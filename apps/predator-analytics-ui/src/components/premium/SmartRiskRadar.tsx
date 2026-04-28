@@ -144,7 +144,7 @@ export const SmartRiskRadar: React.FC = () => {
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold text-white flex items-center gap-2">
                 <Shield className="w-6 h-6 text-cyan-400" />
-                Загальний Ризик-Скор
+                Загальний � изик-Скор
               </h3>
               <Bell className="w-5 h-5 text-cyan-400" />
             </div>

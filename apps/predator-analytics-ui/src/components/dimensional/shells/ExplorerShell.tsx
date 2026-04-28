@@ -90,7 +90,7 @@ export const ExplorerShell: React.FC<ExplorerShellProps> = ({
               </div>
               <div className="text-right">
                 <div className="text-xl font-black text-blue-400 italic tracking-tighter">{search.results}</div>
-                <div className="text-[8px] font-black text-slate-700 uppercase tracking-widest">РЕЗУЛЬТАТІВ</div>
+                <div className="text-[8px] font-black text-slate-700 uppercase tracking-widest">� ЕЗУЛЬТАТІВ</div>
               </div>
             </motion.div>
           ))}
@@ -98,13 +98,13 @@ export const ExplorerShell: React.FC<ExplorerShellProps> = ({
       </TacticalCard>
 
       {/* Quick Actions */}
-      <TacticalCard variant="glass" title="✨ ІНСТРУМЕНТАРІЙ">
+      <TacticalCard variant="glass" title="✨ ІНСТ� УМЕНТА� ІЙ">
         <div className="grid grid-cols-1 gap-4 p-2">
           {[
             { icon: Search, label: 'ГЛОБАЛЬНИЙ_ПОШУК', color: 'purple', action: 'search', desc: 'Пошук по всій БД' },
             { icon: FileText, label: 'БАЗА_ЗНАНЬ', color: 'blue', action: 'knowledge', desc: 'Архів документів' },
-            { icon: Filter, label: 'ФІЛЬТР_ДАННИХ', color: 'indigo', action: 'filter', desc: 'Розширені фільтри' },
-            { icon: TrendingUp, label: 'АНАЛІЗ_ТРЕНДІВ', color: 'cyan', action: 'trends', desc: 'Прогнозування' },
+            { icon: Filter, label: 'ФІЛЬТ� _ДАННИХ', color: 'indigo', action: 'filter', desc: '� озширені фільтри' },
+            { icon: TrendingUp, label: 'АНАЛІЗ_Т� ЕНДІВ', color: 'cyan', action: 'trends', desc: 'Прогнозування' },
           ].map((action, idx) => (
             <motion.button
               key={idx}

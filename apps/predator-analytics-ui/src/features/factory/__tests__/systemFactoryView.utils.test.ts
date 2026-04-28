@@ -103,7 +103,7 @@ describe('systemFactoryView.utils', () => {
     });
 
     expect(snapshot.neo4j.nodes).toBe('420');
-    expect(snapshot.neo4j.edges).toBe('1 337');
+    expect(snapshot.neo4j.edges).toBe('1� 337');
     expect(snapshot.neo4j.status).toBe('online');
     expect(snapshot.redis.memory).toBe('Н/д');
   });

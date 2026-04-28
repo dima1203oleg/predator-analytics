@@ -59,7 +59,7 @@ export interface RiskAlert {
   id: string;
   title: string;
   source: string;
-  severity: 'КРИТИЧНА' | 'ВИСОКА' | 'СЕРЕДНЯ' | 'НИЗЬКА';
+  severity: 'К� ИТИЧНА' | 'ВИСОКА' | 'СЕ� ЕДНЯ' | 'НИЗЬКА';
   status: string;
   desc: string;
 }

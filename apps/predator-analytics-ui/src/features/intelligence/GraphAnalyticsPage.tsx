@@ -1,6 +1,6 @@
 /**
  * 🕸️ PREDATOR Topology Sanctum | v58.2-WRAITH
- * МОДУЛЬ ТОПОЛОГІЧНОГО СВЯТИЛИЩА ТА НЕЙРОФОРМНОЇ ГРАФ ОПТИМІЗАЦІЇ
+ * МОДУЛЬ ТОПОЛОГІЧНОГО СВЯТИЛИЩА ТА НЕЙ� ОФО� МНОЇ Г� АФ ОПТИМІЗАЦІЇ
  * 
  * Глибинний аналіз зв'язків (Neo4j), детекція картелів та аномалій.
  * 
@@ -86,7 +86,7 @@ const GraphAnalyticsPage: React.FC = () => {
             window.dispatchEvent(new CustomEvent('predator-error', {
                 detail: {
                     service: 'GraphTopology',
-                    message: `ТОПОЛОГІЯ_СКАН [${backendStatus.nodeSource}]: Реконструкцію вузлів завершено. Вузлів: ${stats?.nodes_count || '1.4M'}.`,
+                    message: `ТОПОЛОГІЯ_СКАН [${backendStatus.nodeSource}]: � еконструкцію вузлів завершено. Вузлів: ${stats?.nodes_count || '1.4M'}.`,
                     severity: 'info',
                     timestamp: new Date().toISOString(),
                     code: 'GRAPH_SYNC_SUCCESS'
@@ -100,8 +100,8 @@ const GraphAnalyticsPage: React.FC = () => {
             { id: 'root', name: 'SOVEREIGN_CORE', symbolSize: 110, itemStyle: { color: '#D4AF37', shadowBlur: 60, shadowColor: 'rgba(212,175,55,0.4)', borderColor: 'rgba(212,175,55,0.8)', borderWidth: 4 }, label: { show: true }, risk: 0 },
             { id: 'c1', name: 'ТОВ "ЗАВОД ТИТАН"', symbolSize: 85, itemStyle: { color: '#D97706', shadowBlur: 30, shadowColor: '#D97706' }, category: 'HIGH_RISK', risk: 94 },
             { id: 'c2', name: 'ЛОГІСТИК-ПЛЮС', symbolSize: 70, itemStyle: { color: '#fbbf24' }, category: 'MEDIUM_RISK', risk: 58 },
-            { id: 'c3', name: 'ОФШОР "PANAMA"', symbolSize: 65, itemStyle: { color: '#D97706' }, category: 'HIGH_RISK', risk: 89 },
-            { id: 'c4', name: 'БЕНЕФІЦІАР X', symbolSize: 75, itemStyle: { color: '#22c55e' }, category: 'UBO', risk: 15 },
+            { id: 'c3', name: 'ОФШО�  "PANAMA"', symbolSize: 65, itemStyle: { color: '#D97706' }, category: 'HIGH_RISK', risk: 89 },
+            { id: 'c4', name: 'БЕНЕФІЦІА�  X', symbolSize: 75, itemStyle: { color: '#22c55e' }, category: 'UBO', risk: 15 },
             { id: 'c6', name: 'МИТНИЦЯ_ЗАХІД', symbolSize: 60, itemStyle: { color: '#0ea5e9' }, category: 'GOV', risk: 8 },
         ];
         const links = [
@@ -120,7 +120,7 @@ const GraphAnalyticsPage: React.FC = () => {
             const res = await api.graph.getCartels();
             if (Array.isArray(res)) {
                 const processedClusters = res.map((c: any) => ({
-                    name: c.entities?.[0]?.name || `КЛАСТЕР #${c.communityId}`,
+                    name: c.entities?.[0]?.name || `КЛАСТЕ�  #${c.communityId}`,
                     risk: Math.max(...(c.entities?.map((e: any) => e.risk) || [0])),
                     nodes: c.size,
                     type: c.risk > 80 ? 'HIGH_RISK_GROUP' : 'STABLE_GROUP',
@@ -140,7 +140,7 @@ const GraphAnalyticsPage: React.FC = () => {
             window.dispatchEvent(new CustomEvent('predator-error', {
                 detail: {
                     service: 'GraphTopology',
-                    message: `АВТОНОМНИЙ РЕЖИМ ГРАФА [${backendStatus.nodeSource}]: Використовується локальна кеш-модель (MIRROR_VAULT).`,
+                    message: `АВТОНОМНИЙ � ЕЖИМ Г� АФА [${backendStatus.nodeSource}]: Використовується локальна кеш-модель (MIRROR_VAULT).`,
                     severity: 'warning',
                     timestamp: new Date().toISOString(),
                     code: 'GRAPH_OFFLINE'
@@ -151,7 +151,7 @@ const GraphAnalyticsPage: React.FC = () => {
         window.dispatchEvent(new CustomEvent('predator-error', {
             detail: {
                 service: 'GraphTopology',
-                message: `ГРАФ_СЯЙВО [${backendStatus.nodeSource}]: Нейронні зв'язки Neo4j активовано.`,
+                message: `Г� АФ_СЯЙВО [${backendStatus.nodeSource}]: Нейронні зв'язки Neo4j активовано.`,
                 severity: 'info',
                 timestamp: new Date().toISOString(),
                 code: 'GRAPH_SUCCESS'
@@ -241,7 +241,7 @@ const GraphAnalyticsPage: React.FC = () => {
                                         МАПИ <span className="text-yellow-500 underline decoration-yellow-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">КОГНІЦІЇ</span>
                                     </h1>
                                     <p className="text-[12px] text-slate-600 font-black uppercase tracking-[0.5em] mt-6 italic border-l-4 border-yellow-500/30 pl-8 opacity-90 max-w-2xl">
-                                        НЕЙРОННИЙ СКАНЕР GRAHP-DB • ВИЯВЛЕННЯ КАРТЕЛІВ ТА ПРИХОВАНИХ UBO
+                                        НЕЙ� ОННИЙ СКАНЕ�  GRAHP-DB • ВИЯВЛЕННЯ КА� ТЕЛІВ ТА П� ИХОВАНИХ UBO
                                     </p>
                                 </div>
                             </div>
@@ -298,14 +298,14 @@ const GraphAnalyticsPage: React.FC = () => {
                         </section>
 
                         <aside className="col-span-12 xl:col-span-4 flex flex-col gap-12 overflow-y-auto custom-scrollbar pr-4">
-                            {/* МЕТРИКИ WRAITH */}
+                            {/* МЕТ� ИКИ WRAITH */}
                             <section className="p-10 rounded-[3.5rem] bg-black border-2 border-white/[0.04] shadow-4xl space-y-10 relative overflow-hidden group">
                                 <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/5 to-transparent pointer-events-none" />
                                 <div className="flex items-center gap-8 mb-4 border-b border-white/[0.04] pb-8">
                                    <div className="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-2xl text-yellow-500 transform group-hover:rotate-12 transition-transform">
                                       <TrendingUp size={28} />
                                    </div>
-                                   <h4 className="text-[16px] font-black text-white italic uppercase tracking-[0.4em] font-serif">НЕЙРО_МЕТРИКИ_ГРАФА</h4>
+                                   <h4 className="text-[16px] font-black text-white italic uppercase tracking-[0.4em] font-serif">НЕЙ� О_МЕТ� ИКИ_Г� АФА</h4>
                                 </div>
                                 <div className="grid grid-cols-2 gap-10">
                                    {[
@@ -322,7 +322,7 @@ const GraphAnalyticsPage: React.FC = () => {
                                 </div>
                             </section>
 
-                            {/* КАРТЕЛІ WRAITH */}
+                            {/* КА� ТЕЛІ WRAITH */}
                             <section className="p-10 rounded-[3.5rem] bg-black border-2 border-amber-950/20 shadow-4xl flex-1 flex flex-col relative overflow-hidden group">
                                 <div className="absolute top-0 right-0 p-16 opacity-[0.03] pointer-events-none group-hover:opacity-[0.1] transition-all rotate-12 duration-[10s]">
                                    <Skull size={300} className="text-amber-600" />
@@ -331,12 +331,12 @@ const GraphAnalyticsPage: React.FC = () => {
                                    <div className="p-4 bg-amber-500/10 rounded-2xl border-2 border-amber-500/30 shadow-inner group-hover:bg-amber-500/20 transition-all">
                                       <Target size={18} className="text-amber-800 mt-1 shrink-0" />
                                    </div>
-                                   <h4 className="text-[16px] font-black text-white italic uppercase tracking-[0.4em] leading-none font-serif">ВИЯВЛЕНІ <span className="text-amber-600 underline decoration-amber-600/20 decoration-8 underline-offset-8">КАРТЕЛІ</span></h4>
+                                   <h4 className="text-[16px] font-black text-white italic uppercase tracking-[0.4em] leading-none font-serif">ВИЯВЛЕНІ <span className="text-amber-600 underline decoration-amber-600/20 decoration-8 underline-offset-8">КА� ТЕЛІ</span></h4>
                                 </div>
                                 <div className="space-y-6 flex-1 overflow-y-auto custom-scrollbar pr-4 italic">
                                    {(clusters.length > 0 ? clusters : [
-                                      { name: 'ТОВ "ЕНЕРГО-СИНДИКАТ"', risk: 99, nodes: 56, type: 'SHADOW_CARTEL' },
-                                      { name: 'МЕРЕЖА "ПРОКСІ-ТИТАН"', risk: 92, nodes: 22, type: 'UBO_HIDDEN' },
+                                      { name: 'ТОВ "ЕНЕ� ГО-СИНДИКАТ"', risk: 99, nodes: 56, type: 'SHADOW_CARTEL' },
+                                      { name: 'МЕ� ЕЖА "П� ОКСІ-ТИТАН"', risk: 92, nodes: 22, type: 'UBO_HIDDEN' },
                                       { name: 'LOGISTICS_PROXY', risk: 84, nodes: 14, type: 'TRANSIT_HUBS' }
                                    ]).map((c, i) => (
                                       <div key={i} className="p-8 rounded-[2.5rem] bg-black border-2 border-white/[0.03] hover:border-amber-600/40 transition-all cursor-pointer group/item space-y-6 shadow-inner relative overflow-hidden">

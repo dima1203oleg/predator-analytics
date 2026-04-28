@@ -110,7 +110,7 @@ class SoundEngine {
     });
   }
 
-  /** Радарний пінг */
+  /** � адарний пінг */
   playRadarPing() {
     const ctx = this.getCtx(); if (!ctx) return;
     const osc = ctx.createOscillator();
@@ -304,24 +304,24 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
   const PHASE_TEXTS: Record<number, string> = {
 
     0: '',
-    1: '> ІНІЦІАЛІЗАЦІЯ СУВЕРЕННОГО КВАНТОВОГО ПРОТОКОЛУ [V58.2-WRAITH]...',
-    2: '> БЛОКУВАННЯ СПЕКТРУ: 47 ВУЗЛІВ / 1,217 ПОТОКІВ КРИПТОАНАЛІЗУ',
-    3: '> НЕЙРОННИЙ ПЕРЕХОПЛЮВАЧ ОНЛАЙН: ПЕРЕХРЕСНЕ ВІДСТЕЖЕННЯ ТРАФІКУ...',
-    4: '> ДОСТУП РІВНЯ TIER-1 ПІДТВЕРДЖЕНО — PREDATOR АКТИВОВАНО',
+    1: '> ІНІЦІАЛІЗАЦІЯ СУВЕ� ЕННОГО КВАНТОВОГО П� ОТОКОЛУ [V58.2-WRAITH]...',
+    2: '> БЛОКУВАННЯ СПЕКТ� У: 47 ВУЗЛІВ / 1,217 ПОТОКІВ К� ИПТОАНАЛІЗУ',
+    3: '> НЕЙ� ОННИЙ ПЕ� ЕХОПЛЮВАЧ ОНЛАЙН: ПЕ� ЕХ� ЕСНЕ ВІДСТЕЖЕННЯ Т� АФІКУ...',
+    4: '> ДОСТУП � ІВНЯ TIER-1 ПІДТВЕ� ДЖЕНО — PREDATOR АКТИВОВАНО',
   };
 
   const DB_SCAN_LINES = [
-    'СИНХРОНІЗАЦІЯ З ЗАКРИТИМИ БАЗАМИ INTERPOL & NSA...',
-    'АКТИВАЦІЯ ПРОТОКОЛУ СУВЕРЕННОГО ПЕРЕХОПЛЕННЯ ТРАФІКУ (SWIFT/SEPA)...',
-    'МОНІТОРИНГ ГЛОБАЛЬНИХ ЛАНЦЮГІВ ПОСТАЧАННЯ (12.4 ЕКЗАБАЙТ ДАНИХ)...',
-    'ДЕ-АНОНІМІЗАЦІЯ ПАРАВАННИХ ОФШОРНИХ СТРУКТУР (BERMUDA, BVI)...',
-    'AI-ПОШУК ПРИХОВАНИХ БЕНЕФІЦІАРІВ ЧЕРЕЗ АЛГОРИТМИ НЕЙРОГРАФІВ...',
-    'ОЦІНКА ВІРОГІДНОСТІ ТРАНЗАКЦІЙ... ВІДХИЛЕННЯ 0.0001%...',
-    'QUANTUM_DECRYPTION: ЗЛАМ СИМЕТРИЧНИХ КЛЮЧІВ КОНТРАГЕНТА...',
-    'МАСШТАБ ТА ПОТУЖНІСТЬ НЕДОСЯЖНА ДЛЯ КОМЕРЦІЙНИХ СИСТЕМ...',
-    'АБСОЛЮТНИЙ ЗБІГ ЦИФРОВОГО СЛІДУ: 99.998%',
-    'ФІКСАЦІЯ КООРДИНАТ ЦІЛІ БЕЗ МОЖЛИВОСТІ БЛОКУВАННЯ...',
-    '▌ ГЛОБАЛЬНЕ ВЗЯТТЯ НА СУПРОВІД. ЦІЛЬ ЗАФІКСОВАНО.',
+    'СИНХ� ОНІЗАЦІЯ З ЗАК� ИТИМИ БАЗАМИ INTERPOL & NSA...',
+    'АКТИВАЦІЯ П� ОТОКОЛУ СУВЕ� ЕННОГО ПЕ� ЕХОПЛЕННЯ Т� АФІКУ (SWIFT/SEPA)...',
+    'МОНІТО� ИНГ ГЛОБАЛЬНИХ ЛАНЦЮГІВ ПОСТАЧАННЯ (12.4 ЕКЗАБАЙТ ДАНИХ)...',
+    'ДЕ-АНОНІМІЗАЦІЯ ПА� АВАННИХ ОФШО� НИХ СТ� УКТУ�  (BERMUDA, BVI)...',
+    'AI-ПОШУК П� ИХОВАНИХ БЕНЕФІЦІА� ІВ ЧЕ� ЕЗ АЛГО� ИТМИ НЕЙ� ОГ� АФІВ...',
+    'ОЦІНКА ВІ� ОГІДНОСТІ Т� АНЗАКЦІЙ... ВІДХИЛЕННЯ 0.0001%...',
+    'QUANTUM_DECRYPTION: ЗЛАМ СИМЕТ� ИЧНИХ КЛЮЧІВ КОНТ� АГЕНТА...',
+    'МАСШТАБ ТА ПОТУЖНІСТЬ НЕДОСЯЖНА ДЛЯ КОМЕ� ЦІЙНИХ СИСТЕМ...',
+    'АБСОЛЮТНИЙ ЗБІГ ЦИФ� ОВОГО СЛІДУ: 99.998%',
+    'ФІКСАЦІЯ КОО� ДИНАТ ЦІЛІ БЕЗ МОЖЛИВОСТІ БЛОКУВАННЯ...',
+    '▌ ГЛОБАЛЬНЕ ВЗЯТТЯ НА СУП� ОВІД. ЦІЛЬ ЗАФІКСОВАНО.',
     '▌ СТАТУС ВУЗЛА: БЕЗВІДМОВНИЙ. СХОВАТИСЯ НЕМОЖЛИВО.',
   ];
 
@@ -684,7 +684,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
         }
       );
 
-      // Радарний промінь
+      // � адарний промінь
       ctx.save(); ctx.rotate(now * 0.0018);
       const sg = ctx.createConicGradient(0, 0, 0);
       sg.addColorStop(0, 'rgba(220,38,38,0)');
@@ -1053,7 +1053,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
         background: 'radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,0.85) 100%)',
       }}/>
 
-      {/* ══ HUD ОВЕРЛЕЙ (фази 1-4) ══ */}
+      {/* ══ HUD ОВЕ� ЛЕЙ (фази 1-4) ══ */}
       <AnimatePresence>
         {phase >= 1 && phase < 5 && (
           <motion.div
@@ -1064,7 +1064,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
             transition={{ duration: 0.5 }}
             className="absolute inset-0 pointer-events-none z-[25]"
           >
-            {/* ─── КУТОВІ L-МАРКЕРИ ПРИЦІЛУ ─── */}
+            {/* ─── КУТОВІ L-МА� КЕ� И П� ИЦІЛУ ─── */}
             {([['top-0 left-0',0],['top-0 right-0',1],['bottom-0 left-0',2],['bottom-0 right-0',3]] as [string,number][]).map(([pos,i]) => (
               <div key={i} className={`absolute ${pos} w-24 h-24`}>
                 <div className="absolute inset-3 border-amber-700/60" style={{
@@ -1084,7 +1084,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
               </div>
             ))}
 
-            {/* ─── ВЕРХНІЙ ЛІВИЙ БЛОК — КЛАСИФІКАЦІЯ ─── */}
+            {/* ─── ВЕ� ХНІЙ ЛІВИЙ БЛОК — КЛАСИФІКАЦІЯ ─── */}
             <div className="absolute top-8 left-8 space-y-2">
               {/* Статус LIVE */}
               <div className="flex items-center gap-2.5 mb-1">
@@ -1093,35 +1093,35 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                   <div className="absolute inset-0 bg-yellow-500 rounded-full animate-ping opacity-30"/>
                 </div>
                 <span className="text-[9px] font-black tracking-[0.6em] text-yellow-500 drop-shadow-[0_0_8px_rgba(251,191,36,0.7)] uppercase">
-                  ПРЕДАТОР МЕРЕЖА: ОНЛАЙН
+                  П� ЕДАТО�  МЕ� ЕЖА: ОНЛАЙН
                 </span>
               </div>
 
-              {/* Рівень допуску */}
+              {/* � івень допуску */}
               <div className="space-y-[3px] pl-4 border-l border-amber-900/40">
                 <p className="text-[7px] font-black tracking-[0.45em] text-amber-600/90 uppercase text-shadow">
-                  АБСОЛЮТНИЙ КОНТРОЛЬ: ДОСТУП РІВНЯ TIER-1
+                  АБСОЛЮТНИЙ КОНТ� ОЛЬ: ДОСТУП � ІВНЯ TIER-1
                 </p>
                 <p className="text-[6px] text-slate-500 tracking-[0.35em] uppercase">
-                  КЛАСИФІКАЦІЯ: БЕЗПРЕЦЕДЕНТНА ДЕРЖАВНА ТАЄМНИЦЯ
+                  КЛАСИФІКАЦІЯ: БЕЗП� ЕЦЕДЕНТНА ДЕ� ЖАВНА ТАЄМНИЦЯ
                 </p>
                 <p className="text-[6px] text-slate-600 tracking-[0.3em] uppercase">
-                  ЛІЦЕНЗІЯ: УРЯДОВИЙ АКТИВ · ВАРТІСТЬ: НЕ ОЦІНЮЄТЬСЯ
+                  ЛІЦЕНЗІЯ: У� ЯДОВИЙ АКТИВ · ВА� ТІСТЬ: НЕ ОЦІНЮЄТЬСЯ
                 </p>
               </div>
 
               {/* Tier badge */}
               <div className="mt-2 inline-flex items-center gap-2 bg-gradient-to-r from-amber-900/30 via-yellow-800/10 to-transparent border border-amber-600/30 px-3 py-1">
                 <span className="text-[6px] font-black tracking-[0.4em] text-amber-500 uppercase drop-shadow-[0_0_4px_rgba(251,191,36,0.4)]">
-                  ◆ ГЛОБАЛЬНА РОЗВІДУВАЛЬНА МОНОПОЛІЯ ◆
+                  ◆ ГЛОБАЛЬНА � ОЗВІДУВАЛЬНА МОНОПОЛІЯ ◆
                 </span>
               </div>
             </div>
 
-            {/* ─── ВЕРХНІЙ ПРАВИЙ БЛОК — ТЕЛЕМЕТРІЯ ─── */}
+            {/* ─── ВЕ� ХНІЙ П� АВИЙ БЛОК — ТЕЛЕМЕТ� ІЯ ─── */}
             <div className="absolute top-8 right-8 text-right space-y-1.5">
               <div className="text-[7px] text-slate-600 uppercase tracking-[0.35em] font-bold">
-                ПЕРЕХОПЛЕНО / ПРОАНАЛІЗОВАНО
+                ПЕ� ЕХОПЛЕНО / П� ОАНАЛІЗОВАНО
               </div>
               <motion.div
                 animate={{ opacity: [0.65, 1, 0.65] }}
@@ -1136,7 +1136,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                   ВУЗЛІВ: {(4217+Math.floor(interceptCount/8000)).toLocaleString()} · ПОТОКІВ: 1,247
                 </div>
                 <div className="text-[6px] text-slate-700 uppercase tracking-widest">
-                  БАЗ ДАНИХ: 23 · КРАЇНИ: 47 · СУПУТНИКИ: 47
+                  БАЗ ДАНИХ: 23 · К� АЇНИ: 47 · СУПУТНИКИ: 47
                 </div>
               </div>
               {/* Міні-sparkline */}
@@ -1165,18 +1165,18 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                   animate={{ opacity: Math.max(0, 0.75-idx*0.1) }}
                   className="text-[6.5px] text-yellow-600/60 font-mono tracking-wider"
                 >
-                  {['ЯДРО.СИСТ','КВАНТ.БЕЗП', 'AZR.ЯДРО','OSINT.','ПОТІК.ШІ'][idx%5]} ▸ {code} ▸ ДОСТУП:ОК
+                  {['ЯД� О.СИСТ','КВАНТ.БЕЗП', 'AZR.ЯД� О','OSINT.','ПОТІК.ШІ'][idx%5]} ▸ {code} ▸ ДОСТУП:ОК
                 </motion.div>
               ))}
             </div>
 
-            {/* ─── ПРАВИЙ НИЖНІЙ: ПРОГРЕС ─── */}
+            {/* ─── П� АВИЙ НИЖНІЙ: П� ОГ� ЕС ─── */}
             <div className="absolute bottom-28 right-8 w-76 space-y-2.5 text-right">
               {/* Threat level bar (фаза 3) */}
               {phase === 3 && (
                 <div className="space-y-1">
                   <div className="flex justify-between text-[7px] uppercase tracking-[0.3em]">
-                    <span className="text-slate-700">ІНДЕКС ЗАГРОЗИ</span>
+                    <span className="text-slate-700">ІНДЕКС ЗАГ� ОЗИ</span>
                     <motion.span
                       animate={{ color: threatLevel>80 ? ['#ef4444','#ff0000','#ef4444'] : ['#f97316','#ef4444'] }}
                       transition={{ duration: 0.3, repeat: Infinity }}
@@ -1213,27 +1213,27 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                   />
                 </div>
                 <div className="text-[5.5px] text-slate-800 uppercase tracking-widest leading-relaxed">
-                  CRYSTALS-KYBER-1024 · КВАНТОВО-БЕЗПЕЧНИЙ · НУЛЬОВЕ РОЗГОЛОШЕННЯ<br/>
+                  CRYSTALS-KYBER-1024 · КВАНТОВО-БЕЗПЕЧНИЙ · НУЛЬОВЕ � ОЗГОЛОШЕННЯ<br/>
                   <span className={backendStatus.isOffline ? "text-orange-500 animate-pulse" : (backendStatus.activeFailover ? "text-green-500/80" : "text-yellow-600/70")}>
                     {backendStatus.isOffline 
-                      ? `СИСТЕМА В РЕЖИМІ ВІДНОВЛЕННЯ (${Math.floor(backendStatus.healingProgress)}%)` 
+                      ? `СИСТЕМА В � ЕЖИМІ ВІДНОВЛЕННЯ (${Math.floor(backendStatus.healingProgress)}%)` 
                       : (backendStatus.activeFailover ? "ZROK FAILOVER: АКТИВНО (MIRROR CLUSTER)" : "ZROK TUNNEL: ОЧІКУВАННЯ / COLAB SYNC")}
                   </span>
                 </div>
               </div>
             </div>
 
-            {/* ─── ВЕРХНІЙ ЦЕНТР: TIMESTAMP / ВЕРСІЯ ─── */}
+            {/* ─── ВЕ� ХНІЙ ЦЕНТ� : TIMESTAMP / ВЕ� СІЯ ─── */}
             <div className="absolute top-8 left-1/2 -translate-x-1/2 text-center space-y-0.5">
               <div className="text-[6px] text-slate-800 uppercase tracking-[0.5em]">
-                PREDATOR ANALYTICS · СУВЕРЕННИЙ РОЗВІДУВАЛЬНИЙ АКТИВ
+                PREDATOR ANALYTICS · СУВЕ� ЕННИЙ � ОЗВІДУВАЛЬНИЙ АКТИВ
               </div>
               <div className="text-[5.5px] text-yellow-600/70 tracking-[0.4em] uppercase font-black">
-                ВЕРСІЯ 58.2-WRAITH · ЗБІРКА {rndHex(6)} · {new Date().toISOString().slice(0,10)}
+                ВЕ� СІЯ 58.2-WRAITH · ЗБІ� КА {rndHex(6)} · {new Date().toISOString().slice(0,10)}
               </div>
             </div>
 
-            {/* ─── ТЕРМІНАЛ ВНИЗУ ─── */}
+            {/* ─── ТЕ� МІНАЛ ВНИЗУ ─── */}
             <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-center">
               <div className="inline-flex items-center gap-2.5 bg-black/90 border border-amber-900/35 px-7 py-2.5"
                 style={{ boxShadow:'0 0 30px rgba(251,191,36,0.08),inset 0 0 20px rgba(0,0,0,0.6)' }}>
@@ -1257,7 +1257,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                 transition={{ delay:0.6 }}
                 className="absolute top-8 left-1/2 -translate-x-1/2 text-[6.5px] text-slate-800 uppercase tracking-[0.45em]"
               >
-                ◀ НАТИСНІТЬ ДЛЯ ПРОПУСКУ ▶
+                ◀ НАТИСНІТЬ ДЛЯ П� ОПУСКУ ▶
               </motion.div>
             )}
           </motion.div>
@@ -1265,7 +1265,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
       </AnimatePresence>
 
       {/* ════════════════════════════════════════════════════════════════════════
-          ЦЕНТРАЛЬНИЙ КОНТЕНТ — ФАЗИ
+          ЦЕНТ� АЛЬНИЙ КОНТЕНТ — ФАЗИ
       ════════════════════════════════════════════════════════════════════════ */}
       <AnimatePresence mode="wait">
 
@@ -1283,7 +1283,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                 animate={{ opacity:[0.2,0.6,0.2] }}
                 transition={{ duration:0.5, repeat:Infinity }}
                 className="text-[7px] text-amber-900/60 tracking-[0.5em] uppercase font-black"
-              >СУВЕРЕННЕ РОЗВІДУВАЛЬНЕ ЯДРО · GLM-5.2 INITIALIZING</motion.div>
+              >СУВЕ� ЕННЕ � ОЗВІДУВАЛЬНЕ ЯД� О · GLM-5.2 INITIALIZING</motion.div>
             </div>
           </motion.div>
         )}
@@ -1294,7 +1294,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
             transition={smooth} className="absolute inset-0 flex items-center justify-center z-30">
             <div className="text-center space-y-3">
               <div className="text-[10px] font-black tracking-[0.8em] uppercase text-amber-800/70">
-                КВАНТОВИЙ ПРОТОКОЛ
+                КВАНТОВИЙ П� ОТОКОЛ
               </div>
               <motion.div
                 animate={{ letterSpacing:['0.4em','1em','0.4em'] }}
@@ -1319,9 +1319,9 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                 animate={{ opacity:[0.7,1,0.7] }}
                 transition={{ duration:0.35, repeat:Infinity }}
                 className="text-[10px] font-black tracking-[0.9em] uppercase text-yellow-600"
-              >РОЗШИРЕНИЙ АНАЛІЗ</motion.div>
+              >� ОЗШИ� ЕНИЙ АНАЛІЗ</motion.div>
               <div className="text-[7px] text-slate-700 tracking-[0.45em] uppercase">
-                47 СУПУТНИКІВ · 892 ВУЗЛИ · 23 ДЕРЖРЕЄСТРИ · 1.2 PB/ГОД
+                47 СУПУТНИКІВ · 892 ВУЗЛИ · 23 ДЕ� Ж� ЕЄСТ� И · 1.2 PB/ГОД
               </div>
             </div>
           </motion.div>
@@ -1340,7 +1340,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                 <div className="flex items-center gap-2 pb-2 border-b border-amber-900/30">
                   <div className="w-1.5 h-1.5 bg-yellow-600 rounded-full animate-pulse"/>
                   <span className="text-[7px] font-black text-amber-700 tracking-[0.45em] uppercase">
-                    РУШІЙ РОЗВІДУВАЛЬНИХ ЗАПИТІВ
+                    � УШІЙ � ОЗВІДУВАЛЬНИХ ЗАПИТІВ
                   </span>
                 </div>
 
@@ -1359,7 +1359,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                     }`}
                   >
                     <span className="mt-px opacity-50 text-[6px]">
-                      {line.includes('ЦІЛЬ') || line.includes('КРИТИЧНИЙ') ? '●' : '›'}
+                      {line.includes('ЦІЛЬ') || line.includes('К� ИТИЧНИЙ') ? '●' : '›'}
                     </span>
                     <span style={line.includes('ЦІЛЬ ІДЕНТИФІКОВАНО')
                       ? {textShadow:'0 0 12px rgba(255,0,0,0.8)'} : {}}>
@@ -1388,10 +1388,10 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                     transition={{ duration:2, repeat:Infinity }}
                     className="text-[24px] font-black tracking-[0.35em] text-amber-500 uppercase"
                   >
-                    ✛ ІМПЕРАТИВНИЙ КОНТРОЛЬ ВСТАНОВЛЕНО
+                    ✛ ІМПЕ� АТИВНИЙ КОНТ� ОЛЬ ВСТАНОВЛЕНО
                   </motion.div>
                   <div className="text-[10px] font-black tracking-[0.65em] text-white/90 uppercase animate-pulse">
-                    ОБ'ЄКТ ІЗОЛЬОВАНО · ОПЕРАТИВНА ГОТОВНІСТЬ ПІДТВЕРДЖЕНА
+                    ОБ'ЄКТ ІЗОЛЬОВАНО · ОПЕ� АТИВНА ГОТОВНІСТЬ ПІДТВЕ� ДЖЕНА
                   </div>
                 </motion.div>
               ) : (
@@ -1411,16 +1411,16 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                 <div className="flex items-center gap-2 pb-2 border-b border-blue-900/25">
                   <div className="w-1.5 h-1.5 bg-blue-600 rounded-full animate-pulse"/>
                   <span className="text-[7px] font-black text-blue-700/80 tracking-[0.4em] uppercase">
-                    НЕЙРОННИЙ РУШІЙ ШІ [GLM-5.1]
+                    НЕЙ� ОННИЙ � УШІЙ ШІ [GLM-5.1]
                   </span>
                 </div>
                 {([
                   {l:'ТОЧНІСТЬ ЗБІГУ',    v:'97.4%',  c:'text-green-500'},
-                  {l:'ІНДЕКС РИЗИКУ',    v:'9.8/10', c:'text-amber-500'},
+                  {l:'ІНДЕКС � ИЗИКУ',    v:'9.8/10', c:'text-amber-500'},
 
-                  {l:'ДЖЕРЕЛА ДАНИХ',    v:'1,847',  c:'text-blue-400'},
-                  {l:'ПЕРЕХРЕСНІ ПОСИЛАННЯ', v:'12,394', c:'text-slate-400'},
-                  {l:'ДОВІРА ШІ',        v:'99.1%',  c:'text-yellow-500'},
+                  {l:'ДЖЕ� ЕЛА ДАНИХ',    v:'1,847',  c:'text-blue-400'},
+                  {l:'ПЕ� ЕХ� ЕСНІ ПОСИЛАННЯ', v:'12,394', c:'text-slate-400'},
+                  {l:'ДОВІ� А ШІ',        v:'99.1%',  c:'text-yellow-500'},
                   {l:'ЕКСПОЗИЦІЯ $USD',  v:'$42.7M', c:'text-orange-400'},
                 ] as {l:string,v:string,c:string}[]).map((item,idx)=>(
                   <motion.div key={idx}
@@ -1529,7 +1529,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                 className="text-8xl md:text-[12rem] font-black tracking-[-0.05em] text-white uppercase italic"
               >PREDATOR</motion.h1>
 
-              {/* Роздільник з ромбом */}
+              {/* � оздільник з ромбом */}
               <motion.div
                 initial={{ opacity:0, scaleX:0 }}
                 animate={{ opacity:1, scaleX:1 }}
@@ -1540,7 +1540,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                 <div className="flex items-center gap-2">
                   <div className="w-1.5 h-1.5 bg-amber-500/80 rotate-45"/>
                   <h2 className="text-[12px] md:text-[18px] font-black tracking-[0.9em] text-amber-500 uppercase whitespace-nowrap italic skew-x-[-12deg] drop-shadow-[0_0_12px_rgba(245,158,11,0.6)]">
-                    БЕЗПРЕЦЕДЕНТНИЙ СУВЕРЕННИЙ АКТИВ
+                    БЕЗП� ЕЦЕДЕНТНИЙ СУВЕ� ЕННИЙ АКТИВ
                   </h2>
                   <div className="w-1.5 h-1.5 bg-amber-500/80 rotate-45"/>
                 </div>
@@ -1555,10 +1555,10 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                 className="space-y-2 mt-4"
               >
                 <div className="text-[10px] text-slate-500 tracking-[0.65em] uppercase font-bold">
-                  НАЙДОРОЖЧА ПЛАТФОРМА ФІНАНСОВОЇ РОЗВІДКИ В ІСТОРІЇ
+                  НАЙДО� ОЖЧА ПЛАТФО� МА ФІНАНСОВОЇ � ОЗВІДКИ В ІСТО� ІЇ
                 </div>
                 <div className="text-[8px] text-slate-600 tracking-[0.45em] uppercase font-bold">
-                  АБСОЛЮТНА ГЕОПОЛІТИЧНА ПЕРЕВАГА · ЯДРО ШІ GLM-5.1 · КВАНТОВА ДЕКРИПЦІЯ
+                  АБСОЛЮТНА ГЕОПОЛІТИЧНА ПЕ� ЕВАГА · ЯД� О ШІ GLM-5.1 · КВАНТОВА ДЕК� ИПЦІЯ
                 </div>
               </motion.div>
 
@@ -1581,7 +1581,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                   transition={{ duration:2.5, repeat:Infinity }}
                   className="text-[20px] md:text-[34px] font-black tracking-[0.4em] text-white uppercase italic"
                 >
-                  ГЛОБАЛЬНИЙ СУВЕРЕННИЙ КОНТРОЛЬ.
+                  ГЛОБАЛЬНИЙ СУВЕ� ЕННИЙ КОНТ� ОЛЬ.
                 </motion.p>
                 <div className="flex items-center justify-center gap-6">
                   <div className="h-px w-24 bg-amber-900/40"/>
@@ -1603,7 +1603,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                 </motion.p>
                 <p className="text-[7px] text-amber-700/90 tracking-[0.55em] uppercase font-bold bg-amber-950/30 py-1.5 px-4 rounded inline-block border border-amber-900/30">
 
-                  ⚠️ КРИТИЧНА ПОПЕРЕДЖУВАЛЬНА ЗОНА: ТІЛЬКИ ДЛЯ АВТОРИЗОВАНИХ ОСІБ TIER-1
+                  � ️ К� ИТИЧНА ПОПЕ� ЕДЖУВАЛЬНА ЗОНА: ТІЛЬКИ ДЛЯ АВТО� ИЗОВАНИХ ОСІБ TIER-1
                 </p>
               </motion.div>
 
@@ -1622,7 +1622,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                 >
                   <div className="h-px w-20 bg-gradient-to-r from-transparent to-yellow-800/40"/>
                   <span className="text-[7px] text-yellow-700/70 tracking-[0.55em] uppercase font-black">
-                    ■ ТАЄМНО — ДОСТУП ДОЗВОЛЕНО ■
+                    �  ТАЄМНО — ДОСТУП ДОЗВОЛЕНО � 
                   </span>
                   <div className="h-px w-20 bg-gradient-to-l from-transparent to-yellow-800/40"/>
                 </motion.div>

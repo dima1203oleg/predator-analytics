@@ -39,7 +39,7 @@ const SystemPromptsView = () => {
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'Prompt_Engine',
-          message: 'ЯДРО ПРОМПТІВ ПЕРЕЙШЛО В АВТОНОМНИЙ РЕЖИМ (PROMPT_OFFLINE). Використовуються закешовані версії.',
+          message: 'ЯД� О П� ОМПТІВ ПЕ� ЕЙШЛО В АВТОНОМНИЙ � ЕЖИМ (PROMPT_OFFLINE). Використовуються закешовані версії.',
           severity: 'warning',
           timestamp: new Date().toISOString(),
           code: 'PROMPT_OFFLINE'
@@ -51,7 +51,7 @@ const SystemPromptsView = () => {
   const promptCategories = useMemo(() => [
     { id: 'extraction', label: 'Екстракція Даних', icon: Layers, status: 'Активно', count: templates?.length || 0 },
     { id: 'analysis', label: 'Глибока Аналітика', icon: Search, status: 'Активно', count: Math.round((templates?.length || 0) * 0.4) },
-    { id: 'decision', label: 'Прийняття Рішень', icon: Shield, status: 'Бета', count: 5 },
+    { id: 'decision', label: 'Прийняття � ішень', icon: Shield, status: 'Бета', count: 5 },
     { id: 'factory', label: 'Системні Промпти Заводу', icon: Zap, status: 'Критично', count: 32 },
   ], [templates]);
 
@@ -60,14 +60,14 @@ const SystemPromptsView = () => {
       <AdvancedBackground mode="sovereign" />
       
       <ViewHeader 
-        title="СИСТЕМНІ ПРОМПТІ ШІ"
+        title="СИСТЕМНІ П� ОМПТІ ШІ"
         subtitle="Керування інструкціями для нейромереж та системної логіки PREDATOR"
         icon={<Terminal size={24} className="text-rose-400" />}
-        breadcrumbs={['ПРЕДАТОР', 'ЗАВОД', 'ПРОМПТИ']}
+        breadcrumbs={['П� ЕДАТО� ', 'ЗАВОД', 'П� ОМПТИ']}
         stats={[
-          { label: 'ДЖЕРЕЛО', value: nodeSource, icon: <Server size={14} />, color: isOffline ? 'warning' : 'gold' },
+          { label: 'ДЖЕ� ЕЛО', value: nodeSource, icon: <Server size={14} />, color: isOffline ? 'warning' : 'gold' },
           { label: 'ШАБЛОНИ', value: templates?.length?.toString() || '...', icon: <Zap size={14} />, color: 'primary' },
-          { label: 'СТАТУС', value: isOffline ? 'АВТОНОМНО' : 'СИНХРОНІЗОВАНО', icon: <Lock size={14} />, color: isOffline ? 'warning' : 'success' }
+          { label: 'СТАТУС', value: isOffline ? 'АВТОНОМНО' : 'СИНХ� ОНІЗОВАНО', icon: <Lock size={14} />, color: isOffline ? 'warning' : 'success' }
         ]}
       />
 
@@ -75,7 +75,7 @@ const SystemPromptsView = () => {
         {/* Left Column: Categories and Status */}
         <div className="lg:col-span-3 space-y-8">
            <div className="space-y-4">
-              <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] px-2 mb-6 italic">КАТЕГОРІЇ_СУТНОСТЕЙ</h3>
+              <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] px-2 mb-6 italic">КАТЕГО� ІЇ_СУТНОСТЕЙ</h3>
               {promptCategories.map(cat => (
                  <TacticalCard key={cat.id} variant="holographic" className="p-5 hover:border-rose-500/30 transition-all cursor-pointer group">
                     <div className="flex items-center justify-between mb-4">
@@ -88,7 +88,7 @@ const SystemPromptsView = () => {
                     </div>
                     <div className="space-y-1">
                        <h4 className="text-[12px] font-black text-white group-hover:text-rose-400 transition-colors uppercase">{cat.label}</h4>
-                       <p className="text-[10px] font-mono text-slate-600 uppercase tracking-widest leading-none">{cat.count} ДИРЕКТИВ</p>
+                       <p className="text-[10px] font-mono text-slate-600 uppercase tracking-widest leading-none">{cat.count} ДИ� ЕКТИВ</p>
                     </div>
                  </TacticalCard>
               ))}
@@ -106,7 +106,7 @@ const SystemPromptsView = () => {
         {/* Middle Column: Prompts List */}
         <div className="lg:col-span-4 space-y-6">
            <div className="flex items-center justify-between px-2 mb-4">
-              <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] italic mb-0">ДИРЕКТИВИ_v58.2-WRAITH</h3>
+              <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] italic mb-0">ДИ� ЕКТИВИ_v58.2-WRAITH</h3>
               <Button size="icon" variant="ghost" className="h-8 w-8 text-slate-500 hover:text-rose-400" onClick={() => refetch()}>
                  <RefreshCw size={14} className={listLoading ? 'animate-spin' : ''} />
               </Button>
@@ -133,12 +133,12 @@ const SystemPromptsView = () => {
                           </span>
                        </div>
                        <Badge variant={p.is_optimized ? 'success' : 'secondary'} className="text-[8px] font-black uppercase">
-                          {p.is_optimized ? 'АКТИВНО' : 'ЧЕРНЕТКА'}
+                          {p.is_optimized ? 'АКТИВНО' : 'ЧЕ� НЕТКА'}
                        </Badge>
                     </div>
                     <div className="flex items-center justify-between border-t border-white/5 pt-4">
-                       <span className="text-[9px] text-slate-700 font-mono tracking-tighter italic uppercase">СКОР: {p.score || 'Н/Д'}</span>
-                       <button className="text-[9px] font-black text-slate-500 hover:text-white uppercase tracking-widest transition-colors">РЕДАГУВАТИ <Copy size={10} className="inline ml-1 opacity-50" /></button>
+                       <span className="text-[9px] text-slate-700 font-mono tracking-tighter italic uppercase">СКО� : {p.score || 'Н/Д'}</span>
+                       <button className="text-[9px] font-black text-slate-500 hover:text-white uppercase tracking-widest transition-colors">� ЕДАГУВАТИ <Copy size={10} className="inline ml-1 opacity-50" /></button>
                     </div>
                  </motion.div>
               ))}
@@ -160,7 +160,7 @@ const SystemPromptsView = () => {
                     </div>
                     <div className="w-px h-6 bg-white/10 mx-2" />
                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] italic font-mono">
-                      РЕДАКТОР: {selectedTemplate?.name || "ОБЕРІТЬ_ПРОМПТ"}
+                      � ЕДАКТО� : {selectedTemplate?.name || "ОБЕ� ІТЬ_П� ОМПТ"}
                     </span>
                  </div>
                  <div className="flex items-center gap-3">
@@ -181,7 +181,7 @@ const SystemPromptsView = () => {
                  ) : selectedTemplate ? (
                     <div className="space-y-6">
                        <div className="space-y-2">
-                          <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">ШАБЛОН // СИСТЕМНА ІНСТРУКЦІЯ</p>
+                          <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">ШАБЛОН // СИСТЕМНА ІНСТ� УКЦІЯ</p>
                           <div className="p-4 bg-black/40 border border-white/5 rounded-xl text-slate-300 whitespace-pre-wrap leading-loose italic">
                             {selectedTemplate.template}
                           </div>
@@ -190,7 +190,7 @@ const SystemPromptsView = () => {
                        {selectedTemplate.optimized_template && (
                           <div className="space-y-2">
                              <p className="text-[10px] font-black text-emerald-500 uppercase tracking-widest flex items-center gap-2">
-                               <Zap size={10} /> ОПТИМІЗОВАНА ВЕРСІЯ (DSPy)
+                               <Zap size={10} /> ОПТИМІЗОВАНА ВЕ� СІЯ (DSPy)
                              </p>
                              <div className="p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-xl text-emerald-400/80 whitespace-pre-wrap leading-loose italic">
                                {selectedTemplate.optimized_template}
@@ -200,7 +200,7 @@ const SystemPromptsView = () => {
 
                        {selectedTemplate.variables?.length > 0 && (
                           <div className="space-y-2">
-                             <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">АРГУМЕНТИ // ЗМІННІ</p>
+                             <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">А� ГУМЕНТИ // ЗМІННІ</p>
                              <div className="flex flex-wrap gap-2">
                                 {selectedTemplate.variables.map((v: string) => (
                                    <code key={v} className="px-2 py-1 bg-white/5 rounded border border-white/10 text-rose-400 text-[10px]">
@@ -222,17 +222,17 @@ const SystemPromptsView = () => {
               <div className="p-6 bg-white/5 border-t border-white/5 flex items-center justify-between">
                  <div className="flex items-center gap-6">
                     <div className="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase tracking-widest italic">
-                       СКОР: {selectedTemplate?.score || 'Н/Д'}
+                       СКО� : {selectedTemplate?.score || 'Н/Д'}
                     </div>
                     <div className="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase tracking-widest italic">
-                       ПРИКЛАДИ: {selectedTemplate?.examples?.length || 0}
+                       П� ИКЛАДИ: {selectedTemplate?.examples?.length || 0}
                     </div>
                  </div>
                  <Button 
                     className="bg-rose-600 hover:bg-rose-500 text-black font-black text-[10px] uppercase tracking-[0.3em] rounded-xl px-12 italic"
                     disabled={!selectedTemplate}
                   >
-                    <Play size={12} className="mr-2" /> ТЕСТ_ІНФЕРЕНСУ
+                    <Play size={12} className="mr-2" /> ТЕСТ_ІНФЕ� ЕНСУ
                  </Button>
               </div>
            </TacticalCard>

@@ -52,7 +52,7 @@ export const useOmniscienceWS = () => {
         };
 
         ws.current.onclose = () => {
-            console.warn('⚠️ Omniscience WS Disconnected. Retrying in 5s...');
+            console.warn('� ️ Omniscience WS Disconnected. Retrying in 5s...');
             setIsConnected(false);
             reconnectTimeout.current = setTimeout(connect, 5000);
         };

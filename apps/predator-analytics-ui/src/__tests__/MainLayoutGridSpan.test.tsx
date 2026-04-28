@@ -110,7 +110,7 @@ describe('MainLayout', () => {
       <MemoryRouter>
         <ThemeProvider>
           <MainLayout>
-            <div>КОМПАКТНИЙ РЕЖИМ</div>
+            <div>КОМПАКТНИЙ � ЕЖИМ</div>
           </MainLayout>
         </ThemeProvider>
       </MemoryRouter>

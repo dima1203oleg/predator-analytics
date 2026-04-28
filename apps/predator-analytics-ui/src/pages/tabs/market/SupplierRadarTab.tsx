@@ -26,7 +26,7 @@ const ReliabilityBadge: React.FC<{ score: number }> = ({ score }) => {
       "bg-red-500/10 border-red-500/20 text-red-500 animate-pulse"
     )}>
       {isHigh ? <CheckCircle size={10} /> : isMid ? <AlertCircle size={10} /> : <Siren size={10} />}
-      {score}% {isHigh ? 'НАДІЙНО' : isMid ? 'ВЕРІФІКОВАНО' : 'РИЗИКОВАНО'}
+      {score}% {isHigh ? 'НАДІЙНО' : isMid ? 'ВЕ� ІФІКОВАНО' : '� ИЗИКОВАНО'}
     </div>
   );
 };
@@ -66,7 +66,7 @@ export const SupplierRadarTab: React.FC = () => {
       <div className="flex justify-between items-end gap-12 mb-8">
         <div className="space-y-1">
           <h2 className="text-2xl font-black text-white uppercase italic tracking-tighter flex items-center gap-4">
-            <Target size={32} className="text-yellow-500" /> Радар постачальників
+            <Target size={32} className="text-yellow-500" /> � адар постачальників
           </h2>
           <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.4em] pl-12 border-l-2 border-yellow-500/20">GLOBAL_SOURCING // PREM_INTEL_RADAR</p>
         </div>
@@ -115,7 +115,7 @@ export const SupplierRadarTab: React.FC = () => {
 
                 <div className="pt-6 border-t border-white/5 flex justify-between items-end">
                    <div>
-                      <p className="text-[8px] font-black text-slate-700 uppercase tracking-widest mb-1">КОНКУРЕНТОСПРОМОЖНІСТЬ</p>
+                      <p className="text-[8px] font-black text-slate-700 uppercase tracking-widest mb-1">КОНКУ� ЕНТОСП� ОМОЖНІСТЬ</p>
                       <p className="text-2xl font-black text-emerald-500 italic font-mono leading-none">{s.competitiveness}%</p>
                    </div>
                    <div className="flex flex-wrap justify-end gap-1 max-w-[150px]">

@@ -64,7 +64,7 @@ export const Overview: React.FC = () => {
           <div className="w-12 h-12 bg-blue-500/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-blue-500/20 transition-colors">
             <Newspaper className="text-blue-400" size={24} />
           </div>
-          <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-blue-300">Ранкова Газета</h3>
+          <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-blue-300">� анкова Газета</h3>
           <p className="text-slate-400 mb-4 text-sm">
             Щоденний огляд критично важливих подій та аналітики.
           </p>

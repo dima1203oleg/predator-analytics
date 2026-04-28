@@ -97,7 +97,7 @@ describe('SearchConsole Component', () => {
         render(<SearchConsole />);
         expect(screen.getByText(/SYNAPTIC/)).toBeInTheDocument();
         expect(screen.getByText(/DISCOVERY/)).toBeInTheDocument();
-        expect(screen.getByPlaceholderText(/ЗАПИТАЙТЕ У МАТРИЦІ.../)).toBeInTheDocument();
+        expect(screen.getByPlaceholderText(/ЗАПИТАЙТЕ У МАТ� ИЦІ.../)).toBeInTheDocument();
         expect(screen.getByRole('button', { name: /ЗНАЙТИ/i })).toBeInTheDocument();
     });
 
@@ -105,10 +105,10 @@ describe('SearchConsole Component', () => {
         const mockResults = [
             {
                 id: '1',
-                title: 'Тестовий Реєстр',
+                title: 'Тестовий � еєстр',
                 snippet: 'Тестовий опис для перевірки пошуку',
                 score: 0.95,
-                source: 'ТЕСТ_ДЖЕРЕЛО',
+                source: 'ТЕСТ_ДЖЕ� ЕЛО',
                 searchType: 'hybrid',
                 date: '2026-03-14',
                 truthScore: 0.99
@@ -119,7 +119,7 @@ describe('SearchConsole Component', () => {
 
         render(<SearchConsole />);
 
-        const input = screen.getByPlaceholderText(/ЗАПИТАЙТЕ У МАТРИЦІ.../);
+        const input = screen.getByPlaceholderText(/ЗАПИТАЙТЕ У МАТ� ИЦІ.../);
         fireEvent.change(input, { target: { value: 'Тестовий пошук' } });
 
         const searchButton = screen.getByRole('button', { name: /ЗНАЙТИ/i });
@@ -134,16 +134,16 @@ describe('SearchConsole Component', () => {
 
         // Чекаємо на появу результатів
         await waitFor(() => {
-            expect(screen.getByText('Тестовий Реєстр')).toBeInTheDocument();
+            expect(screen.getByText('Тестовий � еєстр')).toBeInTheDocument();
             expect(screen.getByText(/"Тестовий опис для перевірки пошуку"/)).toBeInTheDocument();
-            expect(screen.getByText('ТЕСТ_ДЖЕРЕЛО')).toBeInTheDocument();
+            expect(screen.getByText('ТЕСТ_ДЖЕ� ЕЛО')).toBeInTheDocument();
         });
     });
 
     it('повинен зберігати та відображати історію пошуку', async () => {
         render(<SearchConsole />);
 
-        const input = screen.getByPlaceholderText(/ЗАПИТАЙТЕ У МАТРИЦІ.../);
+        const input = screen.getByPlaceholderText(/ЗАПИТАЙТЕ У МАТ� ИЦІ.../);
         fireEvent.change(input, { target: { value: 'Запит для історії' } });
 
         const searchButton = screen.getByRole('button', { name: /ЗНАЙТИ/i });
@@ -164,7 +164,7 @@ describe('SearchConsole Component', () => {
         localStorage.setItem('search_history', JSON.stringify(['Історія 1', 'Історія 2']));
         render(<SearchConsole />);
 
-        expect(screen.getByText('ІСТОРІЯ:')).toBeInTheDocument();
+        expect(screen.getByText('ІСТО� ІЯ:')).toBeInTheDocument();
         expect(screen.getByText('Історія 1')).toBeInTheDocument();
         expect(screen.getByText('Історія 2')).toBeInTheDocument();
     });
@@ -173,7 +173,7 @@ describe('SearchConsole Component', () => {
         const mockResults = [
             {
                 id: '1',
-                title: 'Реальний факт',
+                title: '� еальний факт',
                 snippet: '100% правда',
                 score: 0.9,
                 searchType: 'text',
@@ -198,13 +198,13 @@ describe('SearchConsole Component', () => {
         const truthButton = screen.getByText('ТІЛЬКИ ІСТИНА');
         fireEvent.click(truthButton);
 
-        // Робимо пошук
-        const input = screen.getByPlaceholderText(/ЗАПИТАЙТЕ У МАТРИЦІ.../);
+        // � обимо пошук
+        const input = screen.getByPlaceholderText(/ЗАПИТАЙТЕ У МАТ� ИЦІ.../);
         fireEvent.change(input, { target: { value: 'Тест' } });
         fireEvent.click(screen.getByRole('button', { name: /ЗНАЙТИ/i }));
 
         await waitFor(() => {
-            expect(screen.getByText('Реальний факт')).toBeInTheDocument();
+            expect(screen.getByText('� еальний факт')).toBeInTheDocument();
             // Другий результат повинен бути відфільтрований
             expect(screen.queryByText('Сумнівний факт')).not.toBeInTheDocument();
         });

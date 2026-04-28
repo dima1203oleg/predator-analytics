@@ -62,7 +62,7 @@ const SovereignReliabilityBadge: React.FC<{ score: number }> = ({ score }) => {
       "bg-amber-600/10 border-amber-600/30 text-amber-500 shadow-[0_0_15px_rgba(225,29,72,0.2)]"
     )}>
       {isEmerald ? <CheckCircle size={14} /> : isAmber ? <AlertCircle size={14} /> : <Siren size={14} className="animate-pulse" />}
-      {score}% {isEmerald ? 'НАДІЙНИЙ_ВУЗОЛ' : isAmber ? 'ДОПУСТИМО' : 'КРИТИЧНИЙ_РИЗИК'}
+      {score}% {isEmerald ? 'НАДІЙНИЙ_ВУЗОЛ' : isAmber ? 'ДОПУСТИМО' : 'К� ИТИЧНИЙ_� ИЗИК'}
     </div>
   );
 };
@@ -177,8 +177,8 @@ export default function SupplierDiscoveryPremium() {
             ]}
             stats={[
               { label: 'ПОСТАЧАЛЬНИКІВ', value: String(suppliers.length), icon: <Building2 size={16} />, color: 'gold' },
-              { label: 'ВЕРИФІКОВАНО', value: String(suppliers.filter(s => s.verified).length), icon: <CheckCircle size={16} />, color: 'success' },
-              { label: 'РИЗИКОВІ_ВУЗЛИ', value: String(suppliers.filter(s => s.reliability < 50).length), icon: <Siren size={16} />, color: 'danger', animate: true },
+              { label: 'ВЕ� ИФІКОВАНО', value: String(suppliers.filter(s => s.verified).length), icon: <CheckCircle size={16} />, color: 'success' },
+              { label: '� ИЗИКОВІ_ВУЗЛИ', value: String(suppliers.filter(s => s.reliability < 50).length), icon: <Siren size={16} />, color: 'danger', animate: true },
               { label: 'AI_MATCHING', value: 'READY', icon: <Sparkles size={16} />, color: 'primary' },
             ]}
             actions={
@@ -209,11 +209,11 @@ export default function SupplierDiscoveryPremium() {
             <div className="col-span-12 xl:col-span-4 space-y-10">
                <div className="p-10 rounded-[4rem] bg-black border-2 border-white/[0.04] shadow-3xl space-y-10">
                   <div className="space-y-4">
-                     <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.4em] italic border-l-4 border-yellow-500/40 pl-6">ПОШУК_ПО_ТОВАРАХ_ТА_НАЗВІ</p>
+                     <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.4em] italic border-l-4 border-yellow-500/40 pl-6">ПОШУК_ПО_ТОВА� АХ_ТА_НАЗВІ</p>
                      <div className="relative group">
                         <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-700 group-focus-within:text-yellow-500 transition-colors" size={24} />
                         <input 
-                          type="text" placeholder="НАПРИКЛАД: ЕЛЕКТРОНІКА, ТЕКСТИЛЬ..."
+                          type="text" placeholder="НАП� ИКЛАД: ЕЛЕКТ� ОНІКА, ТЕКСТИЛЬ..."
                           value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
                           className="w-full bg-white/[0.01] border-2 border-white/[0.04] p-5 pl-16 rounded-2xl text-lg font-black text-white italic tracking-tighter focus:border-yellow-500/40 outline-none transition-all"
                         />
@@ -221,10 +221,10 @@ export default function SupplierDiscoveryPremium() {
                   </div>
 
                   <div className="space-y-4">
-                     <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.4em] italic border-l-4 border-yellow-500/40 pl-6">ФІЛЬТР_ПО_ГЕОГРАФІЇ</p>
+                     <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.4em] italic border-l-4 border-yellow-500/40 pl-6">ФІЛЬТ� _ПО_ГЕОГ� АФІЇ</p>
                      <div className="grid grid-cols-2 gap-4">
                         <button onClick={() => setSelectedCountry('all')} className={cn("p-5 rounded-2xl border-2 text-[10px] font-black uppercase tracking-widest italic transition-all", selectedCountry === 'all' ? "bg-yellow-500 border-yellow-400 text-black shadow-lg" : "bg-black border-white/5 text-slate-600 hover:text-white")}>
-                           УСІ_КРАЇНИ
+                           УСІ_К� АЇНИ
                         </button>
                         {countries.slice(0, 5).map(c => (
                           <button key={c} onClick={() => setSelectedCountry(c)} className={cn("p-5 rounded-2xl border-2 text-[10px] font-black uppercase tracking-widest italic transition-all truncate", selectedCountry === c ? "bg-yellow-500 border-yellow-400 text-black shadow-lg" : "bg-black border-white/5 text-slate-600 hover:text-white")}>
@@ -237,10 +237,10 @@ export default function SupplierDiscoveryPremium() {
 
                <div className="p-10 rounded-[4rem] bg-black border-2 border-white/[0.04] shadow-3xl">
                   <h4 className="text-[11px] font-black text-[#D4AF37] uppercase tracking-[0.5em] italic border-b border-white/[0.04] pb-6 mb-6 flex items-center gap-4">
-                     <Sparkles size={18} /> ПРЕДИКТИВНІ_ПОРАДИ_AI
+                     <Sparkles size={18} /> П� ЕДИКТИВНІ_ПО� АДИ_AI
                   </h4>
                   <p className="text-[12px] text-slate-500 leading-relaxed italic font-medium uppercase tracking-tight">
-                    РИНОК ПРИСТРОЇВ ЗБЕРЕЖЕННЯ ЕНЕРГІЇ В ПОЛЬЩІ ДЕМОНСТРУЄ АНОМАЛЬНО НИЗЬКІ ЦІНИ (+12% ВИГІДНІШЕ). РЕКОМЕНДОВАНО ЗВЕРНУТИ УВАГУ НА НОВИХ ГРАВЦІВ В ОДЕСЬКОМУ ПОРТУ.
+                    � ИНОК П� ИСТ� ОЇВ ЗБЕ� ЕЖЕННЯ ЕНЕ� ГІЇ В ПОЛЬЩІ ДЕМОНСТ� УЄ АНОМАЛЬНО НИЗЬКІ ЦІНИ (+12% ВИГІДНІШЕ). � ЕКОМЕНДОВАНО ЗВЕ� НУТИ УВАГУ НА НОВИХ Г� АВЦІВ В ОДЕСЬКОМУ ПО� ТУ.
                   </p>
                </div>
             </div>
@@ -278,7 +278,7 @@ export default function SupplierDiscoveryPremium() {
                          {expandedId === supplier.id && (
                            <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="mt-10 pt-10 border-t border-white/5 grid grid-cols-1 md:grid-cols-3 gap-10">
                               <div className="space-y-4">
-                                 <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest italic">ГРУПИ_ТОВАРІВ</p>
+                                 <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest italic">Г� УПИ_ТОВА� ІВ</p>
                                  <div className="flex flex-wrap gap-2">
                                     {supplier.products.map(p => (
                                       <span key={p} className="px-4 py-2 bg-white/5 rounded-xl text-[10px] font-black text-white italic uppercase tracking-wider">{p}</span>
@@ -295,7 +295,7 @@ export default function SupplierDiscoveryPremium() {
                                     <Mail size={24} />
                                  </button>
                                  <button className="flex-1 py-5 bg-yellow-600 hover:bg-yellow-500 text-black rounded-3xl text-[11px] font-black uppercase tracking-widest italic shadow-3xl transition-all">
-                                    СТВОРИТИ_ЗАПИТ_RFI
+                                    СТВО� ИТИ_ЗАПИТ_RFI
                                  </button>
                               </div>
                            </motion.div>

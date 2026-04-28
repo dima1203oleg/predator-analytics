@@ -11,7 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { cn } from '@/utils/cn';
 import { Download, Factory, Plus, Search, Settings2, UserCheck } from 'lucide-react';
 
-type SRStatus = 'АКТИВНИЙ' | 'ЧЕРНЕТКА' | 'ПРИЗУПИНЕНО';
+type SRStatus = 'АКТИВНИЙ' | 'ЧЕ� НЕТКА' | 'П� ИЗУПИНЕНО';
 
 type SellerRecord = {
   id: string;
@@ -30,7 +30,7 @@ type SRSettings = {
   showPlatform: boolean;
   showStatus: boolean;
   showCreatedAt: boolean;
-  sort: 'НОВІ_СПОЧАТКУ' | 'СТАРІ_СПОЧАТКУ';
+  sort: 'НОВІ_СПОЧАТКУ' | 'СТА� І_СПОЧАТКУ';
 };
 
 const defaultSettings: SRSettings = {
@@ -93,7 +93,7 @@ const SRView: React.FC = () => {
     const existing = loadRegistry();
     if (existing.length > 0) return existing;
     const seed: SellerRecord[] = [
-      { id: 'SR-0001', edrpou: '00000000', name: 'Приклад продавця', platform: 'Маркетплейс', status: 'ЧЕРНЕТКА', createdAt: nowIso() },
+      { id: 'SR-0001', edrpou: '00000000', name: 'Приклад продавця', platform: 'Маркетплейс', status: 'ЧЕ� НЕТКА', createdAt: nowIso() },
     ];
     saveRegistry(seed);
     return seed;
@@ -140,7 +140,7 @@ const SRView: React.FC = () => {
       edrpou,
       name,
       platform: platform || '—',
-      status: 'ЧЕРНЕТКА',
+      status: 'ЧЕ� НЕТКА',
       createdAt: nowIso(),
     };
     const next = [item, ...registry];
@@ -153,7 +153,7 @@ const SRView: React.FC = () => {
   const toggleStatus = (id: string) => {
     const next = registry.map(r => {
       if (r.id !== id) return r;
-      const status: SRStatus = r.status === 'АКТИВНИЙ' ? 'ПРИЗУПИНЕНО' : 'АКТИВНИЙ';
+      const status: SRStatus = r.status === 'АКТИВНИЙ' ? 'П� ИЗУПИНЕНО' : 'АКТИВНИЙ';
       return { ...r, status };
     });
     setRegistry(next);
@@ -169,7 +169,7 @@ const SRView: React.FC = () => {
   };
 
   const exportCsv = () => {
-    const headers: string[] = ['ID', 'ЄДРПОУ', 'Назва'];
+    const headers: string[] = ['ID', 'ЄД� ПОУ', 'Назва'];
     if (settings.showPlatform) headers.push('Платформа');
     if (settings.showStatus) headers.push('Статус');
     if (settings.showCreatedAt) headers.push('Створено');
@@ -197,7 +197,7 @@ const SRView: React.FC = () => {
   return (
     <div className="space-y-6">
       <ViewHeader
-        title="SR — Реєстр Продавців"
+        title="SR — � еєстр Продавців"
         icon={<UserCheck className="w-6 h-6" />}
         breadcrumbs={['Дані', 'SR']}
         stats={[
@@ -211,7 +211,7 @@ const SRView: React.FC = () => {
               <Input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Пошук за ID, ЄДРПОУ, назвою…"
+                placeholder="Пошук за ID, ЄД� ПОУ, назвою…"
                 className="pl-9 bg-slate-950/40 border-slate-700/60"
               />
             </div>
@@ -222,8 +222,8 @@ const SRView: React.FC = () => {
               >
                 <SelectItem value="УСІ">Усі статуси</SelectItem>
                 <SelectItem value="АКТИВНИЙ">Активні</SelectItem>
-                <SelectItem value="ЧЕРНЕТКА">Чернетки</SelectItem>
-                <SelectItem value="ПРИЗУПИНЕНО">Призупинені</SelectItem>
+                <SelectItem value="ЧЕ� НЕТКА">Чернетки</SelectItem>
+                <SelectItem value="П� ИЗУПИНЕНО">Призупинені</SelectItem>
               </Select>
             </div>
             <Button onClick={() => setIsCreateOpen(v => !v)} className="gap-2">
@@ -274,7 +274,7 @@ const SRView: React.FC = () => {
                   className="py-1"
                 >
                   <SelectItem value="НОВІ_СПОЧАТКУ">Нові спочатку</SelectItem>
-                  <SelectItem value="СТАРІ_СПОЧАТКУ">Старі спочатку</SelectItem>
+                  <SelectItem value="СТА� І_СПОЧАТКУ">Старі спочатку</SelectItem>
                 </Select>
               </div>
             </div>
@@ -283,7 +283,7 @@ const SRView: React.FC = () => {
         {isCreateOpen && (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
             <div className="lg:col-span-3 space-y-2">
-              <Label htmlFor="sr-edrpou">ЄДРПОУ</Label>
+              <Label htmlFor="sr-edrpou">ЄД� ПОУ</Label>
               <Input
                 id="sr-edrpou"
                 value={draft.edrpou}
@@ -329,7 +329,7 @@ const SRView: React.FC = () => {
             <TableHeader>
               <TableRow className="border-white/5 hover:bg-white/5 bg-slate-950/40">
                 <TableHead className="text-xs uppercase font-black tracking-widest text-slate-500 py-4">ID</TableHead>
-                <TableHead className="text-xs uppercase font-black tracking-widest text-slate-500">ЄДРПОУ</TableHead>
+                <TableHead className="text-xs uppercase font-black tracking-widest text-slate-500">ЄД� ПОУ</TableHead>
                 <TableHead className="text-xs uppercase font-black tracking-widest text-slate-500">Назва</TableHead>
                 {settings.showPlatform && (
                   <TableHead className="text-xs uppercase font-black tracking-widest text-slate-500">Платформа</TableHead>
@@ -352,7 +352,7 @@ const SRView: React.FC = () => {
                   {settings.showPlatform && <TableCell className="text-slate-300">{r.platform}</TableCell>}
                   {settings.showStatus && (
                     <TableCell>
-                      <Badge variant={r.status === 'АКТИВНИЙ' ? 'default' : r.status === 'ПРИЗУПИНЕНО' ? 'destructive' : 'secondary'}>
+                      <Badge variant={r.status === 'АКТИВНИЙ' ? 'default' : r.status === 'П� ИЗУПИНЕНО' ? 'destructive' : 'secondary'}>
                         {r.status}
                       </Badge>
                     </TableCell>

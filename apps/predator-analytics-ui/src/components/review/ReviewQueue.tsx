@@ -37,7 +37,7 @@ interface ReviewTask {
 }
 
 const PRIORITY_CONFIG: Record<Priority, { color: string; label: string; icon: any }> = {
-  critical: { color: 'rose', label: 'КРИТИЧНИЙ', icon: AlertTriangle },
+  critical: { color: 'rose', label: 'К� ИТИЧНИЙ', icon: AlertTriangle },
   high: { color: 'amber', label: 'ВИСОКИЙ', icon: Flag },
   normal: { color: 'blue', label: 'ЗВИЧАЙНИЙ', icon: Clock },
   low: { color: 'slate', label: 'НИЗЬКИЙ', icon: Clock },
@@ -97,7 +97,7 @@ export const ReviewQueue: React.FC<ReviewQueueProps> = ({
         entity_type: 'company',
         created_at: new Date().toISOString(),
         context: {
-          entity_name: 'ТОВ "РОМАШКА"',
+          entity_name: 'ТОВ "� ОМАШКА"',
           matched_entity_name: 'ROMASHKA LLC',
           confidence: 0.87,
           evidence: [
@@ -188,7 +188,7 @@ export const ReviewQueue: React.FC<ReviewQueueProps> = ({
               <Users size={24} className="text-amber-400" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-white">ЧЕРГА НА ОГЛЯД</h2>
+              <h2 className="text-xl font-bold text-white">ЧЕ� ГА НА ОГЛЯД</h2>
               <p className="text-sm text-slate-400">Human-in-the-Loop</p>
             </div>
           </div>
@@ -397,7 +397,7 @@ export const ReviewQueue: React.FC<ReviewQueueProps> = ({
                 {/* Suggestion */}
                 <div className="bg-cyan-500/10 border border-cyan-500/30 rounded-xl p-4">
                   <h4 className="text-sm font-bold text-cyan-400 uppercase tracking-wider mb-2">
-                    Рекомендація системи
+                    � екомендація системи
                   </h4>
                   <p className="text-white">{selectedTask.suggestion.reason}</p>
                 </div>

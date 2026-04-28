@@ -367,7 +367,7 @@ export default function MarketPage() {
       } catch (error) {
         console.warn('[MarketPage] API OFFLINE, FALLBACK TO MOCK:', error);
         setOverviewData(MOCK_MARKET_OVERVIEW);
-        setOverviewError('СИСТЕМА В АВТОНОМНОМУ РЕЖИМІ. Дані базуються на останньому збереженому зліпку ринку.');
+        setOverviewError('СИСТЕМА В АВТОНОМНОМУ � ЕЖИМІ. Дані базуються на останньому збереженому зліпку ринку.');
       } finally {
         setLoadingOverview(false);
       }
@@ -407,7 +407,7 @@ export default function MarketPage() {
         const response = await competitorsApi.getActive(15);
         setCompetitors(response ?? []);
       } catch (error) {
-        setCompetitorsError('Рейтинг конкурентів тимчасово недоступний.');
+        setCompetitorsError('� ейтинг конкурентів тимчасово недоступний.');
       } finally {
         setLoadingCompetitors(false);
       }
@@ -424,7 +424,7 @@ export default function MarketPage() {
     () => ({
       entityId: 'market-elite',
       entityType: 'STRATEGIC_MARKET',
-      title: 'РИНКОВИЙ КОНТУР',
+      title: '� ИНКОВИЙ КОНТУ� ',
       subtitle: `v62.7-ELITE • ${backendStatus.sourceLabel}`,
       status: {
         label: loadingOverview ? 'SYNCHRONIZING' : 'OPERATIONAL',
@@ -442,12 +442,12 @@ export default function MarketPage() {
         )
       ],
       relations: [
-        createMetric('active-view', 'Режим', activeTabLabel, 'Поточний фільтр аналітики'),
+        createMetric('active-view', '� ежим', activeTabLabel, 'Поточний фільтр аналітики'),
         createMetric('data-freshness', 'Актуальність', '99.8%', 'Дані оновлено 2 хв тому'),
       ],
       risks: [
         ...(overviewError ? [createRisk('m-offline', 'OFFLINE MODE', overviewError, 'warning')] : []),
-        ...(marketHHI > 2500 ? [createRisk('m-hhi', 'ВИСОКА КОНЦЕНТРАЦІЯ', 'Ринок схильний до монополізації.', 'warning')] : []),
+        ...(marketHHI > 2500 ? [createRisk('m-hhi', 'ВИСОКА КОНЦЕНТ� АЦІЯ', '� инок схильний до монополізації.', 'warning')] : []),
       ],
       sourcePath: '/market',
       documents: [],
@@ -484,7 +484,7 @@ export default function MarketPage() {
 
             <div className="space-y-4">
               <h1 className="flex flex-col text-5xl font-black tracking-tighter text-white sm:text-7xl lg:text-8xl uppercase italic leading-none">
-                <span>РИНКОВИЙ</span>
+                <span>� ИНКОВИЙ</span>
                 <span className="text-red-600 drop-shadow-[0_0_35px_rgba(220,38,38,0.6)]">ІНТЕЛЕКТ</span>
               </h1>
               <p className="max-w-xl text-xl font-medium leading-relaxed text-slate-400/80 [text-wrap:balance]">
@@ -497,16 +497,16 @@ export default function MarketPage() {
             <div className="group rounded-[32px] border border-white/[0.08] bg-white/[0.02] p-6 transition-all hover:border-red-500/40 hover:bg-red-500/[0.02]">
               <div className="flex items-center gap-3 mb-4">
                 <div className="h-2 w-2 rounded-full bg-red-600" />
-                <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">КОНЦЕНТРАЦІЯ</span>
+                <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">КОНЦЕНТ� АЦІЯ</span>
               </div>
               <div className="text-3xl font-black text-white italic">{marketHHI}</div>
-              <div className="text-[10px] text-red-500/80 mt-2 font-bold uppercase tracking-wider">HHI INDEX | {marketHHI > 2500 ? 'МОНОПОЛІЯ' : 'КОНКУРЕНЦІЯ'}</div>
+              <div className="text-[10px] text-red-500/80 mt-2 font-bold uppercase tracking-wider">HHI INDEX | {marketHHI > 2500 ? 'МОНОПОЛІЯ' : 'КОНКУ� ЕНЦІЯ'}</div>
             </div>
 
             <div className="group rounded-[32px] border border-white/[0.08] bg-white/[0.02] p-6 transition-all hover:border-red-500/40 hover:bg-red-500/[0.02]">
               <div className="flex items-center gap-3 mb-4">
                 <div className="h-2 w-2 rounded-full bg-emerald-500" />
-                <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">АРБІТРАЖ</span>
+                <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">А� БІТ� АЖ</span>
               </div>
               <div className="text-3xl font-black text-white italic">4.2%</div>
               <div className="text-[10px] text-emerald-500/80 mt-2 font-bold uppercase tracking-wider">PRICE DEVIATION DETECTED</div>
@@ -514,12 +514,12 @@ export default function MarketPage() {
 
             <Button 
               className="col-span-1 sm:col-span-2 h-20 rounded-[32px] bg-red-600 text-white hover:bg-red-700 shadow-[0_20px_40px_rgba(220,38,38,0.3)] group overflow-hidden relative"
-              onClick={() => handleSimulateValue("Глобальний Ринок")}
+              onClick={() => handleSimulateValue("Глобальний � инок")}
             >
               <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.1)_50%,transparent_75%)] bg-[length:250%_250%] animate-[shimmer_3s_infinite]" />
               <div className="relative z-10 flex items-center justify-center gap-4 text-xl font-black uppercase italic tracking-tighter">
                 <Target size={28} />
-                ГЕНЕРУВАТИ СТРАТЕГІЧНИЙ ROI
+                ГЕНЕ� УВАТИ СТ� АТЕГІЧНИЙ ROI
               </div>
             </Button>
           </div>
@@ -733,7 +733,7 @@ function ArbitrageTab({ declarations, loading }: { declarations: DeclarationResp
             <Target className="text-white" size={32} />
           </div>
           <div>
-            <h3 className="text-3xl font-black text-white uppercase italic tracking-tighter">ДЕТЕКТОР АРБІТРАЖУ</h3>
+            <h3 className="text-3xl font-black text-white uppercase italic tracking-tighter">ДЕТЕКТО�  А� БІТ� АЖУ</h3>
             <p className="text-slate-400 font-bold uppercase text-xs tracking-widest">Виявлення аномальних відхилень у митній вартості</p>
           </div>
         </div>
@@ -746,7 +746,7 @@ function ArbitrageTab({ declarations, loading }: { declarations: DeclarationResp
                    <th className="px-6 py-4">Товар</th>
                    <th className="px-6 py-4">Компанія</th>
                    <th className="px-6 py-4 text-right">Ціна / Одиницю</th>
-                   <th className="px-6 py-4 text-center">Ризик</th>
+                   <th className="px-6 py-4 text-center">� изик</th>
                  </tr>
                </thead>
                <tbody className="divide-y divide-white/[0.04]">
@@ -772,12 +772,12 @@ function ArbitrageTab({ declarations, loading }: { declarations: DeclarationResp
           </div>
           <div className="space-y-4">
              <div className="rounded-[32px] border border-emerald-500/20 bg-emerald-500/5 p-6">
-               <div className="text-[10px] font-black text-emerald-500 uppercase tracking-widest mb-2">ПОТЕНЦІЙНИЙ ПРИБУТОК</div>
+               <div className="text-[10px] font-black text-emerald-500 uppercase tracking-widest mb-2">ПОТЕНЦІЙНИЙ П� ИБУТОК</div>
                <div className="text-4xl font-black text-white italic">$4.2M</div>
                <p className="text-xs text-slate-400 mt-2 font-medium">За умови вирівнювання цінових показників по ринку.</p>
              </div>
              <div className="rounded-[32px] border border-red-500/20 bg-red-500/5 p-6">
-               <div className="text-[10px] font-black text-red-500 uppercase tracking-widest mb-2">КРИТИЧНІ ВІДХИЛЕННЯ</div>
+               <div className="text-[10px] font-black text-red-500 uppercase tracking-widest mb-2">К� ИТИЧНІ ВІДХИЛЕННЯ</div>
                <div className="text-4xl font-black text-white italic">{anomalies.length}</div>
                <p className="text-xs text-slate-400 mt-2 font-medium">Товарних партій вимагають негайної перевірки відділом аудиту.</p>
              </div>
@@ -793,8 +793,8 @@ function DeclarationsTab({ declarations, error, loading }: { declarations: Decla
     <div className="rounded-[40px] border border-white/[0.08] bg-[#020202] overflow-hidden">
       <div className="flex items-center justify-between border-b border-white/[0.08] p-8 bg-white/[0.01]">
         <div>
-          <h3 className="text-2xl font-black text-white uppercase italic tracking-tighter">МИТНИЙ РЕЄСТР</h3>
-          <p className="text-sm text-slate-500 font-medium italic">ПРЯМИЙ ПОТІК ДАНИХ (Sovereign Ingestion)</p>
+          <h3 className="text-2xl font-black text-white uppercase italic tracking-tighter">МИТНИЙ � ЕЄСТ� </h3>
+          <p className="text-sm text-slate-500 font-medium italic">П� ЯМИЙ ПОТІК ДАНИХ (Sovereign Ingestion)</p>
         </div>
         <div className="flex items-center gap-3">
           <div className="h-2 w-2 rounded-full bg-red-600 animate-ping" />
@@ -808,8 +808,8 @@ function DeclarationsTab({ declarations, error, loading }: { declarations: Decla
             <tr className="text-left text-[9px] font-black uppercase tracking-[0.25em] text-slate-500 bg-white/[0.02]">
               <th className="px-8 py-4">ТАЙМСТЕМП / ID</th>
               <th className="px-8 py-4">СУБ'ЄКТ ЗЕД</th>
-              <th className="px-8 py-4">ТОВАРНА ГРУПА</th>
-              <th className="px-8 py-4 text-right">ВАЛЮТНА ВАРТІСТЬ</th>
+              <th className="px-8 py-4">ТОВА� НА Г� УПА</th>
+              <th className="px-8 py-4 text-right">ВАЛЮТНА ВА� ТІСТЬ</th>
               <th className="px-8 py-4 text-center">СТАТУС</th>
             </tr>
           </thead>
@@ -851,7 +851,7 @@ function CompetitorsTab({ competitors, error, loading, hhi }: { competitors: Com
     <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
       <div className="xl:col-span-2 rounded-[40px] border border-white/[0.08] bg-[#020202] overflow-hidden">
         <div className="border-b border-white/[0.08] p-8 bg-white/[0.01]">
-          <h3 className="text-2xl font-black text-white uppercase italic tracking-tighter">ГВАРДІЯ КОНКУРЕНТІВ</h3>
+          <h3 className="text-2xl font-black text-white uppercase italic tracking-tighter">ГВА� ДІЯ КОНКУ� ЕНТІВ</h3>
           <p className="text-sm text-slate-500 font-medium italic">Стратегічний рейтинг гравців ринку.</p>
         </div>
         <div className="divide-y divide-white/[0.04]">
@@ -861,7 +861,7 @@ function CompetitorsTab({ competitors, error, loading, hhi }: { competitors: Com
                 <div className="text-4xl font-black text-red-600/20 italic group-hover:text-red-600/40 transition-colors">#{i+1}</div>
                 <div>
                   <div className="text-xl font-black text-white uppercase tracking-tighter">{c.name}</div>
-                  <div className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.1em] mt-1">EDRPOU: {c.edrpou} • {c.declaration_count} ОПЕРАЦІЙ</div>
+                  <div className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.1em] mt-1">EDRPOU: {c.edrpou} • {c.declaration_count} ОПЕ� АЦІЙ</div>
                 </div>
               </div>
               <div className="text-right">
@@ -878,7 +878,7 @@ function CompetitorsTab({ competitors, error, loading, hhi }: { competitors: Com
           <div className="absolute top-0 right-0 p-4 opacity-10">
              <Scale size={120} className="text-red-500" />
           </div>
-          <h4 className="text-xl font-black text-white uppercase italic tracking-tighter mb-4">РИНКОВА КОНЦЕНТРАЦІЯ</h4>
+          <h4 className="text-xl font-black text-white uppercase italic tracking-tighter mb-4">� ИНКОВА КОНЦЕНТ� АЦІЯ</h4>
           <div className="text-6xl font-black text-red-600 italic leading-none">{hhi}</div>
           <div className="text-xs font-black text-red-500 uppercase tracking-[0.2em] mt-4 mb-6">HERFINDAHL-HIRSCHMAN INDEX</div>
           
@@ -886,7 +886,7 @@ function CompetitorsTab({ competitors, error, loading, hhi }: { competitors: Com
             <div className="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/10">
               <span className="text-[10px] font-black text-slate-400 uppercase italic">СТАТУС</span>
               <span className={cn("text-[10px] font-black uppercase italic", hhi > 2500 ? "text-rose-500" : "text-emerald-500")}>
-                {hhi > 2500 ? 'МОНОПОЛІЯ' : 'ЗДОРОВА КОНКУРЕНЦІЯ'}
+                {hhi > 2500 ? 'МОНОПОЛІЯ' : 'ЗДО� ОВА КОНКУ� ЕНЦІЯ'}
               </span>
             </div>
             <p className="text-xs text-slate-400 leading-relaxed font-medium italic">
@@ -916,12 +916,12 @@ function CustomsTab({ chartOption, declarations, error, loading }: { chartOption
         <div className="flex items-center justify-between mb-10 border-b border-white/5 pb-8">
           <div>
             <h3 className="text-3xl font-black text-white uppercase italic tracking-tighter">ДИНАМІКА МИТНИХ ПОТОКІВ</h3>
-            <p className="text-sm text-slate-500 font-medium italic uppercase tracking-widest mt-1">АНАЛІЗ ОБСЯГІВ ТА ОПЕРАЦІЙ В РЕАЛЬНОМУ ЧАСІ</p>
+            <p className="text-sm text-slate-500 font-medium italic uppercase tracking-widest mt-1">АНАЛІЗ ОБСЯГІВ ТА ОПЕ� АЦІЙ В � ЕАЛЬНОМУ ЧАСІ</p>
           </div>
           <div className="flex items-center gap-4">
             <div className="text-right">
-              <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">ВИБІРКА</div>
-              <div className="text-sm font-bold text-white">{declarations.length} ОПЕРАЦІЙ</div>
+              <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">ВИБІ� КА</div>
+              <div className="text-sm font-bold text-white">{declarations.length} ОПЕ� АЦІЙ</div>
             </div>
             <div className="p-3 rounded-2xl bg-white/5">
               <Globe2 className="text-red-600" size={24} />
@@ -943,7 +943,7 @@ function CustomsTab({ chartOption, declarations, error, loading }: { chartOption
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="rounded-[32px] border border-white/[0.08] bg-white/[0.01] p-8 hover:border-red-500/30 transition-all">
-          <div className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">СУМАРНИЙ ІМПОРТ</div>
+          <div className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">СУМА� НИЙ ІМПО� Т</div>
           <div className="text-4xl font-black text-white italic">
             {formatCurrencyCompact(declarations.reduce((sum, d) => sum + (d.value_usd || 0), 0))}
           </div>
@@ -953,7 +953,7 @@ function CustomsTab({ chartOption, declarations, error, loading }: { chartOption
         </div>
         
         <div className="rounded-[32px] border border-white/[0.08] bg-white/[0.01] p-8 hover:border-red-500/30 transition-all">
-          <div className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">СЕРЕДНЯ ВАГА ПАРТІЇ</div>
+          <div className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">СЕ� ЕДНЯ ВАГА ПА� ТІЇ</div>
           <div className="text-4xl font-black text-white italic">
             {declarations.length > 0 ? Math.round(declarations.reduce((sum, d) => sum + (d.weight_kg || 0), 0) / declarations.length) : 0} KG
           </div>

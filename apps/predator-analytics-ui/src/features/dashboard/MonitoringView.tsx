@@ -1,6 +1,6 @@
 /**
- * 🦅 PREDATOR v58.2 — ЯДРО МОНІТОРИНГУ (WRAITH CORE)
- * Розділ I.6 — Операційний моніторинг платформи.
+ * 🦅 PREDATOR v58.2 — ЯД� О МОНІТО� ИНГУ (WRAITH CORE)
+ * � озділ I.6 — Операційний моніторинг платформи.
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
@@ -63,10 +63,10 @@ import {
 type Tab = 'metrics' | 'logs' | 'pipelines' | 'nodes';
 
 const tabs: Array<{ key: Tab; label: string; icon: JSX.Element }> = [
-    { key: 'metrics', label: 'МЕТРИКИ', icon: <Activity size={16} /> },
+    { key: 'metrics', label: 'МЕТ� ИКИ', icon: <Activity size={16} /> },
     { key: 'logs', label: 'ЛОГИ СИСТЕМИ', icon: <Terminal size={16} /> },
     { key: 'pipelines', label: 'ПАЙПЛАЙНИ', icon: <Layers3 size={16} /> },
-    { key: 'nodes', label: 'ВУЗЛИ КЛАСТЕРА', icon: <Server size={16} /> },
+    { key: 'nodes', label: 'ВУЗЛИ КЛАСТЕ� А', icon: <Server size={16} /> },
 ];
 
 const toneClasses: Record<StatusTone, { badge: string; icon: string; border: string; glow: string }> = {
@@ -290,7 +290,7 @@ const MonitoringView: React.FC = () => {
             window.dispatchEvent(new CustomEvent('predator-error', {
                 detail: {
                     service: 'MonitoringCore',
-                    message: `АВТОНОМНИЙ МОНІТОРИНГ [${backendStatus.nodeSource}]: Зв'язок з NVIDIA Master втрачено. Використовується резервний вузол MIRROR.`,
+                    message: `АВТОНОМНИЙ МОНІТО� ИНГ [${backendStatus.nodeSource}]: Зв'язок з NVIDIA Master втрачено. Використовується резервний вузол MIRROR.`,
                     severity: 'warning',
                     timestamp: new Date().toISOString(),
                     code: 'MONITORING_OFFLINE'
@@ -300,7 +300,7 @@ const MonitoringView: React.FC = () => {
             window.dispatchEvent(new CustomEvent('predator-error', {
                 detail: {
                     service: 'MonitoringCore',
-                    message: `ЯДРО МОНІТОРИНГУ [${backendStatus.nodeSource}]: Синхронізація з кластером активна. Телеметрія стабільна.`,
+                    message: `ЯД� О МОНІТО� ИНГУ [${backendStatus.nodeSource}]: Синхронізація з кластером активна. Телеметрія стабільна.`,
                     severity: 'info',
                     timestamp: new Date().toISOString(),
                     code: 'MONITORING_SUCCESS'
@@ -360,13 +360,13 @@ const MonitoringView: React.FC = () => {
                              <div className="space-y-2">
                                 <div className="flex items-center gap-3">
                                    <span className="badge-v2 bg-sky-600/10 border border-sky-600/20 text-sky-500 px-3 py-1 text-[10px] font-black tracking-[0.3em] uppercase italic">
-                                     ЯДРО_СИСТЕМИ // ОПЕРАЦІЙНЕ_КОМАНДУВАННЯ
+                                     ЯД� О_СИСТЕМИ // ОПЕ� АЦІЙНЕ_КОМАНДУВАННЯ
                                    </span>
                                    <div className="h-px w-12 bg-sky-600/20" />
                                    <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v58.2-WRAITH</span>
                                 </div>
                                 <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
-                                  ОПЕРАЦІЙНИЙ <span className="text-sky-500">МОНІТОРИНГ</span>
+                                  ОПЕ� АЦІЙНИЙ <span className="text-sky-500">МОНІТО� ИНГ</span>
                                 </h1>
                                 <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] italic opacity-80 leading-none">
                                   Метрики Ядра • Потік Подій • Шлюзи Інгвестії • Архітектура Вузлів
@@ -381,15 +381,15 @@ const MonitoringView: React.FC = () => {
                                   <p className={cn("text-lg font-black italic", overallStatusMeta.tone === 'emerald' ? 'text-emerald-500' : 'text-amber-500')}>{overallStatusMeta.label}</p>
                                </div>
                                <div className="text-center px-4 border-l border-white/5">
-                                  <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-1 italic">СЕРВІСИ</p>
+                                  <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-1 italic">СЕ� ВІСИ</p>
                                   <p className="text-lg font-black text-white italic">{serviceSummary.healthy}/{serviceSummary.total}</p>
                                </div>
                                <div className="text-center px-4 border-l border-white/5">
-                                  <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-1 italic">ЗАТРИМКА_API</p>
+                                  <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-1 italic">ЗАТ� ИМКА_API</p>
                                   <p className="text-lg font-black text-sky-400 italic font-mono">{formatLatency(averageLatency)}</p>
                                </div>
                                <div className="text-center px-4 border-l border-white/5">
-                                  <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-1 italic">ЧАС_РОБОТИ (UPTIME)</p>
+                                  <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-1 italic">ЧАС_� ОБОТИ (UPTIME)</p>
                                   <p className="text-lg font-black text-white italic font-mono uppercase">{uptimeLabel}</p>
                                </div>
                             </div>
@@ -428,11 +428,11 @@ const MonitoringView: React.FC = () => {
                         <div className="flex flex-wrap items-center gap-6 px-4">
                             <div className="flex items-center gap-3">
                                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                               <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] italic">ДЖЕРЕЛО: {backendStatus.sourceLabel}</span>
+                               <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] italic">ДЖЕ� ЕЛО: {backendStatus.sourceLabel}</span>
                             </div>
                             <div className="h-10 w-px bg-white/5" />
                             <div className="text-right">
-                               <p className="text-[9px] font-black text-slate-700 uppercase tracking-widest leading-none mb-1">ОСТАННЯ СИНХРОНІЗАЦІЯ ЯДРА</p>
+                               <p className="text-[9px] font-black text-slate-700 uppercase tracking-widest leading-none mb-1">ОСТАННЯ СИНХ� ОНІЗАЦІЯ ЯД� А</p>
                                <p className="text-[11px] font-bold text-slate-400 font-mono italic uppercase tracking-tighter">{formatDateTime(lastSyncedAt) || 'ОЧІКУВАННЯ_ПОТОКУ'}</p>
                             </div>
                         </div>
@@ -453,8 +453,8 @@ const MonitoringView: React.FC = () => {
                                                            <Cpu size={22} className="animate-pulse" />
                                                         </div>
                                                         <div>
-                                                           <h3 className="text-xl font-black text-white italic uppercase tracking-tighter leading-none mb-1">СИНТЕТИЧНА ДИНАМІКА РЕСУРСІВ</h3>
-                                                           <p className="text-[10px] font-bold text-slate-600 uppercase tracking-[0.2em] leading-none">НАВАНТАЖЕННЯ: {systemStats?.cpu_percent || 0}% РЕАЛЬНИЙ ЧАС</p>
+                                                           <h3 className="text-xl font-black text-white italic uppercase tracking-tighter leading-none mb-1">СИНТЕТИЧНА ДИНАМІКА � ЕСУ� СІВ</h3>
+                                                           <p className="text-[10px] font-bold text-slate-600 uppercase tracking-[0.2em] leading-none">НАВАНТАЖЕННЯ: {systemStats?.cpu_percent || 0}% � ЕАЛЬНИЙ ЧАС</p>
                                                         </div>
                                                     </div>
                                                     {refreshing && <Loader2 className="h-6 w-6 animate-spin text-sky-400" />}
@@ -465,7 +465,7 @@ const MonitoringView: React.FC = () => {
                                                        <ReactECharts option={chartOption} style={{ height: '100%', width: '100%' }} />
                                                     </div>
                                                 ) : (
-                                                    <EmptyPanel title="ЧЕКАЮ НА ТЕЛЕМЕТРІЮ" description="Дані з /system/stats ще не надійшли. Система знаходиться у фазі очікування потоку." />
+                                                    <EmptyPanel title="ЧЕКАЮ НА ТЕЛЕМЕТ� ІЮ" description="Дані з /system/stats ще не надійшли. Система знаходиться у фазі очікування потоку." />
                                                 )}
                                             </section>
 
@@ -474,17 +474,17 @@ const MonitoringView: React.FC = () => {
                                                 <ResourceBar
                                                     label="ЗАВАНТАЖЕННЯ ЦП"
                                                     value={systemStats?.cpu_percent ?? null}
-                                                    detail={`${systemStats?.cpu_count || 0} ЛОГІЧНИХ ЯДЕР // ${systemStats?.active_tasks || 0} ПОТОКІВ`}
+                                                    detail={`${systemStats?.cpu_count || 0} ЛОГІЧНИХ ЯДЕ�  // ${systemStats?.active_tasks || 0} ПОТОКІВ`}
                                                     tone="sky"
                                                 />
                                                 <ResourceBar
-                                                    label="ПАМ'ЯТЬ ЯДРА"
+                                                    label="ПАМ'ЯТЬ ЯД� А"
                                                     value={systemStats?.memory_percent ?? null}
                                                     detail={`${formatBytes(systemStats?.memory_used)} / ${formatBytes(systemStats?.memory_total)}`}
                                                     tone="amber"
                                                 />
                                                 <ResourceBar
-                                                    label="ДИСКОВИЙ ПРОСТІР"
+                                                    label="ДИСКОВИЙ П� ОСТІ� "
                                                     value={systemStats?.disk_percent ?? null}
                                                     detail={`${formatBytes(systemStats?.disk_used)} / ${formatBytes(systemStats?.disk_total)}`}
                                                     tone={systemStats?.disk_percent != null && systemStats.disk_percent >= 85 ? 'amber' : 'emerald'}
@@ -493,12 +493,12 @@ const MonitoringView: React.FC = () => {
                                         </div>
 
                                         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                                             <MetricTile label="ЗАТРИМКА_API" value={formatLatency(averageLatency)} hint="ЗАПИТ ЧЕРЕЗ /SYSTEM/STATS" icon={<Clock3 size={20} />} tone={averageLatency > 800 ? 'amber' : 'sky'} />
-                                             <MetricTile label="МЕРЕЖЕВІ СЕСІЇ" value={formatCount(systemStats?.active_connections)} hint="АКТИВНІ З'ЄДНАННЯ TCP/IP" icon={<Network size={20} />} tone="sky" />
-                                             <MetricTile label="ОБ'ЄМ_БД" value={formatCount(systemStats?.documents_total)} hint="ПІДТВЕРДЖЕНО В ШАРІ ЗБЕРЕЖЕННЯ" icon={<Database size={20} />} tone="emerald" />
-                                            <MetricTile label="ІНДЕКС_MAP" value={formatCount(systemStats?.total_indices)} hint="КІЛЬКІСТЬ ПОШУКОВИХ ШАРІВ" icon={<Layers3 size={20} />} tone="amber" />
-                                            <MetricTile label="МЕРЕЖА_ВХІД" value={formatBytes(systemStats?.network_bytes_recv)} hint="ВХІДНИЙ ТРАФІК TITAN" icon={<Zap size={20} />} tone="sky" />
-                                            <MetricTile label="МЕРЕЖА_ВИХІД" value={formatBytes(systemStats?.network_bytes_sent)} hint="ВИХІДНИЙ ТРАФІК TITAN" icon={<Boxes size={20} />} tone="slate" />
+                                             <MetricTile label="ЗАТ� ИМКА_API" value={formatLatency(averageLatency)} hint="ЗАПИТ ЧЕ� ЕЗ /SYSTEM/STATS" icon={<Clock3 size={20} />} tone={averageLatency > 800 ? 'amber' : 'sky'} />
+                                             <MetricTile label="МЕ� ЕЖЕВІ СЕСІЇ" value={formatCount(systemStats?.active_connections)} hint="АКТИВНІ З'ЄДНАННЯ TCP/IP" icon={<Network size={20} />} tone="sky" />
+                                             <MetricTile label="ОБ'ЄМ_БД" value={formatCount(systemStats?.documents_total)} hint="ПІДТВЕ� ДЖЕНО В ША� І ЗБЕ� ЕЖЕННЯ" icon={<Database size={20} />} tone="emerald" />
+                                            <MetricTile label="ІНДЕКС_MAP" value={formatCount(systemStats?.total_indices)} hint="КІЛЬКІСТЬ ПОШУКОВИХ ША� ІВ" icon={<Layers3 size={20} />} tone="amber" />
+                                            <MetricTile label="МЕ� ЕЖА_ВХІД" value={formatBytes(systemStats?.network_bytes_recv)} hint="ВХІДНИЙ Т� АФІК TITAN" icon={<Zap size={20} />} tone="sky" />
+                                            <MetricTile label="МЕ� ЕЖА_ВИХІД" value={formatBytes(systemStats?.network_bytes_sent)} hint="ВИХІДНИЙ Т� АФІК TITAN" icon={<Boxes size={20} />} tone="slate" />
                                         </div>
                                     </motion.div>
                                 )}
@@ -512,7 +512,7 @@ const MonitoringView: React.FC = () => {
                                                     type="text"
                                                     value={searchQuery}
                                                     onChange={e => setSearchQuery(e.target.value)}
-                                                    placeholder="ФІЛЬТРАЦІЯ ЛОГІВ ЗА СЕРВІСОМ, РІВНЕМ АБО ТЕКСТОМ..."
+                                                    placeholder="ФІЛЬТ� АЦІЯ ЛОГІВ ЗА СЕ� ВІСОМ, � ІВНЕМ АБО ТЕКСТОМ..."
                                                     className="w-full h-16 bg-black/60 rounded-2xl border-2 border-white/[0.05] pl-16 pr-8 text-sm font-black italic tracking-tight text-white focus:border-sky-500/40 focus:outline-none transition-all placeholder:text-slate-700"
                                                 />
                                             </div>
@@ -548,14 +548,14 @@ const MonitoringView: React.FC = () => {
                                                                        <span className={cn("text-[9px] font-black px-4 py-1 rounded-lg uppercase tracking-widest border", toneClasses[meta.tone].badge)}>
                                                                           {log.level}
                                                                        </span>
-                                                                       <span className="text-[10px] font-black text-sky-400 uppercase tracking-[0.2em] italic">{log.service || 'ЯДРО'}</span>
+                                                                       <span className="text-[10px] font-black text-sky-400 uppercase tracking-[0.2em] italic">{log.service || 'ЯД� О'}</span>
                                                                        <span className="ml-auto text-[10px] text-slate-700 font-bold tabular-nums italic uppercase">{log.timestampLabel}</span>
                                                                     </div>
                                                                     <p className="text-slate-300 font-bold leading-relaxed tracking-tight group-hover:text-white transition-colors">{log.message}</p>
                                                                     {log.latencyLabel && (
                                                                         <div className="mt-4 flex items-center gap-2">
                                                                            <Clock3 size={12} className="text-slate-700" />
-                                                                           <span className="text-[9px] font-black text-slate-700 uppercase tracking-widest">ЗАТРИМКА: {log.latencyLabel}</span>
+                                                                           <span className="text-[9px] font-black text-slate-700 uppercase tracking-widest">ЗАТ� ИМКА: {log.latencyLabel}</span>
                                                                         </div>
                                                                     )}
                                                                 </div>
@@ -573,9 +573,9 @@ const MonitoringView: React.FC = () => {
                                 {activeTab === 'pipelines' && (
                                     <motion.div key="pipelines" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="space-y-10">
                                          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                            <MetricTile label="АКТИВНІ_ЗАВДАННЯ" value={formatCount(pipelineJobs.filter(j => j.isActive).length)} hint="ЖИВІ ПРОЦЕСИ ІНГЕСТІЇ" icon={<Activity size={20} />} tone="sky" />
-                                            <MetricTile label="УСПІШНО" value={formatCount(pipelineJobs.filter(j => j.tone === 'emerald').length)} hint="ЗАВЕРШЕНІ СЬОГОДНІ" icon={<CheckCircle2 size={20} />} tone="emerald" />
-                                            <MetricTile label="КРИТИЧНО" value={formatCount(pipelineJobs.filter(j => j.tone === 'amber').length)} hint="ПОТРЕБУЮТЬ УВАГИ" icon={<AlertOctagon size={20} />} tone="amber" />
+                                            <MetricTile label="АКТИВНІ_ЗАВДАННЯ" value={formatCount(pipelineJobs.filter(j => j.isActive).length)} hint="ЖИВІ П� ОЦЕСИ ІНГЕСТІЇ" icon={<Activity size={20} />} tone="sky" />
+                                            <MetricTile label="УСПІШНО" value={formatCount(pipelineJobs.filter(j => j.tone === 'emerald').length)} hint="ЗАВЕ� ШЕНІ СЬОГОДНІ" icon={<CheckCircle2 size={20} />} tone="emerald" />
+                                            <MetricTile label="К� ИТИЧНО" value={formatCount(pipelineJobs.filter(j => j.tone === 'amber').length)} hint="ПОТ� ЕБУЮТЬ УВАГИ" icon={<AlertOctagon size={20} />} tone="amber" />
                                          </div>
 
                                          <section className="rounded-[3rem] bg-black border-2 border-white/[0.04] p-10 shadow-3xl">
@@ -584,8 +584,8 @@ const MonitoringView: React.FC = () => {
                                                     <Layers3 size={24} />
                                                  </div>
                                                  <div>
-                                                    <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter leading-none mb-1">ДИСПЕТЧЕР ПАЙПЛАЙНІВ</h3>
-                                                    <p className="text-[10px] font-bold text-slate-600 uppercase tracking-[0.2em] leading-none">РЕЄСТР ЗАВДАНЬ ІНГЕСТІЇ ТА ОБРОБКИ</p>
+                                                    <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter leading-none mb-1">ДИСПЕТЧЕ�  ПАЙПЛАЙНІВ</h3>
+                                                    <p className="text-[10px] font-bold text-slate-600 uppercase tracking-[0.2em] leading-none">� ЕЄСТ�  ЗАВДАНЬ ІНГЕСТІЇ ТА ОБ� ОБКИ</p>
                                                  </div>
                                              </div>
 
@@ -611,7 +611,7 @@ const MonitoringView: React.FC = () => {
 
                                                             <div className="w-full xl:w-96 space-y-4">
                                                                <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest italic leading-none">
-                                                                  <span className="text-slate-500">ПРОГРЕС ІНГЕСТІЇ</span>
+                                                                  <span className="text-slate-500">П� ОГ� ЕС ІНГЕСТІЇ</span>
                                                                   <span className="text-white">{job.progressLabel}</span>
                                                                </div>
                                                                <div className="h-2.5 w-full bg-slate-950 rounded-full overflow-hidden border border-white/[0.03] shadow-inner">
@@ -625,7 +625,7 @@ const MonitoringView: React.FC = () => {
                                                          </div>
                                                      </div>
                                                  )) : (
-                                                     <EmptyPanel title="ЧЕРГА ЗАВДАНЬ ПОРОЖНЯ" description="Наразі в системі немає активних або чергових процесів інгвестії." />
+                                                     <EmptyPanel title="ЧЕ� ГА ЗАВДАНЬ ПО� ОЖНЯ" description="Наразі в системі немає активних або чергових процесів інгвестії." />
                                                  )}
                                              </div>
                                          </section>
@@ -640,8 +640,8 @@ const MonitoringView: React.FC = () => {
                                                 <Server size={64} className="text-sky-500 animate-pulse" />
                                              </div>
                                              <div className="space-y-2">
-                                                <h2 className="text-3xl font-black text-white italic uppercase tracking-tighter">СУВЕРЕННИЙ КЛАСТЕР ВУЗЛІВ</h2>
-                                                <p className="text-[11px] font-bold text-slate-600 uppercase tracking-[0.4em] italic mb-10">КАРТОГРАФУВАННЯ ТА ЛОГІКА РОЗПОДІЛУ</p>
+                                                <h2 className="text-3xl font-black text-white italic uppercase tracking-tighter">СУВЕ� ЕННИЙ КЛАСТЕ�  ВУЗЛІВ</h2>
+                                                <p className="text-[11px] font-bold text-slate-600 uppercase tracking-[0.4em] italic mb-10">КА� ТОГ� АФУВАННЯ ТА ЛОГІКА � ОЗПОДІЛУ</p>
                                              </div>
                                           </div>
                                           
@@ -676,7 +676,7 @@ const MonitoringView: React.FC = () => {
                                                 ))}
                                              </div>
                                           ) : (
-                                             <EmptyPanel title="КЛАСТЕР НЕ ІНІЦІЙОВАНО" description="Вузли системи не зареєстровані в Kernel Control Plane. Очікування heartbeat-сигналу." />
+                                             <EmptyPanel title="КЛАСТЕ�  НЕ ІНІЦІЙОВАНО" description="Вузли системи не зареєстровані в Kernel Control Plane. Очікування heartbeat-сигналу." />
                                           )}
                                        </div>
                                     </motion.div>
@@ -688,14 +688,14 @@ const MonitoringView: React.FC = () => {
                         <div className="col-span-12 xl:col-span-3 space-y-8">
                             
                              <div className="rounded-[2.5rem] bg-black border-2 border-white/[0.04] p-8 shadow-3xl space-y-8">
-                                <h3 className="text-[11px] font-black text-slate-500 uppercase tracking-[0.4em] italic leading-none">ТЕХНІЧНА ВЕРИФІКАЦІЯ</h3>
+                                <h3 className="text-[11px] font-black text-slate-500 uppercase tracking-[0.4em] italic leading-none">ТЕХНІЧНА ВЕ� ИФІКАЦІЯ</h3>
                                 <div className="space-y-4">
                                    {[
                                       { l: 'DB_З\'ЄДНАННЯ', v: 'ВСТАНОВЛЕНО', c: 'text-emerald-500' },
-                                      { l: 'KAFKA_БРОКЕР', v: 'СИНХРОНІЗОВАНО', c: 'text-emerald-500' },
-                                      { l: 'ELASTIC_КЛАСТЕР', v: 'ЗДОРОВИЙ', c: 'text-emerald-500' },
-                                      { l: 'NEO4J_ГРАФ', v: 'ОПТИМІЗОВАНО', c: 'text-emerald-500' },
-                                      { l: 'QDRANT_ВЕКТОР', v: 'ОЧІКУВАННЯ', c: 'text-sky-500' },
+                                      { l: 'KAFKA_Б� ОКЕ� ', v: 'СИНХ� ОНІЗОВАНО', c: 'text-emerald-500' },
+                                      { l: 'ELASTIC_КЛАСТЕ� ', v: 'ЗДО� ОВИЙ', c: 'text-emerald-500' },
+                                      { l: 'NEO4J_Г� АФ', v: 'ОПТИМІЗОВАНО', c: 'text-emerald-500' },
+                                      { l: 'QDRANT_ВЕКТО� ', v: 'ОЧІКУВАННЯ', c: 'text-sky-500' },
                                       { l: 'REDIS_КЕШ', v: 'ЕФЕКТИВНІСТЬ_92%', c: 'text-emerald-500' },
                                    ].map((m, i) => (
                                       <div key={i} className="flex items-center justify-between p-4 rounded-xl border border-white/[0.03] bg-white/[0.01]">
@@ -714,13 +714,13 @@ const MonitoringView: React.FC = () => {
                                    </div>
                                    <div>
                                       <h3 className="text-[14px] font-black text-white italic uppercase tracking-tighter leading-none mb-1">СИСТЕМА БЕЗПЕКИ</h3>
-                                      <p className="text-[9px] font-bold text-slate-600 uppercase tracking-widest leading-none">РЕЖИМ_ВАРТОВОГО: АКТИВНО</p>
+                                      <p className="text-[9px] font-bold text-slate-600 uppercase tracking-widest leading-none">� ЕЖИМ_ВА� ТОВОГО: АКТИВНО</p>
                                    </div>
                                 </div>
                                 <div className="space-y-4">
                                    <div className="p-5 rounded-2xl bg-black/40 border border-white/5 space-y-2">
-                                      <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest">ОСТАННЯ ВЕРИФІКАЦІЯ</p>
-                                      <p className="text-[12px] font-bold text-slate-300 italic tracking-tight">ЦІЛІСНІСТЬ ЯДРА ПІДТВЕРДЖЕНО 100%</p>
+                                      <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest">ОСТАННЯ ВЕ� ИФІКАЦІЯ</p>
+                                      <p className="text-[12px] font-bold text-slate-300 italic tracking-tight">ЦІЛІСНІСТЬ ЯД� А ПІДТВЕ� ДЖЕНО 100%</p>
                                    </div>
                                    <button className="w-full py-4 bg-slate-900 border border-white/[0.05] rounded-xl text-[9px] font-black uppercase tracking-[0.3em] italic text-slate-500 hover:text-white hover:bg-slate-800 transition-all">
                                       ЗАПУСТИТИ АУДИТ

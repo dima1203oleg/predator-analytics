@@ -71,6 +71,7 @@ class BaseAgent(ABC):
         ...
 
     def __repr__(self) -> str:
+        """Рядкове представлення стану об'єкта."""
         return f"{self.__class__.__name__}(type={self.agent_type})"
 
 
@@ -305,8 +306,10 @@ class AgentOrchestrator:
         return list(results)
 
     def __enter__(self) -> "AgentOrchestrator":
+        """Вхід у контекстний менеджер та запуск пулу воркерів."""
         self.start()
         return self
 
     def __exit__(self, *args: Any) -> None:
+        """Вихід з контекстного менеджера та зупинка пулу воркерів."""
         self.stop()

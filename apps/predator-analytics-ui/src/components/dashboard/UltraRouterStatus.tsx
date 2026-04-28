@@ -32,7 +32,7 @@ export const UltraRouterStatus: React.FC = () => {
               : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
           }`}
         >
-          {mode === 'creative' ? '✨ Vibe ON' : '🛠 Strict Mode'}
+          {mode === 'creative' ? '✨ Vibe ON' : '�  Strict Mode'}
         </button>
       </div>
 

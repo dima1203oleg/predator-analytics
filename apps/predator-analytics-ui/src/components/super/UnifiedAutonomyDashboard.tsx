@@ -423,7 +423,7 @@ export const UnifiedAutonomyDashboard: React.FC = () => {
           </div>
           <span className="text-xl font-bold text-white capitalize">
             {metrics.summary.overall_status === 'healthy' ? '✅ Здоровий' :
-             metrics.summary.overall_status === 'degraded' ? '⚠️ Деградовано' : '🔴 Критичний'}
+             metrics.summary.overall_status === 'degraded' ? '� ️ Деградовано' : '🔴 Критичний'}
           </span>
         </motion.div>
 

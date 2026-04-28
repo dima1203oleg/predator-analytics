@@ -86,7 +86,7 @@ describe('SovereignIntelHub', () => {
         
         expect(screen.getByText(/ХАБ/i)).toBeInTheDocument();
         expect(screen.getByText(/ІНТЕЛЕКТУ/i)).toBeInTheDocument();
-        expect(screen.getByText(/СУВЕРЕННИЙ ІНТЕЛЕКТ ПРЕДАТОР/i)).toBeInTheDocument();
+        expect(screen.getByText(/СУВЕ� ЕННИЙ ІНТЕЛЕКТ П� ЕДАТО� /i)).toBeInTheDocument();
     });
 
     it('ініціює predator-error (SOVEREIGN_SUCCESS) при успішному зв’язку', async () => {

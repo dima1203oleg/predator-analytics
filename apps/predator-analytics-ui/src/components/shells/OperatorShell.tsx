@@ -44,7 +44,7 @@ const OperatorShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange,
   }, []);
 
   const sections = [
-    { title: 'ОПЕРАЦІЙНА', items: [
+    { title: 'ОПЕ� АЦІЙНА', items: [
       { id: TabView.OVERVIEW, label: 'Моніторинг', icon: <Activity size={18} /> },
       { id: TabView.SEARCH, label: 'Пошук/OSINT', icon: <Search size={18} /> },
       { id: TabView.DATASET_STUDIO, label: 'ШІ Студія', icon: <Sparkles size={18} /> },
@@ -120,7 +120,7 @@ const OperatorShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange,
           <div className="p-4 border-t border-emerald-900/30 space-y-3 bg-emerald-950/10">
             <div className="flex items-center justify-between text-[10px] font-black">
               <span className="opacity-50 tracking-widest">UNIT_STATUS:</span>
-              <span className="text-emerald-400">НОРМА</span>
+              <span className="text-emerald-400">НО� МА</span>
             </div>
             <div className="space-y-2">
               {[

@@ -12,7 +12,7 @@ const OrbitMenu: React.FC = () => {
     { icon: <Cpu size={20} />, label: 'ОГЛЯД', color: 'text-blue-400', path: '/overview' },
     { icon: <Network size={20} />, label: 'АНАЛІТИКА', color: 'text-emerald-400', path: '/analytics' },
     { icon: <Search size={20} />, label: 'ПОШУК', color: 'text-cyan-400', path: '/search-v2' },
-    { icon: <Trophy size={20} />, label: 'ОПТИМІЗАТОР', color: 'text-amber-400', path: '/llm/nas' },
+    { icon: <Trophy size={20} />, label: 'ОПТИМІЗАТО� ', color: 'text-amber-400', path: '/llm/nas' },
     { icon: <Dna size={20} />, label: 'ЕВОЛЮЦІЯ', color: 'text-rose-400', path: '/evolution' },
   ];
 

@@ -241,7 +241,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
           <div className="absolute inset-0 cyber-scan-grid opacity-[0.02]" />
           <h4 className="text-[11px] font-black text-white/80 mb-8 flex items-center gap-3 uppercase tracking-[0.4em] italic">
             <div className="p-2 bg-indigo-500/10 rounded-lg"><Activity className="w-4 h-4 text-indigo-500" /></div>
-            ЛАТЕНТНІСТЬ_МЕРЕЖІ
+            ЛАТЕНТНІСТЬ_МЕ� ЕЖІ
           </h4>
           <div className="h-64 flex items-end gap-1.5 px-2">
             {data.latency.map((value, index) => (
@@ -305,7 +305,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
            <div className="p-8 bg-black/40 border border-white/5 rounded-[2.5rem] relative overflow-hidden group">
               <h4 className="text-[11px] font-black text-white/80 mb-8 flex items-center gap-3 uppercase tracking-[0.4em] italic">
                 <div className="p-2 bg-emerald-500/10 rounded-lg"><TrendingUp className="w-4 h-4 text-emerald-500" /></div>
-                КРИТИЧНІ_ЕНДПОЇНТИ
+                К� ИТИЧНІ_ЕНДПОЇНТИ
               </h4>
               <div className="space-y-3">
                 {[

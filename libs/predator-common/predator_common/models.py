@@ -69,7 +69,7 @@ class Company(Base):
     __tablename__ = "companies"
     id = Column(UUID(as_uuid=True), primary_key=True, default=_uuid.uuid4)
     tenant_id = Column(UUID(as_uuid=True), ForeignKey("tenants.id", ondelete="CASCADE"), nullable=False, index=True)
-    
+
     # SCD Type 2 поля
     business_key = Column(UUID(as_uuid=True), nullable=False, index=True)
     valid_from = Column(DateTime(timezone=True), server_default=text("now()"), nullable=False)

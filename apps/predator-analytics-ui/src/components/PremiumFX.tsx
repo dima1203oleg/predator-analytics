@@ -3,7 +3,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 /**
- * ðŸŒ  PremiumFX v45
+ * ðŸŒ  PremiumFX v45
  * Adds high-end visual effects like custom cursor trails,
  * click ripples, and global noise overlays.
  */

@@ -69,7 +69,7 @@ describe('ReportBuilderPage', () => {
         vi.mocked(useBackendStatus).mockReturnValue({
             isOffline: false,
             isTruthOnly: true,
-            modeLabel: 'Режим правдивих даних',
+            modeLabel: '� ежим правдивих даних',
             sourceLabel: 'localhost/api/v1',
             sourceType: 'local',
             statusLabel: 'Зʼєднання активне',
@@ -86,7 +86,7 @@ describe('ReportBuilderPage', () => {
     it('рендерить заголовок і основні елементи керування', () => {
         render(<ReportBuilderPage />);
 
-        expect(screen.getByRole('heading', { name: /КОНСТРУКТОР ЗВІТІВ/i })).toBeInTheDocument();
+        expect(screen.getByRole('heading', { name: /КОНСТ� УКТО�  ЗВІТІВ/i })).toBeInTheDocument();
         expect(screen.getByRole('button', { name: /Одиничний/i })).toBeInTheDocument();
         expect(screen.getByRole('button', { name: /Пакетний/i })).toBeInTheDocument();
     });
@@ -117,20 +117,20 @@ describe('ReportBuilderPage', () => {
         });
         vi.mocked(copilotApi.chat).mockResolvedValue({
             message_id: 'm1',
-            reply: 'Резюме для керівника',
+            reply: '� езюме для керівника',
             sources: [],
             tokens_used: 10,
         });
 
         render(<ReportBuilderPage />);
 
-        fireEvent.click(screen.getByText(/Резюме для керівника/i));
+        fireEvent.click(screen.getByText(/� езюме для керівника/i));
         fireEvent.change(screen.getByPlaceholderText(/Вкажіть UEID компанії/i), {
             target: { value: '12345678' },
         });
         fireEvent.click(screen.getByRole('button', { name: /Сформувати звіт/i }));
 
-        expect(await screen.findByText(/Резюме для керівника/i)).toBeInTheDocument();
+        expect(await screen.findByText(/� езюме для керівника/i)).toBeInTheDocument();
         expect(copilotApi.chat).toHaveBeenCalled();
     });
 

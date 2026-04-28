@@ -68,7 +68,7 @@ export const useCommandCenterRoi = (summary: DashboardSummary | null) => {
         id: 'earned',
         label: 'Зароблено',
         value: summary ? formatCurrency(summary.medium_risk_count * 125_000) : '—',
-        hint: 'Реалізовані ринкові можливості',
+        hint: '� еалізовані ринкові можливості',
         icon: Sparkles,
         tone: 'cyan',
       },

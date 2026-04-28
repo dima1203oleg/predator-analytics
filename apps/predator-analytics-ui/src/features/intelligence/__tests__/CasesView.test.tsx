@@ -67,7 +67,7 @@ vi.mock('@/components/cases/CaseStats', () => {
     return {
         CaseStats: React.forwardRef(({ cases, activeFilter, onFilterChange }: any, ref: any) => (
             <div data-testid="case-stats" ref={ref}>
-                <button onClick={() => onFilterChange('КРИТИЧНО')}>Filter Critical</button>
+                <button onClick={() => onFilterChange('К� ИТИЧНО')}>Filter Critical</button>
                 <span>Active: {activeFilter}</span>
             </div>
         )),
@@ -95,7 +95,7 @@ const mockCases = [
         title: 'Критичне відхилення ціни',
         situation: 'Виявлено ціну на 40% нижчу за середню',
         conclusion: 'Можливий демпінг',
-        status: 'КРИТИЧНО',
+        status: 'К� ИТИЧНО',
         riskScore: 95,
         source: 'AI_SCANNER',
     },
@@ -184,7 +184,7 @@ describe('CasesView', () => {
             fireEvent.click(newCaseBtn);
         });
 
-        expect(screen.getByText('Нове Розслідування')).toBeInTheDocument();
+        expect(screen.getByText('Нове � озслідування')).toBeInTheDocument();
     });
 
     it('повинен викликати API для архівації кейсу', async () => {

@@ -95,18 +95,18 @@ describe('FinancialSigintView', () => {
         
         expect(screen.getByText(/ФІНАНСОВА/i)).toBeInTheDocument();
         expect(screen.getByText(/ЕКЗЕКУЦІЯ/i)).toBeInTheDocument();
-        expect(screen.getByText(/ПІДОЗРІЛИЙ ОБІГ/i)).toBeInTheDocument();
+        expect(screen.getByText(/ПІДОЗ� ІЛИЙ ОБІГ/i)).toBeInTheDocument();
     });
 
-    it('перемикає модулі (SWIFT -> ОФШОРНИЙ_РАДАР)', async () => {
+    it('перемикає модулі (SWIFT -> ОФШО� НИЙ_� АДА� )', async () => {
         render(<FinancialSigintView />);
         
-        const offshoreBtn = screen.getByText(/ОФШОРНИЙ_РАДАР/i);
+        const offshoreBtn = screen.getByText(/ОФШО� НИЙ_� АДА� /i);
         await act(async () => {
             fireEvent.click(offshoreBtn);
         });
 
-        expect(screen.getByText(/РАДАР_ОФШОРНОЇ_ЛІКВІДНОСТІ/i)).toBeInTheDocument();
+        expect(screen.getByText(/� АДА� _ОФШО� НОЇ_ЛІКВІДНОСТІ/i)).toBeInTheDocument();
     });
 
     it('ініціює predator-error при автономному режимі', async () => {

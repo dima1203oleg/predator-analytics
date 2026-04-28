@@ -53,7 +53,7 @@ vi.mock('@/services/api/config', () => ({
             getCompetitorRadar: vi.fn(() => Promise.resolve([
                 {
                     ueid: '123',
-                    name: 'РАДАР_ТЕСТ_1',
+                    name: '� АДА� _ТЕСТ_1',
                     edrpou: '11111111',
                     sector: 'Логістика',
                     cers_score: 85,
@@ -61,7 +61,7 @@ vi.mock('@/services/api/config', () => ({
                     trend: 'increasing',
                     confidence: 0.98,
                     last_updated: new Date().toISOString(),
-                    risk_factors: ['АНТИТЕРСТ_СИГНАЛ']
+                    risk_factors: ['АНТИТЕ� СТ_СИГНАЛ']
                 }
             ]))
         }
@@ -78,11 +78,11 @@ describe('EntityRadarView', () => {
     it('відображає інтерфейс радару суб\'єктів та завантажує дані', async () => {
         render(<EntityRadarView />);
         
-        expect(screen.getByText(/РАДАР/i)).toBeInTheDocument();
+        expect(screen.getByText(/� АДА� /i)).toBeInTheDocument();
         expect(screen.getByText(/СУБ'ЄКТІВ/i)).toBeInTheDocument();
         
         await waitFor(() => {
-            expect(screen.getByText('РАДАР_ТЕСТ_1')).toBeInTheDocument();
+            expect(screen.getByText('� АДА� _ТЕСТ_1')).toBeInTheDocument();
         });
     });
 
@@ -105,26 +105,26 @@ describe('EntityRadarView', () => {
         render(<EntityRadarView />);
         
         await waitFor(() => {
-            const entityRow = screen.getByText('РАДАР_ТЕСТ_1');
+            const entityRow = screen.getByText('� АДА� _ТЕСТ_1');
             fireEvent.click(entityRow);
         });
         
-        expect(screen.getByText(/АКТИВНІ_ПОГРОЗИ/i)).toBeInTheDocument();
-        expect(screen.getByText(/ВЕРДИКТ_PREDATOR_AI/i)).toBeInTheDocument();
+        expect(screen.getByText(/АКТИВНІ_ПОГ� ОЗИ/i)).toBeInTheDocument();
+        expect(screen.getByText(/ВЕ� ДИКТ_PREDATOR_AI/i)).toBeInTheDocument();
         expect(screen.getByTestId('echarts-radar')).toBeInTheDocument();
     });
 
-    it('виконує пошук за назвою або ЄДРПОУ', async () => {
+    it('виконує пошук за назвою або ЄД� ПОУ', async () => {
         render(<EntityRadarView />);
         
         await waitFor(() => {
-            expect(screen.getByText('РАДАР_ТЕСТ_1')).toBeInTheDocument();
+            expect(screen.getByText('� АДА� _ТЕСТ_1')).toBeInTheDocument();
         });
 
-        const searchInput = screen.getByPlaceholderText(/ПОШУК СЕРЕД КРИТИЧНИХ/i);
+        const searchInput = screen.getByPlaceholderText(/ПОШУК СЕ� ЕД К� ИТИЧНИХ/i);
         fireEvent.change(searchInput, { target: { value: '99999999' } });
         
-        expect(screen.queryByText('РАДАР_ТЕСТ_1')).not.toBeInTheDocument();
+        expect(screen.queryByText('� АДА� _ТЕСТ_1')).not.toBeInTheDocument();
         expect(screen.getByText(/ОБ'ЄКТІВ_НЕ_ВИЯВЛЕНО/i)).toBeInTheDocument();
     });
 

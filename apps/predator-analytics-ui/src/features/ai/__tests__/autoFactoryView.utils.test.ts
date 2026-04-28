@@ -85,7 +85,7 @@ describe('autoFactoryView.utils', () => {
     );
 
     expect(snapshot.isRunning).toBe(true);
-    expect(snapshot.cycleLabel).toBe('1Â 542');
+    expect(snapshot.cycleLabel).toBe('1Â 542');
     expect(snapshot.avgScoreLabel).toBe('96%');
     expect(snapshot.pipeline.find((stage) => stage.id === 'decide')?.status).toBe('active');
     expect(snapshot.bugs[0].progressLabel).toBe('62%');

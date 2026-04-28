@@ -96,6 +96,8 @@ class IngestionRawEvent(BaseEvent):
     """
 
     class IngestionPayload(BaseModel):
+        """Корисне навантаження сирих даних."""
+
         job_id: str
         file_name: str
         file_path: str
@@ -113,6 +115,8 @@ class IngestionCleanedEvent(BaseEvent):
     """
 
     class CleanedPayload(BaseModel):
+        """Корисне навантаження очищених даних."""
+
         job_id: str
         record_index: int
         declaration_number: str | None = None
@@ -139,6 +143,8 @@ class EntityResolvedEvent(BaseEvent):
     """
 
     class EntityPayload(BaseModel):
+        """Корисне навантаження результатів Entity Resolution."""
+
         ueid: str
         entity_type: str  # company | person
         name: str
@@ -164,6 +170,8 @@ class RiskScoreUpdatedEvent(BaseEvent):
     """
 
     class RiskPayload(BaseModel):
+        """Корисне навантаження оновлення ризику."""
+
         entity_ueid: str
         entity_type: str
         previous_score: float | None = None
@@ -183,6 +191,8 @@ class SanctionsHitEvent(BaseEvent):
     """
 
     class SanctionsPayload(BaseModel):
+        """Корисне навантаження збігу санкцій."""
+
         entity_ueid: str
         entity_name: str
         list_name: str  # RNBO, EU, OFAC, UN
@@ -205,6 +215,8 @@ class DLQEvent(BaseEvent):
     """
 
     class DLQPayload(BaseModel):
+        """Корисне навантаження Dead Letter Queue."""
+
         original_topic: str
         original_event_id: str
         error_message: str
@@ -222,6 +234,8 @@ class QuarantineEvent(BaseEvent):
     """
 
     class QuarantinePayload(BaseModel):
+        """Корисне навантаження карантину."""
+
         job_id: str
         record_index: int
         original_record: dict[str, Any]

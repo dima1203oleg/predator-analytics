@@ -207,7 +207,7 @@ export const SuperIntelligenceDashboard: React.FC = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
-              ðŸ§  SuperIntelligence Orchestrator
+              ðŸ§  SuperIntelligence Orchestrator
             </h1>
             <p className="text-slate-400 mt-1">Predator v45 | Neural Analyticsâ€” AI Command Center</p>
           </div>
@@ -453,7 +453,7 @@ export const SuperIntelligenceDashboard: React.FC = () => {
                 {response.thoughts && response.thoughts.length > 0 && (
                   <div className="mt-6 pt-4 border-t border-slate-700">
                     <h4 className="font-semibold mb-3 flex items-center gap-2">
-                      ðŸ§  Thought Trace (XAI)
+                      ðŸ§  Thought Trace (XAI)
                     </h4>
                     <div className="space-y-2">
                       {response.thoughts.map((thought, idx) => (

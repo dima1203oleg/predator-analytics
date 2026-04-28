@@ -62,14 +62,14 @@ export const UBOMapTab: React.FC = () => {
                         <div className="absolute inset-0 bg-rose-500/5 blur-xl opacity-0 group-hover/search:opacity-100 transition-opacity" />
                         <input 
                             type="text" 
-                            placeholder="ПОШУК ГЕО-ВУЗЛА АБО БЕНЕФІЦІАРА..."
+                            placeholder="ПОШУК ГЕО-ВУЗЛА АБО БЕНЕФІЦІА� А..."
                             className="w-full bg-slate-950/80 backdrop-blur-xl border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-xs font-mono tracking-widest text-white focus:outline-none focus:border-rose-500/50 transition-all relative z-10"
                         />
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-hover/search:text-rose-400 transition-colors z-10" />
                     </div>
                     
                     <div className="flex items-center gap-2 bg-slate-950/60 backdrop-blur-md p-1.5 rounded-2xl border border-white/5">
-                        {['ВУЗЛИ', 'МЕРЕЖІ', 'РИЗИКИ'].map((f) => (
+                        {['ВУЗЛИ', 'МЕ� ЕЖІ', '� ИЗИКИ'].map((f) => (
                             <button key={f} className="px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-all">
                                 {f}
                             </button>
@@ -150,7 +150,7 @@ export const UBOMapTab: React.FC = () => {
                                 </div>
                                 <div className="text-center">
                                     <h3 className="text-sm font-black text-white uppercase tracking-[0.3em] mb-1 italic">
-                                        {isScanning ? 'ГЕНЕРАЦІЯ_ВЕКТОРНОЇ_КАРТИ' : 'MAP_ENGINE_IDLE'}
+                                        {isScanning ? 'ГЕНЕ� АЦІЯ_ВЕКТО� НОЇ_КА� ТИ' : 'MAP_ENGINE_IDLE'}
                                     </h3>
                                     <p className="text-[10px] text-slate-500 font-mono uppercase">
                                         GEO_SYNC: {isScanning ? '98%' : 'ГОТОВО'} [UBO_SCANNER_PRO_4.0]
@@ -181,7 +181,7 @@ export const UBOMapTab: React.FC = () => {
                                     
                                     <div className="space-y-2 overflow-y-auto pr-1">
                                         {[
-                                            { name: 'ТОВ "ЕНЕРГО-ГРИД"', risk: 92, status: 'КРИТИЧНО', loc: 'Київ, Україна' },
+                                            { name: 'ТОВ "ЕНЕ� ГО-Г� ИД"', risk: 92, status: 'К� ИТИЧНО', loc: 'Київ, Україна' },
                                             { name: 'OFFSHORE_VESTA_LTD', risk: 85, status: 'ВИСОКО', loc: 'Лімасол, Кіпр' },
                                             { name: 'GLOBAL_TRANS_LOGISTICS', risk: 42, status: 'СТАБІЛЬНО', loc: 'Варшава, Польща' },
                                             { name: 'PRIVATE_INVEST_GROUP', risk: 12, status: 'БЕЗПЕЧНО', loc: 'Лондон, Великобританія' },
@@ -200,7 +200,7 @@ export const UBOMapTab: React.FC = () => {
                                                     <span className="text-[11px] font-bold text-white group-hover/node:text-rose-400 transition-colors uppercase italic truncate max-w-[140px] leading-none">{node.name}</span>
                                                     <span className={cn(
                                                         "text-[8px] font-black px-1.5 py-0.5 rounded leading-none",
-                                                        node.status === 'КРИТИЧНО' ? 'bg-rose-500 text-white' : 
+                                                        node.status === 'К� ИТИЧНО' ? 'bg-rose-500 text-white' : 
                                                         node.status === 'ВИСОКО' ? 'bg-orange-500 text-white' :
                                                         'bg-slate-800 text-slate-400'
                                                     )}>{node.status}</span>
@@ -217,7 +217,7 @@ export const UBOMapTab: React.FC = () => {
                                     </div>
 
                                     <button className="mt-4 w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-[9px] font-black text-slate-400 uppercase tracking-widest transition-all">
-                                        Завантажити Повний Реєстр
+                                        Завантажити Повний � еєстр
                                     </button>
                                 </TacticalCard>
 
@@ -245,9 +245,9 @@ export const UBOMapTab: React.FC = () => {
                 <div className="absolute bottom-6 left-6 z-30 flex items-center gap-3">
                     <TacticalCard className="!px-6 !py-3 bg-slate-950/90 backdrop-blur-2xl border-white/10 flex items-center gap-8">
                         {[
-                            { label: 'ОФШОРНА ЗОНА', color: 'bg-rose-600', glow: 'shadow-rose-600/50' },
+                            { label: 'ОФШО� НА ЗОНА', color: 'bg-rose-600', glow: 'shadow-rose-600/50' },
                             { label: 'САНКЦІЙНА ЛОКАЦІЯ', color: 'bg-orange-500', glow: 'shadow-orange-500/50' },
-                            { label: 'ПЕРЕВІРЕНИЙ UBO', color: 'bg-rose-400', glow: 'shadow-rose-400/50' },
+                            { label: 'ПЕ� ЕВІ� ЕНИЙ UBO', color: 'bg-rose-400', glow: 'shadow-rose-400/50' },
                         ].map(item => (
                             <div key={item.label} className="flex items-center gap-3">
                                 <div className={`w-2.5 h-2.5 rounded-full ${item.color} shadow-[0_0_8px_currentColor] animate-pulse`} />

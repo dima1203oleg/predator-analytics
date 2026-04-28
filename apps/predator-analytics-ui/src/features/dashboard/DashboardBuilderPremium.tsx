@@ -120,7 +120,7 @@ const widgetTemplates: Omit<Widget, 'id'>[] = [
   },
   {
     type: 'kpi',
-    title: 'Ризик-скор',
+    title: '� изик-скор',
     icon: Target,
     size: 'small',
     color: 'amber',
@@ -203,7 +203,7 @@ const WidgetCard: React.FC<WidgetCardProps> = ({ widget, onRemove, onSettings, i
           <button
             onClick={() => setIsExpanded(!isExpanded)}
             className="p-1.5 rounded-lg hover:bg-white/5 text-slate-500 hover:text-white transition-colors"
-            title={isExpanded ? 'Згорнути' : 'Розгорнути'}
+            title={isExpanded ? 'Згорнути' : '� озгорнути'}
           >
             {isExpanded ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
           </button>
@@ -469,7 +469,7 @@ const DashboardBuilderPremium: React.FC = () => {
                 `}
               >
                 <Settings size={16} />
-                {isEditing ? 'Готово' : 'Редагувати'}
+                {isEditing ? 'Готово' : '� едагувати'}
               </button>
 
               <button className="flex items-center gap-2 px-4 py-2 bg-slate-800 text-slate-300 rounded-xl font-bold text-sm hover:bg-slate-700">

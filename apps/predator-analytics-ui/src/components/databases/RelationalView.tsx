@@ -20,7 +20,7 @@ export const RelationalView: React.FC<RelationalViewProps> = ({ tables, onOpenQu
         >
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                 <div>
-                    <h2 className="text-2xl font-black text-white uppercase italic tracking-tighter">Реляційна Структура <span className="text-blue-500">PostgreSQL</span></h2>
+                    <h2 className="text-2xl font-black text-white uppercase italic tracking-tighter">� еляційна Структура <span className="text-blue-500">PostgreSQL</span></h2>
                     <p className="text-xs text-slate-500 font-medium uppercase tracking-widest mt-1">Оптимізоване сховище для структурованих транзакційних даних</p>
                 </div>
                 <div className="flex gap-4">

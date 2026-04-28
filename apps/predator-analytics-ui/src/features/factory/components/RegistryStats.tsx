@@ -43,7 +43,7 @@ export function RegistryStats({ stats }: RegistryStatsProps) {
       border: 'border-blue-500/20',
       metrics: [
         { label: 'Записів', value: stats.postgres.rows },
-        { label: 'Розмір', value: stats.postgres.size }
+        { label: '� озмір', value: stats.postgres.size }
       ],
       status: stats.postgres.status
     },

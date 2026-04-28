@@ -86,7 +86,7 @@ const StatusBadge: React.FC<{ status: NodeMetric['status'] }> = ({ status }) => 
   const map = {
     online:   { label: 'АКТИВНИЙ', cls: 'text-emerald-500 border-emerald-500/20 bg-emerald-500/5' },
     offline:  { label: 'ОФЛАЙН', cls: 'text-white/20 border-white/10 bg-white/5' },
-    degraded: { label: 'КРИТИЧНО', cls: 'text-rose-500 border-rose-500/20 bg-rose-500/5 animate-pulse' },
+    degraded: { label: 'К� ИТИЧНО', cls: 'text-rose-500 border-rose-500/20 bg-rose-500/5 animate-pulse' },
   };
   const { label, cls } = map[status];
   return (
@@ -103,12 +103,12 @@ const NodeCard: React.FC<{ node: NodeMetric }> = ({ node }) => {
   const localizedRole = node.role
     .replace('Compute Node', 'ОБЧИСЛЮВАЛЬНИЙ_ВУЗОЛ')
     .replace('Database', 'СХОВИЩЕ_ДАНИХ')
-    .replace('Edge API', 'КРАЙОВИЙ_ШЛЮЗ_API')
-    .replace('Worker', 'ВОРКЕР_ОБРОБКИ')
-    .replace('AI Engine', 'ЯДРО_ШІ')
-    .replace('GPU Master', 'МАЙСТЕР_ВУЗОЛ_GPU')
-    .replace('Edge Node', 'КРАЙОВИЙ_ВУЗОЛ')
-    .replace('Cloud Mirror', 'ХМАРНЕ_ДЗЕРКАЛО');
+    .replace('Edge API', 'К� АЙОВИЙ_ШЛЮЗ_API')
+    .replace('Worker', 'ВО� КЕ� _ОБ� ОБКИ')
+    .replace('AI Engine', 'ЯД� О_ШІ')
+    .replace('GPU Master', 'МАЙСТЕ� _ВУЗОЛ_GPU')
+    .replace('Edge Node', 'К� АЙОВИЙ_ВУЗОЛ')
+    .replace('Cloud Mirror', 'ХМА� НЕ_ДЗЕ� КАЛО');
 
   return (
     <motion.div
@@ -172,7 +172,7 @@ const NodeCard: React.FC<{ node: NodeMetric }> = ({ node }) => {
                 </div>
               </div>
               <div className="flex flex-col gap-1 group/stat-icon">
-                <span className="text-[8px] font-black text-white/20 uppercase tracking-widest italic">МЕРЕЖА</span>
+                <span className="text-[8px] font-black text-white/20 uppercase tracking-widest italic">МЕ� ЕЖА</span>
                 <div className="flex items-center gap-2">
                    <Wifi size={14} className="text-sky-500/40 group-hover/stat-icon:text-sky-500 transition-colors" />
                    <span className="text-[11px] font-black font-mono text-white/60 italic tracking-tighter uppercase">{node.net.replace('rx', 'В').replace('tx', 'О')}</span>
@@ -196,7 +196,7 @@ const NodeCard: React.FC<{ node: NodeMetric }> = ({ node }) => {
 
 const svcColumns: VirtualColumn<ServiceStatus>[] = [
   {
-    key: 'name', label: 'РЕЄСТР_ЦЕНТРАЛЬНИХ_СЕРВІСІВ', width: '250px', mono: true,
+    key: 'name', label: '� ЕЄСТ� _ЦЕНТ� АЛЬНИХ_СЕ� ВІСІВ', width: '250px', mono: true,
     render: (v) => (
       <div className="flex items-center gap-4">
         <div className="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_10px_rgba(225,29,72,0.8)]" />
@@ -205,7 +205,7 @@ const svcColumns: VirtualColumn<ServiceStatus>[] = [
     ),
   },
   {
-    key: 'status', label: 'СТАН_ЯДРА', width: '140px',
+    key: 'status', label: 'СТАН_ЯД� А', width: '140px',
     render: (v) => {
       const color = v === 'ok' ? 'text-emerald-500' : v === 'warn' ? 'text-amber-500' : 'text-rose-500';
       const label = v === 'ok' ? 'ОПТИМАЛЬНО' : v === 'warn' ? 'УВАГА' : 'ЗБІЙ';
@@ -226,7 +226,7 @@ const svcColumns: VirtualColumn<ServiceStatus>[] = [
     },
   },
   { 
-    key: 'version', label: 'ВЕРСІЯ_АРТЕФАКТУ', width: '140px', mono: true,
+    key: 'version', label: 'ВЕ� СІЯ_А� ТЕФАКТУ', width: '140px', mono: true,
     render: (v) => <span className="text-white/30 text-[10px] font-black italic">v{String(v)}</span>
   },
   { 
@@ -346,7 +346,7 @@ export const InfraTelemetryTab: React.FC = () => {
           />
           <Activity className="absolute inset-0 m-auto w-8 h-8 text-rose-500 animate-pulse" />
         </div>
-        <div className="text-[14px] font-black font-mono uppercase tracking-[0.6em] animate-pulse italic text-rose-500/60">ЗЧИТУВАННЯ_ТЕЛЕМЕТРІЇ_ЯДРА...</div>
+        <div className="text-[14px] font-black font-mono uppercase tracking-[0.6em] animate-pulse italic text-rose-500/60">ЗЧИТУВАННЯ_ТЕЛЕМЕТ� ІЇ_ЯД� А...</div>
       </div>
     );
   }
@@ -358,15 +358,15 @@ export const InfraTelemetryTab: React.FC = () => {
         <div className="w-24 h-24 rounded-[2rem] bg-rose-500/10 flex items-center justify-center mb-10 border-2 border-rose-500/30">
           <Shield size={48} className="text-rose-500/60" />
         </div>
-        <div className="text-3xl font-black uppercase tracking-tighter text-white mb-4 glint-elite">КРИТИЧНИЙ_ЗРИВ_ТЕЛЕМЕТРІЇ</div>
+        <div className="text-3xl font-black uppercase tracking-tighter text-white mb-4 glint-elite">К� ИТИЧНИЙ_З� ИВ_ТЕЛЕМЕТ� ІЇ</div>
         <p className="text-[12px] font-black font-mono text-white/30 max-w-lg mb-12 leading-relaxed uppercase italic tracking-widest">
-          СИСТЕМА_ВТРАТИЛА_ЗВ'ЯЗОК_З_ВУЗЛАМИ_УПРАВЛІННЯ. ПЕРЕВІРТЕ_СТАТУС_API_ШЛЮЗУ_ТА_ВЕРИФІКАЦІЮ_MTLS_V61.
+          СИСТЕМА_ВТ� АТИЛА_ЗВ'ЯЗОК_З_ВУЗЛАМИ_УП� АВЛІННЯ. ПЕ� ЕВІ� ТЕ_СТАТУС_API_ШЛЮЗУ_ТА_ВЕ� ИФІКАЦІЮ_MTLS_V61.
         </p>
         <button 
           onClick={() => window.location.reload()}
           className="px-12 py-5 bg-rose-600 text-white text-[11px] font-black uppercase tracking-[0.4em] rounded-xl hover:bg-rose-500 transition-all shadow-4xl italic"
         >
-          ПЕРЕПІДКЛЮЧИТИСЬ_ДО_ЯДРА
+          ПЕ� ЕПІДКЛЮЧИТИСЬ_ДО_ЯД� А
         </button>
       </div>
     );
@@ -381,7 +381,7 @@ export const InfraTelemetryTab: React.FC = () => {
         <div className="flex flex-col gap-3 border-l-4 border-rose-500 pl-10 py-2">
           <div className="flex items-center gap-6">
             <h2 className="text-4xl font-black text-white uppercase tracking-tighter italic glint-elite">
-              МОНІТОРИНГ <span className="text-rose-500">ГЛОБАЛЬНОЇ ІНФРАСТРУКТУРИ</span>
+              МОНІТО� ИНГ <span className="text-rose-500">ГЛОБАЛЬНОЇ ІНФ� АСТ� УКТУ� И</span>
             </h2>
             <div className="px-4 py-1.5 bg-rose-500/10 border-2 border-rose-500/30 rounded-lg text-[10px] font-black text-rose-500 tracking-[0.3em] uppercase italic shadow-2xl">
               INFRA_ELITE_v61.0
@@ -390,17 +390,17 @@ export const InfraTelemetryTab: React.FC = () => {
           <div className="flex items-center gap-8 text-[11px] font-black font-mono text-white/30 tracking-[0.2em] uppercase italic">
             <div className="flex items-center gap-3">
               <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_15px_rgba(16,185,129,0.8)]" />
-              <span className="text-emerald-500/80">АКТИВНА_СИНХРОНІЗАЦІЯ_ВУЗЛІВ</span>
+              <span className="text-emerald-500/80">АКТИВНА_СИНХ� ОНІЗАЦІЯ_ВУЗЛІВ</span>
             </div>
             <span className="opacity-20">•</span>
             <div className="flex items-center gap-3">
               <RefreshCw size={14} className="text-rose-500/60 animate-spin-slow" />
-              <span>ІНТЕРВАЛ: 3.0с</span>
+              <span>ІНТЕ� ВАЛ: 3.0с</span>
             </div>
             <span className="opacity-20">•</span>
             <div className="flex items-center gap-3 text-rose-500/40">
               <Server size={14} />
-              <span>МАЙСТЕР_ВУЗОЛ: {nodes.find(n => n.role.includes('Master'))?.node || '0xPRED_MASTER'}</span>
+              <span>МАЙСТЕ� _ВУЗОЛ: {nodes.find(n => n.role.includes('Master'))?.node || '0xPRED_MASTER'}</span>
             </div>
           </div>
         </div>
@@ -408,7 +408,7 @@ export const InfraTelemetryTab: React.FC = () => {
         {/* Routing Indicator Badge */}
         <div className="flex items-center gap-6 bg-black/60 backdrop-blur-3xl p-6 rounded-[2rem] border-2 border-white/5 shadow-4xl group">
            <div className="flex flex-col items-end gap-1">
-              <span className="text-[9px] font-black font-mono text-white/20 uppercase tracking-[0.4em] italic">СТРАТЕГІЯ_МАРШРУТИЗАЦІЇ</span>
+              <span className="text-[9px] font-black font-mono text-white/20 uppercase tracking-[0.4em] italic">СТ� АТЕГІЯ_МА� Ш� УТИЗАЦІЇ</span>
               <span className="text-[12px] font-black text-white/60 italic uppercase tracking-tighter group-hover:text-rose-500 transition-colors">{nodeSource}</span>
            </div>
            <div className="h-12 w-[2px] bg-white/5 mx-2" />
@@ -422,9 +422,9 @@ export const InfraTelemetryTab: React.FC = () => {
              <div className="flex flex-col">
                 <span className="text-xl font-black tracking-widest italic glint-elite leading-none">{llmTriStateMode}</span>
                 <span className="text-[8px] font-black font-mono uppercase tracking-[0.3em] opacity-40 mt-1">
-                   {llmTriStateMode === 'SOVEREIGN' ? 'АВТОНОМНИЙ_СУВЕРЕНІТЕТ' : 
-                    llmTriStateMode === 'HYBRID' ? 'ГІБРИДНА_ЕФЕКТИВНІСТЬ' : 
-                    'ХМАРНЕ_ПРИСКОРЕННЯ'}
+                   {llmTriStateMode === 'SOVEREIGN' ? 'АВТОНОМНИЙ_СУВЕ� ЕНІТЕТ' : 
+                    llmTriStateMode === 'HYBRID' ? 'ГІБ� ИДНА_ЕФЕКТИВНІСТЬ' : 
+                    'ХМА� НЕ_П� ИСКО� ЕННЯ'}
                 </span>
              </div>
            </div>
@@ -436,10 +436,10 @@ export const InfraTelemetryTab: React.FC = () => {
       {/* Grid Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
         {[
-          { label: 'АКТИВНІ_ВУЗЛИ', value: `${nodes.filter(n => n.status === 'online').length}/${nodes.length}`, icon: Server, color: 'text-rose-500', sub: 'ВЕРИФІКОВАНІ_АКТИВИ' },
-          { label: 'МОДУЛІ_ЯДРА', value: services.length, icon: Box, color: 'text-sky-500', sub: 'МІКРОСЕРВІСНА_ФУНДАЦІЯ' },
-          { label: 'ЧАС_UPTIME', value: systemStatus?.uptime || '99.9%', icon: Shield, color: 'text-emerald-500', sub: 'БЕЗПЕРЕРВНІСТЬ_СИСТЕМИ' },
-          { label: 'ТРАФІК_МЕРЕЖІ', value: `${totalThroughput.toFixed(1)} МБ/с`, icon: ZapIcon, color: 'text-amber-500', sub: 'ПОТОКОВА_ПРОПУСКНА_ЗДАТНІСТЬ' },
+          { label: 'АКТИВНІ_ВУЗЛИ', value: `${nodes.filter(n => n.status === 'online').length}/${nodes.length}`, icon: Server, color: 'text-rose-500', sub: 'ВЕ� ИФІКОВАНІ_АКТИВИ' },
+          { label: 'МОДУЛІ_ЯД� А', value: services.length, icon: Box, color: 'text-sky-500', sub: 'МІК� ОСЕ� ВІСНА_ФУНДАЦІЯ' },
+          { label: 'ЧАС_UPTIME', value: systemStatus?.uptime || '99.9%', icon: Shield, color: 'text-emerald-500', sub: 'БЕЗПЕ� Е� ВНІСТЬ_СИСТЕМИ' },
+          { label: 'Т� АФІК_МЕ� ЕЖІ', value: `${totalThroughput.toFixed(1)} МБ/с`, icon: ZapIcon, color: 'text-amber-500', sub: 'ПОТОКОВА_П� ОПУСКНА_ЗДАТНІСТЬ' },
         ].map((stat, i) => (
           <motion.div 
             key={i} 
@@ -495,10 +495,10 @@ export const InfraTelemetryTab: React.FC = () => {
         <div className="flex items-center gap-10 px-4">
           <div className="h-[2px] flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
           <div className="flex flex-col items-center gap-3">
-            <span className="text-2xl font-black text-white/50 uppercase tracking-[0.4em] italic glint-elite">ЯДРО_ЕКОСИСТЕМИ & СЕРВІСИ</span>
+            <span className="text-2xl font-black text-white/50 uppercase tracking-[0.4em] italic glint-elite">ЯД� О_ЕКОСИСТЕМИ & СЕ� ВІСИ</span>
             <div className="flex items-center gap-4">
                <div className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse shadow-[0_0_15px_rgba(225,29,72,1)]" />
-               <span className="text-[10px] font-black font-mono text-rose-500/60 uppercase tracking-[0.3em] font-black italic">ВЕРИФІКОВАНО_ЦІЛІСНІСТЬ_АРХІТЕКТУРИ_ELITE</span>
+               <span className="text-[10px] font-black font-mono text-rose-500/60 uppercase tracking-[0.3em] font-black italic">ВЕ� ИФІКОВАНО_ЦІЛІСНІСТЬ_А� ХІТЕКТУ� И_ELITE</span>
             </div>
           </div>
           <div className="h-[2px] flex-1 bg-gradient-to-l from-transparent via-white/10 to-transparent" />

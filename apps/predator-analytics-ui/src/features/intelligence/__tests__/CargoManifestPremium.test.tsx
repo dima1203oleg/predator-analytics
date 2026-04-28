@@ -65,7 +65,7 @@ describe('CargoManifestPremium', () => {
         render(<CargoManifestPremium />);
         
         expect(screen.getByText(/МИТНА/i)).toBeInTheDocument();
-        expect(screen.getByText(/ФОРЕНЗИКА/i)).toBeInTheDocument();
+        expect(screen.getByText(/ФО� ЕНЗИКА/i)).toBeInTheDocument();
         expect(screen.getByText(/UA\/ODS\/22901/i)).toBeInTheDocument();
     });
 
@@ -76,7 +76,7 @@ describe('CargoManifestPremium', () => {
         fireEvent.click(manifest);
 
         await waitFor(() => {
-            expect(screen.getByText(/АГРО_ТЕХ_СЕРВІС_ПЛЮС/i)).toBeInTheDocument();
+            expect(screen.getByText(/АГ� О_ТЕХ_СЕ� ВІС_ПЛЮС/i)).toBeInTheDocument();
             expect(screen.getByText(/AGRO_GLOBAL_GMBH_BERLIN/i)).toBeInTheDocument();
         });
     });
@@ -85,7 +85,7 @@ describe('CargoManifestPremium', () => {
         render(<CargoManifestPremium />);
         
         const input = screen.getByPlaceholderText(/ID МАНІФЕСТА АБО КОМПАНІЯ.../i);
-        fireEvent.change(input, { target: { value: 'ТЕХНО_ПРОМ' } });
+        fireEvent.change(input, { target: { value: 'ТЕХНО_П� ОМ' } });
 
         expect(screen.getByText(/UA\/ODS\/22912/i)).toBeInTheDocument();
         expect(screen.queryByText(/UA\/ODS\/22901/i)).not.toBeInTheDocument();

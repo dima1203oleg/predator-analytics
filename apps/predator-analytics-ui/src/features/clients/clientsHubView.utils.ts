@@ -219,7 +219,7 @@ export const normalizeClientsHubSnapshot = (
     legal: buildSegment(
       [
         {
-          label: 'Ризикових компаній',
+          label: '� изикових компаній',
           value: formatCount(topRiskCompanies),
           hint: 'Підтверджено `/dashboard/overview.top_risk_companies`.',
         },

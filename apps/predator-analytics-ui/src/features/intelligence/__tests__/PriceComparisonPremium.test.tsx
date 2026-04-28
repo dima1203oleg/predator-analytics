@@ -73,11 +73,11 @@ describe('PriceComparisonPremium', () => {
             </MemoryRouter>
         )
 
-        expect(screen.getByText(/ПОРІВНЯННЯ/i)).toBeInTheDocument()
+        expect(screen.getByText(/ПО� ІВНЯННЯ/i)).toBeInTheDocument()
         expect(screen.getByText(/ЦІН/i)).toBeInTheDocument()
         
-        expect(screen.getByTestId('stat-ТОВАРІВ_У_БАЗІ')).toBeInTheDocument()
-        expect(screen.getByTestId('stat-СЕРЕДНЯ_ЕКОНОМІЯ')).toBeInTheDocument()
+        expect(screen.getByTestId('stat-ТОВА� ІВ_У_БАЗІ')).toBeInTheDocument()
+        expect(screen.getByTestId('stat-СЕ� ЕДНЯ_ЕКОНОМІЯ')).toBeInTheDocument()
         
         expect(screen.getByText(/47,201/i)).toBeInTheDocument()
     })
@@ -89,7 +89,7 @@ describe('PriceComparisonPremium', () => {
             </MemoryRouter>
         )
 
-        expect(screen.getByText(/ГЕНЕРАТОРИ_ДИЗЕЛЬ_5KW/i)).toBeInTheDocument()
+        expect(screen.getByText(/ГЕНЕ� АТО� И_ДИЗЕЛЬ_5KW/i)).toBeInTheDocument()
         expect(screen.getAllByText(/\$980/i).length).toBeGreaterThan(0)
     })
 
@@ -103,7 +103,7 @@ describe('PriceComparisonPremium', () => {
         // p1 розгорнутий за замовчуванням
         expect(screen.getByText(/SINO_TECH_EXPORT/i)).toBeInTheDocument()
 
-        const productHeader = screen.getByText(/ГЕНЕРАТОРИ_ДИЗЕЛЬ_5KW/i)
+        const productHeader = screen.getByText(/ГЕНЕ� АТО� И_ДИЗЕЛЬ_5KW/i)
         
         // Натискаємо щоб згорнути
         await act(async () => {
@@ -122,14 +122,14 @@ describe('PriceComparisonPremium', () => {
             </MemoryRouter>
         )
 
-        const input = screen.getByPlaceholderText(/ПОШУК ТОВАРУ/i)
+        const input = screen.getByPlaceholderText(/ПОШУК ТОВА� У/i)
         
         await act(async () => {
-            fireEvent.change(input, { target: { value: 'АРМАТУРА' } })
+            fireEvent.change(input, { target: { value: 'А� МАТУ� А' } })
         })
 
-        expect(screen.queryByText(/ГЕНЕРАТОРИ_ДИЗЕЛЬ_5KW/i)).not.toBeInTheDocument()
-        expect(screen.getByText(/АРМАТУРА_СТАЛЕВА_12MM/i)).toBeInTheDocument()
+        expect(screen.queryByText(/ГЕНЕ� АТО� И_ДИЗЕЛЬ_5KW/i)).not.toBeInTheDocument()
+        expect(screen.getByText(/А� МАТУ� А_СТАЛЕВА_12MM/i)).toBeInTheDocument()
     })
 
     test('ініціює predator-error при автономному режимі', async () => {

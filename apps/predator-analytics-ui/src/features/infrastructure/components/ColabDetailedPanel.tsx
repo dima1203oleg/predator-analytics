@@ -288,7 +288,7 @@ users:
                 <div>
                   <p className="text-[10px] font-black uppercase tracking-[0.2em] mb-1">WARNING: CLOUD_OVERRIDE_MODE</p>
                   <p className="text-[10px] leading-relaxed text-sky-600/80 font-bold uppercase tracking-tight">
-                    Резервний кластер працює в режимі хмарного дзеркальності (Google Colab). 
+                    � езервний кластер працює в режимі хмарного дзеркальності (Google Colab). 
                     Цей режим активується автоматично при вичерпанні VRAM на суверенних вузлах.
                   </p>
                 </div>

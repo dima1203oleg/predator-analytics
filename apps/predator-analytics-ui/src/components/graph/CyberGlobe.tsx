@@ -12,7 +12,7 @@ const OFFSHORE_NODES = [
 ];
 const UKRAINE_NODE = { lat: 48.3, lng: 31.1, color: '#3b82f6' };
 
-const RADIUS = 2; // Радіус глобуса
+const RADIUS = 2; // � адіус глобуса
 
 function getCoordinates(lat: number, lng: number): [number, number, number] {
   const phi = (90 - lat) * (Math.PI / 180);

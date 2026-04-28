@@ -1,5 +1,5 @@
 /**
- * 💼 CASE GOVERNANCE // УПРАВЛІННЯ КЕЙСАМИ | v58.2-WRAITH
+ * 💼 CASE GOVERNANCE // УП� АВЛІННЯ КЕЙСАМИ | v58.2-WRAITH
  * PREDATOR Analytics — Sovereign Investigative Framework
  * 
  * Модуль керування оперативними розслідуваннями та чергою подій.
@@ -84,7 +84,7 @@ const CasesView: React.FC = () => {
     }
 
     return result.sort((a, b) => {
-      const statusOrder: Record<string, number> = { 'КРИТИЧНО': 0, 'УВАГА': 1, 'БЕЗПЕЧНО': 2, 'АРХІВ': 3 };
+      const statusOrder: Record<string, number> = { 'К� ИТИЧНО': 0, 'УВАГА': 1, 'БЕЗПЕЧНО': 2, 'А� ХІВ': 3 };
       return (statusOrder[a.status || ''] ?? 9) - (statusOrder[b.status || ''] ?? 9) || (b.riskScore || 0) - (a.riskScore || 0);
     });
   }, [cases, activeFilter, searchQuery]);
@@ -99,7 +99,7 @@ const CasesView: React.FC = () => {
 
   const handleArchiveCase = async (id: string) => {
     setCases(prev => prev.map(c =>
-      c.id === id ? { ...c, status: 'АРХІВ' as CaseStatus } : c
+      c.id === id ? { ...c, status: 'А� ХІВ' as CaseStatus } : c
     ));
     dispatchEvent('CASE_ARCHIVED', id);
     try {
@@ -124,7 +124,7 @@ const CasesView: React.FC = () => {
         title: newCaseData.title,
         situation: newCaseData.description,
         priority: newCaseData.priority,
-        status: newCaseData.priority === 'high' ? 'КРИТИЧНО' : 'УВАГА',
+        status: newCaseData.priority === 'high' ? 'К� ИТИЧНО' : 'УВАГА',
         source: 'MANUAL_ENTRY'
       });
 
@@ -160,12 +160,12 @@ const CasesView: React.FC = () => {
                 <div>
                   <div className="flex items-center gap-4 mb-2">
                     <span className="bg-blue-500/10 border border-blue-500/20 text-blue-400 px-4 py-1 text-[9px] font-black tracking-[0.3em] uppercase italic rounded-lg">
-                      INSPECT_OPS // ТЕРМІНАЛ КЕЙСІВ
+                      INSPECT_OPS // ТЕ� МІНАЛ КЕЙСІВ
                     </span>
                     <span className="text-[10px] font-black text-blue-900 italic tracking-widest uppercase shadow-sm">v58.2-WRAITH</span>
                   </div>
                   <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
-                    {isCommanderShell ? 'УПРАВЛІННЯ' : isOperatorShell ? 'ОПЕРАТИВНА' : 'INVESTIGATION'} <span className="text-blue-500">QUEUE</span>
+                    {isCommanderShell ? 'УП� АВЛІННЯ' : isOperatorShell ? 'ОПЕ� АТИВНА' : 'INVESTIGATION'} <span className="text-blue-500">QUEUE</span>
                   </h1>
                 </div>
               </div>
@@ -177,7 +177,7 @@ const CasesView: React.FC = () => {
             ]}
             stats={[
               { label: 'АКТИВНІ_КЕЙСИ', value: filteredCases.length.toString(), icon: <Archive size={14} />, color: 'primary' },
-              { label: 'КРИТИЧНІ_ВУЗЛИ', value: cases.filter(c => c.status === 'КРИТИЧНО').length.toString(), icon: <AlertOctagon size={14} />, color: 'danger', animate: true },
+              { label: 'К� ИТИЧНІ_ВУЗЛИ', value: cases.filter(c => c.status === 'К� ИТИЧНО').length.toString(), icon: <AlertOctagon size={14} />, color: 'danger', animate: true },
               { label: 'THROUGHPUT', value: '94%', icon: <Zap size={14} />, color: 'success' },
             ]}
             actions={
@@ -187,7 +187,7 @@ const CasesView: React.FC = () => {
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-700 to-blue-500 transition-transform duration-500 group-hover:scale-105" />
                 <div className="relative flex items-center gap-4 text-white font-black uppercase italic tracking-[0.2em] text-[11px]">
-                  <Plus size={20} /> НОВЕ_РОЗСЛІДУВАННЯ
+                  <Plus size={20} /> НОВЕ_� ОЗСЛІДУВАННЯ
                 </div>
                 <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
               </button>
@@ -200,7 +200,7 @@ const CasesView: React.FC = () => {
               <Search className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-blue-500 transition-colors" size={24} />
               <input
                 type="text"
-                placeholder="ПОШУК В АРХІВІ ТА АКТИВНИХ КЕЙСАХ..."
+                placeholder="ПОШУК В А� ХІВІ ТА АКТИВНИХ КЕЙСАХ..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-20 pr-10 py-6 bg-black/60 border-2 border-white/[0.04] rounded-[2rem] text-white placeholder-slate-800 focus:outline-none focus:border-blue-500/50 transition-all font-black text-lg italic tracking-tight"
@@ -214,13 +214,13 @@ const CasesView: React.FC = () => {
                 onFilterChange={setActiveFilter}
               />
               <button className="px-8 py-6 bg-white/[0.02] border-2 border-white/[0.05] rounded-[2rem] text-slate-400 font-black text-[10px] uppercase tracking-[0.3em] italic hover:text-white transition-all shadow-xl">
-                <Filter size={18} className="text-blue-500 inline mr-3" /> ФІЛЬТРИ_ДАНРИХ
+                <Filter size={18} className="text-blue-500 inline mr-3" /> ФІЛЬТ� И_ДАН� ИХ
               </button>
             </div>
           </div>
 
           {/* CRITICAL RECOMMENDATION HUD */}
-          {cases.some(c => c.status === 'КРИТИЧНО') && (
+          {cases.some(c => c.status === 'К� ИТИЧНО') && (
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -233,19 +233,19 @@ const CasesView: React.FC = () => {
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-4 mb-2">
-                    <span className="text-[11px] font-black text-amber-500 uppercase tracking-[0.5em] italic">AI_DECISION_ENGINE // ПРІОРИТЕТ 0</span>
+                    <span className="text-[11px] font-black text-amber-500 uppercase tracking-[0.5em] italic">AI_DECISION_ENGINE // П� ІО� ИТЕТ 0</span>
                     <div className="h-px w-20 bg-amber-600/20" />
                   </div>
                   <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter leading-tight">
-                    ВИЯВЛЕНО <span className="text-amber-500 underline decoration-amber-600/30 underline-offset-8 decoration-4">{cases.filter(c => c.status === 'КРИТИЧНО').length} КЕЙСІВ</span> З КРИТИЧНИМ РІВНЕМ РИЗИКУ. 
+                    ВИЯВЛЕНО <span className="text-amber-500 underline decoration-amber-600/30 underline-offset-8 decoration-4">{cases.filter(c => c.status === 'К� ИТИЧНО').length} КЕЙСІВ</span> З К� ИТИЧНИМ � ІВНЕМ � ИЗИКУ. 
                     <span className="text-slate-500 block text-lg font-bold mt-2 not-italic">Негайне втручання рекомендовано для стабілізації контуру.</span>
                   </h3>
                 </div>
                 <button 
-                  onClick={() => handleViewCase(cases.find(c => c.status === 'КРИТИЧНО')?.id || '')}
+                  onClick={() => handleViewCase(cases.find(c => c.status === 'К� ИТИЧНО')?.id || '')}
                   className="px-12 py-6 bg-amber-600 hover:bg-amber-500 text-white font-black text-[12px] uppercase tracking-[0.3em] italic rounded-[2rem] transition-all shadow-4xl active:scale-95"
                 >
-                  ПЕРЕЙТИ_ДО_ВІРУСУ
+                  ПЕ� ЕЙТИ_ДО_ВІ� УСУ
                 </button>
               </div>
             </motion.div>
@@ -267,8 +267,8 @@ const CasesView: React.FC = () => {
               <div className="py-40 text-center bg-black/40 border-4 border-dashed border-white/[0.04] rounded-[5rem] backdrop-blur-3xl shadow-4xl space-y-8">
                 <Archive size={64} className="text-slate-800 mx-auto opacity-20" />
                 <div className="space-y-3">
-                  <h3 className="text-4xl font-black text-slate-700 uppercase tracking-widest italic shadow-sm">ЧЕРГА_ПОРОЖНЯ</h3>
-                  <p className="text-slate-900 font-black uppercase tracking-[0.4em] italic text-xs max-w-xl mx-auto opacity-60">АКТИВНИХ РОЗСЛІДУВАНЬ ЗА ВКАЗАНИМИ ПАРАМЕТРАМИ НЕ ВИЯВЛЕНО</p>
+                  <h3 className="text-4xl font-black text-slate-700 uppercase tracking-widest italic shadow-sm">ЧЕ� ГА_ПО� ОЖНЯ</h3>
+                  <p className="text-slate-900 font-black uppercase tracking-[0.4em] italic text-xs max-w-xl mx-auto opacity-60">АКТИВНИХ � ОЗСЛІДУВАНЬ ЗА ВКАЗАНИМИ ПА� АМЕТ� АМИ НЕ ВИЯВЛЕНО</p>
                 </div>
               </div>
             ) : (
@@ -324,7 +324,7 @@ const CasesView: React.FC = () => {
                           <Plus size={32} />
                        </div>
                        <div>
-                          <h2 className="text-4xl font-black text-white italic tracking-tighter uppercase leading-none">НОВЕ РОЗСЛІДУВАННЯ</h2>
+                          <h2 className="text-4xl font-black text-white italic tracking-tighter uppercase leading-none">НОВЕ � ОЗСЛІДУВАННЯ</h2>
                           <p className="text-xs font-black text-slate-800 uppercase tracking-[0.4em] italic mt-2">INITIALIZING_NEW_ENTITY_RECON</p>
                        </div>
                     </div>
@@ -351,7 +351,7 @@ const CasesView: React.FC = () => {
                       </label>
                       <textarea
                         className="w-full bg-white/[0.02] border-2 border-white/[0.04] rounded-[3rem] px-10 py-7 text-lg font-black italic text-slate-300 placeholder-slate-900 focus:outline-none focus:border-blue-500/50 transition-all h-48 resize-none shadow-inset"
-                        placeholder="ОПИШІТЬ ПРИЧИНИ ВІДКРИТТЯ КЕЙСУ..."
+                        placeholder="ОПИШІТЬ П� ИЧИНИ ВІДК� ИТТЯ КЕЙСУ..."
                         value={newCaseData.description}
                         onChange={(e) => setNewCaseData({ ...newCaseData, description: e.target.value })}
                       />
@@ -359,7 +359,7 @@ const CasesView: React.FC = () => {
 
                    <div className="space-y-6">
                       <label className="text-[12px] font-black text-slate-500 uppercase tracking-[0.4em] italic flex items-center gap-4">
-                        <Siren size={16} /> ПРІОРИТЕТ ОПЕРАЦІЇ // PRIORITY_LVL
+                        <Siren size={16} /> П� ІО� ИТЕТ ОПЕ� АЦІЇ // PRIORITY_LVL
                       </label>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         {['low', 'medium', 'high'].map(p => (
@@ -376,7 +376,7 @@ const CasesView: React.FC = () => {
                                 : 'bg-white/[0.02] border-white/[0.05] text-slate-700 hover:border-white/10'
                             )}
                           >
-                            {p === 'high' ? 'КРИТИЧНИЙ (S1)' : p === 'medium' ? 'СЕРЕДНІЙ (S2)' : 'ПЛАНОВИЙ (S3)'}
+                            {p === 'high' ? 'К� ИТИЧНИЙ (S1)' : p === 'medium' ? 'СЕ� ЕДНІЙ (S2)' : 'ПЛАНОВИЙ (S3)'}
                           </button>
                         ))}
                       </div>
@@ -388,7 +388,7 @@ const CasesView: React.FC = () => {
                      className="w-full py-10 bg-blue-600 hover:bg-blue-500 text-white font-black text-2xl italic tracking-widest uppercase rounded-[3rem] shadow-4xl transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-6 group/submit"
                    >
                      {createLoading ? <div className="w-10 h-10 border-4 border-white/30 border-t-white rounded-full animate-spin" /> : <ShieldCheck size={32} className="group-hover/submit:scale-125 transition-transform" />}
-                     ЗАРЕЄСТРУВАТИ КЕЙС У КОНТУРІ
+                     ЗА� ЕЄСТ� УВАТИ КЕЙС У КОНТУ� І
                    </button>
                  </form>
               </motion.div>

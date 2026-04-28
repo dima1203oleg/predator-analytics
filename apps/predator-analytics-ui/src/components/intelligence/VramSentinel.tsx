@@ -38,9 +38,9 @@ export const VramSentinel: React.FC = () => {
   const limit = 8.0;
   const statusColor = vram.total > 7.6 ? 'crimson' : vram.total > 7.0 ? 'rose' : 'emerald';
   const modeLabel = {
-    SOVEREIGN: { text: 'СУВЕРЕННИЙ (Червоний)', color: 'text-rose-500', bg: 'bg-rose-500/10', border: 'border-rose-500/30' },
-    HYBRID: { text: 'ГІБРИДНИЙ (Зелений)', color: 'text-emerald-500', bg: 'bg-emerald-500/10', border: 'border-emerald-500/30' },
-    CLOUD: { text: 'ХМАРНИЙ (Синій)', color: 'text-blue-500', bg: 'bg-blue-500/10', border: 'border-blue-500/30' },
+    SOVEREIGN: { text: 'СУВЕ� ЕННИЙ (Червоний)', color: 'text-rose-500', bg: 'bg-rose-500/10', border: 'border-rose-500/30' },
+    HYBRID: { text: 'ГІБ� ИДНИЙ (Зелений)', color: 'text-emerald-500', bg: 'bg-emerald-500/10', border: 'border-emerald-500/30' },
+    CLOUD: { text: 'ХМА� НИЙ (Синій)', color: 'text-blue-500', bg: 'bg-blue-500/10', border: 'border-blue-500/30' },
   }[vram.mode];
 
   return (
@@ -142,7 +142,7 @@ export const VramSentinel: React.FC = () => {
                 <Cloud size={16} />
               </div>
               <div className="flex-1">
-                <p className="text-[10px] font-black text-blue-300 uppercase tracking-widest leading-tight">ХМАРНИЙ_ОБХІД_УВІМКНЕНО</p>
+                <p className="text-[10px] font-black text-blue-300 uppercase tracking-widest leading-tight">ХМА� НИЙ_ОБХІД_УВІМКНЕНО</p>
                 <p className="text-[8px] text-blue-400 font-black leading-tight mt-1">Використання Gemini Pro 1.5 для збереження VRAM</p>
               </div>
               <Zap size={14} className="text-blue-500 animate-pulse" />
@@ -158,7 +158,7 @@ export const VramSentinel: React.FC = () => {
         </div>
         <div className="flex items-center gap-1">
           <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-[8px] font-black text-slate-300 font-mono italic">СИНХРОНІЗОВАНО</span>
+          <span className="text-[8px] font-black text-slate-300 font-mono italic">СИНХ� ОНІЗОВАНО</span>
         </div>
       </div>
     </motion.div>

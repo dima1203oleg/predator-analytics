@@ -4,10 +4,12 @@
 
 from dataclasses import dataclass, field
 from enum import StrEnum
-from typing import Any, Dict, List
+from typing import Any
+
 
 class LegacyCersLevel(StrEnum):
     """Legacy рівні ризику, використовуються в тестах."""
+
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
@@ -19,6 +21,7 @@ CersLevel = LegacyCersLevel
 @dataclass(frozen=True)
 class CersFactors:
     """Параметри для legacy CERS розрахунку."""
+
     # Санкції
     is_rnbo_sanctioned: bool = False
     is_eu_sanctioned: bool = False
@@ -46,7 +49,7 @@ class CersResult:
     score: float
     level: LegacyCersLevel
     explanation: str
-    factors: Dict[str, Any]
+    factors: dict[str, Any]
 
 def cers_level_from_score(score: float) -> LegacyCersLevel:
     """Визначає legacy рівень за балом."""
@@ -129,8 +132,8 @@ class CersResultV55:
     score: float
     level: CersLevelV55
     confidence: float
-    components: Dict[str, float]
-    flags: List[Dict[str, Any]] = field(default_factory=list)
+    components: dict[str, float]
+    flags: list[dict[str, Any]] = field(default_factory=list)
 
 def compute_cers_v55(factors: Cers5LayerFactors, confidence: float = 0.95) -> CersResultV55:
     """Канонічний розрахунок CERS v55.2.

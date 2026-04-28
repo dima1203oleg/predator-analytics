@@ -1,5 +1,5 @@
 /**
- * 📦 CARGO MANIFEST FORENSIC // МИТНА ФОРЕНЗИКА | v58.2-WRAITH
+ * 📦 CARGO MANIFEST FORENSIC // МИТНА ФО� ЕНЗИКА | v58.2-WRAITH
  * PREDATOR Analytics — Deep Manifest Analysis & Fraud Detection
  * 
  * Аналіз митних декларацій, вантажних маніфестів та виявлення невідповідностей.
@@ -49,9 +49,9 @@ const MOCK_MANIFESTS: ManifestItem[] = [
   {
     id: 'm1',
     manifestId: 'UA/ODS/22901',
-    consignee: 'ТОВ_САН_МАРІНО_ТРЕЙД',
+    consignee: 'ТОВ_САН_МА� ІНО_Т� ЕЙД',
     consignor: 'GOLDEN_DRAGON_LOGISTICS_XIAMEN',
-    goodsDescription: 'ЕЛЕКТРОННІ_КОМПОНЕНТИ_ТА_ЗАПЧАСТИНИ',
+    goodsDescription: 'ЕЛЕКТ� ОННІ_КОМПОНЕНТИ_ТА_ЗАПЧАСТИНИ',
     hsCode: '8541 10 00 00',
     weight: 1240,
     declaredValue: 45200,
@@ -62,9 +62,9 @@ const MOCK_MANIFESTS: ManifestItem[] = [
   {
     id: 'm2',
     manifestId: 'UA/LVV/11405',
-    consignee: 'АГРО_ТЕХ_СЕРВІС_ПЛЮС',
+    consignee: 'АГ� О_ТЕХ_СЕ� ВІС_ПЛЮС',
     consignor: 'AGRO_GLOBAL_GMBH_BERLIN',
-    goodsDescription: 'ЗАПЧАСТИНИ_ДО_ТРАКТОРІВ_ДЛЯ_СІЛЬСЬКОГО_ГОСПОДАРСТВА',
+    goodsDescription: 'ЗАПЧАСТИНИ_ДО_Т� АКТО� ІВ_ДЛЯ_СІЛЬСЬКОГО_ГОСПОДА� СТВА',
     hsCode: '8433 90 00 00',
     weight: 4500,
     declaredValue: 128000,
@@ -75,9 +75,9 @@ const MOCK_MANIFESTS: ManifestItem[] = [
   {
     id: 'm3',
     manifestId: 'UA/ODS/22912',
-    consignee: 'ТЕХНО_ПРОМ_ГРУП',
+    consignee: 'ТЕХНО_П� ОМ_Г� УП',
     consignor: 'TURK_EXPORT_LOGISTIC_IST',
-    goodsDescription: 'ТКАНИНИ_СИНТЕТИЧНІ_РУЛОННІ',
+    goodsDescription: 'ТКАНИНИ_СИНТЕТИЧНІ_� УЛОННІ',
     hsCode: '5407 10 00 00',
     weight: 850,
     declaredValue: 1200,
@@ -98,7 +98,7 @@ export default function CargoManifestPremium() {
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'CargoForensic',
-          message: `РЕЖИМ АВТОНОМНОЇ МИТНОЇ ФОРЕНЗИКИ [${nodeSource}]: Доступ до центральної бази обмежено. Використовується MIRROR_VAULT.`,
+          message: `� ЕЖИМ АВТОНОМНОЇ МИТНОЇ ФО� ЕНЗИКИ [${nodeSource}]: Доступ до центральної бази обмежено. Використовується MIRROR_VAULT.`,
           severity: 'warning',
           timestamp: new Date().toISOString(),
           code: 'MANIFEST_OFFLINE'
@@ -108,7 +108,7 @@ export default function CargoManifestPremium() {
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'CargoForensic',
-          message: `ВАНТАЖНИЙ_ВУЗОЛ [${nodeSource}]: ФОРЕНЗИК-МАТРИЦЮ успішно активовано. Готовність до глибокого аналізу маніфестів.`,
+          message: `ВАНТАЖНИЙ_ВУЗОЛ [${nodeSource}]: ФО� ЕНЗИК-МАТ� ИЦЮ успішно активовано. Готовність до глибокого аналізу маніфестів.`,
           severity: 'info',
           timestamp: new Date().toISOString(),
           code: 'MANIFEST_SUCCESS'
@@ -157,7 +157,7 @@ export default function CargoManifestPremium() {
                     <span className="text-[10px] font-black text-amber-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-WRAITH</span>
                   </div>
                   <h1 className="text-7xl font-black text-white tracking-tighter uppercase italic skew-x-[-4deg] leading-none text-shadow-wraith">
-                    МИТНА <span className="text-amber-500 underline decoration-amber-600/30 decoration-[16px] underline-offset-[16px] italic uppercase tracking-tighter">ФОРЕНЗИКА</span>
+                    МИТНА <span className="text-amber-500 underline decoration-amber-600/30 decoration-[16px] underline-offset-[16px] italic uppercase tracking-tighter">ФО� ЕНЗИКА</span>
                   </h1>
                 </div>
               </div>
@@ -196,9 +196,9 @@ export default function CargoManifestPremium() {
 
           <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
             {[
-              { label: 'ПЕРЕВІРЕНО_МАНІФЕСТІВ', value: '1,842', sub: 'За останні 24 години', icon: FileSearch, color: '#D4AF37' },
+              { label: 'ПЕ� ЕВІ� ЕНО_МАНІФЕСТІВ', value: '1,842', sub: 'За останні 24 години', icon: FileSearch, color: '#D4AF37' },
               { label: 'ВИЯВЛЕНО_АНОМАЛІЙ', value: '291', sub: 'Критичні розбіжності', icon: ShieldAlert, color: '#F59E0B' },
-              { label: 'ЗАГАЛЬНИЙ_РИЗИК_UA', value: '54%', sub: 'Середньоринковий показник', icon: Activity, color: '#F59E0B' },
+              { label: 'ЗАГАЛЬНИЙ_� ИЗИК_UA', value: '54%', sub: 'Середньоринковий показник', icon: Activity, color: '#F59E0B' },
             ].map((m, i) => (
               <div key={i} className="p-10 rounded-[4rem] bg-black border-2 border-white/[0.03] shadow-4xl group relative overflow-hidden transition-all hover:border-white/10">
                 <div className="absolute -top-10 -right-10 p-12 opacity-[0.03] group-hover:opacity-[0.1] transition-all duration-700 rotate-12 group-hover:rotate-0">
@@ -315,18 +315,18 @@ export default function CargoManifestPremium() {
                            <div className="space-y-10">
                               <div className="p-10 bg-black/40 border-2 border-white/[0.03] rounded-[3.5rem] space-y-4 shadow-inset relative group/card">
                                  <div className="absolute top-6 right-8 text-slate-900 group-hover/card:text-yellow-500/10 transition-colors"><Truck size={42} /></div>
-                                 <p className="text-[10px] font-black text-slate-800 uppercase italic tracking-[0.4em]">ОТРИМУВАЧ_ВАНТАЖУ_UA</p>
+                                 <p className="text-[10px] font-black text-slate-800 uppercase italic tracking-[0.4em]">ОТ� ИМУВАЧ_ВАНТАЖУ_UA</p>
                                  <p className="text-4xl font-black text-white italic uppercase tracking-tighter leading-none">{selectedManifest.consignee}</p>
                               </div>
                               <div className="p-10 bg-black/40 border-2 border-white/[0.03] rounded-[3.5rem] space-y-4 shadow-inset relative group/card">
                                  <div className="absolute top-6 right-8 text-slate-900 group-hover/card:text-amber-500/10 transition-colors"><Ship size={42} /></div>
-                                 <p className="text-[10px] font-black text-slate-800 uppercase italic tracking-[0.4em]">ВІДПРАВНИК_ВАНТАЖУ_INTL</p>
+                                 <p className="text-[10px] font-black text-slate-800 uppercase italic tracking-[0.4em]">ВІДП� АВНИК_ВАНТАЖУ_INTL</p>
                                  <p className="text-4xl font-black text-white italic uppercase tracking-tighter leading-none">{selectedManifest.consignor}</p>
                               </div>
                            </div>
                            <div className="flex flex-col gap-10">
                               <div className="p-10 bg-black border-2 border-white/[0.03] rounded-[3.5rem] space-y-4 shadow-inset flex-1">
-                                 <p className="text-[10px] font-black text-slate-800 uppercase italic tracking-[0.4em]">ОПИС_ТОВРУ (ДЕКЛАРОВАНИЙ)</p>
+                                 <p className="text-[10px] font-black text-slate-800 uppercase italic tracking-[0.4em]">ОПИС_ТОВ� У (ДЕКЛА� ОВАНИЙ)</p>
                                  <p className="text-xl font-black text-slate-400 italic uppercase leading-relaxed font-mono">"{selectedManifest.goodsDescription}"</p>
                               </div>
                               <div className="grid grid-cols-2 gap-8">
@@ -335,7 +335,7 @@ export default function CargoManifestPremium() {
                                     <p className="text-5xl font-black text-white italic font-mono tracking-tighter group-hover/val:text-yellow-500 transition-colors">{selectedManifest.weight.toLocaleString()}</p>
                                  </div>
                                  <div className="p-10 bg-black border-2 border-white/[0.03] rounded-[3.5rem] space-y-2 shadow-inset group/val transition-all">
-                                    <p className="text-[10px] font-black text-slate-800 uppercase italic tracking-[0.4em]">ВАРТІСТЬ_USD</p>
+                                    <p className="text-[10px] font-black text-slate-800 uppercase italic tracking-[0.4em]">ВА� ТІСТЬ_USD</p>
                                     <p className="text-5xl font-black text-emerald-500 italic font-mono tracking-tighter group-hover/val:scale-105 transition-transform duration-700">${selectedManifest.declaredValue.toLocaleString()}</p>
                                  </div>
                               </div>
@@ -346,7 +346,7 @@ export default function CargoManifestPremium() {
                           <div className="relative z-10 mt-16 p-12 rounded-[4rem] bg-amber-600/[0.02] border-4 border-amber-600/30 space-y-8 shadow-4xl group/anom">
                              <div className="flex items-center justify-between border-b-2 border-amber-500/10 pb-6">
                                 <h4 className="text-[13px] font-black text-amber-500 uppercase italic tracking-[0.5em] flex items-center gap-6">
-                                   <Siren size={32} className="animate-pulse shadow-amber-600" /> ВИЯВЛЕНІ_АНТРОПОГЕННІ_АНОМАЛІЇ
+                                   <Siren size={32} className="animate-pulse shadow-amber-600" /> ВИЯВЛЕНІ_АНТ� ОПОГЕННІ_АНОМАЛІЇ
                                 </h4>
                                 <span className="bg-amber-600/20 text-amber-500 px-6 py-2 rounded-2xl text-[10px] font-black italic tracking-widest border border-amber-600/30 shadow-lg animate-bounce">УВАГА</span>
                              </div>
@@ -374,10 +374,10 @@ export default function CargoManifestPremium() {
                            </div>
                            <div className="flex gap-6 w-full md:w-auto">
                              <button className="flex-1 md:flex-none px-12 py-6 bg-black border-2 border-white/[0.05] text-slate-600 hover:text-white hover:border-white/20 rounded-[2.2rem] text-[11px] font-black uppercase tracking-[0.4em] italic shadow-xl transition-all">
-                                ЗБЕРЕГТИ_DOSSIER
+                                ЗБЕ� ЕГТИ_DOSSIER
                              </button>
                              <button className="flex-1 md:flex-none px-12 py-6 bg-white text-black rounded-[2.2rem] text-[11px] font-black uppercase tracking-[0.4em] italic hover:bg-slate-200 shadow-4xl active:scale-95 transition-all duration-300">
-                                ГЕНЕРУВАТИ_ПОВНИЙ_ЗВІТ
+                                ГЕНЕ� УВАТИ_ПОВНИЙ_ЗВІТ
                              </button>
                            </div>
                         </div>
@@ -386,7 +386,7 @@ export default function CargoManifestPremium() {
                      <div className="grid grid-cols-1 md:grid-cols-3 gap-12 pt-4">
                         <div className="p-10 rounded-[4rem] border-2 border-white/[0.04] bg-black shadow-4xl space-y-8 relative overflow-hidden group/sub">
                            <div className="absolute top-6 right-8 text-slate-900 group-hover/sub:text-yellow-500/10 transition-colors"><History size={32} /></div>
-                           <h5 className="text-[12px] font-black text-slate-700 uppercase italic tracking-[0.5em] border-b border-white/[0.03] pb-6">ХРОНОЛОГІЯ_СУБ'ЄКТА</h5>
+                           <h5 className="text-[12px] font-black text-slate-700 uppercase italic tracking-[0.5em] border-b border-white/[0.03] pb-6">Х� ОНОЛОГІЯ_СУБ'ЄКТА</h5>
                            <div className="space-y-6 pt-4">
                               {[1,2,3].map(i => (
                                 <div key={i} className="flex items-center gap-6 group/item transition-all cursor-crosshair">
@@ -401,7 +401,7 @@ export default function CargoManifestPremium() {
                         </div>
                         
                         <div className="p-10 rounded-[4rem] border-2 border-amber-600/20 bg-amber-600/[0.02] shadow-4xl space-y-8 relative overflow-hidden group/ai2">
-                           <h5 className="text-[12px] font-black text-amber-500 uppercase italic tracking-[0.5em] border-b border-amber-500/10 pb-6">AI_ПРЕДИКЦІЯ_РИЗИКУ</h5>
+                           <h5 className="text-[12px] font-black text-amber-500 uppercase italic tracking-[0.5em] border-b border-amber-500/10 pb-6">AI_П� ЕДИКЦІЯ_� ИЗИКУ</h5>
                            <div className="space-y-6 pt-4 relative z-10">
                               <div className="flex justify-between items-end">
                                  <p className="text-[12px] text-slate-400 font-black italic uppercase">Ймовірність_СХЕМИ:</p>
@@ -420,17 +420,17 @@ export default function CargoManifestPremium() {
 
                         <div className="p-10 rounded-[4rem] border-2 border-white/[0.04] bg-black shadow-4xl space-y-8 relative overflow-hidden group/hs">
                            <div className="absolute top-6 right-8 text-slate-900 group-hover/hs:text-emerald-500/10 transition-colors"><Layers size={32} /></div>
-                           <h5 className="text-[12px] font-black text-slate-700 uppercase italic tracking-[0.5em] border-b border-white/[0.03] pb-6">ВЕРІФІКАЦІЯ_HSCODE</h5>
+                           <h5 className="text-[12px] font-black text-slate-700 uppercase italic tracking-[0.5em] border-b border-white/[0.03] pb-6">ВЕ� ІФІКАЦІЯ_HSCODE</h5>
                            <div className="space-y-6 pt-4">
                               <div className="p-6 rounded-2xl bg-black border-2 border-white/[0.03] space-y-1 relative group/val1 transition-all">
-                                 <p className="text-[9px] font-black text-slate-800 uppercase italic tracking-widest">ДЕКЛАРОВАНО</p>
+                                 <p className="text-[9px] font-black text-slate-800 uppercase italic tracking-widest">ДЕКЛА� ОВАНО</p>
                                  <div className="flex items-center justify-between">
                                     <p className="text-xl font-black text-slate-400 italic font-mono uppercase tracking-tighter">8541.10.00.00</p>
                                     <ShieldAlert size={16} className="text-amber-500" />
                                  </div>
                               </div>
                               <div className="p-6 rounded-2xl bg-emerald-500/5 border-2 border-emerald-500/20 space-y-1 relative group/val2 transition-all">
-                                 <p className="text-[9px] font-black text-emerald-800 uppercase italic tracking-widest">РЕКОМЕНДОВАНО_AZR</p>
+                                 <p className="text-[9px] font-black text-emerald-800 uppercase italic tracking-widest">� ЕКОМЕНДОВАНО_AZR</p>
                                  <div className="flex items-center justify-between">
                                     <p className="text-xl font-black text-emerald-500 italic font-mono uppercase tracking-tighter">8542.31.90.00</p>
                                     <ShieldCheck size={16} className="text-emerald-500 animate-bounce" />
@@ -447,7 +447,7 @@ export default function CargoManifestPremium() {
                        <div className="absolute inset-0 border-4 border-amber-500/10 rounded-full animate-ping group-hover:border-amber-500/30 transition-all" />
                     </div>
                     <div className="space-y-6">
-                      <h3 className="text-4xl font-black text-slate-700 uppercase tracking-widest italic leading-none shadow-sm">ОБЕРІТЬ_ОБ'ЄКТ_ДЛЯ_ФОРЕНЗИКИ</h3>
+                      <h3 className="text-4xl font-black text-slate-700 uppercase tracking-widest italic leading-none shadow-sm">ОБЕ� ІТЬ_ОБ'ЄКТ_ДЛЯ_ФО� ЕНЗИКИ</h3>
                       <p className="text-slate-900 font-black uppercase tracking-[0.6em] italic text-xs max-w-xl mx-auto opacity-60">СИСТЕМА ГОТОВА ДО ГЛИБИННОГО СКАНУВАННЯ МАНІФЕСТІВ</p>
                     </div>
                   </div>

@@ -111,14 +111,14 @@ describe('normalizeClientsHubSnapshot', () => {
     );
 
     expect(snapshot.hasAnyData).toBe(true);
-    expect(snapshot.summary[0]?.value).toBe('3 450 123');
+    expect(snapshot.summary[0]?.value).toBe('3� 450� 123');
     expect(snapshot.summary[3]?.value).toBe('10 / 12');
     expect(snapshot.segments.business.statusLabel).toBe('Підтверджено');
-    expect(snapshot.segments.business.metrics[0]?.value).toBe('3 450 123');
-    expect(snapshot.segments.business.metrics[1]?.value).toBe('98 000 000 $');
+    expect(snapshot.segments.business.metrics[0]?.value).toBe('3� 450� 123');
+    expect(snapshot.segments.business.metrics[1]?.value).toBe('98� 000� 000 $');
     expect(snapshot.segments.banking.metrics[2]?.value).toBe('82');
     expect(snapshot.segments.government.metrics[2]?.value).toBe('7');
-    expect(snapshot.segments.law.metrics[1]?.value).toBe('98 400');
+    expect(snapshot.segments.law.metrics[1]?.value).toBe('98� 400');
     expect(snapshot.segments.regulators.metrics[0]?.value).toBe('10 / 12');
     expect(snapshot.segments.legal.metrics[2]?.value).toBe('183 мс');
   });

@@ -1,5 +1,5 @@
 /**
- * 🎯 MA TARGET SCANNER // СКАНЕР ЦІЛЬОВИХ РИНКІВ | v58.2-WRAITH
+ * 🎯 MA TARGET SCANNER // СКАНЕ�  ЦІЛЬОВИХ � ИНКІВ | v58.2-WRAITH
  * PREDATOR Analytics — Mergers & Acquisitions Intelligence
  *
  * Компанії у фінансових труднощах — можливості:
@@ -58,10 +58,10 @@ interface MATarget {
 }
 
 const STATUS_CFG = {
-  distress:       { label: 'ФІНАНСОВИЙ СТРЕС',   color: '#E11D48', bg: 'bg-amber-900/20',     border: 'border-amber-500/40',    icon: AlertTriangle },
-  restructuring:  { label: 'РЕСТРУКТУРИЗАЦІЯ',   color: '#f59e0b', bg: 'bg-amber-900/15',   border: 'border-amber-800/30',  icon: RefreshCw },
+  distress:       { label: 'ФІНАНСОВИЙ СТ� ЕС',   color: '#E11D48', bg: 'bg-amber-900/20',     border: 'border-amber-500/40',    icon: AlertTriangle },
+  restructuring:  { label: '� ЕСТ� УКТУ� ИЗАЦІЯ',   color: '#f59e0b', bg: 'bg-amber-900/15',   border: 'border-amber-800/30',  icon: RefreshCw },
   opportunity:    { label: 'МОЖЛИВІСТЬ',          color: '#D4AF37', bg: 'bg-yellow-900/15', border: 'border-yellow-500/30', icon: Star },
-  watch:          { label: 'СПОСТЕРЕЖЕННЯ',       color: '#64748b', bg: 'bg-slate-900/15',  border: 'border-slate-800/30', icon: Eye },
+  watch:          { label: 'СПОСТЕ� ЕЖЕННЯ',       color: '#64748b', bg: 'bg-slate-900/15',  border: 'border-slate-800/30', icon: Eye },
 };
 
 const DEAL_CFG = {
@@ -209,7 +209,7 @@ const MATargetScannerView: React.FC = () => {
             }
           />
 
-          {/* ── МЕТРИКИ WRAITH ── */}
+          {/* ── МЕТ� ИКИ WRAITH ── */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               { label: 'ЦІЛЕЙ ЗНАЙДЕНО',       value: '127',   icon: Target,      color: '#D4AF37', sub: 'Detected In-Network' },
@@ -250,7 +250,7 @@ const MATargetScannerView: React.FC = () => {
                   />
                 </div>
                 <div className="flex gap-2 bg-black border-2 border-white/5 p-2 rounded-2xl shadow-inner">
-                  {([['all', 'УСІ_ВЕКТОРИ'], ['distress', 'СТРЕС'], ['opportunity', 'НАГОДА'], ['watch', 'НАГЛЯД']] as const).map(([v, l]) => (
+                  {([['all', 'УСІ_ВЕКТО� И'], ['distress', 'СТ� ЕС'], ['opportunity', 'НАГОДА'], ['watch', 'НАГЛЯД']] as const).map(([v, l]) => (
                     <button
                       key={v}
                       onClick={() => setFilterStatus(v)}
@@ -287,7 +287,7 @@ const MATargetScannerView: React.FC = () => {
                         onClick={() => window.location.reload()}
                         className="px-8 py-3 bg-amber-500/10 border border-amber-500/40 text-amber-500 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-amber-500 hover:text-black transition-all"
                       >
-                        ПЕРЕЗАПУСТИТИ_СКАН
+                        ПЕ� ЕЗАПУСТИТИ_СКАН
                       </button>
                    </div>
                 )}
@@ -420,7 +420,7 @@ const MATargetScannerView: React.FC = () => {
                 ) : (
                   <div className="h-full flex flex-col items-center justify-center p-20 opacity-20 transform translate-y-20">
                      <Target size={120} className="text-slate-600 mb-10 animate-pulse" />
-                     <p className="text-2xl font-black text-slate-500 uppercase tracking-[1em] italic text-center">ОБЕРІТЬ ТОРГОВУ ЦІЛЬ ДЛЯ АНАЛІЗУ</p>
+                     <p className="text-2xl font-black text-slate-500 uppercase tracking-[1em] italic text-center">ОБЕ� ІТЬ ТО� ГОВУ ЦІЛЬ ДЛЯ АНАЛІЗУ</p>
                   </div>
                 )}
               </AnimatePresence>

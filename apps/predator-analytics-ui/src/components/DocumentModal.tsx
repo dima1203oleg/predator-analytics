@@ -74,7 +74,7 @@ const DocumentModal: React.FC<Props> = ({ document, query, isOpen, onClose }) =>
         if (document) {
             setSimilarDocs([
                 { id: '1', title: 'Аналіз ланцюгів постачання металопродукції', score: 0.94 },
-                { id: '2', title: 'Реєстр офшорних бенефіціарів: Сектор Енергетика', score: 0.88 },
+                { id: '2', title: '� еєстр офшорних бенефіціарів: Сектор Енергетика', score: 0.88 },
                 { id: '3', title: 'Звіт про аномальну активність на митних постах', score: 0.82 },
             ]);
         }
@@ -129,7 +129,7 @@ const DocumentModal: React.FC<Props> = ({ document, query, isOpen, onClose }) =>
                                         </span>
                                         {document.score && (
                                             <span className="flex items-center gap-2 text-[10px] font-black text-emerald-400 uppercase tracking-widest italic">
-                                                <TrendingUp size={14} /> РЕЛЕВАНТНІСТЬ: {(document.score * 100).toFixed(0)}%
+                                                <TrendingUp size={14} /> � ЕЛЕВАНТНІСТЬ: {(document.score * 100).toFixed(0)}%
                                             </span>
                                         )}
                                     </div>
@@ -199,8 +199,8 @@ const DocumentModal: React.FC<Props> = ({ document, query, isOpen, onClose }) =>
                                                     <Brain className="w-16 h-16 text-emerald-500 animate-pulse" />
                                                 </div>
                                                 <div className="space-y-4">
-                                                    <h3 className="text-3xl font-black text-white uppercase italic tracking-tighter">СЕМАНТИЧНА_КОМПРЕСІЯ</h3>
-                                                    <p className="text-slate-500 font-black uppercase italic text-xs tracking-[0.4em] max-w-md mx-auto">AI ПРОАНАЛІЗУЄ ДОКУМЕНТ ТА СТВОРИТЬ СТИСЛИЙ ВИКЛАД КЛЮЧОВИХ ТЕЗ</p>
+                                                    <h3 className="text-3xl font-black text-white uppercase italic tracking-tighter">СЕМАНТИЧНА_КОМП� ЕСІЯ</h3>
+                                                    <p className="text-slate-500 font-black uppercase italic text-xs tracking-[0.4em] max-w-md mx-auto">AI П� ОАНАЛІЗУЄ ДОКУМЕНТ ТА СТВО� ИТЬ СТИСЛИЙ ВИКЛАД КЛЮЧОВИХ ТЕЗ</p>
                                                 </div>
                                                 <button
                                                     onClick={handleGenerateSummary}
@@ -208,7 +208,7 @@ const DocumentModal: React.FC<Props> = ({ document, query, isOpen, onClose }) =>
                                                     className="px-12 py-6 bg-emerald-700 hover:bg-emerald-600 text-white font-black uppercase tracking-[0.4em] italic rounded-[2rem] shadow-4xl transition-all disabled:opacity-50 flex items-center gap-4 mx-auto"
                                                 >
                                                     {isSummarizing ? <RefreshCw className="animate-spin" size={24} /> : <Zap size={24} />}
-                                                    {isSummarizing ? "ОБРОБКА..." : "ІНІЦІЮВАТИ_АНАЛІЗ"}
+                                                    {isSummarizing ? "ОБ� ОБКА..." : "ІНІЦІЮВАТИ_АНАЛІЗ"}
                                                 </button>
                                             </div>
                                         )}
@@ -253,7 +253,7 @@ const DocumentModal: React.FC<Props> = ({ document, query, isOpen, onClose }) =>
                                             <Brain className="w-6 h-6 text-emerald-500" />
                                             XAI_ПОЯСНЕННЯ
                                         </h3>
-                                        <p className="text-[11px] text-slate-500 font-black uppercase italic leading-relaxed">ВЕКТОРНИЙ_АНАЛІЗ_ДЕРЕВА_РІШЕНЬ_НЕЙРОМЕРЕЖІ_v5</p>
+                                        <p className="text-[11px] text-slate-500 font-black uppercase italic leading-relaxed">ВЕКТО� НИЙ_АНАЛІЗ_ДЕ� ЕВА_� ІШЕНЬ_НЕЙ� ОМЕ� ЕЖІ_v5</p>
                                     </div>
 
                                     {query && (
@@ -294,7 +294,7 @@ const DocumentModal: React.FC<Props> = ({ document, query, isOpen, onClose }) =>
                                     </div>
 
                                     <div className="pt-10 border-t border-white/5 space-y-6">
-                                        <h4 className="text-[10px] font-black text-slate-700 uppercase tracking-[0.4em] italic">ЕКСПОРТ_В_ЗОВНІШНІ_СИСТЕМИ</h4>
+                                        <h4 className="text-[10px] font-black text-slate-700 uppercase tracking-[0.4em] italic">ЕКСПО� Т_В_ЗОВНІШНІ_СИСТЕМИ</h4>
                                         <div className="grid grid-cols-2 gap-4">
                                             <button className="p-6 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl text-slate-500 hover:text-white transition-all flex flex-col items-center gap-3">
                                                 <Share2 size={24} />

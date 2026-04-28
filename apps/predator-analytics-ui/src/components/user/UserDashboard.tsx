@@ -25,7 +25,7 @@ const INITIAL_VOLUME_DATA = [
 
 const RISK_RADAR_DATA = [
   { subject: 'Фінанси', A: 20, fullMark: 100 },
-  { subject: 'Репутація', A: 80, fullMark: 100 },
+  { subject: '� епутація', A: 80, fullMark: 100 },
   { subject: 'Суди', A: 40, fullMark: 100 },
   { subject: 'Санкції', A: 10, fullMark: 100 },
   { subject: 'Зв\'язки', A: 65, fullMark: 100 },
@@ -110,7 +110,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ privacyMode, onSel
                     </div>
                 </div>
                 <div className="bg-slate-900 p-4 rounded-xl border border-slate-800 shadow-lg hover:border-slate-700 transition-colors panel-3d">
-                    <div className="text-[10px] text-slate-500 uppercase font-bold tracking-wider mb-1">Активні Ризики</div>
+                    <div className="text-[10px] text-slate-500 uppercase font-bold tracking-wider mb-1">Активні � изики</div>
                     <div className="text-2xl font-mono text-red-500 text-glow-red">3</div>
                     <div className="text-[10px] text-slate-400">Вимагають уваги</div>
                 </div>
@@ -187,7 +187,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ privacyMode, onSel
                     <AssetMap />
                 </TacticalCard>
 
-                <TacticalCard title="Ваш Профіль Ризику (360°)" className="h-[300px] panel-3d">
+                <TacticalCard title="Ваш Профіль � изику (360°)" className="h-[300px] panel-3d">
                     <ResponsiveContainer width="100%" height="100%">
                         <RadarChart cx="50%" cy="50%" outerRadius="70%" data={RISK_RADAR_DATA}>
                             <PolarGrid stroke="#334155" />

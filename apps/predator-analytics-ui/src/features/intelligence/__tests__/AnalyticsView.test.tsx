@@ -70,7 +70,7 @@ describe('AnalyticsView', () => {
         render(<AnalyticsView />);
         
         expect(screen.getByText(/СЕМАНТИЧНИЙ/i)).toBeInTheDocument();
-        expect(screen.getByText(/РАДАР/i)).toBeInTheDocument();
+        expect(screen.getByText(/� АДА� /i)).toBeInTheDocument();
         
         await waitFor(() => {
             expect(screen.getByText('TEST_ENTITY')).toBeInTheDocument();

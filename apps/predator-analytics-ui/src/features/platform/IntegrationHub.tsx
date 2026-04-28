@@ -434,7 +434,7 @@ const IntegrationHub: React.FC = () => {
                   <button className="p-2 rounded-lg bg-slate-700 text-slate-400 hover:text-white" title="Копіювати">
                     <Copy size={16} />
                   </button>
-                  <button className="p-2 rounded-lg bg-slate-700 text-slate-400 hover:text-white" title="Регенерувати">
+                  <button className="p-2 rounded-lg bg-slate-700 text-slate-400 hover:text-white" title="� егенерувати">
                     <RefreshCw size={16} />
                   </button>
                 </div>
@@ -448,7 +448,7 @@ const IntegrationHub: React.FC = () => {
                   <button className="p-2 rounded-lg bg-slate-700 text-slate-400 hover:text-white" title="Копіювати">
                     <Copy size={16} />
                   </button>
-                  <button className="p-2 rounded-lg bg-slate-700 text-slate-400 hover:text-white" title="Регенерувати">
+                  <button className="p-2 rounded-lg bg-slate-700 text-slate-400 hover:text-white" title="� егенерувати">
                     <RefreshCw size={16} />
                   </button>
                 </div>

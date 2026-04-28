@@ -24,7 +24,7 @@ describe('ClientSegmentView (business)', () => {
     expect(screen.getByText('Бізнес‑Воркбенч')).toBeInTheDocument();
     expect(screen.getByText('Експорт JSON')).toBeInTheDocument();
     expect(screen.getByText('Імпорт JSON')).toBeInTheDocument();
-    expect(screen.getByText('Радар Товару')).toBeInTheDocument();
+    expect(screen.getByText('� адар Товару')).toBeInTheDocument();
     expect(screen.getByText('Сигнали (стрічка)')).toBeInTheDocument();
     expect(screen.getByText('Щотижневий план дій')).toBeInTheDocument();
     expect(screen.getByText('Збережені сценарії')).toBeInTheDocument();

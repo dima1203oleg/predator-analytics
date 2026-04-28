@@ -186,7 +186,7 @@ const NetworkMapPage: React.FC = () => {
                             <span className="text-[10px] font-black text-rose-500/60 uppercase tracking-[0.4em] italic">TOPOLOGY_VISUALIZER // v58.2-WRAITH-ELITE</span>
                             <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
                         </div>
-                        <h1 className="text-3xl font-black tracking-tighter italic uppercase text-white skew-x-[-4deg]">МЕРЕЖЕВИЙ <span className="text-rose-500">АНАЛІЗ_ЗВʼЯЗКІВ</span></h1>
+                        <h1 className="text-3xl font-black tracking-tighter italic uppercase text-white skew-x-[-4deg]">МЕ� ЕЖЕВИЙ <span className="text-rose-500">АНАЛІЗ_ЗВʼЯЗКІВ</span></h1>
                     </div>
                 </div>
 
@@ -198,7 +198,7 @@ const NetworkMapPage: React.FC = () => {
                         </div>
                         <div className="w-px h-8 bg-white/5 mx-2" />
                         <div className="text-right">
-                            <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest">СТАТУС_КЛАСТЕРА</p>
+                            <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest">СТАТУС_КЛАСТЕ� А</p>
                             <p className="text-xs font-mono font-black text-rose-500 uppercase">READY</p>
                         </div>
                     </div>
@@ -207,7 +207,7 @@ const NetworkMapPage: React.FC = () => {
                         <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-700 group-focus-within/search:text-rose-500 transition-colors" size={20} />
                         <input 
                             type="text" 
-                            placeholder="ВВЕДІТЬ_ЄДРПОУ_АБО_ПІБ"
+                            placeholder="ВВЕДІТЬ_ЄД� ПОУ_АБО_ПІБ"
                             className="bg-black border-2 border-white/5 rounded-[2rem] pl-16 pr-8 py-5 text-sm w-96 focus:outline-none focus:border-rose-500/40 focus:bg-rose-500/5 transition-all font-mono italic uppercase tracking-widest placeholder:text-slate-800"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
@@ -249,7 +249,7 @@ const NetworkMapPage: React.FC = () => {
                     <div className="ml-10 space-y-2">
                         <div className="flex items-center gap-3 px-4 py-2 bg-black/40 border border-white/5 rounded-full">
                             <div className="w-2 h-2 rounded-full bg-rose-500" />
-                            <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">ОРГАНІЗАЦІЇ</span>
+                            <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">О� ГАНІЗАЦІЇ</span>
                         </div>
                         <div className="flex items-center gap-3 px-4 py-2 bg-black/40 border border-white/5 rounded-full">
                             <div className="w-2 h-2 rounded-full bg-rose-400" />
@@ -299,7 +299,7 @@ const NetworkMapPage: React.FC = () => {
                                                 </span>
                                                 {selectedNode.primary_risk === 'high' && (
                                                     <span className="px-4 py-2 bg-rose-500/10 border border-rose-500/30 rounded-xl text-[10px] font-black uppercase tracking-widest text-rose-500 animate-pulse flex items-center gap-3">
-                                                        <ShieldAlert size={14} /> КРИТИЧНИЙ_РИЗИК
+                                                        <ShieldAlert size={14} /> К� ИТИЧНИЙ_� ИЗИК
                                                     </span>
                                                 )}
                                             </div>
@@ -308,7 +308,7 @@ const NetworkMapPage: React.FC = () => {
                                         <div className="p-8 bg-white/[0.02] border border-white/5 rounded-[3rem] space-y-6">
                                             <div className="flex items-center gap-4 text-rose-500">
                                                 <Zap size={20} />
-                                                <span className="text-xs font-black uppercase tracking-[0.3em] italic">НЕЙРО-ВИСНОВОК v5</span>
+                                                <span className="text-xs font-black uppercase tracking-[0.3em] italic">НЕЙ� О-ВИСНОВОК v5</span>
                                             </div>
                                             <p className="text-sm font-black text-slate-300 leading-relaxed italic opacity-80">
                                                 Об'єкт ідентифіковано як {selectedNode.type === 'company' ? "центральний вузол холдингової структури" : "пов'язану особу з правом вирішального впливу"}.
@@ -341,10 +341,10 @@ const NetworkMapPage: React.FC = () => {
 
                                     <div className="flex flex-col gap-4 mt-auto pt-10 border-t border-white/5">
                                         <button className="w-full py-6 bg-rose-600 hover:bg-white text-white hover:text-black font-black rounded-3xl uppercase tracking-[0.4em] text-[10px] transition-all flex items-center justify-center gap-5 shadow-2xl">
-                                            <Share2 size={20} /> ВІДКРИТИ_CERS_ДОСЬЄ
+                                            <Share2 size={20} /> ВІДК� ИТИ_CERS_ДОСЬЄ
                                         </button>
                                         <button className="w-full py-6 bg-white/5 hover:bg-white/10 text-slate-500 font-black rounded-3xl uppercase tracking-[0.4em] text-[10px] transition-all flex items-center justify-center gap-5">
-                                            <Radio size={20} /> МОНІТОРИНГ_ЗВʼЯЗКІВ
+                                            <Radio size={20} /> МОНІТО� ИНГ_ЗВʼЯЗКІВ
                                         </button>
                                     </div>
                                 </div>

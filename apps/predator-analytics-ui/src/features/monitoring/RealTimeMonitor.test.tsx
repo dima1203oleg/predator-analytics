@@ -35,7 +35,7 @@ vi.stubGlobal('WebSocket', MockWebSocket);
 vi.mock('@/context/ThemeContext', () => ({
   useTheme: () => ({
     mode: 'sovereign',
-    modeInfo: { label: 'СУВЕРЕННИЙ' },
+    modeInfo: { label: 'СУВЕ� ЕННИЙ' },
     cycleMode: vi.fn()
   }),
   ThemeProvider: ({ children }: any) => <div>{children}</div>
@@ -57,7 +57,7 @@ describe('RealTimeMonitor', () => {
 
   it('should render monitor title', () => {
     render(<RealTimeMonitor />);
-    expect(screen.getByText(/МОНІТОРИНГ/)).toBeInTheDocument();
+    expect(screen.getByText(/МОНІТО� ИНГ/)).toBeInTheDocument();
   });
 
   it('should display connection status', async () => {
@@ -80,14 +80,14 @@ describe('RealTimeMonitor', () => {
 
   it('should have pause/resume button', () => {
     render(<RealTimeMonitor />);
-    expect(screen.getByText(/ПРИЗУПИНИТИ/i)).toBeInTheDocument();
+    expect(screen.getByText(/П� ИЗУПИНИТИ/i)).toBeInTheDocument();
   });
 
   it('should toggle pause state', async () => {
     const user = userEvent.setup();
     render(<RealTimeMonitor />);
 
-    const pauseButton = screen.getByText(/ПРИЗУПИНИТИ/i);
+    const pauseButton = screen.getByText(/П� ИЗУПИНИТИ/i);
     await user.click(pauseButton);
 
     expect(screen.getByText(/ВІДНОВИТИ/i)).toBeInTheDocument();
@@ -95,7 +95,7 @@ describe('RealTimeMonitor', () => {
 
   it('should render filter section', () => {
     render(<RealTimeMonitor />);
-    expect(screen.getByText('ФІЛЬТРАЦІЯ_ПОТОКУ')).toBeInTheDocument();
+    expect(screen.getByText('ФІЛЬТ� АЦІЯ_ПОТОКУ')).toBeInTheDocument();
   });
 
   it('should have type filter dropdown', () => {
@@ -105,11 +105,11 @@ describe('RealTimeMonitor', () => {
 
   it('should have severity filter dropdown', () => {
     render(<RealTimeMonitor />);
-    expect(screen.getByText(/УСІ_РІВНІ/)).toBeInTheDocument();
+    expect(screen.getByText(/УСІ_� ІВНІ/)).toBeInTheDocument();
   });
 
   it('should display no events message when empty', () => {
     render(<RealTimeMonitor />);
-    expect(screen.getByText(/НЕМАЄ ПОДІЙ ДЛЯ ВІДОБРАЖЕННЯ/)).toBeInTheDocument();
+    expect(screen.getByText(/НЕМАЄ ПОДІЙ ДЛЯ ВІДОБ� АЖЕННЯ/)).toBeInTheDocument();
   });
 });

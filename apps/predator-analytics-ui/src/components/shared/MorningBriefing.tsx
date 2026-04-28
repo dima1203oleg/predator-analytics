@@ -55,7 +55,7 @@ export const MorningBriefing: React.FC<MorningBriefingProps> = ({ items, userNam
             </div>
             <div>
               <h2 className="text-xl font-black tracking-tight text-white sm:text-2xl">
-                Ранковий брифінг {userName ? `, ${userName}` : ''}
+                � анковий брифінг {userName ? `, ${userName}` : ''}
               </h2>
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-500">
                 AI ПІДСУМОК ЗА ОСТАННІ 24 ГОДИНИ
@@ -119,8 +119,8 @@ export const MorningBriefing: React.FC<MorningBriefingProps> = ({ items, userNam
             </h4>
             <div className="space-y-4">
                 <MiniStat label="Нових записів" value="14.2 тис" trend="up" />
-                <MiniStat label="Ризикових вузлів" value="128" trend="down" />
-                <MiniStat label="Ринкова активність" value="+14%" trend="up" />
+                <MiniStat label="� изикових вузлів" value="128" trend="down" />
+                <MiniStat label="� инкова активність" value="+14%" trend="up" />
             </div>
 
             <button className="mt-6 w-full rounded-2xl bg-cyan-500/10 border border-cyan-500/20 py-3 text-xs font-black uppercase tracking-[0.15em] text-cyan-200 transition-all hover:bg-cyan-500/20">

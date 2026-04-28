@@ -171,7 +171,7 @@ export default function FactoryStudio() {
                     : tab === 'patterns'
                     ? '⭐ Золоті Патерни'
                     : tab === 'training'
-                    ? '🧠 Тренування'
+                    ? '�  Тренування'
                     : '🧪 Тест'}
                 </button>
               ))}
@@ -367,7 +367,7 @@ export default function FactoryStudio() {
                           <div className="flex items-center justify-between">
                             <label className="text-xs text-slate-400 uppercase font-bold">
                               {metric === 'coverage' ? 'Покриття' : 
-                               metric === 'pass_rate' ? 'Рівень Проходження' :
+                               metric === 'pass_rate' ? '� івень Проходження' :
                                metric === 'performance' ? 'Продуктивність' :
                                metric === 'chaos_resilience' ? 'Стійкість до Хаосу' :
                                'Бізнес KPI'}
@@ -405,7 +405,7 @@ export default function FactoryStudio() {
                       )}
                     >
                       <Send size={16} />
-                      {testIngestMutation.isPending ? 'Надсилаю...' : 'Надіслати Результат'}
+                      {testIngestMutation.isPending ? 'Надсилаю...' : 'Надіслати � езультат'}
                     </button>
 
                     {/* Result */}

@@ -99,7 +99,7 @@ export const SelfHealingStatus: React.FC = () => {
   const getHealthIcon = (status: string) => {
     switch (status) {
       case 'healthy': return '✅';
-      case 'degraded': return '⚠️';
+      case 'degraded': return '� ️';
       case 'recovering': return '🔄';
       case 'critical': return '❌';
       default: return '❓';

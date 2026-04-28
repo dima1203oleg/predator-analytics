@@ -280,9 +280,8 @@ def resolve_person(
         score = fuzzy_similarity(normalized, candidate.name_normalized)
 
         # Якщо є дата народження — підтверджуємо
-        if date_of_birth and candidate.address:
-            if date_of_birth != candidate.address:
-                score *= 0.5
+        if date_of_birth and candidate.address and date_of_birth != candidate.address:
+            score *= 0.5
 
         if score > best_score:
             best_score = score

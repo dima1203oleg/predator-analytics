@@ -32,7 +32,7 @@ export const Reports: React.FC = () => {
                 <th className="p-4 font-medium">Назва документу</th>
                 <th className="p-4 font-medium">Тип</th>
                 <th className="p-4 font-medium">Дата</th>
-                <th className="p-4 font-medium">Розмір</th>
+                <th className="p-4 font-medium">� озмір</th>
                 <th className="p-4 font-medium text-right">Дії</th>
               </tr>
             </thead>

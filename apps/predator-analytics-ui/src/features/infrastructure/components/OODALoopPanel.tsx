@@ -20,9 +20,9 @@ export function OODALoopPanel({
   onDecline 
 }: OODALoopPanelProps) {
   const steps = [
-    { id: 'OBSERVING', label: 'СПОСТЕРЕЖЕННЯ', icon: <Eye className="w-4 h-4" />, color: 'slate' },
-    { id: 'ORIENTING', label: 'ОРІЄНТАЦІЯ', icon: <Compass className="w-4 h-4" />, color: 'rose' },
-    { id: 'DECIDING', label: 'РІШЕННЯ', icon: <Lightbulb className="w-4 h-4" />, color: 'rose' },
+    { id: 'OBSERVING', label: 'СПОСТЕ� ЕЖЕННЯ', icon: <Eye className="w-4 h-4" />, color: 'slate' },
+    { id: 'ORIENTING', label: 'О� ІЄНТАЦІЯ', icon: <Compass className="w-4 h-4" />, color: 'rose' },
+    { id: 'DECIDING', label: '� ІШЕННЯ', icon: <Lightbulb className="w-4 h-4" />, color: 'rose' },
     { id: 'ACTING', label: 'ДІЯ', icon: <Zap className="w-4 h-4" />, color: 'rose' },
   ];
 
@@ -50,7 +50,7 @@ export function OODALoopPanel({
             "bg-slate-500/10 border-slate-500/20 text-slate-400"
           )}>
             <Bell className="w-3 h-3" />
-            {alertLevel === 'NORMAL' ? 'НОРМАЛЬНИЙ' : alertLevel === 'ELEVATED' ? 'ПІДВИЩЕНИЙ' : 'КРИТИЧНИЙ'}
+            {alertLevel === 'NORMAL' ? 'НО� МАЛЬНИЙ' : alertLevel === 'ELEVATED' ? 'ПІДВИЩЕНИЙ' : 'К� ИТИЧНИЙ'}
           </div>
       </div>
 
@@ -148,7 +148,7 @@ export function OODALoopPanel({
                   {incident.human_approval_required && incident.status === 'DECIDING' && (
                     <div className="mt-4 p-4 bg-rose-500/[0.03] rounded-xl border border-rose-500/20 space-y-3">
                        <div className="flex items-center gap-2 text-[9px] font-black text-rose-500 uppercase tracking-widest animate-pulse">
-                        <ShieldOff className="w-3 h-3" /> ПІДТВЕРДЖЕННЯ ОПЕРАТОРА
+                        <ShieldOff className="w-3 h-3" /> ПІДТВЕ� ДЖЕННЯ ОПЕ� АТО� А
                       </div>
                       <div className="flex gap-3">
                         <button 
@@ -180,8 +180,8 @@ export function OODALoopPanel({
               </motion.div>
               <CheckCircle className="w-6 h-6 text-rose-500/40 relative z-10" />
               <p className="text-[10px] text-slate-600 font-black uppercase tracking-[0.2em] relative z-10 leading-relaxed">
-                СИСТЕМИ В НОРМІ<br/>
-                <span className="text-[8px] opacity-60">OODA LOOP: ПАСИВНИЙ МОНІТОРИНГ</span>
+                СИСТЕМИ В НО� МІ<br/>
+                <span className="text-[8px] opacity-60">OODA LOOP: ПАСИВНИЙ МОНІТО� ИНГ</span>
               </p>
             </div>
           )}

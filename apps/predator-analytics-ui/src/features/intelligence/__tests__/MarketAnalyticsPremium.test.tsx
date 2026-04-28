@@ -97,12 +97,12 @@ describe('MarketAnalyticsPremium', () => {
             </MemoryRouter>
         )
 
-        expect(screen.getByText(/РИНКОВА/i)).toBeInTheDocument()
+        expect(screen.getByText(/� ИНКОВА/i)).toBeInTheDocument()
         expect(screen.getByText(/АНАЛІТИКА/i)).toBeInTheDocument()
 
         await waitFor(() => {
             expect(screen.getByText(/\$12\.4M/i)).toBeInTheDocument()
-            expect(screen.getByTestId('stat-МАРЖИНАЛЬНІСТЬ')).toBeInTheDocument()
+            expect(screen.getByTestId('stat-МА� ЖИНАЛЬНІСТЬ')).toBeInTheDocument()
         })
     })
 
@@ -129,7 +129,7 @@ describe('MarketAnalyticsPremium', () => {
 
         await waitFor(() => {
             expect(screen.getByText(/NEURAL Intelligence/i)).toBeInTheDocument()
-            expect(screen.getByText(/AI_ТРАЄКТОРІЇ_ТА_МОЖЛИВОСТІ/i)).toBeInTheDocument()
+            expect(screen.getByText(/AI_Т� АЄКТО� ІЇ_ТА_МОЖЛИВОСТІ/i)).toBeInTheDocument()
             expect(screen.getAllByText(/Електроніка/i).length).toBeGreaterThan(0)
         })
     })

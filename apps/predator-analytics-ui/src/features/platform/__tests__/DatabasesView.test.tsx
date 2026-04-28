@@ -10,7 +10,7 @@ vi.mock('@/hooks/useBackendStatus', () => ({
     useBackendStatus: () => ({
         isOffline: false,
         isTruthOnly: true,
-        modeLabel: 'Режим правдивих даних',
+        modeLabel: '� ежим правдивих даних',
         sourceLabel: 'localhost:9080/api/v1',
         sourceType: 'local',
         statusLabel: 'Зʼєднання активне',
@@ -76,8 +76,8 @@ describe('DatabasesView', () => {
     it('рендерить заголовок і базові блоки', () => {
         render(<DatabasesView />);
 
-        expect(screen.getByRole('heading', { name: /НЕЙРОННА СІТКА/i })).toBeInTheDocument();
-        expect(screen.getByText(/СИНХРОНІЗОВАНЕ ЯДРО ЗНАНЬ/i)).toBeInTheDocument();
+        expect(screen.getByRole('heading', { name: /НЕЙ� ОННА СІТКА/i })).toBeInTheDocument();
+        expect(screen.getByText(/СИНХ� ОНІЗОВАНЕ ЯД� О ЗНАНЬ/i)).toBeInTheDocument();
         expect(screen.getByTestId('etl-monitor')).toBeInTheDocument();
     });
 

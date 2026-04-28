@@ -63,8 +63,8 @@ export const MediaIntelligencePanel: React.FC = () => {
                         <Mic className="w-6 h-6 text-rose-400" />
                     </div>
                     <div>
-                        <h3 className="text-sm font-black text-white uppercase tracking-widest">Медіа-Розвідка</h3>
-                        <p className="text-[10px] text-slate-500 font-mono">Обробка Голосу та Відео в Режимі Реального Часу</p>
+                        <h3 className="text-sm font-black text-white uppercase tracking-widest">Медіа-� озвідка</h3>
+                        <p className="text-[10px] text-slate-500 font-mono">Обробка Голосу та Відео в � ежимі � еального Часу</p>
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -147,11 +147,11 @@ export const MediaIntelligencePanel: React.FC = () => {
                                 <div className="flex items-center justify-between pb-4 border-b border-white/5">
                                     <div className="flex items-center gap-2">
                                         <Activity size={16} className="text-rose-400" />
-                                        <span className="text-xs font-bold text-white">Результати ШІ-Аналізу</span>
+                                        <span className="text-xs font-bold text-white">� езультати ШІ-Аналізу</span>
                                     </div>
                                     {activeItem.sentiment === 'danger' && (
                                         <span className="flex items-center gap-1 text-xs font-black text-rose-500 blink">
-                                            <AlertTriangle size={14} /> ВИЯВЛЕНО ПІДОЗРІЛУ АКТИВНІСТЬ
+                                            <AlertTriangle size={14} /> ВИЯВЛЕНО ПІДОЗ� ІЛУ АКТИВНІСТЬ
                                         </span>
                                     )}
                                 </div>

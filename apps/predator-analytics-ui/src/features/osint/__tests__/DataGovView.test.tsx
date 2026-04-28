@@ -63,7 +63,7 @@ vi.mock('@/hooks/useBackendStatus', () => ({
     useBackendStatus: () => ({
         isOffline: false,
         isTruthOnly: true,
-        modeLabel: 'Режим правдивих даних',
+        modeLabel: '� ежим правдивих даних',
         sourceLabel: 'localhost:9080/api/v1',
         sourceType: 'local',
         statusLabel: 'Зʼєднання активне',
@@ -135,7 +135,7 @@ describe('DataGovView', () => {
     it('повинен відмальовувати основні елементи інтерфейсу', async () => {
         render(<DataGovView />);
         
-        expect(screen.getByText(/ВІДКРИТІ/i)).toBeInTheDocument();
+        expect(screen.getByText(/ВІДК� ИТІ/i)).toBeInTheDocument();
         expect(screen.getByText(/ДАНІ/i)).toBeInTheDocument();
         expect(screen.getByPlaceholderText(/ПОШУК ПО МІЛЬЙОНАХ/i)).toBeInTheDocument();
         await waitFor(() => {
@@ -236,7 +236,7 @@ describe('DataGovView', () => {
 
         render(<DataGovView />);
 
-        expect(await screen.findByText(/НЕМАЄ ПІДТВЕРДЖЕНИХ ДАНИХ/i)).toBeInTheDocument();
+        expect(await screen.findByText(/НЕМАЄ ПІДТВЕ� ДЖЕНИХ ДАНИХ/i)).toBeInTheDocument();
         expect(screen.queryByText('DATASET_ALPHA')).not.toBeInTheDocument();
         expect(screen.getByText(/Локальні датасети не підставляються/i)).toBeInTheDocument();
     });

@@ -73,7 +73,7 @@ describe('ComplianceView', () => {
         render(<ComplianceView />);
         
         await waitFor(() => {
-            expect(screen.getByText(/ЦЕНТР КОМПЛАЄНСУ/i)).toBeInTheDocument();
+            expect(screen.getByText(/ЦЕНТ�  КОМПЛАЄНСУ/i)).toBeInTheDocument();
             expect(screen.getByText(/analyst_01/i)).toBeInTheDocument();
             expect(screen.getByText(/VIEW_ENTITY/i)).toBeInTheDocument();
         });

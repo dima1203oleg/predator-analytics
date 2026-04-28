@@ -157,11 +157,11 @@ describe('SmartCompanySearch Component', () => {
         const filterButton = screen.getByText('⚙️ Фільтри');
 
         // Спочатку скритто
-        expect(screen.queryByText(/Регіон 🗺️/)).not.toBeInTheDocument();
+        expect(screen.queryByText(/� егіон 🗺️/)).not.toBeInTheDocument();
 
         // Клікнути
         await user.click(filterButton);
-        expect(screen.getByText(/Регіон 🗺️/)).toBeInTheDocument();
+        expect(screen.getByText(/� егіон 🗺️/)).toBeInTheDocument();
     });
 
     it('should apply filters', async () => {

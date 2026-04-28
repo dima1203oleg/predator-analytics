@@ -30,7 +30,7 @@ export type NodeType = 'Person' | 'Organization' | 'Location' | 'Event' | 'Asset
 // Типи зв'язків
 export type EdgeType = 'OWNS' | 'MANAGES' | 'CONTROLS' | 'REGISTERED_AT' | 'INVOLVED_IN' | 'RELATED_TO';
 
-// Рівні ризику
+// � івні ризику
 // export type RiskLevel = 'critical' | 'high' | 'medium' | 'low' | 'minimal';
 
 // Інтерфейс вузла
@@ -583,7 +583,7 @@ export const GraphViewer: React.FC<GraphViewerProps> = ({
               </div>
             ))}
             <span className="mx-2">|</span>
-            <span className="font-medium">Ризик:</span>
+            <span className="font-medium">� изик:</span>
             {Object.entries(RISK_COLORS).map(([level, color]) => (
               <div key={level} className="flex items-center gap-1">
                 <div

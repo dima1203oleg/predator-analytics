@@ -120,12 +120,12 @@ export const FinancialFlowPanel: React.FC<FinancialFlowPanelProps> = ({ flows })
                           NODE_SIG: {Math.random().toString(36).substring(7).toUpperCase()}
                         </span>
                         <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] flex items-center gap-3">
-                          <Layers size={14} className="text-rose-500 animate-pulse" /> ВЕКТОР_ПОТОКУ
+                          <Layers size={14} className="text-rose-500 animate-pulse" /> ВЕКТО� _ПОТОКУ
                         </span>
                       </div>
                       <div className="flex items-center gap-8">
                         <div className="flex flex-col">
-                           <span className="text-[9px] text-slate-500 font-black uppercase mb-2 tracking-tighter opacity-60">ДЖЕРЕЛО_АКТИВУ</span>
+                           <span className="text-[9px] text-slate-500 font-black uppercase mb-2 tracking-tighter opacity-60">ДЖЕ� ЕЛО_АКТИВУ</span>
                            <p className="text-[18px] font-black text-white uppercase italic tracking-tight font-display chromatic-elite group-hover:scale-105 transition-transform duration-500 origin-left">
                             {flow.from}
                            </p>
@@ -141,7 +141,7 @@ export const FinancialFlowPanel: React.FC<FinancialFlowPanelProps> = ({ flows })
                           <ArrowRightLeft size={18} className="text-rose-500/50 mt-2 animate-pulse" />
                         </div>
                         <div className="flex flex-col">
-                           <span className="text-[9px] text-slate-500 font-black uppercase mb-2 tracking-tighter opacity-60">ПРИЗНАЧЕННЯ_АКТИВУ</span>
+                           <span className="text-[9px] text-slate-500 font-black uppercase mb-2 tracking-tighter opacity-60">П� ИЗНАЧЕННЯ_АКТИВУ</span>
                            <p className="text-[18px] font-black text-white uppercase italic tracking-tight font-display chromatic-elite group-hover:scale-105 transition-transform duration-500 origin-left">
                             {flow.to}
                            </p>
@@ -188,7 +188,7 @@ export const FinancialFlowPanel: React.FC<FinancialFlowPanelProps> = ({ flows })
                    
                    <div className="space-y-3">
                      <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-3">
-                       <ShieldAlert size={14} className={cn(flow.risk_score > 0.7 ? "text-rose-500 animate-pulse" : "text-emerald-500")} /> РЕЙТИНГ_РИЗИКУ
+                       <ShieldAlert size={14} className={cn(flow.risk_score > 0.7 ? "text-rose-500 animate-pulse" : "text-emerald-500")} /> � ЕЙТИНГ_� ИЗИКУ
                      </span>
                      <div className="flex items-center gap-5">
                         <div className="flex-1 h-2.5 bg-white/5 rounded-full overflow-hidden border border-white/10 relative">
@@ -213,7 +213,7 @@ export const FinancialFlowPanel: React.FC<FinancialFlowPanelProps> = ({ flows })
 
                    <div className="space-y-3">
                      <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-3">
-                       <Cpu size={14} className="text-rose-500/60" /> ТИП_ОБРОБКИ
+                       <Cpu size={14} className="text-rose-500/60" /> ТИП_ОБ� ОБКИ
                      </span>
                      <div className="flex items-center gap-3">
                         <div className="w-2 h-5 bg-rose-500/30 rounded-sm" />
@@ -224,7 +224,7 @@ export const FinancialFlowPanel: React.FC<FinancialFlowPanelProps> = ({ flows })
                    <div className="flex items-end justify-end gap-4">
                       <button className="flex items-center gap-4 px-10 py-4 bg-white/5 hover:bg-rose-500/10 border border-white/10 hover:border-rose-500/50 text-white text-[11px] font-black uppercase tracking-[0.3em] transition-all rounded-2xl italic group/btn overflow-hidden relative shadow-2xl">
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000" />
-                        ДЕТАЛІ_ТРАНЗАКЦІЇ
+                        ДЕТАЛІ_Т� АНЗАКЦІЇ
                         <ArrowUpRight size={18} className="text-rose-500 group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />
                       </button>
                    </div>
@@ -247,10 +247,10 @@ export const FinancialFlowPanel: React.FC<FinancialFlowPanelProps> = ({ flows })
                       </div>
                       <div>
                         <div className="flex items-center gap-3">
-                          <p className="text-[14px] font-black text-rose-500 uppercase tracking-[0.4em] italic chromatic-elite">КРИТИЧНА_АНОМАЛІЯ_ВИЯВЛЕНА</p>
+                          <p className="text-[14px] font-black text-rose-500 uppercase tracking-[0.4em] italic chromatic-elite">К� ИТИЧНА_АНОМАЛІЯ_ВИЯВЛЕНА</p>
                           <span className="px-3 py-1 bg-rose-500 text-black text-[10px] font-black rounded-lg uppercase shadow-lg">SEVERE_THREAT</span>
                         </div>
-                        <p className="text-[12px] text-rose-500/90 font-bold mt-2 uppercase tracking-[0.1em] max-w-md">ВИЯВЛЕНО ПАТЕРН ВІЙСЬКОВОЇ ТРАНЗАКЦІЇ. ВЕКТОР: ОФШОРНИЙ МОНІТОРИНГ. СТАТУС: ПЕРЕХОПЛЕННЯ.</p>
+                        <p className="text-[12px] text-rose-500/90 font-bold mt-2 uppercase tracking-[0.1em] max-w-md">ВИЯВЛЕНО ПАТЕ� Н ВІЙСЬКОВОЇ Т� АНЗАКЦІЇ. ВЕКТО� : ОФШО� НИЙ МОНІТО� ИНГ. СТАТУС: ПЕ� ЕХОПЛЕННЯ.</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-6 relative z-10">
@@ -284,8 +284,8 @@ export const FinancialFlowPanel: React.FC<FinancialFlowPanelProps> = ({ flows })
               <div className="absolute inset-0 blur-3xl bg-rose-500/20 group-hover:bg-rose-500/30 transition-all" />
             </div>
             <div className="space-y-4 relative z-10">
-              <p className="text-[18px] font-black text-slate-700 uppercase tracking-[1em] italic chromatic-elite">ЧИСТА_ОПЕРАЦІЙНА_ЗОНА</p>
-              <p className="text-[11px] font-bold text-slate-800 uppercase tracking-[0.5em] opacity-60">СИСТЕМА МОНІТОРИНГУ ПЕРЕБУВАЄ У СТАНІ ВИСОКОЇ ГОТОВНОСТІ</p>
+              <p className="text-[18px] font-black text-slate-700 uppercase tracking-[1em] italic chromatic-elite">ЧИСТА_ОПЕ� АЦІЙНА_ЗОНА</p>
+              <p className="text-[11px] font-bold text-slate-800 uppercase tracking-[0.5em] opacity-60">СИСТЕМА МОНІТО� ИНГУ ПЕ� ЕБУВАЄ У СТАНІ ВИСОКОЇ ГОТОВНОСТІ</p>
             </div>
           </div>
         )}

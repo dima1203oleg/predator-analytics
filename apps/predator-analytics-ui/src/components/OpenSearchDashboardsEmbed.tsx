@@ -144,10 +144,10 @@ export const OpenSearchDashboardsEmbed: React.FC<OpenSearchDashboardsEmbedProps>
                 console.log('Selected:', e.target.value);
               }}
             >
-              <option value="">🏠 Список дашбордів</option>
+              <option value="">�  Список дашбордів</option>
               <option value={DASHBOARDS.SEARCH_ANALYTICS}>📊 Аналітика Пошуку</option>
               <option value={DASHBOARDS.SYSTEM_METRICS}>📈 Метрики Системи</option>
-              <option value={DASHBOARDS.ERROR_LOGS}>⚠️ Журнал Помилок</option>
+              <option value={DASHBOARDS.ERROR_LOGS}>� ️ Журнал Помилок</option>
               <option value={DASHBOARDS.LATENCY_OVERVIEW}>⏱️ Затримки</option>
             </select>
 

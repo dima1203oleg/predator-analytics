@@ -26,7 +26,7 @@ export interface FactoryCoordinatorChatProps {
 }
 
 /**
- * 🤖 FACTORY COORDINATOR CHAT // КООРДИНАТОР ЯДРА | v61.0-ELITE
+ * 🤖 FACTORY COORDINATOR CHAT // КОО� ДИНАТО�  ЯД� А | v61.0-ELITE
  * PREDATOR Analytics — AI Autonomous Factory Orchestration
  */
 export const FactoryCoordinatorChat: React.FC<FactoryCoordinatorChatProps> = ({
@@ -54,12 +54,12 @@ export const FactoryCoordinatorChat: React.FC<FactoryCoordinatorChatProps> = ({
           </div>
           <div>
             <div className="flex items-center gap-3 mb-1">
-              <h2 className="text-xl font-black text-white tracking-[0.1em] uppercase italic">КООРДИНАТОР ЯДРА</h2>
+              <h2 className="text-xl font-black text-white tracking-[0.1em] uppercase italic">КОО� ДИНАТО�  ЯД� А</h2>
               <span className="px-3 py-0.5 bg-rose-500/10 border border-rose-500/20 text-rose-500 text-[8px] font-black uppercase tracking-widest rounded-sm">v61.0</span>
             </div>
             <div className="flex items-center gap-3">
               <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_12px_#10b981]" />
-              <span className="text-[10px] font-mono text-emerald-500/60 uppercase tracking-[0.2em] font-black italic">OODA-LOOP ACTIVE // ТЕЛЕМЕТРІЯ: НОРМА</span>
+              <span className="text-[10px] font-mono text-emerald-500/60 uppercase tracking-[0.2em] font-black italic">OODA-LOOP ACTIVE // ТЕЛЕМЕТ� ІЯ: НО� МА</span>
             </div>
           </div>
         </div>
@@ -113,7 +113,7 @@ export const FactoryCoordinatorChat: React.FC<FactoryCoordinatorChatProps> = ({
                    msg.sender === 'user' ? "flex-row-reverse" : "flex-row"
                  )}>
                     <span className={msg.sender === 'user' ? 'text-rose-500' : 'text-white'}>
-                      {msg.sender === 'user' ? 'ОПЕРАТОР' : 'КООРДИНАТОР'}
+                      {msg.sender === 'user' ? 'ОПЕ� АТО� ' : 'КОО� ДИНАТО� '}
                     </span>
                     <div className="w-1 h-1 bg-white/10 rounded-full" />
                     <span>{msg.timestamp.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })}</span>
@@ -192,11 +192,11 @@ export const FactoryCoordinatorChat: React.FC<FactoryCoordinatorChatProps> = ({
          <div className="mt-6 flex items-center gap-10 px-4">
             <div className="flex items-center gap-3">
                <Shield size={12} className="text-emerald-500" />
-               <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] italic">КАНАЛ_ЗАШИФРОВАНО</span>
+               <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] italic">КАНАЛ_ЗАШИФ� ОВАНО</span>
             </div>
             <div className="flex items-center gap-3">
                <Zap size={12} className="text-rose-500" />
-               <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] italic">ПРІОРИТЕТ: ЕКСТРЕМАЛЬНИЙ</span>
+               <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] italic">П� ІО� ИТЕТ: ЕКСТ� ЕМАЛЬНИЙ</span>
             </div>
             <div className="flex items-center gap-3 ml-auto opacity-40">
                <Terminal size={12} className="text-white" />

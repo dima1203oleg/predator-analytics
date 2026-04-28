@@ -15,7 +15,7 @@ interface Case {
   id: string;
   title: string;
   situation: string;
-  status: 'ВІДКРИТО' | 'В РОБОТІ' | 'ЗАВЕРШЕНО' | 'КРИТИЧНО';
+  status: 'ВІДК� ИТО' | 'В � ОБОТІ' | 'ЗАВЕ� ШЕНО' | 'К� ИТИЧНО';
   priority: 'low' | 'medium' | 'high' | 'critical';
   risk_score: number;
   sector: string;
@@ -26,10 +26,10 @@ interface Case {
 }
 
 const statusConfig = {
-  'ВІДКРИТО': { color: 'bg-blue-500/20 text-blue-400 border-blue-500/30', icon: FileText },
-  'В РОБОТІ': { color: 'bg-amber-500/20 text-amber-400 border-amber-500/30', icon: Clock },
-  'ЗАВЕРШЕНО': { color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30', icon: CheckCircle },
-  'КРИТИЧНО': { color: 'bg-rose-500/20 text-rose-400 border-rose-500/30', icon: AlertTriangle },
+  'ВІДК� ИТО': { color: 'bg-blue-500/20 text-blue-400 border-blue-500/30', icon: FileText },
+  'В � ОБОТІ': { color: 'bg-amber-500/20 text-amber-400 border-amber-500/30', icon: Clock },
+  'ЗАВЕ� ШЕНО': { color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30', icon: CheckCircle },
+  'К� ИТИЧНО': { color: 'bg-rose-500/20 text-rose-400 border-rose-500/30', icon: AlertTriangle },
 };
 
 const priorityColors = {
@@ -95,7 +95,7 @@ const CaseCard = ({ caseItem, onClick }: { caseItem: Case; onClick: () => void }
           <span className={`text-2xl font-black ${getRiskColor(caseItem.risk_score)}`}>
             {caseItem.risk_score}
           </span>
-          <span className="text-[10px] text-slate-500 uppercase">РИЗИК</span>
+          <span className="text-[10px] text-slate-500 uppercase">� ИЗИК</span>
         </div>
       </div>
 
@@ -265,10 +265,10 @@ export const SmartCaseBrowser: React.FC<{ onCaseSelect?: (caseItem: Case) => voi
             className="px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:border-cyan-500/50 outline-none appearance-none cursor-pointer"
           >
             <option value="all">Всі статуси</option>
-            <option value="КРИТИЧНО">Критично</option>
-            <option value="ВІДКРИТО">Відкрито</option>
-            <option value="В РОБОТІ">В роботі</option>
-            <option value="ЗАВЕРШЕНО">Завершено</option>
+            <option value="К� ИТИЧНО">Критично</option>
+            <option value="ВІДК� ИТО">Відкрито</option>
+            <option value="В � ОБОТІ">В роботі</option>
+            <option value="ЗАВЕ� ШЕНО">Завершено</option>
           </select>
 
           <select

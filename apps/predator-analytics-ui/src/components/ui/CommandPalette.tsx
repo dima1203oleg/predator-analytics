@@ -58,7 +58,7 @@ export const CommandPalette = () => {
     { id: 'news', label: 'Стрічка Новин (Signals)', icon: Radio, action: () => navigate('/news') },
     { id: 'search', label: 'Глобальний Пошук', icon: Search, action: () => navigate('/search-v2') },
     { id: 'analytics', label: 'Аналітика (Neural Hub)', icon: BarChart2, action: () => navigate('/analytics') },
-    { id: 'customs', label: 'Митний Реєстр (Intelligence)', icon: Ship, action: () => navigate('/customs-intel') },
+    { id: 'customs', label: 'Митний � еєстр (Intelligence)', icon: Ship, action: () => navigate('/customs-intel') },
     { id: 'security', label: 'Security & Audit (Truth Ledger)', icon: Shield, action: () => navigate('/security') },
     { id: 'sidebar', label: 'Перемкнути Меню', icon: FileText, action: toggleSidebar },
   ];

@@ -17,7 +17,7 @@ const REPORTS = [
     { id: 1, name: 'Звіт фінансового моніторингу (NBU #417)', standard: 'FATF/NBU', date: 'Сьогодні, 09:00', status: 'ready', icon: Landmark, color: 'text-yellow-400' },
     { id: 2, name: 'Аудит доступу до персональних даних', standard: 'GDPR / 2297-VI', date: 'Вчора, 18:30', status: 'ready', icon: Lock, color: 'text-emerald-400' },
     { id: 3, name: 'Перевірка цілісності транзакцій', standard: 'SOC2 Type II', date: 'Вчора, 12:00', status: 'review', icon: Scale, color: 'text-amber-400' },
-    { id: 4, name: 'Реєстр підозрілої активності (SAR)', standard: 'AML', date: '28.01.2026', status: 'ready', icon: AlertTriangle, color: 'text-amber-400' },
+    { id: 4, name: '� еєстр підозрілої активності (SAR)', standard: 'AML', date: '28.01.2026', status: 'ready', icon: AlertTriangle, color: 'text-amber-400' },
 ];
 
 export const ComplianceView = () => {
@@ -49,7 +49,7 @@ export const ComplianceView = () => {
                     window.dispatchEvent(new CustomEvent('predator-error', {
                         detail: {
                             service: 'ComplianceIntel',
-                            message: 'ЦЕНТР КОМПЛАЄНСУ: Журнал аудиту синхронізовано з локальним дзеркалом (COMPLIANCE_NODES).',
+                            message: 'ЦЕНТ�  КОМПЛАЄНСУ: Журнал аудиту синхронізовано з локальним дзеркалом (COMPLIANCE_NODES).',
                             severity: 'info',
                             timestamp: new Date().toISOString(),
                             code: 'COMPLIANCE_NODES'
@@ -84,7 +84,7 @@ export const ComplianceView = () => {
             window.dispatchEvent(new CustomEvent('predator-error', {
                 detail: {
                     service: 'ComplianceIntel',
-                    message: 'АКТИВОВАНО АВТОНОМНИЙ РЕЖИМ КОМПЛАЄНСУ (COMPLIANCE_NODES). Моніторинг локального контуру.',
+                    message: 'АКТИВОВАНО АВТОНОМНИЙ � ЕЖИМ КОМПЛАЄНСУ (COMPLIANCE_NODES). Моніторинг локального контуру.',
                     severity: 'warning',
                     timestamp: new Date().toISOString(),
                     code: 'COMPLIANCE_NODES'
@@ -113,13 +113,13 @@ export const ComplianceView = () => {
                             <div className="space-y-4">
                                 <div className="flex items-center gap-6">
                                     <span className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg">
-                                        COMPLIANCE_WATCH // {isOffline ? 'АВТОНОМНИЙ_КОМПЛАЄНС' : 'ЖУРНАЛ_АУДИТУ_v58'}
+                                        COMPLIANCE_WATCH // {isOffline ? 'АВТОНОМНИЙ_КОМПЛАЄНС' : 'ЖУ� НАЛ_АУДИТУ_v58'}
                                     </span>
                                     <div className="h-px w-12 bg-emerald-500/20" />
                                     <span className="text-[10px] font-black text-emerald-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-{isOffline ? 'MIRROR' : 'WRAITH'}</span>
                                 </div>
                                 <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
-                                    ЦЕНТР <span className="text-emerald-400 underline decoration-emerald-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">КОМПЛАЄНСУ</span>
+                                    ЦЕНТ�  <span className="text-emerald-400 underline decoration-emerald-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">КОМПЛАЄНСУ</span>
                                 </h1>
                             </div>
                         </div>
@@ -127,10 +127,10 @@ export const ComplianceView = () => {
                     breadcrumbs={['SYSTEM', 'SECURITY', 'AUDIT_LOG_WRAITH']}
                     badges={[
                         { label: 'НЕЗМІННІ_ЛОГИ', color: 'success', icon: <Lock size={10} /> },
-                        { label: 'СУВЕРЕННА_СИСТЕМА', color: 'primary', icon: <CheckCircle size={10} /> },
+                        { label: 'СУВЕ� ЕННА_СИСТЕМА', color: 'primary', icon: <CheckCircle size={10} /> },
                     ]}
                     stats={[
-                        { label: 'РІВЕНЬ_ДОВІРИ', value: '100.0%', icon: <CheckCircle size={16} />, color: 'success' },
+                        { label: '� ІВЕНЬ_ДОВІ� И', value: '100.0%', icon: <CheckCircle size={16} />, color: 'success' },
                         { label: 'ОСТАННІЙ_АУДИТ', value: '2хв тому', icon: <Activity size={16} />, color: 'primary' },
                         { label: 'INTEGRITY_INDEX', value: '1.000', icon: <Activity size={16} />, color: 'success' },
                         { label: 'STATUS_CORE', value: 'NOMINAL', icon: <Activity size={16} />, color: 'primary' },
@@ -176,7 +176,7 @@ export const ComplianceView = () => {
                 </div>
 
                 {/* Audit Log Table */}
-                <TacticalCard variant="minimal" title="ЖУРНАЛ ДІЙ (AUDIT TRAIL)" className="w-full">
+                <TacticalCard variant="minimal" title="ЖУ� НАЛ ДІЙ (AUDIT TRAIL)" className="w-full">
                     {loading ? (
                         <div className="p-6 space-y-4">
                             <SkeletonGroup count={8} variant="text" itemClassName="h-12" />
@@ -196,9 +196,9 @@ export const ComplianceView = () => {
                                         <th className="p-4">Час</th>
                                         <th className="p-4">Користувач</th>
                                         <th className="p-4">Дія</th>
-                                        <th className="p-4">Ресурс</th>
+                                        <th className="p-4">� есурс</th>
                                         <th className="p-4">IP Адреса</th>
-                                        <th className="p-4 text-right">Результат</th>
+                                        <th className="p-4 text-right">� езультат</th>
                                     </tr>
                                 </thead>
                                 <tbody className="text-xs font-mono text-slate-200">
@@ -235,7 +235,7 @@ export const ComplianceView = () => {
 
 // Sub-component for clarity
 const TacticalReportsSection = () => (
-    <TacticalCard variant="holographic" title="ЗВІТНІСТЬ ТА ЕКСПОРТ" className="lg:col-span-2">
+    <TacticalCard variant="holographic" title="ЗВІТНІСТЬ ТА ЕКСПО� Т" className="lg:col-span-2">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {REPORTS.map(report => (
                 <div key={report.id} className="bg-slate-900/40 border border-white/5 rounded-2xl p-4 flex items-start gap-4 hover:border-yellow-500/30 transition-all group cursor-pointer">
@@ -258,7 +258,7 @@ const TacticalReportsSection = () => (
                                 <Download size={12} /> PDF
                            </button>
                            <button className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-blue-600 rounded-lg text-[10px] font-bold text-slate-300 hover:text-white transition-all uppercase tracking-wider">
-                                <FileCheck size={12} /> XML (Регулятор)
+                                <FileCheck size={12} /> XML (� егулятор)
                            </button>
                         </div>
                     </div>

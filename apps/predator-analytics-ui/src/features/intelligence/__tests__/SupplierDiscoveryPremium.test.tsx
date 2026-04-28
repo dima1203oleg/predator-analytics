@@ -141,7 +141,7 @@ describe('SupplierDiscoveryPremium', () => {
 
         await waitFor(() => screen.getByText(/CHINESE ELECTRONICS CO/i))
 
-        const input = screen.getByPlaceholderText(/НАПРИКЛАД: ЕЛЕКТРОНІКА/i)
+        const input = screen.getByPlaceholderText(/НАП� ИКЛАД: ЕЛЕКТ� ОНІКА/i)
         
         await act(async () => {
             fireEvent.change(input, { target: { value: 'POLISH' } })
@@ -166,9 +166,9 @@ describe('SupplierDiscoveryPremium', () => {
         })
 
         // Мають з'явитися деталі (WRAITH)
-        expect(screen.getByText(/ГРУПИ_ТОВАРІВ/i)).toBeInTheDocument()
+        expect(screen.getByText(/Г� УПИ_ТОВА� ІВ/i)).toBeInTheDocument()
         expect(screen.getByText(/ЛОГІСТИЧНИЙ_СЛІД/i)).toBeInTheDocument()
-        expect(screen.getByText(/СТВОРИТИ_ЗАПИТ_RFI/i)).toBeInTheDocument()
+        expect(screen.getByText(/СТВО� ИТИ_ЗАПИТ_RFI/i)).toBeInTheDocument()
     })
 
     test('ініціює predator-error при автономному режимі', async () => {

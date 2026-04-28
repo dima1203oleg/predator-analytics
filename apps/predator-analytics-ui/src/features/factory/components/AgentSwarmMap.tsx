@@ -131,7 +131,7 @@ export const AgentSwarmMap: React.FC<AgentSwarmMapProps> = ({ agents, onSelectAg
       
       {/* Overlay Status */}
       <div className="absolute top-6 left-6 flex flex-col gap-1 pointer-events-none">
-        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-rose-500/40">Автономний_Рій</h4>
+        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-rose-500/40">Автономний_� ій</h4>
         <div className="text-[12px] font-black text-rose-500 italic">NODE_MAP v58.2-WRAITH</div>
       </div>
 

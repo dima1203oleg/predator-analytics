@@ -164,7 +164,7 @@ export const LiveDeploymentColumn: React.FC<LiveDeploymentColumnProps> = ({ env,
             {/* Actions */}
             <div className="p-3 border-t border-slate-800 bg-slate-950 flex gap-2">
                 <button className="flex-1 py-1.5 bg-slate-800 hover:bg-slate-700 rounded text-[10px] font-bold text-slate-300 transition-colors btn-3d">
-                    <RotateCcw size={12} className="inline mr-1"/> Рестарт
+                    <RotateCcw size={12} className="inline mr-1"/> � естарт
                 </button>
                 <button className="flex-1 py-1.5 bg-slate-800 hover:bg-slate-700 rounded text-[10px] font-bold text-slate-300 transition-colors btn-3d">
                     <Terminal size={12} className="inline mr-1"/> Логи

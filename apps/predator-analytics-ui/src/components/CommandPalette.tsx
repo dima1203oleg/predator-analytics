@@ -52,9 +52,9 @@ export const CommandPalette: React.FC = () => {
     { id: 'sys-lockdown', label: 'Активувати Блокування', icon: <ShieldAlert size={16} />, group: 'system', danger: true, action: () => console.log('Блокування активовано') },
 
     // Перемикання Оболонки
-    { id: 'shell-commander', label: 'Режим: Командир', icon: <Terminal size={16} />, group: 'utility', action: () => setShell(UIShell.COMMANDER) },
-    { id: 'shell-operator', label: 'Режим: Оператор', icon: <Layers size={16} />, group: 'utility', action: () => setShell(UIShell.OPERATOR) },
-    { id: 'shell-explorer', label: 'Режим: Дослідник', icon: <Search size={16} />, group: 'utility', action: () => setShell(UIShell.EXPLORER) },
+    { id: 'shell-commander', label: '� ежим: Командир', icon: <Terminal size={16} />, group: 'utility', action: () => setShell(UIShell.COMMANDER) },
+    { id: 'shell-operator', label: '� ежим: Оператор', icon: <Layers size={16} />, group: 'utility', action: () => setShell(UIShell.OPERATOR) },
+    { id: 'shell-explorer', label: '� ежим: Дослідник', icon: <Search size={16} />, group: 'utility', action: () => setShell(UIShell.EXPLORER) },
   ];
 
   const filteredCommands = commands.filter(cmd =>

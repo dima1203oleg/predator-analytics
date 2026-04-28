@@ -94,11 +94,11 @@ const DatasetStudio: React.FC = () => {
     };
 
     const TABS: { id: StudioTab; label: string; icon: React.ReactNode }[] = [
-        { id: 'osint', label: 'OSINT КОМАНДНИЙ ЦЕНТР', icon: <Radar size={16} /> },
-        { id: 'osint-graph', label: 'OSINT ГРАФ', icon: <Network size={16} className="text-cyan-400" /> },
+        { id: 'osint', label: 'OSINT КОМАНДНИЙ ЦЕНТ� ', icon: <Radar size={16} /> },
+        { id: 'osint-graph', label: 'OSINT Г� АФ', icon: <Network size={16} className="text-cyan-400" /> },
         { id: 'datasets', label: 'ДАТАСЕТИ & МОДЕЛІ', icon: <Database size={16} /> },
         { id: 'ml-studio', label: 'ML STUDIO', icon: <BrainCircuit size={16} className="text-purple-400" /> },
-        { id: 'graph', label: 'CERS ПРОФІЛЬ', icon: <Activity size={16} className="text-yellow-400" /> },
+        { id: 'graph', label: 'CERS П� ОФІЛЬ', icon: <Activity size={16} className="text-yellow-400" /> },
     ];
 
     return (
@@ -108,12 +108,12 @@ const DatasetStudio: React.FC = () => {
                 <CyberGrid color="rgba(16, 185, 129, 0.03)" />
 
             <ViewHeader
-                title="OSINT КОМАНДНИЙ ЦЕНТР"
-                subtitle="Розвідувальне ядро: 250+ реєстрів • 12 OSINT-інструментів • Граф-аналіз"
+                title="OSINT КОМАНДНИЙ ЦЕНТ� "
+                subtitle="� озвідувальне ядро: 250+ реєстрів • 12 OSINT-інструментів • Граф-аналіз"
                 icon={<Radar size={20} className="text-emerald-400" />}
-                breadcrumbs={['СИНАПСИС', 'РОЗВІДКА', 'OSINT ЦЕНТР']}
+                breadcrumbs={['СИНАПСИС', '� ОЗВІДКА', 'OSINT ЦЕНТ� ']}
                 stats={[
-                    { label: "Реєстрів", value: '267', icon: <Database size={14} />, color: 'primary' },
+                    { label: "� еєстрів", value: '267', icon: <Database size={14} />, color: 'primary' },
                     { label: "Інструментів", value: '12', icon: <Radar size={14} />, color: 'purple' },
                     { label: "Стрічка подій", value: '●', icon: <Radio size={14} className="animate-pulse text-red-500" />, color: 'warning' },
                 ]}
@@ -217,7 +217,7 @@ const DatasetStudio: React.FC = () => {
 
                                         <div className="space-y-4">
                                             <div className="flex justify-between items-end">
-                                                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">РІВЕНЬ АУГМЕНТАЦІЇ</label>
+                                                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">� ІВЕНЬ АУГМЕНТАЦІЇ</label>
                                                 <span className="text-xs font-mono font-bold text-yellow-400">{augmentationLevel}%</span>
                                             </div>
                                             <input
@@ -268,7 +268,7 @@ const DatasetStudio: React.FC = () => {
                                             )}
                                         >
                                             {isGenerating ? <RefreshCw className="animate-spin" size={16} /> : <Zap size={16} />}
-                                            СТВОРИТИ (СИНТЕЗ)
+                                            СТВО� ИТИ (СИНТЕЗ)
                                         </button>
                                     </div>
                                 </TacticalCard>
@@ -315,7 +315,7 @@ const DatasetStudio: React.FC = () => {
                         >
                             {/* Left: ML Infrastructure Status */}
                             <div className="lg:col-span-1 space-y-6">
-                                <TacticalCard title="ІНФРАСТРУКТУРА ML" variant="cyber">
+                                <TacticalCard title="ІНФ� АСТ� УКТУ� А ML" variant="cyber">
                                     <div className="p-6 space-y-6">
                                         <div className="flex items-center justify-between">
                                             <span className="text-[10px] font-black text-slate-500 uppercase">Трекінг MLflow</span>
@@ -365,7 +365,7 @@ const DatasetStudio: React.FC = () => {
                                         </div>
                                         
                                         <div className="space-y-3">
-                                            <label className="text-[10px] font-black text-slate-500 uppercase">НАВАНТАЖЕННЯ GPU КЛАСТЕРА</label>
+                                            <label className="text-[10px] font-black text-slate-500 uppercase">НАВАНТАЖЕННЯ GPU КЛАСТЕ� А</label>
                                             <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
                                                 <motion.div 
                                                     initial={{ width: 0 }}
@@ -442,7 +442,7 @@ const DatasetStudio: React.FC = () => {
                                         </div>
                                     </TacticalCard>
 
-                                    <TacticalCard title="ЕКСПЕРИМЕНТИ MLflow" variant="cyber">
+                                    <TacticalCard title="ЕКСПЕ� ИМЕНТИ MLflow" variant="cyber">
                                         <div className="p-0">
                                             <div className="overflow-x-auto">
                                                 <table className="w-full">

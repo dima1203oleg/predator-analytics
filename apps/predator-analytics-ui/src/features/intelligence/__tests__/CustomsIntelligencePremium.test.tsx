@@ -67,15 +67,15 @@ describe('CustomsIntelligencePremium', () => {
         
         expect(screen.getByText(/МИТНИЙ/i)).toBeInTheDocument();
         expect(screen.getByText(/PROJECT/i)).toBeInTheDocument();
-        expect(screen.getByText(/РИНКОВА_ЧАСТКА_СУБ'ЄКТА/i)).toBeInTheDocument();
+        expect(screen.getByText(/� ИНКОВА_ЧАСТКА_СУБ'ЄКТА/i)).toBeInTheDocument();
         expect(screen.getByText(/42.8%/i)).toBeInTheDocument();
     });
 
     it('відображає список топ імпортерів', async () => {
         render(<CustomsIntelligencePremium />);
         
-        expect(screen.getByText(/ТОВ "МЕТАЛ-ТРЕЙД ОПТ"/i)).toBeInTheDocument();
-        expect(screen.getByText(/ПРАТ "ЕНЕРГО-СИСТЕМИ"/i)).toBeInTheDocument();
+        expect(screen.getByText(/ТОВ "МЕТАЛ-Т� ЕЙД ОПТ"/i)).toBeInTheDocument();
+        expect(screen.getByText(/П� АТ "ЕНЕ� ГО-СИСТЕМИ"/i)).toBeInTheDocument();
         expect(screen.getByText(/12%/i)).toBeInTheDocument();
     });
 

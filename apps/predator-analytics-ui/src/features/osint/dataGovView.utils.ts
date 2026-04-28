@@ -91,7 +91,7 @@ const normalizeResource = (value: unknown): Resource | null => {
 
     return {
         id,
-        name: readString(value.name) ?? 'Ресурс без назви',
+        name: readString(value.name) ?? '� есурс без назви',
         format,
         url,
         lastModified: readString(value.last_modified) ?? readString(value.modified) ?? 'Н/д',

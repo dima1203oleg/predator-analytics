@@ -94,7 +94,7 @@ describe('AMLScoringView', () => {
             render(<AMLScoringView />)
         })
 
-        expect(screen.getByText(/СКОРІНГ/i)).toBeInTheDocument()
+        expect(screen.getByText(/СКО� ІНГ/i)).toBeInTheDocument()
         expect(screen.getByPlaceholderText(/00000000/i)).toBeInTheDocument()
         expect(screen.getByText(/EXECUTE_SCAN/i)).toBeInTheDocument()
     })
@@ -132,7 +132,7 @@ describe('AMLScoringView', () => {
         await waitFor(() => {
             expect(screen.getByText(/TEST CORP/i)).toBeInTheDocument()
             expect(screen.getByText(/85/i)).toBeInTheDocument()
-            expect(screen.getByText(/КРИТИЧНИЙ/i)).toBeInTheDocument()
+            expect(screen.getByText(/К� ИТИЧНИЙ/i)).toBeInTheDocument()
         })
     })
 

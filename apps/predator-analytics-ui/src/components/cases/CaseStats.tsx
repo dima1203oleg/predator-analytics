@@ -13,10 +13,10 @@ interface CaseStatsProps {
 export const CaseStats: React.FC<CaseStatsProps> = ({ cases, activeFilter, onFilterChange }) => {
   const stats = useMemo(() => ({
     total: cases.length,
-    critical: cases.filter(c => c.status === 'КРИТИЧНО').length,
+    critical: cases.filter(c => c.status === 'К� ИТИЧНО').length,
     attention: cases.filter(c => c.status === 'УВАГА').length,
     safe: cases.filter(c => c.status === 'БЕЗПЕЧНО').length,
-    archived: cases.filter(c => c.status === 'АРХІВ').length,
+    archived: cases.filter(c => c.status === 'А� ХІВ').length,
   }), [cases]);
 
   return (
@@ -41,10 +41,10 @@ export const CaseStats: React.FC<CaseStatsProps> = ({ cases, activeFilter, onFil
       <motion.button
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
-        onClick={() => onFilterChange('КРИТИЧНО')}
+        onClick={() => onFilterChange('К� ИТИЧНО')}
         className={`
           p-4 rounded-2xl border transition-all
-          ${activeFilter === 'КРИТИЧНО'
+          ${activeFilter === 'К� ИТИЧНО'
             ? 'bg-red-500/10 border-red-500/50 ring-2 ring-red-500/20'
             : 'bg-slate-900/50 border-slate-800 hover:border-red-500/30'}
         `}
@@ -101,10 +101,10 @@ export const CaseStats: React.FC<CaseStatsProps> = ({ cases, activeFilter, onFil
       <motion.button
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
-        onClick={() => onFilterChange('АРХІВ')}
+        onClick={() => onFilterChange('А� ХІВ')}
         className={`
           p-4 rounded-2xl border transition-all
-          ${activeFilter === 'АРХІВ'
+          ${activeFilter === 'А� ХІВ'
             ? 'bg-slate-500/10 border-slate-500/50 ring-2 ring-slate-500/20'
             : 'bg-slate-900/50 border-slate-800 hover:border-slate-600'}
         `}

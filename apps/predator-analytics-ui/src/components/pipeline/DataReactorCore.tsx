@@ -109,7 +109,7 @@ export const DataReactorCore: React.FC<ReactorProps> = ({
                         }`}
                 >
                     <Glasses size={16} />
-                    <span className="text-xs font-bold uppercase tracking-wider">Режим X-Ray</span>
+                    <span className="text-xs font-bold uppercase tracking-wider">� ежим X-Ray</span>
                 </button>
             </div>
 
@@ -189,9 +189,9 @@ export const DataReactorCore: React.FC<ReactorProps> = ({
                         {/* Title Label */}
                         <div className="absolute -bottom-10 whitespace-nowrap text-center left-1/2 -translate-x-1/2">
                             <span className={`text-sm font-black tracking-[0.2em] ${hasError ? 'text-red-400' : isActive ? 'text-blue-400' : 'text-slate-400'}`}>
-                                ЯДРО МАРШРУТИЗАЦІЇ
+                                ЯД� О МА� Ш� УТИЗАЦІЇ
                             </span>
-                            <div className="text-[9px] text-slate-500 uppercase tracking-widest mt-1">Багатовимірний Розподілювач</div>
+                            <div className="text-[9px] text-slate-500 uppercase tracking-widest mt-1">Багатовимірний � озподілювач</div>
                         </div>
                     </motion.div>
 
@@ -214,7 +214,7 @@ export const DataReactorCore: React.FC<ReactorProps> = ({
                                 <span className="text-xs font-black uppercase tracking-wider text-orange-400">MinIO (Об'єктне Сховище)</span>
                             </div>
                             <div className="text-[9px] text-slate-400 uppercase tracking-widest text-center w-full border-t border-white/5 pt-1 mt-1">
-                                {isActive ? 'СИРІ ДАНІ ЗАХИЩЕНО' : 'DZ / ХОЛОДНЕ СХОВИЩЕ'}
+                                {isActive ? 'СИ� І ДАНІ ЗАХИЩЕНО' : 'DZ / ХОЛОДНЕ СХОВИЩЕ'}
                             </div>
 
                             {/* File progress indicator in X-Ray mode */}
@@ -324,7 +324,7 @@ export const DataReactorCore: React.FC<ReactorProps> = ({
                     }`}>
                     <Server size={14} className={isActive ? 'animate-pulse' : ''} />
                     <span className="text-[10px] uppercase font-black tracking-widest">
-                        Стан Системи: {isActive ? 'СИНХРОНІЗАЦІЯ МАНІФЕСТУ' : 'ОЧІКУВАННЯ ДАНИХ'}
+                        Стан Системи: {isActive ? 'СИНХ� ОНІЗАЦІЯ МАНІФЕСТУ' : 'ОЧІКУВАННЯ ДАНИХ'}
                     </span>
                 </div>
             </div>

@@ -408,7 +408,7 @@ class IntelligenceService {
             country: code,
             flag: flagMap[code] || '🌐',
             region: regionMap[code] || 'Глобальний',
-            sector: 'Ритейл / Дистрибуція',
+            sector: '� итейл / Дистрибуція',
             entryScore: Math.round(score),
             marketSize: `$${(c.count * 1.5).toFixed(1)}M`,
             growthRate: `+${(Math.random() * 10).toFixed(1)}%`,

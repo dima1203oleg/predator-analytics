@@ -85,7 +85,7 @@ export const ClusterTopology: React.FC = () => {
         <div className="flex flex-col gap-6 p-4">
             <div className="flex items-center justify-between">
                 <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
-                    <LinkIcon size={16} className="text-rose-500" /> ТОПОЛОГІЯ_КЛАСТЕРА_WRAITH
+                    <LinkIcon size={16} className="text-rose-500" /> ТОПОЛОГІЯ_КЛАСТЕ� А_WRAITH
                 </h3>
                 <div className="px-2 py-0.5 rounded bg-rose-500/10 border border-rose-500/20 text-rose-500 text-[8px] font-black uppercase tracking-widest">
                     v58.2-ELITE
@@ -112,15 +112,15 @@ export const ClusterTopology: React.FC = () => {
                     </div>
                 </div>
 
-                <ConnectionLine active={activeFailover && colabNode?.status === 'online'} label="РЕЗЕРВ_ZROK" />
+                <ConnectionLine active={activeFailover && colabNode?.status === 'online'} label="� ЕЗЕ� В_ZROK" />
 
                 {/* Colab Mirror */}
                 <TopologyNode 
                     id="colab"
-                    label="COLAB_ДЗЕРКАЛО"
+                    label="COLAB_ДЗЕ� КАЛО"
                     type="mirror"
                     status={colabNode?.active ? 'active' : (colabNode?.status === 'online' ? 'online' : 'offline')}
-                    description="Резервний хмарний кластер"
+                    description="� езервний хмарний кластер"
                     stats="Tesla T4 | Mirror Sync Active"
                 />
             </div>
@@ -138,7 +138,7 @@ export const ClusterTopology: React.FC = () => {
                     </p>
                 </div>
                 <div className="px-3 py-1 rounded bg-black/40 border border-white/10 relative z-10">
-                    <span className="text-[9px] font-black font-mono text-rose-500 uppercase tracking-widest">ЗАТРИМКА: 42ms</span>
+                    <span className="text-[9px] font-black font-mono text-rose-500 uppercase tracking-widest">ЗАТ� ИМКА: 42ms</span>
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-r from-rose-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>

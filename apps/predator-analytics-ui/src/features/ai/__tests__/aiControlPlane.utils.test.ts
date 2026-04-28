@@ -83,7 +83,7 @@ describe('aiControlPlane.utils', () => {
     expect(snapshot.metrics[0]?.value).toBe('2 / 3');
     expect(snapshot.metrics[1]?.value).toBe('85%');
     expect(snapshot.metrics[2]?.value).toBe('14 мс');
-    expect(snapshot.metrics[3]?.value).toBe('83 800');
+    expect(snapshot.metrics[3]?.value).toBe('83� 800');
     expect(snapshot.metrics[4]?.value).toBe('9 / 10');
     expect(snapshot.engines[0]?.title).toBe('Поведінкове ядро');
     expect(snapshot.engines[1]?.statusLabel).toBe('Калібрування');

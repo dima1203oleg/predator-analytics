@@ -33,7 +33,7 @@ export const CommanderShell: React.FC<CommanderShellProps> = ({ metrics, onActio
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <TacticalCard
           variant="holographic"
-          title="🖥️ ІНФРАСТРУКТУРА_CORE"
+          title="🖥️ ІНФ� АСТ� УКТУ� А_CORE"
           className="border-blue-500/20"
           metrics={[
             { label: 'Контейнери', value: `${metrics.activeContainers}/20` },
@@ -56,7 +56,7 @@ export const CommanderShell: React.FC<CommanderShellProps> = ({ metrics, onActio
             </div>
         </TacticalCard>
 
-        <TacticalCard variant="holographic" title="🤖 ЯДРО_СУПЕРІНТЕЛЕКТУ" className="border-purple-500/20">
+        <TacticalCard variant="holographic" title="🤖 ЯД� О_СУПЕ� ІНТЕЛЕКТУ" className="border-purple-500/20">
           <PermissionLayer sensitivity="TOP_SECRET">
             <div className="space-y-4">
               <div className="flex items-center justify-between p-4 bg-purple-500/5 rounded-2xl border border-purple-500/20 group/row hover:bg-purple-500/10 transition-colors">
@@ -67,7 +67,7 @@ export const CommanderShell: React.FC<CommanderShellProps> = ({ metrics, onActio
                 </span>
               </div>
               <div className="flex items-center justify-between p-4 bg-slate-900/40 rounded-2xl border border-white/5">
-                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic">ВЕРСІЯ_МОДЕЛІ:</span>
+                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic">ВЕ� СІЯ_МОДЕЛІ:</span>
                 <span className="text-purple-400 font-mono font-black italic tracking-tighter">P-v61.0_ELITE_NEURAL</span>
               </div>
               <div className="flex items-center justify-between p-4 bg-slate-900/40 rounded-2xl border border-white/5">
@@ -80,7 +80,7 @@ export const CommanderShell: React.FC<CommanderShellProps> = ({ metrics, onActio
 
         <TacticalCard
           variant="holographic"
-          title="💾 ГЛОБАЛЬНИЙ_ШАР_ДАННИХ"
+          title="💾 ГЛОБАЛЬНИЙ_ША� _ДАННИХ"
           className="border-cyan-500/20"
           metrics={[
             { label: 'VECTOR_STORE', value: `${(metrics.vectorsCount / 1000).toFixed(1)}K` },
@@ -107,8 +107,8 @@ export const CommanderShell: React.FC<CommanderShellProps> = ({ metrics, onActio
         
         <div className="flex flex-wrap gap-2 mb-6 p-2 bg-white/[0.02] rounded-[2rem] relative z-10">
           {[
-            { id: 'metrics', label: 'ТЕЛЕМЕТРІЯ', icon: <Activity size={16}/>, color: 'blue' },
-            { id: 'jobs', label: 'ЧЕРГИ_ЗАВДАНЬ', icon: <Server size={16}/>, color: 'indigo'  },
+            { id: 'metrics', label: 'ТЕЛЕМЕТ� ІЯ', icon: <Activity size={16}/>, color: 'blue' },
+            { id: 'jobs', label: 'ЧЕ� ГИ_ЗАВДАНЬ', icon: <Server size={16}/>, color: 'indigo'  },
             { id: 'llm', label: 'СТАН_LLM', icon: <Brain size={16}/>, color: 'purple'  },
             { id: 'storage', label: 'СХОВИЩА', icon: <Database size={16}/>, color: 'cyan'  },
             { id: 'ledger', label: 'TRUTH_LEDGER', icon: <Fingerprint size={16}/>, color: 'emerald' }
@@ -148,14 +148,14 @@ export const CommanderShell: React.FC<CommanderShellProps> = ({ metrics, onActio
       </div>
 
       {/* God Mode / Shadow Protocols */}
-      <TacticalCard variant="holographic" title="🎛️ ТІНЬОВІ_ПРОТОКОЛИ_КЕРУВАННЯ" className="border-red-500/30 bg-gradient-to-br from-red-950/20 to-slate-950/80 rounded-[3rem]">
+      <TacticalCard variant="holographic" title="🎛️ ТІНЬОВІ_П� ОТОКОЛИ_КЕ� УВАННЯ" className="border-red-500/30 bg-gradient-to-br from-red-950/20 to-slate-950/80 rounded-[3rem]">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 p-2">
           {[
             { icon: Lock, label: 'БЛОКУВАННЯ', color: 'red', code: 'S-LOCK' },
-            { icon: RefreshCw, label: 'ПЕРЕЗАПУСК', color: 'amber', code: 'R-BOOT' },
-            { icon: Shield, label: 'БРАНДМАУЕР', color: 'blue', code: 'F-WALL' },
-            { icon: Terminal, label: 'ТЕРМІНАЛ', color: 'green', code: 'T-CORE' },
-            { icon: Zap, label: 'СИНХРОНІЗАЦІЯ', color: 'purple', code: 'P-SYNC' },
+            { icon: RefreshCw, label: 'ПЕ� ЕЗАПУСК', color: 'amber', code: 'R-BOOT' },
+            { icon: Shield, label: 'Б� АНДМАУЕ� ', color: 'blue', code: 'F-WALL' },
+            { icon: Terminal, label: 'ТЕ� МІНАЛ', color: 'green', code: 'T-CORE' },
+            { icon: Zap, label: 'СИНХ� ОНІЗАЦІЯ', color: 'purple', code: 'P-SYNC' },
             { icon: Eye, label: 'АУДИТ', color: 'cyan', code: 'X-SCAN' },
           ].map((control, idx) => (
             <motion.button

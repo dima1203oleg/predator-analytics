@@ -2,9 +2,7 @@
 
 Перевірка серіалізації/десеріалізації Kafka подій.
 """
-from datetime import datetime
 
-import pytest
 
 from predator_common.event_schemas import (
     DLQEvent,

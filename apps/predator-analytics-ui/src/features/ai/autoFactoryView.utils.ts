@@ -209,7 +209,7 @@ const buildPipeline = (
     },
     {
       id: 'decide',
-      label: 'Рішення',
+      label: '� ішення',
       detail: improvements == null ? 'Кількість покращень не підтверджена' : `Покращень зафіксовано: ${formatCount(improvements)}`,
       status: activeIndex > 2 ? 'done' : activeIndex === 2 && isRunning ? 'active' : 'pending',
       tone: activeIndex > 2 ? 'emerald' : activeIndex === 2 && isRunning ? 'amber' : 'slate',
@@ -223,7 +223,7 @@ const buildPipeline = (
     },
     {
       id: 'reflect',
-      label: 'Рефлексія',
+      label: '� ефлексія',
       detail: !isRunning && improvements != null && improvements > 0 ? 'Цикл завершився, артефакти зафіксовано' : 'Очікує завершення активного циклу',
       status: !isRunning && improvements != null && improvements > 0 ? 'done' : 'pending',
       tone: !isRunning && improvements != null && improvements > 0 ? 'emerald' : 'slate',
@@ -266,7 +266,7 @@ const inferLogMeta = (message: string): { levelLabel: string; tone: AutoFactoryT
   }
 
   if (upper.includes('OK') || upper.includes('SUCCESS') || upper.includes('FIXED')) {
-    return { levelLabel: 'НОРМА', tone: 'emerald' };
+    return { levelLabel: 'НО� МА', tone: 'emerald' };
   }
 
   return { levelLabel: 'ІНФО', tone: 'sky' };
@@ -287,7 +287,7 @@ const normalizeLogLevelLabel = (value: string | null, fallback: string): string 
     case 'success':
     case 'fixed':
     case 'healthy':
-      return 'НОРМА';
+      return 'НО� МА';
     case 'info':
       return 'ІНФО';
     default:

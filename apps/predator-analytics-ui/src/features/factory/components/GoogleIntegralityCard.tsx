@@ -22,14 +22,14 @@ export function GoogleIntegralityCard({
   setGoogleIntegrality
 }: GoogleIntegralityCardProps) {
   return (
-    <TacticalCard title="ІНТЕГРАЦІЯ GOOGLE" variant="holographic" className="border-emerald-500/30 bg-emerald-500/5">
+    <TacticalCard title="ІНТЕГ� АЦІЯ GOOGLE" variant="holographic" className="border-emerald-500/30 bg-emerald-500/5">
       <div className="p-4 space-y-4">
         <div className="flex items-center gap-3 p-3 rounded-2xl bg-black/40 border border-emerald-500/20">
            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400">
              <Cloud size={20} />
            </div>
            <div className="flex-1">
-             <div className="text-[11px] font-black uppercase text-white">Google Робочий Простір (Workspace)</div>
+             <div className="text-[11px] font-black uppercase text-white">Google � обочий Простір (Workspace)</div>
              <div className="text-[8px] text-emerald-500 font-mono">Синхронізація: Drive, Docs, Sheets</div>
            </div>
            <Badge variant="cyber" className="bg-emerald-500/20 text-emerald-400 text-[8px]">{googleStatus.drive.toUpperCase() === 'CONNECTED' ? 'ПІДКЛЮЧЕНО' : googleStatus.drive.toUpperCase()}</Badge>
@@ -54,7 +54,7 @@ export function GoogleIntegralityCard({
              <div className="text-[11px] font-black uppercase text-white">Google Аналітика</div>
              <div className="text-[8px] text-rose-400 font-mono">Аналіз трафіку та конверсії</div>
            </div>
-           <Badge variant="neon" className="bg-rose-500/20 text-rose-400 animate-pulse text-[8px]">{googleStatus.analytics.toUpperCase() === 'SYNCING' ? 'СИНХРОНІЗАЦІЯ' : googleStatus.analytics.toUpperCase()}</Badge>
+           <Badge variant="neon" className="bg-rose-500/20 text-rose-400 animate-pulse text-[8px]">{googleStatus.analytics.toUpperCase() === 'SYNCING' ? 'СИНХ� ОНІЗАЦІЯ' : googleStatus.analytics.toUpperCase()}</Badge>
         </div>
 
         <div className="pt-4 border-t border-white/10">

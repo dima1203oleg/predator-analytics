@@ -33,10 +33,10 @@ const MOCK_SWIFT_FLOW = [
 ];
 
 const MOCK_SUSPICIOUS_TX = [
-  { id: 'TX-WRAITH-8821', from: 'ТОВ "АГРО-ЛІДЕР"', to: 'Kyoto Holdings Ltd (BVI)', amount: '$4.7M', currency: 'USD', time: '12:14:22', risk: 98, type: 'Фіктивна компанія', route: 'UA → BVI → ОАЕ' },
-  { id: 'TX-WRAITH-7203', from: 'БФ "ВІДРОДЖЕННЯ"', to: 'Sunrise Capital Ltd (CY)', amount: '$2.1M', currency: 'USD', time: '10:47:08', risk: 89, type: 'Шайрування', route: 'UA → CY → MT' },
+  { id: 'TX-WRAITH-8821', from: 'ТОВ "АГ� О-ЛІДЕ� "', to: 'Kyoto Holdings Ltd (BVI)', amount: '$4.7M', currency: 'USD', time: '12:14:22', risk: 98, type: 'Фіктивна компанія', route: 'UA → BVI → ОАЕ' },
+  { id: 'TX-WRAITH-7203', from: 'БФ "ВІД� ОДЖЕННЯ"', to: 'Sunrise Capital Ltd (CY)', amount: '$2.1M', currency: 'USD', time: '10:47:08', risk: 89, type: 'Шайрування', route: 'UA → CY → MT' },
   { id: 'TX-WRAITH-5509', from: 'ФОП ТКАЧЕНКО В.М.', to: 'Gulf Meridian FZCO (UAE)', amount: '$1.4M', currency: 'AED', time: '08:55:19', risk: 94, type: 'PEP експозиція', route: 'UA → AE → SA' },
-  { id: 'TX-WRAITH-4412', from: 'ТОВ "МЕТАЛ-ГРУП"', to: 'Belize Trust Corp (BZ)', amount: '$3.2M', currency: 'USD', time: '07:14:55', risk: 92, type: 'Санкційний вузол', route: 'UA → BZ → PA' },
+  { id: 'TX-WRAITH-4412', from: 'ТОВ "МЕТАЛ-Г� УП"', to: 'Belize Trust Corp (BZ)', amount: '$3.2M', currency: 'USD', time: '07:14:55', risk: 92, type: 'Санкційний вузол', route: 'UA → BZ → PA' },
 ];
 
 export const SwiftMonitorTab: React.FC = () => {
@@ -66,16 +66,16 @@ export const SwiftMonitorTab: React.FC = () => {
         <div className="flex items-center justify-between mb-4 border-b border-white/10 pb-6">
           <h2 className="text-sm font-black text-white italic uppercase tracking-[0.4em] flex items-center gap-4">
             <Activity size={20} className="text-emerald-500 shadow-[0_0_15px_#10b981]" />
-            ДИНАМІКА_ПОТОКІВ_SWIFT // МОНІТОРИНГ
+            ДИНАМІКА_ПОТОКІВ_SWIFT // МОНІТО� ИНГ
           </h2>
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-slate-700" />
-              <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">НОРМАЛЬНИЙ</span>
+              <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">НО� МАЛЬНИЙ</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_#10b981]" />
-              <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">ЗАГРОЗА</span>
+              <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">ЗАГ� ОЗА</span>
             </div>
           </div>
         </div>
@@ -109,7 +109,7 @@ export const SwiftMonitorTab: React.FC = () => {
           <Skull size={200} className="text-emerald-600" />
         </div>
         <h3 className="text-[12px] font-black text-emerald-600 italic uppercase tracking-[0.4em] mb-6 border-b border-emerald-500/10 pb-6 flex items-center justify-between">
-          <span>ЗАГРОЗЛИВІ_ТРАНЗАКЦІЇ</span>
+          <span>ЗАГ� ОЗЛИВІ_Т� АНЗАКЦІЇ</span>
           <div className="flex gap-1.5">
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse delay-75" />
@@ -138,7 +138,7 @@ export const SwiftMonitorTab: React.FC = () => {
                   <span className="text-lg font-black italic font-mono text-white tracking-tighter">{tx.amount}</span>
                 </div>
                 <div className="text-right">
-                  <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest leading-none mb-1">РИЗИК</p>
+                  <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest leading-none mb-1">� ИЗИК</p>
                   <span className="text-[10px] font-black text-white px-2 py-0.5 rounded-md bg-emerald-600 shadow-lg font-mono">{tx.risk}%</span>
                 </div>
               </div>

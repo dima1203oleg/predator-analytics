@@ -93,7 +93,7 @@ export const TopBar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
 
   return (
     <div className="h-28 bg-black/40 glass-wraith border-b border-white/10 backdrop-blur-3xl relative z-40 flex items-center px-10 shadow-4xl">
-        {/* ГЛОБАЛЬНІ ІНДИКАТОРИ */}
+        {/* ГЛОБАЛЬНІ ІНДИКАТО� И */}
         <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-rose-500/20 to-transparent" />
         <div className="absolute inset-0 cyber-scan-grid opacity-[0.03] pointer-events-none" />
         
@@ -126,12 +126,12 @@ export const TopBar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
                 </div>
             </div>
 
-            {/* ЦЕНТРАЛЬНА ЧАСТИНА: ПОШУК */}
+            {/* ЦЕНТ� АЛЬНА ЧАСТИНА: ПОШУК */}
             <div className="flex-1 max-w-2xl mx-16">
                 <GlobalSearch />
             </div>
 
-            {/* ПРАВА ЧАСТИНА: МЕТРИКИ ТА ПРОФІЛЬ */}
+            {/* П� АВА ЧАСТИНА: МЕТ� ИКИ ТА П� ОФІЛЬ */}
             <div className="flex items-center gap-8">
                 <div className="hidden lg:flex items-center gap-8 px-8 py-3 bg-white/[0.03] glass-wraith border border-white/5 rounded-full shadow-2xl">
                     <div className="flex items-center gap-4">

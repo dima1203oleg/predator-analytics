@@ -11,7 +11,6 @@ JWT validation, tenant extraction, RBAC helpers.
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from enum import StrEnum
-from typing import Any
 
 import jwt  # type: ignore[import-untyped]
 
@@ -62,6 +61,7 @@ def decode_jwt(
     Raises:
         jwt.ExpiredSignatureError: Термін дії минув
         jwt.InvalidTokenError: Невалідний токен
+
     """
     payload = jwt.decode(
         token,

@@ -67,7 +67,7 @@ const PipelineManagerView: React.FC = () => {
             <ViewHeader
                 title="Оркестратор Пайплайнів"
                 icon={<Activity size={20} className="icon-3d-cyan" />}
-                breadcrumbs={['СИСТЕМА', 'ПАЙПЛАЙНИ', 'КЕРУВАННЯ']}
+                breadcrumbs={['СИСТЕМА', 'ПАЙПЛАЙНИ', 'КЕ� УВАННЯ']}
                 stats={[
                     { label: 'Статус', value: 'ОЧІКУВАННЯ', icon: <CheckCircle2 size={14} />, color: 'success' },
                     { label: 'Data Fusion', value: 'АКТИВНИЙ', icon: <Database size={14} />, color: 'primary' },
@@ -111,7 +111,7 @@ const PipelineManagerView: React.FC = () => {
                             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-lg space-y-2">
                                 <div className="flex items-center text-emerald-400 font-bold">
                                     <CheckCircle2 className="w-4 h-4 mr-2" />
-                                    Результат:
+                                    � езультат:
                                 </div>
                                 <div className="grid grid-cols-3 gap-2 text-sm">
                                     <div className="bg-slate-900 p-2 rounded">Fusion: {runPipeline.data.steps.fusion.entities_resolved} ок</div>
@@ -163,7 +163,7 @@ const PipelineManagerView: React.FC = () => {
                             ) : (
                                 <ShieldAlert className="w-5 h-5 mr-2" />
                             )}
-                            {rescoreEntity.isPending ? 'ПЕРЕРАХУНОК...' : 'ПЕРЕРАХУВАТИ'}
+                            {rescoreEntity.isPending ? 'ПЕ� Е� АХУНОК...' : 'ПЕ� Е� АХУВАТИ'}
                         </Button>
 
                         {rescoreEntity.isSuccess && rescoreEntity.data && (

@@ -205,7 +205,7 @@ export const InvestigationCanvasWidget: React.FC<{
                                   }}
                                   className="w-full py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg transition-colors border border-rose-500/20 font-black tracking-widest text-[9px] uppercase"
                                 >
-                                    {premiumLocales.investigationCanvas.openFullDossier || "РОЗШИРЕНЕ ДОСЬЄ"}
+                                    {premiumLocales.investigationCanvas.openFullDossier || "� ОЗШИ� ЕНЕ ДОСЬЄ"}
                                 </button>
                             </div>
                         </div>

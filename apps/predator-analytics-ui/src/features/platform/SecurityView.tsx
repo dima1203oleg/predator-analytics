@@ -22,7 +22,7 @@ import '@/styles/SecurityView.css';
 
 const KillChainViz = () => {
     const steps = [
-        { id: 'RECON', label: 'Розвідка (Recon)', blocked: 450, color: 'bg-slate-700' },
+        { id: 'RECON', label: '� озвідка (Recon)', blocked: 450, color: 'bg-slate-700' },
         { id: 'WEAPON', label: 'Озброєння (Weaponization)', blocked: 120, color: 'bg-blue-900' },
         { id: 'DELIVER', label: 'Доставка (Delivery)', blocked: 85, color: 'bg-yellow-900' },
         { id: 'EXPLOIT', label: 'Експлуатація (Exploit)', blocked: 12, color: 'bg-purple-900' },
@@ -208,7 +208,7 @@ const SecurityView: React.FC = () => {
                 icon={<Shield size={20} className={state.defconLevel <= 2 ? "text-red-500 animate-pulse" : "icon-3d-green"} />}
                 breadcrumbs={['СИСТЕМА', 'БЕЗПЕКА', 'АКТИВНИЙ ЗАХИСТ']}
                 stats={[
-                    { label: 'Рівень Загрози', value: state.defconLevel === 1 ? 'КРИТИЧНИЙ' : state.defconLevel === 2 ? 'ВИСОКИЙ' : 'НИЗЬКИЙ', icon: <Activity size={14} />, color: state.defconLevel <= 2 ? 'danger' : 'success' },
+                    { label: '� івень Загрози', value: state.defconLevel === 1 ? 'К� ИТИЧНИЙ' : state.defconLevel === 2 ? 'ВИСОКИЙ' : 'НИЗЬКИЙ', icon: <Activity size={14} />, color: state.defconLevel <= 2 ? 'danger' : 'success' },
                     { label: 'Нульова Довіра', value: 'АКТИВНО', icon: <ShieldAlert size={14} className="icon-3d-blue" />, color: 'primary' },
                     { label: 'Події WAF', value: '14/год', icon: <Ban size={14} className="icon-3d-red" />, color: 'warning', animate: true },
                 ]}
@@ -258,7 +258,7 @@ const SecurityView: React.FC = () => {
 
                 {/* 2. RIGHT COLUMN */}
                 <div className="space-y-6">
-                    <TacticalCard variant="holographic" title="Рівень Загрози (DEFCON)" className="panel-3d glass-morphism" glow={state.defconLevel === 1 ? 'red' : 'none'}>
+                    <TacticalCard variant="holographic" title="� івень Загрози (DEFCON)" className="panel-3d glass-morphism" glow={state.defconLevel === 1 ? 'red' : 'none'}>
                         <div className="flex flex-col items-center justify-center p-2">
                             <div className="w-full flex flex-col-reverse gap-2">
                                 {[1, 2, 3, 4, 5].map((level) => (
@@ -354,7 +354,7 @@ const SecurityView: React.FC = () => {
                             className="p-4 bg-slate-950/80 rounded-xl border border-slate-800 flex items-center justify-between group"
                         >
                             <div>
-                                <div className="text-[9px] text-slate-600 uppercase font-bold tracking-widest mb-1">Ротація Ключів</div>
+                                <div className="text-[9px] text-slate-600 uppercase font-bold tracking-widest mb-1">� отація Ключів</div>
                                 <div className="text-xs font-bold text-slate-200 group-hover:text-blue-400 transition-colors">Цикл 24г</div>
                             </div>
                             <RefreshCw size={18} className="text-blue-500/50 group-hover:text-blue-500 transition-colors" />

@@ -15,7 +15,7 @@ export interface FactoryNetworkPanelProps {
 }
 
 /**
- * 🌐 FACTORY NETWORK PANEL // ТОПОЛОГІЯ МЕРЕЖІ | v61.0-ELITE
+ * 🌐 FACTORY NETWORK PANEL // ТОПОЛОГІЯ МЕ� ЕЖІ | v61.0-ELITE
  * PREDATOR Analytics — Infrastructure & Network Visualization
  */
 export const FactoryNetworkPanel: React.FC<FactoryNetworkPanelProps> = ({
@@ -38,8 +38,8 @@ export const FactoryNetworkPanel: React.FC<FactoryNetworkPanelProps> = ({
             <Network size={28} />
           </div>
           <div>
-            <h2 className="text-3xl font-black text-white uppercase italic tracking-tighter leading-none">ТОПОЛОГІЯ ТА ІНФРАСТРУКТУРА</h2>
-            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.4em] mt-2 italic">ВІЗУАЛІЗАЦІЯ_ВУЗЛІВ_КЛАСТЕРА_v61</p>
+            <h2 className="text-3xl font-black text-white uppercase italic tracking-tighter leading-none">ТОПОЛОГІЯ ТА ІНФ� АСТ� УКТУ� А</h2>
+            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.4em] mt-2 italic">ВІЗУАЛІЗАЦІЯ_ВУЗЛІВ_КЛАСТЕ� А_v61</p>
           </div>
         </div>
 
@@ -143,9 +143,9 @@ export const FactoryNetworkPanel: React.FC<FactoryNetworkPanelProps> = ({
         {/* Infrastructure Stats Footer */}
         <div className="grid grid-cols-1 md:grid-cols-3 border-t-2 border-white/5 bg-black/60 backdrop-blur-3xl p-8 gap-8">
           {[
-            { icon: Lock, label: 'СЕКРЕТИ K8s', value: 'ЗАКРИТО // AES-256', color: 'rose' },
+            { icon: Lock, label: 'СЕК� ЕТИ K8s', value: 'ЗАК� ИТО // AES-256', color: 'rose' },
             { icon: HardDrive, label: 'ПОСТІЙНІ ТОМИ', value: '3 / 3 ПІДКЛЮЧЕНО', color: 'slate' },
-            { icon: Shield, label: 'МЕРЕЖЕВІ ПОЛІТИКИ', value: 'ZERO-TRUST ACTIVE', color: 'emerald' }
+            { icon: Shield, label: 'МЕ� ЕЖЕВІ ПОЛІТИКИ', value: 'ZERO-TRUST ACTIVE', color: 'emerald' }
           ].map((stat, idx) => (
             <div key={idx} className={cn(
               "flex flex-col gap-3 p-6 rounded-[1.5rem] border-2 transition-all duration-500",

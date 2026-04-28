@@ -67,7 +67,7 @@ export const DataQualityDashboard: React.FC<DataQualityDashboardProps> = ({
     ],
     anomalies: [
       { type: 'high_null_rate', column: 'consignee_address', message: 'Колонка має 42% null значень', rate: 0.42 },
-      { type: 'value_spike', column: 'total_value', message: 'Різкий стрибок значень порівняно з попереднім періодом' },
+      { type: 'value_spike', column: 'total_value', message: '� ізкий стрибок значень порівняно з попереднім періодом' },
       { type: 'new_category', column: 'hs_code', message: '23 нових HS-кодів не бачених раніше' },
     ],
     profile: {
@@ -165,7 +165,7 @@ export const DataQualityDashboard: React.FC<DataQualityDashboardProps> = ({
       {/* Quality Rules */}
       <div className="p-6 border-b border-slate-800">
         <h4 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">
-          Результати перевірок
+          � езультати перевірок
         </h4>
 
         <div className="space-y-3">
@@ -197,7 +197,7 @@ export const DataQualityDashboard: React.FC<DataQualityDashboardProps> = ({
                   <div className="flex items-center gap-4 text-sm">
                     <span className="text-emerald-400">{check.passed.toLocaleString()} ✓</span>
                     {check.warnings > 0 && (
-                      <span className="text-amber-400">{check.warnings.toLocaleString()} ⚠</span>
+                      <span className="text-amber-400">{check.warnings.toLocaleString()} � </span>
                     )}
                     {check.failed > 0 && (
                       <span className="text-rose-400">{check.failed.toLocaleString()} ✗</span>

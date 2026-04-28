@@ -46,7 +46,7 @@ const stageConfig: Record<IngestionStage, { label: string; icon: React.ReactNode
     color: 'text-purple-600'
   },
   chunking: {
-    label: 'Розбиття',
+    label: '� озбиття',
     icon: <Database className="h-4 w-4" />,
     color: 'text-purple-600'
   },
@@ -138,7 +138,7 @@ export function IngestionProgressMonitor({
             )}
           </div>
           <p className="text-sm text-muted-foreground">
-            {formatBytes(fileSize)} • Розпочато {formatDuration(elapsedTime)} тому
+            {formatBytes(fileSize)} • � озпочато {formatDuration(elapsedTime)} тому
           </p>
         </div>
       </div>

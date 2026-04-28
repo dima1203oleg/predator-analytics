@@ -93,7 +93,7 @@ export const PlaceholderView = () => {
                     transition={{ delay: 0.2 }}
                     className="text-4xl md:text-5xl font-bold text-white mb-6 tracking-tight"
                 >
-                    Модуль <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-500">В Розробці</span>
+                    Модуль <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-500">В � озробці</span>
                 </motion.h1>
 
                 <motion.p

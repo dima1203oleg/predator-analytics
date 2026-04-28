@@ -10,7 +10,7 @@ import { UserRole } from '../../context/UserContext';
 import { useShell, UIShell } from '../../context/ShellContext';
 import { NeutralizedContent } from '../NeutralizedContent';
 
-export type CaseStatus = 'КРИТИЧНО' | 'УВАГА' | 'БЕЗПЕЧНО' | 'АРХІВ';
+export type CaseStatus = 'К� ИТИЧНО' | 'УВАГА' | 'БЕЗПЕЧНО' | 'А� ХІВ';
 export type CaseSector = 'GOV' | 'BIZ' | 'MED' | 'SCI';
 
 export interface Evidence {
@@ -73,7 +73,7 @@ export const SECTOR_CONFIG = {
 };
 
 export const STATUS_CONFIG = {
-  'КРИТИЧНО': {
+  'К� ИТИЧНО': {
     icon: <AlertCircle size={16} />,
     bg: 'bg-red-500/10',
     border: 'border-red-500/50',
@@ -97,7 +97,7 @@ export const STATUS_CONFIG = {
     glow: 'shadow-emerald-500/20',
     pulse: false
   },
-  'АРХІВ': {
+  'А� ХІВ': {
     icon: <Archive size={16} />,
     bg: 'bg-slate-500/10',
     border: 'border-slate-500/50',
@@ -167,7 +167,7 @@ export const CaseCard: React.FC<CaseCardProps> = ({
 
         <div className="flex flex-col items-end">
           <span className="text-[10px] text-slate-500 uppercase tracking-wider mb-1">
-            Ризик
+            � изик
           </span>
           <div className={`
             text-xl font-black ${
@@ -207,7 +207,7 @@ export const CaseCard: React.FC<CaseCardProps> = ({
           <div className="flex items-center gap-2 mb-2">
             <BrainCircuit size={14} className={isCommanderMode ? 'text-amber-400' : 'text-purple-400'} />
             <span className={`text-[10px] font-black uppercase tracking-widest ${isCommanderMode ? 'text-amber-400' : 'text-purple-400'}`}>
-              ВЕРДИКТ_СИНАПСУ
+              ВЕ� ДИКТ_СИНАПСУ
             </span>
           </div>
           <p className={`text-sm italic leading-relaxed ${isCommanderMode ? 'text-slate-200 font-medium' : 'text-slate-300'}`}>

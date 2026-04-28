@@ -4,10 +4,10 @@
  * 
  * Включає:
  * - 🪐 Нейронне ядро (Neural Core)
- * - 🤖 Рада Агентів (Agent Council)
+ * - 🤖 � ада Агентів (Agent Council)
  * - 📊 Матриця знань (Knowledge Matrix)
  * - 🛡️ Тіньовий Контроль (Shadow Control)
- * - 🧬 Революція AZR (AZR Evolution)
+ * - 🧬 � еволюція AZR (AZR Evolution)
  * 
  * © 2026 PREDATOR Analytics - Повна українізація v58.2-WRAITH
  */
@@ -48,7 +48,7 @@ import { LLMCouncilPanel } from '@/components/LLMCouncilPanel';
 import { TripleAgentPanel } from '@/components/TripleAgentPanel';
 import { OmniscienceRealtimeClient } from '@/services/omniscience.service';
 
-// === ТИПИ ТА ІНТЕРФЕЙСИ ===
+// === ТИПИ ТА ІНТЕ� ФЕЙСИ ===
 interface SystemMetrics {
   health: number;
   activeAgents: number;
@@ -140,7 +140,7 @@ const AgentCard: React.FC<{ agent: AgentStatus }> = ({ agent }) => {
         <div className="space-y-6">
           <div>
             <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-2 block flex items-center gap-2">
-              <Terminal size={10} /> ПОТОЧНА_ДИРЕКТИВА
+              <Terminal size={10} /> ПОТОЧНА_ДИ� ЕКТИВА
             </span>
             <p className="text-xs text-slate-300 font-medium leading-relaxed bg-black/40 p-4 border border-white/5 rounded-xl italic">
               {agent.task || "Очікування задачі..."}
@@ -148,7 +148,7 @@ const AgentCard: React.FC<{ agent: AgentStatus }> = ({ agent }) => {
           </div>
           <div>
             <div className="flex justify-between items-center mb-2">
-              <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">ІНДЕКС_ДОВІРИ</span>
+              <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">ІНДЕКС_ДОВІ� И</span>
               <span className="text-xs font-black text-white font-mono">{agent.confidence}%</span>
             </div>
             <div className="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden border border-white/5">
@@ -237,14 +237,14 @@ const OmniscienceView: React.FC = () => {
                 Нексус Всезнання
               </h1>
               <p className="text-[11px] font-mono font-black text-slate-500 uppercase tracking-[0.3em] mt-2">
-                ЯДРО_СИСТЕМИ_V56.5-WRAITH // ГЛОБАЛЬНА_МАТРИЦЯ_ЗНАНЬ
+                ЯД� О_СИСТЕМИ_V56.5-WRAITH // ГЛОБАЛЬНА_МАТ� ИЦЯ_ЗНАНЬ
               </p>
             </div>
           </div>
         }
         breadcrumbs={['PREDATOR', 'OMNISCIENCE', 'CORE_V56.5-WRAITH']}
         stats={[
-          { label: 'ЗДОРОВ\'Я', value: `${metrics.health}%`, icon: <Activity size={14} />, color: 'success' },
+          { label: 'ЗДО� ОВ\'Я', value: `${metrics.health}%`, icon: <Activity size={14} />, color: 'success' },
           { label: 'ВУЗЛИ', value: metrics.knowledgeNodes.toLocaleString(), icon: <Database size={14} />, color: 'primary' },
           { label: 'АГЕНТИ', value: metrics.activeAgents.toString(), icon: <Users size={14} />, color: 'purple' },
         ]}
@@ -294,7 +294,7 @@ const OmniscienceView: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
                 <MetricCard icon={Cpu} label={premiumLocales.omniscience.metrics.power} value={metrics.processingPower} unit="ГГц" color="#60a5fa" trend="+2.4%" />
                 <MetricCard icon={Database} label="Щільність Знань" value={metrics.knowledgeNodes / 2000} unit="ГБ/с" color="#10b981" trend="+12.8%" />
-                <MetricCard icon={BrainCircuit} label={premiumLocales.omniscience.stats.autonomy} value={metrics.autonomyLevel} unit="РІВЕНЬ" color="#a78bfa" trend="ОПТИМАЛЬНО" />
+                <MetricCard icon={BrainCircuit} label={premiumLocales.omniscience.stats.autonomy} value={metrics.autonomyLevel} unit="� ІВЕНЬ" color="#a78bfa" trend="ОПТИМАЛЬНО" />
                 <MetricCard icon={TrendingUp} label="Нейронна Пропускна Здатність" value={metrics.networkActivity} unit="МБ/с" color="#f59e0b" trend="ПІК" />
               </div>
 
@@ -308,7 +308,7 @@ const OmniscienceView: React.FC = () => {
                       </div>
                       <div>
                         <h3 className="text-xl font-black text-white uppercase tracking-tighter">Візуалізатор Нейронного Ядра</h3>
-                        <p className="text-[9px] font-mono text-slate-500 uppercase tracking-widest">РЕАЛЬНИЙ_ЧАС_ПОШИРЕННЯ_МАПИ</p>
+                        <p className="text-[9px] font-mono text-slate-500 uppercase tracking-widest">� ЕАЛЬНИЙ_ЧАС_ПОШИ� ЕННЯ_МАПИ</p>
                       </div>
                     </div>
                     <div className="absolute inset-0 z-0">
@@ -326,12 +326,12 @@ const OmniscienceView: React.FC = () => {
                     </div>
                     <div className="absolute bottom-10 left-10 p-6 bg-black/60 border border-white/5 rounded-2xl backdrop-blur-xl z-20 flex items-center gap-8">
                       <div className="flex flex-col">
-                        <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-1">ЗАТРИМКА</span>
+                        <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-1">ЗАТ� ИМКА</span>
                         <span className="text-sm font-black text-white font-mono">14мс</span>
                       </div>
                       <div className="w-px h-8 bg-white/5" />
                       <div className="flex flex-col">
-                        <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-1">ШВИДКІСТЬ_СИНХРОНІЗАЦІЇ</span>
+                        <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-1">ШВИДКІСТЬ_СИНХ� ОНІЗАЦІЇ</span>
                         <span className="text-sm font-black text-emerald-400 font-mono">99.2%</span>
                       </div>
                     </div>
@@ -429,7 +429,7 @@ const OmniscienceView: React.FC = () => {
                     <Zap size={32} className="text-slate-600 group-hover/new:text-blue-400 group-hover/new:animate-pulse" />
                   </div>
                   <h3 className="text-xl font-black text-slate-600 uppercase tracking-tighter group-hover/new:text-white transition-colors">Створити Нового Агента</h3>
-                  <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest mt-2 group-hover/new:text-blue-500">ІНІЦІАЛІЗАЦІЯ_ПРОТОКОЛУ_НС</p>
+                  <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest mt-2 group-hover/new:text-blue-500">ІНІЦІАЛІЗАЦІЯ_П� ОТОКОЛУ_НС</p>
                 </TacticalCard>
               </div>
             </motion.div>
@@ -490,15 +490,15 @@ const OmniscienceView: React.FC = () => {
           </div>
           <div className="flex flex-wrap items-center gap-12">
             <div className="flex flex-col">
-              <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">ЯДРО_СИСТЕМИ</span>
+              <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">ЯД� О_СИСТЕМИ</span>
               <span className="text-xs font-black text-emerald-400">АКТИВНО_СТАБІЛЬНО</span>
             </div>
             <div className="flex flex-col">
-              <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">КВАНТОВА_ЕНТРОПІЯ</span>
+              <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">КВАНТОВА_ЕНТ� ОПІЯ</span>
               <span className="text-xs font-black text-white">0.0024 ПОМ/С</span>
             </div>
             <div className="flex flex-col text-right">
-              <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">ШИФРУВАННЯ</span>
+              <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">ШИФ� УВАННЯ</span>
               <span className="text-xs font-black text-blue-400">PQC_АКТИВНО</span>
             </div>
           </div>

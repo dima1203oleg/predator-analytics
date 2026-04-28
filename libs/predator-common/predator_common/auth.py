@@ -7,8 +7,8 @@ from fastapi import Request
 class User:
     """Уніфікована модель користувача для всіх сервісів."""
 
-    def __init__(self, id: str, email: str, role: str, tenant_id: str, permissions: list[str]):
-        self.id = id
+    def __init__(self, user_id: str, email: str, role: str, tenant_id: str, permissions: list[str]):
+        self.id = user_id
         self.email = email
         self.role = role
         self.tenant_id = tenant_id

@@ -122,11 +122,11 @@ export const LLMCouncilPanel: React.FC<LLMCouncilPanelProps> = ({ isLockdown }) 
                             {result && (
                                 <div className="flex items-center gap-8 pl-8 border-l border-white/10">
                                     <div className="flex flex-col">
-                                        <span className="text-[9px] text-slate-500 font-black uppercase tracking-widest mb-1">КОЕФІЦІЄНТ_ДОВІРИ</span>
+                                        <span className="text-[9px] text-slate-500 font-black uppercase tracking-widest mb-1">КОЕФІЦІЄНТ_ДОВІ� И</span>
                                         <span className="text-2xl font-black text-emerald-400 font-mono">{(result.confidence * 100).toFixed(1)}%</span>
                                     </div>
                                     <div className="flex flex-col">
-                                        <span className="text-[9px] text-slate-500 font-black uppercase tracking-widest mb-1">ЗАТРИМКА_СИНТЕЗУ</span>
+                                        <span className="text-[9px] text-slate-500 font-black uppercase tracking-widest mb-1">ЗАТ� ИМКА_СИНТЕЗУ</span>
                                         <span className="text-2xl font-black text-cyan-400 font-mono">{(result.metadata.deliberation_time_seconds || 0).toFixed(1)}s</span>
                                     </div>
                                 </div>
@@ -227,8 +227,8 @@ export const LLMCouncilPanel: React.FC<LLMCouncilPanelProps> = ({ isLockdown }) 
                     {/* Progress Phases */}
                     <div className="space-y-6">
                         {[
-                            { id: 'GENERATING', label: 'НЕЙРО_ГЕНЕРАЦІЯ', icon: MessageSquare, desc: 'Паралельний запит до обраного флоту' },
-                            { id: 'REVIEWING', label: 'ПЕРЕХРЕСНИЙ_АРБІТРАЖ', icon: ShieldCheck, desc: 'Взаємний аудит результатів моделями' },
+                            { id: 'GENERATING', label: 'НЕЙ� О_ГЕНЕ� АЦІЯ', icon: MessageSquare, desc: 'Паралельний запит до обраного флоту' },
+                            { id: 'REVIEWING', label: 'ПЕ� ЕХ� ЕСНИЙ_А� БІТ� АЖ', icon: ShieldCheck, desc: 'Взаємний аудит результатів моделями' },
                             { id: 'SYNTHESIZING', label: 'ФІНАЛЬНИЙ_СИНТЕЗ', icon: Brain, desc: 'Формування консенсусної відповіді' }
                         ].map((s, idx) => {
                             const isActive = phase === s.id;
@@ -331,7 +331,7 @@ export const LLMCouncilPanel: React.FC<LLMCouncilPanelProps> = ({ isLockdown }) 
                                 </div>
                                 <div className="mt-24 text-center">
                                     <h4 className="text-5xl font-black text-cyan-400 tracking-tighter animate-pulse uppercase font-display mb-6">PROCESSING_CONSENSUS</h4>
-                                    <p className="text-[12px] text-slate-500 font-black uppercase tracking-[0.5em] font-mono opacity-80">АНАЛІЗ ПАРАДИГМ ТА ФОРМУВАННЯ СИНТЕТИЧНОГО КОНСЕНСУСУ...</p>
+                                    <p className="text-[12px] text-slate-500 font-black uppercase tracking-[0.5em] font-mono opacity-80">АНАЛІЗ ПА� АДИГМ ТА ФО� МУВАННЯ СИНТЕТИЧНОГО КОНСЕНСУСУ...</p>
                                 </div>
                             </motion.div>
                         )}

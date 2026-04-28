@@ -202,7 +202,7 @@ const DatabasesView: React.FC = () => {
                     />
                     <div className="flex justify-between items-center mb-6">
                         <div className="flex gap-4">
-                            <span className="text-[10px] font-mono text-slate-300">Рядки: {queryResult?.length || 0}</span>
+                            <span className="text-[10px] font-mono text-slate-300">� ядки: {queryResult?.length || 0}</span>
                             <span className="text-[10px] font-mono text-slate-300">Час виконання: Н/д</span>
                         </div>
                         <button onClick={handleExecute} disabled={isExecuting} className="px-8 py-3 bg-red-600 hover:bg-red-500 text-white font-black uppercase tracking-widest text-[11px] rounded-xl flex items-center gap-2 shadow-lg shadow-red-600/20 transition-all active:scale-95 disabled:opacity-50 italic">
@@ -228,7 +228,7 @@ const DatabasesView: React.FC = () => {
                         ) : (
                             <div className="h-full flex flex-col items-center justify-center opacity-20 transform scale-150">
                                 <Terminal size={48} className="text-slate-300 mb-4" />
-                                <span className="font-mono text-xs text-slate-300">ТЕРМІНАЛ_ОЧІКУЄ</span>
+                                <span className="font-mono text-xs text-slate-300">ТЕ� МІНАЛ_ОЧІКУЄ</span>
                             </div>
                         )}
                     </div>
@@ -253,10 +253,10 @@ const DatabasesView: React.FC = () => {
                 <div className="flex-1 text-center lg:text-left relative z-10">
                     <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-red-500/10 border border-red-500/20 rounded-full font-black text-[10px] uppercase tracking-[0.3em] text-red-500 mb-6 italic">
                         <Activity className="w-3.5 h-3.5 animate-pulse" />
-                        СУВЕРЕННИЙ ДАТА-ЦЕНТР v58.2-WRAITH
+                        СУВЕ� ЕННИЙ ДАТА-ЦЕНТ�  v58.2-WRAITH
                     </div>
                     <h1 className="text-5xl lg:text-7xl font-black text-white uppercase italic tracking-tighter leading-none mb-4 skew-x-[-2deg]">
-                        ЯДРО <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 via-amber-500 to-red-700">СУВЕРЕНИТЕТУ</span>
+                        ЯД� О <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 via-amber-500 to-red-700">СУВЕ� ЕНИТЕТУ</span>
                     </h1>
                     <p className="text-slate-400 font-medium max-w-2xl leading-relaxed text-sm lg:text-base italic">
                         Централізований шлюз до всіх рівнів зберігання даних. Від реляційних транзакцій до графових топологій та високочастотних векторних пошуків під захистом <span className="text-red-500 font-bold">Конституційного Щита (Constitutional Shield)</span>.
@@ -314,7 +314,7 @@ const DatabasesView: React.FC = () => {
                 <div className="max-w-fit mx-auto p-2 bg-slate-900/80 backdrop-blur-2xl border border-white/5 rounded-3xl flex flex-wrap shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] overflow-hidden">
                     {[
                         { id: 'ETL', label: 'ПОТІК ETL', icon: Network, color: 'text-amber-500' },
-                        { id: 'RELATIONAL', label: 'Реляційні', icon: Database, color: 'text-red-500' },
+                        { id: 'RELATIONAL', label: '� еляційні', icon: Database, color: 'text-red-500' },
                         { id: 'OBJECT', label: 'S3 Об\'єкти', icon: Server, color: 'text-amber-500' },
                         { id: 'VECTOR', label: 'Векторний ШІ', icon: Layers, color: 'text-red-500' },
                         { id: 'GRAPH', label: 'Топологія Графу', icon: Share2, color: 'text-amber-600' },

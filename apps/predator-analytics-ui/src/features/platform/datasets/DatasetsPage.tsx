@@ -64,7 +64,7 @@ const datasets = [
   },
   {
     id: "2",
-    name: "Реєстр компаній UA",
+    name: "� еєстр компаній UA",
     type: "companies",
     format: "JSONL",
     records: 500000,
@@ -79,7 +79,7 @@ const datasets = [
   },
   {
     id: "3",
-    name: "Судові Рішення (NLP)",
+    name: "Судові � ішення (NLP)",
     type: "legal",
     format: "PDF/OCR",
     records: 12400,
@@ -264,7 +264,7 @@ export default function DatasetsPage() {
                                 'bg-slate-800 text-slate-400 border border-white/5'
                             }>
                                 {dataset.status === 'active' ? 'АКТИВНИЙ' : 
-                                 dataset.status === 'processing' ? 'ОБРОБКА' : 'ОЧІКУВАННЯ'}
+                                 dataset.status === 'processing' ? 'ОБ� ОБКА' : 'ОЧІКУВАННЯ'}
                             </Badge>
                         </TableCell>
                         <TableCell className="text-center">
@@ -335,7 +335,7 @@ export default function DatasetsPage() {
                                 <div className="space-y-3">
                                     <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center justify-between">
                                         Структура Даних
-                                        <span className="text-[10px] bg-slate-800 px-1.5 py-0.5 rounded text-slate-300">ПЕРЕГЛЯД</span>
+                                        <span className="text-[10px] bg-slate-800 px-1.5 py-0.5 rounded text-slate-300">ПЕ� ЕГЛЯД</span>
                                     </h3>
                                     <div className="space-y-2">
                                         {selectedDataset.columns.map(col => (

@@ -19,7 +19,7 @@ const MOCK_COUNTRIES = [
 ];
 
 const MOCK_FLOWS = [
-  { id: 'f1', from: 'cn', to: 'ua', value: 45000000, product: 'ЕЛЕКТРОНІКА', color: '#D4AF37' },
+  { id: 'f1', from: 'cn', to: 'ua', value: 45000000, product: 'ЕЛЕКТ� ОНІКА', color: '#D4AF37' },
   { id: 'f2', from: 'de', to: 'ua', value: 32000000, product: 'МАШИНОБУДУВАННЯ', color: '#E11D48' },
 ];
 

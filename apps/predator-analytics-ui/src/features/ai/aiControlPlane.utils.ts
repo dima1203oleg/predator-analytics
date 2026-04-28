@@ -136,7 +136,7 @@ const normalizeLevel = (value: string | null): { label: string; tone: AIControlT
       return { label: 'УВАГА', tone: 'amber' };
     case 'ok':
     case 'success':
-      return { label: 'НОРМА', tone: 'emerald' };
+      return { label: 'НО� МА', tone: 'emerald' };
     default:
       return { label: 'ІНФО', tone: 'sky' };
   }
@@ -196,7 +196,7 @@ const buildEngineRecord = (
   const load = readNumber(engine.load);
   const trend = readString(engine.trend);
   const engineId = readString(engine.id) ?? key;
-  const title = ENGINE_LABELS[key] ?? ENGINE_LABELS[engineId] ?? `Рушій ${index + 1}`;
+  const title = ENGINE_LABELS[key] ?? ENGINE_LABELS[engineId] ?? `� ушій ${index + 1}`;
 
   return {
     id: engineId,

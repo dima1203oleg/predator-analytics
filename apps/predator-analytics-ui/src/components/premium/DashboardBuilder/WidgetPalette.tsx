@@ -341,7 +341,7 @@ export const WidgetPalette: React.FC<WidgetPaletteProps> = ({
         {/* Tabs */}
         <div className="flex bg-slate-950 p-1 rounded-xl">
           {[
-            { id: 'ai', label: premiumLocales.dashboardBuilder.palette.tabs.ai.replace(' Рекомендації', ''), icon: Sparkles },
+            { id: 'ai', label: premiumLocales.dashboardBuilder.palette.tabs.ai.replace(' � екомендації', ''), icon: Sparkles },
             { id: 'widgets', label: premiumLocales.dashboardBuilder.palette.tabs.widgets, icon: BarChart },
             { id: 'data', label: premiumLocales.dashboardBuilder.palette.tabs.data.replace(' Джерела ', ' '), icon: Table }
           ].map((tab) => (

@@ -121,7 +121,7 @@ describe('agentsView.utils', () => {
             {
                 id: 'sherlock',
                 name: 'Sherlock',
-                category: 'СОЦМЕРЕЖІ',
+                category: 'СОЦМЕ� ЕЖІ',
                 status: 'online',
                 findings_count: 142,
                 updated_at: '2026-03-30T10:12:00Z',
@@ -129,7 +129,7 @@ describe('agentsView.utils', () => {
             {
                 id: 'amass',
                 name: 'Amass',
-                category: 'МЕРЕЖА',
+                category: 'МЕ� ЕЖА',
                 status: 'scanning',
                 findings: 87,
                 last_scan: '2026-03-30T10:18:00Z',
@@ -137,7 +137,7 @@ describe('agentsView.utils', () => {
             {
                 id: 'maigret',
                 name: 'Maigret',
-                category: 'СОЦМЕРЕЖІ',
+                category: 'СОЦМЕ� ЕЖІ',
                 status: 'offline',
             },
         ]);

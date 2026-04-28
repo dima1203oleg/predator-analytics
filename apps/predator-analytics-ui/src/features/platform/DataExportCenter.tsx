@@ -230,7 +230,7 @@ const ExportJobRow: React.FC<{ job: ExportJob }> = ({ job }) => {
           </button>
         )}
         {job.status === 'scheduled' && (
-          <button className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white" title="Редагувати">
+          <button className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white" title="� едагувати">
             <Settings size={16} />
           </button>
         )}

@@ -55,7 +55,7 @@ export const FactoryIngestionPanel: React.FC<FactoryIngestionPanelProps> = ({
           </div>
           <div className="bg-slate-900/50 border border-rose-500/20 p-4 rounded-xl flex items-center justify-between">
             <div className="flex flex-col">
-              <span className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Ротація Проксі-серверів</span>
+              <span className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">� отація Проксі-серверів</span>
               <div className="text-2xl text-rose-400 font-mono font-bold mt-1">{ingestionMetrics.proxies}</div>
             </div>
             <Network className="text-rose-500/50" size={32} />

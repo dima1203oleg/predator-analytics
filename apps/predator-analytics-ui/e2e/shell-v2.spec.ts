@@ -22,6 +22,6 @@ test.describe('Shell v2', () => {
     await expect(page).toHaveURL(/\/market$/);
     await expect(page.getByTestId('context-rail')).toBeVisible();
     await expect(page.getByTestId('context-rail').getByText('Контекстна панель')).toBeVisible();
-    await expect(page.getByTestId('context-rail').getByText('Ринок')).toBeVisible();
+    await expect(page.getByTestId('context-rail').getByText('� инок')).toBeVisible();
   });
 });

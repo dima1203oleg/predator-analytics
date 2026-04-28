@@ -71,7 +71,7 @@ const getRoleLabel = (role: string): string => {
   if (role === UserRole.ADMIN) return ROLE_DISPLAY_NAMES[UserRole.ADMIN];
   if (role === UserRole.CLIENT_PREMIUM) return ROLE_DISPLAY_NAMES[UserRole.CLIENT_PREMIUM];
   if (role === UserRole.CLIENT_BASIC) return 'Бізнес-контур';
-  return 'Режим перегляду';
+  return '� ежим перегляду';
 };
 
 const Header: React.FC = () => {
@@ -151,7 +151,7 @@ const Header: React.FC = () => {
                            '#fda4af',
                   }}
                 >
-                  {section?.label ?? 'ПЛАТФОРМА'}
+                  {section?.label ?? 'ПЛАТФО� МА'}
                 </span>
                 {item && (
                   <>
@@ -169,7 +169,7 @@ const Header: React.FC = () => {
                   className="text-[1.75rem] font-black tracking-tight leading-none truncate italic text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]"
                   style={{ letterSpacing: '-0.03em' }}
                 >
-                  {item?.label ?? 'ПАНЕЛЬ УПРАВЛІННЯ'}
+                  {item?.label ?? 'ПАНЕЛЬ УП� АВЛІННЯ'}
                 </h1>
               </div>
               
@@ -199,7 +199,7 @@ const Header: React.FC = () => {
             </div>
           </div>
 
-          {/* ── ПРАВА ЧАСТИНА: Пошук + Дії ── */}
+          {/* ── П� АВА ЧАСТИНА: Пошук + Дії ── */}
           <div className="flex items-center gap-4 shrink-0">
             <SystemPulseIndicator />
             

@@ -30,7 +30,7 @@ export const GlobalAZRStatus: React.FC = () => {
         setActive(true);
         setStatus({
           generation: 42,
-          phase_name: 'Режим Рекомендацій',
+          phase_name: '� ежим � екомендацій',
           improvements_this_week: 12
         });
       }
@@ -57,7 +57,7 @@ export const GlobalAZRStatus: React.FC = () => {
       >
         <div className="flex flex-col items-end">
           <span className="text-[10px] font-black text-amber-400 uppercase tracking-wider flex items-center gap-1">
-            АЗР СИСТЕМА <Zap size={10} className="fill-amber-400" />
+            АЗ�  СИСТЕМА <Zap size={10} className="fill-amber-400" />
           </span>
           <span className="text-xs font-bold text-white flex items-center gap-1">
             ГЕН {status?.generation || '0'}

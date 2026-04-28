@@ -23,11 +23,11 @@ interface DataSourcesGridProps {
 
 const getStatusText = (status: string) => {
     const map: any = {
-        'indexed': 'ПРОІНДЕКСОВАНО',
+        'indexed': 'П� ОІНДЕКСОВАНО',
         'uploaded': 'ЗАВАНТАЖЕНО',
-        'parsing': 'ОБРОБКА',
+        'parsing': 'ОБ� ОБКА',
         'error': 'ПОМИЛКА',
-        'draft': 'ЧЕРНЕТКА'
+        'draft': 'ЧЕ� НЕТКА'
     };
     return map[status] || status.toUpperCase();
 };

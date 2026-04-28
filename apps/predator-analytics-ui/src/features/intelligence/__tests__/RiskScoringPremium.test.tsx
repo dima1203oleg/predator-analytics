@@ -55,7 +55,7 @@ vi.mock('@/features/diligence', () => ({
             items: [
                 {
                     id: '123',
-                    name: 'ТЕСТ_РИЗИК_1',
+                    name: 'ТЕСТ_� ИЗИК_1',
                     edrpou: '11111111',
                     risk_score: 0.95,
                     sanctions: ['BLOCK'],
@@ -76,11 +76,11 @@ describe('RiskScoringPremium', () => {
     it('відображає інтерфейс моніторингу ризиків та завантажує суб\'єктів', async () => {
         render(<RiskScoringPremium />);
         
-        expect(screen.getByText(/РИЗИК/i)).toBeInTheDocument();
-        expect(screen.getByText(/МОНІТОРИНГ/i)).toBeInTheDocument();
+        expect(screen.getByText(/� ИЗИК/i)).toBeInTheDocument();
+        expect(screen.getByText(/МОНІТО� ИНГ/i)).toBeInTheDocument();
         
         await waitFor(() => {
-            expect(screen.getByText('ТЕСТ_РИЗИК_1')).toBeInTheDocument();
+            expect(screen.getByText('ТЕСТ_� ИЗИК_1')).toBeInTheDocument();
         });
     });
 
@@ -103,11 +103,11 @@ describe('RiskScoringPremium', () => {
         render(<RiskScoringPremium />);
         
         await waitFor(() => {
-            const entityRow = screen.getByText('ТЕСТ_РИЗИК_1');
+            const entityRow = screen.getByText('ТЕСТ_� ИЗИК_1');
             fireEvent.click(entityRow);
         });
         
-        expect(screen.getByText(/CERS 5-ШАРОВА МОДЕЛЬ РИЗИКУ/i)).toBeInTheDocument();
+        expect(screen.getByText(/CERS 5-ША� ОВА МОДЕЛЬ � ИЗИКУ/i)).toBeInTheDocument();
         expect(screen.getByTestId('cers-gauge')).toBeInTheDocument();
         expect(screen.getByTestId('sovereign-report')).toBeInTheDocument();
     });
@@ -116,13 +116,13 @@ describe('RiskScoringPremium', () => {
         render(<RiskScoringPremium />);
         
         await waitFor(() => {
-            expect(screen.getByText('ТЕСТ_РИЗИК_1')).toBeInTheDocument();
+            expect(screen.getByText('ТЕСТ_� ИЗИК_1')).toBeInTheDocument();
         });
 
         const searchInput = screen.getByPlaceholderText(/ПОШУК СУБ'ЄКТА ЗА НАЗВОЮ/i);
         fireEvent.change(searchInput, { target: { value: '99999999' } });
         
-        expect(screen.queryByText('ТЕСТ_РИЗИК_1')).not.toBeInTheDocument();
+        expect(screen.queryByText('ТЕСТ_� ИЗИК_1')).not.toBeInTheDocument();
     });
 
     it('відображає MIRROR_SCAN в автономному режимі', () => {

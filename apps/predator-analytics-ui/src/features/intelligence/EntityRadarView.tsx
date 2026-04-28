@@ -1,5 +1,5 @@
 /**
- * 🛰️ ENTITY RADAR // РАДАР СУБ'ЄКТІВ | v58.2-WRAITH
+ * 🛰️ ENTITY RADAR // � АДА�  СУБ'ЄКТІВ | v58.2-WRAITH
  * PREDATOR Analytics — Sovereign Intelligence & Network Analysis
  * 
  * Модуль глобального моніторингу та радарного виявлення аномальних
@@ -111,10 +111,10 @@ const getRadarOption = (entity: EntityRadarItem) => {
     backgroundColor: 'transparent',
     radar: {
       indicator: [
-        { name: 'РЕПУТАЦІЯ', max: 100 },
+        { name: '� ЕПУТАЦІЯ', max: 100 },
         { name: 'ФІНАНСИ', max: 100 },
         { name: 'ЗВ\'ЯЗКИ', max: 100 },
-        { name: 'РЕГУЛЯТОРИ', max: 100 },
+        { name: '� ЕГУЛЯТО� И', max: 100 },
         { name: 'МЕДІА', max: 100 }
       ],
       shape: 'circle',
@@ -188,7 +188,7 @@ const EntityRadarView: React.FC = () => {
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'EntityRadar',
-          message: 'РАДАР СУБ\'ЄКТІВ: Активовано автономний режим (ENTITY_RADAR_NODES). Використовується локальна база радарних виявлень.',
+          message: '� АДА�  СУБ\'ЄКТІВ: Активовано автономний режим (ENTITY_RADAR_NODES). Використовується локальна база радарних виявлень.',
           severity: 'warning',
           timestamp: new Date().toISOString(),
           code: 'RADAR_OFFLINE'
@@ -199,7 +199,7 @@ const EntityRadarView: React.FC = () => {
     window.dispatchEvent(new CustomEvent('predator-error', {
       detail: {
         service: 'EntityRadar',
-        message: `РАДАР_МАТРИЦЯ [${nodeSource}]: Радар суб'єктів активовано. Готовність до сканування контуру GDS.`,
+        message: `� АДА� _МАТ� ИЦЯ [${nodeSource}]: � адар суб'єктів активовано. Готовність до сканування контуру GDS.`,
         severity: 'info',
         timestamp: new Date().toISOString(),
         code: 'RADAR_SUCCESS'
@@ -218,7 +218,7 @@ const EntityRadarView: React.FC = () => {
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'EntityRadar',
-          message: `СЕРВЕР_РАДАРА [${nodeSource}]: Топологію ризику для ${data.length} об'єктів успішно синхронізовано.`,
+          message: `СЕ� ВЕ� _� АДА� А [${nodeSource}]: Топологію ризику для ${data.length} об'єктів успішно синхронізовано.`,
           severity: 'info',
           timestamp: new Date().toISOString(),
           code: 'RADAR_SUCCESS'
@@ -230,7 +230,7 @@ const EntityRadarView: React.FC = () => {
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'EntityRadar',
-          message: `КРИТИЧНА ПОМИЛКА СКАНУВАННЯ ВУЗЛА ENTITY_RADAR_NODES. Перевірте з'єднання з ${nodeSource}.`,
+          message: `К� ИТИЧНА ПОМИЛКА СКАНУВАННЯ ВУЗЛА ENTITY_RADAR_NODES. Перевірте з'єднання з ${nodeSource}.`,
           severity: 'critical',
           timestamp: new Date().toISOString(),
           code: 'ENTITY_RADAR_NODES'
@@ -289,7 +289,7 @@ const EntityRadarView: React.FC = () => {
                     <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-{isOffline ? 'MIRROR' : 'WRAITH'}</span>
                   </div>
                   <h1 className="text-7xl font-black text-white tracking-tighter uppercase italic skew-x-[-4deg] leading-none">
-                    РАДАР <span className="text-yellow-500 underline decoration-yellow-600/30 decoration-[16px] underline-offset-[16px] italic uppercase tracking-tighter">СУБ'ЄКТІВ</span>
+                    � АДА�  <span className="text-yellow-500 underline decoration-yellow-600/30 decoration-[16px] underline-offset-[16px] italic uppercase tracking-tighter">СУБ'ЄКТІВ</span>
                   </h1>
                 </div>
               </div>
@@ -300,8 +300,8 @@ const EntityRadarView: React.FC = () => {
               { label: 'SOVEREIGN_FORCE', color: 'primary', icon: <ShieldCheck size={10} /> },
             ]}
             stats={[
-              { label: 'ОБ\'ЄКТІВ_У_КОНТУРІ', value: String(entities.length), icon: <Building2 />, color: 'gold' },
-              { label: 'КРИТИЧНІ_ВУЗЛИ', value: String(entities.filter(e => e.cers_score > 80).length), icon: <Siren />, color: 'danger', animate: true },
+              { label: 'ОБ\'ЄКТІВ_У_КОНТУ� І', value: String(entities.length), icon: <Building2 />, color: 'gold' },
+              { label: 'К� ИТИЧНІ_ВУЗЛИ', value: String(entities.filter(e => e.cers_score > 80).length), icon: <Siren />, color: 'danger', animate: true },
               { label: 'CONFIDENCE', value: '98.8%', icon: <Zap />, color: 'success' },
               { label: 'ALPHA_SYNC', value: 'NOMINAL', icon: <Activity />, color: 'primary' },
             ]}
@@ -319,7 +319,7 @@ const EntityRadarView: React.FC = () => {
                 <button className="relative px-12 py-7 h-fit group/main overflow-hidden rounded-[2.2rem]">
                   <div className="absolute inset-0 bg-gradient-to-r from-yellow-600 to-yellow-500 transition-transform duration-500 group-hover/main:scale-105" />
                   <div className="relative flex items-center gap-6 text-black font-black uppercase italic tracking-[0.3em] text-[12px]">
-                    <Download size={24} /> ЕКСПОРТ_ТОПОЛОГІЇ_РИЗИКУ
+                    <Download size={24} /> ЕКСПО� Т_ТОПОЛОГІЇ_� ИЗИКУ
                   </div>
                   <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover/main:translate-x-[100%] transition-transform duration-1000" />
                 </button>
@@ -334,7 +334,7 @@ const EntityRadarView: React.FC = () => {
                 <Search className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-yellow-500 transition-colors" size={24} />
                 <input
                   type="text"
-                  placeholder="ПОШУК СЕРЕД КРИТИЧНИХ СУБ'ЄКТІВ (ЄДРПОУ / НАЗВА)..."
+                  placeholder="ПОШУК СЕ� ЕД К� ИТИЧНИХ СУБ'ЄКТІВ (ЄД� ПОУ / НАЗВА)..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-20 pr-10 py-7 bg-black/60 border-2 border-white/[0.04] rounded-[2.2rem] text-white placeholder-slate-800 focus:outline-none focus:border-yellow-500/50 transition-all font-black text-lg italic tracking-tight"
@@ -348,15 +348,15 @@ const EntityRadarView: React.FC = () => {
                     onChange={(e) => setSortBy(e.target.value as any)}
                     className="appearance-none w-full xl:w-[350px] pl-8 pr-16 py-7 bg-black/60 border-2 border-white/[0.04] rounded-[2.2rem] text-slate-400 focus:outline-none focus:border-yellow-500/30 font-black uppercase tracking-[0.2em] text-[11px] cursor-pointer italic"
                   >
-                    <option value="score">СОРТУВАТИ: РІВЕНЬ CERS</option>
-                    <option value="name">СОРТУВАТИ: АЛФАВІТ</option>
-                    <option value="last_updated">СОРТУВАТИ: ОНОВЛЕННЯ</option>
+                    <option value="score">СО� ТУВАТИ: � ІВЕНЬ CERS</option>
+                    <option value="name">СО� ТУВАТИ: АЛФАВІТ</option>
+                    <option value="last_updated">СО� ТУВАТИ: ОНОВЛЕННЯ</option>
                   </select>
                   <ChevronDown className="absolute right-8 top-1/2 -translate-y-1/2 text-slate-600 pointer-events-none" size={20} />
                 </div>
 
                 <button className="px-10 py-7 bg-white/[0.02] border-2 border-white/[0.05] rounded-[2.2rem] text-slate-400 font-black text-[11px] uppercase tracking-[0.3em] italic hover:bg-white/[0.05] hover:text-white transition-all shadow-xl flex items-center gap-4">
-                  <Filter size={18} className="text-yellow-500" /> ФІЛЬТРИ
+                  <Filter size={18} className="text-yellow-500" /> ФІЛЬТ� И
                 </button>
               </div>
             </div>
@@ -417,7 +417,7 @@ const EntityRadarView: React.FC = () => {
                         <div className="flex gap-4">
                           {entity.trend === 'increasing' && (
                             <div className="px-4 py-1.5 bg-amber-600/10 text-amber-500 border-2 border-amber-600/20 rounded-xl text-[10px] font-black uppercase italic tracking-widest flex items-center gap-2">
-                              <ArrowUpRight size={14} /> РИЗИК_ЗРОСТАЄ
+                              <ArrowUpRight size={14} /> � ИЗИК_З� ОСТАЄ
                             </div>
                           )}
                           <div className="px-4 py-1.5 bg-yellow-500/10 text-yellow-500 border-2 border-yellow-500/20 rounded-xl text-[10px] font-black uppercase italic tracking-widest flex items-center gap-2">
@@ -439,7 +439,7 @@ const EntityRadarView: React.FC = () => {
                     {/* Micro Charts Preview */}
                     <div className="hidden 2xl:flex items-center gap-12 px-12 border-x-2 border-white/[0.03] h-20">
                       <div className="space-y-3">
-                        <p className="text-[9px] text-slate-800 font-black uppercase tracking-[0.4em] italic leading-none">РЕПУТАЦІЯ</p>
+                        <p className="text-[9px] text-slate-800 font-black uppercase tracking-[0.4em] italic leading-none">� ЕПУТАЦІЯ</p>
                         <div className="w-24 h-2 bg-slate-900 rounded-full overflow-hidden p-0.5">
                           <div className="h-full bg-yellow-500 rounded-full shadow-[0_0_10px_#d4af37]" style={{ width: `${entity.radar_metrics?.reputation || 50}%` }} />
                         </div>
@@ -495,10 +495,10 @@ const EntityRadarView: React.FC = () => {
                              </div>
                              <div className="p-10 rounded-[3rem] bg-yellow-500/5 border-2 border-yellow-500/10 space-y-4 shadow-4xl backdrop-blur-3xl">
                                 <h4 className="text-[11px] font-black text-yellow-500 uppercase tracking-[0.5em] italic mb-6 flex items-center gap-4">
-                                  <Sparkles size={16} /> ВЕРДИКТ_PREDATOR_AI
+                                  <Sparkles size={16} /> ВЕ� ДИКТ_PREDATOR_AI
                                 </h4>
                                 <p className="text-[16px] font-black text-white leading-relaxed italic border-l-8 border-yellow-500/30 pl-8 py-2">
-                                  "ВУЗОЛ ВИЯВЛЕНО ЯК КРИТИЧНИЙ. ФАКТОР РИЗИКУ {entity.cers_score}% БАЗУЄТЬСЯ НА ПРЯМИХ ЗВ'ЯЗКАХ ПО СЕРВЕРНИХ ЛОГАХ ТА ОФШОРНИХ ПРОВІДНИКАХ. РЕКОМЕНДОВАНО ПОВНИЙ SIGINT-АУДИТ."
+                                  "ВУЗОЛ ВИЯВЛЕНО ЯК К� ИТИЧНИЙ. ФАКТО�  � ИЗИКУ {entity.cers_score}% БАЗУЄТЬСЯ НА П� ЯМИХ ЗВ'ЯЗКАХ ПО СЕ� ВЕ� НИХ ЛОГАХ ТА ОФШО� НИХ П� ОВІДНИКАХ. � ЕКОМЕНДОВАНО ПОВНИЙ SIGINT-АУДИТ."
                                 </p>
                              </div>
                           </div>
@@ -509,9 +509,9 @@ const EntityRadarView: React.FC = () => {
                                 <header className="flex items-center justify-between border-b-2 border-white/[0.03] pb-8">
                                    <div className="space-y-2">
                                       <h4 className="text-[14px] font-black text-amber-600 uppercase tracking-[0.6em] italic flex items-center gap-4">
-                                        <Siren size={20} className="animate-pulse" /> АКТИВНІ_ПОГРОЗИ // ACTIVE_SIG
+                                        <Siren size={20} className="animate-pulse" /> АКТИВНІ_ПОГ� ОЗИ // ACTIVE_SIG
                                       </h4>
-                                      <p className="text-[10px] text-slate-800 font-bold uppercase tracking-[0.4em] italic">ВИЯВЛЕНІ АНОМАЛІЇ У ТЕРМІНАЛІ РИЗИКУ</p>
+                                      <p className="text-[10px] text-slate-800 font-bold uppercase tracking-[0.4em] italic">ВИЯВЛЕНІ АНОМАЛІЇ У ТЕ� МІНАЛІ � ИЗИКУ</p>
                                    </div>
                                    <div className="p-4 bg-amber-600/10 border-2 border-amber-600/20 rounded-2xl text-amber-600 animate-pulse shadow-amber-900/40">
                                       <Shield size={24} />
@@ -519,7 +519,7 @@ const EntityRadarView: React.FC = () => {
                                 </header>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                   {(entity.risk_factors.length > 0 ? entity.risk_factors : ['ВІДСУТНІ ПРЯМІ СИГНАЛИ (LOW_THREAT)']).map((f, i) => (
+                                   {(entity.risk_factors.length > 0 ? entity.risk_factors : ['ВІДСУТНІ П� ЯМІ СИГНАЛИ (LOW_THREAT)']).map((f, i) => (
                                       <div key={i} className="p-8 rounded-[2.5rem] bg-white/[0.01] border-2 border-white/[0.04] hover:border-amber-600/30 transition-all group/it flex items-center gap-6 shadow-2xl">
                                          <div className="w-4 h-4 rounded-full bg-amber-600 shadow-lg shadow-amber-950/50 group-hover/it:scale-125 transition-transform" />
                                          <div className="space-y-1">
@@ -532,7 +532,7 @@ const EntityRadarView: React.FC = () => {
                                        <div className="w-4 h-4 rounded-full bg-yellow-500 shadow-lg shadow-yellow-950/50" />
                                        <div className="space-y-1">
                                           <p className="text-[9px] font-black text-slate-800 uppercase tracking-widest leading-none">NEURAL_TAG</p>
-                                          <span className="text-xl font-black text-yellow-500 italic tracking-tighter uppercase leading-none">ОФШОРНА ТОПОЛОГІЯ</span>
+                                          <span className="text-xl font-black text-yellow-500 italic tracking-tighter uppercase leading-none">ОФШО� НА ТОПОЛОГІЯ</span>
                                        </div>
                                    </div>
                                 </div>
@@ -545,14 +545,14 @@ const EntityRadarView: React.FC = () => {
                                       <Layers size={32} />
                                    </div>
                                    <div className="space-y-1">
-                                      <h5 className="text-[12px] font-black text-white uppercase tracking-[0.4em] italic">КЕРУВАННЯ_ОПЕРАЦІЯМИ</h5>
+                                      <h5 className="text-[12px] font-black text-white uppercase tracking-[0.4em] italic">КЕ� УВАННЯ_ОПЕ� АЦІЯМИ</h5>
                                       <p className="text-[9px] text-slate-700 font-black uppercase tracking-[0.3em] font-mono">SOVEREIGN_COMMAND_UNIT_ONLINE</p>
                                    </div>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                    <button className="flex flex-col items-center justify-center gap-6 p-8 bg-yellow-500 hover:bg-yellow-400 text-black rounded-[2.5rem] transition-all group/btn shadow-4xl active:scale-95 duration-500">
                                       <Download size={24} className="group-hover/btn:translate-y-1 transition-transform" />
-                                      <span className="text-[10px] font-black uppercase tracking-[0.2em] italic">ГЕНЕРУВАТИ_ДОСЬЄ</span>
+                                      <span className="text-[10px] font-black uppercase tracking-[0.2em] italic">ГЕНЕ� УВАТИ_ДОСЬЄ</span>
                                    </button>
                                    <button className="flex flex-col items-center justify-center gap-6 p-8 bg-white/[0.02] border-2 border-white/10 text-white hover:bg-white/[0.05] rounded-[2.5rem] transition-all group/btn shadow-xl">
                                       <Eye size={24} />
@@ -579,7 +579,7 @@ const EntityRadarView: React.FC = () => {
                 </div>
                 <div className="space-y-4">
                   <h3 className="text-4xl font-black text-slate-700 uppercase tracking-widest italic leading-none shadow-sm">ОБ'ЄКТІВ_НЕ_ВИЯВЛЕНО</h3>
-                  <p className="text-slate-900 font-black uppercase tracking-[0.4em] italic text-xs max-w-xl mx-auto opacity-60">РАДАРНА СІТКА GDS ЗАЛИШАЄТЬСЯ ЧИСТОЮ ПРИ ДАНИХ ПАРАМЕТРАХ ПОШУКУ</p>
+                  <p className="text-slate-900 font-black uppercase tracking-[0.4em] italic text-xs max-w-xl mx-auto opacity-60">� АДА� НА СІТКА GDS ЗАЛИШАЄТЬСЯ ЧИСТОЮ П� И ДАНИХ ПА� АМЕТ� АХ ПОШУКУ</p>
                 </div>
               </div>
             )}

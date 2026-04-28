@@ -150,8 +150,8 @@ const BootSequenceV8: React.FC<{ onComplete: () => void }> = ({ onComplete }) =>
   const LOG_ENTRIES = [
     "[✓] IDENTITY LOCKED: ОБ'ЄКТ 'В' (ПО-БАТЬКОВІ: ВАСИЛЬОВИЧ)",
     "[✓] FINANCIAL FOOTPRINT MAPPED (14 BANKS)",
-    "[✓] PARSING RELATIVES: БРАТ (О. ВАСИЛЬОВИЧ) -> ТОП-МЕНЕДЖЕР БАНКУ",
-    "[!] ANOMALY DETECTED: ТЕНДЕР №481516",
+    "[✓] PARSING RELATIVES: Б� АТ (О. ВАСИЛЬОВИЧ) -> ТОП-МЕНЕДЖЕ�  БАНКУ",
+    "[!] ANOMALY DETECTED: ТЕНДЕ�  №481516",
     "[✓] NETWORK GRAPH CONSTRUCTED (47 ACTIVE CONNECTIONS)",
     "[✓] PREDICTIVE BEHAVIOR MODEL: 99.9% ACCURACY",
   ];
@@ -499,7 +499,7 @@ const BootSequenceV8: React.FC<{ onComplete: () => void }> = ({ onComplete }) =>
             className="absolute inset-0 flex items-center justify-center pointer-events-none"
           >
             <h1 className="text-white text-5xl md:text-8xl font-black tracking-[0.2em] shadow-[0_0_50px_rgba(220,38,38,0.5)]">
-              ЯДРО PREDATOR: ОНЛАЙН
+              ЯД� О PREDATOR: ОНЛАЙН
             </h1>
           </motion.div>
         )}
@@ -531,7 +531,7 @@ const BootSequenceV8: React.FC<{ onComplete: () => void }> = ({ onComplete }) =>
             className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center px-4"
           >
             <h2 className="text-white text-4xl md:text-7xl font-bold bg-red-600 px-6 py-2 mb-4 tracking-tighter italic">
-                ЗБІГ ЗАФІКСОВАНО // ЦІЛЬ ПОВНІСТЮ КОМПРОМЕТОВАНА
+                ЗБІГ ЗАФІКСОВАНО // ЦІЛЬ ПОВНІСТЮ КОМП� ОМЕТОВАНА
             </h2>
             <p className="text-red-500 font-mono text-lg md:text-xl uppercase tracking-widest bg-black px-4 py-1">
               Корупційна мережа підтверджена. Активи заблоковано.
@@ -549,8 +549,8 @@ const BootSequenceV8: React.FC<{ onComplete: () => void }> = ({ onComplete }) =>
             className="absolute bottom-20 left-10 pointer-events-none"
           >
             <div className="text-white/40 text-xs font-mono mb-2">PREDATOR OS v8.0 — АКТИВНО</div>
-            <div className="text-white/60 text-xs font-mono mb-2">ВСІ СИСТЕМИ ПРИВЕДЕНІ В БОЙОВУ ГОТОВНІСТЬ</div>
-            <div className="text-white text-sm font-bold tracking-[0.5em] uppercase italic">ГОТОВО ДО РОЗГОРТАННЯ</div>
+            <div className="text-white/60 text-xs font-mono mb-2">ВСІ СИСТЕМИ П� ИВЕДЕНІ В БОЙОВУ ГОТОВНІСТЬ</div>
+            <div className="text-white text-sm font-bold tracking-[0.5em] uppercase italic">ГОТОВО ДО � ОЗГО� ТАННЯ</div>
           </motion.div>
         )}
       </AnimatePresence>

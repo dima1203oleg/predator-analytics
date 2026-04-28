@@ -121,12 +121,12 @@ export const CustomsMonitorTab: React.FC = () => {
             <div className="col-span-12 lg:col-span-4 p-8 rounded-[3rem] bg-white/[0.02] border border-white/5 flex flex-col items-center justify-center space-y-12">
                <h3 className="text-[12px] font-black text-yellow-500 italic uppercase tracking-[0.4em] self-start">Структура товарів</h3>
                <div className="h-60 w-full flex items-center justify-center italic text-slate-600 text-[10px] uppercase tracking-widest text-center">
-                  [СЕКТОРНА_ДІАГРАМА_ОБРОБЛЯЄТЬСЯ...]<br/>
+                  [СЕКТО� НА_ДІАГ� АМА_ОБ� ОБЛЯЄТЬСЯ...]<br/>
                   DYNAMIC_HS_ANALYSIS
                </div>
                <div className="w-full space-y-3">
                   {[
-                    { name: 'ЕЛЕКТРОНІКА', value: 35, color: '#D4AF37' },
+                    { name: 'ЕЛЕКТ� ОНІКА', value: 35, color: '#D4AF37' },
                     { name: 'МАШИНОБУДУВАННЯ', value: 25, color: '#fbbf24' }
                   ].map(d => (
                     <div key={d.name} className="flex items-center justify-between p-4 rounded-xl bg-white/[0.01] border border-white/5">
@@ -164,7 +164,7 @@ export const CustomsMonitorTab: React.FC = () => {
                     <p className="text-sm text-slate-500 italic uppercase font-bold tracking-tight">{alert.desc || alert.description || 'Детальний аналіз ризику доступний у модулі розслідувань.'}</p>
                   </div>
                   <button className="px-6 py-4 bg-white/5 hover:bg-amber-600 border border-white/5 rounded-2xl text-[10px] font-black uppercase italic transition-all hover:text-white tracking-widest">
-                    Розслідувати
+                    � озслідувати
                   </button>
                 </div>
               ))

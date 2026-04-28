@@ -78,15 +78,15 @@ export const Search: React.FC = () => {
                   ГЛОБАЛЬНИЙ <span className="text-blue-600 underline decoration-blue-600/20 decoration-8 italic uppercase">ПОШУК</span>
                 </h1>
                 <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] italic opacity-80 leading-none">
-                  ПОШУК КОМПАНІЙ ТА ФІЗИЧНИХ ОСІБ В РЕЄСТРАХ CERS
+                  ПОШУК КОМПАНІЙ ТА ФІЗИЧНИХ ОСІБ В � ЕЄСТ� АХ CERS
                 </p>
               </div>
             </div>
           }
           stats={[
-            { label: 'РЕЗУЛЬТАТІВ', value: String(results.length), icon: <Target size={14} />, color: 'primary' },
+            { label: '� ЕЗУЛЬТАТІВ', value: String(results.length), icon: <Target size={14} />, color: 'primary' },
             { label: 'БАЗА_ДАНИХ', value: '4.2M+', icon: <Database size={14} />, color: 'primary' },
-            { label: 'ЗАТРИМКА', value: '14ms', icon: <Activity size={14} />, color: 'success' }
+            { label: 'ЗАТ� ИМКА', value: '14ms', icon: <Activity size={14} />, color: 'success' }
           ]}
         />
 
@@ -97,7 +97,7 @@ export const Search: React.FC = () => {
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Введіть код ЄДРПОУ, назву компанії або об'єкта..."
+              placeholder="Введіть код ЄД� ПОУ, назву компанії або об'єкта..."
               className="w-full bg-black/60 border-2 border-white/[0.04] group-focus-within:border-blue-600/40 rounded-[2.5rem] px-10 py-8 pl-20 text-xl font-black italic text-white placeholder:text-slate-700 outline-none shadow-3xl backdrop-blur-3xl transition-all"
             />
             <SearchIcon className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-700 group-focus-within:text-blue-500 transition-colors" size={32} />
@@ -106,16 +106,16 @@ export const Search: React.FC = () => {
               disabled={isSearching || !query.trim()}
               className="absolute right-4 top-1/2 -translate-y-1/2 px-12 py-5 bg-blue-700 hover:bg-blue-600 disabled:bg-slate-900 disabled:text-slate-700 text-white font-black rounded-3xl transition-all uppercase text-[10px] tracking-[0.3em] shadow-2xl active:scale-95 italic"
             >
-              {isSearching ? 'ОБРОБКА...' : 'ЗНАЙТИ_ОБʼЄКТ'}
+              {isSearching ? 'ОБ� ОБКА...' : 'ЗНАЙТИ_ОБʼЄКТ'}
             </button>
           </form>
 
           <div className="flex items-center gap-4 overflow-x-auto pb-4 no-scrollbar opacity-80">
             <button className="flex items-center gap-3 px-6 py-2.5 bg-white/[0.02] border border-white/[0.05] rounded-xl text-slate-500 text-[9px] uppercase font-black tracking-widest transition-all hover:border-blue-500/30 hover:text-blue-400">
-              <Filter size={14} /> ВСІ_ФІЛЬТРИ
+              <Filter size={14} /> ВСІ_ФІЛЬТ� И
             </button>
             <div className="h-4 w-px bg-white/5" />
-            <button className="px-6 py-2.5 bg-white/[0.02] border border-white/[0.05] rounded-xl text-slate-500 text-[9px] uppercase font-black tracking-widest transition-all hover:border-blue-500/30 hover:text-blue-400">ЮРИДИЧНІ_ОСОБИ</button>
+            <button className="px-6 py-2.5 bg-white/[0.02] border border-white/[0.05] rounded-xl text-slate-500 text-[9px] uppercase font-black tracking-widest transition-all hover:border-blue-500/30 hover:text-blue-400">Ю� ИДИЧНІ_ОСОБИ</button>
             <button className="px-6 py-2.5 bg-white/[0.02] border border-white/[0.05] rounded-xl text-slate-500 text-[9px] uppercase font-black tracking-widest transition-all hover:border-blue-500/30 hover:text-blue-400">ФІЗИЧНІ_ОСОБИ</button>
           </div>
         </div>
@@ -163,7 +163,7 @@ export const Search: React.FC = () => {
                           <h3 className="text-3xl font-black text-white group-hover:text-blue-400 transition-colors uppercase italic tracking-tighter leading-none">{result.name}</h3>
                           <div className="flex items-center gap-6">
                              <div className="flex items-center gap-2 px-3 py-1 bg-white/[0.03] border border-white/[0.05] rounded-xl text-[10px] font-black text-slate-500 italic uppercase">
-                                <Fingerprint size={12} className="text-blue-600" /> ЄДРПОУ: {result.edrpou || result.id || 'N/A'}
+                                <Fingerprint size={12} className="text-blue-600" /> ЄД� ПОУ: {result.edrpou || result.id || 'N/A'}
                              </div>
                              <div className="h-1 w-1 rounded-full bg-slate-800" />
                              <div className="flex items-center gap-2 text-[10px] font-black text-amber-500 uppercase tracking-widest italic">
@@ -176,7 +176,7 @@ export const Search: React.FC = () => {
                          onClick={() => window.location.href = `/company/${result.id}/cers`}
                          className="flex items-center gap-4 px-10 py-5 bg-white/[0.03] hover:bg-blue-600 text-white border border-white/5 hover:border-blue-500 rounded-3xl transition-all text-[10px] font-black uppercase tracking-[0.3em] italic group-hover:shadow-2xl active:scale-95"
                       >
-                        ВІДКРИТИ_ДОСЬЄ <ArrowRight size={18} />
+                        ВІДК� ИТИ_ДОСЬЄ <ArrowRight size={18} />
                       </button>
                     </div>
                     
@@ -188,7 +188,7 @@ export const Search: React.FC = () => {
                       ))}
                       {(!result.tags || result.tags.length === 0) && (
                          <span className="text-[9px] uppercase font-black text-emerald-500 bg-emerald-500/10 px-4 py-1.5 rounded-xl border border-emerald-500/20 tracking-[0.2em] italic flex items-center gap-2">
-                           <Zap size={10} /> ДІЮЧЕ_ПІДПРИЄМСТВО
+                           <Zap size={10} /> ДІЮЧЕ_ПІДП� ИЄМСТВО
                          </span>
                       )}
                     </div>
@@ -199,7 +199,7 @@ export const Search: React.FC = () => {
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-40 bg-black border-2 border-dashed border-white/[0.02] rounded-[4rem] shadow-3xl">
                 <SearchIcon size={64} className="mx-auto text-slate-800 mb-8" />
                 <p className="text-slate-500 font-black italic text-xl uppercase tracking-widest">ОБʼЄКТІВ_НЕ_ЗНАЙДЕНО</p>
-                <p className="text-slate-700 text-xs mt-4 uppercase font-bold tracking-[0.3em]">Спробуйте змінити ключові слова або ЄДРПОУ.</p>
+                <p className="text-slate-700 text-xs mt-4 uppercase font-bold tracking-[0.3em]">Спробуйте змінити ключові слова або ЄД� ПОУ.</p>
               </motion.div>
             ) : (
               <div className="text-center py-64 opacity-[0.03]">

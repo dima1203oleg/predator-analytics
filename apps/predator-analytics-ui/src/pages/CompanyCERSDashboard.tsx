@@ -51,7 +51,7 @@ const getGradeConfig = (value?: string) => {
 
     switch (riskLevel) {
         case 'critical':
-            return { grade: 'D', color: 'text-rose-500', ringColor: 'stroke-rose-500', glow: 'shadow-rose-500/50', label: 'КРИТИЧНИЙ' };
+            return { grade: 'D', color: 'text-rose-500', ringColor: 'stroke-rose-500', glow: 'shadow-rose-500/50', label: 'К ИТИЧНИЙ' };
         case 'high':
             return { grade: 'C', color: 'text-rose-600', ringColor: 'stroke-rose-600', glow: 'shadow-rose-600/50', label: 'ВИСОКИЙ' };
         case 'elevated':
@@ -235,7 +235,7 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
     const [searchParams, setSearchParams] = useSearchParams();
     const ueidParam = searchParams.get('ueid');
     
-    const initialSearch = ueidParam || id || 'ТОВ ЕНЕРГО-РЕСУРС 41829391';
+    const initialSearch = ueidParam || id || 'ТОВ ЕНЕ ГО- ЕСУ С 41829391';
     
     const [inputValue, setInputValue] = useState(initialSearch);
     const [searchQuery, setSearchQuery] = useState(initialSearch);
@@ -275,10 +275,10 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                         profile,
                         radar: [
                             { subject: 'ІНСТИТУЦІЙНИЙ_ВЕКТОР', A: scoreData.institutional || 0, fullMark: 100 },
-                            { subject: 'СТРУКТУРНА_АРХІТЕКТУРА', A: scoreData.structural || 0, fullMark: 100 },
-                            { subject: 'ПОВЕДІНКОВИЙ_ПАТЕРН', A: scoreData.behavioral || 0, fullMark: 100 },
+                            { subject: 'СТ УКТУ НА_А ХІТЕКТУ А', A: scoreData.structural || 0, fullMark: 100 },
+                            { subject: 'ПОВЕДІНКОВИЙ_ПАТЕ Н', A: scoreData.behavioral || 0, fullMark: 100 },
                             { subject: 'ІНДЕКС_ВПЛИВУ', A: scoreData.influence || 0, fullMark: 100 },
-                            { subject: 'ПРОГНОЗНА_ДИНАМІКА', A: scoreData.predictive || 0, fullMark: 100 },
+                            { subject: 'П ОГНОЗНА_ДИНАМІКА', A: scoreData.predictive || 0, fullMark: 100 },
                         ],
                         shap: Array.isArray(scoreData.shap_values) ? scoreData.shap_values.map((s: any) => ({
                             feature: s.feature_name.replace(/_/g, ' ').toUpperCase(),
@@ -336,12 +336,12 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                         </div>
                         <div>
                             <h1 className="text-xl font-black tracking-[0.2em] text-white uppercase italic leading-none">
-                                CERS <span className="text-rose-600">НЕЙРО_ЦЕНТР</span> v62.7
+                                CERS <span className="text-rose-600">НЕЙ О_ЦЕНТ </span> v62.7
                             </h1>
                             <div className="flex items-center gap-2 mt-1">
-                                <span className="text-[9px] font-mono text-rose-500/60 uppercase tracking-widest font-black italic">ПРЕДАТОР_ЕЛІТ_ПРОТОКОЛ</span>
+                                <span className="text-[9px] font-mono text-rose-500/60 uppercase tracking-widest font-black italic">П ЕДАТО _ЕЛІТ_П ОТОКОЛ</span>
                                 <span className="w-1 h-1 bg-slate-700 rounded-full animate-pulse"></span>
-                                <span className="text-[9px] font-mono text-slate-500 uppercase font-black italic">РЕЖИМ: БЕЗПЕРЕРВНИЙ_АНАЛІЗ</span>
+                                <span className="text-[9px] font-mono text-slate-500 uppercase font-black italic"> ЕЖИМ: БЕЗПЕ Е ВНИЙ_АНАЛІЗ</span>
                             </div>
                         </div>
                     </div>
@@ -353,7 +353,7 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                 type="text"
                                 value={inputValue}
                                 onChange={(e) => setInputValue(e.target.value)}
-                                placeholder="ПОШУК ОБ'ЄКТА РИЗИКУ..."
+                                placeholder="ПОШУК ОБ'ЄКТА  ИЗИКУ..."
                                 className="w-full bg-slate-950/80 border border-white/10 text-white rounded-xl py-2 pl-10 pr-4 focus:outline-none focus:border-rose-500/50 transition-all font-mono text-xs tracking-widest relative z-10"
                             />
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-hover:text-rose-400 transition-colors z-10" />
@@ -402,7 +402,7 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                         </div>
 
                         <div className="space-y-3">
-                            <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Сигнали Ризику</h3>
+                            <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Сигнали  изику</h3>
                             <div className="space-y-2">
                                 {displayEvents.slice(0, 3).map((event: any, i: number) => (
                                     <div key={i} className="bg-slate-950/30 border-l-2 border-rose-500/50 p-2 rounded-r-lg">
@@ -436,10 +436,10 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                     <ShieldAlert className="absolute inset-0 m-auto w-12 h-12 text-rose-600 animate-pulse" />
                                 </div>
                                 <h2 className="mt-8 text-2xl font-black italic tracking-[0.5em] text-white uppercase animate-pulse">
-                                    ІНІЦІАЛІЗАЦІЯ <span className="text-rose-600">СКАНЕРА_ПРИВИД</span>
+                                    ІНІЦІАЛІЗАЦІЯ <span className="text-rose-600">СКАНЕ А_П ИВИД</span>
                                 </h2>
                                 <p className="mt-4 text-slate-500 font-mono text-[10px] uppercase tracking-[0.3em] font-black italic">
-                                    ДЕКОМПОЗИЦІЯ_ВЕКТОРІВ_SHAP | НЕЙРОННИЙ_РЕЗОНАНС...
+                                    ДЕКОМПОЗИЦІЯ_ВЕКТОРІВ_SHAP | НЕЙ ОННИЙ_ ЕЗОНАНС...
                                 </p>
                             </motion.div>
                         ) : companyData ? (
@@ -490,12 +490,12 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                             </div>
                                         </div>
                                         <div className="bg-white/5 border border-white/10 p-6 rounded-3xl backdrop-blur-md">
-                                            <p className="text-[10px] font-black text-slate-400 uppercase mb-3 tracking-widest text-center">Вердикт AI ПРЕДАТОР</p>
+                                            <p className="text-[10px] font-black text-slate-400 uppercase mb-3 tracking-widest text-center">Вердикт AI П ЕДАТО </p>
                                             <div className="text-center">
                                                 <span className={`text-4xl font-black ${cersGradeColor} drop-shadow-[0_0_15px_rgba(244,63,94,0.5)] tracking-tighter`}>
                                                     {companyData?.grade || 'B+'}
                                                 </span>
-                                                <p className="text-[10px] text-slate-400 mt-2 uppercase font-bold italic leading-tight">Помірна зона ризику.<br/>Рекомендовано: Умови акредитиву.</p>
+                                                <p className="text-[10px] text-slate-400 mt-2 uppercase font-bold italic leading-tight">Помірна зона ризику.<br/> екомендовано: Умови акредитиву.</p>
                                             </div>
                                         </div>
                                     </div>
@@ -523,7 +523,7 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                             <div className="flex flex-wrap gap-4 mt-6">
                                                 <div className="flex items-center gap-2 px-4 py-2 bg-slate-950/60 rounded-xl border border-white/5">
                                                     <Fingerprint className="w-4 h-4 text-rose-500" />
-                                                    <span className="text-xs font-mono text-slate-300">ЄДРПОУ: {profile.edrpou || "Н/Д"}</span>
+                                                    <span className="text-xs font-mono text-slate-300">ЄД ПОУ: {profile.edrpou || "Н/Д"}</span>
                                                 </div>
                                                 <div className="flex items-center gap-2 px-4 py-2 bg-slate-950/60 rounded-xl border border-white/5">
                                                     <Boxes className="w-4 h-4 text-rose-400" />
@@ -531,16 +531,16 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                                 </div>
                                                 <div className="flex items-center gap-2 px-4 py-2 bg-slate-950/60 rounded-xl border border-white/5">
                                                     <CheckCircle2 className={`w-4 h-4 ${profile.status === 'active' ? 'text-emerald-500' : 'text-slate-500'}`} />
-                                                    <span className="text-xs font-mono text-slate-300">Статус: {profile.status === 'active' ? 'АКТИВНИЙ' : 'ПРИЗУПИНЕНО'}</span>
+                                                    <span className="text-xs font-mono text-slate-300">Статус: {profile.status === 'active' ? 'АКТИВНИЙ' : 'П ИЗУПИНЕНО'}</span>
                                                 </div>
                                             </div>
 
                                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
                                                 {[
                                                     { label: 'СКАН_САНКЦІЙ', status: profile.is_sanctioned ? 'БЛОК' : 'ЧИСТО', color: profile.is_sanctioned ? 'rose' : 'slate' },
-                                                    { label: 'ОФШОРИ', status: profile.has_offshores ? 'ВИЯВЛЕНО' : 'НЕМАЄ', color: profile.has_offshores ? 'orange' : 'slate' },
-                                                    { label: 'РЕЄСТР_БОРГІВ', status: profile.is_debtor ? 'ТАК' : 'ЧИСТО', color: profile.is_debtor ? 'orange' : 'slate' },
-                                                    { label: 'ЮРИД_СТАН', status: 'СТАБІЛЬНИЙ', color: 'slate' }
+                                                    { label: 'ОФШО И', status: profile.has_offshores ? 'ВИЯВЛЕНО' : 'НЕМАЄ', color: profile.has_offshores ? 'orange' : 'slate' },
+                                                    { label: ' ЕЄСТ _БО ГІВ', status: profile.is_debtor ? 'ТАК' : 'ЧИСТО', color: profile.is_debtor ? 'orange' : 'slate' },
+                                                    { label: 'Ю ИД_СТАН', status: 'СТАБІЛЬНИЙ', color: 'slate' }
                                                 ].map((item, idx) => (
                                                     <div key={idx} className="bg-slate-800/40 p-3 rounded-2xl border border-white/5">
                                                         <span className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">{item.label}</span>
@@ -575,14 +575,14 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                                 <span className={`text-6xl font-black ${cersGradeColor} drop-shadow-[0_0_20px_rgba(225,29,72,0.6)] italic tracking-tighter`}>
                                                     {companyData?.grade || 'Н/Д'}
                                                 </span>
-                                                <span className="text-[10px] font-mono text-slate-400 mt-2 uppercase tracking-[0.2em] font-black italic">ЯДРО_СКОРИНГУ: {score}/100</span>
+                                                <span className="text-[10px] font-mono text-slate-400 mt-2 uppercase tracking-[0.2em] font-black italic">ЯД О_СКО ИНГУ: {score}/100</span>
                                             </div>
                                         </div>
                                         
                                         <div className="text-center w-full relative z-10">
                                             <div className="px-6 py-2 bg-rose-600/10 rounded-sm border border-rose-600/30 inline-block shadow-[0_0_20px_rgba(225,29,72,0.2)]">
                                                 <span className={`text-[10px] font-black uppercase tracking-[0.3em] italic ${cersGradeColor}`}>
-                                                    СТАТУС_РИЗИКУ: {getGradeConfig((profile as any).risk_level).label}
+                                                    СТАТУС_ ИЗИКУ: {getGradeConfig((profile as any).risk_level).label}
                                                 </span>
                                             </div>
                                         </div>
@@ -597,7 +597,7 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                         <div className="flex items-center justify-between mb-8">
                                             <div className="flex items-center gap-3">
                                                 <Target className="w-5 h-5 text-rose-500" />
-                                                <h3 className="text-sm font-black tracking-[0.2em] uppercase italic text-white">ВЕКТОРНИЙ_АНАЛІЗ_РИЗИКУ</h3>
+                                                <h3 className="text-sm font-black tracking-[0.2em] uppercase italic text-white">ВЕКТОРНИЙ_АНАЛІЗ_ ИЗИКУ</h3>
                                             </div>
                                             <div className="flex items-center gap-2 px-3 py-1 bg-rose-600/10 border border-rose-600/30 rounded-sm">
                                                 <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
@@ -607,11 +607,11 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
 
                                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-[400px]">
                                             <div className="relative">
-                                                <div className="absolute -top-4 left-0 text-[10px] font-black text-slate-600 uppercase tracking-[0.3em] italic">ГЕОМЕТРІЯ_ПРОФІЛЮ</div>
+                                                <div className="absolute -top-4 left-0 text-[10px] font-black text-slate-600 uppercase tracking-[0.3em] italic">ГЕОМЕТ ІЯ_П ОФІЛЮ</div>
                                                 <CERSRadarECharts data={displayRadar} />
                                             </div>
                                             <div className="relative">
-                                                <div className="absolute -top-4 left-0 text-[10px] font-black text-slate-600 uppercase tracking-[0.3em] italic">ДЕТЕРМІНАНТИ_ВПЛИВУ_SHAP</div>
+                                                <div className="absolute -top-4 left-0 text-[10px] font-black text-slate-600 uppercase tracking-[0.3em] italic">ДЕТЕ МІНАНТИ_ВПЛИВУ_SHAP</div>
                                                 <SHAPChart data={displayShap} />
                                             </div>
                                         </div>
@@ -623,7 +623,7 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                         <div>
                                             <div className="flex items-center gap-3 mb-6">
                                                 <Award className="w-5 h-5 text-rose-600" />
-                                                <h3 className="text-sm font-black tracking-[0.2em] uppercase italic text-white">СТРАТЕГІЧНИЙ_ROI_РИЗИКУ</h3>
+                                                <h3 className="text-sm font-black tracking-[0.2em] uppercase italic text-white">СТ АТЕГІЧНИЙ_ROI_ ИЗИКУ</h3>
                                             </div>
                                             <div className="space-y-6">
                                                 <div className="space-y-2">
@@ -654,7 +654,7 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                             </div>
                                         </div>
                                         <button className="mt-8 w-full py-4 bg-rose-600 hover:bg-rose-500 text-white text-[10px] font-black uppercase tracking-[0.3em] italic rounded-sm transition-all shadow-[0_0_30px_rgba(225,29,72,0.3)] hover:shadow-[0_0_40px_rgba(225,29,72,0.5)] active:scale-[0.98]">
-                                            ЗГЕНЕРУВАТИ_ВИКОНАВЧИЙ_ЗВІТ
+                                            ЗГЕНЕ УВАТИ_ВИКОНАВЧИЙ_ЗВІТ
                                         </button>
                                     </div>
                                 </div>
@@ -669,15 +669,15 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                                     <Share2 className="w-6 h-6 text-rose-600" />
                                                 </div>
                                                 <div>
-                                                    <h3 className="text-xl font-black tracking-[0.2em] uppercase italic text-white">ТІНЬОВА_ГЕОМЕТРІЯ_ЗВ’ЯЗКІВ</h3>
-                                                    <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mt-1 italic">ВІЗУАЛІЗАЦІЯ_НЕЙРОННОЇ_МЕРЕЖІ_ВПЛИВУ_v7.4</p>
+                                                    <h3 className="text-xl font-black tracking-[0.2em] uppercase italic text-white">ТІНЬОВА_ГЕОМЕТ ІЯ_ЗВ’ЯЗКІВ</h3>
+                                                    <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mt-1 italic">ВІЗУАЛІЗАЦІЯ_НЕЙ ОННОЇ_МЕ ЕЖІ_ВПЛИВУ_v7.4</p>
                                                 </div>
                                             </div>
                                             <button 
                                                 onClick={() => setShowShadowNetwork(true)}
                                                 className="px-8 py-3 bg-rose-600/10 hover:bg-rose-600/20 border border-rose-600/30 text-rose-500 text-[10px] font-black uppercase tracking-[0.3em] italic rounded-sm transition-all"
                                             >
-                                                РОЗГОРНУТИ_ПОВНУ_КАРТУ
+                                                 ОЗГО НУТИ_ПОВНУ_КА ТУ
                                             </button>
                                         </div>
                                     </div>
@@ -696,7 +696,7 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                     <div className="bg-slate-900/60 border border-white/10 rounded-3xl p-8">
                                         <div className="flex items-center gap-2 mb-10">
                                             <Clock className="w-4 h-4 text-slate-400" />
-                                            <h3 className="text-sm font-black text-white uppercase tracking-widest italic">ОПЕРАТИВНА ХРОНОЛОГІЯ</h3>
+                                            <h3 className="text-sm font-black text-white uppercase tracking-widest italic">ОПЕ АТИВНА Х ОНОЛОГІЯ</h3>
                                         </div>
                                         <div className="relative border-l border-white/10 ml-4 pl-10 space-y-10">
                                             {displayEvents.map((event: any, i: number) => (
@@ -728,10 +728,10 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                 <AlertTriangle className="w-16 h-16 text-slate-800 mb-6" />
                                 <h3 className="text-2xl font-black text-white uppercase italic tracking-widest transition-all">Об'єкт Не Знайдено</h3>
                                 <p className="mt-4 text-slate-500 max-w-md font-mono text-xs uppercase tracking-widest leading-loose">
-                                    ВУЗОЛ НЕ ПОВЕРНУВ ПЕРЕВІРЕНИХ ДАНИХ ДЛЯ ЗАПИТУ "{searchQuery}". ПЕРЕВІРТЕ ЄДРПОУ АБО СКОРИСТАЙТЕСЬ ГЛОБАЛЬНИМ ПОШУКОМ.
+                                    ВУЗОЛ НЕ ПОВЕ НУВ ПЕ ЕВІ ЕНИХ ДАНИХ ДЛЯ ЗАПИТУ "{searchQuery}". ПЕ ЕВІ ТЕ ЄД ПОУ АБО СКО ИСТАЙТЕСЬ ГЛОБАЛЬНИМ ПОШУКОМ.
                                 </p>
                                 <button 
-                                    onClick={() => setSearchQuery('ТОВ ЕНЕРГО-РЕСУРС 41829391')}
+                                    onClick={() => setSearchQuery('ТОВ ЕНЕ ГО- ЕСУ С 41829391')}
                                     className="mt-8 px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest text-slate-400 transition-all"
                                 >
                                     Повернутись до Прикладу
@@ -755,10 +755,10 @@ function ShadowNetworkAnalysis({ onClose, companyName }: { onClose: () => void; 
     const nodes = [
         { id: 1, label: companyName, type: 'main', x: 400, y: 300 },
         { id: 2, label: 'KRAKEN ASSETS LTD (BVI)', type: 'offshore', x: 200, y: 150 },
-        { id: 3, label: 'ПЕТРЕНКО О.В. (UBO)', type: 'ubo', x: 600, y: 150 },
-        { id: 4, label: 'ТОВ "ЦЕНТР-ЛОГІСТИК"', type: 'subsidiary', x: 300, y: 500 },
-        { id: 5, label: 'НК "МАГІСТРАЛЬ"', type: 'subsidiary', x: 500, y: 500 },
-        { id: 6, label: 'ВУЗОЛ_ТРАНЗИТ_ДЕЛЬТА', type: 'transit', x: 650, y: 400 },
+        { id: 3, label: 'ПЕТ ЕНКО О.В. (UBO)', type: 'ubo', x: 600, y: 150 },
+        { id: 4, label: 'ТОВ "ЦЕНТ -ЛОГІСТИК"', type: 'subsidiary', x: 300, y: 500 },
+        { id: 5, label: 'НК "МАГІСТ АЛЬ"', type: 'subsidiary', x: 500, y: 500 },
+        { id: 6, label: 'ВУЗОЛ_Т АНЗИТ_ДЕЛЬТА', type: 'transit', x: 650, y: 400 },
     ];
 
     const links = [
@@ -801,7 +801,7 @@ function ShadowNetworkAnalysis({ onClose, companyName }: { onClose: () => void; 
                 <div className="absolute top-6 left-6 space-y-2 z-20">
                     <div className="flex items-center gap-2 bg-black/40 border border-white/10 px-3 py-1 rounded-full">
                         <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
-                        <span className="text-[9px] font-black text-slate-400 uppercase">Режим: Глибоке Сканування</span>
+                        <span className="text-[9px] font-black text-slate-400 uppercase"> ежим: Глибоке Сканування</span>
                     </div>
                     <div className="text-[10px] font-mono text-slate-500">ОБ'ЄКТІВ ВИЯВЛЕНО: {nodes.length}</div>
                 </div>

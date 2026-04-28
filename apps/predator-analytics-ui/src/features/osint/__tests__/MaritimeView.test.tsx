@@ -15,7 +15,7 @@ vi.mock('@/hooks/useBackendStatus', () => ({
     useBackendStatus: () => ({
         isOffline: false,
         isTruthOnly: true,
-        modeLabel: 'Режим правдивих даних',
+        modeLabel: '� ежим правдивих даних',
         sourceLabel: 'localhost:9080/api/v1',
         sourceType: 'local',
         statusLabel: 'Зʼєднання активне',
@@ -67,8 +67,8 @@ describe('MaritimeView', () => {
 
     it('повинен рендерити базові елементи інтерфейсу', () => {
         render(<MaritimeView />);
-        expect(screen.getByRole('heading', { name: /МОРСЬКИЙ СУВЕРЕН/i })).toBeInTheDocument();
-        expect(screen.getByPlaceholderText(/ПОШУК СУДНА, ПРАПОРА, ПОРТУ/i)).toBeInTheDocument();
+        expect(screen.getByRole('heading', { name: /МО� СЬКИЙ СУВЕ� ЕН/i })).toBeInTheDocument();
+        expect(screen.getByPlaceholderText(/ПОШУК СУДНА, П� АПО� А, ПО� ТУ/i)).toBeInTheDocument();
         expect(screen.getByTestId('echarts-mock')).toBeInTheDocument();
     });
 
@@ -121,7 +121,7 @@ describe('MaritimeView', () => {
             expect(screen.getByText('TITANIC')).toBeInTheDocument();
         });
 
-        const searchInput = screen.getByPlaceholderText(/ПОШУК СУДНА, ПРАПОРА, ПОРТУ/i);
+        const searchInput = screen.getByPlaceholderText(/ПОШУК СУДНА, П� АПО� А, ПО� ТУ/i);
         fireEvent.change(searchInput, { target: { value: 'TITAN' } });
 
         // TITANIC should still be there
@@ -149,7 +149,7 @@ describe('MaritimeView', () => {
             expect(screen.getByText('SAFE SHIP')).toBeInTheDocument();
         });
 
-        const riskFilterBtn = screen.getByRole('button', { name: /РИЗИК/i });
+        const riskFilterBtn = screen.getByRole('button', { name: /� ИЗИК/i });
         fireEvent.click(riskFilterBtn);
 
         expect(screen.getByText('RISKY SHIP')).toBeInTheDocument();
@@ -201,7 +201,7 @@ describe('MaritimeView', () => {
         // Find the refresh button - it's the one with the RefreshCw icon (SVG)
         // and it's not one of the filter buttons
         const refreshButton = screen.getAllByRole('button').find(b => 
-            !['ВСІ', 'РИЗИК', 'ФАНТОМИ'].includes(b.textContent || '') && b.querySelector('svg')
+            !['ВСІ', '� ИЗИК', 'ФАНТОМИ'].includes(b.textContent || '') && b.querySelector('svg')
         );
 
         expect(refreshButton).toBeDefined();
@@ -218,7 +218,7 @@ describe('MaritimeView', () => {
 
         render(<MaritimeView />);
 
-        expect(await screen.findByText('НЕМАЄ ПІДТВЕРДЖЕНИХ ДАНИХ')).toBeInTheDocument();
+        expect(await screen.findByText('НЕМАЄ ПІДТВЕ� ДЖЕНИХ ДАНИХ')).toBeInTheDocument();
         expect(
             screen.getByText('Маршрути морського контуру не повернули підтверджених даних. Екран не підмінює їх локальним флотом або портами.'),
         ).toBeInTheDocument();

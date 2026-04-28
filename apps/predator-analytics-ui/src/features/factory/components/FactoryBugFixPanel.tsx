@@ -73,12 +73,12 @@ export const FactoryBugFixPanel: React.FC<FactoryBugFixPanelProps> = ({
                 )}
                 {bug.status === 'fixing' && (
                   <div className="flex items-center gap-2 text-rose-400 text-[10px] font-mono">
-                    <Loader2 size={14} className="animate-spin" /> ВИПРАВЛЕННЯ...
+                    <Loader2 size={14} className="animate-spin" /> ВИП� АВЛЕННЯ...
                   </div>
                 )}
                 {bug.status === 'fixed' && (
                   <div className="flex items-center gap-2 text-emerald-400 text-[10px] font-black uppercase">
-                    <CheckCircle2 size={16} /> ВИПРАВЛЕНО
+                    <CheckCircle2 size={16} /> ВИП� АВЛЕНО
                   </div>
                 )}
               </div>

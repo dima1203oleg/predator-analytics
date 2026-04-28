@@ -86,7 +86,7 @@ describe('OpportunitiesPage', () => {
     it('switches to Recommendations tab', async () => {
         renderWithClient(<OpportunitiesPage />);
         
-        fireEvent.click(screen.getByText('Рекомендації'));
+        fireEvent.click(screen.getByText('� екомендації'));
         
         await waitFor(() => {
             expect(screen.getByText('New Export Opportunity')).toBeInTheDocument();

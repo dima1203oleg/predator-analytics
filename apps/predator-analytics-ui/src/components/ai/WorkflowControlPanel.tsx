@@ -104,7 +104,7 @@ export const WorkflowControlPanel: React.FC = () => {
   };
 
   const getTypeIcon = (type: string) => {
-    return type === 'self-improvement' ? '🧠' : '🏥';
+    return type === 'self-improvement' ? '� ' : '🏥';
   };
 
   return (
@@ -151,7 +151,7 @@ export const WorkflowControlPanel: React.FC = () => {
                       : 'bg-slate-900/50 border-slate-600 text-slate-400 hover:bg-slate-800/50'
                   }`}
                 >
-                  <div className="text-2xl mb-2">🧠</div>
+                  <div className="text-2xl mb-2">� </div>
                   <div className="font-medium">Self-Improvement</div>
                   <div className="text-xs opacity-70">Оптимізація AI</div>
                 </button>

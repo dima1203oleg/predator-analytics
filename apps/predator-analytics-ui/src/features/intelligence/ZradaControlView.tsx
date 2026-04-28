@@ -1,5 +1,5 @@
 /**
- * 🚩 ZRADA CONTROL // СИСТЕМА ДЕТЕКЦІЇ ЗРАДИ | v58.2-WRAITH
+ * 🚩 ZRADA CONTROL // СИСТЕМА ДЕТЕКЦІЇ З� АДИ | v58.2-WRAITH
  * PREDATOR Analytics — Corruption & Collaboration Intelligence
  * 
  * Моніторинг ризиків: Корупція, Колаборація, промислове шпигунство.
@@ -71,7 +71,7 @@ const MOCK_SUBJECTS: BetrayalSubject[] = [
     lastSignal: '2026-03-23 18:40',
     risk: 'Підтверджено',
     evidenceCount: 7,
-    competitor: 'ТОВ "КОНКУРЕНТ-АЛЬФА"',
+    competitor: 'ТОВ "КОНКУ� ЕНТ-АЛЬФА"',
     signals: [
       { id: 's1', type: 'telegram', date: '2026-03-22', description: 'Виявлено в Telegram-каналі конкурента «Альфа-Бізнес» — коментує та ставить реакції на 12 постах', source: 'PREDATOR_TG_PARSER', confidence: 91 },
       { id: 's2', type: 'tender', date: '2026-03-15', description: 'Спільний тендер на ProZorro: ТОВ "Меркурій Торг" + ТОВ "Конкурент-Альфа"', source: 'PROZORRO_API', confidence: 98 },
@@ -87,7 +87,7 @@ const MOCK_SUBJECTS: BetrayalSubject[] = [
     lastSignal: '2026-03-20 09:15',
     risk: 'Висока підозра',
     evidenceCount: 4,
-    competitor: 'БЕТА_ГРУП',
+    competitor: 'БЕТА_Г� УП',
     signals: [
       { id: 's4', type: 'social', date: '2026-03-19', description: 'Спільне фото з директором БетаГруп на корпоративі (Instagram)', source: 'OSINT_SOCIAL', confidence: 65 },
       { id: 's11', type: 'crypto', date: '2026-03-18', description: 'Транзакція 2.5 ETH з гаманця, асоційованого з конкурентом', source: 'BLOCKCHAIN_FORENSIC', confidence: 72 }
@@ -108,10 +108,10 @@ export default function ZradaControlView() {
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'ВнутрішняДоброчесність',
-          message: 'Активовано автономний режим детекції (ВУЗЛИ_ЗРАДИ). Можливе обмеження глибини OSINT-пошуку.',
+          message: 'Активовано автономний режим детекції (ВУЗЛИ_З� АДИ). Можливе обмеження глибини OSINT-пошуку.',
           severity: 'warning',
           timestamp: new Date().toISOString(),
-          code: 'ВУЗЛИ_ЗРАДИ'
+          code: 'ВУЗЛИ_З� АДИ'
         }
       }));
     }
@@ -158,33 +158,33 @@ export default function ZradaControlView() {
                   <div className="space-y-2">
                      <div className="flex items-center gap-4">
                         <span className="bg-rose-500/10 border border-rose-500/20 text-rose-500 px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg">
-                          МОНІТОРИНГ_ДОБРОЧЕСНОСТІ // КОНТУР_ЗРАДА
+                          МОНІТО� ИНГ_ДОБ� ОЧЕСНОСТІ // КОНТУ� _З� АДА
                         </span>
                         <div className="h-px w-12 bg-rose-500/20" />
                         <span className="text-[10px] font-black text-rose-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-WRAITH</span>
                      </div>
                      <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
-                       СИСТЕМА <span className="text-rose-600 underline decoration-rose-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">ЗРАДА</span>
+                       СИСТЕМА <span className="text-rose-600 underline decoration-rose-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">З� АДА</span>
                      </h1>
                   </div>
                </div>
              }
-             breadcrumbs={['ІНТЕЛЕКТ', 'ДОБРОЧЕСНІСТЬ', 'ЕКРАН_ЗРАДИ']}
+             breadcrumbs={['ІНТЕЛЕКТ', 'ДОБ� ОЧЕСНІСТЬ', 'ЕК� АН_З� АДИ']}
              badges={[
-               { label: 'СЕКРЕТНО_S2', color: 'danger', icon: <Lock size={10} /> },
-               { label: 'ВАРТОВИЙ_ЩИТ', color: 'primary', icon: <ShieldCheck size={10} /> },
+               { label: 'СЕК� ЕТНО_S2', color: 'danger', icon: <Lock size={10} /> },
+               { label: 'ВА� ТОВИЙ_ЩИТ', color: 'primary', icon: <ShieldCheck size={10} /> },
              ]}
              stats={[
                { label: 'ПІД_НАГЛЯДОМ', value: String(stats.total), icon: <Users size={14} />, color: 'primary' },
-               { label: 'ПІДТВЕРДЖЕНА_ЗРАДА', value: String(stats.confirmed), icon: <Skull size={14} />, color: 'danger', animate: true },
-               { label: 'СЕРЕДНІЙ_РИЗИК', value: '84%', icon: <AlertTriangle size={14} />, color: 'warning' },
-               { label: 'ІНДЕКС_ДОБРОЧЕСНОСТІ', value: '0.912', icon: <Fingerprint />, color: 'success' },
+               { label: 'ПІДТВЕ� ДЖЕНА_З� АДА', value: String(stats.confirmed), icon: <Skull size={14} />, color: 'danger', animate: true },
+               { label: 'СЕ� ЕДНІЙ_� ИЗИК', value: '84%', icon: <AlertTriangle size={14} />, color: 'warning' },
+               { label: 'ІНДЕКС_ДОБ� ОЧЕСНОСТІ', value: '0.912', icon: <Fingerprint />, color: 'success' },
              ]}
              actions={
                <div className="flex gap-4">
                   <button onClick={runDeepOsint} className="px-8 py-4 bg-rose-900/10 border border-rose-500/20 text-rose-500 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-rose-600 hover:text-white transition-all shadow-xl">
                      {isOsintLoading ? <RefreshCw className="animate-spin" size={16} /> : <Scan size={16} className="inline mr-2" />}
-                     {isOsintLoading ? 'СКАНУВАННЯ...' : 'НЕЙРОННИЙ_СКРІНІНГ'}
+                     {isOsintLoading ? 'СКАНУВАННЯ...' : 'НЕЙ� ОННИЙ_СК� ІНІНГ'}
                   </button>
                   <button onClick={() => setIsAddingMode(true)} className="px-8 py-4 bg-rose-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-rose-500 shadow-2xl transition-all border border-rose-400/20">
                      <Plus size={16} className="inline mr-2" /> ДОДАТИ_ОБ'ЄКТ
@@ -201,7 +201,7 @@ export default function ZradaControlView() {
                     <div className="relative group">
                        <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-700 group-focus-within:text-rose-500 transition-colors" size={24} />
                        <input 
-                         type="text" placeholder="ПОШУК: ІМ'Я, ЄДРПОУ, РОЛЬ..."
+                         type="text" placeholder="ПОШУК: ІМ'Я, ЄД� ПОУ, � ОЛЬ..."
                          value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
                          className="w-full bg-white/[0.01] border-2 border-white/[0.04] p-5 pl-16 rounded-2xl text-lg font-black text-white italic tracking-tighter focus:border-rose-500/40 outline-none transition-all"
                        />
@@ -260,7 +260,7 @@ export default function ZradaControlView() {
                                      </div>
                                   </div>
                                   <div className="flex gap-4">
-                                     <button className="px-8 py-3 bg-white/5 hover:bg-[#E11D48] border border-white/10 hover:border-[#E11D48]/50 text-white hover:text-black text-[10px] font-black uppercase tracking-[0.2em] italic rounded-2xl transition-all shadow-2xl">ФОРЕНЗІК_ПРОФІЛЬ</button>
+                                     <button className="px-8 py-3 bg-white/5 hover:bg-[#E11D48] border border-white/10 hover:border-[#E11D48]/50 text-white hover:text-black text-[10px] font-black uppercase tracking-[0.2em] italic rounded-2xl transition-all shadow-2xl">ФО� ЕНЗІК_П� ОФІЛЬ</button>
                                   </div>
                                 </div>
 
@@ -284,7 +284,7 @@ export default function ZradaControlView() {
                          <div className="p-10 rounded-[4rem] bg-black border-2 border-white/[0.04] shadow-3xl space-y-10 flex-1 overflow-y-auto no-scrollbar border-t-rose-600/10">
                               <div className="flex items-center gap-6 pb-6 border-b border-white/[0.04]">
                                  <Crosshair size={24} className="text-rose-600 animate-spin-slow" />
-                                 <h3 className="text-[14px] font-black text-white italic uppercase tracking-[0.5em] ">СИГНАЛЬНИЙ ДЕШБОРД (DETECTION_LOG)</h3>
+                                 <h3 className="text-[14px] font-black text-white italic uppercase tracking-[0.5em] ">СИГНАЛЬНИЙ ДЕШБО� Д (DETECTION_LOG)</h3>
                               </div>
                               <div className="space-y-6">
                                  {selectedSubject.signals.map((signal, i) => (
@@ -312,7 +312,7 @@ export default function ZradaControlView() {
                     ) : (
                       <div className="h-full flex flex-col items-center justify-center space-y-10 opacity-20">
                          <Target size={120} className="text-slate-600" />
-                         <p className="text-xl font-black text-slate-500 uppercase tracking-[1em] italic text-center">ОБЕРІТЬ ОБ'ЄКТ МОНІТОРИНГУ</p>
+                         <p className="text-xl font-black text-slate-500 uppercase tracking-[1em] italic text-center">ОБЕ� ІТЬ ОБ'ЄКТ МОНІТО� ИНГУ</p>
                       </div>
                     )}
                  </AnimatePresence>
@@ -329,7 +329,7 @@ export default function ZradaControlView() {
                       <Plus size={300} className="text-rose-500" />
                    </div>
                    <div className="space-y-2 relative z-10 border-l-4 border-rose-600 pl-8">
-                      <h2 className="text-4xl font-black text-white uppercase italic tracking-tighter skew-x-[-2deg] leading-none">АВТОРИЗАЦІЯ ОБ'ЄКТА</h2>
+                      <h2 className="text-4xl font-black text-white uppercase italic tracking-tighter skew-x-[-2deg] leading-none">АВТО� ИЗАЦІЯ ОБ'ЄКТА</h2>
                       <p className="text-[11px] font-black text-slate-700 uppercase tracking-[0.5em] italic leading-none">NEW_INTEGRITY_TARGET_v58.2-WRAITH</p>
                    </div>
                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
@@ -338,11 +338,11 @@ export default function ZradaControlView() {
                          <Input className="h-16 bg-white/[0.01] border-white/10 rounded-2xl font-black italic uppercase text-white focus:border-rose-500/40 transition-all placeholder:text-slate-800" />
                       </div>
                       <div className="space-y-3">
-                         <label className="text-[10px] font-black text-slate-700 uppercase italic tracking-widest">АСОЦІЙОВАНИЙ_КОНКУРЕНТ</label>
+                         <label className="text-[10px] font-black text-slate-700 uppercase italic tracking-widest">АСОЦІЙОВАНИЙ_КОНКУ� ЕНТ</label>
                          <Input className="h-16 bg-white/[0.01] border-white/10 rounded-2xl font-black italic uppercase text-white focus:border-rose-500/40 transition-all placeholder:text-slate-800" />
                       </div>
                       <div className="col-span-2 space-y-3">
-                         <label className="text-[10px] font-black text-slate-700 uppercase italic tracking-widest">ДЕТАЛІ_ПІДОЗРИ (EVIDENCE_BASE)</label>
+                         <label className="text-[10px] font-black text-slate-700 uppercase italic tracking-widest">ДЕТАЛІ_ПІДОЗ� И (EVIDENCE_BASE)</label>
                          <textarea className="w-full h-40 bg-white/[0.01] border border-white/10 rounded-3xl p-8 font-black italic uppercase outline-none focus:border-rose-500/40 transition-all text-white placeholder:text-slate-800" />
                       </div>
                    </div>

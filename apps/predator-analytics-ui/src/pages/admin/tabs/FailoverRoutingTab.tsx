@@ -32,14 +32,14 @@ const MODES: Record<string, { label: string; desc: string; color: string; bg: st
     icon: Shield
   },
   HYBRID:    { 
-    label: 'ГІБРИДНИЙ (HYBRID)',    
-    desc: 'БАЛАНС: ЛОКАЛЬНЕ ЯДРО + GROQ/GEMINI CLOUD',    
+    label: 'ГІБ� ИДНИЙ (HYBRID)',    
+    desc: 'БАЛАНС: ЛОКАЛЬНЕ ЯД� О + GROQ/GEMINI CLOUD',    
     color: 'text-emerald-500', 
     bg: 'bg-emerald-500/10 border-emerald-500/30',
     icon: Zap
   },
   CLOUD:     { 
-    label: 'ХМАРНИЙ (CLOUD)',     
+    label: 'ХМА� НИЙ (CLOUD)',     
     desc: 'МАКСИМАЛЬНА ПОТУЖНІСТЬ: GEMINI PRO, GLM-5.1',     
     color: 'text-sky-500',    
     bg: 'bg-sky-500/10 border-sky-500/30',
@@ -59,14 +59,14 @@ const eventCols: VirtualColumn<FailoverEvent>[] = [
   },
   { 
     key: 'from',     
-    label: 'ДЖЕРЕЛО',            
+    label: 'ДЖЕ� ЕЛО',            
     width: '200px', 
     mono: true, 
     render: (v) => (
       <div className="flex items-center gap-3">
         <div className="w-1.5 h-1.5 rounded-full bg-amber-500/50" />
         <span className="text-amber-400/80 uppercase italic font-black tracking-tighter">
-          {String(v).replace('local-k3s', 'ЛОКАЛЬНИЙ_КЛАСТЕР').replace('nvidia-server', 'СЕРВЕР_NVIDIA').replace('colab-mirror', 'ДЗЕРКАЛО_COLAB')}
+          {String(v).replace('local-k3s', 'ЛОКАЛЬНИЙ_КЛАСТЕ� ').replace('nvidia-server', 'СЕ� ВЕ� _NVIDIA').replace('colab-mirror', 'ДЗЕ� КАЛО_COLAB')}
         </span> 
       </div>
     )
@@ -80,30 +80,30 @@ const eventCols: VirtualColumn<FailoverEvent>[] = [
       <div className="flex items-center gap-3">
         <div className="w-1.5 h-1.5 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(225,29,72,0.8)]" />
         <span className="text-rose-500 uppercase italic font-black tracking-tighter">
-          {String(v).replace('local-k3s', 'ЛОКАЛЬНИЙ_КЛАСТЕР').replace('nvidia-server', 'СЕРВЕР_NVIDIA').replace('colab-mirror', 'ДЗЕРКАЛО_COLAB')}
+          {String(v).replace('local-k3s', 'ЛОКАЛЬНИЙ_КЛАСТЕ� ').replace('nvidia-server', 'СЕ� ВЕ� _NVIDIA').replace('colab-mirror', 'ДЗЕ� КАЛО_COLAB')}
         </span> 
       </div>
     )
   },
   { 
     key: 'reason',   
-    label: 'ПРИЧИНА_РОТАЦІЇ',    
+    label: 'П� ИЧИНА_� ОТАЦІЇ',    
     render: (v) => <span className="text-white/60 uppercase tracking-widest italic font-black text-[10px]">{String(v)}</span> 
   },
   { 
     key: 'user',     
-    label: 'ІНІЦІАТОР',    
+    label: 'ІНІЦІАТО� ',    
     width: '140px', 
     mono: true, 
     render: (v) => (
       <div className="px-2 py-0.5 rounded bg-white/5 border border-white/10 inline-block">
-        <span className="text-white/40 text-[9px] font-black uppercase tracking-widest italic">{String(v).replace('auto-sentinel', 'АВТО_ВАРТОВИЙ')}</span>
+        <span className="text-white/40 text-[9px] font-black uppercase tracking-widest italic">{String(v).replace('auto-sentinel', 'АВТО_ВА� ТОВИЙ')}</span>
       </div>
     )
   },
   { 
     key: 'duration', 
-    label: 'ТРИВАЛІСТЬ',   
+    label: 'Т� ИВАЛІСТЬ',   
     width: '100px',  
     mono: true, 
     align: 'right',
@@ -133,7 +133,7 @@ export const FailoverRoutingTab: React.FC = () => {
           />
           <Radio className="absolute inset-0 m-auto w-8 h-8 text-rose-500 animate-pulse" />
         </div>
-        <div className="text-[14px] font-black font-mono uppercase tracking-[0.6em] animate-pulse italic text-rose-500/60">АНАЛІЗ_ГЛОБАЛЬНИХ_МАРШРУТІВ_V61...</div>
+        <div className="text-[14px] font-black font-mono uppercase tracking-[0.6em] animate-pulse italic text-rose-500/60">АНАЛІЗ_ГЛОБАЛЬНИХ_МА� Ш� УТІВ_V61...</div>
       </div>
     );
   }
@@ -143,15 +143,15 @@ export const FailoverRoutingTab: React.FC = () => {
       <div className="flex flex-col items-center justify-center h-[700px] p-24 text-center glass-wraith m-12 border-2 border-rose-600/20 rounded-[4rem] relative overflow-hidden shadow-4xl">
         <div className="absolute inset-0 bg-rose-900/5 blur-[120px] pointer-events-none" />
         <AlertTriangle size={64} className="text-rose-500/40 mb-10 animate-pulse" />
-        <div className="text-3xl font-black uppercase tracking-tighter text-white mb-4 glint-elite">ПОМИЛКА_МЕРЕЖЕВОГО_КАНАЛУ</div>
+        <div className="text-3xl font-black uppercase tracking-tighter text-white mb-4 glint-elite">ПОМИЛКА_МЕ� ЕЖЕВОГО_КАНАЛУ</div>
         <p className="text-[12px] font-black font-mono text-white/30 max-w-lg mb-12 leading-relaxed uppercase italic tracking-widest">
-          СИСТЕМА_НЕ_ЗМОГЛА_ОТРИМАТИ_СТАН_FAILOVER_КЛАСТЕРА. ПЕРЕВІРТЕ_З'ЄДНАННЯ_З_ЦЕНТРАЛЬНИМ_КОНТРОЛЕРОМ_ELITE.
+          СИСТЕМА_НЕ_ЗМОГЛА_ОТ� ИМАТИ_СТАН_FAILOVER_КЛАСТЕ� А. ПЕ� ЕВІ� ТЕ_З'ЄДНАННЯ_З_ЦЕНТ� АЛЬНИМ_КОНТ� ОЛЕ� ОМ_ELITE.
         </p>
         <button 
           onClick={() => window.location.reload()}
           className="px-12 py-5 bg-rose-600 text-white text-[11px] font-black uppercase tracking-[0.4em] rounded-xl hover:bg-rose-500 transition-all shadow-4xl italic"
         >
-          ПЕРЕПІДКЛЮЧИТИСЬ_ДО_КАНАЛУ
+          ПЕ� ЕПІДКЛЮЧИТИСЬ_ДО_КАНАЛУ
         </button>
       </div>
     );
@@ -182,7 +182,7 @@ export const FailoverRoutingTab: React.FC = () => {
       <div className="flex flex-col gap-3 border-l-4 border-rose-500 pl-10 py-2 relative z-10">
         <div className="flex items-center gap-6">
           <h2 className="text-4xl font-black text-white uppercase tracking-tighter italic glint-elite">
-            ГЛОБАЛЬНЕ КЕРУВАННЯ <span className="text-rose-500">FAILOVER-ПОТОКАМИ</span>
+            ГЛОБАЛЬНЕ КЕ� УВАННЯ <span className="text-rose-500">FAILOVER-ПОТОКАМИ</span>
           </h2>
           <div className="px-4 py-1.5 bg-rose-500/10 border-2 border-rose-500/30 rounded-lg text-[10px] font-black text-rose-500 tracking-[0.3em] uppercase italic shadow-2xl">
             ROUTING_ELITE_v61.0
@@ -191,17 +191,17 @@ export const FailoverRoutingTab: React.FC = () => {
         <div className="flex items-center gap-8 text-[11px] font-black font-mono text-white/30 tracking-[0.2em] uppercase italic">
           <div className="flex items-center gap-3">
             <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_15px_rgba(16,185,129,0.8)]" />
-            <span className="text-emerald-500/80">МЕРЕЖЕВИЙ_КАНАЛ_АКТИВНИЙ_L3</span>
+            <span className="text-emerald-500/80">МЕ� ЕЖЕВИЙ_КАНАЛ_АКТИВНИЙ_L3</span>
           </div>
           <span className="opacity-20">•</span>
           <div className="flex items-center gap-3">
              <RefreshCw size={14} className="text-rose-500/60 animate-spin-slow" />
-             <span>РЕЗЕРВУВАННЯ: {Object.values(nodes).filter((n: any) => n.status === 'online').length}/{Object.keys(nodes).length}</span>
+             <span>� ЕЗЕ� ВУВАННЯ: {Object.values(nodes).filter((n: any) => n.status === 'online').length}/{Object.keys(nodes).length}</span>
           </div>
           <span className="opacity-20">•</span>
           <div className="flex items-center gap-3 text-rose-500/40">
              <Shield size={14} />
-             <span>ПОЛІТИКА: АВТОМАТИЧНА_ПРЕВЕНТИВНА_WRAITH</span>
+             <span>ПОЛІТИКА: АВТОМАТИЧНА_П� ЕВЕНТИВНА_WRAITH</span>
           </div>
         </div>
       </div>
@@ -211,7 +211,7 @@ export const FailoverRoutingTab: React.FC = () => {
         <div className="space-y-8">
           <div className="flex items-center gap-6 px-4">
              <div className="w-2 h-2 bg-rose-500 rotate-45 shadow-[0_0_10px_rgba(225,29,72,1)]" />
-             <span className="text-[12px] font-black font-mono text-white/40 uppercase tracking-[0.5em] italic glint-elite">СТРАТЕГІЯ_МАРШРУТИЗАЦІЇ_ШІ</span>
+             <span className="text-[12px] font-black font-mono text-white/40 uppercase tracking-[0.5em] italic glint-elite">СТ� АТЕГІЯ_МА� Ш� УТИЗАЦІЇ_ШІ</span>
           </div>
           <div className="space-y-4">
             {(Object.keys(MODES) as RouteMode[]).map((mode) => {
@@ -258,14 +258,14 @@ export const FailoverRoutingTab: React.FC = () => {
         <div className="space-y-8">
           <div className="flex items-center gap-6 px-4">
              <div className="w-2 h-2 bg-rose-500 rotate-45 shadow-[0_0_10px_rgba(225,29,72,1)]" />
-             <span className="text-[12px] font-black font-mono text-white/40 uppercase tracking-[0.5em] italic glint-elite">МАТРИЦЯ_АКТИВНИХ_ВУЗЛІВ</span>
+             <span className="text-[12px] font-black font-mono text-white/40 uppercase tracking-[0.5em] italic glint-elite">МАТ� ИЦЯ_АКТИВНИХ_ВУЗЛІВ</span>
           </div>
           <div className="space-y-4">
             {Object.keys(nodes).map((nodeKey) => {
               const node = nodes[nodeKey];
               const isActive = activeNode === nodeKey;
               const isOffline = node.status === 'offline';
-              const label = node.label.replace('local-k3s', 'ЛОКАЛЬНИЙ_КЛАСТЕР').replace('nvidia-server', 'СЕРВЕР_NVIDIA').replace('colab-mirror', 'ДЗЕРКАЛО_COLAB');
+              const label = node.label.replace('local-k3s', 'ЛОКАЛЬНИЙ_КЛАСТЕ� ').replace('nvidia-server', 'СЕ� ВЕ� _NVIDIA').replace('colab-mirror', 'ДЗЕ� КАЛО_COLAB');
               
               return (
                 <div
@@ -299,7 +299,7 @@ export const FailoverRoutingTab: React.FC = () => {
                       className="flex items-center gap-3 px-8 py-4 rounded-2xl bg-rose-500/10 border-2 border-rose-500/30 hover:bg-rose-500/20 hover:border-rose-500/50 transition-all group/btn shadow-4xl"
                     >
                       <ArrowRightLeft className="w-5 h-5 text-rose-500 group-hover/btn:rotate-180 transition-transform duration-1000" />
-                      <span className="text-[11px] text-rose-500 font-black uppercase tracking-[0.2em] italic">ПЕРЕМКНУТИ</span>
+                      <span className="text-[11px] text-rose-500 font-black uppercase tracking-[0.2em] italic">ПЕ� ЕМКНУТИ</span>
                     </motion.button>
                   )}
                   {isActive && (
@@ -329,10 +329,10 @@ export const FailoverRoutingTab: React.FC = () => {
             </div>
             <div className="flex-1 space-y-4 relative z-10 text-center lg:text-left">
               <div className="text-2xl text-white font-black uppercase tracking-tighter italic glint-elite">
-                ПІДТВЕРДЖЕННЯ РОТАЦІЇ <span className="text-rose-500">{nodes[confirming]?.label.replace('local-k3s', 'ЛОКАЛЬНИЙ_КЛАСТЕР').replace('nvidia-server', 'СЕРВЕР_NVIDIA').replace('colab-mirror', 'ДЗЕРКАЛО_COLAB') || confirming}</span>
+                ПІДТВЕ� ДЖЕННЯ � ОТАЦІЇ <span className="text-rose-500">{nodes[confirming]?.label.replace('local-k3s', 'ЛОКАЛЬНИЙ_КЛАСТЕ� ').replace('nvidia-server', 'СЕ� ВЕ� _NVIDIA').replace('colab-mirror', 'ДЗЕ� КАЛО_COLAB') || confirming}</span>
               </div>
               <p className="text-[12px] font-black font-mono text-white/30 uppercase tracking-[0.3em] leading-relaxed italic max-w-2xl">
-                УСІ_АКТИВНІ_ЗАПИТИ_БУДУТЬ_ПЕРЕНАПРАВЛЕНІ_НА_НОВИЙ_ВУЗОЛ_ЕЛІТНОГО_КЛАСУ. МОЖЛИВЕ_КОРОТКОЧАСНЕ_ПЕРЕРИВАННЯ_ПОТОКУ_ДАННИХ (OODA_SYNC_BREAK_V61).
+                УСІ_АКТИВНІ_ЗАПИТИ_БУДУТЬ_ПЕ� ЕНАП� АВЛЕНІ_НА_НОВИЙ_ВУЗОЛ_ЕЛІТНОГО_КЛАСУ. МОЖЛИВЕ_КО� ОТКОЧАСНЕ_ПЕ� Е� ИВАННЯ_ПОТОКУ_ДАННИХ (OODA_SYNC_BREAK_V61).
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-6 relative z-10 w-full lg:w-auto">
@@ -343,7 +343,7 @@ export const FailoverRoutingTab: React.FC = () => {
                 disabled={toggleMutation.isPending}
                 className="px-12 py-5 bg-rose-600 text-white text-[12px] font-black uppercase tracking-[0.3em] rounded-xl shadow-rose-500/50 hover:bg-rose-500 transition-all disabled:opacity-50 italic w-full"
               >
-                {toggleMutation.isPending ? 'СИНХРОНІЗАЦІЯ_L3...' : 'ПІДТВЕРДИТИ_РОТАЦІЮ'}
+                {toggleMutation.isPending ? 'СИНХ� ОНІЗАЦІЯ_L3...' : 'ПІДТВЕ� ДИТИ_� ОТАЦІЮ'}
               </motion.button>
               <motion.button
                 whileHover={{ scale: 1.05 }}
@@ -363,7 +363,7 @@ export const FailoverRoutingTab: React.FC = () => {
         <div className="flex items-center gap-10 px-4">
           <div className="h-[2px] flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
           <div className="flex flex-col items-center gap-3">
-            <span className="text-2xl font-black text-white/50 uppercase tracking-[0.4em] italic glint-elite">ЖУРНАЛ_РОТАЦІЙ_МАРШРУТІВ (WORM_LOCK)</span>
+            <span className="text-2xl font-black text-white/50 uppercase tracking-[0.4em] italic glint-elite">ЖУ� НАЛ_� ОТАЦІЙ_МА� Ш� УТІВ (WORM_LOCK)</span>
             <div className="flex items-center gap-4">
                <RefreshCw size={14} className="text-rose-500/40 animate-spin-slow" />
                <span className="text-[10px] font-black font-mono text-white/20 uppercase tracking-[0.3em] font-black italic">AUDIT_TRAIL_ACTIVE_V61.0_ELITE</span>

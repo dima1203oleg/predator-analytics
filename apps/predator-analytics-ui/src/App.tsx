@@ -72,7 +72,7 @@ function App() {
         window.dispatchEvent(new CustomEvent('predator-error', {
           detail: {
             service: 'AppKernel',
-            message: `КРИТИЧНА ПОМИЛКА ЯДРА: ${msg}`,
+            message: `К� ИТИЧНА ПОМИЛКА ЯД� А: ${msg}`,
             severity: 'critical',
             timestamp: new Date().toISOString(),
             code: 'KERNEL_RUNTIME_ERROR'
@@ -95,7 +95,7 @@ function App() {
         window.dispatchEvent(new CustomEvent('predator-error', {
           detail: {
             service: 'AppKernel',
-            message: `НЕОБРОБЛЕНЕ ВІДХИЛЕННЯ: ${msg}`,
+            message: `НЕОБ� ОБЛЕНЕ ВІДХИЛЕННЯ: ${msg}`,
             severity: 'critical',
             timestamp: new Date().toISOString(),
             code: 'KERNEL_PROMISE_REJECTION'

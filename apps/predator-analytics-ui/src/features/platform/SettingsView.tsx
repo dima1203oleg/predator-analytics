@@ -241,13 +241,13 @@ const SettingsView: React.FC = () => {
     >
       <CyberGrid />
       <ViewHeader
-          title="КОНФІГУРАЦІЯ КЛАСТЕРА (V45.0)"
+          title="КОНФІГУ� АЦІЯ КЛАСТЕ� А (V45.0)"
           icon={<SettingsIcon size={20} className="icon-3d-blue" />}
-          breadcrumbs={['СИНАПСИС', 'СИСТЕМА', 'КОНФІГУРАЦІЯ']}
+          breadcrumbs={['СИНАПСИС', 'СИСТЕМА', 'КОНФІГУ� АЦІЯ']}
           stats={[
               { label: 'Середовище', value: currentEnv.name.toUpperCase(), icon: <Server size={14} className="icon-3d-blue"/>, color: 'primary' },
               { label: 'Стандарт', value: 'V45 GOLD', icon: <Database size={14} className="icon-3d-amber"/>, color: 'success' },
-              { label: 'Статус', value: 'СИНХРОННО', icon: <Globe size={14} className="icon-3d-green"/>, color: 'success' },
+              { label: 'Статус', value: 'СИНХ� ОННО', icon: <Globe size={14} className="icon-3d-green"/>, color: 'success' },
           ]}
       />
 
@@ -304,7 +304,7 @@ const SettingsView: React.FC = () => {
                                 <div className="space-y-1">
                                     <p className="text-sm font-semibold text-slate-100">Висока видимість</p>
                                     <p className="text-[11px] text-slate-400">
-                                        Рекомендовано для яскравих екранів, проєкторів та тривалої роботи.
+                                        � екомендовано для яскравих екранів, проєкторів та тривалої роботи.
                                     </p>
                                 </div>
                                 <div className="flex items-center gap-3">

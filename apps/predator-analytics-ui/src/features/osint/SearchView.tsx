@@ -60,14 +60,14 @@ const SEARCH_MODES: Array<{
     {
         id: 'neural',
         label: 'Гібридний пошук',
-        description: 'Назва, ЄДРПОУ, бенефіціар або довільний опис.',
+        description: 'Назва, ЄД� ПОУ, бенефіціар або довільний опис.',
         icon: BrainCircuit,
         color: 'text-cyan-400',
     },
     {
         id: 'exact',
         label: 'Точний збіг',
-        description: 'Для точного ЄДРПОУ або повної назви.',
+        description: 'Для точного ЄД� ПОУ або повної назви.',
         icon: Target,
         color: 'text-amber-400',
     },
@@ -82,7 +82,7 @@ const SEARCH_MODES: Array<{
 
 const QUICK_QUERIES = [
     '42883391',
-    'Санкції РНБО',
+    'Санкції � НБО',
     'Офшорні структури',
     'Паливні тендери',
     'Експорт зерна',
@@ -457,7 +457,7 @@ const CompanyCard = ({
                                     <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
                                         <div className="mb-2 flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-slate-500">
                                             <ShieldAlert className="h-4 w-4 text-amber-300" />
-                                            Ризик
+                                            � изик
                                         </div>
                                         <div className="text-3xl font-black tracking-tight text-white">
                                             {company.riskScore}
@@ -489,7 +489,7 @@ const CompanyCard = ({
                                 <div className="w-full">
                                     <div className="mb-4 flex items-center justify-between">
                                         <span className="text-[10px] font-black uppercase tracking-[0.35em] text-cyan-300">
-                                            Радар перевірки
+                                            � адар перевірки
                                         </span>
                                         <BarChart3 className="h-4 w-4 text-cyan-300" />
                                     </div>
@@ -535,7 +535,7 @@ const CompanyCard = ({
                                 />
 
                                 <div className="mt-8 flex flex-wrap gap-3 border-t border-white/5 pt-6 text-xs text-slate-500">
-                                    <span>Ризикова оцінка: {company.riskScore}</span>
+                                    <span>� изикова оцінка: {company.riskScore}</span>
                                     <span>Категорія ризику: {company.riskLabel}</span>
                                     <span>Видача побудована тільки з наявних полів API</span>
                                 </div>
@@ -640,7 +640,7 @@ export const SearchView = () => {
             color: backendStatus.sourceType === 'remote' ? 'text-cyan-400' : 'text-amber-300',
         },
         {
-            name: 'Режим даних',
+            name: '� ежим даних',
             value: backendStatus.modeLabel,
             icon: Radio,
             color: 'text-yellow-300',
@@ -662,14 +662,14 @@ export const SearchView = () => {
         >
             <div className="relative mb-20 pt-10">
                 <ViewHeader
-                    title={isConsoleMode ? '> РЕЖИМ_КОНСОЛІ_ПОШУКУ' : 'ПОШУК ПО РЕЄСТРАХ І ВІДКРИТИХ ДЖЕРЕЛАХ'}
+                    title={isConsoleMode ? '> � ЕЖИМ_КОНСОЛІ_ПОШУКУ' : 'ПОШУК ПО � ЕЄСТ� АХ І ВІДК� ИТИХ ДЖЕ� ЕЛАХ'}
                     icon={isConsoleMode ? <SearchCode className="text-emerald-400" /> : <Radar className="text-primary-500" />}
-                    breadcrumbs={['ВІДКРИТІ_ДЖЕРЕЛА', 'ПОШУК', 'ПІДТВЕРДЖЕНІ_ДАНІ']}
+                    breadcrumbs={['ВІДК� ИТІ_ДЖЕ� ЕЛА', 'ПОШУК', 'ПІДТВЕ� ДЖЕНІ_ДАНІ']}
                     stats={[
                         { label: 'Статус API', value: backendStatus.statusLabel, icon: <Database />, color: 'primary' },
-                        { label: 'Режим даних', value: backendStatus.modeLabel, icon: <Radio />, color: 'cyan' },
+                        { label: '� ежим даних', value: backendStatus.modeLabel, icon: <Radio />, color: 'cyan' },
                         {
-                            label: 'Результатів',
+                            label: '� езультатів',
                             value: hasSearched ? String(results.length) : '—',
                             icon: <Activity />,
                             color: 'success',
@@ -763,8 +763,8 @@ export const SearchView = () => {
                                     autoFocus
                                     placeholder={
                                         isConsoleMode
-                                            ? 'ВВЕДІТЬ_ЄДРПОУ_АБО_ЗАПИТ'
-                                            : 'Введіть код ЄДРПОУ, назву компанії або опис ризикової схеми'
+                                            ? 'ВВЕДІТЬ_ЄД� ПОУ_АБО_ЗАПИТ'
+                                            : 'Введіть код ЄД� ПОУ, назву компанії або опис ризикової схеми'
                                     }
                                     className={cn(
                                         'min-w-0 flex-1 bg-transparent px-6 py-7 text-xl font-black tracking-tight text-white outline-none placeholder:text-slate-600 lg:text-2xl',
@@ -863,7 +863,7 @@ export const SearchView = () => {
                         <div className="flex flex-wrap items-center gap-4">
                             <div className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3">
                                 <div className="text-[9px] font-black uppercase tracking-widest text-slate-500">
-                                    Режим запиту
+                                    � ежим запиту
                                 </div>
                                 <div className="text-xs font-semibold text-white">
                                     {SEARCH_MODES.find((mode) => mode.id === searchMode)?.label}
@@ -908,7 +908,7 @@ export const SearchView = () => {
                             <p className="mx-auto max-w-2xl text-sm leading-relaxed text-slate-500">
                                 {searchError
                                     ? 'Спробуйте повторити запит пізніше або перевірте доступність джерела даних.'
-                                    : 'Поточний бекенд не повернув результатів для цього запиту. Спробуйте точний режим або уточніть ЄДРПОУ.'}
+                                    : 'Поточний бекенд не повернув результатів для цього запиту. Спробуйте точний режим або уточніть ЄД� ПОУ.'}
                             </p>
 
                             {searchMode !== 'exact' && (

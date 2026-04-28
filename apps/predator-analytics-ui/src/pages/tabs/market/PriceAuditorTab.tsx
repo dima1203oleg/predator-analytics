@@ -1,5 +1,5 @@
 /**
- * 💰 PRICE AUDITOR TAB // ПРАЙС-АУДИТОР | v58.2-WRAITH
+ * 💰 PRICE AUDITOR TAB // П� АЙС-АУДИТО�  | v58.2-WRAITH
  * PREDATOR Analytics — Market Analysis & Procurement Intelligence
  */
 
@@ -80,7 +80,7 @@ export const PriceAuditorTab: React.FC = () => {
       <div className="flex flex-col items-center justify-center h-[500px] gap-4">
         <Loader2 className="w-12 h-12 text-[#D4AF37] animate-spin" />
         <p className="text-[#D4AF37] font-black uppercase tracking-widest text-xs animate-pulse">
-          АНАЛІЗ ЦІНОВИХ ПРОПОЗИЦІЙ...
+          АНАЛІЗ ЦІНОВИХ П� ОПОЗИЦІЙ...
         </p>
       </div>
     );
@@ -93,7 +93,7 @@ export const PriceAuditorTab: React.FC = () => {
         <div className="relative flex-1 group">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-700 group-focus-within:text-[#D4AF37] transition-colors" size={20} />
           <input 
-            type="text" placeholder="ПОШУК ТОВАРУ, КАТЕГОРІЇ АБО КОДУ УКТЗЕД..."
+            type="text" placeholder="ПОШУК ТОВА� У, КАТЕГО� ІЇ АБО КОДУ УКТЗЕД..."
             value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
             className="w-full bg-white/[0.02] border border-white/[0.05] p-3 pl-12 rounded-xl text-sm font-bold text-white italic tracking-tight focus:border-[#D4AF37]/40 outline-none transition-all placeholder:text-slate-800"
           />
@@ -132,7 +132,7 @@ export const PriceAuditorTab: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-8">
                   <div className="text-right">
-                    <p className="text-[9px] font-black text-slate-700 uppercase tracking-widest italic">СЕРЕДНЯ_ЦІНА</p>
+                    <p className="text-[9px] font-black text-slate-700 uppercase tracking-widest italic">СЕ� ЕДНЯ_ЦІНА</p>
                     <p className="text-xl font-black text-white italic font-mono tracking-tighter">{formatPrice(product.avgPrice)}</p>
                   </div>
                   <div className="p-4 bg-[#D4AF37] text-black rounded-xl text-center min-w-[100px] shadow-lg skew-x-[-3deg]">
@@ -182,7 +182,7 @@ export const PriceAuditorTab: React.FC = () => {
                                 {offer.isVerified && <BadgeCheck size={14} className="text-[#D4AF37]" />}
                                 {offer.isBestPrice && (
                                   <span className="bg-[#D4AF37] text-black px-2 py-0.5 rounded-full text-[7px] font-black italic uppercase tracking-widest">
-                                    НАЙКРАЩА_ЦІНА
+                                    НАЙК� АЩА_ЦІНА
                                   </span>
                                 )}
                               </div>
@@ -206,7 +206,7 @@ export const PriceAuditorTab: React.FC = () => {
                               </p>
                               <p className={cn("text-[8px] font-black italic mt-1", offer.price < product.avgPrice ? "text-[#D4AF37]" : "text-amber-500")}>
                                 {offer.price < product.avgPrice ? <TrendingDown size={10} className="inline mr-1" /> : <TrendingUp size={10} className="inline mr-1" />}
-                                {Math.abs(((offer.price - product.avgPrice) / product.avgPrice) * 100).toFixed(1)}% ВІД СЕРЕДНЬОЇ
+                                {Math.abs(((offer.price - product.avgPrice) / product.avgPrice) * 100).toFixed(1)}% ВІД СЕ� ЕДНЬОЇ
                               </p>
                             </div>
                             <button className="p-3 bg-[#D4AF37] text-black rounded-lg hover:brightness-110 shadow-lg transition-all">

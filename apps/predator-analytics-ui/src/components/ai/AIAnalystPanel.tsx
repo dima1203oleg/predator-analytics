@@ -245,7 +245,7 @@ export const AIAnalystPanel: React.FC = () => {
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: '⚠️ Виникла помилка при обробці запиту. Будь ласка, спробуйте пізніше.',
+        content: '� ️ Виникла помилка при обробці запиту. Будь ласка, спробуйте пізніше.',
         timestamp: new Date(),
         metadata: { confidence: 0 }
       };

@@ -160,7 +160,7 @@ class CircuitBreaker:
         # Для сумісності зробимо їх синхронними, які запускають фонову задачу або використовують thread-safe підхід.
         # Але найкраще — зробити їх асинхронними і оновити виклики.
         # Перевіримо ai_service.py: там вони викликаються з await? Ні.
-        
+
         # Висновок: нам потрібні синхронні методи для сумісності.
         if self._state == CircuitState.HALF_OPEN:
             self._success_count += 1
@@ -179,11 +179,13 @@ class CircuitBreaker:
             self._state = CircuitState.OPEN
 
     async def __aenter__(self) -> "CircuitBreaker":
+        """Вхід в асинхронний контекстний менеджер."""
         if self.state == CircuitState.OPEN:
             raise CircuitBreakerError(self.name, self._last_fail_time + self.timeout)
         return self
 
     async def __aexit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
+        """Вихід з асинхронного контекстного менеджера з обробкою результату."""
         if exc_type:
             await self._on_failure()
         else:
@@ -197,6 +199,7 @@ class CircuitBreaker:
         self._last_fail_time = 0.0
 
     def __repr__(self) -> str:
+        """Рядкове представлення стану об'єкта."""
         return (
             f"CircuitBreaker(name={self.name!r}, state={self._state.value}, "
             f"failures={self._failure_count}/{self.failure_threshold})"

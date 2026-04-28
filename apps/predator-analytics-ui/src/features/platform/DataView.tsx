@@ -167,7 +167,7 @@ const DataView: React.FC = () => {
     setAnalyzingSourceId(source.id);
     try {
       const res = await (api as any).v45.analyze(source.name);
-      alert(`✅ АНАЛІЗ ЗАВЕРШЕНО: ${res.answer.substring(0, 100)}... Кейс створено автоматично.`);
+      alert(`✅ АНАЛІЗ ЗАВЕ� ШЕНО: ${res.answer.substring(0, 100)}... Кейс створено автоматично.`);
     } catch (e) {
       console.error(e);
       alert("Помилка запуску аналізу.");
@@ -220,7 +220,7 @@ const DataView: React.FC = () => {
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
         <div>
           <h1 className="text-3xl font-black text-white tracking-tight flex items-center gap-3">
-            <Database className="text-cyan-400" /> ДАНІ ТА РЕЄСТРИ
+            <Database className="text-cyan-400" /> ДАНІ ТА � ЕЄСТ� И
           </h1>
           <p className="text-slate-400 mt-2 font-mono text-sm uppercase tracking-widest">
             Перетягніть файл сюди або натисніть кнопку • Excel • CSV • PDF
@@ -277,8 +277,8 @@ const DataView: React.FC = () => {
 
       <div className="flex gap-4 border-b border-white/5 pb-1">
         {[
-          { id: 'sources', label: 'ДЖЕРЕЛА (SOURCES)', icon: Database },
-          { id: 'pipelines', label: 'КОНВЕЄРИ (PIPELINES)', icon: Layers }
+          { id: 'sources', label: 'ДЖЕ� ЕЛА (SOURCES)', icon: Database },
+          { id: 'pipelines', label: 'КОНВЕЄ� И (PIPELINES)', icon: Layers }
         ].map(tab => (
           <button
             key={tab.id}

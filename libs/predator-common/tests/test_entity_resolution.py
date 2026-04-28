@@ -7,17 +7,15 @@
 - resolve_company: exact_id, fuzzy_name, new
 - resolve_person: exact_id, fuzzy_name, new
 """
-import pytest
 
 from predator_common.entity_resolution import (
     EntityCandidate,
+    fuzzy_similarity,
     normalize_company_name,
     normalize_person_name,
-    fuzzy_similarity,
     resolve_company,
     resolve_person,
 )
-
 
 # ------------------------------------------------------------------
 # normalize_company_name

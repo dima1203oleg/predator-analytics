@@ -5,7 +5,7 @@ describe('normalizeSanctionsScreeningPayload', () => {
     it('нормалізує підтверджену відповідь скринінгу', () => {
         const result = normalizeSanctionsScreeningPayload({
             id: 'scr-10',
-            entityName: 'ГАЗПРОМ',
+            entityName: 'ГАЗП� ОМ',
             entityType: 'company',
             status: 'blocked',
             timestamp: '2026-03-30T12:00:00Z',
@@ -17,7 +17,7 @@ describe('normalizeSanctionsScreeningPayload', () => {
                     id: 'match-1',
                     list: 'OFAC',
                     program: 'Санкційна програма',
-                    target: 'ГАЗПРОМ',
+                    target: 'ГАЗП� ОМ',
                     details: 'Підсанкційний субʼєкт.',
                     severity: 'high',
                     score: 99,
@@ -27,7 +27,7 @@ describe('normalizeSanctionsScreeningPayload', () => {
         });
 
         expect(result).not.toBeNull();
-        expect(result?.entityName).toBe('ГАЗПРОМ');
+        expect(result?.entityName).toBe('ГАЗП� ОМ');
         expect(result?.status).toBe('blocked');
         expect(result?.matches[0]?.allLists).toEqual(['OFAC', 'EU']);
     });

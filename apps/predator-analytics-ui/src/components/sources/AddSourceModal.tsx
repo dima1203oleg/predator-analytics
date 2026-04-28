@@ -55,9 +55,9 @@ const SOURCE_TYPES = [
     },
     {
         id: 'registry',
-        name: 'Публічний Реєстр',
+        name: 'Публічний � еєстр',
         icon: Database,
-        description: 'Підключення до data.gov.ua, Prozorro, ЄДР',
+        description: 'Підключення до data.gov.ua, Prozorro, ЄД� ',
         color: 'from-purple-500 to-pink-500'
     },
     {
@@ -418,13 +418,13 @@ export const AddSourceModal: React.FC<AddSourceModalProps> = ({
                                         <div>
                                             <label className="block text-sm font-medium text-slate-300 mb-2">
                                                 <Clock size={14} className="inline mr-2" />
-                                                Розклад оновлення
+                                                � озклад оновлення
                                             </label>
                                             <select
                                                 value={config.schedule || ''}
                                                 onChange={(e) => handleConfigChange('schedule', e.target.value)}
                                                 className="w-full bg-slate-800 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-cyan-500 outline-none transition-colors"
-                                                title="Розклад оновлення"
+                                                title="� озклад оновлення"
                                             >
                                                 {SCHEDULE_OPTIONS.map(opt => (
                                                     <option key={opt.value} value={opt.value}>{opt.label}</option>

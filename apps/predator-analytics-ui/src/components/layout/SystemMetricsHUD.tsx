@@ -33,7 +33,7 @@ export const SystemMetricsHUD: React.FC = () => {
 
     const metrics = [
         {
-            label: 'ВУЗОЛ СЕРВЕРА',
+            label: 'ВУЗОЛ СЕ� ВЕ� А',
             icon: isColab ? AlertCircle : Server,
             value: isColab ? 'GOOGLE_COLAB' : 'NVIDIA_PROD',
             sub: isColab ? 'FAILOVER_MODE' : 'PRIMARY_LINK_OK',
@@ -48,7 +48,7 @@ export const SystemMetricsHUD: React.FC = () => {
             color: stats.cpu_percent > 80 ? 'text-rose-500' : 'text-cyan-400'
         },
         { 
-            label: 'ОПЕРАТИВНА_ОЗП', 
+            label: 'ОПЕ� АТИВНА_ОЗП', 
             icon: Activity, 
             value: `${Math.round(stats.memory_percent)}%`, 
             sub: `ВІЛЬНО: ${(stats.memory_available / (1024**3)).toFixed(1)}ГБ / ${(stats.memory_total / (1024**3)).toFixed(1)}ГБ`,

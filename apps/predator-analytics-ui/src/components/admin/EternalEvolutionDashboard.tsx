@@ -105,7 +105,7 @@ export const EternalEvolutionDashboard: React.FC = () => {
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-8">
               <div>
-                <div className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-1">Рівень Автономії</div>
+                <div className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-1">� івень Автономії</div>
                 <div className="text-3xl font-black text-white">{status?.autonomy_level.toFixed(1)}</div>
               </div>
               <div>
@@ -117,7 +117,7 @@ export const EternalEvolutionDashboard: React.FC = () => {
                 <div className="text-3xl font-black text-white">{Number(Object.values(status?.optimizations || {}).reduce((a: any, b: any) => a + (b as number), 0))}</div>
               </div>
               <div>
-                <div className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-1">Час Роботи</div>
+                <div className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-1">Час � оботи</div>
                 <div className="text-xl font-bold text-white pt-1">{status?.uptime}</div>
               </div>
             </div>

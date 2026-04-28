@@ -25,7 +25,7 @@ const typeConfig: Record<ToastType, { color: string; icon: string; bg: string; b
     },
     WARNING: {
         color: '#ffb700',
-        icon: 'âš ',
+        icon: 'âš ',
         bg: 'rgba(255,183,0,0.08)',
         border: 'rgba(255,183,0,0.35)',
     },

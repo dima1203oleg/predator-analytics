@@ -33,11 +33,11 @@ describe('CompanyCERSDashboard', () => {
         
         // Налаштовуємо типові відповіді
         (diligenceApi.searchCompanies as any).mockResolvedValue({
-            items: [{ edrpou: '41829391', name: 'ТОВ ЕНЕРГО-РЕСУРС' }]
+            items: [{ edrpou: '41829391', name: 'ТОВ ЕНЕ� ГО-� ЕСУ� С' }]
         });
         (diligenceApi.getCompanyProfile as any).mockResolvedValue({
             edrpou: '41829391',
-            name: 'ТОВ ЕНЕРГО-РЕСУРС',
+            name: 'ТОВ ЕНЕ� ГО-� ЕСУ� С',
             risk_score: 68,
             risk_level: 'medium',
             events: [
@@ -81,15 +81,15 @@ describe('CompanyCERSDashboard', () => {
     it('renders dashboard with company information', async () => {
         renderDashboard();
         
-        expect(screen.getByText(/CERS КОМАНДНИЙ ЦЕНТР/i)).toBeInTheDocument();
+        expect(screen.getByText(/CERS КОМАНДНИЙ ЦЕНТ� /i)).toBeInTheDocument();
         
         await waitFor(() => {
             expect(diligenceApi.searchCompanies).toHaveBeenCalled();
             expect(diligenceApi.getCompanyProfile).toHaveBeenCalled();
         });
 
-        expect(screen.getByText(/ТОВ ЕНЕРГО-РЕСУРС/i)).toBeInTheDocument();
-        expect(screen.getByText(/ЄДРПОУ: 41829391/i)).toBeInTheDocument();
+        expect(screen.getByText(/ТОВ ЕНЕ� ГО-� ЕСУ� С/i)).toBeInTheDocument();
+        expect(screen.getByText(/ЄД� ПОУ: 41829391/i)).toBeInTheDocument();
         expect(screen.getByText('B-')).toBeInTheDocument();
         expect(screen.getByText('68 / 100')).toBeInTheDocument();
     });
@@ -97,14 +97,14 @@ describe('CompanyCERSDashboard', () => {
     it('shows loading state during search', async () => {
         renderDashboard();
         
-        const input = screen.getByPlaceholderText(/Введіть ЄДРПОУ або Назву.../i);
+        const input = screen.getByPlaceholderText(/Введіть ЄД� ПОУ або Назву.../i);
         fireEvent.change(input, { target: { value: 'New Company' } });
         fireEvent.submit(input);
         
-        expect(screen.getByText(/РАХУЄМО МАТРИЦЮ РИЗИКІВ.../i)).toBeInTheDocument();
+        expect(screen.getByText(/� АХУЄМО МАТ� ИЦЮ � ИЗИКІВ.../i)).toBeInTheDocument();
         
         await waitFor(() => {
-            expect(screen.queryByText(/РАХУЄМО МАТРИЦЮ РИЗИКІВ.../i)).not.toBeInTheDocument();
+            expect(screen.queryByText(/� АХУЄМО МАТ� ИЦЮ � ИЗИКІВ.../i)).not.toBeInTheDocument();
         }, { timeout: 2000 });
     });
 
@@ -115,15 +115,15 @@ describe('CompanyCERSDashboard', () => {
             expect(screen.getAllByTestId('echarts-mock')).toHaveLength(2);
         });
         
-        expect(screen.getByText(/5-ШАРОВА ОЦІНКА CERS/i)).toBeInTheDocument();
-        expect(screen.getByText(/SHAP ДЕКОМПОЗИЦІЯ РИЗИКУ/i)).toBeInTheDocument();
+        expect(screen.getByText(/5-ША� ОВА ОЦІНКА CERS/i)).toBeInTheDocument();
+        expect(screen.getByText(/SHAP ДЕКОМПОЗИЦІЯ � ИЗИКУ/i)).toBeInTheDocument();
     });
 
     it('displays timeline events', async () => {
         renderDashboard();
         
         await waitFor(() => {
-            expect(screen.getByText(/ХРОНОЛОГІЯ ТА СИГНАЛИ/i)).toBeInTheDocument();
+            expect(screen.getByText(/Х� ОНОЛОГІЯ ТА СИГНАЛИ/i)).toBeInTheDocument();
         });
         expect(screen.getByText(/Виявлено зв'язок з офшорною юрисдикцією/i)).toBeInTheDocument();
         expect(screen.getByText(/Успішне виконання контракту з Міноборони/i)).toBeInTheDocument();
