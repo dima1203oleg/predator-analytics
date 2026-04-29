@@ -1,0 +1,62 @@
+name: NVIDIA Connection Probe
+
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/nvidia-connection-probe.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    name: Перевірити NVIDIA runner
+    runs-on: [self-hosted, linux, x64]
+    timeout-minutes: 10
+    steps:
+      - name: Зібрати стан вузла
+        shell: bash
+        run: |
+          set -uo pipefail
+          {
+            echo "=== ВУЗОЛ ==="
+            hostname || true
+            whoami || true
+            date -Is || true
+            uname -a || true
+
+            echo ""
+            echo "=== ДИСК ==="
+            df -h / /home /var /opt 2>/dev/null || df -h
+
+            echo ""
+            echo "=== БЛОЧНІ ПРИСТРОЇ ==="
+            lsblk -f 2>/dev/null || true
+
+            echo ""
+            echo "=== NVIDIA GPU ==="
+            nvidia-smi --query-gpu=index,name,driver_version,memory.total,memory.used,memory.free --format=csv,noheader 2>/dev/null || nvidia-smi 2>/dev/null || echo "nvidia-smi недоступна"
+
+            echo ""
+            echo "=== ZROK ==="
+            command -v zrok >/dev/null 2>&1 && zrok status 2>/dev/null || echo "zrok недоступний або не авторизований"
+
+            echo ""
+            echo "=== ЛОКАЛЬНІ ПОРТИ ==="
+            for port in 22 6666 4000 6443 8000 9080 11434; do
+              if python3 -c 'import socket, sys; s=socket.socket(); s.settimeout(1.0); s.connect(("127.0.0.1", int(sys.argv[1]))); s.close()' "$port" >/dev/null 2>&1
+              then
+                echo "127.0.0.1:${port} OPEN"
+              else
+                echo "127.0.0.1:${port} CLOSED"
+              fi
+            done
+          } | tee nvidia-probe.txt
+
+      - name: Завантажити артефакт діагностики
+        uses: actions/upload-artifact@v4
+        with:
+          name: nvidia-probe
+          path: nvidia-probe.txt
