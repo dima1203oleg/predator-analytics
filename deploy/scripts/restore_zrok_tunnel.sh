@@ -12,21 +12,21 @@
 
 set -e
 
-ZROK_TOKEN="1eeje4um7yvA"
-SHARE_NAME="predator"
-BACKEND_TARGET="http://192.168.88.254:80"   # Nginx з LiteLLM + API
+ZROK_TOKEN="${ZROK_TOKEN:-}"
+SHARE_NAME="${PREDATOR_API_SHARE:-predator}"
+BACKEND_TARGET="${PREDATOR_API_TARGET:-http://192.168.88.254:80}"   # Nginx з LiteLLM + API
 LOG_FILE="/tmp/zrok_predator.log"
 PID_FILE="/tmp/zrok_predator.pid"
 
 echo "🦅 ══════════════════════════════════════════════════"
 echo "   PREDATOR — Відновлення ZROK тунелю"
-echo "   Token: ${ZROK_TOKEN} | Share: ${SHARE_NAME}"
+echo "   Share: ${SHARE_NAME}"
 echo "═══════════════════════════════════════════════════════"
 
 # 1. Перевірка наявності zrok
 if ! command -v zrok &>/dev/null; then
     echo "❌ zrok не знайдено. Встановлення..."
-    ZROK_VERSION="0.4.45"
+    ZROK_VERSION="${ZROK_VERSION:-1.1.11}"
     ARCH=$(uname -m)
     if [ "$ARCH" == "x86_64" ]; then
         ZROK_PKG="zrok_${ZROK_VERSION}_linux_amd64.tar.gz"
@@ -50,7 +50,11 @@ sleep 1
 
 # 3. Ініціалізація середовища (якщо не ініціалізовано)
 zrok status 2>/dev/null | grep -q "<<SET>>" || {
-    echo "🔑 Ініціалізація ZROK середовища (токен: ${ZROK_TOKEN})..."
+    if [ -z "$ZROK_TOKEN" ]; then
+        echo "❌ ZROK_TOKEN не задано. Запустіть: ZROK_TOKEN=*** bash deploy/scripts/restore_zrok_tunnel.sh"
+        exit 1
+    fi
+    echo "🔑 Ініціалізація ZROK середовища..."
     zrok enable "${ZROK_TOKEN}" || echo "⚠️ Середовище вже ініціалізовано (пропускаємо)"
 }
 

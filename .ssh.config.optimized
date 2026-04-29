@@ -1,14 +1,49 @@
-# PREDATOR Analytics - SSH Config Optimization
-# Оптимізована конфігурація для надійного підключення до серверів
+# PREDATOR Analytics - оптимізована SSH конфігурація
+# Оптимізована конфігурація для стабільного підключення до серверів
 
 # ============================================================================
-# PRIMARY: Production Static Server (194.177.1.240)
+# ОСНОВНИЙ: production-сервер зі статичною адресою (194.177.1.240)
 # ============================================================================
-Host predator-server
+Host predator-server nvidia-server
     HostName 194.177.1.240
     Port 6666
     User dima
     IdentityFile ~/.ssh/id_ed25519_dev
+    IdentitiesOnly yes
+    StrictHostKeyChecking no
+    UserKnownHostsFile /dev/null
+    ServerAliveInterval 60
+    ServerAliveCountMax 10
+    TCPKeepAlive yes
+    Compression yes
+    ConnectTimeout 15
+    # Проксі через bastion, якщо прямий маршрут закритий.
+    # ProxyJump bastion-host
+
+# ============================================================================
+# ZROK: приватний SSH-тунель (локальна точка доступу)
+# ============================================================================
+Host predator-zrok
+    HostName 127.0.0.1
+    Port 2222
+    User dima
+    IdentityFile ~/.ssh/id_ed25519_dev
+    IdentitiesOnly yes
+    StrictHostKeyChecking no
+    UserKnownHostsFile /dev/null
+    ServerAliveInterval 60
+    ServerAliveCountMax 10
+    TCPKeepAlive yes
+    Compression yes
+    ConnectTimeout 5
+
+# ============================================================================
+# АЛЬТЕРНАТИВНИЙ КЛЮЧ: predator-v4 (активний лише якщо ключ існує локально)
+# ============================================================================
+Host predator-v4
+    HostName 194.177.1.240
+    Port 6666
+    User dima
     IdentityFile ~/.ssh/id_predator_v4
     IdentitiesOnly yes
     StrictHostKeyChecking no
@@ -18,61 +53,28 @@ Host predator-server
     TCPKeepAlive yes
     Compression yes
     ConnectTimeout 15
-    # Проксі через bastion (якщо потрібна)
-    # ProxyJump bastion-host
-
-# Alias для зворотної сумісності
-Host nvidia-server
-    HostName 194.177.1.240
-    Port 6666
-    User dima
-    IdentityFile ~/.ssh/id_ed25519_dev
-    IdentityFile ~/.ssh/id_predator_v4
-    IdentitiesOnly yes
-    StrictHostKeyChecking no
-    UserKnownHostsFile /dev/null
-    ServerAliveInterval 60
-    ServerAliveCountMax 10
-
-# Alternative key for predator-v4
-Host predator-v4
-    HostName 194.177.1.240
-    Port 6666
-    User dima
-    IdentityFile ~/.ssh/id_predator_v4
-    StrictHostKeyChecking no
-    UserKnownHostsFile /dev/null
 
 # ============================================================================
-# FALLBACK: ngrok tunnel (коли основний сервер недоступний)
-# ============================================================================
-Host predator-ngrok
-    HostName 2.tcp.eu.ngrok.io
-    Port 14677
-    User dima
-    IdentityFile ~/.ssh/id_ed25519_dev
-    StrictHostKeyChecking no
-    UserKnownHostsFile /dev/null
-    ServerAliveInterval 60
-    ServerAliveCountMax 10
-
-# ============================================================================
-# SECONDARY: GCP Instance (34.185.226.240)
+# РЕЗЕРВНИЙ: GCP інстанс (34.185.226.240)
 # ============================================================================
 Host gcp-nvidia
     HostName 34.185.226.240
     Port 22
     User dima
     IdentityFile ~/.ssh/id_ed25519_dev
+    IdentitiesOnly yes
     StrictHostKeyChecking no
     UserKnownHostsFile /dev/null
     ServerAliveInterval 60
     ServerAliveCountMax 10
+    TCPKeepAlive yes
+    Compression yes
+    ConnectTimeout 15
 
 # ============================================================================
-# VPN GATEWAY (якщо сервер за VPN)
+# VPN ШЛЮЗ (якщо сервер за VPN)
 # ============================================================================
-# Розкоментуйте, якщо потрібен VPN туннель
+# Розкоментуйте, якщо потрібен VPN тунель.
 # Host vpn-gateway
 #     HostName vpn.example.com
 #     Port 22
@@ -80,9 +82,9 @@ Host gcp-nvidia
 #     IdentityFile ~/.ssh/id_vpn_key
 
 # ============================================================================
-# BASTION HOST (якщо потрібен jump host)
+# БАСТІОН-ВУЗОЛ (якщо потрібен проміжний SSH-вузол)
 # ============================================================================
-# Розкоментуйте, якщо сервер недоступний напряму
+# Розкоментуйте, якщо сервер недоступний напряму.
 # Host bastion
 #     HostName bastion.example.com
 #     Port 22
@@ -90,14 +92,12 @@ Host gcp-nvidia
 #     IdentityFile ~/.ssh/id_bastion
 
 # ============================================================================
-# GLOBAL DEFAULTS
+# ГЛОБАЛЬНІ НАЛАШТУВАННЯ
 # ============================================================================
 Host *
     AddKeysToAgent yes
     IgnoreUnknown UseKeychain
     UseKeychain yes
-    # SSH Protocol (за замовчуванням 2)
     Protocol 2
-    # Перепробувати підключення 3 рази при тимчасових помилках
     ConnectionAttempts 3
-    ConnectionTimeout 10
+    ConnectTimeout 10

@@ -6,10 +6,16 @@
 
 set -e
 
-ZROK_TOKEN="1eeje4um7yvA"
-ZROK_BIN="${HOME}/bin/zrok"
+ZROK_TOKEN="${ZROK_TOKEN:-}"
+ZROK_BIN="${ZROK_BIN:-${HOME}/bin/zrok}"
+PREDATOR_API_TARGET="${PREDATOR_API_TARGET:-http://127.0.0.1:8000}"
+PREDATOR_K8S_TARGET="${PREDATOR_K8S_TARGET:-127.0.0.1:6443}"
+PREDATOR_SSH_TARGET="${PREDATOR_SSH_TARGET:-127.0.0.1:6666}"
+PREDATOR_API_SHARE="${PREDATOR_API_SHARE:-predator}"
+PREDATOR_K8S_SHARE="${PREDATOR_K8S_SHARE:-predatork8s}"
+PREDATOR_SSH_SHARE="${PREDATOR_SSH_SHARE:-predatorssh}"
 
-# Створення директорії якщо немає
+# Створення директорії, якщо її ще немає.
 mkdir -p ${HOME}/bin
 
 # 1. Завантаження останньої версії zrok (v1.x+)
@@ -32,25 +38,28 @@ fi
 
 echo "✅ zrok версії $("$ZROK_BIN" version | head -n 1)"
 
-# 2. Ініціалізація оточення
+# 2. Ініціалізація оточення.
 echo "🔐 Авторизація оточення..."
-"$ZROK_BIN" disable 2>/dev/null || true
-"$ZROK_BIN" enable "$ZROK_TOKEN" || echo "⚠️  Оточення вже активоване або помилка"
+if "$ZROK_BIN" status 2>/dev/null | grep -q "<<SET>>"; then
+    echo "✅ zrok оточення вже активоване"
+else
+    if [ -z "$ZROK_TOKEN" ]; then
+        echo "❌ ZROK_TOKEN не задано. Запустіть: ZROK_TOKEN=*** bash deploy/scripts/fix_zrok_v2.sh"
+        exit 1
+    fi
+    "$ZROK_BIN" enable "$ZROK_TOKEN"
+fi
 
-# 3. Резервування та запуск Public Share для API (HTTP)
+# 3. Резервування публічного share для API (HTTP).
 echo "🌐 Налаштування API Share (Public)..."
-# Видаляємо стару резервацію якщо є (може знадобитись допомога в UI або інший запуск)
-"$ZROK_BIN" release predator 2>/dev/null || true
+"$ZROK_BIN" reserve public "$PREDATOR_API_TARGET" --unique-name "$PREDATOR_API_SHARE" --backend-mode proxy || true
 
-# Резервуємо знову
-"$ZROK_BIN" reserve public http://127.0.0.1:8000 --unique-name predator --backend-mode proxy || true
-
-# 4. Резервування Private Share для K8s та SSH (TCP)
+# 4. Резервування приватних shares для K8s та SSH (TCP).
 echo "🛡️ Налаштування K8s та SSH (Private)..."
-"$ZROK_BIN" reserve private 127.0.0.1:6443 --unique-name predatork8s --backend-mode tcpTunnel || true
-"$ZROK_BIN" reserve private 127.0.0.1:6666 --unique-name predatorssh --backend-mode tcpTunnel || true
+"$ZROK_BIN" reserve private "$PREDATOR_K8S_TARGET" --unique-name "$PREDATOR_K8S_SHARE" --backend-mode tcpTunnel || true
+"$ZROK_BIN" reserve private "$PREDATOR_SSH_TARGET" --unique-name "$PREDATOR_SSH_SHARE" --backend-mode tcpTunnel || true
 
-# 5. Створення systemd сервісів
+# 5. Створення systemd сервісів.
 echo "⚙️  Створення systemd сервісів..."
 
 create_service() {
@@ -78,9 +87,9 @@ EOF
     sudo systemctl restart ${name}
 }
 
-create_service "predator-api" "$ZROK_BIN share reserved predator --headless" "Predator API Zrok"
-create_service "predator-k8s" "$ZROK_BIN share reserved predatork8s --headless" "Predator K8s Zrok"
-create_service "predator-ssh" "$ZROK_BIN share reserved predatorssh --headless" "Predator SSH Zrok"
+create_service "predator-api" "$ZROK_BIN share reserved $PREDATOR_API_SHARE --headless" "Predator API Zrok"
+create_service "predator-k8s" "$ZROK_BIN share reserved $PREDATOR_K8S_SHARE --headless" "Predator K8s Zrok"
+create_service "predator-ssh" "$ZROK_BIN share reserved $PREDATOR_SSH_SHARE --headless" "Predator SSH Zrok"
 
 echo "✅ Сервіси налаштовані та запущені!"
 echo "📊 Перевірка статусів:"

@@ -8,13 +8,110 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
+NVIDIA_PRIMARY_HOST="${NVIDIA_PRIMARY_HOST:-194.177.1.240}"
+NVIDIA_PRIMARY_PORT="${NVIDIA_PRIMARY_PORT:-6666}"
+NVIDIA_GCP_HOST="${NVIDIA_GCP_HOST:-34.185.226.240}"
+NVIDIA_GCP_PORT="${NVIDIA_GCP_PORT:-22}"
+NVIDIA_USER="${NVIDIA_USER:-dima}"
+NVIDIA_PRIMARY_KEY="${NVIDIA_PRIMARY_KEY:-~/.ssh/id_ed25519_dev}"
+NVIDIA_V4_KEY="${NVIDIA_V4_KEY:-~/.ssh/id_predator_v4}"
+ZROK_SSH_SHARE="${ZROK_SSH_SHARE:-predatorssh}"
+ZROK_K8S_SHARE="${ZROK_K8S_SHARE:-predatork8s}"
+ZROK_SSH_BIND_HOST="${ZROK_SSH_BIND_HOST:-127.0.0.1}"
+ZROK_SSH_BIND_PORT="${ZROK_SSH_BIND_PORT:-2222}"
+ZROK_K8S_BIND_HOST="${ZROK_K8S_BIND_HOST:-127.0.0.1}"
+ZROK_K8S_BIND_PORT="${ZROK_K8S_BIND_PORT:-6443}"
+ZROK_LOG_DIR="${ZROK_LOG_DIR:-$HOME/.zrok}"
+mkdir -p "$ZROK_LOG_DIR"
+
 SERVERS=(
-  "predator-zrok|127.0.0.1|2222|dima|~/.ssh/id_ed25519_dev"
-  "predator-ngrok|2.tcp.eu.ngrok.io|14677|dima|~/.ssh/id_ed25519_dev"
-  "predator-server|194.177.1.240|6666|dima|~/.ssh/id_ed25519_dev"
-  "predator-v4|194.177.1.240|6666|dima|~/.ssh/id_predator_v4"
-  "nvidia-server|34.185.226.240|22|dima|~/.ssh/id_ed25519_dev"
+  "predator-zrok|$ZROK_SSH_BIND_HOST|$ZROK_SSH_BIND_PORT|$NVIDIA_USER|$NVIDIA_PRIMARY_KEY"
+  "predator-server|$NVIDIA_PRIMARY_HOST|$NVIDIA_PRIMARY_PORT|$NVIDIA_USER|$NVIDIA_PRIMARY_KEY"
+  "gcp-nvidia|$NVIDIA_GCP_HOST|$NVIDIA_GCP_PORT|$NVIDIA_USER|$NVIDIA_PRIMARY_KEY"
 )
+
+if [ -f "${NVIDIA_V4_KEY/#\~/$HOME}" ]; then
+  SERVERS+=("predator-v4|$NVIDIA_PRIMARY_HOST|$NVIDIA_PRIMARY_PORT|$NVIDIA_USER|$NVIDIA_V4_KEY")
+fi
+
+tcp_check() {
+  local hostname=$1
+  local port=$2
+  local timeout_seconds=${3:-2}
+
+  python3 - "$hostname" "$port" "$timeout_seconds" <<'PY'
+import socket
+import sys
+
+host = sys.argv[1]
+port = int(sys.argv[2])
+timeout = float(sys.argv[3])
+
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock.settimeout(timeout)
+try:
+    sock.connect((host, port))
+except OSError:
+    sys.exit(1)
+finally:
+    sock.close()
+PY
+}
+
+zrok_bin() {
+  command -v zrok 2>/dev/null || {
+    if [ -x "$HOME/bin/zrok" ]; then
+      echo "$HOME/bin/zrok"
+    fi
+  }
+}
+
+ensure_zrok_access() {
+  local share=$1
+  local bind_host=$2
+  local bind_port=$3
+  local label=$4
+  local bin
+  local log_file="$ZROK_LOG_DIR/${share}.access.log"
+
+  bin="$(zrok_bin || true)"
+  if [ -z "$bin" ]; then
+    echo -e "  ├─ zrok не знайдено, пропускаю $label ${YELLOW}⚠️${NC}"
+    return 1
+  fi
+
+  if tcp_check "$bind_host" "$bind_port" 1; then
+    echo -e "  ├─ $label вже слухає $bind_host:$bind_port ${GREEN}✅${NC}"
+    return 0
+  fi
+
+  if pgrep -f "zrok access private $share" >/dev/null; then
+    if [ "${ZROK_FORCE_RESTART:-0}" = "1" ]; then
+      pkill -f "zrok access private $share" 2>/dev/null || true
+    else
+      echo -e "  ├─ $label має активний процес, але порт ще не слухає ${YELLOW}⚠️${NC}"
+      return 1
+    fi
+  fi
+
+  echo -n "  ├─ Запускаю $label ($share → $bind_host:$bind_port)... "
+  : > "$log_file"
+  "$bin" access private "$share" --bind "$bind_host:$bind_port" >"$log_file" 2>&1 &
+  sleep 3
+
+  if tcp_check "$bind_host" "$bind_port" 1; then
+    echo -e "${GREEN}✅${NC}"
+    return 0
+  fi
+
+  echo -e "${YELLOW}⚠️ НЕ АКТИВНИЙ${NC}"
+  if [ -s "$log_file" ]; then
+    echo "     Лог zrok: $(head -3 "$log_file" | tr '\n' ' ')"
+  else
+    echo "     Лог zrok порожній; share може бути не опублікований на сервері."
+  fi
+  return 1
+}
 
 check_ssh_access() {
   local alias=$1
@@ -34,7 +131,7 @@ check_ssh_access() {
   fi
   echo -e "${GREEN}✅${NC}"
 
-  # Automatically add key to ssh-agent to prevent connection issues
+  # Додаємо ключ в ssh-agent, щоб уникнути нестабільних повторних запитів.
   if ! ssh-add -l 2>/dev/null | grep -q "$keyfile"; then
     echo -n "  ├─ Додаю ключ в ssh-agent... "
     ssh-add "$keyfile" >/dev/null 2>&1 || true
@@ -42,8 +139,7 @@ check_ssh_access() {
   fi
 
   echo -n "  ├─ Перевіряю доступність $hostname:$port... "
-  # Use Python for a reliable, cross-platform TCP check with 2s timeout
-  if python3 -c "import socket; s = socket.socket(socket.AF_INET, socket.SOCK_STREAM); s.settimeout(2.0); s.connect(('$hostname', int('$port')))" >/dev/null 2>&1; then
+  if tcp_check "$hostname" "$port" 2; then
     echo -e "${GREEN}✅ ДОСТУПНА${NC}"
   else
     echo -e "${RED}❌ НЕ ДОСТУПНА (firewall/timeout)${NC}"
@@ -88,6 +184,12 @@ echo "=== NVIDIA GPU ==="
 nvidia-smi --query-gpu=index,name,driver_version,memory.total,memory.used,memory.free --format=csv,noheader 2>/dev/null || echo "❌ nvidia-smi не доступна"
 
 echo ""
+echo "=== ВУЗОЛ ==="
+hostnamectl 2>/dev/null || hostname
+echo "USER=$(whoami)"
+date -Is 2>/dev/null || date
+
+echo ""
 echo "=== RAM (вільна пам'ять) ==="
 free -h 2>/dev/null | grep Mem || (echo "Total:"; cat /proc/meminfo 2>/dev/null | grep MemTotal || echo "❌ /proc/meminfo не доступна")
 
@@ -100,20 +202,44 @@ echo "=== CPU CORES ==="
 nproc 2>/dev/null || (cat /proc/cpuinfo 2>/dev/null | grep "processor" | wc -l)
 
 echo ""
-echo "=== DOCKER (контейнери одноразово) ==="
-docker stats --no-stream --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}" 2>/dev/null || echo "❌ Docker не доступен або не запущено"
+echo "=== DOCKER COMPOSE ПРОЄКТИ ==="
+docker compose ls 2>/dev/null || docker-compose ls 2>/dev/null || echo "❌ Docker Compose не доступний"
 
 echo ""
-echo "=== OLLAMA (LLM Pool) ==="
+echo "=== DOCKER КОНТЕЙНЕРИ ==="
+docker ps --format "table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}" 2>/dev/null || echo "❌ Docker не доступний або не запущено"
+
+echo ""
+echo "=== DOCKER СТАТИСТИКА ==="
+docker stats --no-stream --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}" 2>/dev/null || echo "❌ Docker stats не доступний"
+
+echo ""
+echo "=== DOCKER МЕРЕЖІ ==="
+docker network ls 2>/dev/null || echo "❌ Docker networks не доступні"
+docker network inspect predator-server-net --format '{{json .IPAM.Config}}' 2>/dev/null || true
+
+echo ""
+echo "=== DOCKER ТОМИ ==="
+docker volume ls 2>/dev/null | grep -E 'predator|postgres|redis|qdrant|opensearch|minio|redpanda|ollama|grafana|prometheus' || echo "❌ Цільові Docker volumes не знайдено або Docker не доступний"
+
+echo ""
+echo "=== OLLAMA (пул LLM) ==="
 curl -sS http://localhost:11434/api/tags 2>/dev/null | head -20 || echo "❌ Ollama не відповідає на http://localhost:11434"
 
 echo ""
-echo "=== KUBERNETES (k3s status) ==="
-kubectl get nodes 2>/dev/null || echo "❌ kubectl не налаштований"
+echo "=== KUBERNETES (стан k3s) ==="
+kubectl config current-context 2>/dev/null || true
+kubectl get nodes -o wide 2>/dev/null || echo "❌ kubectl не налаштований або кластер недоступний"
+kubectl get ns 2>/dev/null || true
+kubectl get pods -A -o wide 2>/dev/null | head -80 || true
 
 echo ""
-echo "=== OPENPORT CHECK (6666 SSH, 8000 API, 3030 UI) ==="
-for port in 6666 8000 3030 11434; do
+echo "=== ZROK СЕРВІСИ ==="
+systemctl --no-pager --full status predator-api predator-k8s predator-ssh 2>/dev/null | head -120 || echo "❌ systemd/zrok сервіси не знайдено"
+
+echo ""
+echo "=== ПЕРЕВІРКА ЛОКАЛЬНИХ ПОРТІВ ==="
+for port in 22 6666 4000 5432 6379 6333 6443 8000 9080 3030 9090 3001 11434; do
   if python3 -c "import socket; s = socket.socket(socket.AF_INET, socket.SOCK_STREAM); s.settimeout(1.0); s.connect(('127.0.0.1', int('$port')))" >/dev/null 2>&1; then
     echo "  ✅ Порт $port: ВІДКРИТИЙ"
   else
@@ -126,27 +252,32 @@ REMOTE_COMMANDS
 
 # Основна логіка підключення
 RETRY_DELAY=15
-MAX_ATTEMPTS=0
+MAX_ATTEMPTS="${NVIDIA_MAX_ATTEMPTS:-1}"
 FOREVER=0
 
-if [ "${1:-}" = "--forever" ]; then
-  FOREVER=1
-fi
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --forever)
+      FOREVER=1
+      ;;
+    --attempts)
+      MAX_ATTEMPTS="${2:?Очікується кількість спроб після --attempts}"
+      shift
+      ;;
+    *)
+      echo -e "${RED}Невідомий аргумент: $1${NC}"
+      echo "Використання: $0 [--forever] [--attempts N]"
+      exit 2
+      ;;
+  esac
+  shift
+done
 
 echo -e "${YELLOW}🔍 ФАЗА 1: Пошук робочого SSH підключення${NC}"
 echo ""
 
-if command -v zrok >/dev/null 2>&1 || [ -f "$HOME/bin/zrok" ]; then
-  ZROK_BIN=$(command -v zrok || echo "$HOME/bin/zrok")
-  if ! pgrep -f "zrok access private predatorssh" > /dev/null; then
-    echo -n "  ├─ Запускаю zrok тунель (predatorssh) у фоні... "
-    "$ZROK_BIN" access private predatorssh --bind 127.0.0.1:2222 >/dev/null 2>&1 &
-    sleep 2 # чекаємо поки тунель підніметься
-    echo -e "${GREEN}✅${NC}"
-  else
-    echo -e "  ├─ zrok тунель (predatorssh) вже активний ${GREEN}✅${NC}"
-  fi
-fi
+ensure_zrok_access "$ZROK_SSH_SHARE" "$ZROK_SSH_BIND_HOST" "$ZROK_SSH_BIND_PORT" "SSH zrok-тунель" || true
+ensure_zrok_access "$ZROK_K8S_SHARE" "$ZROK_K8S_BIND_HOST" "$ZROK_K8S_BIND_PORT" "K8s zrok-тунель" || true
 echo ""
 
 CONNECTED_ALIAS=""
@@ -181,7 +312,7 @@ while true; do
     break
   fi
 
-  if [ "$FOREVER" -eq 0 ] && [ "$MAX_ATTEMPTS" -ne 0 ] && [ "$ATTEMPT" -ge "$MAX_ATTEMPTS" ]; then
+  if [ "$FOREVER" -eq 0 ] && [ "$ATTEMPT" -ge "$MAX_ATTEMPTS" ]; then
     break
   fi
 
@@ -199,15 +330,15 @@ if [ -z "$CONNECTED_ALIAS" ]; then
   echo "  1. 🔥 Firewall закриває SSH порти (22, 6666)"
   echo "  2. 🌐 VPN не активна (якщо сервер за VPN)"
   echo "  3. 🔑 SSH ключі не авторизовані на сервері"
-  echo "  4. 📡 ngrok не активна (перевірте 2.tcp.eu.ngrok.io)"
+  echo "  4. 📡 zrok private share '$ZROK_SSH_SHARE' не опублікований на NVIDIA сервері"
   echo "  5. 🔴 Сервер вимкнено або недоступний"
   echo ""
   echo -e "${YELLOW}🛠️  ЩО РОБИТИ:${NC}"
-  echo "  1. Спробуйте вручну: ssh -v predator-server"
-  echo "  2. Дайте адміністратору SERVER_STATUS_REPORT.md"
-  echo "  3. Переконайтесь у VPN підключенні (якщо потрібна)"
+  echo "  1. На сервері запустіть: ZROK_TOKEN=*** bash deploy/scripts/fix_zrok_v2.sh"
+  echo "  2. Або відкрийте прямий SSH: $NVIDIA_PRIMARY_HOST:$NVIDIA_PRIMARY_PORT"
+  echo "  3. Перевірте: zrok access private $ZROK_SSH_SHARE --bind $ZROK_SSH_BIND_HOST:$ZROK_SSH_BIND_PORT"
   echo "  4. Оновіть SSH ключі в ~/.ssh/"
-  echo "  5. Перевірте ngrok тунель (якщо використовується)"
+  echo "  5. Для повторів: $0 --forever"
   echo ""
   exit 1
 fi
@@ -231,6 +362,9 @@ echo ""
 echo -e "${YELLOW}💾 КОМАНДИ ДЛЯ ПОДАЛЬШОЇ РОБОТИ:${NC}"
 echo "  # Підключитися до сервера:"
 echo "  ssh $CONNECTED_ALIAS"
+if [ "$CONNECTED_ALIAS" = "predator-zrok" ]; then
+  echo "  ssh -i ${NVIDIA_PRIMARY_KEY/#\~/$HOME} -p $ZROK_SSH_BIND_PORT $NVIDIA_USER@$ZROK_SSH_BIND_HOST"
+fi
 echo ""
 echo "  # Запустити команду на сервері:"
 echo "  ssh $CONNECTED_ALIAS 'nvidia-smi'"
