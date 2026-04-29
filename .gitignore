@@ -132,3 +132,7 @@ htmlcov/
 *.venv*
 .predator_dev
 
+*.json
+*.txt
+scratch/
+
