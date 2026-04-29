@@ -69,7 +69,7 @@ manage_access() {
         else
             log "🔍 ACCESS [${name}]: Підключення до віддаленого вузла на ${host}:${port}..."
             : > "$log_p"
-            "$ZROK_BIN" access private "$name" --bind "${host}:${port}" > "$log_p" 2>&1 &
+            "$ZROK_BIN" access private "$name" --bind "${host}:${port}" --headless > "$log_p" 2>&1 &
             sleep 3
         fi
     fi
