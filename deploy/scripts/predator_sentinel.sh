@@ -95,7 +95,7 @@ while true; do
 
     # Віддалені ресурси (до чого ми підключаємось)
     # 1. NVIDIA Server (.240)
-    manage_access "predatornvidiassh" "127.0.0.1" "2224"
+    manage_access "predatorgpu" "127.0.0.1" "2224"
     
     # 2. iMac (.199)
     manage_access "predatorimacssh" "127.0.0.1" "2225"
