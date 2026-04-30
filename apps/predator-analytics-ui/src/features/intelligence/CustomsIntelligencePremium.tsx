@@ -153,7 +153,7 @@ export default function CustomsIntelligencePremium() {
           {/* KPI GRID SOVEREIGN */}
           <section className="grid grid-cols-1 md:grid-cols-3 gap-12">
               {[
-                { label: 'РИНКОВА_ЧАСТКА_СУБ'ЄКТА', value: '42.8%', icon: Target, color: '#e11d48', sub: 'За охопленим сегментом' },
+                { label: 'РИНКОВА_ЧАСТКА_СУБ\'ЄКТА', value: '42.8%', icon: Target, color: '#e11d48', sub: 'За охопленим сегментом' },
                 { label: 'ШІ_ПРЕДИКЦІЙНІ_ТОЧКИ', value: '2,841', icon: Sparkles, color: '#e11d48', sub: 'Активні вузли аналізу' },
                 { label: 'РІВЕНЬ_КОНФІДЕНЦІЙНОСТІ', value: 'MAX', icon: ShieldCheck, color: '#e11d48', sub: 'Квантове шифрування GDS' },
               ].map((m, i) => (

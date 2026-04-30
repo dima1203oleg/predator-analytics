@@ -194,7 +194,7 @@ export default function MaritimeView() {
                                 <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v61.0-ELITE</span>
                              </div>
                              <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none mb-1">
-                               МО СЬКИЙ <span className="text-blue-500 underline decoration-blue-600/20 decoration-8 italic uppercase">СУВЕ ЕН</span>
+                               МОРСЬКИЙ <span className="text-blue-500 underline decoration-blue-600/20 decoration-8 italic uppercase">СУВЕРЕН</span>
                              </h1>
                              <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] italic opacity-80 leading-none">
                                 МОНІТОРИНГ ГЛОБАЛЬНОГО ТРАФІКУ ТА САНКЦІЙНОГО ФЛОТУ
@@ -208,42 +208,14 @@ export default function MaritimeView() {
                        { label: 'ПОРТИ_В_РОБОТІ', value: String(ports.length), icon: <Anchor size={14} />, color: 'success' }
                      ]}
                      actions={
-                       <div className="flex gap-4">
-                   <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                     <div className="space-y-2">
-                       <h1 className="text-6xl font-black text-white italic tracking-tighter uppercase leading-none">
-                         МО СЬКИЙ <span className="text-blue-500">СУВЕ ЕН</span>
-                       </h1>
-                       <div className="flex items-center gap-4">
-                         <Badge variant="outline" className="bg-blue-500/10 border-blue-500/20 text-blue-400 font-mono text-[10px] tracking-widest px-4 py-1">
-                           MARITIME_DOMAIN_AWARENESS // V56.5
-                         </Badge>
-                         <span className="text-slate-500 font-mono text-[10px] uppercase tracking-widest flex items-center gap-2">
-                           <Clock size={10} /> {currentTime.toLocaleTimeString('uk-UA')}
-                         </span>
-                       </div>
-                     </div>
-
-                     <div className="flex flex-wrap items-center gap-4">
-                       <div className="relative group">
-                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-500 transition-colors" size={16} />
-                         <input 
-                           type="text"
-                           placeholder="ПОШУК СУДНА, П АПО А, ПОРТУ..."
-                           value={searchTerm}
-                           onChange={(e) => setSearchTerm(e.target.value)}
-                           className="bg-black/40 border-2 border-white/[0.03] focus:border-blue-500/50 rounded-2xl py-4 pl-12 pr-6 text-xs font-black text-white placeholder:text-slate-700 outline-none transition-all w-[300px] italic tracking-tight"
-                         />
-                       </div>
-
                        <button 
                          onClick={fetchData}
                          className="p-4 bg-white/5 border-2 border-white/[0.03] rounded-2xl text-slate-400 hover:text-white hover:border-white/10 transition-all shadow-2xl"
                        >
                          <RefreshCcw size={20} className={loading ? 'animate-spin' : ''} />
                        </button>
-                     </div>
-                   </div>
+                     }
+                   />
 
                    <div className="grid grid-cols-12 gap-10">
                       
@@ -302,7 +274,7 @@ export default function MaritimeView() {
                                     {[
                                       { l: 'MMSI', v: selectedVessel.mmsi || 'N/A', i: Signal },
                                       { l: 'IMO', v: selectedVessel.imo || 'N/A', i: Database },
-                                      { l: 'П АПО ', v: selectedVessel.flag, i: Globe },
+                                      { l: 'ПРАПОР', v: selectedVessel.flag, i: Globe },
                                       { l: 'ETA_DEST', v: selectedVessel.destination || '??', i: Navigation },
                                     ].map((d, i) => (
                                       <div key={i} className="p-6 bg-white/[0.01] border border-white/[0.04] rounded-2xl space-y-1 group hover:border-blue-500/30 transition-all">
