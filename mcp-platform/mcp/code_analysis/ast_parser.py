@@ -2,8 +2,8 @@
 from __future__ import annotations
 
 import ast
-from typing import Any, Optional
 from pathlib import Path
+from typing import Any
 
 
 class ASTError(Exception):

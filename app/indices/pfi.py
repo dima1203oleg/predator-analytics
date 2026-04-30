@@ -27,6 +27,7 @@ def calculate_pfi(
 
     Returns:
         PFI raw value. Positive = phantom flow detected.
+
     """
     return round(
         import_volume - (domestic_sale + export_volume + inventory_change),
@@ -44,6 +45,7 @@ def calculate_pfi_normalized(
 
     Returns:
         PFI score (0-100). Higher = larger phantom flow.
+
     """
     raw = calculate_pfi(import_volume, domestic_sale, export_volume, inventory_change)
 

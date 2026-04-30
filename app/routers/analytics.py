@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Predator Analytics - Analytics Router
 Deep analytics and risk assessment endpoints.
 """
@@ -10,7 +9,6 @@ from fastapi import APIRouter, HTTPException, Query
 
 from app.schemas.analytics import AnalyticsQuery, RiskAssessment, RiskLevel, TrendData
 from app.services.ai_engine import ai_engine
-
 
 router = APIRouter(prefix="/analytics", tags=["Analytics"])
 

@@ -15,7 +15,6 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
-
 # revision identifiers
 revision = "003_v56_5_canonical_tables"
 down_revision = "002_v55_2_decision_artifacts_update"

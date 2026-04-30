@@ -9,7 +9,6 @@ from app.services.auth_service import get_current_user
 from app.services.document_service import document_service
 from app.services.graph_service import graph_builder
 
-
 logger = logging.getLogger(__name__)
 
 router = APIRouter(tags=["Knowledge Graph"])

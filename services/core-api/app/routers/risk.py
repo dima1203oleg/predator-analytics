@@ -18,8 +18,6 @@ from app.models.schemas import CersComponents, ComponentDetail, Uncertainty
 from app.services.elite_risk_engine import EliteRiskEngine
 from app.services.insight_engine import InsightEngine
 
-
-
 # Використовуємо спільні моделі v55.2
 from predator_common.models import Company, RiskScore
 
@@ -150,7 +148,7 @@ async def get_risk_scores(
                     RiskScore.tenant_id == tenant_id,
                     RiskScore.entity_ueid == ueid
                 ).order_by(RiskScore.score_date.desc()).limit(1)
-                
+
                 score_res = await db.execute(scores_query_single)
                 score_record = score_res.fetchone()
             except Exception as e:
@@ -175,7 +173,7 @@ async def get_risk_scores(
             ),
             interpretation=determine_interpretation(score_record.cers),
             key_drivers=[
-                KeyDriver(driver=k, contribution=v) 
+                KeyDriver(driver=k, contribution=v)
                 for k, v in (score_record.explanation or {}).items()
             ] if score_record.explanation else [
                 KeyDriver(driver=flag["name"], contribution=flag.get("weight", 0))

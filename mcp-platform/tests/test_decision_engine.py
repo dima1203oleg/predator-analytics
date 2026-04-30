@@ -1,8 +1,9 @@
 """Тести для Decision Engine та Orchestrator."""
 
 import pytest
-from mcp.meta_controller.reasoning_engine import ReasoningEngine, Decision
-from mcp.meta_controller.orchestrator import Orchestrator, WorkflowTask, WorkflowStatus
+
+from mcp.meta_controller.orchestrator import Orchestrator, WorkflowTask
+from mcp.meta_controller.reasoning_engine import Decision, ReasoningEngine
 
 
 # Mock LLMClient
@@ -36,9 +37,9 @@ class TestReasoningEngine:
             "documented_percentage": 80,
             "lines_of_code": 100,
         }
-        
+
         decision = await reasoning_engine.analyze_code_quality(file_metrics)
-        
+
         assert isinstance(decision, Decision)
         assert decision.confidence >= 0.7
         assert len(reasoning_engine.decision_history) == 1
@@ -53,9 +54,9 @@ class TestReasoningEngine:
             "documented_percentage": 10,
             "lines_of_code": 500,
         }
-        
+
         decision = await reasoning_engine.analyze_code_quality(file_metrics)
-        
+
         assert isinstance(decision, Decision)
         assert decision.priority == 1  # Найвищий
         assert "Критичний" in decision.action
@@ -67,9 +68,9 @@ class TestReasoningEngine:
             "imports": ["os", "sys"],
             "functions": ["check_input"],
         }
-        
+
         decision = await reasoning_engine.analyze_security_issues(code_analysis)
-        
+
         assert isinstance(decision, Decision)
         assert decision.action == "Провести аудит безпеки"
         assert decision.priority == 1
@@ -81,9 +82,9 @@ class TestReasoningEngine:
             "nodes": {"a": {}, "b": {}, "c": {}},
             "cycles": [["a", "b", "c", "a"]],
         }
-        
+
         decision = await reasoning_engine.suggest_refactoring(dependencies)
-        
+
         assert isinstance(decision, Decision)
         assert "Рефакторинг архітектури" in decision.action
 
@@ -151,9 +152,9 @@ class TestOrchestrator:
                 params={"analysis": "results"},
             ),
         ]
-        
+
         result = await orchestrator.execute_workflow("test_workflow", tasks)
-        
+
         assert "workflow_id" in result
         assert result["status"] == "completed"
         assert result["completed"] == 2
@@ -168,16 +169,16 @@ class TestOrchestrator:
             module="code_analysis",
             params={"test": "value"},
         )
-        
+
         result = await orchestrator._execute_task(task)
-        
+
         assert result is not None
         assert result["module"] == "code_analysis"
 
     def test_get_statistics(self, orchestrator):
         """Тест отримання статистики."""
         stats = orchestrator.get_statistics()
-        
+
         assert "total_workflows" in stats
         assert "completed_tasks" in stats
         assert "failed_tasks" in stats

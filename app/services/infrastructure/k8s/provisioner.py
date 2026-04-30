@@ -1,21 +1,19 @@
 import logging
-from typing import Dict, Any, List
-import random
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
 class K8sProvisioner:
-    """
-    K8s Provisioner (Infrastructure Management)
-    Simulates the provisioning and management of K8s components 
+    """K8s Provisioner (Infrastructure Management)
+    Simulates the provisioning and management of K8s components
     like MetalLB, Ingress NGINX, KEDA, etc.
     """
+
     def __init__(self):
         pass
 
-    def check_status(self) -> Dict[str, Any]:
-        """
-        Checks status of core infrastructure components.
+    def check_status(self) -> dict[str, Any]:
+        """Checks status of core infrastructure components.
         """
         return {
             "metallb": {"status": "running", "version": "v0.14.0"},
@@ -25,9 +23,8 @@ class K8sProvisioner:
             "gpu-operator": {"status": "not_detected", "reason": "Requires GPU node"}
         }
 
-    def provision_component(self, component_name: str) -> Dict[str, Any]:
-        """
-        Simulates provisioning a component.
+    def provision_component(self, component_name: str) -> dict[str, Any]:
+        """Simulates provisioning a component.
         """
         logger.info(f"Provisioning {component_name}...")
         return {

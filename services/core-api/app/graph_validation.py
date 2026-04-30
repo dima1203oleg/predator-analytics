@@ -66,13 +66,11 @@ def main() -> None:
     results = run_all_checks()
     issues = {k: v for k, v in results.items() if v}
     if issues:
-        print("Graph validation issues detected:")
-        for category, msgs in issues.items():
-            for msg in msgs:
-                print(f"- [{category}] {msg}")
+        for _category, msgs in issues.items():
+            for _msg in msgs:
+                pass
         exit(1)
     else:
-        print("Neo4j graph validation passed.")
         exit(0)
 
 if __name__ == "__main__":

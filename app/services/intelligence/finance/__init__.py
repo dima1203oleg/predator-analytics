@@ -1,16 +1,20 @@
 from functools import lru_cache
-from .ma_scanner import MAScanner
-from .credit_risk_model import CreditRiskModel
 
-@lru_cache()
+from .credit_risk_model import CreditRiskModel
+from .ma_scanner import MAScanner
+
+
+@lru_cache
 def get_ma_scanner() -> MAScanner:
     return MAScanner()
 
-@lru_cache()
+@lru_cache
 def get_credit_risk_model() -> CreditRiskModel:
     return CreditRiskModel()
 
 __all__ = [
-    "MAScanner", "get_ma_scanner",
-    "CreditRiskModel", "get_credit_risk_model"
+    "CreditRiskModel",
+    "MAScanner",
+    "get_credit_risk_model",
+    "get_ma_scanner"
 ]

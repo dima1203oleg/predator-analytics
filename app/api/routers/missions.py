@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """API Routes для Mission Planner - координація AI агентів."""
 
 import os
@@ -9,12 +8,10 @@ import sys
 from fastapi import APIRouter, BackgroundTasks, HTTPException
 from pydantic import BaseModel
 
-
 # Додаємо шлях до orchestrator
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../../orchestrator"))
 
 from council.mission_planner import MissionPriority, get_mission_planner
-
 
 router = APIRouter(prefix="/api/v45/missions", tags=["missions"])
 

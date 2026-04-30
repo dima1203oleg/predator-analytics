@@ -9,7 +9,6 @@ from sqlalchemy import text
 
 from app.libs.core.database import get_db_sync
 
-
 logger = logging.getLogger("libs.core.mlops")
 
 

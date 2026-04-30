@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """
 Main Data Distributor
 
@@ -13,7 +12,6 @@ import logging
 from typing import Any
 
 from pydantic import BaseModel, Field
-
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -96,6 +94,7 @@ class DataDistributor:
 
         Args:
             config: Optional configuration dictionary
+
         """
         self.config = self._load_config(config)
         self.adapters = {}
@@ -159,6 +158,7 @@ class DataDistributor:
 
         Returns:
             List of DistributionResult objects for each target
+
         """
         results = []
 
@@ -240,6 +240,7 @@ class DataDistributor:
 
         Returns:
             DistributionResult with validation status
+
         """
         try:
             # Basic validation
@@ -288,6 +289,7 @@ class DataDistributor:
 
         Returns:
             List of DistributionResult objects
+
         """
         if batch_size is None:
             batch_size = self.config.batch_size
@@ -331,5 +333,6 @@ def create_data_distributor(config: dict[str, Any | None] | None = None) -> Data
 
     Returns:
         DataDistributor instance
+
     """
     return DataDistributor(config)

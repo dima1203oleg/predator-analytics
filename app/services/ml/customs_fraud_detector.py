@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Customs Fraud Detector (COMP-269)
 
 Виявлення шахрайських схем у митних деклараціях:
@@ -10,13 +9,12 @@ from __future__ import annotations
 - Round-tripping (кругові схеми)
 - Transfer pricing anomalies
 """
-import logging
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
+import logging
 from typing import Any
 
 import numpy as np
-
 
 logger = logging.getLogger("service.customs_fraud")
 
@@ -24,6 +22,7 @@ logger = logging.getLogger("service.customs_fraud")
 @dataclass
 class FraudSignal:
     """Detected customs fraud signal."""
+
     signal_type: str         # undervaluation, misclassification, phantom, round_trip, transfer_pricing
     severity: str            # low, medium, high, critical
     confidence: float
@@ -58,6 +57,7 @@ class CustomsFraudDetector:
     2. Historical price comparison
     3. Weight/quantity anomaly detection
     4. Known scheme pattern matching
+
     """
 
     def __init__(
@@ -90,6 +90,7 @@ class CustomsFraudDetector:
 
         Returns:
             List of FraudSignal
+
         """
         signals: list[FraudSignal] = []
 
@@ -139,7 +140,7 @@ class CustomsFraudDetector:
 
         unit_price = decl.get("unit_price", 0)
         product_code = decl.get("product_code", "")
-        quantity = decl.get("quantity", 0)
+        decl.get("quantity", 0)
 
         if unit_price <= 0 or not product_code:
             return signals

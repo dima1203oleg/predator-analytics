@@ -132,24 +132,24 @@ class Neo4jService:
 
     async def create_snapshot(self, tenant_id: str | None = None) -> GraphResult:
         """Створення щоденного снапшоту графа (Backups).
-        
+
         Згідно TZ v5.0 §10.3.
         """
         timestamp = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
         filename = f"snapshot_{tenant_id or 'global'}_{timestamp}.json"
-        
+
         # Використовуємо APOC якщо доступний, інакше Cypher-експорт
         query = """
         CALL apoc.export.json.all(null, {stream: true})
         YIELD data
         RETURN data
         """
-        
+
         try:
             async with await self._get_session() as session:
                 result = await session.run(query)
                 record = await result.single()
-                
+
                 if record:
                     # У реальному середовищі ми б зберігали це в MinIO
                     # Тут ми повертаємо успіх та назву файлу
@@ -531,26 +531,26 @@ class Neo4jService:
         threshold: float = 25.0
     ) -> GraphResult:
         """Пошук кінцевого бенефіціарного власника (UBO) через ланцюжки володіння.
-        
+
         Згідно TZ v5.0 §15.
         """
         # Тільки Organization можуть мати UBO
         query = """
         MATCH (target:Organization {node_id: $org_id})
         MATCH path = (ubo:Person)-[:FOUNDED|CONTROLS*1..$max_depth]->(target)
-        WHERE all(rel in relationships(path) WHERE 
-            coalesce(rel.share, 0) >= $threshold OR 
+        WHERE all(rel in relationships(path) WHERE
+            coalesce(rel.share, 0) >= $threshold OR
             coalesce(rel.ownership_percentage, 0) >= $threshold
         )
-        RETURN 
-            ubo, 
-            nodes(path) as chain, 
+        RETURN
+            ubo,
+            nodes(path) as chain,
             relationships(path) as rels,
             length(path) as depth
         ORDER BY depth DESC
         LIMIT 5
         """
-        
+
         beneficiaries = []
         async with await self._get_session() as session:
             try:
@@ -561,11 +561,11 @@ class Neo4jService:
                         "depth": record["depth"],
                         "chain": [dict(node) for node in record["chain"]],
                         "percentages": [
-                            rel.get("share") or rel.get("ownership_percentage") 
+                            rel.get("share") or rel.get("ownership_percentage")
                             for rel in record["rels"]
                         ]
                     })
-                
+
                 return GraphResult(
                     success=True,
                     data={

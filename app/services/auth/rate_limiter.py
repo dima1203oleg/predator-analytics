@@ -1,11 +1,9 @@
-"""
-Redis-based Rate Limiter (Phase 3 — SM Edition).
+"""Redis-based Rate Limiter (Phase 3 — SM Edition).
 
 Sliding window rate limiting per tenant + role.
 """
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
-
 
 # Rate limits per plan (§13.2)
 PLAN_RATE_LIMITS: dict[str, dict[str, int]] = {
@@ -33,7 +31,7 @@ class RedisRateLimiter:
             **self.config,
             "plan_limits": PLAN_RATE_LIMITS,
             "status": "active",
-            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(UTC).isoformat(),
         }
 
     def check_limit(self, tenant_id: str, plan: str) -> dict[str, Any]:

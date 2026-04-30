@@ -6,7 +6,6 @@ import logging
 from app.core.celery_app import celery_app
 from app.services.detection_service import detection_service
 
-
 logger = logging.getLogger(__name__)
 
 

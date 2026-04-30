@@ -33,12 +33,10 @@ from __future__ import annotations
 import asyncio
 from dataclasses import asdict, dataclass, field
 from datetime import UTC, datetime
-import json
 import logging
 from pathlib import Path
 import threading
 from typing import Any
-
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("azr_sovereign_core")
@@ -492,63 +490,34 @@ async def initialize_azr() -> AZRSovereignCore:
 
 
 async def run_self_test():
-    print("🏛️ AZR SOVEREIGN CORE v40 - Self-Test")
-    print("=" * 60)
 
     # Initialize
     core = await initialize_azr()
 
     # Get health
-    print("\n📊 System Health:")
     health = core.get_health()
-    print(f"  Overall Score: {health.overall_score:.1f}%")
-    print(f"  Constitutional Compliant: {health.constitutional_compliant}")
-    print("\n  Components:")
-    for name, score in health.components.items():
-        print(f"    • {name}: {score:.0f}%")
-    print("\n  Capabilities:")
-    for cap in health.capabilities:
-        print(f"    • {cap.name} [{cap.status}]: {cap.description[:40]}...")
+    for _name, _score in health.components.items():
+        pass
+    for _cap in health.capabilities:
+        pass
 
     # Record a decision
-    print("\n📝 Recording Decision...")
     result = core.record_decision(
         "Активувати автономний режим",
         {"health_score": 95.0, "risk_level": "low"},
         ["Система стабільна", "Всі тести пройдено", "Немає аномалій"],
     )
-    print(f"  Decision ID: {result['decision_id']}")
-    print(f"  Ledger Sequence: {result['ledger_sequence']}")
-    print(f"  Merkle Root: {result['merkle_root']}...")
 
     # Run agent
-    print("\n🤖 Running MCP Agent...")
-    response = await core.run_agent("What is the current system status?")
-    print(f"  Response: {response['response'][:80]}...")
-    print(f"  Tool Calls: {len(response['tool_calls'])}")
+    await core.run_agent("What is the current system status?")
 
     # Verify integrity
-    print("\n🔍 Verifying Integrity...")
     integrity = core.verify_integrity()
-    print(f"  Overall Valid: {integrity['overall_valid']}")
-    for comp, result in integrity["components"].items():
-        status = "✅" if result["valid"] else "❌"
-        print(f"    {status} {comp}: {result['message'][:50]}...")
+    for _comp, result in integrity["components"].items():
+        "✅" if result["valid"] else "❌"
 
     # Full status
-    print("\n📋 Full Status:")
-    status = core.get_status()
-    print(
-        json.dumps(
-            {
-                "version": status["version"],
-                "initialized": status["initialized"],
-                "health_score": status["health"]["overall_score"],
-                "capabilities": status["capabilities_summary"],
-            },
-            indent=2,
-        )
-    )
+    core.get_status()
 
 
 if __name__ == "__main__":

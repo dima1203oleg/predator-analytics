@@ -1,7 +1,9 @@
 from functools import lru_cache
+
 from .deepfake_detector import DeepfakeDetector
 
-@lru_cache()
+
+@lru_cache
 def get_deepfake_detector() -> DeepfakeDetector:
     return DeepfakeDetector()
 

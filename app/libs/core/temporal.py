@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Temporal.io Client Factory
 Provides reliable connection to Temporal server for durable execution.
 """
@@ -10,7 +9,6 @@ from temporalio.client import Client
 from temporalio.worker import Worker
 
 from app.libs.core.structured_logger import get_logger
-
 
 logger = get_logger("predator.core.temporal")
 

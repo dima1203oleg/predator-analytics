@@ -22,6 +22,7 @@ def calculate_aai(
 
     Returns:
         AAI score (0-100). Higher = more deviation from national mean.
+
     """
     if national_mean <= 0:
         return 0.0

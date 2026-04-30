@@ -1,10 +1,8 @@
 """Тести для Code Analysis Layer."""
 
-import pytest
 from mcp.code_analysis.ast_parser import ASTParser
 from mcp.code_analysis.dependency_generator import DependencyGraphGenerator
 from mcp.code_analysis.metrics_collector import CodeMetricsCollector
-
 
 # Sample Python code for testing
 SAMPLE_CODE = """
@@ -14,11 +12,11 @@ def hello(name: str) -> str:
 
 class Calculator:
     '''Калькулятор клас.'''
-    
+
     def add(self, a: int, b: int) -> int:
         '''Додавання двох чисел.'''
         return a + b
-    
+
     def multiply(self, a: int, b: int) -> int:
         return a * b
 
@@ -52,7 +50,7 @@ class TestASTParser:
         parser = ASTParser()
         parser.parse_string(SAMPLE_CODE)
         functions = parser.get_functions()
-        
+
         assert len(functions) >= 2
         assert any(f["name"] == "hello" for f in functions)
         assert any(f["is_async"] for f in functions)
@@ -62,7 +60,7 @@ class TestASTParser:
         parser = ASTParser()
         parser.parse_string(SAMPLE_CODE)
         classes = parser.get_classes()
-        
+
         assert len(classes) == 1
         assert classes[0]["name"] == "Calculator"
         assert len(classes[0]["methods"]) == 2
@@ -72,7 +70,7 @@ class TestASTParser:
         parser = ASTParser()
         parser.parse_string(SAMPLE_CODE)
         imports = parser.get_imports()
-        
+
         assert len(imports) >= 2
         assert any(i["type"] == "import" for i in imports)
         assert any(i["type"] == "from" for i in imports)
@@ -82,7 +80,7 @@ class TestASTParser:
         parser = ASTParser()
         parser.parse_string(SAMPLE_CODE)
         metrics = parser.get_complexity_metrics()
-        
+
         assert "lines_of_code" in metrics
         assert "functions" in metrics
         assert "classes" in metrics
@@ -94,7 +92,7 @@ class TestASTParser:
         parser = ASTParser()
         parser.parse_string(SAMPLE_CODE)
         stats = parser.get_stats()
-        
+
         assert "functions" in stats
         assert "classes" in stats
         assert "imports" in stats
@@ -114,7 +112,7 @@ class TestDependencyGraphGenerator:
         """Тест додавання файлу."""
         gen = DependencyGraphGenerator()
         gen.add_file("test.py", SAMPLE_CODE)
-        
+
         assert "test.py" in gen.nodes
         assert gen.nodes["test.py"]["type"] == "file"
 
@@ -123,7 +121,7 @@ class TestDependencyGraphGenerator:
         gen = DependencyGraphGenerator()
         gen.add_file("test.py", SAMPLE_CODE)
         graph = gen.get_graph()
-        
+
         assert "nodes" in graph
         assert "edges" in graph
         assert "graph" in graph
@@ -133,7 +131,7 @@ class TestDependencyGraphGenerator:
         gen = DependencyGraphGenerator()
         gen.add_file("test.py", SAMPLE_CODE)
         dead_code = gen.find_dead_code()
-        
+
         assert isinstance(dead_code, list)
 
     def test_find_entry_points(self):
@@ -141,7 +139,7 @@ class TestDependencyGraphGenerator:
         gen = DependencyGraphGenerator()
         gen.add_file("test.py", SAMPLE_CODE)
         entry_points = gen.find_entry_points()
-        
+
         assert isinstance(entry_points, list)
 
     def test_find_circular_dependencies(self):
@@ -149,7 +147,7 @@ class TestDependencyGraphGenerator:
         gen = DependencyGraphGenerator()
         gen.add_file("test.py", SAMPLE_CODE)
         cycles = gen.find_circular_dependencies()
-        
+
         assert isinstance(cycles, list)
 
 
@@ -165,7 +163,7 @@ class TestCodeMetricsCollector:
         """Тест аналізу файлу."""
         collector = CodeMetricsCollector()
         metrics = collector.analyze_file("test.py", SAMPLE_CODE)
-        
+
         assert "lines_of_code" in metrics
         assert "functions" in metrics
         assert "classes" in metrics
@@ -177,7 +175,7 @@ class TestCodeMetricsCollector:
         """Тест якості розраховуваних метрик."""
         collector = CodeMetricsCollector()
         metrics = collector.analyze_file("test.py", SAMPLE_CODE)
-        
+
         assert 0 <= metrics["maintainability_index"] <= 100
         assert metrics["avg_function_length"] >= 0
         assert metrics["documented_functions"] >= 1
@@ -186,7 +184,7 @@ class TestCodeMetricsCollector:
         """Тест виявлення type hints."""
         collector = CodeMetricsCollector()
         metrics = collector.analyze_file("test.py", SAMPLE_CODE)
-        
+
         assert metrics["has_type_hints"] is True
 
     def test_get_summary(self):
@@ -194,7 +192,7 @@ class TestCodeMetricsCollector:
         collector = CodeMetricsCollector()
         collector.analyze_file("test.py", SAMPLE_CODE)
         summary = collector.get_summary()
-        
+
         assert "total_files" in summary
         assert "total_functions" in summary
         assert "total_classes" in summary

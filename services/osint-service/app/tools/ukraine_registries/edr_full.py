@@ -41,10 +41,10 @@ class EDRFullClient(BaseRegistryClient):
 
     async def search_by_edrpou(self, edrpou: str) -> RegistryResult:
         """Пошук компанії за кодом ЄДРПОУ.
-        
+
         Args:
             edrpou: Код ЄДРПОУ (8 цифр)
-            
+
         Returns:
             RegistryResult з даними компанії
         """
@@ -87,10 +87,10 @@ class EDRFullClient(BaseRegistryClient):
 
     async def search_by_name(self, name: str) -> RegistryResult:
         """Пошук компаній за назвою.
-        
+
         Args:
             name: Назва компанії (частковий збіг)
-            
+
         Returns:
             RegistryResult зі списком компаній
         """

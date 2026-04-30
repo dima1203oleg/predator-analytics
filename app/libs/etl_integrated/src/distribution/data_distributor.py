@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import Any
 
-
 """
 Main Data Distributor
 
@@ -12,7 +11,6 @@ Provides a unified interface for distributing data to multiple storage backends.
 from datetime import datetime
 from enum import Enum
 import logging
-
 
 try:
     from pydantic import BaseModel, Field
@@ -111,6 +109,7 @@ class DataDistributor:
 
         Args:
             config: Optional configuration dictionary
+
         """
         self.config = self._load_config(config)
         self.adapters = {}
@@ -171,6 +170,7 @@ class DataDistributor:
 
         Returns:
             List of DistributionResult objects for each target
+
         """
         results = []
 
@@ -252,6 +252,7 @@ class DataDistributor:
 
         Returns:
             DistributionResult with validation status
+
         """
         try:
             # Basic validation
@@ -300,6 +301,7 @@ class DataDistributor:
 
         Returns:
             List of DistributionResult objects
+
         """
         if batch_size is None:
             batch_size = self.config.batch_size
@@ -343,5 +345,6 @@ def create_data_distributor(config: dict[str, Any | None] | None = None) -> Data
 
     Returns:
         DataDistributor instance
+
     """
     return DataDistributor(config)

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """GPT-4 Council Member Implementation
 Uses OpenAI's GPT-4 as a council participant.
 """
@@ -8,7 +7,6 @@ Uses OpenAI's GPT-4 as a council participant.
 from datetime import datetime
 import os
 from typing import Any
-
 
 try:
     from openai import AsyncOpenAI

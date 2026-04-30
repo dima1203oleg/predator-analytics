@@ -55,12 +55,9 @@ if __name__ == "__main__":
     # Smoke test
     collector = ProzorroCollector()
     tenders = collector.fetch_tenders(limit=5)
-    print(f"Fetched {len(tenders.get('data', []))} tenders.")
 
     if tenders.get('data'):
         first_id = tenders['data'][0]['id']
         details = collector.get_tender_details(first_id)
         if details:
-            print(f"Sample Tender: {details.get('title', 'No title')}")
-            print(f"Value: {details.get('value', {}).get('amount')} {details.get('value', {}).get('currency')}")
-            print(f"Status: {details.get('status')}")
+            pass

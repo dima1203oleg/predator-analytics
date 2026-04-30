@@ -7,7 +7,6 @@ from typing import Any
 from app.libs.core.constitutional import get_arbiter, get_ledger
 from app.libs.core.logger import setup_logger
 
-
 logger = setup_logger("predator.governance")
 
 

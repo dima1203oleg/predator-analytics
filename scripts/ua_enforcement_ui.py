@@ -28,7 +28,7 @@ TRANSLATION_MAP = {
 }
 
 def scan_and_translate(file_path):
-    with open(file_path, 'r', encoding='utf-8') as f:
+    with open(file_path, encoding='utf-8') as f:
         content = f.read()
 
     modified = False
@@ -54,14 +54,12 @@ def scan_and_translate(file_path):
     return False
 
 def main():
-    print(f"🚀 Запуск UA Locales Enforcement (Python 3.12)...")
     count = 0
-    for root, dirs, files in os.walk(UI_PATH):
+    for root, _dirs, files in os.walk(UI_PATH):
         for file in files:
             if file.endswith(('.tsx', '.ts')):
                 if scan_and_translate(os.path.join(root, file)):
                     count += 1
-    print(f"✅ Оброблено файлів: {count}")
 
 if __name__ == "__main__":
     main()

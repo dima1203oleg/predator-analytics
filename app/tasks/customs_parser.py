@@ -6,7 +6,6 @@ from typing import Any
 
 import pandas as pd
 
-
 # Configure logging
 logger = logging.getLogger(__name__)
 

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Databases Router - Database management endpoints with REAL connections."""
 from datetime import UTC, datetime
 import logging
@@ -14,7 +13,6 @@ from pydantic import BaseModel
 import redis.asyncio as aioredis
 
 from app.core.config import settings
-
 
 router = APIRouter(prefix="/databases", tags=["Databases"])
 logger = logging.getLogger(__name__)

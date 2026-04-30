@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """E2E Analyzer Node - Executes multi-database analysis and generates cases
 Part of Predator Analytics v45.1 Agent System.
 """
@@ -11,7 +10,6 @@ from typing import Any
 import uuid
 
 from app.libs.agents.state import AgentState, AnalysisResult, CaseTemplate, QueryResult
-
 
 logger = logging.getLogger("agents.analyzer")
 

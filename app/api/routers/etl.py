@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """ETL Router - Predator Analytics v45-S."""
 
 from fastapi import APIRouter, File, HTTPException, UploadFile
@@ -8,7 +7,6 @@ from fastapi import APIRouter, File, HTTPException, UploadFile
 from app.libs.core.etl_arbiter import ETLSovereignArbiter
 from app.libs.core.structured_logger import get_logger
 from app.services.etl_ingestion import ETLIngestionService
-
 
 logger = get_logger("api.etl")
 router = APIRouter(prefix="/etl", tags=["ETL"])

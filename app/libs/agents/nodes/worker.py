@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING
 
 from app.libs.agents.tools.registry import registry
 
-
 if TYPE_CHECKING:
     from app.libs.agents.state import AgentState
 

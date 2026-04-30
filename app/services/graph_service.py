@@ -12,7 +12,6 @@ from app.libs.core.graph_db import graph_db
 from app.libs.core.models import GraphEdge, GraphNode
 from app.services.llm.service import llm_service
 
-
 logger = logging.getLogger(__name__)
 
 GRAPH_EXTRACTION_PROMPT = """

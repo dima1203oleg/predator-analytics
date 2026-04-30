@@ -2,12 +2,11 @@
 
 Симуляція керованої деградації системи (Resilience Testing).
 """
+import asyncio
+from datetime import UTC, datetime, timedelta
 import logging
 import random
-import asyncio
-from typing import Any, Optional
-from datetime import datetime, timedelta, UTC
-
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -36,16 +35,16 @@ class ChaosService:
         exp = cls._active_experiments.get(name)
         if not exp:
             return False
-        
+
         if datetime.now(UTC) > exp["expires_at"]:
             logger.info(f"⏰ Chaos Experiment '{name}' expired and was auto-disabled")
             cls._active_experiments.pop(name, None)
             return False
-            
+
         return exp["active"]
 
     @classmethod
-    async def apply_chaos(cls) -> Optional[dict[str, Any]]:
+    async def apply_chaos(cls) -> dict[str, Any] | None:
         """Застосування активних ефектів хаосу."""
         # 1. Симуляція затримки БД (Latency)
         if cls._is_active("db_latency"):
@@ -59,10 +58,9 @@ class ChaosService:
             return {"error": "Cache connection lost", "chaos": True}
 
         # 3. Симуляція випадкових 500 помилок
-        if cls._is_active("random_errors"):
-            if random.random() < 0.2:
-                logger.error("Chaos: Simulating Internal Server Error")
-                raise Exception("Chaos Injected Error (500)")
+        if cls._is_active("random_errors") and random.random() < 0.2:
+            logger.error("Chaos: Simulating Internal Server Error")
+            raise Exception("Chaos Injected Error (500)")
 
         # 4. ШІ Галлюцинації (Injected Hallucination)
         if cls._is_active("llm_hallucination"):
@@ -80,11 +78,11 @@ class ChaosService:
         if cls._is_active("overheat_simulation"):
             logger.warning("Chaos: System Overheat Detected (Simulation)")
             return {"status": "overheat", "vram_throttle": True}
-        
+
         return None
 
     @classmethod
     def get_status(cls) -> dict[str, Any]:
         """Статус активних експериментів."""
-        return {k: {"active": v["active"], "ttl_left": str(v["expires_at"] - datetime.now(UTC))} 
+        return {k: {"active": v["active"], "ttl_left": str(v["expires_at"] - datetime.now(UTC))}
                 for k, v in cls._active_experiments.items()}

@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-
 """Integrations Router - External system integrations."""
 from datetime import UTC, datetime
 
 from fastapi import APIRouter
 
 from app.services.connector_registry import connector_registry
-
 
 router = APIRouter(prefix="/integrations", tags=["Integrations"])
 

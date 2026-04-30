@@ -1,9 +1,8 @@
-"""
-Tenant Middleware — PostgreSQL RLS (Phase 3 — SM Edition).
+"""Tenant Middleware — PostgreSQL RLS (Phase 3 — SM Edition).
 
 Sets `app.current_tenant_id` per request for Row Level Security.
 """
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 
@@ -23,7 +22,7 @@ class TenantMiddleware:
             **self.config,
             "status": "active",
             "sql_statement": "SET app.current_tenant_id = :tenant_id",
-            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(UTC).isoformat(),
         }
 
     def resolve_tenant(self, headers: dict[str, str]) -> dict[str, Any]:

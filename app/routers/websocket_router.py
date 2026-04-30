@@ -9,7 +9,6 @@ import psutil
 
 from app.services.websocket_service import manager
 
-
 logger = logging.getLogger("predator.websocket.api")
 router = APIRouter()
 

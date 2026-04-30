@@ -6,12 +6,8 @@ from __future__ import annotations
 
 import asyncio
 import json
-import os
-import subprocess
 from pathlib import Path
 from typing import Any, Optional
-
-import typer
 
 
 class TerraformError(Exception):
@@ -25,10 +21,10 @@ class TerraformRunner:
 
     def __init__(self, work_dir: str = ".") -> None:
         """Ініціалізувати Terraform runner.
-        
+
         Args:
             work_dir: Робочий каталог для terraform
-            
+
         Raises:
             TerraformError: Якщо каталог не існує
         """
@@ -42,14 +38,14 @@ class TerraformRunner:
         capture_output: bool = True,
     ) -> tuple[str, str]:
         """Виконати terraform команду асинхронно.
-        
+
         Args:
             *args: Аргументи для terraform
             capture_output: Чи захоплювати вивід
-            
+
         Returns:
             Кортеж (stdout, stderr)
-            
+
         Raises:
             TerraformError: Якщо команда завершиться з помилкою
         """
@@ -81,10 +77,10 @@ class TerraformRunner:
         self, backend_config: Optional[dict[str, str]] = None
     ) -> bool:
         """Ініціалізувати terraform backend.
-        
+
         Args:
             backend_config: Конфіг backend'а (ключ-значення)
-            
+
         Returns:
             True якщо успішно
         """
@@ -99,7 +95,7 @@ class TerraformRunner:
 
     async def validate(self) -> bool:
         """Провести terraform validate.
-        
+
         Returns:
             True якщо конфіг коректний
         """
@@ -111,10 +107,10 @@ class TerraformRunner:
 
     async def fmt_check(self, recursive: bool = True) -> tuple[bool, str]:
         """Перевірити terraform форматування.
-        
+
         Args:
             recursive: Рекурсивно перевіряти всі файли
-            
+
         Returns:
             Кортеж (успіх, повідомлення)
         """
@@ -135,15 +131,15 @@ class TerraformRunner:
         var_file: Optional[str] = None,
     ) -> str:
         """Запустити terraform plan для вибраного окруження.
-        
+
         Args:
             environment: Назва окруження
             out_file: Файл для збереження плану
             var_file: Файл змінних (за замовчуванням {environment}.tfvars)
-            
+
         Returns:
             Вивід плану
-            
+
         Raises:
             TerraformError: Якщо план не можна створити
         """
@@ -174,13 +170,13 @@ class TerraformRunner:
         var_file: Optional[str] = None,
     ) -> bool:
         """Застосувати terraform changes.
-        
+
         Args:
             environment: Назва окруження
             auto_approve: Автоматично схвалити
             plan_file: Файл плану для застосування
             var_file: Файл змінних
-            
+
         Returns:
             True якщо успішно
         """
@@ -207,12 +203,12 @@ class TerraformRunner:
         var_file: Optional[str] = None,
     ) -> bool:
         """Знищити terraform-керовані ресурси.
-        
+
         Args:
             environment: Назва окруження
             auto_approve: Автоматично схвалити
             var_file: Файл змінних
-            
+
         Returns:
             True якщо успішно
         """
@@ -233,11 +229,11 @@ class TerraformRunner:
         self, name: Optional[str] = None, json_format: bool = True
     ) -> dict[str, Any] | str:
         """Отримати terraform output values.
-        
+
         Args:
             name: Назва output для отримання
             json_format: Повернути JSON або рядок
-            
+
         Returns:
             Dict якщо json_format, інакше рядок
         """
@@ -261,7 +257,7 @@ class TerraformRunner:
 
     async def state_list(self) -> list[str]:
         """Отримати список ресурсів у state.
-        
+
         Returns:
             Список адрес ресурсів
         """
@@ -273,10 +269,10 @@ class TerraformRunner:
 
     async def state_show(self, address: str) -> dict[str, Any]:
         """Показати деталі ресурсу у state.
-        
+
         Args:
             address: Адреса ресурсу
-            
+
         Returns:
             JSON представлення ресурсу
         """

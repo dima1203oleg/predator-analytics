@@ -1,10 +1,9 @@
-"""
-JWT Authentication Middleware (Phase 3 — SM Edition).
+"""JWT Authentication Middleware (Phase 3 — SM Edition).
 
 HS256 tokens, access 60min, refresh 7d.
 Integrates with Keycloak OIDC.
 """
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 
@@ -25,7 +24,7 @@ class JWTAuthMiddleware:
         return {
             **self.config,
             "status": "active",
-            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(UTC).isoformat(),
         }
 
     def validate_token_structure(self, token: str) -> dict[str, Any]:

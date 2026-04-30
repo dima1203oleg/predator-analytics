@@ -108,7 +108,7 @@ async def upload_file(
     # Зберігаємо файл в MinIO/S3 (ізоляція по тенанту)
     minio = get_minio_service()
     await minio.ensure_tenant_buckets(tenant_id)
-    
+
     object_name = f"{job_id}/{file.filename}"
     content_type = file.content_type or "application/octet-stream"
     bucket_name = minio.get_raw_bucket(tenant_id)

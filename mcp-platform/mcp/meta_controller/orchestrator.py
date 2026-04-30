@@ -2,17 +2,14 @@
 from __future__ import annotations
 
 import asyncio
-import subprocess
 import uuid
-from typing import Any, Optional
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum
-from datetime import datetime
-from typing import List
+from typing import Any, List
 
 from mcp.meta_controller.bus import EventBus
-from mcp.meta_controller.state import StateStore
 from mcp.meta_controller.decisions import decide
+from mcp.meta_controller.state import StateStore
 
 
 class WorkflowStatus(Enum):
@@ -87,7 +84,7 @@ class Orchestrator:
             print(out.decode())
         if err:
             print(f"[ORCH] Помилка: {err.decode()}")
-        
+
         # Зберегти результат
         await self.store.save_result({"status": "ok", "output": out.decode() if out else ""})
 

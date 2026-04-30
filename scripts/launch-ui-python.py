@@ -1,8 +1,5 @@
 import http.server
-import os
 import socketserver
-import sys
-
 
 PORT = 3030
 DIRECTORY = "apps/predator-analytics-ui/dist"
@@ -20,9 +17,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
 try:
     with socketserver.TCPServer(("", PORT), Handler) as httpd:
-        print(f"Serving UI v45 at http://localhost:{PORT}")
         httpd.serve_forever()
-except Exception as e:
-    print(f"Error: {e}")
+except Exception:
+    pass
 except KeyboardInterrupt:
-    print("\nShutting down...")
+    pass

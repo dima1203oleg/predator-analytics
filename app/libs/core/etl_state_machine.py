@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """ETL State Machine Logic
 Core business logic for ETL transitions and invariants.
 """

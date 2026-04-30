@@ -1,5 +1,4 @@
-"""
-Канонічний модуль безпеки PREDATOR Analytics v4.1.
+"""Канонічний модуль безпеки PREDATOR Analytics v4.1.
 
 Забезпечує:
 - Створення та верифікацію JWT токенів
@@ -10,8 +9,8 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
-from typing import Any, Optional
+from datetime import UTC, datetime, timedelta
+from typing import Any
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
@@ -28,14 +27,14 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{settings.API_V1_STR}/auth/login
 ALGORITHM = "HS256"
 
 
-def create_access_token(data: dict[str, Any], expires_delta: Optional[timedelta] = None) -> str:
+def create_access_token(data: dict[str, Any], expires_delta: timedelta | None = None) -> str:
     """Створює JWT токен доступу."""
     to_encode = data.copy()
     if expires_delta:
-        expire = datetime.now(timezone.utc) + expires_delta
+        expire = datetime.now(UTC) + expires_delta
     else:
-        expire = datetime.now(timezone.utc) + timedelta(minutes=15)
-    
+        expire = datetime.now(UTC) + timedelta(minutes=15)
+
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
@@ -52,9 +51,8 @@ def get_password_hash(password: str) -> str:
 
 
 async def get_current_user_id(token: str = Depends(oauth2_scheme)) -> str:
-    """
-    Залежність для отримання ID поточного користувача з токена.
-    
+    """Залежність для отримання ID поточного користувача з токена.
+
     Підтримує як локальні JWT, так і (майбутню) інтеграцію з Keycloak.
     """
     credentials_exception = HTTPException(
@@ -62,7 +60,7 @@ async def get_current_user_id(token: str = Depends(oauth2_scheme)) -> str:
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
-    
+
     if not token:
         # Для розробки дозволяємо root доступ за замовчуванням, якщо токен відсутній
         if settings.ENVIRONMENT == "development":

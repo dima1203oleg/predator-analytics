@@ -30,7 +30,6 @@ def find_issues(root_dirs):
     file_hashes = {}
     duplicates = []
 
-    print(f"Scanning directories: {root_dirs}")
 
     for root_dir in root_dirs:
         for root, _, files in os.walk(root_dir):
@@ -65,20 +64,17 @@ if __name__ == "__main__":
 
     syntax_errors, duplicates = find_issues(dirs_to_scan)
 
-    print("\n=== SYNTAX ERRORS ===")
     if not syntax_errors:
-        print("✅ No syntax errors found.")
+        pass
     else:
-        for f, e in syntax_errors:
-            print(f"[FAIL] {f}: {e}")
+        for _f, _e in syntax_errors:
+            pass
 
-    print("\n=== DUPLICATE FILES (Content Match) ===")
     if not duplicates:
-        print("✅ No duplicate files found.")
+        pass
     else:
-        for f1, f2 in duplicates:
-            print(f"[WARN] Duplicate: {f1} == {f2}")
+        for _f1, _f2 in duplicates:
+            pass
 
     if syntax_errors:
         sys.exit(1)
-    print("\n✅ HEALTH CHECK PASSED")

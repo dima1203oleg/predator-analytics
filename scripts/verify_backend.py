@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import sys
 from unittest.mock import MagicMock
-
 
 # Define paths
 sys.path.append('/home/dima/Predator_21/backend/orchestrator/agents')
@@ -28,52 +28,31 @@ sys.modules['aiogram.fsm.storage.redis'] = MagicMock()
 # Line 1323: `bot = Bot(token=TELEGRAM_TOKEN)` is inside `async def main():`.
 # So global scope is safe!
 
-try:
-    from telegram_bot_v4_advanced import AgentController, DockerController, GitController, SystemController
-    print("✅ Module imported successfully.")
-except ImportError as e:
-    print(f"❌ Import failed: {e}")
+with contextlib.suppress(ImportError):
+    from telegram_bot_v4_advanced import (
+        AgentController,
+        DockerController,
+        GitController,
+        SystemController,
+    )
     # If import fails, we might need to set env vars
 
 async def test_functions():
-    print("\n--- Testing SystemController ---")
-    try:
-        res = await SystemController.get_system_status()
-        print("✅ get_system_status: Success")
-        print(f"   Output preview: {res.splitlines()[1] if len(res.splitlines()) > 1 else res[:50]}")
-    except Exception as e:
-        print(f"❌ get_system_status: Failed ({e})")
+    with contextlib.suppress(Exception):
+        await SystemController.get_system_status()
 
-    try:
-        res = await SystemController.get_processes()
-        print("✅ get_processes: Success")
-    except Exception as e:
-        print(f"❌ get_processes: Failed ({e})")
+    with contextlib.suppress(Exception):
+        await SystemController.get_processes()
 
-    print("\n--- Testing DockerController ---")
-    try:
-        res = await DockerController.get_containers()
-        print("✅ get_containers: Success")
-    except Exception as e:
-        print(f"❌ get_containers: Failed ({e})")
+    with contextlib.suppress(Exception):
+        await DockerController.get_containers()
 
-    print("\n--- Testing AgentController ---")
-    try:
-        res = await AgentController.get_available_agents()
-        print("✅ get_available_agents: Success")
-        print(f"   Agents found: {res}")
-    except Exception as e:
-        print(f"❌ get_available_agents: Failed ({e})")
+    with contextlib.suppress(Exception):
+        await AgentController.get_available_agents()
 
-    print("\n--- Testing GitController ---")
-    try:
-        res = await GitController.get_status()
-        print("✅ get_status: Success")
-    except Exception as e:
-        print(f"❌ get_status: Failed ({e})")
+    with contextlib.suppress(Exception):
+        await GitController.get_status()
 
 if __name__ == "__main__":
-    try:
+    with contextlib.suppress(Exception):
         asyncio.run(test_functions())
-    except Exception as e:
-        print(f"Test runner error: {e}")

@@ -1,6 +1,8 @@
+
 import pytest
-import asyncio
+
 from app.services.chaos_service import ChaosService
+
 
 @pytest.mark.asyncio
 async def test_chaos_service_logic():

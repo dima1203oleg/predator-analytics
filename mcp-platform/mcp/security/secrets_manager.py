@@ -2,9 +2,9 @@
 from __future__ import annotations
 
 import os
-from typing import Any, Optional
 from dataclasses import dataclass
 from enum import Enum
+from typing import Any
 
 
 class SecretType(Enum):

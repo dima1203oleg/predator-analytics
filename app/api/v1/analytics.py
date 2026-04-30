@@ -1,15 +1,11 @@
 from __future__ import annotations
 
-
 """Analytics V1 API — Market Integrity, Default Prediction, Customs Fraud."""
 from datetime import UTC, datetime
+import logging
 
 from fastapi import APIRouter, Query
 from pydantic import BaseModel, Field
-
-import logging
-from typing import Any
-
 
 logger = logging.getLogger("api.analytics")
 
@@ -21,12 +17,14 @@ router = APIRouter(prefix="/analytics", tags=["Analytics"])
 
 class MarketPriceData(BaseModel):
     """Price data for market analysis."""
+
     product_code: str
     entities: dict[str, list[float]] = Field(..., description="entity_name → [prices]")
 
 
 class FinancialData(BaseModel):
     """Financial data for default prediction."""
+
     total_assets: float
     total_liabilities: float
     current_assets: float = 0
@@ -55,6 +53,7 @@ class PricePredictionRequest(BaseModel):
 
 class DeclarationData(BaseModel):
     """Customs declaration for fraud analysis."""
+
     declaration_id: str
     entity: str
     product_code: str

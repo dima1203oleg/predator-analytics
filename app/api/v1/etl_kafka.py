@@ -1,10 +1,10 @@
-"""
-ETL Kafka Ingestion API (Phase 4 — SM Edition).
+"""ETL Kafka Ingestion API (Phase 4 — SM Edition).
 
 Endpoints for Kafka ingestion worker, job lifecycle, DLQ, and SSE progress.
 """
-from fastapi import APIRouter
 from typing import Any
+
+from fastapi import APIRouter
 
 from app.services.etl.kafka_ingestion_worker import (
     KafkaIngestionWorker,

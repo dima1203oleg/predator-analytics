@@ -1,11 +1,10 @@
-"""
-VRAM Watchdog Protocol v5.0 — Sentinel for Autonomous Factory.
+"""VRAM Watchdog Protocol v5.0 — Sentinel for Autonomous Factory.
 Monitoring GTX 1080 (8GB VRAM) limits for autonomous OODA routing.
 """
 
 import asyncio
-import subprocess
 from dataclasses import dataclass
+
 from predator_common.logging import get_logger
 
 logger = get_logger("core_api.vram_watchdog")
@@ -38,7 +37,7 @@ class VramSentinel:
             used_gb = 7.8  # Critical (CLOUD)
 
         critical = used_gb >= VRAM_TRIGGER_THRESHOLD
-        
+
         # Logic for mode recommendation
         if used_gb >= VRAM_TRIGGER_THRESHOLD:
             recommendation = "CLOUD"
@@ -65,7 +64,7 @@ class VramSentinel:
             elif not status.critical and status.used_gb < VRAM_RECOVERY_THRESHOLD and self._current_mode == "CLOUD":
                  logger.info(f"✅ VRAM RECOVRED: {status.used_gb}GB. Restoring SOVEREIGN mode.")
                  self._current_mode = "SOVEREIGN"
-            
+
             await asyncio.sleep(5)  # 5s interval for hardware pooling
 
 # Global registry or lifecycle hook in main.py

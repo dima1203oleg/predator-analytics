@@ -5,26 +5,26 @@ migrations/003_v55_decision_artifacts.sql. They are the source of truth
 for Alembic autogenerate and for all repository CRUD operations.
 """
 
-from app.models.v55.orm.entity import EntityORM
-from app.models.v55.orm.decision_artifact import DecisionArtifactORM
-from app.models.v55.orm.cers_score import CERSScoreORM
-from app.models.v55.orm.signal import SignalORM
 from app.models.v55.orm.behavioral_score import BehavioralScoreORM
+from app.models.v55.orm.cers_score import CERSScoreORM
+from app.models.v55.orm.decision_artifact import DecisionArtifactORM
+from app.models.v55.orm.entity import EntityORM
 from app.models.v55.orm.fused_record import FusedRecordORM
 from app.models.v55.orm.influence_score import InfluenceScoreORM
 from app.models.v55.orm.institutional_score import InstitutionalScoreORM
-from app.models.v55.orm.structural_score import StructuralScoreORM
 from app.models.v55.orm.predictive_score import PredictiveScoreORM
+from app.models.v55.orm.signal import SignalORM
+from app.models.v55.orm.structural_score import StructuralScoreORM
 
 __all__ = [
-    "EntityORM",
-    "DecisionArtifactORM",
-    "CERSScoreORM",
-    "SignalORM",
     "BehavioralScoreORM",
+    "CERSScoreORM",
+    "DecisionArtifactORM",
+    "EntityORM",
     "FusedRecordORM",
     "InfluenceScoreORM",
     "InstitutionalScoreORM",
-    "StructuralScoreORM",
     "PredictiveScoreORM",
+    "SignalORM",
+    "StructuralScoreORM",
 ]

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """
 MinIO Distribution Adapter
 
@@ -10,12 +9,11 @@ Handles distribution of data and files to MinIO object storage using canonical s
 import asyncio
 from datetime import datetime
 import logging
-from typing import Any
 import os
+from typing import Any
 
 from app.modules.etl_engine.distribution.data_distributor import DistributionResult
 from app.services.minio_service import minio_service
-
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -35,6 +33,7 @@ class MinIOAdapter:
         Args:
             enabled: Whether this adapter is enabled
             bucket_name: MinIO bucket name for storing data
+
         """
         self.enabled = enabled
         self.bucket_name = bucket_name
@@ -52,6 +51,7 @@ class MinIOAdapter:
 
         Returns:
             DistributionResult with status and metadata
+
         """
         if not self.enabled:
             return DistributionResult(True, "minio", data={"status": "disabled"})
@@ -81,7 +81,7 @@ class MinIOAdapter:
             # For this adapter, we'll simulate the upload of the batch as a JSON file
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             object_name = f"batch_{timestamp}_{len(records)}.json"
-            
+
             # Since distribute in adapter is sync, but minio_service is async
             loop = asyncio.get_event_loop()
             if loop.is_running():
@@ -120,6 +120,7 @@ class MinIOAdapter:
 
         Returns:
             DistributionResult with status and metadata
+
         """
         if not self.enabled:
             return DistributionResult(False, "minio", error="MinIO adapter is disabled")

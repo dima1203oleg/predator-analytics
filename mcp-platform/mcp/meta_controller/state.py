@@ -1,8 +1,9 @@
 """Стан/пам’ять: Neo4j + Qdrant (реальні клієнти з fallback)."""
 from __future__ import annotations
 
-import os
 import json
+import os
+
 try:
     from neo4j import GraphDatabase
 except ImportError:

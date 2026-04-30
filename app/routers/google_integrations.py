@@ -6,7 +6,6 @@ import uuid
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-
 # Setup Router
 router = APIRouter(tags=["Google Ecosystem (Assistant)"])
 

@@ -16,7 +16,6 @@ from app.services.minio_service import minio_service
 from libs.core.database import async_session_maker
 from libs.core.logger import setup_logger
 
-
 logger = setup_logger("predator.api.ingestion")
 
 router = APIRouter(prefix="/ingest", tags=["ingestion"])

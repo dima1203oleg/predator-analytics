@@ -1,12 +1,13 @@
 """PREDATOR mTLS Security Logic (v56.5).
 HR-15: Zero Trust & Service-to-Service Security.
 """
-from enum import Enum
+from enum import StrEnum
 import re
-from typing import Optional
-from fastapi import Request, HTTPException, status
 
-class ServiceNodes(str, Enum):
+from fastapi import HTTPException, Request, status
+
+
+class ServiceNodes(StrEnum):
     INGESTION_WORKER = "ingestion-worker"
     GRAPH_SERVICE = "graph-service"
     ADMIN_SENTINEL = "admin-sentinel"
@@ -16,7 +17,7 @@ class MTLSSecurity:
     """Обробка даних mTLS з проксі (Nginx/Kong)."""
 
     @staticmethod
-    def get_client_cn(request: Request) -> Optional[str]:
+    def get_client_cn(request: Request) -> str | None:
         """Отримати Common Name (CN) з клієнтського сертифіката."""
         verify = request.headers.get("X-Client-Verify")
         if verify != "SUCCESS":
@@ -38,11 +39,11 @@ class MTLSSecurity:
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="mTLS verification failed or no certificate provided"
             )
-        
+
         if cn not in [node.value for node in allowed_nodes]:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail=f"Node '{cn}' is not authorized for this resource"
             )
-        
+
         return cn

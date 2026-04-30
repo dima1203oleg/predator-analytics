@@ -3,9 +3,10 @@ HR-16: WORM-аудит дій системи та агентів.
 """
 import logging
 from typing import Any
+
 from sqlalchemy import text
+
 from app.database import SessionLocal
-from datetime import datetime, UTC
 from app.services.security.integrity_checker import IntegritySentinel
 
 logger = logging.getLogger(__name__)
@@ -47,10 +48,10 @@ class AuditService:
                 "details": details or {},
                 "ip_address": ip_address
             }
-            
+
             # Додавання підпису в деталі
             signed_details = {**(details or {}), "sig": IntegritySentinel.sign_data(log_payload)}
-            
+
             async with SessionLocal() as session:
                 await session.execute(query, {
                     "tenant_id": tenant_id,

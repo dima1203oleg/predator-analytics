@@ -5,7 +5,6 @@ import os
 import sys
 from unittest.mock import MagicMock
 
-
 # Add project root to path
 sys.path.append(os.getcwd())
 
@@ -36,11 +35,9 @@ os.environ["AZR_ROOT"] = "/tmp/predator_test"
 
 import logging
 
-
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 
 async def test_azr_logic():
-    print("🧠 Ініціалізація двигуна AZR v32 для верифікації (Mock середовище)...")
 
     try:
         # Спробувати прямий імпорт
@@ -55,31 +52,25 @@ async def test_azr_logic():
 
     # Mock Telegram Sender internal method to see output (Async Mock)
     async def mock_network_alert(msg, level="info"):
-        print(f"📧 [MOCK TELEGRAM] {level.upper()}: {msg.splitlines()[0]}...")
+        pass
 
     engine._send_telegram_alert = MagicMock(side_effect=mock_network_alert)
 
-    print("\n🧪 Тест 1: Виявлення аномалій")
     # Подача нормальних даних
-    print("   Подача нормальних даних (CPU ~40%)...")
     for _ in range(20):
         engine.anomaly_detector.add_observation({"cpu": 40.0, "memory": 50.0, "disk": 30.0})
 
     # Ін'єкція АНОМАЛІЇ
-    print("   💉 Ін'єкція СТРИБКА CPU (99.0%)...")
     anomalous_metrics = {"cpu": 99.0, "memory": 50.0, "disk": 30.0}
 
     # Запуск детектора
     anomalies = engine.anomaly_detector.detect_anomalies(anomalous_metrics)
-    print(f"   Виявлено {len(anomalies)} аномалій.")
 
     if len(anomalies) > 0:
-        a = anomalies[0]
-        print(f"   ✅ Аномалію знайдено: {a['metric']} = {a['current_value']} (Z-Score: {a['z_score']:.2f})")
+        anomalies[0]
     else:
-        print("   ❌ НЕ ВДАЛОСЯ виявити аномалію")
+        pass
 
-    print("\n🧪 Тест 2: Рішення петлі OODA")
     # Симуляція результату орієнтації
     orientation = {
         "health_status": "degraded",
@@ -92,44 +83,36 @@ async def test_azr_logic():
 
     # Виконання фази DECIDE (Рішення)
     actions = await engine._decide(orientation)
-    print(f"   Прийнято рішення про {len(actions)} дії.")
 
     anomaly_response = next((a for a in actions if a.type == "ANOMALY_RESPONSE"), None)
 
     if anomaly_response:
-        print("   ✅ Згенеровано дію ANOMALY_RESPONSE")
         # Перевірка виклику mock-сповіщення
         await asyncio.sleep(0.1)
     else:
-        print("   ❌ НЕ ВДАЛОСЯ згенерувати відповідь")
+        pass
 
-    print("\n🧪 Тест 3: Конституційна варта (Guard)")
     from app.services.azr_engine_v32 import AZRAction
 
     bad_action = AZRAction(type="DELETE_DATA", meta={"has_backup": False})
-    print(f"   Тестування забороненої дії: {bad_action.type}")
 
-    approved, reason = await engine.guard.verify_action(bad_action)
+    approved, _reason = await engine.guard.verify_action(bad_action)
     if not approved:
-        print(f"   ✅ Дію ЗАБЛОКОВАНО коректно: {reason}")
+        pass
     else:
-        print("   ❌ Дію ДОЗВОЛЕНО (має бути заблоковано)")
+        pass
 
-    print("\n🧪 Тест 4: Хаос-інжиніринг")
     engine.chaos.enabled = True
-    print("   🔥 Активація модуля Хаосу...")
 
     # Ручне виконання сценарію
     scenario = "network_latency"
-    print(f"   Симуляція '{scenario}' (затримка мережі)...")
     result = await engine.chaos._execute_scenario(scenario)
 
     if result["scenario"] == scenario and result["recovered"]:
-        print(f"   ✅ Хаос впроваджено та відновлено за {result['recovery_time_ms']:.2f}мс")
+        pass
     else:
-        print("   ❌ Хаос-ін'єкція не вдалася")
+        pass
 
-    print("\n🎉 Верифікацію AZR v32 завершено!")
 
 if __name__ == "__main__":
     asyncio.run(test_azr_logic())

@@ -3,7 +3,6 @@ from typing import TYPE_CHECKING
 
 from app.pipelines.base import BasePipeline, SourceType
 
-
 if TYPE_CHECKING:
     from collections.abc import AsyncGenerator
 

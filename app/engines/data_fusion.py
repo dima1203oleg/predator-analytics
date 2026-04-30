@@ -19,7 +19,6 @@ from typing import Any
 
 from app.core.ueid import fingerprint_entity, normalize_name
 
-
 logger = logging.getLogger("predator.engines.data_fusion")
 
 
@@ -130,6 +129,7 @@ def fuse_record(
 
     Returns:
         FusedRecord ready for entity resolution and indexing.
+
     """
     normalizer = NORMALIZERS.get(source)
     normalized = normalizer(raw) if normalizer else raw
@@ -170,29 +170,29 @@ async def process_batch(
     entity_type: str = "company"
 ) -> FusionResult:
     """Process a batch of raw records through the data fusion pipeline.
-    
+
     Validates rules, normalizes data, resolves UEID via EntityRepository,
     persists FusedRecordORM via FusedRecordRepository, and emits signal_bus events.
     """
-    from app.repositories.entity_repository import EntityRepository
-    from app.repositories.fused_record_repository import FusedRecordRepository
     from app.core.signal_bus import SignalBus
     from app.models.v55.signal import SignalLayer, SignalPriority, V55Signal
-    
+    from app.repositories.entity_repository import EntityRepository
+    from app.repositories.fused_record_repository import FusedRecordRepository
+
     entity_repo = EntityRepository(session)
     fused_repo = FusedRecordRepository(session)
-    
+
     result = FusionResult(records_processed=len(records))
-    
+
     for raw in records:
         try:
             # Step 1: Normalize & Prepare
             prepared = fuse_record(raw, source)
-            
+
             # Step 2: Entity Resolution / Creation
             name = (
                 prepared.normalized_data.get("importer_name") or
-                prepared.normalized_data.get("name") or 
+                prepared.normalized_data.get("name") or
                 prepared.normalized_data.get("seller_name", "Unknown Entity")
             )
             edrpou = (
@@ -200,10 +200,10 @@ async def process_batch(
                 prepared.normalized_data.get("edrpou") or
                 prepared.normalized_data.get("seller_edrpou")
             )
-            
+
             # Use 'inn' if parsed and available, otherwise None
             inn = raw.get("inn")
-            
+
             entity, is_new = await entity_repo.resolve_or_create(
                 name=name,
                 entity_type=entity_type,
@@ -211,7 +211,7 @@ async def process_batch(
                 inn=inn,
                 metadata={"source": str(source)},
             )
-            
+
             prepared.ueid = str(entity.ueid)
             if is_new:
                 result.entities_created += 1
@@ -228,7 +228,7 @@ async def process_batch(
                 await bus.emit(signal, session=session)
             else:
                 result.entities_resolved += 1
-            
+
             # Step 3: Persist the Fused Record
             await fused_repo.save_record(
                 ueid=entity.ueid,
@@ -238,9 +238,9 @@ async def process_batch(
                 fingerprint=prepared.fingerprint,
                 quality_score=prepared.quality_score,
             )
-            
+
             result.records_fused.append(prepared)
-            
+
             # Step 4: Emit Pipeline Event
             bus = SignalBus.get_instance()
             ingest_signal = V55Signal(
@@ -254,10 +254,10 @@ async def process_batch(
                 summary=f"Запис імпортовано з {source}: якість={prepared.quality_score}",
             )
             await bus.emit(ingest_signal, session=session)
-            
+
         except Exception as e:
             logger.exception("Fusion failed for record")
             result.errors.append(str(e))
-            
+
     # Allow caller to commit
     return result

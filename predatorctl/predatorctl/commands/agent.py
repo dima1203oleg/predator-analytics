@@ -5,7 +5,6 @@ from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, TextColumn
 import typer
 
-
 app = typer.Typer(help="Independent CLI Agent Orchestration")
 console = Console()
 

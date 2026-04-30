@@ -1,15 +1,13 @@
 from __future__ import annotations
 
-
 #!/usr/bin/env python3
 """AZR Constitutional Test Suite (AZR-CTS)
 Reference Implementation for v45 Constitution (Hyper-Powered).
 """
-from datetime import datetime, timedelta
+from datetime import datetime
 import os
 import sys
 import unittest
-
 
 # Ensure project root is in path
 sys.path.append(os.getcwd())
@@ -24,7 +22,6 @@ class TestAZRConstitution(unittest.TestCase):
 
     def setUp(self):
         self.engine = StateDerivationEngine()
-        print(f"\n⚖️  [AZR-CTS] Verifying: {self._testMethodName}")
 
     def test_axiom_8_truth_sovereignty(self):
         """Verify that State is Derived, not Claimed."""
@@ -36,7 +33,6 @@ class TestAZRConstitution(unittest.TestCase):
 
         # Expectation: Rejection or fallback to safer state
         assert derivation["state"] != ETLState.COMPLETED, "Axiom 8 Violation: Accepted claimed state without proof"
-        print("✅ Axiom 8 Verified: Sovereign State Derivation")
 
     def test_axiom_9_limited_self_improvement(self):
         """Verify Risk/Confidence scoring logic which underpins AZR safety."""
@@ -49,7 +45,6 @@ class TestAZRConstitution(unittest.TestCase):
         )
 
         assert confidence < 0.7, "Axiom 9 Violation: Confidence too high (>0.7) for violated state"
-        print("✅ Axiom 9 Verified: Risk-Aware Confidence Scoring")
 
     def test_axiom_11_complete_promise(self):
         """Verify cryptographic evidence requirement (Stubbed)."""
@@ -59,7 +54,6 @@ class TestAZRConstitution(unittest.TestCase):
         derivation = self.engine.derive_state(facts, ETLState.PROCESSING)
 
         assert derivation.get("evidence_hash") is not None, "Axiom 11 Violation: Missing evidence hash"
-        print("✅ Axiom 11 Verified: Evidence Hashing")
 
     def test_axiom_14_temporal_irreversibility(self):
          """Verify Monotonicity of Facts (Axiom 14 / Subsidiary 9)."""
@@ -68,7 +62,6 @@ class TestAZRConstitution(unittest.TestCase):
              {"records_processed": 90} # Current (Lower!)
          )
          assert len(violations) > 0, "Axiom 14 Violation: Monotonicity breach ignored"
-         print("✅ Axiom 14 Verified: Temporal Irreversibility")
 
     def test_axiom_15_hyper_scalability_simulation(self):
         """Verify Axiom 15 (Zero Degradation Scaling)."""
@@ -78,7 +71,6 @@ class TestAZRConstitution(unittest.TestCase):
         limit_axiom = 0.001 # 0.1%
 
         assert simulated_degradation <= limit_axiom, "Axiom 15 Violation: Scaling degradation > 0.1%"
-        print("✅ Axiom 15 Verified: Hyper-Scalability (Zero Degradation)")
 
     def test_axiom_16_adaptation_latency(self):
         """Verify Axiom 16 (Real-time Adaptation latency < 1ms)."""
@@ -90,7 +82,6 @@ class TestAZRConstitution(unittest.TestCase):
 
         # In a real test, this would measure the AZR loop tick
         assert duration_ms < 1.0, "Axiom 16 Violation: Adaptation latency > 1ms"
-        print(f"✅ Axiom 16 Verified: Continuous Adaptation ({duration_ms:.4f}ms)")
 
     def test_axiom_17_quantized_security_verification(self):
         """Verify Axiom 17 (Post-Quantum Algorithm Mandate)."""
@@ -101,7 +92,6 @@ class TestAZRConstitution(unittest.TestCase):
         assert mock_crypto_operation("PostQuantumCrypto"), "Axiom 17 Violation: Non-PQ Algorithm Accepted"
         # Test invalid algo
         assert not mock_crypto_operation("RSA-2048"), "Axiom 17 Violation: Classic Algorithm Accepted"
-        print("✅ Axiom 17 Verified: Quantized Security Mandate")
 
 if __name__ == '__main__':
     unittest.main()

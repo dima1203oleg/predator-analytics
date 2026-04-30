@@ -3,9 +3,10 @@ Endpoints для переліку автономних агентів (Legacy & 
 """
 
 from fastapi import APIRouter, Depends
-from app.services.antigravity_orchestrator import orchestrator
-from app.dependencies import PermissionChecker
+
 from app.core.permissions import Permission
+from app.dependencies import PermissionChecker
+from app.services.antigravity_orchestrator import orchestrator
 
 router = APIRouter(prefix="/agents", tags=["agents"])
 

@@ -11,13 +11,15 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import logging
+from typing import TYPE_CHECKING
 
 from app.core.confidence import ConfidenceScore, quick_confidence
-from sqlalchemy.ext.asyncio import AsyncSession
 from app.indices.ass import calculate_ass
 from app.indices.bvi import calculate_bvi
 from app.indices.cp import calculate_cp
 
+if TYPE_CHECKING:
+    from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger("predator.engines.behavioral")
 
@@ -63,6 +65,7 @@ def compute_behavioral_score(
 
     Returns:
         BehavioralScore with all metrics.
+
     """
     bvi = calculate_bvi(intervals, regions, brokers, prices)
     ass = calculate_ass(delta_t_regulation)
@@ -112,11 +115,12 @@ async def process_entity(ueid: str, db: AsyncSession) -> BehavioralScore:
     from datetime import datetime
     import hashlib
     import json
-    from app.repositories.fused_record_repository import FusedRecordRepository
+
+    from app.core.signal_bus import SignalBus
+    from app.models.v55.decision_artifact import DecisionArtifactCreate
     from app.repositories.behavioral_repository import BehavioralRepository
     from app.repositories.decision_repository import DecisionRepository
-    from app.models.v55.decision_artifact import DecisionArtifactCreate
-    from app.core.signal_bus import SignalBus
+    from app.repositories.fused_record_repository import FusedRecordRepository
 
     fused_repo = FusedRecordRepository(db)
     behav_repo = BehavioralRepository(db)
@@ -140,9 +144,9 @@ async def process_entity(ueid: str, db: AsyncSession) -> BehavioralScore:
         data = record.normalized_data
         if "customs" in record.source.lower():
             customs_count += 1
-            if "customs_post" in data and data["customs_post"]:
+            if data.get("customs_post"):
                 regions.append(data["customs_post"])
-            if "broker" in data and data["broker"]:
+            if data.get("broker"):
                 brokers.append(data["broker"])
             if "value_usd" in data and isinstance(data["value_usd"], (int, float)):
                 prices.append(float(data["value_usd"]))
@@ -198,7 +202,7 @@ async def process_entity(ueid: str, db: AsyncSession) -> BehavioralScore:
         "data_completeness": data_completeness,
     }
     input_fp = hashlib.sha256(json.dumps(input_data, sort_keys=True).encode("utf-8")).hexdigest()
-    output_fp = hashlib.sha256(f"{score.bvi}:{score.ass}:{score.cp}".encode("utf-8")).hexdigest()
+    output_fp = hashlib.sha256(f"{score.bvi}:{score.ass}:{score.cp}".encode()).hexdigest()
 
     artifact = DecisionArtifactCreate(
         decision_type="behavioral",
@@ -221,7 +225,7 @@ async def process_entity(ueid: str, db: AsyncSession) -> BehavioralScore:
     # 5. Emit updated signal using V55Signal
     bus = SignalBus.get_instance()
     from app.models.v55.signal import SignalLayer, SignalPriority, V55Signal
-    
+
     signal = V55Signal(
         signal_type="BEHAVIORAL_SCORING",
         topic="behavioral.updated",

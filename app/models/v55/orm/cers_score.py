@@ -6,7 +6,7 @@ Spec 7.10: Composite Economic Risk Score history per entity.
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from sqlalchemy import BigInteger, Boolean, Column, DateTime, Float, ForeignKey, Index, String
 from sqlalchemy.dialects.postgresql import JSONB, UUID
@@ -32,7 +32,7 @@ class CERSScoreORM(Base):
     weights = Column(JSONB, nullable=False, comment="Weights used for each layer")
     confidence = Column(Float, nullable=False)
     decorrelation_applied = Column(Boolean, server_default="false")
-    calculated_at = Column(DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))
+    calculated_at = Column(DateTime(timezone=True), nullable=False, default=lambda: datetime.now(UTC))
 
     def __repr__(self) -> str:
         return f"<CERSScore ueid={self.ueid} score={self.score} level={self.level}>"

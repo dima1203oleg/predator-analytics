@@ -3,18 +3,15 @@ from __future__ import annotations
 import hashlib
 import os
 import sys
-from unittest.mock import MagicMock, patch
 
 import numpy as np
 import pytest
-
 
 # Add specific service path
 sys.path.append(
     os.path.abspath(os.path.join(os.path.dirname(__file__), "../../services/api_gateway"))
 )
 
-from app.routers.azr import AzrStatus, get_azr_status
 from app.routers.google_integrations import SuggestionPushRequest, get_suggestions, push_suggestion
 from app.services.embedding_service import EmbeddingService
 
@@ -24,16 +21,10 @@ def test_axiom_17_crypto():
     """Verify SHA3-512 is preferred if available."""
     msg = b"Axiom 17 Verification"
 
-    if hasattr(hashlib, "sha3_512"):
-        algo = hashlib.sha3_512
-        expected_algo = "SHA3-512"
-    else:
-        algo = hashlib.sha256
-        expected_algo = "SHA-256"
+    algo = hashlib.sha3_512 if hasattr(hashlib, "sha3_512") else hashlib.sha256
 
     h = algo(msg).hexdigest()
     assert len(h) > 0
-    print(f"Verified crypto algorithm: {expected_algo}")
 
 
 # --- 2. VECTOR MATH RESILIENCE ---

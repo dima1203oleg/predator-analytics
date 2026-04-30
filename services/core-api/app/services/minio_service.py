@@ -88,7 +88,7 @@ class MinIOService:
             self.get_processed_bucket(tenant_id),
             self.get_artifacts_bucket(tenant_id)
         ]
-        
+
         for bucket in buckets:
             try:
                 if not self._client.bucket_exists(bucket):

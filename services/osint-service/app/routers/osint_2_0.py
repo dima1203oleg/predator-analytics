@@ -100,7 +100,7 @@ class NetworkAnalysisRequest(BaseModel):
 @router.post("/people/epieos/email")
 async def epieos_email_search(request: EmailSearchRequest):
     """Epieos — Глибинний пошук за email.
-    
+
     Знаходить:
     - Google ID, YouTube канали
     - Відгуки на Google Maps (геолокація)
@@ -116,7 +116,7 @@ async def epieos_email_search(request: EmailSearchRequest):
 @router.post("/people/epieos/phone")
 async def epieos_phone_search(request: PhoneSearchRequest):
     """Epieos — Пошук за номером телефону.
-    
+
     Знаходить:
     - WhatsApp, Telegram, Viber
     - Truecaller
@@ -130,7 +130,7 @@ async def epieos_phone_search(request: PhoneSearchRequest):
 @router.post("/people/holehe")
 async def holehe_check(request: EmailSearchRequest):
     """Holehe — Перевірка email на 120+ сервісах.
-    
+
     ⚠️ Не залишає слідів — власник не отримує сповіщення.
     """
     tool = HoleheTool()
@@ -141,7 +141,7 @@ async def holehe_check(request: EmailSearchRequest):
 @router.post("/people/sherlock")
 async def sherlock_search(request: UsernameSearchRequest):
     """Sherlock — Пошук username у 340+ соцмережах.
-    
+
     Створює цифровий профіль особи.
     """
     tool = SherlockTool()
@@ -152,7 +152,7 @@ async def sherlock_search(request: UsernameSearchRequest):
 @router.post("/people/comprehensive")
 async def comprehensive_person_search(request: ComprehensiveSearchRequest):
     """Комплексний пошук особи за всіма ідентифікаторами.
-    
+
     Об'єднує результати Epieos, Holehe, Sherlock.
     """
     if not any([request.username, request.email, request.phone]):
@@ -176,7 +176,7 @@ async def comprehensive_person_search(request: ComprehensiveSearchRequest):
 @router.post("/forensics/spiderfoot/domain")
 async def spiderfoot_domain_scan(request: DomainScanRequest):
     """SpiderFoot — Сканування домену (200+ джерел).
-    
+
     Збирає:
     - DNS, WHOIS, SSL
     - Emails, технології
@@ -207,7 +207,7 @@ async def spiderfoot_ip_scan(ip: str = Query(..., description="IP-адреса")
 @router.post("/forensics/metagoofil")
 async def metagoofil_analyze(request: DomainScanRequest):
     """Metagoofil — Видобування метаданих з документів.
-    
+
     Знаходить:
     - Імена авторів/співробітників
     - Версії ПЗ
@@ -224,7 +224,7 @@ async def metagoofil_analyze(request: DomainScanRequest):
 @router.post("/graph/nlp/extract")
 async def nlp_extract_entities(request: NLPAnalysisRequest):
     """NLP — Витягування сутностей з тексту.
-    
+
     Використовує NER для знаходження:
     - Компаній, осіб
     - Адрес, дат
@@ -259,7 +259,7 @@ async def nlp_extract_entities(request: NLPAnalysisRequest):
 @router.post("/graph/query")
 async def graph_natural_query(request: GraphQueryRequest):
     """Knowledge Graph — Запит природною мовою.
-    
+
     Приклади:
     - "Покажи всі компанії, пов'язані з Івановим"
     - "Знайди компанії з боргами, які вигравали тендери"
@@ -402,7 +402,7 @@ async def crunchbase_person(name: str = Query(..., min_length=2)):
 @router.post("/sanctions/check")
 async def sanctions_check(request: SanctionsCheckRequest):
     """Перевірка у всіх санкційних списках.
-    
+
     Списки:
     - OFAC SDN (США)
     - EU Sanctions
@@ -410,7 +410,7 @@ async def sanctions_check(request: SanctionsCheckRequest):
     - UN Sanctions
     - FATF
     - Україна (РНБО)
-    
+
     + PEP перевірка (опціонально)
     """
     aggregator = SanctionsAggregator()
@@ -442,7 +442,7 @@ async def sanctions_batch_check(names: list[str]):
 @router.post("/investigate/person")
 async def investigate_person(request: ComprehensiveSearchRequest):
     """Повне розслідування особи.
-    
+
     Об'єднує:
     - People Search (Epieos, Holehe, Sherlock)
     - Санкційні списки
@@ -495,7 +495,7 @@ async def investigate_person(request: ComprehensiveSearchRequest):
 @router.post("/investigate/company")
 async def investigate_company(request: CompanySearchRequest):
     """Повне розслідування компанії.
-    
+
     Об'єднує:
     - OpenCorporates
     - CrunchBase

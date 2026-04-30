@@ -1,20 +1,17 @@
 import logging
-import os
-from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
 class ExperimentTracker:
-    """
-    Wrapper for MLflow to safely track experiments.
+    """Wrapper for MLflow to safely track experiments.
     Falls back to local logging if MLflow is not installed or configured.
     """
-    
+
     def __init__(self, experiment_name="predator_analytics"):
         self.experiment_name = experiment_name
         self.mlflow_available = False
         self.active_run = None
-        
+
         try:
             import mlflow
             self.mlflow = mlflow

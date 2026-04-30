@@ -1,30 +1,29 @@
 import logging
-from typing import Dict, Any, List
 import random
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
 class TrendPredictor:
-    """
-    Fashion/Retail Trend Predictor (COMP-253)
-    Predicts upcoming consumer trends based on social media signals 
+    """Fashion/Retail Trend Predictor (COMP-253)
+    Predicts upcoming consumer trends based on social media signals
     and global market data.
     """
+
     def __init__(self):
         pass
 
-    def predict_trends(self, category: str = "fashion") -> Dict[str, Any]:
-        """
-        Simulates trend forecasting.
+    def predict_trends(self, category: str = "fashion") -> dict[str, Any]:
+        """Simulates trend forecasting.
         """
         trends = []
         if category == "fashion":
             trends = ["Eco-leather", "Neo-folk (UA)", "Cyberpunk-core", "Minimalism"]
         else:
             trends = ["Smart home electronics", "Healthy snacks", "Pet-tech"]
-            
+
         selected = random.sample(trends, 2)
-        
+
         return {
             "category": category,
             "predicted_trends": [

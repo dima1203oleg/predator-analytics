@@ -1,10 +1,7 @@
 from __future__ import annotations
 
-from typing import Optional
-
 from rich.console import Console
 import typer
-
 
 app = typer.Typer(help="GitOps operations")
 console = Console()

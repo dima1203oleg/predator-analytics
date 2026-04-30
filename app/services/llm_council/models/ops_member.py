@@ -9,7 +9,6 @@ from app.services.llm import llm_service
 from app.services.llm_council import CouncilMember, CouncilResponse, PeerReview
 from app.services.ops_service import ops_service
 
-
 logger = logging.getLogger(__name__)
 
 

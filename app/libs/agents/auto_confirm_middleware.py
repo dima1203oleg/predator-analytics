@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """🧲 ANTIGRAVITY GODMODE — AUTO-CONFIRM MIDDLEWARE
 ═══════════════════════════════════════════════════════════════
 Intercepts ALL blocking events and auto-confirms them.
@@ -14,7 +13,6 @@ from enum import Enum
 import functools
 import logging
 from typing import TYPE_CHECKING, Any
-
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -275,8 +273,6 @@ def install_godmode(executor: Any) -> None:
 # ════════════════════════════════════════════════════════════════
 
 if __name__ == "__main__":
-    print("🧲 ANTIGRAVITY GODMODE — AUTO-CONFIRM MIDDLEWARE")
-    print("=" * 60)
 
     # Test event interception
     middleware = AutoConfirmMiddleware()
@@ -291,8 +287,4 @@ if __name__ == "__main__":
     for event in test_events:
         result = middleware.intercept(event)
         status = "✅ AUTO-CONFIRMED" if result.approved else "➡️ PASSED"
-        print(f"  {status}: {event.type}")
 
-    print("=" * 60)
-    print(f"Stats: {middleware.get_stats()}")
-    print("⚡ GODMODE READY — NO STOPS, NO WAITS")

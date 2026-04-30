@@ -17,9 +17,7 @@ from __future__ import annotations
 
 import os
 import time
-import base64
-from collections.abc import AsyncIterator
-from typing import Any, Optional
+from typing import Any
 
 from predator_common.circuit_breaker import CircuitBreaker
 from predator_common.logging import get_logger
@@ -40,7 +38,7 @@ _key_index = 0
 
 def _get_key_pool() -> list[str]:
     """Ініціалізація пулу API ключів з ENV."""
-    global _KEY_POOL  # noqa: PLW0603
+    global _KEY_POOL
     if not _KEY_POOL:
         keys = []
         # Основний ключ
@@ -59,7 +57,7 @@ def _get_key_pool() -> list[str]:
 
 def _next_api_key() -> str:
     """Round-robin вибір наступного API ключа."""
-    global _key_index  # noqa: PLW0603
+    global _key_index
     pool = _get_key_pool()
     if not pool:
         msg = "Жодного Gemini API ключа не знайдено. Встановіть GEMINI_API_KEY."
@@ -251,13 +249,13 @@ class GeminiAgentService:
 
     @staticmethod
     async def analyze_vision(
-        prompt: str, 
-        image_bytes: bytes, 
+        prompt: str,
+        image_bytes: bytes,
         mime_type: str = "image/jpeg",
         model: str = "gemini-2.5-flash"
     ) -> dict[str, Any]:
         """Мультимодальний аналіз (Vision).
-        
+
         Використовується для аналізу:
         - Сканів митних декларацій
         - Схем корпоративної власності
@@ -266,7 +264,7 @@ class GeminiAgentService:
         from google.genai import types
         client = _get_client()
         start_time = time.time()
-        
+
         try:
             import asyncio
             response = await asyncio.to_thread(
@@ -282,7 +280,7 @@ class GeminiAgentService:
                     )
                 ]
             )
-            
+
             latency = (time.time() - start_time) * 1000
             return {
                 "content": response.text,
@@ -295,21 +293,6 @@ class GeminiAgentService:
 
     async def audit_infrastructure(self, project_id: str) -> dict[str, Any]:
         """Автономний аудит GCP інфраструктури через Gemini."""
-        prompt = f"""
-        Проведи критичний аудит GCP проекту {project_id}.
-        Проаналізуй наступні аспекти:
-        1. Безпека: IAM ролі, публічні бакети, правила фаєрволу.
-        2. Продуктивність: Latency між регіонами, використання GPU квот.
-        3. Витрати: Невикористані диски, перерозхід BigQuery.
-        
-        Поверни результат у форматі JSON:
-        {{
-          "score": 0-100,
-          "critical_issues": [],
-          "recommendations": [],
-          "efficiency_gain_usd": number
-        }}
-        """
         return await self.analyze_risk({"project_id": project_id})
 
     # ─── Embeddings (для Qdrant) ──────────────────────────────────────────────

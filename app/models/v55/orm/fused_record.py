@@ -6,8 +6,8 @@ Spec: Stores the result of normalizing and fusing raw data.
 
 from __future__ import annotations
 
+from datetime import UTC, datetime
 import uuid
-from datetime import datetime, timezone
 
 from sqlalchemy import Column, DateTime, Float, ForeignKey, Index, String
 from sqlalchemy.dialects.postgresql import JSONB, UUID
@@ -33,7 +33,7 @@ class FusedRecordORM(Base):
     normalized_data = Column(JSONB, nullable=False)
     fingerprint = Column(String(64), nullable=False)
     quality_score = Column(Float, nullable=False)
-    created_at = Column(DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime(timezone=True), nullable=False, default=lambda: datetime.now(UTC))
 
     def __repr__(self) -> str:
         return f"<FusedRecord {self.record_id} source={self.source} ueid={self.ueid}>"

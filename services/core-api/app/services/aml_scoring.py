@@ -14,6 +14,7 @@ from datetime import UTC, datetime
 from enum import StrEnum
 import logging
 from typing import Any, ClassVar
+
 from app.services.osint.global_sanctions import GlobalSanctionsService
 
 logger = logging.getLogger(__name__)
@@ -580,12 +581,12 @@ class AMLScoringService:
 
     def get_shap_explanations(self, factors: list[RiskFactor]) -> dict[str, float]:
         """Розрахунок внеску кожного детективного фактора (SHAP-подібний метод).
-        
+
         Повертає внесок кожного фактора у фінальний нормалізований бал у відсотках.
         """
         total_detected_weight = sum(f.weight for f in factors if f.detected)
         max_possible_weight = sum(f.weight for f in factors)
-        
+
         if max_possible_weight == 0 or total_detected_weight == 0:
             return {}
 
@@ -593,9 +594,9 @@ class AMLScoringService:
         for factor in factors:
             if factor.detected:
                 # Внесок фактора у загальний бал (0-100)
-                # Якщо загальний бал 80, а цей фактор має вагу 100 з 500, 
+                # Якщо загальний бал 80, а цей фактор має вагу 100 з 500,
                 # то його внесок пропорційний його вазі серед виявлених.
                 contribution = (factor.weight / total_detected_weight) * 100
                 explanations[factor.name] = round(contribution, 1)
-        
+
         return explanations

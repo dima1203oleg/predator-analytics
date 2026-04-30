@@ -1,6 +1,8 @@
 import logging
-from typing import Any, List
+from typing import Any
+
 from libs.core.llm import llm_service
+
 logger = logging.getLogger("orchestrator.support")
 
 class SelfHealingSystem:
@@ -19,6 +21,7 @@ def create_council_debate(chairman, critic, analyst, topic): pass
 
 class LLMAgent:
     """Base class for specialized LLM agents"""
+
     def __init__(self, provider: str, model: str, role: str):
         self.provider = provider
         self.model = model
@@ -35,11 +38,11 @@ class LLMAgent:
 class Chairman(LLMAgent):
     def __init__(self, api_key_ignored: Any, model: str):
         super().__init__("gemini", model, "Chairman")
-    
+
     @property
     def fallback(self): return self.model
-    
-    async def decide(self, task: str, proposals: List[str]) -> str:
+
+    async def decide(self, task: str, proposals: list[str]) -> str:
         prompt = f"Task: {task}\nProposals: {proposals}\nWhich one is best? Explain and decide."
         return await self.ask(prompt)
 
@@ -69,10 +72,10 @@ class UIGuardian:
         logger.info("UI Guardian: System check completed (Mock)")
 
 class DataSentinel:
-    """
-    V45 Data Sentinel: Responsible for economic data integrity 
+    """V45 Data Sentinel: Responsible for economic data integrity
     using the Market Nervous System.
     """
+
     async def check_data(self):
         logger.info("🛡️ Data Sentinel: Початок глибокого аналізу поведінкових патернів...")
         try:
@@ -126,7 +129,7 @@ class KnowledgeGraph:
     def from_codebase(self, path):
         logger.info(f"Knowledge Graph: Analysis of {path} completed (Mock)")
         return self
-    
+
     def get_system_status(self): return {"status": "optimized", "load": 0.1}
     def get_notifications(self): return []
 

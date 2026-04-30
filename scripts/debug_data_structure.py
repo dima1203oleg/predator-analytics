@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import asyncio
 import json
-import os
 
 from sqlalchemy import select
 
@@ -19,19 +18,15 @@ async def inspect_data():
         if content:
             try:
                 data = json.loads(content)
-                print("--- DATA SAMPLE START ---")
-                print(json.dumps(data, indent=2))
-                print("--- DATA SAMPLE END ---")
 
                 # Check for risk_score
                 if isinstance(data, dict):
-                    print(f"Direct keys: {list(data.keys())}")
                     if "data" in data and isinstance(data["data"], dict):
-                        print(f"Keys inside 'data': {list(data['data'].keys())}")
-            except Exception as e:
-                print(f"JSON Parse Error: {e}")
+                        pass
+            except Exception:
+                pass
         else:
-            print("No data found.")
+            pass
 
 if __name__ == "__main__":
     asyncio.run(inspect_data())

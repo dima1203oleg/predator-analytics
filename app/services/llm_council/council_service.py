@@ -4,7 +4,6 @@ import logging
 
 from .council_orchestrator import create_default_council
 
-
 logger = logging.getLogger(__name__)
 
 

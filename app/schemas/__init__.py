@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """UA Sources - Pydantic Schemas
 Re-exports all schemas for convenience.
 """

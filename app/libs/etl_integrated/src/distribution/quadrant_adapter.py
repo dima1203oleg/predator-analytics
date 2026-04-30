@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import Any
 
-
 """
 Quadrant Distribution Adapter
 
@@ -13,7 +12,6 @@ from datetime import datetime
 import json
 import logging
 import uuid
-
 
 try:
     import numpy as np
@@ -47,6 +45,7 @@ class QuadrantAdapter:
         Args:
             enabled: Whether this adapter is enabled
             collection_name: Quadrant collection name for storing embeddings
+
         """
         self.enabled = enabled
         self.collection_name = collection_name
@@ -65,6 +64,7 @@ class QuadrantAdapter:
 
         Returns:
             DistributionResult with status and metadata
+
         """
         from .data_distributor import DistributionResult
 
@@ -128,6 +128,7 @@ class QuadrantAdapter:
 
         Returns:
             NumPy array representing the embedding
+
         """
         # In production, this would use a proper embedding model
         # For simulation, we'll create a deterministic embedding based on record content
@@ -171,6 +172,7 @@ class QuadrantAdapter:
 
         Returns:
             DistributionResult with creation status
+
         """
         from .data_distributor import DistributionResult
 
@@ -208,6 +210,7 @@ class QuadrantAdapter:
 
         Returns:
             DistributionResult with search results
+
         """
         from .data_distributor import DistributionResult
 
@@ -263,6 +266,7 @@ class QuadrantAdapter:
 
         Returns:
             Dictionary representing the collection information
+
         """
         return {
             "collection_name": self.collection_name,
@@ -286,5 +290,6 @@ class QuadrantAdapter:
 
         Returns:
             List of embeddings as NumPy arrays
+
         """
         return [self._generate_embedding(record) for record in records]

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Constitutional Test Runner - AZR Engine v45-S."""
 import asyncio
 from datetime import datetime
@@ -8,7 +7,6 @@ import logging
 from typing import Any
 
 import yaml
-
 
 logger = logging.getLogger(__name__)
 

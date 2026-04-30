@@ -5,7 +5,6 @@ from __future__ import annotations
 # Автор: Головний DevOps Predator Analytics v45.0
 # Призначення: Перевірка безпеки згенерованого AI коду
 import re
-from typing import Dict
 
 
 class PolicyEngine:
@@ -51,4 +50,3 @@ if __name__ == "__main__":
     engine = PolicyEngine()
     test_code = "rm -rf /var/log\nls -la"
     result = engine.check_code(test_code, "dry-run")
-    print(f"Результат тесту: {result}")

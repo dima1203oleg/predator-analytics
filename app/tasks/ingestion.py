@@ -3,11 +3,10 @@ from __future__ import annotations
 import asyncio
 import logging
 
-from app.core.celery_app import celery_app
-from app.database import async_session_maker
-
 from src.ingestion.manager import IngestionManager
 
+from app.core.celery_app import celery_app
+from app.database import async_session_maker
 
 logger = logging.getLogger(__name__)
 

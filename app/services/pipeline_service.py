@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Predator Analytics v45 - Pipeline Service
 Orchestrates ETL, Indexing, ML Training, and Synthetic Data pipelines.
 """
@@ -17,7 +16,6 @@ from app.services.etl_ingestion import ETLIngestionService
 from app.services.minio_service import MinIOService
 from app.services.opensearch_indexer import OpenSearchIndexer
 from app.services.qdrant_service import QdrantService
-
 
 if TYPE_CHECKING:
     from collections.abc import Callable

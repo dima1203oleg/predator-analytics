@@ -73,7 +73,7 @@ class ReconNGTool(BaseTool):
         start_time = datetime.now(UTC)
         options = options or {}
 
-        modules = options.get("modules", self.MODULE_CATEGORIES["recon"])
+        options.get("modules", self.MODULE_CATEGORIES["recon"])
 
         findings = []
         results = {

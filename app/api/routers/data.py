@@ -1,9 +1,7 @@
 from __future__ import annotations
 
-
 """Data Router."""
 from fastapi import APIRouter
-
 
 router = APIRouter(prefix="/data", tags=["Data"])
 

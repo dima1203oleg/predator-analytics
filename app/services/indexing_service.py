@@ -4,7 +4,6 @@ from app.services.embedding_service import get_embedding_service
 from app.services.opensearch_indexer import opensearch_indexer
 from app.services.qdrant_service import qdrant_service
 
-
 logger = logging.getLogger("app.services.indexing_service")
 
 

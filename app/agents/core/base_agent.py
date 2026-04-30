@@ -5,7 +5,6 @@ from typing import Any
 
 from pydantic import BaseModel
 
-
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

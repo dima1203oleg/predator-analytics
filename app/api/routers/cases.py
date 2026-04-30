@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Cases API Router - Кейси (центральна цінність PREDATOR)
 Кейс = виявлена ситуація + аналіз + висновок AI.
 """
@@ -12,7 +11,6 @@ from pydantic import BaseModel
 from sqlalchemy import text
 
 from app.libs.core.database import get_db_ctx
-
 
 logger = logging.getLogger("router.cases")
 

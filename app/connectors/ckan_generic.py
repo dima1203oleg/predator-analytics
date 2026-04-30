@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-
 """CKAN Generic Connector - For any CKAN-based open data portal
 Used for data.gov.ua and similar platforms.
 """
 import logging
 
 from .base import BaseConnector, ConnectorResult
-
 
 logger = logging.getLogger(__name__)
 
@@ -59,6 +57,7 @@ class CKANGenericConnector(BaseConnector):
             query: Full-text search query
             filters: Field-specific filters
             limit: Maximum records
+
         """
         params = {"resource_id": resource_id, "limit": limit}
 

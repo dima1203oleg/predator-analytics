@@ -2,7 +2,6 @@ from datetime import UTC, datetime
 import logging
 from typing import Any
 
-
 logger = logging.getLogger("app.services.training_status_service")
 
 

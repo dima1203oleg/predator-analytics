@@ -1,13 +1,9 @@
 from __future__ import annotations
 
-import os
-import subprocess
-
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 import typer
-
 
 app = typer.Typer(help="🛡️ PREDATOR UI Sentinel - Continuous Web Interface Optimization")
 console = Console()
@@ -39,7 +35,7 @@ def audit():
 def optimize():
     """Trigger autonomous UI/UX optimization."""
     console.print("[bold blue]🚀 Starting UI UX Optimization Loop...[/bold blue]")
-    with console.status("[bold green]Analyzing component structure...") as status:
+    with console.status("[bold green]Analyzing component structure..."):
         import time; time.sleep(1)
         console.print("- Refactoring redundant Tailwind classes...")
         time.sleep(1)

@@ -15,7 +15,6 @@ from fastapi import APIRouter, HTTPException, Query
 
 from app.services.analytical_service import analytical_service
 
-
 if TYPE_CHECKING:
     from uuid import UUID
 

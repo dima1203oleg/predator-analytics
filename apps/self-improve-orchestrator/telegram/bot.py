@@ -1,20 +1,20 @@
-"""
-Predator C2 (Neural Interface) v45.0
+"""Predator C2 (Neural Interface) v45.0
 The state-of-the-art control panel for Predator Analytics.
 Features: Semantic Routing, Cortex Stateful Orchestration, HITL.
 """
-import logging
 import asyncio
+import logging
 import os
-from aiogram import Bot, Dispatcher, types, F, Router
-from aiogram.filters import Command, CommandStart
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, BufferedInputFile
-from aiogram.utils.keyboard import InlineKeyboardBuilder
-from aiogram.enums import ParseMode
 
-from .config import BOT_TOKEN, ADMIN_ID, MESSAGES
+from aiogram import Bot, Dispatcher, F, Router, types
+from aiogram.enums import ParseMode
+from aiogram.filters import CommandStart
+from aiogram.types import BufferedInputFile, InlineKeyboardButton, InlineKeyboardMarkup
+from aiogram.utils.keyboard import InlineKeyboardBuilder
+
 from ..services.cortex import CortexOrchestrator
 from ..services.voice import VoiceProcessor
+from .config import ADMIN_ID, BOT_TOKEN, MESSAGES
 
 # Logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")

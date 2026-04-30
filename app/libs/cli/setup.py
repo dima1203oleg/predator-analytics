@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Predator CLI Package Setup.
 
 Install with: pip install -e ./libs/cli
@@ -8,7 +7,6 @@ Then use: predator --help
 """
 
 from setuptools import setup
-
 
 setup(
     name="predator-cli",

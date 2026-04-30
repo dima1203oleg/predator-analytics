@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """LLM Council Orchestrator
 Coordinates multiple LLMs to reach consensus following Karpathy's pattern.
 
@@ -21,7 +20,6 @@ from .models.gemini_member import GeminiCouncilMember
 from .models.groq_member import GroqCouncilMember
 from .models.openai_member import GPT3_5CouncilMember, GPT4CouncilMember
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -41,6 +39,7 @@ class LLMCouncilOrchestrator:
         result = await council.deliberate(
             query="Analyze customs declaration anomalies in 2024 data"
         )
+
     """
 
     def __init__(
@@ -72,6 +71,7 @@ class LLMCouncilOrchestrator:
 
         Returns:
             ConsensusResult with final answer and metadata
+
         """
         logger.info(f"Starting council deliberation with {len(self.members)} members")
         start_time = datetime.now()
@@ -320,6 +320,7 @@ def create_default_council(include_models: list[str] | None = None) -> LLMCounci
 
     Returns:
         Configured LLMCouncilOrchestrator
+
     """
     include_models = include_models or ["gemini", "groq"]
 

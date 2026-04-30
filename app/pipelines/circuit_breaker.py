@@ -11,7 +11,6 @@ from typing import Any
 
 import psutil
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -81,6 +80,7 @@ class IngestionCircuitBreaker:
 
         Returns:
             (allowed, reason) - True if allowed, False with reason if blocked
+
         """
         # Check circuit breaker state
         if self.state == CircuitBreakerState.OPEN:
@@ -193,6 +193,7 @@ class IngestionCircuitBreaker:
 
         Returns:
             (is_valid, anomaly_type, error_message)
+
         """
         try:
             # Basic file integrity checks

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """WORM Audit Logger (COMP-157)
 
 Append-only, immutable audit log for all system operations.
@@ -16,15 +15,14 @@ Features:
 - API change recording
 - ML decision artifacts (§20.1)
 """
+from dataclasses import asdict, dataclass, field
+from datetime import UTC, datetime
 import hashlib
 import json
 import logging
-from dataclasses import dataclass, field, asdict
-from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 from uuid import uuid4
-
 
 logger = logging.getLogger("service.audit")
 
@@ -37,6 +35,7 @@ class AuditEntry:
 
     Fields follow OWASP Logging Guide and §20.1 ТЗ requirements.
     """
+
     event_id: str = field(default_factory=lambda: str(uuid4()))
     timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
     actor: str = ""                     # user ID or system component
@@ -116,6 +115,7 @@ class AuditLogger:
 
         Returns:
             AuditEntry (immutable)
+
         """
         entry = AuditEntry(
             actor=actor,

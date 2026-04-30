@@ -4,7 +4,6 @@ import asyncio
 import sys
 from unittest.mock import AsyncMock, MagicMock
 
-
 # Adjust path
 sys.path.append("/Users/dima-mac/Documents/Predator_21/services/api_gateway")
 
@@ -20,7 +19,6 @@ from app.services.anomaly_service import AnomalyService
 
 
 async def test_anomaly_logic():
-    print("Testing AnomalyService...")
 
     # Setup mock evolution service
     from app.services.evolution_service import evolution_service
@@ -45,24 +43,18 @@ async def test_anomaly_logic():
 
     service = AnomalyService()
 
-    print("\nRunning detection cycle...")
     result = await service.detect_anomalies()
 
-    print(f"Status: {result.get('status')}")
-    print(f"Anomalies Found: {result.get('anomalies_detected')}")
-    print(f"Forecast: {result.get('forecast')}")
 
     if result.get('anomalies_detected') > 0:
-        for a in result.get('anomalies'):
-            print(f" - [{a['type']}] {a['metric']}: {a['current_value']} (Z={a['z_score']})")
+        for _a in result.get('anomalies'):
+            pass
 
     # Assertions
     assert result.get('anomalies_detected') > 0, "Should detect the drop to 50.0"
-    forecast = result.get('forecast', {})
+    result.get('forecast', {})
     # assert forecast.get('trend') == 'degrading', "Trend should be degrading"
-    print(f"Forecast trend: {forecast.get('trend')}")
 
-    print("\nTest passed!")
 
 if __name__ == "__main__":
     asyncio.run(test_anomaly_logic())

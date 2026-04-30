@@ -19,7 +19,6 @@ class FederationService:
             "status": "online",
             "tasks_completed": 0,
         }
-        print(f"🌍 [FederationService] Node Registered: {node_id}")
         return {"status": "registered", "master_node": "Predator-Core-Prime"}
 
     def heartbeat(self, node_id: str, load: float) -> list[dict] | None:
@@ -35,7 +34,6 @@ class FederationService:
         if self.task_queue.get(node_id):
             tasks = self.task_queue[node_id]
             self.task_queue[node_id] = []
-            print(f"📦 [FederationService] Sending {len(tasks)} tasks to {node_id}")
 
         return tasks
 
@@ -60,7 +58,6 @@ class FederationService:
             if target not in self.task_queue:
                 self.task_queue[target] = []
             self.task_queue[target].append(task_data)
-            print(f"⚡ [FederationService] Task {task_id} ({type}) queued for {target}")
             return task_id
         raise Exception("No active edge nodes available")
 
@@ -73,7 +70,6 @@ class FederationService:
         }
         if node_id in self.edge_nodes:
             self.edge_nodes[node_id]["tasks_completed"] += 1
-        print(f"✅ [FederationService] Task {task_id} completed by {node_id}")
 
     def get_active_nodes(self) -> list[dict]:
         now = time.time()

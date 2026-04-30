@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Telegram Channel Monitor (COMP-027)
 
 Моніторинг Telegram каналів для збору бізнес-інтелекту.
@@ -13,13 +12,13 @@ from __future__ import annotations
 Для prod: Telethon / Pyrogram з MTProto API.
 Для dev: RSS/HTTP fallback з web-preview каналів.
 """
-import logging
+import contextlib
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
+import logging
 from typing import Any
 
 from app.connectors.base import BaseConnector, ConnectorResult
-
 
 logger = logging.getLogger("connector.telegram")
 
@@ -40,6 +39,7 @@ DEFAULT_CHANNELS = [
 @dataclass
 class TelegramMessage:
     """Parsed Telegram message."""
+
     channel_id: str
     channel_name: str
     message_id: str = ""
@@ -101,9 +101,9 @@ class TelegramMonitor(BaseConnector):
             limit: Max results
             **kwargs:
                 channels: List of channel IDs to search
+
         """
         import httpx
-        import re
 
         target_channels = kwargs.get("channels") or self.channels
         all_messages: list[TelegramMessage] = []
@@ -221,10 +221,8 @@ class TelegramMonitor(BaseConnector):
             views = 0
             if i < len(view_matches):
                 view_str = view_matches[i].replace("K", "000").replace("k", "000").replace("M", "000000").replace(".", "")
-                try:
+                with contextlib.suppress(ValueError):
                     views = int(view_str)
-                except ValueError:
-                    pass
 
             # Keyword matching
             matched_keywords = [

@@ -5,7 +5,6 @@ from typing import Any
 
 from .model_router import ModelRouter
 
-
 logger = logging.getLogger("service.avatar")
 
 

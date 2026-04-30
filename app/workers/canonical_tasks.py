@@ -1,5 +1,4 @@
-"""
-⚙️ Celery Workers — PREDATOR Analytics v4.1.
+"""⚙️ Celery Workers — PREDATOR Analytics v4.1.
 
 Задачі для фонової обробки: прогнозування, синхронізація, звітування.
 """
@@ -22,8 +21,7 @@ logger = structlog.get_logger(__name__)
     default_retry_delay=60,
 )
 def forecast_demand_task(self, product_code: str, months_ahead: int = 6) -> dict:
-    """
-    Celery задача: побудова прогнозу попиту.
+    """Celery задача: побудова прогнозу попиту.
 
     Запускається за розкладом або на запит користувача.
     """
@@ -51,8 +49,7 @@ def forecast_demand_task(self, product_code: str, months_ahead: int = 6) -> dict
 
 @celery_app.task(name="sync.customs_data")
 def sync_customs_data_task() -> dict:
-    """
-    Синхронізація митних даних з зовнішніх джерел.
+    """Синхронізація митних даних з зовнішніх джерел.
 
     Запускається щоденно о 02:00 (beat schedule).
     """
@@ -68,8 +65,7 @@ def sync_customs_data_task() -> dict:
 
 @celery_app.task(name="sync.sanctions_lists")
 def sync_sanctions_lists_task() -> dict:
-    """
-    Оновлення санкційних списків.
+    """Оновлення санкційних списків.
 
     Джерела: РНБО, EU, OFAC, UN.
     """
@@ -85,8 +81,7 @@ def sync_sanctions_lists_task() -> dict:
 
 @celery_app.task(name="reports.generate_weekly")
 def generate_weekly_report_task() -> dict:
-    """
-    Генерація тижневого аналітичного звіту.
+    """Генерація тижневого аналітичного звіту.
 
     Включає: ТОП-товари, аномалії, прогнози.
     """

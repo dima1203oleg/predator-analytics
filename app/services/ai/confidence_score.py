@@ -1,12 +1,10 @@
-"""
-Confidence Score Calculator (Phase 5 — SM Edition).
+"""Confidence Score Calculator (Phase 5 — SM Edition).
 
 Implements §9.8 formula:
 confidence = 0.30·completeness + 0.20·stability + 0.20·accuracy + 0.15·variance + 0.15·drift
 """
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
-
 
 WEIGHTS: dict[str, float] = {
     "completeness": 0.30,
@@ -51,7 +49,7 @@ class ConfidenceScoreCalculator:
                 "variance": {"value": variance, "weight": self.weights["variance"]},
                 "drift": {"value": drift, "weight": self.weights["drift"]},
             },
-            "calculated_at": datetime.now(timezone.utc).isoformat(),
+            "calculated_at": datetime.now(UTC).isoformat(),
         }
 
     def get_config(self) -> dict[str, Any]:

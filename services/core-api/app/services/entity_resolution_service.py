@@ -9,7 +9,6 @@
 - TZ §3.2: Merge/split logic для дублікатів
 """
 from typing import Any
-from uuid import uuid4
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -71,7 +70,7 @@ class EntityResolutionService:
 
         # Пошук за нормалізованою назвою (fuzzy)
         if name and not candidates:
-            normalized = normalize_company_name(name)
+            normalize_company_name(name)
             # Беремо останні N компаній для fuzzy-порівняння
             # У production тут має бути vector search або OpenSearch
             stmt = select(
@@ -174,6 +173,7 @@ class EntityResolutionService:
 
         Returns:
             ResolutionResult з UEID, is_new, match_type, confidence
+
         """
         candidates = await EntityResolutionService._load_company_candidates(
             db, name=name, edrpou=edrpou,
@@ -244,6 +244,7 @@ class EntityResolutionService:
 
         Returns:
             Список ResolutionResult у тому ж порядку
+
         """
         results: list[ResolutionResult] = []
 

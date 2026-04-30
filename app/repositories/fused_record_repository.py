@@ -3,14 +3,15 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import TYPE_CHECKING, Any
 import uuid
 
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.v55.orm.fused_record import FusedRecordORM
 
+if TYPE_CHECKING:
+    from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger("predator.repo.fused_record")
 
@@ -38,12 +39,13 @@ class FusedRecordRepository:
         quality_score: float,
     ) -> FusedRecordORM:
         """Save a new FusedRecord.
-        
+
         Returns:
             The created FusedRecordORM
+
         """
         parsed_ueid = uuid.UUID(str(ueid)) if isinstance(ueid, str) else ueid
-        
+
         record = FusedRecordORM(
             ueid=parsed_ueid,
             source=source,
@@ -52,10 +54,10 @@ class FusedRecordRepository:
             fingerprint=fingerprint,
             quality_score=quality_score,
         )
-        
+
         self.session.add(record)
         await self.session.flush()
-        
+
         logger.debug(f"Saved fused record for UEID {ueid} from {source}")
         return record
 

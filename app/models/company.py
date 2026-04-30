@@ -1,5 +1,4 @@
-"""
-🏢 Моделі компаній — PREDATOR Analytics v4.1.
+"""🏢 Моделі компаній — PREDATOR Analytics v4.1.
 
 SQLAlchemy ORM для зберігання інформації про компанії,
 їх власників, директорів, санкційні записи та зв'язки.
@@ -11,13 +10,13 @@ from datetime import datetime
 from uuid import uuid4
 
 from sqlalchemy import (
+    JSON,
     Boolean,
     Column,
     DateTime,
     Float,
     ForeignKey,
     Integer,
-    JSON,
     String,
     Text,
 )

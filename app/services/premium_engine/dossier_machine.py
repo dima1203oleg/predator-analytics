@@ -1,9 +1,8 @@
-"""
-Premium Engine: Dossier Machine (Phase 9 — SM Edition).
+"""Premium Engine: Dossier Machine (Phase 9 — SM Edition).
 
 Generates structured dossiers (PDF/DOCX) for Enterprise/Government clients.
 """
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 
@@ -17,7 +16,7 @@ class DossierMachine:
         """Генерувати звіт для компанії."""
         if format_type not in self.supported_formats:
             return {"error": f"Unsupported format: {format_type}"}
-            
+
         return {
             "status": "generated",
             "ueid": ueid,
@@ -30,7 +29,7 @@ class DossierMachine:
                 "Sanctions & Alerts",
             ],
             "file_url": f"s3://predator-exports/{ueid}-dossier-{datetime.now().strftime('%Y%m%d')}.{format_type}",
-            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "generated_at": datetime.now(UTC).isoformat(),
         }
 
     def get_templates(self) -> list[dict[str, str]]:

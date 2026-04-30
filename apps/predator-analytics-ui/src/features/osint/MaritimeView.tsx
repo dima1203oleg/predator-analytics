@@ -1,5 +1,5 @@
 /**
- * 🌊 MARITIME INTELLIGENCE // МО СЬКИЙ СУВЕ ЕН | v61.0-ELITE
+ * 🌊 MARITIME INTELLIGENCE // МОРСЬКИЙ СУВЕРЕН | v61.0-ELITE
  * PREDATOR Analytics — Global Maritime Traffic & Risk Intelligence
  * 
  * Моніторинг морського трафіку, AIS-трекінг суден та аналіз портів.
@@ -39,7 +39,7 @@ import {
 
 const RiskMeter: React.FC<{ score: number; size?: 'sm' | 'md' }> = ({ score, size = 'md' }) => {
     const color = score > 80 ? '#f43f5e' : score > 60 ? '#f59e0b' : score > 40 ? '#3b82f6' : '#10b981';
-    const label = score > 80 ? 'КРИТИЧНИЙ' : score > 60 ? 'ПІДВИЩЕНИЙ' : score > 40 ? 'ПОМІ НИЙ' : 'НИЗЬКИЙ';
+    const label = score > 80 ? 'КРИТИЧНИЙ' : score > 60 ? 'ПІДВИЩЕНИЙ' : score > 40 ? 'ПОМІРНИЙ' : 'НИЗЬКИЙ';
 
     return (
         <div className="w-full space-y-2">
@@ -205,7 +205,7 @@ export default function MaritimeView() {
                      stats={[
                        { label: 'АКТИВНІ_СУДНА', value: String(vessels.length), icon: <Ship size={14} />, color: 'primary' },
                        { label: 'КРИТИЧНИЙ_РИЗИК', value: String(vessels.filter(v => v.risk_score > 80).length), icon: <Siren size={14} />, color: 'danger', animate: true },
-                       { label: 'ПО ТИ_В_ ОБОТІ', value: String(ports.length), icon: <Anchor size={14} />, color: 'success' }
+                       { label: 'ПОРТИ_В_РОБОТІ', value: String(ports.length), icon: <Anchor size={14} />, color: 'success' }
                      ]}
                      actions={
                        <div className="flex gap-4">
@@ -213,7 +213,7 @@ export default function MaritimeView() {
                              <RefreshCcw size={24} />
                           </button>
                           <button className="px-8 py-5 bg-blue-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-blue-600 shadow-2xl transition-all flex items-center gap-4">
-                             <Radar size={18} /> СКАНУВАТИ_АКВАТО ІЮ
+                             <Radar size={18} /> СКАНУВАТИ_АКВАТОРІЮ
                           </button>
                        </div>
                      }

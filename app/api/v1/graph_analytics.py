@@ -1,12 +1,12 @@
-"""
-Graph Service API (Phase 9 — SM Edition).
+"""Graph Service API (Phase 9 — SM Edition).
 
 Endpoints for Graph Analysis, Communities, and Centrality.
 """
-from fastapi import APIRouter
 from typing import Any
 
-from app.services.graph_engine import CommunityDetection, CentralityEngine
+from fastapi import APIRouter
+
+from app.services.graph_engine import CentralityEngine, CommunityDetection
 
 router = APIRouter(prefix="/graph-v2", tags=["Graph Service & Analytics"])
 

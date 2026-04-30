@@ -1,12 +1,10 @@
+import logging
 import os
 import uuid
-import logging
-from datetime import datetime
-from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Request, Response
-from fastapi.middleware.cors import CORSMiddleware
+
 from confluent_kafka import Producer
-import json
-import asyncio
+from fastapi import FastAPI, File, Form, HTTPException, Request, Response, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
 
 # Assuming libs is added to PYTHONPATH in docker/deployment
 from libs.core.schemas.events import RawIngestionEvent
@@ -83,7 +81,7 @@ async def tus_create(request: Request):
 
     job_id = str(uuid.uuid4())
     # In a real app, we save metadata to Redis here
-    
+
     response = Response(status_code=201)
     response.headers["Tus-Resumable"] = "1.0.0"
     response.headers["Location"] = f"/upload/tus/{job_id}"
@@ -95,16 +93,16 @@ async def tus_patch(request: Request, job_id: str):
     upload_offset = request.headers.get("Upload-Offset")
     if upload_offset is None:
         raise HTTPException(status_code=400, detail="Upload-Offset header missing")
-    
+
     # Read chunk
     body = await request.body()
     # In a real app, append body to file on disk or MinIO at offset
-    
+
     new_offset = int(upload_offset) + len(body)
-    
+
     # Check if complete (mock logic)
     upload_length = request.headers.get("Upload-Length", new_offset) # Fallback for mock
-    
+
     if new_offset >= int(upload_length):
         # MOCK: Trigger Job Completion
         await finalize_upload(job_id, "mock_tenant", "excel", f"minio://uploads/{job_id}.xlsx", "mock_file.xlsx")
@@ -127,9 +125,9 @@ async def upload_direct(
     job_id = str(uuid.uuid4())
     # Save to MinIO here
     target_uri = f"minio://uploads/{tenant_id}/{job_id}_{file.filename}"
-    
+
     await finalize_upload(job_id, tenant_id, source_type, target_uri, file.filename)
-    
+
     return {
         "job_id": job_id,
         "status": "accepted",
@@ -140,7 +138,7 @@ async def finalize_upload(job_id: str, tenant_id: str, source_type: str, uri: st
     if not kafka_producer:
         logger.error("Kafka producer not configured, cannot send event")
         return
-        
+
     event = RawIngestionEvent(
         job_id=job_id,
         tenant_id=tenant_id,
@@ -148,7 +146,7 @@ async def finalize_upload(job_id: str, tenant_id: str, source_type: str, uri: st
         source_uri=uri,
         metadata={"original_filename": original_filename}
     )
-    
+
     try:
         kafka_producer.produce(
             RAW_DATA_TOPIC,

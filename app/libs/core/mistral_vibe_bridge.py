@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """
 🔋 MISTRAL VIBE BRIDGE - Sovereign Coding Adapter
 ================================================
@@ -20,7 +19,6 @@ import logging
 import os
 from pathlib import Path
 from typing import Any
-
 
 logger = logging.getLogger("mistral_vibe_bridge")
 

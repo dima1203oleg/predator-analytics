@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """
 🎨 AZR UI ARCHITECT - Autonomous UX Evolution
 ============================================
@@ -14,7 +13,6 @@ import logging
 from pathlib import Path
 import time
 from typing import Any
-
 
 logger = logging.getLogger("azr_ui_architect")
 

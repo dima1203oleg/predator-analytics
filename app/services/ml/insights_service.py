@@ -7,11 +7,11 @@ Automated discovery of market opportunities, anomalies, and risks.
 Uses statistical analysis and rule-engines to generate actionable intelligence.
 """
 
-import logging
-import uuid
-from datetime import datetime, UTC
-from typing import List, Dict, Any, Optional
+from datetime import UTC, datetime
 from enum import StrEnum
+import logging
+from typing import Any
+import uuid
 
 logger = logging.getLogger(__name__)
 
@@ -55,7 +55,7 @@ class AIInsight:
         self.actionable = actionable
         self.actions = actions or []
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "id": self.id,
             "type": self.type,
@@ -77,9 +77,8 @@ class InsightsService:
         logger.info("InsightsService initialized")
 
     async def generate_market_insights(self, market_data: list[dict[str, Any]] | None = None) -> list[AIInsight]:
-        """
-        Analyzes market data to find insights.
-        
+        """Analyzes market data to find insights.
+
         Logic:
         1. Price Anomaly Detection (Z-score > 2.0)
         2. Market Concentration (HHI index)
@@ -124,27 +123,27 @@ class InsightsService:
 
         return insights
 
-    def _analyze_prices(self, data: List[Dict[str, Any]]) -> Optional[AIInsight]:
+    def _analyze_prices(self, data: list[dict[str, Any]]) -> AIInsight | None:
         """Simple statistical analysis for price deviations."""
         try:
             prices = [float(d.get('price', 0)) for d in data if d.get('price')]
             if len(prices) < 5:
                 return None
-                
+
             total_price = sum(prices)
             mean = total_price / len(prices)
-            
+
             if mean <= 0:
                 return None
 
             # Find low prices
             low_prices = [p for p in prices if p < mean * 0.7] # 30% below mean
-            
+
             if low_prices:
                 min_low = min(low_prices)
                 diff_percent = abs((min_low - mean) / mean)
                 savings = mean - min_low
-                
+
                 insight_id = uuid.uuid4().hex[:8]
                 return AIInsight(
                     id=insight_id,
@@ -158,7 +157,7 @@ class InsightsService:
                 )
         except Exception as e:
             logger.warning(f"Price analysis failed: {e}")
-            
+
         return None
 
 def get_insights_service() -> InsightsService:

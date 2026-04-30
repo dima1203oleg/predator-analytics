@@ -4,14 +4,14 @@
 """
 from collections.abc import AsyncGenerator
 
+import clickhouse_connect
+from clickhouse_connect.driver.client import Client
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
     AsyncSession,
     async_sessionmaker,
     create_async_engine,
 )
-import clickhouse_connect
-from clickhouse_connect.driver.client import Client
 
 from app.config import get_settings
 

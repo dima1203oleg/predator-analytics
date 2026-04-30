@@ -3,15 +3,17 @@
 from __future__ import annotations
 
 import logging
+from typing import TYPE_CHECKING
 import uuid
-from typing import Optional
 
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.v55.orm.behavioral_score import BehavioralScoreORM
-from app.engines.behavioral import BehavioralScore
 
+if TYPE_CHECKING:
+    from sqlalchemy.ext.asyncio import AsyncSession
+
+    from app.engines.behavioral import BehavioralScore
 
 logger = logging.getLogger("predator.repo.behavioral")
 
@@ -48,7 +50,7 @@ class BehavioralRepository:
         )
         return score_orm
 
-    async def get_latest_for_ueid(self, ueid: str | uuid.UUID) -> Optional[BehavioralScoreORM]:
+    async def get_latest_for_ueid(self, ueid: str | uuid.UUID) -> BehavioralScoreORM | None:
         """Fetch the most recent behavioral score for a given UEID."""
         parsed_ueid = uuid.UUID(str(ueid)) if isinstance(ueid, str) else ueid
 

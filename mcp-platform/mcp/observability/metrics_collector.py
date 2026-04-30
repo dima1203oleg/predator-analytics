@@ -1,10 +1,10 @@
 """Metrics Collector для збору та експорту метрик."""
 from __future__ import annotations
 
-from typing import Any, Optional
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
+from typing import Any
 
 
 class MetricType(Enum):

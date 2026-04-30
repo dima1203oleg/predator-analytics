@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """E2E Testing API Router.
 
 Provides endpoints for Cypress E2E tests:
@@ -18,7 +17,6 @@ from typing import Any
 
 from fastapi import APIRouter, BackgroundTasks, HTTPException
 from pydantic import BaseModel
-
 
 logger = logging.getLogger("api.e2e")
 

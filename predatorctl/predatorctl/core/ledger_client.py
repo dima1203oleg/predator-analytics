@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-import json
 import logging
-from typing import Any, Dict, Optional
+from typing import Any
 
 import requests
 
@@ -11,6 +10,7 @@ class LedgerClient:
     """Client for interacting with the Truth Ledger Service.
     Used by predatorctl and other agents.
     """
+
     def __init__(self, base_url: str = "http://localhost:8092"):
         self.base_url = base_url
         self.logger = logging.getLogger("ledger-client")

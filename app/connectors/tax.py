@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Tax Connector - Ukrainian Tax Authority Data
 DFS/Tax Service open data.
 """
@@ -8,7 +7,6 @@ import logging
 from typing import Any
 
 from .base import BaseConnector, ConnectorResult
-
 
 logger = logging.getLogger(__name__)
 
@@ -37,6 +35,7 @@ class TaxConnector(BaseConnector):
             query: Company name or EDRPOU
             limit: Maximum results
             dataset: Which dataset to search (tax_debtors, vat_payers)
+
         """
         dataset_id = self.datasets.get(dataset, self.datasets["tax_debtors"])
 

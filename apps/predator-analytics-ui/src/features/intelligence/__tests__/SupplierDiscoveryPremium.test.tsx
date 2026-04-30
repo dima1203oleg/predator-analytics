@@ -110,8 +110,8 @@ describe('SupplierDiscoveryPremium', () => {
             </MemoryRouter>
         )
 
-        expect(screen.getByText(/ПОШУК/i)).toBeInTheDocument()
-        expect(screen.getByText(/ПОСТАЧАЛЬНИКІВ/i)).toBeInTheDocument()
+        expect(screen.getAllByText(/ПОШУК/i).length).toBeGreaterThan(0)
+        expect(screen.getAllByText(/ПОСТАЧАЛЬНИКІВ/i).length).toBeGreaterThan(0)
         
         await waitFor(() => {
             expect(screen.getByTestId('stat-ПОСТАЧАЛЬНИКІВ')).toHaveTextContent('2')

@@ -1,24 +1,24 @@
 """PREDATOR Sovereign Circuit Breaker (v56.5).
 HR-08: Ресурсний контроль та стійкість до відмов.
 """
-import asyncio
+from collections.abc import Callable
+from enum import StrEnum
+from functools import wraps
 import logging
 import time
-from enum import Enum
-from functools import wraps
-from typing import Any, Callable, TypeVar
+from typing import Any, TypeVar
 
 T = TypeVar("T")
 logger = logging.getLogger(__name__)
 
-class CircuitState(str, Enum):
+class CircuitState(StrEnum):
     CLOSED = "closed"
     OPEN = "open"
     HALF_OPEN = "half_open"
 
 class CircuitBreaker:
     """Запобіжник для запобігання каскадним відмовам."""
-    
+
     def __init__(
         self,
         name: str,
@@ -30,7 +30,7 @@ class CircuitBreaker:
         self.failure_threshold = failure_threshold
         self.recovery_timeout = recovery_timeout
         self.expected_exception = expected_exception
-        
+
         self.state = CircuitState.CLOSED
         self.failures = 0
         self.last_failure_time: float | None = None

@@ -1,10 +1,9 @@
-"""
-OpenSearch Infrastructure Service (Phase 2C — SM Edition).
+"""OpenSearch Infrastructure Service (Phase 2C — SM Edition).
 
 SM-optimized: 2GB RAM, JVM heap 1GB,
 rollover per day, 3 month retention.
 """
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 
@@ -39,7 +38,7 @@ class OpenSearchInfraManager:
             "indices": len(self.indices),
             "rollover_policy": self.config["rollover_policy"],
             "retention_days": self.config["retention_days"],
-            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(UTC).isoformat(),
         }
 
     def list_indices(self) -> list[str]:

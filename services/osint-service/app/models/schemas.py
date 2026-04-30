@@ -1,13 +1,13 @@
 """Pydantic schemas для OSINT Service."""
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 from uuid import UUID
 
 from pydantic import BaseModel, Field
 
 
-class ScanType(str, Enum):
+class ScanType(StrEnum):
     """Типи OSINT сканувань."""
 
     DOMAIN = "domain"
@@ -17,7 +17,7 @@ class ScanType(str, Enum):
     CUSTOM = "custom"
 
 
-class ScanStatus(str, Enum):
+class ScanStatus(StrEnum):
     """Статуси сканування."""
 
     QUEUED = "queued"
@@ -27,7 +27,7 @@ class ScanStatus(str, Enum):
     CANCELLED = "cancelled"
 
 
-class Severity(str, Enum):
+class Severity(StrEnum):
     """Рівні критичності."""
 
     LOW = "low"

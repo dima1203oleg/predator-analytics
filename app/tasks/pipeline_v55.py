@@ -7,9 +7,9 @@
 from __future__ import annotations
 
 import asyncio
+from datetime import UTC, datetime
 import json
 import logging
-from datetime import UTC, datetime
 from typing import Any
 
 from celery import shared_task
@@ -58,6 +58,7 @@ def run_v55_ingestion_task(
         records: Список сирих записів.
         source: Джерело даних (customs | tax | edr | ...).
         entity_type: Тип сутності.
+
     """
     r = None
     job: dict[str, Any] = {

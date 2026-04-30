@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Predator Analytics v45.0 - Self-Improving System Routes
 Endpoints for system monitoring, optimizer control, and auto-improvement.
 """
@@ -13,7 +12,6 @@ from typing import Any
 
 from fastapi import APIRouter, HTTPException, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel
-
 
 try:
     import psutil
@@ -45,14 +43,12 @@ from app.services.ops_service import ops_service
 from app.services.training_status_service import training_status_service
 from app.services.triple_agent_service import triple_agent_service
 
-
 logger = get_logger("v45_routes")
 
 v45_router = APIRouter(prefix="/v45", tags=["v45-self-improvement"])
 
 from app.api.routers import etl as etl_router
 from app.api.routers import graph as graph_router
-
 
 v45_router.include_router(etl_router.router)
 v45_router.include_router(graph_router.router)
@@ -594,6 +590,7 @@ async def trigger_optimizer(request: TriggerRequest):
 
     Returns:
         Triggered cycle info
+
     """
     cycle_id = f"cycle_{datetime.now(UTC).strftime('%Y%m%d_%H%M%S')}"
 
@@ -1974,7 +1971,11 @@ async def get_prometheus_metrics():
     try:
         from fastapi.responses import Response
 
-        from app.agents.orchestrator.metrics import get_content_type, get_metrics, metrics_collector
+        from app.agents.orchestrator.metrics import (
+            get_content_type,
+            get_metrics,
+            metrics_collector,
+        )
         from app.agents.orchestrator.superintelligence import get_superintelligence
 
         # Update metrics from orchestrator

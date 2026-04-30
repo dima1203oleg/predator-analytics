@@ -138,7 +138,7 @@ class TradeFlowAnalyzerTool(BaseTool):
 
     async def _analyze_country_trade(self, country: str, options: dict) -> dict:
         """Аналіз торгівлі країни."""
-        partner = options.get("partner_country")
+        options.get("partner_country")
 
         # Симуляція даних (в реальності — UN Comtrade API)
         return {
@@ -234,7 +234,7 @@ class TradeFlowAnalyzerTool(BaseTool):
         suspicious = []
 
         # Перевіряємо топ партнерів на предмет транзитних схем
-        export_partners = data.get("top_export_partners", [])
+        data.get("top_export_partners", [])
         import_partners = data.get("top_import_partners", [])
 
         for route in self.SUSPICIOUS_ROUTES:

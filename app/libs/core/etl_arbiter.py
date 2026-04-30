@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Arbiter for Constitutional Control of ETL Pipeline - AZR Engine v45-S."""
 from datetime import datetime
 import os
@@ -8,7 +7,6 @@ from typing import Any
 
 from app.libs.core.etl_state_machine import ETLState
 from app.libs.core.structured_logger import get_logger
-
 
 logger = get_logger("etl.arbiter")
 

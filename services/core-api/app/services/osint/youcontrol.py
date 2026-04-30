@@ -1,13 +1,15 @@
 import logging
-from typing import Any, Optional
+from typing import Any
+
 import httpx
+
 from app.config import get_settings
 
 logger = logging.getLogger(__name__)
 
 class YouControlCollector:
     """Сервіс для прямого збору даних з YouControl API для Core API."""
-    
+
     def __init__(self):
         settings = get_settings()
         self.api_key = settings.YOUCONTROL_API_KEY
@@ -32,14 +34,14 @@ class YouControlCollector:
                 response.raise_for_status()
                 return response.json()
             except Exception as e:
-                logger.error(f"YouControl Collector failed: {str(e)}")
+                logger.error(f"YouControl Collector failed: {e!s}")
                 return {"error": "Source connection failed", "edrpou": edrpou}
 
     def _generate_mock_dossier(self, edrpou: str) -> dict[str, Any]:
         """Генерація якісних mock-даних для тестування UI."""
         return {
             "edrpou": edrpou,
-            "name": f"ТОВ 'ПРЕДАТОР ОСІНТ ГРУП'",
+            "name": "ТОВ 'ПРЕДАТОР ОСІНТ ГРУП'",
             "status": "активно",
             "risk_level": "low",
             "registration_date": "2020-01-01",

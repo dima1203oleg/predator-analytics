@@ -1,10 +1,10 @@
-"""
-Redis Sentinel Infrastructure API (Phase 2E — SM Edition).
+"""Redis Sentinel Infrastructure API (Phase 2E — SM Edition).
 
 Endpoints for Redis Sentinel status and memory statistics.
 """
-from fastapi import APIRouter
 from typing import Any
+
+from fastapi import APIRouter
 
 from app.services.infrastructure.cache.redis_sentinel import RedisSentinelManager
 

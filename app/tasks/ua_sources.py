@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """UA Sources - Data Source Tasks
 Background tasks for Ukrainian data source operations.
 """

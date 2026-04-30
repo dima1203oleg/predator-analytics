@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import asyncio
-from collections.abc import Callable, Generator
 from datetime import UTC, datetime
+from typing import TYPE_CHECKING
 from unittest.mock import AsyncMock
 
 from fastapi import FastAPI
@@ -13,6 +13,9 @@ from app.services.factory_runtime import (
     cancel_factory_improvement_task,
     ensure_factory_improvement_task,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Callable, Generator
 
 
 class DummyTask:

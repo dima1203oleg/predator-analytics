@@ -1,9 +1,7 @@
 from __future__ import annotations
 
-
 """ETL Endpoints."""
 from fastapi import APIRouter
-
 
 router = APIRouter()
 

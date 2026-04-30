@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """
 ⚡ AZR SYSTEM DEFIBRILLATOR v46.0.0
 ==================================
@@ -11,12 +10,9 @@ Python 3.12 | Sovereign Life Signal
 """
 
 import asyncio
-from datetime import datetime
 import logging
-import os
 from pathlib import Path
 import sys
-
 
 # Setup project path
 PROJECT_ROOT = Path("/Users/dima-mac/Documents/Predator_21")
@@ -29,7 +25,6 @@ from libs.core.data_synth import get_synthesizer
 from libs.core.neural_mesh import get_neural_mesh
 from libs.core.project_cortex import get_project_cortex
 from libs.core.voice_cortex import get_voice_cortex
-
 
 logging.basicConfig(
     level=logging.INFO,
@@ -56,7 +51,7 @@ async def enliven():
     await mesh.sync_nodes()
 
     logger.info("🎤 Normalizing Voice Cortex frequencies...")
-    voice = get_voice_cortex()
+    get_voice_cortex()
 
     # 4. Trigger First Evolution Cycle
     logger.info("🧪 Igniting Data Synthesis Forge...")

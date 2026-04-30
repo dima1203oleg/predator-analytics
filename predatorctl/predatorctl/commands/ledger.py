@@ -1,11 +1,9 @@
 from __future__ import annotations
 
 from rich.console import Console
-from rich.table import Table
 import typer
 
 from predatorctl.core.ledger_client import LedgerClient
-
 
 app = typer.Typer(help="Truth Ledger verification")
 console = Console()

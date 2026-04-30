@@ -3,7 +3,6 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING, Any
 
-
 try:
     import aio_pika
 except ImportError:
@@ -11,7 +10,6 @@ except ImportError:
 
 from app.libs.core.config import settings
 from app.libs.core.structured_logger import get_logger
-
 
 if TYPE_CHECKING:
     from collections.abc import Awaitable, Callable

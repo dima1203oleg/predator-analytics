@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Redis Core Module
 Shared Redis connection management for Predator Analytics.
 """
@@ -9,7 +8,6 @@ import logging
 import redis.asyncio as redis
 
 from .config import settings
-
 
 logger = logging.getLogger("predator.redis")
 

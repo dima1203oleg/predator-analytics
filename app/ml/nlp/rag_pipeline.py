@@ -1,5 +1,4 @@
-"""
-🧠 RAG Pipeline — PREDATOR Analytics v4.1.
+"""🧠 RAG Pipeline — PREDATOR Analytics v4.1.
 
 Retrieval-Augmented Generation для AI Копілота.
 Шукає релевантні документи у Qdrant та формує контекст для LLM.
@@ -40,8 +39,7 @@ class RagContext:
 
 
 class RagPipeline:
-    """
-    RAG Pipeline для AI Копілота.
+    """RAG Pipeline для AI Копілота.
 
     Етапи:
     1. Парсинг запиту (intent detection)
@@ -61,14 +59,14 @@ class RagPipeline:
         self.top_k = top_k
 
     async def retrieve(self, query: str) -> RagContext:
-        """
-        Пошук релевантних документів для запиту.
+        """Пошук релевантних документів для запиту.
 
         Args:
             query: Природномовний запит від користувача
 
         Returns:
             RagContext з знайденими документами
+
         """
         logger.info("RAG пошук", query=query[:100])
 

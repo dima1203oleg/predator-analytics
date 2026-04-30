@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-
 """[DEPRECATED] This module is legacy.
 Please use the microservice in 'apps/telegram-bot'.
 """
 """Telegram Bot Service"""
 import logging
-
 
 logger = logging.getLogger(__name__)
 

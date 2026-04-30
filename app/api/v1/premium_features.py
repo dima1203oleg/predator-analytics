@@ -1,12 +1,12 @@
-"""
-Premium Features API (Phase 9 — SM Edition).
+"""Premium Features API (Phase 9 — SM Edition).
 
 Endpoints for Document Generation, Dossiers, and Macroeconomic Climate.
 """
-from fastapi import APIRouter
 from typing import Any
 
-from app.services.premium_engine import DossierMachine, ClimateIndex
+from fastapi import APIRouter
+
+from app.services.premium_engine import ClimateIndex, DossierMachine
 
 router = APIRouter(prefix="/premium-v2", tags=["Premium Features & Reports"])
 

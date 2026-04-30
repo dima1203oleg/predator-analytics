@@ -5,15 +5,13 @@ from datetime import datetime
 import json
 import logging
 import os
-import sys
 import time
-from typing import Any, Dict, List
+from typing import Any
 import uuid
 
 import aiohttp
 import asyncpg
 from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
-
 
 # Configure logging
 logging.basicConfig(

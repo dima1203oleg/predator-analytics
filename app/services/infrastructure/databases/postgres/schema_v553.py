@@ -1,5 +1,4 @@
-"""
-PREDATOR Analytics v55.3 — Canonical PostgreSQL Schema (§11.1).
+"""PREDATOR Analytics v55.3 — Canonical PostgreSQL Schema (§11.1).
 
 Includes:
 - Multitenancy (RLS via tenants table)
@@ -11,9 +10,8 @@ Includes:
 HR-07: NEVER SELECT * — always specify columns.
 HR-16: WORM tables: UPDATE/DELETE = ERROR.
 """
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
-
 
 # ──────────────────────────────────────────────────────
 # PostgreSQL v55.3 Schema Definition
@@ -354,7 +352,7 @@ def generate_full_schema_sql() -> str:
     parts: list[str] = [
         "-- PREDATOR Analytics v55.3 Canonical Schema",
         f"-- Version: {SCHEMA_VERSION}",
-        f"-- Generated: {datetime.now(timezone.utc).isoformat()}",
+        f"-- Generated: {datetime.now(UTC).isoformat()}",
         "",
         "-- Required extensions",
         "CREATE EXTENSION IF NOT EXISTS pg_trgm;",

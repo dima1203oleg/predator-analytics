@@ -9,10 +9,14 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 from app.connectors.telegram_channel import telegram_channel_connector
-from app.models.ingestion import IngestionJob, IngestionProgress, IngestionResponse, IngestionStatus
+from app.models.ingestion import (
+    IngestionJob,
+    IngestionProgress,
+    IngestionResponse,
+    IngestionStatus,
+)
 from app.services.ingestion_service import IngestionService
 from app.services.telegram_pipeline import get_telegram_pipeline
-
 
 # In a real app, use a real auth dependency. Mocking for now if file doesn't exist
 try:
@@ -88,27 +92,28 @@ async def process_file_async(
         job.progress.stage = "entity_resolution"
         job.progress.message = "Резолюція суб'єктів (UEID)..."
         job.updated_at = datetime.utcnow()
-        
+
+        import hashlib
+
+        from app.core.signal_bus import SignalBus
         from app.libs.core.database import get_db_ctx
+        from app.models.v55.signal import SignalLayer, SignalPriority, V55Signal
         from app.repositories.entity_repository import EntityRepository
         from app.repositories.fused_record_repository import FusedRecordRepository
-        from app.core.signal_bus import SignalBus
-        from app.models.v55.signal import V55Signal, SignalLayer, SignalPriority
-        import hashlib
-        
+
         unique_ueids = set()
-        
+
         if file_type in [".xlsx", ".xls", ".csv"] and records:
             async with get_db_ctx() as db:
                 repo = EntityRepository(db)
                 fused_repo = FusedRecordRepository(db)
                 bus = SignalBus.get_instance()
-                
+
                 for i, record in enumerate(records):
                     # Try to extract company name and edrpou from common column names
                     name = str(record.get("company_name") or record.get("name") or record.get("declarant_name") or "Unknown Entity")
                     edrpou = record.get("edrpou") or record.get("inn")
-                    
+
                     if edrpou:
                         # Clean up numeric representation or float parsing errors
                         try:
@@ -116,18 +121,18 @@ async def process_file_async(
                             edrpou = edrpou_str.zfill(8) if len(edrpou_str) <= 8 else edrpou_str
                         except (ValueError, TypeError):
                             edrpou = str(edrpou).strip()
-                            
-                    entity, is_new = await repo.resolve_or_create(
-                        name=name, 
-                        entity_type="company", 
+
+                    entity, _is_new = await repo.resolve_or_create(
+                        name=name,
+                        entity_type="company",
                         edrpou=edrpou,
                         metadata={"source_file": filename}
                     )
-                    
+
                     record["ueid"] = str(entity.ueid)
                     unique_ueids.add(str(entity.ueid))
-                    
-                    # Store FusedRecord for engines 
+
+                    # Store FusedRecord for engines
                     fprint = hashlib.md5(str(record).encode("utf-8")).hexdigest()
                     await fused_repo.save_record(
                         ueid=entity.ueid,
@@ -137,14 +142,14 @@ async def process_file_async(
                         fingerprint=fprint,
                         quality_score=0.75,
                     )
-                    
+
                     if i % 100 == 0:
                         job.progress.current_item = i
                         job.progress.message = f"Резолюція UEID: {i}/{len(records)}"
                         await db.flush()
-                        
+
                 await db.commit()
-                
+
                 # Pre-emit `data.ingested` signals
                 for u in unique_ueids:
                     sig = V55Signal(
@@ -158,7 +163,7 @@ async def process_file_async(
                         summary=f"New data ingested from {filename}"
                     )
                     await bus.emit(sig, session=db)
-                
+
                 await db.commit()
 
         # Phase 3: Chunking

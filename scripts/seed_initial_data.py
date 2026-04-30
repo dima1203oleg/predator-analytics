@@ -6,11 +6,9 @@ import uuid
 
 import asyncpg
 
-
 DATABASE_URL = "postgresql://predator:predator_password@localhost:5432/predator_db"
 
 async def seed():
-    print("🌱 Seeding initial data...")
     conn = await asyncpg.connect(DATABASE_URL)
 
     tenant_id = uuid.UUID("00000000-0000-0000-0000-000000000000") # Admin tenant
@@ -32,7 +30,6 @@ async def seed():
         ON CONFLICT DO NOTHING
     """, uuid.uuid4(), tenant_id, doc_id, "Система Predator v45 | Neural Analytics.0 успішно розгорнута на сервері NVIDIA.", "paraphrase")
 
-    print("✅ Seed complete.")
     await conn.close()
 
 if __name__ == "__main__":

@@ -1,5 +1,4 @@
-"""
-📦 Моделі товарів (УКТЗЕД) — PREDATOR Analytics v4.1.
+"""📦 Моделі товарів (УКТЗЕД) — PREDATOR Analytics v4.1.
 
 SQLAlchemy ORM для зберігання товарних позицій
 за Українською класифікацією товарів ЗЕД.
@@ -11,11 +10,11 @@ from datetime import datetime
 from uuid import uuid4
 
 from sqlalchemy import (
+    JSON,
     Column,
     DateTime,
     Float,
     Integer,
-    JSON,
     String,
     Text,
 )

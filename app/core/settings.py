@@ -1,5 +1,4 @@
-"""
-Канонічна конфігурація PREDATOR Analytics v4.2.0.
+"""Канонічна конфігурація PREDATOR Analytics v4.2.0.
 
 Всі налаштування зчитуються зі змінних середовища.
 Типізація обов'язкова (pydantic-settings v2).
@@ -14,7 +13,7 @@ from __future__ import annotations
 from functools import lru_cache
 from typing import Literal
 
-from pydantic import AnyHttpUrl, Field
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -106,8 +105,7 @@ class Settings(BaseSettings):
 
 @lru_cache
 def get_settings() -> Settings:
-    """
-    Повертає синглтон налаштувань.
+    """Повертає синглтон налаштувань.
 
     Кешується через @lru_cache для уникнення повторного читання .env.
     """

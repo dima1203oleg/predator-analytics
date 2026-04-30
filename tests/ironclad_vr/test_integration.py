@@ -1,6 +1,7 @@
-import pytest
+
 import httpx
-import asyncio
+import pytest
+
 from predator_common.logging import get_logger
 
 logger = get_logger("ironclad-vr")
@@ -34,7 +35,7 @@ async def test_vr_03_advanced_graph_algorithms():
         # Тест UBO (Ultimate Beneficial Owner)
         ubo_resp = await client.get(f"{GRAPH_SERVICE_URL}/api/v2/graph/entities/ubo/12345678")
         assert ubo_resp.status_code in [200, 404] # 404 ок, якщо даних немає, головне що API працює
-        
+
         # Тест Cartels
         cartel_resp = await client.get(f"{GRAPH_SERVICE_URL}/api/v2/graph/clusters/cartels")
         assert cartel_resp.status_code == 200
@@ -52,5 +53,5 @@ async def test_vr_04_data_ingestion_pipeline():
         assert response.status_code in [200, 201, 202]
 
 def run_vr_suite():
-    print("🚀 Starting PREDATOR v55.1 Ironclad VR Suite...")
+    pass
     # Logic to trigger pytest and capture results

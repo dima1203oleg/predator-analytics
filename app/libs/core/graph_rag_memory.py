@@ -222,7 +222,7 @@ class KnowledgeGraph:
 
     def __init__(self, storage: Any):
         from app.libs.core.storage import FileStorageProvider, StorageProvider
-        
+
         if isinstance(storage, (str, Path)):
             self.storage = FileStorageProvider(Path(storage))
         elif isinstance(storage, StorageProvider):
@@ -514,7 +514,7 @@ class KnowledgeGraph:
 
     def get_stats(self) -> dict[str, Any]:
         """Get graph statistics."""
-        type_counts = {t.value: len(ids) for t, ids in self._by_type.items()}
+        {t.value: len(ids) for t, ids in self._by_type.items()}
 
         return {
             "nodes": len(self._nodes),
@@ -546,14 +546,11 @@ def get_knowledge_graph(storage: Any = "/tmp/azr_logs") -> KnowledgeGraph:
 # ============================================================================
 
 if __name__ == "__main__":
-    print("🧠 GRAPH RAG MEMORY - Self-Test")
-    print("=" * 60)
 
     # Create knowledge graph
     kg = KnowledgeGraph("/tmp/azr_kg_test")
 
     # Record some decisions
-    print("\n📝 Recording decisions...")
 
     decision1 = kg.record_decision(
         "Масштабування API Gateway",
@@ -576,19 +573,15 @@ if __name__ == "__main__":
         "Запит заблоковано, IP додано в blacklist",
     )
 
-    print("  ✅ Recorded 3 decisions")
 
     # Link decisions
     kg.add_edge(decision1, decision2, EdgeType.PRECEDED_BY)
 
     # Find similar situations
-    print("\n🔍 Finding similar situations to 'high CPU usage'...")
     similar = kg.find_similar("high CPU usage memory", limit=3)
-    for node, sim in similar:
-        print(f"  • [{node.node_type.value}] {node.label} (sim={sim:.3f})")
+    for _node, _sim in similar:
+        pass
 
     # Get explanation
-    print(f"\n{kg.explain_decision(decision1)}")
 
     # Stats
-    print(f"\n📊 Stats: {json.dumps(kg.get_stats(), indent=2)}")

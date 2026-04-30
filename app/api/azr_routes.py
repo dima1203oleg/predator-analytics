@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """═══════════════════════════════════════════════════════════════
 AZR API Routes
 Predator Analytics v45
@@ -32,7 +31,6 @@ from app.libs.azr import (
     AZRRiskAssessmentService,
     get_constitution_summary,
 )
-
 
 logger = logging.getLogger("azr.api")
 

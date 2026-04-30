@@ -1,10 +1,10 @@
-"""
-Qdrant Vector DB Infrastructure API (Phase 2E — SM Edition).
+"""Qdrant Vector DB Infrastructure API (Phase 2E — SM Edition).
 
 Endpoints for Qdrant collections and cluster status.
 """
-from fastapi import APIRouter
 from typing import Any
+
+from fastapi import APIRouter
 
 from app.services.infrastructure.databases.qdrant.qdrant_manager import QdrantInfraManager
 

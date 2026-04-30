@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """RAG Router - Retrieval Augmented Generation."""
 from typing import Any
 
@@ -8,7 +7,6 @@ from fastapi import APIRouter
 
 from app.services.ai_engine import ai_engine
 from app.services.rag import rag_service
-
 
 router = APIRouter(prefix="/rag", tags=["RAG"])
 

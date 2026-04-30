@@ -10,7 +10,6 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
-
 # revision identifiers
 revision = "004_v56_5_scd_type2"
 down_revision = "003_v56_5_canonical_tables"
@@ -28,7 +27,7 @@ def upgrade() -> None:
     op.add_column("companies", sa.Column("valid_from", sa.DateTime(timezone=True), nullable=True))
     op.add_column("companies", sa.Column("valid_to", sa.DateTime(timezone=True), nullable=True))
     op.add_column("companies", sa.Column("is_current", sa.Boolean(), server_default=sa.text("true"), nullable=True))
-    
+
     # ── 3. PERSONS: Додавання нових колонок (Nullable) ──
     op.add_column("persons", sa.Column("business_key", postgresql.UUID(as_uuid=True), nullable=True))
     op.add_column("persons", sa.Column("valid_from", sa.DateTime(timezone=True), nullable=True))
@@ -44,7 +43,7 @@ def upgrade() -> None:
     op.alter_column("companies", "business_key", nullable=False)
     op.alter_column("companies", "valid_from", nullable=False)
     op.alter_column("companies", "is_current", nullable=False)
-    
+
     op.alter_column("persons", "business_key", nullable=False)
     op.alter_column("persons", "valid_from", nullable=False)
     op.alter_column("persons", "is_current", nullable=False)

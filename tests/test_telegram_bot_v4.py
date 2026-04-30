@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 #!/usr/bin/env python3
 """Тестування Telegram Bot V4.0."""
 
@@ -12,7 +11,6 @@ import sys
 from unittest.mock import AsyncMock
 
 import pytest
-
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
@@ -37,9 +35,8 @@ class TestMenuSystem:
             menu = MenuSystem.get_main_menu()
             assert menu is not None
             assert len(menu.keyboard) > 0
-            print("✅ Main menu structure test passed")
         except ImportError:
-            print("⚠️  Skipping menu test - module not available")
+            pass
 
     def test_all_menus_have_back_button(self):
         """Перевірка що всі меню мають кнопку повернення."""
@@ -68,9 +65,8 @@ class TestMenuSystem:
                 )
                 assert has_back, "Menu missing back button"
 
-            print("✅ All menus have back button test passed")
         except ImportError:
-            print("⚠️  Skipping menu back button test - module not available")
+            pass
 
 
 class TestSystemController:
@@ -87,9 +83,8 @@ class TestSystemController:
             assert "CPU" in status
             assert "Memory" in status
             assert "Disk" in status
-            print("✅ System status test passed")
         except ImportError:
-            print("⚠️  Skipping system status test - module not available")
+            pass
 
     @pytest.mark.asyncio
     async def test_get_processes(self):
@@ -100,9 +95,8 @@ class TestSystemController:
             processes = await SystemController.get_processes()
             assert processes is not None
             assert "PROCESSES" in processes
-            print("✅ Processes test passed")
         except ImportError:
-            print("⚠️  Skipping processes test - module not available")
+            pass
 
 
 class TestAIController:
@@ -117,9 +111,8 @@ class TestAIController:
             ai = AIController()
             assert ai is not None
             assert ai.current_model in ["gemini", "groq"]
-            print("✅ AI controller initialization test passed")
         except ImportError:
-            print("⚠️  Skipping AI controller test - module not available")
+            pass
 
     @pytest.mark.asyncio
     async def test_ai_chat_without_keys(self):
@@ -134,9 +127,8 @@ class TestAIController:
 
             response = await ai.chat("Привіт")
             assert "не налаштована" in response or "API" in response
-            print("✅ AI chat without keys test passed")
         except ImportError:
-            print("⚠️  Skipping AI chat test - module not available")
+            pass
 
 
 class TestContextManager:
@@ -162,9 +154,8 @@ class TestContextManager:
             assert context is not None
             assert context.user_id == TEST_USER_ID
             assert isinstance(context.conversation_history, list)
-            print("✅ Context creation test passed")
         except ImportError:
-            print("⚠️  Skipping context test - module not available")
+            pass
 
     @pytest.mark.asyncio
     async def test_add_message_to_context(self):
@@ -183,9 +174,8 @@ class TestContextManager:
             context = await context_mgr.get_context(TEST_USER_ID)
             # Перевірка що повідомлення додано
             assert len(context.conversation_history) > 0
-            print("✅ Add message to context test passed")
         except ImportError:
-            print("⚠️  Skipping add message test - module not available")
+            pass
 
 
 # ==================== INTEGRATION TESTS ====================
@@ -206,11 +196,10 @@ class TestBotIntegration:
 
             bot = Bot(token="test_token")
             assert bot is not None
-            print("✅ Bot initialization test passed")
         except ImportError:
-            print("⚠️  Skipping bot initialization test - module not available")
-        except Exception as e:
-            print(f"⚠️  Bot initialization test skipped: {e}")
+            pass
+        except Exception:
+            pass
 
 
 # ==================== MANUAL TESTS ====================
@@ -218,69 +207,48 @@ class TestBotIntegration:
 
 async def manual_test_system_status():
     """Ручний тест статусу системи."""
-    print("\n" + "=" * 50)
-    print("MANUAL TEST: System Status")
-    print("=" * 50)
 
     try:
         from backend.orchestrator.agents.telegram_bot_v4_advanced import SystemController
 
-        status = await SystemController.get_system_status()
-        print(status)
-        print("✅ Manual system status test completed")
-    except Exception as e:
-        print(f"❌ Error: {e}")
+        await SystemController.get_system_status()
+    except Exception:
+        pass
 
 
 async def manual_test_processes():
     """Ручний тест процесів."""
-    print("\n" + "=" * 50)
-    print("MANUAL TEST: Processes")
-    print("=" * 50)
 
     try:
         from backend.orchestrator.agents.telegram_bot_v4_advanced import SystemController
 
-        processes = await SystemController.get_processes()
-        print(processes)
-        print("✅ Manual processes test completed")
-    except Exception as e:
-        print(f"❌ Error: {e}")
+        await SystemController.get_processes()
+    except Exception:
+        pass
 
 
 async def manual_test_docker():
     """Ручний тест Docker."""
-    print("\n" + "=" * 50)
-    print("MANUAL TEST: Docker")
-    print("=" * 50)
 
     try:
         from backend.orchestrator.agents.telegram_bot_v4_advanced import DockerController
 
-        containers = await DockerController.get_containers()
-        print(containers)
-        print("✅ Manual Docker test completed")
-    except Exception as e:
-        print(f"❌ Error: {e}")
+        await DockerController.get_containers()
+    except Exception:
+        pass
 
 
 async def manual_test_git():
     """Ручний тест Git."""
-    print("\n" + "=" * 50)
-    print("MANUAL TEST: Git")
-    print("=" * 50)
 
     try:
         from backend.orchestrator.agents.telegram_bot_v4_advanced import GitController
 
-        status = await GitController.get_status()
-        print(status)
+        await GitController.get_status()
 
-        log = await GitController.get_log(5)
-        print(log)
-        print("✅ Manual Git test completed")
-    except Exception as e:
-        print(f"❌ Error: {e}")
+        await GitController.get_log(5)
+    except Exception:
+        pass
 
 
 # ==================== MAIN ====================
@@ -288,21 +256,16 @@ async def manual_test_git():
 
 async def run_all_manual_tests():
     """Запустити всі ручні тести."""
-    print("\n🧪 Running Manual Tests...")
 
     await manual_test_system_status()
     await manual_test_processes()
     await manual_test_docker()
     await manual_test_git()
 
-    print("\n" + "=" * 50)
-    print("✅ All manual tests completed!")
-    print("=" * 50)
 
 
 def run_unit_tests():
     """Запустити юніт тести."""
-    print("\n🧪 Running Unit Tests...")
 
     # Menu tests
     test_menu = TestMenuSystem()
@@ -324,7 +287,6 @@ def run_unit_tests():
     asyncio.run(test_context.test_context_creation())
     asyncio.run(test_context.test_add_message_to_context())
 
-    print("\n✅ All unit tests completed!")
 
 
 if __name__ == "__main__":
@@ -340,8 +302,6 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    print("🚀 Telegram Bot V4.0 - Test Suite")
-    print("=" * 50)
 
     if args.mode in ["unit", "all"]:
         run_unit_tests()
@@ -349,4 +309,3 @@ if __name__ == "__main__":
     if args.mode in ["manual", "all"]:
         asyncio.run(run_all_manual_tests())
 
-    print("\n🎉 Testing complete!")

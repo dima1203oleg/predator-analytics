@@ -1,20 +1,19 @@
 import logging
-from typing import Dict, Any, List
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
 class RecommendationEngine:
-    """
-    Recommendation Engine (COMP-068)
-    Provides collaborative filtering or rule-based recommendations 
+    """Recommendation Engine (COMP-068)
+    Provides collaborative filtering or rule-based recommendations
     for business opportunities or supplier alternatives.
     """
+
     def __init__(self):
         pass
 
-    def get_recommendations(self, entity_id: str, context_type: str = "supplier", limit: int = 5) -> List[Dict[str, Any]]:
-        """
-        Mock implementation for providing recommendations based on context.
+    def get_recommendations(self, entity_id: str, context_type: str = "supplier", limit: int = 5) -> list[dict[str, Any]]:
+        """Mock implementation for providing recommendations based on context.
         """
         if context_type == "supplier":
             return [
@@ -29,16 +28,15 @@ class RecommendationEngine:
         return []
 
 class ClusteringService:
-    """
-    Clustering Service (COMP-064)
+    """Clustering Service (COMP-064)
     Groups similar entities or documents using K-Means/DBSCAN.
     """
+
     def __init__(self):
         pass
-        
-    def cluster_entities(self, entity_ids: List[str], features: List[List[float]], n_clusters: int = 3) -> Dict[str, Any]:
-        """
-        Mock implementation for clustering entities based on features.
+
+    def cluster_entities(self, entity_ids: list[str], features: list[list[float]], n_clusters: int = 3) -> dict[str, Any]:
+        """Mock implementation for clustering entities based on features.
         """
         # In a real implementation we would use sklearn.cluster.KMeans here
         result = {}
@@ -47,7 +45,7 @@ class ClusteringService:
             if cluster_id not in result:
                 result[cluster_id] = []
             result[cluster_id].append(eid)
-            
+
         return {
             "num_clusters": n_clusters,
             "clusters": result,

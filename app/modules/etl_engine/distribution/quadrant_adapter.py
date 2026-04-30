@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """
 Quadrant (Qdrant) Distribution Adapter
 
@@ -16,7 +15,6 @@ import uuid
 
 from app.modules.etl_engine.distribution.data_distributor import DistributionResult
 from app.services.qdrant_service import qdrant_service
-
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -36,10 +34,11 @@ class QuadrantAdapter:
         Args:
             enabled: Whether this adapter is enabled
             collection_name: Qdrant collection name for storing embeddings
+
         """
         self.enabled = enabled
         self.collection_name = collection_name
-        
+
         if enabled:
             logger.info(f"Quadrant adapter initialized with collection: {collection_name}")
         else:
@@ -53,6 +52,7 @@ class QuadrantAdapter:
 
         Returns:
             DistributionResult with status and metadata
+
         """
         if not self.enabled:
             return DistributionResult(True, "quadrant", data={"status": "disabled"})
@@ -80,14 +80,14 @@ class QuadrantAdapter:
                 # We need an ID and an embedding
                 doc_id = record.get("id") or record.get("_id") or str(uuid.uuid4())
                 embedding = record.get("embedding") or record.get("_vector")
-                
+
                 if embedding is None:
                     # Generate a fallback deterministic "embedding" if none provided
                     embedding = self._generate_fallback_embedding(record)
-                
+
                 # Metadata is the record itself minus special fields
                 metadata: dict[str, Any] = {k: v for k, v in record.items() if not k.startswith("_") and k != "embedding"}
-                
+
                 batch_docs.append({
                     "id": doc_id,
                     "embedding": embedding,
@@ -132,26 +132,27 @@ class QuadrantAdapter:
 
     def _generate_fallback_embedding(self, record: dict[str, Any]) -> list[float]:
         """Generate a deterministic fallback vector embedding if none exists.
-        
+
         Args:
             record: Data record to embed
 
         Returns:
             List of floats representing the embedding
+
         """
         # Create a 384-dimensional embedding (matching QdrantService default)
         embedding_size = 384
-        
+
         # Use a hash of the record to seed the "embedding"
         record_str = json.dumps(record, sort_keys=True, default=str)
         import hashlib
         import random
         h = hashlib.sha256(record_str.encode()).digest()
-        
+
         # Use first 4 bytes as seed
         seed = int.from_bytes(h[0:4], "little")
         rng = random.Random(seed)
-        
+
         embedding = [rng.uniform(-1, 1) for _ in range(embedding_size)]
 
         return embedding
@@ -164,9 +165,10 @@ class QuadrantAdapter:
 
         Returns:
             DistributionResult with status
+
         """
         name = collection_name or self.collection_name
-        
+
         try:
             loop = asyncio.get_event_loop()
             if loop.is_running():
@@ -177,7 +179,7 @@ class QuadrantAdapter:
                 future.result()
             else:
                 asyncio.run(qdrant_service.create_collection(name))
-                
+
             return DistributionResult(True, "quadrant", data={"collection": name})
         except Exception as e:
             return DistributionResult(False, "quadrant", error=str(e))

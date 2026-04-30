@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Predator Analytics - Arbiter Service
 Multi-Agent Decision Arbiter for conflict resolution and consensus.
 """
@@ -8,7 +7,6 @@ from dataclasses import dataclass
 from enum import Enum
 import logging
 from typing import Any
-
 
 logger = logging.getLogger(__name__)
 

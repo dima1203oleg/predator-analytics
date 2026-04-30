@@ -11,7 +11,6 @@ import random
 import sys
 import time
 
-
 # Adjust path to access app modules
 sys.path.append(os.path.join(os.getcwd(), 'services/api_gateway'))
 
@@ -21,7 +20,6 @@ from app.connectors.telegram_channel import telegram_channel_connector
 from app.models import DataSource
 from app.services.customs_service import customs_service
 from libs.core.database import get_db_ctx
-
 
 # Configure Logging
 logging.basicConfig(

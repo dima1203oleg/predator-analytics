@@ -5,7 +5,6 @@ import os
 from pathlib import Path
 import sys
 
-
 # Add project root to sys.path
 ROOT_DIR = Path(__file__).resolve().parents[1]
 sys.path.append(str(ROOT_DIR))
@@ -22,14 +21,10 @@ async def main():
 
         file_path = "/app/uploads/Березень_2024.xlsx"
         if not os.path.exists(file_path):
-            print(f"Error: File {file_path} not found.")
             return
 
-        print(f"Starting ingestion for {file_path}...")
-        result = await service.process_file(file_path, dataset_type="customs")
-        print(f"Ingestion result: {result}")
-    except Exception as e:
-        print(f"Failed to trigger ingestion: {e}")
+        await service.process_file(file_path, dataset_type="customs")
+    except Exception:
         import traceback
 
         traceback.print_exc()

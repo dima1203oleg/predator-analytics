@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Unified Prometheus Metrics Router for Predator Analytics
 Consolidates all application metrics into a single registry and endpoint.
 """
@@ -15,7 +14,6 @@ from prometheus_client import (
     Histogram,
     generate_latest,
 )
-
 
 # Import shared metrics from middleware to avoid duplication
 try:

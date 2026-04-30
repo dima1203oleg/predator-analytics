@@ -10,7 +10,6 @@ from typing import TYPE_CHECKING
 
 from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters
 
-
 if TYPE_CHECKING:
     from telegram import Update
 

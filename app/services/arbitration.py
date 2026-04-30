@@ -8,7 +8,6 @@ from pydantic import BaseModel
 from app.libs.core.structured_logger import get_logger
 from app.services.model_router import ModelRouter
 
-
 logger = get_logger("service.arbitration")
 
 

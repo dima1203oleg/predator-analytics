@@ -7,22 +7,18 @@ import os
 import sys
 import uuid
 
-
 # Ensure we can import app modules
 sys.path.append('/app')
 
 from libs.core.database import get_db_ctx
 from libs.core.models.entities import AugmentedDataset
 
-
 DATA_FILE = "/app/data/training_data.jsonl"
 GENESIS_TENANT_ID = uuid.UUID("00000000-0000-0000-0000-000000000000")
 
 async def ingest():
-    print(f"📥 Starting ingestion from {DATA_FILE} to PostgreSQL...")
 
     if not os.path.exists(DATA_FILE):
-        print("❌ File not found.")
         return
 
     count = 0
@@ -49,13 +45,11 @@ async def ingest():
                     if count % 100 == 0:
                         sys.stdout.write(".")
                         sys.stdout.flush()
-                except Exception as e:
-                    print(f"⚠️ Error parsing line: {e}")
+                except Exception:
+                    pass
 
         await sess.commit()
 
-    print(f"\n✅ Successfully ingested {count} training samples into 'augmented_datasets' table.")
-    print("🚀 The Self-Improvement Service should now detect the threshold > 100 and trigger training.")
 
 if __name__ == "__main__":
     asyncio.run(ingest())

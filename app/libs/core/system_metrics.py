@@ -9,7 +9,6 @@ import logging
 import platform
 import subprocess
 
-
 logger = logging.getLogger("system_metrics")
 
 

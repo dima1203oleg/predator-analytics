@@ -1,16 +1,16 @@
 
-"""
-Script: simulate_traffic.py
+"""Script: simulate_traffic.py
 Purpose: Generate synthetic events to test Predator API and RTB Engine.
 Usage: python scripts/simulate_traffic.py --url http://localhost:8000
 """
 import argparse
 import asyncio
-import httpx
-import random
-import uuid
 from datetime import datetime
 import json
+import random
+import uuid
+
+import httpx
 
 EVENTS = [
     "ModelPerformanceDegraded",
@@ -25,7 +25,7 @@ SOURCES = ["fraud-detector", "churn-predictor", "security-scanner", "billing-ser
 async def send_event(client, url):
     event_type = random.choice(EVENTS)
     source = random.choice(SOURCES)
-    
+
     payload = {
         "event_id": str(uuid.uuid4()),
         "event_type": event_type,
@@ -38,11 +38,10 @@ async def send_event(client, url):
         },
         "tenant_id": "default"
     }
-    
+
     # In a real scenario, we might hit the /analytics endpoint or a dedicated ingestion endpoint
     # For now, we simulate hitting the insight API or just printing
-    print(f"Generating {event_type} from {source}...")
-    
+
     # Since we don't have a direct ingestion endpoint in API (it goes to RTB directly typically),
     # we can simulate an insight request about this event.
     try:
@@ -54,20 +53,19 @@ async def send_event(client, url):
             }
         )
         if resp.status_code == 200:
-            print(f"✅ AI Analysis: {resp.json().get('insight')[:50]}...")
+            pass
         else:
-            print(f"❌ Failed: {resp.status_code}")
-    except Exception as e:
-        print(f"⚠️  Connection failed: {e}")
+            pass
+    except Exception:
+        pass
 
 async def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--url", default="http://localhost:8000", help="API URL")
     parser.add_argument("--count", type=int, default=10, help="Number of events")
     args = parser.parse_args()
-    
-    print(f"🚀 Starting Traffic Simulation -> {args.url}")
-    
+
+
     async with httpx.AsyncClient() as client:
         tasks = [send_event(client, args.url) for _ in range(args.count)]
         await asyncio.gather(*tasks)

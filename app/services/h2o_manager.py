@@ -9,7 +9,6 @@ from h2o.automl import H2OAutoML
 import pandas as pd
 from sqlalchemy import select
 
-
 try:
     from app.libs.core.config import settings
     from app.libs.core.database import get_db_ctx
@@ -269,9 +268,7 @@ class H2OManager:
             )
             aml.train(x=x, y=y, training_frame=hf)
 
-            lb = aml.leaderboard
             logger.info("🏆 H2O Leaderboard generated.")
-            print(lb.head(rows=5))
 
             # Save Model
             # Note: h2o.save_model saves on the SERVER side.
@@ -303,6 +300,7 @@ class H2OManager:
 
         Args:
             data: List of dictionaries containing input features (instruction, input, output)
+
         """
         if not self.connected:
             await self.ensure_connection()

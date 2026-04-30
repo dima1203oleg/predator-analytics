@@ -3,19 +3,19 @@ from __future__ import annotations
 """
 OpenSearch Distribution Adapter (Canonical v4.2.0)
 
-Handles distribution of data to OpenSearch search engine with integration 
+Handles distribution of data to OpenSearch search engine with integration
 to the canonical OpenSearchIndexer service. (COMP-042)
 """
 
 import asyncio
 from datetime import datetime
-import json
 import logging
 from typing import Any
 import uuid
 
-from .data_distributor import DistributionResult
 from app.services.opensearch_indexer import opensearch_indexer
+
+from .data_distributor import DistributionResult
 
 logger = logging.getLogger(__name__)
 
@@ -45,7 +45,7 @@ class OpenSearchAdapter:
             return DistributionResult(False, "opensearch", error="No data provided")
 
         records = data if isinstance(data, list) else [data]
-        
+
         # Ensure ID exists for async bulk
         processed_records = []
         for r in records:
@@ -73,14 +73,14 @@ class OpenSearchAdapter:
                 self._index_ensured = True
             except Exception as e:
                 logger.warning(f"Failed to ensure index creation, continuing: {e}")
-            
+
         result = await opensearch_indexer.index_documents(
             index_name=self.index_name,
             documents=records,
             pii_safe=False,
             tenant_id="predator",
         )
-        
+
         return DistributionResult(
             True,
             "opensearch",

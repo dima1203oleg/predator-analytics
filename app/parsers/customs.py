@@ -1,10 +1,8 @@
 from __future__ import annotations
 
-
 """Customs Parser - Parse customs data."""
 import logging
 from typing import Any
-
 
 logger = logging.getLogger(__name__)
 

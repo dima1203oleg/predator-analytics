@@ -1,11 +1,11 @@
-import uuid
 import asyncio
+from typing import Any
+import uuid
 
-from typing import Dict, Any, Optional
 
 class CortexOrchestrator:
     def __init__(self) -> None:
-        self.tasks: Dict[str, Any] = {}
+        self.tasks: dict[str, Any] = {}
 
     async def submit_task(self, user_id: int, text: str, source: str = "text") -> str:
         u_id = uuid.uuid4()
@@ -27,7 +27,7 @@ class CortexOrchestrator:
     async def _process_dummy(self, task_id: str) -> None:
         task = self.tasks.get(task_id)
         if not task: return
-        
+
         await asyncio.sleep(2)
         task["status"] = "generating"
         await asyncio.sleep(2)
@@ -38,7 +38,7 @@ class CortexOrchestrator:
         task["status"] = "awaiting_approval"
         task["strategy"]["voice_hint"] = "Завдання підготовлено. Очікую вашого підтвердження."
 
-    def get_task_status(self, task_id: str) -> Optional[Dict[str, Any]]:
+    def get_task_status(self, task_id: str) -> dict[str, Any] | None:
         return self.tasks.get(task_id)
 
     async def execute_approval(self, task_id: str, approved: bool = True) -> bool:

@@ -11,7 +11,6 @@ from pydantic import BaseModel
 
 from app.libs.core.config import settings
 
-
 router = APIRouter(prefix="/customs", tags=["Customs Intelligence"])
 logger = logging.getLogger("api.customs")
 

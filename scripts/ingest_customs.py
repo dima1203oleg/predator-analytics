@@ -3,12 +3,9 @@ from __future__ import annotations
 import datetime
 import json
 import os
-import sys
-import uuid
 
 import pandas as pd
 from sqlalchemy import create_engine, text
-
 
 # Config
 DEFAULT_DB_URL = "postgresql://admin:666666@localhost:5432/predator_db"
@@ -22,22 +19,17 @@ FILE_PATH = "customs.xlsx"
 
 def ingest():
     global FILE_PATH
-    print("🚀 Starting Real Data Ingestion")
 
     if not os.path.exists(FILE_PATH):
         if os.path.exists("/Users/dima-mac/Desktop/Березень_2024.xlsx"):
              FILE_PATH = "/Users/dima-mac/Desktop/Березень_2024.xlsx"
         else:
-             print(f"❌ File not found: {FILE_PATH}")
              return
 
     # 1. Read Excel
-    print("⏳ Reading Excel file...")
     try:
         df = pd.read_excel(FILE_PATH, nrows=20000)
-        print(f"✅ Loaded {len(df)} rows")
-    except Exception as e:
-        print(f"❌ Failed to read Excel: {e}")
+    except Exception:
         return
 
     # 2. Rename columns
@@ -67,7 +59,6 @@ def ingest():
         df_clean['recipient_code'] = df_clean['recipient_code'].fillna('').astype(str)
 
     # 3. Connect to DB
-    print("🔌 Connecting to Database...")
     try:
         engine = create_engine(DB_URL)
 
@@ -92,7 +83,6 @@ def ingest():
             """))
             conn.commit()
 
-        print("⏳ Writing records to 'gold.customs_declarations'...")
         df_clean.to_sql(
             'customs_declarations',
             engine,
@@ -122,10 +112,9 @@ def ingest():
             conn.execute(sql)
             conn.commit()
 
-        print("✅ Ingestion Complete!")
 
-    except Exception as e:
-        print(f"❌ Database Error: {e}")
+    except Exception:
+        pass
 
 if __name__ == "__main__":
     ingest()

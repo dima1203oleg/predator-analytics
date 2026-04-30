@@ -1,11 +1,9 @@
 from __future__ import annotations
 
 import asyncio
-import logging
 import os
 import signal
 import sys
-
 
 # Add paths to ensure imports work
 sys.path.append(os.getcwd())
@@ -15,28 +13,23 @@ import contextlib
 
 from libs.core.structured_logger import get_logger
 
-
 # Setup Logging
 logger = get_logger("scripts.start_azr_autonomy")
 
 async def main():
-    print("🚀 ІНІЦІАЛІЗАЦІЯ СУВЕРЕННОЇ АВТОНОМІЇ AZR V45...")
 
     try:
         from app.services.azr_engine import azr_engine
 
         # Перевірка стану двигуна
-        status = azr_engine.get_status()
-        print(f"ℹ️  Статус двигуна: {status}")
+        azr_engine.get_status()
 
-        print("⚡ АКТИВАЦІЯ БЕЗПЕРЕРВНОГО АВТОНОМНОГО ЦИКЛУ...")
 
         # Визначення обробників сигналів для коректного завершення
         loop = asyncio.get_running_loop()
         stop_event = asyncio.Event()
 
         def handle_stop():
-            print("\n🛑 Зупинка двигуна AZR...")
             azr_engine.is_running = False
             stop_event.set()
 
@@ -49,18 +42,13 @@ async def main():
         # Підтримка роботи скрипту
         while not stop_event.is_set():
             if not azr_engine.is_running:
-                print("⚠️ Двигун припинив роботу, спроба перезапуску...")
                 await azr_engine.start_autonomous_cycle(duration_hours=24000)
 
             await asyncio.sleep(60)
-            print("💓 Серцебиття AZR: Активно")
 
-    except ImportError as e:
-        print(f"❌ КРИТИЧНА ПОМИЛКА ІМПОРТУ: {e}")
-        print("Перевірте шлях до Python та залежності.")
+    except ImportError:
         sys.exit(1)
-    except Exception as e:
-        print(f"❌ ФАТАЛЬНА ПОМИЛКА: {e}")
+    except Exception:
         sys.exit(1)
 
 if __name__ == "__main__":

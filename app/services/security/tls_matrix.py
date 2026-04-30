@@ -1,10 +1,9 @@
-"""
-TLS Matrix & Secrets Rotation (Phase 7 — SM Edition).
+"""TLS Matrix & Secrets Rotation (Phase 7 — SM Edition).
 
 mTLS enforcement for all internal connections, TLS 1.3 for ingress.
 Implements §24.2.
 """
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 
@@ -27,7 +26,7 @@ class TLSMatrix:
                 "mode": self.internal_mtls,
                 "provider": "Cilium Mutual Authentication (WireGuard / IPSec)",
             },
-            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(UTC).isoformat(),
         }
 
     def get_rotation_schedule(self) -> dict[str, Any]:

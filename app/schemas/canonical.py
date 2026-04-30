@@ -4,7 +4,6 @@ import uuid
 
 from pydantic import BaseModel, Field
 
-
 # 1. Канонічна Модель Декларації
 
 

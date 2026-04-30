@@ -9,7 +9,7 @@ import logging
 import uuid
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 logger = logging.getLogger(__name__)
@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 # ======================== STIX 2.1 ТИПИ ========================
 
 
-class STIXNodeType(str, Enum):
+class STIXNodeType(StrEnum):
     """Типи вузлів згідно STIX 2.1."""
     THREAT_ACTOR = "threat-actor"  # Особа, група, компанія
     CAMPAIGN = "campaign"  # Серія пов'язаних дій
@@ -34,7 +34,7 @@ class STIXNodeType(str, Enum):
     OBSERVED_DATA = "observed-data"  # Спостережувані дані
 
 
-class STIXRelationType(str, Enum):
+class STIXRelationType(StrEnum):
     """Типи зв'язків згідно STIX 2.1."""
     USES = "uses"  # Threat-Actor використовує Malware/Infrastructure
     TARGETS = "targets"  # Campaign націлена на Identity
@@ -87,7 +87,7 @@ class GraphResult:
 
 class STIXGraphBuilder:
     """Побудова Knowledge Graph згідно STIX 2.1.
-    
+
     Використовується для:
     - Створення сутностей (Threat-Actor, Campaign, Indicator)
     - Встановлення зв'язків між сутностями
@@ -359,7 +359,7 @@ class STIXGraphBuilder:
 
 class NLPEntityExtractor:
     """NLP Pipeline для автоматичного наповнення графа.
-    
+
     Компоненти:
     - Entity Extraction (NER): Витягування назв компаній, ПІБ, адрес
     - Coreference Resolution: "Петров", "він", "директор" = одна сутність
@@ -421,7 +421,7 @@ class NLPEntityExtractor:
             data={
                 "text_length": len(text),
                 "entities_found": len(entities),
-                "entity_types": list(set(e["type"] for e in entities)),
+                "entity_types": list({e["type"] for e in entities}),
             },
         )
 
@@ -460,7 +460,7 @@ class NLPEntityExtractor:
             relations=stix_relations,
             data={
                 "relations_found": len(relations),
-                "relation_types": list(set(r["relation_type"].value for r in relations)),
+                "relation_types": list({r["relation_type"].value for r in relations}),
             },
         )
 
@@ -482,7 +482,7 @@ class NLPEntityExtractor:
 
 class GraphQueryEngine:
     """Движок запитів до Knowledge Graph.
-    
+
     Підтримує:
     - Cypher (Neo4j)
     - TypeQL (TypeDB)

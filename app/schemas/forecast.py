@@ -1,5 +1,4 @@
-"""
-📈 Pydantic схеми для прогнозування — PREDATOR Analytics v4.1.
+"""📈 Pydantic схеми для прогнозування — PREDATOR Analytics v4.1.
 
 Схеми запитів та відповідей для /api/v1/forecast.
 """
@@ -7,7 +6,6 @@
 from __future__ import annotations
 
 from pydantic import BaseModel, Field
-
 
 # ── Запити ───────────────────────────────────────────────────
 

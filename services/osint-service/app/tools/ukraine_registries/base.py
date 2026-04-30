@@ -3,13 +3,13 @@ import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 logger = logging.getLogger(__name__)
 
 
-class RegistryStatus(str, Enum):
+class RegistryStatus(StrEnum):
     """Статус реєстру."""
     ACTIVE = "active"
     LIMITED = "limited"  # Обмежений доступ (воєнний час)
@@ -33,7 +33,7 @@ class RegistryResult:
 
 class BaseRegistryClient(ABC):
     """Базовий клас для клієнтів українських реєстрів.
-    
+
     Всі реєстри мають спільні характеристики:
     - Ідентифікація за ЄДРПОУ (компанії) або РНОКПП (фізособи)
     - Можливі обмеження воєнного часу
@@ -49,7 +49,7 @@ class BaseRegistryClient(ABC):
 
     def __init__(self, timeout: int = 30, cache_ttl: int = 3600):
         """Ініціалізація.
-        
+
         Args:
             timeout: Таймаут запитів (секунди)
             cache_ttl: Час життя кешу (секунди)

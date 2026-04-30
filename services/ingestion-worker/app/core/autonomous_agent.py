@@ -3,8 +3,9 @@
 Запускає автономні AGI-розслідування на основі результатів інгестії.
 """
 import logging
+
 import httpx
-from typing import Optional
+
 from app.config import get_settings
 
 logger = logging.getLogger(__name__)
@@ -18,9 +19,9 @@ class AutonomousTrigger:
         self.api_url = "http://localhost:8000/api/v1/antigravity/tasks"
 
     async def trigger_investigation(
-        self, 
-        entity_name: str, 
-        edrpou: str, 
+        self,
+        entity_name: str,
+        edrpou: str,
         risk_score: float,
         reason: str = "High risk detected during ingestion"
     ) -> bool:
@@ -29,7 +30,7 @@ class AutonomousTrigger:
             return False
 
         logger.info(f"🚀 Triggering autonomous investigation for {entity_name} (Risk: {risk_score})")
-        
+
         payload = {
             "description": f"Поглиблене OSINT-розслідування компанії {entity_name} (ЄДРПОУ {edrpou}). Причина: {reason}.",
             "priority": "high",

@@ -3,13 +3,14 @@
 Моніторинг стабільності ML-моделей та аналіз розподілу ризиків.
 Виявляє суттєві зміни в статистичних показниках (Score Drift).
 """
-import logging
 from datetime import UTC, datetime, timedelta
+import logging
 from typing import Any
 from uuid import UUID
 
-from sqlalchemy import select, func
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.models.orm import RiskScore
 from app.services.kafka_service import KafkaService
 
@@ -37,7 +38,7 @@ class DriftMonitor:
             return {"drift_detected": False, "message": "Недостатньо даних для порівняння"}
 
         drift_percent = ((current_avg - previous_avg) / previous_avg) * 100
-        
+
         drift_detected = abs(drift_percent) > 15.0 # Поріг 15% згідно ТЗ
 
         if drift_detected:
@@ -71,7 +72,7 @@ class DriftMonitor:
             "details": f"Виявлено дрейф показників ризику: {percent:.1f}%. Поточне сер.: {current:.2f}, попереднє: {previous:.2f}",
             "timestamp": datetime.now(UTC).isoformat()
         }
-        
+
         await self.kafka.send_message(
             f"tenant.{tenant_id}.risk.alerts",
             alert_msg

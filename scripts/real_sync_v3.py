@@ -11,7 +11,6 @@ from sqlalchemy import create_engine, text
 
 
 def run():
-    print("🚀 Predator Sync V3.4: Engineering Pipeline")
 
     # DB Connectivity Logic
     db_candidates = [
@@ -25,19 +24,16 @@ def run():
     for url in db_candidates:
         if not url: continue
         url = url.replace("asyncpg", "psycopg2").replace("postgresql+postgresql", "postgresql")
-        print(f"Trying: {url.split('@')[-1]}...")
         try:
             engine = create_engine(url, connect_args={'connect_timeout': 5})
             with engine.connect() as conn:
                 conn.execute(text("SELECT 1"))
-            print(f"✅ Connected to {url.split('@')[-1]}")
             connected = True
             break
-        except Exception as e:
-            print(f"   Failed connection attempt: {e}")
+        except Exception:
+            pass
 
     if not connected:
-        print("❌ CRITICAL: Could not connect to database.")
         sys.exit(1)
 
     try:
@@ -46,16 +42,13 @@ def run():
         if not os.path.exists(file_path):
             file_path = "customs.xlsx"
 
-        print(f"Reading {file_path} (20k rows)...")
         df = pd.read_excel(file_path, nrows=20000, engine='openpyxl')
-        print(f"✅ Data loaded: {len(df)} rows.")
 
         # Schema and Table Setup (Aligned with entities.py)
         with engine.begin() as conn:
             conn.execute(text("CREATE SCHEMA IF NOT EXISTS gold;"))
 
             # FORCE recreate to align with entities.py precisely
-            print("Aligning metadata tables with entities.py schema...")
             conn.execute(text("DROP TABLE IF EXISTS gold.ml_jobs CASCADE;"))
             conn.execute(text("DROP TABLE IF EXISTS gold.ml_datasets CASCADE;"))
             conn.execute(text("DROP TABLE IF EXISTS gold.data_sources CASCADE;"))
@@ -107,10 +100,8 @@ def run():
             """))
 
         # Ingestion
-        print("Ingesting customs data to gold.customs_declarations...")
         df.columns = [c.replace(' ', '_').replace(',', '').replace('/', '_').lower() for c in df.columns]
         df.to_sql('customs_declarations', engine, schema='gold', if_exists='replace', index=False, chunksize=1000)
-        print("✅ Data ingested successfully.")
 
         # Integration and Registration
         tid = "00000000-0000-0000-0000-000000000000"
@@ -123,7 +114,6 @@ def run():
 
         with engine.begin() as conn:
             # Register Source
-            print("Registering Data Source in registry...")
             conn.execute(text("""
                 INSERT INTO gold.data_sources (id, name, connector, source_type, status, tenant_id, config, sector)
                 VALUES (:id, :name, :conn, :stype, :status, :tid, CAST(:conf_data AS JSONB), :sector)
@@ -139,7 +129,6 @@ def run():
             })
 
             # ML Dataset
-            print("Creating ML Dataset entry...")
             ml_ds_id = uuid.uuid4()
             conn.execute(text("""
                 INSERT INTO gold.ml_datasets (id, tenant_id, name, dvc_path, size_rows)
@@ -153,7 +142,6 @@ def run():
             })
 
             # Create Job
-            print("Creating ML Job entry...")
             job_id = uuid.uuid4()
             conn.execute(text("""
                 INSERT INTO gold.ml_jobs (id, tenant_id, dataset_id, target, status)
@@ -166,10 +154,8 @@ def run():
                 "status": "running"
             })
 
-        print(f"🎉 SUCCESS! Real data integrated and registered. ML Job ID: {job_id} is now RUNNING.")
 
     except Exception:
-        print("❌ FAILED during ingestion/integration:")
         traceback.print_exc()
         sys.exit(1)
 

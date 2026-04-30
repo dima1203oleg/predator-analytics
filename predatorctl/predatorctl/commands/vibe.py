@@ -6,7 +6,6 @@ from rich.console import Console
 from rich.panel import Panel
 import typer
 
-
 app = typer.Typer(help="Predator VIBE - UI / UX Aesthetic Generator")
 console = Console()
 

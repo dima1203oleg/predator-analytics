@@ -3,7 +3,6 @@ from enum import Enum
 import json
 from typing import TYPE_CHECKING
 
-
 if TYPE_CHECKING:
     import redis.asyncio as aioredis
 

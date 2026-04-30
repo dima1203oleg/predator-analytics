@@ -3,10 +3,9 @@ from __future__ import annotations
 import os
 import sys
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pandas as pd
-
 
 # Додаємо шлях до скриптів у системний шлях
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -48,7 +47,7 @@ class TestCustomsParserLogic(unittest.TestCase):
 
     def test_validation_logic(self):
         """Перевірка логіки валідації (негативні значення, некоректні дати)."""
-        invalid_data = pd.DataFrame({
+        pd.DataFrame({
             'declaration_number': ['DECL-001', 'DECL-002'],
             'customs_value': [-100, 5000], # Негативна вартість
             'gross_weight': [100, -50]     # Негативна вага
@@ -58,6 +57,6 @@ class TestCustomsParserLogic(unittest.TestCase):
         # Тут ми можемо додати перевірку відмов (rejected)
 
 if __name__ == '__main__':
-    print("🚀 Запуск верифікації логіки парсера митних даних...")
+    pass
     # Примітка: для запуску потрібен pandas на хості (зараз ми лише фіксуємо код)
     # unittest.main()

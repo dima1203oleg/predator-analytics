@@ -1,10 +1,9 @@
-"""
-ClickHouse Infrastructure Service (Phase 2E — SM Edition).
+"""ClickHouse Infrastructure Service (Phase 2E — SM Edition).
 
 SM-optimized: 2GB RAM, decision artifacts archive,
 time-series analytics acceleration.
 """
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 
@@ -32,7 +31,7 @@ class ClickHouseInfraManager:
             "ram_limit": self.config["ram_limit"],
             "max_memory_usage": self.config["max_memory_usage"],
             "tables": len(self.tables),
-            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(UTC).isoformat(),
         }
 
     def list_tables(self) -> list[dict[str, str]]:

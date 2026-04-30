@@ -1,17 +1,14 @@
 from __future__ import annotations
 
-
 #!/usr/bin/env python3
 """
 🛡️ AZR CONSTITUTIONAL GUARD - v45.0
 Enforcing Project Sovereignty (Axioms 1-16)
 """
 import logging
-import os
 from pathlib import Path
 import re
 import sys
-
 
 # Setup logging
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
@@ -113,12 +110,9 @@ def check_stability_integrity():
     return True
 
 def run_guard():
-    print("\n" + "="*50)
-    print("🛡️  AZR CONSTITUTIONAL GUARD - ACTIVE")
-    print("="*50 + "\n")
 
     py_err = check_python_version()
-    purity_ok = check_project_purity()
+    check_project_purity()
     lang_err = check_language_compliance()
     leaks = check_security_leaks()
     stability_ok = check_stability_integrity()
@@ -131,13 +125,10 @@ def run_guard():
             dupes.append((o, n))
             logger.warning(f"⚠️ ДУБЛІКАТ: {o} та {n} виявлені одночасно!")
 
-    print("\n" + "="*50)
     if not py_err and not lang_err and stability_ok and not dupes and not leaks:
-        print("✅ СИСТЕМА ВІДПОВІДАЄ КОНСТИТУЦІЇ PREDATOR")
+        pass
     else:
-        print("❌ ВИЯВЛЕНО ПОРУШЕННЯ КОНСТИТУЦІЇ!")
-        if leaks: print(f" - КРИТИЧНО: Виявлено {len(leaks)} витоків секретів!")
-    print("="*50 + "\n")
+        if leaks: pass
 
 if __name__ == "__main__":
     run_guard()

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 #!/usr/bin/env python3
 """━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 🤖 CLI для Навчання Моделей та Агентів через Triple CLI Chain
@@ -26,8 +25,6 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 import sys
-from typing import List, Optional
-
 
 # Імпортуємо Triple CLI Chain
 sys.path.insert(0, str(Path(__file__).parent))
@@ -56,9 +53,8 @@ class MLCLIOrchestrator:
 
         Returns:
             Шлях до згенерованого скрипту
-        """
-        print(f"\n🎓 Генерація навчального пайплайну ({framework})...")
 
+        """
         # Формуємо детальний промпт
         prompts = {
             "h2o": f"""Створи production-ready H2O AutoML пайплайн для {task}.
@@ -127,9 +123,8 @@ class MLCLIOrchestrator:
 
         Returns:
             Шлях до згенерованого агента
-        """
-        print(f"\n🤖 Генерація AI агента ({agent_type})...")
 
+        """
         tools_str = ", ".join(tools) if tools else "opensearch, git, postgres"
 
         prompt = f"""Створи AI агента типу "{agent_type}" використовуючи LangGraph.
@@ -178,9 +173,8 @@ class MLCLIOrchestrator:
 
         Returns:
             Шлях до згенерованого скрипту
-        """
-        print(f"\n📊 Генерація пайплайну аугментації даних ({data_type})...")
 
+        """
         prompts = {
             "text": f"""Створи pipeline для аугментації текстових даних.
 Вимоги:
@@ -248,9 +242,8 @@ class MLCLIOrchestrator:
 
         Returns:
             Шлях до згенерованого скрипту
-        """
-        print(f"\n⚙️ Генерація MLOps скрипту ({script_type})...")
 
+        """
         prompts = {
             "monitoring": """Створи моніторинг систему для ML моделей.
 Вимоги:
@@ -369,20 +362,16 @@ def main():
 
     # Виконуємо команду
     if args.command == 'train':
-        script = orchestrator.generate_training_pipeline(args.task, args.framework)
-        print(f"\n✅ Навчальний пайплайн: {script}")
+        orchestrator.generate_training_pipeline(args.task, args.framework)
 
     elif args.command == 'agent':
-        script = orchestrator.generate_agent(args.type, args.tools)
-        print(f"\n✅ AI агент: {script}")
+        orchestrator.generate_agent(args.type, args.tools)
 
     elif args.command == 'augment':
-        script = orchestrator.generate_augmentation_pipeline(args.data_type, args.count)
-        print(f"\n✅ Аугментаційний пайплайн: {script}")
+        orchestrator.generate_augmentation_pipeline(args.data_type, args.count)
 
     elif args.command == 'mlops':
-        script = orchestrator.generate_mlops_script(args.type)
-        print(f"\n✅ MLOps скрипт: {script}")
+        orchestrator.generate_mlops_script(args.type)
 
 
 if __name__ == "__main__":

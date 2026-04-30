@@ -3,15 +3,16 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_db
 from app.engines.pipeline import run_full_pipeline
 
+if TYPE_CHECKING:
+    from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger("predator.api.v2.pipeline")
 router = APIRouter(prefix="/pipeline", tags=["v2-pipeline"])
@@ -108,11 +109,11 @@ async def rescore_entity(
     Useful when new data has been added outside the pipeline, or for manual recalculations.
     """
     from app.engines.behavioral import process_entity as behavioral_process
-    from app.engines.institutional import process_entity as institutional_process
-    from app.engines.influence import process_entity as influence_process
-    from app.engines.structural_gaps import process_entity as structural_process
-    from app.engines.predictive import process_entity as predictive_process
     from app.engines.cers import process_entity as cers_process
+    from app.engines.influence import process_entity as influence_process
+    from app.engines.institutional import process_entity as institutional_process
+    from app.engines.predictive import process_entity as predictive_process
+    from app.engines.structural_gaps import process_entity as structural_process
 
     logger.info("Rescore triggered for ueid=%s", ueid)
 

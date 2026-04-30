@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Shadow Service - The Hidden Encrypted Layer
 Manages AES-256 encrypted storage for sensitive intelligence.
 This is the "Shadow Logic" component of Predator.
@@ -14,7 +13,6 @@ from typing import Any
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
-
 
 logger = logging.getLogger(__name__)
 

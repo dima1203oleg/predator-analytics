@@ -26,13 +26,13 @@ class RAGResult:
 
 class RAGGraphEngine:
     """RAG + Graph Engine — Інтеграція LLM з Knowledge Graph.
-    
+
     Архітектура:
     1. Отримує питання природною мовою
     2. Перетворює на запит до графової БД (Cypher/TypeQL)
     3. Отримує релевантний підграф
     4. Передає контекст LLM для формулювання відповіді
-    
+
     Підтримує:
     - Neo4j (Cypher)
     - TypeDB (TypeQL)
@@ -202,7 +202,7 @@ class RAGGraphEngine:
 
 class PromptGuidedExplorer:
     """Prompt-Guided Exploration — Дослідження графа природною мовою.
-    
+
     Приклади запитів:
     - "Покажи всі компанії, пов'язані з Івановим"
     - "Знайди компанії з боргами, які вигравали тендери"
@@ -220,7 +220,7 @@ class PromptGuidedExplorer:
         follow_up: bool = False,
     ) -> RAGResult:
         """Дослідження графа за питанням."""
-        start_time = datetime.now(UTC)
+        datetime.now(UTC)
 
         # Якщо це follow-up, додаємо контекст попередніх запитів
         context = None
@@ -304,7 +304,7 @@ class PromptGuidedExplorer:
 
 class TypeDBMCPClient:
     """TypeDB MCP Server Client — Інтеграція з TypeDB через MCP.
-    
+
     Model Context Protocol для роботи з TypeDB.
     Дозволяє LLM безпосередньо взаємодіяти з графовою БД.
     """

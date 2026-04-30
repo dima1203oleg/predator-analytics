@@ -9,7 +9,6 @@ from app.libs.agents.tools.registry import registry
 from app.libs.core.database import async_session_maker
 from app.libs.core.models import GraphEdge, GraphNode
 
-
 logger = logging.getLogger(__name__)
 
 

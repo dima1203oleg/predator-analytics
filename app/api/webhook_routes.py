@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Webhook endpoint for Alertmanager integration with v45 auto-trigger system.
 Receives alert firing events and automatically triggers optimization cycles.
 """
@@ -10,7 +9,6 @@ import logging
 from typing import Any
 
 from fastapi import APIRouter, HTTPException, Request
-
 
 logger = logging.getLogger(__name__)
 webhook_router = APIRouter(prefix="/v45", tags=["webhooks"])

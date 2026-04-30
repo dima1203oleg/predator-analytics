@@ -132,7 +132,7 @@ class FactoryRepository:
                 result = await session.run(
                     """
                     MATCH (p:Pattern)
-                    RETURN 
+                    RETURN
                         COUNT(p) as total_patterns,
                         SUM(CASE WHEN p.gold THEN 1 ELSE 0 END) as gold_patterns,
                         AVG(p.score) as avg_score,

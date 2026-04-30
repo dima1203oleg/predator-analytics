@@ -35,21 +35,17 @@ def check_structure(file_path):
 
             if is_closing:
                 if not tags:
-                    print(f"Error: Unexpected closing tag </{tag_name}> at line {i+1}")
                     return
 
                 last_tag = tags.pop()
                 if last_tag['name'] != tag_name:
-                    print(f"Error: Mismatched tag at line {i+1}. Expected </{last_tag['name']}>, got </{tag_name}>")
-                    print(f"Opening tag <{last_tag['name']}> was at line {last_tag['line']}")
                     return
             else:
                 tags.append({'name': tag_name, 'line': i+1})
 
     if tags:
-        print(f"Error: Unclosed tags: {[t['name'] for t in tags]}")
-        print(f"Last unclosed tag <{tags[-1]['name']}> at line {tags[-1]['line']}")
+        pass
     else:
-        print("Structure seems OK")
+        pass
 
 check_structure('/Users/dima-mac/Documents/Predator_21/apps/frontend/src/views/TestingView.tsx')

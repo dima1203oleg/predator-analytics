@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 class DataQualityReporter:
     """Accumulates statistics to generate a data quality report."""
-    
+
     def __init__(self):
         self.stats = {
             "total_processed": 0,
@@ -26,20 +26,19 @@ class DataQualityReporter:
         }
 
     def process_batch(self, records: list[dict[str, Any]]) -> None:
-        """
-        Inspect records to update quality metrics.
+        """Inspect records to update quality metrics.
         Records should pass through this after all enrichments.
         """
         for record in records:
             self.stats["total_processed"] += 1
-            
+
             # Simple missing fields heuristic
             missing_critical = False
             for critical_field in ["Опис товару", "Код товару"]:
                 if not record.get(critical_field):
                     missing_critical = True
                     break
-            
+
             if missing_critical:
                 self.stats["missing_values_count"] += 1
 
@@ -47,14 +46,14 @@ class DataQualityReporter:
                 self.stats["valid_uktzed"] += 1
             else:
                 self.stats["invalid_uktzed"] += 1
-                
+
             if record.get("_normalized_price_uah", 0.0) <= 0.0:
                 self.stats["zero_price_records"] += 1
-                
+
     def add_duplicates(self, count: int) -> None:
         """Manually add duplicate count from deduplicator."""
         self.stats["duplicate_records"] += count
-                
+
     def generate_report(self) -> dict[str, Any]:
         """Finalize and return the quality report."""
         total = self.stats["total_processed"]
@@ -68,7 +67,7 @@ class DataQualityReporter:
             "quality_score_percent": round(quality_score, 2),
             "status": "Healthy" if quality_score >= 90 else "Warning"
         }
-        
+
         logger.info(f"Data Quality Report Generated: Score = {report['quality_score_percent']}%")
         return report
 

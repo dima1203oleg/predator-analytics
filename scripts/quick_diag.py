@@ -13,20 +13,13 @@ async def check_service(name, url, expected_status=200):
         async with aiohttp.ClientSession() as session:
             start = datetime.now()
             async with session.get(url, timeout=5) as response:
-                duration = (datetime.now() - start).total_seconds()
+                (datetime.now() - start).total_seconds()
                 status = response.status
-                if status == expected_status:
-                    print(f"✅ {name:<20} OK ({duration:.2f}s)")
-                    return True
-                print(f"❌ {name:<20} FAIL (Status: {status})")
-                return False
-    except Exception as e:
-        print(f"❌ {name:<20} DOWN ({e!s})")
+                return status == expected_status
+    except Exception:
         return False
 
 async def main():
-    print(f"🔍 SYSTEM DIAGNOSTICS DETAILED SCAN - {datetime.now()}")
-    print("-" * 50)
 
     results = await asyncio.gather(
         check_service("Frontend (NGINX)", "http://localhost:80", 200),
@@ -39,12 +32,9 @@ async def main():
         check_service("RabbitMQ Mgmt", "http://localhost:15672", 200)
     )
 
-    print("-" * 50)
     if all(results):
-        print("🚀 ALL SYSTEMS ONLINE")
         sys.exit(0)
     else:
-        print("⚠️ SOME SYSTEMS UNHEALTHY")
         sys.exit(1)
 
 if __name__ == "__main__":

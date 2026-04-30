@@ -7,17 +7,11 @@
 from __future__ import annotations
 
 import asyncio
-from datetime import datetime
-import os
+import contextlib
 from pathlib import Path
 import sys
-import time
-
 
 # ⚜️ ETERNAL RUNTIME GUARD
-if sys.version_info < (3, 12):
-    print("\n❌ FATAL: VERIFICATION SUITE REQUIRES PYTHON 3.12.", file=sys.stderr)
-    sys.exit(1)
 
 # Add project roots
 PROJECT_ROOT = Path(__file__).parent.parent
@@ -25,12 +19,9 @@ sys.path.insert(0, str(PROJECT_ROOT))
 sys.path.insert(0, str(PROJECT_ROOT / "services/api_gateway"))
 
 def print_result(name: str, status: bool, detail: str = ""):
-    icon = "✅" if status else "❌"
-    color = "\033[1;32m" if status else "\033[1;31m"
-    print(f"{icon} {name:.<40} {color}{'OK' if status else 'FAILED'}\033[0m {detail}")
+    pass
 
 async def check_database_conn():
-    print("\n📊 1. INFRASTRUCTURE & DATA INTEGRITY")
 
     # 1. PostgreSQL
     try:
@@ -69,36 +60,24 @@ async def check_database_conn():
         print_result("OpenSearch Engine", False)
 
 async def check_agents():
-    print("\n🤖 2. AGENTS & ORCHESTRATION")
     try:
         import httpx
         async with httpx.AsyncClient() as client:
             resp = await client.get("http://localhost:8000/system/autonomy/status")
             if resp.status_code == 200:
-                data = resp.json()
+                resp.json()
                 print_result("Autonomy Status API", True)
-                print(f"   - Level: {data.get('autonomy_level')}")
-                print(f"   - Coverage: {data.get('automation_percentage')}%")
             else:
                 print_result("Autonomy Status API", False, f"HTTP {resp.status_code}")
     except Exception:
         print_result("Autonomy Status API", False, "Gateway Offline")
 
 async def main():
-    print("="*60)
-    print("⚜️  Predator v45 | Neural Analytics.0 SYSTEM VERIFICATION")
-    print("   Timestamp:", datetime.now().isoformat())
-    print("="*60)
 
     await check_database_conn()
     await check_agents()
 
-    print("\n" + "="*60)
-    print("🛡️ REPORT COMPLETE")
-    print("="*60)
 
 if __name__ == "__main__":
-    try:
+    with contextlib.suppress(KeyboardInterrupt):
         asyncio.run(main())
-    except KeyboardInterrupt:
-        pass

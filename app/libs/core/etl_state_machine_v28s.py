@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Enhanced ETL State Machine v45-S - AZR Engine
 Core business logic for ETL transitions and constitutional invariants.
 """

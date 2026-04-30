@@ -1,21 +1,19 @@
 import logging
-from typing import Dict, Any, List
-import random
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
 class MobRiskScanner:
-    """
-    Mobilization Risk Scanner (COMP-213)
-    Analyzes personnel structure and demographic data to assess 
+    """Mobilization Risk Scanner (COMP-213)
+    Analyzes personnel structure and demographic data to assess
     the operational impact of potential mobilization on a business entity.
     """
+
     def __init__(self):
         pass
 
-    def scan_risk(self, company_id: str, personnel_data: List[Dict[str, Any]]) -> Dict[str, Any]:
-        """
-        Assesses mobilization risk based on age, specialty, and critical position status.
+    def scan_risk(self, company_id: str, personnel_data: list[dict[str, Any]]) -> dict[str, Any]:
+        """Assesses mobilization risk based on age, specialty, and critical position status.
         """
         if not personnel_data:
             return {"risk_level": "unknown", "critical_staff_vulnerability": 0.0}

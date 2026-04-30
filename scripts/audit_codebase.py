@@ -63,4 +63,3 @@ def analyze_codebase(root_dir):
 
 if __name__ == "__main__":
     result = analyze_codebase("/Users/dima-mac/Documents/Predator_21")
-    print(result)

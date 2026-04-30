@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """UA Sources - Celery Tasks
 Background task definitions.
 """

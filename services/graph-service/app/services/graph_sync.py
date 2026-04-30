@@ -51,7 +51,7 @@ class GraphSyncWorker:
         """Головний цикл отримання повідомлень."""
         if not self.consumer:
             return
-            
+
         try:
             async for msg in self.consumer:
                 if not msg.value:
@@ -73,7 +73,7 @@ class GraphSyncWorker:
         name = entity.get("назва") or entity.get("name")
         risk_score = entity.get("ризик_скор", 0.0)
         tenant_id = entity.get("tenant_id", "default")
-        
+
         if not ueid:
             logger.warning("No UEID provided in message, skipping graph sync.")
             return
@@ -93,7 +93,7 @@ class GraphSyncWorker:
             "edrpou": edrpou,
             "risk_score": risk_score
         })
-        
+
         # 2. Directors / Beneficiaries connections
         director = entity.get("director")
         if director:
@@ -108,5 +108,5 @@ class GraphSyncWorker:
                 "ueid": ueid,
                 "director_name": director
             })
-            
+
         logger.debug(f"Synced UEID {ueid} to Neo4j graph.")

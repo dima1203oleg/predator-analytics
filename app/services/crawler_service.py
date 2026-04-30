@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Crawler Service - Autonomous Web Scraping
 Fetches and processes external web content for hydration into the Knowledge Base.
 """
@@ -12,7 +11,6 @@ from typing import Any
 from urllib.parse import urljoin, urlparse
 
 import aiohttp
-
 
 try:
     from bs4 import BeautifulSoup

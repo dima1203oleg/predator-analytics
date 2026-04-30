@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Unified Data Pipeline Orchestrator.
 
 Головний оркестратор для всіх типів джерел даних:
@@ -17,7 +16,6 @@ import logging
 import os
 from typing import Any
 import uuid
-
 
 logger = logging.getLogger("pipeline.unified")
 
@@ -231,6 +229,7 @@ class UnifiedDataPipeline:
 
         Returns:
             Результат обробки з метаданими
+
         """
         options = options or {}
         job_id = str(uuid.uuid4())

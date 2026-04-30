@@ -5,7 +5,6 @@ import subprocess
 
 from .registry import registry
 
-
 logger = logging.getLogger("tools.infra")
 
 

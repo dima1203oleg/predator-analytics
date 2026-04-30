@@ -1,17 +1,17 @@
-from typing import Dict, Any, List
 from datetime import datetime
+from typing import Any
+
 
 class CompetitorPriceTracker:
-    """
-    Фаза 14: Competitor Price Tracker
+    """Фаза 14: Competitor Price Tracker
     Monitors competitor pricing strategies across channels (e-commerce, Prozorro, tenders).
     """
+
     def __init__(self):
         self.tracking_active = True
 
-    def get_competitor_prices(self, sku: str) -> Dict[str, Any]:
-        """
-        Retrieves recent pricing changes for a given SKU from top competitors.
+    def get_competitor_prices(self, sku: str) -> dict[str, Any]:
+        """Retrieves recent pricing changes for a given SKU from top competitors.
         """
         return {
             "sku": sku,

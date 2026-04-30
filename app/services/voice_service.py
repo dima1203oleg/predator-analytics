@@ -7,7 +7,6 @@ from google.auth.transport.requests import Request as GoogleRequest
 from google.oauth2 import service_account
 import requests
 
-
 # Налаштування логування
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -37,7 +36,6 @@ class VoiceService:
         self.creds = None
         if not os.environ.get("GOOGLE_APPLICATION_CREDENTIALS"):
             logger.error(_("Google Cloud credentials not found."))
-            print(_("Google Cloud credentials not found."))
         else:
             try:
                 self.creds = service_account.Credentials.from_service_account_file(

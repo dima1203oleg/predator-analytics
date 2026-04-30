@@ -1,5 +1,4 @@
-"""
-🧮 Ризик-скорер — PREDATOR Analytics v4.1.
+"""🧮 Ризик-скорер — PREDATOR Analytics v4.1.
 
 Розраховує комплексний ризик-бал для компаній
 на основі множини факторів.
@@ -44,8 +43,7 @@ class RiskResult:
 
 
 class RiskScorer:
-    """
-    Комплексний скорер ризиків для компаній.
+    """Комплексний скорер ризиків для компаній.
 
     Враховує:
     - Санкційний статус (РНБО, EU, OFAC)
@@ -76,8 +74,7 @@ class RiskScorer:
         edrpou: str,
         company_data: dict[str, Any] | None = None,
     ) -> RiskResult:
-        """
-        Розрахунок ризик-балу для компанії.
+        """Розрахунок ризик-балу для компанії.
 
         Args:
             edrpou: Код ЄДРПОУ
@@ -85,6 +82,7 @@ class RiskScorer:
 
         Returns:
             RiskResult з повною оцінкою
+
         """
         logger.info("Розрахунок ризику", edrpou=edrpou)
 

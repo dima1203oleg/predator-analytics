@@ -3,18 +3,19 @@
 """
 
 import asyncio
+from datetime import UTC, datetime
+from typing import Optional
 import uuid
-from datetime import datetime, UTC
-from typing import Dict, List, Optional
+
 from app.models.antigravity import (
+    AgentStatus,
+    AgentTechnology,
+    AgentType,
     AntigravityOrchestratorStatus,
     AntigravityTask,
-    AgentStatus,
-    AgentType,
-    AgentTechnology,
-    TaskStatus,
+    AntigravityTaskLog,
     TaskPriority,
-    AntigravityTaskLog
+    TaskStatus,
 )
 from app.services.audit_service import audit_logger
 from predator_common.logging import get_logger
@@ -23,19 +24,19 @@ logger = get_logger("core_api.antigravity_orchestrator")
 
 class AntigravityOrchestrator:
     """Оркестратор для координації Matrix 4 агентів."""
-    
+
     _instance: Optional["AntigravityOrchestrator"] = None
-    
+
     def __new__(cls):
         if cls._instance is None:
-            cls._instance = super(AntigravityOrchestrator, cls).__new__(cls)
+            cls._instance = super().__new__(cls)
             cls._instance._initialized = False
         return cls._instance
 
     def __init__(self):
         if self._initialized:
             return
-            
+
         self.status = AntigravityOrchestratorStatus(
             is_running=True,
             orchestrator_status="online",
@@ -46,40 +47,40 @@ class AntigravityOrchestrator:
             total_spent_usd=24.50,
             agents=[
                 AgentStatus(
-                    type=AgentType.ARCHITECT, 
-                    name="Architect-Prime", 
-                    technology=AgentTechnology.OPENHANDS, 
+                    type=AgentType.ARCHITECT,
+                    name="Architect-Prime",
+                    technology=AgentTechnology.OPENHANDS,
                     specialization="System Architecture & Refactoring",
                     is_busy=False, tasks_completed=12
                 ),
                 AgentStatus(
-                    type=AgentType.SURGEON, 
-                    name="Surgeon-Beta", 
-                    technology=AgentTechnology.AIDER, 
+                    type=AgentType.SURGEON,
+                    name="Surgeon-Beta",
+                    technology=AgentTechnology.AIDER,
                     specialization="High-Precision Code Injection",
                     is_busy=False, tasks_completed=45
                 ),
                 AgentStatus(
-                    type=AgentType.FINANCIAL_ANALYST, 
-                    name="Forensic-AI", 
-                    technology="Custom Python Engine", 
+                    type=AgentType.FINANCIAL_ANALYST,
+                    name="Forensic-AI",
+                    technology="Custom Python Engine",
                     specialization="UBO & Financial Fraud Detection",
                     is_busy=False, tasks_completed=7
                 ),
                 AgentStatus(
-                    type=AgentType.OSINT_EXPERT, 
-                    name="Phantom-Gatherer", 
-                    technology="Stealth-Web-Engine", 
+                    type=AgentType.OSINT_EXPERT,
+                    name="Phantom-Gatherer",
+                    technology="Stealth-Web-Engine",
                     specialization="Global Sanctions & Registry Scraper",
                     is_busy=False, tasks_completed=15
                 ),
             ]
         )
-        self.tasks: Dict[str, AntigravityTask] = {}
-        self.logs: List[AntigravityTaskLog] = []
-        self._loop_task: Optional[asyncio.Task] = None
+        self.tasks: dict[str, AntigravityTask] = {}
+        self.logs: list[AntigravityTaskLog] = []
+        self._loop_task: asyncio.Task | None = None
         self._initialized = True
-        
+
         # Початкове заповнення (для демонстрації)
         self._seed_data()
 
@@ -107,27 +108,27 @@ class AntigravityOrchestrator:
             try:
                 # 1. Пошук очікуючих задач
                 pending_tasks = [t for t in self.tasks.values() if t.status == TaskStatus.PENDING]
-                
+
                 for task in pending_tasks:
                     # 2. Пошук вільного агента (спрощена модель: беремо першого вільного)
                     free_agent = next((a for a in self.status.agents if not a.is_busy), None)
-                    
+
                     if free_agent:
                         await self._assign_task(task, free_agent)
-                
+
                 # 3. Емуляція прогресу активних задач
                 running_tasks = [t for t in self.tasks.values() if t.status == TaskStatus.RUNNING]
                 for task in running_tasks:
                     await self._simulate_progress(task)
-                
+
                 # 4. Оновлення лічильників
                 self.status.active_tasks = len(running_tasks)
                 self.status.completed_tasks = len([t for t in self.tasks.values() if t.status == TaskStatus.COMPLETED])
                 self.status.last_update = datetime.now(UTC).isoformat()
-                
+
             except Exception as e:
                 logger.error(f"Error in orchestrator loop: {e}")
-                
+
             await asyncio.sleep(5)  # Інтервал перевірки
 
     async def _assign_task(self, task: AntigravityTask, agent: AgentStatus):
@@ -137,10 +138,10 @@ class AntigravityOrchestrator:
         task.started_at = datetime.now(UTC)
         agent.is_busy = True
         agent.current_task_id = task.task_id
-        
+
         self.add_log(task.task_id, f"Агент {agent.name} розпочав виконання завдання: {task.description[:50]}...", agent.type)
         logger.info(f"Task {task.task_id} assigned to {agent.name}")
-        
+
         # Sovereign Audit (HR-16)
         await audit_logger.log(
             action="agi_task_assigned",
@@ -156,7 +157,6 @@ class AntigravityOrchestrator:
 
     async def _simulate_progress(self, task: AntigravityTask):
         """Виконання задачі (через Gemini Code Execution для Surgical Coder)."""
-        
         # Якщо це Surgical Coder (Surgeon), використовуємо реальне виконання коду
         if task.assigned_agent == AgentType.SURGEON and task.progress < 30:
             self.add_log(task.task_id, "Ініціалізація Gemini Code Execution Sandbox...", task.assigned_agent)
@@ -166,7 +166,7 @@ class AntigravityOrchestrator:
                 if result.get("result"):
                     task.result_artifact = result["result"]
                     self.add_log(task.task_id, f"Результат виконання: {result['result'][:100]}...", task.assigned_agent, level="success")
-                
+
                 # Прискорюємо прогрес при успішному виконанні
                 task.progress += 40
             except Exception as e:
@@ -176,12 +176,12 @@ class AntigravityOrchestrator:
         task.progress += 15
         task.actual_cost_usd += 0.02
         self.status.total_spent_usd += 0.02
-        
+
         if task.progress >= 100:
             task.progress = 100
             task.status = TaskStatus.COMPLETED
             task.finished_at = datetime.now(UTC)
-            
+
             # Звільнення агента
             agent = next((a for a in self.status.agents if a.type == task.assigned_agent), None)
             if agent:
@@ -189,7 +189,7 @@ class AntigravityOrchestrator:
                 agent.current_task_id = None
                 agent.tasks_completed += 1
                 self.add_log(task.task_id, f"Завдання {task.task_id} успішно завершено.", agent.type, level="success")
-                
+
                 # Sovereign Audit (HR-16)
                 await audit_logger.log(
                     action="agi_task_completed",
@@ -204,7 +204,7 @@ class AntigravityOrchestrator:
         else:
             self.add_log(task.task_id, f"Виконання: {task.progress}%...", task.assigned_agent)
 
-    def add_task(self, description: str, priority: TaskPriority, max_budget: Optional[float] = None) -> AntigravityTask:
+    def add_task(self, description: str, priority: TaskPriority, max_budget: float | None = None) -> AntigravityTask:
         """Створення нової задачі."""
         task_id = f"task-{uuid.uuid4().hex[:8]}"
         task = AntigravityTask(
@@ -218,7 +218,7 @@ class AntigravityOrchestrator:
         self.add_log(task_id, f"Додано нове завдання у чергу: {description}")
         return task
 
-    def add_log(self, task_id: str, message: str, agent_type: Optional[AgentType] = None, level: str = "info"):
+    def add_log(self, task_id: str, message: str, agent_type: AgentType | None = None, level: str = "info"):
         """Додавання запису в лог."""
         log_entry = AntigravityTaskLog(
             task_id=task_id,
@@ -234,11 +234,11 @@ class AntigravityOrchestrator:
         """Отримання поточного стану."""
         return self.status
 
-    def get_tasks(self) -> List[AntigravityTask]:
+    def get_tasks(self) -> list[AntigravityTask]:
         """Отримання списку всіх задач."""
         return sorted(self.tasks.values(), key=lambda x: x.created_at, reverse=True)
 
-    def get_logs(self) -> List[AntigravityTaskLog]:
+    def get_logs(self) -> list[AntigravityTaskLog]:
         """Отримання останніх логів."""
         return self.logs
 

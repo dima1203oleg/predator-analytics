@@ -214,6 +214,7 @@ class RAGService:
             top_k: Кількість чанків для контексту
             score_threshold: Мінімальний поріг релевантності
             model: LLM модель (за замовчуванням з config)
+
         """
         # 1. Embedding запитання
         query_embedding = await AIService.get_embeddings(question)

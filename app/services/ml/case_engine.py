@@ -8,7 +8,6 @@ from app.libs.core.database import get_db_ctx
 from app.libs.core.models.entities import Case
 from app.services.llm.service import llm_service
 
-
 logger = logging.getLogger("service.case_engine")
 
 

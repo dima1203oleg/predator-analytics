@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Mock Data Generator - For demo/testing."""
 from datetime import datetime
 import random

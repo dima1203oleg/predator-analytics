@@ -103,7 +103,7 @@ class SanctionsCheckerTool(BaseTool):
 
         # Формуємо findings
         for match in matches:
-            severity = "critical" if match["match_score"] >= 95 else "high"
+            "critical" if match["match_score"] >= 95 else "high"
             findings.append({
                 "type": "sanction_match",
                 "value": match["name"],

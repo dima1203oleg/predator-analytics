@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """FastAPI Security Dependencies
 Integrates RBAC with FastAPI routing.
 """
@@ -10,7 +9,6 @@ from fastapi import Depends, HTTPException, Request, status
 
 from app.libs.core.security.rbac import Permission, Role, verify_permission
 from app.libs.core.structured_logger import get_logger, log_security_event
-
 
 logger = get_logger("predator.security")
 

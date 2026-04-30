@@ -4,7 +4,6 @@ import asyncio
 import os
 import sys
 
-
 # Ensure backend modules can be imported
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'backend'))
 
@@ -16,19 +15,12 @@ except ImportError:
     from app.services.diagnostics_service import DiagnosticsService
 
 async def main():
-    print("🤖 --- STARTING AUTOMATED DIAGNOSTICS ---")
-    print("1️⃣  Initializing Service...")
     service = DiagnosticsService()
 
-    print("2️⃣  Running Full Suite (Infra -> AI Brain)...")
     await service.run_full_diagnostics()
 
-    print("3️⃣  Generating Report...")
-    report = service.generate_report()
+    service.generate_report()
 
-    print("\n" + "="*40)
-    print(report)
-    print("="*40)
 
 if __name__ == "__main__":
     asyncio.run(main())

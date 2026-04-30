@@ -1,18 +1,20 @@
+from typing import Any
+
 from fastapi import APIRouter, Depends, HTTPException
-from typing import Dict, Any
-from app.services.gemini_agent_service import gemini_service
+
+from app.config import Settings, get_settings
 from app.services.cloud_bridge import cloud_bridge
-from app.config import get_settings, Settings
+from app.services.gemini_agent_service import gemini_service
 
 router = APIRouter(prefix="/cloud-assist", tags=["cloud-assist"])
 
 @router.post("/sync-colab")
-async def sync_colab(payload: Dict[str, Any]):
+async def sync_colab(payload: dict[str, Any]):
     """Реєстрація та синхронізація з вузлом Google Colab."""
     tunnel_url = payload.get("url")
     if not tunnel_url:
         return {"status": "error", "message": "URL не надано"}
-    
+
     success = await cloud_bridge.check_colab_status(tunnel_url)
     return {
         "status": "success" if success else "failed",
@@ -45,7 +47,7 @@ async def analyze_cloud_scheme(prompt: str, image_data: str):
         else:
             encoded = image_data
             mime_type = "image/jpeg"
-            
+
         img_bytes = base64.b64decode(encoded)
         result = await gemini_service.analyze_vision(prompt, img_bytes, mime_type)
         return result

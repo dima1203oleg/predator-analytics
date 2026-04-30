@@ -3,7 +3,6 @@ from __future__ import annotations
 from datetime import datetime
 import json
 import os
-from typing import Optional
 
 import requests
 from rich.console import Console
@@ -14,7 +13,6 @@ import yaml
 from libs.core.linter import get_linter
 from predatorctl.core.arbiter_client import ArbiterClient
 from predatorctl.core.ledger_client import LedgerClient
-
 
 app = typer.Typer(help="System management and status")
 console = Console()

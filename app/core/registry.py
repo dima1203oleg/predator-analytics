@@ -8,7 +8,6 @@ from enum import StrEnum
 import importlib
 import logging
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -141,6 +140,7 @@ class ComponentRegistry:
 
         Raises:
             RuntimeError if critical components are missing
+
         """
         if not self._initialized:
             raise RuntimeError("Registry not initialized. Call register_all() first.")

@@ -6,8 +6,8 @@ Spec: Section 10, COMP-001+ (Entity Resolution via UEID).
 
 from __future__ import annotations
 
+from datetime import UTC, datetime
 import uuid
-from datetime import datetime, timezone
 
 from sqlalchemy import Column, DateTime, Index, String, Text
 from sqlalchemy.dialects.postgresql import JSONB, UUID
@@ -35,8 +35,8 @@ class EntityORM(Base):
     inn = Column(String(12), nullable=True)
     fingerprint = Column(String(64), nullable=False, comment="SHA-256 of canonical name+type+edrpou")
     metadata_ = Column("metadata", JSONB, server_default="{}", nullable=False)
-    created_at = Column(DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))
-    updated_at = Column(DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime(timezone=True), nullable=False, default=lambda: datetime.now(UTC))
+    updated_at = Column(DateTime(timezone=True), nullable=False, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
 
     def __repr__(self) -> str:
         return f"<Entity {self.ueid} {self.entity_type}:{self.name_normalized}>"

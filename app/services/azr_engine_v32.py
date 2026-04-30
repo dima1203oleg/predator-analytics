@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """
 🧠 AZR Engine v32 - Sovereign Autonomous Response
 ==================================================
@@ -16,7 +15,6 @@ Advanced self-improvement system with:
 """
 
 import asyncio
-from typing import Any
 from collections import deque
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -24,16 +22,13 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import subprocess
 import uuid
 
-import yaml
-import subprocess
-
-from app.libs.core.merkle_ledger import MerkleTruthLedger, get_truth_ledger
-from app.libs.core.structured_logger import get_logger, log_business_event, log_security_event
-from app.libs.core.storage import StorageProvider, FileStorageProvider
 from app.libs.core.config import settings
-
+from app.libs.core.merkle_ledger import MerkleTruthLedger, get_truth_ledger
+from app.libs.core.storage import FileStorageProvider, StorageProvider
+from app.libs.core.structured_logger import get_logger, log_business_event, log_security_event
 
 logger = get_logger("azr_engine_v32")
 
@@ -138,7 +133,7 @@ class ConstitutionalGuardV2:
         self.axioms: list[tuple[str, str, str]] = list(self.CORE_AXIOMS)
         self.violations_count = 0
         self.last_violation: dict | None = None
-        
+
         if self.storage:
             self._load_custom_axioms()
 
@@ -150,7 +145,7 @@ class ConstitutionalGuardV2:
         yaml_rel_paths = [
             "config/axioms/constitutional_axioms.yaml",
         ]
-        
+
         for rel_path in yaml_rel_paths:
             content = self.storage.read_text(rel_path)
             if content:
@@ -587,7 +582,6 @@ class ChaosEngine:
             return None
 
         import random
-        import asyncio
 
         for scenario_id, _desc, probability in self.SCENARIOS:
             if random.random() < probability:
@@ -650,8 +644,6 @@ class AZREngineV32:
     VERSION = "v32.0.0"
 
     def __init__(self, azr_root: str | None = None, storage: StorageProvider | None = None):
-        from app.libs.core.config import settings
-        import asyncio # Added for _main_loop
 
         if storage:
             self.storage = storage
@@ -660,7 +652,7 @@ class AZREngineV32:
             self.root = Path(azr_root or settings.AZR_HOME)
             # Initialize Architecture-Level Storage Provider
             self.storage = FileStorageProvider(self.root)
-        
+
         # Core components using StorageProvider
         self.guard = ConstitutionalGuardV2(self.storage)
         self.memory = ExperienceMemory(self.storage)
@@ -1132,7 +1124,7 @@ class AZREngineV32:
     def get_status(self) -> dict:
         """Get current engine status."""
         # Get ledger integrity status
-        ledger_valid, ledger_message = self.truth_ledger.verify_chain_integrity()
+        ledger_valid, _ledger_message = self.truth_ledger.verify_chain_integrity()
 
         return {
             "engine": f"AZR {self.VERSION}",

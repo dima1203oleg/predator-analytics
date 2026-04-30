@@ -1,9 +1,8 @@
-"""
-Telegram Bot Configuration
+"""Telegram Bot Configuration
 Centralized storage for texts, keyboard layouts, and settings.
 """
-import os
 from enum import Enum
+import os
 
 # Bot Token
 BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")

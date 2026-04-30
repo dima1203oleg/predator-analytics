@@ -1,25 +1,24 @@
 import logging
-from typing import Dict, Any, List
 import random
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
 class OCRWorker:
-    """
-    OCR Worker (COMP-009)
+    """OCR Worker (COMP-009)
     Extracts text from images and PDF scans using Tesseract/EasyOCR.
     Specialized for Ukrainian Cyrillic and technical documents.
     """
+
     def __init__(self):
         # In production, this would initialize tesseract-ocr or easyocr
         pass
 
-    def extract_text(self, file_path: str, lang: str = "ukr+eng") -> Dict[str, Any]:
-        """
-        Simulates text extraction from a document.
+    def extract_text(self, file_path: str, lang: str = "ukr+eng") -> dict[str, Any]:
+        """Simulates text extraction from a document.
         """
         logger.info(f"Processing OCR for {file_path} in {lang}")
-        
+
         # Mock result
         return {
             "file_name": file_path.split("/")[-1],

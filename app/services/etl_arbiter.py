@@ -14,7 +14,6 @@ from app.libs.core.etl_state_machine import ETLState, ETLStateMachine
 from app.libs.core.models.entities import ETLJob
 from app.libs.core.models.truth_ledger import TruthLedger
 
-
 logger = logging.getLogger("service.etl_arbiter")
 
 

@@ -1,15 +1,15 @@
-"""
-Auth & Security API Router (Phase 3 — SM Edition).
+"""Auth & Security API Router (Phase 3 — SM Edition).
 
 Endpoints for Keycloak, JWT, tenant middleware, rate limiter, and Vault.
 """
-from fastapi import APIRouter
 from typing import Any
 
-from app.services.auth.keycloak_service import KeycloakAuthService
+from fastapi import APIRouter
+
 from app.services.auth.jwt_middleware import JWTAuthMiddleware
-from app.services.auth.tenant_middleware import TenantMiddleware
+from app.services.auth.keycloak_service import KeycloakAuthService
 from app.services.auth.rate_limiter import RedisRateLimiter
+from app.services.auth.tenant_middleware import TenantMiddleware
 from app.services.auth.vault_secrets import VaultSecretsService
 
 router = APIRouter(prefix="/auth", tags=["Auth & Security"])

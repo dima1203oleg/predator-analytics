@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Predator Autonomous Intelligence v2.0
 Повністю автономна система з проактивним прийняттям рішень.
 
@@ -24,7 +23,6 @@ from sqlalchemy import select
 from app.libs.core.database import get_db_ctx
 from app.libs.core.models import DataSource, MLJob
 from app.libs.core.structured_logger import get_logger, log_business_event
-
 
 logger = get_logger("predator.autonomous_intelligence_v2")
 

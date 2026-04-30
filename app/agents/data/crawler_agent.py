@@ -1,10 +1,12 @@
 from __future__ import annotations
-from typing import Dict, Any, List
-from ..core.base_agent import BaseAgent, AgentResponse, AgentConfig
-from ...services.crawler_service import get_crawler_service
-from ...services.qdrant_service import get_qdrant_service
-from ...services.embedding_service import get_embedding_service
+
 import logging
+from typing import Any
+
+from ...services.crawler_service import get_crawler_service
+from ...services.embedding_service import get_embedding_service
+from ...services.qdrant_service import get_qdrant_service
+from ..core.base_agent import AgentConfig, AgentResponse, BaseAgent
 
 logger = logging.getLogger(__name__)
 
@@ -15,32 +17,31 @@ class CrawlerAgent(BaseAgent):
         self.qdrant = get_qdrant_service()
         self.embedding = get_embedding_service()
 
-    async def process(self, inputs: Dict[str, Any]) -> AgentResponse:
-        """
-        Inputs:
-            url: str - Target URL to crawl
-            max_pages: int - Limit (default 5)
-            store: bool - Whether to index in Qdrant (default True)
+    async def process(self, inputs: dict[str, Any]) -> AgentResponse:
+        """Inputs:
+        url: str - Target URL to crawl
+        max_pages: int - Limit (default 5)
+        store: bool - Whether to index in Qdrant (default True)
         """
         url = inputs.get("url")
         max_pages = inputs.get("max_pages", 5)
         store = inputs.get("store", True)
-        
+
         if not url:
              return AgentResponse(agent_name=self.name, result={"error": "No URL provided"}, metadata={"status": "failed"})
 
         self._log_activity(f"Starting crawl of {url} (limit: {max_pages})")
-        
+
         try:
             # 1. Crawl
             raw_results = await self.crawler.crawl_site_bfs(url, max_pages)
-            
+
             summary_stats = {
                 "pages_crawled": len(raw_results),
                 "total_chars": sum(len(r.content) for r in raw_results),
                 "stored": False
             }
-            
+
             # 2. Store in Qdrant (VectorDB)
             if store and raw_results:
                 # Prepare docs
@@ -58,7 +59,7 @@ class CrawlerAgent(BaseAgent):
                 import asyncio
                 loop = asyncio.get_event_loop()
                 embeddings = await loop.run_in_executor(None, self.embedding.generate_batch_embeddings, texts)
-                
+
                 for i, res in enumerate(raw_results):
                     doc = {
                         "id": res.url, # URL as ID (or hash it)
@@ -68,16 +69,16 @@ class CrawlerAgent(BaseAgent):
                         "url": res.url,
                         "crawled_at": res.timestamp.isoformat()
                     }
-                    
+
                     # Ensure ID is safe for Qdrant (UUID-like via helper in service)
                     # QdrantService._ensure_uuid handles hashing strings.
-                    
+
                     documents.append({
-                        "id": res.url, 
+                        "id": res.url,
                         "embedding": embeddings[i],
                         "metadata": doc
                     })
-                
+
                 await self.qdrant.index_batch(documents)
                 summary_stats["stored"] = True
                 self._log_activity(f"Indexed {len(documents)} pages to Knowledge Base")

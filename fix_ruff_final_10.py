@@ -1,13 +1,13 @@
 import re
 
+
 def fix_file(path, func):
-    with open(path, 'r') as f:
+    with open(path) as f:
         content = f.read()
     new_content = func(content)
     if new_content != content:
         with open(path, 'w') as f:
             f.write(new_content)
-        print(f"Fixed {path}")
 
 # security.py
 def fix_security(c):
@@ -80,4 +80,3 @@ def fix_ukraine(c):
     return c
 fix_file('/Users/dima-mac/Documents/Predator_21/services/core-api/app/services/ukraine_registries.py', fix_ukraine)
 
-print("done")

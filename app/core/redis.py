@@ -12,7 +12,6 @@ class RedisClient:
             self.client = redis.from_url(
                 settings.REDIS_URL, encoding="utf-8", decode_responses=True
             )
-            print("✅ Redis Connected")
 
     async def get_client(self):
         if not self.client:

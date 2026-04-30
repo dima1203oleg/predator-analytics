@@ -3,7 +3,7 @@ from __future__ import annotations
 """
 Data Deduplication Layer
 
-Generates unique SHA-256 signatures for records and provides 
+Generates unique SHA-256 signatures for records and provides
 functionality to identify and handle duplicate entries.
 """
 
@@ -18,11 +18,11 @@ class DataDeduplicator:
     """Identifies and marks duplicates using SHA-256 hashing."""
 
     def __init__(self, primary_keys: list[str] | None = None):
-        """
-        Args:
-            primary_keys: Optional list of keys that uniquely define a record.
-                          If provided, the hash is created using only these fields.
-                          If None, the hash is created from the entire record.
+        """Args:
+        primary_keys: Optional list of keys that uniquely define a record.
+                      If provided, the hash is created using only these fields.
+                      If None, the hash is created from the entire record.
+
         """
         self.primary_keys = primary_keys
         self.seen_signatures = set()
@@ -36,18 +36,18 @@ class DataDeduplicator:
             keys: list[str] = self.primary_keys or []
             # Normalize to string, strip whitespace, and uppercase for case-insensitive matching if it's a code
             data_to_hash = {
-                k: str(record.get(k, "")).strip().upper() 
+                k: str(record.get(k, "")).strip().upper()
                 for k in keys
             }
         else:
             # Hash the whole record (except metadata)
             exclude_keys = ("source_format", "timestamp", "job_id", "_signature")
             data_to_hash = {
-                k: str(v).strip() 
-                for k, v in record.items() 
+                k: str(v).strip()
+                for k, v in record.items()
                 if k not in exclude_keys
             }
-        
+
         # 2. Convert to a stable JSON string (sorted keys)
         try:
             stable_str = json.dumps(data_to_hash, sort_keys=True, default=str)
@@ -61,10 +61,9 @@ class DataDeduplicator:
         return sha_signature
 
     def process_batch(self, records: list[dict[str, Any]]) -> dict[str, Any]:
-        """
-        Process a batch of records, attaching a 'signature' to each and 
+        """Process a batch of records, attaching a 'signature' to each and
         filtering out exact duplicates within the current in-memory set.
-        
+
         Returns a dict with:
             - "unique_records": List of unique records
             - "duplicate_records": List of discarded duplicates (within this run)
@@ -75,7 +74,7 @@ class DataDeduplicator:
 
         for record in records:
             signature = self._generate_signature(record)
-            
+
             # Attach signature to record
             record["_signature"] = signature
 
@@ -84,10 +83,10 @@ class DataDeduplicator:
             else:
                 self.seen_signatures.add(signature)
                 unique_records.append(record)
-                
+
         # Also log stats about deduplication
         logger.debug(f"Deduplicator processed batch: {len(unique_records)} unique, {len(duplicate_records)} duplicates.")
-        
+
         return {
             "unique_records": unique_records,
             "duplicate_records": duplicate_records,
@@ -97,14 +96,13 @@ class DataDeduplicator:
                 "duplicate_count": len(duplicate_records)
             }
         }
-    
+
     def clear_cache(self):
         """Clears the in-memory set of seen signatures."""
         self.seen_signatures.clear()
-        
+
     def generate_signatures_only(self, records: list[dict[str, Any]]) -> list[dict[str, Any]]:
-        """
-        Just calculate and attach the `_signature` to each record without 
+        """Just calculate and attach the `_signature` to each record without
         filtering them or retaining them in memory.
         """
         for record in records:

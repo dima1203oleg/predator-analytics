@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 #!/usr/bin/env python3
 """
 Open Data Portal Scraper
@@ -10,7 +9,6 @@ Main script to automate scraping, parsing, and saving data from open data portal
 
 from pathlib import Path
 import sys
-
 
 # Add the ETL module to Python path
 etl_module_path = Path(__file__).parent / "src"
@@ -24,8 +22,6 @@ from transformation.data_transformer import DataTransformer
 
 def main():
     """Main function to demonstrate the scraping pipeline."""
-    print("=== AtlasTrinity Open Data Portal Scraper ===")
-
     # Example configuration
     DATA_DIR = Path(__file__).parent.parent / "data" / "etl" / "scraped_data"
     DATA_DIR.mkdir(parents=True, exist_ok=True)
@@ -47,37 +43,29 @@ def main():
     transformer = DataTransformer()
     distributor = DataDistributor()
 
-    print(f"Scraper initialized: {scraper.get_scraping_stats()}")
-    print(f"Supported formats: {parser.get_supported_formats()}")
-    print(f"Enabled distribution targets: {[t.value for t in distributor.get_enabled_targets()]}")
 
     # Example 1: Scrape API endpoint and save as JSON
-    print("\n--- Example 1: API Scraping ---")
     api_result = scraper.scrape_api_endpoint(config["sample_url"])
 
     if api_result.success:
-        print(f"Successfully scraped API: {len(api_result.data)} records")
 
         # Save as JSON
         json_path = Path(config["output_dir"]) / "api_data.json"
         save_result = scraper.save_data(api_result.data, json_path, ScrapeFormat.JSON)
 
         if save_result.success:
-            print(f"Saved to: {save_result.data}")
 
             # Parse the saved data
             parse_result = parser.parse(json_path, DataFormat.JSON)
             if parse_result.success:
-                print(f"Parsed {len(parse_result.data)} records from JSON")
 
                 # Transform to unified schema (this would need mapping for real data)
                 # For demo, we'll just show the transformation capability
-                print("Data ready for transformation and distribution")
+                pass
     else:
-        print(f"API scraping failed: {api_result.error}")
+        pass
 
     # Example 2: Scrape web page with structured extraction
-    print("\n--- Example 2: Web Scraping with Selectors ---")
 
     # Note: This is a placeholder example. In a real scenario, you would:
     # 1. Use a real open data portal URL
@@ -95,13 +83,11 @@ def main():
     )
 
     if scrape_save_result.success:
-        print(f"Successfully scraped and saved: {scrape_save_result.data}")
-        print(f"Metadata: {scrape_save_result.metadata}")
+        pass
     else:
-        print(f"Web scraping failed: {scrape_save_result.error}")
+        pass
 
     # Example 3: Full ETL pipeline demonstration
-    print("\n--- Example 3: Full ETL Pipeline ---")
 
     # Create sample data that matches our unified schema
     sample_data = [
@@ -114,12 +100,10 @@ def main():
     save_result = scraper.save_data(sample_data, sample_path, ScrapeFormat.JSON)
 
     if save_result.success:
-        print(f"Created sample data: {save_result.data}")
 
         # Parse the data
         parse_result = parser.parse(sample_path, DataFormat.JSON)
         if parse_result.success:
-            print("Parsed data successfully")
 
             # Transform to unified schema
             transform_result = transformer.transform_from_dataframe(
@@ -127,7 +111,6 @@ def main():
             )
 
             if transform_result.success:
-                print(f"Transformed {len(transform_result.data)} records")
 
                 # Distribute the data
                 dist_results = distributor.distribute(
@@ -137,18 +120,15 @@ def main():
 
                 for dist_result in dist_results:
                     if dist_result.success:
-                        print(f"Successfully distributed to {dist_result.target}")
+                        pass
                     else:
-                        print(f"Distribution to {dist_result.target} failed: {dist_result.error}")
+                        pass
             else:
-                print(f"Transformation failed: {transform_result.error}")
+                pass
         else:
-            print(f"Parsing failed: {parse_result.error}")
+            pass
 
-    print("\n=== Scraping Pipeline Complete ===")
-    from scraping.data_scraper import LOG_DIR
 
-    print(f"Check {LOG_DIR / 'scraping_audit.log'} for detailed logs")
 
 
 if __name__ == "__main__":

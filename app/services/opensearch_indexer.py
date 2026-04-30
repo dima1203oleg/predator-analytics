@@ -8,7 +8,6 @@ from opensearchpy import AsyncOpenSearch, helpers
 
 from app.libs.core.structured_logger import get_logger, log_performance
 
-
 logger = get_logger("service.opensearch_indexer")
 
 
@@ -118,6 +117,7 @@ class OpenSearchIndexer:
             embedding_service: Service to generate vectors (optional)
             qdrant_service: Service to store vectors (optional)
             tenant_id: Tenant context for isolation
+
         """
         logger.info(
             "opensearch_bulk_indexing_started",
@@ -232,6 +232,7 @@ class OpenSearchIndexer:
             query_body: Advanced query DSL
             size: Number of results
             tenant_id: Tenant context for filtering
+
         """
         if query_body:
             body = query_body.copy()

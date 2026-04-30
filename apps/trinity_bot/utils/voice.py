@@ -7,7 +7,6 @@ import os
 from pydub import AudioSegment
 import speech_recognition as sr
 
-
 # Check for whisper availability
 try:
     import whisper

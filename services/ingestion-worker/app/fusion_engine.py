@@ -4,10 +4,10 @@
 from datetime import datetime
 import logging
 
+from app.core.autonomous_agent import AutonomousTrigger
 from app.models import Організація
 from app.osint.tools import ІнструментФантом, ІнструментШерлок
 from app.registries.ua_registries import УкраїнськийРеєстр
-from app.core.autonomous_agent import AutonomousTrigger
 
 logger = logging.getLogger(__name__)
 

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Cartel Detector (COMP-063) + Dumping Detector (COMP-065)
 
 Виявлення картельних змов та демпінгу на ринках:
@@ -15,14 +14,12 @@ Dumping Detection:
 - Різке зниження для витіснення конкурентів
 - Аналіз ціна/якість аномалій
 """
-import logging
-import math
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
+import logging
 from typing import Any
 
 import numpy as np
-
 
 logger = logging.getLogger("service.market_integrity")
 
@@ -30,6 +27,7 @@ logger = logging.getLogger("service.market_integrity")
 @dataclass
 class CartelSignal:
     """Detected cartel behavior signal."""
+
     signal_type: str           # price_sync, price_correlation, identical_pricing, bid_rotation
     confidence: float          # 0.0 - 1.0
     entities: list[str]        # Involved entities
@@ -53,6 +51,7 @@ class CartelSignal:
 @dataclass
 class DumpingSignal:
     """Detected dumping behavior signal."""
+
     entity: str
     product_code: str
     current_price: float
@@ -106,6 +105,7 @@ class MarketIntegrityAnalyzer:
 
         Returns:
             List of CartelSignal found
+
         """
         signals: list[CartelSignal] = []
         entities = list(price_series.keys())
@@ -144,6 +144,7 @@ class MarketIntegrityAnalyzer:
 
         Returns:
             List of DumpingSignal found
+
         """
         signals: list[DumpingSignal] = []
 
@@ -227,7 +228,7 @@ class MarketIntegrityAnalyzer:
         all_prices = {e: np.array(price_series[e]) for e in entities}
 
         # Calculate % changes
-        for e, prices in all_prices.items():
+        for _e, prices in all_prices.items():
             if len(prices) < 2:
                 return signals
 
@@ -317,7 +318,7 @@ class MarketIntegrityAnalyzer:
         identical_count = 0
         for t in range(n):
             prices_at_t = [p[t] for p in all_prices]
-            if len(set(round(p, 2) for p in prices_at_t)) == 1:
+            if len({round(p, 2) for p in prices_at_t}) == 1:
                 identical_count += 1
 
         if identical_count > n * 0.5 and n >= 5:

@@ -5,10 +5,10 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.auth import get_current_user
 from app.database import get_db
 from app.models.decision import Decision
 from app.schemas.decision import DecisionCreate, DecisionRead
-from app.core.auth import get_current_user
 from app.schemas.user import UserRead
 
 router = APIRouter(prefix="/decisions", tags=["decisions"])
@@ -63,7 +63,7 @@ async def get_decision(
 async def update_decision():
     """ЗАБОРОНЕНО: Рішення в PREDATOR є незмінними (HR-16)."""
     raise HTTPException(
-        status_code=403, 
+        status_code=403,
         detail="CRITICAL_ERROR: Редагування WORM-записів заборонено протоколом безпеки (HR-16)."
     )
 
@@ -71,6 +71,6 @@ async def update_decision():
 async def delete_decision():
     """ЗАБОРОНЕНО: Видалення аудит-логів заборонено (HR-16)."""
     raise HTTPException(
-        status_code=403, 
+        status_code=403,
         detail="CRITICAL_ERROR: Видалення WORM-записів заборонено протоколом безпеки (HR-16)."
     )

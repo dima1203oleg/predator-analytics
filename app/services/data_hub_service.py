@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Predator Analytics v45 - Data Hub Service
 Manages Sources, Datasets, and Jobs lifecycle.
 """
@@ -32,7 +31,6 @@ from app.models.entities import (
 )
 from app.services.etl_ingestion import ETLIngestionService
 from app.services.minio_service import MinIOService
-
 
 if TYPE_CHECKING:
     from uuid import UUID

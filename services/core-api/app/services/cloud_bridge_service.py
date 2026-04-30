@@ -1,17 +1,15 @@
-import asyncio
-import httpx
 import logging
-from typing import Dict, Any, Optional
-from app.core.config import settings
+from typing import Any
+
+import httpx
 
 logger = logging.getLogger(__name__)
 
 class CloudBridgeService:
-    """
-    🦅 PREDATOR Cloud Bridge Service
+    """🦅 PREDATOR Cloud Bridge Service
     Координує роботу між iMac (Local Compute) та Google Colab (Cloud Hybrid).
     """
-    
+
     def __init__(self):
         self.colab_url = None
         self.is_connected = False
@@ -32,9 +30,8 @@ class CloudBridgeService:
             self.is_connected = False
         return False
 
-    async def route_llm_request(self, payload: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-        """
-        Маршрутизація запиту до LLM:
+    async def route_llm_request(self, payload: dict[str, Any]) -> dict[str, Any] | None:
+        """Маршрутизація запиту до LLM:
         Sovereign (Local) -> Hybrid (Groq) -> Cloud (Colab/Gemini)
         """
         # Якщо локальний VRAM переповнений (>7.6GB), форсуємо перехід в хмару

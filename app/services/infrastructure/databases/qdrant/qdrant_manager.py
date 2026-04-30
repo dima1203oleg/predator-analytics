@@ -1,9 +1,8 @@
-"""
-Qdrant Vector Database Infrastructure Service (Phase 2E — SM Edition).
+"""Qdrant Vector Database Infrastructure Service (Phase 2E — SM Edition).
 
 SM-optimized: 2GB RAM, INT8 quantization, on-disk storage.
 """
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 
@@ -32,7 +31,7 @@ class QdrantInfraManager:
             "quantization": self.config["quantization"],
             "storage_mode": self.config["storage"],
             "collections": len(self.collections),
-            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(UTC).isoformat(),
         }
 
     def list_collections(self) -> list[dict[str, Any]]:

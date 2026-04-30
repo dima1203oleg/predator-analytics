@@ -1,10 +1,10 @@
-"""
-War Room API (Phase 12 — SM Edition).
+"""War Room API (Phase 12 — SM Edition).
 
 Endpoints for Command Center, Attack Plans, and Shadow Cartography.
 """
-from fastapi import APIRouter
 from typing import Any
+
+from fastapi import APIRouter
 
 from app.services.intelligence import CommandCenter, ShadowCartography
 

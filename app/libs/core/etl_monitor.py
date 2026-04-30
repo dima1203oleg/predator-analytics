@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """ETL Constitutional Monitor - AZR Engine v45-S
 Real-time monitoring and validation of the ETL Pipeline.
 """
@@ -11,7 +10,6 @@ from typing import Any
 
 from app.libs.core.etl_arbiter import ETLSovereignArbiter
 from app.libs.core.etl_state_machine_v45s import ETLState, ETLStateMachineV45S
-
 
 logger = logging.getLogger(__name__)
 

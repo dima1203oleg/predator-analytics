@@ -1,10 +1,10 @@
-"""
-Kafka Infrastructure API (Phase 2D — SM Edition).
+"""Kafka Infrastructure API (Phase 2D — SM Edition).
 
 Endpoints for managing Kafka broker, topics, and consumer lag.
 """
-from fastapi import APIRouter
 from typing import Any
+
+from fastapi import APIRouter
 
 from app.services.infrastructure.messaging.kafka_manager import KafkaInfraManager
 

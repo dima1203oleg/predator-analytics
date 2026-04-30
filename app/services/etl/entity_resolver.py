@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Entity Resolver / UEID Generator (COMP-017)
 
 Генератор Unified Economic ID (UEID) для сутностей.
@@ -8,20 +7,19 @@ from __future__ import annotations
 
 Resolution Strategy:
 1. Exact match by EDRPOU → UEID
-2. Normalized name matching → candidate UEIDs 
+2. Normalized name matching → candidate UEIDs
 3. Fuzzy matching with Jaccard/Levenshtein → ranked candidates
 4. New UEID generation for truly new entities
 
 UEID Format: PRED-{type}-{hash8}
   type: CO (company), PE (person), GO (government)
 """
+from dataclasses import dataclass, field
+from datetime import UTC, datetime
 import hashlib
 import logging
 import re
-from dataclasses import dataclass, field
-from datetime import UTC, datetime
 from typing import Any
-
 
 logger = logging.getLogger("service.entity_resolver")
 
@@ -29,6 +27,7 @@ logger = logging.getLogger("service.entity_resolver")
 @dataclass
 class ResolvedEntity:
     """A resolved entity with UEID."""
+
     ueid: str
     name: str
     normalized_name: str
@@ -88,6 +87,7 @@ class EntityResolver:
 
         Returns:
             ResolvedEntity with UEID
+
         """
         # 1. Try EDRPOU exact match
         if edrpou and edrpou in self._edrpou_index:
@@ -132,6 +132,7 @@ class EntityResolver:
 
         Args:
             entities: List of dicts with 'name', optional 'edrpou', 'type'
+
         """
         results = []
         for e in entities:

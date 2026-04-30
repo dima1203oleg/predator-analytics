@@ -10,7 +10,6 @@ from sqlalchemy import text
 from libs.core.database import get_db_sync
 from libs.core.mlops import DatasetVersionManager
 
-
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("ingest_radical_datasets")
 
@@ -53,7 +52,6 @@ def ingest():
 
     logger.info(f"📂 Parsing {file_path}...")
     scenarios = parse_md_scenarios(file_path)
-    print(f"DEBUG: Found {len(scenarios)} scenarios locally.")
     logger.info(f"✅ Found {len(scenarios)} radical scenarios.")
 
     # Register in MLOps
@@ -68,7 +66,6 @@ def ingest():
 
     try:
         with get_db_sync() as session:
-            print("DEBUG: Database connection established.")
             session.execute(text("CREATE SCHEMA IF NOT EXISTS knowledge_base;"))
             session.execute(text("""
                 CREATE TABLE IF NOT EXISTS knowledge_base.analytic_scenarios (
@@ -83,12 +80,11 @@ def ingest():
 
             for i, s in enumerate(scenarios):
                 if i % 10 == 0:
-                    print(f"DEBUG: Ingesting scenario {i}/{len(scenarios)}: {s['name']}")
+                    pass
                 session.execute(
                     text("INSERT INTO knowledge_base.analytic_scenarios (name, description, essence, fields) VALUES (:name, :description, :essence, :fields)"),
                     {"name": s['name'], "description": s['description'], "essence": s['essence'], "fields": json.dumps(s['fields'])}
                 )
-        print("DEBUG: Ingestion loop finished.")
         logger.info("🛡️ Knowledge Base updated with radical scenarios.")
     except Exception as e:
         logger.exception(f"❌ Failed to update knowledge base: {e}")

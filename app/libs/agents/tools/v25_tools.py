@@ -5,7 +5,6 @@ import logging
 
 from .registry import registry
 
-
 logger = logging.getLogger("tools.v45")
 
 
@@ -105,6 +104,7 @@ async def e2e_analyze(query: str, databases: list[str] | None = None, limit: int
         query: Search/analysis query
         databases: List of databases to query (postgresql, opensearch, qdrant)
         limit: Max results per database
+
     """
     try:
         import httpx
@@ -176,6 +176,7 @@ async def create_case(
         risk_score: Risk score 1-100
         sector: Sector code (GOV, BIZ, MED, SCI, SYS)
         status: Status (КРИТИЧНО, УВАГА, БЕЗПЕЧНО)
+
     """
     try:
         import httpx
@@ -224,6 +225,7 @@ async def query_database(database: str, query: str, limit: int = 10) -> str:
         database: Target database (postgresql, opensearch, qdrant)
         query: Query string or search term
         limit: Max results
+
     """
     try:
         if database == "postgresql":

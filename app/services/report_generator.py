@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Report Generator Service.
 
 Generates PDF and Markdown reports for test runs.
@@ -12,7 +11,6 @@ import io
 import logging
 import os
 from typing import Any
-
 
 try:
     from reportlab.lib import colors

@@ -2,12 +2,12 @@
 import asyncio
 import getpass
 import os
+
 from dotenv import load_dotenv
 
 load_dotenv()
 
 from telethon import TelegramClient
-
 
 # Try to import config_test if available
 try:
@@ -21,8 +21,6 @@ except ImportError:
     DEFAULT_PHONE = None
 
 async def safe_test():
-    print("🔒 Безпечний тест парсера")
-    print("=" * 50)
 
     # Check environment first
     env_api_id = os.getenv("TELEGRAM_API_ID")
@@ -30,27 +28,20 @@ async def safe_test():
 
     # 1. API Credentials
     if env_api_id and env_api_hash:
-        print(f"✅ Found credentials in ENV: ID={env_api_id[:4]}***")
         api_id = env_api_id
         api_hash = env_api_hash
     elif DEFAULT_API_ID and DEFAULT_API_ID != "використовувати оригінальний":
-         print(f"✅ Found credentials in config_test.py: ID={DEFAULT_API_ID}")
          api_id = DEFAULT_API_ID
          api_hash = DEFAULT_API_HASH
     else:
-        print("⚠️ Credentials not found in ENV or config_test.py")
         api_id = input("Введіть API_ID: ")
         api_hash = getpass.getpass("Введіть API_HASH (не буде відображатись): ")
 
-    print("\n2. Session Setup...")
 
     try:
         client = TelegramClient('test_safemode_session', int(api_id), api_hash)
 
         # Вибір режиму
-        print("\nChoose Login Mode:")
-        print("1 - Bot Token (from .env or input)")
-        print("2 - User Phone (from .env or input)")
         mode = input("Mode (1/2): ").strip()
 
         if mode == "1":
@@ -58,26 +49,22 @@ async def safe_test():
             if not bot_token:
                 bot_token = getpass.getpass("Введіть токен бота: ")
             else:
-                print(f"Using Bot Token from ENV: {bot_token[:10]}...")
+                pass
 
             await client.start(bot_token=bot_token)
-            print("✅ Підключено як бот")
         else:
             phone = os.getenv("TELEGRAM_PHONE") or DEFAULT_PHONE
             if not phone or phone == "+380XXXXXXXXX":
                 phone = input("Введіть номер телефону: ")
             else:
-                print(f"Using Phone from configuration: {phone}")
+                pass
 
             await client.start(phone=phone)
-            print("✅ Підключено як користувач")
 
         # Тестування
-        me = await client.get_me()
-        print(f"\n👤 Успіх! Акаунт: {me.first_name} (@{me.username})")
+        await client.get_me()
 
         # SAVE TO .ENV ON SUCCESS
-        print("\n💾 Saving credentials to .env...")
         try:
             env_path = os.path.join(os.getcwd(), ".env")
             if os.path.exists(env_path):
@@ -112,36 +99,28 @@ async def safe_test():
 
                 with open(env_path, "w") as f:
                     f.writelines(new_lines)
-                print("✅ .env updated successfully with API credentials!")
             else:
-                print("⚠️ .env file not found, skipping save.")
+                pass
 
-        except Exception as env_e:
-            print(f"⚠️ Failed to save to .env: {env_e}")
+        except Exception:
+            pass
 
         # Простий тест парсингу
         test_channel = "Customs_of_Ukraine"
-        print(f"\nTesting channel: {test_channel}")
 
         try:
-            entity = await client.get_entity(test_channel)
-            print(f"📊 Канал знайдено: {entity.title}")
+            await client.get_entity(test_channel)
 
             # Отримати 5 останніх повідомлень
-            async for message in client.iter_messages(test_channel, limit=5):
-                print(f"  [{message.date}] {message.text[:100] if message.text else '[Media]'}...")
-        except Exception as e:
-            print(f"⚠️ Помилка парсингу: {e}")
+            async for _message in client.iter_messages(test_channel, limit=5):
+                pass
+        except Exception:
+            pass
 
         await client.disconnect()
-        print("\n✅ Тест пройдено успішно!")
 
-    except Exception as e:
-        print(f"\n❌ Помилка: {e}")
-        print("\nПеревірте:")
-        print("1. Чи правильні API_ID/API_HASH")
-        print("2. Чи підключення до інтернету")
-        print("3. Чи не потрібен 2FA код")
+    except Exception:
+        pass
 
 if __name__ == "__main__":
     asyncio.run(safe_test())

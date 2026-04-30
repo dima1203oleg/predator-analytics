@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Claude Council Member Implementation
 Uses Anthropic's Claude as a council participant.
 """
@@ -8,7 +7,6 @@ Uses Anthropic's Claude as a council participant.
 from datetime import datetime
 import os
 from typing import Any
-
 
 try:
     from anthropic import AsyncAnthropic

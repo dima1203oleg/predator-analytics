@@ -1,13 +1,14 @@
 """NATS-адаптер: реальний клієнт (заглушка, готовий до real connect)."""
 from __future__ import annotations
 
-import os
 import asyncio
 import json
+import os
 from typing import Callable
+
 try:
     import nats
-    from nats.js.api import StreamConfig, ConsumerConfig
+    from nats.js.api import ConsumerConfig, StreamConfig
 except ImportError:
     nats = None
 

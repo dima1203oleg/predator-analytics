@@ -12,7 +12,6 @@ from celery import shared_task
 from app.libs.core.config import settings
 from app.libs.core.graph_db import graph_db
 
-
 logger = logging.getLogger("predator.customs.intel")
 
 # REGEX PATTERNS FOR CUSTOMS (Section 6.2)

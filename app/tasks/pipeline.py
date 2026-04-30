@@ -5,19 +5,18 @@ import os
 from celery import shared_task
 import redis.asyncio as aioredis
 
+from app.core.db import async_session_maker
+from app.engines.behavioral import process_entity as process_behavioral
+from app.engines.cers import process_entity as process_cers
+from app.engines.influence import process_entity as process_influence
+from app.engines.institutional import process_entity as process_institutional
+from app.engines.predictive import process_entity as process_predictive
+from app.engines.structural_gaps import process_entity as process_structural
 from app.libs.core.pipeline_fsm import KnowledgePipeline, PipelineState
 from app.libs.core.structured_logger import get_logger
-from app.tasks.customs_parser import CustomsExcelParser
-from app.core.db import async_session_maker
 from app.repositories.entity_repository import EntityRepository
 from app.repositories.fused_record_repository import FusedRecordRepository
-from app.engines.cers import process_entity as process_cers
-from app.engines.behavioral import process_entity as process_behavioral
-from app.engines.institutional import process_entity as process_institutional
-from app.engines.influence import process_entity as process_influence
-from app.engines.structural_gaps import process_entity as process_structural
-from app.engines.predictive import process_entity as process_predictive
-
+from app.tasks.customs_parser import CustomsExcelParser
 
 logger = get_logger("predator.workers.pipeline")
 
@@ -66,43 +65,43 @@ def process_pipeline_task(self, source_id: str, file_location: str):
 
             # 2. TRANSFORMING & STORING
             await pipeline.transition(source_id, PipelineState.TRANSFORMING, progress=40)
-            
+
             unique_ueids = set()
-            
+
             if stats and "parser_stats" in meta:
                 # results are stored in parser object
                 records = parser.results
-                
+
                 async with async_session_maker() as session:
                     entity_repo = EntityRepository(session)
                     fused_repo = FusedRecordRepository(session)
-                    
+
                     total_records = len(records)
                     for i, record in enumerate(records):
                         # Extract identification data
                         name = record.get("importer_name", "Unknown Entity")
                         edrpou = record.get("importer_code")
-                        
+
                         # Normalize EDRPOU (remove non-digits, ensure string)
                         if edrpou:
                             edrpou = "".join(filter(str.isdigit, str(edrpou)))
-                        
+
                         # 1. Resolve or Create Entity
-                        entity, is_new = await entity_repo.resolve_or_create(
+                        entity, _is_new = await entity_repo.resolve_or_create(
                             name=name,
                             entity_type="company",
                             edrpou=edrpou
                         )
-                        
+
                         ueid_str = str(entity.ueid)
                         unique_ueids.add(ueid_str)
-                        
+
                         # 2. Save Fused Record
                         import hashlib
                         import json
                         raw_json = json.dumps(record, sort_keys=True)
                         fingerprint = hashlib.sha256(raw_json.encode("utf-8")).hexdigest()
-                        
+
                         await fused_repo.save_record(
                             ueid=entity.ueid,
                             source=f"customs_import_{source_id}",
@@ -111,7 +110,7 @@ def process_pipeline_task(self, source_id: str, file_location: str):
                             fingerprint=fingerprint,
                             quality_score=0.9 # Customs data is high quality
                         )
-                        
+
                         # Update progress occasionally
                         if i % 100 == 0:
                             prog = 40 + int((i / total_records) * 30)
@@ -126,7 +125,7 @@ def process_pipeline_task(self, source_id: str, file_location: str):
 
             # 4. INDEXING & SCORING
             await pipeline.transition(source_id, PipelineState.INDEXING, progress=85)
-            
+
             # TRIGGER ANALYTICAL ENGINES
             async with async_session_maker() as session:
                 for ueid in unique_ueids:
@@ -143,7 +142,7 @@ def process_pipeline_task(self, source_id: str, file_location: str):
                         await process_cers(ueid, session)
                     except Exception as engine_err:
                         logger.error(f"Engine failed for {ueid}: {engine_err}")
-                
+
                 await session.commit()
 
             # 5. READY

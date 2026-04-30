@@ -4,7 +4,6 @@ import random
 
 from fastapi import APIRouter, HTTPException
 
-
 router = APIRouter(prefix="/pipelines", tags=["pipelines"])
 
 # Mock status for different database pipelines

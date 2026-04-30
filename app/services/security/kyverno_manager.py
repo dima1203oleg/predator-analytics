@@ -1,10 +1,9 @@
-"""
-Kyverno Pod Security Standards (Phase 7 — SM Edition).
+"""Kyverno Pod Security Standards (Phase 7 — SM Edition).
 
 Enforces non-root containers, restricted capabilities, and image immutability.
 Implements HR-05 and HR-17.
 """
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 
@@ -50,7 +49,7 @@ class KyvernoPolicyManager:
                     "hr_reference": "Phase 7",
                 }
             ],
-            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(UTC).isoformat(),
         }
 
     def validate_pod_spec(self, pod_spec: dict[str, Any]) -> dict[str, Any]:
@@ -59,5 +58,5 @@ class KyvernoPolicyManager:
         is_root = pod_spec.get("securityContext", {}).get("runAsNonRoot", False) is False
         if is_root:
             return {"allowed": False, "reason": "HR-05: Container must run as non-root"}
-            
+
         return {"allowed": True, "reason": "Passed all PSS restricted checks"}

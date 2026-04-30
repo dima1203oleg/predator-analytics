@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """
 📡 AZR SELF-SCANNER v1.0
 ========================
@@ -13,10 +12,8 @@ Python 3.12 | Sovereign Engineering
 import asyncio
 from datetime import datetime
 import logging
-import os
 from pathlib import Path
 import sys
-
 
 # Setup project path
 PROJECT_ROOT = Path("/Users/dima-mac/Documents/Predator_21")
@@ -27,7 +24,6 @@ if str(PROJECT_ROOT) not in sys.path:
 from libs.core.azr import get_azr
 from libs.core.graph_rag_memory import EdgeType, NodeType, get_knowledge_graph
 from libs.core.project_cortex import get_project_cortex
-
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger("self_scan")

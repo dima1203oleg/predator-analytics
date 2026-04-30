@@ -22,7 +22,6 @@ from enum import StrEnum
 import logging
 from typing import Any
 
-
 logger = logging.getLogger("predator.engines.entity_graph")
 
 

@@ -1,16 +1,13 @@
 from __future__ import annotations
 
-
 """Тести для Autonomous Intelligence v2.0
 Перевіряє всі 4 підсистеми.
 """
-import asyncio
 from datetime import datetime
 from pathlib import Path
 import sys
 
 import pytest
-
 
 # Додати шлях до проекту
 project_root = Path(__file__).parent.parent

@@ -1,10 +1,10 @@
-"""
-Observability API (Phase 6 — SM Edition).
+"""Observability API (Phase 6 — SM Edition).
 
 Endpoints for Prometheus, Grafana, Loki, Tempo, Alertmanager.
 """
-from fastapi import APIRouter
 from typing import Any
+
+from fastapi import APIRouter
 
 from app.services.observability.observability_stack import ObservabilityStack
 

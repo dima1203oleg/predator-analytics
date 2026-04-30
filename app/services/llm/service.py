@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """LLM Service - Multi-provider LLM integration
 Supports OpenAI, Gemini, Anthropic, and local models.
 """
@@ -14,7 +13,6 @@ import httpx
 
 from app.core.config import settings
 from app.libs.core.logger import setup_logger
-
 
 logger = setup_logger("predator.backend.llm")
 

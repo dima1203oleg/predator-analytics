@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """AutoOptimizer Service - Автономне самовдосконалення платформи.
 
 Забезпечує:
@@ -18,7 +17,6 @@ import os
 from typing import Any
 
 import numpy as np
-
 
 # Conditional imports for optional dependencies
 try:

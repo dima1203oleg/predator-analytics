@@ -1,5 +1,6 @@
 
 import os
+
 import yaml
 
 HELM_ROOT = "/Users/dima-mac/Documents/Predator_21/helm/predator"
@@ -12,14 +13,14 @@ def fix_subchart_names():
             continue
 
         # Check for sub-categories like azr/agents
-        for root, dirs, files in os.walk(cat_path):
+        for root, _dirs, files in os.walk(cat_path):
             if "Chart.yaml" in files:
                 chart_path = os.path.join(root, "Chart.yaml")
-                with open(chart_path, 'r') as f:
-                    data = yaml.safe_load(f)
+                with open(chart_path) as f:
+                    yaml.safe_load(f)
 
                 # Calculate the flattened name
-                rel_path = os.path.relpath(root, CHARTS_DIR)
+                os.path.relpath(root, CHARTS_DIR)
                 # rel_path might be "azr/agents/mistral" -> "azr-agents-mistral"
                 # but we want it to match the dependency name in umbrella chart
                 # Actually, let's just use the leaf name but replace slashes in path
@@ -35,7 +36,6 @@ def fix_subchart_names():
 
 if __name__ == "__main__":
     # Redefine create_chart with consistent naming
-    import shutil
 
     # ... I'll just rewrite the generation script to be more robust.
     pass

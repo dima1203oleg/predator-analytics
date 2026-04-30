@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 #!/usr/bin/env python3
 """
 🦅 AZR IMMORTALITY PROTOCOL - System Service Installer
@@ -19,15 +18,12 @@ Features:
 - Environment variable preservation
 """
 
-import os
 from pathlib import Path
 import plistlib
 import sys
 
 
 def main():
-    print("🦅 AZR IMMORTALITY PROTOCOL")
-    print("==========================")
 
     # 1. Detect paths
     project_root = Path(__file__).parent.parent.resolve()
@@ -37,9 +33,6 @@ def main():
     label = "com.predator21.azr.sovereign"
     plist_path = Path.home() / "Library/LaunchAgents" / f"{label}.plist"
 
-    print(f"📍 Project Root: {project_root}")
-    print(f"🐍 Python:       {python_path}")
-    print(f"📜 Script:       {script_path}")
 
     # 2. Create PLIST content
     plist_content = {
@@ -64,23 +57,13 @@ def main():
     }
 
     # 3. Write PLIST
-    print(f"\n📝 Generating {plist_path}...")
     plist_path.parent.mkdir(parents=True, exist_ok=True)
 
     with open(plist_path, "wb") as f:
         plistlib.dump(plist_content, f)
 
-    print("✅ Service definition created.")
 
     # 4. Instructions
-    print("\n⚡ ACTIVATION REQUIRED")
-    print("To grant immortality, run these commands:")
-    print(f"  launchctl unload {plist_path} 2>/dev/null")
-    print(f"  launchctl load -w {plist_path}")
-    print("\nTo monitor:")
-    print("  tail -f /tmp/azr_logs/azr_daemon.out")
-    print("\nTo stop:")
-    print(f"  launchctl unload {plist_path}")
 
 if __name__ == "__main__":
     main()

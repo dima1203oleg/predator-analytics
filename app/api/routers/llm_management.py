@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """LLM Keys Management API
 Управління API ключами для LLM провайдерів.
 """
@@ -17,11 +16,9 @@ from pydantic import BaseModel, Field
 
 from app.services.llm import llm_service
 
-
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from app.core.llm_keys_storage import llm_keys_storage
-
 
 logger = logging.getLogger(__name__)
 

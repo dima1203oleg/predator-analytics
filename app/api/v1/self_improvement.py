@@ -1,10 +1,15 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
-from typing import Dict, Any, List
+from typing import Any
+
+from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
+
 from app.services.self_improvement import (
-    FeedbackCollector, get_feedback_collector,
-    ModelEvaluator, get_model_evaluator,
-    DriftDetector, get_drift_detector
+    DriftDetector,
+    FeedbackCollector,
+    ModelEvaluator,
+    get_drift_detector,
+    get_feedback_collector,
+    get_model_evaluator,
 )
 
 router = APIRouter(prefix="/self-improve", tags=["Самоаналіз та Розвиток"])
@@ -32,9 +37,8 @@ class ABTestRequest(BaseModel):
 async def log_feedback(
     data: FeedbackRequest,
     collector: FeedbackCollector = Depends(get_feedback_collector)
-) -> Dict[str, Any]:
-    """
-    Logs feedback on a model's prediction to improve accuracy over time (COMP-195).
+) -> dict[str, Any]:
+    """Logs feedback on a model's prediction to improve accuracy over time (COMP-195).
     """
     return collector.log_feedback(
         prediction_id=data.prediction_id,
@@ -47,9 +51,8 @@ async def log_feedback(
 @router.get("/feedback/stats")
 async def get_feedback_stats(
     collector: FeedbackCollector = Depends(get_feedback_collector)
-) -> Dict[str, Any]:
-    """
-    Retrieves global accuracy metrics calculated from operator feedback.
+) -> dict[str, Any]:
+    """Retrieves global accuracy metrics calculated from operator feedback.
     """
     return collector.get_accuracy_stats()
 
@@ -57,9 +60,8 @@ async def get_feedback_stats(
 async def detect_feature_drift(
     data: DriftRequest,
     detector: DriftDetector = Depends(get_drift_detector)
-) -> Dict[str, Any]:
-    """
-    Detects if incoming production data distribution has drifted significantly (COMP-197).
+) -> dict[str, Any]:
+    """Detects if incoming production data distribution has drifted significantly (COMP-197).
     """
     return detector.detect_data_drift(
         feature_name=data.feature_name,
@@ -72,9 +74,8 @@ async def detect_feature_drift(
 async def start_ab_test(
     data: ABTestRequest,
     evaluator: ModelEvaluator = Depends(get_model_evaluator)
-) -> Dict[str, Any]:
-    """
-    Initializes a new A/B test between two models (COMP-196).
+) -> dict[str, Any]:
+    """Initializes a new A/B test between two models (COMP-196).
     """
     return evaluator.start_ab_test(
         experiment_id=data.experiment_id,
@@ -87,9 +88,8 @@ async def start_ab_test(
 async def route_ab_test(
     experiment_id: str = Query(...),
     evaluator: ModelEvaluator = Depends(get_model_evaluator)
-) -> Dict[str, Any]:
-    """
-    Routes a request dynamically to the proper model in an active A/B test.
+) -> dict[str, Any]:
+    """Routes a request dynamically to the proper model in an active A/B test.
     """
     model = evaluator.route_request(experiment_id)
     return {"experiment_id": experiment_id, "selected_model": model}

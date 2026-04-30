@@ -9,9 +9,9 @@ Configures Alembic to:
 
 from __future__ import annotations
 
-import sys
 from logging.config import fileConfig
 from pathlib import Path
+import sys
 
 from alembic import context
 from sqlalchemy import engine_from_config, pool, text

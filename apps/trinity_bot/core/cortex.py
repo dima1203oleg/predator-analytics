@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 # Add project root to sys.path to access scripts and libs
 _current_dir = os.path.dirname(os.path.abspath(__file__))
 _project_root = os.path.abspath(os.path.join(_current_dir, "../../.."))
@@ -40,7 +39,6 @@ import asyncio
 import json
 
 from core.tools import InfraTools
-
 
 logger = logging.getLogger("trinity.cortex")
 

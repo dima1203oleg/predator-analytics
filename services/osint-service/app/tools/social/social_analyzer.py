@@ -62,7 +62,7 @@ class SocialAnalyzerTool(BaseTool):
         options = options or {}
 
         platforms = options.get("platforms", self.PLATFORMS)
-        fast_mode = options.get("fast_mode", False)
+        options.get("fast_mode", False)
 
         findings = []
         profiles = []

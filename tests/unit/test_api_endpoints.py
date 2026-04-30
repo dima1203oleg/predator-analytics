@@ -2,7 +2,6 @@
 Unit Tests for Predator API
 """
 
-import pytest
 from fastapi.testclient import TestClient
 from services.api.main import app
 

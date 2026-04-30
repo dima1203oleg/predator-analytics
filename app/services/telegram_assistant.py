@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Telegram AI Assistant v2.0 - Покращений помічник для управління сервером
 Handles:
 - Автоматичний парсинг ngrok URLs
@@ -33,7 +32,6 @@ from .llm import llm_service
 from .remote_server import remote_server
 from .telegram_executor import TaskCategory, task_executor
 from .telegram_menu import menu_builder, message_formatter
-
 
 logger = logging.getLogger(__name__)
 

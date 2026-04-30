@@ -2,9 +2,9 @@
 import logging
 from typing import Any
 
+from app.config import get_settings
 from app.registries.base import БазовийРеєстрКлієнт
 from app.registries.youcontrol import YouControlClient, YouControlConfig
-from app.config import get_settings
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +19,7 @@ class УкраїнськийРеєстр(БазовийРеєстрКлієнт)
     async def знайти_за_єдрпоу(self, edrpou: str) -> dict[str, Any]:
         """Пошук даних про компанію за кодом ЄДРПОУ через YouControl."""
         logger.info(f"Запит до YouControl для ЄДРПОУ: {edrpou}")
-        
+
         # Отримуємо реальні дані через професійний конектор
         return await self.youcontrol.get_company_full_card(edrpou)
 

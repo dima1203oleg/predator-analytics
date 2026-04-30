@@ -9,7 +9,6 @@ from pydantic import BaseModel
 from app.agents.orchestrator.supervisor import NexusSupervisor, get_nexus_supervisor
 from app.core.config import settings
 
-
 logger = logging.getLogger("api.nexus")
 
 router = APIRouter(prefix="/nexus", tags=["Nexus Hivemind"])

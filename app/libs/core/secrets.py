@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Predator Analytics v45 - Centralized Identity & Secret Manager
 Enforces secure handling of API keys and credentials.
 """
@@ -11,7 +10,6 @@ import os
 from cryptography.fernet import Fernet
 
 from app.libs.core.config import settings
-
 
 logger = logging.getLogger("predator.secrets")
 

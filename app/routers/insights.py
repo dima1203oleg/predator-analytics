@@ -4,7 +4,6 @@ from fastapi import APIRouter, HTTPException
 
 from app.services.insights_engine import insights_engine
 
-
 router = APIRouter(prefix="/insights", tags=["insights"])
 
 

@@ -6,7 +6,6 @@ import logging
 import random
 from typing import Any
 
-
 logger = logging.getLogger("predator.simulation")
 
 

@@ -6,7 +6,6 @@ from typing import Any
 
 from ..core.base_agent import AgentConfig, AgentResponse, BaseAgent
 
-
 logger = logging.getLogger(__name__)
 
 

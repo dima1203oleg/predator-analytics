@@ -1,13 +1,12 @@
-"""
-📊 Моніторинг — /api/v1/monitoring
+"""📊 Моніторинг — /api/v1/monitoring
 
 Real-time monitoring endpoints з Prometheus metrics integration.
 """
 
 from __future__ import annotations
 
-import logging
 from datetime import UTC, datetime
+import logging
 
 from fastapi import APIRouter, HTTPException
 
@@ -18,15 +17,14 @@ router = APIRouter(prefix="/monitoring", tags=["monitoring"])
 
 @router.get("/system-health")
 async def get_system_health() -> dict:
-    """
-    Загальний стан системи з реальними метриками.
-    
+    """Загальний стан системи з реальними метриками.
+
     Повертає статус всіх критичних компонентів.
     """
     try:
         # TODO: Інтегрувати з Prometheus API для реальних метрик
         # Для зараз повертаємо базову структуру
-        
+
         return {
             "status": "healthy",
             "timestamp": datetime.now(UTC).isoformat(),
@@ -74,14 +72,13 @@ async def get_system_health() -> dict:
         }
     except Exception as e:
         logger.exception(f"Failed to get system health: {e}")
-        raise HTTPException(status_code=500, detail=f"System health check failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"System health check failed: {e!s}")
 
 
 @router.get("/metrics/prometheus")
 async def get_prometheus_metrics() -> str:
-    """
-    Prometheus metrics endpoint.
-    
+    """Prometheus metrics endpoint.
+
     Повертає metrics у форматі Prometheus exposition format.
     """
     try:
@@ -111,13 +108,12 @@ predator_cache_hit_rate 0.0
         return metrics_text
     except Exception as e:
         logger.exception(f"Failed to get Prometheus metrics: {e}")
-        raise HTTPException(status_code=500, detail=f"Metrics collection failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Metrics collection failed: {e!s}")
 
 
 @router.get("/performance")
 async def get_performance_metrics() -> dict:
-    """
-    Метрики продуктивності системи.
+    """Метрики продуктивності системи.
     """
     try:
         return {
@@ -148,14 +144,13 @@ async def get_performance_metrics() -> dict:
         }
     except Exception as e:
         logger.exception(f"Failed to get performance metrics: {e}")
-        raise HTTPException(status_code=500, detail=f"Performance metrics failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Performance metrics failed: {e!s}")
 
 
 @router.get("/logs/recent")
 async def get_recent_logs(limit: int = 50) -> dict:
-    """
-    Останні логи системи.
-    
+    """Останні логи системи.
+
     TODO: Інтегрувати з Loki або ELK stack для повноцінного логування.
     """
     try:
@@ -168,4 +163,4 @@ async def get_recent_logs(limit: int = 50) -> dict:
         }
     except Exception as e:
         logger.exception(f"Failed to get recent logs: {e}")
-        raise HTTPException(status_code=500, detail=f"Log retrieval failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Log retrieval failed: {e!s}")

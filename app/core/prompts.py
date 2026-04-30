@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """UA Sources - LLM Prompts
 System prompts for various AI tasks with advanced Context Awareness and Chain-of-Thought.
 """

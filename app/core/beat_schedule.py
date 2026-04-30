@@ -1,11 +1,9 @@
 from __future__ import annotations
 
-
 """Celery Beat Schedule Configuration
 Periodic tasks for ETL pipeline automation.
 """
 from celery.schedules import crontab
-
 
 # Beat schedule for automated ETL tasks
 CELERY_BEAT_SCHEDULE = {

@@ -1,12 +1,10 @@
-"""
-Keycloak Authentication Service (Phase 3 — SM Edition).
+"""Keycloak Authentication Service (Phase 3 — SM Edition).
 
 OIDC integration, MFA support, RBAC with 4 roles.
 SM: 2GB RAM allocation.
 """
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
-
 
 # Canonical roles (§12.3)
 ROLES: dict[str, dict[str, Any]] = {
@@ -56,7 +54,7 @@ class KeycloakAuthService:
             "mfa_enabled": self.config["mfa_enabled"],
             "roles": list(ROLES.keys()),
             "session_max": self.config["session_max"],
-            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(UTC).isoformat(),
         }
 
     def get_roles(self) -> dict[str, dict[str, Any]]:

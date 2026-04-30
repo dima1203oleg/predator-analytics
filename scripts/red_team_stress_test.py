@@ -1,25 +1,11 @@
 #!/usr/bin/env python3.12
 from __future__ import annotations
 
-import sys
-
-
 # ⚜️ ETERNAL RUNTIME GUARD
-if sys.version_info < (3, 12):
-    print("\n" + "!"*80, file=sys.stderr)
-    print("❌ FATAL: RUNTIME VERSION MISMATCH", file=sys.stderr)
-    print("   PREDATOR ANALYTICS v45+ STRICTLY REQUIRES PYTHON 3.12.", file=sys.stderr)
-    print(f"   DETECTED: {sys.version}", file=sys.stderr)
-    print("!"*80 + "\n", file=sys.stderr)
-    sys.exit(1)
-
-import json
 import os
 import sys
 
-import requests
 from rich.console import Console
-
 
 console = Console()
 

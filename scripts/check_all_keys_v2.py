@@ -1,11 +1,9 @@
 from __future__ import annotations
 
 import asyncio
-import json
 import logging
 
 import aiohttp
-
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(message)s')
@@ -91,52 +89,43 @@ async def main():
 
     results = {}
 
-    print("Checking Keys...")
 
     # Gemini
     results['gemini'] = []
     for k in keys['gemini']:
         s, m = await check_gemini(k)
-        print(f"Gemini {k[:8]}...: {s} {m}")
         if s: results['gemini'].append(k)
 
     # Groq
     results['groq'] = []
     for k in keys['groq']:
         s, m = await check_groq(k)
-        print(f"Groq {k[:8]}...: {s} {m}")
         if s: results['groq'].append(k)
 
     # Mistral
     results['mistral'] = []
     for k in keys['mistral']:
         s, m = await check_openai_c(k, "https://api.mistral.ai/v1/chat/completions", "mistral-tiny")
-        print(f"Mistral {k[:8]}...: {s} {m}")
         if s: results['mistral'].append(k)
 
     # DeepSeek
     results['deepseek'] = []
     for k in keys['deepseek']:
         s, m = await check_openai_c(k, "https://api.deepseek.com/v1/chat/completions", "deepseek-chat")
-        print(f"DeepSeek {k[:8]}...: {s} {m}")
         if s: results['deepseek'].append(k)
 
     # OpenAI
     results['openai'] = []
     for k in keys['openai']:
         s, m = await check_openai_c(k, "https://api.openai.com/v1/chat/completions", "gpt-3.5-turbo")
-        print(f"OpenAI {k[:8]}...: {s} {m}")
         if s: results['openai'].append(k)
 
     # xAI
     results['xai'] = []
     for k in keys['xai']:
-        s, m = await check_openai_c(k, "https://api.x.ai/v1/chat/completions", "grok-beta")
-        print(f"Grok {k[:8]}...: {s} {m}")
+        s, _m = await check_openai_c(k, "https://api.x.ai/v1/chat/completions", "grok-beta")
         if s: results['xai'].append(k)
 
-    print("\n---------- WORKING KEYS SUMMARY ----------")
-    print(json.dumps(results, indent=2))
 
 if __name__ == "__main__":
     asyncio.run(main())

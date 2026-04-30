@@ -29,6 +29,7 @@ def calculate_mci(
 
     Returns:
         MCI raw value. Positive = more goods enter than exit (suspicious).
+
     """
     supply = import_volume + production
     demand = domestic_sales + export_volume + inventory_change
@@ -51,6 +52,7 @@ def calculate_mci_normalized(
 
     Returns:
         MCI score (0-100). Higher = larger gap.
+
     """
     raw = calculate_mci(
         import_volume,

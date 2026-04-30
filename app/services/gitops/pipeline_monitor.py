@@ -1,25 +1,24 @@
 import logging
-from typing import Dict, Any, List
 import random
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
 class PipelineMonitor:
-    """
-    Pipeline Monitor (COMP-202)
+    """Pipeline Monitor (COMP-202)
     Monitors ETL pipeline health, execution time, and data throughput.
     """
+
     def __init__(self):
         pass
 
-    def get_pipeline_status(self, pipeline_id: str) -> Dict[str, Any]:
-        """
-        Returns real-time metrics for a specific pipeline.
+    def get_pipeline_status(self, pipeline_id: str) -> dict[str, Any]:
+        """Returns real-time metrics for a specific pipeline.
         """
         # Mocking status check
         statuses = ["running", "completed", "failed", "stalled"]
         current_status = random.choice(statuses)
-        
+
         return {
             "pipeline_id": pipeline_id,
             "status": current_status,

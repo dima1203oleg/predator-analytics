@@ -1,9 +1,8 @@
-"""
-Premium Engine: Economic Climate Index (Phase 9 — SM Edition).
+"""Premium Engine: Economic Climate Index (Phase 9 — SM Edition).
 
 Calculates macroeconomic climate indicators for Government View.
 """
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 
@@ -25,7 +24,7 @@ class ClimateIndex:
                 "foreign_investment": 24.6,
                 "sanctions_impact": 43.0,
             },
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
     def get_regional_climate(self, region_code: str) -> dict[str, Any]:
@@ -34,5 +33,5 @@ class ClimateIndex:
             "region": region_code,
             "index_value": 45.1,
             "trend": "stable",
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }

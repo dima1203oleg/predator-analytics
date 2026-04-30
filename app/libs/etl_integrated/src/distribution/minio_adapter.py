@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import Any
 
-
 """
 MinIO Distribution Adapter
 
@@ -14,7 +13,6 @@ import json
 import logging
 from pathlib import Path
 import uuid
-
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -34,6 +32,7 @@ class MinIOAdapter:
         Args:
             enabled: Whether this adapter is enabled
             bucket_name: MinIO bucket name for storing data
+
         """
         self.enabled = enabled
         self.bucket_name = bucket_name
@@ -52,6 +51,7 @@ class MinIOAdapter:
 
         Returns:
             DistributionResult with status and metadata
+
         """
         from .data_distributor import DistributionResult
 
@@ -126,6 +126,7 @@ class MinIOAdapter:
 
         Returns:
             DistributionResult with upload status
+
         """
         from .data_distributor import DistributionResult
 
@@ -172,6 +173,7 @@ class MinIOAdapter:
 
         Returns:
             DistributionResult with creation status
+
         """
         from .data_distributor import DistributionResult
 
@@ -201,6 +203,7 @@ class MinIOAdapter:
 
         Returns:
             URL string for accessing the object
+
         """
         # In production, this would generate a presigned URL
         return f"https://minio.example.com/{self.bucket_name}/{object_name}"

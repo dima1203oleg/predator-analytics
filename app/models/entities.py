@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Predator Analytics v4.2.0 - Canonical Entities
 Source, Dataset, Job, Index, Artifact definitions.
 

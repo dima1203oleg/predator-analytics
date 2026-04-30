@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Groq LLM Provider."""
 import time
 

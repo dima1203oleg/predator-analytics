@@ -11,7 +11,6 @@ from __future__ import annotations
 
 import math
 
-
 # Default coefficients (to be updated from MLflow model registry)
 _DEFAULT_COEFFICIENTS = {
     "beta_0": -3.0,
@@ -48,6 +47,7 @@ def calculate_cp(
 
     Returns:
         CP score (0-100). Higher = higher collapse probability.
+
     """
     coefs = coefficients or _DEFAULT_COEFFICIENTS
 

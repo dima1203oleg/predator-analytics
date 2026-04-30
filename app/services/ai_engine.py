@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """AI Engine Service - Core AI analysis capabilities
 Combines LLM with Ukrainian data sources for intelligent analysis.
 """
@@ -13,7 +12,6 @@ from app.connectors.prozorro import prozorro_connector
 from app.connectors.registry import registry_connector
 
 from .llm import llm_service
-
 
 logger = logging.getLogger(__name__)
 

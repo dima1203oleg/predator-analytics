@@ -1,13 +1,17 @@
 from __future__ import annotations
+
 from abc import ABC, abstractmethod
-from pathlib import Path
-import os
 import json
-from typing import Any
+import os
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
 
 class StorageProvider(ABC):
     """Abstract interface for all persistent storage operations."""
-    
+
     @abstractmethod
     def append_line(self, relative_path: str, data: dict[str, Any]) -> None:
         """Append a JSON line to a file-like resource."""
@@ -40,7 +44,7 @@ class StorageProvider(ABC):
 
 class FileStorageProvider(StorageProvider):
     """Standard filesystem implementation with lazy directory creation."""
-    
+
     def __init__(self, base_path: Path):
         self.base_path = base_path
 

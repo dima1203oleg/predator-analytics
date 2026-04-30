@@ -8,7 +8,6 @@ import numpy as np
 from app.libs.core.structured_logger import get_logger
 from app.services.evolution_service import evolution_service
 
-
 logger = get_logger("service.anomaly")
 
 

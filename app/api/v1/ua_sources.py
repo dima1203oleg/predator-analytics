@@ -1,14 +1,12 @@
 from __future__ import annotations
 
-
 """UA Sources V1 API — Extended with all connectors."""
 from datetime import UTC, datetime
+import logging
 
 from fastapi import APIRouter, Query
 
-import logging
 from app.services.ai_engine import ai_engine
-
 
 logger = logging.getLogger("api.ua_sources")
 

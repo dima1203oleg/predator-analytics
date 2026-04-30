@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import Any
 
-
 """
 Data Transformation Layer
 
@@ -11,7 +10,6 @@ Provides validation and mapping of parsed data to a unified schema.
 
 from datetime import datetime
 import logging
-
 
 try:
     import pandas as pd
@@ -152,6 +150,7 @@ class DataTransformer:
 
         Returns:
             TransformResult containing validated data or error information
+
         """
         try:
             # Select the appropriate schema
@@ -217,6 +216,7 @@ class DataTransformer:
 
         Returns:
             TransformResult containing transformed data or error
+
         """
         try:
             # Convert DataFrame to list of dicts
@@ -241,6 +241,7 @@ class DataTransformer:
 
         Returns:
             TransformResult containing transformed data or error
+
         """
         try:
             # Handle nested XML structure
@@ -307,6 +308,7 @@ class DataTransformer:
 
         Returns:
             TransformResult containing normalized data or error
+
         """
         try:
 
@@ -352,6 +354,7 @@ class DataTransformer:
 
         Returns:
             Dictionary representation of the schema
+
         """
         return self.schema.schema()
 
@@ -365,6 +368,7 @@ class DataTransformer:
 
         Returns:
             TransformResult with compatibility status
+
         """
         try:
             # Check if required fields are present
@@ -399,5 +403,6 @@ def create_data_transformer() -> DataTransformer:
 
     Returns:
         DataTransformer instance
+
     """
     return DataTransformer()

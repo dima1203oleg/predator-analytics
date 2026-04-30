@@ -2,10 +2,11 @@
 
 Керування експериментами Хаосу. Тільки для ролі ADMIN.
 """
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel
-from app.dependencies import PermissionChecker
+
 from app.core.permissions import Permission
+from app.dependencies import PermissionChecker
 from app.services.chaos_service import ChaosService
 
 router = APIRouter(prefix="/admin/chaos", tags=["Адміністрування (Chaos)"])

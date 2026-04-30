@@ -122,13 +122,11 @@ def main() -> None:
     results = run_all_checks()
     issues = {k: v for k, v in results.items() if v}
     if issues:
-        print("Dataset integrity issues detected:")
-        for cat, msgs in issues.items():
-            for msg in msgs:
-                print(f"- [{cat}] {msg}")
+        for _cat, msgs in issues.items():
+            for _msg in msgs:
+                pass
         exit(1)
     else:
-        print("All dataset integrity checks passed.")
         exit(0)
 
 if __name__ == "__main__":

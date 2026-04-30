@@ -1,20 +1,18 @@
 import logging
-from typing import Dict, Any, List
-import random
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
 class Neo4jClusterManager:
-    """
-    Neo4j Cluster Manager (COMP-091)
+    """Neo4j Cluster Manager (COMP-091)
     Simulates management of a Neo4j Causal Clustering setup.
     """
+
     def __init__(self):
         pass
 
-    def get_cluster_status(self) -> Dict[str, Any]:
-        """
-        Returns status of Neo4j cluster nodes.
+    def get_cluster_status(self) -> dict[str, Any]:
+        """Returns status of Neo4j cluster nodes.
         """
         return {
             "cluster_id": "neo4j-p21-cluster",

@@ -5,9 +5,9 @@ Common dependencies for FastAPI routes.
 
 from fastapi import Depends, HTTPException, Request, status
 
+from app.core.mtls import MTLSSecurity, ServiceNodes
 from app.core.permissions import ROLE_PERMISSIONS, Permission, Role
 from app.core.security import get_current_user_payload
-from app.core.mtls import MTLSSecurity, ServiceNodes
 
 
 async def get_current_active_user(

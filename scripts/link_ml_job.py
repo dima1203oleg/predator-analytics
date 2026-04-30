@@ -6,7 +6,6 @@ import uuid
 
 from sqlalchemy import create_engine, text
 
-
 # Config
 DEFAULT_DB_URL = "postgresql://admin:666666@localhost:5432/predator_db"
 DB_URL = os.environ.get("DATABASE_URL", DEFAULT_DB_URL)
@@ -15,7 +14,6 @@ if "postgresql+asyncpg" in DB_URL:
     DB_URL = DB_URL.replace("postgresql+asyncpg", "postgresql")
 
 def link_job():
-    print("🚀 Linking ML Job for Visualization...")
     tenant_id = "00000000-0000-0000-0000-000000000000"
 
     try:
@@ -50,11 +48,9 @@ def link_job():
                 res = conn.execute(text("SELECT id FROM gold.data_sources WHERE name='UkrCustoms March 2024'")).fetchone()
                 if res:
                     break
-                print("   waiting for datasource...")
                 time.sleep(2)
 
             if not res:
-                print("❌ Datasource not found. Is Ingestion done?")
                 return
 
             res[0]
@@ -64,7 +60,6 @@ def link_job():
             if check:
                 ml_ds_id = check[0]
             else:
-                print("   Creating MLDataset record...")
                 ml_ds_id = uuid.uuid4()
                 conn.execute(text("""
                     INSERT INTO gold.ml_datasets (id, name, dvc_path, tenant_id, created_at)
@@ -72,20 +67,17 @@ def link_job():
                 """), {"id": ml_ds_id, "tenant_id": tenant_id})
                 conn.commit()
 
-            print(f"✅ ML Dataset ID: {ml_ds_id}")
 
             # 3. Create active Job
-            print("   Creating active ML Job...")
             job_id = uuid.uuid4()
             conn.execute(text("""
                 INSERT INTO gold.ml_jobs (id, name, type, status, dataset_id, tenant_id, created_at)
                 VALUES (:id, 'Anomaly Detection (XGBoost)', 'training', 'running', :ds_id, :tenant_id, NOW())
             """), {"id": job_id, "ds_id": ml_ds_id, "tenant_id": tenant_id})
             conn.commit()
-            print(f"✅ Created ML Job {job_id} [RUNNING]")
 
-    except Exception as e:
-        print(f"❌ Database error: {e}")
+    except Exception:
+        pass
 
 if __name__ == "__main__":
     link_job()

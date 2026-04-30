@@ -1,5 +1,6 @@
 import pytest
-from app.engines.cers import calculate_cers, CERSResult
+
+from app.engines.cers import CERSResult, calculate_cers
 
 
 def test_cers_basic_calculation():

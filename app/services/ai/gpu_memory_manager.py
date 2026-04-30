@@ -1,14 +1,12 @@
-"""
-GPU Memory Manager (Phase 5 — SM Edition).
+"""GPU Memory Manager (Phase 5 — SM Edition).
 
 Manages GTX 1080 (8GB VRAM) time-slicing and memory allocation.
 Implements LRU eviction and degradation policies (§4.6).
 
 HR-21: Concurrent STT + LLM = FORBIDDEN.
 """
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
-
 
 # GPU allocation priorities (§4.6)
 GPU_PRIORITIES: list[dict[str, Any]] = [
@@ -47,7 +45,7 @@ class GPUMemoryManager:
             "priorities": GPU_PRIORITIES,
             "hr21_concurrent_stt_llm": "FORBIDDEN",
             "status": "healthy",
-            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(UTC).isoformat(),
         }
 
     def get_degradation_policy(self) -> list[dict[str, Any]]:

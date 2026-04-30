@@ -6,7 +6,6 @@ import os
 import re
 from typing import Any
 
-
 logger = logging.getLogger("service.pii_masking")
 
 
@@ -49,6 +48,7 @@ class PIIMaskingService:
 
         Returns:
             Masked document
+
         """
         if mode == "restricted":
             # No masking for restricted access

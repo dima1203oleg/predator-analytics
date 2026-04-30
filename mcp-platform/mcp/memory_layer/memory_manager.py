@@ -7,7 +7,6 @@
 """
 from __future__ import annotations
 
-import asyncio
 from typing import Any, Optional
 
 from mcp.memory_layer.neo4j_adapter import Neo4jAdapter

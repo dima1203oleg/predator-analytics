@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 #!/usr/bin/env python3
 """
 📊 AZR MONITOR - Real-time Sovereign Dashboard
@@ -12,14 +11,11 @@ Usage:
     python3 scripts/monitor_azr.py
 """
 
-import asyncio
-from datetime import datetime
 import json
 import os
 from pathlib import Path
 import sys
 import time
-
 
 # Add project root
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -40,12 +36,11 @@ def main():
         while True:
             # Check if logs exist
             if not os.path.exists("/tmp/azr_logs/truth_ledger.jsonl"):
-                print("⏳ Waiting for AZR logs to appear...")
                 time.sleep(2)
                 continue
 
             try:
-                status = get_status()
+                get_status()
 
                 # Get latest decisions from ledger
                 decisions = []
@@ -60,46 +55,24 @@ def main():
                         except: pass
 
                 clear_screen()
-                print("=" * 60)
-                print(f"🏛️  AZR UNIFIED ORGANISM v{status['version']} (SOVEREIGN)")
-                print("=" * 60)
 
-                print("\n📊 STATUS")
-                print(f"  • Running:      {'✅ Yes' if status['running'] else '❌ No'}")
-                print(f"  • Phase:        {status['phase'].upper()}")
-                print(f"  • Cycles:       {status['cycle_count']}")
-                print(f"  • Ledger Size:  {status['truth_ledger']['entries']} entries")
-                print(f"  • Integrity:    {'✅ Valid' if status['truth_ledger']['valid'] else '❌ Invalid'}")
 
-                print(f"\n🩺 HEALTH {get_health_emoji(status['health']['score'])}")
-                print(f"  • Overall:      {status['health']['score']:.1f}%")
-                print(f"  • CPU:          {status['health']['cpu']:.1f}%")
-                print(f"  • Memory:       {status['health']['memory']:.1f}%")
 
-                print(f"\n🧠 CAPABILITIES ({len(status['capabilities'])})")
-                print(f"  • {' | '.join(status['capabilities'][:4])}...")
 
-                print("\n⚡ LATEST DECISIONS")
                 if not decisions:
-                    print("  (No recent decisions)")
+                    pass
                 for d in decisions[:5]:
-                    print(f"  • {d}")
+                    pass
 
-                print("\n📈 METRICS")
-                print(f"  • Executed: {status['metrics']['executed']}")
-                print(f"  • Blocked:  {status['metrics']['blocked']}")
-                print(f"  • Rollbacks:{status['metrics']['rollbacks']}")
 
-                print("\n" + "=" * 60)
-                print(f"🕒 Last Update: {datetime.now().strftime('%H:%M:%S')} (Press Ctrl+C to exit)")
 
-            except Exception as e:
-                print(f"Error reading status: {e}")
+            except Exception:
+                pass
 
             time.sleep(2)
 
     except KeyboardInterrupt:
-        print("\n👋 Monitor closed.")
+        pass
 
 if __name__ == "__main__":
     main()

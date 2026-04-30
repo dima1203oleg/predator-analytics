@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Secret Manager Abstraction
 Provides unified access to secrets via HashiCorp Vault or Environment Variables.
 """
@@ -8,7 +7,6 @@ import logging
 import os
 
 from app.libs.core.config import settings
-
 
 logger = logging.getLogger("predator.security.vault")
 
@@ -54,6 +52,7 @@ class SecretManager:
 
         Returns:
             Secret value or None
+
         """
         # 1. Try Vault
         if self._use_vault and vault_path and self._vault_client:

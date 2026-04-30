@@ -9,7 +9,6 @@ from typing import Any
 
 from pydantic import BaseModel
 
-
 logger = logging.getLogger("core.reality")
 
 

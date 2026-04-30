@@ -1,5 +1,4 @@
-"""
-👤 Моделі користувачів — PREDATOR Analytics v4.1.
+"""👤 Моделі користувачів — PREDATOR Analytics v4.1.
 
 SQLAlchemy ORM для зберігання користувачів платформи,
 їх ролей, підписок та налаштувань.
@@ -11,10 +10,10 @@ from datetime import datetime
 from uuid import uuid4
 
 from sqlalchemy import (
+    JSON,
     Boolean,
     Column,
     DateTime,
-    JSON,
     String,
 )
 from sqlalchemy.dialects.postgresql import UUID as PostgreSQLUUID

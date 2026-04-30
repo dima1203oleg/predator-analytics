@@ -1,14 +1,11 @@
 from __future__ import annotations
 
-import asyncio
-from datetime import datetime
 import os
 
 # Adjust path
 import sys
 import unittest
 from unittest.mock import AsyncMock, MagicMock, patch
-
 
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.getcwd(), "services/api_gateway"))

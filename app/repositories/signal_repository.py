@@ -3,14 +3,15 @@
 from __future__ import annotations
 
 import logging
+from typing import TYPE_CHECKING, Any
 import uuid
-from typing import Any
 
 from sqlalchemy import func, select
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.v55.orm.signal import SignalORM
 
+if TYPE_CHECKING:
+    from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger("predator.repo.signals")
 

@@ -3,8 +3,8 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any
 
-import pytest
 from fastapi.testclient import TestClient
+import pytest
 
 from app.api.v1.forecast import get_forecast_service
 from app.core.database import get_db
@@ -23,7 +23,7 @@ class DummySession:
     def __init__(self, rows: list[tuple[datetime | None, float | None, str | None, str | None]]) -> None:
         self._rows = rows
 
-    async def execute(self, stmt: Any) -> DummyResult:  # noqa: ARG002 - stmt is unused in dummy
+    async def execute(self, stmt: Any) -> DummyResult:
         return DummyResult(self._rows)
 
 

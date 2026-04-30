@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """RSS Aggregator (COMP-028)
 
 Агрегатор RSS-стрічок українських бізнес-джерел.
@@ -13,13 +12,12 @@ from __future__ import annotations
 - Мінфін (minfin.com.ua)
 - НБУ (bank.gov.ua)
 """
-import logging
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import UTC, datetime
+import logging
 from typing import Any
 
 from app.connectors.base import BaseConnector, ConnectorResult
-
 
 logger = logging.getLogger("connector.rss")
 
@@ -80,6 +78,7 @@ UA_FEEDS = {
 @dataclass
 class FeedItem:
     """A single RSS feed item."""
+
     title: str
     link: str
     published: str
@@ -136,6 +135,7 @@ class RSSAggregator(BaseConnector):
 
         Returns:
             ConnectorResult with matching feed items
+
         """
         sources = kwargs.get("sources")
         category = kwargs.get("category")
@@ -318,10 +318,7 @@ class RSSAggregator(BaseConnector):
     @staticmethod
     def _get_text(element, tag: str, ns: dict | None = None) -> str:
         """Get text content from XML element."""
-        if ns:
-            child = element.find(tag, ns)
-        else:
-            child = element.find(tag)
+        child = element.find(tag, ns) if ns else element.find(tag)
         return child.text.strip() if child is not None and child.text else ""
 
     @staticmethod

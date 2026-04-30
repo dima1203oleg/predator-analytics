@@ -1,12 +1,10 @@
-"""
-Advanced AI/ML Models (Phase 11 — SM Edition).
+"""Advanced AI/ML Models (Phase 11 — SM Edition).
 
 Implements Topic Modeling (BERTopic), Nightly Batch (XGBoost/CatBoost),
 and Monte Carlo Simulations for risk forecasting.
 Optimized for Single Machine execution with strict GPU memory bounds.
 """
-import random
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 
@@ -23,7 +21,7 @@ class TopicModels:
                 {"topic": "Криптовалюти", "velocity": "-10%", "sentiment": 0.0},
             ],
             "analyzed_documents": len(text_corpus),
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
 
@@ -52,12 +50,12 @@ class MonteCarloSimulator:
         volatility = 0.05
         var_95 = base_asset_value * (volatility * 1.645)
         var_99 = base_asset_value * (volatility * 2.33)
-        
+
         return {
             "iterations": iterations,
             "base_value": base_asset_value,
             "simulated_var_95": round(var_95, 2),
             "simulated_var_99": round(var_99, 2),
             "confidence_interval": "95%, 99%",
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """EDRPOU Connector (COMP-033)
 
 Connector for the Unified State Register of Enterprises (ЄДРПОУ).
@@ -14,7 +13,6 @@ import logging
 from typing import Any
 
 from app.connectors.base import BaseConnector, ConnectorResult
-
 
 logger = logging.getLogger("connector.edrpou")
 
@@ -49,6 +47,7 @@ class EDRPOUConnector(BaseConnector):
 
         Returns:
             ConnectorResult with company records
+
         """
         search_type = kwargs.get("search_type", "auto")
 
@@ -67,16 +66,10 @@ class EDRPOUConnector(BaseConnector):
     async def _search_by_edrpou(self, edrpou: str) -> ConnectorResult:
         """Search by exact EDRPOU code."""
         # Try data.gov.ua CKAN API
-        params = {
-            "resource_id": "",  # Would be the specific resource ID
-            "q": edrpou,
-            "limit": 5,
-        }
 
         # Try opendatabot if API key is available
         if self.api_key:
             try:
-                from app.connectors.base import ConnectorResult as CR
                 import httpx
 
                 async with httpx.AsyncClient(timeout=15.0) as client:
@@ -163,6 +156,7 @@ class EDRPOUConnector(BaseConnector):
 
         Returns:
             ConnectorResult with company records
+
         """
         result = await self._request(
             "GET",

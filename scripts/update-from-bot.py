@@ -5,20 +5,17 @@ import re
 import subprocess
 import sys
 
-
 LOG_FILE = "telegram_bot.log"
 ADD_SCRIPT = "./scripts/add-nvidia-cluster.sh"
 
 def get_last_ssh_config(log_file):
     if not os.path.exists(log_file):
-        print(f"Error: {log_file} not found")
         return None
 
     # Read last 1000 lines
     try:
         lines = subprocess.check_output(["tail", "-n", "1000", log_file]).decode("utf-8").splitlines()
-    except Exception as e:
-        print(f"Error reading log: {e}")
+    except Exception:
         return None
 
     # Look for SSH Config pattern from bottom up
@@ -64,22 +61,15 @@ def get_last_ssh_config(log_file):
 def main():
     config = get_last_ssh_config(LOG_FILE)
     if not config:
-        print("❌ No SSH config found in logs")
         sys.exit(1)
 
-    print("🔍 Found SSH Config:")
-    print(f"   Host: {config['host']}")
-    print(f"   Port: {config['port']}")
-    print(f"   User: {config['user']}")
 
     # Run the add script
     cmd = [ADD_SCRIPT, config['port'], config['host'], config['user']]
-    print(f"🚀 Running: {' '.join(cmd)}")
 
     try:
         subprocess.check_call(cmd)
     except subprocess.CalledProcessError as e:
-        print(f"❌ Failed to add cluster: {e}")
         sys.exit(e.returncode)
 
 if __name__ == "__main__":

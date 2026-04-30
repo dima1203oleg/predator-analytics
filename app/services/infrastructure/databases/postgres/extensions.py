@@ -1,18 +1,17 @@
 import logging
-from typing import Dict, Any, List
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
 class PostgresExtensions:
+    """Manages TimescaleDB and other extensions for PostgreSQL (COMP-087)
     """
-    Manages TimescaleDB and other extensions for PostgreSQL (COMP-087)
-    """
+
     def __init__(self):
         pass
 
-    def get_timescaledb_status(self) -> Dict[str, Any]:
-        """
-        Returns status for TimescaleDB extension
+    def get_timescaledb_status(self) -> dict[str, Any]:
+        """Returns status for TimescaleDB extension
         """
         return {
             "name": "timescaledb",
@@ -23,5 +22,5 @@ class PostgresExtensions:
             "continuous_aggregates": 5
         }
 
-    def list_installed_extensions(self) -> List[str]:
+    def list_installed_extensions(self) -> list[str]:
         return ["timescaledb", "pg_stat_statements", "uuid-ossp", "pgcrypto"]

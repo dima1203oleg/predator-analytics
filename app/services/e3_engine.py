@@ -8,7 +8,6 @@ from typing import Any
 
 from app.services.azr_engine import azr_engine
 
-
 logger = logging.getLogger("E3")
 
 

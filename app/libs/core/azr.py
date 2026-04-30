@@ -28,7 +28,6 @@ from app.libs.core.azr_unified import (
     get_azr_organism,
 )
 
-
 # Alias for cleaner imports
 AZR = AZRUnifiedOrganism
 get_azr = get_azr_organism
@@ -41,7 +40,6 @@ from app.libs.core.merkle_ledger import (
     MerkleTruthLedger,
 )
 
-
 # Alias
 TruthLedger = MerkleTruthLedger
 
@@ -53,7 +51,6 @@ from app.libs.core.formal_state_machine import (
     FormalStateMachine,
 )
 
-
 # Alias
 StateMachine = FormalStateMachine
 
@@ -63,7 +60,6 @@ StateMachine = FormalStateMachine
 from app.libs.core.mcp_integration import (
     MCPAgentOrchestrator,
 )
-
 
 # Alias
 MCP = MCPAgentOrchestrator
@@ -130,9 +126,5 @@ def get_status() -> dict:
 # ============================================================================
 
 if __name__ == "__main__":
-    print(f"🏛️ AZR v{__version__} ({__codename__})")
-    print("=" * 50)
-    print(f"Components: {len(VERSION_INFO['components'])}")
-    for comp in VERSION_INFO["components"]:
-        print(f"  • {comp}")
-    print(f"\nConstitutional Axioms: {len(VERSION_INFO['constitutional_axioms'])}")
+    for _comp in VERSION_INFO["components"]:
+        pass

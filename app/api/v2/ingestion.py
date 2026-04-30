@@ -10,21 +10,25 @@ F1-004: Базова інгестія v55
 from __future__ import annotations
 
 import asyncio
+import contextlib
+from datetime import UTC, datetime
 import json
 import logging
+from typing import TYPE_CHECKING, Any
 import uuid
-from datetime import UTC, datetime
-from typing import Any, AsyncGenerator
 
-import redis.asyncio as aioredis
 from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
-from sqlalchemy.ext.asyncio import AsyncSession
+import redis.asyncio as aioredis
 
 from app.core.db import get_db
 from app.libs.core.config import settings
 
+if TYPE_CHECKING:
+    from collections.abc import AsyncGenerator
+
+    from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger("predator.api.v2.ingestion")
 router = APIRouter(prefix="/ingestion", tags=["v2-ingestion"])
@@ -92,7 +96,6 @@ async def upload_file(
     db: AsyncSession = Depends(get_db),
 ) -> UploadResponse:
     """Приймає Excel/CSV файл, парсить записи і запускає фоновий pipeline."""
-
     ALLOWED_SOURCES = {"customs", "tax", "edr", "court", "tender", "license", "media", "telegram"}
     if source not in ALLOWED_SOURCES:
         raise HTTPException(
@@ -330,9 +333,7 @@ async def _run_pipeline_bg(
         job["status"] = "failed"
         job["errors"] = [str(e)]
         job["finished_at"] = datetime.now(UTC).isoformat()
-        try:
+        with contextlib.suppress(Exception):
             await _set_job(r, job_id, job)
-        except Exception:
-            pass
     finally:
         await r.aclose()

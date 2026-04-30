@@ -1,4 +1,5 @@
 import asyncio
+import contextlib
 import logging
 from typing import TYPE_CHECKING, Any
 
@@ -8,9 +9,7 @@ if TYPE_CHECKING:
     from .agent_base import AutonomousAgent
 
 
-try:
-    pass
-except ImportError:
+with contextlib.suppress(ImportError):
     pass
 
 logger = logging.getLogger("predator.autonomy.orchestrator")

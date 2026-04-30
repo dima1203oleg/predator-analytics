@@ -4,14 +4,12 @@ import builtins
 import contextlib
 from datetime import datetime, timedelta
 import json
-import os
 import time
 from typing import Any
 
 from prometheus_client import REGISTRY
 
 from app.libs.core.structured_logger import get_logger
-
 
 logger = get_logger("evolution_service")
 
@@ -20,9 +18,9 @@ from pathlib import Path
 
 class EvolutionService:
     def __init__(self, storage: Any = None):
-        from app.libs.core.storage import StorageProvider, FileStorageProvider
         from app.libs.core.config import settings
-        
+        from app.libs.core.storage import FileStorageProvider, StorageProvider
+
         if storage is None:
             self.storage: StorageProvider = FileStorageProvider(Path(settings.AZR_HOME))
         elif isinstance(storage, (str, Path)):

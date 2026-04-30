@@ -1,12 +1,14 @@
-"""
-ClickHouse Infrastructure API (Phase 2E — SM Edition).
+"""ClickHouse Infrastructure API (Phase 2E — SM Edition).
 
 Endpoints for ClickHouse server status and table statistics.
 """
-from fastapi import APIRouter
 from typing import Any
 
-from app.services.infrastructure.databases.clickhouse.clickhouse_manager import ClickHouseInfraManager
+from fastapi import APIRouter
+
+from app.services.infrastructure.databases.clickhouse.clickhouse_manager import (
+    ClickHouseInfraManager,
+)
 
 router = APIRouter(prefix="/infra/db/clickhouse", tags=["Infrastructure & Databases"])
 

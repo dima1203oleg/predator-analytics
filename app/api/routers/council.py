@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """LLM Council API Router
 Provides endpoints for multi-model consensus queries.
 """
@@ -19,7 +18,6 @@ from app.services.llm_council.council_orchestrator import (
     LLMCouncilOrchestrator,
     create_default_council,
 )
-
 
 if TYPE_CHECKING:
     from app.services.llm_council import ConsensusResult

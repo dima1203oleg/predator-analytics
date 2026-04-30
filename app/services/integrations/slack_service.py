@@ -4,7 +4,6 @@ import logging
 import os
 from typing import Any
 
-
 try:
     from slack_sdk import WebClient
     from slack_sdk.errors import SlackApiError

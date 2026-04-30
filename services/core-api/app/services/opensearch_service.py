@@ -211,6 +211,7 @@ class OpenSearchService:
 
         Returns:
             {"indexed": N, "errors": M}
+
         """
         if not documents:
             return {"indexed": 0, "errors": 0}

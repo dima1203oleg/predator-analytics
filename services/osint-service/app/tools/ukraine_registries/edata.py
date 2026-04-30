@@ -66,7 +66,7 @@ class EdataClient(BaseRegistryClient):
         stats = {
             "total_received": sum(t["amount"] for t in transactions),
             "transaction_count": len(transactions),
-            "unique_payers": len(set(t["payer"]["edrpou"] for t in transactions)),
+            "unique_payers": len({t["payer"]["edrpou"] for t in transactions}),
         }
 
         return RegistryResult(

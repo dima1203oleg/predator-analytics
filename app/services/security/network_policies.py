@@ -1,10 +1,9 @@
-"""
-Cilium Network Policies (Phase 7 — SM Edition).
+"""Cilium Network Policies (Phase 7 — SM Edition).
 
 Default deny policies and zero-trust L3/L4/L7 rules.
 Generates CiliumNetworkPolicy (CNP) YAML or configurations for Kubernetes.
 """
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 
@@ -70,7 +69,7 @@ class NetworkPolicyManager:
             "enforcement_mode": "strict",
             "mTLS_enabled": True,  # Cilium strict mTLS
             "policies": policies,
-            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(UTC).isoformat(),
         }
 
     def get_policy_status(self) -> dict[str, Any]:

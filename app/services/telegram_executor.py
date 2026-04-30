@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Telegram Task Executor - Виконує задачі після підтвердження користувачем
 Замість інструкцій "як зробити" - реально виконує дії.
 """
@@ -14,7 +13,6 @@ import re
 import subprocess
 
 import httpx
-
 
 logger = logging.getLogger(__name__)
 

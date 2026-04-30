@@ -30,7 +30,6 @@ import random
 import time
 from typing import Any
 
-
 # ============================================================================
 # 📊 ATTACK TYPES & RESULTS
 # ============================================================================
@@ -450,7 +449,7 @@ class RedTeamAgent:
 
     def __init__(self, storage: Any = "/tmp/azr_logs"):
         from app.libs.core.storage import FileStorageProvider
-        
+
         if isinstance(storage, (str, Path)):
             self.storage = FileStorageProvider(Path(storage))
         else:
@@ -482,6 +481,7 @@ class RedTeamAgent:
 
         Returns:
             SecurityReport with findings
+
         """
         self.attack_history.clear()
 
@@ -591,8 +591,6 @@ class RedTeamAgent:
 
 
 async def run_self_test():
-    print("🔴 RED TEAM AGENT - Self-Test")
-    print("=" * 60)
 
     # Create mock guard for testing
     class MockGuard:
@@ -630,18 +628,8 @@ async def run_self_test():
 
     report = await agent.run_full_assessment(guard=guard, num_attacks=30)
 
-    print("\n📊 SECURITY REPORT")
-    print(f"  Total Attacks: {report.total_attacks}")
-    print(f"  Block Rate: {report.block_rate:.1f}%")
-    print(f"  Vulnerability Score: {report.vulnerability_score}/10.0")
-    print("\n  Breakdown:")
-    print(f"    ✅ Blocked: {report.blocked_count}")
-    print(f"    ⚠️ Detected: {report.detected_count}")
-    print(f"    🟡 Partial Success: {report.partial_success_count}")
-    print(f"    🔴 Full Success: {report.full_success_count}")
-    print("\n  Recommendations:")
-    for rec in report.recommendations:
-        print(f"    • {rec}")
+    for _rec in report.recommendations:
+        pass
 
 
 if __name__ == "__main__":

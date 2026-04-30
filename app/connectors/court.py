@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Court Registry Parser (COMP-034)
 
 Парсер судового реєстру України (Єдиний державний реєстр судових рішень).
@@ -16,7 +15,6 @@ import logging
 from typing import Any
 
 from app.connectors.base import BaseConnector, ConnectorResult
-
 
 logger = logging.getLogger("connector.court")
 
@@ -80,6 +78,7 @@ class CourtRegistryConnector(BaseConnector):
 
         Returns:
             ConnectorResult with court decisions
+
         """
         category = kwargs.get("category")
         form = kwargs.get("form")

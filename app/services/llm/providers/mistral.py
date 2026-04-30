@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Mistral AI LLM Provider."""
 import time
 

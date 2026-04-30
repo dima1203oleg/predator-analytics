@@ -3,7 +3,6 @@ from __future__ import annotations
 from rich.console import Console
 import typer
 
-
 app = typer.Typer(help="Analyze system traces (OpenTelemetry / Jaeger)")
 console = Console()
 

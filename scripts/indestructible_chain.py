@@ -1,10 +1,8 @@
+import logging
 import os
 import random
-import time
-import logging
 import subprocess
-from pathlib import Path
-from enum import Enum
+import time
 
 # Set GitHub Token explicitly for Copilot CLI (Use environment variables instead of hardcoding)
 # os.environ["GH_TOKEN"] = "REMOVED"
@@ -23,11 +21,11 @@ class Colors:
 
 # --- 🎯 1. STEALTH ROUTER (Gemini 15 Keys Rotation) ---
 class StealthRouter:
-    """
-    Роутер для обходу бан-лімітів Google Gemini.
+    """Роутер для обходу бан-лімітів Google Gemini.
     Використовує пул із 15 ключів, динамічно їх перемикаючи.
     """
-    def __init__(self, keys: list[str] = None):
+
+    def __init__(self, keys: list[str] | None = None):
         self.keys = keys or []
         if not self.keys:
             self._load_keys_from_env()
@@ -40,7 +38,7 @@ class StealthRouter:
         env_files = [".env", "Predator_50/aoies-core/.env", "predator-infra/.env"]
         for ef in env_files:
             if os.path.exists(ef):
-                with open(ef, "r") as f:
+                with open(ef) as f:
                     for line in f:
                         if line.startswith("GEMINI") and "=" in line:
                             key = line.split("=", 1)[1].strip()
@@ -54,7 +52,7 @@ class StealthRouter:
     def get_next_key(self) -> str:
         if not self.keys:
             raise ValueError("No Gemini API keys available for Stealth Router.")
-        
+
         key = self.keys[self.index]
         self.index = (self.index + 1) % len(self.keys)
         logger.info(f"🔄 Rotating to Gemini key index: {self.index}")
@@ -81,7 +79,7 @@ class GeminiAgent:
         logger.info(f"{Colors.BOLD}🧠 [ARCHITECT] Initiating strategic planning...{Colors.END}")
         if not self.is_available:
             return "Fallback to Copilot: Unable to use Gemini SDK."
-        
+
         max_retries = 3
         for attempt in range(max_retries):
             key = self.router.get_next_key()
@@ -102,13 +100,12 @@ class GeminiAgent:
 class CopilotAgent:
     def execute(self, plan: str):
         logger.info(f"{Colors.BOLD}🦾 [EXECUTOR] GitHub Copilot assuming control...{Colors.END}")
-        # Note: 'gh copilot suggest' is interactive. We use a mocked execution approach 
-        # for script building or Aider as a true headless coder, but we can call GitHub 
+        # Note: 'gh copilot suggest' is interactive. We use a mocked execution approach
+        # for script building or Aider as a true headless coder, but we can call GitHub
         # copilot via shell if using `gh copilot explain` or custom prompt flags.
-        
-        agentic_prompt = f"Executing the following plan:\n{plan}"
+
         logger.info("Injecting prompt into Copilot Context...")
-        
+
         # Test GitHub Copilot Auth Status
         auth_check = subprocess.run(["gh", "auth", "status"], capture_output=True, text=True)
         if "Logged in" not in auth_check.stdout and "Logged in" not in auth_check.stderr:
@@ -118,12 +115,12 @@ class CopilotAgent:
         try:
             # We use an example programmatic execution logic:
             cmd = ["gh", "copilot", "explain", "implement this plan"]
-            res = subprocess.run(cmd, capture_output=True, text=True, timeout=15)
+            subprocess.run(cmd, capture_output=True, text=True, timeout=15)
             logger.info(f"{Colors.GREEN}Copilot output retrieved.{Colors.END}")
         except FileNotFoundError:
             logger.error(f"{Colors.YELLOW}GitHub Copilot CLI not installed or accessible.{Colors.END}")
             self.fallback_execution(plan)
-            
+
     def fallback_execution(self, plan: str):
         logger.info(f"{Colors.YELLOW}Executing Aider/Ollama fallback for execution...{Colors.END}")
         pass
@@ -136,17 +133,13 @@ class IndestructibleOrchestrator:
         self.copilot = CopilotAgent()
 
     def handle_mission(self, mission: str):
-        print(f"\n{Colors.BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━{Colors.END}")
-        print(f"{Colors.BOLD}🚀 INITIALIZING INDESTRUCTIBLE PIPELINE{Colors.END}")
-        print(f"{Colors.BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━{Colors.END}\n")
-        
+
         # Step 1: Gemini Plans (with Stealth Router)
         plan = self.gemini.plan(mission)
-        print(f"\n{Colors.YELLOW}--- ARCHITECT PLAN ---{Colors.END}\n{plan[:500]}...\n")
-        
+
         # Step 2: Copilot Executes
         self.copilot.execute(plan)
-        
+
 if __name__ == "__main__":
     import sys
     task = sys.argv[1] if len(sys.argv) > 1 else "Optimize the Telegram ETL pipeline."

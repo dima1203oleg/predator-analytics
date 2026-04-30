@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """
 Data Transformation Layer
 
@@ -10,7 +9,6 @@ Provides validation and mapping of parsed data to a unified schema.
 from datetime import datetime
 import logging
 from typing import Any
-
 
 try:
     import pandas as pd
@@ -28,7 +26,7 @@ except ImportError:
 
         def dict(self):
             return self.__dict__
-        
+
         def model_dump(self):
             return self.__dict__
 
@@ -65,7 +63,7 @@ class CompanySchema(BaseModel):
 
 class CustomsSchema(BaseModel):
     """Schema for Customs Declaration data (Ukraine Customs OSINT)."""
-    
+
     declaration_number: str = Field(..., alias="Митна декларація")
     date: datetime = Field(..., alias="Дата")
     sender: str = Field(..., alias="Відправник")
@@ -175,6 +173,7 @@ class DataTransformer:
 
         Returns:
             TransformResult containing validated data or error information
+
         """
         try:
             # Select the appropriate schema
@@ -238,6 +237,7 @@ class DataTransformer:
 
         Returns:
             TransformResult containing transformed data or error
+
         """
         try:
             # Convert DataFrame to list of dicts
@@ -262,6 +262,7 @@ class DataTransformer:
 
         Returns:
             TransformResult containing transformed data or error
+
         """
         try:
             # Handle nested XML structure
@@ -328,6 +329,7 @@ class DataTransformer:
 
         Returns:
             TransformResult containing normalized data or error
+
         """
         try:
 
@@ -386,7 +388,7 @@ class DataTransformer:
                         is_na = False
                         if pd is not None:
                             is_na = pd.isna(val_raw)
-                        
+
                         if not is_na:
                             val_str = str(val_raw).strip()
                             # Handle float representations of codes (e.g. 12345.0)
@@ -413,6 +415,7 @@ class DataTransformer:
 
         Returns:
             Dictionary representation of the schema
+
         """
         return self.schema.schema()
 
@@ -426,6 +429,7 @@ class DataTransformer:
 
         Returns:
             TransformResult with compatibility status
+
         """
         try:
             # Check if required fields are present
@@ -460,5 +464,6 @@ def create_data_transformer() -> DataTransformer:
 
     Returns:
         DataTransformer instance
+
     """
     return DataTransformer()

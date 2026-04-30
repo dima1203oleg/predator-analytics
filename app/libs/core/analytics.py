@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING, Any
 
 import duckdb
 
-
 if TYPE_CHECKING:
     import pandas as pd
 

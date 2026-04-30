@@ -4,7 +4,6 @@ import asyncio
 import logging
 import time
 
-
 logger = logging.getLogger("predator.ml.batch_embedder")
 
 
@@ -20,6 +19,7 @@ class BatchEmbeddingService:
             embedding_service: The underlying EmbeddingService containing the model
             batch_size: Maximum batch size for inference
             wait_time: Maximum time to wait for a full batch in seconds
+
         """
         self.embedding_service = embedding_service
         self.batch_size = batch_size
@@ -52,6 +52,7 @@ class BatchEmbeddingService:
 
         Returns:
             Embedding vector
+
         """
         if not self._running:
             self.start()

@@ -27,17 +27,16 @@ base_path = "/Users/Shared/Predator_60/apps/predator-analytics-ui"
 for rel_path in files:
     full_path = os.path.join(base_path, rel_path)
     if os.path.exists(full_path):
-        with open(full_path, 'r', encoding='utf-8') as f:
+        with open(full_path, encoding='utf-8') as f:
             content = f.read()
-        
+
         new_content = content.replace("from '../TacticalCard'", "from '../ui/TacticalCard'")
         new_content = new_content.replace('from "../TacticalCard"', 'from "../ui/TacticalCard"')
-        
+
         if new_content != content:
             with open(full_path, 'w', encoding='utf-8') as f:
                 f.write(new_content)
-            print(f"Updated {rel_path}")
         else:
-            print(f"No changes needed for {rel_path}")
+            pass
     else:
-        print(f"File not found: {rel_path}")
+        pass

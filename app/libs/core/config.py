@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Core Configuration
 Shared settings for all Predator services.
 """
@@ -9,7 +8,6 @@ from functools import lru_cache
 import json
 import os
 from typing import Any
-
 
 # 🛡️ FALLBACK: DO ANY METHOD TO WORK WITHOUT PYDANTIC IF NEEDED
 try:
@@ -91,24 +89,24 @@ class Settings(BaseSettings):
     # --- CONSTITUTIONAL CORE (v45.2) ---
     CONSTITUTION_HASH: str = "3f05c27896098e41471c246fb39e6a0dd43f7b11ff7c46db8f0195d3d3cae3cd"
     CONSTITUTION_PATH: str = os.path.join(PROJECT_ROOT, "docs/v45_CONSTITUTION.md")
-    
+
     @property
     def AZR_HOME(self) -> str:
         """Dynamic AZR_HOME with read-only awareness."""
         env_val = os.getenv("AZR_HOME")
         if env_val:
             return env_val
-        
+
         # Default for container
         default_path = "/app/.azr"
-        
+
         # Fallback for macOS or read-only environments
         import sys
         if sys.platform == "darwin" or not os.access("/", os.W_OK):
             import tempfile
             temp_dir = os.path.join(tempfile.gettempdir(), "predator_azr")
             return temp_dir
-        
+
         return default_path
     CORS_ORIGINS: list[str] = [
         "http://localhost:3030",

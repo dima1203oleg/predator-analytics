@@ -3,6 +3,7 @@
 Ініціалізація Celery для фонових задач (Data Freshness, ML retrains тощо).
 """
 import os
+
 from celery import Celery
 
 # Конфігурація з .env або default

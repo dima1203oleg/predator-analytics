@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 #!/usr/bin/env python3
 """━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 🔗 Mixed Top CLI Stack (Canonical Implementation)
@@ -35,8 +34,6 @@ import os
 from pathlib import Path
 import subprocess
 import sys
-from typing import Dict
-
 
 # Налаштування логування
 logging.basicConfig(level=logging.INFO, format='%(message)s')
@@ -71,9 +68,6 @@ class MixedCLIStack:
 
     def self_doctor(self) -> str:
         """Запуск системної діагностики Predator."""
-        print("\n" + "━" * 60)
-        print("🏥 Рівень 0: System Doctor (Diagnostics)")
-        print("━" * 60)
         try:
             script_path = os.path.join(self.root_dir, "scripts/system_doctor.sh")
             result = subprocess.run(['bash', script_path], check=False, capture_output=True, text=True, timeout=30)
@@ -106,7 +100,7 @@ class MixedCLIStack:
                 genai.configure(api_key=self.gemini_key)
                 self.gemini_client = genai.GenerativeModel('gemini-pro')
             except ImportError:
-                print("⚠️  Google Generative AI SDK не встановлено.")
+                pass
 
         # 2. Mistral (Codegen)
         self.mistral_client = None
@@ -115,7 +109,7 @@ class MixedCLIStack:
                 from mistralai import Mistral
                 self.mistral_client = Mistral(api_key=self.mistral_key)
             except ImportError:
-                print("⚠️  Mistral SDK не встановлено.")
+                pass
 
         # 4. Groq (Universal Fallback)
         self.groq_client = None
@@ -132,9 +126,6 @@ class MixedCLIStack:
         """Єдиний механізм Fallback (Ollama).
         Викликається, коли основний інструмент недоступний.
         """
-        print(f"\n⚠️  FALLBACK MODE: {role.value.upper()} → OLLAMA")
-        print("   Причина: Primary tool unavailable")
-
         model_map = {
             AgentRole.PLANNER: "llama3.2:3b", # Швидка модель для тексту
             AgentRole.CODEGEN: "codellama",   # Модель для коду
@@ -167,9 +158,6 @@ class MixedCLIStack:
 
     # 🧠 Рівень 1: Планування (Gemini)
     def planner_agent(self, task: str) -> dict:
-        print("\n" + "━" * 60)
-        print("🧠 Рівень 1: Gemini CLI (Planner)")
-        print("━" * 60)
 
         if not self.gemini_client:
             fallback_res = self._run_fallback(task, AgentRole.PLANNER)
@@ -204,11 +192,9 @@ class MixedCLIStack:
             end = text.rfind('}') + 1
             plan = json.loads(text[start:end])
 
-            print(f"✅ План створено: {plan.get('description')}")
             return plan
 
         except Exception as e:
-            print(f"❌ Gemini Error: {e}")
             # Fallback
             fallback_res = self._run_fallback(task, AgentRole.PLANNER, str(e))
             try:
@@ -220,15 +206,11 @@ class MixedCLIStack:
 
     # ✋ Рівень 2: Генерація (Mistral Vibe)
     def codegen_agent(self, plan: dict) -> str:
-        print("\n" + "━" * 60)
-        print("✋ Рівень 2: Mistral Vibe CLI (Codegen)")
-        print("━" * 60)
 
         task_desc = plan.get('description', 'Unknown Task')
 
         if not self.mistral_client:
             if self.groq_key:
-                print("⚡ Using Groq (Llama-3/Mistral-vibe) for Codegen")
                 import httpx
                 response = httpx.post(
                     "https://api.groq.com/openai/v1/chat/completions",
@@ -275,18 +257,13 @@ class MixedCLIStack:
             elif "```" in code:
                 code = code.split("```")[1].split("```")[0]
 
-            print(f"✅ Код згенеровано ({len(code)} bytes)")
             return code.strip()
 
         except Exception as e:
-            print(f"❌ Mistral Error: {e}")
             return self._run_fallback(f"Generate code for: {task_desc}", AgentRole.CODEGEN, str(e))
 
     # 🎛️ Рівень 3: Рев'ю (Aider)
     def review_agent(self, file_path: str, context: str):
-        print("\n" + "━" * 60)
-        print("🎛️ Рівень 3: Aider (Review & Fix)")
-        print("━" * 60)
 
         # Flexible aider path search
         import shutil
@@ -311,11 +288,8 @@ class MixedCLIStack:
             if check.returncode != 0:
                 raise FileNotFoundError
         except (FileNotFoundError, subprocess.TimeoutExpired):
-            print("⚠️  Aider не знайдено.")
-            print(self._run_fallback(f"Review code in {file_path}", AgentRole.REVIEW, context))
             return None
 
-        print(f"🛡️ Запуск Aider для перевірки: {file_path}")
 
         # Aider run command
         cmd = [
@@ -328,16 +302,13 @@ class MixedCLIStack:
 
         try:
             subprocess.run(cmd, check=True, capture_output=True)
-            print("✅ Aider завершив рев'ю.")
             with open(file_path) as f:
                 return f.read()
-        except subprocess.CalledProcessError as e:
-            print(f"⚠️ Aider завершився з помилкою: {e}")
+        except subprocess.CalledProcessError:
             return None
 
     # Orchestrator Logic
     def run_pipeline(self, task: str, output_file: str | None = None):
-        print(f"🚀 ЗАПУСК MIXED CLI PIPELINE [{self.env.value.upper()}]")
 
         # 1. Plan
         plan = self.planner_agent(task)
@@ -352,13 +323,10 @@ class MixedCLIStack:
 
         out_path = Path(output_file)
         out_path.write_text(code, encoding="utf-8")
-        print(f"💾 Код збережено в: {out_path}")
 
         # 3. Review
         self.review_agent(str(out_path), plan.get("description", task))
 
-        print("\n✅ PIPELINE COMPLETED")
-        print(f"👉 Результат: {out_path.absolute()}")
 
 def main():
     parser = argparse.ArgumentParser(description="Mixed Top CLI Stack for Predator Analytics")
@@ -375,19 +343,17 @@ def main():
     if args.agent:
         # Individual Agent Run
         if args.agent == "planner":
-            print(json.dumps(stack.planner_agent(args.task), indent=2))
+            pass
         elif args.agent == "codegen":
             # Expects JSON plan as task input or plain text
             try:
                 # Try to parse as json plan
-                plan = json.loads(args.task)
+                json.loads(args.task)
             except:
                 # Treat as pure description
-                plan = {"description": args.task}
-            print(stack.codegen_agent(plan))
+                pass
         elif args.agent == "review":
             if not args.file:
-                print("❌ Для рев'ю потрібен файл (--file)")
                 sys.exit(1)
             stack.review_agent(args.file, args.task or "Review code")
     elif args.task:

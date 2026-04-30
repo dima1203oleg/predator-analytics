@@ -1,5 +1,4 @@
-"""
-Реєстр модулів PREDATOR Analytics v4.1.
+"""Реєстр модулів PREDATOR Analytics v4.1.
 
 Керує конфігурацією модулів, їх метаданими та доступністю.
 Використовується для побудови динамічної навігації sidebar.
@@ -10,10 +9,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from app.core.modules.types import (
+    TIER_ORDER,
     ModuleKey,
     SubscriptionTier,
-    TIER_ORDER,
-    MODULE_ACCESS,
 )
 
 
@@ -109,14 +107,14 @@ MODULE_REGISTRY: list[ModuleInfo] = [
 def get_available_modules(
     user_tier: SubscriptionTier,
 ) -> tuple[list[ModuleInfo], list[ModuleInfo]]:
-    """
-    Повертає (доступні, заблоковані) модулі для рівня підписки.
+    """Повертає (доступні, заблоковані) модулі для рівня підписки.
 
     Args:
         user_tier: Рівень підписки користувача.
 
     Returns:
         Tuple з двох списків: доступні та заблоковані модулі.
+
     """
     user_level = TIER_ORDER[user_tier]
     available: list[ModuleInfo] = []

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Named Entity Recognition (NER) Service (COMP-043)
 
 Розпізнавання іменованих сутностей в українських текстах.
@@ -18,11 +17,10 @@ Strategy:
 1. Primary: Hugging Face UKR NER model (if available)
 2. Fallback: Rule-based regex patterns
 """
+from dataclasses import dataclass, field
 import logging
 import re
-from dataclasses import dataclass, field
 from typing import Any
-
 
 logger = logging.getLogger("service.ner")
 
@@ -30,6 +28,7 @@ logger = logging.getLogger("service.ner")
 @dataclass
 class NamedEntity:
     """A recognized named entity."""
+
     text: str
     label: str           # PERSON, ORG, LOC, EDRPOU, MONEY, DATE, PRODUCT
     start: int = 0       # Character position
@@ -51,6 +50,7 @@ class NamedEntity:
 @dataclass
 class NERResult:
     """NER analysis result."""
+
     text: str
     entities: list[NamedEntity] = field(default_factory=list)
     method: str = "regex"
@@ -147,6 +147,7 @@ class NERService:
 
         Returns:
             NERResult with extracted entities
+
         """
         if not text or not text.strip():
             return NERResult(text="")

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Core Database Module
 Safe SQLAlchemy connection management (Async/Sync support).
 """
@@ -10,7 +9,6 @@ from typing import TYPE_CHECKING
 from unittest.mock import MagicMock
 
 from .config import settings
-
 
 # 🛡️ FALLBACK: SQLAlchemy Proxy
 try:

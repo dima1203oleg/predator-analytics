@@ -1,12 +1,10 @@
 from __future__ import annotations
 
 import os
-from typing import Optional
 
 from rich.console import Console
 from rich.markdown import Markdown
 import typer
-
 
 app = typer.Typer(help="Mistral AI Intelligence Interface")
 console = Console()

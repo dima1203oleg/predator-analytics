@@ -11,7 +11,6 @@ import yaml
 from app.libs.core.structured_logger import get_logger
 from app.services.truth_ledger import truth_ledger
 
-
 logger = get_logger("service.chaos")
 
 

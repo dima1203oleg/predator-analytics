@@ -9,10 +9,12 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
-from typing import Any, Callable, Coroutine
+from typing import TYPE_CHECKING, Any
 
-from app.core.signal_bus import SignalBus
 from app.libs.core.database import get_db_ctx
+
+if TYPE_CHECKING:
+    from collections.abc import Callable, Coroutine
 
 logger = logging.getLogger("predator.core.signal_consumer")
 
@@ -45,8 +47,8 @@ class SignalConsumer:
             from aiokafka import AIOKafkaConsumer
 
             # Map our high-level topics to Kafka topics
-            kafka_topics = [f"predator.{t.replace('.', '_')}" for t in self._handlers.keys()]
-            
+            kafka_topics = [f"predator.{t.replace('.', '_')}" for t in self._handlers]
+
             if not kafka_topics:
                 logger.warning("No handlers registered. Consumer will not start.")
                 return
@@ -78,7 +80,7 @@ class SignalConsumer:
                 # Extract topic back to our format
                 kafka_topic = msg.topic
                 topic = kafka_topic.replace("predator.", "").replace("_", ".")
-                
+
                 envelope = msg.value
                 logger.debug("Signal received: %s (id=%s)", topic, envelope.get("signal_id"))
 
@@ -112,13 +114,13 @@ async def handle_data_ingested(envelope: dict[str, Any]) -> None:
         return
 
     logger.info("Triggering analytical pipeline for ueid=%s (reason: data.ingested)", ueid)
-    
+
     from app.engines.behavioral import process_entity as behavioral_process
-    from app.engines.institutional import process_entity as institutional_process
-    from app.engines.influence import process_entity as influence_process
-    from app.engines.structural_gaps import process_entity as structural_process
-    from app.engines.predictive import process_entity as predictive_process
     from app.engines.cers import process_entity as cers_process
+    from app.engines.influence import process_entity as influence_process
+    from app.engines.institutional import process_entity as institutional_process
+    from app.engines.predictive import process_entity as predictive_process
+    from app.engines.structural_gaps import process_entity as structural_process
 
     async with get_db_ctx() as db:
         try:
@@ -129,7 +131,7 @@ async def handle_data_ingested(envelope: dict[str, Any]) -> None:
             await structural_process(ueid, db)
             await predictive_process(ueid, db)
             await cers_process(ueid, db)
-            
+
             await db.commit()
             logger.info("Completed analytical pipeline for ueid=%s", ueid)
         except Exception as e:

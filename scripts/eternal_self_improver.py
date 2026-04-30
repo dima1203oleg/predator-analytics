@@ -1,17 +1,12 @@
 from __future__ import annotations
 
-
 #!/usr/bin/env python3
 """🚀 Predator Eternal Self-Improver CLI
 Runs as a background service to continuously optimize the Predator Analytics system.
 """
 import asyncio
-from datetime import datetime
-import os
 from pathlib import Path
-import shutil
 import sys
-
 
 # Fix paths for imports
 project_root = Path(__file__).parent.parent
@@ -28,8 +23,6 @@ class EternalSelfImprover:
         self._is_active = True
 
     async def run(self):
-        print("🚀 ETERNAL SELF-IMPROVER ACTIVE")
-        print("🌓 Phase: NIGHT CLUSTER (Continuous Refinement)")
 
         while self._is_active:
             try:
@@ -44,13 +37,11 @@ class EternalSelfImprover:
                 await self._optimize_backend()
 
                 # 4. Report Progress
-                print(f"✅ [{datetime.now().strftime('%H:%M:%S')}] Evolution cycle complete.")
 
                 # Sleep between cycles (can be shorter if load is low)
                 await asyncio.sleep(600)  # 10 minutes
 
-            except Exception as e:
-                print(f"❌ Evolution Error: {e}")
+            except Exception:
                 await asyncio.sleep(60)
 
     async def _optimize_ui(self):

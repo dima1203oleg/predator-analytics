@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Sanctions Checker (COMP-030)
 
 Перевірка сутностей за санкційними списками:
@@ -13,13 +12,12 @@ Uses open data from:
 - EU: https://data.europa.eu/data/datasets/consolidated-list-of-persons-groups-and-entities-subject-to-eu-financial-sanctions
 - OFAC: https://sanctionslist.ofac.treas.gov/Home/SdnList
 """
-import logging
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
+import logging
 from typing import Any
 
 from app.connectors.base import BaseConnector, ConnectorResult
-
 
 logger = logging.getLogger("service.sanctions")
 
@@ -46,6 +44,7 @@ SANCTIONS_LISTS = {
 @dataclass
 class SanctionHit:
     """A single sanction match."""
+
     list_name: str
     entity_name: str
     match_score: float  # 0.0 – 1.0
@@ -57,6 +56,7 @@ class SanctionHit:
 @dataclass
 class SanctionsCheckResult:
     """Result of sanctions screening."""
+
     query: str
     is_sanctioned: bool
     hits: list[SanctionHit] = field(default_factory=list)
@@ -116,6 +116,7 @@ class SanctionsChecker(BaseConnector):
 
         Returns:
             SanctionsCheckResult
+
         """
         # Check local cache first
         cache_key = f"{query}:{edrpou or ''}".lower()

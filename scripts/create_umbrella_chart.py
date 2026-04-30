@@ -1,5 +1,6 @@
 
 import os
+
 import yaml
 
 HELM_ROOT = "/Users/dima-mac/Documents/Predator_21/charts"
@@ -11,7 +12,6 @@ OS_CHARTS_DIR = HELM_ROOT # Where the category folders live
 def find_all_charts():
     charts = []
     if not os.path.exists(OS_CHARTS_DIR):
-        print(f"Chats dir {OS_CHARTS_DIR} does not exist")
         return []
 
     for category in os.listdir(OS_CHARTS_DIR):
@@ -20,7 +20,7 @@ def find_all_charts():
             # Search recursively or just one level?
             # generate_v45_helm.py creates: charts/category/component_path
             # Example: charts/api/gateway
-            for root, dirs, files in os.walk(cat_path):
+            for root, _dirs, files in os.walk(cat_path):
                 if "Chart.yaml" in files:
                     # This is a chart
                     # Get relative path from umbrella dir? No, dependencies can be local paths
@@ -29,7 +29,7 @@ def find_all_charts():
                     name = rel_path.replace("/", "-")
                     # Chart name inside Chart.yaml might be different, let's read it
                     try:
-                        with open(os.path.join(root, "Chart.yaml"), 'r') as f:
+                        with open(os.path.join(root, "Chart.yaml")) as f:
                             chart_data = yaml.safe_load(f)
                             chart_name = chart_data.get("name", name)
                             version = chart_data.get("version", "0.1.0")
@@ -45,15 +45,14 @@ def find_all_charts():
                                 "version": version,
                                 "repository": f"file://{dep_path}"
                             })
-                    except Exception as e:
-                        print(f"Skipping {root}: {e}")
+                    except Exception:
+                        pass
     return charts
 
 def create_umbrella():
     os.makedirs(UMBRELLA_DIR, exist_ok=True)
     dependencies = find_all_charts()
 
-    print(f"Found {len(dependencies)} sub-charts.")
 
     chart_yaml = {
         "apiVersion": "v2",
@@ -68,7 +67,6 @@ def create_umbrella():
     with open(os.path.join(UMBRELLA_DIR, "Chart.yaml"), 'w') as f:
         yaml.dump(chart_yaml, f, sort_keys=False)
 
-    print(f"Umbrella Chart created at {UMBRELLA_DIR}/Chart.yaml")
 
     # Create basic values.yaml that can override global settings
     values_yaml = {

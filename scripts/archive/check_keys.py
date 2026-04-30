@@ -5,7 +5,6 @@ import logging
 
 import aiohttp
 
-
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 logger = logging.getLogger(__name__)
@@ -60,25 +59,16 @@ async def main():
         "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"
     ]
 
-    print("\n---------- GEMINI KEYS CHECK ----------")
     working_gemini = []
     for key in gemini_keys:
         success, msg = await check_gemini(key)
-        status = "✅ WORKING" if success else f"❌ FAILED ({msg})"
-        print(f"Key {key[:10]}...: {status}")
         if success: working_gemini.append(key)
 
-    print("\n---------- GROQ KEYS CHECK ----------")
     working_groq = []
     for key in groq_keys:
-        success, msg = await check_groq(key)
-        status = "✅ WORKING" if success else f"❌ FAILED ({msg})"
-        print(f"Key {key[:10]}...: {status}")
+        success, _msg = await check_groq(key)
         if success: working_groq.append(key)
 
-    print("\nSUMMARY:")
-    print(f"Working Gemini Keys: {len(working_gemini)}")
-    print(f"Working Groq Keys: {len(working_groq)}")
 
 if __name__ == "__main__":
     asyncio.run(main())

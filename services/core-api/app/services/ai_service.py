@@ -46,7 +46,6 @@ class AIService:
         route: LLMRoute = LLMRoute.HYBRID,
     ) -> str:
         """Виклик LiteLLM або Gemini для отримання відповіді з Circuit Breaker."""
-        
         # CLOUD routing через Gemini SDK
         if route == LLMRoute.CLOUD:
             prompt = "\n".join([f"{m['role']}: {m['content']}" for m in messages])
@@ -98,34 +97,33 @@ class AIService:
             return
 
         try:
-            async with httpx.AsyncClient() as client:
-                async with client.stream(
-                    "POST",
-                    f"{settings.LITELLM_API_BASE}/chat/completions",
-                    json={
-                        "model": target_model,
-                        "messages": messages,
-                        "temperature": temperature,
-                        "stream": True,
-                    },
-                    timeout=90.0,
-                ) as response:
-                    if response.status_code != 200:
-                        _llm_breaker.record_failure()
-                        yield f"AI Error: {response.status_code}"
-                        return
+            async with httpx.AsyncClient() as client, client.stream(
+                "POST",
+                f"{settings.LITELLM_API_BASE}/chat/completions",
+                json={
+                    "model": target_model,
+                    "messages": messages,
+                    "temperature": temperature,
+                    "stream": True,
+                },
+                timeout=90.0,
+            ) as response:
+                if response.status_code != 200:
+                    _llm_breaker.record_failure()
+                    yield f"AI Error: {response.status_code}"
+                    return
 
-                    _llm_breaker.record_success()
-                    async for line in response.aiter_lines():
-                        if line.startswith("data: ") and line != "data: [DONE]":
-                            import orjson
-                            try:
-                                chunk = orjson.loads(line[6:])
-                                delta = chunk["choices"][0].get("delta", {})
-                                if content := delta.get("content"):
-                                    yield content
-                            except (orjson.JSONDecodeError, KeyError, IndexError):
-                                continue
+                _llm_breaker.record_success()
+                async for line in response.aiter_lines():
+                    if line.startswith("data: ") and line != "data: [DONE]":
+                        import orjson
+                        try:
+                            chunk = orjson.loads(line[6:])
+                            delta = chunk["choices"][0].get("delta", {})
+                            if content := delta.get("content"):
+                                yield content
+                        except (orjson.JSONDecodeError, KeyError, IndexError):
+                            continue
         except Exception as e:
             _llm_breaker.record_failure()
             logger.error(f"Streaming exception: {e!s}")

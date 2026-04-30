@@ -6,7 +6,6 @@ from pydantic import BaseModel
 from app.services.integrations.notion_service import get_notion_service
 from app.services.integrations.slack_service import get_slack_service
 
-
 router = APIRouter(prefix="/integrations", tags=["External Integrations"])
 
 

@@ -7,7 +7,6 @@ from typing import Any
 
 import asyncpg
 
-
 logger = logging.getLogger("service.audit")
 
 
@@ -39,6 +38,7 @@ class AuditService:
             resource_id: ID of accessed resource
             pii_fields: List of PII fields accessed
             ip_address: Client IP
+
         """
         conn = await asyncpg.connect(self.db_url)
 
@@ -81,6 +81,7 @@ class AuditService:
             description: Human-readable description
             user_id: Optional user ID
             metadata: Additional context
+
         """
         conn = await asyncpg.connect(self.db_url)
 

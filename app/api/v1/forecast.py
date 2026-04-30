@@ -1,15 +1,14 @@
 from datetime import datetime
-from typing import List, Dict
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
 from app.core.settings import get_settings
 from app.models.declaration import Declaration
-from app.schemas.forecast import ForecastDemandRequest, ForecastResponse, ForecastModelsResponse
-from app.services.ml.forecast_service import get_forecast_service, ForecastService
+from app.schemas.forecast import ForecastDemandRequest, ForecastModelsResponse, ForecastResponse
+from app.services.ml.forecast_service import ForecastService, get_forecast_service
 
 router = APIRouter(prefix="/forecast", tags=["Прогнозування"])
 
@@ -19,8 +18,7 @@ async def get_demand_forecast(
     db: AsyncSession = Depends(get_db),
     forecast_service: ForecastService = Depends(get_forecast_service)
 ):
-    """
-    Отримати прогноз попиту для товару.
+    """Отримати прогноз попиту для товару.
     """
     # 1. Historical data (без SELECT *)
     stmt = (
@@ -38,7 +36,7 @@ async def get_demand_forecast(
     result = await db.execute(stmt)
     rows = result.all()
 
-    history_data: List[Dict[str, str | float]] = []
+    history_data: list[dict[str, str | float]] = []
     product_name = None
     country_code = None
 
@@ -62,13 +60,12 @@ async def get_demand_forecast(
         months_ahead=request.months_ahead,
         model_key=request.model
     )
-    
+
     return forecast_result
 
 @router.get("/models", response_model=ForecastModelsResponse)
 async def list_models():
-    """
-    Список доступних моделей прогнозування.
+    """Список доступних моделей прогнозування.
     """
     settings = get_settings()
     return {"models": settings.FORECAST_MODELS}

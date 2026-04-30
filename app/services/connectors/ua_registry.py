@@ -1,10 +1,9 @@
-"""
-UA Connectors Service (Phase 10 — SM Edition).
+"""UA Connectors Service (Phase 10 — SM Edition).
 
 Integration clients for Opendatabot, YouControl, and Prozorro.
 Mocks real external calls for the Single Machine environment.
 """
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 
@@ -21,7 +20,7 @@ class OpendatabotClient:
             "address": "м. Київ, вул. Хрещатик, 1",
             "kved": "62.01 Комп'ютерне програмування",
             "source": "Opendatabot",
-            "fetched_at": datetime.now(timezone.utc).isoformat(),
+            "fetched_at": datetime.now(UTC).isoformat(),
         }
 
     def get_court_cases(self, edrpou: str) -> list[dict[str, Any]]:
@@ -43,7 +42,7 @@ class YouControlClient:
             "lists_checked": ["РНБО", "СБУ", "OFAC", "EU"],
             "details": ["Санкції РНБО від 12.05.2024"] if is_sanctioned else [],
             "source": "YouControl",
-            "fetched_at": datetime.now(timezone.utc).isoformat(),
+            "fetched_at": datetime.now(UTC).isoformat(),
         }
 
     def get_express_risk(self, edrpou: str) -> dict[str, Any]:
@@ -71,5 +70,5 @@ class ProzorroClient:
                 {"id": "UA-2025-01-01-123456-a", "item": "Послуги з розробки ПЗ", "status": "Активний"},
             ],
             "source": "Prozorro",
-            "fetched_at": datetime.now(timezone.utc).isoformat(),
+            "fetched_at": datetime.now(UTC).isoformat(),
         }

@@ -1,6 +1,5 @@
 import logging
 
-
 logger = logging.getLogger("app.services.test_data_generator")
 
 

@@ -1,13 +1,13 @@
 """Market Intelligence Router — PREDATOR Analytics v61.0-ELITE.
 """
-from typing import Any
-from fastapi import APIRouter, Depends, Query, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.database import get_db
-from app.dependencies import get_tenant_id, PermissionChecker
+
 from app.core.permissions import Permission
-from app.models.orm import CustomsDeclaration, Company
+from app.database import get_db
+from app.dependencies import PermissionChecker, get_tenant_id
+from app.models.orm import CustomsDeclaration
 
 router = APIRouter(prefix="/market", tags=["ринок"])
 
@@ -23,12 +23,12 @@ async def get_market_overview(
         select(func.sum(CustomsDeclaration.customs_value_usd))
         .where(CustomsDeclaration.tenant_id == tenant_id)
     ) or 0
-    
+
     total_declarations = await db.scalar(
         select(func.count(CustomsDeclaration.id))
         .where(CustomsDeclaration.tenant_id == tenant_id)
     ) or 0
-    
+
     # Топ-5 категорій UKTZED
     top_categories_stmt = (
         select(
@@ -41,7 +41,7 @@ async def get_market_overview(
         .limit(5)
     )
     top_categories_result = await db.execute(top_categories_stmt)
-    
+
     # Топ-5 країн походження
     top_countries_stmt = (
         select(
@@ -54,7 +54,7 @@ async def get_market_overview(
         .limit(5)
     )
     top_countries_result = await db.execute(top_countries_stmt)
-    
+
     return {
         "total_value_usd": float(total_value),
         "total_declarations": total_declarations,
@@ -89,10 +89,10 @@ async def list_market_declarations(
         .limit(limit)
         .offset(offset)
     )
-    
+
     result = await db.execute(stmt)
     declarations = result.all()
-    
+
     return [
         {
             "number": r.declaration_number,
@@ -123,7 +123,7 @@ async def get_product_stats(
         .where(CustomsDeclaration.tenant_id == tenant_id)
     )
     res = stats.one()
-    
+
     # Основні імпортери
     importers = await db.execute(
         select(
@@ -136,7 +136,7 @@ async def get_product_stats(
         .order_by(func.sum(CustomsDeclaration.customs_value_usd).desc())
         .limit(5)
     )
-    
+
     return {
         "code": code,
         "avg_price_usd": float(res.avg_price) if res.avg_price else 0.0,

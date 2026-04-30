@@ -29,12 +29,11 @@ class YouControlClient:
         self.base_url = "https://api.youcontrol.com.ua"
         # Для тестування можна передати YOUCONTROL_TOKEN=mock в .env
         self.token = getattr(settings, "YOUCONTROL_TOKEN", "mock")
-        
+
         self._async_client = httpx.AsyncClient(timeout=15.0)
 
     async def get_company_data(self, edrpou: str) -> dict[str, Any]:
         """Отримує дані компанії за ЄДРПОУ, використовуючи Circuit Breaker."""
-        
         # Перевірка статусу Circuit Breaker
         can_execute = await self.circuit_breaker.check()
         if not can_execute:
@@ -52,7 +51,7 @@ class YouControlClient:
                 f"{self.base_url}/company/profile/{edrpou}",
                 headers={"Authorization": f"Bearer {self.token}"}
             )
-            
+
             # Rate limiting (429) & Server Errors (500+)
             if response.status_code in (429, 500, 502, 503, 504):
                 logger.warning(f"YouControl API Error: {response.status_code}")
@@ -60,7 +59,7 @@ class YouControlClient:
                 response.raise_for_status()
 
             response.raise_for_status()
-            
+
             # Успішно
             await self.circuit_breaker.record_success()
             return response.json()
@@ -72,9 +71,9 @@ class YouControlClient:
 
     def _get_mock_data(self, edrpou: str) -> dict[str, Any]:
         """Повертає mock-дані (стаба)."""
-        import random
         from datetime import UTC, datetime, timedelta
-        
+        import random
+
         test_year = datetime.now(UTC) - timedelta(days=random.randint(100, 5000))
         return {
             "edrpou": edrpou,

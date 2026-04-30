@@ -6,7 +6,6 @@ from pathlib import Path
 
 from .registry import registry
 
-
 logger = logging.getLogger("tools.fs")
 
 # Current working directory as root

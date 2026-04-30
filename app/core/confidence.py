@@ -50,6 +50,7 @@ def calculate_confidence(
 
     Returns:
         ConfidenceScore with total and breakdown.
+
     """
     # Clamp inputs to [0, 1]
     dc = max(0.0, min(1.0, data_completeness))

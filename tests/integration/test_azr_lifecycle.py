@@ -1,9 +1,11 @@
-import pytest
-import asyncio
 from pathlib import Path
-import tempfile
 import shutil
+import tempfile
+
+import pytest
+
 from app.services.azr_engine_v32 import AZREngineV32
+
 
 @pytest.fixture
 async def engine():
@@ -26,7 +28,7 @@ async def test_engine_lifecycle_and_infrastructure(engine):
     """
     # Start engine (this triggers ensure_infrastructure)
     await engine.start()
-    
+
     # Now it should be running
     status = engine.get_status()
     assert status["is_running"] is True
@@ -39,12 +41,12 @@ async def test_engine_memory_write(engine):
     """
     from app.services.azr_engine_v32 import AZRAction
     await engine.start()
-    
+
     action = AZRAction(id="test-1", type="SHELL", fingerprint="abc", meta={})
-    
+
     # Use real method name
     engine.memory.record_experience(action, outcome="SUCCESS", impact_score=0.8)
-    
+
     # Check file (ExperienceMemory uses experience_memory.jsonl)
     assert engine.storage.exists("experience/experience_memory.jsonl")
     content = engine.storage.read_text("experience/experience_memory.jsonl")

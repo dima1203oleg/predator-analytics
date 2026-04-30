@@ -3,10 +3,9 @@
 Забезпечує комплексний скринінг сутностей за національними та міжнародними санкційними списками.
 """
 from datetime import UTC, datetime
-from typing import Any, List, Optional
 import uuid
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
 
 from app.core.permissions import Permission
@@ -19,19 +18,19 @@ router = APIRouter(prefix="/sanctions", tags=["санкції"])
 class SanctionsScreenRequest(BaseModel):
     query: str = Field(..., description="Пошуковий запит (Назва або ПІБ)")
     entity_type: str = Field("organization", description="Тип сутності: organization або person")
-    lists: List[str] = Field(default=["sdn", "eu", "uk", "rnbo"], description="Списки для перевірки")
+    lists: list[str] = Field(default=["sdn", "eu", "uk", "rnbo"], description="Списки для перевірки")
 
 class SanctionMatch(BaseModel):
     list_name: str
     reason: str
     confidence: float
-    date_added: Optional[str] = None
+    date_added: str | None = None
 
 class SanctionsScreenResponse(BaseModel):
     id: str
     query: str
     status: str  # 'clear', 'warning', 'blocked'
-    matches: List[SanctionMatch]
+    matches: list[SanctionMatch]
     timestamp: str
     entity_type: str
     risk_score: float
@@ -43,14 +42,14 @@ async def screen_entity(
     _ = Depends(PermissionChecker([Permission.READ_CORP_DATA]))
 ):
     """Виконує перевірку сутності за вказаними списками санкцій."""
-    start_time = datetime.now(UTC)
-    
+    datetime.now(UTC)
+
     matches = []
-    
+
     # 1. Перевірка через GlobalSanctionsService (International)
     global_service = GlobalSanctionsService()
     global_result = await global_service.check_entity(request.query, request.entity_type)
-    
+
     for m in global_result.get("matches", []):
         matches.append(SanctionMatch(
             list_name=m["list"],
@@ -58,7 +57,7 @@ async def screen_entity(
             confidence=m["confidence"],
             date_added=None
         ))
-        
+
     # 2. Перевірка через UkraineRegistriesService (RNBO)
     if "rnbo" in request.lists:
         ua_service = UkraineRegistriesService()
@@ -79,16 +78,13 @@ async def screen_entity(
     # 3. Визначення статусу та ризику
     risk_score = 0.0
     status = "clear"
-    
+
     if matches:
         # Якщо є хоча б один збіг з впевненістю > 0.9 - блокуємо
         max_confidence = max(m.confidence for m in matches)
         risk_score = max_confidence * 100.0
-        
-        if max_confidence > 0.9:
-            status = "blocked"
-        else:
-            status = "warning"
+
+        status = "blocked" if max_confidence > 0.9 else "warning"
 
     return SanctionsScreenResponse(
         id=str(uuid.uuid4()),

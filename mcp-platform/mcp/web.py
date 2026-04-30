@@ -2,9 +2,8 @@
 from __future__ import annotations
 
 import os
-from typing import Any, Dict, Optional
 from dataclasses import dataclass
-from enum import Enum
+from typing import Any, Dict
 
 try:
     from fastapi import FastAPI
@@ -112,16 +111,16 @@ class APIServer:
         key = f"{method.upper()} {path}"
         if key not in self.routes:
             raise APIError(f"Маршрут не знайдено: {key}")
-        
+
         route = self.routes[key]
         handler = route["handler"]
-        
+
         # Викликаємо handler з або без body
         if body:
             result = await handler(body) if callable(handler) else await handler()
         else:
             result = await handler() if callable(handler) else None
-        
+
         return APIResponse(
             status="success",
             data=result,
@@ -175,14 +174,14 @@ class APIDocumentation:
             OpenAPI специфікація
         """
         paths = {}
-        
+
         for endpoint in self.endpoints:
             path = endpoint["path"]
             method = endpoint["method"].lower()
-            
+
             if path not in paths:
                 paths[path] = {}
-            
+
             paths[path][method] = {
                 "summary": endpoint["description"],
                 "parameters": endpoint["parameters"],
@@ -193,7 +192,7 @@ class APIDocumentation:
                     }
                 },
             }
-        
+
         return {
             "openapi": "3.0.0",
             "info": {
@@ -210,17 +209,17 @@ class APIDocumentation:
             Markdown документація
         """
         lines = [f"# {self.title}", f"**Version: {self.version}**", ""]
-        
+
         for endpoint in self.endpoints:
             lines.append(f"## {endpoint['method']} {endpoint['path']}")
             lines.append(f"\n{endpoint['description']}\n")
-            
+
             if endpoint["parameters"]:
                 lines.append("### Parameters")
                 for param in endpoint["parameters"]:
                     lines.append(f"- `{param.get('name')}`: {param.get('type')}")
                 lines.append("")
-        
+
         return "\n".join(lines)
 
 

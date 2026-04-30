@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 import logging
+from typing import TYPE_CHECKING
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_db
 from app.models.v55.ueid import (
@@ -14,6 +14,9 @@ from app.models.v55.ueid import (
     EntitySearchResponse,
 )
 from app.repositories.entity_repository import EntityRepository
+
+if TYPE_CHECKING:
+    from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger("predator.api.v2.entities")
 router = APIRouter(prefix="/entities", tags=["v2-entities"])
@@ -67,10 +70,10 @@ async def get_entity(
     """Get entity by UEID."""
     repo = EntityRepository(db)
     entity = await repo.get_by_ueid(ueid)
-    
+
     if not entity:
         raise HTTPException(status_code=404, detail="Суб'єкт не знайдений")
-        
+
     return EntityResponse(
         ueid=str(entity.ueid),
         entity_type=entity.entity_type,
@@ -96,7 +99,7 @@ async def search_entities(
     """Search entities by name (fuzzy) or EDRPOU (exact)."""
     repo = EntityRepository(db)
     results, total = await repo.search(query=q, entity_type=entity_type, limit=limit, offset=offset)
-    
+
     items = [
         EntityResponse(
             ueid=str(entity.ueid),
@@ -111,7 +114,7 @@ async def search_entities(
             updated_at=entity.updated_at,
         ) for entity in results
     ]
-    
+
     return EntitySearchResponse(
         total=total,
         items=items,

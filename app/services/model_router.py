@@ -7,7 +7,6 @@ import aiohttp
 
 from app.libs.core.config import settings
 
-
 logger = logging.getLogger("service.model_router")
 
 

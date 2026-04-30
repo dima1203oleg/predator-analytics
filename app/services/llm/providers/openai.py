@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """OpenAI LLM Provider."""
 import time
 

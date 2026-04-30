@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """🔒 Data Contracts для Predator Analytics v45.
 
 Формалізація всіх payload structures з Pydantic для:
@@ -22,7 +21,6 @@ from typing import Any
 import uuid
 
 from pydantic import BaseModel, Field, field_validator, model_validator
-
 
 # ═══════════════════════════════════════════════════════════════════════════
 # ENUMS - Загальні перелічення

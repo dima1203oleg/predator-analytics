@@ -1,20 +1,16 @@
-"""
-🔌 WebSocket Service для PREDATOR Analytics v56.1.4
+"""🔌 WebSocket Service для PREDATOR Analytics v56.1.4
 
 Real-time updates для dashboard, alerts, та monitoring через WebSocket connections.
 """
 
 import asyncio
+from datetime import UTC, datetime
 import json
-from datetime import datetime, timezone
-from typing import Dict, Set
 
-from fastapi import APIRouter, Depends, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.database import get_db
-from app.dependencies import get_tenant_id
 from predator_common.logging import get_logger
 from predator_common.models import Alert, Declaration, RiskScore
 
@@ -28,14 +24,14 @@ class ConnectionManager:
 
     def __init__(self):
         # tenant_id -> set of websockets
-        self.active_connections: Dict[str, Set[WebSocket]] = {}
+        self.active_connections: dict[str, set[WebSocket]] = {}
         # Global broadcast connections
-        self.broadcast_connections: Set[WebSocket] = set()
+        self.broadcast_connections: set[WebSocket] = set()
 
-    async def connect(self, websocket: WebSocket, tenant_id: str = None):
+    async def connect(self, websocket: WebSocket, tenant_id: str | None = None):
         """Підключити WebSocket client."""
         await websocket.accept()
-        
+
         if tenant_id:
             if tenant_id not in self.active_connections:
                 self.active_connections[tenant_id] = set()
@@ -51,7 +47,7 @@ class ConnectionManager:
                 extra={"total_broadcast": len(self.broadcast_connections)}
             )
 
-    def disconnect(self, websocket: WebSocket, tenant_id: str = None):
+    def disconnect(self, websocket: WebSocket, tenant_id: str | None = None):
         """Відключити WebSocket client."""
         if tenant_id and tenant_id in self.active_connections:
             self.active_connections[tenant_id].discard(websocket)
@@ -82,7 +78,7 @@ class ConnectionManager:
                 except Exception as e:
                     logger.error(f"Error broadcasting to tenant {tenant_id}: {e}")
                     disconnected.add(connection)
-            
+
             # Clean up disconnected clients
             for conn in disconnected:
                 self.disconnect(conn, tenant_id)
@@ -90,7 +86,7 @@ class ConnectionManager:
     async def broadcast_to_all(self, message: dict):
         """Надіслати повідомження всім connected clients."""
         disconnected = set()
-        
+
         # Broadcast to tenant-specific connections
         for tenant_id, connections in self.active_connections.items():
             for connection in connections:
@@ -99,7 +95,7 @@ class ConnectionManager:
                 except Exception as e:
                     logger.error(f"Error broadcasting: {e}")
                     disconnected.add((connection, tenant_id))
-        
+
         # Broadcast to global connections
         for connection in self.broadcast_connections:
             try:
@@ -107,7 +103,7 @@ class ConnectionManager:
             except Exception as e:
                 logger.error(f"Error broadcasting to global: {e}")
                 disconnected.add((connection, None))
-        
+
         # Clean up
         for conn, tenant_id in disconnected:
             self.disconnect(conn, tenant_id)
@@ -119,9 +115,8 @@ manager = ConnectionManager()
 
 @router.websocket("/ws/dashboard")
 async def websocket_dashboard(websocket: WebSocket):
-    """
-    WebSocket endpoint для real-time dashboard updates.
-    
+    """WebSocket endpoint для real-time dashboard updates.
+
     Надсилає оновлення:
     - Нові декларації
     - Зміни в risk scores
@@ -130,37 +125,37 @@ async def websocket_dashboard(websocket: WebSocket):
     """
     tenant_id = None
     await manager.connect(websocket, tenant_id)
-    
+
     try:
         while True:
             # Receive messages from client (optional - for subscriptions)
             data = await websocket.receive_text()
-            
+
             try:
                 message = json.loads(data)
                 action = message.get("action")
-                
+
                 if action == "subscribe":
                     tenant_id = message.get("tenant_id")
                     await manager.send_personal_message({
                         "type": "subscription_confirmed",
                         "tenant_id": tenant_id,
-                        "timestamp": datetime.now(timezone.utc).isoformat()
+                        "timestamp": datetime.now(UTC).isoformat()
                     }, websocket)
-                
+
                 elif action == "unsubscribe":
                     tenant_id = None
                     await manager.send_personal_message({
                         "type": "unsubscribed",
-                        "timestamp": datetime.now(timezone.utc).isoformat()
+                        "timestamp": datetime.now(UTC).isoformat()
                     }, websocket)
-                    
+
             except json.JSONDecodeError:
                 await manager.send_personal_message({
                     "type": "error",
                     "message": "Invalid JSON"
                 }, websocket)
-                
+
     except WebSocketDisconnect:
         manager.disconnect(websocket, tenant_id)
     except Exception as e:
@@ -170,18 +165,17 @@ async def websocket_dashboard(websocket: WebSocket):
 
 @router.websocket("/ws/alerts")
 async def websocket_alerts(websocket: WebSocket):
-    """
-    WebSocket endpoint для real-time alerts notifications.
-    
+    """WebSocket endpoint для real-time alerts notifications.
+
     Надсилає нові alerts миттєво при їх створенні.
     """
     tenant_id = None
     await manager.connect(websocket, tenant_id)
-    
+
     try:
         while True:
             data = await websocket.receive_text()
-            
+
             try:
                 message = json.loads(data)
                 if message.get("action") == "subscribe":
@@ -190,10 +184,10 @@ async def websocket_alerts(websocket: WebSocket):
                         "type": "alerts_subscribed",
                         "tenant_id": tenant_id
                     }, websocket)
-                    
+
             except json.JSONDecodeError:
                 pass
-                
+
     except WebSocketDisconnect:
         manager.disconnect(websocket, tenant_id)
     except Exception as e:
@@ -210,7 +204,7 @@ async def notify_new_declaration(tenant_id: str, declaration_data: dict):
     await manager.broadcast_to_tenant({
         "type": "new_declaration",
         "data": declaration_data,
-        "timestamp": datetime.now(timezone.utc).isoformat()
+        "timestamp": datetime.now(UTC).isoformat()
     }, tenant_id)
 
 
@@ -220,7 +214,7 @@ async def notify_risk_score_change(tenant_id: str, ueid: str, new_score: float):
         "type": "risk_score_updated",
         "ueid": ueid,
         "new_score": new_score,
-        "timestamp": datetime.now(timezone.utc).isoformat()
+        "timestamp": datetime.now(UTC).isoformat()
     }, tenant_id)
 
 
@@ -229,7 +223,7 @@ async def notify_new_alert(tenant_id: str, alert_data: dict):
     await manager.broadcast_to_tenant({
         "type": "new_alert",
         "data": alert_data,
-        "timestamp": datetime.now(timezone.utc).isoformat()
+        "timestamp": datetime.now(UTC).isoformat()
     }, tenant_id)
 
 
@@ -238,7 +232,7 @@ async def broadcast_dashboard_update(stats: dict):
     await manager.broadcast_to_all({
         "type": "dashboard_update",
         "data": stats,
-        "timestamp": datetime.now(timezone.utc).isoformat()
+        "timestamp": datetime.now(UTC).isoformat()
     })
 
 
@@ -247,12 +241,12 @@ async def broadcast_dashboard_update(stats: dict):
 # ═══════════════════════════════════════════════════════════════
 
 async def periodic_dashboard_updates(db: AsyncSession, interval: int = 30):
-    """
-    Periodically fetch and broadcast dashboard updates.
-    
+    """Periodically fetch and broadcast dashboard updates.
+
     Args:
         db: Database session
         interval: Update interval in seconds
+
     """
     while True:
         try:
@@ -262,17 +256,17 @@ async def periodic_dashboard_updates(db: AsyncSession, interval: int = 30):
                 select(func.count()).select_from(RiskScore).where(RiskScore.cers >= 80)
             ) or 0
             alerts_count = await db.scalar(select(func.count()).select_from(Alert)) or 0
-            
+
             # Broadcast update
             await broadcast_dashboard_update({
                 "total_declarations": declarations_count,
                 "high_risk_count": high_risk_count,
                 "active_alerts": alerts_count,
             })
-            
+
             logger.debug("Dashboard update broadcasted")
-            
+
         except Exception as e:
             logger.error(f"Error in periodic dashboard updates: {e}")
-        
+
         await asyncio.sleep(interval)

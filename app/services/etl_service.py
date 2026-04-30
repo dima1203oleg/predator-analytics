@@ -5,7 +5,6 @@ from typing import Any
 
 import pandas as pd
 
-
 logger = logging.getLogger("app.services.etl_service")
 
 

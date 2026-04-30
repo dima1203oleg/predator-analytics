@@ -6,7 +6,6 @@ from typing import Any
 
 from neo4j import AsyncGraphDatabase
 
-
 logger = logging.getLogger("predator.core.graph")
 
 

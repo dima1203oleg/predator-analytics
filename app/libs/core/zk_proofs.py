@@ -26,7 +26,6 @@ import json
 import random
 from typing import Any
 
-
 # ============================================================================
 # 🔢 MATH PRIMITIVES (Discrete Logarithm Problem)
 # ============================================================================
@@ -185,45 +184,29 @@ class ConstitutionalProver:
 # ============================================================================
 
 if __name__ == "__main__":
-    print("🔐 ZK PROOFS (SCHNORR NIZK) - Self-Test")
-    print("=" * 60)
 
     # 1. Setup Identity
-    print("\n1️⃣ Identity Setup...")
     secret = 1234567890
     prover = ZKProver(secret)
-    print("   Secret: (hidden)")
-    print(f"   Public Key (Y): {prover.public_key}")
 
     # 2. Generate Proof
-    print("\n2️⃣ Generating Proof for Action 'DELETE_DB'...")
     msg = "ACTION:DELETE_DB:CONFIRMED"
     proof = prover.prove(msg)
-    print(f"   Commitment (R): {proof.commitment[:32]}...")
-    print(f"   Challenge (e): {proof.challenge[:32]}...")
-    print(f"   Response (s): {proof.response[:32]}...")
 
     # 3. Verify Proof
-    print("\n3️⃣ Verifying Proof...")
     is_valid = ZKVerifier.verify(proof, msg)
-    print(f"   ✅ Valid: {is_valid}")
 
     # 4. Attempt Fake Proof
-    print("\n4️⃣ Checking Fake Proof...")
     fake_proof = ZKProof(
         "SCHNORR", proof.public_key, proof.commitment, proof.challenge, str(int(proof.response) + 1)
     )
     is_fake_valid = ZKVerifier.verify(fake_proof, msg)
-    print(f"   ❌ Fake Valid: {is_fake_valid}")
 
     # 5. Constitutional Proof
-    print("\n5️⃣ Constitutional Axiom Proof...")
     const_prover = ConstitutionalProver("AXIOM_10")
-    print(f"   Axiom Public Key: {const_prover.public_key[:32]}...")
 
     action_proof = const_prover.generate_approval_proof("ACT-001", "hash123")
 
     # Verify
     verify_msg = "APPROVED:AXIOM_10:ACT-001:hash123"
     const_valid = ZKVerifier.verify(action_proof, verify_msg)
-    print(f"   ✅ Constitutional Proof Valid: {const_valid}")

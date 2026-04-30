@@ -9,7 +9,6 @@ from typing import Any
 import aiohttp
 import psutil
 
-
 # Configure logging
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -265,4 +264,3 @@ class DiagnosticsService:
 if __name__ == "__main__":
     service = DiagnosticsService()
     results = asyncio.run(service.run_full_diagnostics())
-    print("\n" + service.generate_report())

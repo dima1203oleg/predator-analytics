@@ -8,8 +8,6 @@ import asyncio
 import json
 from typing import Any, Optional
 
-import typer
-
 
 class HelmError(Exception):
     """Базова помилка для Helm операцій."""
@@ -30,14 +28,14 @@ class HelmDeployer:
         capture_output: bool = True,
     ) -> tuple[str, str]:
         """Виконати helm команду асинхронно.
-        
+
         Args:
             *args: Аргументи для helm
             capture_output: Чи захоплювати вивід
-            
+
         Returns:
             Кортеж (stdout, stderr)
-            
+
         Raises:
             HelmError: Якщо команда завершиться з помилкою
         """
@@ -66,11 +64,11 @@ class HelmDeployer:
 
     async def repo_add(self, name: str, url: str) -> bool:
         """Додати helm repository.
-        
+
         Args:
             name: Назва репозиторію
             url: URL репозиторію
-            
+
         Returns:
             True якщо успішно
         """
@@ -82,7 +80,7 @@ class HelmDeployer:
 
     async def repo_update(self) -> bool:
         """Оновити helm repositories.
-        
+
         Returns:
             True якщо успішно
         """
@@ -102,7 +100,7 @@ class HelmDeployer:
         create_namespace: bool = True,
     ) -> bool:
         """Встановити helm release.
-        
+
         Args:
             release: Назва release
             chart: Назва chart
@@ -110,7 +108,7 @@ class HelmDeployer:
             values: Словник значень
             values_file: Файл values.yaml
             create_namespace: Створити namespace якщо не існує
-            
+
         Returns:
             True якщо успішно
         """
@@ -143,7 +141,7 @@ class HelmDeployer:
         force_recreate: bool = False,
     ) -> bool:
         """Оновити helm release.
-        
+
         Args:
             release: Назва release
             chart: Назва chart
@@ -152,7 +150,7 @@ class HelmDeployer:
             values_file: Файл values.yaml
             force: Примусово оновити
             force_recreate: Видалити та створити заново
-            
+
         Returns:
             True якщо успішно
         """
@@ -179,11 +177,11 @@ class HelmDeployer:
 
     async def uninstall(self, release: str, namespace: str = "default") -> bool:
         """Видалити helm release.
-        
+
         Args:
             release: Назва release
             namespace: Kubernetes namespace
-            
+
         Returns:
             True якщо успішно
         """
@@ -197,11 +195,11 @@ class HelmDeployer:
         self, release: str, namespace: str = "default"
     ) -> dict[str, Any]:
         """Отримати статус release.
-        
+
         Args:
             release: Назва release
             namespace: Kubernetes namespace
-            
+
         Returns:
             Словник зі статусом
         """
@@ -221,15 +219,15 @@ class HelmDeployer:
         values_file: Optional[str] = None,
     ) -> str:
         """Показати diff для upgrade.
-        
+
         Потребує helm-diff plugin.
-        
+
         Args:
             release: Назва release
             chart: Назва chart
             namespace: Kubernetes namespace
             values_file: Файл values.yaml
-            
+
         Returns:
             Diff вивід
         """
@@ -252,12 +250,12 @@ class HelmDeployer:
         namespace: str = "default",
     ) -> bool:
         """Відкатити до попередньої версії.
-        
+
         Args:
             release: Назва release
             revision: Номер revision для відката
             namespace: Kubernetes namespace
-            
+
         Returns:
             True якщо успішно
         """
@@ -278,10 +276,10 @@ class HelmDeployer:
         self, namespace: str = "default"
     ) -> list[dict[str, Any]]:
         """Список всіх releases у namespace.
-        
+
         Args:
             namespace: Kubernetes namespace
-            
+
         Returns:
             Список релізів
         """
@@ -296,11 +294,11 @@ class HelmDeployer:
         self, release: str, namespace: str = "default"
     ) -> dict[str, Any]:
         """Отримати поточні values release.
-        
+
         Args:
             release: Назва release
             namespace: Kubernetes namespace
-            
+
         Returns:
             Словник values
         """
@@ -316,11 +314,11 @@ class HelmDeployer:
         self, release: str, namespace: str = "default"
     ) -> str:
         """Отримати manifest release.
-        
+
         Args:
             release: Назва release
             namespace: Kubernetes namespace
-            
+
         Returns:
             YAML manifest
         """
@@ -336,11 +334,11 @@ class HelmDeployer:
         self, release: str, namespace: str = "default"
     ) -> list[dict[str, Any]]:
         """Отримати історію релізів.
-        
+
         Args:
             release: Назва release
             namespace: Kubernetes namespace
-            
+
         Returns:
             Список ревізій
         """

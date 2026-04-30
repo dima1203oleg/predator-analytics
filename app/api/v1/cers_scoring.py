@@ -1,10 +1,10 @@
-"""
-CERS Calculator API (Phase 5B — SM Edition).
+"""CERS Calculator API (Phase 5B — SM Edition).
 
 Endpoints for CERS 5-layer scoring and LLM configuration.
 """
-from fastapi import APIRouter
 from typing import Any
+
+from fastapi import APIRouter
 
 from app.services.ai.cers_calculator import CERSCalculator
 from app.services.ai.litellm_config import LiteLLMConfig

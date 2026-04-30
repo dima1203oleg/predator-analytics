@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Enhanced Telegram Menu System
 Красиве інтерактивне меню з підменю та inline кнопками.
 """

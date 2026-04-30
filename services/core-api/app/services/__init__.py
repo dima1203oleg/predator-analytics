@@ -20,9 +20,9 @@
 """
 
 __all__ = [
-    "SentinelService",
+    "EntityResolutionService",
     "OpenSearchService",
     "QdrantService",
     "RAGService",
-    "EntityResolutionService"
+    "SentinelService"
 ]

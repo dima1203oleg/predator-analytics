@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """
 CSV Parser Implementation
 
@@ -8,7 +7,6 @@ Handles parsing of CSV files using pandas.
 """
 
 from pathlib import Path
-
 
 try:
     import pandas as pd
@@ -43,6 +41,7 @@ class CSVParser:
 
         Returns:
             ParseResult containing parsed DataFrame or error
+
         """
         file_path = Path(file_path)
 
@@ -95,5 +94,6 @@ class CSVParser:
 
         Returns:
             ParseResult containing parsed DataFrame or error
+
         """
         return self.parse(file_path, sep=sep, header=header, encoding=encoding)

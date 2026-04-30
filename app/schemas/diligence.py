@@ -1,16 +1,13 @@
-"""
-🔍 Pydantic схеми для Due Diligence — PREDATOR Analytics v4.1.
+"""🔍 Pydantic схеми для Due Diligence — PREDATOR Analytics v4.1.
 
 Схеми запитів та відповідей для /api/v1/diligence.
 """
 
 from __future__ import annotations
 
-from datetime import datetime
 from typing import Any
 
 from pydantic import BaseModel, Field
-
 
 # ── Вкладені об'єкти ─────────────────────────────────────────
 

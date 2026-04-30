@@ -1,18 +1,22 @@
+from typing import Any
+
 from fastapi import APIRouter, Depends, HTTPException, Query
-from typing import Dict, Any, List
 from pydantic import BaseModel
+
 from app.services.commerce import (
-    PricingEngine, get_pricing_engine,
-    InventoryOptimizer, get_inventory_optimizer
+    InventoryOptimizer,
+    PricingEngine,
+    get_inventory_optimizer,
+    get_pricing_engine,
 )
-from app.services.commerce.tft_forecast import TFTForecaster, get_tft_forecaster
 from app.services.commerce.competitor_tracker import CompetitorPriceTracker, get_competitor_tracker
+from app.services.commerce.tft_forecast import TFTForecaster, get_tft_forecaster
 
 router = APIRouter(prefix="/commerce", tags=["Предиктивна Комерція"])
 
 class PricingRequest(BaseModel):
     base_cost: float
-    competitor_prices: List[float]
+    competitor_prices: list[float]
     demand_elasticity: float
     target_margin: float
 
@@ -29,10 +33,9 @@ class InventoryRequest(BaseModel):
 async def recommend_price(
     data: PricingRequest,
     engine: PricingEngine = Depends(get_pricing_engine)
-) -> Dict[str, Any]:
-    """
-    Pricing Engine (COMP-258).
-    Returns optimal price and strategy based on competitor context 
+) -> dict[str, Any]:
+    """Pricing Engine (COMP-258).
+    Returns optimal price and strategy based on competitor context
     and demand elasticity.
     """
     result = engine.recommend_price(
@@ -49,10 +52,9 @@ async def recommend_price(
 async def optimize_inventory(
     data: InventoryRequest,
     optimizer: InventoryOptimizer = Depends(get_inventory_optimizer)
-) -> Dict[str, Any]:
-    """
-    Inventory Optimizer (COMP-256).
-    Calculates Economic Order Quantity (EOQ), Safety Stock, 
+) -> dict[str, Any]:
+    """Inventory Optimizer (COMP-256).
+    Calculates Economic Order Quantity (EOQ), Safety Stock,
     and Reorder Point.
     """
     result = optimizer.calculate_optimal_inventory(
@@ -69,10 +71,9 @@ async def optimize_inventory(
     return result
 
 @router.get("/supply-chain/monitor")
-async def supply_chain_monitor(ueid: str = Query(..., description="Target UEID")) -> Dict[str, Any]:
-    """
-    Supply Chain Monitor (COMP-260).
-    Placeholder endpoint that will integrate with Customs APIs for 
+async def supply_chain_monitor(ueid: str = Query(..., description="Target UEID")) -> dict[str, Any]:
+    """Supply Chain Monitor (COMP-260).
+    Placeholder endpoint that will integrate with Customs APIs for
     real-time supply chain disruption detection.
     """
     # Placeholder for future implementation combining customs data
@@ -89,9 +90,8 @@ async def get_tft_demand_forecast(
     category_id: str = Query(..., description="Category ID to forecast"),
     horizon_days: int = Query(30, description="Forecast horizon in days"),
     forecaster: TFTForecaster = Depends(get_tft_forecaster)
-) -> Dict[str, Any]:
-    """
-    Phase 14: TFT Forecast
+) -> dict[str, Any]:
+    """Phase 14: TFT Forecast
     """
     return forecaster.predict_demand(category_id, horizon_days)
 
@@ -99,8 +99,7 @@ async def get_tft_demand_forecast(
 async def track_competitor_prices(
     sku: str = Query(..., description="Target SKU"),
     tracker: CompetitorPriceTracker = Depends(get_competitor_tracker)
-) -> Dict[str, Any]:
-    """
-    Phase 14: Competitor Price tracker
+) -> dict[str, Any]:
+    """Phase 14: Competitor Price tracker
     """
     return tracker.get_competitor_prices(sku)

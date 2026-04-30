@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 #!/usr/bin/env python3
 """Швидка перевірка файлів Autonomous Intelligence v2.0
 Перевіряє наявність всіх створених файлів.
@@ -12,19 +11,11 @@ from pathlib import Path
 def check_file(path, description):
     """Перевірити наявність файлу."""
     if os.path.exists(path):
-        size = os.path.getsize(path)
-        print(f"✅ {description}")
-        print(f"   📄 {path}")
-        print(f"   📊 Розмір: {size:,} bytes")
+        os.path.getsize(path)
         return True
-    print(f"❌ {description}")
-    print(f"   📄 {path}")
     return False
 
 def main():
-    print("="*70)
-    print("🔍 ПЕРЕВІРКА AUTONOMOUS INTELLIGENCE V2.0 FILES")
-    print("="*70)
 
     project_root = Path(__file__).parent.parent
 
@@ -86,7 +77,6 @@ def main():
         ),
     ]
 
-    print(f"\n📁 Перевірка {len(files_to_check)} файлів...\n")
 
     found = 0
     total_size = 0
@@ -95,28 +85,13 @@ def main():
         if check_file(file_path, description):
             found += 1
             total_size += os.path.getsize(file_path)
-        print()
 
-    print("="*70)
-    print("📊 ПІДСУМОК")
-    print("="*70)
-    print(f"\n✅ Знайдено файлів: {found}/{len(files_to_check)}")
-    print(f"📊 Загальний розмір: {total_size:,} bytes ({total_size/1024:.1f} KB)")
 
     if found == len(files_to_check):
-        print("\n🎉 ВСІ ФАЙЛИ НА МІСЦІ!")
-        print("\n📚 Документація:")
-        print("   - Швидкий старт: AUTONOMOUS_INTELLIGENCE_README.md")
-        print("   - Інструкції: AUTONOMY_COMPLETE.md")
-        print("   - Детальний аналіз: AUTONOMY_ANALYSIS_v45.md")
-        print("\n🚀 Наступні кроки:")
-        print("   1. Запустити backend: cd services/api_gateway && python -m uvicorn app.main:app --reload")
-        print("   2. Перевірити статус: curl http://localhost:8000/system/autonomy/status")
-        print("   3. Моніторити роботу через API endpoints")
+        pass
     else:
-        print(f"\n⚠️  Відсутні файли: {len(files_to_check) - found}")
+        pass
 
-    print("\n" + "="*70)
 
 if __name__ == "__main__":
     main()

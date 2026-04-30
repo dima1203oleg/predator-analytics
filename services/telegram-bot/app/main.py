@@ -31,7 +31,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Обробка природної мови та натискання кнопок."""
     text = update.message.text
-    user = update.message.from_user
 
     if text == "📊 Статус Системи":
         await update.message.reply_text("🔄 Отримую дані від сервісів...")
@@ -59,5 +58,4 @@ if __name__ == '__main__':
     application.add_handler(start_handler)
     application.add_handler(msg_handler)
 
-    print("🚀 PREDATOR Telegram Bot Controller is running...")
     application.run_polling()

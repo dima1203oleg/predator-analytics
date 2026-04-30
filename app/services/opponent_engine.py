@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Opponent Engine - Competitive Intelligence Analysis
 Analyzes competitors and market positioning.
 """
@@ -14,7 +13,6 @@ from app.connectors.prozorro import prozorro_connector
 from app.connectors.registry import registry_connector
 
 from .ai_engine import ai_engine
-
 
 logger = logging.getLogger(__name__)
 
@@ -45,6 +43,7 @@ class OpponentEngine:
         Args:
             query: Company name or EDRPOU
             sector: Market sector
+
         """
         # Get company data
         company_result = await registry_connector.search(query, limit=1)

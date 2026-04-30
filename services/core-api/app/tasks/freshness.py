@@ -9,8 +9,8 @@ import logging
 from sqlalchemy import select
 
 from app.database import async_session_maker
-from app.models.orm import Alert, IngestionJob, Tenant
-from app.services.kafka_service import KafkaTopics, get_kafka_service
+from app.models.orm import IngestionJob, Tenant
+from app.services.kafka_service import get_kafka_service
 
 logger = logging.getLogger(__name__)
 
@@ -36,7 +36,7 @@ async def _check_freshness_async() -> None:
         for source, threshold in CRITICAL_SOURCES.items():
             # Тут в реальності треба мапити source на тип IngestionJob (dataset_type)
             # Припустимо, що dataset_type == source
-            
+
             # Шукаємо останню успішну джобу
             stmt = (
                 select(IngestionJob)
@@ -52,7 +52,7 @@ async def _check_freshness_async() -> None:
 
             is_stale = False
             last_updated = None
-            
+
             if not job:
                 # Даних взагалі не було
                 is_stale = True
@@ -63,7 +63,7 @@ async def _check_freshness_async() -> None:
 
             if is_stale:
                 logger.warning(f"Data source '{source}' is stale. Threshold: {threshold}")
-                
+
                 # Генеруємо алерти для кожного тенанта
                 for tenant_id in tenant_ids:
                     # Публікуємо алерт через Kafka (TZ v5.0 §5.4: SEV-2 alert + publish до risk.alerts)

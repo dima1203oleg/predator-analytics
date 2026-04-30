@@ -14,7 +14,6 @@ import time
 
 
 def force_env():
-    print("⚡ [TURBO] Forcing Environment Variables...")
     os.environ["SOVEREIGN_AUTO_APPROVE"] = "true"
     os.environ["AUTONOMY_LEVEL"] = "MAXIMUM"
     os.environ["HUMAN_INTERVENTION"] = "NEVER"
@@ -22,7 +21,6 @@ def force_env():
     sys.path.append(os.getcwd())
 
 def launch():
-    print("🚀 [TURBO] Launching AZR Unified Organism...")
 
     cmd = [
         sys.executable,
@@ -34,7 +32,6 @@ def launch():
     # Run in loop
     while True:
         try:
-            print(f"\n🔄 [TURBO] Starting Monitor Loop at {time.ctime()}")
             process = subprocess.Popen(
                 cmd,
                 env=os.environ.copy()
@@ -42,16 +39,13 @@ def launch():
             process.wait()
 
             if process.returncode != 0:
-                print(f"⚠️ [TURBO] Process crashed with code {process.returncode}. Restarting in 5s...")
                 time.sleep(5)
             else:
-                print("✅ [TURBO] Process finished normally. Restarting...")
+                pass
 
         except KeyboardInterrupt:
-            print("\n🛑 [TURBO] Stopping...")
             break
-        except Exception as e:
-            print(f"❌ [TURBO] Launcher Error: {e}")
+        except Exception:
             time.sleep(5)
 
 if __name__ == "__main__":

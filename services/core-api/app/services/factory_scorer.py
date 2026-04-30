@@ -7,14 +7,14 @@ from app.models.factory import Metrics
 
 def calculate_score(metrics: Metrics) -> float:
     """Комплексна оцінка якості на основі метрик.
-    
+
     Вагові коефіцієнти:
     - coverage: 20% (охоплення тестами)
     - pass_rate: 30% (успішність)
     - performance: 20% (продуктивність)
     - chaos_resilience: 15% (стійкість)
     - business_kpi: 15% (бізнес-результат)
-    
+
     Returns:
         float: Оцінка від 0 до 100
 

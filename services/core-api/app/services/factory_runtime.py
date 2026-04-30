@@ -3,14 +3,17 @@
 from __future__ import annotations
 
 import asyncio
-from collections.abc import Awaitable, Callable, Generator
 from datetime import UTC, datetime
-from typing import Protocol, cast
+from typing import TYPE_CHECKING, Protocol, cast
 
-from fastapi import FastAPI
-
-from app.models.factory import SystemImprovement
 from predator_common.logging import get_logger
+
+if TYPE_CHECKING:
+    from collections.abc import Awaitable, Callable, Generator
+
+    from fastapi import FastAPI
+
+    from app.models.factory import SystemImprovement
 
 logger = get_logger("core_api.factory_runtime")
 _TASK_ATTR = "factory_improvement_task"

@@ -115,10 +115,10 @@ class FullInvestigationRequest(BaseModel):
 @router.post("/edr/search")
 async def search_edr(request: CompanySearchRequest):
     """Пошук у Єдиному державному реєстрі (ЄДР).
-    
+
     Основний реєстр юридичних осіб та ФОП України.
     Замінює ЄДРПОУ (ліквідація до кінця 2026).
-    
+
     Повертає:
     - Повне найменування
     - Статус (зареєстровано, припинено, банкрутство)
@@ -174,7 +174,7 @@ async def check_single_tax(request: CompanySearchRequest):
 @router.post("/debtors/check")
 async def check_debtors(request: CompanySearchRequest):
     """Перевірка у реєстрі боржників.
-    
+
     Джерела:
     - Єдиний реєстр боржників (ЄРБ)
     - Реєстр боржників податкової
@@ -217,7 +217,7 @@ async def get_declarations(
 @router.post("/court/decisions")
 async def search_court_decisions(request: CompanySearchRequest):
     """Пошук у Єдиному реєстрі судових рішень (ЄДРСР).
-    
+
     ⚠️ Реєстр працює з обмеженнями під час воєнного стану.
     """
     client = CourtDecisionsClient()
@@ -247,7 +247,7 @@ async def get_case_status(case_number: str):
 @router.post("/real-estate/search")
 async def search_real_estate(request: CompanySearchRequest):
     """Пошук у Реєстрі прав на нерухоме майно.
-    
+
     ⚠️ Платний доступ через державні портали.
     """
     client = RealEstateRegistryClient()
@@ -266,7 +266,7 @@ async def check_encumbrances(registration_number: str):
 @router.post("/cadastre/search")
 async def search_cadastre(request: CompanySearchRequest):
     """Пошук у Публічній кадастровій карті.
-    
+
     ⚠️ Дані не оновлюються з 24.02.2022.
     """
     client = CadastreClient()
@@ -681,7 +681,7 @@ async def search_data_gov_ua(request: NameSearchRequest):
 @router.post("/investigate/full")
 async def full_investigation(request: FullInvestigationRequest):
     """Повне розслідування компанії.
-    
+
     Об'єднує дані з усіх реєстрів:
     - ЄДР (базова інформація)
     - ПДВ, єдиний податок
@@ -689,7 +689,7 @@ async def full_investigation(request: FullInvestigationRequest):
     - Судові справи
     - Нерухомість, транспорт
     - Prozorro, E-data
-    
+
     Returns:
         Комплексний профіль компанії з ризик-скором
     """

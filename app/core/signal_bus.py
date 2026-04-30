@@ -14,7 +14,6 @@ import logging
 from typing import Any
 from uuid import uuid4
 
-
 logger = logging.getLogger("predator.core.signal_bus")
 
 
@@ -77,6 +76,7 @@ def create_signal_envelope(
 
     Returns:
         Envelope dict ready for serialization.
+
     """
     return {
         "signal_id": str(uuid4()),
@@ -147,11 +147,12 @@ class SignalBus:
         session: Any | None = None,
     ) -> str:
         """Emit a signal to the bus AND persist it to v55.signals.
-        
+
         Supports both positional arguments and V55Signal objects.
 
         Returns:
             signal_id of the emitted signal.
+
         """
         # Handle V55Signal object
         if hasattr(signal, "topic"):

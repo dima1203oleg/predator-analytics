@@ -51,7 +51,6 @@ import threading
 import time
 from typing import Any
 
-
 try:
     import yaml
 except ImportError:
@@ -1311,24 +1310,16 @@ async def start_azr(duration_hours: int = 24) -> AZRUnifiedOrganism:
 
 
 async def run_self_test():
-    print("🏛️ AZR UNIFIED ORGANISM v40 - Self-Test")
-    print("=" * 60)
 
     organism = get_azr_organism("/tmp/azr_unified_test")
     await organism.initialize()
 
-    print("\n📊 Initial Status:")
-    status = organism.get_status()
-    print(f"  Version: {status['version']}")
-    print(f"  Phase: {status['phase']}")
-    print(f"  Capabilities: {len(status['capabilities'])}")
+    organism.get_status()
 
-    print("\n🔄 Running 3 OODA cycles...")
     organism._running = True
 
-    for i in range(3):
+    for _i in range(3):
         metrics = await organism._observe()
-        print(f"  Cycle {i + 1}: Health={metrics.health_score:.1f}%")
 
         orientation = await organism._orient(metrics)
         decisions = await organism._decide(orientation)
@@ -1341,17 +1332,9 @@ async def run_self_test():
 
     organism._running = False
 
-    print("\n🔐 Running Security Audit...")
-    audit = await organism.run_security_audit()
-    print(f"  Vulnerability Score: {audit['vulnerability_score']}/10.0")
-    print(f"  Block Rate: {audit['block_rate']}")
+    await organism.run_security_audit()
 
-    print("\n📋 Final Status:")
-    status = organism.get_status()
-    print(f"  Cycles: {status['cycle_count']}")
-    print(f"  Executed: {status['metrics']['executed']}")
-    print(f"  Ledger Entries: {status['truth_ledger']['entries']}")
-    print(f"  Ledger Valid: {status['truth_ledger']['valid']}")
+    organism.get_status()
 
 
 if __name__ == "__main__":

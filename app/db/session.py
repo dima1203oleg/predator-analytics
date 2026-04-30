@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-
 """Database Session Management."""
 
 
 from typing import TYPE_CHECKING
 
 from ..core.db import async_session_maker
-
 
 if TYPE_CHECKING:
     from collections.abc import AsyncGenerator

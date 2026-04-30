@@ -1,5 +1,4 @@
-"""
-🔍 Due Diligence — /api/v1/diligence
+"""🔍 Due Diligence — /api/v1/diligence
 
 Ендпоінти ризик-аналізу компаній та партнерів.
 """
@@ -15,8 +14,7 @@ router = APIRouter(prefix="/diligence")
 async def get_company_profile(
     edrpou: str = Path(description="Код ЄДРПОУ компанії"),
 ) -> dict:
-    """
-    Повний профіль компанії з ризик-аналізом.
+    """Повний профіль компанії з ризик-аналізом.
 
     Повертає інформацію з реєстрів, ризик-бали, зв'язки.
     """

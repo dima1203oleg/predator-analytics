@@ -2,13 +2,14 @@
 Endpoints для управління автономними AI-агентами розробки (v1.5-LIVE)
 """
 
-from fastapi import APIRouter, HTTPException, Depends
-from typing import List
+
+from fastapi import APIRouter, HTTPException
+
 from app.models.antigravity import (
-    AntigravityOrchestratorStatus, 
-    AntigravityTask, 
+    AntigravityOrchestratorStatus,
+    AntigravityTask,
+    AntigravityTaskCreate,
     AntigravityTaskLog,
-    AntigravityTaskCreate
 )
 from app.services.antigravity_orchestrator import orchestrator
 
@@ -24,7 +25,7 @@ async def get_orchestrator_status():
     """Отримати поточний стан AGI-оркестратора та Matrix 4 агентів."""
     return orchestrator.get_status()
 
-@router.get("/tasks", response_model=List[AntigravityTask])
+@router.get("/tasks", response_model=list[AntigravityTask])
 async def get_all_tasks():
     """Отримати список усіх задач (черга + виконання + завершені)."""
     return orchestrator.get_tasks()
@@ -38,7 +39,7 @@ async def create_new_task(task_input: AntigravityTaskCreate):
         max_budget=task_input.max_budget_usd
     )
 
-@router.get("/logs", response_model=List[AntigravityTaskLog])
+@router.get("/logs", response_model=list[AntigravityTaskLog])
 async def get_system_logs():
     """Отримати глобальний лог транзакцій оркестрації."""
     return orchestrator.get_logs()

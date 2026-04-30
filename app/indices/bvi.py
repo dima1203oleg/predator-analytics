@@ -56,6 +56,7 @@ def calculate_bvi(
 
     Returns:
         BVI score (0-100). Higher = more volatile behavior.
+
     """
     cv_intervals = _coefficient_of_variation(intervals)
     shannon_regions = _shannon_entropy(regions)

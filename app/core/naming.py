@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Predator Data Layer - Naming Conventions & Versioning Policy.
 Centralized logic for naming indexes, collections, and buckets to ensure
 consistency across ETL, Search, and ML pipelines.
@@ -34,6 +33,7 @@ class NamingPolicy:
             OpenSearch -> "customs-v1"
             Qdrant -> "customs_vectors_v1"
             Postgres -> "ua_customs_v1" (if partition strategy used)
+
         """
         clean_name = base_name.lower().replace(" ", "_")
 
@@ -79,6 +79,4 @@ class NamingPolicy:
 
 # --- Usage Example ---
 if __name__ == "__main__":
-    print(f"OS Index: {NamingPolicy.get_index_name('customs', 1, DataLayerType.OPENSEARCH)}")
-    print(f"Qdrant Coll: {NamingPolicy.get_index_name('customs', 1, DataLayerType.QDRANT)}")
-    print(f"Stable Alias: {NamingPolicy.get_alias_name('customs', DataLayerType.OPENSEARCH)}")
+    pass

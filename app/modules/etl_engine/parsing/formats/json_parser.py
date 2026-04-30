@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """
 JSON Parser Implementation
 
@@ -37,6 +36,7 @@ class JSONParser:
 
         Returns:
             ParseResult containing parsed data or error
+
         """
         file_path = Path(file_path)
 
@@ -90,6 +90,7 @@ class JSONParser:
 
         Returns:
             ParseResult containing parsed dictionary/list or error
+
         """
         result = self.parse(file_path)
 
@@ -115,6 +116,7 @@ class JSONParser:
 
         Returns:
             ParseResult containing parsed DataFrame or error
+
         """
         try:
             df = pd.read_json(file_path, orient=orient)

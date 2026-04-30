@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """ML API Router
 Provides endpoints for ML services: reranking, summarization.
 """
@@ -9,7 +8,6 @@ from typing import Any
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-
 
 logger = logging.getLogger("api.ml")
 
@@ -65,6 +63,7 @@ async def rerank_documents(request: RerankRequest):
 
     Returns:
         Reranked list of documents with relevance scores
+
     """
     try:
         from app.services.ml import get_reranker
@@ -111,6 +110,7 @@ async def summarize_text(request: SummarizeRequest):
 
     Returns:
         Generated summary with metadata
+
     """
     try:
         from app.services.ml import get_summarizer
@@ -228,6 +228,7 @@ async def augment_text(request: AugmentRequest):
 
     Returns:
         List of augmented text variations
+
     """
     try:
         from app.services.ml import get_augmentor
@@ -271,6 +272,7 @@ async def generate_dataset(request: DatasetGenerateRequest):
 
     Returns:
         Summary of generated dataset
+
     """
     try:
         from app.services.document_service import document_service
@@ -355,6 +357,7 @@ async def explain_result(request: ExplainRequest):
 
     Returns:
         Explanation with feature importance
+
     """
     try:
         from app.services.document_service import document_service
@@ -397,6 +400,7 @@ async def explain_document(document_id: str, query: str):
 
     Returns:
         Explanation with attention heatmap data
+
     """
     try:
         from app.services.document_service import document_service
@@ -440,15 +444,15 @@ async def train_forecast(request: TrainForecastRequest):
     """Trigger training for a demand forecast model."""
     try:
         from app.services.ml import get_training_service
-        
+
         # 1. Fetch data for training (Market/Customs data)
-        # In real scenario, this would query the DB. 
+        # In real scenario, this would query the DB.
         # Here we simulate data gathering if DB is sparse.
         training_data = []
         if request.include_market_data:
             # Mocking some trend data for the demonstration
-            import random
             from datetime import datetime, timedelta
+            import random
             now = datetime.now()
             for i in range(24): # 2 years of monthly data
                 date = (now - timedelta(days=30 * (24 - i))).strftime("%Y-%m-%d")
@@ -456,13 +460,13 @@ async def train_forecast(request: TrainForecastRequest):
                     "date": date,
                     "volume": 1000 + (i * 50) + random.randint(-200, 200) # upward trend
                 })
-        
+
         service = get_training_service()
         result = await service.train_forecast_model(request.product_code, training_data)
-        
+
         if result["status"] == "failed":
             raise HTTPException(status_code=400, detail=result["error"])
-            
+
         return result
 
     except HTTPException:

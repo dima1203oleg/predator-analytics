@@ -2,19 +2,19 @@
 
 Цей роутер обслуговує Wraith-інтерфейс адмін-панелі (префікс /api/v2).
 """
+from datetime import UTC, datetime
 import time
-from datetime import datetime, UTC
-from typing import List, Dict, Any, Optional
+from typing import Any
 
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
-from app.dependencies import PermissionChecker
-from app.core.permissions import Permission
-from app.services.antigravity_orchestrator import orchestrator
-from app.services.redis_service import redis_client
-from app.services.kafka_service import kafka_producer
 from app.core.graph import graph_db
+from app.core.permissions import Permission
+from app.dependencies import PermissionChecker
+from app.services.antigravity_orchestrator import orchestrator
+from app.services.kafka_service import kafka_producer
+from app.services.redis_service import redis_client
 
 router = APIRouter(prefix="/admin", tags=["Адміністрування (V2)"])
 
@@ -26,13 +26,13 @@ class NodeMetric(BaseModel):
     role: str
     cpu: float
     ram: float
-    vram: Optional[float] = None
-    vramGb: Optional[float] = None
-    temp: Optional[float] = None
+    vram: float | None = None
+    vramGb: float | None = None
+    temp: float | None = None
     net: str
     status: str
     uptime: str
-    ip: Optional[str] = None
+    ip: str | None = None
 
 class ServiceStatus(BaseModel):
     name: str
@@ -42,8 +42,8 @@ class ServiceStatus(BaseModel):
     lastCheck: str
 
 class InfraTelemetryResponse(BaseModel):
-    nodes: List[NodeMetric]
-    services: List[ServiceStatus]
+    nodes: list[NodeMetric]
+    services: list[ServiceStatus]
 
 class AgentStatsData(BaseModel):
     total: int
@@ -54,7 +54,7 @@ class AgentStatsData(BaseModel):
 
 class AgentStats(BaseModel):
     stats: AgentStatsData
-    list: List[Dict[str, Any]]
+    list: list[dict[str, Any]]
 
 class FailoverNodeInfo(BaseModel):
     label: str = ""
@@ -65,8 +65,8 @@ class FailoverNodeInfo(BaseModel):
 class FailoverStatus(BaseModel):
     activeMode: str
     activeNode: str
-    nodes: Dict[str, Any]
-    history: List[Any]
+    nodes: dict[str, Any]
+    history: list[Any]
 
 # ─── Телеметрія ───────────────────────────────────────────────────────────────
 
@@ -117,10 +117,10 @@ async def get_infra_telemetry(
             ip="127.0.0.1"
         )
     ]
-    
+
     # Check actual services
     services = []
-    
+
     # Postgres
     try:
         from app.database import engine
@@ -185,12 +185,12 @@ async def get_agents_stats(
     """Статистика автономних агентів Antigravity."""
     status = orchestrator.get_status()
     agents_list = status.agents
-    
+
     total = len(agents_list)
     alive = sum(1 for a in agents_list if a.is_alive)
     dead = total - alive
     idle = sum(1 for a in agents_list if not a.current_task)
-    
+
     return AgentStats(
         stats=AgentStatsData(
             total=total,

@@ -1,9 +1,13 @@
 import asyncio
-from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager, suppress
 from datetime import UTC, datetime
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+# Autonomous AI Orchestration (v4.1)
+from libs.core.autonomy.orchestrator import orchestrator
+from libs.core.autonomy.pulse_agent import SystemPulseAgent
 
 from app.api.v1.canonical_router import api_v1_router
 from app.core.settings import get_settings
@@ -11,18 +15,13 @@ from app.libs.core.mq import broker
 from app.libs.core.otel import setup_otel
 from app.libs.core.structured_logger import get_logger
 
-# Autonomous AI Orchestration (v4.1)
-from libs.core.autonomy.orchestrator import orchestrator
-from libs.core.autonomy.pulse_agent import SystemPulseAgent
-
 settings = get_settings()
 logger = get_logger("predator.api.main")
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """
-    Канонічний lifespan context manager PREDATOR Analytics v4.1.
+    """Канонічний lifespan context manager PREDATOR Analytics v4.1.
     Замінює застарілі on_event('startup') та on_event('shutdown').
     """
     logger.info("PREDATOR_BOOT_START", mode="CANONICAL", version=settings.APP_VERSION)
@@ -30,6 +29,7 @@ async def lifespan(app: FastAPI):
     # 1. Ініціалізація БД та схем
     try:
         from sqlalchemy import text as sa_text
+
         from app.core.database import engine as db_engine
 
         async with db_engine.begin() as conn:
@@ -71,12 +71,10 @@ async def lifespan(app: FastAPI):
     logger.info("PREDATOR_SHUTDOWN_INIT")
     await orchestrator.stop()
     await broker.disconnect()
-    
-    try:
+
+    with suppress(Exception):
         await signal_bus.disconnect()
-    except Exception:
-        pass
-        
+
     logger.info("PREDATOR_SHUTDOWN_COMPLETE")
 
 

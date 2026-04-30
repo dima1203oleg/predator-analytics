@@ -1,7 +1,8 @@
 """Тести для Event Bus та Messaging."""
 
 import pytest
-from mcp.event_bus.bus import EventBus, Event, EventType, EventPublisher
+
+from mcp.event_bus.bus import Event, EventBus, EventPublisher, EventType
 
 
 class TestEventBus:
@@ -23,7 +24,7 @@ class TestEventBus:
         """Тест підключення та відключення."""
         await event_bus.connect()
         assert event_bus.connected
-        
+
         await event_bus.disconnect()
         assert not event_bus.connected
 
@@ -31,7 +32,7 @@ class TestEventBus:
     async def test_publish_event(self, event_bus):
         """Тест публікування eventi."""
         await event_bus.connect()
-        
+
         event = Event(
             id="evt_1",
             type=EventType.CODE_ANALYSIS_STARTED,
@@ -39,9 +40,9 @@ class TestEventBus:
             source="test",
             payload={"file": "test.py"},
         )
-        
+
         await event_bus.publish(event)
-        
+
         assert len(event_bus.event_history) == 1
         assert event_bus.event_history[0].id == "evt_1"
 
@@ -55,7 +56,7 @@ class TestEventBus:
             source="test",
             payload={},
         )
-        
+
         with pytest.raises(Exception):
             await event_bus.publish(event)
 
@@ -63,15 +64,15 @@ class TestEventBus:
     async def test_subscribe_and_handle_event(self, event_bus):
         """Тест підписки та обробки eventi."""
         await event_bus.connect()
-        
+
         received_events = []
-        
+
         async def handler(event: Event):
             received_events.append(event)
-        
+
         topic = EventType.CODE_ANALYSIS_STARTED.value
         await event_bus.subscribe(topic, handler)
-        
+
         event = Event(
             id="evt_1",
             type=EventType.CODE_ANALYSIS_STARTED,
@@ -79,12 +80,12 @@ class TestEventBus:
             source="test",
             payload={},
         )
-        
+
         await event_bus.publish(event)
-        
+
         # Дати час на обробку
         await asyncio.sleep(0.01)
-        
+
         assert len(received_events) == 1
         assert received_events[0].id == "evt_1"
 
@@ -92,20 +93,20 @@ class TestEventBus:
     async def test_multiple_subscribers(self, event_bus):
         """Тест кількох підписників."""
         await event_bus.connect()
-        
+
         handler1_calls = []
         handler2_calls = []
-        
+
         async def handler1(event: Event):
             handler1_calls.append(event)
-        
+
         async def handler2(event: Event):
             handler2_calls.append(event)
-        
+
         topic = EventType.SECURITY_ISSUE_DETECTED.value
         await event_bus.subscribe(topic, handler1)
         await event_bus.subscribe(topic, handler2)
-        
+
         event = Event(
             id="evt_1",
             type=EventType.SECURITY_ISSUE_DETECTED,
@@ -113,10 +114,10 @@ class TestEventBus:
             source="test",
             payload={"severity": "high"},
         )
-        
+
         await event_bus.publish(event)
         await asyncio.sleep(0.01)
-        
+
         assert len(handler1_calls) == 1
         assert len(handler2_calls) == 1
 
@@ -124,16 +125,16 @@ class TestEventBus:
     async def test_unsubscribe(self, event_bus):
         """Тест відписки."""
         await event_bus.connect()
-        
+
         received_events = []
-        
+
         async def handler(event: Event):
             received_events.append(event)
-        
+
         topic = EventType.WORKFLOW_STARTED.value
         await event_bus.subscribe(topic, handler)
         await event_bus.unsubscribe(topic, handler)
-        
+
         event = Event(
             id="evt_1",
             type=EventType.WORKFLOW_STARTED,
@@ -141,10 +142,10 @@ class TestEventBus:
             source="test",
             payload={},
         )
-        
+
         await event_bus.publish(event)
         await asyncio.sleep(0.01)
-        
+
         assert len(received_events) == 0
 
     def test_get_event_history(self, event_bus):
@@ -161,7 +162,7 @@ class TestEventBus:
             payload={},
         )
         event_bus.event_history.append(event)
-        
+
         event_bus.clear_history()
         assert len(event_bus.event_history) == 0
 
@@ -190,9 +191,9 @@ class TestEventPublisher:
     async def test_publish_code_analysis_started(self, publisher):
         """Тест публікування почала аналізу коду."""
         await publisher.event_bus.connect()
-        
+
         event = await publisher.publish_code_analysis_started("test.py")
-        
+
         assert event.type == EventType.CODE_ANALYSIS_STARTED
         assert event.payload["file_path"] == "test.py"
 
@@ -200,10 +201,10 @@ class TestEventPublisher:
     async def test_publish_code_analysis_completed(self, publisher):
         """Тест публікування завершення аналізу коду."""
         await publisher.event_bus.connect()
-        
+
         metrics = {"maintainability": 85, "complexity": 3}
         event = await publisher.publish_code_analysis_completed("test.py", metrics)
-        
+
         assert event.type == EventType.CODE_ANALYSIS_COMPLETED
         assert event.payload["file_path"] == "test.py"
         assert event.payload["metrics"] == metrics
@@ -212,11 +213,11 @@ class TestEventPublisher:
     async def test_publish_security_issue(self, publisher):
         """Тест публікування питання безпеки."""
         await publisher.event_bus.connect()
-        
+
         event = await publisher.publish_issue_detected(
             "security", "critical", "SQL Injection vulnerability"
         )
-        
+
         assert event.type == EventType.SECURITY_ISSUE_DETECTED
         assert event.payload["severity"] == "critical"
 
@@ -224,11 +225,11 @@ class TestEventPublisher:
     async def test_publish_quality_issue(self, publisher):
         """Тест публікування питання якості."""
         await publisher.event_bus.connect()
-        
+
         event = await publisher.publish_issue_detected(
             "quality", "high", "High cyclomatic complexity"
         )
-        
+
         assert event.type == EventType.QUALITY_ISSUE_DETECTED
         assert event.payload["severity"] == "high"
 
@@ -236,11 +237,11 @@ class TestEventPublisher:
     async def test_publish_decision_made(self, publisher):
         """Тест публікування прийнятого рішення."""
         await publisher.event_bus.connect()
-        
+
         event = await publisher.publish_decision_made(
             "dec_1", "Refactor module", 0.92
         )
-        
+
         assert event.type == EventType.DECISION_MADE
         assert event.payload["confidence"] == 0.92
 

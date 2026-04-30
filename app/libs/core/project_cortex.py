@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """
 🧠 AZR PROJECT CORTEX - Mistral Vibe Inspired
 ============================================

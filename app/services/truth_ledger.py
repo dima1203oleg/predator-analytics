@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """📜 Truth Ledger v1.0 (UA) - Predator Analytics v45-S
 Забезпечує прозорість та імутабельність записів дій системи.
 Axiom-003 Compliance.
@@ -14,7 +13,6 @@ from pathlib import Path
 from typing import Any
 
 from app.libs.core.structured_logger import get_logger
-
 
 logger = get_logger("services.truth_ledger")
 

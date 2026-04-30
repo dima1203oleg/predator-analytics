@@ -4,11 +4,10 @@ import asyncio
 import logging
 import uuid
 
-from app.core.celery_app import celery_app
-from app.database import async_session_maker
-
 from src.mlops.augmentor import AugmentorManager
 
+from app.core.celery_app import celery_app
+from app.database import async_session_maker
 
 logger = logging.getLogger(__name__)
 

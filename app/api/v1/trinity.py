@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
 from typing import TYPE_CHECKING
-import uuid
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
@@ -11,8 +9,10 @@ from sqlalchemy import desc, select
 from app.database import get_db
 from app.libs.core.models import TrinityAuditLog
 
-
 if TYPE_CHECKING:
+    from datetime import datetime
+    import uuid
+
     from sqlalchemy.ext.asyncio import AsyncSession
 
 

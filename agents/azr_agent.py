@@ -7,17 +7,13 @@ import json
 import logging
 import math
 import os
-import random
 import re
 import subprocess
 import time
-from typing import Any, Dict, List, Optional, Union
 
 import httpx
-import yaml
 
 from libs.core.azr_memory import AZRSovereignMemory
-
 
 # ============================================================================
 # 🏛️ AZR ENGINE v4.5 - "NEZLAMNIST" (AGGRESSIVE EVOLUTION)
@@ -51,6 +47,7 @@ class AutonomyMetrics:
 
 class TelegramBridge:
     """📡 Real-time Evolution Reporting Bridge."""
+
     def __init__(self):
         self.token = os.getenv("TELEGRAM_BOT_TOKEN")
         self.chat_id = os.getenv("TELEGRAM_ADMIN_ID")
@@ -76,6 +73,7 @@ class TelegramBridge:
 
 class EvolutionBridge:
     """Manages 3.12 syntax injection into the current environment."""
+
     def __init__(self, project_root: str):
         self.root = project_root
 
@@ -160,7 +158,7 @@ class AZREngine:
         import shutil
 
         import psutil
-        total, used, free = shutil.disk_usage(self.project_root)
+        total, used, _free = shutil.disk_usage(self.project_root)
         disk_p = (used / total) * 100
         ram_p = psutil.virtual_memory().percent
 

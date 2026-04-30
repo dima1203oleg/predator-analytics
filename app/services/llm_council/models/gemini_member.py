@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Gemini Council Member Implementation
 Uses Google's Gemini as a council participant via centralized ModelRouter.
 """
@@ -12,7 +11,6 @@ from typing import Any
 
 from app.services.llm_council import CouncilMember, CouncilResponse, PeerReview
 from app.services.model_router import ModelRouter
-
 
 logger = logging.getLogger(__name__)
 

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """UA Sources - Background Workers for TS-Compliant ETL Pipeline
 Implements separate Parser, Processor, and Indexer agents as per Technical Specification.
 """
@@ -20,12 +19,10 @@ import redis.asyncio as redis
 
 from app.libs.core.config import settings
 
-
 # Add root to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../../../../"))
 
 from app.libs.core.structured_logger import RequestLogger, get_logger
-
 
 logger = get_logger("predator.workers.etl")
 
@@ -75,6 +72,7 @@ def parse_external_source(self, source_type: str, config: dict | None = None):
 
     Returns:
         {status, records_fetched, staging_ids}
+
     """
     with RequestLogger(logger, "parser_ingestion", source_type=source_type) as req_logger:
         req_logger.info("ingestion_started", config=config)

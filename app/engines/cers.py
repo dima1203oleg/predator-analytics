@@ -20,12 +20,13 @@ from __future__ import annotations
 from dataclasses import dataclass
 import logging
 import math
+from typing import TYPE_CHECKING
 
 from app.core.confidence import ConfidenceScore, quick_confidence
-from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.i18n import get_cers_label, get_cers_level
-from app.core.ueid import parse_ueid
 
+if TYPE_CHECKING:
+    from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger("predator.engines.cers")
 
@@ -128,6 +129,7 @@ def calculate_cers(
 
     Returns:
         CERSResult with score, level, and breakdown.
+
     """
     # Determine mode
     if structural is not None and predictive is not None:
@@ -193,23 +195,23 @@ def calculate_cers(
 
 async def process_entity(ueid: str, db: AsyncSession) -> CERSResult:
     """Process CERS meta-scoring for an entity by fetching sub-layer indices.
-    
+
     1. Fetches Behavioral, Institutional, etc scores.
     2. Computes the composite CERS.
     3. Persists it via CersRepository.
     4. Writes a WORM DecisionArtifact.
     5. Emits 'cers.updated' signal.
     """
+    from app.core.signal_bus import SignalBus
+    from app.models.v55.decision_artifact import DecisionArtifactCreate
     from app.repositories.behavioral_repository import BehavioralRepository
-    from app.repositories.institutional_repository import InstitutionalRepository
-    from app.repositories.influence_repository import InfluenceRepository
-    from app.repositories.structural_repository import StructuralRepository
-    from app.repositories.predictive_repository import PredictiveRepository
     from app.repositories.cers_repository import CersRepository
     from app.repositories.decision_repository import DecisionRepository
-    from app.models.v55.decision_artifact import DecisionArtifactCreate
-    from app.core.signal_bus import SignalBus
-    
+    from app.repositories.influence_repository import InfluenceRepository
+    from app.repositories.institutional_repository import InstitutionalRepository
+    from app.repositories.predictive_repository import PredictiveRepository
+    from app.repositories.structural_repository import StructuralRepository
+
     # Repos
     behav_repo = BehavioralRepository(db)
     inst_repo = InstitutionalRepository(db)
@@ -218,20 +220,20 @@ async def process_entity(ueid: str, db: AsyncSession) -> CERSResult:
     pred_repo = PredictiveRepository(db)
     cers_repo = CersRepository(db)
     decision_repo = DecisionRepository(db)
-    
+
     # Try fetching sub-layer mapping (Spec 5.8: Full CERS — 5 layers)
     behav_orm = await behav_repo.get_latest_for_ueid(ueid)
     inst_orm = await inst_repo.get_latest_for_ueid(ueid)
     infl_orm = await infl_repo.get_latest_for_ueid(ueid)
     struct_orm = await struct_repo.get_latest_for_ueid(ueid)
     pred_orm = await pred_repo.get_latest_for_ueid(ueid)
-    
+
     behavioral_val = behav_orm.aggregate if behav_orm else 50.0
     institutional_val = inst_orm.aggregate if inst_orm else 50.0
     influence_val = infl_orm.aggregate if infl_orm else 50.0
     structural_val = struct_orm.aggregate if struct_orm else 50.0
     predictive_val = pred_orm.aggregate if pred_orm else 50.0
-    
+
     # Completeness tracks real data presence
     data_completeness = 0.2 # Baseline
     layers_found = 0
@@ -240,9 +242,9 @@ async def process_entity(ueid: str, db: AsyncSession) -> CERSResult:
     if infl_orm: layers_found += 1
     if struct_orm: layers_found += 1
     if pred_orm: layers_found += 1
-    
+
     data_completeness += (layers_found * 0.15)
-        
+
     result = calculate_cers(
         ueid=ueid,
         behavioral=behavioral_val,
@@ -252,10 +254,10 @@ async def process_entity(ueid: str, db: AsyncSession) -> CERSResult:
         predictive=predictive_val,
         data_completeness=min(1.0, data_completeness),
     )
-    
+
     # Save CERS
     await cers_repo.save_score(result)
-    
+
     # Record WORM decision artifact
     import hashlib
     import json
@@ -267,8 +269,8 @@ async def process_entity(ueid: str, db: AsyncSession) -> CERSResult:
         "predictive": predictive_val,
     }
     input_fp = hashlib.sha256(json.dumps(input_data, sort_keys=True).encode("utf-8")).hexdigest()
-    output_fp = hashlib.sha256(f"{result.score}:{result.level}".encode("utf-8")).hexdigest()
-    
+    output_fp = hashlib.sha256(f"{result.score}:{result.level}".encode()).hexdigest()
+
     artifact = DecisionArtifactCreate(
         decision_type="cers",
         input_fingerprint=input_fp,
@@ -283,7 +285,7 @@ async def process_entity(ueid: str, db: AsyncSession) -> CERSResult:
             "layers_count": layers_found,
         },
         sources=[
-            "app.engines.cers", 
+            "app.engines.cers",
             "app.engines.behavioral",
             "app.engines.institutional",
             "app.engines.influence",
@@ -293,11 +295,11 @@ async def process_entity(ueid: str, db: AsyncSession) -> CERSResult:
         metadata={"ueid": ueid},
     )
     await decision_repo.create_artifact(artifact)
-    
+
     # Emit to SignalBus
     bus = SignalBus.get_instance()
     from app.models.v55.signal import SignalLayer, SignalPriority, V55Signal
-    
+
     signal = V55Signal(
         signal_type="CERS_SCORING",
         topic="cers.updated",
@@ -314,6 +316,6 @@ async def process_entity(ueid: str, db: AsyncSession) -> CERSResult:
         }
     )
     await bus.emit(signal, session=db)
-    
+
     return result
 

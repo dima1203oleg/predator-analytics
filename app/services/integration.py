@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Integration Service - Manages external integrations."""
 from datetime import UTC, datetime
 from typing import Any

@@ -25,7 +25,7 @@ class SearchResult:
 
 class EpieosClient:
     """Epieos — 'Швейцарський ніж' для email та телефону.
-    
+
     Можливості:
     - Google ID за email
     - Публічні відгуки на Google Maps (геолокація)
@@ -139,7 +139,7 @@ class EpieosClient:
 
 class HoleheTool:
     """Holehe — Перевірка 120+ сервісів за email без сповіщення власника.
-    
+
     Особливості:
     - Не залишає слідів (власник не отримує сповіщення)
     - Перевіряє реєстрацію на популярних сервісах
@@ -202,7 +202,7 @@ class HoleheTool:
 
 class SherlockTool:
     """Sherlock — Пошук username у 340+ соціальних мережах.
-    
+
     GitHub: sherlock-project/sherlock
     Основа для створення цифрового профілю особи.
     """
@@ -258,7 +258,7 @@ class SherlockTool:
                     })
 
         # Аналіз патернів
-        categories_found = list(set(p["category"] for p in found_profiles))
+        categories_found = list({p["category"] for p in found_profiles})
 
         data = {
             "username": username,

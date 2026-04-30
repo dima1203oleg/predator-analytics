@@ -1,12 +1,12 @@
-"""
-UA Connectors API (Phase 10 — SM Edition).
+"""UA Connectors API (Phase 10 — SM Edition).
 
 Endpoints for registry integration (Opendatabot, YouControl, Prozorro).
 """
-from fastapi import APIRouter
 from typing import Any
 
-from app.services.connectors import OpendatabotClient, YouControlClient, ProzorroClient
+from fastapi import APIRouter
+
+from app.services.connectors import OpendatabotClient, ProzorroClient, YouControlClient
 
 router = APIRouter(prefix="/connectors-ua", tags=["UA Integrations (Registry, Sanctions, Prozorro)"])
 

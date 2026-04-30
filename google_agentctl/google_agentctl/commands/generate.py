@@ -1,11 +1,7 @@
 from __future__ import annotations
 
-from datetime import datetime
-
 from rich.console import Console
 import typer
-import yaml
-
 
 app = typer.Typer(help="Generate content (proposals, code, policies)")
 console = Console()

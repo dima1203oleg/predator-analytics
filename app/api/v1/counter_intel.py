@@ -1,10 +1,15 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
-from typing import Dict, Any, List
+from typing import Any
+
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
+
 from app.services.counter_intel import (
-    DarknetMonitor, get_darknet_monitor,
-    CompetitiveAttackRadar, get_competitive_attack_radar,
-    PsyopsDetector, get_psyops_detector
+    CompetitiveAttackRadar,
+    DarknetMonitor,
+    PsyopsDetector,
+    get_competitive_attack_radar,
+    get_darknet_monitor,
+    get_psyops_detector,
 )
 
 router = APIRouter(prefix="/counter-intel", tags=["Контррозвідка"])
@@ -15,20 +20,19 @@ class LeakScanRequest(BaseModel):
 
 class AttackRadarRequest(BaseModel):
     target_entity: str
-    keyword_alerts: List[str]
-    current_market_prices: Dict[str, float]
+    keyword_alerts: list[str]
+    current_market_prices: dict[str, float]
 
 class PsyopsScanRequest(BaseModel):
     narrative_id: str
-    posts: List[Dict[str, Any]]
+    posts: list[dict[str, Any]]
 
 @router.post("/darknet/scan")
 async def scan_darknet(
     data: LeakScanRequest,
     monitor: DarknetMonitor = Depends(get_darknet_monitor)
-) -> Dict[str, Any]:
-    """
-    Scans darknet resources for mention of the target (COMP-263).
+) -> dict[str, Any]:
+    """Scans darknet resources for mention of the target (COMP-263).
     """
     result = monitor.scan_for_leaks(
         target_domain=data.target_domain,
@@ -42,9 +46,8 @@ async def scan_darknet(
 async def detect_attacks(
     data: AttackRadarRequest,
     radar: CompetitiveAttackRadar = Depends(get_competitive_attack_radar)
-) -> Dict[str, Any]:
-    """
-    Analyzes current data to detect dumping, black PR, etc (COMP-264).
+) -> dict[str, Any]:
+    """Analyzes current data to detect dumping, black PR, etc (COMP-264).
     """
     result = radar.detect_attacks(
         target_entity=data.target_entity,
@@ -59,9 +62,8 @@ async def detect_attacks(
 async def analyze_psyops(
     data: PsyopsScanRequest,
     detector: PsyopsDetector = Depends(get_psyops_detector)
-) -> Dict[str, Any]:
-    """
-    Analyzes a narrative for coordinated astroturfing or bot activity (COMP-268).
+) -> dict[str, Any]:
+    """Analyzes a narrative for coordinated astroturfing or bot activity (COMP-268).
     """
     result = detector.analyze_narrative(
         narrative_id=data.narrative_id,

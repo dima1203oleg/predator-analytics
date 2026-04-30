@@ -1,14 +1,14 @@
-"""
-AI/ML Infrastructure API (Phase 5 — SM Edition).
+"""AI/ML Infrastructure API (Phase 5 — SM Edition).
 
 Endpoints for GPU management, Confidence Score, Decision Ledger.
 """
-from fastapi import APIRouter
 from typing import Any
 
-from app.services.ai.gpu_memory_manager import GPUMemoryManager
+from fastapi import APIRouter
+
 from app.services.ai.confidence_score import ConfidenceScoreCalculator
 from app.services.ai.decision_ledger import DecisionLedger
+from app.services.ai.gpu_memory_manager import GPUMemoryManager
 
 router = APIRouter(prefix="/ai", tags=["AI/ML Infrastructure"])
 

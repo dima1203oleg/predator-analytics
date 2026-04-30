@@ -28,6 +28,7 @@ def calculate_im(
 
     Returns:
         IM score (0-100). Higher = more influential.
+
     """
     raw = (
         0.35 * eigenvector + 0.25 * betweenness + 0.25 * market_share + 0.15 * regulatory_proximity

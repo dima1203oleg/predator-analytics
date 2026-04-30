@@ -1,11 +1,10 @@
-"""
-Vault Dynamic Secrets Service (Phase 3 — SM Edition).
+"""Vault Dynamic Secrets Service (Phase 3 — SM Edition).
 
 HashiCorp Vault integration for dynamic database credentials,
 TLS certificates, and API keys.
 SM: 1GB RAM.
 """
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 
@@ -34,7 +33,7 @@ class VaultSecretsService:
             "auth_method": self.config["auth_method"],
             "secret_engines": self.config["secret_engines"],
             "rotation_policy": self.config["rotation"],
-            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(UTC).isoformat(),
         }
 
     def get_secret_engines(self) -> list[dict[str, str]]:

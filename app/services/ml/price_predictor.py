@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Price Predictor (COMP-052)
 
 Прогнозування цін товарів за кодами УКТЗЕД.
@@ -9,14 +8,13 @@ Ensemble: ARIMA-like + XGBoost + сезонна декомпозиція.
 For production: Uses scikit-learn (always available) as base.
 Optional: Prophet, statsmodels ARIMA.
 """
-import logging
-import math
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
+import logging
+import math
 from typing import Any
 
 import numpy as np
-
 
 logger = logging.getLogger("service.price_predictor")
 
@@ -24,6 +22,7 @@ logger = logging.getLogger("service.price_predictor")
 @dataclass
 class PriceForecast:
     """Single price forecast result."""
+
     product_code: str
     product_name: str
     current_price: float
@@ -63,6 +62,7 @@ class PricePredictor:
     1. Moving average with trend extrapolation (baseline)
     2. Seasonal decomposition (additive)
     3. Gradient Boosting with features (if enough data)
+
     """
 
     def __init__(self):
@@ -90,6 +90,7 @@ class PricePredictor:
 
         Returns:
             PriceForecast with prediction and confidence interval
+
         """
         if not price_history or len(price_history) < 3:
             return self._insufficient_data_forecast(
@@ -190,7 +191,7 @@ class PricePredictor:
             coeffs = np.polyfit(x, prices, 1)
             trend_per_day = coeffs[0]
             ma += trend_per_day * horizon_days
-        
+
         return float(ma)
 
     def _seasonal_predict(
@@ -283,7 +284,7 @@ class PricePredictor:
             return "none"
 
         # Simple autocorrelation check
-        mean = np.mean(prices)
+        np.mean(prices)
         var = np.var(prices)
         if var == 0:
             return "none"

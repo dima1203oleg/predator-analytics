@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """═══════════════════════════════════════════════════════════════
 AZR (Autonomous Zero-Risk Amendment Runtime) - Core Models
 Predator Analytics v45
@@ -23,7 +22,6 @@ import hashlib
 import json
 from typing import Any
 from uuid import UUID, uuid4
-
 
 # ═══════════════════════════════════════════════════════════════
 # CONSTITUTIONAL CONSTANTS (IMMUTABLE)
@@ -420,18 +418,17 @@ class AmendmentProposal:
         if self.risk_assessment and self.risk_assessment.classification in [
             RiskLevel.HIGH,
             RiskLevel.EXTREME,
-        ]:
-            if not self.rollback_plan or not self.rollback_plan.is_valid():
-                violations.append(
-                    ConstitutionalViolation(
-                        violation_id="AZR-005",
-                        axiom="9",
-                        severity=ViolationSeverity.HIGH,
-                        message="High-risk amendment requires valid rollback plan",
-                        action="BLOCK_UNTIL_ROLLBACK_PLAN",
-                        escalation="TECHNICAL_COMMITTEE",
-                    )
+        ] and (not self.rollback_plan or not self.rollback_plan.is_valid()):
+            violations.append(
+                ConstitutionalViolation(
+                    violation_id="AZR-005",
+                    axiom="9",
+                    severity=ViolationSeverity.HIGH,
+                    message="High-risk amendment requires valid rollback plan",
+                    action="BLOCK_UNTIL_ROLLBACK_PLAN",
+                    escalation="TECHNICAL_COMMITTEE",
                 )
+            )
 
         # Axiom 11: Check cryptographic commitment
         if self.current_state != AmendmentState.PROPOSED and not self.commitment:

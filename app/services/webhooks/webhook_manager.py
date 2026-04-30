@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Webhook Manager (COMP-020)
 
 Управління вхідними та вихідними вебхуками.
@@ -11,15 +10,17 @@ from __future__ import annotations
 - Event filtering
 - Dead letter queue
 """
+from dataclasses import dataclass, field
+from datetime import UTC, datetime
 import hashlib
 import hmac
 import json
 import logging
-from dataclasses import dataclass, field
-from datetime import UTC, datetime
-from typing import Any, Callable, Awaitable
+from typing import TYPE_CHECKING, Any
 from uuid import uuid4
 
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 logger = logging.getLogger("service.webhooks")
 
@@ -27,6 +28,7 @@ logger = logging.getLogger("service.webhooks")
 @dataclass
 class WebhookRegistration:
     """Registered webhook endpoint."""
+
     webhook_id: str = field(default_factory=lambda: str(uuid4()))
     name: str = ""
     url: str = ""
@@ -54,6 +56,7 @@ class WebhookRegistration:
 @dataclass
 class WebhookDelivery:
     """Record of a webhook delivery attempt."""
+
     delivery_id: str = field(default_factory=lambda: str(uuid4()))
     webhook_id: str = ""
     event_type: str = ""
@@ -140,6 +143,7 @@ class WebhookManager:
         Args:
             event_type: Event identifier (e.g., "risk.alert")
             payload: Event payload
+
         """
         deliveries = []
 

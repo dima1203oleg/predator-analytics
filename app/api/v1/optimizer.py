@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """AutoOptimizer API Endpoints.
 
 Дозволяє моніторити та керувати автономним самовдосконаленням платформи.
@@ -14,7 +13,6 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
 from app.services.auth_service import require_admin
-
 
 logger = logging.getLogger("api.optimizer")
 
@@ -98,6 +96,7 @@ async def trigger_optimization(request: TriggerOptimizationRequest):
     Args:
         force: Ігнорувати інтервал між циклами
         target: Що оптимізувати ('all', 'models', 'infrastructure')
+
     """
     try:
         from app.services.auto_optimizer import get_auto_optimizer
@@ -159,6 +158,7 @@ async def get_optimization_history(limit: int = 50):
 
     Returns:
         Список дій з timestamps та метриками
+
     """
     try:
         from app.services.auto_optimizer import get_auto_optimizer
@@ -207,6 +207,7 @@ async def update_quality_gate(metric: str, threshold: float):
         threshold: Новий поріг
 
     Security: Потрібна admin роль
+
     """
     from app.services.auto_optimizer import MetricsAnalyzer
 

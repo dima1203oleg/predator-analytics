@@ -1,16 +1,13 @@
 import asyncio
-import subprocess
-from pathlib import Path
-from typing import Optional
 import logging
+from pathlib import Path
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 class IDEBypassExecutor:
-    """
-    Виконує команди напряму, обходячи IDE Run-confirmation.
+    """Виконує команди напряму, обходячи IDE Run-confirmation.
     Використовується коли потрібна 100% автономність.
     """
 
@@ -37,13 +34,13 @@ class IDEBypassExecutor:
         self,
         command: str,
         timeout: int = 60,
-        cwd: Optional[str] = None
+        cwd: str | None = None
     ) -> tuple[bool, str, str]:
-        """
-        Виконує команду асинхронно.
+        """Виконує команду асинхронно.
 
         Returns:
             (success, stdout, stderr)
+
         """
         if not self.is_safe_command(command):
             logger.warning(f"Potentially unsafe command blocked: {command}")
@@ -67,14 +64,14 @@ class IDEBypassExecutor:
             success = process.returncode == 0
             return success, stdout.decode(), stderr.decode()
 
-        except asyncio.TimeoutError:
+        except TimeoutError:
             logger.error(f"Command timed out: {command}")
             return False, "", f"Timeout after {timeout}s"
         except Exception as e:
             logger.error(f"Execution error: {e}")
             return False, "", str(e)
 
-    async def search_codebase(self, pattern: str, file_types: list[str] = None) -> str:
+    async def search_codebase(self, pattern: str, file_types: list[str] | None = None) -> str:
         """Пошук по кодовій базі без Run-confirmation"""
         types = file_types or ['ts', 'py', 'tsx']
         includes = " ".join([f"--include='*.{ft}'" for ft in types])
@@ -92,7 +89,7 @@ class IDEBypassExecutor:
             # Try to find backend tests
             cmd = "pytest backend/tests services/orchestrator/tests -v --tb=short 2>/dev/null"
 
-        success, stdout, stderr = await self.execute(cmd, timeout=300)
+        _success, stdout, stderr = await self.execute(cmd, timeout=300)
         return stdout + stderr
 
     async def lint_and_fix(self) -> str:
@@ -116,8 +113,6 @@ if __name__ == "__main__":
     # Example usage / self-test
     async def test():
         executor = IDEBypassExecutor()
-        print("Checking codebase for 'Predator'...")
-        res = await executor.search_codebase("Predator", ['md'])
-        print(res[:500] + "...")
+        await executor.search_codebase("Predator", ['md'])
 
     asyncio.run(test())

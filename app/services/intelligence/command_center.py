@@ -1,10 +1,9 @@
-"""
-Command Center & Shadow Cartography (Phase 12 — SM Edition).
+"""Command Center & Shadow Cartography (Phase 12 — SM Edition).
 
 Implements War Room analytics, Shadow Map generation, and Attack Plans.
 Mocks complex operations for the Single Machine environment.
 """
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 
@@ -14,7 +13,7 @@ class CommandCenter:
     def generate_daily_strategy(self) -> dict[str, Any]:
         """Генерує щоденну стратегію на основі глобальних ризиків."""
         return {
-            "date": datetime.now(timezone.utc).date().isoformat(),
+            "date": datetime.now(UTC).date().isoformat(),
             "global_risk_level": "High",
             "key_threats": ["Посилення санкцій ЄС", "Атаки на енергосектор"],
             "recommended_actions": [
@@ -35,7 +34,7 @@ class CommandCenter:
                 {"phase": 3, "action": "Блокування активів", "duration_days": 1},
             ],
             "estimated_success_probability": 0.85,
-            "created_at": datetime.now(timezone.utc).isoformat(),
+            "created_at": datetime.now(UTC).isoformat(),
         }
 
 
@@ -64,5 +63,5 @@ class ShadowCartography:
             "known_assets_usd": 15_000_000,
             "hidden_assets_estimated_usd": 45_000_000,
             "risk_jurisdictions": ["Кіпр", "BVI", "Панама"],
-            "last_updated": datetime.now(timezone.utc).isoformat(),
+            "last_updated": datetime.now(UTC).isoformat(),
         }

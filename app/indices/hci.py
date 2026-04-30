@@ -19,6 +19,7 @@ def calculate_hhi(shares: list[float]) -> float:
 
     Returns:
         HHI value (0-10000).
+
     """
     if not shares:
         return 0.0
@@ -38,6 +39,7 @@ def calculate_hci(
     Returns:
         HCI value. Positive = hidden concentration.
         Normalized to 0-100 scale for CERS integration.
+
     """
     raw = hhi_beneficial - hhi_formal
 

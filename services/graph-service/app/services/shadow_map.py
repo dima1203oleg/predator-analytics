@@ -17,10 +17,10 @@ class ShadowMapService:
         MATCH (c1)-[*1..$depth]-(m)-[*1..$depth]-(c2:Company)
         WHERE c1 <> c2 AND NOT (m:Tender)
         AND (m:Offshore OR m:Person OR m:Address OR m:Phone)
-        RETURN 
-            c2.ueid as related_ueid, 
-            c2.name as related_name, 
-            labels(m)[0] as bridge_type, 
+        RETURN
+            c2.ueid as related_ueid,
+            c2.name as related_name,
+            labels(m)[0] as bridge_type,
             m.value as bridge_value
         LIMIT 100
         """
@@ -41,7 +41,7 @@ class ShadowMapService:
             maxLevel: 3,
             relationshipFilter: "OWNER>|<OWNER|DIRECTOR>|<DIRECTOR|HAS_ADDRESS>|<HAS_ADDRESS|HAS_PHONE>|<HAS_PHONE"
         }) YIELD nodes, relationships
-        RETURN 
+        RETURN
             [n IN nodes WHERE n:Company | n.ueid] AS companies,
             [n IN nodes WHERE n:Person | n.name] AS individuals,
             size(relationships) as total_links

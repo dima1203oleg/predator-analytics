@@ -6,7 +6,6 @@ from typing import Any
 
 import yaml
 
-
 logger = logging.getLogger("core.linter")
 
 

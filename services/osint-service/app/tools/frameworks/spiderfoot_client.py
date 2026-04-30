@@ -73,8 +73,8 @@ class SpiderFootTool(BaseTool):
         options = options or {}
 
         scan_type = options.get("scan_type", "quick")
-        modules = options.get("modules", [])
-        max_depth = options.get("max_depth", 2)
+        options.get("modules", [])
+        options.get("max_depth", 2)
 
         findings = []
         scan_results = {

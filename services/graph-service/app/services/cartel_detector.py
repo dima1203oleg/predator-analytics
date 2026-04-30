@@ -46,10 +46,10 @@ class CartelDetectorService:
         WHERE c1.tenant_id = $tenant_id AND c2.tenant_id = $tenant_id
         MATCH (c1)-[*1..2]-(common)-[*1..2]-(c2)
         WHERE NOT (common:Tender) AND c1 <> c2
-        RETURN 
-            t.tender_id as tender, 
-            c1.name as member1, 
-            c2.name as member2, 
+        RETURN
+            t.tender_id as tender,
+            c1.name as member1,
+            c2.name as member2,
             common.name as connection,
             "high_risk" as pattern_type
         LIMIT 100

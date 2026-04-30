@@ -15,10 +15,8 @@ import hashlib
 import logging
 import re
 import uuid
-from typing import Union
 
 from pydantic import BaseModel, Field
-
 
 logger = logging.getLogger("predator.core.ueid")
 
@@ -103,11 +101,12 @@ def fingerprint_entity(name: str, edrpou: str | None = None) -> str:
     return hashlib.sha256(key.encode("utf-8")).hexdigest()
 
 
-def parse_ueid(ueid: Union[str, uuid.UUID]) -> uuid.UUID:
+def parse_ueid(ueid: str | uuid.UUID) -> uuid.UUID:
     """Safely parse UEID into a UUID object.
-    
+
     Raises:
         ValueError: If ueid is not a valid UUID string.
+
     """
     if isinstance(ueid, uuid.UUID):
         return ueid

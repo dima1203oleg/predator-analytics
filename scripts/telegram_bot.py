@@ -1,23 +1,22 @@
 from __future__ import annotations
 
-
 #!/usr/bin/env python3
 """Standalone Telegram Bot - Повністю автономний бот
 Працює без FastAPI, тільки polling.
 """
 import asyncio
+import contextlib
 from dataclasses import dataclass
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 import json
 import logging
 import os
 import re
 import subprocess
 import sys
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 import httpx
-
 
 # Add project to path
 sys.path.insert(0, "/Users/dima-mac/Documents/Predator_21/ua-sources")
@@ -1674,17 +1673,6 @@ async def get_updates(offset: int = 0, timeout: int = 30) -> list[dict]:
 
 async def run_bot():
     """Main bot loop."""
-    print("""
-╔══════════════════════════════════════════════════════════════╗
-║        🤖 Predator Analytics Telegram Bot                    ║
-╠══════════════════════════════════════════════════════════════╣
-║  ✅ Автоматичний парсинг ngrok URLs                          ║
-║  ✅ Оновлення SSH config                                     ║
-║  ✅ Моніторинг сервера                                       ║
-║  ✅ Docker/K8s управління                                    ║
-╚══════════════════════════════════════════════════════════════╝
-    """)
-
     logger.info(f"🚀 Starting bot with token: {BOT_TOKEN[:15]}...")
 
     # Delete existing webhook
@@ -1735,7 +1723,5 @@ async def run_bot():
 
 
 if __name__ == "__main__":
-    try:
+    with contextlib.suppress(KeyboardInterrupt):
         asyncio.run(run_bot())
-    except KeyboardInterrupt:
-        print("\n👋 Bot stopped by user")

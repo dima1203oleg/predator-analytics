@@ -2,13 +2,15 @@
 Моделі даних для автономної архітектури розробки ПЗ (v1.0-ELITE)
 """
 
-from datetime import datetime, UTC
-from enum import Enum
+from datetime import UTC, datetime
+from enum import StrEnum
+
 from pydantic import BaseModel, Field
 
 
-class AgentType(str, Enum):
+class AgentType(StrEnum):
     """Типи спеціалізованих агентів"""
+
     ARCHITECT = "architect"
     SURGEON = "surgeon"
     QA_BROWSER = "qa_browser"
@@ -17,16 +19,18 @@ class AgentType(str, Enum):
     OSINT_EXPERT = "osint_expert"
 
 
-class AgentTechnology(str, Enum):
+class AgentTechnology(StrEnum):
     """Технологічний стек агентів"""
+
     OPENHANDS = "OpenHands"
     AIDER = "Aider"
     CHROME_CDP = "Chrome CDP"
     PLAYWRIGHT = "Playwright"
 
 
-class TaskStatus(str, Enum):
+class TaskStatus(StrEnum):
     """Статуси AGI-задач"""
+
     PENDING = "pending"
     RUNNING = "running"
     COMPLETED = "completed"
@@ -34,8 +38,9 @@ class TaskStatus(str, Enum):
     CANCELLED = "cancelled"
 
 
-class TaskPriority(str, Enum):
+class TaskPriority(StrEnum):
     """Пріоритет виконання"""
+
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
@@ -44,6 +49,7 @@ class TaskPriority(str, Enum):
 
 class AgentStatus(BaseModel):
     """Стан конкретного агента в матриці"""
+
     type: AgentType
     name: str
     technology: AgentTechnology | str
@@ -57,6 +63,7 @@ class AgentStatus(BaseModel):
 
 class AntigravityOrchestratorStatus(BaseModel):
     """Загальний стан системи Antigravity Coder (ELITE-Stabilized)"""
+
     is_running: bool = False
     active_tasks: int = 0
     completed_tasks: int = 0
@@ -73,6 +80,7 @@ class AntigravityOrchestratorStatus(BaseModel):
 
 class AntigravityTaskCreate(BaseModel):
     """Схема створення нової задачі"""
+
     description: str = Field(..., min_length=10, max_length=1000)
     priority: TaskPriority = TaskPriority.MEDIUM
     max_budget_usd: float | None = Field(default=None, ge=0.1)
@@ -80,6 +88,7 @@ class AntigravityTaskCreate(BaseModel):
 
 class AntigravityTask(BaseModel):
     """Повна модель AGI-задачі"""
+
     task_id: str
     description: str
     priority: TaskPriority = TaskPriority.MEDIUM
@@ -96,6 +105,7 @@ class AntigravityTask(BaseModel):
 
 class AntigravityTaskLog(BaseModel):
     """Рядок логу виконання задачі"""
+
     task_id: str
     timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
     level: str = "info"  # info, warn, error, success

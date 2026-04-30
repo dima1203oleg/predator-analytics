@@ -1,13 +1,13 @@
-"""
-Advanced AI/ML API (Phase 11 — SM Edition).
+"""Advanced AI/ML API (Phase 11 — SM Edition).
 
 Endpoints for Topic Modeling (BERTopic), Nightly Batch triggers,
 and Monte Carlo Simulations.
 """
-from fastapi import APIRouter
 from typing import Any
 
-from app.services.ai import TopicModels, NightlyBatchPredictor, MonteCarloSimulator
+from fastapi import APIRouter
+
+from app.services.ai import MonteCarloSimulator, NightlyBatchPredictor, TopicModels
 
 router = APIRouter(prefix="/ai-advanced-v2", tags=["Advanced AI/ML (Topic, Batch, MonteCarlo)"])
 

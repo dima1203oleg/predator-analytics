@@ -10,7 +10,6 @@ from app.connectors.prozorro import prozorro_connector
 from app.connectors.registry import registry_connector
 from app.connectors.tax import tax_connector
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -43,6 +42,7 @@ class DeepScanService:
             query: Search query
             sectors: Sectors to focus on
             sources: Specific sources to query
+
         """
         import time
 

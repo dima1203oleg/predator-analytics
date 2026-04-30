@@ -27,25 +27,35 @@
 """
 
 # Експортуємо всі роутери для зручності імпорту
+from app.api.v1.endpoints.cloud_assist import router as cloud_assist_router
+from app.api.v1.endpoints.factory import router as factory_router
+from app.api.v1.endpoints.osint_vision import router as osint_vision_router
+
+from .admin_chaos import router as admin_chaos_router
+from .admin_v2 import router as admin_v2_router
+from .agents import router as agents_router
 from .alerts import router as alerts_router
 from .analytics import router as analytics_router
+from .antigravity import router as antigravity_router
 from .auth import router as auth_router
 from .cases import router as cases_router
 from .companies import router as companies_router
 from .competitors import router as competitors_router
 from .copilot import router as copilot_router
 from .dashboard import router as dashboard_router
+from .decisions import router as decisions_router
 from .declarations import router as declarations_router
-from app.api.v1.endpoints.cloud_assist import router as cloud_assist_router
-from app.api.v1.endpoints.osint_vision import router as osint_vision_router
-from app.api.v1.endpoints.factory import router as factory_router
+from .forecast import router as forecast_router
 from .graph import router as graph_router
+from .graph_intelligence import router as graph_intelligence_router
 from .ingestion import router as ingestion_router
 from .intelligence import router as intelligence_router
 from .maritime import router as maritime_router
+from .market import router as market_router
 from .ml_studio import router as ml_studio_router
 from .newspaper import router as newspaper_router
 from .optimizer import router as optimizer_router
+from .orchestrator import router as orchestrator_router
 from .osint import router as osint_router
 from .osint_ua import router as osint_ua_router
 from .persons import router as persons_router
@@ -54,40 +64,40 @@ from .public_api import router as public_api_router
 from .registries import router as registries_router
 from .registries_ui import router as registries_ui_router
 from .risk import router as risk_router
+from .sanctions import router as sanctions_router
 from .search import router as search_router
 from .som import router as som_router
 from .system import router as system_router
 from .system import stats_router
-from .antigravity import router as antigravity_router
-from .agents import router as agents_router
 from .warroom import router as warroom_router
-from .admin_chaos import router as admin_chaos_router
-from .graph_intelligence import router as graph_intelligence_router
-from .forecast import router as forecast_router
-from .admin_v2 import router as admin_v2_router
-from .orchestrator import router as orchestrator_router
-from .market import router as market_router
-from .sanctions import router as sanctions_router
-from .decisions import router as decisions_router
 
 __all__ = [
+    "admin_chaos_router",
+    "admin_v2_router",
+    "agents_router",
     "alerts_router",
     "analytics_router",
+    "antigravity_router",
     "auth_router",
     "cases_router",
     "companies_router",
     "competitors_router",
     "copilot_router",
     "dashboard_router",
+    "decisions_router",
     "declarations_router",
     "factory_router",
+    "forecast_router",
+    "graph_intelligence_router",
     "graph_router",
     "ingestion_router",
     "intelligence_router",
     "maritime_router",
+    "market_router",
     "ml_studio_router",
     "newspaper_router",
     "optimizer_router",
+    "orchestrator_router",
     "osint_router",
     "osint_ua_router",
     "persons_router",
@@ -96,19 +106,10 @@ __all__ = [
     "registries_router",
     "registries_ui_router",
     "risk_router",
+    "sanctions_router",
     "search_router",
     "som_router",
-    "system_router",
     "stats_router",
-    "antigravity_router",
-    "agents_router",
+    "system_router",
     "warroom_router",
-    "admin_chaos_router",
-    "admin_v2_router",
-    "graph_intelligence_router",
-    "forecast_router",
-    "orchestrator_router",
-    "market_router",
-    "sanctions_router",
-    "decisions_router",
 ]

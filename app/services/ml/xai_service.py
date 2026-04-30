@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-
 """Explainable AI (XAI) Service
 Provides explanations for ML model predictions using SHAP and LIME.
 """
 import logging
 from typing import TYPE_CHECKING, Any
-
 
 if TYPE_CHECKING:
     import numpy as np
@@ -44,6 +42,7 @@ class XAIService:
 
         Returns:
             Explanation with token importance scores
+
         """
         try:
             # Simple token overlap analysis (fast, no heavy ML)
@@ -105,6 +104,7 @@ class XAIService:
 
         Returns:
             List of SHAP explanations per input
+
         """
         try:
             import shap
@@ -150,6 +150,7 @@ class XAIService:
 
         Returns:
             Results with added explanation field
+
         """
         explained_results = []
 
@@ -200,6 +201,7 @@ class XAIService:
 
         Returns:
             Heatmap data for frontend visualization
+
         """
         query_tokens = query.lower().split()
         doc_tokens = document.lower().split()[:50]  # Limit for visualization

@@ -6,7 +6,7 @@ Spec 5.1, 7.1-7.3: BVI, ASS, CP per entity.
 
 from __future__ import annotations
 
-from datetime import datetime, timezone, date
+from datetime import UTC, datetime
 
 from sqlalchemy import BigInteger, Column, Date, DateTime, Float, ForeignKey, Index
 from sqlalchemy.dialects.postgresql import UUID
@@ -34,7 +34,7 @@ class BehavioralScoreORM(Base):
     )
     confidence = Column(Float, nullable=False)
     calculated_at = Column(
-        DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc)
+        DateTime(timezone=True), nullable=False, default=lambda: datetime.now(UTC)
     )
     data_window_start = Column(Date, nullable=True)
     data_window_end = Column(Date, nullable=True)

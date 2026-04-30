@@ -65,7 +65,7 @@ class AlephTool(BaseTool):
         start_time = datetime.now(UTC)
         options = options or {}
 
-        entity_type = options.get("entity_type", "any")
+        options.get("entity_type", "any")
         limit = options.get("limit", 50)
 
         findings = []

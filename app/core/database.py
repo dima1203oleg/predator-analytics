@@ -1,5 +1,4 @@
-"""
-Канонічний рівень роботи з БАЗОЮ ДАНИХ PREDATOR Analytics v4.2.0.
+"""Канонічний рівень роботи з БАЗОЮ ДАНИХ PREDATOR Analytics v4.2.0.
 
 Єдиний canonical Base для всіх ORM моделей.
 Використовує SQLAlchemy asyncpg pool.
@@ -8,8 +7,7 @@
 
 from __future__ import annotations
 
-from collections.abc import AsyncGenerator
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from sqlalchemy import NullPool
 from sqlalchemy.ext.asyncio import (
@@ -17,9 +15,12 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
     create_async_engine,
 )
-from sqlalchemy.orm import DeclarativeBase, MappedAsDataclass, declared_attr
+from sqlalchemy.orm import DeclarativeBase, declared_attr
 
 from app.core.settings import get_settings
+
+if TYPE_CHECKING:
+    from collections.abc import AsyncGenerator
 
 settings = get_settings()
 
@@ -49,8 +50,7 @@ SessionLocal = async_sessionmaker(
 # ── Declarative Base (CANONICAL — v4.2.0) ────────────────────
 
 class Base(DeclarativeBase):
-    """
-    Єдиний базовий клас для ВСІХ ORM моделей PREDATOR Analytics.
+    """Єдиний базовий клас для ВСІХ ORM моделей PREDATOR Analytics.
 
     Всі моделі (entities.py, declaration.py, company.py, product.py,
     country.py, etc.) ПОВИННІ наслідувати саме цей Base.
@@ -60,17 +60,16 @@ class Base(DeclarativeBase):
     """
 
     @declared_attr.directive
-    def __tablename__(cls) -> str:
+    def __tablename__(self) -> str:
         # Якщо клас визначив __tablename__ вручну — SQLAlchemy
         # використає його, не викликаючи declared_attr
-        return cls.__name__.lower()
+        return self.__name__.lower()
 
 
 # ── Dependency ──────────────────────────────────────────────
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
-    """
-    FastAPI dependency: забезпечує сесію для роутів.
+    """FastAPI dependency: забезпечує сесію для роутів.
 
     Закривається автоматично після завершення запиту.
     """

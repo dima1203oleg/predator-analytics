@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """═══════════════════════════════════════════════════════════════
 AXIOM REGISTRY - Constitutional Axiom Management
 Predator Analytics v45-S.
@@ -20,7 +19,6 @@ from pathlib import Path
 from typing import Any
 
 import yaml
-
 
 logger = logging.getLogger("azr.axiom_registry")
 

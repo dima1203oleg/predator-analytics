@@ -1,34 +1,38 @@
-"""
-🚑 HEALTH — /api/v1/health
+"""🚑 HEALTH — /api/v1/health
 Canonical health checks for PREDATOR Analytics v4.2.0.
 """
 
 from __future__ import annotations
+
 import time
+from typing import TYPE_CHECKING
+
 from fastapi import APIRouter, Depends
 from sqlalchemy import text
-from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core.database import get_db
 from app.core.settings import get_settings
+
+if TYPE_CHECKING:
+    from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter(prefix="/health")
 settings = get_settings()
 
 @router.get("")
 async def health_check(db: AsyncSession = Depends(get_db)):
-    """
-    Check system health including database connectivity.
+    """Check system health including database connectivity.
     """
     start_time = time.time()
     db_status = "UP"
     db_latency = 0.0
-    
+
     try:
         db_start = time.time()
         await db.execute(text("SELECT 1"))
         db_latency = float(f"{(time.time() - db_start) * 1000:.2f}")
     except Exception as e:
-        db_status = f"DOWN: {str(e)}"
+        db_status = f"DOWN: {e!s}"
 
     return {
         "status": "HEALTHY" if db_status == "UP" else "DEGRADED",
@@ -50,14 +54,12 @@ async def health_check(db: AsyncSession = Depends(get_db)):
 
 @router.get("/ready")
 async def readiness_probe():
-    """
-    Simple readiness probe for Kubernetes/Orchestration.
+    """Simple readiness probe for Kubernetes/Orchestration.
     """
     return {"status": "READY"}
 
 @router.get("/live")
 async def liveness_probe():
-    """
-    Simple liveness probe.
+    """Simple liveness probe.
     """
     return {"status": "ALIVE"}

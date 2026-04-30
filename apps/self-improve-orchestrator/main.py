@@ -1,41 +1,45 @@
 #!/usr/bin/env python3
-"""
-PREDATOR ANALYTICS v45.0 - AUTONOMOUS ORCHESTRATOR
+"""PREDATOR ANALYTICS v45.0 - AUTONOMOUS ORCHESTRATOR
 God Mode: Infinite Self-Improvement Loop
 
 This is the BRAIN of the system. It runs on the server 24/7.
 """
 import asyncio
-import logging
-import sys
-import os
-import uuid
-import json
+import contextlib
 from datetime import datetime
-import redis.asyncio as aioredis
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.orm import sessionmaker
-
-import logging
 import json
-from typing import Optional, Dict, List, Any
+import os
+
+import redis.asyncio as aioredis
 
 from libs.core.config import settings
+from libs.core.database import async_session_maker
 from libs.core.logger import setup_logger
-from libs.core.database import async_session_maker, engine
-from libs.core.llm import llm_service
 
 # Setup paths
 # root is already added by Docker/K8s or manual sys.path in docker-compose
-
 from .support import (
-    Chairman, Critic, Analyst, reach_consensus,
-    CodeImprover, UIGuardian, DataSentinel,
-    GitAutoCommitter, ChangeObserver, ProposalArbitrator,
-    AdvancedMemoryManager, ReflexionAgent, TreeOfThoughtsPlanner,
-    SelfHealingSystem, PerformancePredictor, AutoScaler,
-    get_knowledge_graph, TrainingManager, PowerMonitor, VoiceHandler,
-    create_council_debate
+    AdvancedMemoryManager,
+    Analyst,
+    AutoScaler,
+    Chairman,
+    ChangeObserver,
+    CodeImprover,
+    Critic,
+    DataSentinel,
+    GitAutoCommitter,
+    PerformancePredictor,
+    PowerMonitor,
+    ProposalArbitrator,
+    ReflexionAgent,
+    SelfHealingSystem,
+    TrainingManager,
+    TreeOfThoughtsPlanner,
+    UIGuardian,
+    VoiceHandler,
+    create_council_debate,
+    get_knowledge_graph,
+    reach_consensus,
 )
 
 # --- LOGGING SETUP ---
@@ -214,19 +218,16 @@ class AutonomousOrchestrator:
         """Update current activity status in Redis and Log"""
         self.current_activity = activity
         if self.redis:
-            try:
+            with contextlib.suppress(Exception):
                 await self.redis.set(
                     f"orchestrator:activity:{settings.APP_NAME}",
                     activity,
                     ex=3600
                 )
-            except Exception:
-                pass
         logger.info(f"📍 Активність: {activity}")
 
-    async def broadcast(self, stage: str, message: str, status: str = "processing", details: str = None):
-        """
-        Send live updates to Telegram via Redis Pub/Sub or Direct Message Update.
+    async def broadcast(self, stage: str, message: str, status: str = "processing", details: str | None = None):
+        """Send live updates to Telegram via Redis Pub/Sub or Direct Message Update.
         Stages: 'analyst', 'critic', 'architect', 'execution'
         """
         try:
@@ -312,7 +313,6 @@ class AutonomousOrchestrator:
                     # We bypass human approval for total autonomy
                     logger.info("🛡️ АВТО-СХВАЛЕННЯ УВІМКНЕНО: Обхід підтвердження людиною.")
                     await self.broadcast("approval", "✅ АВТО-СХВАЛЕННЯ (Глобальна політика)", "success")
-                    approved_by_user = True
                     # --- AUTO APPROVAL BLOCK END ---
 
                     # 5. EXECUTION
@@ -373,7 +373,6 @@ class AutonomousOrchestrator:
 
     async def identify_task(self, analysis: dict, metrics: dict) -> dict:
         """Identify what to work on next"""
-
         # 1. Check Redis Queue (Tasks from Telegram)
         if self.redis:
             try:
@@ -595,7 +594,7 @@ class AutonomousOrchestrator:
                 await self.notify(f"✅ Changes applied and committed: {file_path}")
                 return True
             else:
-                await self.notify(f"⚠️ Changes applied but git commit failed")
+                await self.notify("⚠️ Changes applied but git commit failed")
                 return True # Code is there, just git failed
 
         except Exception as e:
@@ -642,7 +641,7 @@ class AutonomousOrchestrator:
                 await self.performance.record_metric(metric_name, value)
 
             # Check for anomalies
-            for metric_name in metrics.keys():
+            for metric_name in metrics:
                 is_anomaly, score = await self.performance.detect_anomaly(metric_name)
                 if is_anomaly:
                     logger.warning(f"🔴 Аномалія: {metric_name} (оцінка: {score:.2f})")

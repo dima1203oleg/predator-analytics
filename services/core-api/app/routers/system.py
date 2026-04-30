@@ -1,10 +1,10 @@
 import asyncio
 from datetime import UTC, datetime, timedelta
+import subprocess
 from typing import Any
 
 from fastapi import APIRouter, Request
 import psutil
-import subprocess
 
 from app.config import get_settings
 from app.core.health import health_service
@@ -95,7 +95,7 @@ def _collect_system_stats(request: Request) -> dict[str, Any]:
     memory = psutil.virtual_memory()
     disk = psutil.disk_usage("/")
     network = psutil.net_io_counters()
-    
+
     gpu = _collect_gpu_stats()
 
     try:
@@ -144,7 +144,7 @@ def _collect_antigravity_stats() -> dict[str, Any]:
     from app.services.antigravity_orchestrator import orchestrator
     status = orchestrator.get_status()
     tasks = orchestrator.get_tasks()
-    
+
     return {
         "is_running": status.is_running,
         "active_agents": len([a for a in status.agents if a.is_busy]),
@@ -270,13 +270,14 @@ async def get_system_status(request: Request) -> dict[str, Any]:
 @router.get("/metrics/history")
 async def get_metrics_history() -> list[dict[str, Any]]:
     """Повертає історію метрик за останні 24 години з Redis."""
-    from app.services.redis_service import get_redis_service
     import json
-    
+
+    from app.services.redis_service import get_redis_service
+
     redis = get_redis_service()
     if not redis._connected:
         return []
-        
+
     try:
         key = "system:metrics:history"
         raw_data = await redis._client.lrange(key, 0, -1)
@@ -307,7 +308,7 @@ async def run_system_diagnostics(request: Request) -> dict[str, Any]:
     """Запускає поглиблену діагностику системи для UI."""
     health = await _health_snapshot()
     stats = _collect_system_stats(request)
-    
+
     from app.main import sovereign_guardian
     predictions = await sovereign_guardian.get_predictions()
 
@@ -330,7 +331,7 @@ async def run_system_diagnostics(request: Request) -> dict[str, Any]:
 async def get_cluster_status(request: Request) -> dict[str, Any]:
     """Отримати фактичний зведений стан сервісів для UI моніторингу."""
     from app.services.orchestrator_service import orchestrator_service
-    
+
     health = await _health_snapshot()
     stats = _collect_system_stats(request)
     pods_data = await orchestrator_service.get_pods()
@@ -356,11 +357,11 @@ async def get_cluster_status(request: Request) -> dict[str, Any]:
 async def stream_system_logs(limit: int = 1000) -> list[dict[str, Any]]:
     """Повертає стрім системних логів, включаючи стан оркестрованих подів."""
     from app.services.orchestrator_service import orchestrator_service
-    
+
     health = await _health_snapshot()
     pods_data = await orchestrator_service.get_pods()
     pods = [p.dict() for p in pods_data]
-    
+
     now = datetime.now(UTC)
     logs: list[dict[str, Any]] = []
 
@@ -389,7 +390,7 @@ async def stream_system_logs(limit: int = 1000) -> list[dict[str, Any]]:
     for index, pod in enumerate(pods):
         status = pod["status"]
         level = "INFO" if status == "Running" else "WARN" if status == "Pending" else "ERROR"
-        
+
         # Симулюємо змістовні повідомлення логів
         if status == "Running":
             msg = f"Pod {pod['name']} ({pod['id']}) стабільний. CPU: {pod['cpu']}, MEM: {pod['mem']}."
@@ -470,20 +471,21 @@ async def get_engines(request: Request) -> dict[str, Any]:
 @router.get("/nexus/scenarios")
 async def get_nexus_scenarios() -> list[dict[str, Any]]:
     """Повертає активні OSINT-сценарії з Redis."""
-    from app.services.redis_service import get_redis_service
     import json
-    
+
+    from app.services.redis_service import get_redis_service
+
     redis = get_redis_service()
     if not redis._connected:
         return []
-        
+
     try:
         data = await redis.get("system:nexus:scenarios")
         if data:
             return json.loads(data)
     except Exception:
         pass
-        
+
     # Default fallbacks if redis is empty
     return [
         {
@@ -503,12 +505,13 @@ dlq_router = APIRouter(prefix="/dlq", tags=["system", "dlq"])
 @dlq_router.get("/{tenant_id}")
 async def view_dlq_messages(tenant_id: str, limit: int = 50) -> list[dict[str, Any]]:
     """Перелік повідомлень з Dead Letter Queue для конкретного tenant (TZ v5.0 §5)."""
-    from aiokafka import AIOKafkaConsumer
     import json
-    
+
+    from aiokafka import AIOKafkaConsumer
+
     # Визначаємо DLQ топік для tenant
     topic = f"tenant.{tenant_id}.dlq"
-    
+
     messages = []
     consumer = AIOKafkaConsumer(
         topic,
@@ -518,7 +521,7 @@ async def view_dlq_messages(tenant_id: str, limit: int = 50) -> list[dict[str, A
         auto_offset_reset="earliest",
         consumer_timeout_ms=1000  # Читаємо протягом 1с і виходимо
     )
-    
+
     try:
         await consumer.start()
         # Отримуємо частину повідомлень
@@ -547,14 +550,15 @@ async def view_dlq_messages(tenant_id: str, limit: int = 50) -> list[dict[str, A
 async def retry_dlq_messages(tenant_id: str, target_topic: str) -> dict[str, Any]:
     """Повторна обробка (retry) всіх повідомлень з DLQ до target_topic."""
     # Імпортуємо існуючу логіку з kafka_dlq
-    from app.kafka_dlq import replay_dlq
     import asyncio
-    
+
+    from app.kafka_dlq import replay_dlq
+
     dlq_topic = f"tenant.{tenant_id}.dlq"
-    
+
     # Запускаємо процес у фоні щоб не блокувати API
     asyncio.create_task(replay_dlq(dlq_topic, target_topic))
-    
+
     return {
         "status": "processing",
         "message": f"Почато retry повідомлень з {dlq_topic} до {target_topic}",

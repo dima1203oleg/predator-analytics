@@ -25,7 +25,6 @@ import json
 from typing import TYPE_CHECKING, Any
 import uuid
 
-
 if TYPE_CHECKING:
     from collections.abc import Callable
 

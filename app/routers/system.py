@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import contextlib
 from datetime import UTC, datetime
 import json
 import os
@@ -12,7 +13,6 @@ from fastapi.responses import HTMLResponse
 import psutil
 
 from app.api.routers import health
-
 
 router = APIRouter(prefix="/system", tags=["System"])
 
@@ -206,10 +206,8 @@ async def get_complexity_report():
 
     # 1. Try to run the script to get fresh data
     if os.path.exists(script_path):
-        try:
+        with contextlib.suppress(Exception):
             subprocess.run(["python3", script_path], check=False, timeout=30)
-        except Exception as e:
-            print(f"Error running complexity script: {e}")
 
     # 2. Return HTML if exists
     if os.path.exists(report_path):

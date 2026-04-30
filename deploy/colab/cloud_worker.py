@@ -1,8 +1,9 @@
 import asyncio
-import os
 import logging
-from predator_common.kafka import PredatorConsumer
+import os
+
 from app.services.osint_vision_service import osint_vision
+from predator_common.kafka import PredatorConsumer
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("ColabWorker")
@@ -23,7 +24,7 @@ async def main():
         group_id="colab_group",
         bootstrap_servers=bootstrap_servers
     )
-    
+
     logger.info(f"🔗 Підключено до Kafka: {bootstrap_servers}")
     async for message in consumer:
         await process_task(message['type'], message['data'])

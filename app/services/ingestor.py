@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Ingestor Service - Data ingestion pipeline
 Handles bulk data import from various sources into Qdrant Vector DB.
 """
@@ -16,7 +15,6 @@ import uuid
 
 from .embedding_service import get_embedding_service
 from .qdrant_service import get_qdrant_service
-
 
 logger = logging.getLogger(__name__)
 
@@ -75,6 +73,7 @@ class IngestorService:
         Args:
             source: Data source identifier
             config: Source-specific configuration (must contain 'records' list)
+
         """
         job_id = str(uuid.uuid4())[:8]
         records = config.get("records", [])

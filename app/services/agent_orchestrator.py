@@ -5,7 +5,6 @@ import os
 
 from app.libs.core.structured_logger import get_logger
 
-
 logger = get_logger("predator.agent_orchestrator")
 
 

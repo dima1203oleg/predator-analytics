@@ -4,11 +4,11 @@ Simulates the full lifecycle from API -> MCP -> RTB without K8s.
 Uses FastAPI TestClient to mount applications directly.
 """
 
-import pytest
 from fastapi.testclient import TestClient
+import pytest
 from services.api.main import app as api_app
-from services.rtb_engine.engine import app as rtb_app
 from services.mcp_router.router import app as mcp_app
+from services.rtb_engine.engine import app as rtb_app
 
 # Create Clients
 api_client = TestClient(api_app)
@@ -82,7 +82,7 @@ def test_rtb_event_flow(monkeypatch):
     """
     async def mock_save(*args, **kwargs):
         pass
-    
+
     monkeypatch.setattr("services.rtb_engine.audit.store.AuditStore.save", mock_save)
 
     # 1. Send High Severity Event

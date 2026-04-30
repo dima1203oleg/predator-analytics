@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Middleware for Predator Analytics
 - Rate Limiting
 - Request Logging
@@ -19,7 +18,6 @@ from fastapi.responses import JSONResponse
 from prometheus_client import REGISTRY, Counter, Gauge, Histogram
 import redis.asyncio as aioredis
 from starlette.middleware.base import BaseHTTPMiddleware
-
 
 if TYPE_CHECKING:
     from collections.abc import Callable

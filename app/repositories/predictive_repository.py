@@ -6,15 +6,19 @@ Handles DB operations for PredictiveScoreORM.
 from __future__ import annotations
 
 import logging
-from uuid import UUID
+from typing import TYPE_CHECKING
 
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.engines.predictive import PredictiveScore
-from app.models.v55.orm.predictive_score import PredictiveScoreORM
 from app.core.ueid import parse_ueid
+from app.models.v55.orm.predictive_score import PredictiveScoreORM
 
+if TYPE_CHECKING:
+    from uuid import UUID
+
+    from sqlalchemy.ext.asyncio import AsyncSession
+
+    from app.engines.predictive import PredictiveScore
 
 logger = logging.getLogger("predator.repo.predictive")
 

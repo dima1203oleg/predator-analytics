@@ -23,7 +23,6 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 import logging
 
-
 # Lazy imports to avoid circular dependencies
 # from app.libs.core.graph_rag_memory import get_knowledge_graph, NodeType, EdgeType
 # from app.libs.core.mcp_integration import get_mcp_orchestrator

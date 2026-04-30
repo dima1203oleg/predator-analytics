@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Vault Service - HashiCorp Vault Integration
 Secure secrets management.
 """
@@ -10,7 +9,6 @@ from typing import Any
 import httpx
 
 from app.core.config import settings
-
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +30,7 @@ class VaultService:
         Args:
             path: Secret path (e.g., "secret/data/llm/openai")
             key: Specific key within the secret
+
         """
         if not self.enabled:
             logger.warning("Vault not configured, using environment variables")

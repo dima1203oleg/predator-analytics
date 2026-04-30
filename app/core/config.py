@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-
 """Shim for Core Configuration
 Redirects to libs.core.config.
 """
 from pathlib import Path
 import sys
-
 
 # Add project root to path to find libs
 try:
@@ -25,9 +23,8 @@ except Exception:
 # Re-export settings from shared libs
 try:
     from app.libs.core.config import settings
-except ImportError as e:
+except ImportError:
     # If libs is not found, we might face issue
-    print(f"CRITICAL: Could not import settings from app.libs.core.config: {e}")
 
     # Minimal mock to avoid immediate crash during import scanning, but app will fail later
     class MockSettings:

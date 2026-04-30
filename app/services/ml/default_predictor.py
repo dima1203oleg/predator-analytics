@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Default Predictor (COMP-067)
 
 Прогнозування дефолту/банкрутства компаній.
@@ -9,11 +8,10 @@ from __future__ import annotations
 - Modified Z-score для не-публічних компаній
 - ML-enhanced scoring з додатковими фічами
 """
-import logging
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
+import logging
 from typing import Any
-
 
 logger = logging.getLogger("service.default_predictor")
 
@@ -21,6 +19,7 @@ logger = logging.getLogger("service.default_predictor")
 @dataclass
 class DefaultPrediction:
     """Default/bankruptcy prediction result."""
+
     ueid: str
     company_name: str
     z_score: float
@@ -85,6 +84,7 @@ class DefaultPredictor:
 
         Returns:
             DefaultPrediction
+
         """
         total_assets = financials.get("total_assets", 0)
 

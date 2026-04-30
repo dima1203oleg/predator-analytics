@@ -4,7 +4,6 @@ from fastapi import APIRouter, HTTPException
 
 from app.services.newspaper_service import newspaper_service
 
-
 router = APIRouter(prefix="/newspaper", tags=["premium"])
 
 

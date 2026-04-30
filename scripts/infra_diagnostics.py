@@ -1,9 +1,6 @@
 import asyncio
-import os
-import json
-import socket
-import logging
 from datetime import datetime
+import logging
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -11,7 +8,7 @@ logger = logging.getLogger("PROD_DIAGNOSTICS")
 
 async def check_tcp(host, port, name):
     try:
-        reader, writer = await asyncio.wait_for(asyncio.open_connection(host, port), timeout=2.0)
+        _reader, writer = await asyncio.wait_for(asyncio.open_connection(host, port), timeout=2.0)
         writer.close()
         await writer.wait_closed()
         return {"id": name, "status": "UP", "host": host, "port": port}
@@ -45,7 +42,7 @@ async def run_diagnostics():
     tasks = [check_tcp(s[0], s[1], s[2]) for s in services]
     results = await asyncio.gather(*tasks)
 
-    report = {
+    {
         "timestamp": datetime.now().isoformat(),
         "results": results,
         "summary": {
@@ -55,7 +52,6 @@ async def run_diagnostics():
         }
     }
 
-    print(json.dumps(report, indent=2))
 
 if __name__ == "__main__":
     asyncio.run(run_diagnostics())

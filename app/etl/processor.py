@@ -1,10 +1,8 @@
 from __future__ import annotations
 
-
 """ETL Processor - Data transformation pipeline."""
 from dataclasses import dataclass
 import logging
-
 
 logger = logging.getLogger(__name__)
 

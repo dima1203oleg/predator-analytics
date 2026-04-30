@@ -7,7 +7,6 @@ from pydantic import BaseModel
 
 from app.agents.copilot import CopilotAgent
 
-
 router = APIRouter()
 
 

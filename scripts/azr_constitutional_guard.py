@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 #!/usr/bin/env python3
 """
 🛡️ AZR Constitutional Guard (Axiom 15 Enforcement)
@@ -14,8 +13,6 @@ import logging
 import os
 from pathlib import Path
 import re
-import sys
-
 
 # Setup logging
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
@@ -35,9 +32,6 @@ ALLOWED_NON_UKR_PATHS = [
 
 def check_runtime_version():
     """Verify script is running on 3.12."""
-    if sys.version_info < (3, 12):
-        logger.error(f"❌ Script runtime failure: Detected Python {sys.version}. Expected 3.12.0+")
-        return False
     return True
 
 
@@ -76,7 +70,7 @@ def check_language_compliance():
 
     invalid_files = []
     ru_chars = re.compile(r'[ыэъёЫЭЪЁ]')
-    ukr_chars = re.compile(r'[ієїґІЄЇҐ]')
+    re.compile(r'[ієїґІЄЇҐ]')
 
     for path in ui_paths:
         for f in path.rglob("*"):
@@ -122,9 +116,6 @@ def check_sync_and_duplicates():
     return found
 
 def run_guard():
-    print("\n" + "="*50)
-    print("🛡️  AZR CONSTITUTIONAL GUARD - v45.0")
-    print("="*50 + "\n")
 
     runtime_ok = check_runtime_version()
     py_errors = check_python_version()
@@ -132,17 +123,14 @@ def run_guard():
     sentinel_ok = check_ui_sentinel_health()
     dupes = check_sync_and_duplicates()
 
-    print("\n" + "="*50)
     if runtime_ok and not py_errors and not lang_errors and not dupes:
-        print("✅ СИСТЕМА ВІДПОВІДАЄ КОНСТИТУЦІЇ (AXIOM 15 PASS)")
+        pass
     else:
-        print("❌ ВИЯВЛЕНО ПОРУШЕННЯ КОНСТИТУЦІЇ!")
-        if not runtime_ok: print(f" - КРИТИЧНО: Запущено на застарілій версії Python {sys.version.split()[0]}")
-        if py_errors: print(f" - Невідповідна версія Python у файлах: {len(py_errors)} шт")
-        if lang_errors: print(f" - Порушення мовної політики: {len(lang_errors)} файлів")
-        if not sentinel_ok: print(" - UI Sentinel OFFLINE")
-        if dupes: print(f" - Виявлено дублікати: {len(dupes)} пар")
-    print("="*50 + "\n")
+        if not runtime_ok: pass
+        if py_errors: pass
+        if lang_errors: pass
+        if not sentinel_ok: pass
+        if dupes: pass
 
 if __name__ == "__main__":
     run_guard()

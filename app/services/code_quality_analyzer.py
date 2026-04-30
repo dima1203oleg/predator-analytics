@@ -6,7 +6,6 @@ from typing import Any
 
 from app.libs.core.structured_logger import get_logger
 
-
 logger = get_logger("service.code_quality")
 
 

@@ -1,5 +1,4 @@
-"""
-📈 Прогнозування попиту — PREDATOR Analytics v4.1.
+"""📈 Прогнозування попиту — PREDATOR Analytics v4.1.
 
 Використовує Prophet для сезонного прогнозування
 обсягів імпорту за товарними позиціями УКТЗЕД.
@@ -11,9 +10,9 @@
 
 from __future__ import annotations
 
-import math
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
+import math
 from typing import Any
 
 import structlog
@@ -46,8 +45,7 @@ class ForecastResult:
 
 
 class DemandForecaster:
-    """
-    Прогнозувач попиту на основі Prophet.
+    """Прогнозувач попиту на основі Prophet.
 
     Аналізує історичні дані митних декларацій
     та будує прогноз на задану кількість місяців.
@@ -63,8 +61,7 @@ class DemandForecaster:
         months_ahead: int = 6,
         country_code: str | None = None,
     ) -> ForecastResult:
-        """
-        Побудова прогнозу попиту.
+        """Побудова прогнозу попиту.
 
         Args:
             product_code: Код товару УКТЗЕД
@@ -73,6 +70,7 @@ class DemandForecaster:
 
         Returns:
             ForecastResult з прогнозними точками
+
         """
         logger.info(
             "Побудова прогнозу попиту",

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Temporal Workflows for SuperIntelligence Self-Improvement v45.0.
 
 Implements durable, fault-tolerant workflows for:
@@ -15,7 +14,6 @@ from datetime import timedelta
 from enum import StrEnum
 import logging
 from typing import Any
-
 
 # Temporal imports (with fallback for when not installed)
 try:

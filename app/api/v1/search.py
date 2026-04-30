@@ -1,11 +1,13 @@
-"""
-🔎 SEARCH — /api/v1/search
+"""🔎 SEARCH — /api/v1/search
 Canonical Hybrid Search (OpenSearch + Qdrant) for PREDATOR Analytics v4.2.0.
 """
 
 from __future__ import annotations
-from fastapi import APIRouter, Query, HTTPException
+
 from typing import Any
+
+from fastapi import APIRouter, HTTPException, Query
+
 from app.services.search_fusion import hybrid_search_with_rrf
 
 router = APIRouter(prefix="/search")
@@ -17,8 +19,7 @@ async def global_search(
     tenant: str = Query("default"),
     index: str = Query("idx_staging_customs")
 ) -> dict[str, Any]:
-    """
-    Виконує глобальний гібридний пошук по всій системі.
+    """Виконує глобальний гібридний пошук по всій системі.
     Об'єднує результати OpenSearch та Qdrant за допомогою алгоритму RRF.
     """
     try:
@@ -30,4 +31,4 @@ async def global_search(
         )
         return results
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Search operation failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Search operation failed: {e!s}")

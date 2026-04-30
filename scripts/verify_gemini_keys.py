@@ -6,7 +6,6 @@ import os
 from dotenv import load_dotenv
 import httpx
 
-
 load_dotenv()
 
 async def check_key(key):
@@ -16,11 +15,10 @@ async def check_key(key):
     }
     async with httpx.AsyncClient() as client:
         r = await client.post(url, json=payload)
-        print(f"Key: {key[:10]}... Status: {r.status_code}")
         if r.status_code != 200:
-            print(f"Error: {r.text}")
+            pass
         else:
-            print("Success!")
+            pass
 
 # Try the single key
 single_key = os.getenv("GEMINI_API_KEY")

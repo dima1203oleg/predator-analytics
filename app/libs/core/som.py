@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Sovereign Observer Module (SOM) - Predator Analytics v45."""
 import logging
 from typing import Any
@@ -14,7 +13,6 @@ from app.libs.core.etl_monitor import ETLConstitutionalMonitor
 # SOM v45 Components
 from app.libs.core.proposals import AgentCoordinationProtocol, AgentRole, ImprovementProposal
 from app.libs.core.test_runner import ConstitutionalTestRunner
-
 
 logger = logging.getLogger(__name__)
 

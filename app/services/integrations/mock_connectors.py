@@ -1,13 +1,15 @@
 class YouControlConnector:
     """YouControl API Connector (COMP-036)"""
+
     def __init__(self):
         self.api_key = "MOCK_KEY"
-        
+
     def get_dossier(self, edrpou: str):
         return {"edrpou": edrpou, "status": "active", "risk_level": "low"}
 
 class GoogleTrendsConnector:
     """Google Trends API Connector (COMP-037)"""
+
     def __init__(self):
         pass
 
@@ -16,6 +18,7 @@ class GoogleTrendsConnector:
 
 class SocialMediaParser:
     """Social Media Parser (COMP-038)"""
+
     def __init__(self):
         pass
 
@@ -24,6 +27,7 @@ class SocialMediaParser:
 
 class PropertyRegistryParser:
     """Property Registry Parser (COMP-039)"""
+
     def __init__(self):
         pass
 
@@ -32,6 +36,7 @@ class PropertyRegistryParser:
 
 class VacancyParser:
     """Vacancy Parser (COMP-040)"""
+
     def __init__(self):
         pass
 

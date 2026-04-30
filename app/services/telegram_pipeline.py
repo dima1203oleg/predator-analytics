@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Telegram Intelligence Pipeline.
 
 Повний пайплайн для парсингу Telegram каналів:
@@ -20,7 +19,6 @@ from typing import Any
 
 from .document_processor import get_document_processor
 from .media_processor import get_media_processor
-
 
 logger = logging.getLogger("pipeline.telegram")
 

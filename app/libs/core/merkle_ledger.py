@@ -22,7 +22,6 @@ from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 import hashlib
 import json
-import os
 from pathlib import Path
 import threading
 from typing import Any
@@ -110,7 +109,7 @@ class MerkleTruthLedger:
     GENESIS_HASH = sha3_512("PREDATOR_AZR_GENESIS_BLOCK_v40")
 
     def __init__(self, storage: Any = "/tmp/azr_logs"):
-        from app.libs.core.storage import StorageProvider, FileStorageProvider
+        from app.libs.core.storage import FileStorageProvider
         if isinstance(storage, (str, Path)):
             self.storage = FileStorageProvider(Path(storage))
         else:
@@ -189,6 +188,7 @@ class MerkleTruthLedger:
 
         Returns:
             Created LedgerEntry with cryptographic proofs
+
         """
         with self._lock:
             self._sequence += 1
@@ -249,6 +249,7 @@ class MerkleTruthLedger:
 
         Returns:
             (success, message, entries_removed)
+
         """
         with self._lock:
             if not self._entries:
@@ -365,6 +366,7 @@ class MerkleTruthLedger:
 
         Returns:
             (is_valid, message)
+
         """
         if not self._entries:
             return True, "Порожній реєстр - дійсний"
@@ -408,6 +410,7 @@ class MerkleTruthLedger:
 
         Returns:
             MerkleProof if entry exists, None otherwise
+
         """
         if sequence < 1 or sequence > len(self._entries):
             return None
@@ -521,7 +524,7 @@ _ledger_lock = threading.Lock()
 def get_truth_ledger(storage: Any = "/tmp/azr_logs") -> MerkleTruthLedger:
     """Get or create the Truth Ledger instance for a specific storage path."""
     global _ledger_instances
-    
+
     # Normalize path key
     from app.libs.core.storage import StorageProvider
     if isinstance(storage, StorageProvider):
@@ -571,6 +574,7 @@ def repair_truth() -> tuple[bool, str, int]:
 
     Returns:
         (success, message, entries_removed)
+
     """
     ledger = get_truth_ledger()
     return ledger.repair_from_corruption()
@@ -581,8 +585,6 @@ def repair_truth() -> tuple[bool, str, int]:
 # ============================================================================
 
 if __name__ == "__main__":
-    print("🏛️ MERKLE TRUTH LEDGER - Self-Test")
-    print("=" * 60)
 
     # Create test ledger
     ledger = MerkleTruthLedger("/tmp/azr_test_ledger")
@@ -596,18 +598,14 @@ if __name__ == "__main__":
             metadata={"test": True},
         )
         entries.append(entry)
-        print(f"✅ Entry {entry.sequence}: hash={entry.payload_hash[:32]}...")
 
     # Verify chain
     is_valid, message = ledger.verify_chain_integrity()
-    print(f"\n🔍 Chain Verification: {message}")
 
     # Generate and verify proof
     proof = ledger.get_proof(3)
     if proof:
         verified = ledger.verify_proof(proof)
-        print(f"📜 Proof for entry 3: verified={verified}")
 
     # Print stats
     stats = ledger.get_stats()
-    print(f"\n📊 Stats: {json.dumps(stats, indent=2)}")

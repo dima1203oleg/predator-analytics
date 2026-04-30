@@ -190,9 +190,8 @@ if start_str in content and end_str in content:
     content = content[:content.find(start_str)] + new_nav_groups + "\n" + content[content.find(end_str):]
     content = content.replace("titles.add('ШТАБ');", "titles.add('КОМАНДНИЙ ЦЕНТР');")
     content = content.replace("useState<Set<string>>(new Set(['ШТАБ']));", "useState<Set<string>>(new Set(['КОМАНДНИЙ ЦЕНТР']));")
-    
+
     with codecs.open(path, 'w', 'utf-8') as f:
         f.write(content)
-    print("Sidebar nav groups successfully updated!")
 else:
-    print("Could not find delimiters.")
+    pass

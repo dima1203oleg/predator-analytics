@@ -5,7 +5,6 @@ from datetime import datetime
 import sys
 import uuid
 
-
 # Set up PYTHONPATH for libs
 sys.path.append("/app")
 
@@ -31,7 +30,6 @@ async def create_dummy_log():
         )
         session.add(log)
         await session.commit()
-        print(f"Created dummy log with ID: {log.id}")
 
 if __name__ == "__main__":
     asyncio.run(create_dummy_log())

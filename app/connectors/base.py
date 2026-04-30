@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """UA Sources - Base Connector
 Abstract base class for all Ukrainian data source connectors.
 """
@@ -11,9 +10,7 @@ from enum import Enum
 import logging
 from typing import Any
 
-
 import httpx
-
 
 logger = logging.getLogger(__name__)
 

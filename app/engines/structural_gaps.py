@@ -11,9 +11,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import logging
-from typing import Optional
-
-from sqlalchemy.ext.asyncio import AsyncSession
+from typing import TYPE_CHECKING
 
 from app.core.confidence import ConfidenceScore, quick_confidence
 from app.core.signal_bus import SignalBus
@@ -21,6 +19,8 @@ from app.indices.mci import calculate_mci_normalized
 from app.indices.pfi import calculate_pfi_normalized
 from app.models.v55.signal import SignalLayer, SignalPriority, V55Signal
 
+if TYPE_CHECKING:
+    from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger("predator.engines.structural_gaps")
 
@@ -66,6 +66,7 @@ def compute_structural_score(
 
     Returns:
         StructuralScore with all metrics.
+
     """
     mci = calculate_mci_normalized(
         import_volume,
@@ -110,22 +111,22 @@ async def process_entity(ueid: str, session: AsyncSession) -> StructuralScore:
     """Run Structural Gaps Analysis for a specific entity.
     Features async DB persistence and real-time scaling out via SignalBus.
     """
-    from app.repositories.structural_repository import StructuralRepository
     from app.repositories.fused_record_repository import FusedRecordRepository
-    
+    from app.repositories.structural_repository import StructuralRepository
+
     repo = StructuralRepository(session)
     fused_repo = FusedRecordRepository(session)
-    
+
     # 1. Fetch historical fused records
     fused_records = await fused_repo.get_by_ueid(ueid, limit=500)
-    
+
     # 2. Extract Volumes
     imports = 0.0
     domestic_sales = 0.0
     production = 0.0 # Often requires industrial production data
     exports = 0.0
     inventory = 0.0
-    
+
     for record in fused_records:
         data = record.normalized_data
         if "customs" in record.source.lower():
@@ -133,14 +134,14 @@ async def process_entity(ueid: str, session: AsyncSession) -> StructuralScore:
         elif "tax" in record.source.lower():
             # Assuming if they are the seller, it's domestic sales
             domestic_sales += float(data.get("amount", 0))
-            
+
     # Estimate market volume as total activity
     market = max(1000.0, imports + domestic_sales)
-    
+
     # 3. Stable Fallbacks for Trade/Logistics discrepancies
     t_diff = 15.0 if imports > 0 and domestic_sales > 0 else 45.0
     l_gap = 20.0 if imports > 100000 else 10.0
-    
+
     data_comp = min(1.0, (len(fused_records) / 25.0) + 0.1) if fused_records else 0.2
 
     score = compute_structural_score(
@@ -161,8 +162,7 @@ async def process_entity(ueid: str, session: AsyncSession) -> StructuralScore:
 
     # 2. Emit Signal (v55 standard)
     bus = SignalBus.get_instance()
-    from app.models.v55.signal import SignalLayer, SignalPriority, V55Signal
-    
+
     signal = V55Signal(
         signal_type="STRUCTURAL_GAPS_SCORING",
         topic="structural_gaps.analyzed",

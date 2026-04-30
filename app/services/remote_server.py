@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Remote Server Manager - Управління віддаленим NVIDIA сервером
 Handles:
 - Ngrok tunnel detection and auto-configuration
@@ -18,7 +17,6 @@ from pathlib import Path
 import re
 import subprocess
 from typing import Any
-
 
 logger = logging.getLogger(__name__)
 

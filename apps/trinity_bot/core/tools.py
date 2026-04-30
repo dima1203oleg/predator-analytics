@@ -7,7 +7,6 @@ import aiohttp
 import kubernetes.client
 import kubernetes.config
 
-
 logger = logging.getLogger("trinity.tools")
 
 class InfraTools:

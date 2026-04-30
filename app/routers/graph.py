@@ -4,7 +4,6 @@ from fastapi import APIRouter
 
 from app.services.knowledge_graph import knowledge_graph_service
 
-
 router = APIRouter(prefix="/graph", tags=["graph"])
 
 

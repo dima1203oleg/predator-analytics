@@ -6,7 +6,6 @@ import os
 import sys
 import time
 
-
 # PREDATOR V45.1 - COMPLEXITY ENFORCER (UA)
 # Запобігає "вибуху складності" шляхом моніторингу метрик коду.
 # Вимагає Python 3.12+
@@ -48,7 +47,6 @@ def scan_directory(root_dir):
         }
     }
 
-    print(f"🔍 Сканування каталогу: {root_dir}...")
 
     for root, dirs, files in os.walk(root_dir):
         # Фільтрація каталогів
@@ -156,39 +154,26 @@ def generate_html_report(report):
 
     with open("complexity_report.html", "w", encoding="utf-8") as f:
         f.write(final_html)
-    print("\n📄 HTML звіт збережено у 'complexity_report.html'")
 
 def flatten_report(report):
-    print("\n📊 ЗВІТ ПРО СКЛАДНІСТЬ СИСТЕМИ")
-    print("================================")
-    print(f"Всього файлів: {report['stats']['total_files']}")
-    print(f"Всього рядків коду: {report['stats']['total_loc']}")
-    print(f"Індекс ризику: {report['stats']['complexity_score']}")
-    print(f"Кількість порушень: {len(report['violations'])}")
-    print("================================")
 
     generate_html_report(report)
 
     if report["violations"]:
-        print("\n🚨 КРИТИЧНІ ПОРУШЕННЯ:")
         # Сортуємо порушення за значенням (найбільші спочатку)
         sorted_violations = sorted(report["violations"], key=lambda x: x['value'], reverse=True)
 
         for v in sorted_violations[:10]: # Показати топ 10
             # Скорочуємо шлях до файлу для кращого вигляду
-            short_path = "..." + v['file'][-60:] if len(v['file']) > 60 else v['file']
-            print(f"  - {short_path}")
-            print(f"    ↳ {v['issue']}: {v['value']} (Ліміт: {v['limit']})")
+            "..." + v['file'][-60:] if len(v['file']) > 60 else v['file']
 
         if len(report["violations"]) > 10:
-            print(f"\n  ... та ще {len(report['violations']) - 10} порушень.")
+            pass
 
         # Зберегти у файл
         with open("complexity_report.json", "w", encoding='utf-8') as f:
             json.dump(report, f, indent=2, ensure_ascii=False)
-        print("\nПовний звіт збережено у 'complexity_report.json'")
         return False # Fail
-    print("\n✅ Система в межах бюджету складності.")
     return True # Pass
 
 if __name__ == "__main__":

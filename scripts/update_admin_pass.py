@@ -7,7 +7,6 @@ import secrets
 
 import asyncpg
 
-
 # Configuration from .env or defaults
 DB_URL = os.getenv("DATABASE_URL", "postgresql://predator:predator_password@localhost:5432/predator_db").replace("postgresql+asyncpg://", "postgresql://")
 
@@ -18,7 +17,6 @@ def hash_password(password: str) -> str:
     return f"{salt}:{hashed}"
 
 async def main():
-    print("Connecting to database to set admin password to '666666'...")
     try:
         conn = await asyncpg.connect(DB_URL)
 
@@ -38,10 +36,9 @@ async def main():
             UPDATE gold.users SET id = 1 WHERE email = 'admin@predator.io' AND id != 1;
         """)
 
-        print("✅ Password for admin@predator.io successfully set to '666666'")
         await conn.close()
-    except Exception as e:
-        print(f"❌ Failed to update password: {e}")
+    except Exception:
+        pass
 
 if __name__ == "__main__":
     asyncio.run(main())

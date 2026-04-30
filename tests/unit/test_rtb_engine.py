@@ -2,10 +2,8 @@
 Unit Tests for RTB Engine
 """
 
-import pytest
 from services.rtb_engine.rules.loader import RuleLoader
 from services.shared.events import PredatorEvent
-from datetime import datetime
 
 # Mock Rules YAML content
 MOCK_RULES = """
@@ -37,7 +35,7 @@ def test_event_idempotency_key():
     """Verify event components generate stable keys."""
     evt1 = PredatorEvent(event_type="Test", source="unit-test", context={"val": 123})
 
-    evt2 = PredatorEvent(event_type="Test", source="unit-test", context={"val": 123})
+    PredatorEvent(event_type="Test", source="unit-test", context={"val": 123})
 
     # Same data should produce same hash (excluding random ID/timestamp)
     # Actually, the current Event implementation computes hash on init from internal fields.

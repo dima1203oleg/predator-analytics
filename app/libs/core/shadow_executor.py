@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """
 🛡️ AZR SHADOW EXECUTOR - System Resilience Engine
 ================================================
@@ -13,7 +12,6 @@ Python 3.12 | Zero-Failure Architecture
 from datetime import datetime
 import logging
 from typing import TYPE_CHECKING, Any
-
 
 if TYPE_CHECKING:
     from collections.abc import Callable

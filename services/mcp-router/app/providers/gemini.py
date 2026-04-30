@@ -27,7 +27,7 @@ _key_index = 0
 
 def _get_key_pool() -> list[str]:
     """Ініціалізація пулу API ключів з ENV."""
-    global _KEY_POOL  # noqa: PLW0603
+    global _KEY_POOL
     if not _KEY_POOL:
         keys = []
         primary = os.getenv("GEMINI_API_KEY", "")
@@ -43,7 +43,7 @@ def _get_key_pool() -> list[str]:
 
 def _next_key() -> str:
     """Round-robin вибір наступного ключа."""
-    global _key_index  # noqa: PLW0603
+    global _key_index
     pool = _get_key_pool()
     if not pool:
         msg = "Жодного Gemini API ключа не налаштовано"
@@ -115,7 +115,7 @@ class GeminiProvider(LLMProvider):
                 candidates = data.get("candidates", [])
                 if not candidates:
                     msg = "Gemini не повернув жодного кандидата"
-                    raise Exception(msg)  # noqa: TRY002
+                    raise Exception(msg)
 
                 parts = candidates[0].get("content", {}).get("parts", [])
                 content = "".join([p.get("text", "") for p in parts])

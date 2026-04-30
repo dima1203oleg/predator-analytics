@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Predator Analytics v45.0 - LiteLLM Gateway Service
 Unified interface for multi-LLM routing with automatic failover.
 """
@@ -13,7 +12,6 @@ from typing import TYPE_CHECKING, Any
 
 import litellm
 from litellm import Router
-
 
 if TYPE_CHECKING:
     from collections.abc import AsyncGenerator
@@ -143,6 +141,7 @@ class LiteLLMGateway:
 
         Returns:
             LLMResponse with content and metadata
+
         """
         await self.initialize()
 

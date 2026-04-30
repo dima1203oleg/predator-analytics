@@ -1,10 +1,9 @@
-"""
-Graph Centrality & Influence Mass (Phase 9 — SM Edition).
+"""Graph Centrality & Influence Mass (Phase 9 — SM Edition).
 
 Calculates PageRank, Betweenness, and custom Influence Mass (IM).
 IM = 0.35·Eigenvector + 0.25·Betweenness + 0.25·MarketShare + 0.15·RegProximity
 """
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 
@@ -22,7 +21,7 @@ class CentralityEngine:
             "betweenness": 0.082,
             "eigenvector": 0.061,
             "degree_centrality": 14,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
     def calculate_influence_mass(
@@ -39,7 +38,7 @@ class CentralityEngine:
             0.25 * market_share +
             0.15 * reg_proximity
         )
-        
+
         return {
             "influence_mass": round(im_score, 4),
             "components": {
@@ -48,5 +47,5 @@ class CentralityEngine:
                 "market_share": {"value": market_share, "weight": 0.25},
                 "regulatory_proximity": {"value": reg_proximity, "weight": 0.15},
             },
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }

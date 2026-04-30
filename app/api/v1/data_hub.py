@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Predator Analytics v45 - Data Hub API Endpoints
 RESTful API for Sources, Datasets, and Jobs management.
 """
@@ -25,7 +24,6 @@ from app.models.entities import (
     UploadWizardResult,
 )
 from app.services.data_hub_service import data_hub_service
-
 
 if TYPE_CHECKING:
     from uuid import UUID

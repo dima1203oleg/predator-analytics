@@ -6,7 +6,6 @@ import logging
 import os
 from typing import Any
 
-
 logger = logging.getLogger("service.test_runner")
 
 
@@ -25,6 +24,7 @@ class TestRunnerService:
 
         Returns:
             Dict containing status, logs, duration, and results.
+
         """
         datetime.now()
 

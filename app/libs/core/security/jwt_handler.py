@@ -11,7 +11,6 @@ import json
 import time
 from typing import Any
 
-
 # Secret key should be in environment in production
 SECRET_KEY = "PREDATOR_SOVEREIGN_MASTER_KEY_v45"
 ALGORITHM = "HS256"

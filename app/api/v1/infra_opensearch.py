@@ -1,10 +1,10 @@
-"""
-OpenSearch Infrastructure API (Phase 2C — SM Edition).
+"""OpenSearch Infrastructure API (Phase 2C — SM Edition).
 
 Endpoints for OpenSearch cluster, indices, and statistics.
 """
-from fastapi import APIRouter
 from typing import Any
+
+from fastapi import APIRouter
 
 from app.services.infrastructure.search.opensearch_manager import OpenSearchInfraManager
 

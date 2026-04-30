@@ -1,13 +1,11 @@
-"""
-Kafka Infrastructure Service (Phase 2D — SM Edition).
+"""Kafka Infrastructure Service (Phase 2D — SM Edition).
 
 SM-optimized: single broker, 2GB RAM, JVM heap 1GB,
 retention 24h + tiered storage to MinIO.
 Topics: §17.1 (7 canonical topics).
 """
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
-
 
 # §17.1 canonical Kafka topics
 KAFKA_TOPICS: list[dict[str, Any]] = [
@@ -45,7 +43,7 @@ class KafkaInfraManager:
             "jvm_heap": self.broker_config["jvm_heap"],
             "tiered_storage": self.broker_config["tiered_storage"],
             "topics_count": len(KAFKA_TOPICS),
-            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(UTC).isoformat(),
         }
 
     def list_topics(self) -> list[dict[str, Any]]:

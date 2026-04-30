@@ -1,11 +1,9 @@
 from __future__ import annotations
 
-
 """Opponent Router."""
 from fastapi import APIRouter
 
 from app.services.opponent_engine import opponent_engine
-
 
 router = APIRouter(prefix="/opponent", tags=["Opponent"])
 

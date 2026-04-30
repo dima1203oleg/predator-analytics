@@ -1,9 +1,8 @@
-"""
-MinIO Object Storage Infrastructure Service (Phase 2E — SM Edition).
+"""MinIO Object Storage Infrastructure Service (Phase 2E — SM Edition).
 
 SM-optimized: 2GB RAM, NVMe storage, tiered Kafka archival.
 """
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 
@@ -35,7 +34,7 @@ class MinIOInfraManager:
             "buckets": len(self.buckets),
             "versioning_enabled": self.config["versioning"],
             "lifecycle_rules": self.config["lifecycle_rules"],
-            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(UTC).isoformat(),
         }
 
     def list_buckets(self) -> list[dict[str, Any]]:

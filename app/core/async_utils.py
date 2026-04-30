@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Async utilities for Celery tasks
 Safe execution of async code in synchronous contexts.
 """
@@ -8,7 +7,6 @@ import asyncio
 from functools import wraps
 import logging
 from typing import TYPE_CHECKING, Any, TypeVar
-
 
 if TYPE_CHECKING:
     from collections.abc import Coroutine

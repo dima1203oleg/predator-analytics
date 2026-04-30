@@ -1,15 +1,13 @@
 import logging
-from typing import Dict, Any, List
-import random
 
 logger = logging.getLogger(__name__)
 
 class PromptRegistry:
-    """
-    Prompt Registry (COMP-207)
-    Version-controlled registry for AI prompts to ensure 
+    """Prompt Registry (COMP-207)
+    Version-controlled registry for AI prompts to ensure
     consistency and reproducibility across services.
     """
+
     def __init__(self):
         self.prompts = {
             "risk_analysis": {
@@ -22,8 +20,7 @@ class PromptRegistry:
         }
 
     def get_prompt(self, name: str, version: str = "latest") -> str:
-        """
-        Retrieves a specific prompt by name and version.
+        """Retrieves a specific prompt by name and version.
         """
         if name not in self.prompts:
             return ""

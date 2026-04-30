@@ -6,7 +6,6 @@ from pydantic import BaseModel
 from app.services.auth_service import require_admin
 from app.services.test_runner import get_test_runner
 
-
 router = APIRouter(prefix="/testing", tags=["QA Lab"], dependencies=[Depends(require_admin)])
 
 

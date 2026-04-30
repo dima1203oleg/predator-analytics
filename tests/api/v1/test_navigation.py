@@ -4,15 +4,13 @@
 
 from __future__ import annotations
 
-import pytest
-
+from app.core.modules.registry import get_available_modules
 from app.core.modules.types import (
+    TIER_ORDER,
     ModuleKey,
     SubscriptionTier,
     has_access,
-    TIER_ORDER,
 )
-from app.core.modules.registry import get_available_modules
 
 
 class TestModuleTypes:
@@ -72,7 +70,7 @@ class TestModuleRegistry:
 
     def test_all_labels_in_ukrainian(self) -> None:
         """Всі мітки модулів повинні бути українською."""
-        available, locked = get_available_modules(SubscriptionTier.ENTERPRISE)
+        available, _locked = get_available_modules(SubscriptionTier.ENTERPRISE)
         for module in available:
             # Перевіряємо що мітка не порожня і не ASCII-only
             assert module.label, f"Модуль {module.key} не має мітки"

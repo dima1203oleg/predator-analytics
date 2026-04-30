@@ -35,7 +35,6 @@ import threading
 import time
 from typing import TYPE_CHECKING, Any
 
-
 if TYPE_CHECKING:
     from collections.abc import Awaitable, Callable
 
@@ -442,7 +441,7 @@ class MCPAgentOrchestrator:
 
     def __init__(self, storage: Any = "/tmp/azr_logs"):
         from app.libs.core.storage import FileStorageProvider
-        
+
         if isinstance(storage, (str, Path)):
             self.storage = FileStorageProvider(Path(storage))
         else:
@@ -642,6 +641,7 @@ class MCPAgentOrchestrator:
 
         Returns:
             Agent response with tool call history
+
         """
         provider = provider or self._default_provider
         conversation_id = conversation_id or f"conv_{int(time.time())}"
@@ -768,7 +768,7 @@ _orch_lock = threading.Lock()
 def get_mcp_orchestrator(storage: Any = "/tmp/azr_logs") -> MCPAgentOrchestrator:
     """Get or create the MCP Orchestrator instance for a specific storage path."""
     global _orchestrator_instances
-    
+
     # Normalize path key
     from app.libs.core.storage import StorageProvider
     if isinstance(storage, StorageProvider):
@@ -795,36 +795,26 @@ def reset_mcp_singletons():
 
 
 async def run_self_test():
-    print("🔌 MCP INTEGRATION - Self-Test")
-    print("=" * 60)
 
     # Create orchestrator
     orchestrator = MCPAgentOrchestrator("/tmp/azr_mcp_test")
 
     # List available tools
-    print("\n📦 Available Tools:")
-    for tool in orchestrator.registry.list_tools():
-        print(f"  • {tool.name}: {tool.description[:50]}...")
+    for _tool in orchestrator.registry.list_tools():
+        pass
 
     # Test tool invocation
-    print("\n🔧 Testing Tool Invocation:")
 
-    result = await orchestrator.registry.invoke("get_system_health", {})
-    print(f"  get_system_health: {json.dumps(result.result, indent=4)[:200]}...")
+    await orchestrator.registry.invoke("get_system_health", {})
 
-    result = await orchestrator.registry.invoke("get_azr_status", {})
-    print(f"  get_azr_status: {json.dumps(result.result, indent=4)[:200]}...")
+    await orchestrator.registry.invoke("get_azr_status", {})
 
     # Test agent run
-    print("\n🤖 Testing Agent Run:")
-    response = await orchestrator.run_agent(
+    await orchestrator.run_agent(
         prompt="What is the current system health?", provider="ollama"
     )
-    print(f"  Response: {response['response'][:100]}...")
-    print(f"  Tool calls: {len(response['tool_calls'])}")
 
     # Stats
-    print(f"\n📊 Stats: {json.dumps(orchestrator.get_stats(), indent=2)}")
 
 
 if __name__ == "__main__":

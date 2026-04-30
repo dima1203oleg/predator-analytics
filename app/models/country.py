@@ -1,5 +1,4 @@
-"""
-🌍 Моделі країн — PREDATOR Analytics v4.2.0.
+"""🌍 Моделі країн — PREDATOR Analytics v4.2.0.
 
 Довідник країн (ISO 3166-1) для декларацій,
 з індикаторами ризику та санкційним статусом.
@@ -10,7 +9,7 @@ from __future__ import annotations
 from datetime import datetime
 from uuid import uuid4
 
-from sqlalchemy import Boolean, Column, DateTime, Float, JSON, String
+from sqlalchemy import JSON, Boolean, Column, DateTime, Float, String
 from sqlalchemy.dialects.postgresql import UUID as PostgreSQLUUID
 
 from app.core.database import Base

@@ -1,5 +1,4 @@
-"""
-Головний роутер API v1 PREDATOR Analytics.
+"""Головний роутер API v1 PREDATOR Analytics.
 
 Підключає всі v4.1 канонічні ендпоінти.
 Backward-compatible з існуючими v1 роутерами.
@@ -9,43 +8,43 @@ from __future__ import annotations
 
 from fastapi import APIRouter
 
-from app.api.v1.navigation import router as navigation_router
-from app.api.v1.market import router as market_router
-from app.api.v1.forecast import router as forecast_router
-from app.api.v1.diligence import router as diligence_router
-from app.api.v1.copilot import router as copilot_router
-from app.api.v1.health import router as health_router
-from app.api.v1.dashboard import router as dashboard_router
-from app.api.v1.search import router as search_router
+from app.api.v1.agro import router as agro_router
+from app.api.v1.analytics import router as analytics_router
+from app.api.v1.auth_security import router as auth_security_router
+from app.api.v1.commerce import router as commerce_router
 from app.api.v1.competitors import router as competitors_router
+from app.api.v1.copilot import router as copilot_router
+from app.api.v1.core_ai import router as core_ai_router
+from app.api.v1.counter_intel import router as counter_intel_router
+from app.api.v1.dashboard import router as dashboard_router
+from app.api.v1.diligence import router as diligence_router
+from app.api.v1.finance import router as finance_router
+from app.api.v1.forecast import router as forecast_router
+from app.api.v1.gitops import router as gitops_router
+from app.api.v1.graph import router as graph_router
+from app.api.v1.health import router as health_router
+from app.api.v1.infra_clickhouse import router as infra_clickhouse_router
+from app.api.v1.infra_db_neo4j import router as infra_db_neo4j_router
+from app.api.v1.infra_db_postgres import router as infra_db_postgres_router
+from app.api.v1.infra_k8s import router as infra_k8s_router
+from app.api.v1.infra_kafka import router as infra_kafka_router
+from app.api.v1.infra_minio import router as infra_minio_router
+from app.api.v1.infra_opensearch import router as infra_opensearch_router
+from app.api.v1.infra_qdrant import router as infra_qdrant_router
+from app.api.v1.infra_redis import router as infra_redis_router
+from app.api.v1.ingestion_ocr import router as ingestion_ocr_router
+from app.api.v1.intel_advanced import router as intel_router
+from app.api.v1.market import router as market_router
+from app.api.v1.navigation import router as navigation_router
+from app.api.v1.p2_features import router as p2_features_router
+from app.api.v1.retail import router as retail_router
 from app.api.v1.risk import router as risk_router
 from app.api.v1.risk import sanctions_router
-from app.api.v1.analytics import router as analytics_router
-from app.api.v1.warroom import router as warroom_router
-from app.api.v1.graph import router as graph_router
-from app.api.v1.finance import router as finance_router
-from app.api.v1.commerce import router as commerce_router
-from app.api.v1.counter_intel import router as counter_intel_router
+from app.api.v1.search import router as search_router
 from app.api.v1.self_improvement import router as self_improvement_router
 from app.api.v1.smb import router as smb_router
 from app.api.v1.twin import router as twin_router
-from app.api.v1.agro import router as agro_router
-from app.api.v1.p2_features import router as p2_features_router
-from app.api.v1.gitops import router as gitops_router
-from app.api.v1.intel_advanced import router as intel_router
-from app.api.v1.retail import router as retail_router
-from app.api.v1.core_ai import router as core_ai_router
-from app.api.v1.ingestion_ocr import router as ingestion_ocr_router
-from app.api.v1.infra_k8s import router as infra_k8s_router
-from app.api.v1.infra_db_postgres import router as infra_db_postgres_router
-from app.api.v1.infra_db_neo4j import router as infra_db_neo4j_router
-from app.api.v1.infra_kafka import router as infra_kafka_router
-from app.api.v1.infra_opensearch import router as infra_opensearch_router
-from app.api.v1.infra_redis import router as infra_redis_router
-from app.api.v1.infra_minio import router as infra_minio_router
-from app.api.v1.infra_qdrant import router as infra_qdrant_router
-from app.api.v1.infra_clickhouse import router as infra_clickhouse_router
-from app.api.v1.auth_security import router as auth_security_router
+from app.api.v1.warroom import router as warroom_router
 
 api_v1_router = APIRouter(prefix="/api/v1")
 
@@ -91,30 +90,39 @@ api_v1_router.include_router(infra_clickhouse_router, tags=["Infrastructure & Da
 api_v1_router.include_router(auth_security_router, tags=["Auth & Security"])
 # --- Phase 4 SM: ETL & Kafka ---
 from app.api.v1.etl_kafka import router as etl_kafka_router
+
 api_v1_router.include_router(etl_kafka_router, tags=["ETL & Ingestion"])
 # --- Phase 5 SM: AI/ML Infrastructure ---
 from app.api.v1.ai_infrastructure import router as ai_infra_router
+
 api_v1_router.include_router(ai_infra_router, tags=["AI/ML Infrastructure"])
 # --- Phase 5B SM: CERS & LLM ---
 from app.api.v1.cers_scoring import router as cers_router
+
 api_v1_router.include_router(cers_router, tags=["CERS Meta-Scoring"])
 # --- Phase 6 SM: Observability ---
 from app.api.v1.observability import router as observability_router
+
 api_v1_router.include_router(observability_router, tags=["Observability"])
 # --- Phase 9 SM: Graph Service & Premium API ---
 from app.api.v1.graph_analytics import router as graph_router
 from app.api.v1.premium_features import router as premium_router
+
 api_v1_router.include_router(graph_router, tags=["Graph Service & Analytics"])
 api_v1_router.include_router(premium_router, tags=["Premium Features & Reports"])
 # --- Phase 7 SM: Security & Policies ---
 from app.api.v1.security_sm import router as security_router
+
 api_v1_router.include_router(security_router, tags=["Platform Security & Policies"])
 # --- Phase 10 SM: UA Connectors ---
 from app.api.v1.connectors_ua import router as connectors_router
+
 api_v1_router.include_router(connectors_router, tags=["UA Integrations (Registry, Sanctions, Prozorro)"])
 # --- Phase 11 SM: Advanced AI/ML ---
 from app.api.v1.ai_advanced import router as ai_advanced_router
+
 api_v1_router.include_router(ai_advanced_router, tags=["Advanced AI/ML (Topic, Batch, MonteCarlo)"])
 # --- Phase 12 SM: Command Center ---
 from app.api.v1.warroom_v2 import router as warroom_router
+
 api_v1_router.include_router(warroom_router, tags=["Command Center & Shadow Cartography"])

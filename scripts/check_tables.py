@@ -4,7 +4,6 @@ import asyncio
 import os
 import sys
 
-
 # Add project root to pythonpath
 sys.path.append(os.getcwd())
 
@@ -18,17 +17,15 @@ async def check_tables():
         async with engine.connect() as conn:
             # Check schemas
             result = await conn.execute(text("SELECT schema_name FROM information_schema.schemata WHERE schema_name IN ('gold', 'staging')"))
-            schemas = [r[0] for r in result.fetchall()]
-            print(f"Schemas found: {schemas}")
+            [r[0] for r in result.fetchall()]
 
             # Check tables
             result = await conn.execute(text("SELECT table_name FROM information_schema.tables WHERE table_schema='public'"))
-            tables = [r[0] for r in result.fetchall()]
-            print(f"Public tables count: {len(tables)}")
+            [r[0] for r in result.fetchall()]
             # print(f"Public tables: {tables}")
 
-    except Exception as e:
-        print(f"Error checking DB: {e}")
+    except Exception:
+        pass
 
 if __name__ == "__main__":
     asyncio.run(check_tables())

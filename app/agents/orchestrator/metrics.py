@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Prometheus Metrics Exporter for SuperIntelligence Orchestrator v45.0.
 
 Exposes key AI metrics for monitoring:
@@ -16,7 +15,6 @@ import logging
 import time
 
 from prometheus_client import CONTENT_TYPE_LATEST, Counter, Gauge, Histogram, Info, generate_latest
-
 
 logger = logging.getLogger(__name__)
 

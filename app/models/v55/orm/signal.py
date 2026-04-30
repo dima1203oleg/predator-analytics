@@ -6,8 +6,8 @@ Analytical signals emitted by the 5-layer engine.
 
 from __future__ import annotations
 
+from datetime import UTC, datetime
 import uuid
-from datetime import datetime, timezone
 
 from sqlalchemy import Column, DateTime, Float, ForeignKey, Index, String, Text
 from sqlalchemy.dialects.postgresql import JSONB, UUID
@@ -38,7 +38,7 @@ class SignalORM(Base):
     details = Column(JSONB, server_default="{}", nullable=False)
     sources = Column(JSONB, server_default="[]", nullable=False)
     trace_id = Column(String(100), nullable=True)
-    created_at = Column(DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime(timezone=True), nullable=False, default=lambda: datetime.now(UTC))
 
     def __repr__(self) -> str:
         return f"<Signal {self.signal_id} {self.signal_type}:{self.layer}>"

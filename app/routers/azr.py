@@ -6,7 +6,6 @@ from pydantic import BaseModel
 from app.libs.core.structured_logger import get_logger
 from app.services.azr_engine_v32 import azr_engine_v32
 
-
 logger = get_logger("azr_router")
 
 router = APIRouter(prefix="/azr", tags=["AZR v32 - Sovereign Engine"])

@@ -1,16 +1,16 @@
-"""
-📊 Pydantic схеми для ринкової аналітики — PREDATOR Analytics v4.1.
+"""📊 Pydantic схеми для ринкової аналітики — PREDATOR Analytics v4.1.
 
 Схеми запитів та відповідей для /api/v1/market.
 """
 
 from __future__ import annotations
 
-from datetime import date, datetime
-from uuid import UUID
+from typing import TYPE_CHECKING
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
+if TYPE_CHECKING:
+    from datetime import date
 
 # ── Запити ───────────────────────────────────────────────────
 

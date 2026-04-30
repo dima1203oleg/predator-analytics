@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 import json
-import logging
-import sys
 
 import pytest
 
@@ -48,7 +46,6 @@ def test_structured_log_format(caplog):
 def test_request_logger_context(caplog):
     """Verify RequestLogger adds context and duration."""
     caplog.clear()
-    print("DEBUG: Starting test_request_logger_context")
 
     logger = get_logger("test_request_context")
 

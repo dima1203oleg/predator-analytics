@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Predator Analytics - Evolution Router
 NAS (Neural Architecture Search) and Self-Evolution endpoints.
 """
@@ -15,7 +14,6 @@ from sqlalchemy import desc, select
 from app.core.db import async_session_maker
 from app.models import NasCandidate as NasCandidateDB
 from app.models import NasTournament as NasTournamentDB
-
 
 router = APIRouter(prefix="/evolution", tags=["Evolution"])
 
@@ -193,9 +191,8 @@ async def get_nas_tournaments():
                 )
                 for t in tournaments
             ]
-    except Exception as e:
+    except Exception:
         # Fallback to empty list or handle error
-        print(f"DB Error: {e}")
         return []
 
 
@@ -228,7 +225,6 @@ async def get_nas_models(tournament_id: str | None = None):
 
 
 from fastapi import WebSocket, WebSocketDisconnect
-
 
 # ... existing code ...
 
@@ -302,8 +298,7 @@ async def websocket_endpoint(websocket: WebSocket):
             await asyncio.sleep(2)  # 2 seconds update rate
     except WebSocketDisconnect:
         manager.disconnect(websocket)
-    except Exception as e:
-        print(f"WS Error: {e}")
+    except Exception:
         manager.disconnect(websocket)
 
 
@@ -317,8 +312,7 @@ async def start_metrics_snapshot_loop():
         try:
             await evolution_service.save_snapshot()
             await asyncio.sleep(300)  # 5 minutes
-        except Exception as e:
-            print(f"Snapshot error: {e}")
+        except Exception:
             await asyncio.sleep(60)
 
 

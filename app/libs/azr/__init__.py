@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """═══════════════════════════════════════════════════════════════
 AZR Library - Autonomous Zero-Risk Amendment Runtime
 Predator Analytics v45
@@ -48,7 +47,6 @@ from app.libs.azr.services import (
     AZRConstitutionalValidator,
     AZRRiskAssessmentService,
 )
-
 
 __all__ = [
     "CONSTITUTION_HASH_ALGORITHM",

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Predator Analytics v45 - Self-Healing Guardian
 Core module for system diagnostics, auto-recovery and schema integrity.
 """
@@ -12,7 +11,6 @@ from typing import Any
 from .config import settings
 from .database import get_db_ctx, init_db
 from .redis import RedisClient
-
 
 logger = logging.getLogger("predator.guardian")
 

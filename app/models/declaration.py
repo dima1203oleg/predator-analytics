@@ -1,5 +1,4 @@
-"""
-📋 Моделі митних декларацій — PREDATOR Analytics v4.1.
+"""📋 Моделі митних декларацій — PREDATOR Analytics v4.1.
 
 SQLAlchemy ORM для зберігання митних декларацій,
 включаючи товарні позиції, суми, ваги та аномалії.
@@ -11,12 +10,11 @@ from datetime import datetime
 from uuid import uuid4
 
 from sqlalchemy import (
+    JSON,
     Column,
     DateTime,
     Float,
     ForeignKey,
-    Integer,
-    JSON,
     String,
     Text,
 )

@@ -2,18 +2,19 @@ from __future__ import annotations
 
 from abc import abstractmethod
 from dataclasses import dataclass
-from datetime import datetime
-from typing import Any, Dict, List, Optional, Protocol
+from typing import Any, Protocol
 
 
 class AgentPermission(Protocol):
     """Permissions granted to an agent."""
+
     code: str
     description: str
 
 @dataclass
 class AgentContext:
     """Context passed to agent execution."""
+
     execution_id: str
     token: str
     cli_path: str = "./predatorctl"

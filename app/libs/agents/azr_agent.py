@@ -11,7 +11,6 @@ from typing import Any
 
 from agents.contract import AgentContext, AZRAgentContract
 
-
 logger = logging.getLogger("agent.azr")
 
 

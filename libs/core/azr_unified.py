@@ -18,22 +18,16 @@ class AZRUnifiedOrganism:
         self.start_time = 0
 
     async def initialize(self) -> bool:
-        print(" [AZR] 🧠 Loading Cortex (OODA Loop)... OK")
-        print(" [AZR] 📜 Connecting to Merkle Truth Ledger... OK")
-        print(" [AZR] 🛡️  Initializing Constitutional Guard... OK")
-        print(" [AZR] 🕸️  Building Knowledge Graph... OK")
         return True
 
     async def start(self, hours: int):
         self._running = True
         self.start_time = time.time()
-        print(f" [AZR] 🚀 Self-Improvement Loops Started (Target: {hours}h)")
 
         # Start the background loop
         asyncio.create_task(self._lifeloop())
 
     async def stop(self):
-        print(" [AZR] 🛑 Graceful Shutdown initiated...")
         self._running = False
 
     async def _lifeloop(self):
@@ -52,16 +46,14 @@ class AZRUnifiedOrganism:
             self._cycle_count += 1
 
             # Simulate work
-            action = random.choice(actions)
+            random.choice(actions)
             self.metrics["executed"] += 1
 
             # 1 in 10 chance of getting "blocked" by guard
             if random.random() < 0.1:
-                print(f" [AZR-GUARD] 🛡️ BLOCKED action '{action}' due to Constitutional Axiom 9")
                 self.metrics["blocked"] += 1
             else:
-                latency = random.randint(50, 200)
-                print(f" [AZR-CORE] Cycle {self._cycle_count}: {action} completed in {latency}ms")
+                random.randint(50, 200)
 
     def get_status(self) -> dict[str, Any]:
         uptime = time.time() - self.start_time if self.start_time else 0

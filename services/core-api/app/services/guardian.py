@@ -1,8 +1,7 @@
 import asyncio
-import os
-import subprocess
-import json
 from datetime import datetime
+import json
+import subprocess
 from typing import Any
 
 from predator_common.logging import get_logger
@@ -10,8 +9,7 @@ from predator_common.logging import get_logger
 logger = get_logger("core_api.guardian")
 
 class SovereignGuardian:
-    """
-    Sovereign Guardian (v56.4.5)
+    """Sovereign Guardian (v56.4.5)
     Автономний сервіс самовідновлення. Моніторить стан баз та тунелів.
     """
 
@@ -27,7 +25,7 @@ class SovereignGuardian:
             result = subprocess.run(["pgrep", "-x", "zrok"], capture_output=True)
             if result.returncode != 0:
                 logger.warning("⚠️ Guardian: ZROK tunnel process not found.")
-            
+
             result = subprocess.run(["pgrep", "-f", "lhr.life"], capture_output=True)
             if result.returncode != 0:
                 logger.warning("⚠️ Guardian: LHR tunnel process not found.")
@@ -39,7 +37,7 @@ class SovereignGuardian:
         import psutil
         cpu = psutil.cpu_percent()
         ram = psutil.virtual_memory().percent
-        
+
         if cpu > 90:
             logger.warning(f"🔥 Guardian: CRITICAL CPU LOAD: {cpu}%")
         if ram > 90:
@@ -49,7 +47,7 @@ class SovereignGuardian:
         """Збереження поточних метрик у Redis для побудови графіків динаміки."""
         from app.routers.system import _collect_system_stats
         from app.services.redis_service import get_redis_service
-        
+
         redis = get_redis_service()
         if not redis._connected:
             return
@@ -61,7 +59,7 @@ class SovereignGuardian:
 
         try:
             stats = _collect_system_stats(MockRequest())
-            
+
             metric_entry = {
                 "timestamp": datetime.now().isoformat(),
                 "cpu": stats["cpu_percent"],
@@ -69,7 +67,7 @@ class SovereignGuardian:
                 "disk": stats["disk_percent"],
                 "active_tasks": stats["active_tasks"]
             }
-            
+
             key = "system:metrics:history"
             client = redis._client
             await client.lpush(key, json.dumps(metric_entry))
@@ -100,14 +98,14 @@ class SovereignGuardian:
         redis = get_redis_service()
         if not redis._connected:
             return {}
-            
+
         try:
             raw_data = await redis._client.lrange("system:metrics:history", 0, -1)
             history = [json.loads(d) for d in raw_data]
-            
+
             if len(history) < 2:
                 return {"status": "COLLECTING_DATA", "message": "Накопичення даних для аналізу..."}
-                
+
             # Проста лінійна апроксимація для дисків
             usage_diff = history[0]["disk"] - history[-1]["disk"]
             if usage_diff > 0:
@@ -163,17 +161,17 @@ class SovereignGuardian:
     async def run_loop(self):
         self.is_running = True
         logger.info("🦅 Sovereign Guardian ACTIVATED. Monitoring system health...")
-        
+
         counter = 0
         while self.is_running:
             try:
                 await self.check_tunnels()
                 await self.check_system_load()
-                
+
                 # Записуємо метрики кожні 5 хвилин
                 if counter % 5 == 0:
                     await self.record_metrics()
-                
+
                 # Генеруємо сценарії кожні 15 хвилин
                 if counter % 15 == 0:
                     await self.generate_mock_scenarios()
@@ -187,7 +185,7 @@ class SovereignGuardian:
                     with open("/tmp/predator_heartbeat", "w") as f:
                         f.write(datetime.now().isoformat())
                 except: pass
-                
+
                 counter += 1
                 await asyncio.sleep(self.interval)
             except Exception as e:

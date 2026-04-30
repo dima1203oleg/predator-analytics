@@ -1,18 +1,15 @@
 from __future__ import annotations
 
-
 """UA Sources - Pydantic Schemas
 Request/Response models for API endpoints.
 """
 from datetime import UTC, datetime
 from enum import StrEnum
-from typing import TypeAlias
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from typing import Any, TypeAlias
-
-JsonValue: TypeAlias = Any
+type JsonValue = Any
 
 
 # === Enums ===

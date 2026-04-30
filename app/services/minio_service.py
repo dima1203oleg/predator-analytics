@@ -5,7 +5,6 @@ import os
 from minio import Minio
 from minio.error import S3Error
 
-
 logger = logging.getLogger("app.services.minio_service")
 
 

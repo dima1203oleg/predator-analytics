@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """API Dependencies."""
 from fastapi import Depends, HTTPException, status
 

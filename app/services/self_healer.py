@@ -7,7 +7,6 @@ from typing import Any
 from app.libs.core.structured_logger import get_logger
 from app.services.llm.service import llm_service
 
-
 logger = get_logger("service.self_healer")
 
 

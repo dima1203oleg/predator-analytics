@@ -36,5 +36,5 @@ def fetch_top_tenders(limit: int = 20):
 
 if __name__ == "__main__":
     tenders = fetch_top_tenders(15)
-    for t in tenders:
-        print(f"[{t['status']}] {t['value']} {t['currency']} | {t['procuringEntity']} | {t['title'][:60]}...")
+    for _t in tenders:
+        pass

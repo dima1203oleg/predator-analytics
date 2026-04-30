@@ -3,7 +3,6 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-
 logger = logging.getLogger("predator.fusion")
 
 
@@ -61,6 +60,7 @@ def reciprocal_rank_fusion(
 
     Returns:
         List of fused and sorted documents
+
     """
     scores = {}
     doc_map = {}

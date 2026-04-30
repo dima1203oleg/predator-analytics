@@ -7,7 +7,6 @@ import numpy as np
 import pandas as pd
 from sqlalchemy import create_engine
 
-
 # Setup
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("AutoML")

@@ -2,15 +2,12 @@ from __future__ import annotations
 
 # scripts/chaos/scenarios/fake_completion.py
 import asyncio
-import json
 import logging
-import subprocess
 import uuid
 
 from libs.core.database import get_db_ctx
 from libs.core.etl_state_machine import ETLState
 from libs.core.models.entities import ETLJob
-
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("ChaosFakeCompletion")

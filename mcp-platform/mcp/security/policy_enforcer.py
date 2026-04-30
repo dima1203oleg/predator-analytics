@@ -1,9 +1,9 @@
 """Security Policy Enforcer для впровадження політик безпеки."""
 from __future__ import annotations
 
-from typing import Any, Optional
 from dataclasses import dataclass
 from enum import Enum
+from typing import Any
 
 
 class PolicySeverity(Enum):

@@ -7,7 +7,6 @@ from pathlib import Path
 from typing import Any
 import uuid
 
-import asyncpg
 import pandas as pd
 
 from app.libs.core.database import get_db_ctx
@@ -15,7 +14,6 @@ from app.libs.core.etl_state_machine import ETLState, ETLStateMachine
 from app.libs.core.models.entities import ETLJob
 from app.libs.core.mq import broker
 from app.libs.core.structured_logger import get_logger
-
 
 logger = get_logger("service.etl_ingestion")
 
@@ -78,7 +76,7 @@ class ETLIngestionService:
 
             # Timestamps
             from typing import cast
-            current_timestamps = cast(dict[str, str], job.timestamps or {})
+            current_timestamps = cast("dict[str, str]", job.timestamps or {})
             current_timestamps[f"entered_{state.value.lower()}"] = datetime.utcnow().isoformat()
             job.timestamps = current_timestamps
 
@@ -127,19 +125,19 @@ class ETLIngestionService:
             await sess.commit()
             logger.info("etl_job_created", job_id=str(job_id), filename=filename)
 
+        from app.modules.etl_engine.deduplication import create_data_deduplicator
         from app.modules.etl_engine.distribution import (
             DataDistributor,
             DistributionTarget,
         )
-        from app.modules.etl_engine.parsing.data_parser import DataParser
-        from app.modules.etl_engine.transformation.data_transformer import DataTransformer
-        from app.modules.etl_engine.deduplication import create_data_deduplicator
         from app.modules.etl_engine.enrichment import (
+            create_geo_enricher,
             create_price_normalizer,
             create_uktzed_enricher,
-            create_geo_enricher,
         )
-        from app.modules.etl_engine.quality import create_quality_reporter, create_data_validator
+        from app.modules.etl_engine.parsing.data_parser import DataParser
+        from app.modules.etl_engine.quality import create_data_validator, create_quality_reporter
+        from app.modules.etl_engine.transformation.data_transformer import DataTransformer
 
         try:
             # 2. START ETL (Streaming if Large Excel)
@@ -175,21 +173,21 @@ class ETLIngestionService:
                 async for _batch_idx, df_chunk in self._read_excel_batched(
                     file_path, str(job_id), chunk_size=2000
                 ):
-                    chunk_size: int = int(len(df_chunk))
+                    chunk_size: int = len(df_chunk)
 
                     # A. Transform & Deduplicate
                     records = df_chunk.to_dict(orient="records")
                     transform_result = transformer.normalize_data_types(records)
                     if transform_result.success:
                         records = transform_result.data
-                        
+
                     dedup_result = deduplicator.process_batch(records)
-                    quality_reporter.add_duplicates(int(len(dedup_result["duplicate_records"])))
+                    quality_reporter.add_duplicates(len(dedup_result["duplicate_records"]))
                     records = dedup_result["unique_records"]
 
                     # A.1 Validate
                     data_validator.validate_batch(records)
-                    
+
                     if not records:
                         continue
 
@@ -197,7 +195,7 @@ class ETLIngestionService:
                     records = price_normalizer.process_batch(records)
                     records = uktzed_enricher.process_batch(records)
                     records = geo_enricher.process_batch(records)
-                    
+
                     quality_reporter.process_batch(records)
 
                     # C. Distribute
@@ -254,9 +252,9 @@ class ETLIngestionService:
                 transform_result = transformer.normalize_data_types(records)
                 if transform_result.success:
                     records = transform_result.data
-                    
+
                 dedup_result = deduplicator.process_batch(records)
-                quality_reporter.add_duplicates(int(len(dedup_result["duplicate_records"])))
+                quality_reporter.add_duplicates(len(dedup_result["duplicate_records"]))
                 records = dedup_result["unique_records"]
 
                 # VALIDATION
@@ -266,7 +264,7 @@ class ETLIngestionService:
                 records = price_normalizer.process_batch(records)
                 records = uktzed_enricher.process_batch(records)
                 records = geo_enricher.process_batch(records)
-                
+
                 quality_reporter.process_batch(records)
 
                 # DISTRIBUTION
@@ -286,7 +284,7 @@ class ETLIngestionService:
                 total_records_processed = len(records)
 
             report_data = quality_reporter.generate_report()
-            
+
             await self._update_job_state(
                 job_id,
                 ETLState.INDEXED,

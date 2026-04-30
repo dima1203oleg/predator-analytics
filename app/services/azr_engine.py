@@ -12,7 +12,6 @@ import yaml
 from app.libs.core.structured_logger import get_logger, log_security_event
 from app.services.sovereign_memory import sovereign_memory
 
-
 logger = get_logger("services.azr_engine")
 
 # Force full autonomy mode

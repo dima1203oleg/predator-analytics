@@ -99,10 +99,7 @@ class TikaTool(BaseTool):
                 # Визначаємо тип контенту
                 if target.startswith("data:") or len(target) > 1000:
                     # Base64 encoded
-                    if "," in target:
-                        content = base64.b64decode(target.split(",")[1])
-                    else:
-                        content = base64.b64decode(target)
+                    content = base64.b64decode(target.split(",")[1]) if "," in target else base64.b64decode(target)
                     content_type = "application/octet-stream"
                 else:
                     # Файл або URL

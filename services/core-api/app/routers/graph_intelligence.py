@@ -3,9 +3,10 @@
 Розширена графова аналітика: пошук бенефіціарів (UBO), виявлення прихованих зв'язків.
 """
 from fastapi import APIRouter, Depends, HTTPException
-from app.services.neo4j_service import Neo4jService
-from app.dependencies import PermissionChecker
+
 from app.core.permissions import Permission
+from app.dependencies import PermissionChecker
+from app.services.neo4j_service import Neo4jService
 
 router = APIRouter(prefix="/graph-intelligence", tags=["Graph Intelligence"])
 
@@ -19,8 +20,8 @@ async def get_ultimate_beneficiary(
     """Визначає фізичну особу, яка стоїть за ланцюжком володіння компанією."""
     neo4j = Neo4jService()
     result = await neo4j.find_ultimate_beneficiary(org_id=ueid, max_depth=max_depth, threshold=threshold)
-    
+
     if not result.success:
         raise HTTPException(status_code=500, detail=result.errors[0])
-    
+
     return result.data

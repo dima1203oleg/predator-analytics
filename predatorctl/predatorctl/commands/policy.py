@@ -3,7 +3,6 @@ from __future__ import annotations
 from rich.console import Console
 import typer
 
-
 app = typer.Typer(help="Sovereign Policy Enforcement (OPA/Gatekeeper)")
 console = Console()
 

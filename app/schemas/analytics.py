@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Analytics Schemas."""
 from enum import StrEnum
 

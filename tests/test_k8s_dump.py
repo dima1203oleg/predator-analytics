@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import subprocess
-
 import pytest
 
 from app.services.telegram_assistant import TelegramAssistant
@@ -20,7 +18,7 @@ async def test_k8s_dump_unauthorized(monkeypatch):
 async def test_k8s_dump_success(monkeypatch, tmp_path):
     ta = TelegramAssistant(token="fake")
     ta.authorized_users = [111]
-    
+
     # Mock user authorization check since _is_requesting_user_authorized works differently
     monkeypatch.setattr(ta, "_is_requesting_user_authorized", lambda: True)
 

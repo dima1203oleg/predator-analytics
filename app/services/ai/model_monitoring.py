@@ -1,21 +1,21 @@
-from typing import Dict, Any, List
 from datetime import datetime
+from typing import Any
+
 
 class DriftDetector:
-    """
-    Фаза 15: Model Drift Detection (Self-Improvement)
+    """Фаза 15: Model Drift Detection (Self-Improvement)
     Monitors inference performance vs reality for XGBoost & TFT models.
     """
+
     def __init__(self):
         self.active_models = ["xgboost-v2.1", "tft-sm-v1.0", "cers-v55"]
 
-    def analyze_drift(self, model_id: str) -> Dict[str, Any]:
-        """
-        Calculates KL divergence and PSI (Population Stability Index) for the specified model.
+    def analyze_drift(self, model_id: str) -> dict[str, Any]:
+        """Calculates KL divergence and PSI (Population Stability Index) for the specified model.
         """
         if model_id not in self.active_models:
             return {"error": "Model not managed by DriftDetector."}
-            
+
         return {
             "model_id": model_id,
             "status": "Healthy",
@@ -27,13 +27,12 @@ class DriftDetector:
         }
 
 class DataQualityMonitor:
-    """
-    Фаза 15: Data Quality Monitoring (Self-Improvement)
+    """Фаза 15: Data Quality Monitoring (Self-Improvement)
     Assesses data integrity from UA Connectors before feeding models.
     """
-    def check_ingestion_quality(self, source: str) -> Dict[str, Any]:
-        """
-        Checks missing values, outliers, and schema compliance.
+
+    def check_ingestion_quality(self, source: str) -> dict[str, Any]:
+        """Checks missing values, outliers, and schema compliance.
         """
         return {
             "source": source,

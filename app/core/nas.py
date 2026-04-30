@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """UA Sources - NAS (Neural Architecture Search)
 Self-evolution and model optimization.
 """
@@ -9,7 +8,6 @@ from datetime import UTC, datetime
 from enum import Enum
 import logging
 from typing import Any
-
 
 logger = logging.getLogger(__name__)
 

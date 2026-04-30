@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """🧠 Sovereign Memory v1.0 (UA) - Predator Analytics
 Забезпечує персистентність стану AZR між перезавантаженнями та адаптивне навчання.
 Axiom-006: Continuity of Consciousness.
@@ -11,20 +10,19 @@ from typing import Any
 
 from app.libs.core.structured_logger import get_logger
 
-
 logger = get_logger("services.azr.memory")
 
 
 class SovereignMemory:
     def __init__(self, storage_path: str | None = None):
         from app.libs.core.config import settings
-        
+
         # Use AZR_HOME/memory/azr_state.json by default
         if storage_path:
             self.path = Path(storage_path)
         else:
             self.path = Path(settings.AZR_HOME) / "memory" / "azr_state.json"
-            
+
         # Removed mkdir parent from __init__ to prevent side-effects on import.
         self.state = self._load_state()
 
@@ -60,7 +58,7 @@ class SovereignMemory:
         try:
             # Ensure directory exists only when saving
             self.path.parent.mkdir(parents=True, exist_ok=True)
-            
+
             temp_path = self.path.with_suffix(".tmp")
             with open(temp_path, "w") as f:
                 json.dump(self.state, f, indent=2)

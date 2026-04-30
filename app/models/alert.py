@@ -1,5 +1,4 @@
-"""
-🚨 Моделі алертів — PREDATOR Analytics v4.1.
+"""🚨 Моделі алертів — PREDATOR Analytics v4.1.
 
 SQLAlchemy ORM для зберігання сповіщень, тригерів
 та автоматичних реакцій на аномалії.
@@ -12,12 +11,12 @@ from enum import StrEnum
 from uuid import uuid4
 
 from sqlalchemy import (
+    JSON,
     Boolean,
     Column,
     DateTime,
     Float,
     ForeignKey,
-    JSON,
     String,
     Text,
 )

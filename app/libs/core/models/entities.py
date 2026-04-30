@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Core Domain Models
 Shared SQLAlchemy entities for Predator Analytics.
 """

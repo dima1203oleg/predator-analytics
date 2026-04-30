@@ -7,7 +7,7 @@
 - FR-046: Knowledge Base для RAG pipeline
 - TZ §5.3: Vector store з cosine similarity
 """
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any
 
 import httpx
@@ -170,6 +170,7 @@ class QdrantService:
         Args:
             points: Список точок у форматі:
                 [{"id": "...", "vector": [...], "payload": {...}}]
+
         """
         if not points:
             return True
@@ -212,6 +213,7 @@ class QdrantService:
             limit: Максимум результатів
             score_threshold: Мінімальний поріг cosine similarity
             additional_filters: Додаткові Qdrant filter conditions
+
         """
         # Tenant-ізоляція через filter
         must_conditions: list[dict[str, Any]] = [

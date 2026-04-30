@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 #!/usr/bin/env python3.12
 """🛡️ Predator v45 | Neural Analytics- Тригер необмеженого автовдосконалення (Launch SI Loop).
 ----------------------------------------------------------------------
@@ -12,7 +11,6 @@ import asyncio
 import logging
 import os
 import sys
-
 
 # Додаємо кореневу директорію до шляху
 sys.path.append(os.getcwd())
@@ -49,5 +47,4 @@ if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "--force":
         asyncio.run(main())
     else:
-        print("💡 Використовуйте: python3.12 scripts/launch_unlimited_si.py --force")
-        print("⚠️ Це запустить автономний цикл прямо в консолі.")
+        pass

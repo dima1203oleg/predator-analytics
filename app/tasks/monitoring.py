@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Monitoring Tasks
 Health checks and metrics collection.
 """
@@ -15,7 +14,6 @@ import redis
 
 from app.libs.core.config import settings
 
-
 logger = logging.getLogger("tasks.monitoring")
 
 
@@ -25,6 +23,7 @@ def health_check():
 
     Returns:
         Dict with component status
+
     """
     logger.info("[HEALTH] Running system health check")
 
@@ -104,6 +103,7 @@ def collect_index_stats():
 
     Returns:
         Index stats from OpenSearch and Qdrant
+
     """
     logger.info("[STATS] Collecting index statistics")
 

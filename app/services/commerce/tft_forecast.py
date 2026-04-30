@@ -1,17 +1,16 @@
-from typing import Dict, Any, List
-from datetime import datetime
+from typing import Any
+
 
 class TFTForecaster:
-    """
-    Фаза 14: TFT Forecast (Temporal Fusion Transformer)
+    """Фаза 14: TFT Forecast (Temporal Fusion Transformer)
     Predicts demand, prices, and supply chain disruptions over time.
     """
+
     def __init__(self):
         self.model_version = "tft-sm-v1.0"
-        
-    def predict_demand(self, product_category_id: str, horizon_days: int) -> Dict[str, Any]:
-        """
-        Runs TFT mock inference for demand forecasting.
+
+    def predict_demand(self, product_category_id: str, horizon_days: int) -> dict[str, Any]:
+        """Runs TFT mock inference for demand forecasting.
         """
         return {
             "product_category_id": product_category_id,

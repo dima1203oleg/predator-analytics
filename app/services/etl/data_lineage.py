@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Data Lineage Tracker (COMP-012)
 
 Відстежує походження та трансформації даних у ETL-конвеєрі.
@@ -12,14 +11,13 @@ Implements:
 - Source→Destination mapping
 - Impact analysis (what downstream depends on this record)
 """
+from dataclasses import asdict, dataclass, field
+from datetime import UTC, datetime
 import hashlib
 import json
 import logging
-from dataclasses import dataclass, field, asdict
-from datetime import UTC, datetime
 from typing import Any
 from uuid import uuid4
-
 
 logger = logging.getLogger("service.lineage")
 
@@ -27,6 +25,7 @@ logger = logging.getLogger("service.lineage")
 @dataclass
 class LineageNode:
     """A single step in the data lineage chain."""
+
     step_id: str = field(default_factory=lambda: str(uuid4())[:8])
     operation: str = ""       # ingest, parse, clean, enrich, deduplicate, distribute
     component: str = ""       # Component name (e.g., "csv_parser", "uktzed_enricher")
@@ -44,6 +43,7 @@ class LineageNode:
 @dataclass
 class LineageRecord:
     """Full lineage chain for a data record or batch."""
+
     lineage_id: str = field(default_factory=lambda: str(uuid4()))
     source_connector: str = ""        # Original data source
     source_url: str = ""              # URL or path

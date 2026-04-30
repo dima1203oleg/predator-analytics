@@ -1,18 +1,17 @@
-from typing import Dict, Any, List
 from datetime import datetime
-import json
+from typing import Any
+
 
 class XBRLParser:
-    """
-    Фаза 13: XBRL Parser (Financial Intelligence SM)
+    """Фаза 13: XBRL Parser (Financial Intelligence SM)
     Mock SM-implementation for parsing XBRL/XML financial data.
     """
+
     def __init__(self):
         self.namespace = "http://www.w3.org/1999/xhtml"
-        
-    def parse_document(self, file_content: str) -> Dict[str, Any]:
-        """
-        Parses an XBRL document and extracts key financial metrics.
+
+    def parse_document(self, file_content: str) -> dict[str, Any]:
+        """Parses an XBRL document and extracts key financial metrics.
         In SM Edition this returns a simulated extraction.
         """
         # Simulate parsing delay and logic

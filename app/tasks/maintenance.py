@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Maintenance Tasks
 Cleanup and optimization tasks for the platform.
 """
@@ -14,7 +13,6 @@ from celery import shared_task
 
 from app.libs.core.config import settings
 
-
 logger = logging.getLogger("tasks.maintenance")
 
 
@@ -27,6 +25,7 @@ def cleanup_staging(days: int = 90):
 
     Returns:
         {status, deleted_count}
+
     """
     logger.info(f"[CLEANUP] Starting cleanup of staging records older than {days} days")
 
@@ -75,6 +74,7 @@ def cleanup_search_logs(days: int = 30):
 
     Args:
         days: Delete logs older than this many days
+
     """
     logger.info(f"[CLEANUP] Cleaning search logs older than {days} days")
 

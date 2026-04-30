@@ -1,1 +1,1 @@
-from .data_deduplicator import create_data_deduplicator, DataDeduplicator
+from .data_deduplicator import DataDeduplicator, create_data_deduplicator

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Predator Analytics - Data Layer Architecture
 PostgreSQL Schema for System of Record (Single Source of Truth).
 
@@ -540,11 +539,7 @@ QUALITY_GATES = {
 }
 
 if __name__ == "__main__":
-    print("=== Predator Analytics Data Layer Schema ===")
-    print(f"Version: {SCHEMA_VERSION}")
-    print("\nSchemas:")
-    for schema in NAMING_CONVENTIONS["postgresql"]["schemas"]:
-        print(f"  - {schema}")
-    print("\nEnvironments:")
-    for env, config in ENV_CONFIGS.items():
-        print(f"  - {env}: {config['description']}")
+    for _schema in NAMING_CONVENTIONS["postgresql"]["schemas"]:
+        pass
+    for _env, _config in ENV_CONFIGS.items():
+        pass

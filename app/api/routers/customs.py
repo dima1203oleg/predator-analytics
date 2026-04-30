@@ -10,7 +10,6 @@ from fastapi.responses import JSONResponse
 
 from app.services.customs_service import customs_service
 
-
 logger = logging.getLogger("api.customs")
 router = APIRouter(prefix="/customs", tags=["Customs Intelligence"])
 

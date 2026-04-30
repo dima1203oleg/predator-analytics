@@ -1,6 +1,5 @@
 import logging
 
-
 logger = logging.getLogger("app.services.system_control_service")
 
 

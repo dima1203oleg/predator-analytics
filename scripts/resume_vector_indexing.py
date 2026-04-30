@@ -1,19 +1,17 @@
 from __future__ import annotations
 
 import asyncio
-from datetime import datetime
 import json
 import logging
 import os
 import sys
 import time
-from typing import Any, Dict, List
+from typing import Any
 import uuid
 
 import aiohttp
 import asyncpg
 from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
-
 
 # Configure logging
 logging.basicConfig(
@@ -206,7 +204,7 @@ async def run_vector_logic():
                 t0 = time.time()
                 # logger.info(f"Generating {len(texts_to_embed)} embeddings...")
                 embeddings = await indexer.generate_embeddings(texts_to_embed)
-                embed_time = time.time() - t0
+                time.time() - t0
 
                 # Prepare Qdrant Points
                 for i, embedding in enumerate(embeddings):

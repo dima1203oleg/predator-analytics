@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """CERS — Composite Entity Risk Score Engine (COMP-066)
 
 Обчислює композитний ризик-бал (0-100) для компаній та фізосіб на основі:
@@ -12,11 +11,10 @@ from __future__ import annotations
 - Кількість пов'язаних осіб у реєстрі (pep_connections)
 - ProZorro порушення (prozorro_violations)
 """
-import logging
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
+import logging
 from typing import Any
-
 
 logger = logging.getLogger("service.cers")
 
@@ -36,6 +34,7 @@ DEFAULT_WEIGHTS = {
 @dataclass
 class CERSFactor:
     """A single risk factor contributing to the CERS score."""
+
     name: str
     value: Any
     weight: float
@@ -46,6 +45,7 @@ class CERSFactor:
 @dataclass
 class CERSResult:
     """Composite Entity Risk Score result."""
+
     ueid: str
     cers_score: int  # 0–100
     risk_level: str  # low, medium, high, critical
@@ -113,6 +113,7 @@ class CERSEngine:
 
         Returns:
             CERSResult with score, level, factors, and explanations
+
         """
         factors: list[CERSFactor] = []
         total_score = 0.0
@@ -132,7 +133,7 @@ class CERSEngine:
             ))
 
         # Clamp 0–100
-        cers_score = max(0, min(100, int(round(total_score))))
+        cers_score = max(0, min(100, round(total_score)))
 
         # Determine risk level
         risk_level = self._risk_level(cers_score)

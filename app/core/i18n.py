@@ -9,7 +9,6 @@ from __future__ import annotations
 
 from enum import StrEnum
 
-
 # ═══════════════════════════════════════════════════════════════
 # CERS Risk Levels
 # ═══════════════════════════════════════════════════════════════
@@ -182,6 +181,7 @@ def t(key: str, lang: str = "uk", category: str = "errors") -> str:
 
     Returns:
         Localized string or the key itself as fallback.
+
     """
     catalogs: dict[str, dict[str, dict[str, str]]] = {
         "errors": {"uk": ERRORS_UA, "en": {}},

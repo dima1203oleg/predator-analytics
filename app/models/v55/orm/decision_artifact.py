@@ -7,8 +7,8 @@ UPDATE and DELETE are forbidden via DB trigger.
 
 from __future__ import annotations
 
+from datetime import UTC, datetime
 import uuid
-from datetime import datetime, timezone
 
 from sqlalchemy import Column, DateTime, Float, Index, String
 from sqlalchemy.dialects.postgresql import JSONB, UUID
@@ -29,7 +29,7 @@ class DecisionArtifactORM(Base):
     )
 
     decision_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    timestamp = Column(DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))
+    timestamp = Column(DateTime(timezone=True), nullable=False, default=lambda: datetime.now(UTC))
     tenant_id = Column(String(100), nullable=True)
     trace_id = Column(String(100), nullable=True)
     decision_type = Column(String(100), nullable=False)

@@ -6,15 +6,19 @@ Handles DB operations for StructuralScoreORM.
 from __future__ import annotations
 
 import logging
-from uuid import UUID
+from typing import TYPE_CHECKING
 
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.engines.structural_gaps import StructuralScore
-from app.models.v55.orm.structural_score import StructuralScoreORM
 from app.core.ueid import parse_ueid
+from app.models.v55.orm.structural_score import StructuralScoreORM
 
+if TYPE_CHECKING:
+    from uuid import UUID
+
+    from sqlalchemy.ext.asyncio import AsyncSession
+
+    from app.engines.structural_gaps import StructuralScore
 
 logger = logging.getLogger("predator.repo.structural")
 

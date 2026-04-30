@@ -12,14 +12,14 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 import logging
-from typing import Optional
-
-from sqlalchemy.ext.asyncio import AsyncSession
+from typing import TYPE_CHECKING
 
 from app.core.confidence import ConfidenceScore, quick_confidence
 from app.core.signal_bus import SignalBus
 from app.models.v55.signal import SignalLayer, SignalPriority, V55Signal
 
+if TYPE_CHECKING:
+    from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger("predator.engines.predictive")
 
@@ -63,6 +63,7 @@ def compute_predictive_score(
 
     Returns:
         PredictiveScore with risk predictions.
+
     """
     # Phase 1: Heuristic model (weighted combination)
     # Phase 3: Replace with trained models from MLflow
@@ -113,34 +114,34 @@ async def process_entity(ueid: str, session: AsyncSession) -> PredictiveScore:
     """Run Predictive Analysis for a specific entity.
     Features async DB persistence and real-time scaling out via SignalBus.
     """
-    from app.repositories.predictive_repository import PredictiveRepository
     from app.repositories.behavioral_repository import BehavioralRepository
-    from app.repositories.institutional_repository import InstitutionalRepository
     from app.repositories.influence_repository import InfluenceRepository
+    from app.repositories.institutional_repository import InstitutionalRepository
+    from app.repositories.predictive_repository import PredictiveRepository
     from app.repositories.structural_repository import StructuralRepository
-    
+
     repo = PredictiveRepository(session)
     beh_repo = BehavioralRepository(session)
     inst_repo = InstitutionalRepository(session)
     infl_repo = InfluenceRepository(session)
     struct_repo = StructuralRepository(session)
-    
+
     # 1. Fetch latest scores from all layers for features
     beh_score = await beh_repo.get_latest_for_ueid(ueid)
     inst_score = await inst_repo.get_latest_for_ueid(ueid)
     infl_score = await infl_repo.get_latest_for_ueid(ueid)
     struct_score = await struct_repo.get_latest_for_ueid(ueid)
-    
+
     # Extract aggregates or use safe defaults
     beh_val = beh_score.aggregate if beh_score else 50.0
     inst_val = inst_score.aggregate if inst_score else 50.0
     infl_val = infl_score.aggregate if infl_score else 50.0
     struct_val = struct_score.aggregate if struct_score else 50.0
-    
+
     # Calculate data completeness based on how many layers are available
     available_layers = [s for s in [beh_score, inst_score, infl_score, struct_score] if s is not None]
     data_comp = 0.2 + (len(available_layers) * 0.2)
-    
+
     # 2. Compute predictive score
     score = compute_predictive_score(
         ueid,
@@ -156,8 +157,7 @@ async def process_entity(ueid: str, session: AsyncSession) -> PredictiveScore:
 
     # 2. Emit Signal (v55 standard)
     bus = SignalBus.get_instance()
-    from app.models.v55.signal import SignalLayer, SignalPriority, V55Signal
-    
+
     signal = V55Signal(
         signal_type="PREDICTIVE_SCORING",
         topic="predictive.analyzed",

@@ -14,16 +14,16 @@ import hashlib
 import io
 import json
 from typing import Any, ClassVar
-import pandas as pd
 
 import chardet
+import pandas as pd
 
 from app.minio_service import get_minio_service
 from app.normalizers.company import CompanyNormalizer
+from app.sinks.clickhouse_sink import ClickHouseSink
 from app.sinks.neo4j_sink import Neo4jSink
 from app.sinks.opensearch_sink import OpenSearchSink
 from app.sinks.postgres_sink import PostgresSink
-from app.sinks.clickhouse_sink import ClickHouseSink
 from app.validators.declaration import DeclarationValidator, Severity
 from predator_common.logging import get_logger
 
@@ -376,24 +376,24 @@ class FileIngestionPipeline:
         try:
             # Використовуємо pandas для читання Excel
             df = pd.read_excel(io.BytesIO(content))
-            
+
             # Конвертуємо назви колонок
             df.columns = [
                 self.COLUMN_MAPPING.get(str(c).lower().strip(), str(c).lower().strip())
                 for c in df.columns
             ]
-            
+
             # Обробка рядків
             for _, row in df.iterrows():
                 record = row.to_dict()
                 # Фільтруємо NaN
                 record = {k: (None if pd.isna(v) else v) for k, v in record.items()}
-                
+
                 self.stats.total_rows += 1
-                
+
                 # Валідація та обробка аналогічно CSV
                 validation = DeclarationValidator.validate_record(record)
-                
+
                 if validation.quarantine:
                     self.stats.quarantined_rows += 1
                     self.quarantine.append(
@@ -496,7 +496,7 @@ class FileIngestionPipeline:
     async def _store_clickhouse(self, batch: list[dict[str, Any]]) -> None:
         """Зберігає батч у ClickHouse для аналітики."""
         try:
-            # ClickHouse sink працює синхронно через clickhouse-connect, 
+            # ClickHouse sink працює синхронно через clickhouse-connect,
             # тому загортаємо в thread або використовуємо як є (для воркера ок)
             await self.clickhouse_sink.insert_declarations(batch)
         except Exception as e:

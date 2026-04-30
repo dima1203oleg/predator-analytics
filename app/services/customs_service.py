@@ -10,7 +10,6 @@ from app.libs.core.config import settings
 from app.libs.core.structured_logger import get_logger
 from app.services.report_generator import get_report_generator
 
-
 logger = get_logger("service.customs")
 
 

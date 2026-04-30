@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 #!/usr/bin/env python3
 """Простий тестовий Telegram Bot
 Використовуй для перевірки що токен працює.
@@ -9,7 +8,6 @@ import asyncio
 import logging
 import os
 import sys
-
 
 logging.basicConfig(level=logging.INFO, stream=sys.stdout)
 logger = logging.getLogger("test_bot")

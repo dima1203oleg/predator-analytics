@@ -1,17 +1,17 @@
-from typing import Dict, Any, List
 from datetime import datetime
+from typing import Any
+
 
 class InvestmentTracker:
-    """
-    Фаза 13: Investment Tracker (Financial Intelligence SM)
+    """Фаза 13: Investment Tracker (Financial Intelligence SM)
     Tracks sovereign and corporate investments, FDI, and CAPEX.
     """
+
     def __init__(self):
         self.active_portfolios = {}
 
-    def analyze_fdi(self, country_code: str) -> Dict[str, Any]:
-        """
-        Analyzes Foreign Direct Investment flows for a specific region.
+    def analyze_fdi(self, country_code: str) -> dict[str, Any]:
+        """Analyzes Foreign Direct Investment flows for a specific region.
         """
         return {
             "country_code": country_code,
@@ -25,10 +25,9 @@ class InvestmentTracker:
             "risk_exposure": "Medium-Low",
             "updated_at": datetime.utcnow().isoformat()
         }
-        
-    def track_corporate_capex(self, edrpou: str) -> Dict[str, Any]:
-        """
-        Estimates Capital Expenditures from public registries and tenders.
+
+    def track_corporate_capex(self, edrpou: str) -> dict[str, Any]:
+        """Estimates Capital Expenditures from public registries and tenders.
         """
         return {
             "edrpou": edrpou,

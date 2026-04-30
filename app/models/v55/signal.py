@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
-from datetime import datetime
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from pydantic import BaseModel, Field
+
+if TYPE_CHECKING:
+    from datetime import datetime
 
 
 class SignalResponse(BaseModel):
@@ -41,6 +43,7 @@ class SignalListResponse(BaseModel):
 
 from enum import StrEnum
 
+
 class SignalLayer(StrEnum):
     BEHAVIORAL = "behavioral"
     INSTITUTIONAL = "institutional"
@@ -57,6 +60,7 @@ class SignalPriority(StrEnum):
 
 class V55Signal(BaseModel):
     """Internal signal model used by analytical engines."""
+
     signal_type: str
     topic: str
     ueid: str

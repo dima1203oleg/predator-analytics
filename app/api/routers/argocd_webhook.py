@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """ArgoCD Webhook Router
 Receives webhooks from ArgoCD and notifies Telegram bot (and optionally triggers auto-rollback).
 """
@@ -11,7 +10,6 @@ from typing import Any
 from fastapi import APIRouter, BackgroundTasks, HTTPException, Request
 
 from app.services.telegram_assistant import get_assistant
-
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/argocd", tags=["Argocd"])

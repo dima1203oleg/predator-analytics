@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-
 #!/usr/bin/env python3
 """🔍 PREDATOR TELEGRAM DEBUGGER
 Діагностика та виправлення проблем з ботом.
 """
 import asyncio
+import contextlib
 import logging
 import os
 
@@ -25,18 +25,12 @@ class Colors:
 logging.basicConfig(level=logging.ERROR)
 
 async def check_token(token: str):
-    print(f"{Colors.BLUE}🔄 Checking token: {token[:5]}...{Colors.ENDC}")
     try:
         bot = Bot(token=token)
         me = await bot.get_me()
-        print(f"{Colors.GREEN}✅ SUCCESS!{Colors.ENDC}")
-        print(f"   Bot Name: {me.first_name}")
-        print(f"   Username: @{me.username}")
-        print(f"   Bot ID:   {me.id}")
         await bot.session.close()
         return True, me.username
-    except Exception as e:
-        print(f"{Colors.FAIL}❌ FAILED: {e}{Colors.ENDC}")
+    except Exception:
         return False, None
 
 def update_env_file(key: str, value: str):
@@ -64,20 +58,13 @@ def update_env_file(key: str, value: str):
     # Write back
     with open(env_path, "w") as f:
         f.writelines(new_lines)
-    print(f"{Colors.GREEN}✅ Updated .env file{Colors.ENDC}")
 
 async def main():
-    print(f"{Colors.HEADER}🔎 TELEGRAM BOT DIAGNOSTIC TOOL{Colors.ENDC}")
-    print("====================================")
 
     # 1. Check Env
     token = os.getenv("TELEGRAM_BOT_TOKEN")
     admin_id = os.getenv("TELEGRAM_ADMIN_ID")
 
-    print("Current Config:")
-    print(f"  TOKEN:    {token[:5] + '...' if token else 'NOT SET'}")
-    print(f"  ADMIN_ID: {admin_id or 'NOT SET'}")
-    print()
 
     # 2. Verify Token
     valid = False
@@ -87,7 +74,6 @@ async def main():
         valid, username = await check_token(token)
 
     if not valid:
-        print(f"\n{Colors.WARNING}⚠️  TOKEN IS INVALID OR MISSING!{Colors.ENDC}")
         new_token = input(f"{Colors.BOLD}Enter new Bot Token (from @BotFather):{Colors.ENDC} ").strip()
 
         if new_token:
@@ -97,17 +83,10 @@ async def main():
                 token = new_token
                 os.environ["TELEGRAM_BOT_TOKEN"] = token
             else:
-                print(f"{Colors.FAIL}❌ Token is still invalid. Aborting.{Colors.ENDC}")
                 return
 
     # 3. Verify Admin ID
     if not admin_id:
-        print(f"\n{Colors.WARNING}⚠️  ADMIN ID IS MISSING!{Colors.ENDC}")
-        print("You need to know your Telegram User ID.")
-        print("1. Open Telegram")
-        print("2. Search for @userinfobot")
-        print("3. Click Start")
-        print("4. Copy the 'Id' number")
 
         new_id = input(f"{Colors.BOLD}Enter your ID:{Colors.ENDC} ").strip()
         if new_id:
@@ -117,25 +96,14 @@ async def main():
 
     # 4. Test Message
     if valid and admin_id:
-        print(f"\n{Colors.BLUE}🔄 Sending test message to {admin_id}...{Colors.ENDC}")
         try:
             bot = Bot(token=token)
             await bot.send_message(admin_id, "✅ **DIAGNOSTIC TEST SUCCESSFUL**\n\nYour bot is configured correctly!", parse_mode="Markdown")
             await bot.session.close()
-            print(f"{Colors.GREEN}✅ Message sent! Check your Telegram.{Colors.ENDC}")
-        except Exception as e:
-            print(f"{Colors.FAIL}❌ Failed to send message: {e}{Colors.ENDC}")
-            print("Check if you have started the bot (clicked /start) before.")
+        except Exception:
+            pass
 
-    print("\n====================================")
-    print(f"{Colors.BOLD}🎉 DIAGNOSTIC COMPLETE!{Colors.ENDC}")
-    print()
-    print("To start the bot now, run:")
-    print(f"{Colors.GREEN}python3 backend/orchestrator/agents/telegram_bot_v2.py{Colors.ENDC}")
-    print()
 
 if __name__ == "__main__":
-    try:
+    with contextlib.suppress(KeyboardInterrupt):
         asyncio.run(main())
-    except KeyboardInterrupt:
-        print("\nCANCELLED")

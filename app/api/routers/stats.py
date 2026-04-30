@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Stats Router - TS-Compliant Analytics Endpoints
 Provides statistics on ingestion, search, and system health.
 """
@@ -10,7 +9,6 @@ import os
 
 import asyncpg
 from fastapi import APIRouter, Query
-
 
 logger = logging.getLogger("router.stats")
 
@@ -42,6 +40,7 @@ async def get_ingestion_stats(
         - Documents added in last N days
         - Last ingestion timestamp
         - Ingestion success rate
+
     """
     conn = await get_db_connection()
 
@@ -181,6 +180,7 @@ async def get_search_stats(days: int = Query(7, ge=1, le=365)):
         - Average response time
         - Popular queries
         - Search distribution by type
+
     """
     # Note: This requires a search_logs table to be created
     # For now, return placeholder data
@@ -271,6 +271,7 @@ async def get_system_stats():
         - Database sizes
         - Table counts
         - Index health
+
     """
     conn = await get_db_connection()
 

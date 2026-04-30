@@ -67,8 +67,7 @@ if __name__ == "__main__":
     collector = DataGovUACollector()
     results = collector.search_datasets("закупівлі", rows=3)
     if results.get("success"):
-        print(f"Found {results['result']['count']} datasets for 'закупівлі'")
-        for pkg in results["result"]["results"]:
-            print(f"- {pkg['title']} (ID: {pkg['id']})")
+        for _pkg in results["result"]["results"]:
+            pass
     else:
-        print(f"Search failed: {results.get('error')}")
+        pass

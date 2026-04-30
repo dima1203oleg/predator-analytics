@@ -1,12 +1,12 @@
-from fastapi import APIRouter, Query, HTTPException
-from typing import Dict, Any, List
+from typing import Any
+
+from fastapi import APIRouter, Query
 
 router = APIRouter()
 
 @router.post("/shadow-map")
-async def generate_shadow_map(entity_id: str = Query(..., description="UEID of the core entity")) -> Dict[str, Any]:
-    """
-    Shadow Map Generator (COMP-274).
+async def generate_shadow_map(entity_id: str = Query(..., description="UEID of the core entity")) -> dict[str, Any]:
+    """Shadow Map Generator (COMP-274).
     Maps out the informal and formal network, identifying ultimate beneficial owners
     and hidden affiliates leveraging Neo4j logic.
     """
@@ -28,9 +28,8 @@ async def generate_shadow_map(entity_id: str = Query(..., description="UEID of t
 async def find_influence_path(
     source_id: str = Query(..., description="UEID of source node"),
     target_id: str = Query(..., description="UEID of target node")
-) -> Dict[str, Any]:
-    """
-    Influence Path View (COMP-275).
+) -> dict[str, Any]:
+    """Influence Path View (COMP-275).
     Finds the shortest or most probable path of influence between two entities.
     """
     return {

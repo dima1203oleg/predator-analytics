@@ -1,16 +1,14 @@
 from __future__ import annotations
 
-
 """
 Data Validator Component
 
 Responsible for validating data records against schemas and business rules.
 """
 
-import logging
-from typing import Any, Dict, List, Optional
 from dataclasses import dataclass
-
+import logging
+from typing import Any
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -20,6 +18,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class ValidationIssue:
     """Represents a single validation issue."""
+
     field: str
     message: str
     severity: str = "error"  # "error", "warning"
@@ -28,9 +27,10 @@ class ValidationIssue:
 @dataclass
 class ValidationResult:
     """Result of validating a record or batch."""
+
     is_valid: bool
-    issues: List[ValidationIssue]
-    record_index: Optional[int] = None
+    issues: list[ValidationIssue]
+    record_index: int | None = None
 
     @property
     def error_count(self) -> int:
@@ -47,13 +47,13 @@ class DataValidator:
     Performs deep validation of records beyond simple type normalization.
     """
 
-    def __init__(self, config: Dict[str, Any] | None = None):
+    def __init__(self, config: dict[str, Any] | None = None):
         self.config = config or {}
         # Default required fields if not provided in config
         self.required_fields = self.config.get("required_fields", ["name", "registration_number"])
         logger.info("DataValidator initialized")
 
-    def validate_record(self, record: Dict[str, Any], index: Optional[int] = None) -> ValidationResult:
+    def validate_record(self, record: dict[str, Any], index: int | None = None) -> ValidationResult:
         """Validate a single record.
 
         Args:
@@ -62,18 +62,19 @@ class DataValidator:
 
         Returns:
             ValidationResult containing status and issues
+
         """
         issues = []
 
         # 1. Check required fields
-        required: List[str] = self.required_fields
+        required: list[str] = self.required_fields
         for field in required:
             field_val = record.get(field)
             if field_val is None or str(field_val).strip() == "":
                 issues.append(ValidationIssue(field, f"Required field '{field}' is missing or empty", "error"))
 
         # 2. Check for zero prices (Business Rule)
-        price_fields: List[str] = ["Ціна", "Вартість", "Price", "Amount"]
+        price_fields: list[str] = ["Ціна", "Вартість", "Price", "Amount"]
         for field in price_fields:
             if field in record:
                 try:
@@ -98,7 +99,7 @@ class DataValidator:
             record_index=index
         )
 
-    def validate_batch(self, records: List[Dict[str, Any]]) -> List[ValidationResult]:
+    def validate_batch(self, records: list[dict[str, Any]]) -> list[ValidationResult]:
         """Validate a batch of records.
 
         Args:
@@ -106,6 +107,7 @@ class DataValidator:
 
         Returns:
             List of ValidationResult objects
+
         """
         results = []
         for i, record in enumerate(records):
@@ -113,10 +115,11 @@ class DataValidator:
         return results
 
 
-def create_data_validator(config: Dict[str, Any] | None = None) -> DataValidator:
+def create_data_validator(config: dict[str, Any] | None = None) -> DataValidator:
     """Factory function to create a DataValidator instance.
 
     Returns:
         DataValidator instance
+
     """
     return DataValidator(config)

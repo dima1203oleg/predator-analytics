@@ -47,7 +47,7 @@ class TorBotTool(BaseTool):
         start_time = datetime.now(UTC)
         options = options or {}
 
-        depth = options.get("depth", 2)
+        options.get("depth", 2)
         extract_emails = options.get("extract_emails", True)
         classify = options.get("classify", True)
 

@@ -7,7 +7,6 @@ import random
 import re
 import uuid
 
-
 SEEDS_FILE = "/app/data/seeds/analytic_scenarios_100.md"
 OUTPUT_FILE = "/app/data/training_data.jsonl"
 
@@ -96,15 +95,11 @@ def generate_synthetic_record(scenario):
     }
 
 def main():
-    print("🚀 AZR Synthetic Data Generator started...")
-    print(f"📂 Reading seeds from {SEEDS_FILE}")
 
     if not os.path.exists(SEEDS_FILE):
-        print(f"❌ Error: Seeds file not found at {SEEDS_FILE}")
         return
 
     scenarios = parse_scenarios(SEEDS_FILE)
-    print(f"✅ Parsed {len(scenarios)} unique scenarios from Knowledge Base.")
 
     total_records = 0
     with open(OUTPUT_FILE, 'w', encoding='utf-8') as f_out:
@@ -115,8 +110,6 @@ def main():
                 f_out.write(json.dumps(record, ensure_ascii=False) + '\n')
                 total_records += 1
 
-    print(f"🎉 SUCCESS: Generated {total_records} synthetic training samples.")
-    print(f"💾 Saved to {OUTPUT_FILE}")
 
 if __name__ == "__main__":
     main()

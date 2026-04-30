@@ -33,6 +33,7 @@ class SearchService:
             db: Async database session
             tenant_id: UUID тенанта (обов'язково для RLS)
             limit: Максимальна кількість результатів
+
         """
         result = await db.execute(
             select(Company)
@@ -61,6 +62,7 @@ class SearchService:
             db: Async database session
             tenant_id: UUID тенанта (обов'язково для RLS)
             limit: Максимальна кількість результатів
+
         """
         try:
             # Отримуємо компанію за UEID (з tenant isolation)
@@ -90,7 +92,7 @@ class SearchService:
                     }
                     for r in duplicates
                 ]
-            
+
             # Фоллбек (якщо в Qdrant нічого не знайдено)
             stmt = (
                 select(Company)
@@ -132,6 +134,7 @@ class SearchService:
             db: Async database session
             tenant_id: UUID тенанта (обов'язково для RLS)
             limit: Максимальна кількість результатів
+
         """
         try:
             # Конструюємо OR запит для всіх ключових слів

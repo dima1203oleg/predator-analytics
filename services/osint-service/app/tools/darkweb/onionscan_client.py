@@ -46,7 +46,7 @@ class OnionScanTool(BaseTool):
         start_time = datetime.now(UTC)
         options = options or {}
 
-        depth = options.get("depth", 1)
+        options.get("depth", 1)
         check_ssh = options.get("check_ssh", True)
         check_bitcoin = options.get("check_bitcoin", True)
 

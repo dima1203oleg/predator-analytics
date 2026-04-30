@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Ollama Local LLM Provider."""
 import time
 

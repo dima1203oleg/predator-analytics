@@ -1,24 +1,19 @@
 from __future__ import annotations
 
-
 #!/usr/bin/env python3
 """Predator Analytics CLI (predatorctl) v45
 Implementation of the CLI-First Sovereignty Axiom.
 """
 
 from datetime import datetime
-from enum import Enum
-import hashlib
+from enum import StrEnum
 import json
 import os
-from pathlib import Path
 import subprocess
 import sys
-from typing import Dict, List, Optional
 import uuid
 
 import typer
-import yaml
 
 
 # System path setup for core libs
@@ -50,14 +45,16 @@ app = typer.Typer(
 
 # --- TYPES & ENUMS ---
 
-class OutputFormat(str, Enum):
+class OutputFormat(StrEnum):
     """Output format enum."""
+
     JSON = "json"
     YAML = "yaml"
     TEXT = "text"  # Simplified Human Readable
 
-class JobState(str, Enum):
+class JobState(StrEnum):
     """Job state enum."""
+
     RUNNING = "running"
     COMPLETED = "completed"
     FAILED = "failed"
@@ -419,9 +416,7 @@ def arbiter_history(limit: int = 50, output: OutputFormat = OutputFormat.TEXT):
 @ledger_app.command("verify")
 def ledger_verify(job_id: str | None = None, output: OutputFormat = OutputFormat.TEXT):
     """Verify the integrity of the Truth Ledger hash chain."""
-    import asyncio
-
-    from sqlalchemy import desc, select
+    from sqlalchemy import select
 
     from libs.core.database import get_db_ctx
     from libs.core.models.truth_ledger import TruthLedger

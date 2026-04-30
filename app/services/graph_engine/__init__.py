@@ -1,5 +1,5 @@
 """Graph Engine Services Package."""
-from .community_detection import CommunityDetection
 from .centrality import CentralityEngine
+from .community_detection import CommunityDetection
 
-__all__ = ["CommunityDetection", "CentralityEngine"]
+__all__ = ["CentralityEngine", "CommunityDetection"]

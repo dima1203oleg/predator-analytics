@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Multi-Agent Coordination & Improvement Proposals - SOM v45."""
 from datetime import datetime
 from enum import Enum
@@ -9,7 +8,6 @@ from typing import Any
 import uuid
 
 from pydantic import BaseModel
-
 
 logger = logging.getLogger(__name__)
 
@@ -85,9 +83,8 @@ class AgentCoordinationProtocol:
         if (
             "axiom" in proposal.description.lower()
             or "constitution" in proposal.description.lower()
-        ):
-            if proposal.proposed_by != AgentRole.HUMAN:
-                violations.append("AXIOM-002: Only humans can propose constitutional changes.")
+        ) and proposal.proposed_by != AgentRole.HUMAN:
+            violations.append("AXIOM-002: Only humans can propose constitutional changes.")
 
         return {"passed": len(violations) == 0, "violations": violations}
 

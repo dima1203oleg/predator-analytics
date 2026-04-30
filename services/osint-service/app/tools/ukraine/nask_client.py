@@ -57,7 +57,7 @@ class NASKTool(BaseTool):
         start_time = datetime.now(UTC)
         options = options or {}
 
-        search_type = options.get("search_type", "person")
+        options.get("search_type", "person")
         year = options.get("year")
 
         findings = []

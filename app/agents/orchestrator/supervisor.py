@@ -10,7 +10,6 @@ from ..core.arbiter_agent import ArbiterAgent
 from ..data.crawler_agent import CrawlerAgent
 from ..data.retriever_agent import RetrieverAgent
 
-
 logger = logging.getLogger("nexus.supervisor")
 
 
@@ -271,7 +270,9 @@ class NexusSupervisor:
                 logger.info(f"[{correlation_id}] Activating Real Council of Agents...")
 
                 try:
-                    from app.services.llm_council.council_orchestrator import create_default_council
+                    from app.services.llm_council.council_orchestrator import (
+                        create_default_council,
+                    )
 
                     council = create_default_council()
 

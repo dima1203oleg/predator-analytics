@@ -9,12 +9,12 @@ Triggered via API or scheduled tasks. All steps use real DB persistence.
 from __future__ import annotations
 
 import logging
-from typing import Any
-
-from sqlalchemy.ext.asyncio import AsyncSession
+from typing import TYPE_CHECKING, Any
 
 from app.engines.data_fusion import DataSource, FusionResult, process_batch
 
+if TYPE_CHECKING:
+    from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger("predator.pipeline")
 
@@ -40,13 +40,14 @@ async def run_full_pipeline(
 
     Returns:
         Pipeline execution summary.
+
     """
     from app.engines.behavioral import process_entity as behavioral_process
-    from app.engines.institutional import process_entity as institutional_process
-    from app.engines.influence import process_entity as influence_process
-    from app.engines.structural_gaps import process_entity as structural_process
-    from app.engines.predictive import process_entity as predictive_process
     from app.engines.cers import process_entity as cers_process
+    from app.engines.influence import process_entity as influence_process
+    from app.engines.institutional import process_entity as institutional_process
+    from app.engines.predictive import process_entity as predictive_process
+    from app.engines.structural_gaps import process_entity as structural_process
 
     # ─── Step 1: Data Fusion ───
     logger.info("Pipeline Step 1/7: Data Fusion — %d records from [%s]", len(records), source)

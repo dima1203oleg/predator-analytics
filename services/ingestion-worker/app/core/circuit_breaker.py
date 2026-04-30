@@ -2,8 +2,8 @@
 
 Розподілений Circuit Breaker на базі Redis для OSINT інтеграцій.
 """
-import logging
 from enum import Enum
+import logging
 import time
 
 from redis.asyncio import Redis
@@ -41,7 +41,7 @@ class DistributedCircuitBreaker:
         state = await self.redis.get(self.key_state)
         if not state:
             return CircuitState.CLOSED
-            
+
         state_str = state.decode("utf-8")
         if state_str == CircuitState.OPEN.value:
             # Перевіряємо чи пройшов час recovery
@@ -52,14 +52,14 @@ class DistributedCircuitBreaker:
                     # Перехід в HALF_OPEN
                     await self.redis.set(self.key_state, CircuitState.HALF_OPEN.value)
                     return CircuitState.HALF_OPEN
-        
+
         return CircuitState(state_str)
 
     async def record_failure(self) -> None:
         """Реєструє помилку до зовнішнього API."""
         failures = await self.redis.incr(self.key_failures)
         await self.redis.set(self.key_last_failure, str(time.time()))
-        
+
         if failures >= self.failure_threshold:
             current_state = await self.get_state()
             if current_state != CircuitState.OPEN:
@@ -71,7 +71,7 @@ class DistributedCircuitBreaker:
         current_state = await self.get_state()
         if current_state in (CircuitState.OPEN, CircuitState.HALF_OPEN):
             logger.info(f"Circuit Breaker для {self.service_name} перейшов у стан CLOSED (Відновлено).")
-        
+
         await self.redis.set(self.key_state, CircuitState.CLOSED.value)
         await self.redis.set(self.key_failures, 0)
 
@@ -82,16 +82,17 @@ class DistributedCircuitBreaker:
         state = await self.get_state()
         if state == CircuitState.OPEN:
             return False
-            
+
         if state == CircuitState.HALF_OPEN:
             # Atomic lock for HALF_OPEN to allow ONLY ONE test request
             lock_key = f"cb:{self.service_name}:half_open_lock"
             acquired = await self.redis.set(lock_key, "1", nx=True, ex=10)
             if not acquired:
                 return False  # Інший процес вже робить тестовий запит
-                
+
         return True
 
 class CircuitBreakerOpenException(Exception):
     """Кидається, коли Circuit Breaker відкритий."""
+
     pass

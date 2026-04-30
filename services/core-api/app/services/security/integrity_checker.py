@@ -1,11 +1,12 @@
 """PREDATOR WORM Integrity Sentinel (v56.5).
 HR-16: Гарантування цілісність аудит-логів через HMAC-підписи.
 """
-import hmac
 import hashlib
+import hmac
 import json
 import logging
 from typing import Any
+
 from app.config import get_settings
 
 logger = logging.getLogger(__name__)

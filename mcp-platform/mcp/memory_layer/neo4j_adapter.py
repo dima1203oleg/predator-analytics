@@ -1,7 +1,6 @@
 """Neo4j adapter для управління графом залежностей."""
 from __future__ import annotations
 
-import asyncio
 from typing import Any, Optional
 
 

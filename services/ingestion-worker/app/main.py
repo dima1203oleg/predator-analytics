@@ -7,11 +7,11 @@
 import asyncio
 import contextlib
 from datetime import UTC, datetime
+import hashlib
 import json
 import signal
 from typing import Any
 import uuid
-import hashlib
 
 from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
 from pydantic import ValidationError
@@ -230,7 +230,7 @@ async def process_message(
         # T1.4 - Відправка в quarantine topic при Schema Drift
         await postgres_sink.mark_event_processed(event_id_str, tenant_id, source, "QUARANTINE")
         quarantine_topic = getattr(settings, 'KAFKA_TOPIC_QUARANTINE', f"tenant.{tenant_id}.schema.quarantine")
-        
+
         quarantine_payload = {
             "event_id": event_id_str,
             "original_payload": msg_value,
@@ -238,7 +238,7 @@ async def process_message(
             "validation_errors": str(e),
             "timestamp": int(datetime.now(UTC).timestamp() * 1000)
         }
-        
+
         await producer.send_and_wait(
             quarantine_topic,
             json.dumps(quarantine_payload).encode("utf-8"),
@@ -250,14 +250,14 @@ async def process_message(
         # Відправка в DLQ при системних помилках
         await postgres_sink.mark_event_processed(event_id_str, tenant_id, source, "DLQ")
         dlq_topic = getattr(settings, 'KAFKA_TOPIC_DLQ', f"tenant.{tenant_id}.system.dlq")
-        
+
         dlq_payload = {
             "event_id": event_id_str,
             "original_payload": msg_value,
             "error_message": str(e),
             "timestamp": int(datetime.now(UTC).timestamp() * 1000)
         }
-        
+
         await producer.send_and_wait(
             dlq_topic,
             json.dumps(dlq_payload).encode("utf-8"),

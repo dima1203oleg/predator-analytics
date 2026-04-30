@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 import logging
-import sys
-from typing import Optional
 
 from rich.console import Console
 from rich.logging import RichHandler
@@ -30,7 +28,6 @@ from predatorctl.commands import (
     ui_sentinel,
     vibe,
 )
-
 
 app = typer.Typer(
     name="predatorctl",

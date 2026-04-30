@@ -3,15 +3,17 @@
 from __future__ import annotations
 
 import logging
+from typing import TYPE_CHECKING
 import uuid
-from typing import Any
 
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.v55.decision_artifact import DecisionArtifactCreate
 from app.models.v55.orm.decision_artifact import DecisionArtifactORM
 
+if TYPE_CHECKING:
+    from sqlalchemy.ext.asyncio import AsyncSession
+
+    from app.models.v55.decision_artifact import DecisionArtifactCreate
 
 logger = logging.getLogger("predator.repo.decisions")
 
@@ -24,7 +26,7 @@ class DecisionRepository:
 
     async def create_artifact(self, data: DecisionArtifactCreate) -> DecisionArtifactORM:
         """Create a new Decision Artifact (WORM).
-        
+
         Note: The underlying PostgreSQL trigger guarantees this record cannot be updated or deleted.
         """
         artifact = DecisionArtifactORM(
@@ -39,26 +41,26 @@ class DecisionRepository:
             sources=data.sources,
             metadata_=data.metadata,
         )
-        
+
         self.session.add(artifact)
         await self.session.flush()
-        
+
         logger.info(
             "WORM: Recorded decision artifact %s (type=%s) with confidence %s",
             artifact.decision_id,
             artifact.decision_type,
             artifact.confidence_score,
         )
-        
+
         return artifact
-        
+
     async def get_by_id(self, decision_id: str | uuid.UUID) -> DecisionArtifactORM | None:
         """Fetch decision artifact by exact ID."""
         parsed_uuid = uuid.UUID(str(decision_id)) if isinstance(decision_id, str) else decision_id
         stmt = select(DecisionArtifactORM).where(DecisionArtifactORM.decision_id == parsed_uuid)
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none()
-        
+
     async def search(
         self,
         decision_type: str | None = None,
@@ -68,13 +70,13 @@ class DecisionRepository:
     ) -> list[DecisionArtifactORM]:
         """List decision artifacts with optional filtering."""
         stmt = select(DecisionArtifactORM).order_by(DecisionArtifactORM.timestamp.desc())
-        
+
         if decision_type:
             stmt = stmt.where(DecisionArtifactORM.decision_type == decision_type)
-            
+
         if trace_id:
             stmt = stmt.where(DecisionArtifactORM.trace_id == trace_id)
-            
+
         stmt = stmt.limit(limit).offset(offset)
         result = await self.session.execute(stmt)
         return list(result.scalars().all())

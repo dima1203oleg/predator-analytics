@@ -8,13 +8,13 @@
 import logging
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 logger = logging.getLogger(__name__)
 
 
-class ScanType(str, Enum):
+class ScanType(StrEnum):
     """Типи сканування SpiderFoot."""
     PASSIVE = "passive"  # Тільки пасивний збір
     ACTIVE = "active"  # Активне сканування
@@ -34,14 +34,14 @@ class ForensicsResult:
 
 class SpiderFootClient:
     """SpiderFoot — Модульний OSINT-фреймворк.
-    
+
     Автоматизує збір даних з 200+ джерел:
     - DNS, WHOIS, SSL сертифікати
     - Соціальні мережі
     - Пошук вразливостей
     - Dark Web моніторинг
     - Репутаційні бази
-    
+
     GitHub: smicallef/spiderfoot
     """
 
@@ -238,13 +238,13 @@ class SpiderFootClient:
 
 class HunchlyClient:
     """Hunchly — Система документування розслідувань.
-    
+
     Автоматично зберігає:
     - Кожну веб-сторінку
     - Скріншоти
     - Метадані
     - Часові мітки
-    
+
     Критично важливо для юристів та комплаєнсу.
     """
 
@@ -311,7 +311,7 @@ class HunchlyClient:
             "summary": {
                 "total_pages": len([a for a in self.artifacts if a["type"] == "webpage"]),
                 "total_screenshots": len([a for a in self.artifacts if "screenshot" in a]),
-                "unique_domains": len(set(a.get("url", "").split("/")[2] for a in self.artifacts if a.get("url"))),
+                "unique_domains": len({a.get("url", "").split("/")[2] for a in self.artifacts if a.get("url")}),
             },
         }
 
@@ -355,7 +355,7 @@ class HunchlyClient:
 
 class MetagoofilTool:
     """Metagoofil — Видобування метаданих з публічних документів.
-    
+
     Аналізує PDF, DOC, XLS, PPT та інші формати.
     Знаходить:
     - Імена авторів/співробітників
@@ -423,8 +423,8 @@ class MetagoofilTool:
         ]
 
         # Аналіз знайдених даних
-        authors = list(set(d["metadata"].get("author", "") for d in documents if d["metadata"].get("author")))
-        software = list(set(d["metadata"].get("creator", "") for d in documents if d["metadata"].get("creator")))
+        authors = list({d["metadata"].get("author", "") for d in documents if d["metadata"].get("author")})
+        software = list({d["metadata"].get("creator", "") for d in documents if d["metadata"].get("creator")})
         internal_paths = [d["metadata"].get("internal_path") for d in documents if d["metadata"].get("internal_path")]
 
         data = {

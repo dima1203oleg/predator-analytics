@@ -6,7 +6,6 @@ from rich.console import Console
 from rich.progress import Progress, SpinnerColumn, TextColumn
 import typer
 
-
 app = typer.Typer(help="Manage proposal lifecycle")
 console = Console()
 

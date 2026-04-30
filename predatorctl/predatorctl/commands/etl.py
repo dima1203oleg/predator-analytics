@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 import os
-from typing import Optional
 import uuid
 
 import redis
@@ -14,7 +13,6 @@ import yaml
 
 from predatorctl.core.arbiter_client import ArbiterClient
 from predatorctl.core.ledger_client import LedgerClient
-
 
 app = typer.Typer(help="ETL job management")
 console = Console()

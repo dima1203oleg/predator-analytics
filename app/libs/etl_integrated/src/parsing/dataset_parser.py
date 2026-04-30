@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import Any
 
-
 """
 Dataset Parser for Company and Director Information
 
@@ -15,7 +14,6 @@ from datetime import datetime
 import logging
 from pathlib import Path
 
-
 try:
     import pandas as pd
 except ImportError:
@@ -24,7 +22,6 @@ except ImportError:
 from transformation.data_transformer import DataTransformer
 
 from parsing.data_parser import DataParser
-
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -55,6 +52,7 @@ class DatasetParser:
 
         Returns:
             Dictionary containing parsing results and extracted data
+
         """
         file_path = Path(file_path)
 
@@ -156,6 +154,7 @@ class DatasetParser:
 
         Returns:
             Detected dataset type ('company', 'director', or 'unified')
+
         """
         columns = [col.lower() for col in df.columns]
 
@@ -180,6 +179,7 @@ class DatasetParser:
 
         Returns:
             List of dictionaries with extracted company information
+
         """
         extracted_records = []
 
@@ -224,6 +224,7 @@ class DatasetParser:
 
         Returns:
             List of dictionaries with extracted director information
+
         """
         extracted_records = []
 
@@ -254,6 +255,7 @@ class DatasetParser:
 
         Returns:
             List of dictionaries with extracted personal information
+
         """
         extracted_records = []
 
@@ -281,6 +283,7 @@ class DatasetParser:
 
         Returns:
             Dictionary containing Knowledge Graph logging results
+
         """
         if not parse_result.get("success", False):
             return {
@@ -402,5 +405,6 @@ def create_dataset_parser() -> DatasetParser:
 
     Returns:
         DatasetParser instance
+
     """
     return DatasetParser()

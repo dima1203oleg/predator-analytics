@@ -1,20 +1,22 @@
 """Головний CLI MCP-платформи (Typer)."""
 from __future__ import annotations
 
-import typer
 import asyncio
+
+import typer
+
 from mcp.ai_layer.cli import app as ai_app
-from mcp.memory_layer.cli import app as memory_app
-from mcp.code_analysis.cli import app as analyze_app
-from mcp.infrastructure.cli import app as infra_app
-from mcp.event_bus.cli import app as events_app
-from mcp.security.cli import app as sec_app
-from mcp.observability.cli import app as monitor_app
-from mcp.testing.cli import app as test_app
-from mcp.registry_docs.cli import app as docs_app
-from mcp.feature_flags.cli import app as flags_app
 from mcp.chaos_engineering.cli import app as chaos_app
+from mcp.code_analysis.cli import app as analyze_app
+from mcp.event_bus.cli import app as events_app
+from mcp.feature_flags.cli import app as flags_app
+from mcp.infrastructure.cli import app as infra_app
+from mcp.memory_layer.cli import app as memory_app
 from mcp.meta_controller.controller import main as meta_main
+from mcp.observability.cli import app as monitor_app
+from mcp.registry_docs.cli import app as docs_app
+from mcp.security.cli import app as sec_app
+from mcp.testing.cli import app as test_app
 
 app = typer.Typer(
     name="mcp",

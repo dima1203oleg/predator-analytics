@@ -6,7 +6,6 @@ from fastapi import Request, status
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 
-
 logger = logging.getLogger("predator.security.autonomy_guard")
 
 # Критичні шляхи, які агенти ніколи не можуть змінювати напряму

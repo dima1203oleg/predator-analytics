@@ -3,14 +3,16 @@
 from __future__ import annotations
 
 import logging
+from typing import TYPE_CHECKING
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_db
 from app.models.v55.signal import SignalListResponse, SignalResponse
 from app.repositories.signal_repository import SignalRepository
 
+if TYPE_CHECKING:
+    from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger("predator.api.v2.signals")
 router = APIRouter(prefix="/signals", tags=["v2-signals"])

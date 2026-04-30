@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Search Router with Redis Caching."""
 import os
 import sys
@@ -15,7 +14,6 @@ from app.services.auth_service import get_current_user
 from app.services.embedding_service import EmbeddingService
 from app.services.opensearch_indexer import OpenSearchIndexer
 from app.services.qdrant_service import QdrantService
-
 
 # Add libs to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../../../../"))

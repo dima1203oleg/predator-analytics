@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 import logging
+from typing import TYPE_CHECKING
 
 from fastapi import APIRouter, Depends, Query
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_db
 from app.models.v55.decision_artifact import (
@@ -15,6 +15,8 @@ from app.models.v55.decision_artifact import (
 )
 from app.repositories.decision_repository import DecisionRepository
 
+if TYPE_CHECKING:
+    from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger("predator.api.v2.decisions")
 router = APIRouter(prefix="/decisions", tags=["v2-decisions"])
@@ -33,7 +35,7 @@ async def record_decision(
     """Record a decision artifact. Once written, it cannot be modified or deleted."""
     repo = DecisionRepository(db)
     artifact = await repo.create_artifact(body)
-    
+
     return DecisionArtifactResponse(
         decision_id=str(artifact.decision_id),
         timestamp=artifact.timestamp,
@@ -70,7 +72,7 @@ async def list_decisions(
         limit=limit,
         offset=offset,
     )
-    
+
     items = [
         DecisionArtifactResponse(
             decision_id=str(r.decision_id),
@@ -87,7 +89,7 @@ async def list_decisions(
             metadata=r.metadata_,
         ) for r in results
     ]
-    
+
     return DecisionArtifactListResponse(
         total=len(items),  # Full count would need a separate count query
         items=items,

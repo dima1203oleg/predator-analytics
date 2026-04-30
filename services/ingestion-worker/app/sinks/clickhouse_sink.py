@@ -1,6 +1,8 @@
+from typing import Any
+
 import clickhouse_connect
 import structlog
-from typing import List, Dict, Any
+
 from app.config import settings
 
 logger = structlog.get_logger(__name__)
@@ -27,10 +29,10 @@ class ClickHouseSink:
             logger.error("Failed to connect to ClickHouse", error=str(e))
             raise
 
-    async def insert_declarations(self, data: List[Dict[str, Any]]):
+    async def insert_declarations(self, data: list[dict[str, Any]]):
         if not self.client:
             self.connect()
-        
+
         try:
             # Мапінг даних до колонок ClickHouse
             rows = []
@@ -52,20 +54,20 @@ class ClickHouseSink:
                     item.get('customs_post_code'),
                     item.get('risk_score', 0.0)
                 ])
-            
+
             if rows:
                 self.client.insert(
                     'customs_declarations',
                     rows,
                     column_names=[
-                        'id', 'declaration_number', 'declaration_date', 'exporter_name', 
-                        'exporter_ueid', 'importer_name', 'importer_ueid', 'hs_code', 
-                        'hs_description', 'weight_kg', 'value_usd', 'origin_country', 
+                        'id', 'declaration_number', 'declaration_date', 'exporter_name',
+                        'exporter_ueid', 'importer_name', 'importer_ueid', 'hs_code',
+                        'hs_description', 'weight_kg', 'value_usd', 'origin_country',
                         'destination_country', 'customs_post_code', 'risk_score'
                     ]
                 )
                 logger.info("Inserted batch into ClickHouse", count=len(rows))
         except Exception as e:
             logger.error("ClickHouse insertion error", error=str(e))
-            # Не кидаємо виключення, щоб не блокувати основну інгестію, 
+            # Не кидаємо виключення, щоб не блокувати основну інгестію,
             # але в продакшні тут має бути Retry policy

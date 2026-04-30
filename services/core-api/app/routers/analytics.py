@@ -15,11 +15,11 @@ from app.core.cache import cache_response
 from app.core.permissions import Permission
 from app.dependencies import PermissionChecker, get_tenant_id
 from app.services.aml_scoring import AMLScoringService
+from app.services.analytics_service import AnalyticsService
 from app.services.anomaly_detection import (
     AnomalyDetectionService,
     TimeSeriesPoint,
 )
-from app.services.analytics_service import AnalyticsService
 
 router = APIRouter(prefix="/analytics", tags=["аналітика ризиків"])
 
@@ -418,7 +418,7 @@ async def get_anomaly_trends(
     """Отримати тренди виявлених аномалій за період."""
     service = AnalyticsService()
     trends = service.get_anomaly_trends(str(tenant_id), period_days)
-    
+
     return {
         "period_days": period_days,
         "trends": {

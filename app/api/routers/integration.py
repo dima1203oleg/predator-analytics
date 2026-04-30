@@ -1,9 +1,7 @@
 from __future__ import annotations
 
-
 """Integration Router."""
 from fastapi import APIRouter
-
 
 router = APIRouter(prefix="/integration", tags=["Integration"])
 

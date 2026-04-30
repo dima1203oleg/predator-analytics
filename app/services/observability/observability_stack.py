@@ -1,13 +1,11 @@
-"""
-Observability Stack (Phase 6 — SM Edition).
+"""Observability Stack (Phase 6 — SM Edition).
 
 Prometheus, Grafana, Loki, Tempo, Alertmanager.
 SM: 6GB total RAM budget for observability.
 Implements §19 and HR-11.
 """
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
-
 
 # Observability resource allocations (§19.1)
 OBSERVABILITY_COMPONENTS: list[dict[str, Any]] = [
@@ -79,7 +77,7 @@ class ObservabilityStack:
             "used_ram_gb": total_used,
             "components": len(OBSERVABILITY_COMPONENTS),
             "component_list": [{"name": c["name"], "ram_gb": c["ram_gb"]} for c in OBSERVABILITY_COMPONENTS],
-            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(UTC).isoformat(),
         }
 
     def get_dashboards(self) -> list[dict[str, str]]:

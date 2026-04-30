@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, Dict, Optional
+from typing import Any
 
 import requests
 
@@ -10,6 +10,7 @@ class ArbiterClient:
     """Client for interacting with the Arbiter Service.
     Enforces the 'Constitution as Code'.
     """
+
     def __init__(self, base_url: str = "http://localhost:8091"):
         self.base_url = base_url
         self.logger = logging.getLogger("arbiter-client")

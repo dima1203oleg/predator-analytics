@@ -2,21 +2,22 @@
 
 from __future__ import annotations
 
-from datetime import UTC, datetime
 import logging
+from typing import TYPE_CHECKING
 
 from fastapi import APIRouter, Depends, HTTPException, Path, Query
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_db
 from app.core.signal_bus import SignalBus
 from app.engines.cers import calculate_cers
 from app.models.v55.cers import CERSHistoryItem, CERSHistoryResponse, CERSResponse
-from app.models.v55.signal import SignalLayer, SignalPriority, V55Signal
 from app.models.v55.decision_artifact import DecisionArtifactCreate
+from app.models.v55.signal import SignalLayer, SignalPriority, V55Signal
 from app.repositories.cers_repository import CersRepository
 from app.repositories.decision_repository import DecisionRepository
 
+if TYPE_CHECKING:
+    from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger("predator.api.v2.analytics")
 router = APIRouter(prefix="/analytics", tags=["v2-analytics"])
@@ -95,8 +96,8 @@ async def calculate_cers_endpoint(
     score_orm = await cers_repo.save_score(result)
 
     # 2. Record WORM decision artifact
-    import json
     import hashlib
+    import json
 
     input_data = {
         "behavioral": behavioral,
@@ -106,7 +107,7 @@ async def calculate_cers_endpoint(
         "predictive": predictive,
     }
     input_fp = hashlib.sha256(json.dumps(input_data, sort_keys=True).encode("utf-8")).hexdigest()
-    output_fp = hashlib.sha256(f"{result.score}:{result.level}".encode("utf-8")).hexdigest()
+    output_fp = hashlib.sha256(f"{result.score}:{result.level}".encode()).hexdigest()
 
     artifact = DecisionArtifactCreate(
         decision_type="cers",
@@ -217,13 +218,13 @@ async def get_all_indices(
 ) -> dict:
     """Get all calculated indices for an entity."""
     from app.repositories.behavioral_repository import BehavioralRepository
-    from app.repositories.institutional_repository import InstitutionalRepository
     from app.repositories.influence_repository import InfluenceRepository
-    from app.repositories.structural_repository import StructuralRepository
+    from app.repositories.institutional_repository import InstitutionalRepository
     from app.repositories.predictive_repository import PredictiveRepository
+    from app.repositories.structural_repository import StructuralRepository
 
     indices = {}
-    
+
     # 1. Behavioral
     behav_repo = BehavioralRepository(db)
     b_score = await behav_repo.get_latest_for_ueid(ueid)

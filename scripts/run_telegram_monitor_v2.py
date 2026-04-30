@@ -3,14 +3,12 @@
 Reads channels from /tmp/predator_channels.json (synced with UI)
 """
 import asyncio
-from datetime import datetime
+import contextlib
 import json
 import logging
 import os
 import random
-import sys
 import time
-
 
 # Setup Logger
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - [SENTINEL] - %(message)s')
@@ -90,11 +88,5 @@ async def simulation_loop():
         await asyncio.sleep(5)
 
 if __name__ == "__main__":
-    print("""
-    🦁 PREDATOR SENTINEL V2 LAUNCHING...
-    Tracking /tmp/predator_channels.json
-    """)
-    try:
+    with contextlib.suppress(KeyboardInterrupt):
         asyncio.run(simulation_loop())
-    except KeyboardInterrupt:
-        print("🛑 Sentinel Stopped.")

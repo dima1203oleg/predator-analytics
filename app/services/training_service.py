@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Self-Improvement & Auto-Training Service (Endless Loop).
 -------------------------------------------------------
 Implements the continuous cycle of observation, feedback analysis, and model optimization.
@@ -20,7 +19,6 @@ from app.libs.core.models.entities import AugmentedDataset, MLJob, SICycle
 from app.libs.core.structured_logger import get_logger, log_business_event
 from app.services.llm.service import get_llm_service
 from app.services.training_status_service import training_status_service
-
 
 logger = get_logger("service.self_improvement")
 

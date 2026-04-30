@@ -1,14 +1,13 @@
-"""
-Decision Ledger — WORM immutable AI decision store (Phase 5 — SM Edition).
+"""Decision Ledger — WORM immutable AI decision store (Phase 5 — SM Edition).
 
 Implements §4.3: Every AI decision gets a WORM record with:
 - Input hash, output, SHAP values, confidence, execution time.
 HR-16: UPDATE/DELETE = ERROR.
 """
-from datetime import datetime, timezone
-from typing import Any
+from datetime import UTC, datetime
 import hashlib
 import json
+from typing import Any
 
 
 class DecisionLedger:
@@ -31,7 +30,7 @@ class DecisionLedger:
             **self.config,
             "status": "active",
             "worm_policy": "UPDATE/DELETE заборонено (HR-16)",
-            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(UTC).isoformat(),
         }
 
     def create_artifact(
@@ -62,7 +61,7 @@ class DecisionLedger:
             "confidence": confidence,
             "shap_values": shap_values,
             "execution_ms": execution_ms,
-            "created_at": datetime.now(timezone.utc).isoformat(),
+            "created_at": datetime.now(UTC).isoformat(),
             "worm": True,
         }
 

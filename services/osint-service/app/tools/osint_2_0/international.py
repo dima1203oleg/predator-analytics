@@ -8,13 +8,13 @@
 import logging
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 logger = logging.getLogger(__name__)
 
 
-class SanctionsList(str, Enum):
+class SanctionsList(StrEnum):
     """Санкційні списки."""
     OFAC_SDN = "ofac_sdn"  # США
     EU = "eu"  # Європейський Союз
@@ -36,13 +36,13 @@ class InternationalResult:
 
 class OpenCorporatesClient:
     """OpenCorporates — Найбільша база даних компаній у світі.
-    
+
     Понад 200 млн компаній з 140+ юрисдикцій.
     Дозволяє перевіряти:
     - Материнські/дочірні компанії
     - Офшорні структури
     - Директорів та їх інші посади
-    
+
     API: https://api.opencorporates.com
     """
 
@@ -254,7 +254,7 @@ class OpenCorporatesClient:
 
 class CrunchBaseClient:
     """CrunchBase — Дані про стартапи, інвестиції, інвесторів.
-    
+
     Інформація про:
     - Компанії технологічного сектору
     - Раунди фінансування
@@ -424,7 +424,7 @@ class CrunchBaseClient:
 
 class OFACClient:
     """OFAC SDN — Санкційний список США.
-    
+
     Specially Designated Nationals and Blocked Persons List.
     """
 
@@ -521,7 +521,7 @@ class UKSanctionsClient:
 
 class SanctionsAggregator:
     """Агрегатор санкційних списків.
-    
+
     Перевіряє одночасно:
     - OFAC SDN (США)
     - EU Sanctions

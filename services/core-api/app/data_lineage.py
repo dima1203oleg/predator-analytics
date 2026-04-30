@@ -67,7 +67,6 @@ def main() -> None:
         f.write(lineage.export_dot())
     with open(os.path.join(out_dir, 'lineage.md'), 'w') as f:
         f.write(lineage.export_md())
-    print(f"Data lineage exported to {out_dir}")
 
 if __name__ == '__main__':
     main()

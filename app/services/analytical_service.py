@@ -8,7 +8,6 @@ from typing import TYPE_CHECKING, Any
 
 from libs.core.analytics_engine import analytics_engine
 
-
 if TYPE_CHECKING:
     from uuid import UUID
 

@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 import os
-import sys
-
 
 # PREDATOR AZR COMPATIBILITY INJECTOR
 # Enforces 3.12 syntax capability on legacy runtimes.
@@ -30,10 +28,8 @@ def inject():
                             with open(file_path, 'w') as file:
                                 file.write(new_content)
                             count += 1
-                            print(f"✅ Injected: {f}")
-                    except Exception as e:
-                        print(f"❌ Failed {f}: {e}")
-    print(f"\n🚀 Total files stabilized: {count}")
+                    except Exception:
+                        pass
 
 if __name__ == "__main__":
     inject()

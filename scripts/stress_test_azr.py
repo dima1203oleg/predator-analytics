@@ -3,10 +3,8 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
-from pathlib import Path
 
 from app.services.azr_engine import azr_engine
-
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("AZR_STRESS_TEST")

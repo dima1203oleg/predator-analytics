@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import Any
 
-
 """
 Main Data Parser Interface
 
@@ -12,7 +11,6 @@ Provides a unified interface for parsing different data formats.
 from enum import Enum
 import importlib
 from pathlib import Path
-
 
 try:
     import pandas as pd
@@ -74,8 +72,8 @@ class DataParser:
                 else:
                     parser_class = getattr(module, f"{fmt.capitalize()}Parser")
                 self._parsers[fmt] = parser_class()
-            except (ImportError, AttributeError) as e:
-                print(f"Warning: Could not load {fmt} parser: {e}")
+            except (ImportError, AttributeError):
+                pass
 
     def parse(self, file_path: str | Path, format_hint: DataFormat | None = None) -> ParseResult:
         """Parse data from a file.
@@ -86,6 +84,7 @@ class DataParser:
 
         Returns:
             ParseResult containing parsed data or error information
+
         """
         file_path = Path(file_path)
 
@@ -138,6 +137,7 @@ class DataParser:
 
         Returns:
             ParseResult containing DataFrame or error
+
         """
         result = self.parse(file_path, format_hint)
 

@@ -1,11 +1,9 @@
 from __future__ import annotations
 
 import os
-import random
 
 from rich.console import Console
 import typer
-import yaml
 
 from libs.core.azr import get_azr_engine
 from libs.core.reality import (
@@ -21,7 +19,6 @@ from libs.core.reality import (
 )
 from predatorctl.core.arbiter_client import ArbiterClient
 from predatorctl.core.ledger_client import LedgerClient
-
 
 app = typer.Typer(help="AZR (Autonomous Zero-Risk Runtime) Agent")
 proposal_app = typer.Typer(help="Manage AZR proposals")

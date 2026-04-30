@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Advanced Telegram Bot Service
 Інтеграція з Predator Analytics:
 - ETL/парсинг моніторинг
@@ -18,7 +17,6 @@ import subprocess
 from typing import Any
 
 import httpx
-
 
 logger = logging.getLogger(__name__)
 

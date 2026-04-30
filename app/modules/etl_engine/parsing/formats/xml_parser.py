@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """
 XML Parser Implementation
 
@@ -37,6 +36,7 @@ class XMLParser:
 
         Returns:
             ParseResult containing parsed data or error
+
         """
         file_path = Path(file_path)
 
@@ -81,6 +81,7 @@ class XMLParser:
 
         Returns:
             Dictionary representation of the XML element
+
         """
         result = {}
 
@@ -120,6 +121,7 @@ class XMLParser:
 
         Returns:
             ParseResult containing parsed DataFrame or error
+
         """
         result = self.parse(file_path)
 
@@ -145,6 +147,7 @@ class XMLParser:
 
         Returns:
             pandas DataFrame
+
         """
         # Flatten the XML dictionary for DataFrame conversion
         flat_data = []
@@ -201,5 +204,6 @@ class XMLParser:
 
         Returns:
             ParseResult containing parsed dictionary or error
+
         """
         return self.parse(file_path)

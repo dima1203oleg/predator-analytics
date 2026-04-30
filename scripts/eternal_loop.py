@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 #!/usr/bin/env python3
 """♾️ ETERNAL EXECUTION LOOP — NEVER STOPS
 ═══════════════════════════════════════════════════════════════
@@ -16,7 +15,6 @@ from pathlib import Path
 import signal
 import subprocess
 import time
-
 
 # ════════════════════════════════════════════════════════════════
 # CONFIGURATION
@@ -359,12 +357,6 @@ def signal_handler(signum, frame):
 # ════════════════════════════════════════════════════════════════
 
 if __name__ == "__main__":
-    print("♾️ ETERNAL EXECUTION LOOP — GODMODE")
-    print("=" * 60)
-    print("⚡ System will NEVER stop")
-    print("⚡ Auto-recovery ENABLED")
-    print("⚡ No human intervention required")
-    print("=" * 60)
 
     # Trap common signals
     signal.signal(signal.SIGTERM, signal_handler)

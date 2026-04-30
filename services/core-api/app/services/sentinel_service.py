@@ -15,8 +15,8 @@ health report для Kubernetes probes та HUD-панелей.
 - MinIO (optional)
 """
 import asyncio
-import time
 from datetime import UTC, datetime
+import time
 from typing import Any
 
 import httpx
@@ -187,7 +187,7 @@ class SentinelService:
         ]
 
         checks: dict[str, Any] = {}
-        for name, result in zip(component_names, results):
+        for name, result in zip(component_names, results, strict=False):
             if isinstance(result, Exception):
                 checks[name] = {"status": ComponentStatus.DOWN, "error": str(result)[:200]}
             else:

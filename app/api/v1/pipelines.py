@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Predator Analytics v45 - Pipeline API Endpoints
 Orchestrates ETL, Indexing, ML Training, and Optimization pipelines.
 """
@@ -12,7 +11,6 @@ from app.core.auth import get_current_user
 from app.models.entities import JobCreate, JobResponse, JobStatus, JobType
 from app.services.data_hub_service import data_hub_service
 from app.services.pipeline_service import pipeline_service
-
 
 if TYPE_CHECKING:
     from uuid import UUID

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Predator Analytics v45.1 - Autonomous Neuro-Optimizer
 Enhanced self-optimization system with:
 - Adaptive scheduling based on data velocity
@@ -20,7 +19,6 @@ from sqlalchemy import select, text, update
 from app.libs.core.database import get_db_ctx
 from app.libs.core.models import DataSource, MLJob
 from app.libs.core.structured_logger import get_logger, log_business_event, log_performance
-
 
 logger = get_logger("predator.optimizer")
 

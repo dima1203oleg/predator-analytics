@@ -18,7 +18,6 @@ from qdrant_client.models import (
 
 from app.libs.core.structured_logger import get_logger
 
-
 logger = get_logger("service.qdrant")
 
 
@@ -49,6 +48,7 @@ class QdrantService:
         Args:
             collection_name: Name of collection (default: documents_vectors)
             vector_size: Dimension of vectors (default: 384)
+
         """
         collection_name = collection_name or self.collection_name
         vector_size = vector_size or self.vector_size
@@ -177,6 +177,7 @@ class QdrantService:
 
         Returns:
             List of results with id, score, and payload
+
         """
         try:
             # Build filter

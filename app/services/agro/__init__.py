@@ -1,16 +1,20 @@
 from functools import lru_cache
-from .harvest_predictor import HarvestPredictor
-from .export_risk_analyzer import ExportRiskAnalyzer
 
-@lru_cache()
+from .export_risk_analyzer import ExportRiskAnalyzer
+from .harvest_predictor import HarvestPredictor
+
+
+@lru_cache
 def get_harvest_predictor() -> HarvestPredictor:
     return HarvestPredictor()
 
-@lru_cache()
+@lru_cache
 def get_export_risk_analyzer() -> ExportRiskAnalyzer:
     return ExportRiskAnalyzer()
 
 __all__ = [
-    "HarvestPredictor", "get_harvest_predictor",
-    "ExportRiskAnalyzer", "get_export_risk_analyzer"
+    "ExportRiskAnalyzer",
+    "HarvestPredictor",
+    "get_export_risk_analyzer",
+    "get_harvest_predictor"
 ]

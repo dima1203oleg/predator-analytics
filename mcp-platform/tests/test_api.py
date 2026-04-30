@@ -1,7 +1,8 @@
 """Тести для Testing & Documentation (API та Docs)."""
 
 import pytest
-from mcp.web import APIServer, APIResponse, APIDocumentation
+
+from mcp.web import APIDocumentation, APIServer
 
 
 class TestAPIServer:
@@ -22,7 +23,7 @@ class TestAPIServer:
     async def test_start(self, api_server):
         """Тест запуску сервера."""
         await api_server.start()
-        
+
         assert api_server.running
 
     @pytest.mark.asyncio
@@ -30,39 +31,39 @@ class TestAPIServer:
         """Тест зупинення сервера."""
         await api_server.start()
         await api_server.stop()
-        
+
         assert not api_server.running
 
     def test_register_route(self, api_server):
         """Тест реєстрації маршруту."""
         async def handler():
             return {"message": "test"}
-        
+
         api_server.register_route("/test", "GET", handler, "Test endpoint")
-        
+
         assert "GET /test" in api_server.routes
 
     def test_register_multiple_routes(self, api_server):
         """Тест реєстрації кількох маршрутів."""
         async def handler1():
             return {"message": "test1"}
-        
+
         async def handler2():
             return {"message": "test2"}
-        
+
         api_server.register_route("/test1", "GET", handler1)
         api_server.register_route("/test2", "POST", handler2)
-        
+
         assert len(api_server.routes) == 2
 
     def test_get_routes(self, api_server):
         """Тест отримання списку маршрутів."""
         async def handler():
             return {"message": "test"}
-        
+
         api_server.register_route("/test", "GET", handler, "Test endpoint")
         routes = api_server.get_routes()
-        
+
         assert len(routes) == 1
         assert routes[0]["path"] == "/test"
         assert routes[0]["description"] == "Test endpoint"
@@ -72,10 +73,10 @@ class TestAPIServer:
         """Тест обробки запиту."""
         async def handler():
             return {"result": "success"}
-        
+
         api_server.register_route("/test", "GET", handler)
         response = await api_server.handle_request("/test", "GET")
-        
+
         assert response.status == "success"
         assert response.data == {"result": "success"}
 
@@ -84,19 +85,19 @@ class TestAPIServer:
         """Тест обробки запиту з тілом."""
         async def handler(body):
             return {"received": body}
-        
+
         api_server.register_route("/test", "POST", handler)
         response = await api_server.handle_request(
             "/test", "POST", body={"input": "data"}
         )
-        
+
         assert response.status == "success"
         assert response.data == {"received": {"input": "data"}}
 
     def test_get_health(self, api_server):
         """Тест отримання стану."""
         health = api_server.get_health()
-        
+
         assert health["status"] == "down"
         assert health["host"] == "localhost"
         assert health["port"] == 8000
@@ -124,7 +125,7 @@ class TestAPIDocumentation:
             "Test endpoint",
             parameters=[{"name": "id", "type": "integer"}],
         )
-        
+
         assert len(api_docs.endpoints) == 1
 
     def test_add_multiple_endpoints(self, api_docs):
@@ -132,7 +133,7 @@ class TestAPIDocumentation:
         api_docs.add_endpoint("/test1", "GET", "Test 1")
         api_docs.add_endpoint("/test2", "POST", "Test 2")
         api_docs.add_endpoint("/test3", "PUT", "Test 3")
-        
+
         assert len(api_docs.endpoints) == 3
 
     def test_generate_openapi(self, api_docs):
@@ -143,9 +144,9 @@ class TestAPIDocumentation:
             "Test endpoint",
             response_schema={"type": "object", "properties": {"id": {"type": "integer"}}},
         )
-        
+
         openapi = api_docs.generate_openapi()
-        
+
         assert openapi["openapi"] == "3.0.0"
         assert openapi["info"]["title"] == "MCP API"
         assert "/test" in openapi["paths"]
@@ -158,9 +159,9 @@ class TestAPIDocumentation:
             "Get list of users",
             parameters=[{"name": "limit", "type": "integer"}],
         )
-        
+
         markdown = api_docs.generate_markdown()
-        
+
         assert "# MCP API" in markdown
         assert "## GET /users" in markdown
         assert "Get list of users" in markdown
@@ -176,7 +177,7 @@ class TestAPIDocumentation:
                 {"name": "format", "type": "string", "required": False},
             ],
         )
-        
+
         openapi = api_docs.generate_openapi()
-        
+
         assert len(openapi["paths"]["/items/{id}"]["get"]["parameters"]) == 2

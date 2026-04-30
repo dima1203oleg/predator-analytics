@@ -25,58 +25,57 @@ from app.database import close_db, init_db
 
 # Імпортуємо всі роутери через __init__.py
 from app.routers import (
+    admin_chaos_router,
+    admin_v2_router,
+    agents_router,
     alerts_router,
     analytics_router,
+    antigravity_router,
     auth_router,
     cases_router,
+    cloud_assist_router,
     companies_router,
     competitors_router,
     copilot_router,
     dashboard_router,
+    decisions_router,
     declarations_router,
     factory_router,
+    graph_intelligence_router,
     graph_router,
     ingestion_router,
     intelligence_router,
     maritime_router,
+    market_router,
     ml_studio_router,
     newspaper_router,
     optimizer_router,
+    orchestrator_router,
     osint_router,
     osint_ua_router,
+    osint_vision_router,
     persons_router,
     premium_router,
     public_api_router,
     registries_router,
     registries_ui_router,
     risk_router,
+    sanctions_router,
     search_router,
     som_router,
     stats_router,
     system_router,
     warroom_router,
-    agents_router,
-    antigravity_router,
-    admin_chaos_router,
-    graph_intelligence_router,
-    forecast_router,
-    orchestrator_router,
-    market_router,
-    sanctions_router,
-    decisions_router,
-    admin_v2_router,
-    cloud_assist_router,
-    osint_vision_router,
 )
 from app.services.factory_repository import FactoryRepository
 from app.services.factory_runtime import (
     cancel_factory_improvement_task,
     ensure_factory_improvement_task,
 )
+from app.services.guardian import guardian_service
 from app.services.kafka_service import close_kafka, init_kafka
 from app.services.minio_service import close_minio, init_minio
 from app.services.redis_service import close_redis, init_redis
-from app.services.guardian import guardian_service
 from predator_common.logging import get_logger
 
 logger = get_logger("core_api.main")
@@ -170,7 +169,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         # Stop AGI Orchestrator
         from app.services.antigravity_orchestrator import orchestrator
         orchestrator.status.is_running = False
-        
+
         guardian_service.stop()
         if hasattr(app.state, 'guardian_task'):
             app.state.guardian_task.cancel()

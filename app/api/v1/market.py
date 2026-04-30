@@ -1,24 +1,27 @@
-"""
-📊 Ринок — /api/v1/market
+"""📊 Ринок — /api/v1/market
 
 Ендпоінти ринкової аналітики: декларації, огляд ринку, тренди.
 """
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Query, Depends
-from sqlalchemy import select, func
-from sqlalchemy.ext.asyncio import AsyncSession
+from typing import TYPE_CHECKING
+
+from fastapi import APIRouter, Depends, Query
+from sqlalchemy import func, select
+
 from app.core.database import get_db
 from app.models.declaration import Declaration
+
+if TYPE_CHECKING:
+    from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter(prefix="/market")
 
 
 @router.get("/overview")
 async def get_market_overview() -> dict:
-    """
-    Загальний огляд ринку.
+    """Загальний огляд ринку.
 
     Повертає сумарні дані за період (декларації, обсяги, ТОП-товари).
     """
@@ -55,8 +58,7 @@ async def get_market_trends(
     product_code: str | None = None,
     db: AsyncSession = Depends(get_db)
 ) -> dict:
-    """
-    Аналітика трендів за УКТЗЕД кодами.
+    """Аналітика трендів за УКТЗЕД кодами.
     """
     try:
         # Агрегація за місяцями
@@ -65,13 +67,13 @@ async def get_market_trends(
             func.sum(Declaration.value_usd).label('total_value'),
             func.count(Declaration.id).label('count')
         ).group_by('month').order_by('month')
-        
+
         if product_code:
             query = query.where(Declaration.product_code == product_code)
-            
+
         result = await db.execute(query)
         data = result.all()
-        
+
         return {
             "trends": [
                 {
@@ -90,8 +92,7 @@ async def get_market_share(
     top: int = Query(default=10, ge=1, le=100),
     db: AsyncSession = Depends(get_db)
 ) -> dict:
-    """
-    Розподіл ринку між компаніями (Market Share).
+    """Розподіл ринку між компаніями (Market Share).
     """
     try:
         # ТОП компаній за обсягом
@@ -99,13 +100,13 @@ async def get_market_share(
             Declaration.company_name,
             func.sum(Declaration.value_usd).label('total_value')
         ).group_by(Declaration.company_name).order_by(func.sum(Declaration.value_usd).desc()).limit(top)
-        
+
         result = await db.execute(query)
         data = result.all()
-        
+
         total_market_query = select(func.sum(Declaration.value_usd))
         total_market_value = (await db.execute(total_market_query)).scalar() or 1.0 # Avoid division by zero
-        
+
         return {
             "share": [
                 {
@@ -125,17 +126,16 @@ async def get_declarations(
     page: int = Query(default=1, ge=1),
     db: AsyncSession = Depends(get_db)
 ) -> dict:
-    """
-    Список митних декларацій з пагінацією.
+    """Список митних декларацій з пагінацією.
     """
     try:
         offset = (page - 1) * limit
         query = select(Declaration).order_by(Declaration.declaration_date.desc()).offset(offset).limit(limit)
         count_query = select(func.count(Declaration.id))
-        
+
         items = (await db.execute(query)).scalars().all()
         total = (await db.execute(count_query)).scalar() or 0
-        
+
         return {
             "items": [
                 {
@@ -156,14 +156,14 @@ async def get_declarations(
         }
     except Exception as e:
         return {"error": str(e), "items": [], "total": 0}
-from app.services.ml.insights_service import get_insights_service, InsightsService
+from app.services.ml.insights_service import InsightsService, get_insights_service
+
 
 @router.get("/insights")
 async def get_market_insights(
     insights_service: InsightsService = Depends(get_insights_service)
 ) -> dict:
-    """
-    Отримати автоматичні інсайти по ринку.
+    """Отримати автоматичні інсайти по ринку.
     """
     insights = await insights_service.generate_market_insights()
     return {"insights": [i.to_dict() for i in insights]}

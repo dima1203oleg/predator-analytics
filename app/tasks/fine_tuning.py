@@ -8,7 +8,6 @@ import asyncpg
 
 from app.libs.core.config import settings
 
-
 logger = logging.getLogger(__name__)
 
 

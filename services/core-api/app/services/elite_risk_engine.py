@@ -9,10 +9,11 @@
 """
 from datetime import UTC, datetime
 from typing import Any
-from sqlalchemy import select, func
+
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.models.orm import Company, Declaration, RiskScore
-from app.services.ai_service import AIService
+
+from app.models.orm import Declaration, RiskScore
 from app.services.anomaly_detection import AnomalyDetectionService
 from predator_common.cers_score import Cers5LayerFactors, compute_cers_v55
 from predator_common.logging import get_logger
@@ -100,7 +101,7 @@ class EliteRiskEngine:
         # Виявлення цінових аномалій
         decl_dicts = [d.__dict__ for d in declarations]
         anomalies = self.anomaly_service.detect_price_anomalies(decl_dicts)
-        
+
         score = min(len(anomalies) * 15.0, 100.0)
         return {
             "score": score,
@@ -121,12 +122,8 @@ class EliteRiskEngine:
         """Графовий аналіз зв'язків через Neo4j."""
         if not self.neo4j:
             return {"score": 0.0, "reason": "Neo4j unavailable"}
-        
+
         # Cypher запит для пошуку офшорів у 3 кроках
-        cypher = """
-        MATCH (c:Company {ueid: $ueid})-[*1..3]-(offshore:Country {is_offshore: true})
-        RETURN count(offshore) as offshore_count
-        """
         # Спрощено для MVP
         return {"score": 25.0, "offshore_hops": 2}
 

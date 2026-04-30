@@ -14,7 +14,7 @@ class AudioManager:
         """
         # Перевірка наявності ключів (не обов'язкова, бібліотека сама перевірить, але корисно для логування)
         if not os.environ.get("GOOGLE_APPLICATION_CREDENTIALS"):
-            print("УВАГА: Змінна оточення GOOGLE_APPLICATION_CREDENTIALS не знайдена.")
+            pass
 
         # Клієнти ініціалізуються ліниво або тут. Краще тут для перевірки з'єднання при старті.
         self.tts_client = texttospeech.TextToSpeechClient()
@@ -47,7 +47,6 @@ class AudioManager:
         # Збереження у файл
         with open(output_filename, "wb") as out:
             out.write(response.audio_content)
-            print(f"Аудіо контент записано у файл '{output_filename}'")
 
     def speech_to_text(self, audio_filename: str) -> str:
         """Транскрибує аудіофайл у текст.

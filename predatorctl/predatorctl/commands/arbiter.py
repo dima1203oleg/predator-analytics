@@ -9,7 +9,6 @@ from rich.panel import Panel
 import typer
 import yaml
 
-
 # Try to import from services by adding project root to path
 # Assuming we are running from project root or installed in project
 try:

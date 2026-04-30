@@ -6,7 +6,6 @@ import numpy as np
 
 from app.libs.core.structured_logger import get_logger
 
-
 logger = get_logger("service.embedding")
 
 
@@ -24,6 +23,7 @@ class EmbeddingService:
 
         Args:
             model_name: Ollama model name (default: nomic-embed-text)
+
         """
         from app.libs.core.config import settings
 
@@ -97,6 +97,7 @@ class EmbeddingService:
 
         Returns:
             Similarity score (0-1)
+
         """
         v1 = np.array(vec1)
         v2 = np.array(vec2)
@@ -119,6 +120,7 @@ class EmbeddingService:
 
         Returns:
             List of scores (higher is better)
+
         """
         self._load_model()
 

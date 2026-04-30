@@ -1,12 +1,13 @@
 """Тести для Security Layer (Secrets та Policy Enforcement)."""
 
 import pytest
-from mcp.security.secrets_manager import SecretsManager, Secret, SecretType
+
 from mcp.security.policy_enforcer import (
-    SecurityPolicyEnforcer,
     PolicySeverity,
     PolicyViolation,
+    SecurityPolicyEnforcer,
 )
+from mcp.security.secrets_manager import Secret, SecretsManager, SecretType
 
 
 class TestSecretsManager:
@@ -30,9 +31,9 @@ class TestSecretsManager:
             type=SecretType.API_KEY,
             value="sk_test_12345",
         )
-        
+
         await secrets_manager.store_secret(secret)
-        
+
         assert "test_api_key" in secrets_manager.secrets
 
     @pytest.mark.asyncio
@@ -43,10 +44,10 @@ class TestSecretsManager:
             type=SecretType.DATABASE_PASSWORD,
             value="secure_password_123",
         )
-        
+
         await secrets_manager.store_secret(secret)
         value = await secrets_manager.get_secret("db_password")
-        
+
         assert value == "secure_password_123"
 
     @pytest.mark.asyncio
@@ -63,10 +64,10 @@ class TestSecretsManager:
             type=SecretType.API_KEY,
             value="old_key",
         )
-        
+
         await secrets_manager.store_secret(secret)
         await secrets_manager.rotate_secret("api_key", "new_key")
-        
+
         value = await secrets_manager.get_secret("api_key")
         assert value == "new_key"
 
@@ -78,10 +79,10 @@ class TestSecretsManager:
             type=SecretType.ENCRYPTION_KEY,
             value="temp_value",
         )
-        
+
         await secrets_manager.store_secret(secret)
         await secrets_manager.delete_secret("temp_secret")
-        
+
         assert "temp_secret" not in secrets_manager.secrets
 
     def test_list_secrets(self, secrets_manager):
@@ -96,12 +97,12 @@ class TestSecretsManager:
             type=SecretType.DATABASE_PASSWORD,
             value="value2",
         )
-        
+
         secrets_manager.secrets["secret1"] = secret1
         secrets_manager.secrets["secret2"] = secret2
-        
+
         names = secrets_manager.list_secrets()
-        
+
         assert len(names) == 2
         assert "secret1" in names
         assert "secret2" in names
@@ -118,12 +119,12 @@ class TestSecretsManager:
             type=SecretType.DATABASE_PASSWORD,
             value="value2",
         )
-        
+
         secrets_manager.secrets["secret1"] = secret1
         secrets_manager.secrets["secret2"] = secret2
-        
+
         stats = secrets_manager.get_statistics()
-        
+
         assert stats["total_secrets"] == 2
         assert "by_type" in stats
         assert stats["vault_connected"] is False
@@ -132,7 +133,7 @@ class TestSecretsManager:
     async def test_connect_to_vault(self, secrets_manager):
         """Тест підключення до Vault."""
         await secrets_manager.connect_to_vault("http://vault:8200", "token_123")
-        
+
         assert secrets_manager.vault_connected
 
 
@@ -161,7 +162,7 @@ class TestSecurityPolicyEnforcer:
         """Тест перевірки небезпечних функцій."""
         code = "result = eval('1 + 1')"
         violations = await enforcer.check_file("test.py", code)
-        
+
         assert len(violations) > 0
         assert any("eval" in v.violation for v in violations)
 
@@ -170,7 +171,7 @@ class TestSecurityPolicyEnforcer:
         """Тест перевірки hardcoded секретів."""
         code = "API_KEY = 'sk_prod_12345'"
         violations = await enforcer.check_file("config.py", code)
-        
+
         assert len(violations) > 0
 
     @pytest.mark.asyncio
@@ -182,7 +183,7 @@ def hello(name: str) -> str:
     return f'Hello, {name}!'
 """
         violations = await enforcer.check_file("hello.py", code)
-        
+
         # Чистий код - деякі лиш warnings але не criticals
         critical_violations = [
             v for v in violations if v.severity == PolicySeverity.CRITICAL
@@ -192,17 +193,17 @@ def hello(name: str) -> str:
     def test_enable_disable_policy(self, enforcer):
         """Тест включення/відключення політики."""
         policy_id = "pol_001"
-        
+
         enforcer.disable_policy(policy_id)
         assert not enforcer.get_policy(policy_id).enabled
-        
+
         enforcer.enable_policy(policy_id)
         assert enforcer.get_policy(policy_id).enabled
 
     def test_get_statistics(self, enforcer):
         """Тест отримання статистики."""
         stats = enforcer.get_statistics()
-        
+
         assert "total_violations" in stats
         assert "total_policies" in stats
         assert "enabled_policies" in stats
@@ -217,9 +218,9 @@ def hello(name: str) -> str:
             violation="Found eval()",
             severity=PolicySeverity.CRITICAL,
         )
-        
+
         enforcer.violations.append(violation)
         assert len(enforcer.violations) == 1
-        
+
         enforcer.clear_violations()
         assert len(enforcer.violations) == 0

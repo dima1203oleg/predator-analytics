@@ -1,11 +1,12 @@
 """Тести для AI та Memory Layer."""
 
 import pytest
+
 from mcp.ai_layer.llm_client import LLMClient
-from mcp.ai_layer.prompt_templates import get_prompt, SYSTEM_PROMPTS
+from mcp.ai_layer.prompt_templates import SYSTEM_PROMPTS, get_prompt
+from mcp.memory_layer.memory_manager import MemoryManager
 from mcp.memory_layer.neo4j_adapter import Neo4jAdapter
 from mcp.memory_layer.qdrant_adapter import QdrantAdapter
-from mcp.memory_layer.memory_manager import MemoryManager
 
 
 class TestLLMClient:

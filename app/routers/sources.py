@@ -10,7 +10,6 @@ from pydantic import BaseModel
 
 from app.tasks.etl_workers import parse_external_source
 
-
 router = APIRouter(prefix="/sources", tags=["Sources"])
 logger = logging.getLogger("api.sources")
 

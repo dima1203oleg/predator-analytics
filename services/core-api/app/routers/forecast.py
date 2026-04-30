@@ -2,9 +2,10 @@
 """
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
-from app.services.forecast_service import ForecastService
-from app.dependencies import PermissionChecker
+
 from app.core.permissions import Permission
+from app.dependencies import PermissionChecker
+from app.services.forecast_service import ForecastService
 
 router = APIRouter(prefix="/forecast", tags=["Стратегічна Аналітика (ML)"])
 

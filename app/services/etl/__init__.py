@@ -4,9 +4,9 @@ from app.services.etl.entity_resolver import EntityResolver, ResolvedEntity, ent
 
 __all__ = [
     "DataLineageTracker",
-    "LineageRecord",
-    "lineage_tracker",
     "EntityResolver",
+    "LineageRecord",
     "ResolvedEntity",
     "entity_resolver",
+    "lineage_tracker",
 ]

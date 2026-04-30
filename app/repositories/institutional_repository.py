@@ -6,15 +6,19 @@ Handles DB operations for InstitutionalScoreORM.
 from __future__ import annotations
 
 import logging
-from uuid import UUID
+from typing import TYPE_CHECKING
 
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.engines.institutional import InstitutionalScore
-from app.models.v55.orm.institutional_score import InstitutionalScoreORM
 from app.core.ueid import parse_ueid
+from app.models.v55.orm.institutional_score import InstitutionalScoreORM
 
+if TYPE_CHECKING:
+    from uuid import UUID
+
+    from sqlalchemy.ext.asyncio import AsyncSession
+
+    from app.engines.institutional import InstitutionalScore
 
 logger = logging.getLogger("predator.repo.institutional")
 

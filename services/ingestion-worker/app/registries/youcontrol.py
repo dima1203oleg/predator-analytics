@@ -1,18 +1,19 @@
 import logging
-from typing import Any, Optional
+from typing import Any
+
 import httpx
 from pydantic import BaseModel
 
 logger = logging.getLogger(__name__)
 
 class YouControlConfig(BaseModel):
-    api_key: Optional[str] = None
+    api_key: str | None = None
     base_url: str = "https://api.youcontrol.com.ua/api/v1"
     timeout: int = 15
 
 class YouControlClient:
     """Професійний конектор до API YouControl для глибокої бізнес-розвідки."""
-    
+
     def __init__(self, config: YouControlConfig):
         self.config = config
         self.headers = {
@@ -38,7 +39,7 @@ class YouControlClient:
                 logger.error(f"YouControl API error: {e.response.status_code} - {e.response.text}")
                 return {"error": f"API returned {e.response.status_code}", "edrpou": edrpou}
             except Exception as e:
-                logger.error(f"Failed to fetch from YouControl: {str(e)}")
+                logger.error(f"Failed to fetch from YouControl: {e!s}")
                 return {"error": "Connection failed", "edrpou": edrpou}
 
     def _get_mock_data(self, edrpou: str) -> dict[str, Any]:

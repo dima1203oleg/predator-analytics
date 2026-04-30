@@ -8,7 +8,6 @@ from pydantic import BaseModel
 from app.services.auth_service import require_admin
 from app.services.federation_service import get_federation_service
 
-
 router = APIRouter(tags=["federation"])
 
 

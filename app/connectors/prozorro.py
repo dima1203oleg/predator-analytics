@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-
 """Prozorro Connector - Ukrainian Public Procurement API
 https://public.api.openprocurement.org/.
 """
 import logging
 
 from .base import BaseConnector, ConnectorResult
-
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +24,7 @@ class ProzorroConnector(BaseConnector):
         self, query: str, limit: int = 10, status: str | None = None, **kwargs
     ) -> ConnectorResult:
         """Search Prozorro tenders using the public API."""
-        # The public API /tenders is mostly for polling. 
+        # The public API /tenders is mostly for polling.
         # For actual search by keywords, we often need data.gov.ua datasets or specialized search.
         # But we'll use the official API's offset-based listing and filter for now as a baseline.
         params = {
@@ -41,7 +39,7 @@ class ProzorroConnector(BaseConnector):
 
         if result.success and result.data:
             tenders = result.data.get("data", [])
-            
+
             # 2. Advanced Filtering (since public API /tenders doesn't support 'q' param directly)
             filtered = []
             if query:
@@ -51,7 +49,7 @@ class ProzorroConnector(BaseConnector):
                     desc = str(t.get("description", "")).lower()
                     owner = str(t.get("procuringEntity", {}).get("name", "")).lower()
                     edrpou = str(t.get("procuringEntity", {}).get("identifier", {}).get("id", "")).lower()
-                    
+
                     if q in title or q in desc or q in owner or q in edrpou:
                         filtered.append(t)
             else:

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Sovereign Observer Module (SOM) - Chaos Engineering Router
 Handles stress tests, invariant monitoring, and system resilience.
 """
@@ -12,7 +11,6 @@ from pydantic import BaseModel
 
 from app.libs.core.structured_logger import get_logger, log_security_event
 from app.services.chaos_tester import chaos_tester
-
 
 logger = get_logger("predator.api.som")
 

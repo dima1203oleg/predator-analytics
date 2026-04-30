@@ -6,9 +6,9 @@ from __future__ import annotations
 
 import pytest
 
+from app.ml.anomaly.anomaly_detector import AnomalyDetector
+from app.ml.anomaly.risk_scorer import RiskResult, RiskScorer
 from app.ml.forecasting.demand_forecaster import DemandForecaster, ForecastResult
-from app.ml.anomaly.anomaly_detector import AnomalyDetector, Anomaly
-from app.ml.anomaly.risk_scorer import RiskScorer, RiskResult
 
 
 class TestDemandForecaster:

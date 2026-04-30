@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import Any
 
-
 """
 OpenSearch Distribution Adapter
 
@@ -13,7 +12,6 @@ from datetime import datetime
 import json
 import logging
 import uuid
-
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -33,6 +31,7 @@ class OpenSearchAdapter:
         Args:
             enabled: Whether this adapter is enabled
             index_name: OpenSearch index name for storing documents
+
         """
         self.enabled = enabled
         self.index_name = index_name
@@ -51,6 +50,7 @@ class OpenSearchAdapter:
 
         Returns:
             DistributionResult with status and metadata
+
         """
         from .data_distributor import DistributionResult
 
@@ -165,6 +165,7 @@ class OpenSearchAdapter:
 
         Returns:
             DistributionResult with creation status
+
         """
         from .data_distributor import DistributionResult
 
@@ -202,6 +203,7 @@ class OpenSearchAdapter:
 
         Returns:
             DistributionResult with search results
+
         """
         from .data_distributor import DistributionResult
 
@@ -252,6 +254,7 @@ class OpenSearchAdapter:
 
         Returns:
             Dictionary representing the index mapping
+
         """
         return {
             "index": self.index_name,
@@ -287,6 +290,7 @@ class OpenSearchAdapter:
 
         Returns:
             DistributionResult with bulk indexing status
+
         """
         from .data_distributor import DistributionResult
 
@@ -328,6 +332,7 @@ class OpenSearchAdapter:
 
         Returns:
             DistributionResult with refresh status
+
         """
         from .data_distributor import DistributionResult
 

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """[DEPRECATED] Consolidation in progress.
 Logic moved to apps/telegram-bot microservice.
 Please use that instead.
@@ -18,7 +17,6 @@ import httpx
 from .monitoring_service import monitoring_service
 from .telegram_assistant import TelegramAssistant
 from .triple_agent_service import triple_agent_service
-
 
 logger = logging.getLogger(__name__)
 

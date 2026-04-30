@@ -1,10 +1,9 @@
-"""
-Graph Community Detection (Phase 9 — SM Edition).
+"""Graph Community Detection (Phase 9 — SM Edition).
 
 Implements Louvain clustering algorithm for the Neo4j knowledge graph.
 Scheduled to run nightly at 02:00.
 """
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 
@@ -20,7 +19,7 @@ class CommunityDetection:
         """Запуск алгоритму Louvain (mock implementation)."""
         # In a real implementation, this would call Neo4j GDS library:
         # CALL gds.louvain.stream('myGraph') YIELD nodeId, communityId
-        
+
         return {
             "status": "success",
             "algorithm": self.algorithm,
@@ -28,7 +27,7 @@ class CommunityDetection:
             "modularity_score": 0.68,
             "largest_community_size": 1500,
             "execution_time_ms": 450,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
     def get_community_info(self, ueid: str) -> dict[str, Any]:

@@ -7,7 +7,6 @@ import httpx
 
 from app.libs.core.reality import get_juridical_transpiler
 
-
 router = APIRouter(prefix="/ledger", tags=["Truth Ledger"])
 transpiler = get_juridical_transpiler()
 

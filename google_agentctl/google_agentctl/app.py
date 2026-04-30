@@ -9,7 +9,6 @@ import typer
 # Commands
 from google_agentctl.commands import analyze, detect, generate, lifecycle, report, submit, test
 
-
 app = typer.Typer(
     name="google-agentctl",
     help="Google Integrative Runtime CLI Assistant",

@@ -3,14 +3,14 @@
 """
 
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 import hashlib
 import json
 
 from pydantic import BaseModel, Field, field_validator
 
 
-class ComponentType(str, Enum):
+class ComponentType(StrEnum):
     """Компоненти системи для аналізу"""
 
     WEB_UI = "web_ui"
@@ -20,7 +20,7 @@ class ComponentType(str, Enum):
     CORE = "core"
 
 
-class PatternType(str, Enum):
+class PatternType(StrEnum):
     """Типи патернів"""
 
     PERFORMANCE = "performance"
@@ -116,14 +116,14 @@ class FactoryStats(BaseModel):
     last_run: datetime | None = None
 
 
-class BugSeverity(str, Enum):
+class BugSeverity(StrEnum):
     CRITICAL = "critical"
     HIGH = "high"
     MEDIUM = "medium"
     LOW = "low"
 
 
-class BugStatus(str, Enum):
+class BugStatus(StrEnum):
     DETECTED = "detected"
     FIXING = "fixing"
     FIXED = "fixed"
@@ -143,7 +143,7 @@ class Bug(BaseModel):
     fixed_at: datetime | None = None
 
 
-class ChaosScenario(str, Enum):
+class ChaosScenario(StrEnum):
     VRAM_STRESS = "vram_stress"
     KAFKA_LAG = "kafka_lag"
     DB_LATENCY = "db_latency"
@@ -159,14 +159,14 @@ class ChaosLogEntry(BaseModel):
     timestamp: datetime = Field(default_factory=datetime.utcnow)
 
 
-class ImprovementPhase(str, Enum):
+class ImprovementPhase(StrEnum):
     OBSERVE = "observe"
     ORIENT = "orient"
     DECIDE = "decide"
     ACT = "act"
 
 
-class SwarmAgentStatus(str, Enum):
+class SwarmAgentStatus(StrEnum):
     IDLE = "IDLE"
     THINKING = "THINKING"
     EXECUTING = "EXECUTING"
@@ -175,6 +175,7 @@ class SwarmAgentStatus(str, Enum):
 
 class SwarmAgent(BaseModel):
     """Модель агента в автономному рої"""
+
     id: str
     name: str
     role: str
@@ -185,6 +186,7 @@ class SwarmAgent(BaseModel):
 
 class ReasoningStep(BaseModel):
     """Крок міркування агента"""
+
     id: str
     agent_id: str
     thought: str
@@ -195,6 +197,7 @@ class ReasoningStep(BaseModel):
 
 class SandboxSession(BaseModel):
     """Модель ізольованої пісочниці E2B"""
+
     session_id: str
     status: str  # "running" | "terminating" | "closed"
     logs: list[str] = Field(default_factory=list)

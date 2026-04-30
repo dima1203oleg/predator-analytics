@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import Any
 
-
 """
 XML Parser Implementation
 
@@ -11,7 +10,6 @@ Handles parsing of XML files using xml.etree.ElementTree.
 
 from pathlib import Path
 from xml.etree import ElementTree as ET
-
 
 try:
     import pandas as pd
@@ -42,6 +40,7 @@ class XMLParser:
 
         Returns:
             ParseResult containing parsed data or error
+
         """
         file_path = Path(file_path)
 
@@ -86,6 +85,7 @@ class XMLParser:
 
         Returns:
             Dictionary representation of the XML element
+
         """
         result = {}
 
@@ -125,6 +125,7 @@ class XMLParser:
 
         Returns:
             ParseResult containing parsed DataFrame or error
+
         """
         result = self.parse(file_path)
 
@@ -150,6 +151,7 @@ class XMLParser:
 
         Returns:
             pandas DataFrame
+
         """
         # Flatten the XML dictionary for DataFrame conversion
         flat_data = []
@@ -206,5 +208,6 @@ class XMLParser:
 
         Returns:
             ParseResult containing parsed dictionary or error
+
         """
         return self.parse(file_path)

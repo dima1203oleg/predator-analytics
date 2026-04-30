@@ -11,7 +11,9 @@ import { PortfolioRiskTab } from './tabs/command/PortfolioRiskTab';
 import { WarRoomTab } from './tabs/command/WarRoomTab';
 import { SovereignObserverTab } from './tabs/command/SovereignObserverTab';
 
-type CommandHubTab = 'board' | 'brief' | 'risk' | 'warroom' | 'observer';
+import { StrategicScenarioTab } from './tabs/command/StrategicScenarioTab';
+
+type CommandHubTab = 'board' | 'brief' | 'risk' | 'warroom' | 'observer' | 'simulation';
 
 const CommandHub: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -33,10 +35,11 @@ const CommandHub: React.FC = () => {
 
   const hubTabs = [
     { id: 'board', label: 'Виконавча рада', icon: <LayoutDashboard size={16} /> },
-    { id: 'brief', label: ' анковий брифінг', icon: <FileText size={16} /> },
-    { id: 'risk', label: 'Портфельнийризик', icon: <PieChart size={16} /> },
+    { id: 'brief', label: 'Ранковий брифінг', icon: <FileText size={16} /> },
+    { id: 'risk', label: 'Портфельний ризик', icon: <PieChart size={16} /> },
     { id: 'warroom', label: 'Ситуаційна кімната', icon: <ShieldAlert size={16} /> },
     { id: 'observer', label: 'Суверенний спостерігач', icon: <Eye size={16} /> },
+    { id: 'simulation', label: 'Стратегічний сценарій', icon: <Zap size={16} /> },
   ];
 
   return (
@@ -66,6 +69,7 @@ const CommandHub: React.FC = () => {
         {activeTab === 'risk' && <PortfolioRiskTab />}
         {activeTab === 'warroom' && <WarRoomTab />}
         {activeTab === 'observer' && <SovereignObserverTab />}
+        {activeTab === 'simulation' && <StrategicScenarioTab />}
       </div>
     </HubLayout>
   );

@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-
 """UA Sources - ETL Tasks
 Background tasks for data extraction, transformation, loading.
 """
 import logging
 
 from celery import shared_task
-
 
 logger = logging.getLogger(__name__)
 

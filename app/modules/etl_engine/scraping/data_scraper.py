@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """
 Data Scraper Module
 
@@ -18,7 +17,6 @@ import xml.etree.ElementTree as ET
 
 from bs4 import BeautifulSoup
 import requests
-
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -64,6 +62,7 @@ class DataScraper:
 
         Args:
             user_agent: User agent string for HTTP requests
+
         """
         self.user_agent = user_agent
         self.session = requests.Session()
@@ -85,6 +84,7 @@ class DataScraper:
 
         Returns:
             ScrapeResult containing scraped HTML content or error
+
         """
         try:
             logger.info(f"Scraping URL: {url}")
@@ -126,6 +126,7 @@ class DataScraper:
 
         Returns:
             ScrapeResult containing API response data or error
+
         """
         try:
             logger.info(f"Scraping API endpoint: {url}")
@@ -168,6 +169,7 @@ class DataScraper:
 
         Returns:
             ScrapeResult containing extracted data or error
+
         """
         try:
             if not isinstance(html_content, BeautifulSoup):
@@ -228,6 +230,7 @@ class DataScraper:
 
         Returns:
             ScrapeResult with save operation status
+
         """
         file_path = Path(file_path)
 
@@ -362,6 +365,7 @@ class DataScraper:
 
         Returns:
             ScrapeResult with overall operation status
+
         """
         try:
             # Step 1: Scrape the web page
@@ -409,6 +413,7 @@ class DataScraper:
 
         Returns:
             Dictionary containing scraping statistics
+
         """
         return {
             "user_agent": self.user_agent,
@@ -425,5 +430,6 @@ def create_data_scraper(user_agent: str = "AtlasTrinity-ETL/1.0") -> DataScraper
 
     Returns:
         DataScraper instance
+
     """
     return DataScraper(user_agent)

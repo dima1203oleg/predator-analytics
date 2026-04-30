@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import asyncio
 import json
-from typing import Any, Optional
+from typing import Any
 
 
 class ArgoCDError(Exception):
@@ -20,7 +20,7 @@ class ArgoCDClient:
 
     def __init__(self, server: str = "localhost:8080", insecure: bool = True) -> None:
         """Ініціалізувати ArgoCD client.
-        
+
         Args:
             server: ArgoCD server адреса
             insecure: Ігнорувати SSL сертифікати
@@ -30,13 +30,13 @@ class ArgoCDClient:
 
     async def _run_cmd(self, *args: str) -> str:
         """Виконати argocd команду асинхронно.
-        
+
         Args:
             *args: Аргументи для argocd
-            
+
         Returns:
             Вивід команди
-            
+
         Raises:
             ArgoCDError: Якщо команда завершиться з помилкою
         """
@@ -70,11 +70,11 @@ class ArgoCDClient:
         self, username: str, password: str
     ) -> bool:
         """Аутентифікуватися до ArgoCD.
-        
+
         Args:
             username: Ім'я користувача
             password: Пароль
-            
+
         Returns:
             True якщо успішно
         """
@@ -90,7 +90,7 @@ class ArgoCDClient:
 
     async def app_list(self) -> list[dict[str, Any]]:
         """Отримати список всіх Applications.
-        
+
         Returns:
             Список applications
         """
@@ -103,10 +103,10 @@ class ArgoCDClient:
 
     async def app_status(self, app_name: str) -> dict[str, Any]:
         """Отримати статус Application.
-        
+
         Args:
             app_name: Назва application
-            
+
         Returns:
             Словник зі статусом
         """
@@ -124,13 +124,13 @@ class ArgoCDClient:
         wait_for_completion: bool = False,
     ) -> bool:
         """Синхронізувати Application з репозиторієм.
-        
+
         Args:
             app_name: Назва application
             prune: Видалити ресурси які не в git
             force: Примусово синхронізувати
             wait_for_completion: Чекати завершення
-            
+
         Returns:
             True якщо успішно
         """
@@ -155,11 +155,11 @@ class ArgoCDClient:
         self, app_name: str, timeout: int = 300
     ) -> bool:
         """Чекати поки Application буде синхронізовано.
-        
+
         Args:
             app_name: Назва application
             timeout: Timeout у секундах
-            
+
         Returns:
             True якщо успішно
         """
@@ -175,11 +175,11 @@ class ArgoCDClient:
         self, app_name: str, resource: str
     ) -> dict[str, Any]:
         """Отримати деталі ресурсу Application.
-        
+
         Args:
             app_name: Назва application
             resource: Ресурс адреса (e.g., "pod/my-pod")
-            
+
         Returns:
             Словник з деталями ресурсу
         """
@@ -199,12 +199,12 @@ class ArgoCDClient:
         value: str,
     ) -> bool:
         """Встановити параметр Application.
-        
+
         Args:
             app_name: Назва application
             parameter: Параметр (e.g., "image.tag")
             value: Значення
-            
+
         Returns:
             True якщо успішно
         """
@@ -223,11 +223,11 @@ class ArgoCDClient:
         self, app_name: str, cascade: bool = True
     ) -> bool:
         """Видалити Application.
-        
+
         Args:
             app_name: Назва application
             cascade: Каскадне видалення
-            
+
         Returns:
             True якщо успішно
         """
@@ -244,7 +244,7 @@ class ArgoCDClient:
 
     async def repo_list(self) -> list[dict[str, Any]]:
         """Отримати список сховищ.
-        
+
         Returns:
             Список репозиторіїв
         """
@@ -257,7 +257,7 @@ class ArgoCDClient:
 
     async def cluster_list(self) -> list[dict[str, Any]]:
         """Отримати список кластерів.
-        
+
         Returns:
             Список кластерів
         """
@@ -270,7 +270,7 @@ class ArgoCDClient:
 
     async def version(self) -> dict[str, str]:
         """Отримати версію ArgoCD сервера.
-        
+
         Returns:
             Словник з версіями
         """

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from setuptools import find_packages, setup
 
-
 setup(
     name="predatorctl",
     version="1.0.0",

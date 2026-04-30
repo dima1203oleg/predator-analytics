@@ -16,7 +16,6 @@ from __future__ import annotations
 from app.libs.core.config import settings
 from app.libs.core.database import get_db, get_db_ctx
 
-
 # AZR v40 Core Modules - Import these directly when needed:
 # - libs.core.merkle_ledger (Cryptographic Truth Ledger)
 # - libs.core.event_sourcing (Event Sourcing Engine)

@@ -1,6 +1,6 @@
 import os
-import sys
 from pathlib import Path
+import sys
 
 """Pytest bootstrap to ensure Predator Analytics packages resolve correctly."""
 

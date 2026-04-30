@@ -9,7 +9,6 @@ import os
 import sys
 from typing import Any
 
-
 logger = logging.getLogger("app.services.ops_service")
 
 

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """═══════════════════════════════════════════════════════════════
 AZR Constitutional Test Suite (AZR-CTS)
 Predator Analytics v45
@@ -16,7 +15,7 @@ NO-AI-OVERRIDE CLAUSE ACTIVE
 ═══════════════════════════════════════════════════════════════
 """
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from uuid import uuid4
 
 import pytest
@@ -35,7 +34,6 @@ from app.libs.azr import (
     # Services
     AZRRiskAssessmentService,
     CommitteeApproval,
-    ConstitutionalViolation,
     CryptographicCommitment,
     ImpactScope,
     RiskAssessment,
@@ -48,7 +46,6 @@ from app.libs.azr import (
     # Utilities
     verify_constitution_active,
 )
-
 
 # ═══════════════════════════════════════════════════════════════
 # CONSTITUTIONAL FIXTURE

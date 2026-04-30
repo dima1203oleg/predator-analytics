@@ -22,6 +22,7 @@ def calculate_pls(
 
     Returns:
         PLS score (0-100). Higher = more dependent on single post.
+
     """
     if total_company_flow <= 0:
         return 0.0

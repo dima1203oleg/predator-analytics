@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Telegram Router - Webhook та API для Telegram бота."""
 import logging
 import os
@@ -9,7 +8,6 @@ from fastapi import APIRouter, BackgroundTasks, HTTPException, Request
 from pydantic import BaseModel
 
 from app.services.telegram_assistant import get_assistant, init_assistant
-
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/telegram", tags=["Telegram"])

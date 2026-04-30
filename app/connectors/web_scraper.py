@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Web Scraper Connector - Парсинг веб-сайтів та OSINT джерел
 Використовує httpx + BeautifulSoup для статичного контенту
 Використовує Playwright для динамічних сторінок (JS-rendered).
@@ -18,7 +17,6 @@ from bs4 import BeautifulSoup
 import httpx
 
 from .base import BaseConnector, ConnectorResult, ConnectorStatus
-
 
 logger = logging.getLogger(__name__)
 
@@ -136,6 +134,7 @@ class WebScraperConnector(BaseConnector):
             use_playwright: Використовувати Playwright для JS (default: False)
             follow_links: Слідувати за внутрішніми посиланнями (default: False)
             max_depth: Максимальна глибина обходу (default: 1)
+
         """
         use_playwright = kwargs.get("use_playwright", False)
         follow_links = kwargs.get("follow_links", False)
@@ -319,6 +318,7 @@ class WebScraperConnector(BaseConnector):
 
         Args:
             feed_url: URL RSS/Atom фіду
+
         """
         try:
             async with httpx.AsyncClient(timeout=self.timeout) as client:
@@ -388,6 +388,7 @@ class WebScraperConnector(BaseConnector):
 
         Args:
             dataset_id: ID датасету на data.gov.ua
+
         """
         api_url = f"https://data.gov.ua/api/3/action/package_show?id={dataset_id}"
 

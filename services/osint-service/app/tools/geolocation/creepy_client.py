@@ -46,7 +46,7 @@ class CreepyTool(BaseTool):
         start_time = datetime.now(UTC)
         options = options or {}
 
-        source = options.get("source", "auto")
+        options.get("source", "auto")
         build_timeline = options.get("build_timeline", True)
 
         findings = []
@@ -182,7 +182,7 @@ class CreepyTool(BaseTool):
                 "locations": locations,
                 "timeline": timeline,
                 "patterns": patterns,
-                "sources_used": list(set(loc["source"] for loc in locations)),
+                "sources_used": list({loc["source"] for loc in locations}),
             },
             findings=findings,
             duration_seconds=duration,

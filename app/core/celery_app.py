@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-
 """UA Sources - Celery App Configuration
 Celery worker for background tasks with Beat scheduling.
 """
 from celery import Celery
 
 from .config import settings
-
 
 celery_app = Celery(
     "ua_sources",
@@ -71,6 +69,5 @@ celery_app.conf.task_routes = {
 
 # Import and apply beat schedule
 from .beat_schedule import CELERY_BEAT_SCHEDULE
-
 
 celery_app.conf.beat_schedule = CELERY_BEAT_SCHEDULE

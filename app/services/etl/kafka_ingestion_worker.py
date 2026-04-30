@@ -1,16 +1,16 @@
-"""
-Kafka-driven Ingestion Worker (Phase 4 — SM Edition).
+"""Kafka-driven Ingestion Worker (Phase 4 — SM Edition).
 
 Manages job lifecycle (8 states), DLQ, and SSE progress.
 Consumed from predator.ingestion.* topics.
 """
-from datetime import datetime, timezone
+from datetime import UTC, datetime
+from enum import StrEnum
 from typing import Any
-from enum import Enum
 
 
-class JobStatus(str, Enum):
+class JobStatus(StrEnum):
     """Lifecycle states (§4.4)."""
+
     ACCEPTED = "accepted"
     QUEUED = "queued"
     RUNNING = "running"
@@ -62,7 +62,7 @@ class KafkaIngestionWorker:
             "dlq_topic": self.config["dlq_topic"],
             "throughput_target": self.config["throughput_target"],
             "active_jobs": 0,
-            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(UTC).isoformat(),
         }
 
     def get_job_lifecycle_info(self) -> dict[str, Any]:
@@ -110,7 +110,7 @@ class SSEProgressTracker:
         return {
             **self.config,
             "status": "active",
-            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(UTC).isoformat(),
         }
 
     def format_sse_event(self, event_type: str, data: dict[str, Any]) -> str:

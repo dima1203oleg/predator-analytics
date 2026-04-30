@@ -64,7 +64,7 @@ class FollowTheMoneyTool(BaseTool):
         options = options or {}
 
         depth = options.get("depth", 2)
-        include_transactions = options.get("include_transactions", True)
+        options.get("include_transactions", True)
 
         findings = []
         entities = []

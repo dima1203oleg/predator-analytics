@@ -4,7 +4,6 @@ import logging
 import os
 from typing import Any
 
-
 try:
     from notion_client import AsyncClient
 

@@ -2,16 +2,19 @@
 
 from __future__ import annotations
 
-import logging
-import uuid
 from datetime import UTC, datetime, timedelta
+import logging
+from typing import TYPE_CHECKING
+import uuid
 
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.v55.orm.cers_score import CERSScoreORM
-from app.engines.cers import CERSResult
 
+if TYPE_CHECKING:
+    from sqlalchemy.ext.asyncio import AsyncSession
+
+    from app.engines.cers import CERSResult
 
 logger = logging.getLogger("predator.repo.cers")
 

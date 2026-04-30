@@ -175,6 +175,7 @@ class FormalStateMachine[S: Enum]:
             trigger: Trigger name (e.g., 'START', 'COMPLETE')
             to_state: Target state
             guards: Optional list of guards that must pass
+
         """
         if from_state not in self._transitions:
             self._transitions[from_state] = {}
@@ -217,6 +218,7 @@ class FormalStateMachine[S: Enum]:
 
         Returns:
             (success, message, proof)
+
         """
         context = context or {}
         self._context.update(context)
@@ -559,11 +561,8 @@ def create_ooda_state_machine(
 # ============================================================================
 
 if __name__ == "__main__":
-    print("🔒 FORMAL STATE MACHINE - Self-Test")
-    print("=" * 60)
 
     # Test ETL State Machine
-    print("\n📋 ETL State Machine Test:")
     etl = create_etl_state_machine()
 
     # Run through happy path
@@ -580,14 +579,11 @@ if __name__ == "__main__":
     for trigger, ctx in transitions:
         success, message, proof = etl.fire(trigger, ctx)
         status = "✅" if success else "❌"
-        print(f"  {status} {trigger}: {etl.state_value} - {message[:50]}...")
 
     # Verify history
     valid, msg = etl.verify_history()
-    print(f"\n  📜 Verification: {msg}")
 
     # Test OODA State Machine
-    print("\n🔄 OODA State Machine Test:")
     ooda = create_ooda_state_machine()
 
     ooda_transitions = [
@@ -602,6 +598,4 @@ if __name__ == "__main__":
     for trigger, ctx in ooda_transitions:
         success, message, proof = ooda.fire(trigger, ctx)
         status = "✅" if success else "❌"
-        print(f"  {status} {trigger}: {ooda.state_value}")
 
-    print(f"\n📊 Stats: {json.dumps(ooda.get_stats(), indent=2)}")

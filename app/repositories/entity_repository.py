@@ -3,15 +3,22 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import TYPE_CHECKING, Any
 import uuid
 
-from sqlalchemy import or_, select, func
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import func, or_, select
 
+from app.core.ueid import (
+    fingerprint_entity,
+    generate_deterministic_ueid,
+    normalize_name,
+    parse_ueid,
+    validate_edrpou,
+)
 from app.models.v55.orm.entity import EntityORM
-from app.core.ueid import fingerprint_entity, generate_deterministic_ueid, normalize_name, validate_edrpou, parse_ueid
 
+if TYPE_CHECKING:
+    from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger("predator.repo.entity")
 
@@ -37,9 +44,10 @@ class EntityRepository:
 
     async def search(self, query: str, entity_type: str | None = None, limit: int = 20, offset: int = 0) -> tuple[list[EntityORM], int]:
         """Search entities leveraging pg_trgm for fuzzy matching.
-        
+
         Returns:
             Tuple of (entities list, total count)
+
         """
         normalized_query = normalize_name(query)
         if not normalized_query:
@@ -63,11 +71,11 @@ class EntityRepository:
         items_stmt = stmt.offset(offset).limit(limit)
         items_result = await self.session.execute(items_stmt)
         items = list(items_result.scalars().all())
-        
-        # In a real production environment with millions of rows, 
-        # we'd want a more optimized way to get the total count, 
+
+        # In a real production environment with millions of rows,
+        # we'd want a more optimized way to get the total count,
         # but for Phase 1 we'll use a simple count query.
-        
+
         count_stmt = select(func.count()).select_from(stmt.subquery())
         count_result = await self.session.execute(count_stmt)
         total = count_result.scalar_one()
@@ -83,13 +91,14 @@ class EntityRepository:
         metadata: dict[str, Any] | None = None
     ) -> tuple[EntityORM, bool]:
         """Resolve entity by EDRPOU or Name+Type fingerprint, or create new.
-        
+
         Returns:
             Tuple of (EntityORM, is_new boolean)
+
         """
         normalized = normalize_name(name)
         fingerprint = fingerprint_entity(name, edrpou)
-        
+
         # 1. Try resolving by EDRPOU (exact match)
         if edrpou and validate_edrpou(edrpou):
             existing = await self.get_by_edrpou(edrpou)
@@ -100,14 +109,14 @@ class EntityRepository:
         stmt = select(EntityORM).where(EntityORM.fingerprint == fingerprint)
         result = await self.session.execute(stmt)
         existing_by_fp = result.scalar_one_or_none()
-        
+
         if existing_by_fp:
             return existing_by_fp, False
-            
+
         # 3. If no deterministic EDRPOU, check by exact normalized name (strict check proxy for fuzzy)
         if not edrpou:
              stmt = select(EntityORM).where(
-                 EntityORM.name_normalized == normalized, 
+                 EntityORM.name_normalized == normalized,
                  EntityORM.entity_type == entity_type
              )
              result = await self.session.execute(stmt)
@@ -117,7 +126,7 @@ class EntityRepository:
 
         # 4. Create new entity
         new_ueid = uuid.UUID(generate_deterministic_ueid(edrpou)) if edrpou and validate_edrpou(edrpou) else uuid.uuid4()
-        
+
         entity = EntityORM(
             ueid=new_ueid,
             name=name,
@@ -128,10 +137,10 @@ class EntityRepository:
             fingerprint=fingerprint,
             metadata_=metadata or {}
         )
-        
+
         self.session.add(entity)
         # Flush to ensure ueid is generated/set correctly before returning
         await self.session.flush()
-        
+
         logger.info(f"Created new entity: {name} ({edrpou or 'No EDRPOU'}) -> {new_ueid}")
         return entity, True

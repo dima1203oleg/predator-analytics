@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 #!/usr/bin/env python3
 """Predator Analytics - Self-Improvement & Auto-Completion Agent
 Implementation of 'Self-Improvement Loop' from TECH_SPEC.md Section 9.
@@ -16,7 +15,6 @@ import logging
 import os
 import subprocess
 import time
-
 
 # Setup Logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - [AUTO-AGENT] - %(message)s')

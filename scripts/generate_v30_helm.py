@@ -1,5 +1,6 @@
 
 import os
+
 import yaml
 
 HELM_ROOT = "/Users/dima-mac/Documents/Predator_21/helm/predator"
@@ -221,7 +222,6 @@ spec:
 def main():
     for category, components in COMPONENTS.items():
         for component_path in components:
-            print(f"Creating chart: {category}/{component_path}")
             create_chart(category, component_path)
 
 if __name__ == "__main__":

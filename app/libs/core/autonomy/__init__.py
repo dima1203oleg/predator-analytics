@@ -21,7 +21,6 @@ from .engine import (
     VerificationResult,
 )
 
-
 __all__ = [
     "AutonomousRetrainingOrchestrator",
     "ConstitutionalCheck",

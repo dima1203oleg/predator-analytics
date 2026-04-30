@@ -87,8 +87,8 @@ async def replay_dlq(dlq_topic: str, target_topic: str) -> None:
 
 async def main() -> None:
     # Example usage – adjust topics and group ids as needed.
-    source = os.getenv("KAFKA_SOURCE_TOPIC", "events")
-    group = os.getenv("KAFKA_CONSUMER_GROUP", "event-processor")
+    os.getenv("KAFKA_SOURCE_TOPIC", "events")
+    os.getenv("KAFKA_CONSUMER_GROUP", "event-processor")
     # Run consumer that moves failed messages to DLQ (in background)
     # asyncio.create_task(move_to_dlq(source, group))
     # For manual replay, uncomment the following lines:

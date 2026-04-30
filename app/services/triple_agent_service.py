@@ -10,7 +10,6 @@ import uuid
 
 from .llm import llm_service
 
-
 # Ensure libs is reachable (dynamically find project root)
 _current_dir = os.path.dirname(os.path.abspath(__file__))
 _project_root = os.path.abspath(os.path.join(_current_dir, "..", "..", "..", ".."))
@@ -20,7 +19,6 @@ if _project_root not in sys.path:
 from app.libs.agents.core import TrinityCore
 from app.libs.core.database import get_db_ctx  # Correct context manager
 from app.libs.core.models import TrinityAuditLog
-
 
 # Add scripts to path for MixedCLIStack
 _scripts_dir = os.path.abspath(os.path.join(_project_root, "scripts"))

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Media Processor - Audio & Video Intelligence.
 
 Обробка мультимедійного контенту:
@@ -19,7 +18,6 @@ import os
 from pathlib import Path
 import subprocess
 from typing import Any
-
 
 logger = logging.getLogger("service.media_processor")
 

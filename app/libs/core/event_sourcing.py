@@ -32,7 +32,6 @@ from typing import TYPE_CHECKING, Any, TypeVar
 
 from app.libs.core.merkle_ledger import get_truth_ledger, sha3_256
 
-
 if TYPE_CHECKING:
     from collections.abc import Callable
 
@@ -500,8 +499,6 @@ def get_event_store(storage_path: str | Path = "/tmp/azr_logs") -> EventStore:
 # ============================================================================
 
 if __name__ == "__main__":
-    print("🔄 EVENT SOURCING ENGINE - Self-Test")
-    print("=" * 60)
 
     # Create event store
     store = EventStore("/tmp/azr_test_events")
@@ -523,14 +520,11 @@ if __name__ == "__main__":
 
     # Save snapshot
     snapshot = store.save_snapshot(azr_state)
-    print(f"✅ Snapshot saved at version {snapshot.version}")
 
     # Reconstruct state in new aggregate
     new_azr = AZRStateAggregate("azr-test")
     store.replay(new_azr)
 
-    print(f"📊 Reconstructed state: {json.dumps(new_azr.get_state(), indent=2)}")
 
     # Print stats
     stats = store.get_stats()
-    print(f"\n📊 Event Store Stats: {json.dumps(stats, indent=2)}")

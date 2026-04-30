@@ -27,13 +27,13 @@ class BeneficialOwnerService:
         query = """
         MATCH p = (c:Company {ueid: $ueid, tenant_id: $tenant_id})<-[:OWNER*1..10]-(ubo:Person)
         WHERE NOT (ubo)<-[:OWNER]-()
-        
+
         WITH ubo, relationships(p) as rels
         UNWIND rels as r
         WITH ubo, collect(coalesce(r.share_percentage, 100)) as shares
-        
+
         WITH ubo, reduce(s = 1.0, x IN shares | s * (x / 100.0)) as total_share
-        
+
         RETURN ubo.name AS full_name, ubo.inn AS inn, round(total_share * 100, 2) AS exact_share
         ORDER BY exact_share DESC
         """

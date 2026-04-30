@@ -8,7 +8,6 @@ from typing import TYPE_CHECKING
 
 import redis.asyncio as redis
 
-
 if TYPE_CHECKING:
     from fastapi import WebSocket
 

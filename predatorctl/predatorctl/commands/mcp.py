@@ -1,13 +1,10 @@
 from __future__ import annotations
 
-import json
 import os
 
-import requests
 from rich.console import Console
 from rich.table import Table
 import typer
-
 
 app = typer.Typer(help="Model Context Protocol (MCP) Bridge")
 console = Console()

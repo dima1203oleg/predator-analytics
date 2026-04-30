@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """ML Workers - Background tasks for AI/ML processing
 Handles embeddings generation, classification, and analysis Jobs.
 """
@@ -13,7 +12,6 @@ from app.libs.core.config import settings
 from app.libs.core.database import get_db_ctx
 from app.libs.core.models.entities import MLDataset, MLJob
 from app.libs.core.structured_logger import get_logger
-
 
 logger = get_logger("tasks.ml_workers")
 

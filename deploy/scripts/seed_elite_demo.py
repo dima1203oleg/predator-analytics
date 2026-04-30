@@ -1,10 +1,8 @@
 import asyncio
-import uuid
-import hashlib
-import json
-from datetime import datetime, UTC, timedelta
+from datetime import UTC, datetime
+
 from sqlalchemy import text
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
 # Hardcoded for development
@@ -12,14 +10,13 @@ DATABASE_URL = "postgresql+asyncpg://predator:changeme_dev@localhost:5432/predat
 TENANT_ID = "a0000000-0000-0000-0000-000000000001"
 
 async def seed_elite_demo():
-    print("🚀 Початок генерації ELITE DEMO датасету...")
     engine = create_async_engine(DATABASE_URL)
     async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
     async with async_session() as session:
         # 1. Очищення старих даних (опціонально)
         # await session.execute(text("TRUNCATE companies, persons, declarations, risk_scores CASCADE"))
-        
+
         # 2. Створення компаній для кейсу "Offshore Loop" (Кругова торгівля)
         # ТОВ "Глобал Трейд" (UA) -> Cyprus Ltd (CY) -> ТОВ "Експорт Плюс" (UA)
         companies = [
@@ -69,7 +66,7 @@ async def seed_elite_demo():
         # Декларація з аномально низькою ціною
         await session.execute(text("""
             INSERT INTO declarations (
-                tenant_id, declaration_number, declaration_date, direction, 
+                tenant_id, declaration_number, declaration_date, direction,
                 importer_edrpou, importer_name, exporter_name, exporter_country,
                 uktzed_code, goods_description, invoice_value_usd, customs_value_usd, source
             ) VALUES (
@@ -94,7 +91,6 @@ async def seed_elite_demo():
         """), {"tid": TENANT_ID, "now": datetime.now(UTC)})
 
         await session.commit()
-        print("✅ PostgreSQL Elite Demo Seed завершено.")
 
 if __name__ == "__main__":
     asyncio.run(seed_elite_demo())

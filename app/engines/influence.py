@@ -11,9 +11,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import logging
-from typing import Optional
-
-from sqlalchemy.ext.asyncio import AsyncSession
+from typing import TYPE_CHECKING
 
 from app.core.confidence import ConfidenceScore, quick_confidence
 from app.core.signal_bus import SignalBus
@@ -21,6 +19,8 @@ from app.indices.hci import calculate_hci
 from app.indices.im import calculate_im
 from app.models.v55.signal import SignalLayer, SignalPriority, V55Signal
 
+if TYPE_CHECKING:
+    from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger("predator.engines.influence")
 
@@ -63,6 +63,7 @@ def compute_influence_score(
 
     Returns:
         InfluenceScore with all metrics.
+
     """
     im = calculate_im(eigenvector, betweenness, market_share, regulatory_proximity)
     hci = calculate_hci(hhi_beneficial, hhi_formal)
@@ -94,20 +95,19 @@ async def process_entity(ueid: str, session: AsyncSession) -> InfluenceScore:
     """Run Influence Analysis for a specific entity.
     Features async DB persistence and real-time scaling out via SignalBus.
     """
-    from app.repositories.influence_repository import InfluenceRepository
     from app.repositories.fused_record_repository import FusedRecordRepository
-    
+    from app.repositories.influence_repository import InfluenceRepository
+
     repo = InfluenceRepository(session)
     fused_repo = FusedRecordRepository(session)
-    
+
     # 1. Fetch historical fused records
     fused_records = await fused_repo.get_by_ueid(ueid, limit=500)
-    
+
     # 2. Extract Data for Influence
     total_flow = 0.0
     founders_count = 1
-    industry_type = "GENERAL"
-    
+
     for record in fused_records:
         if "customs" in record.source.lower():
             total_flow += float(record.normalized_data.get("value_usd", 0))
@@ -116,21 +116,21 @@ async def process_entity(ueid: str, session: AsyncSession) -> InfluenceScore:
             founders_count = len(data.get("founders", [])) or 1
             activities = data.get("activities", [])
             if activities:
-                industry_type = activities[0]
-                
+                activities[0]
+
     # 3. Derive Indices
     # Market Share (simplified: entity flow vs conservative 1B market)
-    market_share = min(1.0, total_flow / 1_000_000_000.0) 
-    
+    market_share = min(1.0, total_flow / 1_000_000_000.0)
+
     # HHI (Herfindahl-Hirschman Index) estimate from founders
     # If 1 founder = 10000, 2 founders = 5000, etc. (assuming equal split for now)
-    hhi_ben = 10000.0 / founders_count 
+    hhi_ben = 10000.0 / founders_count
     hhi_form = hhi_ben
-    
+
     # Graph Centralities (Mock these for now but keep them stable)
     eigenvector = 0.1 + (total_flow / 10_000_000.0)
     betweenness = 0.05 + (market_share * 0.5)
-    
+
     shadow = 10.0 if founders_count > 5 else 5.0
     data_comp = min(1.0, (len(fused_records) / 15.0) + 0.3) if fused_records else 0.3
 
@@ -151,8 +151,7 @@ async def process_entity(ueid: str, session: AsyncSession) -> InfluenceScore:
 
     # 2. Emit Signal (v55 standard)
     bus = SignalBus.get_instance()
-    from app.models.v55.signal import SignalLayer, SignalPriority, V55Signal
-    
+
     signal = V55Signal(
         signal_type="INFLUENCE_SCORING",
         topic="influence.analyzed",

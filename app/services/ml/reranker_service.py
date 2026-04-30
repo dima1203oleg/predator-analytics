@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-
 """Cross-Encoder Reranker Service
 Implements MS MARCO MiniLM-based reranking for search results.
 """
 # from sentence_transformers import CrossEncoder # Lazily imported
 import logging
-
 
 logger = logging.getLogger(__name__)
 
@@ -21,6 +19,7 @@ class RerankerService:
 
         Args:
             model_name: HuggingFace model identifier
+
         """
         logger.info(f"Loading reranker model: {model_name}")
         self.model = None
@@ -47,6 +46,7 @@ class RerankerService:
 
         Returns:
             List of (document, relevance_score) tuples, sorted by score
+
         """
         if not documents:
             return []

@@ -1,12 +1,12 @@
-"""
-Security API (Phase 7 — SM Edition).
+"""Security API (Phase 7 — SM Edition).
 
 Endpoints for Cilium Network Policies, Kyverno PSS, and TLS/mTLS Matrix.
 """
-from fastapi import APIRouter
 from typing import Any
 
-from app.services.security import NetworkPolicyManager, KyvernoPolicyManager, TLSMatrix
+from fastapi import APIRouter
+
+from app.services.security import KyvernoPolicyManager, NetworkPolicyManager, TLSMatrix
 
 router = APIRouter(prefix="/security-v2", tags=["Platform Security & Policies"])
 
@@ -41,7 +41,7 @@ async def validate_pod(pod_spec: dict[str, Any]) -> dict[str, Any]:
 
 @router.get("/tls/matrix")
 async def get_tls_matrix() -> dict[str, Any]:
-    """mTLS and ingress TLS encryption status."""
+    """MTLS and ingress TLS encryption status."""
     return _tls.get_tls_status()
 
 

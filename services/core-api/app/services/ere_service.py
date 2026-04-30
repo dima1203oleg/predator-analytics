@@ -8,6 +8,7 @@ from typing import Any
 from uuid import UUID
 
 import httpx
+
 from app.config import get_settings
 from app.services.ai_service import AIService
 
@@ -32,9 +33,9 @@ class EREService:
 
                 # Створюємо колекцію, якщо вона відсутня
                 # Розмірність вектора 1536 (Ollama mxbai-embed-large або подібні)
-                # Якщо використовується multilingual-e5-small — це 384. 
+                # Якщо використовується multilingual-e5-small — це 384.
                 # Для універсальності використовуємо 1536.
-                vector_size = 1536 
+                vector_size = 1536
                 await client.put(
                     f"{self.qdrant_url}/collections/{self.collection_name}",
                     json={
@@ -51,7 +52,7 @@ class EREService:
     async def index_entity(self, tenant_id: UUID | str, entity_id: str, text_content: str, metadata: dict[str, Any]):
         """Індексація сутності для векторного пошуку."""
         embedding = await AIService.get_embeddings(text_content)
-        
+
         payload = {
             "tenant_id": str(tenant_id),
             "entity_id": entity_id,
@@ -107,5 +108,5 @@ class EREService:
                     ]
         except Exception as e:
             logger.error(f"Помилка пошуку в Qdrant: {e}")
-        
+
         return []

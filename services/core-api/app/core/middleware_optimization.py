@@ -6,14 +6,14 @@ Middleware для оптимізації продуктивності:
 - Request validation caching
 - Performance metrics
 """
-import time
 import gzip
+import time
 
 from fastapi import HTTPException, Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.responses import StreamingResponse
-from app.services.chaos_service import ChaosService
 
+from app.services.chaos_service import ChaosService
 from predator_common.logging import get_logger
 
 from .optimization import rate_limiters
@@ -117,7 +117,7 @@ class CompressionMiddleware(BaseHTTPMiddleware):
 
         # Check if response should be compressed
         body = getattr(response, "body", b"") or b""
-        
+
         # Стискаємо лише якщо клієнт підтримує gzip, тіло досить велике і це не бінарний файл
         content_type = response.headers.get("Content-Type", "")
         is_compressible = any(t in content_type for t in ["json", "text", "javascript", "xml"])
@@ -129,7 +129,7 @@ class CompressionMiddleware(BaseHTTPMiddleware):
             and len(body) > self.minimum_size
         ):
             compressed_body = gzip.compress(body)
-            
+
             # Створюємо нову відповідь зі стиснутим тілом
             response = Response(
                 content=compressed_body,

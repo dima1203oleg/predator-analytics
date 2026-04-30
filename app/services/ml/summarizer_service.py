@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-
 """Document Summarization Service
 Generates concise summaries using T5 or BART models.
 """
 import logging
 
 from transformers import pipeline
-
 
 logger = logging.getLogger(__name__)
 
@@ -22,6 +20,7 @@ class SummarizerService:
 
         Args:
             model_name: HuggingFace model (bart-large-cnn or t5-small)
+
         """
         logger.info(f"Loading summarizer model: {model_name}")
         self.summarizer = pipeline(
@@ -41,6 +40,7 @@ class SummarizerService:
 
         Returns:
             Summary text or None if error
+
         """
         if not text or len(text) < 50:
             return None

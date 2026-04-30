@@ -1,4 +1,4 @@
 """UA Connectors Package."""
-from .ua_registry import OpendatabotClient, YouControlClient, ProzorroClient
+from .ua_registry import OpendatabotClient, ProzorroClient, YouControlClient
 
-__all__ = ["OpendatabotClient", "YouControlClient", "ProzorroClient"]
+__all__ = ["OpendatabotClient", "ProzorroClient", "YouControlClient"]

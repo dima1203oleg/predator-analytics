@@ -11,7 +11,6 @@ import random
 from typing import Any
 import uuid
 
-
 # Try importing Qdrant client
 try:
     from qdrant_client import QdrantClient

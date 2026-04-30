@@ -1,5 +1,4 @@
-"""
-🚀 ULTRA-ROUTER v55.3 — LiteLLM Proxy Configuration (Python)
+"""🚀 ULTRA-ROUTER v55.3 — LiteLLM Proxy Configuration (Python)
 STATELESS MODE (без БД)
 """
 
@@ -44,7 +43,7 @@ model_list = [
             "api_key": "gsk_test_5",
         }
     },
-    
+
     # 📚 HUGGINGFACE (резерв)
     {
         "model_name": "hf-llama2",
@@ -53,7 +52,7 @@ model_list = [
             "api_key": "hf_test_key",
         }
     },
-    
+
     # 🤝 TOGETHER AI
     {
         "model_name": "together-llama3",
@@ -62,7 +61,7 @@ model_list = [
             "api_key": "together_test_key",
         }
     },
-    
+
     # 🖥️ OLLAMA (локально)
     {
         "model_name": "ollama-llama2",

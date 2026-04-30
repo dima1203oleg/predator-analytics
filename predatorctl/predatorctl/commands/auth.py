@@ -3,7 +3,6 @@ from __future__ import annotations
 from rich.console import Console
 import typer
 
-
 app = typer.Typer(help="Sovereign Identity Management (Keycloak/OIDC)")
 console = Console()
 

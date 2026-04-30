@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """
 🔌 AZR NERVOUS SYSTEM - WebSocket Bridge
 ========================================
@@ -14,7 +13,6 @@ import contextlib
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
 from app.libs.core.azr import get_azr
-
 
 router = APIRouter()
 
@@ -98,6 +96,5 @@ async def azr_brain_socket(websocket: WebSocket):
 
     except WebSocketDisconnect:
         manager.disconnect(websocket)
-    except Exception as e:
-        print(f"Socket Error: {e}")
+    except Exception:
         manager.disconnect(websocket)

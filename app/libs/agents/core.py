@@ -5,7 +5,6 @@ from typing import Any
 from app.libs.core.governance import OperationalPolicy, SecurityStage
 from app.libs.core.logger import setup_logger
 
-
 logger = setup_logger("predator.trinity")
 
 

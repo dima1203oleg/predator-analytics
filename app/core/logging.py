@@ -1,5 +1,4 @@
-"""
-Канонічне структуроване логування PREDATOR Analytics v4.1.
+"""Канонічне структуроване логування PREDATOR Analytics v4.1.
 
 Використовує structlog для JSON-форматованих логів.
 Підключається в app/main.py на старті.
@@ -24,13 +23,13 @@ def configure_logging(
     level: str = "INFO",
     json_format: bool = False,
 ) -> None:
-    """
-    Конфігурує структуроване логування для всього застосунку.
+    """Конфігурує структуроване логування для всього застосунку.
 
     Args:
         level: Рівень логування (DEBUG, INFO, WARNING, ERROR)
         json_format: Якщо True — виводить JSON (для production).
                      Якщо False — виводить кольоровий текст (для dev).
+
     """
     # Налаштування стандартного logging
     logging.basicConfig(

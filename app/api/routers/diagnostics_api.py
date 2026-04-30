@@ -4,7 +4,6 @@ from fastapi import APIRouter, HTTPException
 
 from app.services.diagnostics_service import DiagnosticsService
 
-
 router = APIRouter(tags=["System Diagnostics"])
 
 

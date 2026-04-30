@@ -1,11 +1,9 @@
 from __future__ import annotations
 
-
 """Axiom Registry and Verification - AZR Engine v45-S."""
 import logging
 
 import yaml
-
 
 logger = logging.getLogger(__name__)
 

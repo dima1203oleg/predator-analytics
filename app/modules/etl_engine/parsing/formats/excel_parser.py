@@ -9,7 +9,6 @@ import zipfile
 
 from ..data_parser import ParseResult
 
-
 logger = logging.getLogger("sovereign_excel_parser")
 
 

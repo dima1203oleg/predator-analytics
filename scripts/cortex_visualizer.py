@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
-
 """
 🧠 AZR CORTEX VISUALIZER v1.0
 Generates a graphical schema of the usage of components and their compliance with
@@ -13,13 +12,10 @@ Outputs:
 - file: cortex_map.json (for UI dashboard)
 """
 
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 import json
-import os
 from pathlib import Path
-from typing import Dict, List, Optional
 import uuid
-
 
 # ANSI Colors
 RESET = "\033[0m"
@@ -34,7 +30,7 @@ BOLD = "\033[1m"
 PROJECT_ROOT = Path("/Users/dima-mac/Documents/Predator_21")
 
 class Component:
-    def __init__(self, name: str, path: str, type: str, dependencies: list[str] = None):
+    def __init__(self, name: str, path: str, type: str, dependencies: list[str] | None = None):
         self.id = str(uuid.uuid4())[:8]
         self.name = name
         self.path = PROJECT_ROOT / path
@@ -112,7 +108,6 @@ class Component:
         }
 
 def analyze_system():
-    print(f"{BOLD}{MAGENTA}🧠 AZR CORTEX VISUALIZER{RESET} - Scanning Neural Architecture...")
 
     components = [
         Component("API Gateway", "services/api_gateway", "service", ["PostgreSQL", "Redis", "Ollama"]),
@@ -131,9 +126,6 @@ def analyze_system():
     # Perform checks
     for comp in components:
         comp.check_compliance()
-        status_icon = "✅" if comp.compliant else "❌"
-        ver_str = f"({comp.version})" if comp.version != "unknown" else ""
-        print(f"  {status_icon} {BOLD}{comp.name:<25}{RESET} {ver_str} {RED if not comp.compliant else GREEN}{', '.join(comp.compliance_notes)}{RESET}")
 
     return components
 
@@ -204,16 +196,8 @@ def main():
     with open(json_file, "w") as f:
         json.dump(json_data, f, indent=2)
 
-    print(f"\n{BOLD}{CYAN}🔹 Graphical Schema Generated:{RESET}")
-    print(f"   📂 {dest_file}")
-    print(f"   📂 {json_file}")
 
-    print(f"\n{BOLD}Mermaid Preview:{RESET}")
-    print("-" * 40)
-    print(mermaid_code)
-    print("-" * 40)
 
-    print(f"\n{BOLD}{GREEN}✅ Cortex Visualization Complete. Ready for Omniscience Dashboard integration.{RESET}")
 
 if __name__ == "__main__":
     main()

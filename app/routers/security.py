@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Security Router - Security and access control endpoints."""
 from datetime import UTC, datetime
 import os
@@ -9,7 +8,6 @@ import asyncpg
 from fastapi import APIRouter
 
 from app.libs.core.structured_logger import get_logger, log_security_event
-
 
 logger = get_logger("predator.api.security")
 

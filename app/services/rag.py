@@ -1,9 +1,7 @@
 from __future__ import annotations
 
-
 """RAG Service - Retrieval Augmented Generation."""
 import logging
-
 
 logger = logging.getLogger(__name__)
 

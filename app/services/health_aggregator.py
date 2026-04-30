@@ -13,7 +13,6 @@ from .monitoring_service import monitoring_service
 from .simulation_service import simulation_service
 from .training_status_service import training_status_service
 
-
 logger = setup_logger("predator.backend.health_aggregator")
 
 

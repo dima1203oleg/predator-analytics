@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """RBAC (Role-Based Access Control) System
 Defines Roles, Permissions and Enforcement logic.
 """

@@ -4,12 +4,14 @@
 """
 import asyncio
 import logging
+
 from celery import shared_task
 from sqlalchemy.future import select
+
 from app.database import AsyncSessionLocal
-from app.services.neo4j_service import Neo4jService
-from app.services.drift_monitor import DriftMonitor
 from app.models.orm import Tenant
+from app.services.drift_monitor import DriftMonitor
+from app.services.neo4j_service import Neo4jService
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +21,7 @@ async def run_snapshots_async():
     async with AsyncSessionLocal() as db:
         result = await db.execute(select(Tenant))
         tenants = result.scalars().all()
-        
+
         for tenant in tenants:
             logger.info(f"Створення снапшоту для тенанта {tenant.id}")
             await service.create_snapshot(tenant_id=str(tenant.id))
@@ -30,7 +32,7 @@ async def run_drift_detection_async():
         monitor = DriftMonitor(db)
         result = await db.execute(select(Tenant))
         tenants = result.scalars().all()
-        
+
         for tenant in tenants:
             logger.info(f"Аналіз дрейфу для тенанта {tenant.id}")
             await monitor.analyze_tenant_drift(tenant_id=tenant.id)

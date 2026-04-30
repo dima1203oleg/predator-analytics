@@ -1,10 +1,10 @@
-"""
-MinIO Object Storage Infrastructure API (Phase 2E — SM Edition).
+"""MinIO Object Storage Infrastructure API (Phase 2E — SM Edition).
 
 Endpoints for MinIO buckets and storage status.
 """
-from fastapi import APIRouter
 from typing import Any
+
+from fastapi import APIRouter
 
 from app.services.infrastructure.storage.minio_manager import MinIOInfraManager
 

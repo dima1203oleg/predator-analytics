@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Sources Management API - Predator Analytics v45
 API для управління джерелами даних (Telegram, Web, RSS, API).
 """
@@ -16,7 +15,6 @@ from app.libs.core.database import get_db_ctx
 from app.libs.core.models.entities import DataSource as DataSourceEntity
 from app.libs.core.structured_logger import get_logger
 from app.services.auth_service import get_current_user
-
 
 logger = get_logger("api.sources_management")
 router = APIRouter(prefix="/sources", tags=["Джерела Даних"])

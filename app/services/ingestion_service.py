@@ -7,7 +7,6 @@ import pandas as pd
 from app.services.embedding_service import get_embedding_service
 from app.services.indexing_service import indexing_service
 
-
 logger = logging.getLogger(__name__)
 
 

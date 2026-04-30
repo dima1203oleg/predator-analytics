@@ -1,11 +1,9 @@
 from __future__ import annotations
 
-
 """API Routes Aggregator."""
 from fastapi import APIRouter
 
 from .routers import analytics, etl, opponent, search
-
 
 api_router = APIRouter()
 api_router.include_router(search.router)

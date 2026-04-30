@@ -5,7 +5,6 @@ from typing import Any
 from app.libs.core.structured_logger import get_logger
 from app.services.code_quality_analyzer import code_quality_analyzer
 
-
 logger = get_logger("service.mission_discoverer")
 
 

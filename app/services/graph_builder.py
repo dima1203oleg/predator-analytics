@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Graph Builder Service - Entity relationship mapping
 Builds connection graphs between entities.
 """
@@ -8,7 +7,6 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 import logging
 from typing import Any
-
 
 logger = logging.getLogger(__name__)
 
@@ -57,6 +55,7 @@ class GraphBuilderService:
             root_entity: Starting entity (EDRPOU or name)
             entity_type: Type of root entity
             depth: How many levels deep to explore
+
         """
         depth = min(depth, self.max_depth)
         nodes: dict[str, GraphNode] = {}

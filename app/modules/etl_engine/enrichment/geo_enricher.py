@@ -47,8 +47,7 @@ class GeoEnricher:
         }
 
     def process_batch(self, records: list[dict[str, Any]]) -> list[dict[str, Any]]:
-        """
-        Enriches a batch of records by normalizing country names.
+        """Enriches a batch of records by normalizing country names.
         """
         processed_records = []
         for record in records:
@@ -67,7 +66,7 @@ class GeoEnricher:
             record["_geo_origin_code"] = self._map_country(origin_country)
             record["_geo_dispatch_code"] = self._map_country(dispatch_country)
             record["_geo_trading_code"] = self._map_country(trading_country)
-            
+
             # Simple regional tagging for Origin
             # Often, we also want to know region like "EU", "Asia", "North America"
             record["_geo_origin_region"] = self._get_region(record["_geo_origin_code"])
@@ -81,7 +80,7 @@ class GeoEnricher:
         """Map raw country name to standard ISO code."""
         if not country_name:
             return ""
-        
+
         # If it's already an ISO code (length 2), just return it
         if len(country_name) == 2 and country_name.isalpha():
             return country_name
@@ -94,7 +93,7 @@ class GeoEnricher:
         eu_codes = {"PL", "DE", "FR", "IT", "ES", "CZ", "RO", "NL", "LT", "LV", "EE", "SK", "HU"}
         asian_codes = {"CN", "JP", "KR", "IN", "VN", "TW", "TR"}
         na_codes = {"US", "CA", "MX"}
-        
+
         if iso_code in eu_codes:
             return "EU"
         elif iso_code in asian_codes:

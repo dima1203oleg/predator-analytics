@@ -1,5 +1,4 @@
 import codecs
-import re
 
 path = '/Users/dima-mac/Documents/Predator_21/apps/predator-analytics-ui/src/components/layout/Sidebar.tsx'
 with codecs.open(path, 'r', 'utf-8') as f:
@@ -209,19 +208,19 @@ new_nav = """{/* ── NAVIGATION ── */}
                                               {/* Горизонтальна лінія, що з'єднує гілку */}
                                               <div className={cn(
                                                 "absolute left-[-18px] top-1/2 w-[14px] border-t-2 transition-colors duration-300",
-                                                isActive 
-                                                  ? (accentBarMap[group.accent ?? 'slate']?.replace('bg-', 'border-') ?? 'border-slate-500') 
+                                                isActive
+                                                  ? (accentBarMap[group.accent ?? 'slate']?.replace('bg-', 'border-') ?? 'border-slate-500')
                                                   : "border-white/[0.05] group-hover:border-white/20"
                                               )} />
-                                              
+
                                               {/* Візуальний маркер (Крапка) */}
                                               <div className={cn(
                                                 "w-[5px] h-[5px] rounded-full mr-2.5 transition-all duration-300 shrink-0",
-                                                isActive 
+                                                isActive
                                                   ? (accentBarMap[group.accent ?? 'slate'] ?? 'bg-slate-400') + " shadow-[0_0_5px_currentColor]"
                                                   : "bg-transparent border border-white/20 group-hover:border-white/50 group-hover:scale-125"
                                               )} />
-                                              
+
                                               <span className={cn(
                                                 "text-[12px] min-w-0 truncate",
                                                 isActive ? "font-semibold" : "font-medium"
@@ -265,6 +264,5 @@ if start_idx != -1 and end_idx != -1:
     content = content[:start_idx] + new_nav + "\n      " + content[end_idx:]
     with codecs.open(path, 'w', 'utf-8') as f:
         f.write(content)
-    print("Sidebar nav rendering successfully updated!")
 else:
-    print("Could not find markers.")
+    pass

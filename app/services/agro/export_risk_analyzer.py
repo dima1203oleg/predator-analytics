@@ -1,27 +1,26 @@
 import logging
-from typing import Dict, Any, List
 import random
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
 class ExportRiskAnalyzer:
-    """
-    Export Risk Analyzer (COMP-223)
-    Analyzes logistics and customs risks specifically for agricultural exports 
+    """Export Risk Analyzer (COMP-223)
+    Analyzes logistics and customs risks specifically for agricultural exports
     (grain corridor, border blockades, etc.).
     """
+
     def __init__(self):
         pass
 
-    def analyze_route(self, route: str = "Ukraine-Poland") -> Dict[str, Any]:
-        """
-        Assesses risks of delay or blockade on major export routes.
+    def analyze_route(self, route: str = "Ukraine-Poland") -> dict[str, Any]:
+        """Assesses risks of delay or blockade on major export routes.
         """
         # Simulated risk levels for UA borders
         risk_score = random.uniform(20, 90)
-        
+
         status = "OPEN" if risk_score < 40 else "CONGESTED" if risk_score < 70 else "BLOCKED"
-        
+
         return {
             "route": route,
             "status": status,

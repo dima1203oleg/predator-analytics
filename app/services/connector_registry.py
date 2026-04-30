@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Connector Registry - Central registry for all data connectors."""
 from typing import Any
 
@@ -9,7 +8,6 @@ from app.connectors.nbu_fx import nbu_fx_connector
 from app.connectors.prozorro import prozorro_connector
 from app.connectors.registry import registry_connector
 from app.connectors.tax import tax_connector
-
 
 # Нові connectors (v45.1)
 try:

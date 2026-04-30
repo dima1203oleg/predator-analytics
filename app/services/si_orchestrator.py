@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """[DEPRECATED] This module is legacy.
 Self-Improvement Orchestrator now runs as a separate microservice in 'apps/self-improve-orchestrator'.
 """
@@ -19,7 +18,6 @@ from sqlalchemy.future import select
 
 from app.database import async_session_maker
 from app.models import MLJob, SICycle
-
 
 # Services
 # from app.services.ml import MLService # Placeholder for actual ML service

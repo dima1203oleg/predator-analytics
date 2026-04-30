@@ -3,20 +3,20 @@
 API для управління інфраструктурними компонентами.
 """
 
+
 from fastapi import APIRouter, Depends, HTTPException
-from typing import List
 from pydantic import BaseModel
 
-from app.services.orchestrator_service import orchestrator_service, PodStatus
-from app.dependencies import PermissionChecker
 from app.core.permissions import Permission
+from app.dependencies import PermissionChecker
+from app.services.orchestrator_service import PodStatus, orchestrator_service
 
 router = APIRouter(prefix="/orchestrator", tags=["Оркестрація"])
 
 class ScaleRequest(BaseModel):
     delta: int
 
-@router.get("/pods", response_model=List[PodStatus])
+@router.get("/pods", response_model=list[PodStatus])
 async def list_pods(
     _ = Depends(PermissionChecker([Permission.MANAGE_USERS]))
 ):

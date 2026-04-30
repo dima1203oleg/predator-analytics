@@ -1,14 +1,12 @@
-"""
-CERS 5-Layer Meta-Scoring Calculator (Phase 5B — SM Edition).
+"""CERS 5-Layer Meta-Scoring Calculator (Phase 5B — SM Edition).
 
 Composite Entity Risk Score = f(Behavioral, Institutional, Influence, Structural, Predictive).
 Implements §9 of the TZ.
 
 Output: 0..100 scale, with sub-scores and confidence.
 """
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
-
 
 # CERS Layer Weights (§9.3)
 LAYER_WEIGHTS: dict[str, float] = {
@@ -99,7 +97,7 @@ class CERSCalculator:
                 "structural": {"score": structural, "weight": self.weights["structural"]},
                 "predictive": {"score": predictive, "weight": self.weights["predictive"]},
             },
-            "calculated_at": datetime.now(timezone.utc).isoformat(),
+            "calculated_at": datetime.now(UTC).isoformat(),
         }
 
     def _get_grade(self, score: float) -> dict[str, Any]:

@@ -46,7 +46,7 @@ def check_postgres_schema() -> list[str]:
     # Placeholder: in production use async engine and reflect tables.
     logger.info("Checking PostgreSQL schema (placeholder)")
     # Simulate missing table detection
-    for table in EXPECTED_POSTGRES_TABLES:
+    for _table in EXPECTED_POSTGRES_TABLES:
         # Here you would query information_schema.tables
         # For demo we assume all tables exist
         pass
@@ -104,13 +104,11 @@ def main() -> None:
     results = run_all_checks()
     issues = {k: v for k, v in results.items() if v}
     if issues:
-        print("Schema governance issues detected:")
-        for store, errs in issues.items():
-            for err in errs:
-                print(f"- [{store}] {err}")
+        for _store, errs in issues.items():
+            for _err in errs:
+                pass
         exit(1)
     else:
-        print("All schemas validated successfully.")
         exit(0)
 
 if __name__ == "__main__":

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """🚀 Redis Caching Service для Predator Analytics v45.
 
 Production-ready caching layer для оптимізації performance:
@@ -29,7 +28,6 @@ import zlib
 import redis.asyncio as redis
 
 from app.libs.core.structured_logger import get_logger
-
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -156,6 +154,7 @@ class CacheService:
 
         Returns:
             Cached value or None if not found
+
         """
         await self.connect()
 
@@ -189,6 +188,7 @@ class CacheService:
 
         Returns:
             True if successful
+
         """
         await self.connect()
 
@@ -229,6 +229,7 @@ class CacheService:
 
         Returns:
             Number of keys deleted
+
         """
         await self.connect()
 
@@ -293,6 +294,7 @@ class CacheService:
             @cache.cached(ttl=600, key_prefix="search")
             async def search_documents(query: str, limit: int):
                 return expensive_search(query, limit)
+
         """
 
         def decorator(func):

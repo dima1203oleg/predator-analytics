@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """NBU FX Connector - National Bank of Ukraine Exchange Rates
 https://bank.gov.ua/NBUStatService/.
 """
@@ -8,7 +7,6 @@ import logging
 from typing import TYPE_CHECKING
 
 from .base import BaseConnector, ConnectorResult
-
 
 if TYPE_CHECKING:
     from datetime import date
@@ -35,6 +33,7 @@ class NBUFXConnector(BaseConnector):
         Args:
             query: Currency code (USD, EUR, etc.)
             limit: Not used for this API
+
         """
         return await self.get_rate(query.upper())
 
@@ -50,6 +49,7 @@ class NBUFXConnector(BaseConnector):
         Args:
             currency_code: ISO 4217 currency code (USD, EUR, PLN, etc.)
             rate_date: Date for historical rate (default: today)
+
         """
         params = {"valcode": currency_code.upper(), "json": ""}
 

@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-from collections.abc import Callable
 import inspect
 import logging
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from pydantic import BaseModel
 
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 logger = logging.getLogger("tools.registry")
 

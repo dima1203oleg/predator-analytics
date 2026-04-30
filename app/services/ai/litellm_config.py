@@ -1,12 +1,10 @@
-"""
-Ollama + LiteLLM Configuration (Phase 5B — SM Edition).
+"""Ollama + LiteLLM Configuration (Phase 5B — SM Edition).
 
 $0 LLM budget: Ollama local → Groq Free → Gemini Free.
 Implements §10 of the TZ.
 """
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
-
 
 # LLM Cascade (§10.2): local → free tier → error
 LLM_CASCADE: list[dict[str, Any]] = [
@@ -58,7 +56,7 @@ class LiteLLMConfig:
             **self.config,
             "cascade": LLM_CASCADE,
             "status": "active",
-            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(UTC).isoformat(),
         }
 
     def get_model_info(self, provider: str = "ollama") -> dict[str, Any]:

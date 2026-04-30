@@ -1,5 +1,5 @@
-import pkgutil
 import pathlib
+import pkgutil
 
 # Extend this package to include the two service app directories
 core_api_path = pathlib.Path(__file__).resolve().parents[2] / "services" / "core-api" / "app"

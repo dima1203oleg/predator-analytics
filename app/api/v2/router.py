@@ -13,7 +13,6 @@ from app.api.v2.ingestion import router as ingestion_router
 from app.api.v2.pipeline import router as pipeline_router
 from app.api.v2.signals import router as signals_router
 
-
 v2_router = APIRouter(prefix="/api/v2")
 
 v2_router.include_router(entities_router)

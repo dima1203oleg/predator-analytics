@@ -6,7 +6,6 @@ from pydantic import BaseModel
 from app.models.dataset import Dataset, DatasetCreate, DatasetType
 from app.services.dataset_service import DatasetService
 
-
 # Mock auth
 try:
     from app.core.security import get_current_user

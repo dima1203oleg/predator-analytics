@@ -22,6 +22,7 @@ def calculate_ass(
 
     Returns:
         ASS score (0-100). Higher = faster adaptation.
+
     """
     if delta_t_regulation < 0:
         delta_t_regulation = 0.0

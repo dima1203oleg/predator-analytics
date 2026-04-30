@@ -4,7 +4,6 @@ import asyncio
 import sys
 import uuid
 
-
 # Add project root to sys.path
 sys.path.append("/app")
 
@@ -14,7 +13,6 @@ from app.services.test_data_generator import TestDataGenerator
 
 
 async def ingest():
-    print("🚀 Starting Sample Data Ingestion...")
     generator = TestDataGenerator()
     batch = generator.generate_batch(row_count=50)
 
@@ -44,7 +42,6 @@ async def ingest():
 
         await db.commit()
 
-    print("✅ Ingested 50 documents into gold.documents")
 
 
 if __name__ == "__main__":

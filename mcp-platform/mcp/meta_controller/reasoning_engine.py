@@ -1,9 +1,9 @@
 """Reasoning Engine для прийняття рішень на основі ШІ."""
 from __future__ import annotations
 
-from typing import Any, Optional
 from dataclasses import dataclass
 from enum import Enum
+from typing import Any
 
 
 class ReasoningError(Exception):
@@ -63,7 +63,7 @@ class ReasoningEngine:
         try:
             maintainability = file_metrics.get("maintainability_index", 50)
             complexity = file_metrics.get("cyclomatic_complexity", 1)
-            documentation_pct = file_metrics.get("documented_percentage", 0)
+            file_metrics.get("documented_percentage", 0)
 
             # Визначити рівень впевненості
             confidence = 0.0

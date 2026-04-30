@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Telegram Logic Service - Telegram bot business logic
 Handles message processing and response generation.
 """
@@ -8,7 +7,6 @@ from datetime import UTC, datetime
 import logging
 
 from .ai_engine import ai_engine
-
 
 logger = logging.getLogger(__name__)
 
@@ -49,6 +47,7 @@ class TelegramLogic:
 
         Returns:
             Response text
+
         """
         text = text.strip()
 

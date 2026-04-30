@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """
 🧪 MISTRAL VIBE PATCH TEST
 ==========================
@@ -12,7 +11,6 @@ import logging
 from pathlib import Path
 import sys
 
-
 # Setup project path
 PROJECT_ROOT = Path("/Users/dima-mac/Documents/Predator_21")
 if str(PROJECT_ROOT) not in sys.path:
@@ -21,7 +19,6 @@ if str(PROJECT_ROOT) not in sys.path:
 # Imports
 from libs.core.azr import get_azr
 from libs.core.azr_unified import ActionPriority, AZRAction
-
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("vibe_test")
@@ -53,7 +50,6 @@ async def test_vibe_patch():
         # In a real Vibe scenario, the CLI would do it.
         # In our test, I (the agent) will now actually apply the patch to prove the 'AI-Worker' logic.
         logger.info("🛠️ Applying local code changes (Sovereign Patch)...")
-        from libs.core.project_cortex import ProjectCortex
         # I'll just rewrite the file with the desired change
         cortex_path = PROJECT_ROOT / "libs" / "core" / "project_cortex.py"
         content = cortex_path.read_text()

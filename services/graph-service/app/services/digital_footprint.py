@@ -1,6 +1,6 @@
 """Digital Footprint Service — PREDATOR Analytics v55.1 Ironclad.
 
-Tracks digital presence matching (emails, crypto wallets, domains) across 
+Tracks digital presence matching (emails, crypto wallets, domains) across
 business entities and Telegram monitors.
 """
 from typing import Any

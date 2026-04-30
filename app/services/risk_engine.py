@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-
 """Risk Engine Service - Risk assessment and scoring."""
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from enum import Enum
 import logging
 from typing import Any
-
 
 logger = logging.getLogger(__name__)
 
@@ -50,6 +48,7 @@ class RiskEngine:
         Args:
             entity_id: EDRPOU or entity identifier
             entity_data: Data collected about the entity
+
         """
         factors = []
         mitigations = []

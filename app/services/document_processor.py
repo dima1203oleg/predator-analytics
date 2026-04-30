@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Multi-Source Document Processor.
 
 Обробляє різні типи документів:
@@ -19,7 +18,6 @@ import logging
 import os
 from pathlib import Path
 from typing import Any
-
 
 logger = logging.getLogger("service.document_processor")
 

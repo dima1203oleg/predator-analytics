@@ -6,8 +6,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
 from app.dependencies import get_tenant_id
-from predator_common.models import Alert, Anomaly, Company, Declaration, RiskScore
 from app.services.analytics_service import AnalyticsService
+from predator_common.models import Alert, Anomaly, Company, Declaration, RiskScore
 
 router = APIRouter(prefix="/dashboard", tags=["dashboard"])
 
@@ -18,7 +18,7 @@ async def get_dashboard_overview(
 ):
     """Повертає консолідовані дані для головної панелі PREDATOR Analytics v56.1.4."""
     # 1. Загальна статистика (SQLAlchemy)
-    companies_count = await db.scalar(select(func.count()).select_from(Company)) or 0
+    await db.scalar(select(func.count()).select_from(Company)) or 0
     declarations_count = await db.scalar(select(func.count()).select_from(Declaration)) or 0
     high_risk_count = await db.scalar(
         select(func.count()).select_from(RiskScore).where(RiskScore.cers >= 80)
@@ -31,7 +31,7 @@ async def get_dashboard_overview(
     )).scalars().all()
 
     # 3. Аномалії
-    anomalies_count = await db.scalar(select(func.count()).select_from(Anomaly)) or 0
+    await db.scalar(select(func.count()).select_from(Anomaly)) or 0
 
     # 4. Аналітика з ClickHouse (OLAP)
     analytics_service = AnalyticsService()

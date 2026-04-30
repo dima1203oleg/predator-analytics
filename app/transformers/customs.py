@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Customs Transformer."""
 from typing import Any
 

@@ -21,7 +21,7 @@ async def lifespan(app: FastAPI):
     """Життєвий цикл додатку. Ініціалізація та завершення."""
     logger.info("Initializing Graph Service...")
     await graph_db.connect()
-    
+
     # Запуск фонової синхронізації
     await sync_worker.start()
 

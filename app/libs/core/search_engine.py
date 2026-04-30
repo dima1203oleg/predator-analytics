@@ -8,7 +8,6 @@ import logging
 import os
 from typing import Any
 
-
 logger = logging.getLogger("core.search_engine")
 
 

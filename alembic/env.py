@@ -11,10 +11,10 @@ from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from app.core.settings import get_settings
+import app.models  # noqa: F401 — triggers all model imports
 
 # Import ALL models so Alembic sees them for autogenerate
-from app.models import Base  # noqa: F401
-import app.models  # noqa: F401 — triggers all model imports
+from app.models import Base
 
 settings = get_settings()
 

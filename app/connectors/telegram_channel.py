@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Telegram Channel Connector - Парсинг публічних та приватних каналів
 Використовує Telethon для доступу до Telegram API.
 """
@@ -11,7 +10,6 @@ import os
 from typing import Any
 
 from .base import BaseConnector, ConnectorResult, ConnectorStatus
-
 
 logger = logging.getLogger(__name__)
 
@@ -115,6 +113,7 @@ class TelegramChannelConnector(BaseConnector):
             channel_username: Конкретний канал для пошуку
             date_from: Дата початку (ISO format)
             date_to: Дата кінця (ISO format)
+
         """
         if not self.is_configured:
             return ConnectorResult(
@@ -201,6 +200,7 @@ class TelegramChannelConnector(BaseConnector):
 
         Args:
             channel_username: Username каналу (без @)
+
         """
         if not self.is_configured:
             return ConnectorResult(
@@ -248,6 +248,7 @@ class TelegramChannelConnector(BaseConnector):
             channel_username: Username каналу
             limit: Максимальна кількість
             min_id: ID з якого почати (для інкрементального завантаження)
+
         """
         return await self.search(
             query=channel_username, limit=limit, channel_username=channel_username

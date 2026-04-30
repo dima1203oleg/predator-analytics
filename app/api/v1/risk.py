@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Risk & Sanctions API Router (v1)
 
 Endpoints:
@@ -14,7 +13,6 @@ from typing import Any
 
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel
-
 
 logger = logging.getLogger("api.risk")
 

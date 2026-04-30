@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import UTC, datetime
 from enum import StrEnum
 import logging
-import uuid
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from datetime import datetime
 
 
 class InsightType(StrEnum):
@@ -38,7 +40,9 @@ class AIInsight:
     saved: bool = False
 
 
-from app.services.ml.insights_service import get_insights_service, InsightsService, AIInsight as MLInsight
+from app.services.ml.insights_service import AIInsight as MLInsight
+from app.services.ml.insights_service import get_insights_service
+
 
 class InsightsEngine:
     """Engine for generating automatic AI insights and anomaly detection."""

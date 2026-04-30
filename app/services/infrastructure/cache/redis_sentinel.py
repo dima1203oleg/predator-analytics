@@ -1,9 +1,8 @@
-"""
-Redis Sentinel Infrastructure Service (Phase 2E — SM Edition).
+"""Redis Sentinel Infrastructure Service (Phase 2E — SM Edition).
 
 SM-optimized: 2GB RAM, Sentinel HA, maxmemory-policy allkeys-lru.
 """
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 
@@ -36,7 +35,7 @@ class RedisSentinelManager:
             "maxmemory_policy": self.config["maxmemory_policy"],
             "sentinel_quorum": self.config["sentinel_quorum"],
             "namespaces": self.namespaces,
-            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(UTC).isoformat(),
         }
 
     def get_memory_stats(self) -> dict[str, Any]:

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Simulation Router - Demo/Testing data endpoints.
 
 ⚠️ WARNING: This router provides SIMULATED DATA for testing purposes only.
@@ -9,7 +8,6 @@ Do NOT use in production for real analytics.
 import random
 
 from fastapi import APIRouter
-
 
 router = APIRouter(prefix="/simulation", tags=["Simulation (Demo Only)"])
 

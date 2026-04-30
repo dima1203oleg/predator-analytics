@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import Any
 
-
 """
 PostgreSQL Distribution Adapter
 
@@ -13,7 +12,6 @@ from datetime import datetime
 import json
 import logging
 import uuid
-
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -33,6 +31,7 @@ class PostgreSQLAdapter:
         Args:
             enabled: Whether this adapter is enabled
             table_name: PostgreSQL table name for storing data
+
         """
         self.enabled = enabled
         self.table_name = table_name
@@ -51,6 +50,7 @@ class PostgreSQLAdapter:
 
         Returns:
             DistributionResult with status and metadata
+
         """
         from .data_distributor import DistributionResult
 
@@ -127,6 +127,7 @@ class PostgreSQLAdapter:
 
         Returns:
             DistributionResult with creation status
+
         """
         from .data_distributor import DistributionResult
 
@@ -158,6 +159,7 @@ class PostgreSQLAdapter:
 
         Returns:
             DistributionResult with query execution status
+
         """
         from .data_distributor import DistributionResult
 
@@ -188,6 +190,7 @@ class PostgreSQLAdapter:
 
         Returns:
             Dictionary representing the table schema
+
         """
         return {
             "table_name": self.table_name,
@@ -215,6 +218,7 @@ class PostgreSQLAdapter:
 
         Returns:
             DistributionResult with transaction status
+
         """
         from .data_distributor import DistributionResult
 
@@ -243,6 +247,7 @@ class PostgreSQLAdapter:
 
         Returns:
             DistributionResult with commit status
+
         """
         from .data_distributor import DistributionResult
 

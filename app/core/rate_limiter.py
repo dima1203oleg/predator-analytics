@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-
 """Rate Limiter Service
 Redis-based rate limiting with plan-based quotas.
 """
 from datetime import datetime, timedelta
 import logging
 import os
-
 
 logger = logging.getLogger("core.rate_limiter")
 
@@ -35,6 +33,7 @@ class RateLimiter:
 
         Args:
             redis_url: Redis connection URL (defaults to env var)
+
         """
         self.redis_url = redis_url or os.getenv("REDIS_URL", "redis://localhost:6379/0")
         self._client = None
@@ -76,6 +75,7 @@ class RateLimiter:
 
         Returns:
             (allowed: bool, remaining: int)
+
         """
         # Get limit for plan
         limit = PLAN_LIMITS.get(plan, PLAN_LIMITS["free"])
@@ -121,6 +121,7 @@ class RateLimiter:
 
         Returns:
             {current: int, remaining: int, limit: int, reset_at: str}
+
         """
         if self.client is None:
             return {"error": "Rate limiter not available"}

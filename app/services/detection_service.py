@@ -11,7 +11,6 @@ from app.libs.core.models import Case, Document
 from app.services.risk_engine import risk_engine
 from app.services.triple_agent_service import triple_agent_service
 
-
 logger = logging.getLogger("service.detection")
 
 
@@ -50,7 +49,6 @@ class DetectionService:
                 try:
                     # 2. Normalize and Extract entity info
                     meta = doc.meta or {}
-                    print(f"DEBUG: Doc {doc.id} Meta keys: {list(meta.keys())}")
 
                     # Map Ukrainian keys to expected standard keys
                     normalized_meta = {
@@ -69,7 +67,6 @@ class DetectionService:
 
                     # 3. Assess Risk
                     assessment = await risk_engine.assess(edrpou, normalized_meta)
-                    print(f"DEBUG: Doc {doc.id} - Entity: {name} - Score: {assessment.score}")
 
                     # 4. If Risk is HIGH or CRITICAL, or if AI finds something interesting, create a Case
                     is_anomaly = assessment.score > 0.6 or assessment.risk_level.value in [
@@ -79,7 +76,6 @@ class DetectionService:
 
                     ai_insight = None  # Initialize ai_insight
                     if is_anomaly:
-                        print(f"DEBUG: ANOMALY DETECTED for {name}")
                         # AI Secondary Check (Optional but premium)
                         try:
                             # Generate AI Insight using Trinity (Triple Agent Stack)

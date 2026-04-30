@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Registry Connector - Ukrainian Business Registry (EDR)
 Unified State Register of Legal Entities.
 """
@@ -8,7 +7,6 @@ import logging
 from typing import Any
 
 from .base import BaseConnector, ConnectorResult
-
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +30,7 @@ class RegistryConnector(BaseConnector):
         Args:
             query: Company name or EDRPOU code
             limit: Maximum results to return
+
         """
         params = {"q": query, "rows": limit}
 
@@ -68,6 +67,7 @@ class RegistryConnector(BaseConnector):
             name: Company name (partial match)
             limit: Maximum results
             include_closed: Include closed/liquidated companies
+
         """
         result = await self.search(query=name, limit=limit)
 

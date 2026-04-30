@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """LLM Council Models.
 
 Available council members:
@@ -14,7 +13,6 @@ from .anthropic_member import ClaudeCouncilMember
 from .gemini_member import GeminiCouncilMember
 from .groq_member import GroqCouncilMember, GroqLlama8BCouncilMember
 from .openai_member import GPT3_5CouncilMember, GPT4CouncilMember
-
 
 __all__ = [
     "ClaudeCouncilMember",

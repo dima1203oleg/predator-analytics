@@ -4,9 +4,6 @@
 
 from __future__ import annotations
 
-import math
-import pytest
-
 
 class TestForecastDemand:
     """Тести для прогнозу попиту."""

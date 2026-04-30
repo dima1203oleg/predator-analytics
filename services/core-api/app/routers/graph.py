@@ -4,6 +4,7 @@ Trinity Graph Engine: Аналіз зв'язків, пошук UBO, детекц
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Query
+from pydantic import BaseModel
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -12,8 +13,6 @@ from app.core.permissions import Permission
 from app.database import get_db
 from app.dependencies import PermissionChecker, get_tenant_id
 from predator_common.models import Company, RiskScore
-
-from pydantic import BaseModel
 
 router = APIRouter(prefix="/graph", tags=["граф-аналітика"])
 
@@ -40,13 +39,13 @@ async def search_graph(
     RETURN n, r, m
     LIMIT 50
     """
-    
+
     try:
         raw_results = await graph_db.run_query(query, {"q": request.q, "tenant_id": tenant_id})
-        
+
         nodes_dict = {}
         edges = []
-        
+
         if not raw_results:
             # Fallback для демонстрації, якщо база порожня (але в стилі PREDATOR)
             return {
@@ -67,10 +66,10 @@ async def search_graph(
                     nodes_dict[node_id] = {
                         "id": node_id,
                         "name": n.get("name") or n.get("ueid") or "Unknown",
-                        "label": list(n.labels)[0] if hasattr(n, "labels") and n.labels else "ENTITY",
+                        "label": next(iter(n.labels)) if hasattr(n, "labels") and n.labels else "ENTITY",
                         "properties": dict(n)
                     }
-            
+
             m = row.get("m")
             if m:
                 node_id = m.get("ueid") or str(id(m))
@@ -78,10 +77,10 @@ async def search_graph(
                     nodes_dict[node_id] = {
                         "id": node_id,
                         "name": m.get("name") or m.get("ueid") or "Unknown",
-                        "label": list(m.labels)[0] if hasattr(m, "labels") and m.labels else "ENTITY",
+                        "label": next(iter(m.labels)) if hasattr(m, "labels") and m.labels else "ENTITY",
                         "properties": dict(m)
                     }
-            
+
             r = row.get("r")
             if r and n and m:
                 edges.append({
@@ -91,7 +90,7 @@ async def search_graph(
                     "relation": r.type,
                     "weight": 1.0
                 })
-        
+
         return {
             "nodes": list(nodes_dict.values()),
             "edges": edges

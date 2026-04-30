@@ -25,7 +25,6 @@ import logging
 import random
 import time
 
-
 # Lazy imports handled by usage to avoid circular deps
 # from app.libs.core.merkle_ledger import record_truth
 
@@ -218,7 +217,6 @@ if __name__ == "__main__":
 
     async def test():
         engine = get_chaos_engine()
-        res = await engine.run_experiment("network_latency", ChaosLevel.MODERATE)
-        print(res)
+        await engine.run_experiment("network_latency", ChaosLevel.MODERATE)
 
     asyncio.run(test())

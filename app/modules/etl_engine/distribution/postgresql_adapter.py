@@ -9,11 +9,9 @@ for extremely fast bulk insertion. (COMP-041)
 
 import asyncio
 from datetime import datetime
-import json
 import logging
 import os
 from typing import Any
-import uuid
 
 import asyncpg
 
@@ -35,7 +33,7 @@ class PostgreSQLAdapter:
         )
         # Ensure asyncpg compatible URL (no +asyncpg) for direct asyncpg usage
         self.db_url = self.raw_db_url.replace("postgresql+asyncpg://", "postgresql://")
-        
+
         # Track whether we've created the table during this session
         self._table_ensured = False
 
@@ -55,7 +53,7 @@ class PostgreSQLAdapter:
         records = data if isinstance(data, list) else [data]
 
         try:
-            # We run the async logic in the current thread. 
+            # We run the async logic in the current thread.
             # If there's an existing loop we must use it (like when called directly),
             # but usually this adapter is invoked from `asyncio.to_thread`, which has no loop.
             try:
@@ -65,7 +63,7 @@ class PostgreSQLAdapter:
             except RuntimeError:
                 # No running loop, perfect for `asyncio.to_thread`
                 result = asyncio.run(self._distribute_async(records))
-                
+
             return result
 
         except Exception as e:
@@ -76,7 +74,7 @@ class PostgreSQLAdapter:
     async def _distribute_async(self, records: list[dict[str, Any]]) -> DistributionResult:
         """Asynchronous bulk insert implementation."""
         columns_list = list(records[0].keys())
-        
+
         if not self._table_ensured:
             await self._create_table_dynamic(columns_list)
             self._table_ensured = True
@@ -84,20 +82,20 @@ class PostgreSQLAdapter:
         conn = await asyncpg.connect(self.db_url)
         try:
             placeholders = ", ".join([f"${i + 1}" for i in range(len(columns_list))])
-            
+
             # Escape col names to avoid syntax errors with spaces or special chars
             safe_cols = ", ".join([f'"{col}"' for col in columns_list])
             insert_sql = f"INSERT INTO {self.table_name} ({safe_cols}) VALUES ({placeholders})"
-            
+
             # Convert all fields to strings for safe text ingestion.
             # In a strict schema pipeline, we would map to actual types.
             batch_values = [[str(r.get(col, "")) for col in columns_list] for r in records]
-            
+
             await conn.executemany(insert_sql, batch_values)
-            
+
             record_count = len(records)
             logger.info(f"PostgreSQL inserted {record_count} records into '{self.table_name}'")
-            
+
             return DistributionResult(
                 True,
                 "postgresql",

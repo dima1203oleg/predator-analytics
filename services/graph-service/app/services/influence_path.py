@@ -26,7 +26,7 @@ class InfluencePathService:
     @staticmethod
     async def find_influence_clusters(ueid: str, tenant_id: str) -> list[dict[str, Any]]:
         """Виявлення 'Островів Впливу' навколо сутності (Influence Clusters).
-        Шукає компанії, пов'язані не тільки власністю, а й спільними директорами, 
+        Шукає компанії, пов'язані не тільки власністю, а й спільними директорами,
         адресами та спільними бенефіціарами (Ultimate Beneficial Owners).
         """
         query = """
@@ -34,9 +34,9 @@ class InfluencePathService:
         MATCH (start)-[r:OWNER|DIRECTOR|HAS_ADDRESS*1..3]-(related:Company)
         WHERE start <> related
         WITH related, count(r) as connection_strength, collect(type(last(r))) as link_types
-        RETURN 
-            related.ueid as ueid, 
-            related.name as name, 
+        RETURN
+            related.ueid as ueid,
+            related.name as name,
             connection_strength,
             link_types,
             "influence_cluster" as type

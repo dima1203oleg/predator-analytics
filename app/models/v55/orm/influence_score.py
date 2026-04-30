@@ -6,7 +6,7 @@ Spec 6.1: IM, HCI, Shadow Cluster Score per entity.
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from sqlalchemy import BigInteger, Column, DateTime, Float, ForeignKey, Index
 from sqlalchemy.dialects.postgresql import UUID
@@ -31,7 +31,7 @@ class InfluenceScoreORM(Base):
     aggregate = Column(Float, nullable=False, server_default="0", comment="Weighted aggregate 0-100")
     confidence = Column(Float, nullable=False)
     calculated_at = Column(
-        DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc)
+        DateTime(timezone=True), nullable=False, default=lambda: datetime.now(UTC)
     )
 
     def __repr__(self) -> str:

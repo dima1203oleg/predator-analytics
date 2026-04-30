@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import asyncio
-from pathlib import Path
 from typing import Optional
 
 import typer
@@ -101,7 +100,7 @@ def diff(
     try:
         helm = HelmDeployer()
         values_file = f"deploy/helm/values-{env}.yaml"
-        typer.echo(f"\n[INFRA-HELM] Helm diff:")
+        typer.echo("\n[INFRA-HELM] Helm diff:")
         diff_output = asyncio.run(
             helm.diff(
                 "predator",

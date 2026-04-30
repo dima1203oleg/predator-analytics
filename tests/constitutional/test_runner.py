@@ -1,16 +1,14 @@
 from __future__ import annotations
 
-
 """🧪 Constitutional Test Runner (AZR 3 Compliant)
 Автоматичний раннер конституційних тестів.
 """
 
 import asyncio
 from datetime import datetime
-from typing import Any, Dict, List
+from typing import Any
 
 from app.libs.core.structured_logger import get_logger
-
 
 logger = get_logger("tests.constitutional")
 

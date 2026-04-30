@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Groq Council Member Implementation
 Uses Groq's ultra-fast LLaMA models as a council participant.
 """
@@ -8,7 +7,6 @@ Uses Groq's ultra-fast LLaMA models as a council participant.
 from datetime import datetime
 import os
 from typing import Any
-
 
 try:
     from groq import AsyncGroq

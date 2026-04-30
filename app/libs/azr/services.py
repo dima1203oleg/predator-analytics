@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """═══════════════════════════════════════════════════════════════
 AZR Risk Assessment Service
 Predator Analytics v45
@@ -30,7 +29,6 @@ from app.libs.azr.models import (
     RollbackTimeframe,
     ViolationSeverity,
 )
-
 
 logger = logging.getLogger("azr.risk")
 

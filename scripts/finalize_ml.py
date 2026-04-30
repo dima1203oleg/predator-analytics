@@ -10,7 +10,6 @@ from sqlalchemy import create_engine, text
 
 
 def run():
-    print("🚀 Predator ML Finalizer: Closing Training Loop")
 
     # DB Connectivity Logic
     db_candidates = [
@@ -34,7 +33,6 @@ def run():
             continue
 
     if not connected:
-        print("❌ CRITICAL: Could not connect to database.")
         sys.exit(1)
 
     try:
@@ -42,11 +40,9 @@ def run():
             # Find the active job
             res = conn.execute(text("SELECT id FROM gold.ml_jobs WHERE status='running' ORDER BY created_at DESC LIMIT 1")).fetchone()
             if not res:
-                print("⚠️ No running ML jobs found to finalize.")
                 return
 
             job_id = res[0]
-            print(f"Updating job {job_id} to SUCCESS...")
 
             metrics = {
                 "precision": 0.942,
@@ -79,10 +75,8 @@ def run():
                 WHERE name = 'UkrCustoms March 2024'
             """))
 
-        print(f"🎉 SUCCESS! ML Job {job_id} finalized with high-accuracy metrics.")
 
     except Exception:
-        print("❌ FAILED during finalization:")
         traceback.print_exc()
         sys.exit(1)
 

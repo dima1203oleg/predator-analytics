@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Caching utilities for Predator Analytics
 Redis-based caching with decorator support.
 """
@@ -12,7 +11,6 @@ import os
 from typing import TYPE_CHECKING, Any
 
 import redis.asyncio as aioredis
-
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -75,6 +73,7 @@ def cache_response(ttl: int = 300, prefix: str = "cache"):
         @cache_response(ttl=600, prefix="search")
         async def search_documents(query: str, limit: int = 10):
             ...
+
     """
 
     def decorator(func: Callable):
@@ -117,6 +116,7 @@ async def invalidate_cache(pattern: str):
 
     Args:
         pattern: Redis key pattern (e.g., "search:*")
+
     """
     try:
         redis = await get_redis()
@@ -231,7 +231,6 @@ class CacheManager:
 
 # Import asyncio for type checking
 import asyncio
-
 
 # Global cache manager instances
 search_cache = CacheManager(prefix="search")

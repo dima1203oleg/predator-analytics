@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Auth Router - TS-Compliant Authentication Endpoints
 Handles user registration, login, and profile management.
 """
@@ -15,7 +14,6 @@ import jwt
 from pydantic import BaseModel, EmailStr
 
 from app.libs.core.structured_logger import get_logger, log_security_event
-
 
 logger = get_logger("router.auth")
 
@@ -193,7 +191,6 @@ async def verify_mfa(payload: MfaVerify):
     - Для мінімальної реалізації порівнює з MFA_MASTER_CODE
     - Логує успіх/помилку; не видає токенів
     """
-
     code = payload.code.strip()
     if not code or len(code) < 4:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Некоректний код MFA")

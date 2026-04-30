@@ -1,11 +1,11 @@
 """PREDATOR Pulse Engine — Strategic Forecasting Service.
 ML-прогнозування попиту на основі Prophet та статистичного аналізу.
 """
+from datetime import UTC, datetime, timedelta
 import logging
 import random
-from datetime import datetime, timedelta, UTC
 from typing import Any
-import numpy as np
+
 from app.services.chaos_service import ChaosService
 from app.services.vram_watchdog import vram_sentinel
 
@@ -21,7 +21,6 @@ class ForecastService:
         model: str = "prophet"
     ) -> dict[str, Any]:
         """Генерує прогноз попиту для товарного коду."""
-        
         # Перевірка VRAM для важких моделей (LSTM)
         if model == "lstm":
             vram_stats = await vram_sentinel.get_stats()
@@ -33,7 +32,7 @@ class ForecastService:
 
         # Симуляція отримання історичних даних (в реальності - запит до DB/Declarations)
         # Для демонстрації ми генеруємо тренд на основі 'product_code' як сида
-        random.seed(product_code) 
+        random.seed(product_code)
         base_volume = random.randint(1000, 5000)
         trend = random.uniform(0.01, 0.05) # 1-5% ріст на місяць
         seasonality = [0.9, 0.85, 1.1, 1.2, 1.3, 1.15, 1.0, 0.95, 1.05, 1.2, 1.4, 1.1] # Приклад місячної сезонності
@@ -44,15 +43,15 @@ class ForecastService:
         for i in range(months_ahead):
             target_date = (current_date + timedelta(days=31 * (i + 1))).replace(day=1)
             month_idx = target_date.month - 1
-            
+
             # Розрахунок прогнозованого обсягу
             expected = base_volume * (1 + trend)**i * seasonality[month_idx]
             noise = expected * random.uniform(-0.05, 0.05)
             predicted = int(expected + noise)
-            
+
             # Розрахунок інтервалів довіри (Confidence Intervals)
             ci_width = predicted * (0.1 + 0.02 * i) # Ширина інтервалу зростає з часом
-            
+
             forecast_points.append({
                 "date": target_date.strftime("%Y-%m-%d"),
                 "predicted_volume": predicted,
@@ -88,7 +87,7 @@ class ForecastService:
         """Генерує текстове пояснення прогнозу (Cyber-AI style)."""
         trend_str = "стійке зростання" if trend > 0.02 else "помірну стабільність"
         conf_str = "Високий рівень впевненості" if confidence > 0.85 else "Середній рівень невизначеності"
-        
+
         return (
             f"Прогнозний аналіз для коду {product_code} вказує на {trend_str} ринкової активності. "
             f"{conf_str} дозволяє планувати закупівлі з горизонтом до 6 місяців. "

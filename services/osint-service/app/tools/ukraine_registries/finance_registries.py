@@ -94,7 +94,7 @@ class StateGuaranteesClient(BaseRegistryClient):
 
 class SNIDAClient(BaseRegistryClient):
     """SNIDA — Реєстр емітентів цінних паперів.
-    
+
     Держатель: НКЦПФР
     Дані про власників акцій, емісії, звітність.
     """
