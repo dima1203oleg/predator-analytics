@@ -1,6 +1,6 @@
 import React, { Suspense, lazy } from 'react';
 
-const StrategicScenarioView = lazy(() => import('@/features/command/StrategicScenarioView'));
+const StrategicScenarioView = lazy(() => import('@/features/dashboard/StrategicScenarioView'));
 
 export const StrategicScenarioTab = () => (
   <Suspense fallback={
