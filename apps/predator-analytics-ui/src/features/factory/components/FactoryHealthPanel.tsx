@@ -8,6 +8,7 @@ import { cn } from '@/utils/cn';
 import { type FactoryHealthCheckRecord } from '../systemFactoryView.utils';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
+import { FactoryChaosPanel } from './FactoryChaosPanel';
 
 export interface FactoryHealthPanelProps {
   healthChecks: FactoryHealthCheckRecord[];
@@ -47,7 +48,7 @@ export const FactoryHealthPanel: React.FC<FactoryHealthPanelProps> = ({
             </div>
             <h3 className="text-3xl font-black text-white uppercase italic tracking-tighter leading-none">СИСТЕМНА ДІАГНОСТИКА</h3>
             <p className="text-[11px] font-mono text-rose-400/50 uppercase mt-4 tracking-[0.2em] italic">
-              АКТИВНИХ СЕ ВІСІВ: <span className="text-white font-black">{healthyCount}/{totalCount}</span> | ОНОВЛЕННЯ КОЖНІ 30 СЕК
+              АКТИВНИХ СЕРВІСІВ: <span className="text-white font-black">{healthyCount}/{totalCount}</span> | ОНОВЛЕННЯ КОЖНІ 30 СЕК
             </p>
           </div>
         </div>
@@ -58,7 +59,7 @@ export const FactoryHealthPanel: React.FC<FactoryHealthPanelProps> = ({
             ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-500 shadow-emerald-500/20"
             : "bg-rose-500/10 border-rose-500/30 text-rose-500 shadow-rose-500/20"
         )}>
-          {totalCount === 0 ? 'СТАТУС_Н/Д' : isAllHealthy ? 'СТАТУС_НОРМА' : 'СТАТУС_ДЕГ АДАЦІЯ'}
+          {totalCount === 0 ? 'СТАТУС_Н/Д' : isAllHealthy ? 'СТАТУС_НОРМА' : 'СТАТУС_ДЕГРАДАЦІЯ'}
         </div>
       </div>
 
@@ -111,7 +112,7 @@ export const FactoryHealthPanel: React.FC<FactoryHealthPanelProps> = ({
                       "text-[10px] font-black uppercase tracking-widest italic",
                       hc.status === 'healthy' ? 'text-emerald-500/60' : 'text-rose-500/60'
                     )}>
-                      {hc.status === 'healthy' ? 'НОРМА' : hc.status === 'degraded' ? 'ДЕГ АД' : 'ОФЛАЙН'}
+                      {hc.status === 'healthy' ? 'НОРМА' : hc.status === 'degraded' ? 'ДЕГРАД' : 'ОФЛАЙН'}
                     </span>
                   </div>
                 </div>
@@ -134,11 +135,16 @@ export const FactoryHealthPanel: React.FC<FactoryHealthPanelProps> = ({
               </div>
               <h4 className="text-xl font-black text-slate-500 uppercase italic tracking-widest">ДАНІ_ВІДСУТНІ</h4>
               <p className="text-[10px] text-slate-700 font-mono uppercase mt-4 max-w-sm mx-auto">
-                ОЧІКУВАННЯ ПАКЕТІВ ТЕЛЕМЕТРІЇ ВІД BACKEND ENDPOINT. ПЕ ЕВІ ТЕ З'ЄДНАННЯ.
+                ОЧІКУВАННЯ ПАКЕТІВ ТЕЛЕМЕТРІЇ ВІД BACKEND ENDPOINT. ПЕРЕВІРТЕ З'ЄДНАННЯ.
               </p>
             </motion.div>
           )}
         </AnimatePresence>
+      </div>
+
+      {/* Chaos Engineering Panel */}
+      <div className="relative z-10">
+        <FactoryChaosPanel />
       </div>
 
       <style dangerouslySetInnerHTML={{ __html: `

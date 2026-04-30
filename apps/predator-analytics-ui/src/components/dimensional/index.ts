@@ -1,6 +1,7 @@
 export * from './shells/ExplorerShell';
 export * from './shells/OperatorShell';
 export * from './shells/CommanderShell';
+export * from './shells/TornadoInsightsShell';
 
 // Primitives placeholder - assuming they might be in separate files or need to be created if not exist
 // For now, re-exporting placeholders or assuming imports work if files exist.

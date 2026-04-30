@@ -113,7 +113,7 @@ export const TopBar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
                 
                 <div className="hidden xl:flex flex-col">
                     <h1 className="text-2xl font-black text-white italic uppercase tracking-[0.25em] leading-none mb-2 glint-elite chromatic-elite">
-                        PREDATOR <span className="text-rose-500">v60.0-ELITE</span>
+                        PREDATOR <span className="text-rose-500">v61.0-ELITE</span>
                     </h1>
                     <div className="flex items-center gap-5 text-[9px] font-black text-slate-500 uppercase tracking-[0.4em] italic">
                         <span className="flex items-center gap-2 text-rose-500/60">

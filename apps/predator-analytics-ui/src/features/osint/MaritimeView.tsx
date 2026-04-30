@@ -209,26 +209,64 @@ export default function MaritimeView() {
                      ]}
                      actions={
                        <div className="flex gap-4">
-                          <button onClick={fetchData} className={cn("p-5 bg-black border border-white/[0.04] rounded-2xl text-slate-400 hover:text-white transition-all shadow-xl", loading && "animate-spin")}>
-                             <RefreshCcw size={24} />
-                          </button>
-                          <button className="px-8 py-5 bg-blue-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-blue-600 shadow-2xl transition-all flex items-center gap-4">
-                             <Radar size={18} /> СКАНУВАТИ_АКВАТОРІЮ
-                          </button>
+                   <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                     <div className="space-y-2">
+                       <h1 className="text-6xl font-black text-white italic tracking-tighter uppercase leading-none">
+                         МО СЬКИЙ <span className="text-blue-500">СУВЕ ЕН</span>
+                       </h1>
+                       <div className="flex items-center gap-4">
+                         <Badge variant="outline" className="bg-blue-500/10 border-blue-500/20 text-blue-400 font-mono text-[10px] tracking-widest px-4 py-1">
+                           MARITIME_DOMAIN_AWARENESS // V56.5
+                         </Badge>
+                         <span className="text-slate-500 font-mono text-[10px] uppercase tracking-widest flex items-center gap-2">
+                           <Clock size={10} /> {currentTime.toLocaleTimeString('uk-UA')}
+                         </span>
                        </div>
-                     }
-                   />
+                     </div>
+
+                     <div className="flex flex-wrap items-center gap-4">
+                       <div className="relative group">
+                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-500 transition-colors" size={16} />
+                         <input 
+                           type="text"
+                           placeholder="ПОШУК СУДНА, П АПО А, ПОРТУ..."
+                           value={searchTerm}
+                           onChange={(e) => setSearchTerm(e.target.value)}
+                           className="bg-black/40 border-2 border-white/[0.03] focus:border-blue-500/50 rounded-2xl py-4 pl-12 pr-6 text-xs font-black text-white placeholder:text-slate-700 outline-none transition-all w-[300px] italic tracking-tight"
+                         />
+                       </div>
+
+                       <button 
+                         onClick={fetchData}
+                         className="p-4 bg-white/5 border-2 border-white/[0.03] rounded-2xl text-slate-400 hover:text-white hover:border-white/10 transition-all shadow-2xl"
+                       >
+                         <RefreshCcw size={20} className={loading ? 'animate-spin' : ''} />
+                       </button>
+                     </div>
+                   </div>
 
                    <div className="grid grid-cols-12 gap-10">
                       
-                      {/* FLEET LIST */}
                       <div className="col-span-12 xl:col-span-4 space-y-8">
-                         <div className="flex gap-4 p-2 bg-black/60 border border-white/[0.03] rounded-3xl">
-                            {(['all', 'high_risk', 'phantom'] as const).map(m => (
-                              <button key={m} onClick={() => setFilterMode(m)} className={cn("flex-1 py-3 rounded-2xl text-[9px] font-black uppercase tracking-widest border transition-all", filterMode === m ? "bg-blue-600 text-white border-blue-400 shadow-2xl" : "bg-transparent text-slate-500 border-transparent")}>
-                                {m === 'all' ? 'УВЕСЬ_ФЛОТ' : m === 'high_risk' ? 'РИЗИК' : 'ФАНТОМИ'}
-                              </button>
-                            ))}
+                         <div className="flex items-center gap-3">
+                           {[
+                             { id: 'ALL', label: 'УВЕСЬ_ФЛОТ' },
+                             { id: 'RISK', label: 'РИЗИК' },
+                             { id: 'PHANTOM', label: 'ФАНТОМИ' }
+                           ].map(f => (
+                             <button
+                               key={f.id}
+                               onClick={() => setFilterMode(f.id as any)}
+                               className={cn(
+                                 "px-8 py-3 rounded-xl text-[10px] font-black tracking-[0.2em] italic transition-all border-2",
+                                 filterMode === f.id 
+                                   ? "bg-white text-black border-white shadow-[0_10px_30px_rgba(255,255,255,0.1)]" 
+                                   : "bg-transparent text-slate-500 border-white/[0.03] hover:border-white/10"
+                               )}
+                             >
+                               {f.label}
+                             </button>
+                           ))}
                          </div>
                          <div className="space-y-4 max-h-[700px] overflow-y-auto no-scrollbar pr-2">
                             {filteredVessels.map(v => (

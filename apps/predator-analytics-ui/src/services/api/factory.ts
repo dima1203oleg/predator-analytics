@@ -132,9 +132,14 @@ export const factoryApi = {
     return Array.isArray(res.data) ? res.data : [];
   },
 
-  /** Запустити Chaos Engineering сценарій */
-  launchChaos: async (scenario: string) => {
-    return (await apiClient.post(`/factory/chaos/launch?scenario=${scenario}`)).data;
+  // ─── Chaos Engineering Orchestration ──────────────────────────────────────
+  
+  triggerChaos: async (experiment_name: string, active: boolean) => {
+    return (await apiClient.post('/admin/chaos/trigger', { experiment_name, active })).data;
+  },
+
+  getChaosStatus: async () => {
+    return (await apiClient.get('/admin/chaos/status')).data;
   },
 
   // ─── Infrastructure Orchestration ─────────────────────────────────────────

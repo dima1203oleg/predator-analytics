@@ -95,9 +95,9 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
                 <span className="text-slate-700">|</span>
                 <span className="text-rose-400">
                    <span className="opacity-50 text-slate-400 mr-1.5">ФАЗА:</span>
-                   {infinitePhase === 'observe' ? 'СПОСТЕ ЕЖЕННЯ' : 
-                    infinitePhase === 'orient' ? 'О ІЄНТАЦІЯ' : 
-                    infinitePhase === 'decide' ? ' ІШЕННЯ' : 'ДІЯ'}
+                   {infinitePhase === 'observe' ? 'СПОСТЕРЕЖЕННЯ' : 
+                    infinitePhase === 'orient' ? 'ОРІЄНТАЦІЯ' : 
+                    infinitePhase === 'decide' ? 'РІШЕННЯ' : 'ДІЯ'}
                 </span>
               </div>
             </div>
@@ -178,7 +178,7 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
             </div>
             <div className="text-center">
               <span className="text-sm font-black uppercase tracking-[0.2em] block text-white">Комплексний Нагляд</span>
-              <span className="text-[10px] text-rose-500/80 font-mono mt-2 uppercase tracking-widest">Суверенне  озгортання</span>
+              <span className="text-[10px] text-rose-500/80 font-mono mt-2 uppercase tracking-widest">Суверенне Розгортання</span>
             </div>
           </TacticalCard>
       </div>
@@ -199,7 +199,7 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
                       <input type="checkbox" checked={techComponents.includes(opt.id)} onChange={() => toggleSelection(opt.id, techComponents, setTechComponents)} className="accent-rose-500 w-4 h-4" />
                       <div className="flex flex-col">
                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-200">{opt.label}</span>
-                        {techComponents.includes(opt.id) && <span className="text-[8px] text-rose-400 animate-pulse uppercase tracking-[0.2em] mt-1">П ИЗНАЧЕНО ДЛЯ ОПТИМІЗАЦІЇ</span>}
+                        {techComponents.includes(opt.id) && <span className="text-[8px] text-rose-400 animate-pulse uppercase tracking-[0.2em] mt-1">ПРИЗНАЧЕНО ДЛЯ ОПТИМІЗАЦІЇ</span>}
                       </div>
                    </label>
                  ))}
@@ -230,7 +230,7 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
                       <input type="checkbox" checked={analyticComponents.includes(opt.id)} onChange={() => toggleSelection(opt.id, analyticComponents, setAnalyticComponents)} className="accent-rose-500 w-4 h-4" />
                       <div className="flex flex-col">
                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-200">{opt.label}</span>
-                        {analyticComponents.includes(opt.id) && <span className="text-[8px] text-rose-400 animate-pulse uppercase tracking-[0.2em] mt-1">ОНОВЛЕННЯ ПАТЕ НУ АКТИВНЕ</span>}
+                        {analyticComponents.includes(opt.id) && <span className="text-[8px] text-rose-400 animate-pulse uppercase tracking-[0.2em] mt-1">ОНОВЛЕННЯ ПАТЕРНУ АКТИВНЕ</span>}
                       </div>
                    </label>
                  ))}
@@ -296,7 +296,7 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
              <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 items-center">
                 <div>
                    <div className="flex items-center justify-between mb-3">
-                     <span className="text-[11px] font-black uppercase tracking-wider text-rose-400">ПОТОЧНИЙПРОГ ЕС ЦИКЛУ</span>
+                     <span className="text-[11px] font-black uppercase tracking-wider text-rose-400">ПОТОЧНИЙ ПРОГРЕС ЦИКЛУ</span>
                      <span className="font-mono text-2xl font-black text-white">{improvementProgress}%</span>
                    </div>
                    <Progress value={improvementProgress} variant="holographic" className="h-4 shadow-[0_0_20px_rgba(244,63,94,0.1)]" />
@@ -305,18 +305,18 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
                      <div className="bg-black/60 border border-white/5 rounded-2xl p-5 flex flex-col items-center shadow-lg">
                        <Microscope size={28} className="text-rose-400 mb-3" />
                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Аналіз</span>
-                       <Badge variant="cyber" className="mt-2 bg-emerald-500/10 text-emerald-400 border-emerald-500/20">ЗАВЕ ШЕНО</Badge>
+                       <Badge variant="cyber" className="mt-2 bg-emerald-500/10 text-emerald-400 border-emerald-500/20">ЗАВЕРШЕНО</Badge>
                      </div>
                      <div className="bg-black/60 border border-white/5 rounded-2xl p-5 flex flex-col items-center shadow-lg">
                        <Fingerprint size={28} className="text-rose-400 mb-3" />
                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Автентичність</span>
-                       <Badge variant="cyber" className="mt-2 bg-emerald-500/10 text-emerald-400 border-emerald-500/20">ПЕ ЕВІ ЕНО</Badge>
+                       <Badge variant="cyber" className="mt-2 bg-emerald-500/10 text-emerald-400 border-emerald-500/20">ПЕРЕВІРЕНО</Badge>
                      </div>
                    </div>
                 </div>
 
                 <div className="bg-slate-950/80 rounded-2xl p-4 border border-rose-500/10 font-mono text-[10px] h-[200px] overflow-y-auto custom-scrollbar shadow-inner relative">
-                   <div className="text-rose-400/60 mb-2 uppercase font-black tracking-widest">[ ПІДТВЕ ДЖЕНІ ЛОГИ OODA ]</div>
+                   <div className="text-rose-400/60 mb-2 uppercase font-black tracking-widest">[ ПІДТВЕРДЖЕНІ ЛОГИ OODA ]</div>
                    {infiniteLogs.length > 0 ? (
                      <div className="space-y-1">
                        {infiniteLogs.slice(-10).map((log, index) => (
@@ -341,7 +341,7 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
                       <ShieldCheck size={20} />
                     </div>
                     <div>
-                      <h4 className="text-sm font-black uppercase tracking-widest text-white">ФІНАЛЬНИЙ ЗВІТ ПО ВЕ ТИКАЛЯХ</h4>
+                      <h4 className="text-sm font-black uppercase tracking-widest text-white">ФІНАЛЬНИЙ ЗВІТ ПО ВЕРТИКАЛЯХ</h4>
                       <p className="text-[9px] text-emerald-500/70 font-mono uppercase">Звіт формується лише з підтверджених server-side станів OODA та Factory API</p>
                     </div>
                   </div>
