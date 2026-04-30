@@ -95,6 +95,10 @@ const TimelineBuilderView   = lazy(() => import('./features/investigation/Timeli
 const EntityResolverView    = lazy(() => import('./features/analytics/EntityResolverView'));
 const ScenarioModelingView  = lazy(() => import('./features/ai/ScenarioModelingView'));
 
+// ✅ Стратегічні модулі v61.0-ELITE (Tornado Insights)
+const TornadoInsightsShell  = lazy(() => import('./components/dimensional/shells/TornadoInsightsShell'));
+const StrategicScenarioView = lazy(() => import('./features/dashboard/StrategicScenarioView'));
+
 const LoadingFallback = () => (
   <div className="flex items-center justify-center h-screen bg-slate-950 relative overflow-hidden">
     <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(16,185,129,0.05),transparent)] animate-pulse" />
@@ -199,7 +203,7 @@ export const AppRoutesNew = () => {
             <Route path="/som" element={<Navigate to="/command?tab=observer" replace />} />
             <Route path="/war-room" element={<Navigate to="/command?tab=warroom" replace />} />
 
-            {/* 2. ТО ГОВА РОЗВІДКА (AMBER HUB) */}
+            {/* 2. ТОРГОВА РОЗВІДКА (AMBER HUB) */}
             <Route path="/market" element={<MarketHub />} />
             <Route path="/customs-intel" element={<Navigate to="/market?tab=customs" replace />} />
             <Route path="/trade-map" element={<Navigate to="/market?tab=flows" replace />} />
@@ -249,6 +253,8 @@ export const AppRoutesNew = () => {
             <Route path="/conversation-intel" element={<ConversationIntelView />} />
             <Route path="/hypothesis-engine" element={<Navigate to="/nexus?tab=hypothesis" replace />} />
             <Route path="/scenarios" element={<ScenarioModelingView />} />
+            <Route path="/tornado-insights" element={<TornadoInsightsShell />} />
+            <Route path="/strategic-scenarios" element={<StrategicScenarioView />} />
 
             {/* Нові модулі v59.0-NEXUS */}
             <Route path="/decisions" element={<DecisionsJournal />} />

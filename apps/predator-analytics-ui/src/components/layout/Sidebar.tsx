@@ -355,7 +355,7 @@ export const Sidebar: React.FC = () => {
       <div
         className="relative shrink-0 border-b overflow-hidden"
         style={{ borderColor: 'rgba(255,255,255,0.07)', borderBottomWidth: '1px' }}
-        title={`Джерело: ${backendStatus.sourceLabel}.  оль: ${roleLabel}. Блоків: ${totals.sections}. Модулів: ${totals.items}.`}
+        title={`Джерело: ${backendStatus.sourceLabel}. Роль: ${roleLabel}. Блоків: ${totals.sections}. Модулів: ${totals.items}.`}
       >
         {/* Верхня лінія акценту */}
         <div
@@ -503,7 +503,7 @@ export const Sidebar: React.FC = () => {
             })}
           </div>
 
-          {/*  ядок пошуку */}
+          {/* Рядок пошуку */}
           <div className="group relative">
             <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3 w-3 -translate-y-1/2 text-slate-500 transition-colors group-focus-within:text-emerald-400" />
             <input
