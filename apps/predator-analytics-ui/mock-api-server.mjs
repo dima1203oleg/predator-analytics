@@ -230,34 +230,30 @@ let systemState = {
       'Китай': { count: 4500, value: 890000000 },
       'Польща': { count: 12000, value: 540000000 },
     },
-    customs_offices: {
-      'Одеська': { count: 1200, value: 89000000, highRisk: 12 },
-      'Київська': { count: 4500, value: 450000000, highRisk: 4 },
-    },
-    factory: {
-      bugs: [
-        { id: 'BUG-124', description: 'Витік пам\'яті у Kafka consumer', severity: 'critical', component: 'ingestion-worker', file: 'consumer.py', status: 'detected', fixProgress: 0 },
-        { id: 'BUG-125', description: 'Некоректний мапінг типів Neo4j', severity: 'high', component: 'graph-service', file: 'mapper.py', status: 'fixing', fixProgress: 45 },
-        { id: 'BUG-126', description: 'Таймаут при великих запитах OpenSearch', severity: 'medium', component: 'core-api', file: 'search.py', status: 'detected', fixProgress: 0 },
-        { id: 'BUG-127', description: 'Помилка валідації JWT токена', severity: 'critical', component: 'core-api', file: 'auth.py', status: 'fixed', fixProgress: 100 },
-      ],
-      goldPatterns: [
-        { id: 'GP-1', name: 'Система очищення даних', accuracy: 0.99, throughput: 1500, status: 'verified' },
-        { id: 'GP-2', name: 'Матриця ризиків v4', accuracy: 0.94, throughput: 850, status: 'active' },
-      ],
-      infinite: {
-        is_running: true,
-        current_phase: 'orient',
-        cycles_completed: 42,
-        improvements_made: 156,
-        last_update: new Date().toISOString(),
-        logs: [
-          "[OBSERVE] Сканування системних логів завершено. Виявлено 2 аномалії.",
-          "[ORIENT] Аномалії ідентифіковано як BUG-124 та BUG-125.",
-          "[DECIDE] Прийнято стратегію автоматичного виправлення для BUG-125.",
-          "[ACT] Запущено процес патчування mapper.py..."
-        ]
-      }
+  },
+  factory: {
+    bugs: [
+      { id: 'BUG-124', description: 'Витік пам\'яті у Kafka consumer', severity: 'critical', component: 'ingestion-worker', file: 'consumer.py', status: 'detected', fixProgress: 0 },
+      { id: 'BUG-125', description: 'Некоректний мапінг типів Neo4j', severity: 'high', component: 'graph-service', file: 'mapper.py', status: 'fixing', fixProgress: 45 },
+      { id: 'BUG-126', description: 'Таймаут при великих запитах OpenSearch', severity: 'medium', component: 'core-api', file: 'search.py', status: 'detected', fixProgress: 0 },
+      { id: 'BUG-127', description: 'Помилка валідації JWT токена', severity: 'critical', component: 'core-api', file: 'auth.py', status: 'fixed', fixProgress: 100 },
+    ],
+    goldPatterns: [
+      { id: 'GP-1', name: 'Система очищення даних', accuracy: 0.99, throughput: 1500, status: 'verified' },
+      { id: 'GP-2', name: 'Матриця ризиків v4', accuracy: 0.94, throughput: 850, status: 'active' },
+    ],
+    infinite: {
+      is_running: true,
+      current_phase: 'orient',
+      cycles_completed: 42,
+      improvements_made: 156,
+      last_update: new Date().toISOString(),
+      logs: [
+        "[OBSERVE] Сканування системних логів завершено. Виявлено 2 аномалії.",
+        "[ORIENT] Аномалії ідентифіковано як BUG-124 та BUG-125.",
+        "[DECIDE] Прийнято стратегію автоматичного виправлення для BUG-125.",
+        "[ACT] Запущено процес патчування mapper.py..."
+      ]
     }
   }
 };

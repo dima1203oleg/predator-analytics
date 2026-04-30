@@ -96,7 +96,8 @@ ensure_zrok_access() {
 
   echo -n "  ├─ Запускаю $label ($share → $bind_host:$bind_port)... "
   : > "$log_file"
-  "$bin" access private "$share" --bind "$bind_host:$bind_port" >"$log_file" 2>&1 &
+  export ZROK_HEADLESS=true
+  "$bin" access private "$share" --bind "$bind_host:$bind_port" --headless >"$log_file" 2>&1 &
   sleep 3
 
   if tcp_check "$bind_host" "$bind_port" 1; then

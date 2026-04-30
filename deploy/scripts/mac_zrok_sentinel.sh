@@ -65,7 +65,7 @@ ensure_access() {
 
     log "🔍 Підключаю ${label}: ${share} → ${host}:${port}"
     : > "$access_log"
-    "$ZROK_BIN" access private "$share" --bind "${host}:${port}" >"$access_log" 2>&1 &
+    "$ZROK_BIN" access private "$share" --bind "${host}:${port}" --headless >"$access_log" 2>&1 &
     sleep 3
 
     if tcp_open "$host" "$port"; then
