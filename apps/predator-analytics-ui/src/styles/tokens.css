@@ -1,6 +1,7 @@
 /* ============================================================================
-   PREDATOR v58.2-WRAITH.1 DESIGN TOKENS — ЄДИНЕ ДЖЕРЕЛО ІСТИНИ
-   Всі візуальні рішення кодифіковані тут. Ніде більше.
+   PREDATOR ELITE SPEC v2.0 — DESIGN TOKENS — ЄДИНЕ ДЖЕРЕЛО ІСТИНИ
+   Military Cyberpunk Dark UI | Sovereign Command Center
+   Відповідає §8 PREDATOR_ELITE_SPEC_v56.5.md
    ============================================================================ */
 
 :root {
@@ -26,12 +27,12 @@
   --radius-3xl: 2rem;
   --radius-full: 9999px;
 
-  /* ── SEMANTIC BACKGROUNDS ── */
-  --bg-canvas: #020617;
-  --bg-surface: #0a0f1c;
-  --bg-elevated: #0f172a;
-  --bg-overlay: rgba(2, 6, 23, 0.85);
-  --bg-panel: rgba(2, 6, 23, 0.7);
+  /* ── SEMANTIC BACKGROUNDS ── (Spec v2.0 §8: абсолютно чорний фон) */
+  --bg-canvas: #0a0a0a;           /* Spec v2.0 §8: #0A0A0A */
+  --bg-surface: #0d0d0d;
+  --bg-elevated: #141414;
+  --bg-overlay: rgba(10, 10, 10, 0.90);
+  --bg-panel: rgba(10, 10, 10, 0.75);
 
   /* ── FOREGROUND ── */
   --fg-primary: #f8fafc;
@@ -45,29 +46,35 @@
   --border-strong: rgba(255, 255, 255, 0.20);
   --border-focus: rgba(99, 102, 241, 0.60);
 
-  /* ── ACCENT PALETTE ── */
+  /* ── ACCENT PALETTE ── (Spec v2.0 §8: Bright Cyan #00F5FF) */
+  --accent-sovereign: #00F5FF;    /* Spec v2.0 §8: домінантний акцент */
+  --accent-sovereign-glow: rgba(0, 245, 255, 0.25);
+  --accent-sovereign-dim: rgba(0, 245, 255, 0.10);
   --accent-indigo: #6366f1;
-  --accent-cyan: #06b6d4;
+  --accent-cyan: #00F5FF;         /* Оновлено до Sovereign Cyan */
   --accent-emerald: #10b981;
-  --accent-amber: #f43f5e; /* Migrated to Rose */
+  --accent-amber: #f59e0b;
   --accent-rose: #f43f5e;
   --accent-violet: #8b5cf6;
-  --accent-blue: #ef4444; /* Migrated to Crimson-Red */
-  --accent-orange: #fb7185; /* Migrated to Soft Rose */
+  --accent-orange: #f97316;
 
-  /* ── NEON PALETTE ── */
-  --neon-cyan: #fb7185;
-  --neon-magenta: #f43f5e;
-  --neon-green: #10b981;
-  --neon-orange: #e11d48;
-  --neon-yellow: #fb7185;
+  /* ── NEON PALETTE ── (Spec v2.0 §8: Military Cyberpunk) */
+  --neon-cyan: #00F5FF;           /* Sovereign Cyan — домінантний */
+  --neon-cyan-dim: rgba(0, 245, 255, 0.6);
+  --neon-magenta: #f43f5e;        /* Критичні тривоги */
+  --neon-green: #10b981;          /* Статус OK */
+  --neon-orange: #f97316;         /* Попередження */
+  --neon-yellow: #eab308;         /* Аномалії */
+  --neon-violet: #8b5cf6;         /* OSINT / Граф */
 
-  /* ── GLOW SHADOWS ── */
+  /* ── GLOW SHADOWS ── (Spec v2.0: Bloom для критичних індикаторів) */
+  --glow-sovereign: 0 0 24px rgba(0, 245, 255, 0.35), 0 0 60px rgba(0, 245, 255, 0.12);
+  --glow-sovereign-intense: 0 0 40px rgba(0, 245, 255, 0.5), 0 0 100px rgba(0, 245, 255, 0.2);
   --glow-indigo: 0 0 20px rgba(99, 102, 241, 0.3);
-  --glow-cyan: 0 0 20px rgba(6, 182, 212, 0.3);
+  --glow-cyan: 0 0 24px rgba(0, 245, 255, 0.35);
   --glow-emerald: 0 0 20px rgba(16, 185, 129, 0.3);
-  --glow-rose: 0 0 20px rgba(244, 63, 94, 0.3);
-  --glow-amber: 0 0 20px rgba(244, 63, 94, 0.3);
+  --glow-rose: 0 0 24px rgba(244, 63, 94, 0.4);
+  --glow-amber: 0 0 20px rgba(245, 158, 11, 0.3);
   --glow-violet: 0 0 20px rgba(139, 92, 246, 0.3);
 
   /* ── ELEVATION SHADOWS ── */
@@ -78,10 +85,11 @@
   --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.7);
   --shadow-2xl: 0 24px 64px rgba(0, 0, 0, 0.8);
 
-  /* ── TYPOGRAPHY ── */
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
-  --font-display: 'Orbitron', sans-serif;
+  /* ── TYPOGRAPHY ── (Spec v2.0 §8: DIN для числових метрик, Orbitron для заголовків) */
+  --font-sans: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'JetBrains Mono', monospace;
+  --font-display: 'Orbitron', sans-serif;    /* Акцентні заголовки, статуси модулів */
+  --font-metric: 'Barlow Condensed', 'DIN Condensed', 'Arial Narrow', sans-serif; /* KPI числа, дашборд */
 
   --text-2xs: 0.5rem;     /*  8px */
   --text-xs: 0.625rem;    /* 10px */
@@ -120,13 +128,14 @@
   --topbar-height: 56px;
   --statusbar-height: 24px;
 
-  /* ── AMBIENT GLOW BACKGROUNDS ── */
-  --ambient-emerald: radial-gradient(circle at 20% 80%, rgba(16, 185, 129, 0.12), transparent 50%);
-  --ambient-cyan: radial-gradient(circle at 80% 20%, rgba(6, 182, 212, 0.12), transparent 50%);
-  --ambient-indigo: radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.12), transparent 60%);
-  --ambient-amber: radial-gradient(circle at 10% 30%, rgba(244, 63, 94, 0.12), transparent 50%);
-  --ambient-rose: radial-gradient(circle at 90% 70%, rgba(244, 63, 94, 0.1), transparent 50%);
-  --ambient-violet: radial-gradient(circle at 60% 10%, rgba(139, 92, 246, 0.12), transparent 50%);
+  /* ── AMBIENT GLOW BACKGROUNDS ── (Spec v2.0: Sovereign Cyan домінує) */
+  --ambient-sovereign: radial-gradient(circle at 50% 0%, rgba(0, 245, 255, 0.06), transparent 55%);
+  --ambient-emerald: radial-gradient(circle at 20% 80%, rgba(16, 185, 129, 0.10), transparent 50%);
+  --ambient-cyan: radial-gradient(circle at 80% 20%, rgba(0, 245, 255, 0.08), transparent 50%);
+  --ambient-indigo: radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.10), transparent 60%);
+  --ambient-amber: radial-gradient(circle at 10% 30%, rgba(245, 158, 11, 0.10), transparent 50%);
+  --ambient-rose: radial-gradient(circle at 90% 70%, rgba(244, 63, 94, 0.08), transparent 50%);
+  --ambient-violet: radial-gradient(circle at 60% 10%, rgba(139, 92, 246, 0.10), transparent 50%);
 
   /* ── CARD SURFACE SYSTEM ── */
   --surface-0: rgba(2, 6, 23, 0.95);
@@ -143,11 +152,12 @@
   --glass-blur-heavy: blur(32px) saturate(200%);
   --glass-border: 1px solid rgba(255, 255, 255, 0.08);
 
-  /* ── GRADIENT MESH ── */
-  --mesh-primary: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(6, 182, 212, 0.03) 50%, rgba(16, 185, 129, 0.04) 100%);
-  --mesh-warm: linear-gradient(135deg, rgba(244, 63, 94, 0.08) 0%, rgba(225, 29, 72, 0.05) 100%);
-  --mesh-cool: linear-gradient(135deg, rgba(251, 113, 133, 0.08) 0%, rgba(244, 63, 94, 0.05) 100%);
-  --mesh-threat: linear-gradient(135deg, rgba(225, 29, 72, 0.1) 0%, rgba(159, 18, 57, 0.08) 100%);
+  /* ── GRADIENT MESH ── (Spec v2.0: Sovereign Cyan акценти) */
+  --mesh-primary: linear-gradient(135deg, rgba(0, 245, 255, 0.04) 0%, rgba(99, 102, 241, 0.03) 50%, rgba(16, 185, 129, 0.03) 100%);
+  --mesh-sovereign: linear-gradient(135deg, rgba(0, 245, 255, 0.05) 0%, rgba(0, 245, 255, 0.02) 100%);
+  --mesh-warm: linear-gradient(135deg, rgba(245, 158, 11, 0.06) 0%, rgba(249, 115, 22, 0.04) 100%);
+  --mesh-cool: linear-gradient(135deg, rgba(0, 245, 255, 0.06) 0%, rgba(99, 102, 241, 0.04) 100%);
+  --mesh-threat: linear-gradient(135deg, rgba(225, 29, 72, 0.10) 0%, rgba(159, 18, 57, 0.08) 100%);
 
   /* ── STATUS COLORS ── */
   --status-ok: #10b981;

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Orbitron:wght@500;700;800;900&family=Space+Grotesk:wght@300;400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Orbitron:wght@500;700;800;900&family=Space+Grotesk:wght@300;400;500;700&family=Barlow+Condensed:wght@400;500;600;700&display=swap');
 
 /* Канонічні дизайн-токени — єдине джерело істини */
 @import './styles/tokens.css';
@@ -249,14 +249,14 @@
 
 body {
     color-scheme: dark;
-    background-color: var(--shell-bg);
+    background-color: var(--bg-canvas, #0a0a0a);
     color: #e2e8f0;
     background-image:
-        radial-gradient(circle at 14% 14%, rgba(244, 63, 94, 0.10), transparent 28%),
-        radial-gradient(circle at 85% 8%, rgba(225, 29, 72, 0.10), transparent 26%),
-        radial-gradient(circle at 50% 100%, rgba(159, 18, 57, 0.10), transparent 34%),
-        radial-gradient(circle at 50% 50%, rgba(244, 63, 94, 0.04), transparent 60%),
-        linear-gradient(180deg, #080a14 0%, #05070d 52%, #030408 100%);
+        radial-gradient(circle at 14% 14%, rgba(0, 245, 255, 0.06), transparent 28%),
+        radial-gradient(circle at 85% 8%, rgba(99, 102, 241, 0.05), transparent 26%),
+        radial-gradient(circle at 50% 100%, rgba(0, 245, 255, 0.08), transparent 34%),
+        radial-gradient(circle at 50% 50%, rgba(0, 245, 255, 0.02), transparent 60%),
+        linear-gradient(180deg, #0a0a0a 0%, #0d0d0d 52%, #050505 100%);
     min-height: 100dvh;
     margin: 0;
     padding: 0;
