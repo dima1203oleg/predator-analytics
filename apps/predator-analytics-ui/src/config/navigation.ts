@@ -996,6 +996,74 @@ const baseNavigationConfig: NavSection[] = [
       },
     ],
   },
+
+  // ══════════════════════════════════════════════════════════════
+  // 7. AUTONOMOUS FACTORY — v61.0-ELITE (gold)
+  //    Оркестрація OODA-циклу, Council Judge та ChiefConductor.
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'factory-elite',
+    label: 'AUTONOMOUS FACTORY',
+    description: 'Оркестрація OODA-циклу, Council Judge та ChiefConductor.',
+    outcome: 'Нескінченне вдосконалення PREDATOR в режимі 24/7.',
+    accent: 'gold',
+    groups: [
+      {
+        title: 'Управління Фабрикою',
+        audiences: ['admin'],
+        items: [
+          {
+            id: 'factory-auto',
+            label: 'Автономний Завод',
+            path: '/admin/command?tab=auto-factory',
+            icon: Factory,
+            description: 'Контроль OODA-циклу, патч-менеджмент та еволюція.',
+            group: 'Управління Фабрикою',
+            badge: 'ELITE',
+            audiences: ['admin'],
+            priority: 100,
+          },
+          {
+            id: 'factory-studio',
+            label: 'Студія Фабрики',
+            path: '/admin/command?tab=factory-studio',
+            icon: Layers,
+            description: 'Дизайн нових модулів та нейронних архітектур.',
+            group: 'Управління Фабрикою',
+            audiences: ['admin'],
+            priority: 90,
+          },
+        ],
+      },
+      {
+        title: 'Суверенний Інтелект',
+        audiences: ['admin'],
+        items: [
+          {
+            id: 'factory-council',
+            label: 'Council Judge',
+            path: '/admin/command?tab=auto-factory',
+            icon: ShieldCheck,
+            description: ' ішення Ради Моделей (Qwen/LLaMA/Gemini).',
+            group: 'Суверенний Інтелект',
+            badge: 'AI',
+            audiences: ['admin'],
+            priority: 95,
+          },
+          {
+            id: 'factory-conductor',
+            label: 'Chief Conductor',
+            path: '/admin/command?tab=agents-ops',
+            icon: Zap,
+            description: 'Глобальний оркестратор автономних місій.',
+            group: 'Суверенний Інтелект',
+            audiences: ['admin'],
+            priority: 92,
+          },
+        ],
+      },
+    ],
+  },
 ];
 
 // ─── Утиліти побудови груп ────────────────────────────────────────────────────

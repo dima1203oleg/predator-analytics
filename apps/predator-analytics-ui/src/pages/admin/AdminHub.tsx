@@ -9,8 +9,9 @@ import {
   Lock, MessageSquare, Anchor, FileText, Share2, AlertTriangle,
   ZapOff, Terminal, Sparkles, Radio, Shield, Zap as ZapIcon,
   Atom, Box, Boxes, PieChart, ChevronRight, Maximize2,
-  RefreshCw, Orbit
+  RefreshCw, Orbit, Scale
 } from 'lucide-react';
+import { VerticalTabNav } from '@/components/layout/VerticalTabNav';
 import { cn } from '@/lib/utils';
 import { 
   useSystemStatus, 
@@ -55,6 +56,11 @@ const SystemPromptsView     = lazy(() => import('@/features/ai/SystemPromptsView
 const NasView               = lazy(() => import('@/features/ai/NasView'));
 const ForecastView          = lazy(() => import('@/features/ai/ForecastView'));
 
+// Autonomous Factory
+const ChiefConductorView = lazy(() => import('@/features/ai/ChiefConductorView'));
+const CouncilJudgeView   = lazy(() => import('@/features/ai/CouncilJudgeView'));
+const TelegramCenterView = lazy(() => import('@/features/ai/TelegramCenterView'));
+
 // Intelligence & OSINT
 const SovereignIntelHub      = lazy(() => import('@/features/ai/SovereignIntelHub'));
 const PredictiveNexusView    = lazy(() => import('@/features/ai/PredictiveNexusView'));
@@ -95,7 +101,7 @@ const MarketEntryView          = lazy(() => import('@/features/intelligence/Mark
 
 // ─── Конфіг вкладок ───────────────────────────────────────────────────────────
 
-type TabCategory = 'SYSTEM_CORE' | 'AI_LAB' | 'INTEL_OSINT' | 'BUSINESS_INTEL' | 'PLATFORM';
+type TabCategory = 'SYSTEM_CORE' | 'AI_LAB' | 'INTEL_OSINT' | 'BUSINESS_INTEL' | 'PLATFORM' | 'AUTONOMOUS_FACTORY';
 
 interface TabConfig {
   id: string;
@@ -175,6 +181,12 @@ const TABS: TabConfig[] = [
   { id: 'alerts-system', category: 'PLATFORM', label: 'СИСТЕМНІ_СПОВІЩЕННЯ', badge: 'ЛОГ', icon: AlertTriangle, component: lazy(() => import('@/features/alerts/AlertCenterView')) },
   { id: 'decisions',    category: 'PLATFORM', label: 'ЖУ НАЛ_РІШЕНЬ',    badge: 'АУДИТ',    icon: FileText,      component: lazy(() => import('@/features/decisions/DecisionsJournal')) },
   { id: 'logs',         category: 'PLATFORM', label: 'СИСТЕМНІ_ЛОГИ',    badge: 'СИ І',      icon: Terminal,      component: lazy(() => import('@/features/monitoring/RealTimeMonitor')) },
+
+  // ─── AUTONOMOUS_FACTORY ────────────────────────────────────────────────────
+  { id: 'factory-ooda', category: 'AUTONOMOUS_FACTORY', label: 'OODA_ЦИКЛ', badge: 'ВІЧНИЙ', icon: Sparkles, component: AutoFactoryView },
+  { id: 'factory-conductor', category: 'AUTONOMOUS_FACTORY', label: 'ДИРИГЕНТ', badge: 'AGI', icon: Orbit, component: ChiefConductorView },
+  { id: 'factory-council', category: 'AUTONOMOUS_FACTORY', label: 'LLM_РАДА', badge: 'СУДДЯ', icon: Scale, component: CouncilJudgeView },
+  { id: 'factory-telegram', category: 'AUTONOMOUS_FACTORY', label: 'ТЕЛЕГРАМ', badge: 'БОТ', icon: MessageSquare, component: TelegramCenterView },
 ];
 
 const DEFAULT_TAB = 'brief';
@@ -485,6 +497,7 @@ const TabNav: React.FC<TabNavProps> = ({ activeTab, onTabChange }) => {
     { id: 'BUSINESS_INTEL', label: 'БІЗНЕС-АНАЛІТИКА', subLabel: 'РАНКОВИЙ_ЗВІТ_&_KPI', icon: TrendingUp, color: 'emerald' },
     { id: 'SYSTEM_CORE', label: 'ЯДРО_СИСТЕМИ', subLabel: 'ІНФ АСТРУКТУРА_&_CONTROL', icon: Shield, color: 'rose' },
     { id: 'AI_LAB',      label: 'AI_ЛАБО АТО ІЯ', subLabel: 'НАВЧАННЯ_&_АВТОЗАВОД', icon: BrainCircuit, color: 'rose' },
+    { id: 'AUTONOMOUS_FACTORY', label: 'АВТОНОМНА_ФАБРИКА', subLabel: 'OODA_2.0_&_КОНТРОЛЬ', icon: Factory, color: 'gold' },
     { id: 'INTEL_OSINT', label: 'РОЗВІДКА_&_OSINT', subLabel: 'ГЛОБАЛЬНИЙ_АНАЛІЗ_L7', icon: Eye, color: 'rose' },
     { id: 'PLATFORM',    label: 'ПЛАТФОРМА', subLabel: 'НАЛАШТУВАННЯ_&_АУДИТ', icon: Settings, color: 'rose' },
   ];
@@ -673,7 +686,8 @@ export const AdminHub: React.FC = () => {
     navigate(`/admin/command?tab=${id}`, { replace: true });
   };
 
-  const ActiveComponent = TABS.find((t) => t.id === activeTab)?.component;
+  const activeTabConfig = useMemo(() => TABS.find((t) => t.id === activeTab), [activeTab]);
+  const ActiveComponent = activeTabConfig?.component;
 
   return (
     <div className="flex flex-col h-full overflow-hidden bg-black selection:bg-rose-500/30">
@@ -686,8 +700,34 @@ export const AdminHub: React.FC = () => {
       {/* Навігація вкладок */}
       <TabNav activeTab={activeTab} onTabChange={handleTabChange} />
 
-      {/* Контент вкладки */}
-      <div className="flex-1 overflow-auto relative custom-scrollbar pb-20">
+      <div className="flex flex-1 overflow-hidden relative">
+        {/* Left Sidebar for Factory */}
+        <AnimatePresence mode="wait">
+          {activeTabConfig?.category === 'AUTONOMOUS_FACTORY' && (
+            <motion.div
+              initial={{ x: -320, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -320, opacity: 0 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="h-full hidden lg:block"
+            >
+              <VerticalTabNav 
+                tabs={TABS.filter(t => t.category === 'AUTONOMOUS_FACTORY').map(t => ({
+                  id: t.id,
+                  label: t.label,
+                  icon: t.icon,
+                  category: t.category
+                }))}
+                activeTab={activeTab}
+                onTabChange={handleTabChange}
+                accentColor="#f59e0b"
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Контент вкладки */}
+        <div className="flex-1 overflow-auto relative custom-scrollbar pb-20">
         {/* Tactical UI Ornaments */}
         <div className="absolute top-10 left-10 flex flex-col gap-3 pointer-events-none opacity-40 z-0 font-black font-mono text-[9px] text-white/40 tracking-[0.4em] italic uppercase">
           <div className="flex items-center gap-3">
@@ -739,6 +779,7 @@ export const AdminHub: React.FC = () => {
           </Suspense>
         </div>
       </div>
+    </div>
 
       <style dangerouslySetInnerHTML={{ __html: `
           .shadow-4xl { box-shadow: 0 60px 120px -30px rgba(0,0,0,0.9); }

@@ -14,6 +14,16 @@
 > [!IMPORTANT]
 > **ZERO-LOCAL-DEPLOYMENT RULE**: На MacBook (локальна машина розробника) ЗАБОРОНЕНО розгортати будь-які важкі сервіси, бази даних або кластери K8s. MacBook використовується ВИКЛЮЧНО як термінал для написання коду (IDE) та керування через Web UI. Усе навантаження (Backend, DBs, AI) має розгортатися на **iMac** (Compute Node) або **NVIDIA Server** (Cloud Fallback).
 
+## Режим роботи (Antigravity Autonomous Factory)
+
+- **auto_approve: true**  — дозволяє агенту виконувати дії без участі людини (через CLI `--auto-approve`).
+- **save_after_each: true** — автоматичне збереження після кожної атомарної зміни.
+- **planning_mode: true** — обов'язкове генерування плану перед виконанням (у поєднанні з `auto_approve`).
+- **max_iterations: 0** — нескінченний цикл вдосконалення.
+- **max_consecutive_auto_actions: 50** — запобіжник від зациклювання.
+
+---
+
 ## Мова
 
 - **Код**: Python (backend), TypeScript/React (frontend)

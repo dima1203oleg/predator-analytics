@@ -270,6 +270,25 @@ services:
           memory: 1G
           cpus: '0.5'
 
+  autonomous-agent:
+    build:
+      context: ../
+      dockerfile: services/autonomous-agent/Dockerfile
+    env_file:
+      - ../.env
+    volumes:
+      - ../:/app  # Щоб агент міг аналізувати та комітити код
+      - ~/.gitconfig:/etc/gitconfig:ro
+    depends_on:
+      - litellm
+    networks:
+      - predator-sovereign-net
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '0.5'
+
 networks:
   predator-sovereign-net:
     driver: bridge
