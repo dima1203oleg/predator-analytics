@@ -19,10 +19,17 @@ class LLMManager:
         )
 
     def get_llm(self):
-        """
-        Повертає об'єкт LLM для використання в LangGraph.
-        """
         return self.llm
+
+    def get_embeddings(self):
+        """
+        Повертає об'єкт для генерації embeddings.
+        """
+        from langchain_ollama import OllamaEmbeddings
+        return OllamaEmbeddings(
+            model=self.model_name,
+            base_url=self.host
+        )
 
     async def invoke(self, messages: List[BaseMessage]) -> BaseMessage:
         """
