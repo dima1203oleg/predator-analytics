@@ -10,12 +10,14 @@ from core.llm import planner_llm, coder_llm
 from core.memory import AgentMemory
 from agents.graph_analyst import GraphAnalyst
 from agents.researcher import ResearcherAgent
+from agents.sysadmin import SysAdminAgent
 import operator
 import json
 
 # Ініціалізація
 graph_analyst = GraphAnalyst()
 researcher = ResearcherAgent()
+sysadmin = SysAdminAgent()
 memory = AgentMemory()
 
 # Визначення стану графа
@@ -35,6 +37,7 @@ PLANNER_PROMPT = """
 Використовуй агентів: 
 - Graph Analyst: зв'язки у Neo4j.
 - Researcher: пошук у документах (Qdrant).
+- SysAdmin: перевірка стану системи, MCP інструментів, БД та ресурсів.
 
 Відповідай ТІЛЬКИ у форматі JSON: {"plan": [{"agent": "graph_analyst", "task": "опис"}], "reasoning": "чому"}
 """
@@ -89,6 +92,9 @@ async def executor_node(state: AgentState):
             results.append(res)
         elif agent_type == "researcher":
             res = await researcher.search(sub_task)
+            results.append(res)
+        elif agent_type == "sysadmin":
+            res = await sysadmin.execute(sub_task)
             results.append(res)
 
     return {

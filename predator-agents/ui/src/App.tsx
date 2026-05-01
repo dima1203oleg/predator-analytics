@@ -38,6 +38,7 @@ const Sidebar = ({ activeAgent, setActiveAgent }: any) => {
     { id: 'orch', name: 'ORCHESTRATOR', status: 'IDLE', type: 'CORE' },
     { id: 'graph', name: 'GRAPH_ANALYST', status: 'IDLE', type: 'NEO4J' },
     { id: 'research', name: 'RESEARCHER', status: 'IDLE', type: 'QDRANT' },
+    { id: 'sysadmin', name: 'SYS_ADMIN', status: 'IDLE', type: 'MONITOR' },
   ];
 
   return (
@@ -204,7 +205,26 @@ const App = () => {
           <StatusCard label="Active Tasks" value="12" icon={Zap} />
           <StatusCard label="OODA Phase" value={isExecuting ? "DECIDE" : "IDLE"} icon={Activity} color={isExecuting ? "primary" : "white/20"} />
           <StatusCard label="Sovereign Memory" value="4.2 GB" icon={Database} />
+          <StatusCard label="System Health" value="WARN (MCP)" icon={Shield} color="alert" />
         </div>
+
+        {/* MCP Alert Banner */}
+        <AnimatePresence>
+          {logs.some(l => l.message.includes('MCP')) && (
+            <motion.div 
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="bg-alert/10 border border-alert/20 p-3 rounded-lg flex items-center justify-between"
+            >
+              <div className="flex items-center space-x-3 text-alert">
+                <Shield size={16} />
+                <span className="text-[10px] font-bold uppercase tracking-widest">Критичне попередження: Ліміт MCP інструментів (100) перевищено</span>
+              </div>
+              <div className="text-[9px] text-white/40">Рекомендація: Відключіть GCE або Kafka сервери</div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Central Display */}
         <div className="flex-1 flex space-x-6 min-h-0">
