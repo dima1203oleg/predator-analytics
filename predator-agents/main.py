@@ -5,6 +5,7 @@ Predator Agents OS — Entry Point
 
 import uvicorn
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Dict, Any, Optional
 import os
@@ -17,6 +18,15 @@ app = FastAPI(
     title="Predator Agents OS API",
     description="API для керування автономними агентами PREDATOR Analytics",
     version="1.0.0"
+)
+
+# Enable CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 class AgentRequest(BaseModel):
