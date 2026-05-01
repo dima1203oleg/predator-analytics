@@ -291,7 +291,7 @@ export default function ZradaControlView() {
                                    <div key={signal.id} className="p-8 bg-white/[0.01] border border-white/[0.04] rounded-[2.5rem] hover:border-rose-600/30 transition-all group space-y-6 shadow-xl">
                                       <div className="flex items-start gap-6">
                                          <div className="p-4 bg-black border border-white/10 rounded-2xl text-rose-500 shadow-lg">
-                                            {signal.type === 'telegram' ? <MessageSquare size={20} /> : signal.type === 'audio' ? <Mic size={20} /> : <FileText size={20} />}
+                                            {signal.type === 'telegram' ? <MessageSquare size={20} /> : signal.type === 'аудіо' ? <Mic size={20} /> : <FileText size={20} />}
                                          </div>
                                          <div className="space-y-2 flex-1">
                                             <div className="flex items-center justify-between">

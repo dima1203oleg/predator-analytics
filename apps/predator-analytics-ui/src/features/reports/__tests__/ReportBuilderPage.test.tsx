@@ -79,6 +79,16 @@ describe('ReportBuilderPage', () => {
             activeFailover: false,
             nodeSource: 'SOVEREIGN_MOCK',
             nodes: [],
+            llmTriStateMode: 'HYBRID',
+            llmLevel: 1,
+            llmLayerName: 'Mock Layer',
+            vramMetrics: {
+                total: 8,
+                localReserve: 5.5,
+                uiReserve: 2.5,
+                used: 4,
+                status: 'nominal'
+            }
         });
 
     });

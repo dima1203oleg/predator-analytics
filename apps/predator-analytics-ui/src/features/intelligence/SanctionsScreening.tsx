@@ -391,7 +391,7 @@ const SanctionsScreening: React.FC = () => {
                                 <div className="relative group">
                                      <div className="absolute inset-0 bg-rose-600/20 blur-3xl rounded-full scale-150 animate-pulse" />
                                      <div className="relative p-7 bg-black border-2 border-rose-500/40 rounded-[2.5rem] shadow-4xl transform rotate-2 hover:rotate-0 transition-all">
-                                         <ShieldAlert hideDefaultIcon size={42} className="text-rose-500 shadow-[0_0_20px_#e11d48]" />
+                                         <ShieldAlert size={42} className="text-rose-500 shadow-[0_0_20px_#e11d48]" />
                                      </div>
                                 </div>
                                 <div className="space-y-4">

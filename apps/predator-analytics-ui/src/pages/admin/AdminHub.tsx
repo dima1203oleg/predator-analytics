@@ -84,7 +84,7 @@ const SettingsView           = lazy(() => import('@/features/platform/SettingsVi
 const SupplyChainAnalyticsView = lazy(() => import('@/features/supply-chain/SupplyChainAnalyticsView'));
 const EntityResolverView       = lazy(() => import('@/features/analytics/EntityResolverView'));
 const FinancialDashboard       = lazy(() => import('@/features/analytics/FinancialDashboard'));
-const MarketOverviewTab        = lazy(() => import('@/features/market/components/MarketOverviewTab'));
+const MarketOverviewTab        = lazy(() => import('@/features/market/components/MarketOverviewTab').then(m => ({ default: m.MarketOverviewTab })));
 const DueDiligenceView         = lazy(() => import('@/features/diligence/DueDiligence'));
 const TimelineBuilderView     = lazy(() => import('@/features/investigation/TimelineBuilderView'));
 const ClientsHubView           = lazy(() => import('@/features/clients/ClientsHubView'));
@@ -103,7 +103,7 @@ interface TabConfig {
   label: string;
   badge?: string;
   icon: React.ElementType;
-  component: React.LazyExoticComponent<React.FC>;
+  component: React.ComponentType<any>;
 }
 
 const TABS: TabConfig[] = [

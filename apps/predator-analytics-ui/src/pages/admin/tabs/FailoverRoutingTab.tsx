@@ -16,8 +16,8 @@ type RouteMode  = 'SOVEREIGN' | 'HYBRID' | 'CLOUD';
 interface FailoverEvent {
   id: string;
   ts: string;
-  from: BackendNode;
-  to:   BackendNode;
+  from: string;
+  to:   string;
   reason: string;
   user: string;
   duration: string;
@@ -336,15 +336,15 @@ export const FailoverRoutingTab: React.FC = () => {
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-6 relative z-10 w-full lg:w-auto">
-                  <button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={confirmSwitch}
-                    disabled={toggleMutation.isPending}
-                    className="px-12 py-5 bg-rose-600 text-white text-[12px] font-black uppercase tracking-[0.3em] rounded-xl shadow-rose-500/50 hover:bg-rose-500 transition-all disabled:opacity-50 italic w-full"
-                  >
-                    {toggleMutation.isPending ? 'СИНХРОНІЗАЦІЯ_L3...' : 'ПІДТВЕРДИТИ_РОТАЦІЮ'}
-                  </button>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={confirmSwitch}
+                disabled={toggleMutation.isPending}
+                className="px-12 py-5 bg-rose-600 text-white text-[12px] font-black uppercase tracking-[0.3em] rounded-xl shadow-rose-500/50 hover:bg-rose-500 transition-all disabled:opacity-50 italic w-full"
+              >
+                {toggleMutation.isPending ? 'СИНХРОНІЗАЦІЯ_L3...' : 'ПІДТВЕРДИТИ_РОТАЦІЮ'}
+              </motion.button>
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { SystemStatsResponse, SystemStatusResponse } from '@/services/api/system';
+import type { SystemStats, SystemStatus } from '@/services/adminApi';
 import { normalizeAIControlPlaneSnapshot } from '../aiControlPlane.utils';
 
 const createSystemStatus = (): SystemStatusResponse => ({
@@ -69,8 +70,8 @@ describe('aiControlPlane.utils', () => {
         influence_mapping: { id: 'influence', score: 68, trend: '-3.2%', status: 'calibrating', throughput: 12500, latency: 45, load: 88 },
         structural_vault: { id: 'structural', score: 97, trend: '+1.4%', status: 'optimal', throughput: 28900, latency: 5, load: 12 },
       },
-      createSystemStatus(),
-      createSystemStats(),
+      createSystemStatus() as unknown as SystemStatus,
+      createSystemStats() as unknown as SystemStats,
       [
         { id: 'log-1', timestamp: '2026-03-30T11:02:00Z', service: 'core-api', level: 'INFO', message: 'Цикл перевірки завершено.' },
         { id: 'log-2', timestamp: '2026-03-30T11:01:00Z', service: 'graph-service', level: 'WARN', message: 'Зросла затримка графового обчислення.' },

@@ -451,7 +451,7 @@ export function FabrykaAutonomousTab() {
 
     try {
       // Виклик реального API замість симуляції
-      await factoryApi.launchChaos(scenarioId);
+      await factoryApi.triggerChaos(scenarioId, true);
       
       setChaosLog((prev) => prev.map((e) =>
         e.id === entryId

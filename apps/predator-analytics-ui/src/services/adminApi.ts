@@ -20,6 +20,7 @@ export interface NodeMetric {
   net: string;
   status: 'online' | 'offline' | 'degraded';
   uptime: string;
+  pods?: any[];
 }
 
 export interface ServiceStatus {
@@ -156,6 +157,7 @@ export interface SystemStats {
   gpu_mem_used?: number;
   uptime_seconds: number;
   timestamp: string;
+  avg_latency?: number;
 }
 
 export interface SystemStatus {

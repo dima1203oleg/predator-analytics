@@ -52,7 +52,7 @@ const TYPE_CFG = {
   csv:   { icon: File,            color: '#f59e0b', label: 'CSV' }
 };
 
-const STATUS_CFG = {
+const STATUS_CFG: Record<ReportStatus, { icon: any; color: string; label: string; bg: string; animate?: boolean }> = {
   ready:      { icon: CheckCircle,  color: '#10b981', label: 'ГОТОВИЙ',     bg: 'bg-emerald-500/10' },
   generating: { icon: RefreshCw,   color: '#0ea5e9', label: 'ГЕНЕРУЄТЬСЯ', bg: 'bg-sky-500/10', animate: true },
   scheduled:  { icon: Calendar,    color: '#8b5cf6', label: 'ЗАПЛАНОВАНО', bg: 'bg-purple-500/10' },

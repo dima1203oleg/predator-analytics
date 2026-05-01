@@ -75,7 +75,7 @@ export const FinancialFlowPanel: React.FC<FinancialFlowPanelProps> = ({ flows })
                 "glass-wraith p-0 group cursor-pointer border-white/10 overflow-hidden transition-all duration-700",
                 "hover:border-rose-500/60 hover:bg-rose-500/[0.03] hover:shadow-[0_0_50px_rgba(244,63,94,0.1)]",
                 "panel-3d",
-                flow.risk_score > 0.8 && "border-rose-500/40 shadow-[0_0_60px_rgba(244,63,94,0.2)]"
+                (flow.risk_score ?? 0) > 0.8 && "border-rose-500/40 shadow-[0_0_60px_rgba(244,63,94,0.2)]"
               )}
             >
               <div className="relative p-8 md:p-10">
@@ -100,7 +100,7 @@ export const FinancialFlowPanel: React.FC<FinancialFlowPanelProps> = ({ flows })
                       <div className="p-6 bg-black/80 border border-white/10 rounded-2xl group-hover:border-rose-500/60 transition-all duration-500 shadow-2xl group-hover:shadow-rose-500/20">
                         <Fingerprint size={32} className="text-slate-400 group-hover:text-rose-500 transition-all duration-700 group-hover:scale-110" />
                       </div>
-                      {flow.risk_score > 0.8 && (
+                      {(flow.risk_score ?? 0) > 0.8 && (
                         <motion.div 
                           animate={{ scale: [1, 1.4, 1] }}
                           transition={{ duration: 2, repeat: Infinity }}
@@ -155,13 +155,13 @@ export const FinancialFlowPanel: React.FC<FinancialFlowPanelProps> = ({ flows })
                          <Database size={22} className="text-slate-600 group-hover:text-rose-500 transition-colors duration-500" />
                          <div className={cn(
                           "px-12 py-5 rounded-[2rem] text-[24px] font-black font-mono shadow-2xl transition-all relative overflow-hidden glint-elite border-2",
-                          flow.amount > 1000000 
+                          (flow.amount ?? 0) > 1000000 
                             ? "bg-rose-500 text-black border-rose-400 shadow-[0_0_40px_rgba(244,63,94,0.4)]" 
                             : "bg-white/5 text-white border-white/10 group-hover:border-rose-500/60"
                         )}>
                           <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent opacity-50" />
-                          <span className="relative z-10">{flow.amount.toLocaleString()}</span> 
-                          <span className={cn("opacity-60 text-[14px] ml-2 relative z-10", flow.amount > 1000000 ? "text-black" : "text-slate-400")}>{flow.currency}</span>
+                          <span className="relative z-10">{(flow.amount ?? 0).toLocaleString()}</span> 
+                          <span className={cn("opacity-60 text-[14px] ml-2 relative z-10", (flow.amount ?? 0) > 1000000 ? "text-black" : "text-slate-400")}>{flow.currency}</span>
                         </div>
                       </div>
                       <div className="flex items-center gap-3 px-5 py-2 bg-black/60 rounded-full border border-white/10 group-hover:border-rose-500/40 transition-colors shadow-inner">
@@ -188,26 +188,26 @@ export const FinancialFlowPanel: React.FC<FinancialFlowPanelProps> = ({ flows })
                    
                    <div className="space-y-3">
                      <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-3">
-                       <ShieldAlert size={14} className={cn(flow.risk_score > 0.7 ? "text-rose-500 animate-pulse" : "text-emerald-500")} />  ЕЙТИНГ_РИЗИКУ
+                       <ShieldAlert size={14} className={cn((flow.risk_score ?? 0) > 0.7 ? "text-rose-500 animate-pulse" : "text-emerald-500")} />  ЕЙТИНГ_РИЗИКУ
                      </span>
                      <div className="flex items-center gap-5">
                         <div className="flex-1 h-2.5 bg-white/5 rounded-full overflow-hidden border border-white/10 relative">
                           <motion.div 
                             initial={{ width: 0 }}
-                            animate={{ width: `${flow.risk_score * 100}%` }}
+                            animate={{ width: `${(flow.risk_score ?? 0) * 100}%` }}
                             className={cn(
                               "h-full rounded-full relative z-10 shadow-[0_0_10px_currentColor]",
-                              flow.risk_score > 0.7 ? "bg-rose-500 text-rose-500" : "bg-emerald-500 text-emerald-500"
+                              (flow.risk_score ?? 0) > 0.7 ? "bg-rose-500 text-rose-500" : "bg-emerald-500 text-emerald-500"
                             )}
                           />
-                          {flow.risk_score > 0.8 && (
+                          {(flow.risk_score ?? 0) > 0.8 && (
                             <div className="absolute inset-0 bg-rose-500/20 animate-pulse" />
                           )}
                         </div>
                         <p className={cn(
                           "text-[15px] font-mono font-black shrink-0 chromatic-elite",
-                          flow.risk_score > 0.7 ? "text-rose-500" : "text-emerald-500"
-                        )}>{(flow.risk_score * 10).toFixed(1)}</p>
+                          (flow.risk_score ?? 0) > 0.7 ? "text-rose-500" : "text-emerald-500"
+                        )}>{((flow.risk_score ?? 0) * 10).toFixed(1)}</p>
                      </div>
                    </div>
 
@@ -231,7 +231,7 @@ export const FinancialFlowPanel: React.FC<FinancialFlowPanelProps> = ({ flows })
                 </div>
 
                 {/* ANOMALY ALERT - ELITE STYLE */}
-                {flow.risk_score > 0.8 && (
+                {(flow.risk_score ?? 0) > 0.8 && (
                   <motion.div 
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}

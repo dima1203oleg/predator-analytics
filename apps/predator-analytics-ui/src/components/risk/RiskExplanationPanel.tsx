@@ -12,7 +12,7 @@ import {
 import { motion } from 'framer-motion';
 
 interface RiskFactor {
-  name: str;
+  name: string;
   weight: number;
   category: string;
   detected: boolean;

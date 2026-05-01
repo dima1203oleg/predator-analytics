@@ -106,7 +106,7 @@ export const useBackendStatus = (): BackendStatusSnapshot => {
     const activeNode = useMemo(() => nodes.find(n => n.active), [nodes]);
     
     const [llmTriStateMode, setLlmTriStateMode] = useState<'SOVEREIGN' | 'HYBRID' | 'CLOUD'>(
-        activeNode?.mode || 'HYBRID'
+        activeNode?.mode === 'MOCK' ? 'SOVEREIGN' : (activeNode?.mode || 'HYBRID')
     );
     const [llmLevel, setLlmLevel] = useState<1 | 2 | 3 | 4>(1);
     const [llmLayerName, setLlmLayerName] = useState('РІВЕНЬ 1: АВТОНОМНИЙ ПУЛ');
@@ -133,7 +133,7 @@ export const useBackendStatus = (): BackendStatusSnapshot => {
                     setNodes(e.detail.nodes);
                     const active = e.detail.nodes.find((n: any) => n.active);
                     if (active && active.mode) {
-                        setLlmTriStateMode(active.mode);
+                        setLlmTriStateMode(active.mode === 'MOCK' ? 'SOVEREIGN' : active.mode);
                     }
                 }
                 if (e.detail.llmTriStateMode) setLlmTriStateMode(e.detail.llmTriStateMode);
@@ -145,7 +145,7 @@ export const useBackendStatus = (): BackendStatusSnapshot => {
                 setNodes(currentNodes);
                 const active = currentNodes.find(n => n.active);
                 if (active && active.mode) {
-                    setLlmTriStateMode(active.mode);
+                    setLlmTriStateMode(active.mode === 'MOCK' ? 'SOVEREIGN' : active.mode);
                 }
             }
         };
