@@ -6243,6 +6243,337 @@ app.post(['/v1/chat/completions', '/openai/v1/chat/completions', '/v1/v1/chat/co
   }
 });
 
+// =============================================
+// 🧠 SOM — Sovereign Observer Module (v56.5-ELITE)
+// =============================================
+
+// Генератор аномалій SOM
+const generateSomAnomalies = () => {
+  const types = ['BEHAVIORAL', 'STRUCTURAL', 'TEMPORAL', 'FINANCIAL', 'NETWORK'];
+  const severities = ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'];
+  const sources = ['Neo4j GraphDB', 'ClickHouse OLAP', 'OpenSearch', 'Qdrant Vector', 'Redis Stream'];
+  return Array.from({ length: 12 }, (_, i) => ({
+    id: `anom-${i + 1}`,
+    type: types[i % types.length],
+    severity: severities[i % severities.length],
+    source: sources[i % sources.length],
+    message: [
+      'Незвичайна частота транзакцій у секторі електроніки',
+      'Виявлено циклічну структуру бенефіціарного ланцюга',
+      'Аномальний сплеск митних декларацій о 03:00–05:00',
+      'Фінансовий сигнал: від\u0027ємний баланс при зростаючому імпорті',
+      'Множинні підключення з однієї IP-підмережі',
+      'Перевищення порогу ризику по УКТЗЕД 8471 на 340%',
+      'Виявлено 7 компаній з ідентичним юридичним директором',
+      'Географічна аномалія: товар задекларований у 3 митницях одночасно',
+      'Темпоральна аномалія: 48-годинний gap у поставках',
+      'Структурна аномалія: офшор у ланцюзі постачання 4-го рівня',
+      'OSINT: новий домен зареєстрований 3 дні до першої декларації',
+      'AML-сигнал: cash-equivalent операції > $50k за добу',
+    ][i],
+    entity: [`ТОВ "ТЕХНО-ГРУП"`, `АТ "ЗАХІД-ІМПОРТ"`, `ФОП Коваль О.В.`, `Offshore BVI Ltd.`, `ТОВ "МЕГА-ТРЕЙД"`, `АТ "УКРБУД-2000"`][i % 6],
+    detected_at: new Date(Date.now() - i * 3600000 * (Math.random() + 0.5)).toISOString(),
+    confidence: Math.round(70 + Math.random() * 28),
+    status: i < 3 ? 'ACTIVE' : i < 7 ? 'ACKNOWLEDGED' : 'RESOLVED',
+    axiom_violation: i % 4 === 0,
+    risk_delta: Math.round((Math.random() - 0.3) * 30),
+  }));
+};
+
+// Генератор пропозицій SOM
+const generateSomProposals = () => [
+  {
+    id: 'prop-1',
+    title: 'Активувати поглиблений моніторинг ТОВ "ТЕХНО-ГРУП"',
+    description: 'Виявлено 12 аномальних транзакцій за 48 годин. Рекомендується режим WATCHDOG з оповіщеннями в реальному часі.',
+    type: 'WATCHDOG_ACTIVATION',
+    priority: 'CRITICAL',
+    confidence: 94,
+    affected_entities: ['ТОВ "ТЕХНО-ГРУП"', 'Offshore BVI Ltd.', 'ФОП Коваль О.В.'],
+    estimated_impact: 'HIGH',
+    created_at: new Date(Date.now() - 1800000).toISOString(),
+    status: 'PENDING',
+    ai_reasoning: 'GLM-5.1 виявив патерн обходу санкцій через ланцюжок номінальних власників. Ймовірність: 94%.',
+  },
+  {
+    id: 'prop-2',
+    title: 'Ескалювати алерт по УКТЗЕД 8471 до рівня CRITICAL',
+    description: 'Перевищення порогового значення ризику на 340%. Необхідне ручне підтвердження аналітика.',
+    type: 'ESCALATION',
+    priority: 'HIGH',
+    confidence: 87,
+    affected_entities: ['Сектор електроніки'],
+    estimated_impact: 'MEDIUM',
+    created_at: new Date(Date.now() - 3600000).toISOString(),
+    status: 'PENDING',
+    ai_reasoning: 'Темпоральний аналіз підтверджує нециклічний характер аномалії.',
+  },
+  {
+    id: 'prop-3',
+    title: 'Запустити автоматичне розслідування АТ "ЗАХІД-ІМПОРТ"',
+    description: 'Neo4j граф виявив 4-рівневий ланцюжок офшорних структур. Рекомендується OSINT-аудит.',
+    type: 'AUTO_INVESTIGATION',
+    priority: 'HIGH',
+    confidence: 81,
+    affected_entities: ['АТ "ЗАХІД-ІМПОРТ"', 'Кіпрська холдингова структура'],
+    estimated_impact: 'HIGH',
+    created_at: new Date(Date.now() - 7200000).toISOString(),
+    status: 'APPROVED',
+    ai_reasoning: 'Structural Vault Engine виявив приховану схему контролю.',
+  },
+  {
+    id: 'prop-4',
+    title: 'Оновити профіль ризику по Одеській митниці',
+    description: 'Статистичне відхилення у кластері декларацій значно перевищує норму.',
+    type: 'RISK_RECALIBRATION',
+    priority: 'MEDIUM',
+    confidence: 76,
+    affected_entities: ['Одеська митниця'],
+    estimated_impact: 'LOW',
+    created_at: new Date(Date.now() - 14400000).toISOString(),
+    status: 'PENDING',
+    ai_reasoning: 'Predictive Matrix Engine виявив дрейф базової лінії.',
+  },
+];
+
+app.get('/api/v1/som/status', (req, res) => {
+  const load = 35 + Math.random() * 40;
+  res.json({
+    status: load > 65 ? 'ALERT' : 'SOVEREIGN',
+    mode: 'AUTONOMOUS',
+    uptime_seconds: 512400,
+    uptime_human: '142г 20хв',
+    active_axioms: 24,
+    violated_axioms: 2,
+    active_watchers: 187,
+    anomalies_detected_24h: 48,
+    proposals_pending: 4,
+    last_scan_at: new Date(Date.now() - 45000).toISOString(),
+    engine_load: Math.round(load),
+    self_healing_active: true,
+    vram_usage_gb: 4.2,
+    vram_limit_gb: 5.5,
+    llm_pool: [
+      { model: 'GLM-5.1', status: 'ACTIVE', role: 'Архітектор' },
+      { model: 'Qwen3-Coder', status: 'ACTIVE', role: 'Кодер' },
+      { model: 'Nemotron-MoE', status: 'STANDBY', role: 'Логіка' },
+    ],
+    routing_state: load > 70 ? 'CLOUD' : load > 45 ? 'HYBRID' : 'SOVEREIGN',
+    timestamp: new Date().toISOString(),
+  });
+});
+
+app.get('/api/v1/som/anomalies', (req, res) => {
+  const anomalies = generateSomAnomalies();
+  const { severity, status, limit = 50 } = req.query;
+  let filtered = anomalies;
+  if (severity) filtered = filtered.filter(a => a.severity === severity.toUpperCase());
+  if (status) filtered = filtered.filter(a => a.status === status.toUpperCase());
+  res.json({
+    items: filtered.slice(0, Number(limit)),
+    total: filtered.length,
+    summary: {
+      critical: anomalies.filter(a => a.severity === 'CRITICAL').length,
+      high: anomalies.filter(a => a.severity === 'HIGH').length,
+      medium: anomalies.filter(a => a.severity === 'MEDIUM').length,
+      low: anomalies.filter(a => a.severity === 'LOW').length,
+      active: anomalies.filter(a => a.status === 'ACTIVE').length,
+    },
+    generated_at: new Date().toISOString(),
+  });
+});
+
+app.get('/api/v1/som/proposals', (req, res) => {
+  const proposals = generateSomProposals();
+  res.json({
+    items: proposals,
+    total: proposals.length,
+    pending_count: proposals.filter(p => p.status === 'PENDING').length,
+    generated_at: new Date().toISOString(),
+  });
+});
+
+app.post('/api/v1/som/proposals/:id/execute', (req, res) => {
+  const { id } = req.params;
+  const { actor } = req.body || {};
+  res.json({
+    success: true,
+    proposal_id: id,
+    executed_by: actor || 'SOVEREIGN_AI',
+    executed_at: new Date().toISOString(),
+    message: `Пропозицію ${id} успішно виконано. Система оновлена.`,
+  });
+});
+
+app.post('/api/v1/som/emergency', (req, res) => {
+  const { level, trigger, actor, message } = req.body || {};
+  res.json({
+    success: true,
+    emergency_id: `emrg-${Date.now()}`,
+    level: level || 'HIGH',
+    trigger: trigger || 'MANUAL',
+    activated_by: actor || 'SYSTEM',
+    message: message || 'Аварійний режим активовано',
+    activated_at: new Date().toISOString(),
+    auto_deactivate_after: '4г',
+  });
+});
+
+app.post('/api/v1/som/emergency/deactivate', (req, res) => {
+  const { actor } = req.body || {};
+  res.json({
+    success: true,
+    deactivated_by: actor || 'SYSTEM',
+    deactivated_at: new Date().toISOString(),
+    message: 'Аварійний режим деактивовано. Система повернулась до нормального стану.',
+  });
+});
+
+app.post('/api/v1/som/chaos', (req, res) => {
+  const { intensity = 15 } = req.body || {};
+  res.json({
+    success: true,
+    chaos_id: `chaos-${Date.now()}`,
+    intensity,
+    anomalies_injected: Math.round(intensity * 2.3),
+    duration_seconds: intensity * 10,
+    message: `Chaos Engineering: ін'єктовано ${Math.round(intensity * 2.3)} аномалій з інтенсивністю ${intensity}%`,
+    started_at: new Date().toISOString(),
+  });
+});
+
+app.get('/api/v1/som/shadow/metrics', (req, res) => {
+  res.json({
+    shadow_load: Math.round(15 + Math.random() * 25),
+    latent_anomalies: Math.round(3 + Math.random() * 8),
+    entropy_score: (0.12 + Math.random() * 0.15).toFixed(4),
+    coherence_index: (0.94 + Math.random() * 0.05).toFixed(4),
+    signal_to_noise: (18 + Math.random() * 6).toFixed(2),
+    dark_patterns: Math.round(Math.random() * 4),
+    shadow_nodes: Math.round(5 + Math.random() * 12),
+    timestamp: new Date().toISOString(),
+  });
+});
+
+app.get('/api/v1/som/violations', (req, res) => {
+  res.json({
+    items: [
+      {
+        id: 'viol-1',
+        axiom: 'HR-07: NO SELECT *',
+        severity: 'HIGH',
+        component: 'legacy-report-generator',
+        detected_at: new Date(Date.now() - 7200000).toISOString(),
+        status: 'OPEN',
+        auto_fix_available: true,
+      },
+      {
+        id: 'viol-2',
+        axiom: 'HR-16: WORM TABLE INTEGRITY',
+        severity: 'CRITICAL',
+        component: 'audit_log service',
+        detected_at: new Date(Date.now() - 3600000).toISOString(),
+        status: 'INVESTIGATING',
+        auto_fix_available: false,
+      },
+      {
+        id: 'viol-3',
+        axiom: 'HR-06: NO SECRETS IN CODE',
+        severity: 'CRITICAL',
+        component: 'legacy-connector',
+        detected_at: new Date(Date.now() - 1800000).toISOString(),
+        status: 'OPEN',
+        auto_fix_available: true,
+      },
+    ],
+    total: 3,
+    generated_at: new Date().toISOString(),
+  });
+});
+
+app.post('/api/v1/som/violations/:id/overrule', (req, res) => {
+  const { id } = req.params;
+  const { reason, actor } = req.body || {};
+  res.json({
+    success: true,
+    violation_id: id,
+    overruled_by: actor || 'ADMIN',
+    reason: reason || 'Технічно обґрунтоване виключення',
+    overruled_at: new Date().toISOString(),
+    audit_entry: `OVERRULE:${id}:${actor}:${new Date().toISOString()}`,
+  });
+});
+
+app.post('/api/v1/som/immunity', (req, res) => {
+  const { component, duration, actor } = req.body || {};
+  res.json({
+    success: true,
+    immunity_id: `imm-${Date.now()}`,
+    component: component || 'unknown',
+    duration_hours: duration || 1,
+    granted_by: actor || 'ADMIN',
+    expires_at: new Date(Date.now() + (duration || 1) * 3600000).toISOString(),
+    message: `Імунітет надано компоненту "${component}" на ${duration}г`,
+  });
+});
+
+// =============================================
+// 💰 Finance Module — VaR та Portfolio Risk
+// =============================================
+
+app.post('/api/v1/finance/portfolio-risk/var', (req, res) => {
+  const { portfolio_ids, confidence_level = 0.95, time_horizon = 1 } = req.body || {};
+  const portfolioCount = Array.isArray(portfolio_ids) ? portfolio_ids.length : 3;
+
+  res.json({
+    calculation_id: `var-${Date.now()}`,
+    confidence_level,
+    time_horizon_days: time_horizon,
+    var_usd: Math.round(1200000 + Math.random() * 800000),
+    var_percent: (2.1 + Math.random() * 1.5).toFixed(2),
+    expected_shortfall_usd: Math.round(1800000 + Math.random() * 1200000),
+    expected_shortfall_percent: (3.2 + Math.random() * 2.1).toFixed(2),
+    portfolio_value_usd: Math.round(45000000 + Math.random() * 15000000),
+    portfolios_analyzed: portfolioCount,
+    breakdown: [
+      { sector: 'Електроніка', var_contribution: 32, value_usd: 14400000 },
+      { sector: 'Паливо та енергетика', var_contribution: 28, value_usd: 12600000 },
+      { sector: 'Металургія', var_contribution: 18, value_usd: 8100000 },
+      { sector: 'Фармацевтика', var_contribution: 12, value_usd: 5400000 },
+      { sector: 'Агропромисловість', var_contribution: 10, value_usd: 4500000 },
+    ],
+    risk_factors: [
+      { factor: 'Валютний ризик (USD/UAH)', weight: 0.35, var_impact: 0.42 },
+      { factor: 'Контрагентський ризик', weight: 0.28, var_impact: 0.31 },
+      { factor: 'Ринковий ризик', weight: 0.22, var_impact: 0.19 },
+      { factor: 'Операційний ризик', weight: 0.15, var_impact: 0.08 },
+    ],
+    stress_scenarios: [
+      { name: 'Базовий', var_multiplier: 1.0, probability: 0.65 },
+      { name: 'Несприятливий', var_multiplier: 1.8, probability: 0.25 },
+      { name: 'Екстремальний', var_multiplier: 3.2, probability: 0.10 },
+    ],
+    historical_violations: Math.round(Math.random() * 5),
+    backtesting_accuracy: (95 + Math.random() * 4).toFixed(1),
+    model: 'Historical Simulation (Monte Carlo Hybrid)',
+    calculated_at: new Date().toISOString(),
+  });
+});
+
+app.get('/api/v1/finance/portfolio-risk/history', (req, res) => {
+  const days = 30;
+  res.json({
+    items: Array.from({ length: days }, (_, i) => ({
+      date: new Date(Date.now() - (days - i) * 86400000).toISOString().split('T')[0],
+      var_usd: Math.round(1000000 + Math.random() * 1000000),
+      var_percent: (1.8 + Math.random() * 1.8).toFixed(2),
+      actual_loss: Math.round(Math.random() * 800000),
+      breach: Math.random() < 0.05,
+    })),
+    total: days,
+  });
+});
+
 // Catch-all for any missing endpoints (must be last)
 app.use('/api', (req, res) => {
   console.log(`[MOCK] Unhandled ${req.method} ${req.path}`);
