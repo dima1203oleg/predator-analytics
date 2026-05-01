@@ -33,17 +33,19 @@ async def root():
         "engine": "LangGraph"
     }
 
+from core.orchestrator import run_orchestrator
+
 @app.post("/api/v1/execute")
 async def execute_task(request: AgentRequest):
     """
     Ендпоїнт для запуску завдання через Orchestrator.
     """
     try:
-        # Тут буде виклик orchestrator.run()
+        result = await run_orchestrator(request.task)
         return {
-            "task_id": "temp-id-123",
-            "message": f"Завдання '{request.task}' прийнято до виконання",
-            "status": "queued"
+            "task_id": "real-time-id",
+            "response": result["messages"][-1].content,
+            "status": "completed"
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
