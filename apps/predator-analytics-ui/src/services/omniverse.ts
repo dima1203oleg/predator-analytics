@@ -79,5 +79,10 @@ export const omniverseService = {
   getAlerts: async (): Promise<any[]> => {
     const response = await axios.get(`${API_BASE}/alerts`);
     return response.data.alerts;
+  },
+
+  simulate: async (params: any): Promise<any> => {
+    const response = await axios.post(`${API_BASE}/synergy/simulate`, { params });
+    return response.data;
   }
 };

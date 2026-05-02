@@ -595,3 +595,53 @@ async def list_omniverse_alerts(
     except Exception as e:
         # Якщо таблиці ще немає — повертаємо пустий список
         return {"alerts": []}
+
+@router.get("/synergy/search")
+async def synergy_search(
+    q: str,
+    tenant_id: str = Depends(get_tenant_id),
+    current_user: dict = Depends(get_current_active_user),
+):
+    """Глобальний пошук сутності по всіх доменах Omniverse."""
+    from app.services.omniverse_synergy import OmniverseSynergy
+    synergy = OmniverseSynergy(tenant_id)
+    results = await synergy.find_entity_globally(q)
+    return {"results": results}
+
+@router.post("/synergy/simulate")
+async def synergy_simulate(
+    params: dict,
+    tenant_id: str = Depends(get_tenant_id),
+    current_user: dict = Depends(get_current_active_user),
+):
+    """Симуляція сценаріїв на основі даних Omniverse."""
+    from app.services.ai_service import AIService
+    ai = AIService()
+    
+    prompt = f"""
+    ВИКОНАЙ СТРАТЕГІЧНУ СИМУЛЯЦІЮ (SCENARIO ANALYSIS).
+    ПАРАМЕТРИ: {params}
+    КОНТЕКСТ: Користувач хоче зрозуміти вплив цих змін на бізнес.
+    
+    Зроби прогноз:
+    1. Ймовірні фінансові наслідки.
+    2. Ризики (Supply Chain, Regulatory, Financial).
+    3. Рекомендації щодо дій.
+    
+    ВІДПОВІДЬ ВИКЛЮЧНО УКРАЇНСЬКОЮ МОВОЮ У ФОРМАТІ JSON:
+    {{
+      "forecast": "текст",
+      "risk_impact": 0-100,
+      "recommendations": ["пункт1", "пункт2"]
+    }}
+    """
+    
+    insight = await ai.generate_insight(prompt)
+    import json
+    try:
+        # Спроба парсингу JSON з відповіді AI
+        start = insight.find('{')
+        end = insight.rfind('}') + 1
+        return json.loads(insight[start:end])
+    except:
+        return {"forecast": insight, "risk_impact": 50, "recommendations": []}
