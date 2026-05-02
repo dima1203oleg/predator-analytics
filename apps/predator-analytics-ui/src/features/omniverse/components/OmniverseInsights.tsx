@@ -21,6 +21,7 @@ interface Message {
 export const OmniverseInsights: React.FC = () => {
   const [tables, setTables] = useState<string[]>([]);
   const [selectedTable, setSelectedTable] = useState<string | null>(null);
+  const [mode, setMode] = useState<'CHAT' | 'PREDICT' | 'ANOMALIES'>('CHAT');
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -53,9 +54,20 @@ export const OmniverseInsights: React.FC = () => {
     setLoading(true);
 
     try {
-      const res = await omniverseService.askInsight(selectedTable, input);
-      const assistantMsg: Message = { role: 'assistant', content: res.answer };
-      setMessages(prev => [...prev, assistantMsg]);
+      let res;
+      if (mode === 'PREDICT') {
+        res = await omniverseService.predict(selectedTable, input);
+        const assistantMsg: Message = { role: 'assistant', content: res.prediction };
+        setMessages(prev => [...prev, assistantMsg]);
+      } else if (mode === 'ANOMALIES') {
+        res = await omniverseService.detectAnomalies(selectedTable, input);
+        const assistantMsg: Message = { role: 'assistant', content: res.analysis };
+        setMessages(prev => [...prev, assistantMsg]);
+      } else {
+        res = await omniverseService.askInsight(selectedTable, input);
+        const assistantMsg: Message = { role: 'assistant', content: res.answer };
+        setMessages(prev => [...prev, assistantMsg]);
+      }
     } catch (error: any) {
       const errorMsg: Message = { role: 'assistant', content: `❌ Помилка: ${error.response?.data?.detail || error.message}` };
       setMessages(prev => [...prev, errorMsg]);
@@ -98,24 +110,52 @@ export const OmniverseInsights: React.FC = () => {
         </div>
 
         {/* AI Capabilities Card */}
-        <div className="p-6 bg-gradient-to-br from-blue-900/20 to-purple-900/20 rounded-2xl border border-blue-500/10 flex-1">
-          <div className="flex items-center gap-2 mb-4">
-            <Sparkles className="w-4 h-4 text-blue-400" />
-            <h4 className="text-white font-bold uppercase text-[10px] tracking-widest">Capabilities</h4>
+        <div className="p-6 bg-gradient-to-br from-blue-900/20 to-purple-900/20 rounded-2xl border border-blue-500/10 flex-1 space-y-6">
+          <div className="space-y-3">
+            <h4 className="text-white font-bold uppercase text-[10px] tracking-widest flex items-center gap-2">
+              <Cpu className="w-3 h-3 text-blue-400" /> Analysis Mode
+            </h4>
+            <div className="grid grid-cols-1 gap-2">
+              {[
+                { id: 'CHAT', label: 'Reasoning Chat', icon: Bot },
+                { id: 'PREDICT', label: 'Predictive Trend', icon: Sparkles },
+                { id: 'ANOMALIES', label: 'Anomaly Search', icon: Cpu }
+              ].map(m => (
+                <button
+                  key={m.id}
+                  onClick={() => setMode(m.id as any)}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold transition-all border ${
+                    mode === m.id 
+                      ? 'bg-blue-600 text-white border-blue-400 shadow-lg shadow-blue-600/20' 
+                      : 'bg-white/5 text-white/40 border-transparent hover:bg-white/10'
+                  }`}
+                >
+                  <m.icon size={14} />
+                  {m.label}
+                </button>
+              ))}
+            </div>
           </div>
-          <ul className="space-y-3">
-            {[
-              'Anomaly Detection in Dynamic Sets',
-              'Relationship Extraction (Neo4j)',
-              'Trend Forecasting',
-              'Strategic Risk Assessment'
-            ].map((cap, i) => (
-              <li key={i} className="flex items-center gap-2 text-[11px] text-white/50">
-                <div className="w-1 h-1 bg-blue-500 rounded-full" />
-                {cap}
-              </li>
-            ))}
-          </ul>
+
+          <div className="pt-4 border-t border-white/5">
+            <div className="flex items-center gap-2 mb-4">
+              <Sparkles className="w-4 h-4 text-blue-400" />
+              <h4 className="text-white font-bold uppercase text-[10px] tracking-widest">Active Model</h4>
+            </div>
+            <ul className="space-y-3">
+              {[
+                'Anomaly Detection in Dynamic Sets',
+                'Relationship Extraction (Neo4j)',
+                'Trend Forecasting',
+                'Strategic Risk Assessment'
+              ].map((cap, i) => (
+                <li key={i} className="flex items-center gap-2 text-[11px] text-white/50">
+                  <div className="w-1 h-1 bg-blue-500 rounded-full" />
+                  {cap}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
 

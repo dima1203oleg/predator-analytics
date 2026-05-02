@@ -64,5 +64,15 @@ export const omniverseService = {
   askInsight: async (tableName: string, question: string): Promise<any> => {
     const response = await axios.post(`${API_BASE}/insights/ask`, { table_name: tableName, question });
     return response.data;
+  },
+
+  predict: async (tableName: string, question: string): Promise<any> => {
+    const response = await axios.post(`${API_BASE}/insights/predict`, { table_name: tableName, question });
+    return response.data;
+  },
+
+  detectAnomalies: async (tableName: string, question: string): Promise<any> => {
+    const response = await axios.post(`${API_BASE}/insights/anomalies`, { table_name: tableName, question });
+    return response.data;
   }
 };

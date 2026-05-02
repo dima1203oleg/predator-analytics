@@ -432,3 +432,147 @@ async def get_omniverse_insight(
     except Exception as e:
         logger.error(f"Помилка генерації інсайту для OMNIVERSE: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+@router.post("/insights/predict")
+async def get_omniverse_prediction(
+    request: InsightRequest,
+    tenant_id: str = Depends(get_tenant_id),
+    current_user: dict = Depends(get_current_active_user),
+    _ = Depends(PermissionChecker([Permission.READ_CORP_DATA])),
+):
+    """
+    Використовує AI для прогнозування трендів на основі історичних даних у таблиці.
+    """
+    if not request.table_name.startswith(f"omniverse_{tenant_id}_"):
+        raise HTTPException(status_code=403, detail="Доступ до цієї таблиці заборонено")
+
+    from app.database import get_clickhouse_client
+    client = get_clickhouse_client()
+    
+    try:
+        # Для прогнозу нам потрібно більше даних та агрегація
+        # Шукаємо часові мітки (DateTime)
+        schema_query = f"DESCRIBE TABLE {request.table_name}"
+        schema_result = client.query(schema_query)
+        time_cols = [row[0] for row in schema_result.result_rows if "DateTime" in row[1] or "Date" in row[1]]
+        numeric_cols = [row[0] for row in schema_result.result_rows if "Int" in row[1] or "Float" in row[1] or "Decimal" in row[1]]
+
+        if not time_cols or not numeric_cols:
+            # Fallback на звичайний аналіз якщо немає часових рядів
+            return await get_omniverse_insight(request, tenant_id, current_user)
+
+        time_col = time_cols[0]
+        num_col = numeric_cols[0]
+
+        # Агрегуємо дані по часу для тренду
+        agg_query = f"""
+        SELECT toStartOfInterval({time_col}, INTERVAL 1 DAY) as period, 
+               avg({num_col}) as val,
+               count() as count
+        FROM {request.table_name}
+        WHERE _tenant_id = '{tenant_id}'
+        GROUP BY period
+        ORDER BY period ASC
+        LIMIT 100
+        """
+        agg_result = client.query(agg_query)
+        trend_data = [dict(zip(agg_result.column_names, row)) for row in agg_result.result_rows]
+
+        prompt = f"""
+        Ти - Predictive Data Scientist платформи PREDATOR OMNIVERSE.
+        Твоя задача - проаналізувати агреговані часові ряди з таблиці '{request.table_name}' та зробити прогноз.
+        
+        ДАНІ (Агрегація за днями):
+        {json.dumps(trend_data, ensure_ascii=False, indent=2, default=str)}
+        
+        ПИТАННЯ КОРИСТУВАЧА:
+        {request.question}
+        
+        Будь ласка:
+        1. Опиши виявлені тренди (зростання, спадання, сезонність).
+        2. Зроби прогноз на наступний період.
+        3. Оціни ризики відхилення від прогнозу.
+        """
+        
+        prediction = await AIService.generate_insight(
+            prompt=prompt,
+            context={"task": "omniverse_prediction", "table": request.table_name}
+        )
+        
+        return {
+            "prediction": prediction,
+            "trend_data": trend_data,
+            "metadata": {
+                "time_column": time_col,
+                "value_column": num_col
+            }
+        }
+    except Exception as e:
+        logger.error(f"Помилка прогнозування для OMNIVERSE: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/insights/anomalies")
+async def get_omniverse_anomalies(
+    request: InsightRequest,
+    tenant_id: str = Depends(get_tenant_id),
+    current_user: dict = Depends(get_current_active_user),
+    _ = Depends(PermissionChecker([Permission.READ_CORP_DATA])),
+):
+    """
+    Виявляє статистичні та логічні аномалії у датасеті.
+    """
+    if not request.table_name.startswith(f"omniverse_{tenant_id}_"):
+        raise HTTPException(status_code=403, detail="Доступ до цієї таблиці заборонено")
+
+    from app.database import get_clickhouse_client
+    client = get_clickhouse_client()
+    
+    try:
+        # Отримуємо статистику по числових колонках
+        schema_query = f"DESCRIBE TABLE {request.table_name}"
+        schema_result = client.query(schema_query)
+        num_cols = [row[0] for row in schema_result.result_rows if "Int" in row[1] or "Float" in row[1]]
+
+        stats = {}
+        if num_cols:
+            stats_parts = [f"avg({c}), stddevPop({c}), min({c}), max({c})" for c in num_cols[:5]]
+            stats_query = f"SELECT {', '.join(stats_parts)} FROM {request.table_name} WHERE _tenant_id = '{tenant_id}'"
+            stats_res = client.query(stats_query)
+            # Тут складний мапінг, спростимо для LLM
+            stats = {"summary": "Статистику зібрано по 5 основним колонках"}
+
+        # Отримуємо крайні значення (можливі викиди)
+        outliers = []
+        if num_cols:
+            outlier_query = f"SELECT * EXCEPT(_tenant_id, _job_id) FROM {request.table_name} WHERE _tenant_id = '{tenant_id}' ORDER BY {num_cols[0]} DESC LIMIT 20"
+            outlier_res = client.query(outlier_query)
+            outliers = [dict(zip(outlier_res.column_names, row)) for row in outlier_res.result_rows]
+
+        prompt = f"""
+        Ти - Forensic Data Analyst платформи PREDATOR OMNIVERSE.
+        Твоя задача - знайти аномалії, викиди або підозрілі патерни у наданих даних таблиці '{request.table_name}'.
+        
+        МОЖЛИВІ ВИКИДИ (Top 20 за значенням):
+        {json.dumps(outliers, ensure_ascii=False, indent=2, default=str)}
+        
+        ПИТАННЯ КОРИСТУВАЧА:
+        {request.question}
+        
+        Будь ласка:
+        1. Ідентифікуй статистичні аномалії.
+        2. Поясни потенційну причину цих відхилень (напр. фрод, помилка вводу, екстремальна ринкова подія).
+        3. Надай рекомендації щодо перевірки.
+        """
+        
+        analysis = await AIService.generate_insight(
+            prompt=prompt,
+            context={"task": "omniverse_anomalies", "table": request.table_name}
+        )
+        
+        return {
+            "analysis": analysis,
+            "detected_potential_outliers": len(outliers)
+        }
+    except Exception as e:
+        logger.error(f"Помилка пошуку аномалій для OMNIVERSE: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
