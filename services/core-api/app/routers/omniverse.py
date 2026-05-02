@@ -645,3 +645,48 @@ async def synergy_simulate(
         return json.loads(insight[start:end])
     except:
         return {"forecast": insight, "risk_impact": 50, "recommendations": []}
+
+@router.get("/command/briefing")
+async def get_command_briefing(
+    tenant_id: str = Depends(get_tenant_id),
+    current_user: dict = Depends(get_current_active_user),
+):
+    """Генерує фінальний стратегічний звіт для керівництва."""
+    from app.services.omniverse_briefing import OmniverseBriefing
+    from app.services.ai_service import AIService
+    
+    briefing = OmniverseBriefing(tenant_id)
+    data = await briefing.generate_executive_brief()
+    
+    ai = AIService()
+    prompt = f"""
+    СФОРМУЙ СТРАТЕГІЧНИЙ БРИФІНГ (EXECUTIVE BRIEFING) ДЛЯ ДИРЕКТОРА.
+    ДАНІ: {data}
+    
+    Вимоги:
+    1. Стиль: Лаконічний, діловий, мілітарний.
+    2. Розділи: Стан системи, Ключові загрози, Стратегічні рекомендації.
+    3. Мова: Українська.
+    
+    Поверни відповідь у форматі Markdown.
+    """
+    
+    report_text = await ai.generate_insight(prompt)
+    return {"report": report_text, "data": data}
+
+@router.get("/command/ooda")
+async def get_ooda_loop(
+    tenant_id: str = Depends(get_tenant_id),
+    current_user: dict = Depends(get_current_active_user),
+):
+    """Повертає стан циклу OODA для Omniverse."""
+    # Mock даних для циклу OODA
+    return {
+        "observe": {"status": "ACTIVE", "last_update": "2 mins ago", "focus": "Ingested Datasets"},
+        "orient": {"status": "ACTIVE", "anomalies_detected": 3, "synergies_found": 12},
+        "decide": {"pending_actions": [
+            {"id": "A1", "action": "Перевірити постачальника ТОВ 'Альфа'", "priority": "HIGH"},
+            {"id": "A2", "action": "Зменшити обсяги закупівель у зоні ризику", "priority": "MED"}
+        ]},
+        "act": {"executed_today": 5, "efficiency": "92%"}
+    }

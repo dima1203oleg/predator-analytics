@@ -7,9 +7,10 @@ import { OmniverseGraph } from './components/OmniverseGraph';
 import { OmniverseInsights } from './components/OmniverseInsights';
 import { OmniverseAlerts } from './components/OmniverseAlerts';
 import { OmniverseSimulator } from './components/OmniverseSimulator';
+import { OmniverseOODA } from './components/OmniverseOODA';
 
 const OmniverseHub: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'INGEST' | 'EXPLORE' | 'GRAPH' | 'INSIGHTS' | 'ALERTS' | 'SIMULATE'>('INGEST');
+  const [activeTab, setActiveTab] = useState<'INGEST' | 'EXPLORE' | 'GRAPH' | 'INSIGHTS' | 'ALERTS' | 'SIMULATE' | 'COMMAND'>('INGEST');
 
   const tabs = [
     { id: 'INGEST', label: 'ЗАВАНТАЖЕННЯ', icon: Database, color: 'emerald' },
@@ -18,6 +19,7 @@ const OmniverseHub: React.FC = () => {
     { id: 'INSIGHTS', label: 'AI ІНСАЙТИ', icon: Cpu, color: 'blue' },
     { id: 'ALERTS', label: 'WATCHDOG', icon: ShieldCheck, color: 'red' },
     { id: 'SIMULATE', label: 'СИМУЛЯТОР', icon: Activity, color: 'orange' },
+    { id: 'COMMAND', label: 'COMMAND CENTER', icon: ShieldCheck, color: 'emerald' },
   ];
 
   return (
@@ -155,6 +157,10 @@ const OmniverseHub: React.FC = () => {
 
           {activeTab === 'SIMULATE' && (
             <OmniverseSimulator />
+          )}
+
+          {activeTab === 'COMMAND' && (
+            <OmniverseOODA />
           )}
         </div>
       </main>
