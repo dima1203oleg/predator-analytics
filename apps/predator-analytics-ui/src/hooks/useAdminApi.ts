@@ -20,7 +20,9 @@ const ADMIN_KEYS = {
   systemNodes: ['admin', 'system', 'nodes'] as const,
   aiEngines: ['admin', 'system', 'engines'] as const,
   systemLogs: ['admin', 'system', 'logs'] as const,
+  chaos: ['admin', 'chaos'] as const,
 };
+
 
 // ─── System & AI ─────────────────────────────────────────────────────────────
 
@@ -181,4 +183,25 @@ export function useAdminApi(key: keyof typeof ADMIN_KEYS): any {
   }
 
   return hook();
+}
+
+// ─── Chaos ──────────────────────────────────────────────────────────────────
+
+export function useChaosStatus() {
+  return useQuery({
+    queryKey: ADMIN_KEYS.chaos,
+    queryFn: () => adminApi.chaos.getStatus(),
+    refetchInterval: 5000,
+  });
+}
+
+export function useSetChaosExperiment() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ name, active }: { name: any, active: boolean }) => 
+      adminApi.chaos.setExperiment(name, active),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ADMIN_KEYS.chaos });
+    },
+  });
 }

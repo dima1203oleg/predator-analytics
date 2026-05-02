@@ -124,10 +124,34 @@ const agentCols: VirtualColumn<AgentRow>[] = [
   { 
     key: 'lastActivity',
     label: 'ОСТАННЯ_МАНІПУЛЯЦІЯ',                     
+    width: '180px',
     mono: true, 
     render: (v) => <span className="text-white/10 text-[9px] uppercase italic tracking-tighter font-black">{String(v)}</span> 
   },
+  {
+    key: 'id',
+    label: 'ДІЇ',
+    width: '120px',
+    align: 'right',
+    render: (id) => (
+      <div className="flex items-center justify-end gap-2">
+        <button 
+          title="Restart Agent"
+          className="p-2 bg-white/5 hover:bg-rose-500/20 text-rose-500/40 hover:text-rose-500 rounded-lg transition-all"
+        >
+          <RefreshCw size={12} />
+        </button>
+        <button 
+          title="Kill Process"
+          className="p-2 bg-white/5 hover:bg-rose-600 text-white/20 hover:text-white rounded-lg transition-all"
+        >
+          <XCircle size={12} />
+        </button>
+      </div>
+    )
+  }
 ];
+
 
 const getAgentStatus = (row: AgentRow): RowStatus =>
   row.status === 'alive'    ? 'ok' :

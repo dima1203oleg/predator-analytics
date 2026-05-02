@@ -16,7 +16,7 @@ import { LucideIcon } from 'lucide-react';
 interface TabItem {
   id: string;
   label: string;
-  icon: LucideIcon;
+  icon: React.ElementType;
   category: string;
 }
 

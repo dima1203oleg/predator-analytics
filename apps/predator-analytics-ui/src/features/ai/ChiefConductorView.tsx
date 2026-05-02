@@ -1,161 +1,211 @@
-/**
- * 🛰️ CHIEF CONDUCTOR VIEW // ГЛОБАЛЬНИЙ_ДИрИГЕНТ_v61.0
- * PREDATOR Analytics — Autonomous Orchestration Matrix
- * 
- * Моніторинг LangGraph ланцюжків та управління AGI-задачами.
- * 
- * © 2026 PREDATOR Analytics
- */
-
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Cpu, Zap, GitMerge, Network, Activity, HardDrive, 
   Search, Terminal, Play, Square, RefreshCw, Layers,
-  ListFilter, AlertCircle, CheckCircle2, Orbit
+  ListFilter, AlertCircle, CheckCircle2, Orbit, Clock,
+  Bot, ShieldCheck, Microscope, Database
 } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/utils/cn';
-import { factoryApi } from '@/services/api/factory';
+import { factoryApi, type AntigravityTask } from '@/services/api/factory';
+import { useAgentsStats, useChaosStatus, useSetChaosExperiment } from '@/hooks/useAdminApi';
 
-interface AGITask {
-  id: string;
-  description: string;
-  status: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled';
-  priority: string;
-  progress: number;
-  agent: string;
-  startedAt: string;
-}
+const AGENT_ICON_MAP: Record<string, any> = {
+  orchestrator: Bot,
+  analyst: Network,
+  coder: Terminal,
+  qa: ShieldCheck,
+  researcher: Search,
+  worker: Database,
+  architect: Microscope,
+  surgeon: Zap,
+};
 
-const MOCK_TASKS: AGITask[] = [
-  { id: 'task-001', description: 'Аналіз графу власності ТОВ "Енерго-Плюс"', status: 'running', priority: 'HIGH', progress: 65, agent: 'GraphAnalyst', startedAt: '2026-05-01 12:40:15' },
-  { id: 'task-002', description: 'Рісерч нових санкцій РНБО за 04.2026', status: 'pending', priority: 'MEDIUM', progress: 0, agent: 'NewsAgent', startedAt: '2026-05-01 12:44:00' },
-  { id: 'task-003', description: 'Оптимізація семантичного індексу Qdrant', status: 'completed', priority: 'LOW', progress: 100, agent: 'SystemAgent', startedAt: '2026-05-01 11:30:12' },
-];
+const getStatusColor = (status: string) => {
+  switch (status) {
+    case 'in_progress': return 'text-yellow-500';
+    case 'completed': return 'text-emerald-500';
+    case 'failed': return 'text-rose-500';
+    case 'pending': return 'text-slate-400';
+    default: return 'text-slate-500';
+  }
+};
+
+const getPriorityColor = (priority: string) => {
+  switch (priority.toLowerCase()) {
+    case 'critical': return 'bg-rose-500/20 text-rose-500 border-rose-500/20';
+    case 'high': return 'bg-orange-500/20 text-orange-500 border-orange-500/20';
+    case 'medium': return 'bg-yellow-500/20 text-yellow-500 border-yellow-500/20';
+    default: return 'bg-slate-500/20 text-slate-400 border-slate-500/20';
+  }
+};
 
 export default function ChiefConductorView() {
-  const [tasks, setTasks] = useState<AGITask[]>(MOCK_TASKS);
-  const [isLoading, setIsLoading] = useState(false);
+  const { data: tasks, isLoading: tasksLoading } = useQuery({
+    queryKey: ['antigravity', 'tasks'],
+    queryFn: factoryApi.getAntigravityTasks,
+    refetchInterval: 5000,
+  });
+
+  const { data: agentData, isLoading: agentsLoading } = useAgentsStats();
+  const { data: chaosStatus } = useChaosStatus();
+  const setChaos = useSetChaosExperiment();
+
+  const activeTasksCount = tasks?.filter(t => t.status === 'in_progress' || t.status === 'pending').length || 0;
 
   return (
-    <div className="space-y-8 p-8">
-      <div className="flex items-center justify-between">
-        <div className="space-y-2">
-          <div className="flex items-center gap-3">
-             <Badge className="bg-yellow-500/10 text-yellow-500 border-yellow-500/20 uppercase font-black text-[10px] tracking-widest px-3">
-               AGI_О КЕСТ АЦІЯ
-             </Badge>
-             <div className="h-px w-8 bg-yellow-500/20" />
-             <span className="text-[10px] font-black text-slate-700 uppercase tracking-widest italic">v61.0-ELITE</span>
-          </div>
-          <h2 className="text-4xl font-black text-white uppercase tracking-tighter italic">
-            Chief<span className="text-yellow-500">Conductor</span>
-          </h2>
-          <p className="text-xs text-slate-500 font-black uppercase tracking-[0.4em] italic leading-none">
-            Глобальний координатор автономних агентів та LangGraph-ланцюжків
+    <div className="p-10 space-y-12 bg-slate-950 min-h-screen selection:bg-yellow-500/30">
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+        <div>
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="flex items-center gap-4 mb-3"
+          >
+            <div className="p-3 bg-yellow-500/10 rounded-2xl border border-yellow-500/20">
+              <Orbit className="text-yellow-500 animate-spin-slow" size={24} />
+            </div>
+            <h2 className="text-4xl font-black text-white uppercase tracking-tighter italic">Chief Conductor</h2>
+          </motion.div>
+          <p className="text-slate-500 font-medium text-xs tracking-widest uppercase ml-14">
+            Глобальний AGI-оркестратор автономних циклів розробки
           </p>
         </div>
 
-        <div className="flex gap-4">
-           <button className="px-8 py-4 bg-yellow-700/10 hover:bg-yellow-700 border border-yellow-500/30 text-yellow-400 hover:text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic transition-all flex items-center gap-4">
-              <Zap size={18} /> НОВА_ЗАДАЧА
-           </button>
+        <div className="flex items-center gap-4">
+          <div className="text-right mr-4 hidden sm:block">
+            <div className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Активні задачі</div>
+            <div className="text-2xl font-black text-yellow-500 italic tabular-nums">{activeTasksCount}</div>
+          </div>
+          <button className="flex items-center gap-2 px-6 py-3 bg-yellow-500 text-black font-black rounded-2xl hover:scale-105 active:scale-95 transition-all text-xs uppercase tracking-tighter">
+            <Play size={14} fill="currentColor" /> Нова Задача
+          </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-[1.3fr_0.7fr] gap-8">
-        <div className="space-y-8">
-          <TacticalCard variant="holographic" title="Черга AGI-задач" className="rounded-[40px] border-yellow-500/20 bg-slate-950/50 p-8">
-            <div className="space-y-4">
-               {tasks.map((task, i) => (
-                 <motion.div
-                   key={task.id}
-                   initial={{ opacity: 0, x: -20 }}
-                   animate={{ opacity: 1, x: 0 }}
-                   transition={{ delay: i * 0.1 }}
-                   className="group relative overflow-hidden rounded-[30px] border border-white/5 bg-black/40 hover:bg-white/[0.02] transition-all p-6"
-                 >
-                    <div className="flex items-start gap-8">
-                       <div className={cn(
-                         "p-4 rounded-2xl border flex items-center justify-center transition-all duration-500 shadow-2xl",
-                         task.status === 'running' ? "bg-yellow-500/10 border-yellow-500/20 text-yellow-500 animate-pulse" : "bg-slate-900 border-white/10 text-slate-500"
-                       )}>
-                          {task.status === 'running' ? <Cpu size={24} /> : task.status === 'completed' ? <CheckCircle2 size={24} className="text-emerald-500" /> : <Clock size={24} />}
-                       </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        <div className="lg:col-span-2 space-y-10">
+          <TacticalCard 
+            variant="glass" 
+            title="Очередь AGI-Задач" 
+            className="rounded-[48px] border-white/5 bg-slate-900/40 p-8"
+          >
+            <div className="flex items-center justify-between mb-8 px-4">
+               <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">Синхронізація: Active</span>
+               </div>
+               <div className="flex items-center gap-2">
+                  <button className="p-2 text-slate-500 hover:text-white transition-colors"><ListFilter size={16} /></button>
+                  <button className="p-2 text-slate-500 hover:text-white transition-colors"><RefreshCw size={16} /></button>
+               </div>
+            </div>
 
-                       <div className="flex-1 space-y-4">
-                          <div className="flex justify-between items-start">
-                             <div className="space-y-2">
-                                <div className="flex items-center gap-4">
-                                   <h4 className="text-xl font-black text-white tracking-tight uppercase italic">{task.description}</h4>
-                                   <Badge className={cn(
-                                     "text-[8px] font-black border-none",
-                                     task.priority === 'HIGH' ? "bg-rose-500/20 text-rose-400" : "bg-slate-500/20 text-slate-400"
-                                   )}>{task.priority}</Badge>
-                                </div>
-                                <div className="flex items-center gap-6 text-[9px] font-black text-slate-500 uppercase tracking-widest italic">
-                                   <span className="flex items-center gap-2"><Orbit size={12} /> {task.agent}</span>
-                                   <span className="flex items-center gap-2"><Clock size={12} /> {task.startedAt}</span>
-                                   <span className="font-mono text-slate-700">ID: {task.id}</span>
-                                </div>
-                             </div>
-                             <div className="text-right">
-                                <div className="text-2xl font-black text-white italic tracking-tighter">{task.progress}%</div>
-                                <div className="text-[8px] font-black text-slate-600 uppercase tracking-widest italic mt-1">Виконання</div>
-                             </div>
-                          </div>
+            <div className="space-y-6">
+               <AnimatePresence mode="popLayout">
+               {tasksLoading ? (
+                 <div className="flex flex-col items-center justify-center py-20 text-slate-600 gap-4">
+                    <RefreshCw className="animate-spin" size={32} />
+                    <span className="text-[10px] font-black uppercase tracking-widest italic">Завантаження задач...</span>
+                 </div>
+               ) : tasks?.length === 0 ? (
+                 <div className="text-center py-20 text-slate-600 italic">Задач не виявлено</div>
+               ) : tasks?.map((task) => (
+                  <motion.div 
+                    key={task.task_id}
+                    layout
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    className="p-6 bg-black/40 border border-white/5 rounded-[32px] hover:border-yellow-500/20 transition-all group"
+                  >
+                     <div className="flex items-start justify-between gap-6">
+                        <div className="flex-1 space-y-4">
+                           <div className="flex items-center gap-3">
+                              <Badge variant="outline" className={cn("rounded-lg font-black italic", getPriorityColor(task.priority))}>
+                                 {task.priority.toUpperCase()}
+                              </Badge>
+                              <span className={cn("text-[9px] font-black uppercase tracking-widest italic", getStatusColor(task.status))}>
+                                 {task.status.replace('_', ' ')}
+                              </span>
+                           </div>
+                           
+                           <div>
+                              <h3 className="text-lg font-bold text-white tracking-tight leading-tight mb-2">{task.description}</h3>
+                              <div className="flex items-center gap-6 text-[9px] font-black uppercase tracking-widest text-slate-500 italic">
+                                 <span className="flex items-center gap-2"><Clock size={12} /> {new Date(task.created_at).toLocaleString('uk-UA')}</span>
+                                 <span className="font-mono text-slate-700">ID: {task.task_id}</span>
+                              </div>
+                           </div>
 
-                          <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                             <motion.div 
-                               initial={{ width: 0 }}
-                               animate={{ width: `${task.progress}%` }}
-                               transition={{ duration: 1.5, ease: "easeOut" }}
-                               className={cn(
-                                 "h-full rounded-full shadow-lg",
-                                 task.status === 'running' ? "bg-yellow-500 shadow-yellow-500/50" : "bg-emerald-500 shadow-emerald-500/50"
-                               )}
-                             />
-                          </div>
-                       </div>
+                           <div className="space-y-2">
+                              <div className="flex justify-between items-end">
+                                 <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">
+                                    {task.progress || 'Очікування початку...'}
+                                 </div>
+                                 <div className="text-xl font-black text-white italic tracking-tighter">
+                                    {task.status === 'completed' ? '100%' : task.status === 'in_progress' ? '45%' : '0%'}
+                                 </div>
+                              </div>
+                              <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                                 <motion.div 
+                                   initial={{ width: 0 }}
+                                   animate={{ width: task.status === 'completed' ? '100%' : task.status === 'in_progress' ? '45%' : '0%' }}
+                                   transition={{ duration: 1.5, ease: "easeOut" }}
+                                   className={cn(
+                                     "h-full rounded-full shadow-lg",
+                                     task.status === 'in_progress' ? "bg-yellow-500 shadow-yellow-500/50" : 
+                                     task.status === 'completed' ? "bg-emerald-500 shadow-emerald-500/50" : "bg-slate-700"
+                                   )}
+                                 />
+                              </div>
+                           </div>
+                        </div>
 
-                       <div className="flex flex-col gap-2">
-                          <button className="p-3 bg-white/5 hover:bg-white/10 rounded-xl text-slate-500 hover:text-white transition-all"><Terminal size={16} /></button>
-                          <button className="p-3 bg-white/5 hover:bg-rose-500/20 rounded-xl text-slate-500 hover:text-rose-500 transition-all"><Square size={16} /></button>
-                       </div>
-                    </div>
-                 </motion.div>
+                        <div className="flex flex-col gap-2">
+                           <button className="p-3 bg-white/5 hover:bg-white/10 rounded-xl text-slate-500 hover:text-white transition-all"><Terminal size={16} /></button>
+                           <button className="p-3 bg-white/5 hover:bg-rose-500/20 rounded-xl text-slate-500 hover:text-rose-500 transition-all"><Square size={16} /></button>
+                        </div>
+                     </div>
+                  </motion.div>
                ))}
+               </AnimatePresence>
             </div>
           </TacticalCard>
         </div>
 
         <div className="space-y-8">
-           <TacticalCard variant="holographic" title="Статус Агентів" className="rounded-[40px] border-yellow-500/20 bg-slate-950/50 p-8">
+           <TacticalCard variant="holographic" title="Swarm Registry" className="rounded-[40px] border-yellow-500/20 bg-slate-950/50 p-8">
               <div className="space-y-6">
-                 {[
-                   { name: 'Researcher', status: 'АКТИВНИЙ', load: 45, icon: Search },
-                   { name: 'GraphAnalyst', status: 'ЗАЙНЯТИЙ', load: 88, icon: Network },
-                   { name: 'NewsAgent', status: 'ОЧІКУВАННЯ', load: 12, icon: Layers },
-                   { name: 'SystemAgent', status: 'ОПТИМІЗАЦІЯ', load: 95, icon: HardDrive },
-                 ].map((agent) => (
-                   <div key={agent.name} className="flex items-center justify-between p-5 bg-black/40 border border-white/5 rounded-2xl group hover:border-yellow-500/20 transition-all">
-                      <div className="flex items-center gap-4">
-                         <div className="p-3 bg-slate-900 rounded-xl text-slate-500 group-hover:text-yellow-500 transition-all">
-                            <agent.icon size={20} />
+                 {agentsLoading ? (
+                    <div className="text-center py-10 text-slate-600 animate-pulse italic">Синхронізація реєстру...</div>
+                 ) : agentData?.list?.map((agent: any) => {
+                    const Icon = AGENT_ICON_MAP[agent.type] || Bot;
+                    return (
+                      <div key={agent.id} className="flex items-center justify-between p-5 bg-black/40 border border-white/5 rounded-2xl group hover:border-yellow-500/20 transition-all">
+                         <div className="flex items-center gap-4">
+                            <div className="p-3 bg-slate-900 rounded-xl text-slate-500 group-hover:text-yellow-500 transition-all">
+                               <Icon size={20} />
+                            </div>
+                            <div>
+                               <div className="text-[11px] font-black text-white uppercase tracking-widest">{agent.name}</div>
+                               <div className={cn(
+                                 "text-[8px] font-black uppercase tracking-widest mt-0.5",
+                                 agent.status === 'alive' ? "text-emerald-500" : "text-slate-500"
+                               )}>{agent.status === 'alive' ? 'ACTIVE' : 'IDLE'}</div>
+                            </div>
                          </div>
-                         <div>
-                            <div className="text-[11px] font-black text-white uppercase tracking-widest">{agent.name}</div>
-                            <div className="text-[8px] font-black text-emerald-500 uppercase tracking-widest mt-0.5">{agent.status}</div>
+                         <div className="text-right">
+                            <div className="text-lg font-black text-slate-300 italic tabular-nums">{agent.cpu}%</div>
+                            <div className="text-[7px] font-black text-slate-700 uppercase tracking-widest">CPU LOAD</div>
                          </div>
                       </div>
-                      <div className="text-right">
-                         <div className="text-lg font-black text-slate-300 italic">{agent.load}%</div>
-                         <div className="text-[7px] font-black text-slate-700 uppercase tracking-widest">VRAM</div>
-                      </div>
-                   </div>
-                 ))}
+                    );
+                 })}
               </div>
            </TacticalCard>
 
@@ -163,18 +213,50 @@ export default function ChiefConductorView() {
               <div className="flex items-center gap-5 mb-6">
                  <div className="p-3 bg-yellow-600/20 rounded-2xl text-yellow-500">
                     <Activity size={20} />
-                 </div>
-                 <h4 className="text-lg font-black text-white uppercase tracking-tighter italic">LangGraph Flow</h4>
+                  </div>
+                  <h4 className="text-lg font-black text-white uppercase tracking-tighter italic">OODA Telemetry</h4>
               </div>
               <div className="space-y-3">
-                 <div className="text-xs text-slate-400 italic">Активний ланцюжок:</div>
+                 <div className="text-xs text-slate-400 italic">Ланцюжок рішення:</div>
                  <div className="p-4 bg-black/60 rounded-2xl border border-white/5 font-mono text-[10px] text-yellow-500/80">
-                    node:start -> agent:researcher -> node:judge -> agent:fixer -> node:end
+                    {"planner -> agent:surgeon -> council:review -> git:push -> node:end"}
                  </div>
                  <div className="flex justify-between items-center text-[9px] font-black text-slate-700 uppercase tracking-widest mt-4">
-                    <span>Токени: 14.5k</span>
-                    <span>Вартість: $0.12</span>
+                    <span>VRAM: {agentData?.stats?.usedVram || '0'} / {agentData?.stats?.totalVram || '0'} GB</span>
+                    <span>Nodes: {agentData?.stats?.alive || '0'}</span>
                  </div>
+              </div>
+           </TacticalCard>
+
+           <TacticalCard variant="glass" title="Chaos Scenario" className="p-8 rounded-[36px] bg-rose-600/5 border-rose-500/10">
+              <div className="flex items-center gap-5 mb-6">
+                 <div className="p-3 bg-rose-600/20 rounded-2xl text-rose-500">
+                    <Zap size={20} />
+                 </div>
+                 <h4 className="text-lg font-black text-white uppercase tracking-tighter italic">Хаос-Експерименти</h4>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                 {[
+                   { id: 'db_latency', label: 'DB Latency' },
+                   { id: 'cache_failure', label: 'Cache Fail' },
+                   { id: 'random_errors', label: '500 Errors' },
+                   { id: 'llm_hallucination', label: 'LLM Halluc' },
+                   { id: 'agent_timeout', label: 'Timeout' },
+                   { id: 'overheat_simulation', label: 'Overheat' },
+                 ].map((exp) => (
+                   <button 
+                     key={exp.id}
+                     onClick={() => setChaos.mutate({ name: exp.id, active: !chaosStatus?.[exp.id as any] })}
+                     className={cn(
+                       "p-3 rounded-xl border text-[9px] font-black uppercase tracking-widest transition-all text-center",
+                       chaosStatus?.[exp.id as any] 
+                         ? "bg-rose-500 text-white border-rose-400 shadow-[0_0_15px_rgba(225,29,72,0.4)]" 
+                         : "bg-black/40 text-slate-500 border-white/5 hover:border-rose-500/30"
+                     )}
+                   >
+                     {exp.label}
+                   </button>
+                 ))}
               </div>
            </TacticalCard>
         </div>

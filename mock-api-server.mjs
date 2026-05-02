@@ -6574,6 +6574,142 @@ app.get('/api/v1/finance/portfolio-risk/history', (req, res) => {
   });
 });
 
+// =============================================
+// 🛡️ Admin & Infrastructure v2
+// =============================================
+
+// GET /api/v2/admin/agents
+app.get('/api/v2/admin/agents', (req, res) => {
+  res.json({
+    stats: {
+      total: 12,
+      alive: 10,
+      dead: 0,
+      idle: 2,
+      avgCpu: 14.2,
+      avgMem: 8.5,
+      totalVram: 45.2,
+      usedVram: 18.4
+    },
+    list: [
+      { id: 'agt-1', name: 'ChiefConductor', status: 'alive', type: 'orchestrator', cpu: 1.2, ram: 5, queueDepth: 2, successRate: 99.8, tasksTotal: 14500, model: 'GLM-5.1-Elite', lastActivity: '2ms ago' },
+      { id: 'agt-2', name: 'NeuralAnalyst-01', status: 'alive', type: 'analyst', cpu: 25.4, ram: 42, queueDepth: 15, successRate: 96.4, tasksTotal: 84200, model: 'Nemotron-Cascade-30B', lastActivity: '14ms ago' },
+      { id: 'agt-3', name: 'SurgicalCoder-Alpha', status: 'alive', type: 'coder', cpu: 12.1, ram: 21, queueDepth: 0, successRate: 94.2, tasksTotal: 12400, model: 'Qwen3-Coder-Next', lastActivity: '1s ago' },
+      { id: 'agt-4', name: 'QABrowser-Prime', status: 'idle', type: 'qa', cpu: 0.1, ram: 5, queueDepth: 0, successRate: 100, tasksTotal: 4500, model: 'Gemini-1.5-Flash', lastActivity: '5m ago' },
+      { id: 'agt-5', name: 'IngestionGuardian', status: 'alive', type: 'worker', cpu: 5.6, ram: 12, queueDepth: 145, successRate: 99.1, tasksTotal: 1024000, model: 'Mistral-Nemo', lastActivity: '500ms ago' },
+    ]
+  });
+});
+
+let chaosExperiments = {
+  db_latency: false,
+  cache_failure: false,
+  random_errors: false,
+  llm_hallucination: false,
+  agent_timeout: false,
+  overheat_simulation: false,
+  mcp_throttle: false,
+  context_overflow: false
+};
+
+// GET /api/v2/admin/chaos
+app.get('/api/v2/admin/chaos', (req, res) => {
+  res.json(chaosExperiments);
+});
+
+// POST /api/v2/admin/chaos
+app.post('/api/v2/admin/chaos', (req, res) => {
+  const { name, active } = req.body;
+  if (chaosExperiments.hasOwnProperty(name)) {
+    chaosExperiments[name] = active;
+    console.log(`💥 Chaos Experiment '${name}' set to ${active}`);
+    res.json({ success: true, name, active });
+  } else {
+    res.status(400).json({ error: 'Invalid experiment name' });
+  }
+});
+
+// GET /api/v2/agents/ooda
+app.get('/api/v2/agents/ooda', (req, res) => {
+  const senders = ['ORCHESTRATOR', 'GRAPH_ANALYST', 'RESEARCHER', 'SYS_ADMIN', 'PLANNER', 'REPORTER'];
+  const baseMessages = [
+    "Аналіз вхідного графа завершено. Виявлено 5 нових вузлів.",
+    "Виконання пошуку в Qdrant: 'митна аналітика 2024'",
+    "Оновлення стану LangGraph: крок 4/12",
+    "Валідація WORM-запису: 0x4f2a... успішно",
+    "Оптимізація пам'яті: очищено 120МБ крізь LRU",
+    "Виклик інструменту: git_blame (core-api/main.py)"
+  ];
+  
+  const chaosMessages = [];
+  if (chaosExperiments.llm_hallucination) chaosMessages.push("HALLUCINATION: Виявлено неіснуючий офшор на Місяці.");
+  if (chaosExperiments.agent_timeout) chaosMessages.push("TIMEOUT: Агент Researcher не відповів за 60с.");
+  if (chaosExperiments.mcp_throttle) chaosMessages.push("MCP_THROTTLE: Ліміт викликів інструментів вичерпано. Чекаю...");
+  
+  const messages = chaosExperiments.random_errors ? ["INTERNAL_SERVER_ERROR: 500"] : [...baseMessages, ...chaosMessages];
+  const randomMsg = messages[Math.floor(Math.random() * messages.length)];
+  const sender = senders[Math.floor(Math.random() * senders.length)];
+  
+  res.json({
+    id: Math.random().toString(36).substring(7),
+    timestamp: new Date().toLocaleTimeString(),
+    sender,
+    message: randomMsg,
+    type: randomMsg.includes('ERROR') || randomMsg.includes('TIMEOUT') || randomMsg.includes('500') ? 'error' : 'info'
+  });
+});
+
+
+
+// GET /api/v2/admin/infra/telemetry
+app.get('/api/v2/admin/infra/telemetry', (req, res) => {
+  res.json({
+    timestamp: new Date().toISOString(),
+    nodes: [
+      { id: 'imac-sentinel', status: 'online', role: 'Compute Node', cpu: 45, mem: 62, gpu_usage: 12, disk: 45, uptime: '15d 4h' },
+      { id: 'nvidia-server', status: 'online', role: 'Cloud Fallback', cpu: 12, mem: 24, gpu_usage: 85, disk: 12, uptime: '42d 12h' },
+      { id: 'macbook-terminal', status: 'online', role: 'IDE / Terminal', cpu: 8, mem: 48, gpu_usage: 0, disk: 82, uptime: '4h 12m' }
+    ],
+    networks: [
+      { name: 'zrok-sentinel-tunnel', status: 'active', latency: 45, throughput: '120Mbps' },
+      { name: 'internal-mesh', status: 'active', latency: 1, throughput: '10Gbps' }
+    ],
+    critical_alerts: []
+  });
+});
+
+// GET /api/v2/admin/gitops
+app.get('/api/v2/admin/gitops', (req, res) => {
+  res.json({
+    status: 'synced',
+    last_sync: new Date(Date.now() - 300000).toISOString(),
+    commit_sha: 'e5f6g7h8',
+    branch: 'main',
+    repository: 'predator-analytics-core',
+    pending_changes: 0,
+    history: [
+      { id: 'c1', sha: 'e5f6g7h8', message: 'feat(core): stabilize autonomous factory layer', author: 'ChiefConductor', timestamp: new Date(Date.now() - 300000).toISOString() },
+      { id: 'c2', sha: 'a1b2c3d4', message: 'fix(ui): resolve VRAM guard false positives', author: 'SurgicalCoder-Alpha', timestamp: new Date(Date.now() - 3600000).toISOString() }
+    ]
+  });
+});
+
+// GET /api/v2/admin/dataops
+app.get('/api/v2/admin/dataops', (req, res) => {
+  res.json({
+    status: 'optimal',
+    last_run: new Date(Date.now() - 600000).toISOString(),
+    throughput: '1.2M events/s',
+    error_rate: 0.001,
+    storage: {
+      clickhouse: '12.4TB',
+      postgres: '450GB',
+      opensearch: '2.1TB',
+      minio: '45.2TB'
+    }
+  });
+});
+
 // Catch-all for any missing endpoints (must be last)
 app.use('/api', (req, res) => {
   console.log(`[MOCK] Unhandled ${req.method} ${req.path}`);

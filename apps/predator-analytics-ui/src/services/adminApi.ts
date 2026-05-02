@@ -67,6 +67,8 @@ export interface AgentStats {
     dead: number;
     idle: number;
     avgCpu: number;
+    totalVram?: number;
+    usedVram?: number;
   };
   list: any[];
 }
@@ -102,6 +104,17 @@ export interface DatasetRecord {
   status: 'ready' | 'training' | 'outdated' | 'draft';
   updatedAt: string;
 }
+
+export type ChaosExperimentName = 
+  | 'db_latency' 
+  | 'cache_failure' 
+  | 'random_errors' 
+  | 'llm_hallucination' 
+  | 'agent_timeout' 
+  | 'overheat_simulation';
+
+export type ChaosStatus = Record<ChaosExperimentName, boolean>;
+
 
 export interface FactoryModule {
   id: string;
@@ -219,6 +232,14 @@ export const adminApi = {
   gitops: {
     getStatus: async (): Promise<GitOpsStatus> => {
       return (await v2Client.get<GitOpsStatus>('/admin/gitops')).data;
+    },
+  },
+  chaos: {
+    getStatus: async (): Promise<ChaosStatus> => {
+      return (await v2Client.get<ChaosStatus>('/admin/chaos')).data;
+    },
+    setExperiment: async (name: ChaosExperimentName, active: boolean): Promise<any> => {
+      return (await v2Client.post('/admin/chaos', { name, active })).data;
     },
   },
   failover: {

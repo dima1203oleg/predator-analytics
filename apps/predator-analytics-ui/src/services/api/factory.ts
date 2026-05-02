@@ -1,5 +1,27 @@
 import { apiClient, v45Client } from './config';
 
+export interface AntigravitySubtask {
+  id: string;
+  agent_type: string;
+  description: string;
+  status: 'pending' | 'in_progress' | 'completed' | 'failed';
+  started_at: string | null;
+  completed_at: string | null;
+}
+
+export interface AntigravityTask {
+  task_id: string;
+  description: string;
+  status: 'pending' | 'in_progress' | 'completed' | 'failed' | 'cancelled';
+  priority: 'low' | 'medium' | 'high' | 'critical';
+  created_at: string;
+  updated_at: string;
+  progress: string | null;
+  spent_usd: number | null;
+  max_budget_usd: number | null;
+  subtasks: AntigravitySubtask[];
+}
+
 /**
  * API клієнт для Фабрики Автоматизації та Knowledge Map.
  * Підключає ендпоінти з Factory Core Engine + Neural Training.
