@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Database, Search, Share2, Activity, ShieldCheck, Cpu } from 'lucide-react';
 import { OmniverseIngestion } from './components/OmniverseIngestion';
+import { OmniverseExplorer } from './components/OmniverseExplorer';
+import { OmniverseGraph } from './components/OmniverseGraph';
+import { OmniverseInsights } from './components/OmniverseInsights';
 
 const OmniverseHub: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'INGEST' | 'EXPLORE' | 'GRAPH' | 'INSIGHTS'>('INGEST');
@@ -131,27 +134,15 @@ const OmniverseHub: React.FC = () => {
           )}
 
           {activeTab === 'EXPLORE' && (
-            <div className="flex flex-col items-center justify-center h-full text-center space-y-4 opacity-50">
-              <Search className="w-20 h-20 text-cyan-400 animate-pulse" />
-              <h2 className="text-3xl font-black text-white italic">UNIVERSAL EXPLORER</h2>
-              <p className="text-cyan-400/70 font-mono">DYNAMIC DATA GRID SYSTEM UNDER CONSTRUCTION</p>
-            </div>
+            <OmniverseExplorer />
           )}
 
           {activeTab === 'GRAPH' && (
-            <div className="flex flex-col items-center justify-center h-full text-center space-y-4 opacity-50">
-              <Share2 className="w-20 h-20 text-purple-400 animate-pulse" />
-              <h2 className="text-3xl font-black text-white italic">ONTOLOGY GRAPH</h2>
-              <p className="text-purple-400/70 font-mono">CYTOSCAPE.JS INTEGRATION IN PROGRESS</p>
-            </div>
+            <OmniverseGraph />
           )}
 
           {activeTab === 'INSIGHTS' && (
-            <div className="flex flex-col items-center justify-center h-full text-center space-y-4 opacity-50">
-              <Cpu className="w-20 h-20 text-blue-400 animate-pulse" />
-              <h2 className="text-3xl font-black text-white italic">AI ADVISOR</h2>
-              <p className="text-blue-400/70 font-mono">REASONING ENGINE COUPLING IN PROGRESS</p>
-            </div>
+            <OmniverseInsights />
           )}
         </div>
       </main>

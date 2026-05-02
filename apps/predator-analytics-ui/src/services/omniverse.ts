@@ -39,5 +39,30 @@ export const omniverseService = {
   startIngestion: async (data: IngestionRequest): Promise<{ job_id: string; status: string }> => {
     const response = await axios.post(`${API_BASE}/ingest`, data);
     return response.data;
+  },
+
+  getTables: async (): Promise<string[]> => {
+    const response = await axios.get(`${API_BASE}/tables`);
+    return response.data.tables;
+  },
+
+  getTableSchema: async (tableName: string): Promise<any> => {
+    const response = await axios.get(`${API_BASE}/table/${tableName}/schema`);
+    return response.data;
+  },
+
+  queryTable: async (tableName: string, params: { limit?: number; offset?: number; filters?: any }): Promise<any> => {
+    const response = await axios.post(`${API_BASE}/table/${tableName}/query`, params);
+    return response.data;
+  },
+
+  getGraph: async (): Promise<{ nodes: any[]; edges: any[] }> => {
+    const response = await axios.get(`${API_BASE}/graph`);
+    return response.data;
+  },
+
+  askInsight: async (tableName: string, question: string): Promise<any> => {
+    const response = await axios.post(`${API_BASE}/insights/ask`, { table_name: tableName, question });
+    return response.data;
   }
 };
