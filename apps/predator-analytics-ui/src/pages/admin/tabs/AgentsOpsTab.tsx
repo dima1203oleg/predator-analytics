@@ -3,7 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Bot, Cpu, MemoryStick, Clock, CheckCircle, XCircle, MinusCircle, RefreshCw, Zap, Shield, Globe, Activity, Server, Database } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { VirtualTable, VirtualColumn, RowStatus } from '@/components/shared/VirtualTable';
-import { useAgentsStats } from '@/hooks/useAdminApi';
+import { useAgentsStats, useExecuteAction } from '@/hooks/useAdminApi';
+
 import { Loader2 } from 'lucide-react';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
@@ -24,135 +25,6 @@ interface AgentRow {
   model: string;
 }
 
-// ─── Колонки ──────────────────────────────────────────────────────────────────
-
-const agentCols: VirtualColumn<AgentRow>[] = [
-  { 
-    key: 'name',        
-    label: 'ШІ_ОПЕ АТО _ELITE',         
-    width: '250px', 
-    mono: true, 
-    render: (v) => (
-      <div className="flex items-center gap-4">
-        <div className="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_10px_rgba(225,29,72,1)]" />
-        <span className="font-black tracking-tight uppercase italic text-white glint-elite">{String(v)}</span>
-      </div>
-    )
-  },
-  {
-    key: 'status',      label: 'СТАТУС_ВУЗЛА',         width: '140px',
-    render: (v) => {
-      const s = String(v);
-      const map: Record<string, string> = {
-        alive:    'text-rose-500',
-        dead:     'text-white/20',
-        idle:     'text-amber-500',
-        starting: 'text-sky-400',
-      };
-      const labelMap: Record<string, string> = {
-        alive:    'АКТИВНИЙ',
-        dead:     'ТЕ МІНОВАНО',
-        idle:     'ОЧІКУВАННЯ',
-        starting: 'ІНІЦІАЛІЗАЦІЯ',
-      };
-      return (
-        <div className={cn('text-[10px] font-black tracking-[0.2em] flex items-center gap-3 italic uppercase', map[s])}>
-          <div className={cn("w-2 h-2 rounded-full animate-pulse shadow-[0_0_8px_currentColor]", s === 'alive' ? 'bg-rose-500' : 'bg-current')} />
-          {labelMap[s] || s.toUpperCase()}
-        </div>
-      );
-    },
-  },
-  {
-    key: 'cpu',         label: 'CPU_ТИСК',           width: '100px',  mono: true, align: 'right',
-    render: (v) => {
-      const n = Number(v);
-      return <span className={cn("font-black italic text-[11px]", n > 80 ? 'text-rose-500 animate-pulse' : n > 60 ? 'text-amber-400' : 'text-emerald-500/80')}>{n}%</span>;
-    },
-  },
-  {
-    key: 'ram',         label: 'VRAM_ПАМ\'ЯТЬ',           width: '100px',  mono: true, align: 'right',
-    render: (v) => {
-      const n = Number(v);
-      return <span className={cn("font-black italic text-[11px]", n > 80 ? 'text-rose-500 animate-pulse shadow-rose-500/20' : n > 60 ? 'text-amber-400' : 'text-sky-500/80')}>{n}%</span>;
-    },
-  },
-  {
-    key: 'queueDepth',  label: 'СТЕК_ЗАВДАНЬ',          width: '120px',  mono: true, align: 'right',
-    render: (v) => {
-      const n = Number(v);
-      return (
-        <div className="flex items-center justify-end gap-2">
-          <Database size={10} className="text-white/20" />
-          <span className={cn("font-black italic text-[11px]", n > 50 ? 'text-amber-400' : 'text-white/40')}>{n}</span>
-        </div>
-      );
-    },
-  },
-  {
-    key: 'successRate', label: 'ЕФЕКТИВНІСТЬ',      width: '140px',  mono: true, align: 'right',
-    render: (v) => {
-      const n = Number(v);
-      return (
-        <div className="flex items-center justify-end gap-2">
-          {n >= 95 && <Zap size={10} className="text-emerald-500 animate-pulse" />}
-          <span className={cn("font-black italic text-[11px]", n === 0 ? 'text-white/10' : n < 95 ? 'text-amber-400' : 'text-emerald-500')}>{n > 0 ? `${n}%` : '—'}</span>
-        </div>
-      );
-    },
-  },
-  { 
-    key: 'tasksTotal',  
-    label: 'А ТЕФАКТИ',        
-    width: '120px',  
-    mono: true, 
-    align: 'right', 
-    render: (v) => <span className="text-white/60 font-black italic text-[11px]">{Number(v).toLocaleString()}</span> 
-  },
-  { 
-    key: 'model',       
-    label: 'ЯДРО_LLM_V61',         
-    width: '220px', 
-    mono: true, 
-    render: (v) => (
-      <div className="flex items-center gap-3">
-        <Activity size={12} className="text-rose-500/30" />
-        <span className="text-white/20 text-[10px] uppercase font-black italic tracking-widest">{String(v)}</span>
-      </div>
-    )
-  },
-  { 
-    key: 'lastActivity',
-    label: 'ОСТАННЯ_МАНІПУЛЯЦІЯ',                     
-    width: '180px',
-    mono: true, 
-    render: (v) => <span className="text-white/10 text-[9px] uppercase italic tracking-tighter font-black">{String(v)}</span> 
-  },
-  {
-    key: 'id',
-    label: 'ДІЇ',
-    width: '120px',
-    align: 'right',
-    render: (id) => (
-      <div className="flex items-center justify-end gap-2">
-        <button 
-          title="Restart Agent"
-          className="p-2 bg-white/5 hover:bg-rose-500/20 text-rose-500/40 hover:text-rose-500 rounded-lg transition-all"
-        >
-          <RefreshCw size={12} />
-        </button>
-        <button 
-          title="Kill Process"
-          className="p-2 bg-white/5 hover:bg-rose-600 text-white/20 hover:text-white rounded-lg transition-all"
-        >
-          <XCircle size={12} />
-        </button>
-      </div>
-    )
-  }
-];
-
-
 const getAgentStatus = (row: AgentRow): RowStatus =>
   row.status === 'alive'    ? 'ok' :
   row.status === 'dead'     ? 'danger' :
@@ -162,6 +34,91 @@ const getAgentStatus = (row: AgentRow): RowStatus =>
 
 export const AgentsOpsTab: React.FC = () => {
   const { data, isLoading, isError } = useAgentsStats();
+  const executeAction = useExecuteAction();
+
+  const handleAction = async (agentId: string, action: string) => {
+    await executeAction.mutateAsync({ agentId, action });
+  };
+
+  const agentCols: VirtualColumn<AgentRow>[] = [
+    { 
+      key: 'name',        
+      label: 'ШІ_ОПЕ АТО _ELITE',         
+      width: '250px', 
+      mono: true, 
+      render: (v) => (
+        <div className="flex items-center gap-4">
+          <div className="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_10px_rgba(225,29,72,1)]" />
+          <span className="font-black tracking-tight uppercase italic text-white glint-elite">{String(v)}</span>
+        </div>
+      )
+    },
+    { 
+      key: 'status',      
+      label: 'СТАТУС_ЯД А',          
+      width: '160px', 
+      render: (s: any) => {
+        const map: Record<string, string> = {
+          alive:    'text-rose-500',
+          dead:     'text-white/20',
+          idle:     'text-amber-400',
+          starting: 'text-sky-400',
+        };
+        const labelMap: Record<string, string> = {
+          alive:    'АКТИВНИЙ',
+          dead:     'ТЕ МІНОВАНО',
+          idle:     'ОЧІКУВАННЯ',
+          starting: 'ІНІЦІАЛІЗАЦІЯ',
+        };
+        return (
+          <div className={cn('text-[10px] font-black tracking-[0.2em] flex items-center gap-3 italic uppercase', map[s])}>
+            <div className={cn("w-2 h-2 rounded-full animate-pulse shadow-[0_0_8px_currentColor]", s === 'alive' ? 'bg-rose-500' : 'bg-current')} />
+            {labelMap[s] || s.toUpperCase()}
+          </div>
+        );
+      },
+    },
+    {
+      key: 'cpu',         label: 'CPU_ТИСК',           width: '100px',  mono: true, align: 'right',
+      render: (v) => {
+        const n = Number(v);
+        return <span className={cn("font-black italic text-[11px]", n > 80 ? 'text-rose-500 animate-pulse' : n > 60 ? 'text-amber-400' : 'text-emerald-500/80')}>{n}%</span>;
+      },
+    },
+    {
+      key: 'ram',         label: 'VRAM_ПАМ\'ЯТЬ',           width: '100px',  mono: true, align: 'right',
+      render: (v) => {
+        const n = Number(v);
+        return <span className={cn("font-black italic text-[11px]", n > 80 ? 'text-rose-500 animate-pulse shadow-rose-500/20' : n > 60 ? 'text-amber-400' : 'text-sky-500/80')}>{n}%</span>;
+      },
+    },
+    {
+      key: 'id',
+      label: 'ДІЇ',
+      width: '120px',
+      align: 'right',
+      render: (id) => (
+        <div className="flex items-center justify-end gap-2">
+          <button 
+            title="Restart Agent"
+            onClick={() => handleAction(id as string, 'restart')}
+            disabled={executeAction.isPending}
+            className="p-2 bg-white/5 hover:bg-rose-500/20 text-rose-500/40 hover:text-rose-500 rounded-lg transition-all disabled:opacity-30"
+          >
+            <RefreshCw size={12} className={cn(executeAction.isPending && "animate-spin")} />
+          </button>
+          <button 
+            title="Kill Process"
+            onClick={() => handleAction(id as string, 'kill')}
+            disabled={executeAction.isPending}
+            className="p-2 bg-white/5 hover:bg-rose-600 text-white/20 hover:text-white rounded-lg transition-all disabled:opacity-30"
+          >
+            <XCircle size={12} />
+          </button>
+        </div>
+      )
+    }
+  ];
 
   if (isLoading) {
     return (
@@ -199,7 +156,8 @@ export const AgentsOpsTab: React.FC = () => {
     );
   }
 
-  const { stats, list: agents } = data;
+  const { health: stats, agents } = data || { health: { total: 0 }, agents: [] };
+
 
   return (
     <div className="p-12 space-y-16 max-w-[1700px] mx-auto relative">
@@ -218,7 +176,8 @@ export const AgentsOpsTab: React.FC = () => {
         <div className="flex items-center gap-8 text-[11px] font-black font-mono text-white/30 tracking-[0.2em] uppercase italic">
           <div className="flex items-center gap-3">
             <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_15px_rgba(16,185,129,0.8)]" />
-            <span className="text-emerald-500/80">ЗДОРОВ'Я_ ОЮ: {stats.total > 0 ? Math.round((stats.alive / stats.total) * 100) : 0}%</span>
+            <span className="text-emerald-500/80">ЗДОРОВ'Я_ ОЮ: {stats?.total || 0}%</span>
+
           </div>
           <span className="opacity-20">•</span>
           <div className="flex items-center gap-3">

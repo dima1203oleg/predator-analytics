@@ -255,8 +255,17 @@ let systemState = {
         "[ACT] Запущено процес патчування mapper.py..."
       ]
     }
+  },
+  chaos: {
+    db_latency: false,
+    cache_failure: false,
+    random_errors: false,
+    llm_hallucination: false,
+    agent_timeout: false,
+    overheat_simulation: false
   }
 };
+
 
 // ─── Допоміжні функції ───────────────────────────────────────────────────────
 
@@ -687,10 +696,28 @@ const server = http.createServer((req, res) => {
     return sendJSON(res, []);
   }
 
-  // 19. Chaos Engineering
+  // 19. Chaos Engineering (v61.0-ELITE)
+  if (path === '/api/v2/admin/chaos' && req.method === 'GET') {
+    return sendJSON(res, systemState.chaos);
+  }
+
+  if (path === '/api/v2/admin/chaos' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', () => {
+      const { name, active } = JSON.parse(body);
+      if (name in systemState.chaos) {
+        systemState.chaos[name] = active;
+      }
+      sendJSON(res, { success: true, name, active });
+    });
+    return;
+  }
+
   if (path.startsWith('/api/v1/factory/chaos/launch') && req.method === 'POST') {
     return sendJSON(res, { status: 'launched', scenario: 'test' });
   }
+
 
   // 20. Other missing endpoints
   if (path === '/api/v1/factory/patterns' && req.method === 'GET') {
