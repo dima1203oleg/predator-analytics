@@ -175,7 +175,7 @@ let systemState = {
       status: 'ok',
       healthy: true,
       overall_status: 'ЗДОРОВИЙ',
-      version: 'v56.5-ELITE',
+      version: 'v63.0-ELITE',
       environment: 'продакшн',
       uptime: '12д 4г 21хв',
       last_sync: new Date().toISOString(),
@@ -802,6 +802,35 @@ const server = http.createServer((req, res) => {
 
   if (path === '/api/v1/gitops/incidents/active' && req.method === 'GET') {
       return sendJSON(res, []);
+  }
+
+  // 21. War-gaming Horizon (v63.0-ELITE)
+  if (path === '/api/v1/wargaming/scenarios' && req.method === 'GET') {
+    return sendJSON(res, [
+      { id: 'WAR-01', name: 'Зрив зернового коридору', probability: 45, impact: 'High', description: 'Зупинка експорту через порти Одеси. Очікуваний дефіцит валютної виручки.', triggers: ['Блокада портів', 'Ріст фрахту'] },
+      { id: 'WAR-02', name: 'Енергетичний шантаж', probability: 60, impact: 'High', description: 'Дефіцит пального через атаки на нафтобази. Ріст імпорту генераторів.', triggers: ['Ціна нафти > $95', 'Атаки на енергосистему'] },
+      { id: 'WAR-03', name: 'Кібер-атака на митну базу', probability: 30, impact: 'Critical', description: 'Повна зупинка оформлення на кордоні. Колапс логістики.', triggers: ['Збільшення активності хакерів', 'Вразливості в API'] }
+    ]);
+  }
+
+  if (path.startsWith('/api/v1/wargaming/simulate/') && req.method === 'POST') {
+    const scenarioId = path.split('/').pop();
+    return sendJSON(res, {
+      scenario: scenarioId === 'WAR-01' ? 'Зрив зернового коридору' : 'Симуляція',
+      estimated_loss_mln_uah: 345.5,
+      critical_nodes: ['Одеська митниця', 'Чорноморський порт'],
+      counter_measures: ['Диверсифікація маршрутів', 'Посилення ППО'],
+      status: 'SIMULATED'
+    });
+  }
+
+  if (path === '/api/v1/wargaming/forecast' && req.method === 'GET') {
+    return sendJSON(res, {
+      risk_level: 'HIGH',
+      average_probability: 52.4,
+      revenue_at_risk_mln: 655.0,
+      last_update: 'Just now'
+    });
   }
 
   // 404

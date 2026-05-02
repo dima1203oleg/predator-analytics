@@ -67,6 +67,7 @@ from app.routers import (
     stats_router,
     system_router,
     warroom_router,
+    wargaming_router,
 )
 from app.services.factory_repository import FactoryRepository
 from app.services.factory_runtime import (
@@ -77,6 +78,7 @@ from app.services.guardian import guardian_service
 from app.services.kafka_service import close_kafka, init_kafka
 from app.services.minio_service import close_minio, init_minio
 from app.services.redis_service import close_redis, init_redis
+from app.services.vram_watchdog import vram_sentinel
 from predator_common.logging import get_logger
 
 logger = get_logger("core_api.main")
@@ -153,12 +155,16 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
         # 7. Start Resident AGIs (Antigravity Orchestrator)
         from app.services.antigravity_orchestrator import orchestrator
-        await orchestrator.start()
-        logger.info("Antigravity AGI Orchestrator started")
+        await orchestrator.start(app)
+        logger.info("Antigravity AGI Orchestrator started with Factory Sync")
 
         # 8. Start Sovereign Guardian (Auto-Healing)
         app.state.guardian_task = asyncio.create_task(guardian_service.run_loop())
         logger.info("Sovereign Guardian task started")
+
+        # 9. Start VRAM Watchdog (FR-012)
+        app.state.vram_watchdog_task = asyncio.create_task(vram_sentinel.watchdog_loop())
+        logger.info("VRAM Watchdog Sentinel started")
 
         logger.info("Core API ініціалізовано (можливо, в обмеженому режимі)")
 
@@ -174,6 +180,9 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         guardian_service.stop()
         if hasattr(app.state, 'guardian_task'):
             app.state.guardian_task.cancel()
+        
+        if hasattr(app.state, 'vram_watchdog_task'):
+            app.state.vram_watchdog_task.cancel()
         await cancel_factory_improvement_task(app)
         await close_redis()
         await close_kafka()
@@ -186,8 +195,8 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
 app = FastAPI(
     title=get_settings().APP_NAME,
-    version="60.5-ELITE",
-    description="Аналітична платформа PREDATOR Analytics (v60.5-ELITE)",
+    version="63.0-ELITE",
+    description="Аналітична платформа PREDATOR Analytics (v63.0-ELITE — War-gaming Horizon)",
     lifespan=lifespan,
     docs_url="/api/docs",
     redoc_url="/api/redoc",
@@ -259,6 +268,7 @@ ROUTERS = [
     ("/api/v1", stats_router),
     ("/api/v1", orchestrator_router),
     ("/api/v1", market_router),
+    ("/api/v1", wargaming_router),
     ("/api/v1", sanctions_router),
     ("/api/v1", decisions_router),
     ("/api/v1", cloud_assist_router),

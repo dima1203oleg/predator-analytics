@@ -71,6 +71,7 @@ from .som import router as som_router
 from .system import router as system_router
 from .system import stats_router
 from .warroom import router as warroom_router
+from .wargaming import router as wargaming_router
 
 __all__ = [
     "admin_chaos_router",
@@ -114,4 +115,5 @@ __all__ = [
     "stats_router",
     "system_router",
     "warroom_router",
+    "wargaming_router",
 ]

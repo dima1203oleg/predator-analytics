@@ -1,7 +1,8 @@
 -- ============================================================
--- PREDATOR Analytics v56.5-ELITE
+-- PREDATOR Analytics v63.0-ELITE (War-gaming Horizon)
+-- Canonical Database Schema
 -- PostgreSQL 16 — Повна схема бази даних
--- Створено: 2026-03-08 (Оновлено: 2026-05-01)
+-- Створено: 2026-03-08 (Оновлено: 2026-05-02)
 -- HR-07: Ніколи SELECT * | HR-16: WORM (audit_log, decision_artifacts)
 -- ============================================================
 
@@ -552,6 +553,9 @@ VALUES
    'Глядач', 'viewer')
 ON CONFLICT (email) DO NOTHING;
 
+INSERT INTO audit_log (event_type, description, user_id) 
+VALUES ('SYSTEM_UPGRADE', 'Платформа оновлена до v63.0-ELITE (War-gaming Horizon). Впроваджено двигун стратегічного моделювання.', '00000000-0000-0000-0000-000000000000');
+
 INSERT INTO audit_log (tenant_id, action, details)
 VALUES ('a0000000-0000-0000-0000-000000000001', 'system_init',
-        '{"message": "PREDATOR Analytics v55.1 ініціалізовано", "version": "55.1"}'::jsonb);
+        '{"message": "PREDATOR Analytics v62.0-ELITE ініціалізовано", "version": "62.0"}'::jsonb);

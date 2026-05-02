@@ -1,7 +1,7 @@
 /**
- * 🔮 PREDATOR ANALYTICS v61.0-ELITE — Моделювання Сценаріїв (What-If Analysis)
+ * 🔮 PREDATOR AN ALYTICS v63.0-ELITE — War-gaming Horizon
  * =========================================================================
- * Ультрапреміальний інструмент бізнес-прогнозування з 3D HUD та голографічними графіками
+ * Ультрапреміальний інструмент стратегічного планування Horizon Engine
  */
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
@@ -60,11 +60,11 @@ const ScenarioModeling: React.FC = () => {
         if (isOffline) {
             window.dispatchEvent(new CustomEvent('predator-error', {
                 detail: {
-                    service: 'ScenarioModeling',
-                    message: 'МОДЕЛЮВАННЯ СЦЕНА ІЇВ: Вузол NVIDIA недоступний. Використовується локальний двигун N5.PREDICTIVE-ELITE.',
+                    service: 'WarGaming',
+                    message: 'WAR-GAMING HORIZON: Вузол NVIDIA недоступний. Використовується локальний двигун N5.PREDICTIVE-ELITE.',
                     severity: 'warning',
                     timestamp: new Date().toISOString(),
-                    code: 'SCENARIO_ENGINE_OFFLINE'
+                    code: 'WARGAMING_ENGINE_OFFLINE'
                 }
             }));
         }
@@ -95,31 +95,31 @@ const ScenarioModeling: React.FC = () => {
                 inflation: ((params.currencyRate - 40) / 40) * 100, // Convert currency to inflation proxy
             };
             
-            const res = await apiClient.post('/modeling/scenario', { scenario });
+            const res = await apiClient.post('/wargaming/simulate/current', { scenario });
             setSimulationResult(res.data);
             setScanProgress(100);
             
             if (res.data) {
                 window.dispatchEvent(new CustomEvent('predator-error', {
                     detail: {
-                        service: 'ScenarioModeling',
-                        message: ` ОЗ АХУНОК МОНТЕ-КА ЛО ЗАВЕ ШЕНО [${nodeSource}]: Оброблено 10,000 ітерацій для вибраних параметрів. Модель майбутнього стабілізована.`,
+                        service: 'WarGaming',
+                        message: `СТРАТЕГІЧНИЙ МОЗК HORIZON [${nodeSource}]: Симуляцію завершено. Майбутнє прораховано.`,
                         severity: 'info',
                         timestamp: new Date().toISOString(),
-                        code: 'SCENARIO_SUCCESS'
+                        code: 'WARGAMING_SUCCESS'
                     }
                 }));
             }
         } catch (err) {
-            setError('Не вдалося виконати моделювання сценарію');
-            console.error('Scenario modeling error:', err);
+            setError('Не вдалося виконати стратегічну симуляцію');
+            console.error('Wargaming simulation error:', err);
             window.dispatchEvent(new CustomEvent('predator-error', {
                 detail: {
-                    service: 'ScenarioModeling',
-                    message: `КрИТИЧНА ПОМИЛКА ДВИГУНА МОДЕЛЮВАННЯ: ${err instanceof Error ? err.message : 'Unknown error'}. Перевірте вузол ${nodeSource}.`,
+                    service: 'WarGaming',
+                    message: `КРИТИЧНА ПОМИЛКА HORIZON ENGINE: ${err instanceof Error ? err.message : 'Unknown error'}. Перевірте вузол ${nodeSource}.`,
                     severity: 'critical',
                     timestamp: new Date().toISOString(),
-                    code: 'SCENARIO_ENGINE_CRITICAL'
+                    code: 'WARGAMING_ENGINE_CRITICAL'
                 }
             }));
         } finally {
@@ -158,7 +158,7 @@ const ScenarioModeling: React.FC = () => {
                 axisPointer: { type: 'cross', label: { backgroundColor: '#8b5cf6' } }
             },
             legend: {
-                data: ['Історичний Факт', 'ШІ Прогноз (ELITE)'],
+                data: ['Історичний Факт', 'ШІ Прогноз (HORIZON)'],
                 textStyle: { color: '#64748b', fontFamily: 'Inter', fontWeight: 700 },
                 top: 0
             },
@@ -186,7 +186,7 @@ const ScenarioModeling: React.FC = () => {
                     data: baseData.map((v: any, i: number) => i <= 5 ? v : null)
                 },
                 {
-                    name: 'ШІ Прогноз (ELITE)',
+                    name: 'ШІ Прогноз (HORIZON)',
                     type: 'line',
                     smooth: true,
                     symbol: 'circle',
@@ -204,8 +204,8 @@ const ScenarioModeling: React.FC = () => {
     return (
         <PageTransition className="min-h-screen bg-slate-950 relative pb-24 overflow-hidden">
             <ViewHeader 
-                title="МОДЕЛЮВАННЯ СЦЕНА ІЇВ"
-                subtitle="WHAT-IF ANALYSIS CORE v61.0-ELITE"
+                title="WAR-GAMING HORIZON"
+                subtitle="HORIZON STRATEGIC ENGINE v63.0-ELITE"
                 badges={[{ label: isOffline ? 'MIRROR_SIMULATION' : 'SIMULATION_ELITE', color: isOffline ? 'warning' : 'primary' }]}
                 stats={[
                     { label: 'П ОГНОЗ  УХУ', value: '$12.4M', color: 'success' },

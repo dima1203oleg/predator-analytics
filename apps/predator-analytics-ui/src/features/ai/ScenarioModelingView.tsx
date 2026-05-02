@@ -1,7 +1,6 @@
-/**
- * ScenarioModelingView — What-if сценарне моделювання.
- * Симуляція наслідків на базі аналітичних параметрів.
- * Фаза 3 v59.0-NEXUS.
+ * ScenarioModelingView — War-gaming & Стратегічне моделювання.
+ * Симуляція загроз та наслідків на базі Horizon Engine.
+ * War-gaming Horizon v63.0-ELITE.
  */
 
 import React, { useState } from 'react';
@@ -271,9 +270,9 @@ export const ScenarioModelingView: React.FC = () => {
             <FlaskConical className="w-5 h-5 text-rose-400" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-white tracking-tight">Сценарне Моделювання</h1>
+            <h1 className="text-xl font-bold text-white tracking-tight">War-gaming & Стратегічне Моделювання</h1>
             <p className="text-xs text-white/40 mt-0.5">
-              What-if аналіз · Powered by GLM-5.1 + Nemotron
+              Horizon Engine · Powered by GLM-5.1 + Nemotron
             </p>
           </div>
         </div>

@@ -566,17 +566,56 @@ class Neo4jService:
                         ]
                     })
 
-                return GraphResult(
-                    success=True,
-                    data={
-                        "target_org": org_id,
-                        "beneficiaries": beneficiaries,
-                        "count": len(beneficiaries)
-                    }
-                )
-            except Exception as e:
-                logger.error(f"UBO Discovery failed: {e}")
-                return GraphResult(success=False, errors=[str(e)])
+    async def find_ultimate_beneficiary(self, edrpou: str, max_depth: int = 15) -> dict[str, Any]:
+        """
+        Пошук кінцевого бенефіціарного власника (UBO) через ланцюги власності.
+        """
+        query = """
+        MATCH (org:Organization {edrpou: $edrpou})
+        MATCH path = (org)<-[:OWNS*1..15]-(ubo:Person)
+        WHERE NOT (ubo)<-[:OWNS]-()
+        RETURN ubo.name as name, 
+               ubo.rnokpp as rnokpp, 
+               length(path) as depth,
+               [rel in relationships(path) | rel.share] as shares
+        ORDER BY depth ASC
+        LIMIT 1
+        """
+        
+        async with await self._get_session() as session:
+            result = await session.run(query, edrpou=edrpou)
+            record = await result.single()
+            if record:
+                return {
+                    "name": record["name"],
+                    "rnokpp": record["rnokpp"],
+                    "depth": record["depth"],
+                    "shares": record["shares"],
+                    "complexity_score": record["depth"] * 0.2  # Штраф за складність ланцюга
+                }
+        return {"error": "Бенефіціара не знайдено"}
+
+    async def detect_circular_ownership(self, edrpou: str) -> list[dict[str, Any]]:
+        """
+        Виявлення циклічного володіння (Circular Ownership).
+        Це часто вказує на схеми приховування активів.
+        """
+        query = """
+        MATCH (n:Organization {edrpou: $edrpou})
+        MATCH path = (n)-[:OWNS*1..6]->(n)
+        RETURN [node in nodes(path) | node.edrpou] as cycle, 
+               length(path) as length
+        """
+        
+        cycles = []
+        async with await self._get_session() as session:
+            result = await session.run(query, edrpou=edrpou)
+            async for record in result:
+                cycles.append({
+                    "cycle": record["cycle"],
+                    "length": record["length"]
+                })
+        return cycles
 
     # ======================== IMPORT DATA ========================
 

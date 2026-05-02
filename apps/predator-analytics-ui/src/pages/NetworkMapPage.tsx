@@ -26,13 +26,41 @@ import { CyberGrid } from '@/components/CyberGrid';
 import { FinancialFlowPanel } from '@/components/graph/FinancialFlowPanel';
 import { analyticsService } from '@/services/unified/analytics.service';
 import { HoloContainer } from '@/components/HoloContainer';
+import { KnowledgeGraph3D } from '@/components/graph/KnowledgeGraph3D';
 
+const VramIndicator: React.FC = () => {
+const VramIndicator: React.FC = () => {
+    const { data: vram } = useQuery({
+        queryKey: ['vram-status'],
+        queryFn: async () => {
+            const resp = await fetch('/api/v1/antigravity/vram');
+            return resp.json();
+        },
+        refetchInterval: 5000
+    });
+
+    const getModeColor = (mode: string) => {
+        switch (mode) {
+            case 'SOVEREIGN': return 'text-green-500';
+            case 'HYBRID': return 'text-yellow-500';
+            case 'CLOUD': return 'text-rose-500';
+            default: return 'text-slate-500';
+        }
+    };
+
+    return (
+        <p className={cn("text-xs font-mono font-black uppercase", getModeColor(vram?.mode))}>
+            {vram?.vram_usage_gb?.toFixed(1) || '0.0'}GB // {vram?.mode || 'IDLE'}
+        </p>
+    );
+};
 
 const NetworkMapPage: React.FC = () => {
     const cyRef = useRef<HTMLDivElement>(null);
     const [cy, setCy] = useState<cytoscape.Core | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedNode, setSelectedNode] = useState<any>(null);
+    const [viewMode, setViewMode] = useState<'2d' | '3d'>('2d');
 
     const { data: graphData, isLoading, refetch } = useQuery({
         queryKey: ['network-graph'],
@@ -198,7 +226,12 @@ const NetworkMapPage: React.FC = () => {
                         </div>
                         <div className="w-px h-8 bg-white/5 mx-2" />
                         <div className="text-right">
-                            <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest">СТАТУС_КЛАСТЕ А</p>
+                            <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest">VRAM_STATUS</p>
+                            <VramIndicator />
+                        </div>
+                        <div className="w-px h-8 bg-white/5 mx-2" />
+                        <div className="text-right">
+                            <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest">СТАТУС_КЛАСТЕРА</p>
                             <p className="text-xs font-mono font-black text-rose-500 uppercase">READY</p>
                         </div>
                     </div>
@@ -215,6 +248,21 @@ const NetworkMapPage: React.FC = () => {
                         />
                     </div>
                     
+                    <div className="flex bg-black border border-white/5 p-1 rounded-2xl">
+                        <button 
+                            onClick={() => setViewMode('2d')}
+                            className={cn("px-4 py-2 rounded-xl text-[10px] font-black uppercase transition-all", viewMode === '2d' ? "bg-rose-600 text-white" : "text-slate-500 hover:text-white")}
+                        >
+                            2D
+                        </button>
+                        <button 
+                            onClick={() => setViewMode('3d')}
+                            className={cn("px-4 py-2 rounded-xl text-[10px] font-black uppercase transition-all", viewMode === '3d' ? "bg-rose-600 text-white" : "text-slate-500 hover:text-white")}
+                        >
+                            3D
+                        </button>
+                    </div>
+
                     <button 
                         onClick={() => refetch()}
                         className="p-5 bg-black border border-white/5 rounded-2xl hover:border-rose-500/40 transition-all text-slate-500 hover:text-rose-500 group"
@@ -225,8 +273,14 @@ const NetworkMapPage: React.FC = () => {
             </div>
 
             <div className="flex-1 relative">
-                {/* Cytoscape Container */}
-                <div ref={cyRef} className="absolute inset-0" />
+                {/* Graph Container */}
+                {viewMode === '2d' ? (
+                    <div ref={cyRef} className="absolute inset-0" />
+                ) : (
+                    <div className="absolute inset-0">
+                        <KnowledgeGraph3D />
+                    </div>
+                )}
 
                 {/* HUD Overlay Elements */}
                 <div className="absolute inset-0 pointer-events-none border-[40px] border-black/40 z-10 border-double opacity-20" />

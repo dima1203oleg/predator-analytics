@@ -14,6 +14,7 @@ import {
   Activity,
   PieChart,
   LineChart,
+  AlertTriangle,
   RefreshCw,
   Maximize2,
   Minimize2,
@@ -38,8 +39,11 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
     requests: [] as number[],
     latency: [] as number[],
     errors: [] as number[],
+    errors: [] as number[],
     success: 0,
-    total: 0
+    total: 0,
+    budgetRisk: 0,
+    projectedLoss: [] as number[]
   });
 
   const [refreshing, setRefreshing] = useState(false);
@@ -61,12 +65,18 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
       const total = requests.reduce((a, b) => a + b, 0);
       const errorCount = errors.reduce((a, b) => a + b, 0);
 
+      const projectedLoss = Array.from({ length: hours }, () =>
+        Math.floor(Math.random() * 500000) + 100000
+      );
+
       setData({
         requests,
         latency,
         errors,
         success: ((total - errorCount) / total * 100),
-        total
+        total,
+        budgetRisk: projectedLoss.reduce((a, b) => a + b, 0),
+        projectedLoss
       });
       setTimeout(() => setRefreshing(false), 800);
     };
@@ -108,7 +118,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
                 <span className="w-1.5 h-1.5 bg-rose-500 rounded-full animate-ping" />
                 <h3 className="text-base font-black uppercase tracking-[0.2em] text-white italic">{title}</h3>
               </div>
-              <p className="text-[10px] uppercase font-black tracking-[0.4em] text-rose-500/50">PREDATOR_NEXUS_v61.0_ELITE_LIVE_SYNC</p>
+              <p className="text-[10px] uppercase font-black tracking-[0.4em] text-rose-500/50">PREDATOR_NEXUS_v63.0_ELITE_LIVE_SYNC</p>
             </div>
           </div>
 
@@ -170,9 +180,9 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 p-8">
         {[
           { label: 'Всього Запитів', value: data.total.toLocaleString(), trend: '+12.5%', color: 'rose', icon: Activity },
-          { label: 'Success Rate', value: `${data.success.toFixed(1)}%`, trend: 'Оптимально', color: 'emerald', icon: TrendingUp },
+          { label: 'Бюджет під Ризиком', value: `-$${(data.budgetRisk / 1000000).toFixed(1)}M`, trend: 'CRITICAL', color: 'amber', icon: AlertTriangle },
           { label: 'Avg Latency', value: `${Math.round(data.latency.reduce((a, b) => a + b, 0) / data.latency.length)}ms`, trend: '-8%', color: 'indigo', icon: Activity },
-          { label: 'Помилки', value: data.errors.reduce((a, b) => a + b, 0), trend: '+2.1%', color: 'amber', icon: Activity }
+          { label: 'Success Rate', value: `${data.success.toFixed(1)}%`, trend: 'Оптимально', color: 'emerald', icon: TrendingUp }
         ].map((stat, i) => (
           <motion.div
             key={i}

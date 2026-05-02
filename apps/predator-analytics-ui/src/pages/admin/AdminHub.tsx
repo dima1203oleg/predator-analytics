@@ -152,7 +152,7 @@ const TABS: TabConfig[] = [
   { id: 'nexus',        category: 'INTEL_OSINT', label: 'НЕКСУС_П ОГНОЗ',        badge: 'П ОГНОЗ',  icon: Zap,           component: PredictiveNexusView },
   { id: 'hypothesis',   category: 'INTEL_OSINT', label: 'ГІПОТЕЗИ',                        icon: BrainCircuit,  component: HypothesisEngineView },
   { id: 'knowledge',    category: 'INTEL_OSINT', label: 'ЗНАННЯ',                         icon: BookOpen,      component: KnowledgeEngineeringView },
-  { id: 'scenarios',    category: 'INTEL_OSINT', label: 'СЦЕНА ІЇ',     badge: 'СИМ',      icon: Layers,        component: ScenarioModelingView },
+  { id: 'scenarios',    category: 'INTEL_OSINT', label: 'WAR-GAMING',     badge: 'ГОРИЗОНТ', icon: Layers,        component: ScenarioModelingView },
   { id: 'intelligence', category: 'INTEL_OSINT', label: 'РОЗВІДКА',     badge: 'П ИВИД',   icon: Eye,           component: CustomsIntelligenceView },
   { id: 'fin-sigint',   category: 'INTEL_OSINT', label: 'ФІН_SIGINT',   badge: 'Г ОШІ',    icon: BarChart3,     component: FinancialSigintView },
   { id: 'due-diligence', category: 'INTEL_OSINT', label: 'ОБАЧНІСТЬ', badge: 'ЗК',       icon: ShieldCheck,   component: DueDiligenceView },
@@ -273,7 +273,7 @@ const SystemStatusHeader: React.FC = () => {
                 </div>
                 <span className="flex items-center gap-6 text-white font-black tracking-[0.5em] text-2xl italic glint-elite">
                    <Atom size={28} className="animate-spin-slow text-rose-500 shadow-rose-500/20" />
-                   PREDATOR <span className="text-rose-500">v61.0-ELITE</span>
+                   PREDATOR <span className="text-rose-500">v63.0-ELITE</span>
                 </span>
               </div>
             </div>
@@ -740,7 +740,7 @@ export const AdminHub: React.FC = () => {
           </div>
           <div className="flex items-center gap-3">
             <div className="w-2.5 h-[1px] bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,1)]" />
-            <span>СТАБІЛЬНІСТЬ_ЯД А: ELITE_v61.0_ELITE_СТАБІЛЬНО</span>
+            <span>СТАБІЛЬНІСТЬ_ЯДРА: ELITE_v63.0_ELITE_СТАБІЛЬНО</span>
           </div>
           <div className="mt-4 flex gap-2">
             {Array.from({ length: 16 }).map((_, i) => (

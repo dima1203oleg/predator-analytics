@@ -12,7 +12,9 @@ from datetime import UTC, datetime
 from enum import StrEnum
 import logging
 import math
-from typing import Any  # Додано Dict для більш точної типізації
+from typing import Any
+import numpy as np
+from sklearn.ensemble import IsolationForest
 
 logger = logging.getLogger(__name__)
 
@@ -187,6 +189,8 @@ class AnomalyDetectionService:
             anomaly_indices = self._detect_iqr_anomalies(values)
         elif method == "moving_average":
             anomaly_indices = self._detect_moving_average_anomalies(values)
+        elif method == "isolation_forest":
+            anomaly_indices = self._detect_isolation_forest_anomalies(values)
         else:
             anomaly_indices = self._detect_zscore_anomalies(values)
 
@@ -250,28 +254,83 @@ class AnomalyDetectionService:
 
         return anomalies
 
-    def _detect_moving_average_anomalies(
-        self,
-        values: list[float],
-        window: int = 7,
-    ) -> list[int]:
-        """Виявлення аномалій методом ковзного середнього."""
+    def _detect_moving_average_anomalies(self, values: list[float], window: int = 5) -> list[int]:
+        """Виявлення аномалій через рухоме середнє."""
         if len(values) < window:
             return []
 
         anomalies = []
-
         for i in range(window, len(values)):
-            window_values = values[i - window:i]
-            ma = sum(window_values) / window
-            std = math.sqrt(sum((x - ma) ** 2 for x in window_values) / window)
+            window_data = values[i - window : i]
+            avg = sum(window_data) / window
+            std = math.sqrt(sum((x - avg) ** 2 for x in window_data) / window)
 
-            if std > 0:
-                z_score = abs((values[i] - ma) / std)
-                if z_score > self.Z_SCORE_THRESHOLD:
-                    anomalies.append(i)
+            if std > 0 and abs(values[i] - avg) > 2 * std:
+                anomalies.append(i)
 
         return anomalies
+
+    def _detect_isolation_forest_anomalies(self, values: list[float]) -> list[int]:
+        """Виявлення аномалій за допомогою Isolation Forest (unsupervised ML)."""
+        if len(values) < 10:
+            return []
+
+        # Підготовка даних (2D масив для sklearn)
+        x = np.array(values).reshape(-1, 1)
+
+        # Ініціалізація моделі
+        # contamination='auto' або фіксований відсоток аномалій
+        clf = IsolationForest(
+            n_estimators=100,
+            max_samples='auto',
+            contamination=0.1,  # Припускаємо до 10% аномалій
+            random_state=42
+        )
+
+        # Навчання та передбачення (-1 — аномалія, 1 — норма)
+        preds = clf.fit_predict(x)
+
+        # Повертаємо індекси аномалій
+        return [i for i, pred in enumerate(preds) if pred == -1]
+
+    def get_unified_anomaly_score(self, values: list[float]) -> float:
+        """
+        Об'єднує результати різних методів для отримання фінального балу аномальності (0.0 - 1.0).
+        """
+        if not values:
+            return 0.0
+
+        scores = []
+        
+        # 1. Isolation Forest (як найбільш надійний для складних даних)
+        if len(values) >= 10:
+            x = np.array(values).reshape(-1, 1)
+            clf = IsolationForest(contamination=0.1, random_state=42)
+            preds = clf.fit_predict(x)
+            if preds[-1] == -1:
+                scores.append(0.8)  # Вага IF
+
+        # 2. Z-Score (для останньої точки)
+        mean_val = sum(values) / len(values)
+        std_val = math.sqrt(sum((x - mean_val) ** 2 for x in values) / len(values))
+        if std_val > 0:
+            z = abs(values[-1] - mean_val) / std_val
+            if z > self.Z_SCORE_THRESHOLD:
+                scores.append(min(1.0, z / 5.0))
+
+        # 3. IQR
+        sorted_vals = sorted(values)
+        q1 = sorted_vals[len(sorted_vals) // 4]
+        q3 = sorted_vals[3 * len(sorted_vals) // 4]
+        iqr = q3 - q1
+        if iqr > 0:
+            if values[-1] < (q1 - 1.5 * iqr) or values[-1] > (q3 + 1.5 * iqr):
+                scores.append(0.7)
+
+        if not scores:
+            return 0.0
+
+        return sum(scores) / len(scores)
 
     # ======================== PATTERN MATCHING ========================
 

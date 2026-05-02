@@ -1,17 +1,16 @@
-"""VRAM Watchdog Protocol v5.0 — Sentinel for Autonomous Factory.
-Monitoring GTX 1080 (8GB VRAM) limits for autonomous OODA routing.
-"""
-
 import asyncio
+import subprocess
+import shutil
 from dataclasses import dataclass
+from typing import Optional
 
 from predator_common.logging import get_logger
 
 logger = get_logger("core_api.vram_watchdog")
 
-VRAM_TOTAL = 8.0  # GB
-VRAM_TRIGGER_THRESHOLD = 7.6  # GB (Switch to CLOUD)
-VRAM_RECOVERY_THRESHOLD = 6.0  # GB (Switch back to SOVEREIGN/HYBRID)
+VRAM_TOTAL = 8.0  # GB (GTX 1080 standard)
+VRAM_TRIGGER_THRESHOLD = 7.6  # GB (Перехід на CLOUD)
+VRAM_RECOVERY_THRESHOLD = 6.0  # GB (Повернення на SOVEREIGN)
 
 @dataclass
 class VramStatus:
@@ -19,26 +18,53 @@ class VramStatus:
     total_gb: float
     critical: bool
     mode_recommendation: str  # 'SOVEREIGN' | 'HYBRID' | 'CLOUD'
+    gpu_found: bool
 
 class VramSentinel:
     def __init__(self):
         self._current_mode = "SOVEREIGN"
+        self._nvidia_smi_path = shutil.whoami = shutil.which("nvidia-smi")
+
+    async def _get_real_vram(self) -> Optional[float]:
+        """Отримати реальне використання VRAM через nvidia-smi."""
+        if not self._nvidia_smi_path:
+            return None
+        
+        try:
+            # Запит: використана пам'ять у MB
+            result = await asyncio.create_subprocess_exec(
+                self._nvidia_smi_path, "--query-gpu=memory.used", "--format=csv,noheader,nounits",
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE
+            )
+            stdout, _ = await result.communicate()
+            if result.returncode == 0:
+                mb_used = float(stdout.decode().strip())
+                return mb_used / 1024.0  # Конвертація в GB
+        except Exception as e:
+            logger.debug(f"Не вдалося отримати дані з nvidia-smi: {e}")
+        return None
 
     async def get_stats(self) -> VramStatus:
-        """Fetch current VRAM usage from nvidia-smi with simulation support."""
-        # Simulation Logic for Testing
-        import time
-        cycle = int(time.time() / 15) % 3
-        if cycle == 0:
-            used_gb = 4.2  # Nominal (SOVEREIGN)
-        elif cycle == 1:
-            used_gb = 6.8  # Warning (HYBRID)
+        """Отримати статистику VRAM (реальну або симуляцію)."""
+        real_vram = await self._get_real_vram()
+        gpu_found = real_vram is not None
+        
+        if real_vram is not None:
+            used_gb = real_vram
         else:
-            used_gb = 7.8  # Critical (CLOUD)
+            # Симуляція для середовищ без GPU (macOS/Dev)
+            import time
+            cycle = int(time.time() / 30) % 3
+            if cycle == 0:
+                used_gb = 3.5 + (time.time() % 1.0)
+            elif cycle == 1:
+                used_gb = 6.2 + (time.time() % 0.5)
+            else:
+                used_gb = 7.7 + (time.time() % 0.2)
 
         critical = used_gb >= VRAM_TRIGGER_THRESHOLD
 
-        # Logic for mode recommendation
         if used_gb >= VRAM_TRIGGER_THRESHOLD:
             recommendation = "CLOUD"
         elif used_gb >= 6.5:
@@ -50,22 +76,29 @@ class VramSentinel:
             used_gb=round(used_gb, 2),
             total_gb=VRAM_TOTAL,
             critical=critical,
-            mode_recommendation=recommendation
+            mode_recommendation=recommendation,
+            gpu_found=gpu_found
         )
 
     async def watchdog_loop(self):
-        """Background loop to signal LiteLLM router on threshold breach."""
+        """Фоновий цикл моніторингу та Failover-сигналізації."""
+        logger.info("📡 VRAM Sentinel Watchdog STARTED.")
         while True:
-            status = await self.get_stats()
-            if status.critical and self._current_mode != "CLOUD":
-                logger.warning(f"⚠️ VRAM CRITICAL: {status.used_gb}GB. Triggering CLOUD failover.")
-                # Here we would call the internal API to update LiteLLM config or tag the session
-                self._current_mode = "CLOUD"
-            elif not status.critical and status.used_gb < VRAM_RECOVERY_THRESHOLD and self._current_mode == "CLOUD":
-                 logger.info(f"✅ VRAM RECOVRED: {status.used_gb}GB. Restoring SOVEREIGN mode.")
-                 self._current_mode = "SOVEREIGN"
+            try:
+                status = await self.get_stats()
+                
+                if status.critical and self._current_mode != "CLOUD":
+                    logger.warning(f"🚨 VRAM CRITICAL: {status.used_gb}GB. Автоматичний FAILOVER на CLOUD.")
+                    self._current_mode = "CLOUD"
+                    # Тут можна додати логіку сповіщення LiteLLM сервісу
+                
+                elif not status.critical and status.used_gb < VRAM_RECOVERY_THRESHOLD and self._current_mode == "CLOUD":
+                    logger.info(f"✅ VRAM RECOVRED: {status.used_gb}GB. Повернення в режим SOVEREIGN.")
+                    self._current_mode = "SOVEREIGN"
 
-            await asyncio.sleep(5)  # 5s interval for hardware pooling
+                await asyncio.sleep(5)
+            except Exception as e:
+                logger.error(f"Error in VRAM Watchdog loop: {e}")
+                await asyncio.sleep(10)
 
-# Global registry or lifecycle hook in main.py
 vram_sentinel = VramSentinel()

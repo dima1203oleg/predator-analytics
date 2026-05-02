@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Database, Search, Share2, Activity, ShieldCheck, Cpu } from 'lucide-react';
+import { Database, Search, Share2, Activity, ShieldCheck, Cpu, FileText } from 'lucide-react';
 import { OmniverseIngestion } from './components/OmniverseIngestion';
 import { OmniverseExplorer } from './components/OmniverseExplorer';
 import { OmniverseGraph } from './components/OmniverseGraph';
@@ -8,9 +8,10 @@ import { OmniverseInsights } from './components/OmniverseInsights';
 import { OmniverseAlerts } from './components/OmniverseAlerts';
 import { OmniverseSimulator } from './components/OmniverseSimulator';
 import { OmniverseOODA } from './components/OmniverseOODA';
+import { OmniverseBriefing } from './components/OmniverseBriefing';
 
 const OmniverseHub: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'INGEST' | 'EXPLORE' | 'GRAPH' | 'INSIGHTS' | 'ALERTS' | 'SIMULATE' | 'COMMAND'>('INGEST');
+  const [activeTab, setActiveTab] = useState<'INGEST' | 'EXPLORE' | 'GRAPH' | 'INSIGHTS' | 'ALERTS' | 'SIMULATE' | 'COMMAND' | 'BRIEF'>('INGEST');
 
   const tabs = [
     { id: 'INGEST', label: 'ЗАВАНТАЖЕННЯ', icon: Database, color: 'emerald' },
@@ -20,6 +21,7 @@ const OmniverseHub: React.FC = () => {
     { id: 'ALERTS', label: 'WATCHDOG', icon: ShieldCheck, color: 'red' },
     { id: 'SIMULATE', label: 'СИМУЛЯТОР', icon: Activity, color: 'orange' },
     { id: 'COMMAND', label: 'COMMAND CENTER', icon: ShieldCheck, color: 'emerald' },
+    { id: 'BRIEF', label: 'STRATEGIC BRIEF', icon: FileText, color: 'blue' },
   ];
 
   return (
@@ -161,6 +163,10 @@ const OmniverseHub: React.FC = () => {
 
           {activeTab === 'COMMAND' && (
             <OmniverseOODA />
+          )}
+
+          {activeTab === 'BRIEF' && (
+            <OmniverseBriefing />
           )}
         </div>
       </main>

@@ -4,6 +4,9 @@
 """
 from typing import Dict, Any
 from app.database import get_clickhouse_client
+from app.services.elite_risk_engine import EliteRiskEngine
+from app.services.forecast_service import ForecastService
+from sqlalchemy.ext.asyncio import AsyncSession
 from predator_common.logging import get_logger
 
 logger = get_logger("core_api.omniverse_briefing")
@@ -12,6 +15,45 @@ class OmniverseBriefing:
     def __init__(self, tenant_id: str):
         self.tenant_id = tenant_id
         self.client = get_clickhouse_client()
+
+    async def generate_entity_intelligence_brief(
+        self, 
+        ueid: str, 
+        db: AsyncSession
+    ) -> Dict[str, Any]:
+        """Генерує глибокий аналітичний звіт для конкретної сутності."""
+        logger.info(f"Generating high-fidelity intelligence brief for {ueid}")
+        
+        # 1. Розраховуємо повний ризик через EliteRiskEngine
+        risk_engine = EliteRiskEngine(db)
+        risk_data = await risk_engine.compute_full_risk(ueid, self.tenant_id)
+        
+        # 2. Отримуємо прогнози попиту/діяльності
+        # (Використовуємо ueid як product_code для демонстрації агрегації)
+        forecast_service = ForecastService()
+        forecast_data = await forecast_service.get_demand_forecast(ueid)
+        
+        # 3. Формуємо стратегічний контекст
+        brief = {
+            "entity_ueid": ueid,
+            "risk_assessment": {
+                "cers_score": risk_data["cers"],
+                "risk_level": risk_data["level"],
+                "layer_breakdown": risk_data["layers"]
+            },
+            "predictive_analytics": {
+                "forecast_trend": forecast_data.get("forecast", []),
+                "confidence": forecast_data.get("confidence_score", 0.0),
+                "interpretation": forecast_data.get("interpretation_uk", "")
+            },
+            "ai_executive_summary": (
+                f"Компанія {ueid} має рівень ризику {risk_data['level']} ({risk_data['cers']}). "
+                f"Прогноз діяльності показує {forecast_data.get('interpretation_uk', 'стабільний тренд')}. "
+                f"Рекомендовано: {'Посилений моніторинг' if risk_data['cers'] > 50 else 'Стандартний нагляд'}."
+            )
+        }
+        
+        return brief
 
     async def generate_executive_brief(self) -> Dict[str, Any]:
         """Генерує зведення останніх подій та інсайтів."""

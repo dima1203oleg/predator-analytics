@@ -35,3 +35,4 @@ export { TruthLedgerSection } from './TruthLedgerSection';
 // v45.0 Pipeline Monitoring
 export { PipelineMonitor } from './pipeline/PipelineMonitor';
 export { ActiveJobsPanel } from './pipeline/ActiveJobsPanel';
+export { WarGamingWidget } from './intel/WarGamingWidget';

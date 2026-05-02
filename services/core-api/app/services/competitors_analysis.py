@@ -10,7 +10,11 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import StrEnum
 import logging
-from typing import Any  # Додано Dict для більш точної типізації
+from typing import Any
+import os
+import clickhouse_connect
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.services.search_service import SearchService
 
 logger = logging.getLogger(__name__)
 
@@ -96,9 +100,9 @@ class CompetitiveAnalysis:
 class CompetitorsAnalysisService:
     """Сервіс для аналізу конкурентів."""
 
-    def __init__(self) -> None:
-        # Mock дані для демонстрації
-        self.companies_db = self._init_mock_companies()
+    def __init__(self, db: AsyncSession | None = None) -> None:
+        self.db = db
+        # self.companies_db більше не потрібен як єдине джерело
 
     def _init_mock_companies(self) -> dict[str, CompanyProfile]: # Властивості словника можуть бути довільними
         """Ініціалізація mock даних компаній."""
@@ -160,52 +164,70 @@ class CompetitorsAnalysisService:
     async def find_competitors(
         self,
         edrpou: str,
-        kved: str | None = None,
-        region: str | None = None,
+        db: AsyncSession,
+        tenant_id: str,
         limit: int = 10,
     ) -> list[CompetitorMatch]:
-        """Знайти конкурентів компанії."""
-        company = self.companies_db.get(edrpou)
-        if not company:
-            # Mock компанія
-            company = CompanyProfile(
-                edrpou=edrpou,
-                name=f"Компанія {edrpou}",
-                kved=kved or "62.01",
-                kved_name="Комп'ютерне програмування",
-                revenue=50_000_000,
-                employees=100,
-                region=region or "Київська",
-            )
+        """Знайти реальних конкурентів через SearchService та ClickHouse."""
+        logger.info(f"Finding real competitors for {edrpou}")
+        
+        # Використовуємо SearchService для пошуку схожих компаній
+        similar_entities = await SearchService.recommend_similar_entities(
+            ueid=edrpou,
+            db=db,
+            tenant_id=tenant_id,
+            limit=limit
+        )
 
-        # Знаходимо конкурентів за КВЕД
-        target_kved = kved or company.kved
         competitors = []
-
-        for comp_edrpou, comp in self.companies_db.items():
-            if comp_edrpou == edrpou:
-                continue
-
-            if comp.kved != target_kved:
-                continue
-
-            if region and comp.region != region:
-                continue
-
-            # Розраховуємо схожість
-            similarity = self._calculate_similarity(company, comp)
-            matching_factors = self._get_matching_factors(company, comp)
-
+        for entity in similar_entities:
+            comp_ueid = entity.get("ueid", "unknown")
+            
+            # Отримуємо виторг з ClickHouse
+            revenue = await self._get_revenue_from_clickhouse(comp_ueid)
+            
+            # Мапимо результат пошуку на CompanyProfile
+            profile = CompanyProfile(
+                edrpou=comp_ueid,
+                name=entity.get("name", "Невідома компанія"),
+                kved=entity.get("industry", "N/A"),
+                kved_name=entity.get("industry", "N/A"),
+                revenue=revenue,
+            )
+            
             competitors.append(CompetitorMatch(
-                company=comp,
-                similarity_score=similarity,
-                matching_factors=matching_factors,
-                competitive_advantage=self._analyze_advantage(company, comp),
+                company=profile,
+                similarity_score=entity.get("similarity_score", 0.5) * 100,
+                matching_factors=["Схожа галузь (Vector Match)"],
+                competitive_advantage=self._analyze_advantage(profile, profile) # placeholder
             ))
 
-        # Сортуємо за схожістю
-        competitors.sort(key=lambda x: x.similarity_score, reverse=True)
-        return competitors[:limit]
+        return competitors
+
+    async def _get_revenue_from_clickhouse(self, ueid: str) -> float:
+        """Отримати виторг компанії за останній рік з ClickHouse."""
+        try:
+            client = clickhouse_connect.get_client(
+                host=os.getenv("CLICKHOUSE_HOST", "192.168.0.199"),
+                port=int(os.getenv("CLICKHOUSE_PORT", "8123")),
+                username=os.getenv("CLICKHOUSE_USER", "default"),
+                password=os.getenv("CLICKHOUSE_PASSWORD", "predator2026")
+            )
+            
+            # Агрегуємо суму за останній доступний рік
+            query = f"""
+            SELECT sum(total_value) as revenue 
+            FROM declarations 
+            WHERE importer_ueid = '{ueid}'
+            AND toYear(declaration_date) = toYear(now()) - 1
+            """
+            result = client.query(query)
+            if result.result_rows and result.result_rows[0][0]:
+                return float(result.result_rows[0][0])
+            return 0.0
+        except Exception as e:
+            logger.error(f"Error fetching revenue from ClickHouse: {e}")
+            return 0.0
 
     def _calculate_similarity(self, company1: CompanyProfile, company2: CompanyProfile) -> float:
         """Розрахувати схожість між компаніями."""

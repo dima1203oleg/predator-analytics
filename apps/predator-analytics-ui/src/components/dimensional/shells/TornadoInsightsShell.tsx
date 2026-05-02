@@ -165,17 +165,17 @@ const modules: TornadoModule[] = [
   },
   {
     id: 'scenario',
-    title: 'СЦЕНАРІЇ «ЩО ЯКЩО»',
+    title: 'ВІЙСЬКОВІ ІГРИ (WAR-GAMING)',
     subtitle: 'Моделювання Майбутнього',
-    description: 'Симуляції впливу курсу, нових податків, конкурентів та логістичних розривів на фінансову модель.',
+    description: 'Автономні симуляції впливу курсу, податків, логістичних розривів та ворожих дій на систему.',
     icon: BarChart3,
     color: '#6366f1',
     borderColor: 'border-indigo-500/20 hover:border-indigo-500/50',
     bgGlow: 'rgba(99,102,241,0.15)',
-    kpi: { label: 'Активних сценаріїв', value: 24, suffix: '' },
-    sparkData: [5, 8, 10, 12, 14, 15, 18, 19, 20, 21, 23, 24],
-    status: 'READY',
-    route: '/scenarios',
+    kpi: { label: 'Активних симуляцій', value: 8, suffix: '' },
+    sparkData: [2, 3, 4, 5, 5, 6, 6, 7, 7, 8, 8, 8],
+    status: 'ACTIVE_WAR',
+    route: '/wargaming',
   },
 ];
 
@@ -203,7 +203,7 @@ export const TornadoInsightsShell: React.FC = () => {
         icon={Radar}
         breadcrumbs={['PREDATOR', 'AI CORE', 'TORNADO INSIGHTS']}
         badges={[
-          { label: 'v61.0-ELITE', color: 'amber', icon: <Sparkles size={10} /> },
+          { label: 'v63.0-ELITE', color: 'amber', icon: <Sparkles size={10} /> },
           { label: 'SOVEREIGN', color: 'success', icon: <Shield size={10} /> },
         ]}
         stats={globalKpis.map(k => ({

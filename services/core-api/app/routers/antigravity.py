@@ -15,10 +15,6 @@ from app.services.antigravity_orchestrator import orchestrator
 
 router = APIRouter(prefix="/antigravity", tags=["AGI Orchestrator"])
 
-@router.on_event("startup")
-async def startup_event():
-    """Запуск циклу оркестрації при старті додатку (ELITE Phase)."""
-    await orchestrator.start()
 
 @router.get("/status", response_model=AntigravityOrchestratorStatus)
 async def get_orchestrator_status():
@@ -51,3 +47,9 @@ async def get_task_details(task_id: str):
         if task.task_id == task_id:
             return task
     raise HTTPException(status_code=404, detail="Task not found")
+
+@router.get("/vram")
+async def get_vram_status():
+    """Отримати статус VRAM від Sentinel Watchdog."""
+    from app.services.vram_watchdog import vram_sentinel
+    return await vram_sentinel.get_stats()
