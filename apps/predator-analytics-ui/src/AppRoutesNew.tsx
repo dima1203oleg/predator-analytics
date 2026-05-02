@@ -99,6 +99,9 @@ const ScenarioModelingView  = lazy(() => import('./features/ai/ScenarioModelingV
 const TornadoInsightsShell  = lazy(() => import('./components/dimensional/shells/TornadoInsightsShell'));
 const StrategicScenarioView = lazy(() => import('./features/dashboard/StrategicScenarioView'));
 
+// ✅ OMNIVERSE v70.0 (Data Agnostic OS)
+const OmniverseHub = lazy(() => import('./features/omniverse/OmniverseHub'));
+
 const LoadingFallback = () => (
   <div className="flex items-center justify-center h-screen bg-slate-950 relative overflow-hidden">
     <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(16,185,129,0.05),transparent)] animate-pulse" />
@@ -255,6 +258,7 @@ export const AppRoutesNew = () => {
             <Route path="/scenarios" element={<ScenarioModelingView />} />
             <Route path="/tornado-insights" element={<TornadoInsightsShell />} />
             <Route path="/strategic-scenarios" element={<StrategicScenarioView />} />
+            <Route path="/omniverse" element={<OmniverseHub />} />
 
             {/* Нові модулі v59.0-NEXUS */}
             <Route path="/decisions" element={<DecisionsJournal />} />

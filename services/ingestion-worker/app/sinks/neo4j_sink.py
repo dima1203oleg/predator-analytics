@@ -105,6 +105,19 @@ class Neo4jSink:
         """Створення або оновлення вузла компанії (legacy)."""
         await self.upsert_company(data)
 
+    async def run_query(self, query: str, params: dict[str, Any] | None = None) -> Any:
+        """Виконує довільний Cypher запит."""
+        if not self._connected or not self.driver:
+            return None
+
+        try:
+            async with self.driver.session() as session:
+                result = await session.run(query, params or {})
+                return await result.data()
+        except Exception as e:
+            logger.error(f"Failed to execute Neo4j query: {e}", extra={"query": query})
+            raise
+
     async def close(self) -> None:
         """Закриття з'єднання."""
         if self.driver:

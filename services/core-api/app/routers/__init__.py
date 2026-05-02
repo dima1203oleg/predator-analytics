@@ -57,6 +57,7 @@ from .newspaper import router as newspaper_router
 from .optimizer import router as optimizer_router
 from .orchestrator import router as orchestrator_router
 from .osint import router as osint_router
+from .omniverse import router as omniverse_router
 from .osint_ua import router as osint_ua_router
 from .persons import router as persons_router
 from .premium import router as premium_router
@@ -99,6 +100,7 @@ __all__ = [
     "optimizer_router",
     "orchestrator_router",
     "osint_router",
+    "omniverse_router",
     "osint_ua_router",
     "persons_router",
     "premium_router",

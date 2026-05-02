@@ -20,6 +20,10 @@ class WorkerSettings(BaseSettings):
     REDIS_URL: str = "redis://localhost:6379/0"
 
     KAFKA_BOOTSTRAP_SERVERS: str = "predator-redpanda:9092"
+    KAFKA_TOPIC_INGESTION_RAW: str = "tenant.default.ingestion.raw"
+    KAFKA_TOPIC_ENRICHMENT: str = "tenant.default.enrichment.events"
+    KAFKA_TOPIC_OMNIVERSE_INGESTION: str = "omniverse-ingestion-triggers"
+    ROOT_TENANT_ID: str = "global-system"
 
     # ClickHouse Analytics
     CLICKHOUSE_HOST: str = "localhost"

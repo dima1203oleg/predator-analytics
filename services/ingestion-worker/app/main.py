@@ -20,6 +20,7 @@ from app.config import get_settings
 from app.fusion_engine import ДвигунЗлиттяДаних
 from app.health import set_health_status, start_health_server, stop_health_server
 from app.pipelines.file_ingestion import FileIngestionPipeline
+from app.pipelines.omniverse_pipeline import OmniversePipeline
 from app.registries.ua_registries import УкраїнськийРеєстр
 from app.sinks.postgres_sink import PostgresSink
 from predator_common.logging import get_logger
@@ -28,8 +29,9 @@ logger = get_logger("ingestion_worker")
 settings = get_settings()
 
 # Канонічні назви топіків (HR-17: tenant.{id}.category.name)
-TOPIC_RAW = settings.KAFKA_TOPIC_INGESTION_RAW if hasattr(settings, 'KAFKA_TOPIC_INGESTION_RAW') else "tenant.default.ingestion.raw"
-TOPIC_ENRICHED = settings.KAFKA_TOPIC_ENRICHMENT if hasattr(settings, 'KAFKA_TOPIC_ENRICHMENT') else "tenant.default.enrichment.events"
+TOPIC_RAW = settings.KAFKA_TOPIC_INGESTION_RAW
+TOPIC_ENRICHED = settings.KAFKA_TOPIC_ENRICHMENT
+TOPIC_OMNIVERSE = settings.KAFKA_TOPIC_OMNIVERSE_INGESTION
 
 
 async def process_file_upload(
@@ -152,6 +154,50 @@ async def process_file_upload(
             records_errors=0,
         )
 
+async def process_omniverse_ingestion(
+    msg_value: dict[str, Any],
+    producer: AIOKafkaProducer,
+    postgres_sink: PostgresSink,
+) -> None:
+    """Універсальна обробка OMNIVERSE."""
+    job_id = msg_value.get("job_id")
+    tenant_id = msg_value.get("tenant_id")
+    file_name = msg_value.get("file_name")
+    s3_path = msg_value.get("s3_path")
+    schema = msg_value.get("schema_definition")
+
+    if not all([job_id, tenant_id, s3_path, schema]):
+        logger.warning("omniverse.skip", job_id=job_id, reason="Missing fields")
+        return
+
+    logger.info("omniverse.start", job_id=job_id, file=file_name)
+
+    try:
+        await postgres_sink.update_job_progress(job_id=job_id, status="processing", progress=10)
+        
+        pipeline = OmniversePipeline(
+            job_id=job_id,
+            tenant_id=tenant_id,
+            file_name=file_name,
+            s3_path=s3_path,
+            schema_definition=schema
+        )
+        
+        result = await pipeline.run()
+        
+        await postgres_sink.update_job_progress(
+            job_id=job_id,
+            status="completed",
+            progress=100,
+            records_processed=result.get("total_rows", 0)
+        )
+        
+        logger.info("omniverse.success", job_id=job_id, rows=result.get("total_rows"))
+
+    except Exception as e:
+        logger.error("omniverse.error", job_id=job_id, error=str(e), exc_info=True)
+        await postgres_sink.update_job_progress(job_id=job_id, status="failed")
+
 
 async def process_osint_enrichment(
     msg_value: dict[str, Any],
@@ -209,7 +255,10 @@ async def process_message(
 
     try:
         # Визначаємо тип повідомлення
-        if "s3_bucket_path" in msg_value:
+        if "schema_definition" in msg_value:
+            # Це OMNIVERSE Dynamic Ingestion
+            await process_omniverse_ingestion(msg_value, producer, postgres_sink)
+        elif "s3_bucket_path" in msg_value:
             # Це RawFileUpload — завантажений файл
             await process_file_upload(msg_value, producer, postgres_sink)
         elif "edrpou" in msg_value:
@@ -220,7 +269,6 @@ async def process_message(
                 "ingestion_worker.unknown_message_type",
                 keys=list(msg_value.keys()),
             )
-            # Не позначаємо незнайомі формати як успішні, або можна розмістити в quarantine (T1.4)
             return
 
         # Позначаємо як успішно оброблено
@@ -286,7 +334,8 @@ async def consume() -> None:
 
     consumer = AIOKafkaConsumer(
         TOPIC_RAW,
-        bootstrap_servers=settings.KAFKA_BROKERS,
+        TOPIC_OMNIVERSE,
+        bootstrap_servers=settings.KAFKA_BOOTSTRAP_SERVERS,
         group_id="predator-ingestion-group",
         auto_offset_reset="earliest",
         value_deserializer=lambda m: json.loads(m.decode("utf-8")) if m else {},

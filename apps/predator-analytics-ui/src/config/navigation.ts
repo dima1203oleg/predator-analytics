@@ -313,8 +313,46 @@ export const globalNavigationActions: NavGlobalAction[] = [
  */
 const baseNavigationConfig: NavSection[] = [
   // ══════════════════════════════════════════════════════════════
-  // 1. EXECUTIVE — стратегічне командування (sky)
-  //    Доступ: business, analyst (НЕ admin — він у System Command Center)
+  // 0. OMNIVERSE — дата-агностична ОС (cyan)
+  //    Доступ: analyst, admin
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'omniverse',
+    label: 'OMNIVERSE',
+    description: 'Універсальний шар даних: агностична інгестія, динамічні онтології та AI-синтез.',
+    outcome: 'Повна свобода від фіксованих схем даних.',
+    accent: 'cyan',
+    groups: [
+      {
+        title: 'Управління Даними',
+        audiences: ['analyst', 'admin'],
+        items: [
+          {
+            id: 'omniverse-hub',
+            label: 'Omniverse Hub',
+            path: '/omniverse',
+            icon: Box,
+            description: 'Головний центр управління універсальними даними.',
+            group: 'Управління Даними',
+            badge: 'v70.0',
+            audiences: ['analyst', 'admin'],
+            priority: 110,
+          },
+          {
+            id: 'omniverse-ingest',
+            label: 'Universal Ingest',
+            path: '/omniverse',
+            icon: Upload,
+            description: 'Інгестія довільних наборів даних через AI-інференс.',
+            group: 'Управління Даними',
+            audiences: ['analyst', 'admin'],
+            priority: 105,
+          },
+        ],
+      },
+    ],
+  },
+
   // ══════════════════════════════════════════════════════════════
   {
     id: 'executive',

@@ -69,5 +69,36 @@ class ClickHouseSink:
                 logger.info("Inserted batch into ClickHouse", count=len(rows))
         except Exception as e:
             logger.error("ClickHouse insertion error", error=str(e))
-            # Не кидаємо виключення, щоб не блокувати основну інгестію,
-            # але в продакшні тут має бути Retry policy
+
+    def execute_query(self, query: str, params: dict[str, Any] | None = None):
+        """Виконує довільний SQL запит."""
+        if not self.client:
+            self.connect()
+        try:
+            return self.client.command(query, parameters=params)
+        except Exception as e:
+            logger.error("ClickHouse query execution error", query=query, error=str(e))
+            raise
+
+    async def insert_dynamic(self, table_name: str, data: list[dict[str, Any]], column_names: list[str]):
+        """Динамічна вставка даних у вказану таблицю."""
+        if not self.client:
+            self.connect()
+
+        if not data:
+            return
+
+        try:
+            rows = []
+            for item in data:
+                rows.append([item.get(col) for col in column_names])
+
+            self.client.insert(
+                table_name,
+                rows,
+                column_names=column_names
+            )
+            logger.info("Inserted dynamic batch into ClickHouse", table=table_name, count=len(rows))
+        except Exception as e:
+            logger.error("ClickHouse dynamic insertion error", table=table_name, error=str(e))
+            raise

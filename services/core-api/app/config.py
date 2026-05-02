@@ -106,6 +106,7 @@ class Settings(BaseSettings):
     KAFKA_TOPIC_RISK_ALERTS: str = "tenant.default.risk.alerts"
     KAFKA_TOPIC_DLQ: str = "tenant.default.dlq"
     KAFKA_TOPIC_QUARANTINE: str = "tenant.default.quarantine"
+    KAFKA_TOPIC_OMNIVERSE_INGESTION: str = "omniverse-ingestion-triggers"
 
     # MinIO/S3
     MINIO_ENDPOINT: str = "localhost:9000"
