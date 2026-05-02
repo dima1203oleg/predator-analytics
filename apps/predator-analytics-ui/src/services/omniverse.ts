@@ -74,5 +74,10 @@ export const omniverseService = {
   detectAnomalies: async (tableName: string, question: string): Promise<any> => {
     const response = await axios.post(`${API_BASE}/insights/anomalies`, { table_name: tableName, question });
     return response.data;
+  },
+
+  getAlerts: async (): Promise<any[]> => {
+    const response = await axios.get(`${API_BASE}/alerts`);
+    return response.data.alerts;
   }
 };

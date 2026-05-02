@@ -576,3 +576,22 @@ async def get_omniverse_anomalies(
     except Exception as e:
         logger.error(f"Помилка пошуку аномалій для OMNIVERSE: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/alerts")
+async def list_omniverse_alerts(
+    tenant_id: str = Depends(get_tenant_id),
+    current_user: dict = Depends(get_current_active_user),
+    _ = Depends(PermissionChecker([Permission.READ_CORP_DATA])),
+):
+    """Повертає список автономних алертів від Watchdog."""
+    from app.database import get_clickhouse_client
+    client = get_clickhouse_client()
+    
+    try:
+        query = f"SELECT * FROM omniverse_alerts WHERE tenant_id = '{tenant_id}' ORDER BY detected_at DESC LIMIT 50"
+        result = client.query(query)
+        alerts = [dict(zip(result.column_names, row)) for row in result.result_rows]
+        return {"alerts": alerts}
+    except Exception as e:
+        # Якщо таблиці ще немає — повертаємо пустий список
+        return {"alerts": []}

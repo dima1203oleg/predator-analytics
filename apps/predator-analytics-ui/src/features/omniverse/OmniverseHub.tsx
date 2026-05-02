@@ -5,15 +5,17 @@ import { OmniverseIngestion } from './components/OmniverseIngestion';
 import { OmniverseExplorer } from './components/OmniverseExplorer';
 import { OmniverseGraph } from './components/OmniverseGraph';
 import { OmniverseInsights } from './components/OmniverseInsights';
+import { OmniverseAlerts } from './components/OmniverseAlerts';
 
 const OmniverseHub: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'INGEST' | 'EXPLORE' | 'GRAPH' | 'INSIGHTS'>('INGEST');
+  const [activeTab, setActiveTab] = useState<'INGEST' | 'EXPLORE' | 'GRAPH' | 'INSIGHTS' | 'ALERTS'>('INGEST');
 
   const tabs = [
     { id: 'INGEST', label: 'ЗАВАНТАЖЕННЯ', icon: Database, color: 'emerald' },
     { id: 'EXPLORE', label: 'ДОСЛІДНИК', icon: Search, color: 'cyan' },
     { id: 'GRAPH', label: 'ГРАФ ЗВ\'ЯЗКІВ', icon: Share2, color: 'purple' },
     { id: 'INSIGHTS', label: 'AI ІНСАЙТИ', icon: Cpu, color: 'blue' },
+    { id: 'ALERTS', label: 'WATCHDOG', icon: ShieldCheck, color: 'red' },
   ];
 
   return (
@@ -143,6 +145,10 @@ const OmniverseHub: React.FC = () => {
 
           {activeTab === 'INSIGHTS' && (
             <OmniverseInsights />
+          )}
+
+          {activeTab === 'ALERTS' && (
+            <OmniverseAlerts />
           )}
         </div>
       </main>

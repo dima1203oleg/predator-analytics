@@ -21,6 +21,7 @@ from app.fusion_engine import ДвигунЗлиттяДаних
 from app.health import set_health_status, start_health_server, stop_health_server
 from app.pipelines.file_ingestion import FileIngestionPipeline
 from app.pipelines.omniverse_pipeline import OmniversePipeline
+from app.services.omniverse_watchdog import OmniverseWatchdog
 from app.registries.ua_registries import УкраїнськийРеєстр
 from app.sinks.postgres_sink import PostgresSink
 from predator_common.logging import get_logger
@@ -390,12 +391,17 @@ async def main() -> None:
         loop.add_signal_handler(sig, stop_event.set)
 
     consumer_task = asyncio.create_task(consume())
+    
+    # Запускаємо OMNIVERSE Watchdog
+    watchdog = OmniverseWatchdog(interval_seconds=300)
+    watchdog_task = asyncio.create_task(watchdog.start())
 
     await stop_event.wait()
     logger.info("ingestion_worker.stopping")
     consumer_task.cancel()
+    watchdog_task.cancel()
     with contextlib.suppress(asyncio.CancelledError):
-        await consumer_task
+        await asyncio.gather(consumer_task, watchdog_task)
 
     # Зупиняємо health check сервер
     await stop_health_server(health_runner)
