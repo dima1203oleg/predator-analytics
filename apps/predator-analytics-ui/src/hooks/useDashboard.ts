@@ -1,5 +1,5 @@
 /**
- * 🦅 PREDATOR Analytics v58.5-ELITE — Dashboard Hooks
+ * 🦅 PREDATOR Analytics v63.0-ELITE — Dashboard Hooks
  * TanStack Query хуки для головного командного дашборду.
  */
 

@@ -288,7 +288,7 @@ export const Predator: React.FC = () => {
                   </h3>
                   <div className="flex items-center gap-3">
                     <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping shadow-[0_0_10px_#e11d48]" />
-                    <p className="text-[10px] text-rose-500/60 font-black uppercase tracking-[0.4em] font-mono">SOVEREIGN_ELITE_v58.2_GLM-5.1</p>
+                    <p className="text-[10px] text-rose-500/60 font-black uppercase tracking-[0.4em] font-mono">SOVEREIGN_ELITE_v63.0-ELITE_GLM-5.1</p>
                     <div className="flex items-center gap-2 mt-1">
                        <span className={cn("text-[8px] font-black px-2 py-0.5 rounded border", backendStatus.isOffline ? "border-rose-500/40 text-rose-500 bg-rose-500/5" : (backendStatus.activeFailover ? "border-emerald-500/40 text-emerald-500 bg-emerald-500/5" : "border-rose-500/40 text-rose-500 bg-rose-500/5"))}>
                           ВУЗОЛ: {backendStatus.isOffline ? "ВІДНОВЛЕННЯ" : (backendStatus.activeFailover ? "ZROK_FAILOVER" : "PRIMARY_CLUSTER")}

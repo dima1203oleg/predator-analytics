@@ -349,7 +349,7 @@ class CatalogService {
 }
 
 // ============================================================================
-// INTELLIGENCE & OSINT - v61.0-ELITE Core
+// INTELLIGENCE & OSINT - v63.0-ELITE Core
 // ============================================================================
 
 class IntelligenceService {
@@ -445,7 +445,7 @@ class IntelligenceService {
    */
   async getSignalFeed() {
     try {
-      // Trace: v61.0-ELITE Signal Acquisition
+      // Trace: v63.0-ELITE Signal Acquisition
       const res = await apiClient.get('/telegram/feed');
       return Array.isArray(res.data) ? res.data : [];
     } catch (error) {

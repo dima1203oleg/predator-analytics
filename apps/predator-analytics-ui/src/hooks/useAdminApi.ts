@@ -1,5 +1,5 @@
 /**
- * PREDATOR Analytics v61.0-ELITE — Admin API Hooks
+ * PREDATOR Analytics v63.0-ELITE — Admin API Hooks
  * React Query hooks for Infrastructure, Agents, Failover.
  */
 

@@ -1,5 +1,5 @@
 /**
- * 🔍 useBackendStatus | PREDATOR v61.0-ELITE
+ * 🔍 useBackendStatus | PREDATOR v63.0-ELITE
  * Хук для відстеження стану вузлів інфраструктури в реальному часі.
  * Підтримує Sovereign Headless Architecture (Tri-State Routing).
  */
