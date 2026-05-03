@@ -8,6 +8,7 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from 'recharts';
 import { analyticsService, TimeSeriesData } from '../../services/unified/analytics.service';
+import { factoryApi } from '../../services/api/factory';
 import { premiumLocales } from '../../locales/uk/premium';
 import { cn } from '../../utils/cn';
 
@@ -19,55 +20,56 @@ interface Scenario {
 }
 
 export const ModelingDashboard: React.FC = () => {
-  const [activeScenario, setActiveScenario] = useState<string>('conservative');
+  const [scenarios, setScenarios] = useState<Scenario[]>([]);
+  const [activeScenario, setActiveScenario] = useState<string>('');
   const [data, setData] = useState<TimeSeriesData[]>([]);
   const [isSimulating, setIsSimulating] = useState(false);
 
-  const SCENARIOS: Scenario[] = useMemo(() => [
-    {
-      id: 'optimistic',
-      name: premiumLocales.modeling.scenarios.optimistic.name,
-      description: premiumLocales.modeling.scenarios.optimistic.desc,
-      impactFactor: 1.15
-    },
-    {
-      id: 'conservative',
-      name: premiumLocales.modeling.scenarios.conservative.name,
-      description: premiumLocales.modeling.scenarios.conservative.desc,
-      impactFactor: 1.02
-    },
-    {
-      id: 'crisis',
-      name: premiumLocales.modeling.scenarios.crisis.name,
-      description: premiumLocales.modeling.scenarios.crisis.desc,
-      impactFactor: 0.8
-    },
-    {
-      id: 'currency',
-      name: premiumLocales.modeling.scenarios.currency.name,
-      description: premiumLocales.modeling.scenarios.currency.desc,
-      impactFactor: 0.9
-    },
-  ], []);
+  useEffect(() => {
+    const loadScenarios = async () => {
+      try {
+        const backendScenarios = await factoryApi.getWargamingScenarios();
+        if (backendScenarios && backendScenarios.length > 0) {
+          const mapped = backendScenarios.map((s: any) => ({
+            id: s.id,
+            name: s.name,
+            description: s.description,
+            impactFactor: s.base_impact_uah_mln ? (1 - s.base_impact_uah_mln / 5000) : 0.9 // Емуляція впливу
+          }));
+          setScenarios(mapped);
+          setActiveScenario(mapped[0].id);
+        }
+      } catch (e) {
+        console.error("Failed to load scenarios:", e);
+      }
+    };
+    loadScenarios();
+  }, []);
 
   useEffect(() => {
-    runSimulation();
+    if (activeScenario) {
+      runSimulation();
+    }
   }, [activeScenario]);
 
   const runSimulation = async () => {
     setIsSimulating(true);
-    const baseData = await analyticsService.getForecast();
-    const scenario = SCENARIOS.find(s => s.id === activeScenario);
-    const factor = scenario?.impactFactor || 1;
+    try {
+      const baseData = await analyticsService.getForecast();
+      const scenario = scenarios.find(s => s.id === activeScenario);
+      const factor = scenario?.impactFactor || 1;
 
-    // Apply scenario factor to generating "modeled" data
-    const modeledData = baseData.map(item => ({
-      ...item,
-      value: Math.round(item.value * (1 + (Math.random() * 0.1 - 0.05))), // Add noise
-      prediction: Math.round((item.prediction || item.value) * factor)
-    }));
+      // Apply scenario factor to generating "modeled" data
+      const modeledData = baseData.map(item => ({
+        ...item,
+        value: Math.round(item.value * (1 + (Math.random() * 0.1 - 0.05))), // Add noise
+        prediction: Math.round((item.prediction || item.value) * factor)
+      }));
 
-    setData(modeledData);
+      setData(modeledData);
+    } catch (e) {
+      console.error("Simulation failed:", e);
+    }
     setIsSimulating(false);
   };
 
@@ -101,7 +103,7 @@ export const ModelingDashboard: React.FC = () => {
         <div className="space-y-4">
           <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4">{premiumLocales.modeling.scenarios.title}</h3>
           <div className="space-y-3">
-            {SCENARIOS.map(scenario => (
+            {scenarios.map(scenario => (
               <motion.button
                 key={scenario.id}
                 onClick={() => setActiveScenario(scenario.id)}

@@ -10,6 +10,19 @@ import { useTranslation } from 'react-i18next';
 const EconomicGraphExplorer: React.FC = () => {
     const { t } = useTranslation();
     const [searchQuery, setSearchQuery] = useState('');
+    const [isShadowMode, setIsShadowMode] = useState(false);
+    const [simulatingEntity, setSimulatingEntity] = useState<string | null>(null);
+
+    const toggleShadowSimulation = async (entityId: string) => {
+        if (isShadowMode) {
+            setIsShadowMode(false);
+            setSimulatingEntity(null);
+        } else {
+            setIsShadowMode(true);
+            setSimulatingEntity(entityId);
+            // Тут виклик до backend для створення Shadow Context
+        }
+    };
 
     // Імітація роботи з Neo4j / Graph API v61.0-ELITE
     const mockNodes = [
@@ -20,21 +33,24 @@ const EconomicGraphExplorer: React.FC = () => {
     ];
 
     return (
-        <Card className="bg-slate-950/90 border-slate-800 backdrop-blur-3xl relative overflow-hidden h-[600px] border-l-cyan-500/20">
+        <Card className={`bg-slate-950/90 border-slate-800 backdrop-blur-3xl relative overflow-hidden h-[600px] transition-all duration-700 ${isShadowMode ? 'ring-2 ring-rose-500/50 border-rose-500/30' : 'border-l-cyan-500/20'}`}>
+            {isShadowMode && (
+                <div className="absolute inset-0 bg-rose-500/5 pointer-events-none z-0 animate-pulse" />
+            )}
             <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20 pointer-events-none" />
 
-            <CardHeader className="border-b border-white/5 bg-slate-900/40 relative z-10">
+            <CardHeader className={`border-b border-white/5 relative z-10 transition-colors ${isShadowMode ? 'bg-rose-950/20' : 'bg-slate-900/40'}`}>
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
-                            <Share2 className="text-cyan-400" size={20} />
+                        <div className={`p-2 rounded-lg border transition-colors ${isShadowMode ? 'bg-rose-500/20 border-rose-500/40' : 'bg-cyan-500/10 border-cyan-500/20'}`}>
+                            {isShadowMode ? <Layers className="text-rose-400" size={20} /> : <Share2 className="text-cyan-400" size={20} />}
                         </div>
                         <div>
                             <CardTitle className="text-lg font-black uppercase tracking-tighter">
-                                {t('graph.title')}
+                                {isShadowMode ? "Shadow Graph Simulation" : t('graph.title')}
                             </CardTitle>
                             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">
-                                Neural Relations Engine v61.0-ELITE
+                                {isShadowMode ? "What-if Analysis Mode Active" : "Neural Relations Engine v61.0-ELITE"}
                             </p>
                         </div>
                     </div>

@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useTranslation } from 'react-i18next';
+import { factoryApi } from '../../services/api/factory';
 
 const MarketSimulator: React.FC = () => {
     const { t } = useTranslation();
@@ -15,15 +16,24 @@ const MarketSimulator: React.FC = () => {
 
     const runSimulation = async () => {
         setIsSimulating(true);
-        // Імітація виклику до v61.0-ELITE-SM ML backend
-        setTimeout(() => {
-            const simulatedMargin = 25.4 - (currency - 40) * 0.5 - (logistics - 10) * 0.8;
-            setResult({
-                margin: parseFloat(simulatedMargin.toFixed(2)),
-                risk: simulatedMargin < 15 ? 'critical' : simulatedMargin < 22 ? 'elevated' : 'stable'
+        try {
+            const mcResult = await factoryApi.runMonteCarlo({
+                scenarios: [
+                    { id: 'custom', name: 'User Simulation', probability: 1.0, impact_uah_mln: currency * 10 }
+                ],
+                iterations: 500
             });
-            setIsSimulating(false);
-        }, 1200);
+            
+            if (mcResult) {
+                setResult({
+                    margin: parseFloat((mcResult.expected_impact_mln / 100).toFixed(2)),
+                    risk: mcResult.p99_impact_mln > 1000 ? 'critical' : mcResult.p95_impact_mln > 500 ? 'elevated' : 'stable'
+                });
+            }
+        } catch (e) {
+            console.error("Monte Carlo simulation failed:", e);
+        }
+        setIsSimulating(false);
     };
 
     return (
