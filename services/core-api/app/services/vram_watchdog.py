@@ -4,6 +4,13 @@ import shutil
 from dataclasses import dataclass
 from typing import Optional
 
+try:
+    import pynvml
+    HAS_NVML = True
+except ImportError:
+    pynvml = None
+    HAS_NVML = False
+
 from predator_common.logging import get_logger
 
 logger = get_logger("core_api.vram_watchdog")
@@ -23,10 +30,28 @@ class VramStatus:
 class VramSentinel:
     def __init__(self):
         self._current_mode = "SOVEREIGN"
-        self._nvidia_smi_path = shutil.whoami = shutil.which("nvidia-smi")
+        self._nvidia_smi_path = shutil.which("nvidia-smi")
+        self._nvml_initialized = False
+        if HAS_NVML:
+            try:
+                pynvml.nvmlInit()
+                self._nvml_initialized = True
+                logger.info("🚀 NVML initialized successfully")
+            except Exception as e:
+                logger.debug(f"NVML init failed: {e}")
 
     async def _get_real_vram(self) -> Optional[float]:
-        """Отримати реальне використання VRAM через nvidia-smi."""
+        """Отримати реальне використання VRAM (через NVML або nvidia-smi)."""
+        # 1. Спробувати NVML (найшвидше)
+        if HAS_NVML and self._nvml_initialized:
+            try:
+                handle = pynvml.nvmlDeviceGetHandleByIndex(0)
+                info = pynvml.nvmlDeviceGetMemoryInfo(handle)
+                return info.used / 1024.0 / 1024.0 / 1024.0 # в GB
+            except Exception as e:
+                logger.debug(f"NVML query failed: {e}")
+
+        # 2. Фоллбек на nvidia-smi (повільніше)
         if not self._nvidia_smi_path:
             return None
         

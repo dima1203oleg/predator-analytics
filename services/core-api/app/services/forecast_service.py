@@ -5,13 +5,26 @@ from datetime import UTC, datetime, timedelta
 import logging
 import random
 import os
+import math
 from typing import Any
-import pandas as pd
-from prophet import Prophet
-import clickhouse_connect
+
+try:
+    import pandas as pd
+    import pandas as pd
+    from prophet import Prophet
+    import clickhouse_connect
+    from app.database import HAS_CLICKHOUSE
+    HAS_ML_LIBS = True
+except ImportError:
+    pd = None
+    Prophet = None
+    clickhouse_connect = None
+    HAS_CLICKHOUSE = False
+    HAS_ML_LIBS = False
 
 from app.services.chaos_service import ChaosService
 from app.services.vram_watchdog import vram_sentinel
+from app.services.cache_service import cache_service
 
 logger = logging.getLogger(__name__)
 
@@ -25,6 +38,18 @@ class ForecastService:
         model: str = "prophet"
     ) -> dict[str, Any]:
         """Генерує прогноз попиту для товарного коду."""
+        
+        # 0. Перевірка кешу
+        cache_key = f"forecast:{model}:{product_code}:{months_ahead}"
+        cached_result = await cache_service.get(cache_key)
+        if cached_result:
+            logger.info(f"🚀 [CACHE HIT] Forecast for '{product_code}' retrieved from Redis")
+            return cached_result
+
+        if not HAS_ML_LIBS:
+            logger.warning("ML libraries (pandas/prophet) not installed. Using simple projection.")
+            return ForecastService._generate_simple_projection(product_code, months_ahead)
+
         # Перевірка VRAM для важких моделей (LSTM)
         if model == "lstm":
             vram_stats = await vram_sentinel.get_stats()
@@ -41,57 +66,70 @@ class ForecastService:
             logger.error(f"ClickHouse fetch failed: {e}. Using fallback simulation.")
             df = ForecastService._generate_fallback_data(product_code)
 
-        if len(df) < 5:
+        if df is None or len(df) < 5:
             logger.warning("Insufficient data for Prophet. Using simple trend projection.")
             return ForecastService._generate_simple_projection(product_code, months_ahead)
 
         # 2. Моделювання
-        m = Prophet(
-            yearly_seasonality=True,
-            weekly_seasonality=False,
-            daily_seasonality=False,
-            interval_width=0.95
-        )
-        m.fit(df)
+        try:
+            m = Prophet(
+                yearly_seasonality=True,
+                weekly_seasonality=False,
+                daily_seasonality=False,
+                interval_width=0.95
+            )
+            m.fit(df)
 
-        # 3. Прогноз
-        future = m.make_future_dataframe(periods=months_ahead, freq='MS')
-        forecast = m.predict(future)
-        
-        # Відбираємо тільки майбутні точки
-        forecast_future = forecast.tail(months_ahead)
-        
-        forecast_points = []
-        for _, row in forecast_future.iterrows():
-            forecast_points.append({
-                "date": row['ds'].strftime("%Y-%m-%d"),
-                "predicted_volume": int(row['yhat']),
-                "confidence_lower": int(max(0, row['yhat_lower'])),
-                "confidence_upper": int(row['yhat_upper'])
-            })
+            # 3. Прогноз
+            future = m.make_future_dataframe(periods=months_ahead, freq='MS')
+            forecast = m.predict(future)
+            
+            # Відбираємо тільки майбутні точки
+            forecast_future = forecast.tail(months_ahead)
+            
+            forecast_points = []
+            for _, row in forecast_future.iterrows():
+                forecast_points.append({
+                    "date": row['ds'].strftime("%Y-%m-%d"),
+                    "predicted_volume": int(row['yhat']),
+                    "confidence_lower": int(max(0, row['yhat_lower'])),
+                    "confidence_upper": int(row['yhat_upper'])
+                })
 
-        # 4. Розрахунок метрик
-        trend_val = (forecast_future.iloc[-1]['yhat'] - forecast_future.iloc[0]['yhat']) / forecast_future.iloc[0]['yhat']
-        confidence_score = 0.85 # Базовий для Prophet
+            # 4. Розрахунок метрик
+            trend_val = (forecast_future.iloc[-1]['yhat'] - forecast_future.iloc[0]['yhat']) / forecast_future.iloc[0]['yhat']
+            confidence_score = 0.85 # Базовий для Prophet
+        except Exception as e:
+            logger.error(f"Modeling failed: {e}")
+            return ForecastService._generate_simple_projection(product_code, months_ahead)
         
         # T9.4: Вплив Хаосу на впевненість
         chaos_active = ChaosService.get_status()
         if chaos_active:
             confidence_score *= 0.7
 
-        return {
+        result = {
             "product_code": product_code,
             "product_name": f"Товарна група {product_code}",
             "model_used": model,
-            "source": "clickhouse",
+            "source": "clickhouse" if HAS_CLICKHOUSE else "fallback",
             "confidence_score": round(confidence_score, 2),
             "forecast": forecast_points,
-            "interpretation_uk": ForecastService._generate_interpretation(product_code, trend_val, confidence_score)
+            "interpretation_uk": ForecastService._generate_interpretation(product_code, trend_val, confidence_score),
+            "generated_at": datetime.now(UTC).isoformat()
         }
 
+        # Збереження в кеш (TTL 6 годин для прогнозів)
+        await cache_service.set(cache_key, result, ttl=21600)
+        
+        return result
+
     @staticmethod
-    async def _fetch_clickhouse_data(product_code: str) -> pd.DataFrame:
+    async def _fetch_clickhouse_data(product_code: str) -> Any:
         """Отримання історичних даних з ClickHouse."""
+        if not HAS_CLICKHOUSE or not pd:
+            raise RuntimeError("ClickHouse or Pandas not available")
+            
         client = clickhouse_connect.get_client(
             host=os.getenv("CLICKHOUSE_HOST", "192.168.0.199"),
             port=int(os.getenv("CLICKHOUSE_PORT", "8123")),
@@ -112,8 +150,10 @@ class ForecastService:
         return client.query_df(query)
 
     @staticmethod
-    def _generate_fallback_data(product_code: str) -> pd.DataFrame:
+    def _generate_fallback_data(product_code: str) -> Any:
         """Генерація синтетичних даних при відсутності зв'язку з БД."""
+        if not pd:
+            return None
         dates = pd.date_range(start='2023-01-01', periods=24, freq='MS')
         random.seed(product_code)
         base = random.randint(1000, 5000)

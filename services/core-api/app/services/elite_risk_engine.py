@@ -17,6 +17,7 @@ from app.models.orm import Declaration, RiskScore
 from app.services.anomaly_detection import AnomalyDetectionService
 from app.services.neo4j_service import Neo4jService
 from app.services.forecast_service import ForecastService
+from app.services.antigravity_orchestrator import orchestrator
 from predator_common.cers_score import Cers5LayerFactors, compute_cers_v55
 from predator_common.logging import get_logger
 
@@ -137,12 +138,17 @@ class EliteRiskEngine:
         
         if cycles:
             structural_score += 40.0  # Штраф за циклічне володіння
+            # Запускаємо Red-Team аналіз для циклічних структур
+            orchestrator.add_task(
+                description=f"ADVERSARIAL_AUDIT: Циклічне володіння виявлено для {ueid}. Пошук прихованих бенефіціарів та схем фроду.",
+                priority="HIGH"
+            )
 
         return {
             "score": min(structural_score, 100.0),
             "ubo": ubo_data.get("name", "Unknown"),
             "cycles_detected": len(cycles),
-            "explanation": f"UBO: {ubo_data.get('name')}. Виявлено {len(cycles)} циклів володіння."
+            "explanation": f"UBO: {ubo_data.get('name', 'Unknown')}. Виявлено {len(cycles)} циклів володіння. Red-Team аудит активовано."
         }
 
     async def _calculate_predictive(self, ueid: str, behavioral: dict, institutional: dict) -> dict[str, Any]:

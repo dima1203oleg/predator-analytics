@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from typing import List, Any
 from app.services.wargaming_engine import wargaming_engine
-from app.routers.auth import get_current_active_user, get_tenant_id
+from app.dependencies import get_current_active_user, get_tenant_id
 
 router = APIRouter(prefix="/wargaming", tags=["War-gaming Engine"])
 
@@ -20,7 +20,7 @@ async def simulate_scenario(
     current_user: dict = Depends(get_current_active_user)
 ):
     """Запустити симуляцію впливу сценарію."""
-    return await wargaming_engine.simulate_impact(scenario_id)
+    return await wargaming_engine.simulate_scenario(scenario_id)
 
 @router.get("/forecast")
 async def get_budget_forecast(

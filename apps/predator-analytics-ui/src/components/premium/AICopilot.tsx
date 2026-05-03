@@ -66,14 +66,31 @@ export const Predator: React.FC = () => {
 
     const fetchInsights = async () => {
       try {
-        const [stats, goldPatterns] = await Promise.all([
+        const [stats, goldPatterns, wargamingScenarios] = await Promise.all([
           factoryApi.getStats(),
-          factoryApi.getGoldPatterns()
+          factoryApi.getGoldPatterns(),
+          factoryApi.getWargamingScenarios()
         ]);
 
         if (!mounted) return;
 
         const dynamicSuggestions: Suggestion[] = [];
+
+        // War-Gaming Scenarios
+        if (wargamingScenarios && wargamingScenarios.length > 0) {
+          wargamingScenarios.forEach((scenario: any) => {
+            if (scenario.probability > 50) {
+              dynamicSuggestions.push({
+                id: `war-${scenario.id}-${Date.now()}`,
+                type: 'warning',
+                title: `ЗАГРОЗА: ${scenario.name}`,
+                description: scenario.description,
+                confidence: scenario.probability / 100,
+                impact: scenario.impact_level?.toLowerCase() || 'high'
+              });
+            }
+          });
+        }
 
         if (stats && stats.total_patterns !== undefined) {
           dynamicSuggestions.push({

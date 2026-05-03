@@ -180,4 +180,22 @@ export const factoryApi = {
   scaleDownPod: async (podId: string) => {
     return (await apiClient.post(`/orchestrator/pods/${podId}/scale-down`)).data;
   },
+
+  // ─── War-Gaming Simulation (v57+) ─────────────────────────────────────────
+
+  /** Отримати список активних сценаріїв загроз */
+  getWargamingScenarios: async () => {
+    const res = await apiClient.get('/wargaming/scenarios');
+    return Array.isArray(res.data) ? res.data : [];
+  },
+
+  /** Запустити симуляцію сценарію */
+  simulateScenario: async (scenarioId: string) => {
+    return (await apiClient.post(`/wargaming/simulate/${scenarioId}`)).data;
+  },
+
+  /** Отримати прогноз ризиків на бюджет */
+  getWargamingForecast: async () => {
+    return (await apiClient.get('/wargaming/forecast')).data;
+  },
 };

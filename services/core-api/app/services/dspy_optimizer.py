@@ -240,17 +240,28 @@ class DSPyOptimizerService:
         # 3. Запуск оптимізатора (BootstrapFewShot, MIPRO, etc.)
         # 4. Оцінка на validation set
 
-        optimized_prompt = f"""[ОПТИМІЗОВАНО]
-{template.template}
+        # 4. Оцінка на validation set
+
+        # DSPy Signature: Reasoning & Answer
+        signature_prompt = f"""
+        Given the fields below, do the following:
+        1. [Reasoning]: Step-by-step thinking about the risk factors.
+        2. [Answer]: Final risk assessment level.
+
+        Input Fields: {', '.join(template.variables)}
+        
+        Output Fields: reasoning, risk_level
+        """
+
+        optimized_prompt = f"""[DSPy OPTIMIZED SIGNATURE]
+{signature_prompt}
 
 [FEW-SHOT EXAMPLES]
 {self._format_examples(template.examples[:config.max_bootstrapped_demos])}
 
-[CHAIN-OF-THOUGHT]
-Крок 1: Проаналізуй вхідні дані
-Крок 2: Визнач ключові фактори ризику
-Крок 3: Оціни кожен фактор
-Крок 4: Сформулюй загальний висновок"""
+[INSTRUCTION]
+Perform a deep forensic analysis. Look for circular ownership and tax gaps.
+"""
 
         # Mock метрики
         score = 0.85 + (len(template.examples) * 0.02)  # Більше прикладів = вища точність

@@ -13,7 +13,8 @@ from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from pydantic import BaseModel
 
 from app.core.permissions import Permission
-from app.dependencies import PermissionChecker, get_current_active_user, get_tenant_id, get_db
+from app.dependencies import PermissionChecker, get_current_active_user, get_tenant_id
+from app.database import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.services.ai_service import AIService
 from app.services.kafka_service import get_kafka_service

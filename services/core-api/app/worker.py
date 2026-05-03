@@ -13,7 +13,7 @@ celery_app = Celery(
     "predator_tasks",
     broker=redis_url,
     backend=redis_url,
-    include=["app.tasks.freshness", "app.tasks.ai_maintenance", "app.tasks.cleanup"]
+    include=["app.tasks.freshness", "app.tasks.ai_maintenance", "app.tasks.cleanup", "app.tasks.forecasting"]
 )
 
 celery_app.conf.update(
@@ -51,5 +51,10 @@ celery_app.conf.beat_schedule = {
     "daily-automl-retrain": {
         "task": "app.tasks.ai_maintenance.nightly_model_retrain",
         "schedule": 86400.0,  # 24 години
+    },
+    # Фонове предиктивне навчання топ-кодів (кожні 4 години)
+    "precalculate-top-forecasts": {
+        "task": "app.tasks.forecasting.precalculate_top_forecasts",
+        "schedule": 14400.0,  # 4 години
     },
 }

@@ -17,6 +17,7 @@ class AgentType(StrEnum):
     QA_DEVTOOLS = "qa_devtools"
     FINANCIAL_ANALYST = "financial_analyst"
     OSINT_EXPERT = "osint_expert"
+    RED_TEAMER = "red_teamer"
 
 
 class AgentTechnology(StrEnum):

@@ -73,6 +73,13 @@ class AntigravityOrchestrator:
                     specialization="Registry Intelligence & Global Sanctions",
                     is_busy=False, tasks_completed=22
                 ),
+                AgentStatus(
+                    type=AgentType.RED_TEAMER,
+                    name="Chaos-Bender",
+                    technology="Adversarial ML",
+                    specialization="Stress-testing Customs Loopholes & Fraud Simulation",
+                    is_busy=False, tasks_completed=7
+                ),
             ]
         )
         self.tasks: dict[str, AntigravityTask] = {}
@@ -197,6 +204,23 @@ class AntigravityOrchestrator:
                     task.progress += 30
             except Exception:
                 task.progress += 10 # Fallback
+
+        # RED_TEAMER: Пошук лазівок через Adversarial Analysis
+        if task.assigned_agent == AgentType.RED_TEAMER and task.progress < 30:
+            self.add_log(task.task_id, "Запуск Adversarial Simulation для пошуку лазівок...", task.assigned_agent)
+            try:
+                from app.services.gemini_agent_service import gemini_service
+                analysis = await gemini_service.generate(
+                    prompt=f"Проаналізуй наступний сценарій/код на предмет митних лазівок та можливостей для фроду: {task.description}",
+                    system_instruction="Ти — Adversarial AI. Твоя мета — знайти слабкі місця в системі митного контролю."
+                )
+                if analysis.get("content"):
+                    task.result_artifact = f"Знайдені вразливості: {analysis['content'][:500]}..."
+                    self.add_log(task.task_id, "Вразливості ідентифіковано.", task.assigned_agent, level="warn")
+                    task.progress += 40
+            except Exception as e:
+                logger.error(f"Red Team analysis failed: {e}")
+                task.progress += 15
         
         # Випадковий прогрес 5-20%
         import random

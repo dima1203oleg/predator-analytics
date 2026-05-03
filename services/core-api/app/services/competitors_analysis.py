@@ -11,8 +11,13 @@ from datetime import UTC, datetime
 from enum import StrEnum
 import logging
 from typing import Any
-import os
-import clickhouse_connect
+try:
+    import clickhouse_connect
+    from app.database import HAS_CLICKHOUSE
+except ImportError:
+    clickhouse_connect = None
+    HAS_CLICKHOUSE = False
+
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.services.search_service import SearchService
 
@@ -206,7 +211,11 @@ class CompetitorsAnalysisService:
 
     async def _get_revenue_from_clickhouse(self, ueid: str) -> float:
         """Отримати виторг компанії за останній рік з ClickHouse."""
+        if not HAS_CLICKHOUSE:
+            logger.warning("ClickHouse library not installed, skipping revenue fetch.")
+            return 0.0
         try:
+            import os
             client = clickhouse_connect.get_client(
                 host=os.getenv("CLICKHOUSE_HOST", "192.168.0.199"),
                 port=int(os.getenv("CLICKHOUSE_PORT", "8123")),

@@ -4,8 +4,15 @@
 """
 from collections.abc import AsyncGenerator
 
-import clickhouse_connect
-from clickhouse_connect.driver.client import Client
+try:
+    import clickhouse_connect
+    from clickhouse_connect.driver.client import Client
+    HAS_CLICKHOUSE = True
+except ImportError:
+    clickhouse_connect = None
+    Client = None
+    HAS_CLICKHOUSE = False
+
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
     AsyncSession,
@@ -77,6 +84,8 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
 
 def get_clickhouse_client() -> Client:
     """Отримати синхронний клієнт ClickHouse для аналітики."""
+    if not HAS_CLICKHOUSE:
+        raise RuntimeError("clickhouse-connect library is not installed.")
     return clickhouse_connect.get_client(
         host=settings.CLICKHOUSE_HOST,
         port=settings.CLICKHOUSE_PORT,

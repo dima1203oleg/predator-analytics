@@ -1,14 +1,51 @@
 import asyncio
 import json
 import random
+import math
 from datetime import UTC, datetime
-from typing import Any, List
+from typing import Any, List, Optional
 
 from predator_common.logging import get_logger
 from app.services.antigravity_orchestrator import orchestrator
 from app.services.ai_service import AIService
 
 logger = get_logger("core_api.wargaming")
+
+class MonteCarloSimulator:
+    """Симулятор Монте-Карло для оцінки фінансових ризиків."""
+
+    @staticmethod
+    def run_simulation(
+        base_loss: float, 
+        probability: float, 
+        iterations: int = 1000,
+        volatility: float = 0.2
+    ) -> dict[str, Any]:
+        """Запускає ітераційну симуляцію можливих збитків."""
+        results = []
+        for _ in range(iterations):
+            # Моделювання випадкового впливу через нормальний розподіл
+            if random.random() * 100 <= probability:
+                # Вплив = База * (1 + випадкова зміна)
+                variation = random.gauss(0, volatility)
+                loss = base_loss * (1 + variation)
+                results.append(max(0, loss))
+            else:
+                results.append(0)
+
+        if not results:
+            return {"mean": 0, "p95": 0, "p99": 0, "max": 0}
+
+        results.sort()
+        count = len(results)
+        
+        return {
+            "mean": round(sum(results) / count, 2),
+            "p95": round(results[int(count * 0.95)], 2),
+            "p99": round(results[int(count * 0.99)], 2),
+            "max": round(max(results), 2),
+            "iterations": iterations
+        }
 
 class WarGamingEngine:
     """War-gaming Engine (v63.0-ELITE)
@@ -17,24 +54,23 @@ class WarGamingEngine:
 
     def __init__(self):
         self.ai = AIService()
+        self.simulator = MonteCarloSimulator()
         self.active_scenarios = []
 
     async def generate_scenarios(self, tenant_id: str = None, context_data: dict = None) -> List[dict]:
-        """Генерує актуальні сценарії загроз на основі поточних даних для конкретного тенданта."""
+        """Генерує актуальні сценарії загроз на основі поточних даних."""
         prompt = f"""
         ПРОАНАЛІЗУЙ КОНТЕКСТ ТА ЗГЕНЕРУЙ 3 СТРАТЕГІЧНІ СЦЕНАРІЇ РИЗИКУ ДЛЯ МИТНИЦІ УКРАЇНИ.
         ДАНІ: {context_data or 'Стабільні показники'}
         
         Вимоги:
         1. Формат: JSON list.
-        2. Поля: id, name, probability (0-100), impact (High/Med/Low), description, triggers.
+        2. Поля: id, name, probability (0-100), base_impact_uah_mln (float), impact_level (High/Med/Low), description, triggers (list).
         3. Мова: Українська.
         """
         
         try:
-            # Спроба згенерувати через AI
             raw_response = await self.ai.generate_insight(prompt)
-            # Очищення від markdown якщо є
             clean_json = raw_response.replace('```json', '').replace('```', '').strip()
             scenarios = json.loads(clean_json)
             self.active_scenarios = scenarios
@@ -49,7 +85,8 @@ class WarGamingEngine:
                 "id": "WAR-01",
                 "name": "Зрив зернового коридору",
                 "probability": 45,
-                "impact": "High",
+                "base_impact_uah_mln": 450.0,
+                "impact_level": "High",
                 "description": "Зупинка експорту через порти Одеси. Очікуваний дефіцит валютної виручки.",
                 "triggers": ["Блокада портів", "Ріст фрахту"]
             },
@@ -57,37 +94,49 @@ class WarGamingEngine:
                 "id": "WAR-02",
                 "name": "Енергетичний шантаж",
                 "probability": 60,
-                "impact": "High",
+                "base_impact_uah_mln": 280.0,
+                "impact_level": "High",
                 "description": "Дефіцит пального через атаки на нафтобази. Ріст імпорту генераторів.",
                 "triggers": ["Ціна нафти > $95", "Атаки на енергосистему"]
             }
         ]
 
-    async def simulate_impact(self, scenario_id: str) -> dict:
-        """Симулює вплив обраного сценарію на систему."""
+    async def simulate_scenario(self, scenario_id: str, iterations: int = 1000) -> dict:
+        """Повна симуляція сценарію з використанням Монте-Карло та AI-агентів."""
         scenario = next((s for s in self.active_scenarios if s['id'] == scenario_id), None)
         if not scenario:
-            scenario = self._get_fallback_scenarios()[0]
+            scenario = next((s for s in self._get_fallback_scenarios() if s['id'] == scenario_id), self._get_fallback_scenarios()[0])
 
-        # Додаємо задачу в Antigravity Orchestrator для аналізу агентами
-        orchestrator.add_task(
-            description=f"АНАЛІЗ ВПЛИВУ: {scenario['name']}. Прогнозування втрат бюджету та схем мінімізації.",
-            priority="CRITICAL",
-            max_budget=50.0
+        # 1. Фізична симуляція збитків (Монте-Карло)
+        base_impact = scenario.get('base_impact_uah_mln', 100.0)
+        probability = scenario.get('probability', 50.0)
+        
+        mc_results = self.simulator.run_simulation(
+            base_loss=base_impact,
+            probability=probability,
+            iterations=iterations
         )
 
-        # Розрахунок впливу (симуляція)
-        loss_estimate = random.randint(100, 500) * (scenario['probability'] / 100)
-        
+        # 2. Агентурний аналіз (Orchestrator)
+        orchestrator.add_task(
+            description=f"STRATEGIC WAR-GAME: {scenario['name']}. Аналіз критичних вузлів та ланцюжків постачання.",
+            priority="CRITICAL",
+            max_budget=100.0,
+            metadata={"scenario_id": scenario_id, "type": "war_game"}
+        )
+
+        # 3. Формування комплексного звіту
         return {
-            "scenario": scenario['name'],
-            "estimated_loss_mln_uah": round(loss_estimate, 2),
-            "critical_nodes": ["Одеська митниця", "Енергетичний хаб Захід"],
-            "counter_measures": [
-                "Посилений контроль імпорту енергоносіїв",
-                "Моніторинг цін на критичний імпорт"
-            ],
-            "status": "SIMULATED"
+            "scenario": scenario,
+            "monte_carlo": mc_results,
+            "strategic_nodes": ["Одеський порт", "Західний кордон (вантажівки)"],
+            "ai_agent_status": "ANALYZING",
+            "timestamp": datetime.now(UTC).isoformat(),
+            "recommendations": [
+                "Диверсифікація логістичних маршрутів",
+                "Створення стратегічного резерву пального",
+                "Посилений моніторинг декларацій з ризиковими кодами"
+            ]
         }
 
 wargaming_engine = WarGamingEngine()

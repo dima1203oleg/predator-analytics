@@ -565,14 +565,21 @@ class Neo4jService:
                             for rel in record["rels"]
                         ]
                     })
+                return GraphResult(
+                    success=True,
+                    data={"beneficiaries": beneficiaries}
+                )
+            except Exception as e:
+                logger.error(f"Error in find_ultimate_beneficiary: {e}")
+                return GraphResult(success=False, errors=[str(e)])
 
-    async def find_ultimate_beneficiary(self, edrpou: str, max_depth: int = 15) -> dict[str, Any]:
+    async def find_ubo_by_edrpou(self, edrpou: str, max_depth: int = 15) -> dict[str, Any]:
         """
         Пошук кінцевого бенефіціарного власника (UBO) через ланцюги власності.
         """
         query = """
         MATCH (org:Organization {edrpou: $edrpou})
-        MATCH path = (org)<-[:OWNS*1..15]-(ubo:Person)
+        MATCH path = (org)<-[:OWNS*1..$max_depth]-(ubo:Person)
         WHERE NOT (ubo)<-[:OWNS]-()
         RETURN ubo.name as name, 
                ubo.rnokpp as rnokpp, 
@@ -583,7 +590,7 @@ class Neo4jService:
         """
         
         async with await self._get_session() as session:
-            result = await session.run(query, edrpou=edrpou)
+            result = await session.run(query, edrpou=edrpou, max_depth=max_depth)
             record = await result.single()
             if record:
                 return {
@@ -595,14 +602,14 @@ class Neo4jService:
                 }
         return {"error": "Бенефіціара не знайдено"}
 
-    async def detect_circular_ownership(self, edrpou: str) -> list[dict[str, Any]]:
+    async def detect_circular_ownership(self, edrpou: str, max_depth: int = 4) -> list[dict[str, Any]]:
         """
         Виявлення циклічного володіння (Circular Ownership).
         Це часто вказує на схеми приховування активів.
         """
-        query = """
-        MATCH (n:Organization {edrpou: $edrpou})
-        MATCH path = (n)-[:OWNS*1..6]->(n)
+        query = f"""
+        MATCH (n:Organization {{edrpou: $edrpou}})
+        MATCH path = (n)-[:OWNS*1..{max_depth}]->(n)
         RETURN [node in nodes(path) | node.edrpou] as cycle, 
                length(path) as length
         """
@@ -916,3 +923,46 @@ class Neo4jService:
                 "total_relations": sum(rel_stats.values()),
             },
         )
+
+    # ======================== SIMULATION (SHADOW GRAPH) ========================
+
+    async def create_simulation_context(self, scenario_id: str, base_edrpou: str) -> bool:
+        """
+        Створює симуляційний контекст (копію вузла та зв'язків) для 'What-if' аналізу.
+        Використовує мітку :Simulation для ідентифікації.
+        """
+        query = """
+        MATCH (org:Organization {edrpou: $edrpou})
+        CREATE (sim:Organization:Simulation {
+            edrpou: $edrpou + '_sim_' + $scenario_id,
+            name: org.name + ' (SIMULATION)',
+            scenario_id: $scenario_id,
+            original_edrpou: $edrpou
+        })
+        WITH org, sim
+        MATCH (org)-[r:OWNS]->(target)
+        CREATE (sim)-[nr:OWNS]->(target)
+        SET nr = r, nr.simulation = true
+        RETURN count(nr) as created_rels
+        """
+        try:
+            async with await self._get_session() as session:
+                await session.run(query, edrpou=base_edrpou, scenario_id=scenario_id)
+                return True
+        except Exception as e:
+            logger.error(f"Failed to create simulation context: {e}")
+            return False
+
+    async def cleanup_simulation(self, scenario_id: str) -> bool:
+        """Видаляє всі вузли та зв'язки конкретної симуляції."""
+        query = """
+        MATCH (n:Simulation {scenario_id: $scenario_id})
+        DETACH DELETE n
+        """
+        try:
+            async with await self._get_session() as session:
+                await session.run(query, scenario_id=scenario_id)
+                return True
+        except Exception as e:
+            logger.error(f"Failed to cleanup simulation: {e}")
+            return False

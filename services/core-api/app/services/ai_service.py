@@ -44,8 +44,16 @@ class AIService:
         temperature: float = 0.2,
         max_tokens: int = 4096,
         route: LLMRoute = LLMRoute.HYBRID,
+        include_reasoning: bool = False,
     ) -> str:
-        """Виклик LiteLLM або Gemini для отримання відповіді з Circuit Breaker."""
+        """Виклик LiteLLM або Gemini з опціональним кроком міркування."""
+        if include_reasoning:
+            # Додаємо інструкцію для Chain-of-Thought
+            reasoning_msg = {
+                "role": "system", 
+                "content": "Перед наданням фінальної відповіді, виконай покроковий аналіз (Chain-of-Thought) та вияви можливі суперечності. Надай відповідь у форматі: <thought>...</thought> <answer>...</answer>"
+            }
+            messages.insert(0, reasoning_msg)
         # CLOUD routing через Gemini SDK
         if route == LLMRoute.CLOUD:
             prompt = "\n".join([f"{m['role']}: {m['content']}" for m in messages])

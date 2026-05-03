@@ -13,8 +13,8 @@ from app.core.graph import graph_db
 from app.core.permissions import Permission
 from app.dependencies import PermissionChecker
 from app.services.antigravity_orchestrator import orchestrator
-from app.services.kafka_service import kafka_producer
-from app.services.redis_service import redis_client
+from app.services.kafka_service import get_kafka_service
+from app.services.redis_service import get_redis_service
 
 router = APIRouter(prefix="/admin", tags=["Адміністрування (V2)"])
 
@@ -139,8 +139,13 @@ async def get_infra_telemetry(
 
     # Redis
     try:
+        redis_service = get_redis_service()
         start = time.time()
-        await redis_client.ping()
+        # Ensure we are connected
+        if not redis_service._connected:
+            await redis_service.connect()
+        
+        await redis_service._client.ping()
         services.append(ServiceStatus(
             name="Redis 7 (Cache)",
             status="ok",
@@ -166,9 +171,10 @@ async def get_infra_telemetry(
         services.append(ServiceStatus(name="Neo4j 5 (Graph)", status="down", latencyMs=0, version="5.17", lastCheck="-"))
 
     # Kafka
+    kafka_service = get_kafka_service()
     services.append(ServiceStatus(
         name="Kafka (Confluent 7.6)",
-        status="ok" if kafka_producer else "warn",
+        status="ok" if kafka_service._connected else "warn",
         latencyMs=45.0,
         version="7.6.0",
         lastCheck=datetime.now(UTC).strftime("%H:%M:%S")

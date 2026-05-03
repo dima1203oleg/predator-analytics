@@ -27,9 +27,9 @@
 """
 
 # Експортуємо всі роутери для зручності імпорту
-from app.api.v1.endpoints.cloud_assist import router as cloud_assist_router
-from app.api.v1.endpoints.factory import router as factory_router
-from app.api.v1.endpoints.osint_vision import router as osint_vision_router
+from .cloud_assist import router as cloud_assist_router
+from .factory import router as factory_router
+from .osint_vision import router as osint_vision_router
 
 from .admin_chaos import router as admin_chaos_router
 from .admin_v2 import router as admin_v2_router
@@ -43,7 +43,7 @@ from .companies import router as companies_router
 from .competitors import router as competitors_router
 from .copilot import router as copilot_router
 from .dashboard import router as dashboard_router
-from .decisions import router as decisions_router
+# from .decisions import router as decisions_router
 from .declarations import router as declarations_router
 from .forecast import router as forecast_router
 from .graph import router as graph_router
@@ -86,7 +86,7 @@ __all__ = [
     "competitors_router",
     "copilot_router",
     "dashboard_router",
-    "decisions_router",
+    # "decisions_router",
     "declarations_router",
     "factory_router",
     "forecast_router",
