@@ -59,18 +59,18 @@ const ADMIN_NAV: AdminNavItem[] = [
   { id: 'security',   label: 'Zero Trust Security',   path: '/admin/command?tab=security',    icon: Lock,                           group: 'Агенти та Безпека' },
   
   // Intelligence & OSINT
-  { id: 'intelligence',label: 'Митна  озвідка',       path: '/admin/command?tab=intelligence',icon: Eye,            badge: 'ELITE',group: ' озвідка & OSINT' },
-  { id: 'osint',      label: 'Search Console',        path: '/admin/command?tab=osint',       icon: Search,         badge: 'OSINT', group: ' озвідка & OSINT' },
-  { id: 'zrada',      label: 'Zrada Control',         path: '/admin/command?tab=zrada',       icon: ShieldAlert,    badge: 'ELITE', group: ' озвідка & OSINT' },
-  { id: 'aml',        label: 'AML Scoring',           path: '/admin/command?tab=aml',         icon: Activity,       badge: 'RISK',  group: ' озвідка & OSINT' },
-  { id: 'sanctions',  label: 'Global Sanctions',      path: '/admin/command?tab=sanctions',   icon: Lock,           badge: 'GLOBAL',group: ' озвідка & OSINT' },
+  { id: 'intelligence',label: 'Митна Розвідка',       path: '/admin/command?tab=intelligence',icon: Eye,            badge: 'ELITE',group: 'Розвідка & OSINT' },
+  { id: 'osint',      label: 'Search Console',        path: '/admin/command?tab=osint',       icon: Search,         badge: 'OSINT', group: 'Розвідка & OSINT' },
+  { id: 'zrada',      label: 'Zrada Control',         path: '/admin/command?tab=zrada',       icon: ShieldAlert,    badge: 'ELITE', group: 'Розвідка & OSINT' },
+  { id: 'aml',        label: 'AML Scoring',           path: '/admin/command?tab=aml',         icon: Activity,       badge: 'RISK',  group: 'Розвідка & OSINT' },
+  { id: 'sanctions',  label: 'Global Sanctions',      path: '/admin/command?tab=sanctions',   icon: Lock,           badge: 'GLOBAL',group: 'Розвідка & OSINT' },
   
   // Конфігурація
   { id: 'settings',   label: 'Налаштування',          path: '/admin/command?tab=settings',    icon: Settings,                       group: 'Конфігурація' },
   { id: 'api-docs',   label: 'API Документація',      path: '/api-docs',                      icon: FileText,                       group: 'Конфігурація' },
 ];
 
-const GROUPS = ['Моніторинг', 'Пайплайни', 'Ядро ШІ', 'ШІ Студія', 'розширена Аналітика', ' озвідка & OSINT', 'Агенти та Безпека', 'Конфігурація'];
+const GROUPS = ['Моніторинг', 'Пайплайни', 'Ядро ШІ', 'ШІ Студія', 'розширена Аналітика', 'Розвідка & OSINT', 'Агенти та Безпека', 'Конфігурація'];
 
 // ─── Компонент бічної панелі ──────────────────────────────────────────────────
 
@@ -96,12 +96,12 @@ const AdminSidebar: React.FC = () => {
     <motion.aside 
       initial={false}
       animate={{ 
-        width: isOpen ? 256 : 80,
-        x: isMobile && !isOpen ? -256 : 0
+        width: isMobile ? (isOpen ? 280 : 0) : (isOpen ? 256 : 80),
+        x: isMobile && !isOpen ? -280 : 0
       }}
       className={cn(
-        "flex flex-col h-screen bg-slate-950/95 backdrop-blur-3xl border-r border-white/10 overflow-hidden relative group z-50 shadow-2xl",
-        isMobile && "fixed left-0 top-0"
+        "flex flex-col h-screen bg-slate-950/95 backdrop-blur-3xl border-r border-white/10 overflow-hidden relative group shrink-0",
+        isMobile && "fixed inset-y-0 left-0 z-[100] shadow-2xl"
       )}
     >
       <div className="absolute inset-0 cyber-scan-grid opacity-[0.03] pointer-events-none" />
@@ -362,6 +362,9 @@ interface AdminLayoutProps {
  * - Фіксована бічна панель з навігацією
  */
 export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
+  const [isSidebarOpen, setSidebarOpen] = useAtom(isSidebarOpenAtom);
+  const isMobile = useMediaQuery('(max-width: 768px)');
+
   return (
     <div
       className="flex h-screen w-screen overflow-hidden relative"
@@ -373,6 +376,19 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
 
       {/* Бічна панель */}
       <AdminSidebar />
+
+      {/* Мобільна підкладка */}
+      <AnimatePresence>
+        {isMobile && isSidebarOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSidebarOpen(false)}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[90]"
+          />
+        )}
+      </AnimatePresence>
 
       {/* Основна область */}
       <div className="flex flex-col flex-1 min-w-0 overflow-hidden relative z-10">
