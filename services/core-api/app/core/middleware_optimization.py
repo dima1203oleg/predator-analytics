@@ -55,8 +55,8 @@ class PerformanceMiddleware(BaseHTTPMiddleware):
     async def dispatch(
         self, request: Request, call_next: RequestResponseEndpoint
     ) -> Response:
-        # Застосування хаосу (Фаза 4)
-        await ChaosService.apply_chaos()
+        # Застосування хаосу (Фаза 4) - DISABLED FOR STABILITY v63.0
+        # await ChaosService.apply_chaos()
 
         start_time = time.time()
 

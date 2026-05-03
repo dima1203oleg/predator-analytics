@@ -1,6 +1,6 @@
 /**
- * 🦅 PREDATOR v58.2 — ЯДРО МОНІТОРИНГУ (ELITE CORE)
- *  озділ I.6 — Операційний моніторинг платформи.
+ * 🦅 PREDATOR v63.0-ELITE — ЯДРО МОНІТОРИНГУ (ELITE CORE)
+ * Розділ I.6 — Операційний моніторинг платформи.
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
@@ -363,7 +363,7 @@ const MonitoringView: React.FC = () => {
                                      ЯДРО_СИСТЕМИ // ОПЕРАЦІЙНЕ_КОМАНДУВАННЯ
                                    </span>
                                    <div className="h-px w-12 bg-sky-600/20" />
-                                   <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v61.0-ELITE</span>
+                                   <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v63.0.0-HORIZON</span>
                                 </div>
                                 <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
                                   ОПЕРАЦІЙНИЙ <span className="text-sky-500">МОНІТОРИНГ</span>

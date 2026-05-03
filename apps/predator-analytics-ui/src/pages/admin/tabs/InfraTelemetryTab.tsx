@@ -353,21 +353,30 @@ export const InfraTelemetryTab: React.FC = () => {
 
   if (isError || !data) {
     return (
-      <div className="flex flex-col items-center justify-center h-[700px] p-24 text-center glass-wraith m-12 border-2 border-rose-600/20 rounded-[4rem] relative overflow-hidden shadow-4xl">
-        <div className="absolute inset-0 bg-rose-900/5 blur-[120px] pointer-events-none" />
-        <div className="w-24 h-24 rounded-[2rem] bg-rose-500/10 flex items-center justify-center mb-10 border-2 border-rose-500/30">
-          <Shield size={48} className="text-rose-500/60" />
+      <div className="flex flex-col items-center justify-center h-[700px] p-24 text-center m-12 relative overflow-hidden">
+        <div className="absolute inset-0 bg-rose-500/[0.02] blur-[100px] pointer-events-none" />
+        <div className="relative z-10 flex flex-col items-center">
+          <div className="w-20 h-20 rounded-2xl bg-rose-500/10 flex items-center justify-center mb-8 border border-rose-500/20 shadow-[0_0_30px_rgba(225,29,72,0.1)]">
+            <RefreshCw size={32} className="text-rose-500/60 animate-spin-slow" />
+          </div>
+          <div className="text-2xl font-black uppercase tracking-tighter text-white/80 mb-4 italic">
+            ВІДНОВЛЕННЯ_ЗВ'ЯЗКУ_З_ЯДРОМ
+          </div>
+          <p className="text-[10px] font-bold font-mono text-white/20 max-w-sm mb-10 leading-relaxed uppercase italic tracking-[0.2em]">
+            Спроба встановити захищене з'єднання з вузлами керування... Перевірте статус сервісів у командному рядку.
+          </p>
+          <div className="flex gap-4">
+            <button 
+              onClick={() => window.location.reload()}
+              className="px-8 py-3 bg-white/5 border border-white/10 text-white/40 text-[9px] font-black uppercase tracking-[0.3em] rounded-lg hover:bg-white/10 transition-all italic"
+            >
+              ПЕРЕЗАВАНТАЖИТИ
+            </button>
+            <div className="px-8 py-3 bg-rose-500/10 border border-rose-500/20 text-rose-500/60 text-[9px] font-black uppercase tracking-[0.3em] rounded-lg animate-pulse italic">
+              ОЧІКУВАННЯ_API...
+            </div>
+          </div>
         </div>
-        <div className="text-3xl font-black uppercase tracking-tighter text-white mb-4 glint-elite">КРИТИЧНИЙ_ЗРИВ_ТЕЛЕМЕТРІЇ</div>
-        <p className="text-[12px] font-black font-mono text-white/30 max-w-lg mb-12 leading-relaxed uppercase italic tracking-widest">
-          СИСТЕМА_ВТРАТИЛА_ЗВ'ЯЗОК_З_ВУЗЛАМИ_УПРАВЛІННЯ. ПЕРЕВІРТЕ_СТАТУС_API_ШЛЮЗУ_ТА_ВЕРИФІКАЦІЮ_MTLS_V61.
-        </p>
-        <button 
-          onClick={() => window.location.reload()}
-          className="px-12 py-5 bg-rose-600 text-white text-[11px] font-black uppercase tracking-[0.4em] rounded-xl hover:bg-rose-500 transition-all shadow-4xl italic"
-        >
-          ПЕРЕПІДКЛЮЧИТИСЬ_ДО_ЯДРА
-        </button>
       </div>
     );
   }

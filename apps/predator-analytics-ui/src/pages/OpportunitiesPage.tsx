@@ -191,7 +191,7 @@ export default function OpportunitiesPage() {
                     <div className="flex-1 space-y-6">
                         <div className="flex flex-wrap items-center gap-3">
                             <div className="badge-v2 badge-v2-amber">
-                                <span className="relative z-10">PREDATOR v61.0-ELITE | МОЖЛИВОСТІ</span>
+                                <span className="relative z-10">PREDATOR v63.0-ELITE | МОЖЛИВОСТІ</span>
                                 <div className="badge-v2-glimmer" />
                             </div>
                             <div className={cn(
@@ -223,7 +223,7 @@ export default function OpportunitiesPage() {
                                     <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 group-hover:text-amber-400/80 transition-colors">Стратегічний Вузол</span>
                                 </div>
                                 <div className="text-base font-bold text-white tracking-tight">Активні сигнали: {insights.length}</div>
-                                <div className="text-[10px] text-slate-500 mt-1 font-mono uppercase">Вузол v61.0-ELITE OSINT-ХАБ</div>
+                                <div className="text-[10px] text-slate-500 mt-1 font-mono uppercase">Вузол v63.0-ELITE OSINT-ХАБ</div>
                             </div>
 
                             <div className="card-depth group rounded-[28px] border border-white/[0.08] bg-black/40 p-5 transition-all hover:bg-black/60 shadow-xl">
@@ -642,7 +642,7 @@ function MarketCaptureSimulator({ monetaryImpact }: { monetaryImpact: number }) 
                     <div className="text-5xl font-black text-white tracking-tighter tabular-nums drop-shadow-[0_0_20px_rgba(16,185,129,0.3)]">
                         {formatMoney(estimatedRev)}
                     </div>
-                    <div className="text-[10px] font-mono text-emerald-500/60 uppercase">Основано на GNN-прогнозі (Графові Нейронні Мережі) v58.2</div>
+                    <div className="text-[10px] font-mono text-emerald-500/60 uppercase">Основано на GNN-прогнозі (Графові Нейронні Мережі) v63.0-ELITE</div>
                 </div>
 
                 <div className="space-y-6">

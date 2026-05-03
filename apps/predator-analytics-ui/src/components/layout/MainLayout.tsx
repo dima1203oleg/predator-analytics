@@ -1,5 +1,5 @@
 /**
- * 🛡️ MAIN LAYOUT // ГОЛОВНИЙ ШЕЛЛ | v61.0-ELITE (AGENTIC)
+ * 🛡️ MAIN LAYOUT // ГОЛОВНИЙ ШЕЛЛ | v63.0-ELITE (WAR-GAMING)
  * Підтримка гібридного вузла та суверенного дизайну.
  */
 import React, { useEffect, useState } from 'react';
@@ -33,7 +33,7 @@ interface MainLayoutProps {
 
 /**
  * Головний Layout PREDATOR Analytics з адаптивним режимом.
- * v56: преміальний ambient-фон, анімовані переходи між сторінками,
+ * v63.0: преміальний ambient-фон, анімовані переходи між сторінками,
  * покращений мобільний drawer з backdrop-blur.
  */
 export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
@@ -153,7 +153,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         node={colabNodeData}
       />
 
-      {/* ── STATUS BAR (v58.2-ELITE) ── */}
+      {/* ── STATUS BAR (v63.0-ELITE) ── */}
       <motion.div
         initial={{ y: 100 }} animate={{ y: 0 }} transition={{ type: "spring", stiffness: 200, damping: 20 }}
         className="fixed bottom-0 left-0 right-0 z-[60] h-9 flex items-center px-4 justify-between overflow-hidden"
@@ -224,7 +224,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           <div className="flex items-center gap-2 px-2 py-0.5 rounded border border-rose-500/20 bg-rose-500/5">
             <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse shadow-[0_0_8px_rgba(225,29,72,0.8)]" />
             <div className="text-[8px] font-black uppercase tracking-[0.25em] text-white/50">
-              PREDATOR <span className="text-rose-500 font-bold">ELITE</span> <span className="text-white/30 ml-1">v58.2</span>
+              PREDATOR <span className="text-rose-500 font-bold">ELITE</span> <span className="text-white/30 ml-1">v63.0</span>
             </div>
           </div>
         </div>

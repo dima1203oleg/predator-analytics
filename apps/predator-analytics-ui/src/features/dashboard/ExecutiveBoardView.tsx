@@ -1,8 +1,8 @@
 /**
- * 🦅 PREDATOR v58.2 — EXECUTIVE BOARD (ELITE CORE)
- * Головна панель CEO:  изики, Гроші, Стратегія — за 3 секунди.
+ * 🦅 PREDATOR v63.0-ELITE — EXECUTIVE BOARD (ELITE CORE)
+ * Головна панель CEO: Ризики, Гроші, Стратегія — за 3 секунди.
  * 
- *  озділ I.1 — Командний Центр
+ * Розділ I.1 — Командний Центр
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 

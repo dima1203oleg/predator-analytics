@@ -1,5 +1,5 @@
 /**
- * PREDATOR v61.0-ELITE | Sovereign Power Edition | Synaptic Discovery Matrix
+ * PREDATOR v63.0-ELITE | Sovereign Power Edition | Synaptic Discovery Matrix
  * 
  * Еволюційний інтерфейс для глибокого семантичного аналізу та пошуку.
  * - Величезний пошуковий рядок з градієнтним бордером та внутрішнім світінням
@@ -210,7 +210,7 @@ export const SearchConsolePage: React.FC = () => {
                                     </h1>
                                     <p className="text-[10px] font-mono font-black text-[#D4AF37]/70 uppercase tracking-[0.6em] mt-3 flex items-center gap-3">
                                         <Atom size={12} className="animate-spin-slow" /> 
-                                        НЕЙ О_ПОШУК_v61.0-ELITE
+                                        НЕЙРО_ПОШУК_v63.0-ELITE
                                     </p>
                                 </div>
                             </div>
@@ -224,7 +224,7 @@ export const SearchConsolePage: React.FC = () => {
                         ]}
                     />
 
-                    {/* Massive Search Console Input (v61.0-ELITE UX) */}
+                    {/* Massive Search Console Input (v63.0-ELITE UX) */}
                     <div className="max-w-6xl mx-auto space-y-12 relative">
                         <motion.div 
                             initial={{ scale: 0.95, opacity: 0 }}
@@ -302,7 +302,7 @@ export const SearchConsolePage: React.FC = () => {
                             </div>
                         </motion.div>
 
-                        {/* Search Modes (v61.0-ELITE Visuals) */}
+                        {/* Search Modes (v63.0-ELITE Visuals) */}
                         <div className="flex flex-wrap justify-center gap-8">
                             {[
                                 { id: 'semantic', label: 'СЕМАНТИЧНИЙ ПОШУК', icon: Sparkles, color: '#D4AF37' },
@@ -347,7 +347,7 @@ export const SearchConsolePage: React.FC = () => {
                                 </div>
                                 <div className="text-center space-y-4">
                                     <h3 className="text-xl font-black text-white uppercase tracking-[0.5em] animate-pulse">КВАНТОВИЙ АНАЛІЗ</h3>
-                                    <p className="text-[10px] font-mono text-[#D4AF37] uppercase tracking-widest">ЗВЕ НЕННЯ_ДО_СЕМАНТИЧНОГО_ЯД А_v58.2...</p>
+                                    <p className="text-[10px] font-mono text-[#D4AF37] uppercase tracking-widest">ЗВЕРНЕННЯ_ДО_СЕМАНТИЧНОГО_ЯДРА_v63.0-ELITE...</p>
                                 </div>
                             </div>
                         ) : results.length > 0 ? (

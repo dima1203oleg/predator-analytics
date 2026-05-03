@@ -1,5 +1,5 @@
 /**
- * 🦅 PREDATOR STRATEGIC NEXUS | v58.2.0-TITAN
+ * 🦅 PREDATOR STRATEGIC NEXUS | v63.0-ELITE
  * ГОЛОВНА ПАНЕЛЬ УПРАВЛІННЯ (SOVEREIGN DASHBOARD)
  * 
  * Центральний вузол моніторингу митнихризиків та торговельних потоків.
@@ -30,6 +30,7 @@ import { dashboardApi } from '@/services/api/dashboard';
 import { SearchWidget } from '@/components/search/SearchWidget';
 import { AudioSanctuary } from '@/components/shared/AudioSanctuary';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { antigravityApi } from '@/services/api/antigravity';
 import type { DashboardOverview, EngineInfo, DashboardAlert, RadarItem, RiskCompany } from '@/services/api/dashboard';
 
 // ========================
@@ -280,7 +281,7 @@ const DashboardView: React.FC = () => {
           <div className="flex flex-col items-center gap-12">
             <CyberOrb size="xl" status="processing" pulsing />
             <div className="text-center space-y-4">
-               <h2 className="text-3xl font-black text-white italic uppercase tracking-[0.4em] animate-pulse">АКТИВАЦІЯ_ЯД А_V56.2</h2>
+               <h2 className="text-3xl font-black text-white italic uppercase tracking-[0.4em] animate-pulse">АКТИВАЦІЯ_ЯДРА_V63.0-ELITE</h2>
                <p className="text-red-500/60 text-[10px] font-mono font-black uppercase tracking-[0.8em]">Синхронізація суверенних метрик...</p>
             </div>
           </div>
@@ -329,7 +330,7 @@ const DashboardView: React.FC = () => {
                   <div className="flex items-center gap-6 mt-6">
                     <div className="h-0.5 w-20 bg-gradient-to-r from-red-600 to-transparent" />
                     <span className="text-[11px] font-mono font-black text-red-500/90 uppercase tracking-[0.6em] animate-pulse">
-                    ЦЕНТ АЛЬНЕ КОМАНДУВАННЯ // v58.2.0-TITAN
+                    ЦЕНТРАЛЬНЕ КОМАНДУВАННЯ // v63.0-ELITE
                     </span>
                   </div>
                 </div>
@@ -350,6 +351,31 @@ const DashboardView: React.FC = () => {
             ]}
             actions={
               <div className="flex gap-6">
+                <motion.button 
+                  whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(99,102,241,0.3)' }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={async () => {
+                    try {
+                      const res = await antigravityApi.simulateHorizon();
+                      window.dispatchEvent(new CustomEvent('predator-error', {
+                        detail: {
+                          service: 'AGI_ORCHESTRATOR',
+                          message: `СИМУЛЯЦІЯ_ЗАПУЩЕНА: ${res.message} (ID: ${res.task_id})`,
+                          severity: 'success',
+                          timestamp: new Date().toISOString(),
+                          code: 'HORIZON_SIM_START'
+                        }
+                      }));
+                    } catch (err) {
+                      console.error('Simulation failed:', err);
+                    }
+                  }}
+                  className="px-10 py-5 bg-indigo-600/20 border-2 border-indigo-500/40 text-indigo-400 rounded-2xl text-[11px] font-black uppercase tracking-[0.3em] hover:bg-indigo-600/40 transition-all flex items-center gap-4 italic group"
+                >
+                  <Orbit size={20} className="text-indigo-400 animate-spin-slow" />
+                  <span>WAR-GAMING_HORIZON</span>
+                </motion.button>
+
                 <motion.button 
                   whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(220,38,38,0.3)' }}
                   whileTap={{ scale: 0.95 }}
@@ -651,7 +677,7 @@ const DashboardView: React.FC = () => {
                              </div>
                              <div className="grid grid-cols-2 gap-4 relative z-10">
                                 <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
-                                   <span className="text-[8px] text-slate-600 font-black uppercase tracking-widest block mb-1">МАСШТАБ_v61.0-ELITE</span>
+                                   <span className="text-[8px] text-slate-600 font-black uppercase tracking-widest block mb-1">МАСШТАБ_v63.0-ELITE</span>
                                    <span className="text-sm font-black text-white italic">{company.count} ДЕКЛ.</span>
                                 </div>
                                 <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
@@ -732,7 +758,7 @@ const DashboardView: React.FC = () => {
               className="flex items-center gap-32 whitespace-nowrap"
             >
               {[
-                `СИСТЕМА: v58.2.0 ELITE NEXUS | СТАТУС: ОПТИМАЛЬНО | РЕЖИМ: СУВЕРЕННИЙ`,
+                `СИСТЕМА: v63.0-ELITE | СТАТУС: ОПТИМАЛЬНО | РЕЖИМ: СУВЕРЕННИЙ`,
                 `ГРАФ: ${formatNumber(overview?.summary.graph_nodes ?? 0)} ВУЗЛІВ | ${formatNumber(overview?.summary.graph_edges ?? 0)} ЗВ'ЯЗКІВ`,
                 `ТОП РИЗИК: ${stats?.topRisk ?? 0}% [${overview?.top_risk_companies?.[0]?.name ?? 'Н/Д'}]`,
                 `ПОШУКОВИЙ ІНДЕКС: ${formatNumber(overview?.summary.search_documents ?? 0)} ДОКУМЕНТІВ`,

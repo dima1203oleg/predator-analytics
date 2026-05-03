@@ -9,14 +9,14 @@
 @tailwind components;
 @tailwind utilities;
 :root {
-    /* Predator Elite Tokens v58.2-WRAITH */
+    /* Predator Elite Tokens v63.0-ELITE */
     --background: 230 25% 2%;
     --foreground: 210 40% 98%;
     --primary: 348 100% 60%; /* Elite Rose */
     --primary-glow: rgba(244, 63, 94, 0.4);
     
-    --wraith-glass: rgba(8, 12, 22, 0.88);
-    --wraith-border: rgba(244, 63, 94, 0.25);
+    --wraith-glass: rgba(8, 12, 22, 0.92);
+    --wraith-border: rgba(244, 63, 94, 0.3);
     --wraith-accent: #f43f5e; /* Elite Rose */
     --wraith-accent-deep: #9f1239;
     
@@ -27,17 +27,19 @@
     --scan-speed: 10s;
     --glint-angle: 135deg;
     --chromatic-offset: 1.5px;
-    --elite-glint: linear-gradient(var(--glint-angle), transparent 20%, rgba(244, 63, 94, 0.15) 50%, transparent 80%);
+    --elite-glint: linear-gradient(var(--glint-angle), transparent 20%, rgba(244, 63, 94, 0.2) 50%, transparent 80%);
 }
 
 .glass-wraith {
     background: var(--wraith-glass);
-    backdrop-filter: blur(40px) saturate(200%);
+    backdrop-filter: blur(50px) saturate(220%);
+    -webkit-backdrop-filter: blur(50px) saturate(220%);
     border: 1px solid var(--wraith-border);
     box-shadow: 
-        0 20px 50px rgba(0, 0, 0, 0.7),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.03);
-    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        0 25px 60px rgba(0, 0, 0, 0.8),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+        0 0 15px rgba(244, 63, 94, 0.05);
+    transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
     overflow: hidden;
 }

@@ -1,5 +1,5 @@
 /**
- * 🔍 PREDATOR Semantic Search Tab | v61.0-ELITE
+ * 🔍 PREDATOR Semantic Search Tab | v63.0-ELITE
  * Consolidated Search Interface for Companies, Persons and Documents.
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
@@ -89,7 +89,7 @@ export const GlobalSearchTab: React.FC = () => {
                                     SYNAPTIC_SEARCH // HYBRID_ENGINE
                                 </span>
                                 <div className="h-px w-10 bg-red-600/20" />
-                                <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v61.0-ELITE</span>
+                                <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v63.0-ELITE</span>
                             </div>
                             <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none mb-1">
                                 ГЛОБАЛЬНИЙ <span className="text-red-500 underline decoration-red-600/20 decoration-8 italic uppercase">ПОШУК</span>
@@ -173,7 +173,7 @@ export const GlobalSearchTab: React.FC = () => {
                                 </div>
                                 <div className="text-center space-y-4">
                                     <span className="text-3xl font-black text-red-600 uppercase tracking-[1em] italic animate-pulse block">ДЕКОДУВАННЯ_СИГНАЛУ</span>
-                                    <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.5em] italic">SEARCH_SCAN_v58.2 // {query.toUpperCase()}</p>
+                                    <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.5em] italic">SEARCH_SCAN_v63.0-ELITE // {query.toUpperCase()}</p>
                                 </div>
                             </div>
                         ) : results.length > 0 ? (

@@ -325,10 +325,10 @@ export const Sidebar: React.FC = () => {
       transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
       className="relative sticky top-0 z-50 flex h-screen shrink-0 flex-col overflow-visible"
       style={{
-        background: 'linear-gradient(180deg, rgba(10, 10, 15, 0.7) 0%, rgba(5, 5, 10, 0.85) 100%)',
-        borderRight: '1px solid rgba(225,29,72,0.15)',
-        boxShadow: '20px 0 60px rgba(0,0,0,0.6)',
-        backdropFilter: 'blur(40px)',
+        background: 'linear-gradient(180deg, rgba(2, 6, 23, 0.75) 0%, rgba(1, 4, 18, 0.9) 100%)',
+        borderRight: '1px solid rgba(244, 63, 94, 0.2)',
+        boxShadow: '24px 0 80px rgba(0,0,0,0.8)',
+        backdropFilter: 'blur(50px) saturate(180%)',
       }}
     >
       {/* Ambient фоновий ефект - більш виражений для візабіліті */}
@@ -382,9 +382,9 @@ export const Sidebar: React.FC = () => {
                 </div>
                 <div
                   className="text-[8px] font-bold uppercase tracking-[0.12em] mt-0.5"
-                  style={{ color: '#475569' }}
+                  style={{ color: '#64748b' }}
                 >
-                  NEXUS ANALYTICS
+                  ELITE COMMAND CENTER
                 </div>
               </motion.div>
             )}

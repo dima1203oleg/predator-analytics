@@ -3,7 +3,7 @@ Endpoints для управління автономними AI-агентами
 """
 
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Body
 
 from app.models.antigravity import (
     AntigravityOrchestratorStatus,
@@ -12,6 +12,7 @@ from app.models.antigravity import (
     AntigravityTaskLog,
 )
 from app.services.antigravity_orchestrator import orchestrator
+from app.services.wargaming_engine import wargaming_engine
 
 router = APIRouter(prefix="/antigravity", tags=["AGI Orchestrator"])
 
@@ -53,3 +54,19 @@ async def get_vram_status():
     """Отримати статус VRAM від Sentinel Watchdog."""
     from app.services.vram_watchdog import vram_sentinel
     return await vram_sentinel.get_stats()
+
+@router.post("/simulate-horizon")
+async def simulate_horizon_threat(scenario_id: str | None = Body(None, embed=True)):
+    """
+    Ініціювати стратегічну симуляцію 'War-gaming Horizon'.
+    Якщо scenario_id не вказано, буде обрано пріоритетний сценарій.
+    """
+    if not scenario_id:
+        # Отримуємо сценарії та беремо перший
+        scenarios = await wargaming_engine.generate_scenarios()
+        if scenarios:
+            scenario_id = scenarios[0]['id']
+        else:
+            scenario_id = "WAR-01" # Fallback
+    
+    return await wargaming_engine.simulate_impact(scenario_id)

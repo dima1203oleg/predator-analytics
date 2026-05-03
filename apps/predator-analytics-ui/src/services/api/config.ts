@@ -1,5 +1,5 @@
 /**
- * ⚙️ API CONFIGURATION | PREDATOR v61.0-ELITE
+ * ⚙️ API CONFIGURATION | PREDATOR v63.0-ELITE
  * Гібридний протокол відмовостійкості (Tri-State Routing)
  * 
  * Вузли:
@@ -169,7 +169,7 @@ export const apiClient = axios.create({
     timeout: 15000,
     headers: {
         'Content-Type': 'application/json',
-        'X-Client-Version': '61.0.0-ELITE',
+        'X-Client-Version': '63.0.0-ELITE',
     },
 });
 

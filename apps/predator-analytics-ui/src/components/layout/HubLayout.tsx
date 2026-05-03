@@ -20,7 +20,7 @@ interface HubLayoutProps {
 }
 
 /**
- * 📡 HUB LAYOUT // ЦЕНТ АЛЬНИЙ МАКЕТ ХАБУ | v61.0-ELITE
+ * 📡 HUB LAYOUT // ЦЕНТРАЛЬНИЙ МАКЕТ ХАБУ | v63.0-ELITE
  * PREDATOR Analytics — Unified Navigation Matrix
  */
 export const HubLayout: React.FC<HubLayoutProps> = ({
@@ -119,7 +119,7 @@ export const HubLayout: React.FC<HubLayoutProps> = ({
               <div className="flex items-center gap-4 mb-3">
                 <span className={cn("w-2 h-2 rounded-full animate-pulse shadow-[0_0_10px_currentColor]", styles.icon)} />
                 <span className="text-[10px] font-black uppercase tracking-[0.6em] text-slate-500 italic leading-none">
-                  PREDATOR_HUB // MATRIX_v58.2
+                  PREDATOR_HUB // MATRIX_v63.0
                 </span>
               </div>
               <h1 className="text-5xl font-black tracking-tighter text-white uppercase italic leading-none">

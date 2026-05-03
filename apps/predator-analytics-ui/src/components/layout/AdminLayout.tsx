@@ -85,7 +85,7 @@ const AdminSidebar: React.FC = () => {
   };
 
   return (
-    <aside className="flex flex-col w-64 min-w-64 h-screen bg-black/60 glass-wraith border-r border-white/10 overflow-hidden relative group">
+    <aside className="flex flex-col w-64 min-w-64 h-screen bg-slate-950/95 backdrop-blur-3xl border-r border-white/10 overflow-hidden relative group">
       <div className="absolute inset-0 cyber-scan-grid opacity-[0.03] pointer-events-none" />
       
       {/* Логотип */}
