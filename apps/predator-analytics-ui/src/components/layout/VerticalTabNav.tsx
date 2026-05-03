@@ -34,7 +34,7 @@ export const VerticalTabNav: React.FC<VerticalTabNavProps> = ({
   accentColor = '#f59e0b' // Gold default
 }) => {
   return (
-    <div className="w-80 h-full bg-slate-950/40 backdrop-blur-xl border-r border-white/5 flex flex-col p-6 space-y-2 z-20">
+    <div className="w-[280px] h-full bg-slate-950/40 backdrop-blur-xl border-r border-white/5 flex flex-col p-6 space-y-2 z-20">
       <div className="mb-8 px-4">
         <div className="flex items-center gap-3 mb-2">
           <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: accentColor }} />

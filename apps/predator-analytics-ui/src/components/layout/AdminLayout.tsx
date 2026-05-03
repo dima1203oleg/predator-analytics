@@ -1,16 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useAtom } from 'jotai';
 import {
   Activity, Radio, Box, Database, Bot, Lock, BrainCircuit,
   Settings, FileText, LogOut, Terminal, ChevronRight,
-  Shield, Cpu, Zap, Eye, ShieldAlert, Search
+  Shield, Cpu, Zap, Eye, ShieldAlert, Search,
+  ChevronLeft, Menu, X
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useUser } from '@/context/UserContext';
 import { useAppStore } from '@/store/useAppStore';
+import { isSidebarOpenAtom } from '@/store/atoms';
 import { LiveAgentTerminal } from '@/components/intelligence/LiveAgentTerminal';
 import { OfflineBanner } from '@/components/shared/OfflineBanner';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 // ─── Навігація системного командного центру ────────────────────────────────────
 
@@ -73,6 +77,8 @@ const GROUPS = ['Моніторинг', 'Пайплайни', 'Ядро ШІ', '
 const AdminSidebar: React.FC = () => {
   const { user, logout } = useUser();
   const location = useLocation();
+  const [isOpen, setIsOpen] = useAtom(isSidebarOpenAtom);
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   const isActive = (item: AdminNavItem): boolean => {
     const url = new URL(item.path, window.location.origin);
@@ -84,23 +90,55 @@ const AdminSidebar: React.FC = () => {
     return currentPath === item.path;
   };
 
+  if (isMobile && !isOpen) return null;
+
   return (
-    <aside className="flex flex-col w-64 min-w-64 h-screen bg-slate-950/95 backdrop-blur-3xl border-r border-white/10 overflow-hidden relative group">
+    <motion.aside 
+      initial={false}
+      animate={{ 
+        width: isOpen ? 256 : 80,
+        x: isMobile && !isOpen ? -256 : 0
+      }}
+      className={cn(
+        "flex flex-col h-screen bg-slate-950/95 backdrop-blur-3xl border-r border-white/10 overflow-hidden relative group z-50 shadow-2xl",
+        isMobile && "fixed left-0 top-0"
+      )}
+    >
       <div className="absolute inset-0 cyber-scan-grid opacity-[0.03] pointer-events-none" />
       
       {/* Логотип */}
-      <div className="flex items-center gap-4 px-4 py-6 border-b border-white/5 relative z-10">
-        <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/30 shadow-[0_0_15px_rgba(225,29,72,0.2)]">
-          <Shield className="w-5 h-5 text-rose-500 drop-shadow-[0_0_8px_rgba(225,29,72,0.8)]" />
-        </div>
-        <div>
-          <div className="text-xs font-black text-white italic tracking-[0.25em] uppercase leading-none">
-            PREDATOR
+      <div className="flex items-center justify-between px-4 py-6 border-b border-white/5 relative z-10">
+        <div className="flex items-center gap-4 overflow-hidden">
+          <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/30 shadow-[0_0_15px_rgba(225,29,72,0.2)] shrink-0">
+            <Shield className="w-5 h-5 text-rose-500 drop-shadow-[0_0_8px_rgba(225,29,72,0.8)]" />
           </div>
-          <div className="text-[7px] font-black text-rose-500/60 tracking-[0.3em] leading-none mt-1.5 italic uppercase">
-            COMMAND_CENTER_v60
-          </div>
+          <AnimatePresence>
+            {isOpen && (
+              <motion.div
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                className="whitespace-nowrap"
+              >
+                <div className="text-xs font-black text-white italic tracking-[0.25em] uppercase leading-none">
+                  PREDATOR
+                </div>
+                <div className="text-[7px] font-black text-rose-500/60 tracking-[0.3em] leading-none mt-1.5 italic uppercase">
+                  COMMAND_CENTER_v60
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
+        
+        {!isMobile && (
+          <button 
+            onClick={() => setIsOpen(!isOpen)}
+            className="w-6 h-6 flex items-center justify-center rounded-lg bg-white/5 hover:bg-white/10 border border-white/5 transition-colors"
+          >
+            {isOpen ? <ChevronLeft size={14} className="text-slate-400" /> : <ChevronRight size={14} className="text-slate-400" />}
+          </button>
+        )}
       </div>
 
       {/* Навігація */}
@@ -110,11 +148,13 @@ const AdminSidebar: React.FC = () => {
           return (
             <div key={group} className="mb-6">
               {/* Заголовок групи */}
-              <div className="px-3 py-2 flex items-center gap-2">
-                <div className="w-1 h-1 rounded-full bg-rose-500/40" />
-                <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.25em] italic">
-                  {group}
-                </span>
+              <div className="px-3 py-2 flex items-center gap-2 overflow-hidden">
+                <div className="w-1 h-1 rounded-full bg-rose-500/40 shrink-0" />
+                {isOpen && (
+                  <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.25em] italic whitespace-nowrap">
+                    {group}
+                  </span>
+                )}
               </div>
 
               {/* Пункти */}
@@ -143,23 +183,28 @@ const AdminSidebar: React.FC = () => {
                         className={cn(
                           'w-4 h-4 shrink-0 transition-all duration-300 relative z-10',
                           active ? 'text-rose-400 scale-110 drop-shadow-[0_0_8px_rgba(225,29,72,0.5)]' : 'text-slate-500 group-hover/nav:text-slate-300 group-hover/nav:scale-105',
+                          !isOpen && "mx-auto"
                         )}
                       />
-                      <span
-                        className={cn(
-                          'text-[11px] truncate transition-all duration-300 relative z-10 uppercase tracking-tight font-bold italic',
-                          active ? 'text-white' : 'text-slate-400 group-hover/nav:text-slate-200',
-                        )}
-                      >
-                        {item.label}
-                      </span>
-                      {item.badge && (
-                        <span className={cn(
-                          "ml-auto text-[7px] font-black px-1.5 py-0.5 rounded-md border italic relative z-10",
-                          active ? "bg-rose-500/20 border-rose-500/40 text-rose-400" : "bg-white/5 border-white/10 text-slate-600"
-                        )}>
-                          {item.badge}
-                        </span>
+                      {isOpen && (
+                        <>
+                          <span
+                            className={cn(
+                              'text-[11px] truncate transition-all duration-300 relative z-10 uppercase tracking-tight font-bold italic',
+                              active ? 'text-white' : 'text-slate-400 group-hover/nav:text-slate-200',
+                            )}
+                          >
+                            {item.label}
+                          </span>
+                          {item.badge && (
+                            <span className={cn(
+                              "ml-auto text-[7px] font-black px-1.5 py-0.5 rounded-md border italic relative z-10",
+                              active ? "bg-rose-500/20 border-rose-500/40 text-rose-400" : "bg-white/5 border-white/10 text-slate-600"
+                            )}>
+                              {item.badge}
+                            </span>
+                          )}
+                        </>
                       )}
                       {active && (
                         <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-4 bg-rose-500 rounded-l-full shadow-[0_0_10px_rgba(225,29,72,0.8)]" />
@@ -179,24 +224,28 @@ const AdminSidebar: React.FC = () => {
           <div className="flex items-center justify-center w-5 h-5 rounded-full bg-rose-500/20 shrink-0">
             <Cpu className="w-2.5 h-2.5 text-rose-500" />
           </div>
-          <div className="flex-1 min-w-0">
-            <div className="text-[10px] font-semibold text-white/80 truncate">
-              {user?.name ?? 'Системний адмін'}
+          {isOpen && (
+            <div className="flex-1 min-w-0">
+              <div className="text-[10px] font-semibold text-white/80 truncate">
+                {user?.name ?? 'Системний адмін'}
+              </div>
+              <div className="text-[8px] font-mono text-rose-500/50 uppercase tracking-wider">
+                ADMIN · {user?.tenant_name ?? 'PREDATOR'}
+              </div>
             </div>
-            <div className="text-[8px] font-mono text-rose-500/50 uppercase tracking-wider">
-              ADMIN · {user?.tenant_name ?? 'PREDATOR'}
-            </div>
-          </div>
-          <button
-            onClick={logout}
-            title="Вийти"
-            className="p-1 rounded text-white/40 hover:text-red-400 hover:bg-red-500/15 transition-colors"
-          >
-            <LogOut className="w-3 h-3" />
-          </button>
+          )}
+          {isOpen && (
+            <button
+              onClick={logout}
+              title="Вийти"
+              className="p-1 rounded text-white/40 hover:text-red-400 hover:bg-red-500/15 transition-colors"
+            >
+              <LogOut className="w-3 h-3" />
+            </button>
+          )}
         </div>
       </div>
-    </aside>
+    </motion.aside>
   );
 };
 
@@ -205,6 +254,8 @@ const AdminSidebar: React.FC = () => {
 const AdminStatusBar: React.FC = () => {
   const [time, setTime] = useState(new Date());
   const { isTerminalOpen, setTerminalOpen } = useAppStore();
+  const [isSidebarOpen, setSidebarOpen] = useAtom(isSidebarOpenAtom);
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   useEffect(() => {
     const id = setInterval(() => setTime(new Date()), 1000);
@@ -228,6 +279,16 @@ const AdminStatusBar: React.FC = () => {
       <div className="absolute inset-0 bg-gradient-to-r from-rose-500/5 via-transparent to-blue-500/5 pointer-events-none" />
       
       <div className="flex items-center gap-6 relative z-10">
+        {/* Мобільне меню */}
+        {isMobile && (
+          <button 
+            onClick={() => setSidebarOpen(!isSidebarOpen)}
+            className="p-1 rounded-lg bg-white/5 border border-white/10 text-rose-500"
+          >
+            {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        )}
+
         {/* режим системи */}
         <div className="flex items-center gap-3">
           <div className="flex gap-1">

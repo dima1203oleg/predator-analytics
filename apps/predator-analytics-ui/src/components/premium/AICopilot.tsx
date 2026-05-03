@@ -176,7 +176,7 @@ export const Predator: React.FC = () => {
         audioRef.current.currentTime = 0;
       }
       const currentSpeakId = ++speakIdRef.current;
-      const response = await fetch('/api/v1/ai/tts', {
+      const response = await fetch(`${API_BASE_URL}/ai/tts`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text })

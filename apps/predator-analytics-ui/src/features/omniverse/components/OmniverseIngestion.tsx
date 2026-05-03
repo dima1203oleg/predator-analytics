@@ -186,7 +186,7 @@ export const OmniverseIngestion: React.FC = () => {
                     {schema.neo4j_ontology.relationships.map((rel, idx) => (
                       <div key={idx} className="p-2 bg-white/5 rounded border border-white/5 text-[10px] font-mono flex items-center gap-2">
                         <span className="text-purple-300">{rel.source_node_label}</span>
-                        <span className="text-white/30">-{rel.relationship_type}-></span>
+                        <span className="text-white/30">-{rel.relationship_type}{"->"}</span>
                         <span className="text-purple-300">{rel.target_node_label}</span>
                       </div>
                     ))}
