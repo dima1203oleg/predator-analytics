@@ -1,14 +1,14 @@
 /**
  * 🦅 PREDATOR v63.0-ELITE — EXECUTIVE BOARD (ELITE CORE)
- * Головна панель CEO: Ризики, Гроші, Стратегія — за 3 секунди.
+ * ГОЛОВНА ПАНЕЛЬ CEO: Ризики, Гроші, Стратегія — за 3 секунди.
  * 
  * Розділ I.1 — Командний Центр
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Activity,
   AlertTriangle,
@@ -24,7 +24,6 @@ import {
   Globe,
   Layers3,
   Loader2,
-  Lock,
   Network,
   Radar,
   Search,
@@ -35,13 +34,20 @@ import {
   Target,
   TrendingUp,
   Zap,
+  Fingerprint,
+  Cpu,
 } from 'lucide-react';
-import { dashboardApi, type DashboardOverview } from '@/services/api/dashboard';
-import { getVisibleNavigation, navAccentStyles } from '@/config/navigation';
 import { useUser } from '@/context/UserContext';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { useDashboardOverview, useDashboardAlerts } from '@/hooks/useDashboard';
+import { getVisibleNavigation, navAccentStyles } from '@/config/navigation';
 import { cn } from '@/utils/cn';
+
+// Premium Components
+import { NeuralPulse } from '@/components/ui/NeuralPulse';
+import { CyberGrid } from '@/components/CyberGrid';
+import { CyberOrb } from '@/components/CyberOrb';
+import { AdvancedBackground } from '@/components/AdvancedBackground';
 
 /* ── Утиліти форматування ── */
 const formatCurrency = (value: number): string => {
@@ -63,96 +69,138 @@ const timeAgo = (timestamp?: string): string => {
   return `${Math.floor(diff / 86_400_000)} дн тому`;
 };
 
-
 /* ── Анімації ── */
 const stagger = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.06, delayChildren: 0.05 } },
+  visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } },
 };
+
 const fadeUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: [0.23, 1, 0.32, 1] } },
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.2, 0.65, 0.3, 0.9] } },
 };
+
 const scaleIn = {
-  hidden: { opacity: 0, y: 16, scale: 0.97 },
-  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.5, ease: [0.23, 1, 0.32, 1] } },
+  hidden: { opacity: 0, scale: 0.95 },
+  visible: { opacity: 1, scale: 1, transition: { duration: 0.6, ease: [0.2, 0.65, 0.3, 0.9] } },
 };
 
 /* ── Кольорова палітра ── */
 const tones = {
-  rose: { bg: 'bg-rose-500/8 border-rose-400/15', icon: 'text-rose-500', glow: 'group-hover:shadow-[0_0_40px_rgba(225,29,72,0.15)]', line: 'from-rose-600 to-rose-400' },
-  crimson: { bg: 'bg-rose-600/8 border-rose-500/15', icon: 'text-rose-600', glow: 'group-hover:shadow-[0_0_40px_rgba(190,18,60,0.15)]', line: 'from-rose-700 to-rose-500' },
-  pink: { bg: 'bg-rose-400/8 border-rose-300/15', icon: 'text-rose-400', glow: 'group-hover:shadow-[0_0_40px_rgba(244,63,94,0.15)]', line: 'from-rose-500 to-rose-300' },
-  warm: { bg: 'bg-rose-500/10 border-rose-500/20', icon: 'text-rose-400', glow: 'group-hover:shadow-[0_0_40px_rgba(225,29,72,0.12)]', line: 'from-rose-600 to-rose-400' },
+  rose: { 
+    bg: 'bg-rose-500/10 border-rose-500/20', 
+    icon: 'text-rose-500', 
+    glow: 'group-hover:shadow-[0_0_50px_rgba(225,29,72,0.25)]', 
+    line: 'from-rose-600 via-rose-500 to-transparent' 
+  },
+  crimson: { 
+    bg: 'bg-rose-600/10 border-rose-500/20', 
+    icon: 'text-rose-600', 
+    glow: 'group-hover:shadow-[0_0_50px_rgba(190,18,60,0.25)]', 
+    line: 'from-rose-700 via-rose-600 to-transparent' 
+  },
+  gold: { 
+    bg: 'bg-amber-500/10 border-amber-500/20', 
+    icon: 'text-amber-500', 
+    glow: 'group-hover:shadow-[0_0_50px_rgba(245,158,11,0.2)]', 
+    line: 'from-amber-600 via-amber-500 to-transparent' 
+  },
+  sky: { 
+    bg: 'bg-sky-500/10 border-sky-500/20', 
+    icon: 'text-sky-500', 
+    glow: 'group-hover:shadow-[0_0_50px_rgba(14,165,233,0.2)]', 
+    line: 'from-sky-600 via-sky-500 to-transparent' 
+  },
 } as const;
 
-/* ══════════════════════════════════════════════════════════════
-   EXECUTIVE BOARD VIEW — Головний Командний Дашборд CEO
-   ══════════════════════════════════════════════════════════════ */
 export default function ExecutiveBoardView() {
   const { user } = useUser();
   const backendStatus = useBackendStatus();
   const currentRole = user?.role ?? 'viewer';
   const navigationSections = useMemo(() => getVisibleNavigation(currentRole), [currentRole]);
 
-  // реактивні дані через TanStack Query
   const { data: overview, isLoading: isOverviewLoading } = useDashboardOverview();
-  const { data: alertsData, isLoading: isAlertsLoading } = useDashboardAlerts(4);
+  const { data: alertsData, isLoading: isAlertsLoading } = useDashboardAlerts(6);
 
   const s = overview?.summary;
   const alerts = alertsData?.items ?? [];
   const loading = isOverviewLoading || isAlertsLoading;
 
-  /* ── 4 головні KPI ── */
   const kpis = useMemo(() => [
-    { label: 'Обсяг операцій', value: s ? formatCurrency(s.total_value_usd) : '—', hint: 'Загальна вартість ЗЕД', icon: DollarSign, tone: 'rose' as const },
-    { label: 'Декларації', value: s ? formatNumber(s.total_declarations) : '—', hint: 'Підтверджених записів', icon: Activity, tone: 'warm' as const },
-    { label: ' изикових сигналів', value: s ? formatNumber(s.high_risk_count) : '—', hint: `Середні: ${s ? formatNumber(s.medium_risk_count) : '—'}`, icon: AlertTriangle, tone: 'crimson' as const },
-    { label: 'Граф зв\'язків', value: s ? formatNumber(s.graph_nodes) : '—', hint: `${s ? formatNumber(s.graph_edges) : '—'} зв'язків`, icon: Network, tone: 'pink' as const },
+    { label: 'ФІНАНСОВИЙ_ПОТІК', value: s ? formatCurrency(s.total_value_usd) : '—', hint: 'Загальна вартість ЗЕД', icon: DollarSign, tone: 'rose' as const },
+    { label: 'ДЕКЛАРАЦІЇ_ЯДРА', value: s ? formatNumber(s.total_declarations) : '—', hint: 'Підтверджених записів', icon: Activity, tone: 'sky' as const },
+    { label: 'ЗОНА_КРИТИЧНОСТІ', value: s ? formatNumber(s.high_risk_count) : '—', hint: `Середні: ${s ? formatNumber(s.medium_risk_count) : '—'}`, icon: AlertTriangle, tone: 'crimson' as const },
+    { label: 'ГРАФ_ЗВ\'ЯЗКІВ', value: s ? formatNumber(s.graph_nodes) : '—', hint: `${s ? formatNumber(s.graph_edges) : '—'} зв'язків`, icon: Network, tone: 'gold' as const },
   ], [s]);
 
-  /* ── Навігаційні секції з іконками ── */
   const sectionIcons: Record<string, typeof Radar> = {
+    omniverse: Box,
     command: Shield,
+    executive: Target,
     intelligence: Radar,
     'financial-sigint': DollarSign,
     'trade-logistics': Ship,
     counterparties: Building2,
     'ai-automation': Brain,
+    analytics: Fingerprint,
+    ai: Cpu,
   };
 
   return (
-    <motion.div className="space-y-6" variants={stagger} initial="hidden" animate="visible">
-      
+    <motion.div 
+      className="relative min-h-screen p-6 sm:p-10 space-y-12 overflow-hidden" 
+      variants={stagger} 
+      initial="hidden" 
+      animate="visible"
+    >
+      {/* Background Layer */}
+      <AdvancedBackground />
+      <CyberGrid color="rgba(244, 63, 94, 0.05)" />
+      <NeuralPulse color="rgba(244, 63, 94, 0.03)" size={1400} />
+
       {/* ═══════════════════════════════════════════════
-         HERO — Статус-бар + KPI
+         HERO HUD — Tactical Dashboard Header
          ═══════════════════════════════════════════════ */}
-      <motion.section variants={fadeUp} className="relative overflow-hidden rounded-3xl border border-white/[0.06] bg-[#030810] p-6 sm:p-8">
-        {/* Фонові елементи */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_-10%,rgba(225,29,72,0.06),transparent_60%)] pointer-events-none" />
-        <div className="absolute top-4 right-4 opacity-[0.02] pointer-events-none">
-          <Shield size={200} strokeWidth={0.5} className="text-rose-400" />
+      <motion.section 
+        variants={fadeUp} 
+        className="relative overflow-hidden rounded-[3rem] border border-white/5 bg-black/40 backdrop-blur-3xl p-8 sm:p-12 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.8)]"
+      >
+        <div className="absolute inset-0 bg-gradient-to-br from-rose-500/5 via-transparent to-transparent pointer-events-none" />
+        
+        {/* Orb Status Indicator */}
+        <div className="absolute top-10 right-10 flex items-center gap-6">
+          <div className="text-right">
+            <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] mb-1 italic">СТАТУС_КЛАСТЕРА</p>
+            <p className="text-sm font-bold text-rose-500 italic uppercase">{backendStatus.statusLabel}</p>
+          </div>
+          <CyberOrb size="md" status={s && s.high_risk_count > 50 ? 'critical' : 'active'} pulsing />
         </div>
 
-        {/* Верхній рядок: badge + status */}
-        <div className="relative z-10 flex flex-wrap items-center gap-2.5 mb-6">
-          <div className="inline-flex items-center gap-2 rounded-full border border-rose-500/20 bg-rose-500/10 px-3 py-1 text-[10px] font-black tracking-[0.2em] text-rose-500 uppercase italic">
-            <div className="h-1.5 w-1.5 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(225,29,72,0.8)] animate-pulse" />
-            PREDATOR v61.0-ELITE
+        {/* Brand & Time */}
+        <div className="relative z-10 flex items-center gap-6 mb-10">
+          <div className="flex flex-col">
+            <div className="inline-flex items-center gap-3 rounded-full border border-rose-500/20 bg-rose-500/5 px-4 py-1.5 text-[10px] font-black tracking-[0.3em] text-rose-500 uppercase italic">
+              <div className="h-1.5 w-1.5 rounded-full bg-rose-500 shadow-[0_0_12px_#f43f5e] animate-pulse" />
+              PREDATOR v63.0-ELITE
+            </div>
+            <div className="mt-4 flex items-center gap-4">
+              <h1 className="text-5xl font-black text-white italic tracking-tighter uppercase skew-x-[-3deg]">
+                ВИКОНАВЧА <span className="text-rose-600">РАДА</span>
+              </h1>
+              <div className="h-0.5 w-24 bg-gradient-to-r from-rose-600 to-transparent" />
+            </div>
+            <p className="mt-2 text-xs font-bold text-slate-500 uppercase tracking-[0.5em] italic opacity-60">
+              ЦЕНТРАЛЬНИЙ ШТАБ УПРАВЛІННЯ ТА СТРАТЕГІЧНОГО ПЛАНУВАННЯ
+            </p>
           </div>
-          <div className={cn(
-            "inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[10px] font-black tracking-[0.15em] uppercase italic text-rose-600 border-rose-500/20 bg-rose-500/10",
-          )}>
-            <div className={cn("h-1.5 w-1.5 rounded-full bg-rose-500 animate-pulse")} />
-            {backendStatus.statusLabel}
-          </div>
-          <div className="ml-auto text-[10px] font-mono text-slate-600 tracking-wider">
-            {timeAgo(overview?.generated_at)}
+          <div className="ml-auto flex flex-col items-end opacity-40">
+            <p className="text-[10px] font-mono font-black text-slate-400 tracking-widest uppercase mb-1">ОСТАННЯ СИНХРОНІЗАЦІЯ</p>
+            <p className="text-xs font-mono text-slate-500">{timeAgo(overview?.generated_at)}</p>
           </div>
         </div>
 
-        {/* KPI Картки */}
-        <motion.div className="relative z-10 grid gap-3 sm:grid-cols-2 xl:grid-cols-4" variants={stagger}>
+        {/* KPI Cards HUD */}
+        <motion.div className="relative z-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-4" variants={stagger}>
           {kpis.map((kpi) => {
             const t = tones[kpi.tone];
             return (
@@ -160,231 +208,256 @@ export default function ExecutiveBoardView() {
                 key={kpi.label}
                 variants={scaleIn}
                 className={cn(
-                  "group relative overflow-hidden rounded-2xl border border-white/[0.05] bg-[#060c18]/50 p-5 transition-all duration-500 hover:border-white/[0.14]",
+                  "group relative overflow-hidden rounded-[2rem] border border-white/5 bg-[#060c18]/60 p-8 transition-all duration-700 hover:border-rose-500/30 hover:bg-[#060c18]/80 shadow-2xl",
                   t.glow
                 )}
-                whileHover={{ y: -3 }}
+                whileHover={{ y: -5 }}
               >
-                <div className="flex items-center justify-between mb-4">
-                  <div className={cn('flex h-10 w-10 items-center justify-center rounded-xl border', t.bg)}>
-                    <kpi.icon className={cn('h-4.5 w-4.5', t.icon)} />
+                <div className="flex items-center justify-between mb-6">
+                  <div className={cn('flex h-14 w-14 items-center justify-center rounded-2xl border transition-all group-hover:scale-110 shadow-lg', t.bg)}>
+                    <kpi.icon className={cn('h-6 w-6', t.icon)} />
                   </div>
-                  {loading && <Loader2 className="h-3.5 w-3.5 animate-spin text-slate-600" />}
+                  {loading && <Loader2 className="h-4 w-4 animate-spin text-slate-700" />}
                 </div>
-                <div className="text-2xl font-black tracking-tight text-white mb-1">{kpi.value}</div>
-                <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">{kpi.label}</div>
-                <div className="text-[10px] text-slate-600 mt-1">{kpi.hint}</div>
-                {/* Accent line */}
-                <div className={cn("absolute bottom-0 left-0 right-0 h-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-r", t.line)} />
+                <div className="text-3xl font-black italic tracking-tighter text-white mb-2 tabular-nums">
+                  {kpi.value}
+                </div>
+                <div className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] italic group-hover:text-rose-400 transition-colors">
+                  {kpi.label}
+                </div>
+                <div className="text-[10px] text-slate-600 mt-2 font-bold uppercase tracking-widest">{kpi.hint}</div>
+                
+                {/* Visual Accent Line */}
+                <div className={cn("absolute bottom-0 left-0 right-0 h-[3px] opacity-0 group-hover:opacity-100 transition-all duration-700 bg-gradient-to-r shadow-[0_-10px_20px_rgba(225,29,72,0.3)]", t.line)} />
               </motion.div>
             );
           })}
         </motion.div>
-
       </motion.section>
 
       {/* ═══════════════════════════════════════════════
-         ОСНОВНА СІТКА: Блоки + Алерти
+         OPERATIONAL CONTOUR — Strategic Modules
          ═══════════════════════════════════════════════ */}
-      <motion.section variants={stagger} className="grid gap-5 xl:grid-cols-[minmax(0,1.8fr)_minmax(320px,0.8fr)]">
+      <motion.section variants={stagger} className="grid gap-10 xl:grid-cols-[minmax(0,1.8fr)_minmax(380px,0.8fr)]">
         
-        {/* ── Ліва колонка: 6 Titan-контурів ── */}
-        <motion.div variants={fadeUp} className="space-y-5">
-          <div className="flex items-center justify-between">
+        {/* Left Column: Module Matrix */}
+        <motion.div variants={fadeUp} className="space-y-8">
+          <div className="flex items-center justify-between px-4">
             <div>
-              <h2 className="text-lg font-black text-white italic tracking-tight">ОПЕРАТИВНИЙ КОНТУ </h2>
-              <p className="text-xs text-slate-500 mt-0.5">6 стратегічних Titan-модулів управління</p>
+              <h2 className="text-2xl font-black text-white italic tracking-tighter uppercase">ОПЕРАТИВНИЙ <span className="text-rose-500">КОНТУР</span></h2>
+              <p className="text-[10px] font-bold text-slate-600 uppercase tracking-[0.4em] italic mt-1">СТРАТЕГІЧНІ ТИТАН-МОДУЛІ УПРАВЛІННЯ</p>
             </div>
-            <div className="inline-flex items-center gap-1.5 rounded-full border border-rose-400/15 bg-rose-500/8 px-2.5 py-1 text-[10px] font-bold text-rose-400">
-              <Layers3 className="h-3 w-3" />
-              {navigationSections.reduce((t, sec) => t + (sec.items?.length || 0), 0)} модулів
+            <div className="flex items-center gap-4">
+               <div className="h-px w-20 bg-white/5" />
+               <div className="inline-flex items-center gap-3 rounded-xl border border-rose-500/20 bg-rose-500/5 px-4 py-2 text-[10px] font-black text-rose-400 italic">
+                 <Layers3 className="h-4 w-4" />
+                 {navigationSections.reduce((t, sec) => t + (sec.items?.length || 0), 0)} МОДУЛІВ_АКТИВНО
+               </div>
             </div>
           </div>
 
-          <motion.div className="grid gap-3 lg:grid-cols-2 xl:grid-cols-3" variants={stagger}>
+          <motion.div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3" variants={stagger}>
             {navigationSections.map((section) => {
               const accent = navAccentStyles[section.accent];
               const SectionIcon = sectionIcons[section.id] || Layers3;
               const items = section.items || [];
-              const topItems = items.slice(0, 3);
+              const topItems = items.slice(0, 4);
 
               return (
                 <motion.div
                   key={section.id}
                   variants={scaleIn}
-                  className="group rounded-2xl border border-white/[0.05] bg-[#060c18]/40 p-4 transition-all duration-400 hover:border-white/[0.12] hover:bg-[#060c18]/60"
-                  whileHover={{ y: -3 }}
+                  className="group relative rounded-3xl border border-white/5 bg-black/40 backdrop-blur-xl p-6 transition-all duration-500 hover:border-rose-500/30 hover:bg-black/60 shadow-xl overflow-hidden"
+                  whileHover={{ y: -5 }}
                 >
-                  {/* Заголовок секції */}
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className={cn('flex h-9 w-9 items-center justify-center rounded-xl border shrink-0', accent.iconBorder)}>
-                      <SectionIcon className={cn('h-4 w-4', accent.icon)} />
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none" />
+                  
+                  {/* Section Header */}
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className={cn('flex h-12 w-12 items-center justify-center rounded-2xl border transition-transform group-hover:scale-110 shadow-inner', accent.iconBorder)}>
+                      <SectionIcon className={cn('h-6 w-6', accent.icon)} />
                     </div>
                     <div className="min-w-0">
-                      <h3 className="text-sm font-black text-white truncate uppercase italic">{section.label}</h3>
-                      <div className={cn('text-[10px] font-bold uppercase tracking-wider truncate', accent.softText)}>
-                        {items.length} модулів
+                      <h3 className="text-sm font-black text-white uppercase italic tracking-tight truncate group-hover:text-rose-400 transition-colors">{section.label}</h3>
+                      <div className={cn('text-[9px] font-black uppercase tracking-[0.2em] truncate opacity-60', accent.softText)}>
+                        {items.length} ОПЕРАЦІЙНИХ ЦІЛЕЙ
                       </div>
                     </div>
                   </div>
 
-                  {/* Лінки на головні підрозділи */}
-                  <div className="space-y-1">
+                  {/* Links HUD */}
+                  <div className="space-y-2">
                     {topItems.map((item) => (
                       <Link
                         key={item.id}
                         to={item.path}
-                        className="flex items-center justify-between rounded-lg border border-transparent bg-white/[0.02] px-3 py-2 text-xs text-slate-300 transition-all hover:border-white/[0.08] hover:bg-white/[0.04] hover:text-white"
+                        className="flex items-center justify-between rounded-xl border border-transparent bg-white/[0.03] px-4 py-3 text-[11px] font-bold text-slate-400 transition-all hover:border-rose-500/20 hover:bg-rose-500/10 hover:text-white group/link"
                       >
-                        <span className="truncate font-medium">{item.label}</span>
-                        <ArrowRight className="h-3 w-3 shrink-0 text-slate-600 transition-transform group-hover:text-slate-400" />
+                        <span className="truncate italic uppercase tracking-tight">{item.label}</span>
+                        <ArrowRight className="h-3.5 w-3.5 shrink-0 text-slate-700 transition-all group-hover/link:translate-x-1 group-hover/link:text-rose-500" />
                       </Link>
                     ))}
                   </div>
 
-                  {items.length > 3 && (
-                    <div className="mt-2 text-[10px] text-slate-600 pl-3 italic">
-                      Ще {items.length - 3} модулів →
+                  {items.length > 4 && (
+                    <div className="mt-4 text-[9px] font-black text-slate-600 px-4 italic uppercase tracking-widest flex items-center gap-2 group-hover:text-rose-600 transition-colors">
+                      ЩЕ {items.length - 4} ПІДРОЗДІЛІВ <ArrowRight size={10} />
                     </div>
                   )}
+                  
+                  {/* Subtle Corner Icon */}
+                  <div className="absolute -right-2 -bottom-2 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
+                     <SectionIcon size={80} />
+                  </div>
                 </motion.div>
               );
             })}
           </motion.div>
         </motion.div>
 
-        {/* ── Права колонка: Алерти + Покриття ── */}
-        <motion.div variants={fadeUp} className="space-y-5">
+        {/* Right Column: Alerts & Signals */}
+        <motion.div variants={fadeUp} className="space-y-8">
           
-          {/* Критичні сигнали */}
-          <div className="rounded-2xl border border-white/[0.05] bg-[#060c18]/40 p-4">
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm font-black text-white flex items-center gap-2 uppercase italic tracking-tight">
-                <Flame className="h-4 w-4 text-rose-500" />
-                Критичні сигнали
+          {/* Critical Signals HUD */}
+          <div className="rounded-[2.5rem] border border-white/5 bg-black/40 backdrop-blur-3xl p-8 shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-1 h-full bg-rose-600/30" />
+            
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-lg font-black text-white flex items-center gap-3 uppercase italic tracking-tighter">
+                <Flame className="h-5 w-5 text-rose-500 animate-pulse" />
+                КРИТИЧНІ СИГНАЛИ
               </h2>
-              <div className="inline-flex items-center gap-1 rounded-full border border-rose-400/15 bg-rose-500/8 px-2 py-0.5 text-[10px] font-bold text-rose-400">
-                {alerts.length}
-              </div>
+              <Badge variant="outline" className="bg-rose-500/10 border-rose-500/20 text-rose-500 px-3 py-1 text-[10px] font-black italic">
+                {alerts.length} АКТИВНО
+              </Badge>
             </div>
 
-            <div className="space-y-2">
-              {loading && (
-                <div className="flex items-center gap-2 rounded-xl bg-black/20 px-3 py-4 text-xs text-slate-500">
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                  Завантаження...
-                </div>
-              )}
-              {!loading && alerts.length === 0 && (
-                <div className="rounded-xl bg-black/20 px-3 py-4 text-xs text-slate-500 italic">
-                  Критичних алертів немає ✓
-                </div>
-              )}
-              {alerts.map((alert) => (
-                <motion.div
-                  key={alert.id}
-                  className="group rounded-xl border border-white/[0.04] bg-black/20 px-3 py-3 transition-all hover:border-white/[0.08] hover:bg-white/[0.02]"
-                  whileHover={{ x: 2 }}
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="min-w-0 flex-1">
-                      <div className="text-xs font-semibold text-white leading-relaxed">{alert.message}</div>
-                      <div className="mt-1 text-[10px] text-slate-500">
-                        {alert.company} • {alert.sector}
+            <div className="space-y-4 max-h-[500px] overflow-y-auto no-scrollbar pr-2">
+              <AnimatePresence mode="popLayout">
+                {loading ? (
+                  <div className="flex flex-col items-center gap-4 py-12 opacity-40">
+                    <Loader2 className="h-8 w-8 animate-spin text-rose-500" />
+                    <p className="text-[10px] font-black uppercase tracking-[0.3em] italic">СИНХРОНІЗАЦІЯ_АЛЕ ТІВ...</p>
+                  </div>
+                ) : alerts.length === 0 ? (
+                  <div className="rounded-2xl bg-white/[0.02] border border-white/5 p-8 text-center text-[11px] text-slate-600 italic uppercase tracking-widest">
+                    КРИТИЧНИХ ЗАГРОЗ НЕ ВИЯВЛЕНО ✓
+                  </div>
+                ) : alerts.map((alert, idx) => (
+                  <motion.div
+                    key={alert.id}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: idx * 0.05 }}
+                    className="group relative rounded-2xl border border-white/5 bg-white/[0.02] p-5 transition-all hover:border-rose-500/30 hover:bg-rose-500/5 shadow-lg overflow-hidden"
+                    whileHover={{ x: 5 }}
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="min-w-0 flex-1">
+                        <div className="text-xs font-black text-white leading-relaxed uppercase italic tracking-tight group-hover:text-rose-400 transition-colors">{alert.message}</div>
+                        <div className="mt-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest italic flex items-center gap-2">
+                          <Building2 size={10} /> {alert.company} <span className="opacity-30">•</span> {alert.sector}
+                        </div>
                       </div>
+                      <span className={cn(
+                        'shrink-0 rounded-lg border px-3 py-1 text-[9px] font-black uppercase tracking-widest italic shadow-lg',
+                        alert.severity === 'critical' ? 'border-rose-500/40 bg-rose-600/20 text-rose-400'
+                          : alert.severity === 'warning' ? 'border-amber-500/40 bg-amber-600/20 text-amber-400'
+                          : 'border-slate-500/40 bg-slate-600/20 text-slate-400',
+                      )}>
+                        {alert.severity === 'critical' ? 'КРИТИЧНО'
+                          : alert.severity === 'warning' ? 'УВАГА'
+                          : 'ІНФО'}
+                      </span>
                     </div>
-                    <span className={cn(
-                      'shrink-0 rounded-md border px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider',
-                      alert.severity === 'critical' ? 'border-rose-400/20 bg-rose-600/10 text-rose-400'
-                        : alert.severity === 'warning' ? 'border-rose-500/20 bg-rose-500/10 text-rose-300'
-                        : 'border-slate-400/20 bg-slate-500/10 text-slate-400',
-                    )}>
-                      {alert.severity === 'critical' ? 'Критично'
-                        : alert.severity === 'warning' ? 'Увага'
-                        : 'Інфо'}
-                    </span>
-                  </div>
-                  <div className="mt-2 flex items-center justify-between text-[10px] text-slate-600 font-mono">
-                    <span>{timeAgo(alert.timestamp)}</span>
-                    {(alert.value ?? 0) > 0 && (
-                      <span className="font-semibold text-slate-400 tabular-nums">{formatCurrency(alert.value!)}</span>
-                    )}
-                  </div>
-                </motion.div>
-              ))}
+                    <div className="mt-4 flex items-center justify-between text-[10px] font-mono font-black italic">
+                      <span className="text-slate-600 group-hover:text-slate-400 transition-colors">{timeAgo(alert.timestamp)}</span>
+                      {(alert.value ?? 0) > 0 && (
+                        <span className="text-rose-500 tabular-nums shadow-rose-500/20 drop-shadow-md">{formatCurrency(alert.value!)}</span>
+                      )}
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
             </div>
           </div>
 
-          {/* Покриття даних */}
-          <div className="rounded-2xl border border-white/[0.05] bg-[#060c18]/40 p-4">
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm font-black text-white flex items-center gap-2 uppercase italic tracking-tight">
-                <Database className="h-4 w-4 text-rose-500" />
-                Покриття даних
-              </h2>
-              <div className="inline-flex items-center gap-1 rounded-full border border-rose-500/15 bg-rose-500/8 px-2 py-0.5 text-[10px] font-bold text-rose-500">
-                ОНЛАЙН
-              </div>
-            </div>
-
-            <div className="space-y-1.5">
-              {[
-                { label: 'Пошуковий індекс', value: s ? formatNumber(s.search_documents) : '—', hint: 'документів', icon: Search, tone: tones.rose },
-                { label: 'Векторні ембедінги', value: s ? formatNumber(s.vectors) : '—', hint: 'записів', icon: Brain, tone: tones.pink },
-                { label: 'Митні офіси', value: overview ? formatNumber(Object.keys(overview.customs_offices || {}).length) : '—', hint: 'активних', icon: ShieldCheck, tone: tones.rose },
-                { label: 'Пайплайни', value: s ? formatNumber(s.active_pipelines) : '—', hint: `${s ? formatNumber(s.completed_pipelines) : '—'} завершених`, icon: Zap, tone: tones.crimson },
-              ].map((item) => (
-                <div
-                  key={item.label}
-                  className="group flex items-center justify-between rounded-xl border border-white/[0.04] bg-black/20 px-3 py-2.5 transition-all hover:border-white/[0.08] hover:bg-white/[0.02]"
-                >
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <div className={cn('flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border', item.tone.bg)}>
-                      <item.icon className={cn('h-3.5 w-3.5', item.tone.icon)} />
-                    </div>
-                    <div className="min-w-0">
-                      <div className="text-xs font-semibold text-white truncate uppercase italic">{item.label}</div>
-                      <div className="text-[10px] text-slate-600">{item.hint}</div>
-                    </div>
-                  </div>
-                  <div className="text-sm font-black text-white tabular-nums">{item.value}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Швидкі дії */}
-          <div className="rounded-2xl border border-white/[0.05] bg-[#060c18]/40 p-4">
-            <h2 className="text-sm font-black text-white mb-3 flex items-center gap-2 uppercase italic tracking-tight">
-              <Sparkles className="h-4 w-4 text-violet-400" />
-              Швидкі дії
+          {/* Quick Actions HUD */}
+          <div className="rounded-[2.5rem] border border-white/5 bg-black/40 backdrop-blur-3xl p-8 shadow-2xl overflow-hidden relative">
+            <div className="absolute inset-0 bg-gradient-to-tr from-rose-500/[0.03] to-transparent pointer-events-none" />
+            <h2 className="text-sm font-black text-white mb-6 flex items-center gap-3 uppercase italic tracking-widest">
+              <Sparkles className="h-4 w-4 text-rose-500 animate-pulse" />
+              ШВИДКІ ДІЇ
             </h2>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-3">
               {[
-                { label: 'Пошук', path: '/search?tab=global', icon: Search, accent: 'rose' },
-                { label: ' изики', path: '/diligence', icon: Target, accent: 'rose' },
-                { label: ' инок', path: '/market?tab=overview', icon: TrendingUp, accent: 'rose' },
-                { label: 'Брифінг', path: '/command?tab=brief', icon: Eye, accent: 'rose' },
+                { label: 'ПОШУК', path: '/search?tab=global', icon: Search },
+                { label: 'РИЗИКИ', path: '/osint?tab=diligence', icon: Target },
+                { label: 'РИНОК', path: '/market?tab=overview', icon: TrendingUp },
+                { label: 'БРИФІНГ', path: '/command?tab=brief', icon: Eye },
               ].map((action) => (
                 <Link
                   key={action.label}
                   to={action.path}
-                  className="group flex items-center gap-2 rounded-xl border border-white/[0.04] bg-black/20 px-3 py-2.5 text-xs font-semibold text-slate-300 transition-all hover:border-white/[0.1] hover:bg-white/[0.04] hover:text-white"
+                  className="group flex items-center gap-3 rounded-2xl border border-white/5 bg-white/[0.03] p-4 text-[10px] font-black uppercase tracking-widest text-slate-400 transition-all hover:border-rose-500/40 hover:bg-rose-500/10 hover:text-white shadow-md italic"
                 >
-                  <action.icon className="h-3.5 w-3.5 text-slate-500 group-hover:text-white transition-colors" />
+                  <action.icon className="h-4 w-4 text-slate-500 group-hover:text-rose-500 transition-all group-hover:scale-110" />
                   {action.label}
-                  <ArrowUpRight className="h-3 w-3 ml-auto text-slate-700 group-hover:text-white transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                  <ArrowUpRight className="h-3 w-3 ml-auto text-slate-800 group-hover:text-rose-500 transition-all group-hover:translate-x-1 group-hover:-translate-y-1" />
                 </Link>
               ))}
             </div>
 
-            <div className="mt-3 flex items-center justify-between text-[10px] text-slate-600 px-1 italic">
-              <span>Командний пошук</span>
-              <kbd className="rounded border border-white/[0.06] bg-white/[0.03] px-1.5 py-0.5 text-[9px] font-semibold text-slate-500">⌘K</kbd>
+            <div className="mt-6 flex items-center justify-between text-[9px] font-black text-slate-700 italic px-2 uppercase tracking-widest">
+              <span>КОМАНДНИЙ ПОШУК</span>
+              <kbd className="rounded-lg border border-white/10 bg-white/5 px-2 py-1 text-[9px] text-slate-500 shadow-inner">⌘ K</kbd>
             </div>
           </div>
         </motion.div>
       </motion.section>
+
+      {/* Strategic Information Ticker */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-3xl border-t border-rose-500/20 h-14 flex items-center overflow-hidden shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
+        <div className="px-8 bg-rose-600 h-full flex items-center shrink-0 border-r border-white/10 shadow-[20px_0_40px_rgba(225,29,72,0.4)] relative z-10 italic text-white font-black text-[11px] tracking-[0.3em] uppercase">
+          <div className="flex items-center gap-4">
+             <Activity size={20} className="animate-pulse" />
+             <span>LIVE_STREAM_v63.0</span>
+          </div>
+        </div>
+        <div className="flex-1 flex items-center">
+          <motion.div 
+            animate={{ x: [2000, -3000] }}
+            transition={{ duration: 50, repeat: Infinity, ease: 'linear' }}
+            className="flex items-center gap-24 whitespace-nowrap"
+          >
+            {[
+              `СИСТЕМА: ОПТИМАЛЬНО | РЕЖИМ: ELITE_TACTICAL | СИНХРОНІЗАЦІЯ: ТАК`,
+              `ФІНАНСОВИЙ ПОТІК: ${s ? formatCurrency(s.total_value_usd) : '—'} | ДЕКЛАРАЦІЙ: ${s ? formatNumber(s.total_declarations) : '—'}`,
+              `КРИТИЧНІ СИГНАЛИ: ${alerts.length} | ЗОНА РИЗИКУ: ${s ? s.high_risk_count : '—'} ОБ'ЄКТІВ`,
+              `НЕЙРОННИЙ ГРАФ: ${s ? formatNumber(s.graph_nodes) : '—'} ВУЗЛІВ | ${s ? formatNumber(s.graph_edges) : '—'} ЗВ'ЯЗКІВ`,
+              `ЯДРО: NVIDIA_H100_NEXUS | ЛАТЕНТНІСТЬ: 4.2мс | ОПЕРАЦІЙНА ЧИСТОТА: 99.8%`
+            ].map((log, i) => (
+              <div key={i} className="flex items-center gap-8">
+                <div className="w-2 h-2 rounded-full bg-rose-600 shadow-[0_0_10px_#f43f5e] animate-pulse" />
+                <span className="text-[11px] font-mono text-slate-500 font-black uppercase tracking-[0.2em] italic">
+                  {log}
+                </span>
+              </div>
+            ))}
+          </motion.div>
+        </div>
+      </div>
+
+      <style dangerouslySetInnerHTML={{
+        __html: `
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        @font-face {
+          font-family: 'Outfit';
+          src: url('https://fonts.googleapis.com/css2?family=Outfit:wght@100;400;900&display=swap');
+        }
+        `
+      }} />
     </motion.div>
   );
 }

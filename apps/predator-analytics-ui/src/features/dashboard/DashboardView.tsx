@@ -390,48 +390,54 @@ const DashboardView: React.FC = () => {
             }
           />
 
+          <NeuralPulse color="rgba(244, 63, 94, 0.05)" size={1200} />
+
           {!hasData ? (
-             <div className="py-60 flex flex-col items-center justify-center gap-12 text-center">
+             <div className="py-60 flex flex-col items-center justify-center gap-12 text-center relative">
+                 <div className="absolute inset-0 bg-red-500/5 blur-[120px] rounded-full animate-pulse" />
                  <div className="relative group">
-                    <div className="absolute inset-0 bg-yellow-500/20 blur-[100px] rounded-full scale-150 animate-pulse" />
-                    <Database size={120} className="text-slate-800 relative z-10 group-hover:text-slate-700 transition-colors" />
+                    <div className="absolute inset-0 bg-red-500/20 blur-[100px] rounded-full scale-150 animate-pulse" />
+                    <Database size={120} className="text-slate-800 relative z-10 group-hover:text-red-900 transition-colors duration-700" />
                  </div>
-                 <div className="space-y-6">
-                    <h3 className="text-4xl font-black text-slate-700 uppercase tracking-[1em] italic">ЯДРО_ПО ОЖНЄ</h3>
+                 <div className="space-y-6 relative z-10">
+                    <h3 className="text-4xl font-black text-slate-700 uppercase tracking-[1em] italic">ЯД О_ПО ОЖНЄ</h3>
                     <p className="text-slate-500 font-black uppercase text-[12px] tracking-[0.4em] max-w-xl italic opacity-60">Завантажте дані для активації аналітичних двигунів PREDATOR</p>
                  </div>
              </div>
           ) : (
             <>
               {/* Grand Metrics Row */}
-              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-8">
+              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-8 relative z-10">
                 {[
                   { label: 'ФІНАНСОВИЙ_ПОТІК', value: formatCurrency(overview!.summary.total_value_usd), icon: <TrendingUp size={24} />, color: 'red', sub: 'Загальна вартість' },
                   { label: 'ІМПОРТ_ВВЕЗЕННЯ', value: formatNumber(overview!.summary.import_count), icon: <Ship size={24} />, color: 'cyan', sub: 'Вантажні судна' },
                   { label: 'ЕКСПОРТ_ВИВЕЗЕННЯ', value: formatNumber(overview!.summary.export_count), icon: <Package size={24} />, color: 'emerald', sub: 'Логістичні партії' },
-                  { label: 'ЗОНА_КРИТИЧНОСТІ', value: String(overview!.summary.high_risk_count), icon: <ShieldAlert size={24} />, color: 'amber', sub: 'Високийризик' },
+                  { label: 'ЗОНА_КРИТИЧНОСТІ', value: String(overview!.summary.high_risk_count), icon: <ShieldAlert size={24} />, color: 'amber', sub: 'Високий ризик' },
                   { label: 'СЕМАНТИЧНИЙ_ГРАФ', value: formatNumber(overview!.summary.graph_nodes), icon: <Network size={24} />, color: 'purple', sub: 'Вузли системи' },
-                  { label: 'НЕЙ О_МАТрИЦЯ', value: formatNumber(overview!.summary.vectors), icon: <Brain size={24} />, color: 'amber', sub: 'Векторні індекси' },
+                  { label: 'НЕЙ О_МАТрИЦЯ', value: formatNumber(overview!.summary.vectors), icon: <Brain size={24} />, color: 'rose', sub: 'Векторні індекси' },
                 ].map((m, i) => (
                   <motion.div
                     key={m.label}
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.05 }}
-                    className="p-8 bg-slate-950/60 border border-white/5 rounded-[2.5rem] relative overflow-hidden group hover:border-yellow-500/30 transition-all shadow-[0_30px_60px_-12px_rgba(0,0,0,0.5)]"
+                    transition={{ delay: i * 0.05, type: "spring", stiffness: 100 }}
+                    className="p-8 bg-black/40 backdrop-blur-3xl border border-white/5 rounded-[2.5rem] relative overflow-hidden group hover:border-red-500/40 transition-all duration-500 shadow-[0_30px_60px_-12px_rgba(0,0,0,0.8)]"
                   >
+                    <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                     <div className={cn(
-                      "absolute top-6 right-6 p-4 rounded-[1.5rem] bg-yellow-500/5 group-hover:bg-yellow-500/10 transition-colors",
+                      "absolute top-6 right-6 p-4 rounded-[1.5rem] bg-white/5 border border-white/5 group-hover:bg-red-500/10 group-hover:border-red-500/20 transition-all duration-500 shadow-xl",
                     )}>
-                      <div className={`text-yellow-400 group-hover:scale-110 transition-transform`}>{m.icon}</div>
+                      <div className={`text-slate-400 group-hover:text-red-500 group-hover:scale-110 transition-all duration-500`}>{m.icon}</div>
                     </div>
-                    <div className="space-y-4">
+                    <div className="space-y-4 relative z-10">
                       <div className="space-y-1">
-                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic group-hover:text-red-500 transition-colors">{m.label}</p>
+                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic group-hover:text-red-500 transition-colors duration-500">{m.label}</p>
                         <p className="text-[9px] font-bold text-slate-700 uppercase tracking-tighter italic">{m.sub}</p>
                       </div>
-                      <p className="text-4xl font-mono font-black text-white italic tracking-tighter">{m.value}</p>
+                      <p className="text-4xl font-mono font-black text-white italic tracking-tighter group-hover:text-red-500 transition-colors duration-500">{m.value}</p>
                     </div>
+                    {/* Corner accent */}
+                    <div className="absolute bottom-0 right-0 w-12 h-12 bg-gradient-to-br from-transparent to-red-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
                   </motion.div>
                 ))}
               </div>

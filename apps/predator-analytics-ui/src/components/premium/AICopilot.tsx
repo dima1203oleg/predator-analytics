@@ -325,9 +325,14 @@ export const Predator: React.FC = () => {
             </div>
 
             {/* Content Area */}
-            <div className="flex-1 overflow-y-auto p-10 space-y-10 no-scrollbar relative">
-             <div className="absolute top-0 right-0 p-20 opacity-[0.03] pointer-events-none">
-                  <Brain size={400} className="text-rose-500" />
+            <div className="flex-1 overflow-y-auto p-10 space-y-12 no-scrollbar relative">
+               <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-40">
+                  <NeuralPulse color="rgba(244, 63, 94, 0.08)" size={800} />
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-rose-600/5 blur-[120px] rounded-full animate-pulse" />
+               </div>
+               
+               <div className="absolute top-0 right-0 p-20 opacity-[0.03] pointer-events-none group-hover:rotate-6 transition-transform duration-1000">
+                  <Brain size={450} className="text-rose-500" />
                </div>
 
                <div className="space-y-6 relative z-10">
@@ -362,17 +367,29 @@ export const Predator: React.FC = () => {
 
                {aiResponse && (
                 <motion.div 
-                    initial={{ opacity: 0, y: 30 }} 
-                    animate={{ opacity: 1, y: 0 }} 
-                    className="p-10 bg-rose-500/5 border-2 border-rose-500/20 rounded-[3rem] relative overflow-hidden shadow-3xl"
+                    initial={{ opacity: 0, y: 30, scale: 0.95 }} 
+                    animate={{ opacity: 1, y: 0, scale: 1 }} 
+                    className="p-12 bg-rose-950/20 backdrop-blur-xl border-2 border-rose-500/30 rounded-[3.5rem] relative overflow-hidden shadow-3xl group"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-br from-rose-500/10 to-transparent pointer-events-none" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-rose-600/10 via-transparent to-transparent opacity-60" />
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/10 blur-3xl rounded-full -mr-10 -mt-10 animate-pulse" />
                   <div className="relative z-10">
-                    <div className="flex items-center gap-5 mb-6">
-                       <Zap size={24} className="text-rose-500 animate-pulse shadow-[0_0_20px_rgba(225,29,72,0.6)]" />
-                       <span className="text-[11px] font-black text-rose-500 uppercase tracking-[0.4em] font-mono">{activeAgent}</span>
+                    <div className="flex items-center gap-6 mb-8">
+                       <div className="relative">
+                          <Zap size={28} className="text-rose-500 animate-pulse relative z-10" />
+                          <div className="absolute inset-0 bg-rose-500 blur-lg opacity-40 animate-ping" />
+                       </div>
+                       <div className="flex flex-col">
+                          <span className="text-[12px] font-black text-rose-500 uppercase tracking-[0.5em] font-mono leading-none">{activeAgent}</span>
+                          <span className="text-[8px] font-black text-rose-500/40 uppercase tracking-[0.3em] mt-1 italic">REALTIME_NEURO_STREAM</span>
+                       </div>
                     </div>
-                    <p className="text-xl font-black text-white italic leading-relaxed tracking-tight underline decoration-rose-500/10 underline-offset-8 decoration-4">{aiResponse}</p>
+                    <p className="text-2xl font-black text-white italic leading-relaxed tracking-tight underline decoration-rose-500/20 underline-offset-8 decoration-8 group-hover:text-rose-50 transition-colors">
+                       {aiResponse}
+                    </p>
+                    <div className="mt-8 flex items-center gap-4 text-[9px] font-black text-rose-500/30 uppercase tracking-[0.4em] italic font-mono">
+                       <Activity size={12} className="animate-pulse" /> SIGNAL_STRENGTH: 99.8% // ENCRYPTED_LINK_ACTIVE
+                    </div>
                   </div>
                 </motion.div>
               )}
@@ -392,18 +409,19 @@ export const Predator: React.FC = () => {
                 >
                   {isListening ? <Activity size={32} /> : <Mic size={32} />}
                 </motion.button>
-                <div className="flex-1 relative">
+                <div className="flex-1 relative group">
                     <input 
                       type="text" 
                       value={message} 
                       onChange={(e) => setMessage(e.target.value)} 
                       onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                       placeholder="ВВЕДІТЬ_СТРАТЕГІЧНУ_КОМАНДУ..."
-                      className="w-full bg-slate-950 border-2 border-rose-500/10 rounded-[2.5rem] px-10 py-8 text-white font-mono text-[16px] uppercase italic tracking-[0.1em] focus:outline-none focus:border-rose-500/40 transition-all placeholder:text-slate-800 shadow-inner"
+                      className="w-full bg-slate-950 border-2 border-rose-500/10 rounded-[2.5rem] px-12 py-9 text-white font-mono text-[17px] uppercase italic tracking-[0.1em] focus:outline-none focus:border-rose-500/50 transition-all placeholder:text-slate-900 shadow-2xl relative z-10"
                     />
-                    <div className="absolute top-1/2 right-10 -translate-y-1/2 flex items-center gap-4 text-slate-800">
-                        <Terminal size={18} />
-                        <span className="text-[10px] font-black uppercase tracking-widest">ГОТОВИЙ</span>
+                    <div className="absolute inset-0 bg-rose-500/5 rounded-[2.5rem] blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity pointer-events-none" />
+                    <div className="absolute top-1/2 right-12 -translate-y-1/2 flex items-center gap-5 text-slate-800 z-20">
+                        <Terminal size={22} className="group-focus-within:text-rose-500 transition-colors" />
+                        <span className="text-[11px] font-black uppercase tracking-[0.3em] group-focus-within:text-rose-500 transition-colors">READY</span>
                     </div>
                 </div>
                 <motion.button 

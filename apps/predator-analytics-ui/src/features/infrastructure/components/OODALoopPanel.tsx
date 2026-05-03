@@ -55,33 +55,52 @@ export function OODALoopPanel({
       </div>
 
       {/* Steps Visualizer */}
-      <div className="flex items-center justify-between px-4 py-6 bg-black/40 rounded-2xl border border-white/5 relative overflow-hidden">
+      <div className="flex items-center justify-between px-4 py-8 bg-black/60 rounded-[2.5rem] border border-white/5 relative overflow-hidden group">
         {/* Connection Line */}
-        <div className="absolute top-1/2 left-0 right-0 h-[1px] bg-white/[0.03] -translate-y-1/2 z-0" />
+        <div className="absolute top-1/2 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-y-1/2 z-0" />
         
+        {/* Scanning effect */}
+        <motion.div 
+          animate={{ left: ['-100%', '200%'] }}
+          transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+          className="absolute inset-0 w-1/3 bg-gradient-to-r from-transparent via-rose-500/5 to-transparent skew-x-[-20deg] pointer-events-none"
+        />
+
         {steps.map((step, idx) => {
           const isActive = currentStatus === step.id;
           const isDone = steps.findIndex(s => s.id === currentStatus) > idx;
 
-          const stepColorClass = step.color === 'rose' ? 'rose-500' : 'slate-500';
-          const activeBg = step.color === 'rose' ? 'bg-rose-500/20 border-rose-500/40 text-rose-500 shadow-[0_0_20px_rgba(225,29,72,0.2)]' : 'bg-slate-500/20 border-slate-500/40 text-slate-400';
+          const activeBg = step.color === 'rose' ? 'bg-rose-500/20 border-rose-500/40 text-rose-500 shadow-[0_0_30px_rgba(225,29,72,0.3)]' : 'bg-slate-500/20 border-slate-500/40 text-slate-400';
 
           return (
-            <div key={step.id} className="relative z-10 flex flex-col items-center gap-3">
+            <div key={step.id} className="relative z-10 flex flex-col items-center gap-4">
+               {isActive && (
+                <motion.div 
+                  layoutId="active-step-glow"
+                  className="absolute inset-[-12px] rounded-[1.5rem] bg-rose-500/5 border border-rose-500/20 blur-md pointer-events-none"
+                />
+              )}
               <motion.div
                 animate={isActive ? { scale: [1, 1.1, 1] } : {}}
                 transition={{ duration: 2, repeat: Infinity }}
                 className={cn(
-                  "w-12 h-12 rounded-xl flex items-center justify-center border transition-all duration-500",
+                  "w-14 h-14 rounded-2xl flex items-center justify-center border transition-all duration-700 relative group/step",
                   isActive ? activeBg :
                   isDone ? "bg-rose-500/10 border-rose-500/20 text-rose-500/60" :
-                  "bg-[#0a0a0a] border-white/5 text-slate-700"
+                  "bg-slate-950 border-white/5 text-slate-700"
                 )}
               >
-                {isDone ? <CheckCircle className="w-5 h-5" /> : step.icon}
+                {isActive && (
+                  <motion.div 
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                    className="absolute inset-[-4px] border border-dashed border-rose-500/30 rounded-2xl pointer-events-none"
+                  />
+                )}
+                {isDone ? <CheckCircle className="w-6 h-6" /> : React.cloneElement(step.icon as React.ReactElement, { className: "w-6 h-6" })}
               </motion.div>
               <span className={cn(
-                "text-[8px] font-black uppercase tracking-[0.2em] transition-colors duration-500",
+                "text-[9px] font-black uppercase tracking-[0.3em] italic transition-colors duration-700 font-mono",
                 isActive ? (step.color === 'rose' ? 'text-rose-500' : 'text-slate-400') : "text-slate-700"
               )}>
                 {step.label}

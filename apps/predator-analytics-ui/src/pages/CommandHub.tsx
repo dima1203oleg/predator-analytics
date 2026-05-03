@@ -50,7 +50,7 @@ const CommandHub: React.FC = () => {
       tabs={hubTabs}
       activeTab={activeTab}
       onTabChange={handleTabChange}
-      accent="sky"
+      accent="rose"
       actions={
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-500 text-[10px] font-bold uppercase tracking-wider">

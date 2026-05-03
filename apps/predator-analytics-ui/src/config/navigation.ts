@@ -367,7 +367,7 @@ const baseNavigationConfig: NavSection[] = [
         items: [
           {
             id: 'dashboard',
-            label: 'Виконавча  ада',
+            label: 'Виконавча рада',
             path: '/command?tab=board',
             icon: LayoutDashboard,
             description: 'Головна точка входу: ROI-пульс, KPI, швидкі переходи.',
@@ -377,10 +377,10 @@ const baseNavigationConfig: NavSection[] = [
           },
           {
             id: 'morning-brief',
-            label: ' анковий Брифінг',
+            label: 'Ранковий Брифінг',
             path: '/command?tab=brief',
             icon: Compass,
-            description: 'Пріоритетний аналізризиків та цілей на поточний день.',
+            description: 'Пріоритетний аналіз ризиків та цілей на поточний день.',
             group: 'Командування',
             audiences: ['business', 'analyst'],
             priority: 92,

@@ -28,7 +28,7 @@ const SystemHub: React.FC = () => {
     { id: 'ingestion', label: 'Кузня Даних', icon: <Upload size={16} /> },
     { id: 'security', label: 'Безпека', icon: <Lock size={16} /> },
     { id: 'settings', label: 'Налаштування', icon: <Settings size={16} /> },
-    { id: 'deployment', label: ' озгортання', icon: <Box size={16} /> },
+    { id: 'deployment', label: 'Розгортання', icon: <Box size={16} /> },
     { id: 'governance', label: 'Управління', icon: <Shield size={16} /> },
     { id: 'factory', label: 'Фабрика Систем', icon: <Factory size={16} /> },
   ];
@@ -41,7 +41,7 @@ const SystemHub: React.FC = () => {
       tabs={hubTabs}
       activeTab={activeTab}
       onTabChange={handleTabChange}
-      accent="slate"
+      accent="rose"
     >
       <div className="h-full">
         {activeTab === 'monitoring' && <MonitoringTab />}

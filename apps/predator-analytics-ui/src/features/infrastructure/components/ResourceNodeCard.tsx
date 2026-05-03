@@ -53,16 +53,16 @@ export function ResourceNodeCard({ node, onClick }: { node: NodeHardwareProps, o
         </div>
       </div>
 
-      <div className="flex items-center gap-4 mb-6">
+      <div className="flex items-center gap-4 mb-6 relative z-10">
         <div className={cn(
-          "p-3 rounded-2xl bg-white/[0.03] border border-white/5",
+          "p-3 rounded-2xl bg-black border border-white/10 shadow-inner group-hover:border-rose-500/30 transition-all duration-500",
           node.type === 'SERVER' ? "text-rose-500" : node.type === 'LAPTOP' ? "text-rose-400" : "text-rose-600"
         )}>
-          {node.type === 'SERVER' ? <Box className="w-6 h-6" /> : <LaptopIcon className="w-6 h-6" />}
+          {node.type === 'SERVER' ? <Box className="w-6 h-6 shadow-[0_0_10px_currentColor]" /> : <LaptopIcon className="w-6 h-6 shadow-[0_0_10px_currentColor]" />}
         </div>
         <div>
-          <h3 className="text-lg font-black text-white leading-tight tracking-tight">{node.name}</h3>
-          <p className="text-[10px] text-slate-600 uppercase font-black tracking-widest">{node.location} • {node.uptime}</p>
+          <h3 className="text-lg font-black text-white leading-tight tracking-tight uppercase italic">{node.name}</h3>
+          <p className="text-[10px] text-slate-600 uppercase font-black tracking-widest font-mono opacity-80">{node.location} // {node.uptime}</p>
         </div>
       </div>
 
