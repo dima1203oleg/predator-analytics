@@ -152,7 +152,7 @@ export const QuickStatsWidget: React.FC<QuickStatsWidgetProps> = ({
         </div>
         <div className="flex items-center gap-2">
           <div className="status-online" />
-          <span className="text-[10px] text-emerald-400 font-black uppercase tracking-wider">LIVE</span>
+          <span className="text-[10px] text-emerald-400 font-black uppercase tracking-wider">НАЖИВО</span>
         </div>
       </div>
 

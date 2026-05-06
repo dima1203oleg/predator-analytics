@@ -50,7 +50,7 @@ export const RealtimeMetricsWidget: React.FC<RealtimeMetricsWidgetProps> = ({
             "text-[10px] font-mono uppercase",
             isConnected ? "text-emerald-400" : "text-rose-400"
           )}>
-            {connectionType === 'websocket' ? 'LIVE' : connectionType === 'polling' ? 'POLL' : 'OFFLINE'}
+            {connectionType === 'websocket' ? 'НАЖИВО' : connectionType === 'polling' ? 'ОПИТУВАННЯ' : 'ОФЛАЙН'}
           </span>
         </div>
 
@@ -118,8 +118,8 @@ export const RealtimeMetricsWidget: React.FC<RealtimeMetricsWidgetProps> = ({
               )}
             </h3>
             <p className="text-[9px] text-slate-500 font-mono uppercase tracking-widest">
-              {connectionType === 'websocket' ? 'WEBSOCKET LIVE' :
-               connectionType === 'polling' ? 'REST POLLING' : 'CONNECTING...'}
+              {connectionType === 'websocket' ? 'WEBSOCKET НАЖИВО' :
+               connectionType === 'polling' ? 'REST ОПИТУВАННЯ' : 'ПІДКЛЮЧЕННЯ...'}
             </p>
           </div>
         </div>

@@ -98,7 +98,7 @@ export const DashboardBuilder: React.FC<{ onSave?: (config: any) => void }> = ({
           <div>
             <h2 className="text-xl font-black text-white tracking-tight">Конструктор Дашборду</h2>
             <div className="flex items-center gap-2 mt-1">
-               <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">PRO MODE</span>
+               <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">ПРО РЕЖИМ</span>
                <p className="text-xs text-slate-500">Створіть свій ідеальний робочий простір</p>
             </div>
           </div>
@@ -269,7 +269,7 @@ export const DashboardBuilder: React.FC<{ onSave?: (config: any) => void }> = ({
                  {!isEditMode && (
                    <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
                       <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                      <span className="text-[10px] font-bold text-emerald-500">LIVE</span>
+                      <span className="text-[10px] font-bold text-emerald-500">НАЖИВО</span>
                    </div>
                  )}
               </div>

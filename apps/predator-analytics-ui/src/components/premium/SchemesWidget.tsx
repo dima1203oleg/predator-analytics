@@ -34,7 +34,7 @@ export const SchemesWidget: React.FC<{ persona: string }> = ({ persona }) => {
           <div>
             <h3 className="text-sm font-black text-white uppercase tracking-wider flex items-center gap-2">
               {premiumLocales.schemes.title}
-              <span className="px-2 py-0.5 rounded text-[9px] bg-red-500 text-white">LIVE</span>
+              <span className="px-2 py-0.5 rounded text-[9px] bg-red-500 text-white">НАЖИВО</span>
             </h3>
             <p className="text-[10px] text-slate-500 font-mono">{premiumLocales.schemes.subtitle}</p>
           </div>
