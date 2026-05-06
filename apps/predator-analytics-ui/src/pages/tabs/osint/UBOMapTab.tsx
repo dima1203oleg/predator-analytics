@@ -69,7 +69,7 @@ export const UBOMapTab: React.FC = () => {
                     </div>
                     
                     <div className="flex items-center gap-2 bg-slate-950/60 backdrop-blur-md p-1.5 rounded-2xl border border-white/5">
-                        {['ВУЗЛИ', 'МЕ ЕЖІ', 'РИЗИКИ'].map((f) => (
+                        {['ВУЗЛИ', 'МЕРЕЖІ', 'РИЗИКИ'].map((f) => (
                             <button key={f} className="px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-all">
                                 {f}
                             </button>
@@ -150,7 +150,7 @@ export const UBOMapTab: React.FC = () => {
                                 </div>
                                 <div className="text-center">
                                     <h3 className="text-sm font-black text-white uppercase tracking-[0.3em] mb-1 italic">
-                                        {isScanning ? 'ГЕНЕ АЦІЯ_ВЕКТО НОЇ_КА ТИ' : 'MAP_ENGINE_IDLE'}
+                                        {isScanning ? 'ГЕНЕРАЦІЯ_ВЕКТОРНОЇ_КАРТИ' : 'MAP_ENGINE_IDLE'}
                                     </h3>
                                     <p className="text-[10px] text-slate-500 font-mono uppercase">
                                         GEO_SYNC: {isScanning ? '98%' : 'ГОТОВО'} [UBO_SCANNER_PRO_4.0]
@@ -181,7 +181,7 @@ export const UBOMapTab: React.FC = () => {
                                     
                                     <div className="space-y-2 overflow-y-auto pr-1">
                                         {[
-                                            { name: 'ТОВ "ЕНЕ ГО-Г ИД"', risk: 92, status: 'КРИТИЧНО', loc: 'Київ, Україна' },
+                                            { name: 'ТОВ "ЕНЕРГО-ГРИД"', risk: 92, status: 'КРИТИЧНО', loc: 'Київ, Україна' },
                                             { name: 'OFFSHORE_VESTA_LTD', risk: 85, status: 'ВИСОКО', loc: 'Лімасол, Кіпр' },
                                             { name: 'GLOBAL_TRANS_LOGISTICS', risk: 42, status: 'СТАБІЛЬНО', loc: 'Варшава, Польща' },
                                             { name: 'PRIVATE_INVEST_GROUP', risk: 12, status: 'БЕЗПЕЧНО', loc: 'Лондон, Великобританія' },
@@ -245,9 +245,9 @@ export const UBOMapTab: React.FC = () => {
                 <div className="absolute bottom-6 left-6 z-30 flex items-center gap-3">
                     <TacticalCard className="!px-6 !py-3 bg-slate-950/90 backdrop-blur-2xl border-white/10 flex items-center gap-8">
                         {[
-                            { label: 'ОФШО НА ЗОНА', color: 'bg-rose-600', glow: 'shadow-rose-600/50' },
+                            { label: 'ОФШОРНА ЗОНА', color: 'bg-rose-600', glow: 'shadow-rose-600/50' },
                             { label: 'САНКЦІЙНА ЛОКАЦІЯ', color: 'bg-orange-500', glow: 'shadow-orange-500/50' },
-                            { label: 'ПЕ ЕВІ ЕНИЙ UBO', color: 'bg-rose-400', glow: 'shadow-rose-400/50' },
+                            { label: 'ПЕРЕВІРЕНИЙ UBO', color: 'bg-rose-400', glow: 'shadow-rose-400/50' },
                         ].map(item => (
                             <div key={item.label} className="flex items-center gap-3">
                                 <div className={`w-2.5 h-2.5 rounded-full ${item.color} shadow-[0_0_8px_currentColor] animate-pulse`} />

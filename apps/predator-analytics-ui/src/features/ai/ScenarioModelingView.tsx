@@ -1,3 +1,4 @@
+/**
  * ScenarioModelingView — War-gaming & Стратегічне моделювання.
  * Симуляція загроз та наслідків на базі Horizon Engine.
  * War-gaming Horizon v63.0-ELITE.

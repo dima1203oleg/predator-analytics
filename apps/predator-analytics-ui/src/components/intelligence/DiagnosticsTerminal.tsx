@@ -92,8 +92,8 @@ export const DiagnosticsTerminal: React.FC = () => {
                   <Activity size={18} className="text-rose-500 animate-pulse" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-black text-rose-500 italic tracking-widest uppercase">SYSLOG_DIAGNOSTICS</h3>
-                  <p className="text-[8px] font-bold text-slate-700 uppercase tracking-[0.3em]">v61.0-ELITE // ERR_TRACKER</p>
+                  <h3 className="text-sm font-black text-rose-500 italic tracking-widest uppercase">ЖУРНАЛ_ДІАГНОСТИКИ</h3>
+                  <p className="text-[8px] font-bold text-slate-700 uppercase tracking-[0.3em]">v61.0-ELITE // ТРЕКЕР_ПОМИЛОК</p>
                 </div>
               </div>
               <div className="flex gap-4">
@@ -168,7 +168,7 @@ export const DiagnosticsTerminal: React.FC = () => {
               <div className="flex items-center gap-6">
                 <div className="flex items-center gap-2">
                   <Cpu size={12} className="text-rose-500" />
-                  <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest">KERNEL: v58.3-ELITE</span>
+                  <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest">ЯДРО: v58.3-ELITE</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Database size={12} className="text-rose-500" />
@@ -177,7 +177,7 @@ export const DiagnosticsTerminal: React.FC = () => {
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
-                <span className="text-[8px] font-black text-emerald-500 uppercase tracking-[0.2em] italic">SEC_READY</span>
+                <span className="text-[8px] font-black text-emerald-500 uppercase tracking-[0.2em] italic">БЕЗПЕКА_ГОТОВА</span>
               </div>
             </div>
           </motion.div>

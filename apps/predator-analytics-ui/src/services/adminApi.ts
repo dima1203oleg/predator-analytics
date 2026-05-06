@@ -254,6 +254,9 @@ export const adminApi = {
     getStats: async (): Promise<AgentStats> => {
       return (await v2Client.get<AgentStats>('/admin/agents')).data;
     },
+    executeAction: async (agentId: string, action: string): Promise<any> => {
+      return (await v2Client.post('/admin/agents/action', { agentId, action })).data;
+    },
   },
   security: {
     getAuditLogs: async (): Promise<any[]> => {

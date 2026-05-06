@@ -108,6 +108,17 @@ export function useAgentsStats() {
   });
 }
 
+export function useExecuteAction() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ agentId, action }: { agentId: string, action: string }) => 
+      adminApi.agents.executeAction(agentId, action),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ADMIN_KEYS.agents });
+    },
+  });
+}
+
 // ─── GitOps ──────────────────────────────────────────────────────────────────
 
 export function useGitOpsStatus() {

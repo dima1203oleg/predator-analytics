@@ -76,7 +76,7 @@ export function OsintGraphExplorer() {
         fetchInitialState();
     }, []);
 
-    // РОЗГОРНЕННЯ БЕЗПОСЕ ЕДНІХ ЗВ'ЯЗКІВ ( ЕАЛЬНИЙ БЕКЕНД NEO4J)
+    // РОЗГОРНЕННЯ БЕЗПОСЕРЕДНІХ ЗВ'ЯЗКІВ (РЕАЛЬНИЙ БЕКЕНД NEO4J)
     const expandNode = useCallback(async (nodeId: string) => {
         if (isExpanding) return;
         setIsExpanding(true);
@@ -149,8 +149,8 @@ export function OsintGraphExplorer() {
             });
             
         } catch (err: any) {
-             console.error('Помилка завантаження звязків:', err);
-             setError(`ПОМИЛКА МЕ ЕЖІ: ${err.message || 'Сервер недоступний'}`);
+             console.error('Помилка завантаження зв’язків:', err);
+             setError(`ПОМИЛКА МЕРЕЖІ: ${err.message || 'Сервер недоступний'}`);
         } finally {
              setIsExpanding(false);
         }
@@ -164,9 +164,9 @@ export function OsintGraphExplorer() {
         setError(null);
     }, []);
 
-    // ГЛОБАЛЬНИЙ ПОШУК ( ЕАЛЬНО ЧЕ ЕЗ /SEARCH/)
+    // ГЛОБАЛЬНИЙ ПОШУК (РЕАЛЬНО ЧЕРЕЗ /SEARCH/)
     const handleGlobalSearch = async (e: React.FormEvent) => {
-        e.preventDefault();
+        if (e) e.preventDefault();
         if (!searchQuery.trim() || isSearching) return;
         
         setIsSearching(true);
@@ -222,7 +222,7 @@ export function OsintGraphExplorer() {
         }
     };
 
-    // ЗАВАНТАЖЕННЯ З ІСТО ІЇ
+    // ЗАВАНТАЖЕННЯ З ІСТОРІЇ
     const loadTarget = (targetId: string) => {
         const found = savedTargets.find(t => t.id === targetId);
         if (found) {
@@ -240,7 +240,7 @@ export function OsintGraphExplorer() {
         }
     };
 
-    // ЗАПУСК ВЛАСНОГО АНАЛІЗУ БЕНЕФІЦІА ІВ (UBO)
+    // ЗАПУСК ВЛАСНОГО АНАЛІЗУ БЕНЕФІЦІАРІВ (UBO)
     const runUboTracer = async (nodeId: string) => {
         if (isExpanding) return;
         setIsExpanding(true);
@@ -298,7 +298,7 @@ export function OsintGraphExplorer() {
                 <div className="p-4 border-b border-slate-800/60 bg-slate-900/50">
                     <h2 className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
                         <History className="w-4 h-4 text-rose-500" />
-                        Вашірозслідування
+                        Ваші розслідування
                     </h2>
                 </div>
                 <div className="flex-1 overflow-y-auto p-3 space-y-2">
@@ -346,7 +346,7 @@ export function OsintGraphExplorer() {
                 </div>
             </div>
 
-            {/* ─── ЦЕНТ АЛЬНА ЗОНА: ГРАФ & ПОШУК ───────────────────── */}
+            {/* ─── ЦЕНТРАЛЬНА ЗОНА: ГРАФ & ПОШУК ───────────────────── */}
             <div className="flex-1 flex flex-col relative bg-slate-950 overflow-hidden">
                 <div className="absolute inset-0 z-0">
                    <AdvancedBackground />
@@ -574,9 +574,9 @@ export function OsintGraphExplorer() {
                                                     selectedNode.riskLevel === 'medium' ? 'text-amber-400' :
                                                     'text-rose-300'
                                                 )}>
-                                                    {selectedNode.riskLevel === 'critical' ? 'Критичний  изик' : 
-                                                     selectedNode.riskLevel === 'high' ? 'Високий  изик' : 
-                                                     selectedNode.riskLevel === 'medium' ? 'Підвищений  изик' : 'Безпечно'}
+                                                    {selectedNode.riskLevel === 'critical' ? 'Критичний ризик' : 
+                                                     selectedNode.riskLevel === 'high' ? 'Високий ризик' : 
+                                                     selectedNode.riskLevel === 'medium' ? 'Підвищений ризик' : 'Безпечно'}
                                                 </div>
                                             </div>
                                         </div>
@@ -591,7 +591,7 @@ export function OsintGraphExplorer() {
                                                 className="w-full relative overflow-hidden group flex flex-col items-center justify-center gap-1 bg-gradient-to-br from-rose-600/90 to-rose-800/90 hover:from-rose-500 hover:to-rose-700 text-white p-3 rounded-xl transition-all shadow-lg disabled:opacity-50 border border-rose-500/50"
                                             >
                                                 <Network className={cn("w-5 h-5", isExpanding && "animate-spin")} /> 
-                                                <span className="text-[10px] font-bold uppercase tracking-widest leading-tight mt-1">Оточення</span>
+                                                <span className="text-[10px] font-bold uppercase tracking-widest leading-tight mt-1">Розгортання</span>
                                             </motion.button>
                                             
                                             {selectedNode.type === 'Organization' && (
@@ -652,7 +652,7 @@ export function OsintGraphExplorer() {
                                                 <div className="p-4 bg-slate-900 border border-slate-800 rounded-xl flex items-start gap-4">
                                                     <div className="p-2 bg-slate-800 rounded-lg shrink-0 mt-0.5"><Building2 className="w-4 h-4 text-rose-400" /></div>
                                                     <div>
-                                                        <div className="text-sm font-bold text-white mb-1">Державний Реєстр (ЄД )</div>
+                                                        <div className="text-sm font-bold text-white mb-1">Державний Реєстр (ЄДР)</div>
                                                         <div className="text-xs text-slate-400 mb-2">Натисніть для запиту до API Мінюсту</div>
                                                         <button className="text-[10px] font-bold text-rose-400 uppercase tracking-widest hover:text-rose-300">Оновити Витяг →</button>
                                                     </div>

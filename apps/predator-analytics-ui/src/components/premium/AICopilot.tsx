@@ -3,6 +3,8 @@
  * -------------------------------------------------------------
  * Sovereign AI Assistant with Neuro-Voice Integration.
  * Focused on Strategic Customs Analytics and Threat Intelligence.
+ * 
+ * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -29,14 +31,18 @@ import {
   ShieldAlert,
   Fingerprint,
   Layers,
-  Search
+  Search,
+  Loader2,
+  Terminal
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { api } from '../../services/api';
 import { useAppStore } from '../../store/useAppStore';
 import { factoryApi } from '../../services/api/factory';
 import { useBackendStatus } from '../../hooks/useBackendStatus';
-import { Terminal } from 'lucide-react';
+import { NeuralPulse } from '@/components/ui/NeuralPulse';
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1';
 
 interface Suggestion {
   id: string;
@@ -97,7 +103,7 @@ export const Predator: React.FC = () => {
             id: `stat-${Date.now()}`,
             type: 'insight',
             title: 'АНАЛІТИКА GLM-5.1 ELITE',
-            description: `СУВЕ ЕННЕ ЯДРО: ${stats.total_patterns} паттернів. ZROK Tunnel: ${backendStatus.nodeSource}.`,
+            description: `СУВЕРЕННЕ ЯДРО: ${stats.total_patterns} патернів. Тунель ZROK: ${backendStatus.nodeSource}.`,
             confidence: 0.99,
             impact: 'high'
           });
@@ -108,8 +114,8 @@ export const Predator: React.FC = () => {
           dynamicSuggestions.push({
             id: `gold-${Date.now()}`,
             type: 'action',
-            title: 'АҐЕНТНИЙ АНАЛІЗ GLM-5.1',
-            description: `Виявлено критичну аномалію "${topPattern.name}".рекомендовано SWE-Bench перевірку.`,
+            title: 'АГЕНТНИЙ АНАЛІЗ GLM-5.1',
+            description: `Виявлено критичну аномалію "${topPattern.name}". Рекомендовано SWE-Bench перевірку.`,
             confidence: 0.98,
             impact: 'high'
           });
@@ -119,7 +125,7 @@ export const Predator: React.FC = () => {
           dynamicSuggestions.push({
             id: `default-${Date.now()}`,
             type: 'opportunity',
-            title: 'SOVEREIGN AGENT ONLINE',
+            title: 'СУВЕРЕННИЙ АГЕНТ ОНЛАЙН',
             description: `GLM-5.1 активовано. Вузол: ${backendStatus.nodeSource}. Очікування директив...`,
             confidence: 0.99,
             impact: 'low'
@@ -131,7 +137,7 @@ export const Predator: React.FC = () => {
         window.dispatchEvent(new CustomEvent('predator-error', {
           detail: {
             service: 'AICopilot',
-            message: `СИНХРОНІЗАЦІЯ GLM-5.1 [${backendStatus.nodeSource}]: АКТИВНО. ${stats?.total_patterns || 0} ПАТТЕ НІВ.`,
+            message: `СИНХРОНІЗАЦІЯ GLM-5.1 [${backendStatus.nodeSource}]: АКТИВНО. ${stats?.total_patterns || 0} ПАТТЕРНІВ.`,
             severity: 'info',
             timestamp: new Date().toISOString(),
             code: 'AI_SYNC_ELITE'
@@ -142,7 +148,7 @@ export const Predator: React.FC = () => {
            window.dispatchEvent(new CustomEvent('predator-error', {
              detail: {
                service: 'AICopilot',
-               message: `КрИТИЧНА ПОМИЛКА КОГНІТИВНОГО ПОРТУ: ${error?.message || 'TIMEOUT'}. ВУЗОЛ: ${backendStatus.nodeSource}`,
+               message: `КРИТИЧНА ПОМИЛКА КОГНІТИВНОГО ПОРТУ: ${error?.message || 'TIMEOUT'}. ВУЗОЛ: ${backendStatus.nodeSource}`,
                severity: 'error',
                timestamp: new Date().toISOString(),
                code: 'AI_PORT_FAILURE'
@@ -151,7 +157,7 @@ export const Predator: React.FC = () => {
            setSuggestions([{
               id: `error-${Date.now()}`,
               type: 'warning',
-              title: 'СЕКТО НИЙ ТАЙМ-АУТ',
+              title: 'СЕКТОРНИЙ ТАЙМ-АУТ',
               description: 'Спроба підключення до Strategic Knowledge Map завершилась затримкою.',
               confidence: 0.5,
               impact: 'medium'
@@ -197,7 +203,7 @@ export const Predator: React.FC = () => {
     const query = forcedQuery || message;
     if (!query.trim()) return;
     if (!forcedQuery) setMessage('');
-    setAiResponse('ГЛУБОКЕ СКАНУВАННЯ GLM-5.1 [SOVEREIGN AGENT]...');
+    setAiResponse('ГЛИБОКЕ СКАНУВАННЯ GLM-5.1 [СУВЕРЕННИЙ АГЕНТ]...');
     setActiveAgent(`GLM-5.1 ↔ ZROK [${backendStatus.nodeSource}]`);
     try {
       const res = await api.premium.query(query);
@@ -229,7 +235,7 @@ export const Predator: React.FC = () => {
           code: 'AI_QUERY_FAILURE'
         }
       }));
-      setAiResponse(`ПОМИЛКА СУВЕРЕННОГО КЛАСТЕ А: ${e?.message}. Перевірте статус NVIDIA сертифіката.`);
+      setAiResponse(`ПОМИЛКА СУВЕРЕННОГО КЛАСТЕРА: ${e?.message}. Перевірте статус NVIDIA сертифіката.`);
     }
   };
 
@@ -305,10 +311,10 @@ export const Predator: React.FC = () => {
                   </h3>
                   <div className="flex items-center gap-3">
                     <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping shadow-[0_0_10px_#e11d48]" />
-                    <p className="text-[10px] text-rose-500/60 font-black uppercase tracking-[0.4em] font-mono">SOVEREIGN_ELITE_v63.0-ELITE_GLM-5.1</p>
+                    <p className="text-[10px] text-rose-500/60 font-black uppercase tracking-[0.4em] font-mono">СУВЕРЕН_ЕЛІТ_v63.0-ELITE_GLM-5.1</p>
                     <div className="flex items-center gap-2 mt-1">
                        <span className={cn("text-[8px] font-black px-2 py-0.5 rounded border", backendStatus.isOffline ? "border-rose-500/40 text-rose-500 bg-rose-500/5" : (backendStatus.activeFailover ? "border-emerald-500/40 text-emerald-500 bg-emerald-500/5" : "border-rose-500/40 text-rose-500 bg-rose-500/5"))}>
-                          ВУЗОЛ: {backendStatus.isOffline ? "ВІДНОВЛЕННЯ" : (backendStatus.activeFailover ? "ZROK_FAILOVER" : "PRIMARY_CLUSTER")}
+                          ВУЗОЛ: {backendStatus.isOffline ? "ВІДНОВЛЕННЯ" : (backendStatus.activeFailover ? "РЕЗЕРВ_ZROK" : "ОСНОВНИЙ_КЛАСТЕР")}
                        </span>
                     </div>
                   </div>
@@ -381,14 +387,14 @@ export const Predator: React.FC = () => {
                        </div>
                        <div className="flex flex-col">
                           <span className="text-[12px] font-black text-rose-500 uppercase tracking-[0.5em] font-mono leading-none">{activeAgent}</span>
-                          <span className="text-[8px] font-black text-rose-500/40 uppercase tracking-[0.3em] mt-1 italic">REALTIME_NEURO_STREAM</span>
+                          <span className="text-[8px] font-black text-rose-500/40 uppercase tracking-[0.3em] mt-1 italic">НЕЙРО_ПОТІК_РЕАЛЬНОГО_ЧАСУ</span>
                        </div>
                     </div>
                     <p className="text-2xl font-black text-white italic leading-relaxed tracking-tight underline decoration-rose-500/20 underline-offset-8 decoration-8 group-hover:text-rose-50 transition-colors">
                        {aiResponse}
                     </p>
                     <div className="mt-8 flex items-center gap-4 text-[9px] font-black text-rose-500/30 uppercase tracking-[0.4em] italic font-mono">
-                       <Activity size={12} className="animate-pulse" /> SIGNAL_STRENGTH: 99.8% // ENCRYPTED_LINK_ACTIVE
+                       <Activity size={12} className="animate-pulse" /> СИЛА_СИГНАЛУ: 99.8% // ШИФРОВАНИЙ_ЗВ'ЯЗОК_АКТИВНО
                     </div>
                   </div>
                 </motion.div>
@@ -421,7 +427,7 @@ export const Predator: React.FC = () => {
                     <div className="absolute inset-0 bg-rose-500/5 rounded-[2.5rem] blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity pointer-events-none" />
                     <div className="absolute top-1/2 right-12 -translate-y-1/2 flex items-center gap-5 text-slate-800 z-20">
                         <Terminal size={22} className="group-focus-within:text-rose-500 transition-colors" />
-                        <span className="text-[11px] font-black uppercase tracking-[0.3em] group-focus-within:text-rose-500 transition-colors">READY</span>
+                        <span className="text-[11px] font-black uppercase tracking-[0.3em] group-focus-within:text-rose-500 transition-colors">ГОТОВО</span>
                     </div>
                 </div>
                 <motion.button 
@@ -433,7 +439,7 @@ export const Predator: React.FC = () => {
                   <Send size={32} />
                 </motion.button>
               </div>
-              <p className="text-[10px] text-slate-800 text-center mt-6 font-black uppercase tracking-[0.5em] italic">ЗАСЕК ЕЧЕНЕ СЕ ЕДОВИЩЕ PREDATOR // ВИМАГАЄТЬСЯ ДОПУСК ТІР-1</p>
+              <p className="text-[10px] text-slate-800 text-center mt-6 font-black uppercase tracking-[0.5em] italic">ЗАСЕКРЕЧЕНЕ СЕРЕДОВИЩЕ PREDATOR // ВИМАГАЄТЬСЯ ДОПУСК ТІР-1</p>
             </div>
             <audio ref={audioRef} style={{ display: 'none' }} />
           </motion.div>

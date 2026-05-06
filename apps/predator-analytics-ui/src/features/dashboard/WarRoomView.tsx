@@ -38,9 +38,9 @@ const MOCK_LINE_DATA = Array.from({ length: 20 }, (_, i) => ({
 }));
 
 const RISK_PIE_DATA = [
-  { name: 'Санкції', value: 400, color: '#E11D48' },
+  { name: 'Санкції', value: 400, color: '#f43f5e' },
   { name: 'Логістика', value: 300, color: '#fbbf24' },
-  { name: 'Фін-ризики', value: 200, color: '#D4AF37' },
+  { name: 'Фін-ризики', value: 200, color: '#f59e0b' },
 ];
 
 // ─── КОМПОНЕНТ ────────────────────────────────────────────────────────
@@ -71,9 +71,9 @@ export default function WarRoomView() {
 
   return (
     <PageTransition>
-      <div className="min-h-screen bg-[#020202] text-slate-200 overflow-hidden relative font-sans flex flex-col">
+      <div className="min-h-screen bg-[#010409] text-slate-200 overflow-hidden relative font-sans flex flex-col">
         <AdvancedBackground mode="sovereign" />
-        <CyberGrid opacity={0.03} />
+        <CyberGrid color="rgba(244, 63, 94, 0.05)" />
         
         <div className="relative z-10 flex-1 flex flex-col p-10 h-screen overflow-hidden max-w-[1950px] mx-auto w-full space-y-8">
           
@@ -81,20 +81,20 @@ export default function WarRoomView() {
             title={
               <div className="flex items-center gap-8">
                 <div className="relative group">
-                  <div className="absolute inset-0 bg-red-600/20 blur-3xl rounded-full scale-150 animate-pulse" />
-                  <div className="relative p-7 bg-black border-2 border-red-500/40 rounded-[2.5rem] shadow-4xl transform -rotate-2 hover:rotate-0 transition-all">
-                    <Target size={48} className="text-red-600 drop-shadow-[0_0_20px_#e11d48]" />
+                  <div className="absolute inset-0 bg-rose-600/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                  <div className="relative p-7 bg-black border-2 border-rose-500/40 rounded-[2.5rem] shadow-4xl transform -rotate-2 hover:rotate-0 transition-all">
+                    <Target size={48} className="text-rose-600 drop-shadow-[0_0_20px_#f43f5e]" />
                   </div>
                 </div>
                  <div>
                     <div className="flex items-center gap-4 mb-2">
-                      <span className={cn("w-1.5 h-1.5 rounded-full animate-pulse shadow-[0_0_10px_currentColor]", isOffline ? "bg-amber-500 text-amber-500" : "bg-red-600 text-red-600")} />
-                      <span className={cn("text-[10px] font-black uppercase tracking-[0.8em]", isOffline ? "text-amber-500/80" : "text-red-500/80")}>
-                        {isOffline ? 'СУВЕРЕННИЙ_РЕЖИМ_НС' : 'ТАКТИЧНИЙ КОМАНДНИЙ ЦЕНТР'} · v63.0.0-HORIZON
+                      <span className={cn("w-1.5 h-1.5 rounded-full animate-pulse shadow-[0_0_10px_currentColor]", isOffline ? "bg-amber-500 text-amber-500" : "bg-rose-600 text-rose-600")} />
+                      <span className={cn("text-[10px] font-black uppercase tracking-[0.8em] italic", isOffline ? "text-amber-500/80" : "text-rose-500/80")}>
+                        {isOffline ? 'СУВЕРЕННИЙ_РЕЖИМ_НС' : 'ТАКТИЧНИЙ КОМАНДНИЙ ЦЕНТР'} · v63.0-ELITE
                       </span>
                     </div>
                     <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic leading-none">
-                      СИТУАЦІЙНИЙ <span className={cn("underline decoration-[12px] underline-offset-8", isOffline ? "text-amber-500 decoration-amber-500/20" : "text-red-600 decoration-red-600/20")}>ЦЕНТ </span>
+                      СИТУАЦІЙНИЙ <span className={cn("underline decoration-[12px] underline-offset-8", isOffline ? "text-amber-500 decoration-amber-500/20" : "text-rose-600 decoration-rose-600/20")}>ЦЕНТР</span>
                     </h1>
                  </div>
               </div>
@@ -112,12 +112,12 @@ export default function WarRoomView() {
               { label: 'ГЛОБАЛЬНИЙ РИЗИК', value: '84.2%', icon: <AlertTriangle size={14} />, color: 'danger' },
               { 
                 label: isOffline ? 'SYNC_HEAL' : 'ДЖЕРЕЛО_ВУЗЛА', 
-                value: isOffline ? `${Math.floor(healingProgress)}%` : (activeFailover ? 'NVIDIA_ZROK' : 'NVIDIA_МАЙСТЕР '), 
+                value: isOffline ? `${Math.floor(healingProgress)}%` : (activeFailover ? 'NVIDIA_ZROK' : 'NVIDIA_МАЙСТЕР'), 
                 icon: isOffline ? <Activity /> : <Cpu />, 
                 color: isOffline ? 'warning' : 'success',
                 animate: isOffline
               },
-              { label: ' ЕЗЕ В', value: activeFailover ? 'ТУНЕЛЬ_ZROK' : isOffline ? 'АВТОНОМНО' : 'ОЧІКУВАННЯ', icon: <Satellite size={14} />, color: isOffline ? 'warning' : 'primary' },
+              { label: 'РЕЗЕРВ', value: activeFailover ? 'ТУНЕЛЬ_ZROK' : isOffline ? 'АВТОНОМНО' : 'ОЧІКУВАННЯ', icon: <Satellite size={14} />, color: isOffline ? 'warning' : 'primary' },
               { label: 'PROTOCOL', value: isOffline ? 'EMERGENCY' : 'ELITE', icon: <Shield />, color: isOffline ? 'warning' : 'success' }
             ]}
             actions={
@@ -128,8 +128,8 @@ export default function WarRoomView() {
                        {new Date().toLocaleTimeString('uk-UA')}
                     </span>
                  </div>
-                 <button className="px-10 py-5 bg-red-600 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.3em] italic hover:brightness-110 shadow-4xl transition-all">
-                    ДЕФОРМАТУВАТИ // АВА ІЙНИЙ_ВИХІД
+                 <button className="px-10 py-5 bg-rose-600 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.3em] italic hover:brightness-110 shadow-4xl transition-all">
+                    ДЕФОРМАТУВАТИ // АВАРІЙНИЙ_ВИХІД
                  </button>
               </div>
             }
@@ -143,16 +143,16 @@ export default function WarRoomView() {
                 <TacticalCard 
                   variant="holographic"
                   className={cn(
-                    "h-full flex flex-col p-8 transition-all duration-700 bg-black/60 border-yellow-500/10 rounded-[4rem] relative overflow-hidden",
-                    expanded === 'q1' ? "fixed inset-12 z-[100] bg-black/98 border-yellow-500/40" : ""
+                    "h-full flex flex-col p-8 transition-all duration-700 bg-black/60 border-amber-500/10 rounded-[4rem] relative overflow-hidden shadow-4xl",
+                    expanded === 'q1' ? "fixed inset-12 z-[100] bg-black/98 border-amber-500/40" : ""
                   )}
                 >
                    <div className="flex items-center justify-between mb-8 relative z-10">
                       <div className="flex items-center gap-4">
-                         <div className="p-3 bg-yellow-500/10 rounded-2xl">
-                            <Globe size={20} className="text-yellow-500" />
+                         <div className="p-3 bg-amber-500/10 rounded-2xl">
+                            <Globe size={20} className="text-amber-500" />
                          </div>
-                         <h3 className="text-[11px] font-black text-yellow-500 uppercase tracking-[0.6em] italic">ГЛОБАЛЬНА РОЗВІДКА</h3>
+                         <h3 className="text-[11px] font-black text-amber-500 uppercase tracking-[0.6em] italic">ГЛОБАЛЬНА РОЗВІДКА</h3>
                       </div>
                       <button onClick={() => setExpanded(expanded === 'q1' ? null : 'q1')} className="p-2 text-slate-700 hover:text-white transition-colors">
                         {expanded === 'q1' ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
@@ -164,24 +164,24 @@ export default function WarRoomView() {
                          <div className="absolute inset-0 z-0 opacity-40 group-hover:opacity-100 transition-opacity duration-1000">
                             <CyberGlobe />
                          </div>
-                         <div className="absolute top-6 left-6 z-10 bg-black/80 px-5 py-2.5 rounded-2xl border border-yellow-500/20 backdrop-blur-xl">
-                            <p className="text-[10px] font-black text-yellow-500 uppercase italic tracking-widest flex items-center gap-3">
-                               <Satellite size={12} className="animate-pulse" /> О БІТАЛЬНА_ФАЗА: АКТИВНО
+                         <div className="absolute top-6 left-6 z-10 bg-black/80 px-5 py-2.5 rounded-2xl border border-amber-500/20 backdrop-blur-xl">
+                            <p className="text-[10px] font-black text-amber-500 uppercase italic tracking-widest flex items-center gap-3">
+                               <Satellite size={12} className="animate-pulse" /> ОРБІТАЛЬНА_ФАЗА: АКТИВНО
                             </p>
                          </div>
                       </div>
                       <div className="flex-1 space-y-6 overflow-y-auto pr-4 custom-scrollbar">
-                         <h4 className="text-[10px] font-black text-slate-800 uppercase tracking-[0.5em] italic mb-6">ГА ЯЧІ ЗОНИ КОНФЛІКТУ · {new Date().toLocaleDateString('uk-UA')}</h4>
+                         <h4 className="text-[10px] font-black text-slate-800 uppercase tracking-[0.5em] italic mb-6">ГАРЯЧІ ЗОНИ КОНФЛІКТУ · {new Date().toLocaleDateString('uk-UA')}</h4>
                          {[
-                            { zone: 'Схід Європи', risk: '98%', status: 'АКТИВНА_ВІЙНА', c: '#E11D48' },
+                            { zone: 'Схід Європи', risk: '98%', status: 'АКТИВНА_ВІЙНА', c: '#f43f5e' },
                             { zone: 'Червоне море', risk: '84%', status: 'БЛОКАДА', c: '#fbbf24' },
-                            { zone: 'Тайваньська прот.', risk: '72%', status: 'СИГНАЛ_П ИСУТНІЙ', c: '#fbbf24' },
-                            { zone: 'Еквадор', risk: '54%', status: 'СТАБІЛЬНО', c: '#D4AF37' },
+                            { zone: 'Тайваньська прот.', risk: '72%', status: 'СИГНАЛ_ПРИСУТНІЙ', c: '#fbbf24' },
+                            { zone: 'Еквадор', risk: '54%', status: 'СТАБІЛЬНО', c: '#10b981' },
                          ].map((z, i) => (
                             <motion.div 
                                key={i} 
                                initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1 }}
-                               className="flex items-center justify-between p-7 rounded-[2.5rem] bg-white/[0.01] border-2 border-white/5 group hover:border-yellow-500/30 transition-all cursor-crosshair shadow-2xl"
+                               className="flex items-center justify-between p-7 rounded-[2.5rem] bg-white/[0.01] border-2 border-white/5 group hover:border-amber-500/30 transition-all cursor-crosshair shadow-2xl"
                             >
                                <div className="flex items-center gap-6">
                                   <div className="w-4 h-4 rounded-full animate-pulse shadow-[0_0_12px_currentColor]" style={{ color: z.c, backgroundColor: z.c }} />
@@ -239,9 +239,9 @@ export default function WarRoomView() {
                                <p className="text-[9px] font-black text-slate-800 uppercase tracking-widest leading-none mb-3 italic">ОБЧИСЛЕННЯ_ЦП</p>
                                <p className="text-3xl font-black text-emerald-500 font-mono italic tracking-tighter">34.2%</p>
                             </div>
-                            <div className="p-6 rounded-3xl bg-black border-2 border-white/5 shadow-inner group hover:border-yellow-500/30 transition-all">
-                               <p className="text-[9px] font-black text-slate-800 uppercase tracking-widest leading-none mb-3 italic">НЕЙ О_НАВАНТАЖЕННЯ</p>
-                               <p className="text-3xl font-black text-yellow-500 font-mono italic tracking-tighter">12.1T</p>
+                            <div className="p-6 rounded-3xl bg-black border-2 border-white/5 shadow-inner group hover:border-amber-500/30 transition-all">
+                               <p className="text-[9px] font-black text-slate-800 uppercase tracking-widest leading-none mb-3 italic">НЕЙРО-НАВАНТАЖЕННЯ</p>
+                               <p className="text-3xl font-black text-amber-500 font-mono italic tracking-tighter">12.1T</p>
                             </div>
                          </div>
                       </div>
@@ -249,12 +249,12 @@ export default function WarRoomView() {
                          <div className="absolute inset-0 bg-emerald-500/[0.01] pointer-events-none" />
                          <div className="flex items-center gap-6 mb-6 pb-6 border-b border-white/5">
                             <Terminal size={18} className="text-slate-700 group-hover:text-emerald-500 transition-colors" />
-                            <span className="text-[10px] font-black text-slate-800 uppercase tracking-[0.4em] italic leading-none">ЖИВІ_ПОТОКИ_ЯД А</span>
+                            <span className="text-[10px] font-black text-slate-800 uppercase tracking-[0.4em] italic leading-none">ЖИВІ_ПОТОКИ_ЯДРА</span>
                          </div>
                          <div className="space-y-3 opacity-80 italic font-bold">
                             <p className="text-slate-700 leading-none">[14:32:01] <span className="text-emerald-600">ІНГЕСТІЯ:</span> Синхронізація підтверджена v63.0.1-HORIZON</p>
-                            <p className="text-slate-700 leading-none">[14:32:05] <span className="text-red-700">ТРИВОГА:</span> Порушення порогуризику POS-001</p>
-                            <p className="text-slate-700 leading-none">[14:32:15] <span className="text-yellow-600">СУВЕ ЕН:</span>  езолюція Kyoto Holdings активна</p>
+                            <p className="text-slate-700 leading-none">[14:32:05] <span className="text-rose-700">ТРИВОГА:</span> Порушення порогу ризику POS-001</p>
+                            <p className="text-slate-700 leading-none">[14:32:15] <span className="text-rose-600">СУВЕРЕН:</span> Резолюція Kyoto Holdings активна</p>
                             <p className="text-slate-700 leading-none">[14:32:22] <span className="text-slate-900">СИСТЕМА:</span> Очікування сплеску кластера Kafka...</p>
                             <motion.p animate={{ opacity: [1, 0, 1] }} transition={{ duration: 0.8, repeat: Infinity }} className="text-emerald-500">_ГОТОВИЙ_ДО_КОМАНД</motion.p>
                          </div>
@@ -268,16 +268,16 @@ export default function WarRoomView() {
                 <TacticalCard 
                   variant="holographic"
                   className={cn(
-                    "h-full p-8 flex flex-col bg-black/60 border-red-500/10 rounded-[4rem] relative overflow-hidden shadow-4xl",
-                    expanded === 'q3' ? "fixed inset-12 z-[100] bg-black border-red-500/40" : ""
+                    "h-full p-8 flex flex-col bg-black/60 border-rose-500/10 rounded-[4rem] relative overflow-hidden shadow-4xl",
+                    expanded === 'q3' ? "fixed inset-12 z-[100] bg-black border-rose-500/40" : ""
                   )}
                 >
                    <div className="flex items-center justify-between mb-10 relative z-10">
                       <div className="flex items-center gap-4">
-                         <div className="p-3 bg-red-500/10 rounded-2xl">
-                            <Layers size={20} className="text-red-500" />
+                         <div className="p-3 bg-rose-500/10 rounded-2xl">
+                            <Layers size={20} className="text-rose-500" />
                          </div>
-                         <h3 className="text-[11px] font-black text-red-500 uppercase tracking-[0.6em] italic">РИЗИК-МАТрИЦЯ</h3>
+                         <h3 className="text-[11px] font-black text-rose-500 uppercase tracking-[0.6em] italic">РИЗИК-МАТРИЦЯ</h3>
                       </div>
                       <button onClick={() => setExpanded(expanded === 'q3' ? null : 'q3')} className="p-2 text-slate-700 hover:text-white transition-colors">
                         {expanded === 'q3' ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
@@ -286,7 +286,7 @@ export default function WarRoomView() {
 
                    <div className="flex-1 flex flex-col space-y-10 relative z-10">
                       <div className="flex items-center justify-center p-10 relative">
-                         <div className="absolute inset-0 bg-red-500/10 blur-3xl rounded-full scale-110" />
+                         <div className="absolute inset-0 bg-rose-500/10 blur-3xl rounded-full scale-110" />
                          <PieChart width={160} height={160}>
                             <Pie data={RISK_PIE_DATA} cx="50%" cy="50%" innerRadius={45} outerRadius={65} dataKey="value" paddingAngle={5}>
                                {RISK_PIE_DATA.map((e, i) => <Cell key={i} fill={e.color} stroke="transparent" />)}
@@ -295,19 +295,19 @@ export default function WarRoomView() {
                       </div>
                       <div className="space-y-4 flex-1 overflow-y-auto no-scrollbar">
                          {RISK_PIE_DATA.map((r, i) => (
-                            <div key={i} className="flex items-center justify-between p-6 rounded-[2rem] border-2 border-white/5 bg-black hover:border-red-500/30 transition-all group/it shadow-2xl">
+                            <div key={i} className="flex items-center justify-between p-6 rounded-[2rem] border-2 border-white/5 bg-black hover:border-rose-500/30 transition-all group/it shadow-2xl">
                                <div className="flex items-center gap-5">
                                   <div className="w-3 h-3 rounded-full transition-transform group-hover/it:scale-125 shadow-[0_0_10px_currentColor]" style={{ backgroundColor: r.color, color: r.color }} />
                                   <span className="text-[11px] font-black text-slate-700 group-hover/it:text-white transition-colors uppercase italic tracking-widest leading-none">{r.name}</span>
-                               </div>
-                               <span className="text-[13px] font-black text-red-500 font-mono italic tabular-nums leading-none tracking-tighter">{(r.value / 10).toFixed(1)}%</span>
+                                </div>
+                                <span className="text-[13px] font-black text-rose-500 font-mono italic tabular-nums leading-none tracking-tighter">{(r.value / 10).toFixed(1)}%</span>
                             </div>
                          ))}
                       </div>
-                      <div className="mt-auto p-10 bg-red-600/10 border-2 border-red-500/30 rounded-[3.5rem] text-center shadow-inner relative group">
-                         <div className="absolute inset-0 bg-red-600/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                         <p className="text-[10px] font-black text-red-700 uppercase tracking-[0.5em] mb-4 italic">ЕКСПОЗИЦІЯ_РИЗИКУ</p>
-                         <p className="text-4xl font-black text-red-500 italic tracking-tighther font-serif leading-none">$127.4M</p>
+                      <div className="mt-auto p-10 bg-rose-600/10 border-2 border-rose-500/30 rounded-[3.5rem] text-center shadow-inner relative group">
+                         <div className="absolute inset-0 bg-rose-600/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                         <p className="text-[10px] font-black text-rose-700 uppercase tracking-[0.5em] mb-4 italic">ЕКСПОЗИЦІЯ_РИЗИКУ</p>
+                         <p className="text-4xl font-black text-rose-500 italic tracking-tighter font-serif leading-none">$127.4M</p>
                       </div>
                    </div>
                 </TacticalCard>
@@ -318,16 +318,16 @@ export default function WarRoomView() {
                 <TacticalCard 
                   variant="holographic"
                   className={cn(
-                    "h-full p-10 flex flex-col bg-black/60 border-yellow-500/10 rounded-[4rem] relative overflow-hidden shadow-4xl",
-                    expanded === 'q4' ? "fixed inset-12 z-[100] bg-black border-yellow-500/40" : ""
+                    "h-full p-10 flex flex-col bg-black/60 border-rose-500/10 rounded-[4rem] relative overflow-hidden shadow-4xl",
+                    expanded === 'q4' ? "fixed inset-12 z-[100] bg-black border-rose-500/40" : ""
                   )}
                 >
                    <div className="flex items-center justify-between mb-10 relative z-10">
                       <div className="flex items-center gap-4">
-                         <div className="p-3 bg-yellow-500/10 rounded-2xl">
-                            <Zap size={20} className="text-yellow-500 animate-pulse" />
+                         <div className="p-3 bg-rose-500/10 rounded-2xl">
+                            <Zap size={20} className="text-rose-500 animate-pulse" />
                          </div>
-                         <h3 className="text-[11px] font-black text-yellow-500 uppercase tracking-[0.6em] italic">ШІ-П ОГНОСТИКА ТА ЕЛІТНІ_АЛЕ ТИ</h3>
+                         <h3 className="text-[11px] font-black text-rose-500 uppercase tracking-[0.6em] italic">ШІ-ПРОГНОСТИКА ТА ЕЛІТНІ_АЛЕРТИ</h3>
                       </div>
                       <button onClick={() => setExpanded(expanded === 'q4' ? null : 'q4')} className="p-2 text-slate-700 hover:text-white transition-colors">
                         {expanded === 'q4' ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
@@ -337,37 +337,37 @@ export default function WarRoomView() {
                    <div className="flex-1 grid grid-cols-12 gap-12 relative z-10 overflow-hidden">
                       <div className="col-span-7 space-y-10 flex flex-col h-full">
                          <div className="flex items-center gap-8 mb-4">
-                            <div className="p-5 rounded-[2rem] bg-yellow-500/10 text-yellow-500 border-2 border-yellow-500/30 shadow-[0_0_30px_rgba(212,175,55,0.2)]">
+                            <div className="p-5 rounded-[2rem] bg-rose-500/10 text-rose-500 border-2 border-rose-500/30 shadow-[0_0_30px_rgba(244,63,94,0.2)]">
                                <Radar size={32} className="animate-pulse" />
                             </div>
                             <div>
-                               <h4 className="text-4xl font-black text-white uppercase italic tracking-tighter leading-none mb-3 font-serif">СЦЕНА ІЙ: ОМЕГА-4</h4>
-                               <p className="text-[11px] font-black text-slate-800 uppercase tracking-[0.4em] leading-none italic">ПрЕДИКТИВНА МОДЕЛЬ ВЕКТОРУ  ОЗШИ ЕННЯ КОНФЛІКТУ</p>
+                               <h4 className="text-4xl font-black text-white uppercase italic tracking-tighter leading-none mb-3 font-serif">СЦЕНАРІЙ: ОМЕГА-4</h4>
+                               <p className="text-[11px] font-black text-slate-800 uppercase tracking-[0.4em] leading-none italic">ПРЕДИКТИВНА МОДЕЛЬ ВЕКТОРУ РОЗШИРЕННЯ КОНФЛІКТУ</p>
                             </div>
                          </div>
                          <div className="space-y-4 flex-1">
                             {[
-                               { t: 'Діючі санкції:', v: 'ПОВНЕ ЕМБА ГО', c: '#E11D48', icon: Shield },
-                               { t: 'Локальні гравці:', v: '14 ФІГУ АНТІВ', c: '#ffffff', icon: Users },
-                               { t: 'Ймовірність ескалації:', v: '92.4%', c: '#E11D48', icon: Target },
+                               { t: 'Діючі санкції:', v: 'ПОВНЕ ЕМБАРГО', c: '#f43f5e', icon: Shield },
+                               { t: 'Локальні гравці:', v: '14 ФІГУРАНТІВ', c: '#ffffff', icon: Users },
+                               { t: 'Ймовірність ескалації:', v: '92.4%', c: '#f43f5e', icon: Target },
                             ].map((s, i) => (
-                               <div key={i} className="flex items-center justify-between p-7 rounded-[3rem] bg-white/[0.01] border-2 border-white/5 hover:border-yellow-500/20 transition-all group/ic">
+                               <div key={i} className="flex items-center justify-between p-7 rounded-[3rem] bg-white/[0.01] border-2 border-white/5 hover:border-rose-500/20 transition-all group/ic shadow-xl">
                                   <div className="flex items-center gap-5">
-                                     <s.icon size={20} className="text-slate-800 group-hover/ic:text-yellow-500 transition-colors" />
+                                     <s.icon size={20} className="text-slate-800 group-hover/ic:text-rose-500 transition-colors" />
                                      <span className="text-[13px] font-black text-slate-700 uppercase tracking-tight italic group-hover/ic:text-slate-300 transition-colors">{s.t}</span>
                                   </div>
                                   <span className={cn("text-[18px] font-black italic uppercase font-mono tracking-tighter", s.v === '92.4%' && "animate-pulse")} style={{ color: s.c }}>{s.v}</span>
                                </div>
                             ))}
                          </div>
-                         <button className="w-full py-8 bg-gradient-to-r from-yellow-600 to-yellow-400 text-black rounded-[2.5rem] text-[13px] font-black uppercase tracking-[0.4em] italic shadow-4xl hover:scale-[1.02] transition-all border-4 border-yellow-400/20">
+                         <button className="w-full py-8 bg-rose-600 text-white rounded-[2.5rem] text-[13px] font-black uppercase tracking-[0.4em] italic shadow-4xl hover:scale-[1.02] transition-all border-4 border-rose-500/20">
                             ЗАПУСТИТИ_СИМУЛЯЦІЮ_РИЗИКУ_ELITE
                          </button>
                       </div>
                       <div className="col-span-5 flex flex-col space-y-8 h-full overflow-hidden">
                          <div className="flex items-center justify-between text-[11px] font-black text-slate-900 uppercase tracking-[0.6em] italic mb-4">
-                            <span>АКТИВНІ АЛЕ ТИ</span>
-                            <span className="text-yellow-600">РЕЖИМ_ХИЖАКА</span>
+                            <span>АКТИВНІ АЛЕРТИ</span>
+                            <span className="text-rose-600">РЕЖИМ_ХИЖАКА</span>
                          </div>
                          <div className="space-y-4 flex-1 overflow-y-auto pr-4 custom-scrollbar pb-10">
                             {[
@@ -382,22 +382,22 @@ export default function WarRoomView() {
                                  initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.1 }}
                                  className={cn(
                                   "p-7 rounded-[2.5rem] border-2 flex items-center gap-6 transition-all hover:scale-[1.01] shadow-xl",
-                                  a.type === 'error' ? "bg-red-600/10 border-red-500/30 text-red-500 shadow-red-500/10" :
-                                  a.type === 'warning' ? "bg-yellow-600/10 border-yellow-500/30 text-yellow-500 shadow-yellow-500/10" :
+                                  a.type === 'error' ? "bg-rose-600/10 border-rose-500/30 text-rose-500 shadow-rose-500/10" :
+                                  a.type === 'warning' ? "bg-amber-600/10 border-amber-500/30 text-amber-500 shadow-amber-500/10" :
                                   "bg-white/5 border-white/10 text-slate-400 shadow-black"
-                               )}>
+                                )}>
                                   <div className="shrink-0 p-3 bg-black/40 rounded-xl border border-white/10">
                                      <Bell size={20} className={a.type === 'error' ? 'animate-bounce' : ''} />
                                   </div>
                                   <p className="text-[15px] font-black italic truncate leading-none uppercase tracking-tight">{a.msg}</p>
                                   <ChevronRight size={18} className="ml-auto opacity-20" />
-                               </motion.div>
+                                </motion.div>
                             ))}
                          </div>
                       </div>
                    </div>
                    <div className="absolute -bottom-10 -right-10 p-32 opacity-5 pointer-events-none">
-                      <Fingerprint size={300} className="text-yellow-500" />
+                      <Fingerprint size={300} className="text-rose-500" />
                    </div>
                 </TacticalCard>
              </div>
@@ -412,8 +412,8 @@ export default function WarRoomView() {
         <style dangerouslySetInnerHTML={{ __html: `
           .custom-scrollbar::-webkit-scrollbar { width: 5px; }
           .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-          .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.15); border-radius: 20px; }
-          .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(212,175,55,0.4); }
+          .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(244,63,94,0.15); border-radius: 20px; }
+          .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(244,63,94,0.4); }
           .animate-spin-slow { animation: spin 40s linear infinite; }
           @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
           .no-scrollbar::-webkit-scrollbar { display: none; }

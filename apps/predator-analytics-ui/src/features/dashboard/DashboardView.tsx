@@ -2,8 +2,8 @@
  * 🦅 PREDATOR STRATEGIC NEXUS | v63.0-ELITE
  * ГОЛОВНА ПАНЕЛЬ УПРАВЛІННЯ (SOVEREIGN DASHBOARD)
  * 
- * Центральний вузол моніторингу митнихризиків та торговельних потоків.
- * © 2026 PREDATOR Analytics - Повна українізація (HR-04)
+ * Центральний вузол моніторингу митних ризиків та торговельних потоків.
+ * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
@@ -12,7 +12,7 @@ import {
   RefreshCw, TrendingUp, Flame, Network, Layers, ShieldAlert, Satellite,
   Radar, Radio, Eye, ArrowUpRight, HardDrive, Database, FileText,
   Building2, Package, Ship, Loader2, Zap, Activity, ShieldCheck, 
-  Orbit, Fingerprint, Boxes, Workflow, Terminal, RadioTower
+  Orbit, Fingerprint, Boxes, Workflow, Terminal, RadioTower, ChevronRight
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactECharts from '@/components/ECharts';
@@ -38,6 +38,7 @@ import type { DashboardOverview, EngineInfo, DashboardAlert, RadarItem, RiskComp
 // ========================
 
 const formatCurrency = (val: number): string => {
+  if (val >= 1_000_000_000) return `$${(val / 1_000_000_000).toFixed(2)}B`;
   if (val >= 1_000_000) return `$${(val / 1_000_000).toFixed(1)}M`;
   if (val >= 1_000) return `$${(val / 1_000).toFixed(0)}K`;
   return `$${val}`;
@@ -68,9 +69,10 @@ const StrategicRadarMatrix: React.FC<{ data: RadarItem[] }> = ({ data }) => {
     backgroundColor: 'transparent',
     tooltip: {
       trigger: 'item',
-      backgroundColor: 'rgba(2, 6, 23, 0.95)',
-      borderColor: '#dc2626',
-      textStyle: { color: '#fff', fontSize: 10 },
+      backgroundColor: 'rgba(10, 10, 10, 0.95)',
+      borderColor: 'rgba(244, 63, 94, 0.4)',
+      borderWidth: 1,
+      textStyle: { color: '#fff', fontSize: 10, fontWeight: '900', fontFamily: 'Outfit' },
       formatter: (params: any) => {
         if (!params.value) return '';
         return data.map((d, i) => `${d.name}: ${params.value[i]}% (ДЕКЛ: ${d.count})`).join('<br/>');
@@ -81,19 +83,19 @@ const StrategicRadarMatrix: React.FC<{ data: RadarItem[] }> = ({ data }) => {
       shape: 'circle',
       splitNumber: 5,
       axisName: {
-        color: '#dc2626',
+        color: '#f43f5e',
         fontSize: 10,
         fontWeight: '900',
-        fontFamily: 'Inter',
+        fontFamily: 'Outfit',
         fontStyle: 'italic'
       },
       splitLine: {
         lineStyle: {
           color: [
-            'rgba(220, 38, 38, 0.05)',
-            'rgba(220, 38, 38, 0.1)',
-            'rgba(245, 158, 11, 0.15)',
-            'rgba(220, 38, 38, 0.2)'
+            'rgba(244, 63, 94, 0.05)',
+            'rgba(244, 63, 94, 0.1)',
+            'rgba(244, 63, 94, 0.15)',
+            'rgba(244, 63, 94, 0.2)'
           ]
         }
       },
@@ -104,20 +106,20 @@ const StrategicRadarMatrix: React.FC<{ data: RadarItem[] }> = ({ data }) => {
     },
     series: [
       {
-        name: ' изиковий Спектр',
+        name: 'РИЗИКОВИЙ СПЕКТР',
         type: 'radar',
         data: [
           {
             value: values.length > 0 ? values : [0],
-            name: 'Середнійризик за секторами',
+            name: 'Середній ризик за секторами',
             symbol: 'circle',
             symbolSize: 6,
-            itemStyle: { color: '#dc2626' },
-            lineStyle: { color: '#dc2626', width: 3, shadowBlur: 20, shadowColor: '#dc2626' },
+            itemStyle: { color: '#f43f5e' },
+            lineStyle: { color: '#f43f5e', width: 3, shadowBlur: 20, shadowColor: 'rgba(244, 63, 94, 0.6)' },
             areaStyle: {
               color: new echarts.graphic.RadialGradient(0.5, 0.5, 1, [
-                { offset: 0, color: 'rgba(220, 38, 38, 0.5)' },
-                { offset: 1, color: 'rgba(220, 38, 38, 0.05)' }
+                { offset: 0, color: 'rgba(244, 63, 94, 0.5)' },
+                { offset: 1, color: 'rgba(244, 63, 94, 0.05)' }
               ])
             }
           }
@@ -132,7 +134,7 @@ const StrategicRadarMatrix: React.FC<{ data: RadarItem[] }> = ({ data }) => {
 const GlobalSituationProjection: React.FC<{ countries: Record<string, { count: number; value: number }> }> = ({ countries }) => {
   const countryCoords: Record<string, [number, number]> = {
     'КИТАЙ': [104.1, 35.8],
-    'ТУ ЕЧЧИНА': [35.2, 39.0],
+    'ТУРЕЧЧИНА': [35.2, 39.0],
     'НІМЕЧЧИНА': [10.4, 51.2],
     'ПОЛЬЩА': [19.1, 51.9],
     'ІНДІЯ': [78.9, 20.6],
@@ -152,10 +154,10 @@ const GlobalSituationProjection: React.FC<{ countries: Record<string, { count: n
     .map(([c, stat]) => ({
       name: c,
       value: [...countryCoords[c], Math.min(stat.count, 200)],
-      itemStyle: { color: stat.count > 100 ? '#dc2626' : stat.count > 50 ? '#f59e0b' : '#ef4444' }
+      itemStyle: { color: stat.count > 100 ? '#f43f5e' : stat.count > 50 ? '#f59e0b' : '#fb7185' }
     }));
 
-  scatterData.push({ name: 'Київ', value: [...kyiv, 150], itemStyle: { color: '#dc2626' } });
+  scatterData.push({ name: 'Київ', value: [...kyiv, 150], itemStyle: { color: '#f43f5e' } });
 
   const option = {
     backgroundColor: 'transparent',
@@ -165,8 +167,8 @@ const GlobalSituationProjection: React.FC<{ countries: Record<string, { count: n
       silent: true,
       zoom: 1.25,
       itemStyle: {
-        areaColor: 'rgba(15, 23, 42, 0.6)',
-        borderColor: 'rgba(99, 102, 241, 0.25)',
+        areaColor: 'rgba(15, 23, 42, 0.4)',
+        borderColor: 'rgba(244, 63, 94, 0.2)',
         borderWidth: 1.5,
         shadowColor: 'rgba(0, 0, 0, 0.5)',
         shadowBlur: 40
@@ -174,14 +176,15 @@ const GlobalSituationProjection: React.FC<{ countries: Record<string, { count: n
     },
     tooltip: {
       trigger: 'item',
-      backgroundColor: 'rgba(2, 6, 23, 0.95)',
-      borderColor: '#dc2626',
-      textStyle: { color: '#fff', fontSize: 11, fontFamily: 'Inter' },
+      backgroundColor: 'rgba(10, 10, 10, 0.95)',
+      borderColor: 'rgba(244, 63, 94, 0.4)',
+      borderWidth: 1,
+      textStyle: { color: '#fff', fontSize: 11, fontWeight: '900', fontFamily: 'Outfit' },
       formatter: (params: any) => {
         const c = params.name;
         const stat = countries[c];
         if (!stat) return c;
-        return `<div class="p-2"><b class="text-yellow-400 uppercase tracking-widest text-[10px]">${c}</b><br/><div class="mt-2 text-white font-black">Декларацій: ${stat.count}</div><div class="text-slate-400 text-[10px]">Вартість: ${formatCurrency(stat.value)}</div></div>`;
+        return `<div class="p-4"><b class="text-rose-500 uppercase tracking-widest text-[10px] italic">${c}</b><br/><div class="mt-2 text-white font-black text-sm italic">ДЕКЛАРАЦІЙ: ${stat.count}</div><div class="text-slate-400 text-[10px] font-black uppercase italic mt-1">ВАРТІСТЬ: ${formatCurrency(stat.value)}</div></div>`;
       }
     },
     series: [
@@ -192,19 +195,19 @@ const GlobalSituationProjection: React.FC<{ countries: Record<string, { count: n
           show: true,
           period: 4,
           trailLength: 0.7,
-          color: '#dc2626',
+          color: '#f43f5e',
           symbolSize: 3,
         },
-        lineStyle: { color: '#dc2626', width: 2, opacity: 0.15, curveness: 0.4 },
+        lineStyle: { color: '#f43f5e', width: 2, opacity: 0.15, curveness: 0.4 },
         data: linesData
       },
       {
         type: 'effectScatter',
         coordinateSystem: 'geo',
         data: scatterData,
-        symbolSize: (v: number[]) => Math.max(v[2] / 10, 8),
-        rippleEffect: { brushType: 'stroke', scale: 5, period: 4 },
-        itemStyle: { shadowBlur: 30, shadowColor: '#dc2626', opacity: 0.8 }
+        symbolSize: (v: number[]) => Math.max(v[2] / 10, 10),
+        rippleEffect: { brushType: 'stroke', scale: 4, period: 4 },
+        itemStyle: { shadowBlur: 30, shadowColor: 'rgba(244, 63, 94, 0.8)', opacity: 0.8 }
       }
     ]
   };
@@ -282,7 +285,7 @@ const DashboardView: React.FC = () => {
             <CyberOrb size="xl" status="processing" pulsing />
             <div className="text-center space-y-4">
                <h2 className="text-3xl font-black text-white italic uppercase tracking-[0.4em] animate-pulse">АКТИВАЦІЯ_ЯДРА_V63.0-ELITE</h2>
-               <p className="text-red-500/60 text-[10px] font-mono font-black uppercase tracking-[0.8em]">Синхронізація суверенних метрик...</p>
+               <p className="text-rose-500/60 text-[10px] font-mono font-black uppercase tracking-[0.8em]">Синхронізація суверенних метрик...</p>
             </div>
           </div>
         </div>
@@ -297,7 +300,7 @@ const DashboardView: React.FC = () => {
         <CyberGrid color="rgba(244, 63, 94, 0.05)" />
         <NeuralPulse color="rgba(244, 63, 94, 0.03)" size={1600} />
         
-        <div className="fixed left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-transparent via-red-600 to-transparent z-50 opacity-30 shadow-[0_0_20px_rgba(220,38,38,0.5)]" />
+        <div className="fixed left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-transparent via-rose-600 to-transparent z-50 opacity-30 shadow-[0_0_20px_rgba(244,63,94,0.5)]" />
         
         <div className="relative z-10 max-w-[1900px] mx-auto w-full space-y-16">
           
@@ -305,11 +308,11 @@ const DashboardView: React.FC = () => {
             <motion.div 
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="p-8 bg-red-500/10 border-2 border-red-500/50 rounded-3xl flex items-center gap-6 text-red-500 shadow-[0_0_50px_rgba(239,68,68,0.2)]"
+              className="p-8 bg-rose-500/10 border-2 border-rose-500/50 rounded-3xl flex items-center gap-6 text-rose-500 shadow-[0_0_50px_rgba(244,63,94,0.2)]"
             >
               <AlertTriangle size={32} className="animate-pulse" />
               <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.4em] opacity-60 mb-1">КрИТИЧНА_ПОМИЛКА_ЯД А</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.4em] opacity-60 mb-1">КРИТИЧНА_ПОМИЛКА_ЯДРА</p>
                 <p className="text-xl font-bold italic uppercase">{error}</p>
               </div>
             </motion.div>
@@ -321,22 +324,22 @@ const DashboardView: React.FC = () => {
             title={
               <div className="flex items-center gap-12">
                 <div className="relative group/orb scale-125">
-                   <CyberOrb size="md" status={stats?.topRisk! > 80 ? 'critical' : 'active'} className="drop-shadow-[0_0_30px_rgba(99,102,241,0.4)]" />
+                   <CyberOrb size="md" status={stats?.topRisk! > 80 ? 'critical' : 'active'} className="drop-shadow-[0_0_30px_rgba(244,63,94,0.4)]" />
                 </div>
                 <div className="ml-4">
                   <h1 className="text-6xl font-black text-white tracking-widest uppercase leading-none font-display italic skew-x-[-3deg]">
-                    ГОЛОВНИЙ <span className="text-red-600">ПУЛЬТ</span>
+                    ГОЛОВНИЙ <span className="text-rose-600">ПУЛЬТ</span>
                   </h1>
                   <div className="flex items-center gap-6 mt-6">
-                    <div className="h-0.5 w-20 bg-gradient-to-r from-red-600 to-transparent" />
-                    <span className="text-[11px] font-mono font-black text-red-500/90 uppercase tracking-[0.6em] animate-pulse">
+                    <div className="h-0.5 w-20 bg-gradient-to-r from-rose-600 to-transparent" />
+                    <span className="text-[11px] font-mono font-black text-rose-500/90 uppercase tracking-[0.6em] animate-pulse italic">
                     ЦЕНТРАЛЬНЕ КОМАНДУВАННЯ // v63.0-ELITE
                     </span>
                   </div>
                 </div>
               </div>
             }
-            breadcrumbs={['ЕСКАД А', 'КОМАНДУВАННЯ', 'ТАКТИЧНИЙ_ХАБ']}
+            breadcrumbs={['ЕСКАДРА', 'КОМАНДУВАННЯ', 'ТАКТИЧНИЙ_ХАБ']}
             stats={[
               { 
                 label: isOffline ? 'MIRROR_RECOVERY' : 'NODE_SOURCE', 
@@ -346,13 +349,13 @@ const DashboardView: React.FC = () => {
                 animate: isOffline
               },
               { label: 'ЯДРО', value: stats?.totalOPS! > 0 ? `${formatNumber(stats?.totalOPS!)} оп/с` : 'Н/Д', color: 'success', icon: <Activity size={14} />, animate: true },
-              { label: 'КрИТИЧНІСТЬ', value: `${stats?.topRisk!}%`, color: stats?.topRisk! > 80 ? 'danger' : 'warning', icon: <Flame size={14} /> },
+              { label: 'КРИТИЧНІСТЬ', value: `${stats?.topRisk!}%`, color: stats?.topRisk! > 80 ? 'danger' : 'warning', icon: <Flame size={14} /> },
               { label: 'ОБ\'ЄМ', value: formatNumber(stats?.totalDecls!), color: 'primary', icon: <Boxes size={14} /> }
             ]}
             actions={
               <div className="flex gap-6">
                 <motion.button 
-                  whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(99,102,241,0.3)' }}
+                  whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(244,63,94,0.3)' }}
                   whileTap={{ scale: 0.95 }}
                   onClick={async () => {
                     try {
@@ -370,21 +373,21 @@ const DashboardView: React.FC = () => {
                       console.error('Simulation failed:', err);
                     }
                   }}
-                  className="px-10 py-5 bg-indigo-600/20 border-2 border-indigo-500/40 text-indigo-400 rounded-2xl text-[11px] font-black uppercase tracking-[0.3em] hover:bg-indigo-600/40 transition-all flex items-center gap-4 italic group"
+                  className="px-10 py-5 bg-rose-600/20 border-2 border-rose-500/40 text-rose-400 rounded-2xl text-[11px] font-black uppercase tracking-[0.3em] hover:bg-rose-600/40 transition-all flex items-center gap-4 italic group"
                 >
-                  <Orbit size={20} className="text-indigo-400 animate-spin-slow" />
+                  <Orbit size={20} className="text-rose-400 animate-spin-slow" />
                   <span>WAR-GAMING_HORIZON</span>
                 </motion.button>
 
                 <motion.button 
-                  whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(220,38,38,0.3)' }}
+                  whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(244,63,94,0.3)' }}
                   whileTap={{ scale: 0.95 }}
                   onClick={fetchData}
                   disabled={refreshing}
-                  className="px-10 py-5 bg-black/60 border-2 border-red-500/30 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.3em] hover:bg-red-600/20 transition-all flex items-center gap-4 disabled:opacity-50 italic group"
+                  className="px-10 py-5 bg-black/60 border-2 border-rose-500/30 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.3em] hover:bg-rose-600/20 transition-all flex items-center gap-4 disabled:opacity-50 italic group"
                 >
-                  <RefreshCw size={20} className={cn("text-red-500 transition-transform", refreshing && "animate-spin")} />
-                  <span>СИНХРОНІЗАЦІЯ_ЯД А</span>
+                  <RefreshCw size={20} className={cn("text-rose-500 transition-transform", refreshing && "animate-spin")} />
+                  <span>СИНХРОНІЗАЦІЯ_ЯДРА</span>
                 </motion.button>
               </div>
             }
@@ -394,13 +397,13 @@ const DashboardView: React.FC = () => {
 
           {!hasData ? (
              <div className="py-60 flex flex-col items-center justify-center gap-12 text-center relative">
-                 <div className="absolute inset-0 bg-red-500/5 blur-[120px] rounded-full animate-pulse" />
+                 <div className="absolute inset-0 bg-rose-500/5 blur-[120px] rounded-full animate-pulse" />
                  <div className="relative group">
-                    <div className="absolute inset-0 bg-red-500/20 blur-[100px] rounded-full scale-150 animate-pulse" />
-                    <Database size={120} className="text-slate-800 relative z-10 group-hover:text-red-900 transition-colors duration-700" />
+                    <div className="absolute inset-0 bg-rose-500/20 blur-[100px] rounded-full scale-150 animate-pulse" />
+                    <Database size={120} className="text-slate-800 relative z-10 group-hover:text-rose-900 transition-colors duration-700" />
                  </div>
                  <div className="space-y-6 relative z-10">
-                    <h3 className="text-4xl font-black text-slate-700 uppercase tracking-[1em] italic">ЯД О_ПО ОЖНЄ</h3>
+                    <h3 className="text-4xl font-black text-slate-700 uppercase tracking-[1em] italic">ЯДРО_ПОРОЖНЄ</h3>
                     <p className="text-slate-500 font-black uppercase text-[12px] tracking-[0.4em] max-w-xl italic opacity-60">Завантажте дані для активації аналітичних двигунів PREDATOR</p>
                  </div>
              </div>
@@ -414,30 +417,30 @@ const DashboardView: React.FC = () => {
                   { label: 'ЕКСПОРТ_ВИВЕЗЕННЯ', value: formatNumber(overview!.summary.export_count), icon: <Package size={24} />, color: 'emerald', sub: 'Логістичні партії' },
                   { label: 'ЗОНА_КРИТИЧНОСТІ', value: String(overview!.summary.high_risk_count), icon: <ShieldAlert size={24} />, color: 'amber', sub: 'Високий ризик' },
                   { label: 'СЕМАНТИЧНИЙ_ГРАФ', value: formatNumber(overview!.summary.graph_nodes), icon: <Network size={24} />, color: 'purple', sub: 'Вузли системи' },
-                  { label: 'НЕЙ О_МАТрИЦЯ', value: formatNumber(overview!.summary.vectors), icon: <Brain size={24} />, color: 'rose', sub: 'Векторні індекси' },
+                  { label: 'НЕЙРО_МАТРИЦЯ', value: formatNumber(overview!.summary.vectors), icon: <Brain size={24} />, color: 'rose', sub: 'Векторні індекси' },
                 ].map((m, i) => (
                   <motion.div
                     key={m.label}
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.05, type: "spring", stiffness: 100 }}
-                    className="p-8 bg-black/40 backdrop-blur-3xl border border-white/5 rounded-[2.5rem] relative overflow-hidden group hover:border-red-500/40 transition-all duration-500 shadow-[0_30px_60px_-12px_rgba(0,0,0,0.8)]"
+                    className="p-8 bg-black/40 backdrop-blur-3xl border border-white/5 rounded-[2.5rem] relative overflow-hidden group hover:border-rose-500/40 transition-all duration-500 shadow-[0_30px_60px_-12px_rgba(0,0,0,0.8)]"
                   >
-                    <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-rose-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                     <div className={cn(
-                      "absolute top-6 right-6 p-4 rounded-[1.5rem] bg-white/5 border border-white/5 group-hover:bg-red-500/10 group-hover:border-red-500/20 transition-all duration-500 shadow-xl",
+                      "absolute top-6 right-6 p-4 rounded-[1.5rem] bg-white/5 border border-white/5 group-hover:bg-rose-500/10 group-hover:border-rose-500/20 transition-all duration-500 shadow-xl",
                     )}>
-                      <div className={`text-slate-400 group-hover:text-red-500 group-hover:scale-110 transition-all duration-500`}>{m.icon}</div>
+                      <div className={`text-slate-400 group-hover:text-rose-500 group-hover:scale-110 transition-all duration-500`}>{m.icon}</div>
                     </div>
                     <div className="space-y-4 relative z-10">
                       <div className="space-y-1">
-                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic group-hover:text-red-500 transition-colors duration-500">{m.label}</p>
+                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic group-hover:text-rose-500 transition-colors duration-500">{m.label}</p>
                         <p className="text-[9px] font-bold text-slate-700 uppercase tracking-tighter italic">{m.sub}</p>
                       </div>
-                      <p className="text-4xl font-mono font-black text-white italic tracking-tighter group-hover:text-red-500 transition-colors duration-500">{m.value}</p>
+                      <p className="text-4xl font-mono font-black text-white italic tracking-tighter group-hover:text-rose-500 transition-colors duration-500">{m.value}</p>
                     </div>
                     {/* Corner accent */}
-                    <div className="absolute bottom-0 right-0 w-12 h-12 bg-gradient-to-br from-transparent to-red-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="absolute bottom-0 right-0 w-12 h-12 bg-gradient-to-br from-transparent to-rose-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
                   </motion.div>
                 ))}
               </div>
@@ -446,9 +449,9 @@ const DashboardView: React.FC = () => {
             
                 {/* ЛІВА КОЛОНКА */}
                 <div className="col-span-12 xl:col-span-4 space-y-12">
-                  <section className="page-section section-emerald shadow-2xl">
+                  <section className="page-section section-rose shadow-2xl">
                     <div className="section-header">
-                      <div className="section-dot-emerald" />
+                      <div className="section-dot-rose" />
                       <div>
                         <h2 className="section-title">ДВИГУНИ_АНАЛІЗУ</h2>
                         <p className="section-subtitle">Стан аналітичного ядра</p>
@@ -461,18 +464,18 @@ const DashboardView: React.FC = () => {
                           initial={{ opacity: 0, x: -40 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: idx * 0.1 }}
-                          className="p-8 bg-black/40 border border-white/5 rounded-[2.5rem] group hover:border-emerald-500/40 transition-all relative overflow-hidden shadow-2xl"
+                          className="p-8 bg-black/40 border border-white/5 rounded-[2.5rem] group hover:border-rose-500/40 transition-all relative overflow-hidden shadow-2xl"
                         >
-                          <div className="absolute inset-0 bg-emerald-500/[0.02] opacity-0 group-hover:opacity-100 transition-opacity" />
+                          <div className="absolute inset-0 bg-rose-500/[0.02] opacity-0 group-hover:opacity-100 transition-opacity" />
                           <div className="flex justify-between items-center mb-8 relative z-10">
                             <span className="text-[12px] font-black text-slate-200 uppercase tracking-[0.3em] italic flex items-center gap-4">
-                              <Terminal size={16} className="text-emerald-500" /> {data.name || key}
+                              <Terminal size={16} className="text-rose-500" /> {data.name || key}
                             </span>
                             <Badge variant="outline" className={cn(
                               "text-[9px] font-black px-5 py-1.5 tracking-widest rounded-xl border-2 italic",
                               data.status === 'optimal' ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-amber-500/10 text-amber-400 border-amber-500/20"
                             )}>
-                              {data.status === 'optimal' ? 'ОПТИМАЛЬНО' : 'КАЛІБ УВАННЯ'}
+                              {data.status === 'optimal' ? 'ОПТИМАЛЬНО' : 'КАЛІБРУВАННЯ'}
                             </Badge>
                           </div>
                           <div className="grid grid-cols-3 gap-6 relative z-10">
@@ -481,8 +484,8 @@ const DashboardView: React.FC = () => {
                               <p className="text-2xl font-mono font-black text-white italic">{formatNumber(data.throughput)}/с</p>
                             </div>
                             <div className="space-y-1">
-                              <p className="text-[9px] font-black text-slate-600 uppercase tracking-tighter italic">ЗАТрИМКА</p>
-                              <p className="text-2xl font-mono font-black text-emerald-400 italic">{data.latency}мс</p>
+                              <p className="text-[9px] font-black text-slate-600 uppercase tracking-tighter italic">ЗАТРИМКА</p>
+                              <p className="text-2xl font-mono font-black text-rose-400 italic">{data.latency}мс</p>
                             </div>
                             <div className="space-y-1">
                               <p className="text-[9px] font-black text-slate-600 uppercase tracking-tighter italic">ЯКІСТЬ</p>
@@ -494,35 +497,35 @@ const DashboardView: React.FC = () => {
                               initial={{ width: 0 }}
                               animate={{ width: `${data.load}%` }}
                               className={cn(
-                                "h-full rounded-full transition-all duration-1000 shadow-[0_0_15px_rgba(16,185,129,0.5)]",
-                                data.load > 85 ? "bg-amber-500 shadow-amber-500/50" : "bg-gradient-to-r from-emerald-600 to-cyan-400"
+                                "h-full rounded-full transition-all duration-1000 shadow-[0_0_15px_rgba(244,63,94,0.5)]",
+                                data.load > 85 ? "bg-amber-500 shadow-amber-500/50" : "bg-gradient-to-r from-rose-600 to-cyan-400"
                               )}
                             />
                           </div>
                           <div className="flex justify-between mt-4 relative z-10">
                             <span className="text-[10px] font-black text-slate-600 italic">НАВАНТАЖЕННЯ: {data.load}%</span>
-                            <span className="text-[10px] font-black text-emerald-500 italic">{data.trend.replace('UP', 'З ОСТАННЯ').replace('DOWN', 'СПАД')}</span>
+                            <span className="text-[10px] font-black text-rose-500 italic uppercase">{data.trend.replace('UP', 'ЗРОСТАННЯ').replace('DOWN', 'СПАД')}</span>
                           </div>
                         </motion.div>
                       ))}
                     </div>
                   </section>
 
-                  <section className="page-section section-cyan shadow-3xl">
+                  <section className="page-section section-rose shadow-3xl">
                     <div className="section-header">
-                      <div className="section-dot-cyan" />
+                      <div className="section-dot-rose" />
                       <div>
-                        <h2 className="section-title">МАТрИЦЯ_РИЗИКІВ</h2>
+                        <h2 className="section-title">МАТРИЦЯ_РИЗИКІВ</h2>
                         <p className="section-subtitle">Багатовимірний аналіз загроз</p>
                       </div>
                     </div>
                     <StrategicRadarMatrix data={overview!.radar} />
                     <div className="mt-12 grid grid-cols-2 gap-8">
                       {overview!.radar.map((s, idx) => {
-                        const colors = ['#06b6d4', '#6366f1', '#10b981', '#f59e0b', '#f43f5e', '#ec4899'];
+                        const colors = ['#f43f5e', '#ec4899', '#f59e0b', '#10b981', '#06b6d4', '#8b5cf6'];
                         const color = colors[idx % colors.length];
                         return (
-                          <div key={s.name} className="p-6 bg-black/60 border border-white/5 rounded-[2rem] hover:border-cyan-500/30 transition-all flex flex-col gap-4 group/radaritem overflow-hidden relative shadow-xl">
+                          <div key={s.name} className="p-6 bg-black/60 border border-white/5 rounded-[2rem] hover:border-rose-500/30 transition-all flex flex-col gap-4 group/radaritem overflow-hidden relative shadow-xl">
                             <div className="absolute -right-4 -bottom-4 opacity-[0.03] group-hover/radaritem:opacity-[0.08] transition-opacity">
                                <ShieldAlert size={80} style={{ color }} />
                             </div>
@@ -541,27 +544,27 @@ const DashboardView: React.FC = () => {
                   </section>
                 </div>
 
-                {/* ЦЕНТ АЛЬНА КОЛОНКА */}
+                {/* ЦЕНТРАЛЬНА КОЛОНКА */}
                 <div className="col-span-12 xl:col-span-5 space-y-12">
-                   <section className="page-section section-yellow shadow-[0_60px_150px_-30px_rgba(0,0,0,0.8)] min-h-[720px] !p-0">
-                     <div className="p-6 pb-0 max-w-xl">
+                   <section className="page-section section-rose shadow-[0_60px_150px_-30px_rgba(0,0,0,0.8)] min-h-[720px] !p-0 overflow-hidden relative">
+                     <div className="p-10 pb-0 max-w-xl">
                        <div className="section-header">
-                         <div className="section-dot-yellow" />
+                         <div className="section-dot-rose" />
                          <div>
-                           <h2 className="section-title">ОПЕРАТИВНА_П ОЕКЦІЯ</h2>
+                           <h2 className="section-title">ОПЕРАТИВНА_ПРОЕКЦІЯ</h2>
                            <p className="section-subtitle">Глобальний транзит</p>
                          </div>
                        </div>
                      </div>
                      <div className="absolute top-24 left-12 z-20">
                        <div className="flex items-center gap-8 bg-slate-950/80 backdrop-blur-3xl border border-white/10 p-8 rounded-[3rem] shadow-3xl">
-                         <div className="p-5 bg-yellow-500/10 rounded-2xl relative">
-                           <div className="absolute inset-0 bg-yellow-500/20 blur-xl animate-pulse rounded-full" />
-                           <Orbit size={28} className="text-yellow-400 relative z-10 animate-spin-slow" />
+                         <div className="p-5 bg-rose-500/10 rounded-2xl relative">
+                           <div className="absolute inset-0 bg-rose-500/20 blur-xl animate-pulse rounded-full" />
+                           <Orbit size={28} className="text-rose-400 relative z-10 animate-spin-slow" />
                          </div>
                          <div>
-                           <h4 className="text-lg font-black text-white uppercase tracking-[0.4em] italic mb-1">ГЛОБАЛЬНИЙ_Т АНЗИТ</h4>
-                           <p className="text-[10px] font-mono text-yellow-400 font-black uppercase tracking-widest italic">
+                           <h4 className="text-lg font-black text-white uppercase tracking-[0.4em] italic mb-1">ГЛОБАЛЬНИЙ_ТРАНЗИТ</h4>
+                           <p className="text-[10px] font-mono text-rose-400 font-black uppercase tracking-widest italic leading-none">
                              {Object.keys(overview!.countries).length} АКТИВНІ_ЛОКАЦІЇ
                            </p>
                          </div>
@@ -574,18 +577,18 @@ const DashboardView: React.FC = () => {
 
                      <div className="absolute bottom-12 right-12 z-20 flex bg-black/60 backdrop-blur-3xl p-3 border border-white/10 rounded-[2.5rem] gap-4 shadow-3xl">
                         {[Search, Layers, Target, RadioTower].map((Icon, idx) => (
-                           <button key={idx} className="p-6 bg-white/5 hover:bg-yellow-600 hover:text-white rounded-3xl text-slate-400 transition-all group">
-                              <Icon size={24} className={cn("group-hover:scale-110 group-hover:rotate-6 transition-transform", idx === 3 && "animate-pulse text-yellow-400")} />
+                           <button key={idx} className="p-6 bg-white/5 hover:bg-rose-600 hover:text-white rounded-3xl text-slate-400 transition-all group">
+                              <Icon size={24} className={cn("group-hover:scale-110 group-hover:rotate-6 transition-transform", idx === 3 && "animate-pulse text-rose-400")} />
                            </button>
                         ))}
                      </div>
                    </section>
 
-                   <section className="page-section section-amber shadow-3xl">
+                   <section className="page-section section-rose shadow-3xl">
                       <div className="section-header">
-                        <div className="section-dot-amber" />
+                        <div className="section-dot-rose" />
                         <div>
-                          <h2 className="section-title">ТАКТИЧНІ_АЛЕ ТИ</h2>
+                          <h2 className="section-title">ТАКТИЧНІ_АЛЕРТИ</h2>
                           <p className="section-subtitle">Критичні інциденти та сповіщення</p>
                         </div>
                       </div>
@@ -599,14 +602,14 @@ const DashboardView: React.FC = () => {
                                transition={{ delay: idx * 0.08 }}
                                className={cn(
                                  "p-8 rounded-[2.5rem] border-2 relative group overflow-hidden transition-all hover:bg-white/5 shadow-2xl",
-                                 alert.severity === 'critical' ? "bg-amber-500/[0.03] border-amber-500/20" : "bg-black/40 border-white/5"
+                                 alert.severity === 'critical' ? "bg-rose-500/[0.03] border-rose-500/20" : "bg-black/40 border-white/5"
                                )}
                             >
                                <div className="flex justify-between items-start mb-6 relative z-10">
                                   <div className="flex items-center gap-6">
                                      <div className={cn(
                                        "w-14 h-14 rounded-2xl flex items-center justify-center shadow-xl",
-                                       alert.severity === 'critical' ? "bg-amber-500/20 text-amber-500 shadow-amber-500/20" : "bg-yellow-500/10 text-yellow-400"
+                                       alert.severity === 'critical' ? "bg-rose-500/20 text-rose-500 shadow-rose-500/20" : "bg-rose-500/10 text-rose-400"
                                      )}>
                                         {alert.severity === 'critical' ? <ShieldAlert size={28} className="animate-pulse" /> : <Eye size={28} />}
                                      </div>
@@ -620,7 +623,7 @@ const DashboardView: React.FC = () => {
                                   </div>
                                   {alert.value > 0 && (
                                      <div className="text-right">
-                                        <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1 italic">ВА ТІСТЬ_ЛОТУ</p>
+                                        <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1 italic">ВАРТІСТЬ_ЛОТУ</p>
                                         <p className="text-lg font-mono font-black text-white italic">{formatCurrency(alert.value)}</p>
                                      </div>
                                   )}
@@ -633,11 +636,11 @@ const DashboardView: React.FC = () => {
                                      </div>
                                      <span className="text-[11px] font-black text-slate-400 uppercase tracking-tight italic truncate max-w-[200px]">{alert.company}</span>
                                   </div>
-                                  <button className="px-8 py-3.5 bg-red-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] transition-all flex items-center gap-3 italic group/btn shadow-[0_10px_30px_rgba(220,38,38,0.3)]">
+                                  <button className="px-8 py-3.5 bg-rose-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] transition-all flex items-center gap-3 italic group/btn shadow-[0_10px_30px_rgba(244,63,94,0.3)]">
                                      РОЗСЛІДУВАТИ <ArrowUpRight size={18} className="group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />
                                   </button>
                                </div>
-                               {alert.severity === 'critical' && <div className="absolute top-0 right-0 w-2 h-full bg-amber-500 shadow-[0_0_30px_#f43f5e]" />}
+                               {alert.severity === 'critical' && <div className="absolute top-0 right-0 w-2 h-full bg-rose-500 shadow-[0_0_30px_#f43f5e]" />}
                             </motion.div>
                           ))}
                         </AnimatePresence>
@@ -647,12 +650,12 @@ const DashboardView: React.FC = () => {
 
                 {/* ПРАВА КОЛОНКА */}
                 <div className="col-span-12 xl:col-span-3 space-y-12">
-                   <section className="page-section section-amber shadow-3xl">
+                   <section className="page-section section-rose shadow-3xl">
                       <div className="section-header">
-                        <div className="section-dot-amber" />
+                        <div className="section-dot-rose" />
                         <div>
-                          <h2 className="section-title">ВЕ ТИКАЛЬ_РИЗИКІВ</h2>
-                          <p className="section-subtitle">Топ суб'єкти високогоризику</p>
+                          <h2 className="section-title">ВЕРТИКАЛЬ_РИЗИКІВ</h2>
+                          <p className="section-subtitle">Топ суб'єкти високого ризику</p>
                         </div>
                       </div>
                       <div className="space-y-6">
@@ -662,20 +665,20 @@ const DashboardView: React.FC = () => {
                              initial={{ opacity: 0, x: 50 }}
                              animate={{ opacity: 1, x: 0 }}
                              transition={{ delay: idx * 0.08 }}
-                             className="p-8 bg-black/40 border border-white/5 rounded-[2.5rem] hover:border-amber-500/40 transition-all group cursor-pointer relative overflow-hidden shadow-xl"
+                             className="p-8 bg-black/40 border border-white/5 rounded-[2.5rem] hover:border-rose-500/40 transition-all group cursor-pointer relative overflow-hidden shadow-xl"
                           >
                              <div className="absolute -right-4 -top-4 opacity-[0.02] group-hover:opacity-[0.05] transition-opacity">
-                                <Fingerprint size={120} className="text-amber-400" />
+                                <Fingerprint size={120} className="text-rose-400" />
                              </div>
                              <div className="flex justify-between items-start mb-8 relative z-10">
                                 <div className="flex-1 min-w-0">
-                                   <p className="text-[14px] font-black text-white italic uppercase tracking-tighter truncate leading-none group-hover:text-amber-400 transition-colors">{company.name}</p>
-                                   <p className="text-[10px] font-mono text-slate-600 mt-2 font-black italic uppercase">ID: {company.edrpou}</p>
+                                   <p className="text-[14px] font-black text-white italic uppercase tracking-tighter truncate leading-none group-hover:text-rose-400 transition-colors">{company.name}</p>
+                                   <p className="text-[10px] font-mono text-slate-600 mt-2 font-black italic uppercase leading-none">ID: {company.edrpou}</p>
                                 </div>
                                 <div className={cn(
                                    "w-16 h-16 rounded-[1.5rem] flex flex-col items-center justify-center font-black italic border-2",
-                                   company.maxRisk > 90 ? "bg-amber-500/10 text-amber-500 border-amber-500/30 shadow-amber-500/20" : 
-                                   "bg-amber-500/10 text-amber-500 border-amber-500/30 shadow-amber-500/20"
+                                   company.maxRisk > 90 ? "bg-rose-500/10 text-rose-500 border-rose-500/30 shadow-rose-500/20" : 
+                                   "bg-rose-500/10 text-rose-500 border-rose-500/30 shadow-rose-500/20"
                                 )}>
                                    <span className="text-[9px] opacity-60 leading-none">РИЗИК</span>
                                    <span className="text-xl tracking-tighter">{company.maxRisk}</span>
@@ -683,12 +686,12 @@ const DashboardView: React.FC = () => {
                              </div>
                              <div className="grid grid-cols-2 gap-4 relative z-10">
                                 <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
-                                   <span className="text-[8px] text-slate-600 font-black uppercase tracking-widest block mb-1">МАСШТАБ_v63.0-ELITE</span>
+                                   <span className="text-[8px] text-slate-600 font-black uppercase tracking-widest block mb-1 leading-none">МАСШТАБ_v63.0-ELITE</span>
                                    <span className="text-sm font-black text-white italic">{company.count} ДЕКЛ.</span>
                                 </div>
                                 <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
-                                   <span className="text-[8px] text-slate-600 font-black uppercase tracking-widest block mb-1">ОБ\'ЄМ_USD</span>
-                                   <span className="text-sm font-black text-amber-400 italic">{formatCurrency(company.totalValue)}</span>
+                                   <span className="text-[8px] text-slate-600 font-black uppercase tracking-widest block mb-1 leading-none">ОБ'ЄМ_USD</span>
+                                   <span className="text-sm font-black text-rose-400 italic">{formatCurrency(company.totalValue)}</span>
                                 </div>
                              </div>
                              <div className="mt-8 h-2 w-full bg-slate-900 rounded-full overflow-hidden relative z-10">
@@ -697,7 +700,7 @@ const DashboardView: React.FC = () => {
                                    animate={{ width: `${company.maxRisk}%` }}
                                    className={cn(
                                      "h-full rounded-full shadow-[0_0_15px]",
-                                     company.maxRisk > 90 ? "bg-amber-500 shadow-amber-500/40" : "bg-amber-500 shadow-amber-500/40"
+                                     company.maxRisk > 90 ? "bg-rose-500 shadow-rose-500/40" : "bg-rose-500 shadow-rose-500/40"
                                    )}
                                 />
                              </div>
@@ -706,11 +709,11 @@ const DashboardView: React.FC = () => {
                       </div>
                    </section>
 
-                   <section className="page-section section-slate shadow-3xl">
+                   <section className="page-section section-rose shadow-3xl">
                       <div className="section-header">
-                        <div className="section-dot-slate" />
+                        <div className="section-dot-rose" />
                         <div>
-                          <h2 className="section-title">ІНФ А_МАТрИЦЯ</h2>
+                          <h2 className="section-title">ІНФРА_МАТРИЦЯ</h2>
                           <p className="section-subtitle">Стан базової інфраструктури</p>
                         </div>
                       </div>
@@ -722,7 +725,7 @@ const DashboardView: React.FC = () => {
                           { key: 'NEO4J', label: 'Graph_Topology', status: 'UP', count: (overview!.infrastructure as any)?.neo4j?.nodes ?? 0, icon: Network, color: 'yellow' },
                           { key: 'MINIO', label: 'Object_Nexus', status: 'UP', count: (overview!.infrastructure as any)?.minio?.files ?? 0, icon: HardDrive, color: 'cyan' },
                         ].map((item) => (
-                          <div key={item.key} className="p-6 bg-black/40 border border-white/5 rounded-[2rem] hover:border-slate-500/30 transition-all flex items-center justify-between group shadow-xl">
+                          <div key={item.key} className="p-6 bg-black/40 border border-white/5 rounded-[2rem] hover:border-rose-500/30 transition-all flex items-center justify-between group shadow-xl">
                              <div className="flex items-center gap-6">
                                 <div className={cn(
                                    "w-12 h-12 rounded-2xl flex items-center justify-center transition-all bg-slate-900 border border-white/5 group-hover:scale-110",
@@ -737,7 +740,7 @@ const DashboardView: React.FC = () => {
                              </div>
                              <div className="text-right">
                                 <p className="text-xl font-mono font-black text-white italic tracking-tighter">{formatNumber(item.count)}</p>
-                                <Badge className="bg-emerald-500/10 text-emerald-400 border-none text-[8px] font-black italic tracking-widest mt-1">ОНЛАЙН</Badge>
+                                <Badge className="bg-emerald-500/10 text-emerald-400 border-none text-[8px] font-black italic tracking-widest mt-1 uppercase">ОНЛАЙН</Badge>
                              </div>
                           </div>
                         ))}
@@ -750,8 +753,8 @@ const DashboardView: React.FC = () => {
         </div>
 
         {/* Strategic Information Ticker */}
-        <div className="fixed bottom-0 left-0 right-0 z-50 bg-[#02040a]/90 backdrop-blur-3xl border-t border-red-500/20 h-16 flex items-center overflow-hidden shadow-[0_-20px_50px_rgba(0,0,0,0.8)]">
-          <div className="px-12 bg-red-600 h-full flex items-center shrink-0 border-r border-white/10 shadow-[15px_0_40px_rgba(220,38,38,0.5)] relative z-10 italic text-white">
+        <div className="fixed bottom-0 left-0 right-0 z-50 bg-[#02040a]/90 backdrop-blur-3xl border-t border-rose-500/20 h-16 flex items-center overflow-hidden shadow-[0_-20px_50px_rgba(0,0,0,0.8)]">
+          <div className="px-12 bg-rose-600 h-full flex items-center shrink-0 border-r border-white/10 shadow-[15px_0_40px_rgba(244,63,94,0.5)] relative z-10 italic text-white">
             <div className="flex items-center gap-4">
                <Fingerprint size={24} className="text-white animate-pulse" />
                <span className="text-[13px] font-black uppercase tracking-[0.4em] whitespace-nowrap">СУВЕРЕННИЙ_ЗВ'ЯЗОК_PREDATOR</span>
@@ -768,11 +771,11 @@ const DashboardView: React.FC = () => {
                 `ГРАФ: ${formatNumber(overview?.summary.graph_nodes ?? 0)} ВУЗЛІВ | ${formatNumber(overview?.summary.graph_edges ?? 0)} ЗВ'ЯЗКІВ`,
                 `ТОП РИЗИК: ${stats?.topRisk ?? 0}% [${overview?.top_risk_companies?.[0]?.name ?? 'Н/Д'}]`,
                 `ПОШУКОВИЙ ІНДЕКС: ${formatNumber(overview?.summary.search_documents ?? 0)} ДОКУМЕНТІВ`,
-                `НЕЙ О-АКТИВНІСТЬ: 78% | ЗАТрИМКА_OODA: 5.8мс`,
-                `ЗАГАЛЬНИЙ ПУЛ: ${formatCurrency(overview?.summary.total_value_usd ?? 0)} | ДЕКЛА АЦІЙ: ${formatNumber(overview?.summary.total_declarations ?? 0)}`
+                `НЕЙРО-АКТИВНІСТЬ: 78% | ЗАТРИМКА_OODA: 5.8мс`,
+                `ЗАГАЛЬНИЙ ПУЛ: ${formatCurrency(overview?.summary.total_value_usd ?? 0)} | ДЕКЛАРАЦІЙ: ${formatNumber(overview?.summary.total_declarations ?? 0)}`
               ].map((log, i) => (
                 <div key={i} className="flex items-center gap-10">
-                  <div className="w-3 h-3 rounded-full bg-red-600 animate-pulse shadow-[0_0_15px_#dc2626]" />
+                  <div className="w-3 h-3 rounded-full bg-rose-600 animate-pulse shadow-[0_0_15px_#e11d48]" />
                   <span className="text-[12px] font-mono text-slate-400 font-black uppercase tracking-[0.3em] italic">
                     {log}
                   </span>
@@ -799,7 +802,53 @@ const DashboardView: React.FC = () => {
           .no-scrollbar::-webkit-scrollbar {
              display: none;
           }
-        `}} />
+          .page-section {
+            padding: 2.5rem;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(40px);
+            border-radius: 3.5rem;
+            border: 1px solid rgba(255,255,255,0.05);
+            position: relative;
+            overflow: hidden;
+          }
+          .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+          }
+          .section-title {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-style: italic;
+          }
+          .section-subtitle {
+            font-size: 0.65rem;
+            font-weight: 900;
+            color: rgba(255,255,255,0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.4em;
+            margin-top: 0.25rem;
+            font-style: italic;
+          }
+          .section-dot-rose {
+            width: 0.75rem;
+            height: 0.75rem;
+            border-radius: 9999px;
+            background: #f43f5e;
+            box-shadow: 0 0 15px #f43f5e;
+          }
+          .section-rose {
+            border-color: rgba(244, 63, 94, 0.1);
+          }
+          .section-rose:hover {
+            border-color: rgba(244, 63, 94, 0.3);
+          }
+          `
+        }} />
       </div>
     </PageTransition>
   );

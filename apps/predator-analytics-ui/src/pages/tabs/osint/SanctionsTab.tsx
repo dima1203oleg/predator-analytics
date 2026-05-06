@@ -34,7 +34,7 @@ export const SanctionsTab: React.FC = () => {
               <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Тип об'єкта</label>
               <select className="w-full bg-slate-950 border border-white/10 rounded-xl p-3 text-xs text-white outline-none focus:border-rose-500/50 transition-all cursor-pointer">
                 <option>ВСІ ТИПИ</option>
-                <option>Ю ИДИЧНІ ОСОБИ</option>
+                <option>ЮРИДИЧНІ ОСОБИ</option>
                 <option>ФІЗИЧНІ ОСОБИ</option>
               </select>
             </div>

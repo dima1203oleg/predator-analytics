@@ -421,7 +421,7 @@ export default function ExecutiveBoardView() {
         <div className="px-8 bg-rose-600 h-full flex items-center shrink-0 border-r border-white/10 shadow-[20px_0_40px_rgba(225,29,72,0.4)] relative z-10 italic text-white font-black text-[11px] tracking-[0.3em] uppercase">
           <div className="flex items-center gap-4">
              <Activity size={20} className="animate-pulse" />
-             <span>LIVE_STREAM_v63.0</span>
+             <span>ЖИВИЙ_ПОТІК_v63.0</span>
           </div>
         </div>
         <div className="flex-1 flex items-center">
@@ -431,7 +431,7 @@ export default function ExecutiveBoardView() {
             className="flex items-center gap-24 whitespace-nowrap"
           >
             {[
-              `СИСТЕМА: ОПТИМАЛЬНО | РЕЖИМ: ELITE_TACTICAL | СИНХРОНІЗАЦІЯ: ТАК`,
+              `СИСТЕМА: ОПТИМАЛЬНО | РЕЖИМ: ЕЛІТ_ТАКТИКА | СИНХРОНІЗАЦІЯ: ТАК`,
               `ФІНАНСОВИЙ ПОТІК: ${s ? formatCurrency(s.total_value_usd) : '—'} | ДЕКЛАРАЦІЙ: ${s ? formatNumber(s.total_declarations) : '—'}`,
               `КРИТИЧНІ СИГНАЛИ: ${alerts.length} | ЗОНА РИЗИКУ: ${s ? s.high_risk_count : '—'} ОБ'ЄКТІВ`,
               `НЕЙРОННИЙ ГРАФ: ${s ? formatNumber(s.graph_nodes) : '—'} ВУЗЛІВ | ${s ? formatNumber(s.graph_edges) : '—'} ЗВ'ЯЗКІВ`,

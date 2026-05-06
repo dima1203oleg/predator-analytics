@@ -1,8 +1,8 @@
 /**
- * 💼 P&L РИЗИКІВ ПО ТФЕЛЮ | v61.0-ELITE
+ * 💼 P&L РИЗИКІВ ПОРТФЕЛЮ | v63.0-ELITE
  * PREDATOR Analytics — Portfolio Risk Management
  *
- * Скільки $ у зоніризику прямо зараз:
+ * Скільки $ у зоні ризику прямо зараз:
  * контрагенти, санкції, ланцюги постачання, фін.ризики.
  * CEO-рівень · Sovereign Power Design · LIVE · Tier-1
  * 
@@ -44,10 +44,10 @@ const RISK_TIMELINE = [
 ];
 
 const RISK_BREAKDOWN = [
-  { name: 'Санкційний',   value: 33, amount: '$41.8M',  color: '#E11D48' },
-  { name: 'Контрагент',  value: 26, amount: '$33.1M',  color: '#BE123C' },
-  { name: 'Ланцюг пост.',value: 20, amount: '$25.5M',  color: '#D4AF37' },
-  { name: 'FX / Валютний',value: 14, amount: '$17.8M', color: '#92400e' },
+  { name: 'Санкційний',   value: 33, amount: '$41.8M',  color: '#f43f5e' },
+  { name: 'Контрагент',  value: 26, amount: '$33.1M',  color: '#e11d48' },
+  { name: 'Ланцюг пост.',value: 20, amount: '$25.5M',  color: '#fb7185' },
+  { name: 'FX / Валютний',value: 14, amount: '$17.8M', color: '#9f1239' },
   { name: 'Операційний', value: 7, amount: '$9.2M',    color: '#475569' },
 ];
 
@@ -78,12 +78,12 @@ const RISK_POSITIONS: RiskPosition[] = [
     trigger: 'Попадання в список SDN — OFAC 2025-03-15',
     daysToMaturity: 12,
     country: '🇻🇬 BVI',
-    action: 'ЗАМО ОЗИТИ  ОЗ АХУНКИ',
+    action: 'ЗАМОРОЗИТИ РОЗРАХУНКИ',
     trend: 'up',
   },
   {
     id: 'POS-002',
-    counterparty: 'ТОВ "МЕТАЛУ Г-ІНВЕСТ"',
+    counterparty: 'ТОВ "МЕТАЛУРГ-ІНВЕСТ"',
     type: 'Дебіторська заборгованість',
     exposure: '$12.1M',
     atRisk: '$9.7M',
@@ -92,7 +92,7 @@ const RISK_POSITIONS: RiskPosition[] = [
     trigger: 'Відкрито банкрутство (справа №910/4521/25)',
     daysToMaturity: 0,
     country: '🇺🇦 Україна',
-    action: 'ПОДАТИ К ЕДИТО СЬКІ ВИМОГИ',
+    action: 'ПОДАТИ КРЕДИТОРСЬКІ ВИМОГИ',
     trend: 'up',
   },
   {
@@ -103,15 +103,15 @@ const RISK_POSITIONS: RiskPosition[] = [
     atRisk: '$6.1M',
     riskPct: 74,
     riskLevel: 'high',
-    trigger: 'Власник під слідством ФБ  (PEP + INTERPOL)',
+    trigger: 'Власник під слідством ФБР (PEP + INTERPOL)',
     daysToMaturity: 45,
     country: '🇨🇾 Кіпр',
-    action: 'П АВОВИЙ АНАЛІЗ + FREEZE',
+    action: 'ПРАВОВИЙ АНАЛІЗ + FREEZE',
     trend: 'up',
   },
   {
     id: 'POS-004',
-    counterparty: 'АГ О-ЛІДЕ  ГРУП',
+    counterparty: 'АГРО-ЛІДЕР ГРУП',
     type: 'Контракт на поставку',
     exposure: '$22.5M',
     atRisk: '$5.8M',
@@ -120,7 +120,7 @@ const RISK_POSITIONS: RiskPosition[] = [
     trigger: 'UBO через офшор · Виявлено фіктивну структуру',
     daysToMaturity: 88,
     country: '🇺🇦 Україна',
-    action: 'ПЕ ЕУКЛАСТИ З ГА АНТІЯМИ',
+    action: 'ПЕРЕУКЛАСТИ З ГАРАНТІЯМИ',
     trend: 'stable',
   },
 ];
@@ -128,10 +128,10 @@ const RISK_POSITIONS: RiskPosition[] = [
 // ─── КОМПОНЕНТ ────────────────────────────────────────────────────────
 
 const RISK_COLOR: Partial<Record<RiskLevelValue, string>> = {
-  critical: '#E11D48',
+  critical: '#f43f5e',
   high:     '#fbbf24',
-  medium:   '#d97706',
-  low:      '#34d399',
+  medium:   '#f59e0b',
+  low:      '#10b981',
 };
 
 const RISK_LABEL: Partial<Record<RiskLevelValue, string>> = {
@@ -153,7 +153,7 @@ const PortfolioRiskView: React.FC = () => {
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'PortfolioRisk',
-          message: `РЕЖИМ АВТОНОМНОЇ РИЗИК-ФО ЕНЗИКИ [${nodeSource}]: Використовується локальна база RISK_NODES.`,
+          message: `РЕЖИМ АВТОНОМНОЇ РИЗИК-ФОРЕНЗИКИ [${nodeSource}]: Використовується локальна база RISK_NODES.`,
           severity: 'warning',
           timestamp: new Date().toISOString(),
           code: 'RISK_OFFLINE'
@@ -163,7 +163,7 @@ const PortfolioRiskView: React.FC = () => {
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'PortfolioRisk',
-          message: `RISK_CORE_READY [${nodeSource}]: Моніторингризиків синхронізовано з NVIDIA Master.`,
+          message: `RISK_CORE_READY [${nodeSource}]: Моніторинг ризиків синхронізовано з NVIDIA Master.`,
           severity: 'info',
           timestamp: new Date().toISOString(),
           code: 'RISK_SUCCESS'
@@ -192,9 +192,9 @@ const PortfolioRiskView: React.FC = () => {
 
   return (
     <PageTransition>
-      <div className="min-h-screen text-slate-200 font-sans pb-32 relative overflow-hidden bg-[#020202]">
+      <div className="min-h-screen text-slate-200 font-sans pb-32 relative overflow-hidden bg-[#010409]">
         <AdvancedBackground mode="sovereign" />
-        <CyberGrid opacity={0.03} />
+        <CyberGrid color="rgba(244, 63, 94, 0.05)" />
 
         <div className="relative z-10 max-w-[1850px] mx-auto p-12 space-y-12">
           
@@ -202,31 +202,31 @@ const PortfolioRiskView: React.FC = () => {
             title={
               <div className="flex items-center gap-10">
                 <div className="relative group">
-                  <div className="absolute inset-0 bg-red-500/15 blur-3xl rounded-full scale-150 group-hover:scale-200 transition-transform duration-1000" />
-                  <div className="relative p-7 bg-black border-2 border-red-500/40 rounded-[3rem] shadow-4xl transform rotate-3 hover:rotate-0 transition-all cursor-crosshair">
-                    <DollarSign size={54} className="text-red-500 drop-shadow-[0_0_20px_rgba(225,29,72,0.4)]" />
-                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-600 rounded-full border-4 border-black animate-pulse shadow-[0_0_15px_#e11d48]" />
+                  <div className="absolute inset-0 bg-rose-500/15 blur-3xl rounded-full scale-150 group-hover:scale-200 transition-transform duration-1000" />
+                  <div className="relative p-7 bg-black border-2 border-rose-500/40 rounded-[3rem] shadow-4xl transform rotate-3 hover:rotate-0 transition-all cursor-crosshair">
+                    <DollarSign size={54} className="text-rose-500 drop-shadow-[0_0_20px_rgba(244,63,94,0.4)]" />
+                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-rose-600 rounded-full border-4 border-black animate-pulse shadow-[0_0_15px_#f43f5e]" />
                   </div>
                 </div>
                 <div>
                   <div className="flex items-center gap-4 mb-3">
-                    <span className="w-1.5 h-1.5 bg-red-600 rounded-full animate-pulse shadow-[0_0_8px_#e11d48]" />
-                    <span className="text-[10px] font-black text-red-500/80 uppercase tracking-[0.6em]">
-                      ЦЕНТ  ПО ТФЕЛЬНИХ РИЗИКІВ · v61.0-ELITE
+                    <span className="w-1.5 h-1.5 bg-rose-600 rounded-full animate-pulse shadow-[0_0_8px_#f43f5e]" />
+                    <span className="text-[10px] font-black text-rose-500/80 uppercase tracking-[0.6em] italic">
+                      ЦЕНТР ПОРТФЕЛЬНИХ РИЗИКІВ · v63.0-ELITE
                     </span>
                   </div>
                   <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg]">
-                    P&L <span className="text-red-600 underline decoration-red-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">РИЗИКІВ</span>
+                    P&L <span className="text-rose-600 underline decoration-rose-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">РИЗИКІВ</span>
                   </h1>
-                  <p className="text-[12px] text-slate-600 font-black uppercase tracking-[0.5em] mt-6 italic border-l-4 border-red-500/30 pl-8 opacity-90 max-w-2xl">
-                    МОНІТОРИНГ ДЕФОЛТНИХ ВЕКТО ІВ · КрИТИЧНА ЕКСПОЗИЦІЯ · СУВЕРЕННИЙ АНАЛІЗ
+                  <p className="text-[12px] text-slate-600 font-black uppercase tracking-[0.5em] mt-6 italic border-l-4 border-rose-500/30 pl-8 opacity-90 max-w-2xl">
+                    МОНІТОРИНГ ДЕФОЛТНИХ ВЕКТОРІВ · КРИТИЧНА ЕКСПОЗИЦІЯ · СУВЕРЕННИЙ АНАЛІЗ
                   </p>
                 </div>
               </div>
             }
             badges={[
-              { label: 'CLASSIFIED_T1', color: 'amber', icon: <Lock size={10} /> },
-              { label: 'SOVEREIGN_READY', color: 'primary', icon: <Shield size={10} /> },
+              { label: 'ТАЙНО_Т1', color: 'amber', icon: <Lock size={10} /> },
+              { label: 'СУВЕРЕН_ГОТОВНІСТЬ', color: 'primary', icon: <Shield size={10} /> },
               { 
                 label: nodeSource, 
                 color: isOffline ? 'warning' : 'danger', 
@@ -236,26 +236,26 @@ const PortfolioRiskView: React.FC = () => {
             stats={[
               { label: 'У ЗОНІ РИЗИКУ', value: `$${liveRisk}M`, icon: <TrendingUp size={14} />, color: 'danger' },
               { 
-                label: isOffline ? 'FAILOVER_SYNC' : 'КРИТИЧНИЙ_NET', 
+                label: isOffline ? 'РЕЗЕРВ_СИНХРО' : 'КРИТИЧНИЙ_NET', 
                 value: isOffline ? `${Math.floor(healingProgress)}%` : '$41.8M', 
                 icon: isOffline ? <Activity /> : <AlertTriangle />, 
                 color: isOffline ? 'warning' : 'danger',
                 animate: isOffline
               },
-              { label: 'СИСТЕМНИЙ ПО ТФЕЛЬ', value: '$847M', icon: <Activity size={14} />, color: 'primary' },
-              { label: 'NODE_SOURCE', value: isOffline ? 'MIRROR' : 'PRIMARY', icon: <Cpu />, color: isOffline ? 'warning' : 'success' },
+              { label: 'СИСТЕМНИЙ ПОРТФЕЛЬ', value: '$847M', icon: <Activity size={14} />, color: 'primary' },
+              { label: 'ВУЗОЛ_ДЖЕРЕЛО', value: isOffline ? 'ДЗЕРКАЛО' : 'ОСНОВНИЙ', icon: <Cpu />, color: isOffline ? 'warning' : 'success' },
             ]}
             actions={
               <div className="flex items-center gap-6">
                 <button
                   onClick={handleRefresh}
-                  className="p-6 rounded-[2rem] bg-black/60 border-2 border-white/5 text-slate-500 hover:text-red-500 hover:border-red-500/30 transition-all shadow-4xl group"
+                  className="p-6 rounded-[2rem] bg-black/60 border-2 border-white/5 text-slate-500 hover:text-rose-500 hover:border-rose-500/30 transition-all shadow-4xl group"
                 >
-                  <RefreshCw size={24} className={cn(refreshing && 'animate-spin text-red-500')} />
+                  <RefreshCw size={24} className={cn(refreshing && 'animate-spin text-rose-500')} />
                 </button>
-                <button className="px-14 py-6 bg-red-600 text-white text-[12px] font-black uppercase tracking-[0.4em] italic hover:brightness-110 transition-all rounded-[2rem] shadow-4xl flex items-center gap-4 font-bold">
+                <button className="px-14 py-6 bg-rose-600 text-white text-[12px] font-black uppercase tracking-[0.4em] italic hover:brightness-110 transition-all rounded-[2rem] shadow-4xl flex items-center gap-4 font-bold">
                   <Download size={24} />
-                  ДОСЬЄ_П АВЛІННЯ_ЕЛІТА
+                  ДОСЬЄ_УПРАВЛІННЯ_ЕЛІТА
                 </button>
               </div>
             }
@@ -264,20 +264,20 @@ const PortfolioRiskView: React.FC = () => {
           {/* ── KPI GRID ELITE ── */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             {[
-              { l: 'КрИТИЧНІ ЛОТИ',    v: '2',          sub: 'POS-001, POS-002',       c: '#E11D48' },
-              { l: 'РИЗИК_INDEX',      v: '15.1%',      sub: 'Від загальних активів',       c: '#D4AF37' },
-              { l: 'ГЕО_ОХОПЛЕННЯ',    v: '4 Країни',   sub: 'Географічне покриття',  c: '#D4AF37' },
-              { l: 'ВІДКрИТІСТЬ_АЛЬФА',   v: '$127.4M',    sub: 'Вплив на сувереннийприбуток',  c: '#E11D48' },
+              { l: 'КРИТИЧНІ ЛОТИ',    v: '2',          sub: 'POS-001, POS-002',       c: '#f43f5e' },
+              { l: 'ІНДЕКС_РИЗИКУ',    v: '15.1%',      sub: 'Від загальних активів',       c: '#fb7185' },
+              { l: 'ГЕО_ОХОПЛЕННЯ',    v: '4 Країни',   sub: 'Географічне покриття',  c: '#fb7185' },
+              { l: 'ВІДКРИТІСТЬ_АЛЬФА',   v: `$127.4M`,    sub: 'Вплив на суверенний прибуток',  c: '#f43f5e' },
             ].map((m, i) => (
               <motion.div
                 key={m.l}
                 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
-                className="p-10 bg-black/60 backdrop-blur-2xl border-2 border-white/5 hover:border-red-500/30 transition-all rounded-[3.5rem] shadow-2xl group relative overflow-hidden"
+                className="p-10 bg-black/60 backdrop-blur-2xl border-2 border-white/5 hover:border-rose-500/30 transition-all rounded-[3.5rem] shadow-2xl group relative overflow-hidden"
               >
-                <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-red-500/40 to-transparent opacity-40" />
+                <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-rose-500/40 to-transparent opacity-40" />
                 <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.6em] mb-4 italic">{m.l}</p>
                 <p className="text-4xl font-black font-mono tracking-tighter italic" style={{ color: m.c }}>{m.v}</p>
-                <p className="text-[10px] text-slate-800 font-black uppercase mt-4 tracking-widest opacity-60 underline decoration-red-500/10">{m.sub}</p>
+                <p className="text-[10px] text-slate-800 font-black uppercase mt-4 tracking-widest opacity-60 underline decoration-rose-500/10 italic">{m.sub}</p>
               </motion.div>
             ))}
           </div>
@@ -295,8 +295,8 @@ const PortfolioRiskView: React.FC = () => {
                       className={cn(
                         "px-8 py-3 text-[10px] font-black uppercase tracking-[0.3em] transition-all rounded-xl italic",
                         filter === f
-                          ? "bg-red-600 text-white shadow-4xl scale-105 font-bold"
-                          : "text-slate-600 hover:text-slate-300 border-2 border-transparent hover:border-red-500/10 hover:bg-white/5"
+                          ? "bg-rose-600 text-white shadow-4xl scale-105 font-bold"
+                          : "text-slate-600 hover:text-slate-300 border-2 border-transparent hover:border-rose-500/10 hover:bg-white/5"
                       )}
                     >
                       {f === 'all' ? 'УСІ_ПОЗИЦІЇ' : RISK_LABEL[f]}
@@ -314,16 +314,16 @@ const PortfolioRiskView: React.FC = () => {
                     className={cn(
                       "p-10 border-2 cursor-pointer transition-all relative overflow-hidden group rounded-[3.5rem] shadow-3xl",
                       selectedPos?.id === pos.id
-                        ? "bg-red-600/[0.03] border-red-500/30 shadow-4xl"
+                        ? "bg-rose-600/[0.03] border-rose-500/30 shadow-4xl"
                         : "bg-black/60 border-white/5 hover:border-white/20"
                     )}
                   >
                     {selectedPos?.id === pos.id && (
-                      <div className="absolute left-0 inset-y-0 w-2.5 bg-red-600 shadow-[0_0_20px_#e11d48]" />
+                      <div className="absolute left-0 inset-y-0 w-2.5 bg-rose-600 shadow-[0_0_20px_#f43f5e]" />
                     )}
 
                     <div className="flex items-start gap-10 pl-4">
-                      <div className="w-24 h-24 shrink-0 rounded-[2rem] bg-black/80 border-2 border-white/5 flex flex-col items-center justify-center shadow-inner group-hover:border-red-500/30 transition-all">
+                      <div className="w-24 h-24 shrink-0 rounded-[2rem] bg-black/80 border-2 border-white/5 flex flex-col items-center justify-center shadow-inner group-hover:border-rose-500/30 transition-all">
                         <span className="text-3xl font-black font-mono italic tracking-tighter leading-none" style={{ color: RISK_COLOR[pos.riskLevel] }}>
                           {pos.riskPct}%
                         </span>
@@ -333,9 +333,9 @@ const PortfolioRiskView: React.FC = () => {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-4 mb-3">
                           <span className="text-[11px] font-black font-mono text-slate-700 uppercase tracking-widest">{pos.id}</span>
-                          <span className="text-[10px] font-black text-red-500/60 uppercase tracking-widest italic">{pos.country}</span>
+                          <span className="text-[10px] font-black text-rose-500/60 uppercase tracking-widest italic">{pos.country}</span>
                         </div>
-                        <h3 className="text-3xl font-black text-white group-hover:text-red-500 transition-colors uppercase italic tracking-tighter leading-none mb-4 font-serif">
+                        <h3 className="text-3xl font-black text-white group-hover:text-rose-500 transition-colors uppercase italic tracking-tighter leading-none mb-4">
                           {pos.counterparty}
                         </h3>
                         <div className="flex items-center gap-8 mb-6">
@@ -344,7 +344,7 @@ const PortfolioRiskView: React.FC = () => {
                              <span className="text-[12px] font-black uppercase italic tracking-tight">{pos.type}</span>
                           </div>
                           <div className={cn("flex items-center gap-2 px-4 py-1.5 rounded-xl border italic text-[9px] font-black tracking-widest uppercase shadow-inner",
-                            pos.riskLevel === 'critical' ? 'border-red-500/30 text-red-500 bg-red-500/5' : 'border-slate-800 text-slate-500 bg-white/5'
+                            pos.riskLevel === 'critical' ? 'border-rose-500/30 text-rose-500 bg-rose-500/5' : 'border-slate-800 text-slate-500 bg-white/5'
                           )}>
                              {RISK_LABEL[pos.riskLevel]}
                           </div>
@@ -352,11 +352,11 @@ const PortfolioRiskView: React.FC = () => {
 
                         <div className="grid grid-cols-2 gap-10">
                           <div>
-                            <p className="text-[9px] text-slate-700 uppercase font-black tracking-[0.4em] mb-2">ЕКСПОЗИЦІЯ_NET</p>
+                            <p className="text-[9px] text-slate-700 uppercase font-black tracking-[0.4em] mb-2 italic">ЕКСПОЗИЦІЯ_NET</p>
                             <p className="text-2xl font-black text-white font-mono italic">{pos.exposure}</p>
                           </div>
                           <div>
-                            <p className="text-[9px] text-slate-700 uppercase font-black tracking-[0.4em] mb-2">У_ЗОНІ_РИЗИКУ</p>
+                            <p className="text-[9px] text-slate-700 uppercase font-black tracking-[0.4em] mb-2 italic">У_ЗОНІ_РИЗИКУ</p>
                             <p className="text-2xl font-black font-mono italic" style={{ color: RISK_COLOR[pos.riskLevel] }}>{pos.atRisk}</p>
                           </div>
                         </div>
@@ -365,8 +365,8 @@ const PortfolioRiskView: React.FC = () => {
                       <div className="shrink-0 pt-6">
                         {pos.trend === 'up' ? (
                           <div className="relative">
-                            <TrendingUp size={32} className="text-red-500 drop-shadow-[0_0_10px_#e11d48]" />
-                            <motion.div animate={{ opacity: [1, 0, 1] }} transition={{ repeat: Infinity }} className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full" />
+                            <TrendingUp size={32} className="text-rose-500 drop-shadow-[0_0_10px_#f43f5e]" />
+                            <motion.div animate={{ opacity: [1, 0, 1] }} transition={{ repeat: Infinity }} className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-rose-500 rounded-full" />
                           </div>
                         ) : (
                           <Activity size={32} className="text-slate-800" />
@@ -388,24 +388,24 @@ const PortfolioRiskView: React.FC = () => {
                     initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }}
                     className="space-y-8"
                   >
-                    <TacticalCard variant="holographic" className="p-10 bg-black/80 border-2 border-red-500/20 rounded-[4rem] shadow-4xl relative overflow-hidden">
+                    <TacticalCard variant="holographic" className="p-10 bg-black/80 border-2 border-rose-500/20 rounded-[4rem] shadow-4xl relative overflow-hidden">
                        <div className="absolute top-0 right-0 p-24 opacity-[0.03] pointer-events-none">
-                          <Target size={260} className="text-red-500" />
+                          <Target size={260} className="text-rose-500" />
                        </div>
                        <div className="relative z-10 space-y-10">
                           <div className="flex items-center justify-between">
-                             <div className="px-5 py-2 bg-red-600/10 border border-red-600/30 rounded-full">
-                                <span className="text-[10px] font-black text-red-500 uppercase tracking-widest italic">{selectedPos.id}</span>
+                             <div className="px-5 py-2 bg-rose-600/10 border border-rose-600/30 rounded-full">
+                                <span className="text-[10px] font-black text-rose-500 uppercase tracking-widest italic">{selectedPos.id}</span>
                              </div>
                              <div className="flex gap-2">
-                                <span className="w-2 h-2 bg-red-600 rounded-full animate-ping" />
-                                <span className="text-[9px] font-black text-red-700 uppercase tracking-widest font-mono italic">АКТИВНА_ЗАГРОЗА</span>
+                                <span className="w-2 h-2 bg-rose-600 rounded-full animate-ping" />
+                                <span className="text-[9px] font-black text-rose-700 uppercase tracking-widest font-mono italic">АКТИВНА_ЗАГРОЗА</span>
                              </div>
                           </div>
 
                           <div>
-                             <h2 className="text-[42px] font-black text-white leading-none tracking-tighter italic uppercase font-serif mb-4">{selectedPos.counterparty}</h2>
-                             <p className="text-[12px] text-red-600 font-black uppercase tracking-[0.5em] italic bg-red-500/5 px-6 py-2 rounded-full w-fit border border-red-500/10">
+                             <h2 className="text-[42px] font-black text-white leading-none tracking-tighter italic uppercase mb-4">{selectedPos.counterparty}</h2>
+                             <p className="text-[12px] text-rose-600 font-black uppercase tracking-[0.5em] italic bg-rose-500/5 px-6 py-2 rounded-full w-fit border border-rose-500/10">
                                {selectedPos.country} · {selectedPos.type}
                              </p>
                           </div>
@@ -415,34 +415,34 @@ const PortfolioRiskView: React.FC = () => {
                               { l: 'ЕКСПОЗИЦІЯ', v: selectedPos.exposure },
                               { l: 'NET_РИЗИК',   v: selectedPos.atRisk },
                               { l: 'ІНДЕКС_X',     v: `${selectedPos.riskPct}%` },
-                              { l: 'З ІЛІСТЬ',     v: selectedPos.daysToMaturity > 0 ? `${selectedPos.daysToMaturity} ДН` : 'ДЕФОЛТ' },
+                              { l: 'ЗРІЛІСТЬ',     v: selectedPos.daysToMaturity > 0 ? `${selectedPos.daysToMaturity} ДН` : 'ДЕФОЛТ' },
                             ].map((f, i) => (
-                              <div key={i} className="p-6 border-2 border-white/5 bg-black rounded-[2.5rem] shadow-inner group hover:border-red-500/20 transition-all">
-                                <p className="text-[9px] text-slate-800 uppercase font-black tracking-widest mb-3 group-hover:text-red-500/60 transition-colors italic">{f.l}</p>
+                              <div key={i} className="p-6 border-2 border-white/5 bg-black rounded-[2.5rem] shadow-inner group hover:border-rose-500/20 transition-all">
+                                <p className="text-[9px] text-slate-800 uppercase font-black tracking-widest mb-3 group-hover:text-rose-500/60 transition-colors italic">{f.l}</p>
                                 <p className="text-2xl font-black text-white font-mono italic tracking-tighter">{f.v}</p>
                               </div>
                             ))}
                           </div>
 
-                          <div className="p-8 bg-red-600/5 border-2 border-red-500/20 rounded-[3rem] relative group/action">
+                          <div className="p-8 bg-rose-600/5 border-2 border-rose-500/20 rounded-[3rem] relative group/action">
                              <div className="flex items-center gap-4 mb-4">
-                                <Flame size={20} className="text-red-500 animate-pulse" />
-                                <h4 className="text-[11px] font-black text-red-500/60 uppercase tracking-[0.5em] italic">КРИТИЧНИЙ_ТрИГЕ </h4>
+                                <Flame size={20} className="text-rose-500 animate-pulse" />
+                                <h4 className="text-[11px] font-black text-rose-500/60 uppercase tracking-[0.5em] italic">КРИТИЧНИЙ_ТРИГЕР</h4>
                              </div>
-                             <p className="text-[15px] font-black text-red-100 italic leading-tight uppercase tracking-tight">
+                             <p className="text-[15px] font-black text-rose-100 italic leading-tight uppercase tracking-tight">
                                {selectedPos.trigger}
                              </p>
                              <div className="absolute top-0 right-0 p-8 opacity-10">
-                                <AlertOctagon size={60} className="text-red-600" />
+                                <AlertOctagon size={60} className="text-rose-600" />
                              </div>
                           </div>
 
                           <div className="space-y-4">
-                            <button className="w-full py-8 bg-red-600 text-white text-[14px] font-black uppercase tracking-[0.6em] italic hover:brightness-110 transition-all shadow-4xl rounded-[2.5rem] flex items-center justify-center gap-6 border-4 border-red-500/20">
-                               <Zap size={24} /> ВИКОНАТИ_П ИМУС
+                            <button className="w-full py-8 bg-rose-600 text-white text-[14px] font-black uppercase tracking-[0.6em] italic hover:brightness-110 transition-all shadow-4xl rounded-[2.5rem] flex items-center justify-center gap-6 border-4 border-rose-500/20">
+                               <Zap size={24} /> ВИКОНАТИ_ПРИМУС
                             </button>
-                            <button className="w-full py-6 bg-black border-2 border-white/10 text-slate-500 text-[11px] font-black uppercase tracking-[0.4em] italic hover:text-white hover:border-red-500/30 transition-all rounded-[2.5rem] shadow-2xl">
-                               ЗАВАНТАЖИТИ_Ю ИДИЧНИЙ_ФАЙЛ
+                            <button className="w-full py-6 bg-black border-2 border-white/10 text-slate-500 text-[11px] font-black uppercase tracking-[0.4em] italic hover:text-white hover:border-rose-500/30 transition-all rounded-[2.5rem] shadow-2xl">
+                               ЗАВАНТАЖИТИ_ЮРИДИЧНИЙ_ФАЙЛ
                             </button>
                           </div>
                        </div>
@@ -451,38 +451,38 @@ const PortfolioRiskView: React.FC = () => {
                     {/* ── ТАЙМЛАЙН ELITE ── */}
                     <TacticalCard className="p-10 bg-black/60 border-2 border-white/5 rounded-[3.5rem] shadow-3xl">
                        <h3 className="text-[11px] font-black text-slate-700 uppercase tracking-[0.6em] mb-10 flex items-center gap-4 italic relative">
-                          <Activity size={18} className="text-red-600 animate-pulse" />
-                          Х ОНОЛОГІЯ_ШВИДКОСТІ_РИЗИКУ
-                          <div className="ml-auto w-2 h-2 bg-red-600 rounded-full shadow-[0_0_10px_#e11d48]" />
+                          <Activity size={18} className="text-rose-600 animate-pulse" />
+                          ХРОНОЛОГІЯ_ШВИДКОСТІ_РИЗИКУ
+                          <div className="ml-auto w-2 h-2 bg-rose-600 rounded-full shadow-[0_0_10px_#f43f5e]" />
                        </h3>
                        <div className="h-[220px]">
                          <ResponsiveContainer width="100%" height="100%">
                            <AreaChart data={RISK_TIMELINE} margin={{ top: 10, right: 0, left: -25, bottom: 0 }}>
                              <defs>
                                <linearGradient id="riskGradElite" x1="0" y1="0" x2="0" y2="1">
-                                 <stop offset="5%"  stopColor="#E11D48" stopOpacity={0.4} />
-                                 <stop offset="95%" stopColor="#E11D48" stopOpacity={0} />
+                                 <stop offset="5%"  stopColor="#f43f5e" stopOpacity={0.4} />
+                                 <stop offset="95%" stopColor="#f43f5e" stopOpacity={0} />
                                </linearGradient>
                              </defs>
                              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,175,55,0.02)" vertical={false} />
                              <XAxis dataKey="t" hide />
                              <YAxis hide domain={[100, 130]} />
                              <Tooltip
-                               contentStyle={{ background: '#020202', border: '2px solid rgba(225,29,72,0.4)', borderRadius: '24px', color: '#fff', fontSize: '10px' }}
-                               itemStyle={{ color: '#E11D48', fontWeight: '900' }}
+                               contentStyle={{ background: '#020202', border: '2px solid rgba(244, 63, 94, 0.4)', borderRadius: '24px', color: '#fff', fontSize: '10px' }}
+                               itemStyle={{ color: '#f43f5e', fontWeight: '900' }}
                              />
-                             <Area type="monotone" dataKey="risk" stroke="#E11D48" strokeWidth={4} fill="url(#riskGradElite)" animationDuration={3000} />
+                             <Area type="monotone" dataKey="risk" stroke="#f43f5e" strokeWidth={4} fill="url(#riskGradElite)" animationDuration={3000} />
                            </AreaChart>
                          </ResponsiveContainer>
                        </div>
                     </TacticalCard>
 
-                    {/* ── СЕКТО НИЙ РОЗПОДІЛ ELITE ── */}
+                    {/* ── СЕКТОРНИЙ РОЗПОДІЛ ELITE ── */}
                     <TacticalCard className="p-10 bg-black/60 border-2 border-white/5 rounded-[3.5rem] shadow-3xl overflow-hidden relative">
                        <div className="absolute top-0 right-0 p-8 opacity-5">
-                          <Radar size={100} className="text-red-500" />
+                          <Radar size={100} className="text-rose-500" />
                        </div>
-                       <h3 className="text-[11px] font-black text-slate-700 uppercase tracking-[0.6em] mb-8 italic leading-none"> АДА _СЕКТО НОГО_РИЗИКУ</h3>
+                       <h3 className="text-[11px] font-black text-slate-700 uppercase tracking-[0.6em] mb-8 italic leading-none">РАДАР_СЕКТОРНОГО_РИЗИКУ</h3>
                        <div className="flex items-center gap-10">
                           <PieChart width={140} height={140}>
                              <Pie data={RISK_BREAKDOWN} innerRadius={42} outerRadius={62} paddingAngle={4} dataKey="value" cx="50%" cy="50%">
@@ -514,7 +514,7 @@ const PortfolioRiskView: React.FC = () => {
         </div>
 
         <style dangerouslySetInnerHTML={{ __html: `
-.custom-scrollbar::-webkit-scrollbar{width:6px}.custom-scrollbar::-webkit-scrollbar-track{background:transparent}.custom-scrollbar::-webkit-scrollbar-thumb{background:rgba(225,29,72,.15);border-radius:20px;border:2px solid black}.custom-scrollbar::-webkit-scrollbar-thumb:hover{background:rgba(225,29,72,.3)}` }} />
+.custom-scrollbar::-webkit-scrollbar{width:6px}.custom-scrollbar::-webkit-scrollbar-track{background:transparent}.custom-scrollbar::-webkit-scrollbar-thumb{background:rgba(244, 63, 94,.15);border-radius:20px;border:2px solid black}.custom-scrollbar::-webkit-scrollbar-thumb:hover{background:rgba(244, 63, 94,.3)}` }} />
       </div>
     </PageTransition>
   );

@@ -205,11 +205,11 @@ export default function MonitoringView() {
                 <div className="rounded-3xl border border-white/5 bg-black/40 backdrop-blur-3xl p-8 shadow-xl">
                    <div className="space-y-4">
                      {[
-                       { label: 'PostgreSQL (SSOT)', status: 'ACTIVE', latency: '2ms', color: 'text-emerald-400' },
-                       { label: 'ClickHouse (OLAP)', status: 'ONLINE', latency: '45ms', color: 'text-emerald-400' },
-                       { label: 'Neo4j (GRAPH)', status: 'ACTIVE', latency: '12ms', color: 'text-emerald-400' },
-                       { label: 'OpenSearch', status: 'INDEXING', latency: '120ms', color: 'text-sky-400' },
-                       { label: 'Qdrant (VECTOR)', status: 'ACTIVE', latency: '8ms', color: 'text-emerald-400' },
+                       { label: 'PostgreSQL (SSOT)', status: 'АКТИВНО', latency: '2ms', color: 'text-emerald-400' },
+                       { label: 'ClickHouse (OLAP)', status: 'ОНЛАЙН', latency: '45ms', color: 'text-emerald-400' },
+                       { label: 'Neo4j (GRAPH)', status: 'АКТИВНО', latency: '12ms', color: 'text-emerald-400' },
+                       { label: 'OpenSearch', status: 'ІНДЕКСАЦІЯ', latency: '120ms', color: 'text-sky-400' },
+                       { label: 'Qdrant (VECTOR)', status: 'АКТИВНО', latency: '8ms', color: 'text-emerald-400' },
                      ].map((db) => (
                        <div key={db.label} className="flex items-center justify-between rounded-2xl bg-white/[0.02] border border-white/5 p-4 hover:bg-white/[0.04] transition-all group">
                          <div className="flex items-center gap-4">

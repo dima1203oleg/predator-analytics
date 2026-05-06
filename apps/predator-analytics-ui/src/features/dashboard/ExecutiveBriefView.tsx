@@ -209,7 +209,7 @@ export default function ExecutiveBriefView() {
               </div>
               <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-rose-500/5 border border-rose-500/20">
                  <span className="w-2 h-2 rounded-full bg-rose-600 animate-pulse shadow-[0_0_8px_#f43f5e]" />
-                 <span className="text-[10px] font-black uppercase tracking-widest text-rose-400 italic">ПОТІК_LIVE</span>
+                 <span className="text-[10px] font-black uppercase tracking-widest text-rose-400 italic">ЖИВИЙ_ПОТІК</span>
               </div>
             </div>
             
