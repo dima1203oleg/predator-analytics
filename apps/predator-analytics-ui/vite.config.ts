@@ -41,17 +41,8 @@ export default defineConfig(({ mode }) => {
       chunkSizeWarningLimit: 3000,
       rollupOptions: {
         output: {
-          manualChunks: {
-            'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-            'vendor-state': ['zustand', '@tanstack/react-query'],
-            'vendor-motion': ['framer-motion'],
-            'vendor-axios': ['axios'],
-            'vendor-recharts': ['recharts'],
-            'vendor-echarts': ['echarts', 'echarts-for-react'],
-            'vendor-three': ['three', '@react-three/fiber', '@react-three/drei'],
-            'vendor-nivo': ['@nivo/core', '@nivo/geo', '@nivo/network', '@nivo/sankey'],
-            'vendor-lucide': ['lucide-react'],
-          }
+          format: 'iife',
+          inlineDynamicImports: true
         }
       },
       sourcemap: false,
