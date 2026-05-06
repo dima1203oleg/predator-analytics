@@ -15,6 +15,7 @@ import {
   ArrowRight,
   ArrowUpRight,
   BarChart3,
+  Box,
   Brain,
   Building2,
   Database,

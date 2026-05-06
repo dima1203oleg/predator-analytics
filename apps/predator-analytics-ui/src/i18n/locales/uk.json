@@ -26,6 +26,55 @@
       "typing": "Друк...",
       "greeting": "Привіт! Я AI Copilot Predator Analytics. Чим можу допомогти?"
     },
+    "market": {
+      "simulator_title": "Симулятор ринку",
+      "sim_param_currency": "Курс валют (UAH/$)",
+      "sim_param_logistics": "Логістичні витрати",
+      "sim_run_ai": "ЗАПУСТИТИ AI СИМУЛЯЦІЮ",
+      "sim_result_margin": "ПРОГНОЗНА МАРЖА",
+      "sim_result_risk": "РІВЕНЬ РИЗИКУ"
+    },
+    "graph": {
+      "title": "Граф економічних зв'язків",
+      "search_entity": "Пошук суб'єкта за ЄДРПОУ/Назвою...",
+      "nodes": "ВИЯВЛЕНІ СУТНОСТІ",
+      "node_type_company": "КОМПАНІЯ",
+      "node_type_person": "ОСОБА",
+      "pathfinding": "ПОШУК МАРШРУТУ ВПЛИВУ",
+      "shadow_mode": "Симуляція тіньового графу",
+      "what_if": "Режим аналізу 'Що-якщо' активовано",
+      "direct": "Прямий зв'язок",
+      "ubo": "Ланцюг бенефіціарів",
+      "risk_link": "Ризиковий зв'язок"
+    },
+    "predictions": {
+      "ews_title": "Сигнали раннього попередження",
+      "ews_investigate": "РОЗПОЧАТИ РОЗСЛІДУВАННЯ",
+      "confidence": "Впевненість"
+    },
+    "layers": {
+      "behavioral": "Поведінковий",
+      "institutional": "Інституційний",
+      "influence": "Вплив",
+      "structural": "Структурний",
+      "predictive": "Предиктивний"
+    },
+    "cers": {
+      "critical": "КРИТИЧНИЙ",
+      "elevated": "ПІДВИЩЕНИЙ",
+      "stable": "СТАБІЛЬНИЙ"
+    },
+    "radar": {
+      "title": "Радар конкурентів",
+      "no_activity": "Активності не виявлено",
+      "new_import": "Новий імпорт",
+      "route_change": "Зміна маршруту",
+      "price_alert": "Цінова аномалія"
+    },
+    "status": {
+      "live_scan": "ЖИВИЙ СКАН",
+      "live": "НАЖИВО"
+    },
     "footer": {
       "built_with": "Створено з використанням сучасних технологій"
     }

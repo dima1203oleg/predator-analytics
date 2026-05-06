@@ -42,7 +42,7 @@ import { factoryApi } from '../../services/api/factory';
 import { useBackendStatus } from '../../hooks/useBackendStatus';
 import { NeuralPulse } from '@/components/ui/NeuralPulse';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1';
+import { API_BASE_URL } from '@/services/api/config';
 
 interface Suggestion {
   id: string;
@@ -204,7 +204,7 @@ export const Predator: React.FC = () => {
     if (!query.trim()) return;
     if (!forcedQuery) setMessage('');
     setAiResponse('ГЛИБОКЕ СКАНУВАННЯ GLM-5.1 [СУВЕРЕННИЙ АГЕНТ]...');
-    setActiveAgent(`GLM-5.1 ↔ ZROK [${backendStatus.nodeSource}]`);
+    setActiveAgent(`GLM-5.1 ↔ [${backendStatus.nodeSource}]`);
     try {
       const res = await api.premium.query(query);
       const answer = res.answer || res.response || res.result;

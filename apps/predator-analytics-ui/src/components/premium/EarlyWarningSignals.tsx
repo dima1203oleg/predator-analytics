@@ -79,7 +79,7 @@ const EarlyWarningSignals: React.FC = () => {
                     </div>
                     <Badge variant="outline" className="bg-slate-900/50 border-slate-800 text-[10px] flex items-center gap-1">
                         <Activity size={10} className="animate-pulse text-rose-500" />
-                        LIVE SCAN
+                        {t('status.live_scan')}
                     </Badge>
                 </div>
             </CardHeader>
@@ -106,7 +106,7 @@ const EarlyWarningSignals: React.FC = () => {
                                     </h4>
                                 </div>
                                 <div className="flex flex-col items-end">
-                                    <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Confidence</div>
+                                    <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{t('predictions.confidence')}</div>
                                     <div className="text-xs font-black text-cyan-400">{(signal.confidence * 100).toFixed(0)}%</div>
                                 </div>
                             </div>

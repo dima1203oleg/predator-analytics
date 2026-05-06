@@ -54,7 +54,7 @@ const CompetitorRadar: React.FC = () => {
                     <Radar className="text-cyan-500 animate-spin-slow" />
                     {t('radar.title')}
                 </CardTitle>
-                <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20">LIVE</Badge>
+                <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20">{t('status.live')}</Badge>
             </CardHeader>
 
             <CardContent className="pt-4 px-4 overflow-y-auto max-h-[320px] scrollbar-hide">

@@ -47,10 +47,10 @@ const EconomicGraphExplorer: React.FC = () => {
                         </div>
                         <div>
                             <CardTitle className="text-lg font-black uppercase tracking-tighter">
-                                {isShadowMode ? "Shadow Graph Simulation" : t('graph.title')}
+                                {isShadowMode ? t('graph.shadow_mode') : t('graph.title')}
                             </CardTitle>
                             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">
-                                {isShadowMode ? "What-if Analysis Mode Active" : "Neural Relations Engine v61.0-ELITE"}
+                                {isShadowMode ? t('graph.what_if') : "Neural Relations Engine v61.0-ELITE"}
                             </p>
                         </div>
                     </div>
@@ -83,7 +83,7 @@ const EconomicGraphExplorer: React.FC = () => {
                         </svg>
                     </div>
                     <div className="absolute text-slate-600 text-[10px] font-mono uppercase tracking-[0.3em] animate-pulse">
-                        Initializing Knowledge Lattice...
+                        {t('common.loadingData')}
                     </div>
                 </div>
 
@@ -120,9 +120,9 @@ const EconomicGraphExplorer: React.FC = () => {
 
                 {/* Bottom Legend */}
                 <div className="absolute bottom-6 right-6 flex items-center gap-4 px-4 py-2 bg-slate-900/40 border border-slate-800 rounded-full backdrop-blur-sm">
-                    <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-cyan-500" /><span className="text-[9px] font-bold text-slate-400 uppercase">Direct</span></div>
-                    <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-amber-500" /><span className="text-[9px] font-bold text-slate-400 uppercase">UBO Chain</span></div>
-                    <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-rose-500" /><span className="text-[9px] font-bold text-slate-400 uppercase">Risk Link</span></div>
+                    <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-cyan-500" /><span className="text-[9px] font-bold text-slate-400 uppercase">{t('graph.direct')}</span></div>
+                    <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-amber-500" /><span className="text-[9px] font-bold text-slate-400 uppercase">{t('graph.ubo')}</span></div>
+                    <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-rose-500" /><span className="text-[9px] font-bold text-slate-400 uppercase">{t('graph.risk_link')}</span></div>
                 </div>
             </CardContent>
         </Card>
