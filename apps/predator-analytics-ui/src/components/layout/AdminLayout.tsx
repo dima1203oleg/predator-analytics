@@ -100,7 +100,7 @@ const AdminSidebar: React.FC = () => {
         x: isMobile && !isOpen ? -280 : 0
       }}
       className={cn(
-        "flex flex-col h-screen bg-slate-950/95 backdrop-blur-3xl border-r border-white/10 overflow-hidden relative group shrink-0",
+        "flex flex-col h-screen bg-slate-950/95 backdrop-blur-3xl border-r border-white/10 overflow-hidden relative z-50 group shrink-0",
         isMobile && "fixed inset-y-0 left-0 z-[100] shadow-2xl"
       )}
     >
