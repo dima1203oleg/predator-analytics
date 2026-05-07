@@ -3,9 +3,9 @@
 # Синхронізація коду з Mac на сервер (Static IP)
 # Використання: ./scripts/sync-to-server.sh [--dry-run]
 
-SSH_KEY="$HOME/.ssh/id_ed25519_ngrok" # Key for server access
-SSH_HOST="194.177.1.240"
-SSH_PORT="6666"
+SSH_KEY="$HOME/.ssh/id_ed25519_dev" # Key for server access (dev key)
+SSH_HOST="127.0.0.1" # Zrok SSH tunnel localhost bind
+SSH_PORT="2222" # Zrok SSH tunnel port
 SSH_USER="dima"
 LOCAL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/"
 REMOTE_DIR="predator-analytics"
@@ -57,9 +57,9 @@ fi
 
 # Виконання rsync
 rsync $RSYNC_OPTS "${EXCLUDES[@]}" \
-  -e "ssh" \
+  -e "ssh -p $SSH_PORT -i $SSH_KEY" \
   "$LOCAL_DIR" \
-  "$SSH_HOST:~/$REMOTE_DIR/"
+  "$SSH_USER@$SSH_HOST:~/$REMOTE_DIR/"
 
 # Перевірка результату
 if [ $? -eq 0 ]; then
