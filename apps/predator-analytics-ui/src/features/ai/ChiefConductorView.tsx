@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/utils/cn';
 import { factoryApi, type AntigravityTask } from '@/services/api/factory';
 import { useAgentsStats, useChaosStatus, useSetChaosExperiment } from '@/hooks/useAdminApi';
+import type { ChaosExperimentName } from '@/services/adminApi';
 
 const AGENT_ICON_MAP: Record<string, any> = {
   orchestrator: Bot,
@@ -246,10 +247,10 @@ export default function ChiefConductorView() {
                  ].map((exp) => (
                    <button 
                      key={exp.id}
-                     onClick={() => setChaos.mutate({ name: exp.id, active: !chaosStatus?.[exp.id as any] })}
+                     onClick={() => setChaos.mutate({ name: exp.id as ChaosExperimentName, active: !chaosStatus?.[exp.id as ChaosExperimentName] })}
                      className={cn(
                        "p-3 rounded-xl border text-[9px] font-black uppercase tracking-widest transition-all text-center",
-                       chaosStatus?.[exp.id as any] 
+                       chaosStatus?.[exp.id as ChaosExperimentName] 
                          ? "bg-rose-500 text-white border-rose-400 shadow-[0_0_15px_rgba(225,29,72,0.4)]" 
                          : "bg-black/40 text-slate-500 border-white/5 hover:border-rose-500/30"
                      )}

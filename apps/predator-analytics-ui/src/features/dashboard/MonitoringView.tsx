@@ -130,7 +130,7 @@ export default function MonitoringView() {
             >
               <RefreshCcw className={cn("h-6 w-6 transition-transform", isLoading && "animate-spin")} />
             </button>
-            <CyberOrb size="sm" status={cluster.statusLabel === 'Справно' ? 'active' : 'warning'} pulsing />
+            <CyberOrb size="sm" status={cluster.statusLabel === 'Справно' ? 'active' : 'alert'} pulsing />
           </div>
         </div>
 

@@ -198,4 +198,14 @@ export const factoryApi = {
   getWargamingForecast: async () => {
     return (await apiClient.get('/wargaming/forecast')).data;
   },
+
+  // ─── Monte Carlo Simulation ───────────────────────────────────────────────
+
+  /** Запустити Monte Carlo симуляцію */
+  runMonteCarlo: async (payload: {
+    scenarios: Array<{ id: string; name: string; probability: number; impact_uah_mln: number }>;
+    iterations: number;
+  }): Promise<{ expected_impact_mln: number; p95_impact_mln: number; p99_impact_mln: number }> => {
+    return (await apiClient.post('/wargaming/monte-carlo', payload)).data;
+  },
 };

@@ -279,7 +279,7 @@ export default function StrategicScenarioView() {
                         </linearGradient>
                       </defs>
                       <CartesianGrid strokeDasharray="4 4" stroke="rgba(255,255,255,0.02)" vertical={false} />
-                      <XAxis dataKey="time" stroke="rgba(255,255,255,0.1)" fontSize={10} tickLine={false} axisLine={false} fontWeight="900" italic />
+                      <XAxis dataKey="time" stroke="rgba(255,255,255,0.1)" fontSize={10} tickLine={false} axisLine={false} fontWeight="900" />
                       <YAxis stroke="rgba(255,255,255,0.1)" fontSize={10} tickLine={false} axisLine={false} unit="%" fontWeight="900" />
                       <Tooltip 
                         contentStyle={{ backgroundColor: 'rgba(0,0,0,0.95)', border: '2px solid rgba(244,63,94,0.3)', borderRadius: '24px', padding: '16px' }}

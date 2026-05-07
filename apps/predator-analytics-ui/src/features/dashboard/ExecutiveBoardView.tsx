@@ -328,9 +328,9 @@ export default function ExecutiveBoardView() {
                 <Flame className="h-5 w-5 text-rose-500 animate-pulse" />
                 КРИТИЧНІ СИГНАЛИ
               </h2>
-              <Badge variant="outline" className="bg-rose-500/10 border-rose-500/20 text-rose-500 px-3 py-1 text-[10px] font-black italic">
+              <span className="bg-rose-500/10 border border-rose-500/20 text-rose-500 px-3 py-1 text-[10px] font-black italic rounded-md">
                 {alerts.length} АКТИВНО
-              </Badge>
+              </span>
             </div>
 
             <div className="space-y-4 max-h-[500px] overflow-y-auto no-scrollbar pr-2">

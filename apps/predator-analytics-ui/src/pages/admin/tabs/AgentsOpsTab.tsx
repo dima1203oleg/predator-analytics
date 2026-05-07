@@ -156,7 +156,7 @@ export const AgentsOpsTab: React.FC = () => {
     );
   }
 
-  const { health: stats, agents } = data || { health: { total: 0 }, agents: [] };
+  const { stats, list: agents } = data || { stats: { total: 0, alive: 0, dead: 0, idle: 0, avgCpu: 0 }, list: [] };
 
 
   return (
@@ -199,7 +199,7 @@ export const AgentsOpsTab: React.FC = () => {
           { label: 'ТЕРМІНОВАНО', value: stats.dead, sub: 'ОФЛАЙН_КАНАЛ', color: 'text-rose-900', icon: XCircle },
           { label: 'РЕЖИМ_ОЧІКУВАННЯ', value: stats.idle, sub: 'ГОТОВНІСТЬ_L5', color: 'text-white/40', icon: Clock },
           { label: 'ОБЧИСЛЮВАЛЬНИЙ_ТИСК', value: `${stats.avgCpu}%`, sub: 'СЕРЕДНЄ_НАВАНТ.', color: 'text-sky-500', icon: Cpu },
-          { label: 'ГЛОБАЛЬНИЙ_СТЕК', value: agents.reduce((s, a) => s + (a.queueDepth || 0), 0).toLocaleString(), sub: 'ЗАВДАНЬ_У_ЧЕРЗІ', color: 'text-rose-500', icon: Database },
+          { label: 'ГЛОБАЛЬНИЙ_СТЕК', value: agents.reduce((s: number, a: AgentRow) => s + (a.queueDepth || 0), 0).toLocaleString(), sub: 'ЗАВДАНЬ_У_ЧЕРЗІ', color: 'text-rose-500', icon: Database },
         ].map((metric, i) => (
           <motion.div 
             key={i}

@@ -39,7 +39,6 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
     requests: [] as number[],
     latency: [] as number[],
     errors: [] as number[],
-    errors: [] as number[],
     success: 0,
     total: 0,
     budgetRisk: 0,

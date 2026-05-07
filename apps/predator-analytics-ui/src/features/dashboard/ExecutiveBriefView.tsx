@@ -29,6 +29,7 @@ import {
   ArrowRight,
   Flame,
   ChevronRight,
+  Loader2,
 } from 'lucide-react';
 import { 
   AreaChart, 
@@ -223,7 +224,7 @@ export default function ExecutiveBriefView() {
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="4 4" stroke="rgba(255,255,255,0.02)" vertical={false} />
-                  <XAxis dataKey="time" stroke="rgba(255,255,255,0.05)" tick={{fill: '#475569', fontSize: 10, fontWeight: '900', italic: true}} tickLine={false} axisLine={false} />
+                  <XAxis dataKey="time" stroke="rgba(255,255,255,0.05)" tick={{fill: '#475569', fontSize: 10, fontWeight: '900', fontStyle: 'italic'}} tickLine={false} axisLine={false} />
                   <YAxis stroke="rgba(255,255,255,0.05)" tick={{fill: '#475569', fontSize: 10, fontWeight: '900'}} tickLine={false} axisLine={false} />
                   <Tooltip 
                     contentStyle={{ backgroundColor: 'rgba(10, 10, 10, 0.95)', borderColor: 'rgba(244, 63, 94, 0.3)', color: '#fff', borderRadius: '20px', border: '1px solid rgba(244, 63, 94, 0.2)', padding: '12px' }}
@@ -248,9 +249,9 @@ export default function ExecutiveBriefView() {
                   <p className="text-[10px] text-slate-600 uppercase tracking-[0.3em] font-black italic mt-1">КРИТИЧНИЙ РІВЕНЬ РИЗИКУ — АНАЛІЗ AI</p>
                 </div>
               </div>
-              <Button variant="ghost" className="text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-white italic">
+              <button className="text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-white italic flex items-center">
                 ВЕСЬ ПЕРЕЛІК <ArrowRight size={14} className="ml-2" />
-              </Button>
+              </button>
             </div>
             
             <div className="overflow-x-auto no-scrollbar">

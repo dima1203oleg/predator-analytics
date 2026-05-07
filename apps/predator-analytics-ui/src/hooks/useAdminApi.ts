@@ -186,6 +186,7 @@ export function useAdminApi(key: keyof typeof ADMIN_KEYS): any {
     systemNodes: useSystemNodes,
     aiEngines: useAIEngines,
     systemLogs: useSystemLogs,
+    chaos: useChaosStatus,
   };
 
   const hook = map[key];

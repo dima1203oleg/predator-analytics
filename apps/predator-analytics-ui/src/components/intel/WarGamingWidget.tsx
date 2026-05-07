@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShieldAlert, Zap, TrendingDown, Target, Activity, Play, RefreshCw, AlertTriangle } from 'lucide-react';
 import { TacticalCard } from '../ui/TacticalCard';
-import { wargamingApi, WarScenario } from '../../../services/api/wargaming';
-import { cn } from '../../../lib/utils';
+import { wargamingApi, WarScenario } from '@/services/api/wargaming';
+import { cn } from '@/lib/utils';
 
 export const WarGamingWidget: React.FC = () => {
     const [scenarios, setScenarios] = useState<WarScenario[]>([]);

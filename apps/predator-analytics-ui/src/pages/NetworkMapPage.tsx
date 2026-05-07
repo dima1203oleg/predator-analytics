@@ -29,7 +29,6 @@ import { HoloContainer } from '@/components/HoloContainer';
 import { KnowledgeGraph3D } from '@/components/graph/KnowledgeGraph3D';
 
 const VramIndicator: React.FC = () => {
-const VramIndicator: React.FC = () => {
     const { data: vram } = useQuery({
         queryKey: ['vram-status'],
         queryFn: async () => {
