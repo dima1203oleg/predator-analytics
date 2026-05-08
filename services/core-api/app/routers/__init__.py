@@ -68,6 +68,7 @@ from .risk import router as risk_router
 from .sanctions import router as sanctions_router
 from .search import router as search_router
 from .som import router as som_router
+from .synthetic_data import router as synthetic_data_router
 from .system import router as system_router
 from .system import stats_router
 from .warroom import router as warroom_router
@@ -113,6 +114,7 @@ __all__ = [
     "sanctions_router",
     "search_router",
     "som_router",
+    "synthetic_data_router",
     "stats_router",
     "system_router",
     "warroom_router",
