@@ -133,7 +133,7 @@ export const RealTimeSystemMetrics: React.FC<{ compact?: boolean }> = ({ compact
 
   const fetchMetrics = useCallback(async () => {
     try {
-      const response = await fetch('/api/v45/monitoring/health');
+      const response = await fetch('/api/v1/health');
       if (response.ok) {
         const data = await response.json();
         setMetrics({

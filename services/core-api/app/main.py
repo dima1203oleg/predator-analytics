@@ -68,6 +68,7 @@ from app.routers import (
     system_router,
     warroom_router,
     wargaming_router,
+    websocket_router,
 )
 from app.services.factory_repository import FactoryRepository
 from app.services.factory_runtime import (
@@ -79,9 +80,13 @@ from app.services.kafka_service import close_kafka, init_kafka
 from app.services.minio_service import close_minio, init_minio
 from app.services.redis_service import close_redis, init_redis
 from app.services.vram_watchdog import vram_sentinel
+import logging
 from predator_common.logging import get_logger
 
 logger = get_logger("core_api.main")
+
+# Приглушити шумні логи від aiokafka (особливо connection errors коли Kafka недоступна)
+logging.getLogger("aiokafka").setLevel(logging.CRITICAL)
 
 
 @asynccontextmanager
@@ -273,6 +278,7 @@ ROUTERS = [
     # ("/api/v1", decisions_router),
     ("/api/v1", cloud_assist_router),
     ("/api/v1", osint_vision_router),
+    ("/api/v1", websocket_router),
     ("/api/v2", admin_v2_router),
 ]
 

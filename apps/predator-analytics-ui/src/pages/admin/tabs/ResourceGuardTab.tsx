@@ -304,7 +304,7 @@ export const ResourceGuardTab: React.FC = () => {
                <div className="grid grid-cols-2 gap-6 mb-10 relative z-10">
                   <div className="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-1 group-hover:border-rose-500/20 transition-all duration-700 shadow-inner">
                      <span className="text-[8px] text-white/20 uppercase font-black tracking-widest italic">ЗВ'ЯЗОК_LAN</span>
-                     <span className="text-[12px] font-black text-rose-500 uppercase tracking-tighter font-mono">192.168.0.199</span>
+                     <span className="text-[12px] font-black text-rose-500 uppercase tracking-tighter font-mono">192.168.0.114</span>
                   </div>
                   <div className="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-1 group-hover:border-rose-500/20 transition-all duration-700 shadow-inner">
                      <span className="text-[8px] text-white/20 uppercase font-black tracking-widest italic">VRAM_LIMIT</span>

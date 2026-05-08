@@ -306,7 +306,7 @@ export const Predator: React.FC = () => {
                   <Fingerprint className="w-10 h-10 text-rose-500 animate-pulse" />
                 </div>
                 <div>
-                  <h3 className="text-3xl font-black text-white italic uppercase tracking-tighter flex items-center gap-3">
+                  <h3 className="text-3xl font-black text-white italic uppercase tracking-tighter flex items-center gap-3 hover-chromatic transition-all duration-300">
                     PREDATOR <span className="text-rose-500">AI</span>
                   </h3>
                   <div className="flex items-center gap-3">
@@ -349,8 +349,14 @@ export const Predator: React.FC = () => {
                     <motion.div 
                         key={s.id} 
                         whileHover={{ y: -4, border: '1px solid rgba(225,29,72,0.4)' }}
-                        className="p-8 bg-white/[0.03] border border-white/5 rounded-[40px] transition-all cursor-pointer group shadow-2xl relative overflow-hidden"
+                        className="p-8 bg-white/[0.03] border border-white/5 rounded-[40px] transition-all cursor-pointer group shadow-2xl relative overflow-hidden panel-3d"
                     >
+                      {/* Nexus Corners */}
+                      <div className="hud-corner-tl hud-corner-nexus" />
+                      <div className="hud-corner-tr hud-corner-nexus" />
+                      <div className="hud-corner-bl hud-corner-nexus" />
+                      <div className="hud-corner-br hud-corner-nexus" />
+                      <div className="scanline-nexus opacity-10" />
                       <div className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-rose-500 via-rose-500 to-transparent opacity-40" />
                       <div className="flex items-start gap-6">
                         <div className="p-4 bg-black border border-white/10 rounded-2xl group-hover:bg-rose-500/10 group-hover:border-rose-500/40 transition-all shadow-inner">
@@ -371,12 +377,15 @@ export const Predator: React.FC = () => {
                   ))}
                </div>
 
-               {aiResponse && (
                 <motion.div 
                     initial={{ opacity: 0, y: 30, scale: 0.95 }} 
                     animate={{ opacity: 1, y: 0, scale: 1 }} 
-                    className="p-12 bg-rose-950/20 backdrop-blur-xl border-2 border-rose-500/30 rounded-[3.5rem] relative overflow-hidden shadow-3xl group"
+                    className="p-12 bg-rose-950/20 backdrop-blur-xl border-2 border-rose-500/30 rounded-[3.5rem] relative overflow-hidden shadow-3xl group holo-shimmer"
                 >
+                  <div className="hud-corner-tl hud-corner-nexus opacity-40" />
+                  <div className="hud-corner-tr hud-corner-nexus opacity-40" />
+                  <div className="hud-corner-bl hud-corner-nexus opacity-40" />
+                  <div className="hud-corner-br hud-corner-nexus opacity-40" />
                   <div className="absolute inset-0 bg-gradient-to-br from-rose-600/10 via-transparent to-transparent opacity-60" />
                   <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/10 blur-3xl rounded-full -mr-10 -mt-10 animate-pulse" />
                   <div className="relative z-10">

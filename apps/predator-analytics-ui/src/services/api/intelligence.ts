@@ -90,7 +90,7 @@ export const intelligenceApi = {
         return Array.isArray(res.data) ? res.data : (res.data?.agents || []);
     },
     getHealth: async () => {
-        return (await v45Client.get('/monitoring/health')).data;
+        return (await v45Client.get('/health')).data;
     },
     getMetrics: async () => {
         return (await v45Client.get('/intelligence/metrics')).data;

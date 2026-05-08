@@ -37,7 +37,7 @@ for pid in $(ps aux | grep -E '(antigravity|gemini.*agent|cortex)' | grep -v gre
 done
 
 # Закрити залишки старих SSH сесій
-for pid in $(ps aux | grep 'ssh.*192.168.0.199' | grep -v grep | awk '{print $2}'); do
+for pid in $(ps aux | grep 'ssh.*192.168.0.114' | grep -v grep | awk '{print $2}'); do
     echo "  Завершення SSH PID=$pid..."
     kill "$pid" 2>/dev/null && ZOMBIE_COUNT=$((ZOMBIE_COUNT + 1))
 done
@@ -52,17 +52,17 @@ echo "  Звільнено процесів: $ZOMBIE_COUNT"
 
 # ─── КРОК 3: Перевірка з'єднання з iMac ──────────────
 echo ""
-echo "🔗 [3/4] З'ЄДНАННЯ З IMAC (192.168.0.199):"
-if ping -c 1 -W 2 192.168.0.199 &>/dev/null; then
+echo "🔗 [3/4] З'ЄДНАННЯ З IMAC (192.168.0.114):"
+if ping -c 1 -W 2 192.168.0.114 &>/dev/null; then
     echo "  ✅ iMac доступний"
     
     # Перевірка SSH
-    if ssh -o ConnectTimeout=3 -o StrictHostKeyChecking=no dima1203@192.168.0.199 "echo 'SSH_OK'" 2>/dev/null; then
+    if ssh -o ConnectTimeout=3 -o StrictHostKeyChecking=no dima1203@192.168.0.114 "echo 'SSH_OK'" 2>/dev/null; then
         echo "  ✅ SSH з'єднання працює"
         
         echo ""
         echo "  📦 Kubectl статус:"
-        ssh -o ConnectTimeout=5 dima1203@192.168.0.199 "
+        ssh -o ConnectTimeout=5 dima1203@192.168.0.114 "
             export KUBECONFIG=\$HOME/.kube/config
             echo '  Контекст: '
             kubectl config current-context 2>/dev/null || echo '  ⚠️ kubectl не налаштовано'

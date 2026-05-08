@@ -2,7 +2,7 @@
 # fix_openlens_imac.sh
 # Автоматичне підключення OpenLens до iMac кластера
 
-IMAC_IP="192.168.0.199"
+IMAC_IP="192.168.0.114"
 KUBECONFIG_PATH="$HOME/.kube/config"
 
 echo "🔗 Отримання kubeconfig з iMac..."

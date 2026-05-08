@@ -14,7 +14,7 @@ spec:
         - values.yaml
         - values-imac.yaml
   destination:
-    server: https://192.168.0.199:6443 # Зовнішній кластер iMac
+    server: https://192.168.0.114:6443 # Зовнішній кластер iMac
     namespace: predator-prod
   syncPolicy:
     automated:

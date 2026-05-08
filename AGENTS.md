@@ -180,7 +180,7 @@ Predator_21/
 
 3. **Не читай**: `.venv`, `node_modules`, `dist`, `__pycache__`, `.git`, `coverage/`
 
-4. **Порт UI**: завжди **3030** (`http://192.168.0.199:3030` — посилання на iMac)
+4. **Порт UI**: завжди **3030** (`http://192.168.0.114:3030` — посилання на iMac)
 
 5. **Директорія UI**: `/Users/dima-mac/Documents/Predator_21/apps/predator-analytics-ui`
 

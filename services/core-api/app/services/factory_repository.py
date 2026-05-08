@@ -122,7 +122,7 @@ class FactoryRepository:
                     )
                 return patterns
         except Exception as e:
-            logger.warning(f"Neo4j get_gold_patterns failed: {e}")
+            logger.debug(f"Neo4j get_gold_patterns failed: {e}")
             return []
 
     async def get_stats(self) -> FactoryStats:
@@ -156,7 +156,7 @@ class FactoryRepository:
                 )
                 return stats
         except Exception as e:
-            logger.warning(f"Neo4j get_stats failed: {e}")
+            logger.debug(f"Neo4j get_stats failed: {e}")
             return FactoryStats(total_patterns=0, gold_patterns=0, avg_score=0.0)
 
     async def save_run(self, pipeline_result: PipelineResult) -> None:
@@ -240,7 +240,7 @@ class FactoryRepository:
                     for record in records
                 ]
         except Exception as e:
-            logger.warning(f"Neo4j get_bugs failed (possibly offline): {e}")
+            logger.debug(f"Neo4j get_bugs failed (possibly offline): {e}")
             return [
                 Bug(
                     id="BUG-OFFLINE-1",
@@ -291,7 +291,7 @@ class FactoryRepository:
                     last_update=datetime.fromisoformat(str(i["last_update"]).replace("Z", "+00:00")),
                 )
         except Exception as e:
-            logger.warning(f"Neo4j get_improvement failed (possibly offline): {e}")
+            logger.debug(f"Neo4j get_improvement failed (possibly offline): {e}")
             return SystemImprovement(
                 is_running=False,
                 logs=[f"[{datetime.now(UTC).strftime('%H:%M:%S')}] ⚠️ DB OFFLINE: Не вдалося завантажити стан з Neo4j."]

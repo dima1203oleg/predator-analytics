@@ -76,7 +76,7 @@ class WarGamingEngine:
             self.active_scenarios = scenarios
             return scenarios
         except Exception as e:
-            logger.warning(f"AI scenario generation failed, using fallback: {e}")
+            logger.debug(f"AI scenario generation failed, using fallback: {e}")
             return self._get_fallback_scenarios()
 
     def _get_fallback_scenarios(self) -> List[dict]:

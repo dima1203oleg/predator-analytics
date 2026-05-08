@@ -1,8 +1,8 @@
 /**
- * PREDATOR v61.0-ELITE | Sovereign Intelligence Sanctum — Хаб Комерційної  озвідки
+ * PREDATOR v61.0-ELITE | Sovereign Intelligence Sanctum — Хаб Комерційної розвідки
  * 
  * Персоналізований хаб для VIP-аналітики та стратегічного аналізу:
- * - TITAN (Market Sovereignty): Конкуренти,ринкові прогнози, інсайди
+ * - TITAN (Market Sovereignty): Конкуренти, ринкові прогнози, інсайди
  * - INQUISITOR (Risk Sovereignty): Аномалії, схеми, компромат
  * - SOVEREIGN (Macro Architect): Тренди, кореляції, макро-прогнози
  * 
@@ -78,15 +78,15 @@ import { DiagnosticsTerminal } from '@/components/intelligence/DiagnosticsTermin
 const PERSONA_CONFIG = {
   TITAN: {
     name: 'TITAN',
-    title: ' ИНКОВИЙ ТИТАН',
+    title: 'РИНКОВИЙ ТИТАН',
     subtitle: 'Стратегічний аналіз та конкурентна розвідка',
     icon: Target,
     color: 'rose',
     gradient: 'from-[#E11D48] via-rose-600 to-[#E11D48]',
     glow: 'rgba(225, 29, 72, 0.4)',
     features: [
-      { icon: Eye, label: 'АНАЛІЗ КОНКУ ЕНТІВ', desc: 'Глибоке сканування кожної декларації опонентів у реальному часі' },
-      { icon: TrendingUp, label: ' ИНКОВІПРОГНОЗИ', desc: 'Прогнозування цінових хвиль та дефіциту товарних груп' },
+      { icon: Eye, label: 'АНАЛІЗ КОНКУРЕНТІВ', desc: 'Глибоке сканування кожної декларації опонентів у реальному часі' },
+      { icon: TrendingUp, label: 'РИНКОВІ ПРОГНОЗИ', desc: 'Прогнозування цінових хвиль та дефіциту товарних груп' },
       { icon: Briefcase, label: 'ІНСАЙДИ ПОСТАЧАЛЬНИКІВ', desc: 'Виявлення прямих заводів та прихованих ланцюгів' },
       { icon: DollarSign, label: 'ЦІНОВА ОПТИМІЗАЦІЯ', desc: 'Benchmark кожної транзакції проти ринкового медіанного значення' },
     ],
@@ -98,42 +98,42 @@ const PERSONA_CONFIG = {
   },
   INQUISITOR: {
     name: 'INQUISITOR',
-    title: 'ВЕЛИКИЙ ІНКВІЗИТО ',
-    subtitle: 'Контрольризиків та виявлення прихованих схем',
+    title: 'ВЕЛИКИЙ ІНКВІЗИТОР',
+    subtitle: 'Контроль ризиків та виявлення прихованих схем',
     icon: Shield,
     color: 'rose',
     gradient: 'from-[#E11D48] via-rose-600 to-[#E11D48]',
     glow: 'rgba(225, 29, 72, 0.4)',
     features: [
       { icon: AlertTriangle, label: 'ДЕТЕКЦІЯ АНОМАЛІЙ', desc: 'AI-сканування на предмет заниження вартості та пересортиці' },
-      { icon: ShieldAlert, label: 'МЕ ЕЖІ УХИЛЕННЯ', desc: 'Автоматичне картування пов\'язаних фірм-прокладок та офшорів' },
-      { icon: Fingerprint, label: 'П ОФІЛЮВАННЯ СУБ\'ЄКТІВ', desc: 'Повний 360° досьє на будь-якого директора чи засновника' },
-      { icon: Scale, label: 'РИЗИК-СКО ИНГ СERS', desc: 'Нейронний рейтинг кожної декларації перед подачею в митницю' },
+      { icon: ShieldAlert, label: 'МЕРЕЖІ УХИЛЕННЯ', desc: 'Автоматичне картування пов\'язаних фірм-прокладок та офшорів' },
+      { icon: Fingerprint, label: 'ПРОФІЛЮВАННЯ СУБ\'ЄКТІВ', desc: 'Повний 360° досьє на будь-якого директора чи засновника' },
+      { icon: Scale, label: 'РИЗИК-СКОРИНГ', desc: 'Нейронний рейтинг кожної декларації перед подачею в митницю' },
     ],
     insights: [
       'Виявлено кластер із 12 компаній, що використовують спільний IP',
       'Аномалія ціни на HS-7304: відхилення від ринку на 68%',
-      'Суб\'єкт "ВЕКТО -ПЛЮС" потрапив у сіру зону санкційного списку',
+      'Суб\'єкт "ВЕКТОР-ПЛЮС" потрапив у сіру зону санкційного списку',
     ]
   },
   SOVEREIGN: {
     name: 'SOVEREIGN',
-    title: 'МАК О-СУВЕ ЕН',
+    title: 'МАКРО-СУВЕРЕН',
     subtitle: 'Архітектор торгових стратегій та геополітики',
     icon: Crown,
     color: 'rose',
     gradient: 'from-[#E11D48] via-[#BE123C] to-[#E11D48]',
     glow: 'rgba(225, 29, 72, 0.4)',
     features: [
-      { icon: Globe, label: 'ГЕОПОЛІТИЧНИЙ МОНІТО ', desc: 'Вплив санкцій та ембарго на глобальні торгові потоки' },
-      { icon: Landmark, label: 'СЕКТО НИЙ А ХІТЕКТО ', desc: 'Картування цілих галузей економіки через митні дані' },
+      { icon: Globe, label: 'ГЕОПОЛІТИЧНИЙ МОНІТОРИНГ', desc: 'Вплив санкцій та ембарго на глобальні торгові потоки' },
+      { icon: Landmark, label: 'СЕКТОРНИЙ АРХІТЕКТОР', desc: 'Картування цілих галузей економіки через митні дані' },
       { icon: BrainCircuit, label: 'NEXUS-ПРОГНОЗУВАННЯ', desc: 'Мультимодальні моделі майбутнього стану ринку України' },
-      { icon: Network, label: 'СИСТЕМНІ КО ЕЛЯЦІЇ', desc: 'Приховані зв\'язки між курсом валют та обсягами критичного імпорту' },
+      { icon: Network, label: 'СИСТЕМНІ КОРЕЛЯЦІЇ', desc: 'Приховані зв\'язки між курсом валют та обсягами критичного імпорту' },
     ],
     insights: [
       'Кореляція 0.94 між ціною на енергоносії та імпортом добрив',
       'Прогноз росту товарообігу з ОАЕ на 45% у річному обчисленні',
-      'Системнийризик: критична залежність ВПК від 2 хабів у КН ',
+      'Системний ризик: критична залежність ВПК від 2 хабів у КНР',
     ]
   }
 };
@@ -159,6 +159,10 @@ const HolographicAccessGate: React.FC = () => {
         className="relative z-10 max-w-5xl w-full"
       >
         <div className="bg-[#0b0f1a]/80 backdrop-blur-3xl border border-[#E11D48]/20 rounded-[80px] p-16 sm:p-24 shadow-[0_0_150px_rgba(225,29,72,0.1)] relative overflow-hidden">
+          <div className="hud-corner-tl hud-corner-nexus opacity-40" />
+          <div className="hud-corner-tr hud-corner-nexus opacity-40" />
+          <div className="hud-corner-bl hud-corner-nexus opacity-40" />
+          <div className="hud-corner-br hud-corner-nexus opacity-40" />
           <div className="absolute top-0 right-0 p-12 opacity-5">
             <Crown size={300} className="text-[#E11D48]" />
           </div>
@@ -179,7 +183,7 @@ const HolographicAccessGate: React.FC = () => {
                 ДОСТУП <span className="text-[#E11D48]">ОБМЕЖЕНО</span>
               </h1>
               <p className="text-xl text-slate-400 font-medium max-w-2xl mx-auto italic">
-                Вхід у Комерційний Хаб потребує авторизації рівня "СУВЕ ЕН". 
+                Вхід у Комерційний Хаб потребує авторизації рівня "СУВЕРЕННИЙ". 
                 Виявлено обмежений доступ. Активуйте статус v61.0-ELITE для розблокування протоколів.
               </p>
             </div>
@@ -216,7 +220,7 @@ const PremiumHubView: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'overview' | 'tactical' | 'analytics' | 'modeling' | 'builder' | 'reports'>('overview');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isDossierOpen, setIsDossierOpen] = useState(false);
-  const [selectedEntity, setSelectedEntity] = useState<string>('ТОВ "УК -ПОСТАЧ"');
+  const [selectedEntity, setSelectedEntity] = useState<string>('ТОВ "УКР-ПОСТАЧ"');
   const backendStatus = useBackendStatus();
   const { isOffline, nodeSource, activeFailover, healingProgress } = backendStatus;
 
@@ -227,7 +231,7 @@ const PremiumHubView: React.FC = () => {
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'PremiumHub',
-          message: `АВТОНОМНИЙПРЕМІУМ-ХАБ [${nodeSource}]: Прямий доступ до NVIDIA-вузлів обмежено, використовується MIRROR_NODE.`,
+          message: `АВТОНОМНИЙ ПРЕМІУМ-ХАБ [${nodeSource}]: Прямий доступ до NVIDIA-вузлів обмежено, використовується MIRROR_NODE.`,
           severity: 'warning',
           timestamp: new Date().toISOString(),
           code: 'PREMIUM_OFFLINE'
@@ -310,7 +314,7 @@ const PremiumHubView: React.FC = () => {
                             </h1>
                             <p className="text-[10px] font-mono font-black text-slate-500 uppercase tracking-[0.6em] mt-3 flex items-center gap-3">
                                 <Gem size={12} className="text-[#E11D48] hover:scale-125 transition-transform" /> 
-                                КОМЕ ЦІЙНА_РОЗВІДКА_v58.2_ELITE
+                                КОМЕРЦІЙНА_РОЗВІДКА_v58.2_ELITE
                             </p>
                         </div>
                     </div>
@@ -323,7 +327,7 @@ const PremiumHubView: React.FC = () => {
                     { label: 'v61.0-ELITE', color: 'danger', icon: <Shield size={10} /> }
                 ]}
                 stats={[
-                    { label: 'ДАНІ_В_ОБ ОБЦІ', value: '1.2M', color: 'primary', icon: <Database size={14} />, animate: true },
+                    { label: 'ДАНІ_В_ОБРОБЦІ', value: '1.2M', color: 'primary', icon: <Database size={14} />, animate: true },
                     { 
                         label: isOffline ? 'MIRROR_RECOVERY' : 'ВУЗОЛ_SOURCE', 
                         value: isOffline ? `${Math.floor(healingProgress)}%` : (activeFailover ? 'NVIDIA_ZROK' : 'NVIDIA_PROD'), 
@@ -336,7 +340,11 @@ const PremiumHubView: React.FC = () => {
             />
 
             {/* Persona Switcher & Tactical Nav (v57.3-ELITE) */}
-            <div className="flex flex-wrap items-center justify-between gap-8 bg-black/60 backdrop-blur-3xl p-4 rounded-[40px] border border-[#E11D48]/10">
+            <div className="flex flex-wrap items-center justify-between gap-8 bg-black/60 backdrop-blur-3xl p-4 rounded-[40px] border border-[#E11D48]/10 relative overflow-hidden">
+                <div className="hud-corner-tl hud-corner-nexus opacity-20" />
+                <div className="hud-corner-tr hud-corner-nexus opacity-20" />
+                <div className="hud-corner-bl hud-corner-nexus opacity-20" />
+                <div className="hud-corner-br hud-corner-nexus opacity-20" />
                 <div className="flex items-center gap-3 p-1.5 bg-black/40 rounded-[28px]">
                     <div className="px-10 py-4 flex items-center gap-3 text-[#E11D48]">
                         <Crown size={18} />
@@ -396,6 +404,10 @@ const PremiumHubView: React.FC = () => {
                                         ? "bg-gradient-to-br from-rose-500/10 via-black/40 to-black"
                                         : "bg-gradient-to-br from-[#E11D48]/10 via-black/40 to-black"
                                 )}>
+                                    <div className="hud-corner-tl hud-corner-nexus opacity-40" />
+                                    <div className="hud-corner-tr hud-corner-nexus opacity-40" />
+                                    <div className="hud-corner-bl hud-corner-nexus opacity-40" />
+                                    <div className="hud-corner-br hud-corner-nexus opacity-40" />
                                     <div className="absolute -top-10 -right-10 opacity-5">
                                         <currentConfig.icon size={280} />
                                     </div>
@@ -434,7 +446,7 @@ const PremiumHubView: React.FC = () => {
                                 <div className="p-8 bg-black/40 border border-white/5 rounded-[40px] space-y-6">
                                     <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-4">
                                         <div className={cn("w-2 h-2 rounded-full animate-pulse", persona === 'INQUISITOR' ? "bg-rose-500" : "bg-[#E11D48]")} />
-                                        НЕЙ ОННІ ІНСАЙДИ (24h)
+                                        НЕЙРОННІ ІНСАЙДИ (24h)
                                     </h3>
                                     <div className="space-y-4">
                                         {currentConfig.insights.map((insight, i) => (
@@ -510,7 +522,7 @@ const PremiumHubView: React.FC = () => {
                                 <Cpu size={80} className={cn(persona === 'INQUISITOR' ? "text-rose-500" : "text-[#E11D48]", "animate-pulse")} />
                             </div>
                             <div className="text-center space-y-4">
-                                <h3 className="text-2xl font-black text-white uppercase tracking-[0.4em] italic">МОДУЛЬ_В_ОБ ОБЦІ</h3>
+                                <h3 className="text-2xl font-black text-white uppercase tracking-[0.4em] italic">МОДУЛЬ_В_ОБРОБЦІ</h3>
                                 <p className="text-xs text-slate-500 italic max-w-md mx-auto">
                                     Даний сегмент матриці знаходиться у стадії фінального квантового навчання. Очікуйте розгортання у v61.0-ELITE.
                                 </p>

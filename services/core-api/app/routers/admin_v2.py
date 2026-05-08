@@ -89,7 +89,7 @@ async def get_infra_telemetry(
             net="rx: 1.2GB/s | tx: 0.8GB/s",
             status="online",
             uptime="17h 42m",
-            ip="192.168.0.199"
+            ip="192.168.0.114"
         ),
         NodeMetric(
             id="node-240",
@@ -216,7 +216,7 @@ async def get_failover_status():
         activeMode="HYBRID",
         activeNode="node-199",
         nodes={
-            "node-199": {"label": "iMac (Primary)", "ip": "192.168.0.199", "status": "online", "load": 45.0},
+            "node-199": {"label": "iMac (Primary)", "ip": "192.168.0.114", "status": "online", "load": 45.0},
             "node-240": {"label": "Nvidia (Fallback)", "ip": "192.168.0.240", "status": "standby", "load": 5.0}
         },
         history=[]

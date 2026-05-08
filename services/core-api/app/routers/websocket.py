@@ -195,6 +195,29 @@ async def websocket_alerts(websocket: WebSocket):
         manager.disconnect(websocket, tenant_id)
 
 
+@router.websocket("/ws/system/events")
+async def websocket_system_events(websocket: WebSocket):
+    """WebSocket endpoint для real-time system events."""
+    tenant_id = None
+    await manager.connect(websocket, tenant_id)
+
+    try:
+        while True:
+            data = await websocket.receive_text()
+            
+            try:
+                message = json.loads(data)
+                # Handle messages if needed
+            except json.JSONDecodeError:
+                pass
+
+    except WebSocketDisconnect:
+        manager.disconnect(websocket, tenant_id)
+    except Exception as e:
+        logger.error(f"WebSocket system events error: {e}", exc_info=True)
+        manager.disconnect(websocket, tenant_id)
+
+
 # ═══════════════════════════════════════════════════════════════
 # Helper functions для відправки real-time updates
 # ═══════════════════════════════════════════════════════════════
@@ -225,6 +248,16 @@ async def notify_new_alert(tenant_id: str, alert_data: dict):
         "data": alert_data,
         "timestamp": datetime.now(UTC).isoformat()
     }, tenant_id)
+
+
+async def notify_system_event(event_type: str, event_data: dict):
+    """Сповістити про системну подію."""
+    await manager.broadcast_to_all({
+        "type": "system_event",
+        "event": event_type,
+        "data": event_data,
+        "timestamp": datetime.now(UTC).isoformat()
+    })
 
 
 async def broadcast_dashboard_update(stats: dict):

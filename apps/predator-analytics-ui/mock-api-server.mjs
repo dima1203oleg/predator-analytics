@@ -21,7 +21,7 @@ let systemState = {
         net: '↑ 1.4 МБ/с ↓ 5.2 МБ/с', 
         status: 'online',   
         uptime: '12д 4г 21хв', 
-        ip: '192.168.0.199' 
+        ip: '192.168.0.114' 
       },
       { 
         id: 'macbook', 
@@ -80,7 +80,7 @@ let systemState = {
     activeNode: 'local-k3s',
     nodes: {
       'local-k3s':     { label: 'Локальний K3s',     ip: '192.168.1.10', status: 'online',  load: 34 },
-      'nvidia-server': { label: 'Сервер NVIDIA', ip: '192.168.0.199',     status: 'online',  load: 61 },
+      'nvidia-server': { label: 'Сервер NVIDIA', ip: '192.168.0.114',     status: 'online',  load: 61 },
       'colab-mirror':  { label: 'Дзеркало Colab',  ip: 'zrok-tunnel',  status: 'offline', load: 0  },
     },
     history: Array.from({ length: 42 }, (_, i) => ({
@@ -550,7 +550,7 @@ const server = http.createServer((req, res) => {
       activeNode: 'n1',
       nodes: {
         n1: { label: 'MASTER_NVIDIA', ip: '192.168.0.240', status: 'online', load: 45 },
-        n2: { label: 'IMAC_FALLBACK', ip: '192.168.0.199', status: 'online', load: 12 },
+        n2: { label: 'IMAC_FALLBACK', ip: '192.168.0.114', status: 'online', load: 12 },
       },
       history: []
     });

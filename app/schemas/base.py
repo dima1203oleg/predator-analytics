@@ -9,8 +9,6 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
-type JsonValue = Any
-
 
 # === Enums ===
 
@@ -72,7 +70,7 @@ class SearchQuery(BaseModel):
 class SearchResult(BaseModel):
     source: DataSourceType
     count: int
-    data: list[dict[str, JsonValue]]
+    data: list[dict[str, Any]]
     search_time_ms: float
 
 
@@ -162,7 +160,7 @@ class AnalysisSource(BaseModel):
     name: str
     type: str
     count: int
-    data: list[dict[str, JsonValue]] = Field(default_factory=list)
+    data: list[dict[str, Any]] = Field(default_factory=list)
 
 
 class AnalysisResponse(BaseModel):

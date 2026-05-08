@@ -209,8 +209,10 @@ class HealthCheckService:
                 bootstrap_servers=self.settings.KAFKA_BROKERS,
                 request_timeout_ms=5000,
             )
-            await producer.start()
-            await producer.stop()
+            try:
+                await producer.start()
+            finally:
+                await producer.stop()
 
             return {
                 "status": "ok",
@@ -436,7 +438,7 @@ class HealthCheckService:
                 },
             }
 
-        logger.info("Початок комплексної перевірки стану системи")
+        logger.debug("Початок комплексної перевірки стану системи")
         checks: list[tuple[str, Any]] = [
             ("postgresql", self.check_postgresql),
             ("redis", self.check_redis),
@@ -491,7 +493,7 @@ class HealthCheckService:
             "summary": summary,
         }
 
-        logger.info(
+        logger.debug(
             "Комплексну перевірку завершено",
             extra={
                 "overall_status": overall_status,

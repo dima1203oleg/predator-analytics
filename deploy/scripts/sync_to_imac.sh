@@ -2,7 +2,7 @@
 # 🦅 Sovereign Sync Script | v61.0-ELITE
 # Автоматична синхронізація коду з MacBook на iMac Compute Node
 
-REMOTE_IP="192.168.0.199"
+REMOTE_IP="192.168.0.114"
 REMOTE_USER="dima-mac"
 REMOTE_PATH="/Users/dima-mac/Documents/Predator_21"
 EXCLUDE_LIST=(

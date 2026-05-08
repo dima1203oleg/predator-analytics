@@ -3,7 +3,7 @@
  * Гібридний протокол відмовостійкості (Tri-State Routing)
  * 
  * Вузли:
- *  1. SOVEREIGN (iMac) → http://192.168.0.199:8000/api/v1
+ *  1. SOVEREIGN (iMac) → http://192.168.0.114:8000/api/v1
  *  2. HYBRID (NVIDIA)  → http://194.177.1.240:8000/api/v1
  *  3. CLOUD (Colab)   → https://predator-mirror.share.zrok.io/api/v1
  *  4. MOCK (Local)    → /api/v1
@@ -38,8 +38,8 @@ const getBaseUrl = () => {
 };
 
 const NODE_URLS: Record<string, string> = {
-    [NODE_IDS.LOCAL]:     'http://localhost:8000/api/v1',
-    [NODE_IDS.SOVEREIGN]: 'http://192.168.0.199:8000/api/v1',
+    [NODE_IDS.LOCAL]:     'http://localhost:8001/api/v1',
+    [NODE_IDS.SOVEREIGN]: 'http://192.168.0.114:8000/api/v1',
     [NODE_IDS.HYBRID]:    'http://194.177.1.240:8000/api/v1',
     [NODE_IDS.CLOUD]:     'https://predator.share.zrok.io/api/v1',
     [NODE_IDS.MOCK]:      'http://localhost:9080/api/v1',

@@ -11,7 +11,8 @@ from datetime import UTC, datetime
 from enum import StrEnum
 import logging
 import os
-from typing import Any  # Додано Dict для більш точної типізації
+import hashlib
+from typing import Any
 
 from neo4j import AsyncDriver, AsyncGraphDatabase, AsyncSession
 from neo4j.exceptions import AuthError, ServiceUnavailable
@@ -654,8 +655,9 @@ class Neo4jService:
 
         # Адреса
         if address:
+            address_hash = hashlib.sha256(address.encode()).hexdigest()[:16]
             loc_node = GraphNode(
-                id=f"loc_{hash(address)}",
+                id=f"loc_{address_hash}",
                 type=NodeType.LOCATION,
                 name=address,
                 properties={"address": address, "type": "legal_address"},
@@ -670,7 +672,8 @@ class Neo4jService:
         # Засновники
         if founders:
             for founder in founders:
-                founder_id = founder.get("rnokpp") or founder.get("edrpou") or hash(founder.get("name", ""))
+                founder_hash = hashlib.sha256(founder.get("name", "").encode()).hexdigest()[:16]
+                founder_id = founder.get("rnokpp") or founder.get("edrpou") or founder_hash
 
                 if founder.get("edrpou"):
                     # Юридична особа-засновник
@@ -703,7 +706,8 @@ class Neo4jService:
         # Керівники
         if managers:
             for manager in managers:
-                manager_id = manager.get("rnokpp") or hash(manager.get("name", ""))
+                manager_hash = hashlib.sha256(manager.get("name", "").encode()).hexdigest()[:16]
+                manager_id = manager.get("rnokpp") or manager_hash
                 manager_node = GraphNode(
                     id=f"person_{manager_id}",
                     type=NodeType.PERSON,
@@ -724,7 +728,8 @@ class Neo4jService:
         # Бенефіціари
         if beneficiaries:
             for beneficiary in beneficiaries:
-                ben_id = beneficiary.get("rnokpp") or hash(beneficiary.get("name", ""))
+                ben_hash = hashlib.sha256(beneficiary.get("name", "").encode()).hexdigest()[:16]
+                ben_id = beneficiary.get("rnokpp") or ben_hash
                 ben_node = GraphNode(
                     id=f"person_{ben_id}",
                     type=NodeType.PERSON,
@@ -763,8 +768,9 @@ class Neo4jService:
     ) -> GraphResult:
         """Імпорт судової справи."""
         # Створюємо вузол справи
+        case_hash = hashlib.sha256(case_number.encode()).hexdigest()[:16]
         case_node = GraphNode(
-            id=f"case_{hash(case_number)}",
+            id=f"case_{case_hash}",
             type=NodeType.EVENT,
             name=f"Справа {case_number}",
             properties={
@@ -780,7 +786,8 @@ class Neo4jService:
 
         # Сторони справи
         for party in parties:
-            party_id = party.get("edrpou") or party.get("rnokpp") or hash(party.get("name", ""))
+            party_hash = hashlib.sha256(party.get("name", "").encode()).hexdigest()[:16]
+            party_id = party.get("edrpou") or party.get("rnokpp") or party_hash
 
             if party.get("edrpou"):
                 party_node = GraphNode(

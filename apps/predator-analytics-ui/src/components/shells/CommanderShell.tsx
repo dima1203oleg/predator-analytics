@@ -154,7 +154,7 @@ const CommanderShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange
               <span className="text-[10px] font-mono text-emerald-500">UPLINK STABLE</span>
               <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
             </div>
-            <span className="text-[9px] font-mono text-slate-500">NODE: 192.168.0.199</span>
+            <span className="text-[9px] font-mono text-slate-500">NODE: 192.168.0.114</span>
           </div>
 
           <div className="h-8 w-[1px] bg-white/10" />

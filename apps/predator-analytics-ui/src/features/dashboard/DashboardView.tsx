@@ -449,7 +449,11 @@ const DashboardView: React.FC = () => {
             
                 {/* ЛІВА КОЛОНКА */}
                 <div className="col-span-12 xl:col-span-4 space-y-12">
-                  <section className="page-section section-rose shadow-2xl">
+                  <section className="page-section section-rose shadow-2xl relative overflow-hidden">
+                    <div className="hud-corner-tl hud-corner-nexus opacity-40" />
+                    <div className="hud-corner-tr hud-corner-nexus opacity-40" />
+                    <div className="hud-corner-bl hud-corner-nexus opacity-40" />
+                    <div className="hud-corner-br hud-corner-nexus opacity-40" />
                     <div className="section-header">
                       <div className="section-dot-rose" />
                       <div>
@@ -511,7 +515,11 @@ const DashboardView: React.FC = () => {
                     </div>
                   </section>
 
-                  <section className="page-section section-rose shadow-3xl">
+                  <section className="page-section section-rose shadow-3xl relative overflow-hidden">
+                    <div className="hud-corner-tl hud-corner-nexus opacity-40" />
+                    <div className="hud-corner-tr hud-corner-nexus opacity-40" />
+                    <div className="hud-corner-bl hud-corner-nexus opacity-40" />
+                    <div className="hud-corner-br hud-corner-nexus opacity-40" />
                     <div className="section-header">
                       <div className="section-dot-rose" />
                       <div>
@@ -547,6 +555,10 @@ const DashboardView: React.FC = () => {
                 {/* ЦЕНТРАЛЬНА КОЛОНКА */}
                 <div className="col-span-12 xl:col-span-5 space-y-12">
                    <section className="page-section section-rose shadow-[0_60px_150px_-30px_rgba(0,0,0,0.8)] min-h-[720px] !p-0 overflow-hidden relative">
+                     <div className="hud-corner-tl hud-corner-nexus opacity-60" />
+                     <div className="hud-corner-tr hud-corner-nexus opacity-60" />
+                     <div className="hud-corner-bl hud-corner-nexus opacity-60" />
+                     <div className="hud-corner-br hud-corner-nexus opacity-60" />
                      <div className="p-10 pb-0 max-w-xl">
                        <div className="section-header">
                          <div className="section-dot-rose" />

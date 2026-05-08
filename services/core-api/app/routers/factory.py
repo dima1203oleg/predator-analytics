@@ -374,7 +374,7 @@ async def _run_ooda_task(driver) -> None:
             try:
                 status = await repo.get_improvement()
             except Exception as e:
-                logger.warning(f"OODA Loop: Помилка отримання статусу (БД офлайн): {e}")
+                logger.debug(f"OODA Loop: Помилка отримання статусу (БД офлайн): {e}")
                 # Якщо БД лежить, ми припускаємо, що хочемо продовжувати (якщо цикл був запущений)
                 # Створюємо тимчасовий об'єкт стану
                 status = SystemImprovement(is_running=True)

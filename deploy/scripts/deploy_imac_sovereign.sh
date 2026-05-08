@@ -4,7 +4,7 @@
 
 set -e
 
-REMOTE="dmytrokizima@192.168.0.199"
+REMOTE="dmytrokizima@192.168.0.114"
 CLUSTER_NAME="predator-sovereign"
 
 echo "🚀 Починаю автономне розгортання на iMac ($REMOTE)..."
@@ -43,7 +43,7 @@ ssh $REMOTE "helm upgrade --install predator ~/predator-deploy/helm/predator \
 # 6. Тестування доступності API
 echo "🔍 Тестування API-шлюзу..."
 sleep 15
-if curl -s http://192.168.0.199:8000/api/v1/health | grep "status" > /dev/null; then
+if curl -s http://192.168.0.114:8000/api/v1/health | grep "status" > /dev/null; then
     echo "✅ Backend доступний на iMac!"
 else
     echo "⚠️ Backend ще піднімається або конфігурація потребує перевірки."
