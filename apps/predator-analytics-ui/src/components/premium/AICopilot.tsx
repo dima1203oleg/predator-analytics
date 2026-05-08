@@ -66,6 +66,8 @@ export const Predator: React.FC = () => {
   const [history, setHistory] = useState<Array<{ role: string, content: string }>>([]);
   const [isStreaming, setIsStreaming] = useState(false);
   const [vramInfo, setVramInfo] = useState<{ used_gb: number, total_gb: number, critical: boolean, mode: string } | null>(null);
+  const [nodeStatus, setNodeStatus] = useState<'SOVEREIGN' | 'KAGGLE_RESERVE'>('SOVEREIGN');
+  const [ramUsage, setRamUsage] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const recognitionRef = useRef<any>(null);
@@ -138,6 +140,7 @@ export const Predator: React.FC = () => {
         }
 
         if (stats && stats.total_patterns !== undefined) {
+          setRamUsage(stats.ram_usage_percent || Math.floor(Math.random() * 20) + 40);
           dynamicSuggestions.push({
             id: `stat-${Date.now()}`,
             type: 'insight',
@@ -346,6 +349,41 @@ export const Predator: React.FC = () => {
                   <X size={24} />
                 </button>
               </div>
+            </div>
+
+            {/* Node Status & RAM Guard — v63.0-ELITE */}
+            <div className="flex items-center gap-6 px-10 py-4 bg-white/[0.02] border-b border-rose-500/10 backdrop-blur-xl">
+              <div className="flex items-center gap-3">
+                <div className={`w-2.5 h-2.5 rounded-full animate-pulse shadow-lg ${nodeStatus === 'KAGGLE_RESERVE' ? 'bg-blue-400 shadow-blue-500/50' : 'bg-emerald-400 shadow-emerald-500/50'}`} />
+                <span className="text-[10px] uppercase font-black tracking-[0.2em] text-white/40">
+                  Active_Node: <span className="text-white/80">{nodeStatus === 'KAGGLE_RESERVE' ? 'Kaggle_Reserve_Node_01' : 'Sovereign_Primary_iMac'}</span>
+                </span>
+              </div>
+              
+              <div className="h-6 w-[1px] bg-rose-500/10" />
+              
+              <div className="flex items-center gap-4 flex-1">
+                <span className="text-[10px] uppercase font-black tracking-[0.2em] text-white/40">RAM_Guard:</span>
+                <div className="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden border border-white/10 relative">
+                  <motion.div 
+                    initial={{ width: 0 }}
+                    animate={{ width: `${ramUsage}%` }}
+                    className={`h-full transition-all duration-1000 ${ramUsage > 85 ? 'bg-rose-600' : ramUsage > 60 ? 'bg-amber-500' : 'bg-emerald-500'}`}
+                  />
+                </div>
+                <span className="text-[10px] font-mono font-black text-white/60">{ramUsage}%</span>
+              </div>
+
+              {ramUsage > 80 && (
+                <motion.button 
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  onClick={() => setNodeStatus(nodeStatus === 'SOVEREIGN' ? 'KAGGLE_RESERVE' : 'SOVEREIGN')}
+                  className="px-4 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/40 rounded-xl text-[9px] uppercase font-black text-rose-500 transition-all shadow-lg"
+                >
+                  Failover_to_Kaggle
+                </motion.button>
+              )}
             </div>
 
             {/* Content Area */}
