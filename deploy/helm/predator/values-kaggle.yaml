@@ -1,0 +1,68 @@
+# 🦅 PREDATOR Analytics v63.0-ELITE — Kaggle K8s Values
+# Оптимізовано для CPU-Only Node (30GB RAM)
+
+global:
+  domain: kaggle.predator.ua
+  tenantId: kaggle-reserve
+  # Використовуємо SQLite/In-memory де можливо для економії RAM
+  postgres:
+    host: predator-postgresql
+  neo4j:
+    host: predator-neo4j
+  qdrant:
+    host: predator-qdrant
+
+# Вимикаємо важкі компоненти для Kaggle-вузла (або ставимо мінімальні ліміти)
+postgresql:
+  enabled: true
+  primary:
+    resources:
+      limits:
+        memory: 512Mi
+      requests:
+        memory: 256Mi
+
+neo4j:
+  enabled: true
+  neo4j:
+    resources:
+      limits:
+        memory: 2Gi
+      requests:
+        memory: 1Gi
+
+coreApi:
+  replicaCount: 1
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+  env:
+    ENV: "production"
+    FF_KAFKA_ENABLED: "false" # Вимикаємо Kafka для Kaggle Node
+    FF_SOVEREIGN_AI: "true"
+    VRAM_LIMIT_MB: "0" # CPU Only mode
+
+# Вимикаємо OpenSearch та ClickHouse (занадто важкі для Kaggle K8s)
+opensearch:
+  enabled: false
+
+clickhouse:
+  enabled: false
+
+# Qdrant у Memory-режимі через Helm
+qdrant:
+  enabled: true
+  resources:
+    limits:
+      memory: 512Mi
+
+# LiteLLM для роутингу на хмарні моделі (Gemini)
+litellm:
+  enabled: true
+  resources:
+    limits:
+      memory: 512Mi
