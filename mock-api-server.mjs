@@ -6518,6 +6518,60 @@ app.post('/api/v1/som/immunity', (req, res) => {
 });
 
 // =============================================
+// 🧪 SYNTHETIC DATA ENGINE & AUTOTRAINER
+// =============================================
+
+app.get('/api/v1/synthetic/domains', (req, res) => {
+  res.json({
+    domains: ['customs', 'finance', 'logistics', 'osint', 'due_diligence', 'medical'],
+    templates: {
+      customs: ['declaration_id', 'date', 'company_name', 'hs_code', 'total_value_usd'],
+      finance: ['transaction_id', 'amount', 'currency', 'sender_account', 'risk_score'],
+      osint: ['entity_name', 'source_type', 'reliability_score', 'first_seen']
+    }
+  });
+});
+
+app.post('/api/v1/synthetic/generate/zero-shot', (req, res) => {
+  const { domain, num_rows } = req.body;
+  const count = num_rows || 100;
+  
+  res.json({
+    status: 'completed',
+    num_rows: count,
+    dataset_path: `s3://synthetic/zero-shot/${domain}/${Date.now()}.parquet`,
+    card_path: `s3://synthetic/cards/dc-${Date.now()}.json`,
+    quality_score: 85 + Math.random() * 10
+  });
+});
+
+app.post('/api/v1/synthetic/generate/from-file', (req, res) => {
+  const { file_path, num_rows, method } = req.body;
+  res.json({
+    status: 'completed',
+    num_rows: num_rows || 1000,
+    generator_used: method || 'GaussianCopula',
+    dataset_path: `s3://synthetic/reference/${Date.now()}.parquet`,
+    quality_score: 92.5
+  });
+});
+
+app.post('/api/v1/synthetic/train/hybrid', (req, res) => {
+  const { real_dataset_id, synthetic_dataset_id, target_column } = req.body;
+  res.json({
+    status: 'completed',
+    model_id: `model-xgboost-${Date.now()}`,
+    metrics: {
+      accuracy: 0.942,
+      f1_score: 0.938,
+      roc_auc: 0.971
+    },
+    model_card_path: `s3://models/cards/mc-${Date.now()}.json`,
+    registration: 'ModelRegistry_v63_ELITE'
+  });
+});
+
+// =============================================
 // 💰 Finance Module — VaR та Portfolio Risk
 // =============================================
 

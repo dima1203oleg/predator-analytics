@@ -69,14 +69,23 @@ class ZeroShotDomainGenerator(BaseSyntheticGenerator):
             method_name, kwargs_str = method_spec.split(":", 1)
             kwargs = {}
             for pair in kwargs_str.split(","):
-                k, v = pair.split("=")
-                # Пробне приведення типів
-                try:
-                    if "." in v: v = float(v)
-                    else: v = int(v)
-                except ValueError:
-                    pass
-                kwargs[k] = v
+                if "=" in pair:
+                    k, v = pair.split("=", 1)
+                    # Пробне приведення типів
+                    try:
+                        if "." in v: v = float(v)
+                        else: v = int(v)
+                    except ValueError:
+                        pass
+                    kwargs[k] = v
+                else:
+                    # Якщо немає '=', вважаємо це позиційним аргументом або спеціальним випадком
+                    # Для PREDATOR спрощуємо: якщо це 'numerify', то kwargs_str і є аргументом
+                    if method_name == 'numerify':
+                        return self.fake.numerify(kwargs_str)
+                    elif method_name == 'random_int':
+                        # обробка min=0,max=100 вже має '='
+                        pass
         else:
             method_name = method_spec
             kwargs = {}
