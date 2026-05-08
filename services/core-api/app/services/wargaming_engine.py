@@ -1,13 +1,12 @@
-import asyncio
+from datetime import UTC, datetime
 import json
 import random
-import math
-from datetime import UTC, datetime
-from typing import Any, List, Optional
+from typing import Any
 
-from predator_common.logging import get_logger
-from app.services.antigravity_orchestrator import orchestrator
 from app.services.ai_service import AIService
+from app.services.analytics_service import AnalyticsService
+from app.services.antigravity_orchestrator import orchestrator
+from predator_common.logging import get_logger
 
 logger = get_logger("core_api.wargaming")
 
@@ -16,8 +15,8 @@ class MonteCarloSimulator:
 
     @staticmethod
     def run_simulation(
-        base_loss: float, 
-        probability: float, 
+        base_loss: float,
+        probability: float,
         iterations: int = 1000,
         volatility: float = 0.2
     ) -> dict[str, Any]:
@@ -38,7 +37,7 @@ class MonteCarloSimulator:
 
         results.sort()
         count = len(results)
-        
+
         return {
             "mean": round(sum(results) / count, 2),
             "p95": round(results[int(count * 0.95)], 2),
@@ -55,20 +54,42 @@ class WarGamingEngine:
     def __init__(self):
         self.ai = AIService()
         self.simulator = MonteCarloSimulator()
+        self.analytics = AnalyticsService()
         self.active_scenarios = []
 
-    async def generate_scenarios(self, tenant_id: str = None, context_data: dict = None) -> List[dict]:
-        """Генерує актуальні сценарії загроз на основі поточних даних."""
+    async def generate_scenarios(self, tenant_id: str | None = None) -> list[dict]:
+        """Генерує актуальні сценарії загроз на основі поточних даних ClickHouse."""
+        # 1. Отримуємо реальні дані з ClickHouse
+        real_stats = {}
+        if tenant_id:
+            real_stats = self.analytics.get_dashboard_stats(tenant_id)
+            anomaly_trends = self.analytics.get_anomaly_trends(tenant_id)
+            real_stats["anomaly_count"] = len(anomaly_trends.get("daily_counts", []))
+
+        context_str = json.dumps(real_stats, ensure_ascii=False) if real_stats else "Стабільні показники"
+
         prompt = f"""
-        ПРОАНАЛІЗУЙ КОНТЕКСТ ТА ЗГЕНЕРУЙ 3 СТРАТЕГІЧНІ СЦЕНАРІЇ РИЗИКУ ДЛЯ МИТНИЦІ УКРАЇНИ.
-        ДАНІ: {context_data or 'Стабільні показники'}
-        
-        Вимоги:
-        1. Формат: JSON list.
-        2. Поля: id, name, probability (0-100), base_impact_uah_mln (float), impact_level (High/Med/Low), description, triggers (list).
+        ТИ - LEAD WAR-GAMER ПЛАТФОРМИ PREDATOR.
+        ЗАВДАННЯ: ЗГЕНЕРУЙ 3 СТРАТЕГІЧНІ СЦЕНАРІЇ РИЗИКУ НА ОСНОВІ РЕАЛЬНОЇ СИТУАЦІЇ.
+
+        РЕАЛЬНІ МЕТРИКИ (CLICKHOUSE): {context_str}
+
+        ВИМОГИ ДО СЦЕНАРІЇВ:
+        1. Формат: ТІЛЬКИ JSON list.
+        2. Поля:
+           - id: (напр. WAR-2026-001)
+           - name: Назва сценарію
+           - probability: (0-100)
+           - base_impact_uah_mln: (очікувані збитки у млн грн)
+           - impact_level: (High/Med/Low)
+           - description: Детальний опис загрози
+           - triggers: [список тригерів, що активують загрозу]
+           - logic_base: (коротке пояснення, чому цей сценарій актуальний на основі даних)
         3. Мова: Українська.
+
+        БУДЬ РЕАЛІСТИЧНИМ. Якщо імпорт падає — шукай загрози в логістиці. Якщо аномалії ростуть — моделюй корупційні схеми.
         """
-        
+
         try:
             raw_response = await self.ai.generate_insight(prompt)
             clean_json = raw_response.replace('```json', '').replace('```', '').strip()
@@ -79,7 +100,7 @@ class WarGamingEngine:
             logger.debug(f"AI scenario generation failed, using fallback: {e}")
             return self._get_fallback_scenarios()
 
-    def _get_fallback_scenarios(self) -> List[dict]:
+    def _get_fallback_scenarios(self) -> list[dict]:
         return [
             {
                 "id": "WAR-01",
@@ -110,7 +131,7 @@ class WarGamingEngine:
         # 1. Фізична симуляція збитків (Монте-Карло)
         base_impact = scenario.get('base_impact_uah_mln', 100.0)
         probability = scenario.get('probability', 50.0)
-        
+
         mc_results = self.simulator.run_simulation(
             base_loss=base_impact,
             probability=probability,

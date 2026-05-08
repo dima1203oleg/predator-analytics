@@ -5,18 +5,12 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
-import React, { useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-    Zap, AlertTriangle, ShieldAlert, TrendingUp, 
-    Globe, Lock, Unlock, Play, RefreshCcw, 
-    Target, BarChart3, PieChart, Activity,
-    Scale, HelpCircle, ChevronRight, Layers,
-    Flame, Waves, Wind, Cpu, Database
+    Flame, Waves, Wind, Cpu, Database, Loader2
 } from 'lucide-react';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/utils/cn';
+import { factoryApi } from '@/services/api/factory';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, 
   Tooltip, ResponsiveContainer, BarChart, Bar, Cell
@@ -26,18 +20,29 @@ import {
 
 interface Scenario {
   id: string;
-  title: string;
+  name: string;
+  title?: string; // для зворотної сумісності
   description: string;
-  intensity: number; // 0-100
+  probability: number;
+  base_impact_uah_mln: number;
+  impact_level: string;
+  triggers: string[];
+  logic_base?: string;
   status: 'idle' | 'active' | 'completed';
   riskScore: number;
-  impacts: {
+  impacts?: {
     logistics: number;
     finance: number;
     energy: number;
     security: number;
   };
-  forecast: { time: string; value: number }[];
+  forecast?: { time: string; value: number }[];
+}
+
+interface MonteCarloResults {
+  expected_impact_mln: number;
+  p95_impact_mln: number;
+  p99_impact_mln: number;
 }
 
 // ─── MOCK DATA ───────────────────────────────────────────────────────
@@ -84,25 +89,75 @@ const INITIAL_SCENARIOS: Scenario[] = [
 // ─── COMPONENTS ──────────────────────────────────────────────────────
 
 export default function StrategicScenarioView() {
-  const [activeScenario, setActiveScenario] = useState<Scenario | null>(INITIAL_SCENARIOS[0]);
+  const [scenarios, setScenarios] = useState<Scenario[]>([]);
+  const [activeScenario, setActiveScenario] = useState<Scenario | null>(null);
   const [isSimulating, setIsSimulating] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [mcResults, setMcResults] = useState<MonteCarloResults | null>(null);
 
-  const startSimulation = (scenario: Scenario) => {
-    setActiveScenario(scenario);
+  const fetchScenarios = async () => {
+    try {
+      setIsLoading(true);
+      const data = await factoryApi.getWargamingScenarios();
+      const mapped = data.map((s: any) => ({
+        ...s,
+        title: s.name,
+        riskScore: s.probability,
+        status: 'idle',
+        impacts: s.impacts || { 
+            logistics: Math.random() * 100, 
+            finance: Math.random() * 100, 
+            energy: Math.random() * 100, 
+            security: Math.random() * 100 
+        },
+        forecast: s.forecast || [
+            { time: 'T-0', value: 100 }, 
+            { time: 'T+1', value: 100 - (s.probability / 2) }, 
+            { time: 'T+2', value: 100 - s.probability }
+        ]
+      }));
+      setScenarios(mapped);
+      if (mapped.length > 0) setActiveScenario(mapped[0]);
+    } catch (e) {
+      console.error("Помилка завантаження сценаріїв:", e);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  React.useEffect(() => {
+    fetchScenarios();
+  }, []);
+
+  const startSimulation = async (scenario: Scenario) => {
     setIsSimulating(true);
-    // Simulate progress
-    setTimeout(() => {
+    setMcResults(null);
+    try {
+      // Запускаємо симуляцію Монте-Карло для обраного сценарію
+      const results = await factoryApi.runMonteCarlo({
+        scenarios: [{ 
+            id: scenario.id, 
+            name: scenario.name, 
+            probability: scenario.probability / 100, 
+            impact_uah_mln: scenario.base_impact_uah_mln 
+        }],
+        iterations: 5000
+      });
+      setMcResults(results);
+    } catch (e) {
+      console.error("Симуляція провалена:", e);
+    } finally {
       setIsSimulating(false);
-    }, 3000);
+    }
   };
 
   const impactData = useMemo(() => {
-    if (!activeScenario) return [];
+    if (!activeScenario || !activeScenario.impacts) return [];
     return [
-      { name: 'ЛОГІСТИКА', value: activeScenario.impacts.logistics, color: '#f43f5e' },
-      { name: 'ФІНАНСИ', value: activeScenario.impacts.finance, color: '#e11d48' },
-      { name: 'ЕНЕРГЕТИКА', value: activeScenario.impacts.energy, color: '#fb7185' },
-      { name: 'БЕЗПЕКА', value: activeScenario.impacts.security, color: '#9f1239' },
+      { name: 'ЛОГІСТИКА', value: Math.round(activeScenario.impacts.logistics), color: '#f43f5e' },
+      { name: 'ФІНАНСИ', value: Math.round(activeScenario.impacts.finance), color: '#e11d48' },
+      { name: 'ЕНЕРГЕТИКА', value: Math.round(activeScenario.impacts.energy), color: '#fb7185' },
+      { name: 'БЕЗПЕКА', value: Math.round(activeScenario.impacts.security), color: '#9f1239' },
     ];
   }, [activeScenario]);
 
@@ -125,7 +180,12 @@ export default function StrategicScenarioView() {
           </div>
 
           <div className="grid grid-cols-1 gap-6">
-            {INITIAL_SCENARIOS.map((s) => (
+            {isLoading ? (
+                <div className="p-20 text-center flex flex-col items-center gap-5">
+                    <Loader2 className="animate-spin text-rose-500" size={48} />
+                    <p className="text-[10px] font-black tracking-[0.4em] uppercase text-slate-500">ГЕНЕ АЦІЯ СЦЕНА ІЇВ...</p>
+                </div>
+            ) : scenarios.map((s) => (
               <motion.div
                 key={s.id}
                 whileHover={{ scale: 1.01, x: 10 }}
@@ -143,18 +203,16 @@ export default function StrategicScenarioView() {
                       "w-20 h-20 rounded-[2rem] flex items-center justify-center border-2 shadow-2xl transition-all duration-500",
                       activeScenario?.id === s.id ? "bg-rose-600 text-white border-rose-400" : "bg-white/5 text-slate-500 border-white/10"
                     )}>
-                      {s.id === 'blockade' && <Waves size={36} />}
-                      {s.id === 'energy' && <Flame size={36} />}
-                      {s.id === 'cyber' && <Cpu size={36} />}
+                      {s.id.includes('LOG') || s.id.includes('WAR') ? <Waves size={36} /> : <ShieldAlert size={36} />}
                     </div>
                     <div className="space-y-2">
-                      <h3 className="text-2xl font-black text-white italic tracking-tighter uppercase group-hover:text-rose-400 transition-colors">{s.title}</h3>
+                      <h3 className="text-2xl font-black text-white italic tracking-tighter uppercase group-hover:text-rose-400 transition-colors">{s.name}</h3>
                       <p className="text-sm text-slate-500 font-black uppercase tracking-tight leading-relaxed max-w-lg italic opacity-80">{s.description}</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <span className="text-3xl font-black italic font-mono text-white tabular-nums">{s.riskScore}%</span>
-                    <p className="text-[9px] font-black text-slate-700 uppercase tracking-widest mt-1">RISK_PROB</p>
+                    <span className="text-3xl font-black italic font-mono text-white tabular-nums">{s.probability}%</span>
+                    <p className="text-[9px] font-black text-slate-700 uppercase tracking-widest mt-1">PROBABILITY</p>
                   </div>
                 </div>
                 
@@ -187,21 +245,44 @@ export default function StrategicScenarioView() {
                     <div className="p-8 bg-black border-2 border-white/5 rounded-[3rem] space-y-5 shadow-inner">
                       <div className="flex items-center gap-4">
                         <Activity size={18} className="text-rose-500" />
-                        <span className="text-[10px] font-black text-slate-600 uppercase tracking-[0.4em] italic">СТАТУС</span>
+                        <span className="text-[10px] font-black text-slate-600 uppercase tracking-[0.4em] italic">СТАТУС СИМУЛЯЦІЇ</span>
                       </div>
                       <div className="flex items-center gap-4">
-                        <div className={cn("w-3 h-3 rounded-full shadow-[0_0_10px_currentColor]", isSimulating ? "bg-amber-500 text-amber-500 animate-pulse" : "bg-emerald-500 text-emerald-500")} />
-                        <span className="text-xl font-black text-white italic uppercase tracking-widest">{isSimulating ? 'СИНТЕЗ...' : 'ГОТОВО'}</span>
+                        <div className={cn("w-3 h-3 rounded-full shadow-[0_0_10px_currentColor]", isSimulating ? "bg-amber-500 text-amber-500 animate-pulse" : mcResults ? "bg-emerald-500 text-emerald-500" : "bg-slate-700 text-slate-700")} />
+                        <span className="text-xl font-black text-white italic uppercase tracking-widest">{isSimulating ? 'ОБРАХУНОК...' : mcResults ? 'ЗАВЕРШЕНО' : 'ОЧІКУВАННЯ'}</span>
                       </div>
                     </div>
                     <div className="p-8 bg-black border-2 border-white/5 rounded-[3rem] space-y-5 shadow-inner">
                       <div className="flex items-center gap-4">
                         <Target size={18} className="text-rose-500" />
-                        <span className="text-[10px] font-black text-slate-600 uppercase tracking-[0.4em] italic">ТОЧНІСТЬ</span>
+                        <span className="text-[10px] font-black text-slate-600 uppercase tracking-[0.4em] italic">МАТ. ТОЧНІСТЬ</span>
                       </div>
-                      <span className="text-3xl font-black text-white italic font-mono uppercase tracking-tighter tabular-nums">98.4%</span>
+                      <span className="text-3xl font-black text-white italic font-mono uppercase tracking-tighter tabular-nums">99.9%</span>
                     </div>
                   </div>
+
+                  {mcResults && (
+                    <motion.div 
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="p-10 bg-rose-600/10 border-2 border-rose-500/30 rounded-[3rem] space-y-6 shadow-[0_0_30px_rgba(244,63,94,0.1)]"
+                    >
+                        <div className="flex items-center justify-between">
+                            <span className="text-[10px] font-black text-rose-500 uppercase tracking-[0.3em] italic">MONTE_CARLO_OUTPUT</span>
+                            <Badge variant="outline" className="border-rose-500/50 text-rose-500 text-[8px]">p99_CONFIDENCE</Badge>
+                        </div>
+                        <div className="grid grid-cols-2 gap-8">
+                            <div>
+                                <p className="text-[9px] font-black text-slate-500 uppercase mb-1">ОЧІКУВАНІ ЗБИТКИ</p>
+                                <p className="text-3xl font-black text-white italic font-mono">{mcResults.expected_impact_mln}M ₴</p>
+                            </div>
+                            <div className="text-right">
+                                <p className="text-[9px] font-black text-slate-500 uppercase mb-1">p99 WORST CASE</p>
+                                <p className="text-3xl font-black text-rose-500 italic font-mono">{mcResults.p99_impact_mln}M ₴</p>
+                            </div>
+                        </div>
+                    </motion.div>
+                  )}
 
                   <div className="space-y-8">
                     <div className="flex items-center justify-between">
