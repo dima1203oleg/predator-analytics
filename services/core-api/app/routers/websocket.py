@@ -12,7 +12,9 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from predator_common.models import Alert, Declaration, RiskScore
-from app.services.ai_service import AIService
+from app.services.ai_service import AIService, LLMRoute
+from app.services.vram_watchdog import vram_sentinel
+from predator_common.logging import get_logger
 
 logger = get_logger("websocket")
 
@@ -235,10 +237,19 @@ async def websocket_copilot(websocket: WebSocket):
                 if not message:
                     continue
                 
+                # Отримуємо статус VRAM для Tri-State Routing
+                vram_stats = await vram_sentinel.get_stats()
+                
                 # Початок відповіді
                 await websocket.send_json({
                     "type": "thinking",
                     "status": "analyzing_node_context",
+                    "vram": {
+                        "used_gb": vram_stats.used_gb,
+                        "total_gb": vram_stats.total_gb,
+                        "critical": vram_stats.critical,
+                        "mode": vram_stats.mode_recommendation
+                    },
                     "timestamp": datetime.now(UTC).isoformat()
                 })
                 

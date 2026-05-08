@@ -8,7 +8,7 @@ LiteLLM MCP Router з підтримкою:
 """
 from collections.abc import AsyncIterator
 from enum import StrEnum
-from typing import Any
+from typing import Any, AsyncIterator
 
 import httpx
 
@@ -16,6 +16,7 @@ from app.config import get_settings
 from app.services.gemini_agent_service import gemini_service
 from predator_common.circuit_breaker import CircuitBreaker
 from predator_common.logging import get_logger
+from app.services.vram_watchdog import vram_sentinel
 
 logger = get_logger("ai_service")
 settings = get_settings()
@@ -47,6 +48,13 @@ class AIService:
         include_reasoning: bool = False,
     ) -> str:
         """Виклик LiteLLM або Gemini з опціональним кроком міркування."""
+        # Автоматичний VRAM Guard: перевірка потреби у CLOUD режимі
+        vram_stats = await vram_sentinel.get_stats()
+        effective_route = route
+        if vram_stats.critical:
+            logger.warning(f"⚠️ VRAM CRITICAL ({vram_stats.used_gb}GB). FORCE CLOUD ROUTE.")
+            effective_route = LLMRoute.CLOUD
+
         if include_reasoning:
             # Додаємо інструкцію для Chain-of-Thought
             reasoning_msg = {
@@ -54,8 +62,9 @@ class AIService:
                 "content": "Перед наданням фінальної відповіді, виконай покроковий аналіз (Chain-of-Thought) та вияви можливі суперечності. Надай відповідь у форматі: <thought>...</thought> <answer>...</answer>"
             }
             messages.insert(0, reasoning_msg)
+
         # CLOUD routing через Gemini SDK
-        if route == LLMRoute.CLOUD:
+        if effective_route == LLMRoute.CLOUD:
             prompt = "\n".join([f"{m['role']}: {m['content']}" for m in messages])
             result = await gemini_service.generate(prompt)
             return result["content"]
@@ -91,13 +100,23 @@ class AIService:
             logger.error(f"AI Exception: {e!s}")
             return f"AI Exception: {e!s}"
 
-    @staticmethod
     async def chat_completion_stream(
         messages: list[dict[str, str]],
         model: str | None = None,
         temperature: float = 0.2,
     ) -> AsyncIterator[str]:
-        """Streaming відповідь для AI Copilot."""
+        """Streaming відповідь для AI Copilot з VRAM Guard."""
+        vram_stats = await vram_sentinel.get_stats()
+        
+        # Якщо VRAM критична, стрімимо через Gemini Cloud
+        if vram_stats.critical:
+            logger.warning(f"🚨 VRAM GUARD: Перемикання Copilot на CLOUD ({vram_stats.used_gb}GB)")
+            prompt = "\n".join([f"{m['role']}: {m['content']}" for m in messages])
+            # Примітка: gemini_service.generate_stream має бути реалізований
+            async for chunk in gemini_service.generate_stream(prompt):
+                yield chunk
+            return
+
         target_model = model or settings.OLLAMA_MODEL
 
         if not _llm_breaker.allow_request():

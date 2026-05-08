@@ -17,7 +17,7 @@ from __future__ import annotations
 
 import os
 import time
-from typing import Any
+from typing import Any, AsyncIterator
 
 from predator_common.circuit_breaker import CircuitBreaker
 from predator_common.logging import get_logger
@@ -143,7 +143,48 @@ class GeminiAgentService:
                 "error": True,
             }
 
-    # ─── Code Execution (Python Sandbox) ──────────────────────────────────────
+    @staticmethod
+    async def generate_stream(
+        prompt: str,
+        *,
+        model: str = "gemini-2.5-flash",
+        system_instruction: str | None = None,
+        temperature: float = 0.3,
+        max_tokens: int = 4096,
+    ) -> AsyncIterator[str]:
+        """Потокова генерація тексту через Gemini API."""
+        if not _gemini_breaker.allow_request():
+            yield "Gemini API тимчасово недоступний."
+            return
+
+        try:
+            from google.genai.types import GenerateContentConfig  # type: ignore[import-untyped]
+
+            client = _get_client()
+            config = GenerateContentConfig(
+                temperature=temperature,
+                max_output_tokens=max_tokens,
+            )
+            if system_instruction:
+                config.system_instruction = system_instruction
+
+            # Використовуємо ітератор для стримінгу
+            response_stream = client.models.generate_content_stream(
+                model=model,
+                contents=prompt,
+                config=config,
+            )
+
+            for chunk in response_stream:
+                if chunk.text:
+                    yield chunk.text
+            
+            _gemini_breaker.record_success()
+
+        except Exception as e:
+            _gemini_breaker.record_failure()
+            logger.error(f"Gemini streaming помилка: {e!s}")
+            yield f"\n[Gemini Error: {e!s}]"
 
     @staticmethod
     async def execute_code(

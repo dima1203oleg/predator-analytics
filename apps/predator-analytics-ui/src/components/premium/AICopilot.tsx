@@ -65,6 +65,7 @@ export const Predator: React.FC = () => {
   const [activeAgent, setActiveAgent] = useState<string>('');
   const [history, setHistory] = useState<Array<{ role: string, content: string }>>([]);
   const [isStreaming, setIsStreaming] = useState(false);
+  const [vramInfo, setVramInfo] = useState<{ used_gb: number, total_gb: number, critical: boolean, mode: string } | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const recognitionRef = useRef<any>(null);
@@ -76,7 +77,12 @@ export const Predator: React.FC = () => {
       if (msg.type === 'thinking') {
         setAiResponse('');
         setIsStreaming(true);
-        setActiveAgent(`GLM-5.1 ↔ [${backendStatus.nodeSource}]`);
+        if (msg.vram) {
+          setVramInfo(msg.vram);
+          setActiveAgent(`${msg.vram.mode === 'CLOUD' ? 'GEMINI-PRO (CLOUD)' : 'NEMOTRON-30B (SOVEREIGN)'}`);
+        } else {
+          setActiveAgent(`GLM-5.1 ↔ [${backendStatus.nodeSource}]`);
+        }
       } else if (msg.type === 'chunk') {
         setAiResponse(prev => prev + (msg.text || ''));
       } else if (msg.type === 'complete') {
@@ -318,11 +324,16 @@ export const Predator: React.FC = () => {
                   </h3>
                   <div className="flex items-center gap-3">
                     <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping shadow-[0_0_10px_#e11d48]" />
-                    <p className="text-[10px] text-rose-500/60 font-black uppercase tracking-[0.4em] font-mono">СУВЕРЕН_ЕЛІТ_v63.0-ELITE_GLM-5.1</p>
+                    <p className="text-[10px] text-rose-500/60 font-black uppercase tracking-[0.4em] font-mono">СУВЕРЕН_ЕЛІТ_v63.0-ELITE</p>
                     <div className="flex items-center gap-2 mt-1">
                        <span className={cn("text-[8px] font-black px-2 py-0.5 rounded border", backendStatus.isOffline ? "border-rose-500/40 text-rose-500 bg-rose-500/5" : (backendStatus.activeFailover ? "border-emerald-500/40 text-emerald-500 bg-emerald-500/5" : "border-rose-500/40 text-rose-500 bg-rose-500/5"))}>
                           ВУЗОЛ: {backendStatus.isOffline ? "ВІДНОВЛЕННЯ" : (backendStatus.activeFailover ? "РЕЗЕРВ_ZROK" : "ОСНОВНИЙ_КЛАСТЕР")}
                        </span>
+                       {vramInfo && (
+                         <span className={cn("text-[8px] font-black px-2 py-0.5 rounded border", vramInfo.critical ? "border-rose-500 bg-rose-500/20 text-white animate-pulse" : "border-white/10 text-slate-400")}>
+                           VRAM: {vramInfo.used_gb} / {vramInfo.total_gb} GB
+                         </span>
+                       )}
                     </div>
                   </div>
                 </div>

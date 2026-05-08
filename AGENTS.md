@@ -90,6 +90,20 @@
 - **Logic Specialist**: Nemotron-Cascade-2 (30B MoE — локально).
 - **QA & Visual Audit**: Gemini 1.5 Vision (у E2B Sandbox).
 
+## ☁️ Kaggle Compute Node (Elite Backup)
+
+Для забезпечення максимальної RAM (до 30 ГБ) без використання локальних ресурсів, бекенд може бути розгорнутий у Kaggle Notebook.
+
+- **Режим**: CPU-Only (Max RAM).
+- **Тунелювання**: Тільки **zrok** (OpenZiti).
+- **Файли**: 
+  - `scripts/kaggle_standalone.py` — основний бекенд-скрипт.
+  - `predator_kaggle_backend.ipynb` — готовий блокнот для імпорту в Kaggle.
+- **Статус**: Автономне вдосконалення (OODA) та Tornado Insights працюють у нативному режимі без Docker.
+
+> [!TIP]
+> При використанні Kaggle завжди оновлюйте `VITE_API_BASE_URL` у фронтенді на URL, наданий тунелем zrok.
+
 ## HARD RULES (порушення = блокер PR)
 
 ```
