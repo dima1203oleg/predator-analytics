@@ -235,10 +235,15 @@
   height: 16px;
 }
 
-.hud-corner-tl { top: -1px; left: -1px; border-top: 2px solid var(--neon-cyan); border-left: 2px solid var(--neon-cyan); }
-.hud-corner-tr { top: -1px; right: -1px; border-top: 2px solid var(--neon-cyan); border-right: 2px solid var(--neon-cyan); }
-.hud-corner-bl { bottom: -1px; left: -1px; border-bottom: 2px solid var(--neon-cyan); border-left: 2px solid var(--neon-cyan); }
-.hud-corner-br { bottom: -1px; right: -1px; border-bottom: 2px solid var(--neon-cyan); border-right: 2px solid var(--neon-cyan); }
+.hud-corner-tl { top: -1px; left: -1px; border-top: 2px solid var(--hud-accent, var(--neon-cyan)); border-left: 2px solid var(--hud-accent, var(--neon-cyan)); }
+.hud-corner-tr { top: -1px; right: -1px; border-top: 2px solid var(--hud-accent, var(--neon-cyan)); border-right: 2px solid var(--hud-accent, var(--neon-cyan)); }
+.hud-corner-bl { bottom: -1px; left: -1px; border-bottom: 2px solid var(--hud-accent, var(--neon-cyan)); border-left: 2px solid var(--hud-accent, var(--neon-cyan)); }
+.hud-corner-br { bottom: -1px; right: -1px; border-bottom: 2px solid var(--hud-accent, var(--neon-cyan)); border-right: 2px solid var(--hud-accent, var(--neon-cyan)); }
+
+.hud-corner-rose { --hud-accent: #f43f5e; }
+.hud-corner-emerald { --hud-accent: #10b981; }
+.hud-corner-cyan { --hud-accent: #06b6d4; }
+.hud-corner-amber { --hud-accent: #f59e0b; }
 
 /* ── SCANLINE v57 ── */
 @keyframes nexus-scan {

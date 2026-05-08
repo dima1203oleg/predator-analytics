@@ -11,8 +11,8 @@ from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from predator_common.logging import get_logger
 from predator_common.models import Alert, Declaration, RiskScore
+from app.services.ai_service import AIService
 
 logger = get_logger("websocket")
 
@@ -216,6 +216,67 @@ async def websocket_system_events(websocket: WebSocket):
     except Exception as e:
         logger.error(f"WebSocket system events error: {e}", exc_info=True)
         manager.disconnect(websocket, tenant_id)
+
+
+@router.websocket("/ws/copilot")
+async def websocket_copilot(websocket: WebSocket):
+    """WebSocket endpoint для інтерактивного Copilot чату з підтримкою стрімінгу."""
+    await websocket.accept()
+    
+    try:
+        while True:
+            # Отримуємо запит від клієнта
+            data = await websocket.receive_text()
+            try:
+                payload = json.loads(data)
+                message = payload.get("message")
+                history = payload.get("history", [])
+                
+                if not message:
+                    continue
+                
+                # Початок відповіді
+                await websocket.send_json({
+                    "type": "thinking",
+                    "status": "analyzing_node_context",
+                    "timestamp": datetime.now(UTC).isoformat()
+                })
+                
+                # Стрімінг від AIService
+                full_reply = ""
+                async for chunk in AIService.chat_completion_stream(
+                    messages=[*history, {"role": "user", "content": message}]
+                ):
+                    full_reply += chunk
+                    await websocket.send_json({
+                        "type": "chunk",
+                        "text": chunk,
+                        "timestamp": datetime.now(UTC).isoformat()
+                    })
+                
+                # Завершення відповіді
+                await websocket.send_json({
+                    "type": "complete",
+                    "reply": full_reply,
+                    "timestamp": datetime.now(UTC).isoformat()
+                })
+                
+            except json.JSONDecodeError:
+                await websocket.send_json({
+                    "type": "error",
+                    "message": "Invalid JSON payload"
+                })
+            except Exception as e:
+                logger.error(f"Copilot WS error during processing: {e}")
+                await websocket.send_json({
+                    "type": "error",
+                    "message": str(e)
+                })
+                
+    except WebSocketDisconnect:
+        logger.info("Copilot WebSocket disconnected")
+    except Exception as e:
+        logger.error(f"Copilot WebSocket error: {e}", exc_info=True)
 
 
 # ═══════════════════════════════════════════════════════════════

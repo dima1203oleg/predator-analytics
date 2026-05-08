@@ -41,6 +41,7 @@ import { useAppStore } from '../../store/useAppStore';
 import { factoryApi } from '../../services/api/factory';
 import { useBackendStatus } from '../../hooks/useBackendStatus';
 import { NeuralPulse } from '@/components/ui/NeuralPulse';
+import { useWebSocket } from '../../hooks/useWebSocket';
 
 import { API_BASE_URL } from '@/services/api/config';
 
@@ -62,10 +63,42 @@ export const Predator: React.FC = () => {
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [aiResponse, setAiResponse] = useState('');
   const [activeAgent, setActiveAgent] = useState<string>('');
+  const [history, setHistory] = useState<Array<{ role: string, content: string }>>([]);
+  const [isStreaming, setIsStreaming] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const recognitionRef = useRef<any>(null);
   const speakIdRef = useRef<number>(0);
+
+  const { sendMessage } = useWebSocket('/ws/copilot', {
+    reconnect: true,
+    onMessage: (msg: any) => {
+      if (msg.type === 'thinking') {
+        setAiResponse('');
+        setIsStreaming(true);
+        setActiveAgent(`GLM-5.1 ↔ [${backendStatus.nodeSource}]`);
+      } else if (msg.type === 'chunk') {
+        setAiResponse(prev => prev + (msg.text || ''));
+      } else if (msg.type === 'complete') {
+        setIsStreaming(false);
+        setHistory(prev => [...prev, { role: 'assistant', content: msg.reply }]);
+        speak(msg.reply);
+        
+        window.dispatchEvent(new CustomEvent('predator-error', {
+          detail: {
+            service: 'AICopilot',
+            message: `ЗАПИТ ВИКОНАНО [GLM-5.1]: СТРАТЕГІЧНИЙ АНАЛІЗ ЗАВЕРШЕНО`,
+            severity: 'success',
+            timestamp: new Date().toISOString(),
+            code: 'AI_WS_SUCCESS'
+          }
+        }));
+      } else if (msg.type === 'error') {
+        setIsStreaming(false);
+        setAiResponse(`ПОМИЛКА СУВЕРЕННОГО КЛАСТЕРА: ${msg.message}`);
+      }
+    }
+  });
 
   useEffect(() => {
     let mounted = true;
@@ -203,40 +236,14 @@ export const Predator: React.FC = () => {
     const query = forcedQuery || message;
     if (!query.trim()) return;
     if (!forcedQuery) setMessage('');
-    setAiResponse('ГЛИБОКЕ СКАНУВАННЯ GLM-5.1 [СУВЕРЕННИЙ АГЕНТ]...');
-    setActiveAgent(`GLM-5.1 ↔ [${backendStatus.nodeSource}]`);
-    try {
-      const res = await api.premium.query(query);
-      const answer = res.answer || res.response || res.result;
-      if (answer) {
-        setAiResponse(answer);
-        setActiveAgent(res.agent || 'PREDATOR_CORE');
-        speak(answer);
-        
-        window.dispatchEvent(new CustomEvent('predator-error', {
-          detail: {
-            service: 'AICopilot',
-            message: `ЗАПИТ ВИКОНАНО [${res.agent || 'CORE'}]: ${query.substring(0, 30)}... [GLM-5.1]`,
-            severity: 'success',
-            timestamp: new Date().toISOString(),
-            code: 'AI_QUERY_SUCCESS'
-          }
-        }));
-      } else {
-        setAiResponse(`✨ КОМАНДУ ВИКОНАНО. СТРАТЕГІЧНІ ДАНІ ОНОВЛЕНО.`);
-      }
-    } catch (e: any) {
-      window.dispatchEvent(new CustomEvent('predator-error', {
-        detail: {
-          service: 'AICopilot',
-          message: `ПОМИЛКА ВИКОНАННЯ ЗАПИТУ: ${e?.message}. ВУЗОЛ: ${backendStatus.nodeSource}`,
-          severity: 'error',
-          timestamp: new Date().toISOString(),
-          code: 'AI_QUERY_FAILURE'
-        }
-      }));
-      setAiResponse(`ПОМИЛКА СУВЕРЕННОГО КЛАСТЕРА: ${e?.message}. Перевірте статус NVIDIA сертифіката.`);
-    }
+    
+    setAiResponse('ІНІЦІАЛІЗАЦІЯ КАНАЛУ GLM-5.1...');
+    setHistory(prev => [...prev, { role: 'user', content: query }]);
+    
+    sendMessage({
+      message: query,
+      history: history
+    });
   };
 
   const handleVoiceToggle = () => {
@@ -382,10 +389,10 @@ export const Predator: React.FC = () => {
                     animate={{ opacity: 1, y: 0, scale: 1 }} 
                     className="p-12 bg-rose-950/20 backdrop-blur-xl border-2 border-rose-500/30 rounded-[3.5rem] relative overflow-hidden shadow-3xl group holo-shimmer"
                 >
-                  <div className="hud-corner-tl hud-corner-nexus opacity-40" />
-                  <div className="hud-corner-tr hud-corner-nexus opacity-40" />
-                  <div className="hud-corner-bl hud-corner-nexus opacity-40" />
-                  <div className="hud-corner-br hud-corner-nexus opacity-40" />
+                  <div className="hud-corner-tl hud-corner-nexus hud-corner-rose opacity-40" />
+                  <div className="hud-corner-tr hud-corner-nexus hud-corner-rose opacity-40" />
+                  <div className="hud-corner-bl hud-corner-nexus hud-corner-rose opacity-40" />
+                  <div className="hud-corner-br hud-corner-nexus hud-corner-rose opacity-40" />
                   <div className="absolute inset-0 bg-gradient-to-br from-rose-600/10 via-transparent to-transparent opacity-60" />
                   <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/10 blur-3xl rounded-full -mr-10 -mt-10 animate-pulse" />
                   <div className="relative z-10">
@@ -401,6 +408,7 @@ export const Predator: React.FC = () => {
                     </div>
                     <p className="text-2xl font-black text-white italic leading-relaxed tracking-tight underline decoration-rose-500/20 underline-offset-8 decoration-8 group-hover:text-rose-50 transition-colors">
                        {aiResponse}
+                       {isStreaming && <motion.span animate={{ opacity: [1, 0, 1] }} transition={{ duration: 0.5, repeat: Infinity }} className="inline-block w-1.5 h-7 bg-rose-500 ml-2 align-middle shadow-[0_0_10px_#e11d48]" />}
                     </p>
                     <div className="mt-8 flex items-center gap-4 text-[9px] font-black text-rose-500/30 uppercase tracking-[0.4em] italic font-mono">
                        <Activity size={12} className="animate-pulse" /> СИЛА_СИГНАЛУ: 99.8% // ШИФРОВАНИЙ_ЗВ'ЯЗОК_АКТИВНО

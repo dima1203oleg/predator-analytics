@@ -11,6 +11,7 @@ import { competitorsApi } from '@/features/competitors/api/competitors';
 import { dashboardApi } from './api/dashboard';
 import { factoryApi } from './api/factory';
 import { infraApi } from './api/infra';
+import { copilotApi } from './api/copilot';
 
 // ─── OSINT & Registries Services ────────────────────────────────────────────────────────
 import { osintService } from './unified/osint.service';
@@ -27,7 +28,8 @@ export {
     trinityApi, somApi, autonomyApi, ingestionApi, mlApi, mlStudioApi,
     marketApi, forecastApi, diligenceApi, dashboardApi, competitorsApi,
     factoryApi, infraApi,
-    osintService, cersService, registriesService
+    osintService, cersService, registriesService,
+    copilotApi
 };
 
 // ─── Search API (used by SearchView, SearchConsole, SystemVerificationSuite) ──
@@ -113,6 +115,7 @@ export const api = {
     factory: factoryApi,
     infra: infraApi,
     mlStudio: mlStudioApi,
+    copilot: copilotApi,
 
     // ─── OSINT & Public Records ────────────────────────────────────────────────
     osint: osintService,
