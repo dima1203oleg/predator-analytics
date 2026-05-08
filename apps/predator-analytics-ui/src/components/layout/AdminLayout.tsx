@@ -182,7 +182,7 @@ const AdminSidebar: React.FC = () => {
                       <Icon
                         className={cn(
                           'w-4 h-4 shrink-0 transition-all duration-300 relative z-10',
-                          active ? 'text-rose-400 scale-110 drop-shadow-[0_0_8px_rgba(225,29,72,0.5)]' : 'text-slate-500 group-hover/nav:text-slate-300 group-hover/nav:scale-105',
+                          active ? 'text-rose-400 scale-110 drop-shadow-[0_0_8px_rgba(225,29,72,0.5)]' : 'text-slate-400 group-hover/nav:text-white group-hover/nav:scale-105',
                           !isOpen && "mx-auto"
                         )}
                       />
@@ -191,7 +191,7 @@ const AdminSidebar: React.FC = () => {
                           <span
                             className={cn(
                               'text-[11px] truncate transition-all duration-300 relative z-10 uppercase tracking-tight font-bold italic',
-                              active ? 'text-white' : 'text-slate-400 group-hover/nav:text-slate-200',
+                              active ? 'text-white' : 'text-slate-300 group-hover/nav:text-white',
                             )}
                           >
                             {item.label}
@@ -199,7 +199,7 @@ const AdminSidebar: React.FC = () => {
                           {item.badge && (
                             <span className={cn(
                               "ml-auto text-[7px] font-black px-1.5 py-0.5 rounded-md border italic relative z-10",
-                              active ? "bg-rose-500/20 border-rose-500/40 text-rose-400" : "bg-white/5 border-white/10 text-slate-600"
+                              active ? "bg-rose-500/20 border-rose-500/40 text-rose-400" : "bg-white/5 border-white/10 text-slate-400"
                             )}>
                               {item.badge}
                             </span>
