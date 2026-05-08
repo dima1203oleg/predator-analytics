@@ -1,68 +1,91 @@
-# 🦅 PREDATOR Analytics v63.0-ELITE — Kaggle K8s Values
-# Оптимізовано для CPU-Only Node (30GB RAM)
+# 🦅 PREDATOR Analytics v63.0-ELITE — Full Kaggle Node Configuration
+# 8 Баз даних + Core API (CPU Optimized)
 
 global:
   domain: kaggle.predator.ua
   tenantId: kaggle-reserve
-  # Використовуємо SQLite/In-memory де можливо для економії RAM
-  postgres:
-    host: predator-postgresql
-  neo4j:
-    host: predator-neo4j
-  qdrant:
-    host: predator-qdrant
+  storageClass: local-path
 
-# Вимикаємо важкі компоненти для Kaggle-вузла (або ставимо мінімальні ліміти)
+# --- [1] PostgreSQL (SSOT) ---
 postgresql:
   enabled: true
   primary:
     resources:
-      limits:
-        memory: 512Mi
-      requests:
-        memory: 256Mi
+      limits: { memory: 512Mi, cpu: 500m }
+      requests: { memory: 256Mi, cpu: 100m }
 
+# --- [2] Neo4j (Graph) ---
 neo4j:
   enabled: true
-  neo4j:
-    resources:
-      limits:
-        memory: 2Gi
-      requests:
-        memory: 1Gi
-
-coreApi:
-  replicaCount: 1
   resources:
-    limits:
-      cpu: 1000m
-      memory: 1Gi
-    requests:
-      cpu: 500m
-      memory: 512Mi
-  env:
-    ENV: "production"
-    FF_KAFKA_ENABLED: "false" # Вимикаємо Kafka для Kaggle Node
-    FF_SOVEREIGN_AI: "true"
-    VRAM_LIMIT_MB: "0" # CPU Only mode
+    limits: { memory: 2Gi, cpu: 1000m }
+    requests: { memory: 1Gi, cpu: 500m }
 
-# Вимикаємо OpenSearch та ClickHouse (занадто важкі для Kaggle K8s)
+# --- [3] OpenSearch (Search) ---
 opensearch:
-  enabled: false
+  enabled: true
+  singleNode: true
+  resources:
+    limits: { memory: 2Gi, cpu: 1000m }
+    requests: { memory: 1Gi, cpu: 500m }
+  config:
+    opensearch.yml: |
+      cluster.name: predator-search
+      discovery.type: single-node
+      bootstrap.memory_lock: false
 
-clickhouse:
-  enabled: false
-
-# Qdrant у Memory-режимі через Helm
+# --- [4] Qdrant (Vector) ---
 qdrant:
   enabled: true
   resources:
-    limits:
-      memory: 512Mi
+    limits: { memory: 512Mi, cpu: 500m }
+    requests: { memory: 256Mi, cpu: 100m }
 
-# LiteLLM для роутингу на хмарні моделі (Gemini)
+# --- [5] ClickHouse (OLAP) ---
+clickhouse:
+  enabled: true
+  resources:
+    limits: { memory: 2Gi, cpu: 1000m }
+    requests: { memory: 1Gi, cpu: 500m }
+
+# --- [6] Redis (Cache) ---
+redis:
+  enabled: true
+  master:
+    resources:
+      limits: { memory: 256Mi, cpu: 200m }
+      requests: { memory: 128Mi, cpu: 100m }
+
+# --- [7] MinIO (S3) ---
+minio:
+  enabled: true
+  resources:
+    limits: { memory: 512Mi, cpu: 500m }
+    requests: { memory: 256Mi, cpu: 100m }
+
+# --- [8] Redpanda (Kafka Substitute) ---
+redpanda:
+  enabled: true
+  resources:
+    limits: { memory: 2Gi, cpu: 1000m }
+    requests: { memory: 1Gi, cpu: 500m }
+
+# --- [Core API] ---
+coreApi:
+  replicaCount: 1
+  resources:
+    limits: { memory: 1Gi, cpu: 1000m }
+    requests: { memory: 512Mi, cpu: 200m }
+  env:
+    ENV: "production"
+    FF_KAFKA_ENABLED: "true"
+    FF_OPENSEARCH_ENABLED: "true"
+    FF_QDRANT_ENABLED: "true"
+    VRAM_LIMIT_MB: "0"
+
+# --- [LiteLLM] ---
 litellm:
   enabled: true
   resources:
-    limits:
-      memory: 512Mi
+    limits: { memory: 512Mi, cpu: 500m }
+    requests: { memory: 256Mi, cpu: 100m }
