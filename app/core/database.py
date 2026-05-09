@@ -26,10 +26,14 @@ settings = get_settings()
 
 # ── SQLAlchemy Core ─────────────────────────────────────────
 
-# Відключаємо пул для Celery воркерів, якщо ENVIRONMENT == "testing"
+# Налаштування двигуна (HR-17/18)
 engine_kwargs: dict[str, Any] = {
     "echo": settings.DEBUG and settings.ENVIRONMENT == "development",
     "pool_pre_ping": True,
+    "pool_size": 20,           # Оптимально для ELITE навантаження
+    "max_overflow": 10,        # Додаткові з'єднання при піках
+    "pool_recycle": 3600,      # Оновлювати з'єднання щогодини
+    "pool_timeout": 30,        # Тайм-аут очікування з'єднання
 }
 
 if settings.ENVIRONMENT == "testing":

@@ -10,8 +10,8 @@ logger = logging.getLogger("predator.core.graph")
 
 
 class Neo4jGraph:
-    """Neo4j Graph Database Manager (Serious Mode v1.0)
-    Implements Section 5.3: Graph DB Schema and Relationships.
+    """Менеджер графової бази даних Neo4j (Elite Mode v61.0)
+    Реалізує розділ 5.3: Схема графа та зв'язки.
     """
 
     def __init__(
@@ -20,13 +20,22 @@ class Neo4jGraph:
         self.uri = uri or os.getenv("NEO4J_URI", "bolt://neo4j:7687")
         self.user = user or os.getenv("NEO4J_USER", "neo4j")
         self.password = password or os.getenv("NEO4J_PASSWORD", "666666")
-        self._driver = AsyncGraphDatabase.driver(self.uri, auth=(self.user, self.password))
+        
+        # Оптимізація пулу з'єднань для Sovereign Node
+        self._driver = AsyncGraphDatabase.driver(
+            self.uri, 
+            auth=(self.user, self.password),
+            max_connection_pool_size=50,
+            connection_timeout=30.0,
+            max_transaction_retry_time=10.0
+        )
 
     async def close(self):
+        """Закриття драйвера та очищення ресурсів."""
         await self._driver.close()
 
     async def sync_company(self, name: str, code: str, country: str = "UA") -> str:
-        """Create or update a Company node."""
+        """Створити або оновити вузол Компанії."""
         async with self._driver.session() as session:
             return await session.execute_write(self._merge_company, name, code, country)
 
@@ -42,13 +51,13 @@ class Neo4jGraph:
         return record[0]
 
     async def sync_declaration(self, decl_data: dict[str, Any]):
-        """Create Declaration node and link to participants and goods."""
+        """Створити вузол Декларації та пов'язати його з учасниками та товарами."""
         async with self._driver.session() as session:
             await session.execute_write(self._merge_declaration_complex, decl_data)
 
     @staticmethod
     async def _merge_declaration_complex(tx, data):
-        # 1. Merge Declaration
+        # 1. Merge Декларації
         query = """
         MERGE (d:Declaration {number: $number})
         SET d.date = date($date),
@@ -57,23 +66,22 @@ class Neo4jGraph:
             d.currency = $currency,
             d.updated_at = datetime()
 
-        // 2. Link to Customs Office
+        // 2. Зв'язок з митним постом
         MERGE (co:CustomsOffice {name: $office})
         MERGE (d)-[:FILED_AT]->(co)
 
-        // 3. Link Participants
+        // 3. Зв'язок учасників
         WITH d
         UNWIND $participants as p
         MERGE (c:Company {code: p.code})
         SET c.name = p.name
 
-        // Dynamic Relationship creation
+        // Динамічне створення зв'язків через APOC (потрібен APOC core)
         WITH d, c, p
         CALL apoc.merge.relationship(c, p.role, {}, {}, d, {}) YIELD rel
 
         RETURN d.number
         """
-        # Note: apoc is needed for dynamic relationship types, or use CASE/conditional
         await tx.run(
             query,
             number=data["number"],
@@ -86,7 +94,7 @@ class Neo4jGraph:
         )
 
     async def link_telegram_post(self, post_id: str, content: str, mentions: list[dict[str, str]]):
-        """Link a Telegram post to entities in the graph."""
+        """Пов'язати пост Telegram з сутностями в графі."""
         async with self._driver.session() as session:
             query = """
             MERGE (p:TelegramPost {id: $id})
@@ -100,5 +108,5 @@ class Neo4jGraph:
             await session.run(query, id=post_id, content=content, mentions=mentions)
 
 
-# Singleton
+# Екземпляр-синглтон для глобального використання
 graph_db = Neo4jGraph()
