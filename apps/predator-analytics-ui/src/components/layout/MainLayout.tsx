@@ -71,6 +71,25 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
     }
   }, [isMobile, setIsContextRailOpen, shellV2Enabled]);
 
+  useEffect(() => {
+    if (!isMobileDrawerOpen) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsMobileDrawerOpen(false);
+      }
+    };
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', onKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, [isMobileDrawerOpen]);
+
   return (
     <div
       data-testid="main-layout"
@@ -85,7 +104,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       </div>
 
       {isMobileDrawerOpen && isMobile && (
-        <div className="fixed inset-0 z-50">
+        <div className="fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label="Мобільна навігація">
           <button
             type="button"
             aria-label="Закрити навігацію"

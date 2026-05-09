@@ -5,11 +5,8 @@ import { uk } from 'date-fns/locale';
 import {
   Bell,
   Calendar,
-  Command,
   Layers3,
   PanelRight,
-  PanelRightClose,
-  Radio,
   Search,
   ShieldCheck,
   UserCircle,

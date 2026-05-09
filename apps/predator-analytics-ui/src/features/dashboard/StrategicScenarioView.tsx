@@ -5,7 +5,10 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
-    Flame, Waves, Wind, Cpu, Database, Loader2
+import React, { useState, useEffect, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+    Flame, Waves, Wind, Cpu, Database, Loader2, RefreshCcw, Play, Target, ShieldAlert, Activity, ChevronRight
 } from 'lucide-react';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { Badge } from '@/components/ui/badge';

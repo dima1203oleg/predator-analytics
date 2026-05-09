@@ -14,7 +14,7 @@ import {
   User,
   X,
 } from 'lucide-react';
-import { isSidebarOpenAtom, shellCommandPaletteOpenAtom, sidebarSearchAtom, colabPanelOpenAtom } from '../../store/atoms';
+import { isSidebarOpenAtom, sidebarSearchAtom, colabPanelOpenAtom } from '../../store/atoms';
 import { useUser } from '../../context/UserContext';
 import { Logo } from '../Logo';
 import {
@@ -205,7 +205,6 @@ export const Sidebar: React.FC = () => {
   const backendStatus = useBackendStatus();
   const [isOpen, setIsOpen] = useAtom(isSidebarOpenAtom);
   const [search, setSearch] = useAtom(sidebarSearchAtom);
-  const [, setIsPaletteOpen] = useAtom(shellCommandPaletteOpenAtom);
   const [, setIsColabOpen] = useAtom(colabPanelOpenAtom);
   const [workspaceMode, setWorkspaceMode] = useState<NavWorkspaceMode>('all');
   const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>(getInitialCollapsed);
@@ -234,8 +233,37 @@ export const Sidebar: React.FC = () => {
 
   const focusSearch = useCallback(() => {
     setIsOpen(true);
-    setIsPaletteOpen(true);
-  }, [setIsOpen, setIsPaletteOpen]);
+    requestAnimationFrame(() => {
+      searchInputRef.current?.focus();
+      searchInputRef.current?.select();
+    });
+  }, [setIsOpen]);
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      const isTypingContext =
+        target instanceof HTMLInputElement ||
+        target instanceof HTMLTextAreaElement ||
+        target?.isContentEditable;
+
+      if (!isTypingContext && event.key === '/') {
+        event.preventDefault();
+        focusSearch();
+      }
+
+      if (event.key === 'Escape' && document.activeElement === searchInputRef.current) {
+        if (search.trim()) {
+          setSearch('');
+        } else {
+          searchInputRef.current?.blur();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [focusSearch, search, setSearch]);
 
   const toggleSection = useCallback((sectionId: string) => {
     setCollapsedSections((prev) => {
@@ -305,7 +333,6 @@ export const Sidebar: React.FC = () => {
     search,
     visibleRecentIds,
     visibleSections,
-    visibleSections,
     workspaceMode,
   ]);
 
@@ -313,7 +340,7 @@ export const Sidebar: React.FC = () => {
     if (search.trim()) return `Нічого не знайдено у режимі «${getModeLabel(workspaceMode)}».`;
     if (workspaceMode === 'favorites') return 'Тут зʼявляться закріплені маршрути після натискання на зірку біля модуля.';
     if (workspaceMode === 'recent') return 'Нещодавні переходи зʼявляться після відкриття перших модулів.';
-    if (workspaceMode === 'recommended') return 'рекомендації зʼявляться, щойно система визначить пріоритетні маршрути для ролі.';
+    if (workspaceMode === 'recommended') return 'Рекомендації зʼявляться, щойно система визначить пріоритетні маршрути для ролі.';
     return 'Доступних маршрутів зараз немає.';
   }, [search, workspaceMode]);
 
@@ -541,6 +568,10 @@ export const Sidebar: React.FC = () => {
                 <X size={10} />
               </button>
             )}
+          </div>
+          <div className="mt-1.5 flex items-center justify-between text-[9px] text-slate-500">
+            <span>{filteredSections.length > 0 ? `Секцій: ${filteredSections.length}` : 'Секцій не знайдено'}</span>
+            <span className="text-slate-600">/ для фокусу, Esc для очищення</span>
           </div>
         </div>
       )}
@@ -840,6 +871,7 @@ export const Sidebar: React.FC = () => {
       {/* ── КНОПКА РОЗГОРТАННЯ/ЗГО ТАННЯ ── */}
       <button
         onClick={() => setIsOpen(!isOpen)}
+        aria-label={isOpen ? 'Згорнути навігацію' : 'Розгорнути навігацію'}
         className="absolute -right-3 top-1/2 z-10 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full transition-all duration-300"
         style={{
           background: 'rgba(4,12,28,0.95)',
@@ -857,7 +889,7 @@ export const Sidebar: React.FC = () => {
           e.currentTarget.style.color = '#64748b';
           e.currentTarget.style.boxShadow = '0 0 16px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.03)';
         }}
-        title={isOpen ? 'Згорнути навігацію' : 'розгорнути навігацію'}
+        title={isOpen ? 'Згорнути навігацію' : 'Розгорнути навігацію'}
       >
         {isOpen ? <ChevronLeft size={12} /> : <ChevronRight size={12} />}
       </button>

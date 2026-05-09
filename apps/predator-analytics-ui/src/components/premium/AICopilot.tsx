@@ -464,7 +464,6 @@ export const Predator: React.FC = () => {
                     </div>
                   </div>
                 </motion.div>
-              )}
             </div>
 
             {/* Premium Input Area */}
