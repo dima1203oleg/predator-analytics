@@ -1,50 +1,65 @@
-# Використовуємо офіційний легкий образ Python 3.12
-FROM python:3.12-slim
+# 🦅 PREDATOR Analytics v61.0-ELITE — Core API Dockerfile
+# Compliance: HR-01 (Python 3.12), HR-05 (Multi-stage, USER predator)
 
-# Встановлення змінних середовища
-# PYTHONDONTWRITEBYTECODE: Запобігає запису .pyc файлів
-# PYTHONUNBUFFERED: Гарантує, що вивід консолі буде видимим одразу
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    APP_HOME=/app \
-    PORT=8080
+# ============================================================
+# Stage 1: Builder
+# ============================================================
+FROM python:3.12-slim as builder
 
-# Встановлення робочої директорії
-WORKDIR $APP_HOME
+WORKDIR /app
 
-# Встановлення системних залежностей, необхідних для компіляції та gettext
+# Встановлення системних залежностей для збірки
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
-    gettext \
     libpq-dev \
+    gettext \
     && rm -rf /var/lib/apt/lists/*
 
-# Копіювання файлу залежностей
+# Встановлення залежностей Python у локальну директорію користувача
 COPY requirements.txt .
+RUN pip install --user --no-cache-dir -r requirements.txt
 
-# Встановлення залежностей Python
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+# ============================================================
+# Stage 2: Runtime
+# ============================================================
+FROM python:3.12-slim as runtime
 
-# Копіювання коду застосунку
-COPY . .
+# Створення користувача predator згідно з HR-05
+RUN groupadd -r predator && useradd -r -g predator -m -s /sbin/nologin predator
 
-# Компіляція файлів перекладу (якщо вони існують)
-RUN if [ -d "locales" ]; then \
-    msgfmt locales/uk/LC_MESSAGES/messages.po -o locales/uk/LC_MESSAGES/messages.mo; \
-    fi
+WORKDIR /app
 
-# Створення непривілейованого користувача для безпеки
-RUN adduser --disabled-password --gecos "" predator_user && \
-    chown -R predator_user:predator_user $APP_HOME
+# Встановлення runtime-залежностей (libpq для PostgreSQL)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq5 \
+    gettext \
+    && rm -rf /var/lib/apt/lists/*
 
-USER predator_user
-
-# Відкриття порту
-EXPOSE $PORT
-
-# Встановлення PYTHONPATH для коректного імпорту app та libs
+# Копіювання встановлених пакетів з builder
+COPY --from=builder /root/.local /home/predator/.local
+ENV PATH=/home/predator/.local/bin:$PATH
 ENV PYTHONPATH=/app
 
-# Команда запуску через модуль для правильного розпізнавання пакету app
+# Налаштування прав доступу
+RUN chown -R predator:predator /app
+
+# Копіювання коду застосунку
+COPY --chown=predator:predator . .
+
+# Компіляція файлів перекладу (HR-04)
+RUN if [ -d "locales" ]; then \
+    msgfmt locales/uk/LC_MESSAGES/messages.po -o locales/uk/LC_MESSAGES/messages.mo || true; \
+    fi
+
+# Перемикання на безпечного користувача
+USER predator
+
+# Експорт порту (за замовчуванням 8000 для PREDATOR)
+EXPOSE 8000
+
+# Змінні середовища для оптимізації Python
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+# Команда запуску Core API
 CMD ["python", "-m", "app.main"]

@@ -47,9 +47,11 @@ export function ResourceNodeCard({ node, onClick }: { node: NodeHardwareProps, o
       <div className="absolute top-0 right-0 p-4">
         <div className={cn(
           "px-2.5 py-1 rounded-md text-[9px] font-black uppercase tracking-widest border",
-          isOnline ? "bg-rose-500/10 text-rose-500 border-rose-500/20" : "bg-slate-800/20 text-slate-500 border-slate-700/30"
+          isOnline ? "bg-rose-500/10 text-rose-500 border-rose-500/20" : 
+          node.status === 'degraded' ? "bg-amber-500/10 text-amber-500 border-amber-500/20" :
+          "bg-slate-800/20 text-slate-500 border-slate-700/30"
         )}>
-          {node.status === 'online' ? 'АКТИВНИЙ' : node.status === 'offline' ? 'ОФЛАЙН' : 'ПОМИЛКОВИЙ'}
+          {node.status === 'online' ? 'АКТИВНИЙ' : node.status === 'offline' ? 'ОФЛАЙН' : 'ДЕГРАДОВАНО'}
         </div>
       </div>
 
@@ -98,7 +100,7 @@ export function ResourceNodeCard({ node, onClick }: { node: NodeHardwareProps, o
 
       <div className="space-y-5">
         <div className="flex items-center justify-between">
-          <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">П ИСКО ЮВАЧІ NVIDIA / GPU</span>
+          <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">ПРИСКОРЮВАЧІ NVIDIA / GPU</span>
           <span className="text-[10px] text-slate-700 font-mono font-black">{node.gpu.length} ОДИНИЦЬ</span>
         </div>
         

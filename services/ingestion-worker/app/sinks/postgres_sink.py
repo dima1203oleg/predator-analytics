@@ -1,11 +1,12 @@
-"""PostgreSQL Sink — PREDATOR Analytics v55.2-SM-EXTENDED.
+"""PostgreSQL Sink — PREDATOR Analytics v61.0-ELITE Ironclad.
+© 2026 PREDATOR — HR-01, HR-05, HR-18
 
-Ефективний запис пакетів даних з підтримкою UPSERT.
+Відповідає за транзакційні дані та метадані (SSOT).
+Згідно з HR-17, важкі аналітичні дані (декларації) мають зберігатися в ClickHouse.
 """
 from datetime import UTC, datetime
 import json
 from typing import Any
-from uuid import uuid4
 
 from sqlalchemy import text
 from sqlalchemy.dialects.postgresql import insert
@@ -21,35 +22,45 @@ settings = get_settings()
 
 
 class PostgresSink:
-    """Сінк для запису в PostgreSQL."""
+    """Сінк для запису транзакційних даних та метадані у PostgreSQL."""
 
     def __init__(self) -> None:
-        """Ініціалізація PostgreSQL клієнта."""
+        """Ініціалізація PostgreSQL клієнта з підтримкою асинхронності."""
         db_url = (
             f"postgresql+asyncpg://{settings.POSTGRES_USER}:{settings.POSTGRES_PASSWORD}"
             f"@{settings.POSTGRES_HOST}:{settings.POSTGRES_PORT}/{settings.POSTGRES_DB}"
         )
-        self.engine = create_async_engine(db_url, pool_pre_ping=True)
+        self.engine = create_async_engine(
+            db_url, 
+            pool_pre_ping=True,
+            pool_size=10,
+            max_overflow=20
+        )
         self.async_session = sessionmaker(
-            bind=self.engine, class_=AsyncSession, expire_on_commit=False
+            bind=self.engine, 
+            class_=AsyncSession, 
+            expire_on_commit=False
         )  # type: ignore[call-overload]
 
     async def upsert_companies(self, batch: list[dict[str, Any]]) -> None:
-        """Виконує UPSERT для компаній за UEID."""
+        """
+        Виконує ідемпотентний UPSERT для компаній за UEID.
+        Оновлює метадані компанії в SSOT.
+        """
         if not batch:
             return
 
         async with self.async_session() as session:
             for item in batch:
                 try:
-                    # Підготовка даних для Company
+                    # Підготовка даних для сутності Company
                     company_data = {
                         "ueid": item.get("ueid"),
                         "edrpou": item.get("edrpou"),
                         "tenant_id": item.get("tenant_id"),
                         "updated_at": datetime.now(UTC),
                     }
-                    # Фільтруємо None значення
+                    # Фільтрація порожніх значень
                     company_data = {k: v for k, v in company_data.items() if v is not None}
 
                     if not company_data.get("ueid"):
@@ -66,59 +77,12 @@ class PostgresSink:
                     )
                     await session.execute(stmt)
                 except Exception as e:
-                    logger.error(f"Failed to upsert company: {e}")
-
-            await session.commit()
-
-    async def save_declarations(self, batch: list[dict[str, Any]]) -> None:
-        """Зберігає декларації."""
-        if not batch:
-            return
-
-        async with self.async_session() as session:
-            for record in batch:
-                try:
-                    # Використовуємо raw SQL для гнучкості
-                    await session.execute(
-                        text("""
-                            INSERT INTO customs_declarations (
-                                id, tenant_id, declaration_number, declaration_date,
-                                company_edrpou, ueid, product_description, uktzed_code,
-                                customs_value, weight, country_origin, customs_post,
-                                record_hash, job_id, created_at
-                            ) VALUES (
-                                :id, :tenant_id, :declaration_number, :declaration_date,
-                                :company_edrpou, :ueid, :product_description, :uktzed_code,
-                                :customs_value, :weight, :country_origin, :customs_post,
-                                :record_hash, :job_id, :created_at
-                            )
-                            ON CONFLICT (record_hash) DO NOTHING
-                        """),
-                        {
-                            "id": str(uuid4()),
-                            "tenant_id": record.get("_tenant_id"),
-                            "declaration_number": record.get("declaration_number"),
-                            "declaration_date": record.get("declaration_date"),
-                            "company_edrpou": record.get("company_edrpou"),
-                            "ueid": record.get("ueid"),
-                            "product_description": record.get("product_description"),
-                            "uktzed_code": record.get("uktzed_code"),
-                            "customs_value": record.get("customs_value"),
-                            "weight": record.get("weight"),
-                            "country_origin": record.get("country_origin"),
-                            "customs_post": record.get("customs_post"),
-                            "record_hash": record.get("_record_hash"),
-                            "job_id": record.get("_job_id"),
-                            "created_at": datetime.now(UTC),
-                        },
-                    )
-                except Exception as e:
-                    logger.error(f"Failed to save declaration: {e}")
+                    logger.error(f"❌ Помилка UPSERT компанії: {e}")
 
             await session.commit()
 
     async def save_quarantine(self, quarantine_records: list[Any]) -> None:
-        """Зберігає карантинні записи (DLQ)."""
+        """Зберігає записи, що не пройшли валідацію (Карантин/DLQ)."""
         if not quarantine_records:
             return
 
@@ -131,12 +95,11 @@ class PostgresSink:
                                 id, tenant_id, job_id, original_record,
                                 errors, quarantined_at
                             ) VALUES (
-                                :id, :tenant_id, :job_id, :original_record,
+                                gen_random_uuid(), :tenant_id, :job_id, :original_record,
                                 :errors, :quarantined_at
                             )
                         """),
                         {
-                            "id": str(uuid4()),
                             "tenant_id": record.tenant_id,
                             "job_id": record.job_id,
                             "original_record": json.dumps(record.original_record, ensure_ascii=False, default=str),
@@ -145,7 +108,7 @@ class PostgresSink:
                         },
                     )
                 except Exception as e:
-                    logger.error(f"Failed to save quarantine record: {e}")
+                    logger.error(f"❌ Помилка запису в карантин: {e}")
 
             await session.commit()
 
@@ -157,7 +120,7 @@ class PostgresSink:
         records_processed: int,
         records_errors: int,
     ) -> None:
-        """Оновлює прогрес ingestion job."""
+        """Оновлює статус та прогрес завдання інгестії (Метадані)."""
         async with self.async_session() as session:
             try:
                 await session.execute(
@@ -181,17 +144,10 @@ class PostgresSink:
                 )
                 await session.commit()
             except Exception as e:
-                logger.error(f"Failed to update job progress: {e}")
-
-    async def write_batch(self, table_name: str, batch: list[dict[str, Any]]) -> None:
-        """Загальний метод запису."""
-        if table_name == "companies":
-            await self.upsert_companies(batch)
-        elif table_name == "declarations":
-            await self.save_declarations(batch)
+                logger.error(f"❌ Помилка оновлення прогресу завдання: {e}")
 
     async def is_event_processed(self, event_id: str) -> bool:
-        """Перевіряє, чи було подію вже оброблено (ідемпотентність)."""
+        """Перевіряє, чи було подію вже оброблено для забезпечення ідемпотентності."""
         async with self.async_session() as session:
             try:
                 result = await session.execute(
@@ -200,13 +156,13 @@ class PostgresSink:
                 )
                 return result.scalar() is not None
             except Exception as e:
-                logger.error(f"Error checking if event is processed: {e}")
+                logger.error(f"⚠️ Помилка перевірки ідемпотентності: {e}")
                 return False
 
     async def mark_event_processed(
         self, event_id: str, tenant_id: str, source: str, status: str = "SUCCESS"
     ) -> None:
-        """Позначає подію як оброблену."""
+        """Позначає ідентифікатор події як оброблений."""
         async with self.async_session() as session:
             try:
                 await session.execute(
@@ -224,8 +180,8 @@ class PostgresSink:
                 )
                 await session.commit()
             except Exception as e:
-                logger.error(f"Failed to mark event as processed: {e}")
+                logger.error(f"❌ Помилка маркування події: {e}")
 
     async def close(self) -> None:
-        """Закриття з'єднання."""
+        """Граціозне закриття з'єднань з БД."""
         await self.engine.dispose()
