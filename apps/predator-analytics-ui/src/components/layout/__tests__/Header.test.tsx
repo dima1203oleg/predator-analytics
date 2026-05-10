@@ -84,7 +84,7 @@ describe('Header', () => {
     expect(screen.getAllByText('Огляд системи').length).toBeGreaterThan(0);
     expect(screen.getByText('КОМАНДНИЙ ЦЕНТР')).toBeInTheDocument();
     expect(screen.getByText('Аналітичний контур')).toBeInTheDocument();
-    expect(screen.getByText('ПОШУК_МОДУЛІВ...')).toBeInTheDocument();
+    expect(screen.getByText('Знайти модуль, звіт або дію…')).toBeInTheDocument();
     expect(screen.getByTitle('Згорнути контекстну панель')).toBeInTheDocument();
   });
 

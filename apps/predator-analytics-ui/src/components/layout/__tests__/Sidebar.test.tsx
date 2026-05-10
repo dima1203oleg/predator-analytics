@@ -97,7 +97,7 @@ describe('Sidebar', () => {
     );
 
     expect(screen.getByText('PREDATOR')).toBeInTheDocument();
-    expect(screen.getByText('ELITE COMMAND CENTER')).toBeInTheDocument();
+    expect(screen.getByText('Аналітика · Рішення · Контроль')).toBeInTheDocument();
     expect(screen.getByText('АКТИВНИЙ')).toBeInTheDocument();
   });
 

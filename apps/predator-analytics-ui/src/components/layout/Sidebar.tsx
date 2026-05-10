@@ -411,7 +411,7 @@ export const Sidebar: React.FC = () => {
                   className="text-[8px] font-bold uppercase tracking-[0.12em] mt-0.5"
                   style={{ color: '#64748b' }}
                 >
-                  ELITE COMMAND CENTER
+                  Аналітика · Рішення · Контроль
                 </div>
               </motion.div>
             )}

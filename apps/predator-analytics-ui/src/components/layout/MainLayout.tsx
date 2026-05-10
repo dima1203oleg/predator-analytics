@@ -20,6 +20,7 @@ import { ConstitutionalShield } from '../shared/ConstitutionalShield';
 import { useTheme } from '../../context/ThemeContext';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { InfrastructureFailoverBanner } from '../InfrastructureFailoverBanner';
+import { WorkspaceBusinessStrip } from './WorkspaceBusinessStrip';
 import { NeuralBackground } from '../ui/NeuralBackground';
 import { cn } from '@/utils/cn';
 import { API_BASE_URL } from '@/services/api/config';
@@ -139,6 +140,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 
       <div className="relative z-10 flex h-screen min-w-0 flex-1 flex-col overflow-hidden">
         <Header />
+        <WorkspaceBusinessStrip />
         <main className="relative flex-1 overflow-y-auto custom-scrollbar">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_16%,rgba(15,23,42,0.28),transparent_24%),radial-gradient(circle_at_100%_0%,rgba(8,47,73,0.18),transparent_30%)]" />
           <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(180deg,transparent,rgba(2,6,23,0.4))]" />

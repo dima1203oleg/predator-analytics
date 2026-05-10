@@ -208,8 +208,8 @@ const Header: React.FC = () => {
               <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                 <Search className="h-4 w-4 text-slate-600 group-hover:text-rose-500 transition-colors" />
               </div>
-              <div className="h-10 w-56 lg:w-72 bg-black/40 border border-white/5 rounded-xl text-[11px] font-bold text-slate-400 flex items-center pl-10 pr-12 transition-all group-hover:border-rose-500/30 group-hover:bg-rose-500/[0.02] shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)] italic tracking-tight">
-                ПОШУК_МОДУЛІВ...
+              <div className="h-10 w-56 lg:w-72 bg-black/40 border border-white/5 rounded-xl text-[11px] font-semibold text-slate-400 flex items-center pl-10 pr-12 transition-all group-hover:border-rose-500/30 group-hover:bg-rose-500/[0.02] shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)] tracking-tight">
+                Знайти модуль, звіт або дію…
               </div>
               <div className="absolute inset-y-0 right-2.5 flex items-center gap-1">
                 <kbd className="hidden lg:flex items-center justify-center px-1.5 py-0.5 rounded border border-white/10 bg-black/40 text-[9px] font-black text-slate-500 group-hover:text-rose-400/80 group-hover:border-rose-500/30 transition-all">

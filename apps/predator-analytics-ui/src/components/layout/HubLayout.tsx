@@ -18,6 +18,10 @@ import { NeuralHUD } from '@/components/ui/NeuralHUD';
 interface HubLayoutProps {
   title: string;
   subtitle?: string;
+  /** Короткий рядок над заголовком (бізнес-фокус замість технічного коду). */
+  eyebrow?: string;
+  /** Додатковий абзац звичайним регістром — для керівників і неаналітиків. */
+  businessCaption?: string;
   icon?: React.ReactNode;
   tabs: { id: string; label: string; icon?: React.ReactNode }[];
   activeTab: string;
@@ -31,6 +35,8 @@ interface HubLayoutProps {
 export const HubLayout: React.FC<HubLayoutProps> = ({
   title,
   subtitle,
+  eyebrow,
+  businessCaption,
   icon,
   tabs,
   activeTab,
@@ -104,8 +110,8 @@ export const HubLayout: React.FC<HubLayoutProps> = ({
             <div>
               <div className="flex items-center gap-4 mb-3">
                 <div className={cn("h-2 w-2 rounded-full animate-pulse shadow-[0_0_12px_currentColor]", styles.icon)} />
-                <span className="text-[10px] font-black uppercase tracking-[0.6em] text-slate-500 italic leading-none opacity-60">
-                  PREDATOR_SYSTEM // {accent.toUpperCase()}_MATRIX_v63.0-ELITE
+                <span className="text-[10px] font-black uppercase tracking-[0.35em] text-slate-500 italic leading-none opacity-80">
+                  {eyebrow ?? 'Робочий простір · аналітика та рішення для бізнесу'}
                 </span>
               </div>
               <h1 className="text-6xl font-black tracking-tighter text-white uppercase italic leading-none skew-x-[-3deg]">
@@ -118,6 +124,11 @@ export const HubLayout: React.FC<HubLayoutProps> = ({
                      {subtitle}
                    </p>
                 </div>
+              )}
+              {businessCaption && (
+                <p className="mt-5 max-w-4xl text-sm font-medium leading-relaxed text-slate-400 normal-case not-italic tracking-normal">
+                  {businessCaption}
+                </p>
               )}
             </div>
           </div>
