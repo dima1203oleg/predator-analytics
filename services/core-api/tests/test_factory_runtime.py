@@ -10,6 +10,7 @@ import pytest
 
 from app.models.factory import ImprovementPhase, SystemImprovement
 from app.services.factory_runtime import (
+    autostart_factory_improvement_if_enabled,
     cancel_factory_improvement_task,
     ensure_factory_improvement_task,
 )
@@ -36,6 +37,7 @@ class DummyTask:
         self.callbacks.append(callback)
 
     def __await__(self) -> Generator[object, None, None]:
+        """Імітація awaitable для тестів asyncio."""
         if self.cancelled:
             raise asyncio.CancelledError
         if False:
@@ -82,6 +84,38 @@ async def test_ensure_factory_improvement_task_restores_running_cycle(monkeypatc
     assert app.state.factory_improvement_task is dummy_task
     repo.update_improvement.assert_awaited_once()
     assert 'автоматично відновлено після рестарту сервера' in status.logs[-1]
+
+
+@pytest.mark.asyncio
+async def test_autostart_factory_sets_running_when_disabled_flag_false() -> None:
+    """Якщо enabled=False — стан не змінюється."""
+    app = FastAPI()
+    repo = AsyncMock()
+    status = SystemImprovement(is_running=False, logs=[], last_update=datetime.now(UTC))
+    repo.get_improvement = AsyncMock(return_value=status)
+    repo.update_improvement = AsyncMock(return_value=True)
+    app.state.factory_repo = repo
+
+    result = await autostart_factory_improvement_if_enabled(app, enabled=False)
+
+    assert result is False
+    repo.update_improvement.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_autostart_factory_enables_cycle_when_enabled() -> None:
+    app = FastAPI()
+    repo = AsyncMock()
+    status = SystemImprovement(is_running=False, logs=[], last_update=datetime.now(UTC))
+    repo.get_improvement = AsyncMock(return_value=status)
+    repo.update_improvement = AsyncMock(return_value=True)
+    app.state.factory_repo = repo
+
+    result = await autostart_factory_improvement_if_enabled(app, enabled=True)
+
+    assert result is True
+    assert status.is_running is True
+    repo.update_improvement.assert_awaited_once()
 
 
 @pytest.mark.asyncio

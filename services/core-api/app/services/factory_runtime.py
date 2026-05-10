@@ -92,8 +92,37 @@ def _store_task(app: FastAPI, task: FactoryImprovementTaskProtocol) -> None:
     task.add_done_callback(_clear)
 
 
-async def ensure_factory_improvement_task(app: FastAPI) -> bool:
-    """Запустити OODA-цикл, якщо стан збережений як активний."""
+async def autostart_factory_improvement_if_enabled(app: FastAPI, *, enabled: bool) -> bool:
+    """Якщо увімкнено FACTORY_AUTO_START і цикл ще не активний — увімкнути is_running і зберегти стан."""
+    if not enabled:
+        return False
+
+    repo = _get_repo(app)
+    if repo is None:
+        return False
+
+    status = await repo.get_improvement()
+    if status.is_running:
+        return False
+
+    resume_timestamp = datetime.now(UTC)
+    status.is_running = True
+    status.last_update = resume_timestamp
+    status.logs.append(
+        f"[{resume_timestamp.strftime('%H:%M:%S')}] 🟢 SYSTEM: "
+        "Автозапуск фабрики вдосконалення (FACTORY_AUTO_START=true). "
+        "Зупинка: POST /api/v1/factory/infinite/stop"
+    )
+    await repo.update_improvement(status)
+    logger.info("FACTORY_AUTO_START: цикл OODA увімкнено автоматично при старті API.")
+    return True
+
+
+async def ensure_factory_improvement_task(app: FastAPI, *, silent: bool = False) -> bool:
+    """Запустити OODA-цикл, якщо стан збережений як активний.
+
+    silent=True — тихе відновлення (сторож), без довгого запису в журнал кожного тіку.
+    """
     repo = _get_repo(app)
     if repo is None:
         logger.warning("Репозиторій безконечного вдосконалення ще не ініціалізовано.")
@@ -113,10 +142,16 @@ async def ensure_factory_improvement_task(app: FastAPI) -> bool:
         return False
 
     resume_timestamp = datetime.now(UTC)
-    status.logs.append(
-        f"[{resume_timestamp.strftime('%H:%M:%S')}] 🔄 SYSTEM: "
-        "Безконечне вдосконалення автоматично відновлено після рестарту сервера."
-    )
+    if not silent:
+        status.logs.append(
+            f"[{resume_timestamp.strftime('%H:%M:%S')}] 🔄 SYSTEM: "
+            "Безконечне вдосконалення автоматично відновлено після рестарту сервера."
+        )
+    else:
+        status.logs.append(
+            f"[{resume_timestamp.strftime('%H:%M:%S')}] 🔁 WATCHDOG: "
+            "Фонова задача OODA перевірена / відновлена автоматично."
+        )
     status.last_update = resume_timestamp
     await repo.update_improvement(status)
 
@@ -124,6 +159,40 @@ async def ensure_factory_improvement_task(app: FastAPI) -> bool:
     _store_task(app, new_task)
     logger.info("Безконечне вдосконалення відновлено і запущено на бекенді.")
     return True
+
+
+async def run_factory_watchdog_loop(
+    app: FastAPI,
+    interval_sec: int,
+    stop_event: asyncio.Event,
+) -> None:
+    """Періодично гарантує наявність активної задачі OODA та синхронізує оркестратор."""
+    # Відкладений імпорт — уникнення циклів під час завантаження модуля
+    from app.services.antigravity_orchestrator import orchestrator
+
+    interval_sec = max(15, interval_sec)
+    logger.info(
+        "Запущено сторож фабрики (інтервал %ss): автономне відновлення OODA без участі людини.",
+        interval_sec,
+    )
+    try:
+        await ensure_factory_improvement_task(app, silent=True)
+        await orchestrator.sync_with_factory(app)
+    except Exception:
+        logger.exception("Початковий тик сторожа фабрики.")
+
+    while True:
+        try:
+            await asyncio.wait_for(stop_event.wait(), timeout=interval_sec)
+            logger.info("Сторож фабрики зупинено за сигналом завершення.")
+            return
+        except TimeoutError:
+            pass
+        try:
+            await ensure_factory_improvement_task(app, silent=True)
+            await orchestrator.sync_with_factory(app)
+        except Exception:
+            logger.exception("Тик сторожа фабрики: помилка відновлення або синхронізації.")
 
 
 async def cancel_factory_improvement_task(app: FastAPI) -> bool:

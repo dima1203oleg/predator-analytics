@@ -1,0 +1,21 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "labels": ["dependencies", "renovate"],
+  "timezone": "Europe/Kyiv",
+  "schedule": ["before 6am on Monday"],
+  "packageRules": [
+    {
+      "description": "Мажорні оновлення потребують підтвердження на дашборді",
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true
+    },
+    {
+      "description": "Patch/minor групуємо за менеджером пакетів",
+      "matchManagers": ["poetry", "npm", "pnpm"],
+      "matchUpdateTypes": ["patch", "minor"],
+      "groupName": "{{manager}} minor-and-patch"
+    }
+  ],
+  "ignorePaths": ["**/node_modules/**", "**/.venv/**", "**/venv/**"]
+}

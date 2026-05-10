@@ -1,7 +1,8 @@
 import asyncio
 from collections.abc import AsyncGenerator
-from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager, suppress
 from datetime import UTC, datetime
+import logging
 
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
@@ -47,9 +48,9 @@ from app.routers import (
     intelligence_router,
     maritime_router,
     market_router,
-    omniverse_router,
     ml_studio_router,
     newspaper_router,
+    omniverse_router,
     optimizer_router,
     orchestrator_router,
     osint_router,
@@ -64,24 +65,26 @@ from app.routers import (
     sanctions_router,
     search_router,
     som_router,
-    synthetic_data_router,
     stats_router,
+    synthetic_data_router,
     system_router,
-    warroom_router,
     wargaming_router,
+    warroom_router,
     websocket_router,
 )
 from app.services.factory_repository import FactoryRepository
 from app.services.factory_runtime import (
+    autostart_factory_improvement_if_enabled,
     cancel_factory_improvement_task,
     ensure_factory_improvement_task,
+    run_factory_watchdog_loop,
 )
+from app.services.oss_automation_scheduler import create_oss_automation_scheduler
 from app.services.guardian import guardian_service
 from app.services.kafka_service import close_kafka, init_kafka
 from app.services.minio_service import close_minio, init_minio
 from app.services.redis_service import close_redis, init_redis
 from app.services.vram_watchdog import vram_sentinel
-import logging
 from predator_common.logging import get_logger
 
 logger = get_logger("core_api.main")
@@ -155,6 +158,10 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
             app.state.factory_improvement_task = None
             logger.info("Factory Repository initialized")
 
+            await autostart_factory_improvement_if_enabled(
+                app,
+                enabled=settings.FACTORY_AUTO_START,
+            )
             await ensure_factory_improvement_task(app)
         except Exception as e:
             logger.warning(f"Factory OODA initialization failed: {e}. System Factory features will be unavailable.")
@@ -172,6 +179,39 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         app.state.vram_watchdog_task = asyncio.create_task(vram_sentinel.watchdog_loop())
         logger.info("VRAM Watchdog Sentinel started")
 
+        # 10. Сторож OODA: автономне відновлення циклу вдосконалення + синхронізація з оркестратором
+        app.state.factory_watchdog_stop = asyncio.Event()
+        app.state.factory_watchdog_task = None
+        if (
+            settings.FACTORY_WATCHDOG_ENABLED
+            and getattr(app.state, "factory_repo", None) is not None
+        ):
+            app.state.factory_watchdog_task = asyncio.create_task(
+                run_factory_watchdog_loop(
+                    app,
+                    settings.FACTORY_WATCHDOG_INTERVAL_SEC,
+                    app.state.factory_watchdog_stop,
+                )
+            )
+            logger.info(
+                "Сторож фабрики запущено (інтервал %ss).",
+                settings.FACTORY_WATCHDOG_INTERVAL_SEC,
+            )
+
+        # 11. Планувальник OSS (APScheduler): резервний ритм синхронізації оркестратора
+        app.state.oss_scheduler = None
+        if settings.OSS_SCHEDULER_ENABLED:
+            sched = create_oss_automation_scheduler(
+                app,
+                settings.OSS_SCHEDULER_INTERVAL_MIN,
+            )
+            sched.start()
+            app.state.oss_scheduler = sched
+            logger.info(
+                "OSS APScheduler запущено (інтервал %s хв).",
+                settings.OSS_SCHEDULER_INTERVAL_MIN,
+            )
+
         logger.info("Core API ініціалізовано (можливо, в обмеженому режимі)")
 
     yield
@@ -186,9 +226,22 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         guardian_service.stop()
         if hasattr(app.state, 'guardian_task'):
             app.state.guardian_task.cancel()
-        
+
         if hasattr(app.state, 'vram_watchdog_task'):
             app.state.vram_watchdog_task.cancel()
+
+        if hasattr(app.state, "factory_watchdog_stop"):
+            app.state.factory_watchdog_stop.set()
+        wd_task = getattr(app.state, "factory_watchdog_task", None)
+        if wd_task is not None:
+            wd_task.cancel()
+            with suppress(asyncio.CancelledError):
+                await wd_task
+
+        oss_sched = getattr(app.state, "oss_scheduler", None)
+        if oss_sched is not None:
+            oss_sched.shutdown(wait=False)
+
         await cancel_factory_improvement_task(app)
         await close_redis()
         await close_kafka()

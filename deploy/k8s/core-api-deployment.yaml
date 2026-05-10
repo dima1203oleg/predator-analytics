@@ -41,6 +41,16 @@ spec:
           value: bolt://predator-elite-neo4j:7687
         - name: ENV
           value: production
+        - name: FACTORY_AUTO_START
+          value: "true"
+        - name: FACTORY_WATCHDOG_ENABLED
+          value: "true"
+        - name: FACTORY_WATCHDOG_INTERVAL_SEC
+          value: "90"
+        - name: OSS_SCHEDULER_ENABLED
+          value: "true"
+        - name: OSS_SCHEDULER_INTERVAL_MIN
+          value: "15"
         - name: SECRET_KEY
           value: "a7f8c9d2e3b4f501a6b7c8d9e0f1a2b3c4d5e6f70819293a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8"
         - name: PYTHONPATH

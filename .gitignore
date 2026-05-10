@@ -133,6 +133,7 @@ htmlcov/
 .predator_dev
 
 *.json
+!renovate.json
 *.txt
 scratch/
 

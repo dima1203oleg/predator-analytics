@@ -21,6 +21,15 @@ class Settings(BaseSettings):
     FF_ANOMALY_DETECTION: bool = True
     FF_SOVEREIGN_AI: bool = False
 
+    # Автономна фабрика (OODA): за замовчуванням увімкнено; зупинка через API /factory/infinite/stop
+    FACTORY_AUTO_START: bool = True
+    # Сторож: періодично відновлює фонову задачу OODA, якщо вона впала, а is_running=true (без участі людини)
+    FACTORY_WATCHDOG_ENABLED: bool = True
+    FACTORY_WATCHDOG_INTERVAL_SEC: int = 90
+    # APScheduler (Apache-2.0): планові «пульси» автоматизації поверх фабрики
+    OSS_SCHEDULER_ENABLED: bool = True
+    OSS_SCHEDULER_INTERVAL_MIN: int = 15
+
     # Alembic (міграції)
     ALEMBIC_AUTO_MIGRATE: bool = False
 
