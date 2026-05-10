@@ -944,6 +944,17 @@ const baseNavigationConfig: NavSection[] = [
             audiences: ['admin'],
             priority: 98,
           },
+          {
+            id: 'admin-database-command-center',
+            label: 'Центр Керування БД',
+            path: '/admin/database-command-center',
+            icon: Database,
+            description: 'Моніторинг здоров\'я 8 баз даних, System Memory Contract та Smart Data Router.',
+            group: 'Моніторинг',
+            badge: 'NEW',
+            audiences: ['admin'],
+            priority: 96,
+          },
         ],
       },
       {

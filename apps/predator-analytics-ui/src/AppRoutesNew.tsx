@@ -12,6 +12,7 @@ import { LoadingSkeleton } from './components/LoadingSkeleton';
 
 // ─── AdminHub (System Command Center) ────────────────────────────────────────
 const AdminHub = lazy(() => import('./pages/admin/AdminHub'));
+const DatabaseCommandCenter = lazy(() => import('./features/admin/DatabaseCommandCenter'));
 
 // Lazy loaded views
 const SearchPage = lazy(() => import('./features/search/SearchPage'));
@@ -157,6 +158,16 @@ export const AppRoutesNew = () => {
               element={
                 <AdminGuard>
                   <AdminHub />
+                </AdminGuard>
+              }
+            />
+
+            {/* Database Command Center */}
+            <Route
+              path="/admin/database-command-center"
+              element={
+                <AdminGuard>
+                  <DatabaseCommandCenter />
                 </AdminGuard>
               }
             />
