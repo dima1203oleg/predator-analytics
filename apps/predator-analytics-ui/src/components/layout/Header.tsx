@@ -88,17 +88,15 @@ const Header: React.FC = () => {
 
   return (
     <header
-      className="sticky top-0 z-40 border-b op-mode-transition"
+      className="sticky top-0 z-40 border-b border-white/[0.06] op-mode-transition shadow-[0_12px_48px_-16px_rgba(0,0,0,0.75)]"
       style={{
-        background: 'rgba(2,6,18,0.7)',
-        backdropFilter: 'blur(30px) saturate(200%)',
-        borderColor: 'rgba(255,255,255,0.05)',
-        boxShadow: '0 8px 64px -12px rgba(0,0,0,0.6)',
+        background: 'rgba(6, 10, 18, 0.82)',
+        backdropFilter: 'blur(36px) saturate(165%)',
       }}
     >
       {/* Cinematic HUD Background Layers */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-[0.03]">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_-10%,rgba(244,63,94,0.3),transparent_40%)]" />
+      <div className="pointer-events-none absolute inset-0 overflow-hidden opacity-[0.04]">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_-10%,rgba(56,189,248,0.18),transparent_42%)]" />
         <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%)] bg-[length:100%_4px]" />
       </div>
 
@@ -134,7 +132,7 @@ const Header: React.FC = () => {
               </div>
 
               {/* Breadcrumb path */}
-              <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.25em] italic">
+              <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400">
                 <span
                   className="rounded-lg border px-2.5 py-1 backdrop-blur-md"
                   style={{
@@ -163,8 +161,8 @@ const Header: React.FC = () => {
             <div className="flex items-center gap-5">
               <div className="min-w-0">
                 <h1
-                  className="text-[1.75rem] font-black tracking-tight leading-none truncate italic text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]"
-                  style={{ letterSpacing: '-0.03em' }}
+                  className="font-display text-[1.75rem] font-bold leading-none tracking-tight text-white drop-shadow-sm sm:text-[1.85rem]"
+                  style={{ letterSpacing: '-0.035em' }}
                 >
                   {item?.label ?? 'ПАНЕЛЬ УПРАВЛІННЯ'}
                 </h1>
@@ -174,13 +172,13 @@ const Header: React.FC = () => {
               <div className="hidden xl:flex items-center gap-3">
                 <div className="h-4 w-px bg-white/10" />
                 <div className="flex items-center gap-3">
-                   <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.03] border border-white/5 text-[9px] font-black uppercase tracking-widest text-slate-500 italic">
-                      <Calendar className="h-3 w-3 text-rose-500/50" />
+                   <div className="flex items-center gap-2 rounded-full border border-white/[0.06] bg-white/[0.03] px-3 py-1 text-[9px] font-semibold uppercase tracking-widest text-slate-500">
+                      <Calendar className="h-3 w-3 text-sky-500/70" />
                       {currentDate}
                    </div>
                    
                    <div className={cn(
-                      "flex items-center gap-2 px-3 py-1 rounded-full border text-[9px] font-black uppercase tracking-widest italic",
+                      "flex items-center gap-2 rounded-full border px-3 py-1 text-[9px] font-semibold uppercase tracking-widest",
                       backendStatus.isOffline 
                         ? "bg-rose-500/5 border-rose-500/20 text-rose-400" 
                         : "bg-emerald-500/5 border-emerald-500/20 text-emerald-400"
@@ -206,13 +204,13 @@ const Header: React.FC = () => {
               onClick={() => setIsPaletteOpen(true)}
             >
               <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                <Search className="h-4 w-4 text-slate-600 group-hover:text-rose-500 transition-colors" />
+                <Search className="h-4 w-4 text-slate-600 transition-colors group-hover:text-sky-400" />
               </div>
-              <div className="h-10 w-56 lg:w-72 bg-black/40 border border-white/5 rounded-xl text-[11px] font-semibold text-slate-400 flex items-center pl-10 pr-12 transition-all group-hover:border-rose-500/30 group-hover:bg-rose-500/[0.02] shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)] tracking-tight">
+              <div className="flex h-10 w-56 items-center rounded-xl border border-white/[0.07] bg-black/45 pl-10 pr-12 text-[11px] font-medium tracking-tight text-slate-400 shadow-[inset_0_2px_4px_rgba(0,0,0,0.45)] transition-all group-hover:border-sky-500/25 group-hover:bg-sky-500/[0.03] lg:w-72">
                 Знайти модуль, звіт або дію…
               </div>
               <div className="absolute inset-y-0 right-2.5 flex items-center gap-1">
-                <kbd className="hidden lg:flex items-center justify-center px-1.5 py-0.5 rounded border border-white/10 bg-black/40 text-[9px] font-black text-slate-500 group-hover:text-rose-400/80 group-hover:border-rose-500/30 transition-all">
+                <kbd className="hidden items-center justify-center rounded border border-white/10 bg-black/50 px-1.5 py-0.5 text-[9px] font-semibold text-slate-500 transition-all group-hover:border-sky-500/30 group-hover:text-sky-300/90 lg:flex">
                   ⌘K
                 </kbd>
               </div>
@@ -266,12 +264,12 @@ const Header: React.FC = () => {
               {/* Профіль */}
               <div className="flex items-center gap-3 pl-1 group cursor-pointer">
                 <div className="text-right hidden lg:block">
-                  <div className="text-[11px] font-black text-white tracking-tight uppercase italic">{user?.name || 'ADMIN_CORE'}</div>
-                  <div className="text-[8px] font-black text-rose-500/60 tracking-[0.2em] uppercase mt-0.5">{roleLabel}</div>
+                  <div className="text-[11px] font-semibold uppercase tracking-tight text-white">{user?.name || 'ADMIN_CORE'}</div>
+                  <div className="mt-0.5 text-[8px] uppercase tracking-[0.18em] text-slate-500">{roleLabel}</div>
                 </div>
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-slate-800 to-slate-900 border border-white/10 flex items-center justify-center shadow-lg group-hover:border-rose-500/30 transition-all relative overflow-hidden">
-                   <div className="absolute inset-0 bg-rose-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                   <UserCircle className="h-6 w-6 text-slate-500 group-hover:text-rose-400 transition-colors" />
+                <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl border border-white/[0.08] bg-gradient-to-br from-slate-800 to-slate-950 shadow-lg transition-all group-hover:border-sky-500/35">
+                   <div className="absolute inset-0 bg-sky-500/5 opacity-0 transition-opacity group-hover:opacity-100" />
+                   <UserCircle className="h-6 w-6 text-slate-500 transition-colors group-hover:text-sky-300" />
                 </div>
               </div>
 

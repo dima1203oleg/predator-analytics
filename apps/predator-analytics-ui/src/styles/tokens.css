@@ -27,10 +27,10 @@
   --radius-3xl: 2rem;
   --radius-full: 9999px;
 
-  /* ── SEMANTIC BACKGROUNDS ── (Spec v2.0 §8: абсолютно чорний фон) */
-  --bg-canvas: #0a0a0a;           /* Spec v2.0 §8: #0A0A0A */
-  --bg-surface: #0d0d0d;
-  --bg-elevated: #141414;
+  /* ── SEMANTIC BACKGROUNDS — глибокий графіт із холодним підтоном */
+  --bg-canvas: #050608;
+  --bg-surface: #0a0c10;
+  --bg-elevated: #101318;
   --bg-overlay: rgba(10, 10, 10, 0.90);
   --bg-panel: rgba(10, 10, 10, 0.75);
 
@@ -85,11 +85,11 @@
   --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.7);
   --shadow-2xl: 0 24px 64px rgba(0, 0, 0, 0.8);
 
-  /* ── TYPOGRAPHY ── (Spec v2.0 §8: DIN для числових метрик, Orbitron для заголовків) */
-  --font-sans: 'Space Grotesk', 'Inter', system-ui, sans-serif;
-  --font-mono: 'IBM Plex Mono', 'JetBrains Mono', monospace;
-  --font-display: 'Orbitron', sans-serif;    /* Акцентні заголовки, статуси модулів */
-  --font-metric: 'Barlow Condensed', 'DIN Condensed', 'Arial Narrow', sans-serif; /* KPI числа, дашборд */
+  /* ── TYPOGRAPHY — інституційний рівень (аналітика світового масштабу) */
+  --font-sans: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, monospace;
+  --font-display: 'Syne', 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-metric: 'IBM Plex Mono', 'Barlow Condensed', ui-monospace, sans-serif;
 
   --text-2xs: 0.5rem;     /*  8px */
   --text-xs: 0.625rem;    /* 10px */

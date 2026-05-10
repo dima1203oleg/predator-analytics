@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Orbitron:wght@500;700;800;900&family=Space+Grotesk:wght@300;400;500;700&family=Barlow+Condensed:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap');
 
 /* Канонічні дизайн-токени — єдине джерело істини */
 @import './styles/tokens.css';
@@ -251,14 +251,14 @@
 
 body {
     color-scheme: dark;
-    background-color: var(--bg-canvas, #0a0a0a);
+    background-color: var(--bg-canvas, #050608);
     color: #e2e8f0;
     background-image:
-        radial-gradient(circle at 14% 14%, rgba(0, 245, 255, 0.06), transparent 28%),
-        radial-gradient(circle at 85% 8%, rgba(99, 102, 241, 0.05), transparent 26%),
-        radial-gradient(circle at 50% 100%, rgba(0, 245, 255, 0.08), transparent 34%),
-        radial-gradient(circle at 50% 50%, rgba(0, 245, 255, 0.02), transparent 60%),
-        linear-gradient(180deg, #0a0a0a 0%, #0d0d0d 52%, #050505 100%);
+        radial-gradient(ellipse 140% 90% at 50% -30%, rgba(56, 189, 248, 0.045), transparent 42%),
+        radial-gradient(circle at 12% 18%, rgba(148, 163, 184, 0.06), transparent 32%),
+        radial-gradient(circle at 88% 12%, rgba(99, 102, 241, 0.05), transparent 28%),
+        radial-gradient(circle at 50% 108%, rgba(14, 165, 233, 0.06), transparent 38%),
+        linear-gradient(180deg, #050608 0%, #070a10 48%, #030406 100%);
     min-height: 100dvh;
     margin: 0;
     padding: 0;
@@ -267,9 +267,9 @@ body {
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
     background-attachment: fixed;
-    font-family: 'Space Grotesk', system-ui, sans-serif;
-    line-height: 1.6;
-    letter-spacing: 0.01em;
+    font-family: var(--font-sans, 'Plus Jakarta Sans', system-ui, sans-serif);
+    line-height: 1.58;
+    letter-spacing: 0.011em;
 }
 
 #root {
@@ -381,8 +381,9 @@ textarea:focus-visible,
 }
 
 .font-display {
-    font-family: 'Orbitron', 'Space Grotesk', sans-serif;
-    letter-spacing: -0.02em;
+    font-family: var(--font-display, 'Syne', sans-serif);
+    letter-spacing: -0.03em;
+    font-weight: 700;
 }
 
 .surface-panel {
@@ -1015,16 +1016,12 @@ tbody tr:hover {
     box-shadow: 0 0 15px rgba(139, 92, 246, 0.2), inset 0 0 15px rgba(139, 92, 246, 0.05);
 }
 
-/* Better typography */
-body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-}
-
+/* Єдина типографіка: sans з токенів, моноширинний для даних */
 .font-mono,
 code,
 pre,
 kbd {
-    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+    font-family: var(--font-mono, 'IBM Plex Mono', monospace);
 }
 
 /* Premium card glow on hover */
@@ -1649,7 +1646,7 @@ tbody tr:hover {
   padding: 0.625rem 1rem;
   outline: none;
   transition: all 0.25s ease;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
 }
 .predator-input::placeholder { color: #475569; }
 .predator-input:hover  { border-color: rgba(255,255,255,0.15); background: rgba(255,255,255,0.05); }

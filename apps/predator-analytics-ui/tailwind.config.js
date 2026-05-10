@@ -8,20 +8,20 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Space Grotesk', 'system-ui', 'sans-serif'],
-        mono: ['IBM Plex Mono', 'monospace'],
-        display: ['Orbitron', 'Space Grotesk', 'sans-serif'],
+        sans: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+        mono: ['IBM Plex Mono', 'ui-monospace', 'monospace'],
+        display: ['Syne', 'Plus Jakarta Sans', 'sans-serif'],
       },
       colors: {
-        background: '#020617',
+        background: '#050608',
         foreground: '#f8fafc',
         border: 'rgba(255, 255, 255, 0.1)',
         input: 'rgba(255, 255, 255, 0.05)',
         ring: '#3b82f6',
         slate: {
-          850: '#151f32',
-          925: '#0a0f1c',
-          950: '#020617',
+          850: '#121a28',
+          925: '#080c14',
+          950: '#050608',
         },
         foundry: {
           slate: '#1c2127',

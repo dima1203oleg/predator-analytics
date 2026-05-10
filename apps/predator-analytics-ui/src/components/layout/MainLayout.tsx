@@ -98,10 +98,14 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       className="relative flex min-h-screen overflow-hidden bg-background text-foreground op-mode-transition"
     >
       <NeuralBackground />
+      <div className="pointer-events-none absolute inset-0 z-[2] bg-[radial-gradient(ellipse_100%_60%_at_50%_-10%,rgba(255,255,255,0.04),transparent_50%)]" />
+      <div className="bg-noise pointer-events-none absolute inset-0 z-[2] opacity-[0.025] mix-blend-overlay" />
       <div className="op-scanline pointer-events-none absolute inset-0 z-[1]" />
-      
-      <div className="op-data-streams opacity-10">
-        {[1,2,3,4].map(i => <div key={i} className="op-stream" />)}
+
+      <div className="op-data-streams opacity-[0.04]">
+        {[1, 2, 3, 4].map((i) => (
+          <div key={i} className="op-stream" />
+        ))}
       </div>
 
       {isMobileDrawerOpen && isMobile && (
@@ -185,8 +189,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           borderTop: '1px solid rgba(255,255,255,0.05)'
         }}
       >
-        {/* Neon top edge */}
-        <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-rose-500/30 to-transparent shadow-[0_0_8px_rgba(225,29,72,0.6)]" />
+        <div className="absolute left-0 right-0 top-0 h-px bg-gradient-to-r from-transparent via-sky-500/35 to-transparent shadow-[0_0_12px_rgba(56,189,248,0.25)]" />
 
         <div className="flex items-center gap-5 min-w-0 overflow-hidden relative z-10">
           <div className="flex items-center gap-1.5 shrink-0 px-2 py-0.5 rounded bg-black/40 border border-white/5 shadow-inner">
@@ -200,11 +203,11 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           <div className="h-3.5 w-px bg-white/10 shrink-0" />
           <div className="flex items-center gap-3 overflow-hidden min-w-0 flex-1 relative">
             <div className="absolute left-0 w-8 h-full bg-gradient-to-r from-[rgba(2,6,18,1)] to-transparent z-10" />
-            <span className="text-[8px] font-bold text-rose-500/70 uppercase tracking-widest shrink-0 z-20">OSINT:</span>
+            <span className="text-[8px] font-bold text-sky-400/80 uppercase tracking-widest shrink-0 z-20">OSINT:</span>
             <div className="flex gap-6 animate-[marquee_40s_linear_infinite] whitespace-nowrap pl-4">
               {["Аналіз митних декларацій (UA-EU)", "Індексризику ТОВ 'ЕНЕ ДЖИ'", "Синхронізація з YouControl", "Виявлено нові зв'язки в секторі ВПК", "Моніторинг транзакцій завершено"].map((text, i) => (
-                <span key={i} className="text-[9px] font-mono text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                  <span className="w-1 h-1 bg-rose-500/50 rounded-full" /> {text}
+                <span key={i} className="text-[9px] font-mono text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                  <span className="h-1 w-1 rounded-full bg-sky-500/45" /> {text}
                 </span>
               ))}
             </div>
@@ -242,10 +245,11 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           </div>
 
           <div className="h-3.5 w-px bg-white/10" />
-          <div className="flex items-center gap-2 px-2 py-0.5 rounded border border-rose-500/20 bg-rose-500/5">
-            <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse shadow-[0_0_8px_rgba(225,29,72,0.8)]" />
-            <div className="text-[8px] font-black uppercase tracking-[0.25em] text-white/50">
-              PREDATOR <span className="text-rose-500 font-bold">ELITE</span> <span className="text-white/30 ml-1">v63.0</span>
+          <div className="flex items-center gap-2 rounded border border-white/[0.08] bg-black/50 px-2 py-0.5 backdrop-blur-sm">
+            <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-sky-500 shadow-[0_0_10px_rgba(56,189,248,0.55)]" />
+            <div className="text-[8px] font-black uppercase tracking-[0.28em] text-slate-500">
+              PREDATOR <span className="font-bold text-slate-100">ELITE</span>{' '}
+              <span className="ml-1 text-slate-600">v63.0</span>
             </div>
           </div>
         </div>

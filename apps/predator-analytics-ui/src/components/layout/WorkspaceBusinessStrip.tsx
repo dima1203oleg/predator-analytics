@@ -73,11 +73,11 @@ export const WorkspaceBusinessStrip: React.FC = () => {
     >
       <div className="mx-auto flex max-w-[1920px] flex-col gap-2 px-3 py-2 sm:px-5 lg:flex-row lg:items-center lg:justify-between lg:gap-4 lg:px-7 xl:px-10">
         <div className="flex min-w-0 flex-1 items-start gap-2.5">
-          <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-emerald-500/25 bg-emerald-500/10 text-emerald-400">
+          <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-sky-500/30 bg-sky-500/10 text-sky-300">
             <Sparkles className="h-4 w-4" aria-hidden />
           </div>
           <div className="min-w-0">
-            <div className="text-[11px] font-bold uppercase tracking-wide text-emerald-400/95">{title}</div>
+            <div className="text-[11px] font-semibold uppercase tracking-wide text-sky-300/95">{title}</div>
             {!collapsed && (
               <p className="mt-1 text-[12px] leading-snug text-slate-400">{detail}</p>
             )}
@@ -89,10 +89,10 @@ export const WorkspaceBusinessStrip: React.FC = () => {
             type="button"
             onClick={() => setPaletteOpen(true)}
             className={cn(
-              'inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.04] px-2.5 py-1.5 text-[11px] font-semibold text-slate-200 transition hover:border-rose-500/35 hover:bg-rose-500/[0.06] hover:text-white',
+              'inline-flex items-center gap-1.5 rounded-lg border border-white/[0.08] bg-white/[0.04] px-2.5 py-1.5 text-[11px] font-semibold text-slate-200 transition hover:border-sky-500/35 hover:bg-sky-500/[0.06] hover:text-white',
             )}
           >
-            <Search className="h-3.5 w-3.5 text-rose-400" aria-hidden />
+            <Search className="h-3.5 w-3.5 text-sky-400" aria-hidden />
             Швидкий пошук
             <kbd className="hidden rounded border border-white/15 bg-black/50 px-1 py-0.5 font-mono text-[9px] text-slate-500 sm:inline">
               ⌘K
