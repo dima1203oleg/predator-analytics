@@ -1,8 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: predator-v55-opensearch
-  namespace: predator-v55
+  name: predator-elite-opensearch
+  namespace: predator-elite
   labels:
     app.kubernetes.io/name: opensearch
     app.kubernetes.io/component: search
@@ -51,8 +51,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: predator-v55-opensearch
-  namespace: predator-v55
+  name: predator-elite-opensearch
+  namespace: predator-elite
 spec:
   selector:
     app.kubernetes.io/name: opensearch

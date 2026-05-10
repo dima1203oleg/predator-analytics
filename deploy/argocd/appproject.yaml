@@ -4,7 +4,7 @@ metadata:
   name: predator-project
   namespace: argocd
 spec:
-  description: Project for PREDATOR Analytics v55.1 Ironclad
+  description: Project for PREDATOR Analytics elite.1 Ironclad
   sourceRepos:
     - '*'
   destinations:

@@ -1,8 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: predator-v55-redpanda
-  namespace: predator-v55
+  name: predator-elite-redpanda
+  namespace: predator-elite
   labels:
     app.kubernetes.io/name: redpanda
     app.kubernetes.io/component: messaging
@@ -35,7 +35,7 @@ spec:
         - --kafka-addr
         - "PLAINTEXT://0.0.0.0:9092"
         - --advertise-kafka-addr
-        - "PLAINTEXT://predator-v55-redpanda:9092"
+        - "PLAINTEXT://predator-elite-redpanda:9092"
         ports:
         - containerPort: 9092
           name: kafka
@@ -62,8 +62,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: predator-v55-redpanda
-  namespace: predator-v55
+  name: predator-elite-redpanda
+  namespace: predator-elite
   labels:
     app.kubernetes.io/name: redpanda
 spec:

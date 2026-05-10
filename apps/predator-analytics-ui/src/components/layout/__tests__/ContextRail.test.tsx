@@ -13,6 +13,31 @@ import ContextRail from '../ContextRail';
 import { useContextRail } from '@/hooks/useContextRail';
 import type { ContextRailPayload } from '@/types/shell';
 
+vi.mock('@/config/navigation', async () => {
+  const actual = await vi.importActual<typeof import('@/config/navigation')>('@/config/navigation');
+  return {
+    ...actual,
+    getNavigationContext: () => ({
+      item: {
+        id: 'overview',
+        label: 'Огляд системи',
+        path: '/overview',
+        icon: () => null,
+        description: 'Ключові показники, сигнали та стан інфраструктури.',
+      },
+      section: {
+        id: 'command',
+        label: 'КОМАНДНИЙ ЦЕНТР',
+        description: 'Операційний огляд платформи.',
+        outcome: 'Дає короткий стратегічний зріз для старту роботи.',
+        accent: 'amber',
+        items: [],
+      },
+    }),
+    getRecommendedNavigation: () => [],
+  };
+});
+
 vi.mock('@/context/UserContext', () => ({
   useUser: () => ({
     user: {
@@ -69,7 +94,7 @@ describe('ContextRail', () => {
               entityType: 'контрагент',
               title: 'ТОВ Орбіта',
               subtitle: 'ЄДРПОУ 12345678',
-              status: { label: ' изик: Підвищений', tone: 'warning' },
+              status: { label: 'Ризик: Підвищений', tone: 'warning' },
               actions: [],
               insights: [],
               relations: [],
@@ -85,6 +110,6 @@ describe('ContextRail', () => {
 
     expect(await screen.findByText('ТОВ Орбіта')).toBeInTheDocument();
     expect(screen.getByText('ЄДРПОУ 12345678')).toBeInTheDocument();
-    expect(screen.getByText(' изик: Підвищений')).toBeInTheDocument();
+    expect(screen.getByText('Ризик: Підвищений')).toBeInTheDocument();
   });
 });

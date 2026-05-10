@@ -2,20 +2,20 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app.kubernetes.io/instance: predator-v55
+    app.kubernetes.io/instance: predator-elite
     app.kubernetes.io/name: core-api
-  name: predator-v55-core-api
-  namespace: predator-v55
+  name: predator-elite-core-api
+  namespace: predator-elite
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/instance: predator-v55
+      app.kubernetes.io/instance: predator-elite
       app.kubernetes.io/name: core-api
   template:
     metadata:
       labels:
-        app.kubernetes.io/instance: predator-v55
+        app.kubernetes.io/instance: predator-elite
         app.kubernetes.io/name: core-api
     spec:
       initContainers:
@@ -30,15 +30,15 @@ spec:
       containers:
       - env:
         - name: DATABASE_URL
-          value: postgresql+asyncpg://predator:predator_password@predator-v55-postgres:5432/predator_db
+          value: postgresql+asyncpg://predator:predator_password@predator-elite-postgres:5432/predator_db
         - name: REDIS_URL
-          value: redis://predator-v55-redis-master:6379/0
+          value: redis://predator-elite-redis-master:6379/0
         - name: QDRANT_URL
-          value: http://predator-v55-qdrant:6333
+          value: http://predator-elite-qdrant:6333
         - name: OPENSEARCH_URL
-          value: http://predator-v55-opensearch:9200
+          value: http://predator-elite-opensearch:9200
         - name: NEO4J_URI
-          value: bolt://predator-v55-neo4j:7687
+          value: bolt://predator-elite-neo4j:7687
         - name: ENV
           value: production
         - name: SECRET_KEY
@@ -82,10 +82,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: predator-v55-core-api
-  namespace: predator-v55
+  name: predator-elite-core-api
+  namespace: predator-elite
   labels:
-    app.kubernetes.io/instance: predator-v55
+    app.kubernetes.io/instance: predator-elite
     app.kubernetes.io/name: core-api
 spec:
   type: ClusterIP
@@ -95,5 +95,5 @@ spec:
     protocol: TCP
     name: http
   selector:
-    app.kubernetes.io/instance: predator-v55
+    app.kubernetes.io/instance: predator-elite
     app.kubernetes.io/name: core-api

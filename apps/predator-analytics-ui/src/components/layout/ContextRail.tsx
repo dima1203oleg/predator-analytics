@@ -326,7 +326,7 @@ export const ContextRail: React.FC = () => {
           </section>
         )}
 
-        <SectionList title=" изики" items={effectivePayload.risks} />
+        <SectionList title="Ризики" items={effectivePayload.risks} />
 
       {/* Sovereign Footer */}
       <div className="border-t border-red-900/20 px-5 py-4">

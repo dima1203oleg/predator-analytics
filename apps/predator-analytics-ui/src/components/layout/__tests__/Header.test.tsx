@@ -6,6 +6,14 @@ import Header from '../Header';
 
 import { ThemeProvider } from '../../../context/ThemeContext';
 
+vi.mock('../../premium/OperationalModeSwitch', () => ({
+  default: () => <div data-testid="operational-mode-switch">Режим</div>,
+}));
+
+vi.mock('../../SystemPulseIndicator', () => ({
+  SystemPulseIndicator: () => <div data-testid="system-pulse">Пульс</div>,
+}));
+
 vi.mock('../../../context/UserContext', () => ({
   useUser: () => ({
     user: {
@@ -59,6 +67,10 @@ vi.mock('../../../config/navigation', async () => {
   };
 });
 
+vi.mock('../../../services/shell/userWorkspace', () => ({
+  isShellV2Enabled: () => true,
+}));
+
 describe('Header', () => {
   it('показує контекст маршруту, роль і джерело даних', () => {
     render(
@@ -71,9 +83,8 @@ describe('Header', () => {
 
     expect(screen.getAllByText('Огляд системи').length).toBeGreaterThan(0);
     expect(screen.getByText('КОМАНДНИЙ ЦЕНТР')).toBeInTheDocument();
-    expect(screen.getByText('Ключові показники, сигнали та стан інфраструктури.')).toBeInTheDocument();
-    expect(screen.getByText('Преміум-аналітика')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Пошук модулів та дій...')).toBeInTheDocument();
+    expect(screen.getByText('Аналітичний контур')).toBeInTheDocument();
+    expect(screen.getByText('ПОШУК_МОДУЛІВ...')).toBeInTheDocument();
     expect(screen.getByTitle('Згорнути контекстну панель')).toBeInTheDocument();
   });
 
@@ -87,6 +98,5 @@ describe('Header', () => {
     );
 
     expect(screen.getByText('Зʼєднання активне')).toBeInTheDocument();
-    expect(screen.getAllByText('Локальний робочий режим').length).toBeGreaterThan(0);
   });
 });

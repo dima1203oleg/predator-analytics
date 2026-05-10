@@ -1,8 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: predator-v55-graph-service
-  namespace: predator-v55
+  name: predator-elite-graph-service
+  namespace: predator-elite
   labels:
     app.kubernetes.io/name: graph-service
     app.kubernetes.io/component: analytics
@@ -27,13 +27,13 @@ spec:
           name: http
         env:
         - name: NEO4J_URI
-          value: "bolt://predator-v55-neo4j:7687"
+          value: "bolt://predator-elite-neo4j:7687"
         - name: NEO4J_USER
           value: "neo4j"
         - name: NEO4J_PASSWORD
           value: "predator-neo4j-secure"
         - name: CORE_API_URL
-          value: "http://predator-v55-core-api:8000"
+          value: "http://predator-elite-core-api:8000"
         - name: LOG_LEVEL
           value: "INFO"
         livenessProbe:
@@ -59,8 +59,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: predator-v55-graph-service
-  namespace: predator-v55
+  name: predator-elite-graph-service
+  namespace: predator-elite
 spec:
   selector:
     app.kubernetes.io/name: graph-service

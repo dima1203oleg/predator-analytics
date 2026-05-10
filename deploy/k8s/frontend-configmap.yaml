@@ -1,8 +1,8 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: predator-v55-frontend-nginx
-  namespace: predator-v55
+  name: predator-elite-frontend-nginx
+  namespace: predator-elite
 data:
   default.conf: |
     server {
@@ -18,7 +18,7 @@ data:
         resolver_timeout 5s;
 
         location /api/ {
-            proxy_pass http://predator-v55-core-api:8000/;
+            proxy_pass http://predator-elite-core-api:8000/;
             proxy_http_version 1.1;
             proxy_set_header Upgrade $http_upgrade;
             proxy_set_header Connection "upgrade";

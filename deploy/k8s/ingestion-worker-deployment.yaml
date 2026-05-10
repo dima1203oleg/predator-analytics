@@ -1,8 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: predator-v55-ingestion-worker
-  namespace: predator-v55
+  name: predator-elite-ingestion-worker
+  namespace: predator-elite
   labels:
     app.kubernetes.io/name: ingestion-worker
     app.kubernetes.io/component: data-ingestion
@@ -23,23 +23,23 @@ spec:
         imagePullPolicy: Always
         env:
         - name: KAFKA_BOOTSTRAP_SERVERS
-          value: "predator-v55-redpanda:9092"
+          value: "predator-elite-redpanda:9092"
         - name: DATABASE_URL
-          value: "postgresql+asyncpg://predator:predator_password@predator-v55-postgres:5432/predator"
+          value: "postgresql+asyncpg://predator:predator_password@predator-elite-postgres:5432/predator"
         - name: REDIS_URL
-          value: "redis://predator-v55-redis-master:6379/0"
+          value: "redis://predator-elite-redis-master:6379/0"
         - name: MINIO_URL
-          value: "http://predator-v55-minio:9000"
+          value: "http://predator-elite-minio:9000"
         - name: MINIO_ACCESS_KEY
           value: "predator"
         - name: MINIO_SECRET_KEY
           value: "predator-minio-secure"
         - name: QDRANT_URL
-          value: "http://predator-v55-qdrant:6333"
+          value: "http://predator-elite-qdrant:6333"
         - name: OPENSEARCH_URL
-          value: "http://predator-v55-opensearch:9200"
+          value: "http://predator-elite-opensearch:9200"
         - name: CORE_API_URL
-          value: "http://predator-v55-core-api:8000"
+          value: "http://predator-elite-core-api:8000"
         - name: LOG_LEVEL
           value: "INFO"
         resources:

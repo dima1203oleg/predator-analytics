@@ -1,8 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: predator-v55-neo4j
-  namespace: predator-v55
+  name: predator-elite-neo4j
+  namespace: predator-elite
   labels:
     app.kubernetes.io/name: neo4j
     app.kubernetes.io/component: graph-db
@@ -49,8 +49,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: predator-v55-neo4j
-  namespace: predator-v55
+  name: predator-elite-neo4j
+  namespace: predator-elite
 spec:
   selector:
     app.kubernetes.io/name: neo4j

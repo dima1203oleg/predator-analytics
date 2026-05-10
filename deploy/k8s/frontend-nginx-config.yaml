@@ -13,7 +13,7 @@ server {
 
     # API проксі - МАЙТЕ ПЕРЕД статикою!
     location /api/ {
-        proxy_pass http://predator-v55-core-api:8000;
+        proxy_pass http://predator-elite-core-api:8000;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";

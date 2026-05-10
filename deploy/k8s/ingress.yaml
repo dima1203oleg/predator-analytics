@@ -1,8 +1,8 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: predator-v55-ingress
-  namespace: predator-v55
+  name: predator-elite-ingress
+  namespace: predator-elite
   annotations:
     kubernetes.io/ingress.class: "nginx"
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
@@ -18,27 +18,27 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: predator-v55-core-api
+            name: predator-elite-core-api
             port:
               number: 8000
       - path: /api/v2
         pathType: Prefix
         backend:
           service:
-            name: predator-v55-core-api
+            name: predator-elite-core-api
             port:
               number: 8000
       - path: /api
         pathType: Prefix
         backend:
           service:
-            name: predator-v55-core-api
+            name: predator-elite-core-api
             port:
               number: 8000
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: predator-v55-frontend
+            name: predator-elite-frontend
             port:
               number: 80

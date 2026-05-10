@@ -1,8 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: predator-v55-ml-studio
-  namespace: predator-v55
+  name: predator-elite-ml-studio
+  namespace: predator-elite
   labels:
     app.kubernetes.io/name: ml-studio
     app.kubernetes.io/component: ai
@@ -27,15 +27,15 @@ spec:
           name: http
         env:
         - name: DATABASE_URL
-          value: "postgres://predator:predator_password@predator-v55-postgres:5432/predator"
+          value: "postgres://predator:predator_password@predator-elite-postgres:5432/predator"
         - name: REDIS_URL
-          value: "redis://predator-v55-redis-master:6379/0"
+          value: "redis://predator-elite-redis-master:6379/0"
         - name: QDRANT_URL
-          value: "http://predator-v55-qdrant:6333"
+          value: "http://predator-elite-qdrant:6333"
         - name: OLLAMA_URL
-          value: "http://predator-v55-ollama:11434"
+          value: "http://predator-elite-ollama:11434"
         - name: CORE_API_URL
-          value: "http://predator-v55-core-api:8000"
+          value: "http://predator-elite-core-api:8000"
         - name: LOG_LEVEL
           value: "INFO"
         - name: PORT
@@ -63,8 +63,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: predator-v55-ml-studio
-  namespace: predator-v55
+  name: predator-elite-ml-studio
+  namespace: predator-elite
 spec:
   selector:
     app.kubernetes.io/name: ml-studio

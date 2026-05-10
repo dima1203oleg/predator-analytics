@@ -65,5 +65,5 @@ data:
           - targets: ['localhost:9090']
       - job_name: 'core-api'
         static_configs:
-          - targets: ['predator-v55-core-api.predator-v55.svc.cluster.local:8000']
+          - targets: ['predator-elite-core-api.predator-elite.svc.cluster.local:8000']
         metrics_path: /metrics

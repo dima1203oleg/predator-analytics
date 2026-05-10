@@ -6,6 +6,16 @@ import { Sidebar } from '../Sidebar';
 
 // ─── MOCKS ───────────────────────────────────────────────────────────────────
 
+/** Легкі атоми без atomWithStorage, щоб уникнути зависань Vitest/jsdom на імпорті всього `store/atoms`. */
+vi.mock('../../../store/atoms', async () => {
+  const { atom } = await vi.importActual<typeof import('jotai')>('jotai');
+  return {
+    isSidebarOpenAtom: atom<boolean>(true),
+    sidebarSearchAtom: atom<string>(''),
+    colabPanelOpenAtom: atom<boolean>(false),
+  };
+});
+
 vi.mock('../../../context/UserContext', () => ({
   useUser: () => ({
     user: {
@@ -38,66 +48,25 @@ vi.mock('../../../hooks/useShellWorkspace', () => ({
   }),
 }));
 
-vi.mock('jotai', () => ({
-    useAtom: (atom: any) => {
-        // Mocking open state for sidebar
-        if (atom.toString().includes('isSidebarOpen') || atom.init === true) return [true, vi.fn()];
-        return [atom.init || '', vi.fn()];
-    },
-}));
-
-vi.mock('framer-motion', () => {
-    const motionProxy = new Proxy(
-        {},
-        {
-            get: (_target, prop) => {
-                return ({ children, ...props }: any) => {
-                    const Tag = typeof prop === 'string' ? prop : 'div';
-                    return <Tag {...props}>{children}</Tag>;
-                };
-            },
-        }
-    );
-    return {
-        motion: motionProxy,
-        AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-    };
-});
-
-vi.mock('lucide-react', () => {
-    const motionProxy = new Proxy(
-        {},
-        {
-            get: () => {
-                return (props: any) => <div {...props} />;
-            },
-        }
-    );
-    return motionProxy;
-});
-
 vi.mock('../Logo', () => ({
     Logo: () => <div data-testid="logo">LOGO</div>
 }));
 
-vi.mock('../../../config/navigation', async () => {
-  const actual = await vi.importActual<any>('../../../config/navigation');
-  return {
-    ...actual,
-    getVisibleNavigation: () => [
-      { id: 'command', label: 'КОМАНДНИЙ ЦЕНТР', accent: 'emerald', items: [{ id: '1', label: 'L1', path: '/', icon: () => null, description: 'd' }], groups: [{ items: [{ id: '1', label: 'L1', path: '/', icon: () => null, description: 'd' }] }] },
-      { id: 'intelligence', label: 'РОЗВІДКА КОНТ АГЕНТІВ', accent: 'cyan', items: [{ id: '2', label: 'L2', path: '/', icon: () => null, description: 'd' }], groups: [{ items: [{ id: '2', label: 'L2', path: '/', icon: () => null, description: 'd' }] }] },
-      { id: 'financial-sigint', label: 'ФІНАНСОВА РОЗВІДКА', accent: 'amber', items: [{ id: '3', label: 'L3', path: '/', icon: () => null, description: 'd' }], groups: [{ items: [{ id: '3', label: 'L3', path: '/', icon: () => null, description: 'd' }] }] },
-      { id: 'trade-logistics', label: 'ЛАНЦЮГИ ПОСТАЧАННЯ', accent: 'indigo', items: [{ id: '4', label: 'L4', path: '/', icon: () => null, description: 'd' }], groups: [{ items: [{ id: '4', label: 'L4', path: '/', icon: () => null, description: 'd' }] }] },
-      { id: 'counterparties', label: 'БІЗНЕС-МОЖЛИВОСТІ', accent: 'violet', items: [{ id: '5', label: 'L5', path: '/', icon: () => null, description: 'd' }], groups: [{ items: [{ id: '5', label: 'L5', path: '/', icon: () => null, description: 'd' }] }] },
-      { id: 'ai-automation', label: 'ШІ-ЛАБО АТО ІЯ', accent: 'rose', items: [{ id: '6', label: 'L6', path: '/', icon: () => null, description: 'd' }], groups: [{ items: [{ id: '6', label: 'L6', path: '/', icon: () => null, description: 'd' }] }] },
-      { id: 'system', label: 'МІСІЯ-КОНТРОЛЬ', accent: 'slate', items: [{ id: '7', label: 'L7', path: '/', icon: () => null, description: 'd' }], groups: [{ items: [{ id: '7', label: 'L7', path: '/', icon: () => null, description: 'd' }] }] },
-    ],
-    getNavigationTotals: () => ({ sections: 7, items: 42 }),
-    getGlobalNavigationActions: () => [],
-    resolveNavigationAudience: () => 'admin',
-  };
-});
+vi.mock('../../../config/navigation', () => ({
+  navAccentStyles: {},
+  getVisibleNavigation: () => [
+    { id: 'command', label: 'КОМАНДНИЙ ЦЕНТР', accent: 'emerald', description: '', outcome: '', items: [{ id: '1', label: 'L1', path: '/', icon: () => null, description: 'd' }], groups: [{ items: [{ id: '1', label: 'L1', path: '/', icon: () => null, description: 'd' }] }] },
+    { id: 'intelligence', label: 'РОЗВІДКА КОНТ АГЕНТІВ', accent: 'cyan', description: '', outcome: '', items: [{ id: '2', label: 'L2', path: '/', icon: () => null, description: 'd' }], groups: [{ items: [{ id: '2', label: 'L2', path: '/', icon: () => null, description: 'd' }] }] },
+    { id: 'financial-sigint', label: 'ФІНАНСОВА РОЗВІДКА', accent: 'amber', description: '', outcome: '', items: [{ id: '3', label: 'L3', path: '/', icon: () => null, description: 'd' }], groups: [{ items: [{ id: '3', label: 'L3', path: '/', icon: () => null, description: 'd' }] }] },
+    { id: 'trade-logistics', label: 'ЛАНЦЮГИ ПОСТАЧАННЯ', accent: 'indigo', description: '', outcome: '', items: [{ id: '4', label: 'L4', path: '/', icon: () => null, description: 'd' }], groups: [{ items: [{ id: '4', label: 'L4', path: '/', icon: () => null, description: 'd' }] }] },
+    { id: 'counterparties', label: 'БІЗНЕС-МОЖЛИВОСТІ', accent: 'violet', description: '', outcome: '', items: [{ id: '5', label: 'L5', path: '/', icon: () => null, description: 'd' }], groups: [{ items: [{ id: '5', label: 'L5', path: '/', icon: () => null, description: 'd' }] }] },
+    { id: 'ai-automation', label: 'ШІ-ЛАБО АТО ІЯ', accent: 'rose', description: '', outcome: '', items: [{ id: '6', label: 'L6', path: '/', icon: () => null, description: 'd' }], groups: [{ items: [{ id: '6', label: 'L6', path: '/', icon: () => null, description: 'd' }] }] },
+    { id: 'system', label: 'МІСІЯ-КОНТРОЛЬ', accent: 'slate', description: '', outcome: '', items: [{ id: '7', label: 'L7', path: '/', icon: () => null, description: 'd' }], groups: [{ items: [{ id: '7', label: 'L7', path: '/', icon: () => null, description: 'd' }] }] },
+  ],
+  getNavigationTotals: () => ({ sections: 7, items: 42 }),
+  getGlobalNavigationActions: () => [],
+  resolveNavigationAudience: () => 'admin',
+}));
 
 describe('Sidebar', () => {
   beforeEach(() => {
@@ -108,7 +77,7 @@ describe('Sidebar', () => {
     render(
       <MemoryRouter>
         <Sidebar />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByText('КОМАНДНИЙ ЦЕНТР')).toBeInTheDocument();
@@ -124,11 +93,11 @@ describe('Sidebar', () => {
     render(
       <MemoryRouter>
         <Sidebar />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByText('PREDATOR')).toBeInTheDocument();
-    expect(screen.getByText('NEXUS ANALYTICS')).toBeInTheDocument();
+    expect(screen.getByText('ELITE COMMAND CENTER')).toBeInTheDocument();
     expect(screen.getByText('АКТИВНИЙ')).toBeInTheDocument();
   });
 
@@ -136,7 +105,7 @@ describe('Sidebar', () => {
     render(
       <MemoryRouter>
         <Sidebar />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByText('Адміністратор')).toBeInTheDocument();
