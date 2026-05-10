@@ -4,7 +4,7 @@
  */
 import React, { useEffect, useState } from 'react';
 import { useAtom } from 'jotai';
-import { Menu, X, Activity, Server, Globe } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 import { Sidebar } from './Sidebar';

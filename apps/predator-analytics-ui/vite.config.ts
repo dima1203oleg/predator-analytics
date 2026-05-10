@@ -40,15 +40,26 @@ export default defineConfig(({ mode }) => {
     },
 
     build: {
-      chunkSizeWarningLimit: 3000,
+      chunkSizeWarningLimit: 1000,
       rollupOptions: {
         output: {
-          format: 'iife',
-          inlineDynamicImports: true
+          // ES modules підтримують code splitting — React.lazy() працює коректно
+          format: 'es',
+          // Розділення vendor-чанків для оптимального кешування
+          manualChunks: {
+            'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+            'vendor-query': ['@tanstack/react-query'],
+            'vendor-motion': ['framer-motion'],
+            'vendor-ui': ['lucide-react'],
+            'vendor-graph': ['cytoscape'],
+            'vendor-charts': ['recharts'],
+          },
         }
       },
       sourcemap: false,
-      minify: 'esbuild'
+      minify: 'esbuild',
+      // Цільові сучасні браузери для меншого бандлу
+      target: 'es2020',
     },
 
     preview: {

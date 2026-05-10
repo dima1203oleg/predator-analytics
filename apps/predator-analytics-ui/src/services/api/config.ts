@@ -20,23 +20,6 @@ export const NODE_IDS = {
     MOCK:      'mock',      // Sandbox
 } as const;
 
-// Визначення базового URL API з урахуванням Cloud/Hybrid режимів
-const getBaseUrl = () => {
-  if (typeof window === 'undefined') return 'http://194.177.1.240:8000/api/v1';
-  const host = window.location.hostname;
-  
-  // Автовизначення Google Colab / zrok тунелю
-  if (host.includes('zrok.io')) {
-    return `https://${host.replace('ui', 'api')}/api/v1`;
-  }
-  
-  if ((import.meta as any).env?.VITE_API_URL) {
-    return (import.meta as any).env.VITE_API_URL;
-  }
-  
-  return 'http://194.177.1.240:8000/api/v1';
-};
-
 const NODE_URLS: Record<string, string> = {
     [NODE_IDS.LOCAL]:     'http://localhost:8001/api/v1',
     [NODE_IDS.SOVEREIGN]: 'http://192.168.0.114:8000/api/v1',
@@ -46,6 +29,7 @@ const NODE_URLS: Record<string, string> = {
 };
 
 const NODE_NAMES: Record<string, string> = {
+    [NODE_IDS.LOCAL]:     'LOCAL_DEVELOPER',
     [NODE_IDS.SOVEREIGN]: 'SOVEREIGN_NODE_IMAC',
     [NODE_IDS.HYBRID]:    'HYBRID_MASTER_NVIDIA',
     [NODE_IDS.CLOUD]:     'CLOUD_MIRROR_COLAB',
@@ -85,14 +69,19 @@ const resolveInitialUrl = (): string => {
 export let API_BASE_URL = resolveInitialUrl();
 
 // ─── Зовнішні сервіси (OpenSearch, etc.) ────────────────────────────────────
-export const OPENSEARCH_URL = API_BASE_URL.replace(/:8000\/api\/v1|:9080\/api\/v1/g, ':5601');
-export const OPENSEARCH_API_URL = API_BASE_URL.replace(/:8000\/api\/v1|:9080\/api\/v1/g, ':9200');
+/** Обчислювані URL для OpenSearch — оновлюються при перемиканні вузла */
+export const getOpensearchUrl = () => API_BASE_URL.replace(/:8000\/api\/v1|:9080\/api\/v1/g, ':5601');
+export const getOpensearchApiUrl = () => API_BASE_URL.replace(/:8000\/api\/v1|:9080\/api\/v1/g, ':9200');
+export const OPENSEARCH_URL = getOpensearchUrl();
+export const OPENSEARCH_API_URL = getOpensearchApiUrl();
 
 /** Визначає ID вузла за URL */
 const resolveNodeId = (url: string): string => {
+    if (url === NODE_URLS[NODE_IDS.LOCAL])     return NODE_IDS.LOCAL;
     if (url === NODE_URLS[NODE_IDS.SOVEREIGN]) return NODE_IDS.SOVEREIGN;
     if (url === NODE_URLS[NODE_IDS.HYBRID])    return NODE_IDS.HYBRID;
     if (url === NODE_URLS[NODE_IDS.CLOUD])     return NODE_IDS.CLOUD;
+    if (url === NODE_URLS[NODE_IDS.MOCK])      return NODE_IDS.MOCK;
     return NODE_IDS.MOCK;
 };
 
@@ -106,7 +95,7 @@ interface BackendNodeInternal {
     url: string;
     active: boolean;
     status: 'online' | 'offline' | 'checking';
-    mode: 'SOVEREIGN' | 'HYBRID' | 'CLOUD' | 'MOCK';
+    mode: 'SOVEREIGN' | 'HYBRID' | 'CLOUD' | 'MOCK' | 'LOCAL';
 }
 
 const initGlobalState = () => {

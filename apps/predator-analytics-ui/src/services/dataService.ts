@@ -402,7 +402,9 @@ class IntelligenceService {
 
         return overview.top_countries.map((c: any, idx: number) => {
           const code = c.country || 'UNKNOWN';
-          const score = Math.min(95, 60 + (c.count / (overview.total_declarations || 1)) * 40 + Math.random() * 5);
+          // Детермінований score на основі частки декларацій (без Math.random)
+          const share = c.count / (overview.total_declarations || 1);
+          const score = Math.min(95, 60 + share * 40 + (idx * 2));
           return {
             id: `mkt-db-${idx}`,
             country: code,
@@ -411,13 +413,13 @@ class IntelligenceService {
             sector: 'Ритейл / Дистрибуція',
             entryScore: Math.round(score),
             marketSize: `$${(c.count * 1.5).toFixed(1)}M`,
-            growthRate: `+${(Math.random() * 10).toFixed(1)}%`,
-            competition: 40 + Math.random() * 30,
-            regulatory: 70 + Math.random() * 20,
-            geopolitical: 80 + Math.random() * 15,
-            infrastructure: 75 + Math.random() * 20,
-            talent: 65 + Math.random() * 25,
-            purchasing: 70 + Math.random() * 25,
+            growthRate: `+${(share * 15 + 2).toFixed(1)}%`,
+            competition: 40 + (share * 30),
+            regulatory: 70 + (share * 20),
+            geopolitical: 80 + (share * 15),
+            infrastructure: 75 + (share * 20),
+            talent: 65 + (share * 25),
+            purchasing: 70 + (share * 25),
             recommendation: (score > 85 ? 'strong-buy' : score > 70 ? 'buy' : 'hold') as 'strong-buy' | 'buy' | 'hold' | 'avoid',
             opportunities: [`Домінуючий канал походження (${c.count} декл.)`, 'Стабільні ланцюги постачання'],
             risks: ['Валютні коливання', 'Логістичні затримки'],

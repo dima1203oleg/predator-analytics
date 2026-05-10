@@ -9,11 +9,13 @@ export { UserRole };
 export const ROLE_HIERARCHY: Record<string, number> = {
   [UserRole.CLIENT_BASIC]: 1,
   [UserRole.CLIENT_PREMIUM]: 2,
-  [UserRole.ADMIN]: 3,
+  [UserRole.CLIENT_DRPO]: 3,
+  [UserRole.ADMIN]: 4,
   // Backward-compatible aliases
   'OPERATOR': 2,
-  'COMMANDER': 3,
+  'COMMANDER': 4,
   'EXPLORER': 1,
+  'INVESTIGATOR': 3,
 };
 
 

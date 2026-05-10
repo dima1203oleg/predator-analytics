@@ -42,7 +42,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             )
             raise HTTPException(
                 status_code=429,
-                detail="Rate limit exceeded. Try again later."
+                detail="Перевищено ліміт запитів. Спробуйте пізніше."
             )
 
         response = await call_next(request)
@@ -64,8 +64,7 @@ class PerformanceMiddleware(BaseHTTPMiddleware):
 
         process_time = time.time() - start_time
 
-        # Add performance headers
-        response.headers["X-Process-Time"] = str(process_time)
+        # X-Process-Time встановлюється в RequestIDMiddleware з точністю до мс
 
         # Log performance metrics
         logger.info(

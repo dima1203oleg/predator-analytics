@@ -39,6 +39,7 @@ def add_cors_middleware(app):
             "http://localhost:3030",
             "http://127.0.0.1:3000",
             "http://127.0.0.1:3030",
+            "http://192.168.0.114:3030",
         ]
 
     app.add_middleware(
