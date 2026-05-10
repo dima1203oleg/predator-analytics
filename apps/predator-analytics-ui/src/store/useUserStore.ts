@@ -68,7 +68,7 @@ export const useUserStore = create<UserState>((set, get) => ({
       user, 
       isAuthenticated: !!user,
       isAdmin: user?.role === UserRole.ADMIN,
-      isClient: user?.role === UserRole.CLIENT_BASIC || user?.role === UserRole.CLIENT_PREMIUM
+      isClient: user?.role === UserRole.CLIENT_BASIC || user?.role === UserRole.CLIENT_PREMIUM || user?.role === UserRole.CLIENT_DRPO
     });
     if (user) {
       sessionStorage.setItem('predator_auth_token', user.role === UserRole.ADMIN ? 'admin-token' : 'user-token');

@@ -1,18 +1,21 @@
 export enum UserRole {
-  CLIENT_BASIC  = 'client_basic',
-  CLIENT_PREMIUM = 'client_premium',
-  ADMIN         = 'admin',
+  CLIENT_BASIC  = 'client_basic',     // Рівень 1: Базовий клієнтський доступ
+  CLIENT_PREMIUM = 'client_premium',  // Рівень 2: Аналітичний контур (без ДРПО)
+  CLIENT_DRPO = 'client_drpo',        // Рівень 3: Доступ до чутливих даних (ДРПО, вскриття)
+  ADMIN         = 'admin',            // Адміністрування системи (ізольований)
   // Зворотньо-сумісні псевдоніми (підтримка legacy-компонентів)
   ANALYST    = 'client_premium',
   OPERATOR   = 'client_premium',
   COMMANDER  = 'admin',
   EXPLORER   = 'client_basic',
+  INVESTIGATOR = 'client_drpo',
 }
 
 // Цивільні назви для UI (ніяких технічних термінів!)
 export const ROLE_DISPLAY_NAMES: Record<UserRole, string> = {
   [UserRole.CLIENT_BASIC]:   'Клієнтський доступ',
   [UserRole.CLIENT_PREMIUM]: 'Аналітичний контур',
+  [UserRole.CLIENT_DRPO]:    'Спеціальний контур',
   [UserRole.ADMIN]:          'Адміністрування системи',
 };
 
@@ -20,6 +23,7 @@ export const ROLE_DISPLAY_NAMES: Record<UserRole, string> = {
 export const ROLE_DESCRIPTIONS: Record<UserRole, string> = {
   [UserRole.CLIENT_BASIC]:   'Базовий огляд ринкових даних',
   [UserRole.CLIENT_PREMIUM]: 'Повний аналітичний та розслідувальний доступ',
+  [UserRole.CLIENT_DRPO]:    'Доступ до ДРПО та законодавчих даних',
   [UserRole.ADMIN]:          'Управління інфраструктурою та безпекою',
 };
 
@@ -80,6 +84,24 @@ export const ROLE_CAPABILITIES: Record<UserRole, RoleCapabilities> = {
     canToggleSensitiveData: true,
     canManageUsers: false,
     canManageJurisdictions: false,
+    canViewAuditLogs: false,
+    canSwitchBackend: false,
+    isAdminExclusive: false,
+  },
+  [UserRole.CLIENT_DRPO]: {
+    canSeeDashboards: true,
+    canSeeVisualAnalytics: true,
+    canSeeRelationsGraph: true,
+    canSeeTimelines: true,
+    canSeeOpenSearch: true,
+    canSeeSensitiveData: true,         // Повний доступ до ДРПО та вскриттів
+    canSeeSystemCore: false,           // ізольовано від системного ядра
+    canSeeInvestigation: true,
+    canAccessFullNewspaper: true,
+    canAccessDetailedTrends: true,
+    canToggleSensitiveData: true,
+    canManageUsers: false,
+    canManageJurisdictions: true,       // Доступ до законодавчих даних
     canViewAuditLogs: false,
     canSwitchBackend: false,
     isAdminExclusive: false,

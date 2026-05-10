@@ -43,6 +43,7 @@ from .companies import router as companies_router
 from .competitors import router as competitors_router
 from .copilot import router as copilot_router
 from .dashboard import router as dashboard_router
+from .db_admin import router as db_admin_router
 # from .decisions import router as decisions_router
 from .declarations import router as declarations_router
 from .forecast import router as forecast_router
@@ -88,6 +89,7 @@ __all__ = [
     "competitors_router",
     "copilot_router",
     "dashboard_router",
+    "db_admin_router",
     # "decisions_router",
     "declarations_router",
     "factory_router",

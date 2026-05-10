@@ -10,6 +10,7 @@ interface RoleContextType {
   isAdmin: boolean;
   isPremium: boolean;
   isBasic: boolean;
+  isDRPO: boolean;
 }
 
 const RoleContext = createContext<RoleContextType | undefined>(undefined);
@@ -33,6 +34,7 @@ export const RoleProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     isAdmin: role === UserRole.ADMIN,
     isPremium: role === UserRole.CLIENT_PREMIUM,
     isBasic: role === UserRole.CLIENT_BASIC,
+    isDRPO: role === UserRole.CLIENT_DRPO,
   }), [role, capabilities]);
 
   return (
@@ -54,6 +56,7 @@ export const useRole = (): RoleContextType => {
       isAdmin: false,
       isPremium: false,
       isBasic: true,
+      isDRPO: false,
     };
   }
   return context;

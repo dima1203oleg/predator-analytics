@@ -57,7 +57,7 @@ export type NavAccent =
   | 'cyan'
   | 'violet';
 
-export type NavigationAudience = 'business' | 'analyst' | 'supply_chain' | 'admin';
+export type NavigationAudience = 'business' | 'analyst' | 'supply_chain' | 'drpo' | 'admin';
 export type NavWorkspaceMode = 'all' | 'favorites' | 'recent' | 'recommended';
 
 export interface NavItem {
@@ -243,6 +243,8 @@ const navigationAudienceAliases: Record<string, NavigationAudience> = {
   supply_chain: 'supply_chain',
   logistician: 'supply_chain',
   logistics: 'supply_chain',
+  client_drpo: 'drpo',
+  investigator: 'drpo',
   client_basic: 'business',
   viewer: 'business',
   explorer: 'business',
@@ -1184,6 +1186,14 @@ const isItemVisibleForRole = (item: NavItem, role: string): boolean => {
     return item.audiences.includes('admin');
   }
 
+  // DRPO роль бачить елементи з audiences 'drpo' та 'analyst' (повний аналітичний + чутливі дані)
+  if (normalizedRole === 'client_drpo' || normalizedRole === 'investigator') {
+    if (!item.audiences || item.audiences.length === 0) {
+      return true;
+    }
+    return item.audiences.includes('drpo') || item.audiences.includes('analyst');
+  }
+
   if (!item.audiences || item.audiences.length === 0) {
     return true;
   }
@@ -1202,6 +1212,14 @@ const isGroupVisibleForRole = (group: NavGroup, role: string): boolean => {
   if (normalizedRole === 'admin') {
     if (!group.audiences || group.audiences.length === 0) return false;
     return group.audiences.includes('admin');
+  }
+
+  // DRPO роль бачить групи з audiences 'drpo' та 'analyst' (повний аналітичний + чутливі дані)
+  if (normalizedRole === 'client_drpo' || normalizedRole === 'investigator') {
+    if (!group.audiences || group.audiences.length === 0) {
+      return true;
+    }
+    return group.audiences.includes('drpo') || group.audiences.includes('analyst');
   }
 
   if (!group.audiences || group.audiences.length === 0) {

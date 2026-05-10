@@ -24,6 +24,9 @@ from app.sinks.clickhouse_sink import ClickHouseSink
 from app.sinks.neo4j_sink import Neo4jSink
 from app.sinks.opensearch_sink import OpenSearchSink
 from app.sinks.postgres_sink import PostgresSink
+from app.sinks.qdrant_sink import QdrantSink
+from app.sinks.redis_sink import RedisSink
+from app.sinks.kafka_emitter import KafkaEmitter
 from app.validators.declaration import DeclarationValidator, Severity
 from predator_common.logging import get_logger
 
@@ -122,11 +125,14 @@ class FileIngestionPipeline:
         self.seen_hashes: set[str] = set()
         self.quarantine: list[QuarantineRecord] = []
 
-        # Sinks
+        # Sinks — усі 8 БД згідно System Memory Contract v4.0
         self.postgres_sink = PostgresSink()
         self.neo4j_sink = Neo4jSink()
         self.opensearch_sink = OpenSearchSink()
         self.clickhouse_sink = ClickHouseSink()
+        self.qdrant_sink = QdrantSink()
+        self.redis_sink = RedisSink()
+        self.kafka_emitter = KafkaEmitter()
 
         # MinIO
         self.minio = get_minio_service()
@@ -178,7 +184,13 @@ class FileIngestionPipeline:
             self.stats.current_stage = "quarantine"
             await self._save_quarantine()
 
-            # 6. Завершення
+            # 6. Емітити Kafka-подію про завершення
+            self.stats.current_stage = "emit"
+            await self.kafka_emitter.emit_ingestion_completed(
+                self.job_id, self.tenant_id, self._build_result()
+            )
+
+            # 7. Завершення
             self.stats.current_stage = "completed"
             self.stats.completed_at = datetime.now(UTC)
             await self._update_progress()
@@ -446,12 +458,13 @@ class FileIngestionPipeline:
             extra={"job_id": self.job_id},
         )
 
-        # Паралельний запис у всі сховища
+        # Паралельний запис у всі сховища (5 із 8; Redis/Kafka/MinIO окремо)
         await asyncio.gather(
             self._store_postgres(batch),
             self._store_neo4j(batch),
             self._store_opensearch(batch),
             self._store_clickhouse(batch),
+            self._store_qdrant(batch),
             return_exceptions=True,
         )
 
@@ -496,11 +509,16 @@ class FileIngestionPipeline:
     async def _store_clickhouse(self, batch: list[dict[str, Any]]) -> None:
         """Зберігає батч у ClickHouse для аналітики."""
         try:
-            # ClickHouse sink працює синхронно через clickhouse-connect,
-            # тому загортаємо в thread або використовуємо як є (для воркера ок)
             await self.clickhouse_sink.insert_declarations(batch)
         except Exception as e:
             logger.error(f"Failed to store in ClickHouse: {e}")
+
+    async def _store_qdrant(self, batch: list[dict[str, Any]]) -> None:
+        """Зберігає батч у Qdrant (векторне сховище)."""
+        try:
+            await self.qdrant_sink.upsert_vectors(batch, self.tenant_id)
+        except Exception as e:
+            logger.error(f"Failed to store in Qdrant: {e}")
 
     async def _save_quarantine(self) -> None:
         """Зберігає карантинні записи."""
@@ -541,6 +559,8 @@ class FileIngestionPipeline:
         await self.postgres_sink.close()
         await self.neo4j_sink.close()
         await self.opensearch_sink.close()
+        await self.redis_sink.close()
+        await self.kafka_emitter.close()
 
     def _build_result(self) -> dict[str, Any]:
         """Формує результат інгестії."""

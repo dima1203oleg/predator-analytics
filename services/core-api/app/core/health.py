@@ -409,12 +409,51 @@ class HealthCheckService:
                 },
             }
 
+    async def check_clickhouse(self) -> dict[str, Any]:
+        """Перевірити доступність ClickHouse (OLAP — HR-17)."""
+        if self.settings.TESTING:
+            return self._testing_response(
+                "clickhouse",
+                {"host": self.settings.CLICKHOUSE_HOST, "port": self.settings.CLICKHOUSE_PORT},
+            )
+
+        base_url = f"http://{self.settings.CLICKHOUSE_HOST}:{self.settings.CLICKHOUSE_PORT}"
+        try:
+            response, duration = await self._http_check(
+                f"{base_url}/ping",
+                timeout_seconds=3.0,
+                auth=(self.settings.CLICKHOUSE_USER, self.settings.CLICKHOUSE_PASSWORD),
+            )
+            is_ok = response.status_code == 200 and "Ok" in response.text
+            return {
+                "status": "ok" if is_ok else "degraded",
+                "duration_seconds": duration,
+                "timestamp": datetime.now(UTC).isoformat(),
+                "details": {
+                    "host": self.settings.CLICKHOUSE_HOST,
+                    "port": self.settings.CLICKHOUSE_PORT,
+                    "database": self.settings.CLICKHOUSE_DATABASE,
+                },
+            }
+        except Exception as exc:
+            return {
+                "status": "error",
+                "duration_seconds": 0.0,
+                "timestamp": datetime.now(UTC).isoformat(),
+                "error": str(exc),
+                "details": {
+                    "host": self.settings.CLICKHOUSE_HOST,
+                    "port": self.settings.CLICKHOUSE_PORT,
+                },
+            }
+
     async def comprehensive_health_check(self) -> dict[str, Any]:
         """Комплексна перевірка здоров'я всіх сервісів."""
         if self.settings.TESTING:
             timestamp = datetime.now(UTC).isoformat()
             services = {
                 "postgresql": self._testing_response("postgresql"),
+                "clickhouse": self._testing_response("clickhouse"),
                 "redis": self._testing_response("redis"),
                 "neo4j": self._testing_response("neo4j"),
                 "kafka": self._testing_response("kafka"),
@@ -441,6 +480,7 @@ class HealthCheckService:
         logger.debug("Початок комплексної перевірки стану системи")
         checks: list[tuple[str, Any]] = [
             ("postgresql", self.check_postgresql),
+            ("clickhouse", self.check_clickhouse),
             ("redis", self.check_redis),
             ("neo4j", self.check_neo4j),
             ("kafka", self.check_kafka),

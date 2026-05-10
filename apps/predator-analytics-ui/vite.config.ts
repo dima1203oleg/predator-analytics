@@ -20,6 +20,8 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 3030,
       strictPort: true,
+      host: true,
+      allowedHosts: true,
       hmr: {
         clientPort: 3030,
       },
@@ -47,6 +49,12 @@ export default defineConfig(({ mode }) => {
       },
       sourcemap: false,
       minify: 'esbuild'
+    },
+
+    preview: {
+      port: 3030,
+      host: true,
+      allowedHosts: true
     }
   };
 });

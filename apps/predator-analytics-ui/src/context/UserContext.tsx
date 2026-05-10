@@ -103,7 +103,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         isLoading,
         isAuthenticated: !!user,
         isAdmin: user?.role === UserRole.ADMIN,
-        isClient: user?.role === UserRole.CLIENT_BASIC || user?.role === UserRole.CLIENT_PREMIUM,
+        isClient: user?.role === UserRole.CLIENT_BASIC || user?.role === UserRole.CLIENT_PREMIUM || user?.role === UserRole.CLIENT_DRPO,
         canAccess,
         setUser,
         logout,
