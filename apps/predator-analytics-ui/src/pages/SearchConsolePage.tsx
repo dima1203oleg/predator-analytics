@@ -199,9 +199,9 @@ export const SearchConsolePage: React.FC = () => {
                         title={
                             <div className="flex items-center gap-8">
                                 <div className="relative group">
-                                    <div className="absolute inset-0 bg-[#D4AF37]/20 blur-[50px] rounded-full scale-150 animate-pulse" />
+                                    <div className="absolute inset-0 bg-[#D4AF37]/20 blur-[50px] rounded-full scale-150 " />
                                     <div className="relative w-16 h-16 bg-[#0a0a0a] border border-[#D4AF37]/20 rounded-2xl flex items-center justify-center panel-3d shadow-2xl">
-                                        <Search size={32} className="text-[#D4AF37] drop-shadow-[0_0_15px_rgba(212,175,55,0.8)]" />
+                                        <Search size={32} className="text-[#D4AF37] " />
                                     </div>
                                 </div>
                                 <div className="flex flex-col">
@@ -229,9 +229,9 @@ export const SearchConsolePage: React.FC = () => {
                         <motion.div 
                             initial={{ scale: 0.95, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
-                            className="relative group p-1.5 rounded-[56px] bg-gradient-to-tr from-[#D4AF37]/30 via-transparent to-[#E11D48]/30 shadow-[0_0_100px_rgba(0,0,0,0.8)]"
+                            className="relative group p-1.5 rounded-[56px] bg-gradient-to-tr from-[#D4AF37]/30 via-transparent to-[#E11D48]/30 "
                         >
-                            <div className="relative bg-[#050505]/95 backdrop-blur-3xl rounded-[50px] border border-white/5 overflow-hidden">
+                            <div className="relative bg-[#050505]/95  rounded-[50px] border border-white/5 overflow-hidden">
                                 <div className="flex items-center px-12 py-10 gap-8">
                                     <button 
                                         onClick={() => setShowFilters(!showFilters)}
@@ -262,7 +262,7 @@ export const SearchConsolePage: React.FC = () => {
                                             onClick={() => voiceStatus === 'LISTENING' ? stopListening() : startListening()}
                                             className={cn(
                                                 "p-5 rounded-[28px] transition-all panel-3d border-2",
-                                                voiceStatus === 'LISTENING' ? "bg-rose-600 border-rose-400 text-white animate-pulse" : "bg-white/5 border-transparent text-slate-500 hover:text-[#D4AF37]"
+                                                voiceStatus === 'LISTENING' ? "bg-rose-600 border-rose-400 text-white " : "bg-white/5 border-transparent text-slate-500 hover:text-[#D4AF37]"
                                             )}
                                         >
                                             <Mic size={28} />
@@ -315,9 +315,9 @@ export const SearchConsolePage: React.FC = () => {
                                     whileHover={{ y: -5, scale: 1.02 }}
                                     onClick={mode.onToggle || (() => setSearchModes(s => ({ ...s, [mode.id]: !s[mode.id as keyof typeof s] })))}
                                     className={cn(
-                                        "px-8 py-4 rounded-[28px] border transition-all flex items-center gap-4 relative overflow-hidden panel-3d shadow-xl backdrop-blur-3xl",
+                                        "px-8 py-4 rounded-[28px] border transition-all flex items-center gap-4 relative overflow-hidden panel-3d shadow-xl ",
                                         (mode.active ?? (searchModes as any)[mode.id])
-                                            ? "bg-[#D4AF37]/10 border-[#D4AF37]/40 text-[#D4AF37] shadow-[0_0_20px_rgba(212,175,55,0.1)]"
+                                            ? "bg-[#D4AF37]/10 border-[#D4AF37]/40 text-[#D4AF37] "
                                             : "bg-[#0a0a0a]/60 border-white/5 text-slate-500 hover:text-slate-300"
                                     )}
                                 >
@@ -339,14 +339,14 @@ export const SearchConsolePage: React.FC = () => {
                         {isLoading ? (
                             <div className="flex flex-col items-center justify-center py-40 gap-12">
                                 <div className="relative">
-                                    <div className="absolute inset-0 bg-[#D4AF37]/10 blur-[120px] rounded-full animate-pulse" />
+                                    <div className="absolute inset-0 bg-[#D4AF37]/10 blur-[120px] rounded-full " />
                                     <CyberOrb size={180} color="#D4AF37" intensity={0.6} pulse />
                                     <div className="absolute inset-0 flex items-center justify-center">
-                                        <Brain size={48} className="text-white animate-pulse" />
+                                        <Brain size={48} className="text-white " />
                                     </div>
                                 </div>
                                 <div className="text-center space-y-4">
-                                    <h3 className="text-xl font-black text-white uppercase tracking-[0.5em] animate-pulse">КВАНТОВИЙ АНАЛІЗ</h3>
+                                    <h3 className="text-xl font-black text-white uppercase tracking-[0.5em] ">КВАНТОВИЙ АНАЛІЗ</h3>
                                     <p className="text-[10px] font-mono text-[#D4AF37] uppercase tracking-widest">ЗВЕРНЕННЯ_ДО_СЕМАНТИЧНОГО_ЯДРА_v63.0-ELITE...</p>
                                 </div>
                             </div>
@@ -374,7 +374,7 @@ export const SearchConsolePage: React.FC = () => {
                                             transition={{ delay: i * 0.1 }}
                                             className="group relative p-1 rounded-[40px] bg-white/[0.02] hover:bg-gradient-to-r hover:from-[#D4AF37]/20 hover:to-[#E11D48]/10 transition-all duration-500 shadow-2xl"
                                         >
-                                            <div className="bg-[#050505]/90 backdrop-blur-3xl rounded-[39px] p-8 relative overflow-hidden">
+                                            <div className="bg-[#050505]/90  rounded-[39px] p-8 relative overflow-hidden">
                                                 <div className="absolute top-0 right-0 w-40 h-40 bg-[#D4AF37]/5 blur-[50px] pointer-events-none" />
                                                 
                                                 <div className="flex items-start gap-8">

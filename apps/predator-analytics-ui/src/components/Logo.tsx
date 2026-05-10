@@ -31,17 +31,17 @@ export const Logo: React.FC<LogoProps> = ({ className = '', size = 'md', animate
     return (
         <div className={`relative ${className} group`}>
             {/* Outer Glow Ring (Elite Rose) */}
-            <div className={`absolute inset-0 rounded-xl bg-rose-600/20 blur-xl group-hover:bg-rose-600/40 transition-all duration-700 scale-125 opacity-0 group-hover:opacity-100 ${animated ? 'animate-pulse' : ''}`} />
+            <div className={`absolute inset-0 rounded-xl bg-rose-600/20 blur-xl group-hover:bg-rose-600/40 transition-all duration-700 scale-125 opacity-0 group-hover:opacity-100 ${animated ? '' : ''}`} />
             
-            <div className={`${s.box} bg-black/90 rounded-xl border-2 border-rose-600/50 flex items-center justify-center shadow-[0_0_30px_rgba(225,29,72,0.2)] relative overflow-hidden backdrop-blur-xl transition-all duration-700 group-hover:border-rose-500 group-hover:shadow-[0_0_50px_rgba(244,63,94,0.5)] text-rose-600`}>
+            <div className={`${s.box} bg-black/90 rounded-xl border-2 border-rose-600/50 flex items-center justify-center  relative overflow-hidden  transition-all duration-700 group-hover:border-rose-500 group-hover: text-rose-600`}>
                 
                 {/* Geometric Vector Raptor */}
-                <GeometricRaptor className={`${s.img} drop-shadow-[0_0_12px_rgba(244,63,94,0.8)] transition-all duration-1000 group-hover:scale-110 group-hover:filter group-hover:brightness-125`} />
+                <GeometricRaptor className={`${s.img}  transition-all duration-1000 group-hover:scale-110 group-hover:filter group-hover:brightness-125`} />
                 
                 {/* Scanline Effect (Rose) */}
                 {animated && (
                     <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                        <div className="absolute top-0 left-0 w-full h-[1.5px] bg-rose-600/40 shadow-[0_0_15px_rgba(244,63,94,1)] animate-[scanline_2.5s_linear_infinite]" />
+                        <div className="absolute top-0 left-0 w-full h-[1.5px] bg-rose-600/40  animate-[scanline_2.5s_linear_infinite]" />
                     </div>
                 )}
                 
@@ -50,7 +50,7 @@ export const Logo: React.FC<LogoProps> = ({ className = '', size = 'md', animate
             </div>
 
             {/* Version Badge - Elite style */}
-            <div className={`absolute ${s.badge} bg-rose-950/90 px-2 py-0.5 text-rose-500 border border-rose-600/50 rounded-sm font-mono font-black tracking-widest text-[8px] backdrop-blur-md shadow-2xl group-hover:border-rose-400 transition-colors uppercase`}>
+            <div className={`absolute ${s.badge} bg-rose-950/90 px-2 py-0.5 text-rose-500 border border-rose-600/50 rounded-sm font-mono font-black tracking-widest text-[8px]  shadow-2xl group-hover:border-rose-400 transition-colors uppercase`}>
                 СУВЕ ЕН v57.3-ELITE
             </div>
         </div>

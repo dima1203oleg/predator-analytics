@@ -167,7 +167,7 @@ export function EvolutionAgentPanel() {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(225,29,72,0.06),transparent_60%)] pointer-events-none" />
         <div className="relative z-10 flex flex-wrap items-center justify-between gap-5">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl border border-[#D4AF37]/30 bg-[#D4AF37]/10 flex items-center justify-center shadow-[0_0_30px_rgba(225,29,72,0.2)]">
+            <div className="w-14 h-14 rounded-2xl border border-[#D4AF37]/30 bg-[#D4AF37]/10 flex items-center justify-center ">
               <BrainCircuit size={28} className="text-[#D4AF37]" />
             </div>
             <div>
@@ -332,7 +332,7 @@ export function EvolutionAgentPanel() {
             <span className="text-[10px] font-black uppercase tracking-[0.28em] text-[#D4AF37]">EvolutionAgent · Термінал</span>
             {isAnalyzing && (
               <span className="flex items-center gap-1.5 text-[10px] text-rose-300 font-black uppercase ml-auto">
-                <span className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse" />
+                <span className="w-1.5 h-1.5 rounded-full bg-rose-400 " />
                 виконується
               </span>
             )}
@@ -351,7 +351,7 @@ export function EvolutionAgentPanel() {
             ))}
             {isAnalyzing && (
               <div className="flex items-center gap-1.5 text-slate-600 py-0.5">
-                <span className="animate-pulse">█</span>
+                <span className="">█</span>
               </div>
             )}
             <div ref={logsEndRef} />

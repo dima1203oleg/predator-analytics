@@ -47,7 +47,7 @@ const OSINTHub: React.FC = () => {
       onTabChange={handleTabChange}
       accent="rose"
     >
-      <div className="h-full bg-slate-950/20 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/5">
+      <div className="h-full bg-slate-950/20  rounded-2xl overflow-hidden border border-white/5">
         {activeTab === 'diligence' && <DiligenceTab />}
         {activeTab === 'graph' && <GraphExplorerTab />}
         {activeTab === 'ubo' && <UBOMapTab />}

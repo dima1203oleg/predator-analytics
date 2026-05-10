@@ -241,7 +241,7 @@ export const BootSequenceELITE: React.FC<{ onComplete: () => void }> = ({ onComp
       transition={{ duration: 2.5 }}
       className="max-w-5xl w-full p-2 bg-gradient-to-br from-[#D4AF37]/40 via-transparent to-black border border-[#D4AF37]/30 relative z-50"
     >
-      <div className="bg-black p-24 border border-[#D4AF37]/20 relative overflow-hidden backdrop-blur-3xl">
+      <div className="bg-black p-24 border border-[#D4AF37]/20 relative overflow-hidden ">
         <div className="absolute top-0 right-0 p-8">
            <div className="text-[#D4AF37] font-mono text-[10px] tracking-widest opacity-30">ВЛАСНИЙ_ПРОТОКОЛ_60.0</div>
         </div>
@@ -276,7 +276,7 @@ export const BootSequenceELITE: React.FC<{ onComplete: () => void }> = ({ onComp
                     />
                   ))}
                </div>
-               <div className="text-[11px] text-[#D4AF37] tracking-[0.8em] uppercase font-bold animate-pulse">
+               <div className="text-[11px] text-[#D4AF37] tracking-[0.8em] uppercase font-bold ">
                  АНАЛІЗ БІОМЕТрИЧНОГО ВІДБИТКУ...
                </div>
             </div>
@@ -432,7 +432,7 @@ export const BootSequenceELITE: React.FC<{ onComplete: () => void }> = ({ onComp
         
         {/* CORNER DATA */}
         <div className="absolute top-16 left-16 flex flex-col gap-4 z-50 opacity-60">
-           <div className="text-white font-black text-3xl tracking-[0.8em] italic filter drop-shadow-[0_0_20px_rgba(212,175,55,0.5)]">
+           <div className="text-white font-black text-3xl tracking-[0.8em] italic filter ">
              PREDATOR <span className="text-[#D4AF37]">ELITE</span>
            </div>
            <div className="h-[1px] w-96 bg-gradient-to-r from-[#D4AF37] to-transparent shadow-[0_0_10px_#D4AF37]" />
@@ -450,7 +450,7 @@ export const BootSequenceELITE: React.FC<{ onComplete: () => void }> = ({ onComp
             sfx.playImpact();
             setTimeout(onComplete, 1000);
           }}
-          className="absolute bottom-32 right-16 px-6 py-2 border border-[#D4AF37]/30 text-[#D4AF37]/40 hover:text-[#D4AF37] hover:border-[#D4AF37] text-[10px] tracking-[0.4em] uppercase transition-all z-50 pointer-events-auto bg-black/50 backdrop-blur-md"
+          className="absolute bottom-32 right-16 px-6 py-2 border border-[#D4AF37]/30 text-[#D4AF37]/40 hover:text-[#D4AF37] hover:border-[#D4AF37] text-[10px] tracking-[0.4em] uppercase transition-all z-50 pointer-events-auto bg-black/50 "
         >
          ПРОПУСТИТИ ЗАСТАВКУ
         </button>
@@ -496,7 +496,7 @@ export const BootSequenceELITE: React.FC<{ onComplete: () => void }> = ({ onComp
             transition={{ duration: 4, ease: "easeOut" }}
             className="flex flex-col items-center z-10"
           >
-            <div className="mb-20 brightness-150 filter drop-shadow-[0_0_50px_rgba(212,175,55,0.6)]">
+            <div className="mb-20 brightness-150 filter ">
                <GeometricRaptor className="w-56 h-56 text-[#D4AF37]" />
             </div>
             <h1 className="text-white text-[12rem] font-thin uppercase tracking-[0.8em] leading-none mb-10 relative">
@@ -523,9 +523,9 @@ export const BootSequenceELITE: React.FC<{ onComplete: () => void }> = ({ onComp
              <div className="relative w-[800px] h-[800px] flex items-center justify-center">
                 <div className="absolute inset-0 border-[0.5px] border-[#D4AF37]/10 rounded-full animate-spin-slow opacity-10" />
                 <div className="absolute inset-40 border-[0.5px] border-[#D4AF37]/20 rounded-full animate-spin-reverse opacity-20" />
-                <div className="absolute inset-[320px] border-2 border-[#D4AF37]/40 rounded-full animate-pulse opacity-30 shadow-[0_0_100px_rgba(212,175,55,0.2)]" />
+                <div className="absolute inset-[320px] border-2 border-[#D4AF37]/40 rounded-full  opacity-30 " />
                 
-                <div className="text-center bg-black/80 p-32 backdrop-blur-3xl border border-[#D4AF37]/20 shadow-[0_0_200px_rgba(0,0,0,1)] relative overflow-hidden">
+                <div className="text-center bg-black/80 p-32  border border-[#D4AF37]/20  relative overflow-hidden">
                    <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#D4AF37]/40 to-transparent" />
                    <div className="text-[11px] text-[#D4AF37] font-black tracking-[2em] uppercase mb-12 opacity-40 italic">
                      Синхронізація_Нейронного_Ядра
@@ -554,7 +554,7 @@ export const BootSequenceELITE: React.FC<{ onComplete: () => void }> = ({ onComp
               <motion.div 
                 initial={{ opacity: 0, x: -50 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="p-20 bg-black/70 border border-[#D4AF37]/10 flex flex-col gap-12 relative overflow-hidden backdrop-blur-2xl"
+                className="p-20 bg-black/70 border border-[#D4AF37]/10 flex flex-col gap-12 relative overflow-hidden "
               >
                 <div className="absolute top-0 left-0 w-1.5 h-full bg-[#D4AF37]/60 shadow-[0_0_30px_#D4AF37]" />
                 <div className="text-[#D4AF37] font-black tracking-[0.8em] text-[12px] uppercase opacity-40 italic"> [ ПОТІК_RAW_SIGINT ] </div>
@@ -572,7 +572,7 @@ export const BootSequenceELITE: React.FC<{ onComplete: () => void }> = ({ onComp
                 initial={{ opacity: 0, x: 50 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.4 }}
-                className="p-20 bg-black/70 border border-[#D4AF37]/10 flex flex-col gap-12 relative overflow-hidden backdrop-blur-2xl"
+                className="p-20 bg-black/70 border border-[#D4AF37]/10 flex flex-col gap-12 relative overflow-hidden "
               >
                 <div className="absolute top-0 right-0 w-1.5 h-full bg-[#D4AF37]/60 shadow-[0_0_30px_#D4AF37]" />
                 <div className="text-[#D4AF37] font-black tracking-[0.8em] text-[12px] uppercase opacity-40 italic"> [ ВЕ ИФІКОВАНІ_ДАНІ ] </div>
@@ -604,7 +604,7 @@ export const BootSequenceELITE: React.FC<{ onComplete: () => void }> = ({ onComp
             animate={{ opacity: 1, scale: 1 }}
             className="flex flex-col items-center z-10"
           >
-            <div className="p-48 border-[0.5px] border-[#D4AF37]/30 bg-black relative shadow-[0_0_300px_rgba(0,0,0,1)] overflow-hidden">
+            <div className="p-48 border-[0.5px] border-[#D4AF37]/30 bg-black relative  overflow-hidden">
                <motion.div 
                 animate={{ x: ['-200%', '200%'] }}
                 transition={{ repeat: Infinity, duration: 2.5, ease: "linear" }}
@@ -614,7 +614,7 @@ export const BootSequenceELITE: React.FC<{ onComplete: () => void }> = ({ onComp
                  СИСТЕМА <span className="text-[#D4AF37]">ГОТОВА</span>
               </h2>
             </div>
-            <div className="mt-20 text-[#D4AF37] text-[11px] font-black tracking-[4em] uppercase opacity-40 animate-pulse italic ml-[4em]">
+            <div className="mt-20 text-[#D4AF37] text-[11px] font-black tracking-[4em] uppercase opacity-40  italic ml-[4em]">
                Протокол_Суверенітету_Активовано
             </div>
           </motion.div>

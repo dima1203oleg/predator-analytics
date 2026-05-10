@@ -41,7 +41,7 @@ export const MorningBriefing: React.FC<MorningBriefingProps> = ({ items, userNam
       variants={container}
       initial="hidden"
       animate="show"
-      className="relative overflow-hidden rounded-[32px] border border-white/[0.08] bg-[linear-gradient(135deg,rgba(10,15,28,0.9),rgba(5,10,20,0.95))] p-6 shadow-[0_24px_64px_rgba(0,0,0,0.4)] backdrop-blur-xl sm:p-8"
+      className="relative overflow-hidden rounded-[32px] border border-white/[0.08] bg-[linear-gradient(135deg,rgba(10,15,28,0.9),rgba(5,10,20,0.95))] p-6 shadow-[0_24px_64px_rgba(0,0,0,0.4)]  sm:p-8"
     >
       {/* Background Decorative Element */}
       <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-cyan-500/10 blur-[80px]" />
@@ -138,8 +138,8 @@ const MiniStat: React.FC<{ label: string; value: string; trend: 'up' | 'down' | 
     <span className="text-xs text-slate-400">{label}</span>
       <div className="flex items-center gap-2">
         <span className="font-mono text-sm font-black text-white">{value}</span>
-        {trend === 'up' && <div className="h-1 w-1 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]" />}
-        {trend === 'down' && <div className="h-1 w-1 rounded-full bg-rose-400 shadow-[0_0_8px_rgba(251,113,133,0.6)]" />}
+        {trend === 'up' && <div className="h-1 w-1 rounded-full bg-emerald-400 " />}
+        {trend === 'down' && <div className="h-1 w-1 rounded-full bg-rose-400 " />}
       </div>
   </div>
 );

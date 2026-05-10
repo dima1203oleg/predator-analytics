@@ -60,10 +60,10 @@ export const DiligenceTab: React.FC = () => {
             
             {/* Intelligence Rail - Left */}
             <div className="hidden xl:flex w-72 flex-col gap-4 overflow-hidden shrink-0 z-10">
-                <TacticalCard title="ВУЗОЛ МОНІТОРИНГУ" icon={<Brain size={16} className="text-rose-500" />} className="bg-rose-500/[0.03] border-rose-500/10 shadow-[0_0_30px_rgba(244,63,94,0.05)]">
+                <TacticalCard title="ВУЗОЛ МОНІТОРИНГУ" icon={<Brain size={16} className="text-rose-500" />} className="bg-rose-500/[0.03] border-rose-500/10 ">
                     <div className="space-y-4">
                         <div className="text-center py-4 relative">
-                            <div className="absolute inset-0 bg-rose-500/5 blur-2xl animate-pulse" />
+                            <div className="absolute inset-0 bg-rose-500/5 blur-2xl " />
                             <div className="text-[10px] font-black text-rose-500 uppercase tracking-[0.2em] mb-1">SYSTEM VRAM FLOW</div>
                             <div className="text-2xl font-black text-white italic tracking-tighter">94.2%</div>
                         </div>
@@ -114,7 +114,7 @@ export const DiligenceTab: React.FC = () => {
             {/* Main Viewport */}
             <div className="flex-1 flex flex-col gap-4 overflow-hidden z-10">
                 {/* Tactical Search Bar */}
-                <div className="bg-slate-900/40 backdrop-blur-md border border-white/5 rounded-3xl p-4 shadow-2xl">
+                <div className="bg-slate-900/40  border border-white/5 rounded-3xl p-4 shadow-2xl">
                     <form onSubmit={handleSearch} className="flex gap-4">
                         <div className="flex-1 relative group">
                             <div className="absolute inset-0 bg-rose-500/5 rounded-2xl blur-md opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -130,7 +130,7 @@ export const DiligenceTab: React.FC = () => {
                         <button 
                             type="submit"
                             disabled={loading}
-                            className="px-10 bg-rose-600 hover:bg-rose-500 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] italic transition-all shadow-[0_0_30px_rgba(225,29,72,0.3)] flex items-center gap-3 disabled:opacity-50"
+                            className="px-10 bg-rose-600 hover:bg-rose-500 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] italic transition-all  flex items-center gap-3 disabled:opacity-50"
                         >
                             {loading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Zap className="w-4 h-4" />}
                             СКАНУВАТИ
@@ -150,7 +150,7 @@ export const DiligenceTab: React.FC = () => {
                                     className={cn(
                                         "px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest transition-all",
                                         riskFilter === filter.value 
-                                            ? "bg-rose-600 text-white shadow-[0_0_15px_rgba(225,29,72,0.4)]" 
+                                            ? "bg-rose-600 text-white " 
                                             : "bg-white/5 text-slate-500 hover:bg-white/10"
                                     )}
                                 >
@@ -177,9 +177,9 @@ export const DiligenceTab: React.FC = () => {
                                     <div className="absolute inset-0 border-t-2 border-rose-500 rounded-full animate-spin" />
                                     <div className="absolute inset-4 border-2 border-rose-500/20 rounded-full scale-110" />
                                     <div className="absolute inset-4 border-b-2 border-rose-600 rounded-full animate-spin-reverse" />
-                                    <Target className="absolute inset-0 m-auto w-10 h-10 text-rose-500 animate-pulse" />
+                                    <Target className="absolute inset-0 m-auto w-10 h-10 text-rose-500 " />
                                 </div>
-                                <h3 className="text-2xl font-black text-white uppercase italic tracking-[0.4em] animate-pulse">ІНІЦІАЛІЗАЦІЯ СКАНЕРА...</h3>
+                                <h3 className="text-2xl font-black text-white uppercase italic tracking-[0.4em] ">ІНІЦІАЛІЗАЦІЯ СКАНЕРА...</h3>
                                 <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mt-4">ОБРОБКА ВЕКТОРІВ ОСІНТ-ВУЗЛА #{Math.floor(Math.random() * 999)}</p>
                             </motion.div>
                         ) : results.length > 0 ? (

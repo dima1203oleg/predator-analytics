@@ -118,7 +118,7 @@ export default function PriceComparisonPremium() {
               title={
                 <div className="flex items-center gap-10">
                    <div className="relative group">
-                      <div className="absolute inset-0 bg-[#D4AF37]/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                      <div className="absolute inset-0 bg-[#D4AF37]/20 blur-3xl rounded-full scale-150 " />
                       <div className="relative p-7 bg-black border-2 border-[#D4AF37]/40 rounded-[2.5rem] shadow-4xl transform rotate-2 hover:rotate-0 transition-all">
                          <DollarSign size={42} className="text-[#D4AF37] shadow-[0_0_20px_#d4af37]" />
                       </div>

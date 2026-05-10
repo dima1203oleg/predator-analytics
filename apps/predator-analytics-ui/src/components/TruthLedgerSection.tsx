@@ -129,7 +129,7 @@ export const TruthLedgerSection: React.FC = () => {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 "
           >
             <div className="bg-slate-900 border border-white/10 rounded-2xl w-full max-w-2xl  shadow-2xl">
               <div className="p-6 border-b border-white/5 flex items-center justify-between">

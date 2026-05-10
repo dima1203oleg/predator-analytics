@@ -21,9 +21,9 @@ export const SystemPulseIndicator: React.FC = () => {
                 )}
                 <span className={cn(
                     "relative inline-flex rounded-full h-2 w-2",
-                    isLoading ? "bg-slate-500 animate-pulse" :
+                    isLoading ? "bg-slate-500 " :
                     isError ? "bg-rose-600" :
-                    isReady ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]" :
+                    isReady ? "bg-emerald-500 " :
                     "bg-amber-500"
                 )}></span>
             </div>
@@ -32,9 +32,9 @@ export const SystemPulseIndicator: React.FC = () => {
                 {isLoading ? (
                     <span className="opacity-50">Pulse Sync...</span>
                 ) : isError ? (
-                    <span className="text-rose-500 drop-shadow-[0_0_8px_rgba(244,63,94,0.4)]">Offline</span>
+                    <span className="text-rose-500 ">Offline</span>
                 ) : isReady ? (
-                    <span className="text-emerald-400 drop-shadow-[0_0_8px_rgba(16,185,129,0.4)]">Active</span>
+                    <span className="text-emerald-400 ">Active</span>
                 ) : (
                     <span className="text-amber-500">Degraded</span>
                 )}

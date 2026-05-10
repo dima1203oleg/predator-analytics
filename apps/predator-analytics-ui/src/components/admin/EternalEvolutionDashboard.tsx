@@ -83,7 +83,7 @@ export const EternalEvolutionDashboard: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
         {/* Main Status */}
-        <div className="lg:col-span-2 p-8 rounded-3xl bg-slate-900/50 border border-white/5 backdrop-blur-xl relative ">
+        <div className="lg:col-span-2 p-8 rounded-3xl bg-slate-900/50 border border-white/5  relative ">
           <div className="absolute top-0 right-0 p-8 opacity-10">
             <Brain size={120} className="text-blue-500" />
           </div>

@@ -79,21 +79,21 @@ export const SovereignReportWidget: React.FC<SovereignReportWidgetProps> = ({ ue
 
     return (
         <div className={cn(
-            "flex flex-col bg-[#050505]/60 backdrop-blur-[50px] border border-[#D4AF37]/10 rounded-[3rem] overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)] transition-all",
+            "flex flex-col bg-[#050505]/60 [50px] border border-[#D4AF37]/10 rounded-[3rem] overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)] transition-all",
             className
         )}>
             {/* Extended Cyber Header */}
             <div className="p-10 border-b border-white/5 flex items-center justify-between bg-gradient-to-r from-[#D4AF37]/10 via-white/[0.02] to-transparent">
                 <div className="flex items-center gap-6">
                     <div className="relative">
-                        <div className="absolute inset-0 bg-[#D4AF37]/20 blur-2xl rounded-2xl animate-pulse" />
+                        <div className="absolute inset-0 bg-[#D4AF37]/20 blur-2xl rounded-2xl " />
                         <div className="relative p-4 bg-black border border-[#D4AF37]/30 rounded-2xl shadow-2xl">
                             <Brain size={28} className="text-[#D4AF37]" />
                         </div>
                     </div>
                     <div>
                         <div className="flex items-center gap-3 mb-1.5">
-                            <span className="text-[10px] font-black text-[#D4AF37] uppercase tracking-[0.4em] animate-pulse italic">SOVEREIGN_ADVISOR // v63.0-ELITE</span>
+                            <span className="text-[10px] font-black text-[#D4AF37] uppercase tracking-[0.4em]  italic">SOVEREIGN_ADVISOR // v63.0-ELITE</span>
                             <Badge className="bg-[#D4AF37]/10 text-[#D4AF37] border-none text-[8px] tracking-widest px-2 py-0">VERIFIED</Badge>
                         </div>
                         <h3 className="text-2xl font-black text-white italic tracking-tighter leading-tight uppercase">СУВЕРЕННИЙ_ЗВІТ_ІНТЕЛЕКТУ</h3>
@@ -101,6 +101,21 @@ export const SovereignReportWidget: React.FC<SovereignReportWidgetProps> = ({ ue
                     </div>
                 </div>
                 <div className="flex items-center gap-4">
+                    {/* OODA Loop Status Indicator */}
+                    <div className="hidden lg:flex items-center gap-2 mr-4 px-4 py-2 bg-white/5 border border-white/10 rounded-xl">
+                        <div className="flex gap-1">
+                            {['O', 'O', 'D', 'A'].map((step, idx) => (
+                                <span key={idx} className={cn(
+                                    "text-[9px] font-black tracking-widest px-1.5 py-0.5 rounded",
+                                    idx === 2 ? "bg-[#D4AF37]/20 text-[#D4AF37] " : "text-slate-600"
+                                )}>
+                                    {step}
+                                </span>
+                            ))}
+                        </div>
+                        <span className="text-[8px] font-mono text-slate-400 uppercase ml-2">Фаза: Вирішення</span>
+                    </div>
+
                     <div className="hidden md:flex flex-col text-right mr-4 border-r border-white/10 pr-6">
                         <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">ЧАС_ГЕНЕ АЦІЇ</span>
                         <span className="text-xs font-mono text-white opacity-80">{new Date().toLocaleTimeString('uk-UA')}</span>
@@ -115,15 +130,23 @@ export const SovereignReportWidget: React.FC<SovereignReportWidgetProps> = ({ ue
                     </motion.button>
                     <motion.button 
                         whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}
-                        className="px-8 py-4 bg-[#D4AF37] text-black rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:brightness-110 transition-all shadow-[0_0_30px_rgba(212,175,55,0.3)] group italic"
+                        className="px-8 py-4 bg-[#D4AF37] text-black rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:brightness-110 transition-all  group italic"
                     >
                         ПОШИ ИТИ_ ОЗВІДКУ
                     </motion.button>
                 </div>
             </div>
 
-            {/* Content Area */}
-            <div className="flex-1 overflow-y-auto p-12 custom-scrollbar min-h-[500px] relative bg-black/20">
+            {/* Content Area with Premium Effects */}
+            <div className="flex-1 overflow-y-auto p-12 custom-scrollbar min-h-[500px] relative bg-black/20 group">
+                {/* Cyber Scanline */}
+                <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-[2rem]">
+                    <div className="w-full h-1 bg-gradient-to-r from-transparent via-[#D4AF37]/30 to-transparent absolute top-0 animate-[scanline_4s_linear_infinite]" />
+                </div>
+                
+                {/* Matrix Background */}
+                <div className="absolute inset-0 pointer-events-none opacity-5 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPgo8cmVjdCB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDUiLz4KPC9zdmc+')] [mask-image:linear-gradient(to_bottom,transparent,black,transparent)]" />
+
                 <AnimatePresence mode="wait">
                     {loading ? (
                         <motion.div
@@ -133,9 +156,9 @@ export const SovereignReportWidget: React.FC<SovereignReportWidgetProps> = ({ ue
                             className="h-full flex flex-col items-center justify-center space-y-10 py-32"
                         >
                             <div className="relative">
-                                <div className="absolute inset-0 bg-[#D4AF37]/20 blur-[60px] rounded-full scale-200 animate-pulse" />
+                                <div className="absolute inset-0 bg-[#D4AF37]/20 blur-[60px] rounded-full scale-200 " />
                                 <div className="relative">
-                                    <Sparkles size={64} className="text-[#D4AF37] animate-pulse" />
+                                    <Sparkles size={64} className="text-[#D4AF37] " />
                                     <motion.div 
                                         animate={{ rotate: 360 }}
                                         transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
@@ -144,7 +167,7 @@ export const SovereignReportWidget: React.FC<SovereignReportWidgetProps> = ({ ue
                                 </div>
                             </div>
                             <div className="text-center space-y-3">
-                                <p className="text-[#D4AF37] font-black tracking-[0.6em] uppercase text-xs animate-pulse">СИНТЕЗУЮ_ЕКСПЕ ТНИЙ_ВИСНОВОК...</p>
+                                <p className="text-[#D4AF37] font-black tracking-[0.6em] uppercase text-xs ">СИНТЕЗУЮ_ЕКСПЕ ТНИЙ_ВИСНОВОК...</p>
                                 <p className="text-slate-600 text-[10px] uppercase font-mono italic tracking-widest">Sovereign Engine Analysing 5-Layer Risk Matrix v63.0-ELITE</p>
                             </div>
                             <div className="flex gap-2">
@@ -182,12 +205,12 @@ export const SovereignReportWidget: React.FC<SovereignReportWidgetProps> = ({ ue
                         <motion.div
                             initial={{ opacity: 0, scale: 0.98 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            className="prose prose-invert max-w-none prose-p:text-slate-400 prose-p:leading-relaxed prose-headings:text-white prose-headings:uppercase prose-headings:tracking-tighter prose-headings:italic prose-headings:font-black prose-strong:text-[#D4AF37] prose-li:text-slate-300"
+                            className="prose prose-invert max-w-none relative z-10 prose-p:text-slate-300 prose-p:leading-relaxed prose-headings:text-white prose-headings:uppercase prose-headings:tracking-tighter prose-headings:italic prose-headings:font-black prose-strong:text-[#D4AF37] prose-li:text-slate-300"
                         >
                             <ReactMarkdown>{report}</ReactMarkdown>
                         </motion.div>
                     ) : (
-                        <div className="flex flex-col items-center justify-center py-32 text-slate-800 border border-dashed border-white/5 rounded-[3rem]">
+                        <div className="flex flex-col items-center justify-center py-32 text-slate-800 border border-dashed border-white/5 rounded-[3rem] relative z-10">
                             <Fingerprint size={80} className="opacity-10 mb-6" />
                             <p className="text-sm font-black uppercase tracking-[0.4em] italic opacity-40">КрИПТОМАТрИЦЯ_ПО ОЖНЯ</p>
                         </div>
@@ -267,6 +290,10 @@ export const SovereignReportWidget: React.FC<SovereignReportWidgetProps> = ({ ue
                 }
                 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
                     background: rgba(212, 175, 55, 0.3);
+                }
+                @keyframes scanline {
+                    0% { transform: translateY(-100%); }
+                    100% { transform: translateY(800px); }
                 }
             `}</style>
         </div>

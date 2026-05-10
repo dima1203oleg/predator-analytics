@@ -37,7 +37,7 @@ export const FactoryOodaPanel: React.FC<FactoryOodaPanelProps> = ({
   return (
     <div className="space-y-6">
       {/* ═══ 1. ЗАГОЛОВОК OODA ═══ */}
-      <div className="relative rounded-3xl border border-rose-500/30 bg-gradient-to-br from-rose-950/60 via-slate-950/80 to-yellow-950/40 backdrop-blur-xl p-6 lg:p-8 shadow-[0_0_50px_rgba(225,29,72,0.1)]">
+      <div className="relative rounded-3xl border border-rose-500/30 bg-gradient-to-br from-rose-950/60 via-slate-950/80 to-yellow-950/40  p-6 lg:p-8 ">
         {infiniteRunning && (
           <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-3xl">
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-rose-500/5 animate-ping" style={{ animationDuration: '3s' }} />
@@ -48,9 +48,9 @@ export const FactoryOodaPanel: React.FC<FactoryOodaPanelProps> = ({
             <div className="flex items-center gap-5 min-w-0">
               <div className="relative shrink-0">
                 <div className={cn('w-14 h-14 lg:w-16 lg:h-16 rounded-2xl border-2 flex items-center justify-center transition-all duration-500',
-                  infiniteRunning ? 'bg-rose-500/20 border-rose-400 shadow-[0_0_30px_rgba(225,29,72,0.6)]' : 'bg-slate-900/80 border-slate-600'
+                  infiniteRunning ? 'bg-rose-500/20 border-rose-400 ' : 'bg-slate-900/80 border-slate-600'
                 )}>
-                  <Infinity size={28} className={cn('transition-all', infiniteRunning ? 'text-rose-300 animate-pulse' : 'text-slate-500')} />
+                  <Infinity size={28} className={cn('transition-all', infiniteRunning ? 'text-rose-300 ' : 'text-slate-500')} />
                 </div>
                 {infiniteRunning && <div className="absolute -inset-1 rounded-2xl border border-rose-400/30 animate-ping opacity-40" />}
               </div>
@@ -73,8 +73,8 @@ export const FactoryOodaPanel: React.FC<FactoryOodaPanelProps> = ({
               onClick={handleInfiniteCycle}
               className={cn('h-12 px-8 font-black tracking-widest uppercase text-sm transition-all shrink-0 w-full lg:w-auto rounded-xl',
                 infiniteRunning
-                  ? 'bg-rose-700 hover:bg-rose-600 text-white shadow-[0_0_25px_rgba(225,29,72,0.4)] border border-rose-400/30'
-                  : 'bg-gradient-to-r from-rose-600 to-yellow-600 hover:from-rose-500 hover:to-yellow-500 text-white shadow-[0_0_25px_rgba(225,29,72,0.5)] border border-rose-400/30'
+                  ? 'bg-rose-700 hover:bg-rose-600 text-white  border border-rose-400/30'
+                  : 'bg-gradient-to-r from-rose-600 to-yellow-600 hover:from-rose-500 hover:to-yellow-500 text-white  border border-rose-400/30'
               )}
             >
               {infiniteRunning ? <><Power size={16} className="mr-2" />ЗУПИНИТИ</> : <><Play size={16} className="mr-2" />ЗАПУСТИТИ</>}
@@ -228,7 +228,7 @@ export const FactoryOodaPanel: React.FC<FactoryOodaPanelProps> = ({
           {infiniteRunning && (
             <div className="flex items-center gap-2 text-rose-400 mt-2">
               <Loader2 size={11} className="animate-spin" />
-              <span className="animate-pulse">
+              <span className="">
                 {infiniteLogs[infiniteLogs.length - 1]?.includes('ERROR') 
                     ? 'Відновлення з\'єднання...' 
                     : 'Обробка...'}

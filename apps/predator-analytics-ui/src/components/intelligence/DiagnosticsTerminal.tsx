@@ -63,9 +63,9 @@ export const DiagnosticsTerminal: React.FC = () => {
         className={cn(
           "fixed bottom-8 right-8 z-[100] p-6 rounded-[2rem] border-2 transition-all shadow-2xl flex items-center gap-4 group",
           logs.some(l => l.severity === 'critical')
-            ? "bg-rose-600 border-rose-400 text-white animate-pulse"
+            ? "bg-rose-600 border-rose-400 text-white "
             : logs.length > 0
-            ? "bg-rose-500 border-rose-500/40 text-black shadow-[0_0_20px_rgba(225,29,72,0.3)]"
+            ? "bg-rose-500 border-rose-500/40 text-black "
             : "bg-black border-white/10 text-slate-500 hover:text-white"
         )}
       >
@@ -83,13 +83,13 @@ export const DiagnosticsTerminal: React.FC = () => {
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="fixed bottom-32 right-8 z-[100] w-[500px] h-[600px] bg-black border-2 border-white/10 rounded-[3rem] shadow-[0_40px_100px_-20px_rgba(0,0,0,0.9)] overflow-hidden flex flex-col backdrop-blur-3xl"
+            className="fixed bottom-32 right-8 z-[100] w-[500px] h-[600px] bg-black border-2 border-white/10 rounded-[3rem] shadow-[0_40px_100px_-20px_rgba(0,0,0,0.9)] overflow-hidden flex flex-col "
           >
             {/* Terminal Header */}
             <div className="p-8 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
               <div className="flex items-center gap-4">
                 <div className="p-3 bg-rose-600/20 rounded-xl">
-                  <Activity size={18} className="text-rose-500 animate-pulse" />
+                  <Activity size={18} className="text-rose-500 " />
                 </div>
                 <div>
                   <h3 className="text-sm font-black text-rose-500 italic tracking-widest uppercase">ЖУРНАЛ_ДІАГНОСТИКИ</h3>
@@ -140,7 +140,7 @@ export const DiagnosticsTerminal: React.FC = () => {
                       <div className="flex items-center gap-3">
                         <span className={cn(
                           "w-2 h-2 rounded-full",
-                          log.severity === 'critical' ? "bg-rose-600 animate-pulse" : "bg-rose-400"
+                          log.severity === 'critical' ? "bg-rose-600 " : "bg-rose-400"
                         )} />
                         <span className="text-[9px] font-black text-slate-400 uppercase italic tracking-widest">{log.service}</span>
                       </div>
@@ -164,7 +164,7 @@ export const DiagnosticsTerminal: React.FC = () => {
             </div>
 
             {/* Terminal Footer */}
-            <div className="p-6 border-t border-white/5 bg-black/60 flex items-center justify-between backdrop-blur-xl">
+            <div className="p-6 border-t border-white/5 bg-black/60 flex items-center justify-between ">
               <div className="flex items-center gap-6">
                 <div className="flex items-center gap-2">
                   <Cpu size={12} className="text-rose-500" />
@@ -176,7 +176,7 @@ export const DiagnosticsTerminal: React.FC = () => {
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+                <div className="w-2 h-2 rounded-full bg-emerald-500 " />
                 <span className="text-[8px] font-black text-emerald-500 uppercase tracking-[0.2em] italic">БЕЗПЕКА_ГОТОВА</span>
               </div>
             </div>

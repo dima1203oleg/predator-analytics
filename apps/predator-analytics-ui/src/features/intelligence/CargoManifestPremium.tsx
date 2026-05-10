@@ -143,8 +143,8 @@ export default function CargoManifestPremium() {
             title={
               <div className="flex items-center gap-12">
                 <div className="relative group">
-                  <div className="absolute inset-0 bg-amber-600/20 blur-[80px] rounded-full scale-150 animate-pulse" />
-                  <div className="relative p-8 bg-black border-2 border-amber-600/40 rounded-[3rem] shadow-[0_0_30px_rgba(245,158,11,0.2)] transform rotate-3 hover:rotate-0 transition-all duration-700">
+                  <div className="absolute inset-0 bg-amber-600/20 blur-[80px] rounded-full scale-150 " />
+                  <div className="relative p-8 bg-black border-2 border-amber-600/40 rounded-[3rem]  transform rotate-3 hover:rotate-0 transition-all duration-700">
                     <Fingerprint size={48} className="text-amber-500 shadow-[0_0_30px_#f59e0b]" />
                   </div>
                 </div>
@@ -243,14 +243,14 @@ export default function CargoManifestPremium() {
                     className={cn(
                       "w-full p-8 bg-black border-2 rounded-[3rem] transition-all duration-500 text-left flex items-center justify-between group relative overflow-hidden",
                       selectedManifest?.id === m.id 
-                        ? "border-amber-500/40 bg-amber-500/[0.04] shadow-[0_0_50px_rgba(245,158,11,0.1)]" 
+                        ? "border-amber-500/40 bg-amber-500/[0.04] " 
                         : "border-white/[0.03] hover:border-white/10"
                     )}
                   >
                      <div className="flex items-center gap-6 relative z-10">
                         <div className={cn(
                           "w-16 h-16 rounded-2xl flex items-center justify-center border-2 transition-all duration-500", 
-                          m.status === 'CRITICAL' ? "bg-amber-500/10 border-amber-500/30 text-amber-500 shadow-[0_0_20px_rgba(245,158,11,0.3)]" : 
+                          m.status === 'CRITICAL' ? "bg-amber-500/10 border-amber-500/30 text-amber-500 " : 
                           m.status === 'WARNING' ? "bg-yellow-500/10 border-yellow-500/30 text-yellow-500" : 
                           "bg-emerald-500/10 border-emerald-500/30 text-emerald-500"
                         )}>
@@ -297,7 +297,7 @@ export default function CargoManifestPremium() {
                                        FORENSIC_DOSSIER // {selectedManifest.id.toUpperCase()}
                                     </span>
                                     <div className="w-2 h-2 rounded-full bg-slate-800" />
-                                    <span className="text-[10px] text-slate-700 font-black uppercase italic tracking-[0.2em] font-mono">STATUS: <span className={selectedManifest.status === 'CRITICAL' ? 'text-amber-600 animate-pulse' : 'text-emerald-500'}>{selectedManifest.status}</span></span>
+                                    <span className="text-[10px] text-slate-700 font-black uppercase italic tracking-[0.2em] font-mono">STATUS: <span className={selectedManifest.status === 'CRITICAL' ? 'text-amber-600 ' : 'text-emerald-500'}>{selectedManifest.status}</span></span>
                                  </div>
                               </div>
                            </div>
@@ -346,7 +346,7 @@ export default function CargoManifestPremium() {
                           <div className="relative z-10 mt-16 p-12 rounded-[4rem] bg-amber-600/[0.02] border-4 border-amber-600/30 space-y-8 shadow-4xl group/anom">
                              <div className="flex items-center justify-between border-b-2 border-amber-500/10 pb-6">
                                 <h4 className="text-[13px] font-black text-amber-500 uppercase italic tracking-[0.5em] flex items-center gap-6">
-                                   <Siren size={32} className="animate-pulse shadow-amber-600" /> ВИЯВЛЕНІ_АНТ ОПОГЕННІ_АНОМАЛІЇ
+                                   <Siren size={32} className=" shadow-amber-600" /> ВИЯВЛЕНІ_АНТ ОПОГЕННІ_АНОМАЛІЇ
                                 </h4>
                                 <span className="bg-amber-600/20 text-amber-500 px-6 py-2 rounded-2xl text-[10px] font-black italic tracking-widest border border-amber-600/30 shadow-lg animate-bounce">УВАГА</span>
                              </div>
@@ -362,7 +362,7 @@ export default function CargoManifestPremium() {
 
                         <div className="relative z-10 mt-16 pt-12 border-t-2 border-white/[0.04] flex flex-col md:flex-row items-center justify-between gap-12">
                            <div className="flex items-center gap-6">
-                              <div className={cn("w-5 h-5 rounded-full animate-pulse shadow-lg", isOffline ? "bg-amber-600 shadow-amber-600/50" : "bg-emerald-500 shadow-emerald-500/50")} />
+                              <div className={cn("w-5 h-5 rounded-full  shadow-lg", isOffline ? "bg-amber-600 shadow-amber-600/50" : "bg-emerald-500 shadow-emerald-500/50")} />
                               <div className="space-y-1">
                                  <p className={cn("text-[11px] font-black uppercase italic tracking-widest leading-none", isOffline ? "text-yellow-500" : "text-emerald-500")}>
                                    {isOffline ? 'ZROK_FAILOVER_ACTIVE' : 'FORENSIC_CORE_ACTIVE'}
@@ -412,7 +412,7 @@ export default function CargoManifestPremium() {
                                     initial={{ width: 0 }} 
                                     animate={{ width: '94.1%' }} 
                                     transition={{ duration: 1.5, ease: "easeOut" }} 
-                                    className="h-full bg-gradient-to-r from-amber-700 to-amber-500 rounded-full shadow-[0_0_15px_rgba(245,158,11,0.5)]" 
+                                    className="h-full bg-gradient-to-r from-amber-700 to-amber-500 rounded-full " 
                                  />
                               </div>
                            </div>
@@ -441,7 +441,7 @@ export default function CargoManifestPremium() {
                      </div>
                   </motion.div>
                 ) : (
-                  <div className="py-80 text-center bg-black border-4 border-dashed border-white/[0.04] rounded-[5rem] backdrop-blur-3xl shadow-4xl space-y-10 group">
+                  <div className="py-80 text-center bg-black border-4 border-dashed border-white/[0.04] rounded-[5rem]  shadow-4xl space-y-10 group">
                     <div className="relative mx-auto w-32 h-32 flex items-center justify-center">
                        <FileSearch className="w-24 h-24 text-slate-800 mx-auto opacity-20 group-hover:opacity-40 transition-opacity" />
                        <div className="absolute inset-0 border-4 border-amber-500/10 rounded-full animate-ping group-hover:border-amber-500/30 transition-all" />
@@ -473,7 +473,7 @@ export default function CargoManifestPremium() {
             .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
             .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(245, 158, 11, 0.1); border-radius: 20px; border: 3px solid black; }
             .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(245, 158, 11, 0.2); }
-            .backdrop-blur-4xl { backdrop-filter: blur(120px) saturate(180%); }
+            . { backdrop-filter: blur(120px) saturate(180%); }
             .text-shadow-wraith { text-shadow: 0 0 40px rgba(245, 158, 11, 0.2); }
         `}} />
       </div>

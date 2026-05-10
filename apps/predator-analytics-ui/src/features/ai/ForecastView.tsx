@@ -101,8 +101,8 @@ const ForecastView: React.FC = () => {
         <div className="min-h-screen bg-slate-950 p-10 relative overflow-hidden">
             {/* Background FX */}
             <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-purple-500/5 rounded-full blur-[120px] animate-pulse" />
-                <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-yellow-500/5 rounded-full blur-[120px] animate-pulse" />
+                <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-purple-500/5 rounded-full blur-[120px] " />
+                <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-yellow-500/5 rounded-full blur-[120px] " />
             </div>
 
             <div className="relative z-10 max-w-[1600px] mx-auto">

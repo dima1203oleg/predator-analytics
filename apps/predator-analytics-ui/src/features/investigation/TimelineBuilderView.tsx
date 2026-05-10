@@ -126,7 +126,7 @@ const EventCard: React.FC<{ event: TimelineEvent; isLast: boolean }> = ({ event,
                         expanded ? "bg-indigo-600 border-indigo-400" : "bg-black border-white/10"
                     )}
                 >
-                    <Icon size={32} style={{ color: expanded ? '#fff' : cfg.color }} className={cn(expanded ? "drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]" : "")} />
+                    <Icon size={32} style={{ color: expanded ? '#fff' : cfg.color }} className={cn(expanded ? "" : "")} />
                     <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent pointer-events-none" />
                 </motion.div>
             </div>
@@ -151,7 +151,7 @@ const EventCard: React.FC<{ event: TimelineEvent; isLast: boolean }> = ({ event,
                     )}
                     <div className="ml-auto flex items-center gap-2">
                         <div className="h-1 w-20 bg-white/5 rounded-full overflow-hidden border border-white/5">
-                            <motion.div initial={{ width: 0 }} animate={{ width: `${event.confidence}%` }} className="h-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+                            <motion.div initial={{ width: 0 }} animate={{ width: `${event.confidence}%` }} className="h-full bg-emerald-500 " />
                         </div>
                         <span className="text-[10px] font-black text-emerald-500 font-mono italic">{event.confidence}% CONFIDENCE</span>
                     </div>
@@ -264,9 +264,9 @@ const TimelineBuilderView: React.FC = () => {
                         title={
                             <div className="flex items-center gap-10">
                                 <div className="relative group">
-                                    <div className="absolute inset-0 bg-indigo-500/20 blur-[50px] rounded-full scale-150 animate-pulse" />
+                                    <div className="absolute inset-0 bg-indigo-500/20 blur-[50px] rounded-full scale-150 " />
                                     <div className="relative p-7 bg-black border border-indigo-900/40 rounded-[2.5rem] shadow-4xl transform hover:rotate-3 transition-transform">
-                                        <History size={42} className="text-indigo-500 shadow-[0_0_20px_rgba(99,102,241,0.5)]" />
+                                        <History size={42} className="text-indigo-500 " />
                                     </div>
                                 </div>
                                 <div className="space-y-2">
@@ -304,7 +304,7 @@ const TimelineBuilderView: React.FC = () => {
                     />
 
                     {/* HUD ФІЛЬТ ІВ */}
-                    <div className="flex flex-col lg:flex-row items-center gap-10 bg-black/40 border-2 border-white/[0.03] p-10 rounded-[3rem] shadow-3xl backdrop-blur-3xl">
+                    <div className="flex flex-col lg:flex-row items-center gap-10 bg-black/40 border-2 border-white/[0.03] p-10 rounded-[3rem] shadow-3xl ">
                         <div className="flex-1 w-full relative group">
                             <Search className="absolute left-8 top-1/2 -translate-y-1/2 w-8 h-8 text-slate-800 group-focus-within:text-indigo-500 transition-colors" />
                             <input
@@ -351,7 +351,7 @@ const TimelineBuilderView: React.FC = () => {
                         <AnimatePresence mode="popLayout">
                             {filtered.length === 0 ? (
                                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-40 flex flex-col items-center justify-center text-center space-y-10">
-                                    <Satellite size={120} className="text-slate-900 animate-pulse" />
+                                    <Satellite size={120} className="text-slate-900 " />
                                     <div className="space-y-4">
                                         <h3 className="text-3xl font-black text-slate-800 uppercase italic tracking-tighter">ВІДСУТНІСТЬ_ДАННИХ</h3>
                                         <p className="text-[11px] text-slate-700 font-black uppercase tracking-[0.4em] italic max-w-md mx-auto leading-relaxed">СІТКА ЧАСУ ПО ОЖНЯ. ЗАДАЙТЕ ІНШІ ПА АМЕТрИ ФІЛЬТ АЦІЇ АБО ЗАПУСТИТИ_СКАНЕ .</p>

@@ -39,10 +39,10 @@ const GuardMeter: React.FC<{
   };
 
   const glowMap = {
-    rose: 'shadow-[0_0_15px_rgba(225,29,72,0.6)]',
-    sky: 'shadow-[0_0_15px_rgba(14,165,233,0.6)]',
-    emerald: 'shadow-[0_0_15px_rgba(16,185,129,0.6)]',
-    amber: 'shadow-[0_0_15px_rgba(245,158,11,0.6)]'
+    rose: '',
+    sky: '',
+    emerald: '',
+    amber: ''
   };
 
   return (
@@ -58,7 +58,7 @@ const GuardMeter: React.FC<{
         <div className="flex flex-col items-end">
           <span className={cn(
             "text-2xl font-black italic glint-elite",
-            isCritical ? "text-rose-500 animate-pulse" : isHigh ? "text-amber-400" : "text-emerald-500/80"
+            isCritical ? "text-rose-500 " : isHigh ? "text-amber-400" : "text-emerald-500/80"
           )}>
             {percentage.toFixed(0)}%
           </span>
@@ -113,11 +113,11 @@ export const ResourceGuardTab: React.FC = () => {
           <motion.div 
             animate={{ rotate: 360 }}
             transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-            className="w-24 h-24 border-2 border-rose-500/20 rounded-full border-t-rose-500 shadow-[0_0_30px_rgba(225,29,72,0.3)]"
+            className="w-24 h-24 border-2 border-rose-500/20 rounded-full border-t-rose-500 "
           />
-          <Shield className="absolute inset-0 m-auto w-8 h-8 text-rose-500 animate-pulse" />
+          <Shield className="absolute inset-0 m-auto w-8 h-8 text-rose-500 " />
         </div>
-        <div className="text-[14px] font-black font-mono uppercase tracking-[0.6em] animate-pulse italic text-rose-500/60">СИНХРОНІЗАЦІЯ_МЕТрИК_ЗАХИСТУ_V61...</div>
+        <div className="text-[14px] font-black font-mono uppercase tracking-[0.6em]  italic text-rose-500/60">СИНХРОНІЗАЦІЯ_МЕТрИК_ЗАХИСТУ_V61...</div>
       </div>
     );
   }
@@ -139,7 +139,7 @@ export const ResourceGuardTab: React.FC = () => {
           </div>
           <div className="flex items-center gap-8 text-[11px] font-black font-mono text-white/30 tracking-[0.2em] uppercase italic">
             <div className="flex items-center gap-3">
-              <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_15px_rgba(16,185,129,0.8)]" />
+              <div className="w-2.5 h-2.5 rounded-full bg-emerald-500  " />
               <span className="text-emerald-500/80">СТАТУС_ЗАХИСТУ: {isCloudOverride ? 'CLOUD_OVERRIDE_ACTIVE' : 'OPTIMAL_RESERVE'}</span>
             </div>
             <span className="opacity-20">•</span>
@@ -156,7 +156,7 @@ export const ResourceGuardTab: React.FC = () => {
         </div>
 
         {/* Routing Indicator Badge */}
-        <div className="flex items-center gap-6 bg-black/60 backdrop-blur-3xl p-6 rounded-[2rem] border-2 border-white/5 shadow-4xl group">
+        <div className="flex items-center gap-6 bg-black/60  p-6 rounded-[2rem] border-2 border-white/5 shadow-4xl group">
            <div className="flex flex-col items-end gap-1">
               <span className="text-[9px] font-black font-mono text-white/20 uppercase tracking-[0.4em] italic">СТРАТЕГІЯ_МА Ш УТИЗАЦІЇ</span>
               <span className="text-[12px] font-black text-white/60 italic uppercase tracking-tighter group-hover:text-rose-500 transition-colors">{nodeSource}</span>
@@ -183,7 +183,7 @@ export const ResourceGuardTab: React.FC = () => {
         <div className="col-span-12 lg:col-span-4 flex flex-col gap-10">
           <div className="space-y-8">
             <div className="flex items-center gap-6 px-4">
-               <div className="w-2 h-2 bg-rose-500 rotate-45 shadow-[0_0_10px_rgba(225,29,72,1)]" />
+               <div className="w-2 h-2 bg-rose-500 rotate-45 " />
                <span className="text-[12px] font-black font-mono text-white/40 uppercase tracking-[0.5em] italic glint-elite">РОЗПОДІЛ_VRAM_8GB_GUARD</span>
             </div>
             
@@ -194,7 +194,7 @@ export const ResourceGuardTab: React.FC = () => {
                  <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
                  <div className="flex justify-between items-center relative z-10">
                     <span className="text-[11px] font-black font-mono text-white/40 uppercase tracking-[0.4em] italic">Політика VRAM Guard:</span>
-                    <div className="px-4 py-1.5 bg-rose-500/10 border-2 border-rose-500/40 rounded-xl text-[9px] font-black text-rose-500 uppercase tracking-widest italic animate-pulse shadow-rose-500/20">АКТИВНИЙ_ЗАХИСТ</div>
+                    <div className="px-4 py-1.5 bg-rose-500/10 border-2 border-rose-500/40 rounded-xl text-[9px] font-black text-rose-500 uppercase tracking-widest italic  shadow-rose-500/20">АКТИВНИЙ_ЗАХИСТ</div>
                  </div>
                  
                  <div className="space-y-6 relative z-10">
@@ -239,7 +239,7 @@ export const ResourceGuardTab: React.FC = () => {
 
           <div className="space-y-8">
             <div className="flex items-center gap-6 px-4">
-               <div className="w-2 h-2 bg-sky-500 rotate-45 shadow-[0_0_10px_rgba(14,165,233,1)]" />
+               <div className="w-2 h-2 bg-sky-500 rotate-45 " />
                <span className="text-[12px] font-black font-mono text-white/40 uppercase tracking-[0.5em] italic glint-elite">CPU_LOAD_CONTROL_L3</span>
             </div>
             <GuardMeter label="SYSTEM_CPU_LOAD_GLOBAL" value={stats?.cpu_percent ?? 0} total={100} unit="%" color="sky" />
@@ -319,7 +319,7 @@ export const ResourceGuardTab: React.FC = () => {
                    "w-full py-5 text-[11px] font-black uppercase tracking-[0.4em] rounded-[1.5rem] transition-all duration-700 border-2 italic shadow-4xl relative z-10 group/btn",
                    llmTriStateMode === 'SOVEREIGN'
                      ? "bg-rose-500/10 border-rose-500/30 text-rose-400 cursor-default"
-                     : "bg-rose-600 text-white border-rose-400 shadow-[0_0_30px_rgba(225,29,72,0.4)] hover:bg-rose-500 hover:scale-[1.02]"
+                     : "bg-rose-600 text-white border-rose-400  hover:bg-rose-500 hover:scale-[1.02]"
                  )}
                >
                  {toggleFailover.isPending ? (
@@ -333,7 +333,7 @@ export const ResourceGuardTab: React.FC = () => {
 
           <div className="space-y-8 relative z-10">
              <div className="flex items-center gap-6 px-4">
-                <div className="w-2.5 h-2.5 bg-rose-500 rotate-45 shadow-[0_0_10px_rgba(225,29,72,1)]" />
+                <div className="w-2.5 h-2.5 bg-rose-500 rotate-45 " />
                 <span className="text-[12px] font-black font-mono text-white/40 uppercase tracking-[0.6em] italic glint-elite">АКТИВНІ_П ОЦЕСИ_ТА_ОФЛОАД_МА Ш УТИ_ELITE</span>
              </div>
              
@@ -361,7 +361,7 @@ export const ResourceGuardTab: React.FC = () => {
                         <span className="text-[14px] font-black text-white italic tracking-tighter uppercase glint-elite group-hover:text-rose-500 transition-colors">{proc.name}</span>
                         <div className="flex items-center gap-4">
                           <div className="flex items-center gap-2">
-                             <div className={cn("w-1.5 h-1.5 rounded-full animate-pulse", proc.status === 'Running' ? "bg-emerald-500 shadow-emerald-500/40" : "bg-rose-500")} />
+                             <div className={cn("w-1.5 h-1.5 rounded-full ", proc.status === 'Running' ? "bg-emerald-500 shadow-emerald-500/40" : "bg-rose-500")} />
                              <span className="text-[9px] font-black font-mono text-white/30 uppercase tracking-widest italic">{proc.status}</span>
                           </div>
                           <span className="text-white/10">•</span>

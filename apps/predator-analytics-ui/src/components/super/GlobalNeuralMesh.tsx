@@ -53,7 +53,7 @@ const GlobalNeuralMesh: React.FC<GlobalNeuralMeshProps> = ({ status }) => {
   }, [clusterNodes, activeFailover, status]);
 
   return (
-    <div className="p-8 bg-slate-950/40 backdrop-blur-3xl border border-rose-500/10 rounded-[40px] shadow-2xl relative overflow-hidden group h-full flex flex-col">
+    <div className="p-8 bg-slate-950/40  border border-rose-500/10 rounded-[40px] shadow-2xl relative overflow-hidden group h-full flex flex-col">
       {/* Background Grid Decoration */}
       <div className="absolute inset-0 opacity-[0.05] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, #e11d48 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
 

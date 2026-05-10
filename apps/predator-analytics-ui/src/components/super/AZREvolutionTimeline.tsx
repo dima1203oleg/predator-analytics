@@ -55,14 +55,14 @@ const AZREvolutionTimeline: React.FC<AZREvolutionTimelineProps> = ({ status }) =
   };
 
   return (
-    <div className="relative p-6 rounded-2xl bg-slate-900/60 border border-slate-800 backdrop-blur-2xl shadow-2xl overflow-hidden min-h-[500px]">
+    <div className="relative p-6 rounded-2xl bg-slate-900/60 border border-slate-800  shadow-2xl overflow-hidden min-h-[500px]">
       {/* Decorative pulse element */}
       <div className="absolute top-0 right-0 p-4">
         <div className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
       </div>
 
       <div className="flex items-center gap-3 mb-8">
-        <div className="p-3 rounded-xl bg-violet-500/10 border border-violet-500/20 shadow-[0_0_20px_rgba(139,92,246,0.1)]">
+        <div className="p-3 rounded-xl bg-violet-500/10 border border-violet-500/20 ">
           <Network className="w-7 h-7 text-violet-400" />
         </div>
         <div>
@@ -85,7 +85,7 @@ const AZREvolutionTimeline: React.FC<AZREvolutionTimelineProps> = ({ status }) =
               className="relative"
             >
               {/* Timeline dot */}
-              <div className="absolute -left-[25px] top-1.5 w-3 h-3 rounded-full bg-slate-900 border-2 border-violet-500 shadow-[0_0_8px_rgba(139,92,246,0.5)] z-10" />
+              <div className="absolute -left-[25px] top-1.5 w-3 h-3 rounded-full bg-slate-900 border-2 border-violet-500  z-10" />
 
               <div className={`p-4 rounded-xl bg-gradient-to-br border ${getEventGradient(event.type)} transition-all duration-300 hover:scale-[1.01] hover:shadow-xl`}>
                 <div className="flex items-start justify-between gap-4">

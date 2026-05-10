@@ -189,7 +189,7 @@ const DiagnosticsPage: React.FC = () => {
             animate={{ x: 0, opacity: 1 }}
             className="text-4xl md:text-6xl font-display font-black tracking-tighter flex items-center gap-6"
           >
-            <div className="p-4 glass-ultra rounded-2xl border-rose-500/30 shadow-[0_0_30px_rgba(225,29,72,0.15)]">
+            <div className="p-4 glass-ultra rounded-2xl border-rose-500/30 ">
               <Activity size={48} className="text-rose-400" />
             </div>
             <span className="text-iridescent">СИСТЕМНА ДІАГНОСТИКА</span>
@@ -201,7 +201,7 @@ const DiagnosticsPage: React.FC = () => {
             </p>
             <div className="h-4 w-px bg-slate-800" />
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+              <div className="w-2 h-2 rounded-full bg-rose-500 " />
               <span className="text-[10px] font-black text-rose-400 uppercase tracking-widest">
                 API контроль активний
               </span>
@@ -294,7 +294,7 @@ const DiagnosticsPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="font-mono text-sm text-slate-300 bg-black/40 p-6 rounded-[24px] border border-white/5 overflow-auto max-h-[60vh] leading-relaxed backdrop-blur-md whitespace-pre-wrap">
+            <div className="font-mono text-sm text-slate-300 bg-black/40 p-6 rounded-[24px] border border-white/5 overflow-auto max-h-[60vh] leading-relaxed  whitespace-pre-wrap">
               {result?.report_markdown || 'Запустіть діагностику, щоб побачити системний звіт.'}
             </div>
           </motion.section>
@@ -338,7 +338,7 @@ const DiagnosticsPage: React.FC = () => {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            className="fixed bottom-8 right-8 bg-rose-600/10 border border-rose-500/30 text-rose-300 p-6 rounded-2xl flex items-start gap-4 backdrop-blur-xl shadow-2xl z-50 max-w-md"
+            className="fixed bottom-8 right-8 bg-rose-600/10 border border-rose-500/30 text-rose-300 p-6 rounded-2xl flex items-start gap-4  shadow-2xl z-50 max-w-md"
           >
             <AlertTriangle size={22} className="shrink-0 mt-0.5" />
             <div>

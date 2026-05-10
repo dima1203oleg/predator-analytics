@@ -65,7 +65,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -5, scale: 1.02 }}
       className={cn(
-        "relative rounded-[32px] p-6 border backdrop-blur-3xl overflow-hidden transition-all duration-500 panel-3d shadow-2xl bg-slate-950/40 group",
+        "relative rounded-[32px] p-6 border  overflow-hidden transition-all duration-500 panel-3d shadow-2xl bg-slate-950/40 group",
         critical ? 'border-rose-500/50 bg-rose-500/5' : warning ? 'border-amber-500/50 bg-amber-500/5' : 'border-white/5'
       )}
     >
@@ -74,7 +74,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
 
       <div className="flex items-start justify-between mb-6 relative z-10">
         <div className={cn("p-4 rounded-2xl bg-slate-900 border border-white/5 shadow-xl group-hover:scale-110 transition-transform duration-500", !critical && !warning && `text-${color}-400`)}>
-          <Icon size={24} className={critical || warning ? 'animate-pulse' : ''} />
+          <Icon size={24} className={critical || warning ? '' : ''} />
         </div>
         {trend && (
           <div className={cn(
@@ -197,7 +197,7 @@ export const RealTimeSystemMetrics: React.FC<{ compact?: boolean }> = ({ compact
 
   if (compact) {
     return (
-      <div className="flex items-center gap-6 px-6 py-2.5 rounded-2xl bg-slate-950/60 border border-white/5 backdrop-blur-2xl shadow-xl group">
+      <div className="flex items-center gap-6 px-6 py-2.5 rounded-2xl bg-slate-950/60 border border-white/5  shadow-xl group">
         <div className="flex items-center gap-3">
           <Cpu size={14} className="text-blue-400 group-hover:scale-125 transition-transform" />
           <span className="text-xs font-black font-mono text-slate-200">{metrics.cpu.toFixed(1)}%</span>
@@ -211,7 +211,7 @@ export const RealTimeSystemMetrics: React.FC<{ compact?: boolean }> = ({ compact
           <span className="text-xs font-black font-mono text-slate-200">{metrics.requestsPerSecond} RPS</span>
         </div>
         <div className={cn("pl-3 border-l border-white/10 flex items-center gap-2", isConnected ? 'text-emerald-500' : 'text-rose-500')}>
-          {isConnected ? <Wifi size={14} className="animate-pulse" /> : <WifiOff size={14} />}
+          {isConnected ? <Wifi size={14} className="" /> : <WifiOff size={14} />}
         </div>
       </div>
     );
@@ -220,17 +220,17 @@ export const RealTimeSystemMetrics: React.FC<{ compact?: boolean }> = ({ compact
   return (
     <div className="flex flex-col gap-10 animate-in fade-in duration-700">
       {/* Header Matrix Control */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-6 p-8 bg-slate-950/40 border border-white/5 rounded-[40px] backdrop-blur-3xl shadow-2xl relative overflow-hidden group">
+      <div className="flex flex-col md:flex-row items-center justify-between gap-6 p-8 bg-slate-950/40 border border-white/5 rounded-[40px]  shadow-2xl relative overflow-hidden group">
         <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-blue-500/30 to-transparent" />
         <div className="flex items-center gap-6 relative z-10">
-          <div className="p-4 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-2xl text-white shadow-[0_0_30px_rgba(37,99,235,0.3)] icon-3d-blue">
+          <div className="p-4 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-2xl text-white  icon-3d-blue">
             <Activity size={24} />
           </div>
           <div>
             <h3 className="text-2xl font-black text-white uppercase tracking-tighter leading-none mb-2 font-display">OMNISCIENCE_<span className="text-blue-400">MATRIX</span>_MONITOR</h3>
             <div className="flex items-center gap-4 text-[10px] text-slate-300 font-black uppercase tracking-[0.2em]">
               <div className="flex items-center gap-2">
-                <div className={cn("w-2 h-2 rounded-full", isConnected ? 'bg-emerald-500 shadow-[0_0_10px_#10b981] animate-pulse' : 'bg-rose-500')} />
+                <div className={cn("w-2 h-2 rounded-full", isConnected ? 'bg-emerald-500 shadow-[0_0_10px_#10b981] ' : 'bg-rose-500')} />
                 <span>{isConnected ? 'СИСТЕМА_В_МЕ ЕЖІ' : 'КРИТИЧНО_ОФЛАЙН'}</span>
               </div>
               {lastUpdate && (
@@ -264,9 +264,9 @@ export const RealTimeSystemMetrics: React.FC<{ compact?: boolean }> = ({ compact
                 "absolute inset-0 blur-[100px] rounded-full scale-150 transition-all duration-1000",
                 metrics.healthScore >= 90 ? 'bg-emerald-500/20' : metrics.healthScore >= 70 ? 'bg-amber-500/20' : 'bg-rose-500/20'
               )} />
-              <div className="relative w-48 h-48 rounded-full border-4 border-white/5 flex flex-col items-center justify-center shadow-2xl bg-slate-900/40 backdrop-blur-2xl group-hover:scale-105 transition-transform duration-700">
+              <div className="relative w-48 h-48 rounded-full border-4 border-white/5 flex flex-col items-center justify-center shadow-2xl bg-slate-900/40  group-hover:scale-105 transition-transform duration-700">
                 <Zap size={48} className={cn(
-                  "mb-2 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]",
+                  "mb-2 ",
                   metrics.healthScore >= 90 ? 'text-emerald-400' : metrics.healthScore >= 70 ? 'text-amber-400' : 'text-rose-400'
                 )} />
                 <div className="text-5xl font-black text-white tracking-widest font-display drop-shadow-2xl">

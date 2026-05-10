@@ -139,7 +139,7 @@ export const CommandPalette: React.FC = () => {
       <button
         onClick={() => setIsOpen(true)}
         title={locales.commandPalette.trigger}
-        className="fixed bottom-24 left-6 z-50 flex items-center gap-3 px-4 py-3 bg-slate-900/90 hover:bg-slate-800/90 border border-white/10 hover:border-indigo-500/30 rounded-2xl backdrop-blur-xl shadow-2xl transition-all group"
+        className="fixed bottom-24 left-6 z-50 flex items-center gap-3 px-4 py-3 bg-slate-900/95 hover:bg-slate-800/95 border border-white/10 hover:border-red-500/30 rounded-2xl transition-all group"
       >
         <Command size={16} className="text-indigo-400" />
         <span className="text-xs font-bold text-slate-400 group-hover:text-white transition-colors">
@@ -159,7 +159,7 @@ export const CommandPalette: React.FC = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsOpen(false)}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9998]"
+              className="fixed inset-0 bg-black/80 z-[9998]"
             />
 
             <motion.div
@@ -168,7 +168,7 @@ export const CommandPalette: React.FC = () => {
               exit={{ opacity: 0, scale: 0.95, y: -20 }}
               className="fixed top-[20%] left-1/2 -translate-x-1/2 w-full max-w-xl z-[9999]"
             >
-              <div className="bg-slate-900/95 border border-white/10 rounded-2xl shadow-2xl backdrop-blur-xl overflow-hidden">
+              <div className="bg-slate-900/98 border border-white/10 rounded-2xl overflow-hidden">
                 <div className="flex items-center gap-4 px-5 py-4 border-b border-white/5">
                   <Search size={18} className="text-indigo-400" />
                   <input

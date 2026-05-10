@@ -78,17 +78,17 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
   return (
     <div className="space-y-6">
       {/* Sovereign Control Center Header */}
-      <TacticalCard variant="holographic" className="border-rose-500/40 bg-rose-500/5 backdrop-blur-xl">
+      <TacticalCard variant="holographic" className="border-rose-500/40 bg-rose-500/5 ">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="flex items-center gap-5">
-            <div className="w-16 h-16 rounded-2xl bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-rose-400 shadow-[0_0_30px_rgba(244,63,94,0.3)] shrink-0">
-              <Factory size={32} className="animate-pulse" />
+            <div className="w-16 h-16 rounded-2xl bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-rose-400  shrink-0">
+              <Factory size={32} className="" />
             </div>
             <div className="min-w-0">
               <h3 className="text-xl font-black uppercase tracking-[0.2em] text-white">ПУЛЬТ УПРАВЛІННЯ ЦИКЛОМ</h3>
               <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 font-mono text-[10px] uppercase">
                 <span className={cn(infiniteRunning ? "text-emerald-400" : "text-rose-500", "flex items-center gap-1.5")}>
-                   <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
+                   <span className="w-1.5 h-1.5 rounded-full bg-current " />
                    <span className="opacity-50 text-slate-400">СТАТУС:</span>
                    {infiniteRunning ? 'АКТИВНИЙ ЦИКЛ' : 'РЕЖИМ ОЧІКУВАННЯ'}
                 </span>
@@ -107,7 +107,7 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
              <Button 
                variant="neon" 
                size="sm" 
-               className="flex-1 lg:flex-none px-6 bg-emerald-600/20 text-emerald-400 border-emerald-500/50 text-[10px] uppercase font-black h-12 shadow-[0_0_20px_rgba(16,185,129,0.2)]"
+               className="flex-1 lg:flex-none px-6 bg-emerald-600/20 text-emerald-400 border-emerald-500/50 text-[10px] uppercase font-black h-12 "
                onClick={handleMasterStart}
              >
                <Zap size={14} className="mr-2" /> МАЙСТЕР  ЗАПУСК
@@ -115,7 +115,7 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
              <Button 
                variant="neon" 
                size="sm" 
-               className="flex-1 lg:flex-none px-6 bg-rose-600/20 text-rose-400 border-rose-500/50 text-[10px] uppercase font-black h-12 shadow-[0_0_20px_rgba(244,63,94,0.2)]"
+               className="flex-1 lg:flex-none px-6 bg-rose-600/20 text-rose-400 border-rose-500/50 text-[10px] uppercase font-black h-12 "
                onClick={handleStartImprovement}
              >
                <Play size={14} className="mr-2" /> ЗАПУСТИТИ
@@ -138,7 +138,7 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
             onClick={() => setImprovementMode('tech')}
             variant={improvementMode === 'tech' ? 'holographic' : 'minimal'}
             className={cn("cursor-pointer py-10 flex flex-col items-center gap-5 transition-all group border-rose-500/20", 
-              improvementMode === 'tech' ? 'border-rose-500 shadow-[0_0_40px_rgba(244,63,94,0.15)] bg-rose-500/5' : 'hover:border-rose-500/40 opacity-70 hover:opacity-100')}
+              improvementMode === 'tech' ? 'border-rose-500  bg-rose-500/5' : 'hover:border-rose-500/40 opacity-70 hover:opacity-100')}
           >
             <div className={cn("w-16 h-16 rounded-2xl flex items-center justify-center border transition-transform group-hover:scale-110 shadow-lg",
               improvementMode === 'tech' ? "bg-rose-500/20 border-rose-500/40 text-rose-400" : "bg-white/5 border-white/10 text-slate-500")}>
@@ -154,7 +154,7 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
             onClick={() => setImprovementMode('analytic')}
             variant={improvementMode === 'analytic' ? 'holographic' : 'minimal'}
             className={cn("cursor-pointer py-10 flex flex-col items-center gap-5 transition-all group border-rose-500/20", 
-              improvementMode === 'analytic' ? 'border-rose-500 shadow-[0_0_40px_rgba(244,63,94,0.15)] bg-rose-500/5' : 'hover:border-rose-500/40 opacity-70 hover:opacity-100')}
+              improvementMode === 'analytic' ? 'border-rose-500  bg-rose-500/5' : 'hover:border-rose-500/40 opacity-70 hover:opacity-100')}
           >
             <div className={cn("w-16 h-16 rounded-2xl flex items-center justify-center border transition-transform group-hover:scale-110 shadow-lg",
               improvementMode === 'analytic' ? "bg-rose-500/20 border-rose-500/40 text-rose-400" : "bg-white/5 border-white/10 text-slate-500")}>
@@ -170,7 +170,7 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
             onClick={() => setImprovementMode('complex')}
             variant={improvementMode === 'complex' ? 'holographic' : 'minimal'}
             className={cn("cursor-pointer py-10 flex flex-col items-center gap-5 transition-all group border-rose-500/20", 
-              improvementMode === 'complex' ? 'border-rose-500 shadow-[0_0_40px_rgba(244,63,94,0.15)] bg-rose-500/5' : 'hover:border-rose-500/40 opacity-70 hover:opacity-100')}
+              improvementMode === 'complex' ? 'border-rose-500  bg-rose-500/5' : 'hover:border-rose-500/40 opacity-70 hover:opacity-100')}
           >
             <div className={cn("w-16 h-16 rounded-2xl flex items-center justify-center border transition-transform group-hover:scale-110 shadow-lg",
               improvementMode === 'complex' ? "bg-rose-500/20 border-rose-500/40 text-rose-400" : "bg-white/5 border-white/10 text-slate-500")}>
@@ -188,7 +188,7 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
         {(improvementMode === 'tech' || improvementMode === 'complex') && (
           <TacticalCard variant="cyber" className="border-rose-500/30 overflow-hidden">
             <div className="flex items-center gap-3 mb-6 p-4 border-b border-rose-500/20 bg-rose-500/5">
-              <div className="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.5)]" />
+              <div className="w-2 h-2 rounded-full bg-rose-500 " />
               <h2 className="text-xs font-black uppercase tracking-widest text-white">Технологічний Стек</h2>
             </div>
             <div className="p-4 space-y-4 pt-0">
@@ -199,13 +199,13 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
                       <input type="checkbox" checked={techComponents.includes(opt.id)} onChange={() => toggleSelection(opt.id, techComponents, setTechComponents)} className="accent-rose-500 w-4 h-4" />
                       <div className="flex flex-col">
                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-200">{opt.label}</span>
-                        {techComponents.includes(opt.id) && <span className="text-[8px] text-rose-400 animate-pulse uppercase tracking-[0.2em] mt-1">ПРИЗНАЧЕНО ДЛЯ ОПТИМІЗАЦІЇ</span>}
+                        {techComponents.includes(opt.id) && <span className="text-[8px] text-rose-400  uppercase tracking-[0.2em] mt-1">ПРИЗНАЧЕНО ДЛЯ ОПТИМІЗАЦІЇ</span>}
                       </div>
                    </label>
                  ))}
               </div>
               <div className="pt-4 border-t border-white/10 flex flex-col gap-3">
-                 <Button onClick={handleStartImprovement} variant="neon" className="w-full bg-rose-600/20 text-rose-400 border-rose-500/50 font-black uppercase tracking-widest text-[10px] h-12 shadow-[0_0_15px_rgba(244,63,94,0.1)]"><Wrench size={14} className="mr-2"/> Оптимізувати Ядро</Button>
+                 <Button onClick={handleStartImprovement} variant="neon" className="w-full bg-rose-600/20 text-rose-400 border-rose-500/50 font-black uppercase tracking-widest text-[10px] h-12 "><Wrench size={14} className="mr-2"/> Оптимізувати Ядро</Button>
                  <div className="grid grid-cols-2 gap-2">
                    <Button variant="cyber" className="text-[9px] h-10 border-white/10 text-slate-400 hover:text-white"><HistoryIcon size={12} className="mr-1"/> Відкат (Rollback)</Button>
                    <Button variant="cyber" className="text-[9px] h-10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/10"><Scan size={12} className="mr-1"/> Сканування Безпеки</Button>
@@ -219,7 +219,7 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
         {(improvementMode === 'analytic' || improvementMode === 'complex') && (
           <TacticalCard variant="cyber" className="border-rose-500/30 overflow-hidden">
             <div className="flex items-center gap-3 mb-6 p-4 border-b border-rose-500/20 bg-rose-500/5">
-              <div className="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.5)]" />
+              <div className="w-2 h-2 rounded-full bg-rose-500 " />
               <h2 className="text-xs font-black uppercase tracking-widest text-white">Аналітичний Інтелект</h2>
             </div>
             <div className="p-4 space-y-4 pt-0">
@@ -230,13 +230,13 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
                       <input type="checkbox" checked={analyticComponents.includes(opt.id)} onChange={() => toggleSelection(opt.id, analyticComponents, setAnalyticComponents)} className="accent-rose-500 w-4 h-4" />
                       <div className="flex flex-col">
                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-200">{opt.label}</span>
-                        {analyticComponents.includes(opt.id) && <span className="text-[8px] text-rose-400 animate-pulse uppercase tracking-[0.2em] mt-1">ОНОВЛЕННЯ ПАТЕРНУ АКТИВНЕ</span>}
+                        {analyticComponents.includes(opt.id) && <span className="text-[8px] text-rose-400  uppercase tracking-[0.2em] mt-1">ОНОВЛЕННЯ ПАТЕРНУ АКТИВНЕ</span>}
                       </div>
                    </label>
                  ))}
               </div>
               <div className="pt-4 border-t border-white/10 flex flex-col gap-3">
-                 <Button onClick={handleStartImprovement} variant="neon" className="w-full bg-rose-600/20 text-rose-400 border-rose-500/50 font-black uppercase tracking-widest text-[10px] h-12 shadow-[0_0_15px_rgba(244,63,94,0.1)]"><Sparkles size={14} className="mr-2"/> Оновити Знання</Button>
+                 <Button onClick={handleStartImprovement} variant="neon" className="w-full bg-rose-600/20 text-rose-400 border-rose-500/50 font-black uppercase tracking-widest text-[10px] h-12 "><Sparkles size={14} className="mr-2"/> Оновити Знання</Button>
                  <Button onClick={handleUpdateKnowledgeMap} variant="cyber" className="w-full text-[10px] h-12 border-white/10 text-slate-400 hover:text-white"><RotateCcw size={14} className="mr-2"/> Синхронізувати Гравітацію Фактів</Button>
               </div>
             </div>
@@ -246,7 +246,7 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
 
       <TacticalCard variant="minimal" className="border-rose-500/20 bg-black/40">
         <div className="flex items-center gap-3 mb-6 p-4 border-b border-white/5">
-          <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+          <div className="w-2 h-2 rounded-full bg-emerald-500 " />
           <h2 className="text-xs font-black uppercase tracking-widest text-white">Суверенні Інтеграції</h2>
         </div>
         <div className="p-4 grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -289,7 +289,7 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
        {(improvementStatus === 'running' || improvementStatus === 'done' || infiniteRunning) && (
          <TacticalCard variant="holographic" className="border-rose-500/30 mt-6">
            <div className="flex items-center gap-3 mb-6 p-4 border-b border-rose-500/20 bg-rose-500/5">
-             <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse shadow-[0_0_10px_rgba(244,63,94,0.5)]" />
+             <div className="w-2 h-2 rounded-full bg-rose-500  " />
              <h2 className="text-xs font-black uppercase tracking-widest text-white">Канал Подій Заводу (Events)</h2>
            </div>
            <div className="p-4">
@@ -299,7 +299,7 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
                      <span className="text-[11px] font-black uppercase tracking-wider text-rose-400">ПОТОЧНИЙ ПРОГРЕС ЦИКЛУ</span>
                      <span className="font-mono text-2xl font-black text-white">{improvementProgress}%</span>
                    </div>
-                   <Progress value={improvementProgress} variant="holographic" className="h-4 shadow-[0_0_20px_rgba(244,63,94,0.1)]" />
+                   <Progress value={improvementProgress} variant="holographic" className="h-4 " />
                    
                    <div className="mt-8 grid grid-cols-2 gap-4">
                      <div className="bg-black/60 border border-white/5 rounded-2xl p-5 flex flex-col items-center shadow-lg">
@@ -337,7 +337,7 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
              {improvementStatus === 'done' && (
                <div className="mt-8 pt-8 border-t border-white/10 animate-in fade-in slide-in-from-bottom-4 duration-1000">
                   <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 border border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+                    <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 border border-emerald-500/30 ">
                       <ShieldCheck size={20} />
                     </div>
                     <div>

@@ -55,7 +55,7 @@ export const InvestigationCanvasWidget: React.FC<{
 
 
   return (
-    <div className="bg-slate-950/80 border border-slate-800 rounded-[24px] backdrop-blur-xl overflow-hidden h-[500px] flex flex-col relative group">
+    <div className="bg-slate-950/80 border border-slate-800 rounded-[24px]  overflow-hidden h-[500px] flex flex-col relative group">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-rose-900/10 via-slate-950/50 to-slate-950 pointer-events-none" />
 
       {/* Header */}
@@ -87,7 +87,7 @@ export const InvestigationCanvasWidget: React.FC<{
       {isLoading ? (
           <div className="flex-1 flex flex-col items-center justify-center gap-4 text-emerald-500/50">
              <Activity className="animate-spin" size={32} />
-             <div className="text-[10px] uppercase font-black tracking-widest animate-pulse">
+             <div className="text-[10px] uppercase font-black tracking-widest ">
                 Синхронізація з Neo4j...
              </div>
           </div>
@@ -131,7 +131,7 @@ export const InvestigationCanvasWidget: React.FC<{
                 onClick={() => setSelectedNode(node.id)}
             >
                 <div className={`
-                    w-12 h-12 rounded-full border-2 flex items-center justify-center shadow-[0_0_20px_rgba(0,0,0,0.5)] bg-slate-900 transition-colors
+                    w-12 h-12 rounded-full border-2 flex items-center justify-center  bg-slate-900 transition-colors
                     ${node.type === 'risk' ? 'border-rose-500 text-rose-500 shadow-rose-900/40' :
                       node.type === 'osint' ? 'border-purple-500 text-purple-500 shadow-purple-900/40' :
                       node.risk > 80 ? 'border-amber-500 text-amber-500 shadow-amber-900/40' : 'border-emerald-500 text-emerald-400'}
@@ -143,16 +143,16 @@ export const InvestigationCanvasWidget: React.FC<{
                 </div>
                 {/* OSINT / Risk Indicators */}
                 {(node.type === 'company' && node.risk > 80) && (
-                    <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-rose-500 animate-pulse border-2 border-slate-900" />
+                    <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-rose-500  border-2 border-slate-900" />
                 )}
                 {/* OSINT Link Badge */}
                 {node.type === 'osint' && (
                     <div className="absolute -bottom-1 -right-1 p-0.5 rounded-full bg-purple-500 border border-slate-900 flex items-center justify-center">
-                        <Activity size={8} className="text-white animate-pulse" />
+                        <Activity size={8} className="text-white " />
                     </div>
                 )}
                 {/* Label */}
-                <div className="absolute top-14 left-1/2 -translate-x-1/2 text-[10px] font-bold text-slate-300 bg-black/50 px-2 py-0.5 rounded whitespace-nowrap backdrop-blur-sm">
+                <div className="absolute top-14 left-1/2 -translate-x-1/2 text-[10px] font-bold text-slate-300 bg-black/50 px-2 py-0.5 rounded whitespace-nowrap ">
                     {node.label}
                 </div>
             </motion.div>
@@ -165,7 +165,7 @@ export const InvestigationCanvasWidget: React.FC<{
                     initial={{ x: 300, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
                     exit={{ x: 300, opacity: 0 }}
-                    className="absolute top-4 right-4 w-64 bg-slate-900/90 border border-slate-700 rounded-xl p-4 backdrop-blur-xl z-20"
+                    className="absolute top-4 right-4 w-64 bg-slate-900/90 border border-slate-700 rounded-xl p-4  z-20"
                 >
                     <div className="flex justify-between items-start mb-2">
                         <h4 className="font-bold text-white text-sm">

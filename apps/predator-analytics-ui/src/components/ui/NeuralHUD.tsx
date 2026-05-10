@@ -67,15 +67,15 @@ export const NeuralHUD: React.FC<NeuralHUDProps> = ({
       {/* ── SYSTEM TELEMETRY — Системна телеметрія в кутах ── */}
       <div className="absolute top-4 left-1/2 -translate-x-1/2 flex items-center gap-12 text-[10px] font-black tracking-[0.4em] text-white/30 uppercase italic">
          <div className="flex items-center gap-2">
-            <div className="w-1 h-1 rounded-full bg-rose-500 animate-pulse" />
+            <div className="w-1 h-1 rounded-full bg-rose-500 " />
             SOVEREIGN_LINK: ESTABLISHED
          </div>
          <div className="flex items-center gap-2">
-            <div className="w-1 h-1 rounded-full bg-rose-500 animate-pulse" />
+            <div className="w-1 h-1 rounded-full bg-rose-500 " />
             VRAM_NODE: 5.8GB / 8GB
          </div>
          <div className="flex items-center gap-2">
-            <div className="w-1 h-1 rounded-full bg-rose-500 animate-pulse" />
+            <div className="w-1 h-1 rounded-full bg-rose-500 " />
             OODA_SYNC: 14MS
          </div>
       </div>

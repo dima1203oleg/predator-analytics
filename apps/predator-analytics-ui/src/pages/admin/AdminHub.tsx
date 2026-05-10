@@ -248,11 +248,11 @@ const SystemStatusHeader: React.FC = () => {
   const isHybrid = vramUsed > (vramTotal * 0.75) && !isCritical;
 
   return (
-    <div className="flex flex-col bg-black/60 glass-wraith border-b-2 border-white/5 relative overflow-hidden group select-none z-30 backdrop-blur-[60px] shadow-4xl">
+    <div className="flex flex-col bg-black/60 glass-wraith border-b-2 border-white/5 relative overflow-hidden group select-none z-30 [60px] shadow-4xl">
       <div className="absolute inset-0 bg-cyber-grid opacity-[0.03] pointer-events-none" />
       
       {/* Top Border Accent */}
-      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-rose-500/50 to-transparent shadow-[0_0_30px_rgba(225,29,72,0.8)]" />
+      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-rose-500/50 to-transparent " />
 
       <div className="flex items-center justify-between px-12 py-8 text-[11px] font-black tracking-[0.3em] uppercase z-10 relative">
         <div className="flex items-center gap-20">
@@ -267,7 +267,7 @@ const SystemStatusHeader: React.FC = () => {
                   <motion.div 
                     animate={{ scale: [1, 1.8, 1], opacity: [0.6, 1, 0.6] }}
                     transition={{ duration: 2.5, repeat: Infinity }}
-                    className="w-2.5 h-2.5 bg-rose-500 rounded-full shadow-[0_0_20px_rgba(225,29,72,1)]" 
+                    className="w-2.5 h-2.5 bg-rose-500 rounded-full " 
                   />
                   <span className="text-white/30 text-[9px] leading-none tracking-[0.7em] font-black italic">СУВЕРЕННИЙ_ХАБ_ОМЕГА</span>
                 </div>
@@ -324,7 +324,7 @@ const SystemStatusHeader: React.FC = () => {
                 <div className="h-2 bg-white/5 rounded-full overflow-hidden p-[1px] border border-white/5 glass-wraith">
                   <motion.div 
                     animate={{ width: `${cpuPercent}%`, backgroundColor: cpuPercent > 80 ? '#f43f5e' : '#e11d48' }}
-                    className="h-full rounded-full shadow-[0_0_20px_rgba(225,29,72,0.8)] relative"
+                    className="h-full rounded-full  relative"
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer" style={{ backgroundSize: '200% 100%' }} />
                   </motion.div>
@@ -336,7 +336,7 @@ const SystemStatusHeader: React.FC = () => {
             <div className="flex flex-col border-l-2 border-white/5 pl-16 h-14 justify-center">
               <span className="text-white/20 text-[9px] leading-none mb-4 tracking-[0.5em] font-black italic">АКТИВНІ_ВУЗЛИ</span>
               <div className="flex items-center gap-6">
-                <Radio size={24} className="text-rose-500 animate-pulse shadow-rose-500/20" />
+                <Radio size={24} className="text-rose-500  shadow-rose-500/20" />
                 <div className="flex flex-col">
                   <span className="text-white font-black text-2xl leading-none tracking-tighter italic glint-elite">
                     {agentsCount.toString().padStart(2, '0')} <span className="text-[10px] text-rose-500 not-italic ml-2 font-black uppercase tracking-widest">ВУЗЛІВ_OODA</span>
@@ -350,7 +350,7 @@ const SystemStatusHeader: React.FC = () => {
               <span className="text-white/20 text-[9px] leading-none mb-4 tracking-[0.5em] font-black italic group-hover/threat:text-rose-500 transition-colors uppercase">РІВЕНЬ_ЗАГРОЗИ_L7</span>
               <div className="flex items-center gap-6">
                 <div className="relative">
-                  <ShieldAlert size={28} className={cn("transition-all duration-1000", threatLevel > 70 ? "text-rose-500 drop-shadow-[0_0_20px_rgba(225,29,72,1)] scale-110" : "text-white/20")} />
+                  <ShieldAlert size={28} className={cn("transition-all duration-1000", threatLevel > 70 ? "text-rose-500  scale-110" : "text-white/20")} />
                   {threatLevel > 70 && <motion.div animate={{ scale: [1, 2.5], opacity: [0.6, 0] }} transition={{ repeat: Infinity, duration: 1.2 }} className="absolute inset-0 bg-rose-500 rounded-full blur-xl" />}
                 </div>
                 <div className="flex flex-col">
@@ -381,7 +381,7 @@ const SystemStatusHeader: React.FC = () => {
               
             <div className="relative flex items-center justify-center scale-150">
               <div className="w-6 h-6 rounded-full bg-rose-500 animate-ping absolute opacity-30" />
-              <div className="w-6 h-6 rounded-full bg-rose-500 relative shadow-[0_0_30px_rgba(225,29,72,1)] flex items-center justify-center border-2 border-white/20">
+              <div className="w-6 h-6 rounded-full bg-rose-500 relative  flex items-center justify-center border-2 border-white/20">
                 <Shield size={12} className="text-black" />
               </div>
             </div>
@@ -408,7 +408,7 @@ const TabLoader: React.FC = () => (
     <div className="absolute inset-0 bg-cyber-grid opacity-[0.05] pointer-events-none" />
     <div className="absolute inset-0 pointer-events-none opacity-[0.03] font-mono text-[9px] flex flex-wrap gap-6 overflow-hidden p-6 text-rose-500">
       {Array.from({ length: 150 }).map((_, i) => (
-        <span key={i} className="animate-pulse" style={{ animationDelay: `${i * 0.02}s` }}>{Math.random().toString(16).substring(2, 12).toUpperCase()}</span>
+        <span key={i} className="" style={{ animationDelay: `${i * 0.02}s` }}>{Math.random().toString(16).substring(2, 12).toUpperCase()}</span>
       ))}
     </div>
 
@@ -430,7 +430,7 @@ const TabLoader: React.FC = () => (
             initial={{ y: -150 }}
             animate={{ y: 150 }}
             transition={{ duration: 2.5, repeat: Infinity, ease: "linear" }}
-            className="absolute left-0 right-0 h-[2px] bg-rose-500 shadow-[0_0_30px_rgba(225,29,72,1)]"
+            className="absolute left-0 right-0 h-[2px] bg-rose-500 "
           />
           <Atom className="w-12 h-12 text-rose-500 animate-spin-slow" />
         </div>
@@ -451,7 +451,7 @@ const TabLoader: React.FC = () => (
             initial={{ left: '-100%' }}
             animate={{ left: '100%' }}
             transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute top-0 bottom-0 w-1/2 bg-rose-500 shadow-[0_0_25px_rgba(225,29,72,1)] rounded-full"
+            className="absolute top-0 bottom-0 w-1/2 bg-rose-500  rounded-full"
           />
         </div>
       </div>
@@ -466,7 +466,7 @@ const TabLoader: React.FC = () => (
           "СИНХРОНІЗАЦІЯ_МАПИ_UBO: L5"
         ].map((text, i) => (
           <div key={i} className="flex items-center gap-4">
-            <div className="w-2 h-2 bg-rose-500 rounded-full shadow-[0_0_10px_rgba(225,29,72,1)]" />
+            <div className="w-2 h-2 bg-rose-500 rounded-full " />
             <span className="text-[9px] font-black font-mono text-white whitespace-nowrap tracking-widest italic">{text}</span>
           </div>
         ))}
@@ -527,7 +527,7 @@ const TabNav: React.FC<TabNavProps> = ({ activeTab, onTabChange }) => {
   return (
     <div className="flex flex-col bg-black border-b-2 border-white/5 z-20 sticky top-0 shadow-4xl">
       {/* Category Selector */}
-      <div className="flex items-center gap-1 px-10 py-0 border-b border-white/5 bg-black/80 backdrop-blur-3xl relative overflow-hidden">
+      <div className="flex items-center gap-1 px-10 py-0 border-b border-white/5 bg-black/80  relative overflow-hidden">
         <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
         
         {CATEGORIES.map(cat => {
@@ -550,7 +550,7 @@ const TabNav: React.FC<TabNavProps> = ({ activeTab, onTabChange }) => {
                     layoutId="activeCategoryBgElite"
                     className="absolute inset-0 bg-rose-500/[0.08] z-0"
                   />
-                  <div className="absolute top-0 left-0 w-full h-[3px] bg-rose-500 shadow-[0_0_20px_rgba(225,29,72,1)]" />
+                  <div className="absolute top-0 left-0 w-full h-[3px] bg-rose-500 " />
                 </>
               )}
               <div className="flex items-center gap-5 relative z-10">
@@ -571,7 +571,7 @@ const TabNav: React.FC<TabNavProps> = ({ activeTab, onTabChange }) => {
            <div className="flex flex-col items-end gap-1">
               <span className="text-white/10 text-[8px] font-black font-mono tracking-widest uppercase italic">СТАТУС_ВУЗЛА</span>
               <span className={cn(
-                "text-[12px] font-black tracking-[0.3em] uppercase animate-pulse italic",
+                "text-[12px] font-black tracking-[0.3em] uppercase  italic",
                 status?.overall_status === 'optimal' ? "text-emerald-500" : "text-rose-500"
               )}>
                 {status?.overall_status === 'optimal' ? 'АКТИВНИЙ_L7' : 'НЕСТАБІЛЬНИЙ'}
@@ -621,7 +621,7 @@ const TabNav: React.FC<TabNavProps> = ({ activeTab, onTabChange }) => {
                   <>
                     <motion.div 
                       layoutId="activeTabUnderlineElite"
-                      className="absolute bottom-0 left-0 right-0 h-1 bg-rose-500 shadow-[0_0_30px_rgba(225,29,72,1)] z-10"
+                      className="absolute bottom-0 left-0 right-0 h-1 bg-rose-500  z-10"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-rose-500/10 via-transparent to-transparent pointer-events-none" />
                   </>
@@ -631,7 +631,7 @@ const TabNav: React.FC<TabNavProps> = ({ activeTab, onTabChange }) => {
                   "p-3 rounded-xl transition-all duration-700 relative border-2",
                   active ? "bg-rose-500/20 border-rose-500/40 text-rose-500 shadow-rose-500/20 scale-110" : "text-white/10 border-white/5 group-hover/tab:text-white/50 group-hover/tab:border-white/10"
                 )}>
-                  {active && <div className="absolute inset-0 bg-rose-500/20 blur-xl animate-pulse" />}
+                  {active && <div className="absolute inset-0 bg-rose-500/20 blur-xl " />}
                   <Icon className="w-5 h-5 relative z-10" />
                 </div>
                 
@@ -731,15 +731,15 @@ export const AdminHub: React.FC = () => {
         {/* Tactical UI Ornaments */}
         <div className="absolute top-10 left-10 flex flex-col gap-3 pointer-events-none opacity-40 z-0 font-black font-mono text-[9px] text-white/40 tracking-[0.4em] italic uppercase">
           <div className="flex items-center gap-3">
-            <div className="w-2.5 h-[1px] bg-rose-500 shadow-[0_0_10px_rgba(225,29,72,1)]" />
+            <div className="w-2.5 h-[1px] bg-rose-500 " />
             <span>ГЕО_ЛОКАЦІЯ: 50.4501° N, 30.5234° E</span>
           </div>
           <div className="flex items-center gap-3">
-            <div className="w-2.5 h-[1px] bg-sky-500 shadow-[0_0_10px_rgba(14,165,233,1)]" />
+            <div className="w-2.5 h-[1px] bg-sky-500 " />
             <span>ВІДСТЕЖЕННЯ_ВУЗЛА: 0x9F431B95-ELITE</span>
           </div>
           <div className="flex items-center gap-3">
-            <div className="w-2.5 h-[1px] bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,1)]" />
+            <div className="w-2.5 h-[1px] bg-emerald-500 " />
             <span>СТАБІЛЬНІСТЬ_ЯДРА: ELITE_v63.0_ELITE_СТАБІЛЬНО</span>
           </div>
           <div className="mt-4 flex gap-2">

@@ -116,26 +116,26 @@ export const TelegramIntelligencePanel: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-full bg-slate-950/50 border border-white/5 rounded-[40px] overflow-hidden backdrop-blur-3xl relative group">
+    <div className="flex flex-col h-full bg-slate-950/50 border border-white/5 rounded-[40px] overflow-hidden  relative group">
       <div className="absolute inset-0 bg-cyber-grid opacity-5 pointer-events-none" />
 
       {/* Header */}
       <div className="p-8 border-b border-white/5 flex items-center justify-between relative z-10 bg-black/20">
         <div className="flex items-center gap-4">
-          <div className="p-3 rounded-2xl bg-blue-500/20 text-blue-400 shadow-[0_0_20px_rgba(59,130,246,0.2)]">
+          <div className="p-3 rounded-2xl bg-blue-500/20 text-blue-400 ">
             <Send size={24} className="icon-3d" />
           </div>
           <div>
             <h3 className="text-xl font-black text-white uppercase tracking-tighter flex items-center gap-2">
               Telegram Parsing Intelligence
-              <span className="px-2 py-0.5 rounded-md bg-blue-500/20 text-[8px] text-blue-400 font-bold border border-blue-500/20 animate-pulse">V45_PRO</span>
+              <span className="px-2 py-0.5 rounded-md bg-blue-500/20 text-[8px] text-blue-400 font-bold border border-blue-500/20 ">V45_PRO</span>
             </h3>
             <p className="text-[10px] text-slate-500 font-mono uppercase tracking-[0.3em]">Neural Channel Ingestion & Signal Extraction</p>
           </div>
         </div>
 
         <div className="flex items-center gap-4">
-          {loading ? <RefreshCw className="animate-spin text-slate-500 w-4 h-4" /> : <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />}
+          {loading ? <RefreshCw className="animate-spin text-slate-500 w-4 h-4" /> : <div className="w-2 h-2 rounded-full bg-emerald-500 " />}
           <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{channels.length} ACTIVE_CHANNELS</div>
         </div>
       </div>
@@ -202,7 +202,7 @@ export const TelegramIntelligencePanel: React.FC = () => {
                   {log.msg}
                 </div>
               ))}
-              <div className="flex items-center gap-2 text-blue-400 animate-pulse">
+              <div className="flex items-center gap-2 text-blue-400 ">
                 <span className="opacity-30 mr-2">{'>'}</span> Listening for neural activity...
               </div>
             </div>
@@ -250,9 +250,9 @@ export const TelegramIntelligencePanel: React.FC = () => {
                     <div className="flex items-start gap-4 mb-6">
                       <div className={cn(
                         "w-12 h-12 rounded-2xl flex items-center justify-center border transition-all duration-500",
-                        channel.status === 'active' ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.1)]" : "bg-slate-800 border-slate-700 text-slate-500"
+                        channel.status === 'active' ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 " : "bg-slate-800 border-slate-700 text-slate-500"
                       )}>
-                        <Globe size={20} className={cn(channel.status === 'active' && "animate-pulse")} />
+                        <Globe size={20} className={cn(channel.status === 'active' && "")} />
                       </div>
                       <div className="flex-1 min-w-0">
                         <h5 className="text-white font-black text-sm truncate uppercase tracking-tight">{channel.name || channel.url.split('/').pop()}</h5>
@@ -264,7 +264,7 @@ export const TelegramIntelligencePanel: React.FC = () => {
                       <div className="flex flex-col">
                         <span className="text-[8px] text-slate-600 font-black uppercase mb-1 tracking-widest">Статус</span>
                         <div className="flex items-center gap-1.5">
-                          <div className={cn("w-1.5 h-1.5 rounded-full", channel.status === 'active' ? "bg-emerald-500 animate-pulse" : "bg-slate-500")} />
+                          <div className={cn("w-1.5 h-1.5 rounded-full", channel.status === 'active' ? "bg-emerald-500 " : "bg-slate-500")} />
                           <span className={cn("text-[9px] font-black uppercase", channel.status === 'active' ? "text-emerald-400" : "text-slate-500")}>
                             {channel.status}
                           </span>
@@ -337,7 +337,7 @@ export const TelegramIntelligencePanel: React.FC = () => {
         <span className="text-[9px] font-black text-blue-400 uppercase tracking-[0.3em]">Temporal-Backbone Sync: Active</span>
         <div className="flex gap-1">
           {[1, 2, 3, 4, 5].map(i => (
-            <div key={i} className="w-1 h-1 rounded-full bg-blue-400/30 animate-pulse" style={{ animationDelay: `${i * 200}ms` }} />
+            <div key={i} className="w-1 h-1 rounded-full bg-blue-400/30 " style={{ animationDelay: `${i * 200}ms` }} />
           ))}
         </div>
       </div>

@@ -136,10 +136,10 @@ export const TripleAgentPanel: React.FC<TripleAgentPanelProps> = ({ isLockdown }
             <div className="col-span-12 lg:col-span-8 flex flex-col gap-8">
 
                 {/* Header Ribbon */}
-                <div className="flex items-center justify-between p-8 bg-slate-950/60 border border-white/5 rounded-[40px] shadow-2xl backdrop-blur-3xl relative overflow-hidden group">
+                <div className="flex items-center justify-between p-8 bg-slate-950/60 border border-white/5 rounded-[40px] shadow-2xl  relative overflow-hidden group">
                     <div className="absolute inset-0 bg-cyber-grid opacity-[0.03] pointer-events-none" />
                     <div className="flex items-center gap-6 relative z-10">
-                        <div className="p-5 bg-purple-600/20 rounded-3xl border border-purple-500/30 text-purple-400 shadow-[0_0_30px_rgba(168,85,247,0.2)] icon-3d-purple">
+                        <div className="p-5 bg-purple-600/20 rounded-3xl border border-purple-500/30 text-purple-400  icon-3d-purple">
                             <Terminal size={32} />
                         </div>
                         <div>
@@ -152,7 +152,7 @@ export const TripleAgentPanel: React.FC<TripleAgentPanelProps> = ({ isLockdown }
                                     <span className="text-[10px] font-black text-purple-300 uppercase tracking-widest">CHAIN_v61.0-ELITE</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <div className={cn("w-2 h-2 rounded-full animate-pulse", isProcessing ? "bg-purple-500 shadow-[0_0_10px_#a855f7]" : "bg-emerald-500 shadow-[0_0_10px_#10b981]")} />
+                                    <div className={cn("w-2 h-2 rounded-full ", isProcessing ? "bg-purple-500 shadow-[0_0_10px_#a855f7]" : "bg-emerald-500 shadow-[0_0_10px_#10b981]")} />
                                     <span className="text-[10px] text-slate-500 font-black uppercase tracking-[0.3em] italic">
                                         {isProcessing ? "EXECUTION_IN_PROGRESS" : "SYSTEM_READY_FOR_DIRECTIVE"}
                                     </span>
@@ -167,9 +167,9 @@ export const TripleAgentPanel: React.FC<TripleAgentPanelProps> = ({ isLockdown }
                                 <motion.div
                                     initial={{ scale: 0, opacity: 0 }}
                                     animate={{ scale: 1, opacity: 1 }}
-                                    className="flex items-center gap-3 px-6 py-3 bg-rose-500/10 border border-rose-500/30 rounded-2xl text-rose-400 shadow-[0_0_20px_rgba(244,63,94,0.1)]"
+                                    className="flex items-center gap-3 px-6 py-3 bg-rose-500/10 border border-rose-500/30 rounded-2xl text-rose-400 "
                                 >
-                                    <ShieldAlert size={18} className="animate-pulse" />
+                                    <ShieldAlert size={18} className="" />
                                     <span className="text-[10px] font-black uppercase tracking-widest">LOCKDOWN_ACTIVE</span>
                                 </motion.div>
                             )}
@@ -250,12 +250,12 @@ export const TripleAgentPanel: React.FC<TripleAgentPanelProps> = ({ isLockdown }
                                         isActive ? "bg-slate-950 scale-110 shadow-2xl" : "bg-slate-900 border-white/5 shadow-xl"
                                     )}>
                                         {isActive && <div className="absolute inset-0 rounded-full bg-current opacity-10 animate-ping" />}
-                                        <step.icon size={28} className={cn("transition-all", isActive ? "animate-pulse scale-110" : "")} />
+                                        <step.icon size={28} className={cn("transition-all", isActive ? " scale-110" : "")} />
                                     </div>
                                     <span className="text-[10px] font-black uppercase tracking-[0.2em] mb-2 leading-none">{step.name}</span>
                                     <div className="flex items-center gap-2">
                                         {isActive ? (
-                                            <div className="px-3 py-0.5 bg-current/10 rounded-full text-[8px] font-black uppercase border border-current/20 animate-pulse">Running</div>
+                                            <div className="px-3 py-0.5 bg-current/10 rounded-full text-[8px] font-black uppercase border border-current/20 ">Running</div>
                                         ) : isCompleted ? (
                                             <div className="text-emerald-500 flex items-center gap-1"><CheckCircle2 size={12} /> <span className="text-[8px] font-black uppercase">Success</span></div>
                                         ) : isFailed ? (
@@ -382,7 +382,7 @@ export const TripleAgentPanel: React.FC<TripleAgentPanelProps> = ({ isLockdown }
                             Trident Nexus чекає вашої директиви для ініціалізації ланцюга автономної розробки v61.0-ELITE.
                         </p>
                         <div className="mt-8 flex gap-3">
-                            {[1, 2, 3].map(i => <div key={i} className="w-1.5 h-1.5 rounded-full bg-slate-800 animate-pulse" style={{ animationDelay: `${i * 0.3}s` }} />)}
+                            {[1, 2, 3].map(i => <div key={i} className="w-1.5 h-1.5 rounded-full bg-slate-800 " style={{ animationDelay: `${i * 0.3}s` }} />)}
                         </div>
                     </div>
                 )}

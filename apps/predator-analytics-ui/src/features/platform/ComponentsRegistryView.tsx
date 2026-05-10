@@ -77,7 +77,7 @@ export const ComponentsRegistryView: React.FC = () => {
           </div>
 
           {/* Stats Bar */}
-          <div className="flex bg-slate-800/50 p-1.5 rounded-2xl border border-slate-700/50 backdrop-blur-sm">
+          <div className="flex bg-slate-800/50 p-1.5 rounded-2xl border border-slate-700/50 ">
             <div className="flex items-center gap-3 px-5 py-2 bg-slate-700/50 rounded-xl">
               <span className="text-2xl font-bold text-white">{stats.total}</span>
               <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">КОМПОНЕНТИ</span>
@@ -98,7 +98,7 @@ export const ComponentsRegistryView: React.FC = () => {
       <div className="flex gap-4 mb-8 sticky top-4 z-50">
         <div className="relative flex-1 group">
           <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-2xl opacity-20 group-hover:opacity-30 transition-opacity blur-md" />
-          <div className="relative flex items-center bg-slate-900/90 border border-slate-700/50 rounded-2xl backdrop-blur-xl">
+          <div className="relative flex items-center bg-slate-900/90 border border-slate-700/50 rounded-2xl ">
             <Search size={20} className="absolute left-4 text-slate-500" />
             <input
               type="text"
@@ -180,7 +180,7 @@ export const ComponentsRegistryView: React.FC = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="bg-slate-900/40 backdrop-blur-sm border border-slate-700/30 rounded-[32px] overflow-hidden"
+                className="bg-slate-900/40  border border-slate-700/30 rounded-[32px] overflow-hidden"
               >
                 {/* Category Header */}
                 <div className="p-6 border-b border-slate-700/30 flex items-center justify-between bg-slate-900/50">

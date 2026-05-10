@@ -34,11 +34,11 @@ interface ProgressData {
 const stageIcons: Record<string, React.ReactNode> = {
   uploading: <Upload className="h-5 w-5 animate-bounce" />,
   uploaded: <Upload className="h-5 w-5" />,
-  validating: <FileSearch className="h-5 w-5 animate-pulse" />,
-  parsing: <FileSearch className="h-5 w-5 animate-pulse" />,
-  chunking: <Scissors className="h-5 w-5 animate-pulse" />,
-  embedding: <Sparkles className="h-5 w-5 animate-pulse" />,
-  indexing: <Database className="h-5 w-5 animate-pulse" />,
+  validating: <FileSearch className="h-5 w-5 " />,
+  parsing: <FileSearch className="h-5 w-5 " />,
+  chunking: <Scissors className="h-5 w-5 " />,
+  embedding: <Sparkles className="h-5 w-5 " />,
+  indexing: <Database className="h-5 w-5 " />,
   ready: <PartyPopper className="h-5 w-5" />,
   failed: <XCircle className="h-5 w-5" />
 }

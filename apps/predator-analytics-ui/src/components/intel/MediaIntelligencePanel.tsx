@@ -56,7 +56,7 @@ export const MediaIntelligencePanel: React.FC = () => {
     const [activeItem, setActiveItem] = useState<MediaItem | null>(null);
 
     return (
-        <div className="bg-slate-900/40 border border-white/5 rounded-3xl p-6 backdrop-blur-sm">
+        <div className="bg-slate-900/40 border border-white/5 rounded-3xl p-6 ">
             <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
                     <div className="p-3 bg-gradient-to-br from-rose-500/20 to-pink-500/20 rounded-2xl border border-rose-500/20">
@@ -108,7 +108,7 @@ export const MediaIntelligencePanel: React.FC = () => {
                                 <span className={cn(
                                     "px-2 py-1 text-[9px] font-black uppercase rounded",
                                     item.status === 'analyzed' ? "bg-emerald-500/10 text-emerald-400" :
-                                        item.status === 'processing' ? "bg-indigo-500/10 text-indigo-400 animate-pulse" :
+                                        item.status === 'processing' ? "bg-indigo-500/10 text-indigo-400 " :
                                             "bg-slate-700 text-slate-400"
                                 )}>
                                     {item.status === 'analyzed' ? 'Проаналізовано' :

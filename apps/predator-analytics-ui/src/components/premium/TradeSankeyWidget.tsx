@@ -78,7 +78,7 @@ export const TradeSankeyWidget: React.FC<{ persona: string }> = ({ persona }) =>
   }), [color]);
 
   return (
-    <div className="bg-slate-950/80 border border-white/10 rounded-[24px] backdrop-blur-xl overflow-hidden h-full flex flex-col">
+    <div className="bg-slate-950/80 border border-white/10 rounded-[24px]  overflow-hidden h-full flex flex-col">
       <div className="p-5 border-b border-white/5 flex items-center gap-3">
         <div className={cn("p-2.5 rounded-xl", `bg-${isSovereign ? 'indigo' : 'amber'}-500/20`)}>
           <ArrowRightLeft className={cn(`text-${isSovereign ? 'indigo' : 'amber'}-400`)} size={18} />

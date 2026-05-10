@@ -182,7 +182,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                 <motion.div
                     animate={{ top: ['0%', '100%'] }}
                     transition={{ duration: 5, repeat: Infinity, ease: 'linear' }}
-                    className="absolute left-0 right-0 h-[2px] bg-rose-600/30 shadow-[0_0_35px_rgba(225,29,72,0.9)] z-10"
+                    className="absolute left-0 right-0 h-[2px] bg-rose-600/30  z-10"
                 />
             </div>
 
@@ -200,8 +200,8 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                             animate={{ opacity: threatPulse ? 1 : 0.4 }}
                             className="flex items-center gap-2"
                         >
-                            <div className="w-2.5 h-2.5 bg-rose-600 rounded-full shadow-[0_0_20px_#E11D48] animate-pulse" />
-                            <span className="text-[11px] font-black text-white tracking-[0.6em] uppercase drop-shadow-[0_0_8px_rgba(225,29,72,0.8)]">
+                            <div className="w-2.5 h-2.5 bg-rose-600 rounded-full shadow-[0_0_20px_#E11D48] " />
+                            <span className="text-[11px] font-black text-white tracking-[0.6em] uppercase ">
                                 ЦІЛКОМ ТАЄМНО // SOVEREIGN_v61.0_ELITE
                             </span>
                         </motion.div>
@@ -383,14 +383,14 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                         className="w-[65%] h-[65%] text-white flex items-center justify-center"
                                         style={{ transformStyle: 'preserve-3d' }}
                                     >
-                                        <GeometricRaptor className="w-full h-full object-contain drop-shadow-[0_0_20px_rgba(255,255,255,0.4)]" />
+                                        <GeometricRaptor className="w-full h-full object-contain " />
                                     </motion.div>
 
                                     {/* Скан-лінія */}
                                     <motion.div
                                         animate={{ top: ['0%', '100%', '0%'] }}
                                         transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                                        className="absolute left-0 right-0 h-[1px] bg-rose-400 shadow-[0_0_10px_rgba(225,29,72,1)] z-20 opacity-20"
+                                        className="absolute left-0 right-0 h-[1px] bg-rose-400  z-20 opacity-20"
                                     />
                                     <div className="absolute inset-[3px] rounded-full border border-rose-500/10 pointer-events-none" />
                                 </div>
@@ -452,7 +452,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                     type="submit"
                                     whileHover={{ scale: 1.02, backgroundColor: 'rgba(225,29,72,0.1)' }}
                                     whileTap={{ scale: 0.98 }}
-                                    className="w-full bg-rose-600 text-black font-black py-4 rounded tracking-[0.8em] text-[11px] transition-all uppercase shadow-[0_0_30px_rgba(225,29,72,0.3)] border border-rose-400/50 mt-4"
+                                    className="w-full bg-rose-600 text-black font-black py-4 rounded tracking-[0.8em] text-[11px] transition-all uppercase  border border-rose-400/50 mt-4"
                                 >
                                     УВІЙТИ В СИСТЕМУ
                                 </motion.button>
@@ -554,8 +554,8 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                         icon: ShieldAlert,
                                         level: 'ЦІЛКОМ_ТАЄМНО_ЕЛІТА',
                                         clearance: 'СУВЕРЕННИЙ',
-                                        borderColor: 'border-rose-500/40 hover:border-rose-400 shadow-[0_0_50px_rgba(225,29,72,0.05)]',
-                                        glowColor: 'hover:shadow-[0_0_60px_rgba(225,29,72,0.2)]',
+                                        borderColor: 'border-rose-500/40 hover:border-rose-400 ',
+                                        glowColor: 'hover:',
                                         accentColor: 'text-rose-400',
                                         bgAccent: 'bg-rose-950/20',
                                         tagColor: 'text-rose-500 border-rose-500/40',
@@ -567,8 +567,8 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                         icon: Activity,
                                         level: 'СЕКРЕТНО_ПЛЮС',
                                         clearance: 'ЕЛІТА-IV',
-                                        borderColor: 'border-rose-500/30 hover:border-rose-400/60 shadow-[0_0_50px_rgba(225,29,72,0.03)]',
-                                        glowColor: 'hover:shadow-[0_0_60px_rgba(225,29,72,0.15)]',
+                                        borderColor: 'border-rose-500/30 hover:border-rose-400/60 ',
+                                        glowColor: 'hover:',
                                         accentColor: 'text-rose-400',
                                         bgAccent: 'bg-rose-950/20',
                                         tagColor: 'text-rose-500 border-rose-500/40',
@@ -581,7 +581,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                         level: 'СЕКРЕТНО',
                                         clearance: 'ЕЛІТА-III',
                                         borderColor: 'border-slate-700/40 hover:border-slate-500/60',
-                                        glowColor: 'hover:shadow-[0_0_40px_rgba(100,116,139,0.15)]',
+                                        glowColor: 'hover:',
                                         accentColor: 'text-slate-200',
                                         bgAccent: 'bg-slate-900',
                                         tagColor: 'text-slate-400 border-slate-700',
@@ -595,7 +595,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: idx * 0.15, duration: 0.6 }}
                                         onClick={() => handleDemoLogin(item.role)}
-                                        className={`group flex-1 p-8 bg-slate-950/60 ${item.borderColor} border-2 rounded-[32px] text-left space-y-4 backdrop-blur-2xl relative overflow-hidden transition-all duration-700 ${item.glowColor} shadow-inner`}
+                                        className={`group flex-1 p-8 bg-slate-950/60 ${item.borderColor} border-2 rounded-[32px] text-left space-y-4  relative overflow-hidden transition-all duration-700 ${item.glowColor} shadow-inner`}
                                     >
                                         {/* Скан-ефект (Elite Rose) */}
                                         <motion.div
@@ -632,7 +632,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                         {/* Нижній рядок */}
                                         <div className="pt-1 flex items-center justify-between">
                                             <div className="flex items-center gap-1.5">
-                                                <div className="w-1.5 h-1.5 rounded-full bg-rose-500/60 shadow-[0_0_6px_rgba(225,29,72,0.6)]" />
+                                                <div className="w-1.5 h-1.5 rounded-full bg-rose-500/60 " />
                                                 <span className="text-[7px] text-rose-600/60 font-bold tracking-[0.2em] uppercase">
                                                     З'ЄДНАННЯ АКТИВНЕ
                                                 </span>
@@ -654,7 +654,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
             </div>
 
             {/* ═══ НИЖНЯ ПАНЕЛЬ: GLOBAL TICKER ═══ */}
-            <div className="absolute bottom-0 left-0 right-0 z-20 overflow-hidden bg-black/80 border-t border-rose-900/30 backdrop-blur-md">
+            <div className="absolute bottom-0 left-0 right-0 z-20 overflow-hidden bg-black/80 border-t border-rose-900/30 ">
                 <div className="flex items-center">
                     <div className="bg-rose-600 text-black text-[10px] font-black px-4 py-2 z-10 tracking-widest whitespace-nowrap">
                         ОПЕРАТИВНИЙ КАНАЛ
@@ -695,7 +695,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                         PREDATOR v61.0-ELITE
                     </div>
                 </div>
-                <div className="h-[3px] bg-yellow-600 shadow-[0_0_15px_rgba(212,175,55,0.8)]" />
+                <div className="h-[3px] bg-yellow-600 " />
             </div>
         </div>
     );

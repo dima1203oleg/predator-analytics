@@ -49,7 +49,7 @@ const ScanningHUD: React.FC = () => {
             <motion.div
                 animate={{ y: ['-10%', '110%'] }}
                 transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
-                className="absolute left-0 w-full h-[1px] bg-yellow-500/40 shadow-[0_0_20px_rgba(212,175,55,0.4)]"
+                className="absolute left-0 w-full h-[1px] bg-yellow-500/40 "
             />
             <div className="absolute top-1/2 left-4 flex flex-col gap-2 font-mono text-[7px] text-yellow-500/30 uppercase italic -rotate-90">
                 <span>СКАН_ІНТЕЛЕКТУ: АКТИВНИЙ</span>
@@ -92,7 +92,7 @@ const FinancialInterceptorTerminal: React.FC = () => {
     return (
         <div className="w-full h-48 bg-black/80 border-2 border-yellow-500/10 rounded-[2.5rem] p-6 font-mono text-[9px] overflow-hidden relative group">
             <div className="absolute top-4 right-8 flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse shadow-[0_0_10px_#d97706]" />
+                <div className="w-2 h-2 rounded-full bg-amber-500  shadow-[0_0_10px_#d97706]" />
                 <span className="text-amber-600 font-black italic uppercase tracking-widest">SIGINT_ПЕ ЕХОПЛЮВАЧ_АКТИВНИЙ</span>
             </div>
             <div className="space-y-1.5 opacity-40 group-hover:opacity-100 transition-opacity">
@@ -106,7 +106,7 @@ const FinancialInterceptorTerminal: React.FC = () => {
                         <span>{log}</span>
                     </motion.div>
                 ))}
-                <div className="w-2 h-3 bg-yellow-500 animate-pulse inline-block align-middle ml-2" />
+                <div className="w-2 h-3 bg-yellow-500  inline-block align-middle ml-2" />
             </div>
         </div>
     );
@@ -274,7 +274,7 @@ export default function FinancialSigintView() {
              title={
                <div className="flex items-center gap-12">
                   <div className="relative group">
-                     <div className="absolute inset-0 bg-yellow-500/20 blur-[80px] rounded-full scale-150 animate-pulse" />
+                     <div className="absolute inset-0 bg-yellow-500/20 blur-[80px] rounded-full scale-150 " />
                      <div className="relative p-8 bg-black border-2 border-yellow-500/40 rounded-[3rem] shadow-4xl transform -rotate-3 hover:rotate-0 transition-all duration-700">
                         <Landmark size={48} className="text-yellow-500 shadow-[0_0_30px_#d4af37]" />
                      </div>
@@ -359,18 +359,18 @@ export default function FinancialSigintView() {
            </section>
 
            {/* MODULE TABS SOVEREIGN */}
-           <div className="flex flex-wrap gap-6 p-4 bg-black/80 border-2 border-white/[0.03] rounded-[3.5rem] w-fit shadow-4xl backdrop-blur-3xl mx-auto">
+           <div className="flex flex-wrap gap-6 p-4 bg-black/80 border-2 border-white/[0.03] rounded-[3.5rem] w-fit shadow-4xl  mx-auto">
               {modules.map(mod => (
                 <button 
                   key={mod.id} onClick={() => setActiveModule(mod.id as ActiveModule)}
                   className={cn(
                     "px-10 py-5 rounded-[2.5rem] text-[11px] font-black uppercase tracking-[0.3em] italic border-2 transition-all duration-500 flex items-center gap-5 relative overflow-hidden group",
                     activeModule === mod.id 
-                      ? "bg-yellow-500 border-yellow-400 text-black shadow-[0_0_50px_rgba(212,175,55,0.3)]" 
+                      ? "bg-yellow-500 border-yellow-400 text-black " 
                       : "bg-transparent text-slate-600 border-transparent hover:bg-white/5 hover:text-slate-400"
                   )}
                 >
-                   <mod.icon size={18} className={cn("transition-transform group-hover:scale-110", activeModule === mod.id ? "animate-pulse" : "")} />
+                   <mod.icon size={18} className={cn("transition-transform group-hover:scale-110", activeModule === mod.id ? "" : "")} />
                    {mod.label}
                    {mod.badge && <span className={cn("text-[9px] px-3 py-1 rounded-full font-black font-mono shadow-sm", activeModule === mod.id ? "bg-black/20 text-black" : "bg-yellow-500/10 text-yellow-500")}>{mod.badge}</span>}
                 </button>
@@ -401,7 +401,7 @@ export default function FinancialSigintView() {
                                   <span className="text-[10px] font-black text-slate-700 uppercase italic tracking-widest">НОРМАЛЬНИЙ_ПОТІК</span>
                                </div>
                                <div className="flex items-center gap-3">
-                                  <div className="w-3 h-3 rounded-full bg-yellow-500 animate-pulse shadow-[0_0_15px_#d4af37]" />
+                                  <div className="w-3 h-3 rounded-full bg-yellow-500  shadow-[0_0_15px_#d4af37]" />
                                   <span className="text-[10px] font-black text-yellow-500 uppercase italic underline decoration-yellow-500/40 tracking-widest">ЗАГРОЗА_НАЖИВО</span>
                                </div>
                             </div>
@@ -439,9 +439,9 @@ export default function FinancialSigintView() {
                          <h3 className="text-[14px] font-black text-amber-600 italic uppercase tracking-[0.5em] mb-10 border-b-2 border-amber-500/10 pb-10 flex items-center justify-between">
                             <span>ЗАГРОЗЛИВІ_ТРАНЗАКЦІЇ</span>
                             <div className="flex gap-2">
-                               <div className="w-2 h-2 rounded-full bg-amber-600 animate-pulse" />
-                               <div className="w-2 h-2 rounded-full bg-amber-600 animate-pulse delay-75" />
-                               <div className="w-2 h-2 rounded-full bg-amber-600 animate-pulse delay-150" />
+                               <div className="w-2 h-2 rounded-full bg-amber-600 " />
+                               <div className="w-2 h-2 rounded-full bg-amber-600  delay-75" />
+                               <div className="w-2 h-2 rounded-full bg-amber-600  delay-150" />
                             </div>
                          </h3>
                          <div className="space-y-8 flex-1 overflow-y-auto custom-scrollbar pr-4 italic">
@@ -559,7 +559,7 @@ export default function FinancialSigintView() {
                                            <p className="text-[10px] font-black text-slate-800 uppercase italic tracking-widest">{s.jur} // ЗВ'ЯЗКИ: {s.links}</p>
                                         </div>
                                         <div className="p-4 bg-black border-2 border-white/5 rounded-2xl">
-                                           <Shield size={20} className={s.risk > 90 ? "text-amber-600 animate-pulse" : "text-yellow-500"} />
+                                           <Shield size={20} className={s.risk > 90 ? "text-amber-600 " : "text-yellow-500"} />
                                         </div>
                                      </div>
                                      <div className="space-y-2">
@@ -636,7 +636,7 @@ export default function FinancialSigintView() {
                                     <p className="text-[14px] font-black text-slate-800 uppercase tracking-[0.5em] leading-none mb-4 italic">КІНЦЕВИЙ_ВЕ ДИКТ</p>
                                     <p className="text-5xl font-black italic text-white tracking-tighter leading-none shadow-sm capitalize">ВИСОКА_ЙМОВІ НІСТЬ</p>
                                   </div>
-                                  <p className="text-8xl font-black italic text-yellow-600 font-mono leading-none tracking-tighter drop-shadow-[0_0_30px_rgba(212,175,55,0.5)] animate-pulse">94.8%</p>
+                                  <p className="text-8xl font-black italic text-yellow-600 font-mono leading-none tracking-tighter  ">94.8%</p>
                                   <div className="text-[12px] font-black text-slate-600 uppercase italic tracking-[0.4em] border-l-8 border-yellow-600/40 pl-8 leading-relaxed max-w-sm mx-auto lg:mx-0">
                                      КрИТИЧНА ЙМОВІ НІСТЬ ПЕ ЕХОВУВАННЯ КБВ ЧЕ ЕЗ СХЕМУ "ЗВО ОТНІХ ПОЗИК" ТА ОФШО НІ ДЕ ИВАТИВИ.
                                   </div>
@@ -678,7 +678,7 @@ export default function FinancialSigintView() {
                          <div className="space-y-4">
                             <h2 className="text-[18px] font-black text-white italic uppercase tracking-[0.6em] flex items-center gap-8">
                                <div className="p-5 bg-amber-600/10 border-2 border-amber-600/20 rounded-[2rem] text-amber-600">
-                                  <Lock size={32} className="animate-pulse" />
+                                  <Lock size={32} className="" />
                                </div>
                                РЕЄСТР_ЗАМО ОЖЕНИХ_АКТИВІВ // АКТИВНИЙ_ЩИТ_РЕСУРСІВ
                             </h2>
@@ -710,7 +710,7 @@ export default function FinancialSigintView() {
                                     </td>
                                     <td className="px-16 py-12 relative z-10">
                                        <div className="flex items-center gap-6">
-                                          <div className={cn("w-4 h-4 rounded-full shadow-lg", asset.status === 'ЗАМО ОЖЕНО' ? "bg-yellow-600 animate-pulse shadow-yellow-900/50" : "bg-emerald-600 shadow-emerald-900/50")} />
+                                          <div className={cn("w-4 h-4 rounded-full shadow-lg", asset.status === 'ЗАМО ОЖЕНО' ? "bg-yellow-600  shadow-yellow-900/50" : "bg-emerald-600 shadow-emerald-900/50")} />
                                           <span className="text-[12px] font-black text-white uppercase italic tracking-[0.4em]">{asset.status}</span>
                                        </div>
                                     </td>

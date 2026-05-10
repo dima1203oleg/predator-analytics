@@ -125,11 +125,11 @@ export default function NewspaperView() {
         <AdvancedBackground />
         <NeuralPulse color="rgba(244, 63, 94, 0.1)" size={1000} />
         <div className="relative">
-           <div className="absolute inset-0 bg-rose-600/20 blur-[100px] scale-150 animate-pulse" />
+           <div className="absolute inset-0 bg-rose-600/20 blur-[100px] scale-150 " />
            <CyberOrb size={220} status="processing" />
         </div>
         <div className="space-y-4 text-center relative z-10">
-           <p className="text-3xl font-black text-white uppercase italic tracking-[0.8em] animate-pulse chromatic-elite">ЗБІ  МЕДІА- РОЗВІДКИ</p>
+           <p className="text-3xl font-black text-white uppercase italic tracking-[0.8em]  chromatic-elite">ЗБІ  МЕДІА- РОЗВІДКИ</p>
            <p className="text-[10px] font-black text-rose-500/60 uppercase tracking-[0.4em] italic font-mono">PREDATOR // TACTICAL_OSINT_SYNC</p>
         </div>
       </div>
@@ -152,9 +152,9 @@ export default function NewspaperView() {
              title={
                <div className="flex items-center gap-10">
                   <div className="relative group">
-                     <div className="absolute inset-0 bg-rose-600/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                     <div className="absolute inset-0 bg-rose-600/20 blur-3xl rounded-full scale-150 " />
                      <div className="relative p-7 bg-black border border-rose-900/40 rounded-[2.5rem] shadow-2xl">
-                        <Newspaper size={42} className="text-rose-500 shadow-[0_0_15px_rgba(244,63,94,0.5)]" />
+                        <Newspaper size={42} className="text-rose-500 " />
                      </div>
                   </div>
                   <div className="space-y-2">
@@ -172,7 +172,7 @@ export default function NewspaperView() {
                         <Clock size={14} className="text-rose-600" /> 
                         <span>{issueTime}</span>
                         <span className="text-slate-800">|</span>
-                        <span className="text-emerald-500 animate-pulse flex items-center gap-2">
+                        <span className="text-emerald-500  flex items-center gap-2">
                            <Activity size={14} /> НАЖИВО: {data.summary}
                         </span>
                      </div>
@@ -210,7 +210,7 @@ export default function NewspaperView() {
               </div>
               <div className="relative z-10 space-y-10">
                  <div className="flex items-center gap-4">
-                    <span className="bg-rose-600/10 border border-rose-600/30 text-rose-500 px-5 py-2 rounded-full text-[11px] font-black tracking-[0.2em] uppercase italic flex items-center gap-3 animate-pulse shadow-[0_0_20px_rgba(225,29,72,0.2)]">
+                    <span className="bg-rose-600/10 border border-rose-600/30 text-rose-500 px-5 py-2 rounded-full text-[11px] font-black tracking-[0.2em] uppercase italic flex items-center gap-3  ">
                        <Flame size={16} /> {data.headline.tag}
                     </span>
                     <div className="h-px w-24 bg-rose-600/20" />
@@ -312,7 +312,7 @@ export default function NewspaperView() {
                         "p-6 rounded-3xl border border-white/[0.04] bg-black flex items-start gap-4 transition-all hover:border-rose-500/30",
                         alert.urgency === 'high' ? "border-rose-900/40 bg-rose-900/5 shadow-2xl" : ""
                       )}>
-                         <Siren size={20} className={cn("mt-1", alert.urgency === 'high' ? "text-rose-500 animate-pulse" : "text-rose-500")} />
+                         <Siren size={20} className={cn("mt-1", alert.urgency === 'high' ? "text-rose-500 " : "text-rose-500")} />
                          <div>
                             <p className="text-sm font-black text-slate-300 italic leading-snug">{alert.text}</p>
                             <p className="text-[9px] font-black text-slate-700 font-mono italic mt-2">{alert.time} // SIGNAL_DETECTED</p>

@@ -39,7 +39,7 @@ const RiskExplanationPanel: React.FC<RiskExplanationProps> = ({ explanation, fac
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="p-6 rounded-xl bg-black/40 border border-rose-500/20 backdrop-blur-md shadow-2xl"
+      className="p-6 rounded-xl bg-black/40 border border-rose-500/20  shadow-2xl"
     >
       <div className="flex items-center justify-between mb-6">
         <div>

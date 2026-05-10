@@ -45,7 +45,7 @@ export const OmniverseOODA: React.FC = () => {
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-black text-white italic uppercase tracking-tighter">OODA Loop Cycle</h2>
         <div className="flex items-center gap-2 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
-          <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+          <span className="w-2 h-2 bg-emerald-500 rounded-full " />
           <span className="text-[10px] text-emerald-500 font-black uppercase">Autonomous Logic Sync Active</span>
         </div>
       </div>
@@ -60,7 +60,7 @@ export const OmniverseOODA: React.FC = () => {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: i * 0.1 }}
-            className="p-6 bg-slate-900/60 backdrop-blur-md border border-white/5 rounded-3xl z-10 flex flex-col items-center text-center space-y-4 hover:border-white/20 transition-all group"
+            className="p-6 bg-slate-900/60  border border-white/5 rounded-3xl z-10 flex flex-col items-center text-center space-y-4 hover:border-white/20 transition-all group"
           >
             <div className={`p-4 rounded-2xl bg-${step.color}-500/20 text-${step.color}-500 border border-${step.color}-500/30 shadow-[0_0_20px_rgba(var(--tw-color-${step.color}-500),0.1)]`}>
               <step.icon size={32} />
@@ -108,7 +108,7 @@ export const OmniverseOODA: React.FC = () => {
             {ooda.decide.pending_actions.map((action: any) => (
               <div key={action.id} className="p-4 bg-white/5 border border-white/5 rounded-2xl flex items-center justify-between group hover:border-white/20 transition-all">
                 <div className="flex items-center gap-3">
-                  <div className={`w-1.5 h-1.5 rounded-full ${action.priority === 'HIGH' ? 'bg-red-500 animate-pulse' : 'bg-orange-500'}`} />
+                  <div className={`w-1.5 h-1.5 rounded-full ${action.priority === 'HIGH' ? 'bg-red-500 ' : 'bg-orange-500'}`} />
                   <span className="text-sm text-white/80 font-medium">{action.action}</span>
                 </div>
                 <button className="p-2 bg-emerald-500/20 text-emerald-500 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">

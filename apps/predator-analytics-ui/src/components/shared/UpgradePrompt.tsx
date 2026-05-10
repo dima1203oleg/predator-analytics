@@ -30,7 +30,7 @@ export const UpgradePrompt: React.FC<UpgradePromptProps> = ({
       animate={{ opacity: 1, y: 0 }}
       className="flex flex-col items-center justify-center p-8 md:p-12 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-900 to-amber-950/30 border border-amber-500/20 text-center max-w-2xl mx-auto my-8"
     >
-      <div className="w-16 h-16 rounded-full bg-amber-500/10 flex items-center justify-center mb-6 ring-1 ring-amber-500/30 shadow-[0_0_20px_rgba(245,158,11,0.15)]">
+      <div className="w-16 h-16 rounded-full bg-amber-500/10 flex items-center justify-center mb-6 ring-1 ring-amber-500/30 ">
         <Crown className="text-amber-400" size={32} />
       </div>
 

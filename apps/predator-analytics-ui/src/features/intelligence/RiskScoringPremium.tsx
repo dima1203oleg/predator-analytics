@@ -45,9 +45,9 @@ interface Investigation {
 }
 
 const RISK_CONFIG: Record<string, { label: string; color: string; bg: string; border: string; glow: string; icon: any }> = {
-  critical: { label: 'КРИТИЧНИЙ', color: '#E11D48', bg: 'bg-rose-950/20', border: 'border-rose-500/40', glow: 'shadow-[0_0_40px_rgba(225,29,72,0.3)]', icon: XCircle },
-  high: { label: 'ВИСОКИЙ', color: '#BE123C', bg: 'bg-rose-900/20', border: 'border-rose-500/40', glow: 'shadow-[0_0_30px_rgba(190,18,60,0.2)]', icon: AlertTriangle },
-  medium: { label: 'СЕРЕДНІЙ', color: '#FB7185', bg: 'bg-rose-900/20', border: 'border-rose-500/40', glow: 'shadow-[0_0_30px_rgba(251,113,133,0.2)]', icon: AlertCircle },
+  critical: { label: 'КРИТИЧНИЙ', color: '#E11D48', bg: 'bg-rose-950/20', border: 'border-rose-500/40', glow: '', icon: XCircle },
+  high: { label: 'ВИСОКИЙ', color: '#BE123C', bg: 'bg-rose-900/20', border: 'border-rose-500/40', glow: '', icon: AlertTriangle },
+  medium: { label: 'СЕРЕДНІЙ', color: '#FB7185', bg: 'bg-rose-900/20', border: 'border-rose-500/40', glow: '', icon: AlertCircle },
   low: { label: 'НИЗЬКИЙ', color: '#22c55e', bg: 'bg-emerald-900/20', border: 'border-emerald-500/40', glow: 'shadow-none', icon: CheckCircle },
   minimal: { label: 'МІНІМАЛЬНИЙ', color: '#64748b', bg: 'bg-slate-900/20', border: 'border-slate-500/40', glow: 'shadow-none', icon: CheckCircle },
   stable: { label: 'СТАБІЛЬНИЙ', color: '#10b981', bg: 'bg-emerald-900/20', border: 'border-emerald-500/40', glow: 'shadow-none', icon: CheckCircle },
@@ -65,7 +65,7 @@ const ScanningHUD: React.FC = () => {
             <motion.div
                 animate={{ y: ['-10%', '110%'] }}
                 transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
-                className="absolute left-0 w-full h-[1px] bg-rose-500/40 shadow-[0_0_15px_rgba(225,29,72,0.3)]"
+                className="absolute left-0 w-full h-[1px] bg-rose-500/40 "
             />
             <div className="absolute top-40 left-10 flex flex-col gap-2 font-mono text-[7px] text-rose-500/30 uppercase italic">
                 <span>ARRAY_STATUS: ACTIVE</span>
@@ -126,7 +126,7 @@ const RiskCognitiveParser: React.FC = () => {
                         {line}
                     </motion.div>
                 ))}
-                <div className="animate-pulse inline-block w-2 h-3 bg-rose-500/40 ml-2" />
+                <div className=" inline-block w-2 h-3 bg-rose-500/40 ml-2" />
             </div>
         </div>
     );
@@ -246,7 +246,7 @@ export default function RiskScoringPremium() {
             title={
               <div className="flex items-center gap-12">
                 <div className="relative group">
-                  <div className="absolute inset-0 bg-rose-600/20 blur-[80px] rounded-full scale-150 animate-pulse" />
+                  <div className="absolute inset-0 bg-rose-600/20 blur-[80px] rounded-full scale-150 " />
                   <div className="relative p-8 bg-black border-2 border-rose-500/40 rounded-[3rem] shadow-4xl transform -rotate-3 hover:rotate-0 transition-all duration-700">
                     <ShieldAlert size={48} className="text-rose-500 shadow-[0_0_30px_#e11d48]" />
                   </div>
@@ -325,7 +325,7 @@ export default function RiskScoringPremium() {
                    onClick={() => setSelectedLevel(m.special ? 'all' : m.level)}
                    className={cn(
                      "p-8 rounded-[3.5rem] bg-black border-2 shadow-4xl group relative overflow-hidden transition-all text-left",
-                     selectedLevel === m.level ? "border-rose-500 animate-pulse-slow" : "border-white/[0.03] hover:border-white/10"
+                     selectedLevel === m.level ? "border-rose-500 -slow" : "border-white/[0.03] hover:border-white/10"
                    )}
                 >
                   <div className="absolute -top-6 -right-6 p-10 opacity-[0.03] group-hover:opacity-[0.1] transition-all duration-700">
@@ -375,7 +375,7 @@ export default function RiskScoringPremium() {
                   
                   <div className="grid grid-cols-1 gap-8 relative z-10 max-h-[1200px] overflow-y-auto no-scrollbar">
                      {loading ? (
-                       Array(4).fill(0).map((_, i) => <div key={i} className="h-40 rounded-[3rem] bg-white/[0.02] animate-pulse border-2 border-white/5" />)
+                       Array(4).fill(0).map((_, i) => <div key={i} className="h-40 rounded-[3rem] bg-white/[0.02]  border-2 border-white/5" />)
                      ) : (
                        filteredEntities.map((entity) => (
                          <div 
@@ -383,7 +383,7 @@ export default function RiskScoringPremium() {
                            onClick={() => setSelectedEntity(entity)}
                            className={cn(
                                "p-10 rounded-[4rem] bg-white/[0.01] border-2 border-white/[0.03] hover:bg-rose-500/[0.02] hover:border-rose-500/30 transition-all duration-700 group cursor-pointer relative overflow-hidden",
-                               entity.riskLevel === 'critical' && "hover:shadow-[0_0_40px_rgba(225,29,72,0.1)]"
+                               entity.riskLevel === 'critical' && "hover:"
                            )}
                          >
                             {entity.riskLevel === 'critical' && (
@@ -450,7 +450,7 @@ export default function RiskScoringPremium() {
                {/* INVESTIGATION TACTICAL HUB */}
                <div className="p-12 rounded-[5rem] bg-gradient-to-br from-rose-700/10 to-rose-900/10 border-4 border-rose-600/20 shadow-4xl space-y-10 relative overflow-hidden group/ai">
                   <div className="absolute top-0 right-0 p-12 opacity-[0.03] group-hover/ai:opacity-[0.1] transition-opacity duration-1000">
-                     <Microscope size={180} className="text-rose-500 animate-pulse" />
+                     <Microscope size={180} className="text-rose-500 " />
                   </div>
                   <div className="flex items-center gap-6 border-b-2 border-white/[0.05] pb-8 relative z-10">
                     <div className="p-5 bg-rose-600/10 border-2 border-rose-600/20 rounded-[2rem] text-rose-500">
@@ -522,18 +522,18 @@ export default function RiskScoringPremium() {
               <motion.div
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                 onClick={() => setSelectedEntity(null)}
-                className="fixed inset-0 bg-black/80 backdrop-blur-2xl z-[100]"
+                className="fixed inset-0 bg-black/80  z-[100]"
               />
               <motion.div
                 initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
                 transition={{ type: 'spring', damping: 30, stiffness: 200 }}
-                className="fixed top-0 right-0 bottom-0 w-full max-w-5xl bg-[#050505] border-l-4 border-rose-600/30 z-[101] shadow-[0_0_100px_rgba(225,29,72,0.2)] flex flex-col overflow-hidden"
+                className="fixed top-0 right-0 bottom-0 w-full max-w-5xl bg-[#050505] border-l-4 border-rose-600/30 z-[101]  flex flex-col overflow-hidden"
               >
                 <div className="p-12 border-b-2 border-white/[0.04] flex items-center justify-between bg-black relative">
                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(225,29,72,0.05),transparent_70%)]" />
                    <div className="flex items-center gap-10 relative z-10">
                       <div className="relative">
-                         <div className="absolute inset-0 bg-rose-600/30 blur-3xl animate-pulse" />
+                         <div className="absolute inset-0 bg-rose-600/30 blur-3xl " />
                          <div className="w-32 h-32 flex items-center justify-center p-4 bg-black border-2 border-rose-500/40 rounded-[2.5rem] shadow-4xl text-5xl font-black italic font-mono" style={{ color: RISK_CONFIG[selectedEntity.riskLevel]?.color }}>{selectedEntity.riskScore}</div>
                       </div>
                       <div>
@@ -604,7 +604,7 @@ export default function RiskScoringPremium() {
             .animate-spin-slow { animation: spin 20s linear infinite; }
             @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
             .no-scrollbar::-webkit-scrollbar { display: none; }
-            .animate-pulse-slow { animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+            .-slow { animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
             @keyframes pulse { 0%, 100% { opacity: 1; border-color: rgba(225, 29, 72, 0.6); } 50% { opacity: 0.8; border-color: rgba(225, 29, 72, 0.2); } }
         `}} />
       </div>

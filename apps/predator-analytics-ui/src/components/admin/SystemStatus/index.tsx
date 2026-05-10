@@ -98,7 +98,7 @@ export const SystemStatus: React.FC = () => {
             <div className="flex items-center gap-3 mb-4 text-slate-300">
                <Activity size={20} /> <span className="font-bold text-sm uppercase">Tasks</span>
             </div>
-            <div className={`text-3xl font-bold text-white mb-1 ${!metrics ? 'animate-pulse bg-slate-800 w-16 h-8 rounded' : ''}`}>
+            <div className={`text-3xl font-bold text-white mb-1 ${!metrics ? ' bg-slate-800 w-16 h-8 rounded' : ''}`}>
                {metrics ? 'Processing' : ''}
             </div>
             <div className="text-xs text-amber-500 font-bold">Queued: {metrics?.activeTasks || '...'}</div>

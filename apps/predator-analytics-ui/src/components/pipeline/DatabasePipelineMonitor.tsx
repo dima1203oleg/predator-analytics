@@ -25,7 +25,7 @@ export const DatabasePipelineMonitor: React.FC<DatabasePipelineMonitorProps> = (
     }
 
     return (
-        <div className={cn("rounded-[32px] overflow-hidden border border-emerald-500/20 shadow-[0_0_50px_rgba(16,185,129,0.1)] relative group/monitor bg-slate-950/80 backdrop-blur-3xl", className)}>
+        <div className={cn("rounded-[32px] overflow-hidden border border-emerald-500/20  relative group/monitor bg-slate-950/80 ", className)}>
             {/* Ambient Background Elements */}
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_0%_0%,rgba(16,185,129,0.1),transparent_50%)] pointer-events-none" />
             <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-emerald-500 to-transparent opacity-50 pointer-events-none" />
@@ -49,7 +49,7 @@ const IdleState = ({ compact, className }: { compact: boolean, className?: strin
 
     return (
         <div className={cn(
-            "relative group overflow-hidden rounded-[32px] border border-white/5 bg-slate-900/40 backdrop-blur-xl transition-all duration-500 hover:border-emerald-500/20 shadow-2xl min-h-[400px] flex items-center justify-center",
+            "relative group overflow-hidden rounded-[32px] border border-white/5 bg-slate-900/40  transition-all duration-500 hover:border-emerald-500/20 shadow-2xl min-h-[400px] flex items-center justify-center",
             className
         )}>
             {/* Cinematic Backgrounds */}
@@ -92,7 +92,7 @@ const IdleState = ({ compact, className }: { compact: boolean, className?: strin
                     </div>
 
                     <div className="inline-flex items-center gap-3 px-4 py-2 bg-slate-800/50 border border-slate-700 rounded-full">
-                        <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+                        <div className="w-2 h-2 rounded-full bg-amber-500 " />
                         <span className="text-[10px] font-black uppercase text-amber-500/80 tracking-widest">Idle Mode</span>
                     </div>
                 </div>

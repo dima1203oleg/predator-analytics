@@ -46,7 +46,7 @@ export const RelationalView: React.FC<RelationalViewProps> = ({ tables, onOpenQu
 
                             <div className="flex justify-between items-start mb-6 relative z-10">
                                 <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 group-hover:scale-110 group-hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] transition-all duration-500">
+                                    <div className="w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 group-hover:scale-110 group-hover: transition-all duration-500">
                                         <TableIcon size={24} />
                                     </div>
                                     <div>
@@ -59,7 +59,7 @@ export const RelationalView: React.FC<RelationalViewProps> = ({ tables, onOpenQu
                                     </div>
                                 </div>
                                 <div className="p-1.5 bg-emerald-500/10 rounded-lg border border-emerald-500/20">
-                                    <Zap size={12} className="text-emerald-500 animate-pulse" />
+                                    <Zap size={12} className="text-emerald-500 " />
                                 </div>
                             </div>
 

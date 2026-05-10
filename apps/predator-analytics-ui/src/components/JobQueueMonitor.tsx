@@ -91,7 +91,7 @@ const QueueCard: React.FC<{ queue: QueueInfo, onPurge: (name: string) => void }>
     <motion.div
       whileHover={{ y: -5, scale: 1.02 }}
       className={cn(
-        "p-6 rounded-[32px] border transition-all duration-500 backdrop-blur-xl relative overflow-hidden group shadow-2xl",
+        "p-6 rounded-[32px] border transition-all duration-500  relative overflow-hidden group shadow-2xl",
         queue.status === 'active' ? 'border-emerald-500/20 bg-emerald-500/5' :
           queue.status === 'congested' ? 'border-amber-500/20 bg-amber-500/5' : 'border-white/5 bg-slate-900/40'
       )}
@@ -112,8 +112,8 @@ const QueueCard: React.FC<{ queue: QueueInfo, onPurge: (name: string) => void }>
         <div className="flex items-center gap-4">
           <div className={cn(
             "w-3 h-3 rounded-full shadow-[0_0_15px_currentColor]",
-            queue.status === 'active' ? 'text-emerald-500 bg-emerald-500 animate-pulse' :
-              queue.status === 'congested' ? 'text-amber-500 bg-amber-500 animate-pulse' : 'text-slate-600 bg-slate-600'
+            queue.status === 'active' ? 'text-emerald-500 bg-emerald-500 ' :
+              queue.status === 'congested' ? 'text-amber-500 bg-amber-500 ' : 'text-slate-600 bg-slate-600'
           )} />
           <div>
             <span className="text-xs font-black text-white uppercase tracking-widest leading-none bg-slate-950/40 px-3 py-1 rounded-lg border border-white/5">{queue.name}</span>
@@ -134,7 +134,7 @@ const QueueCard: React.FC<{ queue: QueueInfo, onPurge: (name: string) => void }>
       </div>
 
       {queue.status === 'congested' && (
-        <div className="mt-6 flex items-center gap-3 text-amber-500 animate-pulse p-2 bg-amber-500/10 rounded-xl border border-amber-500/20">
+        <div className="mt-6 flex items-center gap-3 text-amber-500  p-2 bg-amber-500/10 rounded-xl border border-amber-500/20">
           <AlertTriangle size={14} />
           <span className="text-[10px] font-black uppercase tracking-widest font-mono">Congestion Warning</span>
         </div>
@@ -179,13 +179,13 @@ const JobRow: React.FC<{ job: JobInfo; onExpand: () => void }> = ({ job, onExpan
             <div className="w-48 hidden md:block">
               <div className="flex justify-between items-center mb-2">
                 <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">{job.progress}% COMPLETE</span>
-                <Activity size={12} className="text-blue-500 animate-pulse" />
+                <Activity size={12} className="text-blue-500 " />
               </div>
               <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden border border-white/5">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${job.progress}%` }}
-                  className="h-full bg-gradient-to-r from-blue-600 to-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.5)]"
+                  className="h-full bg-gradient-to-r from-blue-600 to-blue-400 "
                 />
               </div>
             </div>
@@ -337,7 +337,7 @@ export const JobQueueMonitor: React.FC = () => {
             <h3 className="text-2xl font-black text-white uppercase tracking-tighter leading-none mb-2 font-display">Neural Process Orchestrator</h3>
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2 px-3 py-1 bg-blue-500/10 rounded-full border border-blue-500/20 shadow-inner">
-                <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-pulse" />
+                <div className="w-1.5 h-1.5 bg-blue-400 rounded-full " />
                 <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">{stats.running} ACTIVE_CORES</span>
               </div>
               <span className="text-[10px] text-slate-500 font-black uppercase tracking-[0.2em]">{stats.completed} SUCCESSFUL_OPERATIONS</span>
@@ -405,7 +405,7 @@ export const JobQueueMonitor: React.FC = () => {
             <Search size={20} className="text-purple-500" />
             <h4 className="text-xs font-black text-white uppercase tracking-[0.3em] font-display">Registry_Query // AI-Orchestrated Jobs</h4>
           </div>
-          <div className="flex gap-3 p-1 bg-slate-950/40 rounded-2xl border border-white/5 backdrop-blur-xl shrink-0">
+          <div className="flex gap-3 p-1 bg-slate-950/40 rounded-2xl border border-white/5  shrink-0">
             {(['all', 'running', 'completed', 'failed'] as const).map(f => (
               <button
                 key={f}
@@ -453,7 +453,7 @@ export const JobQueueMonitor: React.FC = () => {
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-[1000] flex items-center justify-center p-6"
           >
-            <div className="absolute inset-0 bg-black/80 backdrop-blur-3xl" onClick={() => setSelectedJob(null)} />
+            <div className="absolute inset-0 bg-black/80 " onClick={() => setSelectedJob(null)} />
             <motion.div
               initial={{ scale: 0.9, y: 20, opacity: 0 }}
               animate={{ scale: 1, y: 0, opacity: 1 }}
@@ -524,7 +524,7 @@ export const JobQueueMonitor: React.FC = () => {
                     {selectedJob.status === 'failed' && (
                       <button
                         onClick={() => handleRetry(selectedJob.id)}
-                        className="flex-1 py-5 rounded-[24px] bg-blue-600 text-white text-[11px] font-black uppercase tracking-[0.2em] shadow-[0_0_30px_rgba(37,99,235,0.3)] hover:bg-blue-500 active:scale-95 transition-all flex items-center justify-center gap-3"
+                        className="flex-1 py-5 rounded-[24px] bg-blue-600 text-white text-[11px] font-black uppercase tracking-[0.2em]  hover:bg-blue-500 active:scale-95 transition-all flex items-center justify-center gap-3"
                       >
                         <RefreshCw size={18} /> Initialize_Retry
                       </button>
@@ -533,7 +533,7 @@ export const JobQueueMonitor: React.FC = () => {
                     {selectedJob.status === 'running' && (
                       <button
                         onClick={() => handleCancel(selectedJob.id)}
-                        className="flex-1 py-5 rounded-[24px] bg-rose-600 text-white text-[11px] font-black uppercase tracking-[0.2em] shadow-[0_0_30px_rgba(225,29,72,0.3)] hover:bg-rose-500 active:scale-95 transition-all flex items-center justify-center gap-3"
+                        className="flex-1 py-5 rounded-[24px] bg-rose-600 text-white text-[11px] font-black uppercase tracking-[0.2em]  hover:bg-rose-500 active:scale-95 transition-all flex items-center justify-center gap-3"
                       >
                         <StopCircle size={18} /> Terminate_Process
                       </button>

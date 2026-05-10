@@ -20,7 +20,7 @@ export const MacroIndicatorsWidget: React.FC<{ persona: string }> = ({ persona }
   ];
 
   return (
-    <div className="p-6 bg-slate-950/80 border border-white/5 rounded-[32px] backdrop-blur-xl">
+    <div className="p-6 bg-slate-950/80 border border-white/5 rounded-[32px] ">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
           <div className="p-2.5 rounded-xl bg-violet-500/20 text-violet-400">

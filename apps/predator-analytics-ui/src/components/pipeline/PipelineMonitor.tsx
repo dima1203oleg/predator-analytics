@@ -122,7 +122,7 @@ export const PipelineMonitor: React.FC<PipelineMonitorProps> = ({ jobId, pipelin
     const percent = status?.progress?.percent || 0;
 
     return (
-        <div className="relative group/reactor bg-slate-950/90 border border-emerald-500/20 rounded-[40px] shadow-[0_0_100px_rgba(0,0,0,0.6)] p-6 md:p-10 backdrop-blur-3xl ring-1 ring-white/10 w-full">
+        <div className="relative group/reactor bg-slate-950/90 border border-emerald-500/20 rounded-[40px]  p-6 md:p-10  ring-1 ring-white/10 w-full">
             {/* ⚛️ REACTOR BACKGROUND LAYERS */}
             <div className="absolute inset-0 pointer-events-none rounded-[40px] overflow-hidden">
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1200px] h-[1200px] bg-emerald-500/10 blur-[150px] opacity-50 rounded-full" />
@@ -142,7 +142,7 @@ export const PipelineMonitor: React.FC<PipelineMonitorProps> = ({ jobId, pipelin
                             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                             className="absolute -inset-4 bg-emerald-500/20 blur-2xl rounded-full"
                         />
-                        <div className="w-16 h-16 bg-slate-900 border border-emerald-500/40 rounded-3xl flex items-center justify-center relative z-10 shadow-[0_0_30px_rgba(16,185,129,0.2)]">
+                        <div className="w-16 h-16 bg-slate-900 border border-emerald-500/40 rounded-3xl flex items-center justify-center relative z-10 ">
                             <Binary className="text-emerald-400 w-8 h-8" />
                         </div>
                     </div>
@@ -335,7 +335,7 @@ export const PipelineMonitor: React.FC<PipelineMonitorProps> = ({ jobId, pipelin
                                 })}
                             </div>
                             <div className="mt-8 flex items-center gap-6">
-                                <Waves className="text-white/20 w-8 h-8 animate-pulse" />
+                                <Waves className="text-white/20 w-8 h-8 " />
                                 {pipelineType === 'video' ? <Film className="text-white/40 w-8 h-8" /> : <Music className="text-white/40 w-8 h-8" />}
                                 <Radio className="text-white/20 w-8 h-8" />
                             </div>
@@ -384,7 +384,7 @@ export const PipelineMonitor: React.FC<PipelineMonitorProps> = ({ jobId, pipelin
                                     >
                                         <Rss className="text-white/10 w-20 h-20" />
                                     </motion.div>
-                                    <Cpu className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white/40 w-10 h-10 shadow-[0_0_30px_rgba(255,255,255,0.1)]" />
+                                    <Cpu className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white/40 w-10 h-10 " />
                                 </div>
                             </div>
                         </div>
@@ -392,7 +392,7 @@ export const PipelineMonitor: React.FC<PipelineMonitorProps> = ({ jobId, pipelin
 
                     {/* Duplicate DB Node Anchors removed to prevent overlapping with DataReactorCore */}
 
-                    <div className="absolute top-6 left-6 p-4 bg-black/60 backdrop-blur-md rounded-2xl border border-white/10 font-mono text-[9px] text-emerald-500/80 pointer-events-none">
+                    <div className="absolute top-6 left-6 p-4 bg-black/60  rounded-2xl border border-white/10 font-mono text-[9px] text-emerald-500/80 pointer-events-none">
                         <div className="flex items-center gap-2 mb-2 border-b border-emerald-500/20 pb-1">
                             <Zap size={10} /> {pipelineConfig.visualMode}_ДВИГУН
                         </div>
@@ -414,9 +414,9 @@ export const PipelineMonitor: React.FC<PipelineMonitorProps> = ({ jobId, pipelin
                         <div className="flex flex-col md:flex-row justify-between md:items-end mb-6 gap-4">
                             <div>
                                 <p className="text-[11px] text-slate-400 font-black uppercase tracking-[0.3em] mb-2">Загальний прогрес обробки</p>
-                                <h3 className="text-6xl font-black text-white font-mono drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">{percent}%</h3>
+                                <h3 className="text-6xl font-black text-white font-mono ">{percent}%</h3>
                             </div>
-                            <div className="md:text-right bg-black/20 p-4 rounded-2xl border border-white/5 backdrop-blur-md">
+                            <div className="md:text-right bg-black/20 p-4 rounded-2xl border border-white/5 ">
                                 <p className="text-[10px] text-emerald-400 font-bold uppercase tracking-widest mb-2 flex items-center justify-end gap-2">
                                     <Activity size={10} /> Поточна операція
                                 </p>
@@ -431,13 +431,13 @@ export const PipelineMonitor: React.FC<PipelineMonitorProps> = ({ jobId, pipelin
                                 initial={{ width: 0 }}
                                 animate={{ width: `${percent}%` }}
                                 transition={{ duration: 1, ease: "easeOut" }}
-                                className="absolute inset-y-0 left-0 bg-gradient-to-r from-emerald-600 via-emerald-400 to-cyan-400 rounded-full shadow-[0_0_20px_rgba(16,185,129,0.8)]"
+                                className="absolute inset-y-0 left-0 bg-gradient-to-r from-emerald-600 via-emerald-400 to-cyan-400 rounded-full "
                             />
                         </div>
 
                         <div className="mt-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
                             <div className="flex items-center gap-3 text-sm text-slate-300 font-medium italic">
-                                <ChevronRight size={16} className="text-emerald-400 animate-pulse flex-shrink-0" />
+                                <ChevronRight size={16} className="text-emerald-400  flex-shrink-0" />
                                 {status?.progress?.details || 'Встановлення багатовимірних маршрутів даних...'}
                             </div>
                             <div className="flex gap-4">
@@ -456,7 +456,7 @@ export const PipelineMonitor: React.FC<PipelineMonitorProps> = ({ jobId, pipelin
 
                 {/* 2. Event Log */}
                 <div className="w-full">
-                    <div className="bg-slate-900/60 rounded-[24px] border border-white/5 p-6 backdrop-blur-md">
+                    <div className="bg-slate-900/60 rounded-[24px] border border-white/5 p-6 ">
                         <div className="text-[10px] text-slate-400 font-black uppercase mb-4 px-1 flex flex-row items-center gap-2 border-b border-white/10 pb-2">
                             <Activity size={14} className="text-emerald-500" /> Журнал подій
                         </div>
@@ -481,7 +481,7 @@ export const PipelineMonitor: React.FC<PipelineMonitorProps> = ({ jobId, pipelin
                                 ))
                             ) : (
                                 <div className="h-20 flex flex-col items-center justify-center text-slate-700 gap-2 border border-dashed border-white/5 rounded-2xl">
-                                    <Activity size={16} className="opacity-20 animate-pulse" />
+                                    <Activity size={16} className="opacity-20 " />
                                     <span className="text-[9px] uppercase font-black tracking-widest">Очікування телеметрії...</span>
                                 </div>
                             )}
@@ -491,7 +491,7 @@ export const PipelineMonitor: React.FC<PipelineMonitorProps> = ({ jobId, pipelin
 
                 {/* 3. System Metrics */}
                 <div className="w-full">
-                    <div className="bg-slate-900/80 rounded-3xl border border-white/5 p-6 backdrop-blur-xl shadow-xl">
+                    <div className="bg-slate-900/80 rounded-3xl border border-white/5 p-6  shadow-xl">
                         <div className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-6 flex items-center gap-2 border-b border-white/10 pb-3">
                             <Brain size={14} className="text-emerald-400" /> Системні метрики
                         </div>

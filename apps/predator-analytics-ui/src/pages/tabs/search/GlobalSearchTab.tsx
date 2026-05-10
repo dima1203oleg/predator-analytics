@@ -78,9 +78,9 @@ export const GlobalSearchTab: React.FC = () => {
                 title={
                     <div className="flex items-center gap-10">
                         <div className="relative group">
-                            <div className="absolute inset-0 bg-red-600/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                            <div className="absolute inset-0 bg-red-600/20 blur-3xl rounded-full scale-150 " />
                             <div className="relative p-7 bg-black border border-red-900/40 rounded-[2.5rem] shadow-2xl">
-                                <Search size={42} className="text-red-500 shadow-[0_0_15px_rgba(220,38,38,0.5)]" />
+                                <Search size={42} className="text-red-500 " />
                             </div>
                         </div>
                         <div className="space-y-2">
@@ -148,7 +148,7 @@ export const GlobalSearchTab: React.FC = () => {
                                     className={cn(
                                         "px-10 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.4em] transition-all italic border shadow-xl relative overflow-hidden",
                                         activeFilter === f 
-                                            ? "bg-red-700 border-red-400 text-white shadow-[0_0_30px_rgba(220,38,38,0.3)]" 
+                                            ? "bg-red-700 border-red-400 text-white " 
                                             : "bg-black border-white/5 text-slate-600 hover:text-red-500 hover:border-red-500/40"
                                     )}
                                 >
@@ -165,14 +165,14 @@ export const GlobalSearchTab: React.FC = () => {
                         {isSearching ? (
                             <div className="flex flex-col items-center justify-center py-32 gap-16">
                                 <div className="relative">
-                                    <div className="absolute inset-0 bg-red-600/10 blur-[100px] scale-150 animate-pulse" />
+                                    <div className="absolute inset-0 bg-red-600/10 blur-[100px] scale-150 " />
                                     <CyberOrb size={180} color="#dc2626" intensity={0.6} pulse />
                                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
                                         <Target size={48} className="text-white animate-spin-slow" />
                                     </div>
                                 </div>
                                 <div className="text-center space-y-4">
-                                    <span className="text-3xl font-black text-red-600 uppercase tracking-[1em] italic animate-pulse block">ДЕКОДУВАННЯ_СИГНАЛУ</span>
+                                    <span className="text-3xl font-black text-red-600 uppercase tracking-[1em] italic  block">ДЕКОДУВАННЯ_СИГНАЛУ</span>
                                     <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.5em] italic">SEARCH_SCAN_v63.0-ELITE // {query.toUpperCase()}</p>
                                 </div>
                             </div>
@@ -203,7 +203,7 @@ export const GlobalSearchTab: React.FC = () => {
                                                       </div>
                                                    </div>
                                                    {res.severity === 'CRITICAL' && (
-                                                      <span className="bg-red-600 text-white text-[9px] font-black px-4 py-1.5 rounded-full animate-pulse shadow-xl tracking-tighter">КРИТИЧНО</span>
+                                                      <span className="bg-red-600 text-white text-[9px] font-black px-4 py-1.5 rounded-full  shadow-xl tracking-tighter">КРИТИЧНО</span>
                                                    )}
                                                 </div>
 
@@ -236,7 +236,7 @@ export const GlobalSearchTab: React.FC = () => {
                             </div>
                         ) : (
                             <div className="flex flex-col items-center justify-center py-32 text-center gap-10 border-2 border-dashed border-white/5 rounded-[4rem]">
-                                <Ghost size={120} className="text-red-950/10 animate-pulse" />
+                                <Ghost size={120} className="text-red-950/10 " />
                                 <div className="space-y-4">
                                    <p className="text-4xl font-black text-red-950/20 uppercase tracking-[0.5em] italic leading-tight">ГО ИЗОНТ ПОДІЙ ПО ОЖНІЙ</p>
                                    <p className="text-[11px] text-red-950/10 font-bold uppercase tracking-[0.3em] italic max-w-lg mx-auto leading-relaxed">

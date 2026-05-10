@@ -23,7 +23,7 @@ export const TradeCorridorWidget: React.FC<{ persona: string }> = ({ persona }) 
   ];
 
   return (
-    <div className="bg-slate-950/80 border border-slate-800 rounded-[24px] backdrop-blur-xl overflow-hidden h-full flex flex-col relative group">
+    <div className="bg-slate-950/80 border border-slate-800 rounded-[24px]  overflow-hidden h-full flex flex-col relative group">
       <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent pointer-events-none transition-all duration-500 group-hover:from-indigo-500/10" />
 
       {/* Header */}

@@ -160,9 +160,9 @@ export default function RegistriesView() {
                      title={
                        <div className="flex items-center gap-10">
                           <div className="relative group">
-                             <div className="absolute inset-0 bg-emerald-600/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                             <div className="absolute inset-0 bg-emerald-600/20 blur-3xl rounded-full scale-150 " />
                              <div className="relative p-7 bg-black border border-emerald-900/40 rounded-[2.5rem] shadow-2xl">
-                                <Building2 size={42} className="text-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.5)]" />
+                                <Building2 size={42} className="text-emerald-500 " />
                              </div>
                           </div>
                           <div className="space-y-2">
@@ -246,7 +246,7 @@ export default function RegistriesView() {
                            )}
 
                            {searching && (
-                              <div className="flex items-center justify-center py-6 gap-4 text-emerald-500 animate-pulse">
+                              <div className="flex items-center justify-center py-6 gap-4 text-emerald-500 ">
                                  <RefreshCcw className="animate-spin" size={24} />
                                  <span className="text-[10px] font-black uppercase tracking-[0.4em] italic">ВИКОНУЄТЬСЯ_СЕМАНТИЧНИЙ_ПОШУК...</span>
                               </div>
@@ -260,7 +260,7 @@ export default function RegistriesView() {
                      <div className="py-32 flex flex-col items-center justify-center space-y-12">
                         <CyberOrb size={80} color="#D4AF37" />
                         <div className="space-y-4 text-center">
-                           <p className="text-2xl font-black text-emerald-500 uppercase italic tracking-[0.8em] animate-pulse">ДЕКОДУВАННЯ_БІЗНЕС_МАТрИЦІ...</p>
+                           <p className="text-2xl font-black text-emerald-500 uppercase italic tracking-[0.8em] ">ДЕКОДУВАННЯ_БІЗНЕС_МАТрИЦІ...</p>
                            <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest italic">EDRPOU: {query.toUpperCase()}</p>
                         </div>
                      </div>
@@ -276,7 +276,7 @@ export default function RegistriesView() {
                               </div>
 
                               <div className="relative mb-12">
-                                  <div className="absolute inset-0 bg-emerald-500/10 blur-[60px] rounded-full animate-pulse" />
+                                  <div className="absolute inset-0 bg-emerald-500/10 blur-[60px] rounded-full " />
                                   <div className="relative w-44 h-44 bg-slate-950 border-2 border-emerald-500/30 rounded-[3.5rem] shadow-3xl flex items-center justify-center group cursor-pointer hover:border-emerald-500/60 transition-all">
                                       <Building2 size={72} className="text-emerald-500" />
                                       <div className="absolute -bottom-3 -right-3 p-4 bg-emerald-600 rounded-3xl shadow-2xl text-black border-4 border-slate-950">
@@ -370,7 +370,7 @@ export default function RegistriesView() {
                                  <div className="space-y-4">
                                     {selectedCompany.risk_factors.map((risk, i) => (
                                        <div key={i} className="flex items-start gap-5 p-6 bg-black/40 border border-amber-500/10 rounded-[2rem] hover:bg-amber-500/[0.05] transition-all">
-                                          <AlertCircle size={22} className="text-amber-500 shrink-0 mt-0.5 animate-pulse" />
+                                          <AlertCircle size={22} className="text-amber-500 shrink-0 mt-0.5 " />
                                           <p className="text-[13px] font-black text-amber-100 italic uppercase leading-relaxed">{risk}</p>
                                        </div>
                                     ))}

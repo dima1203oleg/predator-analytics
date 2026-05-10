@@ -161,7 +161,7 @@ const SOMView: React.FC = () => {
 
         {/* LEFT: Structural Sovereignty (The Rings) */}
         <div className="col-span-12 xl:col-span-4 flex flex-col gap-10">
-          <section className="relative h-[500px] flex flex-col items-center justify-center p-10 overflow-hidden bg-black/40 backdrop-blur-3xl border border-white/5 rounded-[4rem] shadow-2xl">
+          <section className="relative h-[500px] flex flex-col items-center justify-center p-10 overflow-hidden bg-black/40  border border-white/5 rounded-[4rem] shadow-2xl">
             <h2 className="absolute top-10 left-10 text-[11px] font-black text-white uppercase tracking-[0.4em] flex items-center gap-3 italic">
               <Shield size={16} className="text-rose-500" /> КІЛЬЦЯ КОНТРОЛЮ
             </h2>
@@ -186,11 +186,11 @@ const SOMView: React.FC = () => {
               {/* Inner Core Eye */}
               <div className="relative z-20 flex flex-col items-center justify-center group cursor-pointer">
                 <div className="absolute inset-0 bg-rose-500/20 blur-2xl rounded-full scale-150 opacity-0 group-hover:opacity-100 transition-opacity" />
-                <Eye size={36} className={cn("transition-all drop-shadow-[0_0_10px_currentColor]", selectedRing === 1 ? "text-rose-400" : "text-slate-600")} />
+                <Eye size={36} className={cn("transition-all ", selectedRing === 1 ? "text-rose-400" : "text-slate-600")} />
               </div>
             </div>
 
-            <div className="absolute bottom-10 inset-x-10 p-8 bg-black/60 border border-rose-500/10 rounded-[2.5rem] backdrop-blur-2xl shadow-xl">
+            <div className="absolute bottom-10 inset-x-10 p-8 bg-black/60 border border-rose-500/10 rounded-[2.5rem]  shadow-xl">
               <div className="flex justify-between items-center mb-3">
                 <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest italic">ПРОТОКОЛ_АКТИВНОГО_РІВНЯ</span>
                 <span className="text-[9px] font-black text-rose-500 uppercase tracking-widest italic">
@@ -205,9 +205,9 @@ const SOMView: React.FC = () => {
             </div>
           </section>
 
-          <section className="relative p-10 overflow-hidden bg-rose-950/20 backdrop-blur-3xl border border-rose-500/20 rounded-[4rem] shadow-2xl group/emerg">
+          <section className="relative p-10 overflow-hidden bg-rose-950/20  border border-rose-500/20 rounded-[4rem] shadow-2xl group/emerg">
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-2 h-2 bg-rose-500 rounded-full animate-pulse shadow-[0_0_10px_#f43f5e]" />
+              <div className="w-2 h-2 bg-rose-500 rounded-full  shadow-[0_0_10px_#f43f5e]" />
               <div>
                 <h2 className="text-xl font-black text-white uppercase italic tracking-tighter">СУВЕРЕННИЙ ЕКСТРЕНИЙ ПРОТОКОЛ</h2>
                 <p className="text-[10px] text-rose-400 font-black uppercase tracking-[0.3em] italic opacity-60">РІШЕННЯ ОСТАННЬОЇ ІНСТАНЦІЇ</p>
@@ -233,7 +233,7 @@ const SOMView: React.FC = () => {
                 </>
               ) : (
                 <>
-                  <Power size={20} className="animate-pulse" /> РОЗІРВАТИ_ЗВ'ЯЗОК_ЯДРА
+                  <Power size={20} className="" /> РОЗІРВАТИ_ЗВ'ЯЗОК_ЯДРА
                 </>
               )}
             </button>
@@ -248,7 +248,7 @@ const SOMView: React.FC = () => {
                 <Activity size={18} className="text-rose-500" /> МАТРИЦЯ ЗДОРОВ'Я ОРГАНІЗМУ
               </h2>
               <div className="flex items-center gap-3 px-4 py-1.5 rounded-full bg-rose-500/5 border border-rose-500/20">
-                <div className="w-2 h-2 bg-rose-500 rounded-full animate-pulse shadow-[0_0_8px_#f43f5e]" />
+                <div className="w-2 h-2 bg-rose-500 rounded-full  shadow-[0_0_8px_#f43f5e]" />
                 <span className="text-[9px] font-black text-rose-500 uppercase tracking-widest italic">LIVE_ПОТІК</span>
               </div>
             </div>
@@ -260,7 +260,7 @@ const SOMView: React.FC = () => {
                   <span className="text-xs font-black text-rose-300 font-mono italic">94.2%</span>
                 </div>
                 <div className="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden">
-                  <motion.div initial={{ width: 0 }} animate={{ width: '94.2%' }} className="h-full bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.3)]" />
+                  <motion.div initial={{ width: 0 }} animate={{ width: '94.2%' }} className="h-full bg-rose-500 " />
                 </div>
               </div>
               <div className="p-8 bg-black/60 border border-white/5 rounded-[3rem] shadow-inner group hover:border-rose-400/30 transition-all">
@@ -284,7 +284,7 @@ const SOMView: React.FC = () => {
                   <div key={i} className="flex-1 flex flex-col gap-3">
                     <div className={cn(
                       "h-2.5 rounded-full transition-all duration-1000 shadow-lg",
-                      i < 3 ? "bg-rose-500 shadow-rose-500/20" : i === 3 ? "bg-amber-500 animate-pulse shadow-amber-500/20" : "bg-slate-800"
+                      i < 3 ? "bg-rose-500 shadow-rose-500/20" : i === 3 ? "bg-amber-500  shadow-amber-500/20" : "bg-slate-800"
                     )} />
                     <span className="text-[8px] font-black text-slate-600 uppercase text-center truncate italic tracking-tighter">{step}</span>
                   </div>
@@ -321,10 +321,10 @@ const SOMView: React.FC = () => {
             </div>
           </HoloContainer>
 
-          <section className="relative p-10 overflow-hidden bg-rose-950/10 backdrop-blur-3xl border border-rose-500/20 rounded-[4rem] shadow-2xl mt-10">
+          <section className="relative p-10 overflow-hidden bg-rose-950/10  border border-rose-500/20 rounded-[4rem] shadow-2xl mt-10">
             <div className="flex items-center justify-between mb-10">
               <div className="flex items-center gap-4">
-                <div className="w-2 h-2 bg-rose-500 rounded-full animate-pulse shadow-[0_0_10px_#f43f5e]" />
+                <div className="w-2 h-2 bg-rose-500 rounded-full  shadow-[0_0_10px_#f43f5e]" />
                 <div>
                   <h2 className="text-xl font-black text-white uppercase italic tracking-tighter">САД ГІПОТЕЗ (IDEA GARDEN)</h2>
                   <p className="text-[10px] text-rose-400 font-black uppercase tracking-[0.3em] italic opacity-60">СИТУАТИВНЕ МОДЕЛЮВАННЯ</p>
@@ -354,7 +354,7 @@ const SOMView: React.FC = () => {
                       )}>{h.type}</span>
                     </div>
                     <div className="flex items-center gap-3">
-                      <Sparkles size={14} className="text-rose-500 animate-pulse" />
+                      <Sparkles size={14} className="text-rose-500 " />
                       <span className="text-[10px] font-black text-rose-500 font-mono italic">{(h.confidence * 100).toFixed(0)}% ВПЕВНЕНІСТЬ</span>
                     </div>
                   </div>
@@ -402,9 +402,9 @@ const SOMView: React.FC = () => {
 
         {/* RIGHT: Agent Swarm & Logs */}
         <div className="col-span-12 xl:col-span-3 flex flex-col gap-10">
-          <section className="relative p-10 flex flex-col h-full overflow-hidden bg-black/40 backdrop-blur-3xl border border-white/5 rounded-[4rem] shadow-2xl">
+          <section className="relative p-10 flex flex-col h-full overflow-hidden bg-black/40  border border-white/5 rounded-[4rem] shadow-2xl">
             <div className="flex items-center gap-4 mb-8">
-              <div className="w-2 h-2 bg-rose-500 rounded-full animate-pulse shadow-[0_0_10px_#f43f5e]" />
+              <div className="w-2 h-2 bg-rose-500 rounded-full  shadow-[0_0_10px_#f43f5e]" />
               <div>
                 <h2 className="text-xl font-black text-white uppercase italic tracking-tighter">АКТИВНИЙ РОЙ АГЕНТІВ</h2>
                 <p className="text-[10px] text-rose-400 font-black uppercase tracking-[0.3em] italic opacity-60">СИСТЕМНІ СПОСТЕРІГАЧІ</p>
@@ -421,7 +421,7 @@ const SOMView: React.FC = () => {
                 <div key={agent.name} className="flex flex-col gap-4 p-8 bg-black border-2 border-white/5 rounded-[3rem] shadow-inner group hover:border-rose-500/30 transition-all">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                      <div className={cn("w-2 h-2 rounded-full shadow-[0_0_8px_currentColor]", agent.status === 'ОЧІКУВАННЯ' ? "bg-slate-800 text-slate-800" : "bg-rose-500 text-rose-500 animate-pulse")} />
+                      <div className={cn("w-2 h-2 rounded-full shadow-[0_0_8px_currentColor]", agent.status === 'ОЧІКУВАННЯ' ? "bg-slate-800 text-slate-800" : "bg-rose-500 text-rose-500 ")} />
                       <span className="text-[11px] font-black text-white uppercase italic tracking-widest">АГЕНТ {agent.name}</span>
                     </div>
                     <Settings size={16} className="text-slate-700 hover:text-white transition-colors cursor-pointer" />
@@ -447,7 +447,7 @@ const SOMView: React.FC = () => {
                 <p><span className="text-slate-700 font-black">[11:12:15]</span> <span className="text-amber-500">ГРАФ_МАЙНЕР:</span> ВИЯВЛЕНО НОВИЙ КЛАСТЕР ВПЛИВУ #7 (3 КОМПАНІЇ, 1 UBO).</p>
                 <p><span className="text-slate-700 font-black">[11:12:22]</span> <span className="text-rose-400">АРХІТЕКТОР:</span> ЗГЕНЕРОВАНО ГІПОТЕЗУ H-504 ЧЕРЕЗ RECURSIVE SCAN.</p>
                 <p><span className="text-slate-700 font-black">[11:15:01]</span> <span className="text-rose-300">СИСТЕМА:</span> OSINT ЗАЧИСТКА ЗАВЕРШЕНА. PURITY: 94.2%.</p>
-                <p className="opacity-40 animate-pulse text-[8px] font-black uppercase tracking-[0.5em] text-center pt-4">--- СКАНУВАННЯ_НОВИХ_ЛОГІВ ---</p>
+                <p className="opacity-40  text-[8px] font-black uppercase tracking-[0.5em] text-center pt-4">--- СКАНУВАННЯ_НОВИХ_ЛОГІВ ---</p>
               </div>
             </div>
           </section>
@@ -458,13 +458,13 @@ const SOMView: React.FC = () => {
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
-        className="p-12 bg-black/60 border border-rose-500/20 rounded-[4rem] backdrop-blur-3xl shadow-4xl relative overflow-hidden"
+        className="p-12 bg-black/60 border border-rose-500/20 rounded-[4rem]  shadow-4xl relative overflow-hidden"
       >
         <div className="absolute inset-0 bg-gradient-to-r from-rose-500/[0.03] via-transparent to-transparent pointer-events-none" />
         <div className="flex flex-col md:flex-row items-center justify-between gap-12 relative z-10">
           <div className="flex items-center gap-10">
             <div className="relative">
-              <div className="absolute inset-0 bg-rose-500/20 blur-3xl rounded-full scale-125 animate-pulse" />
+              <div className="absolute inset-0 bg-rose-500/20 blur-3xl rounded-full scale-125 " />
               <div className="p-5 bg-black border-2 border-rose-500/30 rounded-full shadow-2xl">
                 <Globe size={42} className="text-rose-500 animate-spin-slow" />
               </div>

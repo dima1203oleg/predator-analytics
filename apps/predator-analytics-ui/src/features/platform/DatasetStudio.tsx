@@ -115,14 +115,14 @@ const DatasetStudio: React.FC = () => {
                 stats={[
                     { label: "реєстрів", value: '267', icon: <Database size={14} />, color: 'primary' },
                     { label: "Інструментів", value: '12', icon: <Radar size={14} />, color: 'purple' },
-                    { label: "Стрічка подій", value: '●', icon: <Radio size={14} className="animate-pulse text-red-500" />, color: 'warning' },
+                    { label: "Стрічка подій", value: '●', icon: <Radio size={14} className=" text-red-500" />, color: 'warning' },
                 ]}
             />
             
             <div className="max-w-7xl mx-auto px-6 pt-8 space-y-8">
 
                 {/* ═══ TAB SWITCHER ═══ */}
-                <div className="flex items-center gap-1 p-1.5 bg-slate-950/80 rounded-2xl border border-white/5 backdrop-blur-xl w-fit relative z-20">
+                <div className="flex items-center gap-1 p-1.5 bg-slate-950/80 rounded-2xl border border-white/5  w-fit relative z-20">
                     {TABS.map(tab => (
                         <button
                             key={tab.id}
@@ -330,8 +330,8 @@ const DatasetStudio: React.FC = () => {
                                         <div className="pt-4 border-t border-white/5 space-y-4">
                                             <div className="flex items-center justify-between mb-2">
                                                 <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Двигун Ембедингів Ollama</span>
-                                                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.2)]">
-                                                    <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
+                                                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 ">
+                                                    <div className="w-1 h-1 rounded-full bg-emerald-500 " />
                                                     <span className="text-[8px] font-bold text-emerald-400 uppercase tracking-tighter">АКТ</span>
                                                 </div>
                                             </div>
@@ -482,7 +482,7 @@ const DatasetStudio: React.FC = () => {
                                 <div className="p-8 rounded-[2rem] bg-gradient-to-br from-yellow-950/30 to-slate-950 border border-yellow-500/10 flex items-center justify-between group overflow-hidden relative">
                                     <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10" />
                                     <div className="relative z-10 flex items-center gap-6">
-                                        <div className="w-16 h-16 rounded-2xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center text-yellow-400 group-hover:scale-110 group-hover:bg-yellow-500/20 transition-all duration-500 shadow-[0_0_20px_rgba(99,102,241,0.2)]">
+                                        <div className="w-16 h-16 rounded-2xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center text-yellow-400 group-hover:scale-110 group-hover:bg-yellow-500/20 transition-all duration-500 ">
                                             <RefreshCw size={32} />
                                         </div>
                                         <div>

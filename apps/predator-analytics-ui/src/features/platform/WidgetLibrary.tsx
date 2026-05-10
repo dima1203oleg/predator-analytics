@@ -216,7 +216,7 @@ const widgets: Widget[] = [
     preview: (
       <div className="space-y-1">
         {[1, 2, 3].map(i => (
-          <div key={i} className="h-2 bg-slate-700 rounded animate-pulse" style={{ width: `${100 - i * 20}%` }} />
+          <div key={i} className="h-2 bg-slate-700 rounded " style={{ width: `${100 - i * 20}%` }} />
         ))}
       </div>
     )

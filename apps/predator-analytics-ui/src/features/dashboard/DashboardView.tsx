@@ -284,7 +284,7 @@ const DashboardView: React.FC = () => {
           <div className="flex flex-col items-center gap-12">
             <CyberOrb size="xl" status="processing" pulsing />
             <div className="text-center space-y-4">
-               <h2 className="text-3xl font-black text-white italic uppercase tracking-[0.4em] animate-pulse">АКТИВАЦІЯ_ЯДРА_V63.0-ELITE</h2>
+               <h2 className="text-3xl font-black text-white italic uppercase tracking-[0.4em] ">АКТИВАЦІЯ_ЯДРА_V63.0-ELITE</h2>
                <p className="text-rose-500/60 text-[10px] font-mono font-black uppercase tracking-[0.8em]">Синхронізація суверенних метрик...</p>
             </div>
           </div>
@@ -300,7 +300,7 @@ const DashboardView: React.FC = () => {
         <CyberGrid color="rgba(244, 63, 94, 0.05)" />
         <NeuralPulse color="rgba(244, 63, 94, 0.03)" size={1600} />
         
-        <div className="fixed left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-transparent via-rose-600 to-transparent z-50 opacity-30 shadow-[0_0_20px_rgba(244,63,94,0.5)]" />
+        <div className="fixed left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-transparent via-rose-600 to-transparent z-50 opacity-30 " />
         
         <div className="relative z-10 max-w-[1900px] mx-auto w-full space-y-16">
           
@@ -308,9 +308,9 @@ const DashboardView: React.FC = () => {
             <motion.div 
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="p-8 bg-rose-500/10 border-2 border-rose-500/50 rounded-3xl flex items-center gap-6 text-rose-500 shadow-[0_0_50px_rgba(244,63,94,0.2)]"
+              className="p-8 bg-rose-500/10 border-2 border-rose-500/50 rounded-3xl flex items-center gap-6 text-rose-500 "
             >
-              <AlertTriangle size={32} className="animate-pulse" />
+              <AlertTriangle size={32} className="" />
               <div>
                 <p className="text-[10px] font-black uppercase tracking-[0.4em] opacity-60 mb-1">КРИТИЧНА_ПОМИЛКА_ЯДРА</p>
                 <p className="text-xl font-bold italic uppercase">{error}</p>
@@ -324,7 +324,7 @@ const DashboardView: React.FC = () => {
             title={
               <div className="flex items-center gap-12">
                 <div className="relative group/orb scale-125">
-                   <CyberOrb size="md" status={stats?.topRisk! > 80 ? 'critical' : 'active'} className="drop-shadow-[0_0_30px_rgba(244,63,94,0.4)]" />
+                   <CyberOrb size="md" status={stats?.topRisk! > 80 ? 'critical' : 'active'} className="" />
                 </div>
                 <div className="ml-4">
                   <h1 className="text-6xl font-black text-white tracking-widest uppercase leading-none font-display italic skew-x-[-3deg]">
@@ -332,7 +332,7 @@ const DashboardView: React.FC = () => {
                   </h1>
                   <div className="flex items-center gap-6 mt-6">
                     <div className="h-0.5 w-20 bg-gradient-to-r from-rose-600 to-transparent" />
-                    <span className="text-[11px] font-mono font-black text-rose-500/90 uppercase tracking-[0.6em] animate-pulse italic">
+                    <span className="text-[11px] font-mono font-black text-rose-500/90 uppercase tracking-[0.6em]  italic">
                     ЦЕНТРАЛЬНЕ КОМАНДУВАННЯ // v63.0-ELITE
                     </span>
                   </div>
@@ -397,9 +397,9 @@ const DashboardView: React.FC = () => {
 
           {!hasData ? (
              <div className="py-60 flex flex-col items-center justify-center gap-12 text-center relative">
-                 <div className="absolute inset-0 bg-rose-500/5 blur-[120px] rounded-full animate-pulse" />
+                 <div className="absolute inset-0 bg-rose-500/5 blur-[120px] rounded-full " />
                  <div className="relative group">
-                    <div className="absolute inset-0 bg-rose-500/20 blur-[100px] rounded-full scale-150 animate-pulse" />
+                    <div className="absolute inset-0 bg-rose-500/20 blur-[100px] rounded-full scale-150 " />
                     <Database size={120} className="text-slate-800 relative z-10 group-hover:text-rose-900 transition-colors duration-700" />
                  </div>
                  <div className="space-y-6 relative z-10">
@@ -424,7 +424,7 @@ const DashboardView: React.FC = () => {
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.05, type: "spring", stiffness: 100 }}
-                    className="p-8 bg-black/40 backdrop-blur-3xl border border-white/5 rounded-[2.5rem] relative overflow-hidden group hover:border-rose-500/40 transition-all duration-500 shadow-[0_30px_60px_-12px_rgba(0,0,0,0.8)]"
+                    className="p-8 bg-black/40  border border-white/5 rounded-[2.5rem] relative overflow-hidden group hover:border-rose-500/40 transition-all duration-500 shadow-[0_30px_60px_-12px_rgba(0,0,0,0.8)]"
                   >
                     <div className="absolute inset-0 bg-gradient-to-br from-rose-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                     <div className={cn(
@@ -501,7 +501,7 @@ const DashboardView: React.FC = () => {
                               initial={{ width: 0 }}
                               animate={{ width: `${data.load}%` }}
                               className={cn(
-                                "h-full rounded-full transition-all duration-1000 shadow-[0_0_15px_rgba(244,63,94,0.5)]",
+                                "h-full rounded-full transition-all duration-1000 ",
                                 data.load > 85 ? "bg-amber-500 shadow-amber-500/50" : "bg-gradient-to-r from-rose-600 to-cyan-400"
                               )}
                             />
@@ -538,7 +538,7 @@ const DashboardView: React.FC = () => {
                                <ShieldAlert size={80} style={{ color }} />
                             </div>
                             <div className="flex items-center gap-4 relative z-10">
-                              <div className="w-3 h-3 rounded-full shadow-[0_0_15px_rgba(255,255,255,0.5)]" style={{ backgroundColor: color }} />
+                              <div className="w-3 h-3 rounded-full " style={{ backgroundColor: color }} />
                               <p className="text-[11px] font-black text-slate-300 uppercase tracking-[0.2em] italic">{s.name}</p>
                             </div>
                             <div className="flex items-baseline gap-4 relative z-10">
@@ -569,9 +569,9 @@ const DashboardView: React.FC = () => {
                        </div>
                      </div>
                      <div className="absolute top-24 left-12 z-20">
-                       <div className="flex items-center gap-8 bg-slate-950/80 backdrop-blur-3xl border border-white/10 p-8 rounded-[3rem] shadow-3xl">
+                       <div className="flex items-center gap-8 bg-slate-950/80  border border-white/10 p-8 rounded-[3rem] shadow-3xl">
                          <div className="p-5 bg-rose-500/10 rounded-2xl relative">
-                           <div className="absolute inset-0 bg-rose-500/20 blur-xl animate-pulse rounded-full" />
+                           <div className="absolute inset-0 bg-rose-500/20 blur-xl  rounded-full" />
                            <Orbit size={28} className="text-rose-400 relative z-10 animate-spin-slow" />
                          </div>
                          <div>
@@ -587,10 +587,10 @@ const DashboardView: React.FC = () => {
                         <GlobalSituationProjection countries={overview!.countries} />
                      </div>
 
-                     <div className="absolute bottom-12 right-12 z-20 flex bg-black/60 backdrop-blur-3xl p-3 border border-white/10 rounded-[2.5rem] gap-4 shadow-3xl">
+                     <div className="absolute bottom-12 right-12 z-20 flex bg-black/60  p-3 border border-white/10 rounded-[2.5rem] gap-4 shadow-3xl">
                         {[Search, Layers, Target, RadioTower].map((Icon, idx) => (
                            <button key={idx} className="p-6 bg-white/5 hover:bg-rose-600 hover:text-white rounded-3xl text-slate-400 transition-all group">
-                              <Icon size={24} className={cn("group-hover:scale-110 group-hover:rotate-6 transition-transform", idx === 3 && "animate-pulse text-rose-400")} />
+                              <Icon size={24} className={cn("group-hover:scale-110 group-hover:rotate-6 transition-transform", idx === 3 && " text-rose-400")} />
                            </button>
                         ))}
                      </div>
@@ -623,7 +623,7 @@ const DashboardView: React.FC = () => {
                                        "w-14 h-14 rounded-2xl flex items-center justify-center shadow-xl",
                                        alert.severity === 'critical' ? "bg-rose-500/20 text-rose-500 shadow-rose-500/20" : "bg-rose-500/10 text-rose-400"
                                      )}>
-                                        {alert.severity === 'critical' ? <ShieldAlert size={28} className="animate-pulse" /> : <Eye size={28} />}
+                                        {alert.severity === 'critical' ? <ShieldAlert size={28} className="" /> : <Eye size={28} />}
                                      </div>
                                      <div>
                                         <div className="flex items-center gap-3">
@@ -743,7 +743,7 @@ const DashboardView: React.FC = () => {
                                    "w-12 h-12 rounded-2xl flex items-center justify-center transition-all bg-slate-900 border border-white/5 group-hover:scale-110",
                                    item.status === 'UP' ? "text-emerald-400" : "text-amber-400"
                                 )}>
-                                   <item.icon size={22} className={cn(item.status === 'UP' && "animate-pulse")} />
+                                   <item.icon size={22} className={cn(item.status === 'UP' && "")} />
                                 </div>
                                 <div className="space-y-1">
                                    <p className="text-[11px] font-black text-slate-200 uppercase tracking-widest italic">{item.key}</p>
@@ -765,10 +765,10 @@ const DashboardView: React.FC = () => {
         </div>
 
         {/* Strategic Information Ticker */}
-        <div className="fixed bottom-0 left-0 right-0 z-50 bg-[#02040a]/90 backdrop-blur-3xl border-t border-rose-500/20 h-16 flex items-center overflow-hidden shadow-[0_-20px_50px_rgba(0,0,0,0.8)]">
+        <div className="fixed bottom-0 left-0 right-0 z-50 bg-[#02040a]/90  border-t border-rose-500/20 h-16 flex items-center overflow-hidden shadow-[0_-20px_50px_rgba(0,0,0,0.8)]">
           <div className="px-12 bg-rose-600 h-full flex items-center shrink-0 border-r border-white/10 shadow-[15px_0_40px_rgba(244,63,94,0.5)] relative z-10 italic text-white">
             <div className="flex items-center gap-4">
-               <Fingerprint size={24} className="text-white animate-pulse" />
+               <Fingerprint size={24} className="text-white " />
                <span className="text-[13px] font-black uppercase tracking-[0.4em] whitespace-nowrap">СУВЕРЕННИЙ_ЗВ'ЯЗОК_PREDATOR</span>
             </div>
           </div>
@@ -787,7 +787,7 @@ const DashboardView: React.FC = () => {
                 `ЗАГАЛЬНИЙ ПУЛ: ${formatCurrency(overview?.summary.total_value_usd ?? 0)} | ДЕКЛАРАЦІЙ: ${formatNumber(overview?.summary.total_declarations ?? 0)}`
               ].map((log, i) => (
                 <div key={i} className="flex items-center gap-10">
-                  <div className="w-3 h-3 rounded-full bg-rose-600 animate-pulse shadow-[0_0_15px_#e11d48]" />
+                  <div className="w-3 h-3 rounded-full bg-rose-600  shadow-[0_0_15px_#e11d48]" />
                   <span className="text-[12px] font-mono text-slate-400 font-black uppercase tracking-[0.3em] italic">
                     {log}
                   </span>

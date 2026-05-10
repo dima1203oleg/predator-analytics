@@ -281,7 +281,7 @@ export default function AIControlPlane() {
                     Контур керування <span className="text-[#D4AF37]">ШІ</span>
                   </div>
                   <div className="mt-3 flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.34em] text-[#D4AF37]/70">
-                    <Zap size={12} className="animate-pulse" />
+                    <Zap size={12} className="" />
                     v61.0-ELITE · МОНІТОРИНГ СУВЕ ЕННИХ  УШІЇВ
                   </div>
                 </div>

@@ -278,7 +278,7 @@ export const AIAnalystPanel: React.FC = () => {
             </div>
           </div>
           <div className="flex items-center gap-2 text-xs text-emerald-400">
-            <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+            <div className="w-2 h-2 bg-emerald-400 rounded-full " />
             Онлайн
           </div>
         </div>

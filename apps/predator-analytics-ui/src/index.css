@@ -31,58 +31,18 @@
 }
 
 .glass-wraith {
-    background: var(--wraith-glass);
-    backdrop-filter: blur(50px) saturate(220%);
-    -webkit-backdrop-filter: blur(50px) saturate(220%);
-    border: 1px solid var(--wraith-border);
-    box-shadow: 
-        0 25px 60px rgba(0, 0, 0, 0.8),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.04),
-        0 0 15px rgba(244, 63, 94, 0.05);
-    transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    background: rgba(20, 20, 22, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
 }
 
-.glass-wraith::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 50%;
-    height: 100%;
-    background: var(--elite-glint);
-    transform: skewX(-25deg);
-    transition: 0.75s;
-    pointer-events: none;
-}
-
-.glass-wraith:hover::before {
-    left: 150%;
-    transition: 0.75s;
-}
-
 .glass-wraith:hover {
-    border-color: var(--wraith-accent);
-    box-shadow: 
-        0 0 60px rgba(244, 63, 94, 0.25),
-        inset 0 0 30px rgba(244, 63, 94, 0.05),
-        0 10px 40px rgba(0, 0, 0, 0.5);
-    transform: translateY(-5px) scale(1.01);
-}
-
-.glass-wraith::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(244, 63, 94, 0.05), transparent 60%);
-    opacity: 0;
-    transition: opacity 0.3s;
-    pointer-events: none;
-}
-
-.glass-wraith:hover::after {
-    opacity: 1;
+    border-color: rgba(196, 18, 48, 0.3);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.7);
+    transform: translateY(-2px);
 }
 
 .aura-bg {
@@ -91,10 +51,11 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: 
-        radial-gradient(circle at 10% 20%, var(--aura-gold) 0%, transparent 50%),
-        radial-gradient(circle at 90% 80%, var(--aura-amber) 0%, transparent 50%),
-        #020617;
+    background-color: #0a0a0a;
+    background-image:
+        linear-gradient(rgba(180, 25, 40, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(180, 25, 40, 0.1) 1px, transparent 1px);
+    background-size: 48px 48px;
     z-index: -1;
 }
 
@@ -251,14 +212,14 @@
 
 body {
     color-scheme: dark;
-    background-color: var(--bg-canvas, #050608);
+    background-color: #0a0a0a;
     color: #e2e8f0;
     background-image:
-        radial-gradient(ellipse 140% 90% at 50% -30%, rgba(56, 189, 248, 0.045), transparent 42%),
-        radial-gradient(circle at 12% 18%, rgba(148, 163, 184, 0.06), transparent 32%),
-        radial-gradient(circle at 88% 12%, rgba(99, 102, 241, 0.05), transparent 28%),
-        radial-gradient(circle at 50% 108%, rgba(14, 165, 233, 0.06), transparent 38%),
-        linear-gradient(180deg, #050608 0%, #070a10 48%, #030406 100%);
+        linear-gradient(rgba(180, 25, 40, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(180, 25, 40, 0.1) 1px, transparent 1px);
+    background-size: 48px 48px;
+    background-position: center center;
+    background-attachment: fixed;
     min-height: 100dvh;
     margin: 0;
     padding: 0;
@@ -1685,4 +1646,244 @@ tbody tr:hover {
 .shadow-3xl { box-shadow: 0 60px 100px -30px rgba(0,0,0,0.8); }
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ═══════════════════════════════════════════════════
+   PREDATOR v64.0-WRAITH — CLASSIFICATION & THREAT SYSTEM
+   Гриф секретності, тактичні HUD-елементи, загрозливі ефекти
+   ═══════════════════════════════════════════════════ */
+
+/* ── CLASSIFICATION BANNER ── */
+.classification-banner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 0.2rem 0;
+  font-family: var(--font-mono);
+  font-size: 0.45rem;
+  font-weight: 900;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #c41230;
+  background: rgba(20, 15, 15, 0.95);
+  border-bottom: 1px solid rgba(196, 18, 48, 0.2);
+}
+.classification-dot {
+  width: 3px; height: 3px;
+  background: #c41230;
+  border-radius: 50%;
+}
+
+/* ── THREAT LEVEL INDICATOR ── */
+.threat-level-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.6rem;
+  background: rgba(20, 15, 15, 0.95);
+  border: 1px solid rgba(196, 18, 48, 0.2);
+  border-radius: 2px;
+  font-family: var(--font-mono);
+  font-size: 0.45rem;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #c41230;
+}
+.threat-level-segments {
+  display: flex;
+  gap: 2px;
+}
+.threat-segment {
+  width: 6px; height: 10px;
+  background: rgba(196, 18, 48, 0.2);
+  border-radius: 1px;
+  transition: all 0.3s ease;
+}
+.threat-segment.active {
+  background: #c41230;
+}
+.threat-segment.active.critical {
+  background: #8b1a1a;
+}
+
+/* ── TACTICAL RETICLE ── */
+.tactical-reticle {
+  position: relative;
+}
+.tactical-reticle::before,
+.tactical-reticle::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+  z-index: 20;
+  opacity: 0.15;
+  transition: opacity 0.3s ease;
+}
+.tactical-reticle:hover::before,
+.tactical-reticle:hover::after {
+  opacity: 0.35;
+}
+.tactical-reticle::before {
+  top: 6px; left: 6px;
+  width: 16px; height: 16px;
+  border-top: 1px solid #ff1744;
+  border-left: 1px solid #ff1744;
+}
+.tactical-reticle::after {
+  bottom: 6px; right: 6px;
+  width: 16px; height: 16px;
+  border-bottom: 1px solid #ff1744;
+  border-right: 1px solid #ff1744;
+}
+
+/* ── SHADOW PULSE GLOW ── */
+@keyframes shadow-pulse-glow {
+  0%, 100% {
+    box-shadow:
+      0 0 20px rgba(255,23,68,0.15),
+      0 0 60px rgba(255,23,68,0.05),
+      inset 0 0 20px rgba(255,23,68,0.03);
+  }
+  50% {
+    box-shadow:
+      0 0 35px rgba(255,23,68,0.3),
+      0 0 90px rgba(255,23,68,0.1),
+      inset 0 0 30px rgba(255,23,68,0.06);
+  }
+}
+.shadow-pulse-glow {
+  animation: shadow-pulse-glow 4s ease-in-out infinite;
+}
+
+/* ── MILITARY GRID OVERLAY ── */
+.military-grid {
+  position: relative;
+}
+.military-grid::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.03;
+  background-image:
+    linear-gradient(rgba(255,23,68,0.5) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,23,68,0.5) 1px, transparent 1px);
+  background-size: 80px 80px;
+}
+
+/* ── INTEL CLASSIFICATION STAMP ── */
+.intel-stamp {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.2rem 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.45rem;
+  font-weight: 900;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  border: 1px solid;
+  border-radius: 2px;
+  user-select: none;
+}
+.intel-stamp.top-secret {
+  color: #ff1744;
+  border-color: rgba(255,23,68,0.5);
+  background: rgba(255,23,68,0.08);
+}
+.intel-stamp.confidential {
+  color: #ff6d00;
+  border-color: rgba(255,109,0,0.5);
+  background: rgba(255,109,0,0.08);
+}
+.intel-stamp.restricted {
+  color: #ffd600;
+  border-color: rgba(255,214,0,0.5);
+  background: rgba(255,214,0,0.08);
+}
+
+/* ── AGGRESSIVE GLASS CARD ── */
+.glass-threat {
+  background: rgba(20, 20, 22, 0.95);
+  border: 1px solid rgba(196, 18, 48, 0.15);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  transition: all 0.3s ease;
+}
+.glass-threat:hover {
+  border-color: rgba(196, 18, 48, 0.3);
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.8);
+  transform: translateY(-2px);
+}
+
+/* ── BLOOD ACCENT LINE ── */
+.blood-accent {
+  position: relative;
+}
+.blood-accent::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #ff1744, #b71c1c, transparent);
+  opacity: 0.6;
+}
+
+/* ── TACTICAL SCAN FRAME ── */
+@keyframes scan-frame-pulse {
+  0%, 100% { border-color: rgba(255,23,68,0.1); }
+  50% { border-color: rgba(255,23,68,0.3); }
+}
+.scan-frame {
+  border: 1px solid rgba(255,23,68,0.15);
+  animation: scan-frame-pulse 4s ease-in-out infinite;
+  position: relative;
+}
+.scan-frame::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 20%;
+  right: 20%;
+  height: 1px;
+  background: #ff1744;
+  box-shadow: 0 0 10px #ff1744;
+  opacity: 0.7;
+}
+
+/* ── DARK COMMAND SURFACE ── */
+.command-surface {
+  background: linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(5,2,2,0.9) 100%);
+  border: 1px solid rgba(255,255,255,0.04);
+  box-shadow:
+    0 30px 80px rgba(0,0,0,0.9),
+    inset 0 1px 0 rgba(255,255,255,0.02);
+}
+
+/* ── CRITICAL ALERT RING ── */
+@keyframes alert-ring {
+  0% { box-shadow: 0 0 0 0 rgba(255,23,68,0.5); }
+  100% { box-shadow: 0 0 0 12px rgba(255,23,68,0); }
+}
+.alert-ring {
+  animation: alert-ring 2s ease-out infinite;
+  border-radius: 50%;
+}
+
+/* ── ENHANCED GLASS-WRAITH v64.0 ── */
+.glass-wraith-v64 {
+  background: rgba(20, 20, 22, 0.97);
+  border: 1px solid rgba(196, 18, 48, 0.15);
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.7);
+  transition: all 0.3s ease;
+}
+.glass-wraith-v64:hover {
+  border-color: rgba(196, 18, 48, 0.3);
+  box-shadow: 0 16px 56px rgba(0, 0, 0, 0.85);
+  transform: translateY(-2px);
+}
 

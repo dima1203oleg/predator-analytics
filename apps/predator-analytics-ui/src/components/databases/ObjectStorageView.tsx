@@ -67,7 +67,7 @@ export const ObjectStorageView: React.FC<ObjectStorageViewProps> = ({ buckets })
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ delay: idx * 0.1 }}
                             className={cn(
-                                "group relative p-8 rounded-[40px] border transition-all duration-700 bg-slate-900/40 backdrop-blur-3xl overflow-hidden",
+                                "group relative p-8 rounded-[40px] border transition-all duration-700 bg-slate-900/40  overflow-hidden",
                                 isLocked ? "border-rose-500/20 shadow-[0_20px_50px_rgba(244,63,94,0.15)]" : "border-white/5 hover:border-amber-500/30 shadow-2xl"
                             )}
                         >
@@ -80,7 +80,7 @@ export const ObjectStorageView: React.FC<ObjectStorageViewProps> = ({ buckets })
                                         "w-16 h-16 rounded-[24px] flex items-center justify-center transition-all duration-500 border-2",
                                         isLocked
                                             ? "bg-rose-500/10 border-rose-500/30 text-rose-500"
-                                            : "bg-amber-500/10 border-amber-500/30 text-amber-500 group-hover:bg-amber-500 group-hover:text-black group-hover:shadow-[0_0_30px_rgba(245,158,11,0.4)]"
+                                            : "bg-amber-500/10 border-amber-500/30 text-amber-500 group-hover:bg-amber-500 group-hover:text-black group-hover:"
                                     )}>
                                         {isLocked ? <Lock size={28} /> : <HardDrive size={28} />}
                                     </div>

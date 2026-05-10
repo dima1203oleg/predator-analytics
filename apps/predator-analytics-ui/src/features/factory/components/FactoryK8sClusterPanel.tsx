@@ -52,7 +52,7 @@ export const FactoryK8sClusterPanel: React.FC<FactoryK8sClusterPanelProps> = ({
                 <tr key={pod.id} className="hover:bg-white/5 transition-colors group">
                   <td className="p-4">
                     <div className="flex items-center gap-3">
-                      <div className={cn("w-2 h-2 rounded-full", pod.status === 'Running' ? "bg-emerald-500 shadow-[0_0_10px_#10b981]" : "bg-rose-500 animate-pulse")} />
+                      <div className={cn("w-2 h-2 rounded-full", pod.status === 'Running' ? "bg-emerald-500 shadow-[0_0_10px_#10b981]" : "bg-rose-500 ")} />
                       <div>
                         <div className="text-[13px] font-bold text-white flex items-center gap-2">
                           {pod.name}
@@ -132,7 +132,7 @@ export const FactoryK8sClusterPanel: React.FC<FactoryK8sClusterPanelProps> = ({
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 300 }}
             exit={{ opacity: 0, height: 0 }}
-            className="w-full bg-slate-950/90 border border-emerald-500/30 rounded-xl overflow-hidden flex flex-col shadow-[0_0_30px_rgba(16,185,129,0.1)] relative"
+            className="w-full bg-slate-950/90 border border-emerald-500/30 rounded-xl overflow-hidden flex flex-col  relative"
           >
             <div className="px-4 py-2 border-b border-emerald-500/20 bg-emerald-500/5 flex items-center justify-between">
               <div className="flex items-center gap-2 text-emerald-400 font-mono text-[10px] uppercase font-black tracking-widest">

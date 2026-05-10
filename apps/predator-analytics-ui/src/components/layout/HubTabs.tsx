@@ -31,7 +31,7 @@ export const HubTabs: React.FC<HubTabsProps> = ({
   const styles = navAccentStyles[accent];
 
   return (
-    <div className={cn("flex items-center gap-2 p-1 bg-slate-950/40 backdrop-blur-md border border-slate-800/50 rounded-xl", className)}>
+    <div className={cn("flex items-center gap-2 p-1 bg-slate-950/60 border border-slate-800/50 rounded-xl", className)}>
       {tabs.map((tab) => {
         const isActive = activeTab === tab.id;
         
@@ -57,7 +57,7 @@ export const HubTabs: React.FC<HubTabsProps> = ({
                 className={cn(
                   "absolute inset-0 border rounded-lg",
                   styles.sectionBorder,
-                  "bg-white/5 shadow-[0_0_15px_rgba(255,255,255,0.05)]"
+                  "bg-white/5"
                 )}
                 initial={false}
                 transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}

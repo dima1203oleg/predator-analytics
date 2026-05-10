@@ -103,8 +103,8 @@ export const DataReactorCore: React.FC<ReactorProps> = ({
             <div className="absolute top-6 right-6 z-50 flex gap-4">
                 <button
                     onClick={() => setXrayMode(!xrayMode)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg border backdrop-blur-md transition-all ${xrayMode
-                        ? 'bg-blue-500/20 border-blue-500/50 text-blue-400 shadow-[0_0_20px_rgba(59,130,246,0.3)]'
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg border  transition-all ${xrayMode
+                        ? 'bg-blue-500/20 border-blue-500/50 text-blue-400 '
                         : 'bg-slate-900/80 border-slate-700 text-slate-400 hover:text-white'
                         }`}
                 >
@@ -197,7 +197,7 @@ export const DataReactorCore: React.FC<ReactorProps> = ({
 
                     {/* Incoming Main Payload Stream (From MinIO) */}
                     {isActive && (
-                        <div className="absolute -top-[140px] left-1/2 -translate-x-1/2 w-4 h-36 overflow-hidden mt-6 bg-[#0A0E17]/80 backdrop-blur-md rounded-full border-x border-[#0A0E17] z-0">
+                        <div className="absolute -top-[140px] left-1/2 -translate-x-1/2 w-4 h-36 overflow-hidden mt-6 bg-[#0A0E17]/80  rounded-full border-x border-[#0A0E17] z-0">
                             <motion.div className="w-full h-full bg-gradient-to-b from-transparent via-blue-500/80 to-blue-600 shadow-[0_0_20px_#3b82f6]"
                                 animate={{ y: ['-100%', '100%'] }} transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }} />
                         </div>
@@ -206,8 +206,8 @@ export const DataReactorCore: React.FC<ReactorProps> = ({
                     {/* MinIO Raw Data Source Node */}
                     <div className="absolute -top-[160px] left-1/2 -translate-x-1/2 z-30">
                         <motion.div
-                            className={`flex flex-col items-center justify-center p-3 rounded-xl border backdrop-blur-xl transition-all w-48 ${xrayMode ? 'bg-[#0A0E17]/90 hover:bg-[#0F172A]' : 'bg-slate-900/60'
-                                } ${isActive ? 'border-orange-500/50 shadow-[0_0_30px_rgba(249,115,22,0.3)]' : 'border-slate-800'}`}
+                            className={`flex flex-col items-center justify-center p-3 rounded-xl border  transition-all w-48 ${xrayMode ? 'bg-[#0A0E17]/90 hover:bg-[#0F172A]' : 'bg-slate-900/60'
+                                } ${isActive ? 'border-orange-500/50 ' : 'border-slate-800'}`}
                         >
                             <div className="flex items-center gap-2 mb-1 w-full justify-center">
                                 <Archive size={16} className={isActive ? 'text-orange-400' : 'text-slate-500'} />
@@ -238,7 +238,7 @@ export const DataReactorCore: React.FC<ReactorProps> = ({
                     return (
                         <div key={node.id} className={`absolute w-56 ${node.position} z-10 transition-all duration-500`}>
                             <motion.div
-                                className={`flex flex-col p-4 rounded-xl border backdrop-blur-xl transition-all ${xrayMode ? 'bg-[#0A0E17]/90 hover:bg-[#0F172A]' : node.bg
+                                className={`flex flex-col p-4 rounded-xl border  transition-all ${xrayMode ? 'bg-[#0A0E17]/90 hover:bg-[#0F172A]' : node.bg
                                     } ${node.border} ${isNodeActive ? `shadow-[0_0_30px_var(--glow)]` : ''}`}
                                 style={{ '--glow': node.color.replace('text-', '').replace('-400', '') } as any}
                                 whileHover={{ scale: 1.05, zIndex: 50 }}
@@ -320,9 +320,9 @@ export const DataReactorCore: React.FC<ReactorProps> = ({
 
             {/* Bottom State Footer */}
             <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-4">
-                <div className={`flex items-center gap-2 px-6 py-2 rounded-full border backdrop-blur-md transition-colors ${isActive ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' : 'bg-slate-900/80 border-slate-800 text-slate-600'
+                <div className={`flex items-center gap-2 px-6 py-2 rounded-full border  transition-colors ${isActive ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' : 'bg-slate-900/80 border-slate-800 text-slate-600'
                     }`}>
-                    <Server size={14} className={isActive ? 'animate-pulse' : ''} />
+                    <Server size={14} className={isActive ? '' : ''} />
                     <span className="text-[10px] uppercase font-black tracking-widest">
                         Стан Системи: {isActive ? 'СИНХРОНІЗАЦІЯ МАНІФЕСТУ' : 'ОЧІКУВАННЯ ДАНИХ'}
                     </span>

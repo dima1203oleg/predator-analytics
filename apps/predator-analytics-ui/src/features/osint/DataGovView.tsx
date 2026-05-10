@@ -89,9 +89,9 @@ export default function DataGovView() {
                      title={
                        <div className="flex items-center gap-10">
                           <div className="relative group">
-                             <div className="absolute inset-0 bg-blue-600/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                             <div className="absolute inset-0 bg-blue-600/20 blur-3xl rounded-full scale-150 " />
                              <div className="relative p-7 bg-black border border-blue-900/40 rounded-[2.5rem] shadow-2xl">
-                                <Globe size={42} className="text-blue-500 shadow-[0_0_15px_rgba(14,165,233,0.5)]" />
+                                <Globe size={42} className="text-blue-500 " />
                              </div>
                           </div>
                           <div className="space-y-2">
@@ -131,7 +131,7 @@ export default function DataGovView() {
                    {/* SEARCH HUD */}
                    <div className="relative group max-w-5xl mx-auto w-full">
                       <div className="absolute inset-0 bg-blue-600/20 blur-[120px] opacity-0 group-focus-within:opacity-100 transition-opacity duration-1000" />
-                      <div className="relative bg-black/60 border-2 border-white/[0.04] p-4 rounded-[4rem] backdrop-blur-3xl shadow-3xl flex items-center gap-10 group focus-within:border-blue-500/40 transition-all duration-700">
+                      <div className="relative bg-black/60 border-2 border-white/[0.04] p-4 rounded-[4rem]  shadow-3xl flex items-center gap-10 group focus-within:border-blue-500/40 transition-all duration-700">
                          <div className="pl-10 text-slate-800 group-focus-within:text-blue-500 transition-colors duration-700">
                             <Search size={36} />
                          </div>
@@ -187,7 +187,7 @@ export default function DataGovView() {
                       <AnimatePresence>
                          {selectedDataset && (
                            <motion.div initial={{ opacity: 0, x: 100 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 100 }} className="col-span-12 lg:col-span-5">
-                              <TacticalCard variant="holographic" className="p-16 border-2 border-blue-500/20 rounded-[4rem] bg-black/80 backdrop-blur-3xl shadow-3xl space-y-12 sticky top-12">
+                              <TacticalCard variant="holographic" className="p-16 border-2 border-blue-500/20 rounded-[4rem] bg-black/80  shadow-3xl space-y-12 sticky top-12">
                                  <div className="flex justify-between items-start">
                                     <div className="space-y-2">
                                        <Badge className="bg-blue-600/10 text-blue-500 border border-blue-500/30 px-4 py-1.5 text-[9px] font-black uppercase italic rounded-lg">DATASET_PASSPORT</Badge>

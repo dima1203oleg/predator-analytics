@@ -57,7 +57,7 @@ const ProviderCard: React.FC<{ provider: LLMProvider; onRefresh: () => void }> =
     <motion.div
       whileHover={{ y: -5, scale: 1.02 }}
       className={cn(
-        "relative rounded-[32px] p-8 border backdrop-blur-3xl transition-all duration-700 shadow-2xl group overflow-hidden",
+        "relative rounded-[32px] p-8 border  transition-all duration-700 shadow-2xl group overflow-hidden",
         provider.status === 'online' ? 'bg-emerald-500/5 border-emerald-500/20 shadow-emerald-500/10' :
           provider.status === 'degraded' ? 'bg-amber-500/5 border-amber-500/20 shadow-amber-500/10' :
             'bg-slate-900/40 border-white/5'
@@ -220,7 +220,7 @@ const FallbackChainVisualization: React.FC<{ chain: FallbackChainStep[] }> = ({ 
               <div className="flex items-center gap-3 relative z-10">
                 <div className={cn(
                   "w-2.5 h-2.5 rounded-full",
-                  step.status === 'active' ? 'bg-emerald-500 animate-pulse shadow-[0_0_10px_#10b981]' :
+                  step.status === 'active' ? 'bg-emerald-500  shadow-[0_0_10px_#10b981]' :
                     step.status === 'failed' ? 'bg-rose-500' : 'bg-slate-500'
                 )} />
                 <span className="text-[11px] font-black uppercase tracking-[0.3em] font-display">{step.provider}</span>
@@ -298,9 +298,9 @@ export const LLMHealthMonitor: React.FC<{ compact?: boolean }> = ({ compact = fa
 
   if (compact) {
     return (
-      <div className="flex items-center gap-6 px-6 py-3 rounded-[24px] bg-slate-950/80 border border-white/5 backdrop-blur-3xl shadow-2xl">
+      <div className="flex items-center gap-6 px-6 py-3 rounded-[24px] bg-slate-950/80 border border-white/5  shadow-2xl">
         <div className="flex items-center gap-3">
-          <Brain size={16} className="text-purple-400 drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]" />
+          <Brain size={16} className="text-purple-400 " />
           <span className="text-[10px] font-black text-white uppercase tracking-widest">Gateway</span>
         </div>
         <div className="flex items-center gap-2">

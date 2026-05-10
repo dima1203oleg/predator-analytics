@@ -42,7 +42,7 @@ import { useBackendStatus } from '../../hooks/useBackendStatus';
 const PredictionCard = ({ scenario }: { scenario: Scenario }) => (
   <TacticalCard variant="premium" className="group">
     <div className="flex justify-between items-start mb-4">
-      <div className="h-10 w-10 rounded-xl bg-slate-900 border border-white/10 flex items-center justify-center shadow-[0_0_15px_rgba(244,63,94,0.1)]">
+      <div className="h-10 w-10 rounded-xl bg-slate-900 border border-white/10 flex items-center justify-center ">
         <Brain className="w-5 h-5 text-rose-500" />
       </div>
       <Badge className={cn(
@@ -145,8 +145,8 @@ export default function PredictiveNexusView() {
                             { label: stats?.last_sync ? `SYNC: ${formatDistanceToNow(new Date(stats.last_sync), { locale: uk, addSuffix: true })}` : 'СИНХРОНІЗАЦІЯ...', color: 'primary', icon: <RefreshCw size={10} /> },
                         ]}
                         actions={
-                            <Button onClick={startScan} disabled={isScanning} className="bg-rose-600 hover:bg-rose-500 text-slate-950 font-black gap-2 border border-rose-400 shadow-[0_0_20px_rgba(244,63,94,0.3)]">
-                                <Zap size={16} className={isScanning ? "animate-pulse" : ""} />
+                            <Button onClick={startScan} disabled={isScanning} className="bg-rose-600 hover:bg-rose-500 text-slate-950 font-black gap-2 border border-rose-400 ">
+                                <Zap size={16} className={isScanning ? "" : ""} />
                                 {isScanning ? "КВАНТУВАННЯ..." : "СИНТЕЗУВАТИ П ЕКОГНІЦІЮ"}
                             </Button>
                         }
@@ -155,7 +155,7 @@ export default function PredictiveNexusView() {
                     <div className="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-6 mt-6 overflow-hidden">
                         {/* Ліву колонку: OODA Loop */}
                         <div className="lg:col-span-1 flex flex-col gap-6">
-                            <div className="bg-black/40 border border-rose-900/30 rounded-xl p-6 backdrop-blur-md shadow-[0_0_30px_rgba(244,63,94,0.02)]">
+                            <div className="bg-black/40 border border-rose-900/30 rounded-xl p-6  ">
                                 <h3 className="text-sm font-black text-rose-500 uppercase tracking-widest mb-4 flex items-center gap-2">
                                     <Bot size={16} /> ЦИКЛ OODA
                                 </h3>
@@ -171,7 +171,7 @@ export default function PredictiveNexusView() {
                                 </div>
                             </div>
 
-                            <div className="bg-black/40 border border-white/10 rounded-xl p-6 backdrop-blur-md flex-1">
+                            <div className="bg-black/40 border border-white/10 rounded-xl p-6  flex-1">
                                 <h3 className="text-sm font-black text-slate-300 uppercase tracking-widest mb-4 flex items-center gap-2">
                                     <TrendingUp size={16} />ПРОГНОЗ РЕСУРСІВ
                                 </h3>
@@ -196,10 +196,10 @@ export default function PredictiveNexusView() {
 
                         {/* Центральна колонка: Topology & Dynamics */}
                         <div className="lg:col-span-2 flex flex-col gap-6 min-h-0">
-                            <div className="bg-black/60 border border-white/10 rounded-xl backdrop-blur-lg">
+                            <div className="bg-black/60 border border-white/10 rounded-xl ">
                                 <ClusterTopology />
                             </div>
-                            <div className="bg-black/60 border border-white/10 rounded-xl p-6 backdrop-blur-lg flex-1 overflow-hidden flex flex-col">
+                            <div className="bg-black/60 border border-white/10 rounded-xl p-6  flex-1 overflow-hidden flex flex-col">
                                 <h3 className="text-sm font-black text-rose-400 uppercase tracking-widest mb-4 flex items-center gap-2">
                                     <Activity size={16} /> ДИНАМІКА КЛАСТЕ А (24г)
                                 </h3>

@@ -142,7 +142,7 @@ export default function FactoryStudio() {
           className="relative z-10 h-full w-full flex flex-col"
         >
           {/* Header */}
-          <div className="p-6 border-b border-white/10 bg-black/40 backdrop-blur-xl">
+          <div className="p-6 border-b border-white/10 bg-black/40 ">
             <ViewHeader
               title="Студія Фабрики"
               subtitle="Карта Знань, Патерни та Тренування Моделей"
@@ -151,7 +151,7 @@ export default function FactoryStudio() {
           </div>
 
           {/* Tabs */}
-          <div className="px-6 pt-4 border-b border-white/5 bg-black/20 backdrop-blur-lg">
+          <div className="px-6 pt-4 border-b border-white/5 bg-black/20 ">
             <div className="flex items-center gap-4 pb-4 overflow-x-auto no-scrollbar">
               {(['overview', 'knowledge-map', 'patterns', 'training', 'test'] as const).map((tab) => (
                 <button

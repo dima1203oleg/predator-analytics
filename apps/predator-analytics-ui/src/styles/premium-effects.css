@@ -840,47 +840,13 @@
   animation: scanline-fast 4s linear infinite;
 }
 
-/* ── ELITE GLINT EFFECT ── */
-@keyframes glint-sweep {
-  0% { transform: translateX(-200%) skewX(-25deg); }
-  100% { transform: translateX(300%) skewX(-25deg); }
-}
-
-.glint-elite {
-  position: relative;
-  overflow: hidden;
-}
-
-.glint-elite::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 40%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.08),
-    rgba(255, 255, 255, 0.12),
-    rgba(255, 255, 255, 0.08),
-    transparent
-  );
-  animation: glint-sweep var(--glint-speed) cubic-bezier(0.4, 0, 0.2, 1) infinite;
-  pointer-events: none;
-}
-
-/* ── CHROMATIC ABERRATION ── */
-.chromatic-elite {
-  text-shadow: 
-    var(--chromatic-offset) 0 rgba(244, 63, 94, 0.5),
-    calc(var(--chromatic-offset) * -1) 0 rgba(6, 182, 212, 0.5);
-  animation: chromatic-pulse 4s ease-in-out infinite;
-}
-
-@keyframes chromatic-pulse {
-  0%, 100% { text-shadow: var(--chromatic-offset) 0 rgba(244, 63, 94, 0.3), calc(var(--chromatic-offset) * -1) 0 rgba(6, 182, 212, 0.3); }
-  50% { text-shadow: calc(var(--chromatic-offset) * 1.5) 0 rgba(244, 63, 94, 0.6), calc(var(--chromatic-offset) * -1.5) 0 rgba(6, 182, 212, 0.6); }
+/* ── ELITE HEADING ── */
+.elite-heading {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #f8fafc;
+  text-transform: uppercase;
 }
 
 /* ── CYBER SCAN GRID ── */

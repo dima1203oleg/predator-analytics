@@ -203,7 +203,7 @@ const ActivityView: React.FC = () => {
       <div className="relative z-10 max-w-[1700px] mx-auto p-4 sm:p-10 space-y-12">
         <ViewHeader
           title="ЛОГ_СУВЕ ЕННОЇ_АКТИВНОСТІ"
-          icon={<Activity size={24} className="text-yellow-500 drop-shadow-[0_0_15px_rgba(99,102,241,0.6)]" />}
+          icon={<Activity size={24} className="text-yellow-500 " />}
           breadcrumbs={['PREDATOR', 'СИСТЕМА', 'АКТИВНІСТЬ']}
           stats={[
             { label: 'ПОДІЙ_СЬОГОДНІ', value: String(events.length), color: 'primary', icon: <Boxes size={14} /> },
@@ -221,7 +221,7 @@ const ActivityView: React.FC = () => {
         />
 
         {/* Global Filters */}
-        <div className="flex flex-wrap items-center gap-3 p-1.5 bg-slate-900/40 backdrop-blur-3xl rounded-[28px] border border-white/5 w-fit">
+        <div className="flex flex-wrap items-center gap-3 p-1.5 bg-slate-900/40  rounded-[28px] border border-white/5 w-fit">
           <button
             onClick={() => setActiveFilter('all')}
             className={cn(
@@ -262,7 +262,7 @@ const ActivityView: React.FC = () => {
               <motion.div animate={{ rotate: 360 }} transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}>
                 <RefreshCw size={48} className="text-yellow-500 opacity-20" />
               </motion.div>
-              <p className="text-yellow-400 font-black tracking-[0.3em] uppercase text-xs animate-pulse font-mono">СКАНОГ АМУВАННЯ_ЧАСУ...</p>
+              <p className="text-yellow-400 font-black tracking-[0.3em] uppercase text-xs  font-mono">СКАНОГ АМУВАННЯ_ЧАСУ...</p>
             </div>
           ) : filteredEvents.length === 0 ? (
             <div className="py-40 flex flex-col items-center justify-center bg-slate-900/10 rounded-[48px] border-2 border-dashed border-white/5 relative overflow-hidden">

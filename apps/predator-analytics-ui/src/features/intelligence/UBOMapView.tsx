@@ -144,7 +144,7 @@ const UBONodeCard: React.FC<{ node: UBONode; depth?: number }> = ({ node, depth 
         transition={{ delay: depth * 0.08 }}
         className={cn(
           "relative p-6 border-2 cursor-pointer group transition-all rounded-3xl shadow-2xl overflow-hidden",
-          "bg-black/60 backdrop-blur-xl",
+          "bg-black/60 ",
           node.type === 'offshore'
             ? "border-amber-500/30 hover:border-amber-500/50 shadow-amber-500/5"
             : node.sanctioned
@@ -313,10 +313,10 @@ const UBOMapView: React.FC = () => {
       <div className="min-h-screen bg-[#020202] flex items-center justify-center">
         <div className="text-center space-y-8">
             <div className="relative inline-block">
-                <div className="absolute inset-0 bg-yellow-500/20 blur-4xl animate-pulse" />
+                <div className="absolute inset-0 bg-yellow-500/20 blur-4xl " />
                 <Radar className="text-yellow-500 animate-spin-slow relative" size={80} />
             </div>
-            <div className="text-[11px] font-black text-yellow-500 uppercase tracking-[0.5em] animate-pulse italic">
+            <div className="text-[11px] font-black text-yellow-500 uppercase tracking-[0.5em]  italic">
                 Scanning_Beneficiary_Nodes ... Initializing_Intel_Link
             </div>
         </div>
@@ -327,7 +327,7 @@ const UBOMapView: React.FC = () => {
   if (error || !uboData) {
     return (
       <div className="min-h-screen bg-[#020202] flex items-center justify-center p-12">
-        <div className="max-w-xl w-full bg-red-950/10 border-2 border-red-500/20 p-16 rounded-[4rem] text-center space-y-10 backdrop-blur-3xl">
+        <div className="max-w-xl w-full bg-red-950/10 border-2 border-red-500/20 p-16 rounded-[4rem] text-center space-y-10 ">
            <div className="w-24 h-24 bg-red-500/10 rounded-full flex items-center justify-center mx-auto border border-red-500/30">
              <AlertTriangle className="text-red-500" size={48} />
            </div>
@@ -361,13 +361,13 @@ const UBOMapView: React.FC = () => {
               <div className="relative">
                 <div className="absolute inset-0 bg-yellow-500/15 blur-3xl rounded-full" />
                 <div className="relative p-7 bg-black border-2 border-yellow-500/40 rounded-[3rem] shadow-4xl transform -rotate-3 hover:rotate-0 transition-all cursor-crosshair">
-                  <Network size={54} className="text-yellow-500 drop-shadow-[0_0_20px_rgba(212,175,55,0.4)]" />
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-600 rounded-full border-4 border-black animate-pulse" />
+                  <Network size={54} className="text-yellow-500 " />
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-600 rounded-full border-4 border-black " />
                 </div>
               </div>
               <div>
                 <div className="flex items-center gap-4 mb-3">
-                  <span className="w-1.5 h-1.5 bg-yellow-600 rounded-full animate-pulse shadow-[0_0_8px_#d4af37]" />
+                  <span className="w-1.5 h-1.5 bg-yellow-600 rounded-full  shadow-[0_0_8px_#d4af37]" />
                   <span className="text-[10px] font-black text-yellow-500/80 uppercase tracking-[0.6em]">
                     UBO · SOVEREIGN BENEFICIAL INTEL · v61.0-ELITE
                   </span>
@@ -385,7 +385,7 @@ const UBOMapView: React.FC = () => {
             { 
               label: nodeSource, 
               color: isOffline ? 'warning' : 'success', 
-              icon: <Zap size={10} className={isOffline ? 'animate-pulse' : ''} /> 
+              icon: <Zap size={10} className={isOffline ? '' : ''} /> 
             },
           ]}
           stats={[
@@ -429,7 +429,7 @@ const UBOMapView: React.FC = () => {
             <motion.div
               key={m.label}
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
-              className="p-10 bg-black/60 backdrop-blur-2xl border-2 border-white/5 hover:border-yellow-500/30 transition-all rounded-[3.5rem] shadow-2xl group relative overflow-hidden"
+              className="p-10 bg-black/60  border-2 border-white/5 hover:border-yellow-500/30 transition-all rounded-[3.5rem] shadow-2xl group relative overflow-hidden"
             >
               <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-yellow-500/40 to-transparent opacity-40" />
               <div className="absolute -right-6 -bottom-6 opacity-[0.03] group-hover:opacity-10 group-hover:scale-110 transition-all duration-[2s]">
@@ -442,7 +442,7 @@ const UBOMapView: React.FC = () => {
         </div>
 
         {/* ── ВИБІ  МОДУЛЮ ELITE ── */}
-        <div className="flex gap-3 p-3 bg-black border-2 border-white/5 rounded-[2.5rem] w-fit shadow-4xl backdrop-blur-3xl">
+        <div className="flex gap-3 p-3 bg-black border-2 border-white/5 rounded-[2.5rem] w-fit shadow-4xl ">
           {views.map(v => (
             <button
               key={v.id}
@@ -474,7 +474,7 @@ const UBOMapView: React.FC = () => {
             {activeView === 'ubo-tree' && (
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
                 {/* Граф */}
-                <div className="lg:col-span-8 bg-black/60 backdrop-blur-3xl border-2 border-yellow-500/10 p-12 rounded-[4rem] shadow-4xl relative overflow-hidden">
+                <div className="lg:col-span-8 bg-black/60  border-2 border-yellow-500/10 p-12 rounded-[4rem] shadow-4xl relative overflow-hidden">
                   <div className="absolute top-0 right-0 p-32 opacity-[0.02] pointer-events-none">
                      <Building2 size={500} className="text-yellow-500" />
                   </div>
@@ -495,7 +495,7 @@ const UBOMapView: React.FC = () => {
                 {/* Права панель */}
                 <div className="lg:col-span-4 space-y-8">
                   {/* Підсумок UBO */}
-                  <div className="bg-black/60 border-2 border-white/5 p-10 rounded-[3rem] shadow-2xl relative overflow-hidden backdrop-blur-xl">
+                  <div className="bg-black/60 border-2 border-white/5 p-10 rounded-[3rem] shadow-2xl relative overflow-hidden ">
                     <div className="absolute top-0 left-0 w-1.5 h-full bg-yellow-500 opacity-20" />
                     <h3 className="text-[11px] font-black text-slate-600 uppercase tracking-[0.6em] mb-8 italic">CORE_BENEFICIARIES</h3>
                     <div className="space-y-5">
@@ -530,13 +530,13 @@ const UBOMapView: React.FC = () => {
                   </div>
 
                   {/* 🤖 Sovereign AI UBO Analysis */}
-                  <div className="relative group overflow-hidden rounded-[3.5rem] border-2 border-yellow-500/30 bg-gradient-to-br from-yellow-500/10 via-black/40 to-[#020202] p-10 shadow-4xl backdrop-blur-3xl">
+                  <div className="relative group overflow-hidden rounded-[3.5rem] border-2 border-yellow-500/30 bg-gradient-to-br from-yellow-500/10 via-black/40 to-[#020202] p-10 shadow-4xl ">
                     <div className="absolute top-0 right-0 p-12 opacity-10 pointer-events-none group-hover:scale-125 transition-transform duration-[8s]">
                       <Fingerprint size={280} className="text-yellow-500" />
                     </div>
                     <div className="relative z-10 space-y-8">
                       <div className="flex items-center gap-6">
-                        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-yellow-500 text-black shadow-[0_0_30px_rgba(212,175,55,0.4)]">
+                        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-yellow-500 text-black ">
                           <Fingerprint size={32} />
                         </div>
                         <h3 className="text-2xl font-black text-white uppercase tracking-tighter italic">NEURAL_SHADOW_LINK</h3>
@@ -550,7 +550,7 @@ const UBOMapView: React.FC = () => {
                   {/* PEP статус ELITE */}
                   <div className="bg-[#0f0a02] border-2 border-yellow-500/10 p-10 rounded-[3.5rem] shadow-4xl relative overflow-hidden">
                     <div className="absolute top-0 right-0 p-6 opacity-10">
-                       <Zap size={40} className="text-yellow-600 animate-pulse" />
+                       <Zap size={40} className="text-yellow-600 " />
                     </div>
                     <h3 className="text-[11px] font-black text-yellow-500/60 uppercase tracking-[0.6em] mb-8 flex items-center gap-4 italic font-bold">
                       <Fingerprint size={18} /> PEP_CRITICAL_ALERTS
@@ -577,10 +577,10 @@ const UBOMapView: React.FC = () => {
 
             {/* PEP Т ЕКЕ  ELITE */}
             {activeView === 'pep-tracker' && (
-              <div className="bg-black/80 backdrop-blur-3xl border-2 border-white/5 rounded-[4rem] shadow-4xl overflow-hidden relative">
+              <div className="bg-black/80  border-2 border-white/5 rounded-[4rem] shadow-4xl overflow-hidden relative">
                 <div className="p-10 border-b border-white/5 flex items-center justify-between relative z-10">
                   <h2 className="text-[13px] font-black text-yellow-500/70 uppercase tracking-[0.6em] flex items-center gap-6 italic">
-                    <Fingerprint size={24} className="text-yellow-500 animate-pulse" />
+                    <Fingerprint size={24} className="text-yellow-500 " />
                     SOVEREIGN_PEP_REGISTRY
                   </h2>
                   <div className="px-6 py-2 bg-yellow-500/10 border border-yellow-500/20 rounded-full">
@@ -670,7 +670,7 @@ const UBOMapView: React.FC = () => {
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: i * 0.1 }}
-                    className="p-12 border-2 border-amber-500/10 hover:border-amber-500/40 transition-all bg-black/60 backdrop-blur-3xl rounded-[4rem] shadow-4xl group relative overflow-hidden"
+                    className="p-12 border-2 border-amber-500/10 hover:border-amber-500/40 transition-all bg-black/60  rounded-[4rem] shadow-4xl group relative overflow-hidden"
                   >
                     <div className="absolute top-0 left-0 w-2 h-full bg-amber-600 opacity-20" />
                     <div className="flex items-start justify-between mb-10">
@@ -687,7 +687,7 @@ const UBOMapView: React.FC = () => {
                       <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.5em] italic mb-6">CRITICAL_EVIDENCE_STREAMS:</p>
                       {s.evidence.map((e, j) => (
                         <div key={j} className="flex items-center gap-5 p-4 border border-white/5 bg-white/[0.01] rounded-2xl">
-                          <AlertTriangle size={18} className="text-amber-700 shrink-0 animate-pulse" />
+                          <AlertTriangle size={18} className="text-amber-700 shrink-0 " />
                           <span className="text-[12px] text-slate-400 font-black italic tracking-tight uppercase">{e}</span>
                         </div>
                       ))}

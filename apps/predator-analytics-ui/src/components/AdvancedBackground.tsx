@@ -48,7 +48,7 @@ export const AdvancedBackground: React.FC<AdvancedBackgroundProps> = ({
             case 'vigilance': return 'bg-amber-600/10';
             case 'threat':    return 'bg-rose-600/15';
             case 'stealth':   return 'bg-emerald-600/10';
-            case 'sovereign': return 'bg-rose-500/20 shadow-[0_0_150px_rgba(244,63,94,0.1)]';
+            case 'sovereign': return 'bg-rose-500/20 ';
             default:          return 'bg-blue-600/10';
         }
     };

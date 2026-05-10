@@ -23,9 +23,9 @@ export const InsightsPanel: React.FC = () => {
         <div className="flex flex-col h-full gap-4 pb-safe animate-in fade-in slide-in-from-bottom-8 duration-700">
             
             {/* Deep Search - Floating HUD Style */}
-            <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-1 shadow-lg relative group transition-all focus-within:border-cyan-500/50 focus-within:shadow-[0_0_20px_rgba(6,182,212,0.2)]">
+            <div className="bg-slate-900/60  border border-slate-700/50 rounded-2xl p-1 shadow-lg relative group transition-all focus-within:border-cyan-500/50 focus-within:">
                 <div className="relative flex items-center">
-                    <div className="absolute left-3 text-cyan-400 group-hover:animate-pulse transition-all">
+                    <div className="absolute left-3 text-cyan-400 group-hover: transition-all">
                         <Search size={18} />
                     </div>
                     <input 
@@ -40,7 +40,7 @@ export const InsightsPanel: React.FC = () => {
             </div>
 
             {/* Risk Radar Card */}
-            <div className="flex-1 bg-slate-900/40 backdrop-blur-md border border-slate-800/60 rounded-2xl p-5 shadow-2xl relative  panel-3d min-h-[250px] flex flex-col group">
+            <div className="flex-1 bg-slate-900/40  border border-slate-800/60 rounded-2xl p-5 shadow-2xl relative  panel-3d min-h-[250px] flex flex-col group">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500 opacity-50"></div>
                 <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-amber-500/5 rounded-full blur-3xl group-hover:bg-amber-500/10 transition-colors pointer-events-none"></div>
                 
@@ -51,7 +51,7 @@ export const InsightsPanel: React.FC = () => {
                         </h3>
                         <p className="text-[9px] text-slate-500 mt-0.5">Real-time threat vector analysis</p>
                     </div>
-                    <span className="text-[9px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-1 rounded-full font-bold animate-pulse shadow-[0_0_10px_rgba(245,158,11,0.2)]">
+                    <span className="text-[9px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-1 rounded-full font-bold  ">
                         HIGH ALERT
                     </span>
                 </div>

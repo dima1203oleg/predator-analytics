@@ -152,7 +152,7 @@ const CasesView: React.FC = () => {
             title={
               <div className="flex items-center gap-8">
                 <div className="relative group">
-                  <div className="absolute inset-0 bg-blue-500/20 blur-[60px] rounded-full scale-150 animate-pulse" />
+                  <div className="absolute inset-0 bg-blue-500/20 blur-[60px] rounded-full scale-150 " />
                   <div className="relative p-6 bg-black border-2 border-blue-500/40 rounded-[2rem] shadow-2xl transform -rotate-2 hover:rotate-0 transition-all duration-700">
                     <Briefcase size={32} className="text-blue-500" />
                   </div>
@@ -195,7 +195,7 @@ const CasesView: React.FC = () => {
           />
 
           {/* SEARCH & FILTER STRATEGIC HUB */}
-          <div className="flex flex-col xl:flex-row gap-8 items-center bg-black/40 p-8 rounded-[3rem] border-2 border-white/[0.03] shadow-4xl backdrop-blur-3xl">
+          <div className="flex flex-col xl:flex-row gap-8 items-center bg-black/40 p-8 rounded-[3rem] border-2 border-white/[0.03] shadow-4xl ">
             <div className="flex-1 relative group w-full">
               <Search className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-blue-500 transition-colors" size={24} />
               <input
@@ -228,7 +228,7 @@ const CasesView: React.FC = () => {
             >
               <div className="absolute top-0 right-0 w-64 h-64 bg-amber-600/10 blur-[80px] -translate-y-1/2 translate-x-1/2" />
               <div className="flex flex-col md:flex-row items-center gap-10 relative z-10">
-                <div className="p-6 bg-amber-600/20 rounded-[2rem] border-2 border-amber-600/30 shadow-[0_0_30px_rgba(225,29,72,0.3)] animate-pulse">
+                <div className="p-6 bg-amber-600/20 rounded-[2rem] border-2 border-amber-600/30  ">
                   <Siren size={32} className="text-amber-500" />
                 </div>
                 <div className="flex-1">
@@ -258,13 +258,13 @@ const CasesView: React.FC = () => {
                 <div className="relative">
                   <div className="w-[100px] h-[100px] rounded-full border-4 border-blue-500/20 border-t-blue-500 animate-spin" />
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <Database className="text-blue-500 animate-pulse" size={32} />
+                    <Database className="text-blue-500 " size={32} />
                   </div>
                 </div>
-                <p className="text-blue-500 font-black text-[12px] animate-pulse uppercase tracking-[0.4em] italic leading-none">FETCHING_INVESTIGATION_LOGS // STAND_BY...</p>
+                <p className="text-blue-500 font-black text-[12px]  uppercase tracking-[0.4em] italic leading-none">FETCHING_INVESTIGATION_LOGS // STAND_BY...</p>
               </div>
             ) : filteredCases.length === 0 ? (
-              <div className="py-40 text-center bg-black/40 border-4 border-dashed border-white/[0.04] rounded-[5rem] backdrop-blur-3xl shadow-4xl space-y-8">
+              <div className="py-40 text-center bg-black/40 border-4 border-dashed border-white/[0.04] rounded-[5rem]  shadow-4xl space-y-8">
                 <Archive size={64} className="text-slate-800 mx-auto opacity-20" />
                 <div className="space-y-3">
                   <h3 className="text-4xl font-black text-slate-700 uppercase tracking-widest italic shadow-sm">ЧЕ ГА_ПО ОЖНЯ</h3>
@@ -304,7 +304,7 @@ const CasesView: React.FC = () => {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onClick={() => setIsCreateModalOpen(false)}
-                className="absolute inset-0 bg-black/95 backdrop-blur-2xl"
+                className="absolute inset-0 bg-black/95 "
               />
               <motion.div
                 initial={{ opacity: 0, scale: 0.9, rotateX: -20 }}

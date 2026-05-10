@@ -26,8 +26,8 @@ export const ExplorerShell: React.FC<ExplorerShellProps> = ({
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_-10%,rgba(168,85,247,0.15),transparent_40%)]" />
           
           <div className="flex flex-col md:flex-row items-start md:items-center gap-8 relative z-10">
-            <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-purple-500/20 to-blue-500/20 border border-purple-500/40 flex items-center justify-center shadow-[0_0_30px_rgba(168,85,247,0.3)] group-hover:scale-105 transition-transform duration-500">
-              <Sparkles className="w-12 h-12 text-purple-400 drop-shadow-[0_0_10px_rgba(168,85,247,0.8)]" />
+            <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-purple-500/20 to-blue-500/20 border border-purple-500/40 flex items-center justify-center  group-hover:scale-105 transition-transform duration-500">
+              <Sparkles className="w-12 h-12 text-purple-400 " />
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">
@@ -81,7 +81,7 @@ export const ExplorerShell: React.FC<ExplorerShellProps> = ({
             >
               <div className="flex items-center gap-5">
                 <div className="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Search className="w-6 h-6 text-purple-400 drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]" />
+                  <Search className="w-6 h-6 text-purple-400 " />
                 </div>
                 <div>
                   <p className="text-base font-black text-white italic uppercase tracking-tight">{search.query}</p>

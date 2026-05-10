@@ -128,7 +128,7 @@ export const ExplainabilityPanel: React.FC<ExplainabilityPanelProps> = ({
   const riskColor = getRiskColor(riskScore);
 
   return (
-    <div className="bg-slate-900/90 border border-slate-700/50 rounded-2xl backdrop-blur-xl overflow-hidden">
+    <div className="bg-slate-900/90 border border-slate-700/50 rounded-2xl  overflow-hidden">
       {/* Header */}
       <div className="p-6 border-b border-slate-800">
         <div className="flex items-center justify-between">

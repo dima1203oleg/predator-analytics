@@ -53,12 +53,12 @@ export const CyberTerminal: React.FC = () => {
                         initial={{ opacity: 0, scale: 0.9, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                        className="bg-slate-950/95 border border-emerald-500/30 w-[400px] h-[350px] rounded-2xl shadow-2xl backdrop-blur-xl flex flex-col overflow-hidden mb-2"
+                        className="bg-slate-950/95 border border-emerald-500/30 w-[400px] h-[350px] rounded-2xl shadow-2xl  flex flex-col overflow-hidden mb-2"
                     >
                         <div className="bg-emerald-500/10 p-4 border-b border-emerald-500/20 flex items-center justify-between">
                             <div className="flex items-center gap-3">
                                 <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center">
-                                    <Activity className="h-4 w-4 text-emerald-500 animate-pulse" />
+                                    <Activity className="h-4 w-4 text-emerald-500 " />
                                 </div>
                                 <div className="flex flex-col">
                                     <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500">АЗ _ТЕРМІНАЛ_v45.1</span>
@@ -80,7 +80,7 @@ export const CyberTerminal: React.FC = () => {
                                     <span className="text-slate-300">{log.message}</span>
                                 </div>
                             ))}
-                            <div className="flex items-center gap-1 text-emerald-500 animate-pulse mt-2">
+                            <div className="flex items-center gap-1 text-emerald-500  mt-2">
                                 <ChevronRight size={12} />
                                 <span className="w-1.5 h-4 bg-emerald-500/50" />
                             </div>
@@ -94,7 +94,7 @@ export const CyberTerminal: React.FC = () => {
                 <motion.button
                     onClick={() => navigate('/autonomy')}
                     whileHover={{ scale: 1.02 }}
-                    className="group flex items-center gap-3 pl-4 pr-3 py-2 bg-slate-900/95 backdrop-blur-md border border-amber-500/30 rounded-full shadow-xl hover:border-amber-500/60 transition-all"
+                    className="group flex items-center gap-3 pl-4 pr-3 py-2 bg-slate-900/95  border border-amber-500/30 rounded-full shadow-xl hover:border-amber-500/60 transition-all"
                 >
                     <div className="flex flex-col items-end">
                         <span className="text-[9px] font-black text-amber-400 uppercase tracking-widest flex items-center gap-1">
@@ -102,7 +102,7 @@ export const CyberTerminal: React.FC = () => {
                         </span>
                         <span className="text-xs font-bold text-white flex items-center gap-1">
                             ГЕН {azrStatus.generation}
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#4ade80]" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400  shadow-[0_0_8px_#4ade80]" />
                         </span>
                     </div>
                 </motion.button>

@@ -137,7 +137,7 @@ const DatabaseCard: React.FC<{ db: DatabaseStats; index: number }> = ({ db, inde
       transition={{ delay: index * 0.1, duration: 0.8 }}
       whileHover={{ scale: 1.02 }}
       className={cn(
-        "p-8 rounded-[40px] bg-slate-950/60 border backdrop-blur-3xl transition-all duration-700 shadow-2xl relative overflow-hidden group",
+        "p-8 rounded-[40px] bg-slate-950/60 border  transition-all duration-700 shadow-2xl relative overflow-hidden group",
         db.status === 'healthy' ? 'border-emerald-500/20' : 'border-rose-500/20'
       )}
     >
@@ -430,7 +430,7 @@ export const StorageAnalytics: React.FC = () => {
           </div>
         </div>
 
-        <div className="h-20 bg-slate-900/60 rounded-[32px] flex overflow-hidden border border-white/5 relative shadow-inner p-2 gap-1 backdrop-blur-3xl">
+        <div className="h-20 bg-slate-900/60 rounded-[32px] flex overflow-hidden border border-white/5 relative shadow-inner p-2 gap-1 ">
           {buckets.map((bucket, index) => {
             const percentage = (bucket.size / totalStorage) * 100;
             return (
@@ -451,7 +451,7 @@ export const StorageAnalytics: React.FC = () => {
               >
                 <div className="absolute inset-0 border border-white/10 rounded-2xl pointer-events-none" />
                 <div className="absolute inset-x-0 bottom-full mb-4 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20">
-                  <div className="bg-black/90 border border-white/10 rounded-2xl p-4 shadow-2xl backdrop-blur-xl scale-90 group-hover:scale-100 transition-transform origin-bottom">
+                  <div className="bg-black/90 border border-white/10 rounded-2xl p-4 shadow-2xl  scale-90 group-hover:scale-100 transition-transform origin-bottom">
                     <div className="text-[10px] font-black text-white uppercase tracking-widest mb-1">{bucket.name}</div>
                     <div className="text-[12px] font-black text-blue-400 font-mono italic">{formatBytes(bucket.size)}</div>
                     <div className="text-[8px] font-black text-slate-500 uppercase tracking-widest mt-1 italic">{percentage.toFixed(1)}% RATIO</div>

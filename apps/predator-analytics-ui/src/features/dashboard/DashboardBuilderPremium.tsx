@@ -325,7 +325,7 @@ const WidgetPicker: React.FC<WidgetPickerProps> = ({ isOpen, onClose, onAdd, isP
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 "
       onClick={onClose}
     >
       <motion.div
@@ -427,7 +427,7 @@ const DashboardBuilderPremium: React.FC = () => {
       </div>
 
       {/* Header */}
-      <header className="relative z-10 border-b border-white/5 bg-slate-950/80 backdrop-blur-xl">
+      <header className="relative z-10 border-b border-white/5 bg-slate-950/80 ">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -493,7 +493,7 @@ const DashboardBuilderPremium: React.FC = () => {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="relative z-10 border-b border-white/5 bg-slate-900/60 backdrop-blur-xl overflow-hidden"
+            className="relative z-10 border-b border-white/5 bg-slate-900/60  overflow-hidden"
           >
             <div className="max-w-7xl mx-auto px-6 py-3">
               <div className="flex items-center gap-4">

@@ -101,7 +101,7 @@ const InsightCard: React.FC<{
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className={cn(
-        "p-5 rounded-2xl border backdrop-blur-xl transition-all cursor-pointer",
+        "p-5 rounded-2xl border  transition-all cursor-pointer",
         `bg-${config.color}-500/5 border-${config.color}-500/20 hover:border-${config.color}-500/40`
       )}
       onClick={() => setIsExpanded(!isExpanded)}
@@ -304,7 +304,7 @@ export const AIInsightsPanel: React.FC<{
   };
 
   return (
-    <div className="bg-slate-950/80 border border-white/10 rounded-[32px] backdrop-blur-xl overflow-hidden">
+    <div className="bg-slate-950/80 border border-white/10 rounded-[32px]  overflow-hidden">
       {/* Header */}
       <div className="p-6 border-b border-white/5 flex items-center justify-between">
         <div className="flex items-center gap-4">

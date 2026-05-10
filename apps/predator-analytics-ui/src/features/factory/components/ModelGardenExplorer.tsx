@@ -76,7 +76,7 @@ export function ModelGardenExplorer() {
             >
               <div className="flex items-center justify-between mb-2">
                 <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">{model.category}</span>
-                {selected.id === model.id && <Zap size={12} className="text-blue-400 animate-pulse" />}
+                {selected.id === model.id && <Zap size={12} className="text-blue-400 " />}
               </div>
               <h4 className="text-xs font-black text-white uppercase mb-1">{model.name}</h4>
               <div className="flex gap-1 flex-wrap">

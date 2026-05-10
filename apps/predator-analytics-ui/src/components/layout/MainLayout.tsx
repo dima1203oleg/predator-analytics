@@ -98,15 +98,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       className="relative flex min-h-screen overflow-hidden bg-background text-foreground op-mode-transition"
     >
       <NeuralBackground />
-      <div className="pointer-events-none absolute inset-0 z-[2] bg-[radial-gradient(ellipse_100%_60%_at_50%_-10%,rgba(255,255,255,0.04),transparent_50%)]" />
-      <div className="bg-noise pointer-events-none absolute inset-0 z-[2] opacity-[0.025] mix-blend-overlay" />
-      <div className="op-scanline pointer-events-none absolute inset-0 z-[1]" />
-
-      <div className="op-data-streams opacity-[0.04]">
-        {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="op-stream" />
-        ))}
-      </div>
+      {/* фонова сітка через body */}
 
       {isMobileDrawerOpen && isMobile && (
         <div className="fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label="Мобільна навігація">
@@ -114,7 +106,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
             type="button"
             aria-label="Закрити навігацію"
             onClick={() => setIsMobileDrawerOpen(false)}
-            className="absolute inset-0 bg-slate-950/80 backdrop-blur-lg"
+            className="absolute inset-0 bg-slate-950/90"
           />
           <motion.div
             className="absolute left-0 top-0 h-full"
@@ -132,7 +124,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           type="button"
           aria-label="Відкрити меню"
           onClick={() => setIsMobileDrawerOpen(true)}
-          className="fixed left-4 top-3 z-[100] flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-slate-950/50 text-white backdrop-blur-md transition hover:bg-slate-900"
+          className="fixed left-4 top-3 z-[100] flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-slate-950/80 text-white transition hover:bg-slate-900"
         >
           <Menu className="h-5 w-5" />
         </button>
@@ -145,9 +137,17 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       <div className="relative z-10 flex h-screen min-w-0 flex-1 flex-col overflow-hidden">
         <Header />
         <WorkspaceBusinessStrip />
+        <div className="classification-banner">
+          <span className="classification-dot" />
+          <span>ЦІЛКОМ ТАЄМНО // СІ // ОСОБЛИВОЇ ВАЖЛИВОСТІ</span>
+          <span className="classification-dot" />
+          <span className="mx-2 opacity-40">|</span>
+          <span>PREDATOR ELITE v64.0-WRAITH</span>
+          <span className="mx-2 opacity-40">|</span>
+          <span>РІВЕНЬ ДОПУСКУ 6</span>
+          <span className="classification-dot" />
+        </div>
         <main className="relative flex-1 overflow-y-auto custom-scrollbar">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_16%,rgba(15,23,42,0.28),transparent_24%),radial-gradient(circle_at_100%_0%,rgba(8,47,73,0.18),transparent_30%)]" />
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(180deg,transparent,rgba(2,6,23,0.4))]" />
 
           <div className="relative mx-auto max-w-[1920px] px-3 sm:px-5 lg:px-7 py-5 xl:px-10 pb-16">
             <div className={`grid grid-cols-12 gap-6`}>
@@ -189,11 +189,11 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           borderTop: '1px solid rgba(255,255,255,0.05)'
         }}
       >
-        <div className="absolute left-0 right-0 top-0 h-px bg-gradient-to-r from-transparent via-sky-500/35 to-transparent shadow-[0_0_12px_rgba(56,189,248,0.25)]" />
+        <div className="absolute left-0 right-0 top-0 h-px bg-gradient-to-r from-transparent via-rose-500/20 to-transparent" />
 
         <div className="flex items-center gap-5 min-w-0 overflow-hidden relative z-10">
           <div className="flex items-center gap-1.5 shrink-0 px-2 py-0.5 rounded bg-black/40 border border-white/5 shadow-inner">
-            <div className={cn("h-1.5 w-1.5 rounded-full animate-pulse", isOffline ? "bg-amber-600 shadow-[0_0_6px_#d97706]" : "bg-yellow-500 shadow-[0_0_6px_#f59e0b]")} />
+            <div className={cn("h-1.5 w-1.5 rounded-full", isOffline ? "bg-amber-600" : "bg-yellow-500")} />
             <span className={cn("text-[8px] font-black uppercase tracking-[0.2em]", isOffline ? "text-amber-600/80" : "text-yellow-500/80")}>
               {isOffline ? 'СИСТЕМА_В_РЕЖИМІ_ВІДНОВЛЕННЯ' : 'СИСТЕМА_ОПТИМАЛЬНА'}
             </span>
@@ -220,7 +220,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
              <span className="text-[7px] font-black text-slate-600 uppercase tracking-widest flex items-center gap-1">КЛАСТЕ :</span>
              <div className="flex items-center gap-2">
                 {backendNodes.map(node => (
-                   <div key={node.id} className={cn("flex items-center gap-1.5 px-2 py-0.5 rounded-sm border transition-all duration-300", node.active ? "bg-amber-500/10 border-amber-500/30 shadow-[0_0_10px_rgba(245,158,11,0.1)]" : "opacity-30 border-white/5")}>
+                   <div key={node.id} className={cn("flex items-center gap-1.5 px-2 py-0.5 rounded-sm border transition-all duration-300", node.active ? "bg-amber-500/10 border-amber-500/30" : "opacity-30 border-white/5")}>
                       <div className={cn("w-1 h-1 rounded-full", node.status === 'online' ? "bg-emerald-500" : "bg-rose-500")} />
                       <span className={cn("text-[7px] font-black uppercase tracking-wider", node.active && "text-amber-500")}>{node.name}</span>
                    </div>
@@ -245,8 +245,8 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           </div>
 
           <div className="h-3.5 w-px bg-white/10" />
-          <div className="flex items-center gap-2 rounded border border-white/[0.08] bg-black/50 px-2 py-0.5 backdrop-blur-sm">
-            <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-sky-500 shadow-[0_0_10px_rgba(56,189,248,0.55)]" />
+          <div className="flex items-center gap-2 rounded border border-white/[0.08] bg-black/60 px-2 py-0.5">
+            <div className="h-1.5 w-1.5 rounded-full bg-rose-600" />
             <div className="text-[8px] font-black uppercase tracking-[0.28em] text-slate-500">
               PREDATOR <span className="font-bold text-slate-100">ELITE</span>{' '}
               <span className="ml-1 text-slate-600">v63.0</span>

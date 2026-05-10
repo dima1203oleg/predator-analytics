@@ -150,7 +150,7 @@ export default function ZradaControlView() {
              title={
                <div className="flex items-center gap-10">
                   <div className="relative group">
-                     <div className="absolute inset-0 bg-rose-600/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                     <div className="absolute inset-0 bg-rose-600/20 blur-3xl rounded-full scale-150 " />
                      <div className="relative p-7 bg-black border-2 border-rose-500/40 rounded-[2.5rem] shadow-4xl transform -rotate-2 hover:rotate-0 transition-all">
                         <ShieldX size={42} className="text-rose-600 shadow-[0_0_20px_#e11d48]" />
                      </div>
@@ -302,7 +302,7 @@ export default function ZradaControlView() {
                                          </div>
                                       </div>
                                       <div className="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden shadow-inner">
-                                         <motion.div initial={{ width: 0 }} animate={{ width: `${signal.confidence}%` }} className={cn("h-full shadow-[0_0_10px_rgba(225,29,72,0.4)]", signal.confidence > 80 ? "bg-rose-600" : "bg-rose-500/40")} />
+                                         <motion.div initial={{ width: 0 }} animate={{ width: `${signal.confidence}%` }} className={cn("h-full ", signal.confidence > 80 ? "bg-rose-600" : "bg-rose-500/40")} />
                                       </div>
                                    </div>
                                  ))}
@@ -323,8 +323,8 @@ export default function ZradaControlView() {
         {/* MODAL: ADD TARGET */}
         <AnimatePresence>
            {isAddingMode && (
-             <div className="fixed inset-0 z-[200] flex items-center justify-center p-8 bg-black/95 backdrop-blur-3xl">
-                <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="w-full max-w-2xl bg-[#020202] border-2 border-rose-500/20 p-12 rounded-[4.5rem] shadow-[0_0_100px_rgba(225,29,72,0.1)] space-y-10 relative overflow-hidden">
+             <div className="fixed inset-0 z-[200] flex items-center justify-center p-8 bg-black/95 ">
+                <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="w-full max-w-2xl bg-[#020202] border-2 border-rose-500/20 p-12 rounded-[4.5rem]  space-y-10 relative overflow-hidden">
                    <div className="absolute top-0 right-0 p-16 opacity-[0.02] pointer-events-none rotate-45">
                       <Plus size={300} className="text-rose-500" />
                    </div>

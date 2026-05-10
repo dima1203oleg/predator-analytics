@@ -111,7 +111,7 @@ export default function InfraView() {
           transition={{ duration: 0.5 }}
           className="relative z-10 h-full w-full flex flex-col"
         >
-          <div className="p-6 border-b border-rose-500/10 bg-black/60 backdrop-blur-2xl flex items-center justify-between">
+          <div className="p-6 border-b border-rose-500/10 bg-black/60  flex items-center justify-between">
             <ViewHeader
               title="Інфраструктура"
               subtitle="v61.0-ELITE • Моніторинг NVIDIA Server, MacBook та Google Colab"
@@ -130,11 +130,11 @@ export default function InfraView() {
                   className={cn(
                     "flex items-center gap-2 px-3 py-1.5 rounded-lg border cursor-pointer transition-all duration-300",
                     isFullyAutomated 
-                      ? "bg-rose-500/20 border-rose-500/30 text-rose-400 shadow-[0_0_15px_rgba(225,29,72,0.1)]" 
+                      ? "bg-rose-500/20 border-rose-500/30 text-rose-400 " 
                       : "bg-slate-800/40 border-slate-700/50 text-slate-400"
                   )}
                 >
-                  <Bot className={cn("w-4 h-4", isFullyAutomated && "animate-pulse text-rose-500")} />
+                  <Bot className={cn("w-4 h-4", isFullyAutomated && " text-rose-500")} />
                   <span className="text-[10px] font-black uppercase tracking-widest">
                     {isFullyAutomated ? "ПОВНИЙ АВТОПІЛОТ" : "ВТ УЧАННЯ ОПЕ АТО А"}
                   </span>
@@ -219,7 +219,7 @@ export default function InfraView() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   {/* Left Column */}
                   <div className="lg:col-span-2 space-y-6">
-                    <div className="bg-black/40 border border-white/5 rounded-xl p-6 backdrop-blur-sm">
+                    <div className="bg-black/40 border border-white/5 rounded-xl p-6 ">
                       <h3 className="text-lg font-black text-white mb-2 flex items-center gap-2 uppercase tracking-tight">
                         <Activity className="w-5 h-5 text-rose-500" /> ДИНАМІКА РЕСУРСІВ (24г)
                       </h3>
@@ -227,7 +227,7 @@ export default function InfraView() {
                       <ResourceDynamicsChart />
                     </div>
 
-                    <div className="bg-black/40 border border-white/5 rounded-xl p-6 backdrop-blur-sm">
+                    <div className="bg-black/40 border border-white/5 rounded-xl p-6 ">
                       <h3 className="text-lg font-black text-white mb-4 flex items-center gap-2 uppercase tracking-tight">
                         <DatabaseIcon className="w-5 h-5 text-rose-600" /> БД ТА СХОВИЩА
                       </h3>
@@ -238,7 +238,7 @@ export default function InfraView() {
                       )}
                     </div>
 
-                    <div className="bg-black/40 border border-white/5 rounded-xl p-6 backdrop-blur-sm">
+                    <div className="bg-black/40 border border-white/5 rounded-xl p-6 ">
                       <h3 className="text-lg font-black text-white mb-4 flex items-center gap-2 uppercase tracking-tight">
                         <DatabaseIcon className="w-5 h-5 text-rose-500" /> РОЗПОДІЛ СХОВИЩА
                       </h3>
@@ -248,7 +248,7 @@ export default function InfraView() {
 
                   {/* Right Column */}
                   <div className="space-y-6">
-                    <div className="bg-black/60 border border-white/10 rounded-xl p-6 backdrop-blur-md shadow-2xl">
+                    <div className="bg-black/60 border border-white/10 rounded-xl p-6  shadow-2xl">
                       <OODALoopPanel 
                         currentStatus={oodaStatus} 
                         activeIncidents={activeIncidents} 

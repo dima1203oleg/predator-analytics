@@ -45,7 +45,7 @@ const ScanningHUD: React.FC = () => {
             <motion.div
                 animate={{ y: ['-10%', '110%'] }}
                 transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
-                className="absolute left-0 w-full h-[1px] bg-rose-500/40 shadow-[0_0_15px_rgba(225,29,72,0.3)]"
+                className="absolute left-0 w-full h-[1px] bg-rose-500/40 "
             />
             <div className="absolute bottom-10 right-10 flex flex-col items-end gap-2 font-mono text-[7px] text-rose-500/30 uppercase italic font-bold">
                 <span>ДОСТУП_СЕКТОРУ: РІВЕНЬ_ELITE_SOVEREIGN</span>
@@ -113,7 +113,7 @@ const ManifestXrayTerminal: React.FC = () => {
                         <span className="uppercase tracking-widest">{line}</span>
                     </motion.div>
                 ))}
-                <div className="animate-pulse inline-block w-2 h-3 bg-rose-500/40 ml-2" />
+                <div className=" inline-block w-2 h-3 bg-rose-500/40 ml-2" />
             </div>
         </div>
     );
@@ -250,7 +250,7 @@ export default function CustomsIntelligenceView() {
              title={
                <div className="flex items-center gap-10">
                   <div className="relative group">
-                     <div className="absolute inset-0 bg-rose-500/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                     <div className="absolute inset-0 bg-rose-500/20 blur-3xl rounded-full scale-150 " />
                      <div className="relative p-7 bg-black border-2 border-rose-500/40 rounded-[2.5rem] shadow-2xl transform rotate-2 hover:rotate-0 transition-all">
                         <Anchor size={42} className="text-rose-500 shadow-[0_0_20px_#e11d48]" />
                      </div>
@@ -301,7 +301,7 @@ export default function CustomsIntelligenceView() {
            />
 
            {/* ANALYTICS TABS ELITE */}
-           <div className="flex flex-wrap gap-4 p-3 bg-black border-2 border-white/[0.03] rounded-[2.5rem] w-fit shadow-4xl backdrop-blur-3xl">
+           <div className="flex flex-wrap gap-4 p-3 bg-black border-2 border-white/[0.03] rounded-[2.5rem] w-fit shadow-4xl ">
               {[
                 { id: 'analytics', label: 'ОБСЯГИ_ТА_ДИНАМІКА', i: Activity },
                 { id: 'importers', label: 'ТОП_ІМПОРТЕ ІВ', i: Truck },
@@ -461,7 +461,7 @@ export default function CustomsIntelligenceView() {
                           </div>
                           <div className="flex items-center justify-between relative z-10">
                              <h3 className="text-[18px] font-black text-rose-600 italic uppercase tracking-[0.6em] flex items-center gap-8 font-serif font-bold">
-                                <AlertTriangle size={36} className="animate-pulse" /> РИЗИКОВІ_СИГНАЛИ_МИТНИЦІ // МАНІТОР_ROSE_VECTOR
+                                <AlertTriangle size={36} className="" /> РИЗИКОВІ_СИГНАЛИ_МИТНИЦІ // МАНІТОР_ROSE_VECTOR
                              </h3>
                              <button className="px-14 py-6 bg-rose-600 text-white rounded-[2rem] text-[12px] font-black uppercase tracking-[0.4em] italic hover:brightness-110 shadow-4xl transition-all font-bold uppercase">РОЗГОРНУТИ_АНТИФРОД_МАСИВ</button>
                           </div>
@@ -501,7 +501,7 @@ export default function CustomsIntelligenceView() {
                        <div className="col-span-12 xl:col-span-8 p-12 rounded-[5rem] bg-black border-2 border-white/[0.04] shadow-4xl space-y-12 relative overflow-hidden">
                           <div className="absolute top-0 left-0 w-2 h-full bg-rose-600/20" />
                           <h2 className="text-[16px] font-black text-rose-500 italic uppercase tracking-[0.6em] pb-10 border-b border-white/[0.04] flex items-center gap-6 font-serif">
-                             <Target size={28} className="text-rose-500 animate-pulse" /> ДЕКОДУВАННЯ_ЖИВИХ_СИГНАЛІВ // СТРАТЕГІЧНИЙ_ІНТЕЛ
+                             <Target size={28} className="text-rose-500 " /> ДЕКОДУВАННЯ_ЖИВИХ_СИГНАЛІВ // СТРАТЕГІЧНИЙ_ІНТЕЛ
                           </h2>
                           <div className="space-y-6">
                              {[
@@ -529,11 +529,11 @@ export default function CustomsIntelligenceView() {
                              <h3 className="text-3xl font-black text-white italic uppercase mb-10 flex items-center gap-6 font-serif"><Scan size={32} className="text-rose-500 shadow-[0_0_15px_#e11d48]" /> АКТИВНІ_ХАБИ</h3>
                              <div className="space-y-6 relative z-10">
                                 <div className="flex items-center justify-between p-6 bg-black border-2 border-rose-500/10 rounded-3xl shadow-inner group hover:border-rose-500/30 transition-all cursor-default">
-                                   <div className="flex items-center gap-6"><div className="w-3 h-3 rounded-full bg-rose-500 animate-pulse shadow-[0_0_10px_#e11d48]"/><span className="text-[13px] font-black text-white italic uppercase tracking-tighter">TG_CUSTOMS_UA</span></div>
+                                   <div className="flex items-center gap-6"><div className="w-3 h-3 rounded-full bg-rose-500  shadow-[0_0_10px_#e11d48]"/><span className="text-[13px] font-black text-white italic uppercase tracking-tighter">TG_CUSTOMS_UA</span></div>
                                    <span className="text-[11px] text-rose-800 font-mono italic font-black uppercase">LINK_ACTIVE</span>
                                 </div>
                                 <div className="flex items-center justify-between p-6 bg-black border-2 border-rose-500/10 rounded-3xl shadow-inner group hover:border-rose-500/30 transition-all cursor-default">
-                                   <div className="flex items-center gap-6"><div className="w-3 h-3 rounded-full bg-rose-500 animate-pulse shadow-[0_0_10px_#e11d48]"/><span className="text-[13px] font-black text-white italic uppercase tracking-tighter">RSS_WORLD_TRADE</span></div>
+                                   <div className="flex items-center gap-6"><div className="w-3 h-3 rounded-full bg-rose-500  shadow-[0_0_10px_#e11d48]"/><span className="text-[13px] font-black text-white italic uppercase tracking-tighter">RSS_WORLD_TRADE</span></div>
                                    <span className="text-[11px] text-rose-800 font-mono italic font-black uppercase">LINK_ACTIVE</span>
                                 </div>
                                 <div className="flex items-center justify-between p-6 bg-black border-2 border-white/5 rounded-3xl opacity-40 grayscale group hover:grayscale-0 transition-all cursor-not-allowed">

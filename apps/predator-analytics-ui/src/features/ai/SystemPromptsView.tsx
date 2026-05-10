@@ -121,7 +121,7 @@ const SystemPromptsView = () => {
                    className={cn(
                       "p-5 rounded-2xl border transition-all cursor-pointer group flex flex-col gap-4",
                       selectedId === p.id 
-                        ? "bg-rose-500/10 border-rose-500/40 shadow-[0_0_20px_rgba(245,158,11,0.15)]" 
+                        ? "bg-rose-500/10 border-rose-500/40 " 
                         : "bg-slate-900/40 border-white/5 hover:border-white/10"
                    )}
                  >
@@ -143,7 +143,7 @@ const SystemPromptsView = () => {
                  </motion.div>
               ))}
               {listLoading && Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="h-24 bg-white/5 animate-pulse rounded-2xl border border-white/5" />
+                <div key={i} className="h-24 bg-white/5  rounded-2xl border border-white/5" />
               ))}
            </div>
         </div>

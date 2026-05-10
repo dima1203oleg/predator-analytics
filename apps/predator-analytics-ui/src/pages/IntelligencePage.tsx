@@ -56,7 +56,7 @@ const IntelligenceNode: React.FC<{
     return (
         <motion.div
             whileHover={{ y: -5, scale: 1.02 }}
-            className="group relative p-8 bg-[#0a0a0a]/40 backdrop-blur-3xl border border-white/5 rounded-[2.5rem] shadow-2xl transition-all hover:bg-white/5 hover:border-red-600/20"
+            className="group relative p-8 bg-[#0a0a0a]/40  border border-white/5 rounded-[2.5rem] shadow-2xl transition-all hover:bg-white/5 hover:border-red-600/20"
         >
              <div className="flex items-center justify-between mb-8">
                  <div className={cn("p-4 rounded-2xl border", colorClasses[color])}>
@@ -83,7 +83,7 @@ const IntelligenceNode: React.FC<{
                       <motion.div
                          initial={{ width: 0 }}
                          animate={{ width: `${progress}%` }}
-                         className={cn("h-full rounded-full shadow-[0_0_15px_rgba(220,38,38,0.3)]", barColors[color === 'slate' ? 'slate' : color])}
+                         className={cn("h-full rounded-full ", barColors[color === 'slate' ? 'slate' : color])}
                       />
                   </div>
              </div>
@@ -92,7 +92,7 @@ const IntelligenceNode: React.FC<{
                   <button className="text-[9px] font-black text-red-500 uppercase tracking-widest hover:text-white transition-colors flex items-center gap-2">
                       ДЕТАЛІЗАЦІЯ <ChevronRight size={12} />
                   </button>
-                  <Radio size={14} className={cn("animate-pulse", color === 'crimson' ? "text-red-700" : "text-red-500")} />
+                  <Radio size={14} className={cn("", color === 'crimson' ? "text-red-700" : "text-red-500")} />
               </div>
         </motion.div>
     );
@@ -136,9 +136,9 @@ const IntelligencePage: React.FC = () => {
                         title={
                             <div className="flex items-center gap-8">
                                 <div className="relative group">
-                                    <div className="absolute inset-0 bg-red-600/20 blur-[60px] rounded-full scale-150 animate-pulse opacity-40" />
+                                    <div className="absolute inset-0 bg-red-600/20 blur-[60px] rounded-full scale-150  opacity-40" />
                                     <div className="relative p-6 bg-[#0a0a0a] border border-red-600/20 rounded-[2rem] shadow-2xl transition-all group-hover:scale-105 group-hover:border-red-600/40">
-                                        <Brain size={36} className="text-red-600 drop-shadow-[0_0_15px_rgba(220,38,38,0.8)]" />
+                                        <Brain size={36} className="text-red-600 " />
                                     </div>
                                 </div>
                                 <div className="flex flex-col">
@@ -147,7 +147,7 @@ const IntelligencePage: React.FC = () => {
                                     </h1>
                                     <div className="flex items-center gap-4 mt-4">
                                         <div className="h-0.5 w-12 bg-red-600/50" />
-                                        <span className="text-[10px] font-mono font-black text-red-500/80 uppercase tracking-[0.5em] animate-pulse">
+                                        <span className="text-[10px] font-mono font-black text-red-500/80 uppercase tracking-[0.5em] ">
                                             КОГНІТИВНЕ_ЯДРО // v62.7-ELITE
                                         </span>
                                     </div>
@@ -168,14 +168,14 @@ const IntelligencePage: React.FC = () => {
                         <div className="col-span-12 xl:col-span-8 space-y-10">
 
                              {/* Strategic Tabs */}
-                             <div className="flex bg-[#050505]/60 backdrop-blur-3xl p-2 rounded-[2.5rem] border border-white/5 self-start shadow-xl">
+                             <div className="flex bg-[#050505]/60  p-2 rounded-[2.5rem] border border-white/5 self-start shadow-xl">
                                 {['СТРАТЕГІЯ', 'ТАКТИКА', 'НЕЙ ОМЕ ЕЖА', 'АВТОНОМІЯ'].map(tab => (
                                     <button
                                         key={tab}
                                         onClick={() => setActiveTab(tab as any)}
                                         className={cn(
                                             "px-10 py-4 rounded-[2rem] text-[10px] font-black uppercase tracking-[0.3em] transition-all italic",
-                                            activeTab === tab ? "bg-red-600 text-white shadow-[0_0_30px_rgba(220,38,38,0.4)] scale-105" : "text-slate-500 hover:text-slate-200"
+                                            activeTab === tab ? "bg-red-600 text-white  scale-105" : "text-slate-500 hover:text-slate-200"
                                         )}
                                     >
                                         {tab}
@@ -241,13 +241,13 @@ const IntelligencePage: React.FC = () => {
 
                                        <div className="absolute inset-0 flex items-center justify-center">
                                            <div className="relative w-full h-full flex items-center justify-center">
-                                               <div className="absolute inset-0 bg-red-600/10 blur-[150px] rounded-full animate-pulse" />
+                                               <div className="absolute inset-0 bg-red-600/10 blur-[150px] rounded-full " />
                                                <CyberOrb size={250} color="#DC2626" intensity={0.4} pulse />
 
                                                <div className="relative flex items-center justify-center">
                                                    <div className="relative w-32 h-32 border-2 border-dashed border-red-600/20 rounded-full animate-[spin_20s_linear_infinite]" />
                                                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                                       <Brain size={48} className="text-red-600 drop-shadow-[0_0_20px_rgba(220,38,38,0.8)]" />
+                                                       <Brain size={48} className="text-red-600 " />
                                                    </div>
                                                </div>
 
@@ -276,7 +276,7 @@ const IntelligencePage: React.FC = () => {
 
                                    <div className="space-y-10">
                                        <VramSentinel />
-                                       <div className="bg-[#0a0a0a]/60 backdrop-blur-3xl border border-white/5 p-8 rounded-[2.5rem] shadow-2xl relative overflow-hidden group">
+                                       <div className="bg-[#0a0a0a]/60  border border-white/5 p-8 rounded-[2.5rem] shadow-2xl relative overflow-hidden group">
                                            <div className="flex items-center justify-between mb-6">
                                                <h4 className="text-[10px] font-black text-red-600 uppercase tracking-[0.4em] italic">ГЕОП ОСТО ОВИЙ_СКАНЕ </h4>
                                                <Globe size={18} className="text-red-600/40 animate-[spin_10s_linear_infinite]" />

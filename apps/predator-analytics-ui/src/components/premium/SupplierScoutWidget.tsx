@@ -57,7 +57,7 @@ export const SupplierScoutWidget: React.FC<{ persona: string }> = ({ persona }) 
   };
 
   return (
-    <div className="bg-slate-950/80 border border-emerald-500/20 rounded-[24px] backdrop-blur-xl overflow-hidden h-full min-h-[400px] flex flex-col relative group">
+    <div className="bg-slate-950/80 border border-emerald-500/20 rounded-[24px]  overflow-hidden h-full min-h-[400px] flex flex-col relative group">
       <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent pointer-events-none transition-all duration-500 group-hover:from-emerald-500/10" />
 
       {/* Header */}
@@ -95,7 +95,7 @@ export const SupplierScoutWidget: React.FC<{ persona: string }> = ({ persona }) 
                 disabled={isSearching || !query}
                 className="absolute right-1 top-1 bottom-1 px-4 my-auto bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg transition-all disabled:opacity-50 disabled:bg-slate-800"
             >
-                {isSearching ? <span className="animate-pulse text-[9px] uppercase">{premiumLocales.supplierScout.scanning}</span> : <span className="text-[10px] uppercase">{premiumLocales.supplierScout.search}</span>}
+                {isSearching ? <span className=" text-[9px] uppercase">{premiumLocales.supplierScout.scanning}</span> : <span className="text-[10px] uppercase">{premiumLocales.supplierScout.search}</span>}
             </button>
         </div>
       </div>

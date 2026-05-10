@@ -70,15 +70,15 @@ export const PtyTerminal: React.FC = () => {
         <div className="flex flex-col h-full bg-[#050101] text-emerald-500 font-mono p-10 selection:bg-rose-500/30 relative overflow-hidden">
             {/* Background Effects */}
             <div className="absolute inset-0 bg-noise opacity-[0.03] pointer-events-none" />
-            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent shadow-[0_0_20px_rgba(16,185,129,0.3)]" />
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent " />
 
             {/* Terminal Header */}
             <div className="flex items-center justify-between mb-8 border-b border-emerald-900/20 pb-6 relative z-10">
                 <div className="flex items-center gap-6">
                     <div className="relative group">
-                        <div className="absolute inset-0 bg-emerald-500/20 blur-xl rounded-full scale-150 animate-pulse" />
+                        <div className="absolute inset-0 bg-emerald-500/20 blur-xl rounded-full scale-150 " />
                         <div className="relative p-3 bg-emerald-500/10 rounded-xl border border-emerald-500/30">
-                            <Terminal size={22} className="text-emerald-500 drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
+                            <Terminal size={22} className="text-emerald-500 " />
                         </div>
                     </div>
                     <div className="flex flex-col gap-1">
@@ -93,7 +93,7 @@ export const PtyTerminal: React.FC = () => {
                     </div>
                     <div className="h-10 w-px bg-white/5" />
                     <div className="relative">
-                        <div className="absolute inset-0 bg-emerald-500/10 blur-md rounded-lg animate-pulse" />
+                        <div className="absolute inset-0 bg-emerald-500/10 blur-md rounded-lg " />
                         <div className="relative px-6 py-2 bg-emerald-500/5 border-2 border-emerald-500/30 rounded-xl text-[11px] font-black italic tracking-[0.2em] text-emerald-400 shadow-2xl">
                             З’ЄДНАННЯ_ВСТАНОВЛЕНО
                         </div>
@@ -104,7 +104,7 @@ export const PtyTerminal: React.FC = () => {
             {/* Terminal Output */}
             <div 
                 ref={scrollRef}
-                className="flex-1 overflow-y-auto custom-scrollbar space-y-3 pr-6 bg-black/40 backdrop-blur-3xl p-10 rounded-[2.5rem] border-2 border-white/5 shadow-[inset_0_0_60px_rgba(0,0,0,0.5)] mb-8 relative group"
+                className="flex-1 overflow-y-auto custom-scrollbar space-y-3 pr-6 bg-black/40  p-10 rounded-[2.5rem] border-2 border-white/5 shadow-[inset_0_0_60px_rgba(0,0,0,0.5)] mb-8 relative group"
             >
                 <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
                 
@@ -114,7 +114,7 @@ export const PtyTerminal: React.FC = () => {
                         <div className="flex flex-col gap-1 w-full">
                             <div className="flex items-center gap-3">
                                 {line.type === 'input' && <ChevronRight size={14} className="text-rose-500" />}
-                                {line.type === 'system' && <Zap size={12} className="text-amber-500 animate-pulse" />}
+                                {line.type === 'system' && <Zap size={12} className="text-amber-500 " />}
                                 {line.type === 'error' && <ShieldAlert size={12} className="text-rose-600" />}
                                 <span className={cn(
                                     "text-[12px] whitespace-pre-wrap tracking-wide",
@@ -149,7 +149,7 @@ export const PtyTerminal: React.FC = () => {
                 <div className="absolute inset-y-0 right-8 flex items-center gap-6">
                     <div className="flex items-center gap-2">
                         <div className="px-3 py-1 bg-white/5 border border-white/10 rounded-lg text-[9px] text-white/30 font-black tracking-widest uppercase">ENTER</div>
-                        <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse shadow-[0_0_10px_rgba(225,29,72,1)]" />
+                        <div className="w-2 h-2 rounded-full bg-rose-500  " />
                     </div>
                 </div>
             </form>

@@ -112,7 +112,7 @@ const AlertItem: React.FC<{
       animate={{ opacity: 1, x: 0, scale: 1 }}
       exit={{ opacity: 0, x: 20, scale: 0.95 }}
       className={cn(
-        "p-4 rounded-2xl border backdrop-blur-xl transition-all group cursor-pointer",
+        "p-4 rounded-2xl border  transition-all group cursor-pointer",
         !alert.isRead && `bg-${severity.color}-500/10 border-${severity.color}-500/30`,
         alert.isRead && "bg-black/40 border-white/5 opacity-70",
         alert.isPinned && "ring-2 ring-amber-500/30"
@@ -277,7 +277,7 @@ export const LiveIntelligenceAlerts: React.FC<{
   const unreadCount = alerts.filter(a => !a.isRead).length;
 
   return (
-    <div className="bg-slate-950/80 border border-white/10 rounded-[32px] backdrop-blur-xl overflow-hidden">
+    <div className="bg-slate-950/80 border border-white/10 rounded-[32px]  overflow-hidden">
       {/* Header */}
       <div className="p-6 border-b border-white/5">
         <div className="flex items-center justify-between mb-4">

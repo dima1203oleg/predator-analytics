@@ -110,9 +110,9 @@ export function AIResponse({
         {/* Main Answer */}
         <div className="prose dark:prose-invert max-w-none">
           {isStreaming ? (
-            <p className="animate-pulse leading-relaxed">
+            <p className=" leading-relaxed">
               {answer}
-              <span className="inline-block w-2 h-5 ml-1 bg-primary animate-pulse">▊</span>
+              <span className="inline-block w-2 h-5 ml-1 bg-primary ">▊</span>
             </p>
           ) : (
             <p className="leading-relaxed text-foreground">{answer}</p>

@@ -142,7 +142,7 @@ const EvolutionView: React.FC = () => {
                         title={
                             <div className="flex items-center gap-12">
                                 <div className="relative group">
-                                    <div className="absolute inset-0 bg-yellow-500/20 blur-[80px] rounded-full scale-150 animate-pulse" />
+                                    <div className="absolute inset-0 bg-yellow-500/20 blur-[80px] rounded-full scale-150 " />
                                     <div className="relative p-8 bg-black border-2 border-yellow-500/40 rounded-[3rem] shadow-4xl transform -rotate-3 hover:rotate-0 transition-all duration-700">
                                         <Dna size={48} className="text-yellow-500 shadow-[0_0_30px_#d4af37]" />
                                     </div>
@@ -217,7 +217,7 @@ const EvolutionView: React.FC = () => {
                         ))}
                     </section>
 
-                    <div className="flex flex-wrap gap-6 p-4 bg-black/80 border-2 border-white/[0.03] rounded-[3.5rem] w-fit shadow-4xl backdrop-blur-3xl mx-auto items-center">
+                    <div className="flex flex-wrap gap-6 p-4 bg-black/80 border-2 border-white/[0.03] rounded-[3.5rem] w-fit shadow-4xl  mx-auto items-center">
                         <span className="px-6 text-[10px] font-black text-slate-800 uppercase tracking-[0.5em] italic border-r-2 border-white/5 h-10 flex items-center">MATRIX_SELECT</span>
                         {tabs.map(mod => (
                             <button 
@@ -225,7 +225,7 @@ const EvolutionView: React.FC = () => {
                                 className={cn(
                                     "px-10 py-5 rounded-[2.5rem] text-[11px] font-black uppercase tracking-[0.3em] italic border-2 transition-all duration-500 flex items-center gap-5 relative overflow-hidden group/tab",
                                     activeTab === mod.id 
-                                        ? "bg-yellow-500 border-yellow-400 text-black shadow-[0_0_50px_rgba(212,175,55,0.3)]" 
+                                        ? "bg-yellow-500 border-yellow-400 text-black " 
                                         : "bg-transparent text-slate-600 border-transparent hover:bg-white/5 hover:text-slate-400"
                                 )}
                             >
@@ -293,11 +293,11 @@ const EvolutionView: React.FC = () => {
                                         <div className="col-span-12 xl:col-span-4 space-y-12 flex flex-col items-stretch">
                                             <div className="flex-1 p-12 rounded-[5rem] bg-black border-2 border-yellow-500/40 shadow-4xl relative overflow-hidden flex flex-col items-center justify-center text-center group">
                                                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.08),transparent_60%)] pointer-events-none group-hover:scale-125 transition-transform duration-1000" />
-                                                <CyberOrb size={320} color="#D4AF37" intensity={0.8} pulse={true} className="drop-shadow-[0_0_80px_rgba(212,175,55,0.3)]" />
+                                                <CyberOrb size={320} color="#D4AF37" intensity={0.8} pulse={true} className="" />
                                                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10 space-y-4">
                                                     <div className="text-[12px] font-black text-yellow-500/60 uppercase tracking-[0.8em] italic">EVOLUTION_ACTIVE</div>
                                                     <div className="text-6xl font-black text-white font-mono tracking-tighter shadow-sm italic uppercase">v58.2.GEN</div>
-                                                    <div className="p-4 bg-yellow-500/10 rounded-full border border-yellow-500/20 blur-sm animate-pulse w-32 h-32 absolute -z-10" />
+                                                    <div className="p-4 bg-yellow-500/10 rounded-full border border-yellow-500/20 blur-sm  w-32 h-32 absolute -z-10" />
                                                 </div>
                                             </div>
 
@@ -316,8 +316,8 @@ const EvolutionView: React.FC = () => {
                                                         <div key={i} className="p-6 bg-white/[0.01] rounded-[2rem] border-2 border-white/[0.03] flex items-center justify-between group/v hover:bg-white/[0.04] hover:border-white/10 transition-all cursor-pointer shadow-sm">
                                                             <div className="flex items-center gap-5">
                                                                 <div className={cn(
-                                                                    "w-3 h-3 rounded-full shadow-[0_0_15px_rgba(0,0,0,1)]",
-                                                                    v.type === 'critical' ? 'bg-amber-600 animate-pulse shadow-amber-600/20' :
+                                                                    "w-3 h-3 rounded-full ",
+                                                                    v.type === 'critical' ? 'bg-amber-600  shadow-amber-600/20' :
                                                                         v.type === 'major' ? 'bg-yellow-500 shadow-yellow-500/20' : 'bg-slate-500 shadow-slate-500/20'
                                                                 )} />
                                                                 <div className="space-y-1">
@@ -441,7 +441,7 @@ const EvolutionView: React.FC = () => {
                              </div>
                          </div>
                          <div className="flex items-center gap-6 mt-8 md:mt-0 relative z-10 px-8 py-3 bg-emerald-500/5 rounded-2xl border-2 border-emerald-500/20">
-                             <div className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_20px_#10b981]" />
+                             <div className="w-3 h-3 rounded-full bg-emerald-500  shadow-[0_0_20px_#10b981]" />
                              <span className="text-[11px] font-black uppercase tracking-[0.5em] text-emerald-500 italic">СИНТЕТИЧНИЙ_КОНЦЕНСУС_OK</span>
                          </div>
                     </motion.div>
@@ -462,7 +462,7 @@ const EvolutionView: React.FC = () => {
                     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
                     .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.1); border-radius: 20px; border: 3px solid black; }
                     .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(212,175,55,0.2); }
-                    .backdrop-blur-4xl { backdrop-filter: blur(120px) saturate(180%); }
+                    . { backdrop-filter: blur(120px) saturate(180%); }
                 `}} />
             </div>
         </PageTransition>

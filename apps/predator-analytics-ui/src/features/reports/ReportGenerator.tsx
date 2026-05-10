@@ -195,9 +195,9 @@ const ReportGenerator: React.FC = () => {
             title={
               <div className="flex items-center gap-10">
                 <div className="relative group">
-                  <div className="absolute inset-0 bg-amber-500/20 blur-[80px] rounded-full scale-150 animate-pulse" />
+                  <div className="absolute inset-0 bg-amber-500/20 blur-[80px] rounded-full scale-150 " />
                   <div className="relative p-7 bg-black border-2 border-amber-500/40 rounded-[3rem] shadow-4xl transform rotate-1 group-hover:rotate-0 transition-all duration-700">
-                    <FileDown size={54} className="text-amber-500 drop-shadow-[0_0_20px_rgba(245,158,11,0.4)]" />
+                    <FileDown size={54} className="text-amber-500 " />
                   </div>
                 </div>
                 <div className="space-y-4">
@@ -228,7 +228,7 @@ const ReportGenerator: React.FC = () => {
           />
 
           {/* TABS ELITE/GOLD */}
-          <div className="flex items-center gap-6 p-3 bg-black/60 backdrop-blur-3xl border-2 border-white/5 rounded-[3rem] w-fit shadow-2xl">
+          <div className="flex items-center gap-6 p-3 bg-black/60  border-2 border-white/5 rounded-[3rem] w-fit shadow-2xl">
             {[
               { id: 'templates', label: 'ШАБЛОНИ_ЗВІТІВ', icon: Layers },
               { id: 'reports', label: 'МОЇ_АРХІВИ', icon: Database },

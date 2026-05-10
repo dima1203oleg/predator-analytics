@@ -135,7 +135,7 @@ export const CaseCard: React.FC<CaseCardProps> = ({
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ scale: 1.01, y: -2 }}
       className={`
-        relative p-6 rounded-[32px] border backdrop-blur-3xl transition-all cursor-pointer  group
+        relative p-6 rounded-[32px] border  transition-all cursor-pointer  group
         ${isCommanderMode ? 'bg-amber-500/[0.03] border-amber-500/20 shadow-amber-500/5' :
           isOperatorMode ? 'bg-emerald-500/[0.03] border-emerald-500/20 shadow-emerald-500/5' :
           statusConfig.bg + ' ' + statusConfig.border + ' ' + statusConfig.glow}

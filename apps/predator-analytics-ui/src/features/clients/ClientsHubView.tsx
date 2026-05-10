@@ -350,7 +350,7 @@ export default function ClientsHubView() {
                     Клієнтські <span className="text-rose-400">контури</span>
                   </h1>
                   <p className="mt-3 flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.34em] text-rose-300/70">
-                    <Zap size={12} className="animate-pulse" />
+                    <Zap size={12} />
                      Робочі режими без локальних лічильників
                   </p>
                 </div>

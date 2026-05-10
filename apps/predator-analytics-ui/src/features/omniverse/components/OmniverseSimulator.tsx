@@ -85,7 +85,7 @@ export const OmniverseSimulator: React.FC = () => {
                     onClick={() => setParams({...params, market_volatility: v})}
                     className={`py-2 text-[10px] font-black rounded-lg border transition-all ${
                       params.market_volatility === v 
-                        ? 'bg-emerald-500 border-emerald-400 text-black shadow-[0_0_15px_rgba(16,185,129,0.4)]' 
+                        ? 'bg-emerald-500 border-emerald-400 text-black ' 
                         : 'bg-white/5 border-white/10 text-white/60 hover:border-white/20'
                     }`}
                   >
@@ -123,7 +123,7 @@ export const OmniverseSimulator: React.FC = () => {
         )}
 
         {loading && (
-          <div className="absolute inset-0 z-20 bg-slate-950/80 backdrop-blur-md flex flex-col items-center justify-center">
+          <div className="absolute inset-0 z-20 bg-slate-950/80  flex flex-col items-center justify-center">
             <div className="w-32 h-1 bg-white/10 rounded-full overflow-hidden">
               <motion.div 
                 className="h-full bg-emerald-500"
@@ -132,7 +132,7 @@ export const OmniverseSimulator: React.FC = () => {
                 transition={{ duration: 2, repeat: Infinity }}
               />
             </div>
-            <p className="mt-4 text-[10px] font-black text-emerald-500 uppercase tracking-[0.3em] animate-pulse">Calculating Multi-Domain Outcomes...</p>
+            <p className="mt-4 text-[10px] font-black text-emerald-500 uppercase tracking-[0.3em] ">Calculating Multi-Domain Outcomes...</p>
           </div>
         )}
 

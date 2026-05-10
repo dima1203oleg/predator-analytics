@@ -21,24 +21,24 @@ export const LoadingSkeleton: React.FC = () => {
       {/* Tactical Header Skeleton */}
       <div className="flex items-center justify-between w-full max-w-6xl mx-auto mb-4">
         <div className="space-y-2">
-          <div className="h-8 w-64 bg-slate-800/50 rounded-lg animate-pulse" />
-          <div className="h-4 w-96 bg-slate-800/30 rounded animate-pulse delay-75" />
+          <div className="h-8 w-64 bg-slate-800/50 rounded-lg " />
+          <div className="h-4 w-96 bg-slate-800/30 rounded  delay-75" />
         </div>
         <div className="flex gap-4">
-          <div className="h-10 w-32 bg-slate-800/40 rounded-full animate-pulse" />
-          <div className="h-10 w-10 bg-slate-800/40 rounded-full animate-pulse delay-150" />
+          <div className="h-10 w-32 bg-slate-800/40 rounded-full " />
+          <div className="h-10 w-10 bg-slate-800/40 rounded-full  delay-150" />
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full max-w-6xl mx-auto">
         {/* Main Content Area */}
         <div className="lg:col-span-2 space-y-8">
-          <div className="bg-slate-900/40 border border-slate-800/50 p-6 rounded-2xl backdrop-blur-sm">
+          <div className="bg-slate-900/40 border border-slate-800/50 p-6 rounded-2xl ">
             <TableSkeleton rows={6} columns={4} />
           </div>
           <div className="grid grid-cols-2 gap-6">
-            <div className="bg-slate-900/40 border border-slate-800/50 p-6 rounded-2xl h-48 animate-pulse" />
-            <div className="bg-slate-900/40 border border-slate-800/50 p-6 rounded-2xl h-48 animate-pulse delay-100" />
+            <div className="bg-slate-900/40 border border-slate-800/50 p-6 rounded-2xl h-48 " />
+            <div className="bg-slate-900/40 border border-slate-800/50 p-6 rounded-2xl h-48  delay-100" />
           </div>
         </div>
 

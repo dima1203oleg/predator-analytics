@@ -21,8 +21,8 @@ export const OfflineIndicator: React.FC = () => {
 
     return (
         <div className="fixed bottom-4 right-4 z-[9999] animate-bounce">
-            <div className="bg-red-500/90 text-white px-4 py-2 rounded-lg shadow-lg border border-red-400 flex items-center gap-3 backdrop-blur-sm">
-                <div className="p-1 bg-white/20 rounded-full animate-pulse">
+            <div className="bg-red-500/90 text-white px-4 py-2 rounded-lg shadow-lg border border-red-400 flex items-center gap-3 ">
+                <div className="p-1 bg-white/20 rounded-full ">
                     <WifiOff size={16} />
                 </div>
                 <div>

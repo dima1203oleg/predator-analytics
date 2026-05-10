@@ -100,7 +100,7 @@ export const LLMCouncilPanel: React.FC<LLMCouncilPanelProps> = ({ isLockdown }) 
         <div className="flex flex-col gap-10 min-h-[900px] animate-in fade-in duration-800">
 
             {/* Neural Header v61.0-ELITE */}
-            <div className="p-10 bg-slate-950/40 border border-white/5 rounded-[48px] backdrop-blur-3xl shadow-2xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-10">
+            <div className="p-10 bg-slate-950/40 border border-white/5 rounded-[48px]  shadow-2xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-10">
                 <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
 
                 <div className="flex items-center gap-10 relative z-10">
@@ -116,7 +116,7 @@ export const LLMCouncilPanel: React.FC<LLMCouncilPanelProps> = ({ isLockdown }) 
                         </h2>
                         <div className="flex flex-wrap items-center gap-6">
                             <div className="flex items-center gap-3 px-4 py-1.5 bg-cyan-500/10 rounded-full border border-cyan-500/20">
-                                <span className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse" />
+                                <span className="w-2 h-2 rounded-full bg-cyan-500 " />
                                 <span className="text-[11px] font-black text-cyan-400 uppercase tracking-widest font-mono">ARBITRATOR_v61.0-ELITE_ACTIVE</span>
                             </div>
                             {result && (
@@ -201,7 +201,7 @@ export const LLMCouncilPanel: React.FC<LLMCouncilPanelProps> = ({ isLockdown }) 
                                         {isSelected && (
                                             <div className="flex items-center gap-3 px-3 py-1 bg-cyan-500/20 rounded-xl border border-cyan-500/30">
                                                 <span className="text-[9px] font-black text-cyan-400 uppercase font-mono">ONLINE</span>
-                                                <div className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse" />
+                                                <div className="w-1.5 h-1.5 rounded-full bg-cyan-500 " />
                                             </div>
                                         )}
                                     </motion.button>
@@ -240,7 +240,7 @@ export const LLMCouncilPanel: React.FC<LLMCouncilPanelProps> = ({ isLockdown }) 
                                 <motion.div
                                     key={s.id}
                                     className={cn(
-                                        "p-8 rounded-[36px] border transition-all duration-1000 backdrop-blur-3xl panel-3d relative overflow-hidden",
+                                        "p-8 rounded-[36px] border transition-all duration-1000  panel-3d relative overflow-hidden",
                                         isActive ? 'bg-cyan-500/10 border-cyan-500/40 shadow-2xl' :
                                             isPast ? 'bg-emerald-500/5 border-emerald-500/20' :
                                                 'bg-slate-950/60 border-white/5 opacity-30 focus-within:opacity-100'
@@ -253,7 +253,7 @@ export const LLMCouncilPanel: React.FC<LLMCouncilPanelProps> = ({ isLockdown }) 
                                                 isPast ? 'bg-emerald-500 text-slate-950 shadow-emerald-500/20' :
                                                     'bg-slate-900 border-white/5 text-slate-700'
                                         )}>
-                                            <s.icon size={28} className={isActive ? 'animate-pulse' : ''} />
+                                            <s.icon size={28} className={isActive ? '' : ''} />
                                         </div>
                                         <div className="flex-1">
                                             <div className="flex items-center justify-between mb-2">
@@ -275,7 +275,7 @@ export const LLMCouncilPanel: React.FC<LLMCouncilPanelProps> = ({ isLockdown }) 
                                                 initial={{ width: 0 }}
                                                 animate={{ width: '100%' }}
                                                 transition={{ duration: 10, ease: "linear" }}
-                                                className="h-full bg-gradient-to-r from-cyan-600 to-blue-500 shadow-[0_0_20px_rgba(6,182,212,0.5)]"
+                                                className="h-full bg-gradient-to-r from-cyan-600 to-blue-500 "
                                             />
                                         </div>
                                     )}
@@ -294,7 +294,7 @@ export const LLMCouncilPanel: React.FC<LLMCouncilPanelProps> = ({ isLockdown }) 
                                 initial={{ opacity: 0, scale: 0.98 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 exit={{ opacity: 0, scale: 0.98 }}
-                                className="flex-1 flex flex-col items-center justify-center p-20 border border-white/5 rounded-[64px] bg-slate-950/20 backdrop-blur-3xl panel-3d shadow-2xl relative overflow-hidden group min-h-[800px]"
+                                className="flex-1 flex flex-col items-center justify-center p-20 border border-white/5 rounded-[64px] bg-slate-950/20  panel-3d shadow-2xl relative overflow-hidden group min-h-[800px]"
                             >
                                 <div className="absolute inset-0 bg-cyber-grid opacity-[0.03] pointer-events-none" />
                                 <div className="relative">
@@ -314,11 +314,11 @@ export const LLMCouncilPanel: React.FC<LLMCouncilPanelProps> = ({ isLockdown }) 
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
-                                className="flex-1 flex flex-col items-center justify-center bg-slate-950/40 rounded-[64px] border border-white/5 backdrop-blur-3xl panel-3d shadow-2xl relative min-h-[800px]"
+                                className="flex-1 flex flex-col items-center justify-center bg-slate-950/40 rounded-[64px] border border-white/5  panel-3d shadow-2xl relative min-h-[800px]"
                             >
                                 <div className="absolute inset-0 bg-cyber-scanline opacity-[0.03] pointer-events-none" />
                                 <div className="relative">
-                                    <div className="absolute inset-0 bg-cyan-500/20 blur-[100px] rounded-full animate-pulse" />
+                                    <div className="absolute inset-0 bg-cyan-500/20 blur-[100px] rounded-full " />
                                     <CyberOrb size={480} color="#06b6d4" />
                                     <div className="absolute inset-0 flex flex-col items-center justify-center">
                                         <motion.div
@@ -326,11 +326,11 @@ export const LLMCouncilPanel: React.FC<LLMCouncilPanelProps> = ({ isLockdown }) 
                                             transition={{ rotate: { duration: 20, repeat: Infinity, ease: "linear" }, scale: { duration: 4, repeat: Infinity } }}
                                             className="absolute inset-0 border-2 border-dashed border-cyan-500/20 rounded-full"
                                         />
-                                        <Brain className="w-32 h-32 text-cyan-400 animate-pulse icon-3d-blue drop-shadow-[0_0_30px_rgba(34,211,238,0.5)]" />
+                                        <Brain className="w-32 h-32 text-cyan-400  icon-3d-blue " />
                                     </div>
                                 </div>
                                 <div className="mt-24 text-center">
-                                    <h4 className="text-5xl font-black text-cyan-400 tracking-tighter animate-pulse uppercase font-display mb-6">PROCESSING_CONSENSUS</h4>
+                                    <h4 className="text-5xl font-black text-cyan-400 tracking-tighter  uppercase font-display mb-6">PROCESSING_CONSENSUS</h4>
                                     <p className="text-[12px] text-slate-500 font-black uppercase tracking-[0.5em] font-mono opacity-80">АНАЛІЗ ПА АДИГМ ТА ФО МУВАННЯ СИНТЕТИЧНОГО КОНСЕНСУСУ...</p>
                                 </div>
                             </motion.div>
@@ -349,7 +349,7 @@ export const LLMCouncilPanel: React.FC<LLMCouncilPanelProps> = ({ isLockdown }) 
                                     <div className="p-12 md:p-16 relative z-10">
                                         <div className="flex items-center justify-between mb-12">
                                             <div className="flex items-center gap-6 text-cyan-400 font-black text-[11px] uppercase tracking-[0.4em] font-display">
-                                                <Sparkles size={24} className="icon-3d-blue animate-pulse" />
+                                                <Sparkles size={24} className="icon-3d-blue " />
                                                 Result Consensus Verdict
                                             </div>
                                             <div className="flex gap-4">
@@ -389,7 +389,7 @@ export const LLMCouncilPanel: React.FC<LLMCouncilPanelProps> = ({ isLockdown }) 
                                                         <motion.div
                                                             initial={{ width: 0 }}
                                                             animate={{ width: `${(result.peer_review_summary?.average_scores?.[model] || 0.8) * 100}%` }}
-                                                            className="h-full bg-gradient-to-r from-cyan-600 to-indigo-500 shadow-[0_0_10px_rgba(6,182,212,0.3)]"
+                                                            className="h-full bg-gradient-to-r from-cyan-600 to-indigo-500 "
                                                             transition={{ duration: 1.5, delay: idx * 0.1 }}
                                                         />
                                                     </div>
@@ -463,7 +463,7 @@ export const LLMCouncilPanel: React.FC<LLMCouncilPanelProps> = ({ isLockdown }) 
                                                         initial={{ width: 0 }}
                                                         animate={{ width: `${(result.peer_review_summary?.average_scores?.[model] || 0) * 100}%` }}
                                                         transition={{ duration: 2, ease: "circOut" }}
-                                                        className="h-full bg-gradient-to-r from-blue-600 to-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.4)]"
+                                                        className="h-full bg-gradient-to-r from-blue-600 to-cyan-400 "
                                                     />
                                                 </div>
                                             </div>
@@ -483,10 +483,10 @@ export const LLMCouncilPanel: React.FC<LLMCouncilPanelProps> = ({ isLockdown }) 
                         initial={{ opacity: 0, y: 50 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95 }}
-                        className="fixed bottom-10 right-10 z-50 p-8 bg-rose-950/80 border border-rose-500/50 rounded-[40px] text-rose-400 backdrop-blur-3xl shadow-2xl flex items-center gap-10 max-w-2xl border-l-8 border-l-rose-500"
+                        className="fixed bottom-10 right-10 z-50 p-8 bg-rose-950/80 border border-rose-500/50 rounded-[40px] text-rose-400  shadow-2xl flex items-center gap-10 max-w-2xl border-l-8 border-l-rose-500"
                     >
                         <div className="p-4 bg-rose-500/20 rounded-2xl">
-                            <AlertTriangle size={32} className="shrink-0 animate-pulse" />
+                            <AlertTriangle size={32} className="shrink-0 " />
                         </div>
                         <div>
                             <div className="text-xl font-black text-white mb-2 uppercase tracking-tighter font-display">Neural Synthesis Failure</div>

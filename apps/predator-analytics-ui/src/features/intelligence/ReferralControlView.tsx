@@ -208,7 +208,7 @@ export default function ReferralControlView() {
           actions={
             <Button 
               onClick={() => setIsAddingMode(true)}
-              className="bg-yellow-600 hover:bg-yellow-500 text-white border-none shadow-[0_0_15px_rgba(79,70,229,0.4)] gap-2 uppercase tracking-tighter font-bold"
+              className="bg-yellow-600 hover:bg-yellow-500 text-white border-none  gap-2 uppercase tracking-tighter font-bold"
             >
               <Plus size={18} />
               Поставити на Контроль
@@ -587,7 +587,7 @@ export default function ReferralControlView() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="absolute inset-0 bg-slate-950/80 backdrop-blur-md"
+                className="absolute inset-0 bg-slate-950/80 "
                 onClick={() => setIsAddingMode(false)}
               />
               <motion.div 

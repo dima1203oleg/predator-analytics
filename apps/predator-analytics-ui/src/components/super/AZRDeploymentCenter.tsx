@@ -59,7 +59,7 @@ export const AZRDeploymentCenter: React.FC = () => {
         <div className="space-y-10">
             {/* Version Header */}
             <div className="grid grid-cols-12 gap-8">
-                <div className="col-span-12 lg:col-span-5 p-8 bg-slate-900/60 border border-white/5 rounded-[40px] shadow-2xl backdrop-blur-3xl relative overflow-hidden group">
+                <div className="col-span-12 lg:col-span-5 p-8 bg-slate-900/60 border border-white/5 rounded-[40px] shadow-2xl  relative overflow-hidden group">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 blur-[60px] group-hover:bg-blue-500/20 transition-all rounded-full" />
                     <div className="relative flex items-center gap-6">
                         <div className="p-5 bg-blue-500/20 rounded-3xl border border-blue-500/30">
@@ -71,7 +71,7 @@ export const AZRDeploymentCenter: React.FC = () => {
                                 {currentVersion}
                             </div>
                             <div className="flex items-center gap-2 mt-2">
-                                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                                <div className="w-2 h-2 rounded-full bg-emerald-500 " />
                                 <span className="text-[10px] text-emerald-400 font-black uppercase tracking-widest">Стабільна  обота</span>
                             </div>
                         </div>
@@ -84,7 +84,7 @@ export const AZRDeploymentCenter: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="col-span-12 lg:col-span-5 p-8 bg-slate-900/40 border border-white/5 rounded-[40px] shadow-2xl backdrop-blur-3xl relative overflow-hidden group">
+                <div className="col-span-12 lg:col-span-5 p-8 bg-slate-900/40 border border-white/5 rounded-[40px] shadow-2xl  relative overflow-hidden group">
                      <div className="absolute top-0 left-0 w-32 h-32 bg-purple-500/10 blur-[60px] group-hover:bg-purple-500/20 transition-all rounded-full" />
                     <div className="relative flex items-center gap-6">
                         <div className="p-5 bg-purple-500/20 rounded-3xl border border-purple-500/30">
@@ -105,7 +105,7 @@ export const AZRDeploymentCenter: React.FC = () => {
             </div>
 
             {/* Deployment Flow */}
-            <div className="p-10 bg-black/40 border border-white/5 rounded-[48px] shadow-2xl backdrop-blur-3xl relative overflow-hidden">
+            <div className="p-10 bg-black/40 border border-white/5 rounded-[48px] shadow-2xl  relative overflow-hidden">
                 <div className="absolute inset-0 bg-dot-grid opacity-5 pointer-events-none" />
 
                 <div className="flex items-center justify-between mb-12">
@@ -142,7 +142,7 @@ export const AZRDeploymentCenter: React.FC = () => {
                             }`}
                         >
                             <div className={`w-14 h-14 rounded-2xl flex items-center justify-center border ${
-                                step.status === 'IN_PROGRESS' ? 'bg-blue-500 text-white animate-pulse' :
+                                step.status === 'IN_PROGRESS' ? 'bg-blue-500 text-white ' :
                                 step.status === 'COMPLETED' ? 'bg-emerald-500 text-white' :
                                 'bg-slate-800 border-white/5 text-slate-600'
                             }`}>
@@ -188,7 +188,7 @@ export const AZRDeploymentCenter: React.FC = () => {
                         <div>[SCAN] ПЕ ЕВІ КА ПОЛІТИКИ БЕЗПЕКИ:ПРОЙДЕНО (VULN: 0)</div>
                         {progress > 40 && <div>[NEURAL] СИНХРОНІЗАЦІЯ ЕМБЕДИНГІВ (1024-D) З QDRANT...</div>}
                         {progress > 70 && <div>[DEPLOY] ПОЧАТО ROLL-OUT: 1 З 12 ПОДІВ ЗАПУЩЕНО...</div>}
-                        <div className="animate-pulse">_</div>
+                        <div className="">_</div>
                     </motion.div>
                 )}
             </div>

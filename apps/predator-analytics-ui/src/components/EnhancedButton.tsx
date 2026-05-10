@@ -47,8 +47,8 @@ export const EnhancedButton: React.FC<EnhancedButtonProps> = ({
     const interactionStyles = 'hover:scale-105 active:scale-95 hover:shadow-lg';
     const disabledStyles = 'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100';
 
-    const glowAnimation = glow ? 'animate-pulse shadow-lg' : '';
-    const pulseAnimation = pulse ? 'animate-pulse' : '';
+    const glowAnimation = glow ? ' shadow-lg' : '';
+    const pulseAnimation = pulse ? '' : '';
 
     return (
         <button

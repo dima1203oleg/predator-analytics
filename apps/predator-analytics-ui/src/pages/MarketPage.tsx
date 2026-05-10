@@ -470,12 +470,12 @@ export default function MarketPage() {
         <div className="flex flex-col gap-12 xl:flex-row xl:items-start xl:justify-between relative z-10">
           <div className="flex-1 space-y-8">
             <div className="flex flex-wrap items-center gap-4">
-              <div className="flex items-center gap-2 rounded-full border border-red-500/30 bg-red-500/10 px-4 py-1.5 backdrop-blur-md">
-                <div className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />
+              <div className="flex items-center gap-2 rounded-full border border-red-500/30 bg-red-500/10 px-4 py-1.5 ">
+                <div className="h-1.5 w-1.5 rounded-full bg-red-500 " />
                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-red-500 italic">PREDATOR v62.7-ELITE</span>
               </div>
               <div className={cn(
-                "rounded-full border px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] backdrop-blur-md",
+                "rounded-full border px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] ",
                 backendStatus.isOffline ? "border-rose-500/30 text-rose-500 bg-rose-500/5" : "border-emerald-500/30 text-emerald-500 bg-emerald-500/5"
               )}>
                 {backendStatus.statusLabel}
@@ -485,7 +485,7 @@ export default function MarketPage() {
             <div className="space-y-4">
               <h1 className="flex flex-col text-5xl font-black tracking-tighter text-white sm:text-7xl lg:text-8xl uppercase italic leading-none">
                 <span>РИНКОВИЙ</span>
-                <span className="text-red-600 drop-shadow-[0_0_35px_rgba(220,38,38,0.6)]">ІНТЕЛЕКТ</span>
+                <span className="text-red-600 ">ІНТЕЛЕКТ</span>
               </h1>
               <p className="max-w-xl text-xl font-medium leading-relaxed text-slate-400/80 [text-wrap:balance]">
                 Глобальна дешифровка митних потоків, моніторинг цінового арбітражу та розвідка конкурентного середовища.
@@ -527,7 +527,7 @@ export default function MarketPage() {
       </section>
 
       {/* TABS NAV */}
-      <div className="flex items-center justify-between p-2 rounded-[28px] border border-white/[0.08] bg-white/[0.02] backdrop-blur-xl">
+      <div className="flex items-center justify-between p-2 rounded-[28px] border border-white/[0.08] bg-white/[0.02] ">
         <div className="flex flex-wrap gap-2">
           {tabs.map((tab) => (
             <button
@@ -536,11 +536,11 @@ export default function MarketPage() {
               className={cn(
                 'group flex items-center gap-3 rounded-2xl border px-6 py-3 text-[11px] font-black uppercase tracking-widest transition-all italic',
                 activeTab === tab.key
-                  ? 'border-red-500/40 bg-red-500/10 text-red-500 shadow-[0_0_25px_rgba(220,38,38,0.15)]'
+                  ? 'border-red-500/40 bg-red-500/10 text-red-500 '
                   : 'border-transparent text-slate-500 hover:text-slate-200 hover:bg-white/5',
               )}
             >
-              <span className={cn("transition-transform group-hover:scale-110", activeTab === tab.key && "animate-pulse")}>
+              <span className={cn("transition-transform group-hover:scale-110", activeTab === tab.key && "")}>
                 {tab.icon}
               </span>
               {tab.label}
@@ -552,7 +552,7 @@ export default function MarketPage() {
             <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">ПОТОКОВИЙ АНАЛІЗ</span>
             <span className="text-xs font-bold text-red-500">АКТИВНИЙ</span>
           </div>
-          <Activity size={18} className="text-red-600 animate-pulse" />
+          <Activity size={18} className="text-red-600 " />
         </div>
       </div>
 
@@ -631,7 +631,7 @@ function MarketOverview({
   return (
     <div className="grid gap-6">
       {error && (
-        <div className="flex items-center gap-4 rounded-3xl border border-red-500/20 bg-red-500/5 p-6 backdrop-blur-md">
+        <div className="flex items-center gap-4 rounded-3xl border border-red-500/20 bg-red-500/5 p-6 ">
           <AlertCircle className="text-red-500" size={24} />
           <div className="text-sm font-bold text-red-200 uppercase tracking-tight italic">{error}</div>
         </div>
@@ -729,7 +729,7 @@ function ArbitrageTab({ declarations, loading }: { declarations: DeclarationResp
     <div className="grid gap-6">
       <div className="rounded-[40px] border border-red-500/20 bg-red-500/[0.02] p-8">
         <div className="flex items-center gap-4 mb-8">
-          <div className="p-4 rounded-[24px] bg-red-600 shadow-[0_0_30px_rgba(220,38,38,0.3)]">
+          <div className="p-4 rounded-[24px] bg-red-600 ">
             <Target className="text-white" size={32} />
           </div>
           <div>

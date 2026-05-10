@@ -27,7 +27,7 @@ export const GraphDBView: React.FC<GraphDBViewProps> = ({ cypherQuery, onCypherQ
                     action={
                         <div className="flex items-center gap-3">
                             <div className="px-3 py-1 bg-purple-500/10 border border-purple-500/20 rounded-full flex items-center gap-2">
-                                <div className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-pulse shadow-[0_0_8px_#a855f7]" />
+                                <div className="w-1.5 h-1.5 rounded-full bg-purple-500  shadow-[0_0_8px_#a855f7]" />
                                 <span className="text-[8px] font-black text-purple-400 uppercase tracking-widest">GDBMS ACTIVE</span>
                             </div>
                         </div>
@@ -37,7 +37,7 @@ export const GraphDBView: React.FC<GraphDBViewProps> = ({ cypherQuery, onCypherQ
 
                     <div className="relative h-full w-full flex items-center justify-center p-10 overflow-hidden">
                         {/* Complex SVG Graph Visualization */}
-                        <svg width="100%" height="100%" viewBox="0 0 800 500" className="relative z-10 filter drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]">
+                        <svg width="100%" height="100%" viewBox="0 0 800 500" className="relative z-10 filter ">
                             <defs>
                                 <filter id="glow">
                                     <feGaussianBlur stdDeviation="2.5" result="coloredBlur" />
@@ -121,7 +121,7 @@ export const GraphDBView: React.FC<GraphDBViewProps> = ({ cypherQuery, onCypherQ
                         </svg>
 
                         {/* Topology Overlay Metrics */}
-                        <div className="absolute top-10 left-10 p-6 bg-slate-900/40 rounded-[24px] border border-white/5 backdrop-blur-xl">
+                        <div className="absolute top-10 left-10 p-6 bg-slate-900/40 rounded-[24px] border border-white/5 ">
                             <div className="flex flex-col gap-4">
                                 <div>
                                     <div className="text-[9px] text-slate-500 font-black uppercase tracking-widest mb-1">Total Graph Density</div>

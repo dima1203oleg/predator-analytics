@@ -63,7 +63,7 @@ export const TopImportersWidget: React.FC<{
 
 
   return (
-    <div className="bg-slate-950/80 border border-white/10 rounded-[24px] backdrop-blur-xl overflow-hidden">
+    <div className="bg-slate-950/80 border border-white/10 rounded-[24px]  overflow-hidden">
       <div className="p-5 border-b border-white/5 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className={cn("p-2.5 rounded-xl", `bg-${personaColor}-500/20`)}>
@@ -219,7 +219,7 @@ export const HSCodeAnalyticsWidget: React.FC<{
   };
 
   return (
-    <div className="bg-slate-950/80 border border-white/10 rounded-[24px] backdrop-blur-xl overflow-hidden">
+    <div className="bg-slate-950/80 border border-white/10 rounded-[24px]  overflow-hidden">
       <div className="p-5 border-b border-white/5 flex items-center gap-3">
         <div className={cn("p-2.5 rounded-xl", `bg-${personaColor}-500/20`)}>
           <Layers className={`text-${personaColor}-400`} size={18} />
@@ -312,7 +312,7 @@ export const PriceAnomalyWidget: React.FC<{
   const personaColor = persona === 'INQUISITOR' ? 'rose' : 'amber';
 
   return (
-    <div className="bg-slate-950/80 border border-white/10 rounded-[24px] backdrop-blur-xl overflow-hidden">
+    <div className="bg-slate-950/80 border border-white/10 rounded-[24px]  overflow-hidden">
       <div className="p-5 border-b border-white/5 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="p-2.5 rounded-xl bg-rose-500/20">
@@ -408,7 +408,7 @@ export const TradeFlowWidget: React.FC<{
 
 
   return (
-    <div className="bg-slate-950/80 border border-white/10 rounded-[24px] backdrop-blur-xl overflow-hidden">
+    <div className="bg-slate-950/80 border border-white/10 rounded-[24px]  overflow-hidden">
       <div className="p-5 border-b border-white/5 flex items-center gap-3">
         <div className={cn("p-2.5 rounded-xl", `bg-${personaColor}-500/20`)}>
           <Globe className={`text-${personaColor}-400`} size={18} />
@@ -541,7 +541,7 @@ export const CompetitorRadarWidget: React.FC<{
   };
 
   return (
-    <div className="bg-slate-950/80 border border-white/10 rounded-[24px] backdrop-blur-xl overflow-hidden">
+    <div className="bg-slate-950/80 border border-white/10 rounded-[24px]  overflow-hidden">
       <div className="p-5 border-b border-white/5 flex items-center gap-3">
         <div className="p-2.5 rounded-xl bg-amber-500/20">
           <Target className="text-amber-400" size={18} />
@@ -604,7 +604,7 @@ export const RiskScoreWidget: React.FC<{
   const riskLevel = getRiskLevel(score);
 
   return (
-    <div className="bg-slate-950/80 border border-white/10 rounded-[24px] backdrop-blur-xl overflow-hidden">
+    <div className="bg-slate-950/80 border border-white/10 rounded-[24px]  overflow-hidden">
       <div className="p-5 border-b border-white/5 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="p-2.5 rounded-xl bg-rose-500/20">

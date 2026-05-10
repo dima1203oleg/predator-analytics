@@ -42,7 +42,7 @@ export const MarketOverviewTab: React.FC<MarketOverviewTabProps> = ({
   return (
     <div className="space-y-6">
       {error && (
-        <div className="rounded-2xl border border-rose-500/20 bg-rose-500/10 px-5 py-4 text-sm text-rose-200 backdrop-blur-md">
+        <div className="rounded-2xl border border-rose-500/20 bg-rose-500/10 px-5 py-4 text-sm text-rose-200 ">
           {error}
         </div>
       )}
@@ -51,12 +51,12 @@ export const MarketOverviewTab: React.FC<MarketOverviewTabProps> = ({
         {(loading ? Array.from({ length: 4 }).map((_, i) => ({ title: `L-${i}`, value: '', change: '', positive: true, icon: FileText })) : data.cards).map((card, index) => (
           <div
             key={card.title}
-            className="group relative overflow-hidden rounded-2xl border border-white/5 bg-slate-900/40 backdrop-blur-md p-6 transition-all duration-300 hover:border-amber-500/30 hover:bg-slate-900/50"
+            className="group relative overflow-hidden rounded-2xl border border-white/5 bg-slate-900/40  p-6 transition-all duration-300 hover:border-amber-500/30 hover:bg-slate-900/50"
           >
             <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
             
             {loading ? (
-              <div className="space-y-4 animate-pulse">
+              <div className="space-y-4 ">
                 <div className="h-10 w-10 rounded-lg bg-white/5" />
                 <div className="h-8 w-24 rounded bg-white/5" />
                 <div className="h-4 w-32 rounded bg-white/5" />
@@ -90,7 +90,7 @@ export const MarketOverviewTab: React.FC<MarketOverviewTabProps> = ({
         ))}
       </div>
 
-      <div className="overflow-hidden rounded-2xl border border-white/5 bg-slate-900/40 backdrop-blur-md">
+      <div className="overflow-hidden rounded-2xl border border-white/5 bg-slate-900/40 ">
         <div className="flex items-center justify-between border-b border-white/5 px-6 py-4">
           <h3 className="text-sm font-bold text-white uppercase tracking-wider italic">
             ТОП-10 товарних категорій за обсягом
@@ -114,10 +114,10 @@ export const MarketOverviewTab: React.FC<MarketOverviewTabProps> = ({
                 <tr key={product?.code || index} className="group transition-colors hover:bg-white/5">
                   {loading ? (
                     <>
-                      <td className="px-6 py-4"><div className="h-4 w-12 animate-pulse rounded bg-white/5" /></td>
-                      <td className="px-6 py-4"><div className="h-4 w-48 animate-pulse rounded bg-white/5" /></td>
-                      <td className="px-6 py-4"><div className="h-4 w-20 animate-pulse ml-auto rounded bg-white/5" /></td>
-                      <td className="px-6 py-4"><div className="h-4 w-12 animate-pulse ml-auto rounded bg-white/5" /></td>
+                      <td className="px-6 py-4"><div className="h-4 w-12  rounded bg-white/5" /></td>
+                      <td className="px-6 py-4"><div className="h-4 w-48  rounded bg-white/5" /></td>
+                      <td className="px-6 py-4"><div className="h-4 w-20  ml-auto rounded bg-white/5" /></td>
+                      <td className="px-6 py-4"><div className="h-4 w-12  ml-auto rounded bg-white/5" /></td>
                       <td className="px-6 py-4"></td>
                     </>
                   ) : (

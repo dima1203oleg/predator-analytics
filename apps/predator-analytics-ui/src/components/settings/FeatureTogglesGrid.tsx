@@ -41,12 +41,12 @@ export const FeatureTogglesGrid: React.FC<FeatureTogglesGridProps> = ({
                             className={`
                                 cursor-pointer group flex items-start gap-4 p-4 rounded-xl border transition-all duration-300 relative 
                                 ${enabled
-                                    ? "bg-slate-900/60 border-emerald-500/50 shadow-[0_0_20px_rgba(16,185,129,0.1)]"
+                                    ? "bg-slate-900/60 border-emerald-500/50 "
                                     : "bg-slate-950/30 border-slate-800 hover:border-slate-700"}
                             `}
                         >
                             {enabled && (
-                                <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent shadow-[0_0_10px_rgba(16,185,129,0.5)]"></div>
+                                <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent "></div>
                             )}
 
                             <div className={`p-2.5 rounded-lg mt-0.5 transition-colors ${enabled ? "bg-emerald-500/20 text-emerald-400 scale-110" : "bg-slate-900 text-slate-600"}`}>

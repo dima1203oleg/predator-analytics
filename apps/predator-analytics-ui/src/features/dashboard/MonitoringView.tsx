@@ -65,10 +65,10 @@ const scaleIn = {
 
 /* ── Кольорова палітра ── */
 const statusTones = {
-  emerald: { bg: 'bg-emerald-500/10 border-emerald-500/20', text: 'text-emerald-400', glow: 'shadow-[0_0_20px_rgba(16,185,129,0.2)]' },
-  amber: { bg: 'bg-amber-500/10 border-amber-500/20', text: 'text-amber-400', glow: 'shadow-[0_0_20px_rgba(245,158,11,0.2)]' },
-  rose: { bg: 'bg-rose-500/10 border-rose-500/20', text: 'text-rose-400', glow: 'shadow-[0_0_20px_rgba(244,63,94,0.2)]' },
-  sky: { bg: 'bg-sky-500/10 border-sky-500/20', text: 'text-sky-400', glow: 'shadow-[0_0_20px_rgba(14,165,233,0.2)]' },
+  emerald: { bg: 'bg-emerald-500/10 border-emerald-500/20', text: 'text-emerald-400', glow: '' },
+  amber: { bg: 'bg-amber-500/10 border-amber-500/20', text: 'text-amber-400', glow: '' },
+  rose: { bg: 'bg-rose-500/10 border-rose-500/20', text: 'text-rose-400', glow: '' },
+  sky: { bg: 'bg-sky-500/10 border-sky-500/20', text: 'text-sky-400', glow: '' },
   slate: { bg: 'bg-slate-500/10 border-slate-500/20', text: 'text-slate-400', glow: 'shadow-none' },
 } as const;
 
@@ -100,14 +100,14 @@ export default function MonitoringView() {
          ═══════════════════════════════════════════════ */}
       <motion.section 
         variants={fadeUp}
-        className="relative overflow-hidden rounded-[2.5rem] border border-white/5 bg-black/40 backdrop-blur-3xl p-8 sm:p-10 shadow-2xl"
+        className="relative overflow-hidden rounded-[2.5rem] border border-white/5 bg-black/40  p-8 sm:p-10 shadow-2xl"
       >
         <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-transparent to-rose-500/5 pointer-events-none" />
         
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
           <div>
             <div className="inline-flex items-center gap-3 rounded-full border border-rose-500/20 bg-rose-500/5 px-4 py-1.5 text-[10px] font-black tracking-[0.3em] text-rose-500 uppercase italic">
-              <div className="h-1.5 w-1.5 rounded-full bg-rose-500 shadow-[0_0_12px_#f43f5e] animate-pulse" />
+              <div className="h-1.5 w-1.5 rounded-full bg-rose-500 shadow-[0_0_12px_#f43f5e] " />
               SYSTEM_MONITOR v63.0
             </div>
             <h1 className="mt-4 text-4xl font-black text-white italic tracking-tighter uppercase">
@@ -126,7 +126,7 @@ export default function MonitoringView() {
             <button 
               onClick={refresh}
               disabled={isLoading}
-              className="group flex h-14 w-14 items-center justify-center rounded-2xl border border-rose-500/20 bg-rose-500/5 text-rose-500 transition-all hover:bg-rose-500/10 hover:shadow-[0_0_30px_rgba(244,63,94,0.3)]"
+              className="group flex h-14 w-14 items-center justify-center rounded-2xl border border-rose-500/20 bg-rose-500/5 text-rose-500 transition-all hover:bg-rose-500/10 hover:"
             >
               <RefreshCcw className={cn("h-6 w-6 transition-transform", isLoading && "animate-spin")} />
             </button>
@@ -143,7 +143,7 @@ export default function MonitoringView() {
               className={cn(
                 "flex items-center gap-3 rounded-2xl px-6 py-4 text-[11px] font-black uppercase tracking-widest transition-all italic border",
                 activeTab === tab.id 
-                  ? "bg-rose-500/15 border-rose-500/40 text-white shadow-[0_0_30px_rgba(244,63,94,0.15)]" 
+                  ? "bg-rose-500/15 border-rose-500/40 text-white " 
                   : "bg-white/[0.03] border-white/5 text-slate-500 hover:bg-white/[0.05] hover:text-slate-300"
               )}
             >
@@ -173,7 +173,7 @@ export default function MonitoringView() {
               <div className="space-y-6">
                 <div className="flex items-center justify-between px-4">
                    <h2 className="text-xl font-black text-white italic uppercase tracking-tighter">ПРОДУКТИВНІСТЬ <span className="text-rose-500">ЯДРА</span></h2>
-                   <Activity className="h-5 w-5 text-rose-500 animate-pulse" />
+                   <Activity className="h-5 w-5 text-rose-500 " />
                 </div>
                 <div className="grid gap-6 sm:grid-cols-2">
                    {[
@@ -182,7 +182,7 @@ export default function MonitoringView() {
                      { label: 'ЛАТЕНТНІСТЬ_API', value: formatLatency(metrics.api_latency_ms), icon: Zap, tone: statusTones.amber },
                      { label: 'ДИСКОВИЙ_ПРОСТІР', value: formatPercent(metrics.disk_usage_pct), icon: HardDrive, tone: statusTones.emerald },
                    ].map((m) => (
-                     <div key={m.label} className="group relative rounded-3xl border border-white/5 bg-black/40 backdrop-blur-xl p-8 transition-all hover:border-rose-500/30 overflow-hidden">
+                     <div key={m.label} className="group relative rounded-3xl border border-white/5 bg-black/40  p-8 transition-all hover:border-rose-500/30 overflow-hidden">
                        <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none" />
                        <div className="flex items-center justify-between mb-4">
                          <div className={cn("p-3 rounded-xl border", m.tone.bg)}>
@@ -202,7 +202,7 @@ export default function MonitoringView() {
                    <h2 className="text-xl font-black text-white italic uppercase tracking-tighter">ДЖЕРЕЛА <span className="text-indigo-400">ДОВІРИ</span></h2>
                    <Shield className="h-5 w-5 text-indigo-400" />
                 </div>
-                <div className="rounded-3xl border border-white/5 bg-black/40 backdrop-blur-3xl p-8 shadow-xl">
+                <div className="rounded-3xl border border-white/5 bg-black/40  p-8 shadow-xl">
                    <div className="space-y-4">
                      {[
                        { label: 'PostgreSQL (SSOT)', status: 'АКТИВНО', latency: '2ms', color: 'text-emerald-400' },
@@ -251,11 +251,11 @@ export default function MonitoringView() {
                     <motion.div
                       key={node.id}
                       variants={scaleIn}
-                      className="group relative rounded-3xl border border-white/5 bg-black/40 backdrop-blur-xl p-8 transition-all hover:border-rose-500/30 shadow-xl overflow-hidden"
+                      className="group relative rounded-3xl border border-white/5 bg-black/40  p-8 transition-all hover:border-rose-500/30 shadow-xl overflow-hidden"
                       whileHover={{ y: -5 }}
                     >
                       <div className="absolute top-0 right-0 p-4">
-                         <div className={cn("h-3 w-3 rounded-full animate-pulse", tone.bg.replace('/10', ''), tone.glow)} />
+                         <div className={cn("h-3 w-3 rounded-full ", tone.bg.replace('/10', ''), tone.glow)} />
                       </div>
                       <Server className="h-8 w-8 text-slate-700 mb-6 group-hover:text-rose-500 transition-colors" />
                       <h3 className="text-sm font-black text-white uppercase italic tracking-tight truncate">{node.name}</h3>
@@ -307,7 +307,7 @@ export default function MonitoringView() {
                  <h2 className="text-2xl font-black text-white italic uppercase tracking-tighter">СИСТЕМНИЙ <span className="text-rose-500">ЖУРНАЛ</span></h2>
                  <Terminal className="h-5 w-5 text-rose-500" />
               </div>
-              <div className="rounded-[2.5rem] border border-white/5 bg-black/40 backdrop-blur-3xl p-8 shadow-2xl overflow-hidden relative">
+              <div className="rounded-[2.5rem] border border-white/5 bg-black/40  p-8 shadow-2xl overflow-hidden relative">
                 <div className="absolute top-0 right-0 w-1 h-full bg-rose-600/30" />
                 <div className="max-h-[600px] overflow-y-auto pr-4 space-y-3 font-mono no-scrollbar">
                   {logs.map((log, i) => (
@@ -337,7 +337,7 @@ export default function MonitoringView() {
             <div className="space-y-8">
               <div className="flex items-center justify-between px-4">
                  <h2 className="text-2xl font-black text-white italic uppercase tracking-tighter">ПОТОКИ <span className="text-rose-500">ДАНИХ</span></h2>
-                 <Waves className="h-5 w-5 text-rose-500 animate-pulse" />
+                 <Waves className="h-5 w-5 text-rose-500 " />
               </div>
               <div className="grid gap-6">
                  {pipelines.length === 0 ? (
@@ -347,11 +347,11 @@ export default function MonitoringView() {
                  ) : pipelines.map((job) => {
                    const tone = statusTones[job.tone] || statusTones.slate;
                    return (
-                     <div key={job.id} className="group relative rounded-3xl border border-white/5 bg-black/40 backdrop-blur-xl p-8 transition-all hover:border-rose-500/30 overflow-hidden shadow-xl">
+                     <div key={job.id} className="group relative rounded-3xl border border-white/5 bg-black/40  p-8 transition-all hover:border-rose-500/30 overflow-hidden shadow-xl">
                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                          <div className="flex items-center gap-6">
                             <div className={cn("p-4 rounded-2xl border", tone.bg)}>
-                               <Activity className={cn("h-6 w-6", tone.text, job.isActive && "animate-pulse")} />
+                               <Activity className={cn("h-6 w-6", tone.text, job.isActive && "")} />
                             </div>
                             <div>
                                <h3 className="text-lg font-black text-white italic uppercase tracking-tight">{job.title}</h3>

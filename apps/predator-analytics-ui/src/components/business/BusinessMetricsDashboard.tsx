@@ -208,7 +208,7 @@ export function BusinessMetricsDashboard({
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <div className="h-3 w-3 rounded-full bg-green-500 animate-pulse" />
+              <div className="h-3 w-3 rounded-full bg-green-500 " />
               <span className="text-sm font-medium text-green-700 dark:text-green-400">
                 Operational
               </span>

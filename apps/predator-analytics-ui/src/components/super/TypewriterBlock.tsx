@@ -63,7 +63,7 @@ export const TypewriterBlock: React.FC<TypewriterBlockProps> = ({ text, isActive
                     </div>
                 );
             })}
-            {isActive && <div className="w-2 h-4 bg-green-500 animate-pulse mt-1 ml-2"></div>}
+            {isActive && <div className="w-2 h-4 bg-green-500  mt-1 ml-2"></div>}
         </div>
     );
 };

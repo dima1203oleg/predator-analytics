@@ -14,14 +14,14 @@ export const EnvironmentCard: React.FC<EnvironmentCardProps> = ({ env, onSync, o
     
     const getStatusColor = (status: string) => {
         if (status === 'Running') return 'bg-green-500 shadow-[0_0_5px_lime]';
-        if (status === 'Pending' || status === 'ContainerCreating') return 'bg-yellow-500 animate-pulse';
+        if (status === 'Pending' || status === 'ContainerCreating') return 'bg-yellow-500 ';
         return 'bg-red-500 animate-ping';
     };
 
     const getBorderColor = () => {
-        if (env.type === 'PROD') return 'border-green-500/50 shadow-[0_0_20px_rgba(34,197,94,0.1)]';
-        if (env.type === 'DEV') return 'border-blue-500/50 shadow-[0_0_20px_rgba(59,130,246,0.1)]';
-        return 'border-orange-500/50 shadow-[0_0_20px_rgba(249,115,22,0.1)]';
+        if (env.type === 'PROD') return 'border-green-500/50 ';
+        if (env.type === 'DEV') return 'border-blue-500/50 ';
+        return 'border-orange-500/50 ';
     };
 
     return (

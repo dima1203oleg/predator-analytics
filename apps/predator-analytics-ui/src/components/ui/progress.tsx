@@ -10,7 +10,7 @@ const progressVariants = cva(
         default: "bg-secondary",
         cyber: "bg-slate-900 border border-white/5",
         neon: "bg-indigo-950/50 border border-indigo-500/20",
-        holographic: "bg-cyan-950/30 border border-cyan-500/20 backdrop-blur-md",
+        holographic: "bg-cyan-950/30 border border-cyan-500/20 ",
       }
     },
     defaultVariants: {
@@ -26,8 +26,8 @@ const indicatorVariants = cva(
       variant: {
         default: "bg-primary",
         cyber: "bg-emerald-500 shadow-[0_0_10px_#10b981]",
-        neon: "bg-gradient-to-r from-indigo-500 via-purple-500 to-fuchsia-500 shadow-[0_0_15px_rgba(217,70,239,0.5)]",
-        holographic: "bg-gradient-to-r from-cyan-400 to-blue-500 shadow-[0_0_20px_rgba(6,182,212,0.6)]",
+        neon: "bg-gradient-to-r from-indigo-500 via-purple-500 to-fuchsia-500 ",
+        holographic: "bg-gradient-to-r from-cyan-400 to-blue-500 ",
       }
     },
     defaultVariants: {

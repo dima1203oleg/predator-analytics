@@ -46,7 +46,7 @@ const StatusIcon = ({ status }: { status: string }) => {
     case 'degraded':
       return <AlertTriangle className="text-amber-400" size={18} />;
     case 'critical':
-      return <XCircle className="text-rose-400 animate-pulse" size={18} />;
+      return <XCircle className="text-rose-400 " size={18} />;
     default:
       return <RefreshCw className="text-slate-400 animate-spin" size={18} />;
   }
@@ -132,7 +132,7 @@ const ServiceCard = ({ service }: { service: ServiceStatus }) => {
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ scale: 1.02 }}
       className={`
-        relative p-4 rounded-xl border backdrop-blur-sm
+        relative p-4 rounded-xl border 
         bg-gradient-to-br ${colors.bg} ${colors.border}
         transition-all duration-300
       `}
@@ -225,7 +225,7 @@ const MetricCard = ({
 }) => (
   <motion.div
     whileHover={{ scale: 1.02 }}
-    className="p-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm"
+    className="p-4 rounded-xl bg-white/5 border border-white/10 "
   >
     <div className="flex items-center justify-between mb-2">
       <div className={`p-2 rounded-lg bg-${color}-500/20`}>
@@ -251,7 +251,7 @@ const MetricCard = ({
 const GuardianStatus = ({ mode, healing_history }: { mode: string, healing_history: any[] | null }) => (
     <motion.div
         whileHover={{ scale: 1.01 }}
-        className="col-span-1 md:col-span-2 p-6 rounded-2xl bg-emerald-500/5 border border-emerald-500/10 backdrop-blur-sm"
+        className="col-span-1 md:col-span-2 p-6 rounded-2xl bg-emerald-500/5 border border-emerald-500/10 "
     >
         <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
@@ -291,7 +291,7 @@ const GuardianStatus = ({ mode, healing_history }: { mode: string, healing_histo
 // --- TRUTH VERIFICATION PANEL (v45.2) ---
 const TruthVerification = ({ data, onVerify }: { data: any, onVerify: () => void }) => {
   if (!data) return (
-      <div className="col-span-1 md:col-span-3 p-8 rounded-2xl bg-white/5 border border-white/10 animate-pulse flex items-center justify-center">
+      <div className="col-span-1 md:col-span-3 p-8 rounded-2xl bg-white/5 border border-white/10  flex items-center justify-center">
           <span className="text-slate-500">Завантаження даних Конституції...</span>
       </div>
   );
@@ -300,7 +300,7 @@ const TruthVerification = ({ data, onVerify }: { data: any, onVerify: () => void
     <motion.div
       initial={{ y: 20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      className="col-span-1 md:col-span-3 p-6 rounded-2xl bg-gradient-to-br from-indigo-500/10 via-purple-500/5 to-transparent border border-indigo-500/20 backdrop-blur-md  relative"
+      className="col-span-1 md:col-span-3 p-6 rounded-2xl bg-gradient-to-br from-indigo-500/10 via-purple-500/5 to-transparent border border-indigo-500/20   relative"
     >
       <div className="absolute top-0 right-0 p-4 opacity-10">
           <Shield size={120} className="text-indigo-400" />
@@ -326,7 +326,7 @@ const TruthVerification = ({ data, onVerify }: { data: any, onVerify: () => void
               <motion.div
                 animate={data.constitution.status === 'VALID' ? { scale: [1, 1.2, 1], opacity: [1, 0.7, 1] } : {}}
                 transition={{ duration: 2, repeat: Infinity }}
-                className={`w-2 h-2 rounded-full ${data.constitution.status === 'VALID' ? 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.5)]' : 'bg-rose-400'}`}
+                className={`w-2 h-2 rounded-full ${data.constitution.status === 'VALID' ? 'bg-emerald-400 ' : 'bg-rose-400'}`}
               />
               <span className={`text-sm font-mono ${data.constitution.status === 'VALID' ? 'text-emerald-400' : 'text-rose-400'}`}>
                 {data.constitution.status}

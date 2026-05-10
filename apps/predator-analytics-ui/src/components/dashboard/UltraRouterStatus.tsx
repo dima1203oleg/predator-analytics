@@ -16,12 +16,12 @@ export const UltraRouterStatus: React.FC = () => {
   return (
     <div className={`p-6 rounded-2xl border transition-all duration-500 ${
       mode === 'creative' 
-        ? 'bg-gradient-to-br from-purple-900/40 to-pink-900/40 border-pink-500/50 shadow-[0_0_20px_rgba(236,72,153,0.3)]' 
+        ? 'bg-gradient-to-br from-purple-900/40 to-pink-900/40 border-pink-500/50 ' 
         : 'bg-slate-900/80 border-slate-700/50'
     }`}>
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-xl font-bold flex items-center gap-2">
-          <Zap className={mode === 'creative' ? 'text-pink-400 animate-pulse' : 'text-blue-400'} />
+          <Zap className={mode === 'creative' ? 'text-pink-400 ' : 'text-blue-400'} />
           Ultra-Router Status
         </h3>
         <button 
@@ -48,7 +48,7 @@ export const UltraRouterStatus: React.FC = () => {
             </div>
             <div className="flex items-center gap-2">
               <span className="text-[10px] text-green-400 font-mono">READY</span>
-              <div className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
+              <div className="w-2 h-2 rounded-full bg-green-500 " />
             </div>
           </div>
         ))}

@@ -62,12 +62,12 @@ export const ValueScreen: React.FC<ValueScreenProps> = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-[#020617]/90 backdrop-blur-xl"
+            className="absolute inset-0 bg-[#020617]/90 "
           />
 
           {/* Sparkles / Effects */}
           <div className="pointer-events-none absolute inset-0 overflow-hidden">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[600px] bg-cyan-500/10 blur-[120px] rounded-full animate-pulse" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[600px] bg-cyan-500/10 blur-[120px] rounded-full " />
             <div className="absolute top-1/4 left-1/3 h-[300px] w-[300px] bg-emerald-500/10 blur-[100px] rounded-full" />
           </div>
 
@@ -99,7 +99,7 @@ export const ValueScreen: React.FC<ValueScreenProps> = ({
                   </div>
                   <div className={cn("flex items-baseline gap-1 text-5xl md:text-7xl font-black tracking-tighter", accentColor)}>
                     <span className="text-3xl md:text-5xl font-bold opacity-70">{currency}</span>
-                    <NumberTicker value={amount} decimalPlaces={0} className="drop-shadow-[0_0_20px_currentColor]" />
+                    <NumberTicker value={amount} decimalPlaces={0} className="" />
                   </div>
                 </div>
               </div>
@@ -149,7 +149,7 @@ export const ValueScreen: React.FC<ValueScreenProps> = ({
                     className="group relative flex-1 h-12 overflow-hidden bg-gradient-to-r from-cyan-600 to-emerald-600 hover:from-cyan-500 hover:to-emerald-500 text-white font-black uppercase tracking-[0.15em] border-none shadow-[0_10px_20px_rgba(6,182,212,0.3)]"
                   >
                     <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.1)_50%,transparent_75%)] bg-[length:250%_250%] animate-shimmer" />
-                    <Zap className="mr-2 h-4 w-4 fill-white animate-pulse" />
+                    <Zap className="mr-2 h-4 w-4 fill-white " />
                     <span>{primaryActionLabel}</span>
                   </Button>
                   

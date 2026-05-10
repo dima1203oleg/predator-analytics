@@ -94,7 +94,7 @@ export const FeedItemRow: React.FC<{ item: FeedItem; index: number }> = ({ item,
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.04 }}
             className={cn(
-                'p-3 rounded-xl border backdrop-blur-sm transition-all hover:scale-[1.01] cursor-pointer group',
+                'p-3 rounded-xl border  transition-all hover:scale-[1.01] cursor-pointer group',
                 sev.bg, sev.border
             )}
         >

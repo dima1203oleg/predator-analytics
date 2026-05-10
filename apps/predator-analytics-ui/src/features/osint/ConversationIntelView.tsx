@@ -143,7 +143,7 @@ export default function ConversationIntelView() {
                           <div className="relative group">
                              <div className="absolute inset-0 bg-emerald-500/15 blur-3xl rounded-full scale-150 group-hover:scale-200 transition-transform duration-[2s]" />
                              <div className="relative p-7 bg-black border-2 border-emerald-500/30 rounded-[3rem] shadow-4xl transform -rotate-3 hover:rotate-0 transition-all cursor-crosshair">
-                                <Radio size={54} className="text-emerald-500 drop-shadow-[0_0_20px_rgba(16,185,129,0.4)] animate-pulse" />
+                                <Radio size={54} className="text-emerald-500  " />
                                 <span className="absolute inset-x-0 bottom-4 h-1 bg-emerald-500/20 blur-lg mx-8" />
                              </div>
                           </div>
@@ -184,7 +184,7 @@ export default function ConversationIntelView() {
                       
                       {/* LIVE FEED LIST */}
                       <div className="col-span-12 xl:col-span-7 space-y-10 flex flex-col h-full overflow-hidden">
-                         <div className="flex items-center gap-4 p-3 bg-black border-2 border-white/5 rounded-[2.5rem] w-fit shadow-4xl backdrop-blur-3xl">
+                         <div className="flex items-center gap-4 p-3 bg-black border-2 border-white/5 rounded-[2.5rem] w-fit shadow-4xl ">
                              <div className="flex gap-2 bg-black border-2 border-white/5 p-2 rounded-2xl shadow-inner">
                                 {(['feed', 'analytics', 'risk'] as const).map(tab => (
                                   <button 
@@ -207,10 +207,10 @@ export default function ConversationIntelView() {
                             {isLoading ? (
                                 <div className="p-40 text-center border-2 border-white/5 rounded-[4rem] bg-black/40 h-full flex flex-col items-center justify-center">
                                     <div className="mb-8 relative inline-block">
-                                        <div className="absolute inset-0 bg-emerald-500/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                                        <div className="absolute inset-0 bg-emerald-500/20 blur-3xl rounded-full scale-150 " />
                                         <Satellite size={80} className="relative z-10 text-emerald-500 animate-spin-slow" />
                                     </div>
-                                    <p className="text-[12px] font-black uppercase text-slate-700 tracking-[0.8em] italic animate-pulse">ІНІЦІАЛІЗАЦІЯ_ПЕРЕХОПЛЕННЯ_СИГНАЛІВ...</p>
+                                    <p className="text-[12px] font-black uppercase text-slate-700 tracking-[0.8em] italic ">ІНІЦІАЛІЗАЦІЯ_ПЕРЕХОПЛЕННЯ_СИГНАЛІВ...</p>
                                 </div>
                             ) : messages.length === 0 ? (
                                 <div className="p-40 text-center border-4 border-dashed border-white/5 rounded-[4rem] bg-black/40 h-full flex flex-col items-center justify-center">
@@ -234,7 +234,7 @@ export default function ConversationIntelView() {
                                >
                                   {msg.riskLevel === 'critical' && (
                                      <div className="absolute top-0 right-0 p-12 opacity-10 pointer-events-none">
-                                        <Siren size={100} className="text-red-500 animate-pulse" />
+                                        <Siren size={100} className="text-red-500 " />
                                      </div>
                                   )}
 
@@ -246,7 +246,7 @@ export default function ConversationIntelView() {
                                         <div>
                                            <div className="flex items-center gap-4 mb-2">
                                               <p className="text-xl font-black text-emerald-400 italic leading-none uppercase tracking-tighter">{msg.channel}</p>
-                                              <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_#10b981]" />
+                                              <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full  shadow-[0_0_8px_#10b981]" />
                                            </div>
                                            <p className="text-[10px] font-black text-slate-700 uppercase italic tracking-widest leading-none">
                                               {msg.time} // {msg.views} VIEWS · {msg.platform.toUpperCase()}
@@ -254,7 +254,7 @@ export default function ConversationIntelView() {
                                         </div>
                                      </div>
                                      {msg.riskLevel === 'critical' ? (
-                                        <div className="px-6 py-2 bg-red-600 text-white rounded-full text-[10px] font-black uppercase italic tracking-[0.3em] shadow-4xl animate-pulse">
+                                        <div className="px-6 py-2 bg-red-600 text-white rounded-full text-[10px] font-black uppercase italic tracking-[0.3em] shadow-4xl ">
                                            КРИТИЧНИЙ_РИЗИК
                                         </div>
                                      ) : (
@@ -298,7 +298,7 @@ export default function ConversationIntelView() {
                              </div>
                              <div className="relative z-10">
                                 <h3 className="text-[11px] font-black text-emerald-500 uppercase tracking-[0.6em] italic mb-10 flex items-center gap-6">
-                                   <Activity size={24} className="animate-pulse" /> ДИНАМІКА_СИГНАЛІВ_24Г
+                                   <Activity size={24} className="" /> ДИНАМІКА_СИГНАЛІВ_24Г
                                 </h3>
                                 <div className="h-[260px] mb-12 border-b-2 border-white/5 pb-10">
                                    <ReactECharts option={chartOption} style={{ height: '100%', width: '100%' }} />
@@ -335,7 +335,7 @@ export default function ConversationIntelView() {
                                      <div key={i} className="flex items-center justify-between p-8 bg-black border-2 border-white/5 rounded-[2.5rem] hover:border-emerald-500/40 transition-all group/item shadow-2xl relative overflow-hidden">
                                         {t.gold && <div className="absolute inset-0 bg-emerald-500/[0.03] pointer-events-none" />}
                                         <div className="flex items-center gap-6">
-                                           <div className={cn("w-3 h-3 rounded-full shadow-[0_0_10px_currentColor]", t.risk === 'critical' ? 'text-red-500 bg-red-500 animate-pulse' : t.risk === 'high' ? 'text-amber-500 bg-amber-500' : 'text-emerald-500 bg-emerald-500')} />
+                                           <div className={cn("w-3 h-3 rounded-full shadow-[0_0_10px_currentColor]", t.risk === 'critical' ? 'text-red-500 bg-red-500 ' : t.risk === 'high' ? 'text-amber-500 bg-amber-500' : 'text-emerald-500 bg-emerald-500')} />
                                            <span className="text-[18px] font-black text-white italic tracking-tighter uppercase group-hover/item:text-emerald-400 transition-colors">{t.topic}</span>
                                         </div>
                                         <div className="text-right">
@@ -351,7 +351,7 @@ export default function ConversationIntelView() {
                          <TacticalCard className="p-10 bg-emerald-900/10 border-2 border-emerald-500/20 rounded-[3rem] relative overflow-hidden shadow-4xl group">
                              <div className="flex items-center gap-8 relative z-10">
                                 <div className="p-5 bg-black border-2 border-emerald-500/30 rounded-[2rem] text-emerald-500 shadow-4xl">
-                                   <Cpu size={32} className="animate-pulse" />
+                                   <Cpu size={32} className="" />
                                 </div>
                                 <div>
                                    <h4 className="text-[11px] font-black text-emerald-600 uppercase tracking-[0.5em] italic mb-2">NEURAL_DECODER_MODEL</h4>

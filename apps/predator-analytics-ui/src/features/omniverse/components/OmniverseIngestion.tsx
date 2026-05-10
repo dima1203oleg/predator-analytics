@@ -93,7 +93,7 @@ export const OmniverseIngestion: React.FC = () => {
   };
 
   return (
-    <div className="p-6 space-y-6 bg-slate-950/50 rounded-xl border border-emerald-500/20 backdrop-blur-md">
+    <div className="p-6 space-y-6 bg-slate-950/50 rounded-xl border border-emerald-500/20 ">
       <div className="flex items-center justify-between border-b border-emerald-500/20 pb-4">
         <div>
           <h2 className="text-2xl font-black text-white tracking-tighter flex items-center gap-2">
@@ -138,7 +138,7 @@ export const OmniverseIngestion: React.FC = () => {
       {loading && (
         <div className="py-20 flex flex-col items-center gap-4">
           <div className="w-16 h-16 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin" />
-          <p className="text-emerald-400 font-mono animate-pulse">AI ANALYZING DATA STRUCTURE...</p>
+          <p className="text-emerald-400 font-mono ">AI ANALYZING DATA STRUCTURE...</p>
         </div>
       )}
 
@@ -205,7 +205,7 @@ export const OmniverseIngestion: React.FC = () => {
               <button 
                 onClick={startUniversalIngestion}
                 disabled={ingesting}
-                className="px-8 py-2 bg-emerald-500 text-slate-950 rounded font-black hover:bg-emerald-400 transition-all uppercase text-xs flex items-center gap-2 shadow-[0_0_15px_rgba(16,185,129,0.5)]"
+                className="px-8 py-2 bg-emerald-500 text-slate-950 rounded font-black hover:bg-emerald-400 transition-all uppercase text-xs flex items-center gap-2 "
               >
                 {ingesting ? <><div className="w-3 h-3 border-2 border-slate-950/20 border-t-slate-950 rounded-full animate-spin" /> INGESTING...</> : <><Play size={14} /> EXECUTE UNIVERSAL INGESTION</>}
               </button>

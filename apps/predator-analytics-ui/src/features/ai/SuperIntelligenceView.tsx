@@ -71,7 +71,7 @@ const SuperIntelligenceView: React.FC = () => {
     }, [stage]);
 
     return (
-        <div className={`space-y-8 animate-in fade-in duration-500 w-full mx-auto relative z-10 ${isFocusMode ? 'fixed inset-0 z-[100] bg-slate-950 p-0 m-0 max-w-none backdrop-blur-3xl' : 'max-w-[1600px] pb-24'}`}>
+        <div className={`space-y-8 animate-in fade-in duration-500 w-full mx-auto relative z-10 ${isFocusMode ? 'fixed inset-0 z-[100] bg-slate-950 p-0 m-0 max-w-none ' : 'max-w-[1600px] pb-24'}`}>
             {!isFocusMode && (
                 <ViewHeader
                     title="СУПЕ ІНТЕЛЕКТ (ЯДРО GLM-5.1)"
@@ -127,7 +127,7 @@ const SuperIntelligenceView: React.FC = () => {
                             </div>
                         ) : <MatrixRain />}
 
-                        <div className="absolute top-6 left-8 z-40 bg-slate-900/60 border border-white/10 px-4 py-2 rounded-2xl backdrop-blur-xl flex items-center gap-3 shadow-2xl">
+                        <div className="absolute top-6 left-8 z-40 bg-slate-900/60 border border-white/10 px-4 py-2 rounded-2xl  flex items-center gap-3 shadow-2xl">
                             <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 2 }} className="w-2 h-2 rounded-full bg-purple-500 shadow-[0_0_10px_#a855f7]" />
                             <span className="text-[10px] font-extrabold text-white uppercase tracking-widest">{is3DEnabled ? 'Візуалізація Нейронної Матриці' : 'Потік Матриці Ядра'}</span>
                         </div>
@@ -137,7 +137,7 @@ const SuperIntelligenceView: React.FC = () => {
                                 { id: '3d', icon: is3DEnabled ? EyeOff : BrainCircuit, action: () => setIs3DEnabled(!is3DEnabled) },
                                 { id: 'focus', icon: isFocusMode ? Minimize2 : Maximize2, action: () => setIsFocusMode(!isFocusMode) },
                             ].map(btn => (
-                                <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} key={btn.id} onClick={btn.action} className="p-3 bg-slate-900/80 border border-white/10 text-white rounded-xl backdrop-blur-xl hover:border-purple-500 transition-all shadow-xl">
+                                <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} key={btn.id} onClick={btn.action} className="p-3 bg-slate-900/80 border border-white/10 text-white rounded-xl  hover:border-purple-500 transition-all shadow-xl">
                                     <btn.icon size={20} />
                                 </motion.button>
                             ))}
@@ -146,13 +146,13 @@ const SuperIntelligenceView: React.FC = () => {
                         <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-8 bg-gradient-to-t from-slate-950/90 to-transparent pointer-events-none">
                             <div className="flex gap-4 sm:gap-6 overflow-x-auto pb-4 scrollbar-hide justify-start sm:justify-center pointer-events-auto px-4">
                                 {activeAgents.map(agent => (
-                                    <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} key={agent.id} className={`flex flex-col items-center gap-3 p-4 rounded-2xl border backdrop-blur-2xl transition-all ${agent.status !== 'IDLE' ? 'bg-yellow-600/10 border-yellow-500 shadow-yellow-500/20 -translate-y-4' : 'bg-slate-900/40 border-white/5 opacity-40'}`}>
+                                    <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} key={agent.id} className={`flex flex-col items-center gap-3 p-4 rounded-2xl border  transition-all ${agent.status !== 'IDLE' ? 'bg-yellow-600/10 border-yellow-500 shadow-yellow-500/20 -translate-y-4' : 'bg-slate-900/40 border-white/5 opacity-40'}`}>
                                         <div className={`p-3 rounded-xl ${agent.role === 'SCANNER' ? 'bg-blue-500/20 text-blue-500' : agent.role === 'EXECUTOR' ? 'bg-purple-500/20 text-purple-500' : 'bg-emerald-500/20 text-emerald-500'}`}>
                                             {agent.role === 'SCANNER' ? <Search size={18} /> : agent.role === 'EXECUTOR' ? <Terminal size={18} /> : <Bug size={18} />}
                                         </div>
                                         <div className="text-[10px] font-black text-white uppercase tracking-tighter">{agent.name}</div>
                                         {agent.status !== 'IDLE' && (
-                                            <div className="text-[8px] bg-yellow-500 text-white px-2 py-0.5 rounded-lg font-black animate-pulse uppercase tracking-widest">
+                                            <div className="text-[8px] bg-yellow-500 text-white px-2 py-0.5 rounded-lg font-black  uppercase tracking-widest">
                                                 {agent.status === 'SCANNING' ? 'СКАНУВАННЯ' :
                                                     agent.status === 'TRANSMITTING' ? 'ПЕ ЕДАЧА' :
                                                         agent.status === 'CODING' ? 'КОДУВАННЯ' :
@@ -179,7 +179,7 @@ const SuperIntelligenceView: React.FC = () => {
                         </TacticalCard>
 
                         <TacticalCard variant="holographic" title="СИНАПСИС" className="flex-1 flex flex-col overflow-hidden glass-morphism panel-3d p-0" noPadding>
-                            <div className="flex bg-slate-950/50 backdrop-blur-xl border-b border-white/5 p-1 gap-1">
+                            <div className="flex bg-slate-950/50  border-b border-white/5 p-1 gap-1">
                                 {[
                                     { id: 'STREAM', icon: Radio, label: 'Потік' },
                                     { id: 'EVIDENCE', icon: Database, label: 'Артефакти RAG' },
@@ -187,7 +187,7 @@ const SuperIntelligenceView: React.FC = () => {
                                 ].map(tab => (
                                     <button
                                         key={tab.id} onClick={() => setRightTab(tab.id as any)}
-                                        className={`flex-1 py-4 text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-3 rounded-2xl transition-all ${rightTab === tab.id ? 'bg-blue-600 text-white shadow-[0_0_20px_rgba(37,99,235,0.4)]' : 'text-slate-500 hover:text-slate-300'}`}
+                                        className={`flex-1 py-4 text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-3 rounded-2xl transition-all ${rightTab === tab.id ? 'bg-blue-600 text-white ' : 'text-slate-500 hover:text-slate-300'}`}
                                     >
                                         <tab.icon size={16} /> {tab.label}
                                     </button>

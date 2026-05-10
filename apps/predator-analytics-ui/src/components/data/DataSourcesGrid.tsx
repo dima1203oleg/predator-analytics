@@ -49,7 +49,7 @@ export const DataSourcesGrid: React.FC<DataSourcesGridProps> = ({
         >
             {loading ? (
                 [...Array(3)].map((_, i) => (
-                    <div key={i} className="h-48 rounded-2xl bg-slate-800/30 border border-slate-700/50 animate-pulse" />
+                    <div key={i} className="h-48 rounded-2xl bg-slate-800/30 border border-slate-700/50 " />
                 ))
             ) : (
                 sources.map((source) => (
@@ -58,7 +58,7 @@ export const DataSourcesGrid: React.FC<DataSourcesGridProps> = ({
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         whileHover={{ scale: 1.02, borderColor: 'rgba(99, 102, 241, 0.5)' }}
-                        className="group relative p-6 rounded-2xl bg-slate-900/60 border border-slate-800 backdrop-blur-sm transition-all "
+                        className="group relative p-6 rounded-2xl bg-slate-900/60 border border-slate-800  transition-all "
                     >
                         <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
 
@@ -75,7 +75,7 @@ export const DataSourcesGrid: React.FC<DataSourcesGridProps> = ({
                                     source.status === 'error' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' :
                                     'bg-amber-500/10 text-amber-400 border-amber-500/20'}
                             `}>
-                                <div className={`w-1.5 h-1.5 rounded-full ${source.status === 'indexed' ? 'bg-emerald-500' : 'bg-amber-500'} animate-pulse`} />
+                                <div className={`w-1.5 h-1.5 rounded-full ${source.status === 'indexed' ? 'bg-emerald-500' : 'bg-amber-500'} `} />
                                 {getStatusText(source.status)}
                             </div>
                         </div>
@@ -97,7 +97,7 @@ export const DataSourcesGrid: React.FC<DataSourcesGridProps> = ({
                         </div>
 
                         {/* Накладання дій */}
-                        <div className="absolute inset-0 bg-slate-900/90 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3 z-20 backdrop-blur-sm">
+                        <div className="absolute inset-0 bg-slate-900/90 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3 z-20 ">
                             <button
                                 onClick={() => onAnalyze(source)}
                                 disabled={analyzingSourceId === source.id}

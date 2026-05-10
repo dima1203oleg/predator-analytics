@@ -22,7 +22,7 @@ export const PipelineDetailsModal: React.FC<PipelineDetailsModalProps> = ({ run,
     };
 
     return (
-        <div className="fixed inset-0 z-[70] bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
+        <div className="fixed inset-0 z-[70] bg-slate-950/80  flex items-center justify-center p-4" onClick={onClose}>
             <div className="bg-slate-900 border border-slate-700 rounded-lg shadow-2xl w-full max-w-2xl  panel-3d animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
                 
                 {/* Header */}

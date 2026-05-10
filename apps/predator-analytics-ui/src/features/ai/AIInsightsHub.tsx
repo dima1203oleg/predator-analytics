@@ -111,7 +111,7 @@ const NeuralGraph = ({ color }: { color: string }) => (
     
     <div className="relative h-full flex flex-col items-center justify-center gap-6">
        <div className="relative">
-          <div className="absolute inset-0 bg-rose-500/20 blur-3xl rounded-full scale-150 animate-pulse" />
+          <div className="absolute inset-0 bg-rose-500/20 blur-3xl rounded-full scale-150 " />
           <Radar size={56} className="text-rose-500 relative z-10 animate-spin-slow" style={{ animationDuration: '10s' }} />
        </div>
        <div className="flex flex-col items-center gap-2">
@@ -124,10 +124,10 @@ const NeuralGraph = ({ color }: { color: string }) => (
 
 const HUDCorners = ({ color = '#e11d48' }) => (
     <>
-      <div className="absolute top-4 left-4 w-12 h-12 border-t-2 border-l-2 opacity-40 shadow-[0_0_15px_rgba(225,29,72,0.3)]" style={{ borderColor: color, borderRadius: '2.5rem 0 0 0' }} />
-      <div className="absolute top-4 right-4 w-12 h-12 border-t-2 border-r-2 opacity-40 shadow-[0_0_15px_rgba(225,29,72,0.3)]" style={{ borderColor: color, borderRadius: '0 2.5rem 0 0' }} />
-      <div className="absolute bottom-4 left-4 w-12 h-12 border-b-2 border-l-2 opacity-40 shadow-[0_0_15px_rgba(225,29,72,0.3)]" style={{ borderColor: color, borderRadius: '0 0 0 2.5rem' }} />
-      <div className="absolute bottom-4 right-4 w-12 h-12 border-b-2 border-r-2 opacity-40 shadow-[0_0_15px_rgba(225,29,72,0.3)]" style={{ borderColor: color, borderRadius: '0 0 2.5rem 0' }} />
+      <div className="absolute top-4 left-4 w-12 h-12 border-t-2 border-l-2 opacity-40 " style={{ borderColor: color, borderRadius: '2.5rem 0 0 0' }} />
+      <div className="absolute top-4 right-4 w-12 h-12 border-t-2 border-r-2 opacity-40 " style={{ borderColor: color, borderRadius: '0 2.5rem 0 0' }} />
+      <div className="absolute bottom-4 left-4 w-12 h-12 border-b-2 border-l-2 opacity-40 " style={{ borderColor: color, borderRadius: '0 0 0 2.5rem' }} />
+      <div className="absolute bottom-4 right-4 w-12 h-12 border-b-2 border-r-2 opacity-40 " style={{ borderColor: color, borderRadius: '0 0 2.5rem 0' }} />
     </>
 );
 
@@ -172,14 +172,14 @@ const AIInsightsHub: React.FC<{ isWidgetMode?: boolean }> = ({ isWidgetMode = fa
 
   if (isWidgetMode) {
     return (
-      <div className="flex flex-col h-full bg-black/80 backdrop-blur-3xl border-2 border-rose-500/20 overflow-hidden rounded-[3rem] shadow-4xl relative group">
+      <div className="flex flex-col h-full bg-black/80  border-2 border-rose-500/20 overflow-hidden rounded-[3rem] shadow-4xl relative group">
         <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
         <div className="p-8 border-b border-rose-500/10 flex items-center justify-between relative z-10">
           <div className="flex items-center gap-4">
             <Brain size={20} className="text-rose-500 glint-elite" />
             <span className="text-[11px] font-black uppercase tracking-[0.4em] text-rose-500 italic">АНАЛІТИЧНИЙ_О АКУЛ</span>
           </div>
-          <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse shadow-[0_0_10px_rgba(225,29,72,1)]" />
+          <div className="w-2 h-2 rounded-full bg-rose-500  " />
         </div>
         <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-5 relative z-10">
           {loading ? (
@@ -221,7 +221,7 @@ const AIInsightsHub: React.FC<{ isWidgetMode?: boolean }> = ({ isWidgetMode = fa
         {showDetail && selectedInsight && (
           <motion.div 
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center p-8 sm:p-24 bg-black/95 backdrop-blur-3xl"
+            className="fixed inset-0 z-[100] flex items-center justify-center p-8 sm:p-24 bg-black/95 "
           >
             <div className="w-full max-w-7xl h-full max-h-[1000px] bg-[#050202] border-2 border-rose-500/30 rounded-[4rem] relative overflow-hidden flex flex-col shadow-4xl">
                <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
@@ -238,7 +238,7 @@ const AIInsightsHub: React.FC<{ isWidgetMode?: boolean }> = ({ isWidgetMode = fa
                            <span className="text-[11px] font-black uppercase tracking-[0.4em] italic" style={{ color: TYPE_CONFIG[selectedInsight.type]?.color || '#e11d48' }}>
                               {TYPE_CONFIG[selectedInsight.type]?.label || selectedInsight.type} // ІНСАЙТ_ЯД А
                            </span>
-                           <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
+                           <div className="w-1.5 h-1.5 rounded-full bg-rose-500 " />
                         </div>
                         <h2 className="text-5xl font-black text-white italic tracking-tighter uppercase glint-elite">{selectedInsight.title}</h2>
                      </div>
@@ -275,7 +275,7 @@ const AIInsightsHub: React.FC<{ isWidgetMode?: boolean }> = ({ isWidgetMode = fa
                         <p className="flex items-center gap-3">&gt; <span className="text-emerald-500">ІНІЦІАЛІЗАЦІЯ_ОБХОДУ_ГРАФА..._УСПІШНО</span></p>
                         <p className="flex items-center gap-3">&gt; <span className="text-emerald-500">ВЕ ИФІКАЦІЯ_ГІПОТЕЗИ_0x9F43..._П ОЙДЕНО</span></p>
                         <p className="flex items-center gap-3">&gt; <span className="text-emerald-500">СТАТУС: ГОТОВО_ДО_ ІШЕННЯ_L7</span></p>
-                        <p className="flex items-center gap-3 animate-pulse">&gt; <span className="text-rose-500/40">ОЧІКУВАННЯ_ПІДТВЕ ДЖЕННЯ_СУВЕ ЕНУ...</span></p>
+                        <p className="flex items-center gap-3 ">&gt; <span className="text-rose-500/40">ОЧІКУВАННЯ_ПІДТВЕ ДЖЕННЯ_СУВЕ ЕНУ...</span></p>
                      </div>
                   </div>
                </div>
@@ -301,9 +301,9 @@ const AIInsightsHub: React.FC<{ isWidgetMode?: boolean }> = ({ isWidgetMode = fa
         <div className="flex flex-col lg:flex-row items-center justify-between gap-12 relative">
           <div className="flex items-center gap-12 border-l-4 border-rose-600 pl-12 py-4">
             <div className="relative group">
-              <div className="absolute inset-0 bg-rose-600/20 blur-[60px] rounded-full scale-150 animate-pulse" />
-              <div className="relative p-10 bg-black/60 backdrop-blur-3xl border-2 border-rose-500/40 rounded-[3rem] shadow-4xl transform -rotate-3 group-hover:rotate-0 transition-all duration-700">
-                <Brain size={64} className="text-rose-500 drop-shadow-[0_0_20px_rgba(225,29,72,0.8)]" />
+              <div className="absolute inset-0 bg-rose-600/20 blur-[60px] rounded-full scale-150 " />
+              <div className="relative p-10 bg-black/60  border-2 border-rose-500/40 rounded-[3rem] shadow-4xl transform -rotate-3 group-hover:rotate-0 transition-all duration-700">
+                <Brain size={64} className="text-rose-500 " />
               </div>
             </div>
             <div className="space-y-4">
@@ -387,7 +387,7 @@ const AIInsightsHub: React.FC<{ isWidgetMode?: boolean }> = ({ isWidgetMode = fa
             <div className="space-y-10">
               <AnimatePresence mode="popLayout">
                 {loading ? (
-                  <div className="py-40 text-center animate-pulse flex flex-col items-center gap-8 glass-wraith rounded-[4rem] border-2 border-dashed border-white/5">
+                  <div className="py-40 text-center  flex flex-col items-center gap-8 glass-wraith rounded-[4rem] border-2 border-dashed border-white/5">
                     <Atom size={64} className="text-rose-500 animate-spin-slow" />
                     <span className="text-2xl font-black text-white/20 uppercase tracking-[0.5em] italic">СИНТЕЗ_ДЕ ЖАВНОЇ_СТРАТЕГІЇ...</span>
                   </div>
@@ -446,10 +446,10 @@ const AIInsightsHub: React.FC<{ isWidgetMode?: boolean }> = ({ isWidgetMode = fa
              <div className="p-16 glass-wraith border-2 border-rose-500/20 rounded-[5rem] flex flex-col items-center justify-center min-h-[600px] text-center shadow-4xl relative overflow-hidden group hover:border-rose-500/60 transition-all duration-1000">
                 <div className="absolute inset-0 bg-cyber-grid opacity-[0.03] pointer-events-none" />
                 <div className="relative mb-12">
-                   <div className="absolute inset-0 bg-rose-600/30 blur-[100px] rounded-full scale-150 animate-pulse" />
+                   <div className="absolute inset-0 bg-rose-600/30 blur-[100px] rounded-full scale-150 " />
                    <Orbit size={180} className="text-rose-500 relative z-10 animate-spin-slow" style={{ animationDuration: '30s' }} />
                    <div className="absolute inset-0 flex items-center justify-center">
-                      <Atom size={80} className="text-rose-500 animate-pulse" />
+                      <Atom size={80} className="text-rose-500 " />
                    </div>
                 </div>
                 <h3 className="text-5xl font-black text-white italic uppercase tracking-tighter glint-elite">СИНТЕЗ_ELITE</h3>
@@ -460,7 +460,7 @@ const AIInsightsHub: React.FC<{ isWidgetMode?: boolean }> = ({ isWidgetMode = fa
                    <motion.div 
                      animate={{ left: ['-100%', '100%'] }}
                      transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                     className="absolute top-0 bottom-0 w-1/2 bg-rose-500 shadow-[0_0_20px_rgba(225,29,72,1)]"
+                     className="absolute top-0 bottom-0 w-1/2 bg-rose-500 "
                    />
                 </div>
              </div>
@@ -471,7 +471,7 @@ const AIInsightsHub: React.FC<{ isWidgetMode?: boolean }> = ({ isWidgetMode = fa
                       <Fingerprint size={24} className="text-rose-500" />
                       <span className="text-[12px] font-black text-white uppercase tracking-[0.4em] italic">АКТИВНІСТЬ_ЯД А</span>
                    </div>
-                   <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                   <div className="w-2 h-2 rounded-full bg-emerald-500 " />
                 </div>
                 <div className="space-y-6">
                    {[

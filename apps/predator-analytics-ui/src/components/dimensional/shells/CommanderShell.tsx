@@ -47,7 +47,7 @@ export const CommanderShell: React.FC<CommanderShellProps> = ({ metrics, onActio
                     <motion.div 
                       initial={{ width: 0 }}
                       animate={{ width: '75%' }}
-                      className="h-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)] rounded-full" 
+                      className="h-full bg-blue-500  rounded-full" 
                     />
                  </div>
                  <div className="flex justify-between items-center font-mono italic">
@@ -63,7 +63,7 @@ export const CommanderShell: React.FC<CommanderShellProps> = ({ metrics, onActio
               <div className="flex items-center justify-between p-4 bg-purple-500/5 rounded-2xl border border-purple-500/20 group/row hover:bg-purple-500/10 transition-colors">
                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">СТАТУС_НАВЧАННЯ:</span>
                 <span className="text-green-400 font-black flex items-center gap-2 italic tracking-tight">
-                    <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(74,222,128,0.6)]"></span>
+                    <span className="w-2 h-2 bg-green-400 rounded-full  "></span>
                     ACTIVE_SYNC
                 </span>
               </div>
@@ -95,7 +95,7 @@ export const CommanderShell: React.FC<CommanderShellProps> = ({ metrics, onActio
                       initial={{ opacity: 0.2 }}
                       animate={{ opacity: [0.2, 1, 0.2] }}
                       transition={{ duration: 2, repeat: Infinity, delay: i * 0.1 }}
-                      className={cn("rounded-sm", Math.random() > 0.4 ? 'bg-cyan-500/40 shadow-[0_0_5px_rgba(6,182,212,0.3)]' : 'bg-slate-800')} 
+                      className={cn("rounded-sm", Math.random() > 0.4 ? 'bg-cyan-500/40 ' : 'bg-slate-800')} 
                     />
                  ))}
             </div>
@@ -173,7 +173,7 @@ export const CommanderShell: React.FC<CommanderShellProps> = ({ metrics, onActio
               )}
             >
               <div className={cn("absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-t from-transparent", `via-${control.color}-500/5`)} />
-              <control.icon className={cn("w-8 h-8 transition-all group-hover:scale-110", `text-${control.color}-400 drop-shadow-[0_0_10px_rgba(var(--${control.color}-400),0.8)]`)} />
+              <control.icon className={cn("w-8 h-8 transition-all group-hover:scale-110", `text-${control.color}-400 `)} />
               <div className="text-center relative z-10">
                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white italic">{control.label}</p>
                 <p className={cn("text-[7px] font-black uppercase tracking-[0.3em] mt-1 opacity-40", `text-${control.color}-400`)}>{control.code}</p>

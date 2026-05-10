@@ -158,7 +158,7 @@ export const ShellCommandPalette: React.FC = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsOpen(false)}
-            className="absolute inset-0 bg-slate-950/86 backdrop-blur-md"
+            className="absolute inset-0 bg-slate-950/86 "
             aria-label="Закрити командний пошук"
           />
 

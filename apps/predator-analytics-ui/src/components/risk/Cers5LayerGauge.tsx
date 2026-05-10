@@ -78,7 +78,7 @@ export const Cers5LayerGauge: React.FC<Cers5LayerGaugeProps> = ({ factors, total
                         <div className="mt-4 flex items-center justify-between">
                             <span className="text-[9px] font-black text-slate-600 uppercase">Вага: {layer.weight * 100}%</span>
                             {score > 0.7 ? (
-                                <AlertTriangle size={12} className="text-rose-500 animate-pulse" />
+                                <AlertTriangle size={12} className="text-rose-500 " />
                             ) : score < 0.3 ? (
                                 <CheckCircle size={12} className="text-emerald-500" />
                             ) : (
@@ -90,7 +90,7 @@ export const Cers5LayerGauge: React.FC<Cers5LayerGaugeProps> = ({ factors, total
             })}
 
             {/* Total Indicator (Optional full span or separate) */}
-            <div className="md:col-span-5 p-8 bg-black/40 border border-white/10 rounded-[40px] flex items-center justify-between mt-4 backdrop-blur-3xl shadow-3xl">
+            <div className="md:col-span-5 p-8 bg-black/40 border border-white/10 rounded-[40px] flex items-center justify-between mt-4  shadow-3xl">
                 <div className="flex items-center gap-6">
                     <div className="relative">
                         <svg className="w-24 h-24 -rotate-90">

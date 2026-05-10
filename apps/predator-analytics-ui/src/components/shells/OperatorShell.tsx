@@ -64,7 +64,7 @@ const OperatorShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange,
       {/* Tactical Sidebar */}
       <motion.aside
         animate={{ width: isSidebarCollapsed ? 80 : 280 }}
-        className="relative z-20 flex flex-col bg-black/80 border-r border-emerald-900/50 backdrop-blur-md flex-shrink-0"
+        className="relative z-20 flex flex-col bg-black/80 border-r border-emerald-900/50  flex-shrink-0"
       >
         <div className="p-4 border-b border-emerald-900/30 flex items-center justify-between">
           {!isSidebarCollapsed && (
@@ -136,7 +136,7 @@ const OperatorShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange,
                   <div className="h-1 bg-emerald-900/30 ">
                     <motion.div
                       animate={{ width: `${stat.val}%` }}
-                      className={`h-full ${stat.color} shadow-[0_0_8px_rgba(16,185,129,0.5)]`}
+                      className={`h-full ${stat.color} `}
                     />
                   </div>
                 </div>
@@ -162,7 +162,7 @@ const OperatorShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange,
         <header className="h-12 border-b border-emerald-900/30 flex items-center justify-between px-4 bg-emerald-950/5 flex-shrink-0">
           <div className="flex items-center gap-4 text-[10px] font-black tracking-widest">
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]" />
+              <div className="w-2 h-2 rounded-full bg-emerald-500  shadow-[0_0_8px_#10b981]" />
                <span>ЗВ'ЯЗОК_ВСТАНОВЛЕНО</span>
             </div>
             <div className="text-emerald-900">|</div>

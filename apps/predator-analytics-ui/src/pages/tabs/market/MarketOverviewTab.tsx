@@ -170,7 +170,7 @@ export const MarketOverviewTab: React.FC = () => {
            <RefreshCw size={48} className="text-rose-500 animate-spin" />
            <div className="absolute inset-0 blur-2xl bg-rose-500/20 rounded-full" />
         </div>
-        <p className="text-[10px] font-black text-rose-500 uppercase tracking-[0.6em] animate-pulse italic">
+        <p className="text-[10px] font-black text-rose-500 uppercase tracking-[0.6em]  italic">
           ІНІЦІАЛІЗАЦІЯ_ТОРГОВОЇ_РОЗВІДКИ...
         </p>
       </div>
@@ -199,7 +199,7 @@ export const MarketOverviewTab: React.FC = () => {
                 <card.icon size={24} />
               </div>
               <div className="flex items-center gap-2 text-[10px] font-black text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/10 italic">
-                <ArrowUpRight size={14} className="animate-pulse" />
+                <ArrowUpRight size={14} className="" />
                 {card.change}
               </div>
             </div>
@@ -222,7 +222,7 @@ export const MarketOverviewTab: React.FC = () => {
           <div className="flex justify-between items-center mb-10">
             <div>
                <h3 className="text-2xl font-black text-white uppercase italic tracking-tighter flex items-center gap-4">
-                 <Activity size={24} className="text-rose-500 animate-pulse" /> ДИНАМІКА <span className="text-rose-600">ОПЕРАЦІЙ</span>
+                 <Activity size={24} className="text-rose-500 " /> ДИНАМІКА <span className="text-rose-600">ОПЕРАЦІЙ</span>
                </h3>
                <p className="text-[9px] font-black text-slate-600 uppercase tracking-[0.4em] italic mt-1">РЕТРОСПЕКТИВНИЙ АНАЛІЗ ПОТОКІВ</p>
             </div>

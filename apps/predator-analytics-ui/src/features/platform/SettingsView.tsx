@@ -287,7 +287,7 @@ const SettingsView: React.FC = () => {
                                 </button>
                                 <button
                                     onClick={handleSave}
-                                    className="flex items-center gap-3 px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest bg-emerald-600 text-white hover:bg-emerald-500 transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)]"
+                                    className="flex items-center gap-3 px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest bg-emerald-600 text-white hover:bg-emerald-500 transition-all "
                                 >
                                     <Save size={16} />
                                     Зберегти Зміни

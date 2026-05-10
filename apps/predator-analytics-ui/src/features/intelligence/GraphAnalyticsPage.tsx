@@ -224,7 +224,7 @@ const GraphAnalyticsPage: React.FC = () => {
                         title={
                             <div className="flex items-center gap-10">
                                 <div className="relative group">
-                                    <div className="absolute inset-0 bg-yellow-500/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                                    <div className="absolute inset-0 bg-yellow-500/20 blur-3xl rounded-full scale-150 " />
                                     <div className="relative p-7 bg-black border-2 border-yellow-500/40 rounded-[2.5rem] shadow-4xl transform -rotate-2 hover:rotate-0 transition-all">
                                         <Network size={42} className="text-yellow-500 shadow-[0_0_20px_#d4af37]" />
                                     </div>
@@ -278,7 +278,7 @@ const GraphAnalyticsPage: React.FC = () => {
                                     <div className="w-full h-full flex flex-col items-center justify-center gap-16">
                                         <CyberOrb size={220} color="#D4AF37" intensity={0.5} pulse />
                                         <div className="space-y-4 text-center">
-                                            <p className="text-2xl font-black text-white uppercase italic tracking-[0.8em] animate-pulse font-serif">RECONSTRUCTING_NODES...</p>
+                                            <p className="text-2xl font-black text-white uppercase italic tracking-[0.8em]  font-serif">RECONSTRUCTING_NODES...</p>
                                             <p className="text-[10px] font-black text-yellow-800 uppercase tracking-[0.4em] italic leading-none">NEURAL_GRAPH_OPTIMIZATION_ACTIVE</p>
                                         </div>
                                     </div>
@@ -289,7 +289,7 @@ const GraphAnalyticsPage: React.FC = () => {
                             
                             {/* HUD Overlays ELITE */}
                             <div className="absolute bottom-10 left-10 z-20 flex flex-col gap-4">
-                                <div className="p-5 bg-black/60 border-2 border-white/5 rounded-2xl backdrop-blur-xl flex items-center gap-6 italic">
+                                <div className="p-5 bg-black/60 border-2 border-white/5 rounded-2xl  flex items-center gap-6 italic">
                                     <div className="flex items-center gap-3"><div className="w-2.5 h-2.5 rounded-full bg-amber-600 shadow-[0_0_10px_#d97706]"/><span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">HIGH_RISK_VECTOR</span></div>
                                     <div className="h-4 w-px bg-slate-800" />
                                     <div className="flex items-center gap-3"><div className="w-2.5 h-2.5 rounded-full bg-yellow-500 shadow-[0_0_10px_#d4af37]"/><span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">SOVEREIGN_ASSET</span></div>

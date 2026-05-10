@@ -126,7 +126,7 @@ export const AvatarShell: React.FC<AvatarShellProps> = ({
             
             <div className="absolute bottom-4 left-0 right-0 text-center pointer-events-none z-10">
                 <span className={`
-                    text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border backdrop-blur-md
+                    text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border 
                     ${emotion === 'thinking' ? 'text-purple-400 border-purple-500/50 bg-purple-900/20' : 
                       emotion === 'speaking' ? 'text-green-400 border-green-500/50 bg-green-900/20' :
                       emotion === 'alert' ? 'text-red-400 border-red-500/50 bg-red-900/20' :
@@ -139,7 +139,7 @@ export const AvatarShell: React.FC<AvatarShellProps> = ({
 
             {currentUtterance && emotion === 'speaking' && (
                 <div className="absolute top-4 left-4 right-4 text-center pointer-events-none z-10">
-                    <div className="bg-black/60 backdrop-blur-md p-2 rounded-lg text-xs text-white border border-white/10 shadow-lg inline-block max-w-full truncate">
+                    <div className="bg-black/60  p-2 rounded-lg text-xs text-white border border-white/10 shadow-lg inline-block max-w-full truncate">
                         "{currentUtterance}"
                     </div>
                 </div>

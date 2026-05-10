@@ -17,12 +17,12 @@ const TICKER_ITEMS = [
 
 export const IntelligenceTicker: React.FC = () => {
   return (
-    <div className="w-full bg-slate-950 border-y border-white/5 overflow-hidden flex items-center h-10 relative z-20 backdrop-blur-md">
+    <div className="w-full bg-slate-950 border-y border-white/5 overflow-hidden flex items-center h-10 relative z-20 ">
       <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-slate-950 to-transparent z-10" />
       <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-slate-950 to-transparent z-10" />
 
       <div className="flex items-center gap-2 px-4 bg-amber-500/10 h-full border-r border-amber-500/20 z-20 shrink-0">
-        <Zap size={14} className="text-amber-400 animate-pulse" />
+        <Zap size={14} className="text-amber-400 " />
         <span className="text-[10px] font-black text-amber-400 uppercase tracking-wider">{premiumLocales.intelligenceTicker.live}</span>
       </div>
 

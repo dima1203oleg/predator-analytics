@@ -225,7 +225,7 @@ export const ContextRail: React.FC = () => {
   return (
     <aside
       data-testid="context-rail"
-      className="surface-panel-strong sticky top-[5.5rem] z-[60] hidden h-[calc(100vh-7rem)] overflow-hidden border border-red-900/30 shadow-[0_0_60px_rgba(220,38,38,0.06),0_20px_50px_rgba(2,6,23,0.6)] xl:flex xl:flex-col"
+      className="surface-panel-strong sticky top-[5.5rem] z-[60] hidden h-[calc(100vh-7rem)] overflow-hidden border border-red-900/30 xl:flex xl:flex-col"
       style={{ background: 'linear-gradient(180deg,rgba(5,2,2,0.97) 0%,rgba(8,3,3,0.95) 100%)' }}
     >
       {/*  ед top accent лінія */}
@@ -236,7 +236,7 @@ export const ContextRail: React.FC = () => {
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-1.5 h-1.5 bg-red-600 rounded-full shadow-[0_0_8px_rgba(220,38,38,0.8)] animate-pulse" />
+              <div className="w-1.5 h-1.5 bg-red-600 rounded-full" />
               <div className="text-[7px] font-black uppercase tracking-[0.55em] text-red-700/80">
                 INTEL · CLASSIFIED CONTEXT
               </div>

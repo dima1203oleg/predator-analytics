@@ -173,9 +173,9 @@ export const AlertCenterView: React.FC = () => {
             title={
               <div className="flex items-center gap-12">
                 <div className="relative group">
-                  <div className="absolute inset-0 bg-amber-500/20 blur-[80px] rounded-full scale-150 animate-pulse" />
+                  <div className="absolute inset-0 bg-amber-500/20 blur-[80px] rounded-full scale-150 " />
                   <div className="relative p-7 bg-black border-2 border-amber-500/40 rounded-[3rem] shadow-4xl transform rotate-2 hover:rotate-0 transition-all duration-700">
-                    <Bell size={54} className="text-amber-500 drop-shadow-[0_0_20px_rgba(245,158,11,0.4)]" />
+                    <Bell size={54} className="text-amber-500 " />
                   </div>
                 </div>
                 <div className="space-y-4">
@@ -214,7 +214,7 @@ export const AlertCenterView: React.FC = () => {
           />
 
           {/* TABS ELITE/GOLD */}
-          <div className="flex items-center gap-6 p-3 bg-black/60 backdrop-blur-3xl border-2 border-white/5 rounded-[3rem] w-fit shadow-2xl">
+          <div className="flex items-center gap-6 p-3 bg-black/60  border-2 border-white/5 rounded-[3rem] w-fit shadow-2xl">
             {[
               { id: 'ALL', label: 'УСІ_СИГНАЛИ', icon: Inbox },
               { id: 'ACTIVE', label: 'НЕПРОЧИТАНІ', icon: Zap },
@@ -239,7 +239,7 @@ export const AlertCenterView: React.FC = () => {
           {/* ALERT FEED */}
           <div className="space-y-6 relative min-h-[500px]">
              {isLoading && (
-               <div className="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-sm rounded-[4rem] z-20">
+               <div className="absolute inset-0 flex items-center justify-center bg-black/20  rounded-[4rem] z-20">
                   <RefreshCw className="text-amber-500 animate-spin" size={64} />
                </div>
              )}
@@ -272,7 +272,7 @@ export const AlertCenterView: React.FC = () => {
                    <p className="text-[10px] font-black text-amber-500/40 uppercase tracking-widest">СТАТУС_КАНАЛУ</p>
                    <p className="text-xl font-black text-white italic tracking-tighter">ENCRYPTED_LIVE</p>
                 </div>
-                <Radio className="text-amber-500 animate-pulse" size={32} />
+                <Radio className="text-amber-500 " size={32} />
              </div>
           </div>
 

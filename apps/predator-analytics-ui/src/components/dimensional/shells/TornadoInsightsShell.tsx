@@ -229,7 +229,7 @@ export const TornadoInsightsShell: React.FC = () => {
               onMouseEnter={() => setHoveredModule(mod.id)}
               onMouseLeave={() => setHoveredModule(null)}
               className={cn(
-                'group relative rounded-[2rem] border bg-black/50 backdrop-blur-xl overflow-hidden cursor-pointer transition-all duration-500 shadow-2xl',
+                'group relative rounded-[2rem] border bg-black/50  overflow-hidden cursor-pointer transition-all duration-500 shadow-2xl',
                 mod.borderColor,
                 isHovered && 'scale-[1.02] shadow-[0_20px_60px_rgba(0,0,0,0.5)]'
               )}
@@ -273,7 +273,7 @@ export const TornadoInsightsShell: React.FC = () => {
                   </div>
                   <div className="flex items-center gap-2">
                     <span
-                      className="w-2 h-2 rounded-full animate-pulse"
+                      className="w-2 h-2 rounded-full "
                       style={{
                         background: mod.color,
                         boxShadow: `0 0 8px ${mod.color}`,
@@ -347,7 +347,7 @@ export const TornadoInsightsShell: React.FC = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.8 }}
-        className="flex items-center justify-between px-8 py-4 bg-black/30 backdrop-blur-xl rounded-[2rem] border border-white/5"
+        className="flex items-center justify-between px-8 py-4 bg-black/30  rounded-[2rem] border border-white/5"
       >
         <div className="flex items-center gap-4">
           <Crosshair size={16} className="text-amber-500/60 animate-spin" style={{ animationDuration: '8s' }} />
@@ -356,7 +356,7 @@ export const TornadoInsightsShell: React.FC = () => {
           </span>
         </div>
         <div className="flex items-center gap-3">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_6px_rgba(16,185,129,0.8)]" />
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500  " />
           <span className="text-[9px] font-black text-emerald-500/70 uppercase tracking-[0.2em] italic">
             ВСІ СИСТЕМИ НОРМА
           </span>

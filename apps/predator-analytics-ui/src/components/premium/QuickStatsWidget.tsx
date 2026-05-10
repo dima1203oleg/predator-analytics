@@ -70,7 +70,7 @@ const StatCard: React.FC<{ stat: StatItem; index: number }> = ({ stat, index }) 
       className={`
         relative overflow-hidden rounded-2xl p-5
         ${colors.bg} border ${colors.border}
-        backdrop-blur-xl cursor-pointer
+         cursor-pointer
         hover:shadow-lg ${colors.glow}
         transition-shadow duration-300
         group
@@ -124,7 +124,7 @@ const StatCard: React.FC<{ stat: StatItem; index: number }> = ({ stat, index }) 
       {/* Animated Pulse */}
       <div className={`
         absolute top-3 right-3 w-2 h-2 rounded-full ${colors.bg}
-        animate-pulse
+        
       `}>
         <div className={`absolute inset-0 rounded-full bg-gradient-to-br ${colors.gradient} opacity-60`} />
       </div>

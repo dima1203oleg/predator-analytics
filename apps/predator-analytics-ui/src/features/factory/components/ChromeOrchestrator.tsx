@@ -126,7 +126,7 @@ export function ChromeOrchestrator() {
                <motion.div 
                 animate={{ top: ['0%', '100%'] }}
                 transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
-                className="absolute left-0 w-full h-[2px] bg-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.5)] z-20"
+                className="absolute left-0 w-full h-[2px] bg-emerald-500/30  z-20"
                />
             </div>
           </div>
@@ -141,14 +141,14 @@ export function ChromeOrchestrator() {
             className="absolute z-30 pointer-events-none"
           >
             <div className="flex flex-col items-center">
-              <MousePointer2 size={24} className="text-rose-500 drop-shadow-[0_0_10px_rgba(225,29,72,0.5)]" />
+              <MousePointer2 size={24} className="text-rose-500 " />
               <div className="mt-2 px-2 py-1 bg-rose-500 text-white text-[8px] font-black rounded uppercase">AI Agent Active</div>
             </div>
           </motion.div>
 
           <div className="absolute bottom-6 right-6 flex flex-col items-end gap-2">
-            <div className="px-4 py-2 bg-black/80 border border-white/10 backdrop-blur-md rounded-2xl flex items-center gap-3">
-              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <div className="px-4 py-2 bg-black/80 border border-white/10  rounded-2xl flex items-center gap-3">
+              <div className="w-2 h-2 rounded-full bg-emerald-400 " />
               <span className="text-[10px] font-black text-white uppercase tracking-widest">Live Agent Stream</span>
             </div>
           </div>

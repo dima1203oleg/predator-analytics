@@ -98,7 +98,7 @@ const DocumentModal: React.FC<Props> = ({ document, query, isOpen, onClose }) =>
                     <motion.div
                         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                         onClick={onClose}
-                        className="absolute inset-0 bg-black/80 backdrop-blur-2xl"
+                        className="absolute inset-0 bg-black/80 "
                     />
 
                     {/* MODAL CONTAINER */}
@@ -188,7 +188,7 @@ const DocumentModal: React.FC<Props> = ({ document, query, isOpen, onClose }) =>
                                         {summary ? (
                                             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="p-12 rounded-[3rem] bg-gradient-to-br from-emerald-600/10 to-blue-600/10 border border-emerald-500/20 shadow-4xl">
                                                 <div className="flex items-center gap-4 mb-8 text-emerald-400">
-                                                    <Sparkles className="w-8 h-8 animate-pulse" />
+                                                    <Sparkles className="w-8 h-8 " />
                                                     <span className="text-xl font-black uppercase tracking-widest italic">ГЛИБИННИЙ_ВИСНОВОК_AI</span>
                                                 </div>
                                                 <p className="text-2xl text-slate-100 font-black italic leading-relaxed uppercase skew-x-[-1deg]">{summary}</p>
@@ -196,7 +196,7 @@ const DocumentModal: React.FC<Props> = ({ document, query, isOpen, onClose }) =>
                                         ) : (
                                             <div className="text-center space-y-10">
                                                 <div className="w-32 h-32 mx-auto rounded-[2.5rem] bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shadow-3xl">
-                                                    <Brain className="w-16 h-16 text-emerald-500 animate-pulse" />
+                                                    <Brain className="w-16 h-16 text-emerald-500 " />
                                                 </div>
                                                 <div className="space-y-4">
                                                     <h3 className="text-3xl font-black text-white uppercase italic tracking-tighter">СЕМАНТИЧНА_КОМПРЕСІЯ</h3>
@@ -246,7 +246,7 @@ const DocumentModal: React.FC<Props> = ({ document, query, isOpen, onClose }) =>
                             </div>
 
                             {/* SIDEBAR XAI */}
-                            <div className="w-[450px] border-l border-white/5 p-12 overflow-y-auto bg-black/40 backdrop-blur-md custom-scrollbar">
+                            <div className="w-[450px] border-l border-white/5 p-12 overflow-y-auto bg-black/40  custom-scrollbar">
                                 <div className="space-y-12">
                                     <div className="space-y-4">
                                         <h3 className="text-sm font-black text-white uppercase tracking-[0.4em] italic flex items-center gap-4 border-b border-white/5 pb-6">
@@ -282,7 +282,7 @@ const DocumentModal: React.FC<Props> = ({ document, query, isOpen, onClose }) =>
                                                         initial={{ width: 0 }}
                                                         animate={{ width: `${factor.value * 100}%` }}
                                                         className={cn(
-                                                            "h-full rounded-full shadow-[0_0_10px_rgba(16,185,129,0.5)]",
+                                                            "h-full rounded-full ",
                                                             factor.color === 'emerald' ? 'bg-emerald-500' :
                                                             factor.color === 'cyan' ? 'bg-cyan-500' :
                                                             factor.color === 'blue' ? 'bg-blue-500' : 'bg-amber-500'

@@ -112,8 +112,8 @@ export default function SovereignIntelHub() {
                             <div className="relative group">
                                 <div className="absolute inset-0 bg-rose-500/20 blur-[100px] rounded-full group-hover:scale-150 transition-transform duration-[3s]" />
                                 <div className="relative p-8 bg-black/60 glass-wraith border border-rose-500/40 shadow-4xl rounded-[3rem] transition-all group-hover:border-rose-500/80">
-                                    <Brain size={54} className="text-rose-500 drop-shadow-[0_0_20px_rgba(225,29,72,0.8)]" />
-                                    <div className="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 rounded-full border-4 border-black animate-pulse" />
+                                    <Brain size={54} className="text-rose-500 " />
+                                    <div className="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 rounded-full border-4 border-black " />
                                 </div>
                             </div>
                             <div>
@@ -151,7 +151,7 @@ export default function SovereignIntelHub() {
                             </div>
 
                             {isOffline && (
-                                <div className="px-8 py-4 bg-rose-500/5 border border-rose-500/20 rounded-[2rem] flex items-center gap-5 animate-pulse shadow-2xl">
+                                <div className="px-8 py-4 bg-rose-500/5 border border-rose-500/20 rounded-[2rem] flex items-center gap-5  shadow-2xl">
                                     <AlertTriangle size={18} className="text-rose-500" />
                                     <div className="flex flex-col">
                                         <span className="text-[10px] font-black text-rose-500 uppercase tracking-widest leading-none">FAILOVER SYNC</span>
@@ -223,7 +223,7 @@ export default function SovereignIntelHub() {
                                     </div>
                                     <div className="h-2 bg-black/60 rounded-full overflow-hidden shadow-inner border border-white/5">
                                         <motion.div 
-                                            className="h-full bg-gradient-to-r from-rose-600 to-rose-400 shadow-[0_0_15px_rgba(225,29,72,0.4)]" 
+                                            className="h-full bg-gradient-to-r from-rose-600 to-rose-400 " 
                                             initial={{ width: 0 }} 
                                             animate={{ width: '98.9%' }} 
                                             transition={{ duration: 2, ease: "easeOut" }}
@@ -261,10 +261,10 @@ export default function SovereignIntelHub() {
                             <div className="absolute inset-0 cyber-scan-grid opacity-[0.02]" />
                             
                             {/* Chat Header */}
-                            <div className="p-10 border-b border-rose-500/10 flex items-center justify-between relative z-10 bg-black/20 backdrop-blur-3xl">
+                            <div className="p-10 border-b border-rose-500/10 flex items-center justify-between relative z-10 bg-black/20 ">
                                 <div className="flex items-center gap-8">
                                     <div className="relative">
-                                        <div className="absolute inset-0 bg-rose-500/20 blur-2xl rounded-[2.5rem] animate-pulse" />
+                                        <div className="absolute inset-0 bg-rose-500/20 blur-2xl rounded-[2.5rem] " />
                                         <div className="w-20 h-20 rounded-[2.5rem] bg-gradient-to-br from-rose-600 to-rose-500 flex items-center justify-center shadow-4xl border-2 border-rose-400/40 relative z-10 transition-transform hover:scale-110 duration-500">
                                             <Zap className="text-black" size={36} />
                                             <div className="absolute -top-1 -right-1 w-6 h-6 bg-rose-300 rounded-full border-4 border-black animate-ping" />
@@ -274,7 +274,7 @@ export default function SovereignIntelHub() {
                                         <h4 className="text-2xl font-black text-white uppercase tracking-tighter italic glint-elite">GLM-5.1:SOVEREIGN_OPERATIONS</h4>
                                         <div className="flex items-center gap-5 mt-2">
                                             <div className="flex items-center gap-2.5 px-4 py-1.5 bg-emerald-500/10 border border-emerald-500/30 rounded-full shadow-lg">
-                                                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_12px_#10b981]" />
+                                                <div className="w-2 h-2 rounded-full bg-emerald-500  shadow-[0_0_12px_#10b981]" />
                                                 <span className="text-[10px] text-emerald-400 font-black uppercase tracking-[0.2em] italic">SECURE_ZROK_NODE</span>
                                             </div>
                                             <span className="text-[10px] text-slate-700 font-black uppercase tracking-[0.4em] italic">CORE_LOAD: 14.8%</span>
@@ -316,29 +316,29 @@ export default function SovereignIntelHub() {
                                             "p-8 rounded-[3rem] text-[16px] leading-relaxed relative overflow-hidden whitespace-pre-wrap shadow-3xl",
                                             msg.role === 'user' 
                                                 ? "bg-rose-500 text-black rounded-tr-none font-black italic tracking-tight" 
-                                                : "bg-black/40 glass-wraith text-slate-200 border border-white/10 rounded-tl-none font-medium backdrop-blur-3xl"
+                                                : "bg-black/40 glass-wraith text-slate-200 border border-white/10 rounded-tl-none font-medium "
                                         )}>
-                                            {msg.role === 'system' && <div className="absolute top-0 left-0 w-full h-1.5 bg-rose-500/50 shadow-[0_0_15px_rgba(225,29,72,0.5)]" />}
+                                            {msg.role === 'system' && <div className="absolute top-0 left-0 w-full h-1.5 bg-rose-500/50 " />}
                                             {msg.content}
                                         </div>
                                     </motion.div>
                                 ))}
                                 {chatMutation.isPending && (
-                                    <div className="flex gap-8 max-w-[85%] items-center animate-pulse">
+                                    <div className="flex gap-8 max-w-[85%] items-center ">
                                         <div className="w-14 h-14 rounded-[1.8rem] bg-white/5 border border-white/10 flex items-center justify-center">
                                             <Sparkles size={28} className="text-rose-700 animate-spin-slow" />
                                         </div>
                                         <div className="flex flex-col gap-3">
                                             <div className="h-5 w-80 bg-white/10 rounded-full" />
                                             <div className="h-5 w-64 bg-white/5 rounded-full opacity-50" />
-                                            <span className="text-[11px] font-black text-rose-600/80 uppercase tracking-[0.6em] mt-3 italic animate-pulse">СИНТЕЗ_АГЕНТНОЇ_СТРАТЕГІЇ_GLM...</span>
+                                            <span className="text-[11px] font-black text-rose-600/80 uppercase tracking-[0.6em] mt-3 italic ">СИНТЕЗ_АГЕНТНОЇ_СТРАТЕГІЇ_GLM...</span>
                                         </div>
                                     </div>
                                 )}
                             </div>
 
                             {/* Chat Input */}
-                            <div className="p-10 bg-black/60 border-t border-rose-500/10 relative z-10 backdrop-blur-4xl">
+                            <div className="p-10 bg-black/60 border-t border-rose-500/10 relative z-10 ">
                                 <div className="relative group/input">
                                     <div className="absolute -inset-2 bg-gradient-to-r from-rose-600/30 to-crimson-600/30 blur-[20px] opacity-0 group-focus-within/input:opacity-100 transition duration-[2s]" />
                                     <Input 
@@ -353,7 +353,7 @@ export default function SovereignIntelHub() {
                                         <Button 
                                             onClick={handleSend}
                                             disabled={!input.trim() || chatMutation.isPending}
-                                            className="h-14 w-20 bg-rose-500 hover:bg-rose-400 text-black rounded-[1.5rem] shadow-[0_0_30px_rgba(225,29,72,0.4)] transition-all hover:scale-110 active:scale-90"
+                                            className="h-14 w-20 bg-rose-500 hover:bg-rose-400 text-black rounded-[1.5rem]  transition-all hover:scale-110 active:scale-90"
                                         >
                                             <Send size={28} />
                                         </Button>
@@ -371,7 +371,7 @@ export default function SovereignIntelHub() {
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-4">
-                                        <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse shadow-[0_0_12px_#e11d48]" />
+                                        <div className="w-2 h-2 rounded-full bg-rose-500  shadow-[0_0_12px_#e11d48]" />
                                         <span className="text-[10px] font-black uppercase text-rose-600 tracking-[0.6em] italic font-bold">ZROK_LINK: ENCRYPTED</span>
                                     </div>
                                 </div>

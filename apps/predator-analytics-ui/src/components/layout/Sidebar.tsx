@@ -352,10 +352,9 @@ export const Sidebar: React.FC = () => {
       transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
       className="relative sticky top-0 z-50 flex h-screen shrink-0 flex-col overflow-visible"
       style={{
-        background: 'linear-gradient(180deg, rgba(2, 6, 23, 0.75) 0%, rgba(1, 4, 18, 0.9) 100%)',
-        borderRight: '1px solid rgba(244, 63, 94, 0.2)',
-        boxShadow: '24px 0 80px rgba(0,0,0,0.8)',
-        backdropFilter: 'blur(50px) saturate(180%)',
+        background: 'rgba(15, 15, 17, 0.97)',
+        borderRight: '1px solid rgba(196, 18, 48, 0.15)',
+        boxShadow: '8px 0 40px rgba(0,0,0,0.6)',
       }}
     >
       {/* Ambient фоновий ефект - більш виражений для візабіліті */}
@@ -403,7 +402,7 @@ export const Sidebar: React.FC = () => {
               >
                 <div
                   className="text-[13px] font-black uppercase tracking-[0.18em] leading-none"
-                  style={{ color: '#e11d48', textShadow: '0 0 12px rgba(225,29,72,0.5)' }}
+                  style={{ color: '#c41230' }}
                 >
                   PREDATOR
                 </div>
@@ -423,13 +422,9 @@ export const Sidebar: React.FC = () => {
                 <span
                   className={cn(
                     'h-1.5 w-1.5 rounded-full',
-                    backendStatus.isOffline ? 'bg-rose-400' : 'bg-emerald-400 animate-pulse',
+                    backendStatus.isOffline ? 'bg-rose-400' : 'bg-emerald-400',
                   )}
-                  style={{
-                    boxShadow: backendStatus.isOffline
-                      ? '0 0 6px rgba(248,113,113,0.8)'
-                      : '0 0 6px rgba(52,211,153,0.8)',
-                  }}
+                  style={{}}
                 />
                 <span
                   className={cn(
@@ -532,7 +527,7 @@ export const Sidebar: React.FC = () => {
 
           {/* Рядок пошуку */}
           <div className="group relative">
-            <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3 w-3 -translate-y-1/2 text-slate-500 transition-colors group-focus-within:text-emerald-400" />
+            <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3 w-3 -translate-y-1/2 text-slate-500 transition-colors group-focus-within:text-red-400" />
             <input
               ref={searchInputRef}
               type="search"
@@ -625,8 +620,7 @@ export const Sidebar: React.FC = () => {
                             className="h-1.5 w-1.5 rounded-full"
                             style={{
                               background: colors.dotColor,
-                              boxShadow: `0 0 6px ${colors.glowColor}`,
-                            }}
+                              }}
                           />
                         </div>
                         <div className="min-w-0 flex-1">
@@ -717,7 +711,7 @@ export const Sidebar: React.FC = () => {
                                       style={({ isActive }) => ({
                                         background: isActive ? colors.activeItemBg : 'transparent',
                                         borderColor: isActive ? colors.activeItemBorder : 'transparent',
-                                        boxShadow: isActive ? `0 0 12px ${colors.glowColor.replace('0.4', '0.1')}` : 'none',
+                                        boxShadow: 'none',
                                       })}
                                     >
                                       {({ isActive }) => (
@@ -874,20 +868,17 @@ export const Sidebar: React.FC = () => {
         aria-label={isOpen ? 'Згорнути навігацію' : 'Розгорнути навігацію'}
         className="absolute -right-3 top-1/2 z-10 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full transition-all duration-300"
         style={{
-          background: 'rgba(4,12,28,0.95)',
-          border: '1px solid rgba(255,255,255,0.12)',
-          boxShadow: '0 0 16px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.03)',
+          background: 'rgba(20, 20, 22, 0.97)',
+          border: '1px solid rgba(255,255,255,0.1)',
           color: '#64748b',
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.borderColor = 'rgba(212,175,55,0.4)';
-          e.currentTarget.style.color = '#d4af37';
-          e.currentTarget.style.boxShadow = '0 0 16px rgba(0,0,0,0.8), 0 0 8px rgba(212,175,55,0.2)';
+          e.currentTarget.style.borderColor = 'rgba(196,18,48,0.4)';
+          e.currentTarget.style.color = '#c41230';
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)';
+          e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)';
           e.currentTarget.style.color = '#64748b';
-          e.currentTarget.style.boxShadow = '0 0 16px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.03)';
         }}
         title={isOpen ? 'Згорнути навігацію' : 'Розгорнути навігацію'}
       >

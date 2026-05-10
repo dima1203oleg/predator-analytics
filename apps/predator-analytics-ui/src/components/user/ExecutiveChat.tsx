@@ -31,7 +31,7 @@ export const ExecutiveChat: React.FC<ExecutiveChatProps> = ({ messages, status, 
     };
 
     return (
-        <div className="flex flex-col h-full bg-[#0D0F12]/90 backdrop-blur-2xl border border-slate-800 rounded-2xl  shadow-2xl relative panel-3d">
+        <div className="flex flex-col h-full bg-[#0D0F12]/90  border border-slate-800 rounded-2xl  shadow-2xl relative panel-3d">
             {/* Header */}
             <div className="px-4 py-3 border-b border-slate-800/50 flex justify-between items-center bg-gradient-to-r from-slate-900/80 to-slate-900/40">
                 <div className="flex items-center gap-3">
@@ -41,7 +41,7 @@ export const ExecutiveChat: React.FC<ExecutiveChatProps> = ({ messages, status, 
                     <div>
                         <span className="text-xs font-bold text-white tracking-widest uppercase font-display block">Director AI</span>
                         <span className="text-[9px] text-slate-500 font-mono flex items-center gap-1">
-                            <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> ONLINE
+                            <span className="w-1.5 h-1.5 rounded-full bg-green-500 "></span> ONLINE
                         </span>
                     </div>
                 </div>
@@ -70,7 +70,7 @@ export const ExecutiveChat: React.FC<ExecutiveChatProps> = ({ messages, status, 
                 {messages.map((msg) => (
                     <div key={msg.id} className={`flex w-full ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                         <div className={`
-                            relative max-w-[85%] sm:max-w-[75%] p-4 rounded-2xl text-sm leading-relaxed shadow-lg backdrop-blur-md transition-all duration-300
+                            relative max-w-[85%] sm:max-w-[75%] p-4 rounded-2xl text-sm leading-relaxed shadow-lg  transition-all duration-300
                             ${msg.role === 'user'
                                 ? 'bg-gradient-to-br from-amber-600/20 to-amber-900/40 border border-amber-500/30 text-amber-50 rounded-br-sm ml-8'
                                 : 'bg-slate-800/40 border border-slate-700/50 text-slate-200 rounded-bl-sm mr-8 shadow-[0_4px_20px_rgba(0,0,0,0.2)]'
@@ -94,13 +94,13 @@ export const ExecutiveChat: React.FC<ExecutiveChatProps> = ({ messages, status, 
             </div>
 
             {/* Input Area - Sticky for Mobile Keyboard */}
-            <div className="sticky bottom-0 left-0 right-0 p-3 md:p-4 border-t border-slate-800/50 bg-[#0D0F12]/95 backdrop-blur-xl z-20 pb-safe">
+            <div className="sticky bottom-0 left-0 right-0 p-3 md:p-4 border-t border-slate-800/50 bg-[#0D0F12]/95  z-20 pb-safe">
                 <div className="flex gap-2 items-end bg-slate-900/50 border border-slate-700 rounded-xl p-1.5 focus-within:border-amber-500/50 focus-within:bg-slate-900 transition-all shadow-inner">
                     <button 
                         onClick={onVoiceToggle}
                         className={`p-3 rounded-lg transition-all active:scale-95 ${
                             status === 'LISTENING' 
-                            ? 'text-white bg-red-500 shadow-[0_0_15px_red] animate-pulse' 
+                            ? 'text-white bg-red-500 shadow-[0_0_15px_red] ' 
                             : 'text-slate-400 hover:text-white hover:bg-slate-800'
                         }`}
                     >

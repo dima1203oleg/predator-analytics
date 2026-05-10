@@ -61,7 +61,7 @@ export const WarGamingWidget: React.FC = () => {
         low: 'text-blue-400 border-blue-500/20 bg-blue-500/5',
         medium: 'text-amber-400 border-amber-500/20 bg-amber-500/5',
         high: 'text-orange-400 border-orange-500/20 bg-orange-500/5',
-        critical: 'text-red-400 border-red-500/20 bg-red-500/5 animate-pulse'
+        critical: 'text-red-400 border-red-500/20 bg-red-500/5 '
     };
 
     return (
@@ -140,7 +140,7 @@ export const WarGamingWidget: React.FC = () => {
                         disabled={loading}
                         className="flex-1 py-3 rounded-xl bg-indigo-600/20 border border-indigo-500/30 text-[10px] font-black uppercase tracking-widest italic hover:bg-indigo-600/40 transition-all flex items-center justify-center gap-2"
                     >
-                        <Zap size={14} className={loading ? 'animate-pulse' : ''} />
+                        <Zap size={14} className={loading ? '' : ''} />
                         ГЕНЕРУВАТИ СЦЕНАРІЇ
                     </button>
                     <button 

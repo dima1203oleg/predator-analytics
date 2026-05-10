@@ -44,9 +44,9 @@ const CompetitorRadar: React.FC = () => {
     };
 
     return (
-        <Card className="bg-slate-925/80 border-slate-800 backdrop-blur-2xl relative overflow-hidden h-[400px]">
+        <Card className="bg-slate-925/80 border-slate-800  relative overflow-hidden h-[400px]">
             <div className="absolute inset-0 opacity-10 pointer-events-none">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,cyan_0%,transparent_70%)] animate-pulse" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,cyan_0%,transparent_70%)] " />
             </div>
 
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 border-b border-white/5">

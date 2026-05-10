@@ -168,7 +168,7 @@ export const MorningNewspaper: React.FC = () => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-gradient-to-br from-slate-900/80 via-indigo-950/40 to-slate-950/90 border border-indigo-500/20 rounded-[32px] overflow-hidden shadow-2xl backdrop-blur-xl relative"
+      className="bg-gradient-to-br from-slate-900/80 via-indigo-950/40 to-slate-950/90 border border-indigo-500/20 rounded-[32px] overflow-hidden shadow-2xl  relative"
     >
       {/* Decorative Elements */}
       <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-indigo-500/5 blur-[100px] rounded-full pointer-events-none" />
@@ -373,7 +373,7 @@ export const MorningNewspaper: React.FC = () => {
                     <div className="flex items-start gap-4 flex-1">
                       <div className={cn(
                         'p-2.5 rounded-xl bg-black/20 group-hover:scale-110 transition-transform',
-                        item.category === 'alert' && 'animate-pulse'
+                        item.category === 'alert' && ''
                       )}>
                         {categoryIcons[item.category]}
                       </div>
@@ -418,7 +418,7 @@ export const MorningNewspaper: React.FC = () => {
       <div className="relative z-10 p-4 border-t border-white/5 flex items-center justify-between text-[9px] text-slate-600 font-mono uppercase tracking-widest">
         <span>{premiumLocales.executiveBrief.ui.footer}</span>
         <span className="flex items-center gap-2">
-          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 " />
           {premiumLocales.executiveBrief.ui.liveData}
         </span>
       </div>

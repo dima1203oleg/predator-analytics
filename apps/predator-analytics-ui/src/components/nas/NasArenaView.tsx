@@ -44,7 +44,7 @@ export const NasArenaView: React.FC<NasArenaViewProps> = ({ tournaments, candida
                                         key={`dot-${index}`}
                                         initial={{ r: 0 }}
                                         animate={{ r: 4 }}
-                                        className="fill-blue-500 drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]"
+                                        className="fill-blue-500 "
                                     />
                                 ))}
                             </Scatter>
@@ -64,7 +64,7 @@ export const NasArenaView: React.FC<NasArenaViewProps> = ({ tournaments, candida
                                 className={`
                                 group relative  rounded-3xl border transition-all duration-500 p-6
                                 ${t.topicId === 'GOD_MODE'
-                                        ? 'bg-purple-600/10 border-purple-500/50 shadow-[0_0_30px_rgba(168,85,247,0.15)] ring-1 ring-purple-500/20'
+                                        ? 'bg-purple-600/10 border-purple-500/50  ring-1 ring-purple-500/20'
                                         : 'bg-slate-900/40 border-white/5 hover:border-white/10 shadow-xl'}
                             `}
                             >
@@ -93,12 +93,12 @@ export const NasArenaView: React.FC<NasArenaViewProps> = ({ tournaments, candida
                                                 t.status === 'RUNNING' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/40' :
                                                     'bg-slate-800 text-slate-500'
                                             }`}>
-                                            {t.topicId === 'GOD_MODE' ? <Sparkles size={24} className="animate-pulse" /> : <Trophy size={24} />}
+                                            {t.topicId === 'GOD_MODE' ? <Sparkles size={24} className="" /> : <Trophy size={24} />}
                                         </div>
                                         <div>
                                             <div className="text-sm font-black text-white uppercase tracking-tighter flex items-center gap-2">
                                                 {t.name}
-                                                {t.topicId === 'GOD_MODE' && <span className="text-[8px] bg-purple-600 text-white px-1.5 py-0.5 rounded-full animate-pulse font-black">SUPERINTEL</span>}
+                                                {t.topicId === 'GOD_MODE' && <span className="text-[8px] bg-purple-600 text-white px-1.5 py-0.5 rounded-full  font-black">SUPERINTEL</span>}
                                             </div>
                                             <div className="text-[9px] text-slate-500 font-mono mt-1 flex items-center gap-2 uppercase font-bold tracking-widest">
                                                 <GitBranch size={10} className="text-slate-700" /> {t.strategy}
@@ -139,7 +139,7 @@ export const NasArenaView: React.FC<NasArenaViewProps> = ({ tournaments, candida
                 <TacticalCard variant="holographic" title="Потік Навчання НАЖИВО" className="h-[640px] flex flex-col panel-3d glass-morphism p-0 " noPadding>
                     <div className="bg-slate-900/80 p-3 border-b border-slate-800 flex justify-between items-center relative z-10">
                         <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
-                            <Activity size={12} className="text-blue-400 animate-pulse" /> Кандидати в реальному часі
+                            <Activity size={12} className="text-blue-400 " /> Кандидати в реальному часі
                         </span>
                         <div className="flex gap-1">
                             <div className="w-1.5 h-1.5 rounded-full bg-slate-700"></div>
@@ -156,8 +156,8 @@ export const NasArenaView: React.FC<NasArenaViewProps> = ({ tournaments, candida
                                     initial={{ opacity: 0, x: -20, height: 0 }}
                                     animate={{ opacity: 1, x: 0, height: 'auto' }}
                                     exit={{ opacity: 0, scale: 0.9 }}
-                                    className={`p-4 border rounded-2xl flex items-center justify-between group transition-all backdrop-blur-md relative  ${m.status === 'TRAINING'
-                                            ? 'bg-blue-500/5 border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.05)]'
+                                    className={`p-4 border rounded-2xl flex items-center justify-between group transition-all  relative  ${m.status === 'TRAINING'
+                                            ? 'bg-blue-500/5 border-blue-500/20 '
                                             : 'bg-black/40 border-white/5 hover:border-white/10'
                                         }`}
                                 >
@@ -172,7 +172,7 @@ export const NasArenaView: React.FC<NasArenaViewProps> = ({ tournaments, candida
                                     <div className="flex items-center gap-4 relative z-10">
                                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${m.status === 'TRAINING' ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/40' : 'bg-slate-900 border border-white/5 text-slate-500'
                                             }`}>
-                                            <Brain size={20} className={m.status === 'TRAINING' ? 'animate-pulse' : ''} />
+                                            <Brain size={20} className={m.status === 'TRAINING' ? '' : ''} />
                                         </div>
                                         <div>
                                             <div className="text-[11px] font-black text-white uppercase tracking-wider flex items-center gap-2">
@@ -194,7 +194,7 @@ export const NasArenaView: React.FC<NasArenaViewProps> = ({ tournaments, candida
                                     <div className="text-right relative z-10">
                                         {m.status === 'TRAINING' ? (
                                             <div className="flex flex-col items-end">
-                                                <span className="text-[9px] text-blue-400 font-black tracking-widest animate-pulse">НАВЧАННЯ</span>
+                                                <span className="text-[9px] text-blue-400 font-black tracking-widest ">НАВЧАННЯ</span>
                                                 <span className="text-[7px] text-slate-600 font-mono mt-0.5 uppercase">Еволюція ваг...</span>
                                             </div>
                                         ) : (

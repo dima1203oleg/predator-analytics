@@ -68,7 +68,7 @@ export const FactoryIngestionPanel: React.FC<FactoryIngestionPanelProps> = ({
               <Terminal size={14} className="text-orange-500" /> Жива Стрічка Інгестії
             </span>
             <div className="flex gap-2">
-              <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+              <div className="w-2 h-2 rounded-full bg-rose-500 " />
               <div className="text-[10px] text-rose-400 font-mono font-bold uppercase">Запис</div>
             </div>
           </div>

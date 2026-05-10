@@ -119,11 +119,11 @@ const AxiomCard: React.FC<{ axiom: typeof AXIOMS[0]; violations: number }> = ({ 
           "p-3 rounded-xl bg-slate-900 border border-white/5 shadow-inner transition-colors duration-500",
           isViolated ? 'text-rose-400 border-rose-500/30 bg-rose-500/10' : 'text-slate-500 group-hover:text-emerald-400 group-hover:border-emerald-500/30'
         )}>
-          <Icon size={20} className={isViolated ? 'animate-pulse' : ''} />
+          <Icon size={20} className={isViolated ? '' : ''} />
         </div>
         <div className="flex items-center gap-2">
           {isViolated ? (
-            <div className="flex items-center gap-2 px-3 py-1 bg-rose-500/20 rounded-full border border-rose-500/30 animate-pulse">
+            <div className="flex items-center gap-2 px-3 py-1 bg-rose-500/20 rounded-full border border-rose-500/30 ">
               <AlertTriangle size={12} className="text-rose-400" />
               <span className="text-[9px] font-black text-rose-400 uppercase tracking-widest">{violations} ПОРУШЕНЬ</span>
             </div>
@@ -170,10 +170,10 @@ const AmendmentCard: React.FC<{ amendment: Amendment }> = ({ amendment }) => {
         <div className={cn(
           "flex items-center gap-2 px-4 py-1.5 rounded-2xl text-[9px] font-black tracking-[0.2em] transition-all",
           isActive
-            ? 'bg-blue-600/20 text-blue-400 border border-blue-500/40 shadow-[0_0_15px_rgba(37,99,235,0.2)]'
+            ? 'bg-blue-600/20 text-blue-400 border border-blue-500/40 '
             : 'bg-slate-900/60 text-slate-500 border border-white/5'
         )}>
-          {isActive ? <Activity size={12} className="animate-pulse" /> : <Clock size={12} />}
+          {isActive ? <Activity size={12} className="" /> : <Clock size={12} />}
           {stateLabel}
         </div>
       </div>
@@ -267,7 +267,7 @@ export const AZRConstitutionalDashboard: React.FC = () => {
     <div className="flex flex-col gap-10 animate-in fade-in duration-1000">
 
       {/* Sovereign Header Control */}
-      <div className="flex flex-col lg:flex-row items-center justify-between gap-10 p-10 bg-slate-950/40 border border-white/5 rounded-[48px] backdrop-blur-3xl shadow-2xl relative overflow-hidden group">
+      <div className="flex flex-col lg:flex-row items-center justify-between gap-10 p-10 bg-slate-950/40 border border-white/5 rounded-[48px]  shadow-2xl relative overflow-hidden group">
         <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent" />
         <div className="flex items-center gap-8 relative z-10">
           <div className="relative group">
@@ -282,7 +282,7 @@ export const AZRConstitutionalDashboard: React.FC = () => {
             </h2>
             <div className="flex flex-wrap items-center gap-6">
               <div className="flex items-center gap-3 px-4 py-1.5 bg-indigo-500/10 rounded-full border border-indigo-500/20">
-                <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
+                <span className="w-2 h-2 rounded-full bg-indigo-500 " />
                 <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest font-mono">AZR_RUNTIME_v61.0-ELITE.1_STABLE</span>
               </div>
               {constitution?.active && (
@@ -325,7 +325,7 @@ export const AZRConstitutionalDashboard: React.FC = () => {
               )} />
               <CyberOrb size={240} color={constitution?.active ? "#10b981" : "#f43f5e"} />
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                {constitution?.active ? <Lock size={48} className="text-emerald-400 animate-pulse" /> : <Unlock size={48} className="text-rose-400" />}
+                {constitution?.active ? <Lock size={48} className="text-emerald-400 " /> : <Unlock size={48} className="text-rose-400" />}
                 <div className="mt-4 text-xs font-mono font-black text-white uppercase tracking-widest">
                   {constitution?.active ? 'Secured' : 'Exposed'}
                 </div>

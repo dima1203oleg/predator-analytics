@@ -40,7 +40,7 @@ export const AssetTrackerTab: React.FC = () => {
           <div className="space-y-4">
             <h2 className="text-sm font-black text-white italic uppercase tracking-[0.4em] flex items-center gap-4">
               <div className="p-3 bg-emerald-600/10 border border-emerald-600/20 rounded-xl text-emerald-500">
-                <Lock size={20} className="animate-pulse" />
+                <Lock size={20} className="" />
               </div>
               РЕЄСТР_ЗАМО ОЖЕНИХ_АКТИВІВ // АКТИВНИЙ_ЩИТ
             </h2>
@@ -73,7 +73,7 @@ export const AssetTrackerTab: React.FC = () => {
                   </td>
                   <td className="px-10 py-8 relative z-10">
                     <div className="flex items-center gap-3">
-                      <div className={cn("w-2 h-2 rounded-full shadow-lg", asset.status === 'ЗАМО ОЖЕНО' ? "bg-emerald-600 animate-pulse shadow-emerald-900/50" : "bg-cyan-600 shadow-cyan-900/50")} />
+                      <div className={cn("w-2 h-2 rounded-full shadow-lg", asset.status === 'ЗАМО ОЖЕНО' ? "bg-emerald-600  shadow-emerald-900/50" : "bg-cyan-600 shadow-cyan-900/50")} />
                       <span className="text-[10px] font-black text-white uppercase italic tracking-widest">{asset.status}</span>
                     </div>
                   </td>

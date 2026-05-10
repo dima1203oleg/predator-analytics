@@ -42,7 +42,7 @@ export const PredictiveModelingWidget: React.FC<{ persona: string }> = ({ person
   }), []);
 
   return (
-    <div className="bg-slate-950/80 border border-amber-500/20 rounded-[32px] backdrop-blur-xl overflow-hidden h-full flex flex-col relative group">
+    <div className="bg-slate-950/80 border border-amber-500/20 rounded-[32px]  overflow-hidden h-full flex flex-col relative group">
       <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent pointer-events-none" />
 
       {/* Header */}

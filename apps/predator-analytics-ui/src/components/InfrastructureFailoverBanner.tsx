@@ -80,7 +80,7 @@ export const InfrastructureFailoverBanner: React.FC = () => {
         exit={{ y: -100, x: '-50%', opacity: 0 }}
         onClick={() => isMirror && setIsColabOpen(true)}
         className={cn(
-          "fixed top-6 left-1/2 z-[100] px-8 py-4 rounded-[3rem] border-2 flex items-center gap-8 shadow-4xl backdrop-blur-3xl transition-all duration-700 group",
+          "fixed top-6 left-1/2 z-[100] px-8 py-4 rounded-[3rem] border-2 flex items-center gap-8 shadow-4xl  transition-all duration-700 group",
           mode.bg, mode.border,
           isMirror && "cursor-pointer hover:scale-105 active:scale-95"
         )}
@@ -112,7 +112,7 @@ export const InfrastructureFailoverBanner: React.FC = () => {
           <div className="flex flex-col">
             <div className="flex items-center gap-3">
               <span className="text-[9px] font-black uppercase tracking-[0.5em] opacity-50 italic">ІНФ АСТРУКТУРА //</span>
-              <div className={cn("px-2 py-0.5 rounded-lg text-[8px] font-black uppercase border animate-pulse", mode.color, mode.border)}>
+              <div className={cn("px-2 py-0.5 rounded-lg text-[8px] font-black uppercase border ", mode.color, mode.border)}>
                 {mode.label}
               </div>
             </div>
@@ -138,7 +138,7 @@ export const InfrastructureFailoverBanner: React.FC = () => {
                   animate={{ width: `${(vramMetrics.used / vramMetrics.total) * 100}%` }}
                   className={cn(
                     "h-full rounded-full transition-colors",
-                    vramMetrics.status === 'critical' ? 'bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.5)]' : 
+                    vramMetrics.status === 'critical' ? 'bg-rose-500 ' : 
                     vramMetrics.status === 'warning' ? 'bg-amber-500' : 'bg-emerald-500'
                   )}
                 />
@@ -169,7 +169,7 @@ export const InfrastructureFailoverBanner: React.FC = () => {
             <Radio size={16} className="text-slate-500 group-hover:text-white" />
           </button>
           <button className={cn(
-            "h-10 px-4 rounded-xl flex items-center gap-2 border transition-all text-[10px] font-black uppercase tracking-widest active:scale-95 animate-pulse",
+            "h-10 px-4 rounded-xl flex items-center gap-2 border transition-all text-[10px] font-black uppercase tracking-widest active:scale-95 ",
             llmTriStateMode === 'SOVEREIGN' ? 'bg-rose-500 text-black border-rose-400' : 'bg-white/5 text-slate-400 border-white/5 hover:bg-rose-600/20'
           )}>
             <Box size={14} />

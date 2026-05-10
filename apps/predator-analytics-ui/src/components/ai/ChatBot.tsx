@@ -63,20 +63,20 @@ const ChatBot = () => {
       <button 
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          "fixed bottom-8 right-8 w-14 h-14 rounded-2xl bg-primary flex items-center justify-center text-background shadow-[0_0_20px_rgba(6,182,212,0.4)] hover:shadow-[0_0_30px_rgba(6,182,212,0.6)] transition-all z-50 group overflow-hidden",
+          "fixed bottom-8 right-8 w-14 h-14 rounded-2xl bg-primary flex items-center justify-center text-background  hover: transition-all z-50 group overflow-hidden",
           isOpen && "rotate-90 opacity-0 pointer-events-none"
         )}
       >
-        <MessageSquare className="w-6 h-6 animate-pulse" />
+        <MessageSquare className="w-6 h-6 " />
         <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
       </button>
 
       <div className={cn(
-        "fixed bottom-8 right-8 w-[400px] h-[600px] bg-slate-950/80 backdrop-blur-2xl border border-primary/20 rounded-3xl shadow-2xl flex flex-col transition-all duration-500 z-50 origin-bottom-right",
+        "fixed bottom-8 right-8 w-[400px] h-[600px] bg-slate-950/80  border border-primary/20 rounded-3xl shadow-2xl flex flex-col transition-all duration-500 z-50 origin-bottom-right",
         isOpen ? "scale-100 opacity-100 translate-y-0" : "scale-75 opacity-0 translate-y-20 pointer-events-none"
       )}>
         {/* Header */}
-        <div className="p-5 border-b border-white/5 flex items-center justify-between bg-primary/10 rounded-t-3xl backdrop-blur-md">
+        <div className="p-5 border-b border-white/5 flex items-center justify-between bg-primary/10 rounded-t-3xl ">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-primary border border-primary/30 flex items-center justify-center text-background">
               <Bot className="w-6 h-6" />
@@ -84,7 +84,7 @@ const ChatBot = () => {
             <div>
               <div className="text-sm font-display font-bold text-foreground tracking-wide">AI КОПІЛОТ</div>
               <div className="flex items-center gap-1.5 text-[10px] text-primary font-mono uppercase tracking-widest">
-                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full " />
                 Нейромережа активна
               </div>
             </div>

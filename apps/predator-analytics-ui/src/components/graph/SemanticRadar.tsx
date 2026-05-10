@@ -91,18 +91,18 @@ export const SemanticRadar: React.FC<{ className?: string }> = ({ className }) =
     }, []);
 
     return (
-        <div className={cn("relative bg-[#020617]/40 border border-white/10 rounded-[3rem] overflow-hidden flex flex-col backdrop-blur-3xl shadow-2xl", className)}>
+        <div className={cn("relative bg-[#020617]/40 border border-white/10 rounded-[3rem] overflow-hidden flex flex-col  shadow-2xl", className)}>
             {/* Header Overlay */}
             <div className="absolute top-0 left-0 right-0 p-8 flex justify-between items-start z-10 pointer-events-none">
                 <div className="pointer-events-auto">
                     <div className="flex items-center gap-4 mb-3">
-                        <div className="p-3 bg-indigo-500/20 rounded-2xl border border-indigo-500/30 shadow-[0_0_20px_rgba(99,102,241,0.3)]">
+                        <div className="p-3 bg-indigo-500/20 rounded-2xl border border-indigo-500/30 ">
                             <Binary className="w-6 h-6 text-indigo-400" />
                         </div>
                         <div>
                            <h3 className="text-xl font-black text-white uppercase tracking-[0.2em] leading-none italic">СЕМАНТИЧНИЙ_ АДА </h3>
                            <div className="flex items-center gap-2 mt-2">
-                                <Activity className="w-3 h-3 text-emerald-500 animate-pulse" />
+                                <Activity className="w-3 h-3 text-emerald-500 " />
                                 <span className="text-[9px] text-slate-500 font-mono uppercase tracking-widest">АКТИВНА_СЕСІЯ: 142k_ВУЗЛІВ</span>
                            </div>
                         </div>
@@ -137,18 +137,18 @@ export const SemanticRadar: React.FC<{ className?: string }> = ({ className }) =
                     {loading && (
                         <motion.div 
                             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                            className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/60 backdrop-blur-xl z-20 gap-6"
+                            className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/60  z-20 gap-6"
                         >
                             <div className="relative">
                                 <motion.div
                                     animate={{ rotate: 360 }}
                                     transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                                    className="w-20 h-20 border-2 border-indigo-500/20 border-t-indigo-500 rounded-full shadow-[0_0_40px_rgba(99,102,241,0.3)]"
+                                    className="w-20 h-20 border-2 border-indigo-500/20 border-t-indigo-500 rounded-full "
                                 />
-                                <Brain size={32} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white/40 animate-pulse" />
+                                <Brain size={32} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white/40 " />
                             </div>
                             <div className="text-center">
-                                <p className="text-indigo-400 font-black tracking-[0.5em] uppercase text-[10px] animate-pulse">ЗА ЯДЖАЮ_МАТрИЦЮ_ЗВ'ЯЗКІВ...</p>
+                                <p className="text-indigo-400 font-black tracking-[0.5em] uppercase text-[10px] ">ЗА ЯДЖАЮ_МАТрИЦЮ_ЗВ'ЯЗКІВ...</p>
                                 <p className="text-slate-600 text-[8px] font-mono mt-2 italic">DECRYPTING_NEURAL_LAYERS</p>
                             </div>
                         </motion.div>
@@ -232,7 +232,7 @@ export const SemanticRadar: React.FC<{ className?: string }> = ({ className }) =
                                 className="drop-shadow-2xl"
                             />
                             {/* Center Icon Indicator */}
-                            <circle cx={node.x} cy={node.y} r="4" fill={node.color} className="animate-pulse" />
+                            <circle cx={node.x} cy={node.y} r="4" fill={node.color} className="" />
 
                             {/* Node Label */}
                             <text
@@ -250,15 +250,15 @@ export const SemanticRadar: React.FC<{ className?: string }> = ({ className }) =
                 {/* Legend Overlay */}
                 <div className="absolute bottom-10 left-10 space-y-3 pointer-events-none">
                      <div className="flex items-center gap-3">
-                         <div className="w-2.5 h-2.5 rounded-full bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)]" />
+                         <div className="w-2.5 h-2.5 rounded-full bg-indigo-500 " />
                          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest italic">О ГАНІЗАЦІЯ_v61.0-ELITE</span>
                      </div>
                      <div className="flex items-center gap-3">
-                         <div className="w-2.5 h-2.5 rounded-full bg-pink-500 shadow-[0_0_10px_rgba(236,72,153,0.5)]" />
+                         <div className="w-2.5 h-2.5 rounded-full bg-pink-500 " />
                          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest italic">ОСОБА_VERIFIED</span>
                      </div>
                      <div className="flex items-center gap-3">
-                         <div className="w-2.5 h-2.5 rounded-full bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.5)]" />
+                         <div className="w-2.5 h-2.5 rounded-full bg-amber-500 " />
                          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest italic">АКТИВИ_РИЗИКОВІ</span>
                      </div>
                 </div>
@@ -281,7 +281,7 @@ export const SemanticRadar: React.FC<{ className?: string }> = ({ className }) =
                 <div className="flex gap-4">
                     <motion.button 
                         whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}
-                        className="px-10 py-5 bg-indigo-500 text-black font-black text-[10px] uppercase tracking-[0.2em] rounded-3xl transition-all shadow-[0_0_30px_rgba(99,102,241,0.3)] flex items-center gap-3 group"
+                        className="px-10 py-5 bg-indigo-500 text-black font-black text-[10px] uppercase tracking-[0.2em] rounded-3xl transition-all  flex items-center gap-3 group"
                     >
                         <Zap size={18} className="group-hover:rotate-12 transition-transform" /> ЕКСТ АКЦІЯ_ЗВ'ЯЗКІВ
                     </motion.button>
@@ -295,7 +295,7 @@ export const SemanticRadar: React.FC<{ className?: string }> = ({ className }) =
                         initial={{ x: 450, opacity: 0 }}
                         animate={{ x: 0, opacity: 1 }}
                         exit={{ x: 450, opacity: 0 }}
-                        className="absolute right-0 top-0 bottom-0 w-[450px] bg-[#030712]/90 border-l border-white/10 backdrop-blur-[60px] z-30 p-12 flex flex-col shadow-[0_0_100px_rgba(0,0,0,1)]"
+                        className="absolute right-0 top-0 bottom-0 w-[450px] bg-[#030712]/90 border-l border-white/10 [60px] z-30 p-12 flex flex-col "
                     >
                         <motion.button
                             whileHover={{ rotate: 90, scale: 1.2 }}
@@ -307,7 +307,7 @@ export const SemanticRadar: React.FC<{ className?: string }> = ({ className }) =
 
                         <div className="flex flex-col gap-8 mb-12">
                             <div className="relative w-28 h-28 mx-auto">
-                                <div className="absolute inset-0 bg-current opacity-20 blur-3xl animate-pulse rounded-full" style={{ color: selectedNode.color }} />
+                                <div className="absolute inset-0 bg-current opacity-20 blur-3xl  rounded-full" style={{ color: selectedNode.color }} />
                                 <motion.div
                                     className="w-full h-full rounded-[2rem] flex items-center justify-center border-2 shadow-2xl bg-slate-900 relative z-10"
                                     style={{ borderColor: `${selectedNode.color}40` }}

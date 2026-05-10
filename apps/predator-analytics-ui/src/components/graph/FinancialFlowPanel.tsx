@@ -22,7 +22,7 @@ export const FinancialFlowPanel: React.FC<FinancialFlowPanelProps> = ({ flows })
         <div className="flex items-center gap-6 relative z-10">
           <div className="relative">
             <div className="p-5 bg-rose-500/10 border border-rose-500/30 rounded-2xl relative z-10 group cursor-pointer" onClick={() => SovereignAudio.playImpact()}>
-              <DollarSign size={28} className="text-rose-500 animate-pulse" />
+              <DollarSign size={28} className="text-rose-500 " />
               {/* Focus Dots in Header Icon */}
               <div className="focus-dot -top-1 -left-1" />
               <div className="focus-dot -bottom-1 -right-1" />
@@ -48,7 +48,7 @@ export const FinancialFlowPanel: React.FC<FinancialFlowPanelProps> = ({ flows })
                <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest relative z-10">THROUGHPUT</span>
                <span className="text-[14px] font-mono font-black text-rose-500 relative z-10">1.2 TB/S</span>
             </div>
-            <div className="flex items-center gap-4 px-6 py-3 bg-rose-500/20 border border-rose-500/40 rounded-xl shadow-[0_0_20px_rgba(244,63,94,0.1)]">
+            <div className="flex items-center gap-4 px-6 py-3 bg-rose-500/20 border border-rose-500/40 rounded-xl ">
                 <ShieldCheck size={20} className="text-rose-500" />
                 <span className="text-[11px] font-black text-rose-500 font-mono italic uppercase tracking-widest">ELITE_ACTIVE</span>
             </div>
@@ -73,9 +73,9 @@ export const FinancialFlowPanel: React.FC<FinancialFlowPanelProps> = ({ flows })
               onClick={() => SovereignAudio.playPulse()}
               className={cn(
                 "glass-wraith p-0 group cursor-pointer border-white/10 overflow-hidden transition-all duration-700",
-                "hover:border-rose-500/60 hover:bg-rose-500/[0.03] hover:shadow-[0_0_50px_rgba(244,63,94,0.1)]",
+                "hover:border-rose-500/60 hover:bg-rose-500/[0.03] hover:",
                 "panel-3d",
-                (flow.risk_score ?? 0) > 0.8 && "border-rose-500/40 shadow-[0_0_60px_rgba(244,63,94,0.2)]"
+                (flow.risk_score ?? 0) > 0.8 && "border-rose-500/40 "
               )}
             >
               <div className="relative p-8 md:p-10">
@@ -104,7 +104,7 @@ export const FinancialFlowPanel: React.FC<FinancialFlowPanelProps> = ({ flows })
                         <motion.div 
                           animate={{ scale: [1, 1.4, 1] }}
                           transition={{ duration: 2, repeat: Infinity }}
-                          className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-rose-500 rounded-full border-4 border-black shadow-[0_0_15px_rgba(244,63,94,0.8)]" 
+                          className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-rose-500 rounded-full border-4 border-black " 
                         />
                       )}
                       
@@ -120,7 +120,7 @@ export const FinancialFlowPanel: React.FC<FinancialFlowPanelProps> = ({ flows })
                           NODE_SIG: {Math.random().toString(36).substring(7).toUpperCase()}
                         </span>
                         <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] flex items-center gap-3">
-                          <Layers size={14} className="text-rose-500 animate-pulse" /> ВЕКТО _ПОТОКУ
+                          <Layers size={14} className="text-rose-500 " /> ВЕКТО _ПОТОКУ
                         </span>
                       </div>
                       <div className="flex items-center gap-8">
@@ -138,7 +138,7 @@ export const FinancialFlowPanel: React.FC<FinancialFlowPanelProps> = ({ flows })
                               className="absolute -top-1 left-0 w-2.5 h-2.5 bg-rose-500 rounded-full blur-[3px]"
                             />
                           </div>
-                          <ArrowRightLeft size={18} className="text-rose-500/50 mt-2 animate-pulse" />
+                          <ArrowRightLeft size={18} className="text-rose-500/50 mt-2 " />
                         </div>
                         <div className="flex flex-col">
                            <span className="text-[9px] text-slate-500 font-black uppercase mb-2 tracking-tighter opacity-60">П ИЗНАЧЕННЯ_АКТИВУ</span>
@@ -156,7 +156,7 @@ export const FinancialFlowPanel: React.FC<FinancialFlowPanelProps> = ({ flows })
                          <div className={cn(
                           "px-12 py-5 rounded-[2rem] text-[24px] font-black font-mono shadow-2xl transition-all relative overflow-hidden glint-elite border-2",
                           (flow.amount ?? 0) > 1000000 
-                            ? "bg-rose-500 text-black border-rose-400 shadow-[0_0_40px_rgba(244,63,94,0.4)]" 
+                            ? "bg-rose-500 text-black border-rose-400 " 
                             : "bg-white/5 text-white border-white/10 group-hover:border-rose-500/60"
                         )}>
                           <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent opacity-50" />
@@ -188,7 +188,7 @@ export const FinancialFlowPanel: React.FC<FinancialFlowPanelProps> = ({ flows })
                    
                    <div className="space-y-3">
                      <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-3">
-                       <ShieldAlert size={14} className={cn((flow.risk_score ?? 0) > 0.7 ? "text-rose-500 animate-pulse" : "text-emerald-500")} />  ЕЙТИНГ_РИЗИКУ
+                       <ShieldAlert size={14} className={cn((flow.risk_score ?? 0) > 0.7 ? "text-rose-500 " : "text-emerald-500")} />  ЕЙТИНГ_РИЗИКУ
                      </span>
                      <div className="flex items-center gap-5">
                         <div className="flex-1 h-2.5 bg-white/5 rounded-full overflow-hidden border border-white/10 relative">
@@ -201,7 +201,7 @@ export const FinancialFlowPanel: React.FC<FinancialFlowPanelProps> = ({ flows })
                             )}
                           />
                           {(flow.risk_score ?? 0) > 0.8 && (
-                            <div className="absolute inset-0 bg-rose-500/20 animate-pulse" />
+                            <div className="absolute inset-0 bg-rose-500/20 " />
                           )}
                         </div>
                         <p className={cn(
@@ -238,11 +238,11 @@ export const FinancialFlowPanel: React.FC<FinancialFlowPanelProps> = ({ flows })
                     viewport={{ once: true }}
                     className="mt-10 p-8 bg-rose-500/10 border border-rose-500/40 rounded-3xl flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden shadow-[inset_0_0_40px_rgba(244,63,94,0.1)]"
                   >
-                    <div className="absolute top-0 left-0 w-2 h-full bg-rose-500 shadow-[0_0_20px_rgba(244,63,94,0.6)]" />
+                    <div className="absolute top-0 left-0 w-2 h-full bg-rose-500 " />
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_0%_50%,rgba(244,63,94,0.2),transparent_60%)]" />
                     
                     <div className="flex items-center gap-6 relative z-10">
-                      <div className="p-4 bg-rose-500 rounded-2xl shadow-[0_0_30px_rgba(244,63,94,0.5)]">
+                      <div className="p-4 bg-rose-500 rounded-2xl ">
                         <Lock size={22} className="text-black" />
                       </div>
                       <div>
@@ -259,7 +259,7 @@ export const FinancialFlowPanel: React.FC<FinancialFlowPanelProps> = ({ flows })
                           e.stopPropagation();
                           SovereignAudio.playImpact();
                         }}
-                        className="px-10 py-4 bg-rose-500 text-black text-[12px] font-black uppercase tracking-[0.3em] rounded-2xl shadow-[0_0_30px_rgba(244,63,94,0.4)] hover:bg-rose-400 transition-all duration-500 border-b-4 border-rose-700 active:border-b-0 active:translate-y-1 glint-elite"
+                        className="px-10 py-4 bg-rose-500 text-black text-[12px] font-black uppercase tracking-[0.3em] rounded-2xl  hover:bg-rose-400 transition-all duration-500 border-b-4 border-rose-700 active:border-b-0 active:translate-y-1 glint-elite"
                       >
                         ЗАБЛОКУВАТИ_АКТИВ
                       </button>

@@ -36,7 +36,7 @@ export const ReasoningStream: React.FC<ReasoningStreamProps> = ({ steps, activeA
         </div>
         {isStreaming && (
           <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
+            <div className="w-1.5 h-1.5 rounded-full bg-rose-500 " />
             <span className="text-[8px] font-black text-rose-500 uppercase tracking-widest">Інференс_Активний</span>
           </div>
         )}
@@ -67,7 +67,7 @@ export const ReasoningStream: React.FC<ReasoningStreamProps> = ({ steps, activeA
                 {/* Dot */}
                 <div className={cn(
                   "absolute left-[-5px] top-1 w-2 h-2 rounded-full",
-                  idx === steps.length - 1 ? "bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.5)]" : "bg-white/20"
+                  idx === steps.length - 1 ? "bg-rose-500 " : "bg-white/20"
                 )} />
 
                 <div className="space-y-2">

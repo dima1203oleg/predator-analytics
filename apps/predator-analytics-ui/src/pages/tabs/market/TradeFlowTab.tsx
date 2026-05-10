@@ -54,7 +54,7 @@ export const TradeFlowTab: React.FC = () => {
       {/* MAP AREA */}
       <div className="flex-1 relative p-8 h-[600px] xl:h-auto overflow-hidden group">
         <div className="absolute top-8 left-8 z-20 space-y-2">
-            <h2 className="text-2xl font-black text-white uppercase italic tracking-tighter flex items-center gap-4 drop-shadow-[0_0_20px_rgba(0,0,0,1)]">
+            <h2 className="text-2xl font-black text-white uppercase italic tracking-tighter flex items-center gap-4 ">
                 <Globe size={32} className="text-[#D4AF37]" /> Потоки товарів
             </h2>
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.4em] pl-12 border-l-2 border-[#D4AF37]/20 drop-shadow-md">GLOBAL_FLOW_GEOSPATIAL // TRADE_MATRIX</p>
@@ -85,7 +85,7 @@ export const TradeFlowTab: React.FC = () => {
                {countries.map((c) => (
                   <g key={c.id} onClick={() => setSelectedCountry(c)} className="cursor-pointer">
                      <circle cx={c.x} cy={c.y} r={c.id === 'ua' ? 1.5 : 1} fill={c.id === 'ua' ? '#D4AF37' : '#334155'} />
-                     <circle cx={c.x} cy={c.y} r={3} fill={c.id === 'ua' ? '#D4AF37' : '#334155'} fillOpacity={0.1} className="animate-pulse" />
+                     <circle cx={c.x} cy={c.y} r={3} fill={c.id === 'ua' ? '#D4AF37' : '#334155'} fillOpacity={0.1} className="" />
                      <text x={c.x} y={c.y + 4} textAnchor="middle" fontSize={1.5} className="fill-slate-600 font-black italic">{c.code}</text>
                   </g>
                ))}
@@ -93,7 +93,7 @@ export const TradeFlowTab: React.FC = () => {
         </div>
 
         {/* FLOATING HUD */}
-        <div className="absolute bottom-8 left-8 z-20 w-[300px] p-6 bg-black/90 backdrop-blur-3xl border border-white/5 rounded-3xl space-y-6 shadow-2xl">
+        <div className="absolute bottom-8 left-8 z-20 w-[300px] p-6 bg-black/90  border border-white/5 rounded-3xl space-y-6 shadow-2xl">
             <h4 className="text-[9px] font-black text-white italic uppercase tracking-[0.4em] flex items-center gap-3">
                 <Layers size={14} className="text-[#D4AF37]" /> АКТИВНІ_ПОТОКИ
             </h4>

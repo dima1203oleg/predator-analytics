@@ -32,7 +32,7 @@ export const Skeleton: React.FC<SkeletonProps> = ({
     const getAnimationClass = () => {
         switch (animation) {
             case 'pulse':
-                return 'animate-pulse';
+                return '';
             case 'wave':
                 return 'skeleton-wave';
             case 'none':

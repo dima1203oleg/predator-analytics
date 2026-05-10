@@ -81,7 +81,7 @@ export const PlaceholderView = () => {
                     transition={{ duration: 0.5 }}
                     className="mb-8 relative inline-block"
                 >
-                    <div className="absolute inset-0 bg-emerald-500/20 blur-xl rounded-full animate-pulse" />
+                    <div className="absolute inset-0 bg-emerald-500/20 blur-xl rounded-full " />
                     <div className="w-24 h-24 bg-slate-900 border border-emerald-500/30 rounded-2xl flex items-center justify-center relative shadow-2xl shadow-emerald-500/10 rotate-3">
                          <Construction className="w-12 h-12 text-emerald-400" />
                     </div>

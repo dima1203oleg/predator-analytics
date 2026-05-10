@@ -121,7 +121,7 @@ export const OffshoreDetectorTab: React.FC = () => {
                     <p className="text-[9px] font-black text-slate-600 uppercase italic tracking-widest">{s.jur} // ЗВ'ЯЗКИ: {s.links}</p>
                   </div>
                   <div className="p-3 bg-black border border-white/5 rounded-xl">
-                    <Shield size={16} className={s.risk > 90 ? "text-emerald-500 animate-pulse" : "text-emerald-600"} />
+                    <Shield size={16} className={s.risk > 90 ? "text-emerald-500 " : "text-emerald-600"} />
                   </div>
                 </div>
                 <div className="space-y-2">

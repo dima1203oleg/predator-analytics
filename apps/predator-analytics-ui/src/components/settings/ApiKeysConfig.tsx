@@ -147,7 +147,7 @@ export const ApiKeysConfig: React.FC = () => {
                                                 className="p-2.5 rounded-xl bg-slate-800 border border-white/5 text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 hover:border-blue-500/30 transition-all disabled:opacity-30"
                                                 title={premiumLocales.apiKeys.test}
                                             >
-                                                <Zap size={16} className={testingId === provider.id ? 'animate-pulse text-yellow-400' : ''} />
+                                                <Zap size={16} className={testingId === provider.id ? ' text-yellow-400' : ''} />
                                             </button>
 
                                             <button

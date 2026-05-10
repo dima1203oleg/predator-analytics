@@ -200,10 +200,10 @@ const NetworkMapPage: React.FC = () => {
             <CyberGrid color="rgba(225, 29, 72, 0.03)" />
             
             {/* Header HUD */}
-            <div className="p-8 border-b border-white/[0.03] bg-black/40 backdrop-blur-3xl flex items-center justify-between z-30">
+            <div className="p-8 border-b border-white/[0.03] bg-black/40  flex items-center justify-between z-30">
                 <div className="flex items-center gap-6">
                     <div className="relative group">
-                        <div className="absolute inset-0 bg-rose-500/10 blur-2xl rounded-full scale-150 animate-pulse" />
+                        <div className="absolute inset-0 bg-rose-500/10 blur-2xl rounded-full scale-150 " />
                         <div className="relative p-5 bg-black border border-rose-900/30 rounded-2xl shadow-2xl">
                             <Network className="text-rose-500" size={28} />
                         </div>
@@ -211,7 +211,7 @@ const NetworkMapPage: React.FC = () => {
                     <div>
                         <div className="flex items-center gap-3">
                             <span className="text-[10px] font-black text-rose-500/60 uppercase tracking-[0.4em] italic">TOPOLOGY_VISUALIZER // v61.0-ELITE-ELITE</span>
-                            <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
+                            <div className="w-1.5 h-1.5 rounded-full bg-rose-500 " />
                         </div>
                         <h1 className="text-3xl font-black tracking-tighter italic uppercase text-white skew-x-[-4deg]">МЕ ЕЖЕВИЙ <span className="text-rose-500">АНАЛІЗ_ЗВʼЯЗКІВ</span></h1>
                     </div>
@@ -288,7 +288,7 @@ const NetworkMapPage: React.FC = () => {
 
                 {/* Controls HUD */}
                 <div className="absolute bottom-10 left-10 flex items-center gap-4 z-30">
-                    <div className="flex flex-col bg-black/60 border border-white/5 p-2 rounded-2xl backdrop-blur-xl">
+                    <div className="flex flex-col bg-black/60 border border-white/5 p-2 rounded-2xl ">
                         <button onClick={() => cy?.zoom(cy.zoom() * 1.2)} className="p-4 text-slate-500 hover:text-rose-500 hover:bg-white/5 rounded-xl transition-all">
                             <ZoomIn size={24} />
                         </button>
@@ -296,7 +296,7 @@ const NetworkMapPage: React.FC = () => {
                             <ZoomOut size={24} />
                         </button>
                     </div>
-                    <button onClick={() => cy?.fit()} className="p-6 bg-black/60 border border-white/5 rounded-[2rem] text-slate-500 hover:text-rose-500 backdrop-blur-xl transition-all shadow-2xl">
+                    <button onClick={() => cy?.fit()} className="p-6 bg-black/60 border border-white/5 rounded-[2rem] text-slate-500 hover:text-rose-500  transition-all shadow-2xl">
                         <Maximize size={28} />
                     </button>
                     <div className="ml-10 space-y-2">
@@ -351,7 +351,7 @@ const NetworkMapPage: React.FC = () => {
                                                     ENTITY://{selectedNode.type?.toUpperCase()}
                                                 </span>
                                                 {selectedNode.primary_risk === 'high' && (
-                                                    <span className="px-4 py-2 bg-rose-500/10 border border-rose-500/30 rounded-xl text-[10px] font-black uppercase tracking-widest text-rose-500 animate-pulse flex items-center gap-3">
+                                                    <span className="px-4 py-2 bg-rose-500/10 border border-rose-500/30 rounded-xl text-[10px] font-black uppercase tracking-widest text-rose-500  flex items-center gap-3">
                                                         <ShieldAlert size={14} /> КРИТИЧНИЙ_РИЗИК
                                                     </span>
                                                 )}

@@ -32,9 +32,9 @@ export const OsintCommandCenter: React.FC = () => {
             <RadarBackground />
 
             {/* ─── ВЕРХНЯ ПАНЕЛЬ (HUD) ──────────────────────── */}
-            <header className="relative z-10 flex items-center justify-between mb-8 backdrop-blur-md bg-slate-900/40 p-4 rounded-2xl border border-slate-800/50 shadow-2xl">
+            <header className="relative z-10 flex items-center justify-between mb-8  bg-slate-900/40 p-4 rounded-2xl border border-slate-800/50 shadow-2xl">
                 <div className="flex items-center gap-4">
-                    <div className="p-3 bg-rose-500/10 rounded-xl border border-rose-500/20 shadow-[0_0_15px_rgba(244,63,94,0.2)]">
+                    <div className="p-3 bg-rose-500/10 rounded-xl border border-rose-500/20 ">
                         <Radar className={cn("text-rose-400", isScanning && "animate-spin")} size={24} />
                     </div>
                     <div>
@@ -80,7 +80,7 @@ export const OsintCommandCenter: React.FC = () => {
                 {/* 📊 ЛІВА ПАНЕЛЬ: МОНІТОРИНГ ТА РИЗИКИ (3 cols) */}
                 <aside className="col-span-3 space-y-6 overflow-y-auto pr-2 custom-scrollbar">
                     {/* RISK HEATMAP */}
-                    <div className="bg-slate-900/40 border border-slate-800/50 rounded-2xl p-5 backdrop-blur-xl">
+                    <div className="bg-slate-900/40 border border-slate-800/50 rounded-2xl p-5 ">
                         <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
                             <ShieldAlert size={14} className="text-rose-500" />
                              изики по реєстрах
@@ -93,7 +93,7 @@ export const OsintCommandCenter: React.FC = () => {
                     </div>
 
                     {/* REGISTRY STATUS */}
-                    <div className="bg-slate-900/40 border border-slate-800/50 rounded-2xl p-5 backdrop-blur-xl">
+                    <div className="bg-slate-900/40 border border-slate-800/50 rounded-2xl p-5 ">
                         <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
                             <Database size={14} className="text-rose-500" />
                             Мережа реєстрів
@@ -123,7 +123,7 @@ export const OsintCommandCenter: React.FC = () => {
                 <main className="col-span-6 space-y-6 flex flex-col">
                     {/* SEARCH NEXUS */}
                     {/* SEARCH NEXUS */}
-                    <div className="bg-gradient-to-br from-rose-500/10 to-rose-900/5 border border-rose-500/20 rounded-3xl p-8 backdrop-blur-2xl relative overflow-hidden group">
+                    <div className="bg-gradient-to-br from-rose-500/10 to-rose-900/5 border border-rose-500/20 rounded-3xl p-8  relative overflow-hidden group">
                         <div className="relative z-10">
                             <h2 className="text-2xl font-black text-white mb-2 flex items-center gap-3">
                                 <Zap className="text-rose-400" />
@@ -171,14 +171,14 @@ export const OsintCommandCenter: React.FC = () => {
                                 <motion.div 
                                     key={tool.id}
                                     whileHover={{ y: -4 }}
-                                    className="p-4 bg-slate-900/40 border border-slate-800/50 rounded-2xl backdrop-blur-md relative overflow-hidden group hover:border-rose-500/30 transition-all"
+                                    className="p-4 bg-slate-900/40 border border-slate-800/50 rounded-2xl  relative overflow-hidden group hover:border-rose-500/30 transition-all"
                                 >
                                     <div className="flex items-start justify-between mb-3 relative z-10">
                                         <div className={cn("p-2 rounded-lg bg-slate-950 border border-slate-800 text-rose-400 group-hover:bg-rose-500/10 transition-colors")}>
                                             <Layers size={16} />
                                         </div>
                                         <div className="flex items-center gap-1.5">
-                                            <div className={cn("w-1.5 h-1.5 rounded-full animate-pulse", tool.status === 'СКАНУЄ' ? 'bg-rose-500' : 'bg-rose-400')} />
+                                            <div className={cn("w-1.5 h-1.5 rounded-full ", tool.status === 'СКАНУЄ' ? 'bg-rose-500' : 'bg-rose-400')} />
                                             <span className="text-[8px] font-black text-slate-400 tracking-wider uppercase">{tool.status}</span>
                                         </div>
                                     </div>
@@ -198,7 +198,7 @@ export const OsintCommandCenter: React.FC = () => {
                                     {tool.status === 'СКАНУЄ' && (
                                         <div className="absolute bottom-0 left-0 right-0 h-1 bg-slate-800">
                                             <motion.div 
-                                                className="h-full bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.5)]"
+                                                className="h-full bg-rose-500 "
                                                 animate={{ width: ['0%', '100%'] }}
                                                 transition={{ duration: 3, repeat: Infinity }}
                                             />
@@ -211,7 +211,7 @@ export const OsintCommandCenter: React.FC = () => {
                 </main>
 
                 {/* 📡 ПРАВА ПАНЕЛЬ: ЖИВА СТ ІЧКА (3 cols) */}
-                <aside className="col-span-3 flex flex-col bg-slate-900/40 border border-slate-800/50 rounded-2xl p-5 backdrop-blur-xl h-full">
+                <aside className="col-span-3 flex flex-col bg-slate-900/40 border border-slate-800/50 rounded-2xl p-5  h-full">
                     <div className="flex items-center justify-between mb-6">
                          <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
                             <Activity size={14} className="text-rose-500" />
@@ -246,14 +246,14 @@ export const OsintCommandCenter: React.FC = () => {
             </div>
 
             {/* ─── НИЖНЯ ПАНЕЛЬ СТАТУСУ (FOOTER) ──────────────── */}
-            <footer className="fixed bottom-0 left-0 right-0 h-10 bg-slate-950/80 backdrop-blur-md border-t border-slate-800/50 flex items-center justify-between px-8 text-[10px] z-50">
+            <footer className="fixed bottom-0 left-0 right-0 h-10 bg-slate-950/80  border-t border-slate-800/50 flex items-center justify-between px-8 text-[10px] z-50">
                 <div className="flex items-center gap-6">
                     <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_5px_rgba(244,63,94,0.5)]" />
+                        <div className="w-2 h-2 rounded-full bg-rose-500 " />
                         <span className="text-slate-400 font-bold uppercase tracking-wider"> оутер: http://localhost:4000 (ПІДКЛЮЧЕНО)</span>
                     </div>
                     <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+                        <div className="w-2 h-2 rounded-full bg-rose-500 " />
                         <span className="text-slate-400 font-bold uppercase tracking-wider">Синхронізація: Усі реєстри АКТИВНІ</span>
                     </div>
                 </div>

@@ -28,7 +28,7 @@ export const CalibrationView: React.FC<CalibrationViewProps> = ({ trainingPairs,
                             <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
                                 <div className="flex items-center gap-6">
                                     <div className="w-16 h-16 rounded-[24px] bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 shadow-xl shadow-blue-500/5">
-                                        <BrainCircuit size={32} className="animate-pulse" />
+                                        <BrainCircuit size={32} className="" />
                                     </div>
                                     <div>
                                         <div className="inline-flex items-center gap-2 px-2.5 py-1 bg-blue-500/10 border border-blue-500/20 rounded-lg mb-2">
@@ -38,7 +38,7 @@ export const CalibrationView: React.FC<CalibrationViewProps> = ({ trainingPairs,
                                         <h3 className="text-2xl font-black text-white uppercase tracking-tighter leading-none">CodeLlama-34b-v45-Instruct</h3>
                                         <div className="flex gap-4 mt-3">
                                             <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-slate-700" /> Weights: Frozen</span>
-                                            <span className="text-[10px] font-mono text-blue-400 uppercase tracking-widest flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" /> LoRA: Active_v61.0-ELITE</span>
+                                            <span className="text-[10px] font-mono text-blue-400 uppercase tracking-widest flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-blue-500 " /> LoRA: Active_v61.0-ELITE</span>
                                         </div>
                                     </div>
                                 </div>
@@ -181,10 +181,10 @@ export const CalibrationView: React.FC<CalibrationViewProps> = ({ trainingPairs,
                 </TacticalCard>
 
                 {/* System Logs v61.0-ELITE */}
-                <div className="p-8 bg-slate-900/40 backdrop-blur-3xl border border-white/5 rounded-[40px] space-y-4">
+                <div className="p-8 bg-slate-900/40  border border-white/5 rounded-[40px] space-y-4">
                     <div className="flex items-center justify-between mb-4">
                         <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Synthesis Logs</span>
-                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 " />
                     </div>
                     <div className="space-y-3 font-mono text-[9px]">
                         <div className="flex gap-3 text-slate-500">

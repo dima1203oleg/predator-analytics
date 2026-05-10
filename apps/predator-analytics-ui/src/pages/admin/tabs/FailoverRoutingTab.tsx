@@ -78,7 +78,7 @@ const eventCols: VirtualColumn<FailoverEvent>[] = [
     mono: true, 
     render: (v) => (
       <div className="flex items-center gap-3">
-        <div className="w-1.5 h-1.5 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(225,29,72,0.8)]" />
+        <div className="w-1.5 h-1.5 rounded-full bg-rose-500 " />
         <span className="text-rose-500 uppercase italic font-black tracking-tighter">
           {String(v).replace('local-k3s', 'ЛОКАЛЬНИЙ_КЛАСТЕР').replace('nvidia-server', 'СЕРВЕР_NVIDIA').replace('colab-mirror', 'ДЗЕРКАЛО_COLAB')}
         </span> 
@@ -129,11 +129,11 @@ export const FailoverRoutingTab: React.FC = () => {
           <motion.div 
             animate={{ rotate: 360 }}
             transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-            className="w-24 h-24 border-2 border-rose-500/20 rounded-full border-t-rose-500 shadow-[0_0_30px_rgba(225,29,72,0.3)]"
+            className="w-24 h-24 border-2 border-rose-500/20 rounded-full border-t-rose-500 "
           />
-          <Radio className="absolute inset-0 m-auto w-8 h-8 text-rose-500 animate-pulse" />
+          <Radio className="absolute inset-0 m-auto w-8 h-8 text-rose-500 " />
         </div>
-        <div className="text-[14px] font-black font-mono uppercase tracking-[0.6em] animate-pulse italic text-rose-500/60">АНАЛІЗ_ГЛОБАЛЬНИХ_МАРШРУТІВ_V61...</div>
+        <div className="text-[14px] font-black font-mono uppercase tracking-[0.6em]  italic text-rose-500/60">АНАЛІЗ_ГЛОБАЛЬНИХ_МАРШРУТІВ_V61...</div>
       </div>
     );
   }
@@ -142,7 +142,7 @@ export const FailoverRoutingTab: React.FC = () => {
     return (
       <div className="flex flex-col items-center justify-center h-[700px] p-24 text-center glass-wraith m-12 border-2 border-rose-600/20 rounded-[4rem] relative overflow-hidden shadow-4xl">
         <div className="absolute inset-0 bg-rose-900/5 blur-[120px] pointer-events-none" />
-        <AlertTriangle size={64} className="text-rose-500/40 mb-10 animate-pulse" />
+        <AlertTriangle size={64} className="text-rose-500/40 mb-10 " />
         <div className="text-3xl font-black uppercase tracking-tighter text-white mb-4 glint-elite">ПОМИЛКА_МЕРЕЖЕВОГО_КАНАЛУ</div>
         <p className="text-[12px] font-black font-mono text-white/30 max-w-lg mb-12 leading-relaxed uppercase italic tracking-widest">
           СИСТЕМА_НЕ_ЗМОГЛА_ОТРИМАТИ_СТАН_FAILOVER_КЛАСТЕРА. ПЕРЕВІРТЕ_З'ЄДНАННЯ_З_ЦЕНТРАЛЬНИМ_КОНТРОЛЕРОМ_ELITE.
@@ -190,7 +190,7 @@ export const FailoverRoutingTab: React.FC = () => {
         </div>
         <div className="flex items-center gap-8 text-[11px] font-black font-mono text-white/30 tracking-[0.2em] uppercase italic">
           <div className="flex items-center gap-3">
-            <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_15px_rgba(16,185,129,0.8)]" />
+            <div className="w-2.5 h-2.5 rounded-full bg-emerald-500  " />
             <span className="text-emerald-500/80">МЕРЕЖЕВИЙ_КАНАЛ_АКТИВНИЙ_L3</span>
           </div>
           <span className="opacity-20">•</span>
@@ -210,7 +210,7 @@ export const FailoverRoutingTab: React.FC = () => {
         {/* Tri-State режими */}
         <div className="space-y-8">
           <div className="flex items-center gap-6 px-4">
-             <div className="w-2 h-2 bg-rose-500 rotate-45 shadow-[0_0_10px_rgba(225,29,72,1)]" />
+             <div className="w-2 h-2 bg-rose-500 rotate-45 " />
              <span className="text-[12px] font-black font-mono text-white/40 uppercase tracking-[0.5em] italic glint-elite">СТРАТЕГІЯ_МАРШРУТИЗАЦІЇ_ШІ</span>
           </div>
           <div className="space-y-4">
@@ -243,7 +243,7 @@ export const FailoverRoutingTab: React.FC = () => {
                   {active && (
                     <motion.div 
                       layoutId="active-indicator-mode"
-                      className="p-3 bg-rose-500/20 border-2 border-rose-500/40 rounded-2xl shadow-rose-500/40 animate-pulse"
+                      className="p-3 bg-rose-500/20 border-2 border-rose-500/40 rounded-2xl shadow-rose-500/40 "
                     >
                       <CheckCircle className="w-6 h-6 text-rose-500" />
                     </motion.div>
@@ -257,7 +257,7 @@ export const FailoverRoutingTab: React.FC = () => {
         {/* Матриця вузлів */}
         <div className="space-y-8">
           <div className="flex items-center gap-6 px-4">
-             <div className="w-2 h-2 bg-rose-500 rotate-45 shadow-[0_0_10px_rgba(225,29,72,1)]" />
+             <div className="w-2 h-2 bg-rose-500 rotate-45 " />
              <span className="text-[12px] font-black font-mono text-white/40 uppercase tracking-[0.5em] italic glint-elite">МАТРИЦЯ_АКТИВНИХ_ВУЗЛІВ</span>
           </div>
           <div className="space-y-4">
@@ -323,7 +323,7 @@ export const FailoverRoutingTab: React.FC = () => {
             exit={{ opacity: 0, y: 50, scale: 0.9 }}
             className="p-12 glass-wraith border-2 border-rose-500/40 rounded-[3rem] flex flex-col lg:flex-row items-center gap-12 shadow-4xl relative overflow-hidden z-50"
           >
-            <div className="absolute inset-0 bg-rose-500/[0.03] animate-pulse pointer-events-none" />
+            <div className="absolute inset-0 bg-rose-500/[0.03]  pointer-events-none" />
             <div className="p-8 bg-rose-500/10 rounded-[2rem] border-2 border-rose-500/30 shadow-rose-500/20">
                <AlertTriangle className="w-16 h-16 text-rose-500" />
             </div>
@@ -371,7 +371,7 @@ export const FailoverRoutingTab: React.FC = () => {
           </div>
           <div className="h-[2px] flex-1 bg-gradient-to-l from-transparent via-white/10 to-transparent" />
         </div>
-        <div className="glass-wraith border-2 border-white/5 rounded-[3.5rem] overflow-hidden backdrop-blur-3xl shadow-4xl relative p-4">
+        <div className="glass-wraith border-2 border-white/5 rounded-[3.5rem] overflow-hidden  shadow-4xl relative p-4">
           <div className="absolute inset-0 bg-cyber-grid opacity-[0.03] pointer-events-none" />
           <VirtualTable
             rows={history}

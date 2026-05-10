@@ -121,7 +121,7 @@ export const ExecutiveBrief: React.FC = () => {
             <div className="flex items-center justify-between mb-8 pb-6 border-b border-white/5">
               <div className="flex items-center gap-4">
                 <div className="p-3 bg-emerald-500/10 rounded-xl text-emerald-500 border border-emerald-500/20">
-                  <Sparkles size={20} className="animate-pulse" />
+                  <Sparkles size={20} className="" />
                 </div>
                 <h3 className="text-xs font-black text-white italic uppercase tracking-[0.4em]">ШІ-АНАЛІТИКА ТА ІНСАЙТИ</h3>
               </div>
@@ -203,7 +203,7 @@ export const ExecutiveBrief: React.FC = () => {
               <MessageSquare size={120} className="text-rose-600" />
             </div>
             <div className="relative z-10 flex items-center gap-8">
-              <div className="p-5 bg-rose-900/40 border border-rose-500/40 rounded-[1.5rem] text-rose-500 shadow-xl animate-pulse">
+              <div className="p-5 bg-rose-900/40 border border-rose-500/40 rounded-[1.5rem] text-rose-500 shadow-xl ">
                 <AlertTriangle size={32} />
               </div>
               <div className="space-y-2">

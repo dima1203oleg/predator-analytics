@@ -91,25 +91,25 @@ const tones = {
   rose: { 
     bg: 'bg-rose-500/10 border-rose-500/20', 
     icon: 'text-rose-500', 
-    glow: 'group-hover:shadow-[0_0_50px_rgba(225,29,72,0.25)]', 
+    glow: 'group-hover:', 
     line: 'from-rose-600 via-rose-500 to-transparent' 
   },
   crimson: { 
     bg: 'bg-rose-600/10 border-rose-500/20', 
     icon: 'text-rose-600', 
-    glow: 'group-hover:shadow-[0_0_50px_rgba(190,18,60,0.25)]', 
+    glow: 'group-hover:', 
     line: 'from-rose-700 via-rose-600 to-transparent' 
   },
   gold: { 
     bg: 'bg-amber-500/10 border-amber-500/20', 
     icon: 'text-amber-500', 
-    glow: 'group-hover:shadow-[0_0_50px_rgba(245,158,11,0.2)]', 
+    glow: 'group-hover:', 
     line: 'from-amber-600 via-amber-500 to-transparent' 
   },
   sky: { 
     bg: 'bg-sky-500/10 border-sky-500/20', 
     icon: 'text-sky-500', 
-    glow: 'group-hover:shadow-[0_0_50px_rgba(14,165,233,0.2)]', 
+    glow: 'group-hover:', 
     line: 'from-sky-600 via-sky-500 to-transparent' 
   },
 } as const;
@@ -164,7 +164,7 @@ export default function ExecutiveBoardView() {
          ═══════════════════════════════════════════════ */}
       <motion.section 
         variants={fadeUp} 
-        className="relative overflow-hidden rounded-[3rem] border border-white/5 bg-black/40 backdrop-blur-3xl p-8 sm:p-12 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.8)]"
+        className="relative overflow-hidden rounded-[3rem] border border-white/5 bg-black/40  p-8 sm:p-12 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.8)]"
       >
         <div className="absolute inset-0 bg-gradient-to-br from-rose-500/5 via-transparent to-transparent pointer-events-none" />
         
@@ -181,7 +181,7 @@ export default function ExecutiveBoardView() {
         <div className="relative z-10 flex items-center gap-6 mb-10">
           <div className="flex flex-col">
             <div className="inline-flex items-center gap-3 rounded-full border border-rose-500/20 bg-rose-500/5 px-4 py-1.5 text-[10px] font-black tracking-[0.3em] text-rose-500 uppercase italic">
-              <div className="h-1.5 w-1.5 rounded-full bg-rose-500 shadow-[0_0_12px_#f43f5e] animate-pulse" />
+              <div className="h-1.5 w-1.5 rounded-full bg-rose-500 shadow-[0_0_12px_#f43f5e] " />
               PREDATOR v63.0-ELITE
             </div>
             <div className="mt-4 flex items-center gap-4">
@@ -268,7 +268,7 @@ export default function ExecutiveBoardView() {
                 <motion.div
                   key={section.id}
                   variants={scaleIn}
-                  className="group relative rounded-3xl border border-white/5 bg-black/40 backdrop-blur-xl p-6 transition-all duration-500 hover:border-rose-500/30 hover:bg-black/60 shadow-xl overflow-hidden"
+                  className="group relative rounded-3xl border border-white/5 bg-black/40  p-6 transition-all duration-500 hover:border-rose-500/30 hover:bg-black/60 shadow-xl overflow-hidden"
                   whileHover={{ y: -5 }}
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none" />
@@ -320,12 +320,12 @@ export default function ExecutiveBoardView() {
         <motion.div variants={fadeUp} className="space-y-8">
           
           {/* Critical Signals HUD */}
-          <div className="rounded-[2.5rem] border border-white/5 bg-black/40 backdrop-blur-3xl p-8 shadow-2xl relative overflow-hidden">
+          <div className="rounded-[2.5rem] border border-white/5 bg-black/40  p-8 shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 right-0 w-1 h-full bg-rose-600/30" />
             
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-lg font-black text-white flex items-center gap-3 uppercase italic tracking-tighter">
-                <Flame className="h-5 w-5 text-rose-500 animate-pulse" />
+                <Flame className="h-5 w-5 text-rose-500 " />
                 КРИТИЧНІ СИГНАЛИ
               </h2>
               <span className="bg-rose-500/10 border border-rose-500/20 text-rose-500 px-3 py-1 text-[10px] font-black italic rounded-md">
@@ -384,10 +384,10 @@ export default function ExecutiveBoardView() {
           </div>
 
           {/* Quick Actions HUD */}
-          <div className="rounded-[2.5rem] border border-white/5 bg-black/40 backdrop-blur-3xl p-8 shadow-2xl overflow-hidden relative">
+          <div className="rounded-[2.5rem] border border-white/5 bg-black/40  p-8 shadow-2xl overflow-hidden relative">
             <div className="absolute inset-0 bg-gradient-to-tr from-rose-500/[0.03] to-transparent pointer-events-none" />
             <h2 className="text-sm font-black text-white mb-6 flex items-center gap-3 uppercase italic tracking-widest">
-              <Sparkles className="h-4 w-4 text-rose-500 animate-pulse" />
+              <Sparkles className="h-4 w-4 text-rose-500 " />
               ШВИДКІ ДІЇ
             </h2>
             <div className="grid grid-cols-2 gap-3">
@@ -418,10 +418,10 @@ export default function ExecutiveBoardView() {
       </motion.section>
 
       {/* Strategic Information Ticker */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-3xl border-t border-rose-500/20 h-14 flex items-center overflow-hidden shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
+      <div className="fixed bottom-0 left-0 right-0 z-50 bg-black/80  border-t border-rose-500/20 h-14 flex items-center overflow-hidden shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
         <div className="px-8 bg-rose-600 h-full flex items-center shrink-0 border-r border-white/10 shadow-[20px_0_40px_rgba(225,29,72,0.4)] relative z-10 italic text-white font-black text-[11px] tracking-[0.3em] uppercase">
           <div className="flex items-center gap-4">
-             <Activity size={20} className="animate-pulse" />
+             <Activity size={20} className="" />
              <span>ЖИВИЙ_ПОТІК_v63.0</span>
           </div>
         </div>
@@ -439,7 +439,7 @@ export default function ExecutiveBoardView() {
               `ЯДРО: NVIDIA_H100_NEXUS | ЛАТЕНТНІСТЬ: 4.2мс | ОПЕРАЦІЙНА ЧИСТОТА: 99.8%`
             ].map((log, i) => (
               <div key={i} className="flex items-center gap-8">
-                <div className="w-2 h-2 rounded-full bg-rose-600 shadow-[0_0_10px_#f43f5e] animate-pulse" />
+                <div className="w-2 h-2 rounded-full bg-rose-600 shadow-[0_0_10px_#f43f5e] " />
                 <span className="text-[11px] font-mono text-slate-500 font-black uppercase tracking-[0.2em] italic">
                   {log}
                 </span>

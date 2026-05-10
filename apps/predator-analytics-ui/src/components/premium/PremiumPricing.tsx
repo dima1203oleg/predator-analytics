@@ -121,7 +121,7 @@ const PlanCard: React.FC<{
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -5 }}
       className={cn(
-        "relative p-6 rounded-[32px] border backdrop-blur-xl transition-all",
+        "relative p-6 rounded-[32px] border  transition-all",
         plan.popular
           ? `bg-gradient-to-b from-${plan.color}-500/10 to-slate-950/80 border-${plan.color}-500/30 shadow-xl shadow-${plan.color}-500/10`
           : "bg-slate-950/80 border-white/10"

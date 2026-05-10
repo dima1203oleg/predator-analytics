@@ -81,7 +81,7 @@ export function GlobalIngestionController() {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={() => setHubOpen(false)}
-                        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                        className="absolute inset-0 bg-black/60 "
                     />
 
                     {/* Drawer */}
@@ -90,7 +90,7 @@ export function GlobalIngestionController() {
                         animate={{ x: 0 }}
                         exit={{ x: '100%' }}
                         transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-                        className="relative w-full max-w-2xl bg-slate-950/90 backdrop-blur-3xl border-l border-white/5 shadow-2xl flex flex-col overflow-hidden"
+                        className="relative w-full max-w-2xl bg-slate-950/90  border-l border-white/5 shadow-2xl flex flex-col overflow-hidden"
                     >
                         {/* Hub Header */}
                         <div className="p-8 border-b border-white/5 flex items-center justify-between relative overflow-hidden">
@@ -100,7 +100,7 @@ export function GlobalIngestionController() {
                             <div className="relative z-10">
                                 <div className="flex items-center gap-3 mb-1">
                                     <div className="p-2 bg-emerald-500/20 rounded-lg text-emerald-400">
-                                        <Activity size={20} className="animate-pulse" />
+                                        <Activity size={20} className="" />
                                     </div>
                                     <h2 className="text-2xl font-black text-white tracking-tighter uppercase italic">Центр Процесів</h2>
                                 </div>
@@ -147,7 +147,7 @@ export function GlobalIngestionController() {
                                 <span className="text-emerald-500/50">КОЕФІЦІЄНТ_ДОВІ И: 0.9994</span>
                             </div>
                             <div className="flex items-center gap-2">
-                                <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
+                                <div className="w-1 h-1 rounded-full bg-emerald-500 " />
                                 СИНХРОНІЗАЦІЯ_СИСТЕМИ_АКТИВНА
                             </div>
                         </div>
@@ -173,7 +173,7 @@ function JobHubItem({ job, onRemove }: { job: IngestionJob; onRemove: () => void
             className="group relative"
         >
             <div className={cn(
-                "bg-slate-900/60 backdrop-blur-xl border-2 rounded-[32px] overflow-hidden transition-all duration-500",
+                "bg-slate-900/60  border-2 rounded-[32px] overflow-hidden transition-all duration-500",
                 isDone ? "border-emerald-500/20 shadow-emerald-500/5" :
                     isFailed ? "border-rose-500/20 shadow-rose-500/5" :
                         "border-white/5 hover:border-indigo-500/20 shadow-indigo-500/5"
@@ -208,7 +208,7 @@ function JobHubItem({ job, onRemove }: { job: IngestionJob; onRemove: () => void
 
                                 {/* Background Pulse for active items */}
                                 {!isDone && !isFailed && (
-                                    <div className="absolute inset-0 bg-indigo-500/5 animate-pulse" />
+                                    <div className="absolute inset-0 bg-indigo-500/5 " />
                                 )}
                             </div>
 
@@ -293,7 +293,7 @@ function JobHubItem({ job, onRemove }: { job: IngestionJob; onRemove: () => void
                             <span className="truncate">{job.message}</span>
                         </div>
                         {!isDone && !isFailed && (
-                            <div className="text-emerald-500/60 animate-pulse overflow-hidden whitespace-nowrap text-[9px]">
+                            <div className="text-emerald-500/60  overflow-hidden whitespace-nowrap text-[9px]">
                                 {`>> SYSTEM_TRACE_OK >> DATAPACK_OK >> СТАН_НОРМА`}
                             </div>
                         )}

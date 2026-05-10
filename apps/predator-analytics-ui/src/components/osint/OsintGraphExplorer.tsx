@@ -337,7 +337,7 @@ export function OsintGraphExplorer() {
                 <div className="p-4 border-t border-slate-800 bg-slate-900/50 space-y-3">
                     <div className="flex items-center justify-between text-[10px] font-black uppercase text-rose-400 bg-rose-500/10 px-3 py-2 border border-rose-500/20 rounded-lg">
                         <span className="flex items-center gap-1.5"><Database size={14} /> NEO4J GRAPH DB</span>
-                        <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"/> LIVE</span>
+                        <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-rose-500 "/> LIVE</span>
                     </div>
                     <button className="w-full py-2.5 rounded-lg border border-dashed border-slate-700 text-slate-400 text-xs font-bold uppercase tracking-widest hover:text-white hover:border-slate-500 transition-colors flex items-center justify-center gap-2">
                         <Bookmark className="w-4 h-4" />
@@ -357,9 +357,9 @@ export function OsintGraphExplorer() {
                     <form 
                         onSubmit={handleGlobalSearch} 
                         className={cn(
-                            "relative flex items-center backdrop-blur-xl border rounded-2xl shadow-2xl transition-all duration-300",
+                            "relative flex items-center  border rounded-2xl shadow-2xl transition-all duration-300",
                             isSearchActive ? "bg-slate-900/90 border-rose-500/50 shadow-rose-500/10" : "bg-slate-900/80 border-slate-700",
-                            isSearching ? "animate-pulse" : ""
+                            isSearching ? "" : ""
                         )}
                     >
                         <div className="pl-4 pr-2 flex items-center border-r border-slate-700/50">
@@ -397,7 +397,7 @@ export function OsintGraphExplorer() {
                                 initial={{ opacity: 0, y: -20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -20 }}
-                                className="mt-3 p-3 bg-red-950/90 border border-red-500/50 rounded-xl flex items-center justify-between text-red-200 text-sm shadow-xl backdrop-blur-md"
+                                className="mt-3 p-3 bg-red-950/90 border border-red-500/50 rounded-xl flex items-center justify-between text-red-200 text-sm shadow-xl "
                             >
                                 <div className="flex items-center gap-2">
                                     <ServerCrash className="w-4 h-4 text-red-400" />
@@ -413,11 +413,11 @@ export function OsintGraphExplorer() {
 
                 {/* Toolbar */}
                 <div className="absolute top-6 right-6 z-30 flex gap-2">
-                    <button className="p-3 bg-indigo-600/20 hover:bg-indigo-500/30 text-indigo-400 rounded-xl border border-indigo-500/50 shadow-[0_0_20px_rgba(79,70,229,0.3)] backdrop-blur-md transition-colors tooltip group relative">
+                    <button className="p-3 bg-indigo-600/20 hover:bg-indigo-500/30 text-indigo-400 rounded-xl border border-indigo-500/50   transition-colors tooltip group relative">
                         <Bot className="h-5 w-5" />
                         <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] uppercase font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">AI Copilot Аналіз</span>
                     </button>
-                    <button className="p-3 bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 rounded-xl border border-amber-500/50 shadow-[0_0_20px_rgba(245,158,11,0.3)] backdrop-blur-md transition-colors tooltip group relative">
+                    <button className="p-3 bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 rounded-xl border border-amber-500/50   transition-colors tooltip group relative">
                         <Zap className="h-5 w-5" />
                         <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] uppercase font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Моніторинг Транзакцій</span>
                     </button>
@@ -425,12 +425,12 @@ export function OsintGraphExplorer() {
                     <button 
                         onClick={resetGraph}
                         disabled={isSearching || isExpanding}
-                        className="p-3 bg-slate-900/80 hover:bg-slate-800 disabled:opacity-50 text-slate-300 rounded-xl border border-slate-700 shadow-2xl backdrop-blur-md transition-colors tooltip group relative"
+                        className="p-3 bg-slate-900/80 hover:bg-slate-800 disabled:opacity-50 text-slate-300 rounded-xl border border-slate-700 shadow-2xl  transition-colors tooltip group relative"
                     >
                         <RefreshCw className={cn("h-5 w-5", (isExpanding || isSearching) && "animate-spin text-rose-400")} />
                         <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] uppercase font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Скинути Граф</span>
                     </button>
-                    <button className="p-3 bg-slate-900/80 hover:bg-slate-800 text-slate-300 rounded-xl border border-slate-700 shadow-2xl backdrop-blur-md transition-colors group relative">
+                    <button className="p-3 bg-slate-900/80 hover:bg-slate-800 text-slate-300 rounded-xl border border-slate-700 shadow-2xl  transition-colors group relative">
                         <Download className="h-5 w-5" />
                         <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] uppercase font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Експорт PDF</span>
                     </button>
@@ -466,15 +466,15 @@ export function OsintGraphExplorer() {
                         animate={{ width: 420, opacity: 1 }}
                         exit={{ width: 0, opacity: 0 }}
                         transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                        className="h-full bg-slate-950/95 backdrop-blur-xl border-l border-slate-800 flex flex-col shrink-0 z-40 shadow-[-20px_0_40px_rgba(0,0,0,0.5)] overflow-hidden relative"
+                        className="h-full bg-slate-950/95  border-l border-slate-800 flex flex-col shrink-0 z-40 shadow-[-20px_0_40px_rgba(0,0,0,0.5)] overflow-hidden relative"
                     >
                         {/* Glow effect at top based on risk */}
                         <div className={cn(
                             "absolute top-0 left-0 right-0 h-1",
-                            selectedNode.riskLevel === 'critical' ? 'bg-rose-500 shadow-[0_0_20px_rgba(239,68,68,0.8)]' :
-                            selectedNode.riskLevel === 'high' ? 'bg-orange-500 shadow-[0_0_20px_rgba(249,115,22,0.8)]' :
-                            selectedNode.riskLevel === 'medium' ? 'bg-amber-500 shadow-[0_0_20px_rgba(245,158,11,0.8)]' :
-                            'bg-rose-400 shadow-[0_0_20px_rgba(244,63,94,0.8)]'
+                            selectedNode.riskLevel === 'critical' ? 'bg-rose-500 ' :
+                            selectedNode.riskLevel === 'high' ? 'bg-orange-500 ' :
+                            selectedNode.riskLevel === 'medium' ? 'bg-amber-500 ' :
+                            'bg-rose-400 '
                         )} />
 
                         {/* Хедер досьє */}
@@ -602,7 +602,7 @@ export function OsintGraphExplorer() {
                                                     disabled={isExpanding}
                                                     className="w-full relative overflow-hidden group flex flex-col items-center justify-center gap-1 bg-gradient-to-br from-rose-700/90 to-rose-900/90 hover:from-rose-600 hover:to-rose-800 text-white p-3 rounded-xl transition-all shadow-lg disabled:opacity-50 border border-rose-600/50"
                                                 >
-                                                    <Target className={cn("w-5 h-5", isExpanding && "animate-pulse")} /> 
+                                                    <Target className={cn("w-5 h-5", isExpanding && "")} /> 
                                                     <span className="text-[10px] font-bold uppercase tracking-widest leading-tight mt-1">Знайти UBO</span>
                                                 </motion.button>
                                             )}

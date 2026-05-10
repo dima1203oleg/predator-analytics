@@ -66,12 +66,12 @@ export const ConstitutionalShield: React.FC = () => {
             >
                 {/* Sovereign Apex Aura */}
                 {isActive && !isFrozen && (
-                    <div className="absolute -inset-4 bg-blue-500/20 blur-2xl rounded-full animate-pulse opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                    <div className="absolute -inset-4 bg-blue-500/20 blur-2xl rounded-full  opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                 )}
 
                 {/* Main Shield Orb */}
                 <div className={cn(
-                    "w-16 h-16 rounded-2xl flex items-center justify-center border-2 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] transition-all duration-500 panel-3d overflow-hidden",
+                    "w-16 h-16 rounded-2xl flex items-center justify-center border-2  shadow-[0_20px_50px_rgba(0,0,0,0.5)] transition-all duration-500 panel-3d overflow-hidden",
                     isFrozen 
                         ? "bg-rose-950/40 border-rose-500/50 text-rose-500" 
                         : isActive 
@@ -85,10 +85,10 @@ export const ConstitutionalShield: React.FC = () => {
                     <div className="absolute inset-x-0 top-1 h-[1px] bg-white/20 blur-[1px]" />
                     
                     {isFrozen ? (
-                        <AlertTriangle size={24} className="drop-shadow-[0_0_10px_rgba(244,63,94,0.8)]" />
+                        <AlertTriangle size={24} className="" />
                     ) : isActive ? (
                         <div className="relative">
-                            <Shield size={24} className="drop-shadow-[0_0_10px_rgba(59,130,246,0.8)]" />
+                            <Shield size={24} className="" />
                             <motion.div 
                                 animate={{ opacity: [0.3, 1, 0.3] }}
                                 transition={{ duration: 2, repeat: Infinity }}
@@ -102,7 +102,7 @@ export const ConstitutionalShield: React.FC = () => {
 
                 {/* Side Tag (Apex Style) */}
                 <div className="absolute -right-2 top-0 translate-x-full opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none">
-                    <div className="bg-slate-900/90 border border-blue-500/30 px-3 py-1 rounded-r-lg backdrop-blur-md">
+                    <div className="bg-slate-900/90 border border-blue-500/30 px-3 py-1 rounded-r-lg ">
                         <span className="text-[8px] font-black text-blue-400 uppercase tracking-widest whitespace-nowrap">CONSTITUTIONAL_GUARD_v61.0-ELITE</span>
                     </div>
                 </div>
@@ -113,7 +113,7 @@ export const ConstitutionalShield: React.FC = () => {
                             initial={{ opacity: 0, scale: 0.9, y: 20, x: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: 10, x: 10 }}
-                            className="absolute bottom-20 right-0 w-80 p-0 rounded-[32px] bg-[#0b0f1a]/95 border border-white/10 backdrop-blur-3xl shadow-[0_40px_100px_rgba(0,0,0,0.8)] overflow-hidden"
+                            className="absolute bottom-20 right-0 w-80 p-0 rounded-[32px] bg-[#0b0f1a]/95 border border-white/10  shadow-[0_40px_100px_rgba(0,0,0,0.8)] overflow-hidden"
                         >
                             {/* Header Section */}
                             <div className="p-6 bg-gradient-to-br from-blue-600/20 to-transparent border-b border-white/5">
@@ -125,7 +125,7 @@ export const ConstitutionalShield: React.FC = () => {
                                         <div>
                                             <h4 className="text-[11px] font-black text-white uppercase tracking-[0.2em]">OSINT-Контур v61.0-ELITE</h4>
                                             <div className="flex items-center gap-2">
-                                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 " />
                                                 <span className="text-[8px] font-mono text-emerald-400 uppercase">СИСТЕМА ТИХА</span>
                                             </div>
                                         </div>

@@ -38,18 +38,18 @@ export const FactoryCoordinatorChat: React.FC<FactoryCoordinatorChatProps> = ({
   messagesEndRef
 }) => {
   return (
-    <section className="relative h-[700px] flex flex-col p-0 overflow-hidden rounded-[3rem] bg-[#050101] border-2 border-rose-950/30 shadow-[0_0_100px_rgba(225,29,72,0.1)] group/chat">
+    <section className="relative h-[700px] flex flex-col p-0 overflow-hidden rounded-[3rem] bg-[#050101] border-2 border-rose-950/30  group/chat">
       <AdvancedBackground mode="sovereign" />
       <CyberGrid opacity={0.03} color="rgba(225, 29, 72, 0.1)" />
       <div className="absolute inset-0 bg-noise opacity-[0.02] pointer-events-none" />
 
       {/* Cinematic Header */}
-      <div className="relative z-20 p-8 border-b border-rose-500/10 bg-black/40 backdrop-blur-3xl flex items-center justify-between">
+      <div className="relative z-20 p-8 border-b border-rose-500/10 bg-black/40  flex items-center justify-between">
         <div className="flex items-center gap-6">
           <div className="relative">
-            <div className="absolute inset-0 bg-rose-500 blur-xl opacity-20 animate-pulse" />
+            <div className="absolute inset-0 bg-rose-500 blur-xl opacity-20 " />
             <div className="relative p-4 bg-rose-600 border border-rose-400/30 rounded-2xl shadow-xl transform -rotate-3">
-              <Bot className="w-6 h-6 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.6)]" />
+              <Bot className="w-6 h-6 text-white " />
             </div>
           </div>
           <div>
@@ -58,7 +58,7 @@ export const FactoryCoordinatorChat: React.FC<FactoryCoordinatorChatProps> = ({
               <span className="px-3 py-0.5 bg-rose-500/10 border border-rose-500/20 text-rose-500 text-[8px] font-black uppercase tracking-widest rounded-sm">v61.0</span>
             </div>
             <div className="flex items-center gap-3">
-              <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_12px_#10b981]" />
+              <span className="flex h-2 w-2 rounded-full bg-emerald-500  shadow-[0_0_12px_#10b981]" />
               <span className="text-[10px] font-mono text-emerald-500/60 uppercase tracking-[0.2em] font-black italic">OODA-LOOP ACTIVE // ТЕЛЕМЕТРІЯ: НОРМА</span>
             </div>
           </div>
@@ -96,7 +96,7 @@ export const FactoryCoordinatorChat: React.FC<FactoryCoordinatorChatProps> = ({
                    "max-w-[75%] p-6 rounded-[2rem] text-[14px] relative transition-all duration-500 shadow-2xl",
                    msg.sender === 'user' 
                      ? "bg-rose-600 text-white rounded-tr-none border-2 border-rose-400/30 shadow-[0_15px_40px_rgba(225,29,72,0.2)] skew-x-[-1deg]" 
-                     : "bg-black/80 border-2 border-white/5 text-slate-200 rounded-tl-none hover:border-rose-500/30 backdrop-blur-2xl skew-x-[1deg]"
+                     : "bg-black/80 border-2 border-white/5 text-slate-200 rounded-tl-none hover:border-rose-500/30  skew-x-[1deg]"
                  )}>
                     <p className="leading-relaxed whitespace-pre-wrap font-sans tracking-wide italic font-medium">{msg.text}</p>
                     
@@ -123,18 +123,18 @@ export const FactoryCoordinatorChat: React.FC<FactoryCoordinatorChatProps> = ({
             {isProcessing && (
                <motion.div 
                 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-4 p-6 bg-rose-500/5 border-2 border-rose-500/20 rounded-[2rem] backdrop-blur-xl"
+                className="flex items-center gap-4 p-6 bg-rose-500/5 border-2 border-rose-500/20 rounded-[2rem] "
                >
                   <div className="p-2 bg-rose-500/20 rounded-lg animate-spin">
                     <Loader2 size={18} className="text-rose-500" /> 
                   </div>
                   <div className="space-y-1">
-                    <span className="text-[11px] font-black tracking-[0.3em] text-rose-500 uppercase italic animate-pulse">СИНТЕЗ ВІДПОВІДІ...</span>
+                    <span className="text-[11px] font-black tracking-[0.3em] text-rose-500 uppercase italic ">СИНТЕЗ ВІДПОВІДІ...</span>
                     <div className="h-[2px] w-48 bg-white/5 rounded-full overflow-hidden">
                       <motion.div 
                         animate={{ x: ['-100%', '100%'] }}
                         transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-                        className="h-full w-1/2 bg-rose-500 shadow-[0_0_10px_rgba(225,29,72,0.8)]"
+                        className="h-full w-1/2 bg-rose-500 "
                       />
                     </div>
                   </div>
@@ -152,7 +152,7 @@ export const FactoryCoordinatorChat: React.FC<FactoryCoordinatorChatProps> = ({
       </div>
 
       {/* Input Area */}
-      <div className="relative z-20 p-8 bg-black/80 border-t-2 border-rose-500/20 backdrop-blur-3xl">
+      <div className="relative z-20 p-8 bg-black/80 border-t-2 border-rose-500/20 ">
          <form 
            onSubmit={(e) => { 
              e.preventDefault(); 
@@ -200,7 +200,7 @@ export const FactoryCoordinatorChat: React.FC<FactoryCoordinatorChatProps> = ({
             </div>
             <div className="flex items-center gap-3 ml-auto opacity-40">
                <Terminal size={12} className="text-white" />
-               <span className="text-[9px] font-mono text-white font-black uppercase tracking-widest italic animate-pulse">Awaiting directive_</span>
+               <span className="text-[9px] font-mono text-white font-black uppercase tracking-widest italic ">Awaiting directive_</span>
             </div>
          </div>
       </div>

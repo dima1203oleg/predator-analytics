@@ -204,13 +204,13 @@ const PortfolioRiskView: React.FC = () => {
                 <div className="relative group">
                   <div className="absolute inset-0 bg-rose-500/15 blur-3xl rounded-full scale-150 group-hover:scale-200 transition-transform duration-1000" />
                   <div className="relative p-7 bg-black border-2 border-rose-500/40 rounded-[3rem] shadow-4xl transform rotate-3 hover:rotate-0 transition-all cursor-crosshair">
-                    <DollarSign size={54} className="text-rose-500 drop-shadow-[0_0_20px_rgba(244,63,94,0.4)]" />
-                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-rose-600 rounded-full border-4 border-black animate-pulse shadow-[0_0_15px_#f43f5e]" />
+                    <DollarSign size={54} className="text-rose-500 " />
+                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-rose-600 rounded-full border-4 border-black  shadow-[0_0_15px_#f43f5e]" />
                   </div>
                 </div>
                 <div>
                   <div className="flex items-center gap-4 mb-3">
-                    <span className="w-1.5 h-1.5 bg-rose-600 rounded-full animate-pulse shadow-[0_0_8px_#f43f5e]" />
+                    <span className="w-1.5 h-1.5 bg-rose-600 rounded-full  shadow-[0_0_8px_#f43f5e]" />
                     <span className="text-[10px] font-black text-rose-500/80 uppercase tracking-[0.6em] italic">
                       ЦЕНТР ПОРТФЕЛЬНИХ РИЗИКІВ · v63.0-ELITE
                     </span>
@@ -230,7 +230,7 @@ const PortfolioRiskView: React.FC = () => {
               { 
                 label: nodeSource, 
                 color: isOffline ? 'warning' : 'danger', 
-                icon: <Activity size={10} className={isOffline ? 'animate-pulse' : ''} /> 
+                icon: <Activity size={10} className={isOffline ? '' : ''} /> 
               },
             ]}
             stats={[
@@ -272,7 +272,7 @@ const PortfolioRiskView: React.FC = () => {
               <motion.div
                 key={m.l}
                 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
-                className="p-10 bg-black/60 backdrop-blur-2xl border-2 border-white/5 hover:border-rose-500/30 transition-all rounded-[3.5rem] shadow-2xl group relative overflow-hidden"
+                className="p-10 bg-black/60  border-2 border-white/5 hover:border-rose-500/30 transition-all rounded-[3.5rem] shadow-2xl group relative overflow-hidden"
               >
                 <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-rose-500/40 to-transparent opacity-40" />
                 <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.6em] mb-4 italic">{m.l}</p>
@@ -286,7 +286,7 @@ const PortfolioRiskView: React.FC = () => {
             {/* ── ЛІВА ПАНЕЛЬ: ПОЗИЦІЇ ── */}
             <div className="col-span-12 xl:col-span-8 space-y-8">
               
-              <div className="flex items-center gap-4 p-3 bg-black border-2 border-white/5 rounded-[2.5rem] w-fit shadow-4xl backdrop-blur-3xl">
+              <div className="flex items-center gap-4 p-3 bg-black border-2 border-white/5 rounded-[2.5rem] w-fit shadow-4xl ">
                 <div className="flex gap-2 bg-black border-2 border-white/5 p-2 rounded-2xl shadow-inner">
                   {(['all', 'critical', 'high', 'medium'] as const).map(f => (
                     <button
@@ -365,7 +365,7 @@ const PortfolioRiskView: React.FC = () => {
                       <div className="shrink-0 pt-6">
                         {pos.trend === 'up' ? (
                           <div className="relative">
-                            <TrendingUp size={32} className="text-rose-500 drop-shadow-[0_0_10px_#f43f5e]" />
+                            <TrendingUp size={32} className="text-rose-500 " />
                             <motion.div animate={{ opacity: [1, 0, 1] }} transition={{ repeat: Infinity }} className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-rose-500 rounded-full" />
                           </div>
                         ) : (
@@ -426,7 +426,7 @@ const PortfolioRiskView: React.FC = () => {
 
                           <div className="p-8 bg-rose-600/5 border-2 border-rose-500/20 rounded-[3rem] relative group/action">
                              <div className="flex items-center gap-4 mb-4">
-                                <Flame size={20} className="text-rose-500 animate-pulse" />
+                                <Flame size={20} className="text-rose-500 " />
                                 <h4 className="text-[11px] font-black text-rose-500/60 uppercase tracking-[0.5em] italic">КРИТИЧНИЙ_ТРИГЕР</h4>
                              </div>
                              <p className="text-[15px] font-black text-rose-100 italic leading-tight uppercase tracking-tight">
@@ -451,7 +451,7 @@ const PortfolioRiskView: React.FC = () => {
                     {/* ── ТАЙМЛАЙН ELITE ── */}
                     <TacticalCard className="p-10 bg-black/60 border-2 border-white/5 rounded-[3.5rem] shadow-3xl">
                        <h3 className="text-[11px] font-black text-slate-700 uppercase tracking-[0.6em] mb-10 flex items-center gap-4 italic relative">
-                          <Activity size={18} className="text-rose-600 animate-pulse" />
+                          <Activity size={18} className="text-rose-600 " />
                           ХРОНОЛОГІЯ_ШВИДКОСТІ_РИЗИКУ
                           <div className="ml-auto w-2 h-2 bg-rose-600 rounded-full shadow-[0_0_10px_#f43f5e]" />
                        </h3>

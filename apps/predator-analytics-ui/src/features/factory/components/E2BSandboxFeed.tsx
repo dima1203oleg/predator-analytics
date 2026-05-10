@@ -21,7 +21,7 @@ export const E2BSandboxFeed: React.FC<E2BSandboxFeedProps> = ({ session, classNa
   if (!session) {
     return (
       <div className={cn("h-full bg-black/60 rounded-[28px] border border-white/5 flex flex-col items-center justify-center space-y-4", className)}>
-        <Package size={40} className="text-slate-800 animate-pulse" />
+        <Package size={40} className="text-slate-800 " />
         <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-700 italic">E2B_ORCHESTRATOR_OFFLINE</p>
       </div>
     );
@@ -57,7 +57,7 @@ export const E2BSandboxFeed: React.FC<E2BSandboxFeedProps> = ({ session, classNa
             "flex items-center gap-2",
             session.status === 'ACTIVE' ? "text-emerald-500" : "text-rose-500"
           )}>
-            <div className={cn("w-1.5 h-1.5 rounded-full", session.status === 'ACTIVE' ? "bg-emerald-500 animate-pulse" : "bg-rose-500")} />
+            <div className={cn("w-1.5 h-1.5 rounded-full", session.status === 'ACTIVE' ? "bg-emerald-500 " : "bg-rose-500")} />
             <span className="text-[8px] font-black uppercase tracking-widest">{session.status === 'ACTIVE' ? 'АКТИВНИЙ' : session.status}</span>
           </div>
         </div>

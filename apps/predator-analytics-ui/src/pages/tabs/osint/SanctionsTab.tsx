@@ -24,7 +24,7 @@ export const SanctionsTab: React.FC = () => {
   return (
     <div className="flex flex-col h-full gap-4 p-4 lg:p-6 overflow-y-auto custom-scrollbar bg-slate-950/40">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <TacticalCard className="md:col-span-1 border-white/5 bg-slate-900/40 backdrop-blur-md">
+        <TacticalCard className="md:col-span-1 border-white/5 bg-slate-900/40 ">
           <div className="space-y-6">
             <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
               <Filter size={14} className="text-rose-500" />
@@ -64,7 +64,7 @@ export const SanctionsTab: React.FC = () => {
             <input 
               type="text" 
               placeholder="Пошук за назвою, ЄДРПОУ або ПІБ..."
-              className="w-full bg-slate-900/80 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-rose-500/50 transition-all shadow-2xl backdrop-blur-xl relative z-10"
+              className="w-full bg-slate-900/80 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-rose-500/50 transition-all shadow-2xl  relative z-10"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -87,7 +87,7 @@ export const SanctionsTab: React.FC = () => {
                         item.risk === 'High' ? 'bg-orange-500/10 border-orange-500/20 text-orange-500 shadow-orange-500/5' :
                         'bg-amber-500/10 border-amber-500/20 text-amber-500 shadow-amber-500/5'
                       )}>
-                        <ShieldAlert size={24} className={item.risk === 'Critical' ? 'animate-pulse' : ''} />
+                        <ShieldAlert size={24} className={item.risk === 'Critical' ? '' : ''} />
                       </div>
                       <div>
                         <h4 className="text-lg font-black text-white group-hover:text-rose-400 transition-colors uppercase italic tracking-tight">{item.name}</h4>

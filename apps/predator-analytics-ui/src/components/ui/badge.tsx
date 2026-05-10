@@ -6,9 +6,9 @@ const badgeVariants = {
   secondary: "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
   destructive: "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
   outline: "border border-slate-700/70 text-slate-200 bg-transparent",
-  neon: "border border-indigo-500/50 bg-indigo-500/20 text-indigo-400 shadow-[0_0_10px_rgba(79,70,229,0.3)]",
-  cyber: "border border-emerald-500/50 bg-emerald-500/10 text-emerald-400 uppercase tracking-widest font-black shadow-[0_0_15px_rgba(16,185,129,0.2)]",
-  holographic: "border border-cyan-500/40 bg-cyan-500/10 text-cyan-400 backdrop-blur-md shadow-[0_0_15px_rgba(6,182,212,0.3)]",
+  neon: "border border-indigo-500/50 bg-indigo-500/20 text-indigo-400 ",
+  cyber: "border border-emerald-500/50 bg-emerald-500/10 text-emerald-400 uppercase tracking-widest font-black ",
+  holographic: "border border-cyan-500/40 bg-cyan-500/10 text-cyan-400  ",
   success: "border-transparent bg-emerald-500/10 text-emerald-400",
   warning: "border-transparent bg-amber-500/10 text-amber-400"
 } as const;

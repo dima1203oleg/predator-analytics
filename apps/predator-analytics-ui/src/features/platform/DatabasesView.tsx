@@ -190,7 +190,7 @@ const DatabasesView: React.FC = () => {
             >
                 <div className="p-4 h-[550px] flex flex-col glass-morphism rounded-2xl border border-white/10 bg-black/60">
                     <div className="mb-4 flex items-center gap-3">
-                        <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                        <div className="w-2 h-2 rounded-full bg-red-500 " />
                         <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest italic">Активний маршрут: /databases/query</span>
                     </div>
                     <textarea
@@ -236,7 +236,7 @@ const DatabasesView: React.FC = () => {
             </Modal>
 
             {/* Neural Hub Header v61.0-ELITE Sovereign */}
-            <div className="relative z-20 mt-12 mb-16 rounded-[48px] border border-white/5 bg-[#020408] backdrop-blur-[40px] p-10 flex flex-col lg:flex-row items-center gap-10 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)] overflow-hidden">
+            <div className="relative z-20 mt-12 mb-16 rounded-[48px] border border-white/5 bg-[#020408] [40px] p-10 flex flex-col lg:flex-row items-center gap-10 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)] overflow-hidden">
                 <div className="absolute inset-0 bg-cyber-grid opacity-[0.03] pointer-events-none" />
                 <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-red-600/50 to-transparent" />
 
@@ -244,7 +244,7 @@ const DatabasesView: React.FC = () => {
                     <div className="absolute inset-0 border border-red-500/10 rounded-full animate-[spin_20s_linear_infinite]" />
                     <div className="absolute inset-4 border border-dashed border-red-400/20 rounded-full animate-[spin_15s_linear_infinite_reverse]" />
                     <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-20 h-20 bg-red-500/10 border border-red-400/30 rounded-full flex items-center justify-center shadow-[0_0_40px_rgba(220,38,38,0.3)] backdrop-blur-xl">
+                        <div className="w-20 h-20 bg-red-500/10 border border-red-400/30 rounded-full flex items-center justify-center  ">
                             <DatabaseZap className="w-10 h-10 text-red-500" />
                         </div>
                     </div>
@@ -252,7 +252,7 @@ const DatabasesView: React.FC = () => {
 
                 <div className="flex-1 text-center lg:text-left relative z-10">
                     <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-red-500/10 border border-red-500/20 rounded-full font-black text-[10px] uppercase tracking-[0.3em] text-red-500 mb-6 italic">
-                        <Activity className="w-3.5 h-3.5 animate-pulse" />
+                        <Activity className="w-3.5 h-3.5 " />
                         СУВЕРЕННИЙ ДАТА-ЦЕНТ  v61.0-ELITE
                     </div>
                     <h1 className="text-5xl lg:text-7xl font-black text-white uppercase italic tracking-tighter leading-none mb-4 skew-x-[-2deg]">
@@ -273,7 +273,7 @@ const DatabasesView: React.FC = () => {
                             icon: ShieldCheck,
                         }
                     ].map((s, idx) => (
-                        <div key={idx} className="flex-1 lg:w-32 bg-white/5 border border-white/10 rounded-3xl p-6 text-center shadow-lg backdrop-blur-xl transition-all hover:border-red-500/40 group relative overflow-hidden">
+                        <div key={idx} className="flex-1 lg:w-32 bg-white/5 border border-white/10 rounded-3xl p-6 text-center shadow-lg  transition-all hover:border-red-500/40 group relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-8 h-px bg-gradient-to-l from-red-600 to-transparent" />
                             <s.icon size={16} className={cn("mx-auto mb-3 transition-colors", s.color)} />
                             <p className="text-[10px] text-slate-300 font-black uppercase tracking-widest mb-1 italic">{s.label}</p>
@@ -311,7 +311,7 @@ const DatabasesView: React.FC = () => {
 
             {/* Custom V55 Tab Selector */}
             <div className="sticky top-24 z-40 px-4">
-                <div className="max-w-fit mx-auto p-2 bg-slate-900/80 backdrop-blur-2xl border border-white/5 rounded-3xl flex flex-wrap shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] overflow-hidden">
+                <div className="max-w-fit mx-auto p-2 bg-slate-900/80  border border-white/5 rounded-3xl flex flex-wrap shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] overflow-hidden">
                     {[
                         { id: 'ETL', label: 'ПОТІК ETL', icon: Network, color: 'text-amber-500' },
                         { id: 'RELATIONAL', label: ' еляційні', icon: Database, color: 'text-red-500' },
@@ -327,7 +327,7 @@ const DatabasesView: React.FC = () => {
                                 onClick={() => setActiveTab(tab.id as any)}
                                 className={cn(
                                     "relative py-3.5 px-6 rounded-[20px] transition-all duration-500 flex items-center gap-3 overflow-hidden group italic",
-                                    isActive ? "bg-white/10 shadow-[0_0_30px_rgba(220,38,38,0.1)] scale-105 z-10" : "hover:bg-white/5"
+                                    isActive ? "bg-white/10  scale-105 z-10" : "hover:bg-white/5"
                                 )}
                             >
                                 <span className={cn("transition-transform duration-500", isActive ? "scale-110" : "opacity-40", tab.color)}>
@@ -352,7 +352,7 @@ const DatabasesView: React.FC = () => {
             </div>
 
             {/* Content Display v61.0-ELITE */}
-            <div className="relative min-h-[600px] mt-12 bg-slate-950/20 rounded-[48px] border border-white/5 p-8 backdrop-blur-3xl shadow-[0_0_80px_rgba(0,0,0,0.5)]">
+            <div className="relative min-h-[600px] mt-12 bg-slate-950/20 rounded-[48px] border border-white/5 p-8  ">
                 <AnimatePresence mode="wait">
                     <motion.div
                         key={activeTab}

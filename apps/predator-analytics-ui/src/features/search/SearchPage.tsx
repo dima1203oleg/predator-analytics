@@ -66,7 +66,7 @@ const SearchPage: React.FC = () => {
                         title={
                             <div className="flex items-center gap-10">
                                 <div className="relative group">
-                                    <div className="absolute inset-0 bg-red-600/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                                    <div className="absolute inset-0 bg-red-600/20 blur-3xl rounded-full scale-150 " />
                                     <div className="relative p-7 bg-black border border-red-900/40 rounded-[2.5rem] shadow-2xl">
                                         <Crosshair size={42} className="text-red-600 animate-spin-slow" />
                                     </div>
@@ -146,14 +146,14 @@ const SearchPage: React.FC = () => {
                         {isSearching ? (
                             <div className="flex flex-col items-center justify-center py-40 gap-16">
                                 <div className="relative">
-                                    <div className="absolute inset-0 bg-red-600/20 blur-[100px] scale-150 animate-pulse" />
+                                    <div className="absolute inset-0 bg-red-600/20 blur-[100px] scale-150 " />
                                     <CyberOrb size={200} color="#dc2626" intensity={0.6} pulse />
                                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                                        <Eye size={40} className="text-white animate-pulse" />
+                                        <Eye size={40} className="text-white " />
                                     </div>
                                 </div>
                                 <div className="text-center space-y-4">
-                                    <span className="text-2xl font-black text-red-600 uppercase tracking-[1em] italic animate-pulse block">АНАЛІЗ_КрИМІНАЛЬНИХ_ВЕКТО ІВ</span>
+                                    <span className="text-2xl font-black text-red-600 uppercase tracking-[1em] italic  block">АНАЛІЗ_КрИМІНАЛЬНИХ_ВЕКТО ІВ</span>
                                     <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.5em] italic">SEARCH_IN_PROGRESS_v58.2</p>
                                 </div>
                             </div>
@@ -183,7 +183,7 @@ const SearchPage: React.FC = () => {
                                                       </div>
                                                    </div>
                                                    {res.severity === 'CRITICAL' && (
-                                                      <span className="bg-red-600 text-white text-[9px] font-black px-4 py-1.5 rounded-full animate-pulse shadow-lg">КРИТИЧНИЙ_РИЗИК</span>
+                                                      <span className="bg-red-600 text-white text-[9px] font-black px-4 py-1.5 rounded-full  shadow-lg">КРИТИЧНИЙ_РИЗИК</span>
                                                    )}
                                                 </div>
 
@@ -217,7 +217,7 @@ const SearchPage: React.FC = () => {
                             </div>
                         ) : (
                             <div className="flex flex-col items-center justify-center py-40 text-center gap-10">
-                                <Ghost size={120} className="text-red-950/20 animate-pulse" />
+                                <Ghost size={120} className="text-red-950/20 " />
                                 <div className="space-y-4">
                                    <p className="text-4xl font-black text-red-950/40 uppercase tracking-[0.8em] italic">СИСТЕМА ТИШІ</p>
                                    <p className="text-[11px] text-red-950/30 font-black uppercase tracking-[0.4em] italic leading-tight">PREDATOR ПОТ ЕБУЄ ЦІЛЬ. ІНІЦІЮЙТЕ СКАНУВАННЯ.</p>

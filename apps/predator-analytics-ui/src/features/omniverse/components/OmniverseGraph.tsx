@@ -129,11 +129,11 @@ export const OmniverseGraph: React.FC = () => {
   return (
     <div className="flex h-full gap-4">
       {/* Graph Area */}
-      <div className="flex-1 bg-black/40 backdrop-blur-md border border-white/5 rounded-xl overflow-hidden relative">
+      <div className="flex-1 bg-black/40  border border-white/5 rounded-xl overflow-hidden relative">
         <div ref={containerRef} className="w-full h-full" />
         
         {/* Controls */}
-        <div className="absolute bottom-6 left-6 flex items-center space-x-2 bg-zinc-900/80 border border-white/10 p-1 rounded-lg backdrop-blur-md z-10">
+        <div className="absolute bottom-6 left-6 flex items-center space-x-2 bg-zinc-900/80 border border-white/10 p-1 rounded-lg  z-10">
           <button onClick={zoomIn} className="p-2 hover:bg-white/10 rounded text-white/70 transition-colors" title="Zoom In"><ZoomIn size={16}/></button>
           <button onClick={zoomOut} className="p-2 hover:bg-white/10 rounded text-white/70 transition-colors" title="Zoom Out"><ZoomOut size={16}/></button>
           <button onClick={fit} className="p-2 hover:bg-white/10 rounded text-white/70 transition-colors" title="Fit View"><Maximize2 size={16}/></button>
@@ -142,14 +142,14 @@ export const OmniverseGraph: React.FC = () => {
         </div>
 
         {loading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-sm z-20">
+          <div className="absolute inset-0 flex items-center justify-center bg-black/20  z-20">
             <RefreshCw className="w-10 h-10 text-emerald-500 animate-spin" />
           </div>
         )}
       </div>
 
       {/* Details Sidebar */}
-      <div className="w-80 bg-black/40 backdrop-blur-md border border-white/5 rounded-xl flex flex-col overflow-hidden">
+      <div className="w-80 bg-black/40  border border-white/5 rounded-xl flex flex-col overflow-hidden">
         <div className="p-4 border-b border-white/5 flex items-center space-x-3">
           <div className="p-2 bg-purple-500/20 rounded-lg">
             <Share2 className="w-4 h-4 text-purple-400" />

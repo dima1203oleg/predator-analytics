@@ -145,9 +145,9 @@ export const ReportBuilder: React.FC = () => {
           title={
             <div className="flex items-center gap-8">
               <div className="relative group">
-                <div className="absolute inset-0 bg-amber-500/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                <div className="absolute inset-0 bg-amber-500/20 blur-3xl rounded-full scale-150 " />
                 <div className="relative p-6 bg-black border-2 border-amber-500/40 rounded-[2rem] shadow-4xl transform rotate-2 hover:rotate-0 transition-all">
-                  <FileText size={42} className="text-amber-500 drop-shadow-[0_0_15px_rgba(212,175,55,0.4)]" />
+                  <FileText size={42} className="text-amber-500 " />
                 </div>
               </div>
               <div>
@@ -254,7 +254,7 @@ export const ReportBuilder: React.FC = () => {
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 h-full">
             <div className="lg:col-span-3 space-y-8">
-              <Card className="p-8 bg-black/60 backdrop-blur-3xl border-2 border-white/5 rounded-[3.5rem] shadow-4xl">
+              <Card className="p-8 bg-black/60  border-2 border-white/5 rounded-[3.5rem] shadow-4xl">
                 <h2 className="text-[11px] font-black text-amber-500/60 uppercase tracking-[0.6em] mb-8 italic">🧩 ALPHA_КОМПОНЕНТИ</h2>
                 <div className="space-y-4">
                   {AVAILABLE_SECTIONS.map((section) => (
@@ -275,7 +275,7 @@ export const ReportBuilder: React.FC = () => {
                 </div>
               </Card>
 
-              <Card className="p-8 bg-black/60 backdrop-blur-3xl border-2 border-white/5 rounded-[3.5rem] shadow-4xl">
+              <Card className="p-8 bg-black/60  border-2 border-white/5 rounded-[3.5rem] shadow-4xl">
                 <h2 className="text-[11px] font-black text-amber-500/60 uppercase tracking-[0.6em] mb-8 italic">📚 ТИТАН_ШАБЛОНИ</h2>
                 <div className="space-y-3">
                   {[
@@ -296,11 +296,11 @@ export const ReportBuilder: React.FC = () => {
             </div>
 
             <div className="lg:col-span-9 h-full min-h-[800px]">
-              <Card className="p-12 bg-black/40 backdrop-blur-3xl border-2 border-white/5 rounded-[5rem] shadow-5xl min-h-full">
+              <Card className="p-12 bg-black/40  border-2 border-white/5 rounded-[5rem] shadow-5xl min-h-full">
                 <div className="flex items-center justify-between mb-12">
                    <h2 className="text-[11px] font-black text-slate-700 uppercase tracking-[0.6em] italic">📄 CANVAS_DEEP_INSPECTION</h2>
                    <div className="flex items-center gap-4">
-                     <div className="w-3 h-3 rounded-full bg-amber-500 animate-pulse" />
+                     <div className="w-3 h-3 rounded-full bg-amber-500 " />
                      <span className="text-[9px] font-mono text-amber-500/60">AUTOSAVE_ACTIVE</span>
                    </div>
                 </div>

@@ -53,7 +53,7 @@ export const SmartCalculatorWidget: React.FC<{ persona: string }> = ({ persona }
   };
 
   return (
-    <div className="bg-slate-950/80 border border-amber-500/20 rounded-[24px] backdrop-blur-xl overflow-hidden h-full flex flex-col relative">
+    <div className="bg-slate-950/80 border border-amber-500/20 rounded-[24px]  overflow-hidden h-full flex flex-col relative">
       <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent pointer-events-none" />
 
       {/* Header */}

@@ -38,7 +38,7 @@ export const OperatorShell: React.FC<OperatorShellProps> = ({
                    <div key={i} className={cn("w-1 h-4 rounded-full", i < 4 ? "bg-cyan-500" : "bg-slate-800")} />
                  ))}
               </div>
-              <p className="text-sm text-cyan-400 font-black font-mono tracking-widest uppercase animate-pulse">SYSTEM_OPTIMAL // CORE_STABILITY: 98.4%</p>
+              <p className="text-sm text-cyan-400 font-black font-mono tracking-widest uppercase ">SYSTEM_OPTIMAL // CORE_STABILITY: 98.4%</p>
             </div>
           </div>
           <div className="relative">
@@ -99,7 +99,7 @@ export const OperatorShell: React.FC<OperatorShellProps> = ({
                   <div className="flex items-center justify-between mb-4 relative z-10">
                     <div className="flex items-center gap-4">
                        <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
-                         <Activity className="w-5 h-5 text-cyan-400 animate-pulse" />
+                         <Activity className="w-5 h-5 text-cyan-400 " />
                        </div>
                        <div>
                          <span className="text-base font-black text-white italic uppercase tracking-tight">{process.name}</span>
@@ -126,7 +126,7 @@ export const OperatorShell: React.FC<OperatorShellProps> = ({
                       initial={{ width: 0 }}
                       animate={{ width: `${process.progress}%` }}
                       transition={{ duration: 0.8, ease: "circOut" }}
-                      className="h-full bg-gradient-to-r from-cyan-600 to-blue-500 rounded-full shadow-[0_0_10px_rgba(6,182,212,0.4)]"
+                      className="h-full bg-gradient-to-r from-cyan-600 to-blue-500 rounded-full "
                     />
                   </div>
                 </div>

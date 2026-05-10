@@ -121,7 +121,7 @@ export const OnboardingWizard: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/70 backdrop-blur-md z-[9998]"
+            className="fixed inset-0 bg-black/70  z-[9998]"
             onClick={handleSkip}
           />
 
@@ -132,7 +132,7 @@ export const OnboardingWizard: React.FC = () => {
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg z-[9999]"
           >
-            <div className="bg-slate-900/95 border border-white/10 rounded-3xl shadow-2xl backdrop-blur-xl overflow-hidden">
+            <div className="bg-slate-900/95 border border-white/10 rounded-3xl shadow-2xl  overflow-hidden">
               {/* Progress Bar */}
               <div className="h-1 bg-slate-800 w-full">
                 <motion.div

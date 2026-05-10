@@ -51,7 +51,7 @@ const ExplorerShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange,
       </div>
 
       {/* Sidebar (Explorer Style: Soft & Rounded) */}
-      <aside className="hidden md:flex w-64 flex-col border-r border-white/5 bg-slate-900/20 backdrop-blur-xl z-20 flex-shrink-0">
+      <aside className="hidden md:flex w-64 flex-col border-r border-white/5 bg-slate-900/20  z-20 flex-shrink-0">
         <div className="p-6">
           <div className="flex items-center gap-3 mb-8">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
@@ -78,7 +78,7 @@ const ExplorerShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange,
                 {item.icon}
                 <span className="font-semibold text-sm">{item.label}</span>
                 {activeTab === item.id && (
-                  <motion.div layoutId="active-pill" className="ml-auto w-1.5 h-1.5 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.6)]" />
+                  <motion.div layoutId="active-pill" className="ml-auto w-1.5 h-1.5 rounded-full bg-amber-400 " />
                 )}
               </button>
             ))}
@@ -97,7 +97,7 @@ const ExplorerShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange,
                 {item.icon}
                 <span className="font-semibold text-sm">{item.label}</span>
                 {activeTab === item.id && (
-                  <motion.div layoutId="active-pill" className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.6)]" />
+                  <motion.div layoutId="active-pill" className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-400 " />
                 )}
               </button>
             ))}
@@ -119,7 +119,7 @@ const ExplorerShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange,
                 {item.icon}
                 <span className="font-semibold text-sm">{item.label}</span>
                 {activeTab === item.id && (
-                  <motion.div layoutId="active-pill-data" className="ml-auto w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]" />
+                  <motion.div layoutId="active-pill-data" className="ml-auto w-1.5 h-1.5 rounded-full bg-emerald-400 " />
                 )}
               </button>
             ))}
@@ -141,7 +141,7 @@ const ExplorerShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange,
                 {item.icon}
                 <span className="font-semibold text-sm">{item.label}</span>
                 {activeTab === item.id && (
-                  <motion.div layoutId="active-pill-ai" className="ml-auto w-1.5 h-1.5 rounded-full bg-purple-400 shadow-[0_0_8px_rgba(192,132,252,0.6)]" />
+                  <motion.div layoutId="active-pill-ai" className="ml-auto w-1.5 h-1.5 rounded-full bg-purple-400 " />
                 )}
               </button>
             ))}
@@ -172,7 +172,7 @@ const ExplorerShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange,
       {/* Main Area */}
       <div className="flex-1 flex flex-col relative z-10 min-w-0">
         {/* Header */}
-        <header className="h-16 flex items-center justify-between px-6 border-b border-white/5 bg-slate-950/20 backdrop-blur-md flex-shrink-0">
+        <header className="h-16 flex items-center justify-between px-6 border-b border-white/5 bg-slate-950/20  flex-shrink-0">
           <div className="flex items-center gap-4">
             <button className="md:hidden p-2 text-slate-400" onClick={() => setIsMenuOpen(true)}>
               <Menu size={20} />
@@ -227,7 +227,7 @@ const ExplorerShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange,
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsMenuOpen(false)}
-              className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm md:hidden"
+              className="fixed inset-0 z-40 bg-black/60  md:hidden"
             />
             <motion.aside
               initial={{ x: '-100%' }}

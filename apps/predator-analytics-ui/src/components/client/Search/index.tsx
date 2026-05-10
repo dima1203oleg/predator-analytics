@@ -61,9 +61,9 @@ export const Search: React.FC = () => {
           title={
             <div className="flex items-center gap-10">
               <div className="relative group">
-                <div className="absolute inset-0 bg-blue-600/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                <div className="absolute inset-0 bg-blue-600/20 blur-3xl rounded-full scale-150 " />
                 <div className="relative p-7 bg-black border border-blue-900/40 rounded-[2.5rem] shadow-2xl">
-                  <SearchIcon size={42} className="text-blue-500 shadow-[0_0_15px_rgba(37,99,235,0.5)]" />
+                  <SearchIcon size={42} className="text-blue-500 " />
                 </div>
               </div>
               <div className="space-y-2">
@@ -98,7 +98,7 @@ export const Search: React.FC = () => {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Введіть код ЄДРПОУ, назву компанії або об'єкта..."
-              className="w-full bg-black/60 border-2 border-white/[0.04] group-focus-within:border-blue-600/40 rounded-[2.5rem] px-10 py-8 pl-20 text-xl font-black italic text-white placeholder:text-slate-700 outline-none shadow-3xl backdrop-blur-3xl transition-all"
+              className="w-full bg-black/60 border-2 border-white/[0.04] group-focus-within:border-blue-600/40 rounded-[2.5rem] px-10 py-8 pl-20 text-xl font-black italic text-white placeholder:text-slate-700 outline-none shadow-3xl  transition-all"
             />
             <SearchIcon className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-700 group-focus-within:text-blue-500 transition-colors" size={32} />
             <button
@@ -127,7 +127,7 @@ export const Search: React.FC = () => {
                 <div className="relative inline-block">
                   <div className="w-24 h-24 border-2 border-blue-500/20 border-t-blue-500 rounded-full animate-spin" />
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <Activity size={32} className="text-blue-500 animate-pulse" />
+                    <Activity size={32} className="text-blue-500 " />
                   </div>
                 </div>
                 <p className="mt-10 text-[10px] font-black text-slate-500 uppercase tracking-[0.5em] italic">SCANNING_DATA_CLUSTER...</p>

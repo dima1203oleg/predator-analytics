@@ -88,7 +88,7 @@ const StageIndicator: React.FC<{ stage: StageStatus, index: number }> = ({ stage
       className={cn(
         "flex items-center justify-between p-4 rounded-2xl border mb-3 transition-all panel-3d",
         stage.status === 'completed' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' :
-          stage.status === 'running' ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.15)]' :
+          stage.status === 'running' ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400 ' :
             stage.status === 'error' ? 'bg-amber-500/10 border-amber-500/20 text-amber-400' :
               'bg-slate-900/40 border-white/5 text-slate-500'
       )}
@@ -96,7 +96,7 @@ const StageIndicator: React.FC<{ stage: StageStatus, index: number }> = ({ stage
       <div className="flex items-center gap-4">
         <div className={cn(
           "w-8 h-8 flex items-center justify-center rounded-xl border border-current",
-          stage.status === 'running' && 'animate-pulse'
+          stage.status === 'running' && ''
         )}>
           {stage.status === 'completed' ? <CheckCircle size={16} /> :
             stage.status === 'running' ? <Activity size={16} className="animate-spin" /> :
@@ -413,7 +413,7 @@ const SystemVerificationSuite: React.FC = () => {
             <div className="relative group">
               <div className="absolute inset-0 bg-amber-500/20 blur-[50px] rounded-full scale-125 transition-all group-hover:scale-150" />
               <div className="relative w-14 h-14 bg-slate-900 border border-white/5 rounded-[22px] flex items-center justify-center panel-3d shadow-2xl">
-                <Microscope size={32} className="text-amber-400 drop-shadow-[0_0_10px_rgba(244,63,94,0.8)]" />
+                <Microscope size={32} className="text-amber-400 " />
               </div>
             </div>
             <div>
@@ -425,7 +425,7 @@ const SystemVerificationSuite: React.FC = () => {
                   CONTROL_CASE_MARCH_2026
                 </Badge>
                 <div className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 " />
                   <span className="text-[10px] font-mono font-black text-slate-500 uppercase tracking-widest">Integrity_Shield: ACTIVE</span>
                 </div>
               </div>
@@ -468,7 +468,7 @@ const SystemVerificationSuite: React.FC = () => {
                   className={cn(
                     "px-8 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest flex items-center gap-3 transition-all",
                     uploadedFiles.length > 0
-                      ? 'bg-emerald-500 text-black shadow-[0_0_20px_rgba(16,185,129,0.4)]'
+                      ? 'bg-emerald-500 text-black '
                       : 'bg-slate-800 text-slate-500 cursor-not-allowed border border-white/5'
                   )}
                 >
@@ -509,7 +509,7 @@ const SystemVerificationSuite: React.FC = () => {
                 <h3 className="text-xl font-black text-white uppercase tracking-tighter">02. Виконання ETL Пайплайну</h3>
                 <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mt-2 italic">Realtime_Process_Log</p>
               </div>
-              {isProcessing && <div className="text-[10px] font-black text-cyan-400 animate-pulse font-mono tracking-widest">ПОТІКрАКТИВНИЙ: {jobId?.split('-')[0] || 'PROC-9921'}</div>}
+              {isProcessing && <div className="text-[10px] font-black text-cyan-400  font-mono tracking-widest">ПОТІКрАКТИВНИЙ: {jobId?.split('-')[0] || 'PROC-9921'}</div>}
             </div>
 
             <div className="space-y-1">
@@ -536,7 +536,7 @@ const SystemVerificationSuite: React.FC = () => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={runControlQuery}
-                  className="px-8 py-3 bg-amber-500 text-white rounded-3xl font-black text-[10px] uppercase tracking-widest flex items-center gap-3 shadow-[0_0_30px_rgba(244,63,94,0.3)]"
+                  className="px-8 py-3 bg-amber-500 text-white rounded-3xl font-black text-[10px] uppercase tracking-widest flex items-center gap-3 "
                 >
                   <Search size={16} /> Виконати Тест
                 </motion.button>
@@ -603,7 +603,7 @@ const SystemVerificationSuite: React.FC = () => {
             <div className="flex items-center justify-between">
               <h3 className="text-xl font-black text-white uppercase tracking-tighter">Сховища / Кластери</h3>
               <div className="flex gap-1">
-                {[1, 2, 3].map(i => <div key={i} className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" style={{ animationDelay: `${i * 0.2}s` }} />)}
+                {[1, 2, 3].map(i => <div key={i} className="w-1.5 h-1.5 rounded-full bg-amber-500 " style={{ animationDelay: `${i * 0.2}s` }} />)}
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 gap-6">

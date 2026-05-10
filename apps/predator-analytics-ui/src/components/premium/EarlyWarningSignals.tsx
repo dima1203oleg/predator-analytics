@@ -50,7 +50,7 @@ const EarlyWarningSignals: React.FC = () => {
 
     const getSeverityStyles = (severity: string) => {
         switch (severity) {
-            case 'critical': return 'bg-rose-500/20 text-rose-400 border-rose-500/50 shadow-[0_0_15px_rgba(244,63,94,0.3)]';
+            case 'critical': return 'bg-rose-500/20 text-rose-400 border-rose-500/50 ';
             case 'high': return 'bg-amber-500/20 text-amber-400 border-amber-500/50';
             case 'medium': return 'bg-cyan-500/20 text-cyan-400 border-cyan-500/50';
             default: return 'bg-slate-500/20 text-slate-400 border-slate-500/50';
@@ -58,14 +58,14 @@ const EarlyWarningSignals: React.FC = () => {
     };
 
     return (
-        <Card className="bg-slate-950/40 border-slate-800/50 backdrop-blur-3xl relative overflow-hidden border-r-rose-500/20">
+        <Card className="bg-slate-950/40 border-slate-800/50  relative overflow-hidden border-r-rose-500/20">
             <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/5 blur-[80px] pointer-events-none" />
 
             <CardHeader className="pb-2 border-b border-white/5">
                 <div className="flex justify-between items-center">
                     <div className="flex items-center gap-3">
                         <div className="relative">
-                            <div className="absolute inset-0 bg-rose-500/20 blur-md animate-pulse" />
+                            <div className="absolute inset-0 bg-rose-500/20 blur-md " />
                             <ShieldAlert className="text-rose-500 relative z-10" size={24} />
                         </div>
                         <div>
@@ -78,7 +78,7 @@ const EarlyWarningSignals: React.FC = () => {
                         </div>
                     </div>
                     <Badge variant="outline" className="bg-slate-900/50 border-slate-800 text-[10px] flex items-center gap-1">
-                        <Activity size={10} className="animate-pulse text-rose-500" />
+                        <Activity size={10} className=" text-rose-500" />
                         {t('status.live_scan')}
                     </Badge>
                 </div>

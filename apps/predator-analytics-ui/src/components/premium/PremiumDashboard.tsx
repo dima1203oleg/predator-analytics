@@ -79,8 +79,8 @@ export function PremiumDashboard({ userId, isPremium = true }: PremiumDashboardP
     return (
       <div className="relative h-[600px] w-full rounded-3xl overflow-hidden glass-ultra border border-white/5 flex items-center justify-center">
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b')] bg-cover opacity-10 blur-sm" />
-        <div className="relative z-10 text-center space-y-6 max-w-lg p-8 bg-black/60 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl">
-            <div className="w-16 h-16 bg-gradient-to-br from-amber-400 to-orange-600 rounded-2xl mx-auto flex items-center justify-center shadow-[0_0_30px_rgba(245,158,11,0.4)]">
+        <div className="relative z-10 text-center space-y-6 max-w-lg p-8 bg-black/60  rounded-3xl border border-white/10 shadow-2xl">
+            <div className="w-16 h-16 bg-gradient-to-br from-amber-400 to-orange-600 rounded-2xl mx-auto flex items-center justify-center ">
                 <Lock className="text-white h-8 w-8" />
             </div>
           <h3 className="text-2xl font-black font-display tracking-tight text-white uppercase">
@@ -89,7 +89,7 @@ export function PremiumDashboard({ userId, isPremium = true }: PremiumDashboardP
           <p className="text-slate-400 text-sm font-mono leading-relaxed">
              озширені модулі аналітики (Sankey потоки, граф розпізнавання сутностей, геопросторова інтелектика) вимагають рівня доступу <span className="text-amber-400">КОМАНДИ А</span>.
           </p>
-          <Button className="w-full bg-amber-500 hover:bg-amber-600 text-black font-bold uppercase tracking-widest shadow-[0_0_20px_rgba(245,158,11,0.3)] transition-all hover:scale-105">
+          <Button className="w-full bg-amber-500 hover:bg-amber-600 text-black font-bold uppercase tracking-widest  transition-all hover:scale-105">
             Оновити рівень Доступу
           </Button>
         </div>
@@ -103,7 +103,7 @@ export function PremiumDashboard({ userId, isPremium = true }: PremiumDashboardP
       <motion.div
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-900/40 p-2 rounded-2xl border border-white/5 backdrop-blur-md"
+        className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-900/40 p-2 rounded-2xl border border-white/5 "
       >
         <Tabs value={activeChart} onValueChange={setActiveChart} className="w-full sm:w-auto">
           <TabsList className="bg-black/40 border border-white/5 p-1 rounded-xl gap-1">
@@ -283,7 +283,7 @@ function GeoMap() {
             <div className="w-[400px] h-[400px] border border-blue-500/20 rounded-full animate-ping opacity-30 animation-delay-500" />
         </div>
 
-        <Globe size={64} className="text-blue-500/50 mb-6 animate-pulse" />
+        <Globe size={64} className="text-blue-500/50 mb-6 " />
         <h3 className="text-xl font-bold text-white tracking-widest uppercase mb-2">Global Surveillance</h3>
         <p className="text-slate-500 font-mono text-xs max-w-sm text-center">
             Establishing sat-link connection... <br/>
@@ -292,7 +292,7 @@ function GeoMap() {
 
         <div className="mt-8 flex gap-2">
             {[1, 2, 3, 4].map(i => (
-                <div key={i} className="w-2 h-8 bg-blue-500/20 rounded-full animate-pulse" style={{ animationDelay: `${i * 0.1}s` }} />
+                <div key={i} className="w-2 h-8 bg-blue-500/20 rounded-full " style={{ animationDelay: `${i * 0.1}s` }} />
             ))}
         </div>
     </div>

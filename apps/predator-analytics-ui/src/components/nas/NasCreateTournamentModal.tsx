@@ -75,7 +75,7 @@ export const NasCreateTournamentModal: React.FC<NasCreateTournamentModalProps> =
                                 whileTap={{ scale: 0.95 }}
                                 onClick={() => setStrategy(s)}
                                 className={`p-3 rounded-xl border text-[10px] font-bold transition-all uppercase tracking-wider ${strategy === s
-                                        ? 'bg-blue-900/20 border-blue-500 text-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.15)]'
+                                        ? 'bg-blue-900/20 border-blue-500 text-blue-400 '
                                         : 'bg-slate-900 border-slate-800 text-slate-500 hover:border-slate-700'
                                     }`}
                             >

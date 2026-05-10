@@ -22,7 +22,7 @@ export const CompetitorWarBoardWidget: React.FC<{ persona: string }> = ({ person
   ];
 
   return (
-    <div className="bg-slate-950/80 border border-white/5 rounded-[32px] backdrop-blur-xl overflow-hidden h-full flex flex-col relative group">
+    <div className="bg-slate-950/80 border border-white/5 rounded-[32px]  overflow-hidden h-full flex flex-col relative group">
       <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent pointer-events-none" />
 
       {/* Header */}
@@ -102,7 +102,7 @@ export const CompetitorWarBoardWidget: React.FC<{ persona: string }> = ({ person
                       initial={{ width: 0 }}
                       animate={{ width: `${comp.marketShare + 15}%` }}
                       className={cn(
-                          "h-full shadow-[0_0_10px_rgba(255,255,255,0.1)]",
+                          "h-full ",
                           comp.color === '#6366f1' ? "bg-indigo-500" :
                           comp.color === '#f43f5e' ? "bg-rose-500" : "bg-amber-500"
                       )}

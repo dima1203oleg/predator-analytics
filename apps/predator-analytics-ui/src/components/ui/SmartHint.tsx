@@ -42,7 +42,7 @@ export const SmartHint: React.FC<SmartHintProps> = ({
             transition={{ delay: 0.2, type: 'spring', stiffness: 300, damping: 20 }}
             className={`
               absolute z-50 w-64 p-3 rounded-xl
-              bg-slate-900/95 backdrop-blur-xl border border-slate-700/50
+              bg-slate-900/95  border border-slate-700/50
               shadow-2xl shadow-black/50 pointer-events-none text-left
               ${position === 'top' ? 'bottom-full mb-2' : ''}
               ${position === 'bottom' ? 'top-full mt-2' : ''}

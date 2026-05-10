@@ -131,7 +131,7 @@ export const SmartCompanySearch: React.FC = () => {
       {/* Search Input */}
       <Card
         variant="cyber"
-        className="p-4 bg-black/40 border-amber-500/20 backdrop-blur-xl shadow-[0_0_50px_rgba(245,158,11,0.1)]"
+        className="p-4 bg-black/40 border-amber-500/20  "
       >
         <div className="space-y-3">
           <div className="relative group">
@@ -143,7 +143,7 @@ export const SmartCompanySearch: React.FC = () => {
               value={searchTerm}
               onChange={(e) => handleSearch(e.target.value)}
               placeholder="🔍 Введіть назву компанії, УЕІД, ІПН або ПІБ..."
-              className="w-full pl-12 pr-4 py-4 bg-black/60 border-2 border-amber-900/30 rounded-2xl text-white text-xl placeholder-amber-900/50 focus:border-amber-500 focus:shadow-[0_0_30px_rgba(245,158,11,0.15)] focus:outline-none transition-all duration-300 font-mono italic"
+              className="w-full pl-12 pr-4 py-4 bg-black/60 border-2 border-amber-900/30 rounded-2xl text-white text-xl placeholder-amber-900/50 focus:border-amber-500 focus: focus:outline-none transition-all duration-300 font-mono italic"
             />
           </div>
 

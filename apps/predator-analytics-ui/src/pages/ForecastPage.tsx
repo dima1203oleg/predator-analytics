@@ -278,7 +278,7 @@ export default function ForecastPage() {
                                 <div className="badge-v2-glimmer" />
                             </div>
                             <div className={cn(
-                                "badge-v2 px-4 font-black uppercase tracking-[0.15em] border-red-500/20 text-red-500 bg-red-500/10 shadow-[0_0_15px_rgba(220,38,38,0.2)]",
+                                "badge-v2 px-4 font-black uppercase tracking-[0.15em] border-red-500/20 text-red-500 bg-red-500/10 ",
                                 backendStatus.isOffline && "opacity-80"
                             )}>
                                 {backendStatus.statusLabel}
@@ -288,8 +288,8 @@ export default function ForecastPage() {
                         <div className="space-y-4">
                             <h1 className="flex items-center gap-5 text-4xl font-black tracking-tight text-white sm:text-5xl lg:text-7xl uppercase italic skew-x-[-2deg]">
                                 <div className="relative">
-                                    <TrendingUp className="text-red-600 drop-shadow-[0_0_20px_rgba(220,38,38,0.8)]" size={52} />
-                                    <div className="absolute -inset-2 bg-red-600/30 blur-2xl rounded-full animate-pulse" />
+                                    <TrendingUp className="text-red-600 " size={52} />
+                                    <div className="absolute -inset-2 bg-red-600/30 blur-2xl rounded-full " />
                                 </div>
                                 <span>П ОГНОСТИЧНЕ <span className="text-red-600 font-display">ЯДРО</span></span>
                             </h1>
@@ -300,31 +300,31 @@ export default function ForecastPage() {
                     </div>
 
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 xl:w-[680px]">
-                        <div className="card-depth group rounded-[32px] border border-white/[0.12] bg-[#02060d]/60 backdrop-blur-3xl p-6 transition-all hover:bg-[#02060d]/80 shadow-[0_20px_40px_rgba(0,0,0,0.8)] hover:shadow-[0_0_40px_rgba(220,38,38,0.15)] hover:-translate-y-1 relative overflow-hidden">
+                        <div className="card-depth group rounded-[32px] border border-white/[0.12] bg-[#02060d]/60  p-6 transition-all hover:bg-[#02060d]/80 shadow-[0_20px_40px_rgba(0,0,0,0.8)] hover: hover:-translate-y-1 relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-24 h-px bg-gradient-to-l from-red-600 to-transparent" />
                             <div className="flex items-center gap-3 mb-4">
-                                <div className="h-2 w-2 rounded-full bg-red-600 shadow-[0_0_12px_rgba(220,38,38,1)]" />
+                                <div className="h-2 w-2 rounded-full bg-red-600 " />
                                 <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 group-hover:text-red-400 transition-colors italic">СТРАТЕГІЧНИЙ АЛГО ИТМ</span>
                             </div>
                             <div className="text-lg font-black text-white tracking-widest uppercase">Модель: {request.model.toUpperCase()}</div>
                             <div className="text-[9px] text-slate-500 mt-2 font-mono uppercase tracking-widest bg-white/5 inline-block px-2 py-1 rounded-md">ВУЗОЛ v62 ELITE</div>
                         </div>
 
-                        <div className="card-depth group rounded-[32px] border border-white/[0.12] bg-[#02060d]/60 backdrop-blur-3xl p-6 transition-all hover:bg-[#02060d]/80 shadow-[0_20px_40px_rgba(0,0,0,0.8)] hover:shadow-[0_0_40px_rgba(245,158,11,0.15)] hover:-translate-y-1 relative overflow-hidden">
+                        <div className="card-depth group rounded-[32px] border border-white/[0.12] bg-[#02060d]/60  p-6 transition-all hover:bg-[#02060d]/80 shadow-[0_20px_40px_rgba(0,0,0,0.8)] hover: hover:-translate-y-1 relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-24 h-px bg-gradient-to-l from-amber-500 to-transparent" />
                             <div className="flex items-center gap-3 mb-4">
-                                <div className="h-2 w-2 rounded-full bg-amber-500 shadow-[0_0_12px_rgba(245,158,11,1)]" />
+                                <div className="h-2 w-2 rounded-full bg-amber-500 " />
                                 <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 group-hover:text-amber-400 transition-colors italic">ЦІЛЬОВА НОМЕНКЛАТУ А</span>
                             </div>
                             <div className="text-lg font-black text-white tracking-widest uppercase">{request.product_code}</div>
                             <div className="text-[9px] text-amber-400/50 mt-2 font-mono uppercase tracking-widest bg-amber-500/10 inline-block px-2 py-1 rounded-md">КОД ТН ЗЕД</div>
                         </div>
 
-                        <div className="card-depth rounded-[32px] border border-red-500/20 bg-red-500/[0.05] backdrop-blur-3xl p-6 shadow-[inset_0_0_30px_rgba(220,38,38,0.1)] col-span-2 sm:col-span-1 flex flex-col justify-between hover:border-red-500/40 transition-all relative overflow-hidden">
+                        <div className="card-depth rounded-[32px] border border-red-500/20 bg-red-500/[0.05]  p-6 shadow-[inset_0_0_30px_rgba(220,38,38,0.1)] col-span-2 sm:col-span-1 flex flex-col justify-between hover:border-red-500/40 transition-all relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-24 h-px bg-gradient-to-l from-red-600 to-transparent" />
                             <div>
                                 <div className="flex items-center gap-3 mb-4">
-                                    <ShieldCheck className="h-4 w-4 text-red-500 shadow-[0_0_10px_rgba(220,38,38,0.5)]" />
+                                    <ShieldCheck className="h-4 w-4 text-red-500 " />
                                     <span className="text-[10px] font-black uppercase tracking-[0.25em] text-red-500/80 italic">ВЕ ИФІКАЦІЯ</span>
                                 </div>
                                 <div className="text-lg font-black text-red-500 tracking-widest uppercase leading-none italic">СУВЕ ЕННЕ ЯДРО</div>
@@ -410,11 +410,11 @@ export default function ForecastPage() {
                             className={cn(
                                 'flex items-center gap-3 rounded-2xl border px-6 py-3 text-[11px] font-black uppercase tracking-widest transition-all italic',
                                 activeTab === tab.key
-                                    ? 'border-red-500/40 bg-red-500/10 text-red-500 shadow-[0_0_20px_rgba(220,38,38,0.1)]'
+                                    ? 'border-red-500/40 bg-red-500/10 text-red-500 '
                                     : 'border-transparent text-slate-400 hover:border-white/[0.08] hover:bg-white/[0.04] hover:text-white',
                             )}
                         >
-                            <div className={cn("transition-transform", activeTab === tab.key && "text-red-500 animate-pulse")}>
+                            <div className={cn("transition-transform", activeTab === tab.key && "text-red-500 ")}>
                                 {tab.icon}
                             </div>
                             {tab.label}
@@ -479,7 +479,7 @@ function DemandForecastTab({
         return (
             <div className="flex h-64 flex-col items-center justify-center gap-4 text-slate-400">
                 <Loader2 className="h-8 w-8 animate-spin text-red-500" />
-                <p className="animate-pulse font-black uppercase tracking-widest text-[11px] italic">Генерація прогнозу_Ядра...</p>
+                <p className=" font-black uppercase tracking-widest text-[11px] italic">Генерація прогнозу_Ядра...</p>
             </div>
         );
     }
@@ -542,7 +542,7 @@ function DemandForecastTab({
                                 className={cn(
                                     'rounded-full border px-3 py-1.5 font-black uppercase text-[10px] tracking-wider italic',
                                     forecast.source === 'real'
-                                        ? 'border-red-400/20 bg-red-500/10 text-red-500 shadow-[0_0_15px_rgba(220,38,38,0.3)]'
+                                        ? 'border-red-400/20 bg-red-500/10 text-red-500 '
                                         : 'border-amber-400/20 bg-amber-500/10 text-amber-500',
                                 )}
                             >
@@ -617,7 +617,7 @@ function DemandForecastTab({
                             {forecast.forecast.map((point) => (
                                 <tr key={point.date} className="text-sm transition-colors hover:bg-white/[0.03] group">
                                     <td className="px-6 py-4 font-black text-slate-200 group-hover:text-white transition-colors">{point.date}</td>
-                                    <td className="px-6 py-4 text-right font-black text-red-500 italic drop-shadow-[0_0_8px_rgba(239,68,68,0.3)]">
+                                    <td className="px-6 py-4 text-right font-black text-red-500 italic ">
                                         {point.predicted_volume.toLocaleString('uk-UA')}
                                     </td>
                                     <td className="px-6 py-4 text-right font-mono text-slate-400 group-hover:text-slate-200 transition-colors">
@@ -667,7 +667,7 @@ function ModelsTab({
                 {loading ? (
                     Array.from({ length: 3 }).map((_, index) => (
                         <div key={index} className="h-44 rounded-[28px] border border-white/[0.08] bg-white/[0.03] p-5">
-                            <div className="h-full animate-pulse rounded-[24px] bg-white/[0.05]" />
+                            <div className="h-full  rounded-[24px] bg-white/[0.05]" />
                         </div>
                     ))
                 ) : models.length === 0 ? (

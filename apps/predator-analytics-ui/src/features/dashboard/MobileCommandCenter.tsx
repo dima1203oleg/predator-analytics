@@ -56,7 +56,7 @@ const MobileStatCard: React.FC<{ stat: QuickStat }> = ({ stat }) => (
     <div className="absolute inset-0 bg-cyber-grid opacity-[0.03]" />
     <div className="flex items-center justify-between mb-4">
       <div className="p-3 bg-black/40 border border-white/5 rounded-2xl" style={{ color: stat.color }}>
-        <stat.icon size={20} className="drop-shadow-[0_0_8px_currentColor]" />
+        <stat.icon size={20} className="" />
       </div>
       <div className={cn("text-[10px] font-black font-mono", stat.isPositive ? "text-emerald-400" : "text-amber-400")}>
         {stat.change}
@@ -82,7 +82,7 @@ const MobileCommandCenter: React.FC = () => {
       </div>
 
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-slate-950/80 backdrop-blur-2xl border-b border-white/5 px-6 py-5 flex items-center justify-between">
+      <header className="sticky top-0 z-50 bg-slate-950/80  border-b border-white/5 px-6 py-5 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <div className="relative group">
             <div className="absolute inset-0 bg-blue-500/20 blur-2xl rounded-lg scale-110" />
@@ -93,7 +93,7 @@ const MobileCommandCenter: React.FC = () => {
           <div>
             <h1 className="text-lg font-black text-white uppercase tracking-tighter leading-none">PREDATOR</h1>
             <div className="flex items-center gap-2 mt-1">
-              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 " />
               <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">О БІТАЛЬНИЙ_ЗВ'ЯЗОК_7.4</span>
             </div>
           </div>
@@ -102,7 +102,7 @@ const MobileCommandCenter: React.FC = () => {
         <div className="flex items-center gap-3">
           <button className="p-3 bg-white/5 border border-white/10 rounded-2xl relative">
             <Bell size={20} className="text-slate-400" />
-            <span className="absolute top-2 right-2 w-2 h-2 bg-amber-500 rounded-full shadow-[0_0_10px_rgba(244,63,94,0.8)]" />
+            <span className="absolute top-2 right-2 w-2 h-2 bg-amber-500 rounded-full " />
           </button>
           <button onClick={() => setIsMenuOpen(true)} className="p-3 bg-white/5 border border-white/10 rounded-2xl">
             <Menu size={20} className="text-slate-400" />
@@ -126,7 +126,7 @@ const MobileCommandCenter: React.FC = () => {
                 Сьогодні система AZR виявила 3 нових вікна можливостей для оптимізації митних зборів. Економія: <span className="text-emerald-400 font-black">+$42,102</span>.
               </p>
               <div className="mt-8 flex gap-3">
-                <button className="px-6 py-3 bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl shadow-[0_0_20px_rgba(59,130,246,0.4)]">
+                <button className="px-6 py-3 bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl ">
                   Аналізувати
                 </button>
                 <button className="px-6 py-3 bg-white/5 border border-white/10 text-slate-300 text-[10px] font-black uppercase tracking-widest rounded-xl">
@@ -159,7 +159,7 @@ const MobileCommandCenter: React.FC = () => {
             ].map((item, i) => (
               <button key={i} className="flex flex-col items-center gap-3 py-4 group">
                 <div className="relative p-4 bg-black/40 border border-white/5 rounded-2xl group-active:scale-90 transition-transform" style={{ color: item.color }}>
-                  <item.icon size={22} className="drop-shadow-[0_0_5px_currentColor]" />
+                  <item.icon size={22} className="" />
                   {item.badge && (
                     <span className="absolute -top-1 -right-1 w-5 h-5 bg-amber-500 text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-slate-900">
                       {item.badge}
@@ -175,9 +175,9 @@ const MobileCommandCenter: React.FC = () => {
         {/* AI Insight Card */}
         <section>
           <div className="p-8 bg-gradient-to-br from-yellow-500/20 via-blue-500/10 to-transparent border border-yellow-500/30 rounded-[40px] relative overflow-hidden group">
-            <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-yellow-500/20 blur-[60px] rounded-full animate-pulse" />
+            <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-yellow-500/20 blur-[60px] rounded-full " />
             <div className="flex items-start gap-6 relative z-10">
-              <div className="w-14 h-14 bg-yellow-500 border border-yellow-400 rounded-2xl flex items-center justify-center shadow-[0_0_30px_rgba(99,102,241,0.5)]">
+              <div className="w-14 h-14 bg-yellow-500 border border-yellow-400 rounded-2xl flex items-center justify-center ">
                 <Brain size={28} className="text-white" />
               </div>
               <div className="flex-1">
@@ -234,7 +234,7 @@ const MobileCommandCenter: React.FC = () => {
 
       {/* Bottom Orbital Navigation */}
       <footer className="fixed bottom-0 left-0 right-0 z-[100] p-6">
-        <div className="bg-slate-950/80 backdrop-blur-3xl border border-white/10 rounded-[40px] shadow-[0_0_50px_rgba(0,0,0,0.5)] px-4 py-4 flex items-center justify-around relative overflow-hidden">
+        <div className="bg-slate-950/80  border border-white/10 rounded-[40px]  px-4 py-4 flex items-center justify-around relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-t from-blue-500/5 to-transparent pointer-events-none" />
           {[
             { id: 'home', icon: Home, label: 'Головна' },
@@ -251,7 +251,7 @@ const MobileCommandCenter: React.FC = () => {
               )}
             >
               <div className="relative">
-                <tab.icon size={24} className={cn("transition-transform", activeTab === tab.id && "scale-110 drop-shadow-[0_0_8px_currentColor]")} />
+                <tab.icon size={24} className={cn("transition-transform", activeTab === tab.id && "scale-110 ")} />
                 {tab.badge && (
                   <span className="absolute -top-1 -right-2 w-4 h-4 bg-amber-500 text-white text-[8px] font-black rounded-full flex items-center justify-center border-2 border-slate-950">
                     {tab.badge}
@@ -273,7 +273,7 @@ const MobileCommandCenter: React.FC = () => {
           <>
             <motion.div
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-[200]"
+              className="fixed inset-0 bg-slate-950/60  z-[200]"
               onClick={() => setIsMenuOpen(false)}
             />
             <motion.div
@@ -316,7 +316,7 @@ const MobileCommandCenter: React.FC = () => {
 
               <div className="mt-auto p-8 bg-slate-950/60 border border-white/5 rounded-[32px] flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-blue-500 rounded-2xl flex items-center justify-center text-white font-black shadow-[0_0_20px_rgba(59,130,246,0.5)]">D</div>
+                  <div className="w-12 h-12 bg-blue-500 rounded-2xl flex items-center justify-center text-white font-black ">D</div>
                   <div>
                     <div className="text-sm font-black text-white">Димитрій</div>
                     <div className="text-[10px] font-black text-slate-500 uppercase">Суверенний Адмін</div>

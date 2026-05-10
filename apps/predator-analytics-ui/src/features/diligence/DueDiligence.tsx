@@ -83,9 +83,9 @@ export const DueDiligence: React.FC<{ ueid?: string; companyName?: string }> = (
           <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-10 py-6 border-b border-white/[0.04]">
             <div className="flex items-center gap-8">
                <div className="relative group">
-                  <div className="absolute inset-0 bg-sky-600/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                  <div className="absolute inset-0 bg-sky-600/20 blur-3xl rounded-full scale-150 " />
                   <div className="relative p-6 bg-black border border-sky-900/40 rounded-[2rem] shadow-2xl">
-                     <Shield size={42} className="text-sky-500 animate-pulse" />
+                     <Shield size={42} className="text-sky-500 " />
                   </div>
                </div>
                <div className="space-y-2">
@@ -135,7 +135,7 @@ export const DueDiligence: React.FC<{ ueid?: string; companyName?: string }> = (
                    className="p-8 rounded-[2.5rem] bg-red-600/10 border-2 border-red-600/30 flex items-center justify-between shadow-2xl group"
                  >
                     <div className="flex items-center gap-6">
-                       <div className="p-4 bg-red-600 text-white rounded-2xl animate-pulse">
+                       <div className="p-4 bg-red-600 text-white rounded-2xl ">
                           <AlertTriangle size={24} />
                        </div>
                        <div>

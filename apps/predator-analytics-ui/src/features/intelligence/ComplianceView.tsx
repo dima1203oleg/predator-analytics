@@ -105,7 +105,7 @@ export const ComplianceView = () => {
                     title={
                         <div className="flex items-center gap-10">
                             <div className="relative group">
-                                <div className="absolute inset-0 bg-emerald-500/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                                <div className="absolute inset-0 bg-emerald-500/20 blur-3xl rounded-full scale-150 " />
                                 <div className="relative p-7 bg-black border-2 border-emerald-500/40 rounded-[2.5rem] shadow-4xl transform rotate-2 hover:rotate-0 transition-all">
                                     <ShieldCheck size={42} className="text-emerald-400 shadow-[0_0_20px_#10b981]" />
                                 </div>
@@ -145,7 +145,7 @@ export const ComplianceView = () => {
                                 <motion.div
                                     animate={{ scale: [1, 1.05, 1], opacity: [0.8, 1, 0.8] }}
                                     transition={{ duration: 4, repeat: Infinity }}
-                                    className="w-24 h-24 rounded-full bg-emerald-500/10 border-2 border-emerald-500 flex items-center justify-center mb-4 shadow-[0_0_30px_rgba(16,185,129,0.2)]"
+                                    className="w-24 h-24 rounded-full bg-emerald-500/10 border-2 border-emerald-500 flex items-center justify-center mb-4 "
                                 >
                                     <ShieldCheck className="w-12 h-12 text-emerald-400" />
                                 </motion.div>

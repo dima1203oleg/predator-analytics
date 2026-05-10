@@ -63,7 +63,7 @@ export const DeclarationValidatorWidget: React.FC<{ persona: string }> = ({ pers
   };
 
   return (
-    <div className="bg-slate-950/80 border border-emerald-500/20 rounded-[24px] backdrop-blur-xl overflow-hidden h-full flex flex-col p-6 relative">
+    <div className="bg-slate-950/80 border border-emerald-500/20 rounded-[24px]  overflow-hidden h-full flex flex-col p-6 relative">
       <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent pointer-events-none" />
 
       {/* Header */}
@@ -131,7 +131,7 @@ export const DeclarationValidatorWidget: React.FC<{ persona: string }> = ({ pers
                         <Loader2 size={48} className="text-emerald-400 animate-spin relative z-10" />
                     </div>
                     <div className="text-center">
-                        <h4 className="text-lg font-black text-white animate-pulse">{premiumLocales.declarationValidator.scanning}</h4>
+                        <h4 className="text-lg font-black text-white ">{premiumLocales.declarationValidator.scanning}</h4>
                         <p className="text-xs text-slate-400 font-mono mt-2">{file?.name}</p>
                     </div>
                     <div className="w-full max-w-[200px] h-1 bg-slate-800 rounded-full overflow-hidden">

@@ -12,7 +12,7 @@ export function RegistryStats({ stats }: RegistryStatsProps) {
   const getStatusMeta = (status: RegistryAvailability) => {
     if (status === 'online') {
       return {
-        dot: 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]',
+        dot: 'bg-emerald-500 ',
         text: 'text-emerald-500',
         label: 'В мережі',
       };
@@ -20,7 +20,7 @@ export function RegistryStats({ stats }: RegistryStatsProps) {
 
     if (status === 'offline') {
       return {
-        dot: 'bg-rose-500 animate-pulse',
+        dot: 'bg-rose-500 ',
         text: 'text-rose-500',
         label: 'Помилка',
       };

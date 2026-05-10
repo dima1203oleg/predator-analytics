@@ -216,7 +216,7 @@ const CommandCenter: React.FC<CommandCenterProps> = ({ isOpen, onClose, onLock, 
 
   return (
     <div
-      className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-xl flex items-start justify-center pt-safe pb-safe"
+      className="fixed inset-0 z-[100] bg-black/80  flex items-start justify-center pt-safe pb-safe"
       onClick={onClose}
     >
       <div
@@ -290,7 +290,7 @@ const CommandCenter: React.FC<CommandCenterProps> = ({ isOpen, onClose, onLock, 
 
         {/* Input */}
         <form onSubmit={handleCommand} className={`p-3 border-t flex items-center gap-2 shrink-0 relative z-10 ${matrixMode ? 'bg-black border-green-900' : 'bg-slate-900 border-slate-800'}`}>
-          <span className={`font-bold pl-2 select-none animate-pulse ${matrixMode ? 'text-green-500' : 'text-primary-500'}`}>➜</span>
+          <span className={`font-bold pl-2 select-none  ${matrixMode ? 'text-green-500' : 'text-primary-500'}`}>➜</span>
           <input
             ref={inputRef}
             type="text"

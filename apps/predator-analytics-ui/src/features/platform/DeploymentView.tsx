@@ -119,7 +119,7 @@ const DeploymentView: React.FC = () => {
                 }
             />
 
-            <div className="flex p-1 bg-slate-950/50 backdrop-blur-3xl border border-white/5 rounded-2xl overflow-x-auto scrollbar-hide">
+            <div className="flex p-1 bg-slate-950/50  border border-white/5 rounded-2xl overflow-x-auto scrollbar-hide">
                 {tabConfig.map(tab => (
                     <button
                         key={tab.id} onClick={() => setActiveTab(tab.id as DeployTab)}
@@ -185,12 +185,12 @@ const DeploymentView: React.FC = () => {
                                                         {e.id === 'dev' ? <Terminal size={14} className="text-blue-500"/> : e.id === 'prod' ? <Globe size={14} className="text-emerald-500"/> : <Database size={14} className="text-amber-500"/>}
                                                         {e.name}
                                                     </span>
-                                                    <span className={`font-mono font-bold tracking-widest ${e.gitStatus === 'SYNCED' ? 'text-emerald-500' : 'text-amber-500 animate-pulse'}`}>{e.gitStatus}</span>
+                                                    <span className={`font-mono font-bold tracking-widest ${e.gitStatus === 'SYNCED' ? 'text-emerald-500' : 'text-amber-500 '}`}>{e.gitStatus}</span>
                                                 </div>
                                                 <div className="w-full bg-slate-900/50 h-1.5 rounded-full overflow-hidden border border-white/5">
                                                     <motion.div
                                                         initial={{ width: 0 }} animate={{ width: `${e.gitStatus === 'SYNCED' ? 100 : 45}%` }}
-                                                        className={`h-full transition-all duration-1000 ${e.gitStatus === 'SYNCED' ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]' : 'bg-amber-500'}`}
+                                                        className={`h-full transition-all duration-1000 ${e.gitStatus === 'SYNCED' ? 'bg-emerald-500 ' : 'bg-amber-500'}`}
                                                     />
                                                 </div>
                                             </div>
@@ -207,7 +207,7 @@ const DeploymentView: React.FC = () => {
                                 {envs.map((env, i) => (
                                     <div key={env.id} className="h-full flex flex-col">
                                         <div className="text-center mb-4 text-xs font-bold uppercase tracking-[0.3em] flex items-center justify-center gap-3">
-                                            <span className={`w-2 h-2 rounded-full ${i === 1 ? 'bg-emerald-500 animate-pulse shadow-[0_0_10px_lime]' : i === 0 ? 'bg-blue-500 shadow-[0_0_10px_blue]' : 'bg-amber-500 shadow-[0_0_10px_orange]'}`} />
+                                            <span className={`w-2 h-2 rounded-full ${i === 1 ? 'bg-emerald-500  shadow-[0_0_10px_lime]' : i === 0 ? 'bg-blue-500 shadow-[0_0_10px_blue]' : 'bg-amber-500 shadow-[0_0_10px_orange]'}`} />
                                             {env.name} Trace
                                         </div>
                                         <LiveDeploymentColumn env={env} color={i === 0 ? 'blue' : i === 1 ? 'green' : 'orange'} />

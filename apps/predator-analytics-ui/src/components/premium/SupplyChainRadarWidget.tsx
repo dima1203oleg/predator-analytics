@@ -45,7 +45,7 @@ export const SupplyChainRadarWidget: React.FC<{ persona: string }> = ({ persona 
   }, []);
 
   return (
-    <div className="bg-slate-950/90 border border-emerald-500/20 rounded-[40px] backdrop-blur-3xl overflow-hidden h-full flex flex-col relative group shadow-[0_0_50px_rgba(16,185,129,0.05)]">
+    <div className="bg-slate-950/90 border border-emerald-500/20 rounded-[40px]  overflow-hidden h-full flex flex-col relative group ">
       {/* Radar Background Effects */}
       <div className="absolute inset-0 bg-noise opacity-20 pointer-events-none" />
       <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent pointer-events-none" />
@@ -61,7 +61,7 @@ export const SupplyChainRadarWidget: React.FC<{ persona: string }> = ({ persona 
           </div>
           <div>
             <h3 className="text-xl font-black text-white uppercase tracking-tighter">{premiumLocales.supplyChainRadar.title}</h3>
-            <p className="text-[10px] text-emerald-500 font-mono font-bold uppercase tracking-[0.2em] animate-pulse">{premiumLocales.supplyChainRadar.scanning}</p>
+            <p className="text-[10px] text-emerald-500 font-mono font-bold uppercase tracking-[0.2em] ">{premiumLocales.supplyChainRadar.scanning}</p>
           </div>
         </div>
         <div className="hidden md:flex items-center gap-6">
@@ -107,10 +107,10 @@ export const SupplyChainRadarWidget: React.FC<{ persona: string }> = ({ persona 
                  onMouseEnter={() => setActivePing(ping)}
                >
                  <div className={cn(
-                   "w-4 h-4 rounded-full border-2 animate-pulse",
-                   ping.type === 'risk' ? "bg-rose-500 border-rose-300 shadow-[0_0_15px_rgba(244,63,94,0.5)]" :
-                   ping.type === 'opportunity' ? "bg-emerald-500 border-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.5)]" :
-                   "bg-blue-500 border-blue-300 shadow-[0_0_15px_rgba(59,130,246,0.5)]"
+                   "w-4 h-4 rounded-full border-2 ",
+                   ping.type === 'risk' ? "bg-rose-500 border-rose-300 " :
+                   ping.type === 'opportunity' ? "bg-emerald-500 border-emerald-300 " :
+                   "bg-blue-500 border-blue-300 "
                  )} />
                </motion.div>
             ))}
@@ -122,7 +122,7 @@ export const SupplyChainRadarWidget: React.FC<{ persona: string }> = ({ persona 
                    initial={{ opacity: 0, y: 10 }}
                    animate={{ opacity: 1, y: 0 }}
                    exit={{ opacity: 0 }}
-                   className="absolute top-4 left-4 z-30 w-64 p-6 bg-slate-900/95 border border-white/10 rounded-3xl backdrop-blur-xl shadow-2xl"
+                   className="absolute top-4 left-4 z-30 w-64 p-6 bg-slate-900/95 border border-white/10 rounded-3xl  shadow-2xl"
                  >
                     <div className="flex justify-between items-start mb-4">
                        <span className={cn(
@@ -150,7 +150,7 @@ export const SupplyChainRadarWidget: React.FC<{ persona: string }> = ({ persona 
       {/* Live Activity Feed Sidebar (Simulated) */}
       <div className="absolute top-32 right-8 bottom-8 w-40 hidden lg:flex flex-col gap-3 relative z-10">
          <div className="text-[9px] text-slate-500 uppercase font-black mb-2 flex items-center gap-2">
-            <Radio size={10} className="animate-pulse text-emerald-500" /> {premiumLocales.supplyChainRadar.liveIntelFeed}
+            <Radio size={10} className=" text-emerald-500" /> {premiumLocales.supplyChainRadar.liveIntelFeed}
          </div>
          {[
            'Виявлено нетиповий потік імпорту в HS 8471',

@@ -69,8 +69,8 @@ const DatasetsStudioView = () => {
                 <div className="flex items-center gap-4">
                   <div className="relative group">
                     <div className="absolute inset-0 bg-rose-500/20 blur-2xl rounded-full scale-0 group-hover:scale-150 transition-transform duration-1000" />
-                    <div className="relative w-14 h-14 bg-rose-500/10 border border-rose-500/20 rounded-sm flex items-center justify-center shadow-[0_0_30px_rgba(225,29,72,0.1)]">
-                      <Database size={28} className="text-rose-500 animate-pulse" />
+                    <div className="relative w-14 h-14 bg-rose-500/10 border border-rose-500/20 rounded-sm flex items-center justify-center ">
+                      <Database size={28} className="text-rose-500 " />
                     </div>
                   </div>
                   <div className="flex flex-col">
@@ -126,7 +126,7 @@ const DatasetsStudioView = () => {
                       className={cn(
                         "w-full flex flex-col items-start gap-1 p-4 rounded-sm border transition-all duration-500 group relative overflow-hidden",
                         activeTab === tab.id 
-                          ? "bg-rose-500/10 border-rose-500/30 text-white shadow-[0_0_20px_rgba(225,29,72,0.1)]" 
+                          ? "bg-rose-500/10 border-rose-500/30 text-white " 
                           : "bg-white/[0.02] border-white/5 text-white/40 hover:text-white hover:border-white/20"
                       )}
                     >
@@ -163,7 +163,7 @@ const DatasetsStudioView = () => {
                       <span className="text-rose-500">84%</span>
                    </div>
                    <div className="h-1 bg-white/5 rounded-full overflow-hidden">
-                      <div className="h-full bg-rose-500 w-[84%] shadow-[0_0_10px_rgba(225,29,72,0.5)]" />
+                      <div className="h-full bg-rose-500 w-[84%] " />
                    </div>
                    <p className="text-[9px] font-mono text-white/30 italic">IOPS: 420K | ЗАТрИМКА: 0.12ms</p>
                 </div>
@@ -239,7 +239,7 @@ const DatasetsStudioView = () => {
                                          <motion.div 
                                            initial={{ width: 0 }}
                                            animate={{ width: `${ds.quality}%` }}
-                                           className="h-full bg-rose-500 shadow-[0_0_10px_rgba(225,29,72,0.5)]" 
+                                           className="h-full bg-rose-500 " 
                                          />
                                       </div>
                                       <span className="text-[10px] font-black text-rose-500 font-mono italic">{ds.quality}%</span>
@@ -247,7 +247,7 @@ const DatasetsStudioView = () => {
                                 </td>
                                 <td className="py-6">
                                    <div className="flex items-center gap-2">
-                                      <div className={cn("w-1.5 h-1.5 rounded-full animate-pulse", 
+                                      <div className={cn("w-1.5 h-1.5 rounded-full ", 
                                         ds.status === 'АКТИВНО' ? "bg-emerald-500" : ds.status === 'МОНІТОРИНГ' ? "bg-amber-500" : "bg-rose-500"
                                       )} />
                                       <span className="text-[9px] font-black tracking-[0.2em] text-white/60 uppercase">
@@ -286,7 +286,7 @@ const DatasetsStudioView = () => {
                  </div>
                  
                  <div className="flex items-center gap-6 relative z-10">
-                    <div className="w-16 h-16 rounded-sm bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-500 shadow-[0_0_30px_rgba(225,29,72,0.1)]">
+                    <div className="w-16 h-16 rounded-sm bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-500 ">
                       <RefreshCw className="animate-spin-slow h-8 w-8" />
                     </div>
                     <div>
@@ -297,7 +297,7 @@ const DatasetsStudioView = () => {
                     </div>
                  </div>
                  
-                 <Button className="h-14 bg-rose-600 hover:bg-rose-500 text-white font-black text-[11px] uppercase tracking-[0.3em] rounded-sm px-12 shadow-[0_0_30px_rgba(225,29,72,0.3)] hover:shadow-[0_0_50px_rgba(225,29,72,0.5)] transition-all duration-500 border-none relative z-10">
+                 <Button className="h-14 bg-rose-600 hover:bg-rose-500 text-white font-black text-[11px] uppercase tracking-[0.3em] rounded-sm px-12  hover: transition-all duration-500 border-none relative z-10">
                    ЗАПУСТИТИ_ЦИКЛ_НАВЧАННЯ
                  </Button>
               </motion.div>

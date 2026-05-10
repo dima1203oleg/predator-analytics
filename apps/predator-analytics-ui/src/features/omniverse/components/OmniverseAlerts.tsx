@@ -47,7 +47,7 @@ export const OmniverseAlerts: React.FC = () => {
         
         <div className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg flex items-center gap-3">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+            <span className="w-2 h-2 bg-emerald-500 rounded-full " />
             <span className="text-[10px] text-white/40 uppercase font-bold">Scanning 12 tables</span>
           </div>
         </div>
@@ -66,7 +66,7 @@ export const OmniverseAlerts: React.FC = () => {
           alerts.map((alert, i) => (
             <div 
               key={alert.alert_id || i}
-              className="p-5 bg-black/40 backdrop-blur-md border border-white/5 hover:border-red-500/30 rounded-2xl transition-all group relative overflow-hidden"
+              className="p-5 bg-black/40  border border-white/5 hover:border-red-500/30 rounded-2xl transition-all group relative overflow-hidden"
             >
               <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-20 transition-opacity">
                 <AlertTriangle size={80} className="text-red-500" />

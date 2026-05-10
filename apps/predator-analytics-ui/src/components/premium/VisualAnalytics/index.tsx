@@ -19,7 +19,7 @@ import { cn } from '../../../utils/cn';
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-slate-950/90 border border-white/10 p-4 rounded-2xl shadow-2xl backdrop-blur-xl">
+      <div className="bg-slate-950/90 border border-white/10 p-4 rounded-2xl shadow-2xl ">
         <p className="font-black text-white mb-2 text-[10px] uppercase tracking-widest border-b border-white/5 pb-2">{label}</p>
         <div className="space-y-1.5">
           {payload.map((entry: any, index: number) => (
@@ -41,7 +41,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 const ChartSkeleton = () => (
-  <div className="w-full h-full flex flex-col gap-6 animate-pulse">
+  <div className="w-full h-full flex flex-col gap-6 ">
      <div className="flex justify-between items-center">
         <div className="h-4 w-32 bg-white/5 rounded-full" />
         <div className="h-8 w-8 bg-white/5 rounded-xl" />
@@ -98,7 +98,7 @@ export const VisualAnalytics: React.FC = () => {
              <div className="p-2 bg-emerald-500/10 rounded-xl border border-emerald-500/20">
                 <BrainCircuit size={18} className="text-emerald-400" />
              </div>
-             <span className="text-[10px] font-black text-emerald-400 uppercase tracking-[0.4em] animate-pulse">Neural_Insight_Engine</span>
+             <span className="text-[10px] font-black text-emerald-400 uppercase tracking-[0.4em] ">Neural_Insight_Engine</span>
           </div>
           <h1 className="text-4xl font-black text-white tracking-tighter uppercase leading-none">
             {premiumLocales.visualAnalytics.title.split(' ').map((word, i) => (
@@ -111,7 +111,7 @@ export const VisualAnalytics: React.FC = () => {
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-             <div className="bg-black/40 backdrop-blur-xl border border-white/5 p-1 rounded-2xl flex items-center gap-1">
+             <div className="bg-black/40  border border-white/5 p-1 rounded-2xl flex items-center gap-1">
                 <SensitiveDataToggle />
              </div>
 
@@ -143,7 +143,7 @@ export const VisualAnalytics: React.FC = () => {
               { label: 'Analysis_Depth', value: 'Lvl_5', icon: Target, color: 'purple' },
               { label: 'Vector_Sync', value: 'Active', icon: Database, color: 'amber' }
           ].map((stat, i) => (
-              <div key={i} className="p-6 bg-slate-900/40 border border-white/5 rounded-3xl backdrop-blur-xl group hover:border-white/10 transition-all">
+              <div key={i} className="p-6 bg-slate-900/40 border border-white/5 rounded-3xl  group hover:border-white/10 transition-all">
                   <div className="flex justify-between items-start mb-4">
                       <div className={cn("p-2 rounded-xl bg-opacity-10 opacity-50 group-hover:opacity-100 transition-opacity", `bg-${stat.color}-500 text-${stat.color}-400`)}>
                           <stat.icon size={18} />
@@ -160,7 +160,7 @@ export const VisualAnalytics: React.FC = () => {
         {/* TIME SERIES CHART */}
         <motion.div
            layout
-           className="bg-black/40 border border-white/5 rounded-[40px] p-8 backdrop-blur-3xl shadow-2xl min-h-[420px] relative overflow-hidden group"
+           className="bg-black/40 border border-white/5 rounded-[40px] p-8  shadow-2xl min-h-[420px] relative overflow-hidden group"
         >
             <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 blur-[80px] -mr-32 -mt-32 pointer-events-none" />
 
@@ -169,7 +169,7 @@ export const VisualAnalytics: React.FC = () => {
                 <div className="flex justify-between items-start mb-8">
                     <div>
                         <h3 className="text-sm font-black text-white uppercase tracking-[0.2em] flex items-center gap-3">
-                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 " />
                             {premiumLocales.visualAnalytics.charts.dynamics}
                         </h3>
                         <p className="text-[10px] text-slate-500 font-mono mt-1">SITUATIONAL_TRENDS v2.4</p>
@@ -206,7 +206,7 @@ export const VisualAnalytics: React.FC = () => {
         {/* PIE CHART / STRUCTURE */}
         <motion.div
            layout
-           className="bg-black/40 border border-white/5 rounded-[40px] p-8 backdrop-blur-3xl shadow-2xl min-h-[420px] relative overflow-hidden group"
+           className="bg-black/40 border border-white/5 rounded-[40px] p-8  shadow-2xl min-h-[420px] relative overflow-hidden group"
         >
             <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500/5 blur-[80px] -mr-32 -mt-32 pointer-events-none" />
 
@@ -255,7 +255,7 @@ export const VisualAnalytics: React.FC = () => {
                   {/* Central Label (Holographic Style) */}
                   <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                      <div className="text-[10px] text-slate-500 font-black uppercase tracking-[0.3em] mb-1">{premiumLocales.visualAnalytics.charts.totalVolume}</div>
-                     <div className="text-4xl font-black text-white tracking-tighter drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">{formattedTotal}</div>
+                     <div className="text-4xl font-black text-white tracking-tighter ">{formattedTotal}</div>
                   </div>
                 </div>
               </>
@@ -265,7 +265,7 @@ export const VisualAnalytics: React.FC = () => {
         {/* REGIONAL ACTIVITY / BARS */}
         <motion.div
            layout
-           className="lg:col-span-2 bg-black/40 border border-white/5 rounded-[40px] p-8 backdrop-blur-3xl shadow-2xl min-h-[440px] relative overflow-hidden group"
+           className="lg:col-span-2 bg-black/40 border border-white/5 rounded-[40px] p-8  shadow-2xl min-h-[440px] relative overflow-hidden group"
         >
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500/5 blur-[120px] -mr-64 -mt-64 pointer-events-none" />
 
@@ -321,10 +321,10 @@ export const VisualAnalytics: React.FC = () => {
         <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="flex items-center gap-4 text-amber-500 p-6 bg-amber-500/5 rounded-3xl border border-amber-500/20 backdrop-blur-xl group"
+            className="flex items-center gap-4 text-amber-500 p-6 bg-amber-500/5 rounded-3xl border border-amber-500/20  group"
         >
             <div className="p-3 bg-amber-500/10 rounded-2xl group-hover:scale-110 transition-transform">
-                <Shield size={20} className="animate-pulse" />
+                <Shield size={20} className="" />
             </div>
             <div>
                 <div className="text-[10px] font-black uppercase tracking-[0.2em] mb-1">DATA_PROTECTION_ACTIVE</div>

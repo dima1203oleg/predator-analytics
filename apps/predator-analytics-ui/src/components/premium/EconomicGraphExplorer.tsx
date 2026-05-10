@@ -33,9 +33,9 @@ const EconomicGraphExplorer: React.FC = () => {
     ];
 
     return (
-        <Card className={`bg-slate-950/90 border-slate-800 backdrop-blur-3xl relative overflow-hidden h-[600px] transition-all duration-700 ${isShadowMode ? 'ring-2 ring-rose-500/50 border-rose-500/30' : 'border-l-cyan-500/20'}`}>
+        <Card className={`bg-slate-950/90 border-slate-800  relative overflow-hidden h-[600px] transition-all duration-700 ${isShadowMode ? 'ring-2 ring-rose-500/50 border-rose-500/30' : 'border-l-cyan-500/20'}`}>
             {isShadowMode && (
-                <div className="absolute inset-0 bg-rose-500/5 pointer-events-none z-0 animate-pulse" />
+                <div className="absolute inset-0 bg-rose-500/5 pointer-events-none z-0 " />
             )}
             <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20 pointer-events-none" />
 
@@ -82,14 +82,14 @@ const EconomicGraphExplorer: React.FC = () => {
                             <motion.line x1="70%" y1="30%" x2="30%" y2="70%" stroke="#06b6d4" strokeWidth="1" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 2, repeat: Infinity, delay: 1 }} />
                         </svg>
                     </div>
-                    <div className="absolute text-slate-600 text-[10px] font-mono uppercase tracking-[0.3em] animate-pulse">
+                    <div className="absolute text-slate-600 text-[10px] font-mono uppercase tracking-[0.3em] ">
                         {t('common.loadingData')}
                     </div>
                 </div>
 
                 {/* HUD Controls */}
                 <div className="absolute bottom-6 left-6 flex flex-col gap-2 z-20">
-                    <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-1 flex flex-col gap-1 backdrop-blur-md">
+                    <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-1 flex flex-col gap-1 ">
                         <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-white"><ZoomIn size={16} /></Button>
                         <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-white"><ZoomOut size={16} /></Button>
                         <div className="h-px bg-slate-800 mx-2" />
@@ -99,13 +99,13 @@ const EconomicGraphExplorer: React.FC = () => {
 
                 {/* Entity Sidebar (Overlay) */}
                 <div className="absolute top-6 right-6 w-64 flex flex-col gap-3 z-20">
-                    <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 backdrop-blur-xl shadow-2xl">
+                    <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4  shadow-2xl">
                         <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3">{t('graph.nodes')}</h4>
                         <div className="space-y-2">
                             {mockNodes.map(node => (
                                 <div key={node.id} className="flex items-center justify-between p-2 rounded-lg hover:bg-white/5 transition-all cursor-pointer border border-transparent hover:border-white/5 group">
                                     <div className="flex items-center gap-2">
-                                        <div className={`w-1.5 h-1.5 rounded-full ${node.risk === 'critical' ? 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.6)]' : 'bg-cyan-500'}`} />
+                                        <div className={`w-1.5 h-1.5 rounded-full ${node.risk === 'critical' ? 'bg-rose-500 ' : 'bg-cyan-500'}`} />
                                         <span className="text-xs font-bold text-slate-300 group-hover:text-white transition-colors">{node.label}</span>
                                     </div>
                                     <Badge variant="outline" className="text-[8px] h-4 border-slate-800 text-slate-500 uppercase">{t(`graph.node_type_${node.type}`)}</Badge>
@@ -119,7 +119,7 @@ const EconomicGraphExplorer: React.FC = () => {
                 </div>
 
                 {/* Bottom Legend */}
-                <div className="absolute bottom-6 right-6 flex items-center gap-4 px-4 py-2 bg-slate-900/40 border border-slate-800 rounded-full backdrop-blur-sm">
+                <div className="absolute bottom-6 right-6 flex items-center gap-4 px-4 py-2 bg-slate-900/40 border border-slate-800 rounded-full ">
                     <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-cyan-500" /><span className="text-[9px] font-bold text-slate-400 uppercase">{t('graph.direct')}</span></div>
                     <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-amber-500" /><span className="text-[9px] font-bold text-slate-400 uppercase">{t('graph.ubo')}</span></div>
                     <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-rose-500" /><span className="text-[9px] font-bold text-slate-400 uppercase">{t('graph.risk_link')}</span></div>

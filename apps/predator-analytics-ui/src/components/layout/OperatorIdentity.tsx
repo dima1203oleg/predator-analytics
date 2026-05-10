@@ -12,9 +12,9 @@ export const OperatorIdentity: React.FC = () => {
   const { userRole } = useAppStore();
 
   return (
-    <div className="flex items-center gap-6 px-6 py-3 bg-black/40 glass-wraith border-2 border-white/5 rounded-[2rem] backdrop-blur-3xl group hover:border-rose-500/40 transition-all duration-700 cursor-crosshair shadow-4xl relative overflow-hidden select-none">
-      <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
-      <div className="absolute inset-0 bg-gradient-to-tr from-rose-600/[0.05] via-transparent to-transparent pointer-events-none" />
+    <div className="flex items-center gap-6 px-6 py-3 bg-[rgba(15,15,17,0.97)] border border-white/[0.06] rounded-[2rem] group hover:border-rose-500/40 transition-all duration-700 cursor-crosshair relative overflow-hidden select-none">
+      <div  />
+      <div  />
       
       <div className="text-right hidden sm:block relative z-10">
         <div className="text-[10px] font-black text-white/20 uppercase tracking-[0.4em] leading-none mb-2 italic group-hover:text-rose-500/40 transition-colors">АВТО ИЗОВАННИЙ_ОПЕ АТО </div>
@@ -22,9 +22,9 @@ export const OperatorIdentity: React.FC = () => {
       </div>
 
       <div className="relative z-10">
-        <div className="w-14 h-14 rounded-[1.5rem] bg-gradient-to-br from-rose-600 to-rose-950 flex items-center justify-center shadow-4xl shadow-rose-900/40 border-2 border-white/20 group-hover:scale-110 group-hover:rotate-3 transition-all duration-700 overflow-hidden relative">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white/20 via-transparent to-transparent opacity-40" />
-          <User className="text-white relative z-10 drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]" size={28} />
+        <div className="w-14 h-14 rounded-[1.5rem] bg-rose-700 flex items-center justify-center border border-white/10 group-hover:scale-105 transition-all duration-500 overflow-hidden relative">
+          <div  />
+          <User className="text-white relative z-10" size={28} />
           
           <motion.div 
             animate={{ left: ['-100%', '100%'] }}

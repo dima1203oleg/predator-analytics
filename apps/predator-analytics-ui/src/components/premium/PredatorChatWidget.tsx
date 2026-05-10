@@ -89,14 +89,14 @@ export const PredatorChatWidget: React.FC = () => {
             initial={{ opacity: 0, y: 50, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 50, scale: 0.9 }}
-            className="fixed bottom-24 right-6 w-[380px] h-[500px] bg-slate-950/90 border border-emerald-500/30 rounded-2xl shadow-2xl backdrop-blur-xl flex flex-col z-50 overflow-hidden"
+            className="fixed bottom-24 right-6 w-[380px] h-[500px] bg-slate-950/90 border border-emerald-500/30 rounded-2xl shadow-2xl  flex flex-col z-50 overflow-hidden"
           >
             {/* Header */}
             <div className="p-4 border-b border-white/10 bg-emerald-500/5 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-emerald-500/20 rounded-lg relative">
                   <Bot size={20} className="text-emerald-400" />
-                  <span className="absolute top-0 right-0 w-2 h-2 bg-emerald-400 rounded-full animate-pulse shadow-[0_0_10px_rgba(52,211,153,0.8)]" />
+                  <span className="absolute top-0 right-0 w-2 h-2 bg-emerald-400 rounded-full  " />
                 </div>
                 <div>
                   <h3 className="text-sm font-black text-white tracking-wide">PREDATOR AI</h3>
@@ -140,7 +140,7 @@ export const PredatorChatWidget: React.FC = () => {
                   </div>
 
                   <div className={cn(
-                    "p-3 rounded-2xl text-sm leading-relaxed shadow-lg backdrop-blur-sm border",
+                    "p-3 rounded-2xl text-sm leading-relaxed shadow-lg  border",
                     msg.role === 'bot'
                       ? "bg-slate-900/50 border-white/5 text-slate-200 rounded-tl-none"
                       : "bg-emerald-600/20 border-emerald-500/20 text-white rounded-tr-none"
@@ -167,7 +167,7 @@ export const PredatorChatWidget: React.FC = () => {
             </div>
 
             {/* Input */}
-            <div className="p-4 pt-2 bg-slate-950/50 backdrop-blur-md">
+            <div className="p-4 pt-2 bg-slate-950/50 ">
                <div className="flex gap-2 mb-2 overflow-x-auto pb-1 scrollbar-hide">
                   {[
                     premiumLocales.predatorChat.hints.analyzeRisks,

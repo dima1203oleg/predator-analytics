@@ -128,11 +128,11 @@ export const SignalsFeedWidget: React.FC<{ persona: string }> = ({ persona }) =>
   if (persona === 'GUEST') return null;
 
   return (
-    <div className="bg-slate-950/80 border border-amber-500/20 rounded-[24px] backdrop-blur-xl overflow-hidden h-full flex flex-col">
+    <div className="bg-slate-950/80 border border-amber-500/20 rounded-[24px]  overflow-hidden h-full flex flex-col">
       {/* Header */}
       <div className="p-5 border-b border-white/5 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-amber-500/20 animate-pulse">
+          <div className="p-2.5 rounded-xl bg-amber-500/20 ">
             <Crosshair className="text-amber-400" size={18} />
           </div>
           <div>

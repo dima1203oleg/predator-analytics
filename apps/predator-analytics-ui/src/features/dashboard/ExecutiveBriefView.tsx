@@ -128,7 +128,7 @@ export default function ExecutiveBriefView() {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center space-y-6">
         <Loader2 size={48} className="text-rose-500 animate-spin" />
-        <p className="text-[10px] font-black text-rose-500 uppercase tracking-[0.6em] animate-pulse italic">
+        <p className="text-[10px] font-black text-rose-500 uppercase tracking-[0.6em]  italic">
           СИНТЕЗ_СТРАТЕГІЧНОГО_ЗВЕДЕННЯ...
         </p>
       </div>
@@ -147,7 +147,7 @@ export default function ExecutiveBriefView() {
       {/* ── HEADER CONTOUR — Tactical Briefing Header ── */}
       <motion.header 
         variants={fadeUp}
-        className="relative overflow-hidden rounded-[3rem] border border-white/5 bg-black/40 backdrop-blur-3xl p-10 sm:p-12 shadow-2xl"
+        className="relative overflow-hidden rounded-[3rem] border border-white/5 bg-black/40  p-10 sm:p-12 shadow-2xl"
       >
         <div className="absolute inset-0 bg-gradient-to-br from-rose-500/5 via-transparent to-transparent pointer-events-none" />
         
@@ -157,7 +157,7 @@ export default function ExecutiveBriefView() {
                <div className="inline-flex items-center gap-3 rounded-full border border-rose-500/20 bg-rose-500/5 px-4 py-1.5 text-[10px] font-black tracking-[0.3em] text-rose-500 uppercase italic">
                   ЦІЛКОМ ТАЄМНО // КОНТУР-S
                </div>
-               <div className="w-2 h-2 rounded-full bg-rose-600 animate-pulse shadow-[0_0_12px_#f43f5e]" />
+               <div className="w-2 h-2 rounded-full bg-rose-600  shadow-[0_0_12px_#f43f5e]" />
             </div>
             <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg]">
               СУВЕРЕННЕ <span className="text-rose-600">СТРАТЕГІЧНЕ ЗВЕДЕННЯ</span>
@@ -197,7 +197,7 @@ export default function ExecutiveBriefView() {
         <div className="col-span-12 lg:col-span-8 space-y-10">
           
           {/* Activity Matrix HUD */}
-          <motion.section variants={fadeUp} className="relative overflow-hidden rounded-[3rem] border border-white/5 bg-black/40 backdrop-blur-3xl p-10 shadow-2xl">
+          <motion.section variants={fadeUp} className="relative overflow-hidden rounded-[3rem] border border-white/5 bg-black/40  p-10 shadow-2xl">
             <div className="flex items-center justify-between mb-10">
               <div className="flex items-center gap-6">
                 <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-500 shadow-lg">
@@ -209,7 +209,7 @@ export default function ExecutiveBriefView() {
                 </div>
               </div>
               <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-rose-500/5 border border-rose-500/20">
-                 <span className="w-2 h-2 rounded-full bg-rose-600 animate-pulse shadow-[0_0_8px_#f43f5e]" />
+                 <span className="w-2 h-2 rounded-full bg-rose-600  shadow-[0_0_8px_#f43f5e]" />
                  <span className="text-[10px] font-black uppercase tracking-widest text-rose-400 italic">ЖИВИЙ_ПОТІК</span>
               </div>
             </div>
@@ -238,7 +238,7 @@ export default function ExecutiveBriefView() {
           </motion.section>
 
           {/* Priority Targets HUD Table */}
-          <motion.section variants={fadeUp} className="relative overflow-hidden rounded-[3rem] border border-white/5 bg-black/40 backdrop-blur-3xl shadow-2xl">
+          <motion.section variants={fadeUp} className="relative overflow-hidden rounded-[3rem] border border-white/5 bg-black/40  shadow-2xl">
             <div className="p-10 border-b border-white/5 flex items-center justify-between">
               <div className="flex items-center gap-6">
                 <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-500">
@@ -295,7 +295,7 @@ export default function ExecutiveBriefView() {
         <div className="col-span-12 lg:col-span-4 space-y-10">
           
           {/* Globe Scan HUD */}
-          <motion.section variants={fadeUp} className="h-[380px] relative overflow-hidden rounded-[3rem] border border-white/5 bg-black/40 backdrop-blur-3xl shadow-2xl group">
+          <motion.section variants={fadeUp} className="h-[380px] relative overflow-hidden rounded-[3rem] border border-white/5 bg-black/40  shadow-2xl group">
             <div className="absolute inset-0 z-0 opacity-60 group-hover:opacity-100 transition-all duration-1000">
               <CyberGlobe />
             </div>
@@ -307,7 +307,7 @@ export default function ExecutiveBriefView() {
                 <span className="text-[11px] font-black text-white tracking-[0.4em] uppercase italic">ГЛОБАЛЬНИЙ СКАНИНГ</span>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_12px_#10b981] animate-pulse" />
+                <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_12px_#10b981] " />
                 <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest italic opacity-60">ОРБІТАЛЬНА_ФАЗА: АКТИВНО</span>
               </div>
             </div>
@@ -320,7 +320,7 @@ export default function ExecutiveBriefView() {
           </motion.section>
 
           {/* Neural Terminal Stream HUD */}
-          <motion.section variants={fadeUp} className="relative flex flex-col rounded-[3rem] border border-white/5 bg-black/40 backdrop-blur-3xl p-8 shadow-2xl overflow-hidden min-h-[500px]">
+          <motion.section variants={fadeUp} className="relative flex flex-col rounded-[3rem] border border-white/5 bg-black/40  p-8 shadow-2xl overflow-hidden min-h-[500px]">
             <div className="absolute top-0 right-0 w-1 h-full bg-rose-600/30" />
             
             <div className="flex items-center justify-between mb-8 border-b border-white/5 pb-8">
@@ -385,7 +385,7 @@ export default function ExecutiveBriefView() {
             key={action.label}
             variants={fadeUp}
             className={cn(
-              "group relative overflow-hidden rounded-[2.5rem] border border-white/5 bg-black/40 backdrop-blur-3xl p-8 flex items-center justify-between transition-all hover:border-rose-500/30 shadow-2xl",
+              "group relative overflow-hidden rounded-[2.5rem] border border-white/5 bg-black/40  p-8 flex items-center justify-between transition-all hover:border-rose-500/30 shadow-2xl",
             )}
           >
             <div className="flex items-center gap-6 relative z-10">

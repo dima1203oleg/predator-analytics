@@ -20,18 +20,18 @@ const variantStyles = {
 };
 
 const glowStyles = {
-  default: 'hover:shadow-[0_0_15px_rgba(255,255,255,0.1)]',
-  emerald: 'hover:shadow-[0_0_15px_rgba(16,185,129,0.3)]',
-  blue: 'hover:shadow-[0_0_15px_rgba(59,130,246,0.3)]',
-  purple: 'hover:shadow-[0_0_15px_rgba(168,85,247,0.3)]',
-  rose: 'hover:shadow-[0_0_15px_rgba(244,63,94,0.3)]',
-  amber: 'hover:shadow-[0_0_15px_rgba(245,158,11,0.3)]',
+  default: 'hover:',
+  emerald: 'hover:',
+  blue: 'hover:',
+  purple: 'hover:',
+  rose: 'hover:',
+  amber: 'hover:',
 };
 
 const intensityStyles = {
-  light: 'bg-black/20 backdrop-blur-sm',
-  medium: 'bg-black/40 backdrop-blur-md',
-  heavy: 'bg-black/60 backdrop-blur-xl',
+  light: 'bg-black/20 ',
+  medium: 'bg-black/40 ',
+  heavy: 'bg-black/60 ',
 };
 
 export const GlassCard = React.forwardRef<HTMLDivElement, GlassCardProps>(

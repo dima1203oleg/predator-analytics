@@ -130,7 +130,7 @@ export default function TradeFlowMapPremium() {
               title={
                 <div className="flex items-center gap-10">
                    <div className="relative group">
-                      <div className="absolute inset-0 bg-[#D4AF37]/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                      <div className="absolute inset-0 bg-[#D4AF37]/20 blur-3xl rounded-full scale-150 " />
                       <div className="relative p-7 bg-black border-2 border-[#D4AF37]/40 rounded-[2.5rem] shadow-4xl transform -rotate-2 hover:rotate-0 transition-all">
                          <Globe size={42} className="text-[#D4AF37] shadow-[0_0_20px_#d4af37]" />
                       </div>
@@ -210,14 +210,14 @@ export default function TradeFlowMapPremium() {
                     {MOCK_COUNTRIES.map((c) => (
                        <g key={c.id} onClick={() => setSelectedCountry(c)} className="cursor-pointer group/node">
                           <circle cx={c.x} cy={c.y} r={c.id === 'ua' ? 1.5 : 1} fill={c.id === 'ua' ? '#D4AF37' : '#334155'} className="group-hover/node:fill-white transition-colors" />
-                          <circle cx={c.x} cy={c.y} r={c.id === 'ua' ? 3 : 2} fill={c.id === 'ua' ? '#D4AF37' : '#334155'} fillOpacity={0.2} className="animate-pulse" />
+                          <circle cx={c.x} cy={c.y} r={c.id === 'ua' ? 3 : 2} fill={c.id === 'ua' ? '#D4AF37' : '#334155'} fillOpacity={0.2} className="" />
                           <text x={c.x} y={c.y + 4} textAnchor="middle" fontSize={1.8} className="fill-slate-600 font-black font-mono group-hover/node:fill-white">{c.code}</text>
                        </g>
                     ))}
                  </svg>
 
                  {/* FLOATING LEGEND */}
-                 <div className="absolute bottom-10 left-10 p-8 bg-black/80 backdrop-blur-3xl border border-white/5 rounded-[2.5rem] w-[350px] space-y-6 shadow-2xl">
+                 <div className="absolute bottom-10 left-10 p-8 bg-black/80  border border-white/5 rounded-[2.5rem] w-[350px] space-y-6 shadow-2xl">
                     <h4 className="text-[10px] font-black text-white italic uppercase tracking-[0.4em] flex items-center gap-4">
                        <Layers size={16} className="text-[#D4AF37]" /> АКТИВНІ_ПОТОКИ
                     </h4>
@@ -239,7 +239,7 @@ export default function TradeFlowMapPremium() {
 
                  {/* ZOOM HUD */}
                  <div className="absolute top-10 right-10 flex flex-col gap-4">
-                    <div className="p-6 bg-black/80 backdrop-blur-3xl border border-white/5 rounded-[2rem] text-center shadow-xl">
+                    <div className="p-6 bg-black/80  border border-white/5 rounded-[2rem] text-center shadow-xl">
                        <p className="text-[8px] font-black text-slate-700 uppercase italic mb-1">ZOOM_LEVEL</p>
                        <p className="text-xl font-black text-[#D4AF37] font-mono italic">x{zoom.toFixed(1)}</p>
                     </div>

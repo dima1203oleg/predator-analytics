@@ -72,7 +72,7 @@ export const CortexVisualizer: React.FC = () => {
         return () => clearInterval(interval);
     }, []);
 
-    if (loading) return <div className="p-10 text-center text-cyan-500 animate-pulse">Scanning Cortex Topology...</div>;
+    if (loading) return <div className="p-10 text-center text-cyan-500 ">Scanning Cortex Topology...</div>;
     // if (error) return <div className="p-10 text-center text-rose-500">Error: {error}</div>;
 
     return (
@@ -82,7 +82,7 @@ export const CortexVisualizer: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <TacticalCard variant="holographic" title="SYSTEM STATUS" glow="blue">
                         <div className="text-2xl font-bold text-blue-400 font-mono flex items-center gap-2">
-                            <Activity className="animate-pulse" /> {data.system_status}
+                            <Activity className="" /> {data.system_status}
                         </div>
                     </TacticalCard>
                     <TacticalCard variant="holographic" title="COMPLIANCE SCORE" glow={data.compliance_score > 0.8 ? "green" : "yellow"}>
@@ -128,7 +128,7 @@ export const CortexVisualizer: React.FC = () => {
                                 {node.compliant ? (
                                     <CheckCircle2 className="text-emerald-500" />
                                 ) : (
-                                    <AlertTriangle className="text-rose-500 animate-pulse" />
+                                    <AlertTriangle className="text-rose-500 " />
                                 )}
                             </div>
 

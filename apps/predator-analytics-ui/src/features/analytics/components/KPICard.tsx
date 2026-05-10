@@ -28,10 +28,10 @@ export const KPICard: React.FC<KPICardProps> = ({
   color
 }) => {
   const colorClasses: Record<KPICardProps['color'], string> = {
-    gold: 'from-amber-600/20 via-black/40 to-black/60 border-amber-500/30 shadow-[0_0_30px_rgba(212,175,55,0.1)]',
-    amber: 'from-amber-900/30 via-black/40 to-black/60 border-amber-700/30 shadow-[0_0_20px_rgba(245,158,11,0.05)]',
+    gold: 'from-amber-600/20 via-black/40 to-black/60 border-amber-500/30 ',
+    amber: 'from-amber-900/30 via-black/40 to-black/60 border-amber-700/30 ',
     emerald: 'from-emerald-900/20 via-black/40 to-black/60 border-emerald-500/20',
-    danger: 'from-amber-950/40 via-black/40 to-black/60 border-amber-900/50 shadow-[0_0_40px_rgba(217,119,6,0.1)]'
+    danger: 'from-amber-950/40 via-black/40 to-black/60 border-amber-900/50 '
   };
 
   const percentChange = previousValue && typeof value === 'number' && previousValue !== 0
@@ -53,7 +53,7 @@ export const KPICard: React.FC<KPICardProps> = ({
   return (
     <div
       className={cn(
-        "relative overflow-hidden bg-gradient-to-br border-2 p-10 backdrop-blur-3xl transition-all duration-500 group cursor-crosshair rounded-[3rem] shadow-4xl",
+        "relative overflow-hidden bg-gradient-to-br border-2 p-10  transition-all duration-500 group cursor-crosshair rounded-[3rem] shadow-4xl",
         colorClasses[color]
       )}
     >
@@ -69,7 +69,7 @@ export const KPICard: React.FC<KPICardProps> = ({
             <span className="text-xs text-slate-500 ml-4 font-mono not-italic tracking-normal">{unit}</span>
           </h3>
         </div>
-        <div className="text-5xl opacity-40 group-hover:opacity-100 group-hover:scale-125 transition-all duration-700 drop-shadow-[0_0_20px_rgba(212,175,55,0.3)]">
+        <div className="text-5xl opacity-40 group-hover:opacity-100 group-hover:scale-125 transition-all duration-700 ">
           {icon}
         </div>
       </div>

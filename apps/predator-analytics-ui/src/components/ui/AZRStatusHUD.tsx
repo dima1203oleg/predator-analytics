@@ -35,7 +35,7 @@ export const AZRStatusHUD = () => {
                 <div className="relative">
                     <div className="absolute inset-0 bg-rose-500/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                     <div className="p-2 bg-black/40 border border-rose-500/20 rounded-xl group-hover:border-rose-500/50 transition-all shadow-2xl relative z-10">
-                        <Brain size={18} className="text-rose-500 animate-pulse" />
+                        <Brain size={18} className="text-rose-500 " />
                     </div>
                 </div>
 
@@ -43,7 +43,7 @@ export const AZRStatusHUD = () => {
                     <div className="flex items-center gap-3">
                         <span className="text-[10px] text-slate-500 font-black uppercase tracking-[0.3em] glint-elite">{nodeSource || 'ЯДРО_ELITE'}</span>
                         <div className="flex items-center gap-1.5 px-2 py-0.5 bg-rose-500/5 border border-rose-500/10 rounded-md">
-                            <Zap size={10} className={cn("fill-current animate-pulse", isOffline ? "text-orange-500" : (activeFailover ? "text-rose-400" : "text-rose-500"))} />
+                            <Zap size={10} className={cn("fill-current ", isOffline ? "text-orange-500" : (activeFailover ? "text-rose-400" : "text-rose-500"))} />
                             <span className={cn("text-[9px] font-black font-mono tracking-tighter", isOffline ? "text-orange-500" : (activeFailover ? "text-rose-400" : "text-rose-500"))}>
                                 {isOffline ? 'ВІДНОВЛЕННЯ' : (activeFailover ? 'ZROK_ТУНЕЛЬ' : 'ELITE_LINK')}
                             </span>
@@ -62,7 +62,7 @@ export const AZRStatusHUD = () => {
                             <div className="h-1.5 flex-1 bg-black/60 rounded-full overflow-hidden border border-white/5 relative">
                                 <div className="absolute inset-0 cyber-scan-grid opacity-20" />
                                 <motion.div
-                                    className="h-full bg-gradient-to-r from-rose-900 via-rose-500 to-rose-400 shadow-[0_0_12px_rgba(244,63,94,0.5)]"
+                                    className="h-full bg-gradient-to-r from-rose-900 via-rose-500 to-rose-400 "
                                     animate={{ width: `${status.health}%` }}
                                     transition={{ duration: 1.5, ease: "easeInOut" }}
                                 />

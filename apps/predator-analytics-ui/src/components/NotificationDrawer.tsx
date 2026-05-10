@@ -43,7 +43,7 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({ isOpen, 
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={onClose}
-                        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[80]"
+                        className="fixed inset-0 bg-black/50  z-[80]"
                     />
 
                     {/* Drawer */}
@@ -52,11 +52,11 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({ isOpen, 
                         animate={{ x: 0 }}
                         exit={{ x: '100%' }}
                         transition={{ type: 'spring', damping: 20, stiffness: 300 }}
-                        className="fixed top-0 right-0 bottom-0 w-[400px] glass-ultra border-l border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.8)] z-[90] flex flex-col"
+                        className="fixed top-0 right-0 bottom-0 w-[400px] glass-ultra border-l border-white/10  z-[90] flex flex-col"
                     >
                         <div className="p-6 border-b border-white/5 flex items-center justify-between bg-slate-900/40">
                             <div className="flex items-center gap-3">
-                                <Bell size={18} className="text-primary-400 drop-shadow-[0_0_8px_#06b6d4]" />
+                                <Bell size={18} className="text-primary-400 " />
                                 <span className="text-sm font-black text-iridescent tracking-widest uppercase">Системний Потік</span>
                                 <span className="text-[10px] bg-primary-500 text-slate-950 font-black px-2 py-0.5 rounded-full">48 АКТ</span>
                             </div>

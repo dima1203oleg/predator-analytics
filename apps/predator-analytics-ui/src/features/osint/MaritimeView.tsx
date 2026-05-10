@@ -69,7 +69,7 @@ const VesselCard: React.FC<{ vessel: Vessel; isSelected: boolean; onClick: () =>
             className={cn(
                 "group p-6 rounded-[2.5rem] border cursor-pointer transition-all duration-500 relative overflow-hidden",
                 isSelected
-                    ? "bg-slate-900/80 border-cyan-500/50 shadow-[0_0_30px_rgba(6,182,212,0.15)]"
+                    ? "bg-slate-900/80 border-cyan-500/50 "
                     : "bg-black border-white/[0.04] hover:border-white/10"
             )}
         >
@@ -95,7 +95,7 @@ const VesselCard: React.FC<{ vessel: Vessel; isSelected: boolean; onClick: () =>
                </div>
                <div className="flex items-center gap-3">
                   <span className="text-[9px] font-black font-mono text-cyan-600">{vessel.speed || '0.0'} KN</span>
-                  <div className={cn("w-2 h-2 rounded-full", vessel.risk_score > 80 ? "bg-amber-500 animate-pulse" : "bg-emerald-500")} />
+                  <div className={cn("w-2 h-2 rounded-full", vessel.risk_score > 80 ? "bg-amber-500 " : "bg-emerald-500")} />
                </div>
             </div>
         </motion.div>
@@ -180,9 +180,9 @@ export default function MaritimeView() {
                      title={
                        <div className="flex items-center gap-10">
                           <div className="relative group">
-                             <div className="absolute inset-0 bg-blue-600/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                             <div className="absolute inset-0 bg-blue-600/20 blur-3xl rounded-full scale-150 " />
                              <div className="relative p-7 bg-black border border-blue-900/40 rounded-[2.5rem] shadow-2xl">
-                                <Navigation size={42} className="text-blue-500 shadow-[0_0_15px_rgba(14,165,233,0.5)]" />
+                                <Navigation size={42} className="text-blue-500 " />
                              </div>
                           </div>
                           <div className="space-y-2">
@@ -251,7 +251,7 @@ export default function MaritimeView() {
                       <div className="col-span-12 xl:col-span-8 space-y-10">
                          <div className="p-8 rounded-[4rem] bg-black border-2 border-white/[0.04] shadow-3xl h-[550px] relative overflow-hidden group">
                              <div className="absolute top-8 left-8 z-20 flex gap-4">
-                                <div className="bg-black/80 backdrop-blur-2xl px-6 py-3 border border-white/5 rounded-2xl flex items-center gap-4">
+                                <div className="bg-black/80  px-6 py-3 border border-white/5 rounded-2xl flex items-center gap-4">
                                    <Radar size={18} className="text-blue-500 animate-spin-slow" />
                                    <span className="text-[10px] font-black text-white italic tracking-[0.3em]">AIS_VECTOR_PROJECTION</span>
                                 </div>

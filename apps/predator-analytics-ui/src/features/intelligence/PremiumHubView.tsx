@@ -151,14 +151,14 @@ const HolographicAccessGate: React.FC = () => {
       <AdvancedBackground />
       <CyberGrid color="rgba(225, 29, 72, 0.05)" />
       
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1200px] h-[1200px] bg-[#E11D48]/5 blur-[200px] rounded-full animate-pulse" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1200px] h-[1200px] bg-[#E11D48]/5 blur-[200px] rounded-full " />
       
       <motion.div
         initial={{ opacity: 0, scale: 0.9, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         className="relative z-10 max-w-5xl w-full"
       >
-        <div className="bg-[#0b0f1a]/80 backdrop-blur-3xl border border-[#E11D48]/20 rounded-[80px] p-16 sm:p-24 shadow-[0_0_150px_rgba(225,29,72,0.1)] relative overflow-hidden">
+        <div className="bg-[#0b0f1a]/80  border border-[#E11D48]/20 rounded-[80px] p-16 sm:p-24  relative overflow-hidden">
           <div className="hud-corner-tl hud-corner-nexus opacity-40" />
           <div className="hud-corner-tr hud-corner-nexus opacity-40" />
           <div className="hud-corner-bl hud-corner-nexus opacity-40" />
@@ -174,7 +174,7 @@ const HolographicAccessGate: React.FC = () => {
               className="relative p-1 rounded-full bg-gradient-to-r from-[#D4AF37] to-[#E11D48]"
             >
               <div className="w-40 h-40 bg-black rounded-full flex items-center justify-center border border-[#D4AF37]/20">
-                <Crown className="w-20 h-20 text-[#D4AF37] drop-shadow-[0_0_20px_rgba(212,175,55,0.8)]" />
+                <Crown className="w-20 h-20 text-[#D4AF37] " />
               </div>
             </motion.div>
 
@@ -303,9 +303,9 @@ const PremiumHubView: React.FC = () => {
                 title={
                     <div className="flex items-center gap-8">
                         <div className="relative group">
-                            <div className={cn("absolute inset-0 blur-[50px] rounded-full scale-150 animate-pulse", persona === 'INQUISITOR' ? "bg-rose-500/20" : "bg-[#E11D48]/20")} />
+                            <div className={cn("absolute inset-0 blur-[50px] rounded-full scale-150 ", persona === 'INQUISITOR' ? "bg-rose-500/20" : "bg-[#E11D48]/20")} />
                             <div className="relative w-16 h-16 bg-black border border-white/10 rounded-2xl flex items-center justify-center panel-3d shadow-2xl">
-                                <currentConfig.icon size={32} className={cn(persona === 'INQUISITOR' ? "text-rose-400" : "text-[#E11D48]", "drop-shadow-[0_0_15px_rgba(225,29,72,0.8)]")} />
+                                <currentConfig.icon size={32} className={cn(persona === 'INQUISITOR' ? "text-rose-400" : "text-[#E11D48]", "")} />
                             </div>
                         </div>
                         <div>
@@ -323,7 +323,7 @@ const PremiumHubView: React.FC = () => {
                 breadcrumbs={['PREDATOR', 'PREMIUM', persona]}
                 badges={[
                     { label: 'SOVEREIGN_ACCESS', color: 'danger', icon: <Crown size={10} /> },
-                    { label: isOffline ? 'MIRROR_NODE' : 'CENTRAL_NVIDIA', color: isOffline ? 'warning' : 'primary', icon: <Radio size={10} className={isOffline ? 'animate-pulse' : ''} /> },
+                    { label: isOffline ? 'MIRROR_NODE' : 'CENTRAL_NVIDIA', color: isOffline ? 'warning' : 'primary', icon: <Radio size={10} className={isOffline ? '' : ''} /> },
                     { label: 'v61.0-ELITE', color: 'danger', icon: <Shield size={10} /> }
                 ]}
                 stats={[
@@ -340,7 +340,7 @@ const PremiumHubView: React.FC = () => {
             />
 
             {/* Persona Switcher & Tactical Nav (v57.3-ELITE) */}
-            <div className="flex flex-wrap items-center justify-between gap-8 bg-black/60 backdrop-blur-3xl p-4 rounded-[40px] border border-[#E11D48]/10 relative overflow-hidden">
+            <div className="flex flex-wrap items-center justify-between gap-8 bg-black/60  p-4 rounded-[40px] border border-[#E11D48]/10 relative overflow-hidden">
                 <div className="hud-corner-tl hud-corner-nexus opacity-20" />
                 <div className="hud-corner-tr hud-corner-nexus opacity-20" />
                 <div className="hud-corner-bl hud-corner-nexus opacity-20" />
@@ -419,7 +419,7 @@ const PremiumHubView: React.FC = () => {
                                             {currentConfig.subtitle}
                                         </h2>
                                         <div className="flex items-center gap-6">
-                                            <Badge className="bg-[#E11D48]/20 text-[#E11D48] border-[#E11D48]/30 py-1.5 px-4 font-black shadow-[0_0_15px_rgba(225,29,72,0.3)] italic">АКТИВНІ_ПРОТОКОЛИ</Badge>
+                                            <Badge className="bg-[#E11D48]/20 text-[#E11D48] border-[#E11D48]/30 py-1.5 px-4 font-black  italic">АКТИВНІ_ПРОТОКОЛИ</Badge>
                                             <span className="text-xs text-slate-500 font-mono">v61.0-ELITE.1-stable</span>
                                         </div>
                                     </div>
@@ -445,7 +445,7 @@ const PremiumHubView: React.FC = () => {
                                 {/* Neural Insights Feed */}
                                 <div className="p-8 bg-black/40 border border-white/5 rounded-[40px] space-y-6">
                                     <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-4">
-                                        <div className={cn("w-2 h-2 rounded-full animate-pulse", persona === 'INQUISITOR' ? "bg-rose-500" : "bg-[#E11D48]")} />
+                                        <div className={cn("w-2 h-2 rounded-full ", persona === 'INQUISITOR' ? "bg-rose-500" : "bg-[#E11D48]")} />
                                         НЕЙРОННІ ІНСАЙДИ (24h)
                                     </h3>
                                     <div className="space-y-4">
@@ -508,7 +508,7 @@ const PremiumHubView: React.FC = () => {
                     {activeTab === 'analytics' && (
                         <div className="space-y-12">
                             <AIInsightsPanel persona={persona as string} />
-                            <div className="p-10 bg-black/80 border border-[#E11D48]/10 rounded-[48px] backdrop-blur-3xl">
+                            <div className="p-10 bg-black/80 border border-[#E11D48]/10 rounded-[48px] ">
                                 <TradeSankeyWidget persona={persona as string} />
                             </div>
                         </div>
@@ -519,7 +519,7 @@ const PremiumHubView: React.FC = () => {
                         <div className="flex flex-col items-center justify-center py-40 gap-12 bg-slate-900/20 border border-dashed border-[#E11D48]/10 rounded-[60px]">
                             <div className="relative">
                                 <div className={cn("absolute inset-0 blur-[100px] rounded-full", persona === 'INQUISITOR' ? "bg-rose-500/20" : "bg-[#E11D48]/20")} />
-                                <Cpu size={80} className={cn(persona === 'INQUISITOR' ? "text-rose-500" : "text-[#E11D48]", "animate-pulse")} />
+                                <Cpu size={80} className={cn(persona === 'INQUISITOR' ? "text-rose-500" : "text-[#E11D48]", "")} />
                             </div>
                             <div className="text-center space-y-4">
                                 <h3 className="text-2xl font-black text-white uppercase tracking-[0.4em] italic">МОДУЛЬ_В_ОБРОБЦІ</h3>

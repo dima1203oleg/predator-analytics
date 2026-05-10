@@ -56,7 +56,7 @@ const AzrHyperWidget: React.FC = () => {
     // Visual Styles
     const pulseColor = isFrozen ? 'rgba(239, 68, 68, 0.5)' : (isHyper ? 'rgba(34, 211, 238, 0.5)' : 'rgba(16, 185, 129, 0.5)');
     const borderColor = isFrozen ? 'border-red-500' : (isHyper ? 'border-cyan-400' : 'border-green-500');
-    const textGlow = isFrozen ? 'text-red-400 drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]' : (isHyper ? 'text-cyan-300 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]' : 'text-green-400');
+    const textGlow = isFrozen ? 'text-red-400 ' : (isHyper ? 'text-cyan-300 ' : 'text-green-400');
 
     return (
         <HoloContainer className={`relative flex items-center justify-between p-4 mb-6 pt-10  border ${borderColor} transition-colors duration-500`}>
@@ -89,7 +89,7 @@ const AzrHyperWidget: React.FC = () => {
 
                     {/* Icon Container */}
                     <div 
-                        className={`w-12 h-12 rounded-full flex items-center justify-center bg-black/50 backdrop-blur-md border ${borderColor}`}
+                        className={`w-12 h-12 rounded-full flex items-center justify-center bg-black/50  border ${borderColor}`}
                         style={{ boxShadow: `0 0 15px ${pulseColor}` }}
                     >
                         {isFrozen ? (

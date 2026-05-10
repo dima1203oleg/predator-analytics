@@ -117,7 +117,7 @@ export const CommandPalette: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 bg-black/60 "
             onClick={() => setIsOpen(false)}
           />
 
@@ -126,7 +126,7 @@ export const CommandPalette: React.FC = () => {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: -20 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="w-full max-w-2xl relative z-10 flex flex-col  rounded-2xl bg-[#0b1121] border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)] ring-1 ring-white/10"
+            className="w-full max-w-2xl relative z-10 flex flex-col  rounded-2xl bg-[#0b1121] border border-white/10  ring-1 ring-white/10"
           >
             {/* Header / Input */}
             <div className="flex items-center px-4 py-4 border-b border-white/5 gap-3">
@@ -158,8 +158,8 @@ export const CommandPalette: React.FC = () => {
                     className={`w-full flex items-center justify-between px-3 py-3 rounded-xl transition-all duration-200 group ${
                         selectedIndex === index
                         ? cmd.danger
-                            ? 'bg-rose-500/10 border border-rose-500/20 shadow-[0_0_15px_rgba(244,63,94,0.1)]'
-                            : 'bg-cyan-500/10 border border-cyan-500/20 shadow-[0_0_15px_rgba(34,211,238,0.1)]'
+                            ? 'bg-rose-500/10 border border-rose-500/20 '
+                            : 'bg-cyan-500/10 border border-cyan-500/20 '
                         : 'border border-transparent hover:bg-white/5'
                     }`}
                   >

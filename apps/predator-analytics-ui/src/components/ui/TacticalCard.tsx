@@ -112,7 +112,7 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
       transition={{ duration: 0.5, ease: "easeOut" }}
       className={cn(
         "relative overflow-hidden transition-all duration-500",
-        "bg-black/40 glass-wraith border border-white/10 rounded-[3rem] backdrop-blur-3xl shadow-2xl",
+        "bg-[rgba(15,15,17,0.97)] border border-white/[0.06] rounded-[3rem]",
         elite && "hover:scale-[1.01] hover:border-white/20",
         className
       )}
@@ -142,9 +142,9 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
           onClick={() => expandable && setIsExpanded(!isExpanded)}
         >
           <div className="flex items-center gap-5 min-w-0">
-             <div className={cn(dotClass, "animate-pulse")} />
+             <div className={dotClass} />
              <div className="flex items-center gap-4">
-                {icon && <div className={cn(`text-${sectionColor}-500`, "drop-shadow-[0_0_8px_rgba(225,29,72,0.4)]")}>{icon}</div>}
+                {icon && <div className={`text-${sectionColor}-500`}>{icon}</div>}
                 <div>
                   <h2 className={cn(
                     "text-sm font-black text-white italic tracking-[0.2em] uppercase leading-none",
@@ -157,7 +157,7 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
                 {priority && (
                   <span className={cn(
                     "text-[8px] font-black px-3 py-1 rounded-lg border italic uppercase tracking-widest",
-                    priority === 'critical' ? "bg-rose-500/20 border-rose-500/40 text-rose-500 shadow-[0_0_15px_rgba(225,29,72,0.2)]" :
+                    priority === 'critical' ? "bg-rose-500/20 border-rose-500/40 text-rose-500" :
                     priority === 'high' ? "bg-amber-500/20 border-amber-500/40 text-amber-500" :
                     "bg-white/5 border-white/10 text-slate-500"
                   )}>
@@ -233,7 +233,7 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
                       onClick={act.onClick}
                       className={cn(
                         "flex items-center gap-3 px-8 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] italic transition-all duration-300 group/act",
-                        act.variant === 'primary' ? "bg-rose-500 text-black shadow-[0_0_20px_rgba(225,29,72,0.4)] hover:brightness-110" :
+                        act.variant === 'primary' ? "bg-rose-500 text-black hover:brightness-110" :
                         act.variant === 'danger' ? "bg-black/40 text-rose-500 border border-rose-500/30 hover:bg-rose-500/10" :
                         "bg-white/5 text-slate-400 hover:text-white border border-white/10 hover:border-white/30"
                       )}

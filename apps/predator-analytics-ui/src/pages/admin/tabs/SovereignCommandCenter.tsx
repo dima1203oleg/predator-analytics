@@ -97,7 +97,7 @@ export const SovereignCommandCenter: React.FC = () => {
         </div>
 
         {/* Global Strategy Badge */}
-        <div className="flex items-center gap-6 bg-black/60 backdrop-blur-3xl p-6 rounded-[2.5rem] border-2 border-white/5 shadow-4xl group hover:border-rose-500/30 transition-all duration-700">
+        <div className="flex items-center gap-6 bg-black/60  p-6 rounded-[2.5rem] border-2 border-white/5 shadow-4xl group hover:border-rose-500/30 transition-all duration-700">
            <div className="flex flex-col items-end gap-1">
               <span className="text-[9px] font-black font-mono text-white/20 uppercase tracking-[0.4em] italic">ГЛОБАЛЬНА_СТРАТЕГІЯ_ШІ</span>
               <span className="text-[12px] font-black text-white/60 italic uppercase tracking-tighter group-hover:text-rose-500 transition-colors">{nodeSource}</span>
@@ -125,7 +125,7 @@ export const SovereignCommandCenter: React.FC = () => {
         <div className="col-span-12 xl:col-span-3 flex flex-col gap-10 overflow-y-auto pr-4 custom-scrollbar pb-10">
           <div className="space-y-6">
             <div className="flex items-center gap-4 px-4">
-              <div className="w-2 h-2 bg-rose-500 rotate-45 shadow-[0_0_10px_rgba(225,29,72,1)]" />
+              <div className="w-2 h-2 bg-rose-500 rotate-45 " />
               <span className="text-[12px] font-black font-mono text-white/40 uppercase tracking-[0.5em] italic glint-elite">ЯДРО_ІНФРАСТРУКТУРИ_ELITE</span>
             </div>
             <div className="grid grid-cols-2 gap-6">
@@ -146,7 +146,7 @@ export const SovereignCommandCenter: React.FC = () => {
                     initial={{ width: 0 }}
                     animate={{ width: '99.9%' }}
                     transition={{ duration: 2, ease: "circOut" }}
-                    className="h-full bg-gradient-to-r from-emerald-600 to-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.5)] rounded-full"
+                    className="h-full bg-gradient-to-r from-emerald-600 to-emerald-400  rounded-full"
                   />
                 </div>
               </div>
@@ -155,7 +155,7 @@ export const SovereignCommandCenter: React.FC = () => {
 
           <div className="space-y-6">
             <div className="flex items-center gap-4 px-4">
-              <div className="w-2 h-2 bg-sky-500 rotate-45 shadow-[0_0_10px_rgba(14,165,233,1)]" />
+              <div className="w-2 h-2 bg-sky-500 rotate-45 " />
               <span className="text-[12px] font-black font-mono text-white/40 uppercase tracking-[0.5em] italic glint-elite">БІЗНЕС_АНАЛІТИКА_PREMIUM</span>
             </div>
             <div className="grid grid-cols-1 gap-6">
@@ -167,7 +167,7 @@ export const SovereignCommandCenter: React.FC = () => {
                   </div>
                   <div className="flex items-end gap-4 relative z-10">
                     <span className="text-5xl font-black text-white italic tracking-tighter glint-elite leading-none">x4.8</span>
-                    <span className="text-[11px] text-emerald-500 font-black mb-1 uppercase italic tracking-widest animate-pulse">+12% ОПТИМІЗАЦІЯ</span>
+                    <span className="text-[11px] text-emerald-500 font-black mb-1 uppercase italic tracking-widest ">+12% ОПТИМІЗАЦІЯ</span>
                   </div>
                </div>
                
@@ -188,7 +188,7 @@ export const SovereignCommandCenter: React.FC = () => {
 
           <div className="space-y-6">
             <div className="flex items-center gap-4 px-4">
-              <div className="w-2 h-2 bg-emerald-500 rotate-45 shadow-[0_0_10px_rgba(16,185,129,1)]" />
+              <div className="w-2 h-2 bg-emerald-500 rotate-45 " />
               <span className="text-[12px] font-black font-mono text-white/40 uppercase tracking-[0.5em] italic glint-elite">ОПЕРАЦІЙНІ_МАГІСТРАЛІ</span>
             </div>
             <div className="grid grid-cols-1 gap-6">
@@ -227,18 +227,18 @@ export const SovereignCommandCenter: React.FC = () => {
             {/* Visualizer Header */}
             <div className="absolute top-0 left-0 right-0 p-12 flex items-start justify-between z-30 pointer-events-none">
               <div className="flex flex-col gap-3">
-                <h3 className="text-white font-black tracking-[0.6em] text-2xl uppercase italic glint-elite drop-shadow-[0_0_40px_rgba(255,255,255,0.4)]">
+                <h3 className="text-white font-black tracking-[0.6em] text-2xl uppercase italic glint-elite ">
                   СУВЕРЕННЕ_НЕЙРОННЕ_ЯДРО
                 </h3>
                 <div className="flex items-center gap-6">
-                  <div className="px-6 py-2 bg-rose-600 text-white text-[10px] font-black rounded-xl tracking-[0.4em] shadow-[0_0_30px_rgba(225,29,72,0.8)] border-2 border-rose-400/30 italic uppercase">PREDATOR_ELITE_v61</div>
+                  <div className="px-6 py-2 bg-rose-600 text-white text-[10px] font-black rounded-xl tracking-[0.4em]  border-2 border-rose-400/30 italic uppercase">PREDATOR_ELITE_v61</div>
                   <div className="flex items-center gap-4">
                     <PulseIndicator />
-                    <span className="text-rose-500 font-black font-mono text-[10px] tracking-[0.5em] uppercase animate-pulse italic">СИНХРОНІЗАЦІЯ_РЕАЛЬНОСТІ_АКТИВНА</span>
+                    <span className="text-rose-500 font-black font-mono text-[10px] tracking-[0.5em] uppercase  italic">СИНХРОНІЗАЦІЯ_РЕАЛЬНОСТІ_АКТИВНА</span>
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col items-end gap-3 bg-black/60 p-6 border-2 border-white/5 backdrop-blur-3xl rounded-[2rem] shadow-4xl">
+              <div className="flex flex-col items-end gap-3 bg-black/60 p-6 border-2 border-white/5  rounded-[2rem] shadow-4xl">
                 <div className="flex items-center gap-4">
                   <span className="text-white/40 font-black font-mono text-[9px] tracking-widest uppercase italic">ЗДОРОВ'Я_БУФЕРА</span>
                   <span className="text-emerald-500 font-black font-mono text-[11px] glint-elite">100.0%</span>
@@ -287,7 +287,7 @@ export const SovereignCommandCenter: React.FC = () => {
               <motion.button 
                 whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.1)', borderColor: 'rgba(255,255,255,0.3)' }}
                 whileTap={{ scale: 0.95 }}
-                className="px-16 py-6 bg-white/5 border-2 border-white/10 text-white/70 text-[13px] font-black uppercase tracking-[0.5em] rounded-2xl transition-all duration-700 italic backdrop-blur-3xl shadow-4xl"
+                className="px-16 py-6 bg-white/5 border-2 border-white/10 text-white/70 text-[13px] font-black uppercase tracking-[0.5em] rounded-2xl transition-all duration-700 italic  shadow-4xl"
               >
                 АВАРІЙНИЙ_ШЛЮЗ_OODA
               </motion.button>
@@ -332,7 +332,7 @@ export const SovereignCommandCenter: React.FC = () => {
         <div className="col-span-12 xl:col-span-3 flex flex-col gap-10 overflow-y-auto pr-4 custom-scrollbar pb-10">
           <div className="space-y-6">
             <div className="flex items-center gap-4 px-4">
-              <div className="w-2 h-2 bg-rose-500 rotate-45 shadow-[0_0_10px_rgba(225,29,72,1)]" />
+              <div className="w-2 h-2 bg-rose-500 rotate-45 " />
               <span className="text-[12px] font-black font-mono text-white/40 uppercase tracking-[0.5em] italic glint-elite">СТРАТЕГІЧНИЙ_РЕЗЕРВ_ELITE</span>
             </div>
             <div className="grid grid-cols-1 gap-6">
@@ -357,7 +357,7 @@ export const SovereignCommandCenter: React.FC = () => {
                      <span className={cn("text-3xl font-black italic glint-elite", res.color)}>{res.value}</span>
                      {res.label.includes('ОПТИМ') && (
                        <div className="w-24 h-[3px] bg-white/5 rounded-full overflow-hidden mb-2">
-                         <motion.div animate={{ width: '92%' }} className="h-full bg-rose-500 shadow-[0_0_10px_rgba(225,29,72,1)]" />
+                         <motion.div animate={{ width: '92%' }} className="h-full bg-rose-500 " />
                        </div>
                      )}
                   </div>
@@ -368,14 +368,14 @@ export const SovereignCommandCenter: React.FC = () => {
 
           <div className="space-y-6">
             <div className="flex items-center gap-4 px-4">
-              <div className="w-2 h-2 bg-amber-500 rotate-45 shadow-[0_0_10px_rgba(245,158,11,1)]" />
+              <div className="w-2 h-2 bg-amber-500 rotate-45 " />
               <span className="text-[12px] font-black font-mono text-white/40 uppercase tracking-[0.5em] italic glint-elite">ГЛОБАЛЬНІ_РИЗИКИ_L7</span>
             </div>
             <div className="p-10 glass-wraith border-2 border-amber-500/20 rounded-[3rem] space-y-8 shadow-4xl group hover:border-amber-500/40 transition-all duration-700 relative overflow-hidden">
                <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
                <div className="flex items-center justify-between text-[11px] font-black font-mono uppercase tracking-[0.3em] text-amber-500/60 italic relative z-10">
                   <span>ІНДЕКС_ЗАГРОЗ_ЯДРА</span>
-                  <span className="text-emerald-500 animate-pulse font-black">МІНІМАЛЬНИЙ</span>
+                  <span className="text-emerald-500  font-black">МІНІМАЛЬНИЙ</span>
                </div>
                <div className="grid grid-cols-2 gap-6 relative z-10">
                   <div className="p-6 bg-amber-500/5 border-2 border-amber-500/10 rounded-2xl flex flex-col gap-2 shadow-inner group-hover:border-amber-500/30 transition-all">
@@ -388,7 +388,7 @@ export const SovereignCommandCenter: React.FC = () => {
                   </div>
                </div>
                <div className="flex items-center gap-4 p-6 bg-amber-500/10 border-2 border-amber-500/20 rounded-[1.5rem] relative z-10 shadow-4xl">
-                  <ShieldAlert size={20} className="text-amber-500 animate-pulse flex-shrink-0" />
+                  <ShieldAlert size={20} className="text-amber-500  flex-shrink-0" />
                   <p className="text-[10px] text-amber-200/60 font-black leading-tight uppercase italic tracking-widest">
                      ВИЯВЛЕНО_СПРОБУ_ОБХОДУ_RLS_В_TENANT_42. КІБЕР_ЩИТ_ЗАСТОСОВАНО_АВТОМАТИЧНО.
                   </p>
@@ -398,7 +398,7 @@ export const SovereignCommandCenter: React.FC = () => {
 
           <div className="flex-1 flex flex-col gap-6 min-h-[350px]">
             <div className="flex items-center gap-4 px-4">
-              <div className="w-2 h-2 bg-white/40 rotate-45 shadow-[0_0_10px_rgba(255,255,255,1)]" />
+              <div className="w-2 h-2 bg-white/40 rotate-45 " />
               <span className="text-[12px] font-black font-mono text-white/40 uppercase tracking-[0.5em] italic glint-elite">ОПЕРАЦІЙНИЙ_ЖУРНАЛ_ЯДРА</span>
             </div>
             <div className="flex-1 glass-wraith border-2 border-white/5 rounded-[3rem] flex flex-col overflow-hidden shadow-4xl p-8 relative">
@@ -416,7 +416,7 @@ export const SovereignCommandCenter: React.FC = () => {
                   ))
                 ) : (
                   <div className="flex flex-col items-center justify-center h-full opacity-10 gap-6">
-                    <Terminal size={48} className="animate-pulse" />
+                    <Terminal size={48} className="" />
                     <span className="text-[11px] uppercase tracking-[0.6em] font-black italic">ОЧІКУВАННЯ_ЛОГІВ_ЯДРА_OODA...</span>
                   </div>
                 )}
@@ -424,7 +424,7 @@ export const SovereignCommandCenter: React.FC = () => {
               <div className="mt-8 pt-6 border-t-2 border-white/5 relative z-10">
                 <div className="flex items-center gap-4 p-5 bg-white/5 border-2 border-white/10 rounded-[1.5rem] group/input cursor-text hover:bg-white/10 transition-all duration-700 shadow-inner group">
                   <Terminal size={18} className="text-white/30 group-hover:text-rose-500 transition-colors duration-700" />
-                  <span className="text-[10px] font-black font-mono text-white/30 uppercase tracking-[0.4em] animate-pulse italic">ЯДРО_ГОТОВЕ_ДО_ДИРЕКТИВ_ELITE_</span>
+                  <span className="text-[10px] font-black font-mono text-white/30 uppercase tracking-[0.4em]  italic">ЯДРО_ГОТОВЕ_ДО_ДИРЕКТИВ_ELITE_</span>
                 </div>
               </div>
             </div>

@@ -51,7 +51,7 @@ export const UBOMapTab: React.FC = () => {
                             animate={{ top: '100%' }}
                             exit={{ opacity: 0 }}
                             transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                            className="absolute left-0 right-0 h-1 bg-gradient-to-r from-transparent via-rose-500 to-transparent shadow-[0_0_20px_rgba(244,63,94,0.8)] z-20 pointer-events-none"
+                            className="absolute left-0 right-0 h-1 bg-gradient-to-r from-transparent via-rose-500 to-transparent  z-20 pointer-events-none"
                         />
                     )}
                 </AnimatePresence>
@@ -63,12 +63,12 @@ export const UBOMapTab: React.FC = () => {
                         <input 
                             type="text" 
                             placeholder="ПОШУК ГЕО-ВУЗЛА АБО БЕНЕФІЦІАРА..."
-                            className="w-full bg-slate-950/80 backdrop-blur-xl border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-xs font-mono tracking-widest text-white focus:outline-none focus:border-rose-500/50 transition-all relative z-10"
+                            className="w-full bg-slate-950/80  border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-xs font-mono tracking-widest text-white focus:outline-none focus:border-rose-500/50 transition-all relative z-10"
                         />
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-hover/search:text-rose-400 transition-colors z-10" />
                     </div>
                     
-                    <div className="flex items-center gap-2 bg-slate-950/60 backdrop-blur-md p-1.5 rounded-2xl border border-white/5">
+                    <div className="flex items-center gap-2 bg-slate-950/60  p-1.5 rounded-2xl border border-white/5">
                         {['ВУЗЛИ', 'МЕРЕЖІ', 'РИЗИКИ'].map((f) => (
                             <button key={f} className="px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-all">
                                 {f}
@@ -84,7 +84,7 @@ export const UBOMapTab: React.FC = () => {
                                 "flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all relative overflow-hidden",
                                 isScanning 
                                 ? "bg-rose-500/20 text-rose-400 border border-rose-500/30" 
-                                : "bg-rose-500 text-black hover:bg-rose-400 shadow-[0_0_20px_rgba(244,63,94,0.3)]"
+                                : "bg-rose-500 text-black hover:bg-rose-400 "
                             )}
                         >
                             <Crosshair size={14} className={cn(isScanning && "animate-spin")} />
@@ -95,7 +95,7 @@ export const UBOMapTab: React.FC = () => {
 
                 {/* Left Floating HUD: Tools */}
                 <div className="absolute top-24 left-6 z-30 flex flex-col gap-3">
-                    <TacticalCard className="!p-1.5 bg-slate-950/80 backdrop-blur-xl border-rose-500/20">
+                    <TacticalCard className="!p-1.5 bg-slate-950/80  border-rose-500/20">
                         <div className="flex flex-col gap-1">
                             {[
                                 { icon: Globe, label: 'Глобал' },
@@ -114,7 +114,7 @@ export const UBOMapTab: React.FC = () => {
                         </div>
                     </TacticalCard>
 
-                    <TacticalCard className="!p-3 bg-slate-950/80 backdrop-blur-xl border-white/5">
+                    <TacticalCard className="!p-3 bg-slate-950/80  border-white/5">
                         <div className="flex flex-col gap-3">
                              <div className="flex flex-col gap-1">
                                 <span className="text-[8px] font-black text-slate-600 uppercase">МАСШТАБ</span>
@@ -144,7 +144,7 @@ export const UBOMapTab: React.FC = () => {
                             <div className="flex flex-col items-center gap-4">
                                 <div className={cn(
                                     "p-6 rounded-full border transition-all duration-1000",
-                                    isScanning ? "bg-rose-500/20 border-rose-500 animate-pulse" : "bg-slate-950/60 border-white/10"
+                                    isScanning ? "bg-rose-500/20 border-rose-500 " : "bg-slate-950/60 border-white/10"
                                 )}>
                                     <MapIcon size={40} className={cn(isScanning ? "text-rose-400" : "text-slate-700")} />
                                 </div>
@@ -170,7 +170,7 @@ export const UBOMapTab: React.FC = () => {
                                 animate={{ x: 0, opacity: 1 }}
                                 className="h-full flex flex-col gap-4 pointer-events-auto"
                             >
-                                <TacticalCard className="bg-slate-950/90 backdrop-blur-xl border-white/5 flex flex-col max-h-full">
+                                <TacticalCard className="bg-slate-950/90  border-white/5 flex flex-col max-h-full">
                                     <div className="flex items-center justify-between mb-4 border-b border-white/5 pb-3">
                                         <div className="flex items-center gap-2">
                                             <Target size={14} className="text-red-500" />
@@ -221,7 +221,7 @@ export const UBOMapTab: React.FC = () => {
                                     </button>
                                 </TacticalCard>
 
-                                <TacticalCard className="bg-slate-950/90 backdrop-blur-xl border-rose-500/20">
+                                <TacticalCard className="bg-slate-950/90  border-rose-500/20">
                                     <h4 className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-3">Статус Аналізатора</h4>
                                     <div className="space-y-3">
                                         <div className="flex justify-between items-end">
@@ -243,14 +243,14 @@ export const UBOMapTab: React.FC = () => {
 
                 {/* Bottom Legend Overlay */}
                 <div className="absolute bottom-6 left-6 z-30 flex items-center gap-3">
-                    <TacticalCard className="!px-6 !py-3 bg-slate-950/90 backdrop-blur-2xl border-white/10 flex items-center gap-8">
+                    <TacticalCard className="!px-6 !py-3 bg-slate-950/90  border-white/10 flex items-center gap-8">
                         {[
                             { label: 'ОФШОРНА ЗОНА', color: 'bg-rose-600', glow: 'shadow-rose-600/50' },
                             { label: 'САНКЦІЙНА ЛОКАЦІЯ', color: 'bg-orange-500', glow: 'shadow-orange-500/50' },
                             { label: 'ПЕРЕВІРЕНИЙ UBO', color: 'bg-rose-400', glow: 'shadow-rose-400/50' },
                         ].map(item => (
                             <div key={item.label} className="flex items-center gap-3">
-                                <div className={`w-2.5 h-2.5 rounded-full ${item.color} shadow-[0_0_8px_currentColor] animate-pulse`} />
+                                <div className={`w-2.5 h-2.5 rounded-full ${item.color} shadow-[0_0_8px_currentColor] `} />
                                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">{item.label}</span>
                             </div>
                         ))}

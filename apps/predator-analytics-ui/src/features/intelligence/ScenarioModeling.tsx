@@ -223,15 +223,15 @@ const ScenarioModeling: React.FC = () => {
                             className={cn(
                                 "relative group px-8 py-2.5 rounded-xl font-black text-xs uppercase tracking-widest transition-all overflow-hidden border",
                                 isSimulating
-                                    ? "bg-slate-800 border-violet-500/50 text-violet-300 shadow-[0_0_20px_rgba(139,92,246,0.3)]"
-                                    : "bg-emerald-600 hover:bg-emerald-500 border-emerald-400/50 text-white shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:scale-105"
+                                    ? "bg-slate-800 border-violet-500/50 text-violet-300 "
+                                    : "bg-emerald-600 hover:bg-emerald-500 border-emerald-400/50 text-white  hover:scale-105"
                             )}
                         >
                             {isSimulating && (
                                 <div className="absolute inset-0 bg-violet-600/20" style={{ width: `${scanProgress}%` }} />
                             )}
                             <div className="relative z-10 flex items-center justify-center gap-2">
-                                {isSimulating ? <Activity className="w-4 h-4 animate-pulse" /> : <Play className="w-4 h-4" />}
+                                {isSimulating ? <Activity className="w-4 h-4 " /> : <Play className="w-4 h-4" />}
                                 {isSimulating ? ` озрахунок... ${Math.round(scanProgress)}%` : 'Запустити'}
                             </div>
                         </button>
@@ -244,7 +244,7 @@ const ScenarioModeling: React.FC = () => {
 
                     {/* Left Panel: Controls (4 cols) */}
                     <div className="lg:col-span-4 space-y-6">
-                        <div className="p-6 md:p-8 rounded-[32px] bg-slate-900/40 border border-white/5 backdrop-blur-xl shadow-2xl relative overflow-hidden group">
+                        <div className="p-6 md:p-8 rounded-[32px] bg-slate-900/40 border border-white/5  shadow-2xl relative overflow-hidden group">
                             <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-violet-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 
                             <div className="flex items-center gap-3 mb-8">
@@ -288,7 +288,7 @@ const ScenarioModeling: React.FC = () => {
                                                 className="w-full absolute inset-y-0 top-1/2 -translate-y-1/2 opacity-0 cursor-ew-resize z-20"
                                             />
                                             <div
-                                                className="w-4 h-4 rounded-full bg-white border-2 absolute top-1/2 -translate-y-1/2 z-10 shadow-[0_0_10px_rgba(255,255,255,0.5)] transition-transform group-hover/slider:scale-125"
+                                                className="w-4 h-4 rounded-full bg-white border-2 absolute top-1/2 -translate-y-1/2 z-10  transition-transform group-hover/slider:scale-125"
                                                 style={{
                                                     borderColor: cfg.color,
                                                     left: `calc(${((params[cfg.id] - cfg.min) / (cfg.max - cfg.min)) * 100}% - 8px)`
@@ -330,7 +330,7 @@ const ScenarioModeling: React.FC = () => {
                                 { label: 'Відхилення Маржі', value: `${marginChange > 0 ? '+' : ''}${marginChange.toFixed(1)}%`, diff: 'до бази', up: marginChange >= 0, color: marginChange >= 0 ? '#10b981' : '#ef4444' },
                                 { label: 'Індексризику', value: '42/100', diff: '-5.1 vs сер.', up: true, color: '#06b6d4' }
                             ].map((kpi, i) => (
-                                <div key={i} className="p-5 rounded-3xl bg-slate-900/60 border border-white/5 backdrop-blur-xl relative overflow-hidden">
+                                <div key={i} className="p-5 rounded-3xl bg-slate-900/60 border border-white/5  relative overflow-hidden">
                                     <div className="absolute right-0 top-0 w-24 h-24 bg-gradient-to-bl from-white/5 to-transparent rounded-bl-full pointer-events-none" />
                                     <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">{kpi.label}</p>
                                     <div className="text-3xl font-black text-white tracking-tighter mb-2">{kpi.value}</div>
@@ -343,7 +343,7 @@ const ScenarioModeling: React.FC = () => {
                         </div>
 
                         {/* Main Graph */}
-                        <div className="p-6 md:p-8 rounded-[32px] bg-slate-900/40 border border-white/5 backdrop-blur-xl relative">
+                        <div className="p-6 md:p-8 rounded-[32px] bg-slate-900/40 border border-white/5  relative">
                             <div className="flex justify-between items-center mb-6">
                                 <div>
                                     <h3 className="font-black text-white text-lg uppercase tracking-widest flex items-center gap-2">
@@ -366,13 +366,13 @@ const ScenarioModeling: React.FC = () => {
                                 <div className="absolute inset-0 bg-violet-500/10 blur-[100px] rounded-full pointer-events-none" />
 
                                 {isSimulating ? (
-                                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/80 backdrop-blur-sm z-20 rounded-2xl border border-violet-500/20">
+                                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/80  z-20 rounded-2xl border border-violet-500/20">
                                         <div className="relative w-20 h-20 mb-4">
                                             <div className="absolute inset-0 border-t-2 border-violet-500 rounded-full animate-spin" />
                                             <div className="absolute inset-2 border-r-2 border-cyan-400 rounded-full animate-[spin_2s_linear_infinite_reverse]" />
-                                            <Crosshair className="w-6 h-6 text-violet-300 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
+                                            <Crosshair className="w-6 h-6 text-violet-300 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 " />
                                         </div>
-                                        <p className="text-sm font-black text-violet-400 uppercase tracking-[0.3em] animate-pulse">Запуск Монте-Карло...</p>
+                                        <p className="text-sm font-black text-violet-400 uppercase tracking-[0.3em] ">Запуск Монте-Карло...</p>
                                         <p className="text-[10px] text-slate-500 font-mono mt-2">Обчислення 10,000 можливих майбутніх</p>
                                     </div>
                                 ) : (

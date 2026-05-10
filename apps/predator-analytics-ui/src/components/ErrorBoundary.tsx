@@ -58,14 +58,14 @@ export class ErrorBoundary extends Component<Props, State> {
             className="max-w-2xl w-full relative z-10"
           >
             {/* Error Card */}
-            <div className="bg-slate-900/60 backdrop-blur-xl border border-rose-500/20 rounded-[32px] p-12 shadow-2xl">
+            <div className="bg-slate-900/60  border border-rose-500/20 rounded-[32px] p-12 shadow-2xl">
               {/* Icon */}
               <div className="flex justify-center mb-8">
                 <div className="relative">
                   <div className="w-24 h-24 rounded-full bg-rose-500/10 border-2 border-rose-500/30 flex items-center justify-center">
                     <AlertTriangle className="w-12 h-12 text-rose-400" />
                   </div>
-                  <div className="absolute inset-0 w-24 h-24 rounded-full bg-rose-500/20 blur-xl animate-pulse" />
+                  <div className="absolute inset-0 w-24 h-24 rounded-full bg-rose-500/20 blur-xl " />
                 </div>
               </div>
 

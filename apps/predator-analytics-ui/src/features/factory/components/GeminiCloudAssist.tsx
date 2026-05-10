@@ -40,7 +40,7 @@ export function GeminiCloudAssist() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-600 to-emerald-500 flex items-center justify-center shadow-lg shadow-blue-500/20">
-            <Bot size={24} className="text-white animate-pulse" />
+            <Bot size={24} className="text-white " />
           </div>
           <div>
             <h2 className="text-xl font-black text-white tracking-tight uppercase">Gemini Cloud Assist</h2>
@@ -199,7 +199,7 @@ export function GeminiCloudAssist() {
                    <span className="text-emerald-400 font-black">98%</span>
                 </div>
                 <div className="h-1.5 bg-black/40 rounded-full overflow-hidden">
-                   <div className="h-full bg-emerald-500 w-[98%] rounded-full shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+                   <div className="h-full bg-emerald-500 w-[98%] rounded-full " />
                 </div>
              </div>
              <p className="text-[9px] text-slate-400 mt-4 leading-relaxed font-mono">

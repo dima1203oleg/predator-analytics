@@ -171,7 +171,7 @@ export default function FactorsView() {
                                 <div className="relative">
                                     <div className="absolute inset-0 scale-150 rounded-full bg-yellow-500/25 blur-[60px]" />
                                     <div className="relative flex h-16 w-16 items-center justify-center rounded-[28px] border border-yellow-500/25 bg-slate-950/90 shadow-2xl">
-                                        <Factory size={32} className="text-yellow-300 drop-shadow-[0_0_14px_rgba(129,140,248,0.85)]" />
+                                        <Factory size={32} className="text-yellow-300 " />
                                     </div>
                                 </div>
                                 <div>
@@ -179,7 +179,7 @@ export default function FactorsView() {
                                         Центр <span className="text-yellow-400">факторів</span>
                                     </h1>
                                     <p className="mt-3 flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.45em] text-yellow-300/75">
-                                        <Activity size={12} className="animate-pulse" />
+                                        <Activity size={12} className="" />
                                          обочий контур факторних модулів без синтетичних метрик
                                     </p>
                                 </div>

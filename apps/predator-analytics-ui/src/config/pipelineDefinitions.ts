@@ -2,6 +2,7 @@
 import {
     Activity,
     AlertTriangle,
+    BarChart3,
     Brain,
     CheckCircle,
     Database,
@@ -13,6 +14,7 @@ import {
     Layers,
     LucideIcon,
     MessageSquare,
+    Radio,
     RefreshCw,
     Search,
     Share2,
@@ -41,6 +43,7 @@ export const STAGE_LIBRARY: Record<string, PipelineStageDef> = {
     FETCH: { id: 'FETCH', label: 'Отриман.', icon: Activity, color: '#3b82f6', description: 'Отримання зовнішніх даних' },
     UPLOAD: { id: 'UPLOAD', label: 'Завант.', icon: HardDrive, color: '#06b6d4', description: 'Завантаження у буфер' },
     STREAM: { id: 'STREAM', label: 'Потік', icon: Zap, color: '#06b6d4', description: 'Потокова передача даних' },
+    KAFKA_STREAM: { id: 'KAFKA_STREAM', label: 'Kafka', icon: Radio, color: '#f97316', description: 'Потокова шина Kafka' },
     CRAWL: { id: 'CRAWL', label: 'Парсинг', icon: Globe, color: '#a855f7', description: 'Веб-сканування та пошук' },
 
     // Phase 2: Processing
@@ -63,6 +66,7 @@ export const STAGE_LIBRARY: Record<string, PipelineStageDef> = {
     // Phase 4: Storage & Indexing (The Pulse)
     RAW_STORAGE: { id: 'RAW_STORAGE', label: 'Сховище', icon: Database, color: '#eab308', description: 'Збереження сирих даних' },
     LOAD_SQL: { id: 'LOAD_SQL', label: 'PostgreSQL', icon: Database, color: '#22c55e', description: ' еляційне сховище' },
+    LOAD_CLICKHOUSE: { id: 'LOAD_CLICKHOUSE', label: 'ClickHouse', icon: BarChart3, color: '#f59e0b', description: 'Аналітичне сховище OLAP' },
     BUILD_GRAPH: { id: 'BUILD_GRAPH', label: 'Neo4j', icon: Share2, color: '#ec4899', description: 'Зв\'язки та графи' },
     INDEX_SEARCH: { id: 'INDEX_SEARCH', label: 'OpenSearch', icon: Search, color: '#f97316', description: 'Повнотекстовий пошук' },
     VECTORIZE: { id: 'VECTORIZE', label: 'Qdrant', icon: Brain, color: '#6366f1', description: 'Векторне вбудовування' },
@@ -93,8 +97,8 @@ export const PIPELINES: Record<string, PipelineConfig> = {
     'customs': {
         id: 'customs',
         label: 'реактор Митних Декларацій',
-        stages: ['CREATED', 'UPLOAD', 'PARSE', 'VALIDATE', 'NORMALIZE', 'LOAD_SQL', 'BUILD_GRAPH', 'INDEX_SEARCH', 'VECTORIZE', 'READY'],
-        dbNodes: ['minio', 'quality', 'postgres', 'graphdb', 'opensearch', 'qdrant'],
+        stages: ['CREATED', 'UPLOAD', 'PARSE', 'VALIDATE', 'NORMALIZE', 'LOAD_SQL', 'LOAD_CLICKHOUSE', 'BUILD_GRAPH', 'INDEX_SEARCH', 'VECTORIZE', 'READY'],
+        dbNodes: ['minio', 'kafka', 'quality', 'postgres', 'clickhouse', 'graphdb', 'opensearch', 'qdrant'],
         visualMode: 'REACTOR',
         accentColor: '#10b981'
     },
@@ -102,16 +106,16 @@ export const PIPELINES: Record<string, PipelineConfig> = {
     'excel': {
         id: 'excel',
         label: 'реактор Структурованих Даних',
-        stages: ['CREATED', 'UPLOAD', 'PARSE', 'VALIDATE', 'NORMALIZE', 'LOAD_SQL', 'INDEX_SEARCH', 'READY'],
-        dbNodes: ['minio', 'quality', 'postgres', 'opensearch'],
+        stages: ['CREATED', 'UPLOAD', 'PARSE', 'VALIDATE', 'NORMALIZE', 'LOAD_SQL', 'LOAD_CLICKHOUSE', 'INDEX_SEARCH', 'READY'],
+        dbNodes: ['minio', 'quality', 'postgres', 'clickhouse', 'opensearch'],
         visualMode: 'REACTOR',
         accentColor: '#10b981'
     },
     'csv': {
         id: 'csv',
         label: 'реактор CSV Даних',
-        stages: ['CREATED', 'UPLOAD', 'PARSE', 'VALIDATE', 'NORMALIZE', 'LOAD_SQL', 'INDEX_SEARCH', 'READY'],
-        dbNodes: ['minio', 'quality', 'postgres', 'opensearch'],
+        stages: ['CREATED', 'UPLOAD', 'PARSE', 'VALIDATE', 'NORMALIZE', 'LOAD_SQL', 'LOAD_CLICKHOUSE', 'INDEX_SEARCH', 'READY'],
+        dbNodes: ['minio', 'quality', 'postgres', 'clickhouse', 'opensearch'],
         visualMode: 'REACTOR',
         accentColor: '#10b981'
     },
@@ -120,8 +124,8 @@ export const PIPELINES: Record<string, PipelineConfig> = {
     'telegram': {
         id: 'telegram',
         label: 'Вузол  озвідки Telegram',
-        stages: ['CREATED', 'AUTH', 'FETCH', 'RAW_STORAGE', 'NORMALIZE', 'NLP_EXTRACTION', 'ROUTING_SQL', 'ROUTING_GRAPH', 'ROUTING_SEARCH', 'ROUTING_VECTOR', 'READY'],
-        dbNodes: ['postgres', 'graphdb', 'opensearch', 'qdrant'],
+        stages: ['CREATED', 'AUTH', 'FETCH', 'KAFKA_STREAM', 'RAW_STORAGE', 'NORMALIZE', 'NLP_EXTRACTION', 'ROUTING_SQL', 'LOAD_CLICKHOUSE', 'ROUTING_GRAPH', 'ROUTING_SEARCH', 'ROUTING_VECTOR', 'READY'],
+        dbNodes: ['kafka', 'postgres', 'clickhouse', 'graphdb', 'opensearch', 'qdrant'],
         visualMode: 'NEURAL_NET',
         accentColor: '#3b82f6'
     },
@@ -192,8 +196,8 @@ export const PIPELINES: Record<string, PipelineConfig> = {
     'api': {
         id: 'api',
         label: 'Нейронна Синхронізація Потоку',
-        stages: ['CREATED', 'AUTH', 'FETCH', 'VALIDATE', 'TRANSFORM', 'LOAD_SQL', 'INDEX_SEARCH', 'READY'],
-        dbNodes: ['postgres', 'opensearch', 'quality'],
+        stages: ['CREATED', 'AUTH', 'FETCH', 'VALIDATE', 'TRANSFORM', 'LOAD_SQL', 'LOAD_CLICKHOUSE', 'INDEX_SEARCH', 'READY'],
+        dbNodes: ['postgres', 'clickhouse', 'opensearch', 'quality'],
         visualMode: 'NEURAL_NET',
         accentColor: '#8b5cf6'
     },
@@ -214,10 +218,12 @@ export const PIPELINES: Record<string, PipelineConfig> = {
 // ═══════════════════════════════════════════════════════════════════════════
 
 export const DB_NODE_CONFIGS: Record<string, { name: string, icon: LucideIcon, x: number, y: number, color: string }> = {
-    'minio': { name: 'Оригінал (MinIO)', icon: HardDrive, x: 15, y: 30, color: '#06b6d4' },
-    'postgres': { name: 'Факти (SQL)', icon: Database, x: 85, y: 30, color: '#eab308' },
-    'quality': { name: 'Redis (Стан)', icon: Zap, x: 50, y: 15, color: '#22c55e' },
-    'graphdb': { name: 'Зв\'язки (Graph)', icon: Share2, x: 15, y: 70, color: '#a855f7' },
-    'opensearch': { name: 'Пошук (Index)', icon: Search, x: 85, y: 70, color: '#0ea5e9' },
+    'minio': { name: 'Оригінал (MinIO)', icon: HardDrive, x: 10, y: 25, color: '#06b6d4' },
+    'kafka': { name: 'Потік (Kafka)', icon: Radio, x: 50, y: 10, color: '#f97316' },
+    'postgres': { name: 'Факти (SQL)', icon: Database, x: 90, y: 25, color: '#eab308' },
+    'clickhouse': { name: 'Аналітика (ClickHouse)', icon: BarChart3, x: 90, y: 50, color: '#f59e0b' },
+    'quality': { name: 'Redis (Кеш)', icon: Zap, x: 50, y: 35, color: '#22c55e' },
+    'graphdb': { name: 'Зв\'язки (Graph)', icon: Share2, x: 10, y: 65, color: '#a855f7' },
+    'opensearch': { name: 'Пошук (Index)', icon: Search, x: 90, y: 75, color: '#0ea5e9' },
     'qdrant': { name: 'Семантика (Vector)', icon: Brain, x: 50, y: 85, color: '#14b8a6' },
 };

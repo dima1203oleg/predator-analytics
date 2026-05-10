@@ -87,7 +87,7 @@ export const Toast: React.FC<ToastProps> = ({
     return (
         <div
             className={`
-        relative flex items-start gap-3 p-4 rounded-lg border backdrop-blur-sm
+        relative flex items-start gap-3 p-4 rounded-lg border 
         ${config.bg} ${config.border}
         shadow-lg
         transition-all duration-300 ease-out

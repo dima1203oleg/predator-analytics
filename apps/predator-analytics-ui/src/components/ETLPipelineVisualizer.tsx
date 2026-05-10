@@ -48,9 +48,9 @@ interface Pipeline {
 const StepIcon: React.FC<{ type: string; status: PipelineStep['status'] }> = ({ type, status }) => {
   const iconClass = cn(
     "w-6 h-6 transition-all duration-700",
-    status === 'completed' ? 'text-emerald-400 drop-shadow-[0_0_10px_rgba(16,185,129,0.5)]' :
-      status === 'running' ? 'text-blue-400 animate-pulse drop-shadow-[0_0_15px_rgba(59,130,246,0.5)]' :
-        status === 'failed' ? 'text-rose-400 drop-shadow-[0_0_15px_rgba(244,63,94,0.5)]' :
+    status === 'completed' ? 'text-emerald-400 ' :
+      status === 'running' ? 'text-blue-400  ' :
+        status === 'failed' ? 'text-rose-400 ' :
           status === 'pending' ? 'text-amber-400' :
             'text-slate-600'
   );
@@ -91,7 +91,7 @@ const PipelineStepCard: React.FC<{ step: PipelineStep; isLast: boolean }> = ({ s
       <motion.div
         whileHover={{ scale: 1.05, y: -5 }}
         className={cn(
-          "relative p-8 rounded-[40px] border backdrop-blur-3xl transition-all duration-700 min-w-[240px] shadow-2xl group",
+          "relative p-8 rounded-[40px] border  transition-all duration-700 min-w-[240px] shadow-2xl group",
           step.status === 'completed' ? 'bg-emerald-500/5 border-emerald-500/20 shadow-emerald-500/10' :
             step.status === 'running' ? 'bg-blue-500/5 border-blue-500/20 shadow-blue-500/10' :
               step.status === 'failed' ? 'bg-rose-500/5 border-rose-500/20 shadow-rose-500/10' :
@@ -159,7 +159,7 @@ const PipelineStepCard: React.FC<{ step: PipelineStep; isLast: boolean }> = ({ s
         </div>
 
         {step.errors !== undefined && step.errors > 0 && (
-          <div className="mt-8 p-4 bg-rose-500/10 border border-rose-500/20 rounded-2xl flex items-center gap-3 animate-pulse">
+          <div className="mt-8 p-4 bg-rose-500/10 border border-rose-500/20 rounded-2xl flex items-center gap-3 ">
             <AlertTriangle size={16} className="text-rose-500" />
             <div className="text-[10px] font-black text-rose-400 uppercase tracking-widest">{step.errors} Faults Detected</div>
           </div>
@@ -268,7 +268,7 @@ export const ETLPipelineVisualizer: React.FC = () => {
             onClick={() => setShowLogs(!showLogs)}
             className={cn(
               "px-8 py-4 rounded-[20px] text-[11px] font-black uppercase tracking-widest transition-all duration-500 flex items-center gap-3",
-              showLogs ? 'bg-blue-600 text-white shadow-[0_0_20px_rgba(37,99,235,0.4)]' : 'bg-slate-900 border border-white/10 text-slate-400 hover:text-white'
+              showLogs ? 'bg-blue-600 text-white ' : 'bg-slate-900 border border-white/10 text-slate-400 hover:text-white'
             )}
           >
             <Terminal size={18} /> {showLogs ? 'Disconnect_Stream' : 'Initialize_Stream'}
@@ -293,7 +293,7 @@ export const ETLPipelineVisualizer: React.FC = () => {
             className={cn(
               "flex-shrink-0 px-10 py-6 rounded-[32px] border transition-all duration-700 relative overflow-hidden group",
               activePipeline?.id === pipeline.id
-                ? 'bg-blue-600 shadow-[0_0_40px_rgba(37,99,235,0.25)] border-white/30 scale-105'
+                ? 'bg-blue-600  border-white/30 scale-105'
                 : 'bg-slate-950 border-white/5 hover:border-white/20 hover:bg-slate-900'
             )}
           >
@@ -303,7 +303,7 @@ export const ETLPipelineVisualizer: React.FC = () => {
             <div className="flex items-center gap-5 relative z-10">
               <div className={cn(
                 "w-3 h-3 rounded-full transition-all duration-1000",
-                pipeline.status === 'running' ? 'bg-white animate-pulse shadow-[0_0_10px_#fff]' :
+                pipeline.status === 'running' ? 'bg-white  shadow-[0_0_10px_#fff]' :
                   pipeline.status === 'completed' ? 'bg-emerald-400' :
                     pipeline.status === 'failed' ? 'bg-rose-500' : 'bg-slate-600',
                 activePipeline?.id === pipeline.id ? 'bg-white' : ''
@@ -344,7 +344,7 @@ export const ETLPipelineVisualizer: React.FC = () => {
                 <div className="flex items-center gap-8">
                   <div className="p-8 bg-blue-500/10 border border-blue-500/20 rounded-[40px] text-blue-400 shadow-2xl relative group">
                     <div className="absolute inset-0 bg-blue-500/10 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <Zap size={40} className="relative z-10 drop-shadow-[0_0_20px_rgba(59,130,246,0.6)] animate-pulse" />
+                    <Zap size={40} className="relative z-10  " />
                   </div>
                   <div>
                     <h4 className="text-4xl font-black text-white uppercase tracking-tighter leading-none mb-3 font-display">{activePipeline.name}</h4>
@@ -361,7 +361,7 @@ export const ETLPipelineVisualizer: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-10 bg-slate-950/60 p-8 rounded-[40px] border border-white/5 backdrop-blur-3xl shadow-2xl">
+                <div className="flex items-center gap-10 bg-slate-950/60 p-8 rounded-[40px] border border-white/5  shadow-2xl">
                   <div className="text-center">
                     <div className="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-2 opacity-60">Success_Rate</div>
                     <div className="text-3xl font-black text-white font-display tracking-tighter">99.8%</div>
@@ -394,9 +394,9 @@ export const ETLPipelineVisualizer: React.FC = () => {
                     transition={{ duration: 1.5, ease: "circOut" }}
                     className={cn(
                       "h-full rounded-full transition-all duration-1000 relative",
-                      activePipeline.status === 'completed' ? 'bg-gradient-to-r from-emerald-600 to-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.5)]' :
+                      activePipeline.status === 'completed' ? 'bg-gradient-to-r from-emerald-600 to-emerald-400 ' :
                         activePipeline.status === 'failed' ? 'bg-gradient-to-r from-rose-600 to-rose-400' :
-                          'bg-gradient-to-r from-blue-700 via-blue-500 to-cyan-400 shadow-[0_0_30px_rgba(37,99,235,0.4)]'
+                          'bg-gradient-to-r from-blue-700 via-blue-500 to-cyan-400 '
                     )}
                   >
                     <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent_25%,rgba(255,255,255,0.2)_50%,transparent_75%)] bg-[length:250px_100%] animate-shimmer" />

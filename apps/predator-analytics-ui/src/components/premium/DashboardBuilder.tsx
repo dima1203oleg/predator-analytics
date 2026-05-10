@@ -90,7 +90,7 @@ export const DashboardBuilder: React.FC<{ onSave?: (config: any) => void }> = ({
   return (
     <div className="space-y-8 min-h-screen">
       {/* --- Control Header --- */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 sticky top-0 z-40 bg-slate-950/80 backdrop-blur-xl p-4 rounded-3xl border border-white/5 shadow-2xl">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 sticky top-0 z-40 bg-slate-950/80  p-4 rounded-3xl border border-white/5 shadow-2xl">
         <div className="flex items-center gap-4">
           <div className="p-3 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl shadow-lg shadow-cyan-500/20">
             <LayoutDashboard className="w-6 h-6 text-white" />
@@ -154,7 +154,7 @@ export const DashboardBuilder: React.FC<{ onSave?: (config: any) => void }> = ({
               <div className="absolute inset-0 bg-noise opacity-10" />
               <div className="relative z-10">
                 <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-purple-400 animate-pulse" />
+                  <Sparkles className="w-5 h-5 text-purple-400 " />
                   AI Аналіз:рекомендовані віджети
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -239,7 +239,7 @@ export const DashboardBuilder: React.FC<{ onSave?: (config: any) => void }> = ({
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.5 }}
-              className={`h-full min-h-[180px] bg-slate-900/60 backdrop-blur-xl border border-white/5 rounded-3xl p-6 relative overflow-hidden group hover:border-slate-600 transition-all shadow-xl ${isEditMode ? 'cursor-move ring-2 ring-transparent hover:ring-cyan-500/50' : ''}`}
+              className={`h-full min-h-[180px] bg-slate-900/60  border border-white/5 rounded-3xl p-6 relative overflow-hidden group hover:border-slate-600 transition-all shadow-xl ${isEditMode ? 'cursor-move ring-2 ring-transparent hover:ring-cyan-500/50' : ''}`}
             >
               {/* Background Gradient Spot */}
               <div className={`absolute -right-10 -top-10 w-40 h-40 bg-gradient-to-br ${widget.color} opacity-10 blur-3xl group-hover:opacity-20 transition-opacity`} />
@@ -268,7 +268,7 @@ export const DashboardBuilder: React.FC<{ onSave?: (config: any) => void }> = ({
                  {/* Live Indicator Mockup */}
                  {!isEditMode && (
                    <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
-                      <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                      <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full " />
                       <span className="text-[10px] font-bold text-emerald-500">НАЖИВО</span>
                    </div>
                  )}
@@ -304,7 +304,7 @@ export const DashboardBuilder: React.FC<{ onSave?: (config: any) => void }> = ({
 
                   {widget.type === 'map' && (
                      <div className="w-full h-full opacity-30 flex items-center justify-center">
-                        <Globe className="w-24 h-24 text-blue-400 animate-pulse" />
+                        <Globe className="w-24 h-24 text-blue-400 " />
                      </div>
                   )}
 

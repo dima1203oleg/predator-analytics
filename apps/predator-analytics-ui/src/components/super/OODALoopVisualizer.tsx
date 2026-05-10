@@ -61,7 +61,7 @@ export const OODALoopVisualizer: React.FC<{ activeStep?: string }> = ({ activeSt
         : currentStepIndex;
 
     return (
-        <div className="relative p-8 bg-slate-950/40 backdrop-blur-3xl border border-white/5 rounded-[40px] overflow-hidden group shadow-2xl h-full flex flex-col justify-between">
+        <div className="relative p-8 bg-slate-950/40  border border-white/5 rounded-[40px] overflow-hidden group shadow-2xl h-full flex flex-col justify-between">
             {/* Background Decorative Elements */}
             <div className="absolute inset-0 pointer-events-none">
                 <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.05),transparent_70%)]" />
@@ -72,7 +72,7 @@ export const OODALoopVisualizer: React.FC<{ activeStep?: string }> = ({ activeSt
             <div className="relative z-10 flex items-center justify-between mb-10">
                 <div className="flex items-center gap-4">
                     <div className="p-3 bg-white/5 rounded-2xl border border-white/10">
-                        <Activity className="text-blue-400 animate-pulse" size={24} />
+                        <Activity className="text-blue-400 " size={24} />
                     </div>
                     <div>
                         <h3 className="text-xl font-black text-white uppercase tracking-widest">OODA LOOP v45</h3>

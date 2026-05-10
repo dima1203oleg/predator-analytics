@@ -36,7 +36,7 @@ export const VectorDBView: React.FC<VectorDBViewProps> = ({ vectorData, selected
                 >
                     <div className="absolute top-4 right-8 flex items-center gap-4 z-20">
                         <div className="flex items-center gap-2 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
-                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 " />
                             <span className="text-[8px] font-black text-emerald-400 uppercase tracking-widest">Live Scanner</span>
                         </div>
                     </div>
@@ -60,7 +60,7 @@ export const VectorDBView: React.FC<VectorDBViewProps> = ({ vectorData, selected
                                         if (active && payload && payload.length) {
                                             const data = payload[0].payload;
                                             return (
-                                                <div className="bg-slate-950/90 backdrop-blur-xl border border-white/10 p-4 rounded-2xl shadow-2xl">
+                                                <div className="bg-slate-950/90  border border-white/10 p-4 rounded-2xl shadow-2xl">
                                                     <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Cluster Class</div>
                                                     <div className="text-sm font-black text-white uppercase tracking-tighter mb-3">{data.cluster}</div>
                                                     <div className="grid grid-cols-2 gap-4">
@@ -84,7 +84,7 @@ export const VectorDBView: React.FC<VectorDBViewProps> = ({ vectorData, selected
                                         <Cell
                                             key={`cell-${index}`}
                                             fill={entry.cluster.includes('GOV') ? '#3b82f6' : entry.cluster.includes('MED') ? '#f43f5e' : entry.cluster.includes('BIZ') ? '#eab308' : '#10b981'}
-                                            className="cursor-pointer hover:brightness-150 transition-all duration-300 drop-shadow-[0_0_12px_rgba(currentColor,0.4)]"
+                                            className="cursor-pointer hover:brightness-150 transition-all duration-300 "
                                             style={{ transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)' }}
                                         />
                                     ))}
@@ -119,7 +119,7 @@ export const VectorDBView: React.FC<VectorDBViewProps> = ({ vectorData, selected
                                 <div className="p-6 bg-slate-900/40 border border-white/5 rounded-[32px] mb-8 group-hover:border-blue-500/20 transition-all">
                                     <div className="flex items-center gap-5 mb-6">
                                         <div className="w-14 h-14 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 shadow-lg">
-                                            <Target size={28} className="animate-pulse" />
+                                            <Target size={28} className="" />
                                         </div>
                                         <div>
                                             <div className="text-[10px] text-slate-500 uppercase font-black tracking-[0.2em] mb-1">Target Embedding</div>
@@ -180,7 +180,7 @@ export const VectorDBView: React.FC<VectorDBViewProps> = ({ vectorData, selected
                         ) : (
                             <div className="flex-1 flex flex-col items-center justify-center text-center p-12 mt-10 space-y-8">
                                 <div className="relative">
-                                    <div className="absolute inset-0 bg-blue-500/20 blur-[30px] rounded-full animate-pulse" />
+                                    <div className="absolute inset-0 bg-blue-500/20 blur-[30px] rounded-full " />
                                     <Scan size={80} className="text-blue-500/40 relative z-10" />
                                 </div>
                                 <div className="space-y-4">

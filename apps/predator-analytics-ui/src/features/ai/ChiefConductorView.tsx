@@ -97,7 +97,7 @@ export default function ChiefConductorView() {
           >
             <div className="flex items-center justify-between mb-8 px-4">
                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                  <div className="w-2 h-2 bg-emerald-500 rounded-full " />
                   <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">Синхронізація: Active</span>
                </div>
                <div className="flex items-center gap-2">
@@ -183,7 +183,7 @@ export default function ChiefConductorView() {
            <TacticalCard variant="holographic" title="Swarm Registry" className="rounded-[40px] border-yellow-500/20 bg-slate-950/50 p-8">
               <div className="space-y-6">
                  {agentsLoading ? (
-                    <div className="text-center py-10 text-slate-600 animate-pulse italic">Синхронізація реєстру...</div>
+                    <div className="text-center py-10 text-slate-600  italic">Синхронізація реєстру...</div>
                  ) : agentData?.list?.map((agent: any) => {
                     const Icon = AGENT_ICON_MAP[agent.type] || Bot;
                     return (
@@ -251,7 +251,7 @@ export default function ChiefConductorView() {
                      className={cn(
                        "p-3 rounded-xl border text-[9px] font-black uppercase tracking-widest transition-all text-center",
                        chaosStatus?.[exp.id as ChaosExperimentName] 
-                         ? "bg-rose-500 text-white border-rose-400 shadow-[0_0_15px_rgba(225,29,72,0.4)]" 
+                         ? "bg-rose-500 text-white border-rose-400 " 
                          : "bg-black/40 text-slate-500 border-white/5 hover:border-rose-500/30"
                      )}
                    >

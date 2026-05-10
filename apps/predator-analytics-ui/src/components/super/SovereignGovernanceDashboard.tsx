@@ -72,7 +72,7 @@ interface Proposal {
 
 const StatusIndicator: React.FC<{ active: boolean; label: string }> = ({ active, label }) => (
     <div className="flex items-center gap-2">
-        <div className={`w-2 h-2 rounded-full ${active ? 'bg-emerald-500 animate-pulse' : 'bg-slate-600'}`} />
+        <div className={`w-2 h-2 rounded-full ${active ? 'bg-emerald-500 ' : 'bg-slate-600'}`} />
         <span className="text-[10px] text-slate-400 uppercase font-bold tracking-widest">{label}</span>
     </div>
 );
@@ -97,7 +97,7 @@ const RingPortal: React.FC<{ level: number }> = ({ level }) => {
                         className={cn("absolute ring-portal-element", `ring-pos-${i}`)}
                     />
                 ))}
-                <div className="relative z-10 w-4 h-4 rounded-full bg-white shadow-[0_0_15px_rgba(255,255,255,0.5)]" />
+                <div className="relative z-10 w-4 h-4 rounded-full bg-white " />
             </div>
             <div className="flex flex-col">
                 <span className="text-[8px] text-slate-500 font-black uppercase tracking-[0.3em] mb-1">КІЛЬЦЕ СУВЕРЕНІТЕТУ</span>
@@ -199,7 +199,7 @@ export const SovereignGovernanceDashboard: React.FC = () => {
             <div className="fixed inset-0 pointer-events-none">
                 <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-900/10 rounded-full blur-[120px]" />
                 <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-900/10 rounded-full blur-[120px]" />
-                {isEmergency && <div className="absolute inset-0 bg-rose-900/10 animate-pulse" />}
+                {isEmergency && <div className="absolute inset-0 bg-rose-900/10 " />}
             </div>
 
             {/* Секція хедеру */}
@@ -228,7 +228,7 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                 <div className="col-span-12 lg:col-span-8 space-y-8">
 
                     {/* Секція активних пропозицій */}
-                    <section className="bg-slate-900/40 backdrop-blur-md border border-white/5 rounded-[32px] overflow-hidden">
+                    <section className="bg-slate-900/40  border border-white/5 rounded-[32px] overflow-hidden">
                         <div className="p-6 border-b border-white/5 flex items-center justify-between bg-white/5">
                             <div className="flex items-center gap-3">
                                 <GitBranch className="text-blue-400" size={20} />
@@ -310,7 +310,7 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                                 className="grid grid-cols-2 gap-6"
                             >
                                 {/* результати цифрового двійника */}
-                                <div className="bg-slate-900/40 backdrop-blur-md border border-white/5 rounded-[32px] p-6">
+                                <div className="bg-slate-900/40  border border-white/5 rounded-[32px] p-6">
                                     <div className="flex items-center gap-3 mb-6">
                                         <Activity className="text-emerald-400" size={20} />
                                         <h3 className="text-sm font-bold text-white uppercase tracking-wider">Симуляція Цифрового Двійника</h3>
@@ -341,14 +341,14 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                                         </div>
                                     ) : (
                                         <div className="h-32 flex flex-col items-center justify-center text-slate-600 italic text-xs">
-                                            <Cpu className="mb-2 opacity-20 animate-pulse" />
+                                            <Cpu className="mb-2 opacity-20 " />
                                             Прогнозування впливу на систему...
                                         </div>
                                     )}
                                 </div>
 
                                 {/* результати суверенних дебатів */}
-                                <div className="bg-slate-900/40 backdrop-blur-md border border-white/5 rounded-[32px] p-6">
+                                <div className="bg-slate-900/40  border border-white/5 rounded-[32px] p-6">
                                     <div className="flex items-center gap-3 mb-6">
                                         <Scale className="text-amber-400" size={20} />
                                         <h3 className="text-sm font-bold text-white uppercase tracking-wider">Діалектичний Аналіз</h3>
@@ -377,7 +377,7 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                                         </div>
                                     ) : (
                                         <div className="h-32 flex flex-col items-center justify-center text-slate-600 italic text-xs">
-                                            <Users className="mb-2 opacity-20 animate-pulse" />
+                                            <Users className="mb-2 opacity-20 " />
                                             Очікування консенсусу агентів...
                                         </div>
                                     )}
@@ -400,12 +400,12 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                         <div className="space-y-6">
                             {/* Візуал червоної кнопки */}
                             <div className="relative aspect-square max-w-[200px] mx-auto group">
-                                <div className={`absolute inset-0 rounded-full blur-2xl opacity-20 transition-all ${isEmergency ? 'bg-rose-500 animate-pulse' : 'bg-indigo-500'}`} />
+                                <div className={`absolute inset-0 rounded-full blur-2xl opacity-20 transition-all ${isEmergency ? 'bg-rose-500 ' : 'bg-indigo-500'}`} />
                                 <motion.button
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
                                     onClick={() => setEmergencyModal(true)}
-                                    className={`relative z-10 w-full h-full rounded-full border-8 flex flex-col items-center justify-center gap-2 transition-all duration-500 ${isEmergency ? 'bg-rose-600 border-rose-400 shadow-[0_0_50px_rgba(244,63,94,0.4)]' : 'bg-slate-800 border-slate-700 shadow-xl'}`}
+                                    className={`relative z-10 w-full h-full rounded-full border-8 flex flex-col items-center justify-center gap-2 transition-all duration-500 ${isEmergency ? 'bg-rose-600 border-rose-400 ' : 'bg-slate-800 border-slate-700 shadow-xl'}`}
                                 >
                                     <Flame size={48} className={isEmergency ? 'text-white' : 'text-slate-500 opacity-30'} />
                                     <span className="text-[10px] font-black uppercase tracking-tighter">
@@ -445,7 +445,7 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                     </section>
 
                     {/* Монітор тіньового режиму */}
-                    <section className="bg-slate-900/40 backdrop-blur-md border border-white/5 rounded-[32px] p-6 relative">
+                    <section className="bg-slate-900/40  border border-white/5 rounded-[32px] p-6 relative">
                         <div className="absolute top-0 right-0 p-4 opacity-5">
                             <Fingerprint size={120} />
                         </div>
@@ -493,7 +493,7 @@ export const SovereignGovernanceDashboard: React.FC = () => {
             {/* Модальне вікно екстреної ситуації */}
             {emergencyModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-6 sm:p-0">
-                    <div className="absolute inset-0 bg-slate-950/90 backdrop-blur-xl" />
+                    <div className="absolute inset-0 bg-slate-950/90 " />
                     <motion.div
                         initial={{ scale: 0.9, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
@@ -542,7 +542,7 @@ export const SovereignGovernanceDashboard: React.FC = () => {
             {/* Модальне вікно імунітету */}
             {immunityModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-6 sm:p-0">
-                    <div className="absolute inset-0 bg-slate-950/90 backdrop-blur-xl" />
+                    <div className="absolute inset-0 bg-slate-950/90 " />
                     <motion.div
                         initial={{ scale: 0.9, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
@@ -602,7 +602,7 @@ export const SovereignGovernanceDashboard: React.FC = () => {
             {/* Модальне вікно скасування */}
             {overruleModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-6 sm:p-0">
-                    <div className="absolute inset-0 bg-slate-950/90 backdrop-blur-xl" />
+                    <div className="absolute inset-0 bg-slate-950/90 " />
                     <motion.div
                         initial={{ scale: 0.9, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}

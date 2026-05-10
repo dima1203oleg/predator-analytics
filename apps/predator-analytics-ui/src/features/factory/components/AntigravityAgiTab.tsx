@@ -162,7 +162,7 @@ const AgentCard = ({ agent, onClick }: { agent: AgentCardSnapshot; onClick?: () 
         <div className="flex items-center gap-2">
           {agent.isBusy ? (
             <span className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-rose-300">
-              <span className="h-1.5 w-1.5 rounded-full bg-rose-400 animate-pulse" />
+              <span className="h-1.5 w-1.5 rounded-full bg-rose-400 " />
               Активний
             </span>
           ) : (
@@ -492,7 +492,7 @@ export function AntigravityAgiTab() {
           <div className="flex items-center gap-2">
             {snapshot.isRunning && (
               <span className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-emerald-300">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
+                <span className="h-1.5 w-1.5  rounded-full bg-emerald-400" />
                 Онлайн
               </span>
             )}

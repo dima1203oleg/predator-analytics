@@ -107,9 +107,9 @@ const IntelligenceView: React.FC = () => {
                         title={
                             <div className="flex items-center gap-10">
                                 <div className="relative group">
-                                    <div className="absolute inset-0 bg-[#D4AF37]/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                                    <div className="absolute inset-0 bg-[#D4AF37]/20 blur-3xl rounded-full scale-150 " />
                                     <div className="relative p-7 bg-[#0a0a0a] border border-[#D4AF37]/40 rounded-[2.5rem] shadow-2xl">
-                                        <Brain size={42} className="text-[#D4AF37] drop-shadow-[0_0_20px_rgba(212,175,55,0.8)]" />
+                                        <Brain size={42} className="text-[#D4AF37] " />
                                     </div>
                                 </div>
                                 <div className="space-y-2">
@@ -159,7 +159,7 @@ const IntelligenceView: React.FC = () => {
                                     ОПТИМІЗУВАТИ_ЯДРО
                                 </button>
                                 <button className="p-5 bg-black/60 border border-white/10 rounded-2xl text-slate-500 hover:text-white transition-all">
-                                    <RadioTower size={22} className="animate-pulse text-[#D4AF37]" />
+                                    <RadioTower size={22} className=" text-[#D4AF37]" />
                                 </button>
                             </div>
                         }
@@ -224,14 +224,14 @@ const IntelligenceView: React.FC = () => {
                                 <div className="flex items-center justify-between mb-10 pb-8 border-b border-white/[0.04] relative z-20">
                                     <div className="flex items-center gap-6">
                                         <div className="p-4 rounded-2xl bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/20">
-                                            <Layers size={24} className="animate-pulse" />
+                                            <Layers size={24} className="" />
                                         </div>
                                         <div>
                                             <h3 className="text-xl font-black text-white italic uppercase tracking-tighter leading-none mb-1">СЕМАНТИЧНА ТА СТРАТЕГІЧНА МАТрИЦЯ</h3>
                                             <p className="text-[10px] font-bold text-slate-600 uppercase tracking-[0.3em]">VISUAL_INTELLIGENCE // TOPOLOGY_v58.2</p>
                                         </div>
                                     </div>
-                                    <div className="flex bg-white/[0.02] rounded-xl p-1.5 border border-white/5 backdrop-blur-3xl">
+                                    <div className="flex bg-white/[0.02] rounded-xl p-1.5 border border-white/5 ">
                                         <button 
                                             onClick={() => setActiveLayer('graph')}
                                             className={cn("px-6 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all italic", activeLayer === 'graph' ? 'bg-[#D4AF37] text-black shadow-lg shadow-[#D4AF37]/20' : 'text-slate-500 hover:text-slate-300')}
@@ -271,7 +271,7 @@ const IntelligenceView: React.FC = () => {
                                            <Database size={24} className="text-[#D4AF37]" />
                                            <h4 className="text-[14px] font-black text-white italic uppercase tracking-widest">ПОТОКИ ІНГЕСТІЇ</h4>
                                         </div>
-                                        <div className="w-2 h-2 rounded-full bg-[#D4AF37] animate-pulse" />
+                                        <div className="w-2 h-2 rounded-full bg-[#D4AF37] " />
                                      </div>
                                      <div className="h-[300px] overflow-y-auto no-scrollbar">
                                         <DatabasePipelineMonitor />
@@ -284,7 +284,7 @@ const IntelligenceView: React.FC = () => {
                                            <Terminal size={24} className="text-[#D4AF37]" />
                                            <h4 className="text-[14px] font-black text-white italic uppercase tracking-widest">КОГНІТИВНІ ОПЕ АЦІЇ</h4>
                                         </div>
-                                        <div className="w-2 h-2 rounded-full bg-[#D4AF37] animate-pulse" />
+                                        <div className="w-2 h-2 rounded-full bg-[#D4AF37] " />
                                      </div>
                                      <div className="space-y-6">
                                         <div className="p-6 rounded-2xl bg-white/[0.01] border border-white/[0.03] space-y-4">

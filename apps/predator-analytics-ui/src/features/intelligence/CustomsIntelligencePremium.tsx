@@ -95,7 +95,7 @@ export default function CustomsIntelligencePremium() {
             title={
               <div className="flex items-center gap-12">
                 <div className="relative group">
-                  <div className="absolute inset-0 bg-rose-500/20 blur-[80px] rounded-full scale-150 animate-pulse" />
+                  <div className="absolute inset-0 bg-rose-500/20 blur-[80px] rounded-full scale-150 " />
                   <div className="relative p-8 bg-black border-2 border-rose-500/40 rounded-[3rem] shadow-4xl transform -rotate-3 hover:rotate-0 transition-all duration-700">
                     <Crown size={48} className="text-rose-500 shadow-[0_0_30px_#e11d48]" />
                   </div>
@@ -266,7 +266,7 @@ export default function CustomsIntelligencePremium() {
 
                <div className="p-10 rounded-[4rem] bg-black border-2 border-white/[0.04] shadow-3xl text-center space-y-6">
                   <div className="mx-auto w-24 h-24 bg-rose-500/5 border border-rose-500/30 rounded-full flex items-center justify-center mb-4">
-                     <Lock className="text-rose-500 animate-pulse" size={40} />
+                     <Lock className="text-rose-500 " size={40} />
                   </div>
                   <h4 className="text-xl font-black text-white italic tracking-tighter uppercase">БЕЗПЕКА_ДАННИХ_S1</h4>
                   <p className="text-[10px] text-slate-700 uppercase tracking-widest leading-relaxed">ВЕСЬ АНАЛІЗПРОВОДИТЬСЯ В ІЗОЛЬОВАНОМУ КВАНТОВОМУ СЕ ЕДОВИЩІ PREDATOR QUANTUM</p>

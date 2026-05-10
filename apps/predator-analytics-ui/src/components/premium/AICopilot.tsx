@@ -292,7 +292,7 @@ export const Predator: React.FC = () => {
             onClick={() => setIsOpen(true)}
             className="fixed bottom-12 right-12 z-[100] w-24 h-24 rounded-[32px] bg-black border-2 border-rose-500/40 flex items-center justify-center group overflow-hidden shadow-3xl"
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-rose-500/20 to-rose-500/5 animate-pulse" />
+            <div className="absolute inset-0 bg-gradient-to-br from-rose-500/20 to-rose-500/5 " />
             <Brain className="w-12 h-12 text-rose-500 group-hover:scale-110 transition-transform relative z-10" strokeWidth={1.5} />
             <motion.div 
                className="absolute inset-0 border-2 border-rose-500/40 rounded-[32px]" 
@@ -311,7 +311,7 @@ export const Predator: React.FC = () => {
             exit={{ opacity: 0, scale: 0.9, y: 100 }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
             className={cn(
-              "fixed z-[150] bg-black/95 backdrop-blur-[40px] border-2 border-rose-500/20 shadow-[0_50px_150px_rgba(0,0,0,1)] overflow-hidden flex flex-col transition-all duration-700",
+              "fixed z-[150] bg-black/95 [40px] border-2 border-rose-500/20 shadow-[0_50px_150px_rgba(0,0,0,1)] overflow-hidden flex flex-col transition-all duration-700",
               isExpanded ? "inset-8 rounded-[4rem]" : "bottom-12 right-12 w-[520px] h-[850px] rounded-[3rem]"
             )}
           >
@@ -319,7 +319,7 @@ export const Predator: React.FC = () => {
             <div className="p-10 border-b border-rose-500/10 bg-gradient-to-r from-rose-500/5 via-transparent to-rose-500/5 flex items-center justify-between">
               <div className="flex items-center gap-6">
                 <div className="relative p-5 bg-rose-500/10 border border-rose-500/20 rounded-2xl shadow-xl">
-                  <Fingerprint className="w-10 h-10 text-rose-500 animate-pulse" />
+                  <Fingerprint className="w-10 h-10 text-rose-500 " />
                 </div>
                 <div>
                   <h3 className="text-3xl font-black text-white italic uppercase tracking-tighter flex items-center gap-3 hover-chromatic transition-all duration-300">
@@ -333,7 +333,7 @@ export const Predator: React.FC = () => {
                           ВУЗОЛ: {backendStatus.isOffline ? "ВІДНОВЛЕННЯ" : (backendStatus.activeFailover ? "РЕЗЕРВ_ZROK" : "ОСНОВНИЙ_КЛАСТЕР")}
                        </span>
                        {vramInfo && (
-                         <span className={cn("text-[8px] font-black px-2 py-0.5 rounded border", vramInfo.critical ? "border-rose-500 bg-rose-500/20 text-white animate-pulse" : "border-white/10 text-slate-400")}>
+                         <span className={cn("text-[8px] font-black px-2 py-0.5 rounded border", vramInfo.critical ? "border-rose-500 bg-rose-500/20 text-white " : "border-white/10 text-slate-400")}>
                            VRAM: {vramInfo.used_gb} / {vramInfo.total_gb} GB
                          </span>
                        )}
@@ -352,9 +352,9 @@ export const Predator: React.FC = () => {
             </div>
 
             {/* Node Status & RAM Guard — v63.0-ELITE */}
-            <div className="flex items-center gap-6 px-10 py-4 bg-white/[0.02] border-b border-rose-500/10 backdrop-blur-xl">
+            <div className="flex items-center gap-6 px-10 py-4 bg-white/[0.02] border-b border-rose-500/10 ">
               <div className="flex items-center gap-3">
-                <div className={`w-2.5 h-2.5 rounded-full animate-pulse shadow-lg ${nodeStatus === 'KAGGLE_RESERVE' ? 'bg-blue-400 shadow-blue-500/50' : 'bg-emerald-400 shadow-emerald-500/50'}`} />
+                <div className={`w-2.5 h-2.5 rounded-full  shadow-lg ${nodeStatus === 'KAGGLE_RESERVE' ? 'bg-blue-400 shadow-blue-500/50' : 'bg-emerald-400 shadow-emerald-500/50'}`} />
                 <span className="text-[10px] uppercase font-black tracking-[0.2em] text-white/40">
                   Active_Node: <span className="text-white/80">{nodeStatus === 'KAGGLE_RESERVE' ? 'Kaggle_Reserve_Node_01' : 'Sovereign_Primary_iMac'}</span>
                 </span>
@@ -390,7 +390,7 @@ export const Predator: React.FC = () => {
             <div className="flex-1 overflow-y-auto p-10 space-y-12 no-scrollbar relative">
                <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-40">
                   <NeuralPulse color="rgba(244, 63, 94, 0.08)" size={800} />
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-rose-600/5 blur-[120px] rounded-full animate-pulse" />
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-rose-600/5 blur-[120px] rounded-full " />
                </div>
                
                <div className="absolute top-0 right-0 p-20 opacity-[0.03] pointer-events-none group-hover:rotate-6 transition-transform duration-1000">
@@ -436,18 +436,18 @@ export const Predator: React.FC = () => {
                 <motion.div 
                     initial={{ opacity: 0, y: 30, scale: 0.95 }} 
                     animate={{ opacity: 1, y: 0, scale: 1 }} 
-                    className="p-12 bg-rose-950/20 backdrop-blur-xl border-2 border-rose-500/30 rounded-[3.5rem] relative overflow-hidden shadow-3xl group holo-shimmer"
+                    className="p-12 bg-rose-950/20  border-2 border-rose-500/30 rounded-[3.5rem] relative overflow-hidden shadow-3xl group holo-shimmer"
                 >
                   <div className="hud-corner-tl hud-corner-nexus hud-corner-rose opacity-40" />
                   <div className="hud-corner-tr hud-corner-nexus hud-corner-rose opacity-40" />
                   <div className="hud-corner-bl hud-corner-nexus hud-corner-rose opacity-40" />
                   <div className="hud-corner-br hud-corner-nexus hud-corner-rose opacity-40" />
                   <div className="absolute inset-0 bg-gradient-to-br from-rose-600/10 via-transparent to-transparent opacity-60" />
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/10 blur-3xl rounded-full -mr-10 -mt-10 animate-pulse" />
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/10 blur-3xl rounded-full -mr-10 -mt-10 " />
                   <div className="relative z-10">
                     <div className="flex items-center gap-6 mb-8">
                        <div className="relative">
-                          <Zap size={28} className="text-rose-500 animate-pulse relative z-10" />
+                          <Zap size={28} className="text-rose-500  relative z-10" />
                           <div className="absolute inset-0 bg-rose-500 blur-lg opacity-40 animate-ping" />
                        </div>
                        <div className="flex flex-col">
@@ -460,7 +460,7 @@ export const Predator: React.FC = () => {
                        {isStreaming && <motion.span animate={{ opacity: [1, 0, 1] }} transition={{ duration: 0.5, repeat: Infinity }} className="inline-block w-1.5 h-7 bg-rose-500 ml-2 align-middle shadow-[0_0_10px_#e11d48]" />}
                     </p>
                     <div className="mt-8 flex items-center gap-4 text-[9px] font-black text-rose-500/30 uppercase tracking-[0.4em] italic font-mono">
-                       <Activity size={12} className="animate-pulse" /> СИЛА_СИГНАЛУ: 99.8% // ШИФРОВАНИЙ_ЗВ'ЯЗОК_АКТИВНО
+                       <Activity size={12} className="" /> СИЛА_СИГНАЛУ: 99.8% // ШИФРОВАНИЙ_ЗВ'ЯЗОК_АКТИВНО
                     </div>
                   </div>
                 </motion.div>
@@ -475,7 +475,7 @@ export const Predator: React.FC = () => {
                   onClick={handleVoiceToggle} 
                   className={cn(
                     "p-8 rounded-[2.5rem] transition-all shadow-3xl flex items-center justify-center",
-                    isListening ? "bg-rose-600 text-white animate-pulse shadow-[0_0_30px_#e11d48]" : "bg-slate-900 border border-rose-500/20 text-rose-500 hover:border-rose-500/50 hover:text-white"
+                    isListening ? "bg-rose-600 text-white  shadow-[0_0_30px_#e11d48]" : "bg-slate-900 border border-rose-500/20 text-rose-500 hover:border-rose-500/50 hover:text-white"
                   )}
                 >
                   {isListening ? <Activity size={32} /> : <Mic size={32} />}
@@ -499,7 +499,7 @@ export const Predator: React.FC = () => {
                     whileHover={{ scale: 1.1, rotate: 5 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={() => handleSend()} 
-                    className="p-8 bg-rose-500 text-black rounded-[2.5rem] font-black shadow-[0_0_40px_rgba(225,29,72,0.4)] hover:shadow-[0_0_60px_rgba(225,29,72,0.6)] transition-all"
+                    className="p-8 bg-rose-500 text-black rounded-[2.5rem] font-black  hover: transition-all"
                 >
                   <Send size={32} />
                 </motion.button>

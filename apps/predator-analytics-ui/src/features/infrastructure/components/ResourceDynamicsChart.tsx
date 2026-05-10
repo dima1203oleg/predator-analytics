@@ -23,11 +23,11 @@ export const ResourceDynamicsChart: React.FC = () => {
     const CustomTooltip = ({ active, payload, label }: any) => {
         if (active && payload && payload.length) {
             return (
-                <div className="bg-[#050505]/95 border border-rose-500/20 p-3 rounded-xl backdrop-blur-xl shadow-2xl">
+                <div className="bg-[#050505]/95 border border-rose-500/20 p-3 rounded-xl  shadow-2xl">
                     <p className="text-[10px] font-black text-slate-500 mb-2 uppercase tracking-widest">{label}</p>
                     {payload.map((entry: any, index: number) => (
                         <div key={index} className="flex items-center gap-2 mb-1 last:mb-0">
-                            <div className="w-2 h-2 rounded-full shadow-[0_0_8px_rgba(225,29,72,0.4)]" style={{ backgroundColor: entry.color }} />
+                            <div className="w-2 h-2 rounded-full " style={{ backgroundColor: entry.color }} />
                             <span className="text-[10px] text-white font-black uppercase tracking-tighter">{entry.name}: {entry.value}%</span>
                         </div>
                     ))}

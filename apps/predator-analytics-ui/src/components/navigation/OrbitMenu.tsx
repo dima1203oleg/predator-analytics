@@ -27,7 +27,7 @@ const OrbitMenu: React.FC = () => {
         onMouseEnter={() => setIsOpen(true)}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
-        className="w-16 h-16 bg-slate-950 border border-white/20 rounded-full flex items-center justify-center shadow-[0_0_40px_rgba(37,99,235,0.3)] hover:border-blue-500/50 transition-all z-50 relative group overflow-hidden"
+        className="w-16 h-16 bg-slate-950 border border-white/20 rounded-full flex items-center justify-center  hover:border-blue-500/50 transition-all z-50 relative group overflow-hidden"
       >
         <div className="absolute inset-0 bg-blue-500/5 group-hover:bg-blue-500/10 transition-colors" />
         <Fingerprint className="text-blue-400 relative z-10" size={32} />
@@ -77,8 +77,8 @@ const OrbitMenu: React.FC = () => {
                     className="flex flex-col items-center group"
                   >
                     <div className={`p-4 bg-slate-950 border transition-all duration-300 rounded-3xl ${isActive
-                        ? 'border-blue-500/60 shadow-[0_0_30px_rgba(37,99,235,0.4)]'
-                        : 'border-white/10 group-hover:border-blue-500/50 group-hover:shadow-[0_0_20px_rgba(37,99,235,0.2)]'
+                        ? 'border-blue-500/60 '
+                        : 'border-white/10 group-hover:border-blue-500/50 group-hover:'
                       } ${item.color}`}>
                       {item.icon}
                     </div>
@@ -87,7 +87,7 @@ const OrbitMenu: React.FC = () => {
                       whileHover={{ opacity: 1, y: 0 }}
                       className="absolute -bottom-6 flex flex-col items-center"
                     >
-                      <span className="text-[9px] font-black uppercase tracking-[0.2em] text-white/70 whitespace-nowrap bg-black/80 px-2 py-1 rounded backdrop-blur-md border border-white/5 shadow-2xl">
+                      <span className="text-[9px] font-black uppercase tracking-[0.2em] text-white/70 whitespace-nowrap bg-black/80 px-2 py-1 rounded  border border-white/5 shadow-2xl">
                         {item.label}
                       </span>
                       <div className="w-1 h-1 bg-blue-500 rounded-full mt-1" />

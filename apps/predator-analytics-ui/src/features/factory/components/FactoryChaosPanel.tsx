@@ -52,9 +52,9 @@ export const FactoryChaosPanel = () => {
   };
 
   return (
-    <div className="mt-8 relative overflow-hidden p-8 rounded-[3rem] bg-black/40 border border-orange-500/20 backdrop-blur-md">
+    <div className="mt-8 relative overflow-hidden p-8 rounded-[3rem] bg-black/40 border border-orange-500/20 ">
       <div className="flex items-center gap-4 mb-8">
-        <div className="w-14 h-14 rounded-2xl bg-orange-500/10 border border-orange-500/30 flex items-center justify-center text-orange-500 shadow-[0_0_20px_rgba(249,115,22,0.2)]">
+        <div className="w-14 h-14 rounded-2xl bg-orange-500/10 border border-orange-500/30 flex items-center justify-center text-orange-500 ">
           <ShieldAlert size={28} />
         </div>
         <div>

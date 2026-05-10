@@ -72,7 +72,7 @@ export const OfflineBanner = () => {
                 animate={{ scale: 1 }}
                 onClick={() => setMinimized(false)}
                 title="Система офлайн - натисніть для деталей"
-                className="fixed top-6 left-1/2 -translate-x-1/2 z-[200] p-3 bg-amber-500/90 backdrop-blur-md rounded-full shadow-lg hover:bg-amber-500 transition-all"
+                className="fixed top-6 left-1/2 -translate-x-1/2 z-[200] p-3 bg-amber-500/90  rounded-full shadow-lg hover:bg-amber-500 transition-all"
             >
                 <WifiOff size={20} className="text-white" />
             </motion.button>
@@ -85,7 +85,7 @@ export const OfflineBanner = () => {
                 initial={{ y: -50, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: -50, opacity: 0 }}
-                className="fixed top-6 left-1/2 -translate-x-1/2 z-[200] w-80 max-w-[90vw] bg-slate-900/95 backdrop-blur-md border border-amber-500/30 rounded-2xl shadow-2xl overflow-hidden"
+                className="fixed top-6 left-1/2 -translate-x-1/2 z-[200] w-80 max-w-[90vw] bg-slate-900/95  border border-amber-500/30 rounded-2xl shadow-2xl overflow-hidden"
             >
                 {/* Header */}
                 <div className="flex items-center justify-between p-3 bg-amber-500/10 border-b border-amber-500/20">

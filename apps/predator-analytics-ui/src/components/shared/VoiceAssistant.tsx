@@ -100,13 +100,13 @@ export const VoiceAssistant: React.FC = () => {
             initial={{ opacity: 0, scale: 0.9, y: -10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: -10 }}
-            className="absolute top-14 right-0 w-80 bg-slate-900/95 backdrop-blur-2xl border border-emerald-500/30 rounded-2xl p-6 shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-[1001]"
+            className="absolute top-14 right-0 w-80 bg-slate-900/95  border border-emerald-500/30 rounded-2xl p-6 shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-[1001]"
           >
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <div className={cn(
                   "w-2 h-2 rounded-full",
-                  isRecording ? "bg-red-500 animate-pulse" : "bg-emerald-500"
+                  isRecording ? "bg-red-500 " : "bg-emerald-500"
                 )} />
                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400">
                   Predator Voice
@@ -166,15 +166,15 @@ export const VoiceAssistant: React.FC = () => {
         className={cn(
           "w-10 h-10 rounded-xl flex items-center justify-center transition-all border relative overflow-hidden group/voice",
           isOpen
-            ? "bg-emerald-500/20 border-emerald-500/50 shadow-[0_0_20px_rgba(16,185,129,0.2)]"
+            ? "bg-emerald-500/20 border-emerald-500/50 "
             : "bg-slate-900 border-white/10 hover:border-emerald-500/30"
         )}
       >
         <div className="absolute inset-0 bg-emerald-500/5 opacity-0 group-hover/voice:opacity-100 transition-opacity" />
         {isRecording ? (
-          <MicOff className="text-red-500 relative z-10 animate-pulse" size={18} />
+          <MicOff className="text-red-500 relative z-10 " size={18} />
         ) : isSpeaking ? (
-            <Volume2 className="text-emerald-400 relative z-10 animate-pulse" size={18} />
+            <Volume2 className="text-emerald-400 relative z-10 " size={18} />
         ) : (
           <Mic className={cn("relative z-10 transition-colors", isOpen ? "text-emerald-400" : "text-slate-400 group-hover/voice:text-white")} size={18} />
         )}

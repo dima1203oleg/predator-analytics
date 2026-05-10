@@ -163,7 +163,7 @@ export const ToasterProvider: React.FC = () => {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, x: 100, scale: 0.95 }}
               className={cn(
-                'pointer-events-auto min-w-[320px] max-w-[420px] p-4 rounded-2xl border backdrop-blur-xl shadow-2xl',
+                'pointer-events-auto min-w-[320px] max-w-[420px] p-4 rounded-2xl border  shadow-2xl',
                 style.colors
               )}
             >

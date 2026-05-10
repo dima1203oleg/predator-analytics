@@ -22,8 +22,8 @@ const TopologyNode: React.FC<NodeProps> = ({ label, type, status, description, s
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             className={cn(
-                "relative p-4 rounded-xl border backdrop-blur-md transition-all duration-500",
-                isActive ? "bg-emerald-500/10 border-emerald-500/50 shadow-[0_0_20px_rgba(16,185,129,0.2)]" : 
+                "relative p-4 rounded-xl border  transition-all duration-500",
+                isActive ? "bg-emerald-500/10 border-emerald-500/50 " : 
                 isOnline ? "bg-white/5 border-white/10" : "bg-rose-500/5 border-rose-500/30 opacity-60"
             )}
         >
@@ -48,7 +48,7 @@ const TopologyNode: React.FC<NodeProps> = ({ label, type, status, description, s
             <div className="absolute top-2 right-2 flex items-center gap-1.5">
                 <div className={cn(
                     "w-1.5 h-1.5 rounded-full shadow-[0_0_8px]",
-                    isActive ? "bg-emerald-500 animate-pulse shadow-emerald-500/50" : 
+                    isActive ? "bg-emerald-500  shadow-emerald-500/50" : 
                     isOnline ? "bg-emerald-500 shadow-emerald-500/50" : "bg-rose-600 shadow-rose-600/50"
                 )} />
                 <span className="text-[7px] font-black uppercase text-slate-500 tracking-widest">
@@ -63,7 +63,7 @@ const ConnectionLine: React.FC<{ active: boolean; label: string }> = ({ active, 
     <div className="relative flex-1 h-px bg-white/10 mx-2 flex items-center justify-center min-w-[40px]">
         {active && (
             <motion.div 
-                className="absolute inset-x-0 h-px bg-emerald-500/50 shadow-[0_0_10px_rgba(16,185,129,0.3)]"
+                className="absolute inset-x-0 h-px bg-emerald-500/50 "
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
                 transition={{ duration: 1, repeat: Infinity }}
@@ -107,7 +107,7 @@ export const ClusterTopology: React.FC = () => {
 
                 {/* Secure Gateway */}
                 <div className="flex flex-col items-center gap-1">
-                    <div className="p-3 rounded-full bg-slate-950 border border-rose-500/30 text-rose-500 shadow-[0_0_20px_rgba(225,29,72,0.2)]">
+                    <div className="p-3 rounded-full bg-slate-950 border border-rose-500/30 text-rose-500 ">
                         <Shield size={20} />
                     </div>
                 </div>

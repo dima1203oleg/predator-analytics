@@ -81,14 +81,14 @@ export default function WarRoomView() {
             title={
               <div className="flex items-center gap-8">
                 <div className="relative group">
-                  <div className="absolute inset-0 bg-rose-600/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                  <div className="absolute inset-0 bg-rose-600/20 blur-3xl rounded-full scale-150 " />
                   <div className="relative p-7 bg-black border-2 border-rose-500/40 rounded-[2.5rem] shadow-4xl transform -rotate-2 hover:rotate-0 transition-all">
-                    <Target size={48} className="text-rose-600 drop-shadow-[0_0_20px_#f43f5e]" />
+                    <Target size={48} className="text-rose-600 " />
                   </div>
                 </div>
                  <div>
                     <div className="flex items-center gap-4 mb-2">
-                      <span className={cn("w-1.5 h-1.5 rounded-full animate-pulse shadow-[0_0_10px_currentColor]", isOffline ? "bg-amber-500 text-amber-500" : "bg-rose-600 text-rose-600")} />
+                      <span className={cn("w-1.5 h-1.5 rounded-full  shadow-[0_0_10px_currentColor]", isOffline ? "bg-amber-500 text-amber-500" : "bg-rose-600 text-rose-600")} />
                       <span className={cn("text-[10px] font-black uppercase tracking-[0.8em] italic", isOffline ? "text-amber-500/80" : "text-rose-500/80")}>
                         {isOffline ? 'СУВЕРЕННИЙ_РЕЖИМ_НС' : 'ТАКТИЧНИЙ КОМАНДНИЙ ЦЕНТР'} · v63.0-ELITE
                       </span>
@@ -105,7 +105,7 @@ export default function WarRoomView() {
               { 
                 label: nodeSource, 
                 color: isOffline ? 'warning' : 'danger', 
-                icon: <Radio size={10} className={isOffline ? 'animate-pulse' : ''} /> 
+                icon: <Radio size={10} className={isOffline ? '' : ''} /> 
               },
             ]}
             stats={[
@@ -164,9 +164,9 @@ export default function WarRoomView() {
                          <div className="absolute inset-0 z-0 opacity-40 group-hover:opacity-100 transition-opacity duration-1000">
                             <CyberGlobe />
                          </div>
-                         <div className="absolute top-6 left-6 z-10 bg-black/80 px-5 py-2.5 rounded-2xl border border-amber-500/20 backdrop-blur-xl">
+                         <div className="absolute top-6 left-6 z-10 bg-black/80 px-5 py-2.5 rounded-2xl border border-amber-500/20 ">
                             <p className="text-[10px] font-black text-amber-500 uppercase italic tracking-widest flex items-center gap-3">
-                               <Satellite size={12} className="animate-pulse" /> ОРБІТАЛЬНА_ФАЗА: АКТИВНО
+                               <Satellite size={12} className="" /> ОРБІТАЛЬНА_ФАЗА: АКТИВНО
                             </p>
                          </div>
                       </div>
@@ -184,7 +184,7 @@ export default function WarRoomView() {
                                className="flex items-center justify-between p-7 rounded-[2.5rem] bg-white/[0.01] border-2 border-white/5 group hover:border-amber-500/30 transition-all cursor-crosshair shadow-2xl"
                             >
                                <div className="flex items-center gap-6">
-                                  <div className="w-4 h-4 rounded-full animate-pulse shadow-[0_0_12px_currentColor]" style={{ color: z.c, backgroundColor: z.c }} />
+                                  <div className="w-4 h-4 rounded-full  shadow-[0_0_12px_currentColor]" style={{ color: z.c, backgroundColor: z.c }} />
                                   <div className="text-left font-black italic">
                                      <p className="text-[15px] text-white uppercase tracking-tight">{z.zone}</p>
                                      <p className="text-[10px] text-slate-700 uppercase tracking-[0.2em] mt-1">{z.status}</p>
@@ -325,7 +325,7 @@ export default function WarRoomView() {
                    <div className="flex items-center justify-between mb-10 relative z-10">
                       <div className="flex items-center gap-4">
                          <div className="p-3 bg-rose-500/10 rounded-2xl">
-                            <Zap size={20} className="text-rose-500 animate-pulse" />
+                            <Zap size={20} className="text-rose-500 " />
                          </div>
                          <h3 className="text-[11px] font-black text-rose-500 uppercase tracking-[0.6em] italic">ШІ-ПРОГНОСТИКА ТА ЕЛІТНІ_АЛЕРТИ</h3>
                       </div>
@@ -337,8 +337,8 @@ export default function WarRoomView() {
                    <div className="flex-1 grid grid-cols-12 gap-12 relative z-10 overflow-hidden">
                       <div className="col-span-7 space-y-10 flex flex-col h-full">
                          <div className="flex items-center gap-8 mb-4">
-                            <div className="p-5 rounded-[2rem] bg-rose-500/10 text-rose-500 border-2 border-rose-500/30 shadow-[0_0_30px_rgba(244,63,94,0.2)]">
-                               <Radar size={32} className="animate-pulse" />
+                            <div className="p-5 rounded-[2rem] bg-rose-500/10 text-rose-500 border-2 border-rose-500/30 ">
+                               <Radar size={32} className="" />
                             </div>
                             <div>
                                <h4 className="text-4xl font-black text-white uppercase italic tracking-tighter leading-none mb-3 font-serif">СЦЕНАРІЙ: ОМЕГА-4</h4>
@@ -356,7 +356,7 @@ export default function WarRoomView() {
                                      <s.icon size={20} className="text-slate-800 group-hover/ic:text-rose-500 transition-colors" />
                                      <span className="text-[13px] font-black text-slate-700 uppercase tracking-tight italic group-hover/ic:text-slate-300 transition-colors">{s.t}</span>
                                   </div>
-                                  <span className={cn("text-[18px] font-black italic uppercase font-mono tracking-tighter", s.v === '92.4%' && "animate-pulse")} style={{ color: s.c }}>{s.v}</span>
+                                  <span className={cn("text-[18px] font-black italic uppercase font-mono tracking-tighter", s.v === '92.4%' && "")} style={{ color: s.c }}>{s.v}</span>
                                </div>
                             ))}
                          </div>

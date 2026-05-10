@@ -865,7 +865,7 @@ const ReportBuilderPage: React.FC = () => {
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
                                         exit={{ opacity: 0 }}
-                                        className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-6 bg-slate-950/90 p-10 backdrop-blur-2xl"
+                                        className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-6 bg-slate-950/90 p-10 "
                                     >
                                         <Loader2 size={42} className="animate-spin text-amber-300" />
                                         <div className="text-center">

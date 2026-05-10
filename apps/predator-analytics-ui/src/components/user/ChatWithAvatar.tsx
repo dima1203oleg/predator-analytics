@@ -118,7 +118,7 @@ export const ChatWithAvatar: React.FC = () => {
                 {/* Overlay Stats */}
                 <div className="absolute top-4 right-4 flex flex-col gap-2">
                     {lastResult?.ranking?.map((rank, i) => (
-                        <div key={i} className="bg-black/50 backdrop-blur-sm border border-slate-700 px-3 py-1 rounded-full text-[10px] text-slate-300 flex items-center gap-2">
+                        <div key={i} className="bg-black/50  border border-slate-700 px-3 py-1 rounded-full text-[10px] text-slate-300 flex items-center gap-2">
                             <BrainCircuit size={12} className="text-purple-400" />
                             {rank.model}: {rank.score}%
                         </div>
@@ -143,7 +143,7 @@ export const ChatWithAvatar: React.FC = () => {
                         </div>
                     ))}
                     {councilStatus === 'PROCESSING' && (
-                        <div className="flex items-center gap-2 text-xs text-purple-400 p-2 animate-pulse">
+                        <div className="flex items-center gap-2 text-xs text-purple-400 p-2 ">
                             <Activity size={14} />  ада обговорює рішення...
                         </div>
                     )}
@@ -157,7 +157,7 @@ export const ChatWithAvatar: React.FC = () => {
                             onClick={toggleVoice}
                             className={`p-3 rounded-lg transition-all active:scale-95 ${
                                 voiceStatus === 'LISTENING'
-                                ? 'text-white bg-red-500 shadow-[0_0_15px_red] animate-pulse'
+                                ? 'text-white bg-red-500 shadow-[0_0_15px_red] '
                                 : 'text-slate-400 hover:text-white hover:bg-slate-800'
                             }`}
                         >

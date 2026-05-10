@@ -77,7 +77,7 @@ const PipelineManagerView: React.FC = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 relative z-10">
                 {/* 1. Full Pipeline Run */}
-                <Card className="bg-slate-925/60 border-slate-800/50 backdrop-blur-xl">
+                <Card className="bg-slate-925/60 border-slate-800/50 ">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                             <Database className="w-5 h-5 text-emerald-400" />
@@ -130,7 +130,7 @@ const PipelineManagerView: React.FC = () => {
                 </Card>
 
                 {/* 2. Targeted Rescore */}
-                <Card className="bg-slate-925/60 border-slate-800/50 backdrop-blur-xl">
+                <Card className="bg-slate-925/60 border-slate-800/50 ">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                             <Target className="w-5 h-5 text-amber-400" />

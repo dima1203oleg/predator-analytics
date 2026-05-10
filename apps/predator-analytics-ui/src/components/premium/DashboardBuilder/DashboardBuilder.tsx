@@ -255,7 +255,7 @@ export const DashboardBuilder: React.FC<DashboardBuilderProps> = ({
       />
 
       {/* Toolbar */}
-      <div className="px-6 py-4 flex items-center justify-between gap-4 border-b border-white/5 bg-black/40 backdrop-blur-xl">
+      <div className="px-6 py-4 flex items-center justify-between gap-4 border-b border-white/5 bg-black/40 ">
         {/* Left side */}
         <div className="flex items-center gap-3">
           <button
@@ -588,7 +588,7 @@ export const DashboardBuilder: React.FC<DashboardBuilderProps> = ({
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="p-4 bg-gradient-to-r from-amber-900/90 to-orange-900/90 border border-amber-500/30 rounded-2xl backdrop-blur-xl shadow-2xl flex items-center gap-4"
+            className="p-4 bg-gradient-to-r from-amber-900/90 to-orange-900/90 border border-amber-500/30 rounded-2xl  shadow-2xl flex items-center gap-4"
           >
             <div className="p-2 bg-amber-500/20 rounded-full">
               <Crown className="w-6 h-6 text-amber-400" />

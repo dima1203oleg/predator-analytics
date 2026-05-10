@@ -128,9 +128,9 @@ export default function CouncilJudgeView() {
         
         <div className="flex flex-col md:flex-row items-center gap-12 relative z-10">
            <div className="relative group">
-              <div className="absolute inset-0 bg-rose-500/20 blur-[50px] rounded-full scale-150 animate-pulse" />
+              <div className="absolute inset-0 bg-rose-500/20 blur-[50px] rounded-full scale-150 " />
               <div className="relative w-32 h-32 bg-slate-900 border-2 border-rose-500 rounded-[2.5rem] flex items-center justify-center panel-3d shadow-4xl transform group-hover:rotate-12 transition-transform duration-700">
-                 <ShieldCheck size={64} className="text-rose-500 drop-shadow-[0_0_20px_rgba(225,29,72,0.8)]" />
+                 <ShieldCheck size={64} className="text-rose-500 " />
               </div>
            </div>
 

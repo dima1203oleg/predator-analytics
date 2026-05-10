@@ -79,7 +79,7 @@ export const PriceAuditorTab: React.FC = () => {
     return (
       <div className="flex flex-col items-center justify-center h-[500px] gap-4">
         <Loader2 className="w-12 h-12 text-[#D4AF37] animate-spin" />
-        <p className="text-[#D4AF37] font-black uppercase tracking-widest text-xs animate-pulse">
+        <p className="text-[#D4AF37] font-black uppercase tracking-widest text-xs ">
           АНАЛІЗ ЦІНОВИХПРОПОЗИЦІЙ...
         </p>
       </div>

@@ -121,7 +121,7 @@ const ConnectorCard: React.FC<{ connector: Connector; onSync: (id: string) => vo
                 <Badge className={cn(
                     "font-black text-[9px] px-3 py-1 italic tracking-widest uppercase",
                     connector.status === 'active' ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/10" :
-                    connector.status === 'syncing' ? "bg-blue-500/20 text-blue-400 border border-blue-500/10 animate-pulse" :
+                    connector.status === 'syncing' ? "bg-blue-500/20 text-blue-400 border border-blue-500/10 " :
                     connector.status === 'error' ? "bg-amber-500/20 text-amber-400 border border-amber-500/10" :
                     "bg-slate-800 text-slate-500 border border-white/5"
                 )}>
@@ -171,7 +171,7 @@ const ParsersView: React.FC = () => {
                                 <div className="absolute inset-0 bg-emerald-500/20 blur-[60px] rounded-full scale-150 opacity-20" />
                                 <div className="relative p-5 bg-slate-900 border border-white/5 rounded-[28px] panel-3d shadow-2xl overflow-hidden">
                                      <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent pointer-events-none" />
-                                    <Cloud size={36} className="text-emerald-400 drop-shadow-[0_0_15px_rgba(16,185,129,0.8)]" />
+                                    <Cloud size={36} className="text-emerald-400 " />
                                 </div>
                             </div>
                             <div>
@@ -248,10 +248,10 @@ const ParsersView: React.FC = () => {
                 <TacticalCard variant="holographic" title="Індекс Здоров'я Пайплайну (Pipeline Health)" className="p-10 bg-slate-950/40 border-white/5 rounded-[60px] panel-3d shadow-2xl">
                     <div className="flex flex-col lg:flex-row gap-12 items-center">
                         <div className="w-full lg:w-1/3 relative flex items-center justify-center">
-                            <div className="absolute inset-0 bg-emerald-500/10 blur-[80px] rounded-full scale-150 animate-pulse" />
+                            <div className="absolute inset-0 bg-emerald-500/10 blur-[80px] rounded-full scale-150 " />
                              <div className="relative text-center">
                                 <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">HEALTH_SCORE</p>
-                                <p className="text-7xl font-black text-emerald-400 italic tracking-tighter drop-shadow-[0_0_20px_rgba(16,185,129,0.5)]">98.2<span className="text-2xl text-slate-700">%</span></p>
+                                <p className="text-7xl font-black text-emerald-400 italic tracking-tighter ">98.2<span className="text-2xl text-slate-700">%</span></p>
                             </div>
                         </div>
                         <div className="flex-1 w-full grid grid-cols-1 md:grid-cols-3 gap-8">

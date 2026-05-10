@@ -66,7 +66,7 @@ export const DailyGazette = ({ onAskAI }: { onAskAI: (query: string) => void }) 
         switch(sentiment) {
             case 'positive': return <TrendingUp size={14} className="text-green-500" />;
             case 'negative': return <TrendingDown size={14} className="text-orange-500" />;
-            case 'critical': return <Sparkles size={14} className="text-red-500 animate-pulse" />;
+            case 'critical': return <Sparkles size={14} className="text-red-500 " />;
             default: return <Minus size={14} className="text-slate-500" />;
         }
     };
@@ -74,7 +74,7 @@ export const DailyGazette = ({ onAskAI }: { onAskAI: (query: string) => void }) 
     if (isGenerating) {
         return (
             <div className="h-[400px] flex flex-col items-center justify-center bg-slate-950/80 border border-slate-800 rounded-xl relative  shadow-2xl panel-3d">
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_#f59e0b15_0%,_transparent_70%)] animate-pulse"></div>
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_#f59e0b15_0%,_transparent_70%)] "></div>
                 <Newspaper size={48} className="text-amber-500 mb-6 animate-bounce icon-3d-amber" />
                 <h2 className="text-xl font-bold text-white mb-2 font-display tracking-widest text-center text-glow-amber">PREDATOR INSIDER</h2>
                 <p className="text-xs text-slate-400 font-mono flex items-center gap-2">
@@ -141,7 +141,7 @@ export const DailyGazette = ({ onAskAI }: { onAskAI: (query: string) => void }) 
                 <div className="flex justify-between items-center relative z-10">
                     <div className="text-left">
                         <div className="text-[9px] text-amber-500/80 font-bold uppercase tracking-[0.3em] mb-1 flex items-center gap-2">
-                            <span className="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></span>
+                            <span className="w-2 h-2 bg-amber-500 rounded-full "></span>
                             AI BRIEFING
                         </div>
                         <h1 className="text-2xl md:text-3xl font-serif font-black text-slate-100 tracking-tight leading-none text-glow-amber">

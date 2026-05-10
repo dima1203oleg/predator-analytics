@@ -58,7 +58,7 @@ const GaugeBar: React.FC<GaugeBarProps> = ({
       <div className="flex justify-between items-center text-[9px] font-black tracking-widest italic uppercase">
         <span className="text-white/20">{label}</span>
         <span className={cn(
-          "font-black italic drop-shadow-[0_0_8px_currentColor]",
+          "font-black italic ",
           isDanger ? "text-rose-500" : isWarning ? "text-amber-400" : "text-emerald-500/80"
         )}>{value}{unit}</span>
       </div>
@@ -69,9 +69,9 @@ const GaugeBar: React.FC<GaugeBarProps> = ({
           transition={{ duration: 1.5, ease: "circOut" }}
           className={cn(
             'h-full rounded-full relative z-10',
-            isDanger ? 'bg-gradient-to-r from-rose-600 to-rose-400 shadow-[0_0_15px_rgba(225,29,72,0.8)]' : 
-            isWarning ? 'bg-gradient-to-r from-amber-600 to-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.6)]' : 
-            'bg-gradient-to-r from-emerald-600 to-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.5)]'
+            isDanger ? 'bg-gradient-to-r from-rose-600 to-rose-400 ' : 
+            isWarning ? 'bg-gradient-to-r from-amber-600 to-amber-400 ' : 
+            'bg-gradient-to-r from-emerald-600 to-emerald-400 '
           )}
         />
         <div className="absolute inset-0 flex justify-between px-2 opacity-30 pointer-events-none">
@@ -86,12 +86,12 @@ const StatusBadge: React.FC<{ status: NodeMetric['status'] }> = ({ status }) => 
   const map = {
     online:   { label: 'АКТИВНИЙ', cls: 'text-emerald-500 border-emerald-500/20 bg-emerald-500/5' },
     offline:  { label: 'ОФЛАЙН', cls: 'text-white/20 border-white/10 bg-white/5' },
-    degraded: { label: 'КРИТИЧНО', cls: 'text-rose-500 border-rose-500/20 bg-rose-500/5 animate-pulse' },
+    degraded: { label: 'КРИТИЧНО', cls: 'text-rose-500 border-rose-500/20 bg-rose-500/5 ' },
   };
   const { label, cls } = map[status];
   return (
     <div className={cn('text-[8px] font-black px-3 py-1 rounded-lg border-2 tracking-[0.2em] flex items-center gap-2 italic shadow-2xl', cls)}>
-      <div className={cn("w-1.5 h-1.5 rounded-full", status === 'online' ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,1)]' : 'bg-current')} />
+      <div className={cn("w-1.5 h-1.5 rounded-full", status === 'online' ? 'bg-emerald-500 ' : 'bg-current')} />
       {label}
     </div>
   );
@@ -116,7 +116,7 @@ const NodeCard: React.FC<{ node: NodeMetric }> = ({ node }) => {
       animate={{ opacity: 1, scale: 1 }}
       whileHover={{ y: -8, scale: 1.02 }}
       className={cn(
-        'p-8 rounded-[2.5rem] border-2 relative overflow-hidden group transition-all duration-700 glass-wraith backdrop-blur-3xl shadow-4xl',
+        'p-8 rounded-[2.5rem] border-2 relative overflow-hidden group transition-all duration-700 glass-wraith  shadow-4xl',
         node.status === 'online'   ? 'border-white/5 hover:border-rose-500/40' :
         node.status === 'degraded' ? 'border-rose-500/30 bg-rose-500/5' :
                                      'border-white/5 opacity-40 grayscale bg-black/40',
@@ -140,7 +140,7 @@ const NodeCard: React.FC<{ node: NodeMetric }> = ({ node }) => {
           </div>
           <div className="flex items-center gap-4 pl-1">
             <span className="text-[9px] font-black font-mono text-white/20 uppercase tracking-[0.4em] italic">{localizedRole}</span>
-            <div className="w-1.5 h-1.5 rounded-full bg-rose-500/30 shadow-[0_0_5px_rgba(225,29,72,0.5)]" />
+            <div className="w-1.5 h-1.5 rounded-full bg-rose-500/30 " />
             <span className="text-[10px] font-black font-mono text-white/40 group-hover:text-rose-500/60 transition-colors uppercase tracking-widest">{node.ip || '192.168.0.x'}</span>
           </div>
         </div>
@@ -166,7 +166,7 @@ const NodeCard: React.FC<{ node: NodeMetric }> = ({ node }) => {
                 <span className="text-[8px] font-black text-white/20 uppercase tracking-widest italic">ТЕМП.</span>
                 <div className="flex items-center gap-2">
                    <Thermometer size={14} className="text-rose-500/40 group-hover/stat-icon:text-rose-500 transition-colors" />
-                   <span className={cn("text-[11px] font-black font-mono italic tracking-tighter", (node.temp || 0) > 75 ? "text-rose-500 animate-pulse" : "text-emerald-500/80")}>
+                   <span className={cn("text-[11px] font-black font-mono italic tracking-tighter", (node.temp || 0) > 75 ? "text-rose-500 " : "text-emerald-500/80")}>
                      {node.temp}°C
                    </span>
                 </div>
@@ -199,7 +199,7 @@ const svcColumns: VirtualColumn<ServiceStatus>[] = [
     key: 'name', label: 'РЕЄСТР_ЦЕНТРАЛЬНИХ_СЕРВІСІВ', width: '250px', mono: true,
     render: (v) => (
       <div className="flex items-center gap-4">
-        <div className="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_10px_rgba(225,29,72,0.8)]" />
+        <div className="w-2 h-2 rounded-full bg-rose-500 " />
         <span className="text-white font-black tracking-tight uppercase italic glint-elite">{String(v)}</span>
       </div>
     ),
@@ -211,7 +211,7 @@ const svcColumns: VirtualColumn<ServiceStatus>[] = [
       const label = v === 'ok' ? 'ОПТИМАЛЬНО' : v === 'warn' ? 'УВАГА' : 'ЗБІЙ';
       return (
         <div className={cn('text-[10px] font-black tracking-[0.3em] flex items-center gap-3 italic uppercase', color)}>
-          <div className={cn("w-2 h-2 rounded-full animate-pulse shadow-[0_0_8px_currentColor]", v === 'ok' ? 'bg-emerald-500' : 'bg-current')} />
+          <div className={cn("w-2 h-2 rounded-full  shadow-[0_0_8px_currentColor]", v === 'ok' ? 'bg-emerald-500' : 'bg-current')} />
           {label}
         </div>
       );
@@ -242,20 +242,20 @@ const getServiceStatus = (row: ServiceStatus): RowStatus =>
 
 const LiveNetworkTopology: React.FC<{ nodes: NodeMetric[] }> = ({ nodes }) => {
   return (
-    <div className="relative w-full h-[350px] bg-black/60 backdrop-blur-3xl rounded-[3rem] border-2 border-white/5 overflow-hidden flex items-center justify-center shadow-4xl mb-12">
+    <div className="relative w-full h-[350px] bg-black/60  rounded-[3rem] border-2 border-white/5 overflow-hidden flex items-center justify-center shadow-4xl mb-12">
       <div className="absolute inset-0 bg-cyber-grid opacity-[0.05]" />
       
       {/* Central Core */}
       <div className="absolute z-20 flex flex-col items-center justify-center">
         <div className="relative flex items-center justify-center">
-          <div className="absolute inset-0 bg-rose-500/30 blur-[60px] rounded-full scale-150 animate-pulse" />
+          <div className="absolute inset-0 bg-rose-500/30 blur-[60px] rounded-full scale-150 " />
           <motion.div 
             animate={{ rotate: 360 }}
             transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
             className="absolute inset-0 border-2 border-dashed border-rose-500/20 rounded-full scale-150"
           />
-          <div className="w-24 h-24 bg-gradient-to-br from-rose-700 via-rose-500 to-rose-800 rounded-full flex items-center justify-center shadow-[0_0_50px_rgba(225,29,72,1)] border-2 border-rose-300/30 relative">
-            <Shield size={40} className="text-white drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]" />
+          <div className="w-24 h-24 bg-gradient-to-br from-rose-700 via-rose-500 to-rose-800 rounded-full flex items-center justify-center  border-2 border-rose-300/30 relative">
+            <Shield size={40} className="text-white " />
           </div>
         </div>
         <span className="mt-6 text-[12px] font-black text-rose-500 uppercase tracking-[0.5em] italic glint-elite">PREDATOR_CORE_HUB</span>
@@ -283,7 +283,7 @@ const LiveNetworkTopology: React.FC<{ nodes: NodeMetric[] }> = ({ nodes }) => {
                 stroke={isOnline ? 'rgba(225,29,72,0.6)' : 'rgba(255,255,255,0.05)'} 
                 strokeWidth="2"
                 strokeDasharray={isOnline ? "6 6" : "none"}
-                className={isOnline ? "animate-pulse" : ""}
+                className={isOnline ? "" : ""}
               />
             </svg>
             
@@ -302,7 +302,7 @@ const LiveNetworkTopology: React.FC<{ nodes: NodeMetric[] }> = ({ nodes }) => {
                 "w-14 h-14 rounded-2xl flex items-center justify-center border-2 shadow-4xl relative transition-all duration-500 group-hover:scale-125 group-hover:rotate-6",
                 isOnline ? "bg-black/90 border-rose-500/40 shadow-rose-500/20" : "bg-black/40 border-white/5 opacity-40"
               )}>
-                {isOnline && <div className="absolute inset-0 bg-rose-500/20 rounded-2xl blur-xl animate-pulse" />}
+                {isOnline && <div className="absolute inset-0 bg-rose-500/20 rounded-2xl blur-xl " />}
                 <Server size={24} className={isOnline ? "text-rose-500" : "text-white/10"} />
               </div>
               <div className="mt-4 absolute top-full flex flex-col items-center opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none w-max bg-black/90 border-2 border-white/5 p-4 rounded-2xl z-30 shadow-4xl transform translate-y-2 group-hover:translate-y-0">
@@ -342,11 +342,11 @@ export const InfraTelemetryTab: React.FC = () => {
           <motion.div 
             animate={{ rotate: 360 }}
             transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-            className="w-24 h-24 border-2 border-rose-500/20 rounded-full border-t-rose-500 shadow-[0_0_30px_rgba(225,29,72,0.3)]"
+            className="w-24 h-24 border-2 border-rose-500/20 rounded-full border-t-rose-500 "
           />
-          <Activity className="absolute inset-0 m-auto w-8 h-8 text-rose-500 animate-pulse" />
+          <Activity className="absolute inset-0 m-auto w-8 h-8 text-rose-500 " />
         </div>
-        <div className="text-[14px] font-black font-mono uppercase tracking-[0.6em] animate-pulse italic text-rose-500/60">ЗЧИТУВАННЯ_ТЕЛЕМЕТРІЇ_ЯДРА...</div>
+        <div className="text-[14px] font-black font-mono uppercase tracking-[0.6em]  italic text-rose-500/60">ЗЧИТУВАННЯ_ТЕЛЕМЕТРІЇ_ЯДРА...</div>
       </div>
     );
   }
@@ -356,7 +356,7 @@ export const InfraTelemetryTab: React.FC = () => {
       <div className="flex flex-col items-center justify-center h-[700px] p-24 text-center m-12 relative overflow-hidden">
         <div className="absolute inset-0 bg-rose-500/[0.02] blur-[100px] pointer-events-none" />
         <div className="relative z-10 flex flex-col items-center">
-          <div className="w-20 h-20 rounded-2xl bg-rose-500/10 flex items-center justify-center mb-8 border border-rose-500/20 shadow-[0_0_30px_rgba(225,29,72,0.1)]">
+          <div className="w-20 h-20 rounded-2xl bg-rose-500/10 flex items-center justify-center mb-8 border border-rose-500/20 ">
             <RefreshCw size={32} className="text-rose-500/60 animate-spin-slow" />
           </div>
           <div className="text-2xl font-black uppercase tracking-tighter text-white/80 mb-4 italic">
@@ -372,7 +372,7 @@ export const InfraTelemetryTab: React.FC = () => {
             >
               ПЕРЕЗАВАНТАЖИТИ
             </button>
-            <div className="px-8 py-3 bg-rose-500/10 border border-rose-500/20 text-rose-500/60 text-[9px] font-black uppercase tracking-[0.3em] rounded-lg animate-pulse italic">
+            <div className="px-8 py-3 bg-rose-500/10 border border-rose-500/20 text-rose-500/60 text-[9px] font-black uppercase tracking-[0.3em] rounded-lg  italic">
               ОЧІКУВАННЯ_API...
             </div>
           </div>
@@ -398,7 +398,7 @@ export const InfraTelemetryTab: React.FC = () => {
           </div>
           <div className="flex items-center gap-8 text-[11px] font-black font-mono text-white/30 tracking-[0.2em] uppercase italic">
             <div className="flex items-center gap-3">
-              <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_15px_rgba(16,185,129,0.8)]" />
+              <div className="w-2.5 h-2.5 rounded-full bg-emerald-500  " />
               <span className="text-emerald-500/80">АКТИВНА_СИНХРОНІЗАЦІЯ_ВУЗЛІВ</span>
             </div>
             <span className="opacity-20">•</span>
@@ -415,7 +415,7 @@ export const InfraTelemetryTab: React.FC = () => {
         </div>
 
         {/* Routing Indicator Badge */}
-        <div className="flex items-center gap-6 bg-black/60 backdrop-blur-3xl p-6 rounded-[2rem] border-2 border-white/5 shadow-4xl group">
+        <div className="flex items-center gap-6 bg-black/60  p-6 rounded-[2rem] border-2 border-white/5 shadow-4xl group">
            <div className="flex flex-col items-end gap-1">
               <span className="text-[9px] font-black font-mono text-white/20 uppercase tracking-[0.4em] italic">СТРАТЕГІЯ_МАРШРУТИЗАЦІЇ</span>
               <span className="text-[12px] font-black text-white/60 italic uppercase tracking-tighter group-hover:text-rose-500 transition-colors">{nodeSource}</span>
@@ -463,7 +463,7 @@ export const InfraTelemetryTab: React.FC = () => {
               <span className="text-[10px] font-black font-mono text-white/20 uppercase tracking-[0.4em] mb-4 italic group-hover:text-rose-500/40 transition-colors">{stat.label}</span>
               <div className="flex items-baseline gap-4">
                 <span className="text-4xl font-black text-white italic tracking-tighter glint-elite">{stat.value}</span>
-                {stat.color === 'text-emerald-500' && <span className="text-[9px] text-emerald-500 font-black animate-pulse tracking-widest italic uppercase">SECURE</span>}
+                {stat.color === 'text-emerald-500' && <span className="text-[9px] text-emerald-500 font-black  tracking-widest italic uppercase">SECURE</span>}
               </div>
               <div className="text-[9px] font-black font-mono text-white/10 mt-6 uppercase tracking-[0.2em] italic group-hover:text-rose-500/60 transition-colors">{stat.sub}</div>
             </div>
@@ -474,10 +474,10 @@ export const InfraTelemetryTab: React.FC = () => {
 
             <div className={cn(
               "absolute bottom-0 left-0 right-0 h-[3px] opacity-0 group-hover:opacity-100 transition-all duration-700",
-              stat.color === 'text-rose-500' ? "bg-rose-500/50 shadow-[0_0_20px_rgba(225,29,72,0.6)]" : 
-              stat.color === 'text-sky-500' ? "bg-sky-500/50 shadow-[0_0_20px_rgba(14,165,233,0.6)]" : 
-              stat.color === 'text-emerald-500' ? "bg-emerald-500/50 shadow-[0_0_20px_rgba(16,185,129,0.6)]" : 
-              "bg-amber-500/50 shadow-[0_0_20px_rgba(245,158,11,0.6)]"
+              stat.color === 'text-rose-500' ? "bg-rose-500/50 " : 
+              stat.color === 'text-sky-500' ? "bg-sky-500/50 " : 
+              stat.color === 'text-emerald-500' ? "bg-emerald-500/50 " : 
+              "bg-amber-500/50 "
             )} />
           </motion.div>
         ))}
@@ -506,13 +506,13 @@ export const InfraTelemetryTab: React.FC = () => {
           <div className="flex flex-col items-center gap-3">
             <span className="text-2xl font-black text-white/50 uppercase tracking-[0.4em] italic glint-elite">ЯДРО_ЕКОСИСТЕМИ & СЕРВІСИ</span>
             <div className="flex items-center gap-4">
-               <div className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse shadow-[0_0_15px_rgba(225,29,72,1)]" />
+               <div className="w-2.5 h-2.5 rounded-full bg-rose-500  " />
                <span className="text-[10px] font-black font-mono text-rose-500/60 uppercase tracking-[0.3em] font-black italic">ВЕРИФІКОВАНО_ЦІЛІСНІСТЬ_АРХІТЕКТУРИ_ELITE</span>
             </div>
           </div>
           <div className="h-[2px] flex-1 bg-gradient-to-l from-transparent via-white/10 to-transparent" />
         </div>
-        <div className="glass-wraith border-2 border-white/5 rounded-[3.5rem] overflow-hidden backdrop-blur-3xl shadow-4xl relative p-4">
+        <div className="glass-wraith border-2 border-white/5 rounded-[3.5rem] overflow-hidden  shadow-4xl relative p-4">
           <div className="absolute inset-0 bg-cyber-grid opacity-[0.03] pointer-events-none" />
           <VirtualTable
             rows={services}

@@ -105,21 +105,21 @@ const SovereignETLMonitor: React.FC<SovereignETLMonitorProps> = ({ status }) => 
   };
 
   return (
-    <div className="relative group p-6 rounded-2xl bg-slate-900/40 border border-slate-800 backdrop-blur-xl overflow-hidden shadow-2xl">
+    <div className="relative group p-6 rounded-2xl bg-slate-900/40 border border-slate-800  overflow-hidden shadow-2xl">
       {/* Background Glow */}
       <div className="absolute -top-24 -left-24 w-48 h-48 bg-cyan-500/10 rounded-full blur-3xl group-hover:bg-cyan-500/20 transition-all duration-700" />
 
       <div className="relative flex items-center justify-between mb-8">
         <div>
           <h3 className="text-xl font-bold text-white flex items-center gap-2 tracking-tight">
-            <DbIcon className="w-6 h-6 text-cyan-400 animate-pulse" />
+            <DbIcon className="w-6 h-6 text-cyan-400 " />
             SOVEREIGN ETL REGISTRY
           </h3>
           <p className="text-slate-400 text-xs mt-1 font-mono uppercase tracking-widest">
             Cross-Node Migration Protocol v3.2
           </p>
         </div>
-        <div className="px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-[10px] text-cyan-400 font-bold uppercase tracking-tighter animate-pulse">
+        <div className="px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-[10px] text-cyan-400 font-bold uppercase tracking-tighter ">
           Live Stream
         </div>
       </div>

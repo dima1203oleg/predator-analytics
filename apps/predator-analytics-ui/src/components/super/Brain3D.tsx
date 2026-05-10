@@ -186,7 +186,7 @@ const CouncilMember: React.FC<{
             {/* Holographic Info Card (Visible on Focus/Hover) */}
             {(isFocused || hovered) && (
                 <Html position={[0, 1.5, 0]} center distanceFactor={8} zIndexRange={[100, 0]}>
-                    <div className="bg-slate-900/90 border border-blue-500/50 p-2 rounded text-white text-[10px] w-32 backdrop-blur-md shadow-[0_0_20px_rgba(59,130,246,0.5)] font-mono pointer-events-none select-none transform transition-all duration-200">
+                    <div className="bg-slate-900/90 border border-blue-500/50 p-2 rounded text-white text-[10px] w-32   font-mono pointer-events-none select-none transform transition-all duration-200">
                         <div className="font-bold text-blue-400 mb-1">{node.name}</div>
                         <div className="flex justify-between">
                             <span>Load:</span>

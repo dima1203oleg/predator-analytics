@@ -91,7 +91,7 @@ export const RealtimeMetricsWidget: React.FC<RealtimeMetricsWidgetProps> = ({
 
   return (
     <div className={cn(
-      "bg-slate-950/80 border border-white/10 rounded-[24px] p-6 backdrop-blur-xl",
+      "bg-slate-950/80 border border-white/10 rounded-[24px] p-6 ",
       className
     )}>
       {/* Header */}
@@ -139,7 +139,7 @@ export const RealtimeMetricsWidget: React.FC<RealtimeMetricsWidgetProps> = ({
       {isLoading && !metrics && (
         <div className="grid grid-cols-3 gap-4">
           {[1, 2, 3].map(i => (
-            <div key={i} className="h-24 bg-white/5 rounded-xl animate-pulse" />
+            <div key={i} className="h-24 bg-white/5 rounded-xl " />
           ))}
         </div>
       )}

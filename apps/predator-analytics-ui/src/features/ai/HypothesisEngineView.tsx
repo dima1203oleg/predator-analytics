@@ -205,7 +205,7 @@ const HypothesisEngineView: React.FC = () => {
               <div className="relative">
                 <div className="absolute inset-0 bg-yellow-500/15 blur-3xl rounded-full" />
                 <div className="relative p-7 bg-black border border-yellow-500/40 rounded-[2.5rem] shadow-4xl">
-                  <Brain size={48} className="text-yellow-500 drop-shadow-[0_0_20px_rgba(212,175,55,0.4)]" />
+                  <Brain size={48} className="text-yellow-500 " />
                   <motion.span
                     animate={{ scale: [1, 1.5, 1], opacity: [1, 0.3, 1] }}
                     transition={{ duration: 1.5, repeat: Infinity }}
@@ -215,14 +215,14 @@ const HypothesisEngineView: React.FC = () => {
               </div>
               <div>
                 <div className="flex items-center gap-4 mb-3">
-                  <Sparkles size={12} className="text-yellow-600 animate-pulse" />
+                  <Sparkles size={12} className="text-yellow-600 " />
                   <span className="text-[10px] font-black text-yellow-500/70 uppercase tracking-[0.6em]">
                     СУВЕ ЕННЕ ЯДРО ГІПОТЕЗ · v61.0-ELITE
                   </span>
                 </div>
                 <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic leading-none">
                   ЯДРО{' '}
-                  <span className="text-yellow-500 drop-shadow-[0_0_30px_rgba(212,175,55,0.4)] italic uppercase">ГІПОТЕЗ</span>
+                  <span className="text-yellow-500  italic uppercase">ГІПОТЕЗ</span>
                 </h1>
                 <p className="text-[12px] text-slate-600 font-black uppercase tracking-[0.4em] mt-3 flex items-center gap-4">
                   <Fingerprint size={16} className="text-yellow-500" /> АВТОГЕНЕ АЦІЯ СЛІДЧИХ ГІПОТЕЗ · TIER-1 ACCESS
@@ -237,7 +237,7 @@ const HypothesisEngineView: React.FC = () => {
             { 
               label: nodeSource, 
               color: isOffline ? 'warning' : 'gold', 
-              icon: <Activity size={10} className={isOffline ? 'animate-pulse' : ''} /> 
+              icon: <Activity size={10} className={isOffline ? '' : ''} /> 
             },
           ]}
           stats={[
@@ -254,7 +254,7 @@ const HypothesisEngineView: React.FC = () => {
           ]}
           actions={
             <div className="flex items-center gap-6">
-              <div className="px-8 py-5 bg-black/60 backdrop-blur-xl border-2 border-yellow-500/20 rounded-2xl flex items-center gap-5 shadow-2xl">
+              <div className="px-8 py-5 bg-black/60  border-2 border-yellow-500/20 rounded-2xl flex items-center gap-5 shadow-2xl">
                 <div className="p-3 bg-yellow-500/10 rounded-xl">
                    <Cpu size={24} className="text-yellow-500" />
                 </div>
@@ -282,7 +282,7 @@ const HypothesisEngineView: React.FC = () => {
             <motion.div
               key={m.l}
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
-              className="p-10 bg-black/60 backdrop-blur-2xl border border-white/5 hover:border-yellow-500/30 transition-all rounded-[3rem] shadow-2xl group overflow-hidden"
+              className="p-10 bg-black/60  border border-white/5 hover:border-yellow-500/30 transition-all rounded-[3rem] shadow-2xl group overflow-hidden"
             >
               <div className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-yellow-500/40 to-transparent" />
               <p className="text-[9px] font-black text-slate-600 uppercase tracking-[0.5em] mb-4 group-hover:text-yellow-500/60 transition-colors">{m.l}</p>
@@ -293,12 +293,12 @@ const HypothesisEngineView: React.FC = () => {
         </div>
 
         {/* ── ГЕНЕ АТО  ЗАПИТІВ ELITE ── */}
-        <div className="bg-black border-2 border-yellow-500/10 p-10 space-y-8 rounded-[4rem] shadow-4xl relative overflow-hidden backdrop-blur-3xl">
+        <div className="bg-black border-2 border-yellow-500/10 p-10 space-y-8 rounded-[4rem] shadow-4xl relative overflow-hidden ">
           <div className="absolute top-0 right-0 p-20 opacity-[0.02] pointer-events-none">
              <Brain size={400} className="text-yellow-500" />
           </div>
           <h2 className="text-[11px] font-black text-yellow-500/60 uppercase tracking-[0.6em] flex items-center gap-4 italic font-bold relative z-10">
-            <Zap size={16} className="text-yellow-500 animate-pulse" />
+            <Zap size={16} className="text-yellow-500 " />
             ІНІЦІАЛІЗАЦІЯ_ПОСЛІДОВНОСТІ_СКАНУВАННЯ
           </h2>
           <div className="flex flex-col md:flex-row gap-6 relative z-10">
@@ -468,7 +468,7 @@ const HypothesisEngineView: React.FC = () => {
                   initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
                   className="space-y-8"
                 >
-                  <div className="bg-black/80 backdrop-blur-3xl border-2 border-yellow-500/10 p-12 rounded-[4rem] shadow-4xl relative overflow-hidden">
+                  <div className="bg-black/80  border-2 border-yellow-500/10 p-12 rounded-[4rem] shadow-4xl relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-2 h-full bg-yellow-500 opacity-20" />
                     <div className="flex items-start justify-between mb-8">
                       <div>
@@ -579,7 +579,7 @@ const HypothesisEngineView: React.FC = () => {
                   {/*  ЕКОМЕНДОВАНИ ДІЇ ELITE */}
                   <div className="bg-black/60 border-2 border-white/5 p-10 rounded-[3.5rem] shadow-3xl">
                     <h3 className="text-[11px] font-black text-rose-500/60 uppercase tracking-[0.5em] mb-8 flex items-center gap-4 italic font-bold">
-                      <Target size={20} className="text-rose-500 animate-pulse" />
+                      <Target size={20} className="text-rose-500 " />
                       Цілі Операції
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -596,7 +596,7 @@ const HypothesisEngineView: React.FC = () => {
 
                   <div className="grid grid-cols-2 gap-8 pt-6">
                     <button className="py-7 bg-gradient-to-r from-yellow-600 to-yellow-500 text-black text-[11px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all shadow-4xl rounded-3xl flex items-center justify-center gap-4 italic">
-                      <Sparkles size={22} className="animate-pulse" />
+                      <Sparkles size={22} className="" />
                       ГЛИБОКЕ_СЕНСО НЕ_СКАНУВАННЯ
                     </button>
                     <button className="py-7 bg-black border-2 border-white/10 text-slate-500 text-[11px] font-black uppercase tracking-[0.4em] hover:text-white hover:border-yellow-500/40 transition-all rounded-3xl flex items-center justify-center gap-4 italic shadow-2xl">
@@ -610,7 +610,7 @@ const HypothesisEngineView: React.FC = () => {
                   <div className="relative mb-10">
                      <Brain size={120} className="text-slate-900" />
                      <div className="absolute inset-0 flex items-center justify-center">
-                        <Radar size={60} className="text-slate-800 animate-pulse" />
+                        <Radar size={60} className="text-slate-800 " />
                      </div>
                   </div>
                   <p className="text-[14px] font-black text-slate-800 uppercase tracking-[.8em] italic">

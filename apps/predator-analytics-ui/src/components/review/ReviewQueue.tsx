@@ -179,7 +179,7 @@ export const ReviewQueue: React.FC<ReviewQueueProps> = ({
   };
 
   return (
-    <div className="bg-slate-900/90 border border-slate-700/50 rounded-2xl backdrop-blur-xl overflow-hidden">
+    <div className="bg-slate-900/90 border border-slate-700/50 rounded-2xl  overflow-hidden">
       {/* Header */}
       <div className="p-6 border-b border-slate-800">
         <div className="flex items-center justify-between">
@@ -301,7 +301,7 @@ export const ReviewQueue: React.FC<ReviewQueueProps> = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 bg-black/70  flex items-center justify-center p-4"
             onClick={() => setSelectedTask(null)}
           >
             <motion.div

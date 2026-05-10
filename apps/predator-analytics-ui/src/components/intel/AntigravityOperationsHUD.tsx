@@ -51,7 +51,7 @@ const AntigravityOperationsHUD: React.FC = () => {
   }, []);
 
   if (!status) return (
-    <div className="h-64 flex items-center justify-center bg-black/20 border border-white/5 rounded-xl animate-pulse">
+    <div className="h-64 flex items-center justify-center bg-black/20 border border-white/5 rounded-xl ">
       <div className="text-white/20 font-mono">INITIALIZING AGI MATRIX...</div>
     </div>
   );
@@ -111,7 +111,7 @@ const AntigravityOperationsHUD: React.FC = () => {
 };
 
 const StatusCard = ({ label, value, icon, color }: any) => (
-  <div className="p-4 rounded-xl bg-black/40 border border-white/10 backdrop-blur-md">
+  <div className="p-4 rounded-xl bg-black/40 border border-white/10 ">
     <div className="flex items-center gap-2 text-[10px] text-white/40 uppercase mb-1 tracking-widest">
       {icon} {label}
     </div>
@@ -126,7 +126,7 @@ const AgentCard = ({ agent }: { agent: Agent }) => (
     whileHover={{ scale: 1.02 }}
     className={`p-4 rounded-xl border transition-all duration-300 ${
       agent.is_busy 
-        ? 'bg-rose-500/5 border-rose-500/30 shadow-[0_0_15px_rgba(244,63,94,0.1)]' 
+        ? 'bg-rose-500/5 border-rose-500/30 ' 
         : 'bg-white/5 border-white/10'
     }`}
   >
@@ -135,7 +135,7 @@ const AgentCard = ({ agent }: { agent: Agent }) => (
         <Cpu className={`w-5 h-5 ${agent.is_busy ? 'text-rose-500' : 'text-white/60'}`} />
       </div>
       <div className={`px-2 py-0.5 rounded text-[10px] font-mono ${
-        agent.is_busy ? 'bg-rose-500/20 text-rose-400 animate-pulse' : 'bg-emerald-500/20 text-emerald-400'
+        agent.is_busy ? 'bg-rose-500/20 text-rose-400 ' : 'bg-emerald-500/20 text-emerald-400'
       }`}>
         {agent.is_busy ? 'ACTIVE' : 'IDLE'}
       </div>

@@ -42,7 +42,7 @@ const KillChainViz = () => {
                     className="relative flex items-center h-10"
                 >
                     <div className="w-8 flex flex-col items-center">
-                        <div className={`w-3 h-3 rounded-full z-10 ${step.blocked > 0 ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]' : 'bg-slate-700'}`}></div>
+                        <div className={`w-3 h-3 rounded-full z-10 ${step.blocked > 0 ? 'bg-green-500 ' : 'bg-slate-700'}`}></div>
                         {idx < steps.length - 1 && <div className="w-0.5 h-full bg-slate-800"></div>}
                     </div>
                     <div className="flex-1 bg-slate-900/40 border border-slate-800/50 rounded-lg px-3 flex justify-between items-center group hover:border-slate-700 transition-all hover:bg-slate-900/60">
@@ -163,11 +163,11 @@ const SecurityView: React.FC = () => {
 
     const getDefconColor = (level: number) => {
         switch (level) {
-            case 1: return 'bg-amber-600 shadow-[0_0_25px_rgba(225,29,72,0.4)]';
-            case 2: return 'bg-orange-500 shadow-[0_0_20px_rgba(249,115,22,0.3)]';
-            case 3: return 'bg-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.2)]';
-            case 4: return 'bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.2)]';
-            case 5: return 'bg-blue-600 shadow-[0_0_15px_rgba(37,99,235,0.2)]';
+            case 1: return 'bg-amber-600 ';
+            case 2: return 'bg-orange-500 ';
+            case 3: return 'bg-amber-500 ';
+            case 4: return 'bg-emerald-500 ';
+            case 5: return 'bg-blue-600 ';
             default: return 'bg-slate-500';
         }
     };
@@ -197,7 +197,7 @@ const SecurityView: React.FC = () => {
                         <div className="fixed bottom-8 right-8 z-[100] font-mono text-amber-500 text-[10px] text-right pointer-events-none uppercase tracking-widest opacity-60">
                             <div>REGION: EUR-CENTER-01</div>
                             <div>DEFENSE_RINGS: 4/4_ACTIVE</div>
-                            <div className="animate-pulse">SYSTEM_OVERLOAD_PREVENTION: ON</div>
+                            <div className="">SYSTEM_OVERLOAD_PREVENTION: ON</div>
                         </div>
                     </>
                 )}
@@ -205,7 +205,7 @@ const SecurityView: React.FC = () => {
 
             <ViewHeader
                 title="Центр Кіберзахисту (Cyber Defense)"
-                icon={<Shield size={20} className={state.defconLevel <= 2 ? "text-red-500 animate-pulse" : "icon-3d-green"} />}
+                icon={<Shield size={20} className={state.defconLevel <= 2 ? "text-red-500 " : "icon-3d-green"} />}
                 breadcrumbs={['СИСТЕМА', 'БЕЗПЕКА', 'АКТИВНИЙ ЗАХИСТ']}
                 stats={[
                     { label: 'рівень Загрози', value: state.defconLevel === 1 ? 'КРИТИЧНИЙ' : state.defconLevel === 2 ? 'ВИСОКИЙ' : 'НИЗЬКИЙ', icon: <Activity size={14} />, color: state.defconLevel <= 2 ? 'danger' : 'success' },
@@ -237,7 +237,7 @@ const SecurityView: React.FC = () => {
                                 </Canvas>
                             </div>
 
-                            <div className="absolute bottom-6 left-6 p-4 bg-black/60 border border-white/10 rounded-2xl backdrop-blur-xl pointer-events-none">
+                            <div className="absolute bottom-6 left-6 p-4 bg-black/60 border border-white/10 rounded-2xl  pointer-events-none">
                                 <div className="text-[8px] font-black text-slate-500 mb-3 uppercase tracking-[0.3em]">Situation_Report</div>
                                 <div className="space-y-2">
                                     <div className="flex items-center gap-3 text-[10px] text-slate-300 font-mono font-bold">
@@ -251,7 +251,7 @@ const SecurityView: React.FC = () => {
                         </div>
                     </TacticalCard>
 
-                    <TacticalCard variant="holographic" title="Ланцюг Атаки (Kill Chain)" className="panel-3d bg-slate-900/40 backdrop-blur-xl border-white/5">
+                    <TacticalCard variant="holographic" title="Ланцюг Атаки (Kill Chain)" className="panel-3d bg-slate-900/40  border-white/5">
                         <KillChainViz />
                     </TacticalCard>
                 </div>
@@ -286,11 +286,11 @@ const SecurityView: React.FC = () => {
                         </div>
                     </TacticalCard>
 
-                    <TacticalCard variant="holographic" title="Активний Захист" className="panel-3d bg-slate-900/40 backdrop-blur-xl border-white/5">
+                    <TacticalCard variant="holographic" title="Активний Захист" className="panel-3d bg-slate-900/40  border-white/5">
                         <ActiveDefenses />
                     </TacticalCard>
 
-                    <TacticalCard variant="holographic" title="Матриця Довіри" className="panel-3d bg-slate-900/40 backdrop-blur-xl border-white/5">
+                    <TacticalCard variant="holographic" title="Матриця Довіри" className="panel-3d bg-slate-900/40  border-white/5">
                         <IdentityTrustMatrix />
                     </TacticalCard>
                 </div>

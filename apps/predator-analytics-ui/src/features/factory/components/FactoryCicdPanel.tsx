@@ -43,7 +43,7 @@ export const FactoryCicdPanel: React.FC<FactoryCicdPanelProps> = ({
               <div key={idx} className="flex flex-col items-center gap-3 relative">
                 <div className={cn(
                   "w-12 h-12 rounded-2xl flex items-center justify-center border-2 transition-all duration-500 z-10",
-                  step.state ? "bg-emerald-500/20 border-emerald-500 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.5)]" : "bg-slate-900 border-slate-700 text-slate-500"
+                  step.state ? "bg-emerald-500/20 border-emerald-500 text-emerald-400 " : "bg-slate-900 border-slate-700 text-slate-500"
                 )}>
                   <step.icon size={20} />
                 </div>

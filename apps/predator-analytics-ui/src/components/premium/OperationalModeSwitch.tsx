@@ -32,10 +32,10 @@ const MODE_BORDER: Record<OperationalMode, string> = {
 };
 
 const MODE_GLOW: Record<OperationalMode, string> = {
-  sovereign: 'hover:shadow-[0_0_20px_rgba(99,102,241,0.15)]',
-  vigilance: 'hover:shadow-[0_0_20px_rgba(225,29,72,0.15)]',
-  threat: 'hover:shadow-[0_0_20px_rgba(239,68,68,0.2)]',
-  stealth: 'hover:shadow-[0_0_20px_rgba(16,185,129,0.12)]',
+  sovereign: 'hover:',
+  vigilance: 'hover:',
+  threat: 'hover:',
+  stealth: 'hover:',
 };
 
 const OperationalModeSwitch: React.FC = () => {
@@ -49,7 +49,7 @@ const OperationalModeSwitch: React.FC = () => {
       whileTap={{ scale: 0.97 }}
       className={`
         group flex items-center gap-2.5 px-3 py-2 rounded-lg
-        bg-black/40 backdrop-blur-md border
+        bg-black/40  border
         ${MODE_BORDER[mode]} ${MODE_GLOW[mode]}
         transition-all duration-500 cursor-pointer select-none
       `}

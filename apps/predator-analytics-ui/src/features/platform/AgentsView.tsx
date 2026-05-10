@@ -183,7 +183,7 @@ const AgentHexCard: React.FC<{
             <div className={`
                 relative p-5 rounded-[24px] border overflow-hidden transition-all duration-300
                 ${isSelected
-                    ? 'border-blue-500/60 bg-gradient-to-br from-blue-950/60 to-yellow-950/40 shadow-[0_0_30px_rgba(59,130,246,0.15)]'
+                    ? 'border-blue-500/60 bg-gradient-to-br from-blue-950/60 to-yellow-950/40 '
                     : 'border-white/[0.06] bg-slate-900/50 hover:border-white/20 hover:bg-slate-900/70'
                 }
             `}>
@@ -549,7 +549,7 @@ const AgentsView: React.FC = () => {
             </div>
 
             {/* ── TABS ── */}
-            <div className="flex gap-2 p-1.5 bg-slate-900/70 backdrop-blur-md rounded-2xl border border-white/[0.06] w-fit">
+            <div className="flex gap-2 p-1.5 bg-slate-900/70  rounded-2xl border border-white/[0.06] w-fit">
                 {tabs.map((tab) => (
                     <button
                         key={tab.id}
@@ -558,12 +558,12 @@ const AgentsView: React.FC = () => {
                             flex items-center gap-2 px-5 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all duration-300
                             ${activeTab === tab.id
                                 ? tab.id === 'osint'
-                                    ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-[0_0_20px_rgba(34,211,238,0.3)]'
+                                    ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white '
                                     : isCommanderShell
-                                        ? 'bg-cyan-500 text-black shadow-[0_0_20px_rgba(34,211,238,0.4)]'
+                                        ? 'bg-cyan-500 text-black '
                                         : isOperatorShell
-                                            ? 'bg-emerald-500 text-black shadow-[0_0_20px_rgba(16,185,129,0.3)]'
-                                            : 'bg-cyan-600 text-white shadow-[0_0_20px_rgba(34,211,238,0.3)]'
+                                            ? 'bg-emerald-500 text-black '
+                                            : 'bg-cyan-600 text-white '
                                 : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'
                             }
                         `}
@@ -686,7 +686,7 @@ const AgentsView: React.FC = () => {
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-2">
-                                            <div className={`w-2 h-2 rounded-full ${osintUnavailable ? 'bg-amber-500' : osintSummary.totalTools > 0 ? 'bg-green-500 animate-pulse' : 'bg-slate-500'}`} />
+                                            <div className={`w-2 h-2 rounded-full ${osintUnavailable ? 'bg-amber-500' : osintSummary.totalTools > 0 ? 'bg-green-500 ' : 'bg-slate-500'}`} />
                                             <span className={`text-[9px] font-bold uppercase tracking-widest ${osintUnavailable ? 'text-amber-300' : osintSummary.totalTools > 0 ? 'text-green-400' : 'text-slate-400'}`}>
                                                 {osintStatusLabel}
                                             </span>
@@ -766,7 +766,7 @@ const AgentsView: React.FC = () => {
                                     <div className="flex items-center justify-between p-3 bg-slate-950/60 rounded-2xl border border-white/5">
                                         <div className="flex items-center gap-3">
                                             <div className={`p-2.5 rounded-xl border ${selectedAgent.status === 'WORKING' ? 'bg-emerald-900/20 border-emerald-500/20 text-emerald-400' : 'bg-slate-900 border-white/5 text-slate-600'}`}>
-                                                <Activity size={16} className={selectedAgent.status === 'WORKING' ? 'animate-pulse' : ''} />
+                                                <Activity size={16} className={selectedAgent.status === 'WORKING' ? '' : ''} />
                                             </div>
                                             <div>
                                                 <div className="text-[10px] font-bold text-slate-200 uppercase tracking-widest">

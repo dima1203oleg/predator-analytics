@@ -31,7 +31,7 @@ export function JulesIntelBridge() {
       <div className="p-8 relative z-10">
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-[#D4AF37]/10 border border-[#D4AF37]/40 flex items-center justify-center shadow-[0_0_20px_rgba(212,175,55,0.2)]">
+            <div className="w-14 h-14 rounded-2xl bg-[#D4AF37]/10 border border-[#D4AF37]/40 flex items-center justify-center ">
               <Sparkles size={28} className="text-[#D4AF37]" />
             </div>
             <div>
@@ -43,7 +43,7 @@ export function JulesIntelBridge() {
             href="https://jules.google/" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="flex items-center gap-2 bg-[#D4AF37] hover:bg-[#b8962d] text-black px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-[0_0_25px_rgba(212,175,55,0.4)]"
+            className="flex items-center gap-2 bg-[#D4AF37] hover:bg-[#b8962d] text-black px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all "
           >
             Відкрити Jules <ExternalLink size={14} />
           </a>
@@ -69,7 +69,7 @@ export function JulesIntelBridge() {
             <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">Статус підключення: АКТИВНО (Model Garden)</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <div className="w-2 h-2 rounded-full bg-emerald-400 " />
             <span className="text-[9px] font-mono text-slate-400 italic">Connected to vertex-ai-platform</span>
           </div>
         </div>

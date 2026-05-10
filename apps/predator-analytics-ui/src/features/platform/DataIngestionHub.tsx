@@ -71,13 +71,13 @@ const NodeStatus = ({ node }: any) => {
     cyan: 'text-cyan-400 bg-cyan-500/5 border-cyan-500/20'
   };
   return (
-    <div className={`p-6 bg-slate-950/40 border rounded-[2rem] backdrop-blur-3xl hover:bg-slate-900/60 transition-all group relative overflow-hidden ${colors[node.color]}`}>
+    <div className={`p-6 bg-slate-950/40 border rounded-[2rem]  hover:bg-slate-900/60 transition-all group relative overflow-hidden ${colors[node.color]}`}>
       <div className="flex justify-between items-start mb-6 relative z-10">
         <div className="p-3 rounded-xl bg-slate-900 border border-white/5 group-hover:scale-110 transition-transform">
           <Icon size={20} />
         </div>
         <div className="flex items-center gap-2 px-2 py-0.5 bg-black/40 rounded-full border border-white/5">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 " />
           <span className="text-[8px] font-black uppercase tracking-widest">{node.status}</span>
         </div>
       </div>
@@ -190,11 +190,11 @@ const DataIngestionHub: React.FC = () => {
               </div>
               <div>
                   <div className="flex items-center gap-3 mb-2">
-                       <span className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.4em] animate-pulse">ЯДРО_ЗЛИТТЯ_ДАНИХ_v6.1</span>
+                       <span className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.4em] ">ЯДРО_ЗЛИТТЯ_ДАНИХ_v6.1</span>
                        <Badge variant="outline" className="text-[8px] bg-emerald-500/10 text-emerald-400 border-emerald-500/20">LIVE_BRIDGE</Badge>
                   </div>
                   <h1 className="text-5xl font-black text-white italic tracking-tighter uppercase leading-tight font-display">
-                      ЦЕНТ  <span className="text-emerald-400 drop-shadow-[0_0_20px_rgba(16,185,129,0.4)]">ІНГЕСТІЇ</span>
+                      ЦЕНТ  <span className="text-emerald-400 ">ІНГЕСТІЇ</span>
                   </h1>
               </div>
            </div>
@@ -206,7 +206,7 @@ const DataIngestionHub: React.FC = () => {
                 </div>
                 <button 
                   onClick={() => setIsModalOpen(true)}
-                  className="px-10 py-6 bg-emerald-500 text-black font-black rounded-[2rem] text-xs uppercase tracking-[0.2em] shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:bg-emerald-400 transition-all flex items-center gap-3 group active:scale-95"
+                  className="px-10 py-6 bg-emerald-500 text-black font-black rounded-[2rem] text-xs uppercase tracking-[0.2em]  hover:bg-emerald-400 transition-all flex items-center gap-3 group active:scale-95"
                 >
                   <Plus size={20} className="group-hover:rotate-90 transition-transform duration-500" />
                   ПІДКЛЮЧИТИ ДЖЕРЕЛО_v2
@@ -270,7 +270,7 @@ const DataIngestionHub: React.FC = () => {
                                         <td className="bg-slate-900/40 border-y border-white/5 px-6 py-5 text-center">
                                             <div className={cn("inline-flex items-center gap-2 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-[0.2em]", 
                                                 source.status === 'active' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-slate-500/10 text-slate-300')}>
-                                                <div className={cn("w-1.5 h-1.5 rounded-full", source.status === 'active' ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400')} />
+                                                <div className={cn("w-1.5 h-1.5 rounded-full", source.status === 'active' ? 'bg-emerald-500 ' : 'bg-slate-400')} />
                                                 {source.status === 'active' ? 'АКТИВНИЙ' : 'ОЧІКУВАННЯ'}
                                             </div>
                                         </td>
@@ -311,7 +311,7 @@ const DataIngestionHub: React.FC = () => {
                              <div>SCANNING_ORACLE_VDS... <span className="text-yellow-400">[WAIT]</span></div>
                              <div>MAPPING_SEMANTIC_NODES: 2,492,102...</div>
                              <div className="pt-4 flex items-center gap-2">
-                                <span className="w-1 h-3 bg-emerald-500 animate-pulse" />
+                                <span className="w-1 h-3 bg-emerald-500 " />
                                 <span className="text-emerald-400 uppercase font-black">СИСТЕМА_ГОТОВА_ДО_ВВЕДЕННЯ</span>
                              </div>
                          </div>
@@ -370,12 +370,12 @@ const DataIngestionHub: React.FC = () => {
         <AnimatePresence>
             {isModalOpen && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-8">
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsModalOpen(false)} className="absolute inset-0 bg-black/90 backdrop-blur-3xl" />
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsModalOpen(false)} className="absolute inset-0 bg-black/90 " />
                     <motion.div
                         initial={{ scale: 0.9, y: 50, opacity: 0 }}
                         animate={{ scale: 1, y: 0, opacity: 1 }}
                         exit={{ scale: 0.9, opacity: 0 }}
-                        className="relative w-full max-w-6xl bg-[#020617] border border-white/10 rounded-[4rem] shadow-[0_0_100px_rgba(16,185,129,0.1)] overflow-hidden h-[90vh] flex flex-col"
+                        className="relative w-full max-w-6xl bg-[#020617] border border-white/10 rounded-[4rem]  overflow-hidden h-[90vh] flex flex-col"
                     >
                         <div className="p-12 flex items-start justify-between border-b border-white/5">
                             <div className="flex items-center gap-8">
@@ -396,7 +396,7 @@ const DataIngestionHub: React.FC = () => {
                             <div className="grid grid-cols-12 gap-12">
                                 <div className="col-span-12 lg:col-span-12">
                                     <h3 className="text-[11px] font-black text-emerald-400 uppercase tracking-[0.4em] mb-8 flex items-center gap-3">
-                                        <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" /> ВИБЕ ІТЬ ТИП ТА Т ІЄ  ДЖЕ ЕЛА
+                                        <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full " /> ВИБЕ ІТЬ ТИП ТА Т ІЄ  ДЖЕ ЕЛА
                                     </h3>
                                     <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                                         {SOURCE_TYPES.map(type => (
@@ -467,7 +467,7 @@ const DataIngestionHub: React.FC = () => {
                                 <button 
                                     onClick={initIngestion}
                                     disabled={isSubmitting || (files.length === 0)}
-                                    className="px-16 py-6 bg-emerald-500 text-black font-black rounded-[2rem] text-[10px] uppercase tracking-[0.3em] shadow-[0_0_50px_rgba(16,185,129,0.3)] hover:bg-emerald-400 transition-all flex items-center gap-4 disabled:opacity-50"
+                                    className="px-16 py-6 bg-emerald-500 text-black font-black rounded-[2rem] text-[10px] uppercase tracking-[0.3em]  hover:bg-emerald-400 transition-all flex items-center gap-4 disabled:opacity-50"
                                 >
                                     {isSubmitting ? <RefreshCw className="animate-spin" size={18} /> : <Zap size={18} />}
                                     {isSubmitting ? 'ІНІЦІАЛІЗАЦІЯ_ВУЗЛА...' : " ОЗПОЧАТИ_Ф'ЮЖН_ДАНИХ"}

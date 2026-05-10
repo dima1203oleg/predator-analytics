@@ -41,13 +41,13 @@ import { normalizeModelTrainingSnapshot, type TrainingRunRecord, type TrainingTo
 
 const toneClasses: Record<TrainingTone, { badge: string; panel: string; accent: string; glow: string }> = {
     emerald: {
-        badge: 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.2)]',
+        badge: 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400 ',
         panel: 'border-emerald-500/10 bg-emerald-500/[0.02]',
         accent: 'text-emerald-400',
         glow: 'bg-emerald-500/20',
     },
     amber: {
-        badge: 'border-rose-500/30 bg-rose-500/10 text-rose-400 shadow-[0_0_10px_rgba(225,29,72,0.2)]',
+        badge: 'border-rose-500/30 bg-rose-500/10 text-rose-400 ',
         panel: 'border-rose-500/10 bg-rose-500/[0.02]',
         accent: 'text-rose-400',
         glow: 'bg-rose-500/20',
@@ -59,7 +59,7 @@ const toneClasses: Record<TrainingTone, { badge: string; panel: string; accent: 
         glow: 'bg-slate-500/10',
     },
     rose: {
-        badge: 'border-rose-500/30 bg-rose-500/10 text-rose-400 shadow-[0_0_10px_rgba(225,29,72,0.2)]',
+        badge: 'border-rose-500/30 bg-rose-500/10 text-rose-400 ',
         panel: 'border-rose-500/10 bg-rose-500/[0.02]',
         accent: 'text-rose-400',
         glow: 'bg-rose-500/20',
@@ -76,7 +76,7 @@ const EmptyState = ({ title, description }: { title: string; description: string
         >
             <Brain size={200} />
         </motion.div>
-        <AlertCircle className="mb-6 h-12 w-12 text-rose-500/40 animate-pulse" />
+        <AlertCircle className="mb-6 h-12 w-12 text-rose-500/40 " />
         <div className="text-xl font-black text-white/90 tracking-widest uppercase italic">{title}</div>
         <div className="mt-3 max-w-md text-xs leading-6 text-white/30 font-mono tracking-tighter">{description}</div>
     </div>
@@ -234,8 +234,8 @@ export default function ModelTrainingView() {
                                 <div className="flex items-center gap-4">
                                     <div className="relative group">
                                         <div className="absolute inset-0 bg-rose-500/20 blur-2xl rounded-full scale-0 group-hover:scale-150 transition-transform duration-1000" />
-                                        <div className="relative w-14 h-14 bg-rose-500/10 border border-rose-500/20 rounded-sm flex items-center justify-center shadow-[0_0_30px_rgba(225,29,72,0.1)]">
-                                            <Brain size={28} className="text-rose-500 animate-pulse" />
+                                        <div className="relative w-14 h-14 bg-rose-500/10 border border-rose-500/20 rounded-sm flex items-center justify-center ">
+                                            <Brain size={28} className="text-rose-500 " />
                                         </div>
                                     </div>
                                     <div className="flex flex-col">
@@ -288,7 +288,7 @@ export default function ModelTrainingView() {
                                         : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400',
                                 )}
                             >
-                                <div className={cn("w-2 h-2 rounded-full animate-pulse", feedbackTone === 'amber' ? "bg-rose-500" : "bg-emerald-500")} />
+                                <div className={cn("w-2 h-2 rounded-full ", feedbackTone === 'amber' ? "bg-rose-500" : "bg-emerald-500")} />
                                 {feedbackMessage}
                                 <div className="ml-auto flex gap-1">
                                     {[1,2,3].map(i => <div key={i} className="w-3 h-[1px] bg-current opacity-40" />)}
@@ -344,7 +344,7 @@ export default function ModelTrainingView() {
                                                     initial={{ width: 0 }}
                                                     animate={{ width: `${snapshot.session.progress ?? 0}%` }}
                                                     transition={{ duration: 1, ease: "easeOut" }}
-                                                    className="h-full bg-gradient-to-r from-rose-900 via-rose-500 to-rose-400 shadow-[0_0_15px_rgba(225,29,72,0.5)] rounded-full relative"
+                                                    className="h-full bg-gradient-to-r from-rose-900 via-rose-500 to-rose-400  rounded-full relative"
                                                 >
                                                     <div className="absolute inset-0 bg-white/20 animate-shimmer" style={{ backgroundSize: '200% 100%' }} />
                                                 </motion.div>
@@ -360,7 +360,7 @@ export default function ModelTrainingView() {
                                                 "h-14 rounded-sm font-black tracking-[0.3em] uppercase text-[11px] transition-all duration-700",
                                                 snapshot.session.isRunning 
                                                     ? "bg-white/5 text-white/20 cursor-not-allowed border border-white/5"
-                                                    : "bg-rose-600 hover:bg-rose-500 text-white shadow-[0_0_30px_rgba(225,29,72,0.3)] hover:shadow-[0_0_50px_rgba(225,29,72,0.5)] border-none"
+                                                    : "bg-rose-600 hover:bg-rose-500 text-white  hover: border-none"
                                             )}
                                         >
                                             {starting ? <Loader2 className="animate-spin mr-3" size={18} /> : <Play className="mr-3" size={16} fill="currentColor" />}
@@ -442,7 +442,7 @@ export default function ModelTrainingView() {
                                 </div>
                                 <div className="p-4 border-t border-white/5 flex items-center justify-between text-[8px] font-mono tracking-widest text-white/20 uppercase">
                                     <div className="flex items-center gap-2">
-                                        <div className="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(225,29,72,1)]" />
+                                        <div className="w-2 h-2 rounded-full bg-rose-500 " />
                                         <span>ЖИВА_ТЕЛЕМЕТ ІЯ_СИНХРОНІЗАЦІЯ_ФАЗИ</span>
                                     </div>
                                     <span>З АЗКИ: {snapshot.metrics.length} ЦИКЛІВ</span>
@@ -498,7 +498,7 @@ export default function ModelTrainingView() {
                                         ))
                                     ) : (
                                         <div className="h-full flex flex-col items-center justify-center opacity-20 gap-4 text-center">
-                                            <Terminal size={40} className="animate-pulse" />
+                                            <Terminal size={40} className="" />
                                             <span className="uppercase tracking-[0.3em] font-black">Очікування потоку...</span>
                                         </div>
                                     )}
@@ -506,7 +506,7 @@ export default function ModelTrainingView() {
                                 </div>
                                 <div className="p-4 bg-rose-500/[0.03] border-t border-rose-500/10 flex items-center justify-between">
                                     <div className="flex items-center gap-2">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 " />
                                         <span className="text-[8px] font-mono font-black text-emerald-500 uppercase tracking-widest italic">STREAM_READY</span>
                                     </div>
                                     <ScrollText size={14} className="text-white/20" />

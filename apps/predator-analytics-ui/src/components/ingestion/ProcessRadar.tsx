@@ -49,7 +49,7 @@ export const ProcessRadar = () => {
                     onMouseEnter={() => setMinimized(false)}
                     onMouseLeave={() => setMinimized(true)}
                     className={cn(
-                        "relative w-16 h-16 bg-slate-900 border-2 rounded-full flex items-center justify-center transition-all shadow-[0_0_30px_rgba(16,185,129,0.3)] group overflow-hidden",
+                        "relative w-16 h-16 bg-slate-900 border-2 rounded-full flex items-center justify-center transition-all  group overflow-hidden",
                         activeCount > 0 ? "border-emerald-500/50" : "border-slate-800"
                     )}
                 >
@@ -81,7 +81,7 @@ export const ProcessRadar = () => {
                             initial={{ opacity: 0, x: 20, y: 10 }}
                             animate={{ opacity: 1, x: 0, y: 0 }}
                             exit={{ opacity: 0, x: 20 }}
-                            className="absolute bottom-full right-0 mb-4 bg-slate-900/95 backdrop-blur-2xl border border-emerald-500/30 rounded-2xl p-4 w-72 shadow-[0_20px_50px_rgba(0,0,0,0.5)] pointer-events-none"
+                            className="absolute bottom-full right-0 mb-4 bg-slate-900/95  border border-emerald-500/30 rounded-2xl p-4 w-72 shadow-[0_20px_50px_rgba(0,0,0,0.5)] pointer-events-none"
                         >
                             <div className="flex items-center justify-between mb-3 border-b border-white/5 pb-2">
                                 <div className="flex items-center gap-2">
@@ -111,7 +111,7 @@ export const ProcessRadar = () => {
                                         </div>
                                         <div className="flex justify-between text-[8px] uppercase tracking-tighter text-slate-500 font-bold italic">
                                             <span>{job.stage}</span>
-                                            <span className="animate-pulse text-emerald-500/50">{job.message?.substring(0, 30)}...</span>
+                                            <span className=" text-emerald-500/50">{job.message?.substring(0, 30)}...</span>
                                         </div>
                                     </div>
                                 ))}
@@ -159,7 +159,7 @@ export const ProcessRadar = () => {
                                             </div>
                                             <div className="flex justify-between text-[8px] uppercase tracking-tighter text-slate-500 font-bold italic">
                                                 <span>{stage}</span>
-                                                <span className="animate-pulse text-cyan-500/50">ETL Ядро</span>
+                                                <span className=" text-cyan-500/50">ETL Ядро</span>
                                             </div>
                                         </div>
                                     );

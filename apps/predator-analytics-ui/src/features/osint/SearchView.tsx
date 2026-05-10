@@ -203,9 +203,9 @@ const AIAnswerCard = ({
                 <div className="space-y-5">
                     {loading ? (
                         <div className="space-y-3">
-                            <div className="h-5 w-full animate-pulse rounded-xl bg-white/5" />
-                            <div className="h-5 w-5/6 animate-pulse rounded-xl bg-white/5" />
-                            <div className="h-5 w-4/6 animate-pulse rounded-xl bg-white/5" />
+                            <div className="h-5 w-full  rounded-xl bg-white/5" />
+                            <div className="h-5 w-5/6  rounded-xl bg-white/5" />
+                            <div className="h-5 w-4/6  rounded-xl bg-white/5" />
                         </div>
                     ) : (
                         <p className="text-base font-semibold leading-relaxed text-slate-200">{answer}</p>
@@ -680,7 +680,7 @@ export const SearchView = () => {
                 <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="mt-10 flex flex-wrap items-center gap-4 rounded-3xl border border-white/5 bg-white/[0.02] px-8 py-5 shadow-2xl backdrop-blur-3xl"
+                    className="mt-10 flex flex-wrap items-center gap-4 rounded-3xl border border-white/5 bg-white/[0.02] px-8 py-5 shadow-2xl "
                 >
                     {statusCards.map((card) => (
                         <div
@@ -844,7 +844,7 @@ export const SearchView = () => {
                     <motion.div
                         initial={{ opacity: 0, scale: 0.96 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="flex flex-col gap-4 rounded-3xl border border-white/5 bg-white/[0.02] px-6 py-5 shadow-xl backdrop-blur-md lg:flex-row lg:items-center lg:justify-between"
+                        className="flex flex-col gap-4 rounded-3xl border border-white/5 bg-white/[0.02] px-6 py-5 shadow-xl  lg:flex-row lg:items-center lg:justify-between"
                     >
                         <div className="flex items-center gap-4">
                             <div className="flex h-10 w-10 items-center justify-center rounded-full border border-primary-500/20 bg-primary-500/10">

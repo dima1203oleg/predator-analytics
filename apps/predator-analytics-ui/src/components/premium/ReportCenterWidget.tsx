@@ -42,7 +42,7 @@ export const ReportCenterWidget: React.FC<{ persona: string }> = ({ persona }) =
   };
 
   return (
-    <div className="bg-slate-950/80 border border-white/10 rounded-[32px] backdrop-blur-xl overflow-hidden h-full flex flex-col relative group">
+    <div className="bg-slate-950/80 border border-white/10 rounded-[32px]  overflow-hidden h-full flex flex-col relative group">
       <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent pointer-events-none" />
 
       {/* Header */}

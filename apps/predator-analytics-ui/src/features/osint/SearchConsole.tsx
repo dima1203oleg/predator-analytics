@@ -154,9 +154,9 @@ export default function SearchConsole() {
                         title={
                             <div className="flex items-center gap-10">
                                 <div className="relative group">
-                                    <div className="absolute inset-0 bg-yellow-500/20 blur-[50px] rounded-full scale-150 animate-pulse" />
+                                    <div className="absolute inset-0 bg-yellow-500/20 blur-[50px] rounded-full scale-150 " />
                                     <div className="relative w-16 h-16 bg-slate-900 border border-white/10 rounded-2xl flex items-center justify-center panel-3d shadow-2xl">
-                                        <Search size={32} className="text-yellow-400 drop-shadow-[0_0_15px_rgba(99,102,241,0.8)]" />
+                                        <Search size={32} className="text-yellow-400 " />
                                     </div>
                                 </div>
                                 <div className="space-y-1">
@@ -197,9 +197,9 @@ export default function SearchConsole() {
                     <div className="max-w-6xl mx-auto space-y-12 relative">
                         <motion.div 
                             initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-                            className="relative group p-1.5 rounded-[4rem] bg-gradient-to-tr from-yellow-500/30 via-transparent to-emerald-500/30 shadow-[0_0_100px_rgba(0,0,0,0.8)]"
+                            className="relative group p-1.5 rounded-[4rem] bg-gradient-to-tr from-yellow-500/30 via-transparent to-emerald-500/30 "
                         >
-                            <div className="relative bg-[#0b0f1a]/95 backdrop-blur-3xl rounded-[3.8rem] border border-white/5 overflow-hidden">
+                            <div className="relative bg-[#0b0f1a]/95  rounded-[3.8rem] border border-white/5 overflow-hidden">
                                 <div className="flex items-center px-10 py-8 gap-8">
                                     <button onClick={() => setShowFilters(!showFilters)} className={cn("p-6 rounded-[2rem] transition-all border border-white/5", showFilters ? "bg-yellow-600 text-white shadow-yellow-500/40" : "bg-white/5 text-slate-500 hover:text-white")}>
                                         <ListFilter size={28} />
@@ -273,7 +273,7 @@ export default function SearchConsole() {
                             <div className="flex flex-col items-center justify-center py-40 gap-12 text-center">
                                 <CyberOrb size={220} status="processing" color="#6366f1" />
                                 <div className="space-y-4">
-                                    <h3 className="text-2xl font-black text-white uppercase tracking-[0.8em] animate-pulse italic">КВАНТОВИЙ_АНАЛІЗ_МАТрИЦІ</h3>
+                                    <h3 className="text-2xl font-black text-white uppercase tracking-[0.8em]  italic">КВАНТОВИЙ_АНАЛІЗ_МАТрИЦІ</h3>
                                     <p className="text-[10px] font-mono text-yellow-500 uppercase tracking-widest italic tracking-[0.4em]">ЗВЕ НЕННЯ_ДО_СЕМАНТИЧНОГО_ЯД А_v56_TITAN...</p>
                                 </div>
                             </div>
@@ -298,7 +298,7 @@ export default function SearchConsole() {
                                             key={result.id} initial={{ opacity: 0, scale: 0.98, y: 30 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ delay: i * 0.1 }}
                                             className="group relative p-1 rounded-[4rem] bg-white/[0.01] hover:bg-gradient-to-r hover:from-yellow-600/30 hover:to-emerald-600/10 transition-all duration-700 shadow-3xl"
                                         >
-                                            <div className="bg-[#0b0f1a]/95 backdrop-blur-3xl rounded-[3.9rem] p-10 relative overflow-hidden border border-white/5">
+                                            <div className="bg-[#0b0f1a]/95  rounded-[3.9rem] p-10 relative overflow-hidden border border-white/5">
                                                 <div className="absolute top-0 right-0 w-64 h-64 bg-yellow-600/5 blur-[80px] pointer-events-none group-hover:bg-yellow-600/10 transition-colors" />
                                                 
                                                 <div className="flex items-start gap-10 relative z-10">
@@ -324,7 +324,7 @@ export default function SearchConsole() {
                                                                 </div>
                                                             </div>
                                                             <div className="text-right">
-                                                                <div className="text-4xl font-mono font-black text-yellow-500 italic tracking-tighter drop-shadow-[0_0_15px_rgba(99,102,241,0.5)]">{(result.score * 100).toFixed(1)}%</div>
+                                                                <div className="text-4xl font-mono font-black text-yellow-500 italic tracking-tighter ">{(result.score * 100).toFixed(1)}%</div>
                                                                 <div className="text-[9px] font-black text-slate-700 uppercase tracking-widest italic mt-1">AI_ ЕЙТИНГ_ІСТИННОСТІ</div>
                                                             </div>
                                                         </div>
@@ -357,7 +357,7 @@ export default function SearchConsole() {
                             </div>
                         ) : query && !isLoading ? (
                             <div className="flex flex-col items-center justify-center py-40 gap-10 bg-slate-950/40 border-2 border-dashed border-white/[0.03] rounded-[4rem] text-center shadow-inner">
-                                <HelpCircle size={80} className="text-slate-800 animate-pulse" />
+                                <HelpCircle size={80} className="text-slate-800 " />
                                 <div>
                                     <h3 className="text-2xl font-black text-slate-700 uppercase tracking-[0.6em] italic">NEXUS_ПУСТИЙ_НАБІ </h3>
                                     <p className="text-slate-800 mt-3 italic font-black text-xs tracking-widest uppercase">ОБ'ЄКТІВ_НЕ_ВИЯВЛЕНО_В_ЦЬОМУ_СЕКТО І_МАТрИЦІ</p>

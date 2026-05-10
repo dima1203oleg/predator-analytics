@@ -127,9 +127,9 @@ export const AutonomyDashboard: React.FC = () => {
                         title={
                             <div className="flex items-center gap-8">
                                 <div className="relative group">
-                                    <div className="absolute inset-0 bg-yellow-500/20 blur-[50px] rounded-full scale-150 animate-pulse" />
+                                    <div className="absolute inset-0 bg-yellow-500/20 blur-[50px] rounded-full scale-150 " />
                                     <div className="relative w-16 h-16 bg-slate-900 border border-white/10 rounded-2xl flex items-center justify-center panel-3d shadow-2xl">
-                                        <Brain size={32} className="text-yellow-400 drop-shadow-[0_0_15px_rgba(99,102,241,0.8)]" />
+                                        <Brain size={32} className="text-yellow-400 " />
                                     </div>
                                 </div>
                                 <div>
@@ -137,7 +137,7 @@ export const AutonomyDashboard: React.FC = () => {
                                         NEXUS <span className="text-cyan-500">SOVEREIGN</span>
                                     </h1>
                                     <p className="text-[10px] font-mono font-black text-cyan-500/70 uppercase tracking-[0.6em] mt-3 flex items-center gap-3">
-                                        <Dna size={12} className="animate-pulse" /> 
+                                        <Dna size={12} className="" /> 
                                         SELF_MODIFICATION_CORE_v61.0-ELITE
                                     </p>
                                 </div>
@@ -153,7 +153,7 @@ export const AutonomyDashboard: React.FC = () => {
                     />
 
                     {/* Evolutionary Navigation (v61.0-ELITE) */}
-                    <div className="flex flex-wrap items-center justify-center gap-6 p-2 bg-[#0b0f1a]/60 backdrop-blur-3xl rounded-[40px] border border-white/5 w-fit mx-auto shadow-2xl">
+                    <div className="flex flex-wrap items-center justify-center gap-6 p-2 bg-[#0b0f1a]/60  rounded-[40px] border border-white/5 w-fit mx-auto shadow-2xl">
                         {[
                             { id: 'overview', label: uk.tabs.overview, icon: Activity },
                             { id: 'hypotheses', label: uk.tabs.hypotheses, icon: GitBranch },
@@ -195,11 +195,11 @@ export const AutonomyDashboard: React.FC = () => {
                                     {/* Left Pane - Core Metrics & Orb */}
                                     <div className="lg:col-span-4 space-y-10">
                                         <div className="relative group p-1.5 rounded-[60px] bg-gradient-to-br from-yellow-500/20 via-transparent to-purple-500/20">
-                                            <div className="bg-[#0b0f1a]/95 backdrop-blur-3xl rounded-[56px] p-12 flex flex-col items-center justify-center min-h-[500px] border border-white/5 panel-3d shadow-2xl relative overflow-hidden">
+                                            <div className="bg-[#0b0f1a]/95  rounded-[56px] p-12 flex flex-col items-center justify-center min-h-[500px] border border-white/5 panel-3d shadow-2xl relative overflow-hidden">
                                                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_rgba(34,211,238,0.1),_transparent_70%)] pointer-events-none" />
                                                 <CyberOrb size={320} color="#22d3ee" intensity={0.8} pulse />
                                                 <div className="absolute flex flex-col items-center justify-center gap-4 text-center">
-                                                    <Brain size={64} className="text-white opacity-40 animate-pulse" />
+                                                    <Brain size={64} className="text-white opacity-40 " />
                                                     <div className="space-y-1">
                                                         <p className="text-[10px] font-black text-cyan-500 uppercase tracking-[0.6em]">NEXUS_CORE</p>
                                                         <h3 className="text-4xl font-black text-white tracking-widest">v61.0-ELITE ALPHA</h3>
@@ -230,7 +230,7 @@ export const AutonomyDashboard: React.FC = () => {
                                                 { label: 'ПОМИЛКИ (24h)', value: `${metrics.errorRate}%`, icon: AlertTriangle, progress: 99, color: 'emerald' },
                                                 { label: 'ТОЧНІСТЬ МОДЕЛІ', value: `${metrics.accuracy}%`, icon: Target, progress: 98, color: 'purple' }
                                             ].map((m, i) => (
-                                                <div key={i} className="p-10 bg-[#0b0f1a]/60 backdrop-blur-2xl border border-white/5 rounded-[48px] space-y-6 panel-3d group">
+                                                <div key={i} className="p-10 bg-[#0b0f1a]/60  border border-white/5 rounded-[48px] space-y-6 panel-3d group">
                                                     <div className="flex justify-between items-start">
                                                         <div className={cn("p-4 rounded-2xl", `bg-${m.color}-500/10`)}>
                                                             <m.icon className={cn(`text-${m.color}-400 group-hover:scale-125 transition-transform`)} size={28} />
@@ -306,7 +306,7 @@ export const AutonomyDashboard: React.FC = () => {
                                         </div>
                                         
                                         <div className="flex flex-col items-center gap-12 text-center mb-16">
-                                            <div className="w-32 h-32 bg-amber-500/10 rounded-full flex items-center justify-center border border-amber-500/30 shadow-[0_0_60px_rgba(245,158,11,0.2)]">
+                                            <div className="w-32 h-32 bg-amber-500/10 rounded-full flex items-center justify-center border border-amber-500/30 ">
                                                 <Lock className="text-amber-400" size={56} />
                                             </div>
                                             <div className="space-y-4">
@@ -362,7 +362,7 @@ export const AutonomyDashboard: React.FC = () => {
                                 <div className="flex flex-col items-center justify-center py-40 gap-12 bg-slate-900/20 border border-dashed border-white/5 rounded-[80px]">
                                     <div className="relative">
                                         <div className="absolute inset-0 bg-yellow-500/20 blur-[100px] rounded-full" />
-                                        <Cpu size={80} className="text-yellow-400 animate-pulse" />
+                                        <Cpu size={80} className="text-yellow-400 " />
                                     </div>
                                     <div className="text-center space-y-4">
                                         <h3 className="text-3xl font-black text-white uppercase tracking-[0.5em]">СЕКТО _В_ОБ ОБЦІ</h3>

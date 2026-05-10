@@ -28,9 +28,9 @@ export function BackendSwitcher() {
   const getNodeColorClass = (id: string, active: boolean) => {
     if (!active) return "text-slate-500 group-hover:text-slate-200";
     switch (id) {
-      case NODE_IDS.SOVEREIGN: return "text-rose-500 shadow-[0_0_10px_rgba(225,29,72,0.3)]";
-      case NODE_IDS.HYBRID: return "text-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]";
-      case NODE_IDS.CLOUD: return "text-sky-400 shadow-[0_0_10px_rgba(14,165,233,0.3)]";
+      case NODE_IDS.SOVEREIGN: return "text-rose-500 ";
+      case NODE_IDS.HYBRID: return "text-emerald-500 ";
+      case NODE_IDS.CLOUD: return "text-sky-400 ";
       default: return "text-amber-500";
     }
   };
@@ -54,7 +54,7 @@ export function BackendSwitcher() {
         <div className="relative z-10">
           {activeNode && React.createElement(getIcon(activeNode.id), { className: "w-5 h-5" })}
           <div className={cn(
-            "absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full border-2 border-slate-950 animate-pulse",
+            "absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full border-2 border-slate-950 ",
             activeNode?.status === 'online' ? "bg-emerald-500 shadow-[0_0_8px_#10b981]" : "bg-rose-600 shadow-[0_0_8px_#e11d48]"
           )} />
         </div>
@@ -81,7 +81,7 @@ export function BackendSwitcher() {
             initial={{ opacity: 0, y: 12, scale: 0.98, filter: 'blur(10px)' }}
             animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
             exit={{ opacity: 0, y: 12, scale: 0.98, filter: 'blur(10px)' }}
-            className="absolute top-full right-0 mt-3 w-80 bg-[#020101]/95 border border-white/5 rounded-2xl backdrop-blur-3xl shadow-[0_30px_70px_rgba(0,0,0,0.8)] z-50 overflow-hidden"
+            className="absolute top-full right-0 mt-3 w-80 bg-[#020101]/95 border border-white/5 rounded-2xl  shadow-[0_30px_70px_rgba(0,0,0,0.8)] z-50 overflow-hidden"
           >
             <div className="p-4 border-b border-white/5 bg-white/[0.02] flex items-center justify-between">
                <div className="flex flex-col">

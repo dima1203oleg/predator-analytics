@@ -23,7 +23,7 @@ const ReliabilityBadge: React.FC<{ score: number }> = ({ score }) => {
       "flex items-center gap-2 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest italic border",
       isHigh ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-500" :
       isMid ? "bg-yellow-500/10 border-yellow-500/20 text-yellow-500" :
-      "bg-red-500/10 border-red-500/20 text-red-500 animate-pulse"
+      "bg-red-500/10 border-red-500/20 text-red-500 "
     )}>
       {isHigh ? <CheckCircle size={10} /> : isMid ? <AlertCircle size={10} /> : <Siren size={10} />}
       {score}% {isHigh ? 'НАДІЙНО' : isMid ? 'ВЕ ІФІКОВАНО' : 'РИЗИКОВАНО'}

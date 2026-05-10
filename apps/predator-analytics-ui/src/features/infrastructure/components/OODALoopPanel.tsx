@@ -30,8 +30,8 @@ export function OODALoopPanel({
     switch (status) {
       case 'OBSERVING': return 'text-slate-400 border-slate-500/20 bg-slate-500/5';
       case 'ORIENTING': return 'text-rose-400 border-rose-500/20 bg-rose-500/5';
-      case 'DECIDING': return 'text-rose-500 border-rose-500/30 bg-rose-500/10 shadow-[0_0_15px_rgba(225,29,72,0.05)]';
-      case 'ACTING': return 'text-rose-400 border-rose-500/40 bg-rose-500/20 animate-pulse';
+      case 'DECIDING': return 'text-rose-500 border-rose-500/30 bg-rose-500/10 ';
+      case 'ACTING': return 'text-rose-400 border-rose-500/40 bg-rose-500/20 ';
       default: return 'text-slate-500 border-slate-500/20 bg-slate-500/5';
     }
   };
@@ -45,7 +45,7 @@ export function OODALoopPanel({
           </div>
           <div className={cn(
             "flex items-center gap-2 px-3 py-1 rounded-md border text-[8px] font-black tracking-[0.2em] uppercase",
-            alertLevel === 'CRITICAL' ? "bg-rose-500/20 border-rose-500/30 text-rose-500 animate-pulse shadow-[0_0_20px_rgba(225,29,72,0.2)]" :
+            alertLevel === 'CRITICAL' ? "bg-rose-500/20 border-rose-500/30 text-rose-500  " :
             alertLevel === 'ELEVATED' ? "bg-rose-500/10 border-rose-500/20 text-rose-400" :
             "bg-slate-500/10 border-slate-500/20 text-slate-400"
           )}>
@@ -70,7 +70,7 @@ export function OODALoopPanel({
           const isActive = currentStatus === step.id;
           const isDone = steps.findIndex(s => s.id === currentStatus) > idx;
 
-          const activeBg = step.color === 'rose' ? 'bg-rose-500/20 border-rose-500/40 text-rose-500 shadow-[0_0_30px_rgba(225,29,72,0.3)]' : 'bg-slate-500/20 border-slate-500/40 text-slate-400';
+          const activeBg = step.color === 'rose' ? 'bg-rose-500/20 border-rose-500/40 text-rose-500 ' : 'bg-slate-500/20 border-slate-500/40 text-slate-400';
 
           return (
             <div key={step.id} className="relative z-10 flex flex-col items-center gap-4">
@@ -121,7 +121,7 @@ export function OODALoopPanel({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 className={cn(
-                  "p-4 rounded-xl border flex items-start gap-4 backdrop-blur-md transition-all duration-500",
+                  "p-4 rounded-xl border flex items-start gap-4  transition-all duration-500",
                   getStatusColor(incident.status)
                 )}
               >
@@ -166,13 +166,13 @@ export function OODALoopPanel({
                   {/* Human Approval UI */}
                   {incident.human_approval_required && incident.status === 'DECIDING' && (
                     <div className="mt-4 p-4 bg-rose-500/[0.03] rounded-xl border border-rose-500/20 space-y-3">
-                       <div className="flex items-center gap-2 text-[9px] font-black text-rose-500 uppercase tracking-widest animate-pulse">
+                       <div className="flex items-center gap-2 text-[9px] font-black text-rose-500 uppercase tracking-widest ">
                         <ShieldOff className="w-3 h-3" /> ПІДТВЕ ДЖЕННЯ ОПЕ АТО А
                       </div>
                       <div className="flex gap-3">
                         <button 
                           onClick={() => onApprove?.(incident.id)}
-                          className="flex-1 py-2 bg-rose-600 hover:bg-rose-500 text-white text-[9px] font-black rounded-lg transition-all duration-300 uppercase tracking-widest shadow-[0_0_15px_rgba(225,29,72,0.3)]"
+                          className="flex-1 py-2 bg-rose-600 hover:bg-rose-500 text-white text-[9px] font-black rounded-lg transition-all duration-300 uppercase tracking-widest "
                         >
                           СХВАЛИТИ
                         </button>

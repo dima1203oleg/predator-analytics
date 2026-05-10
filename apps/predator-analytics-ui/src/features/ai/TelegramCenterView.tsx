@@ -63,7 +63,7 @@ export default function TelegramCenterView() {
                  </div>
               </div>
               <div className="w-px h-10 bg-white/5" />
-              <Radio className={isBotActive ? "text-emerald-500 animate-pulse" : "text-rose-500"} size={24} />
+              <Radio className={isBotActive ? "text-emerald-500 " : "text-rose-500"} size={24} />
            </TacticalCard>
         </div>
       </div>

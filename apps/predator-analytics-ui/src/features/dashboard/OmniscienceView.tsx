@@ -126,7 +126,7 @@ const AgentCard: React.FC<{ agent: AgentStatus }> = ({ agent }) => {
         <div className="relative">
           <div className="absolute inset-0 blur-2xl rounded-full scale-150 opacity-20" style={{ backgroundColor: config.color }} />
           <div className="relative p-5 bg-slate-900 border border-white/5 rounded-2xl shadow-2xl group-hover/agent:scale-105 transition-transform">
-            <Brain size={32} style={{ color: config.color }} className={cn(agent.status === 'thinking' && "animate-pulse")} />
+            <Brain size={32} style={{ color: config.color }} className={cn(agent.status === 'thinking' && "")} />
           </div>
         </div>
         <div className="px-4 py-1.5 bg-black/40 border border-white/10 rounded-full text-[9px] font-black uppercase tracking-widest flex items-center gap-2" style={{ color: config.color }}>
@@ -155,7 +155,7 @@ const AgentCard: React.FC<{ agent: AgentStatus }> = ({ agent }) => {
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${agent.confidence}%` }}
-                className="h-full bg-gradient-to-r from-blue-600 to-yellow-600 shadow-[0_0_10px_rgba(37,99,235,0.4)]"
+                className="h-full bg-gradient-to-r from-blue-600 to-yellow-600 "
               />
             </div>
           </div>
@@ -229,7 +229,7 @@ const OmniscienceView: React.FC = () => {
             <div className="relative group">
               <div className="absolute inset-0 bg-blue-500/20 blur-[60px] rounded-full scale-150 opacity-20" />
               <div className="relative p-5 bg-slate-900 border border-white/5 rounded-[28px] panel-3d shadow-2xl">
-                <Network size={36} className="text-blue-400 drop-shadow-[0_0_10px_rgba(59,130,246,0.8)]" />
+                <Network size={36} className="text-blue-400 " />
               </div>
             </div>
             <div>
@@ -268,7 +268,7 @@ const OmniscienceView: React.FC = () => {
             className={cn(
               "px-8 py-5 rounded-[24px] flex items-center gap-4 transition-all duration-500 relative group overflow-hidden border",
               selectedView === tab.id
-                ? "bg-blue-600 text-white border-blue-500 shadow-[0_0_30px_rgba(59,130,246,0.3)]"
+                ? "bg-blue-600 text-white border-blue-500 "
                 : "bg-slate-950/40 text-slate-500 border-white/5 hover:text-white hover:bg-white/5"
             )}
           >
@@ -304,7 +304,7 @@ const OmniscienceView: React.FC = () => {
                   <TacticalCard variant="holographic" className="p-0 h-[600px] bg-slate-950 flex flex-col relative overflow-hidden group/viz">
                     <div className="absolute top-10 left-10 z-20 flex items-center gap-4">
                       <div className="p-3 bg-blue-500/20 rounded-xl border border-blue-500/30 text-blue-400">
-                        <Target size={20} className="animate-pulse" />
+                        <Target size={20} className="" />
                       </div>
                       <div>
                         <h3 className="text-xl font-black text-white uppercase tracking-tighter">Візуалізатор Нейронного Ядра</h3>
@@ -324,7 +324,7 @@ const OmniscienceView: React.FC = () => {
                         ]
                       }} />
                     </div>
-                    <div className="absolute bottom-10 left-10 p-6 bg-black/60 border border-white/5 rounded-2xl backdrop-blur-xl z-20 flex items-center gap-8">
+                    <div className="absolute bottom-10 left-10 p-6 bg-black/60 border border-white/5 rounded-2xl  z-20 flex items-center gap-8">
                       <div className="flex flex-col">
                         <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-1">ЗАТрИМКА</span>
                         <span className="text-sm font-black text-white font-mono">14мс</span>
@@ -379,7 +379,7 @@ const OmniscienceView: React.FC = () => {
                         <div key={i} className="p-5 bg-slate-900/60 border border-white/5 rounded-[24px] panel-3d group/a hover:border-blue-500/30 transition-all">
                           <div className="flex items-center justify-between mb-4">
                             <div className="flex items-center gap-3">
-                              <div className={cn("w-2 h-2 rounded-full animate-pulse", agent.status === 'thinking' ? 'bg-blue-400' : 'bg-emerald-500')} />
+                              <div className={cn("w-2 h-2 rounded-full ", agent.status === 'thinking' ? 'bg-blue-400' : 'bg-emerald-500')} />
                               <span className="text-[10px] font-black text-white uppercase">{agent.name}</span>
                             </div>
                             <span className="text-[9px] font-black text-slate-500 font-mono italic">#{agent.id.slice(0, 4)}</span>
@@ -408,7 +408,7 @@ const OmniscienceView: React.FC = () => {
                             </div>
                           </div>
                         ))}
-                        <div className="text-blue-500 animate-pulse">_</div>
+                        <div className="text-blue-500 ">_</div>
                       </div>
                     </div>
                   </TacticalCard>
@@ -426,7 +426,7 @@ const OmniscienceView: React.FC = () => {
                 {agents.map(agent => <AgentCard key={agent.id} agent={agent} />)}
                 <TacticalCard variant="glass" className="p-10 flex flex-col items-center justify-center border-dashed border-white/10 group/new cursor-pointer hover:border-blue-500/30 transition-all">
                   <div className="w-20 h-20 bg-white/5 border border-white/10 rounded-[32px] flex items-center justify-center mb-6 group-hover/new:scale-110 group-hover/new:bg-blue-600/10 group-hover/new:border-blue-500/30 transition-all">
-                    <Zap size={32} className="text-slate-600 group-hover/new:text-blue-400 group-hover/new:animate-pulse" />
+                    <Zap size={32} className="text-slate-600 group-hover/new:text-blue-400 group-hover/new:" />
                   </div>
                   <h3 className="text-xl font-black text-slate-600 uppercase tracking-tighter group-hover/new:text-white transition-colors">Створити Нового Агента</h3>
                   <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest mt-2 group-hover/new:text-blue-500">ІНІЦІАЛІЗАЦІЯ_ПРОТОКОЛУ_НС</p>
@@ -474,11 +474,11 @@ const OmniscienceView: React.FC = () => {
       </div>
 
       {/* Footer System Bar */}
-      <div className="mt-10 p-10 bg-slate-950/60 border border-white/5 rounded-[48px] backdrop-blur-3xl shadow-2xl relative overflow-hidden group">
+      <div className="mt-10 p-10 bg-slate-950/60 border border-white/5 rounded-[48px]  shadow-2xl relative overflow-hidden group">
         <div className="flex flex-col md:flex-row items-center justify-between gap-10">
           <div className="flex items-center gap-8">
             <div className="relative">
-              <div className="absolute inset-0 bg-blue-500/20 blur-2xl rounded-full scale-110 animate-pulse" />
+              <div className="absolute inset-0 bg-blue-500/20 blur-2xl rounded-full scale-110 " />
               <div className="p-4 bg-slate-900 border border-white/10 rounded-2xl relative z-10">
                 <RadioReceiver size={32} className="text-blue-400" />
               </div>
@@ -576,8 +576,8 @@ const AdvancedBackground: React.FC = () => (
     <div className="absolute inset-0 bg-slate-950" />
     <div className="absolute inset-0 bg-cyber-grid opacity-[0.05]" />
     <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-blue-900/10 via-transparent to-purple-900/10" />
-    <div className="absolute top-[20%] left-[10%] w-[40%] h-[40%] bg-blue-600/5 blur-[120px] rounded-full animate-pulse" />
-    <div className="absolute bottom-[20%] right-[10%] w-[40%] h-[40%] bg-yellow-600/5 blur-[120px] rounded-full animate-pulse" style={{ animationDelay: '2s' }} />
+    <div className="absolute top-[20%] left-[10%] w-[40%] h-[40%] bg-blue-600/5 blur-[120px] rounded-full " />
+    <div className="absolute bottom-[20%] right-[10%] w-[40%] h-[40%] bg-yellow-600/5 blur-[120px] rounded-full " style={{ animationDelay: '2s' }} />
   </div>
 );
 

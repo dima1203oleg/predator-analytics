@@ -242,7 +242,7 @@ const GeopoliticalRadarView: React.FC = () => {
           title={
             <div className="flex items-center gap-10">
               <div className="relative group">
-                <div className="absolute inset-0 bg-amber-600/20 blur-3xl rounded-full scale-150 animate-pulse group-hover:bg-amber-600/30 transition-all duration-[5s]" />
+                <div className="absolute inset-0 bg-amber-600/20 blur-3xl rounded-full scale-150  group-hover:bg-amber-600/30 transition-all duration-[5s]" />
                 <div className="relative p-7 bg-black border-2 border-amber-500/40 rounded-[2.5rem] shadow-4xl transform -rotate-2 hover:rotate-0 transition-all">
                   <Globe size={42} className="text-amber-500 shadow-[0_0_20px_#f59e0b] animate-spin-slow" />
                 </div>
@@ -268,7 +268,7 @@ const GeopoliticalRadarView: React.FC = () => {
             { 
               label: nodeSource, 
               color: isOffline ? 'warning' : 'success', 
-              icon: <Activity size={10} className={isOffline ? 'animate-pulse' : ''} /> 
+              icon: <Activity size={10} className={isOffline ? '' : ''} /> 
             },
           ]}
           stats={[
@@ -290,7 +290,7 @@ const GeopoliticalRadarView: React.FC = () => {
            <div className="flex items-center justify-between mb-12 relative z-10">
               <div className="flex items-center gap-10">
                  <div className="flex h-16 w-16 items-center justify-center rounded-[2rem] bg-amber-600/10 border-2 border-amber-600/20 shadow-2xl">
-                    <Activity size={32} className="text-amber-600 animate-pulse" />
+                    <Activity size={32} className="text-amber-600 " />
                  </div>
                  <div className="space-y-2">
                     <h2 className="text-xl font-black text-white uppercase italic tracking-[0.3em] leading-none font-serif">ГЛОБАЛЬНИЙ ІНДЕКС ТЕКТОНІЧНОГО РИЗИКУ</h2>
@@ -348,7 +348,7 @@ const GeopoliticalRadarView: React.FC = () => {
           <div className="col-span-12 lg:col-span-3 space-y-6">
              <div className="flex items-center justify-between mb-4 px-4 py-2 border-l-4 border-amber-600/30">
                 <h3 className="text-[13px] font-black text-slate-700 uppercase tracking-[0.5em] italic flex items-center gap-4 font-serif">
-                   <Crosshair size={18} className="text-amber-600 animate-pulse" /> ГА ЯЧІ ТОЧКИ
+                   <Crosshair size={18} className="text-amber-600 " /> ГА ЯЧІ ТОЧКИ
                 </h3>
              </div>
              <div className="space-y-4 max-h-[1000px] overflow-y-auto custom-scrollbar pr-2">
@@ -413,7 +413,7 @@ const GeopoliticalRadarView: React.FC = () => {
                     </div>
                     <div className="relative z-10">
                        <div className="flex items-center gap-10 mb-12">
-                          <div className="text-7xl group-hover/hub:rotate-6 transition-transform filter drop-shadow-[0_0_30px_rgba(255,255,255,0.1)]">{selectedRegion.flag}</div>
+                          <div className="text-7xl group-hover/hub:rotate-6 transition-transform filter ">{selectedRegion.flag}</div>
                           <div className="space-y-4">
                              <div className="flex items-center gap-4">
                                 <span className="bg-amber-500/10 border border-amber-500/20 text-amber-500 px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg">
@@ -439,7 +439,7 @@ const GeopoliticalRadarView: React.FC = () => {
                                </div>
                                <div className="flex items-baseline gap-4">
                                   <p className="text-5xl font-black font-mono tracking-tighter italic leading-none group-hover/stat:scale-110 transition-transform origin-left" style={{ color: getRiskColor(r.value) }}>{r.value}%</p>
-                                  <div className={cn("text-[10px] font-black uppercase tracking-widest italic", r.value > 85 ? "text-amber-600 animate-pulse" : "text-slate-800")}>
+                                  <div className={cn("text-[10px] font-black uppercase tracking-widest italic", r.value > 85 ? "text-amber-600 " : "text-slate-800")}>
                                      {r.value > 85 ? 'ЕКСТ ЕМАЛЬНО' : 'МОНІТОРИНГ'}
                                   </div>
                                 </div>
@@ -457,7 +457,7 @@ const GeopoliticalRadarView: React.FC = () => {
                     <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-transparent via-amber-600/20 to-transparent" />
                     <div className="flex items-center justify-between mb-10 pb-8 border-b border-white/[0.04]">
                        <h3 className="text-xl font-black text-white uppercase italic tracking-[0.4em] flex items-center gap-6 leading-none font-serif">
-                          <AlertTriangle size={28} className="text-orange-500 animate-pulse" /> КрИТИЧНІ ФАКТО И ТА ПОДІЇ
+                          <AlertTriangle size={28} className="text-orange-500 " /> КрИТИЧНІ ФАКТО И ТА ПОДІЇ
                        </h3>
                        <div className="flex items-center gap-4">
                           <span className="text-[10px] font-black text-slate-800 uppercase tracking-widest italic leading-none font-mono">TI_LVL: АЛЬФА_НУЛЬ</span>
@@ -528,7 +528,7 @@ const GeopoliticalRadarView: React.FC = () => {
              <div className="rounded-[3.5rem] bg-black/60 border-2 border-white/[0.04] p-10 shadow-4xl space-y-10 relative overflow-hidden group/radar">
                 <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/[0.02] to-transparent pointer-events-none" />
                 <h3 className="text-[12px] font-black text-slate-700 uppercase tracking-[0.6em] italic leading-none font-serif flex items-center gap-4">
-                    <Radar size={18} className="text-yellow-600 animate-pulse" /> ГЛОБАЛЬНИЙПРОФІЛЬ РИЗИКУ
+                    <Radar size={18} className="text-yellow-600 " /> ГЛОБАЛЬНИЙПРОФІЛЬ РИЗИКУ
                 </h3>
                 <div className="h-[280px] flex items-center justify-center p-4 bg-black rounded-[4rem] border-2 border-white/5 shadow-inner">
                    <ResponsiveContainer width="100%" height="100%">
@@ -546,7 +546,7 @@ const GeopoliticalRadarView: React.FC = () => {
                    </div>
                    <div className="text-center group/met">
                       <p className="text-[9px] font-black text-slate-800 uppercase tracking-widest mb-2 italic">ПРОТОКОЛ_АЛЬФА</p>
-                      <p className="text-4xl font-black text-amber-600 italic tracking-tighter shadow-sm animate-pulse">SET-1</p>
+                      <p className="text-4xl font-black text-amber-600 italic tracking-tighter shadow-sm ">SET-1</p>
                    </div>
                 </div>
              </div>
@@ -555,7 +555,7 @@ const GeopoliticalRadarView: React.FC = () => {
              <div className="rounded-[3.5rem] bg-black border-2 border-white/[0.04] overflow-hidden shadow-4xl group/feed">
                 <div className="p-10 border-b-2 border-white/[0.04] flex items-center justify-between bg-white/[0.01]">
                    <h3 className="text-[12px] font-black text-slate-700 uppercase tracking-[0.5em] italic flex items-center gap-5 leading-none font-serif">
-                      <Radio size={22} className="text-amber-600 animate-pulse" /> ДЕКОДУВАННЯ_ РОЗВІДКИ_LIVE
+                      <Radio size={22} className="text-amber-600 " /> ДЕКОДУВАННЯ_ РОЗВІДКИ_LIVE
                    </h3>
                    <span className="px-4 py-1.5 bg-amber-600/10 border border-amber-600/20 text-amber-600 text-[10px] font-black italic rounded-lg shadow-lg shadow-amber-900/40">14_ВУЗЛІВ</span>
                 </div>

@@ -89,7 +89,7 @@ export const OmniverseExplorer: React.FC = () => {
   return (
     <div className="flex flex-col h-full space-y-4">
       {/* Header & Selector */}
-      <div className="flex items-center justify-between bg-black/40 backdrop-blur-md border border-white/5 p-4 rounded-xl">
+      <div className="flex items-center justify-between bg-black/40  border border-white/5 p-4 rounded-xl">
         <div className="flex items-center space-x-4">
           <div className="p-2 bg-emerald-500/20 rounded-lg">
             <Database className="w-5 h-5 text-emerald-400" />
@@ -125,11 +125,11 @@ export const OmniverseExplorer: React.FC = () => {
       </div>
 
       {/* Main Table Area */}
-      <div className="flex-1 bg-black/40 backdrop-blur-md border border-white/5 rounded-xl overflow-hidden flex flex-col">
+      <div className="flex-1 bg-black/40  border border-white/5 rounded-xl overflow-hidden flex flex-col">
         <div className="flex-1 overflow-auto custom-scrollbar">
           {selectedTable ? (
             <table className="w-full text-left border-collapse">
-              <thead className="sticky top-0 bg-zinc-900/90 backdrop-blur-md z-10">
+              <thead className="sticky top-0 bg-zinc-900/90  z-10">
                 {table.getHeaderGroups().map(headerGroup => (
                   <tr key={headerGroup.id}>
                     {headerGroup.headers.map(header => (

@@ -74,7 +74,7 @@ export const SwiftMonitorTab: React.FC = () => {
               <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">НОРМАЛЬНИЙ</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_#10b981]" />
+              <div className="w-2 h-2 rounded-full bg-emerald-500  shadow-[0_0_10px_#10b981]" />
               <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">ЗАГРОЗА</span>
             </div>
           </div>
@@ -111,8 +111,8 @@ export const SwiftMonitorTab: React.FC = () => {
         <h3 className="text-[12px] font-black text-emerald-600 italic uppercase tracking-[0.4em] mb-6 border-b border-emerald-500/10 pb-6 flex items-center justify-between">
           <span>ЗАГРОЗЛИВІ_ТРАНЗАКЦІЇ</span>
           <div className="flex gap-1.5">
-            <div className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />
-            <div className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse delay-75" />
+            <div className="w-1.5 h-1.5 rounded-full bg-emerald-600 " />
+            <div className="w-1.5 h-1.5 rounded-full bg-emerald-600  delay-75" />
           </div>
         </h3>
         

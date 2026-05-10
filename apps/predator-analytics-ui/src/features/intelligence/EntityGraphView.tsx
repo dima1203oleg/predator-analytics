@@ -147,7 +147,7 @@ const GraphNode = ({ node, onClick, isSelected }: { node: Node; onClick: (node: 
       {(hovered || isSelected || node.id === 'predator_core' || node.id === 'target_omega') && (
         <Html distanceFactor={15} zIndexRange={[100, 0]}>
           <div className={cn(
-            "relative px-3 py-1.5 backdrop-blur-md border rounded-md whitespace-nowrap overflow-hidden group pointer-events-none -translate-x-1/2 -translate-y-[150%]",
+            "relative px-3 py-1.5  border rounded-md whitespace-nowrap overflow-hidden group pointer-events-none -translate-x-1/2 -translate-y-[150%]",
             node.riskScore > 85 ? "bg-amber-500/10 border-amber-500/50" : node.id === 'predator_core' ? "bg-emerald-500/10 border-emerald-500/50" : "bg-cyan-500/10 border-cyan-500/30"
           )}>
             <div className={cn("absolute inset-y-0 left-0 w-1", node.riskScore > 85 ? "bg-amber-500" : node.id === 'predator_core' ? "bg-emerald-500" : "bg-cyan-500")} />
@@ -279,7 +279,7 @@ const NodeDetailsPanel = ({ node, onClose }: { node: Node; onClose: () => void }
       initial={{ x: 400, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       exit={{ x: 400, opacity: 0 }}
-      className="absolute right-0 top-0 bottom-0 w-[420px] bg-slate-950/95 backdrop-blur-3xl border-l border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.8)] z-30 flex flex-col"
+      className="absolute right-0 top-0 bottom-0 w-[420px] bg-slate-950/95  border-l border-white/10  z-30 flex flex-col"
     >
       {/* Header */}
       <div className="p-6 border-b border-white/5 relative overflow-hidden shrink-0">
@@ -332,7 +332,7 @@ const NodeDetailsPanel = ({ node, onClose }: { node: Node; onClose: () => void }
             <Eye size={16} className="text-purple-400" />
             <div>
               <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-0.5">{premiumLocales.graph.nodeDetails.monitoring}</div>
-              <div className="text-sm font-black text-white uppercase mt-1">{premiumLocales.graph.nodeDetails.activeStatus} <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse ml-1" /></div>
+              <div className="text-sm font-black text-white uppercase mt-1">{premiumLocales.graph.nodeDetails.activeStatus} <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500  ml-1" /></div>
             </div>
           </div>
         </div>
@@ -362,7 +362,7 @@ const NodeDetailsPanel = ({ node, onClose }: { node: Node; onClose: () => void }
       </div>
 
       <div className="p-6 border-t border-white/5 bg-slate-900/50 shrink-0">
-        <button className={cn("w-full py-4 rounded-xl font-black uppercase tracking-widest text-sm flex items-center justify-center gap-2 transition-all hover:scale-[1.02]", node.riskScore > 85 ? "bg-amber-600 hover:bg-amber-500 text-white shadow-[0_0_20px_rgba(225,29,72,0.3)]" : "bg-cyan-600 hover:bg-cyan-500 text-white shadow-[0_0_20px_rgba(8,145,178,0.3)]")}>
+        <button className={cn("w-full py-4 rounded-xl font-black uppercase tracking-widest text-sm flex items-center justify-center gap-2 transition-all hover:scale-[1.02]", node.riskScore > 85 ? "bg-amber-600 hover:bg-amber-500 text-white " : "bg-cyan-600 hover:bg-cyan-500 text-white ")}>
           <Search size={16} /> {premiumLocales.graph.nodeDetails.fullAnalysis}
         </button>
       </div>
@@ -423,11 +423,11 @@ const EntityGraphView = () => {
         <div className="relative w-32 h-32">
           <div className="absolute inset-0 border-4 border-dashed border-emerald-500/20 rounded-full animate-[spin_10s_linear_infinite]" />
           <div className="absolute inset-4 border-4 border-cyan-500/30 rounded-full animate-[spin_4s_linear_infinite_reverse]" />
-          <Zap className="w-8 h-8 text-emerald-400 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
+          <Zap className="w-8 h-8 text-emerald-400 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 " />
         </div>
         <div className="text-center">
           <h2 className="text-xl font-black text-white uppercase tracking-[0.3em] mb-2">{premiumLocales.graph.loading.title}</h2>
-          <p className="text-xs font-mono text-emerald-400 animate-pulse">{premiumLocales.graph.loading.description}</p>
+          <p className="text-xs font-mono text-emerald-400 ">{premiumLocales.graph.loading.description}</p>
         </div>
       </div>
     );
@@ -444,27 +444,27 @@ const EntityGraphView = () => {
       {/* Header Overlay V55 */}
       <div className="absolute top-6 inset-x-6 z-20 flex justify-between items-start pointer-events-none">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full mb-3 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full mb-3 ">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 " />
             <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest leading-none">{premiumLocales.graph.status}</span>
           </div>
-          <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]">
+          <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic ">
             {premiumLocales.graph.title.split(' ')[0]} <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400">{premiumLocales.graph.title.split(' ')[1]}</span>
           </h1>
         </div>
 
         <div className="pointer-events-auto flex gap-3">
           {isOffline && (
-            <div className="px-5 py-2.5 bg-amber-600/10 border border-amber-500/20 rounded-2xl flex items-center gap-3 backdrop-blur-xl animate-pulse">
+            <div className="px-5 py-2.5 bg-amber-600/10 border border-amber-500/20 rounded-2xl flex items-center gap-3  ">
                <ShieldAlert size={16} className="text-amber-500" />
                <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest italic">OFFLINE_GRAPH_MODE</span>
             </div>
           )}
-          <div className="bg-slate-900/60 backdrop-blur-xl border border-white/10 rounded-2xl p-1.5 flex shadow-2xl">
-            <button onClick={() => setFilter('all')} className={cn("px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all", filter === 'all' ? "bg-cyan-500 text-white shadow-[0_0_15px_rgba(6,182,212,0.4)]" : "text-slate-400 hover:text-white hover:bg-white/5")}>{premiumLocales.graph.filters.all}</button>
-            <button onClick={() => setFilter('risk')} className={cn("px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all", filter === 'risk' ? "bg-amber-500 text-white shadow-[0_0_15px_rgba(244,63,94,0.4)]" : "text-slate-400 hover:text-white hover:bg-white/5")}>{premiumLocales.graph.filters.risk}</button>
+          <div className="bg-slate-900/60  border border-white/10 rounded-2xl p-1.5 flex shadow-2xl">
+            <button onClick={() => setFilter('all')} className={cn("px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all", filter === 'all' ? "bg-cyan-500 text-white " : "text-slate-400 hover:text-white hover:bg-white/5")}>{premiumLocales.graph.filters.all}</button>
+            <button onClick={() => setFilter('risk')} className={cn("px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all", filter === 'risk' ? "bg-amber-500 text-white " : "text-slate-400 hover:text-white hover:bg-white/5")}>{premiumLocales.graph.filters.risk}</button>
           </div>
-          <button className="p-3 bg-slate-900/60 backdrop-blur-xl border border-white/10 rounded-2xl text-slate-400 hover:text-white transition-all hover:bg-white/10 hover:border-white/20 shadow-2xl">
+          <button className="p-3 bg-slate-900/60  border border-white/10 rounded-2xl text-slate-400 hover:text-white transition-all hover:bg-white/10 hover:border-white/20 shadow-2xl">
             <Filter size={20} />
           </button>
         </div>
@@ -481,7 +481,7 @@ const EntityGraphView = () => {
 
       {/* Bottom Minimal HUD */}
       <div className="absolute bottom-8 lg:bottom-10 left-8 z-20 pointer-events-none">
-        <div className="flex bg-black/50 backdrop-blur-xl border border-white/10 rounded-2xl p-1 shadow-2xl">
+        <div className="flex bg-black/50  border border-white/10 rounded-2xl p-1 shadow-2xl">
           {[
             { icon: Database, lbl: premiumLocales.graph.stats.nodes, val: graphData.nodes.length, c: 'text-cyan-400' },
             { icon: Share2, lbl: premiumLocales.graph.stats.links, val: graphData.links.length, c: 'text-purple-400' },

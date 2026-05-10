@@ -129,7 +129,7 @@ export default function DatasetsPage() {
             <Sparkles className="mr-2 h-4 w-4 text-purple-400 group-hover:rotate-12 transition-transform" />
             Згенерувати Дані
           </Button>
-          <Button className="bg-blue-600 hover:bg-blue-500 text-white shadow-[0_0_15px_rgba(37,99,235,0.3)] text-[10px] font-black uppercase tracking-widest px-6 h-11">
+          <Button className="bg-blue-600 hover:bg-blue-500 text-white  text-[10px] font-black uppercase tracking-widest px-6 h-11">
             <Upload className="mr-2 h-4 w-4" />
             Імпортувати Датасет
           </Button>
@@ -171,7 +171,7 @@ export default function DatasetsPage() {
       <div className="flex flex-col lg:flex-row gap-8 relative z-10">
         {/* Main List */}
         <div className="flex-1 space-y-4">
-            <Card className="bg-slate-950/60 border-white/5 backdrop-blur-xl overflow-hidden shadow-2xl">
+            <Card className="bg-slate-950/60 border-white/5  overflow-hidden shadow-2xl">
                 <div className="p-4 border-b border-white/5 flex gap-4 bg-slate-900/20">
                     <div className="relative flex-1">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
@@ -260,7 +260,7 @@ export default function DatasetsPage() {
                         <TableCell className="text-center">
                             <Badge variant={dataset.status === "active" ? "default" : "secondary"} className={
                                 dataset.status === 'active' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' :
-                                dataset.status === 'processing' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/30 animate-pulse' :
+                                dataset.status === 'processing' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/30 ' :
                                 'bg-slate-800 text-slate-400 border border-white/5'
                             }>
                                 {dataset.status === 'active' ? 'АКТИВНИЙ' : 
@@ -277,7 +277,7 @@ export default function DatasetsPage() {
                                 <MoreHorizontal className="h-5 w-5" />
                             </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="bg-slate-900 border-white/10 text-white z-50 p-2 rounded-xl backdrop-blur-xl">
+                            <DropdownMenuContent align="end" className="bg-slate-900 border-white/10 text-white z-50 p-2 rounded-xl ">
                                 <DropdownMenuItem className="rounded-lg focus:bg-blue-500/10 focus:text-blue-400 cursor-pointer">
                                     <Play className="mr-2 h-4 w-4 text-emerald-400" /> Перевірити Ядро
                                 </DropdownMenuItem>
@@ -304,11 +304,11 @@ export default function DatasetsPage() {
                     className="w-full lg:w-[400px]"
                 >
                     <TiltCard intensity={5} className="h-full sticky top-6">
-                        <div className="bg-slate-900/60 border border-white/10 backdrop-blur-xl h-full rounded-2xl overflow-hidden flex flex-col shadow-2xl">
+                        <div className="bg-slate-900/60 border border-white/10  h-full rounded-2xl overflow-hidden flex flex-col shadow-2xl">
                             <div className="h-32 bg-gradient-to-br from-blue-900/20 via-slate-900/20 to-purple-900/20 relative p-6 flex flex-col justify-between">
                                 <div className="absolute top-0 right-0 p-32 bg-blue-500/10 blur-[60px] rounded-full pointer-events-none" />
                                 <div className="flex justify-between items-start z-10">
-                                    <Badge className="bg-slate-950/50 border-white/10 text-slate-300 backdrop-blur-md">ID: {selectedDataset.id}</Badge>
+                                    <Badge className="bg-slate-950/50 border-white/10 text-slate-300 ">ID: {selectedDataset.id}</Badge>
                                     <Button size="icon" variant="ghost" onClick={() => setSelectedDatasetId(null)}>
                                         <XCircle className="text-slate-400 hover:text-white transition-colors" />
                                     </Button>

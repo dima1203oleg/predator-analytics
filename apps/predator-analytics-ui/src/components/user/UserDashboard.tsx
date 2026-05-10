@@ -56,7 +56,7 @@ const AssetMap = () => (
         <div className="absolute top-[40%] left-[30%]">
             <div className="relative flex flex-col items-center">
                 <div className="w-3 h-3 bg-blue-500 rounded-full border-2 border-white z-10 shadow-[0_0_10px_#3b82f6]"></div>
-                <div className="mt-1 px-2 py-0.5 bg-slate-900/90 text-[9px] text-white rounded border border-slate-700 shadow-lg whitespace-nowrap backdrop-blur-sm">
+                <div className="mt-1 px-2 py-0.5 bg-slate-900/90 text-[9px] text-white rounded border border-slate-700 shadow-lg whitespace-nowrap ">
                     Truck #441 (Kyiv)
                 </div>
             </div>
@@ -64,7 +64,7 @@ const AssetMap = () => (
         <div className="absolute top-[60%] left-[70%]">
              <div className="relative flex flex-col items-center">
                 <div className="w-3 h-3 bg-green-500 rounded-full border-2 border-white z-10 shadow-[0_0_10px_#22c55e]"></div>
-                <div className="mt-1 px-2 py-0.5 bg-slate-900/90 text-[9px] text-white rounded border border-slate-700 shadow-lg whitespace-nowrap backdrop-blur-sm">
+                <div className="mt-1 px-2 py-0.5 bg-slate-900/90 text-[9px] text-white rounded border border-slate-700 shadow-lg whitespace-nowrap ">
                     Cargo #882 (Odesa)
                 </div>
             </div>
@@ -152,7 +152,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ privacyMode, onSel
                 {/* Quick Actions Grid */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     <button className="flex flex-col items-center justify-center p-4 rounded-xl transition-all group shadow-sm hover:shadow-md btn-3d btn-3d-blue">
-                        <div className="p-3 bg-blue-900/20 text-blue-400 rounded-full mb-2 group-hover:scale-110 transition-transform shadow-[0_0_15px_rgba(59,130,246,0.3)]">
+                        <div className="p-3 bg-blue-900/20 text-blue-400 rounded-full mb-2 group-hover:scale-110 transition-transform ">
                             <FileText size={20} className="icon-3d-blue"/>
                         </div>
                         <span className="text-xs font-bold text-slate-200">Звіт (PDF)</span>
@@ -161,19 +161,19 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ privacyMode, onSel
                         onClick={() => onSelectEntity(TOP_ENTITIES[0])}
                         className="flex flex-col items-center justify-center p-4 rounded-xl transition-all group shadow-sm hover:shadow-md btn-3d btn-3d-amber"
                     >
-                        <div className="p-3 bg-amber-900/20 text-amber-400 rounded-full mb-2 group-hover:scale-110 transition-transform shadow-[0_0_15px_rgba(245,158,11,0.3)]">
+                        <div className="p-3 bg-amber-900/20 text-amber-400 rounded-full mb-2 group-hover:scale-110 transition-transform ">
                             <ShieldCheck size={20} className="icon-3d-amber"/>
                         </div>
                         <span className="text-xs font-bold text-slate-200">Аудит Контрагента</span>
                     </button>
                     <button className="flex flex-col items-center justify-center p-4 rounded-xl transition-all group shadow-sm hover:shadow-md btn-3d btn-3d-purple">
-                        <div className="p-3 bg-purple-900/20 text-purple-400 rounded-full mb-2 group-hover:scale-110 transition-transform shadow-[0_0_15px_rgba(168,85,247,0.3)]">
+                        <div className="p-3 bg-purple-900/20 text-purple-400 rounded-full mb-2 group-hover:scale-110 transition-transform ">
                             <Fingerprint size={20} className="icon-3d-purple"/>
                         </div>
                         <span className="text-xs font-bold text-slate-200">Deep Scan</span>
                     </button>
                     <button className="flex flex-col items-center justify-center p-4 rounded-xl transition-all group shadow-sm hover:shadow-md btn-3d btn-3d-green">
-                        <div className="p-3 bg-green-900/20 text-green-400 rounded-full mb-2 group-hover:scale-110 transition-transform shadow-[0_0_15px_rgba(34,197,94,0.3)]">
+                        <div className="p-3 bg-green-900/20 text-green-400 rounded-full mb-2 group-hover:scale-110 transition-transform ">
                             <Download size={20} className="icon-3d-green"/>
                         </div>
                         <span className="text-xs font-bold text-slate-200">Експорт Даних</span>
@@ -211,7 +211,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ privacyMode, onSel
                                 className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-900 cursor-pointer group transition-colors border border-transparent hover:border-slate-800 btn-3d"
                             >
                                 <div className="flex items-center gap-3">
-                                    <div className={`w-2 h-2 rounded-full ${ent.status === 'CRITICAL' ? 'bg-red-500 animate-pulse' : ent.status === 'WARNING' ? 'bg-amber-500' : 'bg-green-500'}`}></div>
+                                    <div className={`w-2 h-2 rounded-full ${ent.status === 'CRITICAL' ? 'bg-red-500 ' : ent.status === 'WARNING' ? 'bg-amber-500' : 'bg-green-500'}`}></div>
                                     <div>
                                         <div className="text-xs font-bold text-slate-200 group-hover:text-amber-400 transition-colors">{ent.name}</div>
                                         <div className="text-[10px] text-slate-500 font-mono">EDRPOU: {ent.code}</div>

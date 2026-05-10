@@ -81,7 +81,7 @@ const RadarOverlay: React.FC = () => (
         <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
-            className="absolute top-1/2 left-1/2 w-[220%] h-[220%] -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-yellow-500/10 to-transparent origin-center opacity-40 shadow-[0_0_100px_rgba(212,175,55,0.05)]"
+            className="absolute top-1/2 left-1/2 w-[220%] h-[220%] -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-yellow-500/10 to-transparent origin-center opacity-40 "
             style={{ clipPath: 'polygon(50% 50%, 100% 50%, 100% 55%)' }}
         />
 
@@ -315,7 +315,7 @@ const AnalysisGraph: React.FC<{
     };
 
     return (
-        <div ref={containerRef} className="w-full h-full relative cursor-crosshair group overflow-hidden bg-black/40 backdrop-blur-3xl rounded-[4rem] border-2 border-white/[0.04] shadow-4xl transition-all hover:border-yellow-500/20">
+        <div ref={containerRef} className="w-full h-full relative cursor-crosshair group overflow-hidden bg-black/40  rounded-[4rem] border-2 border-white/[0.04] shadow-4xl transition-all hover:border-yellow-500/20">
             <RadarOverlay />
             <canvas
                 ref={canvasRef}
@@ -431,7 +431,7 @@ const AnalyticsView: React.FC = () => {
                 title={
                     <div className="flex items-center gap-10">
                         <div className="relative group">
-                            <div className="absolute inset-0 bg-yellow-500/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                            <div className="absolute inset-0 bg-yellow-500/20 blur-3xl rounded-full scale-150 " />
                             <div className="relative p-7 bg-black border-2 border-yellow-500/40 rounded-[2.5rem] shadow-4xl transform rotate-2 hover:rotate-0 transition-all">
                                 <Network size={42} className="text-yellow-500 shadow-[0_0_20px_#d4af37]" />
                             </div>
@@ -471,7 +471,7 @@ const AnalyticsView: React.FC = () => {
                         onChange={(e) => setSearchQuery(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                         placeholder={premiumLocales.semanticRadar.search.placeholder}
-                        className="w-full pl-20 pr-48 py-8 bg-black border-2 border-white/5 rounded-[3rem] text-white placeholder-slate-800 focus:border-yellow-500/40 focus:ring-8 focus:ring-yellow-500/5 transition-all font-black italic text-lg backdrop-blur-3xl shadow-4xl tracking-tight"
+                        className="w-full pl-20 pr-48 py-8 bg-black border-2 border-white/5 rounded-[3rem] text-white placeholder-slate-800 focus:border-yellow-500/40 focus:ring-8 focus:ring-yellow-500/5 transition-all font-black italic text-lg  shadow-4xl tracking-tight"
                     />
                     <Search size={32} className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-800 group-focus-within:text-yellow-500 transition-colors" />
                     <div className="absolute right-4 top-3 bottom-3 flex items-center gap-4">
@@ -484,7 +484,7 @@ const AnalyticsView: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="flex gap-6 p-3 bg-black border-2 border-white/5 rounded-[4rem] backdrop-blur-3xl shadow-4xl">
+                <div className="flex gap-6 p-3 bg-black border-2 border-white/5 rounded-[4rem]  shadow-4xl">
                     {[
                         { id: 'radar', label: 'RADAR_ARRAY', icon: Network },
                         { id: 'visual', label: 'VISUAL_VECTOR', icon: BarChart3 }
@@ -522,14 +522,14 @@ const AnalyticsView: React.FC = () => {
                             {/* Visual Graph Area ELITE */}
                             <div className="col-span-12 xl:col-span-8 relative group">
                                 {isScanning && (
-                                    <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-black/90 rounded-[4rem] backdrop-blur-2xl border-4 border-yellow-500/10">
+                                    <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-black/90 rounded-[4rem]  border-4 border-yellow-500/10">
                                         <div className="relative mb-12">
-                                            <div className="w-48 h-48 border-4 border-yellow-500/5 border-t-yellow-500 rounded-full animate-spin shadow-[0_0_50px_rgba(212,175,55,0.2)]" />
+                                            <div className="w-48 h-48 border-4 border-yellow-500/5 border-t-yellow-500 rounded-full animate-spin " />
                                             <div className="absolute inset-0 flex items-center justify-center">
                                                 <CyberOrb size={100} color="#D4AF37" intensity={0.6} pulse />
                                             </div>
                                         </div>
-                                        <h3 className="text-3xl font-black text-white uppercase tracking-[0.6em] font-serif animate-pulse">CAPTURING_SIGNALS...</h3>
+                                        <h3 className="text-3xl font-black text-white uppercase tracking-[0.6em] font-serif ">CAPTURING_SIGNALS...</h3>
                                         <p className="text-[12px] font-mono text-yellow-800 uppercase tracking-[0.4em] mt-6 italic">NEURAL_DECRYPTION: ACTIVE • 92%_FIDELITY</p>
                                     </div>
                                 )}
@@ -582,7 +582,7 @@ const AnalyticsView: React.FC = () => {
                                             </TacticalCard>
 
                                             {/* Parameters Breakdown ELITE */}
-                                            <div className="p-10 bg-black/60 border-2 border-white/5 rounded-[4rem] shadow-4xl backdrop-blur-3xl relative overflow-hidden group/params">
+                                            <div className="p-10 bg-black/60 border-2 border-white/5 rounded-[4rem] shadow-4xl  relative overflow-hidden group/params">
                                                 <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/5 to-transparent pointer-events-none" />
                                                 <h3 className="text-[12px] font-black text-slate-700 uppercase tracking-[0.5em] mb-10 flex items-center gap-5 italic font-serif">
                                                     <Fingerprint size={20} className="text-yellow-600" /> TOPOLOGY_PARAMETERS
@@ -604,13 +604,13 @@ const AnalyticsView: React.FC = () => {
                                             </div>
 
                                             {/* AI Neural Insight ELITE */}
-                                            <div className="p-10 bg-amber-950/20 border-2 border-amber-500/20 rounded-[4rem] shadow-4xl backdrop-blur-3xl relative overflow-hidden group/insight">
+                                            <div className="p-10 bg-amber-950/20 border-2 border-amber-500/20 rounded-[4rem] shadow-4xl  relative overflow-hidden group/insight">
                                                 <div className="absolute top-0 right-0 p-10 opacity-[0.05] group-hover/insight:opacity-20 transition-all duration-[5s] rotate-12">
                                                     <Brain size={120} className="text-amber-500" />
                                                 </div>
                                                 <div className="flex items-center gap-6 mb-8">
                                                     <div className="p-5 bg-black border-2 border-amber-600/30 rounded-[2rem] text-amber-500 shadow-2xl">
-                                                        <Sparkles size={24} className="animate-pulse" />
+                                                        <Sparkles size={24} className="" />
                                                     </div>
                                                     <span className="text-[12px] font-black text-white uppercase tracking-[0.5em] italic font-serif leading-none underline decoration-amber-600/30 decoration-4 underline-offset-4">COGNITIVE_INSIGHT_X</span>
                                                 </div>
@@ -632,7 +632,7 @@ const AnalyticsView: React.FC = () => {
                                     ) : (
                                         <div className="flex flex-col items-center justify-center h-full text-slate-800 opacity-20">
                                             <div className="p-16 bg-black border-4 border-dashed border-white/5 rounded-[5rem] mb-12 shadow-inner group transition-all hover:bg-white/[0.02]">
-                                                <Activity size={120} className="animate-pulse group-hover:scale-110 transition-transform duration-[10s]" />
+                                                <Activity size={120} className=" group-hover:scale-110 transition-transform duration-[10s]" />
                                             </div>
                                             <span className="text-[14px] font-black uppercase tracking-[1em] italic text-center">AWAITING_NODE_SELECTION</span>
                                         </div>
@@ -658,13 +658,13 @@ const AnalyticsView: React.FC = () => {
             <motion.div
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mt-12 p-12 bg-black border-2 border-white/[0.04] rounded-[5rem] backdrop-blur-3xl shadow-4xl relative overflow-hidden group hover:border-yellow-500/10 transition-all duration-1000"
+                className="mt-12 p-12 bg-black border-2 border-white/[0.04] rounded-[5rem]  shadow-4xl relative overflow-hidden group hover:border-yellow-500/10 transition-all duration-1000"
             >
                 <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/[0.02] to-transparent pointer-events-none" />
                 <div className="flex flex-col xl:flex-row items-center justify-between gap-12 relative z-10">
                     <div className="flex items-center gap-10">
                         <div className="relative group/globe">
-                            <div className="absolute inset-0 bg-yellow-500/20 blur-[60px] rounded-full scale-150 animate-pulse group-hover/globe:bg-yellow-500/40 transition-all duration-[5s]" />
+                            <div className="absolute inset-0 bg-yellow-500/20 blur-[60px] rounded-full scale-150  group-hover/globe:bg-yellow-500/40 transition-all duration-[5s]" />
                             <div className="p-6 bg-black border-2 border-yellow-500/20 rounded-[3rem] shadow-4xl relative z-10">
                                 <Globe size={64} className="text-yellow-500 animate-spin-slow" />
                             </div>
@@ -691,7 +691,7 @@ const AnalyticsView: React.FC = () => {
                     </div>
 
                     <button className="px-14 py-8 bg-yellow-600 text-black border-2 border-yellow-500/40 rounded-[2.5rem] text-[12px] font-black uppercase tracking-[0.5em] italic hover:brightness-110 transition-all flex items-center gap-6 shadow-4xl font-bold">
-                        EXPAND_NETWORK_HORIZON <ArrowUpRight size={24} className="animate-pulse" />
+                        EXPAND_NETWORK_HORIZON <ArrowUpRight size={24} className="" />
                     </button>
                 </div>
             </motion.div>

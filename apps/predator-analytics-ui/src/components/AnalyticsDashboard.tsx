@@ -107,9 +107,9 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
       
       {/* Header */}
       {showHeader && (
-        <div className="flex items-center justify-between px-8 py-6 border-b border-rose-500/10 bg-black/40 backdrop-blur-2xl relative z-20">
+        <div className="flex items-center justify-between px-8 py-6 border-b border-rose-500/10 bg-black/40  relative z-20">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-[1rem] bg-gradient-to-br from-rose-500/20 to-rose-900/20 border border-rose-500/40 flex items-center justify-center shadow-[0_0_20px_rgba(244,63,94,0.3)] group cursor-pointer">
+            <div className="w-12 h-12 rounded-[1rem] bg-gradient-to-br from-rose-500/20 to-rose-900/20 border border-rose-500/40 flex items-center justify-center  group cursor-pointer">
               <BarChart3 className="w-6 h-6 text-rose-500 group-hover:scale-110 transition-transform" />
             </div>
             <div>
@@ -130,7 +130,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
                   onClick={() => setTimeRange(range)}
                   className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${
                     timeRange === range
-                      ? 'bg-rose-500 text-black shadow-[0_0_15px_rgba(244,63,94,0.4)]'
+                      ? 'bg-rose-500 text-black '
                       : 'text-slate-500 hover:text-white hover:bg-white/5'
                   }`}
                 >
@@ -234,7 +234,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
                 transition={{ delay: index * 0.02, duration: 1, ease: "circOut" }}
                 className="flex-1 bg-gradient-to-t from-rose-600/40 via-rose-500/20 to-rose-400/10 rounded-t-lg relative group/bar border-t border-rose-500/30"
               >
-                <div className="absolute bottom-full mb-3 left-1/2 transform -translate-x-1/2 bg-black border border-rose-500/40 px-3 py-1.5 rounded-xl text-[10px] font-black text-white opacity-0 group-hover/bar:opacity-100 transition-all scale-90 group-hover/bar:scale-100 shadow-[0_0_20px_rgba(225,29,72,0.4)] z-30 whitespace-nowrap">
+                <div className="absolute bottom-full mb-3 left-1/2 transform -translate-x-1/2 bg-black border border-rose-500/40 px-3 py-1.5 rounded-xl text-[10px] font-black text-white opacity-0 group-hover/bar:opacity-100 transition-all scale-90 group-hover/bar:scale-100  z-30 whitespace-nowrap">
                   {value} REQ
                 </div>
               </motion.div>
@@ -262,7 +262,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
                 transition={{ delay: index * 0.02, duration: 1, ease: "circOut" }}
                 className="flex-1 bg-gradient-to-t from-indigo-600/40 via-indigo-500/20 to-indigo-400/10 rounded-t-lg relative group/bar border-t border-indigo-500/30"
               >
-                <div className="absolute bottom-full mb-3 left-1/2 transform -translate-x-1/2 bg-black border border-indigo-500/40 px-3 py-1.5 rounded-xl text-[10px] font-black text-white opacity-0 group-hover/bar:opacity-100 transition-all scale-90 group-hover/bar:scale-100 shadow-[0_0_20px_rgba(99,102,241,0.4)] z-30 whitespace-nowrap">
+                <div className="absolute bottom-full mb-3 left-1/2 transform -translate-x-1/2 bg-black border border-indigo-500/40 px-3 py-1.5 rounded-xl text-[10px] font-black text-white opacity-0 group-hover/bar:opacity-100 transition-all scale-90 group-hover/bar:scale-100  z-30 whitespace-nowrap">
                   {value} MS
                 </div>
               </motion.div>
@@ -299,7 +299,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
                         animate={{ width: `${error.value}%` }}
                         transition={{ delay: index * 0.1, duration: 1.5, ease: "circOut" }}
                         className={cn(
-                          "h-full rounded-full shadow-[0_0_10px_rgba(255,255,255,0.2)]",
+                          "h-full rounded-full ",
                           error.color === 'rose' ? "bg-rose-500 shadow-rose-500/40" :
                           error.color === 'amber' ? "bg-amber-500 shadow-amber-500/40" :
                           error.color === 'indigo' ? "bg-indigo-500 shadow-indigo-500/40" :

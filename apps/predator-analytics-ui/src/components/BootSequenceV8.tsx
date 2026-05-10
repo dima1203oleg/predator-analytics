@@ -498,7 +498,7 @@ const BootSequenceV8: React.FC<{ onComplete: () => void }> = ({ onComplete }) =>
             exit={{ opacity: 0, scale: 1.2 }}
             className="absolute inset-0 flex items-center justify-center pointer-events-none"
           >
-            <h1 className="text-white text-5xl md:text-8xl font-black tracking-[0.2em] shadow-[0_0_50px_rgba(220,38,38,0.5)]">
+            <h1 className="text-white text-5xl md:text-8xl font-black tracking-[0.2em] ">
               ЯДРО PREDATOR: ОНЛАЙН
             </h1>
           </motion.div>

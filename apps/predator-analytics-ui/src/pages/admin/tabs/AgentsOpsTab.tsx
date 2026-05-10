@@ -48,7 +48,7 @@ export const AgentsOpsTab: React.FC = () => {
       mono: true, 
       render: (v) => (
         <div className="flex items-center gap-4">
-          <div className="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_10px_rgba(225,29,72,1)]" />
+          <div className="w-2 h-2 rounded-full bg-rose-500 " />
           <span className="font-black tracking-tight uppercase italic text-white glint-elite">{String(v)}</span>
         </div>
       )
@@ -72,7 +72,7 @@ export const AgentsOpsTab: React.FC = () => {
         };
         return (
           <div className={cn('text-[10px] font-black tracking-[0.2em] flex items-center gap-3 italic uppercase', map[s])}>
-            <div className={cn("w-2 h-2 rounded-full animate-pulse shadow-[0_0_8px_currentColor]", s === 'alive' ? 'bg-rose-500' : 'bg-current')} />
+            <div className={cn("w-2 h-2 rounded-full  shadow-[0_0_8px_currentColor]", s === 'alive' ? 'bg-rose-500' : 'bg-current')} />
             {labelMap[s] || s.toUpperCase()}
           </div>
         );
@@ -82,14 +82,14 @@ export const AgentsOpsTab: React.FC = () => {
       key: 'cpu',         label: 'CPU_ТИСК',           width: '100px',  mono: true, align: 'right',
       render: (v) => {
         const n = Number(v);
-        return <span className={cn("font-black italic text-[11px]", n > 80 ? 'text-rose-500 animate-pulse' : n > 60 ? 'text-amber-400' : 'text-emerald-500/80')}>{n}%</span>;
+        return <span className={cn("font-black italic text-[11px]", n > 80 ? 'text-rose-500 ' : n > 60 ? 'text-amber-400' : 'text-emerald-500/80')}>{n}%</span>;
       },
     },
     {
       key: 'ram',         label: 'VRAM_ПАМ\'ЯТЬ',           width: '100px',  mono: true, align: 'right',
       render: (v) => {
         const n = Number(v);
-        return <span className={cn("font-black italic text-[11px]", n > 80 ? 'text-rose-500 animate-pulse shadow-rose-500/20' : n > 60 ? 'text-amber-400' : 'text-sky-500/80')}>{n}%</span>;
+        return <span className={cn("font-black italic text-[11px]", n > 80 ? 'text-rose-500  shadow-rose-500/20' : n > 60 ? 'text-amber-400' : 'text-sky-500/80')}>{n}%</span>;
       },
     },
     {
@@ -128,11 +128,11 @@ export const AgentsOpsTab: React.FC = () => {
           <motion.div 
             animate={{ rotate: 360 }}
             transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-            className="w-24 h-24 border-2 border-rose-500/20 rounded-full border-t-rose-500 shadow-[0_0_30px_rgba(225,29,72,0.3)]"
+            className="w-24 h-24 border-2 border-rose-500/20 rounded-full border-t-rose-500 "
           />
-          <Bot className="absolute inset-0 m-auto w-8 h-8 text-rose-500 animate-pulse" />
+          <Bot className="absolute inset-0 m-auto w-8 h-8 text-rose-500 " />
         </div>
-        <div className="text-[14px] font-black font-mono uppercase tracking-[0.6em] animate-pulse italic text-rose-500/60">ОПИТУВАННЯ_НЕЙРОННОГО_РОЮ_V61...</div>
+        <div className="text-[14px] font-black font-mono uppercase tracking-[0.6em]  italic text-rose-500/60">ОПИТУВАННЯ_НЕЙРОННОГО_РОЮ_V61...</div>
       </div>
     );
   }
@@ -141,7 +141,7 @@ export const AgentsOpsTab: React.FC = () => {
     return (
       <div className="flex flex-col items-center justify-center h-[700px] p-24 text-center glass-wraith m-12 border-2 border-rose-600/20 rounded-[4rem] relative overflow-hidden shadow-4xl">
         <div className="absolute inset-0 bg-rose-900/5 blur-[120px] pointer-events-none" />
-        <Bot size={64} className="text-rose-500/40 mb-10 animate-pulse" />
+        <Bot size={64} className="text-rose-500/40 mb-10 " />
         <div className="text-3xl font-black uppercase tracking-tighter text-white mb-4 glint-elite"> РОЗСИНХРОНІЗАЦІЯ_НЕЙРОННОЇ_МЕРЕЖІ</div>
         <p className="text-[12px] font-black font-mono text-white/30 max-w-lg mb-12 leading-relaxed uppercase italic tracking-widest">
           СИСТЕМА_ВТРАТИЛА_ЗВ'ЯЗОК_З_ОРКЕСТРАТОРОМ_АГЕНТІВ. ПЕРЕВІРТЕ_СТАН_AGENT_CONTROL_HUB_ELITE_v61.
@@ -175,7 +175,7 @@ export const AgentsOpsTab: React.FC = () => {
         </div>
         <div className="flex items-center gap-8 text-[11px] font-black font-mono text-white/30 tracking-[0.2em] uppercase italic">
           <div className="flex items-center gap-3">
-            <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_15px_rgba(16,185,129,0.8)]" />
+            <div className="w-2.5 h-2.5 rounded-full bg-emerald-500  " />
             <span className="text-emerald-500/80">ЗДОРОВ'Я_РОЮ: {stats?.total || 0}%</span>
 
           </div>
@@ -223,9 +223,9 @@ export const AgentsOpsTab: React.FC = () => {
 
             <div className={cn(
               "absolute bottom-0 left-0 right-0 h-[3px] opacity-0 group-hover:opacity-100 transition-all duration-700",
-              metric.color.includes('rose') ? "bg-rose-500/50 shadow-[0_0_20px_rgba(225,29,72,0.6)]" : 
-              metric.color.includes('sky') ? "bg-sky-500/50 shadow-[0_0_20px_rgba(14,165,233,0.6)]" : 
-              "bg-white/20 shadow-[0_0_20px_rgba(255,255,255,0.2)]"
+              metric.color.includes('rose') ? "bg-rose-500/50 " : 
+              metric.color.includes('sky') ? "bg-sky-500/50 " : 
+              "bg-white/20 "
             )} />
           </motion.div>
         ))}
@@ -238,13 +238,13 @@ export const AgentsOpsTab: React.FC = () => {
           <div className="flex flex-col items-center gap-3">
             <span className="text-2xl font-black text-white/50 uppercase tracking-[0.4em] italic glint-elite">МАТрИЦЯ ШІ-ВУЗЛІВ</span>
             <div className="flex items-center gap-4">
-               <Bot size={14} className="text-rose-500/40 animate-pulse" />
+               <Bot size={14} className="text-rose-500/40 " />
                <span className="text-[10px] font-black font-mono text-rose-500/60 uppercase tracking-[0.3em] font-black italic">НЕЙРОННИЙ_РЕЄСТР_СИНХРОНІЗОВАНО_V61_ELITE</span>
             </div>
           </div>
           <div className="h-[2px] flex-1 bg-gradient-to-l from-transparent via-white/10 to-transparent" />
         </div>
-        <div className="glass-wraith border-2 border-white/5 rounded-[3.5rem] overflow-hidden backdrop-blur-3xl shadow-4xl relative p-4">
+        <div className="glass-wraith border-2 border-white/5 rounded-[3.5rem] overflow-hidden  shadow-4xl relative p-4">
           <div className="absolute inset-0 bg-cyber-grid opacity-[0.03] pointer-events-none" />
           <VirtualTable
             rows={agents}

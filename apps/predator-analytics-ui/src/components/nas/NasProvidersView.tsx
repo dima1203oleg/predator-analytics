@@ -27,7 +27,7 @@ export const NasProvidersView: React.FC<NasProvidersViewProps> = ({ providers })
                                 key={p.id}
                                 whileHover={{ y: -5 }}
                                 className={`p-5 rounded-xl border relative  group transition-all duration-300 ${!isEnabled ? 'grayscale opacity-50 bg-slate-900/20 border-slate-800' :
-                                        usagePercent > 85 ? 'bg-yellow-900/10 border-yellow-500/50 shadow-[0_0_15px_rgba(234,179,8,0.1)]' :
+                                        usagePercent > 85 ? 'bg-yellow-900/10 border-yellow-500/50 ' :
                                             'bg-slate-900/40 border-slate-800 hover:border-slate-700'
                                     }`}
                             >
@@ -61,9 +61,9 @@ export const NasProvidersView: React.FC<NasProvidersViewProps> = ({ providers })
                                                 initial={{ width: 0 }}
                                                 animate={{ width: `${usagePercent}%` }}
                                                 transition={{ duration: 1, ease: 'easeOut' }}
-                                                className={`h-full relative ${usagePercent > 85 ? 'bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]' :
-                                                        usagePercent > 60 ? 'bg-amber-500 shadow-[0_0_10px_rgba(234,179,8,0.5)]' :
-                                                            'bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]'
+                                                className={`h-full relative ${usagePercent > 85 ? 'bg-red-500 ' :
+                                                        usagePercent > 60 ? 'bg-amber-500 ' :
+                                                            'bg-blue-500 '
                                                     }`}
                                             >
                                                 <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent"></div>

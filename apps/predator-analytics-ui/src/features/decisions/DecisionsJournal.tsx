@@ -251,9 +251,9 @@ export const DecisionsJournal: React.FC = () => {
             title={
               <div className="flex items-center gap-12">
                 <div className="relative group">
-                  <div className="absolute inset-0 bg-rose-500/20 blur-[80px] rounded-full scale-150 animate-pulse" />
+                  <div className="absolute inset-0 bg-rose-500/20 blur-[80px] rounded-full scale-150 " />
                   <div className="relative p-7 bg-black border-2 border-rose-500/40 rounded-[3rem] shadow-4xl transform -rotate-2 hover:rotate-0 transition-all duration-700">
-                    <BookOpen size={54} className="text-rose-500 drop-shadow-[0_0_20px_rgba(244,63,94,0.4)]" />
+                    <BookOpen size={54} className="text-rose-500 " />
                   </div>
                 </div>
                 <div className="space-y-4">
@@ -284,7 +284,7 @@ export const DecisionsJournal: React.FC = () => {
           />
 
           {/* ФІЛЬТрИ ELITE */}
-          <div className="flex flex-wrap gap-8 items-center p-4 bg-black/60 backdrop-blur-3xl border-2 border-white/5 rounded-[3rem] w-fit shadow-2xl">
+          <div className="flex flex-wrap gap-8 items-center p-4 bg-black/60  border-2 border-white/5 rounded-[3rem] w-fit shadow-2xl">
             <div className="flex items-center gap-6 bg-black border-2 border-white/5 px-10 py-4 rounded-2xl group focus-within:border-rose-500/40 transition-all">
               <Search size={22} className="text-slate-700 group-hover:text-rose-500 transition-colors" />
               <input
@@ -325,10 +325,10 @@ export const DecisionsJournal: React.FC = () => {
           {/* СПИСОК РІШЕНЬ */}
           <div className="space-y-6 relative min-h-[600px]">
             {isLoading ? (
-               <div className="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-sm rounded-[3rem] z-20">
+               <div className="absolute inset-0 flex items-center justify-center bg-black/20  rounded-[3rem] z-20">
                   <div className="flex flex-col items-center gap-6">
                      <RefreshCw className="text-rose-500 animate-spin" size={64} />
-                     <span className="text-[12px] font-black text-rose-500 uppercase tracking-[0.5em] animate-pulse italic">СИНХРОНІЗАЦІЯ_WORM_МАТрИЦІ...</span>
+                     <span className="text-[12px] font-black text-rose-500 uppercase tracking-[0.5em]  italic">СИНХРОНІЗАЦІЯ_WORM_МАТрИЦІ...</span>
                   </div>
                </div>
             ) : null}

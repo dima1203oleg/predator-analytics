@@ -68,7 +68,7 @@ export const EtlProcessMonitor: React.FC = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.1 }}
                         key={i}
-                        className="bg-slate-900/40 border border-white/5 rounded-3xl p-6 backdrop-blur-3xl group hover:border-white/10 transition-all"
+                        className="bg-slate-900/40 border border-white/5 rounded-3xl p-6  group hover:border-white/10 transition-all"
                     >
                         <m.icon size={18} className={cn("mb-4", m.color)} />
                         <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">{m.label}</div>
@@ -78,11 +78,11 @@ export const EtlProcessMonitor: React.FC = () => {
             </div>
 
             {/* Main Job Queue Container */}
-            <div className="bg-slate-950/40 backdrop-blur-3xl border border-white/5 rounded-[40px] overflow-hidden shadow-2xl">
+            <div className="bg-slate-950/40  border border-white/5 rounded-[40px] overflow-hidden shadow-2xl">
                 {/* Internal Terminal Header */}
                 <div className="px-8 py-6 border-b border-white/5 bg-gradient-to-r from-blue-900/10 to-transparent flex justify-between items-center">
                     <div className="flex items-center gap-4">
-                        <div className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+                        <div className="w-3 h-3 rounded-full bg-emerald-500  " />
                         <h2 className="text-sm font-black text-white uppercase tracking-widest font-mono">Kernel Pipeline Queue // Active</h2>
                     </div>
                     <div className="flex gap-6 font-mono text-[10px] text-slate-500">
@@ -148,7 +148,7 @@ const EtlJobModule: React.FC<{ job: EtlJob }> = ({ job }) => {
                             <h3 className="text-xl font-black text-white uppercase tracking-tight font-mono">{job.source_file.split('/').pop()}</h3>
                             <span className={cn(
                                 "text-[9px] font-black px-2 py-0.5 rounded-md uppercase tracking-widest border",
-                                isComplete ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400" : isFailed ? "bg-rose-500/10 border-rose-500/30 text-rose-400" : "bg-blue-500/10 border-blue-500/30 text-blue-400 animate-pulse"
+                                isComplete ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400" : isFailed ? "bg-rose-500/10 border-rose-500/30 text-rose-400" : "bg-blue-500/10 border-blue-500/30 text-blue-400 "
                             )}>
                                 {job.state}
                             </span>
@@ -197,7 +197,7 @@ const EtlJobModule: React.FC<{ job: EtlJob }> = ({ job }) => {
                         <div key={idx} className="relative z-10 flex flex-col items-center">
                             <div className={cn(
                                 "w-12 h-12 rounded-2xl flex items-center justify-center border-2 transition-all duration-700 bg-black/80",
-                                active ? "border-cyan-500/50 text-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.2)]" : "border-white/5 text-slate-700"
+                                active ? "border-cyan-500/50 text-cyan-400 " : "border-white/5 text-slate-700"
                             )}>
                                 <stage.icon size={18} />
                             </div>
@@ -207,7 +207,7 @@ const EtlJobModule: React.FC<{ job: EtlJob }> = ({ job }) => {
                             </div>
                             {/* Animated Flow Pulse */}
                             {active && nextActive && (
-                                <div className="absolute top-6 left-1/2 w-full h-[1px] bg-cyan-400/50 shadow-[0_0_10px_#22d3ee] animate-pulse" />
+                                <div className="absolute top-6 left-1/2 w-full h-[1px] bg-cyan-400/50 shadow-[0_0_10px_#22d3ee] " />
                             )}
                         </div>
                     );

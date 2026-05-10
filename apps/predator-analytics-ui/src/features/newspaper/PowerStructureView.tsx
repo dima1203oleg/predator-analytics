@@ -84,7 +84,7 @@ const PowerNodeCard = ({ node, color }: { node: PowerNode; color?: string }) => 
                     <motion.div 
                         initial={{ width: 0 }}
                         animate={{ width: `${node.power}%` }}
-                        className="h-full bg-gradient-to-r from-cyan-600 to-blue-600 shadow-[0_0_10px_rgba(6,182,212,0.5)]"
+                        className="h-full bg-gradient-to-r from-cyan-600 to-blue-600 "
                     />
                 </div>
                 <span className="text-[10px] font-black font-mono text-cyan-400 italic leading-none">{node.power}% ВПЛИВУ</span>
@@ -174,9 +174,9 @@ export default function PowerStructureView() {
                      title={
                        <div className="flex items-center gap-10">
                           <div className="relative group">
-                             <div className="absolute inset-0 bg-cyan-600/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                             <div className="absolute inset-0 bg-cyan-600/20 blur-3xl rounded-full scale-150 " />
                              <div className="relative p-7 bg-black border border-cyan-900/40 rounded-[2.5rem] shadow-2xl">
-                                <Landmark size={42} className="text-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.5)]" />
+                                <Landmark size={42} className="text-cyan-500 " />
                              </div>
                           </div>
                           <div className="space-y-2">
@@ -244,7 +244,7 @@ export default function PowerStructureView() {
                                        </div>
                                        <div className="max-w-2xl">
                                           {data.levels.level1.nodes.map(node => (
-                                            <PowerNodeCard key={node.id} node={node} color="shadow-[0_0_30px_rgba(6,182,212,0.3)] border-cyan-500/40 bg-cyan-500/[0.02]" />
+                                            <PowerNodeCard key={node.id} node={node} color=" border-cyan-500/40 bg-cyan-500/[0.02]" />
                                           ))}
                                        </div>
                                     </div>
@@ -319,7 +319,7 @@ export default function PowerStructureView() {
                              <div className="space-y-6">
                                 {data?.recentChanges.map((log, i) => (
                                   <div key={i} className="flex gap-4 p-5 rounded-2xl bg-white/[0.01] border border-white/[0.04] transition-all hover:bg-white/[0.03]">
-                                     <div className="w-2 h-2 rounded-full bg-cyan-500 mt-2 shrink-0 animate-pulse" />
+                                     <div className="w-2 h-2 rounded-full bg-cyan-500 mt-2 shrink-0 " />
                                      <span className="text-[12px] font-black text-slate-400 italic leading-snug">{log}</span>
                                   </div>
                                 ))}

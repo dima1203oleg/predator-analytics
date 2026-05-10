@@ -79,9 +79,9 @@ export default function DocumentsView() {
                      title={
                        <div className="flex items-center gap-10">
                           <div className="relative group">
-                             <div className="absolute inset-0 bg-yellow-600/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                             <div className="absolute inset-0 bg-yellow-600/20 blur-3xl rounded-full scale-150 " />
                              <div className="relative p-7 bg-black border border-yellow-900/40 rounded-[2.5rem] shadow-2xl">
-                                <Layers size={42} className="text-yellow-500 shadow-[0_0_15px_rgba(99,102,241,0.5)]" />
+                                <Layers size={42} className="text-yellow-500 " />
                              </div>
                           </div>
                           <div className="space-y-2">

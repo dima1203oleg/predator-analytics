@@ -113,10 +113,10 @@ const EngineCardHeader: React.FC<{ engine: any }> = ({ engine }) => {
     return (
         <div className="flex items-start gap-8">
             <div className="relative">
-                <div className="absolute inset-0 blur-3xl opacity-20 animate-pulse" style={{ backgroundColor: engine.color }} />
+                <div className="absolute inset-0 blur-3xl opacity-20 " style={{ backgroundColor: engine.color }} />
                 <div className="relative p-6 bg-slate-900 border border-white/10 rounded-[28px] panel-3d shadow-2xl overflow-hidden group">
                     <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
-                    <Icon size={48} style={{ color: engine.color }} className="drop-shadow-[0_0_15px_currentColor]" />
+                    <Icon size={48} style={{ color: engine.color }} className="" />
                 </div>
             </div>
             <div className="flex-1">
@@ -124,7 +124,7 @@ const EngineCardHeader: React.FC<{ engine: any }> = ({ engine }) => {
                     <h2 className="text-3xl font-black text-white uppercase tracking-tighter italic">{engine.name}</h2>
                     <Badge className={cn(
                         "font-black text-[10px] px-3 py-1 italic tracking-widest uppercase",
-                        engine.status === 'ok' ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30" : "bg-rose-500/20 text-rose-400 border border-rose-500/30 animate-pulse"
+                        engine.status === 'ok' ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30" : "bg-rose-500/20 text-rose-400 border border-rose-500/30 "
                     )}>
                         {engine.label || engine.status}
                     </Badge>
@@ -170,7 +170,7 @@ const EngineListItem: React.FC<{ engine: any; isActive: boolean; onClick: () => 
                 "p-3 rounded-xl border transition-all",
                 isActive ? "bg-slate-900 border-white/10" : "bg-slate-900/50 border-white/5 group-hover:border-white/10"
             )} style={{ color: engine.color }}>
-                <Icon size={20} className={cn(isActive && "animate-pulse")} />
+                <Icon size={20} className={cn(isActive && "")} />
             </div>
             <div className="flex-1 text-left">
                 <div className="flex justify-between items-center mb-1">
@@ -371,7 +371,7 @@ const EnginesView: React.FC = () => {
                             <div className="relative group">
                                 <div className="absolute inset-0 bg-purple-500/20 blur-[60px] rounded-full scale-150 opacity-20" />
                                 <div className="relative p-5 bg-slate-900 border border-white/5 rounded-[28px] panel-3d shadow-2xl">
-                                    <Cpu size={36} className="text-purple-400 drop-shadow-[0_0_10px_rgba(139,92,246,0.8)]" />
+                                    <Cpu size={36} className="text-purple-400 " />
                                 </div>
                             </div>
                             <div>
@@ -511,7 +511,7 @@ const EnginesView: React.FC = () => {
                                                         transition={{ delay: i * 0.1 }}
                                                         className="p-5 bg-black/40 border border-white/5 rounded-[24px] group hover:border-white/10 transition-all flex items-start gap-5 relative overflow-hidden"
                                                     >
-                                                        <div className="shrink-0 w-2 h-2 rounded-full mt-2 animate-pulse" style={{ backgroundColor: cfg.color }} />
+                                                        <div className="shrink-0 w-2 h-2 rounded-full mt-2 " style={{ backgroundColor: cfg.color }} />
                                                         <div className="flex-1">
                                                             <div className="flex justify-between items-center mb-2">
                                                                 <Badge className="font-black text-[8px] border-none italic" style={{ backgroundColor: cfg.bg, color: cfg.color }}>
@@ -533,11 +533,11 @@ const EnginesView: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="p-10 bg-slate-950/40 border border-white/5 rounded-[48px] backdrop-blur-3xl shadow-2xl relative overflow-hidden group">
+                <div className="p-10 bg-slate-950/40 border border-white/5 rounded-[48px]  shadow-2xl relative overflow-hidden group">
                     <div className="flex flex-col md:flex-row items-center justify-between gap-10">
                         <div className="flex items-center gap-8">
                             <div className="relative">
-                                <div className="absolute inset-0 bg-purple-500/20 blur-2xl rounded-full scale-110 animate-pulse" />
+                                <div className="absolute inset-0 bg-purple-500/20 blur-2xl rounded-full scale-110 " />
                                 <div className="p-4 bg-slate-900 border border-white/10 rounded-2xl relative z-10">
                                     <Box size={32} className="text-purple-400" />
                                 </div>

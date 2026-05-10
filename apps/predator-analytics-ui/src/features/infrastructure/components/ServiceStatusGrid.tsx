@@ -42,7 +42,7 @@ export function ServiceStatusGrid({ data }: ServiceStatusGridProps) {
           <div key={key} className="bg-slate-950 border border-white/10 rounded-xl p-4 flex flex-col justify-between hover:bg-rose-500/5 hover:border-rose-500/30 transition-all group shadow-xl">
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-rose-500/10 rounded-xl text-rose-500 border border-rose-500/20 group-hover:bg-rose-500/20 group-hover:border-rose-500/40 transition-all shadow-[0_0_15px_rgba(225,29,72,0.1)]">
+                <div className="p-2.5 bg-rose-500/10 rounded-xl text-rose-500 border border-rose-500/20 group-hover:bg-rose-500/20 group-hover:border-rose-500/40 transition-all ">
                   {getIcon(key)}
                 </div>
                 <div>
@@ -54,11 +54,11 @@ export function ServiceStatusGrid({ data }: ServiceStatusGridProps) {
               </div>
               <div className="flex flex-col items-end gap-1.5">
                 {comp.status === 'UP' ? (
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500 drop-shadow-[0_0_8px_rgba(16,185,129,0.4)]" />
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500 " />
                 ) : comp.status === 'DEGRADED' ? (
-                  <AlertTriangle className="w-4 h-4 text-rose-500 animate-pulse drop-shadow-[0_0_8px_rgba(225,29,72,0.4)]" />
+                  <AlertTriangle className="w-4 h-4 text-rose-500  " />
                 ) : (
-                  <AlertCircle className="w-4 h-4 text-rose-600 drop-shadow-[0_0_8px_rgba(225,29,72,0.4)]" />
+                  <AlertCircle className="w-4 h-4 text-rose-600 " />
                 )}
                 <span className={cn(
                     "text-[9px] font-black font-mono px-1.5 py-0.5 rounded bg-black/40 border border-white/5",
@@ -86,7 +86,7 @@ export function ServiceStatusGrid({ data }: ServiceStatusGridProps) {
                             animate={{ width: `${usagePercent}%` }}
                             className={cn(
                                 "h-full rounded-full transition-all duration-1000",
-                                usagePercent > 90 ? "bg-rose-600 shadow-[0_0_10px_rgba(225,29,72,0.6)]" : usagePercent > 70 ? "bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.4)]" : "bg-emerald-500"
+                                usagePercent > 90 ? "bg-rose-600 " : usagePercent > 70 ? "bg-rose-500 " : "bg-emerald-500"
                             )}
                         />
                     </div>

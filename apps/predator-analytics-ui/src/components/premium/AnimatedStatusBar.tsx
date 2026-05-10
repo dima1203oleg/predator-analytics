@@ -52,11 +52,10 @@ const StatusPill: React.FC<{
       className={`
         flex items-center gap-2 px-3 py-1.5 rounded-full border
         ${statusColors[status]}
-        backdrop-blur-sm transition-all duration-300
-        hover:scale-105 cursor-default
+        transition-all duration-300 hover:scale-105 cursor-default
       `}
     >
-      <div className={animate ? 'animate-pulse' : ''}>
+      <div className=''>
         {icon}
       </div>
       <span className="text-[10px] font-mono uppercase tracking-tight hidden xl:inline">
@@ -150,7 +149,7 @@ export const AnimatedStatusBar: React.FC<AnimatedStatusBarProps> = ({
       onMouseLeave={() => setShowDetails(false)}
     >
       {/* Main Status Bar */}
-      <div className="flex items-center gap-3 bg-slate-900/60 backdrop-blur-xl px-4 py-2 rounded-2xl border border-slate-800">
+      <div className="flex items-center gap-3 bg-slate-900/80 px-4 py-2 rounded-2xl border border-slate-800">
         {/* Connection Status */}
         <StatusPill
           icon={connectionIcon}
@@ -191,7 +190,7 @@ export const AnimatedStatusBar: React.FC<AnimatedStatusBarProps> = ({
             initial={{ opacity: 0, y: -10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
-            className="absolute top-full right-0 mt-2 w-72 bg-slate-900/95 backdrop-blur-xl rounded-2xl border border-slate-700 shadow-2xl p-4 z-50"
+            className="absolute top-full right-0 mt-2 w-72 bg-slate-900/98 rounded-2xl border border-slate-700 p-4 z-50"
           >
             <div className="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">
               {premiumLocales.statusBar.detailedInfo}

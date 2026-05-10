@@ -75,7 +75,7 @@ const ciCols: VirtualColumn<CIRun>[] = [
       const labelMap: Record<string, string> = { success: 'УСПІШНО_ДЕПЛОЙ', failure: 'КРИТИЧНИЙ_ЗБІЙ', running: 'ФО МУВАННЯ', pending: 'В_ЧЕ ЗІ' };
       return (
         <div className={cn('text-[10px] font-black tracking-[0.2em] flex items-center gap-2 italic uppercase', map[s] ?? 'text-white/20')}>
-          <div className={cn("w-2 h-2 rounded-full", s === 'running' ? 'bg-sky-400 animate-pulse shadow-[0_0_8px_rgba(56,189,248,0.8)]' : 'bg-current')} />
+          <div className={cn("w-2 h-2 rounded-full", s === 'running' ? 'bg-sky-400  ' : 'bg-current')} />
           {labelMap[s] || s.toUpperCase()}
         </div>
       );
@@ -156,7 +156,7 @@ const etlCols: VirtualColumn<ETLPipeline>[] = [
       const labelMap: Record<string, string> = { running: 'Т АНСФОРМАЦІЯ', completed: 'СИНХ ОНІЗОВАНО', failed: 'ЗБІЙ_ДЖЕ ЕЛА', idle: 'ОЧІКУВАННЯ' };
       return (
         <div className={cn('text-[10px] font-black tracking-[0.2em] flex items-center gap-2 italic uppercase', map[s])}>
-          <div className={cn("w-2 h-2 rounded-full", s === 'running' ? 'bg-sky-400 animate-pulse shadow-[0_0_8px_rgba(56,189,248,0.8)]' : 'bg-current')} />
+          <div className={cn("w-2 h-2 rounded-full", s === 'running' ? 'bg-sky-400  ' : 'bg-current')} />
           {labelMap[s] || s.toUpperCase()}
         </div>
       );
@@ -182,7 +182,7 @@ const etlCols: VirtualColumn<ETLPipeline>[] = [
     key: 'lag',        label: 'ЗАТрИМКА_LAG',       width: '120px',  mono: true, align: 'right',
     render: (v) => {
       const n = Number(v);
-      return <span className={cn("font-black italic text-[11px]", n > 1000 ? 'text-red-500 animate-pulse' : n > 100 ? 'text-amber-400' : 'text-white/20')}>{n.toLocaleString()}</span>;
+      return <span className={cn("font-black italic text-[11px]", n > 1000 ? 'text-red-500 ' : n > 100 ? 'text-amber-400' : 'text-white/20')}>{n.toLocaleString()}</span>;
     },
   },
   { 
@@ -201,8 +201,8 @@ const getETLStatus = (row: ETLPipeline): RowStatus =>
 // ─── ArgoCD картки ────────────────────────────────────────────────────────────
 
 const SyncIcon: React.FC<{ status: ArgoCDApp['syncStatus'] }> = ({ status }) => {
-  if (status === 'Synced')    return <CheckCircle className="w-6 h-6 text-rose-500 shadow-[0_0_15px_rgba(244,63,94,0.5)]" />;
-  if (status === 'OutOfSync') return <XCircle className="w-6 h-6 text-amber-500 animate-pulse shadow-[0_0_15px_rgba(245,158,11,0.5)]" />;
+  if (status === 'Synced')    return <CheckCircle className="w-6 h-6 text-rose-500 " />;
+  if (status === 'OutOfSync') return <XCircle className="w-6 h-6 text-amber-500  " />;
   return <Clock className="w-6 h-6 text-white/20" />;
 };
 
@@ -219,11 +219,11 @@ export const GitOpsPipelineTab: React.FC = () => {
           <motion.div 
             animate={{ rotate: 360 }}
             transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-            className="w-24 h-24 border-2 border-rose-500/20 rounded-full border-t-rose-500 shadow-[0_0_30px_rgba(225,29,72,0.3)]"
+            className="w-24 h-24 border-2 border-rose-500/20 rounded-full border-t-rose-500 "
           />
-          <Workflow className="absolute inset-0 m-auto w-8 h-8 text-rose-500 animate-pulse" />
+          <Workflow className="absolute inset-0 m-auto w-8 h-8 text-rose-500 " />
         </div>
-        <div className="text-[14px] font-black font-mono uppercase tracking-[0.6em] animate-pulse italic text-rose-500/60">АНАЛІЗ_МАГІСТ АЛЕЙ_GITOPS_V61...</div>
+        <div className="text-[14px] font-black font-mono uppercase tracking-[0.6em]  italic text-rose-500/60">АНАЛІЗ_МАГІСТ АЛЕЙ_GITOPS_V61...</div>
       </div>
     );
   }
@@ -232,7 +232,7 @@ export const GitOpsPipelineTab: React.FC = () => {
     return (
       <div className="flex flex-col items-center justify-center h-[700px] p-24 text-center glass-wraith m-12 border-2 border-rose-600/20 rounded-[4rem] relative overflow-hidden shadow-4xl">
         <div className="absolute inset-0 bg-rose-900/5 blur-[120px] pointer-events-none" />
-        <GitBranch size={64} className="text-rose-500/40 mb-10 animate-pulse" />
+        <GitBranch size={64} className="text-rose-500/40 mb-10 " />
         <div className="text-3xl font-black uppercase tracking-tighter text-white mb-4 glint-elite">КРИТИЧНИЙ_ЗБІЙ_МАГІСТ АЛІ</div>
         <p className="text-[12px] font-black font-mono text-white/30 max-w-lg mb-12 leading-relaxed uppercase italic tracking-widest">
           СИСТЕМА_НЕ_ЗМОГЛА_ОТРИМАТИ_СТАН_ARGOCD_ТА_ПЛАТФО М_CI_CD. ПЕ ЕВІ ТЕ_GITOPS_CONTROLLER_V61_ELITE.
@@ -265,7 +265,7 @@ export const GitOpsPipelineTab: React.FC = () => {
         </div>
         <div className="flex items-center gap-8 text-[11px] font-black font-mono text-white/30 tracking-[0.2em] uppercase italic">
           <div className="flex items-center gap-3">
-            <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_15px_rgba(16,185,129,0.8)]" />
+            <div className="w-2.5 h-2.5 rounded-full bg-emerald-500  " />
             <span className="text-emerald-500/80">СИНХ ОНІЗОВАНО_З_MASTER_REPO</span>
           </div>
           <span className="opacity-20">•</span>
@@ -284,7 +284,7 @@ export const GitOpsPipelineTab: React.FC = () => {
       {/* ArgoCD Apps */}
       <div className="space-y-8 relative z-10">
         <div className="flex items-center gap-6 px-4">
-           <div className="w-2 h-2 bg-rose-500 rotate-45 shadow-[0_0_10px_rgba(225,29,72,1)]" />
+           <div className="w-2 h-2 bg-rose-500 rotate-45 " />
            <span className="text-[12px] font-black font-mono text-white/40 uppercase tracking-[0.5em] italic glint-elite">ArgoCD — СТАН_А ХІТЕКТУ НИХ_МОДУЛІВ</span>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -308,7 +308,7 @@ export const GitOpsPipelineTab: React.FC = () => {
                  <span className={cn(
                     'text-[10px] font-black px-5 py-1.5 rounded-xl border-2 tracking-[0.3em] italic uppercase shadow-4xl',
                     app.healthStatus === 'Healthy'     ? 'text-emerald-500 bg-emerald-500/5 border-emerald-500/30 shadow-emerald-500/10' :
-                    app.healthStatus === 'Degraded'    ? 'text-rose-500 bg-rose-500/5 border-rose-500/30 animate-pulse' :
+                    app.healthStatus === 'Degraded'    ? 'text-rose-500 bg-rose-500/5 border-rose-500/30 ' :
                                                            'text-sky-500 bg-sky-500/5 border-sky-500/30',
                   )}>
                     {app.healthStatus === 'Healthy' ? 'HEALTHY' : app.healthStatus === 'Degraded' ? 'DEGRADED' : 'PROGRESSING'}
@@ -328,10 +328,10 @@ export const GitOpsPipelineTab: React.FC = () => {
         {/* CI/CD Runs */}
         <div className="space-y-8">
           <div className="flex items-center gap-6 px-4">
-             <div className="w-2.5 h-2.5 bg-rose-500 rotate-45 shadow-[0_0_10px_rgba(225,29,72,1)]" />
+             <div className="w-2.5 h-2.5 bg-rose-500 rotate-45 " />
              <span className="text-[12px] font-black font-mono text-white/40 uppercase tracking-[0.6em] italic glint-elite">ЖУ НАЛ_МАГІСТ АЛІ_CI_CD (AUDIT_TRAIL)</span>
           </div>
-          <div className="glass-wraith border-2 border-white/5 rounded-[3.5rem] overflow-hidden backdrop-blur-3xl shadow-4xl relative p-4">
+          <div className="glass-wraith border-2 border-white/5 rounded-[3.5rem] overflow-hidden  shadow-4xl relative p-4">
             <div className="absolute inset-0 bg-cyber-grid opacity-[0.03] pointer-events-none" />
             <VirtualTable
               rows={ciRuns}
@@ -347,10 +347,10 @@ export const GitOpsPipelineTab: React.FC = () => {
         {/* ETL Пайплайни */}
         <div className="space-y-8">
           <div className="flex items-center gap-6 px-4">
-             <div className="w-2.5 h-2.5 bg-rose-500 rotate-45 shadow-[0_0_10px_rgba(225,29,72,1)]" />
+             <div className="w-2.5 h-2.5 bg-rose-500 rotate-45 " />
              <span className="text-[12px] font-black font-mono text-white/40 uppercase tracking-[0.6em] italic glint-elite">МАТрИЦЯ_ПОТОКІВ_ETL_CORE_ELITE</span>
           </div>
-          <div className="glass-wraith border-2 border-white/5 rounded-[3.5rem] overflow-hidden backdrop-blur-3xl shadow-4xl relative p-4">
+          <div className="glass-wraith border-2 border-white/5 rounded-[3.5rem] overflow-hidden  shadow-4xl relative p-4">
             <div className="absolute inset-0 bg-cyber-grid opacity-[0.03] pointer-events-none" />
             <VirtualTable
               rows={etlPipelines}

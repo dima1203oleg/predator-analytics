@@ -47,7 +47,7 @@ export const VramSentinel: React.FC = () => {
     <motion.div 
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="bg-slate-950/80 backdrop-blur-3xl border border-white/5 p-6 rounded-[32px] shadow-2xl relative overflow-hidden group"
+      className="bg-slate-950/80  border border-white/5 p-6 rounded-[32px] shadow-2xl relative overflow-hidden group"
     >
       <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-[80px] pointer-events-none" />
       
@@ -59,7 +59,7 @@ export const VramSentinel: React.FC = () => {
             vram.mode === 'HYBRID' ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400' :
             'bg-blue-500/20 border-blue-500/40 text-blue-400'
           )}>
-            <Cpu size={20} className={vram.total > 7.6 ? 'animate-pulse' : ''} />
+            <Cpu size={20} className={vram.total > 7.6 ? '' : ''} />
           </div>
           <div>
             <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] italic">СИСТЕМА_ЗАХИСТУ_VRAM</h4>
@@ -94,7 +94,7 @@ export const VramSentinel: React.FC = () => {
               animate={{ width: `${(vram.total / limit) * 100}%` }}
               transition={{ duration: 1.5, ease: "circOut" }}
             >
-              <div className="absolute inset-0 bg-white/20 animate-pulse pointer-events-none" />
+              <div className="absolute inset-0 bg-white/20  pointer-events-none" />
             </motion.div>
           </div>
         </div>
@@ -145,7 +145,7 @@ export const VramSentinel: React.FC = () => {
                 <p className="text-[10px] font-black text-blue-300 uppercase tracking-widest leading-tight">ХМА НИЙ_ОБХІД_УВІМКНЕНО</p>
                 <p className="text-[8px] text-blue-400 font-black leading-tight mt-1">Використання Gemini Pro 1.5 для збереження VRAM</p>
               </div>
-              <Zap size={14} className="text-blue-500 animate-pulse" />
+              <Zap size={14} className="text-blue-500 " />
             </motion.div>
           )}
         </AnimatePresence>
@@ -157,7 +157,7 @@ export const VramSentinel: React.FC = () => {
           <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">Стабільність системи гарантована</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 " />
           <span className="text-[8px] font-black text-slate-300 font-mono italic">СИНХ ОНІЗОВАНО</span>
         </div>
       </div>

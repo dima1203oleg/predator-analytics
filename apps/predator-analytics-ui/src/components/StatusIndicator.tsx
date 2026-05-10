@@ -75,7 +75,7 @@ export const StatusIndicator: React.FC<StatusIndicatorProps> = ({
     const sizeConf = sizeConfig[size];
     const Icon = CustomIcon || config.icon;
 
-    const pulseClass = showPulse && (status === 'loading' || status === 'warning') ? 'animate-pulse' : '';
+    const pulseClass = showPulse && (status === 'loading' || status === 'warning') ? '' : '';
     const spinClass = status === 'loading' ? 'animate-spin' : '';
 
     return (
@@ -139,7 +139,7 @@ export const MetricBadge: React.FC<MetricBadgeProps> = ({
             className={`
         flex items-center gap-3 px-4 py-3 rounded-lg border
         ${colorConfig[color]}
-        ${animate ? 'animate-pulse' : ''}
+        ${animate ? '' : ''}
         transition-all duration-300 hover:scale-105
         ${className}
       `}

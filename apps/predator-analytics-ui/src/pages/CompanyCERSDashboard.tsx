@@ -329,9 +329,9 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
             )}
 
             {!isTab && (
-                <div className="flex items-center justify-between px-6 py-4 border-b border-white/5 bg-slate-900/40 backdrop-blur-xl z-20 shadow-[0_10px_40px_rgba(0,0,0,0.5)] border-t-2 border-t-rose-600/30">
+                <div className="flex items-center justify-between px-6 py-4 border-b border-white/5 bg-slate-900/40  z-20 shadow-[0_10px_40px_rgba(0,0,0,0.5)] border-t-2 border-t-rose-600/30">
                     <div className="flex items-center gap-4">
-                        <div className="p-2 bg-rose-500/10 rounded-sm border border-rose-500/20 shadow-[0_0_20px_rgba(244,63,94,0.3)] animate-pulse">
+                        <div className="p-2 bg-rose-500/10 rounded-sm border border-rose-500/20  ">
                             <ShieldAlert className="w-6 h-6 text-rose-500" />
                         </div>
                         <div>
@@ -340,7 +340,7 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                             </h1>
                             <div className="flex items-center gap-2 mt-1">
                                 <span className="text-[9px] font-mono text-rose-500/60 uppercase tracking-widest font-black italic">ПРЕДАТОР_ЕЛІТ_ПРОТОКОЛ</span>
-                                <span className="w-1 h-1 bg-slate-700 rounded-full animate-pulse"></span>
+                                <span className="w-1 h-1 bg-slate-700 rounded-full "></span>
                                 <span className="text-[9px] font-mono text-slate-500 uppercase font-black italic">РЕЖИМ: БЕЗПЕРЕРВНИЙ_АНАЛІЗ</span>
                             </div>
                         </div>
@@ -373,7 +373,7 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
 
             <div className="flex flex-1 overflow-hidden">
                 {/* Left Sidebar: Intelligence HUD */}
-                <div className="w-80 border-r border-white/5 flex flex-col bg-slate-900/20 backdrop-blur-sm z-10">
+                <div className="w-80 border-r border-white/5 flex flex-col bg-slate-900/20  z-10">
                     <div className="p-4 space-y-6 flex-1 overflow-y-auto custom-scrollbar">
                         <VramSentinel />
                         
@@ -433,9 +433,9 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                     <div className="absolute inset-0 border-t-2 border-rose-600 rounded-full animate-spin"></div>
                                     <div className="absolute inset-4 border-2 border-rose-600/20 rounded-full"></div>
                                     <div className="absolute inset-4 border-b-2 border-rose-600 rounded-full animate-spin-reverse"></div>
-                                    <ShieldAlert className="absolute inset-0 m-auto w-12 h-12 text-rose-600 animate-pulse" />
+                                    <ShieldAlert className="absolute inset-0 m-auto w-12 h-12 text-rose-600 " />
                                 </div>
-                                <h2 className="mt-8 text-2xl font-black italic tracking-[0.5em] text-white uppercase animate-pulse">
+                                <h2 className="mt-8 text-2xl font-black italic tracking-[0.5em] text-white uppercase ">
                                     ІНІЦІАЛІЗАЦІЯ <span className="text-rose-600">СКАНЕРА_ПРИВИД</span>
                                 </h2>
                                 <p className="mt-4 text-slate-500 font-mono text-[10px] uppercase tracking-[0.3em] font-black italic">
@@ -451,7 +451,7 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                 <motion.div 
                                     initial={{ y: 20, opacity: 0 }}
                                     animate={{ y: 0, opacity: 1 }}
-                                    className="mb-10 bg-gradient-to-r from-rose-500/10 via-amber-500/5 to-transparent border border-rose-500/20 p-8 rounded-[2rem] relative overflow-hidden backdrop-blur-xl"
+                                    className="mb-10 bg-gradient-to-r from-rose-500/10 via-amber-500/5 to-transparent border border-rose-500/20 p-8 rounded-[2rem] relative overflow-hidden "
                                 >
                                     <div className="absolute top-0 right-0 p-4 opacity-10">
                                         <TrendingUp size={120} className="text-rose-500" />
@@ -489,10 +489,10 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="bg-white/5 border border-white/10 p-6 rounded-3xl backdrop-blur-md">
+                                        <div className="bg-white/5 border border-white/10 p-6 rounded-3xl ">
                                             <p className="text-[10px] font-black text-slate-400 uppercase mb-3 tracking-widest text-center">Вердикт AI ПРЕДАТОР</p>
                                             <div className="text-center">
-                                                <span className={`text-4xl font-black ${cersGradeColor} drop-shadow-[0_0_15px_rgba(244,63,94,0.5)] tracking-tighter`}>
+                                                <span className={`text-4xl font-black ${cersGradeColor}  tracking-tighter`}>
                                                     {companyData?.grade || 'B+'}
                                                 </span>
                                                 <p className="text-[10px] text-slate-400 mt-2 uppercase font-bold italic leading-tight">Помірна зона ризику.<br/> Рекомендовано: Умови акредитиву.</p>
@@ -572,7 +572,7 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                                 />
                                             </svg>
                                             <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                                <span className={`text-6xl font-black ${cersGradeColor} drop-shadow-[0_0_20px_rgba(225,29,72,0.6)] italic tracking-tighter`}>
+                                                <span className={`text-6xl font-black ${cersGradeColor}  italic tracking-tighter`}>
                                                     {companyData?.grade || 'Н/Д'}
                                                 </span>
                                                 <span className="text-[10px] font-mono text-slate-400 mt-2 uppercase tracking-[0.2em] font-black italic">ЯДРО_СКОРИНГУ: {score}/100</span>
@@ -580,7 +580,7 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                         </div>
                                         
                                         <div className="text-center w-full relative z-10">
-                                            <div className="px-6 py-2 bg-rose-600/10 rounded-sm border border-rose-600/30 inline-block shadow-[0_0_20px_rgba(225,29,72,0.2)]">
+                                            <div className="px-6 py-2 bg-rose-600/10 rounded-sm border border-rose-600/30 inline-block ">
                                                 <span className={`text-[10px] font-black uppercase tracking-[0.3em] italic ${cersGradeColor}`}>
                                                     СТАТУС_РИЗИКУ: {getGradeConfig((profile as any).risk_level).label}
                                                 </span>
@@ -592,7 +592,7 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                 {/* Row 2: Vector Analysis & Strategic Summary */}
                                 <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
                                     {/* SHAP & Radar Details */}
-                                    <div className="xl:col-span-8 bg-slate-900/40 border border-white/10 rounded-3xl p-6 backdrop-blur-md relative overflow-hidden">
+                                    <div className="xl:col-span-8 bg-slate-900/40 border border-white/10 rounded-3xl p-6  relative overflow-hidden">
                                         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-rose-600/30 to-transparent" />
                                         <div className="flex items-center justify-between mb-8">
                                             <div className="flex items-center gap-3">
@@ -600,7 +600,7 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                                 <h3 className="text-sm font-black tracking-[0.2em] uppercase italic text-white">ВЕКТОРНИЙ_АНАЛІЗ_РИЗИКУ</h3>
                                             </div>
                                             <div className="flex items-center gap-2 px-3 py-1 bg-rose-600/10 border border-rose-600/30 rounded-sm">
-                                                <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
+                                                <div className="w-1.5 h-1.5 rounded-full bg-rose-500 " />
                                                 <span className="text-[9px] font-black text-rose-500 uppercase tracking-widest italic">NEURAL_READY</span>
                                             </div>
                                         </div>
@@ -632,7 +632,7 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                                         <span className="text-rose-500">92.4%</span>
                                                     </div>
                                                     <div className="h-1 bg-slate-800 rounded-full overflow-hidden">
-                                                        <div className="h-full bg-rose-600 w-[92.4%] shadow-[0_0_10px_rgba(225,29,72,0.5)]" />
+                                                        <div className="h-full bg-rose-600 w-[92.4%] " />
                                                     </div>
                                                 </div>
                                                 <div className="space-y-1">
@@ -653,7 +653,7 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                                 </div>
                                             </div>
                                         </div>
-                                        <button className="mt-8 w-full py-4 bg-rose-600 hover:bg-rose-500 text-white text-[10px] font-black uppercase tracking-[0.3em] italic rounded-sm transition-all shadow-[0_0_30px_rgba(225,29,72,0.3)] hover:shadow-[0_0_40px_rgba(225,29,72,0.5)] active:scale-[0.98]">
+                                        <button className="mt-8 w-full py-4 bg-rose-600 hover:bg-rose-500 text-white text-[10px] font-black uppercase tracking-[0.3em] italic rounded-sm transition-all  hover: active:scale-[0.98]">
                                             ЗГЕНЕРУВАТИ_ВИКОНАВЧИЙ_ЗВІТ
                                         </button>
                                     </div>
@@ -665,7 +665,7 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                         <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(244,63,94,0.02)_50%,transparent_75%)] bg-[length:200%_200%] animate-shimmer pointer-events-none" />
                                         <div className="flex items-center justify-between mb-10">
                                             <div className="flex items-center gap-4">
-                                                <div className="p-3 bg-rose-600/10 rounded-sm border border-rose-600/20 shadow-[0_0_20px_rgba(225,29,72,0.2)]">
+                                                <div className="p-3 bg-rose-600/10 rounded-sm border border-rose-600/20 ">
                                                     <Share2 className="w-6 h-6 text-rose-600" />
                                                 </div>
                                                 <div>
@@ -702,9 +702,9 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                             {displayEvents.map((event: any, i: number) => (
                                                 <div key={i} className="relative">
                                                     <div className={`absolute -left-[50px] top-1 w-5 h-5 rounded-full border-4 border-slate-950 ${
-                                                        event.type === 'alert' ? 'bg-rose-500 shadow-[0_0_15px_rgba(244,63,94,0.5)]' :
-                                                        event.type === 'warning' ? 'bg-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.5)]' :
-                                                        'bg-rose-500 shadow-[0_0_15px_rgba(225,29,72,0.5)]'
+                                                        event.type === 'alert' ? 'bg-rose-500 ' :
+                                                        event.type === 'warning' ? 'bg-amber-500 ' :
+                                                        'bg-rose-500 '
                                                     }`} />
                                                     <div className="flex flex-col">
                                                         <span className="text-[10px] font-mono text-rose-500 uppercase tracking-[0.2em] mb-2">{event.date}</span>
@@ -774,7 +774,7 @@ function ShadowNetworkAnalysis({ onClose, companyName }: { onClose: () => void; 
         <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-slate-900/90 border border-rose-500/30 rounded-[40px] p-8 backdrop-blur-3xl relative overflow-hidden"
+            className="bg-slate-900/90 border border-rose-500/30 rounded-[40px] p-8  relative overflow-hidden"
         >
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(244,63,94,0.1),transparent_70%)] pointer-events-none" />
             
@@ -800,13 +800,13 @@ function ShadowNetworkAnalysis({ onClose, companyName }: { onClose: () => void; 
                 {/* HUD Elements */}
                 <div className="absolute top-6 left-6 space-y-2 z-20">
                     <div className="flex items-center gap-2 bg-black/40 border border-white/10 px-3 py-1 rounded-full">
-                        <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
+                        <div className="w-1.5 h-1.5 rounded-full bg-rose-500 " />
                         <span className="text-[9px] font-black text-slate-400 uppercase">режим: Глибоке Сканування</span>
                     </div>
                     <div className="text-[10px] font-mono text-slate-500">ОБ'ЄКТІВ ВИЯВЛЕНО: {nodes.length}</div>
                 </div>
 
-                <div className="absolute bottom-6 right-6 z-20 bg-black/40 border border-white/10 p-4 rounded-2xl backdrop-blur-md">
+                <div className="absolute bottom-6 right-6 z-20 bg-black/40 border border-white/10 p-4 rounded-2xl ">
                     <div className="text-[9px] font-black text-slate-500 uppercase mb-3">Легенда Мережі</div>
                     <div className="space-y-2">
                         <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-rose-500" /><span className="text-[10px] text-slate-300 uppercase">Основний Об'єкт</span></div>

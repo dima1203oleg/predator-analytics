@@ -166,8 +166,8 @@ export const WidgetRenderer: React.FC<WidgetRendererProps> = ({
 
   const containerClasses = cn(
     "relative rounded-3xl border overflow-hidden transition-all duration-300 h-full",
-    variant === 'holographic' && "bg-gradient-to-br from-slate-900/80 via-slate-950/90 to-black border-white/10 shadow-[0_0_30px_rgba(0,0,0,0.5)]",
-    variant === 'glass' && "bg-white/5 backdrop-blur-xl border-white/10",
+    variant === 'holographic' && "bg-gradient-to-br from-slate-900/80 via-slate-950/90 to-black border-white/10 ",
+    variant === 'glass' && "bg-white/5  border-white/10",
     variant === 'solid' && "bg-slate-900 border-slate-800",
     variant === 'default' && "bg-slate-900/60 border-white/5",
     isEditing && "cursor-move ring-2 ring-amber-500/50"

@@ -67,7 +67,7 @@ const NodeDetailPanel: React.FC<{ node: GraphNode | null; onClose: () => void }>
             initial={{ x: 400, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: 400, opacity: 0 }}
-            className="absolute top-0 right-0 h-full w-[450px] bg-slate-900/90 backdrop-blur-3xl border-l border-white/10 z-50 p-10 flex flex-col shadow-[-20px_0_100px_rgba(0,0,0,0.8)]"
+            className="absolute top-0 right-0 h-full w-[450px] bg-slate-900/90  border-l border-white/10 z-50 p-10 flex flex-col shadow-[-20px_0_100px_rgba(0,0,0,0.8)]"
         >
             <div className="flex items-center justify-between mb-10">
                 <div className="flex items-center gap-5">
@@ -95,7 +95,7 @@ const NodeDetailPanel: React.FC<{ node: GraphNode | null; onClose: () => void }>
                         <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-2">РІВЕНЬ РИЗИКУ</p>
                         <div className="flex items-center gap-3">
                             <div className="text-3xl font-mono font-black text-rose-500 italic">{(node.risk || 0.12 * 100).toFixed(0)}%</div>
-                            <TrendingUp size={16} className="text-rose-500 animate-pulse" />
+                            <TrendingUp size={16} className="text-rose-500 " />
                         </div>
                     </div>
                     <div className="p-6 bg-black/40 border border-white/5 rounded-[2rem]">
@@ -204,9 +204,9 @@ const GraphAnalyticsPage: React.FC = () => {
                         title={
                             <div className="flex items-center gap-8">
                                 <div className="relative group">
-                                    <div className="absolute inset-0 bg-red-600/20 blur-[60px] rounded-full scale-150 animate-pulse opacity-40" />
+                                    <div className="absolute inset-0 bg-red-600/20 blur-[60px] rounded-full scale-150  opacity-40" />
                                     <div className="relative p-6 bg-slate-900 border border-white/10 rounded-[2rem] shadow-2xl transition-all group-hover:scale-105 group-hover:border-red-600/40">
-                                        <Network size={36} className="text-red-600 drop-shadow-[0_0_15px_rgba(220,38,38,0.8)]" />
+                                        <Network size={36} className="text-red-600 " />
                                     </div>
                                 </div>
                                 <div>
@@ -215,7 +215,7 @@ const GraphAnalyticsPage: React.FC = () => {
                                     </h1>
                                     <div className="flex items-center gap-4 mt-4">
                                         <div className="h-0.5 w-12 bg-red-600/50" />
-                                        <span className="text-[10px] font-mono font-black text-red-500/80 uppercase tracking-[0.5em] animate-pulse">
+                                        <span className="text-[10px] font-mono font-black text-red-500/80 uppercase tracking-[0.5em] ">
                                             NEURAL_TOPOLOGY_ANALYZER // v62.7-ELITE
                                         </span>
                                     </div>
@@ -242,14 +242,14 @@ const GraphAnalyticsPage: React.FC = () => {
                             >
                                 {/* Graph HUD - Top Bar */}
                                 <div className="absolute top-10 left-10 z-20 flex items-center gap-10">
-                                     <div className="flex bg-black/60 backdrop-blur-2xl p-2 rounded-[2rem] border border-white/5 shadow-2xl">
+                                     <div className="flex bg-black/60  p-2 rounded-[2rem] border border-white/5 shadow-2xl">
                                          {['Pagerank', 'Louvain', 'Pathfinding'].map(alg => (
                                              <button 
                                                 key={alg}
                                                 onClick={() => { setActiveAlgorithm(alg as any); toggleLoading(); }}
                                                 className={cn(
                                                     "px-8 py-3 rounded-[1.5rem] text-[9px] font-black uppercase tracking-[0.2em] transition-all",
-                                                    activeAlgorithm === alg ? "bg-red-600 text-white shadow-[0_0_20px_rgba(220,38,38,0.4)]" : "text-slate-500 hover:text-slate-200"
+                                                    activeAlgorithm === alg ? "bg-red-600 text-white " : "text-slate-500 hover:text-slate-200"
                                                 )}
                                              >
                                                 {alg}
@@ -271,7 +271,7 @@ const GraphAnalyticsPage: React.FC = () => {
                                         { icon: Maximize2, label: 'FS' },
                                         { icon: RefreshCw, label: 'RESET', rotate: true }
                                      ].map(ctrl => (
-                                         <button key={ctrl.label} className="p-5 bg-black/60 backdrop-blur-3xl rounded-3xl border border-white/5 text-slate-500 hover:text-[#D4AF37] hover:border-[#D4AF37]/30 transition-all group/btn shadow-2xl">
+                                         <button key={ctrl.label} className="p-5 bg-black/60  rounded-3xl border border-white/5 text-slate-500 hover:text-[#D4AF37] hover:border-[#D4AF37]/30 transition-all group/btn shadow-2xl">
                                              <ctrl.icon size={22} className={cn("transition-transform group-hover/btn:scale-110", ctrl.rotate && "group-hover/btn:rotate-180 duration-500")} />
                                          </button>
                                      ))}
@@ -286,14 +286,14 @@ const GraphAnalyticsPage: React.FC = () => {
                                      {isLoading ? (
                                          <div className="absolute inset-0 flex flex-col items-center justify-center gap-10">
                                              <div className="relative">
-                                                 <div className="absolute inset-0 bg-indigo-500/20 blur-[120px] rounded-full animate-pulse" />
+                                                 <div className="absolute inset-0 bg-indigo-500/20 blur-[120px] rounded-full " />
                                                  <CyberOrb size={220} color="#6366f1" intensity={0.9} pulse />
                                                  <div className="absolute inset-0 flex items-center justify-center">
-                                                     <Brain size={64} className="text-white animate-pulse" />
+                                                     <Brain size={64} className="text-white " />
                                                  </div>
                                              </div>
                                              <div className="text-center space-y-4">
-                                                <h3 className="text-2xl font-black text-white px-10 uppercase tracking-[0.6em] animate-pulse italic leading-none">НЕЙ О- ЕНДЕ ИНГ</h3>
+                                                <h3 className="text-2xl font-black text-white px-10 uppercase tracking-[0.6em]  italic leading-none">НЕЙ О- ЕНДЕ ИНГ</h3>
                                                 <p className="text-[10px] font-mono text-indigo-500 uppercase tracking-widest">ОБ АХУНОК_АЛГО ИТМУ_{activeAlgorithm.toUpperCase()}...</p>
                                              </div>
                                          </div>
@@ -314,7 +314,7 @@ const GraphAnalyticsPage: React.FC = () => {
                                              >
                                                  <div className="relative p-12 group/main hover:scale-110 transition-transform">
                                                      <div className="absolute inset-0 bg-indigo-500/20 blur-[80px] rounded-full group-hover/main:blur-[120px] transition-all" />
-                                                     <div className="relative w-32 h-32 bg-slate-900 border-4 border-indigo-500 rounded-[2.5rem] flex items-center justify-center shadow-[0_0_60px_rgba(99,102,241,0.5)]">
+                                                     <div className="relative w-32 h-32 bg-slate-900 border-4 border-indigo-500 rounded-[2.5rem] flex items-center justify-center ">
                                                          <Shield size={48} className="text-indigo-400 group-hover:scale-110 transition-transform duration-500" />
                                                          <div className="absolute -top-10 left-1/2 -translate-x-1/2 whitespace-nowrap bg-indigo-500 text-black px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-2xl">ЦЕНТ АЛЬНИЙ ВУЗОЛ</div>
                                                      </div>
@@ -345,25 +345,25 @@ const GraphAnalyticsPage: React.FC = () => {
                                              ))}
 
                                              {/* Graph Legend */}
-                                             <div className="absolute bottom-10 left-10 z-20 flex gap-8 items-center bg-black/40 backdrop-blur-3xl p-6 rounded-[2rem] border border-white/5 shadow-2xl">
+                                             <div className="absolute bottom-10 left-10 z-20 flex gap-8 items-center bg-black/40  p-6 rounded-[2rem] border border-white/5 shadow-2xl">
                                                  <div className="flex items-center gap-3">
-                                                     <div className="w-3 h-3 rounded-full bg-red-600 shadow-[0_0_10px_rgba(220,38,38,0.5)]" />
+                                                     <div className="w-3 h-3 rounded-full bg-red-600 " />
                                                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">КОМПАНІЇ</span>
                                                  </div>
                                                  <div className="flex items-center gap-3">
-                                                     <div className="w-3 h-3 rounded-full bg-slate-500 shadow-[0_0_10px_rgba(255,255,255,0.2)]" />
+                                                     <div className="w-3 h-3 rounded-full bg-slate-500 " />
                                                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">ОСОБИ</span>
                                                  </div>
                                                  <div className="flex items-center gap-3">
-                                                     <div className="w-3 h-3 rounded-full bg-red-600/30 shadow-[0_0_10px_rgba(220,38,38,0.3)]" />
+                                                     <div className="w-3 h-3 rounded-full bg-red-600/30 " />
                                                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">ТРАНЗАКЦІЇ</span>
                                                  </div>
                                                  <div className="flex items-center gap-3">
-                                                     <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse shadow-[0_0_15px_rgba(244,63,94,0.7)]" />
+                                                     <div className="w-3 h-3 rounded-full bg-red-500  " />
                                                      <span className="text-[10px] font-black text-white/80 uppercase tracking-widest">CRITICAL_THREAT</span>
                                                  </div>
                                                  <div className="flex items-center gap-3">
-                                                     <div className="w-3 h-3 rounded-full bg-rose-500 animate-pulse shadow-[0_0_10px_rgba(244,63,94,0.5)]" />
+                                                     <div className="w-3 h-3 rounded-full bg-rose-500  " />
                                                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">ВИСОКИЙ РИЗИК</span>
                                                  </div>
                                              </div>
@@ -386,7 +386,7 @@ const GraphAnalyticsPage: React.FC = () => {
                                              </div>
                                              <h3 className="text-sm font-black text-white uppercase tracking-[0.4em] italic leading-none">СТРАТЕГІЧНИЙ_АНАЛІЗ_v62</h3>
                                          </div>
-                                         <Badge className="bg-red-600 text-white px-4 rounded-lg uppercase tracking-widest text-[9px] font-black italic shadow-[0_0_10px_rgba(220,38,38,0.5)]">ELITE_ANALYZER</Badge>
+                                         <Badge className="bg-red-600 text-white px-4 rounded-lg uppercase tracking-widest text-[9px] font-black italic ">ELITE_ANALYZER</Badge>
                                      </div>
                                      
                                      <div className="space-y-6 flex-1 overflow-y-auto no-scrollbar pr-4">
@@ -405,7 +405,7 @@ const GraphAnalyticsPage: React.FC = () => {
                                                      <motion.div 
                                                         initial={{ width: 0 }}
                                                         animate={{ width: `${stat.val * 100}%` }}
-                                                        className={cn("h-full rounded-full shadow-[0_0_15px_rgba(99,102,241,0.5)]", stat.color)}
+                                                        className={cn("h-full rounded-full ", stat.color)}
                                                      />
                                                  </div>
                                              </div>
@@ -421,7 +421,7 @@ const GraphAnalyticsPage: React.FC = () => {
                                              </div>
                                              <h3 className="text-sm font-black text-white uppercase tracking-[0.4em] italic leading-none">ЛОГ_ГРАФОВИХ_ОПЕРАЦІЙ</h3>
                                          </div>
-                                         <span className="text-amber-500 animate-pulse"><Radio size={18} /></span>
+                                         <span className="text-amber-500 "><Radio size={18} /></span>
                                      </div>
 
                                      <div className="space-y-6 font-mono text-[11px] flex-1 overflow-y-auto no-scrollbar pr-4 text-emerald-500/80 italic">
@@ -478,7 +478,7 @@ const GraphAnalyticsPage: React.FC = () => {
                                              </div>
                                              <div className="flex items-center justify-between">
                                                   <div className="w-full bg-white/5 h-1.5 rounded-full overflow-hidden mr-4 border border-white/5">
-                                                      <div className={cn("h-full", cluster.risk > 0.8 ? "bg-red-600 shadow-[0_0_10px_rgba(220,38,38,0.5)]" : "bg-red-400")} style={{ width: `${cluster.risk * 100}%` }} />
+                                                      <div className={cn("h-full", cluster.risk > 0.8 ? "bg-red-600 " : "bg-red-400")} style={{ width: `${cluster.risk * 100}%` }} />
                                                   </div>
                                                   <span className="text-xs font-mono font-black text-white italic">{cluster.label}</span>
                                              </div>
@@ -489,7 +489,7 @@ const GraphAnalyticsPage: React.FC = () => {
 
                              <TacticalCard variant="glass" className="p-10 border border-white/10 rounded-[3rem] overflow-hidden relative group/diag">
                                  <div className="flex items-center gap-5 mb-10">
-                                     <div className="p-4 bg-emerald-500/10 rounded-2xl group-hover/diag:animate-pulse">
+                                     <div className="p-4 bg-emerald-500/10 rounded-2xl group-hover/diag:">
                                          <Radio size={24} className="text-emerald-400" />
                                      </div>
                                      <div>

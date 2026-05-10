@@ -42,7 +42,7 @@ export const ViewHeader: React.FC<ViewHeaderProps> = ({
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
       className={cn(
         "flex flex-col gap-6 relative overflow-hidden transition-all duration-700",
-        "bg-black/40 glass-wraith p-8 rounded-[3rem] border border-white/10 shadow-4xl",
+        "bg-[rgba(15,15,17,0.97)] p-8 rounded-[3rem] border border-white/[0.06]",
         className
       )}
     >
@@ -57,11 +57,10 @@ export const ViewHeader: React.FC<ViewHeaderProps> = ({
           {icon && (
             <motion.div
               whileHover={{ scale: 1.1, rotate: 2 }}
-              className="p-5 bg-black/60 glass-wraith rounded-[2rem] border border-rose-500/20 shadow-2xl text-rose-500 shrink-0 relative group"
+              className="p-5 bg-[rgba(20,20,22,0.95)] rounded-[2rem] border border-rose-500/20 text-rose-500 shrink-0 relative group"
             >
-              <div className="absolute inset-0 bg-rose-500/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity rounded-full"></div>
               {typeof icon === 'function' || (typeof icon === 'object' && 'render' in (icon as any))
-                ? React.createElement(icon as any, { className: 'w-8 h-8 drop-shadow-[0_0_8px_rgba(225,29,72,0.4)]' })
+                ? React.createElement(icon as any, { className: 'w-8 h-8' })
                 : icon as React.ReactNode}
             </motion.div>
           )}
@@ -99,7 +98,7 @@ export const ViewHeader: React.FC<ViewHeaderProps> = ({
                         "flex items-center gap-2 px-4 py-1.5 rounded-xl border text-[9px] font-black uppercase tracking-[0.2em] italic transition-all duration-300",
                         badge.color === 'success' || badge.color === 'emerald' ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-lg' :
                         badge.color === 'primary' || badge.color === 'cyan' ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400 shadow-lg' :
-                        badge.color === 'danger' || badge.color === 'rose' || badge.color === 'error' ? 'bg-rose-500/10 border-rose-500/30 text-rose-500 shadow-[0_0_15px_rgba(225,29,72,0.2)]' :
+                        badge.color === 'danger' || badge.color === 'rose' || badge.color === 'error' ? 'bg-rose-500/10 border-rose-500/30 text-rose-500' :
                         badge.color === 'warning' || badge.color === 'amber' || badge.color === 'gold' ? 'bg-amber-500/10 border-amber-500/30 text-amber-500 shadow-lg' :
                         badge.color === 'purple' ? 'bg-purple-500/10 border-purple-500/30 text-purple-400 shadow-lg' :
                         'bg-white/5 border-white/10 text-slate-400'
@@ -124,15 +123,15 @@ export const ViewHeader: React.FC<ViewHeaderProps> = ({
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.1 * idx }}
-              className="flex items-center gap-5 bg-black/40 glass-wraith px-6 py-3 rounded-[1.5rem] border border-white/5 hover:border-rose-500/20 transition-all duration-500 shadow-2xl group"
+              className="flex items-center gap-5 bg-[rgba(20,20,22,0.95)] px-6 py-3 rounded-[1.5rem] border border-white/5 hover:border-rose-500/20 transition-all duration-500 group"
             >
               {stat.icon && (
                 <span className={cn(
                   "p-2 rounded-xl bg-white/5 border border-white/5 group-hover:scale-110 transition-transform duration-500",
-                  stat.animate ? 'animate-pulse' : '',
+                  '',
                   stat.color === 'success' || stat.color === 'emerald' ? 'text-emerald-400' :
                   stat.color === 'warning' || stat.color === 'amber' || stat.color === 'gold' ? 'text-amber-400' :
-                  stat.color === 'danger' || stat.color === 'error' || stat.color === 'rose' || stat.color === 'crimson' ? 'text-rose-500 drop-shadow-[0_0_8px_rgba(225,29,72,0.4)]' :
+                  stat.color === 'danger' || stat.color === 'error' || stat.color === 'rose' || stat.color === 'crimson' ? 'text-rose-500' :
                   stat.color === 'primary' || stat.color === 'cyan' ? 'text-cyan-400' :
                   stat.color === 'purple' ? 'text-purple-400' :
                   stat.color === 'secondary' ? 'text-indigo-400' : 'text-slate-500'

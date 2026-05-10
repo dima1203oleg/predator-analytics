@@ -68,7 +68,7 @@ export const WorkspaceBusinessStrip: React.FC = () => {
 
   return (
     <div
-      className="border-b border-white/[0.06] bg-gradient-to-r from-slate-950/90 via-slate-900/80 to-slate-950/90 backdrop-blur-xl"
+      className="border-b border-white/[0.06] bg-[rgba(15,15,17,0.97)]"
       data-testid="workspace-business-strip"
     >
       <div className="mx-auto flex max-w-[1920px] flex-col gap-2 px-3 py-2 sm:px-5 lg:flex-row lg:items-center lg:justify-between lg:gap-4 lg:px-7 xl:px-10">

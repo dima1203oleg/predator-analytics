@@ -163,11 +163,11 @@ const LLMView: React.FC = () => {
                     { label: premiumLocales.llm.stats.optimizer, value: dspyOptimizing ? premiumLocales.llm.stats.active : premiumLocales.llm.stats.ready, icon: <Sparkles size={14} />, color: 'success' },
                 ]}
                 actions={[
-                    <button key="v" onClick={speakMetrics} title={premiumLocales.llm.actions.speak} className="p-3 bg-slate-900/50 border border-white/10 rounded-2xl text-slate-500 hover:text-white transition-all backdrop-blur-md shadow-xl"><Volume2 size={22} /></button>
+                    <button key="v" onClick={speakMetrics} title={premiumLocales.llm.actions.speak} className="p-3 bg-slate-900/50 border border-white/10 rounded-2xl text-slate-500 hover:text-white transition-all  shadow-xl"><Volume2 size={22} /></button>
                 ]}
             />
 
-            <div className="flex p-1 bg-black/40 backdrop-blur-3xl border border-white/5 rounded-[24px] overflow-x-auto scrollbar-hide shadow-2xl">
+            <div className="flex p-1 bg-black/40  border border-white/5 rounded-[24px] overflow-x-auto scrollbar-hide shadow-2xl">
                 {[
                     { id: 'INFERENCE', label: premiumLocales.llm.tabs.inference, icon: MessageSquare, color: 'text-blue-400' },
                     { id: 'DSPY', label: premiumLocales.llm.tabs.dspy, icon: Sparkles, color: 'text-emerald-400' },

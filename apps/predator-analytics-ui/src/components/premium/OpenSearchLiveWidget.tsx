@@ -112,7 +112,7 @@ export const OpenSearchLiveWidget: React.FC<{
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="p-4 bg-gradient-to-br from-orange-500/10 to-slate-900/40 border border-orange-500/20 rounded-2xl backdrop-blur-xl group hover:border-orange-500/40 transition-all"
+        className="p-4 bg-gradient-to-br from-orange-500/10 to-slate-900/40 border border-orange-500/20 rounded-2xl  group hover:border-orange-500/40 transition-all"
       >
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
@@ -121,7 +121,7 @@ export const OpenSearchLiveWidget: React.FC<{
             </div>
             <span className="text-[10px] font-black text-white uppercase tracking-wider">OpenSearch</span>
           </div>
-          <div className={`w-2 h-2 rounded-full ${getHealthColor(data?.clusterHealth || 'green')} animate-pulse`} />
+          <div className={`w-2 h-2 rounded-full ${getHealthColor(data?.clusterHealth || 'green')} `} />
         </div>
 
         <div className="flex items-end justify-between">
@@ -145,7 +145,7 @@ export const OpenSearchLiveWidget: React.FC<{
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-gradient-to-br from-orange-500/10 via-slate-900/60 to-slate-950/80 border border-orange-500/20 rounded-[24px] p-6 relative overflow-hidden group shadow-xl backdrop-blur-xl"
+      className="bg-gradient-to-br from-orange-500/10 via-slate-900/60 to-slate-950/80 border border-orange-500/20 rounded-[24px] p-6 relative overflow-hidden group shadow-xl "
     >
       {/* Фонове світіння */}
       <div className="absolute top-0 right-0 w-40 h-40 bg-orange-500/10 blur-[80px] rounded-full pointer-events-none group-hover:bg-orange-500/20 transition-all duration-700" />
@@ -159,7 +159,7 @@ export const OpenSearchLiveWidget: React.FC<{
           <div>
             <h4 className="text-sm font-black text-white uppercase tracking-wider">OpenSearch Analytics</h4>
             <div className="flex items-center gap-2 mt-1">
-              <div className={`w-1.5 h-1.5 rounded-full ${getHealthColor(data?.clusterHealth || 'green')} animate-pulse`} />
+              <div className={`w-1.5 h-1.5 rounded-full ${getHealthColor(data?.clusterHealth || 'green')} `} />
               <span className="text-[9px] text-slate-500 font-mono uppercase">PREDATOR_CLUSTER_V45</span>
             </div>
           </div>

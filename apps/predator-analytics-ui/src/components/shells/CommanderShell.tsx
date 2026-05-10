@@ -103,7 +103,7 @@ const CommanderShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange
       </div>
 
       {/* TOP COMMANDER HUD */}
-      <nav className="fixed top-0 left-0 right-0 z-50 h-20 bg-black/60 backdrop-blur-3xl border-b border-white/5 flex items-center justify-between px-8">
+      <nav className="fixed top-0 left-0 right-0 z-50 h-20 bg-black/60  border-b border-white/5 flex items-center justify-between px-8">
         <div className="flex items-center gap-8">
           <div className="flex items-center gap-3 group cursor-pointer">
             <div className="relative">
@@ -152,7 +152,7 @@ const CommanderShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange
           <div className="hidden xl:flex flex-col items-end">
             <div className="flex items-center gap-2">
               <span className="text-[10px] font-mono text-emerald-500">UPLINK STABLE</span>
-              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 " />
             </div>
             <span className="text-[9px] font-mono text-slate-500">NODE: 192.168.0.114</span>
           </div>
@@ -177,7 +177,7 @@ const CommanderShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange
 
       {/* SIDEBAR NAVIGATION */}
       {!isZenMode && (
-        <aside className="fixed left-0 top-20 bottom-0 w-24 bg-black/40 backdrop-blur-2xl border-r border-white/5 flex flex-col items-center py-10 gap-6 z-40">
+        <aside className="fixed left-0 top-20 bottom-0 w-24 bg-black/40  border-r border-white/5 flex flex-col items-center py-10 gap-6 z-40">
           {sideNavItems.map((item) => (
             <button
               key={item.id}
@@ -185,7 +185,7 @@ const CommanderShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange
               className={`
                 group relative w-14 h-14 flex items-center justify-center rounded-2xl border transition-all
                 ${activeTab === item.id
-                  ? 'bg-rose-500 text-black border-rose-400 shadow-[0_0_25px_rgba(244,63,94,0.4)]'
+                  ? 'bg-rose-500 text-black border-rose-400 '
                   : 'bg-black/40 text-slate-500 border-white/10 hover:border-rose-500/50 hover:text-rose-400'
                 }
               `}
@@ -232,11 +232,11 @@ const CommanderShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange
 
         {/* SYSTEM ANALYTICS DRAWER (Right Side) */}
         {!isZenMode && (
-          <aside className="w-80 bg-black/40 backdrop-blur-3xl border-l border-white/5 flex flex-col p-6 gap-8 overflow-y-auto hidden 2xl:flex">
+          <aside className="w-80 bg-black/40  border-l border-white/5 flex flex-col p-6 gap-8 overflow-y-auto hidden 2xl:flex">
             <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-black uppercase text-slate-500 tracking-[0.2em]">ТЕЛЕМЕТ ІЯ СИСТЕМИ</span>
-                <Activity size={14} className="text-rose-500 animate-pulse" />
+                <Activity size={14} className="text-rose-500 " />
               </div>
 
               <div className="space-y-4">

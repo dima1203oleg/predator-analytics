@@ -232,7 +232,7 @@ export const KnowledgeEngineeringView: React.FC = () => {
             <h3 className="text-xl font-bold text-white mb-4">Машина Правил (Rules Engine)</h3>
             <div className="space-y-3">
               {loading ? (
-                Array(4).fill(0).map((_, i) => <div key={i} className="h-16 bg-slate-800 animate-pulse rounded-xl" />)
+                Array(4).fill(0).map((_, i) => <div key={i} className="h-16 bg-slate-800  rounded-xl" />)
               ) : (
                 rules.map(rule => (
                   <div key={rule.id} className="flex items-center justify-between p-4 bg-slate-800/50 rounded-xl">
@@ -270,7 +270,7 @@ export const KnowledgeEngineeringView: React.FC = () => {
             <h3 className="text-xl font-bold text-white mb-4">Контроль Витрат та Навантаження</h3>
             <div className="grid grid-cols-2 gap-4">
               {loading ? (
-                Array(4).fill(0).map((_, i) => <div key={i} className="h-24 bg-slate-800 animate-pulse rounded-xl" />)
+                Array(4).fill(0).map((_, i) => <div key={i} className="h-24 bg-slate-800  rounded-xl" />)
               ) : (
                 costs.map(item => (
                   <div key={item.resource} className="bg-slate-800/50 rounded-xl p-4">

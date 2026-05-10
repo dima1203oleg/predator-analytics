@@ -128,9 +128,9 @@ export default function ComprompatPersonView() {
              title={
                <div className="flex items-center gap-10">
                   <div className="relative group">
-                     <div className="absolute inset-0 bg-orange-600/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                     <div className="absolute inset-0 bg-orange-600/20 blur-3xl rounded-full scale-150 " />
                      <div className="relative p-7 bg-black border border-orange-900/40 rounded-[2.5rem] shadow-2xl">
-                        <Fingerprint size={42} className="text-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.5)]" />
+                        <Fingerprint size={42} className="text-orange-500 " />
                      </div>
                   </div>
                   <div className="space-y-2">
@@ -223,7 +223,7 @@ export default function ComprompatPersonView() {
               <div className="py-32 flex flex-col items-center justify-center space-y-12">
                  <CyberOrb size={220} status="quantum" />
                  <div className="space-y-4 text-center">
-                    <p className="text-2xl font-black text-orange-500 uppercase italic tracking-[0.8em] animate-pulse">Т АСУВАННЯ ТРАНЗАКЦІЙ...</p>
+                    <p className="text-2xl font-black text-orange-500 uppercase italic tracking-[0.8em] ">Т АСУВАННЯ ТРАНЗАКЦІЙ...</p>
                     <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest italic">SEARCHING: {form.pib.toUpperCase()}</p>
                  </div>
               </div>
@@ -238,7 +238,7 @@ export default function ComprompatPersonView() {
                    <section className="rounded-[4rem] bg-black border-2 border-orange-900/10 p-12 shadow-3xl relative overflow-hidden group">
                       <div className="absolute top-0 right-0 p-16 flex flex-col items-end opacity-100 transition-all group-hover:opacity-80">
                          <p className="text-[10px] font-black text-orange-500 uppercase tracking-[0.4em] mb-2 italic">RISK_SCORE</p>
-                         <p className="text-7xl font-black text-orange-500 italic font-mono tracking-tighter drop-shadow-[0_0_20px_rgba(249,115,22,0.4)] leading-none">{result.riskScore}%</p>
+                         <p className="text-7xl font-black text-orange-500 italic font-mono tracking-tighter  leading-none">{result.riskScore}%</p>
                       </div>
 
                       <div className="flex items-center gap-10 mb-12 pb-10 border-b border-white/[0.04] relative z-10">

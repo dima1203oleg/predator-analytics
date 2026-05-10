@@ -62,7 +62,7 @@ export const NasLeaderboardView: React.FC<NasLeaderboardViewProps> = ({ models }
                                         </td>
                                         <td className="px-6 py-4 rounded-r-2xl border-r border-t border-b border-white/5">
                                             <div className="flex items-center gap-2">
-                                                <div className={`w-1.5 h-1.5 rounded-full ${m.status === 'DEPLOYED' ? 'bg-emerald-500 animate-pulse' : 'bg-blue-500'}`} />
+                                                <div className={`w-1.5 h-1.5 rounded-full ${m.status === 'DEPLOYED' ? 'bg-emerald-500 ' : 'bg-blue-500'}`} />
                                                 <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest">{m.status}</span>
                                             </div>
                                         </td>

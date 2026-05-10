@@ -92,7 +92,7 @@ export const TopBar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
   }, []);
 
   return (
-    <div className="h-28 bg-black/40 glass-wraith border-b border-white/10 backdrop-blur-3xl relative z-40 flex items-center px-10 shadow-4xl">
+    <div className="h-28 bg-[rgba(15,15,17,0.97)] border-b border-white/[0.06] relative z-40 flex items-center px-10">
         {/* ГЛОБАЛЬНІ ІНДИКАТО И */}
         <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-rose-500/20 to-transparent" />
         <div className="absolute inset-0 cyber-scan-grid opacity-[0.03] pointer-events-none" />
@@ -120,7 +120,7 @@ export const TopBar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
                             <Shield size={12} /> 
                             SOVEREIGN_SYSTEM
                         </span>
-                        <div className="w-1.5 h-1.5 rounded-full bg-rose-500 shadow-[0_0_10px_rgba(225,29,72,0.6)] animate-pulse" />
+                        <div className="w-1.5 h-1.5 rounded-full bg-rose-500" />
                         <span className="text-slate-700 font-mono">NODE: AZR-001/PRIMARY</span>
                     </div>
                 </div>
@@ -133,9 +133,9 @@ export const TopBar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
 
             {/* ПРАВА ЧАСТИНА: МЕТрИКИ ТАПРОФІЛЬ */}
             <div className="flex items-center gap-8">
-                <div className="hidden lg:flex items-center gap-8 px-8 py-3 bg-white/[0.03] glass-wraith border border-white/5 rounded-full shadow-2xl">
+                <div className="hidden lg:flex items-center gap-8 px-8 py-3 bg-white/[0.03] border border-white/5 rounded-full">
                     <div className="flex items-center gap-4">
-                        <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.5)]" />
+                        <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
                         <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] italic">SYNAPSE_LINKED</span>
                     </div>
                     <div className="w-px h-6 bg-white/10" />

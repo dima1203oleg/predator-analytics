@@ -39,7 +39,7 @@ export function ResourceNodeCard({ node, onClick }: { node: NodeHardwareProps, o
       animate={{ opacity: 1, y: 0 }}
       onClick={onClick}
       className={cn(
-        "bg-white/[0.03] border border-white/5 rounded-2xl p-6 backdrop-blur-md relative overflow-hidden group transition-all duration-500",
+        "bg-white/[0.03] border border-white/5 rounded-2xl p-6  relative overflow-hidden group transition-all duration-500",
         onClick && "cursor-pointer hover:border-rose-500/30 hover:bg-black/40 shadow-2xl hover:shadow-rose-500/5",
         !isOnline && "opacity-40 grayscale"
       )}
@@ -131,7 +131,7 @@ export function ResourceNodeCard({ node, onClick }: { node: NodeHardwareProps, o
 
 function ResourceMiniStat({ icon: Icon, label, used, total, unit, percent, color }: any) {
   const barColor = color === 'rose' ? 'bg-rose-500' : 'bg-slate-500';
-  const shadowColor = color === 'rose' ? 'shadow-[0_0_8px_rgba(225,29,72,0.3)]' : 'shadow-[0_0_8px_rgba(100,116,139,0.3)]';
+  const shadowColor = color === 'rose' ? '' : '';
   const iconColor = color === 'rose' ? 'text-rose-500' : 'text-slate-500';
 
   const free = total - used;

@@ -55,7 +55,7 @@ export const LLMDspyView: React.FC<LLMDspyViewProps> = ({
                             <div key={mod.id} className="p-5 bg-slate-950/80 border border-white/5 rounded-3xl group hover:border-purple-500/30 transition-all cursor-default">
                                 <div className="flex justify-between items-center mb-4">
                                     <div className="flex items-center gap-4">
-                                        <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse shadow-[0_0_10px_#a855f7]" />
+                                        <div className="w-2 h-2 rounded-full bg-purple-500  shadow-[0_0_10px_#a855f7]" />
                                         <div>
                                             <div className="text-xs font-bold text-slate-100 uppercase tracking-widest">{mod.moduleName}</div>
                                             <div className="text-[10px] text-slate-600 font-mono">{premiumLocales.llm.dspy.metrics.target}: {mod.targetMetric}</div>

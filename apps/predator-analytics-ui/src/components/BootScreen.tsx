@@ -1092,7 +1092,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                   <div className="w-full h-full bg-yellow-500 rounded-full shadow-[0_0_12px_#fbbf24,0_0_24px_rgba(251,191,36,0.5)]"/>
                   <div className="absolute inset-0 bg-yellow-500 rounded-full animate-ping opacity-30"/>
                 </div>
-                <span className="text-[9px] font-black tracking-[0.6em] text-yellow-500 drop-shadow-[0_0_8px_rgba(251,191,36,0.7)] uppercase">
+                <span className="text-[9px] font-black tracking-[0.6em] text-yellow-500  uppercase">
                   PREDATOR МЕ ЕЖА: ОНЛАЙН
                 </span>
               </div>
@@ -1112,7 +1112,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
 
               {/* Tier badge */}
               <div className="mt-2 inline-flex items-center gap-2 bg-gradient-to-r from-amber-900/30 via-yellow-800/10 to-transparent border border-amber-600/30 px-3 py-1">
-                <span className="text-[6px] font-black tracking-[0.4em] text-amber-500 uppercase drop-shadow-[0_0_4px_rgba(251,191,36,0.4)]">
+                <span className="text-[6px] font-black tracking-[0.4em] text-amber-500 uppercase ">
                   ◆ ГЛОБАЛЬНА  ОЗВІДУВАЛЬНА МОНОПОЛІЯ ◆
                 </span>
               </div>
@@ -1214,7 +1214,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                 </div>
                 <div className="text-[5.5px] text-slate-800 uppercase tracking-widest leading-relaxed">
                   CRYSTALS-KYBER-1024 · КВАНТОВО-БЕЗПЕЧНИЙ · НУЛЬОВЕ  ОЗГОЛОШЕННЯ<br/>
-                  <span className={backendStatus.isOffline ? "text-orange-500 animate-pulse" : (backendStatus.activeFailover ? "text-green-500/80" : "text-yellow-600/70")}>
+                  <span className={backendStatus.isOffline ? "text-orange-500 " : (backendStatus.activeFailover ? "text-green-500/80" : "text-yellow-600/70")}>
                     {backendStatus.isOffline 
                       ? `СИСТЕМА В РЕЖИМІ ВІДНОВЛЕННЯ (${Math.floor(backendStatus.healingProgress)}%)` 
                       : (backendStatus.activeFailover ? "ZROK FAILOVER: АКТИВНО (MIRROR CLUSTER)" : "ZROK TUNNEL: ОЧІКУВАННЯ / COLAB SYNC")}
@@ -1338,7 +1338,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
 
                 style={{ backdropFilter:'blur(8px)' }}>
                 <div className="flex items-center gap-2 pb-2 border-b border-amber-900/30">
-                  <div className="w-1.5 h-1.5 bg-yellow-600 rounded-full animate-pulse"/>
+                  <div className="w-1.5 h-1.5 bg-yellow-600 rounded-full "/>
                   <span className="text-[7px] font-black text-amber-700 tracking-[0.45em] uppercase">
                      УШІЙ  ОЗВІДУВАЛЬНИХ ЗАПИТІВ
                   </span>
@@ -1351,7 +1351,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                     transition={{ duration:0.18 }}
                     className={`text-[7px] font-mono tracking-wider flex items-start gap-1.5 ${
                       line.includes('TARGET IDENTIFIED')
-                        ? 'text-amber-500 font-black animate-pulse'
+                        ? 'text-amber-500 font-black '
 
                         : line.includes('CRITICAL')
                         ? 'text-orange-500 font-bold'
@@ -1390,7 +1390,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                   >
                     ✛ ІМПЕ АТИВНИЙ КОНТРОЛЬ ВСТАНОВЛЕНО
                   </motion.div>
-                  <div className="text-[10px] font-black tracking-[0.65em] text-white/90 uppercase animate-pulse">
+                  <div className="text-[10px] font-black tracking-[0.65em] text-white/90 uppercase ">
                     ОБ'ЄКТ ІЗОЛЬОВАНО · ОПЕРАТИВНА ГОТОВНІСТЬ ПІДТВЕРДЖЕНА
                   </div>
                 </motion.div>
@@ -1409,7 +1409,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
               <div className="border border-blue-900/25 bg-black/60 p-4 space-y-3"
                 style={{ backdropFilter:'blur(8px)' }}>
                 <div className="flex items-center gap-2 pb-2 border-b border-blue-900/25">
-                  <div className="w-1.5 h-1.5 bg-blue-600 rounded-full animate-pulse"/>
+                  <div className="w-1.5 h-1.5 bg-blue-600 rounded-full "/>
                   <span className="text-[7px] font-black text-blue-700/80 tracking-[0.4em] uppercase">
                     НЕЙРОННИЙ  УШІЙ ШІ [GLM-5.1]
                   </span>
@@ -1501,7 +1501,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                   transition={{ duration:2.8, repeat:Infinity, ease:'linear' }}
                 />
                 {/* Логотип */}
-                <div className="w-[60%] h-[60%] text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.55)]">
+                <div className="w-[60%] h-[60%] text-white ">
                   <GeometricRaptor className="w-full h-full object-contain"/>
                 </div>
               </div>
@@ -1539,7 +1539,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                 <div className="h-px w-48 bg-gradient-to-r from-transparent via-amber-700/60 to-transparent"/>
                 <div className="flex items-center gap-2">
                   <div className="w-1.5 h-1.5 bg-amber-500/80 rotate-45"/>
-                  <h2 className="text-[12px] md:text-[18px] font-black tracking-[0.9em] text-amber-500 uppercase whitespace-nowrap italic skew-x-[-12deg] drop-shadow-[0_0_12px_rgba(245,158,11,0.6)]">
+                  <h2 className="text-[12px] md:text-[18px] font-black tracking-[0.9em] text-amber-500 uppercase whitespace-nowrap italic skew-x-[-12deg] ">
                     БЕЗПрЕЦЕДЕНТНИЙ СУВЕРЕННИЙ АКТИВ
                   </h2>
                   <div className="w-1.5 h-1.5 bg-amber-500/80 rotate-45"/>

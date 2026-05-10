@@ -52,7 +52,7 @@ const sessionCols: VirtualColumn<Session>[] = [
       const label = s === 'admin' ? 'АДМІНІСТ АТО ' : s === 'client_premium' ? 'КЛІЄНТ_ПРЕМІУМ' : s.toUpperCase();
       return (
         <div className={cn('text-[10px] font-black tracking-[0.2em] flex items-center gap-2 italic uppercase', color)}>
-           <div className={cn("w-1.5 h-1.5 rounded-full", s === 'admin' ? 'bg-rose-500 shadow-[0_0_8px_rgba(225,29,72,0.8)]' : 'bg-current')} />
+           <div className={cn("w-1.5 h-1.5 rounded-full", s === 'admin' ? 'bg-rose-500 ' : 'bg-current')} />
            {label}
         </div>
       );
@@ -162,7 +162,7 @@ export const ZeroTrustSecurityTab: React.FC = () => {
         </div>
         <div className="flex items-center gap-8 text-[11px] font-black font-mono text-white/30 tracking-[0.2em] uppercase italic">
           <div className="flex items-center gap-3">
-            <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_15px_rgba(16,185,129,0.8)]" />
+            <div className="w-2.5 h-2.5 rounded-full bg-emerald-500  " />
             <span className="text-emerald-500/80">ПЕ ИМЕТ _ЗАСТОСОВАНО_L7</span>
           </div>
           <span className="opacity-20">•</span>
@@ -205,7 +205,7 @@ export const ZeroTrustSecurityTab: React.FC = () => {
                 {active && (
                    <motion.div 
                      layoutId="security-tab-indicator-v61"
-                     className="w-1.5 h-1.5 bg-rose-500 rounded-full shadow-[0_0_15px_rgba(225,29,72,1)] animate-pulse"
+                     className="w-1.5 h-1.5 bg-rose-500 rounded-full  "
                    />
                 )}
               </div>
@@ -237,11 +237,11 @@ export const ZeroTrustSecurityTab: React.FC = () => {
                   <motion.div 
                     animate={{ rotate: 360 }}
                     transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                    className="w-24 h-24 border-2 border-rose-500/20 rounded-full border-t-rose-500 shadow-[0_0_30px_rgba(225,29,72,0.3)]"
+                    className="w-24 h-24 border-2 border-rose-500/20 rounded-full border-t-rose-500 "
                   />
-                  <Shield className="absolute inset-0 m-auto w-8 h-8 text-rose-500 animate-pulse" />
+                  <Shield className="absolute inset-0 m-auto w-8 h-8 text-rose-500 " />
                </div>
-               <div className="text-[14px] font-black font-mono text-rose-500/60 uppercase tracking-[0.6em] animate-pulse italic">
+               <div className="text-[14px] font-black font-mono text-rose-500/60 uppercase tracking-[0.6em]  italic">
                  СИНАПТИЧНИЙ_АНАЛІЗ_ПЕ ИМЕТ А_V61...
                </div>
             </motion.div>
@@ -252,7 +252,7 @@ export const ZeroTrustSecurityTab: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -30 }}
               transition={{ duration: 0.6, ease: "circOut" }}
-              className="glass-wraith border-2 border-white/5 rounded-[3.5rem] overflow-hidden backdrop-blur-3xl shadow-4xl relative p-4"
+              className="glass-wraith border-2 border-white/5 rounded-[3.5rem] overflow-hidden  shadow-4xl relative p-4"
             >
               <div className="absolute inset-0 bg-cyber-grid opacity-[0.03] pointer-events-none" />
               
@@ -305,7 +305,7 @@ export const ZeroTrustSecurityTab: React.FC = () => {
                         </div>
                         <div className={cn(
                           "px-4 py-1.5 rounded-xl text-[10px] font-black tracking-[0.2em] italic border-2 transition-all shadow-4xl",
-                          service.status === 'ok' ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-500 shadow-emerald-500/10" : "bg-rose-500/10 border-rose-500/30 text-rose-500 animate-pulse shadow-rose-500/10"
+                          service.status === 'ok' ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-500 shadow-emerald-500/10" : "bg-rose-500/10 border-rose-500/30 text-rose-500  shadow-rose-500/10"
                         )}>
                           {service.status === 'ok' ? 'ВЕ ИФІКОВАНО' : 'ПОМИЛКА_СЕГМЕНТУ'}
                         </div>
@@ -347,7 +347,7 @@ export const ZeroTrustSecurityTab: React.FC = () => {
       {/* Footer System Status */}
       <div className="flex items-center gap-8 relative z-10 opacity-60 hover:opacity-100 transition-opacity duration-700">
         <div className="flex items-center gap-4 px-6 py-3 bg-rose-500/10 border-2 border-rose-500/20 rounded-2xl shadow-rose-500/10">
-           <AlertCircle className="w-5 h-5 text-rose-500 animate-pulse" />
+           <AlertCircle className="w-5 h-5 text-rose-500 " />
            <span className="text-[11px] font-black font-mono text-rose-500 uppercase tracking-[0.3em] italic">ЗАХИСТ_WORM_LOCK_АКТИВНИЙ</span>
         </div>
         <div className="h-[2px] flex-1 bg-gradient-to-r from-rose-500/40 via-white/5 to-transparent" />

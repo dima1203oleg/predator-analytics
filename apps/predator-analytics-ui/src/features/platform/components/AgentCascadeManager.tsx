@@ -55,13 +55,13 @@ const AgentCascadeManager: React.FC = () => {
                         activeCascade.status === 'ACTIVE' ? "bg-blue-500/20 text-blue-400 border-blue-500/30 shadow-blue-500/20" : 
                         "bg-slate-800 border-slate-700 text-slate-400"
                     )}>
-                        <Radio size={12} className={activeCascade.status === 'ACTIVE' ? "animate-pulse" : ""} />
+                        <Radio size={12} className={activeCascade.status === 'ACTIVE' ? "" : ""} />
                         SAGA {activeCascade.status}
                     </div>
                 </div>
             </div>
 
-            <div className="relative py-16 px-10 bg-[#0b0f1a]/80 backdrop-blur-xl rounded-[40px] border border-white/10 overflow-hidden shadow-2xl">
+            <div className="relative py-16 px-10 bg-[#0b0f1a]/80  rounded-[40px] border border-white/10 overflow-hidden shadow-2xl">
                 {/* Background Grid & Decor */}
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(59,130,246,0.1),transparent_70%)] pointer-events-none" />
                 <div className="absolute top-1/2 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-blue-500/20 to-transparent -translate-y-1/2" />
@@ -77,16 +77,16 @@ const AgentCascadeManager: React.FC = () => {
                                     className={cn(
                                         "relative z-10 w-56 p-8 rounded-[32px] border transition-all panel-3d text-center overflow-hidden",
                                         node.status === 'WORKING' 
-                                            ? "border-blue-500 bg-blue-950/40 shadow-[0_0_40px_rgba(59,130,246,0.25)]" 
+                                            ? "border-blue-500 bg-blue-950/40 " 
                                             : "border-white/10 bg-slate-900/60 opacity-80"
                                     )}
                                 >
                                     {node.status === 'WORKING' && (
-                                        <div className="absolute inset-0 bg-blue-500/5 animate-pulse" />
+                                        <div className="absolute inset-0 bg-blue-500/5 " />
                                     )}
                                     <div className={cn(
                                         "mx-auto w-16 h-16 rounded-[20px] flex items-center justify-center mb-5 relative",
-                                        node.status === 'WORKING' ? "bg-blue-500 text-white shadow-[0_0_20px_rgba(59,130,246,0.5)]" : "bg-slate-800 text-slate-400"
+                                        node.status === 'WORKING' ? "bg-blue-500 text-white " : "bg-slate-800 text-slate-400"
                                     )}>
                                         {node.status === 'WORKING' && (
                                             <div className="absolute inset-0 rounded-[20px] border-2 border-blue-400 animate-ping opacity-20" />
@@ -133,7 +133,7 @@ const AgentCascadeManager: React.FC = () => {
                                             className="relative"
                                         >
                                             <div className="absolute top-1/2 left-0 w-full h-0.5 bg-blue-500/30 -translate-y-1/2" />
-                                            <ArrowRight className={node.status === 'WORKING' ? "text-blue-500 drop-shadow-[0_0_10px_rgba(59,130,246,0.8)]" : "text-slate-700"} size={40} />
+                                            <ArrowRight className={node.status === 'WORKING' ? "text-blue-500 " : "text-slate-700"} size={40} />
                                         </motion.div>
                                     </div>
                                 )}
@@ -154,7 +154,7 @@ const AgentCascadeManager: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <TacticalCard title="КОНТРОЛЬ ПА АЛЕЛІЗМУ" className="bg-[#0b0f1a]/80 backdrop-blur-md border-white/5" variant="holographic">
+                <TacticalCard title="КОНТРОЛЬ ПА АЛЕЛІЗМУ" className="bg-[#0b0f1a]/80  border-white/5" variant="holographic">
                     <div className="space-y-6 pt-4">
                         <div className="flex justify-between items-end">
                             <div>
@@ -171,13 +171,13 @@ const AgentCascadeManager: React.FC = () => {
                             <motion.div 
                                 initial={{ width: 0 }}
                                 animate={{ width: `${Math.min(100, ((agents || []).filter(a => a.status === 'WORKING').length / 16) * 100)}%` }}
-                                className="h-full bg-gradient-to-r from-blue-600 to-cyan-400 shadow-[0_0_15px_rgba(59,130,246,0.5)]" 
+                                className="h-full bg-gradient-to-r from-blue-600 to-cyan-400 " 
                             />
                         </div>
                     </div>
                 </TacticalCard>
 
-                <TacticalCard title="СИНХРОНІЗАЦІЯ SAGA" className="bg-[#0b0f1a]/80 backdrop-blur-md border-white/5" variant="holographic">
+                <TacticalCard title="СИНХРОНІЗАЦІЯ SAGA" className="bg-[#0b0f1a]/80  border-white/5" variant="holographic">
                     <div className="space-y-4 pt-4">
                         {(activeCascade.steps || []).map((step: string, i: number) => {
                             const isCurrent = step === activeCascade.current_step;
@@ -191,7 +191,7 @@ const AgentCascadeManager: React.FC = () => {
                                     transition={{ delay: i * 0.1 }}
                                     className={cn(
                                         "flex items-center justify-between p-3.5 rounded-xl border transition-all",
-                                        isCurrent ? "bg-blue-500/10 border-blue-500/30 shadow-[0_0_20px_rgba(59,130,246,0.1)]" : 
+                                        isCurrent ? "bg-blue-500/10 border-blue-500/30 " : 
                                         isPast ? "bg-emerald-500/5 border-emerald-500/20" : 
                                         "bg-slate-900/50 border-white/5"
                                     )}
@@ -215,7 +215,7 @@ const AgentCascadeManager: React.FC = () => {
                                     <span className={cn(
                                         "text-[9px] font-black tracking-widest px-3 py-1 rounded-md",
                                         isPast ? "bg-emerald-500/10 text-emerald-400" : 
-                                        isCurrent ? "bg-blue-500/20 text-blue-400 animate-pulse border border-blue-500/30" : 
+                                        isCurrent ? "bg-blue-500/20 text-blue-400  border border-blue-500/30" : 
                                         "text-slate-600"
                                     )}>
                                         {isPast ? 'COMPLETED' : isCurrent ? 'EXECUTION' : 'PENDING'}

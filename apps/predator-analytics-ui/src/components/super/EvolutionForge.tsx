@@ -43,14 +43,14 @@ const EvolutionForge: React.FC<EvolutionForgeProps> = ({ status }) => {
   }, [status]);
 
   return (
-    <div className="p-8 bg-slate-950/80 backdrop-blur-3xl border border-yellow-500/10 rounded-[40px] shadow-2xl overflow-hidden relative group">
+    <div className="p-8 bg-slate-950/80  border border-yellow-500/10 rounded-[40px] shadow-2xl overflow-hidden relative group">
       {/* Decorative Glow */}
       <div className="absolute top-0 right-0 w-64 h-64 bg-yellow-500/10 blur-[100px] pointer-events-none group-hover:bg-yellow-500/15 transition-colors duration-700" />
       <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-amber-500/5 blur-[80px] pointer-events-none" />
 
       <div className="flex items-center justify-between mb-8 relative z-10">
         <div className="flex items-center gap-4">
-          <div className="p-4 bg-yellow-500/20 rounded-2xl border border-yellow-500/30 shadow-[0_0_20px_rgba(212,175,55,0.2)]">
+          <div className="p-4 bg-yellow-500/20 rounded-2xl border border-yellow-500/30 ">
             <Hammer className="text-yellow-400 animate-bounce" size={24} />
           </div>
           <div>

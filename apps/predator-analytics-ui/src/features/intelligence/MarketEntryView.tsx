@@ -108,7 +108,7 @@ const MARKETS: MarketEntry[] = [
 ];
 
 const RECOMMENDATION_CFG: Record<MarketEntry['recommendation'], { label: string; color: string; bg: string; border: string; shadow: string; icon: any }> = {
-  'strong-buy': { label: 'СУВЕРЕННИЙ ВХІД', color: '#e11d48', bg: 'bg-rose-950/20', border: 'border-rose-500/40', shadow: 'shadow-[0_0_20px_rgba(225,29,72,0.3)]', icon: Star },
+  'strong-buy': { label: 'СУВЕРЕННИЙ ВХІД', color: '#e11d48', bg: 'bg-rose-950/20', border: 'border-rose-500/40', shadow: '', icon: Star },
   'buy':        { label: ' ЕКОМЕНДОВАНО', color: '#fb7185', bg: 'bg-rose-900/20', border: 'border-rose-500/30', shadow: 'shadow-none', icon: CheckCircle },
   'hold':       { label: 'СПОСТЕ ЕЖЕННЯ',   color: '#94a3b8', bg: 'bg-slate-900/40',   border: 'border-slate-800/30', shadow: 'shadow-none', icon: Activity },
   'avoid':      { label: 'УНИКАТИ',      color: '#be123c', bg: 'bg-rose-950/40',     border: 'border-rose-900/40',  shadow: 'shadow-none', icon: AlertTriangle },
@@ -227,9 +227,9 @@ const MarketEntryView: React.FC = () => {
           title={
             <div className="flex items-center gap-10">
               <div className="relative group">
-                <div className="absolute inset-0 bg-rose-500/20 blur-3xl rounded-full scale-150 animate-pulse group-hover:bg-rose-500/30 transition-all duration-[5s]" />
+                <div className="absolute inset-0 bg-rose-500/20 blur-3xl rounded-full scale-150  group-hover:bg-rose-500/30 transition-all duration-[5s]" />
                 <div className="relative p-7 bg-black border-2 border-rose-500/40 rounded-[3rem] shadow-4xl transform rotate-3 hover:rotate-0 transition-all cursor-crosshair">
-                  <Globe size={48} className="text-rose-500 drop-shadow-[0_0_20px_rgba(225,29,72,0.4)]" />
+                  <Globe size={48} className="text-rose-500 " />
                 </div>
               </div>
               <div className="space-y-4">
@@ -284,7 +284,7 @@ const MarketEntryView: React.FC = () => {
             <motion.div
               key={m.l}
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
-              className="p-10 bg-black/60 backdrop-blur-2xl border-2 border-white/5 hover:border-rose-500/30 transition-all rounded-[3.5rem] shadow-2xl group relative overflow-hidden"
+              className="p-10 bg-black/60  border-2 border-white/5 hover:border-rose-500/30 transition-all rounded-[3.5rem] shadow-2xl group relative overflow-hidden"
             >
               <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-rose-500/40 to-transparent opacity-40" />
               <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.6em] mb-4 italic">{m.l}</p>
@@ -300,7 +300,7 @@ const MarketEntryView: React.FC = () => {
           {/* Список ринків ELITE */}
           <div className="lg:col-span-5 space-y-8">
             {/* Фільтри ELITE */}
-            <div className="flex flex-wrap gap-4 items-center p-3 bg-black border-2 border-white/5 rounded-[2.5rem] w-fit shadow-4xl backdrop-blur-3xl">
+            <div className="flex flex-wrap gap-4 items-center p-3 bg-black border-2 border-white/5 rounded-[2.5rem] w-fit shadow-4xl ">
               <div className="flex gap-2 bg-black border-2 border-white/5 p-2 rounded-2xl shadow-inner">
                 {(['all', 'strong-buy', 'buy', 'hold'] as const).map(r => (
                   <button key={r} onClick={() => setFilterRec(r)}
@@ -323,13 +323,13 @@ const MarketEntryView: React.FC = () => {
               {isLoading && (
                 <div className="p-12 border-2 border-white/5 bg-black/40 rounded-[3.5rem] flex flex-col items-center gap-6">
                    <RefreshCcw className="text-rose-500 animate-spin" size={48} />
-                   <span className="text-[10px] font-black text-rose-500 uppercase tracking-[0.5em] animate-pulse italic">Синхронізація геополітичних векторів...</span>
+                   <span className="text-[10px] font-black text-rose-500 uppercase tracking-[0.5em]  italic">Синхронізація геополітичних векторів...</span>
                 </div>
               )}
 
               {error && !isLoading && (
                 <div className="p-12 border-2 border-rose-500/20 bg-rose-500/5 rounded-[3.5rem] flex flex-col items-center gap-6 text-center">
-                   <AlertTriangle size={48} className="text-rose-500 animate-pulse" />
+                   <AlertTriangle size={48} className="text-rose-500 " />
                    <div className="space-y-2">
                      <p className="text-white font-black uppercase italic tracking-widest">{error}</p>
                      <p className="text-[10px] text-slate-500 uppercase font-bold tracking-[0.3em]">Truth Protocol: Відображення мок-даних заблоковано.</p>
@@ -426,7 +426,7 @@ const MarketEntryView: React.FC = () => {
                 className="space-y-8"
               >
                 {/* Заголовок ELITE */}
-                <div className="bg-black/80 backdrop-blur-3xl border-2 border-rose-500/10 p-12 rounded-[4rem] shadow-4xl relative overflow-hidden">
+                <div className="bg-black/80  border-2 border-rose-500/10 p-12 rounded-[4rem] shadow-4xl relative overflow-hidden">
                   <div className="absolute top-0 right-0 p-32 opacity-[0.03] pointer-events-none">
                      <Globe size={400} className="text-rose-500" />
                   </div>
@@ -471,7 +471,7 @@ const MarketEntryView: React.FC = () => {
 
                 {/*  адар + Можливості +  изики ELITE */}
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-10">
-                  <div className="bg-black/60 backdrop-blur-3xl border-2 border-white/5 p-10 rounded-[4rem] shadow-3xl relative overflow-hidden">
+                  <div className="bg-black/60  border-2 border-white/5 p-10 rounded-[4rem] shadow-3xl relative overflow-hidden">
                     <div className="absolute top-0 right-0 p-12 opacity-5">
                        <CyberOrb size={130} color="#e11d48" />
                     </div>
@@ -501,7 +501,7 @@ const MarketEntryView: React.FC = () => {
                     <div className="bg-black/60 border-2 border-rose-500/10 p-10 rounded-[3.5rem] group hover:border-rose-500/30 transition-all shadow-3xl relative overflow-hidden">
                        <div className="absolute top-0 left-0 w-1.5 h-full bg-rose-500 opacity-20" />
                       <h3 className="text-[11px] font-black text-rose-500/60 uppercase tracking-[0.6em] mb-8 flex items-center gap-4 italic">
-                        <CheckCircle size={20} className="text-rose-500 animate-pulse" />
+                        <CheckCircle size={20} className="text-rose-500 " />
                         ALPHA_GROWTH_VESTORS
                       </h3>
                       <div className="space-y-4">
@@ -534,7 +534,7 @@ const MarketEntryView: React.FC = () => {
                 </div>
 
                 {/* Партнери + режим входу ELITE */}
-                <div className="bg-black/60 border-2 border-white/5 p-12 rounded-[4rem] shadow-4xl grid grid-cols-1 xl:grid-cols-2 gap-12 backdrop-blur-3xl">
+                <div className="bg-black/60 border-2 border-white/5 p-12 rounded-[4rem] shadow-4xl grid grid-cols-1 xl:grid-cols-2 gap-12 ">
                   <div>
                     <h3 className="text-[11px] font-black text-slate-700 uppercase tracking-[0.6em] mb-8 flex items-center gap-4 italic">
                       <Building2 size={20} className="text-rose-600/40" />
@@ -567,19 +567,19 @@ const MarketEntryView: React.FC = () => {
                 </div>
 
                 {/* 🤖 Sovereign AI Verdict ELITE */}
-                <div className="relative group overflow-hidden rounded-[5rem] border-2 border-rose-500/30 bg-gradient-to-br from-rose-500/10 via-black/40 to-[#020202] p-12 shadow-4xl backdrop-blur-3xl">
+                <div className="relative group overflow-hidden rounded-[5rem] border-2 border-rose-500/30 bg-gradient-to-br from-rose-500/10 via-black/40 to-[#020202] p-12 shadow-4xl ">
                     <div className="absolute top-0 right-0 p-16 opacity-10 pointer-events-none group-hover:scale-125 transition-transform duration-[10s]">
                         <Zap size={300} className="text-rose-500" />
                     </div>
                     <div className="relative z-10 space-y-10">
                         <div className="flex items-center gap-8">
-                            <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[2rem] bg-rose-600 text-white shadow-[0_0_40px_rgba(225,29,72,0.5)]">
+                            <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[2rem] bg-rose-600 text-white ">
                                 <Target size={40} />
                             </div>
                             <div>
                                 <h3 className="text-3xl font-black text-white uppercase tracking-tighter italic font-serif">PREDATIVE_ENTRY_VERDICT</h3>
                                 <div className="flex items-center gap-3 mt-2">
-                                    <Cpu size={14} className="text-rose-500 animate-pulse" />
+                                    <Cpu size={14} className="text-rose-500 " />
                                     <span className="text-[10px] font-black text-slate-700 uppercase tracking-[0.4em]">SOVEREIGN_ENGINE_v61.0-ELITE</span>
                                 </div>
                             </div>
@@ -603,7 +603,7 @@ const MarketEntryView: React.FC = () => {
               </motion.div>
               ) : (
                 <div className="h-[600px] flex flex-col items-center justify-center p-20 opacity-20 transform translate-y-20 border-2 border-dashed border-white/10 rounded-[4rem]">
-                   <Globe size={120} className="text-slate-600 mb-10 animate-pulse" />
+                   <Globe size={120} className="text-slate-600 mb-10 " />
                    <p className="text-2xl font-black text-slate-500 uppercase tracking-[1em] italic text-center">ОБЕРІТЬ ВЕКТО  ДЛЯ АНАЛІЗУ</p>
                 </div>
               )}

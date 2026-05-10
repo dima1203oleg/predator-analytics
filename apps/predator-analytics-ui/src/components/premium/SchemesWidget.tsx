@@ -22,13 +22,13 @@ export const SchemesWidget: React.FC<{ persona: string }> = ({ persona }) => {
   if (!isTarget) return null;
 
   return (
-    <div className="bg-slate-950/80 border border-red-500/20 rounded-[32px] overflow-hidden backdrop-blur-xl relative">
+    <div className="bg-slate-950/80 border border-red-500/20 rounded-[32px] overflow-hidden  relative">
       <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-transparent pointer-events-none" />
 
       {/* Header */}
       <div className="p-6 border-b border-white/5 flex items-center justify-between relative z-10">
         <div className="flex items-center gap-4">
-          <div className="p-3 rounded-2xl bg-red-500/20 animate-pulse">
+          <div className="p-3 rounded-2xl bg-red-500/20 ">
             <ShieldAlert className="text-red-400" size={24} />
           </div>
           <div>
@@ -46,7 +46,7 @@ export const SchemesWidget: React.FC<{ persona: string }> = ({ persona }) => {
         {loading ? (
           <div className="flex flex-col items-center justify-center py-12 gap-3">
             <div className="w-8 h-8 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
-            <span className="text-xs font-black text-red-500 animate-pulse">{premiumLocales.schemes.scanning}</span>
+            <span className="text-xs font-black text-red-500 ">{premiumLocales.schemes.scanning}</span>
           </div>
         ) : (
           <AnimatePresence>

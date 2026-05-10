@@ -28,7 +28,7 @@ export const DeploymentTimeline: React.FC = () => {
                         
                         <div className={`w-6 h-6 rounded-full flex items-center justify-center border-2 z-10 transition-all duration-300 ${
                             event.status === 'success' ? 'bg-green-900 border-green-500 text-green-500 shadow-[0_0_10px_lime]' :
-                            event.status === 'error' ? 'bg-red-900 border-red-500 text-red-500 shadow-[0_0_10px_red] animate-pulse' :
+                            event.status === 'error' ? 'bg-red-900 border-red-500 text-red-500 shadow-[0_0_10px_red] ' :
                             'bg-slate-800 border-slate-600 text-slate-400'
                         }`}>
                             <event.icon size={12} />

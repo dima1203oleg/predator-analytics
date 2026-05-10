@@ -152,7 +152,7 @@ export const LiveAgentTerminal: React.FC = () => {
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           className={cn(
             "fixed bottom-28 right-6 z-[100] w-[500px] overflow-hidden flex flex-col",
-            "bg-[#050505]/90 backdrop-blur-2xl border border-white/10 rounded-[2.5rem]",
+            "bg-[#050505]/90  border border-white/10 rounded-[2.5rem]",
             "shadow-[0_20px_50px_rgba(0,0,0,0.5),0_0_20px_rgba(244,63,94,0.1)] transition-all duration-500 group"
           )}
         >
@@ -165,12 +165,12 @@ export const LiveAgentTerminal: React.FC = () => {
           <div className="flex items-center justify-between px-10 py-5 border-b border-white/5 bg-white/[0.02] relative z-20">
             <div className="flex items-center gap-4">
               <div className="p-2 bg-rose-500/10 rounded-xl border border-rose-500/20 shadow-inner">
-                <Terminal size={18} className="text-rose-500 drop-shadow-[0_0_8px_rgba(244,63,94,0.5)]" />
+                <Terminal size={18} className="text-rose-500 " />
               </div>
               <div className="flex flex-col">
                 <h4 className="text-[11px] font-black text-white uppercase tracking-[0.4em] italic leading-none">TACTICAL_INTEL_HUD</h4>
                 <div className="flex items-center gap-2 mt-1.5 overflow-hidden">
-                  <div className="w-1 h-1 bg-emerald-500 rounded-full animate-pulse shrink-0" />
+                  <div className="w-1 h-1 bg-emerald-500 rounded-full  shrink-0" />
                   <span className="text-[8px] font-mono text-slate-500 uppercase tracking-tighter whitespace-nowrap">STATUS: OPERATIONAL // VRAM_GUARD ON</span>
                 </div>
               </div>
@@ -178,7 +178,7 @@ export const LiveAgentTerminal: React.FC = () => {
             
             <div className="flex items-center gap-4">
               <div className="hidden sm:flex gap-1.5 px-3 py-1 bg-black/40 rounded-full border border-white/5">
-                <div className="w-1.5 h-1.5 rounded-full bg-rose-600/40 border border-rose-500 animate-pulse" />
+                <div className="w-1.5 h-1.5 rounded-full bg-rose-600/40 border border-rose-500 " />
                 <div className="w-1.5 h-1.5 rounded-full bg-orange-600/40 border border-orange-500" />
                 <div className="w-1.5 h-1.5 rounded-full bg-slate-600/40 border border-slate-500" />
               </div>
@@ -218,7 +218,7 @@ export const LiveAgentTerminal: React.FC = () => {
                     <span className={cn(
                       "px-2.5 py-0.5 rounded text-[9px] font-black tracking-widest shrink-0 border shadow-sm",
                       log.type === 'warn' ? "bg-orange-500/10 border-orange-500/30 text-orange-400" :
-                      log.type === 'error' ? "bg-rose-500/20 border-rose-500/40 text-rose-500 shadow-[0_0_15px_rgba(244,63,94,0.2)]" :
+                      log.type === 'error' ? "bg-rose-500/20 border-rose-500/40 text-rose-500 " :
                       log.type === 'success' ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400" :
                       log.type === 'system' ? "bg-cyan-500/10 border-cyan-500/30 text-cyan-400" :
                       "bg-rose-500/10 border-rose-500/30 text-rose-400"
@@ -245,8 +245,8 @@ export const LiveAgentTerminal: React.FC = () => {
               {logs.length === 0 && (
                 <div className="flex flex-col items-center justify-center h-full space-y-6 opacity-30">
                   <div className="relative">
-                    <Activity className="animate-pulse text-rose-500" size={48} />
-                    <div className="absolute inset-0 bg-rose-500 blur-2xl animate-pulse -z-10" />
+                    <Activity className=" text-rose-500" size={48} />
+                    <div className="absolute inset-0 bg-rose-500 blur-2xl  -z-10" />
                   </div>
                   <div className="flex flex-col items-center">
                     <p className="uppercase tracking-[1em] font-black italic text-rose-500/80 mb-2">ELITE_STANDBY</p>
@@ -292,7 +292,7 @@ export const LiveAgentTerminal: React.FC = () => {
               </div>
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2 text-rose-500 font-black italic">
-                  <Sparkles size={12} className="animate-pulse" />
+                  <Sparkles size={12} className="" />
                   <span className="text-[9px] uppercase tracking-[0.2em]">P_OSINT_KERNEL 58.2</span>
                 </div>
               </div>

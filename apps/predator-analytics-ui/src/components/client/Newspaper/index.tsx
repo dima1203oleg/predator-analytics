@@ -83,7 +83,7 @@ export const Newspaper: React.FC = () => {
                 {/* Premium Lock Overlay */}
                 {article.isPremium && !isPremium && (
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="bg-slate-900/90 backdrop-blur-md px-6 py-3 rounded-xl border border-amber-500/30 shadow-xl flex items-center gap-3">
+                    <div className="bg-slate-900/90  px-6 py-3 rounded-xl border border-amber-500/30 shadow-xl flex items-center gap-3">
                       <Lock className="text-amber-500" size={20} />
                       <span className="text-amber-200 font-medium text-sm">Тільки з Premium</span>
                     </div>

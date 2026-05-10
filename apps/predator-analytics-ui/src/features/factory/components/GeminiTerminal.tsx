@@ -63,7 +63,7 @@ export function GeminiTerminal() {
       {/* Terminal Content */}
       <div 
         ref={scrollRef}
-        className="flex-1 p-6 font-mono text-[11px] overflow-y-auto scrollbar-hide bg-[#300a24]/80 backdrop-blur-sm"
+        className="flex-1 p-6 font-mono text-[11px] overflow-y-auto scrollbar-hide bg-[#300a24]/80 "
       >
         <div className="space-y-1.5">
           {history.map((line, i) => (

@@ -48,7 +48,7 @@ export const QuickActionsBar: React.FC = () => {
       id: 'analyze',
       icon: <Brain size={18} />,
       label: locales.quickActions.analyze,
-      color: 'bg-rose-500/10 border-rose-500/30 text-rose-500 shadow-[0_0_15px_rgba(244,63,94,0.1)]',
+      color: 'bg-rose-500/10 border-rose-500/30 text-rose-500',
       onClick: async () => {
         setLoading('analyze');
         try {
@@ -91,7 +91,7 @@ export const QuickActionsBar: React.FC = () => {
       id: 'ai',
       icon: <ShieldCheck size={18} />,
       label: 'S-CORE',
-      color: 'bg-black border-rose-500/50 text-white shimmer-wraith shadow-[0_0_20px_rgba(244,63,94,0.3)]',
+      color: 'bg-black border-rose-500/50 text-white',
       path: '/omniscience'
     }
   ];
@@ -117,9 +117,9 @@ export const QuickActionsBar: React.FC = () => {
             initial={{ opacity: 0, scale: 0.9, y: 20, x: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20, x: 20 }}
-            className="mb-6 bg-black/80 border border-rose-500/20 rounded-[2.5rem] p-4 backdrop-blur-3xl shadow-4xl relative overflow-hidden"
+            className="mb-6 bg-[rgba(15,15,17,0.97)] border border-rose-500/20 rounded-[2.5rem] p-4 relative overflow-hidden"
           >
-            <div className="absolute inset-0 cyber-scan-grid opacity-[0.05]" />
+            <div  />
             <div className="flex flex-col gap-3 relative z-10">
               {actions.map((action, i) => (
                 <motion.button
@@ -138,7 +138,7 @@ export const QuickActionsBar: React.FC = () => {
                 >
                   <div className="p-2 bg-white/5 rounded-lg group-hover:scale-110 transition-transform">
                     {loading === action.id ? (
-                      <Activity size={18} className="animate-pulse" />
+                      <Activity size={18} className="" />
                     ) : (
                       action.icon
                     )}
@@ -157,12 +157,11 @@ export const QuickActionsBar: React.FC = () => {
         onClick={() => { SovereignAudio.playPulse(); setExpanded(!expanded); }}
         title={expanded ? locales.quickActions.collapse : locales.quickActions.expand}
         className={cn(
-          'w-16 h-16 rounded-[2rem] flex items-center justify-center shadow-4xl transition-all relative overflow-hidden group',
-          'bg-black border-2 border-rose-500/30 hover:border-rose-500/60',
-          'shadow-[0_0_25px_rgba(244,63,94,0.2)]'
+          'w-16 h-16 rounded-[2rem] flex items-center justify-center transition-all relative overflow-hidden group',
+          'bg-black border-2 border-rose-500/30 hover:border-rose-500/60'
         )}
       >
-        <div className="absolute inset-0 bg-gradient-to-tr from-rose-900/20 via-transparent to-rose-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+        <div  />
         <div className="absolute inset-0 glint-elite opacity-20 pointer-events-none" />
         
         <motion.div

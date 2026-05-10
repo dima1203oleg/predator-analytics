@@ -101,7 +101,7 @@ export const NewspaperTab = () => {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center space-y-8 italic">
         <CyberOrb size={120} status="processing" />
-        <p className="text-xl font-black text-yellow-500 uppercase italic tracking-[0.6em] animate-pulse">ЗБІ  МЕДІА- РОЗВІДКИ...</p>
+        <p className="text-xl font-black text-yellow-500 uppercase italic tracking-[0.6em] ">ЗБІ  МЕДІА- РОЗВІДКИ...</p>
       </div>
     );
   }
@@ -114,9 +114,9 @@ export const NewspaperTab = () => {
         title={
           <div className="flex items-center gap-10">
             <div className="relative group">
-              <div className="absolute inset-0 bg-yellow-600/20 blur-3xl rounded-full scale-150 animate-pulse" />
+              <div className="absolute inset-0 bg-yellow-600/20 blur-3xl rounded-full scale-150 " />
               <div className="relative p-7 bg-black border border-yellow-900/40 rounded-[2.5rem] shadow-2xl">
-                <Newspaper size={42} className="text-yellow-500 shadow-[0_0_15px_rgba(99,102,241,0.5)]" />
+                <Newspaper size={42} className="text-yellow-500 " />
               </div>
             </div>
             <div className="space-y-2">
@@ -134,7 +134,7 @@ export const NewspaperTab = () => {
                 <Clock size={14} className="text-yellow-600" />
                 <span>{issueTime}</span>
                 <span className="text-slate-800">|</span>
-                <span className="text-emerald-500 animate-pulse flex items-center gap-2">
+                <span className="text-emerald-500  flex items-center gap-2">
                   <Activity size={14} /> НАЖИВО: {data.summary}
                 </span>
               </div>
@@ -171,7 +171,7 @@ export const NewspaperTab = () => {
         </div>
         <div className="relative z-10 space-y-8">
           <div className="flex items-center gap-4">
-            <span className="bg-amber-600/10 border border-amber-600/30 text-amber-500 px-4 py-1.5 rounded-full text-[10px] font-black tracking-widest uppercase italic flex items-center gap-2 animate-pulse">
+            <span className="bg-amber-600/10 border border-amber-600/30 text-amber-500 px-4 py-1.5 rounded-full text-[10px] font-black tracking-widest uppercase italic flex items-center gap-2 ">
               <Flame size={14} /> {data.headline.tag}
             </span>
             <div className="h-px w-20 bg-amber-600/20" />
@@ -269,7 +269,7 @@ export const NewspaperTab = () => {
                 "p-6 rounded-3xl border border-white/[0.04] bg-black flex items-start gap-4 transition-all hover:border-amber-500/30",
                 alert.urgency === 'high' ? "border-amber-900/40 bg-amber-900/5 shadow-2xl" : ""
               )}>
-                <Siren size={20} className={cn("mt-1", alert.urgency === 'high' ? "text-amber-500 animate-pulse" : "text-amber-500")} />
+                <Siren size={20} className={cn("mt-1", alert.urgency === 'high' ? "text-amber-500 " : "text-amber-500")} />
                 <div>
                   <p className="text-sm font-black text-slate-300 italic leading-snug">{alert.text}</p>
                   <p className="text-[9px] font-black text-slate-700 font-mono italic mt-2">{alert.time} // SIGNAL_DETECTED</p>

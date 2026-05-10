@@ -38,7 +38,7 @@ export function TechVerticalControls({
                 />
                 <div className="flex flex-col">
                   <span className="text-[10px] font-black uppercase tracking-widest text-slate-200">{opt.label}</span>
-                  {techComponents.includes(opt.id) && <span className="text-[8px] text-yellow-400 animate-pulse uppercase tracking-[0.2em]">П ИЗНАЧЕНО ДЛЯ ОПТИМІЗАЦІЇ</span>}
+                  {techComponents.includes(opt.id) && <span className="text-[8px] text-yellow-400  uppercase tracking-[0.2em]">П ИЗНАЧЕНО ДЛЯ ОПТИМІЗАЦІЇ</span>}
                 </div>
              </label>
            ))}

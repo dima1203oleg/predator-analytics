@@ -4,7 +4,7 @@ const StrategicScenarioView = lazy(() => import('@/features/dashboard/StrategicS
 
 export const StrategicScenarioTab = () => (
   <Suspense fallback={
-    <div className="flex items-center justify-center p-12 text-slate-400 font-mono text-xs tracking-widest animate-pulse italic">
+    <div className="flex items-center justify-center p-12 text-slate-400 font-mono text-xs tracking-widest  italic">
       ІНІЦІАЛІЗАЦІЯ СТРАТЕГІЧНОГО СЦЕНАРІЮ...
     </div>
   }>

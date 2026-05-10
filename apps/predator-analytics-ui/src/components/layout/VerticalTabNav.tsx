@@ -34,10 +34,10 @@ export const VerticalTabNav: React.FC<VerticalTabNavProps> = ({
   accentColor = '#f59e0b' // Gold default
 }) => {
   return (
-    <div className="w-[280px] h-full bg-slate-950/40 backdrop-blur-xl border-r border-white/5 flex flex-col p-6 space-y-2 z-20">
+    <div className="w-[280px] h-full bg-slate-950/40  border-r border-white/5 flex flex-col p-6 space-y-2 z-20">
       <div className="mb-8 px-4">
         <div className="flex items-center gap-3 mb-2">
-          <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: accentColor }} />
+          <div className="w-2 h-2 rounded-full " style={{ backgroundColor: accentColor }} />
           <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">
             Autonomous Factory
           </span>
@@ -59,7 +59,7 @@ export const VerticalTabNav: React.FC<VerticalTabNavProps> = ({
               className={cn(
                 "w-full group relative flex items-center gap-4 px-6 py-5 rounded-2xl transition-all duration-500",
                 isActive 
-                  ? "bg-white/5 shadow-[0_0_40px_rgba(0,0,0,0.5)] border border-white/10" 
+                  ? "bg-white/5  border border-white/10" 
                   : "hover:bg-white/[0.02] border border-transparent"
               )}
             >
@@ -112,7 +112,7 @@ export const VerticalTabNav: React.FC<VerticalTabNavProps> = ({
       <div className="mt-auto pt-6 border-t border-white/5 px-4">
         <div className="flex items-center justify-between text-[9px] font-black text-slate-700 uppercase tracking-widest">
           <span>OODA 2.0 // Active</span>
-          <span className="text-emerald-500 animate-pulse">Live</span>
+          <span className="text-emerald-500 ">Live</span>
         </div>
       </div>
     </div>

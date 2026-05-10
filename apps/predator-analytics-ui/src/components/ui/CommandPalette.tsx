@@ -105,7 +105,7 @@ export const CommandPalette = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsOpen(false)}
-            className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm"
+            className="absolute inset-0 bg-slate-950/60 "
           />
 
           {/* Modal */}
@@ -114,7 +114,7 @@ export const CommandPalette = () => {
             animate={{ opacity: 1, scale: 1, y: 0, rotateX: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: -40, rotateX: 20 }}
             transition={{ type: "spring", damping: 20, stiffness: 300 }}
-            className="w-full max-w-xl bg-slate-900/80 border border-emerald-500/30 rounded-2xl shadow-[0_0_50px_rgba(16,185,129,0.1)] relative z-10 backdrop-blur-2xl overflow-hidden"
+            className="w-full max-w-xl bg-slate-900/80 border border-emerald-500/30 rounded-2xl  relative z-10  overflow-hidden"
           >
             {/* Animated Scanline */}
             <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-[linear-gradient(transparent_50%,rgba(16,185,129,0.5)_50%)] bg-[length:100%_4px] animate-scanline z-0" />
@@ -166,7 +166,7 @@ export const CommandPalette = () => {
                     <div className="flex items-center gap-4 relative z-10">
                       <div className={cn(
                         "p-2 rounded-lg transition-colors duration-300",
-                        index === selectedIndex ? "bg-emerald-500/20 text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.3)]" : "bg-slate-800 text-slate-500 group-hover/item:bg-slate-700"
+                        index === selectedIndex ? "bg-emerald-500/20 text-emerald-400 " : "bg-slate-800 text-slate-500 group-hover/item:bg-slate-700"
                       )}>
                         <action.icon className="w-5 h-5" />
                       </div>
@@ -177,7 +177,7 @@ export const CommandPalette = () => {
                     </div>
                     {index === selectedIndex && (
                       <motion.div layoutId="palette-active-glow" className="flex items-center gap-2 text-emerald-400 relative z-10">
-                        <span className="text-[9px] font-mono font-black animate-pulse uppercase">Execute</span>
+                        <span className="text-[9px] font-mono font-black  uppercase">Execute</span>
                         <ArrowRight className="w-4 h-4" />
                       </motion.div>
                     )}

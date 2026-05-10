@@ -65,7 +65,7 @@ export const HoloContainer: React.FC<HoloContainerProps> = ({
     const s = variantStyles[variant];
 
     return (
-        <div className={`relative ${className} group  border rounded-xl bg-[#0a0f1c]/70 backdrop-blur-md transition-all duration-500 shadow-2xl shadow-black/80 ${s.border} ${s.borderHover}`}>
+        <div className={`relative ${className} group  border rounded-xl bg-[#0a0f1c]/70  transition-all duration-500 shadow-2xl shadow-black/80 ${s.border} ${s.borderHover}`}>
             {/* Subtle holographic radial glow */}
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,var(--glow-color),transparent)] pointer-events-none z-0" style={{ '--glow-color': s.glowColor } as React.CSSProperties}></div>
 

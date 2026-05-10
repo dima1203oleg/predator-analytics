@@ -15,7 +15,7 @@ interface ExplorerViewProps {
 export const ExplorerView: React.FC<ExplorerViewProps> = ({ children, className }) => {
   return (
     <div className={cn(
-      "w-full h-full min-h-[500px] relative overflow-hidden rounded-[4rem] border-2 border-white/5 shadow-[0_0_100px_rgba(0,0,0,0.8)] bg-[#020202]",
+      "w-full h-full min-h-[500px] relative overflow-hidden rounded-[4rem] border-2 border-white/5  bg-[#020202]",
       className
     )}>
       {/* Cinematic Background Layers */}

@@ -86,7 +86,7 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({ ueid: pr
     return (
       <div className="flex flex-col items-center justify-center min-h-[600px] text-white">
         <Loader2 size={48} className="text-amber-500 animate-spin mb-4" />
-        <p className="text-lg font-bold uppercase tracking-[0.2em] animate-pulse">Завантаження фінансових даних...</p>
+        <p className="text-lg font-bold uppercase tracking-[0.2em] ">Завантаження фінансових даних...</p>
       </div>
     );
   }
@@ -139,7 +139,7 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({ ueid: pr
                 {isOffline ? 'SOVEREIGN_EMERGENCY' : 'FINANCE_CORE_v61.0-ELITE'}
               </Badge>
               <span className="text-slate-500 font-mono text-[10px] tracking-widest uppercase">NODE: {sourceLabel} // ID: {ueid}</span>
-              {activeFailover && <Badge className="bg-amber-600 text-black text-[8px] animate-pulse">FAILOVER_MIRROR</Badge>}
+              {activeFailover && <Badge className="bg-amber-600 text-black text-[8px] ">FAILOVER_MIRROR</Badge>}
             </div>
             <h1 className="text-4xl lg:text-5xl font-black text-white uppercase tracking-tighter">
               💰 Фінансові <span className="text-amber-500">{isOffline ? 'MIRROR_VAULT' : 'Метрики'}</span>

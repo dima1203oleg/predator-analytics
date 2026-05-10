@@ -88,7 +88,7 @@ users:
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100]"
+            className="fixed inset-0 bg-black/60  z-[100]"
           />
 
           {/* Panel */}
@@ -100,7 +100,7 @@ users:
             className="fixed right-0 top-0 h-screen w-[480px] bg-slate-950 border-l border-white/10 z-[101] shadow-2xl flex flex-col"
           >
             {/* Header */}
-            <div className="p-6 border-b border-white/5 bg-slate-900/50 backdrop-blur-xl flex items-center justify-between">
+            <div className="p-6 border-b border-white/5 bg-slate-900/50  flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="p-3 rounded-xl bg-gradient-to-br from-sky-500/30 to-sky-600/10 text-sky-500 border border-sky-500/20">
                   <Cloud className="w-6 h-6" />
@@ -108,7 +108,7 @@ users:
                 <div>
                   <h2 className="text-xl font-black text-white tracking-tight uppercase">COLAB_MIRROR_V5</h2>
                   <p className="text-[10px] text-sky-500 font-mono tracking-[0.2em] uppercase flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-sky-500 " />
                     CLOUD_FAILOVER_NODE
                   </p>
                 </div>
@@ -178,7 +178,7 @@ users:
                 <div className="bg-gradient-to-br from-sky-500/10 to-transparent border border-sky-500/20 rounded-xl p-5 space-y-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-xl bg-sky-500/20 flex items-center justify-center text-sky-500 border border-sky-500/10 shadow-[0_0_20px_rgba(14,165,233,0.15)]">
+                      <div className="w-12 h-12 rounded-xl bg-sky-500/20 flex items-center justify-center text-sky-500 border border-sky-500/10 ">
                         <Terminal className="w-6 h-6" />
                       </div>
                       <div>
@@ -216,7 +216,7 @@ users:
                   <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
                     <Database className="w-4 h-4 text-sky-500" /> DATABASE_CLOUD_ARRAY
                   </h3>
-                  <Activity className="w-4 h-4 text-emerald-500 animate-pulse" />
+                  <Activity className="w-4 h-4 text-emerald-500 " />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   {Object.entries(databases).map(([name, status]: [string, any]) => (
@@ -273,7 +273,7 @@ users:
                   href={extended.zrok_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-3 px-5 py-4 bg-sky-500/10 border border-sky-500/30 rounded-2xl text-sky-500 text-[11px] font-black uppercase tracking-widest hover:bg-sky-500 hover:text-white transition-all shadow-[0_0_30px_rgba(14,165,233,0.2)] group"
+                  className="flex items-center justify-center gap-3 px-5 py-4 bg-sky-500/10 border border-sky-500/30 rounded-2xl text-sky-500 text-[11px] font-black uppercase tracking-widest hover:bg-sky-500 hover:text-white transition-all  group"
                 >
                   <ExternalLink className="w-5 h-5" /> OPEN_COLAB
                 </a>
@@ -282,7 +282,7 @@ users:
             </div>
 
             {/* Footer */}
-            <div className="p-6 border-t border-white/5 bg-black/40 backdrop-blur-md">
+            <div className="p-6 border-t border-white/5 bg-black/40 ">
               <div className="flex items-start gap-4 text-sky-600 bg-sky-600/5 p-4 rounded-2xl border border-sky-600/20 shadow-[inset_0_0_20px_rgba(14,165,233,0.05)]">
                 <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5" />
                 <div>

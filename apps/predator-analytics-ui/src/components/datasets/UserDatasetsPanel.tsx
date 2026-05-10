@@ -160,7 +160,7 @@ export const UserDatasetsPanel: React.FC<UserDatasetsPanelProps> = ({ className,
     const enabledCount = datasets.filter(d => d.isExampleEnabled).length;
 
     return (
-        <div className={cn("bg-slate-900/40 border border-white/5 rounded-3xl overflow-hidden backdrop-blur-sm", className)}>
+        <div className={cn("bg-slate-900/40 border border-white/5 rounded-3xl overflow-hidden ", className)}>
             {/* Header */}
             <div className="p-6 border-b border-white/5 bg-black/20">
                 <div className="flex items-center justify-between">
@@ -323,7 +323,7 @@ export const UserDatasetsPanel: React.FC<UserDatasetsPanelProps> = ({ className,
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+                        className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80  p-4"
                         onClick={() => setShowUploadModal(false)}
                     >
                         <motion.div

@@ -25,7 +25,7 @@ const GraphNode: React.FC<{
     style={{ left: `${x}%`, top: `${y}%`, transform: 'translate(-50%, -50%)' }}
   >
     <div
-      className="relative flex items-center justify-center rounded-full backdrop-blur-sm border transition-all duration-300 group-hover:scale-125"
+      className="relative flex items-center justify-center rounded-full  border transition-all duration-300 group-hover:scale-125"
       style={{
         width: size,
         height: size,
@@ -234,11 +234,11 @@ export const GraphView = () => {
           <TacticalCard
             variant="holographic"
             title="ІНТЕ АКТИВНА НЕЙ ОННА МОДЕЛЬ"
-            className="border-white/5 bg-slate-950/40 backdrop-blur-xl hud-frame h-full min-h-[600px] flex flex-col"
+            className="border-white/5 bg-slate-950/40  hud-frame h-full min-h-[600px] flex flex-col"
             noPadding
           >
             {/* Action Toolbar */}
-            <div className="absolute top-4 right-4 z-20 flex items-center gap-2 bg-slate-900/80 backdrop-blur-md p-1.5 rounded-lg border border-white/10">
+            <div className="absolute top-4 right-4 z-20 flex items-center gap-2 bg-slate-900/80  p-1.5 rounded-lg border border-white/10">
                 <button className="px-3 py-1.5 rounded-md text-[10px] font-black uppercase text-cyan-400 hover:bg-cyan-500/10 transition-colors">
                     Повний Екран
                 </button>
@@ -255,7 +255,7 @@ export const GraphView = () => {
               <div className="flex-1 flex items-center justify-center">
                 <div className="flex flex-col items-center gap-4">
                   <div className="glow-orb" />
-                  <span className="text-cyan-400 font-mono text-sm animate-pulse tracking-widest">
+                  <span className="text-cyan-400 font-mono text-sm  tracking-widest">
                     ЗАВАНТАЖЕННЯ НЕЙ ОННИХ ЗВ'ЯЗКІВ...
                   </span>
                 </div>
@@ -302,8 +302,8 @@ export const GraphView = () => {
                   className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10"
                 >
                   <div className="relative">
-                    <div className="w-24 h-24 rounded-full bg-gradient-to-br from-cyan-500/20 to-yellow-500/20 border border-cyan-400/40 flex items-center justify-center backdrop-blur-md shadow-[0_0_50px_rgba(6,182,212,0.3)]">
-                      <Zap className="w-10 h-10 text-cyan-300 drop-shadow-[0_0_15px_#22d3ee]" />
+                    <div className="w-24 h-24 rounded-full bg-gradient-to-br from-cyan-500/20 to-yellow-500/20 border border-cyan-400/40 flex items-center justify-center  ">
+                      <Zap className="w-10 h-10 text-cyan-300 " />
                     </div>
                     <div className="absolute inset-0 rounded-full border border-cyan-400/30 animate-ping" style={{ animationDuration: '3s' }} />
                     <div className="absolute -inset-8 rounded-full border border-yellow-400/20 animate-spin" style={{ animationDuration: '15s' }} />
@@ -313,7 +313,7 @@ export const GraphView = () => {
 
                 {/* Interactive Hint */}
                 <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20">
-                  <span className="text-[10px] text-cyan-400 uppercase tracking-widest font-mono bg-cyan-950/80 px-6 py-2.5 rounded-full border border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.2)]">
+                  <span className="text-[10px] text-cyan-400 uppercase tracking-widest font-mono bg-cyan-950/80 px-6 py-2.5 rounded-full border border-cyan-500/30 ">
                     ✨ ІНТЕ АКТИВНИЙ РЕЖИМ (КЛІКНІТЬ ДЛЯ ДЕТАЛЕЙ)
                   </span>
                 </div>

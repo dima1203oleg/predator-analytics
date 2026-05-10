@@ -30,7 +30,7 @@ export const CyberGrid: React.FC<CyberGridProps> = ({ color, className, opacity 
                 {[...Array(6)].map((_, i) => (
                     <div 
                         key={i} 
-                        className="focus-dot animate-pulse"
+                        className="focus-dot "
                         style={{ 
                             top: `${Math.random() * 100}%`, 
                             left: `${Math.random() * 100}%`,

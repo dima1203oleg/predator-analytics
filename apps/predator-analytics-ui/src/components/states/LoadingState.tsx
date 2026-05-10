@@ -20,7 +20,7 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
   };
 
   const containerClasses = fullScreen
-    ? 'fixed inset-0 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm z-50'
+    ? 'fixed inset-0 flex items-center justify-center bg-slate-950/80  z-50'
     : 'flex items-center justify-center py-12';
 
   return (
@@ -37,7 +37,7 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
           <Loader2 className={`${sizeClasses[size]} text-blue-400`} />
         </motion.div>
         {message && (
-          <p className="text-sm font-medium text-slate-400 animate-pulse">
+          <p className="text-sm font-medium text-slate-400 ">
             {message}
           </p>
         )}

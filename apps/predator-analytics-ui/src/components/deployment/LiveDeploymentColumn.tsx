@@ -18,21 +18,21 @@ export const LiveDeploymentColumn: React.FC<LiveDeploymentColumnProps> = ({ env,
             bg: 'bg-blue-900/10',
             border: 'border-blue-900/30',
             text: 'text-blue-400',
-            glow: 'shadow-[0_0_15px_rgba(59,130,246,0.2)]',
+            glow: '',
             icon: 'text-blue-500'
         },
         green: {
             bg: 'bg-green-900/10',
             border: 'border-green-900/30',
             text: 'text-green-400',
-            glow: 'shadow-[0_0_15px_rgba(34,197,94,0.2)]',
+            glow: '',
             icon: 'text-green-500'
         },
         orange: {
             bg: 'bg-orange-900/10',
             border: 'border-orange-900/30',
             text: 'text-orange-400',
-            glow: 'shadow-[0_0_15px_rgba(249,115,22,0.2)]',
+            glow: '',
             icon: 'text-orange-500'
         }
     };
@@ -59,7 +59,7 @@ export const LiveDeploymentColumn: React.FC<LiveDeploymentColumnProps> = ({ env,
 
     const getPodStatusIcon = (status: string) => {
         if (status === 'Running') return <div className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_5px_lime]"></div>;
-        if (status === 'Pending' || status === 'ContainerCreating' || status === 'Waiting') return <div className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></div>;
+        if (status === 'Pending' || status === 'ContainerCreating' || status === 'Waiting') return <div className="w-2 h-2 rounded-full bg-yellow-500 "></div>;
         return <div className="w-2 h-2 rounded-full bg-red-500 animate-ping"></div>;
     };
 

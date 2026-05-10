@@ -28,39 +28,39 @@ import { SystemPulseIndicator } from '../SystemPulseIndicator';
 // Кольорові акценти для кожного типу розділу
 const sectionGlowMap: Record<string, { gradient: string; glow: string; border: string }> = {
   emerald: {
-    gradient: 'radial-gradient(circle at 0% 0%, rgba(16,185,129,0.1) 0%, transparent 60%)',
-    glow: 'rgba(16,185,129,0.15)',
-    border: 'rgba(16,185,129,0.18)',
+    gradient: 'radial-gradient(circle at 0% 0%, rgba(196,18,48,0.08) 0%, transparent 60%)',
+    glow: 'rgba(196,18,48,0.12)',
+    border: 'rgba(196,18,48,0.15)',
   },
   cyan: {
-    gradient: 'radial-gradient(circle at 0% 0%, rgba(6,182,212,0.1) 0%, transparent 60%)',
-    glow: 'rgba(6,182,212,0.15)',
-    border: 'rgba(6,182,212,0.18)',
+    gradient: 'radial-gradient(circle at 0% 0%, rgba(196,18,48,0.08) 0%, transparent 60%)',
+    glow: 'rgba(196,18,48,0.12)',
+    border: 'rgba(196,18,48,0.15)',
   },
   amber: {
-    gradient: 'radial-gradient(circle at 0% 0%, rgba(244,63,94,0.1) 0%, transparent 60%)',
-    glow: 'rgba(244,63,94,0.15)',
-    border: 'rgba(244,63,94,0.18)',
+    gradient: 'radial-gradient(circle at 0% 0%, rgba(196,18,48,0.1) 0%, transparent 60%)',
+    glow: 'rgba(196,18,48,0.15)',
+    border: 'rgba(196,18,48,0.18)',
   },
   indigo: {
-    gradient: 'radial-gradient(circle at 0% 0%, rgba(99,102,241,0.1) 0%, transparent 60%)',
-    glow: 'rgba(99,102,241,0.15)',
-    border: 'rgba(99,102,241,0.18)',
+    gradient: 'radial-gradient(circle at 0% 0%, rgba(196,18,48,0.08) 0%, transparent 60%)',
+    glow: 'rgba(196,18,48,0.12)',
+    border: 'rgba(196,18,48,0.15)',
   },
   violet: {
-    gradient: 'radial-gradient(circle at 0% 0%, rgba(139,92,246,0.1) 0%, transparent 60%)',
-    glow: 'rgba(139,92,246,0.15)',
-    border: 'rgba(139,92,246,0.18)',
+    gradient: 'radial-gradient(circle at 0% 0%, rgba(196,18,48,0.08) 0%, transparent 60%)',
+    glow: 'rgba(196,18,48,0.12)',
+    border: 'rgba(196,18,48,0.15)',
   },
   rose: {
-    gradient: 'radial-gradient(circle at 0% 0%, rgba(244,63,94,0.1) 0%, transparent 60%)',
-    glow: 'rgba(244,63,94,0.15)',
-    border: 'rgba(244,63,94,0.18)',
+    gradient: 'radial-gradient(circle at 0% 0%, rgba(196,18,48,0.12) 0%, transparent 60%)',
+    glow: 'rgba(196,18,48,0.18)',
+    border: 'rgba(196,18,48,0.2)',
   },
   slate: {
-    gradient: 'radial-gradient(circle at 0% 0%, rgba(100,116,139,0.08) 0%, transparent 60%)',
-    glow: 'rgba(100,116,139,0.12)',
-    border: 'rgba(100,116,139,0.16)',
+    gradient: 'radial-gradient(circle at 0% 0%, rgba(100,116,139,0.06) 0%, transparent 60%)',
+    glow: 'rgba(100,116,139,0.1)',
+    border: 'rgba(100,116,139,0.12)',
   },
 };
 
@@ -88,21 +88,17 @@ const Header: React.FC = () => {
 
   return (
     <header
-      className="sticky top-0 z-40 border-b border-white/[0.06] op-mode-transition shadow-[0_12px_48px_-16px_rgba(0,0,0,0.75)]"
+      className="sticky top-0 z-40 border-b border-white/[0.06] op-mode-transition shadow-[0_8px_32px_rgba(0,0,0,0.8)]"
       style={{
-        background: 'rgba(6, 10, 18, 0.82)',
-        backdropFilter: 'blur(36px) saturate(165%)',
+        background: 'rgba(15, 15, 17, 0.97)',
       }}
     >
-      {/* Cinematic HUD Background Layers */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden opacity-[0.04]">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_-10%,rgba(56,189,248,0.18),transparent_42%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%)] bg-[length:100%_4px]" />
-      </div>
+      {/* Тактичне затінення */}
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(20,15,15,0.3)_0%,transparent_100%)]" />
 
       {/* Верхня акцентна лінія розділу */}
       <div
-        className="absolute top-0 left-0 right-0 h-[1.5px] pointer-events-none opacity-80"
+        className="absolute top-0 left-0 right-0 h-[1.5px] pointer-events-none opacity-60"
         style={{
           background: `linear-gradient(90deg, transparent 0%, ${sectionGlow.glow} 20%, ${sectionGlow.glow} 80%, transparent 100%)`,
         }}
@@ -125,25 +121,20 @@ const Header: React.FC = () => {
               >
                 <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                 {section ? (
-                  <Layers3 className={cn('h-4 w-4 drop-shadow-[0_0_8px_currentColor]', accent.icon)} />
+                  <Layers3 className={cn('h-4 w-4 ', accent.icon)} />
                 ) : (
-                  <ShieldCheck className={cn('h-4 w-4 drop-shadow-[0_0_8px_currentColor]', accent.icon)} />
+                  <ShieldCheck className={cn('h-4 w-4 ', accent.icon)} />
                 )}
               </div>
 
               {/* Breadcrumb path */}
               <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400">
                 <span
-                  className="rounded-lg border px-2.5 py-1 backdrop-blur-md"
+                  className="rounded-lg border px-2.5 py-1"
                   style={{
                     background: `${sectionGlow.glow.replace('0.15', '0.1')}`,
                     borderColor: sectionGlow.border,
-                    color: accent.icon.includes('emerald') ? '#6ee7b7' :
-                           accent.icon.includes('cyan')    ? '#67e8f9' :
-                           accent.icon.includes('rose')    ? '#fda4af' :
-                           accent.icon.includes('indigo')  ? '#a5b4fc' :
-                           accent.icon.includes('violet')  ? '#c4b5fd' :
-                           '#fda4af',
+                    color: '#e8888f',
                   }}
                 >
                   {section?.label ?? 'ПЛАТФОРМА'}
@@ -151,7 +142,7 @@ const Header: React.FC = () => {
                 {item && (
                   <>
                     <ChevronRight className="h-3 w-3 text-slate-700 shrink-0" />
-                    <span className="text-slate-500 hover:text-slate-300 transition-colors cursor-default drop-shadow-sm">{item.label}</span>
+                    <span className="text-slate-500 hover:text-slate-300 transition-colors cursor-default ">{item.label}</span>
                   </>
                 )}
               </div>
@@ -161,7 +152,7 @@ const Header: React.FC = () => {
             <div className="flex items-center gap-5">
               <div className="min-w-0">
                 <h1
-                  className="font-display text-[1.75rem] font-bold leading-none tracking-tight text-white drop-shadow-sm sm:text-[1.85rem]"
+                  className="font-display text-[1.75rem] font-bold leading-none tracking-tight text-white  sm:text-[1.85rem]"
                   style={{ letterSpacing: '-0.035em' }}
                 >
                   {item?.label ?? 'ПАНЕЛЬ УПРАВЛІННЯ'}
@@ -185,7 +176,7 @@ const Header: React.FC = () => {
                    )}>
                       <span className={cn(
                         "w-1.5 h-1.5 rounded-full",
-                        backendStatus.isOffline ? "bg-rose-500" : "bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]"
+                        backendStatus.isOffline ? "bg-rose-500" : "bg-emerald-500"
                       )} />
                       {backendStatus.statusLabel}
                    </div>
@@ -204,13 +195,13 @@ const Header: React.FC = () => {
               onClick={() => setIsPaletteOpen(true)}
             >
               <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                <Search className="h-4 w-4 text-slate-600 transition-colors group-hover:text-sky-400" />
+                <Search className="h-4 w-4 text-slate-600 transition-colors group-hover:text-red-400" />
               </div>
-              <div className="flex h-10 w-56 items-center rounded-xl border border-white/[0.07] bg-black/45 pl-10 pr-12 text-[11px] font-medium tracking-tight text-slate-400 shadow-[inset_0_2px_4px_rgba(0,0,0,0.45)] transition-all group-hover:border-sky-500/25 group-hover:bg-sky-500/[0.03] lg:w-72">
+              <div className="flex h-10 w-56 items-center rounded-xl border border-white/[0.07] bg-black/45 pl-10 pr-12 text-[11px] font-medium tracking-tight text-slate-400 shadow-[inset_0_2px_4px_rgba(0,0,0,0.45)] transition-all group-hover:border-red-500/25 group-hover:bg-red-500/[0.03] lg:w-72">
                 Знайти модуль, звіт або дію…
               </div>
               <div className="absolute inset-y-0 right-2.5 flex items-center gap-1">
-                <kbd className="hidden items-center justify-center rounded border border-white/10 bg-black/50 px-1.5 py-0.5 text-[9px] font-semibold text-slate-500 transition-all group-hover:border-sky-500/30 group-hover:text-sky-300/90 lg:flex">
+                <kbd className="hidden items-center justify-center rounded border border-white/10 bg-black/50 px-1.5 py-0.5 text-[9px] font-semibold text-slate-500 transition-all group-hover:border-red-500/30 group-hover:text-red-300/90 lg:flex">
                   ⌘K
                 </kbd>
               </div>
@@ -225,7 +216,7 @@ const Header: React.FC = () => {
                   className={cn(
                     "flex h-9 w-9 items-center justify-center rounded-xl transition-all duration-300 relative group",
                     isContextRailOpen 
-                      ? "bg-indigo-500/10 text-indigo-400 shadow-[inset_0_0_12px_rgba(99,102,241,0.2)]" 
+                      ? "bg-red-500/10 text-red-400 shadow-[inset_0_0_12px_rgba(196,18,48,0.15)]" 
                       : "text-slate-600 hover:text-white hover:bg-white/[0.05]"
                   )}
                 >
@@ -239,7 +230,7 @@ const Header: React.FC = () => {
               >
                 <Bell className="h-4 w-4" />
                 <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-rose-500 rounded-full animate-ping" />
-                <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-rose-600 rounded-full shadow-[0_0_8px_rgba(225,29,72,0.8)]" />
+                <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-rose-600 rounded-full" />
               </button>
 
               <button
@@ -267,9 +258,9 @@ const Header: React.FC = () => {
                   <div className="text-[11px] font-semibold uppercase tracking-tight text-white">{user?.name || 'ADMIN_CORE'}</div>
                   <div className="mt-0.5 text-[8px] uppercase tracking-[0.18em] text-slate-500">{roleLabel}</div>
                 </div>
-                <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl border border-white/[0.08] bg-gradient-to-br from-slate-800 to-slate-950 shadow-lg transition-all group-hover:border-sky-500/35">
-                   <div className="absolute inset-0 bg-sky-500/5 opacity-0 transition-opacity group-hover:opacity-100" />
-                   <UserCircle className="h-6 w-6 text-slate-500 transition-colors group-hover:text-sky-300" />
+                <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl border border-white/[0.08] bg-gradient-to-br from-slate-800 to-slate-950 shadow-lg transition-all group-hover:border-red-500/35">
+                   <div className="absolute inset-0 bg-red-500/5 opacity-0 transition-opacity group-hover:opacity-100" />
+                   <UserCircle className="h-6 w-6 text-slate-500 transition-colors group-hover:text-red-300" />
                 </div>
               </div>
 

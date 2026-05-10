@@ -121,7 +121,7 @@ const CompetitorCardELITE: React.FC<{
                 : "bg-black text-slate-500 border-white/5"
             )}>
                {competitor.marketShare > 10 && <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />}
-              <Building2 size={32} className={cn("transition-transform duration-700", isExpanded && "scale-110 drop-shadow-[0_0_12px_rgba(212,175,55,0.4)]")} />
+              <Building2 size={32} className={cn("transition-transform duration-700", isExpanded && "scale-110 ")} />
             </div>
 
             <div className="space-y-1.5 pt-1">
@@ -188,7 +188,7 @@ const CompetitorCardELITE: React.FC<{
             initial={{ width: 0 }}
             animate={{ width: `${competitor.marketShare}%` }}
             transition={{ duration: 2, ease: [0.23, 1, 0.32, 1] }}
-            className="h-full bg-gradient-to-r from-[#D4AF37] via-[#D4AF37] to-white/40 shadow-[0_0_15px_rgba(212,175,55,0.4)]"
+            className="h-full bg-gradient-to-r from-[#D4AF37] via-[#D4AF37] to-white/40 "
           />
         </div>
       </div>
@@ -208,7 +208,7 @@ const CompetitorCardELITE: React.FC<{
             <div className="p-10 grid grid-cols-1 md:grid-cols-3 gap-12 relative z-10">
               <div className="space-y-6">
                 <h4 className="text-[11px] font-black text-slate-600 uppercase tracking-[0.4em] flex items-center gap-3 italic">
-                  <div className="w-2 h-2 bg-[#D4AF37] rounded-full animate-pulse shadow-[0_0_8px_#D4AF37]" />
+                  <div className="w-2 h-2 bg-[#D4AF37] rounded-full  shadow-[0_0_8px_#D4AF37]" />
                   {localLocales.card.geography}
                 </h4>
                 <div className="flex flex-wrap gap-2.5">
@@ -222,7 +222,7 @@ const CompetitorCardELITE: React.FC<{
 
               <div className="space-y-6">
                 <h4 className="text-[11px] font-black text-slate-600 uppercase tracking-[0.4em] flex items-center gap-3 italic">
-                  <div className="w-2 h-2 bg-[#D4AF37] rounded-full animate-pulse shadow-[0_0_8px_#D4AF37]" />
+                  <div className="w-2 h-2 bg-[#D4AF37] rounded-full  shadow-[0_0_8px_#D4AF37]" />
                   {localLocales.card.suppliers}
                 </h4>
                 <ul className="space-y-4">
@@ -242,7 +242,7 @@ const CompetitorCardELITE: React.FC<{
 
               <div className="space-y-6">
                 <h4 className="text-[11px] font-black text-slate-600 uppercase tracking-[0.4em] flex items-center gap-3 italic">
-                  <div className="w-2 h-2 bg-amber-600 rounded-full animate-pulse shadow-[0_0_8px_#f43f5e]" />
+                  <div className="w-2 h-2 bg-amber-600 rounded-full  shadow-[0_0_8px_#f43f5e]" />
                   {localLocales.card.actions.analytics}
                 </h4>
                 <div className="flex flex-col gap-4">
@@ -367,7 +367,7 @@ const CompetitorIntelligenceView: React.FC = () => {
       <div className="min-h-screen pb-24 relative overflow-hidden bg-[#020202]">
         {/* Background Depth */}
         <div className="absolute inset-0 opacity-20 pointer-events-none overflow-hidden"><HoloContainer>{null}</HoloContainer></div>
-        <div className="absolute top-1/4 -right-20 w-96 h-96 bg-[#D4AF37]/10 rounded-full blur-[120px] pointer-events-none animate-pulse" />
+        <div className="absolute top-1/4 -right-20 w-96 h-96 bg-[#D4AF37]/10 rounded-full blur-[120px] pointer-events-none " />
         <div className="absolute bottom-1/4 -left-20 w-80 h-80 bg-amber-600/5 rounded-full blur-[100px] pointer-events-none" />
 
         <div className="relative z-20">
@@ -375,7 +375,7 @@ const CompetitorIntelligenceView: React.FC = () => {
             title={
               <div className="flex items-center gap-10">
                 <div className="relative group">
-                  <div className="absolute inset-0 bg-[#D4AF37]/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                  <div className="absolute inset-0 bg-[#D4AF37]/20 blur-3xl rounded-full scale-150 " />
                   <div className="relative p-7 bg-black border-2 border-[#D4AF37]/40 rounded-[2.5rem] shadow-4xl transform rotate-2 hover:rotate-0 transition-all">
                     <Radar size={42} className="text-[#D4AF37] shadow-[0_0_20px_#d4af37]" />
                   </div>

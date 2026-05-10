@@ -88,7 +88,7 @@ export const AMLRadarTab: React.FC = () => {
                 <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.3em] mb-2 italic">КІНЦЕВИЙ_ВЕ ДИКТ</p>
                 <p className="text-4xl font-black italic text-white tracking-tighter leading-none uppercase">ВИСОКА_ЙМОВІ НІСТЬ</p>
               </div>
-              <p className="text-7xl font-black italic text-emerald-500 font-mono leading-none tracking-tighter drop-shadow-[0_0_20px_rgba(16,185,129,0.4)]">94.8%</p>
+              <p className="text-7xl font-black italic text-emerald-500 font-mono leading-none tracking-tighter ">94.8%</p>
               <p className="text-[10px] font-bold text-slate-500 uppercase italic tracking-wide border-l-4 border-emerald-500/20 pl-4 leading-relaxed max-w-sm">
                 КрИТИЧНА ЙМОВІ НІСТЬ ПЕ ЕХОВУВАННЯ КБВ ЧЕ ЕЗ СХЕМУ "ЗВО ОТНІХ ПОЗИК" ТА ОФШО НІ ДЕ ИВАТИВИ.
               </p>

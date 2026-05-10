@@ -54,7 +54,7 @@ export const PremiumFX: React.FC = () => {
                 }}
                 transition={{ type: 'spring', damping: 20, stiffness: 300, mass: 0.2 }}
             >
-                <div className="absolute inset-0 rounded-full bg-primary-400/20 animate-pulse" />
+                <div className="absolute inset-0 rounded-full bg-primary-400/20 " />
             </motion.div>
 
             {/* Click Ripples */}

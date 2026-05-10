@@ -57,7 +57,7 @@ export const TenderIntelligenceWidget: React.FC<{ persona: string }> = ({ person
 
 
   return (
-    <div className="bg-slate-950/80 border border-blue-500/20 rounded-[24px] backdrop-blur-xl overflow-hidden h-full flex flex-col relative group">
+    <div className="bg-slate-950/80 border border-blue-500/20 rounded-[24px]  overflow-hidden h-full flex flex-col relative group">
       <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent pointer-events-none transition-all duration-500 group-hover:from-blue-500/10" />
 
       {/* Header */}

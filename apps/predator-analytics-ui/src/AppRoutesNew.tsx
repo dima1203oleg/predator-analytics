@@ -105,7 +105,7 @@ const OmniverseHub = lazy(() => import('./features/omniverse/OmniverseHub'));
 
 const LoadingFallback = () => (
   <div className="flex items-center justify-center h-screen bg-slate-950 relative overflow-hidden">
-    <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(16,185,129,0.05),transparent)] animate-pulse" />
+    <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(16,185,129,0.05),transparent)] " />
     <div className="flex flex-col items-center gap-6 relative z-10">
       <div className="relative">
         <div className="w-24 h-24 border-2 border-emerald-500/20 rounded-full" />
@@ -116,14 +116,14 @@ const LoadingFallback = () => (
         </div>
       </div>
       <div className="flex flex-col items-center">
-        <div className="text-emerald-400 font-mono text-xs tracking-[0.5em] animate-pulse mb-1">КВАНТОВИЙ ЗВ'ЯЗОК ВСТАНОВЛЕНО</div>
+        <div className="text-emerald-400 font-mono text-xs tracking-[0.5em]  mb-1">КВАНТОВИЙ ЗВ'ЯЗОК ВСТАНОВЛЕНО</div>
         <div className="text-white font-black text-2xl tracking-tighter flex gap-1">
           {["P", "R", "E", "D", "A", "T", "O", "R"].map((char, i) => (
             <motion.span
               key={i}
               animate={{ opacity: [0.3, 1, 0.3] }}
               transition={{ duration: 2, delay: i * 0.1, repeat: Infinity }}
-              className="drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]"
+              className=""
             >
               {char}
             </motion.span>

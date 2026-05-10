@@ -784,7 +784,7 @@ export default function SystemFactoryView() {
           {/* Логотип Factory */}
           <TacticalCard variant="holographic" className="mb-4 border-rose-500/30 bg-rose-500/5">
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-8 h-8 rounded-xl bg-rose-500/20 border border-rose-500/40 flex items-center justify-center shadow-[0_0_15px_rgba(244,63,94,0.3)]">
+              <div className="w-8 h-8 rounded-xl bg-rose-500/20 border border-rose-500/40 flex items-center justify-center ">
                 <Factory size={16} className="text-rose-400" />
               </div>
               <div>
@@ -795,9 +795,9 @@ export default function SystemFactoryView() {
             <div className="h-px bg-rose-500/20 my-2" />
             <div className="text-[9px] text-slate-400 font-mono">
               {activeTab === 'autonomous' || activeTab === 'evolution' ? (
-                <span className="text-rose-400 flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse" />FABRYKA v2.0 ACTIVE</span>
+                <span className="text-rose-400 flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-rose-400 " />FABRYKA v2.0 ACTIVE</span>
               ) : infiniteRunning ? (
-                <span className="text-emerald-400 flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />OODA LOOP RUNNING</span>
+                <span className="text-emerald-400 flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400 " />OODA LOOP RUNNING</span>
               ) : (
                 <span className="text-slate-500 flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-slate-700" />SYSTEM STANDBY</span>
               )}
@@ -917,7 +917,7 @@ export default function SystemFactoryView() {
 
             {activeTab === 'bugfix' && (
               <motion.div key="bugfix" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
-                <div className="flex items-center justify-between p-5 bg-gradient-to-r from-rose-950/40 to-slate-900/40 border border-rose-500/20 rounded-2xl backdrop-blur-md">
+                <div className="flex items-center justify-between p-5 bg-gradient-to-r from-rose-950/40 to-slate-900/40 border border-rose-500/20 rounded-2xl ">
                   <div className="flex items-center gap-4">
                     <div className="w-14 h-14 rounded-xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400">
                       <Bug size={28} />

@@ -53,7 +53,7 @@ export const GlobalAZRStatus: React.FC = () => {
         onClick={() => navigate('/autonomy')}
         whileHover={{ scale: 1.05, x: -5 }}
         whileTap={{ scale: 0.95 }}
-        className="group flex items-center gap-3 pl-4 pr-2 py-2 bg-slate-900/90 backdrop-blur-md border border-amber-500/30 rounded-full shadow-lg hover:border-amber-500/60 transition-all"
+        className="group flex items-center gap-3 pl-4 pr-2 py-2 bg-slate-900/90  border border-amber-500/30 rounded-full shadow-lg hover:border-amber-500/60 transition-all"
       >
         <div className="flex flex-col items-end">
           <span className="text-[10px] font-black text-amber-400 uppercase tracking-wider flex items-center gap-1">
@@ -61,7 +61,7 @@ export const GlobalAZRStatus: React.FC = () => {
           </span>
           <span className="text-xs font-bold text-white flex items-center gap-1">
             ГЕН {status?.generation || '0'}
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 " />
           </span>
         </div>
 

@@ -150,9 +150,9 @@ export const RealTimeMonitor: React.FC = () => {
             title={
               <div className="flex items-center gap-12">
                 <div className="relative group">
-                  <div className="absolute inset-0 bg-rose-600/20 blur-[60px] rounded-full scale-150 animate-pulse" />
-                  <div className="relative p-10 bg-black/60 backdrop-blur-3xl border-2 border-rose-500/30 rounded-[3.5rem] shadow-4xl transform -rotate-3 group-hover:rotate-0 transition-all duration-700">
-                    <Radio size={56} className="text-rose-500 drop-shadow-[0_0_20px_rgba(225,29,72,0.8)]" />
+                  <div className="absolute inset-0 bg-rose-600/20 blur-[60px] rounded-full scale-150 " />
+                  <div className="relative p-10 bg-black/60  border-2 border-rose-500/30 rounded-[3.5rem] shadow-4xl transform -rotate-3 group-hover:rotate-0 transition-all duration-700">
+                    <Radio size={56} className="text-rose-500 " />
                   </div>
                 </div>
                 <div className="space-y-5">
@@ -242,7 +242,7 @@ export const RealTimeMonitor: React.FC = () => {
                   <div className="flex items-center gap-8">
                      <div className={cn(
                        "w-4 h-4 rounded-full shadow-[0_0_20px_currentColor] transition-all duration-1000", 
-                       isConnected ? "bg-emerald-500 animate-pulse shadow-emerald-500/60" : "bg-rose-500 shadow-rose-500/60"
+                       isConnected ? "bg-emerald-500  shadow-emerald-500/60" : "bg-rose-500 shadow-rose-500/60"
                      )} />
                      <p className="text-[12px] font-black text-white/40 uppercase tracking-[0.3em] italic group-hover:text-white transition-colors duration-700">
                         {isConnected ? 'NODE_CONNECTION_ACTIVE_L7' : 'NODE_LINK_LOST_RECONNECTING'}
@@ -282,10 +282,10 @@ export const RealTimeMonitor: React.FC = () => {
                         className="p-40 text-center border-4 border-dashed border-white/5 rounded-[5rem] glass-wraith flex flex-col items-center justify-center gap-12"
                       >
                          <div className="relative">
-                            <div className="absolute inset-0 bg-rose-500/10 blur-[100px] rounded-full scale-150 animate-pulse" />
+                            <div className="absolute inset-0 bg-rose-500/10 blur-[100px] rounded-full scale-150 " />
                             <Orbit size={120} className="relative mx-auto text-white/10 animate-spin-slow" style={{ animationDuration: '40s' }} />
                             <div className="absolute inset-0 flex items-center justify-center">
-                               <Activity size={48} className="text-rose-600/40 animate-pulse" />
+                               <Activity size={48} className="text-rose-600/40 " />
                             </div>
                          </div>
                          <div className="space-y-6">

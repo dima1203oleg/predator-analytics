@@ -176,7 +176,7 @@ export const PremiumHero: React.FC = () => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="px-8 py-4 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl text-white font-bold text-lg hover:bg-white/20 transition-all flex items-center gap-2"
+              className="px-8 py-4 bg-white/10  border border-white/20 rounded-2xl text-white font-bold text-lg hover:bg-white/20 transition-all flex items-center gap-2"
             >
               <Play className="w-5 h-5" />
               Дивитись демо
@@ -222,7 +222,7 @@ export const PremiumHero: React.FC = () => {
               className="relative group"
             >
               <div className="absolute inset-0 bg-gradient-to-r ${feature.color} rounded-3xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity" />
-              <div className="relative bg-slate-900/90 backdrop-blur-xl border border-white/10 rounded-3xl p-8 hover:border-white/30 transition-all">
+              <div className="relative bg-slate-900/90  border border-white/10 rounded-3xl p-8 hover:border-white/30 transition-all">
                 <div className={`w-16 h-16 bg-gradient-to-br ${feature.color} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
                   <feature.icon className="w-8 h-8 text-white" />
                 </div>

@@ -52,9 +52,9 @@ interface RiskLevelInfo {
 // ========================
 
 const RISK_CONFIG: Record<string, { label: string; color: string; bg: string; border: string; glow: string }> = {
-    critical: { label: 'КРИТИЧНИЙ',   color: '#E11D48', bg: 'bg-rose-950/20',    border: 'border-rose-500/40',    glow: 'shadow-[0_0_40px_rgba(225,29,72,0.3)]' },
-    high:     { label: 'ВИСОКИЙ',     color: '#9F1239', bg: 'bg-rose-950/20', border: 'border-rose-700/40',   glow: 'shadow-[0_0_30px_rgba(159,18,57,0.2)]' },
-    medium:   { label: 'СЕРЕДНІЙ',    color: '#E11D48', bg: 'bg-rose-900/20',   border: 'border-rose-500/40',   glow: 'shadow-[0_0_30px_rgba(225,29,72,0.2)]' },
+    critical: { label: 'КРИТИЧНИЙ',   color: '#E11D48', bg: 'bg-rose-950/20',    border: 'border-rose-500/40',    glow: '' },
+    high:     { label: 'ВИСОКИЙ',     color: '#9F1239', bg: 'bg-rose-950/20', border: 'border-rose-700/40',   glow: '' },
+    medium:   { label: 'СЕРЕДНІЙ',    color: '#E11D48', bg: 'bg-rose-900/20',   border: 'border-rose-500/40',   glow: '' },
     low:      { label: 'НИЗЬКИЙ',     color: '#71717a', bg: 'bg-zinc-900/20',     border: 'border-zinc-500/40',     glow: 'shadow-none' },
     minimal:  { label: 'МІНІМАЛЬНИЙ', color: '#3f3f46', bg: 'bg-zinc-950/20',     border: 'border-zinc-800/40',     glow: 'shadow-none' },
 };
@@ -93,7 +93,7 @@ const RiskBadge: React.FC<{ level: string }> = ({ level }) => {
     const conf = RISK_CONFIG[level] || RISK_CONFIG.minimal;
     return (
         <div className={cn("flex items-center gap-3 px-6 py-2 rounded-2xl border-2 italic", conf.bg, conf.border, conf.glow)}>
-            <span className="w-2.5 h-2.5 rounded-full animate-pulse" style={{ backgroundColor: conf.color }} />
+            <span className="w-2.5 h-2.5 rounded-full " style={{ backgroundColor: conf.color }} />
             <span className="text-[10px] font-black uppercase tracking-[0.3em]" style={{ color: conf.color }}>
                 {conf.label}
             </span>
@@ -166,8 +166,8 @@ const ScanningHUD: React.FC<{ vramStatus: 'nominal' | 'warning' | 'critical' }> 
                 animate={{ y: ['-10%', '110%'] }}
                 transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
                 className={cn(
-                    "absolute left-0 w-full h-[2px] bg-gradient-to-r from-transparent to-transparent shadow-[0_0_20px_rgba(225,29,72,0.3)]",
-                    vramStatus === 'critical' ? 'via-rose-500/80 shadow-[0_0_30px_rgba(244,63,94,0.5)]' : 'via-rose-500/50'
+                    "absolute left-0 w-full h-[2px] bg-gradient-to-r from-transparent to-transparent ",
+                    vramStatus === 'critical' ? 'via-rose-500/80 ' : 'via-rose-500/50'
                 )}
             />
 
@@ -185,7 +185,7 @@ const ScanningHUD: React.FC<{ vramStatus: 'nominal' | 'warning' | 'critical' }> 
             </div>
 
             <div className="absolute bottom-24 left-10 flex flex-col gap-1 font-mono text-[8px] text-rose-500/40 italic">
-                <span className={cn("uppercase tracking-[0.3em] font-black", vramStatus === 'critical' ? 'text-rose-500 animate-pulse' : '')}>
+                <span className={cn("uppercase tracking-[0.3em] font-black", vramStatus === 'critical' ? 'text-rose-500 ' : '')}>
                     {vramStatus === 'critical' ? 'CUDA_GUARD: ОБМЕЖЕННЯ_АКТИВНЕ' : 'ЯДРО_ТЕМП: 42°C'}
                 </span>
                 <span className="uppercase tracking-[0.3em] font-black">НАВАНТАЖЕННЯ: {Math.floor(Math.random() * 100)}%</span>
@@ -255,12 +255,12 @@ const CognitiveParsingTerminal: React.FC<{ active: boolean; targetName: string; 
             initial={{ opacity: 0, height: 0, scale: 0.95 }}
             animate={{ opacity: 1, height: 'auto', scale: 1 }}
             exit={{ opacity: 0, height: 0, scale: 0.95 }}
-            className="mt-6 p-6 bg-black border-2 border-rose-500/30 rounded-[2rem] overflow-hidden shadow-[0_0_40px_rgba(225,29,72,0.1)] relative group"
+            className="mt-6 p-6 bg-black border-2 border-rose-500/30 rounded-[2rem] overflow-hidden  relative group"
         >
-            <div className="absolute top-0 left-0 w-full h-1 bg-rose-500/40 animate-pulse" />
+            <div className="absolute top-0 left-0 w-full h-1 bg-rose-500/40 " />
             <div className="flex items-center justify-between mb-4 border-b border-white/5 pb-2">
                 <div className="flex items-center gap-3">
-                    <Cpu size={14} className="text-rose-500 animate-pulse" />
+                    <Cpu size={14} className="text-rose-500 " />
                     <span className="text-[9px] font-black text-rose-500 uppercase tracking-[0.3em] italic">ОБ ОБКА: {targetName?.toUpperCase() || 'НЕВІДОМИЙ_ВУЗОЛ'}</span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -288,10 +288,10 @@ const CognitiveParsingTerminal: React.FC<{ active: boolean; targetName: string; 
                     <motion.div
                         animate={{ x: ['-100%', '100%'] }}
                         transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
-                        className="h-full w-1/3 bg-gradient-to-r from-transparent via-rose-500 to-transparent shadow-[0_0_10px_rgba(225,29,72,0.5)]"
+                        className="h-full w-1/3 bg-gradient-to-r from-transparent via-rose-500 to-transparent "
                     />
                 </div>
-                <span className="text-[8px] font-black text-rose-900 uppercase italic animate-pulse">ПА СИНГ_МАСИВУ...</span>
+                <span className="text-[8px] font-black text-rose-900 uppercase italic ">ПА СИНГ_МАСИВУ...</span>
             </div>
         </motion.div>
     );
@@ -310,7 +310,7 @@ const FactorCard: React.FC<{ factor: AMLFactor }> = ({ factor }) => {
             className={cn(
                 'p-6 rounded-[2rem] border-2 transition-all relative overflow-hidden',
                 factor.detected
-                    ? 'bg-rose-500/10 border-rose-500/30 shadow-[0_0_20px_rgba(225,29,72,0.1)]'
+                    ? 'bg-rose-500/10 border-rose-500/30 '
                     : 'bg-black/60 border-white/5 hover:border-white/20'
             )}
         >
@@ -554,9 +554,9 @@ const AMLScoringView: React.FC = () => {
                     title={
                         <div className="flex items-center gap-10">
                             <div className="relative group">
-                                <div className="absolute inset-0 bg-rose-500/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                                <div className="absolute inset-0 bg-rose-500/20 blur-3xl rounded-full scale-150 " />
                                 <div className="relative p-7 bg-black border-2 border-rose-500/40 rounded-[2.5rem] shadow-4xl transform -rotate-2 hover:rotate-0 transition-all">
-                                    <ShieldAlert size={42} className="text-rose-500 shadow-[0_0_20px_rgba(225,29,72,0.4)]" />
+                                    <ShieldAlert size={42} className="text-rose-500 " />
                                 </div>
                             </div>
                             <div className="space-y-2">
@@ -593,9 +593,9 @@ const AMLScoringView: React.FC = () => {
                 />
 
                 {/* === Статус-бар ELITE === */}
-                <div className="z-10 flex items-center gap-6 py-4 px-8 bg-black border-2 border-white/5 rounded-[2rem] shadow-4xl backdrop-blur-3xl w-fit">
+                <div className="z-10 flex items-center gap-6 py-4 px-8 bg-black border-2 border-white/5 rounded-[2rem] shadow-4xl  w-fit">
                     <div className="flex items-center gap-3">
-                        <span className="w-3 h-3 rounded-full bg-rose-600 animate-pulse shadow-[0_0_8px_rgba(225,29,72,0.6)]" />
+                        <span className="w-3 h-3 rounded-full bg-rose-600  " />
                         <span className="text-[11px] font-black text-rose-500 uppercase tracking-[0.5em] font-mono italic">
                             СТАТУС_ЯД А: НОМІНАЛЬНИЙ // РЕЖИМ: ГЛИБОКИЙ_СКАН // {liveTime}
                         </span>
@@ -628,9 +628,9 @@ const AMLScoringView: React.FC = () => {
                     <div className="col-span-12 lg:col-span-4 flex flex-col gap-10">
 
                         {!batchMode ? (
-                            <TacticalCard variant="holographic" className="p-10 flex flex-col gap-8 rounded-[3.5rem] border-rose-500/10 shadow-4xl bg-black/60 backdrop-blur-3xl">
+                            <TacticalCard variant="holographic" className="p-10 flex flex-col gap-8 rounded-[3.5rem] border-rose-500/10 shadow-4xl bg-black/60 ">
                                 <h3 className="text-[11px] font-black text-white uppercase tracking-[0.4em] flex items-center gap-4 italic font-serif">
-                                    <Crosshair size={24} className="text-rose-500 animate-pulse" /> ПА АМЕТрИ_СКАНУВАННЯ
+                                    <Crosshair size={24} className="text-rose-500 " /> ПА АМЕТрИ_СКАНУВАННЯ
                                 </h3>
 
                                 <div className="flex gap-4">
@@ -714,7 +714,7 @@ const AMLScoringView: React.FC = () => {
                                 )}
                             </TacticalCard>
                         ) : (
-                            <TacticalCard variant="holographic" className="p-10 flex flex-col gap-8 rounded-[3.5rem] border-rose-500/10 shadow-4xl bg-black/60 backdrop-blur-3xl">
+                            <TacticalCard variant="holographic" className="p-10 flex flex-col gap-8 rounded-[3.5rem] border-rose-500/10 shadow-4xl bg-black/60 ">
                                 <h3 className="text-[11px] font-black text-white uppercase tracking-[0.4em] flex items-center gap-4 italic font-serif">
                                     <Upload size={24} className="text-rose-500" /> МАСОВЕ_ЗАВАНТАЖЕННЯ_МАСИВУ
                                 </h3>
@@ -799,7 +799,7 @@ const AMLScoringView: React.FC = () => {
                                     initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
                                     className="flex flex-col gap-10"
                                 >
-                                    <TacticalCard variant="holographic" className="p-12 rounded-[4rem] border-rose-500/10 shadow-4xl bg-black/80 backdrop-blur-3xl relative overflow-hidden">
+                                    <TacticalCard variant="holographic" className="p-12 rounded-[4rem] border-rose-500/10 shadow-4xl bg-black/80  relative overflow-hidden">
                                         <div className="absolute top-0 right-0 p-16 opacity-[0.03] pointer-events-none">
                                             <Database size={300} className="text-rose-500" />
                                         </div>
@@ -860,7 +860,7 @@ const AMLScoringView: React.FC = () => {
                                 >
                                     <div className="grid grid-cols-12 gap-10">
                                         {/* Скор-метр панель */}
-                                        <TacticalCard variant="holographic" className="col-span-12 xl:col-span-5 p-12 rounded-[5rem] border-rose-500/10 shadow-4xl bg-black/80 backdrop-blur-3xl flex flex-col items-center justify-center relative overflow-hidden">
+                                        <TacticalCard variant="holographic" className="col-span-12 xl:col-span-5 p-12 rounded-[5rem] border-rose-500/10 shadow-4xl bg-black/80  flex flex-col items-center justify-center relative overflow-hidden">
                                             <div className="absolute top-0 left-0 p-16 opacity-[0.02] pointer-events-none w-full h-full flex items-center justify-center">
                                                 <Radar size={400} className="text-rose-500 animate-spin-slow" />
                                             </div>
@@ -936,7 +936,7 @@ const AMLScoringView: React.FC = () => {
                                     className="h-[800px] rounded-[5rem] border-2 border-dashed border-white/5 bg-black/20 flex flex-col items-center justify-center gap-12 group p-20"
                                 >
                                     <div className="relative">
-                                        <div className="absolute inset-0 bg-rose-500/10 blur-[100px] rounded-full scale-150 animate-pulse" />
+                                        <div className="absolute inset-0 bg-rose-500/10 blur-[100px] rounded-full scale-150 " />
                                         <div className="relative p-12 bg-black border-2 border-white/5 rounded-full group-hover:border-rose-500/40 transition-all duration-1000 shadow-4xl">
                                             <ShieldAlert size={100} className="text-slate-900 group-hover:text-rose-500 transition-all duration-1000 group-hover:scale-110" />
                                         </div>

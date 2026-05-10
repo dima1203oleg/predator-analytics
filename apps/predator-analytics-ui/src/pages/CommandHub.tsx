@@ -56,7 +56,7 @@ const CommandHub: React.FC = () => {
       actions={
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-500 text-[10px] font-bold uppercase tracking-wider">
-            <Zap size={12} className="animate-pulse" />
+            <Zap size={12} className="" />
             {backendStatus.statusLabel}
           </div>
           <button className="p-2 rounded-lg bg-white/5 border border-white/10 text-slate-400 hover:text-white transition-colors">
@@ -65,7 +65,7 @@ const CommandHub: React.FC = () => {
         </div>
       }
     >
-      <div className="h-full bg-slate-950/20 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/5">
+      <div className="h-full bg-slate-950/20  rounded-2xl overflow-hidden border border-white/5">
         {activeTab === 'board' && <ExecutiveBoardTab />}
         {activeTab === 'brief' && <MorningBriefTab />}
         {activeTab === 'risk' && <PortfolioRiskTab />}

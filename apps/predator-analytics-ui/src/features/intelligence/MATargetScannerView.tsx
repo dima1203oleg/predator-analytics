@@ -152,9 +152,9 @@ const MATargetScannerView: React.FC = () => {
             title={
               <div className="flex items-center gap-12">
                 <div className="relative group">
-                  <div className="absolute inset-0 bg-yellow-500/20 blur-[80px] rounded-full scale-150 animate-pulse" />
+                  <div className="absolute inset-0 bg-yellow-500/20 blur-[80px] rounded-full scale-150 " />
                   <div className="relative p-7 bg-black border-2 border-yellow-500/40 rounded-[3rem] shadow-4xl transform rotate-3 hover:rotate-0 transition-all cursor-crosshair duration-700">
-                    <Target size={54} className="text-yellow-500 drop-shadow-[0_0_20px_rgba(212,175,55,0.4)]" />
+                    <Target size={54} className="text-yellow-500 " />
                   </div>
                 </div>
                 <div className="space-y-4">
@@ -178,7 +178,7 @@ const MATargetScannerView: React.FC = () => {
               { 
                 label: nodeSource, 
                 color: isOffline ? 'warning' : 'gold', 
-                icon: <Zap size={10} className={isOffline ? 'animate-pulse' : ''} /> 
+                icon: <Zap size={10} className={isOffline ? '' : ''} /> 
               },
             ]}
             stats={[
@@ -196,7 +196,7 @@ const MATargetScannerView: React.FC = () => {
             actions={
               <div className="flex items-center gap-6">
                 <div className="flex items-center gap-6 px-10 py-6 bg-black border-2 border-white/5 rounded-3xl shadow-3xl group hover:border-yellow-500/20 transition-all">
-                  <Crosshair size={24} className="text-yellow-500 animate-pulse" />
+                  <Crosshair size={24} className="text-yellow-500 " />
                   <span className="text-[12px] font-black text-yellow-500 uppercase tracking-[0.4em] font-mono italic">
                     {targets.length}_ACTIVE_ASSETS
                   </span>
@@ -220,7 +220,7 @@ const MATargetScannerView: React.FC = () => {
               <motion.div
                 key={m.label}
                 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
-                className="p-10 bg-black/60 backdrop-blur-2xl border-2 border-white/5 hover:border-yellow-500/30 transition-all rounded-[3.5rem] shadow-2xl group relative overflow-hidden"
+                className="p-10 bg-black/60  border-2 border-white/5 hover:border-yellow-500/30 transition-all rounded-[3.5rem] shadow-2xl group relative overflow-hidden"
               >
                 <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-yellow-500/40 to-transparent opacity-40" />
                 <div className="absolute -right-6 -bottom-6 opacity-[0.03] group-hover:opacity-10 transition-all duration-[2s]">
@@ -239,7 +239,7 @@ const MATargetScannerView: React.FC = () => {
             {/* Список цілей */}
             <div className="lg:col-span-7 space-y-8">
               {/* Фільтри ELITE */}
-              <div className="flex flex-wrap gap-4 items-center p-3 bg-black/40 backdrop-blur-2xl border-2 border-white/5 rounded-[2.5rem] w-fit shadow-2xl">
+              <div className="flex flex-wrap gap-4 items-center p-3 bg-black/40  border-2 border-white/5 rounded-[2.5rem] w-fit shadow-2xl">
                 <div className="flex items-center gap-4 bg-black border-2 border-white/5 px-8 py-3 rounded-2xl group focus-within:border-yellow-500/40 transition-all">
                   <Search size={18} className="text-slate-700 group-hover:text-yellow-500 transition-colors" />
                   <input
@@ -268,17 +268,17 @@ const MATargetScannerView: React.FC = () => {
               {/* Grid цілей */}
               <div className="grid grid-cols-1 gap-6 relative min-h-[400px]">
                 {loading ? (
-                   <div className="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-sm rounded-[2.5rem] z-20">
+                   <div className="absolute inset-0 flex items-center justify-center bg-black/20  rounded-[2.5rem] z-20">
                       <div className="flex flex-col items-center gap-6">
                          <RefreshCw className="text-yellow-500 animate-spin" size={48} />
-                         <span className="text-[10px] font-black text-yellow-500 uppercase tracking-[0.5em] animate-pulse italic">Синхронізація M&A цілей...</span>
+                         <span className="text-[10px] font-black text-yellow-500 uppercase tracking-[0.5em]  italic">Синхронізація M&A цілей...</span>
                       </div>
                    </div>
                 ) : null}
                 
                 {error && !loading && (
                    <div className="p-12 border-2 border-amber-500/20 bg-amber-500/5 rounded-[2.5rem] flex flex-col items-center gap-6 text-center">
-                      <AlertTriangle size={48} className="text-amber-500 animate-pulse" />
+                      <AlertTriangle size={48} className="text-amber-500 " />
                       <div className="space-y-2">
                         <p className="text-white font-black uppercase italic tracking-widest">{error}</p>
                         <p className="text-[10px] text-slate-500 uppercase font-bold tracking-[0.3em]">Truth Protocol: Відображення мок-даних заблоковано.</p>
@@ -419,7 +419,7 @@ const MATargetScannerView: React.FC = () => {
                   </motion.div>
                 ) : (
                   <div className="h-full flex flex-col items-center justify-center p-20 opacity-20 transform translate-y-20">
-                     <Target size={120} className="text-slate-600 mb-10 animate-pulse" />
+                     <Target size={120} className="text-slate-600 mb-10 " />
                      <p className="text-2xl font-black text-slate-500 uppercase tracking-[1em] italic text-center">ОБЕРІТЬ ТО ГОВУ ЦІЛЬ ДЛЯ АНАЛІЗУ</p>
                   </div>
                 )}

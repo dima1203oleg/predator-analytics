@@ -39,14 +39,14 @@ export const TacticalVoiceCommWidget: React.FC<{ persona: string }> = ({ persona
   }, []);
 
   return (
-    <div className="bg-slate-950/90 border border-emerald-500/30 rounded-[32px] backdrop-blur-3xl overflow-hidden p-6 relative group">
+    <div className="bg-slate-950/90 border border-emerald-500/30 rounded-[32px]  overflow-hidden p-6 relative group">
       <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-transparent pointer-events-none" />
 
       <div className="flex items-center justify-between mb-4 relative z-10">
         <div className="flex items-center gap-3">
           <div className={cn(
             "p-2 rounded-xl transition-colors",
-            isTransmitting ? "bg-emerald-500 text-black animate-pulse" : "bg-white/5 text-slate-500"
+            isTransmitting ? "bg-emerald-500 text-black " : "bg-white/5 text-slate-500"
           )}>
             <Volume2 size={18} />
           </div>
@@ -72,7 +72,7 @@ export const TacticalVoiceCommWidget: React.FC<{ persona: string }> = ({ persona
                animate={{ height: isTransmitting ? height : 4 }}
                className={cn(
                  "w-1 rounded-full transition-colors",
-                 isTransmitting ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-slate-800"
+                 isTransmitting ? "bg-emerald-500 " : "bg-slate-800"
                )}
              />
            ))}
@@ -102,7 +102,7 @@ export const TacticalVoiceCommWidget: React.FC<{ persona: string }> = ({ persona
 
       <div className="absolute bottom-2 right-6">
          <div className="flex items-center gap-1">
-            <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
+            <div className="w-1 h-1 rounded-full bg-emerald-500 " />
             <span className="text-[8px] font-mono text-emerald-500/40 uppercase">{premiumLocales.tacticalVoice.neuralLinkActive}</span>
          </div>
       </div>

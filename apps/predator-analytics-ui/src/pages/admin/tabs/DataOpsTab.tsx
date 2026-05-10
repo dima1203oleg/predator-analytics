@@ -132,12 +132,12 @@ export const DataOpsTab: React.FC = () => {
           <motion.div 
             animate={{ rotate: 360 }}
             transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
-            className="w-24 h-24 border-4 border-rose-500/10 rounded-full border-t-rose-500 shadow-[0_0_40px_rgba(225,29,72,0.3)]"
+            className="w-24 h-24 border-4 border-rose-500/10 rounded-full border-t-rose-500 "
           />
-          <Database className="absolute inset-0 m-auto w-8 h-8 text-rose-500 animate-pulse" />
+          <Database className="absolute inset-0 m-auto w-8 h-8 text-rose-500 " />
         </div>
         <div className="flex flex-col items-center gap-4">
-           <div className="text-[14px] font-mono uppercase tracking-[0.8em] animate-pulse italic font-black text-rose-500 glint-elite">ІНТЕ ОПЕ АБЕЛЬНІСТЬ_ДАНИХ...</div>
+           <div className="text-[14px] font-mono uppercase tracking-[0.8em]  italic font-black text-rose-500 glint-elite">ІНТЕ ОПЕ АБЕЛЬНІСТЬ_ДАНИХ...</div>
            <div className="text-[9px] font-black uppercase tracking-[0.4em] text-white/10 italic">LAKE_CONTROLLER_v61_SYNCING</div>
         </div>
       </div>
@@ -149,7 +149,7 @@ export const DataOpsTab: React.FC = () => {
       <div className="flex flex-col items-center justify-center h-[700px] p-24 text-center glass-wraith m-12 border-2 border-rose-600/20 rounded-[4rem] relative overflow-hidden shadow-4xl">
         <div className="absolute inset-0 bg-rose-900/5 blur-[150px] pointer-events-none" />
         <div className="absolute inset-0 bg-cyber-grid opacity-[0.03] pointer-events-none" />
-        <Database size={80} className="text-rose-600/40 mb-12 animate-pulse" />
+        <Database size={80} className="text-rose-600/40 mb-12 " />
         <div className="text-4xl font-black uppercase tracking-[0.3em] text-white mb-6 glint-elite chromatic-elite italic">КРИТИЧНИЙ_ЗБІЙ_ДАТА_КОНВЕЄ А</div>
         <p className="text-[14px] font-black text-white/30 max-w-2xl mb-16 leading-relaxed uppercase italic tracking-widest">
           СИСТЕМА НЕ ЗМОГЛА ОТРИМАТИ СТАН ВУЗЛІВ ОБ ОБКИ. <br/>
@@ -195,12 +195,12 @@ export const DataOpsTab: React.FC = () => {
            </div>
            <div className="flex items-center gap-10 text-[12px] font-black font-mono text-white/30 tracking-[0.3em] uppercase italic">
              <div className="flex items-center gap-4">
-               <div className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_20px_rgba(16,185,129,0.8)]" />
+               <div className="w-3 h-3 rounded-full bg-emerald-500  " />
                <span className="text-emerald-500/80">СИСТЕМА_Т АНСПОРТУ_АКТИВНА_L7</span>
              </div>
              <span className="opacity-20">|</span>
              <div className="flex items-center gap-4">
-               <Zap size={18} className="text-amber-500 animate-pulse" />
+               <Zap size={18} className="text-amber-500 " />
                <span className="text-white/60">ШВИДКІСТЬ_ПОТОКУ: <span className="text-white font-black">{totalThroughput.toFixed(1)} МБ/с</span></span>
              </div>
              <span className="opacity-20">|</span>
@@ -265,7 +265,7 @@ export const DataOpsTab: React.FC = () => {
               <div className="flex items-center gap-8 w-full">
                 <div className={cn(
                    'p-6 rounded-[1.8rem] transition-all duration-1000 transform group-hover:rotate-6',
-                   active ? 'bg-rose-600 text-white shadow-[0_0_40px_rgba(225,29,72,0.6)]' : 'bg-white/5 text-white/20 group-hover:text-white/40'
+                   active ? 'bg-rose-600 text-white ' : 'bg-white/5 text-white/20 group-hover:text-white/40'
                 )}>
                   <Icon className="w-8 h-8" />
                 </div>
@@ -278,7 +278,7 @@ export const DataOpsTab: React.FC = () => {
                 {active && (
                    <motion.div 
                      layoutId="data-tab-indicator-v61"
-                     className="w-2 h-12 bg-rose-600 rounded-full shadow-[0_0_30px_rgba(225,29,72,1)]"
+                     className="w-2 h-12 bg-rose-600 rounded-full "
                    />
                 )}
               </div>
@@ -293,7 +293,7 @@ export const DataOpsTab: React.FC = () => {
         initial={{ opacity: 0, scale: 0.97, filter: 'blur(20px)' }}
         animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
         transition={{ duration: 1, ease: "easeOut" }}
-        className="glass-wraith border-2 border-white/5 rounded-[5rem] overflow-hidden backdrop-blur-3xl shadow-4xl relative p-8 group/content hover:border-rose-500/20 transition-all duration-1000"
+        className="glass-wraith border-2 border-white/5 rounded-[5rem] overflow-hidden  shadow-4xl relative p-8 group/content hover:border-rose-500/20 transition-all duration-1000"
       >
         <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
         <div className="absolute top-6 left-12 flex items-center gap-6 text-[11px] font-black text-white/20 uppercase tracking-[0.6em] italic mb-8 relative z-10">

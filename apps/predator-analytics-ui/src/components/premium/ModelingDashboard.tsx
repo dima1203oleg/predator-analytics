@@ -74,7 +74,7 @@ export const ModelingDashboard: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 p-6 bg-slate-950/80 border border-white/10 rounded-[32px] backdrop-blur-xl">
+    <div className="space-y-6 p-6 bg-slate-950/80 border border-white/10 rounded-[32px] ">
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
@@ -122,7 +122,7 @@ export const ModelingDashboard: React.FC = () => {
                     activeScenario === scenario.id ? "text-white" : "text-slate-300"
                   )}>{scenario.name}</span>
                   {activeScenario === scenario.id && (
-                    <motion.div layoutId="activeInd" className="w-2 h-2 rounded-full bg-indigo-400 shadow-[0_0_10px_rgba(129,140,248,0.5)]" />
+                    <motion.div layoutId="activeInd" className="w-2 h-2 rounded-full bg-indigo-400 " />
                   )}
                 </div>
                 <p className="text-[10px] text-slate-500">{scenario.description}</p>
@@ -151,9 +151,9 @@ export const ModelingDashboard: React.FC = () => {
         {/* Chart Area */}
         <div className="lg:col-span-2 bg-black/40 border border-white/5 rounded-2xl p-6 min-h-[400px] flex flex-col relative">
           {isSimulating && (
-            <div className="absolute inset-0 z-10 bg-black/60 backdrop-blur-sm flex items-center justify-center flex-col gap-4 rounded-2xl">
+            <div className="absolute inset-0 z-10 bg-black/60  flex items-center justify-center flex-col gap-4 rounded-2xl">
               <RefreshCw size={32} className="text-indigo-400 animate-spin" />
-              <span className="text-xs font-black text-indigo-400 uppercase tracking-widest animate-pulse">ШІ Обробка...</span>
+              <span className="text-xs font-black text-indigo-400 uppercase tracking-widest ">ШІ Обробка...</span>
             </div>
           )}
 

@@ -109,8 +109,8 @@ const AdminSidebar: React.FC = () => {
       {/* Логотип */}
       <div className="flex items-center justify-between px-4 py-6 border-b border-white/5 relative z-10">
         <div className="flex items-center gap-4 overflow-hidden">
-          <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/30 shadow-[0_0_15px_rgba(225,29,72,0.2)] shrink-0">
-            <Shield className="w-5 h-5 text-rose-500 drop-shadow-[0_0_8px_rgba(225,29,72,0.8)]" />
+          <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/30 shrink-0">
+            <Shield className="w-5 h-5 text-rose-500" />
           </div>
           <AnimatePresence>
             {isOpen && (
@@ -169,7 +169,7 @@ const AdminSidebar: React.FC = () => {
                       className={cn(
                         'flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 group/nav relative overflow-hidden',
                         active
-                          ? 'bg-rose-500/10 border border-rose-500/30 shadow-[0_0_20px_rgba(225,29,72,0.1)]'
+                          ? 'bg-rose-500/10 border border-rose-500/30'
                           : 'hover:bg-white/[0.03] border border-transparent hover:border-white/5',
                       )}
                     >
@@ -182,7 +182,7 @@ const AdminSidebar: React.FC = () => {
                       <Icon
                         className={cn(
                           'w-4 h-4 shrink-0 transition-all duration-300 relative z-10',
-                          active ? 'text-rose-400 scale-110 drop-shadow-[0_0_8px_rgba(225,29,72,0.5)]' : 'text-slate-400 group-hover/nav:text-white group-hover/nav:scale-105',
+                          active ? 'text-rose-400 scale-105' : 'text-slate-400 group-hover/nav:text-white group-hover/nav:scale-105',
                           !isOpen && "mx-auto"
                         )}
                       />
@@ -207,7 +207,7 @@ const AdminSidebar: React.FC = () => {
                         </>
                       )}
                       {active && (
-                        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-4 bg-rose-500 rounded-l-full shadow-[0_0_10px_rgba(225,29,72,0.8)]" />
+                        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-4 bg-rose-500 rounded-l-full" />
                       )}
                     </Link>
                   );
@@ -293,7 +293,7 @@ const AdminStatusBar: React.FC = () => {
         <div className="flex items-center gap-3">
           <div className="flex gap-1">
              {[...Array(3)].map((_, i) => (
-               <div key={i} className="w-1 h-3 bg-rose-500 rounded-full animate-pulse" style={{ animationDelay: `${i * 0.2}s` }} />
+               <div key={i} className="w-1 h-3 bg-rose-500 rounded-full" style={{ animationDelay: `${i * 0.2}s` }} />
              ))}
           </div>
           <span className="text-[10px] font-black text-rose-500 italic tracking-[0.25em] uppercase">
@@ -313,7 +313,7 @@ const AdminStatusBar: React.FC = () => {
           ].map((svc) => (
             <div key={svc.label} className="flex items-center gap-2 group/svc cursor-help">
               <span className={cn(
-                'w-1.5 h-1.5 rounded-full shadow-[0_0_8px_rgba(var(--color),0.6)]', 
+                'w-1.5 h-1.5 rounded-full', 
                 svc.ok ? `bg-${svc.color}-500` : 'bg-red-500 animate-ping'
               )} />
               <span className="text-[8px] font-black text-slate-500 group-hover/svc:text-slate-300 transition-colors uppercase tracking-widest">{svc.label}</span>
@@ -327,7 +327,7 @@ const AdminStatusBar: React.FC = () => {
           onClick={() => setTerminalOpen(!isTerminalOpen)}
           className={cn(
             "flex items-center gap-2 px-3 py-1 bg-white/5 border rounded-full transition-all duration-300",
-            isTerminalOpen ? "border-rose-500 bg-rose-500/10 shadow-[0_0_10px_rgba(225,29,72,0.3)]" : "border-white/10 hover:border-rose-500/50"
+            isTerminalOpen ? "border-rose-500 bg-rose-500/10" : "border-white/10 hover:border-rose-500/50"
           )}
         >
            <Terminal className={cn("w-3 h-3 transition-colors", isTerminalOpen ? "text-rose-500" : "text-rose-400")} />
@@ -337,7 +337,7 @@ const AdminStatusBar: React.FC = () => {
         </button>
         
         <div className="flex items-center gap-3 px-4 py-1 bg-amber-500/5 border border-amber-500/20 rounded-full group/vram">
-          <Zap className="w-3 h-3 text-amber-400 animate-pulse" />
+          <Zap className="w-3 h-3 text-amber-400" />
           <div className="flex flex-col">
             <span className="text-[8px] font-black text-amber-500/60 uppercase tracking-widest leading-none">VRAM_LOAD</span>
             <span className="text-[10px] font-black text-amber-400 italic tracking-tight leading-tight mt-0.5">4.2 / 8.0 GB</span>
@@ -385,7 +385,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setSidebarOpen(false)}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[90]"
+            className="fixed inset-0 bg-black/80 z-[90]"
           />
         )}
       </AnimatePresence>

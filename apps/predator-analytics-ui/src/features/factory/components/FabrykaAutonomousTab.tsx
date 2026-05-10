@@ -489,7 +489,7 @@ export function FabrykaAutonomousTab() {
             <p className="text-[9px] text-slate-500 font-mono uppercase">GTX 1080 · 8GB GDDR5X</p>
           </div>
           {isCritical && (
-            <Badge className="bg-rose-500 text-white animate-pulse border-none text-[8px] font-black italic">
+            <Badge className="bg-rose-500 text-white  border-none text-[8px] font-black italic">
               VRAM_ПЕ ЕВАНТАЖЕННЯ_АКТИВНО
             </Badge>
           )}
@@ -553,7 +553,7 @@ export function FabrykaAutonomousTab() {
           <div className="flex items-center gap-5">
             <div className={cn(
               'w-16 h-16 rounded-2xl border flex items-center justify-center transition-all duration-500',
-              isAutonomous ? 'border-emerald-500/40 bg-emerald-500/15 text-emerald-400 shadow-[0_0_30px_rgba(16,185,129,0.3)]' : 'border-rose-500/40 bg-rose-500/15 text-rose-400 shadow-[0_0_30px_rgba(225,29,72,0.3)]',
+              isAutonomous ? 'border-emerald-500/40 bg-emerald-500/15 text-emerald-400 ' : 'border-rose-500/40 bg-rose-500/15 text-rose-400 ',
             )}>
               {isAutonomous ? <WifiOff size={28} /> : <Wifi size={28} />}
             </div>
@@ -618,7 +618,7 @@ export function FabrykaAutonomousTab() {
               'flex items-center gap-2 border rounded-full px-3 py-1.5 text-[10px] font-mono',
               rule.triggered ? 'border-rose-500/40 bg-rose-500/10 text-rose-300' : 'border-white/5 bg-white/5 text-slate-600',
             )}>
-              {rule.triggered && <span className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse" />}
+              {rule.triggered && <span className="w-1.5 h-1.5 rounded-full bg-rose-400 " />}
               <ChevronRight size={10} />
               {rule.condition} → {rule.switch_to}
             </div>
@@ -650,7 +650,7 @@ export function FabrykaAutonomousTab() {
               className={cn(
                 'flex items-center gap-2 px-4 py-2.5 rounded-[14px] border text-[10px] font-black uppercase tracking-wider transition-all duration-300',
                 coderSource === 'ollama'
-                  ? 'border-emerald-500/50 bg-emerald-500/15 text-emerald-300 shadow-[0_0_16px_rgba(16,185,129,0.25)]'
+                  ? 'border-emerald-500/50 bg-emerald-500/15 text-emerald-300 '
                   : 'border-white/10 bg-white/5 text-slate-500 hover:text-slate-300',
               )}
             >
@@ -665,7 +665,7 @@ export function FabrykaAutonomousTab() {
               className={cn(
                 'flex items-center gap-2 px-4 py-2.5 rounded-[14px] border text-[10px] font-black uppercase tracking-wider transition-all duration-300',
                 coderSource === 'api'
-                  ? 'border-rose-500/50 bg-rose-500/15 text-rose-300 shadow-[0_0_16px_rgba(225,29,72,0.25)]'
+                  ? 'border-rose-500/50 bg-rose-500/15 text-rose-300 '
                   : 'border-white/10 bg-white/5 text-slate-500 hover:text-slate-300',
               )}
             >
@@ -681,7 +681,7 @@ export function FabrykaAutonomousTab() {
           {/* ── Ліва колонка: Ollama (сервер) ── */}
           <div className="p-4 space-y-2">
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 " />
               <span className="text-[9px] font-black uppercase tracking-[0.3em] text-emerald-400">Ollama · NVIDIA Server</span>
               <span className="text-[9px] text-slate-600 font-mono ml-auto">GTX 1080 · 8GB VRAM</span>
             </div>
@@ -697,7 +697,7 @@ export function FabrykaAutonomousTab() {
                   className={cn(
                     'w-full text-left rounded-[18px] border p-3.5 transition-all duration-200 relative overflow-hidden',
                     isActive
-                      ? 'border-emerald-500/50 bg-emerald-500/10 shadow-[0_0_12px_rgba(16,185,129,0.2)]'
+                      ? 'border-emerald-500/50 bg-emerald-500/10 '
                       : model.online
                         ? 'border-white/8 bg-black/20 hover:border-white/20 hover:bg-white/5 cursor-pointer'
                         : 'border-white/4 bg-black/10 opacity-40 cursor-not-allowed',
@@ -729,7 +729,7 @@ export function FabrykaAutonomousTab() {
           {/* ── Права колонка: API ── */}
           <div className="p-4 space-y-2">
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse" />
+              <div className="w-1.5 h-1.5 rounded-full bg-rose-400 " />
               <span className="text-[9px] font-black uppercase tracking-[0.3em] text-rose-400">API · Зовнішні сервіси</span>
               <span className="text-[9px] text-slate-600 font-mono ml-auto">LiteLLM proxy :4000</span>
             </div>
@@ -745,7 +745,7 @@ export function FabrykaAutonomousTab() {
                   className={cn(
                     'w-full text-left rounded-[18px] border p-3.5 transition-all duration-200 relative overflow-hidden',
                     isActive
-                      ? 'border-rose-500/50 bg-rose-500/10 shadow-[0_0_12px_rgba(225,29,72,0.2)]'
+                      ? 'border-rose-500/50 bg-rose-500/10 '
                       : model.online
                         ? 'border-white/8 bg-black/20 hover:border-white/20 hover:bg-white/5 cursor-pointer'
                         : 'border-white/4 bg-black/10 opacity-40 cursor-not-allowed',
@@ -910,7 +910,7 @@ export function FabrykaAutonomousTab() {
             <div className="p-6 rounded-[32px] border border-rose-500/20 bg-rose-500/5 flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-2xl bg-rose-500/20 flex items-center justify-center border border-rose-500/40">
-                  <Activity size={24} className="text-rose-500 animate-pulse" />
+                  <Activity size={24} className="text-rose-500 " />
                 </div>
                 <div>
                   <h4 className="text-xs font-black text-white uppercase tracking-widest">Hardware Watchdog Protocol v5.0</h4>

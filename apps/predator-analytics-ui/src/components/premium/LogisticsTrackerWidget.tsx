@@ -44,7 +44,7 @@ export const LogisticsTrackerWidget: React.FC<{ persona: string }> = ({ persona 
   };
 
   return (
-    <div className="bg-slate-950/80 border border-indigo-500/20 rounded-[24px] backdrop-blur-xl overflow-hidden h-full min-h-[400px] flex flex-col relative">
+    <div className="bg-slate-950/80 border border-indigo-500/20 rounded-[24px]  overflow-hidden h-full min-h-[400px] flex flex-col relative">
       <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent pointer-events-none" />
 
       {/* Header */}
@@ -104,7 +104,7 @@ export const LogisticsTrackerWidget: React.FC<{ persona: string }> = ({ persona 
                    <div className={cn(
                      "relative z-10 w-12 h-12 rounded-full flex items-center justify-center border-4 transition-all",
                      step.status === 'completed' ? "bg-indigo-500 text-white border-slate-950" :
-                     step.status === 'current' ? "bg-amber-500 text-white border-slate-950 animate-pulse" :
+                     step.status === 'current' ? "bg-amber-500 text-white border-slate-950 " :
                      "bg-slate-900 text-slate-600 border-slate-800"
                    )}>
                      <step.icon size={18} />

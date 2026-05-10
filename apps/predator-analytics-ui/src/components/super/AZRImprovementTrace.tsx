@@ -73,7 +73,7 @@ export const AZRImprovementTrace: React.FC = () => {
     return (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-[600px]">
             {/* Sidebar List */}
-            <div className="lg:col-span-4 flex flex-col bg-slate-900/40 border border-white/5 rounded-[32px] overflow-hidden backdrop-blur-3xl">
+            <div className="lg:col-span-4 flex flex-col bg-slate-900/40 border border-white/5 rounded-[32px] overflow-hidden ">
                 <div className="p-6 border-b border-white/5 flex items-center justify-between bg-black/20">
                     <div className="flex items-center gap-3">
                         <Terminal size={18} className="text-amber-400" />
@@ -109,7 +109,7 @@ export const AZRImprovementTrace: React.FC = () => {
                                 className={cn(
                                     "p-4 rounded-2xl cursor-pointer border transition-all duration-300 relative overflow-hidden group",
                                     selectedId === decision.id
-                                        ? "bg-amber-500/10 border-amber-500/40 shadow-[0_0_20px_rgba(245,158,11,0.1)]"
+                                        ? "bg-amber-500/10 border-amber-500/40 "
                                         : "bg-black/40 border-white/5 hover:border-white/20"
                                 )}
                             >
@@ -139,7 +139,7 @@ export const AZRImprovementTrace: React.FC = () => {
             </div>
 
             {/* Main Inspection Panel */}
-            <div className="lg:col-span-8 bg-slate-900/40 border border-white/5 rounded-[32px] overflow-hidden backdrop-blur-3xl flex flex-col">
+            <div className="lg:col-span-8 bg-slate-900/40 border border-white/5 rounded-[32px] overflow-hidden  flex flex-col">
                 <AnimatePresence mode="wait">
                     {activeDecision ? (
                         <motion.div

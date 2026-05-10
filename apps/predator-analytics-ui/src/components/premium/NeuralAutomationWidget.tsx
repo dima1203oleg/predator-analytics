@@ -30,7 +30,7 @@ export const NeuralAutomationWidget: React.FC<{ persona: string }> = ({ persona 
   ]);
 
   return (
-    <div className="bg-slate-950/80 border border-white/10 rounded-[40px] backdrop-blur-3xl overflow-hidden h-full flex flex-col relative group">
+    <div className="bg-slate-950/80 border border-white/10 rounded-[40px]  overflow-hidden h-full flex flex-col relative group">
       <div className="absolute inset-0 bg-cyber-grid opacity-5 pointer-events-none" />
 
       {/* Header */}
@@ -66,7 +66,7 @@ export const NeuralAutomationWidget: React.FC<{ persona: string }> = ({ persona 
                 <div className="flex items-center gap-3">
                    <div className={cn(
                      "w-2 h-2 rounded-full",
-                     saga.status === 'active' ? "bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-slate-500"
+                     saga.status === 'active' ? "bg-emerald-500  " : "bg-slate-500"
                    )} />
                    <h4 className="text-sm font-black text-white">{saga.name}</h4>
                 </div>
@@ -96,7 +96,7 @@ export const NeuralAutomationWidget: React.FC<{ persona: string }> = ({ persona 
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${saga.progress}%` }}
-                      className="h-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.3)]"
+                      className="h-full bg-blue-500 "
                     />
                  </div>
               </div>
@@ -116,7 +116,7 @@ export const NeuralAutomationWidget: React.FC<{ persona: string }> = ({ persona 
                    <span className="text-blue-500/50 mr-2">{'>'}</span> {log}
                 </div>
               ))}
-              <div className="flex items-center gap-2 text-[10px] text-blue-400 animate-pulse">
+              <div className="flex items-center gap-2 text-[10px] text-blue-400 ">
                  <span className="mr-2">{'>'}</span> {premiumLocales.neuralAutomation.processing}
               </div>
            </div>

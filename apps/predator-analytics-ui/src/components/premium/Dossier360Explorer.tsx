@@ -55,7 +55,7 @@ export const Dossier360Explorer: React.FC<DossierProps> = ({ isOpen, onClose, en
           className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8"
         >
           {/* Backdrop */}
-          <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-md" onClick={onClose} />
+          <div className="absolute inset-0 bg-slate-950/60 " onClick={onClose} />
 
           {/* Content */}
           <motion.div
@@ -189,7 +189,7 @@ export const Dossier360Explorer: React.FC<DossierProps> = ({ isOpen, onClose, en
                       <div key={i} className="flex items-center gap-3 p-3 bg-black/20 rounded-xl border-l-2 border-slate-700">
                         <div className={cn(
                           "w-2 h-2 rounded-full",
-                          flag.type === 'high' ? "bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.6)]" :
+                          flag.type === 'high' ? "bg-rose-500 " :
                           flag.type === 'medium' ? "bg-amber-500" : "bg-blue-500"
                         )} />
                         <div className="flex-1">

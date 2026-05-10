@@ -80,7 +80,7 @@ export const OmniverseInsights: React.FC = () => {
     <div className="flex h-full gap-6">
       {/* Sidebar: Context Selector */}
       <div className="w-80 space-y-6 flex flex-col">
-        <div className="p-6 bg-black/40 backdrop-blur-md border border-white/5 rounded-2xl space-y-4">
+        <div className="p-6 bg-black/40  border border-white/5 rounded-2xl space-y-4">
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-blue-500/20 rounded-lg">
               <Database className="w-4 h-4 text-blue-400" />
@@ -160,7 +160,7 @@ export const OmniverseInsights: React.FC = () => {
       </div>
 
       {/* Main: Chat Interface */}
-      <div className="flex-1 flex flex-col bg-black/40 backdrop-blur-md border border-white/5 rounded-2xl overflow-hidden">
+      <div className="flex-1 flex flex-col bg-black/40  border border-white/5 rounded-2xl overflow-hidden">
         {/* Chat Header */}
         <div className="p-4 border-b border-white/5 bg-white/[0.02] flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -170,7 +170,7 @@ export const OmniverseInsights: React.FC = () => {
             <div>
               <div className="text-sm font-bold text-white tracking-tight">Sovereign Advisor</div>
               <div className="text-[10px] text-emerald-400 flex items-center gap-1">
-                <span className="w-1 h-1 bg-emerald-500 rounded-full animate-pulse" />
+                <span className="w-1 h-1 bg-emerald-500 rounded-full " />
                 READY TO REASON
               </div>
             </div>

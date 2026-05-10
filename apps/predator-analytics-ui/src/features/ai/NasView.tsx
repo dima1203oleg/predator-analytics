@@ -182,7 +182,7 @@ const NasView: React.FC = () => {
                 }
             />
 
-            <div className="flex p-1.5 bg-slate-900/50 backdrop-blur-xl border border-slate-800/50 rounded-2xl overflow-x-auto scrollbar-hide relative">
+            <div className="flex p-1.5 bg-slate-900/50  border border-slate-800/50 rounded-2xl overflow-x-auto scrollbar-hide relative">
                 {[
                     { id: 'ARENA', label: 'Активна Арена', icon: <Trophy size={16} />, color: 'blue' },
                     { id: 'LEADERBOARD', label: 'Таблиця Лідерів', icon: <Activity size={16} />, color: 'amber' }, // Replaced BarChart3 with Activity as it was missing from imports but used for color logic

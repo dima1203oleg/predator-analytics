@@ -31,9 +31,9 @@ const OmniverseHub: React.FC = () => {
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/5 blur-[120px] rounded-full pointer-events-none" />
 
       {/* Header */}
-      <header className="p-6 border-b border-white/5 flex items-center justify-between z-10 bg-slate-950/80 backdrop-blur-xl">
+      <header className="p-6 border-b border-white/5 flex items-center justify-between z-10 bg-slate-950/80 ">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-blue-600 rounded-lg flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.3)]">
+          <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-blue-600 rounded-lg flex items-center justify-center ">
             <Activity className="text-white w-7 h-7" />
           </div>
           <div>
@@ -129,7 +129,7 @@ const OmniverseHub: React.FC = () => {
                         <div key={node} className="flex items-center justify-between">
                           <span className="text-[10px] font-mono text-white/60">{node}</span>
                           <span className="flex items-center gap-1.5">
-                            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full " />
                             <span className="text-[10px] font-bold text-emerald-400">ONLINE</span>
                           </span>
                         </div>

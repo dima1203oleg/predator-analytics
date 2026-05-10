@@ -196,7 +196,7 @@ export default function StrategicScenarioView() {
                 className={cn(
                   "p-10 rounded-[3.5rem] border-2 cursor-pointer transition-all duration-500 relative overflow-hidden group shadow-2xl",
                   activeScenario?.id === s.id 
-                    ? "bg-rose-600/10 border-rose-500 shadow-[0_0_50px_rgba(244,63,94,0.15)]" 
+                    ? "bg-rose-600/10 border-rose-500 " 
                     : "bg-black border-white/[0.03] hover:border-white/10"
                 )}
               >
@@ -232,12 +232,12 @@ export default function StrategicScenarioView() {
           <TacticalCard 
             title="S.E.N.T.I.N.E.L ENGINE" 
             subtitle="STRATEGIC_EVOLUTION_NETWORK"
-            className="h-full bg-black/40 backdrop-blur-3xl border-2 border-white/[0.04] p-10 rounded-[4rem] shadow-4xl"
+            className="h-full bg-black/40  border-2 border-white/[0.04] p-10 rounded-[4rem] shadow-4xl"
           >
             <div className="h-full flex flex-col justify-between py-6">
               {!activeScenario ? (
                 <div className="flex-1 flex flex-col items-center justify-center text-center space-y-8 opacity-30">
-                  <div className="p-12 bg-white/5 rounded-full border-2 border-white/10 animate-pulse">
+                  <div className="p-12 bg-white/5 rounded-full border-2 border-white/10 ">
                     <Play size={64} className="text-slate-500" />
                   </div>
                   <p className="text-[11px] font-black tracking-[0.5em] uppercase italic text-rose-500">ОБЕРІТЬ СЦЕНАРІЙ ДЛЯ ЗАПУСКУ СИМУЛЯЦІЇ</p>
@@ -251,7 +251,7 @@ export default function StrategicScenarioView() {
                         <span className="text-[10px] font-black text-slate-600 uppercase tracking-[0.4em] italic">СТАТУС СИМУЛЯЦІЇ</span>
                       </div>
                       <div className="flex items-center gap-4">
-                        <div className={cn("w-3 h-3 rounded-full shadow-[0_0_10px_currentColor]", isSimulating ? "bg-amber-500 text-amber-500 animate-pulse" : mcResults ? "bg-emerald-500 text-emerald-500" : "bg-slate-700 text-slate-700")} />
+                        <div className={cn("w-3 h-3 rounded-full shadow-[0_0_10px_currentColor]", isSimulating ? "bg-amber-500 text-amber-500 " : mcResults ? "bg-emerald-500 text-emerald-500" : "bg-slate-700 text-slate-700")} />
                         <span className="text-xl font-black text-white italic uppercase tracking-widest">{isSimulating ? 'ОБРАХУНОК...' : mcResults ? 'ЗАВЕРШЕНО' : 'ОЧІКУВАННЯ'}</span>
                       </div>
                     </div>
@@ -268,7 +268,7 @@ export default function StrategicScenarioView() {
                     <motion.div 
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="p-10 bg-rose-600/10 border-2 border-rose-500/30 rounded-[3rem] space-y-6 shadow-[0_0_30px_rgba(244,63,94,0.1)]"
+                        className="p-10 bg-rose-600/10 border-2 border-rose-500/30 rounded-[3rem] space-y-6 "
                     >
                         <div className="flex items-center justify-between">
                             <span className="text-[10px] font-black text-rose-500 uppercase tracking-[0.3em] italic">MONTE_CARLO_OUTPUT</span>
@@ -387,7 +387,7 @@ export default function StrategicScenarioView() {
                 <div className="space-y-4 relative z-10">
                   <div className="flex items-center gap-4">
                     <div className="p-3 bg-rose-500/10 rounded-2xl border border-rose-500/20">
-                      <Cpu size={24} className="text-rose-500 animate-pulse" />
+                      <Cpu size={24} className="text-rose-500 " />
                     </div>
                     <div>
                       <span className="text-[10px] font-black text-rose-500 uppercase tracking-[0.5em] italic">AI_CEO_COPILOT</span>

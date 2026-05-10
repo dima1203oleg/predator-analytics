@@ -76,9 +76,9 @@ export const AudioSanctuary: React.FC = () => {
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: 20 }}
-                        className="bg-red-500/10 border border-red-500/30 px-6 py-3 rounded-2xl backdrop-blur-3xl shadow-3xl flex items-center gap-4"
+                        className="bg-red-500/10 border border-red-500/30 px-6 py-3 rounded-2xl  shadow-3xl flex items-center gap-4"
                     >
-                        <ShieldAlert size={14} className="text-red-500 animate-pulse" />
+                        <ShieldAlert size={14} className="text-red-500 " />
                         <span className="text-[9px] font-black text-red-500 uppercase tracking-[0.3em] italic">АКТИВНИЙ_ТАКТИЧНИЙ_ЕМБІЄНТ</span>
                     </motion.div>
                 )}
@@ -89,7 +89,7 @@ export const AudioSanctuary: React.FC = () => {
                 whileTap={{ scale: 0.9 }}
                 onClick={toggleAudio}
                 className={cn(
-                    "p-6 rounded-[2rem] border transition-all shadow-3xl backdrop-blur-3xl group",
+                    "p-6 rounded-[2rem] border transition-all shadow-3xl  group",
                     isPlaying 
                         ? "bg-red-600/20 border-red-500/40 text-red-400" 
                         : "bg-slate-900/80 border-white/10 text-slate-500 hover:text-white hover:border-indigo-500/40"

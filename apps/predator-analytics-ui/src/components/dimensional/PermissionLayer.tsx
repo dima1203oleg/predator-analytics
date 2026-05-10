@@ -86,7 +86,7 @@ export const PermissionLayer: React.FC<PermissionLayerProps> = ({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 flex items-center justify-center bg-black/80 backdrop-blur-xl"
+              className="absolute inset-0 flex items-center justify-center bg-black/80 "
             >
               <div className="text-center px-6 py-4 bg-slate-900/90 border border-amber-500/30 rounded-2xl max-w-sm">
                 <EyeOff className="w-8 h-8 text-amber-400 mx-auto mb-3" />
@@ -154,7 +154,7 @@ const LockedOverlay: React.FC<{
         <motion.div
           animate={{ scale: [1, 1.05, 1] }}
           transition={{ repeat: Infinity, duration: 2 }}
-          className="w-20 h-20 rounded-2xl bg-red-500/10 border border-red-500/30 flex items-center justify-center shadow-[0_0_30px_rgba(239,68,68,0.3)]"
+          className="w-20 h-20 rounded-2xl bg-red-500/10 border border-red-500/30 flex items-center justify-center "
         >
           <Lock className="w-10 h-10 text-red-400" />
         </motion.div>
@@ -242,7 +242,7 @@ const RedactedOverlay: React.FC<{
 
         {/* Warning overlay */}
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-          <div className="bg-black/80 border border-yellow-500/30 rounded-xl px-6 py-4 backdrop-blur-xl">
+          <div className="bg-black/80 border border-yellow-500/30 rounded-xl px-6 py-4 ">
             <ShieldAlert className="w-8 h-8 text-yellow-400 mx-auto mb-2" />
             <p className="text-xs font-black text-yellow-400 uppercase tracking-widest">
               Інформація Приховано

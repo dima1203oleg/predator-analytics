@@ -92,21 +92,21 @@ const statusConfig: Record<ScreenStatus, { label: string; icon: LucideIcon; cls:
         icon: ShieldCheck,
         cls: 'text-emerald-500',
         bg: 'bg-emerald-600/10 border-emerald-600/30',
-        glow: 'shadow-[0_0_20px_rgba(16,185,129,0.3)]',
+        glow: '',
     },
     warning: {
         label: 'Увага',
         icon: AlertTriangle,
         cls: 'text-rose-400',
         bg: 'bg-rose-400/10 border-rose-400/30',
-        glow: 'shadow-[0_0_20px_rgba(251,113,133,0.3)]',
+        glow: '',
     },
     blocked: {
         label: 'Заблоковано',
         icon: AlertOctagon,
         cls: 'text-rose-600',
         bg: 'bg-rose-600/10 border-rose-600/30',
-        glow: 'shadow-[0_0_20px_rgba(225,29,72,0.3)]',
+        glow: '',
     },
 };
 
@@ -265,7 +265,7 @@ const HistoryRow: React.FC<{ result: ScreeningResult; isSelected: boolean; onCli
 const EmptyPanel = ({ title, description }: { title: string; description: string }) => (
     <div className="flex min-h-[500px] flex-col items-center justify-center rounded-[4rem] border-4 border-dashed border-white/5 bg-black/40 px-12 text-center shadow-inner group">
         <div className="p-12 bg-black border-2 border-white/5 rounded-[3rem] shadow-4xl mb-10 group-hover:scale-110 transition-transform duration-[10s]">
-            <AlertCircle size={64} className="text-slate-800 animate-pulse" />
+            <AlertCircle size={64} className="text-slate-800 " />
         </div>
         <h3 className="text-3xl font-black uppercase tracking-tighter text-white font-serif italic">{title}</h3>
         <p className="mt-6 max-w-lg text-sm leading-7 text-slate-600 font-black uppercase tracking-[0.4em] italic opacity-80">{description}</p>
@@ -389,7 +389,7 @@ const SanctionsScreening: React.FC = () => {
                         title={
                             <div className="flex items-center gap-10">
                                 <div className="relative group">
-                                     <div className="absolute inset-0 bg-rose-600/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                                     <div className="absolute inset-0 bg-rose-600/20 blur-3xl rounded-full scale-150 " />
                                      <div className="relative p-7 bg-black border-2 border-rose-500/40 rounded-[2.5rem] shadow-4xl transform rotate-2 hover:rotate-0 transition-all">
                                          <ShieldAlert size={42} className="text-rose-500 shadow-[0_0_20px_#e11d48]" />
                                      </div>
@@ -426,7 +426,7 @@ const SanctionsScreening: React.FC = () => {
                         ]}
                     />
 
-                    <div className="mt-12 flex flex-wrap items-center gap-4 px-4 py-3 bg-black border-2 border-white/5 rounded-[2rem] shadow-2xl backdrop-blur-3xl italic">
+                    <div className="mt-12 flex flex-wrap items-center gap-4 px-4 py-3 bg-black border-2 border-white/5 rounded-[2rem] shadow-2xl  italic">
                         {[
                             { l: 'ДЖЕРЕЛО_ДАНИХ', v: '/sanctions/screen', c: 'text-rose-600' },
                             { l: 'ВУЗОЛ_БЕКЕНДУ', v: backendStatus.sourceLabel.toUpperCase(), c: 'text-white' },
@@ -567,7 +567,7 @@ const SanctionsScreening: React.FC = () => {
                             {history.length === 0 ? (
                                 <TacticalCard variant="cyber" className="rounded-[4rem] border-2 border-white/5 p-12 bg-black/40 shadow-inner">
                                     <div className="flex min-h-[300px] flex-col items-center justify-center text-center opacity-20">
-                                        <History size={80} className="mb-10 text-slate-800 animate-pulse" />
+                                        <History size={80} className="mb-10 text-slate-800 " />
                                         <h4 className="text-2xl font-black uppercase tracking-tighter text-white font-serif italic">EMPTY_SESSION_LEDGER</h4>
                                         <p className="mt-6 max-w-sm text-[11px] leading-relaxed text-slate-700 uppercase tracking-[0.4em] italic font-black">
                                             AWAITING_CONFIRMED_API_CALLBACK_FOR_DECRYPTION
@@ -646,7 +646,7 @@ const SanctionsScreening: React.FC = () => {
                                                     <div className="space-y-8">
                                                         <div className="mb-8 flex items-center gap-6 pb-6 border-b-2 border-white/[0.04]">
                                                             <div className="p-4 bg-rose-600/10 border-2 border-rose-600/20 rounded-2xl text-rose-500 shadow-xl">
-                                                                <AlertOctagon size={28} className="animate-pulse" />
+                                                                <AlertOctagon size={28} className="" />
                                                             </div>
                                                             <h3 className="text-xl font-black uppercase tracking-[0.5em] text-white font-serif italic">
                                                                 ВИЯВЛЕНІ ЗБІГИ: <span className="text-rose-600 underline decoration-rose-600/20 decoration-8">{selected.matches.length}</span>
@@ -661,7 +661,7 @@ const SanctionsScreening: React.FC = () => {
                                                         <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/[0.02] to-transparent pointer-events-none" />
                                                         <motion.div animate={{ scale: [1, 1.15, 1], rotate: [0, 5, -5, 0] }} transition={{ duration: 10, repeat: Infinity }}>
                                                             <div className="p-16 bg-black border-4 border-emerald-500/10 rounded-[5rem] shadow-4xl mb-12 relative">
-                                                                <ShieldCheck size={120} className="text-emerald-500 shadow-[0_0_60px_rgba(16,185,129,0.2)]" />
+                                                                <ShieldCheck size={120} className="text-emerald-500 " />
                                                                 <div className="absolute -top-4 -right-4 bg-emerald-500 p-4 rounded-full text-black shadow-xl"><Zap size={24} /></div>
                                                             </div>
                                                         </motion.div>

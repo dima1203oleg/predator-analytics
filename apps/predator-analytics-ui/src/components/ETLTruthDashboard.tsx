@@ -184,7 +184,7 @@ const PhaseIndicator: React.FC<{
         <Icon size={20} className={
           isCompleted ? 'text-emerald-400' :
           isFailed ? 'text-rose-400' :
-          isActive ? 'text-blue-400 animate-pulse' :
+          isActive ? 'text-blue-400 ' :
           'text-slate-500'
         } />
       </div>
@@ -464,7 +464,7 @@ export const ETLTruthDashboard: React.FC = () => {
             <h2 className="text-xl font-black text-white uppercase tracking-tight flex items-center gap-2">
               📊 ETL Pipeline
               {stats.active > 0 && (
-                <span className="px-2 py-0.5 bg-blue-500/20 text-blue-400 text-[9px] font-bold rounded-lg border border-blue-500/30 animate-pulse">
+                <span className="px-2 py-0.5 bg-blue-500/20 text-blue-400 text-[9px] font-bold rounded-lg border border-blue-500/30 ">
                   {stats.active} АКТИВНИХ
                 </span>
               )}

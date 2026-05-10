@@ -239,7 +239,7 @@ export const ActiveJobsPanel: React.FC<ActiveJobsPanelProps> = ({
     const summary = useMemo(() => summarizeActiveJobs(jobs), [jobs]);
 
     return (
-        <div className={`overflow-hidden rounded-2xl border border-slate-800/50 bg-slate-900/80 backdrop-blur-xl ${className}`}>
+        <div className={`overflow-hidden rounded-2xl border border-slate-800/50 bg-slate-900/80  ${className}`}>
             {showHeader ? (
                 <div className="border-b border-slate-800/50 p-4">
                     <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">

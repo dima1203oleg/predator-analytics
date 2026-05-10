@@ -384,7 +384,7 @@ export default function AutoFactoryView() {
                 <div className="relative">
                   <div className="absolute inset-0 scale-150 rounded-full bg-[#D4AF37]/20 blur-[60px]" />
                   <div className="relative flex h-16 w-16 items-center justify-center rounded-[28px] border border-[#D4AF37]/20 bg-slate-950/90 shadow-2xl">
-                    <Factory size={30} className="text-[#D4AF37] drop-shadow-[0_0_14px_rgba(212,175,55,0.75)]" />
+                    <Factory size={30} className="text-[#D4AF37] " />
                   </div>
                 </div>
                 <div>
@@ -392,7 +392,7 @@ export default function AutoFactoryView() {
                     Автономний <span className="text-[#D4AF37]">завод</span>
                   </h1>
                   <p className="mt-3 flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.34em] text-[#D4AF37]/75">
-                    <Sparkles size={12} className="animate-pulse" />
+                    <Sparkles size={12} className="" />
                     v61.0-ELITE · МОДУЛЬ НЕЙ ОННОЇ ЕВОЛЮЦІЇ
                   </p>
                 </div>

@@ -37,7 +37,7 @@ const MarketSimulator: React.FC = () => {
     };
 
     return (
-        <Card className="bg-slate-925/60 border-slate-800/50 backdrop-blur-xl border-t-cyan-500/30 overflow-hidden relative">
+        <Card className="bg-slate-925/60 border-slate-800/50  border-t-cyan-500/30 overflow-hidden relative">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent" />
             <CardHeader>
                 <div className="flex justify-between items-start">

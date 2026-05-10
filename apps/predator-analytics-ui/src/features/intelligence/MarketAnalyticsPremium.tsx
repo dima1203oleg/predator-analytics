@@ -131,7 +131,7 @@ export default function MarketAnalyticsPremium() {
             title={
               <div className="flex items-center gap-12">
                 <div className="relative group">
-                  <div className="absolute inset-0 bg-yellow-600/20 blur-[80px] rounded-full scale-150 animate-pulse" />
+                  <div className="absolute inset-0 bg-yellow-600/20 blur-[80px] rounded-full scale-150 " />
                   <div className="relative p-8 bg-black border-2 border-yellow-500/40 rounded-[3rem] shadow-4xl transform -rotate-3 hover:rotate-0 transition-all duration-700">
                     <BarChart3 size={48} className="text-[#D4AF37] shadow-[0_0_30px_#D4AF37]" />
                   </div>
@@ -218,7 +218,7 @@ export default function MarketAnalyticsPremium() {
                   
                   <div className="grid grid-cols-1 gap-8 relative z-10 max-h-[1400px] overflow-y-auto no-scrollbar pr-4">
                      {loading ? (
-                       Array(4).fill(0).map((_, i) => <div key={i} className="h-40 rounded-[3rem] bg-white/[0.02] animate-pulse border-2 border-white/5" />)
+                       Array(4).fill(0).map((_, i) => <div key={i} className="h-40 rounded-[3rem] bg-white/[0.02]  border-2 border-white/5" />)
                      ) : (
                        marketOverview?.top_products.map((product) => (
                          <div key={product.code} className="p-10 rounded-[4rem] bg-white/[0.01] border-2 border-white/[0.03] hover:bg-yellow-500/[0.02] hover:border-yellow-500/30 transition-all duration-700 group cursor-pointer relative overflow-hidden">
@@ -256,7 +256,7 @@ export default function MarketAnalyticsPremium() {
                {/* NEURAL INTEL HUB */}
                <div className="p-12 rounded-[5rem] bg-gradient-to-br from-yellow-700/10 to-yellow-900/10 border-4 border-yellow-600/20 shadow-4xl space-y-10 relative overflow-hidden group/ai">
                   <div className="absolute top-0 right-0 p-12 opacity-[0.03] group-hover/ai:opacity-[0.1] transition-opacity duration-1000">
-                     <Microscope size={180} className="text-yellow-500 animate-pulse" />
+                     <Microscope size={180} className="text-yellow-500 " />
                   </div>
                   <div className="flex items-center gap-6 border-b-2 border-white/[0.05] pb-8 relative z-10">
                     <CyberOrb size="sm" status="active" />

@@ -64,7 +64,7 @@ const EvolutionDashboard: React.FC = () => {
     };
 
     return (
-        <div className="p-6 grid grid-cols-1 md:grid-cols-12 gap-6 bg-black/40 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl">
+        <div className="p-6 grid grid-cols-1 md:grid-cols-12 gap-6 bg-black/40  rounded-3xl border border-white/10 shadow-2xl">
             {/* Header / Central Vision */}
             <div className="col-span-12 flex items-center justify-between mb-2">
                 <div>
@@ -78,14 +78,14 @@ const EvolutionDashboard: React.FC = () => {
                         onClick={triggerChaos}
                         disabled={isThinking}
                         className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all ${
-                            chaosStatus?.chaos_mode ? 'bg-red-500/20 border-red-500 text-red-500 shadow-[0_0_15px_rgba(239,68,68,0.4)]' : 'bg-white/5 border-white/10 text-white/60 hover:border-red-500/50 hover:text-red-400'
+                            chaosStatus?.chaos_mode ? 'bg-red-500/20 border-red-500 text-red-500 ' : 'bg-white/5 border-white/10 text-white/60 hover:border-red-500/50 hover:text-red-400'
                         }`}
                     >
                         <Flame className={`w-4 h-4 ${isThinking ? 'animate-bounce' : ''}`} />
                         <span className="text-xs font-bold uppercase tracking-widest">Тест Хаосу</span>
                     </button>
                     <div className="px-4 py-2 bg-blue-500/10 border border-blue-500/30 rounded-full flex items-center gap-2">
-                        <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse shadow-[0_0_10px_#3b82f6]" />
+                        <div className="w-2 h-2 bg-blue-500 rounded-full  shadow-[0_0_10px_#3b82f6]" />
                         <span className="text-[10px] font-mono text-blue-400 uppercase">Self-Healer Онлайн</span>
                     </div>
                 </div>
@@ -137,7 +137,7 @@ const EvolutionDashboard: React.FC = () => {
                              </div>
                              <div className="text-right">
                                  <span className="text-[10px] text-white/40 uppercase tracking-widest">Z-Score Аномалії</span>
-                                 <div className={`text-lg font-bold ${anomalies?.anomalies_detected > 0 ? 'text-red-500 animate-pulse' : 'text-green-500'}`}>
+                                 <div className={`text-lg font-bold ${anomalies?.anomalies_detected > 0 ? 'text-red-500 ' : 'text-green-500'}`}>
                                      {anomalies?.anomalies_detected || 0}
                                  </div>
                              </div>

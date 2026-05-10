@@ -68,7 +68,7 @@ export const LLMInferenceView: React.FC<LLMInferenceViewProps> = ({
                                 >
                                     <div className={`max-w-[85%] p-6 rounded-[24px] text-sm leading-relaxed border transition-all duration-500 ${msg.role === 'user'
                                         ? 'bg-blue-600/10 border-blue-500/30 text-blue-100 rounded-br-none shadow-2xl'
-                                        : 'bg-white/5 border-white/10 text-slate-300 rounded-bl-none backdrop-blur-3xl shadow-xl'
+                                        : 'bg-white/5 border-white/10 text-slate-300 rounded-bl-none  shadow-xl'
                                         }`}>
                                         {msg.role === 'assistant' && (
                                             <div className="flex items-center gap-3 mb-3 pb-2 border-b border-white/5">

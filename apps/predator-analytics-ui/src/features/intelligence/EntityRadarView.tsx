@@ -79,16 +79,16 @@ interface EntityRadarItem {
 const SovereignBadge = ({ level, score }: { level: string; score: number }) => {
   const getColors = () => {
     switch (level.toUpperCase()) {
-      case 'CRITICAL': return 'bg-amber-600/10 text-amber-500 border-amber-600/30 shadow-[0_0_20px_rgba(225,29,72,0.3)]';
-      case 'HIGH': return 'bg-orange-600/10 text-orange-500 border-orange-600/30 shadow-[0_0_15px_rgba(234,88,12,0.2)]';
-      case 'ELEVATED': return 'bg-yellow-600/10 text-yellow-500 border-yellow-600/30 shadow-[0_0_15px_rgba(212,175,55,0.2)]';
+      case 'CRITICAL': return 'bg-amber-600/10 text-amber-500 border-amber-600/30 ';
+      case 'HIGH': return 'bg-orange-600/10 text-orange-500 border-orange-600/30 ';
+      case 'ELEVATED': return 'bg-yellow-600/10 text-yellow-500 border-yellow-600/30 ';
       default: return 'bg-emerald-600/10 text-emerald-500 border-emerald-600/30';
     }
   };
 
   return (
     <div className={cn("px-6 py-2 rounded-2xl border text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-3 italic", getColors())}>
-      <Shield size={12} className={score > 80 ? "animate-pulse" : ""} />
+      <Shield size={12} className={score > 80 ? "" : ""} />
       <span>{score.toFixed(1)}</span>
       <span className="opacity-20">|</span>
       <span>{level}</span>
@@ -275,7 +275,7 @@ const EntityRadarView: React.FC = () => {
             title={
               <div className="flex items-center gap-12">
                 <div className="relative group">
-                  <div className="absolute inset-0 bg-yellow-500/20 blur-[80px] rounded-full scale-150 animate-pulse" />
+                  <div className="absolute inset-0 bg-yellow-500/20 blur-[80px] rounded-full scale-150 " />
                   <div className="relative p-8 bg-black border-2 border-yellow-500/40 rounded-[3rem] shadow-4xl transform -rotate-3 hover:rotate-0 transition-all duration-700">
                     <Crosshair size={48} className="text-yellow-500 shadow-[0_0_30px_#d4af37]" />
                   </div>
@@ -329,7 +329,7 @@ const EntityRadarView: React.FC = () => {
 
           {/* CONTROLS SOVEREIGN */}
           <div className="grid grid-cols-12 gap-8">
-            <div className="col-span-12 xl:col-span-12 flex flex-col xl:flex-row gap-8 items-center bg-black/40 p-8 rounded-[3.5rem] border-2 border-white/[0.03] shadow-4xl backdrop-blur-3xl">
+            <div className="col-span-12 xl:col-span-12 flex flex-col xl:flex-row gap-8 items-center bg-black/40 p-8 rounded-[3.5rem] border-2 border-white/[0.03] shadow-4xl ">
               <div className="flex-1 relative group w-full">
                 <Search className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-yellow-500 transition-colors" size={24} />
                 <input
@@ -369,10 +369,10 @@ const EntityRadarView: React.FC = () => {
                 <div className="relative">
                   <div className="w-[120px] h-[120px] rounded-full border-4 border-yellow-500/20 border-t-yellow-500 animate-spin" />
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <SearchCode className="text-yellow-500 animate-pulse" size={40} />
+                    <SearchCode className="text-yellow-500 " size={40} />
                   </div>
                 </div>
-                <p className="text-yellow-500 font-black text-[12px] animate-pulse uppercase tracking-[0.6em] italic">SYNCING_GDS_RECORDS // NEURAL_PROCESSING...</p>
+                <p className="text-yellow-500 font-black text-[12px]  uppercase tracking-[0.6em] italic">SYNCING_GDS_RECORDS // NEURAL_PROCESSING...</p>
               </div>
             ) : filteredEntities.length > 0 ? (
               filteredEntities.map((entity, idx) => (
@@ -382,7 +382,7 @@ const EntityRadarView: React.FC = () => {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: idx * 0.05 }}
                   className={cn(
-                    "group relative border-2 rounded-[4rem] overflow-hidden transition-all duration-700 backdrop-blur-4xl shadow-4xl",
+                    "group relative border-2 rounded-[4rem] overflow-hidden transition-all duration-700  shadow-4xl",
                     expandedId === entity.ueid
                       ? "bg-black border-yellow-500/40"
                       : "bg-black/60 border-white/[0.03] hover:border-white/10"
@@ -390,7 +390,7 @@ const EntityRadarView: React.FC = () => {
                 >
                   {/* Danger Line for critical entities */}
                   {entity.cers_score > 80 && (
-                    <div className="absolute top-0 inset-x-0 h-[3px] bg-gradient-to-r from-transparent via-amber-600 to-transparent opacity-40 animate-pulse" />
+                    <div className="absolute top-0 inset-x-0 h-[3px] bg-gradient-to-r from-transparent via-amber-600 to-transparent opacity-40 " />
                   )}
 
                   <div
@@ -401,7 +401,7 @@ const EntityRadarView: React.FC = () => {
                     <div className="relative w-24 h-24 shrink-0 flex items-center justify-center group-hover:scale-110 transition-transform duration-700">
                       <div className={cn(
                         "absolute inset-0 rounded-[2rem] border-4 rotate-45 group-hover:rotate-[225deg] transition-transform duration-1000",
-                        entity.cers_score > 70 ? "bg-amber-600/5 border-amber-600/30 shadow-[0_0_30px_rgba(225,29,72,0.1)]" : "bg-yellow-500/5 border-yellow-500/30 shadow-[0_0_30px_rgba(212,175,55,0.1)]"
+                        entity.cers_score > 70 ? "bg-amber-600/5 border-amber-600/30 " : "bg-yellow-500/5 border-yellow-500/30 "
                       )} />
                       <div className="relative z-10 font-black font-mono text-3xl italic text-white shadow-sm">
                         {entity.name.split('"')[1]?.charAt(0) || entity.name.charAt(0)}
@@ -421,7 +421,7 @@ const EntityRadarView: React.FC = () => {
                             </div>
                           )}
                           <div className="px-4 py-1.5 bg-yellow-500/10 text-yellow-500 border-2 border-yellow-500/20 rounded-xl text-[10px] font-black uppercase italic tracking-widest flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse" /> TARGET_LOCK
+                            <span className="w-1.5 h-1.5 rounded-full bg-yellow-500 " /> TARGET_LOCK
                           </div>
                         </div>
                       </div>
@@ -493,7 +493,7 @@ const EntityRadarView: React.FC = () => {
                                   opts={{ renderer: 'svg' }}
                                 />
                              </div>
-                             <div className="p-10 rounded-[3rem] bg-yellow-500/5 border-2 border-yellow-500/10 space-y-4 shadow-4xl backdrop-blur-3xl">
+                             <div className="p-10 rounded-[3rem] bg-yellow-500/5 border-2 border-yellow-500/10 space-y-4 shadow-4xl ">
                                 <h4 className="text-[11px] font-black text-yellow-500 uppercase tracking-[0.5em] italic mb-6 flex items-center gap-4">
                                   <Sparkles size={16} /> ВЕ ДИКТ_PREDATOR_AI
                                 </h4>
@@ -509,11 +509,11 @@ const EntityRadarView: React.FC = () => {
                                 <header className="flex items-center justify-between border-b-2 border-white/[0.03] pb-8">
                                    <div className="space-y-2">
                                       <h4 className="text-[14px] font-black text-amber-600 uppercase tracking-[0.6em] italic flex items-center gap-4">
-                                        <Siren size={20} className="animate-pulse" /> АКТИВНІ_ПОГ ОЗИ // ACTIVE_SIG
+                                        <Siren size={20} className="" /> АКТИВНІ_ПОГ ОЗИ // ACTIVE_SIG
                                       </h4>
                                       <p className="text-[10px] text-slate-800 font-bold uppercase tracking-[0.4em] italic">ВИЯВЛЕНІ АНОМАЛІЇ У ТЕРМІНАЛІ РИЗИКУ</p>
                                    </div>
-                                   <div className="p-4 bg-amber-600/10 border-2 border-amber-600/20 rounded-2xl text-amber-600 animate-pulse shadow-amber-900/40">
+                                   <div className="p-4 bg-amber-600/10 border-2 border-amber-600/20 rounded-2xl text-amber-600  shadow-amber-900/40">
                                       <Shield size={24} />
                                    </div>
                                 </header>
@@ -559,7 +559,7 @@ const EntityRadarView: React.FC = () => {
                                       <span className="text-[10px] font-black uppercase tracking-[0.2em] italic">ВІЗУАЛІЗУВАТИ_ЗВ'ЯЗКИ</span>
                                    </button>
                                    <button className="flex flex-col items-center justify-center gap-6 p-8 bg-amber-600/10 border-2 border-amber-600/20 text-amber-500 hover:bg-amber-600/20 rounded-[2.5rem] transition-all group/btn shadow-2xl">
-                                      <Zap size={24} className="animate-pulse" />
+                                      <Zap size={24} className="" />
                                       <span className="text-[10px] font-black uppercase tracking-[0.2em] italic">ІЗОЛЮВАТИ_ВУЗОЛ</span>
                                    </button>
                                 </div>
@@ -572,7 +572,7 @@ const EntityRadarView: React.FC = () => {
                 </motion.div>
               ))
             ) : (
-              <div className="py-40 text-center bg-black border-4 border-dashed border-white/[0.04] rounded-[5rem] backdrop-blur-3xl shadow-4xl space-y-10">
+              <div className="py-40 text-center bg-black border-4 border-dashed border-white/[0.04] rounded-[5rem]  shadow-4xl space-y-10">
                 <div className="relative mx-auto w-32 h-32">
                    <Target className="w-24 h-24 text-slate-800 mx-auto opacity-20" />
                    <div className="absolute inset-0 border-4 border-white/[0.02] rounded-full animate-ping" />
@@ -590,7 +590,7 @@ const EntityRadarView: React.FC = () => {
         <style dangerouslySetInnerHTML={{ __html: `
             .shadow-4xl { box-shadow: 0 80px 150px -40px rgba(0,0,0,0.95), 0 0 100px rgba(212,175,55,0.02); }
             .shadow-inset { box-shadow: inset 0 2px 20px rgba(0,0,0,0.8), inset 0 0 100px rgba(212,175,55,0.01); }
-            .backdrop-blur-4xl { backdrop-filter: blur(120px) saturate(180%); }
+            . { backdrop-filter: blur(120px) saturate(180%); }
             .animate-spin-slow { animation: spin 15s linear infinite; }
             @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
             .perspective-1000 { perspective: 1000px; }

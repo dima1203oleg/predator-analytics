@@ -85,7 +85,7 @@ const QuickStatCard: React.FC<{
       animate={{ opacity: 1, scale: 1 }}
       whileHover={{ y: -4, scale: 1.02 }}
       className={cn(
-        "p-8 rounded-[40px] bg-slate-950/60 border backdrop-blur-3xl transition-all duration-700 shadow-2xl relative overflow-hidden group",
+        "p-8 rounded-[40px] bg-slate-950/60 border  transition-all duration-700 shadow-2xl relative overflow-hidden group",
         style.border
       )}
     >
@@ -114,7 +114,7 @@ const QuickStatCard: React.FC<{
 
       <div className="space-y-2 relative z-10">
         {loading ? (
-          <div className="h-10 w-32 bg-slate-800/50 rounded-xl animate-pulse" />
+          <div className="h-10 w-32 bg-slate-800/50 rounded-xl " />
         ) : (
           <div className={cn(
             "text-4xl font-black font-display tracking-tighter transition-all duration-700 group-hover:scale-110 origin-left",
@@ -222,10 +222,10 @@ const NeuralChart: React.FC<{
         </div>
         <div className="h-[250px] relative group">
           {loading ? (
-            <div className="absolute inset-0 flex items-center justify-center bg-slate-950/20 backdrop-blur-sm z-10">
+            <div className="absolute inset-0 flex items-center justify-center bg-slate-950/20  z-10">
               <div className="relative">
                 <RefreshCw className="animate-spin text-blue-500/40" size={48} />
-                <div className="absolute inset-0 bg-blue-500 blur-2xl opacity-20 animate-pulse" />
+                <div className="absolute inset-0 bg-blue-500 blur-2xl opacity-20 " />
               </div>
             </div>
           ) : null}
@@ -331,7 +331,7 @@ export const AnalyticsDashboard: React.FC = () => {
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-500/5 blur-[120px] rounded-full pointer-events-none" />
         <div className="flex items-center gap-8 relative z-10">
           <div className="p-8 rounded-[40px] bg-gradient-to-br from-blue-600/20 to-indigo-600/20 text-blue-400 border border-blue-500/20 shadow-2xl icon-3d-blue relative group overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/20 to-transparent animate-pulse" />
+            <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/20 to-transparent " />
             <BarChart3 size={40} className="relative z-10" />
           </div>
           <div>
@@ -344,7 +344,7 @@ export const AnalyticsDashboard: React.FC = () => {
                 <span className="text-[11px] font-black text-blue-400 uppercase tracking-widest">REALTIME_SYNC: {lastUpdate.toLocaleTimeString('uk-UA')}</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_#10b981]" />
+                <div className="w-2 h-2 rounded-full bg-emerald-500  shadow-[0_0_10px_#10b981]" />
                 <span className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] italic leading-none">{premiumLocales.operationalAnalytics.subtitle}</span>
               </div>
             </div>
@@ -470,7 +470,7 @@ export const AnalyticsDashboard: React.FC = () => {
           <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
           <div className="flex flex-col md:flex-row items-center gap-12 relative z-10">
             <div className="relative w-[280px] h-[280px] shrink-0">
-              <div className="absolute inset-0 rounded-full border border-white/5 animate-pulse" />
+              <div className="absolute inset-0 rounded-full border border-white/5 " />
               <div className="absolute inset-8 rounded-full border border-white/5 animate-shimmer" />
               <ReactECharts
                 option={{

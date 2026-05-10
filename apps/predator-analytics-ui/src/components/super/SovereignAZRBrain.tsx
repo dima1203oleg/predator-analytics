@@ -143,12 +143,12 @@ const SovereignAZRBrain: React.FC = () => {
                animate={{ x: 0, opacity: 1 }}
                className="flex items-center gap-6"
             >
-              <div className="p-5 bg-gradient-to-br from-yellow-500 to-yellow-700 rounded-[28px] shadow-[0_0_50px_rgba(212,175,55,0.3)] border border-white/20">
+              <div className="p-5 bg-gradient-to-br from-yellow-500 to-yellow-700 rounded-[28px]  border border-white/20">
                 <Cpu className="text-black" size={36} strokeWidth={2.5} />
               </div>
               <div>
                 <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic flex items-center gap-4">
-                  SOVEREIGN <span className="text-yellow-500 drop-shadow-[0_0_15px_rgba(212,175,55,0.4)]">AZR BRAIN</span>
+                  SOVEREIGN <span className="text-yellow-500 ">AZR BRAIN</span>
                   <span className="text-[11px] bg-yellow-500/20 border border-yellow-500/40 text-yellow-400 px-4 py-1.5 rounded-full not-italic tracking-[0.4em] font-black uppercase shadow-inner">v61.0-ELITE</span>
                 </h1>
                 <p className="text-sm text-slate-400 font-black uppercase tracking-[0.5em] flex items-center gap-3 mt-2">
@@ -164,7 +164,7 @@ const SovereignAZRBrain: React.FC = () => {
               <motion.div 
                 animate={{ scale: [1, 1.05, 1], opacity: [0.8, 1, 0.8] }}
                 transition={{ repeat: Infinity, duration: 2 }}
-                className="px-8 py-5 bg-amber-500/10 border border-amber-500/40 rounded-[24px] backdrop-blur-3xl shadow-[0_0_30px_rgba(245,158,11,0.2)] flex flex-col justify-center"
+                className="px-8 py-5 bg-amber-500/10 border border-amber-500/40 rounded-[24px]   flex flex-col justify-center"
               >
                 <span className="text-[10px] text-amber-500 font-black uppercase tracking-widest mb-1 flex items-center gap-2">
                   <ZapOff size={12} /> СУВЕРЕННИЙ АВТОНОМНИЙ РЕЖИМ
@@ -173,16 +173,16 @@ const SovereignAZRBrain: React.FC = () => {
               </motion.div>
             )}
             
-            <div className="px-8 py-5 bg-yellow-500/5 border border-yellow-500/20 rounded-[24px] backdrop-blur-3xl shadow-2xl flex flex-col justify-center group/autonomy">
+            <div className="px-8 py-5 bg-yellow-500/5 border border-yellow-500/20 rounded-[24px]  shadow-2xl flex flex-col justify-center group/autonomy">
               <span className="text-[10px] text-yellow-600 font-black uppercase tracking-widest mb-1 group-hover/autonomy:text-yellow-400 transition-colors">СИСТЕМНА АВТОНОМНІСТЬ</span>
               <div className="text-3xl font-black text-white italic tabular-nums">{isOffline ? '100.00%' : '99.98%'}</div>
             </div>
 
-            <div className={`px-8 py-5 bg-emerald-500/5 border ${isOffline ? 'border-amber-500/20' : 'border-emerald-500/20'} rounded-[24px] backdrop-blur-3xl shadow-2xl flex flex-col justify-center group/cluster relative overflow-hidden`}>
+            <div className={`px-8 py-5 bg-emerald-500/5 border ${isOffline ? 'border-amber-500/20' : 'border-emerald-500/20'} rounded-[24px]  shadow-2xl flex flex-col justify-center group/cluster relative overflow-hidden`}>
               <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-1 group-hover/cluster:text-white transition-colors">ОПЕРАЦІЙНИЙ ВУЗОЛ</span>
               <div className={`text-3xl font-black ${isOffline ? 'text-amber-500' : 'text-emerald-500'} italic flex items-center gap-3`}>
                  {activeFailover ? 'NVIDIA_ZROK' : isOffline ? 'OFFLINE' : 'NVIDIA_MASTER'} 
-                 <div className={`w-3 h-3 ${isOffline ? 'bg-amber-500 shadow-[0_0_15px_#f59e0b]' : 'bg-emerald-500 shadow-[0_0_15px_#10b981]'} rounded-full animate-pulse`} />
+                 <div className={`w-3 h-3 ${isOffline ? 'bg-amber-500 shadow-[0_0_15px_#f59e0b]' : 'bg-emerald-500 shadow-[0_0_15px_#10b981]'} rounded-full `} />
               </div>
               
               <div className="mt-4 flex items-center gap-4 text-[9px] font-black font-mono border-t border-white/5 pt-4">
@@ -213,7 +213,7 @@ const SovereignAZRBrain: React.FC = () => {
                   <div className="relative">
                      <CyberOrb size={80} color="#D4AF37" pulse intensity={0.9} />
                      <div className="absolute inset-0 flex items-center justify-center">
-                        <Sparkles size={24} className="text-white opacity-40 animate-pulse" />
+                        <Sparkles size={24} className="text-white opacity-40 " />
                      </div>
                   </div>
                   <div>
@@ -242,7 +242,7 @@ const SovereignAZRBrain: React.FC = () => {
             </div>
             
             {/* Sector Health Radar */}
-            <div className="p-8 bg-slate-950/60 backdrop-blur-3xl border border-yellow-500/10 rounded-[40px] shadow-2xl relative overflow-hidden group">
+            <div className="p-8 bg-slate-950/60  border border-yellow-500/10 rounded-[40px] shadow-2xl relative overflow-hidden group">
               <div className="absolute -top-12 -right-12 w-48 h-48 bg-yellow-500/10 rounded-full blur-[80px]" />
               <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-3">
@@ -287,7 +287,7 @@ const SovereignAZRBrain: React.FC = () => {
             </div>
 
             {/* Sovereign Auto-Heal (v58.2) */}
-            <div className="p-8 bg-slate-950/60 backdrop-blur-3xl border border-rose-500/10 rounded-[40px] shadow-2xl relative overflow-hidden group">
+            <div className="p-8 bg-slate-950/60  border border-rose-500/10 rounded-[40px] shadow-2xl relative overflow-hidden group">
                <div className="absolute top-0 right-0 w-full h-1 bg-gradient-to-r from-transparent via-rose-500/30 to-transparent" />
                <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-3">
@@ -295,7 +295,7 @@ const SovereignAZRBrain: React.FC = () => {
                     <h3 className="text-sm font-black text-white uppercase tracking-[0.3em] font-mono italic">ЖУ НАЛ СУВЕРЕННОГО ПОТОКУ [ELITE]</h3>
                   </div>
                   <div className="text-[9px] font-black text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20 flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                    <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full " />
                     NEURAL_STREAM
                   </div>
                </div>
@@ -335,9 +335,9 @@ const SovereignAZRBrain: React.FC = () => {
 
           {/* MIDDLE: GLOBAL NEURAL MESH & AI BRAIN FOCUS */}
           <div className="col-span-12 lg:col-span-5 space-y-8">
-            <div className="h-[650px] bg-slate-950/40 backdrop-blur-3xl border border-yellow-500/5 rounded-[48px] shadow-2xl relative overflow-hidden p-8 flex flex-col">
+            <div className="h-[650px] bg-slate-950/40  border border-yellow-500/5 rounded-[48px] shadow-2xl relative overflow-hidden p-8 flex flex-col">
                <div className="flex items-center justify-between mb-8 relative z-20">
-                  <div className="flex items-center gap-3 px-6 py-3 bg-black/60 border border-yellow-500/20 rounded-2xl backdrop-blur-xl">
+                  <div className="flex items-center gap-3 px-6 py-3 bg-black/60 border border-yellow-500/20 rounded-2xl ">
                     <Globe className="text-yellow-500 animate-spin-slow" size={20} />
                     <div>
                       <span className="text-sm font-black text-white uppercase tracking-[0.4em]">H100 SOVEREIGN_ELITE 2026</span>
@@ -347,7 +347,7 @@ const SovereignAZRBrain: React.FC = () => {
                   <div className="flex -space-x-3">
                     {[1,2,3,4].map(i => (
                       <div key={i} className="w-10 h-10 rounded-full border-2 border-black bg-slate-900 flex items-center justify-center overflow-hidden shadow-xl">
-                        <div className={`w-full h-full bg-gradient-to-br ${i % 2 === 0 ? 'from-yellow-500 to-rose-600' : 'from-indigo-500 to-teal-400'} opacity-40 animate-pulse`} />
+                        <div className={`w-full h-full bg-gradient-to-br ${i % 2 === 0 ? 'from-yellow-500 to-rose-600' : 'from-indigo-500 to-teal-400'} opacity-40 `} />
                       </div>
                     ))}
                   </div>
@@ -438,7 +438,7 @@ const CyberOrb: React.FC<CyberOrbProps> = ({ size, color, pulse, intensity = 0.5
   return (
     <div style={{ width: size, height: size }} className="relative">
       <div 
-        className={`absolute inset-0 rounded-full blur-2xl ${pulse ? 'animate-pulse' : ''}`} 
+        className={`absolute inset-0 rounded-full blur-2xl ${pulse ? '' : ''}`} 
         style={{ backgroundColor: color, opacity: 0.2 * intensity }} 
       />
       <div className="absolute inset-2 rounded-full border border-white/10" />

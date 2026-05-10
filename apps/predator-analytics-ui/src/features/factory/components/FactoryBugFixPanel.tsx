@@ -22,9 +22,9 @@ export const FactoryBugFixPanel: React.FC<FactoryBugFixPanelProps> = ({
       <div className="space-y-3">
         {bugs.map(bug => (
           <motion.div key={bug.id} layout initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className={cn(
-            "p-4 rounded-xl border backdrop-blur-md flex items-center justify-between transition-all",
+            "p-4 rounded-xl border  flex items-center justify-between transition-all",
             bug.status === 'fixed' && "bg-emerald-950/20 border-emerald-500/20",
-            bug.status === 'fixing' && "bg-rose-950/20 border-rose-500/30 shadow-[0_0_15px_rgba(245,158,11,0.1)]",
+            bug.status === 'fixing' && "bg-rose-950/20 border-rose-500/30 ",
             bug.status === 'detected' && "bg-rose-950/10 border-rose-500/10",
           )}>
             <div className="flex items-center gap-4 w-full">

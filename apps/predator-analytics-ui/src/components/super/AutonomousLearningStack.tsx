@@ -52,13 +52,13 @@ export const AutonomousLearningStack: React.FC = () => {
     };
 
     return (
-        <div className="p-8 bg-slate-950/80 backdrop-blur-3xl border border-rose-500/10 rounded-[40px] shadow-2xl relative overflow-hidden group">
+        <div className="p-8 bg-slate-950/80  border border-rose-500/10 rounded-[40px] shadow-2xl relative overflow-hidden group">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-rose-500/40 to-transparent" />
             
             <div className="flex items-center justify-between mb-8 relative z-10">
                 <div className="flex items-center gap-4">
-                    <div className="p-4 bg-rose-500/20 rounded-2xl border border-rose-500/30 shadow-[0_0_20px_rgba(225,29,72,0.15)]">
-                        <Database className="w-6 h-6 text-rose-500 animate-pulse" />
+                    <div className="p-4 bg-rose-500/20 rounded-2xl border border-rose-500/30 ">
+                        <Database className="w-6 h-6 text-rose-500 " />
                     </div>
                     <div>
                         <h2 className="text-xl font-black text-white tracking-widest uppercase italic">{premiumLocales.evolution.learningStack.title}</h2>
@@ -77,7 +77,7 @@ export const AutonomousLearningStack: React.FC = () => {
                     <div className="flex justify-between items-center mb-4">
                         <span className="text-[11px] text-slate-400 uppercase font-black tracking-widest">{premiumLocales.evolution.learningStack.engineStatus}</span>
                         <div className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border-2 ${
-                            trainingStatus?.status === 'running' ? 'bg-rose-500/20 text-rose-400 border-rose-500/30 animate-pulse' : 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
+                            trainingStatus?.status === 'running' ? 'bg-rose-500/20 text-rose-400 border-rose-500/30 ' : 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
                         }`}>
                             {trainingStatus?.status === 'running' ? 'АКТИВНЕ НАВЧАННЯ' : premiumLocales.evolution.learningStack.idle}
                         </div>
@@ -130,7 +130,7 @@ export const AutonomousLearningStack: React.FC = () => {
                         {Array.isArray(history) && history.slice(0, 3).map((job, i) => (
                             <div key={job.id || i} className="flex items-center justify-between text-[11px] p-3 hover:bg-white/5 rounded-2xl transition-all border border-transparent hover:border-white/10 group/row">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(225,29,72,0.5)]" />
+                                    <div className="w-2 h-2 rounded-full bg-rose-500 " />
                                     <span className="text-slate-200 font-black italic truncate max-w-[120px]">{job.name}</span>
                                 </div>
                                 <div className="flex gap-3 font-mono items-center">

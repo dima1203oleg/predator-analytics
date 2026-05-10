@@ -50,7 +50,7 @@ export const TruthLedgerTerminal: React.FC = () => {
   }, [entries]);
 
   return (
-    <div className="h-full bg-black/80 border border-emerald-500/20 rounded-[32px] overflow-hidden flex flex-col shadow-[0_0_50px_rgba(16,185,129,0.05)] backdrop-blur-3xl">
+    <div className="h-full bg-black/80 border border-emerald-500/20 rounded-[32px] overflow-hidden flex flex-col  ">
       {/* Terminal Header */}
       <div className="px-6 py-4 bg-emerald-500/10 border-b border-emerald-500/20 flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -64,7 +64,7 @@ export const TruthLedgerTerminal: React.FC = () => {
           </span>
         </div>
         <div className="flex items-center gap-4">
-            <div className={`px-2 py-0.5 rounded text-[8px] font-bold font-mono transition-all ${isSyncing ? 'bg-amber-500/20 text-amber-400 animate-pulse' : 'bg-emerald-500/20 text-emerald-400'}`}>
+            <div className={`px-2 py-0.5 rounded text-[8px] font-bold font-mono transition-all ${isSyncing ? 'bg-amber-500/20 text-amber-400 ' : 'bg-emerald-500/20 text-emerald-400'}`}>
                 {isSyncing ? premiumLocales.evolution.ledgerView.sync : premiumLocales.evolution.ledgerView.liveStream}
             </div>
             <Activity className={isSyncing ? "text-amber-500" : "text-emerald-500/50"} size={14} />
@@ -117,7 +117,7 @@ export const TruthLedgerTerminal: React.FC = () => {
          <div className="flex gap-6">
             <span>{premiumLocales.evolution.ledgerView.status}</span>
             <span>{premiumLocales.evolution.ledgerView.uptime}: 24h 56m</span>
-            <span className="text-emerald-500/60 animate-pulse">{premiumLocales.evolution.ledgerView.connection}</span>
+            <span className="text-emerald-500/60 ">{premiumLocales.evolution.ledgerView.connection}</span>
          </div>
          <div className="flex items-center gap-2">
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />

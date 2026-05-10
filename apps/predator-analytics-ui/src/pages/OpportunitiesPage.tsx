@@ -182,7 +182,7 @@ export default function OpportunitiesPage() {
             
             
             <section className="relative overflow-hidden rounded-[40px] border border-white/[0.08] bg-[#03080f] p-8 shadow-[0_45px_100px_rgba(0,0,0,0.6)] sm:p-10">
-                <div className="absolute top-0 right-0 p-10 opacity-[0.03] pointer-events-none animate-pulse-slow">
+                <div className="absolute top-0 right-0 p-10 opacity-[0.03] pointer-events-none -slow">
                     <Brain size={240} strokeWidth={0.5} className="text-amber-500" />
                 </div>
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_-20%,rgba(245,158,11,0.08),transparent_50%)] pointer-events-none" />
@@ -205,8 +205,8 @@ export default function OpportunitiesPage() {
                         <div className="space-y-4">
                             <h1 className="flex items-center gap-5 text-4xl font-black tracking-tight text-white sm:text-5xl lg:text-6xl">
                                 <div className="relative">
-                                    <Lightbulb className="text-amber-400 drop-shadow-[0_0_15px_rgba(245,158,11,0.5)]" size={52} />
-                                    <div className="absolute -inset-2 bg-amber-400/20 blur-xl rounded-full animate-pulse" />
+                                    <Lightbulb className="text-amber-400 " size={52} />
+                                    <div className="absolute -inset-2 bg-amber-400/20 blur-xl rounded-full " />
                                 </div>
                                 <span>Можливості</span>
                             </h1>
@@ -219,7 +219,7 @@ export default function OpportunitiesPage() {
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 xl:w-[600px]">
                             <div className="card-depth group rounded-[28px] border border-white/[0.08] bg-black/40 p-5 transition-all hover:bg-black/60 shadow-xl">
                                 <div className="flex items-center gap-2 mb-3">
-                                    <div className="h-1.5 w-1.5 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.8)]" />
+                                    <div className="h-1.5 w-1.5 rounded-full bg-amber-400 " />
                                     <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 group-hover:text-amber-400/80 transition-colors">Стратегічний Вузол</span>
                                 </div>
                                 <div className="text-base font-bold text-white tracking-tight">Активні сигнали: {insights.length}</div>
@@ -228,7 +228,7 @@ export default function OpportunitiesPage() {
 
                             <div className="card-depth group rounded-[28px] border border-white/[0.08] bg-black/40 p-5 transition-all hover:bg-black/60 shadow-xl">
                                 <div className="flex items-center gap-2 mb-3">
-                                    <div className="h-1.5 w-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
+                                    <div className="h-1.5 w-1.5 rounded-full bg-cyan-400 " />
                                     <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 group-hover:text-cyan-400/80 transition-colors">Хаб розвідки</span>
                                 </div>
                                 <div className="text-base font-bold text-white tracking-tight">{tabs.find((tab) => tab.key === activeTab)?.label}</div>
@@ -241,7 +241,7 @@ export default function OpportunitiesPage() {
                                     <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400/60">Верифікація</span>
                                 </div>
                                 <div className="text-base font-black text-emerald-400 tracking-tighter uppercase leading-none">Ядро можливостей</div>
-                                <div className="text-[10px] text-emerald-500/40 mt-1 font-mono group-hover:animate-pulse">ДОВІ ЕНИЙ СЕКТО </div>
+                                <div className="text-[10px] text-emerald-500/40 mt-1 font-mono group-hover:">ДОВІ ЕНИЙ СЕКТО </div>
                             </div>
                     </div>
                 </div>
@@ -499,7 +499,7 @@ function ExecutiveTab({
             </div>
 
             {/* Detailed Signals Feed */}
-            <div className="rounded-[40px] border border-white/[0.08] bg-[#050505]/60 backdrop-blur-3xl p-8 relative overflow-hidden group">
+            <div className="rounded-[40px] border border-white/[0.08] bg-[#050505]/60  p-8 relative overflow-hidden group">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-amber-400/5 rounded-full blur-[80px] pointer-events-none" />
                 
                 <div className="flex flex-col gap-3 border-b border-white/[0.06] pb-6 sm:flex-row sm:items-end sm:justify-between relative z-10">
@@ -537,7 +537,7 @@ function ExecutiveTab({
                                         Вплив: {insight.impact}
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                        <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 " />
                                         <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Статус: Оперативно</span>
                                     </div>
                                 </div>
@@ -555,7 +555,7 @@ function ExecutiveTab({
  */
 function StrategicROIMatrix({ insights }: { insights: MarketInsight[] }) {
     return (
-        <div className="h-full rounded-[40px] border border-white/[0.08] bg-[#050505]/60 backdrop-blur-3xl p-8 relative overflow-hidden group flex flex-col">
+        <div className="h-full rounded-[40px] border border-white/[0.08] bg-[#050505]/60  p-8 relative overflow-hidden group flex flex-col">
             <div className="flex items-center gap-3 mb-8">
                 <Scale className="text-amber-400" size={24} />
                 <h3 className="text-xl font-black text-white uppercase tracking-tight italic">Матриця Стратегічного ROI</h3>
@@ -598,13 +598,13 @@ function StrategicROIMatrix({ insights }: { insights: MarketInsight[] }) {
                                 className="absolute group/point cursor-pointer"
                             >
                                 <div className={cn(
-                                    "w-4 h-4 rounded-full border-2 border-white shadow-[0_0_15px_rgba(255,255,255,0.3)] transition-all group-hover/point:scale-150 group-hover/point:shadow-[0_0_25px_rgba(255,255,255,0.6)]",
+                                    "w-4 h-4 rounded-full border-2 border-white  transition-all group-hover/point:scale-150 group-hover/point:",
                                     insight.priority === 'high' ? "bg-emerald-400" : insight.priority === 'medium' ? "bg-amber-400" : "bg-slate-400"
                                 )} />
                                 
                                 {/* Tooltip on Hover */}
                                 <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 opacity-0 group-hover/point:opacity-100 transition-all pointer-events-none z-50">
-                                    <div className="bg-[#0a0a0a] border border-white/10 rounded-2xl p-4 shadow-2xl min-w-[200px] backdrop-blur-xl">
+                                    <div className="bg-[#0a0a0a] border border-white/10 rounded-2xl p-4 shadow-2xl min-w-[200px] ">
                                         <div className="text-[10px] font-black text-slate-500 uppercase mb-2">Об'єкт: #{insight.id.slice(0, 8)}</div>
                                         <div className="text-xs font-bold text-white mb-2">{insight.title}</div>
                                         <div className="flex justify-between items-center text-[9px] font-black uppercase">
@@ -630,7 +630,7 @@ function MarketCaptureSimulator({ monetaryImpact }: { monetaryImpact: number }) 
     const estimatedRev = (monetaryImpact * (marketShare / 100)) * 12; // Yearly estimate
 
     return (
-        <div className="h-full rounded-[40px] border border-white/[0.08] bg-gradient-to-br from-emerald-500/[0.03] to-cyan-500/[0.03] backdrop-blur-3xl p-8 relative overflow-hidden group flex flex-col">
+        <div className="h-full rounded-[40px] border border-white/[0.08] bg-gradient-to-br from-emerald-500/[0.03] to-cyan-500/[0.03]  p-8 relative overflow-hidden group flex flex-col">
             <div className="flex items-center gap-3 mb-8">
                 <Target className="text-emerald-400" size={24} />
                 <h3 className="text-xl font-black text-white uppercase tracking-tight italic">Симулятор  инкової Частки</h3>
@@ -639,7 +639,7 @@ function MarketCaptureSimulator({ monetaryImpact }: { monetaryImpact: number }) 
             <div className="space-y-10 flex-1 flex flex-col justify-center">
                 <div className="text-center space-y-2">
                     <div className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Прогнозований  ічний Дохід</div>
-                    <div className="text-5xl font-black text-white tracking-tighter tabular-nums drop-shadow-[0_0_20px_rgba(16,185,129,0.3)]">
+                    <div className="text-5xl font-black text-white tracking-tighter tabular-nums ">
                         {formatMoney(estimatedRev)}
                     </div>
                     <div className="text-[10px] font-mono text-emerald-500/60 uppercase">Основано на GNN-прогнозі (Графові Нейронні Мережі) v63.0-ELITE</div>

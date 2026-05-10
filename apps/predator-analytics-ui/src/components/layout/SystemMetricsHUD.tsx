@@ -37,7 +37,7 @@ export const SystemMetricsHUD: React.FC = () => {
             icon: isColab ? AlertCircle : Server,
             value: isColab ? 'GOOGLE_COLAB' : 'NVIDIA_PROD',
             sub: isColab ? 'FAILOVER_MODE' : 'PRIMARY_LINK_OK',
-            color: isColab ? 'text-rose-500 animate-pulse' : 'text-emerald-400',
+            color: isColab ? 'text-rose-500' : 'text-emerald-400',
             bg: isColab ? 'bg-rose-500/10' : 'bg-emerald-500/5'
         },
         { 
@@ -81,7 +81,7 @@ export const SystemMetricsHUD: React.FC = () => {
                         "flex items-center gap-2.5 px-3 py-1.5 transition-all relative overflow-hidden h-8 rounded-md group",
                         m.bg || "bg-gradient-to-b from-white/[0.03] to-transparent",
                         "border border-white/5 hover:border-white/20 select-none shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]",
-                        "hover:shadow-[0_0_12px_rgba(255,255,255,0.05)]"
+                        ""
                     )}
                 >
                     {/* Hover light effect */}

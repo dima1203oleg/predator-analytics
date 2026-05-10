@@ -34,7 +34,7 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ className }) => {
             <motion.div 
                 layout
                 className={cn(
-                    "relative overflow-hidden transition-all duration-500 rounded-[2rem] border backdrop-blur-3xl shadow-3xl",
+                    "relative overflow-hidden transition-all duration-500 rounded-[2rem] border  shadow-3xl",
                     isFocused 
                         ? "bg-black/90 border-yellow-500/50 shadow-[0_40px_100px_-20px_rgba(180,140,20,0.3)] ring-4 ring-yellow-600/10" 
                         : "bg-slate-900/60 border-white/5 hover:border-yellow-900/20 shadow-2xl"
@@ -58,7 +58,7 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ className }) => {
                         isFocused ? "bg-yellow-600/20 scale-110" : "bg-white/5"
                     )}>
                         {isFocused ? (
-                            <Zap size={24} className="text-yellow-500 drop-shadow-[0_0_10px_#f59e0b]" />
+                            <Zap size={24} className="text-yellow-500 " />
                         ) : (
                             <Search size={22} className="text-slate-500" />
                         )}
@@ -135,7 +135,7 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ className }) => {
                             {/* Threat Alert Panel */}
                             <div className="px-6 py-4 bg-yellow-600/10 flex items-center justify-between border-t border-yellow-500/20">
                                 <div className="flex items-center gap-3">
-                                    <ShieldAlert size={14} className="text-yellow-500 animate-pulse" />
+                                    <ShieldAlert size={14} className="text-yellow-500 " />
                                     <span className="text-[9px] font-black text-yellow-500 uppercase tracking-[0.2em] italic">СИСТЕМА ШІ-МОНІТОРИНГУ АКТИВОВАНА</span>
                                 </div>
                                 <span className="text-[8px] font-mono text-yellow-900 uppercase">LATENCY: 0.1ms</span>

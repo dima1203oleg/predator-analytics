@@ -88,7 +88,7 @@ const Nvidia3DVisualizer: React.FC<{ load?: number }> = ({ load = 45 }) => {
       {/* UI Overlay Labels */}
       <div className="absolute top-10 left-10 z-10 pointer-events-none">
         <div className="flex items-center gap-4 mb-3">
-          <div className="w-4 h-4 rounded-full bg-rose-500 shadow-[0_0_25px_rgba(225,29,72,1)] animate-pulse" />
+          <div className="w-4 h-4 rounded-full bg-rose-500  " />
           <span className="text-sm font-black text-white uppercase tracking-[0.4em]">H100 SOVEREIGN_CORE_ELITE</span>
         </div>
         <div className="text-4xl font-black text-slate-800 italic uppercase tracking-tighter opacity-30 select-none">NODE_READY</div>

@@ -63,7 +63,7 @@ const Node: React.FC<{ data: NodeData, onClick: (n: NodeData) => void }> = ({ da
 
       {(hovered || data.val > 7) && (
         <Html distanceFactor={10}>
-          <div className="bg-black/90 backdrop-blur-xl border border-white/20 p-2 rounded-lg text-[9px] text-white whitespace-nowrap pointer-events-none shadow-2xl">
+          <div className="bg-black/90  border border-white/20 p-2 rounded-lg text-[9px] text-white whitespace-nowrap pointer-events-none shadow-2xl">
             <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: data.color }} />
                 <span className="font-black uppercase tracking-widest">{data.name}</span>
@@ -170,7 +170,7 @@ export const KnowledgeGraph3D: React.FC = () => {
       {/* Header Overlay */}
       <div className="absolute top-8 left-8 z-10 pointer-events-none">
           <div className="flex items-center gap-3 mb-2">
-              <Layers className="text-blue-500 animate-pulse" size={24} />
+              <Layers className="text-blue-500 " size={24} />
               <h2 className="text-2xl font-black text-white uppercase tracking-tighter italic">NEURAL_GRAPH_V47</h2>
           </div>
           <p className="text-[10px] text-slate-500 font-mono tracking-widest uppercase mb-4">Deep Extraction Level: 3 | Real-Time Sync Enabled</p>
@@ -196,7 +196,7 @@ export const KnowledgeGraph3D: React.FC = () => {
             initial={{ x: 300, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: 300, opacity: 0 }}
-            className="absolute top-8 right-8 z-20 w-72 bg-black/60 backdrop-blur-xl border border-white/10 rounded-3xl p-6 shadow-2xl"
+            className="absolute top-8 right-8 z-20 w-72 bg-black/60  border border-white/10 rounded-3xl p-6 shadow-2xl"
           >
             <div className="flex justify-between items-start mb-6">
                 <div>

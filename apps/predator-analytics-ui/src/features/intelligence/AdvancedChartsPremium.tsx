@@ -341,7 +341,7 @@ const AdvancedChartsPremium: React.FC = () => {
             title={
               <div className="flex items-center gap-12">
                 <div className="relative group">
-                  <div className="absolute inset-0 bg-yellow-600/20 blur-[80px] rounded-full scale-150 animate-pulse" />
+                  <div className="absolute inset-0 bg-yellow-600/20 blur-[80px] rounded-full scale-150 " />
                   <div className="relative p-8 bg-black border-2 border-yellow-500/40 rounded-[3rem] shadow-4xl transform -rotate-3 hover:rotate-0 transition-all duration-700">
                     <BarChart3 size={48} className="text-[#D4AF37] shadow-[0_0_30px_#D4AF37]" />
                   </div>
@@ -375,7 +375,7 @@ const AdvancedChartsPremium: React.FC = () => {
 
           {/* CONTROL HUD ELITE */}
           <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-8 z-20">
-             <div className="flex gap-4 p-3 bg-black border-2 border-white/5 rounded-[3rem] shadow-4xl backdrop-blur-3xl">
+             <div className="flex gap-4 p-3 bg-black border-2 border-white/5 rounded-[3rem] shadow-4xl ">
                 {(['week', 'month', 'quarter', 'year'] as const).map((r) => (
                   <button 
                     key={r} onClick={() => setTimeRange(r)}
@@ -400,7 +400,7 @@ const AdvancedChartsPremium: React.FC = () => {
                   <RefreshCw size={32} className={cn("transition-transform duration-700", !refreshing && "group-hover/btn:rotate-180")} />
                 </button>
                 <button className="px-14 py-8 bg-[#D4AF37] text-black border-2 border-yellow-400/40 rounded-[2.5rem] text-[12px] font-black uppercase tracking-[0.5em] italic hover:brightness-110 transition-all flex items-center gap-6 shadow-4xl">
-                   EXPORT_DATA_ARRAY <Download size={24} className="animate-pulse" />
+                   EXPORT_DATA_ARRAY <Download size={24} className="" />
                 </button>
              </div>
           </div>
@@ -409,7 +409,7 @@ const AdvancedChartsPremium: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             {loading ? (
               Array(6).fill(0).map((_, i) => (
-                <div key={i} className="h-[400px] bg-black/40 border-2 border-white/5 rounded-[4rem] animate-pulse" />
+                <div key={i} className="h-[400px] bg-black/40 border-2 border-white/5 rounded-[4rem] " />
               ))
             ) : (
               <>
@@ -501,15 +501,15 @@ const AdvancedChartsPremium: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
-            className="p-12 bg-black/40 border-2 border-white/[0.04] rounded-[5rem] backdrop-blur-3xl shadow-4xl relative overflow-hidden group hover:border-yellow-500/10 transition-all duration-1000"
+            className="p-12 bg-black/40 border-2 border-white/[0.04] rounded-[5rem]  shadow-4xl relative overflow-hidden group hover:border-yellow-500/10 transition-all duration-1000"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/[0.02] to-transparent pointer-events-none" />
             <div className="flex flex-col xl:flex-row items-center justify-between gap-12 relative z-10">
                <div className="flex items-center gap-10">
                   <div className="relative group/globe">
-                    <div className="absolute inset-0 bg-yellow-500/20 blur-[60px] rounded-full scale-150 animate-pulse" />
+                    <div className="absolute inset-0 bg-yellow-500/20 blur-[60px] rounded-full scale-150 " />
                     <div className="p-6 bg-black border-2 border-yellow-500/20 rounded-[3rem] shadow-4xl">
-                      <Brain size={64} className="text-yellow-500 animate-pulse" />
+                      <Brain size={64} className="text-yellow-500 " />
                     </div>
                   </div>
                   <div className="space-y-3">

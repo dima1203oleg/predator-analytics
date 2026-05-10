@@ -171,7 +171,7 @@ export const OpenSearch: React.FC = () => {
   };
 
   return (
-    <div className={`flex flex-col bg-slate-950/80 border border-slate-800/50 rounded-[24px] backdrop-blur-xl overflow-hidden ${isFullscreen ? 'fixed inset-4 z-50' : 'h-[calc(100vh-140px)]'}`}>
+    <div className={`flex flex-col bg-slate-950/80 border border-slate-800/50 rounded-[24px]  overflow-hidden ${isFullscreen ? 'fixed inset-4 z-50' : 'h-[calc(100vh-140px)]'}`}>
       {/* Заголовок */}
       <div className="p-4 border-b border-slate-800/50 flex justify-between items-center bg-gradient-to-r from-orange-500/10 to-transparent">
         <div className="flex items-center gap-4">
@@ -184,7 +184,7 @@ export const OpenSearch: React.FC = () => {
               <span className="text-[9px] text-slate-500 font-mono uppercase">PREDATOR_CLUSTER_V45</span>
               {stats && (
                 <span className={`text-[9px] font-black uppercase flex items-center gap-1 ${getHealthColor(stats.cluster_health)}`}>
-                  <div className={`w-1.5 h-1.5 rounded-full animate-pulse ${stats.cluster_health === 'green' ? 'bg-emerald-400' : stats.cluster_health === 'yellow' ? 'bg-amber-400' : 'bg-rose-400'}`} />
+                  <div className={`w-1.5 h-1.5 rounded-full  ${stats.cluster_health === 'green' ? 'bg-emerald-400' : stats.cluster_health === 'yellow' ? 'bg-amber-400' : 'bg-rose-400'}`} />
                   {getHealthLabel(stats.cluster_health)}
                 </span>
               )}

@@ -38,7 +38,7 @@ export const EnvSidebar: React.FC<EnvSidebarProps> = ({
                                 className={`
                                     w-full text-left p-3 rounded-lg border transition-all duration-300 btn-3d
                                     ${active
-                                        ? "border-sky-500 bg-sky-500/10 text-sky-100 shadow-[0_0_20px_rgba(14,165,233,0.2)]"
+                                        ? "border-sky-500 bg-sky-500/10 text-sky-100 "
                                         : "border-slate-800 bg-slate-900/40 text-slate-400 hover:bg-slate-800/60 hover:text-slate-200"
                                     }
                                 `}

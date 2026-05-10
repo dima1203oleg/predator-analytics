@@ -59,9 +59,9 @@ const SovereignReliabilityBadge: React.FC<{ score: number }> = ({ score }) => {
       "flex items-center gap-3 px-6 py-2 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] italic border shadow-inner",
       isEmerald ? "bg-emerald-600/10 border-emerald-600/30 text-emerald-500" :
       isAmber ? "bg-yellow-600/10 border-yellow-600/30 text-yellow-500" :
-      "bg-amber-600/10 border-amber-600/30 text-amber-500 shadow-[0_0_15px_rgba(225,29,72,0.2)]"
+      "bg-amber-600/10 border-amber-600/30 text-amber-500 "
     )}>
-      {isEmerald ? <CheckCircle size={14} /> : isAmber ? <AlertCircle size={14} /> : <Siren size={14} className="animate-pulse" />}
+      {isEmerald ? <CheckCircle size={14} /> : isAmber ? <AlertCircle size={14} /> : <Siren size={14} className="" />}
       {score}% {isEmerald ? 'НАДІЙНИЙ_ВУЗОЛ' : isAmber ? 'ДОПУСТИМО' : 'КРИТИЧНИЙ_РИЗИК'}
     </div>
   );
@@ -151,7 +151,7 @@ export default function SupplierDiscoveryPremium() {
             title={
               <div className="flex items-center gap-12">
                 <div className="relative group">
-                  <div className="absolute inset-0 bg-yellow-500/20 blur-[80px] rounded-full scale-150 animate-pulse" />
+                  <div className="absolute inset-0 bg-yellow-500/20 blur-[80px] rounded-full scale-150 " />
                   <div className="relative p-8 bg-black border-2 border-yellow-500/40 rounded-[3rem] shadow-4xl transform -rotate-3 hover:rotate-0 transition-all duration-700">
                     <Target size={48} className="text-yellow-500 shadow-[0_0_30px_#d4af37]" />
                   </div>

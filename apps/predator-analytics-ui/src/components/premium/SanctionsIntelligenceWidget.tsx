@@ -38,7 +38,7 @@ export const SanctionsIntelligenceWidget: React.FC<{ persona: string }> = ({ per
   };
 
   return (
-    <div className="bg-slate-950/80 border border-rose-500/20 rounded-[32px] backdrop-blur-xl overflow-hidden h-full flex flex-col relative group">
+    <div className="bg-slate-950/80 border border-rose-500/20 rounded-[32px]  overflow-hidden h-full flex flex-col relative group">
       <div className="absolute inset-0 bg-gradient-to-br from-rose-500/5 to-transparent pointer-events-none" />
 
       {/* Header */}
@@ -90,7 +90,7 @@ export const SanctionsIntelligenceWidget: React.FC<{ persona: string }> = ({ per
                  transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
                  className="w-12 h-12 border-4 border-rose-500/20 border-t-rose-500 rounded-full mx-auto"
                />
-               <p className="text-[10px] text-slate-500 uppercase font-black animate-pulse">{premiumLocales.sanctionsIntelligence.scanningMessage}</p>
+               <p className="text-[10px] text-slate-500 uppercase font-black ">{premiumLocales.sanctionsIntelligence.scanningMessage}</p>
             </div>
           )}
 
