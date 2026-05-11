@@ -27,8 +27,15 @@ export interface AntigravityTask {
  * Підключає ендпоінти з Factory Core Engine + Neural Training.
  */
 export const factoryApi = {
+  // ─── System Mode Control ────────────────────────────────────────────────
+
+  /** Встановити системний режим (AUTONOMOUS / API) */
+  setSystemMode: async (mode: 'AUTONOMOUS' | 'API') => {
+    return (await apiClient.post('/factory/mode', { mode })).data;
+  },
+
   // ─── Knowledge Map ────────────────────────────────────────────────────────
-  
+
   /** Отримати золоті патерни (score ≥ 92) */
   getGoldPatterns: async () => {
     const res = await apiClient.get('/factory/patterns/gold');

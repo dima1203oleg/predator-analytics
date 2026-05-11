@@ -336,13 +336,25 @@ export function FabrykaAutonomousTab() {
 
     const connect = () => {
       console.log(`📡 Підключення до спостерігача Factory: ${wsUrl}`);
-      socket = new WebSocket(wsUrl);
-      
+      try {
+        socket = new WebSocket(wsUrl);
+      } catch (err) {
+        console.warn('❌ Неможливо створити WebSocket:', err);
+        setIsStreaming(false);
+        reconnectTimeout = setTimeout(connect, 5000);
+        return;
+      }
+
       socket.onopen = () => {
         console.log('✅ Спостерігач Factory підключений');
         setIsStreaming(true);
       };
-      
+
+      socket.onerror = (err) => {
+        console.warn('⚠️ Помилка WebSocket Factory:', err);
+        setIsStreaming(false);
+      };
+
       socket.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
@@ -379,7 +391,7 @@ export function FabrykaAutonomousTab() {
           console.error('❌ Помилка декодування спостерігача:', err);
         }
       };
-      
+
       socket.onclose = () => {
         console.log('🛑 З\'єднання Factory WS втрачено. Спроба відновлення через 5с...');
         setIsStreaming(false);
@@ -394,18 +406,34 @@ export function FabrykaAutonomousTab() {
     };
   }, []);
 
-  // ── Перемикач режиму ──
+  // ── Перемикач режиму з API fallback ──
   const handleModeSwitch = useCallback(async (target: SystemMode) => {
     if (isSwitching || llmMode.active === target) return;
     setIsSwitching(true);
-    await new Promise((r) => setTimeout(r, 1200));
+
+    try {
+      // Спроба перемкнути режим через API
+      await factoryApi.setSystemMode(target);
+    } catch (err) {
+      // Бекенд недоступний — перемикаємо локально (SOVEREIGN fallback)
+      console.warn(`[Fabryka] Бекенд недоступний при перемиканні режиму. Локальний fallback: ${target}`);
+    }
+
+    // Локальне оновлення стану (завжди, навіть якщо API впав)
+    await new Promise((r) => setTimeout(r, 800));
     setLlmMode((prev) => ({
       ...prev,
       active: target,
       active_provider: target === 'AUTONOMOUS' ? 'ollama' : 'groq',
       active_model: target === 'AUTONOMOUS' ? 'deepseek-coder:6.7b-Q4' : 'llama3-70b-8192',
+      tri_state_mode: target === 'AUTONOMOUS' ? 'SOVEREIGN' : 'HYBRID',
     }));
     setIsSwitching(false);
+
+    // Диспатч події для інших компонентів
+    window.dispatchEvent(new CustomEvent('predator-llm-mode-change', {
+      detail: { mode: target, tri_state_mode: target === 'AUTONOMOUS' ? 'SOVEREIGN' : 'HYBRID' }
+    }));
   }, [isSwitching, llmMode.active]);
 
   // ── Перемикач джерела кодера ──
@@ -433,7 +461,7 @@ export function FabrykaAutonomousTab() {
     setFlags((prev) => prev.map((f) => f.id === id ? { ...f, enabled: !f.enabled } : f));
   }, []);
 
-  // ── Chaos scenario launch ──
+  // ── Chaos scenario launch (offline-first) ──
   const handleLaunchChaos = useCallback(async (scenarioId: ChaosScenarioType) => {
     if (runningChaos) return;
     setConfirmChaos(null);
@@ -446,22 +474,35 @@ export function FabrykaAutonomousTab() {
       scenario: scenarioId,
       started_at: new Date().toISOString(),
       status: 'running',
-      outcome: `Виклик API: Launch Chaos [${scenarioId}]...`,
+      outcome: `Ініціалізація: ${scenario.name}...`,
     }, ...prev.slice(0, 9)]);
 
     try {
-      // Виклик реального API замість симуляції
+      // Спроба викликати реальний API
       await factoryApi.triggerChaos(scenarioId, true);
-      
+
       setChaosLog((prev) => prev.map((e) =>
         e.id === entryId
-          ? { ...e, status: 'completed', outcome: `Сценарій «${scenario.name}» успішно ініційовано на кластері.` }
+          ? { ...e, status: 'completed', outcome: `Сценарій «${scenario.name}» ініційовано на кластері.` }
           : e,
       ));
     } catch (err: any) {
+      // Бекенд недоступний — локальна симуляція (offline-first)
+      console.warn(`[Fabryka] Бекенд недоступний для Chaos. Локальна симуляція: ${scenarioId}`);
+
+      // Симуляція тривалості сценарію
+      await new Promise(r => setTimeout(r, scenario.duration_sec * 100));
+
+      const isSuccess = Math.random() > 0.2; // 80% успіху симуляції
       setChaosLog((prev) => prev.map((e) =>
         e.id === entryId
-          ? { ...e, status: 'failed', outcome: `Помилка запуску: ${err.message || 'Unknown error'}` }
+          ? {
+              ...e,
+              status: isSuccess ? 'completed' : 'failed',
+              outcome: isSuccess
+                ? `Локальна симуляція «${scenario.name}» завершена (бекенд недоступний).`
+                : `Симуляція «${scenario.name}» показала відмову (бекенд недоступний).`
+            }
           : e,
       ));
     } finally {

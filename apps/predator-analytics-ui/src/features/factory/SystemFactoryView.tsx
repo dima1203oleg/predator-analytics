@@ -254,27 +254,70 @@ export default function SystemFactoryView() {
   };
 
   const handleStartImprovement = async () => {
+    const time = new Date().toLocaleTimeString('uk-UA');
+    setImprovementStatus('running');
+    setInfiniteRunning(true);
+    setIsBackendOffline(false);
+
+    setInfiniteLogs(prev => [...prev.slice(-49), `[${time}] 🚀 SYSTEM: Ініціалізація OODA циклу. Звернення до Core API...`]);
+    pushSystemMessage('🚀 Ініційовано цикл автономного вдосконалення системи на бекенді...', 'build');
+
     try {
-      setImprovementStatus('running');
-      setInfiniteRunning(true);
-      
-      const time = new Date().toLocaleTimeString('uk-UA');
-      setInfiniteLogs(prev => [...prev.slice(-49), `[${time}] 🚀 SYSTEM: Ініціалізація OODA циклу. Звернення до Core API...`]);
-      pushSystemMessage('🚀 Ініційовано цикл автономного вдосконалення системи на бекенді...', 'build');
-      
-      // Насправді запускаємо OODA Loop на бекенді
       await factoryApi.startInfinite();
       await refreshInfiniteStatus(true);
-      
       pushSystemMessage('✅ Сервер підтвердив запуск циклу вдосконалення (OODA).', 'build');
-      
     } catch (e) {
-      console.warn("Бекенд недоступний при старті OODA. Входимо в режим очікування.", e);
-      const time = new Date().toLocaleTimeString('uk-UA');
-      setInfiniteLogs(prev => [...prev.slice(-49), `[${time}] 📡 SYSTEM: Бекенд недоступний. Цикл очікує і буде продовжено щойно сервер з'явиться...`]);
-      pushSystemMessage('📡 Сервер недоступний. Цикл залишається активним і продовжить роботу, щойно система підніметься у мережі (auto-reconnect).', 'analyze');
+      console.warn("[Factory] Бекенд недоступний при старті OODA.", e);
+      setIsBackendOffline(true);
+      setInfiniteRunning(false); // Не можемо запустити без бекенду
+      setImprovementStatus('error');
+
+      const failTime = new Date().toLocaleTimeString('uk-UA');
+      setInfiniteLogs(prev => [...prev.slice(-49), `[${failTime}] ⚠️ SYSTEM: Бекенд недоступний. OODA цикл НЕ запущено. Очікування відновлення з'єднання...`]);
+      pushSystemMessage('⚠️ Сервер недоступний. OODA цикл не запущено. Система очікує відновлення з\'єднання...', 'analyze');
+
+      // Запускаємо polling для відновлення
+      startBackendRecoveryPolling();
     }
   };
+
+  // ── Polling для відновлення бекенду ──
+  const recoveryIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const startBackendRecoveryPolling = useCallback(() => {
+    if (recoveryIntervalRef.current) return; // Вже запущено
+
+    console.log('[Factory] Запуск polling відновлення бекенду...');
+    recoveryIntervalRef.current = setInterval(async () => {
+      try {
+        await apiClient.get('/health');
+        // Бекенд відновився!
+        console.log('[Factory] Бекенд відновлено! Авто-резюм...');
+        setIsBackendOffline(false);
+        setImprovementStatus('idle');
+
+        const recoverTime = new Date().toLocaleTimeString('uk-UA');
+        setInfiniteLogs(prev => [...prev.slice(-49), `[${recoverTime}] ✅ SYSTEM: З'єднання відновлено. Можна запускати OODA цикл.`]);
+        pushSystemMessage('✅ З\'єднання з сервером відновлено. Готовий до запуску OODA циклу.', 'build');
+
+        // Зупиняємо polling
+        if (recoveryIntervalRef.current) {
+          clearInterval(recoveryIntervalRef.current);
+          recoveryIntervalRef.current = null;
+        }
+      } catch {
+        // Ще офлайн — продовжуємо чекати
+      }
+    }, 5000); // Перевірка кожні 5 секунд
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (recoveryIntervalRef.current) {
+        clearInterval(recoveryIntervalRef.current);
+      }
+    };
+  }, []);
 
   const handleMasterStart = async () => {
     pushSystemMessage('🌀 МАЙСТЕР-ЗАПУСК: Глобальна синхронізація всіх компонентів кластера...', 'deploy');
