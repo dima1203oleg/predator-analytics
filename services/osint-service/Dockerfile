@@ -28,7 +28,7 @@ FROM python:3.12-slim AS production
 
 # Мітки
 LABEL maintainer="PREDATOR Engineering Team"
-LABEL version="1.0.0"
+LABEL version="61.0-ELITE"
 LABEL description="PREDATOR OSINT Service"
 
 # Створюємо користувача (HR-05)
@@ -65,12 +65,14 @@ RUN chown -R predator:predator /app
 # Переключаємося на непривілейованого користувача
 USER predator
 
-# Порт
-EXPOSE 8000
+ENV APP_VERSION="61.0-ELITE"
+
+# Порт (HR-10: канонічний порт OSINT Service)
+EXPOSE 9200
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8000/health || exit 1
+HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
+    CMD curl -f http://localhost:9200/health || exit 1
 
 # Запуск
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "9200"]

@@ -383,7 +383,7 @@ async def main() -> None:
     loop = asyncio.get_running_loop()
 
     # Запускаємо health check сервер
-    health_runner = await start_health_server(port=8080)
+    health_runner = await start_health_server(port=9100)
 
     # Graceful shutdown
     stop_event = asyncio.Event()

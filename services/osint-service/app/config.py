@@ -1,11 +1,11 @@
-"""Конфігурація OSINT Service."""
+"""Конфігурація OSINT Service — PREDATOR Analytics v61.0-ELITE."""
 from functools import lru_cache
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    """Налаштування OSINT Service."""
+    """Налаштування OSINT Service (v61.0-ELITE)."""
 
     model_config = SettingsConfigDict(
         env_file=".env",
@@ -15,11 +15,12 @@ class Settings(BaseSettings):
 
     # Загальні
     APP_NAME: str = "PREDATOR OSINT Service"
-    APP_VERSION: str = "1.0.0"
+    APP_VERSION: str = "61.0-ELITE"
     DEBUG: bool = False
+    PORT: int = 9200  # Канонічний порт OSINT Service
 
-    # Database
-    DATABASE_URL: str = "postgresql+asyncpg://predator:predator@localhost:5432/predator"
+    # Database (HR-06: пароль тільки через env)
+    DATABASE_URL: str = "postgresql+asyncpg://predator:predator@localhost:5432/predator"  # noqa: S105 — override через env
 
     # Redis
     REDIS_URL: str = "redis://localhost:6379/2"
@@ -27,10 +28,10 @@ class Settings(BaseSettings):
     # Kafka
     KAFKA_BOOTSTRAP_SERVERS: str = "localhost:9092"
 
-    # Neo4j
+    # Neo4j (HR-06: пароль тільки через env)
     NEO4J_URI: str = "bolt://localhost:7687"
     NEO4J_USER: str = "neo4j"
-    NEO4J_PASSWORD: str = "predator"
+    NEO4J_PASSWORD: str = ""  # noqa: S105 — тільки через env var (HR-06)
 
     # Celery
     CELERY_BROKER_URL: str = "redis://localhost:6379/3"
