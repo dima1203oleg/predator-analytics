@@ -9,7 +9,7 @@ export type WebVitalsReporter = (metric: Metric) => void;
 
 const defaultReporter: WebVitalsReporter = (metric: Metric) => {
     if (import.meta.env.DEV) {
-        // eslint-disable-next-line no-console -- діагностика лише в режимі розробки
+         
         console.debug('[web-vitals]', metric.name, Math.round(metric.value * 100) / 100);
     }
 };

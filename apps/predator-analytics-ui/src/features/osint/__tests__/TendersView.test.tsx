@@ -126,7 +126,7 @@ describe('TendersView', () => {
         vi.useFakeTimers();
         render(<TendersView />);
         
-        const statusElement = screen.getByText(/КОНТУ  PROZORRO/i);
+        const statusElement = screen.getByText(/КОНТУ {2}PROZORRO/i);
         const initialText = statusElement.textContent;
 
         act(() => {

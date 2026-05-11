@@ -45,7 +45,7 @@ export const PtyTerminal: React.FC = () => {
         // Simulate execution
         setTimeout(() => {
             let response = '';
-            let type: 'output' | 'error' = 'output';
+            const type: 'output' | 'error' = 'output';
 
             if (cmd === 'help') {
                 response = 'ДОСТУПНІ КОМАНДИ: help, status, pods, logs, clear, restart, deploy, factory, scan';

@@ -112,7 +112,7 @@ describe('UBOMapView', () => {
         render(<UBOMapView />);
 
         await waitFor(() => {
-            expect(screen.getByText(/КРИТИЧНИЙ ЗБІЙ  РОЗВІДКИ/i)).toBeInTheDocument();
+            expect(screen.getByText(/КРИТИЧНИЙ ЗБІЙ {2}РОЗВІДКИ/i)).toBeInTheDocument();
         });
     });
 

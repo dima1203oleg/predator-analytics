@@ -107,7 +107,7 @@ describe('AdvancedChartsPremium', () => {
         )
 
         await waitFor(() => {
-            expect(screen.getByText(/ДИНАМІКА  ИНКОВИХ Т ЕНДІВ/i)).toBeInTheDocument()
+            expect(screen.getByText(/ДИНАМІКА {2}ИНКОВИХ Т ЕНДІВ/i)).toBeInTheDocument()
             expect(screen.getByText(/РОЗПОДІЛ КАТЕГО ІЙ/i)).toBeInTheDocument()
             expect(screen.getAllByText(/Електроніка/i).length).toBeGreaterThan(0)
             expect(screen.getByText(/\$50M/i)).toBeInTheDocument()

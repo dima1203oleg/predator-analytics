@@ -164,7 +164,7 @@ describe('DocumentsView', () => {
         
         await waitFor(() => expect(screen.getByText('Document One')).toBeInTheDocument());
         
-        const refreshBtn = screen.getByText(/Оновити  епозиторій/i);
+        const refreshBtn = screen.getByText(/Оновити {2}епозиторій/i);
         fireEvent.click(refreshBtn);
 
         expect(api.documents.list).toHaveBeenCalledTimes(2); // Initial + click
