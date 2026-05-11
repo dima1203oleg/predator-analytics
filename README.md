@@ -1,24 +1,36 @@
-# 🦅 PREDATOR Analytics v56.5-ELITE — Sovereign Power Edition
+# 🦅 PREDATOR Analytics v61.0-ELITE — Sovereign Power Edition
 
 Autonomous AI-driven analytical platform for OSINT, Financial Intelligence, and Corporate Due Diligence.
 *Concentrated power. Economic radar. Tool of Influence.*
 
-**Status**: 100% PRODUCTION READY (v56.5-elite-sealed)  
+**Status**: PRODUCTION READY (v61.0-ELITE)  
 **Python**: 3.12 ONLY (HR-01)  
+**Architecture**: Headless — керування через Web UI (Zero-Terminal)  
 **LLM Budget**: $0 (Ollama → Groq Free → Gemini Free cascade)  
 
 ---
 
-## ⚡ Architecture (SM Resource Contract)
+## ⚡ Architecture (Sovereign Headless v3.0)
 
-Optimized explicitly for a single deployment server:
-- **Server Specs**: 64GB RAM, 20 vCPU, GTX 1080 (8GB VRAM)
-- **Data Stack (~20GB)**: PostgreSQL (TimescaleDB), Redpanda (Kafka), OpenSearch, Redis, MinIO, Qdrant, Neo4j, ClickHouse.
-- **Core Stack (~10GB)**: Python API, Celery Workers, UI (v45/v55.3 React).
-- **AI Stack (~8GB)**: Ollama (GLM-5.1 Agentic Pool / DeepSeek R1), LiteLLM, ZROK Tunnel, GPU Memory Manager.
-- **Security & Ops (~12GB)**: Cilium, Kyverno, Keycloak, Vault, Prometheus, Grafana, Loki (10% sampling), Alertmanager.
+### System Memory Contract
+Кожна БД має жорстку роль (порушення = архітектурний борг):
+| База | Роль | Записи |
+|------|------|--------|
+| PostgreSQL | SSOT (метадані, транзакції) | < 1M |
+| ClickHouse | OLAP (агрегації, аналітика) | 100M+ |
+| OpenSearch | Повнотекстовий пошук | — |
+| Qdrant | Векторна пам'ять (embeddings) | — |
+| Neo4j | Граф зв'язків (фрод, власність) | — |
+| Redis | Кеш, сесії, черги | — |
+| MinIO | S3 файли, скани, PDF | — |
 
-**Total Required RAM**: ~50GB / 64GB 
+### Compute Nodes
+- **MacBook**: IDE + Frontend build (Zero-Local-Deploy)
+- **iMac (...199)**: 8 БД + Backend + AI Stack
+- **NVIDIA (...240)**: Cloud Fallback + K8s
+- **Kaggle**: CPU-Only Backup (30GB RAM)
+
+**Total Required RAM**: ~50GB / 64GB (iMac) 
 
 ---
 
@@ -38,13 +50,19 @@ chmod +x scripts/deploy_sm.sh
 ./scripts/deploy_sm.sh
 ```
 
-### 3. Access Endpoints
+### 3. Access Endpoints (v61.0-ELITE)
 
-* **UI (React/Vite)**: `http://localhost:3030` — Sovereign Command Center
-* **API Backend**: `http://localhost:8000` — Integrated Intelligence Node
-* **Grafana**: `http://localhost:3001` (admin/admin)
-* **Keycloak**: `http://localhost:8080/auth` (admin/admin)
-* **Prometheus**: `http://localhost:9090`
+| Сервіс | URL | Порт |
+|--------|-----|------|
+| **UI (React/Vite)** | `http://localhost:3030` | 3030 |
+| **Core API** | `http://localhost:8000` | 8000 |
+| **Graph Service** | `http://localhost:8001` | 8001 |
+| **OSINT Service** | `http://localhost:9201` | 9201 |
+| **Ingestion Worker** | `http://localhost:9100` | 9100 |
+| **Mock API** | `http://localhost:9080` | 9080 |
+| **Grafana** | `http://localhost:3001` | 3001 |
+| **Prometheus** | `http://localhost:9090` | 9090 |
+| **MinIO Console** | `http://localhost:9001` | 9001 |
 
 ---
 
