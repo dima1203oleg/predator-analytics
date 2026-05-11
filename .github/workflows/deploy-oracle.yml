@@ -61,7 +61,7 @@ jobs:
           context: ./apps/predator-analytics-ui
           platforms: linux/amd64
           push: true
-          tags: ghcr.io/${{ github.repository }}/frontend:v55.1.${{ github.run_number }}
+          tags: ghcr.io/${{ github.repository }}/frontend:v61.0.${{ github.run_number }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -73,7 +73,7 @@ jobs:
           file: services/core-api/Dockerfile
           platforms: linux/amd64
           push: true
-          tags: ghcr.io/${{ github.repository }}/core-api:v55.1.${{ github.run_number }}
+          tags: ghcr.io/${{ github.repository }}/core-api:v61.0.${{ github.run_number }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -85,8 +85,8 @@ jobs:
       - name: Update Helm values for oracle
         run: |
           if [ -f environments/oracle/values.yaml ]; then
-            yq -i ".frontend.image.tag = \"v55.1.${{ github.run_number }}\"" environments/oracle/values.yaml
-            yq -i ".coreApi.image.tag = \"v55.1.${{ github.run_number }}\"" environments/oracle/values.yaml
+            yq -i ".frontend.image.tag = \"v61.0.${{ github.run_number }}\"" environments/oracle/values.yaml
+            yq -i ".coreApi.image.tag = \"v61.0.${{ github.run_number }}\"" environments/oracle/values.yaml
           fi
 
       - name: Commit updated values
@@ -94,7 +94,7 @@ jobs:
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
           git add environments/oracle/values.yaml
-          git diff --staged --quiet || git commit -m "chore(oracle): оновити образи до v55.1.${{ github.run_number }} [skip ci]"
+          git diff --staged --quiet || git commit -m "chore(oracle): оновити образи до v61.0.${{ github.run_number }} [skip ci]"
           git push || echo "⚠️ Push failed — можливо немає прав запису"
 
   argocd-sync:

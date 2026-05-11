@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       target_tag:
-        description: 'Version tag to revert to (e.g. v55.1.0)'
+        description: 'Version tag to revert to (e.g. v61.0-ELITE)'
         required: true
 
 jobs:

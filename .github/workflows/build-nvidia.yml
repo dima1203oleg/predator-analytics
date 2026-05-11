@@ -69,7 +69,7 @@ jobs:
           context: ./apps/predator-analytics-ui
           platforms: linux/amd64
           push: true
-          tags: ghcr.io/${{ github.repository }}/frontend:v55.1.${{ github.run_number }}
+          tags: ghcr.io/${{ github.repository }}/frontend:v61.0.${{ github.run_number }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -81,7 +81,7 @@ jobs:
       - name: Update Helm values for nvidia
         run: |
           if [ -f environments/nvidia/values.yaml ]; then
-            yq -i ".frontend.image.tag = \"v55.1.${{ github.run_number }}\"" environments/nvidia/values.yaml
+            yq -i ".frontend.image.tag = \"v61.0.${{ github.run_number }}\"" environments/nvidia/values.yaml
           fi
 
       - name: Commit updated values
@@ -89,5 +89,5 @@ jobs:
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
           git add environments/nvidia/values.yaml
-          git diff --staged --quiet || git commit -m "chore(nvidia): оновити frontend образ до v55.1.${{ github.run_number }} [skip ci]"
+          git diff --staged --quiet || git commit -m "chore(nvidia): оновити frontend образ до v61.0.${{ github.run_number }} [skip ci]"
           git push || echo "⚠️ Push failed"

@@ -1,9 +1,9 @@
 # ═══════════════════════════════════════════════════════════════
-# 🦅 PREDATOR Analytics v55.1 — Unified CI/CD Pipeline
+# 🦅 PREDATOR Analytics v61.0-ELITE — Unified CI/CD Pipeline
 # Єдиний пайплайн: Lint → Build → GitOps → ArgoCD Sync
 # ═══════════════════════════════════════════════════════════════
 
-name: PREDATOR v55.1 Unified Pipeline
+name: PREDATOR v61.0-ELITE Unified Pipeline
 
 on:
   push:
@@ -149,7 +149,7 @@ jobs:
           tags: |
             ${{ env.REGISTRY }}/${{ env.OWNER }}/${{ matrix.image }}:latest
             ${{ env.REGISTRY }}/${{ env.OWNER }}/${{ matrix.image }}:${{ github.sha }}
-            ${{ env.REGISTRY }}/${{ env.OWNER }}/${{ matrix.image }}:v55.1.0
+            ${{ env.REGISTRY }}/${{ env.OWNER }}/${{ matrix.image }}:v61.0-ELITE
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -215,11 +215,11 @@ jobs:
           ARGOCD_TOKEN: ${{ secrets.ARGOCD_TOKEN }}
         run: |
           if [ -n "$ARGOCD_SERVER" ] && [ -n "$ARGOCD_TOKEN" ]; then
-            echo "🚀 Triggering ArgoCD sync for predator-v55..."
+            echo "🚀 Triggering ArgoCD sync for predator..."
             curl -sSL -X POST \
               -k \
               -H "Authorization: Bearer $ARGOCD_TOKEN" \
-              "https://$ARGOCD_SERVER/api/v1/applications/predator-v55/sync" \
+              "https://$ARGOCD_SERVER/api/v1/applications/predator/sync" \
               -H "Content-Type: application/json" \
               -d '{"prune": true}' || echo "⚠️ ArgoCD sync request failed"
           else
