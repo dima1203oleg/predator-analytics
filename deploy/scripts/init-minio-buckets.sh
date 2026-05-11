@@ -1,14 +1,19 @@
 #!/usr/bin/env bash
 # =============================================================
-# PREDATOR Analytics v55.1
-# Ініціалізація MinIO бакетів
-# Використання: ./deploy/scripts/init-minio-buckets.sh
+# PREDATOR Analytics v61.0-ELITE
+# Ініціалізація MinIO бакетів (HR-06: пароль тільки через env)
+# Використання: MINIO_ROOT_PASSWORD=xxx ./deploy/scripts/init-minio-buckets.sh
 # =============================================================
 set -euo pipefail
 
 MINIO_ENDPOINT="${MINIO_ENDPOINT:-http://minio:9000}"
 MINIO_ROOT_USER="${MINIO_ROOT_USER:-predator}"
-MINIO_ROOT_PASSWORD="${MINIO_ROOT_PASSWORD:-changeme_dev}"
+MINIO_ROOT_PASSWORD="${MINIO_ROOT_PASSWORD:-}"  # HR-06: обов'язково через env
+
+if [[ -z "$MINIO_ROOT_PASSWORD" ]]; then
+    echo "❌ Помилка: MINIO_ROOT_PASSWORD не встановлено (HR-06)"
+    exit 1
+fi
 
 echo "🟡 Підключення до MinIO: ${MINIO_ENDPOINT}"
 

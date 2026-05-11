@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================
-# PREDATOR Analytics v55.1
+# PREDATOR Analytics v61.0-ELITE
 # Створення Kafka топіків
 # Використання: ./deploy/scripts/create-kafka-topics.sh
 # =============================================================
