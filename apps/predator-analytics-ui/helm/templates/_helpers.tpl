@@ -301,7 +301,7 @@ Return the TLS secret name
 */}}
 {{- define "predator-frontend.tlsSecretName" -}}
 {{- if .Values.frontend.ingress.tls }}
-{{- .Values.frontend.ingress.tls[0].secretName }}
+{{- (index .Values.frontend.ingress.tls 0).secretName }}
 {{- else }}
 {{- printf "%s-tls" (include "predator-frontend.fullname" .) | trunc 63 | trimSuffix "-" }}
 {{- end }}
@@ -539,80 +539,14 @@ Return the chart tags
 {{- end }}
 
 {{/*
-Return the chart version
+Return the image pull policy
 */}}
-{{- define "predator-frontend.chartVersion" -}}
-{{- .Chart.Version }}
+{{- define "predator-frontend.imagePullPolicy" -}}
+{{- if .Values.frontend.image.pullPolicy }}
+{{- .Values.frontend.image.pullPolicy }}
+{{- else }}
+{{- "IfNotPresent" }}
 {{- end }}
-
-{{/*
-Return the chart kubeVersion
-*/}}
-{{- define "predator-frontend.chartKubeVersion" -}}
-{{- .Chart.KubeVersion }}
-{{- end }}
-
-{{/*
-Return the chart dependencies
-*/}}
-{{- define "predator-frontend.chartDependencies" -}}
-{{- .Chart.Dependencies }}
-{{- end }}
-
-{{/*
-Return the chart icon
-*/}}
-{{- define "predator-frontend.chartIcon" -}}
-{{- .Chart.Icon }}
-{{- end }}
-
-{{/*
-Return the chart maintainers
-*/}}
-{{- define "predator-frontend.chartMaintainers" -}}
-{{- .Chart.Maintainers }}
-{{- end }}
-
-{{/*
-Return the chart sources
-*/}}
-{{- define "predator-frontend.chartSources" -}}
-{{- .Chart.Sources }}
-{{- end }}
-
-{{/*
-Return the chart type
-*/}}
-{{- define "predator-frontend.chartType" -}}
-{{- .Chart.Type }}
-{{- end }}
-
-{{/*
-Return the chart annotations
-*/}}
-{{- define "predator-frontend.chartAnnotations" -}}
-{{- .Chart.Annotations }}
-{{- end }}
-
-{{/*
-Return the chart condition
-*/}}
-{{- define "predator-frontend.chartCondition" -}}
-{{- .Chart.Condition }}
-{{- end }}
-
-{{/*
-Return the chart tags
-*/}}
-{{- define "predator-frontend.chartTags" -}}
-{{- .Chart.Tags }}
-{{- end }}
-
-{{/*
-Return the chart version
-*/}}
-{{- define "predator-frontend.chartVersion" -}}
-{{- .Chart.Version }}
 {{- end }}
 
 {{/*

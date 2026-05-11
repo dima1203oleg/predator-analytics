@@ -9,6 +9,14 @@ global:
     - name: ghcr-secret
   storageClass: "standard"
 
+# Autoscaling (required by deployment.yaml template)
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
+
 # Frontend application configuration
 frontend:
   # Image configuration
@@ -183,9 +191,9 @@ networkPolicy:
         - namespaceSelector:
             matchLabels:
               name: ingress-nginx
-      - podSelector:
-          matchLabels:
-            app.kubernetes.io/name: predator-frontend
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: predator-frontend
   egress:
     - to:
         - podSelector:
@@ -198,6 +206,7 @@ networkPolicy:
       ports:
         - protocol: TCP
           port: 53
+        - protocol: TCP
           port: 443
         - protocol: UDP
           port: 53
@@ -381,12 +390,12 @@ monitoring:
         annotations:
           summary: "High response time detected"
           description: "95th percentile response time is {{ $value }}s for the last 5 minutes."
-  
+
   grafanaDashboard:
     enabled: true
-      namespace: predator
-      labels:
-        grafana_dashboard: "1"
+    namespace: predator
+    labels:
+      grafana_dashboard: "1"
 
 # Backup configuration
 backup:

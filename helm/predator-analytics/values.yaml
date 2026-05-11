@@ -2,6 +2,9 @@ global:
   environment: development
   domain: predator.analytics.local
   pythonVersion: "3.12"
+
+replicaCount:
+  nginx: 1
   
 postgresql:
   enabled: true
@@ -22,6 +25,28 @@ minio:
     
 mlflow:
   enabled: true
+  image:
+    registry: ghcr.io
+    repository: dima1203oleg/predator-mlflow
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 5000
+  persistence:
+    size: 10Gi
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+  podSecurityContext: {}
+  securityContext: {}
+  nodeSelector: {}
+  affinity: {}
+  tolerations: []
   
 ollama:
   enabled: true
@@ -29,3 +54,37 @@ ollama:
     requests:
       memory: "4Gi"
       cpu: "2"
+
+nginx:
+  image:
+    registry: ghcr.io
+    repository: nginx
+    tag: "alpine"
+    pullPolicy: IfNotPresent
+  service:
+    type: LoadBalancer
+    ports:
+      http: 80
+      https: 443
+
+monitoring:
+  grafana:
+    service:
+      type: ClusterIP
+      port: 3000
+    persistence:
+      size: 10Gi
+    ingress:
+      host: grafana.predator.analytics.local
+    resources:
+      limits:
+        cpu: 500m
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+    podSecurityContext: {}
+    securityContext: {}
+    nodeSelector: {}
+    affinity: {}
+    tolerations: []

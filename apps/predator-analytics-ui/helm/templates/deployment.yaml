@@ -67,10 +67,6 @@ spec:
           resources:
             {{- toYaml .Values.frontend.resources | nindent 12 }}
           env:
-            - name: NODE_ENV
-              value: {{ .Values.frontend.env.NODE_ENV | quote }}
-            - name: VITE_API_URL
-              value: {{ .Values.frontend.env.VITE_API_URL | quote }}
             {{- with .Values.frontend.env }}
             {{- toYaml . | nindent 12 }}
             {{- end }}

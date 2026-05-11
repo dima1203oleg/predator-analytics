@@ -33,3 +33,12 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- define "predator-analytics.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
+
+{{- define "predator-analytics.image" -}}
+{{- $root := .root -}}
+{{- $image := .image -}}
+{{- $registry := default $image.registry ($root.Values.global).imageRegistry -}}
+{{- $repository := $image.repository -}}
+{{- $tag := default $root.Chart.AppVersion $image.tag -}}
+{{- printf "%s/%s:%s" $registry $repository $tag -}}
+{{- end -}}
