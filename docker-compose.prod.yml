@@ -1,4 +1,4 @@
-# Predator Analytics v55.1 - Production Docker Compose
+# Predator Analytics v61.0-ELITE - Production Docker Compose
 # Infrastructure + Governance + AI Orchestration + Ingestion Pipeline
 # Optimized for NVIDIA Server Deployment
 
@@ -206,8 +206,8 @@ services:
       - "9000:9000"
       - "9001:9001"
     environment:
-      MINIO_ROOT_USER: predator_admin
-      MINIO_ROOT_PASSWORD: predator_secret_key
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
     volumes:
       - minio_data:/data
     command: server /data --console-address ":9001"
@@ -333,7 +333,7 @@ services:
       - redis
       - rabbitmq
 
-  # Redpanda (Kafka) - v55.1
+  # Redpanda (Kafka) - v61.0-ELITE
   redpanda:
     image: redpandadata/redpanda:v24.2.19
     container_name: predator-redpanda
@@ -356,7 +356,7 @@ services:
       timeout: 5s
       retries: 5
 
-  # Neo4j Graph Database - v55.1
+  # Neo4j Graph Database - v61.0-ELITE
   neo4j:
     image: neo4j:5.16.0
     container_name: predator-neo4j
@@ -373,7 +373,7 @@ services:
       predator-network:
         ipv4_address: 172.20.0.20
 
-  # Ingestion Worker - v55.1
+  # Ingestion Worker - v61.0-ELITE
   ingestion-worker:
     build:
       context: .
@@ -394,8 +394,8 @@ services:
       - OPENSEARCH_HOSTS=http://opensearch:9200
       - QDRANT_URL=http://qdrant:6333
       - MINIO_ENDPOINT=minio:9000
-      - MINIO_ACCESS_KEY=${MINIO_ROOT_USER:-predator_admin}
-      - MINIO_SECRET_KEY=${MINIO_ROOT_PASSWORD:-predator_secret_key}
+      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
+      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
       - MINIO_SECURE=false
       - MINIO_BUCKET_INGESTION=raw-uploads
     deploy:
