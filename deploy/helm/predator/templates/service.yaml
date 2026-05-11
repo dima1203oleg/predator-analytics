@@ -27,7 +27,7 @@ spec:
   type: ClusterIP
   ports:
     - port: {{ .Values.graphService.service.port }}
-      targetPort: 8002
+      targetPort: 8001
       protocol: TCP
       name: http
   selector:
@@ -51,4 +51,21 @@ spec:
   selector:
     {{- include "predator.selectorLabels" . | nindent 4 }}
     app: frontend
-
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "predator.fullname" . }}-osint-service
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: osint-service
+spec:
+  type: {{ .Values.osintService.service.type }}
+  ports:
+    - port: {{ .Values.osintService.service.port }}
+      targetPort: 9200
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "predator.selectorLabels" . | nindent 4 }}
+    app: osint-service
