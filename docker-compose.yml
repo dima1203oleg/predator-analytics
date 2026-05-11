@@ -1,4 +1,4 @@
-# Predator Analytics v56.5-ELITE - Production Docker Compose
+# Predator Analytics v61.0-ELITE - Production Docker Compose
 # Single network: predator-network | No hardcoded secrets | No duplicates
 
 services:
@@ -11,14 +11,14 @@ services:
     image: timescale/timescaledb:latest-pg15
     container_name: predator_postgres
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-admin}
+      POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB:-predator_db}
     ports: ["5432:5432"]
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-admin} -d ${POSTGRES_DB:-predator_db}"]
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -126,28 +126,28 @@ services:
     restart: unless-stopped
     networks: [predator-network]
     profiles: ["local", "server"]
- 
-   clickhouse:
-     image: clickhouse/clickhouse-server:latest
-     container_name: predator_clickhouse
-     ports:
-       - "8123:8123"
-       - "9000:9000"
-     volumes:
-       - clickhouse_data:/var/lib/clickhouse
-       - ./db/clickhouse/init.sql:/docker-entrypoint-initdb.d/init.sql
-     healthcheck:
-       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "localhost:8123/ping"]
-       interval: 10s
-       timeout: 5s
-       retries: 5
-     deploy:
-       resources:
-         limits:
-           memory: 8G
-     restart: unless-stopped
-     networks: [predator-network]
-     profiles: ["local", "server"]
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:latest
+    container_name: predator_clickhouse
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+      - ./db/clickhouse/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "localhost:8123/ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 8G
+    restart: unless-stopped
+    networks: [predator-network]
+    profiles: ["local", "server"]
 
   redpanda:
     image: redpandadata/redpanda:v24.2.19
@@ -232,7 +232,7 @@ services:
       context: .
       dockerfile: services/graph-service/Dockerfile
     ports:
-      - "9030:8000"
+      - "9030:8001"
     environment:
       - NEO4J_URI=bolt://neo4j:7687
       - NEO4J_USER=neo4j
@@ -250,7 +250,7 @@ services:
     container_name: predator_ingestion_worker
     environment:
       - KAFKA_BOOTSTRAP_SERVERS=redpanda:9092
-      - POSTGRES_USER=${POSTGRES_USER:-admin}
+      - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB:-predator_db}
       - POSTGRES_HOST=postgres
@@ -259,8 +259,8 @@ services:
       - NEO4J_USER=neo4j
       - NEO4J_PASSWORD=${NEO4J_PASSWORD}
       - OPENSEARCH_HOSTS=http://opensearch:9200
-      - OPENSEARCH_USERNAME=admin
-      - OPENSEARCH_PASSWORD=admin
+      - OPENSEARCH_USERNAME=${OPENSEARCH_USERNAME}
+      - OPENSEARCH_PASSWORD=${OPENSEARCH_PASSWORD}
       - OPENSEARCH_TLS_VERIFY=false
       - QDRANT_URL=http://qdrant:6333
       - MINIO_ENDPOINT=minio:9000
@@ -316,9 +316,9 @@ services:
       - MINIO_SECRET_KEY=${MINIO_ROOT_PASSWORD}
       - KAFKA_BROKERS=redpanda:9092
       - MCP_ROUTER_URL=http://mcp-router:8080/v1/query
-      - GRAPH_SERVICE_URL=http://graph-service:8000
-       - CLICKHOUSE_HOST=clickhouse
-       - CLICKHOUSE_PORT=8123
+      - GRAPH_SERVICE_URL=http://graph-service:8001
+      - CLICKHOUSE_HOST=clickhouse
+      - CLICKHOUSE_PORT=8123
     depends_on:
       postgres:
         condition: service_healthy
@@ -418,7 +418,7 @@ services:
     profiles: ["local", "server"]
 
   orchestrator:
-    image: predator-orchestrator:v56.5-elite
+    image: predator-orchestrator:v61.0-ELITE
     build:
       context: .
       dockerfile: apps/self-improve-orchestrator/Dockerfile
@@ -461,10 +461,10 @@ services:
     environment:
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-predator_db}
-      KC_DB_USERNAME: ${POSTGRES_USER:-admin}
+      KC_DB_USERNAME: ${POSTGRES_USER}
       KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
     command: start-dev
     ports: ["8080:8080"]
     depends_on:
@@ -504,7 +504,7 @@ services:
     environment:
       POSTGRES_USER: kong
       POSTGRES_DB: kong
-      POSTGRES_PASSWORD: ${KONG_DB_PASSWORD:-kongpassword}
+      POSTGRES_PASSWORD: ${KONG_DB_PASSWORD}
     volumes:
       - kong_data:/var/lib/postgresql/data
     deploy:
@@ -522,7 +522,7 @@ services:
       KONG_DATABASE: postgres
       KONG_PG_HOST: kong-db
       KONG_PG_USER: kong
-      KONG_PG_PASSWORD: ${KONG_DB_PASSWORD:-kongpassword}
+      KONG_PG_PASSWORD: ${KONG_DB_PASSWORD}
       KONG_PROXY_ACCESS_LOG: /dev/stdout
       KONG_ADMIN_ACCESS_LOG: /dev/stdout
       KONG_PROXY_ERROR_LOG: /dev/stderr
@@ -653,7 +653,7 @@ volumes:
   opensearch_data:
   minio_data:
   redpanda_data:
-   clickhouse_data:
+  clickhouse_data:
   ollama_data:
   orchestrator_logs:
   prometheus_data:
