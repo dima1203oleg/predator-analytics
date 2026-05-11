@@ -50,10 +50,10 @@ global:
     host: predator-qdrant
     port: 6333
   minio:
-    accessKey: minioadmin
-    secretKey: minioadmin
+    accessKey: ""  # HR-06: через env var або SealedSecret
+    secretKey: ""  # HR-06: через env var або SealedSecret
   osint:
-    youcontrolApiKey: "YOUR_PRO_API_KEY_HERE"
+    youcontrolApiKey: ""  # HR-06: через env var або SealedSecret
 
 # Frontend (predator-analytics-ui)
 frontend:
@@ -61,7 +61,7 @@ frontend:
   replicaCount: 1
   image:
     repository: predator/frontend
-    tag: v60.5-ELITE
+    tag: v61.0-ELITE
     pullPolicy: IfNotPresent
   service:
     type: LoadBalancer
@@ -111,7 +111,7 @@ coreApi:
   replicaCount: 1
   image:
     repository: predator/core-api
-    tag: v60.5-ELITE
+    tag: v61.0-ELITE
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
@@ -162,7 +162,7 @@ graphService:
   replicaCount: 1
   image:
     repository: predator/graph-service
-    tag: v60.5-ELITE
+    tag: v61.0-ELITE
   service:
     type: ClusterIP
     port: 8002
@@ -196,7 +196,7 @@ ingestionWorker:
   replicaCount: 1
   image:
     repository: predator/ingestion-worker
-    tag: v60.5-ELITE
+    tag: v61.0-ELITE
     pullPolicy: IfNotPresent
   resources:
     limits:
@@ -221,19 +221,15 @@ ingestionWorker:
     YOUCONTROL_API_KEY: "{{ .Values.global.osint.youcontrolApiKey }}"
     DEBUG: "false"
   livenessProbe:
-    exec:
-      command:
-        - /bin/sh
-        - -c
-        - "ps aux | grep '[p]ython' || exit 1"
+    httpGet:
+      path: /api/v1/health
+      port: 9100
     initialDelaySeconds: 30
     periodSeconds: 10
   readinessProbe:
-    exec:
-      command:
-        - /bin/sh
-        - -c
-        - "python -c 'import kafka; print(\"ok\")' || exit 1"
+    httpGet:
+      path: /api/v1/ready
+      port: 9100
     initialDelaySeconds: 10
     periodSeconds: 10
   keda:
