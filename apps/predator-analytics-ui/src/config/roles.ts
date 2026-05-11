@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
 export enum UserRole {
   CLIENT_BASIC  = 'client_basic',     // Рівень 1: Базовий клієнтський доступ
   CLIENT_PREMIUM = 'client_premium',  // Рівень 2: Аналітичний контур (без ДРПО)
