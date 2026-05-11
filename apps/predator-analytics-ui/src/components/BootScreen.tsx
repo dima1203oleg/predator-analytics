@@ -248,8 +248,8 @@ class SoundEngine {
     return () => {
       try {
         gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.5);
-        setTimeout(() => { try { osc.stop(); } catch {} }, 600);
-      } catch {}
+        setTimeout(() => { try { osc.stop(); } catch { /* pass */ } }, 600);
+      } catch { /* pass */ }
     };
   }
 }
