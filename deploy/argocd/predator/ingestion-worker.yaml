@@ -6,7 +6,7 @@ metadata:
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
-  project: default
+  project: predator-project
   source:
     repoURL: 'https://github.com/dima1203oleg/predator-analytics.git'
     path: deploy/helm/predator/charts/ingestion-worker

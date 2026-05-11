@@ -1,6 +1,6 @@
 groups:
   # ============================================================
-  # PREDATOR Analytics v55.1 — Правила алертингу
+  # PREDATOR Analytics v61.0-ELITE — Правила алертингу
   # ============================================================
 
   - name: predator.api
@@ -168,3 +168,38 @@ groups:
         annotations:
           summary: "Висока кількість помилок інгестії (> 10%)"
           description: "Відсоток помилок: {{ $value | humanizePercentage }}"
+
+  # ============================================================
+  # Infrastructure Services
+  # ============================================================
+  - name: predator.infrastructure
+    interval: 30s
+    rules:
+      - alert: PredatorGraphServiceDown
+        expr: up{job="predator-graph-service"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: graph-service
+        annotations:
+          summary: "Graph Service недоступний"
+          description: "Neo4j algorithms сервіс не відповідає"
+
+      - alert: PredatorIngestionWorkerDown
+        expr: up{job="predator-ingestion-worker"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          service: ingestion-worker
+        annotations:
+          summary: "Ingestion Worker недоступний"
+          description: "Kafka consumer не обробляє події"
+
+      - alert: PredatorOsintServiceDown
+        expr: up{job="predator-osint-service"} == 0
+        for: 1m
+        labels:
+          severity: warning
+          service: osint-service
+        annotations:
+          summary: "OSINT Service недоступний"

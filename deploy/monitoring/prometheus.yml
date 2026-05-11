@@ -1,4 +1,4 @@
-# Prometheus — PREDATOR Analytics v55.1
+# Prometheus — PREDATOR Analytics v61.0-ELITE
 # Конфігурація збору метрик (scrape configs)
 
 global:
@@ -46,7 +46,7 @@ scrape_configs:
   - job_name: predator-ingestion-worker
     metrics_path: /metrics
     static_configs:
-      - targets: ['ingestion-worker:8080']
+      - targets: ['ingestion-worker:9100']
 
   # ============================================================
   # PREDATOR Graph Service
@@ -54,7 +54,7 @@ scrape_configs:
   - job_name: predator-graph-service
     metrics_path: /metrics
     static_configs:
-      - targets: ['graph-service:8000']
+      - targets: ['graph-service:8001']
 
   # ============================================================
   # PostgreSQL (через postgres_exporter)
@@ -112,3 +112,11 @@ scrape_configs:
     metrics_path: /metrics
     static_configs:
       - targets: ['litellm:4000']
+
+  # ============================================================
+  # OSINT Service
+  # ============================================================
+  - job_name: predator-osint-service
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['osint-service:9200']
