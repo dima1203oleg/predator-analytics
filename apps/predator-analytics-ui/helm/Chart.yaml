@@ -1,12 +1,12 @@
 # 🦅 PREDATOR Analytics UI - Helm Chart
-# Version: v55.1.0
+# Version: v61.0-ELITE
 
 apiVersion: v2
 name: predator-frontend
 description: PREDATOR Analytics Frontend - OSINT платформа для митної аналітики України
 type: application
-version: 55.1.0
-appVersion: "55.1.0"
+version: 61.0.0
+appVersion: "61.0-ELITE"
 
 home: https://github.com/dima1203oleg/predator-analytics
 sources:
@@ -31,9 +31,8 @@ keywords:
 annotations:
   category: Analytics
   licenses: MIT
-  dependencies: []
-  predatorengine: "v55.1.0"
-  compliance: "AGENTS.md v55"
+  predatorengine: "v61.0-ELITE"
+  compliance: "AGENTS.md v61.0-ELITE"
 
 # Chart dependencies
 dependencies:

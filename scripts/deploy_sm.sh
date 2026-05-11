@@ -1,10 +1,10 @@
 #!/bin/bash
-# PREDATOR Analytics v56.5-ELITE - Single Machine (SM) Deployment
+# PREDATOR Analytics v61.0-ELITE - Single Machine (SM) Deployment
 # Run this from the root of the project
 
 set -e
 
-echo "🦅 PREDATOR Analytics v56.5-ELITE SM Edition - ініціалізація розгортання..."
+echo "🦅 PREDATOR Analytics v61.0-ELITE SM Edition - ініціалізація розгортання..."
 
 # 1. Створення необхідних директорій
 echo "[1/4] Створення директорій для томів..."

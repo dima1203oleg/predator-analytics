@@ -1,5 +1,5 @@
 # 🦅 PREDATOR Analytics UI - Helm Values
-# Version: v55.1.0
+# Version: v61.0-ELITE
 # Environment: Production
 
 # Global configuration
@@ -15,7 +15,7 @@ frontend:
   image:
     registry: ghcr.io
     repository: dima1203oleg/predator-analytics-ui
-    tag: "v55.1.0-production"
+    tag: "v61.0-ELITE"
     pullPolicy: Always
   
   # Replica configuration

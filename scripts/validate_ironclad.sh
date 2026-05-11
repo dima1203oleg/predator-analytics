@@ -1,8 +1,8 @@
 #!/bin/bash
-# PREDATOR v55.1 Ironclad VR Final Validation
+# PREDATOR v61.0-ELITE Ironclad VR Final Validation
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "🦅 PREDATOR ANALYTICS v55.1 IRONCLAD — FINAL VALIDATION"
+echo "🦅 PREDATOR ANALYTICS v61.0-ELITE IRONCLAD — FINAL VALIDATION"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 # 1. Check Python structures
