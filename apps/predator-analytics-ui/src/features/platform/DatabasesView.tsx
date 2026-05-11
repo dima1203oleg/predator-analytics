@@ -5,7 +5,7 @@ import Modal from '@/components/Modal';
 import {
     Database, HardDrive, RefreshCw, Layers, Play, X, Terminal, Binary,
     Share2, CheckCircle2, MessageSquare, Activity, Cpu, Network, Zap,
-    ShieldCheck, Box, Server, DatabaseZap
+    ShieldCheck, Box, Server, DatabaseZap, BarChart3
 } from 'lucide-react';
 import { DatabaseTable, SqlTrainingPair } from '@/types';
 import { useSystemMetrics } from '@/hooks/useSystemMetrics';
@@ -21,9 +21,10 @@ import { ObjectStorageView } from '@/components/databases/ObjectStorageView';
 import { VectorDBView } from '@/components/databases/VectorDBView';
 import { GraphDBView } from '@/components/databases/GraphDBView';
 import { CalibrationView } from '@/components/databases/CalibrationView';
+import { ClickHouseView } from '@/components/databases/ClickHouseView';
 import { EtlProcessMonitor } from '@/components/etl/EtlProcessMonitor';
 
-type DBTab = 'RELATIONAL' | 'OBJECT' | 'VECTOR' | 'GRAPH' | 'CALIBRATION' | 'ETL';
+type DBTab = 'RELATIONAL' | 'OBJECT' | 'VECTOR' | 'GRAPH' | 'CALIBRATION' | 'CLICKHOUSE' | 'ETL';
 
 type ObjectStorageBucket = {
     name: string;
@@ -318,6 +319,7 @@ const DatabasesView: React.FC = () => {
                         { id: 'OBJECT', label: 'S3 Об\'єкти', icon: Server, color: 'text-amber-500' },
                         { id: 'VECTOR', label: 'Векторний ШІ', icon: Layers, color: 'text-red-500' },
                         { id: 'GRAPH', label: 'Топологія Графу', icon: Share2, color: 'text-amber-600' },
+                        { id: 'CLICKHOUSE', label: 'ClickHouse OLAP', icon: BarChart3, color: 'text-amber-500' },
                         { id: 'CALIBRATION', label: 'ШІ Синтез', icon: Binary, color: 'text-slate-400' }
                     ].map(tab => {
                         const isActive = activeTab === tab.id;
@@ -366,6 +368,7 @@ const DatabasesView: React.FC = () => {
                         {activeTab === 'OBJECT' && <ObjectStorageView buckets={buckets} />}
                         {activeTab === 'VECTOR' && <VectorDBView vectorData={vectorData} selectedVector={selectedVector} onSelectVector={setSelectedVector} />}
                         {activeTab === 'GRAPH' && <GraphDBView cypherQuery={cypherQuery} onCypherQueryChange={setCypherQuery} onExecuteCypher={handleExecuteCypher} />}
+                        {activeTab === 'CLICKHOUSE' && <ClickHouseView />}
                         {activeTab === 'CALIBRATION' && <CalibrationView trainingPairs={trainingPairs} onVerifySql={handleVerifySql} />}
                     </motion.div>
                 </AnimatePresence>

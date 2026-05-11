@@ -6,7 +6,7 @@
 
 import http from 'http';
 
-const PORT = 9080;
+const PORT = 9081;
 
 // ─── Стан Системи (Dynamic State) ───────────────────────────────────────────
 
@@ -837,6 +837,6 @@ const server = http.createServer((req, res) => {
   sendJSON(res, { error: 'Not Found', path }, 404);
 });
 
-server.listen(PORT, () => {
-  console.log(`🦅 PREDATOR Mock API Server running at http://localhost:${PORT}`);
+server.listen(PORT, '127.0.0.1', () => {
+  console.log(`🦅 PREDATOR Mock API Server running at http://127.0.0.1:${PORT}`);
 });
