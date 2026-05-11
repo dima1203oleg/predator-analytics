@@ -41,9 +41,10 @@ export const ShellProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     if (!user) return;
 
     // Hierarchy: ADMIN(3) > PREMIUM(2) > BASIC(1)
-    const roleLevel = {
+    const roleLevel: Record<string, number> = {
       [UserRole.CLIENT_BASIC]: 1,
       [UserRole.CLIENT_PREMIUM]: 2,
+      [UserRole.CLIENT_DRPO]: 2,
       [UserRole.ADMIN]: 3,
     };
 

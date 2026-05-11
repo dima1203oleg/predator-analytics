@@ -8,7 +8,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-    Flame, Waves, Wind, Cpu, Database, Loader2, RefreshCcw, Play, Target, ShieldAlert, Activity, ChevronRight
+    Flame, Waves, Wind, Cpu, Database, Loader2, RefreshCcw, Play, Target, ShieldAlert, Activity, ChevronRight, Zap
 } from 'lucide-react';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { Badge } from '@/components/ui/badge';
@@ -23,16 +23,17 @@ import {
 
 interface Scenario {
   id: string;
-  name: string;
+  name?: string;
   title?: string; // для зворотної сумісності
   description: string;
-  probability: number;
-  base_impact_uah_mln: number;
-  impact_level: string;
-  triggers: string[];
+  probability?: number;
+  base_impact_uah_mln?: number;
+  impact_level?: string;
+  triggers?: string[];
   logic_base?: string;
   status: 'idle' | 'active' | 'completed';
   riskScore: number;
+  intensity?: number;
   impacts?: {
     logistics: number;
     finance: number;
@@ -140,9 +141,9 @@ export default function StrategicScenarioView() {
       const results = await factoryApi.runMonteCarlo({
         scenarios: [{ 
             id: scenario.id, 
-            name: scenario.name, 
-            probability: scenario.probability / 100, 
-            impact_uah_mln: scenario.base_impact_uah_mln 
+            name: scenario.name ?? scenario.title ?? scenario.id, 
+            probability: (scenario.probability ?? 50) / 100, 
+            impact_uah_mln: scenario.base_impact_uah_mln ?? 100 
         }],
         iterations: 5000
       });

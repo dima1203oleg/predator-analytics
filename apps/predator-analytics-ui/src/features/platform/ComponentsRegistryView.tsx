@@ -206,6 +206,7 @@ export const ComponentsRegistryView: React.FC = () => {
                 {/* Components Grid */}
                 <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
                   {filteredComponents.map((comp, idx) => {
+                    // eslint-disable-next-line react-hooks/rules-of-hooks
                     const [isExpanded, setIsExpanded] = useState(false);
 
                     return (

@@ -102,7 +102,7 @@ export const useExpensiveComputation = <T>(
     }
 
     return computed;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+   
   }, dependencies);
 
   return result;

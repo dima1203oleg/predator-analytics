@@ -1,4 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
+/* eslint-disable @typescript-eslint/no-duplicate-enum-values */
 export enum UserRole {
   CLIENT_BASIC  = 'client_basic',     // Рівень 1: Базовий клієнтський доступ
   CLIENT_PREMIUM = 'client_premium',  // Рівень 2: Аналітичний контур (без ДРПО)
@@ -13,7 +13,7 @@ export enum UserRole {
 }
 
 // Цивільні назви для UI (ніяких технічних термінів!)
-export const ROLE_DISPLAY_NAMES: Record<UserRole, string> = {
+export const ROLE_DISPLAY_NAMES: Record<string, string> = {
   [UserRole.CLIENT_BASIC]:   'Клієнтський доступ',
   [UserRole.CLIENT_PREMIUM]: 'Аналітичний контур',
   [UserRole.CLIENT_DRPO]:    'Спеціальний контур',
@@ -21,7 +21,7 @@ export const ROLE_DISPLAY_NAMES: Record<UserRole, string> = {
 };
 
 // Описи контурів (показуються у Sidebar під іменем)
-export const ROLE_DESCRIPTIONS: Record<UserRole, string> = {
+export const ROLE_DESCRIPTIONS: Record<string, string> = {
   [UserRole.CLIENT_BASIC]:   'Базовий огляд ринкових даних',
   [UserRole.CLIENT_PREMIUM]: 'Повний аналітичний та розслідувальний доступ',
   [UserRole.CLIENT_DRPO]:    'Доступ до ДРПО та законодавчих даних',

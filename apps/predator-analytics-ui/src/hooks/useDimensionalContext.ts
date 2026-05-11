@@ -139,10 +139,11 @@ export const useDimensionalContext = (): DimensionalContext => {
 
   const canAccessLevel = (requiredRole: UserRole): boolean => {
     if (!user) return false;
-    const roleLevel = {
+    const roleLevel: Record<string, number> = {
         [UserRole.CLIENT_BASIC]: 1,
         [UserRole.CLIENT_PREMIUM]: 2,
-        [UserRole.ADMIN]: 3
+        [UserRole.CLIENT_DRPO]: 2,
+        [UserRole.ADMIN]: 3,
     };
     return roleLevel[user.role] >= roleLevel[requiredRole];
   };

@@ -26,9 +26,10 @@ export const ShellSwitcher: React.FC = () => {
     { id: UIShell.COMMANDER, label: 'КОМАНДИ ', icon: <Crown size={14} />, role: UserRole.ADMIN },
   ];
 
-  const roleHierarchy = {
+  const roleHierarchy: Record<string, number> = {
     [UserRole.CLIENT_BASIC]: 1,
     [UserRole.CLIENT_PREMIUM]: 2,
+    [UserRole.CLIENT_DRPO]: 2,
     [UserRole.ADMIN]: 3,
   };
 

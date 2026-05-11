@@ -170,7 +170,7 @@ const GraphNode = ({ node, onClick, isSelected }: { node: Node; onClick: (node: 
 const GraphLink = ({ start, end, type }: { start: THREE.Vector3; end: THREE.Vector3; type: string }) => {
   const lineRef = useRef<any>(null);
   const color = type === 'risk' ? '#f43f5e' : '#0ea5e9';
-  const points = useMemo(() => [start, end], [start, end]); // eslint-disable-line
+  const points = useMemo(() => [start, end], [start, end]);  
 
   useFrame((state) => {
     if (lineRef.current && type === 'risk') {

@@ -51,7 +51,7 @@ export const DashboardBuilder: React.FC<DashboardBuilderProps> = ({
   const [autoRefresh, setAutoRefresh] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
   const [aiRecommendations, setAiRecommendations] = useState<AIRecommendation[]>([]);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   const [isGeneratingAI, setIsGeneratingAI] = useState(false);
   const [history, setHistory] = useState<WidgetConfig[][]>([[]]);
   const [historyIndex, setHistoryIndex] = useState(0);

@@ -159,7 +159,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // Ініціалізація CSS-змінних при маунті
   useEffect(() => {
     applyCSS(mode);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, []);
 
   const modeInfo = MODE_META[mode];

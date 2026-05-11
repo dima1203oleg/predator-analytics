@@ -33,7 +33,7 @@ const AnimatedCounter: React.FC<{
     };
     frameRef.current = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(frameRef.current);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [target, duration]);
 
   return (

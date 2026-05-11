@@ -250,8 +250,8 @@ export const Predator: React.FC = () => {
     setHistory(prev => [...prev, { role: 'user', content: query }]);
     
     sendMessage({
-      message: query,
-      history: history
+      type: 'copilot_query',
+      payload: { message: query, history }
     });
   };
 

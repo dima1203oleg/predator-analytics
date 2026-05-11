@@ -195,9 +195,10 @@ export const InformationTier: React.FC<{
 }> = ({ tier, children, className = '' }) => {
   const { role } = useDimensionalContext();
 
-  const roleToTier: Record<UserRole, number> = {
+  const roleToTier: Record<string, number> = {
     [UserRole.CLIENT_BASIC]: 1,
     [UserRole.CLIENT_PREMIUM]: 2,
+    [UserRole.CLIENT_DRPO]: 2,
     [UserRole.ADMIN]: 3,
   };
 

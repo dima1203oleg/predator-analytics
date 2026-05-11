@@ -334,7 +334,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
       if (i >= target.length) clearInterval(id);
     }, 24);
     return () => clearInterval(id);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+   
   }, [phase]);
 
   /* ── DB scan lines (фаза 3) ── */
@@ -356,7 +356,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
     };
     const t = setTimeout(addLine, 300);
     return () => clearTimeout(t);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+   
   }, [phase]);
 
   /* ── Threat level (фаза 3) ── */
