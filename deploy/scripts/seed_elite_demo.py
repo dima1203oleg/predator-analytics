@@ -1,12 +1,20 @@
 import asyncio
+import os
 from datetime import UTC, datetime
 
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
-# Hardcoded for development
-DATABASE_URL = "postgresql+asyncpg://predator:changeme_dev@localhost:5432/predator"
+# HR-06: пароль тільки через env
+DATABASE_URL = os.environ.get(
+    "DATABASE_URL",
+    "postgresql+asyncpg://predator:@localhost:5432/predator",
+)
+if "@localhost" in DATABASE_URL and ":@" in DATABASE_URL:
+    raise RuntimeError(
+        "❌ HR-06: Встановіть DATABASE_URL з паролем"
+    )
 TENANT_ID = "a0000000-0000-0000-0000-000000000001"
 
 async def seed_elite_demo():

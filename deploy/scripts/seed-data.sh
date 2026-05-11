@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # =============================================================
-# PREDATOR Analytics v55.1
-# Seed даних для розробки
-# Використання: ./deploy/scripts/seed-data.sh
+# PREDATOR Analytics v61.0-ELITE
+# Seed даних для розробки (HR-06: пароль тільки через env)
+# Використання: POSTGRES_PASSWORD=xxx ./deploy/scripts/seed-data.sh
 # =============================================================
 set -euo pipefail
 
@@ -10,10 +10,15 @@ PG_HOST="${PG_HOST:-localhost}"
 PG_PORT="${PG_PORT:-5432}"
 PG_USER="${POSTGRES_USER:-predator}"
 PG_DB="${POSTGRES_DB:-predator}"
-PGPASSWORD="${POSTGRES_PASSWORD:-changeme_dev}"
+PGPASSWORD="${POSTGRES_PASSWORD:-}"
+
+if [[ -z "$PGPASSWORD" ]]; then
+    echo "❌ Помилка: POSTGRES_PASSWORD не встановлено (HR-06)"
+    exit 1
+fi
 export PGPASSWORD
 
-echo "🌱 Запуск seed даних для PREDATOR Analytics v55.1"
+echo "🌱 Запуск seed даних для PREDATOR Analytics v61.0-ELITE"
 
 psql -h "${PG_HOST}" -p "${PG_PORT}" -U "${PG_USER}" -d "${PG_DB}" << 'EOSQL'
 -- Seed: Тестові компанії

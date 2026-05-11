@@ -18,8 +18,8 @@ class MinioService:
     def __init__(self) -> None:
         """Ініціалізація MinIO клієнта."""
         self.endpoint = os.getenv("MINIO_ENDPOINT", "localhost:9000")
-        self.access_key = os.getenv("MINIO_ACCESS_KEY", "minioadmin")
-        self.secret_key = os.getenv("MINIO_SECRET_KEY", "minioadmin")
+        self.access_key = os.environ["MINIO_ACCESS_KEY"]
+        self.secret_key = os.environ["MINIO_SECRET_KEY"]
         self.secure = os.getenv("MINIO_SECURE", "false").lower() == "true"
         self.bucket_ingestion = os.getenv("MINIO_BUCKET_INGESTION", "raw-uploads")
 
