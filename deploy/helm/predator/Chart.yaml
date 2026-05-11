@@ -2,8 +2,8 @@ apiVersion: v2
 name: predator
 description: PREDATOR Analytics v60.5-ELITE Full Stack Chart
 type: application
-version: 60.5.0
-appVersion: "60.5-ELITE"
+version: 61.0.0
+appVersion: "61.0-ELITE"
 
 dependencies:
   - name: postgresql

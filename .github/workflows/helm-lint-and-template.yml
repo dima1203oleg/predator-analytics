@@ -23,26 +23,26 @@ jobs:
 
       - name: Lint Predator Base Chart
         run: |
-          helm dependency build deploy/helm/predator/ || true
-          helm lint deploy/helm/predator/ || true
+          helm dependency build deploy/helm/predator/
+          helm lint deploy/helm/predator/
 
       - name: Lint Umbrella Chart
         working-directory: ./infra/helm/umbrella
         run: |
-          helm dependency build . || true
-          helm lint . || true
+          helm dependency build .
+          helm lint .
 
       - name: Render templates (Predator base)
         run: |
-          helm dependency build deploy/helm/predator/ || true
-          helm template predator deploy/helm/predator/ --debug || true
+          helm dependency build deploy/helm/predator/
+          helm template predator deploy/helm/predator/ --debug
 
       - name: Lint Environment Charts
         run: |
           for env_dir in environments/*/; do
             if [ -f "$env_dir/Chart.yaml" ]; then
               echo "📋 Linting $env_dir..."
-              helm dependency build "$env_dir" || true
-              helm lint "$env_dir" || true
+              helm dependency build "$env_dir"
+              helm lint "$env_dir"
             fi
           done

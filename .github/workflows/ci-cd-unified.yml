@@ -58,7 +58,6 @@ jobs:
 
       - name: Mypy Type Checking
         run: mypy services/ libs/ --ignore-missing-imports --no-strict-optional
-        continue-on-error: true
 
       - name: Frontend Install
         working-directory: ./apps/predator-analytics-ui
@@ -71,6 +70,10 @@ jobs:
       - name: Frontend TypeScript Check
         working-directory: ./apps/predator-analytics-ui
         run: npx tsc --noEmit --skipLibCheck
+
+      - name: Frontend Vitest Tests
+        working-directory: ./apps/predator-analytics-ui
+        run: npx vitest run --reporter=verbose
 
   # ── 2. Helm Lint ───────────────────────────────────────────
   helm-lint:
@@ -85,14 +88,14 @@ jobs:
 
       - name: Lint Predator Base Chart
         run: |
-          helm dependency build deploy/helm/predator/ || true
-          helm lint deploy/helm/predator/ || true
+          helm dependency build deploy/helm/predator/
+          helm lint deploy/helm/predator/
 
       - name: Lint Umbrella Chart
         run: |
           cd infra/helm/umbrella
-          helm dependency build . || true
-          helm lint . || true
+          helm dependency build .
+          helm lint .
 
   # ── 3. Build & Push Docker Images ──────────────────────────
   build-images:

@@ -33,7 +33,7 @@ global:
   domain: internal.predator.ua
   tenantId: default
   imagePullPolicy: IfNotPresent
-  secretKey: changeme-production-secret-key-32-chars
+  # secretKey: ПЕРЕДАЄТЬСЯ ЧЕРЕЗ --set global.secretKey або SealedSecret (HR-06)
   postgres:
     host: predator-postgresql
     port: 5432

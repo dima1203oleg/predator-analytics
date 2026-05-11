@@ -33,8 +33,7 @@ jobs:
             // Тільки активні workflow файли (не _archived)
             const workflows = [
               'ci-cd-unified.yml',
-              'backend-ci-cd.yml',
-              'frontend-ci-cd-v55.yml',
+              'ci.yml',
               'deploy-mac.yml',
               'deploy-nvidia-self-hosted.yml',
               'deploy-oracle.yml',
