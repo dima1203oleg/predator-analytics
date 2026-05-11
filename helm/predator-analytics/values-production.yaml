@@ -1,4 +1,4 @@
-# Predator Analytics v45.0 - Production Values
+# Predator Analytics v61.0-ELITE - Production Values (HR-06: NO hardcoded secrets)
 # MANDATORY: Static IP / Domain deployment - NO localhost for external access
 
 # Global configuration
@@ -37,7 +37,8 @@ certManager:
 
 # JWT (used by templates/secrets.yaml)
 jwt:
-  secretKey: "secure_prod_jwt_secret_2024"
+  existingSecret: "predator-secrets"
+  secretKey: "jwt-secret"
 
 # Frontend configuration
 frontend:
@@ -128,7 +129,10 @@ backend:
     - name: REDIS_URL
       value: "redis://redis:6379/0"
     - name: RABBITMQ_URL
-      value: "amqp://predator:predator_secret_key@rabbitmq:5672/"
+      valueFrom:
+        secretKeyRef:
+          name: predator-secrets
+          key: rabbitmq-url
     - name: MINIO_ENDPOINT
       value: "minio:9000"
     - name: OPENSEARCH_URL
@@ -147,16 +151,23 @@ backend:
           name: predator-secrets
           key: jwt-secret
     - name: MINIO_ACCESS_KEY
-      value: "predator_admin"
+      valueFrom:
+        secretKeyRef:
+          name: predator-secrets
+          key: minio-access-key
     - name: MINIO_SECRET_KEY
-      value: "predator_secret_key"
+      valueFrom:
+        secretKeyRef:
+          name: predator-secrets
+          key: minio-secret-key
 
 # RabbitMQ
 rabbitmq:
   enabled: true
   auth:
     username: "predator"
-    password: "predator_secret_key"
+    existingPasswordSecret: "predator-secrets"
+    existingPasswordSecretKey: "rabbitmq-password"
   persistence:
     enabled: true
     storageClass: "fast-ssd"
@@ -166,8 +177,7 @@ rabbitmq:
 minio:
   enabled: true
   auth:
-    rootUser: "predator_admin"
-    rootPassword: "predator_secret_key"
+    existingSecret: "predator-secrets"
   persistence:
     enabled: true
     storageClass: "fast-ssd"
@@ -214,7 +224,7 @@ nginx:
 postgresql:
   enabled: true
   auth:
-    postgresPassword: "secure_prod_postgres_password_2024"
+    existingSecret: "predator-secrets"
     database: "predator_db"
   primary:
     persistence:
@@ -275,7 +285,8 @@ opensearch:
       restEncryption: false
       transportEncryption: false
     auth:
-      adminPassword: "secure_prod_opensearch_password_2024"
+      existingSecret: "predator-secrets"
+      existingSecretPasswordKey: "opensearch-password"
 
 # Qdrant vector database
 qdrant:
@@ -334,7 +345,10 @@ celeryWorker:
     - name: REDIS_URL
       value: "redis://redis:6379/0"
     - name: RABBITMQ_URL
-      value: "amqp://predator:predator_secret_key@rabbitmq:5672/"
+      valueFrom:
+        secretKeyRef:
+          name: predator-secrets
+          key: rabbitmq-url
     - name: MINIO_ENDPOINT
       value: "minio:9000"
     - name: OPENSEARCH_URL
@@ -342,9 +356,15 @@ celeryWorker:
     - name: QDRANT_URL
       value: "http://qdrant:6333"
     - name: MINIO_ACCESS_KEY
-      value: "predator_admin"
+      valueFrom:
+        secretKeyRef:
+          name: predator-secrets
+          key: minio-access-key
     - name: MINIO_SECRET_KEY
-      value: "predator_secret_key"
+      valueFrom:
+        secretKeyRef:
+          name: predator-secrets
+          key: minio-secret-key
 
 # Celery beat scheduler
 celeryBeat:
@@ -452,7 +472,9 @@ monitoring:
       requests:
         cpu: 500m
         memory: 1Gi
-    adminPassword: "secure_prod_grafana_password_2024"
+    admin:
+      existingSecret: "predator-secrets"
+      passwordKey: "grafana-password"
     ingress:
       enabled: true
       className: "nginx"

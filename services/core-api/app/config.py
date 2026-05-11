@@ -119,8 +119,8 @@ class Settings(BaseSettings):
 
     # MinIO/S3
     MINIO_ENDPOINT: str = "localhost:9000"
-    MINIO_ACCESS_KEY: str = ""  # noqa: S105 — тільки через env var (HR-06)
-    MINIO_SECRET_KEY: str = ""  # noqa: S105 — тільки через env var (HR-06)
+    MINIO_ACCESS_KEY: str = ""  # тільки через env var (HR-06)
+    MINIO_SECRET_KEY: str = ""  # тільки через env var (HR-06)
     MINIO_SECURE: bool = False
     MINIO_REGION: str | None = None
     MINIO_BUCKET_RAW_UPLOADS: str = "raw-uploads"
