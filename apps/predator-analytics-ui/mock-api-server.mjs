@@ -8,7 +8,7 @@ import http from 'http';
 
 
 
-const PORT = 9081;
+const PORT = 9080;
 
 // ─── Стан Системи (Dynamic State) ───────────────────────────────────────────
 
@@ -716,10 +716,173 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  if (path.startsWith('/api/v1/factory/chaos/launch') && req.method === 'POST') {
+  if (path === '/api/v1/factory/chaos/launch' && req.method === 'POST') {
     return sendJSON(res, { status: 'launched', scenario: 'test' });
   }
 
+  // ─── Factory Mode Control (v61.0-ELITE) ─────────────────────────────────
+  if (path === '/api/v1/factory/mode' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', () => {
+      const { mode } = JSON.parse(body || '{}');
+      sendJSON(res, { success: true, mode: mode || 'AUTONOMOUS', timestamp: new Date().toISOString() });
+    });
+    return;
+  }
+
+  // ─── Factory Bug Fix by ID (v61.0-ELITE) ──────────────────────────────
+  if (path.startsWith('/api/v1/factory/bugs/') && path.endsWith('/fix') && req.method === 'POST') {
+    const bugId = path.split('/')[4];
+    const bug = systemState.factory.bugs.find(b => b.id === bugId);
+    if (bug) {
+      bug.status = 'fixing';
+      bug.fixProgress = 10;
+    }
+    return sendJSON(res, { success: true, bugId });
+  }
+
+  // ─── Factory Ingest (v61.0-ELITE) ────────────────────────────────────────
+  if (path === '/api/v1/factory/ingest' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', () => {
+      const data = JSON.parse(body || '{}');
+      sendJSON(res, { success: true, run_id: data.run_id || `RUN-${Date.now()}`, timestamp: new Date().toISOString() });
+    });
+    return;
+  }
+
+  // ─── Neural Training Start/Stop (v61.0-ELITE) ───────────────────────────
+  if (path === '/api/v1/neural/training/start' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', () => {
+      sendJSON(res, { status: 'TRAINING', model: 'Predator-v45-X-Core', started_at: new Date().toISOString() });
+    });
+    return;
+  }
+
+  if (path === '/api/v1/neural/training/stop' && req.method === 'POST') {
+    return sendJSON(res, { status: 'IDLE', stopped_at: new Date().toISOString() });
+  }
+
+  // ─── Antigravity Task CRUD (v61.0-ELITE) ───────────────────────────────
+  if (path === '/api/v1/antigravity/tasks' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', () => {
+      const data = JSON.parse(body || '{}');
+      const taskId = `AGI-${Date.now()}`;
+      sendJSON(res, {
+        task_id: taskId,
+        description: data.description || 'New AGI Task',
+        priority: data.priority || 'medium',
+        status: 'pending',
+        created_at: new Date().toISOString()
+      });
+    });
+    return;
+  }
+
+  if (path.startsWith('/api/v1/antigravity/tasks/') && !path.endsWith('/cancel') && !path.endsWith('/logs') && req.method === 'GET') {
+    const taskId = path.split('/').pop();
+    return sendJSON(res, {
+      task_id: taskId,
+      description: 'AGI Task Detail',
+      priority: 'high',
+      status: 'in_progress',
+      progress: '45%',
+      spent_usd: 2.50,
+      max_budget_usd: 10.00,
+      subtasks: [
+        { id: 's1', agent_type: 'coder', description: 'Analyze codebase', status: 'completed', started_at: new Date().toISOString(), completed_at: new Date().toISOString() }
+      ],
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    });
+  }
+
+  if (path.startsWith('/api/v1/antigravity/tasks/') && path.endsWith('/cancel') && req.method === 'POST') {
+    const taskId = path.split('/')[4];
+    return sendJSON(res, { success: true, task_id: taskId, status: 'cancelled' });
+  }
+
+  if (path.startsWith('/api/v1/antigravity/tasks/') && path.endsWith('/logs') && req.method === 'GET') {
+    return sendJSON(res, [
+      { timestamp: new Date().toISOString(), level: 'info', message: 'AGI task initialized' },
+      { timestamp: new Date().toISOString(), level: 'info', message: 'Subtask analysis completed' }
+    ]);
+  }
+
+  // ─── Chaos Engineering Trigger/Status (v61.0-ELITE) ──────────────────────
+  if (path === '/api/v1/admin/chaos/trigger' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', () => {
+      const { experiment_name, active } = JSON.parse(body || '{}');
+      if (experiment_name && systemState.chaos.hasOwnProperty(experiment_name)) {
+        systemState.chaos[experiment_name] = active;
+      }
+      sendJSON(res, { success: true, experiment: experiment_name, active });
+    });
+    return;
+  }
+
+  if (path === '/api/v1/admin/chaos/status' && req.method === 'GET') {
+    return sendJSON(res, systemState.chaos);
+  }
+
+  // ─── Orchestrator Scale-Down (v61.0-ELITE) ──────────────────────────────
+  if (path.startsWith('/api/v1/orchestrator/pods/') && path.endsWith('/scale-down') && req.method === 'POST') {
+    const podId = path.split('/')[4];
+    return sendJSON(res, { status: 'scaled_down', pod_id: podId });
+  }
+
+  // ─── Wargaming Monte Carlo (v61.0-ELITE) ─────────────────────────────────
+  if (path === '/api/v1/wargaming/monte-carlo' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', () => {
+      const data = JSON.parse(body || '{}');
+      sendJSON(res, {
+        expected_impact_mln: 245.5,
+        p95_impact_mln: 520.0,
+        p99_impact_mln: 890.0,
+        iterations: data.iterations || 10000,
+        scenarios_count: data.scenarios?.length || 0
+      });
+    });
+    return;
+  }
+
+  // ─── Ingestion Job Status (v61.0-ELITE) ──────────────────────────────────
+  if (path.startsWith('/api/v1/ingest/status/') && req.method === 'GET') {
+    const jobId = path.split('/').pop();
+    return sendJSON(res, {
+      job_id: jobId,
+      state: 'READY',
+      status: 'ready',
+      progress: {
+        percent: 100,
+        stage: 'completed',
+        details: 'Ingestion completed successfully',
+        records_total: 12500,
+        records_processed: 12500,
+        quality_score: 99.2
+      },
+      metadata: {
+        parser_stats: {
+          total_rows: 12500,
+          success: 12350,
+          rejected: 100,
+          duplicates: 50,
+          anomalies: 0,
+          status_summary: 'completed'
+        }
+      }
+    });
+  }
 
   // 20. Other missing endpoints
   if (path === '/api/v1/factory/patterns' && req.method === 'GET') {
