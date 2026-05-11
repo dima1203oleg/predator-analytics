@@ -7,8 +7,8 @@ from botocore.client import Config
 class MinioClient:
     def __init__(self):
         self.endpoint = os.getenv("MINIO_ENDPOINT", "http://localhost:9000")
-        self.access_key = os.getenv("MINIO_ACCESS_KEY", "minioadmin")
-        self.secret_key = os.getenv("MINIO_SECRET_KEY", "minioadmin")
+        self.access_key = os.getenv("MINIO_ACCESS_KEY", "")
+        self.secret_key = os.getenv("MINIO_SECRET_KEY", "")
 
         self.s3 = boto3.client(
             's3',

@@ -4,11 +4,11 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    """Канонічна конфігурація PREDATOR Core API (v60.5-ELITE)."""
+    """Канонічна конфігурація PREDATOR Core API (v61.0-ELITE)."""
 
     # Основні
     APP_NAME: str = "PREDATOR Analytics Core API"
-    APP_VERSION: str = "60.5-ELITE"
+    APP_VERSION: str = "61.0-ELITE"
     DEBUG: bool = False
     ENV: str = "development"
     TESTING: bool = False
@@ -57,7 +57,7 @@ class Settings(BaseSettings):
     # Database (DATABASE_URL overrides parts)
     DATABASE_URL: str | None = None
     POSTGRES_USER: str = "predator"
-    POSTGRES_PASSWORD: str = "predator"  # noqa: S105
+    POSTGRES_PASSWORD: str = ""  # noqa: S105 — тільки через env var (HR-06)
     POSTGRES_SERVER: str = "localhost"
     POSTGRES_PORT: str = "5432"
     POSTGRES_DB: str = "predator"
@@ -85,12 +85,12 @@ class Settings(BaseSettings):
     # Neo4j (Graph)
     NEO4J_URI: str = "bolt://localhost:7687"
     NEO4J_USER: str = "neo4j"
-    NEO4J_PASSWORD: str = "predator"  # noqa: S105
+    NEO4J_PASSWORD: str = ""  # noqa: S105 — тільки через env var (HR-06)
 
     # OpenSearch / пошук
     OPENSEARCH_HOSTS: str = "https://localhost:9200"
     OPENSEARCH_USERNAME: str = "admin"
-    OPENSEARCH_PASSWORD: str = "admin"  # noqa: S105
+    OPENSEARCH_PASSWORD: str = ""  # noqa: S105 — тільки через env var (HR-06)
     OPENSEARCH_TLS_VERIFY: bool = False
 
     # ClickHouse / аналітика
@@ -119,8 +119,8 @@ class Settings(BaseSettings):
 
     # MinIO/S3
     MINIO_ENDPOINT: str = "localhost:9000"
-    MINIO_ACCESS_KEY: str = "minioadmin"
-    MINIO_SECRET_KEY: str = "minioadmin"  # noqa: S105
+    MINIO_ACCESS_KEY: str = ""  # noqa: S105 — тільки через env var (HR-06)
+    MINIO_SECRET_KEY: str = ""  # noqa: S105 — тільки через env var (HR-06)
     MINIO_SECURE: bool = False
     MINIO_REGION: str | None = None
     MINIO_BUCKET_RAW_UPLOADS: str = "raw-uploads"

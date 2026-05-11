@@ -37,10 +37,10 @@ class MinIOService:
         self._offline_dir = Path(settings.KAFKA_OFFLINE_DIR) / "minio_offline"
         self._offline_dir.mkdir(parents=True, exist_ok=True)
 
-        # Парсимо MinIO URL з конфігурації
+        # Парсимо MinIO URL з конфігурації (HR-06: без defaults, тільки env)
         self._endpoint = getattr(settings, "MINIO_ENDPOINT", "localhost:9000")
-        self._access_key = getattr(settings, "MINIO_ACCESS_KEY", "minioadmin")
-        self._secret_key = getattr(settings, "MINIO_SECRET_KEY", "minioadmin")
+        self._access_key = getattr(settings, "MINIO_ACCESS_KEY", "")
+        self._secret_key = getattr(settings, "MINIO_SECRET_KEY", "")
         self._secure = getattr(settings, "MINIO_SECURE", False)
 
     async def connect(self) -> bool:
