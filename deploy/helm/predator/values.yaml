@@ -137,7 +137,7 @@ coreApi:
     NEO4J_PASSWORD: "{{ .Values.neo4j.neo4j.password }}"
     OPENSEARCH_URL: "http://{{ .Values.global.opensearch.host }}:9200"
     QDRANT_URL: "http://{{ .Values.global.qdrant.host }}:6333"
-    KAFKA_BOOTSTRAP_SERVERS: "predator-v55-redpanda:9092"
+    KAFKA_BOOTSTRAP_SERVERS: "{{ .Release.Name }}-kafka:9092"
     LITELLM_GATEWAY_URL: "http://{{ include \"predator.fullname\" . }}-litellm:4000"
     ANTIGRAVITY_ENABLED: "true"
     ANTIGRAVITY_AGENT_MODEL: "qwen3:8b"
@@ -165,7 +165,7 @@ graphService:
     tag: v61.0-ELITE
   service:
     type: ClusterIP
-    port: 8002
+    port: 8001
   resources:
     limits:
       cpu: 500m
@@ -181,13 +181,13 @@ graphService:
   livenessProbe:
     httpGet:
       path: /health
-      port: 8002
+      port: 8001
     initialDelaySeconds: 15
     periodSeconds: 10
   readinessProbe:
     httpGet:
       path: /ready
-      port: 8002
+      port: 8001
     initialDelaySeconds: 5
     periodSeconds: 5
 
@@ -211,11 +211,11 @@ ingestionWorker:
     maxReplicas: 4
     targetCPUUtilizationPercentage: 70
   env:
-    KAFKA_BOOTSTRAP_SERVERS: "predator-v55-redpanda:9092"
+    KAFKA_BOOTSTRAP_SERVERS: "{{ .Release.Name }}-kafka:9092"
     DATABASE_URL: "postgresql+asyncpg://predator:{{ .Values.postgresql.global.postgresql.auth.password }}@{{ .Values.global.postgres.host }}:5432/{{ .Values.postgresql.global.postgresql.auth.database }}"
     OPENSEARCH_URL: "http://{{ .Values.global.opensearch.host }}:9200"
     QDRANT_URL: "http://{{ .Values.global.qdrant.host }}:6333"
-    MINIO_ENDPOINT: "predator-v55-minio:9000"
+    MINIO_ENDPOINT: "{{ .Release.Name }}-minio:9000"
     MINIO_ACCESS_KEY: "{{ .Values.global.minio.accessKey }}"
     MINIO_SECRET_KEY: "{{ .Values.global.minio.secretKey }}"
     YOUCONTROL_API_KEY: "{{ .Values.global.osint.youcontrolApiKey }}"
