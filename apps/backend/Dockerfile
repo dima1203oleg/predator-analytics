@@ -1,6 +1,7 @@
 # ============================================================
-# Predator Analytics v55.0 - Backend Dockerfile (GOD-MODE)
+# PREDATOR Analytics v61.0-ELITE — Backend Dockerfile
 # FastAPI + ML Services + Sovereign Autonomous Agents
+# HR-05: Multi-stage, non-root user
 # ============================================================
 
 FROM python:3.12-slim AS base
@@ -33,7 +34,7 @@ COPY libs ./libs
 ENV PYTHONPATH=/app
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
-ENV APP_VERSION=55.0.0
+ENV APP_VERSION=61.0-ELITE
 
 # Health check (Use the new v45 status endpoint)
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
@@ -42,10 +43,15 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
 # Expose port (Internal FastAPI port)
 EXPOSE 8000
 
-# Labels
-LABEL maintainer="Predator Analytics Team"
-LABEL version="55.0.0"
-LABEL description="Predator Analytics Backend - God-Mode Sovereignty"
+# HR-05: Ніколи root
+RUN useradd --create-home --shell /bin/bash predator && \
+    chown -R predator:predator /app
 
-# Run the application
+USER predator
+
+# Labels
+LABEL maintainer="PREDATOR Engineering Team"
+LABEL version="61.0-ELITE"
+LABEL description="PREDATOR Analytics Backend — Sovereign Architecture"
+
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

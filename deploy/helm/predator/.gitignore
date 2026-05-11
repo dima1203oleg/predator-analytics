@@ -1,0 +1,15 @@
+# Helm generated files
+rendered.yaml
+*.tgz
+charts/*.tgz
+requirements.lock
+
+# IDE
+.DS_Store
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.bak
+*~
