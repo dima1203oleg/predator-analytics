@@ -12,6 +12,8 @@ import {
 import { HoloContainer } from "@/components/HoloContainer";
 import { CyberGrid } from "@/components/CyberGrid";
 import { motion, AnimatePresence } from "framer-motion";
+import { useUISound, UISoundType } from "@/hooks/useUISound";
+import { SlideToExecute } from "@/components/ui/SlideToExecute";
 
 // Extracted Sub-views
 import { EnvSidebar, EnvKey } from "@/components/settings/EnvSidebar";
@@ -140,6 +142,7 @@ const SettingsView: React.FC = () => {
   const highVisibility = useAppStore((state) => state.highVisibility);
   const setHighVisibility = useAppStore((state) => state.setHighVisibility);
   const toast = useToast();
+  const { play } = useUISound();
 
   React.useEffect(() => {
     const loadConfig = async () => {
@@ -161,6 +164,7 @@ const SettingsView: React.FC = () => {
   );
 
   const handleToggleChange = (key: FeatureToggleKey) => {
+    play(UISoundType.CLICK);
     setEnvConfig((prev) => ({
       ...prev,
       [selectedEnv]: {
@@ -193,10 +197,12 @@ const SettingsView: React.FC = () => {
 
   const handleSave = async () => {
     try {
+      play(UISoundType.SUCCESS);
       await api.saveConfig(envConfig);
       toast.success("Збережено", "Налаштування конфігурації оновлено успішно.");
     } catch (e) {
       console.error(e);
+      play(UISoundType.ERROR);
       toast.error("Помилка", "Не вдалося зберегти налаштування.");
     }
   };
@@ -279,19 +285,22 @@ const SettingsView: React.FC = () => {
                             </div>
                             <div className="flex gap-3">
                                 <button
-                                    onClick={handleGenerateYamlPreview}
+                                    onClick={() => {
+                                      play(UISoundType.CLICK);
+                                      handleGenerateYamlPreview();
+                                    }}
+                                    onMouseEnter={() => play(UISoundType.HOVER)}
                                     className="flex items-center gap-3 px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-white/10 text-slate-400 hover:bg-white/5 transition-all"
                                 >
                                     <Copy size={16} />
                                     YAML Код
                                 </button>
-                                <button
-                                    onClick={handleSave}
-                                    className="flex items-center gap-3 px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest bg-emerald-600 text-white hover:bg-emerald-500 transition-all "
-                                >
-                                    <Save size={16} />
-                                    Зберегти Зміни
-                                </button>
+                                <SlideToExecute
+                                    onConfirm={handleSave}
+                                    label="ПЕРЕТЯГНІТЬ ДЛЯ ЗБЕРЕЖЕННЯ"
+                                    confirmLabel="ЗБЕРЕЖЕНО"
+                                    variant="warning"
+                                />
                             </div>
                         </div>
 
@@ -313,7 +322,10 @@ const SettingsView: React.FC = () => {
                                     </span>
                                     <Switch
                                         checked={highVisibility}
-                                        onCheckedChange={setHighVisibility}
+                                        onCheckedChange={(checked) => {
+                                          play(UISoundType.CLICK);
+                                          setHighVisibility(checked);
+                                        }}
                                         aria-label="Висока видимість"
                                     />
                                 </div>
