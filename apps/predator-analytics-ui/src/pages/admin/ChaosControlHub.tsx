@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  AlertTriangle, 
-  Flame, 
-  Wind, 
+import {
+  AlertTriangle,
+  Flame,
+  Wind,
   ExternalLink,
   ZapOff,
   Clock,
@@ -27,6 +27,8 @@ import { cn } from '@/lib/utils';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
 import { API_BASE_URL } from '@/services/api/config';
+import { useUISound, UISoundType } from '@/hooks/useUISound';
+import { SlideToExecute } from '@/components/ui/SlideToExecute';
 
 interface Experiment {
   active: boolean;
@@ -40,6 +42,7 @@ interface Experiment {
 const ChaosControlHub: React.FC = () => {
   const [experiments, setExperiments] = useState<Record<string, Experiment>>({});
   const [loading, setLoading] = useState(false);
+  const { play } = useUISound();
 
   const fetchStatus = async () => {
     try {
@@ -59,6 +62,7 @@ const ChaosControlHub: React.FC = () => {
   }, []);
 
   const toggleExperiment = async (name: string, active: boolean) => {
+    play(UISoundType.CLICK);
     setLoading(true);
     try {
       await fetch(`${API_BASE_URL}/admin/chaos/trigger`, {
@@ -67,8 +71,10 @@ const ChaosControlHub: React.FC = () => {
         body: JSON.stringify({ experiment_name: name, active })
       });
       await fetchStatus();
+      play(active ? UISoundType.SUCCESS : UISoundType.ERROR);
     } catch (err) {
       console.error("[PREDATOR] Chaos trigger error:", err);
+      play(UISoundType.ERROR);
     } finally {
       setLoading(false);
     }
@@ -119,15 +125,15 @@ const ChaosControlHub: React.FC = () => {
           </div>
         </div>
 
-        <button 
-          onClick={() => Object.keys(experiments).forEach(k => toggleExperiment(k, false))}
-          className="group relative px-12 py-6 bg-rose-600 text-white rounded-[2rem] font-black uppercase tracking-[0.5em] text-[13px] hover:bg-rose-700 transition-all duration-700 flex items-center gap-6 italic shadow-4xl border-2 border-rose-400/50 overflow-hidden"
-        >
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-          <Power size={24} className="group-hover:scale-110 transition-transform relative z-10" /> 
-          <span className="relative z-10">ЕКСТ ЕНА_ЗУПИНКА_ЯД А</span>
-          <div className="absolute inset-0 rounded-[2rem] border-2 border-white/10  pointer-events-none" />
-        </button>
+        <SlideToExecute
+          onConfirm={() => {
+            play(UISoundType.SUCCESS);
+            Object.keys(experiments).forEach(k => toggleExperiment(k, false));
+          }}
+          label="ПЕРЕТЯГНІТЬ ДЛЯ ЗУПИНКИ ЯДРА"
+          confirmLabel="ЯДРО ЗУПИНЕНО"
+          variant="critical"
+        />
       </div>
 
       {/* Experiment Grid */}
@@ -166,6 +172,7 @@ const ChaosControlHub: React.FC = () => {
                   </span>
                   <button
                     onClick={() => toggleExperiment(cfg.id, !isActive)}
+                    onMouseEnter={() => play(UISoundType.HOVER)}
                     disabled={loading}
                     className={cn(
                       "w-20 h-10 rounded-full relative transition-all duration-700 border-2 p-1",
@@ -225,7 +232,14 @@ const ChaosControlHub: React.FC = () => {
               <div className="w-3 h-3 rounded-full bg-sky-500 " />
               <span className="text-[11px] font-black text-sky-500 uppercase tracking-widest italic">COLAB_HYBRID: STANDBY</span>
             </div>
-            <button className="px-10 py-5 bg-sky-600 text-white rounded-2xl font-black uppercase tracking-widest text-[11px] hover:bg-sky-500 transition-all shadow-xl italic flex items-center gap-3">
+            <button
+              onClick={() => {
+                play(UISoundType.CLICK);
+                console.log('З\'єднання з Colab');
+              }}
+              onMouseEnter={() => play(UISoundType.HOVER)}
+              className="px-10 py-5 bg-sky-600 text-white rounded-2xl font-black uppercase tracking-widest text-[11px] hover:bg-sky-500 transition-all shadow-xl italic flex items-center gap-3"
+            >
               <Link size={16} /> З'єднати з Colab
             </button>
           </div>
@@ -271,9 +285,16 @@ const ChaosControlHub: React.FC = () => {
             <p className="text-[13px] text-white/20 font-black uppercase tracking-[0.2em] mb-12 italic leading-relaxed max-w-xs">
               Автоматично згенерований звіт на основі останніх k6 стрес-тестів та ін'єкцій хаосу.
             </p>
-            <button className="w-full py-8 bg-rose-600 text-white rounded-[2rem] text-[13px] font-black uppercase tracking-[0.5em] hover:bg-rose-500 hover:scale-[1.02] transition-all duration-700 shadow-4xl italic border-2 border-rose-400/50 group/btn relative overflow-hidden">
+            <button
+              onClick={() => {
+                play(UISoundType.CLICK);
+                console.log('Генерація аналітики SLA');
+              }}
+              onMouseEnter={() => play(UISoundType.HOVER)}
+              className="w-full py-8 bg-rose-600 text-white rounded-[2rem] text-[13px] font-black uppercase tracking-[0.5em] hover:bg-rose-500 hover:scale-[1.02] transition-all duration-700 shadow-4xl italic border-2 border-rose-400/50 group/btn relative overflow-hidden"
+            >
                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000" />
-               <span className="relative z-10">ГЕНЕ УВАТИ_АНАЛІТИКУ_SLA</span>
+               <span className="relative z-10">ГЕНЕРУВАТИ_АНАЛІТИКУ_SLA</span>
             </button>
         </div>
       </div>
