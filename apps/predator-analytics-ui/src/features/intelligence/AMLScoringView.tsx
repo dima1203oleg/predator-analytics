@@ -29,6 +29,8 @@ import { DiagnosticsTerminal } from '@/components/intelligence/DiagnosticsTermin
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { SovereignAudio } from '@/utils/sovereign-audio';
+import { useUISound, UISoundType } from '@/hooks/useUISound';
+import { SlideToExecute } from '@/components/ui/SlideToExecute';
 
 // ========================
 // Типи
@@ -390,6 +392,7 @@ const ScoreMeter: React.FC<{ score: number; level: string }> = ({ score, level }
 // ========================
 
 const AMLScoringView: React.FC = () => {
+    const { play } = useUISound();
     const [entityId, setEntityId]     = useState('');
     const [entityName, setEntityName] = useState('');
     const [entityType, setEntityType] = useState<'organization' | 'person'>('organization');
@@ -610,7 +613,7 @@ const AMLScoringView: React.FC = () => {
                     ].map(({ id, label, icon }) => (
                         <button
                             key={String(id)}
-                            onClick={() => setBatchMode(id)}
+                            onClick={() => { play(UISoundType.CLICK); setBatchMode(id); }}
                             className={cn(
                                 'flex items-center gap-4 px-10 py-5 rounded-[2rem] border-2 text-[10px] font-black uppercase tracking-[0.3em] italic transition-all shadow-xl',
                                 batchMode === id
@@ -637,7 +640,7 @@ const AMLScoringView: React.FC = () => {
                                     {(['organization', 'person'] as const).map(t => (
                                         <button
                                             key={t}
-                                            onClick={() => setEntityType(t)}
+                                            onClick={() => { play(UISoundType.CLICK); setEntityType(t); }}
                                             className={cn(
                                                 'flex-1 py-5 rounded-2xl border-2 text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-4 transition-all italic',
                                                 entityType === t
@@ -681,7 +684,8 @@ const AMLScoringView: React.FC = () => {
                                 </div>
 
                                 <button
-                                    onClick={runScore}
+                                    onClick={() => { play(UISoundType.CLICK); runScore(); }}
+                                    onMouseEnter={() => play(UISoundType.HOVER)}
                                     disabled={loading || !entityId || !entityName}
                                     className={cn(
                                         "w-full py-8 text-white font-black text-sm rounded-[2rem] uppercase tracking-[0.4em] italic hover:brightness-110 transition-all shadow-4xl disabled:opacity-40 flex flex-col items-center justify-center gap-2 font-bold border-4 relative overflow-hidden group/btn",
@@ -722,7 +726,7 @@ const AMLScoringView: React.FC = () => {
                                     ФОРМАТ: entity_id, name, type (org/pers) // ЛІМІТ: 100_ВУЗЛІВ
                                 </p>
                                 <button
-                                    onClick={() => fileInputRef.current?.click()}
+                                    onClick={() => { play(UISoundType.CLICK); fileInputRef.current?.click(); }}
                                     className="py-12 border-4 border-dashed border-white/5 rounded-[2.5rem] text-slate-700 hover:border-rose-500/40 hover:text-rose-500 transition-all flex flex-col items-center gap-6 bg-black/40 group shadow-inner"
                                 >
                                     <Upload size={40} className="group-hover:scale-110 transition-transform opacity-40 group-hover:opacity-100" />
@@ -736,7 +740,7 @@ const AMLScoringView: React.FC = () => {
                                             <span className="text-[10px] text-rose-600 font-black uppercase tracking-[0.4em] italic">
                                                 ЗАВАНТАЖЕНО: {batchList.length}_ВУЗЛІВ
                                             </span>
-                                            <button onClick={() => setBatchList([])} className="p-2 text-slate-800 hover:text-rose-500 transition-colors">
+                                            <button onClick={() => { play(UISoundType.CLICK); setBatchList([]); }} onMouseEnter={() => play(UISoundType.HOVER)} className="p-2 text-slate-800 hover:text-rose-500 transition-colors">
                                                 <X size={18} />
                                             </button>
                                         </div>
@@ -751,7 +755,8 @@ const AMLScoringView: React.FC = () => {
                                 )}
 
                                 <button
-                                    onClick={runBatch}
+                                    onClick={() => { play(UISoundType.CLICK); runBatch(); }}
+                                    onMouseEnter={() => play(UISoundType.HOVER)}
                                     disabled={batchLoading || batchList.length === 0}
                                     className="w-full py-8 bg-rose-600 text-white font-black text-sm rounded-[2rem] uppercase tracking-[0.4em] italic hover:brightness-110 transition-all shadow-4xl disabled:opacity-40 flex items-center justify-center gap-6 font-bold border-4 border-rose-500/20"
                                 >
