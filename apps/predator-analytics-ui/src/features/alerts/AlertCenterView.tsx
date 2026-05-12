@@ -15,6 +15,8 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/utils/cn';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { apiClient } from '@/services/api/config';
+import { useUISound, UISoundType } from '@/hooks/useUISound';
+import { SlideToExecute } from '@/components/ui/SlideToExecute';
 
 // ─── ТИПИ ───────────────────────────────────────────────────────────────────
 
@@ -46,6 +48,7 @@ const SEVERITY_CFG: Record<AlertSeverity, { label: string; color: string; bg: st
 // ─── КОМПОНЕНТ КА ТКИ ────────────────────────────────────────────────────────
 
 const AlertRow: React.FC<{ alert: Alert; onAck: (id: string) => void }> = ({ alert, onAck }) => {
+  const { play } = useUISound();
   const cfg = SEVERITY_CFG[alert.severity] || SEVERITY_CFG.INFO;
   const Icon = cfg.icon;
 
@@ -92,13 +95,17 @@ const AlertRow: React.FC<{ alert: Alert; onAck: (id: string) => void }> = ({ ale
       <div className="flex items-center gap-3">
         {alert.status === 'ACTIVE' && (
           <button 
-            onClick={() => onAck(alert.id)}
+            onClick={() => { play(UISoundType.CLICK); onAck(alert.id); }}
+            onMouseEnter={() => play(UISoundType.HOVER)}
             className="p-4 bg-amber-500 text-black rounded-2xl hover:brightness-110 transition-all shadow-4xl"
           >
             <CheckCheck size={20} />
           </button>
         )}
-        <button className="p-4 bg-white/5 text-slate-500 hover:text-white rounded-2xl border border-white/5 transition-all">
+        <button 
+          onMouseEnter={() => play(UISoundType.HOVER)}
+          className="p-4 bg-white/5 text-slate-500 hover:text-white rounded-2xl border border-white/5 transition-all"
+        >
           <Eye size={20} />
         </button>
       </div>
@@ -109,6 +116,7 @@ const AlertRow: React.FC<{ alert: Alert; onAck: (id: string) => void }> = ({ ale
 // ─── ГОЛОВНИЙ КОМПОНЕНТ ──────────────────────────────────────────────────────
 
 export const AlertCenterView: React.FC = () => {
+  const { play } = useUISound();
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [activeFilter, setActiveFilter] = useState<'ALL' | 'CRITICAL' | 'ACTIVE'>('ALL');
@@ -201,14 +209,21 @@ export const AlertCenterView: React.FC = () => {
             actions={
               <div className="flex gap-4">
                  <button 
-                  onClick={fetchAlerts}
+                  onClick={() => { play(UISoundType.CLICK); fetchAlerts(); }}
+                  onMouseEnter={() => play(UISoundType.HOVER)}
                   className="p-6 bg-white/5 border-2 border-white/5 text-slate-400 hover:text-white rounded-3xl transition-all"
                  >
                     <RefreshCw size={24} className={isLoading ? "animate-spin" : ""} />
                  </button>
-                 <button className="px-14 py-6 bg-amber-500 text-black text-[12px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all rounded-[2rem] shadow-4xl flex items-center gap-4 italic font-bold">
-                    <CheckCheck size={22} /> ПРОЧИТАТИ_ВСЕ
-                 </button>
+                 <SlideToExecute
+                    onConfirm={() => {
+                      play(UISoundType.SUCCESS);
+                      alerts.filter(a => a.status === 'ACTIVE').forEach(a => handleAck(a.id));
+                    }}
+                    label="ПЕРЕТЯГНІТЬ ДЛЯ ПІДТВЕРДЖЕННЯ ВСІХ"
+                    confirmLabel="УСІ АЛЕРТИ ПІДТВЕРДЖЕНО"
+                    variant="warning"
+                 />
               </div>
             }
           />
@@ -222,7 +237,8 @@ export const AlertCenterView: React.FC = () => {
             ].map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveFilter(tab.id as any)}
+                onClick={() => { play(UISoundType.CLICK); setActiveFilter(tab.id as any); }}
+                onMouseEnter={() => play(UISoundType.HOVER)}
                 className={cn(
                   "flex items-center gap-4 px-10 py-5 rounded-[2rem] font-black text-[11px] uppercase tracking-widest transition-all duration-500 italic",
                   activeFilter === tab.id 

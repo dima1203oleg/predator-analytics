@@ -31,6 +31,7 @@ import { SearchWidget } from '@/components/search/SearchWidget';
 import { AudioSanctuary } from '@/components/shared/AudioSanctuary';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { antigravityApi } from '@/services/api/antigravity';
+import { useUISound, UISoundType } from '@/hooks/useUISound';
 import type { DashboardOverview, EngineInfo, DashboardAlert, RadarItem, RiskCompany } from '@/services/api/dashboard';
 
 // ========================
@@ -216,6 +217,7 @@ const GlobalSituationProjection: React.FC<{ countries: Record<string, { count: n
 };
 
 const DashboardView: React.FC = () => {
+  const { play } = useUISound();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [overview, setOverview] = useState<DashboardOverview | null>(null);
@@ -358,6 +360,7 @@ const DashboardView: React.FC = () => {
                   whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(244,63,94,0.3)' }}
                   whileTap={{ scale: 0.95 }}
                   onClick={async () => {
+                    play(UISoundType.CLICK);
                     try {
                       const res = await antigravityApi.simulateHorizon();
                       window.dispatchEvent(new CustomEvent('predator-error', {
@@ -382,7 +385,8 @@ const DashboardView: React.FC = () => {
                 <motion.button 
                   whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(244,63,94,0.3)' }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={fetchData}
+                  onClick={() => { play(UISoundType.CLICK); fetchData(); }}
+                  onMouseEnter={() => play(UISoundType.HOVER)}
                   disabled={refreshing}
                   className="px-10 py-5 bg-black/60 border-2 border-rose-500/30 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.3em] hover:bg-rose-600/20 transition-all flex items-center gap-4 disabled:opacity-50 italic group"
                 >
@@ -589,7 +593,7 @@ const DashboardView: React.FC = () => {
 
                      <div className="absolute bottom-12 right-12 z-20 flex bg-black/60  p-3 border border-white/10 rounded-[2.5rem] gap-4 shadow-3xl">
                         {[Search, Layers, Target, RadioTower].map((Icon, idx) => (
-                           <button key={idx} className="p-6 bg-white/5 hover:bg-rose-600 hover:text-white rounded-3xl text-slate-400 transition-all group">
+                           <button key={idx} onMouseEnter={() => play(UISoundType.HOVER)} className="p-6 bg-white/5 hover:bg-rose-600 hover:text-white rounded-3xl text-slate-400 transition-all group">
                               <Icon size={24} className={cn("group-hover:scale-110 group-hover:rotate-6 transition-transform", idx === 3 && " text-rose-400")} />
                            </button>
                         ))}
@@ -648,7 +652,7 @@ const DashboardView: React.FC = () => {
                                      </div>
                                      <span className="text-[11px] font-black text-slate-400 uppercase tracking-tight italic truncate max-w-[200px]">{alert.company}</span>
                                   </div>
-                                  <button className="px-8 py-3.5 bg-rose-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] transition-all flex items-center gap-3 italic group/btn shadow-[0_10px_30px_rgba(244,63,94,0.3)]">
+                                  <button onClick={() => play(UISoundType.CLICK)} onMouseEnter={() => play(UISoundType.HOVER)} className="px-8 py-3.5 bg-rose-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] transition-all flex items-center gap-3 italic group/btn shadow-[0_10px_30px_rgba(244,63,94,0.3)]">
                                      РОЗСЛІДУВАТИ <ArrowUpRight size={18} className="group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />
                                   </button>
                                </div>
