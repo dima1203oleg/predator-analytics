@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { ViewHeader } from '@/components/ViewHeader';
+import { useUISound, UISoundType } from '@/hooks/useUISound';
 
 // Import sub-components
 import { ReviewQueue } from '@/components/review/ReviewQueue';
@@ -43,6 +44,7 @@ const KNOWLEDGE_TABS = [
 ];
 
 export const KnowledgeEngineeringView: React.FC = () => {
+  const { play } = useUISound();
   const { isOffline, nodeSource } = useBackendStatus();
   const [activeTab, setActiveTab] = useState('quality');
   const [rules, setRules] = useState<any[]>([]);
@@ -329,7 +331,8 @@ export const KnowledgeEngineeringView: React.FC = () => {
           return (
             <motion.button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => { play(UISoundType.CLICK); setActiveTab(tab.id); }}
+              onMouseEnter={() => play(UISoundType.HOVER)}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className={`p-3 rounded-xl flex flex-col items-center gap-2 transition-all ${isActive

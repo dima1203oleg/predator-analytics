@@ -20,8 +20,11 @@ import { Stars } from '@react-three/drei';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TruthLedgerTerminal } from '@/components/super/TruthLedgerTerminal';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { useUISound, UISoundType } from '@/hooks/useUISound';
+import { SlideToExecute } from '@/components/ui/SlideToExecute';
 
 const SuperIntelligenceView: React.FC = () => {
+    const { play } = useUISound();
     const { isOffline, nodeSource, healingProgress } = useBackendStatus();
     const {
         isActive, toggleLoop, vetoCycle, injectScenario, stage, logs, brainNodes, activeAgents,
@@ -91,11 +94,8 @@ const SuperIntelligenceView: React.FC = () => {
                         <div className="flex flex-wrap gap-4 w-full sm:w-auto">
                             <motion.button
                                 whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-                                onClick={() => {
-                                    if (availableScenarios.length > 0) {
-                                        injectScenario(availableScenarios[0].id);
-                                    }
-                                }}
+                                onClick={() => { play(UISoundType.CLICK); if (availableScenarios.length > 0) { injectScenario(availableScenarios[0].id); } }}
+                                onMouseEnter={() => play(UISoundType.HOVER)}
                                 className="flex-1 sm:flex-none px-6 py-2.5 bg-white/5 border border-white/10 text-white rounded-[24px] text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-white/10 transition-all shadow-xl group"
                             >
                                 <Sparkles size={14} className="group-hover:rotate-12 transition-transform text-rose-400" />
@@ -103,7 +103,8 @@ const SuperIntelligenceView: React.FC = () => {
                             </motion.button>
                             <motion.button
                                 whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-                                onClick={toggleLoop}
+                                onClick={() => { play(UISoundType.CLICK); toggleLoop(); }}
+                                onMouseEnter={() => play(UISoundType.HOVER)}
                                 className={`flex-1 sm:flex-none px-8 py-2.5 rounded-[24px] text-[10px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all ${isActive ? 'bg-rose-600 shadow-[0_0_25px_#e11d48]' : 'bg-blue-600 shadow-[0_0_25px_#2563eb]'} text-white`}
                             >
                                 {isActive ? <Pause size={14} /> : <Play size={14} />}
@@ -134,10 +135,10 @@ const SuperIntelligenceView: React.FC = () => {
 
                         <div className="absolute top-6 right-8 z-50 flex gap-3">
                             {[
-                                { id: '3d', icon: is3DEnabled ? EyeOff : BrainCircuit, action: () => setIs3DEnabled(!is3DEnabled) },
-                                { id: 'focus', icon: isFocusMode ? Minimize2 : Maximize2, action: () => setIsFocusMode(!isFocusMode) },
+                                { id: '3d', icon: is3DEnabled ? EyeOff : BrainCircuit, action: () => { play(UISoundType.CLICK); setIs3DEnabled(!is3DEnabled); } },
+                                { id: 'focus', icon: isFocusMode ? Minimize2 : Maximize2, action: () => { play(UISoundType.CLICK); setIsFocusMode(!isFocusMode); } },
                             ].map(btn => (
-                                <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} key={btn.id} onClick={btn.action} className="p-3 bg-slate-900/80 border border-white/10 text-white rounded-xl  hover:border-purple-500 transition-all shadow-xl">
+                                <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} key={btn.id} onClick={btn.action} onMouseEnter={() => play(UISoundType.HOVER)} className="p-3 bg-slate-900/80 border border-white/10 text-white rounded-xl  hover:border-purple-500 transition-all shadow-xl">
                                     <btn.icon size={20} />
                                 </motion.button>
                             ))}
@@ -186,7 +187,7 @@ const SuperIntelligenceView: React.FC = () => {
                                     { id: 'GENOME', icon: Dna, label: 'Геноми AI' },
                                 ].map(tab => (
                                     <button
-                                        key={tab.id} onClick={() => setRightTab(tab.id as any)}
+                                        key={tab.id} onClick={() => { play(UISoundType.CLICK); setRightTab(tab.id as any); }} onMouseEnter={() => play(UISoundType.HOVER)}
                                         className={`flex-1 py-4 text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-3 rounded-2xl transition-all ${rightTab === tab.id ? 'bg-blue-600 text-white ' : 'text-slate-500 hover:text-slate-300'}`}
                                     >
                                         <tab.icon size={16} /> {tab.label}
