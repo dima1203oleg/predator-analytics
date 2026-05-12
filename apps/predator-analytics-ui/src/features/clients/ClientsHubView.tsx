@@ -27,6 +27,7 @@ import { PageTransition } from '@/components/layout/PageTransition';
 import { Badge } from '@/components/ui/badge';
 import { useContextRail } from '@/hooks/useContextRail';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { useUISound, UISoundType } from '@/hooks/useUISound';
 import { cn } from '@/utils/cn';
 import { useAppStore } from '@/store/useAppStore';
 import { dashboardApi, type DashboardOverview } from '@/services/api/dashboard';
@@ -223,6 +224,7 @@ export default function ClientsHubView() {
   const navigate = useNavigate();
   const { persona, setPersona } = useAppStore();
   const backendStatus = useBackendStatus();
+  const { play } = useUISound();
   const [overview, setOverview] = useState<DashboardOverview | null>(null);
   const [systemStatus, setSystemStatus] = useState<SystemStatusResponse | null>(null);
   const [systemStats, setSystemStats] = useState<SystemStatsResponse | null>(null);
@@ -383,8 +385,10 @@ export default function ClientsHubView() {
               <button
                 type="button"
                 onClick={() => {
+                  play(UISoundType.CLICK);
                   void loadData(true);
                 }}
+                onMouseEnter={() => play(UISoundType.HOVER)}
                 disabled={refreshing}
                 className={cn(
                   'inline-flex items-center justify-center gap-3 rounded-[22px] border border-white/10 bg-white/5 px-5 py-3 text-[11px] font-black uppercase tracking-[0.24em] text-white transition hover:bg-white/10',
@@ -506,9 +510,11 @@ export default function ClientsHubView() {
                         <button
                           type="button"
                           onClick={() => {
+                            play(UISoundType.CLICK);
                             setPersona(segment.persona);
                             navigate(`/clients/${segment.key}`);
                           }}
+                          onMouseEnter={() => play(UISoundType.HOVER)}
                           className={cn(
                             'inline-flex flex-1 items-center justify-center gap-3 rounded-[22px] px-4 py-3 text-[11px] font-black uppercase tracking-[0.22em] transition',
                             isActive
@@ -522,7 +528,11 @@ export default function ClientsHubView() {
 
                         <button
                           type="button"
-                          onClick={() => navigate(`/clients/${segment.key}`)}
+                          onClick={() => {
+                            play(UISoundType.CLICK);
+                            navigate(`/clients/${segment.key}`);
+                          }}
+                          onMouseEnter={() => play(UISoundType.HOVER)}
                           className="inline-flex h-12 w-12 items-center justify-center rounded-[20px] border border-white/10 bg-white/5 text-white transition hover:bg-white/10"
                           aria-label={`Відкрити сегмент ${segment.title}`}
                         >
