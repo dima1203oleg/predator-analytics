@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Activity, Cpu, Zap, Shield, Database, 
+import {
+  Activity, Cpu, Zap, Shield, Database,
   Layers, Boxes, Terminal, Box, Sparkles,
   BarChart3, BrainCircuit, Factory, HardDrive,
   Network, AlertTriangle, RefreshCw, Atom,
@@ -16,6 +16,8 @@ import { useSystemStatus, useSystemStats, useAIEngines, useSystemLogs } from '@/
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { useUISound, UISoundType } from '@/hooks/useUISound';
+import { SlideToExecute } from '@/components/ui/SlideToExecute';
 
 /**
  * 🦅 Sovereign Command Center | v61.0-ELITE
@@ -51,10 +53,12 @@ export const SovereignCommandCenter: React.FC = () => {
   const { data: engines } = useAIEngines();
   const { data: logData } = useSystemLogs();
   const { llmTriStateMode, nodeSource } = useBackendStatus();
+  const { play } = useUISound();
 
   const navigate = useNavigate();
 
   const goToTab = (tabId: string) => {
+    play(UISoundType.CLICK);
     navigate(`/admin/command?tab=${tabId}`);
   };
 
@@ -196,10 +200,11 @@ export const SovereignCommandCenter: React.FC = () => {
                 { id: 'auto-factory', label: 'ШІ_ЗАВОД_PREDATOR', sub: 'ЦИКЛ_БЕЗПЕРЕВНИЙ_L5', icon: Factory, color: 'text-rose-500', bg: 'rose' },
                 { id: 'models', label: 'НЕЙРОННИЙ_ПОЛІГОН', sub: 'ЕТАП_ВЕРТИКАЛЬНОЇ_ВАЛІДАЦІЇ', icon: BrainCircuit, color: 'text-sky-500', bg: 'sky' }
               ].map((link, i) => (
-                <motion.button 
+                <motion.button
                   key={link.id}
                   whileHover={{ x: 10, scale: 1.02 }}
                   onClick={() => goToTab(link.id)}
+                  onMouseEnter={() => play(UISoundType.HOVER)}
                   className="w-full flex items-center justify-between p-8 glass-wraith border-2 border-white/5 rounded-[2.5rem] cursor-pointer group hover:border-white/20 transition-all duration-700 shadow-4xl relative overflow-hidden"
                 >
                   <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
@@ -275,22 +280,25 @@ export const SovereignCommandCenter: React.FC = () => {
             </div>
 
             {/* Main Action Buttons */}
-            <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-30 flex items-center gap-12">
-              <motion.button 
-                whileHover={{ scale: 1.05, boxShadow: '0 0 60px rgba(225,29,72,0.6)' }}
-                whileTap={{ scale: 0.95 }}
-                className="px-16 py-6 bg-rose-600 text-white text-[13px] font-black uppercase tracking-[0.5em] rounded-2xl transition-all duration-700 shadow-4xl border-2 border-rose-400/50 italic group/btn overflow-hidden relative"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000" />
-                <span className="relative z-10">ПЕРЕКАЛІБРУВАТИ_ЯДРО_ELITE</span>
-              </motion.button>
-              <motion.button 
-                whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.1)', borderColor: 'rgba(255,255,255,0.3)' }}
-                whileTap={{ scale: 0.95 }}
-                className="px-16 py-6 bg-white/5 border-2 border-white/10 text-white/70 text-[13px] font-black uppercase tracking-[0.5em] rounded-2xl transition-all duration-700 italic  shadow-4xl"
-              >
-                АВАРІЙНИЙ_ШЛЮЗ_OODA
-              </motion.button>
+            <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-8">
+              <SlideToExecute
+                onConfirm={() => {
+                  play(UISoundType.SUCCESS);
+                  console.log('Перекалібрування ядра ELITE');
+                }}
+                label="ПЕРЕТЯГНІТЬ ДЛЯ ПЕРЕКАЛІБРУВАННЯ ЯДРА"
+                confirmLabel="ПЕРЕКАЛІБРУВАННЯ ЗАПУЩЕНО"
+                variant="critical"
+              />
+              <SlideToExecute
+                onConfirm={() => {
+                  play(UISoundType.SUCCESS);
+                  console.log('Аварійний шлюз OODA активовано');
+                }}
+                label="ПЕРЕТЯГНІТЬ ДЛЯ АВАРІЙНОГО ШЛЮЗУ"
+                confirmLabel="АВАРІЙНИЙ ШЛЮЗ АКТИВОВАНО"
+                variant="critical"
+              />
             </div>
           </div>
 
