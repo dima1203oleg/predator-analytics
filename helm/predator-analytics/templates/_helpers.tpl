@@ -42,3 +42,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- $tag := default $root.Chart.AppVersion $image.tag -}}
 {{- printf "%s/%s:%s" $registry $repository $tag -}}
 {{- end -}}
+
+{{- define "predator-analytics.databaseURL" -}}
+postgresql://{{ .Values.postgresql.auth.username }}:{{ .Values.postgresql.auth.postgresPassword }}@{{ include "predator-analytics.fullname" . }}-postgresql:5432/{{ .Values.postgresql.auth.database }}
+{{- end -}}

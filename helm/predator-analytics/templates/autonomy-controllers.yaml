@@ -1,14 +1,25 @@
 
-# predator-analytics v45.1 - Component Registry Update
+# predator-analytics v61.0-ELITE - Component Registry Update
 # Adding SIO and AutoML Controller
 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "predator-analytics.fullname" . }}-sio-controller
+  name: {{ include "predator-analytics.fullname" . }}-sio
+  labels:
+    {{- include "predator-analytics.labels" . | nindent 4 }}
+    app: sio-controller
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      {{- include "predator-analytics.selectorLabels" . | nindent 6 }}
+      app: sio-controller
   template:
+    metadata:
+      labels:
+        {{- include "predator-analytics.selectorLabels" . | nindent 8 }}
+        app: sio-controller
     spec:
       containers:
         - name: sio-controller
@@ -21,10 +32,21 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "predator-analytics.fullname" . }}-automl-controller
+  name: {{ include "predator-analytics.fullname" . }}-automl
+  labels:
+    {{- include "predator-analytics.labels" . | nindent 4 }}
+    app: automl-controller
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      {{- include "predator-analytics.selectorLabels" . | nindent 6 }}
+      app: automl-controller
   template:
+    metadata:
+      labels:
+        {{- include "predator-analytics.selectorLabels" . | nindent 8 }}
+        app: automl-controller
     spec:
       containers:
         - name: automl-controller

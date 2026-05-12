@@ -4,15 +4,57 @@ global:
   pythonVersion: "3.12"
 
 replicaCount:
+  frontend: 1
+  backend: 1
   nginx: 1
+  celeryBeat: 1
+  celeryWorker: 1
+
+frontend:
+  enabled: true
+  image:
+    registry: ghcr.io
+    repository: dima1203oleg/predator-analytics-ui
+    tag: "v61.0-ELITE"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 3000
+  resources:
+    limits:
+      cpu: 500m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  env:
+    - name: NODE_ENV
+      value: production
+    - name: VITE_API_URL
+      value: "http://localhost:8000"
+  podSecurityContext: {}
+  securityContext: {}
+  nodeSelector: {}
+  affinity: {}
+  tolerations: []
   
 postgresql:
   enabled: true
   image: 
     tag: "15"
+  auth:
+    postgresPassword: "change-me-in-production"
+    database: "predator_db"
+    username: "predator"
   persistence:
     size: 10Gi
     
+opensearch:
+  enabled: true
+  security:
+    auth:
+      adminPassword: "change-me-in-production"
+
 redis:
   enabled: true
   image:
@@ -55,6 +97,90 @@ ollama:
       memory: "4Gi"
       cpu: "2"
 
+backend:
+  enabled: true
+  image:
+    registry: ghcr.io
+    repository: dima1203oleg/predator-api
+    tag: "v61.0-ELITE"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8000
+  ingress:
+    enabled: false
+    host: api.predator.analytics.local
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 250m
+      memory: 512Mi
+  env: []
+  podSecurityContext: {}
+  securityContext: {}
+  nodeSelector: {}
+  affinity: {}
+  tolerations: []
+
+celeryWorker:
+  enabled: true
+  image:
+    registry: ghcr.io
+    repository: dima1203oleg/predator-worker
+    tag: "v61.0-ELITE"
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+  env: []
+  podSecurityContext: {}
+  securityContext: {}
+  nodeSelector: {}
+  affinity: {}
+  tolerations: []
+
+celeryBeat:
+  enabled: true
+  image:
+    registry: ghcr.io
+    repository: dima1203oleg/predator-worker
+    tag: "v61.0-ELITE"
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  resources:
+    limits:
+      cpu: 250m
+      memory: 256Mi
+    requests:
+      cpu: 50m
+      memory: 128Mi
+  env: []
+  podSecurityContext: {}
+  securityContext: {}
+  nodeSelector: {}
+  affinity: {}
+  tolerations: []
+
+autoscaling:
+  enabled: false
+  frontend:
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 80
+  backend:
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 80
+
 nginx:
   image:
     registry: ghcr.io
@@ -67,15 +193,27 @@ nginx:
       http: 80
       https: 443
 
+jwt:
+  secretKey: "change-me-in-production"
+
+certManager:
+  enabled: false
+  email: "admin@predator.analytics.local"
+  ingressClass: "nginx"
+
 monitoring:
   grafana:
+    adminPassword: "change-me-in-production"
     service:
       type: ClusterIP
       port: 3000
     persistence:
       size: 10Gi
     ingress:
+      enabled: false
       host: grafana.predator.analytics.local
+      tls:
+        secretName: ""
     resources:
       limits:
         cpu: 500m
@@ -88,3 +226,13 @@ monitoring:
     nodeSelector: {}
     affinity: {}
     tolerations: []
+
+nginxSSL:
+  cert: ""
+  key: ""
+
+externalAPIs:
+  openai: ""
+  anthropic: ""
+  gemini: ""
+  groq: ""
