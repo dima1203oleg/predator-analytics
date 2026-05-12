@@ -37,6 +37,8 @@ import {
   HardDrive,
   Cloud
 } from 'lucide-react';
+import { SlideToExecute } from '../../components/ui/SlideToExecute';
+import { useUISound, UISoundType } from '../../hooks/useUISound';
 
 // ========================
 // Types
@@ -116,10 +118,17 @@ const statusConfig: Record<ExportStatus, StatusConfigEntry> = {
 
 const DataSourceCard: React.FC<{ source: DataSource; onExport: () => void }> = ({ source, onExport }) => {
   const Icon = source.icon;
+  const { play } = useUISound();
+
+  const handleExport = () => {
+    play(UISoundType.CLICK);
+    onExport();
+  };
 
   return (
     <motion.div
       whileHover={{ scale: 1.02 }}
+      onMouseEnter={() => play(UISoundType.HOVER)}
       className="p-4 bg-slate-900/60 border border-white/5 rounded-xl hover:border-white/10 transition-all"
     >
       <div className="flex items-start gap-4">
@@ -152,7 +161,8 @@ const DataSourceCard: React.FC<{ source: DataSource; onExport: () => void }> = (
           </div>
 
           <button
-            onClick={onExport}
+            onClick={handleExport}
+            onMouseEnter={() => play(UISoundType.HOVER)}
             className="flex items-center gap-1 px-3 py-1.5 bg-emerald-500/20 text-emerald-400 rounded-lg text-xs font-bold hover:bg-emerald-500/30 transition-colors"
           >
             <Download size={12} />
@@ -169,6 +179,8 @@ const ExportJobRow: React.FC<{ job: ExportJob }> = ({ job }) => {
   const status = statusConfig[job.status];
   const FormatIcon = format.icon;
   const StatusIcon = status.icon;
+  const { play } = useUISound();
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   return (
     <div className={`
@@ -225,18 +237,50 @@ const ExportJobRow: React.FC<{ job: ExportJob }> = ({ job }) => {
 
       <div className="flex items-center gap-1">
         {job.status === 'ready' && (
-          <button className="p-2 rounded-lg bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 transition-colors" title="Завантажити">
+          <button
+            onClick={() => play(UISoundType.CLICK)}
+            onMouseEnter={() => play(UISoundType.HOVER)}
+            className="p-2 rounded-lg bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 transition-colors"
+            title="Завантажити"
+          >
             <Download size={16} />
           </button>
         )}
         {job.status === 'scheduled' && (
-          <button className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white" title="редагувати">
+          <button
+            onClick={() => play(UISoundType.CLICK)}
+            onMouseEnter={() => play(UISoundType.HOVER)}
+            className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white"
+            title="редагувати"
+          >
             <Settings size={16} />
           </button>
         )}
-        <button className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-amber-400 transition-colors" title="Видалити">
-          <Trash2 size={16} />
-        </button>
+        {showDeleteConfirm ? (
+          <SlideToExecute
+            onConfirm={() => {
+              play(UISoundType.SLIDE_COMPLETE);
+              setShowDeleteConfirm(false);
+              console.log('Delete job:', job.id);
+            }}
+            label="ПЕРЕТЯГНІТЬ ДЛЯ ВИДАЛЕННЯ"
+            confirmLabel="ВИДАЛЕНО"
+            variant="critical"
+            className="w-48 h-12"
+          />
+        ) : (
+          <button
+            onClick={() => {
+              play(UISoundType.CLICK);
+              setShowDeleteConfirm(true);
+            }}
+            onMouseEnter={() => play(UISoundType.HOVER)}
+            className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-amber-400 transition-colors"
+            title="Видалити"
+          >
+            <Trash2 size={16} />
+          </button>
+        )}
       </div>
     </div>
   );
@@ -249,6 +293,7 @@ const ExportJobRow: React.FC<{ job: ExportJob }> = ({ job }) => {
 const DataExportCenter: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'sources' | 'history' | 'scheduled'>('sources');
   const [selectedFormat, setSelectedFormat] = useState<ExportFormat>('csv');
+  const { play } = useUISound();
 
   const stats = useMemo(() => ({
     totalRecords: dataSources.reduce((acc, s) => acc + s.recordCount, 0),
@@ -283,7 +328,11 @@ const DataExportCenter: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-3">
-            <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white rounded-xl font-bold text-sm">
+            <button
+              onClick={() => play(UISoundType.CLICK)}
+              onMouseEnter={() => play(UISoundType.HOVER)}
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white rounded-xl font-bold text-sm"
+            >
               <Plus size={16} />
               Новий експорт
             </button>
@@ -334,7 +383,11 @@ const DataExportCenter: React.FC = () => {
           ].map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as typeof activeTab)}
+              onClick={() => {
+                play(UISoundType.CLICK);
+                setActiveTab(tab.id as typeof activeTab);
+              }}
+              onMouseEnter={() => play(UISoundType.HOVER)}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm transition-colors ${activeTab === tab.id ? 'bg-emerald-500/20 text-emerald-400' : 'text-slate-500 hover:text-white'
                 }`}
             >
@@ -377,8 +430,12 @@ const DataExportCenter: React.FC = () => {
               <div className="text-center py-12">
                 <Calendar className="text-slate-700 mx-auto mb-4" size={48} />
                 <p className="text-slate-500">Немає запланованих експортів</p>
-                <button className="mt-4 px-4 py-2 bg-purple-500/20 text-purple-400 rounded-xl text-sm font-bold">
-                  Створитирозклад
+                <button
+              onClick={() => play(UISoundType.CLICK)}
+              onMouseEnter={() => play(UISoundType.HOVER)}
+              className="mt-4 px-4 py-2 bg-purple-500/20 text-purple-400 rounded-xl text-sm font-bold"
+            >
+                  Створити розклад
                 </button>
               </div>
             )}
@@ -394,7 +451,11 @@ const DataExportCenter: React.FC = () => {
               {Object.entries(formatConfig).map(([key, config]) => (
                 <button
                   key={key}
-                  onClick={() => setSelectedFormat(key as ExportFormat)}
+                  onClick={() => {
+                    play(UISoundType.CLICK);
+                    setSelectedFormat(key as ExportFormat);
+                  }}
+                  onMouseEnter={() => play(UISoundType.HOVER)}
                   className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold transition-colors ${selectedFormat === key
                       ? `bg-${config.color}-500/20 text-${config.color}-400 border border-${config.color}-500/30`
                       : 'bg-slate-800 text-slate-400 border border-transparent'
@@ -408,10 +469,17 @@ const DataExportCenter: React.FC = () => {
 
             <div className="flex-1" />
 
-            <button className="flex items-center gap-2 px-6 py-2 bg-emerald-500 text-black font-bold rounded-xl">
-              <Download size={16} />
-              Експортувати все
-            </button>
+            <div className="w-full max-w-md">
+              <SlideToExecute
+                onConfirm={() => {
+                  play(UISoundType.SLIDE_COMPLETE);
+                  console.log('Bulk export started:', selectedFormat);
+                }}
+                label="ПЕРЕТЯГНІТЬ ДЛЯ ЕКСПОРТУ ВСЬОГО"
+                confirmLabel="ЕКСПОРТ ЗАПУЩЕНО"
+                variant="default"
+              />
+            </div>
           </div>
         </div>
 
@@ -430,7 +498,11 @@ const DataExportCenter: React.FC = () => {
                 <div className="h-full w-1/4 bg-gradient-to-r from-cyan-500 to-emerald-500 rounded-full" />
               </div>
             </div>
-            <button className="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl text-sm">
+            <button
+              onClick={() => play(UISoundType.CLICK)}
+              onMouseEnter={() => play(UISoundType.HOVER)}
+              className="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl text-sm"
+            >
               Очистити
             </button>
           </div>

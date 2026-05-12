@@ -1,5 +1,6 @@
 import React from 'react';
 import { LucideIcon } from 'lucide-react';
+import { useUISound, UISoundType } from '../hooks/useUISound';
 
 export interface EnhancedButtonProps {
     children?: React.ReactNode;
@@ -43,6 +44,7 @@ export const EnhancedButton: React.FC<EnhancedButtonProps> = ({
     pulse = false,
     glow = false,
 }) => {
+    const { play } = useUISound();
     const baseStyles = 'relative font-bold rounded-lg border transition-all duration-200 flex items-center justify-center gap-2 ';
     const interactionStyles = 'hover:scale-105 active:scale-95 hover:shadow-lg';
     const disabledStyles = 'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100';
@@ -50,9 +52,17 @@ export const EnhancedButton: React.FC<EnhancedButtonProps> = ({
     const glowAnimation = glow ? ' shadow-lg' : '';
     const pulseAnimation = pulse ? '' : '';
 
+    const handleClick = () => {
+        if (!disabled && !loading) {
+            play(UISoundType.CLICK);
+            onClick?.();
+        }
+    };
+
     return (
         <button
-            onClick={onClick}
+            onClick={handleClick}
+            onMouseEnter={() => !disabled && !loading && play(UISoundType.HOVER)}
             disabled={disabled || loading}
             className={`
         ${baseStyles}
