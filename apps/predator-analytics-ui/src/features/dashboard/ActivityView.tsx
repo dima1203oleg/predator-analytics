@@ -18,6 +18,7 @@ import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { CyberGrid } from '@/components/CyberGrid';
 import { cn } from '@/utils/cn';
+import { useUISound, UISoundType } from '@/hooks/useUISound';
 
 type EventType = 'case' | 'data' | 'user' | 'ai' | 'system' | 'security';
 type EventLevel = 'info' | 'success' | 'warning' | 'error';
@@ -126,6 +127,7 @@ const EventCard: React.FC<{ event: ActivityEvent }> = ({ event }) => {
 };
 
 const ActivityView: React.FC = () => {
+  const { play } = useUISound();
   const { logs } = useAgents();
   const [events, setEvents] = useState<ActivityEvent[]>([]);
   const [loading, setLoading] = useState(true);
@@ -212,7 +214,7 @@ const ActivityView: React.FC = () => {
           ]}
           actions={
             <button
-              onClick={() => window.location.reload()}
+              onClick={() => { play(UISoundType.CLICK); window.location.reload(); }}
               className="px-8 py-3 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hover:text-white hover:bg-white/10 transition-all flex items-center gap-3"
             >
               <RefreshCw size={16} /> ОНОВИТИ_ДАНІ
@@ -223,7 +225,7 @@ const ActivityView: React.FC = () => {
         {/* Global Filters */}
         <div className="flex flex-wrap items-center gap-3 p-1.5 bg-slate-900/40  rounded-[28px] border border-white/5 w-fit">
           <button
-            onClick={() => setActiveFilter('all')}
+            onClick={() => { play(UISoundType.CLICK); setActiveFilter('all'); }}
             className={cn(
               "px-6 py-3 rounded-[22px] text-[10px] font-black tracking-widest uppercase transition-all",
               activeFilter === 'all' ? "bg-white text-black shadow-2xl scale-105" : "text-slate-500 hover:text-slate-300 hover:bg-white/5"
@@ -238,7 +240,7 @@ const ActivityView: React.FC = () => {
             return (
               <button
                 key={type}
-                onClick={() => setActiveFilter(type)}
+                onClick={() => { play(UISoundType.CLICK); setActiveFilter(type); }}
                 className={cn(
                   "flex items-center gap-3 px-6 py-3 rounded-[22px] text-[10px] font-black tracking-widest uppercase transition-all border border-transparent",
                   activeFilter === type

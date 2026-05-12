@@ -23,6 +23,7 @@ import { SemanticRadar } from '@/components/graph/SemanticRadar';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { Badge } from '@/components/ui/badge';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { useUISound, UISoundType } from '@/hooks/useUISound';
 import AIInsightsHub from '@/features/ai/AIInsightsHub';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
@@ -33,6 +34,7 @@ import { DiagnosticsTerminal } from '@/components/intelligence/DiagnosticsTermin
 import { DatabasePipelineMonitor } from '@/components/pipeline/DatabasePipelineMonitor';
 
 const IntelligenceView: React.FC = () => {
+    const { play } = useUISound();
     const [selectedUeid, setSelectedUeid] = useState<string | null>('12345678');
     const [isThinking, setIsThinking] = useState(false);
     const [activeLayer, setActiveLayer] = useState<'graph' | 'radar'>('graph');
@@ -229,22 +231,13 @@ const IntelligenceView: React.FC = () => {
                                         <div>
                                             <h3 className="text-xl font-black text-white italic uppercase tracking-tighter leading-none mb-1">СЕМАНТИЧНА ТА СТРАТЕГІЧНА МАТрИЦЯ</h3>
                                             <p className="text-[10px] font-bold text-slate-600 uppercase tracking-[0.3em]">VISUAL_INTELLIGENCE // TOPOLOGY_v58.2</p>
-                                        </div>
                                     </div>
-                                    <div className="flex bg-white/[0.02] rounded-xl p-1.5 border border-white/5 ">
-                                        <button 
-                                            onClick={() => setActiveLayer('graph')}
-                                            className={cn("px-6 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all italic", activeLayer === 'graph' ? 'bg-[#D4AF37] text-black shadow-lg shadow-[#D4AF37]/20' : 'text-slate-500 hover:text-slate-300')}
-                                        >GRAPH_SCAN</button>
-                                        <button 
-                                            onClick={() => setActiveLayer('radar')}
-                                            className={cn("px-6 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all italic", activeLayer === 'radar' ? 'bg-[#D4AF37] text-black shadow-lg shadow-[#D4AF37]/20' : 'text-slate-500 hover:text-slate-300')}
-                                        >RADAR_OSINT</button>
-                                    </div>
-                                </div>
-
-                                <div className="h-[550px] relative z-10">
-                                    <SemanticRadar className="h-full w-full opacity-90 scale-105" />
+                                    <Badge variant="outline" className="border-[#D97706]/30 text-[#D97706]">PREMIUM</Badge>
+                                 </div>
+                                 <p className="text-sm font-black text-slate-400 italic leading-relaxed mb-6">Детекція схем підміни кодів УКТЗЕД та заниження митної вартості на основі маніфестів.</p>
+                                 <div className="flex items-center gap-3 text-[#D97706] font-black text-[10px] uppercase tracking-widest italic">
+                                    ПЕ ЕЙТИ_ДО_АНАЛІЗУ <ChevronRight size={14} />
+                                 </div>
                                 </div>
 
                                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 mt-12 pt-10 border-t border-white/[0.04]">
