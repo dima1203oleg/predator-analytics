@@ -1,31 +1,28 @@
 /* eslint-disable @typescript-eslint/no-duplicate-enum-values */
 export enum UserRole {
-  CLIENT_BASIC  = 'client_basic',     // Рівень 1: Базовий клієнтський доступ
-  CLIENT_PREMIUM = 'client_premium',  // Рівень 2: Аналітичний контур (без ДРПО)
-  CLIENT_DRPO = 'client_drpo',        // Рівень 3: Доступ до чутливих даних (ДРПО, вскриття)
-  ADMIN         = 'admin',            // Адміністрування системи (ізольований)
-  // Зворотньо-сумісні псевдоніми (підтримка legacy-компонентів)
+  CLIENT_BASIC  = 'client_basic',
+  CLIENT_PREMIUM = 'client_premium',
+  CLIENT_DRPO = 'client_drpo',
+  ADMIN         = 'admin',
   ANALYST    = 'client_premium',
-  OPERATOR   = 'client_premium',
+  OPERATOR   = 'client_basic',
   COMMANDER  = 'admin',
   EXPLORER   = 'client_basic',
-  INVESTIGATOR = 'client_drpo',
+  INVESTIGATOR = 'client_premium',
 }
 
-// Цивільні назви для UI (ніяких технічних термінів!)
 export const ROLE_DISPLAY_NAMES: Record<string, string> = {
-  [UserRole.CLIENT_BASIC]:   'Клієнтський доступ',
-  [UserRole.CLIENT_PREMIUM]: 'Аналітичний контур',
-  [UserRole.CLIENT_DRPO]:    'Спеціальний контур',
-  [UserRole.ADMIN]:          'Адміністрування системи',
+  [UserRole.CLIENT_BASIC]:   'Абонент',
+  [UserRole.CLIENT_PREMIUM]: 'Абонент Преміум',
+  [UserRole.CLIENT_DRPO]:    'Абонент Преміум',
+  [UserRole.ADMIN]:          'Технічний адміністратор',
 };
 
-// Описи контурів (показуються у Sidebar під іменем)
 export const ROLE_DESCRIPTIONS: Record<string, string> = {
-  [UserRole.CLIENT_BASIC]:   'Базовий огляд ринкових даних',
-  [UserRole.CLIENT_PREMIUM]: 'Повний аналітичний та розслідувальний доступ',
-  [UserRole.CLIENT_DRPO]:    'Доступ до ДРПО та законодавчих даних',
-  [UserRole.ADMIN]:          'Управління інфраструктурою та безпекою',
+  [UserRole.CLIENT_BASIC]:   'Базова та середня аналітика без конфіденційних даних',
+  [UserRole.CLIENT_PREMIUM]: 'Повний клієнтський доступ до всіх аналітичних модулів',
+  [UserRole.CLIENT_DRPO]:    'Повний клієнтський доступ до всіх аналітичних модулів',
+  [UserRole.ADMIN]:          'Тільки технічна панель, інфраструктура та безпека',
 };
 
 export interface RoleCapabilities {
@@ -54,16 +51,16 @@ export interface RoleCapabilities {
 
 export const ROLE_CAPABILITIES: Record<UserRole, RoleCapabilities> = {
   [UserRole.CLIENT_BASIC]: {
-    canSeeDashboards: false,
-    canSeeVisualAnalytics: false,
+    canSeeDashboards: true,
+    canSeeVisualAnalytics: true,
     canSeeRelationsGraph: false,
     canSeeTimelines: false,
-    canSeeOpenSearch: false,
+    canSeeOpenSearch: true,
     canSeeSensitiveData: false,
     canSeeSystemCore: false,
     canSeeInvestigation: false,
     canAccessFullNewspaper: false,
-    canAccessDetailedTrends: false,
+    canAccessDetailedTrends: true,
     canToggleSensitiveData: false,
     canManageUsers: false,
     canManageJurisdictions: false,
@@ -77,8 +74,8 @@ export const ROLE_CAPABILITIES: Record<UserRole, RoleCapabilities> = {
     canSeeRelationsGraph: true,
     canSeeTimelines: true,
     canSeeOpenSearch: true,
-    canSeeSensitiveData: true,        // через перемикач
-    canSeeSystemCore: false,           // ізольовано від системного ядра
+    canSeeSensitiveData: true,
+    canSeeSystemCore: false,
     canSeeInvestigation: true,
     canAccessFullNewspaper: true,
     canAccessDetailedTrends: true,
@@ -95,8 +92,8 @@ export const ROLE_CAPABILITIES: Record<UserRole, RoleCapabilities> = {
     canSeeRelationsGraph: true,
     canSeeTimelines: true,
     canSeeOpenSearch: true,
-    canSeeSensitiveData: true,         // Повний доступ до ДРПО та вскриттів
-    canSeeSystemCore: false,           // ізольовано від системного ядра
+    canSeeSensitiveData: true,
+    canSeeSystemCore: false,
     canSeeInvestigation: true,
     canAccessFullNewspaper: true,
     canAccessDetailedTrends: true,
@@ -108,21 +105,21 @@ export const ROLE_CAPABILITIES: Record<UserRole, RoleCapabilities> = {
     isAdminExclusive: false,
   },
   [UserRole.ADMIN]: {
-    canSeeDashboards: false,           // Адмін ізольований від бізнес-дашбордів
-    canSeeVisualAnalytics: false,      // Тільки системна зона
+    canSeeDashboards: false,
+    canSeeVisualAnalytics: false,
     canSeeRelationsGraph: false,
     canSeeTimelines: false,
     canSeeOpenSearch: false,
-    canSeeSensitiveData: true,
+    canSeeSensitiveData: false,
     canSeeSystemCore: true,
     canSeeInvestigation: false,
     canAccessFullNewspaper: false,
     canAccessDetailedTrends: false,
     canToggleSensitiveData: false,
     canManageUsers: true,
-    canManageJurisdictions: true,
+    canManageJurisdictions: false,
     canViewAuditLogs: true,
-    canSwitchBackend: true,            // тільки адмін перемикає NVIDIA/Colab
-    isAdminExclusive: true,            // Повна ізоляція — тільки System Command Center
+    canSwitchBackend: true,
+    isAdminExclusive: true,
   },
 };

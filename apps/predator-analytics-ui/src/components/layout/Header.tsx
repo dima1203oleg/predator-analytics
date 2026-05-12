@@ -11,7 +11,10 @@ import {
   ShieldCheck,
   UserCircle,
   ChevronRight,
+  Monitor,
   Terminal,
+  Smartphone,
+  Tablet,
 } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { getNavigationContext, navAccentStyles } from '../../config/navigation';
@@ -24,6 +27,7 @@ import { shellCommandPaletteOpenAtom, shellContextRailOpenAtom } from '../../sto
 import { isShellV2Enabled } from '../../services/shell/userWorkspace';
 import OperationalModeSwitch from '../premium/OperationalModeSwitch';
 import { SystemPulseIndicator } from '../SystemPulseIndicator';
+import { DisplayMode, useDisplayMode } from '../../context/DisplayModeContext';
 
 // Кольорові акценти для кожного типу розділу
 const sectionGlowMap: Record<string, { gradient: string; glow: string; border: string }> = {
@@ -85,6 +89,12 @@ const Header: React.FC = () => {
   const [isContextRailOpen, setIsContextRailOpen] = useAtom(shellContextRailOpenAtom);
   const shellV2Enabled = isShellV2Enabled();
   const { isTerminalOpen, setTerminalOpen } = useAppStore();
+  const { mode: displayMode, setMode: setDisplayMode } = useDisplayMode();
+  const deviceModes = [
+    { mode: DisplayMode.DESKTOP, label: 'Десктоп', icon: Monitor },
+    { mode: DisplayMode.TABLET, label: 'Планшет', icon: Tablet },
+    { mode: DisplayMode.MOBILE, label: 'Смартфон', icon: Smartphone },
+  ];
 
   return (
     <header
@@ -188,6 +198,23 @@ const Header: React.FC = () => {
           {/* ── ПРАВА ЧАСТИНА: Пошук + Дії ── */}
           <div className="flex items-center gap-4 shrink-0">
             <SystemPulseIndicator />
+            <div className="hidden items-center gap-1 rounded-2xl border border-white/5 bg-black/40 p-1.5 shadow-lg lg:flex">
+              {deviceModes.map(({ mode, label, icon: Icon }) => (
+                <button
+                  key={mode}
+                  title={`Емулятор: ${label}`}
+                  onClick={() => setDisplayMode(mode)}
+                  className={cn(
+                    "flex h-9 w-9 items-center justify-center rounded-xl transition-all duration-300",
+                    displayMode === mode
+                      ? "border border-red-500/30 bg-red-500/10 text-red-300 shadow-[inset_0_0_14px_rgba(185,28,28,0.18)]"
+                      : "text-slate-600 hover:bg-white/[0.05] hover:text-white"
+                  )}
+                >
+                  <Icon className="h-4 w-4" />
+                </button>
+              ))}
+            </div>
             
             {/* Командний пошук */}
             <div

@@ -422,8 +422,8 @@ export const BootSequenceELITE: React.FC<{ onComplete: () => void }> = ({ onComp
   }, [phase]);
 
   return (
-    <div className={`fixed inset-0 z-[99999] bg-[#010101] flex items-center justify-center overflow-hidden font-mono select-none ${matchLine ? 'animate-subtle-shake' : ''}`}>
-      <canvas ref={canvasRef} className="absolute inset-0" />
+    <div className={`fixed inset-0 z-[99999] bg-[#010101] flex items-center justify-center overflow-hidden px-4 py-6 font-mono select-none sm:px-8 ${matchLine ? 'animate-subtle-shake' : ''}`}>
+      <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
       
       {/* HUD OVERLAYS */}
       <div className="absolute inset-0 pointer-events-none z-10">
@@ -482,7 +482,7 @@ export const BootSequenceELITE: React.FC<{ onComplete: () => void }> = ({ onComp
 
       <AnimatePresence mode="wait">
         {phase === 0 && (
-          <div key="legal" className="flex items-center justify-center min-h-screen z-[100] px-20">
+          <div key="legal" className="flex h-full w-full items-center justify-center z-[100] px-4 sm:px-10">
             {renderLegalWarning()}
           </div>
         )}
@@ -494,12 +494,12 @@ export const BootSequenceELITE: React.FC<{ onComplete: () => void }> = ({ onComp
             animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
             exit={{ opacity: 0, filter: 'blur(50px)', scale: 1.1 }}
             transition={{ duration: 4, ease: "easeOut" }}
-            className="flex flex-col items-center z-10"
+            className="flex w-full max-w-[92vw] flex-col items-center justify-center z-10 text-center"
           >
-            <div className="mb-20 brightness-150 filter ">
-               <GeometricRaptor className="w-56 h-56 text-[#D4AF37]" />
+            <div className="mb-10 brightness-150 filter sm:mb-16">
+               <GeometricRaptor className="h-[min(28vmin,14rem)] w-[min(28vmin,14rem)] text-[#D4AF37]" />
             </div>
-            <h1 className="text-white text-[12rem] font-thin uppercase tracking-[0.8em] leading-none mb-10 relative">
+            <h1 className="relative mb-8 max-w-full text-center text-[clamp(3rem,12vw,12rem)] font-thin uppercase leading-none tracking-[clamp(0.18em,2.8vw,0.8em)] text-white">
               PREDATOR
               <motion.div 
                 animate={{ opacity: [0.1, 0.4, 0.1], width: ['0%', '100%', '0%'] }}
@@ -507,7 +507,7 @@ export const BootSequenceELITE: React.FC<{ onComplete: () => void }> = ({ onComp
                 className="absolute inset-x-0 bottom-0 h-1 bg-[#D4AF37] blur-md mx-auto"
               />
             </h1>
-            <p className="text-[#D4AF37] text-sm tracking-[3em] uppercase font-black opacity-20 italic">
+            <p className="max-w-[90vw] text-center text-[clamp(0.55rem,1.4vw,0.875rem)] font-black uppercase tracking-[clamp(0.35em,2.5vw,3em)] text-[#D4AF37] opacity-20 italic">
                Світ — це дані. Ми — Предатори.
             </p>
           </motion.div>
@@ -520,17 +520,17 @@ export const BootSequenceELITE: React.FC<{ onComplete: () => void }> = ({ onComp
             exit={{ opacity: 0 }}
             className="absolute inset-0 flex flex-col items-center justify-center z-20"
           >
-             <div className="relative w-[800px] h-[800px] flex items-center justify-center">
+             <div className="relative flex h-[min(78vmin,800px)] w-[min(78vmin,800px)] items-center justify-center">
                 <div className="absolute inset-0 border-[0.5px] border-[#D4AF37]/10 rounded-full animate-spin-slow opacity-10" />
                 <div className="absolute inset-40 border-[0.5px] border-[#D4AF37]/20 rounded-full animate-spin-reverse opacity-20" />
                 <div className="absolute inset-[320px] border-2 border-[#D4AF37]/40 rounded-full  opacity-30 " />
                 
-                <div className="text-center bg-black/80 p-32  border border-[#D4AF37]/20  relative overflow-hidden">
+                <div className="relative max-w-[88vw] overflow-hidden border border-[#D4AF37]/20 bg-black/80 p-[clamp(2rem,7vmin,8rem)] text-center">
                    <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#D4AF37]/40 to-transparent" />
-                   <div className="text-[11px] text-[#D4AF37] font-black tracking-[2em] uppercase mb-12 opacity-40 italic">
+                   <div className="mb-8 text-[clamp(0.45rem,1.1vw,0.7rem)] font-black uppercase tracking-[clamp(0.45em,2.2vw,2em)] text-[#D4AF37] opacity-40 italic sm:mb-12">
                      Синхронізація_Нейронного_Ядра
                    </div>
-                   <div className="text-white text-7xl font-light tracking-[0.4em] uppercase mb-10 h-24 flex items-center justify-center">
+                   <div className="mb-8 flex min-h-20 items-center justify-center text-[clamp(2rem,6vw,4.5rem)] font-light uppercase tracking-[clamp(0.16em,1.4vw,0.4em)] text-white sm:mb-10">
                       <motion.span
                         animate={{ opacity: [0.3, 1, 0.3], x: [-10, 0, 10] }}
                         transition={{ repeat: Infinity, duration: 4 }}
@@ -602,19 +602,19 @@ export const BootSequenceELITE: React.FC<{ onComplete: () => void }> = ({ onComp
             key="final"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="flex flex-col items-center z-10"
+            className="flex w-full max-w-[92vw] flex-col items-center justify-center z-10 text-center"
           >
-            <div className="p-48 border-[0.5px] border-[#D4AF37]/30 bg-black relative  overflow-hidden">
+            <div className="relative max-w-full overflow-hidden border-[0.5px] border-[#D4AF37]/30 bg-black p-[clamp(2.5rem,8vmin,12rem)]">
                <motion.div 
                 animate={{ x: ['-200%', '200%'] }}
                 transition={{ repeat: Infinity, duration: 2.5, ease: "linear" }}
                 className="absolute inset-0 bg-gradient-to-r from-transparent via-[#D4AF37]/10 to-transparent skew-x-[-30deg]"
               />
-              <h2 className="text-white text-[12rem] font-thin tracking-[0.6em] leading-none text-center uppercase relative mix-blend-difference">
+              <h2 className="relative text-center text-[clamp(2.4rem,9vw,12rem)] font-thin uppercase leading-none tracking-[clamp(0.1em,1.7vw,0.6em)] text-white mix-blend-difference">
                  СИСТЕМА <span className="text-[#D4AF37]">ГОТОВА</span>
               </h2>
             </div>
-            <div className="mt-20 text-[#D4AF37] text-[11px] font-black tracking-[4em] uppercase opacity-40  italic ml-[4em]">
+            <div className="mt-12 max-w-[90vw] text-center text-[clamp(0.45rem,1.2vw,0.7rem)] font-black uppercase tracking-[clamp(0.3em,2.2vw,4em)] text-[#D4AF37] opacity-40 italic sm:mt-20">
                Протокол_Суверенітету_Активовано
             </div>
           </motion.div>

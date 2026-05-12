@@ -1,15 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAtom } from 'jotai';
+import { AnimatePresence, motion } from 'framer-motion';
 import { 
   SendHorizonal, 
-  MessageSquare, 
   X, 
   Bot, 
   User, 
   Sparkles,
   Terminal,
-  ChevronDown
+  ChevronDown,
+  BrainCircuit
 } from 'lucide-react';
 import { chatMessagesAtom, isTypingAtom } from '../../store/atoms';
 import { ChatMessage } from '../../types/index';
@@ -23,12 +24,24 @@ const ChatBot = () => {
   const [input, setInput] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages, isTyping]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setIsOpen(false);
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [isOpen]);
 
   const handleSend = async () => {
     const userText = input.trim();
@@ -59,22 +72,42 @@ const ChatBot = () => {
   };
 
   return (
-    <>
-      <button 
-        onClick={() => setIsOpen(!isOpen)}
-        className={cn(
-          "fixed bottom-8 right-8 w-14 h-14 rounded-2xl bg-primary flex items-center justify-center text-background  hover: transition-all z-50 group overflow-hidden",
-          isOpen && "rotate-90 opacity-0 pointer-events-none"
-        )}
-      >
-        <MessageSquare className="w-6 h-6 " />
-        <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-      </button>
+    <AnimatePresence>
+      {!isOpen && (
+        <motion.button
+          initial={{ opacity: 0, scale: 0.82, y: 18 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.82, y: 18 }}
+          whileHover={{ scale: 1.06 }}
+          whileTap={{ scale: 0.94 }}
+          onClick={() => setIsOpen(true)}
+          aria-label="Відкрити ШІ-асистента"
+          className="fixed bottom-8 right-8 z-50 flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl border border-red-500/30 bg-black text-red-300 shadow-2xl shadow-red-950/40 transition-all group"
+        >
+          <BrainCircuit className="w-6 h-6 transition-transform group-hover:rotate-12" />
+          <div className="absolute inset-0 translate-y-full bg-red-500/20 transition-transform duration-300 group-hover:translate-y-0" />
+        </motion.button>
+      )}
 
-      <div className={cn(
-        "fixed bottom-8 right-8 w-[400px] h-[600px] bg-slate-950/80  border border-primary/20 rounded-3xl shadow-2xl flex flex-col transition-all duration-500 z-50 origin-bottom-right",
-        isOpen ? "scale-100 opacity-100 translate-y-0" : "scale-75 opacity-0 translate-y-20 pointer-events-none"
-      )}>
+      {isOpen && (
+        <>
+          <motion.button
+            type="button"
+            aria-label="Закрити панель ШІ"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsOpen(false)}
+            className="fixed inset-0 z-40 cursor-default bg-black/10 backdrop-blur-[1px]"
+          />
+          <motion.div
+            ref={panelRef}
+            initial={{ opacity: 0, x: 120, scale: 0.96 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            exit={{ opacity: 0, x: 120, scale: 0.96 }}
+            transition={{ type: 'spring', stiffness: 240, damping: 28 }}
+            className="fixed bottom-8 right-8 z-50 flex h-[min(600px,calc(100vh-5rem))] w-[min(400px,calc(100vw-2rem))] origin-bottom-right flex-col overflow-hidden rounded-3xl border border-red-500/20 bg-slate-950/90 shadow-2xl shadow-black/70 backdrop-blur-2xl"
+          >
         {/* Header */}
         <div className="p-5 border-b border-white/5 flex items-center justify-between bg-primary/10 rounded-t-3xl ">
           <div className="flex items-center gap-3">
@@ -82,7 +115,7 @@ const ChatBot = () => {
               <Bot className="w-6 h-6" />
             </div>
             <div>
-              <div className="text-sm font-display font-bold text-foreground tracking-wide">AI КОПІЛОТ</div>
+              <div className="text-sm font-display font-bold text-foreground tracking-wide">ШІ КОПІЛОТ</div>
               <div className="flex items-center gap-1.5 text-[10px] text-primary font-mono uppercase tracking-widest">
                 <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full " />
                 Нейромережа активна
@@ -91,6 +124,7 @@ const ChatBot = () => {
           </div>
           <button 
             onClick={() => setIsOpen(false)}
+            aria-label="Закрити ШІ-панель"
             className="p-2 hover:bg-white/5 rounded-lg text-slate-500 transition-colors"
           >
             <X className="w-5 h-5" />
@@ -171,11 +205,13 @@ const ChatBot = () => {
               <Terminal className="w-3.5 h-3.5 cursor-pointer hover:opacity-100 transition-opacity" />
               <ChevronDown className="w-3.5 h-3.5 cursor-pointer hover:opacity-100 transition-opacity" />
             </div>
-            <div className="text-[10px] font-mono tracking-tighter uppercase font-bold text-primary/60">PREDATOR AI ENGINE v61.0-ELITE</div>
+            <div className="text-[10px] font-mono tracking-tighter uppercase font-bold text-primary/60">ЯДРО PREDATOR AI v61.0-ELITE</div>
           </div>
         </div>
-      </div>
-    </>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
   );
 };
 

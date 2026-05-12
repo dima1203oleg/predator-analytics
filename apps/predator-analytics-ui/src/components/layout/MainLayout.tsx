@@ -2,7 +2,7 @@
  * 🛡️ MAIN LAYOUT // ГОЛОВНИЙ ШЕЛЛ | v63.0-ELITE (WAR-GAMING)
  * Підтримка гібридного вузла та суверенного дизайну.
  */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useAtom } from 'jotai';
 import { Menu } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -27,6 +27,7 @@ import { API_BASE_URL } from '@/services/api/config';
 import { colabPanelOpenAtom, colabNodeDataAtom } from '../../store/atoms';
 import { ColabDetailedPanel } from '@/features/infrastructure/components/ColabDetailedPanel';
 import { useSystemNodes } from '@/hooks/useAdminApi';
+import { DisplayMode, useDisplayMode } from '@/context/DisplayModeContext';
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -39,6 +40,7 @@ interface MainLayoutProps {
  */
 export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const isMobile = useMediaQuery('(max-width: 768px)');
+  const rootRef = useRef<HTMLDivElement | null>(null);
   const [isSidebarExpanded, setIsSidebarExpanded] = useAtom(isSidebarOpenAtom);
   const [isContextRailOpen, setIsContextRailOpen] = useAtom(shellContextRailOpenAtom);
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
@@ -46,6 +48,13 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const shellV2Enabled = isShellV2Enabled();
   const location = useLocation();
   const { mode } = useTheme();
+  const { mode: displayMode } = useDisplayMode();
+  const displayFrameClass =
+    displayMode === DisplayMode.MOBILE
+      ? 'max-w-[430px]'
+      : displayMode === DisplayMode.TABLET
+        ? 'max-w-[940px]'
+        : 'max-w-[1920px]';
 
   const [isColabOpen, setIsColabOpen] = useAtom(colabPanelOpenAtom);
   const [colabNodeData, setColabNodeData] = useAtom(colabNodeDataAtom);
@@ -57,6 +66,23 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       if (node) setColabNodeData(node);
     }
   }, [isColabOpen, colabNodeData, systemNodes, setColabNodeData]);
+
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+
+    const handlePointerMove = (event: PointerEvent) => {
+      const depthX = (event.clientX / window.innerWidth - 0.5) * 18;
+      const depthY = (event.clientY / window.innerHeight - 0.5) * 18;
+      root.style.setProperty('--predator-depth-x', `${depthX}px`);
+      root.style.setProperty('--predator-depth-y', `${depthY}px`);
+      root.style.setProperty('--predator-radar-x', `${event.clientX}px`);
+      root.style.setProperty('--predator-radar-y', `${event.clientY}px`);
+    };
+
+    window.addEventListener('pointermove', handlePointerMove, { passive: true });
+    return () => window.removeEventListener('pointermove', handlePointerMove);
+  }, []);
 
   useEffect(() => {
     if (isMobile) {
@@ -93,12 +119,29 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 
   return (
     <div
+      ref={rootRef}
       data-testid="main-layout"
       data-op-mode={mode}
-      className="relative flex min-h-screen overflow-hidden bg-background text-foreground op-mode-transition"
+      data-display-mode={displayMode}
+      className="relative flex min-h-screen overflow-hidden bg-black text-foreground op-mode-transition"
     >
       <NeuralBackground />
-      {/* фонова сітка через body */}
+      <div
+        className="pointer-events-none absolute inset-0 z-[1] opacity-70"
+        style={{
+          backgroundImage:
+            'linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px)',
+          backgroundSize: '42px 42px',
+          transform: 'translate3d(calc(var(--predator-depth-x, 0px) * -0.35), calc(var(--predator-depth-y, 0px) * -0.35), 0)',
+        }}
+      />
+      <div
+        className="pointer-events-none absolute inset-0 z-[2] opacity-80"
+        style={{
+          background:
+            'radial-gradient(360px circle at var(--predator-radar-x, 50%) var(--predator-radar-y, 50%), rgba(185,28,28,0.18), rgba(185,28,28,0.05) 35%, transparent 68%)',
+        }}
+      />
 
       {isMobileDrawerOpen && isMobile && (
         <div className="fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label="Мобільна навігація">
@@ -134,7 +177,12 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 
       <InfrastructureFailoverBanner />
 
-      <div className="relative z-10 flex h-screen min-w-0 flex-1 flex-col overflow-hidden">
+      <div
+        className="relative z-10 flex h-screen min-w-0 flex-1 flex-col overflow-hidden"
+        style={{
+          transform: 'translate3d(calc(var(--predator-depth-x, 0px) * 0.08), calc(var(--predator-depth-y, 0px) * 0.08), 0)',
+        }}
+      >
         <Header />
         <WorkspaceBusinessStrip />
         <div className="classification-banner">
@@ -149,7 +197,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         </div>
         <main className="relative flex-1 overflow-y-auto custom-scrollbar">
 
-          <div className="relative mx-auto max-w-[1920px] px-3 sm:px-5 lg:px-7 py-5 xl:px-10 pb-16">
+          <div className={cn("relative mx-auto px-3 sm:px-5 lg:px-7 py-5 xl:px-10 pb-16 transition-[max-width] duration-500", displayFrameClass)}>
             <div className={`grid grid-cols-12 gap-6`}>
               <div className={shellV2Enabled && !isMobile && isContextRailOpen ? 'col-span-12 xl:col-span-9' : 'col-span-12'}>
                 <AnimatePresence mode="wait">

@@ -43,8 +43,10 @@ v2Client.interceptors.response.use(
         if (!error.response || error.response.status >= 500) {
             console.warn(`[v2 Resilience] ${error.config?.url} failed.`);
             if (typeof window !== 'undefined') {
-                (window as any).__BACKEND_OFFLINE_MODE__ = true;
-                window.dispatchEvent(new CustomEvent('predator-backend-offline'));
+                (window as any).__BACKEND_OFFLINE_MODE__ = false;
+                window.dispatchEvent(new CustomEvent('predator-backend-status-change', {
+                    detail: { isOffline: false, isRecovering: true }
+                }));
             }
         }
         return Promise.reject(error);

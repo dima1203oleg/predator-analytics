@@ -3,7 +3,7 @@
  * Гібридний протокол відмовостійкості (Tri-State Routing)
  * 
  * Вузли:
- *  1. SOVEREIGN (iMac) → http://192.168.0.114:8000/api/v1
+ *  1. SOVEREIGN (iMac) → http://178.214.200.25:8000/api/v1
  *  2. HYBRID (NVIDIA)  → http://194.177.1.240:8000/api/v1
  *  3. CLOUD (Colab)   → https://predator-mirror.share.zrok.io/api/v1
  *  4. MOCK (Local)    → /api/v1
@@ -22,7 +22,7 @@ export const NODE_IDS = {
 
 const NODE_URLS: Record<string, string> = {
     [NODE_IDS.LOCAL]:     'http://localhost:8001/api/v1',
-    [NODE_IDS.SOVEREIGN]: 'http://192.168.0.114:8000/api/v1',
+    [NODE_IDS.SOVEREIGN]: 'http://178.214.200.25:8000/api/v1',
     [NODE_IDS.HYBRID]:    'http://194.177.1.240:8000/api/v1',
     [NODE_IDS.CLOUD]:     'https://predator.share.zrok.io/api/v1',
     [NODE_IDS.MOCK]:      'http://localhost:9080/api/v1',
@@ -113,7 +113,7 @@ const initGlobalState = () => {
     }));
 
     gw.__CURRENT_BACKEND__ = API_BASE_URL;
-    gw.__BACKEND_OFFLINE_MODE__ = activeId === NODE_IDS.MOCK;
+    gw.__BACKEND_OFFLINE_MODE__ = false;
 };
 
 // ─── Публічні Методи Управління ──────────────────────────────────────────────
@@ -130,7 +130,7 @@ export const switchToNode = (nodeId: string) => {
     
     const gw = getGlobalWindow();
     gw.__CURRENT_BACKEND__ = targetUrl;
-    gw.__BACKEND_OFFLINE_MODE__ = nodeId === NODE_IDS.MOCK;
+    gw.__BACKEND_OFFLINE_MODE__ = false;
     
     if (gw.__BACKEND_NODES__) {
         gw.__BACKEND_NODES__ = gw.__BACKEND_NODES__.map((n: any) => ({
@@ -142,7 +142,7 @@ export const switchToNode = (nodeId: string) => {
 
     // Повідомляємо систему
     window.dispatchEvent(new CustomEvent('predator-backend-status-change', {
-        detail: { isOffline: nodeId === NODE_IDS.MOCK, nodes: gw.__BACKEND_NODES__ }
+        detail: { isOffline: false, nodes: gw.__BACKEND_NODES__ }
     }));
 
     console.info(`[PREDATOR] Перемикання на вузол: ${nodeId.toUpperCase()} | ${targetUrl}`);
@@ -180,6 +180,10 @@ apiClient.interceptors.response.use(
             const node = gw.__BACKEND_NODES__.find((n: any) => n.id === activeId);
             if (node) node.status = 'online';
         }
+        if (gw.__BACKEND_OFFLINE_MODE__) {
+            gw.__BACKEND_OFFLINE_MODE__ = false;
+            window.dispatchEvent(new CustomEvent('predator-backend-online'));
+        }
         return response;
     },
     async (error: AxiosError) => {
@@ -187,7 +191,7 @@ apiClient.interceptors.response.use(
         
         // Автоматична відмовостійкість (Failover)
         if (!error.response || (status && status >= 500)) {
-            console.error(`[PREDATOR] Помилка вузла ${API_BASE_URL}. Запуск Failover...`);
+            console.warn(`[PREDATOR] Канал ${API_BASE_URL} нестабільний. Запущено фонове відновлення.`);
             await triggerFailover();
         }
 
@@ -201,20 +205,19 @@ apiClient.interceptors.response.use(
 const triggerFailover = async () => {
     const currentId = resolveNodeId(API_BASE_URL);
     
-    const cascade = [
-        NODE_IDS.SOVEREIGN,
-        NODE_IDS.HYBRID,
-        NODE_IDS.CLOUD,
-        NODE_IDS.MOCK
-    ];
+    const gw = getGlobalWindow();
+    gw.__BACKEND_OFFLINE_MODE__ = false;
 
-    const currentIndex = cascade.indexOf(currentId as any);
-    const nextNodeId = cascade[currentIndex + 1];
-
-    if (nextNodeId) {
-        console.warn(`[PREDATOR] Failover: ${currentId} ➔ ${nextNodeId}`);
-        switchToNode(nextNodeId);
+    if (gw.__BACKEND_NODES__) {
+        gw.__BACKEND_NODES__ = gw.__BACKEND_NODES__.map((node: any) => ({
+            ...node,
+            status: node.id === currentId ? 'checking' : node.status,
+        }));
     }
+
+    window.dispatchEvent(new CustomEvent('predator-backend-status-change', {
+        detail: { isOffline: false, isRecovering: true, nodes: gw.__BACKEND_NODES__ }
+    }));
 };
 
 // ─── Watchdog (Синхронізація Стану) ──────────────────────────────────────────
@@ -228,7 +231,6 @@ const startWatchdog = () => {
 
         for (const node of gw.__BACKEND_NODES__) {
             try {
-                // Пряма перевірка здоров'я вузла
                 const healthUrl = node.url.replace('/api/v1', '/health');
                 await axios.get(healthUrl, { timeout: 3000 });
                 node.status = 'online';
@@ -237,8 +239,14 @@ const startWatchdog = () => {
             }
         }
 
+        const activeNode = gw.__BACKEND_NODES__.find((node: any) => node.active);
+        gw.__BACKEND_OFFLINE_MODE__ = false;
+        if (activeNode?.status === 'online') {
+            window.dispatchEvent(new CustomEvent('predator-backend-online'));
+        }
+
         window.dispatchEvent(new CustomEvent('predator-backend-status-change', {
-            detail: { isOffline: gw.__BACKEND_OFFLINE_MODE__, nodes: gw.__BACKEND_NODES__ }
+            detail: { isOffline: false, isRecovering: activeNode?.status !== 'online', nodes: gw.__BACKEND_NODES__ }
         }));
     }, 20000);
 };

@@ -15,10 +15,10 @@ def switch_node(node_name):
             "URL": "https://predator.share.zrok.io"
         },
         "IMAC": {
-            "IP": "192.168.0.114",
+            "IP": "178.214.200.25",
             "DB_PASS": "predator",
             "NEO_PASS": "predator",
-            "URL": "http://192.168.0.114:8000"
+            "URL": "http://178.214.200.25:8000"
         },
         "COLAB": {
             "IP": "136.118.146.84",
@@ -46,10 +46,10 @@ def switch_node(node_name):
     for line in lines:
         if line.startswith("PREDATOR_NODE="):
             new_lines.append(f'PREDATOR_NODE="{node_name}"\n')
-        elif "194.177.1.240" in line or "192.168.0.114" in line or "136.118.146.84" in line or "z7onbbru9393.share.zrok.io" in line:
+        elif "194.177.1.240" in line or "178.214.200.25" in line or "136.118.146.84" in line or "z7onbbru9393.share.zrok.io" in line:
             # Replace IP/Host
             l = line.replace("194.177.1.240", node["IP"])
-            l = l.replace("192.168.0.114", node["IP"])
+            l = l.replace("178.214.200.25", node["IP"])
             l = l.replace("136.118.146.84", node["IP"])
             # Special case for zrok URLs if they are used as whole hosts
             if "share.zrok.io" in l and node_name == "COLAB":

@@ -1,9 +1,10 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { Suspense, lazy, useEffect } from 'react';
+import { Suspense, lazy, useEffect, type ReactNode } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import MainLayout from './components/layout/MainLayout';
 import AdminLayout from './components/layout/AdminLayout';
 import { AdminGuard } from './components/guards/AdminGuard';
+import { RoleGuard } from './components/guards/RoleGuard';
 import { useAppStore } from './store/useAppStore';
 import { useUser } from './context/UserContext';
 import { UserRole } from './config/roles';
@@ -136,6 +137,36 @@ const LoadingFallback = () => (
   </div>
 );
 
+const PremiumOnly = ({ children }: { children: ReactNode }) => (
+  <RoleGuard allowedRoles={[UserRole.CLIENT_PREMIUM, UserRole.CLIENT_DRPO]} showUpgrade>
+    {children}
+  </RoleGuard>
+);
+
+const GuardedCommandHub = () => {
+  const routeLocation = useLocation();
+  const tab = new URLSearchParams(routeLocation.search).get('tab');
+  return ['risk', 'observer', 'warroom'].includes(tab ?? '')
+    ? <PremiumOnly><CommandHub /></PremiumOnly>
+    : <CommandHub />;
+};
+
+const GuardedSearchHub = () => {
+  const routeLocation = useLocation();
+  const tab = new URLSearchParams(routeLocation.search).get('tab');
+  return ['newspaper', 'registries'].includes(tab ?? '')
+    ? <PremiumOnly><SearchHub /></PremiumOnly>
+    : <SearchHub />;
+};
+
+const GuardedAIHub = () => {
+  const routeLocation = useLocation();
+  const tab = new URLSearchParams(routeLocation.search).get('tab');
+  return ['agents', 'hypothesis', 'knowledge'].includes(tab ?? '')
+    ? <PremiumOnly><AIHub /></PremiumOnly>
+    : <AIHub />;
+};
+
 export const AppRoutesNew = () => {
   const location = useLocation();
   const { user } = useUser();
@@ -190,9 +221,8 @@ export const AppRoutesNew = () => {
             <Route path="/settings"          element={<Navigate to="/admin/command?tab=settings"   replace />} />
             <Route path="/admin/ai-control"  element={<Navigate to="/admin/command?tab=models" replace />} />
 
-            {/* Публічні маршрути доступні для адміна */}
             <Route path="/api-docs"          element={<ApiDocumentationView />} />
-            <Route path="/reports"           element={<ReportBuilderPage />} />
+            <Route path="/reports"           element={<Navigate to="/admin/command?tab=infra" replace />} />
 
             {/* Fallback */}
             <Route path="*" element={<Navigate to="/admin/command?tab=infra" replace />} />
@@ -210,83 +240,83 @@ export const AppRoutesNew = () => {
           <Routes location={location} key={location.pathname}>
             {/* 1. КОМАНДНИЙ ЦЕНТР (GOLD HUB) */}
             <Route path="/" element={<Navigate to="/command?tab=board" replace />} />
-            <Route path="/command" element={<CommandHub />} />
+            <Route path="/command" element={<GuardedCommandHub />} />
             <Route path="/morning-brief" element={<Navigate to="/command?tab=brief" replace />} />
-            <Route path="/portfolio-risk" element={<Navigate to="/command?tab=risk" replace />} />
-            <Route path="/newspaper" element={<Navigate to="/search?tab=newspaper" replace />} />
-            <Route path="/som" element={<Navigate to="/command?tab=observer" replace />} />
-            <Route path="/war-room" element={<Navigate to="/command?tab=warroom" replace />} />
+            <Route path="/portfolio-risk" element={<PremiumOnly><Navigate to="/command?tab=risk" replace /></PremiumOnly>} />
+            <Route path="/newspaper" element={<PremiumOnly><Navigate to="/search?tab=newspaper" replace /></PremiumOnly>} />
+            <Route path="/som" element={<PremiumOnly><Navigate to="/command?tab=observer" replace /></PremiumOnly>} />
+            <Route path="/war-room" element={<PremiumOnly><Navigate to="/command?tab=warroom" replace /></PremiumOnly>} />
 
             {/* 2. ТОРГОВА РОЗВІДКА (AMBER HUB) */}
             <Route path="/market" element={<MarketHub />} />
-            <Route path="/customs-intel" element={<Navigate to="/market?tab=customs" replace />} />
-            <Route path="/trade-map" element={<Navigate to="/market?tab=flows" replace />} />
-            <Route path="/suppliers" element={<Navigate to="/market?tab=suppliers" replace />} />
-            <Route path="/customs-premium" element={<CustomsIntelligencePremium />} />
-            <Route path="/price-compare" element={<Navigate to="/market?tab=price" replace />} />
-            <Route path="/cargo-manifest" element={<CargoManifestPremium />} />
-            <Route path="/trade-flow-map" element={<Navigate to="/market?tab=flows" replace />} />
-            <Route path="/geopolitical-radar" element={<GeopoliticalRadarView />} />
-            <Route path="/supply-chain" element={<SupplyChainAnalyticsView />} />
-            <Route path="/maritime" element={<MaritimeView />} />
-            <Route path="/tenders" element={<TendersView />} />
+            <Route path="/customs-intel" element={<PremiumOnly><Navigate to="/market?tab=customs" replace /></PremiumOnly>} />
+            <Route path="/trade-map" element={<PremiumOnly><Navigate to="/market?tab=flows" replace /></PremiumOnly>} />
+            <Route path="/suppliers" element={<PremiumOnly><Navigate to="/market?tab=suppliers" replace /></PremiumOnly>} />
+            <Route path="/customs-premium" element={<PremiumOnly><CustomsIntelligencePremium /></PremiumOnly>} />
+            <Route path="/price-compare" element={<PremiumOnly><Navigate to="/market?tab=price" replace /></PremiumOnly>} />
+            <Route path="/cargo-manifest" element={<PremiumOnly><CargoManifestPremium /></PremiumOnly>} />
+            <Route path="/trade-flow-map" element={<PremiumOnly><Navigate to="/market?tab=flows" replace /></PremiumOnly>} />
+            <Route path="/geopolitical-radar" element={<PremiumOnly><GeopoliticalRadarView /></PremiumOnly>} />
+            <Route path="/supply-chain" element={<PremiumOnly><SupplyChainAnalyticsView /></PremiumOnly>} />
+            <Route path="/maritime" element={<PremiumOnly><MaritimeView /></PremiumOnly>} />
+            <Route path="/tenders" element={<PremiumOnly><TendersView /></PremiumOnly>} />
 
             {/* 3. РОЗВІДКА СУБ'ЄКТІВ (WARN HUB) */}
-            <Route path="/search" element={<SearchHub />} />
-            <Route path="/registries" element={<Navigate to="/search?tab=registries" replace />} />
+            <Route path="/search" element={<GuardedSearchHub />} />
+            <Route path="/registries" element={<PremiumOnly><Navigate to="/search?tab=registries" replace /></PremiumOnly>} />
             <Route path="/documents" element={<Navigate to="/search?tab=documents" replace />} />
-            <Route path="/diligence" element={<Navigate to="/osint?tab=diligence" replace />} />
-            <Route path="/diligence/:ueid" element={<DueDiligence />} />
-            <Route path="/ubo-map" element={<Navigate to="/osint?tab=ubo" replace />} />
-            <Route path="/graph" element={<Navigate to="/osint?tab=graph" replace />} />
-            <Route path="/risk-scoring" element={<RiskScoringPremium />} />
-            <Route path="/sanctions" element={<Navigate to="/osint?tab=sanctions" replace />} />
-            <Route path="/osint" element={<OSINTHub />} />
-            <Route path="/aml" element={<Navigate to="/financial?tab=aml" replace />} />
-            <Route path="/network/:ueid" element={<NetworkGraph />} />
-            <Route path="/cases" element={<CasesView />} />
-            <Route path="/power-structure" element={<PowerStructureView />} />
-            <Route path="/compliance" element={<ComplianceView />} />
+            <Route path="/diligence" element={<PremiumOnly><Navigate to="/osint?tab=diligence" replace /></PremiumOnly>} />
+            <Route path="/diligence/:ueid" element={<PremiumOnly><DueDiligence /></PremiumOnly>} />
+            <Route path="/ubo-map" element={<PremiumOnly><Navigate to="/osint?tab=ubo" replace /></PremiumOnly>} />
+            <Route path="/graph" element={<PremiumOnly><Navigate to="/osint?tab=graph" replace /></PremiumOnly>} />
+            <Route path="/risk-scoring" element={<PremiumOnly><RiskScoringPremium /></PremiumOnly>} />
+            <Route path="/sanctions" element={<PremiumOnly><Navigate to="/osint?tab=sanctions" replace /></PremiumOnly>} />
+            <Route path="/osint" element={<PremiumOnly><OSINTHub /></PremiumOnly>} />
+            <Route path="/aml" element={<PremiumOnly><Navigate to="/financial?tab=aml" replace /></PremiumOnly>} />
+            <Route path="/network/:ueid" element={<PremiumOnly><NetworkGraph /></PremiumOnly>} />
+            <Route path="/cases" element={<PremiumOnly><CasesView /></PremiumOnly>} />
+            <Route path="/power-structure" element={<PremiumOnly><PowerStructureView /></PremiumOnly>} />
+            <Route path="/compliance" element={<PremiumOnly><ComplianceView /></PremiumOnly>} />
 
             {/* 4. ФІНАНСОВА РОЗВІДКА (EMERALD HUB) */}
-            <Route path="/financial" element={<FinancialHub />} />
-            <Route path="/swift-monitor" element={<Navigate to="/financial?tab=swift" replace />} />
-            <Route path="/offshore-detector" element={<Navigate to="/financial?tab=offshore" replace />} />
-            <Route path="/asset-freeze-tracker" element={<Navigate to="/financial?tab=assets" replace />} />
-            <Route path="/financials/:ueid" element={<FinancialDashboardPage />} />
-            <Route path="/portfolio-analysis" element={<PortfolioRiskView />} />
+            <Route path="/financial" element={<PremiumOnly><FinancialHub /></PremiumOnly>} />
+            <Route path="/swift-monitor" element={<PremiumOnly><Navigate to="/financial?tab=swift" replace /></PremiumOnly>} />
+            <Route path="/offshore-detector" element={<PremiumOnly><Navigate to="/financial?tab=offshore" replace /></PremiumOnly>} />
+            <Route path="/asset-freeze-tracker" element={<PremiumOnly><Navigate to="/financial?tab=assets" replace /></PremiumOnly>} />
+            <Route path="/financials/:ueid" element={<PremiumOnly><FinancialDashboardPage /></PremiumOnly>} />
+            <Route path="/portfolio-analysis" element={<PremiumOnly><PortfolioRiskView /></PremiumOnly>} />
 
             {/* 5. AI НЕКСУС (BLUE HUB) */}
-            <Route path="/nexus" element={<AIHub />} />
-            <Route path="/agents" element={<Navigate to="/nexus?tab=agents" replace />} />
-            <Route path="/ai-hypothesis" element={<Navigate to="/nexus?tab=hypothesis" replace />} />
+            <Route path="/nexus" element={<GuardedAIHub />} />
+            <Route path="/agents" element={<PremiumOnly><Navigate to="/nexus?tab=agents" replace /></PremiumOnly>} />
+            <Route path="/ai-hypothesis" element={<PremiumOnly><Navigate to="/nexus?tab=hypothesis" replace /></PremiumOnly>} />
             <Route path="/ai-insights" element={<Navigate to="/nexus?tab=insights" replace />} />
-            <Route path="/knowledge" element={<Navigate to="/nexus?tab=knowledge" replace />} />
+            <Route path="/knowledge" element={<PremiumOnly><Navigate to="/nexus?tab=knowledge" replace /></PremiumOnly>} />
             <Route path="/oracle" element={<Navigate to="/nexus?tab=oracle" replace />} />
-            <Route path="/forecast/:ueid" element={<ForecastingEngine />} />
-            <Route path="/conversation-intel" element={<ConversationIntelView />} />
-            <Route path="/hypothesis-engine" element={<Navigate to="/nexus?tab=hypothesis" replace />} />
-            <Route path="/scenarios" element={<ScenarioModelingView />} />
-            <Route path="/tornado-insights" element={<TornadoInsightsShell />} />
-            <Route path="/strategic-scenarios" element={<StrategicScenarioView />} />
-            <Route path="/omniverse" element={<OmniverseHub />} />
+            <Route path="/forecast/:ueid" element={<PremiumOnly><ForecastingEngine /></PremiumOnly>} />
+            <Route path="/conversation-intel" element={<PremiumOnly><ConversationIntelView /></PremiumOnly>} />
+            <Route path="/hypothesis-engine" element={<PremiumOnly><Navigate to="/nexus?tab=hypothesis" replace /></PremiumOnly>} />
+            <Route path="/scenarios" element={<PremiumOnly><ScenarioModelingView /></PremiumOnly>} />
+            <Route path="/tornado-insights" element={<PremiumOnly><TornadoInsightsShell /></PremiumOnly>} />
+            <Route path="/strategic-scenarios" element={<PremiumOnly><StrategicScenarioView /></PremiumOnly>} />
+            <Route path="/omniverse" element={<PremiumOnly><OmniverseHub /></PremiumOnly>} />
 
             {/* Нові модулі v59.0-NEXUS */}
-            <Route path="/decisions" element={<DecisionsJournal />} />
-            <Route path="/alerts" element={<AlertCenterView />} />
-            <Route path="/timeline" element={<TimelineBuilderView />} />
-            <Route path="/entity-resolver" element={<EntityResolverView />} />
+            <Route path="/decisions" element={<PremiumOnly><DecisionsJournal /></PremiumOnly>} />
+            <Route path="/alerts" element={<PremiumOnly><AlertCenterView /></PremiumOnly>} />
+            <Route path="/timeline" element={<PremiumOnly><TimelineBuilderView /></PremiumOnly>} />
+            <Route path="/entity-resolver" element={<PremiumOnly><EntityResolverView /></PremiumOnly>} />
 
             {/* 6. СИСТЕМНЕ ЯДРО (тільки для client-ролей) */}
-            <Route path="/system" element={<SystemHub />} />
-            <Route path="/monitoring" element={<Navigate to="/system?tab=monitoring" replace />} />
-            <Route path="/settings" element={<Navigate to="/system?tab=settings" replace />} />
-            <Route path="/api-docs" element={<ApiDocumentationView />} />
-            <Route path="/reports" element={<ReportBuilderPage />} />
+            <Route path="/system" element={<Navigate to="/command?tab=board" replace />} />
+            <Route path="/monitoring" element={<Navigate to="/command?tab=board" replace />} />
+            <Route path="/settings" element={<Navigate to="/command?tab=board" replace />} />
+            <Route path="/api-docs" element={<PremiumOnly><ApiDocumentationView /></PremiumOnly>} />
+            <Route path="/reports" element={<PremiumOnly><ReportBuilderPage /></PremiumOnly>} />
 
             {/* Клієнтські маршрути */}
-            <Route path="/clients" element={<ClientsHubView />} />
-            <Route path="/clients/:segment" element={<ClientSegmentView />} />
+            <Route path="/clients" element={<PremiumOnly><ClientsHubView /></PremiumOnly>} />
+            <Route path="/clients/:segment" element={<PremiumOnly><ClientSegmentView /></PremiumOnly>} />
 
             {/* Блокування адмін-зони для не-адмінів */}
             <Route path="/admin/*" element={<Navigate to="/" replace />} />
