@@ -1,9 +1,9 @@
 import React, { lazy, Suspense, useEffect, useState, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Loader, Activity, Network, GitMerge, Cpu, ShieldAlert, 
-  Database, Zap, Factory, BrainCircuit, HardDrive, 
+import {
+  Loader, Activity, Network, GitMerge, Cpu, ShieldAlert,
+  Database, Zap, Factory, BrainCircuit, HardDrive,
   BookOpen, Layers, Eye, Settings, Globe, ShieldCheck,
   TrendingUp, BarChart3, Fingerprint, Target, Search,
   Lock, MessageSquare, Anchor, FileText, Share2, AlertTriangle,
@@ -13,14 +13,15 @@ import {
 } from 'lucide-react';
 import { VerticalTabNav } from '@/components/layout/VerticalTabNav';
 import { cn } from '@/lib/utils';
-import { 
-  useSystemStatus, 
-  useSystemStats, 
-  useAgentsStats 
+import {
+  useSystemStatus,
+  useSystemStats,
+  useAgentsStats
 } from '@/hooks/useAdminApi';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { useUISound, UISoundType } from '@/hooks/useUISound';
 
 /**
  * 🦅 PREDATOR Analytics | Admin Hub v61.0-ELITE
@@ -487,6 +488,7 @@ const TabNav: React.FC<TabNavProps> = ({ activeTab, onTabChange }) => {
   const scrollContainerRef = React.useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = React.useState(false);
   const [canScrollRight, setCanScrollRight] = React.useState(true);
+  const { play } = useUISound();
 
   const activeTabConfig = TABS.find(t => t.id === activeTab);
   const [selectedCategory, setSelectedCategory] = React.useState<TabCategory>(
@@ -536,7 +538,11 @@ const TabNav: React.FC<TabNavProps> = ({ activeTab, onTabChange }) => {
           return (
             <button
               key={cat.id}
-              onClick={() => setSelectedCategory(cat.id)}
+              onClick={() => {
+                play(UISoundType.CLICK);
+                setSelectedCategory(cat.id);
+              }}
+              onMouseEnter={() => play(UISoundType.HOVER)}
               className={cn(
                 "flex flex-col items-start gap-2 px-10 py-7 transition-all duration-700 relative group overflow-hidden border-r border-white/5 min-w-[280px]",
                 isActive 
@@ -609,7 +615,11 @@ const TabNav: React.FC<TabNavProps> = ({ activeTab, onTabChange }) => {
             return (
               <button
                 key={tab.id}
-                onClick={() => onTabChange(tab.id)}
+                onClick={() => {
+                  play(UISoundType.CLICK);
+                  onTabChange(tab.id);
+                }}
+                onMouseEnter={() => play(UISoundType.HOVER)}
                 className={cn(
                   'relative flex items-center whitespace-nowrap gap-6 px-12 py-5 text-[11px] font-black transition-all duration-700 uppercase tracking-[0.4em] group/tab h-full border-r border-white/5 italic',
                   active
