@@ -23,6 +23,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { factoryApi, monitoringApi, systemApi, apiClient, api } from '@/services/api';
+import { useUISound, UISoundType } from '@/hooks/useUISound';
+import { SlideToExecute } from '@/components/ui/SlideToExecute';
 import { AntigravityAgiTab } from './components/AntigravityAgiTab';
 import { FabrykaAutonomousTab } from './components/FabrykaAutonomousTab';
 import { GeminiCloudAssist } from './components/GeminiCloudAssist';
@@ -58,6 +60,7 @@ const graphApi = api.graph;
 
 
 export default function SystemFactoryView() {
+  const { play } = useUISound();
   const [messages, setMessages] = useState<FactoryMessage[]>([
     {
       id: 'msg-0',
@@ -855,7 +858,11 @@ export default function SystemFactoryView() {
               return (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id as any)}
+                  onClick={() => {
+                    play(UISoundType.CLICK);
+                    setActiveTab(tab.id as any);
+                  }}
+                  onMouseEnter={() => play(UISoundType.HOVER)}
                   className={cn(
                     "flex items-center gap-3 w-full px-4 py-3 rounded-xl border transition-all relative group",
                     isActive 
@@ -972,7 +979,7 @@ export default function SystemFactoryView() {
                       </p>
                     </div>
                   </div>
-                  <Button variant="neon" className="bg-rose-600/20 text-rose-300 border-rose-500/50 text-[9px] uppercase font-black" onClick={() => bugs.filter(b => b.status === 'detected').forEach(b => handleFixBug(b.id))}>
+                  <Button variant="neon" className="bg-rose-600/20 text-rose-300 border-rose-500/50 text-[9px] uppercase font-black" onClick={() => { play(UISoundType.CLICK); bugs.filter(b => b.status === 'detected').forEach(b => handleFixBug(b.id)); }}>
                     <Zap size={12} className="mr-1" /> Автовиправити все
                   </Button>
                 </div>

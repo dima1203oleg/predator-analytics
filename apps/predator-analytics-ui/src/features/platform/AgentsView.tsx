@@ -17,6 +17,8 @@ import { NeutralizedContent } from '@/components/NeutralizedContent';
 import { Badge } from '@/components/ui/badge';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { dashboardApi } from '@/services/api/dashboard';
+import { useUISound, UISoundType } from '@/hooks/useUISound';
+import { SlideToExecute } from '@/components/ui/SlideToExecute';
 import { osintService } from '@/services/unified/osint.service';
 import { systemApi } from '@/services/api/system';
 import AgentCascadeManager from './components/AgentCascadeManager';
@@ -371,6 +373,7 @@ const OSINTToolRow: React.FC<{
 // ГОЛОВНИЙ КОМПОНЕНТ
 // ──────────────────────────────────────────────
 const AgentsView: React.FC = () => {
+    const { play } = useUISound();
     const navigate = useNavigate();
     const backendStatus = useBackendStatus();
     const { currentShell } = useShell();
@@ -538,8 +541,10 @@ const AgentsView: React.FC = () => {
                 <button
                     type="button"
                     onClick={() => {
+                        play(UISoundType.CLICK);
                         void handleRefresh();
                     }}
+                    onMouseEnter={() => play(UISoundType.HOVER)}
                     disabled={refreshing}
                     className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-slate-200 transition hover:bg-white/10 disabled:opacity-60"
                 >
@@ -553,7 +558,11 @@ const AgentsView: React.FC = () => {
                 {tabs.map((tab) => (
                     <button
                         key={tab.id}
-                        onClick={() => setActiveTab(tab.id as 'telemetry' | 'cascades' | 'workflow' | 'osint')}
+                        onClick={() => {
+                            play(UISoundType.CLICK);
+                            setActiveTab(tab.id as 'telemetry' | 'cascades' | 'workflow' | 'osint');
+                        }}
+                        onMouseEnter={() => play(UISoundType.HOVER)}
                         className={`
                             flex items-center gap-2 px-5 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all duration-300
                             ${activeTab === tab.id

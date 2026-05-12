@@ -11,6 +11,8 @@
 import React, { useState, useEffect } from 'react';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useUISound, UISoundType } from '@/hooks/useUISound';
+import { SlideToExecute } from '@/components/ui/SlideToExecute';
 import {
     Dna,
     Activity,
@@ -64,6 +66,7 @@ const tabs: TabConfig[] = [
 ];
 
 const EvolutionView: React.FC = () => {
+    const { play } = useUISound();
     const [activeTab, setActiveTab] = useState('overview');
     const [refreshing, setRefreshing] = useState(false);
 
@@ -176,7 +179,11 @@ const EvolutionView: React.FC = () => {
 
                     <div className="flex justify-end gap-6 mb-12">
                         <button 
-                            onClick={handleRefresh} 
+                            onClick={() => {
+                                play(UISoundType.CLICK);
+                                handleRefresh();
+                            }}
+                            onMouseEnter={() => play(UISoundType.HOVER)}
                             className={cn(
                                 "p-7 bg-black border-2 border-white/[0.04] rounded-[2rem] text-slate-500 hover:text-yellow-500 transition-all shadow-4xl group/btn",
                                 refreshing && "animate-spin cursor-not-allowed opacity-50"
@@ -184,13 +191,15 @@ const EvolutionView: React.FC = () => {
                         >
                             <RefreshCw size={32} className={cn("transition-transform duration-700", refreshing ? "" : "group-hover/btn:rotate-180")} />
                         </button>
-                        <button className="relative px-12 py-7 h-fit group/main overflow-hidden rounded-[2.2rem]">
-                            <div className="absolute inset-0 bg-gradient-to-r from-yellow-600 to-yellow-500 transition-transform duration-500 group-hover/main:scale-105" />
-                            <div className="relative flex items-center gap-6 text-black font-black uppercase italic tracking-[0.3em] text-[12px]">
-                                <Sparkles size={24} /> ІНІЦІЮВАТИ_СИНТЕЗ_AZR
-                            </div>
-                            <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover/main:translate-x-[100%] transition-transform duration-1000" />
-                        </button>
+                        <SlideToExecute
+                            onConfirm={() => {
+                                play(UISoundType.SUCCESS);
+                                console.log('Синтез AZR ініційовано');
+                            }}
+                            label="ПЕРЕТЯГНІТЬ ДЛЯ СИНТЕЗУ AZR"
+                            confirmLabel="СИНТЕЗ AZR ЗАПУЩЕНО"
+                            variant="critical"
+                        />
                     </div>
 
                     <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
@@ -221,7 +230,7 @@ const EvolutionView: React.FC = () => {
                         <span className="px-6 text-[10px] font-black text-slate-800 uppercase tracking-[0.5em] italic border-r-2 border-white/5 h-10 flex items-center">MATRIX_SELECT</span>
                         {tabs.map(mod => (
                             <button 
-                                key={mod.id} onClick={() => setActiveTab(mod.id)}
+                                key={mod.id} onClick={() => { play(UISoundType.CLICK); setActiveTab(mod.id); }} onMouseEnter={() => play(UISoundType.HOVER)}
                                 className={cn(
                                     "px-10 py-5 rounded-[2.5rem] text-[11px] font-black uppercase tracking-[0.3em] italic border-2 transition-all duration-500 flex items-center gap-5 relative overflow-hidden group/tab",
                                     activeTab === mod.id 
