@@ -23,7 +23,8 @@ import {
 import { intelligenceApi } from '@/services/api';
 import { ViewHeader } from '@/components/ViewHeader';
 import { cn } from '@/utils/cn';
-import { DataSkeleton } from '@/components/shared/DataSkeleton';
+import { AdvancedBackground } from '@/components/AdvancedBackground';
+import { useUISound, UISoundType } from '@/hooks/useUISound';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { CyberOrb } from '@/components/CyberOrb';
 import { HoloContainer } from '@/components/HoloContainer';
@@ -96,7 +97,8 @@ const CompetitorCardELITE: React.FC<{
   isExpanded: boolean;
   onToggle: () => void;
   onTrack: () => void;
-}> = ({ competitor, isExpanded, onToggle, onTrack }) => {
+  play: (type: UISoundType) => void;
+}> = ({ competitor, isExpanded, onToggle, onTrack, play }) => {
   return (
     <TacticalCard
       variant={isExpanded ? "holographic" : "cyber"}
@@ -106,7 +108,7 @@ const CompetitorCardELITE: React.FC<{
     >
       <div
         className="p-6 cursor-pointer relative overflow-hidden group"
-        onClick={onToggle}
+        onClick={() => { play(UISoundType.CLICK); onToggle(); }}
       >
         {/* Background Decorative Element */}
         <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-[#D4AF37]/10 to-transparent rounded-full -mr-16 -mt-16 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
@@ -165,7 +167,7 @@ const CompetitorCardELITE: React.FC<{
 
             <div className="flex items-center gap-3 border-l border-white/5 pl-6">
               <button
-                onClick={(e) => { e.stopPropagation(); onTrack(); }}
+                onClick={(e) => { e.stopPropagation(); play(UISoundType.CLICK); onTrack(); }} onMouseEnter={() => play(UISoundType.HOVER)}
                 className={cn(
                   "p-4 rounded-2xl transition-all duration-500 border shadow-2xl",
                   competitor.isTracked
@@ -274,6 +276,7 @@ const CompetitorCardELITE: React.FC<{
 // --- MAIN VIEW ---
 
 const CompetitorIntelligenceView: React.FC = () => {
+  const { play } = useUISound();
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [competitors, setCompetitors] = useState<Competitor[]>([]);
@@ -474,6 +477,7 @@ const CompetitorIntelligenceView: React.FC = () => {
                           competitor={competitor}
                           isExpanded={expandedId === competitor.id}
                           onToggle={() => setExpandedId(expandedId === competitor.id ? null : competitor.id)}
+                          play={play}
                           onTrack={() => toggleTrack(competitor.id)}
                         />
                       </motion.div>

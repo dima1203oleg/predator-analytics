@@ -67,6 +67,7 @@ import { CompetitorWarBoardWidget } from '@/components/premium/CompetitorWarBoar
 import { TacticalVoiceCommWidget } from '@/components/premium/TacticalVoiceCommWidget';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
+import { useUISound, UISoundType } from '@/hooks/useUISound';
 import { CyberGrid } from '@/components/CyberGrid';
 import { Badge } from '@/components/ui/badge';
 import { DiagnosticsTerminal } from '@/components/intelligence/DiagnosticsTerminal';
@@ -216,6 +217,7 @@ const HolographicAccessGate: React.FC = () => {
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 
 const PremiumHubView: React.FC = () => {
+  const { play } = useUISound();
   const { userRole, persona, setPersona } = useAppStore();
   const [activeTab, setActiveTab] = useState<'overview' | 'tactical' | 'analytics' | 'modeling' | 'builder' | 'reports'>('overview');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -364,7 +366,7 @@ const PremiumHubView: React.FC = () => {
                     ].map(tab => (
                         <button
                             key={tab.id}
-                            onClick={() => setActiveTab(tab.id as any)}
+                            onClick={() => { play(UISoundType.CLICK); setActiveTab(tab.id as any); }} onMouseEnter={() => play(UISoundType.HOVER)}
                             className={cn(
                                 "px-8 py-3.5 rounded-[22px] text-[10px] font-black uppercase tracking-widest flex items-center gap-3 transition-all italic",
                                 activeTab === tab.id
@@ -377,7 +379,7 @@ const PremiumHubView: React.FC = () => {
                         </button>
                     ))}
                     <button 
-                        onClick={() => setIsSearchOpen(true)}
+                        onClick={() => { play(UISoundType.CLICK); setIsSearchOpen(true); }} onMouseEnter={() => play(UISoundType.HOVER)}
                         className="p-3.5 rounded-[22px] bg-white/5 text-slate-500 hover:text-white transition-all border border-transparent hover:border-white/10"
                     >
                         <Search size={16} />
