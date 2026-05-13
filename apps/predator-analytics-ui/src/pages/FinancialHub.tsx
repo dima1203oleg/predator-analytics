@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Activity, Globe, ShieldCheck, Lock, Landmark, Zap, Settings2 } from 'lucide-react';
 import { HubLayout } from '@/components/layout/HubLayout';
 import { useSearchParams } from 'react-router-dom';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { useRole } from '@/context/RoleContext';
 
 // Імпорт нових вкладок
 import { SwiftMonitorTab } from './tabs/finance/SwiftMonitorTab';
@@ -12,30 +13,41 @@ import { AssetTrackerTab } from './tabs/finance/AssetTrackerTab';
 
 type FinancialHubTab = 'swift' | 'offshore' | 'aml' | 'assets';
 
+const ALL_TABS = [
+  { id: 'swift', label: 'Транзакційний монітор', icon: <Activity size={16} /> },
+  { id: 'offshore', label: 'Офшорний детектор', icon: <Globe size={16} />, premium: true },
+  { id: 'aml', label: 'AML радар', icon: <ShieldCheck size={16} />, premium: true },
+  { id: 'assets', label: 'Трекер активів', icon: <Lock size={16} />, premium: true },
+];
+
 const FinancialHub: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const { isPremium } = useRole();
   const tabParam = searchParams.get('tab') as FinancialHubTab;
   const [activeTab, setActiveTab] = useState<FinancialHubTab>(tabParam || 'swift');
   const backendStatus = useBackendStatus();
 
+  const hubTabs = useMemo(() => {
+    return ALL_TABS.filter(t => !t.premium || isPremium);
+  }, [isPremium]);
+
   // Синхронізація активної вкладки при зміні URL
   useEffect(() => {
     if (tabParam && tabParam !== activeTab) {
-      setActiveTab(tabParam);
+      const isPremiumTab = ALL_TABS.find(t => t.id === tabParam)?.premium;
+      if (isPremiumTab && !isPremium) {
+        setActiveTab('swift');
+        setSearchParams({ tab: 'swift' });
+      } else {
+        setActiveTab(tabParam);
+      }
     }
-  }, [tabParam, activeTab]);
+  }, [tabParam, activeTab, isPremium, setSearchParams]);
 
   const handleTabChange = (id: string) => {
     setActiveTab(id as FinancialHubTab);
     setSearchParams({ tab: id });
   };
-
-  const hubTabs = [
-    { id: 'swift', label: 'Транзакційний монітор', icon: <Activity size={16} /> },
-    { id: 'offshore', label: 'Офшорний детектор', icon: <Globe size={16} /> },
-    { id: 'aml', label: 'AML  адар', icon: <ShieldCheck size={16} /> },
-    { id: 'assets', label: 'Трекер активів', icon: <Lock size={16} /> },
-  ];
 
   return (
     <HubLayout
