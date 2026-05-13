@@ -308,8 +308,8 @@ export const Predator: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, scale: 0.9, y: 100 }} 
             animate={{ opacity: 1, scale: 1, y: 0 }} 
-            exit={{ opacity: 0, scale: 0.9, y: 100 }}
-            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            exit={{ opacity: 0, scale: 0.85, y: 80 }}
+            transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
             className={cn(
               "fixed z-[150] bg-black/95 rounded-[40px] border-2 border-rose-500/20 shadow-[0_50px_150px_rgba(0,0,0,1)] overflow-hidden flex flex-col",
               isExpanded ? "inset-8 rounded-[4rem]" : "bottom-12 right-12 w-[520px] h-[850px] rounded-[3rem]"
