@@ -24,6 +24,7 @@ import {
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { ViewHeader } from '@/components/ViewHeader';
 import { TacticalCard } from '@/components/ui/TacticalCard';
+import { useUISound, UISoundType } from '@/hooks/useUISound';
 import { CyberOrb } from '@/components/CyberOrb';
 import { CyberGrid } from '@/components/CyberGrid';
 import { PipelineMonitor } from '@/components/pipeline/PipelineMonitor';
@@ -58,7 +59,11 @@ const CONNECTOR_TYPE_CONFIG: Record<string, { icon: any; color: string; bg: stri
 // Sub-components
 // ========================
 
-const ConnectorCard: React.FC<{ connector: Connector; onSync: (id: string) => void }> = ({ connector, onSync }) => {
+const ConnectorCard: React.FC<{
+    connector: Connector;
+    onSync: (id: string) => void;
+    play: (type: UISoundType) => void;
+}> = ({ connector, onSync, play }) => {
     const config = CONNECTOR_TYPE_CONFIG[connector.type] || CONNECTOR_TYPE_CONFIG.api;
     const Icon = config.icon;
 
@@ -88,7 +93,7 @@ const ConnectorCard: React.FC<{ connector: Connector; onSync: (id: string) => vo
                         <Settings size={16} />
                     </button>
                     <button
-                        onClick={() => onSync(connector.id)}
+                        onClick={() => { play(UISoundType.CLICK); onSync(connector.id); }} onMouseEnter={() => play(UISoundType.HOVER)}
                         disabled={connector.status === 'syncing'}
                         className={cn(
                             "p-3 rounded-xl border transition-all",
@@ -138,6 +143,7 @@ const ConnectorCard: React.FC<{ connector: Connector; onSync: (id: string) => vo
 // ========================
 
 const ParsersView: React.FC = () => {
+    const { play } = useUISound();
     const [connectors, setConnectors] = useState<Connector[]>([
         { id: '1', name: 'Держмитслужба API', type: 'api', status: 'active', lastSync: '2хв тому', itemsCount: 124502, description: 'Центральний шлюз митних декларацій України.', throughput: '1.2 GB/s' },
         { id: '2', name: 'Telegram Monitoring', type: 'telegram', status: 'active', lastSync: '10с тому', itemsCount: 45821, description: 'Канали: Митна Варта, Кордон_Інфо, OSINT_UA.', throughput: '42 msg/s' },
@@ -219,7 +225,7 @@ const ParsersView: React.FC = () => {
                     <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        onClick={() => setIsModalOpen(true)}
+                        onClick={() => { play(UISoundType.CLICK); setIsModalOpen(true); }} onMouseEnter={() => play(UISoundType.HOVER)}
                         className="px-10 py-5 bg-gradient-to-br from-emerald-600 to-teal-700 text-white rounded-[28px] text-[10px] font-black uppercase tracking-[0.4em] shadow-[0_20px_50px_-15px_rgba(16,185,129,0.5)] border border-white/20 transition-all flex items-center gap-4 group italic"
                     >
                         <Plus size={20} className="group-hover:rotate-180 transition-transform duration-500" /> ЗАРЕЄСТРУВАТИ_НОВЕ_ДЖЕРЕЛО
@@ -229,12 +235,12 @@ const ParsersView: React.FC = () => {
                 {/* Main Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                     {connectors.map(c => (
-                        <ConnectorCard key={c.id} connector={c} onSync={handleSync} />
+                        <ConnectorCard key={c.id} connector={c} onSync={handleSync} play={play} />
                     ))}
                     
                     {/* Placeholder for "Add" */}
                     <button 
-                        onClick={() => setIsModalOpen(true)}
+                        onClick={() => { play(UISoundType.CLICK); setIsModalOpen(true); }} onMouseEnter={() => play(UISoundType.HOVER)}
                         className="border-2 border-dashed border-white/5 rounded-[32px] p-8 flex flex-col items-center justify-center gap-4 text-slate-600 hover:border-emerald-500/30 hover:text-emerald-400 hover:bg-emerald-500/5 transition-all group min-h-[300px]"
                     >
                         <div className="w-16 h-16 rounded-full bg-slate-950 border border-white/5 flex items-center justify-center group-hover:scale-110 transition-transform shadow-2xl">

@@ -21,8 +21,10 @@ import {
 import React, { useMemo, useState } from 'react';
 import { CATEGORIES, COMPONENT_REGISTRY, PredatorComponent, SYSTEM_STATS } from '@/config/componentRegistry';
 import { componentsLocales as t } from '@/locales/uk/autonomy';
+import { useUISound, UISoundType } from '@/hooks/useUISound';
 
 export const ComponentsRegistryView: React.FC = () => {
+  const { play } = useUISound();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -134,7 +136,7 @@ export const ComponentsRegistryView: React.FC = () => {
           return (
             <motion.button
               key={cat.id}
-              onClick={() => setSelectedCategory(cat.id)}
+              onClick={() => { play(UISoundType.CLICK); setSelectedCategory(cat.id); }} onMouseEnter={() => play(UISoundType.HOVER)}
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
               className={`relative overflow-hidden p-3 rounded-2xl text-center transition-all border ${isSelected
@@ -217,7 +219,7 @@ export const ComponentsRegistryView: React.FC = () => {
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: idx * 0.05 }}
                         whileHover={{ scale: 1.02, y: -4 }}
-                        onClick={() => setIsExpanded(!isExpanded)}
+                        onClick={() => { play(UISoundType.CLICK); setIsExpanded(!isExpanded); }} onMouseEnter={() => play(UISoundType.HOVER)}
                         className={`group relative bg-slate-800/30 border border-slate-700/50 rounded-2xl p-5 cursor-pointer transition-all duration-300 shadow-lg hover:shadow-xl hover:bg-slate-800/80 hover:border-slate-600 ${isExpanded ? 'col-span-1 md:col-span-2 row-span-2 bg-slate-800 border-cyan-500/50 z-10' : ''}`}
                       >
                         <div className="flex items-start justify-between mb-3">
