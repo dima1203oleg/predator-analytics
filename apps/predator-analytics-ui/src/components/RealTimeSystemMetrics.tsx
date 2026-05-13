@@ -227,7 +227,7 @@ export const RealTimeSystemMetrics: React.FC<{ compact?: boolean }> = ({ compact
             <Activity size={24} />
           </div>
           <div>
-            <h3 className="text-2xl font-black text-white uppercase tracking-tighter leading-none mb-2 font-display">OMNISCIENCE_<span className="text-blue-400">MATRIX</span>_MONITOR</h3>
+            <h3 className="text-2xl font-black text-white uppercase tracking-tighter leading-none mb-2 font-display">МАТРИЦЯ_<span className="text-blue-400">ВСЕВІДУЧОСТІ</span>_МОНІТОР</h3>
             <div className="flex items-center gap-4 text-[10px] text-slate-300 font-black uppercase tracking-[0.2em]">
               <div className="flex items-center gap-2">
                 <div className={cn("w-2 h-2 rounded-full", isConnected ? 'bg-emerald-500 shadow-[0_0_10px_#10b981] ' : 'bg-rose-500')} />
@@ -257,7 +257,7 @@ export const RealTimeSystemMetrics: React.FC<{ compact?: boolean }> = ({ compact
 
         {/* Vitality Score Main Hub */}
         <div className="col-span-12 xl:col-span-4 flex flex-col gap-8">
-          <TacticalCard variant="holographic" title="SYSTEM_VITALITY_CORE" className="flex-1 p-10 flex flex-col items-center justify-center bg-slate-950/60 shadow-2xl overflow-hidden group">
+          <TacticalCard variant="holographic" title="СИСТЕМНЕ_ЯДРО_ЖИТТЄДІЯЛЬНОСТІ" className="flex-1 p-10 flex flex-col items-center justify-center bg-slate-950/60 shadow-2xl overflow-hidden group">
             <div className="absolute inset-0 bg-cyber-scanline opacity-[0.03] pointer-events-none" />
             <div className="relative mb-8 mt-4">
               <div className={cn(
@@ -285,7 +285,7 @@ export const RealTimeSystemMetrics: React.FC<{ compact?: boolean }> = ({ compact
           <div className="grid grid-cols-2 gap-8">
             <div className="p-8 rounded-[36px] bg-slate-950/40 border border-white/5 shadow-xl flex flex-col gap-4 group hover:bg-slate-900/60 transition-all duration-500">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Error Rate</span>
+                <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Частка_Помилок</span>
                 <AlertTriangle size={16} className={metrics.errorRate < 1 ? 'text-emerald-500' : 'text-rose-500'} />
               </div>
               <div className={cn("text-3xl font-black font-display tracking-tighter", metrics.errorRate < 1 ? 'text-emerald-400' : 'text-rose-400')}>
@@ -294,7 +294,7 @@ export const RealTimeSystemMetrics: React.FC<{ compact?: boolean }> = ({ compact
             </div>
             <div className="p-8 rounded-[36px] bg-slate-950/40 border border-white/5 shadow-xl flex flex-col gap-4 group hover:bg-slate-900/60 transition-all duration-500">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Uptime</span>
+                <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Час_Роботи</span>
                 <Shield size={16} className="text-emerald-500" />
               </div>
               <div className="text-3xl font-black text-emerald-400 font-display tracking-tighter">
@@ -308,7 +308,7 @@ export const RealTimeSystemMetrics: React.FC<{ compact?: boolean }> = ({ compact
         <div className="col-span-12 xl:col-span-8 flex flex-col gap-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
             <MetricCard
-              label="ЦЕНТ АЛЬНИЙ_П ОЦЕСО "
+              label="ЦЕНТРАЛЬНИЙ_ПРОЦЕСОР"
               value={metrics.cpu.toFixed(1)}
               unit="%"
               icon={Cpu}
@@ -339,7 +339,7 @@ export const RealTimeSystemMetrics: React.FC<{ compact?: boolean }> = ({ compact
               unit="NODES"
             />
             <MetricCard
-              label="П ОПУСКНА_ЗДАТНІСТЬ"
+              label="ПРОПУСКНА_ЗДАТНІСТЬ"
               value={metrics.requestsPerSecond}
               unit="REQ/S"
               icon={Activity}
@@ -350,13 +350,13 @@ export const RealTimeSystemMetrics: React.FC<{ compact?: boolean }> = ({ compact
           </div>
 
           {/* Latency Matrix Visualization */}
-          <TacticalCard variant="holographic" title="NETWORK_LATENCY_SPECTRUM" className="p-10 border-white/5 bg-slate-950/40 overflow-hidden relative group">
+          <TacticalCard variant="holographic" title="СПЕКТР_МЕРЕЖЕВОЇ_ЗАТРИМКИ" className="p-10 border-white/5 bg-slate-950/40 overflow-hidden relative group">
             <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
             <div className="flex items-center gap-6 mb-10">
               <div className="p-3 bg-amber-500/10 rounded-2xl border border-amber-500/20 text-amber-400">
                 <Clock size={20} />
               </div>
-              <span className="text-[11px] font-black text-slate-300 uppercase tracking-[0.4em]">Response Time Analytics (ms)</span>
+              <span className="text-[11px] font-black text-slate-300 uppercase tracking-[0.4em]">Аналітика_Часу_Відповіді_(мс)</span>
             </div>
             <div className="grid grid-cols-3 gap-12 relative z-10">
               {[
