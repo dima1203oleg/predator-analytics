@@ -545,7 +545,7 @@ export const BootSequenceELITE: React.FC<{ onComplete: () => void }> = ({ onComp
         )}
 
         {phase === 2 && (
-          <div className="w-full max-w-[92vw] flex flex-col items-center gap-12 sm:gap-24 relative z-10 px-4 sm:px-24">
+          <div className="w-full max-w-[92vw] h-full flex flex-col items-center justify-center gap-12 sm:gap-24 relative z-10 px-4 sm:px-24 overflow-y-auto py-8">
             <div className="text-[#D4AF37] text-sm tracking-[3em] uppercase font-black opacity-30 pb-12 border-b border-[#D4AF37]/10 w-full text-center italic">
                Глобальні_Протоколи_Вилучення
             </div>
