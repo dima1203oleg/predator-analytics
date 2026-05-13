@@ -166,7 +166,7 @@ export const ChartSkeleton: React.FC<ChartSkeletonProps> = ({
                     <div className="w-full h-full relative">
                         <Skeleton variant="rectangular" width="100%" height="100%" />
                         <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="text-slate-600 text-sm">Loading chart...</div>
+                            <div className="text-slate-600 text-sm">Завантаження графіка...</div>
                         </div>
                     </div>
                 )}
