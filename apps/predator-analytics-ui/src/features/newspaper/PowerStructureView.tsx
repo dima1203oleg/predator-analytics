@@ -24,6 +24,7 @@ import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
 import { CyberOrb } from '@/components/CyberOrb';
+import { useUISound, UISoundType } from '@/hooks/useUISound';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 
 interface PowerNode {
@@ -97,6 +98,7 @@ const PowerNodeCard = ({ node, color }: { node: PowerNode; color?: string }) => 
 // ─── MAIN COMPONENT ──────────────────────────────────────────────────
 
 export default function PowerStructureView() {
+    const { play } = useUISound();
     const [data, setData] = useState<PowerStructureData | null>(null);
     const [loading, setLoading] = useState(true);
 
@@ -209,7 +211,7 @@ export default function PowerStructureView() {
                      ]}
                      actions={
                        <div className="flex gap-4">
-                          <button onClick={fetchData} className={cn("p-5 bg-black border border-white/[0.04] rounded-2xl text-slate-400 hover:text-white transition-all shadow-xl", loading && "animate-spin")}>
+                          <button onClick={() => { play(UISoundType.CLICK); fetchData(); }} onMouseEnter={() => play(UISoundType.HOVER)} className={cn("p-5 bg-black border border-white/[0.04] rounded-2xl text-slate-400 hover:text-white transition-all shadow-xl", loading && "animate-spin")}>
                              <RefreshCcw size={24} />
                           </button>
                           <button className="px-8 py-5 bg-cyan-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-cyan-600 shadow-2xl transition-all flex items-center gap-4">

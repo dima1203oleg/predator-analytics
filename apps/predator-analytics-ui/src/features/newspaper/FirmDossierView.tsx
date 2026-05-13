@@ -24,11 +24,13 @@ import { PageTransition } from '@/components/layout/PageTransition';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
+import { useUISound, UISoundType } from '@/hooks/useUISound';
 import { CyberGrid } from '@/components/CyberGrid';
 import { CyberOrb } from '@/components/CyberOrb';
 import { Badge } from '@/components/ui/badge';
 
 export default function FirmDossierView() {
+  const { play } = useUISound();
   const [query, setQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [result, setResult] = useState<any>(null);
@@ -48,8 +50,7 @@ export default function FirmDossierView() {
     }
   }, [isOffline]);
 
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSearch = async () => {
     if (query.length < 3) return;
     setIsSearching(true);
     try {
@@ -135,10 +136,10 @@ export default function FirmDossierView() {
               ]}
              actions={
                <div className="flex gap-4">
-                  <button onClick={() => {setResult(null); setQuery('');}} className="p-5 bg-black border border-white/[0.04] rounded-2xl text-slate-400 hover:text-white transition-all shadow-xl">
+                  <button onClick={() => { play(UISoundType.CLICK); setResult(null); setQuery('');}} onMouseEnter={() => play(UISoundType.HOVER)} className="p-5 bg-black border border-white/[0.04] rounded-2xl text-slate-400 hover:text-white transition-all shadow-xl">
                      <RefreshCcw size={24} />
                   </button>
-                  <button onClick={handleSearch} className="px-8 py-5 bg-sky-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-sky-600 shadow-2xl transition-all flex items-center gap-4">
+                  <button onClick={() => { play(UISoundType.CLICK); handleSearch(); }} onMouseEnter={() => play(UISoundType.HOVER)} disabled={isSearching} className="px-8 py-5 bg-sky-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-sky-600 shadow-2xl transition-all flex items-center gap-4 disabled:opacity-50 disabled:cursor-not-allowed">
                      <Radar size={18} /> СКАНУВАТИ_РЕЄСТРИ
                   </button>
                </div>
