@@ -545,45 +545,45 @@ export const BootSequenceELITE: React.FC<{ onComplete: () => void }> = ({ onComp
         )}
 
         {phase === 2 && (
-          <div className="w-full max-w-[85vw] flex flex-col items-center gap-24 relative z-10 px-24">
+          <div className="w-full max-w-[92vw] flex flex-col items-center gap-12 sm:gap-24 relative z-10 px-4 sm:px-24">
             <div className="text-[#D4AF37] text-sm tracking-[3em] uppercase font-black opacity-30 pb-12 border-b border-[#D4AF37]/10 w-full text-center italic">
                Глобальні_Протоколи_Вилучення
             </div>
             
-            <div className="w-full grid grid-cols-2 gap-32">
-              <motion.div 
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-32">
+              <motion.div
                 initial={{ opacity: 0, x: -50 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="p-20 bg-black/70 border border-[#D4AF37]/10 flex flex-col gap-12 relative overflow-hidden "
+                className="p-8 sm:p-20 bg-black/70 border border-[#D4AF37]/10 flex flex-col gap-6 sm:gap-12 relative overflow-hidden"
               >
                 <div className="absolute top-0 left-0 w-1.5 h-full bg-[#D4AF37]/60 shadow-[0_0_30px_#D4AF37]" />
                 <div className="text-[#D4AF37] font-black tracking-[0.8em] text-[12px] uppercase opacity-40 italic"> [ ПОТІК_RAW_SIGINT ] </div>
-                <div className="text-white font-mono text-2xl leading-normal h-80 overflow-hidden break-all tracking-tight opacity-60 italic">
+                <div className="text-white font-mono text-lg sm:text-2xl leading-normal h-80 overflow-hidden break-all tracking-tight opacity-60 italic">
                   {sourceText}
-                  <motion.span 
+                  <motion.span
                     animate={{ opacity: [0, 1, 0] }}
                     transition={{ repeat: Infinity, duration: 0.5 }}
-                    className="inline-block w-4 h-8 bg-[#D4AF37] ml-4 shadow-[0_0_20px_#D4AF37]" 
+                    className="inline-block w-4 h-8 bg-[#D4AF37] ml-4 shadow-[0_0_20px_#D4AF37]"
                   />
                 </div>
               </motion.div>
 
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, x: 50 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.4 }}
-                className="p-20 bg-black/70 border border-[#D4AF37]/10 flex flex-col gap-12 relative overflow-hidden "
+                className="p-8 sm:p-20 bg-black/70 border border-[#D4AF37]/10 flex flex-col gap-6 sm:gap-12 relative overflow-hidden"
               >
                 <div className="absolute top-0 right-0 w-1.5 h-full bg-[#D4AF37]/60 shadow-[0_0_30px_#D4AF37]" />
                 <div className="text-[#D4AF37] font-black tracking-[0.8em] text-[12px] uppercase opacity-40 italic"> [ ВЕ ИФІКОВАНІ_ДАНІ ] </div>
-                <div className="text-white font-mono text-2xl leading-[2.5] h-80 overflow-hidden space-y-4 opacity-40 italic">
+                <div className="text-white font-mono text-lg sm:text-2xl leading-[2.5] h-80 overflow-hidden space-y-4 opacity-40 italic">
                   {["АНАЛІЗ ТРАНЗАКЦІЙ: ПРІОРИТЕТ 1", "МОНІТОРИНГ КО ДОНІВ: АКТИВНО", "ПОШУКрАНОМАЛІЙ: 0.042ms", "РИЗИК-П ОФІЛЮВАННЯ: ОМЕГА"].map((entry, idx) => (
-                    <motion.div 
-                      key={idx} 
+                    <motion.div
+                      key={idx}
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: idx * 0.2 }}
-                      className="flex items-center gap-8 border-b border-white/5 pb-4"
+                      className="flex items-center gap-4 sm:gap-8 border-b border-white/5 pb-4"
                     >
                        <span className="w-3 h-3 bg-[#D4AF37]/40 rotate-45" />
                        {entry}

@@ -110,7 +110,7 @@ export const useBackendStatus = (): BackendStatusSnapshot => {
         activeNode?.mode === 'MOCK' ? 'SOVEREIGN' : (activeNode?.mode || 'HYBRID')
     );
     const [llmLevel, setLlmLevel] = useState<1 | 2 | 3 | 4>(1);
-    const [llmLayerName, setLlmLayerName] = useState('РІВЕНЬ 1: АВТОНОМНИЙ ПУЛ');
+    const [llmLayerName, setLlmLayerName] = useState('РІВЕНЬ 1: СУВЕРЕННИЙ ПУЛ');
     const [vramMetrics, setVramMetrics] = useState<BackendStatusSnapshot['vramMetrics']>({
         total: 8.0,
         localReserve: 5.5,

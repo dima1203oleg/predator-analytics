@@ -32,7 +32,7 @@ export const RoleProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     displayName: ROLE_DISPLAY_NAMES[role],
     description: ROLE_DESCRIPTIONS[role],
     isAdmin: role === UserRole.ADMIN,
-    isPremium: role === UserRole.CLIENT_PREMIUM,
+    isPremium: role === UserRole.CLIENT_PREMIUM || role === UserRole.CLIENT_DRPO,
     isBasic: role === UserRole.CLIENT_BASIC,
     isDRPO: role === UserRole.CLIENT_DRPO,
   }), [role, capabilities]);

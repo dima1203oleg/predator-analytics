@@ -311,7 +311,7 @@ export const Predator: React.FC = () => {
             exit={{ opacity: 0, scale: 0.9, y: 100 }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
             className={cn(
-              "fixed z-[150] bg-black/95 [40px] border-2 border-rose-500/20 shadow-[0_50px_150px_rgba(0,0,0,1)] overflow-hidden flex flex-col transition-all duration-700",
+              "fixed z-[150] bg-black/95 rounded-[40px] border-2 border-rose-500/20 shadow-[0_50px_150px_rgba(0,0,0,1)] overflow-hidden flex flex-col",
               isExpanded ? "inset-8 rounded-[4rem]" : "bottom-12 right-12 w-[520px] h-[850px] rounded-[3rem]"
             )}
           >
