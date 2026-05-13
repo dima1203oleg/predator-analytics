@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { LayoutDashboard, FileText, PieChart, ShieldAlert, Eye, Settings2, Zap } from 'lucide-react';
 import { HubLayout } from '@/components/layout/HubLayout';
 import { useSearchParams } from 'react-router-dom';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { useRole } from '@/context/RoleContext';
 
 // Імпорт компонентів вкладок
 import { ExecutiveBoardTab } from './tabs/command/ExecutiveBoardTab';
@@ -15,32 +16,44 @@ import { StrategicScenarioTab } from './tabs/command/StrategicScenarioTab';
 
 type CommandHubTab = 'board' | 'brief' | 'risk' | 'warroom' | 'observer' | 'simulation';
 
+const ALL_TABS = [
+  { id: 'board', label: 'Виконавча рада', icon: <LayoutDashboard size={16} /> },
+  { id: 'brief', label: 'Ранковий брифінг', icon: <FileText size={16} /> },
+  { id: 'risk', label: 'Портфельний ризик', icon: <PieChart size={16} />, premium: true },
+  { id: 'warroom', label: 'Ситуаційна кімната', icon: <ShieldAlert size={16} />, premium: true },
+  { id: 'observer', label: 'Суверенний спостерігач', icon: <Eye size={16} />, premium: true },
+  { id: 'simulation', label: 'Стратегічний сценарій', icon: <Zap size={16} />, premium: true },
+];
+
 const CommandHub: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const { isPremium } = useRole();
   const tabParam = searchParams.get('tab') as CommandHubTab;
   const [activeTab, setActiveTab] = useState<CommandHubTab>(tabParam || 'board');
   const backendStatus = useBackendStatus();
 
+  const hubTabs = useMemo(() => {
+    return ALL_TABS.filter(t => !t.premium || isPremium);
+  }, [isPremium]);
+
   // Синхронізація активної вкладки при зміні URL
   useEffect(() => {
     if (tabParam && tabParam !== activeTab) {
-      setActiveTab(tabParam);
+      // Якщо tabParam преміум, а користувач — basic, скидаємо на board
+      const isPremiumTab = ALL_TABS.find(t => t.id === tabParam)?.premium;
+      if (isPremiumTab && !isPremium) {
+        setActiveTab('board');
+        setSearchParams({ tab: 'board' });
+      } else {
+        setActiveTab(tabParam);
+      }
     }
-  }, [tabParam, activeTab]);
+  }, [tabParam, activeTab, isPremium, setSearchParams]);
 
   const handleTabChange = (id: string) => {
     setActiveTab(id as CommandHubTab);
     setSearchParams({ tab: id });
   };
-
-  const hubTabs = [
-    { id: 'board', label: 'Виконавча рада', icon: <LayoutDashboard size={16} /> },
-    { id: 'brief', label: 'Ранковий брифінг', icon: <FileText size={16} /> },
-    { id: 'risk', label: 'Портфельний ризик', icon: <PieChart size={16} /> },
-    { id: 'warroom', label: 'Ситуаційна кімната', icon: <ShieldAlert size={16} /> },
-    { id: 'observer', label: 'Суверенний спостерігач', icon: <Eye size={16} /> },
-    { id: 'simulation', label: 'Стратегічний сценарій', icon: <Zap size={16} /> },
-  ];
 
   return (
     <HubLayout
