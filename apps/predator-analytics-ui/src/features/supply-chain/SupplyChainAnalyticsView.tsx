@@ -23,6 +23,7 @@ import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { useUISound, UISoundType } from '@/hooks/useUISound';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { apiClient } from '@/services/api/config';
 import { cn } from '@/utils/cn';
@@ -72,6 +73,7 @@ const getRiskMeta = (value?: number | null) => {
 };
 
 export default function SupplyChainAnalyticsView() {
+    const { play } = useUISound();
     const [activeSection, setActiveSection] = useState<SectionType>('radar');
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
@@ -176,10 +178,10 @@ export default function SupplyChainAnalyticsView() {
                      ]}
                      actions={
                        <div className="flex gap-4">
-                          <button onClick={() => void loadData(true)} className={cn("p-5 bg-black border border-white/[0.04] rounded-2xl text-slate-400 hover:text-white transition-all shadow-xl", refreshing && "animate-spin")}>
+                          <button onClick={() => { play(UISoundType.CLICK); void loadData(true); }} onMouseEnter={() => play(UISoundType.HOVER)} className={cn("p-5 bg-black border border-white/[0.04] rounded-2xl text-slate-400 hover:text-white transition-all shadow-xl", refreshing && "animate-spin")}>
                              <RefreshCcw size={24} />
                           </button>
-                          <button className="px-8 py-5 bg-cyan-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-cyan-600 shadow-2xl transition-all flex items-center gap-4">
+                          <button onClick={() => play(UISoundType.CLICK)} onMouseEnter={() => play(UISoundType.HOVER)} className="px-8 py-5 bg-cyan-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-cyan-600 shadow-2xl transition-all flex items-center gap-4">
                              <Database size={18} /> СИНХ ОНІЗУВАТИ_AIS
                           </button>
                        </div>
@@ -189,8 +191,8 @@ export default function SupplyChainAnalyticsView() {
                    {/* NAVIGATION TABS */}
                    <div className="flex flex-wrap gap-4 p-3 bg-black/60 border border-white/[0.03] rounded-[2.5rem] w-fit shadow-2xl">
                       {sections.map(section => (
-                        <button 
-                          key={section.id} onClick={() => setActiveSection(section.id)}
+                        <button
+                          key={section.id} onClick={() => { play(UISoundType.CLICK); setActiveSection(section.id); }} onMouseEnter={() => play(UISoundType.HOVER)}
                           className={cn(
                             "px-8 py-4 rounded-[1.8rem] text-[10px] font-black uppercase tracking-[0.2em] italic border transition-all flex items-center gap-3",
                             activeSection === section.id ? "bg-cyan-700 border-cyan-500 text-white shadow-3xl" : "bg-transparent text-slate-500 border-transparent hover:bg-white/5 hover:text-slate-300"

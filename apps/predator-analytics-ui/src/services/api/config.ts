@@ -55,6 +55,11 @@ const resolveInitialUrl = (): string => {
     if (savedNode && NODE_URLS[savedNode]) {
         return NODE_URLS[savedNode];
     }
+    // Очищення старого/невалідного кастомного URL
+    const savedCustomUrl = localStorage.getItem('PREDATOR_CUSTOM_URL');
+    if (savedCustomUrl && !Object.values(NODE_URLS).includes(savedCustomUrl)) {
+        localStorage.removeItem('PREDATOR_CUSTOM_URL');
+    }
 
     // 2. Явна настройка через .env
     if (metaEnv.VITE_API_URL) return metaEnv.VITE_API_URL;
