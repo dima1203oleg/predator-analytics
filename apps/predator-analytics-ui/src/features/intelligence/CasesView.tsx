@@ -23,6 +23,7 @@ import { useShell, UIShell } from '@/context/ShellContext';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
+import { useUISound, UISoundType } from '@/hooks/useUISound';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { cn } from '@/utils/cn';
 
@@ -32,6 +33,7 @@ import { CaseStats } from '@/components/cases/CaseStats';
 import { CaseDetailModal } from '@/components/cases/CaseDetailModal';
 
 const CasesView: React.FC = () => {
+  const { play } = useUISound();
   const { currentShell } = useShell();
   const { dispatchEvent } = useGlobalState();
   const [cases, setCases] = useState<Case[]>([]);
@@ -182,7 +184,7 @@ const CasesView: React.FC = () => {
             ]}
             actions={
               <button
-                onClick={() => setIsCreateModalOpen(true)}
+                onClick={() => { play(UISoundType.CLICK); setIsCreateModalOpen(true); }}
                 className="group relative px-10 py-5 overflow-hidden rounded-[1.8rem]"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-700 to-blue-500 transition-transform duration-500 group-hover:scale-105" />
@@ -242,7 +244,7 @@ const CasesView: React.FC = () => {
                   </h3>
                 </div>
                 <button 
-                  onClick={() => handleViewCase(cases.find(c => c.status === 'КРИТИЧНО')?.id || '')}
+                  onClick={() => { play(UISoundType.CLICK); handleViewCase(cases.find(c => c.status === 'КРИТИЧНО')?.id || ''); }}
                   className="px-12 py-6 bg-amber-600 hover:bg-amber-500 text-white font-black text-[12px] uppercase tracking-[0.3em] italic rounded-[2rem] transition-all shadow-4xl active:scale-95"
                 >
                   ПЕ ЕЙТИ_ДО_ВІ УСУ
@@ -303,7 +305,7 @@ const CasesView: React.FC = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                onClick={() => setIsCreateModalOpen(false)}
+                onClick={() => { play(UISoundType.CLICK); setIsCreateModalOpen(false); }}
                 className="absolute inset-0 bg-black/95 "
               />
               <motion.div
@@ -366,7 +368,7 @@ const CasesView: React.FC = () => {
                           <button
                             key={p}
                             type="button"
-                            onClick={() => setNewCaseData({ ...newCaseData, priority: p })}
+                            onClick={() => { play(UISoundType.CLICK); setNewCaseData({ ...newCaseData, priority: p }); }}
                             className={cn(
                               "py-8 rounded-[2.5rem] text-[11px] font-black uppercase tracking-[0.3em] italic border-4 transition-all duration-500",
                               newCaseData.priority === p

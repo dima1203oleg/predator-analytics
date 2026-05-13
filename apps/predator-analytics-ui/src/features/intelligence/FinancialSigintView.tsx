@@ -28,6 +28,7 @@ import {
 } from 'recharts';
 import { cn } from '@/utils/cn';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { useUISound, UISoundType } from '@/hooks/useUISound';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { CyberGrid } from '@/components/CyberGrid';
 import { CyberOrb } from '@/components/CyberOrb';
@@ -159,6 +160,7 @@ const MOCK_AML_RADAR = [
 type ActiveModule = 'swift' | 'offshore' | 'contracts' | 'frozen' | 'aml';
 
 export default function FinancialSigintView() {
+  const { play } = useUISound();
   const [activeModule, setActiveModule] = useState<ActiveModule>('swift');
   const [refreshing, setRefreshing] = useState(false);
   const [liveAlerts, setLiveAlerts] = useState(14);
@@ -316,8 +318,8 @@ export default function FinancialSigintView() {
                 <div className="flex-1 mr-10 hidden xl:block">
                     <FinancialInterceptorTerminal />
                 </div>
-              <button 
-               onClick={handleRefresh} 
+              <button
+               onClick={() => { play(UISoundType.CLICK); handleRefresh(); }} 
                className={cn(
                  "p-7 bg-black border-2 border-white/[0.04] rounded-[2rem] text-slate-500 hover:text-yellow-500 transition-all shadow-4xl group/btn",
                  refreshing && "animate-spin cursor-not-allowed opacity-50"
@@ -361,8 +363,8 @@ export default function FinancialSigintView() {
            {/* MODULE TABS SOVEREIGN */}
            <div className="flex flex-wrap gap-6 p-4 bg-black/80 border-2 border-white/[0.03] rounded-[3.5rem] w-fit shadow-4xl  mx-auto">
               {modules.map(mod => (
-                <button 
-                  key={mod.id} onClick={() => setActiveModule(mod.id as ActiveModule)}
+                <button
+                  key={mod.id} onClick={() => { play(UISoundType.CLICK); setActiveModule(mod.id as ActiveModule); }} onMouseEnter={() => play(UISoundType.HOVER)}
                   className={cn(
                     "px-10 py-5 rounded-[2.5rem] text-[11px] font-black uppercase tracking-[0.3em] italic border-2 transition-all duration-500 flex items-center gap-5 relative overflow-hidden group",
                     activeModule === mod.id 
