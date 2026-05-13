@@ -123,13 +123,21 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
     const handleDemoLogin = (role: UserRole) => {
         speak('Доступ дозволено. Ласкаво просимо в систему PREDATOR.');
         let tier = SubscriptionTier.FREE;
-        if (role === UserRole.CLIENT_PREMIUM) tier = SubscriptionTier.PRO;
+        if (role === UserRole.CLIENT_PREMIUM || role === UserRole.CLIENT_DRPO) tier = SubscriptionTier.PRO;
         if (role === UserRole.ADMIN) tier = SubscriptionTier.ENTERPRISE;
+
+        const roleName = role === UserRole.ADMIN
+            ? 'Командир'
+            : role === UserRole.CLIENT_DRPO
+                ? 'DRPO-Директор'
+                : role === UserRole.CLIENT_PREMIUM
+                    ? 'Старший Аналітик'
+                    : 'Оператор';
 
         flushSync(() => {
             setUser({
                 id: role === UserRole.ADMIN ? 'admin-1' : 'client-1',
-                name: role === UserRole.ADMIN ? 'Командир' : role === UserRole.CLIENT_PREMIUM ? 'Старший Аналітик' : 'Оператор',
+                name: roleName,
                 email: role === UserRole.ADMIN ? 'admin@predator.ai' : 'user@client.com',
                 role: role,
                 tier: tier,
@@ -545,7 +553,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                             </motion.div>
 
                             {/* Картки ролей */}
-                            <div className="flex flex-col md:flex-row gap-6">
+                            <div className="flex flex-col md:flex-row flex-wrap gap-6 justify-center">
                                 {[
                                     {
                                         role: UserRole.ADMIN,
@@ -559,6 +567,19 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                         accentColor: 'text-rose-400',
                                         bgAccent: 'bg-rose-950/20',
                                         tagColor: 'text-rose-500 border-rose-500/40',
+                                    },
+                                    {
+                                        role: UserRole.CLIENT_DRPO,
+                                        label: 'DRPO-ДИРЕКТОР',
+                                        desc: 'Повний клієнтський доступ: OSINT, фінансові потоки, AI-прогнозування. Без адміністрування.',
+                                        icon: Shield,
+                                        level: 'СЕКРЕТНО_ПЛЮС',
+                                        clearance: 'VIP-DRPO',
+                                        borderColor: 'border-amber-500/40 hover:border-amber-400',
+                                        glowColor: 'hover:',
+                                        accentColor: 'text-amber-400',
+                                        bgAccent: 'bg-amber-950/20',
+                                        tagColor: 'text-amber-500 border-amber-500/40',
                                     },
                                     {
                                         role: UserRole.CLIENT_PREMIUM,
@@ -576,7 +597,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                     {
                                         role: UserRole.CLIENT_BASIC,
                                         label: 'ОПЕРАТИВНИЙ ОФІЦЕР',
-                                        desc: 'Моніторинг митних коридорів, базовий аудит та оперативнапідтримка інгестії.',
+                                        desc: 'Моніторинг митних коридорів, базовий аудит та оперативна підтримка інгестії.',
                                         icon: Terminal,
                                         level: 'СЕКРЕТНО',
                                         clearance: 'ЕЛІТА-III',
