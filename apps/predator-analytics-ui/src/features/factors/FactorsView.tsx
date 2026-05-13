@@ -29,6 +29,7 @@ import { Badge } from '@/components/ui/badge';
 import { ViewHeader } from '@/components/ViewHeader';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { useUISound, UISoundType } from '@/hooks/useUISound';
 import { dashboardApi, type DashboardOverview } from '@/services/api/dashboard';
 import { factoryApi } from '@/services/api/factory';
 import type { FactoryStats } from '@/features/factory/types';
@@ -91,6 +92,7 @@ const EmptyPanel = ({ title, description }: { title: string; description: string
 );
 
 export default function FactorsView() {
+    const { play } = useUISound();
     const navigate = useNavigate();
     const backendStatus = useBackendStatus();
     const [factoryStats, setFactoryStats] = useState<FactoryStats | null>(null);
@@ -211,9 +213,7 @@ export default function FactorsView() {
                         actions={(
                             <button
                                 type="button"
-                                onClick={() => {
-                                    void loadData(true);
-                                }}
+                                onClick={() => { play(UISoundType.CLICK); void loadData(true); }} onMouseEnter={() => play(UISoundType.HOVER)}
                                 disabled={refreshing}
                                 className="inline-flex items-center gap-3 rounded-[24px] border border-white/10 bg-white/5 px-5 py-3 text-[11px] font-black uppercase tracking-[0.2em] text-white transition hover:bg-white/10 disabled:opacity-60"
                             >
@@ -330,7 +330,7 @@ export default function FactorsView() {
                                     >
                                         <button
                                             type="button"
-                                            onClick={() => navigate(module.path)}
+                                            onClick={() => { play(UISoundType.CLICK); navigate(module.path); }} onMouseEnter={() => play(UISoundType.HOVER)}
                                             className={cn(
                                                 'group relative flex h-full w-full flex-col overflow-hidden rounded-[34px] border bg-slate-950/65 p-6 text-left shadow-[0_22px_60px_rgba(2,6,23,0.35)] transition hover:-translate-y-1 hover:border-white/15',
                                                 styles.border,
