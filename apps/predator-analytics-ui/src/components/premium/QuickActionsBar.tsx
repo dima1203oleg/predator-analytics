@@ -90,7 +90,7 @@ export const QuickActionsBar: React.FC = () => {
     {
       id: 'ai',
       icon: <ShieldCheck size={18} />,
-      label: 'S-CORE',
+      label: 'S-ЯДРО',
       color: 'bg-black border-rose-500/50 text-white',
       path: '/omniscience'
     }
