@@ -27,6 +27,7 @@ import { Input } from '@/components/ui/input';
 import { ViewHeader } from '@/components/ViewHeader';
 import { cn } from '@/utils/cn';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
+import { useUISound, UISoundType } from '@/hooks/useUISound';
 import { CyberGrid } from '@/components/CyberGrid';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { useEffect } from 'react';
@@ -96,6 +97,7 @@ const MOCK_SUBJECTS: BetrayalSubject[] = [
 ];
 
 export default function ZradaControlView() {
+  const { play } = useUISound();
   const [selectedSubject, setSelectedSubject] = useState<BetrayalSubject | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterRisk, setFilterRisk] = useState<BetrayalRisk | 'Всі'>('Всі');
@@ -182,11 +184,11 @@ export default function ZradaControlView() {
              ]}
              actions={
                <div className="flex gap-4">
-                  <button onClick={runDeepOsint} className="px-8 py-4 bg-rose-900/10 border border-rose-500/20 text-rose-500 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-rose-600 hover:text-white transition-all shadow-xl">
+                  <button onClick={() => { play(UISoundType.CLICK); runDeepOsint(); }} onMouseEnter={() => play(UISoundType.HOVER)} className="px-8 py-4 bg-rose-900/10 border border-rose-500/20 text-rose-500 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-rose-600 hover:text-white transition-all shadow-xl">
                      {isOsintLoading ? <RefreshCw className="animate-spin" size={16} /> : <Scan size={16} className="inline mr-2" />}
                      {isOsintLoading ? 'СКАНУВАННЯ...' : 'НЕЙРОННИЙ_СКРІНІНГ'}
                   </button>
-                  <button onClick={() => setIsAddingMode(true)} className="px-8 py-4 bg-rose-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-rose-500 shadow-2xl transition-all border border-rose-400/20">
+                  <button onClick={() => { play(UISoundType.CLICK); setIsAddingMode(true); }} onMouseEnter={() => play(UISoundType.HOVER)} className="px-8 py-4 bg-rose-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-rose-500 shadow-2xl transition-all border border-rose-400/20">
                      <Plus size={16} className="inline mr-2" /> ДОДАТИ_ОБ'ЄКТ
                   </button>
                </div>
@@ -208,7 +210,7 @@ export default function ZradaControlView() {
                     </div>
                     <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
                        {(['Всі', 'Підтверджено', 'Висока підозра', 'Моніторинг'].map(r => (
-                         <button key={r} onClick={() => setFilterRisk(r as any)} className={cn("px-6 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest italic border transition-all whitespace-nowrap", filterRisk === r ? "bg-rose-600 border-rose-400 text-white shadow-lg shadow-rose-900/20" : "bg-black text-slate-600 border-white/5")}>
+                         <button key={r} onClick={() => { play(UISoundType.CLICK); setFilterRisk(r as any); }} onMouseEnter={() => play(UISoundType.HOVER)} className={cn("px-6 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest italic border transition-all whitespace-nowrap", filterRisk === r ? "bg-rose-600 border-rose-400 text-white shadow-lg shadow-rose-900/20" : "bg-black text-slate-600 border-white/5")}>
                            {r}
                          </button>
                        )))}
@@ -217,7 +219,7 @@ export default function ZradaControlView() {
 
                  <div className="flex-1 overflow-y-auto no-scrollbar space-y-6">
                     {filtered.map((subject, i) => (
-                       <motion.div key={subject.id} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }} onClick={() => setSelectedSubject(subject)} className={cn("p-8 rounded-[2.5rem] bg-black border-2 cursor-pointer transition-all group relative overflow-hidden", selectedSubject?.id === subject.id ? "border-rose-500/40 bg-rose-500/[0.05]" : "border-white/[0.04] hover:border-rose-600/20")}>
+                       <motion.div key={subject.id} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }} onClick={() => { play(UISoundType.CLICK); setSelectedSubject(subject); }} className={cn("p-8 rounded-[2.5rem] bg-black border-2 cursor-pointer transition-all group relative overflow-hidden", selectedSubject?.id === subject.id ? "border-rose-500/40 bg-rose-500/[0.05]" : "border-white/[0.04] hover:border-rose-600/20")}>
                           <div className="flex items-center justify-between">
                              <div className="flex items-center gap-6">
                                 <div className={cn("p-4 rounded-2xl border bg-black/40 shadow-xl", subject.risk === 'Підтверджено' ? "text-rose-500 border-rose-500/30" : "text-slate-600 border-white/10")}>
@@ -347,8 +349,8 @@ export default function ZradaControlView() {
                       </div>
                    </div>
                    <div className="flex gap-4 relative z-10 pt-4">
-                      <button onClick={() => setIsAddingMode(false)} className="flex-1 py-6 bg-white/5 border border-white/5 text-slate-600 rounded-2xl text-[11px] font-black uppercase italic tracking-widest hover:text-white transition-all">СКАСУВАТИ</button>
-                      <button onClick={() => setIsAddingMode(false)} className="flex-[3] px-12 py-6 bg-rose-700 text-white rounded-2xl text-[11px] font-black uppercase italic tracking-widest shadow-2xl hover:bg-rose-600 hover:shadow-rose-900/40 transition-all">АКТИВУВАТИ_ВІДСТЕЖЕННЯ</button>
+                      <button onClick={() => { play(UISoundType.CLICK); setIsAddingMode(false); }} onMouseEnter={() => play(UISoundType.HOVER)} className="flex-1 py-6 bg-white/5 border border-white/5 text-slate-600 rounded-2xl text-[11px] font-black uppercase italic tracking-widest hover:text-white transition-all">СКАСУВАТИ</button>
+                      <button onClick={() => { play(UISoundType.CLICK); setIsAddingMode(false); }} onMouseEnter={() => play(UISoundType.HOVER)} className="flex-[3] px-12 py-6 bg-rose-700 text-white rounded-2xl text-[11px] font-black uppercase italic tracking-widest shadow-2xl hover:bg-rose-600 hover:shadow-rose-900/40 transition-all">АКТИВУВАТИ_ВІДСТЕЖЕННЯ</button>
                    </div>
                 </motion.div>
              </div>

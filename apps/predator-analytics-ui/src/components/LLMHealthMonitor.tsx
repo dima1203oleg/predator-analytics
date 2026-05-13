@@ -110,7 +110,7 @@ const ProviderCard: React.FC<{ provider: LLMProvider; onRefresh: () => void }> =
           <div className="absolute inset-0 bg-blue-500/5 opacity-0 group-hover/metric:opacity-100 transition-opacity" />
           <div className="flex items-center gap-2 text-slate-300 mb-2 relative z-10">
             <Clock size={14} />
-            <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Latency</span>
+            <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Латентність</span>
           </div>
           <div className={cn(
             "text-2xl font-black font-display tracking-tighter relative z-10",
@@ -123,7 +123,7 @@ const ProviderCard: React.FC<{ provider: LLMProvider; onRefresh: () => void }> =
           <div className="absolute inset-0 bg-blue-500/5 opacity-0 group-hover/metric:opacity-100 transition-opacity" />
           <div className="flex items-center gap-2 text-slate-300 mb-2 relative z-10">
             <Activity size={14} />
-            <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Availability</span>
+            <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Доступність</span>
           </div>
           <div className={cn(
             "text-2xl font-black font-display tracking-tighter relative z-10",
@@ -137,7 +137,7 @@ const ProviderCard: React.FC<{ provider: LLMProvider; onRefresh: () => void }> =
       {/* Token Usage */}
       <div className="mb-8 p-6 bg-slate-950/40 rounded-[24px] border border-white/5">
         <div className="flex items-center justify-between text-[11px] mb-4">
-          <span className="font-black text-slate-300 uppercase tracking-widest opacity-60">Token_Pressure</span>
+          <span className="font-black text-slate-300 uppercase tracking-widest opacity-60">Токенний_Тиск</span>
           <span className="font-mono font-black text-white italic">{((provider.tokensUsed / provider.tokensLimit) * 100).toFixed(1)}%</span>
         </div>
         <div className="h-2 bg-slate-900 rounded-full overflow-hidden border border-white/5 p-px">
@@ -153,9 +153,9 @@ const ProviderCard: React.FC<{ provider: LLMProvider; onRefresh: () => void }> =
           />
         </div>
         <div className="flex justify-between items-center mt-3 text-[9px] font-black text-slate-400 uppercase tracking-widest font-mono">
-          <span>0_BASE</span>
-          <span>{provider.tokensUsed.toLocaleString()} USED</span>
-          <span>MAX_{provider.tokensLimit.toLocaleString()}</span>
+          <span>0_БАЗА</span>
+          <span>{provider.tokensUsed.toLocaleString()} ВИКОРИСТАНО</span>
+          <span>МАКС_{provider.tokensLimit.toLocaleString()}</span>
         </div>
       </div>
 
@@ -166,12 +166,12 @@ const ProviderCard: React.FC<{ provider: LLMProvider; onRefresh: () => void }> =
             <DollarSign size={16} />
           </div>
           <div>
-            <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest leading-none block mb-1 opacity-60">Cost_Cycle</span>
+            <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest leading-none block mb-1 opacity-60">Цикл_Витрат</span>
             <span className="text-lg font-black text-white font-mono tracking-tighter leading-none">${provider.costToday.toFixed(3)}</span>
           </div>
         </div>
         <div className="text-right">
-          <div className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Stream_Sync</div>
+          <div className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Синхронізація_Потоку</div>
           <div className="text-[10px] font-mono text-slate-300 uppercase italic">OK: {provider.lastCheck}</div>
         </div>
       </div>
@@ -191,13 +191,13 @@ const FallbackChainVisualization: React.FC<{ chain: FallbackChainStep[] }> = ({ 
             <Zap size={24} />
           </div>
           <div>
-            <h4 className="text-lg font-black text-white uppercase tracking-tighter font-display mb-1">Stability_Core_Network</h4>
-            <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em] opacity-60 italic">Resilience Fallback Protocols</span>
+            <h4 className="text-lg font-black text-white uppercase tracking-tighter font-display mb-1">Мережа_Стабільності_Ядра</h4>
+            <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em] opacity-60 italic">Протоколи_Резервування_Стійкості</span>
           </div>
         </div>
         <div className="flex items-center gap-3 px-6 py-2 bg-slate-900 rounded-full border border-white/5">
           <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_#10b981]" />
-          <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">Failover_Armed</span>
+          <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">Резерв_Збройний</span>
         </div>
       </div>
 
@@ -225,7 +225,7 @@ const FallbackChainVisualization: React.FC<{ chain: FallbackChainStep[] }> = ({ 
                 )} />
                 <span className="text-[11px] font-black uppercase tracking-[0.3em] font-display">{step.provider}</span>
               </div>
-              <span className="text-[9px] font-black uppercase tracking-widest opacity-50 italic">Priority: {step.order}</span>
+              <span className="text-[9px] font-black uppercase tracking-widest opacity-50 italic">Пріоритет: {step.order}</span>
             </motion.div>
 
             {index < chain.length - 1 && (
@@ -241,7 +241,7 @@ const FallbackChainVisualization: React.FC<{ chain: FallbackChainStep[] }> = ({ 
       </div>
 
       <div className="mt-12 text-center text-[11px] font-black text-slate-400 uppercase tracking-[0.5em] italic">
-        AUTOMATED_DYNAMIC_ROUTING_ACTIVE // AUTO_FAILOVER_SECURED
+        АВТОМАТИЧНЕ_ДИНАМІЧНЕ_МАРШРУТИЗУВАННЯ_АКТИВНЕ // АВТОМАТИЧНЕ_РЕЗЕРВУВАННЯ_ЗАБЕЗПЕЧЕНО
       </div>
     </div>
   );
@@ -301,16 +301,16 @@ export const LLMHealthMonitor: React.FC<{ compact?: boolean }> = ({ compact = fa
       <div className="flex items-center gap-6 px-6 py-3 rounded-[24px] bg-slate-950/80 border border-white/5  shadow-2xl">
         <div className="flex items-center gap-3">
           <Brain size={16} className="text-purple-400 " />
-          <span className="text-[10px] font-black text-white uppercase tracking-widest">Gateway</span>
+          <span className="text-[10px] font-black text-white uppercase tracking-widest">Шлюз</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_5px_#10b981]" />
-          <span className="text-[10px] font-black text-emerald-400 font-mono italic">{onlineCount} UNIT</span>
+          <span className="text-[10px] font-black text-emerald-400 font-mono italic">{onlineCount} ВУЗОЛ</span>
         </div>
         {degradedCount > 0 && (
           <div className="flex items-center gap-2 border-l border-white/10 pl-4">
             <div className="w-1.5 h-1.5 rounded-full bg-amber-500 shadow-[0_0_5px_#f59e0b]" />
-            <span className="text-[10px] font-black text-amber-500 font-mono italic">{degradedCount} DEG</span>
+            <span className="text-[10px] font-black text-amber-500 font-mono italic">{degradedCount} ДЕГ</span>
           </div>
         )}
       </div>
@@ -327,13 +327,13 @@ export const LLMHealthMonitor: React.FC<{ compact?: boolean }> = ({ compact = fa
             <Network size={40} />
           </div>
           <div>
-            <h3 className="text-4xl font-black text-white uppercase tracking-tighter leading-none mb-4 font-display">Neural Gateway Controller</h3>
+            <h3 className="text-4xl font-black text-white uppercase tracking-tighter leading-none mb-4 font-display">Нейронний_Контролер_Шлюзу</h3>
             <div className="flex items-center gap-8">
               <div className="flex items-center gap-3 px-6 py-1.5 bg-emerald-500/10 rounded-full border border-emerald-500/20 group hover:border-emerald-500/40 transition-all cursor-default">
                 <Activity size={16} className="text-emerald-500 group-hover:rotate-90 transition-all" />
-                <span className="text-[11px] font-black text-emerald-400 uppercase tracking-widest">{onlineCount} ACTIVE_NODES</span>
+                <span className="text-[11px] font-black text-emerald-400 uppercase tracking-widest">{onlineCount} АКТИВНІ_ВУЗЛИ</span>
               </div>
-              <span className="text-[11px] text-slate-300 font-black uppercase tracking-[0.4em] italic">{degradedCount} DEGRADED_SIGNALS</span>
+              <span className="text-[11px] text-slate-300 font-black uppercase tracking-[0.4em] italic">{degradedCount} ДЕГРАДОВАНІ_СИГНАЛИ</span>
             </div>
           </div>
         </div>
