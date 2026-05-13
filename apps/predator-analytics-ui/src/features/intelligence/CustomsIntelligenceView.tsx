@@ -33,6 +33,7 @@ import { TacticalCard } from '@/components/ui/TacticalCard';
 import { CyberGrid } from '@/components/CyberGrid';
 import { ViewHeader } from '@/components/ViewHeader';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { useUISound, UISoundType } from '@/hooks/useUISound';
 import { SovereignAudio } from '@/utils/sovereign-audio';
 
 // ========================
@@ -173,6 +174,7 @@ const RISK_ALERTS: RiskAlert[] = [
 ];
 
 export default function CustomsIntelligenceView() {
+  const { play } = useUISound();
   const [activeTab, setActiveTab] = useState<'analytics' | 'importers' | 'risks' | 'signals'>('analytics');
   const [refreshing, setRefreshing] = useState(false);
   const [tradeVolume, setTradeVolume] = useState<any[]>(TRADE_VOLUME_DATA);
@@ -290,10 +292,10 @@ export default function CustomsIntelligenceView() {
              ]}
              actions={
                <div className="flex gap-4">
-                  <button onClick={handleRefresh} className={cn("p-6 bg-black border-2 border-white/[0.04] rounded-2xl text-slate-400 hover:text-rose-500 transition-all shadow-xl", refreshing && "animate-spin")}>
+                  <button onClick={() => { play(UISoundType.CLICK); handleRefresh(); }} onMouseEnter={() => play(UISoundType.HOVER)} className={cn("p-6 bg-black border-2 border-white/[0.04] rounded-2xl text-slate-400 hover:text-rose-500 transition-all shadow-xl", refreshing && "animate-spin")}>
                      <RefreshCw size={26} />
                   </button>
-                  <button className="px-12 py-6 bg-rose-600 text-white rounded-[2rem] text-[12px] font-black uppercase tracking-[0.4em] italic hover:brightness-110 shadow-4xl transition-all flex items-center gap-4 font-bold">
+                  <button onClick={() => play(UISoundType.CLICK)} onMouseEnter={() => play(UISoundType.HOVER)} className="px-12 py-6 bg-rose-600 text-white rounded-[2rem] text-[12px] font-black uppercase tracking-[0.4em] italic hover:brightness-110 shadow-4xl transition-all flex items-center gap-4 font-bold">
                      <Download size={20} /> ЗАВАНТАЖИТИ_ЗВІТ_ЗЕД
                   </button>
                </div>
@@ -308,8 +310,8 @@ export default function CustomsIntelligenceView() {
                 { id: 'risks', label: 'МИТНІ_РИЗИКИ', i: AlertTriangle },
                 { id: 'signals', label: 'СИГНАЛЬНА_РОЗВІДКА', i: Zap },
               ].map(tab => (
-                <button 
-                  key={tab.id} onClick={() => setActiveTab(tab.id as any)}
+                <button
+                  key={tab.id} onClick={() => { play(UISoundType.CLICK); setActiveTab(tab.id as any); }} onMouseEnter={() => play(UISoundType.HOVER)}
                   className={cn(
                     "px-10 py-5 rounded-[1.8rem] text-[10px] font-black uppercase tracking-[0.3em] italic border-2 transition-all flex items-center gap-4",
                     activeTab === tab.id 

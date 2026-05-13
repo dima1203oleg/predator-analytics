@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { useUISound, UISoundType } from '@/hooks/useUISound';
 import { api } from '@/services/api';
 import { cn } from '@/utils/cn';
 import { premiumLocales } from '@/locales/uk/premium';
@@ -334,6 +335,7 @@ const AnalysisGraph: React.FC<{
 
 // === ГОЛОВНИЙ КОМПОНЕНТ ELITE ===
 const AnalyticsView: React.FC = () => {
+    const { play } = useUISound();
     const [searchQuery, setSearchQuery] = useState('');
     const [isScanning, setIsScanning] = useState(false);
     const [nodes, setNodes] = useState<GraphNode[]>([]);
@@ -476,7 +478,8 @@ const AnalyticsView: React.FC = () => {
                     <Search size={32} className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-800 group-focus-within:text-yellow-500 transition-colors" />
                     <div className="absolute right-4 top-3 bottom-3 flex items-center gap-4">
                         <button
-                            onClick={() => handleSearch()}
+                            onClick={() => { play(UISoundType.CLICK); handleSearch(); }}
+                            onMouseEnter={() => play(UISoundType.HOVER)}
                             className="px-12 h-full bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-500 hover:to-yellow-400 text-black rounded-[2rem] transition-all font-black text-[12px] uppercase tracking-[0.4em] italic flex items-center gap-4 shadow-4xl border-2 border-yellow-400/20"
                         >
                             {isScanning ? <Activity size={20} className="animate-spin" /> : <><Target size={20} /> EXECUTE_SCAN</>}
@@ -491,7 +494,8 @@ const AnalyticsView: React.FC = () => {
                     ].map(tab => (
                         <button
                             key={tab.id}
-                            onClick={() => setActiveTab(tab.id as any)}
+                            onClick={() => { play(UISoundType.CLICK); setActiveTab(tab.id as any); }}
+                            onMouseEnter={() => play(UISoundType.HOVER)}
                             className={cn(
                                 "px-10 py-5 rounded-[2.5rem] flex items-center gap-4 transition-all duration-700 italic border-2",
                                 activeTab === tab.id
