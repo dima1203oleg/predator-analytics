@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useEffect, useState, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { BrowserRouter } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
 
 // Contexts
 import { AgentProvider } from './context/AgentContext';
@@ -142,27 +143,51 @@ function App() {
                             <SuperIntelligenceProvider>
                               <AdvancedBackground />
                               <NeuralPulse />
-                              {appState === 'BOOTING' && (
-                                <BootSequenceELITE onComplete={handleBootComplete} />
-                              )}
+                              <AnimatePresence mode="wait">
+                                {appState === 'BOOTING' && (
+                                  <motion.div
+                                    key="booting"
+                                    initial={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.6, ease: 'easeInOut' }}
+                                    className="fixed inset-0 z-[99999]"
+                                  >
+                                    <BootSequenceELITE onComplete={handleBootComplete} />
+                                  </motion.div>
+                                )}
 
-                              {appState === 'LOGIN' && (
-                                <LoginScreen onLogin={handleLogin} />
-                              )}
+                                {appState === 'LOGIN' && (
+                                  <motion.div
+                                    key="login"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.5, ease: 'easeInOut' }}
+                                    className="fixed inset-0 z-[99998]"
+                                  >
+                                    <LoginScreen onLogin={handleLogin} />
+                                  </motion.div>
+                                )}
 
-                              {appState === 'READY' && (
-                                <>
-                                  <AppRoutes />
-                                  {/* Глобальні UI компоненти */}
-                                  <QuickActionsBar />
-                                  <ToasterProvider />
-                                  <OnboardingWizard />
-                                  <OfflineBanner />
-                                  <Predator />
-                                  
-                                  <LiveAgentTerminal />
-                                </>
-                              )}
+                                {appState === 'READY' && (
+                                  <motion.div
+                                    key="ready"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.5, ease: 'easeInOut' }}
+                                  >
+                                    <AppRoutes />
+                                    {/* Глобальні UI компоненти */}
+                                    <QuickActionsBar />
+                                    <ToasterProvider />
+                                    <OnboardingWizard />
+                                    <OfflineBanner />
+                                    <Predator />
+                                    <LiveAgentTerminal />
+                                  </motion.div>
+                                )}
+                              </AnimatePresence>
                             </SuperIntelligenceProvider>
                           </ThemeProvider>
                         </GlobalProvider>
