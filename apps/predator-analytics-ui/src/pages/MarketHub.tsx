@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { BarChart3, Globe2, Ship, Truck, Zap, Settings2, DollarSign } from 'lucide-react';
 import { HubLayout } from '@/components/layout/HubLayout';
 import { useSearchParams } from 'react-router-dom';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { useRole } from '@/context/RoleContext';
 
 // Імпорт компонентів вкладок
 import { MarketOverviewTab } from './tabs/market/MarketOverviewTab';
@@ -13,31 +14,42 @@ import { PriceAuditorTab } from './tabs/market/PriceAuditorTab';
 
 type MarketHubTab = 'overview' | 'customs' | 'flows' | 'suppliers' | 'price';
 
+const ALL_TABS = [
+  { id: 'overview', label: 'Огляд ринку', icon: <BarChart3 size={16} /> },
+  { id: 'customs', label: 'Митний моніторинг', icon: <Globe2 size={16} />, premium: true },
+  { id: 'flows', label: 'Потоки товарів', icon: <Ship size={16} />, premium: true },
+  { id: 'suppliers', label: 'Постачальники', icon: <Truck size={16} />, premium: true },
+  { id: 'price', label: 'Прайс-аудитор', icon: <DollarSign size={16} />, premium: true },
+];
+
 const MarketHub: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const { isPremium } = useRole();
   const tabParam = searchParams.get('tab') as MarketHubTab;
   const [activeTab, setActiveTab] = useState<MarketHubTab>(tabParam || 'overview');
   const backendStatus = useBackendStatus();
 
+  const hubTabs = useMemo(() => {
+    return ALL_TABS.filter(t => !t.premium || isPremium);
+  }, [isPremium]);
+
   // Синхронізація активної вкладки при зміні URL
   useEffect(() => {
     if (tabParam && tabParam !== activeTab) {
-      setActiveTab(tabParam);
+      const isPremiumTab = ALL_TABS.find(t => t.id === tabParam)?.premium;
+      if (isPremiumTab && !isPremium) {
+        setActiveTab('overview');
+        setSearchParams({ tab: 'overview' });
+      } else {
+        setActiveTab(tabParam);
+      }
     }
-  }, [tabParam, activeTab]);
+  }, [tabParam, activeTab, isPremium, setSearchParams]);
 
   const handleTabChange = (id: string) => {
     setActiveTab(id as MarketHubTab);
     setSearchParams({ tab: id });
   };
-
-  const hubTabs = [
-    { id: 'overview', label: 'Огляд ринку', icon: <BarChart3 size={16} /> },
-    { id: 'customs', label: 'Митний моніторинг', icon: <Globe2 size={16} /> },
-    { id: 'flows', label: 'Потоки товарів', icon: <Ship size={16} /> },
-    { id: 'suppliers', label: 'Постачальники', icon: <Truck size={16} /> },
-    { id: 'price', label: 'Прайс-аудитор', icon: <DollarSign size={16} /> },
-  ];
 
   return (
     <HubLayout
