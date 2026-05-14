@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 export const OfflineBanner = () => {
     const [visible, setVisible] = useState(false);
     const [retrying, setRetrying] = useState(false);
+    const [autoRetryCount, setAutoRetryCount] = useState(0);
 
     useEffect(() => {
         const handleStatusChange = (event: Event) => {
@@ -18,6 +19,7 @@ export const OfflineBanner = () => {
 
         const handleOnline = () => {
             setVisible(false);
+            setAutoRetryCount(0);
         };
 
         window.addEventListener('predator-backend-status-change', handleStatusChange);
@@ -29,6 +31,43 @@ export const OfflineBanner = () => {
         };
     }, []);
 
+    // Автоматичне фонове перепідключення без відволікання користувача
+    useEffect(() => {
+        if (!visible) return;
+
+        const autoRetry = async () => {
+            try {
+                const response = await fetch('/api/v1/health', { method: 'GET', cache: 'no-store' });
+                if (response.ok) {
+                    window.dispatchEvent(new CustomEvent('predator-backend-online'));
+                    setVisible(false);
+                    setAutoRetryCount(0);
+                }
+            } catch {
+                // Тихо не вдається, не показуємо користувачу
+            }
+        };
+
+        // Перше спроба через 3 секунди
+        const firstRetry = setTimeout(() => {
+            autoRetry();
+            setAutoRetryCount(1);
+        }, 3000);
+
+        // Подальші спроби кожні 10 секунд
+        const retryInterval = setInterval(() => {
+            if (autoRetryCount < 5) { // Максимум 5 спроб
+                autoRetry();
+                setAutoRetryCount(prev => prev + 1);
+            }
+        }, 10000);
+
+        return () => {
+            clearTimeout(firstRetry);
+            clearInterval(retryInterval);
+        };
+    }, [visible, autoRetryCount]);
+
     const handleDismiss = () => {
         setVisible(false);
         sessionStorage.setItem('predator-offline-dismissed', 'true');
@@ -37,7 +76,7 @@ export const OfflineBanner = () => {
     const handleRetry = async () => {
         setRetrying(true);
         try {
-            const response = await fetch('/api/v1/health', { method: 'GET' });
+            const response = await fetch('/api/v1/health', { method: 'GET', cache: 'no-store' });
             if (response.ok) {
                 window.dispatchEvent(new CustomEvent('predator-backend-online'));
                 setVisible(false);
@@ -48,7 +87,8 @@ export const OfflineBanner = () => {
         setRetrying(false);
     };
 
-    if (!visible) return null;
+    // Показуємо банер тільки якщо є критична проблема (більше 5 спроб автоматичного перепідключення)
+    if (!visible || autoRetryCount < 5) return null;
 
     return (
         <AnimatePresence>
@@ -61,7 +101,7 @@ export const OfflineBanner = () => {
                 <div className="flex items-center gap-2">
                     <Activity size={14} className="text-amber-300" />
                     <span className="whitespace-nowrap text-[10px] font-black uppercase tracking-[0.22em] text-amber-200">
-                        Відновлення каналу
+                        Фонове відновлення
                     </span>
                 </div>
                 <button

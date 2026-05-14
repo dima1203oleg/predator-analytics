@@ -14,15 +14,24 @@
     --foreground: 210 40% 98%;
     --primary: 348 100% 60%; /* Elite Rose */
     --primary-glow: rgba(244, 63, 94, 0.4);
-    
+
+    /* Premium Palette - Deep Black & Blood Red */
+    --elite-black: #0a0a0a;
+    --elite-black-deep: #050505;
+    --elite-white: #ffffff;
+    --elite-white-muted: #f8fafc;
+    --elite-red: #e11d48; /* Blood Red */
+    --elite-red-deep: #9f1239;
+    --elite-red-glow: rgba(225, 29, 72, 0.4);
+
     --wraith-glass: rgba(8, 12, 22, 0.92);
     --wraith-border: rgba(244, 63, 94, 0.3);
     --wraith-accent: #f43f5e; /* Elite Rose */
     --wraith-accent-deep: #9f1239;
-    
+
     --aura-gold: hsla(348, 100%, 60%, 0.18);
     --aura-amber: hsla(340, 100%, 50%, 0.12);
-    
+
     --glint-speed: 4s;
     --scan-speed: 10s;
     --glint-angle: 135deg;

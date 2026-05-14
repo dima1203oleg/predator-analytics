@@ -1032,7 +1032,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
   return (
     <div
       ref={containerRef}
-      className="fixed inset-0 z-[999] bg-black overflow-hidden font-mono select-none cursor-default"
+      className="fixed inset-0 z-[999] bg-black overflow-hidden font-mono select-none cursor-default flex items-center justify-center"
       onClick={handleSkip}
     >
       <canvas ref={canvasRef} className="absolute inset-0" />

@@ -13,7 +13,7 @@ import {
   FileText, Activity, TrendingUp, Building2, Package, 
   ArrowUpRight, BarChart3, Globe2, 
   Search, Zap, RefreshCw, Layers,
-  ChevronRight,
+  ChevronRight, AlertTriangle,
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { Button } from '@/components/ui/button';
@@ -32,26 +32,28 @@ const DEFAULT_TIMELINE = [
 export const MarketOverviewTab: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
+        setError(null);
         const overview = await marketApi.getOverview();
         
         setData({
           overview: {
             stats: {
               total_declarations: overview.total_declarations || 0,
-              declarations_change: 12.4,
+              declarations_change: 12.4, // Дефолтне значення, оскільки API не повертає
               total_value_usd: overview.total_value_usd || 0,
-              value_change: 8.1,
+              value_change: 8.1, // Дефолтне значення, оскільки API не повертає
               active_companies: overview.total_companies || 0,
-              companies_change: 3.2,
-              total_products: 89430,
-              products_change: 15.2,
+              companies_change: 3.2, // Дефолтне значення, оскільки API не повертає
+              total_products: overview.top_products?.length || 0,
+              products_change: 15.2, // Дефолтне значення, оскільки API не повертає
             },
-            top_products: overview.top_products?.map(p => ({
+            top_products: overview.top_products?.map((p: any) => ({
               product_code: p.code,
               product_name: p.name,
               total_value_usd: p.value_usd,
@@ -60,8 +62,8 @@ export const MarketOverviewTab: React.FC = () => {
           }
         });
       } catch (error) {
-        console.warn('API Error, using fallback', error);
-        setData(MOCK_MARKET_OVERVIEW);
+        console.error('API Error:', error);
+        setError('Не вдалося завантажити дані ринку. Перевірте підключення до бекенду.');
       } finally {
         setTimeout(() => setLoading(false), 800); // Visual buffer for smoothness
       }
@@ -83,7 +85,7 @@ export const MarketOverviewTab: React.FC = () => {
     grid: { left: '3%', right: '4%', bottom: '5%', top: '10%', containLabel: true },
     xAxis: {
       type: 'category',
-      data: MOCK_TIMELINE.map(t => t.month),
+      data: DEFAULT_TIMELINE.map((t: any) => t.month),
       axisLine: { lineStyle: { color: 'rgba(255,255,255,0.05)' } },
       axisLabel: { color: '#64748b', fontSize: 10, fontWeight: '900', italic: true, margin: 20 }
     },
@@ -110,7 +112,7 @@ export const MarketOverviewTab: React.FC = () => {
             ]
           }
         },
-        data: MOCK_TIMELINE.map(t => t.import)
+        data: DEFAULT_TIMELINE.map((t: any) => t.import)
       },
       {
         name: 'ЕКСПОРТ',
@@ -127,13 +129,24 @@ export const MarketOverviewTab: React.FC = () => {
             ]
           }
         },
-        data: MOCK_TIMELINE.map(t => t.export)
+        data: DEFAULT_TIMELINE.map((t: any) => t.export)
       }
     ]
   }), []);
 
-  const stats = data?.overview?.stats || MOCK_MARKET_OVERVIEW.overview.stats;
-  const topProducts = data?.overview?.top_products || MOCK_MARKET_OVERVIEW.overview.top_products;
+  const defaultStats = {
+    total_declarations: 0,
+    declarations_change: 0,
+    total_value_usd: 0,
+    value_change: 0,
+    active_companies: 0,
+    companies_change: 0,
+    total_products: 0,
+    products_change: 0,
+  };
+
+  const stats = data?.overview?.stats || defaultStats;
+  const topProducts = data?.overview?.top_products || [];
 
   const cards = [
     { title: 'МИТНІ ДЕКЛАРАЦІЇ', value: stats.total_declarations.toLocaleString('uk-UA'), change: `+${stats.declarations_change}%`, icon: FileText, tone: 'rose' },
@@ -152,6 +165,26 @@ export const MarketOverviewTab: React.FC = () => {
         <p className="text-[10px] font-black text-rose-500 uppercase tracking-[0.6em]  italic">
           ІНІЦІАЛІЗАЦІЯ_ТОРГОВОЇ_РОЗВІДКИ...
         </p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="h-full flex flex-col items-center justify-center space-y-6 p-12">
+        <div className="relative">
+           <AlertTriangle size={48} className="text-rose-500" />
+           <div className="absolute inset-0 blur-2xl bg-rose-500/20 rounded-full" />
+        </div>
+        <p className="text-[10px] font-black text-rose-500 uppercase tracking-[0.6em]  italic text-center">
+          {error}
+        </p>
+        <button 
+          onClick={() => window.location.reload()}
+          className="px-6 py-3 bg-rose-500/10 border border-rose-500/20 text-rose-500 rounded-xl text-[10px] font-black uppercase tracking-[0.3em] hover:bg-rose-500/20 transition-all"
+        >
+          ПЕРЕЗАВАНТАЖИТИ
+        </button>
       </div>
     );
   }

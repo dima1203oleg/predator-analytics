@@ -12,10 +12,10 @@ export enum UserRole {
 }
 
 export const ROLE_DISPLAY_NAMES: Record<string, string> = {
-  [UserRole.CLIENT_BASIC]:   'Абонент',
-  [UserRole.CLIENT_PREMIUM]: 'Абонент Преміум',
-  [UserRole.CLIENT_DRPO]:    'Абонент Преміум',
-  [UserRole.ADMIN]:          'Технічний адміністратор',
+  [UserRole.CLIENT_BASIC]:   'Standard Client',
+  [UserRole.CLIENT_PREMIUM]: 'VIP Client',
+  [UserRole.CLIENT_DRPO]:    'VIP Client',
+  [UserRole.ADMIN]:          'Tech Admin',
 };
 
 export const ROLE_DESCRIPTIONS: Record<string, string> = {
