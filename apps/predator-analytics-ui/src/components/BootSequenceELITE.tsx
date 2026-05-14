@@ -423,7 +423,7 @@ export const BootSequenceELITE: React.FC<{ onComplete: () => void }> = ({ onComp
 
   return (
     <div className={`fixed inset-0 z-[99999] bg-[#010101] flex items-center justify-center overflow-hidden px-4 py-6 font-mono select-none sm:px-8 ${matchLine ? 'animate-subtle-shake' : ''}`}>
-      <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
+      <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }} />
       
       {/* HUD OVERLAYS */}
       <div className="absolute inset-0 pointer-events-none z-10">

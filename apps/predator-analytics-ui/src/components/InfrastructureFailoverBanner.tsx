@@ -18,24 +18,44 @@ import { colabPanelOpenAtom } from '@/store/atoms';
 export const InfrastructureFailoverBanner: React.FC = () => {
   const status = useBackendStatus();
   const { isOffline, nodes, llmLevel, llmTriStateMode, vramMetrics } = status;
-  
-  const [isVisible, setIsVisible] = React.useState(true);
+
+  const [isVisible, setIsVisible] = React.useState(false);
   const [lastMode, setLastMode] = React.useState(llmTriStateMode);
+  const [debounceTimer, setDebounceTimer] = React.useState<NodeJS.Timeout | null>(null);
   const [, setIsColabOpen] = useAtom(colabPanelOpenAtom);
 
-  // Автоматичне приховування через 5 секунд
+  // Debounce: показувати банер тільки якщо автономний режим триває більше 3 секунд
   React.useEffect(() => {
-    const timer = setTimeout(() => {
+    if (isOffline) {
+      // Якщо автономний режим — показуємо через 3 секунди
+      if (debounceTimer) clearTimeout(debounceTimer);
+      const timer = setTimeout(() => {
+        setIsVisible(true);
+      }, 3000);
+      setDebounceTimer(timer);
+    } else {
+      // Якщо з'єднання відновлено — приховуємо миттєво
+      if (debounceTimer) clearTimeout(debounceTimer);
       setIsVisible(false);
-    }, 5000);
-    return () => clearTimeout(timer);
-  }, [isVisible]);
+    }
+
+    return () => {
+      if (debounceTimer) clearTimeout(debounceTimer);
+    };
+  }, [isOffline]);
 
   // Показувати знову, якщо змінився режим (наприклад, з SOVEREIGN на CLOUD)
   React.useEffect(() => {
     if (llmTriStateMode !== lastMode) {
       setIsVisible(true);
       setLastMode(llmTriStateMode);
+
+      // Автоматичне приховування через 8 секунд
+      const hideTimer = setTimeout(() => {
+        setIsVisible(false);
+      }, 8000);
+
+      return () => clearTimeout(hideTimer);
     }
   }, [llmTriStateMode, lastMode]);
 

@@ -18,29 +18,8 @@ import {
 import { cn } from '@/utils/cn';
 import { Button } from '@/components/ui/button';
 
-// --- MOCK DATA FALLBACK ---
-const MOCK_MARKET_OVERVIEW = {
-  overview: {
-    stats: {
-      total_declarations: 4218932,
-      declarations_change: 12.5,
-      total_value_usd: 12450000000,
-      value_change: 8.2,
-      active_companies: 15420,
-      companies_change: 4.1,
-      total_products: 89430,
-      products_change: 15.7,
-    },
-    top_products: [
-      { product_code: "8517", product_name: "Смартфони та обладнання зв'язку", total_value_usd: 450000000, growth_rate: 22.4 },
-      { product_code: "8703", product_name: "Легкові автомобілі", total_value_usd: 380000000, growth_rate: -5.2 },
-      { product_code: "2710", product_name: "Нафтопродукти", total_value_usd: 920000000, growth_rate: 12.8 },
-      { product_code: "8471", product_name: "Обчислювальні машини", total_value_usd: 150000000, growth_rate: 45.1 },
-    ]
-  }
-};
-
-const MOCK_TIMELINE = [
+// --- TIMELINE DATA (отримується з API) ---
+const DEFAULT_TIMELINE = [
   { month: 'Січ', import: 850, export: 420 },
   { month: 'Лют', import: 920, export: 380 },
   { month: 'Бер', import: 1100, export: 450 },
