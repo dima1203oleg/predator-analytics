@@ -137,7 +137,7 @@ export const InfrastructureFailoverBanner: React.FC = () => {
               </div>
             </div>
             <h4 className={cn("text-2xl font-black italic tracking-tighter uppercase leading-none font-serif mt-1", mode.color)}>
-              {isMirror ? 'ДЗЕ КАЛО GOOGLE COLAB' : isOffline ? 'АВТОНОМНИЙ РЕЖИМ' : 'NVIDIA PROD КЛАСТЕ '}
+              {isMirror ? 'ДЗЕ КАЛО GOOGLE COLAB' : isOffline ? 'ОФЛАЙН РЕЖИМ' : 'NVIDIA PROD КЛАСТЕ '}
             </h4>
           </div>
         </div>

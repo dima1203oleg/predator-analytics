@@ -145,15 +145,16 @@ export default function RiskScoringPremium() {
     SovereignAudio.playImpact();
     fetchData();
     if (isOffline) {
-      window.dispatchEvent(new CustomEvent('predator-error', {
-        detail: {
-          service: 'RiskProtocol',
-          message: `ВУЗОЛ [${nodeSource}]: АВТОНОМНИЙ РЕЖИМ. Сканування реєстру проводиться через локалізований кеш NVIDIA.`,
-          severity: 'warning',
-          timestamp: new Date().toISOString(),
-          code: 'RISK_ENGINE_OFFLINE'
-        }
-      }));
+      // Видалимо нав'язливе повідомлення про автономний режим
+      // window.dispatchEvent(new CustomEvent('predator-error', {
+      //   detail: {
+      //     service: 'RiskProtocol',
+      //     message: `ВУЗОЛ [${nodeSource}]: АВТОНОМНИЙ РЕЖИМ. Сканування реєстру проводиться через локалізований кеш NVIDIA.`,
+      //     severity: 'warning',
+      //     timestamp: new Date().toISOString(),
+      //     code: 'RISK_ENGINE_OFFLINE'
+      //   }
+      // }));
     }
   }, [isOffline, nodeSource]);
 

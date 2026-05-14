@@ -107,15 +107,16 @@ export default function ZradaControlView() {
 
   useEffect(() => {
     if (isOffline) {
-      window.dispatchEvent(new CustomEvent('predator-error', {
-        detail: {
-          service: 'ВнутрішняДоброчесність',
-          message: 'Активовано автономний режим детекції (ВУЗЛИ_ЗРАДИ). Можливе обмеження глибини OSINT-пошуку.',
-          severity: 'warning',
-          timestamp: new Date().toISOString(),
-          code: 'ВУЗЛИ_ЗРАДИ'
-        }
-      }));
+      // Видалимо нав'язливе повідомлення про автономний режим
+      // window.dispatchEvent(new CustomEvent('predator-error', {
+      //   detail: {
+      //     service: 'ВнутрішняДоброчесність',
+      //     message: 'Активовано автономний режим детекції (ВУЗЛИ_ЗРАДИ). Можливе обмеження глибини OSINT-пошуку.',
+      //     severity: 'warning',
+      //     timestamp: new Date().toISOString(),
+      //     code: 'ВУЗЛИ_ЗРАДИ'
+      //   }
+      // }));
     }
   }, [isOffline]);
 

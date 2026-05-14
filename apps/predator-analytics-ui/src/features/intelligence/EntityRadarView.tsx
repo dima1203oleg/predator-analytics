@@ -185,15 +185,16 @@ const EntityRadarView: React.FC = () => {
 
   useEffect(() => {
     if (isOffline) {
-      window.dispatchEvent(new CustomEvent('predator-error', {
-        detail: {
-          service: 'EntityRadar',
-          message: ' АДА  СУБ\'ЄКТІВ: Активовано автономний режим (ENTITY_RADAR_NODES). Використовується локальна база радарних виявлень.',
-          severity: 'warning',
-          timestamp: new Date().toISOString(),
-          code: 'RADAR_OFFLINE'
-        }
-      }));
+      // Видалимо нав'язливе повідомлення про автономний режим
+      // window.dispatchEvent(new CustomEvent('predator-error', {
+      //   detail: {
+      //     service: 'EntityRadar',
+      //     message: ' АДА  СУБ\'ЄКТІВ: Активовано автономний режим (ENTITY_RADAR_NODES). Використовується локальна база радарних виявлень.',
+      //     severity: 'warning',
+      //     timestamp: new Date().toISOString(),
+      //     code: 'RADAR_OFFLINE'
+      //   }
+      // }));
     }
 
     window.dispatchEvent(new CustomEvent('predator-error', {

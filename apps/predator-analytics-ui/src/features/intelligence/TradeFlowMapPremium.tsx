@@ -86,15 +86,16 @@ export default function TradeFlowMapPremium() {
 
   useEffect(() => {
     if (isOffline) {
-      window.dispatchEvent(new CustomEvent('predator-error', {
-        detail: {
-          service: 'GeoIntel',
-          message: 'АКТИВОВАНО АВТОНОМНИЙ РЕЖИМ ГЕОП ОСТО ОВОЇ  РОЗВІДКИ (GEOSPATIAL_NODES). Візуалізація на базі локальних дзеркал.',
-          severity: 'warning',
-          timestamp: new Date().toISOString(),
-          code: 'GEOSPATIAL_NODES'
-        }
-      }));
+      // Видалимо нав'язливе повідомлення про автономний режим
+      // window.dispatchEvent(new CustomEvent('predator-error', {
+      //   detail: {
+      //     service: 'GeoIntel',
+      //     message: 'АКТИВОВАНО АВТОНОМНИЙ РЕЖИМ ГЕОП ОСТО ОВОЇ  РОЗВІДКИ (GEOSPATIAL_NODES). Візуалізація на базі локальних дзеркал.',
+      //     severity: 'warning',
+      //     timestamp: new Date().toISOString(),
+      //     code: 'GEOSPATIAL_NODES'
+      //   }
+      // }));
     }
   }, [isOffline]);
 

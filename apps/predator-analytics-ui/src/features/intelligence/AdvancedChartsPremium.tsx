@@ -314,12 +314,13 @@ const AdvancedChartsPremium: React.FC = () => {
     fetchData();
     if (isOffline) {
       window.dispatchEvent(new CustomEvent('predator-error', {
-        detail: {
-          service: 'QuantumVisual',
-          action: 'RenderArray',
-          message: 'Автономний режим: візуалізація базується на локальному квантовому масиві даних.',
-          severity: 'info'
-        }
+        // Видалимо нав'язливе повідомлення про автономний режим
+        // detail: {
+        //   service: 'QuantumVisual',
+        //   action: 'RenderArray',
+        //   message: 'Автономний режим: візуалізація базується на локальному квантовому масиві даних.',
+        //   severity: 'info'
+        // }
       }));
     }
   }, [timeRange, isOffline]);

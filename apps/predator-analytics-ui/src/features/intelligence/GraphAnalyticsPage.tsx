@@ -137,15 +137,16 @@ const GraphAnalyticsPage: React.FC = () => {
         fetchData();
 
         if (backendStatus.isOffline) {
-            window.dispatchEvent(new CustomEvent('predator-error', {
-                detail: {
-                    service: 'GraphTopology',
-                    message: `АВТОНОМНИЙ РЕЖИМ ГРАФА [${backendStatus.nodeSource}]: Використовується локальна кеш-модель (MIRROR_VAULT).`,
-                    severity: 'warning',
-                    timestamp: new Date().toISOString(),
-                    code: 'GRAPH_OFFLINE'
-                }
-            }));
+            // Видалимо нав'язливе повідомлення про автономний режим
+            // window.dispatchEvent(new CustomEvent('predator-error', {
+            //     detail: {
+            //         service: 'GraphTopology',
+            //         message: `АВТОНОМНИЙ РЕЖИМ ГРАФА [${backendStatus.nodeSource}]: Використовується локальна кеш-модель (MIRROR_VAULT).`,
+            //         severity: 'warning',
+            //         timestamp: new Date().toISOString(),
+            //         code: 'GRAPH_OFFLINE'
+            //     }
+            // }));
         }
 
         window.dispatchEvent(new CustomEvent('predator-error', {

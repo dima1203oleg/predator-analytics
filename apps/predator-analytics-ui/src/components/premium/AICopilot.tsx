@@ -342,10 +342,10 @@ export const Predator: React.FC = () => {
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <button onClick={() => setIsExpanded(!isExpanded)} className="p-4 bg-white/5 border border-white/5 rounded-2xl hover:text-rose-500 transition-all hover:bg-rose-500/10">
+                <button onClick={() => setIsExpanded(!isExpanded)} className="p-4 bg-white/5 border border-white/5 rounded-2xl hover:text-rose-500 transition-all hover:bg-rose-500/10" title={isExpanded ? "Згорнути" : "Розширити"}>
                   {isExpanded ? <Minimize2 size={24} /> : <Maximize2 size={24} />}
                 </button>
-                <button onClick={() => { setIsOpen(false); setIsExpanded(false); }} className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-2xl text-rose-500 hover:bg-rose-500 hover:text-white transition-all shadow-lg">
+                <button onClick={() => { setIsOpen(false); setIsExpanded(false); }} className="p-4 bg-white/5 border border-white/5 rounded-2xl hover:text-rose-500 transition-all hover:bg-rose-500/10" title="Закрити">
                   <X size={24} />
                 </button>
               </div>

@@ -186,15 +186,16 @@ export default function CustomsIntelligenceView() {
 
   useEffect(() => {
     if (isOffline) {
-      window.dispatchEvent(new CustomEvent('predator-error', {
-        detail: {
-          service: 'CustomsIntel',
-          message: 'АКТИВОВАНО АВТОНОМНИЙ РЕЖИМ МИТНИХ ВУЗЛІВ. Переключення на локальні дзеркара (CUSTOMS_NODES).',
-          severity: 'warning',
-          timestamp: new Date().toISOString(),
-          code: 'CUSTOMS_NODES'
-        }
-      }));
+      // Видалимо нав'язливе повідомлення про автономний режим
+      // window.dispatchEvent(new CustomEvent('predator-error', {
+      //   detail: {
+      //     service: 'CustomsIntel',
+      //     message: 'АКТИВОВАНО АВТОНОМНИЙ РЕЖИМ МИТНИХ ВУЗЛІВ. Переключення на локальні дзеркара (CUSTOMS_NODES).',
+      //     severity: 'warning',
+      //     timestamp: new Date().toISOString(),
+      //     code: 'CUSTOMS_NODES'
+      //   }
+      // }));
     }
   }, [isOffline]);
 

@@ -99,12 +99,13 @@ export default function MarketAnalyticsPremium() {
     fetchData();
     if (isOffline) {
       window.dispatchEvent(new CustomEvent('predator-error', {
-        detail: {
-          service: 'MarketSignals',
-          action: 'DecodeSignal',
-          message: 'Автономний режим: аналіз ринкових сигналів проводиться через локалізований масив.',
-          severity: 'info'
-        }
+        // Видалимо нав'язливе повідомлення про автономний режим
+        // detail: {
+        //   service: 'MarketSignals',
+        //   action: 'DecodeSignal',
+        //   message: 'Автономний режим: аналіз ринкових сигналів проводиться через локалізований масив.',
+        //   severity: 'info'
+        // }
       }));
     }
   }, [timeRange, isOffline]);

@@ -221,11 +221,11 @@
 
 body {
     color-scheme: dark;
-    background-color: #0a0a0a;
-    color: #e2e8f0;
+    background-color: var(--elite-black-deep);
+    color: var(--elite-white);
     background-image:
-        linear-gradient(rgba(180, 25, 40, 0.1) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(180, 25, 40, 0.1) 1px, transparent 1px);
+        linear-gradient(rgba(225, 29, 72, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(225, 29, 72, 0.08) 1px, transparent 1px);
     background-size: 48px 48px;
     background-position: center center;
     background-attachment: fixed;
@@ -1085,6 +1085,137 @@ kbd {
    PREDATOR v58.2-WRAITH — ПОСИЛЕНА ВІЗУАЛЬНА ЯКІСТЬ
    Контраст, читабельність, динамічні ефекти, мікро-анімації
    ============================================================================ */
+
+/* ── PREMIUM GLASSMORPHISM ── */
+.glass-premium {
+    background: rgba(5, 5, 5, 0.85);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(225, 29, 72, 0.15);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.6),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.03),
+        0 0 0 1px rgba(225, 29, 72, 0.05);
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.glass-premium:hover {
+    border-color: rgba(225, 29, 72, 0.3);
+    box-shadow:
+        0 16px 48px rgba(0, 0, 0, 0.7),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+        0 0 20px rgba(225, 29, 72, 0.15);
+}
+
+/* ── TECHNOLOGICAL GRID WITH RADAR EFFECT ── */
+.tech-grid-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--elite-black-deep);
+    background-image:
+        linear-gradient(rgba(225, 29, 72, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(225, 29, 72, 0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.tech-grid-radar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+    background: radial-gradient(
+        circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+        rgba(225, 29, 72, 0.08) 0%,
+        transparent 30%
+    );
+}
+
+/* ── PARALLAX DEPTH EFFECT ── */
+.parallax-container {
+    perspective: 1000px;
+    transform-style: preserve-3d;
+}
+
+.parallax-layer {
+    transform-style: preserve-3d;
+    transition: transform 0.1s ease-out;
+}
+
+/* ── TACTICAL FOCUS (SNIPER ACCENT) ── */
+.tactical-focus-active .tactical-blur {
+    opacity: 0.3;
+    filter: blur(2px);
+    transition: all 0.3s ease;
+}
+
+.tactical-focus-target {
+    opacity: 1;
+    filter: blur(0);
+    box-shadow: 0 0 30px rgba(225, 29, 72, 0.5), 0 0 60px rgba(225, 29, 72, 0.3);
+    border-color: rgba(225, 29, 72, 0.8);
+    transition: all 0.3s ease;
+}
+
+/* ── DECRYPTION EFFECT (REPLACEMENT FOR LOADER) ── */
+@keyframes decrypt {
+    0% { opacity: 0; }
+    50% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+.decrypt-text {
+    position: relative;
+}
+
+.decrypt-text::before {
+    content: attr(data-decrypt);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--elite-black-deep);
+    color: var(--elite-red);
+    font-family: 'Courier New', monospace;
+    animation: decrypt 0.1s infinite;
+    pointer-events: none;
+}
+
+/* ── THERMAL HOVER EFFECT ── */
+.thermal-hover {
+    transition: all 0.3s ease;
+}
+
+.thermal-hover:hover {
+    background: rgba(225, 29, 72, 0.1);
+    box-shadow: 0 0 20px rgba(225, 29, 72, 0.2);
+}
+
+.thermal-hover::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+        circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+        rgba(225, 29, 72, 0.15),
+        transparent 50%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.thermal-hover:hover::after {
+    opacity: 1;
+}
 
 /* ── ГЛОБАЛЬНІ HOVER MICRO-INTERACTIONS ── */
 button,

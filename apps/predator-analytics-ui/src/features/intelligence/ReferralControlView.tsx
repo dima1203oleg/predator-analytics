@@ -150,15 +150,16 @@ export default function ReferralControlView() {
 
   useEffect(() => {
     if (isOffline) {
-      window.dispatchEvent(new CustomEvent('predator-error', {
-        detail: {
-          service: 'ReferralControl',
-          message: ' ЕФЕ АЛЬНИЙ КОНТРОЛЬ: Активовано автономний режим. Перевірка прихованих зв\'язків проводиться через MIRROR_OSINT_NODE.',
-          severity: 'warning',
-          timestamp: new Date().toISOString(),
-          code: 'REFERRAL_SCAN_OFFLINE'
-        }
-      }));
+      // Видалимо нав'язливе повідомлення про автономний режим
+      // window.dispatchEvent(new CustomEvent('predator-error', {
+      //   detail: {
+      //     service: 'ReferralControl',
+      //     message: ' ЕФЕ АЛЬНИЙ КОНТРОЛЬ: Активовано автономний режим. Перевірка прихованих зв\'язків проводиться через MIRROR_OSINT_NODE.',
+      //     severity: 'warning',
+      //     timestamp: new Date().toISOString(),
+      //     code: 'REFERRAL_SCAN_OFFLINE'
+      //   }
+      // }));
     }
     
     window.dispatchEvent(new CustomEvent('predator-error', {

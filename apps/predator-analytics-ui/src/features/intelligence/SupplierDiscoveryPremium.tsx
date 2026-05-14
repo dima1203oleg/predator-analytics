@@ -96,12 +96,13 @@ export default function SupplierDiscoveryPremium() {
     loadSuppliers();
     if (isOffline) {
       window.dispatchEvent(new CustomEvent('predator-error', {
-        detail: {
-          service: 'SupplierIntel',
-          action: 'ScanNodes',
-          message: 'Автономний режим: сканування глобальних вузлів проводиться через PROCUREMENT_NODES.',
-          severity: 'info'
-        }
+        // Видалимо нав'язливе повідомлення про автономний режим
+        // detail: {
+        //   service: 'SupplierIntel',
+        //   action: 'ScanNodes',
+        //   message: 'Автономний режим: сканування глобальних вузлів проводиться через PROCUREMENT_NODES.',
+        //   severity: 'info'
+        // }
       }));
     }
   }, [isOffline]);

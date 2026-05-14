@@ -37,13 +37,7 @@ export const GlobalSearchTab: React.FC = () => {
             setResults(response.data || []);
         } catch (err) {
             console.error('Search failed:', err);
-            // Fallback mock
-            setResults([
-                { id: '1', title: 'ТОВ "ЗАВОД ОМЕГА-ТИТАН"', type: 'COMPANY', risk: 94, info: 'Виявлено зв\'язки з підсанкційними холдингами  Ф (ВТБ)', date: '2026-04-12', severity: 'CRITICAL' },
-                { id: '2', title: 'Декларація UA-4001/01/26', type: 'DECLARATION', risk: 62, info: 'Аномальна митна вартість для групи HS-72 (Залізо)', date: '2026-04-11', severity: 'HIGH' },
-                { id: '3', title: 'Олексій  езніков (Archive)', type: 'PERSON', risk: 28, info: 'Зв\'язок через 3 структури з постачаннями БПЛА', date: '2026-04-01', severity: 'LOW' },
-                { id: '4', title: 'Хустський Логістичний Хаб', type: 'LOCATION', risk: 55, info: ' аптова зміна власника на кіпрський офшор', date: '2026-03-29', severity: 'MEDIUM' },
-            ]);
+            setResults([]);
         } finally {
             setTimeout(() => setIsSearching(false), 800);
         }

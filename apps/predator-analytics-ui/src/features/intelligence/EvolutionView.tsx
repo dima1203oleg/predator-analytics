@@ -82,15 +82,16 @@ const EvolutionView: React.FC = () => {
 
     useEffect(() => {
         if (isOffline) {
-            window.dispatchEvent(new CustomEvent('predator-error', {
-                detail: {
-                    service: 'EvolutionEngine',
-                    message: 'ДВИГУН ЕВОЛЮЦІЇ: Активовано автономний режим AZR-синтезу (EVOLUTION_NODES). Використовується локальний Реєстр мутацій.',
-                    severity: 'warning',
-                    timestamp: new Date().toISOString(),
-                    code: 'EVOLUTION_OFFLINE'
-                }
-            }));
+            // Видалимо нав'язливе повідомлення про автономний режим
+            // window.dispatchEvent(new CustomEvent('predator-error', {
+            //     detail: {
+            //         service: 'EvolutionEngine',
+            //         message: 'ДВИГУН ЕВОЛЮЦІЇ: Активовано автономний режим AZR-синтезу (EVOLUTION_NODES). Використовується локальний Реєстр мутацій.',
+            //         severity: 'warning',
+            //         timestamp: new Date().toISOString(),
+            //         code: 'EVOLUTION_OFFLINE'
+            //     }
+            // }));
         } else {
             window.dispatchEvent(new CustomEvent('predator-error', {
                 detail: {

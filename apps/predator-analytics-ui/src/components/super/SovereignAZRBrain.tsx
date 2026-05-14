@@ -160,18 +160,6 @@ const SovereignAZRBrain: React.FC = () => {
           </div>
 
           <div className="flex flex-wrap gap-4 relative">
-            {isOffline && (
-              <motion.div 
-                animate={{ scale: [1, 1.05, 1], opacity: [0.8, 1, 0.8] }}
-                transition={{ repeat: Infinity, duration: 2 }}
-                className="px-8 py-5 bg-amber-500/10 border border-amber-500/40 rounded-[24px]   flex flex-col justify-center"
-              >
-                <span className="text-[10px] text-amber-500 font-black uppercase tracking-widest mb-1 flex items-center gap-2">
-                  <ZapOff size={12} /> СУВЕРЕННИЙ АВТОНОМНИЙ РЕЖИМ
-                </span>
-                <div className="text-xl font-black text-white italic">EMERGENCY_LOCAL</div>
-              </motion.div>
-            )}
             
             <div className="px-8 py-5 bg-yellow-500/5 border border-yellow-500/20 rounded-[24px]  shadow-2xl flex flex-col justify-center group/autonomy">
               <span className="text-[10px] text-yellow-600 font-black uppercase tracking-widest mb-1 group-hover/autonomy:text-yellow-400 transition-colors">СИСТЕМНА АВТОНОМНІСТЬ</span>

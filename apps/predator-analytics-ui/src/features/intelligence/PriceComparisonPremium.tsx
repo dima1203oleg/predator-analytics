@@ -94,12 +94,13 @@ export default function PriceComparisonPremium() {
   useEffect(() => {
     if (isOffline) {
       window.dispatchEvent(new CustomEvent('predator-error', {
-        detail: {
-          service: 'PriceIntel',
-          action: 'CompareOffers',
-          message: 'Автономний режим: порівняння цін базується на локальному реєстрі PROCUREMENT_CACHED.',
-          severity: 'info'
-        }
+        // Видалимо нав'язливе повідомлення про автономний режим
+        // detail: {
+        //   service: 'PriceIntel',
+        //   action: 'CompareOffers',
+        //   message: 'Автономний режим: порівняння цін базується на локальному реєстрі PROCUREMENT_CACHED.',
+        //   severity: 'info'
+        // }
       }));
     }
   }, [isOffline]);

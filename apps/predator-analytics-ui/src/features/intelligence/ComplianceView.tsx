@@ -81,15 +81,16 @@ export const ComplianceView = () => {
 
     useEffect(() => {
         if (isOffline) {
-            window.dispatchEvent(new CustomEvent('predator-error', {
-                detail: {
-                    service: 'ComplianceIntel',
-                    message: 'АКТИВОВАНО АВТОНОМНИЙ РЕЖИМ КОМПЛАЄНСУ (COMPLIANCE_NODES). Моніторинг локального контуру.',
-                    severity: 'warning',
-                    timestamp: new Date().toISOString(),
-                    code: 'COMPLIANCE_NODES'
-                }
-            }));
+            // Видалимо нав'язливе повідомлення про автономний режим
+            // window.dispatchEvent(new CustomEvent('predator-error', {
+            //     detail: {
+            //         service: 'ComplianceIntel',
+            //         message: 'АКТИВОВАНО АВТОНОМНИЙ РЕЖИМ КОМПЛАЄНСУ (COMPLIANCE_NODES). Моніторинг локального контуру.',
+            //         severity: 'warning',
+            //         timestamp: new Date().toISOString(),
+            //         code: 'COMPLIANCE_NODES'
+            //     }
+            // }));
         }
     }, [isOffline]);
 
