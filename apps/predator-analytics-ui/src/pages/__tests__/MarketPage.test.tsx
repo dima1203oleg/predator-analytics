@@ -22,14 +22,12 @@ vi.mock('framer-motion', async () => {
     return {
         ...actual as any,
         motion: {
-            div: ({ children, className, onClick, style }: any) => (
-                <div className={className} onClick={onClick} style={style} data-testid="motion-div">{children}</div>
-            ),
+            div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
             tr: ({ children, className }: any) => (
                 <tr className={className}>{children}</tr>
             )
         },
-        AnimatePresence: ({ children }: any) => <>{children}</>
+        AnimatePresence: ({ children }: any) => <>{children}</>,
     };
 });
 
