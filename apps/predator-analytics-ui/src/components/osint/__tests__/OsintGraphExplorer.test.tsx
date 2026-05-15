@@ -7,10 +7,9 @@ vi.mock('framer-motion', () => {
     const React = require('react');
     return {
         motion: {
-            div: React.forwardRef(({ initial, animate, exit, transition, whileHover, whileTap, ...props }: any, ref: any) => React.createElement('div', { ref, ...props })),
-            button: React.forwardRef(({ initial, animate, exit, transition, whileHover, whileTap, ...props }: any, ref: any) => React.createElement('button', { ref, ...props })),
+            div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
         },
-        AnimatePresence: ({ children }: any) => React.createElement(React.Fragment, null, children),
+        AnimatePresence: ({ children }: any) => <>{children}</>,
     };
 });
 
