@@ -29,7 +29,7 @@ import { CyberOrb } from '@/components/CyberOrb';
 import { intelligence } from '@/services/dataService';
 import { ViewHeader } from '@/components/ViewHeader';
 import { useQuery } from '@tanstack/react-query';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Skeleton } from '@/components/ui/Skeleton';
 import { DiagnosticsTerminal } from '@/components/intelligence/DiagnosticsTerminal';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 

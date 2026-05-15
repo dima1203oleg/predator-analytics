@@ -31,7 +31,9 @@ import { HoloContainer } from '@/components/HoloContainer';
 import { PageTransition } from '@/components/layout/PageTransition';
 import AIInsightsHub from '@/features/ai/AIInsightsHub';
 import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/Skeleton';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { EntityActionMenu } from '@/components/shared/EntityActionMenu';
 
 // --- LOCALIZATION ---
 const localLocales = {
@@ -166,6 +168,13 @@ const CompetitorCardELITE: React.FC<{
             </div>
 
             <div className="flex items-center gap-3 border-l border-white/5 pl-6">
+              <div onClick={e => e.stopPropagation()}>
+                <EntityActionMenu 
+                  entityId={competitor.id} 
+                  entityType="company" 
+                  entityName={competitor.name}
+                />
+              </div>
               <button
                 onClick={(e) => { e.stopPropagation(); play(UISoundType.CLICK); onTrack(); }} onMouseEnter={() => play(UISoundType.HOVER)}
                 className={cn(
@@ -457,10 +466,10 @@ const CompetitorIntelligenceView: React.FC = () => {
                 {loading ? (
                   Array.from({ length: 4 }).map((_, i) => (
                     <div key={i} className="p-12 bg-black border border-white/5 rounded-[3rem] shadow-2xl">
-                      <DataSkeleton className="mb-8" width="40%" height={32} />
+                      <Skeleton className="mb-8 w-[40%] h-[32px]" />
                       <div className="flex gap-8">
-                        <DataSkeleton width="20%" height={24} />
-                        <DataSkeleton width="25%" height={24} />
+                        <Skeleton className="w-[20%] h-[24px]" />
+                        <Skeleton className="w-[25%] h-[24px]" />
                       </div>
                     </div>
                   ))

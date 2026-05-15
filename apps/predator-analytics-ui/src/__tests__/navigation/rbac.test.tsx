@@ -22,7 +22,7 @@ vi.mock('../../context/RoleContext', () => ({
 }));
 
 // Mock Lucide icon
-const mockIcon: LucideIcon = vi.fn(() => null);
+const mockIcon: LucideIcon = vi.fn(() => null) as unknown as LucideIcon;
 
 describe('RBAC Navigation Tests', () => {
   describe('isNavItemLocked - визначення заблокованих пунктів', () => {
@@ -34,7 +34,7 @@ describe('RBAC Navigation Tests', () => {
         path: '/graph',
         icon: mockIcon,
         description: 'Графова аналітика',
-        audiences: ['analyst'],
+        audiences: ['pro'] as any,
       };
 
       const drpoItem = {
@@ -43,7 +43,7 @@ describe('RBAC Navigation Tests', () => {
         path: '/beneficiaries',
         icon: mockIcon,
         description: 'Карта бенефіціарів',
-        audiences: ['drpo'],
+        audiences: ['sovereign'] as any,
       };
 
       const publicItem = {
@@ -52,7 +52,7 @@ describe('RBAC Navigation Tests', () => {
         path: '/search?tab=newspaper',
         icon: mockIcon,
         description: 'Ранкова газета',
-        audiences: ['business'],
+        audiences: ['terminal'] as any,
       };
 
       expect(isNavItemLocked(analystItem, 'promo')).toBe(true);
@@ -67,7 +67,7 @@ describe('RBAC Navigation Tests', () => {
         path: '/graph',
         icon: mockIcon,
         description: 'Графова аналітика',
-        audiences: ['analyst'],
+        audiences: ['pro'] as any,
       };
 
       const drpoItem = {
@@ -76,7 +76,7 @@ describe('RBAC Navigation Tests', () => {
         path: '/beneficiaries',
         icon: mockIcon,
         description: 'Карта бенефіціарів',
-        audiences: ['drpo'],
+        audiences: ['sovereign'] as any,
       };
 
       expect(isNavItemLocked(analystItem, 'pro')).toBe(false);
@@ -90,7 +90,7 @@ describe('RBAC Navigation Tests', () => {
         path: '/beneficiaries',
         icon: mockIcon,
         description: 'Карта бенефіціарів',
-        audiences: ['drpo'],
+        audiences: ['sovereign'] as any,
       };
 
       expect(isNavItemLocked(drpoItem, 'vip')).toBe(false);
@@ -103,7 +103,7 @@ describe('RBAC Navigation Tests', () => {
         path: '/admin/command?tab=infra',
         icon: mockIcon,
         description: 'Телеметрія кластера',
-        audiences: ['admin'],
+        audiences: ['core'] as any,
       };
 
       expect(isNavItemLocked(adminItem, 'admin')).toBe(false);

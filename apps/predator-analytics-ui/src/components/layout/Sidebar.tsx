@@ -179,10 +179,10 @@ const sectionColorMap: Record<string, {
 
 const getRoleLabel = (role: string): string => {
   const audience = resolveNavigationAudience(role);
-  if (audience === 'admin') return 'Адміністрування системи';
-  if (audience === 'analyst') return 'Аналітичний контур';
-  if (audience === 'supply_chain') return 'Контур логістики';
-  return 'Бізнес-контур';
+  if (audience === 'core') return 'SYSTEM COMMAND CENTER';
+  if (audience === 'sovereign') return 'Суверенний контур (Elite)';
+  if (audience === 'pro') return 'Професійний контур (Pro)';
+  return 'Термінал-доступ (Basic)';
 };
 
 const getInitialCollapsed = (): Record<string, boolean> => {

@@ -138,7 +138,7 @@ const LoadingFallback = () => (
 );
 
 const PremiumOnly = ({ children }: { children: ReactNode }) => (
-  <RoleGuard allowedRoles={[UserRole.CLIENT_PREMIUM, UserRole.CLIENT_DRPO]} showUpgrade>
+  <RoleGuard minLevel="pro" showUpgrade>
     {children}
   </RoleGuard>
 );

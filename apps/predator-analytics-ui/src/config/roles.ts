@@ -1,34 +1,47 @@
 /* eslint-disable @typescript-eslint/no-duplicate-enum-values */
+
+/**
+ * PREDATOR ELITE — Ієрархія клієнтських допусків v2.0
+ *
+ * 4 рівні доступу:
+ *   TERMINAL  — базовий макроекономічний огляд з маскуванням
+ *   PRO       — повна OSINT-розвідка з точними реєстрами
+ *   SOVEREIGN — абсолютна влада: деанонімізація, сирі дані
+ *   CORE      — технічне ядро (невидиме для клієнтів)
+ */
 export enum UserRole {
-  // Нові ролі згідно з ТЗ RBAC v61.0
-  PROMO = 'promo',           // Рівень 1: STANDARD / PROMO (рекламно-заохочувальний)
-  PRO = 'pro',               // Рівень 2: PRO CLIENT (комерційний доступ)
-  VIP = 'vip',               // Рівень 3: VIP CLIENT / ELITE SIGINT (повний VIP доступ)
-  ADMIN = 'admin',           // Рівень 4: SYSTEM ADMIN (технічне управління)
+  // Канонічні ролі PREDATOR ELITE
+  TERMINAL = 'terminal',       // Рівень 1: PREDATOR Terminal (базова станція)
+  PRO = 'pro',                 // Рівень 2: PREDATOR Pro (професійна розвідка)
+  SOVEREIGN = 'sovereign',     // Рівень 3: PREDATOR Sovereign (елітний доступ)
+  CORE = 'core',               // Рівень 4: PREDATOR Core (технічне ядро)
 
   // Легасі-аліаси для зворотної сумісності
-  CLIENT_BASIC = 'promo',
+  PROMO = 'terminal',
+  CLIENT_BASIC = 'terminal',
   CLIENT_PREMIUM = 'pro',
-  CLIENT_DRPO = 'vip',
+  CLIENT_DRPO = 'sovereign',
+  VIP = 'sovereign',
+  ADMIN = 'core',
+  COMMANDER = 'core',
   ANALYST = 'pro',
-  OPERATOR = 'promo',
-  COMMANDER = 'admin',
-  EXPLORER = 'promo',
-  INVESTIGATOR = 'vip',
+  OPERATOR = 'terminal',
+  EXPLORER = 'terminal',
+  INVESTIGATOR = 'sovereign',
 }
 
 export const ROLE_DISPLAY_NAMES: Record<string, string> = {
-  [UserRole.PROMO]: 'Standard / Promo',
-  [UserRole.PRO]: 'Pro Client',
-  [UserRole.VIP]: 'VIP Elite',
-  [UserRole.ADMIN]: 'System Admin',
+  [UserRole.TERMINAL]: 'PREDATOR Terminal',
+  [UserRole.PRO]: 'PREDATOR Pro',
+  [UserRole.SOVEREIGN]: 'PREDATOR Sovereign',
+  [UserRole.CORE]: 'PREDATOR Core',
 };
 
 export const ROLE_DESCRIPTIONS: Record<string, string> = {
-  [UserRole.PROMO]: 'Рекламно-заохочувальний рівень: базові дешборди та огляд ринку з маскуванням даних',
-  [UserRole.PRO]: 'Комерційний доступ: повний аналітичний інструментарій без деанонімізації',
-  [UserRole.VIP]: 'VIP Elite: безлімітний аналітичний доступ включаючи деанонімізацію та сирі дані',
-  [UserRole.ADMIN]: 'Технічне управління: повний контроль інфраструктури без доступу до бізнес-даних',
+  [UserRole.TERMINAL]: 'Базова станція: макроекономічний огляд ринку та перевірка контрагентів з маскуванням даних',
+  [UserRole.PRO]: 'Професійна розвідка: повний аналітичний інструментарій з точними реєстрами',
+  [UserRole.SOVEREIGN]: 'Елітний допуск: безлімітний доступ включаючи деанонімізацію та сирі дані',
+  [UserRole.CORE]: 'Технічне ядро: управління інфраструктурою та ШІ-моделями (невидиме для клієнтів)',
 };
 
 export interface RoleCapabilities {
@@ -41,6 +54,7 @@ export interface RoleCapabilities {
   canSeeSensitiveData: boolean;
   canSeeSystemCore: boolean;
   canSeeInvestigation: boolean;
+  canSeeCyberIntel: boolean;
 
   // Функціональність
   canAccessFullNewspaper: boolean;
@@ -50,82 +64,116 @@ export interface RoleCapabilities {
   canManageJurisdictions: boolean;
   canViewAuditLogs: boolean;
   canSwitchBackend: boolean;
+  canDeAnonymize: boolean;
+  canAccessRawData: boolean;
 
-  // Ізоляція адміна — виключно системна зона
+  // Маскування даних
+  graphDepthLimit: number;
+  financialPrecision: 'range' | 'exact' | 'transactional';
+  identifierMasking: 'partial' | 'full' | 'international';
+  personalDataAccess: 'masked' | 'full' | 'deanonymized';
+
+  // Ізоляція
   isAdminExclusive: boolean;
+  isClientFacing: boolean;
 }
 
 export const ROLE_CAPABILITIES: Record<UserRole, RoleCapabilities> = {
-  // РІВЕНЬ 1: PROMO (рекламно-заохочувальний)
-  [UserRole.PROMO]: {
+  // РІВЕНЬ 1: PREDATOR Terminal (базова станція)
+  [UserRole.TERMINAL]: {
     canSeeDashboards: true,
     canSeeVisualAnalytics: true,
-    canSeeRelationsGraph: false,  // 🔒 Тільки в PRO/VIP
-    canSeeTimelines: false,      // 🔒 Тільки в PRO/VIP
+    canSeeRelationsGraph: false,      // 🔒 Граф — 1 рівень глибини
+    canSeeTimelines: false,           // 🔒 Тільки в Pro/Sovereign
     canSeeOpenSearch: true,
-    canSeeSensitiveData: false,  // 🔒 Суворе маскування
+    canSeeSensitiveData: false,       // 🔒 Суворе маскування
     canSeeSystemCore: false,
-    canSeeInvestigation: false,  // 🔒 Тільки в PRO/VIP
-    canAccessFullNewspaper: false,  // 🔒 Тільки в PRO/VIP
+    canSeeInvestigation: false,       // 🔒 Тільки в Pro/Sovereign
+    canSeeCyberIntel: false,          // 🔒 Тільки Sovereign
+    canAccessFullNewspaper: false,    // 🔒 Обмежений контент
     canAccessDetailedTrends: true,
     canToggleSensitiveData: false,
     canManageUsers: false,
     canManageJurisdictions: false,
     canViewAuditLogs: false,
     canSwitchBackend: false,
+    canDeAnonymize: false,
+    canAccessRawData: false,
+    graphDepthLimit: 1,
+    financialPrecision: 'range',
+    identifierMasking: 'partial',
+    personalDataAccess: 'masked',
     isAdminExclusive: false,
+    isClientFacing: true,
   },
 
-  // РІВЕНЬ 2: PRO (комерційний доступ)
+  // РІВЕНЬ 2: PREDATOR Pro (професійна розвідка)
   [UserRole.PRO]: {
     canSeeDashboards: true,
     canSeeVisualAnalytics: true,
-    canSeeRelationsGraph: true,
+    canSeeRelationsGraph: true,       // ✅ Граф до 5 рівнів
     canSeeTimelines: true,
     canSeeOpenSearch: true,
-    canSeeSensitiveData: false,  // 🔒 Маскування на рівні API (без деанонімізації)
+    canSeeSensitiveData: false,       // 🔒 Маскування на рівні API
     canSeeSystemCore: false,
     canSeeInvestigation: true,
+    canSeeCyberIntel: false,          // 🔒 Тільки Sovereign
     canAccessFullNewspaper: true,
     canAccessDetailedTrends: true,
-    canToggleSensitiveData: false,  // 🔒 Не можна перемикати сирі дані
+    canToggleSensitiveData: false,
     canManageUsers: false,
     canManageJurisdictions: false,
     canViewAuditLogs: false,
     canSwitchBackend: false,
+    canDeAnonymize: false,
+    canAccessRawData: false,
+    graphDepthLimit: 5,
+    financialPrecision: 'exact',
+    identifierMasking: 'full',
+    personalDataAccess: 'full',
     isAdminExclusive: false,
+    isClientFacing: true,
   },
 
-  // РІВЕНЬ 3: VIP (повний доступ)
-  [UserRole.VIP]: {
+  // РІВЕНЬ 3: PREDATOR Sovereign (елітний допуск)
+  [UserRole.SOVEREIGN]: {
     canSeeDashboards: true,
     canSeeVisualAnalytics: true,
-    canSeeRelationsGraph: true,
+    canSeeRelationsGraph: true,       // ✅ Безлімітна глибина
     canSeeTimelines: true,
     canSeeOpenSearch: true,
-    canSeeSensitiveData: true,   // ✅ Повний доступ до чутливих даних
+    canSeeSensitiveData: true,        // ✅ Повний доступ до чутливих даних
     canSeeSystemCore: false,
     canSeeInvestigation: true,
+    canSeeCyberIntel: true,           // ✅ Суверенна кіберрозвідка
     canAccessFullNewspaper: true,
     canAccessDetailedTrends: true,
-    canToggleSensitiveData: true,  // ✅ Можна перемикати відображення
+    canToggleSensitiveData: true,
     canManageUsers: false,
-    canManageJurisdictions: true,  // ✅ Доступ до законодавчих даних (DRPO)
+    canManageJurisdictions: true,
     canViewAuditLogs: false,
     canSwitchBackend: false,
+    canDeAnonymize: true,             // ✅ Деанонімізація
+    canAccessRawData: true,           // ✅ Сирі дані
+    graphDepthLimit: Infinity,
+    financialPrecision: 'transactional',
+    identifierMasking: 'international',
+    personalDataAccess: 'deanonymized',
     isAdminExclusive: false,
+    isClientFacing: true,
   },
 
-  // РІВЕНЬ 4: ADMIN (технічне управління)
-  [UserRole.ADMIN]: {
-    canSeeDashboards: false,      // 🔒 Жодних бізнес-даних
+  // РІВЕНЬ 4: PREDATOR Core (технічне ядро — невидиме для клієнтів)
+  [UserRole.CORE]: {
+    canSeeDashboards: false,          // 🔒 Жодних бізнес-даних
     canSeeVisualAnalytics: false,
     canSeeRelationsGraph: false,
     canSeeTimelines: false,
     canSeeOpenSearch: false,
     canSeeSensitiveData: false,
-    canSeeSystemCore: true,       // ✅ Тільки інфраструктура
+    canSeeSystemCore: true,           // ✅ Тільки інфраструктура
     canSeeInvestigation: false,
+    canSeeCyberIntel: false,
     canAccessFullNewspaper: false,
     canAccessDetailedTrends: false,
     canToggleSensitiveData: false,
@@ -133,6 +181,13 @@ export const ROLE_CAPABILITIES: Record<UserRole, RoleCapabilities> = {
     canManageJurisdictions: false,
     canViewAuditLogs: true,
     canSwitchBackend: true,
-    isAdminExclusive: true,       // ✅ Повна ізоляція від бізнес-даних
+    canDeAnonymize: false,
+    canAccessRawData: false,
+    graphDepthLimit: 0,
+    financialPrecision: 'range',
+    identifierMasking: 'partial',
+    personalDataAccess: 'masked',
+    isAdminExclusive: true,
+    isClientFacing: false,
   },
 };

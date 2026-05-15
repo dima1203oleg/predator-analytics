@@ -82,3 +82,8 @@ vi.mock('framer-motion', () => ({
     useSpring: () => 0,
     useMotionTemplate: () => '',
 }))
+
+// Глобальний мок для TacticalCard (для всіх тестів)
+vi.mock('@/components/ui/TacticalCard', () => ({
+    TacticalCard: ({ children, ...props }: any) => <div data-testid="tactical-card" {...props}>{children}</div>,
+}))

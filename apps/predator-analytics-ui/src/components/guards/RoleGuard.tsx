@@ -6,10 +6,10 @@ import { AccessDenied } from '../shared/AccessDenied';
 
 interface RoleGuardProps {
   children: ReactNode;
-  allowedRoles: UserRole[];
+  allowedRoles?: UserRole[];
   fallback?: ReactNode;
-  showUpgrade?: boolean; // Якщо true, покаже UpgradePrompt для PROMO юзерів замість простого fallback
-  minLevel?: 'promo' | 'pro' | 'vip' | 'admin'; // Мінімальний рівень доступу
+  showUpgrade?: boolean; // Якщо true, покаже UpgradePrompt для Terminal юзерів замість простого fallback
+  minLevel?: 'terminal' | 'pro' | 'sovereign' | 'core'; // Мінімальний рівень доступу
 }
 
 export const RoleGuard: React.FC<RoleGuardProps> = ({
@@ -19,20 +19,25 @@ export const RoleGuard: React.FC<RoleGuardProps> = ({
   showUpgrade = false,
   minLevel,
 }) => {
-  const { role, isPromo, isPro, isVIP, isAdmin } = useRole();
+  const { role: currentRole, isTerminal, isPro, isSovereign, isCore } = useRole();
 
   // Перевірка за мінімальним рівнем доступу
   if (minLevel) {
     const hasAccess =
-      (minLevel === 'promo' && (isPromo || isPro || isVIP || isAdmin)) ||
-      (minLevel === 'pro' && (isPro || isVIP || isAdmin)) ||
-      (minLevel === 'vip' && (isVIP || isAdmin)) ||
-      (minLevel === 'admin' && isAdmin);
+      (minLevel === 'terminal' && (isTerminal || isPro || isSovereign || isCore)) ||
+      (minLevel === 'pro' && (isPro || isSovereign || isCore)) ||
+      (minLevel === 'sovereign' && (isSovereign || isCore)) ||
+      (minLevel === 'core' && isCore);
 
     if (!hasAccess) {
-      // PROMO користувачі бачать UpgradePrompt для апгрейду до PRO/VIP
-      if (showUpgrade && isPromo) {
-        return <UpgradePrompt />;
+      // Terminal користувачі бачать UpgradePrompt для апгрейду
+      if (showUpgrade && isTerminal) {
+        return <UpgradePrompt requiredRole={minLevel === 'sovereign' ? UserRole.SOVEREIGN : UserRole.PRO} />;
+      }
+      
+      // Pro користувачі бачать UpgradePrompt для апгрейду до Sovereign
+      if (showUpgrade && isPro && minLevel === 'sovereign') {
+        return <UpgradePrompt requiredRole={UserRole.SOVEREIGN} />;
       }
 
       if (fallback) {
@@ -44,15 +49,10 @@ export const RoleGuard: React.FC<RoleGuardProps> = ({
   }
 
   // Перевірка за списком дозволених ролей
-  if (allowedRoles && !allowedRoles.includes(role)) {
-    // Спеціальний кейс: якщо юзер PROMO, а ми хочемо запропонувати апгрейд
-    if (showUpgrade && isPromo && (allowedRoles.includes(UserRole.PRO) || allowedRoles.includes(UserRole.VIP))) {
-      return <UpgradePrompt />;
-    }
-
-    // Легасі-аліаси для зворотної сумісності
-    if (showUpgrade && role === UserRole.CLIENT_BASIC && allowedRoles.includes(UserRole.CLIENT_PREMIUM)) {
-      return <UpgradePrompt />;
+  if (allowedRoles && !allowedRoles.includes(currentRole)) {
+    // Спеціальний кейс: якщо юзер Terminal або Pro, а ми хочемо запропонувати апгрейд
+    if (showUpgrade && (isTerminal || isPro) && !isCore) {
+      return <UpgradePrompt requiredRole={allowedRoles[0]} />;
     }
 
     if (fallback) {

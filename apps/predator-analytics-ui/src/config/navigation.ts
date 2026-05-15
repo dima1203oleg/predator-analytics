@@ -57,7 +57,7 @@ export type NavAccent =
   | 'cyan'
   | 'violet';
 
-export type NavigationAudience = 'business' | 'analyst' | 'supply_chain' | 'drpo' | 'admin';
+export type NavigationAudience = 'terminal' | 'pro' | 'sovereign' | 'core';
 export type NavWorkspaceMode = 'all' | 'favorites' | 'recent' | 'recommended';
 
 export interface NavItem {
@@ -230,36 +230,43 @@ export const navAccentStyles: Record<
   },
 };
 
-// ─── Відповідність ролей до аудиторій ────────────────────────────────────────
+// ─── Відповідність ролей до допусків PREDATOR ELITE ──────────────────────────
 
 const navigationAudienceAliases: Record<string, NavigationAudience> = {
-  // Нові ролі v61.0
-  promo: 'business',
-  pro: 'analyst',
-  vip: 'drpo',
-  
-  // Легасі-аліаси
-  admin: 'admin',
-  commander: 'admin',
-  client_basic: 'business',
-  client_premium: 'analyst',
-  client_drpo: 'drpo',
-  analyst: 'analyst',
-  operator: 'supply_chain',
-  supply: 'supply_chain',
-  'supply-chain': 'supply_chain',
-  supply_chain: 'supply_chain',
-  logistician: 'supply_chain',
-  logistics: 'supply_chain',
-  investigator: 'drpo',
-  viewer: 'business',
-  explorer: 'business',
-  ceo: 'business',
-  owner: 'business',
+  // Канонічні ролі PREDATOR ELITE
+  terminal: 'terminal',
+  pro: 'pro',
+  sovereign: 'sovereign',
+  core: 'core',
+
+  // Легасі-аліаси для зворотної сумісності
+  promo: 'terminal',
+  client_basic: 'terminal',
+  operator: 'terminal',
+  explorer: 'terminal',
+  viewer: 'terminal',
+  ceo: 'terminal',
+  owner: 'terminal',
+
+  analyst: 'pro',
+  client_premium: 'pro',
+  supply_chain: 'pro',
+  supply: 'pro',
+  'supply-chain': 'pro',
+  logistician: 'pro',
+  logistics: 'pro',
+
+  vip: 'sovereign',
+  client_drpo: 'sovereign',
+  investigator: 'sovereign',
+  drpo: 'sovereign',
+
+  admin: 'core',
+  commander: 'core',
 };
 
 export const resolveNavigationAudience = (role: string): NavigationAudience =>
-  navigationAudienceAliases[role?.toLowerCase?.() ?? ''] ?? 'business';
+  navigationAudienceAliases[role?.toLowerCase?.() ?? ''] ?? 'terminal';
 
 // ─── Глобальні дії (гарячі клавіші, режими) ──────────────────────────────────
 
@@ -321,66 +328,27 @@ export const globalNavigationActions: NavGlobalAction[] = [
  */
 const baseNavigationConfig: NavSection[] = [
   // ══════════════════════════════════════════════════════════════
-  // 0. OMNIVERSE — дата-агностична ОС (cyan)
-  //    Доступ: analyst, admin
-  // ══════════════════════════════════════════════════════════════
-  {
-    id: 'omniverse',
-    label: 'OMNIVERSE',
-    description: 'Універсальний шар даних: агностична інгестія, динамічні онтології та AI-синтез.',
-    outcome: 'Повна свобода від фіксованих схем даних.',
-    accent: 'cyan',
-    groups: [
-      {
-        title: 'Управління Даними',
-        audiences: ['analyst', 'drpo', 'admin'],
-        items: [
-          {
-            id: 'omniverse-hub',
-            label: 'Omniverse Hub',
-            path: '/omniverse',
-            icon: Box,
-            description: 'Головний центр управління універсальними даними.',
-            group: 'Управління Даними',
-            badge: 'v70.0',
-            audiences: ['analyst', 'drpo', 'admin'],
-            priority: 110,
-          },
-          {
-            id: 'omniverse-ingest',
-            label: 'Universal Ingest',
-            path: '/omniverse',
-            icon: Upload,
-            description: 'Інгестія довільних наборів даних через AI-інференс.',
-            group: 'Управління Даними',
-            audiences: ['analyst', 'drpo', 'admin'],
-            priority: 105,
-          },
-        ],
-      },
-    ],
-  },
-
+  // 1. КОМАНДНЕ КЕРІВНИЦТВО (sky)
   // ══════════════════════════════════════════════════════════════
   {
     id: 'executive',
-    label: 'EXECUTIVE',
-    description: 'Стратегічний рівень: рішення,ризики, брифінги та ситуаційна обізнаність.',
+    label: 'КОМАНДНЕ КЕРІВНИЦТВО',
+    description: 'Стратегічний рівень: рішення, ризики, брифінги та ситуаційна обізнаність.',
     outcome: 'Повний 360° контроль над бізнес-периметром.',
     accent: 'sky',
     groups: [
       {
         title: 'Командування',
-        audiences: ['business', 'analyst'],
+        audiences: ['terminal', 'pro', 'sovereign'],
         items: [
           {
             id: 'dashboard',
-            label: 'Виконавча рада',
+            label: 'Виконавча Рада',
             path: '/command?tab=board',
             icon: LayoutDashboard,
             description: 'Головна точка входу: ROI-пульс, KPI, швидкі переходи.',
             group: 'Командування',
-            audiences: ['business', 'analyst'],
+            audiences: ['terminal', 'pro', 'sovereign'],
             priority: 100,
           },
           {
@@ -390,7 +358,7 @@ const baseNavigationConfig: NavSection[] = [
             icon: Compass,
             description: 'Пріоритетний аналіз ризиків та цілей на поточний день.',
             group: 'Командування',
-            audiences: ['business', 'analyst'],
+            audiences: ['terminal', 'pro', 'sovereign'],
             priority: 92,
           },
           {
@@ -400,14 +368,14 @@ const baseNavigationConfig: NavSection[] = [
             icon: Newspaper,
             description: 'Персоналізована щоденна аналітика ринку.',
             group: 'Командування',
-            audiences: ['business', 'analyst'],
+            audiences: ['terminal', 'pro', 'sovereign'],
             priority: 84,
           },
         ],
       },
       {
-        title: 'Оперативний штаб',
-        audiences: ['analyst', 'drpo'],
+        title: 'Оперативний Штаб',
+        audiences: ['terminal', 'pro', 'sovereign'],
         items: [
           {
             id: 'war-room',
@@ -415,9 +383,9 @@ const baseNavigationConfig: NavSection[] = [
             path: '/command?tab=warroom',
             icon: Target,
             description: 'Оперативний штаб для кризового управління та ескалацій.',
-            group: 'Оперативний штаб',
-            badge: 'LIVE',
-            audiences: ['analyst', 'drpo'],
+            group: 'Оперативний Штаб',
+            badge: 'ОНЛАЙН',
+            audiences: ['pro', 'sovereign'],
             priority: 98,
           },
           {
@@ -426,20 +394,20 @@ const baseNavigationConfig: NavSection[] = [
             path: '/command?tab=risk',
             icon: TrendingUp,
             description: 'Агрегований фінансовий ризик портфелю клієнтів',
-            group: 'Оперативний штаб',
+            group: 'Оперативний Штаб',
             badge: 'ОНЛАЙН',
-            audiences: ['analyst', 'drpo'],
+            audiences: ['terminal', 'pro', 'sovereign'],
             priority: 99,
           },
           {
             id: 'alert-center',
-            label: 'Alert Center',
+            label: 'Центр Сповіщень',
             path: '/alerts',
             icon: AlertTriangle,
             description: 'Консолідований центр системних та аналітичних алертів.',
-            group: 'Оперативний штаб',
-            badge: 'NEW',
-            audiences: ['analyst', 'drpo'],
+            group: 'Оперативний Штаб',
+            badge: 'НОВЕ',
+            audiences: ['pro', 'sovereign'],
             priority: 97,
           },
           {
@@ -448,19 +416,9 @@ const baseNavigationConfig: NavSection[] = [
             path: '/decisions',
             icon: History,
             description: 'WORM-журнал прийнятих рішень з прив\'язкою до кейсів.',
-            group: 'Оперативний штаб',
-            audiences: ['analyst', 'drpo'],
+            group: 'Оперативний Штаб',
+            audiences: ['pro', 'sovereign'],
             priority: 88,
-          },
-          {
-            id: 'clients',
-            label: 'Портфель Клієнтів',
-            path: '/clients',
-            icon: Users,
-            description: 'Сегментація та аналіз клієнтської бази.',
-            group: 'Оперативний штаб',
-            audiences: ['analyst', 'drpo'],
-            priority: 80,
           },
         ],
       },
@@ -468,18 +426,55 @@ const baseNavigationConfig: NavSection[] = [
   },
 
   // ══════════════════════════════════════════════════════════════
-  // 2. INTELLIGENCE — торгова розвідка (amber)
+  // 2. ГЛОБАЛЬНА РОЗВІДКА (amber)
   // ══════════════════════════════════════════════════════════════
   {
     id: 'intelligence',
-    label: 'INTELLIGENCE',
+    label: 'ГЛОБАЛЬНА РОЗВІДКА',
     description: 'Митниця, ціни, логістичні потоки та аналіз ринків.',
     outcome: 'Торгова розвідка: домінування через аналіз потоків.',
     accent: 'amber',
     groups: [
       {
-        title: 'Ринок',
-        audiences: ['business', 'analyst', 'supply_chain', 'admin'],
+        title: 'Пошук та Ідентифікація',
+        audiences: ['terminal', 'pro', 'sovereign'],
+        items: [
+          {
+            id: 'search',
+            label: 'Універсальний Пошук',
+            path: '/search?tab=global',
+            icon: Search,
+            description: 'Синаптичний пошук по всіх реєстрах та базах.',
+            group: 'Пошук та Ідентифікація',
+            audiences: ['terminal', 'pro', 'sovereign'],
+            priority: 86,
+          },
+          {
+            id: 'registries',
+            label: 'Державні та Комерційні Реєстри',
+            path: '/search?tab=registries',
+            icon: Database,
+            description: 'Прямий доступ до відкритих та закритих баз даних.',
+            group: 'Пошук та Ідентифікація',
+            audiences: ['pro', 'sovereign'],
+            priority: 82,
+          },
+          {
+            id: 'entity-resolver',
+            label: 'Ідентифікатор Сутностей',
+            path: '/entity-resolver',
+            icon: Fingerprint,
+            description: 'Де-дублікація та злиття записів з confidence score.',
+            group: 'Пошук та Ідентифікація',
+            badge: 'НОВЕ',
+            audiences: ['pro', 'sovereign'],
+            priority: 81,
+          },
+        ],
+      },
+      {
+        title: 'Ринок та Логістика',
+        audiences: ['terminal', 'pro', 'sovereign'],
         items: [
           {
             id: 'market',
@@ -487,8 +482,8 @@ const baseNavigationConfig: NavSection[] = [
             path: '/market?tab=overview',
             icon: TrendingUp,
             description: 'Загальна аналітика зовнішньоекономічної діяльності.',
-            group: 'Ринок',
-            audiences: ['business', 'analyst', 'supply_chain', 'admin'],
+            group: 'Ринок та Логістика',
+            audiences: ['terminal', 'pro', 'sovereign'],
             priority: 90,
           },
           {
@@ -497,8 +492,8 @@ const baseNavigationConfig: NavSection[] = [
             path: '/market?tab=price',
             icon: BarChart3,
             description: 'Контроль цін та виявлення демпінгу.',
-            group: 'Ринок',
-            audiences: ['analyst', 'drpo', 'admin'],
+            group: 'Ринок та Логістика',
+            audiences: ['pro', 'sovereign'],
             priority: 86,
           },
           {
@@ -507,76 +502,10 @@ const baseNavigationConfig: NavSection[] = [
             path: '/geopolitical-radar',
             icon: Radar,
             description: 'Вплив світових подій на торговельну стабільність.',
-            group: 'Ринок',
-            badge: 'ELITE',
-            audiences: ['analyst', 'drpo', 'admin'],
+            group: 'Ринок та Логістика',
+            badge: 'ЕЛІТ',
+            audiences: ['sovereign'],
             priority: 85,
-          },
-        ],
-      },
-      {
-        title: 'Митниця та Логістика',
-        audiences: ['analyst', 'supply_chain', 'drpo', 'admin'],
-        items: [
-          {
-            id: 'customs-intel',
-            label: 'Митний Моніторинг',
-            path: '/market?tab=customs',
-            icon: Shield,
-            description: 'Аналіз декларацій та ризикових митних операцій.',
-            group: 'Митниця та Логістика',
-            audiences: ['analyst', 'supply_chain', 'drpo', 'admin'],
-            priority: 88,
-          },
-          {
-            id: 'trade-map',
-            label: 'Потоки Товарів',
-            path: '/market?tab=flows',
-            icon: Globe,
-            description: 'Візуалізація глобальних ланцюгів постачання.',
-            group: 'Митниця та Логістика',
-            audiences: ['analyst', 'supply_chain', 'drpo', 'admin'],
-            priority: 82,
-          },
-          {
-            id: 'suppliers',
-            label: 'Радар Постачальників',
-            path: '/market?tab=suppliers',
-            icon: Briefcase,
-            description: 'Пошук та верифікація стратегічних контрагентів.',
-            group: 'Митниця та Логістика',
-            audiences: ['analyst', 'supply_chain', 'drpo', 'admin'],
-            priority: 80,
-          },
-          {
-            id: 'supply-chain',
-            label: 'Ланцюги Постачання',
-            path: '/supply-chain',
-            icon: Layers,
-            description: 'Аналіз вразливостей та критичних вузлів.',
-            group: 'Митниця та Логістика',
-            audiences: ['supply_chain', 'analyst', 'drpo', 'admin'],
-            priority: 76,
-          },
-          {
-            id: 'maritime',
-            label: 'Морська Розвідка',
-            path: '/maritime',
-            icon: Ship,
-            description: 'Відстеження суден та активності портів.',
-            group: 'Митниця та Логістика',
-            audiences: ['supply_chain', 'analyst', 'drpo', 'admin'],
-            priority: 74,
-          },
-          {
-            id: 'tenders',
-            label: 'Тендерний Радар',
-            path: '/tenders',
-            icon: FileText,
-            description: 'Моніторинг державних закупівель та тендерів.',
-            group: 'Митниця та Логістика',
-            audiences: ['analyst', 'drpo', 'admin'],
-            priority: 72,
           },
         ],
       },
@@ -584,55 +513,18 @@ const baseNavigationConfig: NavSection[] = [
   },
 
   // ══════════════════════════════════════════════════════════════
-  // 3. ANALYTICS — due diligence, AML, графи (rose)
+  // 3. РИЗИКИ ТА КОМПЛАЄНС (rose)
   // ══════════════════════════════════════════════════════════════
   {
     id: 'analytics',
-    label: 'ANALYTICS',
+    label: 'РИЗИКИ ТА КОМПЛАЄНС',
     description: 'Due Diligence 360°, AML, санкції, UBO та зв\'язки.',
     outcome: 'Повний профіль будь-якого контрагента.',
     accent: 'rose',
     groups: [
       {
-        title: 'Пошук та Ідентифікація',
-        audiences: ['business', 'analyst', 'admin'],
-        items: [
-          {
-            id: 'search',
-            label: 'Глобальний Пошук',
-            path: '/search?tab=global',
-            icon: Search,
-            description: 'Синаптичний пошук по всіх реєстрах та базах.',
-            group: 'Пошук та Ідентифікація',
-            audiences: ['business', 'analyst', 'admin'],
-            priority: 86,
-          },
-          {
-            id: 'registries',
-            label: 'Державні реєстри',
-            path: '/search?tab=registries',
-            icon: Database,
-            description: 'Прямий доступ до відкритих та закритих баз даних.',
-            group: 'Пошук та Ідентифікація',
-            audiences: ['analyst', 'drpo', 'admin'],
-            priority: 82,
-          },
-          {
-            id: 'entity-resolver',
-            label: 'Entity Resolver',
-            path: '/entity-resolver',
-            icon: Fingerprint,
-            description: 'Де-дублікація та злиття записів з confidence score.',
-            group: 'Пошук та Ідентифікація',
-            badge: 'NEW',
-            audiences: ['analyst', 'drpo', 'admin'],
-            priority: 81,
-          },
-        ],
-      },
-      {
-        title: 'Розвідка та Комплаєнс',
-        audiences: ['analyst', 'drpo', 'admin'],
+        title: 'Перевірка Суб\'єктів',
+        audiences: ['terminal', 'pro', 'sovereign'],
         items: [
           {
             id: 'osint-diligence',
@@ -640,8 +532,8 @@ const baseNavigationConfig: NavSection[] = [
             path: '/osint?tab=diligence',
             icon: User,
             description: 'Повний KYC/KYB аудит та профіль ризиків суб\'єкта.',
-            group: 'Розвідка та Комплаєнс',
-            audiences: ['analyst', 'drpo', 'admin'],
+            group: 'Перевірка Суб\'єктів',
+            audiences: ['terminal', 'pro', 'sovereign'],
             priority: 91,
           },
           {
@@ -650,39 +542,45 @@ const baseNavigationConfig: NavSection[] = [
             path: '/osint?tab=ubo',
             icon: Network,
             description: 'Візуалізація кінцевих власників та структур впливу.',
-            group: 'Розвідка та Комплаєнс',
-            badge: 'ELITE',
-            audiences: ['analyst', 'drpo', 'admin'],
+            group: 'Перевірка Суб\'єктів',
+            badge: 'ЕЛІТ',
+            audiences: ['pro', 'sovereign'],
             priority: 97,
           },
           {
             id: 'graph',
-            label: 'Нейронний Граф',
+            label: 'Архітектура Зв\'язків',
             path: '/osint?tab=graph',
             icon: Network,
             description: 'Аналіз прихованих зв\'язків та аномальних кластерів.',
-            group: 'Розвідка та Комплаєнс',
-            audiences: ['analyst', 'drpo', 'admin'],
+            group: 'Перевірка Суб\'єктів',
+            audiences: ['pro', 'sovereign'],
             priority: 95,
           },
+        ],
+      },
+      {
+        title: 'Фінансовий Комплаєнс',
+        audiences: ['terminal', 'pro', 'sovereign'],
+        items: [
           {
             id: 'sanctions',
-            label: 'Санкції та PEP',
+            label: 'Радар Санкцій та PEP',
             path: '/osint?tab=sanctions',
             icon: ShieldX,
             description: 'Скринінг на санкційні списки та PEP-осіб.',
-            group: 'Розвідка та Комплаєнс',
-            audiences: ['analyst', 'drpo', 'admin'],
+            group: 'Фінансовий Комплаєнс',
+            audiences: ['terminal', 'pro', 'sovereign'],
             priority: 94,
           },
           {
             id: 'aml-radar',
-            label: 'AML Радар',
+            label: 'AML Моніторинг',
             path: '/financial?tab=aml',
             icon: ShieldCheck,
             description: 'Система виявлення схем відмивання коштів.',
-            group: 'Розвідка та Комплаєнс',
-            audiences: ['analyst', 'drpo', 'admin'],
+            group: 'Фінансовий Комплаєнс',
+            audiences: ['pro', 'sovereign'],
             priority: 92,
           },
           {
@@ -691,9 +589,9 @@ const baseNavigationConfig: NavSection[] = [
             path: '/financial?tab=swift',
             icon: Activity,
             description: 'Аналіз грошових переказів у реальному часі.',
-            group: 'Розвідка та Комплаєнс',
+            group: 'Фінансовий Комплаєнс',
             badge: 'ОНЛАЙН',
-            audiences: ['analyst', 'drpo', 'admin'],
+            audiences: ['sovereign'],
             priority: 90,
           },
           {
@@ -702,19 +600,9 @@ const baseNavigationConfig: NavSection[] = [
             path: '/financial?tab=offshore',
             icon: Globe,
             description: 'Виявлення підставних компаній та прихованих активів.',
-            group: 'Розвідка та Комплаєнс',
-            audiences: ['analyst', 'drpo', 'admin'],
+            group: 'Фінансовий Комплаєнс',
+            audiences: ['pro', 'sovereign'],
             priority: 88,
-          },
-          {
-            id: 'financial-hub',
-            label: 'Фінансовий Хаб',
-            path: '/financial',
-            icon: Landmark,
-            description: 'Єдиний центр управління фінансовою аналітикою.',
-            group: 'Розвідка та Комплаєнс',
-            audiences: ['analyst', 'drpo', 'admin'],
-            priority: 89,
           },
         ],
       },
@@ -722,125 +610,18 @@ const baseNavigationConfig: NavSection[] = [
   },
 
   // ══════════════════════════════════════════════════════════════
-  // 4. AI CORE — агенти, гіпотези, оракул (blue)
-  // ══════════════════════════════════════════════════════════════
-  {
-    id: 'ai',
-    label: 'AI CORE',
-    description: 'Автономні агенти, гіпотези, сценарне моделювання та предиктивна аналітика.',
-    outcome: 'Синтетичні інсайти для випередження подій.',
-    accent: 'blue',
-    groups: [
-      {
-        title: 'Когніція',
-        audiences: ['business', 'analyst', 'drpo', 'admin'],
-        items: [
-          {
-            id: 'oracle',
-            label: 'Суверенний Оракул',
-            path: '/nexus?tab=oracle',
-            icon: Sparkles,
-            description: 'Генеративний синтез від Lead Architect GLM.',
-            group: 'Когніція',
-            audiences: ['business', 'analyst', 'drpo', 'admin'],
-            priority: 100,
-          },
-          {
-            id: 'ai-insights',
-            label: 'ШІ Інсайти',
-            path: '/nexus?tab=insights',
-            icon: Zap,
-            description: 'Стратегічні висновки на базі кросмодальних сигналів.',
-            group: 'Когніція',
-            audiences: ['business', 'analyst', 'drpo', 'admin'],
-            priority: 86,
-          },
-          {
-            id: 'nexus',
-            label: 'Предиктивний Нексус',
-            path: '/nexus',
-            icon: BrainCircuit,
-            description: 'Центр прогнозного моделювання та сценаріїв.',
-            group: 'Когніція',
-            badge: 'ELITE',
-            audiences: ['analyst', 'drpo', 'admin'],
-            priority: 95,
-          },
-        ],
-      },
-      {
-        title: 'Аналітика та Агенти',
-        audiences: ['analyst', 'drpo', 'admin'],
-        items: [
-          {
-            id: 'ai-hypothesis',
-            label: 'Генератор Гіпотез',
-            path: '/nexus?tab=hypothesis',
-            icon: FlaskConical,
-            description: 'Автоматичне формування слідчих версій.',
-            group: 'Аналітика та Агенти',
-            audiences: ['analyst', 'drpo', 'admin'],
-            priority: 89,
-          },
-          {
-            id: 'scenarios',
-            label: 'Сценарне Моделювання',
-            path: '/scenarios',
-            icon: Layers,
-            description: '"What-if" симуляція на базі аналітичних моделей.',
-            group: 'Аналітика та Агенти',
-            badge: 'NEW',
-            audiences: ['analyst', 'drpo', 'admin'],
-            priority: 87,
-          },
-          {
-            id: 'agents',
-            label: 'ШІ Агенти',
-            path: '/nexus?tab=agents',
-            icon: Bot,
-            description: 'Керування автономною мережею аналітичних агентів.',
-            group: 'Аналітика та Агенти',
-            audiences: ['analyst', 'drpo', 'admin'],
-            priority: 88,
-          },
-          {
-            id: 'conversation-intel',
-            label: 'Аналіз Смислів',
-            path: '/conversation-intel',
-            icon: Radio,
-            description: 'Обробка неструктурованих комунікацій та тексту.',
-            group: 'Аналітика та Агенти',
-            audiences: ['analyst', 'drpo', 'admin'],
-            priority: 82,
-          },
-          {
-            id: 'knowledge',
-            label: 'База Знань',
-            path: '/nexus?tab=knowledge',
-            icon: Database,
-            description: 'Синхронізація знань для ШІ-ядра платформи.',
-            group: 'Аналітика та Агенти',
-            audiences: ['analyst', 'drpo', 'admin'],
-            priority: 74,
-          },
-        ],
-      },
-    ],
-  },
-
-  // ══════════════════════════════════════════════════════════════
-  // 5. INVESTIGATION — кейси, хронологія,розслідування (indigo)
+  // 4. РОЗСЛІДУВАННЯ (indigo)
   // ══════════════════════════════════════════════════════════════
   {
     id: 'investigation',
-    label: 'INVESTIGATION',
+    label: 'РОЗСЛІДУВАННЯ',
     description: 'Кейси, хронологія подій, структури влади та спостереження.',
     outcome: 'Структуроване розслідування від сигналу до рішення.',
     accent: 'indigo',
     groups: [
       {
         title: 'Кейс-менеджмент',
-        audiences: ['analyst', 'drpo', 'admin'],
+        audiences: ['terminal', 'pro', 'sovereign'],
         items: [
           {
             id: 'cases',
@@ -849,35 +630,181 @@ const baseNavigationConfig: NavSection[] = [
             icon: Briefcase,
             description: 'Управління розслідуваннями: від відкриття до архіву.',
             group: 'Кейс-менеджмент',
-            audiences: ['analyst', 'drpo', 'admin'],
+            audiences: ['pro', 'sovereign'],
             priority: 95,
           },
           {
             id: 'timeline',
-            label: 'Timeline Builder',
+            label: 'Хронологія Подій',
             path: '/timeline',
             icon: History,
             description: 'Хронологічна стрічка подій з прив\'язкою до документів.',
             group: 'Кейс-менеджмент',
-            badge: 'NEW',
-            audiences: ['analyst', 'drpo', 'admin'],
+            badge: 'НОВЕ',
+            audiences: ['pro', 'sovereign'],
             priority: 90,
           },
           {
             id: 'compliance',
-            label: 'Комплаєнс Аудит',
+            label: 'Комплексний Аудит',
             path: '/compliance',
             icon: Scale,
             description: 'Перевірка відповідності нормативним вимогам.',
             group: 'Кейс-менеджмент',
-            audiences: ['analyst', 'drpo', 'admin'],
+            audiences: ['pro', 'sovereign'],
             priority: 82,
           },
         ],
       },
       {
-        title: 'Глибока Розвідка',
-        audiences: ['analyst', 'drpo', 'admin'],
+        title: 'Логістичний Моніторинг',
+        audiences: ['terminal', 'pro', 'sovereign'],
+        items: [
+          {
+            id: 'customs-intel',
+            label: 'Митний Моніторинг',
+            path: '/market?tab=customs',
+            icon: Shield,
+            description: 'Аналіз декларацій та ризикових митних операцій.',
+            group: 'Логістичний Моніторинг',
+            audiences: ['pro', 'sovereign'],
+            priority: 88,
+          },
+          {
+            id: 'trade-map',
+            label: 'Потоки Товарів',
+            path: '/market?tab=flows',
+            icon: Globe,
+            description: 'Візуалізація глобальних ланцюгів постачання.',
+            group: 'Логістичний Моніторинг',
+            audiences: ['pro', 'sovereign'],
+            priority: 82,
+          },
+          {
+            id: 'supply-chain',
+            label: 'Ланцюги Постачання',
+            path: '/supply-chain',
+            icon: Layers,
+            description: 'Аналіз вразливостей та критичних вузлів.',
+            group: 'Логістичний Моніторинг',
+            audiences: ['pro', 'sovereign'],
+            priority: 76,
+          },
+          {
+            id: 'tenders',
+            label: 'Тендерний Радар',
+            path: '/tenders',
+            icon: FileText,
+            description: 'Моніторинг державних закупівель та тендерів.',
+            group: 'Логістичний Моніторинг',
+            audiences: ['terminal', 'pro', 'sovereign'],
+            priority: 72,
+          },
+        ],
+      },
+    ],
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // 5. КОГНІТИВНЕ ЯДРО (blue)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'ai',
+    label: 'КОГНІТИВНЕ ЯДРО',
+    description: 'Автономні агенти, гіпотези, сценарне моделювання та предиктивна аналітика.',
+    outcome: 'Синтетичні інсайти для випередження подій.',
+    accent: 'blue',
+    groups: [
+      {
+        title: 'ШІ-Синтез',
+        audiences: ['terminal', 'pro', 'sovereign'],
+        items: [
+          {
+            id: 'oracle',
+            label: 'Суверенний Оракул',
+            path: '/nexus?tab=oracle',
+            icon: Sparkles,
+            description: 'Генеративний синтез від Lead Architect GLM.',
+            group: 'ШІ-Синтез',
+            audiences: ['pro', 'sovereign'],
+            priority: 100,
+          },
+          {
+            id: 'ai-insights',
+            label: 'Центр ШІ-Інсайтів',
+            path: '/nexus?tab=insights',
+            icon: Zap,
+            description: 'Стратегічні висновки на базі кросмодальних сигналів.',
+            group: 'ШІ-Синтез',
+            audiences: ['terminal', 'pro', 'sovereign'],
+            priority: 86,
+          },
+          {
+            id: 'nexus',
+            label: 'Предиктивний Нексус',
+            path: '/nexus',
+            icon: BrainCircuit,
+            description: 'Центр прогнозного моделювання та сценаріїв.',
+            group: 'ШІ-Синтез',
+            badge: 'ЕЛІТ',
+            audiences: ['sovereign'],
+            priority: 95,
+          },
+        ],
+      },
+      {
+        title: 'Моделювання',
+        audiences: ['terminal', 'pro', 'sovereign'],
+        items: [
+          {
+            id: 'ai-hypothesis',
+            label: 'Генератор Гіпотез',
+            path: '/nexus?tab=hypothesis',
+            icon: FlaskConical,
+            description: 'Автоматичне формування слідчих версій.',
+            group: 'Моделювання',
+            audiences: ['pro', 'sovereign'],
+            priority: 89,
+          },
+          {
+            id: 'scenarios',
+            label: 'Сценарії Моделювання',
+            path: '/scenarios',
+            icon: Layers,
+            description: '"What-if" симуляція на базі аналітичних моделей.',
+            group: 'Моделювання',
+            badge: 'НОВЕ',
+            audiences: ['sovereign'],
+            priority: 87,
+          },
+          {
+            id: 'conversation-intel',
+            label: 'Аналіз Сигналів',
+            path: '/conversation-intel',
+            icon: Radio,
+            description: 'Обробка неструктурованих комунікацій та тексту.',
+            group: 'Моделювання',
+            audiences: ['pro', 'sovereign'],
+            priority: 82,
+          },
+        ],
+      },
+    ],
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // 6. СУВЕРЕННА КІБЕРРОЗВІДКА (gold) — Тільки Sovereign
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'cyber',
+    label: 'СУВЕРЕННА КІБЕРРОЗВІДКА',
+    description: 'Пасивний моніторинг, структури впливу та виявлення інсайдерів.',
+    outcome: 'Глибоке розуміння прихованих сил.',
+    accent: 'gold',
+    groups: [
+      {
+        title: 'Розвідка',
+        audiences: ['terminal', 'pro', 'sovereign'],
         items: [
           {
             id: 'som',
@@ -885,8 +812,8 @@ const baseNavigationConfig: NavSection[] = [
             path: '/command?tab=observer',
             icon: Eye,
             description: 'Пасивний моніторинг аномалій та патернів.',
-            group: 'Глибока Розвідка',
-            audiences: ['analyst', 'drpo', 'admin'],
+            group: 'Розвідка',
+            audiences: ['sovereign'],
             priority: 85,
           },
           {
@@ -895,19 +822,36 @@ const baseNavigationConfig: NavSection[] = [
             path: '/power-structure',
             icon: Landmark,
             description: 'Аналіз політичного впливу та зв\'язків.',
-            group: 'Глибока Розвідка',
-            audiences: ['analyst', 'drpo', 'admin'],
+            group: 'Розвідка',
+            audiences: ['sovereign'],
             priority: 81,
           },
           {
             id: 'financial-sigint',
-            label: 'Фінансова SIGINT',
+            label: 'Фінансова OSINT',
             path: '/financial-sigint',
             icon: Radar,
             description: 'Виявлення фінансових сигналів у розподілених мережах.',
-            group: 'Глибока Розвідка',
-            audiences: ['analyst', 'drpo', 'admin'],
+            group: 'Розвідка',
+            audiences: ['sovereign'],
             priority: 78,
+          },
+        ],
+      },
+      {
+        title: 'Кіберзахист',
+        audiences: ['terminal', 'pro', 'sovereign'],
+        items: [
+          {
+            id: 'insider-threat',
+            label: 'Індикатор Внутрішніх Загроз',
+            path: '/insider-threat',
+            icon: Shield,
+            description: 'Виявлення витоків даних та інсайдерської активності.',
+            group: 'Кіберзахист',
+            badge: 'ЕЛІТ',
+            audiences: ['sovereign'],
+            priority: 90,
           },
         ],
       },
@@ -915,207 +859,202 @@ const baseNavigationConfig: NavSection[] = [
   },
 
   // ══════════════════════════════════════════════════════════════
-  // 6. SYSTEM COMMAND CENTER — тільки admin (emerald)
-  //    Пульт управління інфраструктурою. БЕЗ будь-яких бізнес-даних.
+  // 7. PREDATOR CORE — Тільки Core/Admin (emerald)
   // ══════════════════════════════════════════════════════════════
   {
     id: 'system',
-    label: 'SYSTEM COMMAND CENTER',
+    label: 'PREDATOR CORE',
     description: 'Телеметрія кластера, безпека, пайплайни та оркестрація агентів.',
     outcome: 'Повний контроль над інфраструктурою PREDATOR.',
     accent: 'emerald',
     groups: [
       {
-        title: 'Моніторинг',
-        audiences: ['admin'],
+        title: 'Шлюзи Агрегації Даних',
+        audiences: ['core'],
+        items: [
+          {
+            id: 'omniverse-hub',
+            label: 'Універсальний Хаб',
+            path: '/omniverse',
+            icon: Box,
+            description: 'Головний центр управління універсальними даними.',
+            group: 'Шлюзи Агрегації Даних',
+            badge: 'v70.0',
+            audiences: ['core'],
+            priority: 110,
+          },
+          {
+            id: 'omniverse-ingest',
+            label: 'Інгестія Даних',
+            path: '/omniverse?tab=ingest',
+            icon: Upload,
+            description: 'Інгестія довільних наборів даних через AI-інференс.',
+            group: 'Шлюзи Агрегації Даних',
+            audiences: ['core'],
+            priority: 105,
+          },
+        ],
+      },
+      {
+        title: 'Операційне Управління Даними',
+        audiences: ['core'],
+        items: [
+          {
+            id: 'admin-database-command-center',
+            label: 'Центр Керування БД',
+            path: '/admin/database-command-center',
+            icon: Database,
+            description: 'Моніторинг здоров\'я 8 баз даних та System Memory Contract.',
+            group: 'Операційне Управління Даними',
+            audiences: ['core'],
+            priority: 96,
+          },
+          {
+            id: 'admin-dataops',
+            label: 'DataOps Кластер',
+            path: '/admin/command?tab=dataops',
+            icon: Database,
+            description: 'Kafka ingestion, фабрика модулів, датасети ШІ.',
+            group: 'Операційне Управління Даними',
+            audiences: ['core'],
+            priority: 88,
+          },
+        ],
+      },
+      {
+        title: 'Маршрутизація та Відмовостійкість',
+        audiences: ['core'],
         items: [
           {
             id: 'admin-infra',
             label: 'Телеметрія Кластера',
             path: '/admin/command?tab=infra',
             icon: Activity,
-            description: 'GPU VRAM, CPU, RAM, мережа — реальний час. Tensor Core Usage%.',
-            group: 'Моніторинг',
-            badge: 'LIVE',
-            audiences: ['admin'],
+            description: 'GPU VRAM, CPU, RAM, мережа — реальний час.',
+            group: 'Маршрутизація та Відмовостійкість',
+            badge: 'ОНЛАЙН',
+            audiences: ['core'],
             priority: 100,
           },
           {
             id: 'admin-failover',
-            label: 'Failover & Маршрутизація',
+            label: 'Failover Маршрутизація',
             path: '/admin/command?tab=failover',
             icon: Radio,
             description: 'Перемикання трафіку: Local K3s ↔ NVIDIA Server ↔ Colab.',
-            group: 'Моніторинг',
-            audiences: ['admin'],
+            group: 'Маршрутизація та Відмовостійкість',
+            audiences: ['core'],
             priority: 98,
           },
           {
-            id: 'admin-database-command-center',
-            label: 'Центр Керування БД',
-            path: '/admin/database-command-center',
-            icon: Database,
-            description: 'Моніторинг здоров\'я 8 баз даних, System Memory Contract та Smart Data Router.',
-            group: 'Моніторинг',
-            badge: 'NEW',
-            audiences: ['admin'],
-            priority: 96,
-          },
-        ],
-      },
-      {
-        title: 'Пайплайни',
-        audiences: ['admin'],
-        items: [
-          {
             id: 'admin-gitops',
-            label: 'GitOps & Пайплайни',
+            label: 'GitOps Пайплайни',
             path: '/admin/command?tab=gitops',
             icon: Box,
-            description: 'ArgoCD sync статус, CI/CD runs, ETL пайплайни.',
-            group: 'Пайплайни',
-            audiences: ['admin'],
+            description: 'ArgoCD sync статус, CI/CD runs.',
+            group: 'Маршрутизація та Відмовостійкість',
+            audiences: ['core'],
             priority: 95,
-          },
-          {
-            id: 'admin-dataops',
-            label: 'DataOps',
-            path: '/admin/command?tab=dataops',
-            icon: Database,
-            description: 'Kafka ingestion, фабрика модулів, датасети ШІ.',
-            group: 'Пайплайни',
-            audiences: ['admin'],
-            priority: 88,
           },
         ],
       },
       {
-        title: 'Агенти та Безпека',
-        audiences: ['admin'],
+        title: 'Панель Управління ШІ',
+        audiences: ['core'],
         items: [
-          {
-            id: 'admin-agents-ops',
-            label: 'Оркестрація Агентів',
-            path: '/admin/command?tab=agents-ops',
-            icon: Bot,
-            description: 'Статус агентів: CPU, RAM, черга завдань, success rate.',
-            group: 'Агенти та Безпека',
-            audiences: ['admin'],
-            priority: 92,
-          },
-          {
-            id: 'admin-security',
-            label: 'Zero Trust & Безпека',
-            path: '/admin/command?tab=security',
-            icon: Lock,
-            description: 'IAM, аудит сесій, API-ключі, логи доступу.',
-            group: 'Агенти та Безпека',
-            audiences: ['admin'],
-            priority: 90,
-          },
           {
             id: 'admin-ai-control',
             label: 'Контроль ШІ-Моделей',
             path: '/admin/ai-control',
             icon: BrainCircuit,
             description: 'LLM роутинг, A/B тести, VRAM-баланс моделей.',
-            group: 'Агенти та Безпека',
-            audiences: ['admin'],
+            group: 'Панель Управління ШІ',
+            audiences: ['core'],
             priority: 85,
+          },
+          {
+            id: 'admin-agents-ops',
+            label: 'Оркестрація Агентів',
+            path: '/admin/command?tab=agents-ops',
+            icon: Bot,
+            description: 'Статус автономної мережі аналітичних агентів.',
+            group: 'Панель Управління ШІ',
+            audiences: ['core'],
+            priority: 92,
+          },
+          {
+            id: 'knowledge',
+            label: 'Векторна База Знань',
+            path: '/nexus?tab=knowledge',
+            icon: Database,
+            description: 'Синхронізація знань для ШІ-ядра платформи.',
+            group: 'Панель Управління ШІ',
+            audiences: ['core'],
+            priority: 74,
           },
         ],
       },
       {
-        title: 'Конфігурація',
-        audiences: ['admin'],
+        title: 'Архітектура Нульової Довіри',
+        audiences: ['core'],
         items: [
           {
+            id: 'admin-security',
+            label: 'Zero Trust Консоль',
+            path: '/admin/command?tab=security',
+            icon: Lock,
+            description: 'IAM, аудит сесій, API-ключі, логи доступу.',
+            group: 'Архітектура Нульової Довіри',
+            audiences: ['core'],
+            priority: 90,
+          },
+          {
             id: 'admin-settings',
-            label: 'Налаштування',
+            label: 'Глобальні Налаштування',
             path: '/admin/command?tab=settings',
             icon: Settings,
             description: 'Глобальна конфігурація платформи.',
-            group: 'Конфігурація',
-            audiences: ['admin'],
+            group: 'Архітектура Нульової Довіри',
+            audiences: ['core'],
             priority: 70,
           },
           {
             id: 'api-docs',
-            label: 'API Документація',
+            label: 'API Протоколи',
             path: '/api-docs',
             icon: FileText,
             description: 'Інтеграційні протоколи для зовнішніх систем.',
-            group: 'Конфігурація',
-            audiences: ['admin'],
+            group: 'Архітектура Нульової Довіри',
+            audiences: ['core'],
             priority: 60,
           },
         ],
       },
-    ],
-  },
-
-  // ══════════════════════════════════════════════════════════════
-  // 7. AUTONOMOUS FACTORY — v61.0-ELITE (gold)
-  //    Оркестрація OODA-циклу, Council Judge та ChiefConductor.
-  // ══════════════════════════════════════════════════════════════
-  {
-    id: 'factory-elite',
-    label: 'AUTONOMOUS FACTORY',
-    description: 'Оркестрація OODA-циклу, Council Judge та ChiefConductor.',
-    outcome: 'Нескінченне вдосконалення PREDATOR в режимі 24/7.',
-    accent: 'gold',
-    groups: [
       {
-        title: 'Управління Фабрикою',
-        audiences: ['admin'],
+        title: 'Автономний Завод',
+        audiences: ['core'],
         items: [
           {
             id: 'factory-auto',
-            label: 'Автономний Завод',
+            label: 'Автономний Завод OODA',
             path: '/admin/command?tab=auto-factory',
             icon: Factory,
             description: 'Контроль OODA-циклу, патч-менеджмент та еволюція.',
-            group: 'Управління Фабрикою',
-            badge: 'ELITE',
-            audiences: ['admin'],
+            group: 'Автономний Завод',
+            badge: 'ЕЛІТ',
+            audiences: ['core'],
             priority: 100,
           },
-          {
-            id: 'factory-studio',
-            label: 'Студія Фабрики',
-            path: '/admin/command?tab=factory-studio',
-            icon: Layers,
-            description: 'Дизайн нових модулів та нейронних архітектур.',
-            group: 'Управління Фабрикою',
-            audiences: ['admin'],
-            priority: 90,
-          },
-        ],
-      },
-      {
-        title: 'Суверенний Інтелект',
-        audiences: ['admin'],
-        items: [
           {
             id: 'factory-council',
             label: 'Council Judge',
             path: '/admin/command?tab=auto-factory',
             icon: ShieldCheck,
-            description: ' ішення Ради Моделей (Qwen/LLaMA/Gemini).',
-            group: 'Суверенний Інтелект',
-            badge: 'AI',
-            audiences: ['admin'],
+            description: 'Рішення Ради Моделей (Qwen/LLaMA/Gemini).',
+            group: 'Автономний Завод',
+            badge: 'ШІ',
+            audiences: ['core'],
             priority: 95,
-          },
-          {
-            id: 'factory-conductor',
-            label: 'Chief Conductor',
-            path: '/admin/command?tab=agents-ops',
-            icon: Zap,
-            description: 'Глобальний оркестратор автономних місій.',
-            group: 'Суверенний Інтелект',
-            audiences: ['admin'],
-            priority: 92,
           },
         ],
       },
@@ -1135,7 +1074,7 @@ const buildGroupsFromItems = (items: NavItem[] = []): NavGroup[] => {
     groups.set(groupTitle, currentItems);
   }
 
-  return [...groups.entries()].map(([title, groupItems]) => ({
+  return Array.from(groups.entries()).map(([title, groupItems]) => ({
     title,
     items: groupItems.map((item) => ({
       ...item,
@@ -1196,40 +1135,27 @@ const isItemVisibleForRole = (item: NavItem, role: string): boolean => {
     return false;
   }
 
-  // ─── НОВА ЛОГІКА RBAC v61.0 ────────────────────────────────────────────────
-  // Для бізнес-ролей показуємо ВСІ бізнес-секції
-  // Різниця тільки в контенті всередині (UpgradePrompt, маскування даних)
-  const businessRoles = ['promo', 'pro', 'vip', 'client_basic', 'client_premium', 'client_drpo', 'analyst', 'operator', 'explorer', 'investigator'];
-  if (businessRoles.includes(normalizedRole)) {
-    // Бізнес-ролі бачать все, КРІМ admin-секцій
-    if (item.audiences && item.audiences.includes('admin')) {
+  // ─── PREDATOR ELITE RBAC ──────────────────────────────────────────────────
+  // Showcase UI: Клієнти бачать усі клієнтські секції (terminal, pro, sovereign)
+  const clientRoles = ['terminal', 'pro', 'sovereign', 'promo', 'client_basic', 'operator', 'explorer', 'viewer', 'ceo', 'owner', 'client_premium', 'analyst', 'supply_chain', 'logistician', 'vip', 'client_drpo', 'investigator'];
+  
+  if (clientRoles.includes(normalizedRole)) {
+    // Клієнти НЕ бачать Core-секції
+    if (item.audiences && item.audiences.includes('core')) {
       return false;
     }
-    
-    // Якщо audiences не вказано - показуємо
-    if (!item.audiences || item.audiences.length === 0) {
-      return true;
-    }
-    
-    // Перевіряємо, чи відповідає роль хоч одній з аудиторій
-    const audience = resolveNavigationAudience(normalizedRole);
-    return item.audiences.includes(audience);
-  }
-
-  // ─── ІЗОЛЯЦІЯ АДМІНА ───────────────────────────────────────────────────────
-  // Адмін бачить ТІЛЬКИ технічні секції (SYSTEM COMMAND CENTER, AUTONOMOUS FACTORY)
-  // Жодних бізнес-даних
-  if (normalizedRole === 'admin' || normalizedRole === 'commander') {
-    if (!item.audiences || item.audiences.length === 0) return false;
-    return item.audiences.includes('admin');
-  }
-
-  // ─── FALLBACK ДЛЯ ЛЕГАСИ ────────────────────────────────────────────────────
-  if (!item.audiences || item.audiences.length === 0) {
+    // Всі інші показуємо (включаючи ті, до яких немає доступу - для Upgrade Prompt)
     return true;
   }
 
-  return item.audiences.includes(resolveNavigationAudience(normalizedRole));
+  // ─── PREDATOR CORE ────────────────────────────────────────────────────────
+  // Адмін бачить ТІЛЬКИ технічні секції
+  if (normalizedRole === 'core' || normalizedRole === 'admin' || normalizedRole === 'commander') {
+    if (!item.audiences || item.audiences.length === 0) return false;
+    return item.audiences.includes('core');
+  }
+
+  return true;
 };
 
 const isGroupVisibleForRole = (group: NavGroup, role: string): boolean => {
@@ -1239,74 +1165,50 @@ const isGroupVisibleForRole = (group: NavGroup, role: string): boolean => {
     return false;
   }
 
-  // ─── НОВА ЛОГІКА RBAC v61.0 ────────────────────────────────────────────────
-  // Для бізнес-ролей показуємо ВСІ бізнес-секції
-  const businessRoles = ['promo', 'pro', 'vip', 'client_basic', 'client_premium', 'client_drpo', 'analyst', 'operator', 'explorer', 'investigator'];
-  if (businessRoles.includes(normalizedRole)) {
-    // Бізнес-ролі бачать все, КРІМ admin-секцій
-    if (group.audiences && group.audiences.includes('admin')) {
+  // Showcase UI
+  const clientRoles = ['terminal', 'pro', 'sovereign', 'promo', 'client_basic', 'operator', 'explorer', 'viewer', 'ceo', 'owner', 'client_premium', 'analyst', 'supply_chain', 'logistician', 'vip', 'client_drpo', 'investigator'];
+  if (clientRoles.includes(normalizedRole)) {
+    if (group.audiences && group.audiences.includes('core')) {
       return false;
     }
-    
-    // Якщо audiences не вказано - показуємо
-    if (!group.audiences || group.audiences.length === 0) {
-      return true;
-    }
-    
-    // Перевіряємо, чи відповідає роль хоч одній з аудиторій
-    const audience = resolveNavigationAudience(normalizedRole);
-    return group.audiences.includes(audience);
-  }
-
-  // ─── ІЗОЛЯЦІЯ АДМІНА ───────────────────────────────────────────────────────
-  // Адмін бачить ТІЛЬКИ технічні секції
-  if (normalizedRole === 'admin' || normalizedRole === 'commander') {
-    if (!group.audiences || group.audiences.length === 0) return false;
-    return group.audiences.includes('admin');
-  }
-
-  // ─── FALLBACK ДЛЯ ЛЕГАСИ ────────────────────────────────────────────────────
-  if (!group.audiences || group.audiences.length === 0) {
     return true;
   }
 
-  return group.audiences.includes(resolveNavigationAudience(normalizedRole));
+  // Core
+  if (normalizedRole === 'core' || normalizedRole === 'admin' || normalizedRole === 'commander') {
+    if (!group.audiences || group.audiences.length === 0) return false;
+    return group.audiences.includes('core');
+  }
+
+  return true;
 };
 
-// ─── Helper: визначення заблокованих пунктів меню ─────────────────────────────
+// ─── Helper: визначення заблокованих пунктів меню (Showcase UI) ──────────────
 
 /**
- * Перевіряє, чи заблокований пункт меню для конкретної ролі
+ * Визначає, чи потрібен Upgrade Prompt (замок) для певного пункту меню.
  * @param item - пункт навігації
  * @param role - роль користувача
- * @returns true, якщо пункт заблокований для цієї ролі
+ * @returns true, якщо пункт вимагає вищого допуску
  */
 export const isNavItemLocked = (item: NavItem, role: string): boolean => {
   const normalizedRole = role?.toLowerCase?.() ?? '';
+  const resolvedAudience = resolveNavigationAudience(normalizedRole);
 
-  // Адмін не має заблокованих пунктів в своєму контурі (тільки admin-секції)
-  if (normalizedRole === 'admin' || normalizedRole === 'commander') {
-    return false;
+  // Core ніколи не має замків у своєму просторі
+  if (resolvedAudience === 'core') return false;
+
+  // Якщо секція не має специфічних вимог до аудиторії
+  if (!item.audiences || item.audiences.length === 0) return false;
+
+  // Термінал не має доступу до Pro та Sovereign
+  if (resolvedAudience === 'terminal') {
+    if (item.audiences.includes('pro') || item.audiences.includes('sovereign')) return true;
   }
 
-  // Для бізнес-ролей перевіряємо audiences
-  const businessRoles = ['promo', 'pro', 'vip', 'client_basic', 'client_premium', 'client_drpo', 'analyst', 'operator', 'explorer', 'investigator'];
-  if (businessRoles.includes(normalizedRole)) {
-    // PROMO не має доступу до analyst-секцій
-    if (normalizedRole === 'promo' || normalizedRole === 'client_basic' || normalizedRole === 'operator' || normalizedRole === 'explorer') {
-      if (item.audiences && (item.audiences.includes('analyst') || item.audiences.includes('drpo'))) {
-        return true;
-      }
-    }
-
-    // PRO не має доступу до drpo-секцій
-    if (normalizedRole === 'pro' || normalizedRole === 'client_premium' || normalizedRole === 'analyst') {
-      if (item.audiences && item.audiences.includes('drpo')) {
-        return true;
-      }
-    }
-
-    return false;
+  // Pro не має доступу до Sovereign
+  if (resolvedAudience === 'pro') {
+    if (item.audiences.includes('sovereign')) return true;
   }
 
   return false;
