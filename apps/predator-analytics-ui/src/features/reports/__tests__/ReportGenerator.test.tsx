@@ -8,12 +8,8 @@ vi.mock('framer-motion', async () => {
     return {
         ...actual as any,
         motion: {
-            div: ({ children, className, onClick, style }: any) => (
-                <div className={className} onClick={onClick} style={style} data-testid="motion-div">{children}</div>
-            ),
-            button: ({ children, className, onClick, style }: any) => (
-                <button className={className} onClick={onClick} style={style} data-testid="motion-button">{children}</button>
-            )
+            div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+            button: ({ children, ...props }: any) => <button {...props}>{children}</button>
         },
         AnimatePresence: ({ children }: any) => <>{children}</>
     };
