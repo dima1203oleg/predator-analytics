@@ -32,6 +32,7 @@ import { ToasterProvider } from './components/premium/ToasterProvider';
 import { LiveAgentTerminal } from './components/intelligence/LiveAgentTerminal';
 import { AdvancedBackground } from './components/AdvancedBackground';
 import NeuralPulse from './components/NeuralPulse';
+import { TechGridBackground } from './components/TechGridBackground';
 import { OfflineBanner } from './components/shared/OfflineBanner';
 
 // Setup Query Client with optimized settings
@@ -143,6 +144,7 @@ function App() {
                             <SuperIntelligenceProvider>
                               <AdvancedBackground />
                               <NeuralPulse />
+                              <TechGridBackground />
                               <AnimatePresence mode="wait">
                                 {appState === 'BOOTING' && (
                                   <motion.div

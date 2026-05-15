@@ -350,9 +350,8 @@ export const Sidebar: React.FC = () => {
       initial={false}
       animate={{ width: isOpen ? 296 : 80 }}
       transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-      className="relative sticky top-0 z-50 flex h-screen shrink-0 flex-col overflow-visible"
+      className="relative sticky top-0 z-50 flex h-screen shrink-0 flex-col overflow-visible glass-premium"
       style={{
-        background: 'rgba(15, 15, 17, 0.97)',
         borderRight: '1px solid rgba(196, 18, 48, 0.15)',
         boxShadow: '8px 0 40px rgba(0,0,0,0.6)',
       }}
