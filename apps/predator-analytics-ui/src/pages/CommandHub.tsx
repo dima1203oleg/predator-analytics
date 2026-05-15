@@ -17,12 +17,12 @@ import { StrategicScenarioTab } from './tabs/command/StrategicScenarioTab';
 type CommandHubTab = 'board' | 'brief' | 'risk' | 'warroom' | 'observer' | 'simulation';
 
 const ALL_TABS = [
-  { id: 'board', label: 'Виконавча рада', icon: <LayoutDashboard size={16} /> },
-  { id: 'brief', label: 'Ранковий брифінг', icon: <FileText size={16} /> },
-  { id: 'risk', label: 'Портфельний ризик', icon: <PieChart size={16} />, premium: true },
-  { id: 'warroom', label: 'Ситуаційна кімната', icon: <ShieldAlert size={16} />, premium: true },
-  { id: 'observer', label: 'Суверенний спостерігач', icon: <Eye size={16} />, premium: true },
-  { id: 'simulation', label: 'Стратегічний сценарій', icon: <Zap size={16} />, premium: true },
+  { id: 'board', label: 'Executive Board', icon: <LayoutDashboard size={16} /> },
+  { id: 'brief', label: 'Strategic Briefing', icon: <FileText size={16} /> },
+  { id: 'risk', label: 'Strategic Alerts', icon: <PieChart size={16} />, premium: true },
+  { id: 'warroom', label: 'Crisis Room', icon: <ShieldAlert size={16} />, premium: true },
+  { id: 'observer', label: 'Sovereign Observer', icon: <Eye size={16} />, premium: true },
+  { id: 'simulation', label: 'Strategic Scenario', icon: <Zap size={16} />, premium: true },
 ];
 
 const CommandHub: React.FC = () => {
@@ -65,7 +65,7 @@ const CommandHub: React.FC = () => {
       tabs={hubTabs}
       activeTab={activeTab}
       onTabChange={handleTabChange}
-      accent="rose"
+      accent="sky"
       actions={
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-500 text-[10px] font-bold uppercase tracking-wider">

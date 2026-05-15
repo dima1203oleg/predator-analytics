@@ -67,6 +67,7 @@ const OSINTHub = lazy(() => import('./pages/OSINTHub'));
 const FinancialHub = lazy(() => import('./pages/FinancialHub'));
 const AIHub = lazy(() => import('./pages/AIHub'));
 const SystemHub = lazy(() => import('./pages/SystemHub'));
+const ModelingHub = lazy(() => import('./pages/ModelingHub'));
 
 
 const FactoryStudio = lazy(() => import('./features/factory/FactoryStudio'));
@@ -167,6 +168,14 @@ const GuardedAIHub = () => {
     : <AIHub />;
 };
 
+const GuardedModelingHub = () => {
+  const routeLocation = useLocation();
+  const tab = new URLSearchParams(routeLocation.search).get('tab');
+  return ['simulation', 'forecast'].includes(tab ?? '')
+    ? <PremiumOnly><ModelingHub /></PremiumOnly>
+    : <ModelingHub />;
+};
+
 export const AppRoutesNew = () => {
   const location = useLocation();
   const { user } = useUser();
@@ -246,6 +255,7 @@ export const AppRoutesNew = () => {
             <Route path="/newspaper" element={<PremiumOnly><Navigate to="/search?tab=newspaper" replace /></PremiumOnly>} />
             <Route path="/som" element={<PremiumOnly><Navigate to="/command?tab=observer" replace /></PremiumOnly>} />
             <Route path="/war-room" element={<PremiumOnly><Navigate to="/command?tab=warroom" replace /></PremiumOnly>} />
+            <Route path="/modeling" element={<GuardedModelingHub />} />
 
             {/* 2. ТОРГОВА РОЗВІДКА (AMBER HUB) */}
             <Route path="/market" element={<MarketHub />} />

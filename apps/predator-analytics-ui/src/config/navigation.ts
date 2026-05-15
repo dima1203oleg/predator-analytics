@@ -329,22 +329,22 @@ export const globalNavigationActions: NavGlobalAction[] = [
  */
 const baseNavigationConfig: NavSection[] = [
   // ══════════════════════════════════════════════════════════════
-  // 1. ГЛОБАЛЬНИЙ КОНТРОЛЬ (sky)
+  // 1. 🌐 CONTROL (sky)
   // ══════════════════════════════════════════════════════════════
   {
     id: 'global-control',
-    label: 'ГЛОБАЛЬНИЙ КОНТРОЛЬ',
+    label: '🌐 CONTROL',
     description: 'Верхньорівневий моніторинг активів та ситуаційна обізнаність.',
     outcome: 'Стратегічне домінування.',
     accent: 'sky',
     groups: [
       {
-        title: 'Штаб Командування',
+        title: 'Command Center',
         audiences: ['terminal', 'pro', 'sovereign'],
         items: [
           {
             id: 'dashboard',
-            label: 'Виконавча Рада',
+            label: 'Executive Board',
             path: '/command?tab=board',
             icon: LayoutDashboard,
             description: 'ROI-пульс, KPI та ключові метрики бізнес-периметра.',
@@ -353,7 +353,7 @@ const baseNavigationConfig: NavSection[] = [
           },
           {
             id: 'war-room',
-            label: 'Ситуаційна Кімната',
+            label: 'Crisis Room',
             path: '/command?tab=warroom',
             icon: Target,
             description: 'Оперативний штаб для кризового управління та ескалацій.',
@@ -363,7 +363,7 @@ const baseNavigationConfig: NavSection[] = [
           },
           {
             id: 'portfolio-risk',
-            label: 'Карта Ризиків',
+            label: 'Strategic Alerts',
             path: '/command?tab=risk',
             icon: TrendingUp,
             description: 'Агрегований фінансовий та репутаційний ризик портфеля.',
@@ -376,22 +376,32 @@ const baseNavigationConfig: NavSection[] = [
   },
 
   // ══════════════════════════════════════════════════════════════
-  // 2. РАДА ДИРЕКТОРІВ (gold)
+  // 2. 📊 EXECUTIVE (gold)
   // ══════════════════════════════════════════════════════════════
   {
-    id: 'directors-council',
-    label: 'РАДА ДИРЕКТОРІВ',
+    id: 'executive-sector',
+    label: '📊 EXECUTIVE',
     description: 'Аналітичні зведення та стратегічне планування.',
     outcome: 'Інформаційна перевага.',
     accent: 'gold',
     groups: [
       {
-        title: 'Інтелект-сервіси',
+        title: 'Strategic Planning',
         audiences: ['terminal', 'pro', 'sovereign'],
         items: [
           {
+            id: 'scenario-modeling',
+            label: 'Scenario Simulation',
+            path: '/modeling?tab=simulation',
+            icon: Layers,
+            description: 'What-if симуляція на базі онтології та Causal AI.',
+            badge: 'ELITE',
+            audiences: ['pro', 'sovereign'],
+            priority: 100,
+          },
+          {
             id: 'morning-brief',
-            label: 'Ранковий Брифінг',
+            label: 'Strategic Briefing',
             path: '/command?tab=brief',
             icon: Compass,
             description: 'Пріоритетний аналіз ризиків на поточний операційний день.',
@@ -400,21 +410,12 @@ const baseNavigationConfig: NavSection[] = [
           },
           {
             id: 'newspaper',
-            label: 'Ранкова Газета',
+            label: 'Intelligence Feed',
             path: '/search?tab=newspaper',
             icon: Newspaper,
             description: 'Персоналізована щоденна аналітика ринку та конкурентів.',
             audiences: ['terminal', 'pro', 'sovereign'],
             priority: 84,
-          },
-          {
-            id: 'decisions',
-            label: 'Журнал Рішень',
-            path: '/decisions',
-            icon: History,
-            description: 'WORM-архів прийнятих стратегічних рішень.',
-            audiences: ['pro', 'sovereign'],
-            priority: 88,
           },
         ],
       },
@@ -422,22 +423,22 @@ const baseNavigationConfig: NavSection[] = [
   },
 
   // ══════════════════════════════════════════════════════════════
-  // 3. КОМЕРЦІЙНА РОЗВІДКА (amber)
+  // 3. 🔍 INTELLIGENCE (amber)
   // ══════════════════════════════════════════════════════════════
   {
-    id: 'commercial-intel',
-    label: 'КОМЕРЦІЙНА РОЗВІДКА',
+    id: 'intel-sector',
+    label: '🔍 INTELLIGENCE',
     description: 'Пошук, ідентифікація та аналіз ринкових гравців.',
     outcome: 'Ринкова прозорість.',
     accent: 'amber',
     groups: [
       {
-        title: 'Розвідка Ринків',
+        title: 'Core Intelligence',
         audiences: ['terminal', 'pro', 'sovereign'],
         items: [
           {
             id: 'search',
-            label: 'Універсальний Пошук',
+            label: 'Entity Search',
             path: '/search?tab=global',
             icon: Search,
             description: 'Глобальний пошук по реєстрах та базах даних.',
@@ -445,138 +446,8 @@ const baseNavigationConfig: NavSection[] = [
             priority: 86,
           },
           {
-            id: 'market',
-            label: 'Огляд Ринку',
-            path: '/market?tab=overview',
-            icon: TrendingUp,
-            description: 'Аналітика зовнішньоекономічної діяльності.',
-            audiences: ['terminal', 'pro', 'sovereign'],
-            priority: 90,
-          },
-          {
-            id: 'price-compare',
-            label: 'Прайс-Аудитор',
-            path: '/market?tab=price',
-            icon: BarChart3,
-            description: 'Контроль цін та виявлення аномальних відхилень.',
-            audiences: ['pro', 'sovereign'],
-            priority: 86,
-          },
-        ],
-      },
-    ],
-  },
-
-  // ══════════════════════════════════════════════════════════════
-  // 4. МИТНИЦЯ ТА ЛОГІСТИКА (blue)
-  // ══════════════════════════════════════════════════════════════
-  {
-    id: 'logistics-customs',
-    label: 'МИТНИЦЯ ТА ЛОГІСТИКА',
-    description: 'Моніторинг вантажних потоків та митної активності.',
-    outcome: 'Логістична стійкість.',
-    accent: 'blue',
-    groups: [
-      {
-        title: 'Supply Chain Control',
-        audiences: ['terminal', 'pro', 'sovereign'],
-        items: [
-          {
-            id: 'customs-intel',
-            label: 'Митний Моніторинг',
-            path: '/market?tab=customs',
-            icon: Shield,
-            description: 'Аналіз декларацій та ризикових операцій.',
-            audiences: ['pro', 'sovereign'],
-            priority: 88,
-          },
-          {
-            id: 'supply-chain',
-            label: 'Ланцюги Постачання',
-            path: '/supply-chain',
-            icon: Layers,
-            description: 'Візуалізація та аналіз вразливостей поставок.',
-            audiences: ['pro', 'sovereign'],
-            priority: 76,
-          },
-          {
-            id: 'tenders',
-            label: 'Тендерний Радар',
-            path: '/tenders',
-            icon: FileText,
-            description: 'Моніторинг державних закупівель (Prozorro).',
-            audiences: ['terminal', 'pro', 'sovereign'],
-            priority: 72,
-          },
-        ],
-      },
-    ],
-  },
-
-  // ══════════════════════════════════════════════════════════════
-  // 5. ЮРИДИЧНИЙ КОМПЛАЄНС (rose)
-  // ══════════════════════════════════════════════════════════════
-  {
-    id: 'legal-compliance',
-    label: 'ЮРИДИЧНИЙ КОМПЛАЄНС',
-    description: 'Due Diligence, KYC та перевірка бенефіціарів.',
-    outcome: 'Правова безпека.',
-    accent: 'rose',
-    groups: [
-      {
-        title: 'Перевірка Суб\'єктів',
-        audiences: ['terminal', 'pro', 'sovereign'],
-        items: [
-          {
-            id: 'osint-diligence',
-            label: 'Персональне Досьє',
-            path: '/osint?tab=diligence',
-            icon: User,
-            description: 'Повний KYC/KYB аудит будь-якого суб\'єкта.',
-            audiences: ['terminal', 'pro', 'sovereign'],
-            priority: 91,
-          },
-          {
-            id: 'ubo-map',
-            label: 'Карта Бенефіціарів',
-            path: '/osint?tab=ubo',
-            icon: Network,
-            description: 'Структури власності та приховані зв\'язки.',
-            badge: 'ELITE',
-            audiences: ['pro', 'sovereign'],
-            priority: 97,
-          },
-          {
-            id: 'sanctions',
-            label: 'Санкції та PEP',
-            path: '/osint?tab=sanctions',
-            icon: ShieldX,
-            description: 'Скринінг на санкційні списки та політичні зв\'язки.',
-            audiences: ['terminal', 'pro', 'sovereign'],
-            priority: 94,
-          },
-        ],
-      },
-    ],
-  },
-
-  // ══════════════════════════════════════════════════════════════
-  // 6. ГЛИБОКА АНАЛІТИКА (indigo)
-  // ══════════════════════════════════════════════════════════════
-  {
-    id: 'deep-analytics',
-    label: 'ГЛИБОКА АНАЛІТИКА',
-    description: 'Графові алгоритми та пошук аномалій.',
-    outcome: 'Виявлення прихованого.',
-    accent: 'indigo',
-    groups: [
-      {
-        title: 'Graph Intelligence',
-        audiences: ['terminal', 'pro', 'sovereign'],
-        items: [
-          {
             id: 'graph',
-            label: 'Архітектура Зв\'язків',
+            label: 'Graph Analysis',
             path: '/osint?tab=graph',
             icon: Network,
             description: 'Аналіз графа зв\'язків та аномальних кластерів.',
@@ -584,18 +455,8 @@ const baseNavigationConfig: NavSection[] = [
             priority: 95,
           },
           {
-            id: 'entity-resolver',
-            label: 'Ідентифікатор Сутностей',
-            path: '/entity-resolver',
-            icon: Fingerprint,
-            description: 'Де-дублікація та злиття записів з різних джерел.',
-            badge: 'NEW',
-            audiences: ['pro', 'sovereign'],
-            priority: 81,
-          },
-          {
             id: 'offshore-detector',
-            label: 'Офшорний Детектор',
+            label: 'Offshore Detection',
             path: '/financial?tab=offshore',
             icon: Globe,
             description: 'Виявлення підставних компаній та офшорних активів.',
@@ -608,22 +469,115 @@ const baseNavigationConfig: NavSection[] = [
   },
 
   // ══════════════════════════════════════════════════════════════
-  // 7. КІБЕРБЕЗПЕКА ТА РИЗИКИ (violet)
+  // 4. 🚢 SUPPLY (blue)
   // ══════════════════════════════════════════════════════════════
   {
-    id: 'cyber-risk',
-    label: 'КІБЕРБЕЗПЕКА ТА РИЗИКИ',
+    id: 'supply-sector',
+    label: '🚢 SUPPLY',
+    description: 'Моніторинг вантажних потоків та митної активності.',
+    outcome: 'Логістична стійкість.',
+    accent: 'blue',
+    groups: [
+      {
+        title: 'Maritime & Trade',
+        audiences: ['terminal', 'pro', 'sovereign'],
+        items: [
+          {
+            id: 'customs-intel',
+            label: 'Customs Intelligence',
+            path: '/market?tab=customs',
+            icon: Shield,
+            description: 'Аналіз декларацій та ризикових операцій.',
+            audiences: ['pro', 'sovereign'],
+            priority: 88,
+          },
+          {
+            id: 'supply-chain',
+            label: 'Logistics Control',
+            path: '/supply-chain',
+            icon: Layers,
+            description: 'Візуалізація та аналіз вразливостей поставок.',
+            audiences: ['pro', 'sovereign'],
+            priority: 76,
+          },
+          {
+            id: 'tenders',
+            label: 'Trade Pressure',
+            path: '/tenders',
+            icon: FileText,
+            description: 'Моніторинг державних закупівель та тендерного тиску.',
+            audiences: ['terminal', 'pro', 'sovereign'],
+            priority: 72,
+          },
+        ],
+      },
+    ],
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // 5. ⚖️ COMPLIANCE (rose)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'compliance-sector',
+    label: '⚖️ COMPLIANCE',
+    description: 'Due Diligence, KYC та перевірка бенефіціарів.',
+    outcome: 'Правова безпека.',
+    accent: 'rose',
+    groups: [
+      {
+        title: 'Legal Monitoring',
+        audiences: ['terminal', 'pro', 'sovereign'],
+        items: [
+          {
+            id: 'osint-diligence',
+            label: 'KYC/KYB Audit',
+            path: '/osint?tab=diligence',
+            icon: User,
+            description: 'Повний аудит будь-якого суб\'єкта.',
+            audiences: ['terminal', 'pro', 'sovereign'],
+            priority: 91,
+          },
+          {
+            id: 'ubo-map',
+            label: 'Beneficiary Map',
+            path: '/osint?tab=ubo',
+            icon: Network,
+            description: 'Структури власності та приховані зв\'язків.',
+            badge: 'ELITE',
+            audiences: ['pro', 'sovereign'],
+            priority: 97,
+          },
+          {
+            id: 'sanctions',
+            label: 'Sanctions & PEP',
+            path: '/osint?tab=sanctions',
+            icon: ShieldX,
+            description: 'Скринінг на санкційні списки та політичні зв\'язки.',
+            audiences: ['terminal', 'pro', 'sovereign'],
+            priority: 94,
+          },
+        ],
+      },
+    ],
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  // 6. 🛡 CYBER (violet)
+  // ══════════════════════════════════════════════════════════════
+  {
+    id: 'cyber-sector',
+    label: '🛡 CYBER',
     description: 'AML-моніторинг та аналіз геополітичних загроз.',
     outcome: 'Системна захищеність.',
     accent: 'violet',
     groups: [
       {
-        title: 'Risk Guard',
+        title: 'Attack Surface',
         audiences: ['terminal', 'pro', 'sovereign'],
         items: [
           {
             id: 'aml-radar',
-            label: 'AML Радар',
+            label: 'AML Intelligence',
             path: '/financial?tab=aml',
             icon: ShieldCheck,
             description: 'Виявлення схем відмивання коштів.',
@@ -632,7 +586,7 @@ const baseNavigationConfig: NavSection[] = [
           },
           {
             id: 'swift-monitor',
-            label: 'SWIFT Монітор',
+            label: 'SWIFT Monitor',
             path: '/financial?tab=swift',
             icon: Activity,
             description: 'Аналіз транскордонних транзакцій у реальному часі.',
@@ -642,7 +596,7 @@ const baseNavigationConfig: NavSection[] = [
           },
           {
             id: 'geopolitical-radar',
-            label: 'Геополітичний Радар',
+            label: 'Geopolitical Threat',
             path: '/geopolitical-radar',
             icon: Radar,
             description: 'Вплив глобальних подій на бізнес-стабільність.',
@@ -656,22 +610,22 @@ const baseNavigationConfig: NavSection[] = [
   },
 
   // ══════════════════════════════════════════════════════════════
-  // 8. СУВЕРЕННИЙ ШІ (cyan)
+  // 7. 🧠 AI CORE (cyan)
   // ══════════════════════════════════════════════════════════════
   {
-    id: 'sovereign-ai',
-    label: 'СУВЕРЕННИЙ ШІ',
+    id: 'ai-core-sector',
+    label: '🧠 AI CORE',
     description: 'Генеративна аналітика та предиктивне моделювання.',
     outcome: 'Когнітивна перевага.',
     accent: 'cyan',
     groups: [
       {
-        title: 'Neural Core',
+        title: 'Sovereign Agents',
         audiences: ['terminal', 'pro', 'sovereign'],
         items: [
           {
             id: 'oracle',
-            label: 'Суверенний Оракул',
+            label: 'Sovereign Oracle',
             path: '/nexus?tab=oracle',
             icon: Sparkles,
             description: 'Генеративний синтез від архітектурних LLM моделей.',
@@ -680,7 +634,7 @@ const baseNavigationConfig: NavSection[] = [
           },
           {
             id: 'nexus',
-            label: 'Предиктивний Нексус',
+            label: 'Predictive Nexus',
             path: '/nexus',
             icon: BrainCircuit,
             description: 'Центр прогнозного моделювання та сценаріїв.',
@@ -690,7 +644,7 @@ const baseNavigationConfig: NavSection[] = [
           },
           {
             id: 'ai-insights',
-            label: 'Центр ШІ-Інсайтів',
+            label: 'AI Insights Hub',
             path: '/nexus?tab=insights',
             icon: Zap,
             description: 'Кросмодальні сигнали та стратегічні висновки.',
@@ -703,11 +657,11 @@ const baseNavigationConfig: NavSection[] = [
   },
 
   // ══════════════════════════════════════════════════════════════
-  // 9. РОЗСЛІДУВАННЯ (slate)
+  // 8. 🕵 INVESTIGATION (slate)
   // ══════════════════════════════════════════════════════════════
   {
-    id: 'investigations',
-    label: 'РОЗСЛІДУВАННЯ',
+    id: 'investigation-sector',
+    label: '🕵 INVESTIGATION',
     description: 'Управління кейсами та хронологія розслідувань.',
     outcome: 'Доказова база.',
     accent: 'slate',
@@ -718,16 +672,16 @@ const baseNavigationConfig: NavSection[] = [
         items: [
           {
             id: 'cases',
-            label: 'Кейс-Менеджер',
+            label: 'Lobby Mapping',
             path: '/cases',
             icon: Briefcase,
-            description: 'Структуроване управління слідчими кейсами.',
+            description: 'Структуроване управління слідчими кейсами та зв\'язками.',
             audiences: ['pro', 'sovereign'],
             priority: 95,
           },
           {
             id: 'timeline',
-            label: 'Хронологія Подій',
+            label: 'Event Timeline',
             path: '/timeline',
             icon: History,
             description: 'Тимчасова шкала подій та зв\'язок з документами.',
@@ -737,7 +691,7 @@ const baseNavigationConfig: NavSection[] = [
           },
           {
             id: 'audit-log',
-            label: 'Лог Операцій',
+            label: 'WORM Audit Log',
             path: '/compliance',
             icon: Scale,
             description: 'WORM-журнал усіх операцій у системі.',
