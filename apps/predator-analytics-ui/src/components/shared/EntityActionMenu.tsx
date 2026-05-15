@@ -13,7 +13,7 @@ import { ROLE_CAPABILITIES } from '@/config/roles';
 
 interface EntityActionMenuProps {
   entityId: string;
-  entityType: 'company' | 'person' | 'vessel' | 'customs_declaration';
+  entityType: 'company' | 'person' | 'vessel' | 'customs_declaration' | 'tender';
   entityName?: string;
   onAction?: (action: string, id: string) => void;
 }

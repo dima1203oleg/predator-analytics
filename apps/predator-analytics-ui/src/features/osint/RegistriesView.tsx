@@ -27,6 +27,9 @@ import { CyberOrb } from '@/components/CyberOrb';
 import { HoloContainer } from '@/components/HoloContainer';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/utils/cn';
+import { useRole } from '@/context/RoleContext';
+import { maskIdentifier, maskPersonalData, maskFinancialValue } from '@/lib/dataMasking';
+import { EntityActionMenu } from '@/components/shared/EntityActionMenu';
 
 // ========================
 // Types
@@ -58,6 +61,7 @@ interface CompanyDetails {
 // ========================
 
 export default function RegistriesView() {
+    const { role, capabilities } = useRole();
     const [query, setQuery] = useState('');
     const [results, setResults] = useState<SearchResult[]>([]);
     const [selectedCompany, setSelectedCompany] = useState<CompanyDetails | null>(null);
@@ -229,10 +233,16 @@ export default function RegistriesView() {
                                        <motion.div key={res.edrpou} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }} onClick={() => fetchDetails(res.edrpou)} className="p-6 bg-white/[0.02] border border-white/[0.04] rounded-3xl hover:border-emerald-500/40 hover:bg-emerald-500/[0.02] cursor-pointer transition-all group/it">
                                           <div className="flex justify-between items-center mb-3">
                                              <Badge className="bg-emerald-600/10 text-emerald-500 border-none font-black text-[9px]">{res.status}</Badge>
-                                             <Fingerprint size={16} className="text-slate-800 group-hover/it:text-emerald-500 transition-colors" />
+                                             <div onClick={e => e.stopPropagation()}>
+                                                 <EntityActionMenu 
+                                                     entityId={res.edrpou} 
+                                                     entityType="company" 
+                                                     entityName={res.name}
+                                                 />
+                                              </div>
                                           </div>
-                                          <h4 className="text-sm font-black text-white italic uppercase truncate mb-1">{res.name}</h4>
-                                          <p className="text-[9px] font-black text-slate-700 italic uppercase">ЄДРПОУ: {res.edrpou}</p>
+                                          <h4 className="text-sm font-black text-white italic uppercase truncate mb-1">{maskPersonalData(res.name, capabilities.personalDataAccess)}</h4>
+                                          <p className="text-[9px] font-black text-slate-700 italic uppercase">ЄДРПОУ: {maskIdentifier(res.edrpou, capabilities.identifierMasking)}</p>
                                        </motion.div>
                                     ))}
                                  </motion.div>
@@ -285,8 +295,12 @@ export default function RegistriesView() {
                                   </div>
                               </div>
 
-                              <h2 className="text-4xl font-black text-white uppercase tracking-tighter text-center leading-tight mb-5 italic skew-x-[-2deg]">{selectedCompany.name}</h2>
-                              <Badge className="bg-emerald-600/10 text-emerald-500 border-emerald-500/30 mb-12 uppercase text-xs font-mono font-black italic px-6 py-2 rounded-xl">ЄДРПОУ: {selectedCompany.edrpou}</Badge>
+                              <h2 className="text-4xl font-black text-white uppercase tracking-tighter text-center leading-tight mb-5 italic skew-x-[-2deg]">
+                                  {maskPersonalData(selectedCompany.name, capabilities.personalDataAccess)}
+                              </h2>
+                              <Badge className="bg-emerald-600/10 text-emerald-500 border-emerald-500/30 mb-12 uppercase text-xs font-mono font-black italic px-6 py-2 rounded-xl">
+                                  ЄДРПОУ: {maskIdentifier(selectedCompany.edrpou, capabilities.identifierMasking)}
+                              </Badge>
 
                               <div className="w-full space-y-8">
                                  <div className="p-8 bg-black/60 rounded-[3rem] border border-white/[0.04] text-center space-y-6">
@@ -345,7 +359,7 @@ export default function RegistriesView() {
                                              <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500 group-hover:bg-emerald-500 group-hover:text-black transition-all">
                                                 <Briefcase size={22} />
                                              </div>
-                                             <span className="text-lg font-black text-white italic uppercase tracking-tighter">{d}</span>
+                                             <span className="text-lg font-black text-white italic uppercase tracking-tighter">{maskPersonalData(d, capabilities.personalDataAccess)}</span>
                                           </div>
                                        ))}
                                     </div>
@@ -356,7 +370,7 @@ export default function RegistriesView() {
                                              <div className="w-12 h-12 rounded-2xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-500 group-hover:bg-sky-500 group-hover:text-black transition-all">
                                                 <Fingerprint size={22} />
                                              </div>
-                                             <span className="text-lg font-black text-white italic uppercase tracking-tighter">{b}</span>
+                                             <span className="text-lg font-black text-white italic uppercase tracking-tighter">{maskPersonalData(b, capabilities.personalDataAccess)}</span>
                                           </div>
                                        ))}
                                     </div>

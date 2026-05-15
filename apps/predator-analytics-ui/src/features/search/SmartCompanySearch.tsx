@@ -16,6 +16,9 @@ import {cersService} from '@/services/unified/cers.service';
 import {Card} from '@/components/ui/card';
 import {Alert} from '@/components/ui/alert';
 import {DataTable} from '@/components/ui/data-table';
+import {useRole} from '@/context/RoleContext';
+import {maskFinancialValue, maskIdentifier, maskPersonalData} from '@/lib/dataMasking';
+import {EntityActionMenu} from '@/components/shared/EntityActionMenu';
 
 // ──────────────────────────────────────────────────────────────
 // Types & Interfaces
@@ -49,6 +52,7 @@ interface Company {
 
 export const SmartCompanySearch: React.FC = () => {
   const navigate = useNavigate();
+  const {role, capabilities} = useRole();
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState<SearchFilters>({
     region: 'all',
@@ -306,8 +310,12 @@ export const SmartCompanySearch: React.FC = () => {
                   sortable: true,
                   render: (row: Company) => (
                     <div>
-                      <div className="font-bold text-white">{row.name}</div>
-                      <div className="text-xs text-gray-500">{row.ueid}</div>
+                      <div className="font-bold text-white">
+                        {maskPersonalData(row.name, capabilities.personalDataAccess)}
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        {maskIdentifier(row.ueid, capabilities.identifierMasking)}
+                      </div>
                     </div>
                   )
                 },
@@ -362,8 +370,22 @@ export const SmartCompanySearch: React.FC = () => {
                   sortable: true,
                   render: (row: Company) => (
                     <span className="text-gray-300">
-                      {row.revenue ? `₴${(row.revenue / 1000000).toFixed(1)}M` : '-'}
+                      {row.revenue ? maskFinancialValue(row.revenue, capabilities.financialPrecision) : '-'}
                     </span>
+                  )
+                },
+                {
+                  key: 'actions',
+                  label: 'Дії',
+                  width: '5%',
+                  render: (row: Company) => (
+                    <div onClick={(e) => e.stopPropagation()}>
+                      <EntityActionMenu 
+                        entityId={row.ueid} 
+                        entityType="company" 
+                        entityName={row.name}
+                      />
+                    </div>
                   )
                 }
               ]}

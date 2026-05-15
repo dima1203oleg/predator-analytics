@@ -34,6 +34,9 @@ import { CyberOrb } from '@/components/CyberOrb';
 import { cn } from '@/utils/cn';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { SovereignAudio } from '@/utils/sovereign-audio';
+import { useRole } from '@/context/RoleContext';
+import { maskFinancialValue, maskIdentifier, maskPersonalData } from '@/lib/dataMasking';
+import { EntityActionMenu } from '@/components/shared/EntityActionMenu';
 
 // ─── HELPER COMPONENTS ───────────────────────────────────────────────
 
@@ -61,6 +64,7 @@ const RiskBadge: React.FC<{ score: number }> = ({ score }) => {
 };
 
 const TenderCard: React.FC<{ tender: any; idx: number }> = ({ tender, idx }) => {
+    const { role, capabilities } = useRole();
     const isCritical = tender.risk_score >= 80;
     
     return (
@@ -86,7 +90,16 @@ const TenderCard: React.FC<{ tender: any; idx: number }> = ({ tender, idx }) => 
                    </div>
                    <div className="flex flex-col items-end gap-2">
                        <RiskBadge score={tender.risk_score || 0} />
-                       <span className="text-[10px] font-black text-slate-700 italic tracking-[0.2em] font-mono">#{tender.id?.slice(-8).toUpperCase()}</span>
+                       <div className="flex items-center gap-3">
+                           <span className="text-[10px] font-black text-slate-700 italic tracking-[0.2em] font-mono">#{maskIdentifier(tender.id?.slice(-8).toUpperCase() || '', capabilities.identifierMasking)}</span>
+                           <div onClick={e => e.stopPropagation()}>
+                               <EntityActionMenu 
+                                   entityId={tender.id} 
+                                   entityType="tender" 
+                                   entityName={tender.title}
+                               />
+                           </div>
+                       </div>
                    </div>
                 </div>
 
@@ -95,7 +108,9 @@ const TenderCard: React.FC<{ tender: any; idx: number }> = ({ tender, idx }) => 
                       {tender.title}
                    </h3>
                    <div className="flex items-center gap-3 border-l-2 border-slate-800 pl-4 py-1">
-                      <span className="text-[10px] font-black text-slate-500 uppercase italic truncate max-w-[200px]">{tender.procuringEntity || 'НЕВІДОМИЙ ЗАМОВНИК'}</span>
+                      <span className="text-[10px] font-black text-slate-500 uppercase italic truncate max-w-[200px]">
+                          {maskPersonalData(tender.procuringEntity || 'НЕВІДОМИЙ ЗАМОВНИК', capabilities.personalDataAccess)}
+                      </span>
                    </div>
                 </div>
 
@@ -104,7 +119,7 @@ const TenderCard: React.FC<{ tender: any; idx: number }> = ({ tender, idx }) => 
                       <div>
                          <p className="text-[9px] font-black text-slate-700 uppercase italic tracking-widest mb-1">СУМА_ЛОТА</p>
                          <p className="text-3xl font-black text-white italic tracking-tighter font-mono leading-none">
-                            {(tender.value / 1_000_000).toFixed(1)} <span className="text-sm text-emerald-500">МЛН ₴</span>
+                            {maskFinancialValue(tender.value, capabilities.financialPrecision)}
                          </p>
                       </div>
                       <div className="text-right">

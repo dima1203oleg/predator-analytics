@@ -25,8 +25,12 @@ import { CyberGrid } from '@/components/CyberGrid';
 import { Badge } from '@/components/ui/badge';
 import { CyberOrb } from '@/components/CyberOrb';
 import { cn } from '@/utils/cn';
+import { useRole } from '@/context/RoleContext';
+import { maskIdentifier, maskPersonalData } from '@/lib/dataMasking';
+import { EntityActionMenu } from '@/components/shared/EntityActionMenu';
 
 const SearchPage: React.FC = () => {
+    const { role, capabilities } = useRole();
     const [query, setQuery] = useState('');
     const [isSearching, setIsSearching] = useState(false);
     const [results, setResults] = useState<any[]>([]);
@@ -179,16 +183,27 @@ const SearchPage: React.FC = () => {
                                                       </div>
                                                       <div className="text-left font-black italic">
                                                          <p className="text-[11px] text-red-600 uppercase tracking-widest leading-none">{res.type}</p>
-                                                         <p className="text-[8px] text-slate-700 uppercase tracking-widest mt-1">UUID:{res.id.padStart(6, '0')}</p>
+                                                          <p className="text-[8px] text-slate-700 uppercase tracking-widest mt-1">UUID:{maskIdentifier(res.id, capabilities.identifierMasking)}</p>
                                                       </div>
                                                    </div>
-                                                   {res.severity === 'CRITICAL' && (
-                                                      <span className="bg-red-600 text-white text-[9px] font-black px-4 py-1.5 rounded-full  shadow-lg">КРИТИЧНИЙ_РИЗИК</span>
-                                                   )}
+                                                   <div className="flex items-center gap-4">
+                                                       <div onClick={e => e.stopPropagation()}>
+                                                           <EntityActionMenu 
+                                                               entityId={res.id} 
+                                                               entityType={res.type === 'COMPANY' ? 'company' : 'customs_declaration'} 
+                                                               entityName={res.title}
+                                                           />
+                                                       </div>
+                                                       {res.severity === 'CRITICAL' && (
+                                                          <span className="bg-red-600 text-white text-[9px] font-black px-4 py-1.5 rounded-full  shadow-lg">КРИТИЧНИЙ_РИЗИК</span>
+                                                       )}
+                                                   </div>
                                                 </div>
 
                                                 <div className="space-y-6 flex-1">
-                                                   <h3 className="text-3xl font-black text-white italic uppercase tracking-tighter leading-tight group-hover:text-red-500 transition-colors">{res.title}</h3>
+                                                   <h3 className="text-3xl font-black text-white italic uppercase tracking-tighter leading-tight group-hover:text-red-500 transition-colors">
+                                                       {maskPersonalData(res.title, capabilities.personalDataAccess)}
+                                                   </h3>
                                                    <div className="p-6 bg-red-600/5 border-l-4 border-red-600 rounded-r-2xl">
                                                       <p className="text-sm font-bold text-slate-300 italic uppercase leading-relaxed">{res.info}</p>
                                                    </div>
