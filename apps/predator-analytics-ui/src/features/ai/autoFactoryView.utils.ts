@@ -389,8 +389,8 @@ export const normalizeAutoFactorySnapshot = (
   const isRunning = Boolean(statusRecord?.is_running);
   const activeFixes = bugRecords.filter((bug) => bug.statusLabel === 'У роботі').length;
   const fixedBugs = bugRecords.filter((bug) => bug.statusLabel === 'Завершено').length;
-  const totalServices = systemStatus?.summary.total ?? null;
-  const healthyServices = systemStatus?.summary.healthy ?? null;
+  const totalServices = systemStatus?.summary?.total ?? null;
+  const healthyServices = systemStatus?.summary?.healthy ?? null;
   const serviceHealthPercent =
     totalServices && healthyServices != null && totalServices > 0
       ? (healthyServices / totalServices) * 100
@@ -479,7 +479,7 @@ export const normalizeAutoFactorySnapshot = (
         statusLabel: systemStatus ? 'Підключено' : 'Н/д',
         detailLabel:
           systemStatus
-            ? `${formatCount(systemStatus.summary.healthy)} з ${formatCount(systemStatus.summary.total)} сервісів справні`
+            ? `${formatCount(systemStatus.summary?.healthy ?? 0)} з ${formatCount(systemStatus.summary?.total ?? 0)} сервісів справні`
             : 'Немає підтвердження з /system/status',
         tone: systemStatus ? 'sky' : 'slate',
       },

@@ -4,6 +4,11 @@ export * from './CyberOrb';
 export * from './CyberGrid';
 export * from './HoloContainer';
 export * from './ui/TacticalCard';
+export * from './ui/ThermalHover';
+export * from './ui/SlideToExecute';
+export * from './ui/GlassCard';
+export * from './ui/TacticalFocus';
+export * from './ui/KineticDepth';
 export * from './ViewHeader';
 export * from './EnhancedButton';
 

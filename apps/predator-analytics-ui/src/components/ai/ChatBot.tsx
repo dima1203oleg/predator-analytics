@@ -98,7 +98,7 @@ const ChatBot = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsOpen(false)}
-            className="fixed inset-0 z-40 cursor-default bg-black/10 backdrop-blur-[1px]"
+            className="fixed inset-0 z-40 cursor-default bg-black/50 backdrop-blur-sm"
           />
           <motion.div
             ref={panelRef}

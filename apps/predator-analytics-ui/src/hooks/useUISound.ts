@@ -10,7 +10,11 @@ export enum UISoundType {
 
 const isEnabled = (): boolean => {
   if (typeof window === 'undefined') return false;
-  return localStorage.getItem('predator_ui_sounds') !== 'off';
+  try {
+    return localStorage.getItem('predator_ui_sounds') !== 'off';
+  } catch {
+    return false;
+  }
 };
 
 let audioCtx: AudioContext | null = null;
@@ -91,8 +95,12 @@ export const useUISound = () => {
     isEnabled,
     toggle: () => {
       if (typeof window === 'undefined') return;
-      const next = localStorage.getItem('predator_ui_sounds') === 'off' ? 'on' : 'off';
-      localStorage.setItem('predator_ui_sounds', next);
+      try {
+        const next = localStorage.getItem('predator_ui_sounds') === 'off' ? 'on' : 'off';
+        localStorage.setItem('predator_ui_sounds', next);
+      } catch {
+        // Ignore localStorage errors in test environment
+      }
     },
   };
 };

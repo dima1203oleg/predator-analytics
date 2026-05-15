@@ -7,6 +7,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Command,
+  Lock,
   LogOut,
   Search,
   Shield,
@@ -21,6 +22,7 @@ import {
   getGlobalNavigationActions,
   getNavigationTotals,
   getVisibleNavigation,
+  isNavItemLocked,
   navAccentStyles,
   type NavSection,
   resolveNavigationAudience,
@@ -739,6 +741,11 @@ export const Sidebar: React.FC = () => {
                                                 >
                                                   {item.label}
                                                 </span>
+                                                {isNavItemLocked(item, userRole) && (
+                                                  <span title="Заблоковано для вашого рівня доступу">
+                                                    <Lock className="h-3 w-3 shrink-0 text-rose-400" />
+                                                  </span>
+                                                )}
                                                 {item.badge && (
                                                   <span
                                                     className="shrink-0 rounded-full border px-1 py-0.5 text-[7px] font-black uppercase tracking-[0.1em] leading-none"

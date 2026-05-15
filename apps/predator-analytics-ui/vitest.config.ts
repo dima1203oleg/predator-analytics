@@ -18,7 +18,7 @@ export default defineConfig({
     globals: true,
 
     // Setup файл — ініціалізація React Testing Library
-    setupFiles: ['./src/__tests__/setup.ts'],
+    setupFiles: ['./src/__tests__/setup.tsx'],
 
     // Патерни для тестових файлів
     include: [

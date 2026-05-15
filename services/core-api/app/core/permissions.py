@@ -1,13 +1,15 @@
-"""RBAC (Role-Based Access Control) — Матриця прав доступу PREDATOR Analytics.
+"""RBAC (Role-Based Access Control) — Матриця прав доступу PREDATOR Analytics v61.0.
 
-Ролі (COMP-301..COMP-420):
-- admin
-- analyst
-- guest
-- business (SMB/Enterprise)
-- bank (compliance)
-- gov (law enforcement / regulations)
-- journalist (OSINT)
+Нові ролі згідно з ТЗ RBAC v61.0:
+- promo (Рівень 1: STANDARD / PROMO - рекламно-заохочувальний)
+- pro (Рівень 2: PRO CLIENT - комерційний доступ)
+- vip (Рівень 3: VIP CLIENT / ELITE SIGINT - повний VIP доступ)
+- admin (Рівень 4: SYSTEM ADMIN - технічне управління)
+
+Легасі-аліаси для зворотної сумісності:
+- analyst -> pro
+- business -> promo
+- guest -> promo
 """
 from enum import StrEnum
 
@@ -19,33 +21,89 @@ from app.core.security import get_current_user_payload
 class Role(StrEnum):
     """Типи ролей у системі."""
 
-    ADMIN = "admin"
-    ANALYST = "analyst"
-    GUEST = "guest"
-    BUSINESS = "business"
-    BANK = "bank"
-    GOV = "gov"
-    JOURNALIST = "journalist"
+    # Нові ролі RBAC v61.0
+    PROMO = "promo"           # Рівень 1: STANDARD / PROMO
+    PRO = "pro"               # Рівень 2: PRO CLIENT
+    VIP = "vip"               # Рівень 3: VIP CLIENT / ELITE SIGINT
+    ADMIN = "admin"           # Рівень 4: SYSTEM ADMIN
+
+    # Легасі-аліаси для зворотної сумісності
+    ANALYST = "pro"
+    BUSINESS = "promo"
+    GUEST = "promo"
+    BANK = "pro"
+    GOV = "vip"
+    JOURNALIST = "promo"
 
 
 class Permission(StrEnum):
     """Можливі дії (прав доступу) в системі."""
 
+    # Базовий доступ до даних
     READ_CORP_DATA = "read:corp_data"
-    WRITE_CORP_DATA = "write:corp_data"
     READ_COMPANIES = "read:companies"
     READ_CUSTOMS = "read:customs"
     READ_INTEL = "read:intel"
+
+    # Аналітичні інструменти
     RUN_ANALYTICS = "run:analytics"
     RUN_GRAPH = "run:graph"
+
+    # Спеціальні права
     VIEW_WARROOM = "view:warroom"
     EDIT_TENANT = "edit:tenant"
+
+    # Управління чутливими даними
+    READ_SENSITIVE_DATA = "read:sensitive_data"
+    READ_RAW_DATA = "read:raw_data"
+
+    # Системне управління
     MANAGE_USERS = "manage:users"
+    MANAGE_INFRASTRUCTURE = "manage:infrastructure"
+    VIEW_LOGS = "view:logs"
 
 
 # Матриця дозвілів: Роль -> Список прав
 ROLE_PERMISSIONS: dict[Role, list[Permission]] = {
-    Role.ADMIN: list(Permission),  # Всі права
+    # РІВЕНЬ 1: PROMO (рекламно-заохочувальний)
+    Role.PROMO: [
+        Permission.READ_CORP_DATA,           # Базовий доступ до корпоративних даних (з маскуванням)
+        Permission.RUN_ANALYTICS,           # Базова аналітика
+    ],
+
+    # РІВЕНЬ 2: PRO (комерційний доступ)
+    Role.PRO: [
+        Permission.READ_CORP_DATA,           # Корпоративні дані (з маскуванням на рівні API)
+        Permission.READ_COMPANIES,           # Дані про компанії
+        Permission.READ_CUSTOMS,             # Митні декларації
+        Permission.READ_INTEL,               # Розвідка
+        Permission.RUN_ANALYTICS,           # Повна аналітика
+        Permission.RUN_GRAPH,                # Графова аналітика
+        Permission.VIEW_WARROOM,             # Ситуаційна кімната
+    ],
+
+    # РІВЕНЬ 3: VIP (повний доступ)
+    Role.VIP: [
+        Permission.READ_CORP_DATA,           # Корпоративні дані
+        Permission.READ_COMPANIES,           # Дані про компанії
+        Permission.READ_CUSTOMS,             # Митні декларації
+        Permission.READ_INTEL,               # Розвідка
+        Permission.RUN_ANALYTICS,           # Повна аналітика
+        Permission.RUN_GRAPH,                # Графова аналітика
+        Permission.VIEW_WARROOM,             # Ситуаційна кімната
+        Permission.READ_SENSITIVE_DATA,      # Чутливі дані (з можливістю перемикання)
+        Permission.READ_RAW_DATA,            # Сирі дані (деанонімізація)
+    ],
+
+    # РІВЕНЬ 4: ADMIN (технічне управління)
+    Role.ADMIN: [
+        Permission.MANAGE_USERS,             # Управління користувачами
+        Permission.MANAGE_INFRASTRUCTURE,    # Управління інфраструктурою
+        Permission.VIEW_LOGS,                # Перегляд логів
+        # ❌ ЖОДНИХ прав доступу до бізнес-даних (ізоляція адміна)
+    ],
+
+    # Легасі-аліаси для зворотної сумісності
     Role.ANALYST: [
         Permission.READ_CORP_DATA,
         Permission.READ_COMPANIES,
@@ -58,7 +116,6 @@ ROLE_PERMISSIONS: dict[Role, list[Permission]] = {
     Role.BUSINESS: [
         Permission.READ_CORP_DATA,
         Permission.RUN_ANALYTICS,
-        Permission.RUN_GRAPH,
     ],
     Role.BANK: [
         Permission.READ_CORP_DATA,

@@ -38,6 +38,7 @@ vi.mock('../store/atoms', async () => {
     navFavoritesAtom: atom<string[]>([]),
     navRecentAtom: atom<string[]>([]),
     shellCommandPaletteOpenAtom: atom(false),
+    colabPanelOpenAtom: atom(false),
   };
 });
 

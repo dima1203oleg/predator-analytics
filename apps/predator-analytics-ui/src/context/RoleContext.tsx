@@ -8,6 +8,10 @@ interface RoleContextType {
   displayName: string;
   description: string;
   isAdmin: boolean;
+  isPromo: boolean;
+  isPro: boolean;
+  isVIP: boolean;
+  // Легасі-аліаси для зворотної сумісності
   isPremium: boolean;
   isBasic: boolean;
   isDRPO: boolean;
@@ -32,9 +36,13 @@ export const RoleProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     displayName: ROLE_DISPLAY_NAMES[role],
     description: ROLE_DESCRIPTIONS[role],
     isAdmin: role === UserRole.ADMIN,
-    isPremium: role === UserRole.CLIENT_PREMIUM || role === UserRole.CLIENT_DRPO,
-    isBasic: role === UserRole.CLIENT_BASIC,
-    isDRPO: role === UserRole.CLIENT_DRPO,
+    isPromo: role === UserRole.PROMO,
+    isPro: role === UserRole.PRO,
+    isVIP: role === UserRole.VIP,
+    // Легасі-аліаси для зворотної сумісності
+    isPremium: role === UserRole.PRO || role === UserRole.VIP,
+    isBasic: role === UserRole.PROMO,
+    isDRPO: role === UserRole.VIP,
   }), [role, capabilities]);
 
   return (
@@ -49,11 +57,15 @@ export const useRole = (): RoleContextType => {
   if (!context) {
     console.warn('useRole used outside of RoleProvider - returning defaults');
     return {
-      role: UserRole.CLIENT_BASIC,
-      capabilities: ROLE_CAPABILITIES[UserRole.CLIENT_BASIC],
-      displayName: ROLE_DISPLAY_NAMES[UserRole.CLIENT_BASIC],
-      description: ROLE_DESCRIPTIONS[UserRole.CLIENT_BASIC],
+      role: UserRole.PROMO,
+      capabilities: ROLE_CAPABILITIES[UserRole.PROMO],
+      displayName: ROLE_DISPLAY_NAMES[UserRole.PROMO],
+      description: ROLE_DESCRIPTIONS[UserRole.PROMO],
       isAdmin: false,
+      isPromo: true,
+      isPro: false,
+      isVIP: false,
+      // Легасі-аліаси
       isPremium: false,
       isBasic: true,
       isDRPO: false,

@@ -3,6 +3,8 @@
 // Ініціалізація DOM-тестів: jsdom + jest-dom matchers
 // ═══════════════════════════════════════════════════════════════════════════════
 
+import { vi } from 'vitest'
+import React from 'react'
 import '@testing-library/jest-dom'
 
 // Глобальний мок для window.matchMedia (для responsive компонентів)
@@ -59,3 +61,26 @@ Object.defineProperty(globalThis, 'crypto', {
         getRandomValues: (arr: Uint8Array) => arr,
     },
 })
+
+// Мок для framer-motion (hoisted)
+const mockFramerMotion = {
+    motion: {
+        div: ({ children, ...props }: any) => React.createElement('div', props, children),
+        span: ({ children, ...props }: any) => React.createElement('span', props, children),
+        button: ({ children, ...props }: any) => React.createElement('button', props, children),
+        section: ({ children, ...props }: any) => React.createElement('section', props, children),
+        article: ({ children, ...props }: any) => React.createElement('article', props, children),
+        p: ({ children, ...props }: any) => React.createElement('p', props, children),
+        h1: ({ children, ...props }: any) => React.createElement('h1', props, children),
+        h2: ({ children, ...props }: any) => React.createElement('h2', props, children),
+        h3: ({ children, ...props }: any) => React.createElement('h3', props, children),
+    },
+    AnimatePresence: ({ children }: any) => React.createElement(React.Fragment, null, children),
+    useAnimation: () => ({ start: () => { } }),
+    useMotionValue: () => ({ get: () => 0, set: () => { } }),
+    useTransform: () => 0,
+    useSpring: () => 0,
+    useMotionTemplate: () => '',
+}
+
+vi.mock('framer-motion', () => mockFramerMotion)

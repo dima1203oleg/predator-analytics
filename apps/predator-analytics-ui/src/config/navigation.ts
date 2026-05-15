@@ -233,9 +233,17 @@ export const navAccentStyles: Record<
 // ─── Відповідність ролей до аудиторій ────────────────────────────────────────
 
 const navigationAudienceAliases: Record<string, NavigationAudience> = {
+  // Нові ролі v61.0
+  promo: 'business',
+  pro: 'analyst',
+  vip: 'drpo',
+  
+  // Легасі-аліаси
   admin: 'admin',
   commander: 'admin',
+  client_basic: 'business',
   client_premium: 'analyst',
+  client_drpo: 'drpo',
   analyst: 'analyst',
   operator: 'supply_chain',
   supply: 'supply_chain',
@@ -243,9 +251,7 @@ const navigationAudienceAliases: Record<string, NavigationAudience> = {
   supply_chain: 'supply_chain',
   logistician: 'supply_chain',
   logistics: 'supply_chain',
-  client_drpo: 'drpo',
   investigator: 'drpo',
-  client_basic: 'business',
   viewer: 'business',
   explorer: 'business',
   ceo: 'business',
@@ -327,7 +333,7 @@ const baseNavigationConfig: NavSection[] = [
     groups: [
       {
         title: 'Управління Даними',
-        audiences: ['analyst', 'admin'],
+        audiences: ['analyst', 'drpo', 'admin'],
         items: [
           {
             id: 'omniverse-hub',
@@ -337,7 +343,7 @@ const baseNavigationConfig: NavSection[] = [
             description: 'Головний центр управління універсальними даними.',
             group: 'Управління Даними',
             badge: 'v70.0',
-            audiences: ['analyst', 'admin'],
+            audiences: ['analyst', 'drpo', 'admin'],
             priority: 110,
           },
           {
@@ -347,7 +353,7 @@ const baseNavigationConfig: NavSection[] = [
             icon: Upload,
             description: 'Інгестія довільних наборів даних через AI-інференс.',
             group: 'Управління Даними',
-            audiences: ['analyst', 'admin'],
+            audiences: ['analyst', 'drpo', 'admin'],
             priority: 105,
           },
         ],
@@ -401,7 +407,7 @@ const baseNavigationConfig: NavSection[] = [
       },
       {
         title: 'Оперативний штаб',
-        audiences: ['analyst'],
+        audiences: ['analyst', 'drpo'],
         items: [
           {
             id: 'war-room',
@@ -1190,21 +1196,35 @@ const isItemVisibleForRole = (item: NavItem, role: string): boolean => {
     return false;
   }
 
-  // Адмін бачить ТІЛЬКИ елементи з audiences: ['admin']
-  // Бізнес-модулі для адміна приховані (ізоляція System Command Center)
-  if (normalizedRole === 'admin') {
+  // ─── НОВА ЛОГІКА RBAC v61.0 ────────────────────────────────────────────────
+  // Для бізнес-ролей показуємо ВСІ бізнес-секції
+  // Різниця тільки в контенті всередині (UpgradePrompt, маскування даних)
+  const businessRoles = ['promo', 'pro', 'vip', 'client_basic', 'client_premium', 'client_drpo', 'analyst', 'operator', 'explorer', 'investigator'];
+  if (businessRoles.includes(normalizedRole)) {
+    // Бізнес-ролі бачать все, КРІМ admin-секцій
+    if (item.audiences && item.audiences.includes('admin')) {
+      return false;
+    }
+    
+    // Якщо audiences не вказано - показуємо
+    if (!item.audiences || item.audiences.length === 0) {
+      return true;
+    }
+    
+    // Перевіряємо, чи відповідає роль хоч одній з аудиторій
+    const audience = resolveNavigationAudience(normalizedRole);
+    return item.audiences.includes(audience);
+  }
+
+  // ─── ІЗОЛЯЦІЯ АДМІНА ───────────────────────────────────────────────────────
+  // Адмін бачить ТІЛЬКИ технічні секції (SYSTEM COMMAND CENTER, AUTONOMOUS FACTORY)
+  // Жодних бізнес-даних
+  if (normalizedRole === 'admin' || normalizedRole === 'commander') {
     if (!item.audiences || item.audiences.length === 0) return false;
     return item.audiences.includes('admin');
   }
 
-  // DRPO роль бачить елементи з audiences 'drpo' та 'analyst' (повний аналітичний + чутливі дані)
-  if (normalizedRole === 'client_drpo' || normalizedRole === 'investigator') {
-    if (!item.audiences || item.audiences.length === 0) {
-      return true;
-    }
-    return item.audiences.includes('drpo') || item.audiences.includes('analyst');
-  }
-
+  // ─── FALLBACK ДЛЯ ЛЕГАСИ ────────────────────────────────────────────────────
   if (!item.audiences || item.audiences.length === 0) {
     return true;
   }
@@ -1219,25 +1239,77 @@ const isGroupVisibleForRole = (group: NavGroup, role: string): boolean => {
     return false;
   }
 
-  // Адмін бачить ТІЛЬКИ групи з audiences: ['admin']
-  if (normalizedRole === 'admin') {
+  // ─── НОВА ЛОГІКА RBAC v61.0 ────────────────────────────────────────────────
+  // Для бізнес-ролей показуємо ВСІ бізнес-секції
+  const businessRoles = ['promo', 'pro', 'vip', 'client_basic', 'client_premium', 'client_drpo', 'analyst', 'operator', 'explorer', 'investigator'];
+  if (businessRoles.includes(normalizedRole)) {
+    // Бізнес-ролі бачать все, КРІМ admin-секцій
+    if (group.audiences && group.audiences.includes('admin')) {
+      return false;
+    }
+    
+    // Якщо audiences не вказано - показуємо
+    if (!group.audiences || group.audiences.length === 0) {
+      return true;
+    }
+    
+    // Перевіряємо, чи відповідає роль хоч одній з аудиторій
+    const audience = resolveNavigationAudience(normalizedRole);
+    return group.audiences.includes(audience);
+  }
+
+  // ─── ІЗОЛЯЦІЯ АДМІНА ───────────────────────────────────────────────────────
+  // Адмін бачить ТІЛЬКИ технічні секції
+  if (normalizedRole === 'admin' || normalizedRole === 'commander') {
     if (!group.audiences || group.audiences.length === 0) return false;
     return group.audiences.includes('admin');
   }
 
-  // DRPO роль бачить групи з audiences 'drpo' та 'analyst' (повний аналітичний + чутливі дані)
-  if (normalizedRole === 'client_drpo' || normalizedRole === 'investigator') {
-    if (!group.audiences || group.audiences.length === 0) {
-      return true;
-    }
-    return group.audiences.includes('drpo') || group.audiences.includes('analyst');
-  }
-
+  // ─── FALLBACK ДЛЯ ЛЕГАСИ ────────────────────────────────────────────────────
   if (!group.audiences || group.audiences.length === 0) {
     return true;
   }
 
   return group.audiences.includes(resolveNavigationAudience(normalizedRole));
+};
+
+// ─── Helper: визначення заблокованих пунктів меню ─────────────────────────────
+
+/**
+ * Перевіряє, чи заблокований пункт меню для конкретної ролі
+ * @param item - пункт навігації
+ * @param role - роль користувача
+ * @returns true, якщо пункт заблокований для цієї ролі
+ */
+export const isNavItemLocked = (item: NavItem, role: string): boolean => {
+  const normalizedRole = role?.toLowerCase?.() ?? '';
+
+  // Адмін не має заблокованих пунктів в своєму контурі (тільки admin-секції)
+  if (normalizedRole === 'admin' || normalizedRole === 'commander') {
+    return false;
+  }
+
+  // Для бізнес-ролей перевіряємо audiences
+  const businessRoles = ['promo', 'pro', 'vip', 'client_basic', 'client_premium', 'client_drpo', 'analyst', 'operator', 'explorer', 'investigator'];
+  if (businessRoles.includes(normalizedRole)) {
+    // PROMO не має доступу до analyst-секцій
+    if (normalizedRole === 'promo' || normalizedRole === 'client_basic' || normalizedRole === 'operator' || normalizedRole === 'explorer') {
+      if (item.audiences && (item.audiences.includes('analyst') || item.audiences.includes('drpo'))) {
+        return true;
+      }
+    }
+
+    // PRO не має доступу до drpo-секцій
+    if (normalizedRole === 'pro' || normalizedRole === 'client_premium' || normalizedRole === 'analyst') {
+      if (item.audiences && item.audiences.includes('drpo')) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  return false;
 };
 
 // ─── Публічне API навігації ───────────────────────────────────────────────────

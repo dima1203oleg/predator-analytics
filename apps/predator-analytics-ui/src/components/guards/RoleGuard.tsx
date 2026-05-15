@@ -8,7 +8,8 @@ interface RoleGuardProps {
   children: ReactNode;
   allowedRoles: UserRole[];
   fallback?: ReactNode;
-  showUpgrade?: boolean; // Якщо true, покаже UpgradePrompt для Basic юзерів замість простого fallback
+  showUpgrade?: boolean; // Якщо true, покаже UpgradePrompt для PROMO юзерів замість простого fallback
+  minLevel?: 'promo' | 'pro' | 'vip' | 'admin'; // Мінімальний рівень доступу
 }
 
 export const RoleGuard: React.FC<RoleGuardProps> = ({
@@ -16,11 +17,40 @@ export const RoleGuard: React.FC<RoleGuardProps> = ({
   allowedRoles,
   fallback,
   showUpgrade = false,
+  minLevel,
 }) => {
-  const { role } = useRole();
+  const { role, isPromo, isPro, isVIP, isAdmin } = useRole();
 
-  if (!allowedRoles.includes(role)) {
-    // Спеціальний кейс: якщо юзер Basic, а ми хочемо запропонувати апгрейд
+  // Перевірка за мінімальним рівнем доступу
+  if (minLevel) {
+    const hasAccess =
+      (minLevel === 'promo' && (isPromo || isPro || isVIP || isAdmin)) ||
+      (minLevel === 'pro' && (isPro || isVIP || isAdmin)) ||
+      (minLevel === 'vip' && (isVIP || isAdmin)) ||
+      (minLevel === 'admin' && isAdmin);
+
+    if (!hasAccess) {
+      // PROMO користувачі бачать UpgradePrompt для апгрейду до PRO/VIP
+      if (showUpgrade && isPromo) {
+        return <UpgradePrompt />;
+      }
+
+      if (fallback) {
+        return <>{fallback}</>;
+      }
+
+      return <AccessDenied />;
+    }
+  }
+
+  // Перевірка за списком дозволених ролей
+  if (allowedRoles && !allowedRoles.includes(role)) {
+    // Спеціальний кейс: якщо юзер PROMO, а ми хочемо запропонувати апгрейд
+    if (showUpgrade && isPromo && (allowedRoles.includes(UserRole.PRO) || allowedRoles.includes(UserRole.VIP))) {
+      return <UpgradePrompt />;
+    }
+
+    // Легасі-аліаси для зворотної сумісності
     if (showUpgrade && role === UserRole.CLIENT_BASIC && allowedRoles.includes(UserRole.CLIENT_PREMIUM)) {
       return <UpgradePrompt />;
     }
@@ -29,7 +59,6 @@ export const RoleGuard: React.FC<RoleGuardProps> = ({
       return <>{fallback}</>;
     }
 
-    // Default fallback based on denying admins vs clients
     return <AccessDenied />;
   }
 
