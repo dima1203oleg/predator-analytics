@@ -9,12 +9,12 @@ vi.mock('framer-motion', () => ({
     motion: {
         div: ({ children, ...props }: React.HTMLAttributes<HTMLDivElement>) => <div {...props}>{children}</div>,
     },
-    AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+    AnimatePresence: ({ children }: any) => <>{children}</>,
 }));
 
 vi.mock('@/hooks/useBackendStatus', () => ({
     useBackendStatus: () => ({
-        isOffline: false,
+        isOffline: true,
         isTruthOnly: true,
         modeLabel: 'режим правдивих даних',
         sourceLabel: 'localhost:9080/api/v1',
