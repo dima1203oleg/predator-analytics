@@ -27,6 +27,8 @@ import {
   type NavSection,
   resolveNavigationAudience,
   type NavWorkspaceMode,
+  getAccessStatusIndicator,
+  type AccessLevel,
 } from '../../config/navigation';
 import { useBackendStatus } from '../../hooks/useBackendStatus';
 import { useShellWorkspace } from '../../hooks/useShellWorkspace';
@@ -763,6 +765,18 @@ export const Sidebar: React.FC = () => {
                                           {isOpen && (
                                             <div className="min-w-0 flex-1">
                                               <div className="flex items-center gap-1.5">
+                                                {/* Позначка статусу доступу (🟢🟡🔴) */}
+                                                {(() => {
+                                                  const { indicator } = getAccessStatusIndicator(
+                                                    item.accessLevel,
+                                                    userRole
+                                                  );
+                                                  return indicator ? (
+                                                    <span className="text-[10px] leading-none" title="Рівень доступу">
+                                                      {indicator}
+                                                    </span>
+                                                  ) : null;
+                                                })()}
                                                 <span
                                                   className="truncate text-[11px] font-bold leading-none"
                                                   style={{ color: isActive ? '#ffffff' : '#cbd5e1' }}

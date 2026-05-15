@@ -61,6 +61,9 @@ export type NavAccent =
 export type NavigationAudience = 'terminal' | 'pro' | 'sovereign' | 'core';
 export type NavWorkspaceMode = 'all' | 'favorites' | 'recent' | 'recommended';
 
+// Рівні доступу для позначок статусів (🟢🟡🔴)
+export type AccessLevel = 'terminal' | 'pro' | 'sovereign';
+
 export interface NavItem {
   id: string;
   label: string;
@@ -73,6 +76,7 @@ export interface NavItem {
   audiences?: NavigationAudience[];
   priority?: number;
   matchPaths?: string[];
+  accessLevel?: AccessLevel; // Рівень доступу для позначки статусу (🟢🟡🔴)
 }
 
 export interface NavGroup {
@@ -269,6 +273,59 @@ const navigationAudienceAliases: Record<string, NavigationAudience> = {
 export const resolveNavigationAudience = (role: string): NavigationAudience =>
   navigationAudienceAliases[role?.toLowerCase?.() ?? ''] ?? 'terminal';
 
+// ─── Позначки статусів доступу (🟢🟡🔴) ────────────────────────────────────────
+
+/**
+ * Отримує позначку статусу для модуля на основі рівня доступу та ролі користувача
+ * 🟢 - відкрито в Terminal (і вище)
+ * 🟡 - відкрито в Pro (і више); для Terminal - пейвол
+ * 🔴 - відкрито тільки в Sovereign; для Terminal та Pro - елітний замок
+ */
+export const getAccessStatusIndicator = (
+  itemAccessLevel: AccessLevel | undefined,
+  userRole: string
+): { indicator: string; isLocked: boolean; upgradeLevel: AccessLevel | null } => {
+  const audience = resolveNavigationAudience(userRole);
+
+  // Якщо рівень доступу не вказано - вважаємо, що відкрито для всіх
+  if (!itemAccessLevel) {
+    return { indicator: '🟢', isLocked: false, upgradeLevel: null };
+  }
+
+  // Пріоритет рівнів: terminal < pro < sovereign
+  const levelPriority: Record<AccessLevel, number> = {
+    terminal: 1,
+    pro: 2,
+    sovereign: 3,
+  };
+
+  const audiencePriority: Record<NavigationAudience, number> = {
+    terminal: 1,
+    pro: 2,
+    sovereign: 3,
+    core: 0, // Core - технічний рівень, не порівнюється
+  };
+
+  const itemLevel = levelPriority[itemAccessLevel];
+  const userLevel = audiencePriority[audience];
+
+  // Користувач має достатній рівень доступу
+  if (userLevel >= itemLevel) {
+    return { indicator: '🟢', isLocked: false, upgradeLevel: null };
+  }
+
+  // Користувач не має достатнього рівня доступу
+  if (itemAccessLevel === 'pro') {
+    return { indicator: '🟡', isLocked: true, upgradeLevel: 'pro' };
+  }
+
+  if (itemAccessLevel === 'sovereign') {
+    return { indicator: '🔴', isLocked: true, upgradeLevel: 'sovereign' };
+  }
+
+  return { indicator: '🟢', isLocked: false, upgradeLevel: null };
+};
+
 // ─── Глобальні дії (гарячі клавіші, режими) ──────────────────────────────────
 
 export const globalNavigationActions: NavGlobalAction[] = [
@@ -350,6 +407,7 @@ const baseNavigationConfig: NavSection[] = [
             description: 'ROI-пульс, KPI та ключові метрики бізнес-периметра.',
             audiences: ['terminal', 'pro', 'sovereign'],
             priority: 100,
+            accessLevel: 'terminal', // 🟢
           },
           {
             id: 'war-room',
@@ -360,6 +418,7 @@ const baseNavigationConfig: NavSection[] = [
             badge: 'LIVE',
             audiences: ['pro', 'sovereign'],
             priority: 98,
+            accessLevel: 'pro', // 🟡
           },
           {
             id: 'portfolio-risk',
@@ -369,6 +428,7 @@ const baseNavigationConfig: NavSection[] = [
             description: 'Агрегований фінансовий та репутаційний ризик портфеля.',
             audiences: ['terminal', 'pro', 'sovereign'],
             priority: 99,
+            accessLevel: 'terminal', // 🟢
           },
         ],
       },
@@ -398,6 +458,7 @@ const baseNavigationConfig: NavSection[] = [
             badge: 'ELITE',
             audiences: ['pro', 'sovereign'],
             priority: 100,
+            accessLevel: 'pro', // 🟡
           },
           {
             id: 'morning-brief',
@@ -407,6 +468,7 @@ const baseNavigationConfig: NavSection[] = [
             description: 'Пріоритетний аналіз ризиків на поточний операційний день.',
             audiences: ['terminal', 'pro', 'sovereign'],
             priority: 92,
+            accessLevel: 'terminal', // 🟢
           },
           {
             id: 'newspaper',
@@ -416,6 +478,7 @@ const baseNavigationConfig: NavSection[] = [
             description: 'Персоналізована щоденна аналітика ринку та конкурентів.',
             audiences: ['terminal', 'pro', 'sovereign'],
             priority: 84,
+            accessLevel: 'terminal', // 🟢
           },
         ],
       },
@@ -444,6 +507,7 @@ const baseNavigationConfig: NavSection[] = [
             description: 'Глобальний пошук по реєстрах та базах даних.',
             audiences: ['terminal', 'pro', 'sovereign'],
             priority: 86,
+            accessLevel: 'terminal', // 🟢
           },
           {
             id: 'graph',
@@ -453,6 +517,7 @@ const baseNavigationConfig: NavSection[] = [
             description: 'Аналіз графа зв\'язків та аномальних кластерів.',
             audiences: ['pro', 'sovereign'],
             priority: 95,
+            accessLevel: 'pro', // 🟡
           },
           {
             id: 'offshore-detector',
@@ -462,6 +527,7 @@ const baseNavigationConfig: NavSection[] = [
             description: 'Виявлення підставних компаній та офшорних активів.',
             audiences: ['pro', 'sovereign'],
             priority: 88,
+            accessLevel: 'pro', // 🟡
           },
         ],
       },
@@ -490,6 +556,7 @@ const baseNavigationConfig: NavSection[] = [
             description: 'Аналіз декларацій та ризикових операцій.',
             audiences: ['pro', 'sovereign'],
             priority: 88,
+            accessLevel: 'pro', // 🟡
           },
           {
             id: 'supply-chain',
@@ -499,6 +566,7 @@ const baseNavigationConfig: NavSection[] = [
             description: 'Візуалізація та аналіз вразливостей поставок.',
             audiences: ['pro', 'sovereign'],
             priority: 76,
+            accessLevel: 'pro', // 🟡
           },
           {
             id: 'tenders',
@@ -508,6 +576,7 @@ const baseNavigationConfig: NavSection[] = [
             description: 'Моніторинг державних закупівель та тендерного тиску.',
             audiences: ['terminal', 'pro', 'sovereign'],
             priority: 72,
+            accessLevel: 'terminal', // 🟢
           },
         ],
       },
@@ -536,6 +605,7 @@ const baseNavigationConfig: NavSection[] = [
             description: 'Повний аудит будь-якого суб\'єкта.',
             audiences: ['terminal', 'pro', 'sovereign'],
             priority: 91,
+            accessLevel: 'terminal', // 🟢
           },
           {
             id: 'ubo-map',
@@ -546,6 +616,7 @@ const baseNavigationConfig: NavSection[] = [
             badge: 'ELITE',
             audiences: ['pro', 'sovereign'],
             priority: 97,
+            accessLevel: 'pro', // 🟡
           },
           {
             id: 'sanctions',
@@ -555,6 +626,7 @@ const baseNavigationConfig: NavSection[] = [
             description: 'Скринінг на санкційні списки та політичні зв\'язки.',
             audiences: ['terminal', 'pro', 'sovereign'],
             priority: 94,
+            accessLevel: 'terminal', // 🟢
           },
         ],
       },
@@ -583,6 +655,7 @@ const baseNavigationConfig: NavSection[] = [
             description: 'Виявлення схем відмивання коштів.',
             audiences: ['pro', 'sovereign'],
             priority: 92,
+            accessLevel: 'pro', // 🟡
           },
           {
             id: 'swift-monitor',
@@ -593,6 +666,7 @@ const baseNavigationConfig: NavSection[] = [
             badge: 'ELITE',
             audiences: ['sovereign'],
             priority: 90,
+            accessLevel: 'sovereign', // 🔴
           },
           {
             id: 'geopolitical-radar',
@@ -603,6 +677,7 @@ const baseNavigationConfig: NavSection[] = [
             badge: 'CORE',
             audiences: ['sovereign'],
             priority: 85,
+            accessLevel: 'sovereign', // 🔴
           },
         ],
       },
@@ -631,6 +706,7 @@ const baseNavigationConfig: NavSection[] = [
             description: 'Генеративний синтез від архітектурних LLM моделей.',
             audiences: ['pro', 'sovereign'],
             priority: 100,
+            accessLevel: 'pro', // 🟡
           },
           {
             id: 'nexus',
@@ -641,6 +717,7 @@ const baseNavigationConfig: NavSection[] = [
             badge: 'ELITE',
             audiences: ['sovereign'],
             priority: 95,
+            accessLevel: 'sovereign', // 🔴
           },
           {
             id: 'ai-insights',
@@ -650,6 +727,7 @@ const baseNavigationConfig: NavSection[] = [
             description: 'Кросмодальні сигнали та стратегічні висновки.',
             audiences: ['terminal', 'pro', 'sovereign'],
             priority: 86,
+            accessLevel: 'terminal', // 🟢
           },
         ],
       },
@@ -678,6 +756,7 @@ const baseNavigationConfig: NavSection[] = [
             description: 'Структуроване управління слідчими кейсами та зв\'язками.',
             audiences: ['pro', 'sovereign'],
             priority: 95,
+            accessLevel: 'pro', // 🟡
           },
           {
             id: 'timeline',
@@ -688,6 +767,7 @@ const baseNavigationConfig: NavSection[] = [
             badge: 'NEW',
             audiences: ['pro', 'sovereign'],
             priority: 90,
+            accessLevel: 'pro', // 🟡
           },
           {
             id: 'audit-log',
@@ -697,6 +777,7 @@ const baseNavigationConfig: NavSection[] = [
             description: 'WORM-журнал усіх операцій у системі.',
             audiences: ['pro', 'sovereign'],
             priority: 82,
+            accessLevel: 'pro', // 🟡
           },
         ],
       },

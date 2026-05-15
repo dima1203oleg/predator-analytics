@@ -117,7 +117,7 @@ export const SovereignReportWidget: React.FC<SovereignReportWidgetProps> = ({ ue
                     </div>
 
                     <div className="hidden md:flex flex-col text-right mr-4 border-r border-white/10 pr-6">
-                        <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">ЧАС_ГЕНЕ АЦІЇ</span>
+                        <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">ЧАС_ГЕНЕРАЦІЇ</span>
                         <span className="text-xs font-mono text-white opacity-80">{new Date().toLocaleTimeString('uk-UA')}</span>
                     </div>
                     <motion.button
@@ -132,7 +132,7 @@ export const SovereignReportWidget: React.FC<SovereignReportWidgetProps> = ({ ue
                         whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}
                         className="px-8 py-4 bg-[#D4AF37] text-black rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:brightness-110 transition-all  group italic"
                     >
-                        ПОШИ ИТИ_ ОЗВІДКУ
+                        ПОШИРИТИ_РОЗВІДКУ
                     </motion.button>
                 </div>
             </div>
@@ -167,7 +167,7 @@ export const SovereignReportWidget: React.FC<SovereignReportWidgetProps> = ({ ue
                                 </div>
                             </div>
                             <div className="text-center space-y-3">
-                                <p className="text-[#D4AF37] font-black tracking-[0.6em] uppercase text-xs ">СИНТЕЗУЮ_ЕКСПЕ ТНИЙ_ВИСНОВОК...</p>
+                                <p className="text-[#D4AF37] font-black tracking-[0.6em] uppercase text-xs ">СИНТЕЗУЮ_ЕКСПЕРТНИЙ_ВИСНОВОК...</p>
                                 <p className="text-slate-600 text-[10px] uppercase font-mono italic tracking-widest">Sovereign Engine Analysing 5-Layer Risk Matrix v63.0-ELITE</p>
                             </div>
                             <div className="flex gap-2">
@@ -212,7 +212,7 @@ export const SovereignReportWidget: React.FC<SovereignReportWidgetProps> = ({ ue
                     ) : (
                         <div className="flex flex-col items-center justify-center py-32 text-slate-800 border border-dashed border-white/5 rounded-[3rem] relative z-10">
                             <Fingerprint size={80} className="opacity-10 mb-6" />
-                            <p className="text-sm font-black uppercase tracking-[0.4em] italic opacity-40">КрИПТОМАТрИЦЯ_ПО ОЖНЯ</p>
+                            <p className="text-sm font-black uppercase tracking-[0.4em] italic opacity-40">КРИПТОМАТРИЦЯ_ПОРОЖНЯ</p>
                         </div>
                     )}
                 </AnimatePresence>
@@ -227,7 +227,7 @@ export const SovereignReportWidget: React.FC<SovereignReportWidgetProps> = ({ ue
                         </div>
                         <div className="flex flex-col">
                             <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] mb-0.5 leading-none">ЦІЛІСНІСТЬ</span>
-                            <span className="text-[11px] font-black text-[#D4AF37] uppercase tracking-tight italic">ВЕ ИФІКОВАНО_ELITE</span>
+                            <span className="text-[11px] font-black text-[#D4AF37] uppercase tracking-tight italic">ВЕРИФІКОВАНО_ELITE</span>
                         </div>
                     </div>
                     <div className="flex items-center gap-4">
@@ -235,7 +235,7 @@ export const SovereignReportWidget: React.FC<SovereignReportWidgetProps> = ({ ue
                             <Fingerprint size={18} className="text-[#D4AF37]" />
                         </div>
                         <div className="flex flex-col">
-                            <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] mb-0.5 leading-none">АВТО СТВО_ШІ</span>
+                            <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] mb-0.5 leading-none">АВТОРСТВО_ШІ</span>
                             <span className="text-[11px] font-black text-white uppercase tracking-tight italic">SOVEREIGN_ADVISOR</span>
                         </div>
                     </div>
@@ -245,7 +245,7 @@ export const SovereignReportWidget: React.FC<SovereignReportWidgetProps> = ({ ue
                         </div>
                         <div className="flex flex-col">
                             <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] mb-0.5 leading-none">БЕЗПЕКА</span>
-                            <span className="text-[11px] font-black text-slate-300 uppercase tracking-tight italic">L5_ENCRYTION</span>
+                            <span className="text-[11px] font-black text-slate-300 uppercase tracking-tight italic">L5_ENCRYPTION</span>
                         </div>
                     </div>
                 </div>
