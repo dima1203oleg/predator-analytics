@@ -50,15 +50,19 @@ const getGlobalWindow = () => (typeof window !== 'undefined' ? window : {}) as a
 const resolveInitialUrl = (): string => {
     if (typeof window === 'undefined') return NODE_URLS[NODE_IDS.HYBRID];
 
-    // 1. Ручний вибір користувача (пріоритет #1)
-    const savedNode = localStorage.getItem('PREDATOR_ACTIVE_NODE');
-    if (savedNode && NODE_URLS[savedNode]) {
-        return NODE_URLS[savedNode];
-    }
-    // Очищення старого/невалідного кастомного URL
-    const savedCustomUrl = localStorage.getItem('PREDATOR_CUSTOM_URL');
-    if (savedCustomUrl && !Object.values(NODE_URLS).includes(savedCustomUrl)) {
-        localStorage.removeItem('PREDATOR_CUSTOM_URL');
+    try {
+        // 1. Ручний вибір користувача (пріоритет #1)
+        const savedNode = localStorage.getItem('PREDATOR_ACTIVE_NODE');
+        if (savedNode && NODE_URLS[savedNode]) {
+            return NODE_URLS[savedNode];
+        }
+        // Очищення старого/невалідного кастомного URL
+        const savedCustomUrl = localStorage.getItem('PREDATOR_CUSTOM_URL');
+        if (savedCustomUrl && !Object.values(NODE_URLS).includes(savedCustomUrl)) {
+            localStorage.removeItem('PREDATOR_CUSTOM_URL');
+        }
+    } catch {
+        // Ignore localStorage errors in test environment
     }
 
     // 2. Явна настройка через .env

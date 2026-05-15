@@ -417,7 +417,7 @@ const baseNavigationConfig: NavSection[] = [
             description: 'Оперативний штаб для кризового управління та ескалацій.',
             group: 'Оперативний штаб',
             badge: 'LIVE',
-            audiences: ['analyst'],
+            audiences: ['analyst', 'drpo'],
             priority: 98,
           },
           {
@@ -428,7 +428,7 @@ const baseNavigationConfig: NavSection[] = [
             description: 'Агрегований фінансовий ризик портфелю клієнтів',
             group: 'Оперативний штаб',
             badge: 'ОНЛАЙН',
-            audiences: ['analyst'],
+            audiences: ['analyst', 'drpo'],
             priority: 99,
           },
           {
@@ -439,7 +439,7 @@ const baseNavigationConfig: NavSection[] = [
             description: 'Консолідований центр системних та аналітичних алертів.',
             group: 'Оперативний штаб',
             badge: 'NEW',
-            audiences: ['analyst'],
+            audiences: ['analyst', 'drpo'],
             priority: 97,
           },
           {
@@ -449,7 +449,7 @@ const baseNavigationConfig: NavSection[] = [
             icon: History,
             description: 'WORM-журнал прийнятих рішень з прив\'язкою до кейсів.',
             group: 'Оперативний штаб',
-            audiences: ['analyst'],
+            audiences: ['analyst', 'drpo'],
             priority: 88,
           },
           {
@@ -459,7 +459,7 @@ const baseNavigationConfig: NavSection[] = [
             icon: Users,
             description: 'Сегментація та аналіз клієнтської бази.',
             group: 'Оперативний штаб',
-            audiences: ['analyst'],
+            audiences: ['analyst', 'drpo'],
             priority: 80,
           },
         ],
@@ -498,7 +498,7 @@ const baseNavigationConfig: NavSection[] = [
             icon: BarChart3,
             description: 'Контроль цін та виявлення демпінгу.',
             group: 'Ринок',
-            audiences: ['analyst', 'admin'],
+            audiences: ['analyst', 'drpo', 'admin'],
             priority: 86,
           },
           {
@@ -509,14 +509,14 @@ const baseNavigationConfig: NavSection[] = [
             description: 'Вплив світових подій на торговельну стабільність.',
             group: 'Ринок',
             badge: 'ELITE',
-            audiences: ['analyst', 'admin'],
+            audiences: ['analyst', 'drpo', 'admin'],
             priority: 85,
           },
         ],
       },
       {
         title: 'Митниця та Логістика',
-        audiences: ['analyst', 'supply_chain', 'admin'],
+        audiences: ['analyst', 'supply_chain', 'drpo', 'admin'],
         items: [
           {
             id: 'customs-intel',
@@ -525,7 +525,7 @@ const baseNavigationConfig: NavSection[] = [
             icon: Shield,
             description: 'Аналіз декларацій та ризикових митних операцій.',
             group: 'Митниця та Логістика',
-            audiences: ['analyst', 'supply_chain', 'admin'],
+            audiences: ['analyst', 'supply_chain', 'drpo', 'admin'],
             priority: 88,
           },
           {
@@ -535,7 +535,7 @@ const baseNavigationConfig: NavSection[] = [
             icon: Globe,
             description: 'Візуалізація глобальних ланцюгів постачання.',
             group: 'Митниця та Логістика',
-            audiences: ['analyst', 'supply_chain', 'admin'],
+            audiences: ['analyst', 'supply_chain', 'drpo', 'admin'],
             priority: 82,
           },
           {
@@ -545,7 +545,7 @@ const baseNavigationConfig: NavSection[] = [
             icon: Briefcase,
             description: 'Пошук та верифікація стратегічних контрагентів.',
             group: 'Митниця та Логістика',
-            audiences: ['analyst', 'supply_chain', 'admin'],
+            audiences: ['analyst', 'supply_chain', 'drpo', 'admin'],
             priority: 80,
           },
           {
@@ -555,7 +555,7 @@ const baseNavigationConfig: NavSection[] = [
             icon: Layers,
             description: 'Аналіз вразливостей та критичних вузлів.',
             group: 'Митниця та Логістика',
-            audiences: ['supply_chain', 'analyst', 'admin'],
+            audiences: ['supply_chain', 'analyst', 'drpo', 'admin'],
             priority: 76,
           },
           {
@@ -565,7 +565,7 @@ const baseNavigationConfig: NavSection[] = [
             icon: Ship,
             description: 'Відстеження суден та активності портів.',
             group: 'Митниця та Логістика',
-            audiences: ['supply_chain', 'analyst', 'admin'],
+            audiences: ['supply_chain', 'analyst', 'drpo', 'admin'],
             priority: 74,
           },
           {
@@ -575,7 +575,7 @@ const baseNavigationConfig: NavSection[] = [
             icon: FileText,
             description: 'Моніторинг державних закупівель та тендерів.',
             group: 'Митниця та Логістика',
-            audiences: ['analyst', 'admin'],
+            audiences: ['analyst', 'drpo', 'admin'],
             priority: 72,
           },
         ],
@@ -614,7 +614,7 @@ const baseNavigationConfig: NavSection[] = [
             icon: Database,
             description: 'Прямий доступ до відкритих та закритих баз даних.',
             group: 'Пошук та Ідентифікація',
-            audiences: ['analyst', 'admin'],
+            audiences: ['analyst', 'drpo', 'admin'],
             priority: 82,
           },
           {
@@ -625,14 +625,14 @@ const baseNavigationConfig: NavSection[] = [
             description: 'Де-дублікація та злиття записів з confidence score.',
             group: 'Пошук та Ідентифікація',
             badge: 'NEW',
-            audiences: ['analyst', 'admin'],
+            audiences: ['analyst', 'drpo', 'admin'],
             priority: 81,
           },
         ],
       },
       {
         title: 'Розвідка та Комплаєнс',
-        audiences: ['analyst', 'admin'],
+        audiences: ['analyst', 'drpo', 'admin'],
         items: [
           {
             id: 'osint-diligence',
@@ -641,7 +641,7 @@ const baseNavigationConfig: NavSection[] = [
             icon: User,
             description: 'Повний KYC/KYB аудит та профіль ризиків суб\'єкта.',
             group: 'Розвідка та Комплаєнс',
-            audiences: ['analyst', 'admin'],
+            audiences: ['analyst', 'drpo', 'admin'],
             priority: 91,
           },
           {
@@ -652,7 +652,7 @@ const baseNavigationConfig: NavSection[] = [
             description: 'Візуалізація кінцевих власників та структур впливу.',
             group: 'Розвідка та Комплаєнс',
             badge: 'ELITE',
-            audiences: ['analyst', 'admin'],
+            audiences: ['analyst', 'drpo', 'admin'],
             priority: 97,
           },
           {
@@ -662,7 +662,7 @@ const baseNavigationConfig: NavSection[] = [
             icon: Network,
             description: 'Аналіз прихованих зв\'язків та аномальних кластерів.',
             group: 'Розвідка та Комплаєнс',
-            audiences: ['analyst', 'admin'],
+            audiences: ['analyst', 'drpo', 'admin'],
             priority: 95,
           },
           {
@@ -672,7 +672,7 @@ const baseNavigationConfig: NavSection[] = [
             icon: ShieldX,
             description: 'Скринінг на санкційні списки та PEP-осіб.',
             group: 'Розвідка та Комплаєнс',
-            audiences: ['analyst', 'admin'],
+            audiences: ['analyst', 'drpo', 'admin'],
             priority: 94,
           },
           {
@@ -682,7 +682,7 @@ const baseNavigationConfig: NavSection[] = [
             icon: ShieldCheck,
             description: 'Система виявлення схем відмивання коштів.',
             group: 'Розвідка та Комплаєнс',
-            audiences: ['analyst', 'admin'],
+            audiences: ['analyst', 'drpo', 'admin'],
             priority: 92,
           },
           {
@@ -693,7 +693,7 @@ const baseNavigationConfig: NavSection[] = [
             description: 'Аналіз грошових переказів у реальному часі.',
             group: 'Розвідка та Комплаєнс',
             badge: 'ОНЛАЙН',
-            audiences: ['analyst', 'admin'],
+            audiences: ['analyst', 'drpo', 'admin'],
             priority: 90,
           },
           {
@@ -703,7 +703,7 @@ const baseNavigationConfig: NavSection[] = [
             icon: Globe,
             description: 'Виявлення підставних компаній та прихованих активів.',
             group: 'Розвідка та Комплаєнс',
-            audiences: ['analyst', 'admin'],
+            audiences: ['analyst', 'drpo', 'admin'],
             priority: 88,
           },
           {
@@ -713,7 +713,7 @@ const baseNavigationConfig: NavSection[] = [
             icon: Landmark,
             description: 'Єдиний центр управління фінансовою аналітикою.',
             group: 'Розвідка та Комплаєнс',
-            audiences: ['analyst', 'admin'],
+            audiences: ['analyst', 'drpo', 'admin'],
             priority: 89,
           },
         ],
@@ -733,7 +733,7 @@ const baseNavigationConfig: NavSection[] = [
     groups: [
       {
         title: 'Когніція',
-        audiences: ['business', 'analyst', 'admin'],
+        audiences: ['business', 'analyst', 'drpo', 'admin'],
         items: [
           {
             id: 'oracle',
@@ -742,7 +742,7 @@ const baseNavigationConfig: NavSection[] = [
             icon: Sparkles,
             description: 'Генеративний синтез від Lead Architect GLM.',
             group: 'Когніція',
-            audiences: ['business', 'analyst', 'admin'],
+            audiences: ['business', 'analyst', 'drpo', 'admin'],
             priority: 100,
           },
           {
@@ -752,7 +752,7 @@ const baseNavigationConfig: NavSection[] = [
             icon: Zap,
             description: 'Стратегічні висновки на базі кросмодальних сигналів.',
             group: 'Когніція',
-            audiences: ['business', 'analyst', 'admin'],
+            audiences: ['business', 'analyst', 'drpo', 'admin'],
             priority: 86,
           },
           {
@@ -763,14 +763,14 @@ const baseNavigationConfig: NavSection[] = [
             description: 'Центр прогнозного моделювання та сценаріїв.',
             group: 'Когніція',
             badge: 'ELITE',
-            audiences: ['analyst', 'admin'],
+            audiences: ['analyst', 'drpo', 'admin'],
             priority: 95,
           },
         ],
       },
       {
         title: 'Аналітика та Агенти',
-        audiences: ['analyst', 'admin'],
+        audiences: ['analyst', 'drpo', 'admin'],
         items: [
           {
             id: 'ai-hypothesis',
@@ -779,7 +779,7 @@ const baseNavigationConfig: NavSection[] = [
             icon: FlaskConical,
             description: 'Автоматичне формування слідчих версій.',
             group: 'Аналітика та Агенти',
-            audiences: ['analyst', 'admin'],
+            audiences: ['analyst', 'drpo', 'admin'],
             priority: 89,
           },
           {
@@ -790,7 +790,7 @@ const baseNavigationConfig: NavSection[] = [
             description: '"What-if" симуляція на базі аналітичних моделей.',
             group: 'Аналітика та Агенти',
             badge: 'NEW',
-            audiences: ['analyst', 'admin'],
+            audiences: ['analyst', 'drpo', 'admin'],
             priority: 87,
           },
           {
@@ -800,7 +800,7 @@ const baseNavigationConfig: NavSection[] = [
             icon: Bot,
             description: 'Керування автономною мережею аналітичних агентів.',
             group: 'Аналітика та Агенти',
-            audiences: ['analyst', 'admin'],
+            audiences: ['analyst', 'drpo', 'admin'],
             priority: 88,
           },
           {
@@ -810,7 +810,7 @@ const baseNavigationConfig: NavSection[] = [
             icon: Radio,
             description: 'Обробка неструктурованих комунікацій та тексту.',
             group: 'Аналітика та Агенти',
-            audiences: ['analyst', 'admin'],
+            audiences: ['analyst', 'drpo', 'admin'],
             priority: 82,
           },
           {
@@ -820,7 +820,7 @@ const baseNavigationConfig: NavSection[] = [
             icon: Database,
             description: 'Синхронізація знань для ШІ-ядра платформи.',
             group: 'Аналітика та Агенти',
-            audiences: ['analyst', 'admin'],
+            audiences: ['analyst', 'drpo', 'admin'],
             priority: 74,
           },
         ],
@@ -840,7 +840,7 @@ const baseNavigationConfig: NavSection[] = [
     groups: [
       {
         title: 'Кейс-менеджмент',
-        audiences: ['analyst', 'admin'],
+        audiences: ['analyst', 'drpo', 'admin'],
         items: [
           {
             id: 'cases',
@@ -849,7 +849,7 @@ const baseNavigationConfig: NavSection[] = [
             icon: Briefcase,
             description: 'Управління розслідуваннями: від відкриття до архіву.',
             group: 'Кейс-менеджмент',
-            audiences: ['analyst', 'admin'],
+            audiences: ['analyst', 'drpo', 'admin'],
             priority: 95,
           },
           {
@@ -860,7 +860,7 @@ const baseNavigationConfig: NavSection[] = [
             description: 'Хронологічна стрічка подій з прив\'язкою до документів.',
             group: 'Кейс-менеджмент',
             badge: 'NEW',
-            audiences: ['analyst', 'admin'],
+            audiences: ['analyst', 'drpo', 'admin'],
             priority: 90,
           },
           {
@@ -870,14 +870,14 @@ const baseNavigationConfig: NavSection[] = [
             icon: Scale,
             description: 'Перевірка відповідності нормативним вимогам.',
             group: 'Кейс-менеджмент',
-            audiences: ['analyst', 'admin'],
+            audiences: ['analyst', 'drpo', 'admin'],
             priority: 82,
           },
         ],
       },
       {
         title: 'Глибока Розвідка',
-        audiences: ['analyst', 'admin'],
+        audiences: ['analyst', 'drpo', 'admin'],
         items: [
           {
             id: 'som',
@@ -886,7 +886,7 @@ const baseNavigationConfig: NavSection[] = [
             icon: Eye,
             description: 'Пасивний моніторинг аномалій та патернів.',
             group: 'Глибока Розвідка',
-            audiences: ['analyst', 'admin'],
+            audiences: ['analyst', 'drpo', 'admin'],
             priority: 85,
           },
           {
@@ -896,7 +896,7 @@ const baseNavigationConfig: NavSection[] = [
             icon: Landmark,
             description: 'Аналіз політичного впливу та зв\'язків.',
             group: 'Глибока Розвідка',
-            audiences: ['analyst', 'admin'],
+            audiences: ['analyst', 'drpo', 'admin'],
             priority: 81,
           },
           {
@@ -906,7 +906,7 @@ const baseNavigationConfig: NavSection[] = [
             icon: Radar,
             description: 'Виявлення фінансових сигналів у розподілених мережах.',
             group: 'Глибока Розвідка',
-            audiences: ['analyst', 'admin'],
+            audiences: ['analyst', 'drpo', 'admin'],
             priority: 78,
           },
         ],

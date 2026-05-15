@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from '../context/ThemeContext';
 import { MainLayout } from '../components/layout/MainLayout';
 import { useBackendStatus } from '../hooks/useBackendStatus';
@@ -55,8 +56,30 @@ vi.mock('../components/layout/ContextRail', () => ({ default: () => <div data-te
 vi.mock('../components/layout/ShellCommandPalette', () => ({ default: () => <div data-testid="palette-mock">PALETTE</div> }));
 vi.mock('../components/ai/ChatBot', () => ({ default: () => null }));
 vi.mock('../hooks/useMediaQuery', () => ({ useMediaQuery: () => mockIsMobile }));
+vi.mock('../context/UserContext', () => ({
+  useUser: () => ({
+    user: {
+      name: 'Тестовий користувач',
+      role: 'admin',
+    },
+    logout: vi.fn(),
+  }),
+}));
+vi.mock('../components/premium/ToasterProvider', () => ({}));
+
+// Прості компоненти-обгортки для тестів
+const UserProvider = ({ children }: { children: React.ReactNode }) => <>{children}</>;
+const ToasterProvider = ({ children }: { children: React.ReactNode }) => <>{children}</>;
 
 describe('MainLayout', () => {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
+
   beforeEach(() => {
     mockIsMobile = false;
     const storage = new Map<string, string>();
@@ -85,13 +108,19 @@ describe('MainLayout', () => {
 
   it('розтягує контент на 12 колонок сітки', () => {
     render(
-      <MemoryRouter>
-        <ThemeProvider>
-          <MainLayout>
-            <div>ТЕСТОВИЙ КОНТЕНТ</div>
-          </MainLayout>
-        </ThemeProvider>
-      </MemoryRouter>
+      <QueryClientProvider client={queryClient}>
+        <UserProvider>
+          <ToasterProvider>
+            <MemoryRouter>
+              <ThemeProvider>
+                <MainLayout>
+                  <div>ТЕСТОВИЙ КОНТЕНТ</div>
+                </MainLayout>
+              </ThemeProvider>
+            </MemoryRouter>
+          </ToasterProvider>
+        </UserProvider>
+      </QueryClientProvider>
     );
 
     expect(screen.getByTestId('header-mock')).toBeInTheDocument();
@@ -107,13 +136,15 @@ describe('MainLayout', () => {
     mockIsMobile = true;
 
     render(
-      <MemoryRouter>
-        <ThemeProvider>
-          <MainLayout>
-            <div>КОМПАКТНИЙ РЕЖИМ</div>
-          </MainLayout>
-        </ThemeProvider>
-      </MemoryRouter>
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <ThemeProvider>
+            <MainLayout>
+              <div>КОМПАКТНИЙ РЕЖИМ</div>
+            </MainLayout>
+          </ThemeProvider>
+        </MemoryRouter>
+      </QueryClientProvider>
     );
 
     // В MainLayout.tsx мобільна кнопка може мати іншу назву або треба перевірити наявність іконки Menu
