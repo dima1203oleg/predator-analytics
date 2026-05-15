@@ -10,9 +10,14 @@ export class SovereignAudio {
 
     private static init() {
         if (!this.ctx) {
+            // Перевірка на тестове оточення (jsdom не підтримує AudioContext)
+            if (typeof window === 'undefined' || 
+                !(window.AudioContext || (window as any).webkitAudioContext)) {
+                return null;
+            }
             this.ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
         }
-        if (this.ctx.state === 'suspended') {
+        if (this.ctx && this.ctx.state === 'suspended') {
             this.ctx.resume();
         }
         return this.ctx;
@@ -23,6 +28,8 @@ export class SovereignAudio {
      */
     static playImpact() {
         const ctx = this.init();
+        if (!ctx) return;
+
         const now = ctx.currentTime;
 
         const osc = ctx.createOscillator();
@@ -60,6 +67,8 @@ export class SovereignAudio {
      */
     static playScanPulse() {
         const ctx = this.init();
+        if (!ctx) return;
+
         const now = ctx.currentTime;
 
         const osc = ctx.createOscillator();
@@ -88,6 +97,8 @@ export class SovereignAudio {
      */
     static playAlert() {
         const ctx = this.init();
+        if (!ctx) return;
+
         const now = ctx.currentTime;
 
         [440, 466, 493].forEach(freq => {
