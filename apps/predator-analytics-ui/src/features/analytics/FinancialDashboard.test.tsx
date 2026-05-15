@@ -9,6 +9,10 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
 // Локальний mock для framer-motion видалено - використовується глобальний mock з setup.tsx
 
+vi.mock('@/components/ui/TacticalCard', () => ({
+    default: ({ children, ...props }: any) => <div data-testid="tactical-card" {...props}>{children}</div>,
+}));
+
 vi.mock('lucide-react', async (importOriginal) => {
     const actual = await importOriginal() as any;
     return new Proxy(actual, {
