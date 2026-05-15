@@ -13,21 +13,8 @@ vi.mock('framer-motion', () => {
   const motion = new Proxy(
     {},
     {
-      get: (_target, key: string) => {
-        const Tag = key as keyof JSX.IntrinsicElements;
-        return ({
-          children,
-          whileHover: _whileHover,
-          whileTap: _whileTap,
-          initial: _initial,
-          animate: _animate,
-          exit: _exit,
-          transition: _transition,
-          ...props
-        }: React.HTMLAttributes<HTMLElement> & Record<string, unknown>) =>
-          React.createElement(Tag || 'div', props, children);
-      },
-    },
+      get: () => ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    }
   );
 
   return {

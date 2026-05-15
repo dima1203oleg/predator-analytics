@@ -17,7 +17,7 @@ vi.mock('framer-motion', () => ({
     motion: {
         div: (props: any) => <div {...props}>{props.children}</div>,
     },
-    AnimatePresence: ({ children }: any) => <>{children}</>
+    AnimatePresence: ({ children }: any) => <>{children}</>,
 }));
 
 describe('OpportunitiesPage', () => {
