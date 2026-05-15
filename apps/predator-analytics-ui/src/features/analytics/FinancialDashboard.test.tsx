@@ -7,12 +7,7 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
 // ─── MOCKS ───────────────────────────────────────────────────────────────────
 
-vi.mock('framer-motion', () => ({
-    motion: {
-        div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-    },
-    AnimatePresence: ({ children }: any) => <>{children}</>,
-}));
+// Локальний mock для framer-motion видалено - використовується глобальний mock з setup.tsx
 
 vi.mock('lucide-react', async (importOriginal) => {
     const actual = await importOriginal() as any;
