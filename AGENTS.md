@@ -1,3 +1,13 @@
+> [!WARNING]
+> **HUMAN REVIEW REQUIRED — DO NOT AUTO-MERGE**
+>
+> This file is read and executed automatically by AI coding agents (Claude Code, Cursor, GitHub Copilot, etc.).
+> Changes to this file **must be reviewed by a human** before being applied or merged.
+> Unreviewed agent instructions are a known prompt injection risk — an attacker can redirect an AI agent
+> to read from malicious paths, suppress security checks, or commit unreviewed code automatically.
+>
+> See: [labs.jamessawyer.co.uk](https://labs.jamessawyer.co.uk/) and [OWASP LLM01](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
+
 # 🦅 PREDATOR Analytics v56.5-ELITE — Інструкції для ШІ-Агента (AGENTS.md)
 
 > Цей файл визначає **канонічну поведінку** будь-якого ШІ-агента, що працює з кодовою базою PREDATOR Analytics.
