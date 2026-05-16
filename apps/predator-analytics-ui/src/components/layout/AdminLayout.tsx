@@ -40,11 +40,11 @@ const ADMIN_NAV: AdminNavItem[] = [
   // Ядро ШІ
   { id: 'ai-control', label: 'Плоскість Керування ШІ',      path: '/admin/command?tab=ai-control',  icon: Zap,            badge: 'NEXUS', group: 'Ядро ШІ' },
   { id: 'ai-engines', label: 'Двигуни ШІ',            path: '/admin/command?tab=ai-engines',  icon: Cpu,            badge: 'CORE',  group: 'Ядро ШІ' },
-  { id: 'intel-hub',  label: 'Суверенна Розвідка',       path: '/admin/command?tab=intel-hub',   icon: Shield,         badge: 'ELITE', group: 'Ядро ШІ' },
+  { id: 'command',    label: 'Суверенна Розвідка',       path: '/admin/command?tab=command',     icon: Shield,         badge: 'ELITE', group: 'Ядро ШІ' },
   
   // ШІ Студія
   { id: 'factory',    label: 'ШІ Фабрика',            path: '/admin/command?tab=factory',     icon: BrainCircuit,   badge: 'NEW',   group: 'ШІ Студія' },
-  { id: 'models',     label: 'Моделі (Налаштування)',    path: '/admin/command?tab=models',      icon: BrainCircuit,   badge: 'ML',    group: 'ШІ Студія' },
+  { id: 'model-train',label: 'Моделі (Налаштування)',    path: '/admin/command?tab=model-train', icon: BrainCircuit,   badge: 'ML',    group: 'ШІ Студія' },
   { id: 'datasets',   label: 'Студія Датасетів',       path: '/admin/command?tab=datasets',    icon: Database,                       group: 'ШІ Студія' },
   { id: 'prompts',    label: 'Системні Промпти',        path: '/admin/command?tab=prompts',     icon: FileText,                       group: 'ШІ Студія' },
   
