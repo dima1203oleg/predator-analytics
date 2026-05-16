@@ -30,47 +30,47 @@ interface AdminNavItem {
 const ADMIN_NAV: AdminNavItem[] = [
   // Моніторинг
   { id: 'infra',      label: 'Телеметрія Кластера',  path: '/admin/command?tab=infra',       icon: Activity,       badge: 'LIVE',  group: 'Моніторинг' },
-  { id: 'failover',   label: 'Failover & Маршрути',   path: '/admin/command?tab=failover',    icon: Radio,                          group: 'Моніторинг' },
-  { id: 'chaos',      label: 'Chaos Control',         path: '/admin/command?tab=chaos',       icon: Zap,                            group: 'Моніторинг' },
+  { id: 'failover',   label: 'Резервування та Маршрути',   path: '/admin/command?tab=failover',    icon: Radio,                          group: 'Моніторинг' },
+  { id: 'chaos',      label: 'Контроль Хаосу',         path: '/admin/command?tab=chaos',       icon: Zap,                            group: 'Моніторинг' },
   
   // Пайплайни
-  { id: 'gitops',     label: 'GitOps & Пайплайни',    path: '/admin/command?tab=gitops',      icon: Box,                            group: 'Пайплайни' },
-  { id: 'dataops',    label: 'DataOps Hub',           path: '/admin/command?tab=dataops',     icon: Database,                       group: 'Пайплайни' },
+  { id: 'gitops',     label: 'GitOps та Пайплайни',    path: '/admin/command?tab=gitops',      icon: Box,                            group: 'Пайплайни' },
+  { id: 'dataops',    label: 'Хаб Даних',           path: '/admin/command?tab=dataops',     icon: Database,                       group: 'Пайплайни' },
   
   // Ядро ШІ
-  { id: 'ai-control', label: 'AI Control Plane',      path: '/admin/command?tab=ai-control',  icon: Zap,            badge: 'NEXUS', group: 'Ядро ШІ' },
+  { id: 'ai-control', label: 'Плоскість Керування ШІ',      path: '/admin/command?tab=ai-control',  icon: Zap,            badge: 'NEXUS', group: 'Ядро ШІ' },
   { id: 'ai-engines', label: 'Двигуни ШІ',            path: '/admin/command?tab=ai-engines',  icon: Cpu,            badge: 'CORE',  group: 'Ядро ШІ' },
-  { id: 'intel-hub',  label: 'Sovereign Intel',       path: '/admin/command?tab=intel-hub',   icon: Shield,         badge: 'ELITE', group: 'Ядро ШІ' },
+  { id: 'intel-hub',  label: 'Суверенна Розвідка',       path: '/admin/command?tab=intel-hub',   icon: Shield,         badge: 'ELITE', group: 'Ядро ШІ' },
   
   // ШІ Студія
   { id: 'factory',    label: 'ШІ Фабрика',            path: '/admin/command?tab=factory',     icon: BrainCircuit,   badge: 'NEW',   group: 'ШІ Студія' },
-  { id: 'models',     label: 'Моделі (Fine-Tune)',    path: '/admin/command?tab=models',      icon: BrainCircuit,   badge: 'ML',    group: 'ШІ Студія' },
-  { id: 'datasets',   label: 'Datasets Studio',       path: '/admin/command?tab=datasets',    icon: Database,                       group: 'ШІ Студія' },
-  { id: 'prompts',    label: 'System Prompts',        path: '/admin/command?tab=prompts',     icon: FileText,                       group: 'ШІ Студія' },
+  { id: 'models',     label: 'Моделі (Налаштування)',    path: '/admin/command?tab=models',      icon: BrainCircuit,   badge: 'ML',    group: 'ШІ Студія' },
+  { id: 'datasets',   label: 'Студія Датасетів',       path: '/admin/command?tab=datasets',    icon: Database,                       group: 'ШІ Студія' },
+  { id: 'prompts',    label: 'Системні Промпти',        path: '/admin/command?tab=prompts',     icon: FileText,                       group: 'ШІ Студія' },
   
   //розширена Аналітика
-  { id: 'nexus',      label: 'Predictive Nexus',      path: '/admin/command?tab=nexus',       icon: Zap,            badge: 'PREDICT',group: 'розширена Аналітика' },
-  { id: 'ai-insights',label: 'AI Insights Hub',       path: '/admin/command?tab=ai-insights', icon: BrainCircuit,   badge: 'DEEP',  group: 'розширена Аналітика' },
-  { id: 'hypothesis', label: 'Гіпотези & NAS',        path: '/admin/command?tab=hypothesis',  icon: Cpu,                            group: 'розширена Аналітика' },
-  { id: 'forecast',   label: 'Прогнози & Тренди',     path: '/admin/command?tab=forecast',    icon: Activity,                       group: 'розширена Аналітика' },
+  { id: 'nexus',      label: 'Прогностичний Нексус',      path: '/admin/command?tab=nexus',       icon: Zap,            badge: 'PREDICT',group: 'розширена Аналітика' },
+  { id: 'ai-insights',label: 'Хаб ШІ Інсайтів',       path: '/admin/command?tab=ai-insights', icon: BrainCircuit,   badge: 'DEEP',  group: 'розширена Аналітика' },
+  { id: 'hypothesis', label: 'Гіпотези та NAS',        path: '/admin/command?tab=hypothesis',  icon: Cpu,                            group: 'розширена Аналітика' },
+  { id: 'forecast',   label: 'Прогнози та Тренди',     path: '/admin/command?tab=forecast',    icon: Activity,                       group: 'розширена Аналітика' },
   
   // Агенти та Безпека
   { id: 'agents-ops', label: 'Оркестрація Агентів',   path: '/admin/command?tab=agents-ops',  icon: Bot,                            group: 'Агенти та Безпека' },
-  { id: 'security',   label: 'Zero Trust Security',   path: '/admin/command?tab=security',    icon: Lock,                           group: 'Агенти та Безпека' },
+  { id: 'security',   label: 'Безпека Zero Trust',   path: '/admin/command?tab=security',    icon: Lock,                           group: 'Агенти та Безпека' },
   
   // Intelligence & OSINT
-  { id: 'intelligence',label: 'Митна Розвідка',       path: '/admin/command?tab=intelligence',icon: Eye,            badge: 'ELITE',group: 'Розвідка & OSINT' },
-  { id: 'osint',      label: 'Search Console',        path: '/admin/command?tab=osint',       icon: Search,         badge: 'OSINT', group: 'Розвідка & OSINT' },
-  { id: 'zrada',      label: 'Zrada Control',         path: '/admin/command?tab=zrada',       icon: ShieldAlert,    badge: 'ELITE', group: 'Розвідка & OSINT' },
-  { id: 'aml',        label: 'AML Scoring',           path: '/admin/command?tab=aml',         icon: Activity,       badge: 'RISK',  group: 'Розвідка & OSINT' },
-  { id: 'sanctions',  label: 'Global Sanctions',      path: '/admin/command?tab=sanctions',   icon: Lock,           badge: 'GLOBAL',group: 'Розвідка & OSINT' },
+  { id: 'intelligence',label: 'Митна Розвідка',       path: '/admin/command?tab=intelligence',icon: Eye,            badge: 'ELITE',group: 'Розвідка та OSINT' },
+  { id: 'osint',      label: 'Консоль Пошуку',        path: '/admin/command?tab=osint',       icon: Search,         badge: 'OSINT', group: 'Розвідка та OSINT' },
+  { id: 'zrada',      label: 'Контроль Зради',         path: '/admin/command?tab=zrada',       icon: ShieldAlert,    badge: 'ELITE', group: 'Розвідка та OSINT' },
+  { id: 'aml',        label: 'AML Оцінювання',           path: '/admin/command?tab=aml',         icon: Activity,       badge: 'RISK',  group: 'Розвідка та OSINT' },
+  { id: 'sanctions',  label: 'Глобальні Санкції',      path: '/admin/command?tab=sanctions',   icon: Lock,           badge: 'GLOBAL',group: 'Розвідка та OSINT' },
   
   // Конфігурація
   { id: 'settings',   label: 'Налаштування',          path: '/admin/command?tab=settings',    icon: Settings,                       group: 'Конфігурація' },
   { id: 'api-docs',   label: 'API Документація',      path: '/api-docs',                      icon: FileText,                       group: 'Конфігурація' },
 ];
 
-const GROUPS = ['Моніторинг', 'Пайплайни', 'Ядро ШІ', 'ШІ Студія', 'розширена Аналітика', 'Розвідка & OSINT', 'Агенти та Безпека', 'Конфігурація'];
+const GROUPS = ['Моніторинг', 'Пайплайни', 'Ядро ШІ', 'ШІ Студія', 'розширена Аналітика', 'Розвідка та OSINT', 'Агенти та Безпека', 'Конфігурація'];
 
 // ─── Компонент бічної панелі ──────────────────────────────────────────────────
 

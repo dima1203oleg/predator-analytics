@@ -140,7 +140,14 @@ const TABS: TabConfig[] = [
   { id: 'llm-explorer', category: 'AI_LAB', label: 'LLM_ПРОВІДНИК',                    icon: BookOpen,      component: LLMView },
   { id: 'factory',      category: 'AI_LAB', label: 'ЗАВОД_ШІ',      badge: 'ПРОД',     icon: Factory,       component: SystemFactoryView  },
   { id: 'factory-studio', category: 'AI_LAB', label: 'СТУДІЯ_ЗАВОДУ',  badge: 'ДИЗАЙН',   icon: Layers,        component: FactoryStudio },
-  { id: 'auto-factory', category: 'AI_LAB', label: 'АВТО-Ф  { id: 'intel-hub',    category: 'INTEL_OSINT', label: 'ХАБ_РОЗВІДКИ',    badge: 'ОРАКУЛ',   icon: Network,       component: SovereignIntelHub },
+  { id: 'auto-factory', category: 'AI_LAB', label: 'АВТО-ЗАВОД',   badge: 'АВТОНОМНИЙ', icon: Factory,       component: AutoFactoryView },
+  { id: 'model-train',  category: 'AI_LAB', label: 'НАВЧАННЯ_МОДЕЛЕЙ', badge: 'ТРЕН',    icon: BrainCircuit,  component: ModelTrainingView },
+  { id: 'datasets',     category: 'AI_LAB', label: 'ДАТАСЕТИ',     badge: 'ДАНІ',      icon: Database,      component: DatasetsStudioView },
+  { id: 'prompts',      category: 'AI_LAB', label: 'СИСТЕМНІ_ПРОМПТИ', badge: 'PROMPT', icon: BookOpen,      component: SystemPromptsView },
+  { id: 'nas',          category: 'AI_LAB', label: 'NAS_СХОВИЩЕ',  badge: 'ДИСК',      icon: HardDrive,     component: NasView },
+  { id: 'forecast',     category: 'AI_LAB', label: 'ПРОГНОЗ_ШІ',   badge: 'ПРОГНОЗ',   icon: TrendingUp,    component: ForecastView },
+
+  // ─── INTEL_OSINT ─────────────────────────────────────────────────────
   { id: 'nexus',        category: 'INTEL_OSINT', label: 'НЕКСУС_ПРЕГНОЗ',        badge: 'ПРОГНОЗ',  icon: Zap,           component: PredictiveNexusView },
   { id: 'hypothesis',   category: 'INTEL_OSINT', label: 'ГІПОТЕЗИ',                        icon: BrainCircuit,  component: HypothesisEngineView },
   { id: 'knowledge',    category: 'INTEL_OSINT', label: 'ЗНАННЯ',                         icon: BookOpen,      component: KnowledgeEngineeringView },
@@ -166,16 +173,7 @@ const TABS: TabConfig[] = [
   { id: 'maritime',     category: 'INTEL_OSINT', label: 'МОРСЬКИЙ_ТРЕК', badge: 'СУДНО',   icon: Anchor,        component: MaritimeView },
   { id: 'tenders',      category: 'INTEL_OSINT', label: 'ТЕНДЕРИ_PROZORRO',      badge: 'PROZORRO', icon: FileText,      component: TendersView },
   { id: 'registries',   category: 'INTEL_OSINT', label: 'РЕЄСТРИ_БД',      badge: 'БД',       icon: Database,      component: RegistriesView },
-  { id: 'open-data',    category: 'INTEL_OSINT', label: 'ВІДКРИТІ_ДАНІ', badge: 'ДЕРЖ',      icon: Globe,         component: DataGovView },,    category: 'INTEL_OSINT', label: 'ЕВОЛЮЦІЯ_АКТИВУ',     badge: 'АГЕНТ',    icon: TrendingUp,    component: EvolutionView },
-  { id: 'osint',        category: 'INTEL_OSINT', label: 'КОНСОЛЬ_ОСІНТ', badge: 'ПОШУК',    icon: Search,        component: SearchConsole },
-  { id: 'zrada',        category: 'INTEL_OSINT', label: 'КОНТРОЛЬ_З АДИ', badge: 'ЕЛІТА',    icon: ShieldAlert,   component: ZradaControlView },
-  { id: 'aml',          category: 'INTEL_OSINT', label: 'СКО ИНГ_АМЛ',   badge: 'РИЗИК',     icon: Activity,      component: AMLScoringView },
-  { id: 'sanctions',    category: 'INTEL_OSINT', label: 'САНКЦІЇ',       badge: 'ГЛОБАЛЬНО',   icon: Lock,          component: SanctionsScreening },
-  { id: 'conv-intel',   category: 'INTEL_OSINT', label: 'СОЦ_РОЗВІДКА', badge: 'СОЦІАЛЬНО',   icon: MessageSquare, component: ConversationIntelView },
-  { id: 'maritime',     category: 'INTEL_OSINT', label: 'МО СЬКИЙ_Т ЕК', badge: 'СУДНО',   icon: Anchor,        component: MaritimeView },
-  { id: 'tenders',      category: 'INTEL_OSINT', label: 'ТЕНДЕ И_PROZORRO',      badge: 'PROZORRO', icon: FileText,      component: TendersView },
-  { id: 'registries',   category: 'INTEL_OSINT', label: 'РЕЄСТРИ_БД',      badge: 'БД',       icon: Database,      component: RegistriesView },
-  { id: 'open-data',    category: 'INTEL_OSINT', label: 'ВІДКрИТІ_ДАНІ', badge: 'ДЕ Ж',      icon: Globe,         component: DataGovView },
+  { id: 'open-data',    category: 'INTEL_OSINT', label: 'ВІДКРИТІ_ДАНІ', badge: 'ДЕРЖ',      icon: Globe,         component: DataGovView },
   
   // ─── PLATFORM ──────────────────────────────────────────────────────────────
   { id: 'settings',     category: 'PLATFORM', label: 'НАЛАШТУВАННЯ',                    icon: Settings,      component: SettingsView },

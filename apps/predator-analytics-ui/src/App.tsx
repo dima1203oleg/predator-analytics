@@ -9,6 +9,7 @@ import { DisplayModeProvider } from './context/DisplayModeContext';
 import { GlobalProvider } from './context/GlobalContext';
 import { UserProvider } from './context/UserContext';
 import { RoleProvider } from './context/RoleContext';
+import { AccessProvider } from './context/AccessContext';
 // Stores
 import { useAppStore } from './store/useAppStore';
 
@@ -134,7 +135,8 @@ function App() {
         <BrowserRouter>
           <UserProvider>
             <RoleProvider>
-              <ShellProvider>
+              <AccessProvider>
+                <ShellProvider>
                 <AgentProvider>
                   <DisplayModeProvider>
                     <SensitiveDataProvider>
@@ -198,6 +200,7 @@ function App() {
                   </DisplayModeProvider>
                 </AgentProvider>
               </ShellProvider>
+            </AccessProvider>
             </RoleProvider>
           </UserProvider>
         </BrowserRouter>
