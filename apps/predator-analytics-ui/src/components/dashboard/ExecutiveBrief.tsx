@@ -37,7 +37,7 @@ export const ExecutiveBrief: React.FC = () => {
 
   const coreStats = useMemo(() => [
     { 
-      label: 'ОБО ОТ (USD)', 
+      label: 'ОБОРОТ (USD)', 
       value: summary ? `$${(summary.total_value_usd / 1e6).toFixed(1)}M` : '...', 
       trend: '+12.4%', 
       icon: TrendingUp, 
@@ -58,7 +58,7 @@ export const ExecutiveBrief: React.FC = () => {
       color: 'text-yellow-500' 
     },
     { 
-      label: 'ШІ- ЕЗОЛЮЦІЇ', 
+      label: 'ШІ-РЕЗОЛЮЦІЇ', 
       value: summary?.vectors.toLocaleString() || '...', 
       trend: '+88', 
       icon: Sparkles, 
@@ -182,10 +182,10 @@ export const ExecutiveBrief: React.FC = () => {
             </div>
             <div className="grid grid-cols-2 gap-6">
               {[
-                { label: 'АКТИВНІ ТЕНДЕ И', val: summary?.completed_pipelines.toString() || '...', icon: Briefcase },
+                { label: 'АКТИВНІ ТЕНДЕРИ', val: summary?.completed_pipelines.toString() || '...', icon: Briefcase },
                 { label: 'OSINT СИГНАЛИ', val: summary?.search_documents.toLocaleString() || '...', icon: Database },
-                { label: 'КОМПАНІЇ_МОНІТО ', val: summary?.import_count.toLocaleString() || '...', icon: Users },
-                { label: 'МЕ ЕЖЕВА_ЕНТ ОПІЯ', val: '0.04', icon: Activity },
+                { label: 'КОМПАНІЇ_МОНІТОРИНГ', val: summary?.import_count.toLocaleString() || '...', icon: Users },
+                { label: 'МЕРЕЖЕВА_ЕНТРОПІЯ', val: '0.04', icon: Activity },
               ].map((item, i) => (
                 <div key={i} className="p-6 rounded-[2rem] bg-black border-2 border-white/5 hover:border-blue-500/30 transition-all group">
                   <div className="flex items-center gap-3 mb-4">
@@ -227,7 +227,7 @@ export const ExecutiveBrief: React.FC = () => {
               <div className="p-2 bg-emerald-500/10 rounded-lg text-emerald-500 border border-emerald-500/20">
                 <PieChart size={18} />
               </div>
-              <h4 className="text-[10px] font-black text-white italic uppercase tracking-widest">П ОГНОЗОВАНЕ  ВД (ROI)</h4>
+              <h4 className="text-[10px] font-black text-white italic uppercase tracking-widest">ПРОГНОЗОВАНЕ ROI (ВД)</h4>
             </div>
             <span className="text-[10px] font-black text-emerald-500">+18.5%</span>
           </div>
@@ -249,7 +249,7 @@ export const ExecutiveBrief: React.FC = () => {
               <div className="p-2 bg-blue-500/10 rounded-lg text-blue-500 border border-blue-500/20">
                 <Globe size={18} />
               </div>
-              <h4 className="text-[10px] font-black text-white italic uppercase tracking-widest">ЕКСПАНСІЯ  ИНКУ</h4>
+              <h4 className="text-[10px] font-black text-white italic uppercase tracking-widest">ЕКСПАНСІЯ РИНКУ</h4>
             </div>
             <span className="text-[10px] font-black text-blue-500">КЛАС-1</span>
           </div>

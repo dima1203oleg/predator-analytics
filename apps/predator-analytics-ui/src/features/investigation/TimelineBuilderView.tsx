@@ -1,5 +1,5 @@
 /**
- * ⏳ TIMELINE BUILDER //  ЕКОНСТРУКТОР Х ОНОЛОГІЇ | v61.0-ELITE
+ * ⏳ TIMELINE BUILDER // РЕКОНСТРУКТОР ХРОНОЛОГІЇ | v61.0-ELITE
  * PREDATOR Analytics — Temporal Forensic & Event Reconstruction Array
  *
  * Глибока хронологічна реконструкція подій: Фінанси, Право, OSINT.
@@ -53,9 +53,9 @@ interface TimelineEvent {
 
 const CATEGORY_CONFIG: Record<EventCategory, { label: string; color: string; bg: string; icon: any }> = {
     financial:     { label: 'ФІНАНСИ', color: '#10b981', bg: 'bg-emerald-500/10', icon: DollarSign },
-    legal:         { label: 'П АВО', color: '#3b82f6', bg: 'bg-blue-500/10', icon: Shield },
+    legal:         { label: 'ПРАВО', color: '#3b82f6', bg: 'bg-blue-500/10', icon: Shield },
     contact:       { label: 'КОНТАКТ', color: '#0ea5e9', bg: 'bg-sky-500/10', icon: MessageSquare },
-    travel:        { label: 'Т АНСПО Т', color: '#f59e0b', bg: 'bg-amber-500/10', icon: MapPin },
+    travel:        { label: 'ТРАНСПОРТ', color: '#f59e0b', bg: 'bg-amber-500/10', icon: MapPin },
     document:      { label: 'ДОКУМЕНТ', color: '#6366f1', bg: 'bg-indigo-500/10', icon: FileText },
     risk:          { label: 'РИЗИК', color: '#f43f5e', bg: 'bg-rose-500/10', icon: AlertTriangle },
     investigation: { label: 'СЛІДСТВО', color: '#a855f7', bg: 'bg-purple-500/10', icon: Eye },
@@ -67,8 +67,8 @@ const MOCK_EVENTS: TimelineEvent[] = [
         date: '2026-01-15',
         time: '09:30',
         category: 'financial',
-        title: 'ВІДКрИТТЯ_ АХУНКУ_MONOBANK',
-        description: 'Відкрито поточнийрахунок UA213206490000026007233566001. Первісний депозит 50,000 UAH.',
+        title: 'ВІДКРИТТЯ_РАХУНКУ_MONOBANK',
+        description: 'Відкрито поточний рахунок UA213206490000026007233566001. Первісний депозит 50,000 UAH.',
         source: 'БАНКІВСЬКІ_РЕЄСТРИ',
         confidence: 98,
         relatedEntities: ['Марченко  .Г.', 'Monobank'],
@@ -79,11 +79,11 @@ const MOCK_EVENTS: TimelineEvent[] = [
         id: 'EVT-002',
         date: '2026-02-03',
         category: 'legal',
-        title: 'РЕЄСТРАЦІЯ_ТОВ_ГОЛДЕН_Т ЕЙД',
+        title: 'РЕЄСТРАЦІЯ_ТОВ_ГОЛДЕН_ТРЕЙД',
         description: 'Зареєстровано нову юридичну особу. КВЕДи: 46.39, 46.90. Статутний капітал 1,000 UAH.',
         source: 'ЄД _УКРАЇНИ',
         confidence: 100,
-        relatedEntities: ['ТОВ "ГОЛДЕН Т ЕЙД"', 'Марченко  .Г.'],
+        relatedEntities: ['ТОВ "ГОЛДЕН ТРЕЙД"', 'Марченко І.Г.'],
         verified: true,
     },
     {
@@ -91,8 +91,8 @@ const MOCK_EVENTS: TimelineEvent[] = [
         date: '2026-02-28',
         time: '14:15',
         category: 'risk',
-        title: 'ІДЕНТИФІКАЦІЯ_PEP_ЗВ_ЯЗКУ',
-        description: 'Встановлено ділові відносини з Олещуком В.О. — заступником міністра.  изик: HIGH.',
+        title: 'ІДЕНТИФІКАЦІЯ_PEP_ЗВ\'ЯЗКУ',
+        description: 'Встановлено ділові відносини з Олещуком В.О. — заступником міністра. Ризик: HIGH.',
         source: 'АНАЛІТИЧНИЙ_ЯДРО_PREDATOR',
         confidence: 92,
         relatedEntities: ['Марченко  .Г.', 'Олещук В.О.'],
@@ -112,12 +112,12 @@ const EventCard: React.FC<{ event: TimelineEvent; isLast: boolean }> = ({ event,
 
     return (
         <div className="relative flex gap-10">
-            {/* ТЕМПО АЛЬНА ЛІНІЯ */}
+            {/* ТЕМПОРАЛЬНА ЛІНІЯ */}
             {!isLast && (
                 <div className="absolute left-[39px] top-16 bottom-0 w-1 bg-gradient-to-b from-indigo-500/30 to-transparent rounded-full" />
             )}
 
-            {/* Х ОНО-ВУЗОЛ */}
+            {/* ХРОНО-ВУЗОЛ */}
             <div className="flex-shrink-0 z-10 pt-4">
                 <motion.div 
                     whileHover={{ scale: 1.1, rotate: 5 }}
@@ -147,7 +147,7 @@ const EventCard: React.FC<{ event: TimelineEvent; isLast: boolean }> = ({ event,
                         {cfg.label}
                     </Badge>
                     {!event.verified && (
-                        <Badge className="bg-rose-600/10 text-rose-500 border-rose-500/20 text-[9px] font-black italic">УВАГА: НЕВЕ ИФІКОВАНО</Badge>
+                        <Badge className="bg-rose-600/10 text-rose-500 border-rose-500/20 text-[9px] font-black italic">УВАГА: НЕВЕРИФІКОВАНО</Badge>
                     )}
                     <div className="ml-auto flex items-center gap-2">
                         <div className="h-1 w-20 bg-white/5 rounded-full overflow-hidden border border-white/5">
@@ -183,7 +183,7 @@ const EventCard: React.FC<{ event: TimelineEvent; isLast: boolean }> = ({ event,
                             >
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                                     <div className="space-y-4">
-                                        <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest italic leading-none">ДЖЕРЕЛО_А ТЕФАКТУ</p>
+                                        <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest italic leading-none">ДЖЕРЕЛО_АРТЕФАКТУ</p>
                                         <div className="p-6 bg-black/60 rounded-[2rem] border border-white/5 flex items-center gap-4">
                                             <Satellite size={18} className="text-indigo-500" />
                                             <span className="text-sm font-black text-white italic uppercase">{event.source}</span>
@@ -214,7 +214,7 @@ const EventCard: React.FC<{ event: TimelineEvent; isLast: boolean }> = ({ event,
                                 <div className="flex items-center justify-between pt-6 border-t border-white/[0.04]">
                                     <div className="flex gap-4">
                                         <button className="px-8 py-4 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black text-slate-400 uppercase tracking-widest italic hover:text-white transition-all flex items-center gap-3">
-                                            <FileText size={16} /> ПЕ ЕГЛЯНУТИ_ЗВІТ
+                                            <FileText size={16} /> ПЕРЕГЛЯНУТИ_ЗВІТ
                                         </button>
                                         <button className="px-8 py-4 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black text-slate-400 uppercase tracking-widest italic hover:text-white transition-all flex items-center gap-3">
                                             <History size={16} /> ЛОГ_ЗМІН
@@ -222,7 +222,7 @@ const EventCard: React.FC<{ event: TimelineEvent; isLast: boolean }> = ({ event,
                                     </div>
                                     <div className="flex items-center gap-4 text-emerald-500">
                                         <Shield size={16} />
-                                        <span className="text-[9px] font-black uppercase italic tracking-widest">ДАНІ_ВЕ ЕФІКОВАНО_АНАЛІТИКОМ</span>
+                                        <span className="text-[9px] font-black uppercase italic tracking-widest">ДАНІ_ВЕРИФІКОВАНО_АНАЛІТИКОМ</span>
                                     </div>
                                 </div>
                             </motion.div>
@@ -278,18 +278,18 @@ const TimelineBuilderView: React.FC = () => {
                                         <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v61.0-ELITE</span>
                                     </div>
                                     <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none">
-                                         ЕКОНСТРУКТОР <span className="text-indigo-500 underline decoration-indigo-600/20 decoration-8 italic uppercase">Х ОНОЛОГІЇ</span>
+                                         РЕКОНСТРУКТОР <span className="text-indigo-500 underline decoration-indigo-600/20 decoration-8 italic uppercase">ХРОНОЛОГІЇ</span>
                                     </h1>
                                     <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.5em] italic mt-2 opacity-80 leading-none">
-                                        ГЛИБИННИЙ АНАЛІЗ ЧАСОВИХ ВЕКТО ІВ ТАПРИХОВАНИХ ЗВ'ЯЗКІВ
+                                        ГЛИБИННИЙ АНАЛІЗ ЧАСОВИХ ВЕКТОРІВ ТА ПРИХОВАНИХ ЗВ'ЯЗКІВ
                                     </p>
                                 </div>
                             </div>
                         }
                         stats={[
                             { label: 'ПОДІЙ_В_КЕЙСІ', value: '142', icon: <Hash size={14} />, color: 'primary' },
-                            { label: 'ВЕ ИФІКОВАНО', value: '89.4%', icon: <Shield size={14} />, color: 'success', animate: true },
-                            { label: 'АКТИВНІ_ВЕКТО І', value: '12', icon: <Target size={14} />, color: 'warning' }
+                            { label: 'ВЕРИФІКОВАНО', value: '89.4%', icon: <Shield size={14} />, color: 'success', animate: true },
+                            { label: 'АКТИВНІ_ВЕКТОРІ', value: '12', icon: <Target size={14} />, color: 'warning' }
                         ]}
                         actions={
                             <div className="flex gap-4">
@@ -297,13 +297,13 @@ const TimelineBuilderView: React.FC = () => {
                                     <RefreshCcw size={24} />
                                 </button>
                                 <button onClick={() => setIsAddModalOpen(true)} className="px-8 py-5 bg-indigo-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-indigo-600 shadow-2xl transition-all flex items-center gap-4">
-                                    <PlusCircle size={18} /> ДОДАТИ_ТЕМПО АЛЬНИЙ_А ТЕФАКТ
+                                    <PlusCircle size={18} /> ДОДАТИ_ТЕМПОРАЛЬНИЙ_АРТЕФАКТ
                                 </button>
                             </div>
                         }
                     />
 
-                    {/* HUD ФІЛЬТ ІВ */}
+                    {/* HUD ФІЛЬТРІВ */}
                     <div className="flex flex-col lg:flex-row items-center gap-10 bg-black/40 border-2 border-white/[0.03] p-10 rounded-[3rem] shadow-3xl ">
                         <div className="flex-1 w-full relative group">
                             <Search className="absolute left-8 top-1/2 -translate-y-1/2 w-8 h-8 text-slate-800 group-focus-within:text-indigo-500 transition-colors" />
@@ -311,7 +311,7 @@ const TimelineBuilderView: React.FC = () => {
                                 type="text"
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
-                                placeholder="ПОШУК ПОДІЙ У МАТрИЦІ ЧАСУ..."
+                                placeholder="ПОШУК ПОДІЙ У МАТРИЦІ ЧАСУ..."
                                 className="w-full bg-white/[0.01] border-2 border-white/[0.04] p-8 pl-24 rounded-[2rem] text-2xl font-black text-white italic tracking-tighter placeholder:text-slate-900 outline-none focus:border-indigo-500/40 focus:bg-indigo-500/[0.02] transition-all uppercase"
                             />
                         </div>
@@ -319,7 +319,7 @@ const TimelineBuilderView: React.FC = () => {
                         <div className="flex items-center gap-4 flex-wrap justify-center lg:justify-start">
                             <div className="flex items-center gap-4 mr-4 p-4 border-r border-white/5">
                                 <Filter className="w-6 h-6 text-indigo-500" />
-                                <span className="text-[10px] font-black text-slate-700 uppercase tracking-widest italic leading-none">ФІЛЬТ _КАТЕГО ІЙ</span>
+                                <span className="text-[10px] font-black text-slate-700 uppercase tracking-widest italic leading-none">ФІЛЬТР_КАТЕГОРІЙ</span>
                             </div>
                             <button
                                 onClick={() => setCategoryFilter('ALL')}
@@ -346,7 +346,7 @@ const TimelineBuilderView: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* ТЕМПО АЛЬНА ШКАЛА */}
+                    {/* ТЕМПОРАЛЬНА ШКАЛА */}
                     <div className="max-w-6xl mx-auto space-y-4">
                         <AnimatePresence mode="popLayout">
                             {filtered.length === 0 ? (
@@ -354,7 +354,7 @@ const TimelineBuilderView: React.FC = () => {
                                     <Satellite size={120} className="text-slate-900 " />
                                     <div className="space-y-4">
                                         <h3 className="text-3xl font-black text-slate-800 uppercase italic tracking-tighter">ВІДСУТНІСТЬ_ДАННИХ</h3>
-                                        <p className="text-[11px] text-slate-700 font-black uppercase tracking-[0.4em] italic max-w-md mx-auto leading-relaxed">СІТКА ЧАСУ ПО ОЖНЯ. ЗАДАЙТЕ ІНШІ ПА АМЕТрИ ФІЛЬТ АЦІЇ АБО ЗАПУСТИТИ_СКАНЕ .</p>
+                                        <p className="text-[11px] text-slate-700 font-black uppercase tracking-[0.4em] italic max-w-md mx-auto leading-relaxed">СІТКА ЧАСУ ПОРОЖНЯ. ЗАДАЙТЕ ІНШІ ПАРАМЕТРИ ФІЛЬТРАЦІЇ АБО ЗАПУСТИТИ_СКАНЕР.</p>
                                     </div>
                                 </motion.div>
                             ) : (
@@ -370,7 +370,7 @@ const TimelineBuilderView: React.FC = () => {
                 <Modal 
                     isOpen={isAddModalOpen} 
                     onClose={() => setIsAddModalOpen(false)} 
-                    title="ДОДАТИ_ТЕМПО АЛЬНИЙ_А ТЕФАКТ" 
+                    title="ДОДАТИ_ТЕМПОРАЛЬНИЙ_АРТЕФАКТ" 
                     icon={<PlusCircle size={24} />}
                     size="md"
                     variant="default"
@@ -385,7 +385,7 @@ const TimelineBuilderView: React.FC = () => {
                                 </div>
                             </div>
                             <div className="space-y-4">
-                                <label className="text-[10px] font-black text-slate-700 uppercase tracking-widest italic ml-2">КАТЕГОРІЯ_МАТрИЦІ</label>
+                                <label className="text-[10px] font-black text-slate-700 uppercase tracking-widest italic ml-2">КАТЕГОРІЯ_МАТРИЦІ</label>
                                 <select className="w-full bg-black/60 border border-white/10 p-5 rounded-2xl text-white outline-none focus:border-indigo-500/40 uppercase font-black italic text-xs tracking-widest">
                                     {Object.values(CATEGORY_CONFIG).map(c => <option key={c.label} value={c.label}>{c.label}</option>)}
                                 </select>
@@ -393,7 +393,7 @@ const TimelineBuilderView: React.FC = () => {
                         </div>
 
                         <div className="space-y-4">
-                            <label className="text-[10px] font-black text-slate-700 uppercase tracking-widest italic ml-2">ЗАГОЛОВОК_А ТЕФАКТУ</label>
+                            <label className="text-[10px] font-black text-slate-700 uppercase tracking-widest italic ml-2">ЗАГОЛОВОК_АРТЕФАКТУ</label>
                             <input type="text" placeholder="НАЗВА ПОДІЇ..." className="w-full bg-black/60 border border-white/10 p-6 rounded-2xl text-white outline-none focus:border-indigo-500/40 font-black italic uppercase" />
                         </div>
 
@@ -403,7 +403,7 @@ const TimelineBuilderView: React.FC = () => {
                         </div>
 
                         <button className="w-full py-8 bg-indigo-600 hover:bg-indigo-500 text-white font-black uppercase tracking-[0.4em] italic rounded-[2rem] shadow-4xl transition-all flex items-center justify-center gap-6">
-                            <Fingerprint size={24} /> ЗАК ІПИТИ_В_WORM_МАСИВІ
+                            <Fingerprint size={24} /> ЗАКРІПИТИ_В_WORM_МАСИВІ
                         </button>
                     </div>
                 </Modal>

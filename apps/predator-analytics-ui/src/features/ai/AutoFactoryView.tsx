@@ -1,6 +1,6 @@
 /**
  * 🏭 Sovereign Auto-Factory | v61.0-ELITE
- * PREDATOR —  обочий Центр Автономного Вдосконалення
+ * PREDATOR — Робочий Центр Автономного Вдосконалення
  * 
  * Контроль OODA-циклу, патч-менеджмент та еволюція нейронних архітектур.
  * Sovereign Power Design System · Gold/Rose Palette · Tier-1 Access
@@ -63,7 +63,7 @@ const AXIOMS = [
   {
     code: 'AX-12',
     title: 'Колективний розум',
-    detail: ' ішення про виправлення спирається на реальну телеметрію, чергу багів і підтверджені сервером артефакти узгодження.',
+    detail: 'Рішення про виправлення спирається на реальну телеметрію, чергу багів і підтверджені сервером артефакти узгодження.',
   },
   {
     code: 'AX-15',
@@ -158,7 +158,7 @@ const BugCard = ({ bug }: { bug: AutoFactoryBugRecord }) => {
           </div>
           <div className="flex flex-wrap gap-6 text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">
             <span>Компонент: <span className="text-slate-200">{bug.componentLabel}</span></span>
-            <span> изик: <span className={tone.text}>{bug.riskLabel}</span></span>
+            <span>Ризик: <span className={tone.text}>{bug.riskLabel}</span></span>
             <span>Погодження: <span className="text-slate-200">{bug.councilLabel}</span></span>
           </div>
           <div className="text-sm leading-6 text-slate-400">{bug.detailLabel}</div>
@@ -393,7 +393,7 @@ export default function AutoFactoryView() {
                   </h1>
                   <p className="mt-3 flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.34em] text-[#D4AF37]/75">
                     <Sparkles size={12} className="" />
-                    v61.0-ELITE · МОДУЛЬ НЕЙ ОННОЇ ЕВОЛЮЦІЇ
+                    v61.0-ELITE · МОДУЛЬ НЕЙРОННОЇ ЕВОЛЮЦІЇ
                   </p>
                 </div>
               </div>

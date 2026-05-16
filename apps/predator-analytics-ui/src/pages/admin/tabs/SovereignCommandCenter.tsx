@@ -183,7 +183,7 @@ export const SovereignCommandCenter: React.FC = () => {
                   </div>
                   <div className="p-6 glass-wraith border-2 border-white/5 rounded-[2rem] flex flex-col gap-2 shadow-4xl group hover:border-rose-500/40 transition-all duration-700 overflow-hidden relative">
                      <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
-                     <span className="text-[8px] text-white/20 uppercase font-black tracking-[0.3em] italic relative z-10">ВА ТІСТЬ_ЗАПИТУ</span>
+                     <span className="text-[8px] text-white/20 uppercase font-black tracking-[0.3em] italic relative z-10">ВАРТІСТЬ_ЗАПИТУ</span>
                      <span className="text-xl font-black text-rose-500 italic tracking-tighter relative z-10 glint-elite">₴0.0004</span>
                   </div>
                </div>
@@ -329,7 +329,7 @@ export const SovereignCommandCenter: React.FC = () => {
                 </div>
                 <span className="text-[11px] font-black font-mono text-emerald-500 uppercase tracking-[0.5em] italic relative z-10">СТАТУС_БЕЗПЕКИ_L7</span>
                 <div className="flex items-end justify-between relative z-10">
-                  <span className="text-4xl font-black text-emerald-400 italic tracking-tighter glint-elite uppercase leading-none">ГЕ МЕТИЧНО</span>
+                  <span className="text-4xl font-black text-emerald-400 italic tracking-tighter glint-elite uppercase leading-none">ГЕРМЕТИЧНО</span>
                   <Lock size={48} className="text-emerald-500/10 group-hover:text-emerald-500 group-hover:scale-110 transition-all duration-700" />
                 </div>
              </div>

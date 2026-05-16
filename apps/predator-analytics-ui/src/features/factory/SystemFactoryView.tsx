@@ -397,7 +397,7 @@ export default function SystemFactoryView() {
   };
 
   const handleCheckReliability = () => {
-    pushSystemMessage('Chaos Engineering не підключено до окремого бекенд-ендпоїнта.  озділ показує лише підтверджену телеметрію без локального моделювання вразливостей.', 'analyze');
+    pushSystemMessage('Chaos Engineering не підключено до окремого бекенд-ендпоїнта. Розділ показує лише підтверджену телеметрію без локального моделювання вразливостей.', 'analyze');
   };
 
   const handleUpdateKnowledgeMap = () => {
@@ -492,9 +492,9 @@ export default function SystemFactoryView() {
     if (lower === 'autofix status') {
        const activeFixes = bugs.filter(b => b.status === 'fixing');
        if (activeFixes.length > 0) {
-          return `🤖 [AUTOFIX STATUS] ${activeFixes.length} багів впроцесі ремедіації. Прогрес: ${activeFixes[0].fixProgress}%`;
+          return `🤖 [AUTOFIX STATUS] ${activeFixes.length} багів в процесі ремедіації. Прогрес: ${activeFixes[0].fixProgress}%`;
        }
-       return '🤖 [AUTOFIX STATUS] Немає активнихпроцесів виправлення коду.';
+        return '🤖 [AUTOFIX STATUS] Немає активних процесів виправлення коду.';
     }
 
     if (lower.includes('масштабуй') || lower.includes('скейл') || lower.includes('scale')) {
@@ -517,7 +517,7 @@ export default function SystemFactoryView() {
          }
          return 'Pod API не підтверджено у відповіді `/system/cluster`.';
        }
-       return 'Вкажіть підсистему дляперегляду логів (напр. "покажи логи API").';
+        return 'Вкажіть підсистему для перегляду логів (напр. "покажи логи API").';
     }
 
     if (lower.includes('кеш') || lower.includes('cache')) {
@@ -525,7 +525,7 @@ export default function SystemFactoryView() {
     }
     
     if (lower.includes('секрет') || lower.includes('secret')) {
-       return { action: 'analyze', reply: ' отація секретів не підключена до окремого backend endpoint.  озділ не симулює зміну TLS або Kubernetes Secrets.' };
+       return { action: 'analyze', reply: 'Ротація секретів не підключена до окремого backend endpoint. Розділ не симулює зміну TLS або Kubernetes Secrets.' };
     }
 
     // Pipeline commands
@@ -534,7 +534,7 @@ export default function SystemFactoryView() {
     } 
     if (lower.includes('білд') || lower.includes('збір')) {
       setPipelineProgress(0);
-      return { action: 'build', reply: 'Ініційованопроцес збірки Docker образів та CI. Контекст оновлено.' };
+      return { action: 'build', reply: 'Ініційовано процес збірки Docker образів та CI. Контекст оновлено.' };
     } 
 
     if (lower.includes('що') && (lower.includes('виправ') || lower.includes('роби'))) {
@@ -577,7 +577,7 @@ export default function SystemFactoryView() {
         }
         return 'OODA Loop вже працює в штатному режимі.';
       }
-      return { action: 'deploy', reply: ' озгортаю оновлення системних компонентів у кластер...' };
+      return { action: 'deploy', reply: 'Розгортаю оновлення системних компонентів у кластер...' };
     }
 
     if (lower.includes('зупини') || lower.includes('стоп') || lower.includes('stop')) {
