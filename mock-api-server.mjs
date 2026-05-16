@@ -6775,7 +6775,7 @@ app.use('/api', (req, res) => {
   res.json({ success: true, message: 'Mock accepted' });
 });
 
-server.listen(PORT, () => {
-    console.log(`🚀 Mock API Server running on http://localhost:${PORT}`);
+server.listen(PORT, '127.0.0.1', () => {
+    console.log(`🚀 Mock API Server running on http://127.0.0.1:${PORT}`);
 });
 
