@@ -1,3 +1,24 @@
+> [!WARNING]
+> **HARDCODED LOCAL PATH DETECTED — PRIVACY & PORTABILITY RISK**
+>
+> This agent config file contains `file:///Users/...` paths pointing to files on the
+> original developer's local machine. These paths:
+>
+> - **Do not work** in any other environment (CI, team members, code review agents)
+> - **Leak your username and local directory structure** into a public repository
+> - Cause AI agents to silently fail or behave unpredictably when the path is unreachable
+>
+> Replace with relative paths, environment variables, or inline the content directly.
+>
+> ---
+>
+> **HUMAN REVIEW REQUIRED — DO NOT AUTO-MERGE**
+> Agent config files must be reviewed by a human before being applied.
+> Unreviewed instructions are a prompt injection risk in agentic pipelines.
+>
+> 🔗 [labs.jamessawyer.co.uk](https://labs.jamessawyer.co.uk/) — security research
+> 🔗 [OWASP LLM01 — Prompt Injection](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
+
 # 🦅 PREDATOR Analytics v56.5-ELITE — Інструкції для ШІ-Агента (AGENTS.md)
 
 > Цей файл визначає **канонічну поведінку** будь-якого ШІ-агента, що працює з кодовою базою PREDATOR Analytics.
