@@ -124,6 +124,7 @@ helm repo add bitnami https://charts.bitnami.com/bitnami || true
 helm repo remove neo4j 2>/dev/null || true
 helm repo add neo4j https://helm.neo4j.com || true
 helm repo add qdrant https://qdrant.github.io/helm || true
+helm repo add opensearch https://opensearch-project.github.io/helm-charts/ || true
 helm repo update || true
 
 # Neo4j (Sovereign Graph)
@@ -148,6 +149,20 @@ helm upgrade --install clickhouse-predator bitnami/clickhouse \
 helm upgrade --install qdrant-predator qdrant/qdrant \
   --namespace predator \
   --set persistence.enabled=false || true
+
+# MinIO (S3 Фізичне Сховище)
+helm upgrade --install minio-predator bitnami/minio \
+  --namespace predator \
+  --set auth.rootUser=admin \
+  --set auth.rootPassword=predator1204 \
+  --set persistence.enabled=false || true
+
+# OpenSearch (Текстова Розвідка)
+helm upgrade --install opensearch-predator opensearch/opensearch \
+  --namespace predator \
+  --set singleNode=true \
+  --set persistence.enabled=false \
+  --set opensearchJavaOpts="-Xmx512M -Xms512M" || true
 "
 
 # 5. Перевірка статусу
