@@ -243,8 +243,8 @@ export default function AIControlPlane() {
   useEffect(() => {
     if (!isInitialLoading && snapshot.hasAnyData) {
       const message = backendStatus.isOffline
-        ? `АВТОНОМНИЙ_КОНТУ  [${backendStatus.nodeSource}]: Телеметрія рушіїв завантажена з кешу Mirror Vault.`
-        : `КОНТУ _КЕ УВАННЯ [${backendStatus.nodeSource}]: Телеметрію рушіїв успішно синхронізовано.`;
+        : `АВТОНОМНИЙ_КОНТУР [${backendStatus.nodeSource}]: Телеметрія рушіїв завантажена з кешу Mirror Vault.`
+        : `КОНТУР_КЕРУВАННЯ [${backendStatus.nodeSource}]: Телеметрію рушіїв успішно синхронізовано.`;
 
       window.dispatchEvent(
         new CustomEvent('predator-error', {
@@ -282,7 +282,7 @@ export default function AIControlPlane() {
                   </div>
                   <div className="mt-3 flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.34em] text-[#D4AF37]/70">
                     <Zap size={12} className="" />
-                    v61.0-ELITE · МОНІТОРИНГ СУВЕ ЕННИХ  УШІЇВ
+                    v61.0-ELITE · МОНІТОРИНГ СУВЕРЕННИХ РУШІЇВ
                   </div>
                 </div>
               </div>
@@ -291,7 +291,7 @@ export default function AIControlPlane() {
             breadcrumbs={['PREDATOR', 'ШІ', 'Контур керування']}
             stats={[
               {
-                label: ' ушії',
+                label: 'Рушії',
                 value: snapshot.metrics[0]?.value ?? 'Н/д',
                 icon: <Server size={14} />,
                 color: 'primary',
@@ -365,7 +365,7 @@ export default function AIControlPlane() {
 
           <div className="flex flex-wrap gap-3 rounded-[28px] border border-white/10 bg-slate-950/50 p-3">
             {[
-              { id: 'engines' as const, label: ' ушії', icon: Server },
+              { id: 'engines' as const, label: 'Рушії', icon: Server },
               { id: 'governance' as const, label: 'Політики', icon: ShieldAlert },
               { id: 'logs' as const, label: 'Журнал', icon: Terminal },
             ].map((item) => (
@@ -397,7 +397,7 @@ export default function AIControlPlane() {
                   </div>
                 ) : (
                   <EmptyState
-                    title=" ушії не підтверджені"
+                    title="Рушії не підтверджені"
                     description="`/system/engines` не повернув елементів. Панель не домальовує локальний список мовних, векторних чи графових модулів."
                   />
                 )}
