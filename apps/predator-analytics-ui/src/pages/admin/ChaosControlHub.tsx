@@ -218,19 +218,19 @@ const ChaosControlHub: React.FC = () => {
               <Cloud size={48} className="" />
             </div>
             <div>
-              <h3 className="text-4xl font-black text-white uppercase italic tracking-tighter glint-elite">Cloud Hybrid Sync</h3>
-              <p className="text-[12px] text-sky-400/60 font-black uppercase tracking-[0.4em] mt-3 italic">Управління вузлом Google Colab & zrok Tunnels</p>
+              <h3 className="text-4xl font-black text-white uppercase italic tracking-tighter glint-elite">ХМАРНА_ГІБРИДНА_СИНХРОНІЗАЦІЯ</h3>
+              <p className="text-[12px] text-sky-400/60 font-black uppercase tracking-[0.4em] mt-3 italic">Управління хмарним вузлом обчислень та zrok-тунелями</p>
             </div>
           </div>
 
           <div className="flex flex-wrap gap-6">
             <div className="px-8 py-5 glass-wraith border-2 border-emerald-500/20 rounded-2xl flex items-center gap-4">
               <div className="w-3 h-3 rounded-full bg-emerald-500 animate-ping" />
-              <span className="text-[11px] font-black text-emerald-500 uppercase tracking-widest italic">IMAC_COMPUTE: ONLINE</span>
+              <span className="text-[11px] font-black text-emerald-500 uppercase tracking-widest italic">АЙМАК_ВУЗОЛ: ОНЛАЙН</span>
             </div>
             <div className="px-8 py-5 glass-wraith border-2 border-sky-500/20 rounded-2xl flex items-center gap-4">
               <div className="w-3 h-3 rounded-full bg-sky-500 " />
-              <span className="text-[11px] font-black text-sky-500 uppercase tracking-widest italic">COLAB_HYBRID: STANDBY</span>
+              <span className="text-[11px] font-black text-sky-500 uppercase tracking-widest italic">КОЛАБ_ГІБРИД: ОЧІКУВАННЯ</span>
             </div>
             <button
               onClick={() => {
@@ -240,7 +240,7 @@ const ChaosControlHub: React.FC = () => {
               onMouseEnter={() => play(UISoundType.HOVER)}
               className="px-10 py-5 bg-sky-600 text-white rounded-2xl font-black uppercase tracking-widest text-[11px] hover:bg-sky-500 transition-all shadow-xl italic flex items-center gap-3"
             >
-              <Link size={16} /> З'єднати з Colab
+              <Link size={16} /> З'ЄДНАТИ_З_ХМАРОЮ
             </button>
           </div>
         </div>
