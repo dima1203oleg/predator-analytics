@@ -37,8 +37,8 @@ remote_exec() {
 # 1. Перевірка Docker/Colima
 if ! remote_exec "docker ps" > /dev/null 2>&1; then
     echo "🏗️ Запуск Docker Engine (Colima)..."
-    remote_exec "brew install qemu 2>/dev/null || true"
-    remote_exec "colima start --cpu 4 --memory 6 --disk 60 --vm-type=qemu || true"
+    # Використовуємо Apple Virtualization Framework (vz) замість qemu, щоб уникнути компіляції 1 годину
+    remote_exec "colima start --cpu 4 --memory 6 --disk 60 --vm-type=vz || true"
     sleep 10
 fi
 
