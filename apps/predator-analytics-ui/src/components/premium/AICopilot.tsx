@@ -140,7 +140,7 @@ export const Predator: React.FC = () => {
         }
 
         if (stats && stats.total_patterns !== undefined) {
-          setRamUsage(stats.ram_usage_percent || Math.floor(Math.random() * 20) + 40);
+          setRamUsage(stats.ram_usage_percent || 0);
           dynamicSuggestions.push({
             id: `stat-${Date.now()}`,
             type: 'insight',

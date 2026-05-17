@@ -121,7 +121,7 @@ export const MorningNewspaper: React.FC = () => {
               importance: 'medium',
               source: n.type || 'PREDATOR',
               timestamp: new Date(n.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-              change: Math.floor(Math.random() * 10) + 1
+              change: 0
             }));
             setNews(newsItems);
           }

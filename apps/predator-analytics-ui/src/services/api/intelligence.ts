@@ -130,23 +130,14 @@ export const intelligenceApi = {
     },
 
     // ─── Knowledge Engineering (Rules + Costs) ─────────────────────────────────
+    // AUDIT-FIX: Видалено inline mock datasets — при недоступності API повертається []
     getRules: async () => {
         const res = await apiClient.get('/premium/rules').catch(() => ({ data: [] }));
-        return Array.isArray(res.data) ? res.data : (res.data?.rules ?? [
-            { id: 'r1', name: 'Контрабанда > $50k → Аудит', category: 'fraud', enabled: true },
-            { id: 'r2', name: 'Санкційний список ЄС', category: 'sanctions', enabled: true },
-            { id: 'r3', name: 'Ціновий демпінг > 30%', category: 'customs', enabled: false },
-            { id: 'r4', name: 'Нові ЄДРПОУ < 1 рік', category: 'risk', enabled: true },
-        ]);
+        return Array.isArray(res.data) ? res.data : (res.data?.rules ?? []);
     },
     getCosts: async () => {
         const res = await apiClient.get('/premium/costs').catch(() => ({ data: [] }));
-        return Array.isArray(res.data) ? res.data : (res.data?.costs ?? [
-            { resource: 'OpenAI API', used: 12.40, limit: 50, color: 'blue' },
-            { resource: 'Qdrant Vectors', used: 8.20, limit: 20, color: 'purple' },
-            { resource: 'OpenSearch Index', used: 5.80, limit: 30, color: 'emerald' },
-            { resource: 'MinIO Storage', used: 2.10, limit: 10, color: 'amber' },
-        ]);
+        return Array.isArray(res.data) ? res.data : (res.data?.costs ?? []);
     },
     healing: {
         getMetrics: async () => (await v45Client.get('/intelligence/healing/metrics')).data,

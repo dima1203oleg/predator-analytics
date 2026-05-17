@@ -11,6 +11,7 @@
  */
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { API_BASE_URL } from '@/services/api/config';
 
 interface AIStreamData {
   type: 'health_update' | 'agent_action' | 'query_result' | 'error' | 'metrics';
@@ -52,7 +53,10 @@ export function useAIStream(options: UseAIStreamOptions = {}): UseAIStreamReturn
 
   const getWsUrl = useCallback(() => {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    return `${protocol}//${window.location.host}/api/v45/ws/ai/stream`;
+    const baseUrl = API_BASE_URL.startsWith('http')
+      ? API_BASE_URL.replace(/^http/, 'ws')
+      : `${protocol}//${window.location.host}${API_BASE_URL}`;
+    return `${baseUrl}/ws/ai/stream`;
   }, []);
 
   const connect = useCallback(() => {

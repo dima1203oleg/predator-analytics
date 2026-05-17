@@ -13,6 +13,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { flushSync } from 'react-dom';
 import { UserRole } from '../config/roles';
 import { SubscriptionTier, useUser } from '../context/UserContext';
+import { apiClient } from '../services/api/config';
 import { GeometricRaptor } from './Logo';
 
 interface LoginScreenProps {
@@ -80,6 +81,9 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
     const [step, setStep] = useState<'initial' | 'scanning' | 'roles'>('initial');
     const [scanProgress, setScanProgress] = useState(0);
     const [threatPulse, setThreatPulse] = useState(false);
+    const [email, setEmail] = useState('admin@predator.ai');
+    const [password, setPassword] = useState('admin123');
+    const [error, setError] = useState<string | null>(null);
     const clock = useClock();
 
     // Лічильники глобальної активності
@@ -120,7 +124,53 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
     }, [step]);
 
 
+    const handleLoginSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError(null);
+        setStep('scanning');
+
+        try {
+            const formData = new URLSearchParams();
+            formData.append('username', email);
+            formData.append('password', password);
+
+            const response = await apiClient.post('/auth/token', formData, {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            });
+
+            if (response.data && response.data.access_token) {
+                // Simulate biometric scanning before redirect
+                setTimeout(() => {
+                    const userData = response.data.user;
+                    flushSync(() => {
+                        setUser({
+                            id: userData.id,
+                            name: userData.full_name || userData.role,
+                            email: userData.email,
+                            role: userData.role as UserRole,
+                            tier: userData.role === UserRole.ADMIN ? SubscriptionTier.ENTERPRISE : SubscriptionTier.PRO,
+                            tenant_id: userData.tenant_id,
+                            tenant_name: 'PREDATOR_CORP',
+                            last_login: new Date().toISOString(),
+                            data_sectors: ['ALPHA', 'GAMMA', 'DELTA-9']
+                        });
+                        sessionStorage.setItem('predator_auth_token', response.data.access_token);
+                    });
+                    onLogin();
+                }, 2000); // 2 sec scan animation
+            }
+        } catch (err) {
+            console.error('Login failed', err);
+            setStep('initial');
+            setError('ПОМИЛКА ІДЕНТИФІКАЦІЇ');
+            speak('Помилка ідентифікації. Невірний код або ключ.');
+        }
+    };
+
     const handleDemoLogin = (role: UserRole) => {
+        // Fallback or demo behavior if needed, otherwise this is replaced by real login.
         speak('Доступ дозволено. Ласкаво просимо в систему PREDATOR.');
         let tier = SubscriptionTier.FREE;
         if (role === UserRole.CLIENT_PREMIUM || role === UserRole.CLIENT_DRPO) tier = SubscriptionTier.PRO;
@@ -433,15 +483,22 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                             </div>
 
                             {/* ФОРМА АВТОРИЗАЦІЇ */}
-                            <form className="w-72 space-y-2.5" onSubmit={(e) => { e.preventDefault(); setStep('scanning'); }}>
+                            <form className="w-72 space-y-2.5" onSubmit={handleLoginSubmit}>
+                                {error && (
+                                    <div className="text-[10px] font-black text-rose-500 tracking-widest text-center animate-pulse">
+                                        {error}
+                                    </div>
+                                )}
                                 <div className="relative group">
                                     <div className="absolute left-3 top-1/2 -translate-y-1/2 text-rose-500 group-focus-within:text-rose-400 transition-colors">
-                                        <Fingerprint size={16} />
+                                        <User size={16} />
                                     </div>
                                     <input
-                                        readOnly
-                                        placeholder="ОПЕРАТИВНИЙ КОД"
-                                        className="w-full bg-black/80 border border-rose-900/40 rounded py-3 pl-10 pr-4 text-[11px] tracking-[0.4em] font-black text-white placeholder:text-rose-900/50 focus:border-rose-600/60 outline-none transition-all shadow-inner"
+                                        type="email"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        placeholder="ОПЕРАТИВНИЙ КОД (EMAIL)"
+                                        className="w-full bg-black/80 border border-rose-900/40 rounded py-3 pl-10 pr-4 text-[11px] tracking-[0.2em] font-black text-white placeholder:text-rose-900/50 focus:border-rose-600/60 outline-none transition-all shadow-inner"
                                     />
                                 </div>
                                 <div className="relative group">
@@ -449,10 +506,11 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                         <Lock size={16} />
                                     </div>
                                     <input
-                                        readOnly
                                         type="password"
-                                        placeholder="КРИПТО-КЛЮЧ"
-                                        className="w-full bg-black/80 border border-rose-900/40 rounded py-3 pl-10 pr-4 text-[11px] tracking-[0.4em] font-black text-white placeholder:text-rose-900/50 focus:border-rose-600/60 outline-none transition-all shadow-inner"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        placeholder="КРИПТО-КЛЮЧ (ПАРОЛЬ)"
+                                        className="w-full bg-black/80 border border-rose-900/40 rounded py-3 pl-10 pr-4 text-[11px] tracking-[0.2em] font-black text-white placeholder:text-rose-900/50 focus:border-rose-600/60 outline-none transition-all shadow-inner"
                                     />
                                 </div>
 

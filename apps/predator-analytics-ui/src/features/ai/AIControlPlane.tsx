@@ -243,7 +243,7 @@ export default function AIControlPlane() {
   useEffect(() => {
     if (!isInitialLoading && snapshot.hasAnyData) {
       const message = backendStatus.isOffline
-        : `АВТОНОМНИЙ_КОНТУР [${backendStatus.nodeSource}]: Телеметрія рушіїв завантажена з кешу Mirror Vault.`
+        ? `АВТОНОМНИЙ_КОНТУР [${backendStatus.nodeSource}]: Телеметрія рушіїв завантажена з кешу Mirror Vault.`
         : `КОНТУР_КЕРУВАННЯ [${backendStatus.nodeSource}]: Телеметрію рушіїв успішно синхронізовано.`;
 
       window.dispatchEvent(

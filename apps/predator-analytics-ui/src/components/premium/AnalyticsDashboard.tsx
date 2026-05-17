@@ -298,7 +298,7 @@ export const AnalyticsDashboard: React.FC = () => {
           queries_per_minute: st.queries_per_minute || 0
         });
 
-        setQueryHistory(prev => [...prev.slice(-29), { time: timeStr, value: st.queries_per_minute || Math.floor(Math.random() * 100) }]);
+        setQueryHistory(prev => [...prev.slice(-29), { time: timeStr, value: st.queries_per_minute || 0 }]);
         setLatencyHistory(prev => [...prev.slice(-29), { time: timeStr, value: st.avg_latency || 45 }]);
       }
 

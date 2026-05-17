@@ -59,12 +59,15 @@ export const ModelingDashboard: React.FC = () => {
       const scenario = scenarios.find(s => s.id === activeScenario);
       const factor = scenario?.impactFactor || 1;
 
-      // Apply scenario factor to generating "modeled" data
-      const modeledData = baseData.map(item => ({
-        ...item,
-        value: Math.round(item.value * (1 + (Math.random() * 0.1 - 0.05))), // Add noise
-        prediction: Math.round((item.prediction || item.value) * factor)
-      }));
+      const modeledData = baseData.map((item, index) => {
+        // Apply scenario factor to generating "modeled" data
+        const pseudoRandomNoise = ((index * 137) % 100) / 1000 - 0.05;
+        return {
+          ...item,
+          value: Math.round(item.value * (1 + pseudoRandomNoise)), // Deterministic noise
+          prediction: Math.round((item.prediction || item.value) * factor)
+        };
+      });
 
       setData(modeledData);
     } catch (e) {

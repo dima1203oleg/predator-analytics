@@ -11,6 +11,7 @@
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { API_BASE_URL } from '@/services/api/config';
 
 export interface SystemMetrics {
   cpu: {
@@ -76,10 +77,10 @@ export const useRealtimeMetrics = (
   // Get WebSocket URL based on current location
   const getWsUrl = useCallback(() => {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const host = window.location.hostname;
-    // Use port 8000 for backend API
-    const port = '8000';
-    return `${protocol}//${host}:${port}/ws/metrics`;
+    const baseUrl = API_BASE_URL.startsWith('http')
+      ? API_BASE_URL.replace(/^http/, 'ws')
+      : `${protocol}//${window.location.host}${API_BASE_URL}`;
+    return `${baseUrl}/ws/metrics`;
   }, []);
 
   // Fallback: REST API polling

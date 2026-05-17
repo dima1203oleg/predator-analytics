@@ -61,7 +61,7 @@ export const OpenSearchLiveWidget: React.FC<{
 
         setActivityData(prev => [
           ...prev.slice(-19),
-          { time: timeStr, value: s.search_rate || Math.floor(Math.random() * 50) }
+          { time: timeStr, value: s.search_rate || 0 }
         ]);
       }
     } catch (e) {

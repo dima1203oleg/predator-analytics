@@ -18,7 +18,10 @@ export const useSystemEvents = () => {
 
   const connect = () => {
     // Формуємо WS URL на основі активного API_BASE_URL
-    const baseUrl = API_BASE_URL.replace(/^http/, 'ws');
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const baseUrl = API_BASE_URL.startsWith('http')
+      ? API_BASE_URL.replace(/^http/, 'ws')
+      : `${protocol}//${window.location.host}${API_BASE_URL}`;
     const socket = new WebSocket(`${baseUrl}/ws/system/events`);
 
     socket.onopen = () => {

@@ -18,20 +18,9 @@ const CompetitorRadar: React.FC = () => {
     const { t } = useTranslation();
     const [events, setEvents] = useState<RadarEvent[]>([]);
 
-    // Імітація WebSocket потоку з v61.0-ELITE-SM Signal Bus
+    // Імітація WebSocket потоку вимкнена. Чекаємо на реальні дані.
     useEffect(() => {
-        const interval = setInterval(() => {
-            const newEvent: RadarEvent = {
-                id: Math.random().toString(36).substr(2, 9),
-                type: ['import', 'route', 'price'][Math.floor(Math.random() * 3)] as any,
-                entity: 'ТОВ "Вектор Трейд"',
-                description: 'Зафіксовано аномальне заниження вартості на 15%',
-                timestamp: new Date().toLocaleTimeString(),
-                severity: 'high'
-            };
-            setEvents(prev => [newEvent, ...prev].slice(0, 5));
-        }, 4000);
-        return () => clearInterval(interval);
+        // Here we should hook up to useSystemEvents or useAIStream in the future
     }, []);
 
     const getIcon = (type: string) => {

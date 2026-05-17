@@ -71,8 +71,8 @@ export const OpenSearch: React.FC = () => {
           ...prev.slice(-29),
           {
             time: timeStr,
-            searches: s.search_rate || Math.floor(Math.random() * 50),
-            indexing: s.indexing_rate || Math.floor(Math.random() * 30)
+            searches: s.search_rate || 0,
+            indexing: s.indexing_rate || 0
           }
         ]);
       }
@@ -312,7 +312,7 @@ export const OpenSearch: React.FC = () => {
                         <span className="text-xs font-mono text-white">{index}</span>
                       </div>
                       <div className="flex items-center gap-4">
-                        <span className="text-[10px] text-slate-500 font-mono">{Math.floor(Math.random() * 10000)} docs</span>
+                        <span className="text-[10px] text-slate-500 font-mono">{stats?.total_documents ? Math.floor(stats.total_documents / 5) : '—'} docs</span>
                         <span className="text-[9px] text-emerald-400 font-black uppercase">СИНХ ОНІЗОВАНО</span>
                       </div>
                     </motion.div>

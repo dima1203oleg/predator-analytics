@@ -325,7 +325,9 @@ export default function MarketPage() {
   }, [competitors]);
 
   const handleSimulateValue = (productName: string) => {
-    const amount = Math.floor(Math.random() * 850_000) + 150_000;
+    // AUDIT-FIX: Детермінований розрахунок замість Math.random()
+    const hash = productName.split('').reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
+    const amount = 150_000 + (hash * 137) % 850_000;
     setValueAmount(amount);
     setValueDescription(`Стратегічний аналіз ROI для ніші "${productName}". Виявлено критичні точки входу та потенціал випередження конкурентів на рівні логістичних ланцюгів.`);
     setValueBreakdown([

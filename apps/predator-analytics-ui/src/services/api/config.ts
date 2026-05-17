@@ -25,7 +25,7 @@ const NODE_URLS: Record<string, string> = {
     [NODE_IDS.SOVEREIGN]: 'http://178.214.200.25:8000/api/v1',
     [NODE_IDS.HYBRID]:    'http://194.177.1.240:8000/api/v1',
     [NODE_IDS.CLOUD]:     'https://predator.share.zrok.io/api/v1',
-    [NODE_IDS.MOCK]:      'http://localhost:9080/api/v1',
+    // MOCK disabled for production mode
 };
 
 const NODE_NAMES: Record<string, string> = {
@@ -33,7 +33,7 @@ const NODE_NAMES: Record<string, string> = {
     [NODE_IDS.SOVEREIGN]: 'SOVEREIGN_NODE_IMAC',
     [NODE_IDS.HYBRID]:    'HYBRID_MASTER_NVIDIA',
     [NODE_IDS.CLOUD]:     'CLOUD_MIRROR_COLAB',
-    [NODE_IDS.MOCK]:      'LOCAL_SUVEREIGN_MOCK',
+    // MOCK disabled for production mode
 };
 
 // ─── Утиліти стану ───────────────────────────────────────────────────────────
@@ -82,8 +82,7 @@ const resolveNodeId = (url: string): string => {
     if (url === NODE_URLS[NODE_IDS.SOVEREIGN]) return NODE_IDS.SOVEREIGN;
     if (url === NODE_URLS[NODE_IDS.HYBRID])    return NODE_IDS.HYBRID;
     if (url === NODE_URLS[NODE_IDS.CLOUD])     return NODE_IDS.CLOUD;
-    if (url === NODE_URLS[NODE_IDS.MOCK])      return NODE_IDS.MOCK;
-    return NODE_IDS.MOCK;
+    return NODE_IDS.LOCAL;
 };
 
 export const IS_TRUTH_ONLY_MODE = true;

@@ -22,13 +22,13 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 3030,
       strictPort: true,
-      host: true,
+      host: '127.0.0.1',
       allowedHosts: true,
       hmr: {
         clientPort: 3030,
       },
-      configureServer(server) {
-        server.middlewares.use((req, res, next) => {
+      configureServer(server: any) {
+        server.middlewares.use((req: any, res: any, next: any) => {
           mockApiHandler(req, res, next);
         });
       },

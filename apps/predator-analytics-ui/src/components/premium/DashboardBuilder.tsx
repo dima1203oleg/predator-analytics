@@ -292,12 +292,11 @@ export const DashboardBuilder: React.FC<{ onSave?: (config: any) => void }> = ({
 
                   {widget.type === 'metric' && (
                      <div className="text-center">
-                        <div className="text-4xl font-black text-white tracking-tighter">
-                           { Math.floor(Math.random() * 5000) + 1200 }
+                        <div className="text-4xl font-black text-white/40 tracking-tighter">
+                           —
                         </div>
-                        <div className={`text-sm font-bold mt-1 flex items-center justify-center gap-1 ${Math.random() > 0.3 ? 'text-emerald-400' : 'text-rose-400'}`}>
-                           {Math.random() > 0.3 ? <TrendingUp size={14}/> : <TrendingUp size={14} className="rotate-180" />}
-                           { (Math.random() * 10).toFixed(1) }%
+                        <div className="text-xs font-bold mt-2 text-slate-500 uppercase tracking-widest">
+                           Очікує підключення API
                         </div>
                      </div>
                   )}

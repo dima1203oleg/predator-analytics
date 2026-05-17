@@ -321,7 +321,7 @@ const IntelligencePage: React.FC = () => {
                                      {(etlJobs && etlJobs.length > 0 ? etlJobs.slice(0, 4).map((job: any) => ({
                                          name: job.name?.toUpperCase() || job.id || 'НЕВІДОМИЙ_П ОЦЕС',
                                          status: job.status?.toUpperCase() || 'В_П ОЦЕСІ',
-                                         val: job.progress || job.completion_percentage || Math.floor(Math.random() * 100),
+                                         val: job.progress || job.completion_percentage || 0,
                                          color: job.status === 'error' || job.status === 'failed' ? 'crimson' : 'rose'
                                      })) : [
                                          { name: 'ІДЕНТИФІКАЦІЯ_КБ', status: 'В_П ОЦЕСІ', val: 74, color: 'rose' },

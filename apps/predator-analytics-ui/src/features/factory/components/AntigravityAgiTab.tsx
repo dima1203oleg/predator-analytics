@@ -14,6 +14,8 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { AutonomousAuditPanel } from '../../admin/AutonomousAuditPanel';
+
 import {
   Activity,
   AlertCircle,
@@ -311,7 +313,9 @@ const LogLine = ({ log }: { log: AgentTaskLog }) => {
 
 export function AntigravityAgiTab() {
   // ── Стан ──
+  const [subTab, setSubTab] = useState<'orchestrator' | 'audit'>('orchestrator');
   const [statusRaw, setStatusRaw] = useState<unknown>(null);
+
   const [tasksRaw, setTasksRaw] = useState<unknown[]>([]);
   const [logsRaw, setLogsRaw] = useState<unknown[]>([]);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
@@ -444,8 +448,40 @@ export function AntigravityAgiTab() {
   // ──  ендер ──
   return (
     <div className="space-y-6">
+      
+      {/* ── Сегмент перемикання ── */}
+      <div className="flex border-b border-white/5 pb-px">
+        <button
+          type="button"
+          onClick={() => setSubTab('orchestrator')}
+          className={cn(
+            'px-6 py-3 text-xs font-black uppercase tracking-widest transition border-b-2',
+            subTab === 'orchestrator'
+              ? 'border-rose-500 text-white'
+              : 'border-transparent text-slate-500 hover:text-slate-300'
+          )}
+        >
+          🤖 AGI Оркестрація
+        </button>
+        <button
+          type="button"
+          onClick={() => setSubTab('audit')}
+          className={cn(
+            'px-6 py-3 text-xs font-black uppercase tracking-widest transition border-b-2',
+            subTab === 'audit'
+              ? 'border-rose-500 text-white'
+              : 'border-transparent text-slate-500 hover:text-slate-300'
+          )}
+        >
+          🛡️ Forensic Аудит та AutoFix
+        </button>
+      </div>
 
-      {/* ── Фідбек ── */}
+      {subTab === 'audit' ? (
+        <AutonomousAuditPanel />
+      ) : (
+        <>
+          {/* ── Фідбек ── */}
       <AnimatePresence>
         {feedback && (
           <motion.div
@@ -870,6 +906,8 @@ export function AntigravityAgiTab() {
           у Vault), автоматично блокується на рівні пайплайну CI/CD.
         </div>
       </div>
+        </>
+      )}
     </div>
   );
 }
