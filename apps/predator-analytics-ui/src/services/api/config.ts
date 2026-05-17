@@ -21,7 +21,7 @@ export const NODE_IDS = {
 } as const;
 
 const NODE_URLS: Record<string, string> = {
-    [NODE_IDS.LOCAL]:     'http://localhost:8001/api/v1',
+    [NODE_IDS.LOCAL]:     '/api/v1',                                    // Vite proxy → iMac:8000
     [NODE_IDS.SOVEREIGN]: 'http://178.214.200.25:8000/api/v1',
     [NODE_IDS.HYBRID]:    'http://194.177.1.240:8000/api/v1',
     [NODE_IDS.CLOUD]:     'https://predator.share.zrok.io/api/v1',
@@ -56,11 +56,6 @@ const resolveInitialUrl = (): string => {
         if (savedNode && NODE_URLS[savedNode]) {
             return NODE_URLS[savedNode];
         }
-        // Очищення старого/невалідного кастомного URL
-        const savedCustomUrl = localStorage.getItem('PREDATOR_CUSTOM_URL');
-        if (savedCustomUrl && !Object.values(NODE_URLS).includes(savedCustomUrl)) {
-            localStorage.removeItem('PREDATOR_CUSTOM_URL');
-        }
     } catch {
         // Ignore localStorage errors in test environment
     }
@@ -68,11 +63,8 @@ const resolveInitialUrl = (): string => {
     // 2. Явна настройка через .env
     if (metaEnv.VITE_API_URL) return metaEnv.VITE_API_URL;
     
-    // 3. Авто-вибір для розробки (MacBook Local Dev)
-    if (metaEnv.DEV) return NODE_URLS[NODE_IDS.LOCAL];
-
-    // 4. Default
-    return NODE_URLS[NODE_IDS.HYBRID];
+    // 3. Дефолт — Vite proxy (працює і на локальному, і на production)
+    return NODE_URLS[NODE_IDS.LOCAL];
 };
 
 export let API_BASE_URL = resolveInitialUrl();
@@ -240,22 +232,27 @@ const startWatchdog = () => {
 
         for (const node of gw.__BACKEND_NODES__) {
             try {
-                const healthUrl = node.url.replace('/api/v1', '/health');
+                // Для відносного URL (Vite proxy) — перевіряємо локальний health
+                const healthUrl = node.url.startsWith('/') 
+                    ? '/health' 
+                    : node.url.replace('/api/v1', '/health');
                 await axios.get(healthUrl, { timeout: 3000 });
                 node.status = 'online';
             } catch {
-                node.status = node.active ? 'checking' : 'offline';
+                node.status = node.active ? 'offline' : 'offline';
             }
         }
 
         const activeNode = gw.__BACKEND_NODES__.find((node: any) => node.active);
-        gw.__BACKEND_OFFLINE_MODE__ = false;
-        if (activeNode?.status === 'online') {
+        const isOffline = activeNode?.status !== 'online';
+        gw.__BACKEND_OFFLINE_MODE__ = isOffline;
+
+        if (!isOffline) {
             window.dispatchEvent(new CustomEvent('predator-backend-online'));
         }
 
         window.dispatchEvent(new CustomEvent('predator-backend-status-change', {
-            detail: { isOffline: false, isRecovering: activeNode?.status !== 'online', nodes: gw.__BACKEND_NODES__ }
+            detail: { isOffline, isRecovering: isOffline, nodes: gw.__BACKEND_NODES__ }
         }));
     }, 20000);
 };
