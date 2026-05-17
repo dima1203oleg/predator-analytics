@@ -55,3 +55,8 @@ for path in (PREDATOR_COMMON, LIBS_DIR, REPO_ROOT, ROOT_DIR):
 from app.config import get_settings
 os.environ["TESTING"] = "1"
 get_settings.cache_clear()
+
+# Global patch of psutil.net_connections to prevent AccessDenied on macOS/sandbox
+import psutil
+psutil.net_connections = lambda *args, **kwargs: []
+

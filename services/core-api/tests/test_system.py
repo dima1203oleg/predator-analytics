@@ -1,5 +1,17 @@
-from httpx import AsyncClient
+"""🧪 Тести для системних endpoints PREDATOR Core API.
+"""
+
+from httpx import ASGITransport, AsyncClient
 import pytest
+
+from app.main import app
+
+
+@pytest.fixture
+async def async_client():
+    """Фікстура асинхронного тестового клієнта."""
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        yield client
 
 
 @pytest.mark.asyncio

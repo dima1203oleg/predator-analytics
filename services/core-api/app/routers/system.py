@@ -309,8 +309,9 @@ async def run_system_diagnostics(request: Request) -> dict[str, Any]:
     health = await _health_snapshot()
     stats = _collect_system_stats(request)
 
-    from app.main import sovereign_guardian
+    from app.services.guardian import guardian_service as sovereign_guardian
     predictions = await sovereign_guardian.get_predictions()
+
 
     return {
         "status": "success",
