@@ -24,6 +24,6 @@ dependencies:
     condition: opensearch.enabled
   - name: qdrant
     version: 0.1.0
-    repository: https://qdrant.github.io/helm-charts
+    repository: https://qdrant.github.io/helm
     condition: qdrant.enabled
 
