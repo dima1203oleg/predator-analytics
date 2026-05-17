@@ -1,7 +1,7 @@
 # Helm generated files
 rendered.yaml
-*.tgz
-charts/*.tgz
+# *.tgz
+# charts/*.tgz
 requirements.lock
 
 # IDE
