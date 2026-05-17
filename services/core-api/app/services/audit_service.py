@@ -17,6 +17,16 @@ class AuditService:
         self._queue: asyncio.Queue = asyncio.Queue()
         self._worker_task: Optional[asyncio.Task] = None
 
+    @property
+    def queue(self) -> asyncio.Queue:
+        """Повертає чергу, автоматично перестворюючи її, якщо асоційований івент-луп закритий."""
+        try:
+            if self._queue._loop.is_closed():
+                self._queue = asyncio.Queue()
+        except Exception:
+            pass
+        return self._queue
+
     def start_worker(self):
         """Запуск фонового воркера для пакетного запису."""
         if self._worker_task is None:
@@ -50,7 +60,7 @@ class AuditService:
         signed_details = {**(details or {}), "sig": IntegritySentinel.sign_data(log_payload)}
         log_payload["details"] = signed_details
 
-        await self._queue.put(log_payload)
+        await self.queue.put(log_payload)
         
         if self._worker_task is None:
             self.start_worker()
@@ -60,13 +70,13 @@ class AuditService:
         while True:
             batch: List[dict] = []
             # Чекаємо хоча б одного елемента
-            first_item = await self._queue.get()
+            first_item = await self.queue.get()
             batch.append(first_item)
 
             # Намагаємось зібрати більше елементів протягом 1 секунди або до ліміту 50
             try:
                 while len(batch) < 50:
-                    item = await asyncio.wait_for(self._queue.get(), timeout=1.0)
+                    item = await asyncio.wait_for(self.queue.get(), timeout=1.0)
                     batch.append(item)
             except asyncio.TimeoutError:
                 pass # Час вийшов, записуємо те, що є
@@ -75,7 +85,7 @@ class AuditService:
                 await self._write_batch(batch)
             
             for _ in range(len(batch)):
-                self._queue.task_done()
+                self.queue.task_done()
 
     async def _write_batch(self, batch: List[dict]):
         """Запис пачки логів у базу."""

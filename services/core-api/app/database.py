@@ -82,7 +82,7 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
             await session.close()
 
 
-def get_clickhouse_client() -> Client | None:
+def get_clickhouse_client() -> "Client | None":
     """Отримати синхронний клієнт ClickHouse для аналітики.
     
     Повертає None якщо ClickHouse недоступний (graceful degradation).
