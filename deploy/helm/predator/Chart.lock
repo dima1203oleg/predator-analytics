@@ -5,5 +5,14 @@ dependencies:
 - name: neo4j
   repository: https://helm.neo4j.com/neo4j
   version: 5.21.0
-digest: sha256:0788958ccd3de4c501e4d336f0a63b0d9c57f11812b2fa863ea4180ff4e841bb
-generated: "2026-03-09T19:27:36.780663+02:00"
+- name: clickhouse
+  repository: https://radondb.github.io/clickhouse-cluster-helm/
+  version: 0.1.0
+- name: opensearch
+  repository: https://opensearch-project.github.io/helm-charts
+  version: 2.16.0
+- name: qdrant
+  repository: https://qdrant.github.io/qdrant-helm
+  version: 0.1.0
+digest: sha256:abcb92f03db4f95c739ddf454679935dbc1df715bbd57c3549a75bda18c47618
+generated: "2026-05-18T01:06:19.253505+03:00"
