@@ -39,11 +39,11 @@ export const VerticalTabNav: React.FC<VerticalTabNavProps> = ({
         <div className="flex items-center gap-3 mb-2">
           <div className="w-2 h-2 rounded-full " style={{ backgroundColor: accentColor }} />
           <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">
-            Autonomous Factory
+            Автономна Фабрика
           </span>
         </div>
         <h3 className="text-xl font-black text-white italic tracking-tighter uppercase">
-          Elite <span style={{ color: accentColor }}>Control</span>
+          Елітний <span style={{ color: accentColor }}>Контроль</span>
         </h3>
       </div>
 
@@ -111,8 +111,8 @@ export const VerticalTabNav: React.FC<VerticalTabNavProps> = ({
 
       <div className="mt-auto pt-6 border-t border-white/5 px-4">
         <div className="flex items-center justify-between text-[9px] font-black text-slate-700 uppercase tracking-widest">
-          <span>OODA 2.0 // Active</span>
-          <span className="text-emerald-500 ">Live</span>
+          <span>OODA 2.0 // Активний</span>
+          <span className="text-emerald-500 ">Наживо</span>
         </div>
       </div>
     </div>
