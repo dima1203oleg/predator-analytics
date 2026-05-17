@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: predator-nvidia-elite
+  namespace: argocd
+spec:
+  project: predator-project
+  source:
+    repoURL: https://github.com/dima1203oleg/predator-analytics.git
+    targetRevision: HEAD
+    path: deploy/helm/predator
+    helm:
+      valueFiles:
+        - values.yaml
+        - values-nvidia.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: predator-prod
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

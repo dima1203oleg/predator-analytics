@@ -1,0 +1,129 @@
+# NVIDIA Server spec values (v60.5-ELITE Full Stack)
+# Focus: Full Deployment (Backend, Databases, Ingress, Frontend, and AI Gateway)
+
+global:
+  domain: "194.177.1.240" # Статична IP-адреса NVIDIA сервера
+  imagePullPolicy: IfNotPresent
+
+frontend:
+  enabled: true
+  replicaCount: 1
+  service:
+    type: LoadBalancer
+    port: 3030 # Запускається на порту 3030
+    targetPort: 3030
+  env:
+    VITE_API_URL: "http://194.177.1.240:8000/api/v1"
+    NODE_ENV: "production"
+
+coreApi:
+  enabled: true
+  replicaCount: 1
+  service:
+    type: LoadBalancer
+    port: 8000
+    targetPort: 8000
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+
+graphService:
+  enabled: true
+  replicaCount: 1
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+
+ingestionWorker:
+  enabled: true
+  replicaCount: 1
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+
+postgresql:
+  enabled: true
+  primary:
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 1Gi
+      requests:
+        cpu: 200m
+        memory: 512Mi
+
+neo4j:
+  enabled: true
+  resources:
+    limits:
+      cpu: 1500m
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+
+clickhouse:
+  enabled: true
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 4Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+
+opensearch:
+  enabled: true
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 4Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+
+qdrant:
+  enabled: true
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+
+minio:
+  enabled: true
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+litellm:
+  enabled: true
+  replicaCount: 1
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+
+ollama:
+  enabled: false # Не вмикаємо локальну Ollama, оскільки використовуємо хмарні моделі / сервіси
+
+monitoring:
+  enabled: false
