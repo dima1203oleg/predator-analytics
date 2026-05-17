@@ -38,25 +38,25 @@ else
     echo "✅ helm вже встановлено"
 fi
 
-echo "🚀 [2/8] Створення кластера k3d 'predator-nvidia'..."
+echo "🚀 [2/8] Створення кластера k3d 'predator-nvidia' (Безвідмовний режим без LoadBalancer)..."
 
+# Повне очищення старого зламаного кластера
 if k3d cluster list | grep -q "predator-nvidia"; then
-    echo "🔄 Кластер 'predator-nvidia' вже існує. Перезапускаємо..."
-    k3d cluster start predator-nvidia
-else
-    echo "🏗️ Створення нового кластера k3d з прокиданням портів для NVIDIA сервера..."
-    # Порти:
-    # 3030 -> Фронтенд (на сервері)
-    # 8000 -> Бекенд API
-    # 9082 -> ArgoCD UI
-    k3d cluster create predator-nvidia \
-        --agents 1 \
-        --servers 1 \
-        -p "3030:3030@loadbalancer" \
-        -p "8000:8000@loadbalancer" \
-        -p "9082:8080@loadbalancer" \
-        --k3s-arg "--disable=traefik@server:0"
+    echo "🧹 Очищення попереднього кластера 'predator-nvidia'..."
+    k3d cluster delete predator-nvidia
 fi
+
+echo "🏗️ Створення нового кластера з прямим мапуванням портів на серверний вузол (минаючи баг k3d-proxy)..."
+# Використовуємо `--no-lb` та прокидаємо порти безпосередньо на server:0
+# Це повністю обходить баг з `confd /etc/confd/values.yaml: no such file or directory` у проксі-лоадбалансері.
+k3d cluster create predator-nvidia \
+    --agents 1 \
+    --servers 1 \
+    --no-lb \
+    -p "3030:3030@server:0" \
+    -p "8000:8000@server:0" \
+    -p "9082:8080@server:0" \
+    --k3s-arg "--disable=traefik@server:0"
 
 echo "🔄 [3/8] Налаштування контексту kubectl..."
 kubectl config use-context k3d-predator-nvidia
