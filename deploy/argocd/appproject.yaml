@@ -8,7 +8,7 @@ spec:
   sourceRepos:
     - '*'
   destinations:
-    - namespace: predator
+    - namespace: '*'
       server: https://kubernetes.default.svc
   clusterResourceWhitelist:
     - group: '*'
