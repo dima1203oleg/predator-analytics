@@ -56,8 +56,8 @@ sshpass -e rsync -az --delete \
 # Запускаємо Python Backend та K3D (повний стек)
 cat deploy/scripts/deploy_imac_full_stack.sh | sshpass -e ssh -o StrictHostKeyChecking=no dmytrokizima@$IMAC_IP "cat > ~/bootstrap.sh && chmod +x ~/bootstrap.sh && bash ~/bootstrap.sh"
 
-# Запускаємо Python Core-API
-sshpass -e ssh -o StrictHostKeyChecking=no dmytrokizima@$IMAC_IP "export PATH=\"/opt/homebrew/bin:/usr/local/bin:\$PATH\"; cd ~/Predator_60/services/core-api && python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt && nohup uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 2 > ~/predator_api.log 2>&1 &"
+# Запускаємо Python Core-API (використовуємо /usr/bin/nohup бо brew PATH перекриває системний)
+sshpass -e ssh -o StrictHostKeyChecking=no dmytrokizima@$IMAC_IP "export PATH=\"/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:\$PATH\"; cd ~/Predator_60/services/core-api && python3 -m venv .venv && source .venv/bin/activate && pip install -q -r requirements.txt && pip install -q -e ../../libs/predator-common && /usr/bin/nohup .venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 2 > ~/predator_api.log 2>&1 &"
 
 # 3. Запуск UI на MacBook у новому вікні Терміналу
 echo "🎨 Запуск веб-інтерфейсу на MacBook (у новому вікні)..."

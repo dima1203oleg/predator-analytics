@@ -22,3 +22,9 @@ redis>=5.0.0
 hiredis>=2.3.0
 httpx>=0.27.0
 clickhouse-connect
+# ML / Data залежності (anomaly_detection, synthetic_data)
+numpy>=1.26.0
+scikit-learn>=1.4.0
+pandas>=2.2.0
+# Планувальник (oss_automation_scheduler)
+apscheduler>=3.10.0
