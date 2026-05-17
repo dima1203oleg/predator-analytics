@@ -128,7 +128,7 @@ HR-18  PostgreSQL: Тільки транзакції та метадані (SSOT
 HR-19  OpenSearch: Тільки повнотекстовий пошук, заборонено використовувати як Primary DB
 HR-20  Qdrant: Тільки векторна пам'ять (embeddings)
 HR-21  ZERO-LOCAL-DEPLOYMENT: MacBook — тільки IDE. Жодних K8s/Docker кластерів.
-HR-22  IMAC-COMPUTE-NODE: Всі 8 БД та аналітичні сервіси розгортаються ТІЛЬКИ на iMac (...199).
+HR-22  IMAC-COMPUTE-NODE: Всі 8 БД та аналітичні сервіси розгортаються ТІЛЬКИ на iMac (...200).
 HR-23  TUNNELS: Тільки zrok (zrok.io). Використання Cloudflare Tunnel або Ngrok ЗАБОРОНЕНО.
 ```
 
@@ -195,13 +195,13 @@ Predator_21/
 
 3. **Не читай**: `.venv`, `node_modules`, `dist`, `__pycache__`, `.git`, `coverage/`
 
-4. **Порт UI**: завжди **3030** (`http://192.168.0.114:3030` — посилання на iMac)
+4. **Порт UI**: завжди **3030** (`http://192.168.0.200:3030` — посилання на iMac)
 
 5. **Директорія UI**: `/Users/dima-mac/Documents/Predator_21/apps/predator-analytics-ui`
 
 6. **Mock API**: `mock-api-server.mjs` на порту **9080** (коли backend недоступний)
 
-7. **Деплой (КРИТИЧНО)**: MacBook = **0 контейнерів**. iMac (...199) / NVIDIA Server (...240) = **100% інфраструктури**.
+7. **Деплой (КРИТИЧНО)**: MacBook = **0 контейнерів**. iMac (...200) / NVIDIA Server (...240) = **100% інфраструктури**.
 8. **Системний софт**: На MacBook дозволено тільки: Git, Node.js (для фронтенд-білду), IDE.
 
 ---

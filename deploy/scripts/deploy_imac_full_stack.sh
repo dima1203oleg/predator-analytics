@@ -171,4 +171,4 @@ sleep 60
 remote_exec "kubectl get pods -n predator"
 
 echo "🏁 Всі системи (8 DBs + Core) ініціалізовано на iMac."
-echo "🔗 API доступний за адресою: http://192.168.0.114:8000/api/v1"
+echo "🔗 API доступний за адресою: http://192.168.0.200:8000/api/v1"

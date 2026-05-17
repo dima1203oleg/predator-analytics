@@ -1,12 +1,12 @@
 #!/bin/bash
 # ============================================================
-# PREDATOR Analytics — Деплой бекенду на iMac (192.168.0.199)
+# PREDATOR Analytics — Деплой бекенду на iMac (192.168.0.200)
 # Встановлює: Python 3.12, PostgreSQL 16, Redis 7
 # Запускає: Core API на порту 8000
 # ============================================================
 set -euo pipefail
 
-IMAC_IP="192.168.0.199"
+IMAC_IP="192.168.0.200"
 IMAC_USER="dmytrokizima"
 SSH_KEY="$HOME/.ssh/id_ed25519_dev"
 SSH_CMD="ssh -i $SSH_KEY -o StrictHostKeyChecking=no $IMAC_USER@$IMAC_IP"

@@ -1,18 +1,18 @@
 """PREDATOR Pulse Engine — Strategic Forecasting Service.
 ML-прогнозування попиту на основі Prophet та статистичного аналізу.
 """
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 import logging
-import random
-import os
 import math
+import os
+import random
 from typing import Any
 
 try:
-    import pandas as pd
+    import clickhouse_connect
     import pandas as pd
     from prophet import Prophet
-    import clickhouse_connect
+
     from app.database import HAS_CLICKHOUSE
     HAS_ML_LIBS = True
 except ImportError:
@@ -22,9 +22,9 @@ except ImportError:
     HAS_CLICKHOUSE = False
     HAS_ML_LIBS = False
 
+from app.services.cache_service import cache_service
 from app.services.chaos_service import ChaosService
 from app.services.vram_watchdog import vram_sentinel
-from app.services.cache_service import cache_service
 
 logger = logging.getLogger(__name__)
 
@@ -38,7 +38,6 @@ class ForecastService:
         model: str = "prophet"
     ) -> dict[str, Any]:
         """Генерує прогноз попиту для товарного коду."""
-        
         # 0. Перевірка кешу
         cache_key = f"forecast:{model}:{product_code}:{months_ahead}"
         cached_result = await cache_service.get(cache_key)
@@ -83,10 +82,10 @@ class ForecastService:
             # 3. Прогноз
             future = m.make_future_dataframe(periods=months_ahead, freq='MS')
             forecast = m.predict(future)
-            
+
             # Відбираємо тільки майбутні точки
             forecast_future = forecast.tail(months_ahead)
-            
+
             forecast_points = []
             for _, row in forecast_future.iterrows():
                 forecast_points.append({
@@ -102,7 +101,7 @@ class ForecastService:
         except Exception as e:
             logger.error(f"Modeling failed: {e}")
             return ForecastService._generate_simple_projection(product_code, months_ahead)
-        
+
         # T9.4: Вплив Хаосу на впевненість
         chaos_active = ChaosService.get_status()
         if chaos_active:
@@ -121,7 +120,7 @@ class ForecastService:
 
         # Збереження в кеш (TTL 6 годин для прогнозів)
         await cache_service.set(cache_key, result, ttl=21600)
-        
+
         return result
 
     @staticmethod
@@ -129,14 +128,14 @@ class ForecastService:
         """Отримання історичних даних з ClickHouse."""
         if not HAS_CLICKHOUSE or not pd:
             raise RuntimeError("ClickHouse or Pandas not available")
-            
+
         client = clickhouse_connect.get_client(
-            host=os.getenv("CLICKHOUSE_HOST", "192.168.0.114"),
+            host=os.getenv("CLICKHOUSE_HOST", "192.168.0.200"),
             port=int(os.getenv("CLICKHOUSE_PORT", "8123")),
             username=os.getenv("CLICKHOUSE_USER", "default"),
             password=os.getenv("CLICKHOUSE_PASSWORD", "predator2026")
         )
-        
+
         query = f"""
         SELECT 
             toStartOfMonth(declaration_date) as ds,
@@ -146,7 +145,7 @@ class ForecastService:
         GROUP BY ds
         ORDER BY ds ASC
         """
-        
+
         return client.query_df(query)
 
     @staticmethod

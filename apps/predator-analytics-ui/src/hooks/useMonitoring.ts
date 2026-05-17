@@ -84,7 +84,7 @@ const MOCK_NODES: ClusterNode[] = [
     tone: 'emerald',
     cpu_percent: 42,
     memory_percent: 58,
-    detail: '192.168.0.114 | k3s master | 32GB RAM',
+    detail: '192.168.0.200 | k3s master | 32GB RAM',
   },
   {
     id: 'node-nvidia-240',
