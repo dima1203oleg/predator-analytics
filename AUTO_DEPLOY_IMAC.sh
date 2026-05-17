@@ -74,8 +74,8 @@ sshpass -e rsync -az --delete \
 # ─── 5. Перевірка Docker на iMac ───────────────────────────────
 echo "🐳 Перевірка Docker на iMac..."
 if ! imac_ssh "docker ps >/dev/null 2>&1"; then
-    echo "🏗️ Docker не запущено. Запуск Colima (vz)..."
-    imac_ssh "export PATH='/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:\$PATH'; colima start --cpu 4 --memory 6 --disk 60 --vm-type=vz 2>&1 || echo 'Colima вже запущена або помилка, продовжуємо...'"
+    echo "🏗️ Docker не запущено. Запуск Colima..."
+    imac_ssh "export PATH='/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:\$PATH'; colima start --cpu 4 --memory 6 --disk 60 2>&1 || echo 'Colima вже запущена або помилка, продовжуємо...'"
     echo "⏳ Очікування Docker (15с)..."
     sleep 15
 fi

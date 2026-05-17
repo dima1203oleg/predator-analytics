@@ -82,14 +82,21 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
             await session.close()
 
 
-def get_clickhouse_client() -> Client:
-    """Отримати синхронний клієнт ClickHouse для аналітики."""
+def get_clickhouse_client() -> Client | None:
+    """Отримати синхронний клієнт ClickHouse для аналітики.
+    
+    Повертає None якщо ClickHouse недоступний (graceful degradation).
+    """
     if not HAS_CLICKHOUSE:
-        raise RuntimeError("clickhouse-connect library is not installed.")
-    return clickhouse_connect.get_client(
-        host=settings.CLICKHOUSE_HOST,
-        port=settings.CLICKHOUSE_PORT,
-        username=settings.CLICKHOUSE_USER,
-        password=settings.CLICKHOUSE_PASSWORD,
-        database=settings.CLICKHOUSE_DATABASE
-    )
+        return None
+    try:
+        return clickhouse_connect.get_client(
+            host=settings.CLICKHOUSE_HOST,
+            port=settings.CLICKHOUSE_PORT,
+            username=settings.CLICKHOUSE_USER,
+            password=settings.CLICKHOUSE_PASSWORD,
+            database=settings.CLICKHOUSE_DATABASE
+        )
+    except Exception:
+        return None
+
