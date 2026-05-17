@@ -48,11 +48,11 @@ const ADMIN_NAV: AdminNavItem[] = [
   { id: 'datasets',   label: 'Студія Датасетів',       path: '/admin/command?tab=datasets',    icon: Database,                       group: 'ШІ Студія' },
   { id: 'prompts',    label: 'Системні Промпти',        path: '/admin/command?tab=prompts',     icon: FileText,                       group: 'ШІ Студія' },
   
-  //розширена Аналітика
-  { id: 'nexus',      label: 'Прогностичний Нексус',      path: '/admin/command?tab=nexus',       icon: Zap,            badge: 'PREDICT',group: 'розширена Аналітика' },
-  { id: 'ai-insights',label: 'Хаб ШІ Інсайтів',       path: '/admin/command?tab=ai-insights', icon: BrainCircuit,   badge: 'DEEP',  group: 'розширена Аналітика' },
-  { id: 'hypothesis', label: 'Гіпотези та NAS',        path: '/admin/command?tab=hypothesis',  icon: Cpu,                            group: 'розширена Аналітика' },
-  { id: 'forecast',   label: 'Прогнози та Тренди',     path: '/admin/command?tab=forecast',    icon: Activity,                       group: 'розширена Аналітика' },
+  // Розширена Аналітика
+  { id: 'nexus',      label: 'Прогностичний Нексус',      path: '/admin/command?tab=nexus',       icon: Zap,            badge: 'PREDICT',group: 'Розширена Аналітика' },
+  { id: 'ai-insights',label: 'Хаб ШІ Інсайтів',       path: '/admin/command?tab=ai-insights', icon: BrainCircuit,   badge: 'DEEP',  group: 'Розширена Аналітика' },
+  { id: 'hypothesis', label: 'Гіпотези та NAS',        path: '/admin/command?tab=hypothesis',  icon: Cpu,                            group: 'Розширена Аналітика' },
+  { id: 'forecast',   label: 'Прогнози та Тренди',     path: '/admin/command?tab=forecast',    icon: Activity,                       group: 'Розширена Аналітика' },
   
   // Агенти та Безпека
   { id: 'agents-ops', label: 'Оркестрація Агентів',   path: '/admin/command?tab=agents-ops',  icon: Bot,                            group: 'Агенти та Безпека' },
@@ -70,7 +70,7 @@ const ADMIN_NAV: AdminNavItem[] = [
   { id: 'api-docs',   label: 'API Документація',      path: '/api-docs',                      icon: FileText,                       group: 'Конфігурація' },
 ];
 
-const GROUPS = ['Моніторинг', 'Пайплайни', 'Ядро ШІ', 'ШІ Студія', 'розширена Аналітика', 'Розвідка та OSINT', 'Агенти та Безпека', 'Конфігурація'];
+const GROUPS = ['Моніторинг', 'Пайплайни', 'Ядро ШІ', 'ШІ Студія', 'Розширена Аналітика', 'Розвідка та OSINT', 'Агенти та Безпека', 'Конфігурація'];
 
 // ─── Компонент бічної панелі ──────────────────────────────────────────────────
 

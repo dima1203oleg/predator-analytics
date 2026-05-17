@@ -332,7 +332,7 @@ export const FailoverRoutingTab: React.FC = () => {
                 ПІДТВЕРДЖЕННЯ РОТАЦІЇ <span className="text-rose-500">{nodes[confirming]?.label.replace('local-k3s', 'ЛОКАЛЬНИЙ_КЛАСТЕР').replace('nvidia-server', 'СЕРВЕР_NVIDIA').replace('colab-mirror', 'ДЗЕРКАЛО_COLAB') || confirming}</span>
               </div>
               <p className="text-[12px] font-black font-mono text-white/30 uppercase tracking-[0.3em] leading-relaxed italic max-w-2xl">
-                УСІ_АКТИВНІ_ЗАПИТИ_БУДУТЬ_ПЕРЕНАПРАВЛЕНІ_НА_НОВИЙ_ВУЗОЛ_ЕЛІТНОГО_КЛАСУ. МОЖЛИВЕ_КОРОТКОЧАСНЕ_ПЕРЕРИВАННЯ_ПОТОКУ_ДАННИХ (OODA_SYNC_BREAK_V61).
+                УСІ_АКТИВНІ_ЗАПИТИ_БУДУТЬ_ПЕРЕНАПРАВЛЕНІ_НА_НОВИЙ_ВУЗОЛ_ЕЛІТНОГО_КЛАСУ. МОЖЛИВЕ_КОРОТКОЧАСНЕ_ПЕРЕРИВАННЯ_ПОТОКУ_ДАНИХ (OODA_SYNC_BREAK_V61).
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-6 relative z-10 w-full lg:w-auto">

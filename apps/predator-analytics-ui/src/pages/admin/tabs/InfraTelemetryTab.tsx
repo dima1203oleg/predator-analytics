@@ -404,7 +404,7 @@ export const InfraTelemetryTab: React.FC = () => {
             <span className="opacity-20">•</span>
             <div className="flex items-center gap-3">
               <RefreshCw size={14} className="text-rose-500/60 animate-spin-slow" />
-              <span>ІНТЕ ВАЛ: 3.0с</span>
+              <span>ІНТЕРВАЛ: 3.0с</span>
             </div>
             <span className="opacity-20">•</span>
             <div className="flex items-center gap-3 text-rose-500/40">

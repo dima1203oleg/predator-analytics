@@ -45,8 +45,8 @@ const RISK_TIMELINE = [
 
 const RISK_BREAKDOWN = [
   { name: 'Санкційний',   value: 33, amount: '$41.8M',  color: '#f43f5e' },
-  { name: 'Контрагент',  value: 26, amount: '$33.1M',  color: '#e11d48' },
-  { name: 'Ланцюг пост.',value: 20, amount: '$25.5M',  color: '#fb7185' },
+  { name: 'КОНТРАГЕНТИ',  value: 26, amount: '$33.1M',  color: '#e11d48' },
+  { name: 'ЛАНЦЮГИ_ПОСТАЧАННЯ',value: 20, amount: '$25.5M',  color: '#fb7185' },
   { name: 'FX / Валютний',value: 14, amount: '$17.8M', color: '#9f1239' },
   { name: 'Операційний', value: 7, amount: '$9.2M',    color: '#475569' },
 ];

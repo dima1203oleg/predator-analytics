@@ -117,7 +117,7 @@ export const ResourceGuardTab: React.FC = () => {
           />
           <Shield className="absolute inset-0 m-auto w-8 h-8 text-rose-500 " />
         </div>
-        <div className="text-[14px] font-black font-mono uppercase tracking-[0.6em]  italic text-rose-500/60">СИНХРОНІЗАЦІЯ_МЕТрИК_ЗАХИСТУ_V61...</div>
+        <div className="text-[14px] font-black font-mono uppercase tracking-[0.6em]  italic text-rose-500/60">СИНХРОНІЗАЦІЯ_МЕТРИК_ЗАХИСТУ_V61...</div>
       </div>
     );
   }
@@ -131,7 +131,7 @@ export const ResourceGuardTab: React.FC = () => {
         <div className="flex flex-col gap-3 border-l-4 border-rose-500 pl-10 py-2">
           <div className="flex items-center gap-6">
             <h2 className="text-4xl font-black text-white uppercase tracking-tighter italic glint-elite">
-              VRAM GUARD <span className="text-rose-500">&  ЕСУ СНИЙ ДИСПЕТЧЕ </span>
+              VRAM GUARD <span className="text-rose-500">& РЕСУРСНИЙ ДИСПЕТЧЕР</span>
             </h2>
             <div className="px-4 py-1.5 bg-rose-500/10 border-2 border-rose-500/30 rounded-lg text-[10px] font-black text-rose-500 tracking-[0.3em] uppercase italic shadow-2xl">
               RESOURCE_GUARD_v61.0
@@ -150,7 +150,7 @@ export const ResourceGuardTab: React.FC = () => {
             <span className="opacity-20">•</span>
             <div className="flex items-center gap-3 text-rose-500/40">
                <Shield size={14} />
-               <span>РІВЕНЬ_ГА ДУ: ELITE_ELITE_v3</span>
+               <span>РІВЕНЬ_ГАРДУ: ELITE_ELITE_v3</span>
             </div>
           </div>
         </div>
@@ -158,7 +158,7 @@ export const ResourceGuardTab: React.FC = () => {
         {/* Routing Indicator Badge */}
         <div className="flex items-center gap-6 bg-black/60  p-6 rounded-[2rem] border-2 border-white/5 shadow-4xl group">
            <div className="flex flex-col items-end gap-1">
-              <span className="text-[9px] font-black font-mono text-white/20 uppercase tracking-[0.4em] italic">СТРАТЕГІЯ_МА Ш УТИЗАЦІЇ</span>
+              <span className="text-[9px] font-black font-mono text-white/20 uppercase tracking-[0.4em] italic">СТРАТЕГІЯ_МАРШРУТИЗАЦІЇ</span>
               <span className="text-[12px] font-black text-white/60 italic uppercase tracking-tighter group-hover:text-rose-500 transition-colors">{nodeSource}</span>
            </div>
            <div className="h-12 w-[2px] bg-white/5 mx-2" />
@@ -203,7 +203,7 @@ export const ResourceGuardTab: React.FC = () => {
                           <div className="p-2 bg-sky-500/10 rounded-lg">
                              <Layout size={18} className="text-sky-400" />
                           </div>
-                          <span className="text-[12px] text-white/80 uppercase font-black italic tracking-tighter">UI / OS  езерв</span>
+                          <span className="text-[12px] text-white/80 uppercase font-black italic tracking-tighter">UI / OS Резерв</span>
                        </div>
                        <span className="text-[13px] font-black font-mono text-sky-400 italic">{VRAM_UI_OS_RESERVE} GB</span>
                     </div>
@@ -254,7 +254,7 @@ export const ResourceGuardTab: React.FC = () => {
                <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
                <div className="flex items-center justify-between mb-8 relative z-10">
                   <div className="flex flex-col">
-                     <span className="text-[10px] font-black font-mono text-emerald-500/60 uppercase tracking-[0.4em] italic mb-2">ГЛОБАЛЬНИЙ_МАЙСТЕР </span>
+                     <span className="text-[10px] font-black font-mono text-emerald-500/60 uppercase tracking-[0.4em] italic mb-2">ГЛОБАЛЬНИЙ_МАЙСТЕР</span>
                      <span className="text-2xl font-black text-white italic tracking-tighter uppercase glint-elite">HYBRID_MASTER_NVIDIA</span>
                   </div>
                   <div className="p-4 bg-emerald-500/10 rounded-2xl border-2 border-emerald-500/20 group-hover:bg-emerald-500/20 transition-all duration-700">
@@ -268,7 +268,7 @@ export const ResourceGuardTab: React.FC = () => {
                      <span className="text-[12px] font-black text-emerald-500 uppercase tracking-widest italic">АКТИВНИЙ_L3</span>
                   </div>
                   <div className="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-1 group-hover:border-emerald-500/20 transition-all duration-700 shadow-inner">
-                     <span className="text-[8px] text-white/20 uppercase font-black tracking-widest italic">IP_АД ЕСА</span>
+                     <span className="text-[8px] text-white/20 uppercase font-black tracking-widest italic">IP_АДРЕСА</span>
                      <span className="text-[12px] font-black text-white italic tracking-tighter font-mono">194.177.1.240</span>
                   </div>
                </div>
@@ -284,7 +284,7 @@ export const ResourceGuardTab: React.FC = () => {
                  )}
                >
                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/0 via-emerald-500/10 to-emerald-500/0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000" />
-                 {llmTriStateMode === 'HYBRID' ? 'ПОТОЧНИЙ_МАЙСТЕР _АКТИВНИЙ' : 'АКТИВУВАТИ_HYBRID_ENGINE'}
+                 {llmTriStateMode === 'HYBRID' ? 'ПОТОЧНИЙ_МАЙСТЕР_АКТИВНИЙ' : 'АКТИВУВАТИ_HYBRID_ENGINE'}
                </button>
             </div>
 
@@ -334,7 +334,7 @@ export const ResourceGuardTab: React.FC = () => {
           <div className="space-y-8 relative z-10">
              <div className="flex items-center gap-6 px-4">
                 <div className="w-2.5 h-2.5 bg-rose-500 rotate-45 " />
-                <span className="text-[12px] font-black font-mono text-white/40 uppercase tracking-[0.6em] italic glint-elite">АКТИВНІ_П ОЦЕСИ_ТА_ОФЛОАД_МА Ш УТИ_ELITE</span>
+                <span className="text-[12px] font-black font-mono text-white/40 uppercase tracking-[0.6em] italic glint-elite">АКТИВНІ_ПРОЦЕСИ_ТА_ОФЛОАД_МАРШРУТИ_ELITE</span>
              </div>
              
              <div className="glass-wraith border-2 border-white/5 rounded-[3.5rem] p-4 h-[450px] overflow-y-auto custom-scrollbar shadow-4xl">

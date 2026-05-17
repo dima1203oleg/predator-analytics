@@ -4,7 +4,7 @@
  *
  * Скоринг привабливості ринків для входу:
  * конкуренція, регуляторика, геополітика,
- * купівельна спроможність, партнери,ризики.
+ * купівельна спроможність, партнери, ризики.
  * Sovereign Power Design · Classified · Tier-1
  */
 
@@ -109,8 +109,8 @@ const MARKETS: MarketEntry[] = [
 
 const RECOMMENDATION_CFG: Record<MarketEntry['recommendation'], { label: string; color: string; bg: string; border: string; shadow: string; icon: any }> = {
   'strong-buy': { label: 'СУВЕРЕННИЙ ВХІД', color: '#e11d48', bg: 'bg-rose-950/20', border: 'border-rose-500/40', shadow: '', icon: Star },
-  'buy':        { label: ' ЕКОМЕНДОВАНО', color: '#fb7185', bg: 'bg-rose-900/20', border: 'border-rose-500/30', shadow: 'shadow-none', icon: CheckCircle },
-  'hold':       { label: 'СПОСТЕ ЕЖЕННЯ',   color: '#94a3b8', bg: 'bg-slate-900/40',   border: 'border-slate-800/30', shadow: 'shadow-none', icon: Activity },
+  'buy':        { label: 'РЕКОМЕНДОВАНО', color: '#fb7185', bg: 'bg-rose-900/20', border: 'border-rose-500/30', shadow: 'shadow-none', icon: CheckCircle },
+  'hold':       { label: 'СПОСТЕРЕЖЕННЯ',   color: '#94a3b8', bg: 'bg-slate-900/40',   border: 'border-slate-800/30', shadow: 'shadow-none', icon: Activity },
   'avoid':      { label: 'УНИКАТИ',      color: '#be123c', bg: 'bg-rose-950/40',     border: 'border-rose-900/40',  shadow: 'shadow-none', icon: AlertTriangle },
 };
 
@@ -273,13 +273,13 @@ const MarketEntryView: React.FC = () => {
           }
         />
 
-        {/* ── МЕТрИКИ ELITE ── */}
+        {/* ── МЕТРИКИ ELITE ── */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
           {[
             { l: 'АКТИВНИЙ ВХІД',    v: `${markets.filter(m => m.recommendation === 'strong-buy').length}`, sub: 'High Opportunity Hubs', c: '#e11d48' },
-            { l: ' ЕКОМЕНДОВАНО',    v: `${markets.filter(m => m.recommendation === 'buy').length}`,         sub: 'Viable Growth Vectors', c: '#e11d48' },
+            { l: 'РЕКОМЕНДОВАНО',    v: `${markets.filter(m => m.recommendation === 'buy').length}`,         sub: 'Viable Growth Vectors', c: '#e11d48' },
             { l: 'ALPHA_TARGET',     v: sorted[0]?.country ?? '—',  sub: `Fidelity Score ${sorted[0]?.entryScore ?? 0}`, c: '#e11d48' },
-            { l: 'FASTEST_TO_REV',    v: sorted.find(m => m.id === 'mkt-004')?.country || ' умунія',                   sub: '3-6 Mo Velocity',                    c: '#e11d48' },
+            { l: 'FASTEST_TO_REV',    v: sorted.find(m => m.id === 'mkt-004')?.country || 'Румунія',                   sub: '3-6 Mo Velocity',                    c: '#e11d48' },
           ].map((m, i) => (
             <motion.div
               key={m.l}
@@ -469,7 +469,7 @@ const MarketEntryView: React.FC = () => {
                   </div>
                 </div>
 
-                {/*  адар + Можливості +  изики ELITE */}
+                {/* Радар + Можливості + Ризики ELITE */}
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-10">
                   <div className="bg-black/60  border-2 border-white/5 p-10 rounded-[4rem] shadow-3xl relative overflow-hidden">
                     <div className="absolute top-0 right-0 p-12 opacity-5">
@@ -514,7 +514,7 @@ const MarketEntryView: React.FC = () => {
                       </div>
                     </div>
 
-                    {/*  изики ELITE */}
+                    {/* Ризики ELITE */}
                     <div className="bg-black/60 border-2 border-rose-700/10 p-10 rounded-[3.5rem] group hover:border-rose-700/30 transition-all shadow-3xl relative overflow-hidden">
                        <div className="absolute top-0 left-0 w-1.5 h-full bg-rose-700 opacity-20" />
                       <h3 className="text-[11px] font-black text-rose-700/60 uppercase tracking-[0.6em] mb-8 flex items-center gap-4 italic font-bold">
@@ -604,7 +604,7 @@ const MarketEntryView: React.FC = () => {
               ) : (
                 <div className="h-[600px] flex flex-col items-center justify-center p-20 opacity-20 transform translate-y-20 border-2 border-dashed border-white/10 rounded-[4rem]">
                    <Globe size={120} className="text-slate-600 mb-10 " />
-                   <p className="text-2xl font-black text-slate-500 uppercase tracking-[1em] italic text-center">ОБЕРІТЬ ВЕКТО  ДЛЯ АНАЛІЗУ</p>
+                   <p className="text-2xl font-black text-slate-500 uppercase tracking-[1em] italic text-center">ОБЕРІТЬ ВЕКТОР ДЛЯ АНАЛІЗУ</p>
                 </div>
               )}
             </AnimatePresence>

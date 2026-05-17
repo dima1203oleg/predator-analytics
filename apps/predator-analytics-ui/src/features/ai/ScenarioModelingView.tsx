@@ -78,7 +78,7 @@ const MOCK_SCENARIOS: Scenario[] = [
       { key: 'period_days', label: 'Горизонт', value: 90, min: 30, max: 365, unit: 'днів' },
     ],
     results: [
-      { metric: ' изик портфелю', baseline: 32, projected: 51, unit: '%', trend: 'up', impact: 'negative' },
+      { metric: 'Ризик портфелю', baseline: 32, projected: 51, unit: '%', trend: 'up', impact: 'negative' },
       { metric: 'Прибутковість', baseline: 100, projected: 78, unit: '%', trend: 'down', impact: 'negative' },
       { metric: 'Обсяг транзакцій', baseline: 100, projected: 87, unit: '%', trend: 'down', impact: 'negative' },
       { metric: 'AML-тригери', baseline: 12, projected: 19, unit: 'шт/міс', trend: 'up', impact: 'negative' },
@@ -94,10 +94,10 @@ const MOCK_SCENARIOS: Scenario[] = [
     createdAt: '2025-04-18',
     params: [
       { key: 'sanction_coverage', label: 'Охоплення ринку', value: 40, min: 0, max: 100, unit: '%' },
-      { key: 'response_time', label: 'реакція ринку', value: 14, min: 1, max: 90, unit: 'днів' },
+      { key: 'response_time', label: 'Реакція ринку', value: 14, min: 1, max: 90, unit: 'днів' },
     ],
     results: [
-      { metric: ' изик портфелю', baseline: 32, projected: 68, unit: '%', trend: 'up', impact: 'negative' },
+      { metric: 'Ризик портфелю', baseline: 32, projected: 68, unit: '%', trend: 'up', impact: 'negative' },
       { metric: 'Нові можливості', baseline: 0, projected: 23, unit: 'клієнтів', trend: 'up', impact: 'positive' },
       { metric: 'Відтік клієнтів', baseline: 5, projected: 18, unit: '%', trend: 'up', impact: 'negative' },
     ],
@@ -118,8 +118,8 @@ const MOCK_SCENARIOS: Scenario[] = [
 // ─── Конфігурація категорій ───────────────────────────────────────────────────
 
 const CATEGORY_CONFIG: Record<ScenarioCategory, { label: string; color: string; icon: React.ComponentType<{ className?: string }> }> = {
-  market: { label: ' инок', color: 'text-rose-400 bg-rose-500/10 border-rose-500/25', icon: TrendingUp },
-  risk: { label: ' изик', color: 'text-rose-400 bg-rose-500/10 border-rose-500/25', icon: AlertTriangle },
+  market: { label: 'Ринок', color: 'text-rose-400 bg-rose-500/10 border-rose-500/25', icon: TrendingUp },
+  risk: { label: 'Ризик', color: 'text-rose-400 bg-rose-500/10 border-rose-500/25', icon: AlertTriangle },
   aml: { label: 'AML', color: 'text-orange-400 bg-orange-500/10 border-orange-500/25', icon: Shield },
   geopolitical: { label: 'Геополітика', color: 'text-indigo-400 bg-indigo-500/10 border-indigo-500/25', icon: Globe },
 };
@@ -229,7 +229,7 @@ function ScenarioCard({ scenario }: { scenario: Scenario }) {
             </div>
           </div>
 
-          {/* результати */}
+          {/* Результати */}
           {scenario.results && scenario.results.length > 0 && (
             <div>
               <div className="text-[10px] font-semibold text-white/30 uppercase tracking-wider mb-2">Прогнозні результати</div>
@@ -307,7 +307,7 @@ export const ScenarioModelingView: React.FC = () => {
         <BrainCircuit className="w-4 h-4 text-rose-400 flex-shrink-0" />
         <p className="text-xs text-rose-400/70">
           ШІ-сценарії генеруються GLM-5.1 (Lead Architect) та верифікуються Nemotron-30B.
-          результати мають рекомендаційний характер.
+          Результати мають рекомендаційний характер.
         </p>
       </div>
 

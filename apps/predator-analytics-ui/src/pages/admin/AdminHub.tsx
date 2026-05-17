@@ -25,7 +25,7 @@ import { useUISound, UISoundType } from '@/hooks/useUISound';
 
 /**
  * 🦅 PREDATOR Analytics | Admin Hub v61.0-ELITE
- * ГЛОБАЛЬНИЙ_О КЕСТ АТО _СУВЕ ЕНУ: Єдиний інтерфейс управління всіма системами.
+ * ГЛОБАЛЬНИЙ_ОРКЕСТРАТОР_СУВЕРЕНУ: Єдиний інтерфейс управління всіма системами.
  */
 
 // ─── Ліниве завантаження вкладок ─────────────────────────────────────────────
@@ -278,7 +278,7 @@ const SystemStatusHeader: React.FC = () => {
             </div>
             
             <div className="flex flex-col border-l-2 border-white/5 pl-12 h-16 justify-center">
-              <span className="text-white/20 text-[9px] leading-none mb-3 tracking-[0.5em] font-black uppercase italic">СТРАТЕГІЯ_ЯД А</span>
+              <span className="text-white/20 text-[9px] leading-none mb-3 tracking-[0.5em] font-black uppercase italic">СТРАТЕГІЯ_ЯДРА</span>
               <div className="flex items-center gap-6">
                 <div className="relative flex items-center justify-center">
                   <div className={cn(
@@ -767,7 +767,7 @@ export const AdminHub: React.FC = () => {
           <span>ВИХІДНИЙ_ПОТІК: 14.8 ГБ/С</span>
           <span>ВХІДНИЙ_ПОТІК: 8.2 ГБ/С</span>
           <div className="mt-4 w-48 h-[2px] bg-gradient-to-l from-rose-500/50 to-transparent rounded-full shadow-rose-500/20" />
-          <span className="text-[7px] opacity-30 font-bold">ШИФ : CHACHA20-POLY1305_QUANTUM_L5</span>
+          <span className="text-[7px] opacity-30 font-bold">ШИФР: CHACHA20-POLY1305_QUANTUM_L5</span>
         </div>
 
         <div className="relative z-10 h-full">

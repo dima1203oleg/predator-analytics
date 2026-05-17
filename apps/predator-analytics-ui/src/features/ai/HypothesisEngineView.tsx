@@ -71,8 +71,8 @@ const HYPOTHESES: Hypothesis[] = [
     ],
     nextActions: [
       'ПОДАТИ ЗАЯВУ ДО НАБУ — СТ. 199 ККУ',
-      'КЛОПОТАННЯПРО ВИЗНАННЯ УГОД НЕДІЙСНИМИ',
-      'ЗАПИТ ДО КІП СЬКОГО  ЕГУЛЯТО А НА  ОЗКрИТТЯ UBO',
+      'КЛОПОТАННЯ ПРО ВИЗНАННЯ УГОД НЕДІЙСНИМИ',
+      'ЗАПИТ ДО КІПРСЬКОГО РЕГУЛЯТОРА НА РОЗКРИТТЯ UBO',
     ],
     aiModel: 'PREDATOR-SIGINT-7B',
     processingTime: '2.4с',
@@ -84,19 +84,19 @@ const HYPOTHESES: Hypothesis[] = [
     category: 'corruption',
     status: 'probable',
     confidence: 81,
-    impact: 'Збитки державі · Конкурентнеправо',
+    impact: 'Збитки державі · Конкурентне право',
     impactValue: '$67M',
     createdAt: '03:47:19',
-    entities: ['ТОВ "ЗАХИСТ-Т ЕЙД"', 'ФОП Бойченко І.В.', 'БФ "ПЕ ЕМОГА"'],
+    entities: ['ТОВ "ЗАХИСТ-ТРЕЙД"', 'ФОП Бойченко І.В.', 'БФ "ПЕРЕМОГА"'],
     evidence: [
-      { source: 'ProZorro API', description: '47 тендерів — переморогавці ротуються за схемою 1-2-3', weight: 88, timestamp: '2024-08-01' },
-      { source: 'ЄДРГраф', description: 'Спільний директор в 2 з 3 компаній: Гнатюк О. .', weight: 79, timestamp: '2025-01-20' },
+      { source: 'ProZorro API', description: '47 тендерів — переможці ротуються за схемою 1-2-3', weight: 88, timestamp: '2024-08-01' },
+      { source: 'ЄДРГраф', description: 'Спільний директор в 2 з 3 компаній: Гнатюк О.П.', weight: 79, timestamp: '2025-01-20' },
       { source: 'ContactData', description: 'Однакові контактні дані та IP-адреси заявок у ProZorro', weight: 85, timestamp: '2025-03-12' },
     ],
     nextActions: [
-      'ЗАПИТ ДО АМКУ — АНТИМОНОПОЛЬНЕПРОВАДЖЕННЯ',
-      'АНАЛІЗ IP-АД ЕС ПОДАЧІ ТЕНДЕ НИХПРОПОЗИЦІЙ',
-      'ПО ІВНЯЛЬНИЙ АНАЛІЗ СПЕЦИФІКАЦІЙ ЗА 47 ЛОТАМИ',
+      'ЗАПИТ ДО АМКУ — АНТИМОНОПОЛЬНЕ ПРОВАДЖЕННЯ',
+      'АНАЛІЗ IP-АДРЕС ПОДАЧІ ТЕНДЕРНИХ ПРОПОЗИЦІЙ',
+      'ПОРІВНЯЛЬНИЙ АНАЛІЗ СПЕЦИФІКАЦІЙ ЗА 47 ЛОТАМИ',
     ],
     aiModel: 'PREDATOR-GRAPH-4B',
     processingTime: '3.1с',
@@ -105,9 +105,9 @@ const HYPOTHESES: Hypothesis[] = [
 
 const STATUS_CFG = {
   confirmed: { label: 'ПІДТВЕРДЖЕНО', color: '#10b981', bg: 'bg-emerald-900/20', border: 'border-emerald-800/40', icon: CheckCircle },
-  probable:  { label: 'ЙМОВІ НО',    color: '#D4AF37', bg: 'bg-yellow-900/15',  border: 'border-yellow-800/30', icon: AlertTriangle },
+  probable:  { label: 'ЙМОВІРНО',    color: '#D4AF37', bg: 'bg-yellow-900/15',  border: 'border-yellow-800/30', icon: AlertTriangle },
   possible:  { label: 'МОЖЛИВО',     color: '#475569', bg: 'bg-slate-900/15',   border: 'border-slate-800/30',  icon: Eye },
-  refuted:   { label: 'СП ОСТОВАНО', color: '#F59E0B', bg: 'bg-rose-900/15',    border: 'border-rose-800/30',   icon: Lock },
+  refuted:   { label: 'СПРОСТОВАНО', color: '#F59E0B', bg: 'bg-rose-900/15',    border: 'border-rose-800/30',   icon: Lock },
 };
 
 const CATEGORY_CFG = {
@@ -138,7 +138,7 @@ const HypothesisEngineView: React.FC = () => {
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'HypothesisEngine',
-          message: 'АКТИВОВАНО АВТОНОМНИЙ РЕЖИМ ГЕНЕ АЦІЇ ГІПОТЕЗ (COGNITIVE_NODES). Використовується локальна нейромережа.',
+          message: 'АКТИВОВАНО АВТОНОМНИЙ РЕЖИМ ГЕНЕРАЦІЇ ГІПОТЕЗ (COGNITIVE_NODES). Використовується локальна нейромережа.',
           severity: 'warning',
           timestamp: new Date().toISOString(),
           code: 'COGNITIVE_NODES'
@@ -148,7 +148,7 @@ const HypothesisEngineView: React.FC = () => {
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'HypothesisEngine',
-          message: 'СИНХРОНІЗАЦІЯ ГЕНЕ АТО А ГІПОТЕЗ УСПІШНА (HYPOTHESIS_SUCCESS). Зв\'язок з NVIDIA-кластером стабільний.',
+          message: 'СИНХРОНІЗАЦІЯ ГЕНЕРАТОРА ГІПОТЕЗ УСПІШНА (HYPOTHESIS_SUCCESS). Зв\'язок з NVIDIA-кластером стабільний.',
           severity: 'info',
           timestamp: new Date().toISOString(),
           code: 'HYPOTHESIS_SUCCESS'
@@ -169,9 +169,9 @@ const HypothesisEngineView: React.FC = () => {
       '> [PATTERN-2B] Пошук повторюваних патернів...',
       '> [SANCTIONS-3B] Перевірка санкційних баз...',
       '> Крос-верифікація між моделями...',
-      '>  анжування гіпотез за confidence score...',
+      '> Ранжування гіпотез за confidence score...',
       '─────────────────────────────────────',
-      '> ✓ НОВА ГІПОТЕЗА СФО МОВАНА · Впевненість: 79%',
+      '> ✓ НОВА ГІПОТЕЗА СФОРМОВАНА · Впевненість: 79%',
     ];
 
     for (let i = 0; i < steps.length; i++) {
@@ -217,7 +217,7 @@ const HypothesisEngineView: React.FC = () => {
                 <div className="flex items-center gap-4 mb-3">
                   <Sparkles size={12} className="text-yellow-600 " />
                   <span className="text-[10px] font-black text-yellow-500/70 uppercase tracking-[0.6em]">
-                    СУВЕ ЕННЕ ЯДРО ГІПОТЕЗ · v61.0-ELITE
+                    СУВЕРЕННЕ ЯДРО ГІПОТЕЗ · v61.0-ELITE
                   </span>
                 </div>
                 <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic leading-none">
@@ -225,7 +225,7 @@ const HypothesisEngineView: React.FC = () => {
                   <span className="text-yellow-500  italic uppercase">ГІПОТЕЗ</span>
                 </h1>
                 <p className="text-[12px] text-slate-600 font-black uppercase tracking-[0.4em] mt-3 flex items-center gap-4">
-                  <Fingerprint size={16} className="text-yellow-500" /> АВТОГЕНЕ АЦІЯ СЛІДЧИХ ГІПОТЕЗ · TIER-1 ACCESS
+                  <Fingerprint size={16} className="text-yellow-500" /> АВТОГЕНЕРАЦІЯ СЛІДЧИХ ГІПОТЕЗ · TIER-1 ACCESS
                 </p>
               </div>
             </div>
@@ -233,7 +233,7 @@ const HypothesisEngineView: React.FC = () => {
           breadcrumbs={['INTEL', 'AI', 'HYPOTHESIS_ENGINE']}
           badges={[
             { label: 'ОБМЕЖЕНИЙ_Т1', color: 'gold', icon: <Lock size={10} /> },
-            { label: 'СУВЕ ЕННЕ_ЯДРО', color: 'primary', icon: <Cpu size={10} /> },
+            { label: 'СУВЕРЕННЕ_ЯДРО', color: 'primary', icon: <Cpu size={10} /> },
             { 
               label: nodeSource, 
               color: isOffline ? 'warning' : 'gold', 
@@ -250,7 +250,7 @@ const HypothesisEngineView: React.FC = () => {
               animate: isOffline
             },
             { label: 'РИЗИК_ВПЛИВУ', value: '$184M', icon: <DollarSign />, color: 'danger' },
-            { label: 'ОБЧИСЛЕННЯ', value: isOffline ? 'ЛОКАЛЬНІ' : 'ХМА НІ', icon: <Cpu />, color: isOffline ? 'warning' : 'primary' },
+            { label: 'ОБЧИСЛЕННЯ', value: isOffline ? 'ЛОКАЛЬНІ' : 'ХМАРНІ', icon: <Cpu />, color: isOffline ? 'warning' : 'primary' },
           ]}
           actions={
             <div className="flex items-center gap-6">
@@ -274,7 +274,7 @@ const HypothesisEngineView: React.FC = () => {
         {/* ── МЕТрИКИ ELITE ── */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
           {[
-            { l: 'ГІПОТЕЗ СФО МОВАНО', v: '47',    sub: 'Активний векторний скан',       c: '#D4AF37' },
+            { l: 'ГІПОТЕЗ СФОРМОВАНО', v: '47',    sub: 'Активний векторний скан',       c: '#D4AF37' },
             { l: 'ТОЧНІСТЬ_МАТЧИНГУ',  v: '94.2%', sub: 'Висока відповідність',     c: '#10b981' },
             { l: 'ОБСЯГ_ВИЯВЛЕНЬ',     v: '$184M', sub: 'Виявлено витік капіталу',   c: '#E11D48' },
             { l: 'ШВИДКІСТЬ_МЕШУ',      v: '1.8ms', sub: 'Продуктивність нейромережі', c: '#D4AF37' },
@@ -292,7 +292,7 @@ const HypothesisEngineView: React.FC = () => {
           ))}
         </div>
 
-        {/* ── ГЕНЕ АТО  ЗАПИТІВ ELITE ── */}
+        {/* ── ГЕНЕРАТОР ЗАПИТІВ ELITE ── */}
         <div className="bg-black border-2 border-yellow-500/10 p-10 space-y-8 rounded-[4rem] shadow-4xl relative overflow-hidden ">
           <div className="absolute top-0 right-0 p-20 opacity-[0.02] pointer-events-none">
              <Brain size={400} className="text-yellow-500" />
@@ -308,7 +308,7 @@ const HypothesisEngineView: React.FC = () => {
                 value={promptText}
                 onChange={e => setPromptText(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && handleGenerate()}
-                placeholder="ВВЕДІТЬ_ПА АМЕТрИ_ПОШУКУ_ОБ'ЄКТА..."
+                placeholder="ВВЕДІТЬ_ПАРАМЕТРИ_ПОШУКУ_ОБ'ЄКТА..."
                 className="flex-1 bg-transparent text-xl font-black text-white outline-none placeholder:text-slate-800 font-mono italic"
               />
             </div>
@@ -343,7 +343,7 @@ const HypothesisEngineView: React.FC = () => {
                   line.startsWith('> ✓') ? "text-emerald-400 font-black" :
                   line.startsWith('> [') ? "text-yellow-500/70" :
                   line.startsWith('───') ? "text-slate-900" :
-                  line.startsWith('> ZAПИТ') ? "text-yellow-500" :
+                  line.startsWith('> ЗАПИТ') ? "text-yellow-500" :
                   "text-slate-700"
                 )}
               >
@@ -383,7 +383,7 @@ const HypothesisEngineView: React.FC = () => {
                     )}
                     style={filterStatus === s && sc ? { backgroundColor: sc.color + '25', color: sc.color, borderColor: sc.color + '40', borderWidth: '1px' } : {}}
                   >
-                    {s === 'all' ? 'УСІ_ВЕКТО И' : sc!.label}
+                    {s === 'all' ? 'УСІ_ВЕКТОРИ' : sc!.label}
                   </button>
                 );
               })}
@@ -395,7 +395,7 @@ const HypothesisEngineView: React.FC = () => {
                 className="p-6 border-2 border-emerald-500/20 bg-emerald-500/5 flex items-center gap-4 rounded-3xl shadow-xl"
               >
                 <CheckCircle size={20} className="text-emerald-400" />
-                <span className="text-[12px] font-black text-emerald-400 italic">НОВА ГІПОТЕЗА СИНТЕЗОВАНА · ЧЕ ГА_ВЕ ИФІКАЦІЇ_АКТИВНА</span>
+                <span className="text-[12px] font-black text-emerald-400 italic">НОВА ГІПОТЕЗА СИНТЕЗОВАНА · ЧЕРГА_ВЕРИФІКАЦІЇ_АКТИВНА</span>
               </motion.div>
             )}
 
@@ -490,7 +490,7 @@ const HypothesisEngineView: React.FC = () => {
                         <p className="text-[56px] font-black font-mono leading-none tracking-tighter italic" style={{ color: STATUS_CFG[selected.status].color }}>
                           {selected.confidence}%
                         </p>
-                        <p className="text-[10px] text-slate-600 uppercase font-black tracking-[0.5em] mt-2"> ЕЙТИНГ_ВПЕВНЕННОСТІ</p>
+                        <p className="text-[10px] text-slate-600 uppercase font-black tracking-[0.5em] mt-2">РЕЙТИНГ_ВПЕВНЕНОСТІ</p>
                       </div>
                     </div>
                     
@@ -576,7 +576,7 @@ const HypothesisEngineView: React.FC = () => {
                     </div>
                   </div>
 
-                  {/*  ЕКОМЕНДОВАНИ ДІЇ ELITE */}
+                  {/* РЕКОМЕНДОВАНІ ДІЇ ELITE */}
                   <div className="bg-black/60 border-2 border-white/5 p-10 rounded-[3.5rem] shadow-3xl">
                     <h3 className="text-[11px] font-black text-rose-500/60 uppercase tracking-[0.5em] mb-8 flex items-center gap-4 italic font-bold">
                       <Target size={20} className="text-rose-500 " />
@@ -597,11 +597,11 @@ const HypothesisEngineView: React.FC = () => {
                   <div className="grid grid-cols-2 gap-8 pt-6">
                     <button className="py-7 bg-gradient-to-r from-yellow-600 to-yellow-500 text-black text-[11px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all shadow-4xl rounded-3xl flex items-center justify-center gap-4 italic">
                       <Sparkles size={22} className="" />
-                      ГЛИБОКЕ_СЕНСО НЕ_СКАНУВАННЯ
+                      ГЛИБОКЕ_СЕНСОРНЕ_СКАНУВАННЯ
                     </button>
                     <button className="py-7 bg-black border-2 border-white/10 text-slate-500 text-[11px] font-black uppercase tracking-[0.4em] hover:text-white hover:border-yellow-500/40 transition-all rounded-3xl flex items-center justify-center gap-4 italic shadow-2xl">
                       <Download size={20} />
-                      ЕКСПОРТ_МАТЕ ІАЛІВ_СП АВИ
+                      ЕКСПОРТ_МАТЕРІАЛІВ_СПРАВИ
                     </button>
                   </div>
                 </motion.div>

@@ -48,7 +48,7 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({ ueid: pr
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'FinancialAnalytics',
-          message: `СИНХ ОНІЗАЦІЮ FINANCIAL_DATA ЗАВЕ ШЕНО [${sourceLabel}]: Оброблено звіти за ${metrics.length} років. Фінансове ядро стабілізоване.`,
+          message: `СИНХРОНІЗАЦІЮ FINANCIAL_DATA ЗАВЕРШЕНО [${sourceLabel}]: Оброблено звіти за ${metrics.length} років. Фінансове ядро стабілізоване.`,
           severity: 'info',
           timestamp: new Date().toISOString(),
           code: 'FINANCIAL_SUCCESS'
@@ -62,7 +62,7 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({ ueid: pr
         window.dispatchEvent(new CustomEvent('predator-error', {
             detail: {
                 service: 'FinancialAnalytics',
-                message: `ФІНАНСОВИЙ_ДАШБО Д [${sourceLabel}]: Нексус NVIDIA недоступний. Використовується автономний шар MIRROR_VAULT.`,
+                message: `ФІНАНСОВИЙ_ДАШБОРД [${sourceLabel}]: Нексус NVIDIA недоступний. Використовується автономний шар MIRROR_VAULT.`,
                 severity: 'warning',
                 timestamp: new Date().toISOString(),
                 code: 'FINANCIAL_OFFLINE'
@@ -196,7 +196,7 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({ ueid: pr
               <div className="p-2 bg-yellow-500/10 rounded-lg"><PieChart size={20} className="text-yellow-400" /></div>
             </div>
             <div className="mt-4">
-              <div className="text-[10px] text-slate-500 uppercase font-black tracking-widest"> ентабельність</div>
+              <div className="text-[10px] text-slate-500 uppercase font-black tracking-widest">Рентабельність</div>
               <div className="text-3xl font-black text-white mt-1">{latest.profitMargin.toFixed(1)} <span className="text-xs text-slate-400 ml-1">%</span></div>
             </div>
           </TacticalCard>
@@ -208,7 +208,7 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({ ueid: pr
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-white/5 bg-white/[0.02]">
-                  <th className="p-4 text-[10px] font-black uppercase text-slate-500 tracking-widest"> ік</th>
+                  <th className="p-4 text-[10px] font-black uppercase text-slate-500 tracking-widest">Рік</th>
                   <th className="p-4 text-[10px] font-black uppercase text-slate-500 tracking-widest text-right">Дохід (МЛН)</th>
                   <th className="p-4 text-[10px] font-black uppercase text-slate-500 tracking-widest text-right">Витрати (МЛН)</th>
                   <th className="p-4 text-[10px] font-black uppercase text-slate-500 tracking-widest text-right">Прибуток (МЛН)</th>

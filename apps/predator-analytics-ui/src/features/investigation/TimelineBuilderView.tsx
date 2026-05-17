@@ -71,7 +71,7 @@ const MOCK_EVENTS: TimelineEvent[] = [
         description: 'Відкрито поточний рахунок UA213206490000026007233566001. Первісний депозит 50,000 UAH.',
         source: 'БАНКІВСЬКІ_РЕЄСТРИ',
         confidence: 98,
-        relatedEntities: ['Марченко  .Г.', 'Monobank'],
+        relatedEntities: ['Марченко І.Г.', 'Monobank'],
         caseId: 'CASE-2026-089',
         verified: true,
     },
@@ -81,7 +81,7 @@ const MOCK_EVENTS: TimelineEvent[] = [
         category: 'legal',
         title: 'РЕЄСТРАЦІЯ_ТОВ_ГОЛДЕН_ТРЕЙД',
         description: 'Зареєстровано нову юридичну особу. КВЕДи: 46.39, 46.90. Статутний капітал 1,000 UAH.',
-        source: 'ЄД _УКРАЇНИ',
+        source: 'ЄДР_УКРАЇНИ',
         confidence: 100,
         relatedEntities: ['ТОВ "ГОЛДЕН ТРЕЙД"', 'Марченко І.Г.'],
         verified: true,
@@ -95,7 +95,7 @@ const MOCK_EVENTS: TimelineEvent[] = [
         description: 'Встановлено ділові відносини з Олещуком В.О. — заступником міністра. Ризик: HIGH.',
         source: 'АНАЛІТИЧНИЙ_ЯДРО_PREDATOR',
         confidence: 92,
-        relatedEntities: ['Марченко  .Г.', 'Олещук В.О.'],
+        relatedEntities: ['Марченко І.Г.', 'Олещук В.О.'],
         caseId: 'CASE-2026-089',
         verified: true,
     }
@@ -289,7 +289,7 @@ const TimelineBuilderView: React.FC = () => {
                         stats={[
                             { label: 'ПОДІЙ_В_КЕЙСІ', value: '142', icon: <Hash size={14} />, color: 'primary' },
                             { label: 'ВЕРИФІКОВАНО', value: '89.4%', icon: <Shield size={14} />, color: 'success', animate: true },
-                            { label: 'АКТИВНІ_ВЕКТОРІ', value: '12', icon: <Target size={14} />, color: 'warning' }
+                            { label: 'АКТИВНІ_ВЕКТОРИ', value: '12', icon: <Target size={14} />, color: 'warning' }
                         ]}
                         actions={
                             <div className="flex gap-4">
@@ -353,8 +353,8 @@ const TimelineBuilderView: React.FC = () => {
                                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-40 flex flex-col items-center justify-center text-center space-y-10">
                                     <Satellite size={120} className="text-slate-900 " />
                                     <div className="space-y-4">
-                                        <h3 className="text-3xl font-black text-slate-800 uppercase italic tracking-tighter">ВІДСУТНІСТЬ_ДАННИХ</h3>
-                                        <p className="text-[11px] text-slate-700 font-black uppercase tracking-[0.4em] italic max-w-md mx-auto leading-relaxed">СІТКА ЧАСУ ПОРОЖНЯ. ЗАДАЙТЕ ІНШІ ПАРАМЕТРИ ФІЛЬТРАЦІЇ АБО ЗАПУСТИТИ_СКАНЕР.</p>
+                                        <h3 className="text-3xl font-black text-slate-800 uppercase italic tracking-tighter">ВІДСУТНІСТЬ_ДАНИХ</h3>
+                                        <p className="text-[11px] text-slate-700 font-black uppercase tracking-[0.4em] italic max-w-md mx-auto leading-relaxed">СІТКА ЧАСУ ПОРОЖНЯ. ЗАДАЙТЕ ІНШІ ПАРАМЕТРИ ФІЛЬТРАЦІЇ АБО ЗАПУСТІТЬ_СКАНЕР.</p>
                                     </div>
                                 </motion.div>
                             ) : (

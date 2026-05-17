@@ -1,5 +1,5 @@
 /**
- * 🎯 MA TARGET SCANNER // СКАНЕ  ЦІЛЬОВИХ  ИНКІВ | v61.0-ELITE
+ * 🎯 MA TARGET SCANNER // СКАНЕР ЦІЛЬОВИХ РИНКІВ | v61.0-ELITE
  * PREDATOR Analytics — Mergers & Acquisitions Intelligence
  *
  * Компанії у фінансових труднощах — можливості:
@@ -58,10 +58,10 @@ interface MATarget {
 }
 
 const STATUS_CFG = {
-  distress:       { label: 'ФІНАНСОВИЙ СТ ЕС',   color: '#E11D48', bg: 'bg-amber-900/20',     border: 'border-amber-500/40',    icon: AlertTriangle },
-  restructuring:  { label: ' ЕСТ УКТУ ИЗАЦІЯ',   color: '#f59e0b', bg: 'bg-amber-900/15',   border: 'border-amber-800/30',  icon: RefreshCw },
+  distress:       { label: 'ФІНАНСОВИЙ СТРЕС',   color: '#E11D48', bg: 'bg-amber-900/20',     border: 'border-amber-500/40',    icon: AlertTriangle },
+  restructuring:  { label: 'РЕСТРУКТУРИЗАЦІЯ',   color: '#f59e0b', bg: 'bg-amber-900/15',   border: 'border-amber-800/30',  icon: RefreshCw },
   opportunity:    { label: 'МОЖЛИВІСТЬ',          color: '#D4AF37', bg: 'bg-yellow-900/15', border: 'border-yellow-500/30', icon: Star },
-  watch:          { label: 'СПОСТЕ ЕЖЕННЯ',       color: '#64748b', bg: 'bg-slate-900/15',  border: 'border-slate-800/30', icon: Eye },
+  watch:          { label: 'СПОСТЕРЕЖЕННЯ',       color: '#64748b', bg: 'bg-slate-900/15',  border: 'border-slate-800/30', icon: Eye },
 };
 
 const DEAL_CFG = {
@@ -166,7 +166,7 @@ const MATargetScannerView: React.FC = () => {
                     <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v61.0-ELITE</span>
                   </div>
                   <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
-                    TARGET <span className="text-yellow-500 underline decoration-yellow-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">SCANNER</span>
+                    СКАНЕР ЦІЛЬОВИХ <span className="text-yellow-500 underline decoration-yellow-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">РИНКІВ</span>
                   </h1>
                 </div>
               </div>
@@ -209,7 +209,7 @@ const MATargetScannerView: React.FC = () => {
             }
           />
 
-          {/* ── МЕТрИКИ ELITE ── */}
+          {/* ── МЕТРИКИ ELITE ── */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               { label: 'ЦІЛЕЙ ЗНАЙДЕНО',       value: '127',   icon: Target,      color: '#D4AF37', sub: 'Detected In-Network' },
@@ -250,7 +250,7 @@ const MATargetScannerView: React.FC = () => {
                   />
                 </div>
                 <div className="flex gap-2 bg-black border-2 border-white/5 p-2 rounded-2xl shadow-inner">
-                  {([['all', 'УСІ_ВЕКТО И'], ['distress', 'СТ ЕС'], ['opportunity', 'НАГОДА'], ['watch', 'НАГЛЯД']] as const).map(([v, l]) => (
+                  {([['all', 'УСІ_ВЕКТОРИ'], ['distress', 'СТРЕС'], ['opportunity', 'НАГОДА'], ['watch', 'НАГЛЯД']] as const).map(([v, l]) => (
                     <button
                       key={v}
                       onClick={() => setFilterStatus(v)}
@@ -287,7 +287,7 @@ const MATargetScannerView: React.FC = () => {
                         onClick={() => window.location.reload()}
                         className="px-8 py-3 bg-amber-500/10 border border-amber-500/40 text-amber-500 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-amber-500 hover:text-black transition-all"
                       >
-                        ПЕ ЕЗАПУСТИТИ_СКАН
+                        ПЕРЕЗАПУСТИТИ_СКАН
                       </button>
                    </div>
                 )}
@@ -420,7 +420,7 @@ const MATargetScannerView: React.FC = () => {
                 ) : (
                   <div className="h-full flex flex-col items-center justify-center p-20 opacity-20 transform translate-y-20">
                      <Target size={120} className="text-slate-600 mb-10 " />
-                     <p className="text-2xl font-black text-slate-500 uppercase tracking-[1em] italic text-center">ОБЕРІТЬ ТО ГОВУ ЦІЛЬ ДЛЯ АНАЛІЗУ</p>
+                     <p className="text-2xl font-black text-slate-500 uppercase tracking-[1em] italic text-center">ОБЕРІТЬ ТОРГОВУ ЦІЛЬ ДЛЯ АНАЛІЗУ</p>
                   </div>
                 )}
               </AnimatePresence>

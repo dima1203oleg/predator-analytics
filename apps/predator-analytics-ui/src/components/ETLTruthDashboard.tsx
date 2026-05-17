@@ -1,7 +1,7 @@
 /**
  * 📊 ETL Truth Dashboard
  * Predator v45 | Neural Analytics*
- * ПРИНЦИП: ETL ГОВО ИТЬ П АВДУ
+ * ПРИНЦИП: ETL ГОВОРИТЬ ПРАВДУ
  * - реальні стани (не симуляція)
  * - реальний прогрес (похідний від даних)
  * - реальні помилки (не приховані)
@@ -230,7 +230,7 @@ const JobCard: React.FC<{ job: ETLJob; expanded: boolean; onToggle: () => void }
     if (job.state === 'COMPLETED') return 100;
     if (TERMINAL_STATES.includes(job.state)) return job.progress.percent;
 
-    //  озрахунок реального прогресу по фазі
+    // Розрахунок реального прогресу по фазі
     const phase = config.phase;
     if (phase === 'upload') {
       return Math.min(job.progress.percent, 10);

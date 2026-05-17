@@ -1,5 +1,5 @@
 /**
- * 🗺️ БЕНЕФІЦІА НА КА ТА (UBO MAP) | v61.0-ELITE
+ * 🗺️ БЕНЕФІЦІАРНА КАРТА (UBO MAP) | v61.0-ELITE
  * PREDATOR Analytics — Ultimate Beneficial Owner Intelligence
  *
  * Граф кінцевих бенефіціарів, ланцюги власності,
@@ -29,7 +29,7 @@ import { SovereignAudio } from '@/utils/sovereign-audio';
 
 const MOCK_UBO_TREE: UBONode = {
   id: 'root',
-  name: 'ТОВ "АГ О-ЛІДЕ  ГРУП"',
+  name: 'ТОВ "АГРО-ЛІДЕР ГРУП"',
   type: 'company',
   risk: 87,
   country: '🇺🇦',
@@ -100,9 +100,9 @@ const MOCK_UBO_TREE: UBONode = {
 const PEP_DATABASE = [
   { name: 'Ткаченко В.М.', position: 'Нар. депутат III скликання', risk: 91, links: 8,  status: 'АКТИВНИЙ' },
   { name: 'Петренко М.О.', position: 'Заст. міністра (2018-2021)', risk: 88, links: 12, status: 'АКТИВНИЙ' },
-  { name: 'Коваль Д.С.',   position: 'Голова ДФСУ (2019-2022)',    risk: 76, links: 6,  status: 'ЗАВЕ ШЕНО' },
-  { name: 'Бойко А. .',    position: ' адник Кабміну',             risk: 63, links: 4,  status: 'АКТИВНИЙ' },
-  { name: 'Мельник Т.В.', position: 'Член ЦВК (2015-2019)',         risk: 54, links: 3,  status: 'ЗАВЕ ШЕНО' },
+  { name: 'Коваль Д.С.',   position: 'Голова ДФСУ (2019-2022)',    risk: 76, links: 6,  status: 'ЗАВЕРШЕНО' },
+  { name: 'Бойко А.П.',    position: 'Радник Кабміну',             risk: 63, links: 4,  status: 'АКТИВНИЙ' },
+  { name: 'Мельник Т.В.', position: 'Член ЦВК (2015-2019)',         risk: 54, links: 3,  status: 'ЗАВЕРШЕНО' },
 ];
 
 type ActiveView = 'ubo-tree' | 'pep-tracker' | 'shadow-director';
@@ -153,7 +153,7 @@ const UBONodeCard: React.FC<{ node: UBONode; depth?: number }> = ({ node, depth 
         )}
         onClick={() => hasChildren && setExpanded(e => !e)}
       >
-        {/*  изик-індикатор зліва */}
+        {/* Ризик-індикатор зліва */}
         <div
           className="absolute left-0 inset-y-0 w-1.5 rounded-r transition-all"
           style={{
@@ -184,7 +184,7 @@ const UBONodeCard: React.FC<{ node: UBONode; depth?: number }> = ({ node, depth 
               )}
               {node.type === 'offshore' && (
                 <span className="text-[8px] font-black bg-amber-600 text-white px-3 py-1 uppercase tracking-widest rounded-lg shadow-lg shadow-amber-900/40">
-                  ОФШО НИЙ_ВУЗОЛ
+                  ОФШОРНИЙ_ВУЗОЛ
                 </span>
               )}
             </div>
@@ -200,7 +200,7 @@ const UBONodeCard: React.FC<{ node: UBONode; depth?: number }> = ({ node, depth 
                 </span>
               </span>
               {node.nationality && (
-                <span className="text-[9px] text-slate-700 font-black tracking-widest uppercase italic">Г ОМАДЯНСТВО: {node.nationality}</span>
+                <span className="text-[9px] text-slate-700 font-black tracking-widest uppercase italic">ГРОМАДЯНСТВО: {node.nationality}</span>
               )}
             </div>
           </div>
@@ -241,7 +241,7 @@ const UBOMapView: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [activeView, setActiveView] = useState<ActiveView>('ubo-tree');
   const [searchQuery, setSearchQuery] = useState('');
-  const [company, setCompany] = useState('ТОВ "АГ О-ЛІДЕ  ГРУП"');
+  const [company, setCompany] = useState('ТОВ "АГРО-ЛІДЕР ГРУП"');
   const { isOffline, nodeSource, healingProgress } = useBackendStatus();
 
   useEffect(() => {
@@ -305,7 +305,7 @@ const UBOMapView: React.FC = () => {
   const views: Array<{ id: ActiveView; label: string; icon: React.ElementType; badge?: string }> = [
     { id: 'ubo-tree',       label: 'СТРУКТУРА_ВЛАСНОСТІ',       icon: Network,      badge: 'ПОКрАЩЕНО' },
     { id: 'pep-tracker',    label: 'PEP_РОЗВІДКА',           icon: Fingerprint,  badge: 'LIVE' },
-    { id: 'shadow-director', label: 'ТІНЬОВИЙ_ДИ ЕКТО ',     icon: Eye,          badge: 'AI_ЯДРО' },
+    { id: 'shadow-director', label: 'ТІНЬОВИЙ_ДИРЕКТОР',     icon: Eye,          badge: 'AI_ЯДРО' },
   ];
 
   if (isLoading) {
@@ -332,14 +332,14 @@ const UBOMapView: React.FC = () => {
              <AlertTriangle className="text-red-500" size={48} />
            </div>
            <div className="space-y-4">
-             <h2 className="text-3xl font-black text-white italic uppercase tracking-tighter">КРИТИЧНИЙ ЗБІЙ  РОЗВІДКИ</h2>
-             <p className="text-slate-400 font-bold uppercase tracking-widest text-xs leading-relaxed">{error || 'НЕВІДОМА ПОМИЛКА ЯД А'}</p>
+             <h2 className="text-3xl font-black text-white italic uppercase tracking-tighter">КРИТИЧНИЙ ЗБІЙ РОЗВІДКИ</h2>
+             <p className="text-slate-400 font-bold uppercase tracking-widest text-xs leading-relaxed">{error || 'НЕВІДОМА ПОМИЛКА ЯДРА'}</p>
            </div>
            <button 
              onClick={() => fetchUboData()}
              className="w-full py-6 bg-red-600 text-white font-black uppercase tracking-[0.4em] rounded-[2rem] hover:bg-red-500 transition-all shadow-[0_20px_40px_-10px_rgba(220,38,38,0.4)] italic scale-105 active:scale-95"
            >
-             ПЕ ЕЗАП ОСИТИ_ДАНІ
+             ПЕРЕЗАПУСТИТИ_ДАНІ
            </button>
         </div>
       </div>
@@ -373,7 +373,7 @@ const UBOMapView: React.FC = () => {
                   </span>
                 </div>
                 <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
-                  БЕНЕФІЦІА НА <span className="text-yellow-500 underline decoration-yellow-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">КА ТА</span>
+                  БЕНЕФІЦІАРНА <span className="text-yellow-500 underline decoration-yellow-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">КАРТА</span>
                 </h1>
               </div>
             </div>
@@ -381,7 +381,7 @@ const UBOMapView: React.FC = () => {
           breadcrumbs={['ІНТЕЛЕКТ', 'УПРАВЛІННЯ', 'UBO_ВУЗОЛ']}
           badges={[
             { label: 'СЕКРЕТНО_T1', color: 'primary', icon: <Lock size={10} /> },
-            { label: 'СУВЕРЕННИЙ_П ИВИД', color: 'gold', icon: <Star size={10} /> },
+            { label: 'СУВЕРЕННИЙ_ПРИВИД', color: 'gold', icon: <Star size={10} /> },
             { 
               label: nodeSource, 
               color: isOffline ? 'warning' : 'success', 
@@ -389,11 +389,11 @@ const UBOMapView: React.FC = () => {
             },
           ]}
           stats={[
-            { label: ' ІВНІВ СТ УКТУ И', value: '4_TIERS', icon: <Network />, color: 'gold' },
+            { label: 'РІВНІВ СТРУКТУРИ', value: '4_TIERS', icon: <Network />, color: 'gold' },
             { label: 'PEP_DETECTION', value: '02_LEADS', icon: <Fingerprint />, color: 'warning' },
             { label: 'OFFSHORE_NODES', value: '03_UNITS', icon: <Globe />, color: 'danger' },
             { 
-              label: isOffline ? 'АВА ІЙНА_СИНХРОНІЗАЦІЯ' : 'ПОКАЗНИК_РИЗИКУ', 
+              label: isOffline ? 'АВАРІЙНА_СИНХРОНІЗАЦІЯ' : 'ПОКАЗНИК_РИЗИКУ', 
               value: isOffline ? `${Math.floor(healingProgress)}%` : '94.8%', 
               icon: isOffline ? <Activity /> : <Target />, 
               color: isOffline ? 'warning' : 'danger',
@@ -421,7 +421,7 @@ const UBOMapView: React.FC = () => {
         {/* ── МЕТрИКИ ELITE ── */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
           {[
-            { label: ' ІВНІВ СТ УКТУ И', value: '4_TIERS',   icon: Network,      color: '#D4AF37' },
+            { label: 'РІВНІВ СТРУКТУРИ', value: '4_TIERS',   icon: Network,      color: '#D4AF37' },
             { label: 'PEP_DETECTION',   value: '02_LEADS',   icon: Fingerprint,  color: '#f59e0b' },
             { label: 'OFFSHORE_NODES',    value: '03_UNITS',    icon: Globe,        color: '#D4AF37' },
             { label: 'RISK_VULNERABILITY', value: '94.8%',     icon: Target,       color: '#D97706' },
@@ -575,7 +575,7 @@ const UBOMapView: React.FC = () => {
               </div>
             )}
 
-            {/* PEP Т ЕКЕ  ELITE */}
+            {/* PEP ТРЕКЕР ELITE */}
             {activeView === 'pep-tracker' && (
               <div className="bg-black/80  border-2 border-white/5 rounded-[4rem] shadow-4xl overflow-hidden relative">
                 <div className="p-10 border-b border-white/5 flex items-center justify-between relative z-10">
@@ -652,7 +652,7 @@ const UBOMapView: React.FC = () => {
                 {[
                   {
                     name: 'Петренко М.О.',
-                    company: 'ТОВ "АГ О-ЛІДЕ  ГРУП"',
+                    company: 'ТОВ "АГРО-ЛІДЕР ГРУП"',
                     evidence: ['AUTHORIZED_SIGNATURE_PATT_47', 'BANK_INITIATION_BY_PROXY', 'RECOGNIZED_BY_VENDORS_AS_UBO'],
                     confidence: 94.2,
                     method: 'NEURAL_BEHAVIORAL_MESH',

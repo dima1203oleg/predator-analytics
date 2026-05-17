@@ -90,7 +90,7 @@ export default function PredictiveNexusView() {
             window.dispatchEvent(new CustomEvent('predator-error', {
                 detail: {
                     service: 'PredictiveNexus',
-                    message: `НЕКСУС_АКТИВОВАНО [${nodeSource}]: Повний доступ до квантової аналітики NVIDIA. Операційна станість 100%.`,
+                    message: `НЕКСУС_АКТИВОВАНО [${nodeSource}]: Повний доступ до квантової аналітики NVIDIA. Операційна стабільність 100%.`,
                     severity: 'info',
                     timestamp: new Date().toISOString(),
                     code: 'NEXUS_SUCCESS'

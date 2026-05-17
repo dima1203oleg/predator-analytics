@@ -37,7 +37,7 @@ interface Experiment {
 
 /**
  * 🦅 CHAOS CONTROL HUB | v61.0-ELITE
- * ЦЕНТ _КЕ УВАННЯ_ХАОСОМ: Верифікація стійкості через ін'єкцію аномалій.
+ * ЦЕНТР_КЕРУВАННЯ_ХАОСОМ: Верифікація стійкості через ін'єкцію аномалій.
  */
 const ChaosControlHub: React.FC = () => {
   const [experiments, setExperiments] = useState<Record<string, Experiment>>({});
@@ -81,11 +81,11 @@ const ChaosControlHub: React.FC = () => {
   };
 
   const experimentConfigs = [
-    { id: 'db_latency', name: 'ІН\'ЄКЦІЯ_ЗАТрИМКИ_БД', desc: 'ДОДАЄ_ВИПАДКОВУ_ЗАТрИМКУ_2-5с_ДО_SQL_ЗАПИТІВ', icon: <Clock /> },
+    { id: 'db_latency', name: 'ІН\'ЄКЦІЯ_ЗАТРИМКИ_БД', desc: 'ДОДАЄ_ВИПАДКОВУ_ЗАТРИМКУ_2-5с_ДО_SQL_ЗАПИТІВ', icon: <Clock /> },
     { id: 'cache_failure', name: 'ОБХІД_КЕШУ_REDIS', desc: 'ІГНОРУЄ_КЕШ_ТА_ЗМУШУЄ_СИСТЕМУ_ЙТИ_В_DB', icon: <ZapOff /> },
-    { id: 'random_errors', name: 'ВИПАДКОВІ_ПОМИЛКИ_500', desc: 'ВКИДАЄ_ПОМИЛКИ_HTTP_З_ІМОВІ НІСТЮ_20%', icon: <AlertTriangle /> },
-    { id: 'llm_hallucination', name: 'ГАЛЮЦИНАЦІЯ_ШІ', desc: 'СИМУЛЮЄ_НЕКО ЕКТНІ_АБО_ТОКСИЧНІ_ВІДПОВІДІ_LLM', icon: <Wind /> },
-    { id: 'agent_timeout', name: 'Д ЕЙФ_ШІ_АГЕНТА', desc: 'БЛОКУЄ_ВИКОНАННЯ_ЗАДАЧ_AGI-АГЕНТАМИ_ПО_TTL', icon: <Skull /> },
+    { id: 'random_errors', name: 'ВИПАДКОВІ_ПОМИЛКИ_500', desc: 'ВКИДАЄ_ПОМИЛКИ_HTTP_З_ІМОВІРНІСТЮ_20%', icon: <AlertTriangle /> },
+    { id: 'llm_hallucination', name: 'ГАЛЮЦИНАЦІЯ_ШІ', desc: 'СИМУЛЮЄ_НЕКОРЕКТНІ_АБО_ТОКСИЧНІ_ВІДПОВІДІ_LLM', icon: <Wind /> },
+    { id: 'agent_timeout', name: 'ДРЕЙФ_ШІ_АГЕНТА', desc: 'БЛОКУЄ_ВИКОНАННЯ_ЗАДАЧ_AGI-АГЕНТАМИ_ПО_TTL', icon: <Skull /> },
   ];
 
   const { data: systemStatus } = useSystemStatus();
@@ -101,7 +101,7 @@ const ChaosControlHub: React.FC = () => {
         <div className="flex flex-col gap-3 border-l-4 border-rose-600 pl-10 py-2">
           <div className="flex items-center gap-6">
             <h2 className="text-4xl font-black text-white uppercase tracking-tighter italic glint-elite">
-              ЦЕНТ  <span className="text-rose-500">КЕ УВАННЯ ХАОСОМ</span>
+              ЦЕНТР <span className="text-rose-500">КЕРУВАННЯ ХАОСОМ</span>
             </h2>
             <div className="px-4 py-1.5 bg-rose-600/10 border-2 border-rose-600/30 rounded-lg text-[10px] font-black text-rose-500 tracking-[0.4em] uppercase italic shadow-2xl">
               DANGER_ZONE_v61.0_ELITE
@@ -115,12 +115,12 @@ const ChaosControlHub: React.FC = () => {
             <span className="opacity-20">•</span>
             <div className="flex items-center gap-3">
                <RefreshCw size={14} className="text-rose-500/60" />
-               <span>ВЕ ЕФІКАЦІЯ_SLA: ТрИВАЄ</span>
+               <span>ВЕРИФІКАЦІЯ_SLA: ТРИВАЄ</span>
             </div>
             <span className="opacity-20">•</span>
             <div className="flex items-center gap-3 text-rose-500/40">
                <ShieldAlert size={14} />
-               <span>РЕЖИМ: АГ ЕСИВНИЙ_СТ ЕС_ТЕСТ</span>
+               <span>РЕЖИМ: АГРЕСИВНИЙ_СТРЕС_ТЕСТ</span>
             </div>
           </div>
         </div>
@@ -201,7 +201,7 @@ const ChaosControlHub: React.FC = () => {
                 </div>
               ) : (
                 <div className="pt-8 border-t-2 border-white/5 flex items-center justify-center opacity-20 relative z-10">
-                  <span className="text-[11px] font-black text-white uppercase tracking-[0.3em] italic">СИСТЕМА_В_ПЕ ІМЕТ І_БЕЗПЕКИ</span>
+                  <span className="text-[11px] font-black text-white uppercase tracking-[0.3em] italic">СИСТЕМА_В_ПЕРИМЕТРІ_БЕЗПЕКИ</span>
                 </div>
               )}
             </motion.div>
@@ -258,16 +258,16 @@ const ChaosControlHub: React.FC = () => {
               <ShieldCheck size={32} />
             </div>
             <div>
-              <h2 className="text-4xl font-black text-white uppercase italic tracking-tighter leading-none glint-elite">МЕТрИКИ СТІЙКОСТІ_SLA</h2>
-              <p className="text-[11px] text-white/20 font-black uppercase tracking-[0.5em] mt-3 italic">ВЕ ИФІКАЦІЯ_ВІДМОВОСТІЙКОСТІ_ЯД А</p>
+              <h2 className="text-4xl font-black text-white uppercase italic tracking-tighter leading-none glint-elite">МЕТРИКИ СТІЙКОСТІ_SLA</h2>
+              <p className="text-[11px] text-white/20 font-black uppercase tracking-[0.5em] mt-3 italic">ВЕРИФІКАЦІЯ_ВІДМОВОСТІЙКОСТІ_ЯДРА</p>
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
              <MetricRow label="ЧАС_ВІДГУКУ_P95" value={`${avgLatency}мс`} target="< 2.0с" status={avgLatency < 2000 ? "success" : "danger"} icon={Activity} />
              <MetricRow label="РІВЕНЬ_ПОМИЛОК_ERR" value={systemStatus?.overall_status === 'optimal' ? '0.00%' : 'Н/Д'} target="< 1.0%" status={systemStatus?.overall_status === 'optimal' ? "success" : "warning"} icon={Zap} />
-             <MetricRow label="СТАН_ЗАПОБІЖНИКА" value={systemStatus?.healthy ? "ЗАКрИТО" : "ВІДКрИТО"} target="HEALTHY_L7" status={systemStatus?.healthy ? "success" : "danger"} icon={ShieldAlert} />
+             <MetricRow label="СТАН_ЗАПОБІЖНИКА" value={systemStatus?.healthy ? "ЗАКРИТО" : "ВІДКРИТО"} target="HEALTHY_L7" status={systemStatus?.healthy ? "success" : "danger"} icon={ShieldAlert} />
              <div className="p-10 glass-wraith border-2 border-white/5 rounded-[2.5rem] flex flex-col justify-center gap-4 italic group/inner shadow-inner hover:border-rose-500/20 transition-all duration-700">
-                <span className="text-[11px] font-black text-white/10 uppercase tracking-[0.4em] italic group-hover/inner:text-rose-500/40 transition-colors">СТАТУС_КЛАСТЕ А_OODA</span>
+                <span className="text-[11px] font-black text-white/10 uppercase tracking-[0.4em] italic group-hover/inner:text-rose-500/40 transition-colors">СТАТУС_КЛАСТЕРА_OODA</span>
                 <span className="text-3xl font-black text-white uppercase tracking-tighter italic glint-elite">СТАБІЛЬНИЙ // ELITE_v61</span>
              </div>
           </div>
