@@ -72,18 +72,26 @@ sshpass -e rsync -az --delete \
     /Users/Shared/Predator_60/ \
     "${IMAC_USER}@${IMAC_IP}:~/Predator_60/" || echo "⚠️ rsync частково не вдався, продовжуємо..."
 
-# ─── 5. ФІКС: Встановлення colima якщо відсутня ────────────────
-echo "🐳 Перевірка та налаштування Docker (colima)..."
+# ─── 5. ФІКС: Встановлення colima та qemu якщо відсутні ─────────
+echo "🐳 Перевірка та налаштування Docker (colima + qemu)..."
 imac_ssh "
+    QEMU_BIN=\$(which qemu-img 2>/dev/null || echo '')
+    if [ -z \"\$QEMU_BIN\" ]; then
+        echo '⚙️  qemu-img не знайдено — встановлюємо qemu через brew...'
+        brew install qemu 2>&1 | tail -5
+    else
+        echo \"✅ qemu-img знайдено: \$QEMU_BIN\"
+    fi
+
     COLIMA_BIN=\$(which colima 2>/dev/null || echo '')
     if [ -z \"\$COLIMA_BIN\" ]; then
-        echo '⚙️  colima не знайдено — встановлюємо...'
+        echo '⚙️  colima не знайдено — встановлюємо colima через brew...'
         brew install colima 2>&1 | tail -5
     else
         echo \"✅ colima знайдено: \$COLIMA_BIN\"
     fi
     colima version
-" || echo "⚠️ colima перевірка не вдалась"
+" || echo "⚠️ colima/qemu перевірка не вдалась"
 
 # ─── 6. Запуск colima якщо Docker не відповідає ─────────────────
 echo "🏗️ Запуск Docker (colima)..."
@@ -131,17 +139,24 @@ imac_ssh "
 
     echo '✅ Всі залежності встановлено. Запуск uvicorn...'
 
-    # Запуск з nohup
-    /usr/bin/nohup .venv/bin/uvicorn app.main:app \
+    # Очищуємо старий лог
+    rm -f ~/predator_api.log
+
+    # Запуск через python -m uvicorn (з -u для зняття буферизації логів)
+    nohup python -u -m uvicorn app.main:app \
         --host 0.0.0.0 --port 8000 --workers 2 \
         > ~/predator_api.log 2>&1 &
 
     API_PID=\$!
     echo \"API запущено з PID: \$API_PID\"
-    sleep 5
+    sleep 10
 
-    echo '--- Лог uvicorn (останні 25 рядків) ---'
-    cat ~/predator_api.log | tail -25
+    echo '--- Лог uvicorn ---'
+    if [ -f ~/predator_api.log ]; then
+        cat ~/predator_api.log
+    else
+        echo '⚠️ Файл логу ~/predator_api.log не знайдено!'
+    fi
 "
 
 # ─── 9. Перевірка що API відповідає ────────────────────────────

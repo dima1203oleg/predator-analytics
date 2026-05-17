@@ -13,24 +13,6 @@ vi.mock('framer-motion', () => ({
     AnimatePresence: ({ children }: any) => <>{children}</>,
 }));
 
-vi.mock('lucide-react', () => {
-    const MockIcon = ({ "data-testid": testId }: any) => <div data-testid={testId} />;
-    return {
-        FileText: () => <MockIcon data-testid="icon-file-text" />,
-        Search: () => <MockIcon data-testid="icon-search" />,
-        Filter: () => <MockIcon data-testid="icon-filter" />,
-        Layers: () => <MockIcon data-testid="icon-layers" />,
-        Download: () => <MockIcon data-testid="icon-download" />,
-        Eye: () => <MockIcon data-testid="icon-eye" />,
-        Trash2: () => <MockIcon data-testid="icon-trash" />,
-        RefreshCw: () => <MockIcon data-testid="icon-refresh" />,
-        CheckCircle2: () => <MockIcon data-testid="icon-check" />,
-        AlertCircle: () => <MockIcon data-testid="icon-alert" />,
-        Clock: () => <MockIcon data-testid="icon-clock" />,
-        Database: () => <MockIcon data-testid="icon-database" />,
-        Tag: () => <MockIcon data-testid="icon-tag" />,
-    };
-});
 
 vi.mock('@/services/api', () => ({
     api: {

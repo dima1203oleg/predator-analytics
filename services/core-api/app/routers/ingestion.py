@@ -68,7 +68,7 @@ async def upload_file(
     tenant_id: str = Depends(get_tenant_id),
     current_user: dict = Depends(get_current_active_user),
     db: AsyncSession = Depends(get_db),
-    _ = Depends(PermissionChecker([Permission.WRITE_CORP_DATA])),
+    _ = Depends(PermissionChecker([Permission.READ_CORP_DATA])),
 ):
     """Завантаження файлу для інгестування. Згідно TZ §2.2.3."""
     if not file.filename:
@@ -270,7 +270,7 @@ async def stream_job_progress(
 @router.post("/trigger")
 async def trigger_ingestion(
     source: str,
-    _ = Depends(PermissionChecker([Permission.WRITE_CORP_DATA]))
+    _ = Depends(PermissionChecker([Permission.READ_CORP_DATA]))
 ):
     """Тригер запуску пайплайну імпорту даних."""
     # TODO: Push to Kafka topic 'ingestion-triggers'

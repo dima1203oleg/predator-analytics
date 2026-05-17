@@ -87,3 +87,13 @@ vi.mock('framer-motion', () => ({
 vi.mock('@/components/ui/TacticalCard', () => ({
     TacticalCard: ({ children, ...props }: any) => <div data-testid="tactical-card" {...props}>{children}</div>,
 }))
+
+// Глобальний Proxy-мок для lucide-react (забезпечує автоматичний рендер будь-якої іконки)
+vi.mock('lucide-react', () => {
+    return new Proxy({}, {
+        get: (target, prop) => {
+            if (prop === '__esModule') return true;
+            return (props: any) => <span data-testid={`icon-${String(prop).toLowerCase()}`} {...props} />;
+        }
+    });
+});

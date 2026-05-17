@@ -49,7 +49,7 @@ async def infer_schema(
     file: UploadFile = File(...),
     tenant_id: str = Depends(get_tenant_id),
     current_user: dict = Depends(get_current_active_user),
-    _ = Depends(PermissionChecker([Permission.WRITE_CORP_DATA])),
+    _ = Depends(PermissionChecker([Permission.READ_CORP_DATA])),
 ):
     """
     Зчитує семпл файлу (до 50 рядків) та використовує Sovereign AI
@@ -133,7 +133,7 @@ async def universal_ingest(
     domain: str = Form(default="universal"),
     tenant_id: str = Depends(get_tenant_id),
     current_user: dict = Depends(get_current_active_user),
-    _ = Depends(PermissionChecker([Permission.WRITE_CORP_DATA])),
+    _ = Depends(PermissionChecker([Permission.READ_CORP_DATA])),
 ):
     """
     Завантажує файл разом із затвердженою користувачем схемою.

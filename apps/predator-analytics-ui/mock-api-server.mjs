@@ -8,7 +8,7 @@ import http from 'http';
 
 
 
-const PORT = 9080;
+const PORT = 3031;
 
 // ─── Стан Системи (Dynamic State) ───────────────────────────────────────────
 
@@ -281,9 +281,17 @@ const sendJSON = (res, data, status = 200) => {
   res.end(JSON.stringify(data));
 };
 
-// ─── Обробка маршрутів ────────────────────────────────────────────────────────
+export function mockApiHandler(req, res, next) {
+  const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+  const path = url.pathname;
 
-const server = http.createServer((req, res) => {
+  // Delegate non-API and non-health routes to next middleware (for Vite dev assets)
+  if (!path.startsWith('/api') && path !== '/health') {
+    if (next) {
+      return next();
+    }
+  }
+
   // Handle preflight
   if (req.method === 'OPTIONS') {
     res.writeHead(204, {
@@ -294,9 +302,6 @@ const server = http.createServer((req, res) => {
     res.end();
     return;
   }
-
-  const url = new URL(req.url, `http://${req.headers.host}`);
-  const path = url.pathname;
 
   // 1. Телеметрія
   if (path === '/api/v2/admin/telemetry' && req.method === 'GET') {
@@ -998,10 +1003,25 @@ const server = http.createServer((req, res) => {
     });
   }
 
-  // 404
-  sendJSON(res, { error: 'Not Found', path }, 404);
-});
+  // 404 for API, otherwise delegate to next middleware
+  if (path.startsWith('/api') || path === '/health') {
+    sendJSON(res, { error: 'Not Found', path }, 404);
+  } else if (next) {
+    next();
+  } else {
+    sendJSON(res, { error: 'Not Found', path }, 404);
+  }
+}
 
-server.listen(PORT, '127.0.0.1', () => {
-  console.log(`🦅 PREDATOR Mock API Server running at http://127.0.0.1:${PORT}`);
-});
+const server = http.createServer(mockApiHandler);
+
+// Handle server listen gracefully if sandboxed
+try {
+  server.listen(PORT, () => {
+    console.log(`🦅 PREDATOR Mock API Server running at http://localhost:${PORT}`);
+  }).on('error', (err) => {
+    console.warn(`⚠️ [PREDATOR Mock Server] Can't listen on port ${PORT} due to sandbox constraints. Using Vite proxy instead.`);
+  });
+} catch (e) {
+  console.warn("⚠️ Standalone server listen failed:", e.message);
+}
