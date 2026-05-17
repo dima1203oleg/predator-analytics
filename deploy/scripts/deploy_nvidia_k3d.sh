@@ -38,24 +38,29 @@ else
     echo "✅ helm вже встановлено"
 fi
 
-echo "🚀 [2/8] Створення кластера k3d 'predator-nvidia' (Безвідмовний режим без LoadBalancer)..."
+echo "🚀 [2/8] Створення кластера k3d 'predator-nvidia' (Оптимізований Single-Node)..."
 
-# Повне очищення старого зламаного кластера
+# Повне очищення старого кластера та Docker-ресурсів
 if k3d cluster list | grep -q "predator-nvidia"; then
-    echo "🧹 Очищення попереднього кластера 'predator-nvidia'..."
-    k3d cluster delete predator-nvidia
+    echo "🧹 Видалення попереднього кластера 'predator-nvidia'..."
+    k3d cluster delete predator-nvidia || true
 fi
 
-echo "🏗️ Створення нового кластера з прямим мапуванням портів на серверний вузол (минаючи баг k3d-proxy)..."
-# Використовуємо `--no-lb` та прокидаємо порти безпосередньо на server:0
-# Це повністю обходить баг з `confd /etc/confd/values.yaml: no such file or directory` у проксі-лоадбалансері.
+# Примусове видалення залишкових контейнерів та мереж, якщо k3d не зміг їх стерти
+echo "🧹 Очищення залишкових контейнерів та мереж Docker..."
+docker rm -f k3d-predator-nvidia-server-0 k3d-predator-nvidia-agent-0 k3d-predator-nvidia-serverlb 2>/dev/null || true
+docker network rm k3d-predator-nvidia 2>/dev/null || true
+docker volume rm k3d-predator-nvidia-images 2>/dev/null || true
+
+echo "🏗️ Створення нового Single-Node кластера (1 Server, 0 Agents) для усунення конфліктів мережі..."
+# Використання Single-Node (1 server, 0 agents) повністю усуває проблеми з реєстрацією вузлів
+# та забезпечує миттєвий старт LoadBalancer без багів confd.
 k3d cluster create predator-nvidia \
-    --agents 1 \
     --servers 1 \
-    --no-lb \
-    -p "3030:3030@server:0" \
-    -p "8000:8000@server:0" \
-    -p "9082:8080@server:0" \
+    --agents 0 \
+    -p "3030:3030@loadbalancer" \
+    -p "8000:8000@loadbalancer" \
+    -p "9082:8080@loadbalancer" \
     --k3s-arg "--disable=traefik@server:0"
 
 echo "🔄 [3/8] Налаштування контексту kubectl..."
