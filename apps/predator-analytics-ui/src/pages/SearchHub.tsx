@@ -12,10 +12,10 @@ import { NewspaperTab } from './tabs/search/NewspaperTab';
 type SearchHubTab = 'global' | 'registries' | 'documents' | 'newspaper';
 
 const ALL_TABS = [
-  { id: 'global', label: 'Entity Search', icon: <Search size={16} /> },
-  { id: 'registries', label: 'State Registries', icon: <Database size={16} />, premium: true },
-  { id: 'documents', label: 'Documents', icon: <FileText size={16} /> },
-  { id: 'newspaper', label: 'Intelligence Feed', icon: <Newspaper size={16} />, premium: true },
+  { id: 'global', label: 'Пошук Суб\'єктів', icon: <Search size={16} /> },
+  { id: 'registries', label: 'Державні Реєстри', icon: <Database size={16} />, premium: true },
+  { id: 'documents', label: 'Документи', icon: <FileText size={16} /> },
+  { id: 'newspaper', label: 'Стрічка Новин', icon: <Newspaper size={16} />, premium: true },
 ];
 
 const SearchHub: React.FC = () => {

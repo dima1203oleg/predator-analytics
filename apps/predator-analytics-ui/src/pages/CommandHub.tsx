@@ -17,12 +17,12 @@ import { StrategicScenarioTab } from './tabs/command/StrategicScenarioTab';
 type CommandHubTab = 'board' | 'brief' | 'risk' | 'warroom' | 'observer' | 'simulation';
 
 const ALL_TABS = [
-  { id: 'board', label: 'Executive Board', icon: <LayoutDashboard size={16} /> },
-  { id: 'brief', label: 'Strategic Briefing', icon: <FileText size={16} /> },
-  { id: 'risk', label: 'Strategic Alerts', icon: <PieChart size={16} />, premium: true },
-  { id: 'warroom', label: 'Crisis Room', icon: <ShieldAlert size={16} />, premium: true },
-  { id: 'observer', label: 'Sovereign Observer', icon: <Eye size={16} />, premium: true },
-  { id: 'simulation', label: 'Strategic Scenario', icon: <Zap size={16} />, premium: true },
+  { id: 'board', label: 'Панель Управління', icon: <LayoutDashboard size={16} /> },
+  { id: 'brief', label: 'Стратегічний Брифінг', icon: <FileText size={16} /> },
+  { id: 'risk', label: 'Портфельний Ризик', icon: <PieChart size={16} />, premium: true },
+  { id: 'warroom', label: 'Ситуаційна Кімната', icon: <ShieldAlert size={16} />, premium: true },
+  { id: 'observer', label: 'Суверенний Обсерватор', icon: <Eye size={16} />, premium: true },
+  { id: 'simulation', label: 'Симуляція Сценаріїв', icon: <Zap size={16} />, premium: true },
 ];
 
 const CommandHub: React.FC = () => {

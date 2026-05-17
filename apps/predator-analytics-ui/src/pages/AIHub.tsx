@@ -14,12 +14,12 @@ import { KnowledgeBaseTab } from './tabs/ai/KnowledgeBaseTab';
 type AIHubTab = 'nexus' | 'oracle' | 'hypothesis' | 'agents' | 'insights' | 'knowledge';
 
 const ALL_TABS = [
-  { id: 'nexus', label: 'Predictive Nexus', icon: <BrainCircuit size={16} /> },
-  { id: 'oracle', label: 'Sovereign Oracle', icon: <Sparkles size={16} /> },
-  { id: 'hypothesis', label: 'Hypothesis Generator', icon: <FlaskConical size={16} />, premium: true },
-  { id: 'agents', label: 'Autonomous Agents', icon: <Users size={16} />, premium: true },
-  { id: 'insights', label: 'AI Insights Hub', icon: <Zap size={16} /> },
-  { id: 'knowledge', label: 'Knowledge Engineering', icon: <Database size={16} />, premium: true },
+  { id: 'nexus', label: 'Предиктивний Нексус', icon: <BrainCircuit size={16} /> },
+  { id: 'oracle', label: 'Суверенний Оракул', icon: <Sparkles size={16} /> },
+  { id: 'hypothesis', label: 'Генератор Гіпотез', icon: <FlaskConical size={16} />, premium: true },
+  { id: 'agents', label: 'Автономні Агенти', icon: <Users size={16} />, premium: true },
+  { id: 'insights', label: 'Центр ШІ-Інсайтів', icon: <Zap size={16} /> },
+  { id: 'knowledge', label: 'Інженерія Знань', icon: <Database size={16} />, premium: true },
 ];
 
 const AIHub: React.FC = () => {
