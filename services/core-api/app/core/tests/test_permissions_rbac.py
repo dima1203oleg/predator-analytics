@@ -8,7 +8,8 @@ RBAC Permissions Tests — Тестування прав доступу на API
 4. ADMIN роль: тільки системне управління (MANAGE_USERS, MANAGE_INFRASTRUCTURE, VIEW_LOGS)
 """
 import pytest
-from app.core.permissions import Role, Permission, ROLE_PERMISSIONS, PermissionChecker
+from app.core.permissions import Role, Permission, ROLE_PERMISSIONS
+from app.dependencies import PermissionChecker
 
 
 class TestRolePermissions:

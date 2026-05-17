@@ -24,7 +24,7 @@ def mock_db():
 def mock_user():
     return {
         "sub": "user-123",
-        "role": "admin",
+        "role": "vip",
         "tenant_id": "test-tenant",
         "is_active": True
     }
@@ -43,14 +43,14 @@ async def test_list_companies(async_client, mock_db, mock_user):
     mock_company.edrpou = "12345678"
     mock_company.status = "active"
     mock_company.sector = "Tech"
-    mock_company.risk_score = 45.5
+    mock_company.cers_score = 45.5
     mock_company.cers_confidence = 0.95
     mock_company.created_at = "2024-01-01T00:00:00"
     mock_company.updated_at = "2024-01-01T00:00:00"
 
     # Mock DB execution
     mock_result_set = MagicMock()
-    mock_result_set.scalars.return_value.all.return_value = [mock_company]
+    mock_result_set.all.return_value = [mock_company]
 
     # For count query
     mock_count_res = MagicMock()
@@ -82,13 +82,13 @@ async def test_get_company_success(async_client, mock_db, mock_user):
     mock_company.edrpou = "12345678"
     mock_company.status = "active"
     mock_company.sector = "Tech"
-    mock_company.risk_score = 45.5
+    mock_company.cers_score = 45.5
     mock_company.cers_confidence = 0.95
     mock_company.created_at = "2024-01-01T00:00:00"
     mock_company.updated_at = "2024-01-01T00:00:00"
 
     mock_result = MagicMock()
-    mock_result.scalar_one_or_none.return_value = mock_company
+    mock_result.first.return_value = mock_company
 
     # Mock RiskScore
     mock_score = MagicMock()
@@ -99,7 +99,7 @@ async def test_get_company_success(async_client, mock_db, mock_user):
     mock_score.predictive_score = 50.0
 
     mock_score_res = MagicMock()
-    mock_score_res.scalar_one_or_none.return_value = mock_score
+    mock_score_res.first.return_value = mock_score
 
     # Side effects for multiple execute calls
     mock_db.execute.side_effect = [mock_result, mock_score_res]
@@ -121,7 +121,7 @@ async def test_get_company_not_found(async_client, mock_db, mock_user):
     app.dependency_overrides[get_tenant_id] = lambda: "test-tenant"
 
     mock_result = MagicMock()
-    mock_result.scalar_one_or_none.return_value = None
+    mock_result.first.return_value = None
     mock_db.execute.return_value = mock_result
 
     response = await async_client.get("/api/v1/companies/NONEXISTENT")

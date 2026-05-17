@@ -25,7 +25,7 @@ def mock_db():
 def mock_user():
     return {
         "sub": "user-123",
-        "role": "admin",
+        "role": "vip",
         "tenant_id": "test-tenant",
         "is_active": True
     }

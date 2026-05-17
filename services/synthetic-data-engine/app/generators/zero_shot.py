@@ -4,7 +4,7 @@ import pandas as pd
 from typing import Any, Dict, Optional
 import structlog
 from faker import Faker
-from app.generators.base import BaseSyntheticGenerator
+from services.synthetic_data_engine.app.generators.base import BaseSyntheticGenerator
 
 logger = structlog.get_logger("sde.generators.zeroshot")
 

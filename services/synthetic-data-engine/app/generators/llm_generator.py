@@ -5,7 +5,7 @@ import json
 import asyncio
 from typing import Any, Dict, List, Optional
 import structlog
-from app.generators.base import BaseSyntheticGenerator
+from services.synthetic_data_engine.app.generators.base import BaseSyntheticGenerator
 from predator_common.logging import get_logger
 
 logger = structlog.get_logger("sde.generators.llm")

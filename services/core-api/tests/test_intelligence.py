@@ -18,7 +18,7 @@ async def async_client():
 def mock_user():
     return {
         "sub": "user-123",
-        "role": "admin",
+        "role": "vip",
         "tenant_id": "test-tenant",
         "permissions": ["read_corp_data", "run_graph", "read_intel"]
     }
@@ -56,7 +56,8 @@ async def test_analyze_cartel_cluster(async_client, mock_user):
         # The endpoint expects cluster_id and entities as query parameters based on 422 error with body
         response = await async_client.post(
             "/api/v1/intelligence/analyze/cluster",
-            params={"cluster_id": "cluster-1", "entities": ["e1", "e2"]}
+            params={"cluster_id": "cluster-1"},
+            json=["e1", "e2"]
         )
         assert response.status_code == 200
         assert response.json()["insight"] == "Cartel insight"

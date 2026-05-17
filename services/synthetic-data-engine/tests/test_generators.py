@@ -1,7 +1,7 @@
 import pytest
 import pandas as pd
-from app.generators.zero_shot import ZeroShotDomainGenerator
-from app.trainers.quality_evaluator import SyntheticQualityEvaluator
+from services.synthetic_data_engine.app.generators.zero_shot import ZeroShotDomainGenerator
+from services.synthetic_data_engine.app.trainers.quality_evaluator import SyntheticQualityEvaluator
 
 def test_zero_shot_generator():
     gen = ZeroShotDomainGenerator(domain="customs")

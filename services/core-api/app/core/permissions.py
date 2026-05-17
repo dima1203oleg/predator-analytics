@@ -28,12 +28,12 @@ class Role(StrEnum):
     ADMIN = "admin"           # Рівень 4: SYSTEM ADMIN
 
     # Легасі-аліаси для зворотної сумісності
-    ANALYST = "pro"
-    BUSINESS = "promo"
-    GUEST = "promo"
-    BANK = "pro"
-    GOV = "vip"
-    JOURNALIST = "promo"
+    ANALYST = "analyst"
+    BUSINESS = "business"
+    GUEST = "guest"
+    BANK = "bank"
+    GOV = "gov"
+    JOURNALIST = "journalist"
 
 
 class Permission(StrEnum):
@@ -138,6 +138,7 @@ ROLE_PERMISSIONS: dict[Role, list[Permission]] = {
     ],
     Role.GUEST: [
         Permission.READ_CORP_DATA,
+        Permission.RUN_ANALYTICS,
     ],
 }
 

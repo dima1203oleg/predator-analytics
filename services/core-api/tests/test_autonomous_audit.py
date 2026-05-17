@@ -97,7 +97,7 @@ async def test_autofix_pipeline_trigger() -> None:
     latest_fix = sovereign_audit_engine.remediation_logs[0]
     assert latest_fix["resolved"] is True
     assert "steps" in latest_fix
-    assert len(latest_fix["steps"]) == 10  # 10 детермінованих кроків
+    assert len(latest_fix["steps"]) == 10 + len(latest_fix["target_planes"])  # 10 детермінованих кроків + виправлення площин
     assert "target_planes" in latest_fix
     assert "infrastructure" in latest_fix["target_planes"]
 

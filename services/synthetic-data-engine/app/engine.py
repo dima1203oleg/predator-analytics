@@ -6,15 +6,15 @@ import asyncio
 import structlog
 import uuid
 
-from app.config import config
-from app.analyzer.dataset_profiler import DatasetProfiler
-from app.generators.zero_shot import ZeroShotDomainGenerator
-from app.generators.llm_generator import LLMSyntheticGenerator
-from app.generators.statistical import GaussianCopulaGenerator, CTGANGenerator, TVAEGenerator
-from app.trainers.auto_trainer import AutoTrainer
-from app.trainers.quality_evaluator import SyntheticQualityEvaluator
-from app.cards.card_generator import CardGenerator
-from app.storage.versioned_store import VersionedDatasetStore
+from services.synthetic_data_engine.app.config import config
+from services.synthetic_data_engine.app.analyzer.dataset_profiler import DatasetProfiler
+from services.synthetic_data_engine.app.generators.zero_shot import ZeroShotDomainGenerator
+from services.synthetic_data_engine.app.generators.llm_generator import LLMSyntheticGenerator
+from services.synthetic_data_engine.app.generators.statistical import GaussianCopulaGenerator, CTGANGenerator, TVAEGenerator
+from services.synthetic_data_engine.app.trainers.auto_trainer import AutoTrainer
+from services.synthetic_data_engine.app.trainers.quality_evaluator import SyntheticQualityEvaluator
+from services.synthetic_data_engine.app.cards.card_generator import CardGenerator
+from services.synthetic_data_engine.app.storage.versioned_store import VersionedDatasetStore
 
 logger = structlog.get_logger("sde.engine")
 

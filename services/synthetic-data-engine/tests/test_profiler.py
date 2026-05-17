@@ -1,7 +1,7 @@
 import pytest
 import pandas as pd
 import numpy as np
-from app.analyzer.dataset_profiler import DatasetProfiler
+from services.synthetic_data_engine.app.analyzer.dataset_profiler import DatasetProfiler
 
 def test_profiler_basic():
     df = pd.DataFrame({
