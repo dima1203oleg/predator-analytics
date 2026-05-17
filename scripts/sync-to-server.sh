@@ -80,7 +80,7 @@ echo -e "${YELLOW}Цільовий сервер:${NC} $RSYNC_TARGET"
 echo ""
 
 # Опції rsync
-RSYNC_OPTS="-avz --progress --exclude .venv* --exclude venv* --exclude node_modules --exclude .git --exclude __pycache__ --exclude *.pyc --exclude .DS_Store --exclude dist --exclude build --exclude *.log"
+RSYNC_OPTS="-avz --progress --exclude .venv* --exclude venv* --exclude node_modules --exclude .git --exclude __pycache__ --exclude *.pyc --exclude .DS_Store --exclude dist --exclude build --exclude *.log --exclude uploads* --exclude temp_azr*"
 
 # Виключення (Bash Array)
 EXCLUDES=(
@@ -103,6 +103,12 @@ EXCLUDES=(
   --exclude=*.gz
   --exclude=Березень_2024.csv
   --exclude=backups
+  --exclude=uploads
+  --exclude=uploads/
+  --exclude=services/core-api/uploads
+  --exclude=services/core-api/uploads/
+  --exclude=temp_azr
+  --exclude=temp_azr/
 )
 
 # Перевірка на --dry-run
