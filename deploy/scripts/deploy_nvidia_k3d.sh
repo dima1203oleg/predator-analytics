@@ -68,7 +68,7 @@ kubectl config use-context k3d-predator-nvidia
 
 echo "📦 [4/8] Встановлення ArgoCD..."
 kubectl create namespace argocd 2>/dev/null || true
-kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+kubectl apply --server-side -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
 echo "⏳ Очікування готовності ArgoCD Server (це може зайняти до 2 хвилин)..."
 kubectl wait --for=condition=available deployment -l app.kubernetes.io/name=argocd-server -n argocd --timeout=300s || true
