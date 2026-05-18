@@ -5,6 +5,8 @@ FROM python:3.12-slim AS builder
 
 WORKDIR /build
 
+ENV PIP_NO_CACHE_DIR=1
+
 # Встановлюємо системні залежності для збірки
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
@@ -13,13 +15,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Копіюємо залежності
-COPY pyproject.toml ./
-COPY ../../libs/predator-common /libs/predator-common
+COPY services/osint-service/pyproject.toml ./
+COPY libs/predator-common /libs/predator-common
 
 # Встановлюємо Poetry та залежності
-RUN pip install --no-cache-dir poetry && \
+RUN pip install --no-cache-dir "poetry==1.8.5" && \
     poetry config virtualenvs.create false && \
-    poetry install --no-dev --no-interaction --no-ansi
+    poetry install --only main --no-interaction --no-ansi
 
 # ============================================================
 # Production image
@@ -57,7 +59,7 @@ RUN pip install --no-cache-dir \
     photon
 
 # Копіюємо код
-COPY app/ ./app/
+COPY services/osint-service/app/ ./app/
 
 # Права доступу
 RUN chown -R predator:predator /app

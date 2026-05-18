@@ -11,14 +11,13 @@ ENV POETRY_HOME="/opt/poetry" \
     POETRY_VIRTUALENVS_IN_PROJECT=1 \
     POETRY_NO_INTERACTION=1 \
     PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl build-essential \
-    && curl -sSL https://install.python-poetry.org | python3 - \
+    && pip install --no-cache-dir "poetry==1.8.5" \
     && rm -rf /var/lib/apt/lists/*
-
-ENV PATH="$POETRY_HOME/bin:$PATH"
 
 WORKDIR /app
 
