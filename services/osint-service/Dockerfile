@@ -12,14 +12,25 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Копіюємо залежності
-COPY services/osint-service/pyproject.toml ./
 COPY libs/predator-common /libs/predator-common
 
-# Встановлюємо Poetry та залежності
-RUN pip install --no-cache-dir "poetry==1.8.5" && \
-    poetry config virtualenvs.create false && \
-    poetry install --only main --no-interaction --no-ansi
+# Встановлюємо Python залежності без важкого resolver Poetry
+RUN pip install --no-cache-dir \
+    /libs/predator-common \
+    "fastapi>=0.110.0" \
+    "uvicorn[standard]>=0.29.0" \
+    "sqlalchemy[asyncio]>=2.0.29" \
+    "asyncpg>=0.29.0" \
+    "pydantic>=2.6.4" \
+    "pydantic-settings>=2.2.1" \
+    "celery[redis]>=5.3.6" \
+    "redis>=5.0.0" \
+    "aiokafka>=0.10.0" \
+    "neo4j>=5.18.0" \
+    "httpx>=0.27.0" \
+    "aiofiles>=23.2.1" \
+    "prometheus-client>=0.20.0" \
+    "python-multipart>=0.0.9"
 
 # ============================================================
 # Production image
