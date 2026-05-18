@@ -111,6 +111,14 @@ clickhouse:
 
 opensearch:
   enabled: true
+  # OpenSearch 2.12+ вимагає OPENSEARCH_INITIAL_ADMIN_PASSWORD при першому запуску.
+  # Пароль зберігається у Secret `predator-opensearch-admin` (templates/secret-opensearch.yaml).
+  extraEnvs:
+    - name: OPENSEARCH_INITIAL_ADMIN_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: predator-opensearch-admin
+          key: password
   resources:
     limits:
       cpu: 2000m
