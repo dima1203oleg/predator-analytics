@@ -5,7 +5,7 @@
 # ============================================================
 # Stage 1: Builder
 # ============================================================
-FROM python:3.12-slim AS builder
+FROM python:3.12-bookworm-slim AS builder
 
 ENV POETRY_HOME="/opt/poetry" \
     POETRY_VIRTUALENVS_IN_PROJECT=1 \
@@ -30,7 +30,7 @@ RUN poetry install --no-root
 # ============================================================
 # Stage 2: Runtime
 # ============================================================
-FROM python:3.12-slim AS runtime
+FROM python:3.12-bookworm-slim AS runtime
 
 ENV PATH="/app/.venv/bin:$PATH" \
     PYTHONUNBUFFERED=1 \
