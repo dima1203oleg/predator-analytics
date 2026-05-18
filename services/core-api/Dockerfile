@@ -5,7 +5,7 @@
 # ============================================================
 # Stage 1: Builder — встановлення залежностей
 # ============================================================
-FROM python:3.12-slim AS builder
+FROM python:3.12-bookworm-slim AS builder
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
@@ -31,7 +31,7 @@ RUN pip install --prefix=/install -r requirements.txt
 # ============================================================
 # Stage 2: Runtime — тільки необхідне
 # ============================================================
-FROM python:3.12-slim AS runtime
+FROM python:3.12-bookworm-slim AS runtime
 
 # Runtime системні залежності
 RUN apt-get update && apt-get install -y --no-install-recommends \
