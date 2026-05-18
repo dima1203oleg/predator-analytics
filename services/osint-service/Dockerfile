@@ -1,7 +1,7 @@
 # PREDATOR OSINT Service — Multi-stage Dockerfile
 # HR-05: НІКОЛИ root (USER predator)
 
-FROM python:3.12-slim AS builder
+FROM python:3.12-bookworm-slim AS builder
 
 WORKDIR /build
 
@@ -26,7 +26,7 @@ RUN pip install --no-cache-dir "poetry==1.8.5" && \
 # ============================================================
 # Production image
 # ============================================================
-FROM python:3.12-slim AS production
+FROM python:3.12-bookworm-slim AS production
 
 # Мітки
 LABEL maintainer="PREDATOR Engineering Team"
