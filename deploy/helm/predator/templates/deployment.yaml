@@ -23,6 +23,7 @@ spec:
       containers:
         - name: graph-service
           image: "{{ .Values.graphService.image.repository }}:{{ .Values.graphService.image.tag }}"
+          imagePullPolicy: {{ .Values.graphService.image.pullPolicy | default .Values.global.imagePullPolicy }}
           ports:
             - containerPort: 8001
           env:
@@ -82,6 +83,7 @@ spec:
       containers:
         - name: ingestion-worker
           image: "{{ .Values.ingestionWorker.image.repository }}:{{ .Values.ingestionWorker.image.tag }}"
+          imagePullPolicy: {{ .Values.ingestionWorker.image.pullPolicy | default .Values.global.imagePullPolicy }}
           ports:
             - containerPort: 9100
           env:
@@ -130,7 +132,7 @@ spec:
       containers:
         - name: frontend
           image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
-          imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
+          imagePullPolicy: {{ .Values.frontend.image.pullPolicy | default .Values.global.imagePullPolicy }}
           ports:
             - name: http
               containerPort: 3030
@@ -209,7 +211,7 @@ spec:
       containers:
         - name: osint-service
           image: "{{ .Values.osintService.image.repository }}:{{ .Values.osintService.image.tag }}"
-          imagePullPolicy: {{ .Values.osintService.image.pullPolicy }}
+          imagePullPolicy: {{ .Values.osintService.image.pullPolicy | default .Values.global.imagePullPolicy }}
           ports:
             - containerPort: 9200
           env:

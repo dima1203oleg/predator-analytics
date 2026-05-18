@@ -2,23 +2,31 @@
 # Focus: Full Deployment (Backend, Databases, Ingress, Frontend, and AI Gateway)
 
 global:
-  domain: "194.177.1.240" # Статична IP-адреса NVIDIA сервера
+  # nip.io DNS wildcard: 194.177.1.240.nip.io резолвиться у 194.177.1.240.
+  # Потрібен валідний DNS-host для k8s 1.27 Ingress validator та HTTP-01 ACME.
+  domain: "194.177.1.240.nip.io"
   imagePullPolicy: IfNotPresent
 
 frontend:
   enabled: true
   replicaCount: 1
+  image:
+    # На k3d немає registry — образ імпортується через `k3d image import`.
+    # pullPolicy=Never гарантує використання локального образу без спроби pull.
+    pullPolicy: Never
   service:
     type: LoadBalancer
     port: 3030 # Запускається на порту 3030
     targetPort: 3030
   env:
-    VITE_API_URL: "http://194.177.1.240:8000/api/v1"
+    VITE_API_URL: "http://api.194.177.1.240.nip.io/api/v1"
     NODE_ENV: "production"
 
 coreApi:
   enabled: true
   replicaCount: 1
+  image:
+    pullPolicy: Never
   service:
     type: LoadBalancer
     port: 8000
@@ -34,6 +42,8 @@ coreApi:
 graphService:
   enabled: true
   replicaCount: 1
+  image:
+    pullPolicy: Never
   resources:
     limits:
       cpu: 1000m
@@ -45,6 +55,8 @@ graphService:
 ingestionWorker:
   enabled: true
   replicaCount: 1
+  image:
+    pullPolicy: Never
   resources:
     limits:
       cpu: 2000m
@@ -52,6 +64,19 @@ ingestionWorker:
     requests:
       cpu: 500m
       memory: 512Mi
+
+osintService:
+  enabled: true
+  replicaCount: 1
+  image:
+    pullPolicy: Never
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 200m
+      memory: 256Mi
 
 postgresql:
   enabled: true

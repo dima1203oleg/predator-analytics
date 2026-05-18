@@ -23,6 +23,7 @@ spec:
       containers:
         - name: core-api
           image: "{{ .Values.coreApi.image.repository }}:{{ .Values.coreApi.image.tag }}"
+          imagePullPolicy: {{ .Values.coreApi.image.pullPolicy | default .Values.global.imagePullPolicy }}
           ports:
             - containerPort: 8000
           livenessProbe:
