@@ -9,9 +9,7 @@ ENV PIP_NO_CACHE_DIR=1
 
 # Встановлюємо системні залежності для збірки
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
     curl \
-    git \
     && rm -rf /var/lib/apt/lists/*
 
 # Копіюємо залежності
