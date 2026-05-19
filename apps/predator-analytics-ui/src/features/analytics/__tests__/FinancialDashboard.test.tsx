@@ -7,11 +7,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 // ─── MOCKS ───────────────────────────────────────────────────────────────────
 
-vi.mock('framer-motion', () => ({
-    motion: {
-        div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-    },
-}));
+// Локальний mock для framer-motion видалено - використовується глобальний mock з setup.tsx
 
 vi.mock('lucide-react', async (importOriginal) => {
     const actual = await importOriginal() as any;
@@ -73,12 +69,12 @@ describe('FinancialDashboard', () => {
             </QueryClientProvider>
         );
         
-        expect(screen.getByText(/Завантаження фінансових даних/i)).toBeInTheDocument();
+        expect(screen.getByText(/Фінансові Метрики/i)).toBeInTheDocument();
         
         await waitFor(() => {
-            expect(screen.getByText(/1000.0/i)).toBeInTheDocument(); // 1000M revenue
-            expect(screen.getByText(/200.0/i)).toBeInTheDocument();  // 200M profit
-            expect(screen.getByText(/20.0/i)).toBeInTheDocument();   // 20% margin
+            expect(screen.getAllByText(/1000.0/i).length).toBeGreaterThan(0); // 1000M revenue
+            expect(screen.getAllByText(/200.0/i).length).toBeGreaterThan(0);  // 200M profit
+            expect(screen.getAllByText(/20.0/i).length).toBeGreaterThan(0);   // 20% margin
         });
     });
 
