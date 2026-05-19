@@ -26,6 +26,7 @@ import {
 } from 'recharts';
 import { cn } from '@/utils/cn';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
+import { GeoGlobe } from '@/components/polish/GeoGlobe';
 import { CyberGrid } from '@/components/CyberGrid';
 import { ViewHeader } from '@/components/ViewHeader';
 import { analyticsService } from '@/services/unified/analytics.service';
@@ -408,8 +409,8 @@ const GeopoliticalRadarView: React.FC = () => {
               >
                  {/* REGION OVERVIEW CARD ELITE */}
                  <div className="rounded-[4rem] bg-black border-2 border-white/[0.04] p-12 relative overflow-hidden shadow-4xl group/hub">
-                    <div className="absolute top-0 right-0 p-16 opacity-[0.03] pointer-events-none group-hover/hub:scale-125 transition-transform duration-[15s] rotate-12">
-                       <Globe size={300} style={{ color: selectedRegion.color }} />
+                    <div className="absolute top-0 right-0 p-8 pointer-events-none">
+                       <GeoGlobe size={280} rotationSpeed={0.0008} className="opacity-60" />
                     </div>
                     <div className="relative z-10">
                        <div className="flex items-center gap-10 mb-12">
