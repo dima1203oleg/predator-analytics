@@ -4,6 +4,7 @@
  */
 import React, { ReactNode, useRef, useState, useCallback } from 'react';
 import { cn } from '@/utils/cn';
+import { useUISound, UISoundType } from '@/hooks/useUISound';
 
 interface ThermalCardProps {
   children: ReactNode;
@@ -20,6 +21,7 @@ export const ThermalCard: React.FC<ThermalCardProps> = ({
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const [pos, setPos] = useState({ x: 50, y: 50, active: false });
+  const { play } = useUISound();
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     const el = ref.current;
@@ -28,7 +30,8 @@ export const ThermalCard: React.FC<ThermalCardProps> = ({
     const x = ((e.clientX - rect.left) / rect.width) * 100;
     const y = ((e.clientY - rect.top) / rect.height) * 100;
     setPos({ x, y, active: true });
-  }, []);
+    play(UISoundType.HOVER, 120);
+  }, [play]);
 
   const handleMouseLeave = useCallback(() => {
     setPos(prev => ({ ...prev, active: false }));

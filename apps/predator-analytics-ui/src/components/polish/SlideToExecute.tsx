@@ -6,6 +6,7 @@ import React, { useState, useRef, useCallback } from 'react';
 import { motion, useAnimation, PanInfo } from 'framer-motion';
 import { Lock, Unlock, ShieldAlert, ArrowRight } from 'lucide-react';
 import { cn } from '@/utils/cn';
+import { useUISound, UISoundType } from '@/hooks/useUISound';
 
 interface SlideToExecuteProps {
   label?: string;
@@ -31,6 +32,7 @@ export const SlideToExecute: React.FC<SlideToExecuteProps> = ({
   const [executed, setExecuted] = useState(false);
   const controls = useAnimation();
   const trackRef = useRef<HTMLDivElement>(null);
+  const { play } = useUISound();
 
   const handleDrag = useCallback((_: any, info: PanInfo) => {
     if (disabled || executed) return;
@@ -53,6 +55,7 @@ export const SlideToExecute: React.FC<SlideToExecuteProps> = ({
       setExecuted(true);
       setProgress(1);
       controls.start({ x: trackWidth, transition: { duration: 0.2 } });
+      play(UISoundType.SLIDE_COMPLETE);
       onExecute();
     } else {
       // Cancel / reset
