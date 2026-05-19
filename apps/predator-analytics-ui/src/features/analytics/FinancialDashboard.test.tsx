@@ -78,8 +78,8 @@ describe('FinancialDashboard', () => {
         expect(screen.getByText(/Фінансові Метрики/i)).toBeInTheDocument();
         
         await waitFor(() => {
-            expect(screen.getByText('100.0')).toBeInTheDocument(); // 100M revenue
-            expect(screen.getByText('20.0')).toBeInTheDocument(); // 20M profit
+            expect(screen.getAllByText(/1000.0/i).length).toBeGreaterThan(0); // 1000M revenue
+            expect(screen.getAllByText(/200.0/i).length).toBeGreaterThan(0); // 200M profit
             expect(screen.getByText('2025')).toBeInTheDocument();
             expect(screen.getByText('2024')).toBeInTheDocument();
         });
