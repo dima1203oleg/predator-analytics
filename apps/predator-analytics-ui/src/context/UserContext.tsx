@@ -70,8 +70,25 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         try {
           return JSON.parse(saved);
         } catch (e) {
-          return null;
+          // ignore
         }
+      }
+      const token = sessionStorage.getItem('predator_auth_token');
+      if (token) {
+        const isAdmin = token === 'admin-token';
+        const fallbackUser: UserProfile = {
+          id: isAdmin ? 'admin-1' : 'client-1',
+          name: isAdmin ? 'Командир' : 'Старший Стратег',
+          email: isAdmin ? 'admin@predator.ai' : 'user@client.com',
+          role: isAdmin ? UserRole.ADMIN : UserRole.CLIENT_PREMIUM,
+          tier: isAdmin ? SubscriptionTier.ENTERPRISE : SubscriptionTier.PRO,
+          tenant_id: 'demo-tenant',
+          tenant_name: 'PREDATOR_CORP',
+          last_login: new Date().toISOString(),
+          data_sectors: ['ALPHA', 'GAMMA', 'DELTA-9']
+        };
+        sessionStorage.setItem('predator_user_profile', JSON.stringify(fallbackUser));
+        return fallbackUser;
       }
     }
     return null;

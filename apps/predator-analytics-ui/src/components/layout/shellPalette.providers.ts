@@ -141,8 +141,8 @@ const buildAssistantEntries = (): CommandPaletteEntry[] => [
     ['агенти', 'автоматизація', 'copilot', 'шi'],
   ),
   createAssistantEntry(
-    'assistant-market',
-    'Відкритиринковий аналіз',
+    'market',
+    'Відкрити ринковий аналіз',
     'Перейти до ринку та перевірити наступну можливість',
     BarChart3,
     'analyze',

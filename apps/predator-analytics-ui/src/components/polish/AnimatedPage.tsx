@@ -9,6 +9,7 @@ interface AnimatedPageProps {
   children: ReactNode;
   pageKey: string;
   variant?: 'fade' | 'slideUp' | 'slideLeft' | 'tactical' | 'decrypt';
+  className?: string;
 }
 
 const variants = {
@@ -48,6 +49,7 @@ export const AnimatedPage: React.FC<AnimatedPageProps> = ({
   children,
   pageKey,
   variant = 'tactical',
+  className,
 }) => {
   const v = variants[variant];
 
@@ -59,7 +61,7 @@ export const AnimatedPage: React.FC<AnimatedPageProps> = ({
         animate={v.animate}
         exit={v.exit}
         transition={v.transition}
-        className="w-full h-full"
+        className={className ? `${className} w-full h-full` : 'w-full h-full'}
       >
         {children}
       </motion.div>

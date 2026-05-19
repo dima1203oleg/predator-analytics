@@ -24,6 +24,7 @@ import {
   PieChart, Pie, Cell, ReferenceLine
 } from 'recharts';
 import { cn } from '@/utils/cn';
+import { useThermalHover } from '@/hooks/useThermalHover';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
@@ -306,9 +307,13 @@ const PortfolioRiskView: React.FC = () => {
               </div>
 
               <div className="space-y-6">
-                {filtered.map((pos, i) => (
+                {filtered.map((pos, i) => {
+                  const { ref: thermalRef, style: thermalStyle } = useThermalHover(1.2);
+                  return (
                   <motion.div
                     key={pos.id}
+                    ref={thermalRef as any}
+                    style={thermalStyle}
                     initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.08 }}
                     onClick={() => setSelectedPos(pos)}
                     className={cn(
@@ -374,7 +379,8 @@ const PortfolioRiskView: React.FC = () => {
                       </div>
                     </div>
                   </motion.div>
-                ))}
+                  );
+                })}
               </div>
             </div>
 

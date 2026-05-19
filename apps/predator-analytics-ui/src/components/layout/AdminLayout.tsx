@@ -14,6 +14,7 @@ import { useAppStore } from '@/store/useAppStore';
 import { isSidebarOpenAtom } from '@/store/atoms';
 import { LiveAgentTerminal } from '@/components/intelligence/LiveAgentTerminal';
 import { OfflineBanner } from '@/components/shared/OfflineBanner';
+import { AnimatedPage } from '@/components/polish/AnimatedPage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 // ─── Навігація системного командного центру ────────────────────────────────────
@@ -398,15 +399,9 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
         {/* Контентна зона */}
         <main className="flex-1 overflow-auto relative" style={{ backgroundColor: 'rgba(5,2,2,0.4)' }}>
           <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-[0.02] pointer-events-none" />
-          <motion.div
-            key="admin-content"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
-            className="h-full relative z-10"
-          >
+          <AnimatedPage pageKey={location.pathname} variant="decrypt" className="h-full relative z-10">
             {children}
-          </motion.div>
+          </AnimatedPage>
         </main>
       </div>
 

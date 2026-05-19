@@ -43,6 +43,7 @@ import { CyberOrb } from '@/components/CyberOrb';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
+import { GeoGlobe } from '@/components/polish/GeoGlobe';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { cn } from '@/utils/cn';
 import { apiClient } from '@/services/api/config';
@@ -394,7 +395,10 @@ const SanctionsScreening: React.FC = () => {
                                          <ShieldAlert size={42} className="text-rose-500 shadow-[0_0_20px_#e11d48]" />
                                      </div>
                                 </div>
-                                <div className="space-y-4">
+                                <div className="absolute right-0 top-0 pointer-events-none opacity-40">
+                                    <GeoGlobe size={200} rotationSpeed={0.001} className="opacity-60" />
+                                </div>
+                                <div className="space-y-4 relative z-10">
                                      <div className="flex items-center gap-4">
                                         <span className="bg-rose-500/10 border border-rose-500/20 text-rose-500 px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg">
                                             САНКЦІЙНИЙ_ХАБ // MATRIX_ARRAY

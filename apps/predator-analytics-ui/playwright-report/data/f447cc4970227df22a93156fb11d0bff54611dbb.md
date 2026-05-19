@@ -1,0 +1,924 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - complementary [ref=e5]:
+      - 'generic "Джерело: Локальний проксі /api/v1. Роль: Професійний контур (Pro). Блоків: 8. Модулів: 24." [ref=e6]':
+        - generic [ref=e8]:
+          - generic [ref=e9]:
+            - img "Predator Logo" [ref=e12]
+            - generic [ref=e14]: СУВЕ ЕН v57.3-ELITE
+          - generic [ref=e15]:
+            - generic [ref=e16]: PREDATOR
+            - generic [ref=e17]: Аналітика · Рішення · Контроль
+          - generic [ref=e18]:
+            - generic [ref=e21]: З'єднання стабільне
+            - generic [ref=e22]: Правда
+      - generic [ref=e23]:
+        - generic [ref=e24]:
+          - button "Пошук" [ref=e25] [cursor=pointer]:
+            - img [ref=e26]
+            - generic [ref=e29]: Пошук
+          - button "Обране" [ref=e30] [cursor=pointer]:
+            - img [ref=e31]
+            - generic [ref=e33]: Обране
+          - button "Нещодавнє" [ref=e34] [cursor=pointer]:
+            - img [ref=e35]
+            - generic [ref=e39]: Нещодавнє
+          - button "ШІ-рекомендації" [ref=e40] [cursor=pointer]:
+            - img [ref=e41]
+            - generic [ref=e43]: ШІ-рекомендації
+          - link "ШІ-асистент" [ref=e44] [cursor=pointer]:
+            - /url: /agents
+            - img [ref=e45]
+            - generic [ref=e48]: ШІ-асистент
+          - button "Colab Mirror" [ref=e49] [cursor=pointer]:
+            - img [ref=e50]
+            - generic [ref=e52]: Colab Mirror
+        - generic [ref=e53]:
+          - img
+          - searchbox "Пошук модулів..." [ref=e54]
+          - generic:
+            - img
+            - generic: K
+        - generic [ref=e55]:
+          - generic [ref=e56]: "Секцій: 8"
+          - generic [ref=e57]: / для фокусу, Esc для очищення
+      - navigation [ref=e58]:
+        - generic [ref=e59]:
+          - generic [ref=e60]:
+            - button "🌐 КОНТРОЛЬ" [ref=e61] [cursor=pointer]:
+              - generic [ref=e62]:
+                - generic [ref=e66]: 🌐 КОНТРОЛЬ
+                - img [ref=e67]
+            - generic [ref=e71]:
+              - generic [ref=e72]: Командний Центр
+              - generic [ref=e73]:
+                - link "Глобальна Панорама" [ref=e74] [cursor=pointer]:
+                  - /url: /command?tab=board
+                  - img [ref=e76]
+                  - generic [ref=e82]:
+                    - 'generic "Рівень доступу: Terminal доступ (Доступно)" [ref=e83]'
+                    - generic [ref=e85]: Глобальна Панорама
+                    - generic "Заблоковано для вашого рівня доступу" [ref=e86]:
+                      - img [ref=e87]
+                - button "Додати в обране" [ref=e91] [cursor=pointer]:
+                  - img [ref=e92]
+              - generic [ref=e94]:
+                - link "Ситуаційна Кімната LIVE" [ref=e95] [cursor=pointer]:
+                  - /url: /command?tab=warroom
+                  - img [ref=e97]
+                  - generic [ref=e102]:
+                    - 'generic "Рівень доступу: Pro розвідка (Доступно)" [ref=e103]'
+                    - generic [ref=e105]: Ситуаційна Кімната
+                    - generic "Заблоковано для вашого рівня доступу" [ref=e106]:
+                      - img [ref=e107]
+                    - generic [ref=e110]: LIVE
+                - button "Додати в обране" [ref=e112] [cursor=pointer]:
+                  - img [ref=e113]
+              - generic [ref=e115]:
+                - link "Стратегічні Алерти" [ref=e116] [cursor=pointer]:
+                  - /url: /command?tab=risk
+                  - img [ref=e118]
+                  - generic [ref=e122]:
+                    - 'generic "Рівень доступу: Terminal доступ (Доступно)" [ref=e123]'
+                    - generic [ref=e125]: Стратегічні Алерти
+                    - generic "Заблоковано для вашого рівня доступу" [ref=e126]:
+                      - img [ref=e127]
+                - button "Додати в обране" [ref=e131] [cursor=pointer]:
+                  - img [ref=e132]
+          - generic [ref=e134]:
+            - button "📊 ВИКОНАВЧИЙ КОНТУР" [ref=e135] [cursor=pointer]:
+              - generic [ref=e136]:
+                - generic [ref=e140]: 📊 ВИКОНАВЧИЙ КОНТУР
+                - img [ref=e141]
+            - generic [ref=e145]:
+              - generic [ref=e146]: Стратегічне Планування
+              - generic [ref=e147]:
+                - link "Рушій Симуляції Сценаріїв ELITE" [ref=e148] [cursor=pointer]:
+                  - /url: /modeling?tab=simulation
+                  - img [ref=e150]
+                  - generic [ref=e155]:
+                    - 'generic "Рівень доступу: Pro розвідка (Доступно)" [ref=e156]'
+                    - generic [ref=e158]: Рушій Симуляції Сценаріїв
+                    - generic "Заблоковано для вашого рівня доступу" [ref=e159]:
+                      - img [ref=e160]
+                    - generic [ref=e163]: ELITE
+                - button "Додати в обране" [ref=e164] [cursor=pointer]:
+                  - img [ref=e165]
+              - generic [ref=e167]:
+                - link "Стратегічний Брифінг" [ref=e168] [cursor=pointer]:
+                  - /url: /command?tab=brief
+                  - img [ref=e170]
+                  - generic [ref=e174]:
+                    - 'generic "Рівень доступу: Terminal доступ (Доступно)" [ref=e175]'
+                    - generic [ref=e177]: Стратегічний Брифінг
+                    - generic "Заблоковано для вашого рівня доступу" [ref=e178]:
+                      - img [ref=e179]
+                - button "Додати в обране" [ref=e183] [cursor=pointer]:
+                  - img [ref=e184]
+              - generic [ref=e186]:
+                - link "Стрічка Розвідки" [ref=e187] [cursor=pointer]:
+                  - /url: /search?tab=newspaper
+                  - img [ref=e189]
+                  - generic [ref=e193]:
+                    - 'generic "Рівень доступу: Terminal доступ (Доступно)" [ref=e194]'
+                    - generic [ref=e196]: Стрічка Розвідки
+                    - generic "Заблоковано для вашого рівня доступу" [ref=e197]:
+                      - img [ref=e198]
+                - button "Додати в обране" [ref=e201] [cursor=pointer]:
+                  - img [ref=e202]
+          - generic [ref=e204]:
+            - button "🔍 РОЗВІДКА" [ref=e205] [cursor=pointer]:
+              - generic [ref=e206]:
+                - generic [ref=e210]: 🔍 РОЗВІДКА
+                - img [ref=e211]
+            - generic [ref=e215]:
+              - generic [ref=e216]: Основна Розвідка
+              - generic [ref=e217]:
+                - link "Пошук Суб'єктів" [ref=e218] [cursor=pointer]:
+                  - /url: /search?tab=global
+                  - img [ref=e220]
+                  - generic [ref=e224]:
+                    - 'generic "Рівень доступу: Terminal доступ (Доступно)" [ref=e225]'
+                    - generic [ref=e227]: Пошук Суб'єктів
+                    - generic "Заблоковано для вашого рівня доступу" [ref=e228]:
+                      - img [ref=e229]
+                - button "Додати в обране" [ref=e232] [cursor=pointer]:
+                  - img [ref=e233]
+              - generic [ref=e235]:
+                - link "Граф Аналіз" [ref=e236] [cursor=pointer]:
+                  - /url: /osint?tab=graph
+                  - img [ref=e238]
+                  - generic [ref=e244]:
+                    - 'generic "Рівень доступу: Pro розвідка (Доступно)" [ref=e245]'
+                    - generic [ref=e247]: Граф Аналіз
+                    - generic "Заблоковано для вашого рівня доступу" [ref=e248]:
+                      - img [ref=e249]
+                - button "Додати в обране" [ref=e252] [cursor=pointer]:
+                  - img [ref=e253]
+              - generic [ref=e255]:
+                - link "Виявлення Офшорів" [ref=e256] [cursor=pointer]:
+                  - /url: /financial?tab=offshore
+                  - img [ref=e258]
+                  - generic [ref=e262]:
+                    - 'generic "Рівень доступу: Pro розвідка (Доступно)" [ref=e263]'
+                    - generic [ref=e265]: Виявлення Офшорів
+                    - generic "Заблоковано для вашого рівня доступу" [ref=e266]:
+                      - img [ref=e267]
+                - button "Додати в обране" [ref=e270] [cursor=pointer]:
+                  - img [ref=e271]
+          - generic [ref=e273]:
+            - button "🚢 ПОСТАЧАННЯ" [ref=e274] [cursor=pointer]:
+              - generic [ref=e275]:
+                - generic [ref=e279]: 🚢 ПОСТАЧАННЯ
+                - img [ref=e280]
+            - generic [ref=e284]:
+              - generic [ref=e285]: Морський та Торгівля
+              - generic [ref=e286]:
+                - link "Митна Розвідка" [ref=e287] [cursor=pointer]:
+                  - /url: /market?tab=customs
+                  - img [ref=e289]
+                  - generic [ref=e292]:
+                    - 'generic "Рівень доступу: Pro розвідка (Доступно)" [ref=e293]'
+                    - generic [ref=e295]: Митна Розвідка
+                    - generic "Заблоковано для вашого рівня доступу" [ref=e296]:
+                      - img [ref=e297]
+                - button "Додати в обране" [ref=e300] [cursor=pointer]:
+                  - img [ref=e301]
+              - generic [ref=e303]:
+                - link "Контроль Логістики" [ref=e304] [cursor=pointer]:
+                  - /url: /supply-chain
+                  - img [ref=e306]
+                  - generic [ref=e311]:
+                    - 'generic "Рівень доступу: Pro розвідка (Доступно)" [ref=e312]'
+                    - generic [ref=e314]: Контроль Логістики
+                    - generic "Заблоковано для вашого рівня доступу" [ref=e315]:
+                      - img [ref=e316]
+                - button "Додати в обране" [ref=e319] [cursor=pointer]:
+                  - img [ref=e320]
+              - generic [ref=e322]:
+                - link "Тендерний Тиск" [ref=e323] [cursor=pointer]:
+                  - /url: /tenders
+                  - img [ref=e325]
+                  - generic [ref=e329]:
+                    - 'generic "Рівень доступу: Terminal доступ (Доступно)" [ref=e330]'
+                    - generic [ref=e332]: Тендерний Тиск
+                    - generic "Заблоковано для вашого рівня доступу" [ref=e333]:
+                      - img [ref=e334]
+                - button "Додати в обране" [ref=e337] [cursor=pointer]:
+                  - img [ref=e338]
+          - generic [ref=e340]:
+            - button "⚖️ КОМПЛАЄНС" [ref=e341] [cursor=pointer]:
+              - generic [ref=e342]:
+                - generic [ref=e346]: ⚖️ КОМПЛАЄНС
+                - img [ref=e347]
+            - generic [ref=e351]:
+              - generic [ref=e352]: Юридичний Моніторинг
+              - generic [ref=e353]:
+                - link "Аудит KYC/KYB" [ref=e354] [cursor=pointer]:
+                  - /url: /osint?tab=diligence
+                  - img [ref=e356]
+                  - generic [ref=e360]:
+                    - 'generic "Рівень доступу: Terminal доступ (Доступно)" [ref=e361]'
+                    - generic [ref=e363]: Аудит KYC/KYB
+                    - generic "Заблоковано для вашого рівня доступу" [ref=e364]:
+                      - img [ref=e365]
+                - button "Додати в обране" [ref=e368] [cursor=pointer]:
+                  - img [ref=e369]
+              - generic [ref=e371]:
+                - link "Карта Бенефіціарів ELITE" [ref=e372] [cursor=pointer]:
+                  - /url: /osint?tab=ubo
+                  - img [ref=e374]
+                  - generic [ref=e380]:
+                    - 'generic "Рівень доступу: Pro розвідка (Доступно)" [ref=e381]'
+                    - generic [ref=e383]: Карта Бенефіціарів
+                    - generic "Заблоковано для вашого рівня доступу" [ref=e384]:
+                      - img [ref=e385]
+                    - generic [ref=e388]: ELITE
+                - button "Додати в обране" [ref=e389] [cursor=pointer]:
+                  - img [ref=e390]
+              - generic [ref=e392]:
+                - link "Санкції та PEP" [ref=e393] [cursor=pointer]:
+                  - /url: /osint?tab=sanctions
+                  - img [ref=e395]
+                  - generic [ref=e400]:
+                    - 'generic "Рівень доступу: Terminal доступ (Доступно)" [ref=e401]'
+                    - generic [ref=e403]: Санкції та PEP
+                    - generic "Заблоковано для вашого рівня доступу" [ref=e404]:
+                      - img [ref=e405]
+                - button "Додати в обране" [ref=e408] [cursor=pointer]:
+                  - img [ref=e409]
+          - generic [ref=e411]:
+            - button "🛡 КІБЕРБЕЗПЕКА" [ref=e412] [cursor=pointer]:
+              - generic [ref=e413]:
+                - generic [ref=e417]: 🛡 КІБЕРБЕЗПЕКА
+                - img [ref=e418]
+            - generic [ref=e422]:
+              - generic [ref=e423]: Поверхня Атаки
+              - generic [ref=e424]:
+                - link "AML Розвідка" [ref=e425] [cursor=pointer]:
+                  - /url: /financial?tab=aml
+                  - img [ref=e427]
+                  - generic [ref=e431]:
+                    - 'generic "Рівень доступу: Pro розвідка (Доступно)" [ref=e432]'
+                    - generic [ref=e434]: AML Розвідка
+                    - generic "Заблоковано для вашого рівня доступу" [ref=e435]:
+                      - img [ref=e436]
+                - button "Додати в обране" [ref=e439] [cursor=pointer]:
+                  - img [ref=e440]
+              - generic [ref=e442]:
+                - 'link "Рівень доступу: Sovereign елітний доступ (Заблоковано) SWIFT Монітор ELITE" [ref=e443] [cursor=pointer]':
+                  - /url: /financial?tab=swift
+                  - img [ref=e445]
+                  - generic [ref=e448]:
+                    - 'generic "Рівень доступу: Sovereign елітний доступ (Заблоковано)" [ref=e449]'
+                    - generic [ref=e450]: SWIFT Монітор
+                    - generic "Заблоковано для вашого рівня доступу" [ref=e451]:
+                      - img [ref=e452]
+                    - generic [ref=e455]: ELITE
+                - button "Додати в обране" [ref=e456] [cursor=pointer]:
+                  - img [ref=e457]
+              - generic [ref=e459]:
+                - 'link "Рівень доступу: Sovereign елітний доступ (Заблоковано) Геополітична Загроза CORE" [ref=e460] [cursor=pointer]':
+                  - /url: /geopolitical-radar
+                  - img [ref=e462]
+                  - generic [ref=e470]:
+                    - 'generic "Рівень доступу: Sovereign елітний доступ (Заблоковано)" [ref=e471]'
+                    - generic [ref=e472]: Геополітична Загроза
+                    - generic "Заблоковано для вашого рівня доступу" [ref=e473]:
+                      - img [ref=e474]
+                    - generic [ref=e477]: CORE
+                - button "Додати в обране" [ref=e478] [cursor=pointer]:
+                  - img [ref=e479]
+          - generic [ref=e481]:
+            - button "🧠 СУВЕРЕННИЙ ШІ" [ref=e482] [cursor=pointer]:
+              - generic [ref=e483]:
+                - generic [ref=e487]: 🧠 СУВЕРЕННИЙ ШІ
+                - img [ref=e488]
+            - generic [ref=e492]:
+              - generic [ref=e493]: Суверенні Агенти
+              - generic [ref=e494]:
+                - link "Суверенний Оракул" [ref=e495] [cursor=pointer]:
+                  - /url: /nexus?tab=oracle
+                  - img [ref=e497]
+                  - generic [ref=e500]:
+                    - 'generic "Рівень доступу: Pro розвідка (Доступно)" [ref=e501]'
+                    - generic [ref=e503]: Суверенний Оракул
+                    - generic "Заблоковано для вашого рівня доступу" [ref=e504]:
+                      - img [ref=e505]
+                - button "Додати в обране" [ref=e508] [cursor=pointer]:
+                  - img [ref=e509]
+              - generic [ref=e511]:
+                - 'link "Рівень доступу: Sovereign елітний доступ (Заблоковано) Прогностичний Нексус ELITE" [ref=e512] [cursor=pointer]':
+                  - /url: /nexus
+                  - img [ref=e514]
+                  - generic [ref=e523]:
+                    - 'generic "Рівень доступу: Sovereign елітний доступ (Заблоковано)" [ref=e524]'
+                    - generic [ref=e525]: Прогностичний Нексус
+                    - generic "Заблоковано для вашого рівня доступу" [ref=e526]:
+                      - img [ref=e527]
+                    - generic [ref=e530]: ELITE
+                - button "Додати в обране" [ref=e531] [cursor=pointer]:
+                  - img [ref=e532]
+              - generic [ref=e534]:
+                - link "Хаб ШІ Інсайтів" [ref=e535] [cursor=pointer]:
+                  - /url: /nexus?tab=insights
+                  - img [ref=e537]
+                  - generic [ref=e540]:
+                    - 'generic "Рівень доступу: Terminal доступ (Доступно)" [ref=e541]'
+                    - generic [ref=e543]: Хаб ШІ Інсайтів
+                    - generic "Заблоковано для вашого рівня доступу" [ref=e544]:
+                      - img [ref=e545]
+                - button "Додати в обране" [ref=e548] [cursor=pointer]:
+                  - img [ref=e549]
+          - generic [ref=e551]:
+            - button "🕵 РОЗСЛІДУВАННЯ" [ref=e552] [cursor=pointer]:
+              - generic [ref=e553]:
+                - generic [ref=e557]: 🕵 РОЗСЛІДУВАННЯ
+                - img [ref=e558]
+            - generic [ref=e562]:
+              - generic [ref=e563]: Управління Кейсами
+              - generic [ref=e564]:
+                - link "Карта Лобізму" [ref=e565] [cursor=pointer]:
+                  - /url: /cases
+                  - img [ref=e567]
+                  - generic [ref=e571]:
+                    - 'generic "Рівень доступу: Pro розвідка (Доступно)" [ref=e572]'
+                    - generic [ref=e574]: Карта Лобізму
+                    - generic "Заблоковано для вашого рівня доступу" [ref=e575]:
+                      - img [ref=e576]
+                - button "Додати в обране" [ref=e579] [cursor=pointer]:
+                  - img [ref=e580]
+              - generic [ref=e582]:
+                - link "Хронологія Подій NEW" [ref=e583] [cursor=pointer]:
+                  - /url: /timeline
+                  - img [ref=e585]
+                  - generic [ref=e590]:
+                    - 'generic "Рівень доступу: Pro розвідка (Доступно)" [ref=e591]'
+                    - generic [ref=e593]: Хронологія Подій
+                    - generic "Заблоковано для вашого рівня доступу" [ref=e594]:
+                      - img [ref=e595]
+                    - generic [ref=e598]: NEW
+                - button "Додати в обране" [ref=e599] [cursor=pointer]:
+                  - img [ref=e600]
+              - generic [ref=e602]:
+                - link "WORM Аудит Лог" [ref=e603] [cursor=pointer]:
+                  - /url: /compliance
+                  - img [ref=e605]
+                  - generic [ref=e610]:
+                    - 'generic "Рівень доступу: Pro розвідка (Доступно)" [ref=e611]'
+                    - generic [ref=e613]: WORM Аудит Лог
+                    - generic "Заблоковано для вашого рівня доступу" [ref=e614]:
+                      - img [ref=e615]
+                - button "Додати в обране" [ref=e618] [cursor=pointer]:
+                  - img [ref=e619]
+      - generic [ref=e623]:
+        - img [ref=e625]
+        - generic [ref=e628]:
+          - generic [ref=e629]: Старший Стратег
+          - generic [ref=e630]: Професійний контур (Pro)
+        - button "Вийти з системи" [ref=e631] [cursor=pointer]:
+          - img [ref=e632]
+      - button "Згорнути навігацію" [ref=e635] [cursor=pointer]:
+        - img [ref=e636]
+    - generic [ref=e638]:
+      - banner [ref=e639]:
+        - generic [ref=e641]:
+          - generic:
+            - generic:
+              - img [ref=e644]
+              - generic [ref=e648]:
+                - generic [ref=e649]: 🌐 КОНТРОЛЬ
+                - img [ref=e650]
+                - generic [ref=e652]: Глобальна Панорама
+            - generic:
+              - generic:
+                - heading "Глобальна Панорама" [level=1]
+              - generic [ref=e655]:
+                - generic [ref=e656]:
+                  - img [ref=e657]
+                  - text: 20 травня 2026 р.
+                - generic [ref=e659]: З'єднання стабільне
+          - generic [ref=e661]:
+            - 'generic "System Status: Unknown Postgres: FAIL Kafka: FAIL Neo4j: FAIL LiteLLM: FAIL" [ref=e662]':
+              - generic [ref=e665]:
+                - generic [ref=e666]: Pulse Sync...
+                - img [ref=e667]
+            - generic [ref=e674]:
+              - 'button "Емулятор: Десктоп" [ref=e675] [cursor=pointer]':
+                - img [ref=e676]
+              - 'button "Емулятор: Планшет" [ref=e678] [cursor=pointer]':
+                - img [ref=e679]
+              - 'button "Емулятор: Смартфон" [ref=e681] [cursor=pointer]':
+                - img [ref=e682]
+            - generic [ref=e684] [cursor=pointer]:
+              - generic:
+                - img
+              - generic [ref=e685]: Знайти модуль, звіт або дію…
+              - generic [ref=e687]: ⌘K
+            - generic [ref=e688]:
+              - button "Згорнути контекстну панель" [ref=e689] [cursor=pointer]:
+                - img [ref=e690]
+              - button "Сповіщення" [ref=e692] [cursor=pointer]:
+                - img [ref=e693]
+              - button "Відкрити термінал" [ref=e698] [cursor=pointer]:
+                - img [ref=e699]
+            - generic [ref=e701]:
+              - generic [ref=e703] [cursor=pointer]:
+                - generic [ref=e704]:
+                  - generic [ref=e705]: Старший Стратег
+                  - generic [ref=e706]: PREDATOR Pro
+                - img [ref=e709]
+              - button "РЕЖИМ СУВЕРЕННИЙ" [ref=e713] [cursor=pointer]:
+                - img [ref=e717]
+                - generic [ref=e719]:
+                  - generic [ref=e720]: РЕЖИМ
+                  - generic [ref=e721]: СУВЕРЕННИЙ
+      - generic [ref=e724]:
+        - generic [ref=e725]:
+          - img [ref=e727]
+          - generic [ref=e729]:
+            - generic [ref=e730]: "Зараз: Глобальна Панорама"
+            - paragraph [ref=e731]: ROI-пульс, KPI та ключові метрики бізнес-периметра.
+        - generic [ref=e732]:
+          - button "Швидкий пошук ⌘K" [ref=e733] [cursor=pointer]:
+            - img [ref=e734]
+            - text: Швидкий пошук
+            - generic [ref=e737]: ⌘K
+          - button "Контекст" [ref=e738] [cursor=pointer]:
+            - img [ref=e739]
+            - text: Контекст
+          - button "Згорнути" [expanded] [ref=e741] [cursor=pointer]:
+            - text: Згорнути
+            - img [ref=e742]
+      - generic [ref=e745]:
+        - generic [ref=e747]: ЦІЛКОМ ТАЄМНО // СІ // ОСОБЛИВОЇ ВАЖЛИВОСТІ
+        - generic [ref=e749]: "|"
+        - generic [ref=e750]: PREDATOR ELITE v64.0-WRAITH
+        - generic [ref=e751]: "|"
+        - generic [ref=e752]: РІВЕНЬ ДОПУСКУ 6
+      - main [ref=e754]:
+        - generic [ref=e756]:
+          - generic [ref=e759]:
+            - generic [ref=e760]:
+              - generic [ref=e761]:
+                - generic [ref=e762]:
+                  - img [ref=e764]
+                  - generic [ref=e769]:
+                    - generic [ref=e772]: Єдиний екран для керівника · KPI, ризики, сценарії
+                    - heading "КОМАНДНИЙ ЦЕНТР" [level=1] [ref=e773]
+                    - paragraph [ref=e776]: Огляд показників, брифінгу та портфельних ризиків
+                    - paragraph [ref=e777]: "Зручно для компаній будь-якого масштабу: від швидкого ранкового огляду до глибокого аналізу перед рішенням. Перемикайте вкладки зверху — логіка однакова для торгівлі, виробництва, логістики та послуг."
+                - generic [ref=e779]:
+                  - generic [ref=e780]:
+                    - img [ref=e781]
+                    - text: З'єднання стабільне
+                  - button [ref=e783] [cursor=pointer]:
+                    - img [ref=e784]
+              - generic [ref=e788]:
+                - button "Панель Управління" [ref=e789] [cursor=pointer]:
+                  - img [ref=e791]
+                  - generic [ref=e796]: Панель Управління
+                - button "Стратегічний Брифінг" [ref=e798] [cursor=pointer]:
+                  - img [ref=e800]
+                  - generic [ref=e803]: Стратегічний Брифінг
+                - button "Портфельний Ризик" [ref=e804] [cursor=pointer]:
+                  - img [ref=e806]
+                  - generic [ref=e809]: Портфельний Ризик
+                - button "Ситуаційна Кімната" [ref=e810] [cursor=pointer]:
+                  - img [ref=e812]
+                  - generic [ref=e814]: Ситуаційна Кімната
+                - button "Суверенний Обсерватор" [ref=e815] [cursor=pointer]:
+                  - img [ref=e817]
+                  - generic [ref=e820]: Суверенний Обсерватор
+                - button "Симуляція Сценаріїв" [ref=e821] [cursor=pointer]:
+                  - img [ref=e823]
+                  - generic [ref=e825]: Симуляція Сценаріїв
+            - main [ref=e826]:
+              - generic [ref=e829]:
+                - generic [ref=e830]:
+                  - generic [ref=e831]:
+                    - generic [ref=e832]:
+                      - paragraph [ref=e833]: СТАТУС_КЛАСТЕРА
+                      - paragraph [ref=e834]: З'єднання стабільне
+                    - img [ref=e846]
+                  - generic [ref=e858]:
+                    - generic [ref=e859]:
+                      - generic [ref=e860]: PREDATOR v63.0-ELITE
+                      - heading "ВИКОНАВЧА РАДА" [level=1] [ref=e863]
+                      - paragraph [ref=e865]: ЦЕНТРАЛЬНИЙ ШТАБ УПРАВЛІННЯ ТА СТРАТЕГІЧНОГО ПЛАНУВАННЯ
+                    - generic [ref=e866]:
+                      - paragraph [ref=e867]: ОСТАННЯ СИНХРОНІЗАЦІЯ
+                      - paragraph [ref=e868]: Немає синхронізації
+                  - generic [ref=e869]:
+                    - generic [ref=e870]:
+                      - generic [ref=e871]:
+                        - img [ref=e873]
+                        - img [ref=e875]
+                      - generic [ref=e877]: —
+                      - generic [ref=e878]: ФІНАНСОВИЙ_ПОТІК
+                      - generic [ref=e879]: Загальна вартість ЗЕД
+                    - generic [ref=e881]:
+                      - generic [ref=e882]:
+                        - img [ref=e884]
+                        - img [ref=e886]
+                      - generic [ref=e888]: —
+                      - generic [ref=e889]: ДЕКЛАРАЦІЇ_ЯДРА
+                      - generic [ref=e890]: Підтверджених записів
+                    - generic [ref=e892]:
+                      - generic [ref=e893]:
+                        - img [ref=e895]
+                        - img [ref=e897]
+                      - generic [ref=e899]: —
+                      - generic [ref=e900]: ЗОНА_КРИТИЧНОСТІ
+                      - generic [ref=e901]: "Середні: —"
+                    - generic [ref=e903]:
+                      - generic [ref=e904]:
+                        - img [ref=e906]
+                        - img [ref=e911]
+                      - generic [ref=e913]: —
+                      - generic [ref=e914]: ГРАФ_ЗВ'ЯЗКІВ
+                      - generic [ref=e915]: — зв'язків
+                - generic [ref=e917]:
+                  - generic [ref=e918]:
+                    - generic [ref=e919]:
+                      - generic [ref=e920]:
+                        - heading "ОПЕРАТИВНИЙ КОНТУР" [level=2] [ref=e921]
+                        - paragraph [ref=e922]: СТРАТЕГІЧНІ ТИТАН-МОДУЛІ УПРАВЛІННЯ
+                      - generic [ref=e925]:
+                        - img [ref=e926]
+                        - text: 24 МОДУЛІВ_АКТИВНО
+                    - generic [ref=e930]:
+                      - generic [ref=e933]:
+                        - generic [ref=e934]:
+                          - img [ref=e936]
+                          - generic [ref=e940]:
+                            - heading "🌐 КОНТРОЛЬ" [level=3] [ref=e941]
+                            - generic [ref=e942]: 3 ОПЕРАЦІЙНИХ ЦІЛЕЙ
+                        - generic [ref=e943]:
+                          - link "Глобальна Панорама" [ref=e944] [cursor=pointer]:
+                            - /url: /command?tab=board
+                            - generic: Глобальна Панорама
+                            - img [ref=e945]
+                          - link "Ситуаційна Кімната" [ref=e947] [cursor=pointer]:
+                            - /url: /command?tab=warroom
+                            - generic: Ситуаційна Кімната
+                            - img [ref=e948]
+                          - link "Стратегічні Алерти" [ref=e950] [cursor=pointer]:
+                            - /url: /command?tab=risk
+                            - generic: Стратегічні Алерти
+                            - img [ref=e951]
+                        - img [ref=e954]
+                      - generic [ref=e960]:
+                        - generic [ref=e961]:
+                          - img [ref=e963]
+                          - generic [ref=e967]:
+                            - heading "📊 ВИКОНАВЧИЙ КОНТУР" [level=3] [ref=e968]
+                            - generic [ref=e969]: 3 ОПЕРАЦІЙНИХ ЦІЛЕЙ
+                        - generic [ref=e970]:
+                          - link "Рушій Симуляції Сценаріїв" [ref=e971] [cursor=pointer]:
+                            - /url: /modeling?tab=simulation
+                            - generic: Рушій Симуляції Сценаріїв
+                            - img [ref=e972]
+                          - link "Стратегічний Брифінг" [ref=e974] [cursor=pointer]:
+                            - /url: /command?tab=brief
+                            - generic: Стратегічний Брифінг
+                            - img [ref=e975]
+                          - link "Стрічка Розвідки" [ref=e977] [cursor=pointer]:
+                            - /url: /search?tab=newspaper
+                            - generic: Стрічка Розвідки
+                            - img [ref=e978]
+                        - img [ref=e981]
+                      - generic [ref=e987]:
+                        - generic [ref=e988]:
+                          - img [ref=e990]
+                          - generic [ref=e994]:
+                            - heading "🔍 РОЗВІДКА" [level=3] [ref=e995]
+                            - generic [ref=e996]: 3 ОПЕРАЦІЙНИХ ЦІЛЕЙ
+                        - generic [ref=e997]:
+                          - link "Пошук Суб'єктів" [ref=e998] [cursor=pointer]:
+                            - /url: /search?tab=global
+                            - generic: Пошук Суб'єктів
+                            - img [ref=e999]
+                          - link "Граф Аналіз" [ref=e1001] [cursor=pointer]:
+                            - /url: /osint?tab=graph
+                            - generic: Граф Аналіз
+                            - img [ref=e1002]
+                          - link "Виявлення Офшорів" [ref=e1004] [cursor=pointer]:
+                            - /url: /financial?tab=offshore
+                            - generic: Виявлення Офшорів
+                            - img [ref=e1005]
+                        - img [ref=e1008]
+                      - generic [ref=e1014]:
+                        - generic [ref=e1015]:
+                          - img [ref=e1017]
+                          - generic [ref=e1021]:
+                            - heading "🚢 ПОСТАЧАННЯ" [level=3] [ref=e1022]
+                            - generic [ref=e1023]: 3 ОПЕРАЦІЙНИХ ЦІЛЕЙ
+                        - generic [ref=e1024]:
+                          - link "Митна Розвідка" [ref=e1025] [cursor=pointer]:
+                            - /url: /market?tab=customs
+                            - generic: Митна Розвідка
+                            - img [ref=e1026]
+                          - link "Контроль Логістики" [ref=e1028] [cursor=pointer]:
+                            - /url: /supply-chain
+                            - generic: Контроль Логістики
+                            - img [ref=e1029]
+                          - link "Тендерний Тиск" [ref=e1031] [cursor=pointer]:
+                            - /url: /tenders
+                            - generic: Тендерний Тиск
+                            - img [ref=e1032]
+                        - img [ref=e1035]
+                      - generic [ref=e1041]:
+                        - generic [ref=e1042]:
+                          - img [ref=e1044]
+                          - generic [ref=e1048]:
+                            - heading "⚖️ КОМПЛАЄНС" [level=3] [ref=e1049]
+                            - generic [ref=e1050]: 3 ОПЕРАЦІЙНИХ ЦІЛЕЙ
+                        - generic [ref=e1051]:
+                          - link "Аудит KYC/KYB" [ref=e1052] [cursor=pointer]:
+                            - /url: /osint?tab=diligence
+                            - generic: Аудит KYC/KYB
+                            - img [ref=e1053]
+                          - link "Карта Бенефіціарів" [ref=e1055] [cursor=pointer]:
+                            - /url: /osint?tab=ubo
+                            - generic: Карта Бенефіціарів
+                            - img [ref=e1056]
+                          - link "Санкції та PEP" [ref=e1058] [cursor=pointer]:
+                            - /url: /osint?tab=sanctions
+                            - generic: Санкції та PEP
+                            - img [ref=e1059]
+                        - img [ref=e1062]
+                      - generic [ref=e1068]:
+                        - generic [ref=e1069]:
+                          - img [ref=e1071]
+                          - generic [ref=e1075]:
+                            - heading "🛡 КІБЕРБЕЗПЕКА" [level=3] [ref=e1076]
+                            - generic [ref=e1077]: 3 ОПЕРАЦІЙНИХ ЦІЛЕЙ
+                        - generic [ref=e1078]:
+                          - link "AML Розвідка" [ref=e1079] [cursor=pointer]:
+                            - /url: /financial?tab=aml
+                            - generic: AML Розвідка
+                            - img [ref=e1080]
+                          - link "SWIFT Монітор" [ref=e1082] [cursor=pointer]:
+                            - /url: /financial?tab=swift
+                            - generic: SWIFT Монітор
+                            - img [ref=e1083]
+                          - link "Геополітична Загроза" [ref=e1085] [cursor=pointer]:
+                            - /url: /geopolitical-radar
+                            - generic: Геополітична Загроза
+                            - img [ref=e1086]
+                        - img [ref=e1089]
+                      - generic [ref=e1095]:
+                        - generic [ref=e1096]:
+                          - img [ref=e1098]
+                          - generic [ref=e1102]:
+                            - heading "🧠 СУВЕРЕННИЙ ШІ" [level=3] [ref=e1103]
+                            - generic [ref=e1104]: 3 ОПЕРАЦІЙНИХ ЦІЛЕЙ
+                        - generic [ref=e1105]:
+                          - link "Суверенний Оракул" [ref=e1106] [cursor=pointer]:
+                            - /url: /nexus?tab=oracle
+                            - generic: Суверенний Оракул
+                            - img [ref=e1107]
+                          - link "Прогностичний Нексус" [ref=e1109] [cursor=pointer]:
+                            - /url: /nexus
+                            - generic: Прогностичний Нексус
+                            - img [ref=e1110]
+                          - link "Хаб ШІ Інсайтів" [ref=e1112] [cursor=pointer]:
+                            - /url: /nexus?tab=insights
+                            - generic: Хаб ШІ Інсайтів
+                            - img [ref=e1113]
+                        - img [ref=e1116]
+                      - generic [ref=e1122]:
+                        - generic [ref=e1123]:
+                          - img [ref=e1125]
+                          - generic [ref=e1129]:
+                            - heading "🕵 РОЗСЛІДУВАННЯ" [level=3] [ref=e1130]
+                            - generic [ref=e1131]: 3 ОПЕРАЦІЙНИХ ЦІЛЕЙ
+                        - generic [ref=e1132]:
+                          - link "Карта Лобізму" [ref=e1133] [cursor=pointer]:
+                            - /url: /cases
+                            - generic: Карта Лобізму
+                            - img [ref=e1134]
+                          - link "Хронологія Подій" [ref=e1136] [cursor=pointer]:
+                            - /url: /timeline
+                            - generic: Хронологія Подій
+                            - img [ref=e1137]
+                          - link "WORM Аудит Лог" [ref=e1139] [cursor=pointer]:
+                            - /url: /compliance
+                            - generic: WORM Аудит Лог
+                            - img [ref=e1140]
+                        - img [ref=e1143]
+                  - generic [ref=e1147]:
+                    - generic [ref=e1148]:
+                      - generic [ref=e1150]:
+                        - heading "КРИТИЧНІ СИГНАЛИ" [level=2] [ref=e1151]:
+                          - img [ref=e1152]
+                          - text: КРИТИЧНІ СИГНАЛИ
+                        - generic [ref=e1154]: 0 АКТИВНО
+                      - generic [ref=e1156]:
+                        - img [ref=e1157]
+                        - paragraph [ref=e1159]: СИНХРОНІЗАЦІЯ_АЛЕ ТІВ...
+                    - generic [ref=e1160]:
+                      - heading "ШВИДКІ ДІЇ" [level=2] [ref=e1161]:
+                        - img [ref=e1162]
+                        - text: ШВИДКІ ДІЇ
+                      - generic [ref=e1164]:
+                        - link "ПОШУК" [ref=e1165] [cursor=pointer]:
+                          - /url: /search?tab=global
+                          - img [ref=e1166]
+                          - text: ПОШУК
+                          - img [ref=e1169]
+                        - link "РИЗИКИ" [ref=e1172] [cursor=pointer]:
+                          - /url: /osint?tab=diligence
+                          - img [ref=e1173]
+                          - text: РИЗИКИ
+                          - img [ref=e1177]
+                        - link "РИНОК" [ref=e1180] [cursor=pointer]:
+                          - /url: /market?tab=overview
+                          - img [ref=e1181]
+                          - text: РИНОК
+                          - img [ref=e1184]
+                        - link "БРИФІНГ" [ref=e1187] [cursor=pointer]:
+                          - /url: /command?tab=brief
+                          - img [ref=e1188]
+                          - text: БРИФІНГ
+                          - img [ref=e1191]
+                      - generic [ref=e1194]:
+                        - generic [ref=e1195]: КОМАНДНИЙ ПОШУК
+                        - generic [ref=e1196]: ⌘ K
+                - generic [ref=e1197]:
+                  - generic [ref=e1199]:
+                    - img [ref=e1200]
+                    - generic [ref=e1202]: ЖИВИЙ_ПОТІК_v63.0
+                  - generic [ref=e1204]:
+                    - generic [ref=e1207]: "СИСТЕМА: ОПТИМАЛЬНО | РЕЖИМ: ЕЛІТ_ТАКТИКА | СИНХРОНІЗАЦІЯ: ТАК"
+                    - generic [ref=e1210]: "ФІНАНСОВИЙ ПОТІК: — | ДЕКЛАРАЦІЙ: —"
+                    - generic [ref=e1213]: "КРИТИЧНІ СИГНАЛИ: 0 | ЗОНА РИЗИКУ: — ОБ'ЄКТІВ"
+                    - generic [ref=e1216]: "НЕЙРОННИЙ ГРАФ: — ВУЗЛІВ | — ЗВ'ЯЗКІВ"
+                    - generic [ref=e1219]: "ЯДРО: NVIDIA_H100_NEXUS | ЛАТЕНТНІСТЬ: 4.2мс | ОПЕРАЦІЙНА ЧИСТОТА: 99.8%"
+          - complementary [ref=e1221]:
+            - generic [ref=e1223]:
+              - generic [ref=e1224]:
+                - generic [ref=e1225]:
+                  - generic [ref=e1228]: INTEL · CLASSIFIED CONTEXT
+                  - generic [ref=e1229]: Ситуаційна Кімната
+                  - generic [ref=e1230]: Оперативний штаб для кризового управління та ескалацій.
+                - button "Згорнути контекстну панель" [ref=e1231] [cursor=pointer]:
+                  - img [ref=e1232]
+              - generic [ref=e1235]: Активний модуль
+            - generic [ref=e1237]:
+              - generic [ref=e1238]:
+                - generic [ref=e1239]: ДІЇ
+                - generic [ref=e1242]:
+                  - button "Запитати ШІ Перейти до агентів і поставити питання по поточному маршруту" [ref=e1243] [cursor=pointer]:
+                    - generic [ref=e1244]:
+                      - img [ref=e1246]
+                      - generic [ref=e1249]:
+                        - generic [ref=e1250]: Запитати ШІ
+                        - generic [ref=e1251]: Перейти до агентів і поставити питання по поточному маршруту
+                    - img [ref=e1252]
+                  - button "Додати в обране Закріпити поточний маршрут у верхньому шарі shell" [ref=e1254] [cursor=pointer]:
+                    - generic [ref=e1255]:
+                      - img [ref=e1257]
+                      - generic [ref=e1259]:
+                        - generic [ref=e1260]: Додати в обране
+                        - generic [ref=e1261]: Закріпити поточний маршрут у верхньому шарі shell
+                    - img [ref=e1262]
+                  - button "Відкрити документи Швидкий перехід до документального контуру для поточного сценарію" [ref=e1264] [cursor=pointer]:
+                    - generic [ref=e1265]:
+                      - img [ref=e1267]
+                      - generic [ref=e1269]:
+                        - generic [ref=e1270]: Відкрити документи
+                        - generic [ref=e1271]: Швидкий перехід до документального контуру для поточного сценарію
+                    - img [ref=e1272]
+                  - button "Запустити агента Відкрити агентський контур і перейти до автоматизації" [ref=e1274] [cursor=pointer]:
+                    - generic [ref=e1275]:
+                      - img [ref=e1277]
+                      - generic [ref=e1279]:
+                        - generic [ref=e1280]: Запустити агента
+                        - generic [ref=e1281]: Відкрити агентський контур і перейти до автоматизації
+                    - img [ref=e1282]
+              - generic [ref=e1284]:
+                - generic [ref=e1285]: ШІ-інсайти
+                - generic [ref=e1286]:
+                  - generic [ref=e1287]:
+                    - generic [ref=e1288]:
+                      - generic [ref=e1289]: Найкращий наступний крок
+                      - generic [ref=e1290]: 🌐 КОНТРОЛЬ
+                    - generic [ref=e1291]: ROI-пульс, KPI та ключові метрики бізнес-периметра.
+                  - generic [ref=e1292]:
+                    - generic [ref=e1293]:
+                      - generic [ref=e1294]: Рушій Симуляції Сценаріїв
+                      - generic [ref=e1295]: 📊 ВИКОНАВЧИЙ КОНТУР
+                    - generic [ref=e1296]: What-if симуляція на базі онтології та Causal AI.
+                  - generic [ref=e1297]:
+                    - generic [ref=e1298]:
+                      - generic [ref=e1299]: Суверенний Оракул
+                      - generic [ref=e1300]: 🧠 СУВЕРЕННИЙ ШІ
+                    - generic [ref=e1301]: Генеративний синтез від архітектурних LLM моделей.
+              - generic [ref=e1302]:
+                - generic [ref=e1303]: Звʼязки
+                - generic [ref=e1305]:
+                  - generic [ref=e1306]:
+                    - generic [ref=e1307]: Бізнес-блок
+                    - generic [ref=e1308]: 🌐 КОНТРОЛЬ
+                  - generic [ref=e1309]: Стратегічне домінування.
+              - generic [ref=e1310]:
+                - generic [ref=e1311]: Документи
+                - button "Ситуаційна Кімната /command?tab=warroom • 🌐 КОНТРОЛЬ" [ref=e1313] [cursor=pointer]:
+                  - generic [ref=e1314]:
+                    - img [ref=e1316]
+                    - generic [ref=e1319]:
+                      - generic [ref=e1320]: Ситуаційна Кімната
+                      - generic [ref=e1321]: /command?tab=warroom • 🌐 КОНТРОЛЬ
+                  - img [ref=e1322]
+              - generic [ref=e1324]:
+                - generic [ref=e1325]: Ризики
+                - generic [ref=e1327]:
+                  - generic [ref=e1329]: Контекст не передано зі сторінки
+                  - generic [ref=e1330]: Для цього маршруту працює fallback-rail з рекомендаціями та швидкими діями shell.
+              - generic [ref=e1332]: PREDATOR · INTEL CONTEXT RAIL · CLASSIFIED
+    - button "Відкрити ШІ-асистента" [ref=e1333] [cursor=pointer]:
+      - img [ref=e1334]
+    - generic [ref=e1343]:
+      - button "Закрити командний пошук" [ref=e1344] [cursor=pointer]
+      - generic [ref=e1345]:
+        - generic [ref=e1346]:
+          - img [ref=e1348]
+          - generic [ref=e1351]:
+            - generic [ref=e1352]: Глобальний командний пошук
+            - textbox "Маршрут, сутність, рекомендація або дія..." [active] [ref=e1353]: аналіз ринку
+          - generic [ref=e1354]:
+            - img [ref=e1355]
+            - generic [ref=e1357]: K
+        - button "Відкрити ринковий аналіз Перейти до ринку та перевірити наступну можливість ШІ-дія" [ref=e1360] [cursor=pointer]:
+          - generic [ref=e1361]:
+            - img [ref=e1363]
+            - generic [ref=e1365]:
+              - generic [ref=e1366]: Відкрити ринковий аналіз
+              - generic [ref=e1367]: Перейти до ринку та перевірити наступну можливість
+              - generic [ref=e1368]: ШІ-дія
+          - img [ref=e1369]
+        - generic [ref=e1371]:
+          - generic [ref=e1372]:
+            - generic [ref=e1373]: ↑↓ вибір
+            - generic [ref=e1374]: ↵ перехід
+            - generic [ref=e1375]: Esc закрити
+          - generic [ref=e1376]:
+            - img [ref=e1377]
+            - text: Shell v61.0-ELITE
+    - generic [ref=e1380]:
+      - img [ref=e1383]
+      - generic:
+        - generic: CONSTITUTIONAL_GUARD_v61.0-ELITE
+    - generic [ref=e1386]:
+      - generic [ref=e1388]:
+        - generic [ref=e1391]: СИСТЕМА_ОПТИМАЛЬНА
+        - generic [ref=e1394]:
+          - generic [ref=e1396]: "OSINT:"
+          - generic [ref=e1397]:
+            - generic [ref=e1398]: Аналіз митних декларацій (UA-EU)
+            - generic [ref=e1400]: Індексризику ТОВ 'ЕНЕ ДЖИ'
+            - generic [ref=e1402]: Синхронізація з YouControl
+            - generic [ref=e1404]: Виявлено нові зв'язки в секторі ВПК
+            - generic [ref=e1406]: Моніторинг транзакцій завершено
+      - generic [ref=e1409]:
+        - generic [ref=e1410]:
+          - generic [ref=e1411]: "КЛАСТЕ :"
+          - generic [ref=e1412]:
+            - generic [ref=e1415]: LOCAL_DEVELOPER
+            - generic [ref=e1418]: SOVEREIGN_NODE_IMAC
+            - generic [ref=e1421]: HYBRID_MASTER_NVIDIA
+            - generic [ref=e1424]: CLOUD_MIRROR_COLAB
+        - generic [ref=e1428]:
+          - generic "Active Core API Node" [ref=e1429]:
+            - generic [ref=e1430]: "API:"
+            - generic [ref=e1431]: LOCAL
+          - generic "Current Web Interface Host" [ref=e1432]:
+            - generic [ref=e1433]: "WEB:"
+            - generic [ref=e1434]: localhost
+        - generic [ref=e1438]: PREDATOR ELITE v63.0
+  - button "Відкрити швидкі дії" [ref=e1440] [cursor=pointer]:
+    - img [ref=e1442]
+  - generic [ref=e1445]:
+    - generic [ref=e1448]:
+      - generic [ref=e1449]:
+        - img [ref=e1450]
+        - generic [ref=e1452]: Крок 1 з 6
+      - button "Закрити" [ref=e1453] [cursor=pointer]:
+        - img [ref=e1454]
+    - generic [ref=e1457]:
+      - img [ref=e1459]
+      - heading "Ласкаво просимо до Predator v45 | Neural Analytics" [level=2] [ref=e1464]
+      - paragraph [ref=e1465]: Ваша ультимативна платформа для аналітики, розслідувань та стратегічного планування тепер ще потужніша.
+    - generic [ref=e1466]:
+      - button "Назад" [disabled] [ref=e1467]
+      - button "Далі" [ref=e1475] [cursor=pointer]:
+        - text: Далі
+        - img [ref=e1476]
+  - button [ref=e1478] [cursor=pointer]:
+    - img [ref=e1480]
+```
