@@ -17,6 +17,7 @@ spec:
         {{- include "predator.selectorLabels" . | nindent 8 }}
         app: graph-service
     spec:
+      priorityClassName: {{ include "predator.priorityClassName" (list $ "predator-high") }}
       securityContext:
         runAsNonRoot: true
         runAsUser: 1001
@@ -77,6 +78,7 @@ spec:
         {{- include "predator.selectorLabels" . | nindent 8 }}
         app: ingestion-worker
     spec:
+      priorityClassName: {{ include "predator.priorityClassName" (list $ "predator-default") }}
       securityContext:
         runAsNonRoot: true
         runAsUser: 1001
@@ -125,6 +127,7 @@ spec:
         {{- include "predator.selectorLabels" . | nindent 8 }}
         app: frontend
     spec:
+      priorityClassName: {{ include "predator.priorityClassName" (list $ "predator-high") }}
       securityContext:
         runAsNonRoot: true
         runAsUser: 1001
@@ -205,6 +208,7 @@ spec:
         {{- include "predator.selectorLabels" . | nindent 8 }}
         app: osint-service
     spec:
+      priorityClassName: {{ include "predator.priorityClassName" (list $ "predator-default") }}
       securityContext:
         runAsNonRoot: true
         runAsUser: 1001

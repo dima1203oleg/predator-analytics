@@ -17,6 +17,7 @@ spec:
       labels:
         app: core-api
     spec:
+      priorityClassName: {{ include "predator.priorityClassName" (list $ "predator-critical") }}
       securityContext:
         runAsNonRoot: true
         runAsUser: 1001

@@ -30,4 +30,8 @@ dependencies:
     version: 19.6.0
     repository: https://charts.bitnami.com/bitnami
     condition: redis.enabled
+  - name: kafka
+    version: 29.3.0
+    repository: https://charts.bitnami.com/bitnami
+    condition: kafka.enabled
 

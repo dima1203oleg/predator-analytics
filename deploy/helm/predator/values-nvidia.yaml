@@ -337,6 +337,25 @@ redis:
         cpu: 100m
         memory: 256Mi
 
+kafka:
+  enabled: true
+  replicaCount: 1
+  persistence:
+    enabled: true
+    size: 50Gi
+    storageClass: local-path
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+    requests:
+      cpu: 200m
+      memory: 512Mi
+  zookeeper:
+    enabled: false
+  kraft:
+    enabled: true
+
 litellm:
   enabled: true
   replicaCount: 1
@@ -369,6 +388,42 @@ litellm:
 
 ollama:
   enabled: false
+  nodeSelector:
+    accelerator: nvidia
+  tolerations:
+    - key: nvidia.com/gpu
+      operator: Exists
+      effect: NoSchedule
+  resources:
+    limits:
+      nvidia.com/gpu: 1
+      memory: 8Gi
+    requests:
+      memory: 4Gi
+
+priorityClass:
+  enabled: true
+  classes:
+    - name: predator-critical
+      value: 1000000
+      description: "Critical PREDATOR services"
+    - name: predator-high
+      value: 100000
+      description: "High priority services"
+    - name: predator-default
+      value: 10000
+      description: "Default priority"
+    - name: predator-low
+      value: 1000
+      description: "Low priority batch jobs"
+
+backup:
+  enabled: true
+  velero:
+    enabled: false
+  annotations:
+    backup.velero.io/backup-volumes: data
+    backup.velero.io/include-resources: persistentvolumeclaims
 
 monitoring:
   enabled: true

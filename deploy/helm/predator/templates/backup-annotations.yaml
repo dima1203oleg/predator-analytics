@@ -1,0 +1,24 @@
+{{- if .Values.backup.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "predator.fullname" . }}-backup-config
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: backup-config
+data:
+  backup-policy: |
+    # Velero backup annotations for PREDATOR databases
+    # Apply to PVCs with: kubectl annotate pvc <name> backup.velero.io/backup-volumes=data
+    databases:
+      - postgresql
+      - neo4j
+      - clickhouse
+      - opensearch
+      - qdrant
+      - redis
+      - minio
+    schedule: "0 2 * * *"  # Daily at 2 AM
+    retention: "720h"  # 30 days
+    storageLocation: default
+{{- end }}

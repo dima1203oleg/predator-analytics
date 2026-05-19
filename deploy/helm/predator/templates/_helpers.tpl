@@ -47,3 +47,15 @@ Create chart name and version as used by the chart label.
 {{- define "predator.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
+
+{{/*
+PriorityClass name helper
+Usage: {{ include "predator.priorityClassName" (list $ "predator-high") }}
+*/}}
+{{- define "predator.priorityClassName" -}}
+{{- $ctx := index . 0 -}}
+{{- $name := index . 1 -}}
+{{- if $ctx.Values.priorityClass.enabled -}}
+{{- $name | default "predator-default" -}}
+{{- end -}}
+{{- end }}

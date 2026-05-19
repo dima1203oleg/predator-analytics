@@ -1,0 +1,14 @@
+{{- if .Values.priorityClass.enabled }}
+{{- range .Values.priorityClass.classes }}
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: {{ .name }}
+  labels:
+    {{- include "predator.labels" $ | nindent 4 }}
+value: {{ .value }}
+preemptionPolicy: PreemptLowerPriority
+description: {{ .description | quote }}
+---
+{{- end }}
+{{- end }}
