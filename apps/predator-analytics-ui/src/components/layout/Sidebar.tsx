@@ -207,6 +207,76 @@ const sectionColorMap: Record<string, {
   },
 };
 
+// Компонент для відображення преміальних індикаторів доступу (орбів)
+const AccessOrb: React.FC<{
+  level: AccessLevel | undefined;
+  userRole: string;
+  className?: string;
+  collapsed?: boolean;
+}> = ({ level, userRole, className, collapsed = false }) => {
+  const { isLocked } = getAccessStatusIndicator(level, userRole);
+  if (!level) return null;
+
+  // Стилі для кожного рівня доступу
+  const orbStyles: Record<AccessLevel, { bg: string; border: string; shadow: string; pulse: string; label: string }> = {
+    terminal: {
+      bg: 'bg-emerald-500',
+      border: 'border-emerald-400/30',
+      shadow: 'shadow-[0_0_8px_rgba(16,185,129,0.7)]',
+      pulse: 'bg-emerald-400',
+      label: 'Terminal доступ',
+    },
+    pro: {
+      bg: 'bg-amber-500',
+      border: 'border-amber-400/30',
+      shadow: 'shadow-[0_0_8px_rgba(245,158,11,0.7)]',
+      pulse: 'bg-amber-400',
+      label: 'Pro розвідка',
+    },
+    sovereign: {
+      bg: 'bg-rose-500',
+      border: 'border-rose-400/30',
+      shadow: 'shadow-[0_0_8px_rgba(225,29,72,0.7)]',
+      pulse: 'bg-rose-400',
+      label: 'Sovereign елітний доступ',
+    },
+  };
+
+  const style = orbStyles[level] || orbStyles.terminal;
+
+  if (collapsed) {
+    // Маленька крапка-індикатор доступу на іконці у згорнутому стані
+    return (
+      <div 
+        className={cn(
+          'absolute -bottom-0.5 -right-0.5 z-20 flex h-2 w-2 items-center justify-center rounded-full border border-black bg-black', 
+          className
+        )}
+        title={`Рівень доступу: ${style.label} ${isLocked ? '(Заблоковано)' : '(Доступно)'}`}
+      >
+        <span className={cn('h-1 w-1 rounded-full', style.bg)} />
+      </div>
+    );
+  }
+
+  return (
+    <div 
+      className={cn(
+        'relative flex h-2 w-2 shrink-0 items-center justify-center rounded-full border transition-all duration-300', 
+        style.border, 
+        style.bg, 
+        style.shadow,
+        className
+      )}
+      title={`Рівень доступу: ${style.label} ${isLocked ? '(Заблоковано)' : '(Доступно)'}`}
+    >
+      {!isLocked && (
+        <span className={cn('absolute inline-flex h-full w-full animate-ping rounded-full opacity-75', style.pulse)} />
+      )}
+    </div>
+  );
+};
+
 const getRoleLabel = (role: string): string => {
   const audience = resolveNavigationAudience(role);
   if (audience === 'core') return 'SYSTEM COMMAND CENTER';
@@ -626,7 +696,22 @@ export const Sidebar: React.FC = () => {
               const isCollapsed = collapsedSections[section.id] && !search;
 
               return (
-                <div key={section.id} className="overflow-hidden rounded-xl" style={{ marginBottom: '4px' }}>
+                <div 
+                  key={section.id} 
+                  className={cn(
+                    "overflow-hidden rounded-xl transition-all duration-300",
+                    !isOpen && "border bg-white/[0.01] p-1"
+                  )}
+                  style={{
+                    marginBottom: isOpen ? '4px' : '12px',
+                    borderColor: !isOpen ? colors.border : undefined,
+                    boxShadow: !isOpen ? `0 0 10px ${colors.glowColor}15` : undefined,
+                    // Передача CSS змінних для дочірніх NavLink
+                    ['--section-glow' as any]: colors.glowColor,
+                    ['--section-hover-bg' as any]: colors.hoverBg,
+                    ['--section-border' as any]: colors.border,
+                  }}
+                >
                   {/* Заголовок секції */}
                   {isOpen ? (
                     <button
@@ -651,7 +736,7 @@ export const Sidebar: React.FC = () => {
                             className="h-1.5 w-1.5 rounded-full"
                             style={{
                               background: colors.dotColor,
-                              }}
+                            }}
                           />
                         </div>
                         <div className="min-w-0 flex-1">
@@ -673,7 +758,7 @@ export const Sidebar: React.FC = () => {
                       </div>
                     </button>
                   ) : (
-                    /* Згорнутий вигляд — тільки кольоровий маркер */
+                    /* Згорнутий вигляд — тільки кольоровий маркер з пульсацією */
                     <div
                       className="mx-auto my-1 flex h-8 w-8 items-center justify-center rounded-xl"
                       style={{
@@ -682,13 +767,19 @@ export const Sidebar: React.FC = () => {
                       }}
                       title={section.label}
                     >
-                      <span
-                        className="h-2 w-2 rounded-full"
-                        style={{
-                          background: colors.dotColor,
-                          boxShadow: `0 0 8px ${colors.glowColor}`,
-                        }}
-                      />
+                      <span className="relative flex h-2 w-2">
+                        <span 
+                          className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
+                          style={{ background: colors.dotColor }}
+                        />
+                        <span 
+                          className="relative inline-flex rounded-full h-2 w-2"
+                          style={{
+                            background: colors.dotColor,
+                            boxShadow: `0 0 8px ${colors.glowColor}`,
+                          }}
+                        />
+                      </span>
                     </div>
                   )}
 
@@ -732,24 +823,24 @@ export const Sidebar: React.FC = () => {
                                       onClick={() => pushRecent(item.id)}
                                       className={({ isActive }) =>
                                         cn(
-                                          'group relative flex items-center gap-2 rounded-lg border transition-all duration-200',
+                                          'group relative flex items-center gap-2 rounded-lg border transition-all duration-300',
                                           isOpen ? 'px-2 py-1.5 pr-8' : 'mx-auto h-8 w-8 justify-center',
                                           isActive
                                             ? 'text-white'
-                                            : 'text-slate-300 hover:text-white active:scale-[0.98]',
+                                            : 'text-slate-300 hover:text-white hover:bg-[var(--section-hover-bg)] hover:border-[var(--section-border)] hover:shadow-[0_0_12px_var(--section-glow)] active:scale-[0.98]',
                                         )
                                       }
                                       style={({ isActive }) => ({
                                         background: isActive ? colors.activeItemBg : 'transparent',
                                         borderColor: isActive ? colors.activeItemBorder : 'transparent',
-                                        boxShadow: 'none',
+                                        boxShadow: isActive ? `0 0 12px ${colors.glowColor}30` : 'none',
                                       })}
                                     >
                                       {({ isActive }) => (
                                         <>
                                           {/* Іконка */}
                                           <div
-                                            className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md transition-all"
+                                            className="relative flex h-6 w-6 shrink-0 items-center justify-center rounded-md transition-all"
                                             style={{
                                               background: isActive ? colors.activeIconBg : 'rgba(255,255,255,0.04)',
                                               border: `1px solid ${isActive ? colors.activeItemBorder : 'rgba(255,255,255,0.06)'}`,
@@ -759,24 +850,29 @@ export const Sidebar: React.FC = () => {
                                               className="h-3.5 w-3.5 transition-colors"
                                               style={{ color: isActive ? colors.activeIconColor : '#64748b' }}
                                             />
+                                            {/* Преміальний індикатор доступу у згорнутому стані */}
+                                            {!isOpen && item.accessLevel && (
+                                              <AccessOrb level={item.accessLevel} userRole={userRole} collapsed={true} />
+                                            )}
+                                            {/* Замок у згорнутому стані */}
+                                            {!isOpen && isNavItemLocked(item, userRole) && (
+                                              <div 
+                                                className="absolute -top-1 -right-1 z-20 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-rose-950/90 border border-rose-500/40 text-rose-400 shadow-[0_0_6px_rgba(225,29,72,0.6)]"
+                                                title="Заблоковано для вашого рівня доступу"
+                                              >
+                                                <Lock className="h-2 w-2" />
+                                              </div>
+                                            )}
                                           </div>
 
                                           {/* Текст (тільки у відкритому стані) */}
                                           {isOpen && (
                                             <div className="min-w-0 flex-1">
                                               <div className="flex items-center gap-1.5">
-                                                {/* Позначка статусу доступу (🟢🟡🔴) */}
-                                                {(() => {
-                                                  const { indicator } = getAccessStatusIndicator(
-                                                    item.accessLevel,
-                                                    userRole
-                                                  );
-                                                  return indicator ? (
-                                                    <span className="text-[10px] leading-none" title="Рівень доступу">
-                                                      {indicator}
-                                                    </span>
-                                                  ) : null;
-                                                })()}
+                                                {/* Преміальний індикатор доступу */}
+                                                {item.accessLevel && (
+                                                  <AccessOrb level={item.accessLevel} userRole={userRole} />
+                                                )}
                                                 <span
                                                   className="truncate text-[11px] font-bold leading-none"
                                                   style={{ color: isActive ? '#ffffff' : '#cbd5e1' }}

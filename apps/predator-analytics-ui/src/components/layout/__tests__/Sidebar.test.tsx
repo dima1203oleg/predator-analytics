@@ -66,6 +66,8 @@ vi.mock('../../../config/navigation', () => ({
   getNavigationTotals: () => ({ sections: 7, items: 42 }),
   getGlobalNavigationActions: () => [],
   resolveNavigationAudience: () => 'admin',
+  getAccessStatusIndicator: () => ({ isLocked: false, indicator: '🟢' }),
+  isNavItemLocked: () => false,
 }));
 
 describe('Sidebar', () => {
