@@ -4,13 +4,13 @@ import { useQuery } from '@tanstack/react-query';
 import { marketApi } from '@/features/market/api/market';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { cn } from '@/utils/cn';
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import {
     ArrowUpRight,
     Clock,
     ExternalLink,
     FileBarChart,
     Lightbulb,
-    Loader2,
     Sparkles,
     Star,
     TrendingUp,
@@ -300,8 +300,7 @@ function InsightsTab({
     if (isLoading && insights.length === 0) {
         return (
             <div className="flex flex-col items-center justify-center py-20 text-slate-400">
-                <Loader2 className="mb-4 h-10 w-10 animate-spin text-amber-300" />
-                <p>Аналізуємо ринок і формуємо поточні інсайти...</p>
+                <BrandLoaderFallback text="ІНСАЙТИ" subtext="АНАЛІЗ РИНКУ ТА ІНСАЙТИ" />
             </div>
         );
     }
@@ -397,8 +396,7 @@ function RecommendationsTab({
     if (isLoading && recommendations.length === 0) {
         return (
             <div className="flex flex-col items-center justify-center py-20 text-slate-400">
-                <Loader2 className="mb-4 h-10 w-10 animate-spin text-amber-300" />
-                <p>Підбираємо релевантні рекомендації з поточних сигналів...</p>
+                <BrandLoaderFallback text="РЕКОМЕНДАЦІЇ" subtext="ПІДБІР РЕЛЕВАНТНИХ РЕКОМЕНДАЦІЙ" />
             </div>
         );
     }
@@ -469,8 +467,7 @@ function ExecutiveTab({
     if (isLoading && insights.length === 0) {
         return (
             <div className="flex flex-col items-center justify-center py-20 text-slate-400">
-                <Loader2 className="mb-4 h-10 w-10 animate-spin text-cyan-300" />
-                <p>Готуємо виконавчий огляд із поточного потоку інсайтів...</p>
+                <BrandLoaderFallback text="ОГЛЯД" subtext="ВИКОНАВЧИЙ ОГЛЯД ІНСАЙТІВ" />
             </div>
         );
     }

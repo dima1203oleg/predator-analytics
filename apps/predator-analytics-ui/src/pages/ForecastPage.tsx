@@ -10,11 +10,11 @@ import type {
 } from '@/features/forecast/types';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { cn } from '@/utils/cn';
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import {
     AlertCircle,
     ArrowUpRight,
     Brain,
-    Loader2,
     RefreshCw,
     Settings2,
     Target,
@@ -478,8 +478,7 @@ function DemandForecastTab({
     if (loading) {
         return (
             <div className="flex h-64 flex-col items-center justify-center gap-4 text-slate-400">
-                <Loader2 className="h-8 w-8 animate-spin text-red-500" />
-                <p className=" font-black uppercase tracking-widest text-[11px] italic">Генерація прогнозу_Ядра...</p>
+                <BrandLoaderFallback text="ПРОГНОЗ" subtext="ГЕНЕРАЦІЯ ПРОГНОЗУ ЯДРА" />
             </div>
         );
     }
@@ -717,8 +716,7 @@ function ScenariosTab({
     if (loading) {
         return (
             <div className="flex h-56 items-center justify-center gap-4 text-slate-400">
-                <Loader2 className="h-7 w-7 animate-spin text-emerald-400" />
-                Підготовка сценарного простору...
+                <BrandLoaderFallback text="СЦЕНАРІЇ" subtext="ПІДГОТОВКА СЦЕНАРНОГО ПРОСТОРУ" />
             </div>
         );
     }

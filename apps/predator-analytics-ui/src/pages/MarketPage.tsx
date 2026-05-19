@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import ReactECharts from '@/components/ECharts';
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import { dashboardApi, marketApi, competitorsApi } from '@/services/api';
 import type { Competitor } from '@/features/competitors/api/competitors';
 import type {
@@ -23,7 +24,6 @@ import {
   Building2,
   FileText,
   Globe2,
-  Loader2,
   Package,
   Radar,
   ShieldCheck,
@@ -934,8 +934,7 @@ function CustomsTab({ chartOption, declarations, error, loading }: { chartOption
         <div className="h-[450px] w-full">
           {loading ? (
             <div className="flex h-full flex-col items-center justify-center gap-4 text-red-500/60 font-black italic uppercase tracking-widest">
-              <Loader2 className="h-10 w-10 animate-spin" />
-              ВІЗУАЛІЗАЦІЯ ПОТОКІВ...
+              <BrandLoaderFallback text="ПОТОКИ" subtext="ВІЗУАЛІЗАЦІЯ ПОТОКІВ" />
             </div>
           ) : (
             <ReactECharts option={chartOption} style={{ height: '100%', width: '100%' }} />

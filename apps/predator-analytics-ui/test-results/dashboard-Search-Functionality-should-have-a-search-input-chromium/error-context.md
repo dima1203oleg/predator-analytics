@@ -1,22 +1,64 @@
 # Page snapshot
 
 ```yaml
-- generic [ref=e7]:
-  - img [ref=e11]
-  - heading "Щось пішло не так" [level=1] [ref=e14]
-  - paragraph [ref=e15]: Виникла неочікувана помилка. Не хвилюйтесь, ваші дані в безпеці. Спробуйте оновити сторінку або повернутися на головну.
-  - generic [ref=e16]:
-    - heading "Технічні деталі" [level=3] [ref=e17]
-    - generic [ref=e18]:
-      - generic [ref=e19]: "Error: Error creating WebGL context."
-      - group [ref=e20]:
-        - generic "Stack Trace" [ref=e21] [cursor=pointer]
-  - generic [ref=e22]:
-    - button "Спробувати знову" [ref=e23] [cursor=pointer]:
-      - img [ref=e24]
-      - generic [ref=e29]: Спробувати знову
-    - button "На головну" [ref=e30] [cursor=pointer]:
-      - img [ref=e31]
-      - generic [ref=e34]: На головну
-  - paragraph [ref=e35]: Якщопроблема повторюється, зверніться до служби підтримки
+- generic [ref=e4]:
+  - generic:
+    - generic:
+      - generic: PREDATOR ELITE
+      - generic: Кластер_Абсолютного_Інтелекту // v60.0
+    - generic:
+      - generic: "ДОСТУП: ВЕ ХОВНИЙ_СУВЕ ЕН"
+      - generic: НЕЙРОННИЙ_ЩИТ_АКТИВНИЙ // 2048-Q Шифрування
+    - button "ПРОПУСТИТИ ЗАСТАВКУ" [ref=e6] [cursor=pointer]
+  - generic:
+    - generic:
+      - generic: "Журнал_Ініціалізації_Системи:"
+      - generic:
+        - generic:
+          - text: "> BOOT: ЗАВАНТАЖЕННЯ_ЕЛІТНИХ_СИСТЕМНИХ_ВИКЛИКІВ"
+          - generic: "[ACK]"
+        - generic:
+          - text: "> CORE: ПРИЄДНАННЯ_НЕЙ ОННИХ_СИНАПСІВ_v60"
+          - generic: "[ACK]"
+        - generic:
+          - text: "> SIGINT: СКАНУВАННЯ_ГЛОБАЛЬНИХ_ ЕЗЕ ВІВ [КИЇВ_СИНХ О]"
+          - generic: "[ACK]"
+        - generic:
+          - text: "> AUTH: ВСТАНОВЛЕНО_ДОПУСК_ОМЕГА"
+          - generic: "[ACK]"
+        - generic:
+          - text: "> STATUS:ПРОБУДЖЕННЯ_PREDATORА [СУВЕРЕННИЙ_РЕЖИМ]"
+          - generic: "[ACK]"
+  - generic [ref=e7]:
+    - img "Predator Logo" [ref=e9]
+    - heading "PREDATOR" [level=1] [ref=e10]: PREDATOR
+    - paragraph [ref=e12]: Світ — це дані. Ми — Предатори.
+  - generic [ref=e13]:
+    - generic [ref=e14]: ЦЕНТ АЛЬНЕ_ЯДРО_КИЇВ
+    - generic [ref=e15]:
+      - generic [ref=e16]: "КИЇВ_ВУЗОЛ_H100: СИНХ ОНІЗОВАНО"
+      - generic [ref=e17]: "GEO_SIGINT: ОДЕСЬКА_ОБЛАСТЬ_АНАЛІЗ..."
+      - generic [ref=e18]: "НЕЙ ОННЕ_НАВАНТАЖЕННЯ: 3.48%"
+      - generic [ref=e19]: ВИЯВЛЕНО_МАНІПУЛЯЦІЮ_ ИНКОМ
+      - generic [ref=e20]: "ЗАТрИМКА: 0.000042ms"
+      - generic [ref=e21]: "КИЇВ_ВУЗОЛ_H100: СИНХ ОНІЗОВАНО"
+      - generic [ref=e22]: "GEO_SIGINT: ОДЕСЬКА_ОБЛАСТЬ_АНАЛІЗ..."
+      - generic [ref=e23]: "НЕЙ ОННЕ_НАВАНТАЖЕННЯ: 3.48%"
+      - generic [ref=e24]: ВИЯВЛЕНО_МАНІПУЛЯЦІЮ_ ИНКОМ
+      - generic [ref=e25]: "ЗАТрИМКА: 0.000042ms"
+      - generic [ref=e26]: "КИЇВ_ВУЗОЛ_H100: СИНХ ОНІЗОВАНО"
+      - generic [ref=e27]: "GEO_SIGINT: ОДЕСЬКА_ОБЛАСТЬ_АНАЛІЗ..."
+      - generic [ref=e28]: "НЕЙ ОННЕ_НАВАНТАЖЕННЯ: 3.48%"
+      - generic [ref=e29]: ВИЯВЛЕНО_МАНІПУЛЯЦІЮ_ ИНКОМ
+      - generic [ref=e30]: "ЗАТрИМКА: 0.000042ms"
+      - generic [ref=e31]: "КИЇВ_ВУЗОЛ_H100: СИНХ ОНІЗОВАНО"
+      - generic [ref=e32]: "GEO_SIGINT: ОДЕСЬКА_ОБЛАСТЬ_АНАЛІЗ..."
+      - generic [ref=e33]: "НЕЙ ОННЕ_НАВАНТАЖЕННЯ: 3.48%"
+      - generic [ref=e34]: ВИЯВЛЕНО_МАНІПУЛЯЦІЮ_ ИНКОМ
+      - generic [ref=e35]: "ЗАТрИМКА: 0.000042ms"
+      - generic [ref=e36]: "КИЇВ_ВУЗОЛ_H100: СИНХ ОНІЗОВАНО"
+      - generic [ref=e37]: "GEO_SIGINT: ОДЕСЬКА_ОБЛАСТЬ_АНАЛІЗ..."
+      - generic [ref=e38]: "НЕЙ ОННЕ_НАВАНТАЖЕННЯ: 3.48%"
+      - generic [ref=e39]: ВИЯВЛЕНО_МАНІПУЛЯЦІЮ_ ИНКОМ
+      - generic [ref=e40]: "ЗАТрИМКА: 0.000042ms"
 ```

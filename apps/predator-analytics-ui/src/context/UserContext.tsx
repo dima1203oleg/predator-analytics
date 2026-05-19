@@ -63,11 +63,24 @@ interface UserContextType {
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUserState] = useState<UserProfile | null>(null);
+  const [user, setUserState] = useState<UserProfile | null>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = sessionStorage.getItem('predator_user_profile');
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch (e) {
+          return null;
+        }
+      }
+    }
+    return null;
+  });
   const [isLoading, setIsLoading] = useState(false);
 
   const setUser = (newUser: UserProfile) => {
     setUserState(newUser);
+    sessionStorage.setItem('predator_user_profile', JSON.stringify(newUser));
     // Simple mock token
     sessionStorage.setItem('predator_auth_token', newUser.role === UserRole.ADMIN ? 'admin-token' : 'user-token');
   };
@@ -75,6 +88,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const logout = () => {
     setUserState(null);
     sessionStorage.removeItem('predator_auth_token');
+    sessionStorage.removeItem('predator_user_profile');
     window.location.href = '/'; // Hard reload to clear states
   };
 
