@@ -213,3 +213,33 @@ export const BrandLoader: React.FC<BrandLoaderProps> = ({
 };
 
 export default BrandLoader;
+
+/**
+ * BrandLoaderFallback — Спрощена версія для Suspense fallback
+ * Без onComplete callback, зменшена тривалість
+ */
+export const BrandLoaderFallback: React.FC<Pick<BrandLoaderProps, 'text' | 'subtext'>> = ({
+  text = 'PREDATOR',
+  subtext = 'ЗАВАНТАЖЕННЯ МОДУЛЯ',
+}) => (
+  <div className="w-full h-full min-h-[300px] bg-black/95 flex flex-col items-center justify-center relative overflow-hidden rounded-2xl">
+    {/* Scanlines */}
+    <div className="absolute inset-0 pointer-events-none z-[1]"
+      style={{ backgroundImage: 'repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.1) 2px,rgba(0,0,0,0.1) 4px)' }}
+    />
+    <div className="relative z-10 text-center space-y-4">
+      <h1 className="text-3xl font-black tracking-[0.2em] text-white font-mono"
+        style={{ textShadow: '0 0 30px rgba(225,29,72,0.4)' }}>
+        {text}
+        <span className="inline-block w-1 h-8 bg-rose-500 ml-2 align-middle animate-pulse" />
+      </h1>
+      <p className="text-[10px] font-black uppercase tracking-[0.5em] text-rose-500/60">
+        {subtext}
+      </p>
+      <div className="w-48 h-[2px] bg-slate-900 rounded-full overflow-hidden mx-auto">
+        <motion.div className="h-full bg-gradient-to-r from-rose-900 via-rose-500 to-rose-400"
+          initial={{ width: '0%' }} animate={{ width: '100%' }} transition={{ duration: 1.5, ease: 'linear' }} />
+      </div>
+    </div>
+  </div>
+);

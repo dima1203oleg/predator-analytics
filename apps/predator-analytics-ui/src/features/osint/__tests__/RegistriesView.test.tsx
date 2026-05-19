@@ -54,36 +54,6 @@ vi.mock('framer-motion', async () => {
     };
 });
 
-// Mock lucide-react icons
-vi.mock('lucide-react', () => ({
-    Building2: () => <svg data-testid="icon-building" />,
-    Search: () => <svg data-testid="icon-search" />,
-    ShieldAlert: () => <svg data-testid="icon-shield-alert" />,
-    Users: () => <svg data-testid="icon-users" />,
-    Briefcase: () => <svg data-testid="icon-briefcase" />,
-    ClipboardList: () => <svg data-testid="icon-clipboard" />,
-    ArrowRight: () => <svg data-testid="icon-arrow-right" />,
-    MapPin: () => <svg data-testid="icon-map-pin" />,
-    Database: () => <svg data-testid="icon-database" />,
-    Binary: () => <svg data-testid="icon-binary" />,
-    ExternalLink: () => <svg data-testid="icon-external-link" />,
-    AlertCircle: () => <svg data-testid="icon-alert-circle" />,
-    TrendingUp: () => <svg data-testid="icon-trending-up" />,
-    Fingerprint: () => <svg data-testid="icon-fingerprint" />,
-    ShieldCheck: () => <svg data-testid="icon-shield-check" />,
-    Download: () => <svg data-testid="icon-download" />,
-    FileText: () => <svg data-testid="icon-file-text" />,
-    Share2: () => <svg data-testid="icon-share" />,
-    Target: () => <svg data-testid="icon-target" />,
-    Dna: () => <svg data-testid="icon-dna" />,
-    Globe: () => <svg data-testid="icon-globe" />,
-    RefreshCw: () => <svg data-testid="icon-refresh" />,
-    BarChart3: () => <svg data-testid="icon-bar-chart" />,
-    CheckCircle: () => <svg data-testid="icon-check-circle" />,
-    Activity: () => <svg data-testid="icon-activity" />,
-    Eye: () => <svg data-testid="icon-eye" />,
-    Zap: () => <svg data-testid="icon-zap" />,
-}));
 
 describe('RegistriesView', () => {
     beforeEach(() => {

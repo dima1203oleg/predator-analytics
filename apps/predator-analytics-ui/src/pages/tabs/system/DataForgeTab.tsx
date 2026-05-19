@@ -1,8 +1,9 @@
 import React, { Suspense, lazy } from 'react';
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 const DataIngestionHub = lazy(() => import('@/features/platform/DataIngestionHub'));
 
 export const DataForgeTab = () => (
-  <Suspense fallback={<div className="p-8 text-slate-400">Підготовка Кузні Даних...</div>}>
+  <Suspense fallback={<BrandLoaderFallback text="КУЗНЯ" subtext="ПІДГОТОВКА КУЗНІ ДАНИХ" />}>
     <DataIngestionHub />
   </Suspense>
 );

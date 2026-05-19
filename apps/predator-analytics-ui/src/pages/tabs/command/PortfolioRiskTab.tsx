@@ -1,8 +1,9 @@
 import React, { Suspense, lazy } from 'react';
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 const PortfolioRiskView = lazy(() => import('@/features/dashboard/PortfolioRiskView'));
 
 export const PortfolioRiskTab = () => (
-  <Suspense fallback={<div className="p-8 text-slate-400">Аналізризиків портфелю...</div>}>
+  <Suspense fallback={<BrandLoaderFallback text="ПОРТФЕЛЬ" subtext="АНАЛІЗ РИЗИКІВ ПОРТФЕЛЮ" />}>
     <PortfolioRiskView />
   </Suspense>
 );

@@ -23,6 +23,7 @@ import { InfrastructureFailoverBanner } from '../InfrastructureFailoverBanner';
 import { WorkspaceBusinessStrip } from './WorkspaceBusinessStrip';
 import { NeuralBackground } from '../ui/NeuralBackground';
 import { cn } from '@/utils/cn';
+import { AnimatedPage } from '../polish/AnimatedPage';
 import { API_BASE_URL } from '@/services/api/config';
 import { colabPanelOpenAtom, colabNodeDataAtom } from '../../store/atoms';
 import { ColabDetailedPanel } from '@/features/infrastructure/components/ColabDetailedPanel';
@@ -200,11 +201,9 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           <div className={cn("relative mx-auto px-3 sm:px-5 lg:px-7 py-5 xl:px-10 pb-16 transition-[max-width] duration-500", displayFrameClass)}>
             <div className={`grid grid-cols-12 gap-6`}>
               <div className={shellV2Enabled && !isMobile && isContextRailOpen ? 'col-span-12 xl:col-span-9' : 'col-span-12'}>
-                <AnimatePresence mode="wait">
-                  <motion.div key={location.pathname} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }}>
-                    {children}
-                  </motion.div>
-                </AnimatePresence>
+                <AnimatedPage pageKey={location.pathname} variant="tactical">
+                  {children}
+                </AnimatedPage>
               </div>
               {shellV2Enabled && !isMobile && isContextRailOpen && (
                 <div className="col-span-12 xl:col-span-3">

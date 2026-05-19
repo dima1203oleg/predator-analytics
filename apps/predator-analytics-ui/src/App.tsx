@@ -35,6 +35,7 @@ import { AdvancedBackground } from './components/AdvancedBackground';
 import NeuralPulse from './components/NeuralPulse';
 import { TechGridBackground } from './components/TechGridBackground';
 import { OfflineBanner } from './components/shared/OfflineBanner';
+import { CommandPalette } from './components/polish/CommandPalette';
 
 // Setup Query Client with optimized settings
 const queryClient = new QueryClient({
@@ -203,6 +204,9 @@ function App() {
             </AccessProvider>
             </RoleProvider>
           </UserProvider>
+
+          {/* Sovereign Command Palette — глобальний Cmd+K */}
+          <CommandPalette />
         </BrowserRouter>
       </QueryClientProvider>
       {/* Global runtime error overlay (helps capture crashes during user actions) */}

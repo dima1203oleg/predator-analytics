@@ -11,47 +11,6 @@ vi.mock('framer-motion', () => ({
     AnimatePresence: ({ children }: any) => <>{children}</>,
 }));
 
-vi.mock('lucide-react', () => {
-    const MockIcon = ({ "data-testid": testId }: any) => <div data-testid={testId} />;
-    return {
-        Database: () => <MockIcon data-testid="icon-database" />,
-        Search: () => <MockIcon data-testid="icon-search" />,
-        Filter: () => <MockIcon data-testid="icon-filter" />,
-        ExternalLink: () => <MockIcon data-testid="icon-external-link" />,
-        Download: () => <MockIcon data-testid="icon-download" />,
-        FileText: () => <MockIcon data-testid="icon-file-text" />,
-        Info: () => <MockIcon data-testid="icon-info" />,
-        Globe: () => <MockIcon data-testid="icon-globe" />,
-        Shield: () => <MockIcon data-testid="icon-shield" />,
-        RefreshCw: () => <MockIcon data-testid="icon-refresh" />,
-        X: () => <MockIcon data-testid="icon-x" />,
-        Users: () => <MockIcon data-testid="icon-users" />,
-        Zap: () => <MockIcon data-testid="icon-zap" />,
-        Layers: () => <MockIcon data-testid="icon-layers" />,
-        ArrowRight: () => <MockIcon data-testid="icon-arrow-right" />,
-        DatabaseIcon: () => <MockIcon data-testid="icon-database" />,
-        SearchIcon: () => <MockIcon data-testid="icon-search" />,
-        DownloadIcon: () => <MockIcon data-testid="icon-download" />,
-        Settings2: () => <MockIcon data-testid="icon-settings" />,
-        History: () => <MockIcon data-testid="icon-history" />,
-        Bookmark: () => <MockIcon data-testid="icon-bookmark" />,
-        ChevronDown: () => <MockIcon data-testid="icon-chevron-down" />,
-        ChevronUp: () => <MockIcon data-testid="icon-chevron-up" />,
-        TrendingUp: () => <MockIcon data-testid="icon-trending-up" />,
-        Clock: () => <MockIcon data-testid="icon-clock" />,
-        Share2: () => <MockIcon data-testid="icon-share" />,
-        Server: () => <MockIcon data-testid="icon-server" />,
-        AlertCircle: () => <MockIcon data-testid="icon-alert" />,
-        CheckCircle: () => <MockIcon data-testid="icon-check" />,
-        InfoIcon: () => <MockIcon data-testid="icon-info" />,
-        Layout: () => <MockIcon data-testid="icon-layout" />,
-        Grid: () => <MockIcon data-testid="icon-grid" />,
-        List: () => <MockIcon data-testid="icon-list" />,
-        Calendar: () => <MockIcon data-testid="icon-calendar" />,
-        Plus: () => <MockIcon data-testid="icon-plus" />,
-        Lock: () => <MockIcon data-testid="icon-lock" />,
-    };
-});
 
 vi.mock('@/services/api/config', () => ({
     apiClient: {
