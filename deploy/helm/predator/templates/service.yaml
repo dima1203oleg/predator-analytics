@@ -42,10 +42,10 @@ metadata:
     {{- include "predator.labels" . | nindent 4 }}
     app: frontend
 spec:
-  type: LoadBalancer
+  type: {{ .Values.frontend.service.type }}
   ports:
-    - port: 80
-      targetPort: 3030
+    - port: {{ .Values.frontend.service.port }}
+      targetPort: {{ .Values.frontend.service.targetPort }}
       protocol: TCP
       name: http
   selector:

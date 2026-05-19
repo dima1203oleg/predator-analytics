@@ -26,4 +26,8 @@ dependencies:
     version: 0.1.0
     repository: https://qdrant.github.io/qdrant-helm
     condition: qdrant.enabled
+  - name: redis
+    version: 19.6.0
+    repository: https://charts.bitnami.com/bitnami
+    condition: redis.enabled
 

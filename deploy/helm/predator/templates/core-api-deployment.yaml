@@ -27,17 +27,13 @@ spec:
           ports:
             - containerPort: 8000
           livenessProbe:
-            httpGet:
-              path: /health
-              port: 8000
-            initialDelaySeconds: 30
-            periodSeconds: 30
+            {{- toYaml .Values.coreApi.livenessProbe | nindent 12 }}
           readinessProbe:
-            httpGet:
-              path: /health
-              port: 8000
-            initialDelaySeconds: 15
-            periodSeconds: 10
+            {{- toYaml .Values.coreApi.readinessProbe | nindent 12 }}
+          {{- if .Values.coreApi.startupProbe }}
+          startupProbe:
+            {{- toYaml .Values.coreApi.startupProbe | nindent 12 }}
+          {{- end }}
           resources:
             {{- toYaml .Values.coreApi.resources | nindent 12 }}
           env:

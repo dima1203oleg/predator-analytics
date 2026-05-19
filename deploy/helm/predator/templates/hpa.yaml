@@ -1,25 +1,30 @@
-{{- if .Values.frontend.autoscaling.enabled }}
+{{- define "predator.hpa" -}}
+{{- $name := index . 0 -}}
+{{- $values := index . 1 -}}
+{{- $fullname := index . 2 -}}
+{{- $labels := index . 3 -}}
+{{- if $values.autoscaling.enabled }}
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ include "predator.fullname" . }}-frontend
+  name: {{ $fullname }}-{{ $name }}
   labels:
-    {{- include "predator.labels" . | nindent 4 }}
-    app: frontend
+    {{- $labels | nindent 4 }}
+    app: {{ $name }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "predator.fullname" . }}-frontend
-  minReplicas: {{ .Values.frontend.autoscaling.minReplicas }}
-  maxReplicas: {{ .Values.frontend.autoscaling.maxReplicas }}
+    name: {{ $fullname }}-{{ $name }}
+  minReplicas: {{ $values.autoscaling.minReplicas }}
+  maxReplicas: {{ $values.autoscaling.maxReplicas }}
   metrics:
     - type: Resource
       resource:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: {{ .Values.frontend.autoscaling.targetCPUUtilizationPercentage }}
+          averageUtilization: {{ $values.autoscaling.targetCPUUtilizationPercentage }}
     - type: Resource
       resource:
         name: memory
@@ -44,3 +49,10 @@ spec:
           periodSeconds: 30
       selectPolicy: Max
 {{- end }}
+{{- end }}
+
+{{ include "predator.hpa" (list "frontend" .Values.frontend (include "predator.fullname" .) (include "predator.labels" .)) }}
+---
+{{ include "predator.hpa" (list "core-api" .Values.coreApi (include "predator.fullname" .) (include "predator.labels" .)) }}
+---
+{{ include "predator.hpa" (list "ingestion-worker" .Values.ingestionWorker (include "predator.fullname" .) (include "predator.labels" .)) }}

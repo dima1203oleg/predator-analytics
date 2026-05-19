@@ -1,26 +1,82 @@
-# NVIDIA Server spec values (v60.5-ELITE Full Stack)
-# Focus: Full Deployment (Backend, Databases, Ingress, Frontend, and AI Gateway)
+# NVIDIA Server spec values (v61.0-ELITE Production-Grade)
+# Focus: Production Deployment (Backend, Databases, Ingress, Frontend, AI Gateway, Observability)
+# Виправлено: persistence, HPA, ingress, redis, monitoring, security hardening
 
 global:
-  # nip.io DNS wildcard: 194.177.1.240.nip.io резолвиться у 194.177.1.240.
-  # Потрібен валідний DNS-host для k8s 1.27 Ingress validator та HTTP-01 ACME.
   domain: "194.177.1.240.nip.io"
   imagePullPolicy: IfNotPresent
+  postgres:
+    host: predator-postgresql
+    port: 5432
+  redis:
+    host: predator-redis-master
+    port: 6379
+  neo4j:
+    host: predator-neo4j
+    port: 7687
+  opensearch:
+    host: opensearch-cluster-master
+    port: 9200
+  qdrant:
+    host: predator-qdrant
+    port: 6333
 
 frontend:
   enabled: true
   replicaCount: 1
   image:
-    # На k3d немає registry — образ імпортується через `k3d image import`.
-    # pullPolicy=Never гарантує використання локального образу без спроби pull.
     pullPolicy: Never
   service:
-    type: LoadBalancer
-    port: 3030 # Запускається на порту 3030
+    type: ClusterIP
+    port: 80
     targetPort: 3030
+  ingress:
+    enabled: true
+    className: traefik
+    annotations:
+      cert-manager.io/cluster-issuer: "letsencrypt-prod"
+      traefik.ingress.kubernetes.io/router.middlewares: "predator-https-redirect@kubernetescrd"
+      traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+    hosts:
+      - host: "{{ .Values.global.domain }}"
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - secretName: predator-tls
+        hosts:
+          - "{{ .Values.global.domain }}"
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 3
+    targetCPUUtilizationPercentage: 70
   env:
-    VITE_API_URL: "http://api.194.177.1.240.nip.io/api/v1"
+    VITE_API_URL: "https://api.194.177.1.240.nip.io/api/v1"
     NODE_ENV: "production"
+  livenessProbe:
+    httpGet:
+      path: /
+      port: 3030
+    initialDelaySeconds: 10
+    periodSeconds: 30
+    timeoutSeconds: 3
+    failureThreshold: 3
+  readinessProbe:
+    httpGet:
+      path: /
+      port: 3030
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    timeoutSeconds: 3
+    failureThreshold: 2
 
 coreApi:
   enabled: true
@@ -28,7 +84,7 @@ coreApi:
   image:
     pullPolicy: Never
   service:
-    type: LoadBalancer
+    type: ClusterIP
     port: 8000
     targetPort: 8000
   resources:
@@ -38,6 +94,35 @@ coreApi:
     requests:
       cpu: 500m
       memory: 512Mi
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 70
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: 8000
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+  readinessProbe:
+    httpGet:
+      path: /ready
+      port: 8000
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    timeoutSeconds: 3
+    failureThreshold: 3
+  startupProbe:
+    httpGet:
+      path: /health
+      port: 8000
+    initialDelaySeconds: 10
+    periodSeconds: 5
+    timeoutSeconds: 3
+    failureThreshold: 12
 
 graphService:
   enabled: true
@@ -51,6 +136,22 @@ graphService:
     requests:
       cpu: 200m
       memory: 256Mi
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: 8001
+    initialDelaySeconds: 30
+    periodSeconds: 30
+    timeoutSeconds: 5
+    failureThreshold: 3
+  readinessProbe:
+    httpGet:
+      path: /health
+      port: 8001
+    initialDelaySeconds: 15
+    periodSeconds: 10
+    timeoutSeconds: 3
+    failureThreshold: 3
 
 ingestionWorker:
   enabled: true
@@ -64,12 +165,36 @@ ingestionWorker:
     requests:
       cpu: 500m
       memory: 512Mi
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 70
+  livenessProbe:
+    httpGet:
+      path: /api/v1/health
+      port: 9100
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+  readinessProbe:
+    httpGet:
+      path: /api/v1/ready
+      port: 9100
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    timeoutSeconds: 3
+    failureThreshold: 3
 
 osintService:
   enabled: true
   replicaCount: 1
   image:
     pullPolicy: Never
+  service:
+    type: ClusterIP
+    port: 9200
   resources:
     limits:
       cpu: 1000m
@@ -77,20 +202,52 @@ osintService:
     requests:
       cpu: 200m
       memory: 256Mi
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: 9200
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+  readinessProbe:
+    httpGet:
+      path: /ready
+      port: 9200
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    timeoutSeconds: 3
+    failureThreshold: 3
 
 postgresql:
   enabled: true
+  global:
+    postgresql:
+      auth:
+        database: predator
+        username: predator
+        password: predator_db_secret
   primary:
+    persistence:
+      enabled: true
+      size: 100Gi
+      storageClass: local-path
     resources:
       limits:
         cpu: 1000m
-        memory: 1Gi
+        memory: 2Gi
       requests:
         cpu: 200m
         memory: 512Mi
 
 neo4j:
   enabled: true
+  neo4j:
+    password: predator_graph_secret
+    name: predator-graph
+  volumes:
+    data:
+      mode: defaultStorageClass
   resources:
     limits:
       cpu: 1500m
@@ -101,18 +258,24 @@ neo4j:
 
 clickhouse:
   enabled: true
+  persistence:
+    enabled: true
+    size: 100Gi
+    storageClass: local-path
   resources:
     limits:
       cpu: 2000m
-      memory: 4Gi
+      memory: 6Gi
     requests:
       cpu: 500m
-      memory: 1Gi
+      memory: 2Gi
 
 opensearch:
   enabled: true
-  # OpenSearch 2.12+ вимагає OPENSEARCH_INITIAL_ADMIN_PASSWORD при першому запуску.
-  # Пароль зберігається у Secret `predator-opensearch-admin` (templates/secret-opensearch.yaml).
+  persistence:
+    enabled: true
+    size: 200Gi
+    storageClass: local-path
   extraEnvs:
     - name: OPENSEARCH_INITIAL_ADMIN_PASSWORD
       valueFrom:
@@ -122,13 +285,31 @@ opensearch:
   resources:
     limits:
       cpu: 2000m
-      memory: 4Gi
+      memory: 8Gi
     requests:
       cpu: 500m
-      memory: 1Gi
+      memory: 2Gi
 
 qdrant:
   enabled: true
+  persistence:
+    enabled: true
+    size: 100Gi
+    storageClass: local-path
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+    requests:
+      cpu: 200m
+      memory: 512Mi
+
+minio:
+  enabled: true
+  persistence:
+    enabled: true
+    size: 500Gi
+    storageClass: local-path
   resources:
     limits:
       cpu: 1000m
@@ -137,16 +318,31 @@ qdrant:
       cpu: 200m
       memory: 256Mi
 
-minio:
+redis:
   enabled: true
-  resources:
-    limits:
-      cpu: 500m
-      memory: 512Mi
+  architecture: standalone
+  auth:
+    enabled: true
+    password: predator_redis_secret
+  master:
+    persistence:
+      enabled: true
+      size: 10Gi
+      storageClass: local-path
+    resources:
+      limits:
+        cpu: 500m
+        memory: 1Gi
+      requests:
+        cpu: 100m
+        memory: 256Mi
 
 litellm:
   enabled: true
   replicaCount: 1
+  service:
+    type: ClusterIP
+    port: 4000
   resources:
     limits:
       cpu: 1000m
@@ -154,9 +350,53 @@ litellm:
     requests:
       cpu: 200m
       memory: 256Mi
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: 4000
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+  readinessProbe:
+    httpGet:
+      path: /health
+      port: 4000
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    timeoutSeconds: 3
+    failureThreshold: 3
 
 ollama:
-  enabled: false # Не вмикаємо локальну Ollama, оскільки використовуємо хмарні моделі / сервіси
+  enabled: false
 
 monitoring:
-  enabled: false
+  enabled: true
+  prometheus:
+    enabled: true
+    retention: 30d
+  grafana:
+    enabled: true
+    adminPassword: ""
+  loki:
+    enabled: true
+  serviceMonitor:
+    enabled: true
+    interval: 30s
+    path: /metrics
+  prometheusRule:
+    enabled: true
+
+security:
+  networkPolicy:
+    enabled: true
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    fsGroup: 2000
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
