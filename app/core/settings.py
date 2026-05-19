@@ -40,8 +40,10 @@ class Settings(BaseSettings):
 
     # ── База даних (PostgreSQL SSOT) ──────────────────────────
     DATABASE_URL: str = "postgresql+asyncpg://predator:devpassword@localhost/predator"
+    DATABASE_READ_URL: str = ""
     DATABASE_POOL_SIZE: int = 20
     DATABASE_MAX_OVERFLOW: int = 10
+    PGBOUNCER_ENABLED: bool = False
 
     # ── ClickHouse (OLAP Analytics) ──────────────────────────
     CLICKHOUSE_HOST: str = "localhost"

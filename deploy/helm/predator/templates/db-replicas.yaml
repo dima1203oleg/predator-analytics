@@ -1,0 +1,119 @@
+{{- if .Values.database.replicas.enabled }}
+# PostgreSQL Read Replicas через pgpool-II
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "predator.fullname" . }}-pgpool-config
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: pgpool
+data:
+  pgpool.conf: |
+    listen_addresses = '*'
+    port = 5433
+    backend_hostname0 = '{{ include "predator.fullname" . }}-postgresql'
+    backend_port0 = 5432
+    backend_weight0 = 1
+    backend_flag0 = 'ALWAYS_PRIMARY'
+    {{- range $i := until (int .Values.database.replicas.count) }}
+    backend_hostname{{ add $i 1 }} = '{{ include "predator.fullname" $ }}-postgresql-read-{{ add $i 1 }}'
+    backend_port{{ add $i 1 }} = 5432
+    backend_weight{{ add $i 1 }} = 1
+    backend_flag{{ add $i 1 }} = 'DISALLOW_TO_FAILOVER'
+    {{- end }}
+    num_init_children = 32
+    max_pool = 4
+    child_life_time = 300
+    connection_life_time = 0
+    client_idle_limit = 0
+    log_connections = on
+    log_disconnections = on
+    load_balance_mode = on
+    master_slave_mode = on
+    master_slave_sub_mode = 'stream'
+    sr_check_period = 10
+    sr_check_user = 'repmgr'
+    health_check_period = 10
+    health_check_user = 'repmgr'
+    failover_on_backend_error = off
+    memory_cache_enabled = on
+    memqcache_method = 'shmem'
+    memqcache_total_size = 67108864
+    memqcache_max_num_cache = 1000000
+    memqcache_expire = 3600
+    memqcache_auto_cache_invalidation = on
+    memqcache_maxcache = 409600
+    memqcache_cache_block_size = 1048576
+    white_function_list = 'now,current_timestamp,random'
+    black_function_list = 'nextval,setval'
+---
+# ClickHouse Materialized Views для топ-10 dashboards
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "predator.fullname" . }}-ch-materialized-views
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: ch-views
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "7"
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: create-views
+          image: clickhouse/clickhouse-client:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              clickhouse-client --host={{ include "predator.fullname" . }}-clickhouse --port=8123 <<'SQL'
+              -- Daily aggregation view
+              CREATE MATERIALIZED VIEW IF NOT EXISTS predator.daily_imports_mv
+              ENGINE = SummingMergeTree()
+              ORDER BY (date, country, hs_code)
+              POPULATE
+              AS SELECT
+                toDate(timestamp) AS date,
+                origin_country AS country,
+                hs_code,
+                count() AS import_count,
+                sum(declared_value_usd) AS total_value,
+                sum(weight_kg) AS total_weight,
+                avg(risk_score) AS avg_risk
+              FROM predator.imports
+              GROUP BY date, country, hs_code;
+
+              -- Company risk aggregation
+              CREATE MATERIALIZED VIEW IF NOT EXISTS predator.company_risk_mv
+              ENGINE = AggregatingMergeTree()
+              ORDER BY company_id
+              POPULATE
+              AS SELECT
+                company_id,
+                maxState(risk_score) AS max_risk,
+                avgState(risk_score) AS avg_risk,
+                countState() AS total_imports,
+                sumState(declared_value_usd) AS total_value
+              FROM predator.imports
+              GROUP BY company_id;
+
+              -- Country risk trends
+              CREATE MATERIALIZED VIEW IF NOT EXISTS predator.country_risk_trends_mv
+              ENGINE = AggregatingMergeTree()
+              ORDER BY (date, country)
+              POPULATE
+              AS SELECT
+                toStartOfWeek(timestamp) AS date,
+                origin_country AS country,
+                avgState(risk_score) AS avg_risk,
+                countState() AS imports_count,
+                quantileState(0.95)(risk_score) AS p95_risk
+              FROM predator.imports
+              GROUP BY date, country;
+              SQL
+              echo "ClickHouse materialized views створено."
+{{- end }}

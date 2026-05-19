@@ -1,0 +1,9 @@
+# mise.toml — керування версіями інструментів для PREDATOR Analytics
+[tools]
+python = "3.12"
+node = "20"
+java = "temurin-17"
+
+[env]
+PYTHONPATH = "."
+NODE_ENV = "development"

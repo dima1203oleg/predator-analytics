@@ -29,6 +29,16 @@ repos:
         args: ["--fix=lf"]
 
   # ─────────────────────────────────────────────────────────────────────────────
+  # PYTHON - MYPY (Type Checking)
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.11.0
+    hooks:
+      - id: mypy
+        name: mypy
+        args: ["--config-file", "mypy.ini", "--no-strict-optional"]
+        exclude: "^(migrations|alembic|tests)/"
+        additional_dependencies: [pydantic, sqlalchemy, types-redis]
+
   # PYTHON - RUFF (Linting & Formatting)
   # ─────────────────────────────────────────────────────────────────────────────
   - repo: https://github.com/astral-sh/ruff-pre-commit

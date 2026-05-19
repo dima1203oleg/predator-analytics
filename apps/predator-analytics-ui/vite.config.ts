@@ -1,6 +1,7 @@
 import path from 'path'
 import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
+import { VitePWA } from 'vite-plugin-pwa'
 // @ts-ignore
 import { mockApiHandler } from './mock-api-server.mjs'
 
@@ -10,7 +11,46 @@ export default defineConfig(({ mode }) => {
   const proxyTarget = env.VITE_BACKEND_PROXY_TARGET || 'http://127.0.0.1:8001';
 
   return {
-    plugins: [react()],
+    plugins: [
+      react(),
+      VitePWA({
+        registerType: 'autoUpdate',
+        workbox: {
+          globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+          runtimeCaching: [
+            {
+              urlPattern: /^https:\/\/.*\.nip\.io\/api\/.*/i,
+              handler: 'NetworkFirst',
+              options: {
+                cacheName: 'api-cache',
+                expiration: { maxEntries: 100, maxAgeSeconds: 300 },
+              },
+            },
+            {
+              urlPattern: /\.(png|jpg|jpeg|svg|gif|webp|avif)$/,
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'image-cache',
+                expiration: { maxEntries: 200, maxAgeSeconds: 604800 },
+              },
+            },
+          ],
+        },
+        manifest: {
+          name: 'PREDATOR Analytics',
+          short_name: 'PREDATOR',
+          description: 'OSINT митна аналітика України',
+          theme_color: '#0a0a0f',
+          background_color: '#0a0a0f',
+          display: 'standalone',
+          orientation: 'landscape',
+          icons: [
+            { src: '/favicon-192.png', sizes: '192x192', type: 'image/png' },
+            { src: '/favicon-512.png', sizes: '512x512', type: 'image/png' },
+          ],
+        },
+      }),
+    ],
     base: './',
 
     resolve: {
@@ -47,11 +87,18 @@ export default defineConfig(({ mode }) => {
     },
 
     build: {
-      chunkSizeWarningLimit: 10000,
+      chunkSizeWarningLimit: 500,
       rollupOptions: {
         output: {
           format: 'es',
-          inlineDynamicImports: true,
+          manualChunks: {
+            'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+            'vendor-cytoscape': ['cytoscape'],
+            'vendor-recharts': ['recharts'],
+            'vendor-tanstack': ['@tanstack/react-query', '@tanstack/react-table'],
+            'vendor-ui': ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-tooltip'],
+            'vendor-three': ['three', '@react-three/fiber', '@react-three/drei'],
+          },
         }
       },
       sourcemap: false,

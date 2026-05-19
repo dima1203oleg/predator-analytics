@@ -494,6 +494,16 @@ security:
     capabilities:
       drop:
         - ALL
+  zeroTrust:
+    enabled: true
+    spire:
+      enabled: false
+    opa:
+      enabled: true
+    falco:
+      enabled: true
+    trivy:
+      enabled: true
   resourceQuota:
     enabled: true
     hard:
@@ -607,6 +617,9 @@ database:
     pgSchedule: "0 3 * * *"
     chSchedule: "0 4 * * *"
     storage: 50Gi
+  replicas:
+    enabled: true
+    count: 2
 
 externalDns:
   enabled: false
@@ -620,3 +633,38 @@ externalDns:
 
 healthAggregator:
   enabled: true
+
+cicd:
+  argoRollouts:
+    enabled: true
+  cosign:
+    enabled: true
+  renovate:
+    enabled: true
+
+pgbouncer:
+  enabled: true
+  poolSize: 25
+  minPoolSize: 5
+  reservePoolSize: 5
+  maxDbConnections: 50
+  maxUserConnections: 50
+  pgPassword: "devpassword"
+
+costOptimization:
+  enabled: true
+  kubecost: true
+  karpenter: true
+  vpa: true
+
+testing:
+  enabled: true
+  locust: true
+  chaosMesh: true
+  pact: true
+
+performance:
+  enabled: true
+  http3: true
+  brotli: true
+  tls13: true

@@ -1,10 +1,9 @@
 # ═══════════════════════════════════════════════════════════════
-# 🪐 Backstage System Catalog (Architecture Topology)
-# PREDATOR Analytics Components Registration
+# 🪐 Backstage System Catalog v63.0-ELITE
+# PREDATOR Analytics — повна архітектурна топологія
 # ═══════════════════════════════════════════════════════════════
 
 ---
-# 1. Загальна система
 apiVersion: backstage.io/v1alpha1
 kind: System
 metadata:
@@ -14,54 +13,154 @@ spec:
   owner: dima1203oleg
 
 ---
-# 2. Core API
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: core-api
-  description: Головний FastAPI Backend для UI та авторизації
+  description: Головний FastAPI Backend (async-first, pgbouncer, read replicas)
   links:
-    - title: Swagger Swagger UI
+    - title: Swagger UI
       url: http://localhost:8000/docs
-    - title: Prometheus Metrics
-      url: http://localhost:8000/metrics
+    - title: GraphQL Playground
+      url: http://localhost:8000/graphql
   annotations:
     github.com/project-slug: dima1203oleg/predator-analytics
-    argocd/app-name: predator-v55
-    prometheus.io/rule: http_requests_total
+    argocd/app-name: predator
 spec:
   type: service
   lifecycle: production
   owner: dima1203oleg
   system: predator-analytics
+  providesApis:
+    - predator-core-api
+  dependsOn:
+    - resource:predator-postgresql
+    - resource:predator-redis
+    - resource:predator-kafka
 
 ---
-# 3. Cerebro (LLM / ML Inference)
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: cerebro-ml
-  description: ML мікросервіс для NLP та семантичного аналізу з використанням GPU
-  annotations:
-    qdrant.io/collection: "customs_vectors"
-    gpu.nvidia.com/class: "a100"
+  name: graph-service
+  description: Neo4j GDS алгоритми (Louvain, PageRank, Node2Vec)
 spec:
   type: service
   lifecycle: production
   owner: dima1203oleg
   system: predator-analytics
+  dependsOn:
+    - resource:predator-neo4j
 
 ---
-# 4. Ingestion Worker
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: ingestion-worker
-  description: Kafka-base ETL Worker для обробки митних декларацій та індексів OpenSearch
-  annotations:
-    kafka.apache.org/topic: "customs-data-raw"
+  description: Kafka ETL Worker (Avro + Schema Registry)
 spec:
   type: worker
   lifecycle: production
   owner: dima1203oleg
   system: predator-analytics
+  dependsOn:
+    - resource:predator-kafka
+    - resource:predator-clickhouse
+    - resource:predator-opensearch
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: litellm
+  description: AI Gateway (LiteLLM) з семантичним кешем
+spec:
+  type: service
+  lifecycle: production
+  owner: dima1203oleg
+  system: predator-analytics
+  dependsOn:
+    - resource:predator-qdrant
+    - resource:predator-redis
+
+---
+# ── Resources (Бази даних) ──────────────────────────────────
+
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: predator-postgresql
+  description: PostgreSQL 16 — SSOT (метадані, транзакції, RLS, WORM)
+spec:
+  type: database
+  owner: dima1203oleg
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: predator-neo4j
+  description: Neo4j 5 — Graph DB (схеми власності, фрод-ланцюжки)
+spec:
+  type: database
+  owner: dima1203oleg
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: predator-clickhouse
+  description: ClickHouse — OLAP (агрегації, materialized views)
+spec:
+  type: database
+  owner: dima1203oleg
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: predator-opensearch
+  description: OpenSearch 2.12 — Full-text + Hybrid search (BM25+Vector)
+spec:
+  type: database
+  owner: dima1203oleg
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: predator-qdrant
+  description: Qdrant 1.8 — Vector memory (embeddings, semantic cache)
+spec:
+  type: database
+  owner: dima1203oleg
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: predator-redis
+  description: Redis 7 — Cache + queues + sessions
+spec:
+  type: database
+  owner: dima1203oleg
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: predator-minio
+  description: MinIO — S3 storage (документи, скани, моделі)
+spec:
+  type: storage
+  owner: dima1203oleg
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: predator-kafka
+  description: Kafka (KRaft) — Event streaming (9 topics)
+spec:
+  type: message-broker
+  owner: dima1203oleg

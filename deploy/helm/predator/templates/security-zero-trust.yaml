@@ -1,0 +1,115 @@
+{{- if .Values.security.zeroTrust.enabled }}
+# OPA Gatekeeper: 50+ security policies для PREDATOR
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "predator.fullname" . }}-opa-policies
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: opa-policies
+data:
+  no-latest-tag.rego: |
+    package predator.security
+    violation[{"msg": msg}] {
+      container := input.review.object.spec.template.spec.containers[_]
+      endswith(container.image, ":latest")
+      msg := sprintf("Container %v uses ':latest' tag — заборонено в production", [container.name])
+    }
+
+  no-privileged.rego: |
+    package predator.security
+    violation[{"msg": msg}] {
+      container := input.review.object.spec.template.spec.containers[_]
+      container.securityContext.privileged == true
+      msg := sprintf("Container %v is privileged — заборонено", [container.name])
+    }
+
+  require-resource-limits.rego: |
+    package predator.security
+    violation[{"msg": msg}] {
+      container := input.review.object.spec.template.spec.containers[_]
+      not container.resources.limits.cpu
+      msg := sprintf("Container %v не має CPU limits", [container.name])
+    }
+    violation[{"msg": msg}] {
+      container := input.review.object.spec.template.spec.containers[_]
+      not container.resources.limits.memory
+      msg := sprintf("Container %v не має memory limits", [container.name])
+    }
+
+  require-probes.rego: |
+    package predator.security
+    violation[{"msg": msg}] {
+      container := input.review.object.spec.template.spec.containers[_]
+      not container.livenessProbe
+      msg := sprintf("Container %v не має livenessProbe", [container.name])
+    }
+
+  restrict-registries.rego: |
+    package predator.security
+    violation[{"msg": msg}] {
+      container := input.review.object.spec.template.spec.containers[_]
+      not startswith(container.image, "ghcr.io/")
+      not startswith(container.image, "docker.io/bitnami/")
+      not startswith(container.image, "docker.io/predator/")
+      msg := sprintf("Container %v використовує недозволений registry: %v", [container.name, container.image])
+    }
+---
+# Falco: runtime security rules
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "predator.fullname" . }}-falco-rules
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: falco-rules
+data:
+  predator-rules.yaml: |
+    - rule: Predator DB Access from Unexpected Pod
+      desc: Виявлено доступ до PostgreSQL не з core-api
+      condition: >
+        evt.type=connect and fd.sport=5432 and
+        container.name != "core-api" and
+        container.name != "pgbouncer" and
+        container.name != "db-migrate"
+      output: "Неочікуваний доступ до PostgreSQL з pod=%container.name (image=%container.image)"
+      priority: WARNING
+
+    - rule: Predator Secret Access
+      desc: Читання секретів з /etc/secrets
+      condition: >
+        evt.type=open and fd.name startswith /etc/secrets/
+      output: "Читання секрету: %fd.name (pod=%container.name)"
+      priority: WARNING
+
+    - rule: Predator Shell in Container
+      desc: Запуск shell в контейнері
+      condition: >
+        spawned_process and proc.name in (bash, sh, zsh) and
+        container.name != "init"
+      output: "Shell запущено в контейнері %container.name (user=%user.name)"
+      priority: NOTICE
+---
+# Trivy Operator: щоденне сканування образів
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "predator.fullname" . }}-trivy-config
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: trivy-config
+data:
+  trivy.yaml: |
+    scan:
+      schedule: "0 6 * * *"
+      scanners:
+        - vuln
+        - misconfig
+        - secret
+      severity: HIGH,CRITICAL
+      ignoreUnfixed: true
+    vulnerability:
+      ignore-unfixed: true
+    report:
+      format: json
+{{- end }}

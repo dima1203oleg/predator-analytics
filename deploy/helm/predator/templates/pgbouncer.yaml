@@ -1,0 +1,43 @@
+{{- if .Values.pgbouncer.enabled }}
+# PgBouncer Sidecar для Core API — transaction pooling (1000+ з'єднань)
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "predator.fullname" . }}-pgbouncer-config
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: pgbouncer
+data:
+  pgbouncer.ini: |
+    [databases]
+    predator = host={{ include "predator.fullname" . }}-postgresql port=5432 dbname=predator
+
+    [pgbouncer]
+    listen_addr = 0.0.0.0
+    listen_port = 6432
+    auth_type = md5
+    auth_file = /etc/pgbouncer/userlist.txt
+    pool_mode = transaction
+    max_client_conn = 1000
+    default_pool_size = {{ .Values.pgbouncer.poolSize | default 25 }}
+    min_pool_size = {{ .Values.pgbouncer.minPoolSize | default 5 }}
+    reserve_pool_size = {{ .Values.pgbouncer.reservePoolSize | default 5 }}
+    reserve_pool_timeout = 3
+    max_db_connections = {{ .Values.pgbouncer.maxDbConnections | default 50 }}
+    max_user_connections = {{ .Values.pgbouncer.maxUserConnections | default 50 }}
+    server_idle_timeout = 600
+    server_lifetime = 3600
+    server_connect_timeout = 15
+    client_idle_timeout = 0
+    query_wait_timeout = 120
+    stats_period = 60
+    log_connections = 1
+    log_disconnections = 1
+    verbose = 1
+    admin_users = predator_admin
+    stats_users = predator_admin
+
+  userlist.txt: |
+    "predator" "{{ .Values.pgbouncer.pgPassword | default "devpassword" }}"
+    "predator_admin" "{{ .Values.pgbouncer.pgPassword | default "devpassword" }}"
+{{- end }}
