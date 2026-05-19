@@ -43,6 +43,7 @@ import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { useDashboardOverview, useDashboardAlerts } from '@/hooks/useDashboard';
 import { getVisibleNavigation, navAccentStyles } from '@/config/navigation';
 import { cn } from '@/utils/cn';
+import { ThermalCard } from '@/components/polish/ThermalCard';
 
 // Premium Components
 import { NeuralPulse } from '@/components/ui/NeuralPulse';
@@ -268,9 +269,9 @@ export default function ExecutiveBoardView() {
                 <motion.div
                   key={section.id}
                   variants={scaleIn}
-                  className="group relative rounded-3xl border border-white/5 bg-black/40  p-6 transition-all duration-500 hover:border-rose-500/30 hover:bg-black/60 shadow-xl overflow-hidden"
                   whileHover={{ y: -5 }}
                 >
+                  <ThermalCard className="group shadow-xl">
                   <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none" />
                   
                   {/* Section Header */}
@@ -310,6 +311,7 @@ export default function ExecutiveBoardView() {
                   <div className="absolute -right-2 -bottom-2 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
                      <SectionIcon size={80} />
                   </div>
+                  </ThermalCard>
                 </motion.div>
               );
             })}
