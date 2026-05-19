@@ -289,6 +289,12 @@ opensearch:
     requests:
       cpu: 500m
       memory: 2Gi
+  ilm:
+    enabled: true
+    hotAge: "7d"
+    warmAge: "30d"
+    coldAge: "90d"
+    logsAge: "7d"
 
 qdrant:
   enabled: true
@@ -455,3 +461,59 @@ security:
     capabilities:
       drop:
         - ALL
+
+argocd:
+  enabled: true
+  appName: predator
+  namespace: argocd
+  project: predator
+  repoURL: "https://github.com/dima1203oleg/predator-analytics.git"
+  targetRevision: main
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: predator
+  syncPolicy:
+    prune: true
+    selfHeal: true
+
+sealedSecrets:
+  enabled: true
+  encrypted:
+    databaseUrl: "AgAAAAAA..."
+    redisUrl: "AgAAAAAA..."
+    neo4jPassword: "AgAAAAAA..."
+    opensearchPassword: "AgAAAAAA..."
+    minioAccessKey: "AgAAAAAA..."
+    minioSecretKey: "AgAAAAAA..."
+    jwtSecret: "AgAAAAAA..."
+    secretKey: "AgAAAAAA..."
+    youcontrolApiKey: "AgAAAAAA..."
+    geminiApiKey: "AgAAAAAA..."
+
+serviceMesh:
+  enabled: false
+  type: linkerd
+  mtls: true
+  autoInject: true
+
+otel:
+  enabled: true
+  collector:
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+  tempo:
+    enabled: true
+    resources:
+      limits:
+        cpu: 500m
+        memory: 1Gi
+      requests:
+        cpu: 100m
+        memory: 256Mi
+  loki:
+    enabled: true

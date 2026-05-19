@@ -1,0 +1,137 @@
+{{- if .Values.serviceMesh.enabled }}
+# Linkerd Service Mesh конфігурація для PREDATOR
+# Встановлення: linkerd install | kubectl apply -f -
+# Анотації для автоматичного sidecar injection
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "predator.fullname" . }}-linkerd-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: linkerd-config
+  annotations:
+    linkerd.io/inject: enabled
+data:
+  # Налаштування mTLS, retries, timeouts для PREDATOR сервісів
+  service-profiles: |
+    # Core API
+    - apiVersion: linkerd.io/v1alpha2
+      kind: ServiceProfile
+      metadata:
+        name: {{ include "predator.fullname" . }}-core-api.{{ .Release.Namespace }}.svc.cluster.local
+      spec:
+        routes:
+          - name: health
+            condition:
+              pathRegex: /health
+              method: GET
+            isRetryable: false
+          - name: api-v1
+            condition:
+              pathRegex: /api/v1/.*
+            isRetryable: true
+            timeout: 30s
+        retryBudget:
+          retryRatio: 0.2
+          minRetriesPerSecond: 3
+          ttl: 10s
+
+    # Graph Service
+    - apiVersion: linkerd.io/v1alpha2
+      kind: ServiceProfile
+      metadata:
+        name: {{ include "predator.fullname" . }}-graph-service.{{ .Release.Namespace }}.svc.cluster.local
+      spec:
+        routes:
+          - name: health
+            condition:
+              pathRegex: /health
+              method: GET
+            isRetryable: false
+          - name: graph-queries
+            condition:
+              pathRegex: /api/v1/graph/.*
+            isRetryable: true
+            timeout: 60s
+        retryBudget:
+          retryRatio: 0.2
+          minRetriesPerSecond: 3
+          ttl: 10s
+
+    # OSINT Service
+    - apiVersion: linkerd.io/v1alpha2
+      kind: ServiceProfile
+      metadata:
+        name: {{ include "predator.fullname" . }}-osint-service.{{ .Release.Namespace }}.svc.cluster.local
+      spec:
+        routes:
+          - name: health
+            condition:
+              pathRegex: /health
+              method: GET
+            isRetryable: false
+          - name: osint-queries
+            condition:
+              pathRegex: /api/v1/osint/.*
+            isRetryable: true
+            timeout: 45s
+        retryBudget:
+          retryRatio: 0.2
+          minRetriesPerSecond: 3
+          ttl: 10s
+
+    # LiteLLM AI Gateway
+    - apiVersion: linkerd.io/v1alpha2
+      kind: ServiceProfile
+      metadata:
+        name: {{ include "predator.fullname" . }}-litellm.{{ .Release.Namespace }}.svc.cluster.local
+      spec:
+        routes:
+          - name: health
+            condition:
+              pathRegex: /health
+              method: GET
+            isRetryable: false
+          - name: llm-completions
+            condition:
+              pathRegex: /v1/chat/completions
+              method: POST
+            isRetryable: false
+            timeout: 120s
+        retryBudget:
+          retryRatio: 0.1
+          minRetriesPerSecond: 1
+          ttl: 10s
+---
+# Circuit Breaker для зовнішніх API (OSINT connectors)
+apiVersion: policy.linkerd.io/v1alpha1
+kind: Server
+metadata:
+  name: {{ include "predator.fullname" . }}-osint-server
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app: osint-service
+  port: 9200
+  proxyProtocol: HTTP/1
+---
+apiVersion: policy.linkerd.io/v1alpha1
+kind: ServerAuthorization
+metadata:
+  name: {{ include "predator.fullname" . }}-osint-authz
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+spec:
+  server:
+    name: {{ include "predator.fullname" . }}-osint-server
+  client:
+    meshTLS:
+      identities:
+        - {{ include "predator.fullname" . }}-core-api.{{ .Release.Namespace }}.serviceaccount.identity.linkerd.cluster.local
+        - {{ include "predator.fullname" . }}-ingestion-worker.{{ .Release.Namespace }}.serviceaccount.identity.linkerd.cluster.local
+{{- end }}

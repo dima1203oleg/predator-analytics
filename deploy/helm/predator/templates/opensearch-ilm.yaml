@@ -1,0 +1,166 @@
+{{- if and .Values.opensearch.enabled .Values.opensearch.ilm.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "predator.fullname" . }}-opensearch-ilm-setup
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: opensearch-ilm-setup
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    metadata:
+      labels:
+        app: opensearch-ilm-setup
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: ilm-setup
+          image: curlimages/curl:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -e
+              OPENSEARCH_URL="{{ .Values.opensearch.ilm.opensearchUrl | default (printf "http://%s:%d" .Values.global.opensearch.host (int .Values.global.opensearch.port)) }}"
+
+              echo "Налаштування ILM політик для OpenSearch..."
+
+              # Політика: hot-warm-cold-delete
+              curl -s -X PUT "${OPENSEARCH_URL}/_plugins/_ism/policies/predator-hot-warm-cold" \
+                -H "Content-Type: application/json" \
+                -u "${OPENSEARCH_USER:-admin}:${OPENSEARCH_PASS:-admin}" \
+                -d '{
+                "policy": {
+                  "description": "PREDATOR ILM: hot→warm→cold→delete",
+                  "default_state": "hot",
+                  "states": [
+                    {
+                      "name": "hot",
+                      "actions": [
+                        {
+                          "replica_count": {
+                            "number_of_replicas": 1
+                          }
+                        }
+                      ],
+                      "transitions": [
+                        {
+                          "state_name": "warm",
+                          "conditions": {
+                            "min_index_age": "{{ .Values.opensearch.ilm.hotAge | default "7d" }}"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "name": "warm",
+                      "actions": [
+                        {
+                          "replica_count": {
+                            "number_of_replicas": 0
+                          }
+                        },
+                        {
+                          "force_merge": {
+                            "max_num_segments": 1
+                          }
+                        }
+                      ],
+                      "transitions": [
+                        {
+                          "state_name": "cold",
+                          "conditions": {
+                            "min_index_age": "{{ .Values.opensearch.ilm.warmAge | default "30d" }}"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "name": "cold",
+                      "actions": [
+                        {
+                          "freeze": {}
+                        }
+                      ],
+                      "transitions": [
+                        {
+                          "state_name": "delete",
+                          "conditions": {
+                            "min_index_age": "{{ .Values.opensearch.ilm.coldAge | default "90d" }}"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "name": "delete",
+                      "actions": [
+                        {
+                          "delete": {}
+                        }
+                      ],
+                      "transitions": []
+                    }
+                  ],
+                  "ism_template": {
+                    "index_patterns": ["predator-*"],
+                    "priority": 100
+                  }
+                }
+              }'
+
+              # Політика: коротке життя для логів
+              curl -s -X PUT "${OPENSEARCH_URL}/_plugins/_ism/policies/predator-logs-short" \
+                -H "Content-Type: application/json" \
+                -u "${OPENSEARCH_USER:-admin}:${OPENSEARCH_PASS:-admin}" \
+                -d '{
+                "policy": {
+                  "description": "PREDATOR ILM: коротке життя для логів (7d hot → delete)",
+                  "default_state": "hot",
+                  "states": [
+                    {
+                      "name": "hot",
+                      "actions": [],
+                      "transitions": [
+                        {
+                          "state_name": "delete",
+                          "conditions": {
+                            "min_index_age": "{{ .Values.opensearch.ilm.logsAge | default "7d" }}"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "name": "delete",
+                      "actions": [
+                        {
+                          "delete": {}
+                        }
+                      ],
+                      "transitions": []
+                    }
+                  ],
+                  "ism_template": {
+                    "index_patterns": ["predator-logs-*"],
+                    "priority": 200
+                  }
+                }
+              }'
+
+              echo "ILM політики налаштовано успішно."
+          env:
+            - name: OPENSEARCH_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-opensearch-admin
+                  key: username
+                  optional: true
+            - name: OPENSEARCH_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-opensearch-admin
+                  key: password
+{{- end }}

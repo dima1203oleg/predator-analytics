@@ -1,0 +1,285 @@
+{{- if .Values.otel.enabled }}
+# OpenTelemetry Collector для PREDATOR distributed tracing
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "predator.fullname" . }}-otel-collector
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: otel-collector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "predator.selectorLabels" . | nindent 6 }}
+      app: otel-collector
+  template:
+    metadata:
+      labels:
+        {{- include "predator.selectorLabels" . | nindent 8 }}
+        app: otel-collector
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8888"
+    spec:
+      priorityClassName: {{ include "predator.priorityClassName" (list $ "predator-low") }}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+      containers:
+        - name: otel-collector
+          image: otel/opentelemetry-collector-contrib:0.96.0
+          ports:
+            - name: otlp-grpc
+              containerPort: 4317
+              protocol: TCP
+            - name: otlp-http
+              containerPort: 4318
+              protocol: TCP
+            - name: metrics
+              containerPort: 8888
+              protocol: TCP
+          env:
+            - name: TEMPO_ENDPOINT
+              value: "http://{{ include "predator.fullname" . }}-tempo:4317"
+          resources:
+            {{- toYaml .Values.otel.collector.resources | nindent 12 }}
+          volumeMounts:
+            - name: config
+              mountPath: /etc/otelcol-contrib/config.yaml
+              subPath: config.yaml
+              readOnly: true
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 13133
+            initialDelaySeconds: 15
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 13133
+            initialDelaySeconds: 5
+            periodSeconds: 10
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "predator.fullname" . }}-otel-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "predator.fullname" . }}-otel-collector
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: otel-collector
+spec:
+  type: ClusterIP
+  ports:
+    - name: otlp-grpc
+      port: 4317
+      targetPort: 4317
+      protocol: TCP
+    - name: otlp-http
+      port: 4318
+      targetPort: 4318
+      protocol: TCP
+    - name: metrics
+      port: 8888
+      targetPort: 8888
+      protocol: TCP
+  selector:
+    {{- include "predator.selectorLabels" . | nindent 4 }}
+    app: otel-collector
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "predator.fullname" . }}-otel-config
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: otel-config
+data:
+  config.yaml: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: 0.0.0.0:4317
+          http:
+            endpoint: 0.0.0.0:4318
+
+    processors:
+      batch:
+        timeout: 5s
+        send_batch_size: 1024
+      memory_limiter:
+        check_interval: 1s
+        limit_mib: 256
+      filter:
+        error_mode: ignore
+        traces:
+          span:
+            - 'attributes["http.target"] == "/health"'
+            - 'attributes["http.target"] == "/ready"'
+            - 'attributes["http.target"] == "/metrics"'
+
+    exporters:
+      prometheus:
+        endpoint: "0.0.0.0:8888"
+        namespace: predator
+      logging:
+        loglevel: warn
+      {{- if .Values.otel.tempo.enabled }}
+      otlp/tempo:
+        endpoint: "{{ include "predator.fullname" . }}-tempo:4317"
+        tls:
+          insecure: true
+      {{- end }}
+      {{- if .Values.otel.loki.enabled }}
+      loki:
+        endpoint: "http://{{ include "predator.fullname" . }}-loki:3100/loki/api/v1/push"
+        default_labels_enabled:
+          exporter: false
+      {{- end }}
+
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: [memory_limiter, filter, batch]
+          exporters: [logging{{- if .Values.otel.tempo.enabled }}, otlp/tempo{{- end }}]
+        metrics:
+          receivers: [otlp]
+          processors: [memory_limiter, batch]
+          exporters: [prometheus, logging]
+        logs:
+          receivers: [otlp]
+          processors: [memory_limiter, batch]
+          exporters: [logging{{- if .Values.otel.loki.enabled }}, loki{{- end }}]
+---
+{{- if .Values.otel.tempo.enabled }}
+# Tempo — distributed tracing backend
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "predator.fullname" . }}-tempo
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: tempo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "predator.selectorLabels" . | nindent 6 }}
+      app: tempo
+  template:
+    metadata:
+      labels:
+        {{- include "predator.selectorLabels" . | nindent 8 }}
+        app: tempo
+    spec:
+      priorityClassName: {{ include "predator.priorityClassName" (list $ "predator-low") }}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+      containers:
+        - name: tempo
+          image: grafana/tempo:2.4.0
+          ports:
+            - name: otlp-grpc
+              containerPort: 4317
+            - name: otlp-http
+              containerPort: 4318
+            - name: tempo-query
+              containerPort: 3200
+          resources:
+            {{- toYaml .Values.otel.tempo.resources | nindent 12 }}
+          volumeMounts:
+            - name: config
+              mountPath: /etc/tempo/tempo.yaml
+              subPath: tempo.yaml
+            - name: data
+              mountPath: /var/tempo
+          livenessProbe:
+            httpGet:
+              path: /ready
+              port: 3200
+            initialDelaySeconds: 15
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 3200
+            initialDelaySeconds: 5
+            periodSeconds: 10
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "predator.fullname" . }}-tempo-config
+        - name: data
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "predator.fullname" . }}-tempo
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: tempo
+spec:
+  type: ClusterIP
+  ports:
+    - name: otlp-grpc
+      port: 4317
+      targetPort: 4317
+    - name: otlp-http
+      port: 4318
+      targetPort: 4318
+    - name: query
+      port: 3200
+      targetPort: 3200
+  selector:
+    {{- include "predator.selectorLabels" . | nindent 4 }}
+    app: tempo
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "predator.fullname" . }}-tempo-config
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: tempo-config
+data:
+  tempo.yaml: |
+    server:
+      http_listen_port: 3200
+
+    distributor:
+      receivers:
+        otlp:
+          protocols:
+            grpc:
+              endpoint: "0.0.0.0:4317"
+            http:
+              endpoint: "0.0.0.0:4318"
+
+    storage:
+      trace:
+        backend: local
+        local:
+          path: /var/tempo/traces
+        wal:
+          path: /var/tempo/wal
+
+    metrics_generator:
+      registry:
+        external_labels:
+          source: tempo
+          cluster: predator
+      storage:
+        path: /var/tempo/generator/wal
+        remote_write:
+          - url: "http://{{ include "predator.fullname" . }}-prometheus:9090/api/v1/write"
+{{- end }}
+{{- end }}

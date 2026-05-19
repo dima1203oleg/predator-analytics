@@ -1,0 +1,84 @@
+{{- if .Values.argocd.enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ .Values.argocd.appName | default "predator" }}
+  namespace: {{ .Values.argocd.namespace | default "argocd" }}
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+  annotations:
+    notifications.argoproj.io/subscribe.on-deployed.slack: predator-deployments
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: {{ .Values.argocd.project | default "predator" }}
+  source:
+    repoURL: {{ .Values.argocd.repoURL | quote }}
+    targetRevision: {{ .Values.argocd.targetRevision | default "main" | quote }}
+    path: deploy/helm/predator
+    helm:
+      valueFiles:
+        - values.yaml
+        - values-nvidia.yaml
+      parameters:
+        - name: global.domain
+          value: {{ .Values.global.domain | quote }}
+  destination:
+    server: {{ .Values.argocd.destination.server | default "https://kubernetes.default.svc" }}
+    namespace: {{ .Values.argocd.destination.namespace | default "predator" }}
+  syncPolicy:
+    automated:
+      prune: {{ .Values.argocd.syncPolicy.prune | default true }}
+      selfHeal: {{ .Values.argocd.syncPolicy.selfHeal | default true }}
+      allowEmpty: false
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+      - RespectIgnoreDifferences=true
+    retry:
+      limit: 3
+      backoff:
+        duration: 30s
+        factor: 2
+        maxDuration: 5m
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: {{ .Values.argocd.project | default "predator" }}
+  namespace: {{ .Values.argocd.namespace | default "argocd" }}
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+spec:
+  description: "PREDATOR Analytics — OSINT митна аналітика"
+  sourceRepos:
+    - {{ .Values.argocd.repoURL | quote }}
+    - "https://charts.bitnami.com/bitnami"
+    - "https://helm.neo4j.com/neo4j"
+    - "https://opensearch-project.github.io/helm-charts"
+    - "https://qdrant.github.io/qdrant-helm"
+    - "https://radondb.github.io/clickhouse-cluster-helm/"
+  destinations:
+    - namespace: {{ .Values.argocd.destination.namespace | default "predator" }}
+      server: {{ .Values.argocd.destination.server | default "https://kubernetes.default.svc" }}
+    - namespace: monitoring
+      server: {{ .Values.argocd.destination.server | default "https://kubernetes.default.svc" }}
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace
+    - group: "storage.k8s.io"
+      kind: StorageClass
+    - group: "scheduling.k8s.io"
+      kind: PriorityClass
+    - group: "apiextensions.k8s.io"
+      kind: CustomResourceDefinition
+  namespaceResourceWhitelist:
+    - group: "*"
+      kind: "*"
+  roles:
+    - name: admin
+      description: "Admin доступ до PREDATOR проекту"
+      policies:
+        - p, proj:{{ .Values.argocd.project | default "predator" }}:admin, applications, *, {{ .Values.argocd.project | default "predator" }}/*, allow
+        - p, proj:{{ .Values.argocd.project | default "predator" }}:admin, repositories, *, *, allow
+{{- end }}
