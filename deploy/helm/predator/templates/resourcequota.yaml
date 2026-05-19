@@ -1,0 +1,54 @@
+{{- if .Values.security.resourceQuota.enabled }}
+# ResourceQuota: обмеження ресурсів для namespace predator
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: {{ include "predator.fullname" . }}-quota
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+spec:
+  hard:
+    # Обчислювальні ресурси
+    requests.cpu: {{ .Values.security.resourceQuota.hard.requestsCpu | default "16" }}
+    requests.memory: {{ .Values.security.resourceQuota.hard.requestsMemory | default "32Gi" }}
+    limits.cpu: {{ .Values.security.resourceQuota.hard.limitsCpu | default "32" }}
+    limits.memory: {{ .Values.security.resourceQuota.hard.limitsMemory | default "64Gi" }}
+    # Об'єкти
+    pods: {{ .Values.security.resourceQuota.hard.pods | default "50" }}
+    services: {{ .Values.security.resourceQuota.hard.services | default "20" }}
+    persistentvolumeclaims: {{ .Values.security.resourceQuota.hard.pvcs | default "20" }}
+    secrets: {{ .Values.security.resourceQuota.hard.secrets | default "30" }}
+    configmaps: {{ .Values.security.resourceQuota.hard.configmaps | default "30" }}
+    # Зберігання
+    requests.storage: {{ .Values.security.resourceQuota.hard.storage | default "2Ti" }}
+---
+# LimitRange: дефолтні ліміти для pod'ів без явних requests/limits
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: {{ include "predator.fullname" . }}-limits
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+spec:
+  limits:
+    - type: Container
+      default:
+        cpu: {{ .Values.security.resourceQuota.defaultLimit.cpu | default "500m" }}
+        memory: {{ .Values.security.resourceQuota.defaultLimit.memory | default "512Mi" }}
+      defaultRequest:
+        cpu: {{ .Values.security.resourceQuota.defaultRequest.cpu | default "100m" }}
+        memory: {{ .Values.security.resourceQuota.defaultRequest.memory | default "128Mi" }}
+      max:
+        cpu: "4"
+        memory: 8Gi
+      min:
+        cpu: 50m
+        memory: 64Mi
+    - type: PersistentVolumeClaim
+      max:
+        storage: 500Gi
+      min:
+        storage: 1Gi
+{{- end }}

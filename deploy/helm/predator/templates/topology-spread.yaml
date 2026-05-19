@@ -1,0 +1,51 @@
+{{- if .Values.topologySpread.enabled }}
+# TopologySpreadConstraints для HA — розподіл pod'ів по зонах/вузлах
+# Застосовується через patches у deployment або напряму
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "predator.fullname" . }}-topology-spread
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+data:
+  # Шаблони TopologySpreadConstraints для кожного сервісу
+  core-api.yaml: |
+    maxSkew: 1
+    topologyKey: kubernetes.io/hostname
+    whenUnsatisfiable: DoNotSchedule
+    labelSelector:
+      matchLabels:
+        app: core-api
+
+  frontend.yaml: |
+    maxSkew: 1
+    topologyKey: kubernetes.io/hostname
+    whenUnsatisfiable: DoNotSchedule
+    labelSelector:
+      matchLabels:
+        app: frontend
+
+  graph-service.yaml: |
+    maxSkew: 1
+    topologyKey: kubernetes.io/hostname
+    whenUnsatisfiable: ScheduleAnyway
+    labelSelector:
+      matchLabels:
+        app: graph-service
+
+  ingestion-worker.yaml: |
+    maxSkew: 1
+    topologyKey: kubernetes.io/hostname
+    whenUnsatisfiable: ScheduleAnyway
+    labelSelector:
+      matchLabels:
+        app: ingestion-worker
+
+  osint-service.yaml: |
+    maxSkew: 1
+    topologyKey: kubernetes.io/hostname
+    whenUnsatisfiable: ScheduleAnyway
+    labelSelector:
+      matchLabels:
+        app: osint-service
+{{- end }}

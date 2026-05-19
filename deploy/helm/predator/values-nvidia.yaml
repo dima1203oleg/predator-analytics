@@ -21,6 +21,15 @@ global:
     host: predator-qdrant
     port: 6333
 
+ingress:
+  enabled: true
+  className: traefik
+  tls:
+    enabled: true
+    issuer: letsencrypt-prod
+    secretName: predator-tls
+    email: "admin@predator.analytics"
+
 frontend:
   enabled: true
   replicaCount: 1
@@ -439,12 +448,14 @@ monitoring:
   grafana:
     enabled: true
     adminPassword: ""
+    dashboards:
+      enabled: true
   loki:
     enabled: true
   serviceMonitor:
     enabled: true
     interval: 30s
-    path: /metrics
+  prometheusRelease: predator
   prometheusRule:
     enabled: true
 
@@ -461,6 +472,25 @@ security:
     capabilities:
       drop:
         - ALL
+  resourceQuota:
+    enabled: true
+    hard:
+      requestsCpu: "16"
+      requestsMemory: "32Gi"
+      limitsCpu: "32"
+      limitsMemory: "64Gi"
+      pods: "50"
+      services: "20"
+      pvcs: "20"
+      secrets: "30"
+      configmaps: "30"
+      storage: "2Ti"
+    defaultLimit:
+      cpu: "500m"
+      memory: "512Mi"
+    defaultRequest:
+      cpu: "100m"
+      memory: "128Mi"
 
 argocd:
   enabled: true
@@ -517,3 +547,19 @@ otel:
         memory: 256Mi
   loki:
     enabled: true
+
+rbac:
+  enabled: true
+  serviceAccounts:
+    coreApi: true
+    graphService: true
+    ingestionWorker: true
+    frontend: true
+    osintService: true
+    litellm: true
+
+initContainers:
+  enabled: true
+
+topologySpread:
+  enabled: true

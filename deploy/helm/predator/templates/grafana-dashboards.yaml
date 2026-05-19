@@ -1,0 +1,177 @@
+{{- if and .Values.monitoring.enabled .Values.monitoring.grafana.dashboards.enabled }}
+# Grafana Dashboard: PREDATOR Overview
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "predator.fullname" . }}-dashboard-overview
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    grafana_dashboard: "1"
+    app: grafana-dashboard
+data:
+  predator-overview.json: |
+    {
+      "annotations": {
+        "list": []
+      },
+      "editable": true,
+      "fiscalYearStartMonth": 0,
+      "graphTooltip": 1,
+      "links": [],
+      "panels": [
+        {
+          "title": "PREDATOR — Статус сервісів",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 24, "x": 0, "y": 0 },
+          "targets": [
+            { "expr": "up{job=~\"predator-.*\"}", "legendFormat": "{{`{{job}}`}}" }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "mappings": [
+                { "type": "value", "options": { "0": { "text": "DOWN", "color": "red" }, "1": { "text": "UP", "color": "green" } } }
+              ]
+            }
+          }
+        },
+        {
+          "title": "CPU використання",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+          "targets": [
+            { "expr": "rate(container_cpu_usage_seconds_total{namespace=\"predator\"}[5m])", "legendFormat": "{{`{{pod}}`}}" }
+          ]
+        },
+        {
+          "title": "RAM використання",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+          "targets": [
+            { "expr": "container_memory_working_set_bytes{namespace=\"predator\"}", "legendFormat": "{{`{{pod}}`}}" }
+          ]
+        },
+        {
+          "title": "HTTP запити/сек (Core API)",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
+          "targets": [
+            { "expr": "rate(http_requests_total{job=\"predator-core-api\"}[5m])", "legendFormat": "{{`{{method}}`}} {{`{{path}}`}}" }
+          ]
+        },
+        {
+          "title": "Kafka: повідомлення/сек",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
+          "targets": [
+            { "expr": "rate(kafka_consumer_records_consumed_total[5m])", "legendFormat": "{{`{{topic}}`}}" }
+          ]
+        },
+        {
+          "title": "LLM запити (LiteLLM)",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 20 },
+          "targets": [
+            { "expr": "rate(litellm_requests_total[5m])", "legendFormat": "{{`{{model}}`}}" }
+          ]
+        },
+        {
+          "title": "PVC використання",
+          "type": "gauge",
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 20 },
+          "targets": [
+            { "expr": "kubelet_volume_stats_used_bytes / kubelet_volume_stats_capacity_bytes", "legendFormat": "{{`{{persistentvolumeclaim}}`}}" }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percentunit",
+              "max": 1, "min": 0,
+              "thresholds": {
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "yellow", "value": 0.7 },
+                  { "color": "red", "value": 0.9 }
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "schemaVersion": 39,
+      "tags": ["predator", "overview"],
+      "templating": { "list": [] },
+      "time": { "from": "now-1h", "to": "now" },
+      "title": "PREDATOR Analytics — Огляд",
+      "uid": "predator-overview"
+    }
+---
+# Grafana Dashboard: PREDATOR Databases
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "predator.fullname" . }}-dashboard-databases
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    grafana_dashboard: "1"
+    app: grafana-dashboard
+data:
+  predator-databases.json: |
+    {
+      "annotations": { "list": [] },
+      "editable": true,
+      "graphTooltip": 1,
+      "panels": [
+        {
+          "title": "PostgreSQL: підключення",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+          "targets": [
+            { "expr": "pg_stat_activity_count", "legendFormat": "{{`{{datname}}`}}" }
+          ]
+        },
+        {
+          "title": "Neo4j: запити/сек",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+          "targets": [
+            { "expr": "neo4j_queries_total", "legendFormat": "queries" }
+          ]
+        },
+        {
+          "title": "OpenSearch: індекси",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 8, "x": 0, "y": 8 },
+          "targets": [
+            { "expr": "es_indices_docs_count", "legendFormat": "{{`{{index}}`}}" }
+          ]
+        },
+        {
+          "title": "ClickHouse: запити",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 12, "x": 8, "y": 8 },
+          "targets": [
+            { "expr": "ch_queries_total", "legendFormat": "queries" }
+          ]
+        },
+        {
+          "title": "Redis:命中率",
+          "type": "gauge",
+          "gridPos": { "h": 4, "w": 4, "x": 20, "y": 8 },
+          "targets": [
+            { "expr": "redis_keyspace_hits_total / (redis_keyspace_hits_total + redis_keyspace_misses_total)", "legendFormat": "hit rate" }
+          ]
+        },
+        {
+          "title": "Qdrant: вектори",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 8, "x": 0, "y": 16 },
+          "targets": [
+            { "expr": "qdrant_vectors_total", "legendFormat": "vectors" }
+          ]
+        }
+      ],
+      "schemaVersion": 39,
+      "tags": ["predator", "databases"],
+      "title": "PREDATOR — Бази даних",
+      "uid": "predator-databases"
+    }
+{{- end }}

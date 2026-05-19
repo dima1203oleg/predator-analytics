@@ -1,0 +1,121 @@
+{{- if and .Values.monitoring.enabled .Values.monitoring.serviceMonitor.enabled }}
+# ServiceMonitor: Core API
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "predator.fullname" . }}-core-api
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: core-api
+    release: {{ .Values.monitoring.prometheusRelease | default "predator" }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "predator.selectorLabels" . | nindent 6 }}
+      app: core-api
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: {{ .Values.monitoring.serviceMonitor.interval | default "30s" }}
+      scrapeTimeout: 10s
+      honorLabels: true
+---
+# ServiceMonitor: Graph Service
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "predator.fullname" . }}-graph-service
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: graph-service
+    release: {{ .Values.monitoring.prometheusRelease | default "predator" }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "predator.selectorLabels" . | nindent 6 }}
+      app: graph-service
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 30s
+      scrapeTimeout: 10s
+---
+# ServiceMonitor: Ingestion Worker
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "predator.fullname" . }}-ingestion-worker
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: ingestion-worker
+    release: {{ .Values.monitoring.prometheusRelease | default "predator" }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "predator.selectorLabels" . | nindent 6 }}
+      app: ingestion-worker
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 30s
+      scrapeTimeout: 10s
+---
+# ServiceMonitor: OSINT Service
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "predator.fullname" . }}-osint-service
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: osint-service
+    release: {{ .Values.monitoring.prometheusRelease | default "predator" }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "predator.selectorLabels" . | nindent 6 }}
+      app: osint-service
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 30s
+      scrapeTimeout: 10s
+---
+# ServiceMonitor: LiteLLM AI Gateway
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "predator.fullname" . }}-litellm
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: litellm
+    release: {{ .Values.monitoring.prometheusRelease | default "predator" }}
+spec:
+  selector:
+    matchLabels:
+      app: litellm
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s
+      scrapeTimeout: 5s
+---
+# ServiceMonitor: OTEL Collector
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "predator.fullname" . }}-otel-collector
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: otel-collector
+    release: {{ .Values.monitoring.prometheusRelease | default "predator" }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "predator.selectorLabels" . | nindent 6 }}
+      app: otel-collector
+  endpoints:
+    - port: metrics
+      path: /metrics
+      interval: 15s
+      scrapeTimeout: 5s
+{{- end }}

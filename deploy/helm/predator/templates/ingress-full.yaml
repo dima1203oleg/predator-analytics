@@ -1,0 +1,68 @@
+{{- if .Values.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "predator.fullname" . }}-ingress
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+  annotations:
+    kubernetes.io/ingress.class: {{ .Values.ingress.className | default "traefik" | quote }}
+    {{- if .Values.ingress.tls.enabled }}
+    cert-manager.io/cluster-issuer: {{ .Values.ingress.tls.issuer | default "letsencrypt-prod" | quote }}
+    {{- end }}
+    traefik.ingress.kubernetes.io/router.middlewares: ""
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    # Rate limiting
+    traefik.ingress.kubernetes.io/router.tls: "true"
+spec:
+  {{- if .Values.ingress.tls.enabled }}
+  tls:
+    - hosts:
+        - {{ .Values.global.domain | quote }}
+      secretName: {{ .Values.ingress.tls.secretName | default (printf "%s-tls" (include "predator.fullname" .)) }}
+  {{- end }}
+  rules:
+    - host: {{ .Values.global.domain | quote }}
+      http:
+        paths:
+          # Core API
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "predator.fullname" . }}-core-api
+                port:
+                  number: {{ .Values.coreApi.service.port }}
+          # Graph Service
+          - path: /graph
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "predator.fullname" . }}-graph-service
+                port:
+                  number: {{ .Values.graphService.service.port }}
+          # OSINT Service
+          - path: /osint
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "predator.fullname" . }}-osint-service
+                port:
+                  number: {{ .Values.osintService.service.port }}
+          # LiteLLM AI Gateway
+          - path: /llm
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "predator.fullname" . }}-litellm
+                port:
+                  number: 4000
+          # Frontend (fallback)
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "predator.fullname" . }}-frontend
+                port:
+                  number: 80
+{{- end }}

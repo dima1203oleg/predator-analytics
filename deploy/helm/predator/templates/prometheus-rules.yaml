@@ -1,0 +1,176 @@
+{{- if and .Values.monitoring.enabled .Values.monitoring.prometheusRule.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: {{ include "predator.fullname" . }}-alerts
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: prometheus-rule
+    release: {{ .Values.monitoring.prometheusRelease | default "predator" }}
+spec:
+  groups:
+    # === Сервіси ===
+    - name: predator-services
+      rules:
+        - alert: PredatorServiceDown
+          expr: up{job=~"predator-.*"} == 0
+          for: 2m
+          labels:
+            severity: critical
+            team: predator
+          annotations:
+            summary: "PREDATOR сервіс {{`{{ $labels.job }}`}} недоступний"
+            description: "Сервіс {{`{{ $labels.job }}`}} не відповідає більше 2 хвилин."
+
+        - alert: PredatorHighErrorRate
+          expr: rate(http_requests_total{job=~"predator-.*",code=~"5.."}[5m]) / rate(http_requests_total{job=~"predator-.*"}[5m]) > 0.05
+          for: 5m
+          labels:
+            severity: warning
+            team: predator
+          annotations:
+            summary: "Висока частота помилок {{`{{ $labels.job }}`}}"
+            description: "5xx помилки > 5% для {{`{{ $labels.job }}`}}."
+
+        - alert: PredatorHighLatency
+          expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job=~"predator-.*"}[5m])) > 2
+          for: 5m
+          labels:
+            severity: warning
+            team: predator
+          annotations:
+            summary: "Висока латентність {{`{{ $labels.job }}`}}"
+            description: "P95 латентність > 2с для {{`{{ $labels.job }}`}}."
+
+    # === Ресурси ===
+    - name: predator-resources
+      rules:
+        - alert: PredatorHighCPU
+          expr: rate(container_cpu_usage_seconds_total{namespace="predator"}[5m]) > 0.8
+          for: 10m
+          labels:
+            severity: warning
+            team: predator
+          annotations:
+            summary: "Високе CPU {{`{{ $labels.pod }}`}}"
+            description: "CPU > 80% для {{`{{ $labels.pod }}`}} понад 10 хвилин."
+
+        - alert: PredatorHighMemory
+          expr: container_memory_working_set_bytes{namespace="prederator"} / container_spec_memory_limit_bytes{namespace="predator"} > 0.85
+          for: 10m
+          labels:
+            severity: warning
+            team: predator
+          annotations:
+            summary: "Висока пам'ять {{`{{ $labels.pod }}`}}"
+            description: "RAM > 85% для {{`{{ $labels.pod }}`}}."
+
+        - alert: PredatorPVCAlmostFull
+          expr: kubelet_volume_stats_used_bytes{namespace="predator"} / kubelet_volume_stats_capacity_bytes{namespace="predator"} > 0.85
+          for: 15m
+          labels:
+            severity: warning
+            team: predator
+          annotations:
+            summary: "PVC {{`{{ $labels.persistentvolumeclaim }}`}} майже повний"
+            description: "Використання > 85% для {{`{{ $labels.persistentvolumeclaim }}`}}."
+
+        - alert: PredatorPVCCritical
+          expr: kubelet_volume_stats_used_bytes{namespace="predator"} / kubelet_volume_stats_capacity_bytes{namespace="predator"} > 0.95
+          for: 5m
+          labels:
+            severity: critical
+            team: predator
+          annotations:
+            summary: "PVC {{`{{ $labels.persistentvolumeclaim }}`}} критично повний"
+            description: "Використання > 95% для {{`{{ $labels.persistentvolumeclaim }}`}}!"
+
+    # === Бази даних ===
+    - name: predator-databases
+      rules:
+        - alert: PredatorPostgreSQLDown
+          expr: pg_up == 0
+          for: 2m
+          labels:
+            severity: critical
+            team: predator
+          annotations:
+            summary: "PostgreSQL недоступний"
+            description: "PostgreSQL не відповідає."
+
+        - alert: PredatorRedisDown
+          expr: redis_up == 0
+          for: 2m
+          labels:
+            severity: critical
+            team: predator
+          annotations:
+            summary: "Redis недоступний"
+            description: "Redis не відповідає."
+
+        - alert: PredatorKafkaLag
+          expr: kafka_consumer_group_lag > 1000
+          for: 10m
+          labels:
+            severity: warning
+            team: predator
+          annotations:
+            summary: "Kafka lag > 1000 для {{`{{ $labels.topic }}`}}"
+            description: "Consumer group {{`{{ $labels.group }}`}} відстає на {{`{{ $value }}`}} повідомлень."
+
+        - alert: PredatorOpenSearchHighDisk
+          expr: es_fs_total_disk_bytes - es_fs_available_disk_bytes / es_fs_total_disk_bytes > 0.8
+          for: 10m
+          labels:
+            severity: warning
+            team: predator
+          annotations:
+            summary: "OpenSearch диск > 80%"
+            description: "OpenSearch використовує > 80% диска."
+
+    # === Ollama / LLM ===
+    - name: predator-llm
+      rules:
+        - alert: PredatorOllamaDown
+          expr: up{job="predator-ollama"} == 0
+          for: 5m
+          labels:
+            severity: warning
+            team: predator
+          annotations:
+            summary: "Ollama недоступний"
+            description: "Локальний LLM сервер не відповідає. Перехід на CLOUD OVERRIDE."
+
+        - alert: PredatorLiteLLMHighLatency
+          expr: histogram_quantile(0.95, rate(litellm_request_duration_seconds_bucket[5m])) > 30
+          for: 5m
+          labels:
+            severity: warning
+            team: predator
+          annotations:
+            summary: "LiteLLM висока латентність"
+            description: "P95 > 30с для LLM запитів."
+
+    # === HPA ===
+    - name: predator-autoscaling
+      rules:
+        - alert: PredatorHPAMaxedOut
+          expr: kube_hpa_status_current_replicas == kube_hpa_spec_max_replicas
+          for: 15m
+          labels:
+            severity: warning
+            team: predator
+          annotations:
+            summary: "HPA {{`{{ $labels.horizontalpodautoscaler }}`}} досяг максимуму"
+            description: "Потрібно збільшити maxReplicas або оптимізувати ресурси."
+
+        - alert: PredatorPodCrashLooping
+          expr: rate(kube_pod_container_status_restarts_total{namespace="predator"}[15m]) > 0
+          for: 10m
+          labels:
+            severity: critical
+            team: predator
+          annotations:
+            summary: "Pod {{`{{ $labels.pod }}`}} у CrashLoop"
+            description: "{{`{{ $labels.pod }}`}} перезапускається. Дивись логи."
+{{- end }}

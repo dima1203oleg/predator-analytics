@@ -1,0 +1,129 @@
+{{- if .Values.rbac.enabled }}
+# ServiceAccount: Core API
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "predator.fullname" . }}-core-api
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: core-api
+  {{- if .Values.serviceMesh.enabled }}
+  annotations:
+    linkerd.io/inject: enabled
+  {{- end }}
+---
+# ServiceAccount: Graph Service
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "predator.fullname" . }}-graph-service
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: graph-service
+  {{- if .Values.serviceMesh.enabled }}
+  annotations:
+    linkerd.io/inject: enabled
+  {{- end }}
+---
+# ServiceAccount: Ingestion Worker
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "predator.fullname" . }}-ingestion-worker
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: ingestion-worker
+  {{- if .Values.serviceMesh.enabled }}
+  annotations:
+    linkerd.io/inject: enabled
+  {{- end }}
+---
+# ServiceAccount: Frontend
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "predator.fullname" . }}-frontend
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: frontend
+  {{- if .Values.serviceMesh.enabled }}
+  annotations:
+    linkerd.io/inject: enabled
+  {{- end }}
+---
+# ServiceAccount: OSINT Service
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "predator.fullname" . }}-osint-service
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: osint-service
+  {{- if .Values.serviceMesh.enabled }}
+  annotations:
+    linkerd.io/inject: enabled
+  {{- end }}
+---
+# ServiceAccount: LiteLLM
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "predator.fullname" . }}-litellm
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: litellm
+  {{- if .Values.serviceMesh.enabled }}
+  annotations:
+    linkerd.io/inject: enabled
+  {{- end }}
+---
+# Role: PREDATOR сервіси — читання ConfigMap/Secret
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "predator.fullname" . }}-services-role
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+spec:
+  rules:
+    - apiGroups: [""]
+      resources: ["configmaps", "secrets"]
+      verbs: ["get", "list", "watch"]
+    - apiGroups: [""]
+      resources: ["pods"]
+      verbs: ["get", "list"]
+    - apiGroups: ["extensions", "networking.k8s.io"]
+      resources: ["networkpolicies"]
+      verbs: ["get", "list", "watch"]
+---
+# RoleBinding: прив'язка Role до всіх ServiceAccounts
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "predator.fullname" . }}-services-rolebinding
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ include "predator.fullname" . }}-services-role
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "predator.fullname" . }}-core-api
+    namespace: {{ .Release.Namespace }}
+  - kind: ServiceAccount
+    name: {{ include "predator.fullname" . }}-graph-service
+    namespace: {{ .Release.Namespace }}
+  - kind: ServiceAccount
+    name: {{ include "predator.fullname" . }}-ingestion-worker
+    namespace: {{ .Release.Namespace }}
+  - kind: ServiceAccount
+    name: {{ include "predator.fullname" . }}-frontend
+    namespace: {{ .Release.Namespace }}
+  - kind: ServiceAccount
+    name: {{ include "predator.fullname" . }}-osint-service
+    namespace: {{ .Release.Namespace }}
+  - kind: ServiceAccount
+    name: {{ include "predator.fullname" . }}-litellm
+    namespace: {{ .Release.Namespace }}
+{{- end }}

@@ -1,0 +1,41 @@
+{{- if and .Values.ingress.enabled .Values.ingress.tls.enabled }}
+# ClusterIssuer: Let's Encrypt для автоматичного TLS
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: {{ .Values.ingress.tls.issuer | default "letsencrypt-prod" }}
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: {{ .Values.ingress.tls.email | default "admin@predator.analytics" }}
+    privateKeySecretRef:
+      name: {{ .Values.ingress.tls.issuer | default "letsencrypt-prod" }}-key
+    solvers:
+      - http01:
+          ingress:
+            class: {{ .Values.ingress.className | default "traefik" }}
+---
+# Certificate: TLS сертифікат для домену
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ include "predator.fullname" . }}-cert
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+spec:
+  secretName: {{ .Values.ingress.tls.secretName | default (printf "%s-tls" (include "predator.fullname" .)) }}
+  duration: 2160h
+  renewBefore: 360h
+  issuerRef:
+    name: {{ .Values.ingress.tls.issuer | default "letsencrypt-prod" }}
+    kind: ClusterIssuer
+  dnsNames:
+    - {{ .Values.global.domain | quote }}
+    - {{ printf "api.%s" .Values.global.domain | quote }}
+    - {{ printf "graph.%s" .Values.global.domain | quote }}
+  usages:
+    - server auth
+    - digital signature
+{{- end }}

@@ -1,0 +1,62 @@
+{{- if .Values.initContainers.enabled }}
+# ConfigMap: скрипти для init containers
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "predator.fullname" . }}-init-scripts
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+data:
+  wait-for-postgres.sh: |
+    #!/bin/sh
+    set -e
+    until pg_isready -h ${PGHOST:-predator-postgresql} -p ${PGPORT:-5432} -U ${PGUSER:-predator}; do
+      echo "Чекаємо PostgreSQL..."
+      sleep 2
+    done
+    echo "PostgreSQL готовий."
+
+  wait-for-redis.sh: |
+    #!/bin/sh
+    set -e
+    until redis-cli -h ${REDIS_HOST:-predator-redis-master} -p ${REDIS_PORT:-6379} -a ${REDIS_PASSWORD:-predator_redis_secret} ping | grep -q PONG; do
+      echo "Чекаємо Redis..."
+      sleep 2
+    done
+    echo "Redis готовий."
+
+  wait-for-neo4j.sh: |
+    #!/bin/sh
+    set -e
+    until nc -z ${NEO4J_HOST:-predator-neo4j} ${NEO4J_PORT:-7687}; do
+      echo "Чекаємо Neo4j..."
+      sleep 3
+    done
+    echo "Neo4j готовий."
+
+  wait-for-opensearch.sh: |
+    #!/bin/sh
+    set -e
+    until curl -s "http://${OS_HOST:-opensearch-cluster-master}:${OS_PORT:-9200}/_cluster/health" | grep -q '"status":"green\|yellow"'; do
+      echo "Чекаємо OpenSearch..."
+      sleep 5
+    done
+    echo "OpenSearch готовий."
+
+  wait-for-kafka.sh: |
+    #!/bin/sh
+    set -e
+    until nc -z ${KAFKA_HOST:-predator-kafka} ${KAFKA_PORT:-9092}; do
+      echo "Чекаємо Kafka..."
+      sleep 3
+    done
+    echo "Kafka готовий."
+
+  run-migrations.sh: |
+    #!/bin/sh
+    set -e
+    echo "Запуск Alembic міграцій..."
+    cd /app
+    alembic upgrade head
+    echo "Міграції завершено."
+{{- end }}
