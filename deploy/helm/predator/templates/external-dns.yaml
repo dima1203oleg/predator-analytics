@@ -1,0 +1,73 @@
+{{- if .Values.externalDns.enabled }}
+# ExternalDNS: автоматичне управління DNS записами для Ingress
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "predator.fullname" . }}-external-dns
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: external-dns
+data:
+  external-dns.yaml: |
+    provider: {{ .Values.externalDns.provider | default "rfc2136" }}
+    sources:
+      - ingress
+      - service
+    policy: sync
+    txtOwnerId: {{ include "predator.fullname" . }}
+    domainFilters:
+      - {{ .Values.global.domain | quote }}
+    {{- if eq .Values.externalDns.provider "rfc2136" }}
+    rfc2136:
+      host: {{ .Values.externalDns.rfc2136.host | quote }}
+      port: 53
+      zone: {{ .Values.externalDns.rfc2136.zone | default .Values.global.domain | quote }}
+      tsigKeyname: {{ .Values.externalDns.rfc2136.tsigKeyName | default "predator-dns-key" | quote }}
+      tsigSecret: {{ .Values.externalDns.rfc2136.tsigSecret | quote }}
+      tsigSecretAlg: {{ .Values.externalDns.rfc2136.tsigAlgorithm | default "hmac-sha256" | quote }}
+    {{- end }}
+    interval: 1m
+    registry: txt
+    logFormat: json
+---
+# ServiceAccount для ExternalDNS
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "predator.fullname" . }}-external-dns
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: external-dns
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "predator.fullname" . }}-external-dns
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+rules:
+  - apiGroups: [""]
+    resources: ["services", "endpoints", "pods"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["extensions", "networking.k8s.io"]
+    resources: ["ingresses"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["nodes"]
+    verbs: ["list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "predator.fullname" . }}-external-dns
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "predator.fullname" . }}-external-dns
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "predator.fullname" . }}-external-dns
+    namespace: {{ .Release.Namespace }}
+{{- end }}

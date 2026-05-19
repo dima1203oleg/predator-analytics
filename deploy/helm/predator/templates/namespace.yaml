@@ -1,0 +1,24 @@
+{{- if .Values.namespace.create }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Values.namespace.name | default .Release.Namespace }}
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    # PodSecurity Standard: restricted — максимальний рівень безпеки
+    pod-security.kubernetes.io/enforce: {{ .Values.namespace.podSecurity.enforce | default "restricted" }}
+    pod-security.kubernetes.io/enforce-version: {{ .Values.namespace.podSecurity.enforceVersion | default "latest" }}
+    pod-security.kubernetes.io/audit: {{ .Values.namespace.podSecurity.audit | default "restricted" }}
+    pod-security.kubernetes.io/audit-version: {{ .Values.namespace.podSecurity.auditVersion | default "latest" }}
+    pod-security.kubernetes.io/warn: {{ .Values.namespace.podSecurity.warn | default "restricted" }}
+    pod-security.kubernetes.io/warn-version: {{ .Values.namespace.podSecurity.warnVersion | default "latest" }}
+    # Відміна для БД (потрібні привiled операції)
+    {{- if .Values.namespace.podSecurity.dbExemptions }}
+    pod-security.kubernetes.io/exempt: {{ .Values.namespace.podSecurity.dbExemptions | quote }}
+    {{- end }}
+    # ArgoCD мітка для GitOps
+    argocd.argoproj.io/managed-by: {{ .Values.argocd.namespace | default "argocd" }}
+  annotations:
+    # Опис namespace
+    scheduler.alpha.kubernetes.io/defaultTolerations: '[{"key":"predator-dedicated","operator":"Equal","value":"true","effect":"NoSchedule"}]'
+{{- end }}

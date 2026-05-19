@@ -1,0 +1,139 @@
+{{- if .Values.database.backup.enabled }}
+# CronJob: PostgreSQL backup (щодня о 03:00)
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "predator.fullname" . }}-pg-backup
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: pg-backup
+spec:
+  schedule: {{ .Values.database.backup.pgSchedule | default "0 3 * * *" | quote }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: pg-dump
+              image: postgres:16-alpine
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -e
+                  BACKUP_FILE="predator_pg_$(date +%Y%m%d_%H%M%S).sql.gz"
+                  echo "PostgreSQL backup: $BACKUP_FILE"
+
+                  pg_dump -h ${PGHOST} -p ${PGPORT} -U ${PGUSER} -d predator \
+                    --no-owner --no-privileges --clean --if-exists \
+                    | gzip > /backups/$BACKUP_FILE
+
+                  echo "Backup створено: /backups/$BACKUP_FILE"
+                  ls -lh /backups/
+              env:
+                - name: PGHOST
+                  value: "{{ include "predator.fullname" . }}-postgresql"
+                - name: PGPORT
+                  value: "5432"
+                - name: PGUSER
+                  value: "predator"
+                - name: PGPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Release.Name }}-postgresql
+                      key: password
+              volumeMounts:
+                - name: backups
+                  mountPath: /backups
+              resources:
+                limits:
+                  cpu: 500m
+                  memory: 512Mi
+                requests:
+                  cpu: 100m
+                  memory: 128Mi
+          volumes:
+            - name: backups
+              persistentVolumeClaim:
+                claimName: {{ include "predator.fullname" . }}-backup-pvc
+---
+# CronJob: ClickHouse backup (щодня о 04:00)
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "predator.fullname" . }}-ch-backup
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: ch-backup
+spec:
+  schedule: {{ .Values.database.backup.chSchedule | default "0 4 * * *" | quote }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: ch-dump
+              image: clickhouse/clickhouse-client:latest
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -e
+                  BACKUP_FILE="predator_ch_$(date +%Y%m%d_%H%M%S).sql.gz"
+                  echo "ClickHouse backup: $BACKUP_FILE"
+
+                  clickhouse-client --host=${CH_HOST} --port=8123 \
+                    --query="SHOW TABLES FROM predator" | while read table; do
+                    echo "Exporting table: $table"
+                    clickhouse-client --host=${CH_HOST} --port=8123 \
+                      --query="SELECT * FROM predator.$table FORMAT TabSeparated" \
+                      >> /tmp/ch_data.tsv
+                  done
+
+                  gzip /tmp/ch_data.tsv
+                  mv /tmp/ch_data.tsv.gz /backups/$BACKUP_FILE
+                  echo "Backup створено: /backups/$BACKUP_FILE"
+              env:
+                - name: CH_HOST
+                  value: "{{ include "predator.fullname" . }}-clickhouse"
+              volumeMounts:
+                - name: backups
+                  mountPath: /backups
+              resources:
+                limits:
+                  cpu: 500m
+                  memory: 512Mi
+                requests:
+                  cpu: 100m
+                  memory: 128Mi
+          volumes:
+            - name: backups
+              persistentVolumeClaim:
+                claimName: {{ include "predator.fullname" . }}-backup-pvc
+---
+# PVC для бекапів
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "predator.fullname" . }}-backup-pvc
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: backup-storage
+  annotations:
+    backup.velero.io/ignore: "true"
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: {{ .Values.global.storageClass | default "local-path" }}
+  resources:
+    requests:
+      storage: {{ .Values.database.backup.storage | default "50Gi" }}
+{{- end }}

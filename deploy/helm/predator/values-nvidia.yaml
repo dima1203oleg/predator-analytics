@@ -332,6 +332,8 @@ minio:
     requests:
       cpu: 200m
       memory: 256Mi
+  provisioning:
+    enabled: true
 
 redis:
   enabled: true
@@ -370,6 +372,9 @@ kafka:
     enabled: false
   kraft:
     enabled: true
+  provisioning:
+    enabled: true
+    defaultCleanupPolicy: true
 
 litellm:
   enabled: true
@@ -435,10 +440,17 @@ priorityClass:
 backup:
   enabled: true
   velero:
-    enabled: false
-  annotations:
-    backup.velero.io/backup-volumes: data
-    backup.velero.io/include-resources: persistentvolumeclaims
+    enabled: true
+    namespace: velero
+    schedule: "0 2 * * *"
+    dbSchedule: "0 */6 * * *"
+    ttl: "720h0m0s"
+    dbTtl: "168h0m0s"
+    storageLocation: default
+    volumeSnapshotLocation: default
+    annotations:
+      backup.velero.io/backup-volumes: data
+      backup.velero.io/include-resources: persistentvolumeclaims
 
 monitoring:
   enabled: true
@@ -458,6 +470,16 @@ monitoring:
   prometheusRelease: predator
   prometheusRule:
     enabled: true
+  alertmanager:
+    enabled: true
+    slack:
+      enabled: false
+      webhookUrl: ""
+    email:
+      enabled: false
+      to: "admin@predator.analytics"
+      from: "alertmanager@predator.analytics"
+      smarthost: "smtp:587"
 
 security:
   networkPolicy:
@@ -562,4 +584,39 @@ initContainers:
   enabled: true
 
 topologySpread:
+  enabled: true
+
+namespace:
+  create: true
+  name: predator
+  podSecurity:
+    enforce: restricted
+    enforceVersion: latest
+    audit: restricted
+    auditVersion: latest
+    warn: restricted
+    warnVersion: latest
+    dbExemptions: "postgresql,neo4j,opensearch,clickhouse,redis,kafka,qdrant,minio"
+
+database:
+  migration:
+    enabled: true
+    seed: true
+  backup:
+    enabled: true
+    pgSchedule: "0 3 * * *"
+    chSchedule: "0 4 * * *"
+    storage: 50Gi
+
+externalDns:
+  enabled: false
+  provider: rfc2136
+  rfc2136:
+    host: "192.168.0.200"
+    zone: "nip.io"
+    tsigKeyName: "predator-dns-key"
+    tsigSecret: ""
+    tsigAlgorithm: "hmac-sha256"
+
+healthAggregator:
   enabled: true

@@ -1,0 +1,76 @@
+{{- if .Values.database.migration.enabled }}
+# Database Migration + Seed Job — виконується після встановлення PostgreSQL
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "predator.fullname" . }}-db-migrate
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: db-migrate
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "3"
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  backoffLimit: 6
+  template:
+    metadata:
+      labels:
+        app: db-migrate
+    spec:
+      restartPolicy: OnFailure
+      serviceAccountName: {{ include "predator.fullname" . }}-core-api
+      initContainers:
+        # Чекаємо PostgreSQL
+        - name: wait-postgres
+          image: postgres:16-alpine
+          command:
+            - /bin/sh
+            - -c
+            - |
+              until pg_isready -h ${PGHOST} -p ${PGPORT} -U ${PGUSER}; do
+                echo "Чекаємо PostgreSQL..."
+                sleep 3
+              done
+              echo "PostgreSQL готовий."
+          env:
+            - name: PGHOST
+              value: "{{ include "predator.fullname" . }}-postgresql"
+            - name: PGPORT
+              value: "5432"
+            - name: PGUSER
+              value: "predator"
+      containers:
+        - name: migrate
+          image: "{{ .Values.coreApi.image.repository }}:{{ .Values.coreApi.image.tag }}"
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -e
+              echo "=== PREDATOR Database Migration ==="
+
+              # Alembic міграції
+              echo "Запуск Alembic міграцій..."
+              cd /app
+              alembic upgrade head
+              echo "Міграції завершено."
+
+              # Seed data (тільки при першому встановленні)
+              if [ "${SEED_DATA:-true}" = "true" ]; then
+                echo "Запуск seed скрипта..."
+                python -m app.core.seed 2>/dev/null || echo "Seed скрипт не знайдено — пропускаємо."
+              fi
+
+              echo "=== Migration завершено успішно ==="
+          env:
+            - name: DATABASE_URL
+              value: "postgresql+asyncpg://predator:${PGPASSWORD}@{{ include "predator.fullname" . }}-postgresql:5432/predator"
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-postgresql
+                  key: password
+            - name: SEED_DATA
+              value: {{ .Values.database.migration.seed | default "true" | quote }}
+{{- end }}

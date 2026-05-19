@@ -1,0 +1,61 @@
+{{- if .Values.backup.velero.enabled }}
+# Velero Schedule: повний бекап PREDATOR щодня о 02:00
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: {{ include "predator.fullname" . }}-daily-backup
+  namespace: {{ .Values.backup.velero.namespace | default "velero" }}
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: velero-schedule
+  annotations:
+    "helm.sh/hook": post-install
+    "helm.sh/hook-weight": "10"
+spec:
+  schedule: {{ .Values.backup.velero.schedule | default "0 2 * * *" | quote }}
+  template:
+    includedNamespaces:
+      - {{ .Release.Namespace }}
+    includedResources:
+      - persistentvolumeclaims
+      - secrets
+      - configmaps
+      - deployments
+      - services
+      - ingresses
+      - networkpolicies
+      - serviceaccounts
+      - roles
+      - rolebindings
+    labelSelector:
+      matchLabels:
+        {{- include "predator.selectorLabels" . | nindent 8 }}
+    ttl: {{ .Values.backup.velero.ttl | default "720h0m0s" | quote }}
+    storageLocation: {{ .Values.backup.velero.storageLocation | default "default" }}
+    volumeSnapshotLocations:
+      - {{ .Values.backup.velero.volumeSnapshotLocation | default "default" }}
+    includeClusterResources: false
+---
+# Velero Schedule: бекап БД кожні 6 годин (інкрементальний)
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: {{ include "predator.fullname" . }}-db-backup
+  namespace: {{ .Values.backup.velero.namespace | default "velero" }}
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: velero-schedule
+spec:
+  schedule: {{ .Values.backup.velero.dbSchedule | default "0 */6 * * *" | quote }}
+  template:
+    includedNamespaces:
+      - {{ .Release.Namespace }}
+    includedResources:
+      - persistentvolumeclaims
+    labelSelector:
+      matchLabels:
+        backup.velero.io/backup-volumes: data
+    ttl: {{ .Values.backup.velero.dbTtl | default "168h0m0s" | quote }}
+    storageLocation: {{ .Values.backup.velero.storageLocation | default "default" }}
+    includeClusterResources: false
+{{- end }}

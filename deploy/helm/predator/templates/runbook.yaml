@@ -1,0 +1,104 @@
+{{- if .Values.monitoring.enabled }}
+# Runbook: інструкції для реагування на алерти PREDATOR
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "predator.fullname" . }}-runbook
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: runbook
+data:
+  predator-service-down.md: |
+    # PREDATOR Service Down
+
+    ## Симптоми
+    - Алерт `PredatorServiceDown` спрацював
+    - `up{job=~"predator-.*"} == 0` більше 2 хвилин
+
+    ## Діагностика
+    ```bash
+    kubectl -n predator get pods -l app=<service-name>
+    kubectl -n predator logs -l app=<service-name> --tail=100
+    kubectl -n predator describe pod -l app=<service-name>
+    ```
+
+    ## Дії
+    1. Перевірити статус pod: `kubectl get pods`
+    2. Переглянути логи: `kubectl logs <pod>`
+    3. Перевірити ресурси: `kubectl top pods`
+    4. Restart: `kubectl rollout restart deployment/<service>`
+    5. Якщо CrashLoop: перевірити env vars, secrets, DB connectivity
+
+  predator-high-error-rate.md: |
+    # Висока частота помилок
+
+    ## Симптоми
+    - 5xx помилки > 5% протягом 5 хвилин
+
+    ## Діагностика
+    ```bash
+    kubectl -n predator logs -l app=core-api --tail=200 | grep "5[0-9][0-9]"
+    curl -s http://core-api:8000/health
+    ```
+
+    ## Дії
+    1. Перевірити чи БД доступні
+    2. Перевірити зовнішні API (OSINT connectors)
+    3. Перевірити memory pressure (OOMKilled)
+    4. Scale up: `kubectl scale deployment/core-api --replicas=3`
+
+  predator-pvc-full.md: |
+    # PVC майже повний
+
+    ## Симптоми
+    - Використання диска > 85% (warning) або > 95% (critical)
+
+    ## Діагностика
+    ```bash
+    kubectl -n predator get pvc
+    df -h (всередині pod)
+    ```
+
+    ## Дії
+    1. Видалити старі індекси (OpenSearch ILM)
+    2. Очистити старі бекапи
+    3. Збільшити PVC: `kubectl edit pvc <name>`
+    4. Запустити `VACUUM` в PostgreSQL
+
+  predator-kafka-lag.md: |
+    # Kafka Consumer Lag
+
+    ## Симптоми
+    - Consumer group відстає на > 1000 повідомлень
+
+    ## Діагностика
+    ```bash
+    kubectl -n predator exec -it predator-kafka-0 -- \
+      kafka-consumer-groups.sh --bootstrap-server localhost:9092 --describe --all-groups
+    ```
+
+    ## Дії
+    1. Перевірити ingestion-worker ресурси
+    2. Scale up workers: `kubectl scale deployment/ingestion-worker --replicas=3`
+    3. Перевірити DB connectivity (ClickHouse/OpenSearch)
+    4. Перевірити dead-letter topic
+
+  predator-ollama-down.md: |
+    # Ollama недоступний — CLOUD OVERRIDE
+
+    ## Симптоми
+    - Локальний LLM сервер не відповідає
+
+    ## Діагностика
+    ```bash
+    kubectl -n predator get pods -l app=ollama
+    nvidia-smi (на GPU вузлі)
+    ```
+
+    ## Дії
+    1. Перевірити GPU вузол: `nvidia-smi`
+    2. Restart Ollama: `kubectl rollout restart deployment/ollama`
+    3. Система автоматично перейде на CLOUD OVERRIDE (Tri-State → BLUE)
+    4. Перевірити LiteLLM конфігурацію fallback
+    5. Якщо VRAM > 7.6GB — це очікувана поведінка (VRAM Guard)
+{{- end }}

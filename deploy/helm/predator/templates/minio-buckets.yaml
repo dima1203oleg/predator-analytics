@@ -1,0 +1,84 @@
+{{- if and .Values.minio.enabled .Values.minio.provisioning.enabled }}
+# MinIO Bucket provisioning — створення buckets після встановлення
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "predator.fullname" . }}-minio-buckets
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: minio-buckets
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "5"
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    metadata:
+      labels:
+        app: minio-buckets
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: bucket-creator
+          image: minio/mc:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -e
+              MINIO_ENDPOINT="{{ include "predator.fullname" . }}-minio:9000"
+              MINIO_ALIAS="predator-local"
+
+              echo "Налаштування MinIO alias..."
+              mc alias set "$MINIO_ALIAS" "http://$MINIO_ENDPOINT" \
+                "${MINIO_ACCESS_KEY:-predator_admin}" \
+                "${MINIO_SECRET_KEY:-predator_secret_key}"
+
+              create_bucket() {
+                local name=$1
+                local policy=$2
+
+                if mc ls "$MINIO_ALIAS/$name" > /dev/null 2>&1; then
+                  echo "Bucket $name вже існує — пропускаємо."
+                else
+                  mc mb "$MINIO_ALIAS/$name"
+                  echo "Bucket $name створено."
+
+                  if [ "$policy" = "public" ]; then
+                    mc anonymous set download "$MINIO_ALIAS/$name"
+                    echo "Bucket $name: публічний read доступ."
+                  else
+                    mc anonymous set none "$MINIO_ALIAS/$name"
+                    echo "Bucket $name: приватний."
+                  fi
+                fi
+              }
+
+              # Створення buckets
+              create_bucket "predator-documents" "private"
+              create_bucket "predator-scans" "private"
+              create_bucket "predator-reports" "private"
+              create_bucket "predator-exports" "private"
+              create_bucket "predator-backups" "private"
+              create_bucket "predator-models" "private"
+              create_bucket "predator-temp" "private"
+
+              # Lifecycle rule для temp bucket (7 днів)
+              mc ilm rule add "$MINIO_ALIAS/predator-temp" --expire-days 7
+              echo "Lifecycle rule для predator-temp: 7 днів."
+
+              echo "Усі MinIO buckets створено успішно."
+          env:
+            - name: MINIO_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-minio-admin
+                  key: rootUser
+                  optional: true
+            - name: MINIO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-minio-admin
+                  key: rootPassword
+                  optional: true
+{{- end }}

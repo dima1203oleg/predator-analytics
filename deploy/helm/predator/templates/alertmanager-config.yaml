@@ -1,0 +1,107 @@
+{{- if and .Values.monitoring.enabled .Values.monitoring.alertmanager.enabled }}
+# Alertmanager Config: маршрутизація алертів для PREDATOR
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "predator.fullname" . }}-alertmanager-config
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: alertmanager-config
+    release: {{ .Values.monitoring.prometheusRelease | default "predator" }}
+data:
+  alertmanager.yml: |
+    global:
+      resolve_timeout: 5m
+      {{- if .Values.monitoring.alertmanager.slack.enabled }}
+      slack_api_url: {{ .Values.monitoring.alertmanager.slack.webhookUrl | quote }}
+      {{- end }}
+
+    templates:
+      - '/etc/alertmanager/templates/*.tmpl'
+
+    route:
+      receiver: 'predator-default'
+      group_by: ['alertname', 'namespace', 'team']
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 4h
+      routes:
+        # Критичні алерти → Slack + Email (негайно)
+        - match:
+            severity: critical
+          receiver: 'predator-critical'
+          group_wait: 10s
+          repeat_interval: 1h
+        # LLM алерти → окремий канал
+        - match:
+            team: predator
+            severity: warning
+          receiver: 'predator-warning'
+          group_wait: 1m
+          repeat_interval: 2h
+        # БД алерти → DBA канал
+        - match_re:
+            alertname: Predator(PostgreSQL|Redis|Kafka|OpenSearch).*
+          receiver: 'predator-dba'
+          group_wait: 30s
+
+    receivers:
+      - name: 'predator-default'
+        {{- if .Values.monitoring.alertmanager.slack.enabled }}
+        slack_configs:
+          - channel: '#predator-alerts'
+            title: "[PREDATOR] {{`{{ .GroupLabels.alertname }}`}}"
+            text: >-
+              {{`{{ range .Alerts }}`}}{{`{{ .Annotations.summary }}`}}
+              {{`{{ .Annotations.description }}`}}{{`{{ end }}`}}
+            send_resolved: true
+        {{- end }}
+
+      - name: 'predator-critical'
+        {{- if .Values.monitoring.alertmanager.slack.enabled }}
+        slack_configs:
+          - channel: '#predator-critical'
+            title: "🔴 [CRITICAL] {{`{{ .GroupLabels.alertname }}`}}"
+            text: >-
+              {{`{{ range .Alerts }}`}}{{`{{ .Annotations.summary }}`}}
+              {{`{{ .Annotations.description }}`}}{{`{{ end }}`}}
+            send_resolved: true
+        {{- end }}
+        {{- if .Values.monitoring.alertmanager.email.enabled }}
+        email_configs:
+          - to: {{ .Values.monitoring.alertmanager.email.to | quote }}
+            from: {{ .Values.monitoring.alertmanager.email.from | default "alertmanager@predator.analytics" | quote }}
+            smarthost: {{ .Values.monitoring.alertmanager.email.smarthost | quote }}
+            headers:
+              Subject: "🔴 [PREDATOR CRITICAL] {{`{{ .GroupLabels.alertname }}`}}"
+        {{- end }}
+
+      - name: 'predator-warning'
+        {{- if .Values.monitoring.alertmanager.slack.enabled }}
+        slack_configs:
+          - channel: '#predator-warnings'
+            title: "🟡 [WARNING] {{`{{ .GroupLabels.alertname }}`}}"
+            text: >-
+              {{`{{ range .Alerts }}`}}{{`{{ .Annotations.summary }}`}}{{`{{ end }}`}}
+            send_resolved: true
+        {{- end }}
+
+      - name: 'predator-dba'
+        {{- if .Values.monitoring.alertmanager.slack.enabled }}
+        slack_configs:
+          - channel: '#predator-dba'
+            title: "🗄️ [DB] {{`{{ .GroupLabels.alertname }}`}}"
+            text: >-
+              {{`{{ range .Alerts }}`}}{{`{{ .Annotations.summary }}`}}
+              {{`{{ .Annotations.description }}`}}{{`{{ end }}`}}
+            send_resolved: true
+        {{- end }}
+
+    inhibit_rules:
+      # Critical пригнічує Warning для того ж сервісу
+      - source_match:
+          severity: 'critical'
+        target_match:
+          severity: 'warning'
+        equal: ['alertname', 'namespace']
+{{- end }}

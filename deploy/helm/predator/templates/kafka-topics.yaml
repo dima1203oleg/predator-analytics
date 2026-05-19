@@ -1,0 +1,66 @@
+{{- if and .Values.kafka.enabled .Values.kafka.provisioning.enabled }}
+# Kafka Topic provisioning — створення topics після встановлення Kafka
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "predator.fullname" . }}-kafka-topics
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: kafka-topics
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "5"
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    metadata:
+      labels:
+        app: kafka-topics
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: topic-creator
+          image: bitnami/kafka:3.7.0
+          command:
+            - /bin/bash
+            - -c
+            - |
+              set -e
+              KAFKA_BROKER="{{ include "predator.fullname" . }}-kafka:9092"
+
+              echo "Створення Kafka topics для PREDATOR Analytics..."
+
+              create_topic() {
+                local name=$1
+                local partitions=$2
+                local replication=$3
+                local cleanup=$4
+
+                if kafka-topics.sh --bootstrap-server "$KAFKA_BROKER" --describe --topic "$name" > /dev/null 2>&1; then
+                  echo "Topic $name вже існує — пропускаємо."
+                else
+                  kafka-topics.sh --bootstrap-server "$KAFKA_BROKER" \
+                    --create --topic "$name" \
+                    --partitions "$partitions" \
+                    --replication-factor "$replication" \
+                    {{- if .Values.kafka.provisioning.defaultCleanupPolicy }}
+                    --config "cleanup.policy=$cleanup" \
+                    {{- end }}
+                    --if-not-exists
+                  echo "Topic $name створено (partitions=$partitions, replication=$replication)."
+                fi
+              }
+
+              # Основні topics
+              create_topic "predator.ingestion.raw" 6 1 "delete"
+              create_topic "predator.ingestion.parsed" 6 1 "delete"
+              create_topic "predator.risk.scored" 3 1 "delete"
+              create_topic "predator.alerts" 3 1 "compact"
+              create_topic "predator.analytics.events" 6 1 "delete"
+              create_topic "predator.graph.updates" 3 1 "compact"
+              create_topic "predator.osint.results" 6 1 "delete"
+              create_topic "predator.ai.insights" 3 1 "delete"
+              create_topic "predator.dead-letter" 1 1 "delete"
+
+              echo "Усі Kafka topics створено успішно."
+{{- end }}
