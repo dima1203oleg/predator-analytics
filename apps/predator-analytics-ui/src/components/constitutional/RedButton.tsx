@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { SlideToExecute } from '../polish/SlideToExecute';
 
 /**
  * ═══════════════════════════════════════════════════════════════
@@ -494,17 +495,15 @@ export const RedButton: React.FC<RedButtonProps> = ({
 
               {error && <div className="confirm-error">{error}</div>}
 
-              <div className="confirm-buttons">
-                <button className="confirm-button cancel" onClick={handleCancel}>
-                  Скасувати
-                </button>
-                <button
-                  className="confirm-button activate"
-                  onClick={handleConfirm}
-                  disabled={isLoading || !confirmationInput}
-                >
-                  {isLoading ? '⏳ Активація...' : '🔴 АКТИВУВАТИ'}
-                </button>
+              <div className="mt-6">
+                <SlideToExecute
+                  label="ПОВЗУНОК ДЛЯ АКТИВАЦІЇ"
+                  confirmLabel={`АКТИВОВАНО ${EMERGENCY_LEVELS[selectedLevel as 1 | 2 | 3].nameUk}`}
+                  onExecute={handleConfirm}
+                  onCancel={handleCancel}
+                  danger
+                  disabled={!confirmationInput || isLoading}
+                />
               </div>
             </motion.div>
           </motion.div>

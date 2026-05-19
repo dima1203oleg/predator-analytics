@@ -51,7 +51,16 @@ const queryClient = new QueryClient({
 
 function App() {
   // SOVEREIGN NEXUS EXPERIENCE: Start with cinematic BootScreen
-  const [appState, setAppState] = useState<'BOOTING' | 'LOGIN' | 'READY'>('BOOTING');
+  const [appState, setAppState] = useState<'BOOTING' | 'LOGIN' | 'READY'>(() => {
+    if (typeof window !== 'undefined') {
+      const token = sessionStorage.getItem('predator_auth_token');
+      const savedUser = sessionStorage.getItem('predator_user_profile');
+      if (token && savedUser) {
+        return 'READY';
+      }
+    }
+    return 'BOOTING';
+  });
   const { highVisibility, isTerminalOpen } = useAppStore((state) => ({
     highVisibility: state.highVisibility,
     isTerminalOpen: state.isTerminalOpen
