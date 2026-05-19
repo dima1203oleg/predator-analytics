@@ -303,12 +303,13 @@ export const Predator: React.FC = () => {
         )}
       </AnimatePresence>
 
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 100 }} 
-            animate={{ opacity: 1, scale: 1, y: 0 }} 
-            exit={{ opacity: 0, scale: 0.85, y: 80 }}
+            key="copilot-panel"
+            initial={{ opacity: 0, scale: 0.9, y: 100 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.85, y: 80, pointerEvents: 'none' }}
             transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
             className={cn(
               "fixed z-[150] bg-black/95 rounded-[40px] border-2 border-rose-500/20 shadow-[0_50px_150px_rgba(0,0,0,1)] overflow-hidden flex flex-col",

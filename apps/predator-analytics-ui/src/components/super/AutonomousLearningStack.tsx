@@ -37,8 +37,8 @@ export const AutonomousLearningStack: React.FC = () => {
 
     useEffect(() => {
         fetchTrainingData();
-        const interval = setInterval(fetchTrainingData, 5000);
-        return () => clearInterval(interval);
+        // Більше немає автоматичного polling — тільки ручне оновлення
+        // щоб уникнути нав'язливих запитів та помилок backend sync
     }, []);
 
     const triggerManualTraining = async () => {

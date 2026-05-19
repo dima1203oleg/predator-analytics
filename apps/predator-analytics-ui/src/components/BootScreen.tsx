@@ -1035,7 +1035,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
       className="fixed inset-0 z-[999] bg-black overflow-hidden font-mono select-none cursor-default flex items-center justify-center"
       onClick={handleSkip}
     >
-      <canvas ref={canvasRef} className="absolute inset-0" />
+      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full object-cover" style={{ objectPosition: 'center center' }} />
 
       {/* Scanlines */}
       <div className="absolute inset-0 pointer-events-none z-[5]" style={{
