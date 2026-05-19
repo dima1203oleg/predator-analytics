@@ -69,7 +69,7 @@ describe('FinancialDashboard', () => {
             </QueryClientProvider>
         );
         
-        expect(screen.getByText(/Фінансові Метрики/i)).toBeInTheDocument();
+        expect(screen.getByText(/Завантаження фінансових даних/i)).toBeInTheDocument();
         
         await waitFor(() => {
             expect(screen.getAllByText(/1000.0/i).length).toBeGreaterThan(0); // 1000M revenue
