@@ -1,6 +1,7 @@
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Lock, Users, Key, FileText, Shield, Loader2, AlertCircle, RefreshCw, Zap, Globe, Activity, Database, Server } from 'lucide-react';
+import { Lock, Users, Key, FileText, Shield, AlertCircle, RefreshCw, Zap, Globe, Activity, Database, Server } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { VirtualTable, VirtualColumn, RowStatus } from '@/components/shared/VirtualTable';
 import { 
@@ -200,7 +201,7 @@ export const ZeroTrustSecurityTab: React.FC = () => {
                    'p-4 rounded-2xl transition-all duration-700 border-2 shadow-inner',
                    active ? 'bg-rose-500/20 border-rose-500/40 text-rose-500' : 'bg-white/5 border-white/5 text-white/20 group-hover:text-white/40 group-hover:border-white/10'
                 )}>
-                  {t.loading && active ? <Loader2 className="w-6 h-6 animate-spin" /> : <Icon className="w-6 h-6" />}
+                  {t.loading && active ? <BrandLoaderFallback text="ЗАВАНТАЖЕННЯ" subtext="ОБРОБКА ДАНИХ" /> : <Icon className="w-6 h-6" />}
                 </div>
                 {active && (
                    <motion.div 

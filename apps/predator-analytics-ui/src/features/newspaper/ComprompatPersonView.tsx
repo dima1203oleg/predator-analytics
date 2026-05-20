@@ -8,12 +8,12 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState, useEffect } from 'react';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  AlertTriangle, Building2, CheckCircle, Fingerprint, Globe,
-  Loader2, Lock, Network, Scale, Search, Shield, UserX, XCircle,
+  AlertTriangle, Building2, CheckCircle, Fingerprint, Globe, Lock, Network, Scale, Search, Shield, UserX, XCircle,
   ShieldAlert, Activity, Target, Zap, Eye, ArrowRight, Database,
   User, Briefcase, Share2, Phone, Mail, MapPin, Scan, Radar, Siren,
   RefreshCcw, Layout, FileText

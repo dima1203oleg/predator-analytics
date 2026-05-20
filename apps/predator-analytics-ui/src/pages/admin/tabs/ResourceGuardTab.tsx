@@ -1,9 +1,10 @@
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Zap, Cpu, Shield, AlertTriangle, 
   ArrowRightLeft, HardDrive, Layout, 
-  Settings, Loader2, Gauge, Activity,
+  Settings, Gauge, Activity,
   Server, Globe, Monitor, RefreshCw,
   Database, Box, Zap as ZapIcon, Terminal
 } from 'lucide-react';
@@ -323,7 +324,7 @@ export const ResourceGuardTab: React.FC = () => {
                  )}
                >
                  {toggleFailover.isPending ? (
-                   <Loader2 className="w-5 h-5 animate-spin mx-auto" />
+                   <BrandLoaderFallback text="ЗАВАНТАЖЕННЯ" subtext="ОБРОБКА ДАНИХ" />
                  ) : (
                    llmTriStateMode === 'SOVEREIGN' ? 'СУВЕРЕННИЙ_РЕЖИМ_АКТИВОВАНО' : 'АКТИВУВАТИ_СУВЕРЕННИЙ_ОФЛОАД'
                  )}

@@ -1,7 +1,8 @@
 
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, Key, Mail, CheckCircle, X, Loader2, Copy, UserPlus, Server } from 'lucide-react';
+import { Shield, Key, Mail, CheckCircle, X, Copy, UserPlus, Server } from 'lucide-react';
 import { api } from '../../services/api';
 
 interface AdminLicenseModalProps {
@@ -132,7 +133,7 @@ export const AdminLicenseModal: React.FC<AdminLicenseModalProps> = ({ isOpen, on
                                             disabled={loading || !email}
                                             className="w-full py-4 bg-gradient-to-r from-red-600 to-orange-600 text-white font-black uppercase tracking-widest rounded-xl shadow-lg shadow-red-900/20 hover:from-red-500 hover:to-orange-500 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                                         >
-                                            {loading ? <Loader2 className="animate-spin w-5 h-5" /> : <UserPlus className="w-5 h-5" />}
+                                            {loading ? <BrandLoaderFallback text="ЗАВАНТАЖЕННЯ" subtext="ОБРОБКА ДАНИХ" /> : <UserPlus className="w-5 h-5" />}
                                             Згенерувати Ключ
                                         </button>
                                     </form>

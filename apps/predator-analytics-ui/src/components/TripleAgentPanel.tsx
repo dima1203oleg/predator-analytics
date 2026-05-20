@@ -7,11 +7,11 @@
  * © 2026 PREDATOR Analytics - Повна українізація v61.0-ELITE
  */
 
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-    Terminal, Play, CheckCircle2, XCircle,
-    Loader2, Code, Brain, RefreshCcw, Clock, Shield,
+    Terminal, Play, CheckCircle2, XCircle, Code, Brain, RefreshCcw, Clock, Shield,
     Zap, ZapOff, Activity, ShieldAlert, Cpu,
     ChevronRight, ArrowRight, Target, Share2, Maximize2,
     Lock, Unlock, Bot, Search, Boxes, Network

@@ -1,6 +1,7 @@
 
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React from 'react';
-import { GitCommit, Clock, CheckCircle2, XCircle, Loader2, RotateCcw, Box, ArrowRight } from 'lucide-react';
+import { GitCommit, Clock, CheckCircle2, XCircle, RotateCcw, Box, ArrowRight } from 'lucide-react';
 import { PipelineRun } from '../../types';
 
 interface PipelineTableProps {

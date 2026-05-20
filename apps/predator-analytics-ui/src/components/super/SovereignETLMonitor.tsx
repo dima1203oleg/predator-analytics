@@ -1,6 +1,7 @@
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Database, Zap, Search, Layers, FileText, CheckCircle2, Loader2, DatabaseIcon as DbIcon } from 'lucide-react';
+import { Database, Zap, Search, Layers, FileText, CheckCircle2, DatabaseIcon as DbIcon } from 'lucide-react';
 
 interface ETLStep {
   id: string;
@@ -133,7 +134,7 @@ const SovereignETLMonitor: React.FC<SovereignETLMonitorProps> = ({ status }) => 
                 <div className="flex items-center gap-3">
                   <div className={`p-2 rounded-lg bg-slate-800/50 border border-slate-700/50 ${getStatusColor(step.status)}`}>
                     {step.status === 'processing' ? (
-                      <Loader2 className="w-5 h-5 animate-spin" />
+                      <BrandLoaderFallback text="ЗАВАНТАЖЕННЯ" subtext="ОБРОБКА ДАНИХ" />
                     ) : (
                       <Icon className="w-5 h-5" />
                     )}

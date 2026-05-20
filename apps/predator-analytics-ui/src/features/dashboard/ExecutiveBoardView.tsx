@@ -6,6 +6,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -24,7 +25,6 @@ import {
   Flame,
   Globe,
   Layers3,
-  Loader2,
   Network,
   Radar,
   Search,
@@ -219,7 +219,7 @@ export default function ExecutiveBoardView() {
                   <div className={cn('flex h-14 w-14 items-center justify-center rounded-2xl border transition-all group-hover:scale-110 shadow-lg', t.bg)}>
                     <kpi.icon className={cn('h-6 w-6', t.icon)} />
                   </div>
-                  {loading && <Loader2 className="h-4 w-4 animate-spin text-slate-700" />}
+                  {loading && <BrandLoaderFallback text="ЗАВАНТАЖЕННЯ" subtext="ОБРОБКА ДАНИХ" />}
                 </div>
                 <div className="text-3xl font-black italic tracking-tighter text-white mb-2 tabular-nums">
                   {kpi.value}
@@ -339,7 +339,7 @@ export default function ExecutiveBoardView() {
               <AnimatePresence mode="popLayout">
                 {loading ? (
                   <div className="flex flex-col items-center gap-4 py-12 opacity-40">
-                    <Loader2 className="h-8 w-8 animate-spin text-rose-500" />
+                    <BrandLoaderFallback text="ЗАВАНТАЖЕННЯ" subtext="ОБРОБКА ДАНИХ" />
                     <p className="text-[10px] font-black uppercase tracking-[0.3em] italic">СИНХРОНІЗАЦІЯ_АЛЕ ТІВ...</p>
                   </div>
                 ) : alerts.length === 0 ? (

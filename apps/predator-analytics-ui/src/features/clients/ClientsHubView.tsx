@@ -1,3 +1,4 @@
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -10,7 +11,6 @@ import {
   FileCheck,
   Globe,
   Landmark,
-  Loader2,
   Radio,
   RefreshCw,
   Scale,

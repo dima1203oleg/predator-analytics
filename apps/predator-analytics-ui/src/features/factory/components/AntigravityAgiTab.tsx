@@ -12,6 +12,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська мова)
  */
 
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AutonomousAuditPanel } from '../../admin/AutonomousAuditPanel';
@@ -26,7 +27,6 @@ import {
   Clock,
   DollarSign,
   Globe,
-  Loader2,
   Plus,
   RefreshCw,
   Send,

@@ -1,6 +1,7 @@
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Database, Upload, Factory, Layers, TrendingUp, Loader2, Zap, Activity, HardDrive, Shield, Orbit, Atom, Terminal } from 'lucide-react';
+import { Database, Upload, Factory, Layers, TrendingUp, Zap, Activity, HardDrive, Shield, Orbit, Atom, Terminal } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useDataOpsStatus } from '@/hooks/useAdminApi';
 import { VirtualTable, VirtualColumn, RowStatus } from '@/components/shared/VirtualTable';

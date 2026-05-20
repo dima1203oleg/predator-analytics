@@ -7,6 +7,7 @@
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
@@ -17,7 +18,6 @@ import {
   ChevronRight,
   Cpu,
   Gauge,
-  Loader2,
   Radio,
   RefreshCw,
   Server,
@@ -346,7 +346,7 @@ export default function AIControlPlane() {
 
           {isInitialLoading && !snapshot.hasAnyData && (
             <div className="flex min-h-[400px] flex-col items-center justify-center space-y-6">
-               <Loader2 className="h-12 w-12 animate-spin text-[#D4AF37]" />
+               <BrandLoaderFallback text="ЗАВАНТАЖЕННЯ" subtext="ОБРОБКА ДАНИХ" />
                <div className="text-sm font-black uppercase tracking-widest text-[#D4AF37]/70">Завантаження контуру...</div>
             </div>
           )}

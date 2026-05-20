@@ -13,6 +13,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська мова)
  */
 
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -25,7 +26,6 @@ import {
   Flame,
   GitMerge,
   Layers,
-  Loader2,
   Monitor,
   Network,
   Play,

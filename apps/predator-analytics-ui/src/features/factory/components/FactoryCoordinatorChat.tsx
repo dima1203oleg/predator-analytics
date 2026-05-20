@@ -1,7 +1,8 @@
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Bot, Loader2, Send, Cpu, Shield, Zap, Terminal, Activity,
+  Bot, Send, Cpu, Shield, Zap, Terminal, Activity,
   Sparkles, Layers
 } from 'lucide-react';
 import { cn } from '@/utils/cn';

@@ -12,6 +12,7 @@
  * © 2026 PREDATOR Analytics - Повна українізація v61.0-ELITE
  */
 
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -20,7 +21,7 @@ import {
 import { Canvas } from '@react-three/fiber';
 import {
   Activity, Brain, BrainCircuit, CheckCircle2, Clock, Cpu,
-  Database, Gauge, GitBranch, Layers, Loader2, Network, Radio,
+  Database, Gauge, GitBranch, Layers, Network, Radio,
   RefreshCw, Search, Send, Shield, Sparkles, Target, Terminal,
   TrendingUp, Users, XCircle, Zap, Globe, Hexagon, Box, Boxes,
   ChevronRight, ArrowUpRight, Power, Settings, Eye, Workflow, BarChart3,

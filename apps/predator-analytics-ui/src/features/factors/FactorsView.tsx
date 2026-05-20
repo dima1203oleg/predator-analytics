@@ -7,6 +7,7 @@
  * - /api/v1/system/stats
  */
 
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
@@ -14,7 +15,6 @@ import {
     AlertCircle,
     ChevronRight,
     Factory,
-    Loader2,
     Radar,
     RefreshCw,
     Server,
@@ -420,7 +420,7 @@ export default function FactorsView() {
 
                     {loading && (
                         <div className="mt-6 flex items-center gap-3 rounded-[24px] border border-white/5 bg-black/30 px-5 py-4 text-sm text-slate-400">
-                            <Loader2 className="h-5 w-5 animate-spin" />
+                            <BrandLoaderFallback text="ЗАВАНТАЖЕННЯ" subtext="ОБРОБКА ДАНИХ" />
                             Отримую підтверджені агрегати факторного контуру…
                         </div>
                     )}

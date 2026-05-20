@@ -1,3 +1,4 @@
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -14,7 +15,6 @@ import {
   ChevronRight,
   AlertTriangle,
   FileText,
-  Loader2,
   Activity,
   Zap,
   Terminal,

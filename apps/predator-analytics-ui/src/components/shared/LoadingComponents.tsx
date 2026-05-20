@@ -8,6 +8,7 @@
  * - Suspense fallbacks
  */
 
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2, RefreshCw } from 'lucide-react';

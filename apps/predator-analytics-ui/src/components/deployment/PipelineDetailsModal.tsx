@@ -1,6 +1,7 @@
 
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React from 'react';
-import { X, CheckCircle2, Circle, Clock, GitCommit, User, Loader2, XCircle, AlertTriangle } from 'lucide-react';
+import { X, CheckCircle2, Circle, Clock, GitCommit, User, XCircle, AlertTriangle } from 'lucide-react';
 import { PipelineRun, PipelineStep } from '../../types';
 
 interface PipelineDetailsModalProps {

@@ -1,3 +1,4 @@
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -6,7 +7,6 @@ import {
   Sparkles, 
   Bot, 
   User, 
-  Loader2, 
   Database,
   ArrowRight
 } from 'lucide-react';

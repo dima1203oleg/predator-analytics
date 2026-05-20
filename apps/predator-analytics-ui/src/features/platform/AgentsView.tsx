@@ -1,10 +1,11 @@
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import {
     Bot, Activity, Server, Zap, Network, Cpu, HardDrive,
     AlertCircle, Eye, Shield, Target, Radar,
-    ScanLine, BrainCircuit, GitBranch, Terminal, Globe, Lock, Loader2, RefreshCw
+    ScanLine, BrainCircuit, GitBranch, Terminal, Globe, Lock, RefreshCw
 } from 'lucide-react';
 import { useAgents } from '@/context/AgentContext';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';

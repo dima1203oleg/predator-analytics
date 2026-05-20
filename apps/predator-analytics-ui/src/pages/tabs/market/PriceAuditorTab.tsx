@@ -3,12 +3,13 @@
  * PREDATOR Analytics — Market Analysis & Procurement Intelligence
  */
 
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, Filter, DollarSign, TrendingUp, TrendingDown, ArrowRight,
   ChevronDown, ChevronUp, Star, Clock, Globe, Package, BarChart3,
-  Download, Target, Layers, Zap, BadgeCheck, Box, Loader2
+  Download, Target, Layers, Zap, BadgeCheck, Box
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { intelligenceApi } from '@/services/api/intelligence';
@@ -78,7 +79,7 @@ export const PriceAuditorTab: React.FC = () => {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center h-[500px] gap-4">
-        <Loader2 className="w-12 h-12 text-[#D4AF37] animate-spin" />
+        <BrandLoaderFallback text="ЗАВАНТАЖЕННЯ" subtext="ОБРОБКА ДАНИХ" />
         <p className="text-[#D4AF37] font-black uppercase tracking-widest text-xs ">
           АНАЛІЗ ЦІНОВИХПРОПОЗИЦІЙ...
         </p>

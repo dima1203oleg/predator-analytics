@@ -8,6 +8,7 @@
  * - /api/v1/system/stats
  */
 
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -15,7 +16,6 @@ import {
     AlertCircle,
     Brain,
     Cpu,
-    Loader2,
     Play,
     RefreshCw,
     ScrollText,

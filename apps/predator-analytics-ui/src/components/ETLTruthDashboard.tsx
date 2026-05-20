@@ -7,6 +7,7 @@
  * - реальні помилки (не приховані)
  */
 
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -22,7 +23,6 @@ import {
   ChevronRight,
   FileText,
   Activity,
-  Loader2,
   AlertOctagon,
   BarChart3,
   ArrowRight,

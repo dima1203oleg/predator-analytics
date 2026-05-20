@@ -8,11 +8,12 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
     AlertTriangle, Anchor, BarChart3, ChevronRight, Clock, DollarSign,
-    Fingerprint, Globe, Layers, Loader2, Navigation, Package, RefreshCw,
+    Fingerprint, Globe, Layers, Navigation, Package, RefreshCw,
     Search, ShieldAlert, Ship, Target, TrendingUp, Truck, type LucideIcon,
     Zap, Scan, Microscope, Database, Box, Siren, RefreshCcw, Activity,
     ShieldCheck, Target as TargetIcon, Map

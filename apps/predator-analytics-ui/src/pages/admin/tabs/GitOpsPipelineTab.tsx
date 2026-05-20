@@ -1,3 +1,4 @@
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -5,8 +6,7 @@ import {
   XCircle, 
   Clock, 
   GitBranch, 
-  Workflow, 
-  Loader2,
+  Workflow,
   Database,
   Cpu,
   Activity,

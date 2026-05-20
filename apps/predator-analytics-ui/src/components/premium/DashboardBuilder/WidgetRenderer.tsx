@@ -4,6 +4,7 @@
  * Повна українська локалізація
  */
 
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import {
@@ -13,7 +14,7 @@ import {
   Legend, FunnelChart, Funnel, LabelList
 } from 'recharts';
 import {
-  TrendingUp, TrendingDown, Minus, Loader2, AlertTriangle,
+  TrendingUp, TrendingDown, Minus, AlertTriangle,
   RefreshCw, Maximize2, Settings
 } from 'lucide-react';
 import { WidgetConfig, WidgetData } from './types';
@@ -177,7 +178,7 @@ export const WidgetRenderer: React.FC<WidgetRendererProps> = ({
     if (data.loading) {
       return (
         <div className="h-full flex flex-col items-center justify-center gap-3">
-          <Loader2 className="w-8 h-8 text-amber-500 animate-spin" />
+          <BrandLoaderFallback text="ЗАВАНТАЖЕННЯ" subtext="ОБРОБКА ДАНИХ" />
           <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">{premiumLocales.common.loadingData}</span>
         </div>
       );

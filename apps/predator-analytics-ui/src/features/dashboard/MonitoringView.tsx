@@ -5,6 +5,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -27,7 +28,6 @@ import {
   ActivitySquare,
   BarChart3,
   Waves,
-  Loader2,
   Lock,
 } from 'lucide-react';
 import { useMonitoringCore } from '@/hooks/useMonitoring';

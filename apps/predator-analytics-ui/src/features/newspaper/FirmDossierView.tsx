@@ -8,12 +8,13 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState, useEffect } from 'react';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   AlertTriangle, Building2, Clock, DollarSign, FileText, Globe,
-  History, Info, Layers, Link2, Loader2, Lock, Search, 
+  History, Info, Layers, Link2, Lock, Search, 
   ShieldAlert, ShieldCheck, TrendingDown, TrendingUp, Shell,
   Target, Zap, Fingerprint, Eye, ArrowRight, Activity, Database,
   Box, Radar, Siren, RefreshCcw, Scan, Layout, Share2

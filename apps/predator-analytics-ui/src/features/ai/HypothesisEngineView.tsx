@@ -7,13 +7,14 @@
  * Sovereign Power Design · Classified · Tier-1
  */
 
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Sparkles, Brain, Target, AlertTriangle, CheckCircle,
   Clock, Zap, Eye, ArrowUpRight, RefreshCw, Download,
   Filter, ChevronRight, Network, DollarSign, Globe,
-  Activity, Lock, FileText, Send, Loader2, Star, Fingerprint, Cpu, Search, Radar
+  Activity, Lock, FileText, Send, Star, Fingerprint, Cpu, Search, Radar
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { useBackendStatus } from '@/hooks/useBackendStatus';

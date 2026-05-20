@@ -1,7 +1,8 @@
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Brain, Send, Sparkles, Loader2, AlertCircle,
+  Brain, Send, Sparkles, AlertCircle,
   CheckCircle, Copy, ThumbsUp, ThumbsDown, RefreshCw,
   FileText, Target, Shield, Zap
 } from 'lucide-react';

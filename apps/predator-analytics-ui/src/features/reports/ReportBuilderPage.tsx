@@ -1,3 +1,4 @@
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -14,7 +15,6 @@ import {
     Trash2,
     ScanText,
     Layers,
-    Loader2,
     ClipboardList,
     ShieldCheck,
     GitBranch,

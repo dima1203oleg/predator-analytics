@@ -1,3 +1,4 @@
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -12,7 +13,6 @@ import {
     FileSpreadsheet,
     FileText,
     Globe,
-    Loader2,
     MessageSquare,
     Radio,
     RefreshCw,
@@ -300,7 +300,7 @@ export const ActiveJobsPanel: React.FC<ActiveJobsPanelProps> = ({
             <div className="max-h-[440px] overflow-y-auto">
                 {loading ? (
                     <div className="flex min-h-[260px] items-center justify-center gap-3 text-sm text-slate-400">
-                        <Loader2 className="h-5 w-5 animate-spin" />
+                        <BrandLoaderFallback text="ЗАВАНТАЖЕННЯ" subtext="ОБРОБКА ДАНИХ" />
                         Синхронізую підтверджені ingestion jobs...
                     </div>
                 ) : jobs.length === 0 ? (

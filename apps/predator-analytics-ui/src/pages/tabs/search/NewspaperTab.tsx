@@ -8,11 +8,12 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   AlertTriangle, Bell, Clock,
-  FileText, Flame, Loader2, Network,
+  FileText, Flame, Network,
   RefreshCw, Siren, TrendingDown, TrendingUp,
   UserX, Activity, Database, Newspaper, RefreshCcw, Box, ShieldAlert
 } from 'lucide-react';

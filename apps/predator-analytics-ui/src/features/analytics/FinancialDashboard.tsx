@@ -2,6 +2,7 @@
  * 💰 FinancialDashboard — Продвинутий фінансовий дашборд компанії
  * Відображає KPI, тренди та історичні дані на основі CERS.
  */
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -14,7 +15,6 @@ import {
   PieChart, 
   ArrowUpRight, 
   ArrowDownRight,
-  Loader2,
   AlertCircle
 } from 'lucide-react';
 import { cersService } from '@/services/unified/cers.service';

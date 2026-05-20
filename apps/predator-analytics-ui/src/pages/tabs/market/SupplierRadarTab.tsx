@@ -1,9 +1,10 @@
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Building2, MapPin, CheckCircle, AlertCircle, Siren, 
   Search, Filter, ExternalLink, Mail, Sparkles, Target,
-  RefreshCw, TrendingUp, Loader2
+  RefreshCw, TrendingUp
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { intelligenceApi } from '@/services/api';

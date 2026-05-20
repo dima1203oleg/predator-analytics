@@ -6,12 +6,13 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   AlertTriangle, Brain, LayoutDashboard, Search, Target, Globe, Cpu,
   RefreshCw, TrendingUp, Flame, Network, Layers, ShieldAlert, Satellite,
   Radar, Radio, Eye, ArrowUpRight, HardDrive, Database, FileText,
-  Building2, Package, Ship, Loader2, Zap, Activity, ShieldCheck, 
+  Building2, Package, Ship, Zap, Activity, ShieldCheck, 
   Orbit, Fingerprint, Boxes, Workflow, Terminal, RadioTower, ChevronRight
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';

@@ -5,6 +5,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Activity, 
@@ -29,7 +30,6 @@ import {
   ArrowRight,
   Flame,
   ChevronRight,
-  Loader2,
 } from 'lucide-react';
 import { 
   AreaChart, 

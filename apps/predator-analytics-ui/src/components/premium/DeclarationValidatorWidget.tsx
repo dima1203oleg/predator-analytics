@@ -1,8 +1,9 @@
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   FileCheck, FileWarning, UploadCloud,
-  CheckCircle2, AlertOctagon, Loader2, ShieldCheck, Download
+  CheckCircle2, AlertOctagon, ShieldCheck, Download
 } from 'lucide-react';
 import { cn } from '../../utils/cn';
 import { premiumLocales } from '../../locales/uk/premium';

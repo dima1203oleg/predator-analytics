@@ -7,7 +7,6 @@ import {
     CheckCircle,
     Database,
     FileSearch,
-    Loader2,
     PartyPopper,
     Scissors,
     Sparkles,
@@ -125,7 +124,7 @@ export function IngestionProgress({ jobId, onComplete }: IngestionProgressProps)
       <Card>
         <CardContent className="pt-6">
           <div className="flex items-center gap-3">
-            <Loader2 className="h-6 w-6 animate-spin" />
+            <BrandLoaderFallback text="ЗАВАНТАЖЕННЯ" subtext="ОБРОБКА ДАНИХ" />
             <span>Підключення до потоку даних...</span>
           </div>
         </CardContent>
@@ -144,7 +143,7 @@ export function IngestionProgress({ jobId, onComplete }: IngestionProgressProps)
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg flex items-center gap-2">
-            {stageIcons[progress.stage] || <Loader2 className="h-5 w-5 animate-spin"/>}
+            {stageIcons[progress.stage] || <BrandLoaderFallback text="ЗАВАНТАЖЕННЯ" subtext="ОБРОБКА ДАНИХ" />}
             {stageLabels[progress.stage] || progress.stage}
           </CardTitle>
           <Badge variant={
@@ -206,7 +205,7 @@ export function IngestionProgress({ jobId, onComplete }: IngestionProgressProps)
                   {isCompletedStep ? (
                     <CheckCircle className="h-3.5 w-3.5" />
                   ) : isCurrentStep ? (
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    <BrandLoaderFallback text="ЗАВАНТАЖЕННЯ" subtext="ОБРОБКА ДАНИХ" />
                   ) : (
                     <span className="text-[10px]">{i + 1}</span>
                   )}

@@ -11,6 +11,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська мова)
  */
 
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -19,7 +20,6 @@ import {
   BrainCircuit,
   CheckCircle2,
   ChevronRight,
-  Loader2,
   Play,
   RefreshCw,
   Sparkles,

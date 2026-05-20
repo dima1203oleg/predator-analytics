@@ -4,6 +4,7 @@
  * Повна українська локалізація
  */
 
+import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -11,7 +12,7 @@ import {
   Eye, EyeOff, Lock, Unlock, Undo, Redo, Copy,
   Maximize2, Play, Pause, RefreshCw, Sparkles,
   Layout, PanelLeft, PanelLeftClose, ChevronDown,
-  Crown, Loader2, FileText, ArrowRight
+  Crown, FileText, ArrowRight
 } from 'lucide-react';
 import {
   WidgetConfig, WidgetData, DashboardTemplate, SavedDashboard,

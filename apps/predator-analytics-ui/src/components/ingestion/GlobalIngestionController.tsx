@@ -6,7 +6,6 @@ import {
     AlertCircle,
     CheckCircle2,
     ChevronRight,
-    Loader2,
     Settings,
     X
 } from "lucide-react"
