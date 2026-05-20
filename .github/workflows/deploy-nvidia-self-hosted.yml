@@ -5,7 +5,7 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'argocd/predator-nvidia.yaml'
+      - 'deploy/argocd/predator-nvidia.yaml'
       - 'environments/nvidia/**'
 
 jobs:
@@ -25,7 +25,7 @@ jobs:
       - name: Apply ArgoCD Application
         run: |
           echo "Applying ArgoCD manifest for NVIDIA environment..."
-          kubectl apply -f argocd/predator-nvidia.yaml -n argocd
+          kubectl apply -f deploy/argocd/predator-nvidia.yaml -n argocd
 
       - name: Force Sync (Optional)
         if: always()

@@ -7,7 +7,7 @@ spec:
   project: predator-project
   source:
     repoURL: https://github.com/dima1203oleg/predator-analytics.git
-    targetRevision: cursor/business-workspace-ui-hints
+    targetRevision: main
     path: deploy/helm/predator
     helm:
       valueFiles:

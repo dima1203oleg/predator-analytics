@@ -1,0 +1,494 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - complementary [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - img [ref=e9]
+          - generic [ref=e11]:
+            - generic [ref=e12]: PREDATOR
+            - generic [ref=e13]: COMMAND_CENTER_v60
+        - button [ref=e14] [cursor=pointer]:
+          - img [ref=e15]
+      - navigation [ref=e17]:
+        - generic [ref=e18]:
+          - generic [ref=e21]: Моніторинг
+          - generic [ref=e22]:
+            - link "Телеметрія Кластера LIVE" [ref=e23] [cursor=pointer]:
+              - /url: /admin/command?tab=infra
+              - img [ref=e24]
+              - generic [ref=e26]: Телеметрія Кластера
+              - generic [ref=e27]: LIVE
+            - link "Резервування та Маршрути" [ref=e29] [cursor=pointer]:
+              - /url: /admin/command?tab=failover
+              - img [ref=e30]
+              - generic [ref=e36]: Резервування та Маршрути
+            - link "Контроль Хаосу" [ref=e37] [cursor=pointer]:
+              - /url: /admin/command?tab=chaos
+              - img [ref=e38]
+              - generic [ref=e40]: Контроль Хаосу
+        - generic [ref=e41]:
+          - generic [ref=e44]: Пайплайни
+          - generic [ref=e45]:
+            - link "GitOps та Пайплайни" [ref=e46] [cursor=pointer]:
+              - /url: /admin/command?tab=gitops
+              - img [ref=e47]
+              - generic [ref=e50]: GitOps та Пайплайни
+            - link "Хаб Даних" [ref=e51] [cursor=pointer]:
+              - /url: /admin/command?tab=dataops
+              - img [ref=e52]
+              - generic [ref=e56]: Хаб Даних
+        - generic [ref=e57]:
+          - generic [ref=e60]: Ядро ШІ
+          - generic [ref=e61]:
+            - link "Плоскість Керування ШІ NEXUS" [ref=e62] [cursor=pointer]:
+              - /url: /admin/command?tab=ai-control
+              - img [ref=e63]
+              - generic [ref=e65]: Плоскість Керування ШІ
+              - generic [ref=e66]: NEXUS
+            - link "Двигуни ШІ CORE" [ref=e67] [cursor=pointer]:
+              - /url: /admin/command?tab=ai-engines
+              - img [ref=e68]
+              - generic [ref=e71]: Двигуни ШІ
+              - generic [ref=e72]: CORE
+            - link "Суверенна Розвідка ELITE" [ref=e73] [cursor=pointer]:
+              - /url: /admin/command?tab=command
+              - img [ref=e74]
+              - generic [ref=e76]: Суверенна Розвідка
+              - generic [ref=e77]: ELITE
+        - generic [ref=e78]:
+          - generic [ref=e81]: ШІ Студія
+          - generic [ref=e82]:
+            - link "ШІ Фабрика NEW" [ref=e83] [cursor=pointer]:
+              - /url: /admin/command?tab=factory
+              - img [ref=e84]
+              - generic [ref=e92]: ШІ Фабрика
+              - generic [ref=e93]: NEW
+            - link "Моделі (Налаштування) ML" [ref=e94] [cursor=pointer]:
+              - /url: /admin/command?tab=model-train
+              - img [ref=e95]
+              - generic [ref=e103]: Моделі (Налаштування)
+              - generic [ref=e104]: ML
+            - link "Студія Датасетів" [ref=e105] [cursor=pointer]:
+              - /url: /admin/command?tab=datasets
+              - img [ref=e106]
+              - generic [ref=e110]: Студія Датасетів
+            - link "Системні Промпти" [ref=e111] [cursor=pointer]:
+              - /url: /admin/command?tab=prompts
+              - img [ref=e112]
+              - generic [ref=e115]: Системні Промпти
+        - generic [ref=e116]:
+          - generic [ref=e119]: Розширена Аналітика
+          - generic [ref=e120]:
+            - link "Прогностичний Нексус PREDICT" [ref=e121] [cursor=pointer]:
+              - /url: /admin/command?tab=nexus
+              - img [ref=e122]
+              - generic [ref=e124]: Прогностичний Нексус
+              - generic [ref=e125]: PREDICT
+            - link "Хаб ШІ Інсайтів DEEP" [ref=e126] [cursor=pointer]:
+              - /url: /admin/command?tab=ai-insights
+              - img [ref=e127]
+              - generic [ref=e135]: Хаб ШІ Інсайтів
+              - generic [ref=e136]: DEEP
+            - link "Гіпотези та NAS" [ref=e137] [cursor=pointer]:
+              - /url: /admin/command?tab=hypothesis
+              - img [ref=e138]
+              - generic [ref=e141]: Гіпотези та NAS
+            - link "Прогнози та Тренди" [ref=e142] [cursor=pointer]:
+              - /url: /admin/command?tab=forecast
+              - img [ref=e143]
+              - generic [ref=e145]: Прогнози та Тренди
+        - generic [ref=e146]:
+          - generic [ref=e149]: Розвідка та OSINT
+          - generic [ref=e150]:
+            - link "Митна Розвідка ELITE" [ref=e151] [cursor=pointer]:
+              - /url: /admin/command?tab=intelligence
+              - img [ref=e152]
+              - generic [ref=e155]: Митна Розвідка
+              - generic [ref=e156]: ELITE
+            - link "Консоль Пошуку OSINT" [ref=e157] [cursor=pointer]:
+              - /url: /admin/command?tab=osint
+              - img [ref=e158]
+              - generic [ref=e161]: Консоль Пошуку
+              - generic [ref=e162]: OSINT
+            - link "Контроль Зради ELITE" [ref=e163] [cursor=pointer]:
+              - /url: /admin/command?tab=zrada
+              - img [ref=e164]
+              - generic [ref=e166]: Контроль Зради
+              - generic [ref=e167]: ELITE
+            - link "AML Оцінювання RISK" [ref=e168] [cursor=pointer]:
+              - /url: /admin/command?tab=aml
+              - img [ref=e169]
+              - generic [ref=e171]: AML Оцінювання
+              - generic [ref=e172]: RISK
+            - link "Глобальні Санкції GLOBAL" [ref=e173] [cursor=pointer]:
+              - /url: /admin/command?tab=sanctions
+              - img [ref=e174]
+              - generic [ref=e177]: Глобальні Санкції
+              - generic [ref=e178]: GLOBAL
+        - generic [ref=e179]:
+          - generic [ref=e182]: Агенти та Безпека
+          - generic [ref=e183]:
+            - link "Оркестрація Агентів" [ref=e184] [cursor=pointer]:
+              - /url: /admin/command?tab=agents-ops
+              - img [ref=e185]
+              - generic [ref=e188]: Оркестрація Агентів
+            - link "Безпека Zero Trust" [ref=e189] [cursor=pointer]:
+              - /url: /admin/command?tab=security
+              - img [ref=e190]
+              - generic [ref=e193]: Безпека Zero Trust
+        - generic [ref=e194]:
+          - generic [ref=e197]: Конфігурація
+          - generic [ref=e198]:
+            - link "Налаштування" [ref=e199] [cursor=pointer]:
+              - /url: /admin/command?tab=settings
+              - img [ref=e200]
+              - generic [ref=e203]: Налаштування
+            - link "API Документація" [ref=e204] [cursor=pointer]:
+              - /url: /api-docs
+              - img [ref=e205]
+              - generic [ref=e208]: API Документація
+      - generic [ref=e210]:
+        - img [ref=e212]
+        - generic [ref=e215]:
+          - generic [ref=e216]: Командир
+          - generic [ref=e217]: ADMIN · PREDATOR_CORP
+        - button "Вийти" [ref=e218] [cursor=pointer]:
+          - img [ref=e219]
+    - generic [ref=e222]:
+      - banner [ref=e223]:
+        - generic [ref=e224]:
+          - generic [ref=e230]: SOVEREIGN_NODE // LOCAL_K3S
+          - generic [ref=e232]:
+            - generic [ref=e235]: API
+            - generic [ref=e238]: KAFKA
+            - generic [ref=e241]: NEO4J
+            - generic [ref=e244]: REDIS
+        - generic [ref=e245]:
+          - button "09:53:07" [ref=e246] [cursor=pointer]:
+            - img [ref=e247]
+            - generic [ref=e249]: 09:53:07
+          - generic [ref=e250]:
+            - img [ref=e251]
+            - generic [ref=e253]:
+              - generic [ref=e254]: VRAM_LOAD
+              - generic [ref=e255]: 4.2 / 8.0 GB
+      - main [ref=e256]:
+        - generic [ref=e258]:
+          - generic [ref=e261]:
+            - generic [ref=e262]:
+              - generic [ref=e263]:
+                - generic [ref=e265]:
+                  - generic [ref=e268]: СУВЕРЕННИЙ_ХАБ_ОМЕГА
+                  - generic [ref=e269]:
+                    - img [ref=e270]
+                    - text: PREDATOR
+                    - generic [ref=e274]: v63.0-ELITE
+                - generic [ref=e275]:
+                  - generic [ref=e276]: СТРАТЕГІЯ_ЯДРА
+                  - generic [ref=e281]:
+                    - generic [ref=e282]: ЛОКАЛЬНИЙ_СУВЕРЕН
+                    - generic [ref=e283]: "VRAM: 0.0GB / 8.0GB • LOCAL_NODE"
+              - generic [ref=e284]:
+                - generic [ref=e287]:
+                  - generic [ref=e288]:
+                    - generic [ref=e289]: НЕЙРОННЕ_НАВАНТАЖЕННЯ
+                    - generic [ref=e290]: АКТИВНІ_ВАГИ_L3
+                  - generic [ref=e291]: 0.0%
+                - generic [ref=e308]:
+                  - generic [ref=e309]: АКТИВНІ_ВУЗЛИ
+                  - generic [ref=e310]:
+                    - img [ref=e311]
+                    - generic [ref=e317]:
+                      - generic [ref=e318]: 00 ВУЗЛІВ_OODA
+                      - generic [ref=e319]: "ЛАТЕНТНІСТЬ: 0MS"
+                - generic [ref=e320]:
+                  - generic [ref=e321]: РІВЕНЬ_ЗАГРОЗИ_L7
+                  - generic [ref=e322]:
+                    - img [ref=e324]
+                    - generic [ref=e326]:
+                      - generic [ref=e327]: 5% РИЗИК
+                      - generic [ref=e328]: БЕЗПЕЧНИЙ_РЕЖИМ
+            - generic [ref=e329]:
+              - generic [ref=e330]:
+                - generic [ref=e331]: СИСТЕМНИЙ_ЧАС_UTC
+                - generic [ref=e332]:
+                  - text: 09:53:06
+                  - generic [ref=e333]: "[642]"
+              - generic [ref=e334]:
+                - img [ref=e342]
+                - generic [ref=e344]:
+                  - generic [ref=e345]: ЗАХИЩЕНО_L5
+                  - generic [ref=e354]: X-QUANTUM_CORE
+          - generic [ref=e355]:
+            - generic [ref=e356]:
+              - button "БІЗНЕС-АНАЛІТИКА РАНКОВИЙ_ЗВІТ_&_KPI" [ref=e357] [cursor=pointer]:
+                - generic [ref=e358]:
+                  - img [ref=e359]
+                  - generic [ref=e362]: БІЗНЕС-АНАЛІТИКА
+                - generic [ref=e363]: РАНКОВИЙ_ЗВІТ_&_KPI
+              - button "ЯДРО_СИСТЕМИ ІНФРАСТРУКТУРА_&_CONTROL" [ref=e364] [cursor=pointer]:
+                - generic [ref=e367]:
+                  - img [ref=e368]
+                  - generic [ref=e370]: ЯДРО_СИСТЕМИ
+                - generic [ref=e371]: ІНФРАСТРУКТУРА_&_CONTROL
+              - button "AI_ЛАБОРАТОРІЯ НАВЧАННЯ_&_АВТОЗАВОД" [ref=e372] [cursor=pointer]:
+                - generic [ref=e373]:
+                  - img [ref=e374]
+                  - generic [ref=e382]: AI_ЛАБОРАТОРІЯ
+                - generic [ref=e383]: НАВЧАННЯ_&_АВТОЗАВОД
+              - button "АВТОНОМНА_ФАБРИКА OODA_2.0_&_КОНТРОЛЬ" [ref=e384] [cursor=pointer]:
+                - generic [ref=e385]:
+                  - img [ref=e386]
+                  - generic [ref=e388]: АВТОНОМНА_ФАБРИКА
+                - generic [ref=e389]: OODA_2.0_&_КОНТРОЛЬ
+              - button "РОЗВІДКА_&_OSINT ГЛОБАЛЬНИЙ_АНАЛІЗ_L7" [ref=e390] [cursor=pointer]:
+                - generic [ref=e391]:
+                  - img [ref=e392]
+                  - generic [ref=e395]: РОЗВІДКА_&_OSINT
+                - generic [ref=e396]: ГЛОБАЛЬНИЙ_АНАЛІЗ_L7
+              - button "ПЛАТФОРМА НАЛАШТУВАННЯ_&_АУДИТ" [ref=e397] [cursor=pointer]:
+                - generic [ref=e398]:
+                  - img [ref=e399]
+                  - generic [ref=e402]: ПЛАТФОРМА
+                - generic [ref=e403]: НАЛАШТУВАННЯ_&_АУДИТ
+              - generic [ref=e404]:
+                - generic [ref=e405]:
+                  - generic [ref=e406]: СТАТУС_ВУЗЛА
+                  - generic [ref=e407]: НЕСТАБІЛЬНИЙ
+                - generic [ref=e410]: СИЛА_СИГНАЛУ
+            - generic [ref=e419]:
+              - button "КОМАНДНИЙ_ЦЕНТР СУВЕРЕН" [ref=e420] [cursor=pointer]:
+                - img [ref=e422]
+                - generic [ref=e424]: КОМАНДНИЙ_ЦЕНТР
+                - generic [ref=e425]: СУВЕРЕН
+              - button "ТЕЛЕМЕТРІЯ ЖИВИЙ" [ref=e426] [cursor=pointer]:
+                - img [ref=e430]
+                - generic [ref=e432]: ТЕЛЕМЕТРІЯ
+                - generic [ref=e433]: ЖИВИЙ
+              - button "РЕЗЕРВУВАННЯ" [ref=e434] [cursor=pointer]:
+                - img [ref=e436]
+                - generic [ref=e441]: РЕЗЕРВУВАННЯ
+              - button "КОНВЕЄР_GITOPS" [ref=e442] [cursor=pointer]:
+                - img [ref=e444]
+                - generic [ref=e448]: КОНВЕЄР_GITOPS
+              - button "ШІ_АГЕНТИ_OPS" [ref=e449] [cursor=pointer]:
+                - img [ref=e451]
+                - generic [ref=e454]: ШІ_АГЕНТИ_OPS
+              - button "НУЛЬОВА_ДОВІРА БЕЗПЕКА" [ref=e455] [cursor=pointer]:
+                - img [ref=e457]
+                - generic [ref=e459]: НУЛЬОВА_ДОВІРА
+                - generic [ref=e460]: БЕЗПЕКА
+              - button "ЦЕНТР_DATAOPS" [ref=e461] [cursor=pointer]:
+                - img [ref=e463]
+                - generic [ref=e467]: ЦЕНТР_DATAOPS
+              - button "ОПЕРАЦІЇ_ХАОСУ НЕБЕЗПЕКА" [ref=e468] [cursor=pointer]:
+                - img [ref=e470]
+                - generic [ref=e472]: ОПЕРАЦІЇ_ХАОСУ
+                - generic [ref=e473]: НЕБЕЗПЕКА
+              - button "ЗАХИСТ_РЕСУРСІВ В-ПАМ" [ref=e474] [cursor=pointer]:
+                - img [ref=e476]
+                - generic [ref=e478]: ЗАХИСТ_РЕСУРСІВ
+                - generic [ref=e479]: В-ПАМ
+              - button "PTY_ТЕРМІНАЛ КЛЮЧ" [ref=e480] [cursor=pointer]:
+                - img [ref=e482]
+                - generic [ref=e484]: PTY_ТЕРМІНАЛ
+                - generic [ref=e485]: КЛЮЧ
+          - generic [ref=e487]:
+            - generic:
+              - generic:
+                - generic: "ГЕО_ЛОКАЦІЯ: 50.4501° N, 30.5234° E"
+              - generic:
+                - generic: "ВІДСТЕЖЕННЯ_ВУЗЛА: 0x9F431B95-ELITE"
+              - generic:
+                - generic: "СТАБІЛЬНІСТЬ_ЯДРА: ELITE_v63.0_ELITE_СТАБІЛЬНО"
+            - generic:
+              - generic: "СИНХРОНІЗАЦІЯ_ЗАТрИМКИ: 0.0014MS"
+              - generic: "ВИХІДНИЙ_ПОТІК: 14.8 ГБ/С"
+              - generic: "ВХІДНИЙ_ПОТІК: 8.2 ГБ/С"
+              - generic: "ШИФР: CHACHA20-POLY1305_QUANTUM_L5"
+            - generic [ref=e489]:
+              - generic:
+                - generic: B49ABC4F25
+                - generic: B9DCBFEF2C
+                - generic: 8ED5DD92D7
+                - generic: 2011506DB0
+                - generic: C9F6CC8E86
+                - generic: C3A796B483
+                - generic: AB85EFAB3A
+                - generic: 43F854B734
+                - generic: 2DF3DAE4FA
+                - generic: EE2DC3CF8A
+                - generic: 6C469D2825
+                - generic: C540086ECE
+                - generic: F970689512
+                - generic: B06FF4FD80
+                - generic: 46F44FDFD8
+                - generic: 1C221914B5
+                - generic: C5A7B1EF0D
+                - generic: 5BE7D563C4
+                - generic: E1579279EE
+                - generic: 63CC73C418
+                - generic: DA3DE6CF4E
+                - generic: 1412DF35BD
+                - generic: EB38B05EC4
+                - generic: 5D6DA90C4F
+                - generic: 905C87696E
+                - generic: 62A14DA6DA
+                - generic: F1F1D23F22
+                - generic: 2D8DCEBB76
+                - generic: 691CD452FC
+                - generic: C18150F3AC
+                - generic: 30795A4FDB
+                - generic: 3287D9B721
+                - generic: 2B63F8C977
+                - generic: 9DD675E1AC
+                - generic: "62755E2008"
+                - generic: 8E6522768A
+                - generic: A4FE36F5DB
+                - generic: 485A6BA486
+                - generic: A5840A0450
+                - generic: DEA46F030A
+                - generic: ED834E88C5
+                - generic: 1C78911ADB
+                - generic: 16E547AFDF
+                - generic: 868CC92830
+                - generic: 85EEA1F16C
+                - generic: 2FF7439E90
+                - generic: 239F704CAD
+                - generic: C8633DCA86
+                - generic: 1A6770F745
+                - generic: AC00245408
+                - generic: AD06983925
+                - generic: 01478BFF82
+                - generic: 735DB5BEC6
+                - generic: B6CF8DA90E
+                - generic: CE25E50948
+                - generic: 4D313E8BAD
+                - generic: AB2249E812
+                - generic: 1ED00C8DB9
+                - generic: 22ADBB25FF
+                - generic: 9625DEC970
+                - generic: 625D83E28D
+                - generic: 632070F5A6
+                - generic: D6925C749F
+                - generic: 8187AAAC33
+                - generic: 1A1D0F1E50
+                - generic: 1CA934F828
+                - generic: AAC8B18F69
+                - generic: 5CB0599D21
+                - generic: 7F6AB1EB3D
+                - generic: F642805730
+                - generic: 2D3C6CCD48
+                - generic: 0749EDDC60
+                - generic: 31CA596F86
+                - generic: 028AD5B011
+                - generic: 562AE70B53
+                - generic: 28DDB32D89
+                - generic: 8E0B567650
+                - generic: DF6787CB53
+                - generic: 823F8C9E9B
+                - generic: 9E7B6FF7BA
+                - generic: 9ED77CF6D8
+                - generic: 505D92E013
+                - generic: D6672D35BD
+                - generic: 5EE38FB5AB
+                - generic: C9CD9B80CB
+                - generic: 4F68F0470A
+                - generic: 9A2C26C89B
+                - generic: ABC354BDFF
+                - generic: 46BD5763D5
+                - generic: A8F8A6B668
+                - generic: 714C19DDDB
+                - generic: 20ABC2922F
+                - generic: 7F0C9A5E55
+                - generic: A5363F6EA1
+                - generic: E81A4B83DF
+                - generic: 444257FD2B
+                - generic: A896BE652A
+                - generic: 00C0C236D8
+                - generic: E1E1A8F393
+                - generic: C9F692B5AB
+                - generic: 8D15C98E01
+                - generic: 6E42DE2667
+                - generic: B2B1E814F9
+                - generic: 7D6A9675D6
+                - generic: 2F471D38EB
+                - generic: 5DC8F56757
+                - generic: 509E4F43C9
+                - generic: CDCB91C59C
+                - generic: 9F79C54079
+                - generic: D36B33FA7E
+                - generic: 162C584B7A
+                - generic: 5FCB71C5F4
+                - generic: 31D80AB05D
+                - generic: 5FD664EBAB
+                - generic: 502B024465
+                - generic: 043394193E
+                - generic: 0331DD91CE
+                - generic: 35AA618E68
+                - generic: 89B104C974
+                - generic: 490CB655FB
+                - generic: 22CDA538E3
+                - generic: CC605FA63F
+                - generic: 9CCFC62D82
+                - generic: A3E37E26D8
+                - generic: 6E7D78AE9C
+                - generic: 723080AEDC
+                - generic: C42DA278CD
+                - generic: 7E8D4698E1
+                - generic: FA9F2379B6
+                - generic: CA4B755D72
+                - generic: 6A7271B57C
+                - generic: 0B3B15D619
+                - generic: D445CDE8FA
+                - generic: BBC6D26B67
+                - generic: 420DCEBD19
+                - generic: 730808367D
+                - generic: 525723C125
+                - generic: A6FC50AF59
+                - generic: C73DCCDEEF
+                - generic: 571B827554
+                - generic: 461A6D6F98
+                - generic: 1E6E126122
+                - generic: 5D47B2F9E8
+                - generic: FB5E0E7CF8
+                - generic: 9780F20B2B
+                - generic: 9D23DBFE02
+                - generic: D99BA4A79E
+                - generic: E3ABC54F68
+                - generic: AD76AD4AC1
+                - generic: EFD7E83C1A
+              - img [ref=e496]
+              - generic [ref=e500]:
+                - generic [ref=e502]: ІНІЦІАЛІЗАЦІЯ_ВУЗЛА_ELITE
+                - generic [ref=e505]:
+                  - generic [ref=e508]: "НЕЙРОННИЙ_ЗВ'ЯЗОК: 10.4 GB/S"
+                  - generic [ref=e511]: "З’ЄДНАННЯ_ЯДРА: ПІДТВЕРДЖЕНО"
+                  - generic [ref=e514]: "ШАР_ДЕШИФРУВАННЯ: AES-256-GCM"
+                  - generic [ref=e517]: "СУВЕРЕННА_АВТЕНТИФІКАЦІЯ: OK"
+                  - generic [ref=e519]: "РОЗПОДІЛ_VRAM: 8GB_GUARD_АКТИВНИЙ"
+                  - generic [ref=e522]: "СИНХРОНІЗАЦІЯ_МАПИ_UBO: L5"
+  - button "Відкрити швидкі дії" [ref=e524] [cursor=pointer]:
+    - img [ref=e526]
+  - generic [ref=e529]:
+    - generic [ref=e532]:
+      - generic [ref=e533]:
+        - img [ref=e534]
+        - generic [ref=e536]: Крок 1 з 6
+      - button "Закрити" [ref=e537] [cursor=pointer]:
+        - img [ref=e538]
+    - generic [ref=e541]:
+      - img [ref=e543]
+      - heading "Ласкаво просимо до Predator v45 | Neural Analytics" [level=2] [ref=e548]
+      - paragraph [ref=e549]: Ваша ультимативна платформа для аналітики, розслідувань та стратегічного планування тепер ще потужніша.
+    - generic [ref=e550]:
+      - button "Назад" [disabled] [ref=e551]
+      - button "Далі" [ref=e559] [cursor=pointer]:
+        - text: Далі
+        - img [ref=e560]
+  - button [ref=e562] [cursor=pointer]:
+    - img [ref=e564]
+```
