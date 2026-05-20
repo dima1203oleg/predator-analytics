@@ -6,6 +6,7 @@
  */
 
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
+import { ThermalCard } from '@/components/polish/ThermalCard';
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -182,16 +183,17 @@ export default function MonitoringView() {
                      { label: 'ЛАТЕНТНІСТЬ_API', value: formatLatency(metrics.api_latency_ms), icon: Zap, tone: statusTones.amber },
                      { label: 'ДИСКОВИЙ_ПРОСТІР', value: formatPercent(metrics.disk_usage_pct), icon: HardDrive, tone: statusTones.emerald },
                    ].map((m) => (
-                     <div key={m.label} className="group relative rounded-3xl border border-white/5 bg-black/40  p-8 transition-all hover:border-rose-500/30 overflow-hidden">
-                       <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none" />
-                       <div className="flex items-center justify-between mb-4">
-                         <div className={cn("p-3 rounded-xl border", m.tone.bg)}>
-                            <m.icon className={cn("h-5 w-5", m.tone.text)} />
+                     <ThermalCard key={m.label} className="group" glowColor="rgba(225, 29, 72, 0.12)">
+                       <div className="p-8">
+                         <div className="flex items-center justify-between mb-4">
+                           <div className={cn("p-3 rounded-xl border", m.tone.bg)}>
+                              <m.icon className={cn("h-5 w-5", m.tone.text)} />
+                           </div>
                          </div>
+                         <div className="text-3xl font-black italic tracking-tighter text-white tabular-nums mb-1">{m.value}</div>
+                         <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic group-hover:text-rose-400 transition-colors">{m.label}</div>
                        </div>
-                       <div className="text-3xl font-black italic tracking-tighter text-white tabular-nums mb-1">{m.value}</div>
-                       <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic group-hover:text-rose-400 transition-colors">{m.label}</div>
-                     </div>
+                     </ThermalCard>
                    ))}
                 </div>
               </div>
