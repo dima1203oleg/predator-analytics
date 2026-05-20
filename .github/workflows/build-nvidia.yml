@@ -32,12 +32,12 @@ jobs:
       - name: Install frontend dependencies
         run: |
           cd apps/predator-analytics-ui
-          npm install
+          npm ci
 
       - name: Build frontend
         run: |
           cd apps/predator-analytics-ui
-          npm run build 2>&1 | tee /tmp/build.log || (echo "=== BUILD FAILED ==="; tail -100 /tmp/build.log; exit 1)
+          NODE_OPTIONS="--max-old-space-size=6144" npm run build
         env:
           VITE_API_URL: "http://localhost:9080"
 
