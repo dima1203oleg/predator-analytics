@@ -10,6 +10,7 @@ import {
   Settings, AlertTriangle, Zap, Lock
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
+import { useUISound, UISoundType } from '@/hooks/useUISound';
 
 interface CommandItem {
   id: string;
@@ -41,6 +42,7 @@ export const CommandPalette: React.FC = () => {
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
+  const { play } = useUISound();
 
   const filtered = useMemo(() => {
     if (!query.trim()) return COMMANDS;
@@ -55,10 +57,10 @@ export const CommandPalette: React.FC = () => {
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
       e.preventDefault();
-      setOpen(p => !p);
+      setOpen(p => { const next = !p; if (next) play(UISoundType.CLICK); return next; });
     }
-    if (e.key === 'Escape') setOpen(false);
-  }, []);
+    if (e.key === 'Escape') { setOpen(false); }
+  }, [play]);
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
@@ -75,7 +77,7 @@ export const CommandPalette: React.FC = () => {
     } else if (e.key === 'Enter') {
       e.preventDefault();
       const item = filtered[selectedIndex];
-      if (item) { item.action(); setOpen(false); setQuery(''); }
+      if (item) { play(UISoundType.SUCCESS); item.action(); setOpen(false); setQuery(''); }
     } else if (e.key === 'Escape') {
       setOpen(false);
     }
@@ -156,8 +158,8 @@ export const CommandPalette: React.FC = () => {
                       return (
                         <motion.button
                           key={item.id}
-                          onMouseEnter={() => setSelectedIndex(globalIdx)}
-                          onClick={() => { item.action(); setOpen(false); setQuery(''); }}
+                          onMouseEnter={() => { setSelectedIndex(globalIdx); play(UISoundType.HOVER, 100); }}
+                          onClick={() => { play(UISoundType.SUCCESS); item.action(); setOpen(false); setQuery(''); }}
                           className={cn(
                             "w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all text-left group",
                             isSelected
