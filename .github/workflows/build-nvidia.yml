@@ -37,7 +37,7 @@ jobs:
       - name: Build frontend
         run: |
           cd apps/predator-analytics-ui
-          npm run build
+          npm run build 2>&1 | tee /tmp/build.log || (echo "=== BUILD FAILED ==="; tail -100 /tmp/build.log; exit 1)
         env:
           VITE_API_URL: "http://localhost:9080"
 
