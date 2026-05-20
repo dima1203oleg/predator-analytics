@@ -76,14 +76,12 @@ export const ShellCommandPalette: React.FC = () => {
       return entries;
     }
 
-    const queryWords = normalizedQuery.split(/\s+/);
-
     return entries.filter((entry) => {
       const haystack = [entry.label, entry.subtitle, entry.source, ...entry.keywords]
         .join(' ')
         .toLowerCase();
 
-      return queryWords.every((word) => haystack.includes(word));
+      return haystack.includes(normalizedQuery);
     });
   }, [entries, query]);
 

@@ -4,7 +4,7 @@
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 import { Canvas } from '@react-three/fiber';
 import { Stars, PerspectiveCamera, OrbitControls, Float } from '@react-three/drei';
@@ -21,19 +21,6 @@ interface AdvancedBackgroundProps {
     mode?: string;
 }
 
-function hasWebGLSupport(): boolean {
-    if (typeof window === 'undefined') return false;
-    try {
-        const canvas = document.createElement('canvas');
-        return !!(
-            window.WebGLRenderingContext &&
-            (canvas.getContext('webgl') || canvas.getContext('experimental-webgl'))
-        );
-    } catch (e) {
-        return false;
-    }
-}
-
 export const AdvancedBackground: React.FC<AdvancedBackgroundProps> = ({
     showStars = true,
     showGrid = true,
@@ -44,11 +31,6 @@ export const AdvancedBackground: React.FC<AdvancedBackgroundProps> = ({
 }) => {
     const { mode: themeMode } = useTheme();
     const mode = propsMode || themeMode;
-    const [webglSupported, setWebglSupported] = useState(true);
-
-    useEffect(() => {
-        setWebglSupported(hasWebGLSupport());
-    }, []);
 
     // Mode-specific color mapping
     const getModeGradient = () => {
@@ -74,7 +56,7 @@ export const AdvancedBackground: React.FC<AdvancedBackgroundProps> = ({
     return (
         <div className={cn("fixed inset-0 z-[-1] pointer-events-none overflow-hidden bg-black", className)}>
             {/* 3D Deep Space Layer */}
-            {showStars && webglSupported && (
+            {showStars && (
                 <div className="absolute inset-0 opacity-40">
                     <Canvas>
                         <PerspectiveCamera makeDefault position={[0, 0, 10]} />
@@ -101,11 +83,6 @@ export const AdvancedBackground: React.FC<AdvancedBackgroundProps> = ({
                         <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={mode === 'sovereign' ? 0.6 : 0.3} />
                     </Canvas>
                 </div>
-            )}
-
-            {/* Fallback CSS Stars for environments without WebGL (e.g. headless tests) */}
-            {showStars && !webglSupported && (
-                <div className="absolute inset-0 opacity-25 bg-[radial-gradient(1px_1px_at_20px_30px,#fff,transparent),radial-gradient(1px_1px_at_40px_70px,#fff,transparent),radial-gradient(2px_2px_at_50px_160px,#fff,transparent),radial-gradient(2px_2px_at_80px_120px,rgba(255,255,255,0.5),transparent)] bg-[size:200px_200px]" />
             )}
 
             {/* Tactical Grid */}

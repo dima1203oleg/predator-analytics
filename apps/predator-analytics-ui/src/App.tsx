@@ -12,7 +12,6 @@ import { RoleProvider } from './context/RoleContext';
 import { AccessProvider } from './context/AccessContext';
 // Stores
 import { useAppStore } from './store/useAppStore';
-import { useUISound, UISoundType } from './hooks/useUISound';
 
 // Remaining Providers
 import { SensitiveDataProvider } from './context/SensitiveDataContext';
@@ -52,15 +51,7 @@ const queryClient = new QueryClient({
 
 function App() {
   // SOVEREIGN NEXUS EXPERIENCE: Start with cinematic BootScreen
-  const [appState, setAppState] = useState<'BOOTING' | 'LOGIN' | 'READY'>(() => {
-    if (typeof window !== 'undefined') {
-      const token = sessionStorage.getItem('predator_auth_token');
-      if (token) {
-        return 'READY';
-      }
-    }
-    return 'BOOTING';
-  });
+  const [appState, setAppState] = useState<'BOOTING' | 'LOGIN' | 'READY'>('BOOTING');
   const { highVisibility, isTerminalOpen } = useAppStore((state) => ({
     highVisibility: state.highVisibility,
     isTerminalOpen: state.isTerminalOpen
@@ -70,20 +61,6 @@ function App() {
     if (typeof document === 'undefined') return;
     document.documentElement.classList.toggle('high-visibility', highVisibility);
   }, [highVisibility]);
-
-  // Глобальний click sound для всіх кнопок і інтерактивних елементів
-  const { play } = useUISound();
-  useEffect(() => {
-    if (typeof document === 'undefined') return;
-    const handler = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (target.closest('button, a, [role="button"], .cursor-pointer')) {
-        play(UISoundType.CLICK, 80);
-      }
-    };
-    document.addEventListener('click', handler);
-    return () => document.removeEventListener('click', handler);
-  }, [play]);
 
   // Global error capture for runtime issues (shows overlay with details)
   const [globalError, setGlobalError] = useState<{ message: string; stack?: string } | null>(null);

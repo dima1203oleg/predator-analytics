@@ -63,41 +63,11 @@ interface UserContextType {
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUserState] = useState<UserProfile | null>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = sessionStorage.getItem('predator_user_profile');
-      if (saved) {
-        try {
-          return JSON.parse(saved);
-        } catch (e) {
-          // ignore
-        }
-      }
-      const token = sessionStorage.getItem('predator_auth_token');
-      if (token) {
-        const isAdmin = token === 'admin-token';
-        const fallbackUser: UserProfile = {
-          id: isAdmin ? 'admin-1' : 'client-1',
-          name: isAdmin ? 'Командир' : 'Старший Стратег',
-          email: isAdmin ? 'admin@predator.ai' : 'user@client.com',
-          role: isAdmin ? UserRole.ADMIN : UserRole.CLIENT_PREMIUM,
-          tier: isAdmin ? SubscriptionTier.ENTERPRISE : SubscriptionTier.PRO,
-          tenant_id: 'demo-tenant',
-          tenant_name: 'PREDATOR_CORP',
-          last_login: new Date().toISOString(),
-          data_sectors: ['ALPHA', 'GAMMA', 'DELTA-9']
-        };
-        sessionStorage.setItem('predator_user_profile', JSON.stringify(fallbackUser));
-        return fallbackUser;
-      }
-    }
-    return null;
-  });
+  const [user, setUserState] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const setUser = (newUser: UserProfile) => {
     setUserState(newUser);
-    sessionStorage.setItem('predator_user_profile', JSON.stringify(newUser));
     // Simple mock token
     sessionStorage.setItem('predator_auth_token', newUser.role === UserRole.ADMIN ? 'admin-token' : 'user-token');
   };
@@ -105,7 +75,6 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const logout = () => {
     setUserState(null);
     sessionStorage.removeItem('predator_auth_token');
-    sessionStorage.removeItem('predator_user_profile');
     window.location.href = '/'; // Hard reload to clear states
   };
 

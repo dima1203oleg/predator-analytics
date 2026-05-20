@@ -2,7 +2,7 @@ import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  CheckCircle2, XCircle, AlertTriangle, HelpCircle, ChevronRight, X, Loader2
+  CheckCircle2, XCircle, AlertTriangle, HelpCircle, ChevronRight, X
 } from 'lucide-react';
 import { cn } from '../../utils/cn';
 import { useSystemEvents } from '../../hooks/useSystemEvents';

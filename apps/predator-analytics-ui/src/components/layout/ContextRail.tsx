@@ -238,7 +238,7 @@ export const ContextRail: React.FC = () => {
             <div className="flex items-center gap-2 mb-2">
               <div className="w-1.5 h-1.5 bg-red-600 rounded-full" />
               <div className="text-[7px] font-black uppercase tracking-[0.55em] text-red-700/80">
-                КОНТЕКСТНА ПАНЕЛЬ · CLASSIFIED CONTEXT
+                INTEL · CLASSIFIED CONTEXT
               </div>
             </div>
             <div className="text-[13px] font-black tracking-tight text-white leading-snug">{effectivePayload.title}</div>
