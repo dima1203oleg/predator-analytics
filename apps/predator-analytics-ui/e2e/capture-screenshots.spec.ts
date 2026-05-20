@@ -13,9 +13,29 @@ test.describe('📸 Візуальне тестування PREDATOR Analytics',
   test.use({ viewport: { width: 1920, height: 1080 } });
 
   test('Сценарій VIP: Скріншоти всіх бізнес-модулів та аналітики', async ({ page }) => {
+    test.setTimeout(120000);
+    // Реєструємо логування з браузера
+    page.on('console', msg => {
+      console.log(`[BROWSER CONSOLE ${msg.type()}]: ${msg.text()}`);
+    });
+    page.on('pageerror', err => {
+      console.error(`[BROWSER EXCEPTION]: ${err.message}\n${err.stack}`);
+    });
+
     // 1. Авторизація як VIP (DRPO-ДИРЕКТОР)
     console.log('Початок авторизації VIP...');
     await page.goto('http://localhost:3030/login');
+    
+    // Чекаємо завантаження сторінки або кнопки пропуску заставки
+    try {
+      const skipBtn = page.locator('text=ПРОПУСТИТИ ЗАСТАВКУ');
+      await skipBtn.waitFor({ state: 'visible', timeout: 5000 });
+      console.log('Знайдено кнопку пропуску заставки. Клікаємо...');
+      await skipBtn.click();
+    } catch (e) {
+      console.log('Кнопку пропуску заставки не знайдено або таймаут, продовжуємо стандартне очікування...');
+    }
+
     await page.waitForSelector('text=PREDATOR', { timeout: 15000 });
     
     // Клікаємо на монету/логотип для запуску сканування
@@ -69,16 +89,36 @@ test.describe('📸 Візуальне тестування PREDATOR Analytics',
     for (const view of businessViews) {
       console.log(`Перехід на: ${view.url} -> Збереження у ${view.name}`);
       await page.goto(view.url);
-      await page.waitForLoadState('networkidle');
-      await page.waitForTimeout(1000); // Даємо час дозавантажитись картам і чартам
+      await page.waitForLoadState('domcontentloaded');
+      await page.waitForTimeout(2000); // Даємо час дозавантажитись картам і чартам
       await page.screenshot({ path: path.join(SCREENSHOT_DIR, view.name), fullPage: false });
     }
   });
 
   test('Сценарій ADMIN: Скріншоти технічних дашбордів керування', async ({ page }) => {
+    test.setTimeout(120000);
+    // Реєструємо логування з браузера
+    page.on('console', msg => {
+      console.log(`[ADMIN BROWSER CONSOLE ${msg.type()}]: ${msg.text()}`);
+    });
+    page.on('pageerror', err => {
+      console.error(`[ADMIN BROWSER EXCEPTION]: ${err.message}\n${err.stack}`);
+    });
+
     // 2. Авторизація як ADMIN (КОМАНДИР СУВЕРЕНІТЕТУ)
     console.log('Початок авторизації ADMIN...');
     await page.goto('http://localhost:3030/login');
+
+    // Чекаємо завантаження сторінки або кнопки пропуску заставки
+    try {
+      const skipBtn = page.locator('text=ПРОПУСТИТИ ЗАСТАВКУ');
+      await skipBtn.waitFor({ state: 'visible', timeout: 5000 });
+      console.log('Знайдено кнопку пропуску заставки. Клікаємо...');
+      await skipBtn.click();
+    } catch (e) {
+      console.log('Кнопку пропуску заставки не знайдено або таймаут, продовжуємо стандартне очікування...');
+    }
+
     await page.waitForSelector('text=PREDATOR', { timeout: 15000 });
     
     // Клікаємо на монету/логотип для запуску сканування
@@ -113,8 +153,8 @@ test.describe('📸 Візуальне тестування PREDATOR Analytics',
     for (const view of adminViews) {
       console.log(`Перехід на: ${view.url} -> Збереження у ${view.name}`);
       await page.goto(view.url);
-      await page.waitForLoadState('networkidle');
-      await page.waitForTimeout(1000);
+      await page.waitForLoadState('domcontentloaded');
+      await page.waitForTimeout(2000); // Даємо час дозавантажитись картам і чартам
       await page.screenshot({ path: path.join(SCREENSHOT_DIR, view.name), fullPage: false });
     }
   });
