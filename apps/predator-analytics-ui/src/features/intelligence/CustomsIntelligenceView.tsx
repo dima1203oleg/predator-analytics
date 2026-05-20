@@ -34,6 +34,7 @@ import { CyberGrid } from '@/components/CyberGrid';
 import { ViewHeader } from '@/components/ViewHeader';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { useUISound, UISoundType } from '@/hooks/useUISound';
+import { GeoGlobe } from '@/components/polish/GeoGlobe';
 import { SovereignAudio } from '@/utils/sovereign-audio';
 
 // ========================
@@ -251,14 +252,17 @@ export default function CustomsIntelligenceView() {
            {/* HEADER HUD */}
            <ViewHeader
              title={
-               <div className="flex items-center gap-10">
+               <div className="flex items-center gap-10 relative">
                   <div className="relative group">
                      <div className="absolute inset-0 bg-rose-500/20 blur-3xl rounded-full scale-150 " />
                      <div className="relative p-7 bg-black border-2 border-rose-500/40 rounded-[2.5rem] shadow-2xl transform rotate-2 hover:rotate-0 transition-all">
                         <Anchor size={42} className="text-rose-500 shadow-[0_0_20px_#e11d48]" />
                      </div>
                   </div>
-                  <div className="space-y-2">
+                  <div className="absolute right-0 top-0 pointer-events-none opacity-30">
+                     <GeoGlobe size={180} rotationSpeed={0.0006} className="opacity-60" />
+                  </div>
+                  <div className="space-y-2 relative z-10">
                      <div className="flex items-center gap-4">
                         <span className="bg-rose-500/10 border border-rose-500/20 text-rose-500 px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg">
                           ELITE_MANIFEST_XRAY // {isOffline ? 'OFFLINE_CACHE' : 'LIVE_FEED'}

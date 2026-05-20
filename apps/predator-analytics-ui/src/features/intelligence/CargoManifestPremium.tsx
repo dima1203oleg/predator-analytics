@@ -26,6 +26,7 @@ import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { ViewHeader } from '@/components/ViewHeader';
 import { DiagnosticsTerminal } from '@/components/intelligence/DiagnosticsTerminal';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { GeoGlobe } from '@/components/polish/GeoGlobe';
 
 // ─── TYPES ────────────────────────────────────────────────────────────
 
@@ -141,14 +142,17 @@ export default function CargoManifestPremium() {
           
           <ViewHeader
             title={
-              <div className="flex items-center gap-12">
+              <div className="flex items-center gap-12 relative">
                 <div className="relative group">
                   <div className="absolute inset-0 bg-amber-600/20 blur-[80px] rounded-full scale-150 " />
                   <div className="relative p-8 bg-black border-2 border-amber-600/40 rounded-[3rem]  transform rotate-3 hover:rotate-0 transition-all duration-700">
                     <Fingerprint size={48} className="text-amber-500 shadow-[0_0_30px_#f59e0b]" />
                   </div>
                 </div>
-                <div className="space-y-4">
+                <div className="absolute right-0 top-0 pointer-events-none opacity-30">
+                  <GeoGlobe size={180} rotationSpeed={0.0006} className="opacity-60" />
+                </div>
+                <div className="space-y-4 relative z-10">
                   <div className="flex items-center gap-6">
                     <span className="bg-amber-600/10 border border-amber-600/20 text-amber-500 px-5 py-1.5 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-xl">
                       MANIFEST_FORENSIC // DEEP_SCAN_SYSTEM

@@ -4,6 +4,8 @@ import { HubLayout } from '@/components/layout/HubLayout';
 import { useSearchParams } from 'react-router-dom';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { useRole } from '@/context/RoleContext';
+import { useContextRail } from '@/hooks/useContextRail';
+import { createMetric, createRisk, createStandardContextActions } from '@/components/layout/contextRail.builders';
 
 // Імпорт компонентів вкладок
 import { MarketOverviewTab } from './tabs/market/MarketOverviewTab';
@@ -32,6 +34,41 @@ const MarketHub: React.FC = () => {
   const hubTabs = useMemo(() => {
     return ALL_TABS.filter(t => !t.premium || isPremium);
   }, [isPremium]);
+
+  const activeTabLabel = ALL_TABS.find(t => t.id === activeTab)?.label ?? 'Огляд';
+
+  const marketRailPayload = useMemo(
+    () => ({
+      entityId: 'market-elite',
+      entityType: 'STRATEGIC_MARKET',
+      title: 'РИНОК',
+      subtitle: `v62.7-ELITE • ${backendStatus.sourceLabel}`,
+      status: {
+        label: 'OPERATIONAL',
+        tone: 'info' as const,
+      },
+      actions: createStandardContextActions({
+        auditPath: '/diligence',
+        documentsPath: '/documents',
+        agentPath: '/agents',
+      }),
+      insights: [
+        createMetric('m-status', 'Стан системи', 'Активний', 'Всі контури інтегровані', 'success'),
+        createMetric('m-type', 'Тип аналітики', 'Стратегічний', 'Аналіз торгових потоків та митниці')
+      ],
+      relations: [
+        createMetric('active-view', 'Режим', activeTabLabel, 'Поточний фільтр аналітики'),
+        createMetric('data-freshness', 'Актуальність', '99.8%', 'Дані оновлено 2 хв тому'),
+      ],
+      risks: [],
+      sourcePath: '/market',
+      documents: [],
+    }),
+    [activeTabLabel, backendStatus.sourceLabel]
+  );
+
+  useContextRail(marketRailPayload);
+
 
   // Синхронізація активної вкладки при зміні URL
   useEffect(() => {
