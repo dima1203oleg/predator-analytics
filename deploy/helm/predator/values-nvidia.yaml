@@ -34,11 +34,12 @@ frontend:
   enabled: true
   replicaCount: 1
   image:
-    pullPolicy: Never
+    repository: ghcr.io/dima1203oleg/predator-analytics/frontend
+    pullPolicy: IfNotPresent
   service:
     type: ClusterIP
     port: 80
-    targetPort: 3030
+    targetPort: 80
   ingress:
     enabled: true
     className: traefik
@@ -91,7 +92,8 @@ coreApi:
   enabled: true
   replicaCount: 1
   image:
-    pullPolicy: Never
+    repository: ghcr.io/dima1203oleg/predator-analytics/core-api
+    pullPolicy: IfNotPresent
   service:
     type: ClusterIP
     port: 8000
@@ -137,7 +139,8 @@ graphService:
   enabled: true
   replicaCount: 1
   image:
-    pullPolicy: Never
+    repository: ghcr.io/dima1203oleg/predator-analytics/graph-service
+    pullPolicy: IfNotPresent
   resources:
     limits:
       cpu: 1000m
@@ -166,7 +169,8 @@ ingestionWorker:
   enabled: true
   replicaCount: 1
   image:
-    pullPolicy: Never
+    repository: ghcr.io/dima1203oleg/predator-analytics/ingestion-worker
+    pullPolicy: IfNotPresent
   resources:
     limits:
       cpu: 2000m
@@ -200,7 +204,8 @@ osintService:
   enabled: true
   replicaCount: 1
   image:
-    pullPolicy: Never
+    repository: ghcr.io/dima1203oleg/predator-analytics/osint-service
+    pullPolicy: IfNotPresent
   service:
     type: ClusterIP
     port: 9200
