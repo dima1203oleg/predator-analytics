@@ -32,8 +32,7 @@ jobs:
       - name: Install frontend dependencies
         run: |
           cd apps/predator-analytics-ui
-          npm cache clean --force
-          npm ci
+          npm install
 
       - name: Build frontend
         run: |
