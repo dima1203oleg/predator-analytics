@@ -7,10 +7,21 @@ __pycache__/
 venv/
 .venv/
 .env
+.env*
 
 # Ignore git files
 .git
 .gitignore
+.github/
+
+# Ignore tests and coverage
+coverage/
+tests/
+__tests__/
+*.test.*
+*.spec.*
+playwright-report/
+test-results/
 
 # Ignore Docker files not needed in context
 Dockerfile
@@ -20,6 +31,14 @@ docker-compose.yml
 .vscode/
 .idea/
 
+# Ignore documentation
+*.md
+!README.md
+
+# Ignore CI artifacts
+*.tar.gz
+*.zip
+
 # Ignore logs and temporary files
 *.log
 *.tmp
@@ -28,12 +47,15 @@ docker-compose.yml
 data/workers/
 services/api-gateway/data/
 
-# Ignore node modules (if any)
+# Ignore node modules and build artifacts
 **/node_modules/
 **/dist/
 !apps/predator-analytics-ui/dist/
 **/build/
 **/npm_cache/
+**/.turbo/
+**/.cache/
+.next/
 **/*.log
 **/*.tmp
 **/*.csv

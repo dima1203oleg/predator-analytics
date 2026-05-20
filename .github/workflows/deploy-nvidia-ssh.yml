@@ -1,0 +1,88 @@
+---
+name: Deploy to NVIDIA via SSH
+permissions:
+  contents: read
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'deploy/argocd/predator-nvidia.yaml'
+      - 'environments/nvidia/**'
+
+# HR-06: Не запускати якщо коміт з [skip ci]
+concurrency:
+  group: deploy-nvidia-ssh
+  cancel-in-progress: false
+
+jobs:
+  deploy-nvidia:
+    name: Deploy to NVIDIA Server (SSH)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check required secrets
+        run: |
+          if [ -z "${{ secrets.NVIDIA_SSH_KEY }}" ]; then
+            echo "❌ NVIDIA_SSH_KEY не налаштований. Деплой пропущено."
+            echo "Додайте secrets у Settings -> Secrets and variables -> Actions"
+            exit 0
+          fi
+          echo "✅ Secrets налаштовані. Продовжуємо деплой."
+
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'v1.29.0'
+
+      - name: Deploy to NVIDIA Server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.NVIDIA_HOST }}
+          username: ${{ secrets.NVIDIA_USER }}
+          key: ${{ secrets.NVIDIA_SSH_KEY }}
+          port: ${{ secrets.NVIDIA_SSH_PORT || '22' }}
+          script: |
+            echo "=== PREDATOR NVIDIA Deploy ==="
+            set -e
+
+            # 1. Pull latest code
+            cd ~/predator-analytics || cd /opt/predator-analytics || (echo "Repo not found"; exit 1)
+            git fetch origin
+            git checkout main
+            git pull origin main
+
+            # 2. Update Helm values
+            helm upgrade --install predator-nvidia deploy/helm/predator \
+              -f deploy/helm/predator/values.yaml \
+              -f environments/nvidia/values.yaml \
+              -n predator-nvidia \
+              --create-namespace \
+              --wait --timeout 10m
+
+            # 3. Apply ArgoCD application
+            kubectl apply -f deploy/argocd/predator-nvidia.yaml -n argocd || true
+
+            # 4. Force sync ArgoCD
+            kubectl patch application predator-nvidia-elite -n argocd \
+              --type merge \
+              -p '{"operation":{"sync":{"prune":true}}}' || true
+
+            # 5. Health check
+            echo "=== Health Check ==="
+            kubectl get pods -n predator-nvidia -o wide
+            kubectl get svc -n predator-nvidia
+
+            echo "=== Deploy Complete ==="
+
+      - name: Notify result
+        if: always()
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "✅ Деплой на NVIDIA сервер успішний"
+          else
+            echo "⚠️ Деплой на NVIDIA сервер не вдався. Перевірте secrets та підключення."
+          fi
