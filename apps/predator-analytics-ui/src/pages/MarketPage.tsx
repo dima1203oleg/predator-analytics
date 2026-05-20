@@ -426,7 +426,7 @@ export default function MarketPage() {
     () => ({
       entityId: 'market-elite',
       entityType: 'STRATEGIC_MARKET',
-      title: 'РИНКОВИЙ КОНТУР',
+      title: 'РИНОК',
       subtitle: `v62.7-ELITE • ${backendStatus.sourceLabel}`,
       status: {
         label: loadingOverview ? 'SYNCHRONIZING' : 'OPERATIONAL',

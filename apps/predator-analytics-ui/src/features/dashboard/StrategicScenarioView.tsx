@@ -6,6 +6,7 @@
  */
 
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
+import { ThermalCard } from '@/components/polish/ThermalCard';
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -187,8 +188,7 @@ export default function StrategicScenarioView() {
           <div className="grid grid-cols-1 gap-6">
             {isLoading ? (
                 <div className="p-20 text-center flex flex-col items-center gap-5">
-                    <Loader2 className="animate-spin text-rose-500" size={48} />
-                    <p className="text-[10px] font-black tracking-[0.4em] uppercase text-slate-500">ГЕНЕ АЦІЯ СЦЕНА ІЇВ...</p>
+                    <BrandLoaderFallback text="ГЕНЕРАЦІЯ СЦЕНАРІЇВ" subtext="МАКРОЕКОНОМІЧНЕ МОДЕЛЮВАННЯ" />
                 </div>
             ) : scenarios.map((s) => (
               <motion.div
@@ -247,23 +247,27 @@ export default function StrategicScenarioView() {
               ) : (
                 <div className="flex-1 space-y-12">
                   <div className="grid grid-cols-2 gap-6">
-                    <div className="p-8 bg-black border-2 border-white/5 rounded-[3rem] space-y-5 shadow-inner">
-                      <div className="flex items-center gap-4">
-                        <Activity size={18} className="text-rose-500" />
-                        <span className="text-[10px] font-black text-slate-600 uppercase tracking-[0.4em] italic">СТАТУС СИМУЛЯЦІЇ</span>
+                    <ThermalCard glowColor="rgba(225, 29, 72, 0.1)">
+                      <div className="p-8 space-y-5">
+                        <div className="flex items-center gap-4">
+                          <Activity size={18} className="text-rose-500" />
+                          <span className="text-[10px] font-black text-slate-600 uppercase tracking-[0.4em] italic">СТАТУС СИМУЛЯЦІЇ</span>
+                        </div>
+                        <div className="flex items-center gap-4">
+                          <div className={cn("w-3 h-3 rounded-full shadow-[0_0_10px_currentColor]", isSimulating ? "bg-amber-500 text-amber-500 " : mcResults ? "bg-emerald-500 text-emerald-500" : "bg-slate-700 text-slate-700")} />
+                          <span className="text-xl font-black text-white italic uppercase tracking-widest">{isSimulating ? 'ОБРАХУНОК...' : mcResults ? 'ЗАВЕРШЕНО' : 'ОЧІКУВАННЯ'}</span>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-4">
-                        <div className={cn("w-3 h-3 rounded-full shadow-[0_0_10px_currentColor]", isSimulating ? "bg-amber-500 text-amber-500 " : mcResults ? "bg-emerald-500 text-emerald-500" : "bg-slate-700 text-slate-700")} />
-                        <span className="text-xl font-black text-white italic uppercase tracking-widest">{isSimulating ? 'ОБРАХУНОК...' : mcResults ? 'ЗАВЕРШЕНО' : 'ОЧІКУВАННЯ'}</span>
+                    </ThermalCard>
+                    <ThermalCard glowColor="rgba(225, 29, 72, 0.1)">
+                      <div className="p-8 space-y-5">
+                        <div className="flex items-center gap-4">
+                          <Target size={18} className="text-rose-500" />
+                          <span className="text-[10px] font-black text-slate-600 uppercase tracking-[0.4em] italic">МАТ. ТОЧНІСТЬ</span>
+                        </div>
+                        <span className="text-3xl font-black text-white italic font-mono uppercase tracking-tighter tabular-nums">99.9%</span>
                       </div>
-                    </div>
-                    <div className="p-8 bg-black border-2 border-white/5 rounded-[3rem] space-y-5 shadow-inner">
-                      <div className="flex items-center gap-4">
-                        <Target size={18} className="text-rose-500" />
-                        <span className="text-[10px] font-black text-slate-600 uppercase tracking-[0.4em] italic">МАТ. ТОЧНІСТЬ</span>
-                      </div>
-                      <span className="text-3xl font-black text-white italic font-mono uppercase tracking-tighter tabular-nums">99.9%</span>
-                    </div>
+                    </ThermalCard>
                   </div>
 
                   {mcResults && (

@@ -6,6 +6,7 @@
  */
 
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
+import { ThermalCard } from '@/components/polish/ThermalCard';
 import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Activity, 
@@ -127,10 +128,7 @@ export default function ExecutiveBriefView() {
   if (loading) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center space-y-6">
-        <Loader2 size={48} className="text-rose-500 animate-spin" />
-        <p className="text-[10px] font-black text-rose-500 uppercase tracking-[0.6em]  italic">
-          СИНТЕЗ_СТРАТЕГІЧНОГО_ЗВЕДЕННЯ...
-        </p>
+        <BrandLoaderFallback text="СИНТЕЗ СТРАТЕГІЧНОГО ЗВЕДЕННЯ" subtext="АГЕНТИЧНИЙ АНАЛІЗ" />
       </div>
     );
   }
@@ -381,32 +379,28 @@ export default function ExecutiveBriefView() {
           { label: 'ВЕРИФІКУВАТИ ДАНІ', hint: 'КВАНТОВЕ ПІДТВЕРДЖЕННЯ РЕЄСТРІВ', icon: ShieldCheck, tone: 'rose', accent: 'amber' },
           { label: 'ЗВІТ ДЛЯ РНБО', hint: 'ЕКСПОРТ ПРАВОВОГО ДОСЬЄ', icon: AlertOctagon, tone: 'rose', accent: 'rose' },
         ].map((action, i) => (
-          <motion.button 
-            key={action.label}
-            variants={fadeUp}
-            className={cn(
-              "group relative overflow-hidden rounded-[2.5rem] border border-white/5 bg-black/40  p-8 flex items-center justify-between transition-all hover:border-rose-500/30 shadow-2xl",
-            )}
-          >
-            <div className="flex items-center gap-6 relative z-10">
-              <div className={cn(
-                "p-4 rounded-2xl border transition-all group-hover:scale-110 shadow-lg",
-                action.accent === 'emerald' ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-500" :
-                action.accent === 'amber' ? "bg-amber-500/10 border-amber-500/20 text-amber-500" :
-                "bg-rose-500/10 border-rose-500/20 text-rose-500"
-              )}>
-                <action.icon size={24} />
+          <ThermalCard key={action.label} glowColor="rgba(225, 29, 72, 0.12)" className="group">
+            <motion.button 
+              variants={fadeUp}
+              className="w-full p-8 flex items-center justify-between relative z-10"
+            >
+              <div className="flex items-center gap-6">
+                <div className={cn(
+                  "p-4 rounded-2xl border transition-all group-hover:scale-110 shadow-lg",
+                  action.accent === 'emerald' ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-500" :
+                  action.accent === 'amber' ? "bg-amber-500/10 border-amber-500/20 text-amber-500" :
+                  "bg-rose-500/10 border-rose-500/20 text-rose-500"
+                )}>
+                  <action.icon size={24} />
+                </div>
+                <div className="text-left">
+                  <div className="text-base font-black text-white uppercase italic tracking-tight">{action.label}</div>
+                  <div className="text-[10px] text-slate-600 font-black uppercase tracking-[0.2em] mt-1 italic group-hover:text-rose-400/60 transition-colors">{action.hint}</div>
+                </div>
               </div>
-              <div className="text-left">
-                <div className="text-base font-black text-white uppercase italic tracking-tight">{action.label}</div>
-                <div className="text-[10px] text-slate-600 font-black uppercase tracking-[0.2em] mt-1 italic group-hover:text-rose-400/60 transition-colors">{action.hint}</div>
-              </div>
-            </div>
-            <ChevronRight size={20} className="text-slate-800 group-hover:text-rose-500 group-hover:translate-x-1 transition-all" />
-            
-            {/* Hover Glint */}
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.02] to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-          </motion.button>
+              <ChevronRight size={20} className="text-slate-800 group-hover:text-rose-500 group-hover:translate-x-1 transition-all" />
+            </motion.button>
+          </ThermalCard>
         ))}
       </footer>
 
