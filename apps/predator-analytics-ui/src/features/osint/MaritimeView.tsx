@@ -28,6 +28,7 @@ import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
 import { cn } from '@/utils/cn';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { GeoGlobe } from '@/components/polish/GeoGlobe';
 import {
     normalizePortsPayload,
     normalizeVesselsPayload,
@@ -178,14 +179,17 @@ export default function MaritimeView() {
                    {/* HEADER HUD */}
                    <ViewHeader
                      title={
-                       <div className="flex items-center gap-10">
+                       <div className="flex items-center gap-10 relative">
                           <div className="relative group">
                              <div className="absolute inset-0 bg-blue-600/20 blur-3xl rounded-full scale-150 " />
                              <div className="relative p-7 bg-black border border-blue-900/40 rounded-[2.5rem] shadow-2xl">
                                 <Navigation size={42} className="text-blue-500 " />
                              </div>
                           </div>
-                          <div className="space-y-2">
+                          <div className="absolute right-0 top-0 pointer-events-none opacity-30">
+                             <GeoGlobe size={180} rotationSpeed={0.0006} className="opacity-60" />
+                          </div>
+                          <div className="space-y-2 relative z-10">
                              <div className="flex items-center gap-3">
                                 <span className="badge-v2 bg-blue-600/10 border border-blue-600/20 text-blue-500 px-3 py-1 text-[10px] font-black tracking-[0.3em] uppercase italic">
                                   MARITIME_SOVEREIGN // GLOBAL_AIS_NET

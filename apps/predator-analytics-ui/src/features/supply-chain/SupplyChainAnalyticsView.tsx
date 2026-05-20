@@ -25,6 +25,7 @@ import { ViewHeader } from '@/components/ViewHeader';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useUISound, UISoundType } from '@/hooks/useUISound';
+import { GeoGlobe } from '@/components/polish/GeoGlobe';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { apiClient } from '@/services/api/config';
 import { cn } from '@/utils/cn';
@@ -142,14 +143,17 @@ export default function SupplyChainAnalyticsView() {
                    {/* HEADER HUD */}
                    <ViewHeader
                      title={
-                       <div className="flex items-center gap-10">
+                       <div className="flex items-center gap-10 relative">
                           <div className="relative group">
                              <div className="absolute inset-0 bg-cyan-600/20 blur-3xl rounded-full scale-150 " />
                              <div className="relative p-7 bg-black border border-cyan-900/40 rounded-[2.5rem] shadow-2xl">
                                 <Ship size={42} className="text-cyan-500 " />
                              </div>
                           </div>
-                          <div className="space-y-2">
+                          <div className="absolute right-0 top-0 pointer-events-none opacity-30">
+                             <GeoGlobe size={180} rotationSpeed={0.0006} className="opacity-60" />
+                          </div>
+                          <div className="space-y-2 relative z-10">
                              <div className="flex items-center gap-3">
                                 <span className="badge-v2 bg-cyan-600/10 border border-cyan-600/20 text-cyan-500 px-3 py-1 text-[10px] font-black tracking-[0.3em] uppercase italic">
                                   SUPPLY_CHAIN_MATRIX // DIGITAL_TWINS
