@@ -96,7 +96,7 @@ export default defineConfig(({ mode }) => {
             'vendor-cytoscape': ['cytoscape'],
             'vendor-recharts': ['recharts'],
             'vendor-tanstack': ['@tanstack/react-query', '@tanstack/react-table'],
-            'vendor-ui': ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-tooltip'],
+            'vendor-ui': ['@radix-ui/react-slot'],
             'vendor-three': ['three', '@react-three/fiber', '@react-three/drei'],
           },
         }
