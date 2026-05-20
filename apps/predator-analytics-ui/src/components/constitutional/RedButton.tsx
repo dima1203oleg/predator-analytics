@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SlideToExecute } from '../polish/SlideToExecute';
+import { useUISound, UISoundType } from '@/hooks/useUISound';
 
 /**
  * ═══════════════════════════════════════════════════════════════
@@ -57,48 +58,56 @@ export const RedButton: React.FC<RedButtonProps> = ({
   const [confirmationInput, setConfirmationInput] = useState('');
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { play } = useUISound();
 
   const handleLevelClick = useCallback((level: 1 | 2 | 3) => {
-    if (currentEmergencyLevel) return; // Already in emergency mode
+    if (currentEmergencyLevel) return;
+    play(UISoundType.CLICK, 90);
     setSelectedLevel(level);
     setShowConfirmDialog(true);
     setConfirmationInput('');
     setError(null);
-  }, [currentEmergencyLevel]);
+  }, [currentEmergencyLevel, play]);
 
   const handleConfirm = useCallback(async () => {
     if (!selectedLevel) return;
 
     const expectedCode = EMERGENCY_LEVELS[selectedLevel].code;
     if (confirmationInput !== expectedCode) {
+      play(UISoundType.ERROR, 120);
       setError('Невірний код підтвердження');
       return;
     }
 
     try {
       await onActivate(selectedLevel, confirmationInput);
+      play(UISoundType.SUCCESS, 100);
       setShowConfirmDialog(false);
       setSelectedLevel(null);
       setConfirmationInput('');
     } catch (err) {
+      play(UISoundType.ERROR, 120);
       setError('Помилка активації екстреного протоколу');
     }
-  }, [selectedLevel, confirmationInput, onActivate]);
+  }, [selectedLevel, confirmationInput, onActivate, play]);
 
   const handleDeactivate = useCallback(async () => {
     try {
       await onDeactivate();
+      play(UISoundType.SUCCESS, 100);
     } catch (err) {
+      play(UISoundType.ERROR, 120);
       setError('Помилка деактивації');
     }
-  }, [onDeactivate]);
+  }, [onDeactivate, play]);
 
   const handleCancel = useCallback(() => {
+    play(UISoundType.CLICK, 60);
     setShowConfirmDialog(false);
     setSelectedLevel(null);
     setConfirmationInput('');
     setError(null);
-  }, []);
+  }, [play]);
 
   return (
     <div className="red-button-container">
@@ -415,6 +424,7 @@ export const RedButton: React.FC<RedButtonProps> = ({
                 key={level}
                 className="level-button"
                 onClick={() => handleLevelClick(level)}
+                onMouseEnter={() => play(UISoundType.HOVER, 80)}
                 disabled={isLoading}
                 whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.99 }}
