@@ -37,7 +37,7 @@ jobs:
       - name: Build frontend
         run: |
           cd apps/predator-analytics-ui
-          NODE_OPTIONS="--max-old-space-size=6144" npm run build
+          npm run build
         env:
           VITE_API_URL: "http://localhost:9080"
 
