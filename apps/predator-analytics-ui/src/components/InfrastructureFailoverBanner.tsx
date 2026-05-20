@@ -105,12 +105,13 @@ export const InfrastructureFailoverBanner: React.FC = () => {
           isMirror && "cursor-pointer hover:scale-105 active:scale-95"
         )}
       >
-        {/* Кнопка закриття */}
-        <button 
-          onClick={() => setIsVisible(false)}
-          className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-black border border-white/20 flex items-center justify-center text-white/50 hover:text-white hover:border-white/40 transition-all opacity-0 group-hover:opacity-100"
+        {/* Кнопка закриття — завжди видима */}
+        <button
+          onClick={(e) => { e.stopPropagation(); setIsVisible(false); }}
+          className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-black border border-white/30 flex items-center justify-center text-white/70 hover:text-white hover:border-white/60 transition-all opacity-100 shadow-lg"
+          title="Закрити"
         >
-          <Zap size={12} className="rotate-45" />
+          <span className="text-xs font-bold">×</span>
         </button>
 
         {/* Core Status Block */}
@@ -183,18 +184,24 @@ export const InfrastructureFailoverBanner: React.FC = () => {
           </div>
         </div>
 
-        {/* Global Control Buttons */}
+        {/* Global Control Buttons — мінімалістичний індикатор */}
         <div className="flex gap-2 ml-4">
-          <button className="w-10 h-10 bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl flex items-center justify-center transition-all group">
+          <button
+            onClick={(e) => { e.stopPropagation(); setIsVisible(false); }}
+            className="w-10 h-10 bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl flex items-center justify-center transition-all group"
+            title="Закрити банер"
+          >
             <Radio size={16} className="text-slate-500 group-hover:text-white" />
           </button>
-          <button className={cn(
-            "h-10 px-4 rounded-xl flex items-center gap-2 border transition-all text-[10px] font-black uppercase tracking-widest active:scale-95 ",
-            llmTriStateMode === 'SOVEREIGN' ? 'bg-rose-500 text-black border-rose-400' : 'bg-white/5 text-slate-400 border-white/5 hover:bg-rose-600/20'
+          <div className={cn(
+            "h-10 px-3 rounded-xl flex items-center gap-2 border transition-all text-[10px] font-black uppercase tracking-widest",
+            llmTriStateMode === 'SOVEREIGN' ? 'border-rose-500/20 text-rose-400 bg-rose-500/5' :
+            llmTriStateMode === 'HYBRID' ? 'border-emerald-500/20 text-emerald-400 bg-emerald-500/5' :
+            'border-sky-500/20 text-sky-400 bg-sky-500/5'
           )}>
             <Box size={14} />
-            АВТОНОМНИЙ_OODA
-          </button>
+            {llmTriStateMode}
+          </div>
         </div>
       </motion.div>
     </AnimatePresence>

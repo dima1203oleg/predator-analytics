@@ -241,7 +241,7 @@ export const BootSequenceELITE: React.FC<{ onComplete: () => void }> = ({ onComp
       transition={{ duration: 2.5 }}
       className="max-w-5xl w-full p-2 bg-gradient-to-br from-[#D4AF37]/40 via-transparent to-black border border-[#D4AF37]/30 relative z-50"
     >
-      <div className="bg-black p-24 border border-[#D4AF37]/20 relative overflow-hidden ">
+      <div className="bg-black p-8 sm:p-12 lg:p-16 xl:p-24 border border-[#D4AF37]/20 relative overflow-hidden flex flex-col justify-center min-h-0">
         <div className="absolute top-0 right-0 p-8">
            <div className="text-[#D4AF37] font-mono text-[10px] tracking-widest opacity-30">ВЛАСНИЙ_ПРОТОКОЛ_60.0</div>
         </div>

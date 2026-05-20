@@ -58,6 +58,33 @@ export const Predator: React.FC = () => {
   const { isCopilotOpen: isOpen, setCopilotOpen: setIsOpen } = useAppStore();
   const backendStatus = useBackendStatus();
   const [isExpanded, setIsExpanded] = useState(false);
+  const wasExpandedRef = useRef(false);
+  const isClosingRef = useRef(false);
+
+  // Запам'ятовуємо розмір панелі при відкритті для коректної анімації закриття
+  useEffect(() => {
+    if (isOpen && !isClosingRef.current) {
+      wasExpandedRef.current = isExpanded;
+    }
+  }, [isOpen, isExpanded]);
+
+  const handleClose = () => {
+    if (isClosingRef.current) return;
+    isClosingRef.current = true;
+    wasExpandedRef.current = isExpanded;
+
+    if (isExpanded) {
+      // Спочатку згортаємо, потім закриваємо
+      setIsExpanded(false);
+      setTimeout(() => {
+        setIsOpen(false);
+        isClosingRef.current = false;
+      }, 400);
+    } else {
+      setIsOpen(false);
+      setTimeout(() => { isClosingRef.current = false; }, 400);
+    }
+  };
   const [isListening, setIsListening] = useState(false);
   const [message, setMessage] = useState('');
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
@@ -309,11 +336,12 @@ export const Predator: React.FC = () => {
             key="copilot-panel"
             initial={{ opacity: 0, scale: 0.9, y: 100 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.85, y: 80, pointerEvents: 'none' }}
-            transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
+            exit={{ opacity: 0, scale: 0.7, y: 200, x: 100, pointerEvents: 'none' }}
+            transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
             className={cn(
               "fixed z-[150] bg-black/95 rounded-[40px] border-2 border-rose-500/20 shadow-[0_50px_150px_rgba(0,0,0,1)] overflow-hidden flex flex-col",
-              isExpanded ? "inset-8 rounded-[4rem]" : "bottom-12 right-12 w-[520px] h-[850px] rounded-[3rem]"
+              (isClosingRef.current ? wasExpandedRef.current : isExpanded)
+                ? "inset-8 rounded-[4rem]" : "bottom-12 right-12 w-[520px] h-[850px] rounded-[3rem]"
             )}
           >
             {/* Elite Header */}
@@ -343,10 +371,10 @@ export const Predator: React.FC = () => {
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <button onClick={() => setIsExpanded(!isExpanded)} className="p-4 bg-white/5 border border-white/5 rounded-2xl hover:text-rose-500 transition-all hover:bg-rose-500/10" title={isExpanded ? "Згорнути" : "Розширити"}>
+                <button onClick={() => { if (!isClosingRef.current) setIsExpanded(!isExpanded); }} className="p-4 bg-white/5 border border-white/5 rounded-2xl hover:text-rose-500 transition-all hover:bg-rose-500/10" title={isExpanded ? "Згорнути" : "Розширити"}>
                   {isExpanded ? <Minimize2 size={24} /> : <Maximize2 size={24} />}
                 </button>
-                <button onClick={() => { setIsOpen(false); setIsExpanded(false); }} className="p-4 bg-white/5 border border-white/5 rounded-2xl hover:text-rose-500 transition-all hover:bg-rose-500/10" title="Закрити">
+                <button onClick={handleClose} className="p-4 bg-white/5 border border-white/5 rounded-2xl hover:text-rose-500 transition-all hover:bg-rose-500/10" title="Закрити">
                   <X size={24} />
                 </button>
               </div>
