@@ -64,7 +64,8 @@ jobs:
       - name: Build and push frontend
         uses: docker/build-push-action@v5
         with:
-          context: ./apps/predator-analytics-ui
+          context: .
+          file: ./apps/predator-analytics-ui/Dockerfile
           platforms: linux/amd64
           push: true
           tags: ghcr.io/${{ github.repository }}/frontend:v61.0.${{ github.run_number }}
