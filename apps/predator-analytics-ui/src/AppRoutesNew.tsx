@@ -176,11 +176,35 @@ const GuardedModelingHub = () => {
     : <ModelingHub />;
 };
 
+const LEGACY_ROLE_MAP: Record<string, UserRole> = {
+  admin: UserRole.CORE,
+  commander: UserRole.CORE,
+  core: UserRole.CORE,
+  vip: UserRole.SOVEREIGN,
+  sovereign: UserRole.SOVEREIGN,
+  client_drpo: UserRole.SOVEREIGN,
+  investigator: UserRole.SOVEREIGN,
+  pro: UserRole.PRO,
+  analyst: UserRole.PRO,
+  client_premium: UserRole.PRO,
+  supply_chain: UserRole.PRO,
+  logistician: UserRole.PRO,
+  terminal: UserRole.TERMINAL,
+  client_basic: UserRole.TERMINAL,
+  operator: UserRole.TERMINAL,
+  explorer: UserRole.TERMINAL,
+  viewer: UserRole.TERMINAL,
+  ceo: UserRole.TERMINAL,
+  owner: UserRole.TERMINAL,
+  promo: UserRole.TERMINAL,
+};
+
 export const AppRoutesNew = () => {
   const location = useLocation();
   const { user } = useUser();
-  const effectiveRole = user?.role || UserRole.CLIENT_BASIC;
-  const isAdmin = effectiveRole === UserRole.ADMIN;
+  const rawRole = (user?.role || 'client_basic').toLowerCase();
+  const effectiveRole = LEGACY_ROLE_MAP[rawRole] ?? UserRole.TERMINAL;
+  const isAdmin = effectiveRole === UserRole.CORE;
 
   // ─── ADMIN TREE (/admin/*) ────────────────────────────────────────────────
   if (isAdmin) {

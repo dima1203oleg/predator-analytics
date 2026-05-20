@@ -941,24 +941,21 @@ const isItemVisibleForRole = (item: NavItem, role: string): boolean => {
     return false;
   }
 
-  // ─── PREDATOR ELITE RBAC ──────────────────────────────────────────────────
-  // Showcase UI: Клієнти бачать усі клієнтські секції (terminal, pro, sovereign)
-  const clientRoles = ['terminal', 'pro', 'sovereign', 'promo', 'client_basic', 'operator', 'explorer', 'viewer', 'ceo', 'owner', 'client_premium', 'analyst', 'supply_chain', 'logistician', 'vip', 'client_drpo', 'investigator'];
-  
-  if (clientRoles.includes(normalizedRole)) {
-    // Клієнти НЕ бачать Core-секції
-    if (item.audiences && item.audiences.includes('core')) {
-      return false;
-    }
-    // Всі інші показуємо (включаючи ті, до яких немає доступу - для Upgrade Prompt)
-    return true;
-  }
+  // ─── PREDATOR ELITE RBAC v63.0 ─────────────────────────────────────────────
+  // Використовуємо канонічний audience через resolveNavigationAudience
+  // для автоматичної обробки всіх legacy аліасів
+  const audience = resolveNavigationAudience(normalizedRole);
 
-  // ─── PREDATOR CORE ────────────────────────────────────────────────────────
-  // Адмін бачить ТІЛЬКИ технічні секції
-  if (normalizedRole === 'core' || normalizedRole === 'admin' || normalizedRole === 'commander') {
+  // Core (Tech Admin): тільки технічні секції
+  if (audience === 'core') {
     if (!item.audiences || item.audiences.length === 0) return false;
     return item.audiences.includes('core');
+  }
+
+  // Клієнтські ролі (Terminal / Pro / Sovereign): всі клієнтські секції
+  // Core-секції приховані — преміум модулі показуються з замком через isNavItemLocked
+  if (item.audiences && item.audiences.includes('core')) {
+    return false;
   }
 
   return true;
@@ -971,19 +968,18 @@ const isGroupVisibleForRole = (group: NavGroup, role: string): boolean => {
     return false;
   }
 
-  // Showcase UI
-  const clientRoles = ['terminal', 'pro', 'sovereign', 'promo', 'client_basic', 'operator', 'explorer', 'viewer', 'ceo', 'owner', 'client_premium', 'analyst', 'supply_chain', 'logistician', 'vip', 'client_drpo', 'investigator'];
-  if (clientRoles.includes(normalizedRole)) {
-    if (group.audiences && group.audiences.includes('core')) {
-      return false;
-    }
-    return true;
-  }
+  // ─── PREDATOR ELITE RBAC v63.0 ─────────────────────────────────────────────
+  const audience = resolveNavigationAudience(normalizedRole);
 
-  // Core
-  if (normalizedRole === 'core' || normalizedRole === 'admin' || normalizedRole === 'commander') {
+  // Core (Tech Admin): тільки технічні секції
+  if (audience === 'core') {
     if (!group.audiences || group.audiences.length === 0) return false;
     return group.audiences.includes('core');
+  }
+
+  // Клієнтські ролі: Core-секції приховані
+  if (group.audiences && group.audiences.includes('core')) {
+    return false;
   }
 
   return true;
