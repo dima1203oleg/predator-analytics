@@ -142,6 +142,88 @@ const RISK_LABEL: Partial<Record<RiskLevelValue, string>> = {
   low:      'НИЗЬКИЙ',
 };
 
+const RiskPositionCard: React.FC<{
+  pos: RiskPosition;
+  index: number;
+  selectedPos: RiskPosition | null;
+  setSelectedPos: (pos: RiskPosition) => void;
+}> = ({ pos, index, selectedPos, setSelectedPos }) => {
+  const { ref: thermalRef, style: thermalStyle } = useThermalHover(1.2);
+  const isSelected = selectedPos?.id === pos.id;
+
+  return (
+    <motion.div
+      key={pos.id}
+      ref={thermalRef as any}
+      style={thermalStyle}
+      initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: index * 0.08 }}
+      onClick={() => setSelectedPos(pos)}
+      className={cn(
+        "p-10 border-2 cursor-pointer transition-all relative overflow-hidden group rounded-[3.5rem] shadow-3xl",
+        isSelected
+          ? "bg-rose-600/[0.03] border-rose-500/30 shadow-4xl"
+          : "bg-black/60 border-white/5 hover:border-white/20"
+      )}
+    >
+      {isSelected && (
+        <div className="absolute left-0 inset-y-0 w-2.5 bg-rose-600 shadow-[0_0_20px_#f43f5e]" />
+      )}
+
+      <div className="flex items-start gap-10 pl-4">
+        <div className="w-24 h-24 shrink-0 rounded-[2rem] bg-black/80 border-2 border-white/5 flex flex-col items-center justify-center shadow-inner group-hover:border-rose-500/30 transition-all">
+          <span className="text-3xl font-black font-mono italic tracking-tighter leading-none" style={{ color: RISK_COLOR[pos.riskLevel] }}>
+            {pos.riskPct}%
+          </span>
+          <span className="text-[8px] font-black uppercase text-slate-700 mt-2 tracking-widest italic">РИЗИК</span>
+        </div>
+
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-4 mb-3">
+            <span className="text-[11px] font-black font-mono text-slate-700 uppercase tracking-widest">{pos.id}</span>
+            <span className="text-[10px] font-black text-rose-500/60 uppercase tracking-widest italic">{pos.country}</span>
+          </div>
+          <h3 className="text-3xl font-black text-white group-hover:text-rose-500 transition-colors uppercase italic tracking-tighter leading-none mb-4">
+            {pos.counterparty}
+          </h3>
+          <div className="flex items-center gap-8 mb-6">
+            <div className="flex items-center gap-3 text-slate-500">
+               <Building2 size={16} />
+               <span className="text-[12px] font-black uppercase italic tracking-tight">{pos.type}</span>
+            </div>
+            <div className={cn("flex items-center gap-2 px-4 py-1.5 rounded-xl border italic text-[9px] font-black tracking-widest uppercase shadow-inner",
+              pos.riskLevel === 'critical' ? 'border-rose-500/30 text-rose-500 bg-rose-500/5' : 'border-slate-800 text-slate-500 bg-white/5'
+            )}>
+               {RISK_LABEL[pos.riskLevel]}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-10">
+            <div>
+              <p className="text-[9px] text-slate-700 uppercase font-black tracking-[0.4em] mb-2 italic">ЕКСПОЗИЦІЯ_NET</p>
+              <p className="text-2xl font-black text-white font-mono italic">{pos.exposure}</p>
+            </div>
+            <div>
+              <p className="text-[9px] text-slate-700 uppercase font-black tracking-[0.4em] mb-2 italic">У_ЗОНІ_РИЗИКУ</p>
+              <p className="text-2xl font-black font-mono italic" style={{ color: RISK_COLOR[pos.riskLevel] }}>{pos.atRisk}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="shrink-0 pt-6">
+          {pos.trend === 'up' ? (
+            <div className="relative">
+              <TrendingUp size={32} className="text-rose-500 " />
+              <motion.div animate={{ opacity: [1, 0, 1] }} transition={{ repeat: Infinity }} className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-rose-500 rounded-full" />
+            </div>
+          ) : (
+            <Activity size={32} className="text-slate-800" />
+          )}
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
 const PortfolioRiskView: React.FC = () => {
   const [selectedPos, setSelectedPos] = useState<RiskPosition | null>(RISK_POSITIONS[0]);
   const [liveRisk, setLiveRisk] = useState(127.4);
@@ -307,80 +389,15 @@ const PortfolioRiskView: React.FC = () => {
               </div>
 
               <div className="space-y-6">
-                {filtered.map((pos, i) => {
-                  const { ref: thermalRef, style: thermalStyle } = useThermalHover(1.2);
-                  return (
-                  <motion.div
+                {filtered.map((pos, i) => (
+                  <RiskPositionCard
                     key={pos.id}
-                    ref={thermalRef as any}
-                    style={thermalStyle}
-                    initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.08 }}
-                    onClick={() => setSelectedPos(pos)}
-                    className={cn(
-                      "p-10 border-2 cursor-pointer transition-all relative overflow-hidden group rounded-[3.5rem] shadow-3xl",
-                      selectedPos?.id === pos.id
-                        ? "bg-rose-600/[0.03] border-rose-500/30 shadow-4xl"
-                        : "bg-black/60 border-white/5 hover:border-white/20"
-                    )}
-                  >
-                    {selectedPos?.id === pos.id && (
-                      <div className="absolute left-0 inset-y-0 w-2.5 bg-rose-600 shadow-[0_0_20px_#f43f5e]" />
-                    )}
-
-                    <div className="flex items-start gap-10 pl-4">
-                      <div className="w-24 h-24 shrink-0 rounded-[2rem] bg-black/80 border-2 border-white/5 flex flex-col items-center justify-center shadow-inner group-hover:border-rose-500/30 transition-all">
-                        <span className="text-3xl font-black font-mono italic tracking-tighter leading-none" style={{ color: RISK_COLOR[pos.riskLevel] }}>
-                          {pos.riskPct}%
-                        </span>
-                        <span className="text-[8px] font-black uppercase text-slate-700 mt-2 tracking-widest italic">РИЗИК</span>
-                      </div>
-
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-4 mb-3">
-                          <span className="text-[11px] font-black font-mono text-slate-700 uppercase tracking-widest">{pos.id}</span>
-                          <span className="text-[10px] font-black text-rose-500/60 uppercase tracking-widest italic">{pos.country}</span>
-                        </div>
-                        <h3 className="text-3xl font-black text-white group-hover:text-rose-500 transition-colors uppercase italic tracking-tighter leading-none mb-4">
-                          {pos.counterparty}
-                        </h3>
-                        <div className="flex items-center gap-8 mb-6">
-                          <div className="flex items-center gap-3 text-slate-500">
-                             <Building2 size={16} />
-                             <span className="text-[12px] font-black uppercase italic tracking-tight">{pos.type}</span>
-                          </div>
-                          <div className={cn("flex items-center gap-2 px-4 py-1.5 rounded-xl border italic text-[9px] font-black tracking-widest uppercase shadow-inner",
-                            pos.riskLevel === 'critical' ? 'border-rose-500/30 text-rose-500 bg-rose-500/5' : 'border-slate-800 text-slate-500 bg-white/5'
-                          )}>
-                             {RISK_LABEL[pos.riskLevel]}
-                          </div>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-10">
-                          <div>
-                            <p className="text-[9px] text-slate-700 uppercase font-black tracking-[0.4em] mb-2 italic">ЕКСПОЗИЦІЯ_NET</p>
-                            <p className="text-2xl font-black text-white font-mono italic">{pos.exposure}</p>
-                          </div>
-                          <div>
-                            <p className="text-[9px] text-slate-700 uppercase font-black tracking-[0.4em] mb-2 italic">У_ЗОНІ_РИЗИКУ</p>
-                            <p className="text-2xl font-black font-mono italic" style={{ color: RISK_COLOR[pos.riskLevel] }}>{pos.atRisk}</p>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="shrink-0 pt-6">
-                        {pos.trend === 'up' ? (
-                          <div className="relative">
-                            <TrendingUp size={32} className="text-rose-500 " />
-                            <motion.div animate={{ opacity: [1, 0, 1] }} transition={{ repeat: Infinity }} className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-rose-500 rounded-full" />
-                          </div>
-                        ) : (
-                          <Activity size={32} className="text-slate-800" />
-                        )}
-                      </div>
-                    </div>
-                  </motion.div>
-                  );
-                })}
+                    pos={pos}
+                    index={i}
+                    selectedPos={selectedPos}
+                    setSelectedPos={setSelectedPos}
+                  />
+                ))}
               </div>
             </div>
 

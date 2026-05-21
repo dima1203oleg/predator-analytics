@@ -1,0 +1,182 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e6]:
+  - generic [ref=e7]:
+    - complementary [ref=e8]:
+      - generic [ref=e10]:
+        - img [ref=e12]
+        - generic [ref=e14]:
+          - generic [ref=e15]: PREDATOR
+          - generic [ref=e16]: COMMAND_CENTER_v60
+      - navigation [ref=e17]:
+        - generic [ref=e18]:
+          - generic [ref=e21]: Моніторинг
+          - generic [ref=e22]:
+            - link "Телеметрія Кластера LIVE" [ref=e23] [cursor=pointer]:
+              - /url: /admin/command?tab=infra
+              - img [ref=e24]
+              - generic [ref=e26]: Телеметрія Кластера
+              - generic [ref=e27]: LIVE
+            - link "Резервування та Маршрути" [ref=e28] [cursor=pointer]:
+              - /url: /admin/command?tab=failover
+              - img [ref=e29]
+              - generic [ref=e35]: Резервування та Маршрути
+            - link "Контроль Хаосу" [ref=e36] [cursor=pointer]:
+              - /url: /admin/command?tab=chaos
+              - img [ref=e37]
+              - generic [ref=e39]: Контроль Хаосу
+        - generic [ref=e40]:
+          - generic [ref=e43]: Пайплайни
+          - generic [ref=e44]:
+            - link "GitOps та Пайплайни" [ref=e45] [cursor=pointer]:
+              - /url: /admin/command?tab=gitops
+              - img [ref=e46]
+              - generic [ref=e49]: GitOps та Пайплайни
+            - link "Хаб Даних" [ref=e50] [cursor=pointer]:
+              - /url: /admin/command?tab=dataops
+              - img [ref=e51]
+              - generic [ref=e55]: Хаб Даних
+        - generic [ref=e56]:
+          - generic [ref=e59]: Ядро ШІ
+          - generic [ref=e60]:
+            - link "Плоскість Керування ШІ NEXUS" [ref=e61] [cursor=pointer]:
+              - /url: /admin/command?tab=ai-control
+              - img [ref=e62]
+              - generic [ref=e64]: Плоскість Керування ШІ
+              - generic [ref=e65]: NEXUS
+            - link "Двигуни ШІ CORE" [ref=e66] [cursor=pointer]:
+              - /url: /admin/command?tab=ai-engines
+              - img [ref=e67]
+              - generic [ref=e70]: Двигуни ШІ
+              - generic [ref=e71]: CORE
+            - link "Суверенна Розвідка ELITE" [ref=e72] [cursor=pointer]:
+              - /url: /admin/command?tab=command
+              - img [ref=e73]
+              - generic [ref=e75]: Суверенна Розвідка
+              - generic [ref=e76]: ELITE
+        - generic [ref=e77]:
+          - generic [ref=e80]: ШІ Студія
+          - generic [ref=e81]:
+            - link "ШІ Фабрика NEW" [ref=e82] [cursor=pointer]:
+              - /url: /admin/command?tab=factory
+              - img [ref=e83]
+              - generic [ref=e91]: ШІ Фабрика
+              - generic [ref=e92]: NEW
+            - link "Моделі (Налаштування) ML" [ref=e93] [cursor=pointer]:
+              - /url: /admin/command?tab=model-train
+              - img [ref=e94]
+              - generic [ref=e102]: Моделі (Налаштування)
+              - generic [ref=e103]: ML
+            - link "Студія Датасетів" [ref=e104] [cursor=pointer]:
+              - /url: /admin/command?tab=datasets
+              - img [ref=e105]
+              - generic [ref=e109]: Студія Датасетів
+            - link "Системні Промпти" [ref=e110] [cursor=pointer]:
+              - /url: /admin/command?tab=prompts
+              - img [ref=e111]
+              - generic [ref=e114]: Системні Промпти
+        - generic [ref=e115]:
+          - generic [ref=e118]: Розширена Аналітика
+          - generic [ref=e119]:
+            - link "Прогностичний Нексус PREDICT" [ref=e120] [cursor=pointer]:
+              - /url: /admin/command?tab=nexus
+              - img [ref=e121]
+              - generic [ref=e123]: Прогностичний Нексус
+              - generic [ref=e124]: PREDICT
+            - link "Хаб ШІ Інсайтів DEEP" [ref=e125] [cursor=pointer]:
+              - /url: /admin/command?tab=ai-insights
+              - img [ref=e126]
+              - generic [ref=e134]: Хаб ШІ Інсайтів
+              - generic [ref=e135]: DEEP
+            - link "Гіпотези та NAS" [ref=e136] [cursor=pointer]:
+              - /url: /admin/command?tab=hypothesis
+              - img [ref=e137]
+              - generic [ref=e140]: Гіпотези та NAS
+            - link "Прогнози та Тренди" [ref=e141] [cursor=pointer]:
+              - /url: /admin/command?tab=forecast
+              - img [ref=e142]
+              - generic [ref=e144]: Прогнози та Тренди
+        - generic [ref=e145]:
+          - generic [ref=e148]: Розвідка та OSINT
+          - generic [ref=e149]:
+            - link "Митна Розвідка ELITE" [ref=e150] [cursor=pointer]:
+              - /url: /admin/command?tab=intelligence
+              - img [ref=e151]
+              - generic [ref=e154]: Митна Розвідка
+              - generic [ref=e155]: ELITE
+            - link "Консоль Пошуку OSINT" [ref=e156] [cursor=pointer]:
+              - /url: /admin/command?tab=osint
+              - img [ref=e157]
+              - generic [ref=e160]: Консоль Пошуку
+              - generic [ref=e161]: OSINT
+            - link "Контроль Зради ELITE" [ref=e162] [cursor=pointer]:
+              - /url: /admin/command?tab=zrada
+              - img [ref=e163]
+              - generic [ref=e165]: Контроль Зради
+              - generic [ref=e166]: ELITE
+            - link "AML Оцінювання RISK" [ref=e167] [cursor=pointer]:
+              - /url: /admin/command?tab=aml
+              - img [ref=e168]
+              - generic [ref=e170]: AML Оцінювання
+              - generic [ref=e171]: RISK
+            - link "Глобальні Санкції GLOBAL" [ref=e172] [cursor=pointer]:
+              - /url: /admin/command?tab=sanctions
+              - img [ref=e173]
+              - generic [ref=e176]: Глобальні Санкції
+              - generic [ref=e177]: GLOBAL
+        - generic [ref=e178]:
+          - generic [ref=e181]: Агенти та Безпека
+          - generic [ref=e182]:
+            - link "Оркестрація Агентів" [ref=e183] [cursor=pointer]:
+              - /url: /admin/command?tab=agents-ops
+              - img [ref=e184]
+              - generic [ref=e187]: Оркестрація Агентів
+            - link "Безпека Zero Trust" [ref=e188] [cursor=pointer]:
+              - /url: /admin/command?tab=security
+              - img [ref=e189]
+              - generic [ref=e192]: Безпека Zero Trust
+        - generic [ref=e193]:
+          - generic [ref=e196]: Конфігурація
+          - generic [ref=e197]:
+            - link "Налаштування" [ref=e198] [cursor=pointer]:
+              - /url: /admin/command?tab=settings
+              - img [ref=e199]
+              - generic [ref=e202]: Налаштування
+            - link "API Документація" [ref=e203] [cursor=pointer]:
+              - /url: /api-docs
+              - img [ref=e204]
+              - generic [ref=e207]: API Документація
+      - generic [ref=e209]:
+        - img [ref=e211]
+        - generic [ref=e214]:
+          - generic [ref=e215]: Командир
+          - generic [ref=e216]: ADMIN · PREDATOR_CORP
+        - button "Вийти" [ref=e217] [cursor=pointer]:
+          - img [ref=e218]
+    - generic [ref=e222]:
+      - banner [ref=e223]:
+        - generic [ref=e224]:
+          - button [ref=e225] [cursor=pointer]:
+            - img [ref=e226]
+          - generic [ref=e234]: SOVEREIGN_NODE // LOCAL_K3S
+          - generic [ref=e236]:
+            - generic [ref=e239]: API
+            - generic [ref=e242]: KAFKA
+            - generic [ref=e245]: NEO4J
+            - generic [ref=e248]: REDIS
+        - generic [ref=e249]:
+          - button "18:40:01" [ref=e250] [cursor=pointer]:
+            - img [ref=e251]
+            - generic [ref=e253]: 18:40:01
+          - generic [ref=e254]:
+            - img [ref=e255]
+            - generic [ref=e257]:
+              - generic [ref=e258]: VRAM_LOAD
+              - generic [ref=e259]: 4.2 / 8.0 GB
+      - main [ref=e260]
+  - button "Відкрити швидкі дії" [ref=e263] [cursor=pointer]:
+    - img [ref=e265]
+  - button:
+    - img
+```

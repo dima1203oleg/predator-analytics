@@ -1,0 +1,115 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e7]:
+  - generic:
+    - generic:
+      - img
+  - generic:
+    - generic:
+      - generic:
+        - generic:
+          - generic: ЦІЛКОМ ТАЄМНО // SOVEREIGN_v61.0_ELITE
+        - generic: │
+        - generic: "КАТЕГОРІЯ ДОСТУПУ: СУВЕРЕННИЙ"
+      - generic:
+        - generic: 18:40:50 UTC+3
+        - generic: 21.05.2026
+      - generic:
+        - generic:
+          - img
+          - generic: 1 250 ВУЗЛІВ
+        - generic: │
+        - generic:
+          - img
+          - generic: 194 КРАЇН
+  - generic:
+    - generic:
+      - generic:
+        - generic:
+          - img
+          - text: ПЕРЕХОПЛЕНО
+        - generic: 2 849 051
+        - generic: ТРАНЗАКЦІЙ ЗА ДОБУ
+      - generic:
+        - generic:
+          - img
+          - text: ЗАГРОЗИ
+        - generic: 18 434
+        - generic: ВИЯВЛЕНИХ ОБ'ЄКТІВ
+      - generic:
+        - generic:
+          - img
+          - text: АКТИВНИХ
+        - generic: "342"
+        - generic: ОПЕРАЦІЙ У СВІТІ
+  - generic:
+    - generic:
+      - generic:
+        - generic:
+          - generic: КрИСТАЛИ-КІБЕ -1024
+          - generic: АКТИВНО
+        - generic:
+          - img
+      - generic:
+        - generic:
+          - generic: ДА КНЕТ / ONION СКАН
+          - generic: АКТИВНО
+        - generic:
+          - img
+      - generic:
+        - generic:
+          - generic: СУПУТН. ЗВ'ЯЗОК [47]
+          - generic: ОНЛАЙН
+        - generic:
+          - img
+      - generic:
+        - generic:
+          - generic: SWIFT/SEPA ПЕРЕХВАТ
+          - generic: АКТИВНО
+        - generic:
+          - img
+      - generic:
+        - generic:
+          - generic: ЧЕРВОНА_КА ТКА_ІНТЕРПОЛУ
+          - generic: АКТИВНО
+        - generic:
+          - img
+      - generic:
+        - generic:
+          - generic: БІОМЕТРІЯ / СІТКІВКА
+          - generic: ОЧІКУЄ
+        - generic:
+          - img
+    - generic:
+      - generic: РІВЕНЬ ЗАГРОЗИ
+      - generic: КРИТИЧНИЙ
+      - generic: 1.4 TB ОБРОБЛЕНО
+  - generic [ref=e9]:
+    - img "Predator Logo" [ref=e15] [cursor=pointer]
+    - generic [ref=e17]:
+      - heading "PREDATOR" [level=1] [ref=e18]
+      - heading "СУВЕРЕННИЙ_АКТИВ_ РОЗВІДКИ" [level=2] [ref=e21]
+      - paragraph [ref=e23]: ГЛОБАЛЬНИЙ_ТЕРМІНАЛ_УПРАВЛІННЯ_ELITE v61.0-ELITE · ТІР-1_СЕКРЕТНО
+    - generic [ref=e24]:
+      - generic [ref=e25]:
+        - img [ref=e27]
+        - textbox "ОПЕРАТИВНИЙ КОД (EMAIL)" [ref=e30]: admin@predator.ai
+      - generic [ref=e31]:
+        - img [ref=e33]
+        - textbox "КРИПТО-КЛЮЧ (ПАРОЛЬ)" [ref=e36]: admin123
+      - button "УВІЙТИ В СИСТЕМУ" [ref=e37] [cursor=pointer]
+      - generic [ref=e38]: БІОМЕТРИКА // СКАН СІТКІВКИ // ГОЛОСОВА ІДЕНТИФІКАЦІЯ
+  - generic [ref=e40]:
+    - generic [ref=e41]: ОПЕРАТИВНИЙ КАНАЛ
+    - generic [ref=e42]:
+      - generic [ref=e43]: "[ТРИВОГА] ПЕРЕХОПЛЕННЯ ШИФ ОВАНИХ ТРАНЗАКЦІЙ У СЕКТО І GAMMA-4 — АНАЛІЗ АКТИВНИЙ"
+      - generic [ref=e44]: "[КРИТИЧНО] ВИЯВЛЕНО ОФШОРНУ МЕ ЕЖУ $47M ЧЕ ЕЗ SHELL-КОМПАНІЇ У BVI — ДЕАННІМІЗАЦІЯ..."
+      - generic [ref=e45]: "[OK] СИНХРОНІЗАЦІЯ З СЕРВЕРАМИ МИТНИЦІ ПІДТВЕРДЖЕНА (NODE: КИЇВ-ЯДРО-03 · ПОЛІГОН-7)"
+      - generic [ref=e46]: "[КОНТРОЛЬ] UEID-9472-BX: БЕНЕФІЦІАРА ВИЯВЛЕНО — $12.4M НЕОДЕКЛА РОВАНИХ АКТИВІВ — ЗАМОРОЖЕННЯ ІНІЦІЙОВАНО"
+      - generic [ref=e47]: "[УВАГА] ЧЕРВОНА_КА ТКА_ІНТЕРПОЛУ: 3 ОБ'ЄКТІВ У СИСТЕМІ — МІСЦЕЗНАХОДЖЕННЯ НЕВІДОМО — МОНІТОРИНГ"
+      - generic [ref=e48]: "[СУПУТНИК] СЕНТИНЕЛЬ-47 ОНЛАЙН · 13.7 ГБ/с · ІНТЕ ЦЕПЦІЯ АКТИВНА"
+      - generic [ref=e49]: "[ШІ ХАНТЕР] ЦІЛЬ ПІДТВЕРДЖЕНА: СПІВПАДІННЯ 99.97% — ПАКЕТ ПЕРЕДАНО ДО SBU/NABU — СПРАВА #PRD-28847"
+      - generic [ref=e50]: "[СП БА ДОСТУПУ] НЕСАНКЦІОНОВАНА АВТОРИЗАЦІЯ З IP 185.12.92.X — ЗАБЛОКОВАНО — ORIGIN: TOR_EXIT"
+    - generic [ref=e51]: PREDATOR v61.0-ELITE
+```

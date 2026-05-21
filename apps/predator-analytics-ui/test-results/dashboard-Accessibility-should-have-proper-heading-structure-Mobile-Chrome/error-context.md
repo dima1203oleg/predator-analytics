@@ -1,0 +1,64 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e7]:
+  - generic:
+    - generic:
+      - generic: PREDATOR ELITE
+      - generic: Кластер_Абсолютного_Інтелекту // v60.0
+    - generic:
+      - generic: "ДОСТУП: ВЕ ХОВНИЙ_СУВЕ ЕН"
+      - generic: НЕЙРОННИЙ_ЩИТ_АКТИВНИЙ // 2048-Q Шифрування
+    - button "ПРОПУСТИТИ ЗАСТАВКУ" [ref=e9] [cursor=pointer]
+  - generic:
+    - generic:
+      - generic: "Журнал_Ініціалізації_Системи:"
+      - generic:
+        - generic:
+          - text: "> BOOT: ЗАВАНТАЖЕННЯ_ЕЛІТНИХ_СИСТЕМНИХ_ВИКЛИКІВ"
+          - generic: "[ACK]"
+        - generic:
+          - text: "> CORE: ПРИЄДНАННЯ_НЕЙ ОННИХ_СИНАПСІВ_v60"
+          - generic: "[ACK]"
+        - generic:
+          - text: "> SIGINT: СКАНУВАННЯ_ГЛОБАЛЬНИХ_ ЕЗЕ ВІВ [КИЇВ_СИНХ О]"
+          - generic: "[ACK]"
+        - generic:
+          - text: "> AUTH: ВСТАНОВЛЕНО_ДОПУСК_ОМЕГА"
+          - generic: "[ACK]"
+        - generic:
+          - text: "> STATUS:ПРОБУДЖЕННЯ_PREDATORА [СУВЕРЕННИЙ_РЕЖИМ]"
+          - generic: "[ACK]"
+  - generic [ref=e10]:
+    - img "Predator Logo" [ref=e12]
+    - heading "PREDATOR" [level=1] [ref=e13]: PREDATOR
+    - paragraph [ref=e15]: Світ — це дані. Ми — Предатори.
+  - generic [ref=e16]:
+    - generic [ref=e17]: ЦЕНТ АЛЬНЕ_ЯДРО_КИЇВ
+    - generic [ref=e18]:
+      - generic [ref=e19]: "КИЇВ_ВУЗОЛ_H100: СИНХ ОНІЗОВАНО"
+      - generic [ref=e20]: "GEO_SIGINT: ОДЕСЬКА_ОБЛАСТЬ_АНАЛІЗ..."
+      - generic [ref=e21]: "НЕЙ ОННЕ_НАВАНТАЖЕННЯ: 3.48%"
+      - generic [ref=e22]: ВИЯВЛЕНО_МАНІПУЛЯЦІЮ_ ИНКОМ
+      - generic [ref=e23]: "ЗАТрИМКА: 0.000042ms"
+      - generic [ref=e24]: "КИЇВ_ВУЗОЛ_H100: СИНХ ОНІЗОВАНО"
+      - generic [ref=e25]: "GEO_SIGINT: ОДЕСЬКА_ОБЛАСТЬ_АНАЛІЗ..."
+      - generic [ref=e26]: "НЕЙ ОННЕ_НАВАНТАЖЕННЯ: 3.48%"
+      - generic [ref=e27]: ВИЯВЛЕНО_МАНІПУЛЯЦІЮ_ ИНКОМ
+      - generic [ref=e28]: "ЗАТрИМКА: 0.000042ms"
+      - generic [ref=e29]: "КИЇВ_ВУЗОЛ_H100: СИНХ ОНІЗОВАНО"
+      - generic [ref=e30]: "GEO_SIGINT: ОДЕСЬКА_ОБЛАСТЬ_АНАЛІЗ..."
+      - generic [ref=e31]: "НЕЙ ОННЕ_НАВАНТАЖЕННЯ: 3.48%"
+      - generic [ref=e32]: ВИЯВЛЕНО_МАНІПУЛЯЦІЮ_ ИНКОМ
+      - generic [ref=e33]: "ЗАТрИМКА: 0.000042ms"
+      - generic [ref=e34]: "КИЇВ_ВУЗОЛ_H100: СИНХ ОНІЗОВАНО"
+      - generic [ref=e35]: "GEO_SIGINT: ОДЕСЬКА_ОБЛАСТЬ_АНАЛІЗ..."
+      - generic [ref=e36]: "НЕЙ ОННЕ_НАВАНТАЖЕННЯ: 3.48%"
+      - generic [ref=e37]: ВИЯВЛЕНО_МАНІПУЛЯЦІЮ_ ИНКОМ
+      - generic [ref=e38]: "ЗАТрИМКА: 0.000042ms"
+      - generic [ref=e39]: "КИЇВ_ВУЗОЛ_H100: СИНХ ОНІЗОВАНО"
+      - generic [ref=e40]: "GEO_SIGINT: ОДЕСЬКА_ОБЛАСТЬ_АНАЛІЗ..."
+      - generic [ref=e41]: "НЕЙ ОННЕ_НАВАНТАЖЕННЯ: 3.48%"
+      - generic [ref=e42]: ВИЯВЛЕНО_МАНІПУЛЯЦІЮ_ ИНКОМ
+      - generic [ref=e43]: "ЗАТрИМКА: 0.000042ms"
+```

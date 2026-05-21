@@ -1,6 +1,6 @@
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React from 'react';
-import { LucideIcon, CheckCircle2, AlertCircle, XCircle, Clock } from 'lucide-react';
+import { LucideIcon, CheckCircle2, AlertCircle, XCircle, Clock, Loader2 } from 'lucide-react';
 
 export interface StatusIndicatorProps {
     status: 'success' | 'error' | 'warning' | 'info' | 'loading' | 'idle';
@@ -42,7 +42,7 @@ const statusConfig = {
         glow: 'shadow-primary-500/50',
     },
     loading: {
-        icon:
+        icon: Loader2,
         color: 'text-primary-500',
         bg: 'bg-primary-500/10',
         border: 'border-primary-500/30',
