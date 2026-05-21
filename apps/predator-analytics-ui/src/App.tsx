@@ -34,7 +34,6 @@ import { LiveAgentTerminal } from './components/intelligence/LiveAgentTerminal';
 import { AdvancedBackground } from './components/AdvancedBackground';
 import NeuralPulse from './components/NeuralPulse';
 import { TechGridBackground } from './components/TechGridBackground';
-import { OfflineBanner } from './components/shared/OfflineBanner';
 import { CommandPalette } from './components/polish/CommandPalette';
 
 // Setup Query Client with optimized settings
@@ -187,7 +186,6 @@ function App() {
                                     <QuickActionsBar />
                                     <ToasterProvider />
                                     <OnboardingWizard />
-                                    <OfflineBanner />
                                     <Predator />
                                     <LiveAgentTerminal />
                                   </motion.div>

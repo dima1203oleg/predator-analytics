@@ -406,7 +406,6 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       </div>
 
       {/* Глобальні компоненти (тільки системні) */}
-      <OfflineBanner />
       <LiveAgentTerminal />
     </div>
   );
