@@ -40,6 +40,9 @@ class OmniverseWatchdog:
         # 1. Отримуємо список таблиць
         tables_query = "SHOW TABLES LIKE 'omniverse_%'"
         res = self.clickhouse.execute_query(tables_query)
+        if res is None:
+            logger.debug("ClickHouse недоступний — watchdog cycle skipped")
+            return
         tables = [row[0] for row in res]
 
         for table in tables:
@@ -50,6 +53,9 @@ class OmniverseWatchdog:
         # 1. Отримуємо останні дані та статистику
         stats_query = f"SELECT count(), max(_ingested_at) FROM {table}"
         stats_res = self.clickhouse.execute_query(stats_query)
+        if stats_res is None:
+            logger.debug(f"ClickHouse недоступний — scan {table} skipped")
+            return
         count, last_ingested = stats_res[0]
 
         # 2. Якщо таблиця оновилася нещодавно (або ми її ще не сканували)
@@ -57,6 +63,9 @@ class OmniverseWatchdog:
         # Шукаємо екстремальні значення (напр. по першій числовій колонці)
         schema_query = f"DESCRIBE TABLE {table}"
         schema_res = self.clickhouse.execute_query(schema_query)
+        if schema_res is None:
+            logger.debug(f"ClickHouse недоступний — schema scan {table} skipped")
+            return
         num_cols = [row[0] for row in schema_res if "Int" in row[1] or "Float" in row[1]]
 
         if not num_cols:

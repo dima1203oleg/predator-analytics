@@ -9,7 +9,7 @@ from app.graph_db import graph_db
 from predator_common.logging import configure_logging
 
 settings = get_settings()
-configure_logging(level="INFO")
+configure_logging(log_level="INFO")
 logger = logging.getLogger("graph_service.main")
 
 from app.services.graph_sync import GraphSyncWorker
