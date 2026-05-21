@@ -43,7 +43,7 @@ qdrant:
   replicaCount: 0
 
 opensearch:
-  enabled: true
+  enabled: false
   replicaCount: 0
 
 neo4j:
