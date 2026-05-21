@@ -57,6 +57,14 @@ class HealthCheckService:
             return host
         return f"http://{host}"
 
+    def _service_enabled(self, raw_value: str | None) -> bool:
+        """Перевіряє чи сервіс реально сконфігурований (не localhost і не порожній)."""
+        if not raw_value:
+            return False
+        # Витягуємо хост з URL типу redis://host:port або bolt://host:port
+        host = raw_value.split("://")[-1].split(":")[0].split(",")[0].strip()
+        return host not in ("localhost", "127.0.0.1", "")
+
     async def _http_check(
         self,
         url: str,
@@ -521,16 +529,16 @@ class HealthCheckService:
             ("redis", self.check_redis),
         ]
 
-        # Опціональні сервіси — перевіряємо тільки якщо сконфігуровані
+        # Опціональні сервіси — перевіряємо тільки якщо реально сконфігуровані (не localhost)
         optional_checks = [
-            ("clickhouse", self.check_clickhouse, bool(self.settings.CLICKHOUSE_HOST)),
-            ("neo4j", self.check_neo4j, bool(self.settings.NEO4J_URI)),
-            ("kafka", self.check_kafka, bool(self.settings.KAFKA_BROKERS)),
-            ("minio", self.check_minio, bool(self.settings.MINIO_ENDPOINT)),
-            ("opensearch", self.check_opensearch, bool(self.settings.OPENSEARCH_HOSTS)),
-            ("qdrant", self.check_qdrant, bool(self.settings.QDRANT_URL)),
-            ("ollama", self.check_ollama, bool(self.settings.LITELLM_API_BASE)),
-            ("mlflow", self.check_mlflow, bool(self.settings.MLFLOW_TRACKING_URL)),
+            ("clickhouse", self.check_clickhouse, self._service_enabled(self.settings.CLICKHOUSE_HOST)),
+            ("neo4j", self.check_neo4j, self._service_enabled(self.settings.NEO4J_URI)),
+            ("kafka", self.check_kafka, self._service_enabled(self.settings.KAFKA_BROKERS)),
+            ("minio", self.check_minio, self._service_enabled(self.settings.MINIO_ENDPOINT)),
+            ("opensearch", self.check_opensearch, self._service_enabled(self.settings.OPENSEARCH_HOSTS)),
+            ("qdrant", self.check_qdrant, self._service_enabled(self.settings.QDRANT_URL)),
+            ("ollama", self.check_ollama, self._service_enabled(self.settings.LITELLM_API_BASE)),
+            ("mlflow", self.check_mlflow, self._service_enabled(self.settings.MLFLOW_TRACKING_URL)),
         ]
 
         # Спочатку критичні (швидко)
