@@ -72,8 +72,8 @@ export const UserOnboarding: React.FC = () => {
                         className="relative w-full max-w-lg bg-[#020617] border border-white/10 rounded-[32px] overflow-hidden shadow-2xl shadow-indigo-500/20"
                     >
                         {/* Background Effects */}
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 blur-[80px] rounded-full pointer-events-none" />
-                        <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-500/10 blur-[80px] rounded-full pointer-events-none" />
+                        <div className="absolute top-0 right-0 w-48 h-48 sm:w-64 sm:h-64 bg-indigo-500/10 blur-[60px] sm:blur-[80px] rounded-full pointer-events-none" />
+                        <div className="absolute bottom-0 left-0 w-48 h-48 sm:w-64 sm:h-64 bg-purple-500/10 blur-[60px] sm:blur-[80px] rounded-full pointer-events-none" />
 
                         {/* Close Button */}
                         <button
@@ -86,7 +86,7 @@ export const UserOnboarding: React.FC = () => {
 
                         <div className="relative z-10">
                             {/* Step Indicator */}
-                            <div className="flex justify-center gap-2 pt-8 pb-4">
+                            <div className="flex justify-center gap-2 pt-6 sm:pt-8 pb-3 sm:pb-4">
                                 {steps.map((_, idx) => (
                                     <div
                                         key={idx}
@@ -99,7 +99,7 @@ export const UserOnboarding: React.FC = () => {
                             </div>
 
                             {/* Content */}
-                            <div className="px-8 pb-8 pt-4 text-center">
+                            <div className="px-5 sm:px-8 pb-6 sm:pb-8 pt-3 sm:pt-4 text-center">
                                 <motion.div
                                     key={currentStep}
                                     initial={{ opacity: 0, x: 20 }}
@@ -109,24 +109,24 @@ export const UserOnboarding: React.FC = () => {
                                     className="flex flex-col items-center"
                                 >
                                     <div className={cn(
-                                        "w-20 h-20 rounded-2xl flex items-center justify-center mb-6 shadow-lg",
+                                        "w-16 h-16 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl flex items-center justify-center mb-4 sm:mb-6 shadow-lg",
                                         steps[currentStep].bg
                                     )}>
-                                        <StepIcon size={40} className={steps[currentStep].color} />
+                                        <StepIcon size={32} className="sm:w-10 sm:h-10" />
                                     </div>
 
-                                    <h2 className="text-2xl font-black text-white mb-3 tracking-tight">
+                                    <h2 className="text-xl sm:text-2xl font-black text-white mb-2 sm:mb-3 tracking-tight px-2">
                                         {steps[currentStep].title}
                                     </h2>
 
-                                    <p className="text-slate-400 text-sm leading-relaxed max-w-xs mb-8">
+                                    <p className="text-slate-400 text-sm leading-relaxed max-w-xs mb-6 sm:mb-8">
                                         {steps[currentStep].description}
                                     </p>
                                 </motion.div>
 
                                 <button
                                     onClick={handleNext}
-                                    className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-indigo-500/25 flex items-center justify-center gap-2 group"
+                                    className="w-full py-3 sm:py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-indigo-500/25 flex items-center justify-center gap-2 group"
                                 >
                                     {currentStep === steps.length - 1 ? premiumLocales.onboarding.ui.finish : premiumLocales.onboarding.ui.next}
                                     <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />

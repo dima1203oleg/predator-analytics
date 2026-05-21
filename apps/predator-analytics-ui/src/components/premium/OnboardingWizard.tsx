@@ -130,9 +130,9 @@ export const OnboardingWizard: React.FC = () => {
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg z-[9999]"
+            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] sm:w-full max-w-lg z-[9999] mx-auto"
           >
-            <div className="bg-slate-900/95 border border-white/10 rounded-3xl shadow-2xl  overflow-hidden">
+            <div className="bg-slate-900/95 border border-white/10 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden">
               {/* Progress Bar */}
               <div className="h-1 bg-slate-800 w-full">
                 <motion.div
@@ -143,7 +143,7 @@ export const OnboardingWizard: React.FC = () => {
               </div>
 
               {/* Header */}
-              <div className="p-6 border-b border-white/5 flex items-center justify-between">
+              <div className="p-4 sm:p-6 border-b border-white/5 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <Sparkles className="text-indigo-400" size={18} />
                   <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
@@ -166,21 +166,21 @@ export const OnboardingWizard: React.FC = () => {
                   initial={{ opacity: 0, x: 50 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -50 }}
-                  className="p-8"
+                  className="p-5 sm:p-8"
                 >
                   <div className={cn(
-                    'w-20 h-20 rounded-3xl flex items-center justify-center mb-6 mx-auto',
+                    'w-16 h-16 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl flex items-center justify-center mb-4 sm:mb-6 mx-auto',
                     'bg-gradient-to-br shadow-xl text-white',
                     step.color
                   )}>
                     {step.icon}
                   </div>
 
-                  <h2 className="text-2xl font-black text-white text-center mb-4">
+                  <h2 className="text-xl sm:text-2xl font-black text-white text-center mb-3 sm:mb-4">
                     {step.title}
                   </h2>
 
-                  <p className="text-slate-400 text-center leading-relaxed mb-8">
+                  <p className="text-slate-400 text-sm sm:text-base text-center leading-relaxed mb-6 sm:mb-8 px-2 sm:px-0">
                     {step.description}
                   </p>
 
@@ -197,7 +197,7 @@ export const OnboardingWizard: React.FC = () => {
               </AnimatePresence>
 
               {/* Footer */}
-              <div className="p-6 border-t border-white/5 flex items-center justify-between">
+              <div className="p-4 sm:p-6 border-t border-white/5 flex items-center justify-between gap-2">
                 <button
                   onClick={handlePrev}
                   disabled={currentStep === 0}
