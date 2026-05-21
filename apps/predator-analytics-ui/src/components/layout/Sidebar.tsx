@@ -828,6 +828,7 @@ export const Sidebar: React.FC = () => {
                                           isActive
                                             ? 'text-white'
                                             : 'text-slate-300 hover:text-white hover:bg-[var(--section-hover-bg)] hover:border-[var(--section-border)] hover:shadow-[0_0_20px_var(--section-glow)] active:scale-[0.98]',
+                                          'sidebar-kinetic-item',
                                         )
                                       }
                                       style={({ isActive }) => ({
@@ -847,6 +848,15 @@ export const Sidebar: React.FC = () => {
                                               animation: 'scan-slide 2s ease-in-out infinite',
                                             }}
                                           />
+                                          {/* HUD Corners — тактичні куточки */}
+                                          {isOpen && (
+                                            <>
+                                              <div className="hud-corner-nexus hud-corner-tl opacity-0 group-hover:opacity-100 transition-opacity" style={{ '--hud-accent': colors.dotColor } as React.CSSProperties} />
+                                              <div className="hud-corner-nexus hud-corner-tr opacity-0 group-hover:opacity-100 transition-opacity" style={{ '--hud-accent': colors.dotColor } as React.CSSProperties} />
+                                              <div className="hud-corner-nexus hud-corner-bl opacity-0 group-hover:opacity-100 transition-opacity" style={{ '--hud-accent': colors.dotColor } as React.CSSProperties} />
+                                              <div className="hud-corner-nexus hud-corner-br opacity-0 group-hover:opacity-100 transition-opacity" style={{ '--hud-accent': colors.dotColor } as React.CSSProperties} />
+                                            </>
+                                          )}
                                           {/* Іконка */}
                                           <div
                                             className="relative flex h-6 w-6 shrink-0 items-center justify-center rounded-md transition-all"

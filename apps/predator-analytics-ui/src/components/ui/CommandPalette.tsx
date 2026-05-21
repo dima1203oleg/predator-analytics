@@ -1,205 +1,301 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import {
-  ArrowRight,
-  BarChart2,
-  BrainCircuit,
-  Command,
-  FileText,
-  Home, Radio,
-  Search,
-  Shield,
-  Ship,
-  TrendingUp,
-  X
-} from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { ArrowRight, Command, Lock, Search, X } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAppStore } from '../../store/useAppStore';
 import { cn } from '../../utils/cn';
+import {
+  getAllVisibleNavigationItems,
+  isNavItemLocked,
+  type VisibleNavItem,
+} from '../../config/navigation';
+import { useRoleStore } from '../../store/useRoleStore';
+
+const sectionEmoji: Record<string, string> = {
+  'global-control': '🌐',
+  'intelligence-sector': '🔭',
+  'finance-sector': '💰',
+  'supply-sector': '🚢',
+  'geospatial-sector': '🗺',
+  'compliance-sector': '⚖️',
+  'cyber-sector': '🛡',
+  'ai-core-sector': '🧠',
+  'reports-sector': '📋',
+  'alerts-sector': '🔔',
+  'investigation-sector': '🕵',
+  'system-core': '⚙️',
+};
+
+const sectionColor: Record<string, string> = {
+  'global-control': '#38bdf8',
+  'intelligence-sector': '#fbbf24',
+  'finance-sector': '#34d399',
+  'supply-sector': '#60a5fa',
+  'geospatial-sector': '#818cf8',
+  'compliance-sector': '#f43f5e',
+  'cyber-sector': '#a78bfa',
+  'ai-core-sector': '#22d3ee',
+  'reports-sector': '#94a3b8',
+  'alerts-sector': '#22d3ee',
+  'investigation-sector': '#64748b',
+  'system-core': '#f43f5e',
+};
 
 export const CommandPalette = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-  const { toggleSidebar, userRole } = useAppStore();
+  const userRole = useRoleStore((state) => state.getRoleData().role);
 
-  // Toggle with Cmd+K
+  const allItems = useMemo(() => getAllVisibleNavigationItems(userRole), [userRole]);
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return allItems;
+    return allItems.filter(
+      (item) =>
+        item.label.toLowerCase().includes(q) ||
+        item.description?.toLowerCase().includes(q) ||
+        item.sectionLabel.toLowerCase().includes(q),
+    );
+  }, [allItems, query]);
+
+  const grouped = useMemo(() => {
+    const map = new Map<string, VisibleNavItem[]>();
+    for (const item of filtered) {
+      const list = map.get(item.sectionId) ?? [];
+      list.push(item);
+      map.set(item.sectionId, list);
+    }
+    return Array.from(map.entries()).map(([sectionId, items]) => ({ sectionId, items }));
+  }, [filtered]);
+
+  const flatItems = useMemo(() => grouped.flatMap((g) => g.items), [grouped]);
+
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
+    setSelectedIndex(0);
+  }, [query]);
+
+  useEffect(() => {
+    if (isOpen) {
+      setQuery('');
+      setSelectedIndex(0);
+      requestAnimationFrame(() => inputRef.current?.focus());
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
         setIsOpen((prev) => !prev);
       }
+      if (!isOpen) return;
       if (e.key === 'Escape') {
+        e.preventDefault();
         setIsOpen(false);
       }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
-
-  // Focus input on open
-  useEffect(() => {
-    if (isOpen) {
-      setTimeout(() => inputRef.current?.focus(), 10);
-    } else {
-      setQuery('');
-      setSelectedIndex(0);
-    }
-  }, [isOpen]);
-
-  const actions = [
-    { id: 'home', label: 'Головний Театр (Omniscience)', icon: Home, action: () => navigate('/') },
-    { id: 'foundry', label: 'ML_FOUNDRY (Навчання)', icon: BrainCircuit, action: () => navigate('/datasets') },
-    { id: 'evolution', label: 'Evolution Lab (Метрики)', icon: TrendingUp, action: () => navigate('/evolution') },
-    { id: 'governance', label: 'Sovereign Governance', icon: Shield, action: () => navigate('/governance') },
-    { id: 'news', label: 'Стрічка Новин (Signals)', icon: Radio, action: () => navigate('/news') },
-    { id: 'search', label: 'Глобальний Пошук', icon: Search, action: () => navigate('/search-v2') },
-    { id: 'analytics', label: 'Аналітика (Neural Hub)', icon: BarChart2, action: () => navigate('/analytics') },
-    { id: 'customs', label: 'Митний Реєстр (Intelligence)', icon: Ship, action: () => navigate('/customs-intel') },
-    { id: 'security', label: 'Security & Audit (Truth Ledger)', icon: Shield, action: () => navigate('/security') },
-    { id: 'sidebar', label: 'Перемкнути Меню', icon: FileText, action: toggleSidebar },
-  ];
-
-  if (userRole === 'admin') {
-    actions.push({ id: 'admin', label: 'Адмін Панель', icon: Shield, action: () => navigate('/admin') });
-  }
-
-  const filteredActions = actions.filter(action =>
-    action.label.toLowerCase().includes(query.toLowerCase())
-  );
-
-  // Keyboard navigation
-  useEffect(() => {
-    const handleNavigation = (e: KeyboardEvent) => {
-      if (!isOpen) return;
       if (e.key === 'ArrowDown') {
         e.preventDefault();
-        setSelectedIndex(i => Math.min(i + 1, filteredActions.length - 1));
+        setSelectedIndex((i) => (i + 1) % flatItems.length);
       }
       if (e.key === 'ArrowUp') {
         e.preventDefault();
-        setSelectedIndex(i => Math.max(i - 1, 0));
+        setSelectedIndex((i) => (i - 1 + flatItems.length) % flatItems.length);
       }
-      if (e.key === 'Enter') {
+      if (e.key === 'Enter' && flatItems[selectedIndex]) {
         e.preventDefault();
-        if (filteredActions[selectedIndex]) {
-          filteredActions[selectedIndex].action();
+        const item = flatItems[selectedIndex];
+        if (!isNavItemLocked(item, userRole)) {
+          navigate(item.path);
           setIsOpen(false);
         }
       }
     };
-    window.addEventListener('keydown', handleNavigation);
-    return () => window.removeEventListener('keydown', handleNavigation);
-  }, [isOpen, filteredActions, selectedIndex]);
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [isOpen, flatItems, selectedIndex, navigate, userRole]);
+
+  const scrollSelectedIntoView = useCallback(() => {
+    const el = listRef.current?.querySelector(`[data-index="${selectedIndex}"]`);
+    if (el) el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }, [selectedIndex]);
+
+  useEffect(() => {
+    scrollSelectedIntoView();
+  }, [scrollSelectedIntoView]);
+
+  let globalIndex = 0;
 
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[100] flex items-start justify-center pt-[20vh] px-4">
-          {/* Backdrop */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.15 }}
+          className="fixed inset-0 z-[100] flex items-start justify-center pt-[15vh]"
+          style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }}
+          onClick={() => setIsOpen(false)}
+        >
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setIsOpen(false)}
-            className="absolute inset-0 bg-slate-950/60 "
-          />
-
-          {/* Modal */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: -40, rotateX: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0, rotateX: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: -40, rotateX: 20 }}
-            transition={{ type: "spring", damping: 20, stiffness: 300 }}
-            className="w-full max-w-xl bg-slate-900/80 border border-emerald-500/30 rounded-2xl  relative z-10  overflow-hidden"
+            initial={{ opacity: 0, y: -20, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.96 }}
+            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="relative w-full max-w-xl overflow-hidden rounded-2xl"
+            style={{
+              background: 'rgba(15, 18, 25, 0.95)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              boxShadow: '0 24px 80px rgba(0,0,0,0.8), 0 0 40px rgba(225,29,72,0.1)',
+            }}
+            onClick={(e) => e.stopPropagation()}
           >
-            {/* Animated Scanline */}
-            <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-[linear-gradient(transparent_50%,rgba(16,185,129,0.5)_50%)] bg-[length:100%_4px] animate-scanline z-0" />
-
-            {/* Header */}
-            <div className="flex items-center px-6 py-5 border-b border-white/5 relative z-10">
-              <div className="p-2 bg-emerald-500/10 rounded-lg mr-4 border border-emerald-500/20">
-                <Command className="w-5 h-5 text-emerald-400" />
-              </div>
-              <input
-                ref={inputRef}
-                value={query}
-                onChange={(e) => {
-                  setQuery(e.target.value);
-                  setSelectedIndex(0);
+            {/* Scan-line overlay */}
+            <div className="pointer-events-none absolute inset-0 opacity-20">
+              <div
+                className="absolute inset-0"
+                style={{
+                  background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.15) 2px, rgba(0,0,0,0.15) 4px)',
                 }}
-                placeholder="Введіть команду..."
-                className="bg-transparent border-none outline-none text-white placeholder-slate-500 w-full text-xl font-bold tracking-tight"
               />
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-mono text-emerald-500/50 uppercase tracking-widest hidden md:block">System_Ready</span>
-                <button
-                  onClick={() => setIsOpen(false)}
-                  className="p-2 hover:bg-white/5 rounded-lg ml-2 transition-colors"
-                  title="Close command palette"
-                  aria-label="Close command palette"
-                >
-                  <X className="w-4 h-4 text-slate-500 hover:text-white" />
-                </button>
-              </div>
             </div>
 
-            {/* List */}
-            <div className="max-h-[300px] overflow-y-auto p-2 custom-scrollbar">
-              {filteredActions.length > 0 ? (
-                filteredActions.map((action, index) => (
-                  <button
-                    key={action.id}
-                    onClick={() => {
-                      action.action();
-                      setIsOpen(false);
-                    }}
-                    onMouseEnter={() => setSelectedIndex(index)}
-                    className={cn(
-                      "w-full flex items-center justify-between px-4 py-4 rounded-xl transition-all text-left relative overflow-hidden group/item",
-                      index === selectedIndex ? "bg-emerald-500/10 text-emerald-300 border border-emerald-500/20" : "text-slate-400 border border-transparent hover:bg-white/5"
-                    )}
-                  >
-                    <div className="flex items-center gap-4 relative z-10">
-                      <div className={cn(
-                        "p-2 rounded-lg transition-colors duration-300",
-                        index === selectedIndex ? "bg-emerald-500/20 text-emerald-400 " : "bg-slate-800 text-slate-500 group-hover/item:bg-slate-700"
-                      )}>
-                        <action.icon className="w-5 h-5" />
+            {/* Header */}
+            <div className="relative flex items-center gap-3 border-b px-4 py-3" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
+              <Search className="h-4 w-4 text-slate-500" />
+              <input
+                ref={inputRef}
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Пошук модулів, розділів, інструментів..."
+                className="flex-1 bg-transparent text-sm text-white outline-none placeholder:text-slate-600"
+              />
+              <div className="flex items-center gap-1 rounded-md border border-white/[0.08] bg-white/[0.03] px-1.5 py-0.5">
+                <Command className="h-3 w-3 text-slate-500" />
+                <span className="text-[10px] font-bold text-slate-500">K</span>
+              </div>
+              <button
+                onClick={() => setIsOpen(false)}
+                className="p-1.5 hover:bg-white/5 rounded-lg transition-colors"
+                title="Закрити"
+                aria-label="Закрити"
+              >
+                <X className="w-4 h-4 text-slate-500 hover:text-white" />
+              </button>
+            </div>
+
+            {/* Results */}
+            <div ref={listRef} className="max-h-[50vh] overflow-y-auto p-2 scrollbar-dark">
+              {grouped.length === 0 ? (
+                <div className="py-8 text-center">
+                  <div className="text-sm font-bold text-slate-400">Нічого не знайдено</div>
+                  <p className="mt-1 text-xs text-slate-600">Спробуйте інший запит</p>
+                </div>
+              ) : (
+                grouped.map((group) => {
+                  const color = sectionColor[group.sectionId] ?? '#64748b';
+                  const emoji = sectionEmoji[group.sectionId] ?? '•';
+                  return (
+                    <div key={group.sectionId} className="mb-2">
+                      <div
+                        className="mb-1 flex items-center gap-2 px-2 py-1 text-[10px] font-black uppercase tracking-[0.14em]"
+                        style={{ color }}
+                      >
+                        <span>{emoji}</span>
+                        <span>{group.items[0]?.sectionLabel ?? group.sectionId}</span>
+                        <span className="ml-auto text-[9px] opacity-50">{group.items.length}</span>
                       </div>
-                      <div className="flex flex-col">
-                        <span className="font-bold text-sm tracking-tight">{action.label}</span>
-                        <span className="text-[10px] text-slate-500 font-mono tracking-tighter uppercase opacity-0 group-hover/item:opacity-100 transition-opacity">Execute_Routine://{action.id}</span>
+                      <div className="space-y-0.5">
+                        {group.items.map((item) => {
+                          const idx = globalIndex++;
+                          const isSelected = idx === selectedIndex;
+                          const locked = isNavItemLocked(item, userRole);
+                          return (
+                            <button
+                              key={item.id}
+                              data-index={idx}
+                              type="button"
+                              onClick={() => {
+                                if (!locked) {
+                                  navigate(item.path);
+                                  setIsOpen(false);
+                                }
+                              }}
+                              onMouseEnter={() => setSelectedIndex(idx)}
+                              className={cn(
+                                'group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left transition-all',
+                                isSelected
+                                  ? 'text-white'
+                                  : 'text-slate-300 hover:bg-white/[0.04] hover:text-white',
+                              )}
+                              style={{
+                                background: isSelected ? `${color}15` : 'transparent',
+                                border: isSelected ? `1px solid ${color}30` : '1px solid transparent',
+                                boxShadow: isSelected ? `0 0 16px ${color}15` : 'none',
+                                cursor: locked ? 'not-allowed' : 'pointer',
+                                opacity: locked ? 0.5 : 1,
+                              }}
+                            >
+                              <item.icon
+                                className="h-4 w-4 shrink-0"
+                                style={{ color: isSelected ? color : '#64748b' }}
+                              />
+                              <div className="min-w-0 flex-1">
+                                <div className="flex items-center gap-2">
+                                  <span className="truncate text-xs font-bold">{item.label}</span>
+                                  {locked && <Lock className="h-3 w-3 shrink-0 text-rose-400" />}
+                                  {item.badge && (
+                                    <span
+                                      className="shrink-0 rounded-full border px-1.5 py-0.5 text-[7px] font-black uppercase tracking-[0.1em]"
+                                      style={{
+                                        background: `${color}15`,
+                                        borderColor: `${color}30`,
+                                        color,
+                                      }}
+                                    >
+                                      {item.badge}
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="mt-0.5 truncate text-[10px] text-slate-600">{item.description}</p>
+                              </div>
+                              {isSelected && (
+                                <ArrowRight className="h-3.5 w-3.5 shrink-0" style={{ color }} />
+                              )}
+                            </button>
+                          );
+                        })}
                       </div>
                     </div>
-                    {index === selectedIndex && (
-                      <motion.div layoutId="palette-active-glow" className="flex items-center gap-2 text-emerald-400 relative z-10">
-                        <span className="text-[9px] font-mono font-black  uppercase">Execute</span>
-                        <ArrowRight className="w-4 h-4" />
-                      </motion.div>
-                    )}
-                  </button>
-                ))
-              ) : (
-                <div className="px-4 py-8 text-center text-slate-500">
-                  Нічого не знайдено
-                </div>
+                  );
+                })
               )}
             </div>
 
             {/* Footer */}
-            <div className="bg-slate-950 px-4 py-2 border-t border-slate-800 flex items-center justify-between text-xs text-slate-500">
-              <div className="flex gap-4">
-                <span className="flex items-center gap-1"><kbd className="bg-slate-800 px-1 rounded border border-slate-700">↑↓</kbd> Навігація</span>
-                <span className="flex items-center gap-1"><kbd className="bg-slate-800 px-1 rounded border border-slate-700">↵</kbd> Вибрати</span>
+            <div
+              className="flex items-center justify-between border-t px-4 py-2 text-[9px] text-slate-600"
+              style={{ borderColor: 'rgba(255,255,255,0.06)' }}
+            >
+              <div className="flex items-center gap-3">
+                <span>
+                  <kbd className="rounded border border-white/[0.08] bg-white/[0.04] px-1 py-0.5 font-mono text-[8px] text-slate-500">↑↓</kbd> навігація
+                </span>
+                <span>
+                  <kbd className="rounded border border-white/[0.08] bg-white/[0.04] px-1 py-0.5 font-mono text-[8px] text-slate-500">Enter</kbd> вибір
+                </span>
               </div>
-              <span className="tracking-wider opacity-50">PREDATOR AI</span>
+              <span>
+                <kbd className="rounded border border-white/[0.08] bg-white/[0.04] px-1 py-0.5 font-mono text-[8px] text-slate-500">Esc</kbd> закрити
+              </span>
             </div>
           </motion.div>
-        </div>
+        </motion.div>
       )}
     </AnimatePresence>
   );
