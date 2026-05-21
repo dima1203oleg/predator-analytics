@@ -33,8 +33,7 @@ kafka:
   enabled: true
   replicaCount: 1
   zookeeper:
-    enabled: true
-    replicaCount: 1
+    enabled: false
 
 qdrant:
   enabled: true
