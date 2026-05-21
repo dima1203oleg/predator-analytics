@@ -87,6 +87,10 @@ export default defineConfig(({ mode }) => {
       }
     },
 
+    optimizeDeps: {
+      exclude: ['@hyperdx/browser', '@hyperdx/node-opentelemetry', 'better-sqlite3'],
+    },
+
     build: {
       chunkSizeWarningLimit: 500,
       rollupOptions: {
