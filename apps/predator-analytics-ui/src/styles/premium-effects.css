@@ -288,6 +288,20 @@
   opacity: 0.4;
 }
 
+/* ── SIDEBAR SCAN SLIDE ── */
+@keyframes scan-slide {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── SIDEBAR KINETIC HOVER ── */
+.sidebar-kinetic-item {
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.sidebar-kinetic-item:hover {
+  transform: translateX(2px);
+}
+
 /* ── GLOW NEON INTENSE ── */
 .glow-nexus-cyan {
   box-shadow: 0 0 30px rgba(0, 243, 255, 0.1), inset 0 0 20px rgba(0, 243, 255, 0.05);

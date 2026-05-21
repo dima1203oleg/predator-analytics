@@ -823,21 +823,30 @@ export const Sidebar: React.FC = () => {
                                       onClick={() => pushRecent(item.id)}
                                       className={({ isActive }) =>
                                         cn(
-                                          'group relative flex items-center gap-2 rounded-lg border transition-all duration-300',
+                                          'group relative flex items-center gap-2 rounded-lg border transition-all duration-300 overflow-hidden',
                                           isOpen ? 'px-2 py-1.5 pr-8' : 'mx-auto h-8 w-8 justify-center',
                                           isActive
                                             ? 'text-white'
-                                            : 'text-slate-300 hover:text-white hover:bg-[var(--section-hover-bg)] hover:border-[var(--section-border)] hover:shadow-[0_0_12px_var(--section-glow)] active:scale-[0.98]',
+                                            : 'text-slate-300 hover:text-white hover:bg-[var(--section-hover-bg)] hover:border-[var(--section-border)] hover:shadow-[0_0_20px_var(--section-glow)] active:scale-[0.98]',
                                         )
                                       }
                                       style={({ isActive }) => ({
                                         background: isActive ? colors.activeItemBg : 'transparent',
                                         borderColor: isActive ? colors.activeItemBorder : 'transparent',
                                         boxShadow: isActive ? `0 0 12px ${colors.glowColor}30` : 'none',
-                                      })}
+                                      })} 
                                     >
                                       {({ isActive }) => (
                                         <>
+                                          {/* Scan-line hover effect */}
+                                          <div 
+                                            className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                                            style={{
+                                              background: `linear-gradient(90deg, transparent 0%, ${colors.glowColor}20 50%, transparent 100%)`,
+                                              backgroundSize: '200% 100%',
+                                              animation: 'scan-slide 2s ease-in-out infinite',
+                                            }}
+                                          />
                                           {/* Іконка */}
                                           <div
                                             className="relative flex h-6 w-6 shrink-0 items-center justify-center rounded-md transition-all"
@@ -971,12 +980,26 @@ export const Sidebar: React.FC = () => {
           )}
           style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
         >
-          {/* Аватар */}
+          {/* Аватар з кольором рівня доступу */}
           <div
             className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg"
-            style={{ background: 'rgba(225,29,72,0.15)', border: '1px solid rgba(225,29,72,0.25)' }}
+            style={{
+              background: userRole === 'core' || userRole === 'admin' ? 'rgba(99,102,241,0.15)' :
+                         userRole === 'sovereign' || userRole === 'vip' ? 'rgba(225,29,72,0.15)' :
+                         userRole === 'pro' || userRole === 'client_premium' ? 'rgba(245,158,11,0.15)' :
+                         'rgba(16,185,129,0.15)',
+              border: `1px solid ${userRole === 'core' || userRole === 'admin' ? 'rgba(99,102,241,0.3)' :
+                         userRole === 'sovereign' || userRole === 'vip' ? 'rgba(225,29,72,0.25)' :
+                         userRole === 'pro' || userRole === 'client_premium' ? 'rgba(245,158,11,0.25)' :
+                         'rgba(16,185,129,0.25)'}`,
+            }}
           >
-            <User className="h-3.5 w-3.5" style={{ color: '#fb7185' }} />
+            <User className="h-3.5 w-3.5" style={{
+              color: userRole === 'core' || userRole === 'admin' ? '#818cf8' :
+                     userRole === 'sovereign' || userRole === 'vip' ? '#fb7185' :
+                     userRole === 'pro' || userRole === 'client_premium' ? '#fbbf24' :
+                     '#34d399'
+            }} />
           </div>
 
           {isOpen && (
