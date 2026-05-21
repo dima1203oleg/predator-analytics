@@ -40,3 +40,6 @@ class WorkerSettings(BaseSettings):
 @lru_cache
 def get_settings() -> WorkerSettings:
     return WorkerSettings()
+
+# Глобальний екземпляр для backward compatibility
+settings: WorkerSettings = get_settings()

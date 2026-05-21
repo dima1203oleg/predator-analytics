@@ -340,8 +340,11 @@ ROUTERS = [
 ]
 
 for prefix, router in ROUTERS:
-    app.include_router(router, prefix=prefix)
-    logger.debug(f"Registered router: {prefix}{router.prefix}")
+    if router is not None:
+        app.include_router(router, prefix=prefix)
+        logger.debug(f"Registered router: {prefix}{router.prefix}")
+    else:
+        logger.warning(f"Skipped None router at prefix: {prefix}")
 
 @app.get("/api/v1/health", tags=["system"])
 @app.get("/health", tags=["system"])

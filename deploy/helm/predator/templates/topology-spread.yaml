@@ -1,4 +1,4 @@
-{{- if .Values.topologySpread.enabled }}
+{{- if (.Values.topologySpread).enabled | default false }}
 # TopologySpreadConstraints для HA — розподіл pod'ів по зонах/вузлах
 # Застосовується через patches у deployment або напряму
 apiVersion: v1

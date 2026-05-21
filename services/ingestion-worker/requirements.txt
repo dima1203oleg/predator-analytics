@@ -13,3 +13,4 @@ chardet
 tenacity
 minio
 clickhouse-connect
+neo4j==5.18.0

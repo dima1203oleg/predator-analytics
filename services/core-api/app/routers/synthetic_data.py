@@ -7,20 +7,21 @@ import pandas as pd
 import io
 import uuid
 
-# Це спрацює, якщо ми встановимо sde як пакет або додамо його до PYTHONPATH
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../")))
-from services.synthetic_data_engine.app.engine import DatasetGeneratorTrainer
-
 from predator_common.logging import get_logger
 
 logger = get_logger("core-api.synthetic")
 
 router = APIRouter(prefix="/synthetic", tags=["Synthetic Data"])
 
-# Ініціалізація рушія
-engine = DatasetGeneratorTrainer()
+# Опціональний імпорт рушія — не падаємо якщо модуль недоступний
+try:
+    import sys, os
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../")))
+    from services.synthetic_data_engine.app.engine import DatasetGeneratorTrainer
+    engine = DatasetGeneratorTrainer()
+except Exception as e:
+    logger.warning("Synthetic Data Engine недоступний", error=str(e))
+    engine = None
 
 class ZeroShotRequest(BaseModel):
     domain: str = Field(..., description="Домен (customs, finance, etc)")

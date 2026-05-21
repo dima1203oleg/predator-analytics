@@ -12,7 +12,7 @@ ENV PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
+    gcc libc6-dev \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 

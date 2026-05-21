@@ -69,7 +69,10 @@ from .risk import router as risk_router
 from .sanctions import router as sanctions_router
 from .search import router as search_router
 from .som import router as som_router
-from .synthetic_data import router as synthetic_data_router
+try:
+    from .synthetic_data import router as synthetic_data_router
+except ImportError:
+    synthetic_data_router = None
 from .system import router as system_router
 from .system import stats_router
 from .warroom import router as warroom_router
