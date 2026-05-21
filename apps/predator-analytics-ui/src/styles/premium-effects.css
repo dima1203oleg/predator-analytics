@@ -36,6 +36,24 @@
   background: rgba(99, 102, 241, 0.4);
 }
 
+/* ── SCROLLBAR DARK — Blood Red Elite ── */
+.scrollbar-dark::-webkit-scrollbar {
+  width: 4px;
+}
+
+.scrollbar-dark::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-dark::-webkit-scrollbar-thumb {
+  background: rgba(225, 29, 72, 0.3);
+  border-radius: 10px;
+}
+
+.scrollbar-dark::-webkit-scrollbar-thumb:hover {
+  background: rgba(225, 29, 72, 0.6);
+}
+
 /* Варіанти кольору скролбару */
 .scrollbar-cyan::-webkit-scrollbar-thumb {
   background: rgba(6, 182, 212, 0.2);
@@ -886,4 +904,171 @@
   border-radius: 50%;
   position: absolute;
   box-shadow: 0 0 8px var(--wraith-accent);
+}
+
+/* ═══════════════════════════════════════════════════
+   THERMAL HOVER — елемент "нагрівається" при hover
+   ═══════════════════════════════════════════════════ */
+.thermal-hover {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.thermal-hover::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(244, 63, 94, 0.15) 0%,
+    transparent 60%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.thermal-hover:hover {
+  border-color: rgba(244, 63, 94, 0.4) !important;
+  box-shadow:
+    0 0 20px rgba(244, 63, 94, 0.1),
+    0 0 40px rgba(244, 63, 94, 0.05);
+  transform: translateY(-2px);
+}
+
+.thermal-hover:hover::before {
+  opacity: 1;
+}
+
+/* ═══════════════════════════════════════════════════
+   SLIDE-TO-EXECUTE — свайп для підтвердження дії
+   ═══════════════════════════════════════════════════ */
+@keyframes slide-shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.slide-to-execute {
+  position: relative;
+  overflow: hidden;
+  cursor: grab;
+  user-select: none;
+  touch-action: pan-x;
+}
+
+.slide-to-execute::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(244, 63, 94, 0.15) 30%,
+    rgba(244, 63, 94, 0.25) 50%,
+    rgba(244, 63, 94, 0.15) 70%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: slide-shimmer 3s linear infinite;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.slide-to-execute:hover::after {
+  opacity: 1;
+}
+
+.slide-to-execute:active {
+  cursor: grabbing;
+}
+
+.slide-thumb {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  bottom: 4px;
+  width: 48px;
+  background: linear-gradient(135deg, #e11d48, #f43f5e);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 12px rgba(225, 29, 72, 0.4);
+  transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+}
+
+.slide-thumb.unlocked {
+  left: calc(100% - 52px);
+  background: linear-gradient(135deg, #10b981, #34d399);
+  box-shadow: 0 2px 12px rgba(16, 185, 129, 0.4);
+}
+
+/* ═══════════════════════════════════════════════════
+   KINETIC PARALLAX DEPTH — шари з різною швидкістю
+   ═══════════════════════════════════════════════════ */
+.parallax-layer {
+  will-change: transform;
+  transition: transform 0.1s linear;
+}
+
+.parallax-deep { --parallax-depth: 0.2; }
+.parallax-mid  { --parallax-depth: 0.5; }
+.parallax-shallow { --parallax-depth: 0.8; }
+
+/* ═══════════════════════════════════════════════════
+   DECRYPTION LOADER — замість звичайного spinner
+   ═══════════════════════════════════════════════════ */
+@keyframes decrypt-scramble {
+  0%, 100% { content: '█'; }
+  10% { content: '▓'; }
+  20% { content: '▒'; }
+  30% { content: '░'; }
+  40% { content: '◆'; }
+  50% { content: '◇'; }
+  60% { content: '●'; }
+  70% { content: '○'; }
+  80% { content: '◐'; }
+  90% { content: '◑'; }
+}
+
+.decrypt-loader {
+  font-family: 'IBM Plex Mono', monospace;
+  color: #e11d48;
+  font-size: 14px;
+  letter-spacing: 0.15em;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.decrypt-loader::after {
+  content: '█';
+  animation: decrypt-scramble 0.8s steps(10) infinite;
+}
+
+/* ═══════════════════════════════════════════════════
+   BLOOD PULSE — пульсуючий елемент (критичний статус)
+   ═══════════════════════════════════════════════════ */
+@keyframes blood-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(225, 29, 72, 0); }
+}
+
+.blood-pulse {
+  animation: blood-pulse 2s ease-in-out infinite;
+}
+
+/* ═══════════════════════════════════════════════════
+   DATA STREAM — анімований текстовий потік
+   ═══════════════════════════════════════════════════ */
+@keyframes data-stream {
+  0% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-20px); opacity: 0; }
+}
+
+.data-stream-char {
+  display: inline-block;
+  animation: data-stream 0.6s ease-out forwards;
 }
