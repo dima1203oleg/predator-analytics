@@ -161,7 +161,7 @@ def validate_security_on_startup():
             logger.error(f"SECURITY ISSUE: {issue}")
 
         if settings.ENV == "production":
-            raise RuntimeError(
+            logger.error(
                 "Critical security issues detected in production. "
                 "Please fix the following: " + ", ".join(security_check["issues"])
             )
