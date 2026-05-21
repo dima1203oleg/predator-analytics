@@ -611,7 +611,7 @@ namespace:
     auditVersion: latest
     warn: restricted
     warnVersion: latest
-    dbExemptions: "postgresql,neo4j,opensearch,clickhouse,redis,kafka,qdrant,minio"
+    dbExemptions: "postgresql-neo4j-opensearch-clickhouse-redis-kafka-qdrant-minio"
 
 database:
   migration:

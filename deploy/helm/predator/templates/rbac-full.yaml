@@ -84,8 +84,7 @@ metadata:
   name: {{ include "predator.fullname" . }}-services-role
   labels:
     {{- include "predator.labels" . | nindent 4 }}
-spec:
-  rules:
+rules:
     - apiGroups: [""]
       resources: ["configmaps", "secrets"]
       verbs: ["get", "list", "watch"]
