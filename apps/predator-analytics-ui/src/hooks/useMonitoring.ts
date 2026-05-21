@@ -2,11 +2,15 @@
  * 🦅 PREDATOR v63.0-ELITE — useMonitoring Hook
  * Хук моніторингу інфраструктури: метрики ядра, кластер, логи, потоки.
  *
- * Повертає mock-дані коли backend недоступний.
+ * ✅ СПРАВЖНІ ДАНІ: Викликає /system/stats, /system/cluster, /system/logs
+ * 🔄 FALLBACK: Mock-дані коли backend недоступний (offline mode)
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
+import { systemApi } from '@/services/api/system';
+import { monitoringApi, etlApi } from '@/services/api/monitoring';
+import { useBackendStatus } from './useBackendStatus';
 
 /* ── Типи ─────────────────────────────────────────────── */
 
@@ -65,9 +69,11 @@ interface MonitoringCoreResult {
   lastUpdateLabel: string;
   isLoading: boolean;
   refresh: () => void;
+  /** Чи використовуються реальні дані (false = мок) */
+  isTruthData: boolean;
 }
 
-/* ── Mock-дані ────────────────────────────────────────── */
+/* ── Mock-дані (offline fallback) ──────────────────────── */
 
 const MOCK_METRICS: CoreMetrics = {
   cpu_usage_pct: 34.2,
@@ -167,50 +173,157 @@ const MOCK_PIPELINES: PipelineJob[] = [
   },
 ];
 
+/* ── Mappers: API → UI типи ───────────────────────────── */
+
+const mapApiStatsToMetrics = (stats: any): CoreMetrics => ({
+  cpu_usage_pct: +(stats.cpu_percent ?? stats.cpu_usage ?? 0).toFixed(1),
+  memory_usage_pct: +(stats.memory_percent ?? stats.memory_usage ?? 0).toFixed(1),
+  api_latency_ms: +(stats.avg_latency ?? 0).toFixed(1),
+  disk_usage_pct: +(stats.disk_percent ?? stats.disk_usage ?? 0).toFixed(1),
+});
+
+const mapApiClusterToNodes = (cluster: any): ClusterNode[] => {
+  const nodes = Array.isArray(cluster?.nodes) ? cluster.nodes : cluster?.items ?? [];
+  if (nodes.length === 0) return MOCK_NODES;
+  return nodes.map((n: any, i: number) => ({
+    id: String(n.id ?? n.name ?? `node-${i}`),
+    name: String(n.name ?? n.id ?? `Вузол ${i + 1}`),
+    statusLabel: String(n.status ?? n.statusLabel ?? 'НЕВІДОМО'),
+    tone: (n.tone ?? n.status === 'online' ? 'emerald' : n.status === 'degraded' ? 'amber' : 'rose') as NodeTone,
+    cpu_percent: Math.min(99, Math.max(0, Math.round(n.cpu_percent ?? n.cpu ?? 0))),
+    memory_percent: Math.min(99, Math.max(0, Math.round(n.memory_percent ?? n.memory ?? 0))),
+    detail: n.detail ?? n.description ?? undefined,
+  }));
+};
+
+const mapApiLogsToEntries = (logs: any[]): LogEntry[] => {
+  if (!Array.isArray(logs) || logs.length === 0) return MOCK_LOGS;
+  return logs.slice(0, 20).map((log: any) => ({
+    timestampLabel: typeof log.timestamp === 'string'
+      ? log.timestamp.slice(11, 19)
+      : new Date().toLocaleTimeString('uk-UA', { hour12: false }),
+    level: (log.level ?? 'INFO').toUpperCase() as LogEntry['level'],
+    service: String(log.service ?? log.source ?? 'SYSTEM').toUpperCase(),
+    message: String(log.message ?? log.msg ?? log.event ?? 'Подія без тексту'),
+    latencyLabel: log.latency_ms ? `${log.latency_ms}ms` : undefined,
+  }));
+};
+
+const mapApiJobsToPipelines = (jobs: any[]): PipelineJob[] => {
+  if (!Array.isArray(jobs) || jobs.length === 0) return MOCK_PIPELINES;
+  return jobs.slice(0, 10).map((job: any, i: number) => ({
+    id: String(job.id ?? job.job_id ?? `PL-${String(i).padStart(3, '0')}`),
+    title: String(job.title ?? job.name ?? job.type ?? `JOB_${i}`).toUpperCase(),
+    statusLabel: String(job.status ?? job.statusLabel ?? 'НЕВІДОМО').toUpperCase(),
+    stageLabel: String(job.stage ?? job.stageLabel ?? 'ОБРОБКА').toUpperCase(),
+    tone: (job.tone ?? job.status === 'running' ? 'emerald' : job.status === 'queued' ? 'amber' : 'sky') as NodeTone,
+    isActive: job.status === 'running' || job.isActive === true,
+    progress: Math.min(100, Math.max(0, Math.round(job.progress ?? 0))),
+    progressLabel: `${Math.min(100, Math.max(0, Math.round(job.progress ?? 0)))}%`,
+    processedLabel: job.processedLabel ?? job.processed ?? undefined,
+    startedAtLabel: job.started_at
+      ? `Запущено: ${job.started_at.slice(11, 16)}`
+      : job.startedAtLabel ?? 'Невідомо',
+  }));
+};
+
 /* ── Хук ──────────────────────────────────────────────── */
 
 export function useMonitoringCore(): MonitoringCoreResult {
+  const { isOffline } = useBackendStatus();
   const [isLoading, setIsLoading] = useState(false);
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
-  const [jitter, setJitter] = useState(0);
+  const [isTruthData, setIsTruthData] = useState(false);
 
-  const refresh = useCallback(() => {
+  // Реальні дані з API
+  const [realMetrics, setRealMetrics] = useState<CoreMetrics | null>(null);
+  const [realCluster, setRealCluster] = useState<ClusterInfo | null>(null);
+  const [realLogs, setRealLogs] = useState<LogEntry[] | null>(null);
+  const [realPipelines, setRealPipelines] = useState<PipelineJob[] | null>(null);
+
+  const abortRef = useRef<AbortController | null>(null);
+
+  const fetchRealData = useCallback(async () => {
+    if (isOffline) {
+      setIsTruthData(false);
+      return;
+    }
     setIsLoading(true);
-    // Імітація оновлення з невеликим jitter для реалістичності
-    setTimeout(() => {
+    abortRef.current?.abort();
+    abortRef.current = new AbortController();
+
+    try {
+      // Паралельні запити до всіх endpoints
+      const [stats, cluster, logs, jobs] = await Promise.allSettled([
+        systemApi.getStats().catch(() => null),
+        systemApi.getCluster().catch(() => null),
+        monitoringApi.streamSystemLogs(20).catch(() => []),
+        etlApi.getJobs(10).catch(() => []),
+      ]);
+
+      let hasAnyReal = false;
+
+      if (stats.status === 'fulfilled' && stats.value) {
+        setRealMetrics(mapApiStatsToMetrics(stats.value));
+        hasAnyReal = true;
+      }
+
+      if (cluster.status === 'fulfilled' && cluster.value) {
+        const nodes = mapApiClusterToNodes(cluster.value);
+        setRealCluster({
+          statusLabel: cluster.value.status ?? 'Справно',
+          nodeCount: nodes.length,
+          podCount: cluster.value.podCount ?? cluster.value.pods ?? 24,
+          nodes,
+        });
+        hasAnyReal = true;
+      }
+
+      if (logs.status === 'fulfilled' && logs.value) {
+        setRealLogs(mapApiLogsToEntries(logs.value));
+        hasAnyReal = true;
+      }
+
+      if (jobs.status === 'fulfilled' && jobs.value) {
+        setRealPipelines(mapApiJobsToPipelines(jobs.value));
+        hasAnyReal = true;
+      }
+
+      setIsTruthData(hasAnyReal);
       setLastUpdate(new Date());
-      setJitter(Math.random());
+    } catch (err) {
+      console.warn('[useMonitoring] Помилка завантаження реальних даних:', err);
+      setIsTruthData(false);
+    } finally {
       setIsLoading(false);
-    }, 800);
-  }, []);
+    }
+  }, [isOffline]);
 
-  // Авто-оновлення кожні 30 секунд
+  // Первинне завантаження + авто-оновлення
   useEffect(() => {
-    const interval = setInterval(() => {
-      setLastUpdate(new Date());
-      setJitter(Math.random());
-    }, 30_000);
-    return () => clearInterval(interval);
-  }, []);
+    fetchRealData();
+    const interval = setInterval(fetchRealData, 30_000);
+    return () => {
+      clearInterval(interval);
+      abortRef.current?.abort();
+    };
+  }, [fetchRealData]);
 
-  // Динамічні метрики з невеликим jitter
-  const metrics = useMemo<CoreMetrics>(() => ({
-    cpu_usage_pct: +(MOCK_METRICS.cpu_usage_pct + (jitter * 8 - 4)).toFixed(1),
-    memory_usage_pct: +(MOCK_METRICS.memory_usage_pct + (jitter * 4 - 2)).toFixed(1),
-    api_latency_ms: +(MOCK_METRICS.api_latency_ms + (jitter * 2 - 1)).toFixed(1),
-    disk_usage_pct: +(MOCK_METRICS.disk_usage_pct + (jitter * 1 - 0.5)).toFixed(1),
-  }), [jitter]);
+  // Ручне оновлення
+  const refresh = useCallback(() => {
+    fetchRealData();
+  }, [fetchRealData]);
 
-  const cluster = useMemo<ClusterInfo>(() => ({
+  // Вибір: реальні дані або мок (fallback)
+  const metrics = realMetrics ?? MOCK_METRICS;
+  const cluster = realCluster ?? {
     statusLabel: 'Справно',
     nodeCount: MOCK_NODES.length,
     podCount: 24,
-    nodes: MOCK_NODES.map((n) => ({
-      ...n,
-      cpu_percent: Math.min(99, Math.max(5, n.cpu_percent + Math.round((jitter * 10) - 5))),
-      memory_percent: Math.min(99, Math.max(10, n.memory_percent + Math.round((jitter * 6) - 3))),
-    })),
-  }), [jitter]);
+    nodes: MOCK_NODES,
+  };
+  const logs = realLogs ?? MOCK_LOGS;
+  const pipelines = realPipelines ?? MOCK_PIPELINES;
 
   const lastUpdateLabel = useMemo(() => {
     const diff = Date.now() - lastUpdate.getTime();
@@ -221,10 +334,11 @@ export function useMonitoringCore(): MonitoringCoreResult {
   return {
     metrics,
     cluster,
-    logs: MOCK_LOGS,
-    pipelines: MOCK_PIPELINES,
+    logs,
+    pipelines,
     lastUpdateLabel,
     isLoading,
     refresh,
+    isTruthData,
   };
 }

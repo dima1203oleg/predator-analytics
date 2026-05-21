@@ -75,7 +75,7 @@ const statusTones = {
 
 export default function MonitoringView() {
   const [activeTab, setActiveTab] = useState<'overview' | 'nodes' | 'logs' | 'pipelines'>('overview');
-  const { metrics, cluster, logs, pipelines, lastUpdateLabel, isLoading, refresh } = useMonitoringCore();
+  const { metrics, cluster, logs, pipelines, lastUpdateLabel, isLoading, refresh, isTruthData } = useMonitoringCore();
 
   const tabs = [
     { id: 'overview', label: 'ЗАГАЛЬНИЙ МОНІТОРИНГ', icon: Activity },
@@ -123,6 +123,19 @@ export default function MonitoringView() {
             <div className="text-right">
               <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1 italic">ОСТАННЄ ОНОВЛЕННЯ</p>
               <p className="text-xs font-mono font-bold text-rose-400 italic">{lastUpdateLabel}</p>
+            </div>
+            {/* Індикатор джерела даних — Правда vs Мок */}
+            <div
+              className={cn(
+                'flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[8px] font-black uppercase tracking-[0.14em]',
+                isTruthData
+                  ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400'
+                  : 'border-amber-500/30 bg-amber-500/10 text-amber-400',
+              )}
+              title={isTruthData ? 'Дані отримано з реальних сенсорів інфраструктури' : 'Демонстраційні дані (backend недоступний)'}
+            >
+              <span className={cn('h-1.5 w-1.5 rounded-full', isTruthData ? 'bg-emerald-400 shadow-[0_0_6px_#34d399]' : 'bg-amber-400 shadow-[0_0_6px_#fbbf24]')} />
+              {isTruthData ? 'ПРАВДА' : 'МОК'}
             </div>
             <button 
               onClick={refresh}
