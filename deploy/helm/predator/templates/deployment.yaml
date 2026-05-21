@@ -29,7 +29,7 @@ spec:
             - containerPort: 8001
           env:
             - name: NEO4J_URI
-              value: "bolt://{{ .Release.Name }}-neo4j:7687"
+              value: "bolt://{{ .Release.Name }}:7687"
             - name: NEO4J_PASSWORD
               valueFrom:
                 secretKeyRef:
