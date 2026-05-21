@@ -353,9 +353,9 @@ async def consume() -> None:
     except Exception as e:
         logger.warning(f"Kafka недоступна — ingestion worker у standby режимі: {e}")
         set_health_status("kafka_connected", False)
-        await ua_registry.закрити()
-        await postgres_sink.close()
-        return
+        # Не завершуємося — працюємо в standby режимі
+        while True:
+            await asyncio.sleep(60)
 
     background_tasks: set[asyncio.Task[Any]] = set()
 
