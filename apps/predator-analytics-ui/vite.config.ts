@@ -90,6 +90,7 @@ export default defineConfig(({ mode }) => {
     build: {
       chunkSizeWarningLimit: 500,
       rollupOptions: {
+        external: ['better-sqlite3', '@hyperdx/browser', '@hyperdx/node-opentelemetry'],
         output: {
           format: 'es',
           manualChunks: {
