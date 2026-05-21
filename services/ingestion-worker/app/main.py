@@ -333,23 +333,29 @@ async def consume() -> None:
         logger.error(f"PostgreSQL connection failed: {e}")
         set_health_status("postgres_connected", False)
 
-    consumer = AIOKafkaConsumer(
-        TOPIC_RAW,
-        TOPIC_OMNIVERSE,
-        bootstrap_servers=settings.KAFKA_BOOTSTRAP_SERVERS,
-        group_id="predator-ingestion-group",
-        auto_offset_reset="earliest",
-        value_deserializer=lambda m: json.loads(m.decode("utf-8")) if m else {},
-    )
-
-    producer = AIOKafkaProducer(
-        bootstrap_servers=settings.KAFKA_BROKERS,
-    )
-
-    await consumer.start()
-    await producer.start()
-    set_health_status("kafka_connected", True)
-    logger.info("ingestion_worker.started", topic=TOPIC_RAW)
+    # Перевірка доступності Kafka — якщо недоступна, працюємо в standby режимі
+    try:
+        consumer = AIOKafkaConsumer(
+            TOPIC_RAW,
+            TOPIC_OMNIVERSE,
+            bootstrap_servers=settings.KAFKA_BOOTSTRAP_SERVERS,
+            group_id="predator-ingestion-group",
+            auto_offset_reset="earliest",
+            value_deserializer=lambda m: json.loads(m.decode("utf-8")) if m else {},
+        )
+        producer = AIOKafkaProducer(
+            bootstrap_servers=settings.KAFKA_BROKERS,
+        )
+        await consumer.start()
+        await producer.start()
+        set_health_status("kafka_connected", True)
+        logger.info("ingestion_worker.started", topic=TOPIC_RAW)
+    except Exception as e:
+        logger.warning(f"Kafka недоступна — ingestion worker у standby режимі: {e}")
+        set_health_status("kafka_connected", False)
+        await ua_registry.закрити()
+        await postgres_sink.close()
+        return
 
     background_tasks: set[asyncio.Task[Any]] = set()
 

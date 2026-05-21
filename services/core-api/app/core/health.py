@@ -447,8 +447,44 @@ class HealthCheckService:
                 },
             }
 
+    async def _check_optional_service(
+        self,
+        name: str,
+        check_func: Any,
+        enabled: bool,
+        timeout: float = 2.0,
+    ) -> dict[str, Any]:
+        """Перевіряє опціональний сервіс з таймаутом."""
+        if not enabled:
+            return {
+                "status": "disabled",
+                "duration_seconds": 0.0,
+                "timestamp": datetime.now(UTC).isoformat(),
+                "details": {"reason": "not configured"},
+            }
+        try:
+            return await asyncio.wait_for(check_func(), timeout=timeout)
+        except asyncio.TimeoutError:
+            return {
+                "status": "timeout",
+                "duration_seconds": timeout,
+                "timestamp": datetime.now(UTC).isoformat(),
+                "details": {"reason": f"timeout after {timeout}s"},
+            }
+        except Exception as exc:
+            return {
+                "status": "error",
+                "error": str(exc),
+                "duration_seconds": 0.0,
+                "timestamp": datetime.now(UTC).isoformat(),
+            }
+
     async def comprehensive_health_check(self) -> dict[str, Any]:
-        """Комплексна перевірка здоров'я всіх сервісів."""
+        """Комплексна перевірка здоров'я всіх сервісів.
+
+        Оптимізовано для K8s probes: критичні сервіси перевіряються швидко,
+        опціональні — з коротким таймаутом або skipped якщо не сконфігуровані.
+        """
         if self.settings.TESTING:
             timestamp = datetime.now(UTC).isoformat()
             services = {
@@ -478,28 +514,35 @@ class HealthCheckService:
             }
 
         logger.debug("Початок комплексної перевірки стану системи")
-        checks: list[tuple[str, Any]] = [
+
+        # Критичні сервіси — завжди перевіряємо
+        critical_checks = [
             ("postgresql", self.check_postgresql),
-            ("clickhouse", self.check_clickhouse),
             ("redis", self.check_redis),
-            ("neo4j", self.check_neo4j),
-            ("kafka", self.check_kafka),
-            ("minio", self.check_minio),
-            ("opensearch", self.check_opensearch),
-            ("qdrant", self.check_qdrant),
-            ("ollama", self.check_ollama),
-            ("mlflow", self.check_mlflow),
         ]
 
-        results = await asyncio.gather(
-            *(check() for _, check in checks),
+        # Опціональні сервіси — перевіряємо тільки якщо сконфігуровані
+        optional_checks = [
+            ("clickhouse", self.check_clickhouse, bool(self.settings.CLICKHOUSE_HOST)),
+            ("neo4j", self.check_neo4j, bool(self.settings.NEO4J_URI)),
+            ("kafka", self.check_kafka, bool(self.settings.KAFKA_BROKERS)),
+            ("minio", self.check_minio, bool(self.settings.MINIO_ENDPOINT)),
+            ("opensearch", self.check_opensearch, bool(self.settings.OPENSEARCH_HOSTS)),
+            ("qdrant", self.check_qdrant, bool(self.settings.QDRANT_URL)),
+            ("ollama", self.check_ollama, bool(self.settings.LITELLM_API_BASE)),
+            ("mlflow", self.check_mlflow, bool(self.settings.MLFLOW_TRACKING_URL)),
+        ]
+
+        # Спочатку критичні (швидко)
+        critical_results = await asyncio.gather(
+            *(check() for _, check in critical_checks),
             return_exceptions=True,
         )
 
         services: dict[str, dict[str, Any]] = {}
         overall_status = "ok"
 
-        for (name, _check), result in zip(checks, results, strict=False):
+        for (name, _check), result in zip(critical_checks, critical_results, strict=False):
             if isinstance(result, Exception):
                 services[name] = {
                     "status": "error",
@@ -507,11 +550,31 @@ class HealthCheckService:
                     "timestamp": datetime.now(UTC).isoformat(),
                 }
                 overall_status = "degraded"
-                continue
+            else:
+                services[name] = result
+                if result["status"] != "ok":
+                    overall_status = "degraded"
 
-            services[name] = result
-            if result["status"] != "ok":
-                overall_status = "degraded"
+        # Потім опціональні (з коротким таймаутом)
+        optional_results = await asyncio.gather(
+            *(
+                self._check_optional_service(name, check, enabled, timeout=2.0)
+                for name, check, enabled in optional_checks
+            ),
+            return_exceptions=True,
+        )
+
+        for (name, _check, _enabled), result in zip(optional_checks, optional_results, strict=False):
+            if isinstance(result, Exception):
+                services[name] = {
+                    "status": "error",
+                    "error": str(result),
+                    "timestamp": datetime.now(UTC).isoformat(),
+                }
+            else:
+                services[name] = result
+                if result["status"] not in {"ok", "disabled"}:
+                    overall_status = "degraded"
 
         summary = {
             "total": len(services),
@@ -519,9 +582,10 @@ class HealthCheckService:
             "degraded": sum(
                 1
                 for service in services.values()
-                if service.get("status") in {"degraded", "offline"}
+                if service.get("status") in {"degraded", "offline", "timeout"}
             ),
             "failed": sum(1 for service in services.values() if service.get("status") == "error"),
+            "disabled": sum(1 for service in services.values() if service.get("status") == "disabled"),
         }
 
         health_status = {
@@ -539,6 +603,7 @@ class HealthCheckService:
                 "overall_status": overall_status,
                 "healthy_services": summary["healthy"],
                 "failed_services": summary["failed"],
+                "disabled_services": summary["disabled"],
             },
         )
         return health_status

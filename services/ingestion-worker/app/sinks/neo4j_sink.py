@@ -4,13 +4,17 @@
 """
 from typing import Any
 
-from neo4j import AsyncGraphDatabase
-
 from app.config import get_settings
 from predator_common.logging import get_logger
 
 logger = get_logger("ingestion_worker.neo4j")
 settings = get_settings()
+
+# Опціональний імпорт — не падаємо якщо neo4j недоступний
+try:
+    from neo4j import AsyncGraphDatabase
+except ImportError:
+    AsyncGraphDatabase = None  # type: ignore
 
 
 class Neo4jSink:
@@ -18,6 +22,10 @@ class Neo4jSink:
 
     def __init__(self) -> None:
         """Ініціалізація Neo4j клієнта."""
+        self.driver = None
+        if AsyncGraphDatabase is None:
+            logger.warning("neo4j не встановлено — Neo4j недоступний")
+            return
         try:
             self.driver = AsyncGraphDatabase.driver(
                 settings.NEO4J_URI,

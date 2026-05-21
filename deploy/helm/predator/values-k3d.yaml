@@ -1,0 +1,103 @@
+# Override values for K3s/NVIDIA server deployment
+# All services enabled with minimal resources
+
+ingress:
+  enabled: false
+
+security:
+  networkPolicy:
+    enabled: false
+  zeroTrust:
+    enabled: false
+
+backup:
+  enabled: false
+
+database:
+  migration:
+    enabled: true
+  backup:
+    enabled: false
+
+monitoring:
+  enabled: false
+
+osintService:
+  enabled: false
+
+clickhouse:
+  enabled: true
+  replicaCount: 0
+
+kafka:
+  enabled: true
+  replicaCount: 1
+  zookeeper:
+    enabled: true
+    replicaCount: 1
+
+qdrant:
+  enabled: true
+  replicaCount: 0
+
+opensearch:
+  enabled: true
+  replicaCount: 0
+
+neo4j:
+  enabled: true
+  neo4j:
+    password: predator_graph_secret
+
+graphService:
+  enabled: true
+  replicaCount: 1
+
+minio:
+  enabled: true
+  provisioning:
+    enabled: false
+
+redis:
+  enabled: true
+  image:
+    tag: latest
+
+postgresql:
+  enabled: true
+
+frontend:
+  enabled: true
+  replicaCount: 1
+
+coreApi:
+  enabled: true
+  replicaCount: 1
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: 8000
+    initialDelaySeconds: 30
+    periodSeconds: 15
+    timeoutSeconds: 30
+    failureThreshold: 5
+  readinessProbe:
+    httpGet:
+      path: /health
+      port: 8000
+    initialDelaySeconds: 5
+    periodSeconds: 15
+    timeoutSeconds: 30
+    failureThreshold: 5
+  startupProbe:
+    httpGet:
+      path: /health
+      port: 8000
+    initialDelaySeconds: 10
+    periodSeconds: 15
+    timeoutSeconds: 30
+    failureThreshold: 20
+
+ingestionWorker:
+  enabled: true
+  replicaCount: 1

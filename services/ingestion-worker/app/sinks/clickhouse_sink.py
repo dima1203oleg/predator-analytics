@@ -1,11 +1,16 @@
 from typing import Any
 
-import clickhouse_connect
 import structlog
 
 from app.config import settings
 
 logger = structlog.get_logger(__name__)
+
+# Опціональний імпорт — не падаємо якщо clickhouse_connect недоступний
+try:
+    import clickhouse_connect
+except ImportError:
+    clickhouse_connect = None  # type: ignore
 
 class ClickHouseSink:
     def __init__(self):
@@ -16,6 +21,9 @@ class ClickHouseSink:
         self.password = settings.CLICKHOUSE_PASSWORD
 
     def connect(self):
+        if clickhouse_connect is None:
+            logger.warning("clickhouse_connect не встановлено — ClickHouse недоступний")
+            return
         try:
             self.client = clickhouse_connect.get_client(
                 host=self.host,
@@ -26,8 +34,8 @@ class ClickHouseSink:
             )
             logger.info("Connected to ClickHouse", host=self.host, port=self.port)
         except Exception as e:
-            logger.error("Failed to connect to ClickHouse", error=str(e))
-            raise
+            logger.warning("ClickHouse недоступний", error=str(e))
+            self.client = None
 
     async def insert_declarations(self, data: list[dict[str, Any]]):
         if not self.client:
