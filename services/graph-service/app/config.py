@@ -13,6 +13,10 @@ class Settings(BaseSettings):
     NEO4J_USER: str = "neo4j"
     NEO4J_PASSWORD: str = "predator_graph_secret"
 
+    # Kafka (опціонально)
+    KAFKA_BROKERS: str = "localhost:9092"
+    KAFKA_TOPIC_ENRICHMENT: str = "tenant.default.enrichment.events"
+
     # KEDA & Telemetry
     ENABLE_METRICS: bool = True
 
