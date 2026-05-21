@@ -318,7 +318,7 @@ async def process_message(
 async def consume() -> None:
     """Головний цикл споживання повідомлень з Kafka."""
     # Ініціалізація залежностей
-    ua_registry = УкраїнськийРеєстр(base_url="https://opendatabot.com/api/v1")
+    ua_registry = УкраїнськийРеєстр()
     fusion_engine = ДвигунЗлиттяДаних(ua_registry)
     postgres_sink = PostgresSink()
 
