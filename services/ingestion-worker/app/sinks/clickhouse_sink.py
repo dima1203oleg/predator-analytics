@@ -82,6 +82,9 @@ class ClickHouseSink:
         """Виконує довільний SQL запит."""
         if not self.client:
             self.connect()
+        if not self.client:
+            logger.warning("ClickHouse недоступний — execute_query пропущено")
+            return None
         try:
             return self.client.command(query, parameters=params)
         except Exception as e:
@@ -92,6 +95,9 @@ class ClickHouseSink:
         """Динамічна вставка даних у вказану таблицю."""
         if not self.client:
             self.connect()
+        if not self.client:
+            logger.warning("ClickHouse недоступний — insert_dynamic пропущено")
+            return
 
         if not data:
             return

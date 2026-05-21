@@ -9,6 +9,11 @@ security:
     enabled: false
   zeroTrust:
     enabled: false
+  resourceQuota:
+    enabled: true
+    hard:
+      services: "30"
+      pods: "50"
 
 backup:
   enabled: false
@@ -30,10 +35,8 @@ clickhouse:
   replicaCount: 0
 
 kafka:
-  enabled: true
-  replicaCount: 1
-  zookeeper:
-    enabled: false
+  enabled: false
+  replicaCount: 0
 
 qdrant:
   enabled: true
