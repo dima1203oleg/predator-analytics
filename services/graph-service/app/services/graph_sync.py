@@ -8,13 +8,17 @@ import json
 import logging
 from typing import Any
 
-from aiokafka import AIOKafkaConsumer
-
 from app.config import get_settings
 from app.graph_db import graph_db
 
 logger = logging.getLogger("graph_service.sync")
 settings = get_settings()
+
+# Опціональний імпорт aiokafka — Kafka не обов'язкова для graph-service
+try:
+    from aiokafka import AIOKafkaConsumer
+except ImportError:
+    AIOKafkaConsumer = None  # type: ignore
 
 class GraphSyncWorker:
     """Воркер для фонової синхронізації з Kafka до Neo4j."""
@@ -23,11 +27,14 @@ class GraphSyncWorker:
         self.topic = getattr(settings, "KAFKA_TOPIC_ENRICHMENT", "tenant.default.enrichment.events")
         self.brokers = settings.KAFKA_BROKERS
         self.group_id = "predator-graph-sync-group"
-        self.consumer: AIOKafkaConsumer | None = None
+        self.consumer: Any = None
         self._task: asyncio.Task[Any] | None = None
 
     async def start(self):
         """Запуск споживача."""
+        if AIOKafkaConsumer is None:
+            logger.warning("aiokafka не встановлено — GraphSyncWorker у standby режимі")
+            return
         self.consumer = AIOKafkaConsumer(
             self.topic,
             bootstrap_servers=self.brokers,
