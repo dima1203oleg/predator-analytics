@@ -271,7 +271,7 @@ export const SuperIntelligenceDashboard: React.FC = () => {
                 color="emerald"
               />
               <MetricCard
-                title="Avg Latency"
+                title="Середня затримка"
                 value={`${(metrics?.avg_latency_ms || 0).toFixed(0)}ms`}
                 icon="⚡"
                 color="yellow"

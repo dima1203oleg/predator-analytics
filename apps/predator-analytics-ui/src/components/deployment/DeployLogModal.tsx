@@ -80,11 +80,11 @@ export const DeployLogModal: React.FC<DeployLogModalProps> = ({ isOpen, onClose,
                         <button 
                             onClick={() => setIsPaused(!isPaused)}
                             className="p-1.5 hover:bg-slate-800 rounded text-slate-400 hover:text-white transition-colors"
-                            title={isPaused ? "Resume" : "Pause"}
+                            title={isPaused ? "Відновити" : "Пауза"}
                         >
                             {isPaused ? <Play size={16} /> : <Pause size={16} />}
                         </button>
-                        <button className="p-1.5 hover:bg-slate-800 rounded text-slate-400 hover:text-white transition-colors" title="Download">
+                        <button className="p-1.5 hover:bg-slate-800 rounded text-slate-400 hover:text-white transition-colors" title="Завантажити">
                             <Download size={16} />
                         </button>
                         <button onClick={onClose} className="p-1.5 hover:bg-red-900/20 rounded text-slate-400 hover:text-red-400 transition-colors">

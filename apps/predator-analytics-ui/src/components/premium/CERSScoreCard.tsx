@@ -126,8 +126,8 @@ export const CERSScoreCard: React.FC<CERSScoreCardProps> = ({ edrpou, className 
 
     return (
         <TacticalCard 
-            title="CERS SCORECARD" 
-            subtitle="Central Entity Resolution Scoring"
+            title="CERS SCORECARD"
+            subtitle="Центральне скорингове оцінювання сутностей"
             icon={<Shield className="text-emerald-400" size={18} />}
             variant="holographic"
             className={className}

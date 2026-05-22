@@ -205,7 +205,7 @@ export const SelfHealingStatus: React.FC = () => {
                       onClick={() => handleTriggerHealing(component.name)}
                       disabled={isHealing === component.name}
                       className="p-1.5 rounded bg-slate-700 hover:bg-slate-600 transition-colors disabled:opacity-50"
-                      title="Trigger healing"
+                      title="Запустити самовідновлення"
                     >
                       {isHealing === component.name ? '⏳' : '🔧'}
                     </button>

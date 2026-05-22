@@ -1,7 +1,7 @@
 
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React from 'react';
-import { GitCommit, Clock, CheckCircle2, XCircle, RotateCcw, Box, ArrowRight } from 'lucide-react';
+import { GitCommit, Clock, CheckCircle2, XCircle, RotateCcw, Box, ArrowRight, Loader2 } from 'lucide-react';
 import { PipelineRun } from '../../types';
 
 interface PipelineTableProps {
@@ -59,9 +59,9 @@ export const PipelineTable: React.FC<PipelineTableProps> = ({ pipelines, onRollb
                             </td>
                             <td className="p-4">
                                 <div className="flex gap-1.5">
-                                    <div className={`w-3 h-3 rounded-full border border-slate-900 ${run.environments.mac ? 'bg-blue-500 shadow-[0_0_8px_blue]' : 'bg-slate-800'}`} title="Local (Mac)"></div>
-                                    <div className={`w-3 h-3 rounded-full border border-slate-900 ${run.environments.nvidia ? 'bg-green-500 shadow-[0_0_8px_lime]' : 'bg-slate-800'}`} title="Prod (NVIDIA)"></div>
-                                    <div className={`w-3 h-3 rounded-full border border-slate-900 ${run.environments.oracle ? 'bg-orange-500 shadow-[0_0_8px_orange]' : 'bg-slate-800'}`} title="Cloud (Oracle)"></div>
+                                    <div className={`w-3 h-3 rounded-full border border-slate-900 ${run.environments.mac ? 'bg-blue-500 shadow-[0_0_8px_blue]' : 'bg-slate-800'}`} title="Локальний (Mac)"></div>
+                                    <div className={`w-3 h-3 rounded-full border border-slate-900 ${run.environments.nvidia ? 'bg-green-500 shadow-[0_0_8px_lime]' : 'bg-slate-800'}`} title="Прод (NVIDIA)"></div>
+                                    <div className={`w-3 h-3 rounded-full border border-slate-900 ${run.environments.oracle ? 'bg-orange-500 shadow-[0_0_8px_orange]' : 'bg-slate-800'}`} title="Хмара (Oracle)"></div>
                                 </div>
                             </td>
                             <td className="p-4">

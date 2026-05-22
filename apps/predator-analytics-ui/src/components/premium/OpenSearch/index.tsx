@@ -356,7 +356,7 @@ export const OpenSearch: React.FC = () => {
                   className="w-full h-full border-none"
                   onLoad={() => setIsLoading(false)}
                   onError={() => setIframeError(true)}
-                  title="OpenSearch Dashboards"
+                  title="Панелі OpenSearch"
                   sandbox="allow-same-origin allow-scripts allow-forms"
                 />
               )}
