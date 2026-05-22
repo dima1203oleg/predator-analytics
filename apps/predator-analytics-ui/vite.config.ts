@@ -105,6 +105,7 @@ export default defineConfig(({ mode }) => {
             'vendor-ui': ['@radix-ui/react-slot'],
             'vendor-three': ['three', '@react-three/fiber', '@react-three/drei'],
             'vendor-framer': ['framer-motion'],
+            'vendor-lucide': ['lucide-react'],
           },
         }
       },
