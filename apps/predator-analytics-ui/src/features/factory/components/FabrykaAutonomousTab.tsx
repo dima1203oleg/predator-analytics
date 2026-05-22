@@ -26,6 +26,7 @@ import {
   Flame,
   GitMerge,
   Layers,
+  Loader2,
   Monitor,
   Network,
   Play,

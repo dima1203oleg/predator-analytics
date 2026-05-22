@@ -14,7 +14,7 @@ export const AdminGuard: React.FC<AdminGuardProps> = ({
 }) => {
   return (
     <RoleGuard
-      allowedRoles={[UserRole.ADMIN]}
+      allowedRoles={[UserRole.CORE]}
       showUpgrade={false}
       fallback={fallback}
     >
