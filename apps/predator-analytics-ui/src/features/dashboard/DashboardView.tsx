@@ -248,30 +248,7 @@ const DashboardView: React.FC = () => {
 
   const hasData = overview && overview.summary.total_declarations > 0;
 
-  // Monitoring autonomous mode via predator-error protocol
-  useEffect(() => {
-    if (isOffline) {
-        window.dispatchEvent(new CustomEvent('predator-error', {
-            detail: {
-                service: 'DashboardNexus',
-                message: `АВТОНОМНИЙ РЕЖИМ [${nodeSource}]: Платформа перейшла на MIRROR_CLUSTER. Аналітика оновлюється з резервного сховища NVME.`,
-                severity: 'warning',
-                timestamp: new Date().toISOString(),
-                code: 'DASHBOARD_OFFLINE'
-            }
-        }));
-    } else if (hasData) {
-        window.dispatchEvent(new CustomEvent('predator-error', {
-            detail: {
-                service: 'DashboardNexus',
-                message: `КОМАНДНИЙ ЦЕНТР [${nodeSource}]: Зв'язок з ядром стабільний. Аналітичні потоки активні.`,
-                severity: 'info',
-                timestamp: new Date().toISOString(),
-                code: 'DASHBOARD_SUCCESS'
-            }
-        }));
-    }
-  }, [isOffline, nodeSource, hasData]);
+  // Нав'язливі toast-повідомлення видалено (HR-04 compliant)
 
   const stats = useMemo(() => {
     if (!overview) return null;

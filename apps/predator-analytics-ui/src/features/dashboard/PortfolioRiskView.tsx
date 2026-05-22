@@ -231,29 +231,7 @@ const PortfolioRiskView: React.FC = () => {
   const [refreshing, setRefreshing] = useState(false);
   const { isOffline, nodeSource, healingProgress } = useBackendStatus();
 
-  useEffect(() => {
-    if (isOffline) {
-      window.dispatchEvent(new CustomEvent('predator-error', {
-        detail: {
-          service: 'PortfolioRisk',
-          message: `РЕЖИМ АВТОНОМНОЇ РИЗИК-ФОРЕНЗИКИ [${nodeSource}]: Використовується локальна база RISK_NODES.`,
-          severity: 'warning',
-          timestamp: new Date().toISOString(),
-          code: 'RISK_OFFLINE'
-        }
-      }));
-    } else {
-      window.dispatchEvent(new CustomEvent('predator-error', {
-        detail: {
-          service: 'PortfolioRisk',
-          message: `RISK_CORE_READY [${nodeSource}]: Моніторинг ризиків синхронізовано з NVIDIA Master.`,
-          severity: 'info',
-          timestamp: new Date().toISOString(),
-          code: 'RISK_SUCCESS'
-        }
-      }));
-    }
-  }, [isOffline, nodeSource]);
+  // Нав'язливі повідомлення про автономний режим видалено (HR-04 compliant)
 
   useEffect(() => {
     const id = setInterval(() => {

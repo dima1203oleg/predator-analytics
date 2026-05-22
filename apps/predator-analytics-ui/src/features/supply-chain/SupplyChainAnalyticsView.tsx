@@ -103,19 +103,7 @@ export default function SupplyChainAnalyticsView() {
 
     const { isOffline, nodeSource, healingProgress } = useBackendStatus();
 
-    useEffect(() => {
-        if (isOffline) {
-           window.dispatchEvent(new CustomEvent('predator-error', {
-              detail: {
-                service: 'SupplyChainMatrix',
-                message: 'РЕЖИМ АВТОНОМНОЇ ЛОГІСТИКИ (LOGISTICS_OFFLINE). Трасування AIS виконується через дзеркальні вузли.',
-                severity: 'info',
-                timestamp: new Date().toISOString(),
-                code: 'LOGISTICS_OFFLINE'
-              }
-           }));
-        }
-    }, [isOffline]);
+    // Нав'язливі toast-повідомлення видалено (HR-04 compliant)
 
     useEffect(() => {
         void loadData();

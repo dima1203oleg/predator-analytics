@@ -79,20 +79,7 @@ export const ComplianceView = () => {
         return () => clearInterval(interval);
     }, [isOffline]);
 
-    useEffect(() => {
-        if (isOffline) {
-            // Видалимо нав'язливе повідомлення про автономний режим
-            // window.dispatchEvent(new CustomEvent('predator-error', {
-            //     detail: {
-            //         service: 'ComplianceIntel',
-            //         message: 'АКТИВОВАНО АВТОНОМНИЙ РЕЖИМ КОМПЛАЄНСУ (COMPLIANCE_NODES). Моніторинг локального контуру.',
-            //         severity: 'warning',
-            //         timestamp: new Date().toISOString(),
-            //         code: 'COMPLIANCE_NODES'
-            //     }
-            // }));
-        }
-    }, [isOffline]);
+    // Нав'язливі toast-повідомлення видалено (HR-04 compliant)
 
     return (
         <div className="min-h-screen w-full relative overflow-hidden bg-black pb-20">

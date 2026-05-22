@@ -31,29 +31,7 @@ const SuperIntelligenceView: React.FC = () => {
         agentGenomes, nasDiff, cycleCount, availableScenarios, arbitrationScores, ragArtifacts
     } = useSuperIntelligence();
 
-    useEffect(() => {
-        if (isOffline) {
-            window.dispatchEvent(new CustomEvent('predator-error', {
-                detail: {
-                    service: 'SuperIntelligence',
-                    message: 'АВТОНОМНИЙ РЕЖИМ ЯД А (CORE_DECOUPLING). Зв\'язок з центральним NVIDIA-кластером перервано.',
-                    severity: 'warning',
-                    timestamp: new Date().toISOString(),
-                    code: 'CORE_DECOUPLING'
-                }
-            }));
-        } else {
-            window.dispatchEvent(new CustomEvent('predator-error', {
-                detail: {
-                    service: 'SuperIntelligence',
-                    message: 'ПОТОКОВА СИНХРОНІЗАЦІЯ ЯД А УСПІШНА (CORE_SYNC_ELITE). Повний доступ до GPU-ферми.',
-                    severity: 'info',
-                    timestamp: new Date().toISOString(),
-                    code: 'CORE_SYNC_ELITE'
-                }
-            }));
-        }
-    }, [isOffline]);
+    // Нав'язливі toast-повідомлення видалено (HR-04 compliant)
 
     const [rightTab, setRightTab] = useState<'STREAM' | 'MATRIX' | 'EVIDENCE' | 'GENOME'>('STREAM');
     const [isFocusMode, setIsFocusMode] = useState(false);

@@ -2,20 +2,19 @@
  * 💰 FinancialDashboard — Продвинутий фінансовий дашборд компанії
  * Відображає KPI, тренди та історичні дані на основі CERS.
  */
-import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
 import { 
-  TrendingUp, 
-  TrendingDown, 
-  DollarSign, 
-  BarChart3, 
-  PieChart, 
-  ArrowUpRight, 
+  TrendingUp,
+  TrendingDown,
+  DollarSign,
+  BarChart3,
+  PieChart,
+  ArrowUpRight,
   ArrowDownRight,
-  AlertCircle
+  AlertCircle,
+  Loader2
 } from 'lucide-react';
 import { cersService } from '@/services/unified/cers.service';
 import { TacticalCard } from '@/components/ui/TacticalCard';
@@ -25,7 +24,6 @@ import { CyberGrid } from '@/components/CyberGrid';
 import { cn } from '@/utils/cn';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { DiagnosticsTerminal } from '@/components/intelligence/DiagnosticsTerminal';
-import { useEffect } from 'react';
 
 interface FinancialDashboardProps {
   ueid?: string;
@@ -43,44 +41,8 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({ ueid: pr
     staleTime: 24 * 60 * 60 * 1000, // 24 hours
   });
 
-  useEffect(() => {
-    if (!isLoading && !isError && metrics && metrics.length > 0) {
-      window.dispatchEvent(new CustomEvent('predator-error', {
-        detail: {
-          service: 'FinancialAnalytics',
-          message: `СИНХРОНІЗАЦІЮ FINANCIAL_DATA ЗАВЕРШЕНО [${sourceLabel}]: Оброблено звіти за ${metrics.length} років. Фінансове ядро стабілізоване.`,
-          severity: 'info',
-          timestamp: new Date().toISOString(),
-          code: 'FINANCIAL_SUCCESS'
-        }
-      }));
-    }
-  }, [isLoading, isError, metrics, sourceLabel]);
-
-  useEffect(() => {
-    if (isOffline) {
-        window.dispatchEvent(new CustomEvent('predator-error', {
-            detail: {
-                service: 'FinancialAnalytics',
-                message: `ФІНАНСОВИЙ_ДАШБОРД [${sourceLabel}]: Нексус NVIDIA недоступний. Використовується автономний шар MIRROR_VAULT.`,
-                severity: 'warning',
-                timestamp: new Date().toISOString(),
-                code: 'FINANCIAL_OFFLINE'
-            }
-        }));
-    }
-    if (isError) {
-      window.dispatchEvent(new CustomEvent('predator-error', {
-        detail: {
-          service: 'FinancialAnalytics',
-          message: `ПОМИЛКА_CERS [${sourceLabel}]: Не вдалося отримати фінансові показники для суб'єкта ${ueid}.`,
-          severity: 'critical',
-          timestamp: new Date().toISOString(),
-          code: 'FINANCIAL_ERROR'
-        }
-      }));
-    }
-  }, [isError, isOffline, sourceLabel, ueid]);
+  // Нав'язливі toast-повідомлення видалено (HR-04 compliant)
+  // Fallback на мок-дані працює тихо через useBackendStatus
 
   if (isLoading) {
     return (

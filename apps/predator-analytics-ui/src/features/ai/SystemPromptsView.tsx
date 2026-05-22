@@ -34,19 +34,7 @@ const SystemPromptsView = () => {
     enabled: !!selectedId,
   });
 
-  useEffect(() => {
-    if (isOffline) {
-      window.dispatchEvent(new CustomEvent('predator-error', {
-        detail: {
-          service: 'Prompt_Engine',
-          message: 'ЯДРОПРОМПТІВ ПЕ ЕЙШЛО В АВТОНОМНИЙ РЕЖИМ (PROMPT_OFFLINE). Використовуються закешовані версії.',
-          severity: 'warning',
-          timestamp: new Date().toISOString(),
-          code: 'PROMPT_OFFLINE'
-        }
-      }));
-    }
-  }, [isOffline]);
+  // Нав'язливі toast-повідомлення видалено (HR-04 compliant)
 
   const promptCategories = useMemo(() => [
     { id: 'extraction', label: 'Екстракція Даних', icon: Layers, status: 'Активно', count: templates?.length || 0 },

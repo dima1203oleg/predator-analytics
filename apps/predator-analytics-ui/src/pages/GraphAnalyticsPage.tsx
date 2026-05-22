@@ -162,29 +162,8 @@ const GraphAnalyticsPage: React.FC = () => {
     const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
     const [activeAlgorithm, setActiveAlgorithm] = useState<'Pagerank' | 'Louvain' | 'Pathfinding'>('Pagerank');
 
-    useEffect(() => {
-        if (isOffline) {
-            window.dispatchEvent(new CustomEvent('predator-error', {
-                detail: {
-                    service: 'GraphGNN',
-                    message: `АВТОНОМНИЙ ГРАФ [${nodeSource}]: Виявлення зв'язків через локальний Mirror Vault. Аналіз GNN обмежений.`,
-                    severity: 'warning',
-                    timestamp: new Date().toISOString(),
-                    code: 'GRAPH_OFFLINE'
-                }
-            }));
-        } else {
-            window.dispatchEvent(new CustomEvent('predator-error', {
-                detail: {
-                    service: 'GraphGNN',
-                    message: `ГРАФОВИЙ_ВУЗОЛ [${nodeSource}]: Нейронну топологію синхронізовано. Готовність до обчислень L5.`,
-                    severity: 'info',
-                    timestamp: new Date().toISOString(),
-                    code: 'GRAPH_SUCCESS'
-                }
-            }));
-        }
-    }, [isOffline, nodeSource]);
+    // Нав'язливі повідомлення про автономний режим видалено (HR-04 compliant)
+    // Fallback на мок-дані працює тихо через useBackendStatus
 
     const toggleLoading = () => {
         setIsLoading(true);

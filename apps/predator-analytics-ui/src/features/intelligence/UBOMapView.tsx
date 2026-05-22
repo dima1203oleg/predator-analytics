@@ -244,29 +244,7 @@ const UBOMapView: React.FC = () => {
   const [company, setCompany] = useState('ТОВ "АГРО-ЛІДЕР ГРУП"');
   const { isOffline, nodeSource, healingProgress } = useBackendStatus();
 
-  useEffect(() => {
-    if (isOffline) {
-      window.dispatchEvent(new CustomEvent('predator-error', {
-        detail: {
-          service: 'UBONexus',
-          message: `РЕЖИМ АВТОНОМНОЇ  РОЗВІДКИ [${nodeSource}]: Активовано MIRROR_VAULT. Дані бенефіціарів доступні в автономному режимі.`,
-          severity: 'warning',
-          timestamp: new Date().toISOString(),
-          code: 'UBO_OFFLINE'
-        }
-      }));
-    } else {
-      window.dispatchEvent(new CustomEvent('predator-error', {
-        detail: {
-          service: 'UBONexus',
-          message: `UBO_CORE_READY [${nodeSource}]: Граф власності синхронізовано з Neo4j TITAN.`,
-          severity: 'info',
-          timestamp: new Date().toISOString(),
-          code: 'UBO_SUCCESS'
-        }
-      }));
-    }
-  }, [isOffline, nodeSource]);
+  // Нав'язливі toast-повідомлення видалено (HR-04 compliant)
 
   const fetchUboData = useCallback(async () => {
     setIsLoading(true);

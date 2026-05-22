@@ -96,19 +96,7 @@ export default function NewspaperView() {
     return () => clearInterval(interval);
   }, [fetchData]);
 
-  useEffect(() => {
-    if (isOffline) {
-       window.dispatchEvent(new CustomEvent('predator-error', {
-          detail: {
-            service: 'NewspaperNexus',
-            message: 'Активовано автономний режим медіа-розвідки (MEDIA_NODES). Прямий доступ до NVIDIA-вузлів обмежено.',
-            severity: 'info',
-            timestamp: new Date().toISOString(),
-            code: 'MEDIA_NODES'
-          }
-       }));
-    }
-  }, [isOffline]);
+  // Нав'язливі toast-повідомлення видалено (HR-04 compliant)
 
   useEffect(() => {
     const updateTime = () => {

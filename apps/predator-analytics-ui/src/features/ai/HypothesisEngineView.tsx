@@ -14,7 +14,8 @@ import {
   Sparkles, Brain, Target, AlertTriangle, CheckCircle,
   Clock, Zap, Eye, ArrowUpRight, RefreshCw, Download,
   Filter, ChevronRight, Network, DollarSign, Globe,
-  Activity, Lock, FileText, Send, Star, Fingerprint, Cpu, Search, Radar
+  Activity, Lock, FileText, Send, Star, Fingerprint, Cpu, Search, Radar,
+  Loader2
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
@@ -134,29 +135,7 @@ const HypothesisEngineView: React.FC = () => {
   ]);
   const { isOffline, nodeSource, healingProgress } = useBackendStatus();
 
-  useEffect(() => {
-    if (isOffline) {
-      window.dispatchEvent(new CustomEvent('predator-error', {
-        detail: {
-          service: 'HypothesisEngine',
-          message: 'АКТИВОВАНО АВТОНОМНИЙ РЕЖИМ ГЕНЕРАЦІЇ ГІПОТЕЗ (COGNITIVE_NODES). Використовується локальна нейромережа.',
-          severity: 'warning',
-          timestamp: new Date().toISOString(),
-          code: 'COGNITIVE_NODES'
-        }
-      }));
-    } else {
-      window.dispatchEvent(new CustomEvent('predator-error', {
-        detail: {
-          service: 'HypothesisEngine',
-          message: 'СИНХРОНІЗАЦІЯ ГЕНЕРАТОРА ГІПОТЕЗ УСПІШНА (HYPOTHESIS_SUCCESS). Зв\'язок з NVIDIA-кластером стабільний.',
-          severity: 'info',
-          timestamp: new Date().toISOString(),
-          code: 'HYPOTHESIS_SUCCESS'
-        }
-      }));
-    }
-  }, [isOffline]);
+  // Нав'язливі toast-повідомлення видалено (HR-04 compliant)
 
   const handleGenerate = async () => {
     if (!promptText.trim()) return;
