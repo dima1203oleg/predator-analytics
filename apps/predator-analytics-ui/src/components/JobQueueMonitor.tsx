@@ -352,7 +352,7 @@ export const JobQueueMonitor: React.FC = () => {
             className="px-6 py-3 rounded-2xl bg-slate-900 border border-white/10 text-slate-400 flex items-center gap-3 hover:bg-slate-800 hover:text-white transition-all shadow-xl"
           >
             <RefreshCw size={18} className={isLoading ? 'animate-spin' : ''} />
-            <span className="text-[10px] font-black uppercase tracking-widest">Refresh_Registry</span>
+            <span className="text-[10px] font-black uppercase tracking-widest">ОНОВИТИ_РЕЄСТР</span>
           </motion.button>
         </div>
       </div>
@@ -360,10 +360,10 @@ export const JobQueueMonitor: React.FC = () => {
       {/* Grid: Global Distribution & Cluster Status */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {[
-          { label: 'System_Registry', value: stats.total, color: 'slate', icon: <Database size={16} />, title: "REGISTRY" },
-          { label: 'Active_Computation', value: stats.running, color: 'blue', icon: <Zap size={16} />, title: "COMPUTE" },
-          { label: 'Operational_Success', value: stats.completed, color: 'emerald', icon: <CheckCircle2 size={16} />, title: "SUCCESS" },
-          { label: 'Critical_Failures', value: stats.failed, color: 'rose', icon: <AlertTriangle size={16} />, title: "FAULT" }
+          { label: 'System_Registry', value: stats.total, color: 'slate', icon: <Database size={16} />, title: "РЕЄСТР" },
+          { label: 'Active_Computation', value: stats.running, color: 'blue', icon: <Zap size={16} />, title: "ОБЧИСЛЕННЯ" },
+          { label: 'Operational_Success', value: stats.completed, color: 'emerald', icon: <CheckCircle2 size={16} />, title: "УСПІХ" },
+          { label: 'Critical_Failures', value: stats.failed, color: 'rose', icon: <AlertTriangle size={16} />, title: "ЗБІЙ" }
         ].map(({ label, value, color, icon, title }) => (
           <TacticalCard variant="holographic" key={label} title={title} className="py-6 px-8 border-white/5 bg-slate-950/40 group hover:border-blue-500/20 transition-all">
             <div className="flex justify-between items-start mb-4">
