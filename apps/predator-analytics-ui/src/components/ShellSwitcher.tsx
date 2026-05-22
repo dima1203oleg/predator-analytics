@@ -21,16 +21,16 @@ export const ShellSwitcher: React.FC = () => {
   if (!user) return null;
 
   const shells = [
-    { id: UIShell.EXPLORER, label: 'ДОСЛІДНИК', icon: <Eye size={14} />, role: UserRole.CLIENT_BASIC },
-    { id: UIShell.OPERATOR, label: 'ОПЕ АТО ', icon: <Shield size={14} />, role: UserRole.CLIENT_PREMIUM },
-    { id: UIShell.COMMANDER, label: 'КОМАНДИ ', icon: <Crown size={14} />, role: UserRole.ADMIN },
+    { id: UIShell.EXPLORER, label: 'ДОСЛІДНИК', icon: <Eye size={14} />, role: UserRole.TERMINAL },
+    { id: UIShell.OPERATOR, label: 'ОПЕ АТО ', icon: <Shield size={14} />, role: UserRole.PRO },
+    { id: UIShell.COMMANDER, label: 'КОМАНДИ ', icon: <Crown size={14} />, role: UserRole.CORE },
   ];
 
   const roleHierarchy: Record<string, number> = {
-    [UserRole.CLIENT_BASIC]: 1,
-    [UserRole.CLIENT_PREMIUM]: 2,
-    [UserRole.CLIENT_DRPO]: 2,
-    [UserRole.ADMIN]: 3,
+    [UserRole.TERMINAL]: 1,
+    [UserRole.PRO]: 2,
+    [UserRole.SOVEREIGN]: 3,
+    [UserRole.CORE]: 4,
   };
 
   return (
@@ -39,7 +39,7 @@ export const ShellSwitcher: React.FC = () => {
         const hasAccess = roleHierarchy[user.role] >= roleHierarchy[shell.role];
 
         // Mobile Restriction: Commander is not supported on mobile
-        if (isMobile && shell.role === UserRole.ADMIN) return null;
+        if (isMobile && shell.role === UserRole.CORE) return null;
 
         if (!hasAccess) return null;
 
