@@ -522,8 +522,8 @@ export const BootSequenceELITE: React.FC<{ onComplete: () => void }> = ({ onComp
           >
              <div className="relative flex h-[min(78vmin,800px)] w-[min(78vmin,800px)] items-center justify-center">
                 <div className="absolute inset-0 border-[0.5px] border-[#D4AF37]/10 rounded-full animate-spin-slow opacity-10" />
-                <div className="absolute inset-40 border-[0.5px] border-[#D4AF37]/20 rounded-full animate-spin-reverse opacity-20" />
-                <div className="absolute inset-[320px] border-2 border-[#D4AF37]/40 rounded-full  opacity-30 " />
+                <div className="absolute inset-[clamp(60px,15vmin,160px)] sm:inset-40 border-[0.5px] border-[#D4AF37]/20 rounded-full animate-spin-reverse opacity-20" />
+                <div className="absolute inset-[clamp(100px,25vmin,320px)] sm:inset-[160px] lg:inset-[320px] border-2 border-[#D4AF37]/40 rounded-full opacity-30" />
                 
                 <div className="relative max-w-[88vw] overflow-hidden border border-[#D4AF37]/20 bg-black/80 p-[clamp(2rem,7vmin,8rem)] text-center">
                    <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#D4AF37]/40 to-transparent" />
