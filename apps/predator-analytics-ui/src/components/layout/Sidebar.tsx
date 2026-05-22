@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { isSidebarOpenAtom, sidebarSearchAtom, colabPanelOpenAtom } from '../../store/atoms';
 import { useUser } from '../../context/UserContext';
+import { UserRole } from '../../config/roles';
 import { Logo } from '../Logo';
 import {
   getGlobalNavigationActions,
@@ -303,7 +304,7 @@ const getModeLabel = (mode: NavWorkspaceMode): string => {
 
 export const Sidebar: React.FC = () => {
   const { user, logout } = useUser();
-  const userRole = user?.role || 'viewer';
+  const userRole = user?.role || UserRole.TERMINAL;
   const backendStatus = useBackendStatus();
   const [isOpen, setIsOpen] = useAtom(isSidebarOpenAtom);
   const [search, setSearch] = useAtom(sidebarSearchAtom);
@@ -994,20 +995,20 @@ export const Sidebar: React.FC = () => {
           <div
             className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg"
             style={{
-              background: userRole === 'core' || userRole === 'admin' ? 'rgba(99,102,241,0.15)' :
-                         userRole === 'sovereign' || userRole === 'vip' ? 'rgba(225,29,72,0.15)' :
-                         userRole === 'pro' || userRole === 'client_premium' ? 'rgba(245,158,11,0.15)' :
+              background: userRole === UserRole.CORE ? 'rgba(99,102,241,0.15)' :
+                         userRole === UserRole.SOVEREIGN ? 'rgba(225,29,72,0.15)' :
+                         userRole === UserRole.PRO ? 'rgba(245,158,11,0.15)' :
                          'rgba(16,185,129,0.15)',
-              border: `1px solid ${userRole === 'core' || userRole === 'admin' ? 'rgba(99,102,241,0.3)' :
-                         userRole === 'sovereign' || userRole === 'vip' ? 'rgba(225,29,72,0.25)' :
-                         userRole === 'pro' || userRole === 'client_premium' ? 'rgba(245,158,11,0.25)' :
+              border: `1px solid ${userRole === UserRole.CORE ? 'rgba(99,102,241,0.3)' :
+                         userRole === UserRole.SOVEREIGN ? 'rgba(225,29,72,0.25)' :
+                         userRole === UserRole.PRO ? 'rgba(245,158,11,0.25)' :
                          'rgba(16,185,129,0.25)'}`,
             }}
           >
             <User className="h-3.5 w-3.5" style={{
-              color: userRole === 'core' || userRole === 'admin' ? '#818cf8' :
-                     userRole === 'sovereign' || userRole === 'vip' ? '#fb7185' :
-                     userRole === 'pro' || userRole === 'client_premium' ? '#fbbf24' :
+              color: userRole === UserRole.CORE ? '#818cf8' :
+                     userRole === UserRole.SOVEREIGN ? '#fb7185' :
+                     userRole === UserRole.PRO ? '#fbbf24' :
                      '#34d399'
             }} />
           </div>
