@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { useUserStore } from './useUserStore';
-import { UserRole, RoleCapabilities, ROLE_CAPABILITIES, ROLE_DISPLAY_NAMES, ROLE_DESCRIPTIONS } from '../config/roles';
+import { UserRole, RoleCapabilities, ROLE_CAPABILITIES, ROLE_DISPLAY_NAMES, ROLE_DESCRIPTIONS, resolveUserRole } from '../config/roles';
 
 interface RoleState {
   // Computed values that refresh when user changes
@@ -26,7 +26,7 @@ interface RoleState {
 export const useRoleStore = create<RoleState>((_set, _get) => ({
   getRoleData: () => {
     const user = useUserStore.getState().user;
-    const role = user?.role || UserRole.TERMINAL;
+    const role = resolveUserRole(user?.role);
 
     return {
       role,
@@ -52,7 +52,7 @@ export const useRoleStore = create<RoleState>((_set, _get) => ({
 // Note: This needs to be a hook to subscribe to user state changes
 export const useRole = () => {
   const user = useUserStore((state) => state.user);
-  const role = user?.role || UserRole.TERMINAL;
+  const role = resolveUserRole(user?.role);
 
   return {
     role,

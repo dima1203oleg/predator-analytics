@@ -30,6 +30,49 @@ export enum UserRole {
   INVESTIGATOR = 'sovereign',
 }
 
+// ─── Legacy Role Resolution ─────────────────────────────────────────────────
+/** Мапа всіх відомих legacy ролей до канонічних PREDATOR ELITE */
+export const LEGACY_ROLE_MAP: Record<string, UserRole> = {
+  // Core (Tech Admin)
+  admin: UserRole.CORE,
+  commander: UserRole.CORE,
+  core: UserRole.CORE,
+
+  // Sovereign (VIP / Elite)
+  vip: UserRole.SOVEREIGN,
+  sovereign: UserRole.SOVEREIGN,
+  client_drpo: UserRole.SOVEREIGN,
+  investigator: UserRole.SOVEREIGN,
+  drpo: UserRole.SOVEREIGN,
+
+  // Pro (Premium / Analyst)
+  pro: UserRole.PRO,
+  analyst: UserRole.PRO,
+  client_premium: UserRole.PRO,
+  supply_chain: UserRole.PRO,
+  supply: UserRole.PRO,
+  'supply-chain': UserRole.PRO,
+  logistician: UserRole.PRO,
+  logistics: UserRole.PRO,
+
+  // Terminal (Basic / Entry)
+  terminal: UserRole.TERMINAL,
+  client_basic: UserRole.TERMINAL,
+  operator: UserRole.TERMINAL,
+  explorer: UserRole.TERMINAL,
+  viewer: UserRole.TERMINAL,
+  ceo: UserRole.TERMINAL,
+  owner: UserRole.TERMINAL,
+  promo: UserRole.TERMINAL,
+};
+
+/** Перетворює будь-яку legacy роль у канонічну PREDATOR ELITE роль */
+export const resolveUserRole = (rawRole?: string): UserRole => {
+  if (!rawRole) return UserRole.TERMINAL;
+  const normalized = rawRole.toLowerCase().trim();
+  return LEGACY_ROLE_MAP[normalized] ?? UserRole.TERMINAL;
+};
+
 export const ROLE_DISPLAY_NAMES: Record<string, string> = {
   [UserRole.TERMINAL]: 'PREDATOR Terminal',
   [UserRole.PRO]: 'PREDATOR Pro',

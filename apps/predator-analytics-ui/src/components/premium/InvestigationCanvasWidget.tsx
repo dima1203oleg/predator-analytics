@@ -72,13 +72,13 @@ export const InvestigationCanvasWidget: React.FC<{
           </div>
         </div>
         <div className="flex gap-2">
-           <button aria-label="Add Note" className="p-2 hover:bg-white/5 rounded-lg text-slate-400 hover:text-white transition-colors">
+           <button aria-label="Додати нотатку" className="p-2 hover:bg-white/5 rounded-lg text-slate-400 hover:text-white transition-colors">
               <Plus size={16} />
            </button>
            <button aria-label="Пошук" className="p-2 hover:bg-white/5 rounded-lg text-slate-400 hover:text-white transition-colors">
               <Search size={16} />
            </button>
-           <button aria-label="Maximize" className="p-2 hover:bg-white/5 rounded-lg text-slate-400 hover:text-white transition-colors">
+           <button aria-label="Розгорнути" className="p-2 hover:bg-white/5 rounded-lg text-slate-400 hover:text-white transition-colors">
               <Maximize2 size={16} />
            </button>
         </div>
@@ -171,7 +171,7 @@ export const InvestigationCanvasWidget: React.FC<{
                         <h4 className="font-bold text-white text-sm">
                             {nodes.find(n => n.id === selectedNode)?.label}
                         </h4>
-                        <button aria-label="Close details" onClick={() => setSelectedNode(null)}>
+                        <button aria-label="Закрити деталі" onClick={() => setSelectedNode(null)}>
                             <X size={14} className="text-slate-500 hover:text-white" />
                         </button>
                     </div>
