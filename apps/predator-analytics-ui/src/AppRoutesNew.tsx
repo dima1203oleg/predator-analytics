@@ -7,7 +7,7 @@ import { AdminGuard } from './components/guards/AdminGuard';
 import { RoleGuard } from './components/guards/RoleGuard';
 import { useAppStore } from './store/useAppStore';
 import { useUser } from './context/UserContext';
-import { UserRole } from './config/roles';
+import { UserRole, resolveUserRole } from './config/roles';
 
 import { LoadingSkeleton } from './components/LoadingSkeleton';
 import { ErrorBoundary } from './components/ErrorBoundary';
@@ -177,34 +177,10 @@ const GuardedModelingHub = () => {
     : <ModelingHub />;
 };
 
-const LEGACY_ROLE_MAP: Record<string, UserRole> = {
-  admin: UserRole.CORE,
-  commander: UserRole.CORE,
-  core: UserRole.CORE,
-  vip: UserRole.SOVEREIGN,
-  sovereign: UserRole.SOVEREIGN,
-  client_drpo: UserRole.SOVEREIGN,
-  investigator: UserRole.SOVEREIGN,
-  pro: UserRole.PRO,
-  analyst: UserRole.PRO,
-  client_premium: UserRole.PRO,
-  supply_chain: UserRole.PRO,
-  logistician: UserRole.PRO,
-  terminal: UserRole.TERMINAL,
-  client_basic: UserRole.TERMINAL,
-  operator: UserRole.TERMINAL,
-  explorer: UserRole.TERMINAL,
-  viewer: UserRole.TERMINAL,
-  ceo: UserRole.TERMINAL,
-  owner: UserRole.TERMINAL,
-  promo: UserRole.TERMINAL,
-};
-
 export const AppRoutesNew = () => {
   const location = useLocation();
   const { user } = useUser();
-  const rawRole = (user?.role || 'client_basic').toLowerCase();
-  const effectiveRole = LEGACY_ROLE_MAP[rawRole] ?? UserRole.TERMINAL;
+  const effectiveRole = resolveUserRole(user?.role);
   const isAdmin = effectiveRole === UserRole.CORE;
 
   // ─── ADMIN TREE (/admin/*) ────────────────────────────────────────────────

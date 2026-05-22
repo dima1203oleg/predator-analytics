@@ -12,7 +12,7 @@ echo "=== Копіювання dist на сервер ==="
 rsync -avz --delete --rsh="ssh -F /Users/Shared/Predator_60/.ssh.config.optimized -o StrictHostKeyChecking=no" apps/predator-analytics-ui/dist/ predator-server:/tmp/predator-frontend-dist/
 
 echo "=== Оновлення файлів в поді ==="
-ssh -o StrictHostKeyChecking=no $SERVER "export KUBECONFIG=/etc/rancher/k3s/k3s.yaml && kubectl cp /tmp/predator-frontend-dist/ $NAMESPACE/$POD_NAME:/usr/share/nginx/html/ && kubectl exec -n $NAMESPACE $POD_NAME -- nginx -s reload"
+ssh -o StrictHostKeyChecking=no $SERVER "export KUBECONFIG=/etc/rancher/k3s/k3s.yaml && kubectl exec -n $NAMESPACE $POD_NAME -- rm -rf /usr/share/nginx/html/assets /usr/share/nginx/html/index.html /usr/share/nginx/html/sw.js /usr/share/nginx/html/manifest* /usr/share/nginx/html/registerSW.js /usr/share/nginx/html/workbox* && tar -czf - -C /tmp/predator-frontend-dist . | kubectl exec -i -n $NAMESPACE $POD_NAME -- tar -xzf - -C /usr/share/nginx/html/ && kubectl exec -n $NAMESPACE $POD_NAME -- nginx -s reload"
 
 echo "=== Деплой завершено ==="
 echo "Перевірка: https://30ditqc28551.share.zrok.io"
