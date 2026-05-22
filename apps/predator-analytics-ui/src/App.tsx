@@ -23,18 +23,20 @@ import { ToastProvider } from './context/ToastContext';
 
 // Components
 import { AppRoutesNew as AppRoutes } from './AppRoutesNew';
-import BootSequenceELITE from './components/BootSequenceELITE';
 import { ErrorBoundary } from './components/ErrorBoundary';
-import LoginScreen from './components/LoginScreen';
-import { Predator } from './components/premium/AICopilot';
-import OnboardingWizard from './components/premium/OnboardingWizard';
-import QuickActionsBar from './components/premium/QuickActionsBar';
 import { ToasterProvider } from './components/premium/ToasterProvider';
-import { LiveAgentTerminal } from './components/intelligence/LiveAgentTerminal';
 import { AdvancedBackground } from './components/AdvancedBackground';
 import NeuralPulse from './components/NeuralPulse';
 import { TechGridBackground } from './components/TechGridBackground';
 import { CommandPalette } from './components/polish/CommandPalette';
+
+// Lazy-loaded великі компоненти для зменшення initial bundle
+const BootSequenceELITE = React.lazy(() => import('./components/BootSequenceELITE'));
+const LoginScreen = React.lazy(() => import('./components/LoginScreen'));
+const Predator = React.lazy(() => import('./components/premium/AICopilot').then(m => ({ default: m.Predator })));
+const OnboardingWizard = React.lazy(() => import('./components/premium/OnboardingWizard'));
+const QuickActionsBar = React.lazy(() => import('./components/premium/QuickActionsBar'));
+const LiveAgentTerminal = React.lazy(() => import('./components/intelligence/LiveAgentTerminal').then(m => ({ default: m.LiveAgentTerminal })));
 
 // Setup Query Client with optimized settings
 const queryClient = new QueryClient({
@@ -156,7 +158,9 @@ function App() {
                                     transition={{ duration: 0.6, ease: 'easeInOut' }}
                                     className="fixed inset-0 z-[99999]"
                                   >
-                                    <BootSequenceELITE onComplete={handleBootComplete} />
+                                    <React.Suspense fallback={<div className="fixed inset-0 bg-[#010101]" />}>
+                                      <BootSequenceELITE onComplete={handleBootComplete} />
+                                    </React.Suspense>
                                   </motion.div>
                                 )}
 
@@ -169,7 +173,9 @@ function App() {
                                     transition={{ duration: 0.5, ease: 'easeInOut' }}
                                     className="fixed inset-0 z-[99998]"
                                   >
-                                    <LoginScreen onLogin={handleLogin} />
+                                    <React.Suspense fallback={<div className="fixed inset-0 bg-[#010101]" />}>
+                                      <LoginScreen onLogin={handleLogin} />
+                                    </React.Suspense>
                                   </motion.div>
                                 )}
 
@@ -183,11 +189,13 @@ function App() {
                                   >
                                     <AppRoutes />
                                     {/* Глобальні UI компоненти */}
-                                    <QuickActionsBar />
-                                    <ToasterProvider />
-                                    <OnboardingWizard />
-                                    <Predator />
-                                    <LiveAgentTerminal />
+                                    <React.Suspense fallback={null}>
+                                      <QuickActionsBar />
+                                      <ToasterProvider />
+                                      <OnboardingWizard />
+                                      <Predator />
+                                      <LiveAgentTerminal />
+                                    </React.Suspense>
                                   </motion.div>
                                 )}
                               </AnimatePresence>
