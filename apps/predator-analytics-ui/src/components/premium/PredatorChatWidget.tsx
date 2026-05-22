@@ -112,7 +112,7 @@ export const PredatorChatWidget: React.FC = () => {
                  </button>
                  <button
                    onClick={() => setIsOpen(false)}
-                   aria-label="Close Chat"
+                   aria-label="Закрити чат"
                    className="p-1.5 hover:bg-rose-500/20 rounded-lg transition-colors text-slate-400 hover:text-rose-400"
                  >
                     <ChevronDown size={16} />
@@ -185,7 +185,7 @@ export const PredatorChatWidget: React.FC = () => {
                   ))}
                </div>
                <div className="relative flex items-end gap-2 bg-slate-900/50 border border-white/10 p-2 rounded-xl focus-within:border-emerald-500/50 transition-colors">
-                   <button aria-label="Attach file" className="p-2 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-white/5">
+                   <button aria-label="Прикріпити файл" className="p-2 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-white/5">
                       <Paperclip size={18} />
                    </button>
                   <textarea
@@ -208,7 +208,7 @@ export const PredatorChatWidget: React.FC = () => {
                      <button
                        onClick={handleSend}
                        disabled={!input.trim()}
-                       aria-label="Send message"
+                       aria-label="Надіслати повідомлення"
                        className="p-2 bg-emerald-500 hover:bg-emerald-400 text-white rounded-lg shadow-lg shadow-emerald-500/20 disabled:opacity-50 disabled:shadow-none transition-all"
                      >
                         <Send size={16} />
@@ -228,7 +228,7 @@ export const PredatorChatWidget: React.FC = () => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => setIsOpen(true)}
-          aria-label="Open AI Assistant"
+          aria-label="Відкрити AI асистента"
           className="fixed bottom-6 right-6 w-14 h-14 bg-emerald-500 hover:bg-emerald-400 text-white rounded-2xl shadow-2xl shadow-emerald-500/30 flex items-center justify-center z-50 group border border-emerald-400/20"
         >
            <Bot size={28} className="group-hover:rotate-12 transition-transform" />

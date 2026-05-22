@@ -126,7 +126,7 @@ export const NeuralAutomationWidget: React.FC<{ persona: string }> = ({ persona 
       {/* Integration Shortcuts */}
       <div className="p-6 border-t border-white/5 bg-black/40 grid grid-cols-2 gap-4">
          <button
-           aria-label="Telegram Bot"
+           aria-label="Telegram Бот"
            className="flex items-center justify-center gap-3 py-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all"
          >
             <div className="text-blue-400"><Send size={18} /></div>
@@ -136,7 +136,7 @@ export const NeuralAutomationWidget: React.FC<{ persona: string }> = ({ persona 
             </div>
          </button>
          <button
-           aria-label="API Documentation"
+           aria-label="API Документація"
            className="flex items-center justify-center gap-3 py-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all"
          >
             <div className="text-emerald-400"><FileCode size={18} /></div>

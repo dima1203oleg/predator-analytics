@@ -31,7 +31,7 @@ export const MacroIndicatorsWidget: React.FC<{ persona: string }> = ({ persona }
             <p className="text-[9px] text-slate-500 font-mono tracking-widest uppercase">{premiumLocales.macroIndicators.subtitle}</p>
           </div>
         </div>
-        <button aria-label="More Info" className="p-2 hover:bg-white/5 rounded-lg text-slate-500 transition-colors">
+        <button aria-label="Детальніше" className="p-2 hover:bg-white/5 rounded-lg text-slate-500 transition-colors">
           <Info size={16} />
         </button>
       </div>
