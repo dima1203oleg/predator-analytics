@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getNavigationContext, getRecommendedNavigation } from '@/config/navigation';
+import { resolveUserRole } from '@/config/roles';
 import { useUser } from '@/context/UserContext';
 import { useShellWorkspace } from '@/hooks/useShellWorkspace';
 import { cn } from '@/utils/cn';
@@ -173,7 +174,7 @@ export const ContextRail: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useUser();
-  const role = user?.role ?? 'viewer';
+  const role = resolveUserRole(user?.role);
   const [isOpen, setIsOpen] = useAtom(shellContextRailOpenAtom);
   const [payload] = useAtom(shellContextRailPayloadAtom);
   const [, setCommandPaletteOpen] = useAtom(shellCommandPaletteOpenAtom);

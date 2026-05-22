@@ -10,7 +10,7 @@
 
 import { useUser } from '../context/UserContext';
 import { useShell, UIShell } from '../context/ShellContext';
-import { UserRole } from '../config/roles';
+import { UserRole, resolveUserRole } from '../config/roles';
 
 export type Dimension = 'NEBULA' | 'CORTEX' | 'NEXUS';
 export type DataSensitivity = 'PUBLIC' | 'INTERNAL' | 'CONFIDENTIAL' | 'CLASSIFIED';
@@ -139,13 +139,14 @@ export const useDimensionalContext = (): DimensionalContext => {
 
   const canAccessLevel = (requiredRole: UserRole): boolean => {
     if (!user) return false;
+    const resolvedRole = resolveUserRole(user.role);
     const roleLevel: Record<string, number> = {
-        [UserRole.CLIENT_BASIC]: 1,
-        [UserRole.CLIENT_PREMIUM]: 2,
-        [UserRole.CLIENT_DRPO]: 2,
-        [UserRole.ADMIN]: 3,
+        [UserRole.TERMINAL]: 1,
+        [UserRole.PRO]: 2,
+        [UserRole.SOVEREIGN]: 2,
+        [UserRole.CORE]: 3,
     };
-    return roleLevel[user.role] >= roleLevel[requiredRole];
+    return roleLevel[resolvedRole] >= roleLevel[requiredRole];
   };
 
   // Visualization mode selector

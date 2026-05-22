@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useUser } from './UserContext';
-import { UserRole } from '../config/roles';
+import { UserRole, resolveUserRole } from '../config/roles';
 
 export enum UIShell {
   EXPLORER = 'explorer',   // Nebula Hub
@@ -25,9 +25,10 @@ export const ShellProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   // Auto-set shell based on role when user changes
   useEffect(() => {
     if (user) {
-      if (user.role === UserRole.ADMIN) {
+      const resolvedRole = resolveUserRole(user.role);
+      if (resolvedRole === UserRole.CORE) {
         setCurrentShell(UIShell.COMMANDER);
-      } else if (user.role === UserRole.CLIENT_PREMIUM) {
+      } else if (resolvedRole === UserRole.PRO || resolvedRole === UserRole.SOVEREIGN) {
         setCurrentShell(UIShell.OPERATOR);
       } else {
         setCurrentShell(UIShell.EXPLORER);
@@ -40,12 +41,14 @@ export const ShellProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     // Only allow setting a shell if user has sufficient role
     if (!user) return;
 
-    // Hierarchy: ADMIN(3) > PREMIUM(2) > BASIC(1)
+    const resolvedRole = resolveUserRole(user.role);
+
+    // Hierarchy: CORE(3) > PRO/SOVEREIGN(2) > TERMINAL(1)
     const roleLevel: Record<string, number> = {
-      [UserRole.CLIENT_BASIC]: 1,
-      [UserRole.CLIENT_PREMIUM]: 2,
-      [UserRole.CLIENT_DRPO]: 2,
-      [UserRole.ADMIN]: 3,
+      [UserRole.TERMINAL]: 1,
+      [UserRole.PRO]: 2,
+      [UserRole.SOVEREIGN]: 2,
+      [UserRole.CORE]: 3,
     };
 
     // Shell Requirements
@@ -55,7 +58,7 @@ export const ShellProvider: React.FC<{ children: ReactNode }> = ({ children }) =
        [UIShell.COMMANDER]: 3,
     };
 
-    const currentLevel = roleLevel[user.role] || 1;
+    const currentLevel = roleLevel[resolvedRole] || 1;
     const requiredLevel = shellLevel[shell] || 1;
 
     if (currentLevel >= requiredLevel) {

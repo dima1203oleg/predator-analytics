@@ -6,7 +6,22 @@ set -e
 
 SERVER="dima@194.177.1.240 -p 6666"
 NAMESPACE="predator-v61"
-POD_NAME=$(ssh -o StrictHostKeyChecking=no $SERVER "export KUBECONFIG=/etc/rancher/k3s/k3s.yaml && kubectl get pods -n $NAMESPACE | grep frontend | grep Running | awk '{print \$1}' | head -1")
+
+echo "=== Визначення frontend pod ==="
+POD_NAME=$(ssh -o StrictHostKeyChecking=no $SERVER "export KUBECONFIG=/etc/rancher/k3s/k3s.yaml && kubectl get pods -n $NAMESPACE --field-selector=status.phase=Running | grep frontend | awk '{print \\\$1}' | head -1")
+
+if [ -z "$POD_NAME" ]; then
+  echo "⚠️  Pod 'frontend' у статусі Running не знайдено. Fallback — перший pod з 'frontend' у назві..."
+  POD_NAME=$(ssh -o StrictHostKeyChecking=no $SERVER "export KUBECONFIG=/etc/rancher/k3s/k3s.yaml && kubectl get pods -n $NAMESPACE | grep frontend | awk '{print \\\$1}' | head -1")
+fi
+
+if [ -z "$POD_NAME" ]; then
+  echo "❌ Не вдалося знайти frontend pod у namespace $NAMESPACE"
+  ssh -o StrictHostKeyChecking=no $SERVER "export KUBECONFIG=/etc/rancher/k3s/k3s.yaml && kubectl get pods -n $NAMESPACE"
+  exit 1
+fi
+
+echo "✅ Знайдено pod: $POD_NAME"
 
 echo "=== Копіювання dist на сервер ==="
 rsync -avz --delete --rsh="ssh -F /Users/Shared/Predator_60/.ssh.config.optimized -o StrictHostKeyChecking=no" apps/predator-analytics-ui/dist/ predator-server:/tmp/predator-frontend-dist/

@@ -21,7 +21,7 @@ import { getNavigationContext, navAccentStyles } from '../../config/navigation';
 import { useUser } from '../../context/UserContext';
 import { useBackendStatus } from '../../hooks/useBackendStatus';
 import { cn } from '../../lib/utils';
-import { ROLE_DISPLAY_NAMES, UserRole } from '../../config/roles';
+import { ROLE_DISPLAY_NAMES, UserRole, resolveUserRole } from '../../config/roles';
 import { useAtom } from 'jotai';
 import { shellCommandPaletteOpenAtom, shellContextRailOpenAtom } from '../../store/atoms';
 import { isShellV2Enabled } from '../../services/shell/userWorkspace';
@@ -68,11 +68,8 @@ const sectionGlowMap: Record<string, { gradient: string; glow: string; border: s
   },
 };
 
-const getRoleLabel = (role: string): string => {
-  if (role === UserRole.ADMIN) return ROLE_DISPLAY_NAMES[UserRole.ADMIN];
-  if (role === UserRole.CLIENT_PREMIUM) return ROLE_DISPLAY_NAMES[UserRole.CLIENT_PREMIUM];
-  if (role === UserRole.CLIENT_BASIC) return 'Бізнес-контур';
-  return 'режимперегляду';
+const getRoleLabel = (role: UserRole): string => {
+  return ROLE_DISPLAY_NAMES[role] ?? 'PREDATOR Terminal';
 };
 
 const Header: React.FC = () => {
@@ -80,7 +77,7 @@ const Header: React.FC = () => {
   const location = useLocation();
   const currentDate = format(new Date(), "d MMMM yyyy 'р.'", { locale: uk });
   const backendStatus = useBackendStatus();
-  const currentRole = user?.role ?? 'viewer';
+  const currentRole = resolveUserRole(user?.role);
   const { item, section } = getNavigationContext(location.pathname + location.search, currentRole);
   const accent = section ? navAccentStyles[section.accent] : navAccentStyles.amber;
   const sectionGlow = section ? (sectionGlowMap[section.accent] ?? sectionGlowMap.amber) : sectionGlowMap.amber;

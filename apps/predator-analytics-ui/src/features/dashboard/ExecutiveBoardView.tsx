@@ -42,6 +42,7 @@ import { useUser } from '@/context/UserContext';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { useDashboardOverview, useDashboardAlerts } from '@/hooks/useDashboard';
 import { getVisibleNavigation, navAccentStyles } from '@/config/navigation';
+import { resolveUserRole } from '@/config/roles';
 import { cn } from '@/utils/cn';
 import { ThermalCard } from '@/components/polish/ThermalCard';
 
@@ -118,7 +119,7 @@ const tones = {
 export default function ExecutiveBoardView() {
   const { user } = useUser();
   const backendStatus = useBackendStatus();
-  const currentRole = user?.role ?? 'viewer';
+  const currentRole = resolveUserRole(user?.role);
   const navigationSections = useMemo(() => getVisibleNavigation(currentRole), [currentRole]);
 
   const { data: overview, isLoading: isOverviewLoading } = useDashboardOverview();

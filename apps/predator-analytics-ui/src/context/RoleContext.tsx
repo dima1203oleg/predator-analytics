@@ -1,6 +1,6 @@
 import React, { createContext, useContext, ReactNode, useMemo } from 'react';
 import { useUser } from './UserContext';
-import { UserRole, RoleCapabilities, ROLE_CAPABILITIES, ROLE_DISPLAY_NAMES, ROLE_DESCRIPTIONS } from '../config/roles';
+import { UserRole, RoleCapabilities, ROLE_CAPABILITIES, ROLE_DISPLAY_NAMES, ROLE_DESCRIPTIONS, resolveUserRole } from '../config/roles';
 
 /**
  * PREDATOR ELITE — Контекст Допусків
@@ -49,37 +49,7 @@ const ROLE_PRIORITY: Record<string, number> = {
 export const RoleProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { user } = useUser();
 
-  const role = useMemo((): UserRole => {
-    const rawRole = user?.role?.toLowerCase?.() ?? '';
-
-    // Маппінг легасі-ролей на канонічні
-    const legacyMap: Record<string, UserRole> = {
-      promo: UserRole.TERMINAL,
-      client_basic: UserRole.TERMINAL,
-      operator: UserRole.TERMINAL,
-      explorer: UserRole.TERMINAL,
-      viewer: UserRole.TERMINAL,
-      ceo: UserRole.TERMINAL,
-      owner: UserRole.TERMINAL,
-
-      pro: UserRole.PRO,
-      client_premium: UserRole.PRO,
-      analyst: UserRole.PRO,
-      supply_chain: UserRole.PRO,
-      logistician: UserRole.PRO,
-
-      sovereign: UserRole.SOVEREIGN,
-      vip: UserRole.SOVEREIGN,
-      client_drpo: UserRole.SOVEREIGN,
-      investigator: UserRole.SOVEREIGN,
-
-      core: UserRole.CORE,
-      admin: UserRole.CORE,
-      commander: UserRole.CORE,
-    };
-
-    return legacyMap[rawRole] ?? UserRole.TERMINAL;
-  }, [user]);
+  const role = useMemo((): UserRole => resolveUserRole(user?.role), [user]);
 
   const capabilities = useMemo(() => ROLE_CAPABILITIES[role], [role]);
   const rolePriority = useMemo(() => ROLE_PRIORITY[role] ?? 0, [role]);

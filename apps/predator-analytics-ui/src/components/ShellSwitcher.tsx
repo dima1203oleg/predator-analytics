@@ -3,7 +3,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useShell, UIShell } from '../context/ShellContext';
 import { useUser } from '../context/UserContext';
-import { UserRole } from '../config/roles';
+import { UserRole, resolveUserRole } from '../config/roles';
 import { Layout, Eye, Shield, Crown } from 'lucide-react';
 
 export const ShellSwitcher: React.FC = () => {
@@ -36,7 +36,8 @@ export const ShellSwitcher: React.FC = () => {
   return (
     <div className="fixed bottom-6 left-24 z-[100] flex items-center gap-1 p-1 bg-black/60  border border-white/10 rounded-full shadow-2xl transition-all duration-500">
       {shells.map((shell) => {
-        const hasAccess = roleHierarchy[user.role] >= roleHierarchy[shell.role];
+        const resolvedRole = resolveUserRole(user.role);
+        const hasAccess = roleHierarchy[resolvedRole] >= roleHierarchy[shell.role];
 
         // Mobile Restriction: Commander is not supported on mobile
         if (isMobile && shell.role === UserRole.CORE) return null;

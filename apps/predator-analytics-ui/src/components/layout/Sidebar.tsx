@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import { isSidebarOpenAtom, sidebarSearchAtom, colabPanelOpenAtom } from '../../store/atoms';
 import { useUser } from '../../context/UserContext';
-import { UserRole } from '../../config/roles';
+import { UserRole, resolveUserRole } from '../../config/roles';
 import { Logo } from '../Logo';
 import {
   getGlobalNavigationActions,
@@ -304,7 +304,7 @@ const getModeLabel = (mode: NavWorkspaceMode): string => {
 
 export const Sidebar: React.FC = () => {
   const { user, logout } = useUser();
-  const userRole = user?.role || UserRole.TERMINAL;
+  const userRole = resolveUserRole(user?.role);
   const backendStatus = useBackendStatus();
   const [isOpen, setIsOpen] = useAtom(isSidebarOpenAtom);
   const [search, setSearch] = useAtom(sidebarSearchAtom);
