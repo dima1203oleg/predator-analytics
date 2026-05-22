@@ -318,19 +318,19 @@ export const SuperIntelligenceDashboard: React.FC = () => {
                   onClick={handleSelfImprove}
                   loading={isImproving}
                   icon="🔄"
-                  label="Self-Improvement Cycle"
+                  label="Цикл Самовдосконалення"
                   color="cyan"
                 />
                 <ActionButton
                   onClick={() => handleHealing('all')}
                   icon="🏥"
-                  label="Trigger Self-Healing"
+                  label="Запустити Самовідновлення"
                   color="emerald"
                 />
                 <ActionButton
                   onClick={refreshData}
                   icon="🔃"
-                  label="Refresh Data"
+                  label="Оновити Дані"
                   color="purple"
                 />
               </div>

@@ -115,7 +115,7 @@ export const VoiceAssistant: React.FC = () => {
               <button
                 onClick={() => setIsOpen(false)}
                 className="text-slate-500 hover:text-white transition-colors"
-                aria-label="Close Voice Assistant"
+                aria-label="Закрити голосового асистента"
                 title="Закрити"
               >
                 <X size={16} />

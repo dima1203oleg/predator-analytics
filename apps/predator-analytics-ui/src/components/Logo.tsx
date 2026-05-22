@@ -5,7 +5,7 @@ import raptorLogo from '../assets/predator-raptor-logo.png';
 export const GeometricRaptor: React.FC<{ className?: string }> = ({ className }) => (
   <img 
     src={raptorLogo} 
-    alt="Predator Logo"
+    alt="Логотип PREDATOR"
     className={`${className} mix-blend-screen object-contain`}
     style={{ clipPath: 'circle(48% at 50% 50%)' }}
   />
