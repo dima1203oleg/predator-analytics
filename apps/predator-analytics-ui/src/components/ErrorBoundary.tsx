@@ -126,7 +126,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
               {/* Help Text */}
               <p className="text-center text-xs text-slate-600 mt-8 font-mono">
-                Якщопроблема повторюється, зверніться до служби підтримки
+                Якщо проблема повторюється, зверніться до служби підтримки
               </p>
             </div>
 
