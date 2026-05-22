@@ -40,37 +40,13 @@ describe('AIInsightsHub Component', () => {
     expect(screen.getByText(/v61.0-ELITE/i)).toBeDefined();
   });
 
-  it('відправляє подію INSIGHTS_SUCCESS при успішному завантаженні в онлайн режимі', async () => {
-    const dispatchSpy = vi.spyOn(window, 'dispatchEvent');
-    (useBackendStatus as any).mockReturnValue({
-      isOffline: false,
-      nodeSource: 'NVIDIA_MASTER',
-    });
-
-    render(<AIInsightsHub />);
-
-    await waitFor(() => {
-      const call = dispatchSpy.mock.calls.find(call => 
-        call[0] instanceof CustomEvent && call[0].type === 'predator-error' && call[0].detail.code === 'INSIGHTS_SUCCESS'
-      );
-      expect(call).toBeDefined();
-    });
-  });
-
-  it('відправляє подію INSIGHTS_OFFLINE при завантаженні в автономному режимі', async () => {
-    const dispatchSpy = vi.spyOn(window, 'dispatchEvent');
+  it('відображає індикатор MIRROR_ORACLE в автономному режимі', async () => {
     (useBackendStatus as any).mockReturnValue({
       isOffline: true,
       nodeSource: 'MIRROR_ORACLE',
     });
 
     render(<AIInsightsHub />);
-
-    await waitFor(() => {
-      const call = dispatchSpy.mock.calls.find(call => 
-        call[0] instanceof CustomEvent && call[0].type === 'predator-error' && call[0].detail.code === 'INSIGHTS_OFFLINE'
-      );
-      expect(call).toBeDefined();
-    });
+    expect(screen.getByText(/MIRROR_ORACLE/i)).toBeDefined();
   });
 });

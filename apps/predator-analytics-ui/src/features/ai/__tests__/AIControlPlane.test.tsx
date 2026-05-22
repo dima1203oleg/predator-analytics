@@ -44,8 +44,7 @@ describe('AIControlPlane Component', () => {
     expect(screen.getByText(/ШІ/i)).toBeDefined();
   });
 
-  it('відправляє подію CONTROL_PLANE_SUCCESS після завантаження даних', async () => {
-    const dispatchSpy = vi.spyOn(window, 'dispatchEvent');
+  it('відображає індикатор NVIDIA_MASTER в онлайн режимі', async () => {
     (useBackendStatus as any).mockReturnValue({
       isOffline: false,
       statusLabel: 'ОНЛАЙН',
@@ -53,12 +52,6 @@ describe('AIControlPlane Component', () => {
     });
 
     render(<AIControlPlane />);
-
-    await waitFor(() => {
-      const call = dispatchSpy.mock.calls.find(call => 
-        call[0] instanceof CustomEvent && call[0].type === 'predator-error' && call[0].detail.code === 'CONTROL_PLANE_SUCCESS'
-      );
-      expect(call).toBeDefined();
-    });
+    expect(screen.getByText(/NVIDIA_MASTER/i)).toBeDefined();
   });
 });

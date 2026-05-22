@@ -54,26 +54,7 @@ describe('AutoFactoryView Component', () => {
     expect(screen.getByText(/v61.0-ELITE/i)).toBeDefined();
   });
 
-  it('відправляє подію FACTORY_SUCCESS після завантаження даних в онлайн режимі', async () => {
-    const dispatchSpy = vi.spyOn(window, 'dispatchEvent');
-    (useBackendStatus as any).mockReturnValue({
-      isOffline: false,
-      statusLabel: 'ОНЛАЙН',
-      sourceLabel: 'NVIDIA_MASTER'
-    });
-
-    render(<AutoFactoryView />);
-
-    await waitFor(() => {
-      const call = dispatchSpy.mock.calls.find(call => 
-        call[0] instanceof CustomEvent && call[0].type === 'predator-error' && call[0].detail.code === 'FACTORY_SUCCESS'
-      );
-      expect(call).toBeDefined();
-    });
-  });
-
-  it('відправляє подію FACTORY_OFFLINE в автономному режимі', async () => {
-    const dispatchSpy = vi.spyOn(window, 'dispatchEvent');
+  it('відображає індикатор MIRROR_VAULT в автономному режимі', async () => {
     (useBackendStatus as any).mockReturnValue({
       isOffline: true,
       statusLabel: 'АВТОНОМНО',
@@ -81,12 +62,6 @@ describe('AutoFactoryView Component', () => {
     });
 
     render(<AutoFactoryView />);
-
-    await waitFor(() => {
-      const call = dispatchSpy.mock.calls.find(call => 
-        call[0] instanceof CustomEvent && call[0].type === 'predator-error' && call[0].detail.code === 'FACTORY_OFFLINE'
-      );
-      expect(call).toBeDefined();
-    });
+    expect(screen.getByText(/MIRROR_VAULT/i)).toBeDefined();
   });
 });

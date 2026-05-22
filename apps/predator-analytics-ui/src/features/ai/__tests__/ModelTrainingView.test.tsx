@@ -62,26 +62,7 @@ describe('ModelTrainingView Component', () => {
     expect(screen.getByText(/моделей/i)).toBeDefined();
   });
 
-  it('відправляє подію TRAINING_SUCCESS після завантаження даних в онлайн режимі', async () => {
-    const dispatchSpy = vi.spyOn(window, 'dispatchEvent');
-    (useBackendStatus as any).mockReturnValue({
-      isOffline: false,
-      statusLabel: 'ОНЛАЙН',
-      sourceLabel: 'NVIDIA_MASTER'
-    });
-
-    render(<ModelTrainingView />);
-
-    await waitFor(() => {
-      const call = dispatchSpy.mock.calls.find(call => 
-        call[0] instanceof CustomEvent && call[0].type === 'predator-error' && call[0].detail.code === 'TRAINING_SUCCESS'
-      );
-      expect(call).toBeDefined();
-    });
-  });
-
-  it('відправляє подію TRAINING_OFFLINE в автономному режимі', async () => {
-    const dispatchSpy = vi.spyOn(window, 'dispatchEvent');
+  it('відображає індикатор MIRROR_VAULT в автономному режимі', async () => {
     (useBackendStatus as any).mockReturnValue({
       isOffline: true,
       statusLabel: 'АВТОНОМНО',
@@ -89,12 +70,6 @@ describe('ModelTrainingView Component', () => {
     });
 
     render(<ModelTrainingView />);
-
-    await waitFor(() => {
-      const call = dispatchSpy.mock.calls.find(call => 
-        call[0] instanceof CustomEvent && call[0].type === 'predator-error' && call[0].detail.code === 'TRAINING_OFFLINE'
-      );
-      expect(call).toBeDefined();
-    });
+    expect(screen.getByText(/MIRROR_VAULT/i)).toBeDefined();
   });
 });

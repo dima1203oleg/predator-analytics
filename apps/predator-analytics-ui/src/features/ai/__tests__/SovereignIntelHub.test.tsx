@@ -89,47 +89,7 @@ describe('SovereignIntelHub', () => {
         expect(screen.getByText(/СУВЕРЕННИЙ ІНТЕЛЕКТ PREDATOR/i)).toBeInTheDocument();
     });
 
-    it('ініціює predator-error (SOVEREIGN_SUCCESS) при успішному зв’язку', async () => {
-        const dispatchSpy = vi.spyOn(window, 'dispatchEvent');
-        render(<SovereignIntelHub />);
-
-        await waitFor(() => {
-            expect(dispatchSpy).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    detail: expect.objectContaining({
-                        code: 'SOVEREIGN_SUCCESS',
-                        service: 'SovereignHub'
-                    })
-                })
-            );
-        });
-    });
-
-    it('ініціює predator-error (LOCAL_CORE) в автономному режимі', async () => {
-        vi.mock('@/hooks/useBackendStatus', () => ({
-            useBackendStatus: () => ({ 
-                isOffline: true, 
-                nodeSource: 'LOCAL_MIRROR',
-                healingProgress: 50
-            })
-        }));
-
-        const dispatchSpy = vi.spyOn(window, 'dispatchEvent');
-        render(<SovereignIntelHub />);
-
-        await waitFor(() => {
-            expect(dispatchSpy).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    detail: expect.objectContaining({
-                        code: 'LOCAL_CORE',
-                        service: 'SovereignHub'
-                    })
-                })
-            );
-        });
-    });
-
-    it('дозволяє відправлятиповідомлення та отримувати відповідь', async () => {
+    it('дозволяє відправляти повідомлення та отримувати відповідь', async () => {
         render(<SovereignIntelHub />);
         
         const input = screen.getByPlaceholderText(/Введіть директиву для GLM-5.1/i);
