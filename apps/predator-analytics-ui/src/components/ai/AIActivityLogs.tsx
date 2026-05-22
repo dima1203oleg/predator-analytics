@@ -226,11 +226,11 @@ export const AIActivityLogs: React.FC<AIActivityLogsProps> = ({
             className="px-3 py-2 bg-slate-900/50 border border-slate-600 rounded-lg text-sm text-white focus:outline-none focus:border-cyan-500/50"
           >
             <option value="all">Всі</option>
-            <option value="info">Info</option>
+            <option value="info">Інформація</option>
             <option value="success">Успіх</option>
-            <option value="warning">Warning</option>
+            <option value="warning">Попередження</option>
             <option value="error">Помилка</option>
-            <option value="debug">Debug</option>
+            <option value="debug">Налагодження</option>
           </select>
 
           {/* Pause/Resume */}
@@ -241,7 +241,7 @@ export const AIActivityLogs: React.FC<AIActivityLogsProps> = ({
                 ? 'bg-yellow-500/20 text-yellow-400'
                 : 'bg-slate-700/50 text-slate-400 hover:bg-slate-600/50'
             }`}
-            title={isPaused ? 'Resume' : 'Pause'}
+            title={isPaused ? 'Відновити' : 'Пауза'}
           >
             {isPaused ? '▶️' : '⏸️'}
           </button>
@@ -250,7 +250,7 @@ export const AIActivityLogs: React.FC<AIActivityLogsProps> = ({
           <button
             onClick={exportLogs}
             className="p-2 rounded-lg bg-slate-700/50 text-slate-400 hover:bg-slate-600/50 transition-colors"
-            title="Export logs"
+            title="Експорт журналу"
           >
             <Download size={16} />
           </button>
