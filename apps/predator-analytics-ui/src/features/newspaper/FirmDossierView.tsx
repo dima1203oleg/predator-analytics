@@ -37,19 +37,7 @@ export default function FirmDossierView() {
   const [result, setResult] = useState<any>(null);
   const { isOffline, nodeSource, activeFailover, healingProgress } = useBackendStatus();
 
-  useEffect(() => {
-    if (isOffline) {
-       window.dispatchEvent(new CustomEvent('predator-error', {
-          detail: {
-            service: 'CorporateIntel',
-            message: 'РЕЖИМ АВТОНОМНОГО АНАЛІЗУ (CORPORATE_OFFLINE). Дані бенефіціарів можуть бути несинхронізовані з ДПС.',
-            severity: 'warning',
-            timestamp: new Date().toISOString(),
-            code: 'CORPORATE_OFFLINE'
-          }
-       }));
-    }
-  }, [isOffline]);
+  // Нав'язливі toast-повідомлення видалено (HR-04 compliant)
 
   const handleSearch = async () => {
     if (query.length < 3) return;

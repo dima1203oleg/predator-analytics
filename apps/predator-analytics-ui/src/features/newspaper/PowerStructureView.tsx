@@ -144,19 +144,7 @@ export default function PowerStructureView() {
 
     const { isOffline, nodeSource, activeFailover, healingProgress } = useBackendStatus();
 
-    useEffect(() => {
-        if (isOffline) {
-           window.dispatchEvent(new CustomEvent('predator-error', {
-              detail: {
-                service: 'PowerNexus',
-                message: 'РЕЖИМ АВТОНОМНОГО КА ТОГРАФУВАННЯ (POWER_OFFLINE). Тіньові зв\'язки базуються на локальних кеш-вузлах.',
-                severity: 'info',
-                timestamp: new Date().toISOString(),
-                code: 'POWER_OFFLINE'
-              }
-           }));
-        }
-    }, [isOffline]);
+    // Нав'язливі toast-повідомлення видалено (HR-04 compliant)
 
     useEffect(() => {
         fetchData();

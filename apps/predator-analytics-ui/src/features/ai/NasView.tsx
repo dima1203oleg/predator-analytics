@@ -20,29 +20,7 @@ const NasView: React.FC = () => {
     const toast = useToast();
     const { isActive: isGodMode, stage: godStage, currentScenario } = useSuperIntelligence();
 
-    useEffect(() => {
-        if (isOffline) {
-            window.dispatchEvent(new CustomEvent('predator-error', {
-                detail: {
-                    service: 'NAS_Orchestrator',
-                    message: 'ГЕНЕТИЧНИЙ АЛГО ИТМ ПЕ ЕКЛЮЧЕНО НА ЛОКАЛЬНИЙ ЕМУЛЯТО  (NAS_OFFLINE). Траєкторії еволюції можуть бути неточними.',
-                    severity: 'warning',
-                    timestamp: new Date().toISOString(),
-                    code: 'NAS_OFFLINE'
-                }
-            }));
-        } else {
-            window.dispatchEvent(new CustomEvent('predator-error', {
-                detail: {
-                    service: 'NAS_Orchestrator',
-                    message: 'СИНХРОНІЗАЦІЯ З ЕВОЛЮЦІЙНИМ Г ІДОМ УСПІШНА (NAS_SUCCESS). Моделі SOTA доступні.',
-                    severity: 'info',
-                    timestamp: new Date().toISOString(),
-                    code: 'NAS_SUCCESS'
-                }
-            }));
-        }
-    }, [isOffline]);
+    // Нав'язливі toast-повідомлення видалено (HR-04 compliant)
 
     const [activeTab, setActiveTab] = useState<'ARENA' | 'LEADERBOARD' | 'PROVIDERS'>('ARENA');
     const [tournaments, setTournaments] = useState<NasTournament[]>([]);

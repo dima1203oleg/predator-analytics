@@ -75,29 +75,7 @@ export default function PredictiveNexusView() {
     const { isOffline, nodeSource, activeFailover } = useBackendStatus();
     const [isScanning, setIsScanning] = useState(false);
     
-    useEffect(() => {
-        if (isOffline) {
-            window.dispatchEvent(new CustomEvent('predator-error', {
-                detail: {
-                    service: 'PredictiveNexus',
-                    message: `АВТОНОМНИЙ_НЕКСУС [${nodeSource}]: Перехід на дзеркальні прогностичні моделі MIRROR_VAULT.`,
-                    severity: 'warning',
-                    timestamp: new Date().toISOString(),
-                    code: 'NEXUS_OFFLINE'
-                }
-            }));
-        } else {
-            window.dispatchEvent(new CustomEvent('predator-error', {
-                detail: {
-                    service: 'PredictiveNexus',
-                    message: `НЕКСУС_АКТИВОВАНО [${nodeSource}]: Повний доступ до квантової аналітики NVIDIA. Операційна стабільність 100%.`,
-                    severity: 'info',
-                    timestamp: new Date().toISOString(),
-                    code: 'NEXUS_SUCCESS'
-                }
-            }));
-        }
-    }, [isOffline, nodeSource]);
+    // Нав'язливі toast-повідомлення видалено (HR-04 compliant)
 
     const { data: stats } = useQuery({
         queryKey: ['system', 'stats'],

@@ -25,19 +25,7 @@ const DatasetsStudioView = () => {
   const { isOffline, nodeSource } = useBackendStatus();
   const [activeTab, setActiveTab] = useState<'sources' | 'cleaning' | 'annotation' | 'quality'>('sources');
 
-  useEffect(() => {
-    window.dispatchEvent(new CustomEvent('predator-error', {
-      detail: {
-        service: 'Datasets_Studio',
-        message: isOffline 
-          ? 'ДАТАСЕТ-ЦЕНТ : РЕЖИМ ЛОКАЛЬНОГО КЕШУ (DATA_OFFLINE).' 
-          : 'СИНХРОНІЗАЦІЯ ДАТАСЕТІВ: NVIDIA-GRID ACTIVE.',
-        severity: isOffline ? 'warning' : 'info',
-        timestamp: new Date().toISOString(),
-        code: isOffline ? 'DATA_OFFLINE' : 'DATA_SUCCESS'
-      }
-    }));
-  }, [isOffline]);
+  // Нав'язливі toast-повідомлення видалено (HR-04 compliant)
 
   const stats = [
     { label: 'ЗАГАЛЬНИЙ_ОБСЯГ', value: '4.2 TB', icon: <Database size={14} />, color: 'primary' },

@@ -68,42 +68,21 @@ export default function ConversationIntelView() {
         refetchInterval: 15000 
     });
 
-    // Trace: v61.0-ELITE Error Protocol Integration
+    // Нав'язливі offline/success toast видалено (HR-04 compliant)
+    // Залишено тільки критичні помилки
     useEffect(() => {
-        if (isOffline) {
-            window.dispatchEvent(new CustomEvent('predator-error', { 
-                detail: { 
-                    service: 'ConversationIntel', 
-                    message: `СИГНАЛЬНИЙ ДЕКОДЕ  [${backendStatus.nodeSource}]:  обота в автономному режимі MIRROR. Синхронізація OSINT обмежена.`,
-                    severity: 'warning',
-                    timestamp: new Date().toISOString(),
-                    code: 'OSINT_OFFLINE'
-                } 
-            }));
-        } else if (!isLoading && !error) {
-            window.dispatchEvent(new CustomEvent('predator-error', { 
-                detail: { 
-                    service: 'ConversationIntel', 
-                    message: `DECODER_READY [${backendStatus.nodeSource}]: Канали перехоплення (Telegram/News) стабільні. Сигнали надходять.`,
-                    severity: 'info',
-                    timestamp: new Date().toISOString(),
-                    code: 'OSINT_SUCCESS'
-                } 
-            }));
-        }
-
         if (error) {
-            window.dispatchEvent(new CustomEvent('predator-error', { 
-                detail: { 
-                    service: 'ConversationIntel', 
+            window.dispatchEvent(new CustomEvent('predator-error', {
+                detail: {
+                    service: 'ConversationIntel',
                     message: error instanceof Error ? `ПОМИЛКА_SIGINT: ${error.message}` : 'Втрачено контакт з OSINT-процесором.',
                     severity: 'critical',
                     timestamp: new Date().toISOString(),
                     code: 'OSINT_FAIL'
-                } 
+                }
             }));
         }
-    }, [error, isOffline, isLoading, backendStatus.nodeSource]);
+    }, [error]);
 
     useEffect(() => {
         const id = setInterval(() => setLiveCount(c => c + Math.floor(Math.random() * 5)), 3000);
