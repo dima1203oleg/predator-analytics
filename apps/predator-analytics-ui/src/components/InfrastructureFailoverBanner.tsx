@@ -19,17 +19,28 @@ export const InfrastructureFailoverBanner: React.FC = () => {
   const status = useBackendStatus();
   const { isOffline, nodes, llmLevel, llmTriStateMode, vramMetrics } = status;
 
+  const BANNER_DISMISS_KEY = 'predator:banner:dismissedAt';
+  const BANNER_DISMISS_TTL_MS = 30 * 60 * 1000; // 30 хвилин
+
+  const isDismissedExpired = () => {
+    const dismissedAt = localStorage.getItem(BANNER_DISMISS_KEY);
+    if (!dismissedAt) return true;
+    return Date.now() - parseInt(dismissedAt, 10) > BANNER_DISMISS_TTL_MS;
+  };
+
   const [isVisible, setIsVisible] = React.useState(false);
   const [lastMode, setLastMode] = React.useState(llmTriStateMode);
   const [lastOfflineState, setLastOfflineState] = React.useState(isOffline);
-  const [userDismissed, setUserDismissed] = React.useState(false);
+  const [userDismissed, setUserDismissed] = React.useState(() => !isDismissedExpired());
   const [debounceTimer, setDebounceTimer] = React.useState<NodeJS.Timeout | null>(null);
   const [, setIsColabOpen] = useAtom(colabPanelOpenAtom);
 
-  // Скидаємо userDismissed коли offline → online (щоб показати знову при наступному offline)
+  // Скидаємо userDismissed коли offline → online тільки якщо TTL вийшов
   React.useEffect(() => {
     if (!isOffline && lastOfflineState) {
-      setUserDismissed(false);
+      if (isDismissedExpired()) {
+        setUserDismissed(false);
+      }
     }
     setLastOfflineState(isOffline);
   }, [isOffline]);
@@ -117,7 +128,7 @@ export const InfrastructureFailoverBanner: React.FC = () => {
       >
         {/* Кнопка закриття — завжди видима */}
         <button
-          onClick={(e) => { e.stopPropagation(); setIsVisible(false); setUserDismissed(true); }}
+          onClick={(e) => { e.stopPropagation(); setIsVisible(false); setUserDismissed(true); localStorage.setItem(BANNER_DISMISS_KEY, String(Date.now())); }}
           className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-black border border-white/30 flex items-center justify-center text-white/70 hover:text-white hover:border-white/60 transition-all opacity-100 shadow-lg"
           title="Закрити"
         >
@@ -197,7 +208,7 @@ export const InfrastructureFailoverBanner: React.FC = () => {
         {/* Global Control Buttons — мінімалістичний індикатор */}
         <div className="flex gap-2 ml-4">
           <button
-            onClick={(e) => { e.stopPropagation(); setIsVisible(false); setUserDismissed(true); }}
+            onClick={(e) => { e.stopPropagation(); setIsVisible(false); setUserDismissed(true); localStorage.setItem(BANNER_DISMISS_KEY, String(Date.now())); }}
             className="w-10 h-10 bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl flex items-center justify-center transition-all group"
             title="Закрити банер"
           >
