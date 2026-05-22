@@ -100,7 +100,7 @@ export const AgentsOpsTab: React.FC = () => {
       render: (id) => (
         <div className="flex items-center justify-end gap-2">
           <button 
-            title="Restart Agent"
+            title="Перезапустити агента"
             onClick={() => handleAction(id as string, 'restart')}
             disabled={executeAction.isPending}
             className="p-2 bg-white/5 hover:bg-rose-500/20 text-rose-500/40 hover:text-rose-500 rounded-lg transition-all disabled:opacity-30"
@@ -108,7 +108,7 @@ export const AgentsOpsTab: React.FC = () => {
             <RefreshCw size={12} className={cn(executeAction.isPending && "animate-spin")} />
           </button>
           <button 
-            title="Kill Process"
+            title="Завершити процес"
             onClick={() => handleAction(id as string, 'kill')}
             disabled={executeAction.isPending}
             className="p-2 bg-white/5 hover:bg-rose-600 text-white/20 hover:text-white rounded-lg transition-all disabled:opacity-30"

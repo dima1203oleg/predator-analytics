@@ -191,7 +191,7 @@ export const ToasterProvider: React.FC = () => {
                 <button
                   onClick={() => dismissToast(t.id)}
                   className="flex-shrink-0 p-1 hover:bg-white/10 rounded-lg transition-colors"
-                  title="Dismiss notification"
+                  title="Закрити сповіщення"
                 >
                   <X size={14} className="text-slate-500" />
                 </button>

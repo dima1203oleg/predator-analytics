@@ -357,7 +357,7 @@ export const AnalyticsDashboard: React.FC = () => {
             whileTap={{ scale: 0.95 }}
             onClick={fetchRealData}
             className="p-6 rounded-[32px] bg-slate-900 border border-white/10 text-slate-400 hover:bg-slate-800 hover:text-white transition-all shadow-2xl group"
-            title="Force Neural Refresh"
+            title="Примусове нейронне оновлення"
           >
             <RefreshCw size={24} className={cn("group-hover:text-blue-400", loading ? 'animate-spin' : '')} />
           </motion.button>

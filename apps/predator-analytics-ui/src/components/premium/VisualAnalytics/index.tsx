@@ -127,7 +127,7 @@ export const VisualAnalytics: React.FC = () => {
              </button>
 
              <button
-                title="Export to PDF"
+                title="Експорт у PDF"
                 className="flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-emerald-900/20 hover:scale-105 transition-all"
              >
                 <Download size={16} /> {premiumLocales.executiveBrief.actions.exportPdf}
