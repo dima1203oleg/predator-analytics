@@ -7,15 +7,10 @@ export { UserRole };
 // ============================================================================
 // Legacy aliases used by older components
 export const ROLE_HIERARCHY: Record<string, number> = {
-  [UserRole.CLIENT_BASIC]: 1,
-  [UserRole.CLIENT_PREMIUM]: 2,
-  [UserRole.CLIENT_DRPO]: 3,
-  [UserRole.ADMIN]: 4,
-  // Backward-compatible aliases
-  'OPERATOR': 2,
-  'COMMANDER': 4,
-  'EXPLORER': 1,
-  'INVESTIGATOR': 3,
+  [UserRole.TERMINAL]: 1,
+  [UserRole.PRO]: 2,
+  [UserRole.SOVEREIGN]: 3,
+  [UserRole.CORE]: 4,
 };
 
 
@@ -69,7 +64,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const setUser = (newUser: UserProfile) => {
     setUserState(newUser);
     // Simple mock token
-    sessionStorage.setItem('predator_auth_token', newUser.role === UserRole.ADMIN ? 'admin-token' : 'user-token');
+    sessionStorage.setItem('predator_auth_token', newUser.role === UserRole.CORE ? 'core-token' : 'user-token');
   };
 
   const logout = () => {
@@ -80,11 +75,11 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const updateTier = (tier: SubscriptionTier) => {
     if (user) {
-      // Logic: if upgrading to PRO, change role to PREMIUM
+      // Логіка: при апгрейді до PRO змінюємо роль на PRO
       let newRole = user.role;
       if (tier === SubscriptionTier.PRO || tier === SubscriptionTier.ENTERPRISE) {
-        if (user.role === UserRole.CLIENT_BASIC) {
-          newRole = UserRole.CLIENT_PREMIUM;
+        if (user.role === UserRole.TERMINAL) {
+          newRole = UserRole.PRO;
         }
       }
       setUserState({ ...user, tier, role: newRole });
@@ -104,8 +99,8 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         user,
         isLoading,
         isAuthenticated: !!user,
-        isAdmin: user?.role === UserRole.ADMIN,
-        isClient: user?.role === UserRole.CLIENT_BASIC || user?.role === UserRole.CLIENT_PREMIUM || user?.role === UserRole.CLIENT_DRPO,
+        isAdmin: user?.role === UserRole.CORE,
+        isClient: user?.role !== UserRole.CORE,
         canAccess,
         setUser,
         logout,
