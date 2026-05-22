@@ -104,6 +104,7 @@ export default defineConfig(({ mode }) => {
             'vendor-tanstack': ['@tanstack/react-query', '@tanstack/react-table'],
             'vendor-ui': ['@radix-ui/react-slot'],
             'vendor-three': ['three', '@react-three/fiber', '@react-three/drei'],
+            'vendor-framer': ['framer-motion'],
           },
         }
       },
