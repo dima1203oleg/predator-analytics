@@ -234,50 +234,50 @@ export const BootSequenceELITE: React.FC<{ onComplete: () => void }> = ({ onComp
 
   // Strict Legal Warning (Bloomberg Elite Style)
   const renderLegalWarning = () => (
-    <motion.div 
-      initial={{ opacity: 0, y: 50 }}
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 1.1, filter: 'blur(40px)' }}
-      transition={{ duration: 2.5 }}
-      className="max-w-5xl w-full p-2 bg-gradient-to-br from-[#D4AF37]/40 via-transparent to-black border border-[#D4AF37]/30 relative z-50"
+      exit={{ opacity: 0, scale: 1.05, filter: 'blur(30px)' }}
+      transition={{ duration: 2 }}
+      className="max-w-5xl w-full mx-auto p-2 sm:p-3 bg-gradient-to-br from-[#D4AF37]/40 via-transparent to-black border border-[#D4AF37]/30 relative z-50"
     >
-      <div className="bg-black p-8 sm:p-12 lg:p-16 xl:p-24 border border-[#D4AF37]/20 relative overflow-hidden flex flex-col justify-center min-h-0">
-        <div className="absolute top-0 right-0 p-8">
-           <div className="text-[#D4AF37] font-mono text-[10px] tracking-widest opacity-30">ВЛАСНИЙ_ПРОТОКОЛ_60.0</div>
+      <div className="bg-black p-6 sm:p-10 lg:p-16 xl:p-20 border border-[#D4AF37]/20 relative overflow-hidden flex flex-col justify-center">
+        <div className="absolute top-0 right-0 p-4 sm:p-6">
+           <div className="text-[#D4AF37] font-mono text-[9px] sm:text-[10px] tracking-widest opacity-30">ВЛАСНИЙ_ПРОТОКОЛ_60.0</div>
         </div>
-        
-        <div className="flex flex-col gap-20">
-          <div className="space-y-6">
-             <div className="text-[#D4AF37] font-black text-xs tracking-[1.5em] uppercase opacity-60">рівень_Суверенної_Авторизації</div>
-             <h2 className="text-white text-7xl font-light tracking-[0.2em] uppercase leading-tight">
+
+        <div className="flex flex-col gap-8 sm:gap-14 lg:gap-20">
+          <div className="space-y-3 sm:space-y-6">
+             <div className="text-[#D4AF37] font-black text-[9px] sm:text-xs tracking-[0.8em] sm:tracking-[1.5em] uppercase opacity-60">рівень_Суверенної_Авторизації</div>
+             <h2 className="text-white text-3xl sm:text-5xl lg:text-7xl font-light tracking-[0.15em] sm:tracking-[0.2em] uppercase leading-tight">
                Правовий <span className="text-[#D4AF37] font-medium">Суверенітет</span>
              </h2>
           </div>
-          
-          <div className="grid grid-cols-2 gap-16 border-t border-white/5 pt-16">
-            <div className="text-white/40 font-mono text-sm leading-relaxed space-y-6">
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-10 lg:gap-16 border-t border-white/5 pt-8 sm:pt-12 lg:pt-16">
+            <div className="text-white/40 font-mono text-xs sm:text-sm leading-relaxed space-y-4 sm:space-y-6">
               <p>
-                ДОСТУП ДО <span className="text-[#D4AF37]">PREDATOR ELITE</span> ОБМЕЖЕНИЙ. 
-                ВИ ПОГОДЖУЄТЕСЬ НА ПОВНУПРОЗО ИСТЬ ВАШИХ ДІЙ ПЕ ЕД АВТОНОМНИМ ЯДРОМ.
+                ДОСТУП ДО <span className="text-[#D4AF37]">PREDATOR ELITE</span> ОБМЕЖЕНИЙ.
+                ВИ ПОГОДЖУЄТЕСЬ НА ПОВНУ ПРОЗОРІСТЬ ВАШИХ ДІЙ ПЕРЕД АВТОНОМНИМ ЯДРОМ.
               </p>
-              <div className="h-[1px] w-48 bg-[#D4AF37]/30" />
-              <p className="text-[10px] tracking-widest text-white/20 uppercase italic">
+              <div className="h-[1px] w-32 sm:w-48 bg-[#D4AF37]/30" />
+              <p className="text-[9px] sm:text-[10px] tracking-widest text-white/20 uppercase italic">
                 Всі операції логуються в незмінному реєстрі WORM.
               </p>
             </div>
-            <div className="flex flex-col justify-end items-end gap-10">
-               <div className="flex gap-1.5">
-                  {[...Array(24)].map((_, i) => (
-                    <motion.div 
-                      key={i} 
-                      animate={{ height: [12, 30, 12] }}
+            <div className="flex flex-col justify-end items-start sm:items-end gap-6 sm:gap-10">
+               <div className="flex gap-1 sm:gap-1.5">
+                  {[...Array(12)].map((_, i) => (
+                    <motion.div
+                      key={i}
+                      animate={{ height: [8, 18, 8] }}
                       transition={{ repeat: Infinity, duration: 1 + Math.random(), ease: "easeInOut" }}
-                      className="w-1 bg-[#D4AF37]/40" 
+                      className="w-0.5 sm:w-1 bg-[#D4AF37]/40"
                     />
                   ))}
                </div>
-               <div className="text-[11px] text-[#D4AF37] tracking-[0.8em] uppercase font-bold ">
-                 АНАЛІЗ БІОМЕТрИЧНОГО ВІДБИТКУ...
+               <div className="text-[9px] sm:text-[11px] text-[#D4AF37] tracking-[0.5em] sm:tracking-[0.8em] uppercase font-bold">
+                 АНАЛІЗ БІОМЕТРИЧНОГО ВІДБИТКУ...
                </div>
             </div>
           </div>
@@ -431,17 +431,17 @@ export const BootSequenceELITE: React.FC<{ onComplete: () => void }> = ({ onComp
         <div className="crt-overlay" />
         
         {/* CORNER DATA */}
-        <div className="absolute top-16 left-16 flex flex-col gap-4 z-50 opacity-60">
-           <div className="text-white font-black text-3xl tracking-[0.8em] italic filter ">
+        <div className="absolute top-4 left-4 sm:top-8 sm:left-8 lg:top-16 lg:left-16 flex flex-col gap-2 sm:gap-4 z-50 opacity-60">
+           <div className="text-white font-black text-lg sm:text-2xl lg:text-3xl tracking-[0.4em] sm:tracking-[0.8em] italic filter">
              PREDATOR <span className="text-[#D4AF37]">ELITE</span>
            </div>
-           <div className="h-[1px] w-96 bg-gradient-to-r from-[#D4AF37] to-transparent shadow-[0_0_10px_#D4AF37]" />
-           <div className="text-white/30 text-[10px] tracking-[1em] uppercase font-bold">Кластер_Абсолютного_Інтелекту // v60.0</div>
+           <div className="h-[1px] w-32 sm:w-64 lg:w-96 bg-gradient-to-r from-[#D4AF37] to-transparent shadow-[0_0_10px_#D4AF37]" />
+           <div className="text-white/30 text-[7px] sm:text-[10px] tracking-[0.6em] sm:tracking-[1em] uppercase font-bold">Кластер_Абсолютного_Інтелекту // v60.0</div>
         </div>
-        
-        <div className="absolute top-16 right-16 flex flex-col items-end gap-2 z-50 opacity-40 text-right">
-           <div className="text-[#D4AF37] font-black text-xs tracking-[1em] uppercase">ДОСТУП: ВЕ ХОВНИЙ_СУВЕ ЕН</div>
-           <div className="text-white/20 font-mono text-[9px] uppercase tracking-widest italic">НЕЙРОННИЙ_ЩИТ_АКТИВНИЙ // 2048-Q Шифрування</div>
+
+        <div className="absolute top-4 right-4 sm:top-8 sm:right-8 lg:top-16 lg:right-16 flex flex-col items-end gap-1 sm:gap-2 z-50 opacity-40 text-right">
+           <div className="text-[#D4AF37] font-black text-[8px] sm:text-xs tracking-[0.6em] sm:tracking-[1em] uppercase">ДОСТУП: ВЕХОВНИЙ_СУВЕРЕН</div>
+           <div className="text-white/20 font-mono text-[7px] sm:text-[9px] uppercase tracking-widest italic">НЕЙРОННИЙ_ЩИТ_АКТИВНИЙ // 2048-Q Шифрування</div>
         </div>
 
         <button 
@@ -450,20 +450,20 @@ export const BootSequenceELITE: React.FC<{ onComplete: () => void }> = ({ onComp
             sfx.playImpact();
             setTimeout(onComplete, 1000);
           }}
-          className="absolute bottom-32 right-16 px-6 py-2 border border-[#D4AF37]/30 text-[#D4AF37]/40 hover:text-[#D4AF37] hover:border-[#D4AF37] text-[10px] tracking-[0.4em] uppercase transition-all z-50 pointer-events-auto bg-black/50 "
+          className="absolute bottom-8 right-4 sm:bottom-16 sm:right-8 lg:bottom-32 lg:right-16 px-4 sm:px-6 py-2 border border-[#D4AF37]/30 text-[#D4AF37]/40 hover:text-[#D4AF37] hover:border-[#D4AF37] text-[9px] sm:text-[10px] tracking-[0.3em] sm:tracking-[0.4em] uppercase transition-all z-50 pointer-events-auto bg-black/50"
         >
          ПРОПУСТИТИ ЗАСТАВКУ
         </button>
       </div>
 
       {/* LEFT SIDE LOG STREAM */}
-      <div className="absolute inset-y-0 left-20 flex items-center z-40 pointer-events-none">
-        <motion.div 
+      <div className="absolute inset-y-0 left-4 sm:left-8 lg:left-20 flex items-center z-40 pointer-events-none">
+        <motion.div
           initial={{ opacity: 0, x: -100 }}
           animate={{ opacity: 1, x: 0 }}
-          className="border-l border-[#D4AF37]/20 pl-10 space-y-6"
+          className="border-l border-[#D4AF37]/20 pl-3 sm:pl-6 lg:pl-10 space-y-3 sm:space-y-6"
         >
-          <div className="text-[10px] text-[#D4AF37] font-black uppercase tracking-[0.6em] mb-12 italic opacity-40">Журнал_Ініціалізації_Системи:</div>
+          <div className="text-[8px] sm:text-[10px] text-[#D4AF37] font-black uppercase tracking-[0.4em] sm:tracking-[0.6em] mb-4 sm:mb-12 italic opacity-40">Журнал_Ініціалізації_Системи:</div>
           <div className="space-y-4">
             {bootLogs.map((log, i) => (
               <div key={i} className="text-[9px] font-mono text-white/20 tracking-[0.4em] flex items-center gap-5">
@@ -622,9 +622,9 @@ export const BootSequenceELITE: React.FC<{ onComplete: () => void }> = ({ onComp
       </AnimatePresence>
 
       {/* GLOBAL FOOTER SYNC TICKER */}
-      <div className="absolute bottom-0 w-full bg-black border-t border-[#D4AF37]/10 h-16 flex items-center overflow-hidden z-[70] px-20 shadow-[0_-30px_60px_rgba(0,0,0,0.8)]">
-        <div className="bg-[#050505] text-[#D4AF37] font-black px-10 h-full flex items-center tracking-[0.6em] text-[11px] border-r border-[#D4AF37]/30 skew-x-[-20deg] mr-16 shadow-[10px_0_30px_rgba(0,0,0,0.8)]">
-           ЦЕНТ АЛЬНЕ_ЯДРО_КИЇВ
+      <div className="absolute bottom-0 w-full bg-black border-t border-[#D4AF37]/10 h-12 sm:h-16 flex items-center overflow-hidden z-[70] px-4 sm:px-8 lg:px-20 shadow-[0_-30px_60px_rgba(0,0,0,0.8)]">
+        <div className="bg-[#050505] text-[#D4AF37] font-black px-3 sm:px-6 lg:px-10 h-full flex items-center tracking-[0.3em] sm:tracking-[0.6em] text-[9px] sm:text-[11px] border-r border-[#D4AF37]/30 skew-x-[-20deg] mr-4 sm:mr-8 lg:mr-16 shadow-[10px_0_30px_rgba(0,0,0,0.8)]">
+           ЦЕНТРАЛЬНЕ_ЯДРО_КИЇВ
         </div>
         <div className="flex animate-ticker whitespace-nowrap gap-32 text-white/20 font-mono text-[10px] tracking-[0.6em] items-center italic">
           {[...Array(5)].map((_, i) => (

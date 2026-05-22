@@ -149,10 +149,10 @@ export const LiveAgentTerminal: React.FC = () => {
             y: 0,
             height: isMinimized ? '60px' : '450px' 
           }}
-          exit={{ opacity: 0, scale: 0.95, y: 20 }}
+          exit={{ opacity: 0, x: 600, scale: 0.9, transition: { duration: 0.35, ease: 'easeInOut' } }}
           className={cn(
-            "fixed bottom-28 right-6 z-[100] w-[500px] overflow-hidden flex flex-col",
-            "bg-[#050505]/90  border border-white/10 rounded-[2.5rem]",
+            "fixed bottom-28 right-6 z-[100] w-full max-w-[500px] overflow-hidden flex flex-col",
+            "bg-[#050505]/90 border border-white/10 rounded-[2.5rem]",
             "shadow-[0_20px_50px_rgba(0,0,0,0.5),0_0_20px_rgba(244,63,94,0.1)] transition-all duration-500 group"
           )}
         >
