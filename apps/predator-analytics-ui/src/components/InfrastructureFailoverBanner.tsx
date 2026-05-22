@@ -21,12 +21,22 @@ export const InfrastructureFailoverBanner: React.FC = () => {
 
   const [isVisible, setIsVisible] = React.useState(false);
   const [lastMode, setLastMode] = React.useState(llmTriStateMode);
+  const [lastOfflineState, setLastOfflineState] = React.useState(isOffline);
+  const [userDismissed, setUserDismissed] = React.useState(false);
   const [debounceTimer, setDebounceTimer] = React.useState<NodeJS.Timeout | null>(null);
   const [, setIsColabOpen] = useAtom(colabPanelOpenAtom);
 
+  // Скидаємо userDismissed коли offline → online (щоб показати знову при наступному offline)
+  React.useEffect(() => {
+    if (!isOffline && lastOfflineState) {
+      setUserDismissed(false);
+    }
+    setLastOfflineState(isOffline);
+  }, [isOffline]);
+
   // Debounce: показувати банер тільки якщо автономний режим триває більше 3 секунд
   React.useEffect(() => {
-    if (isOffline) {
+    if (isOffline && !userDismissed) {
       // Якщо автономний режим — показуємо через 3 секунди
       if (debounceTimer) clearTimeout(debounceTimer);
       const timer = setTimeout(() => {
@@ -42,7 +52,7 @@ export const InfrastructureFailoverBanner: React.FC = () => {
     return () => {
       if (debounceTimer) clearTimeout(debounceTimer);
     };
-  }, [isOffline]);
+  }, [isOffline, userDismissed]);
 
   // Показувати знову, якщо змінився режим (наприклад, з SOVEREIGN на CLOUD)
   React.useEffect(() => {
@@ -107,7 +117,7 @@ export const InfrastructureFailoverBanner: React.FC = () => {
       >
         {/* Кнопка закриття — завжди видима */}
         <button
-          onClick={(e) => { e.stopPropagation(); setIsVisible(false); }}
+          onClick={(e) => { e.stopPropagation(); setIsVisible(false); setUserDismissed(true); }}
           className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-black border border-white/30 flex items-center justify-center text-white/70 hover:text-white hover:border-white/60 transition-all opacity-100 shadow-lg"
           title="Закрити"
         >
@@ -187,7 +197,7 @@ export const InfrastructureFailoverBanner: React.FC = () => {
         {/* Global Control Buttons — мінімалістичний індикатор */}
         <div className="flex gap-2 ml-4">
           <button
-            onClick={(e) => { e.stopPropagation(); setIsVisible(false); }}
+            onClick={(e) => { e.stopPropagation(); setIsVisible(false); setUserDismissed(true); }}
             className="w-10 h-10 bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl flex items-center justify-center transition-all group"
             title="Закрити банер"
           >
