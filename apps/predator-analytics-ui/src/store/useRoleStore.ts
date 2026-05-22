@@ -10,10 +10,13 @@ interface RoleState {
     displayName: string;
     description: string;
     isAdmin: boolean;
-    isPromo: boolean;
+    isTerminal: boolean;
     isPro: boolean;
-    isVIP: boolean;
+    isSovereign: boolean;
+    isCore: boolean;
     // Легасі-аліаси для зворотної сумісності
+    isPromo: boolean;
+    isVIP: boolean;
     isPremium: boolean;
     isBasic: boolean;
     isDRPO: boolean;
@@ -23,21 +26,24 @@ interface RoleState {
 export const useRoleStore = create<RoleState>((_set, _get) => ({
   getRoleData: () => {
     const user = useUserStore.getState().user;
-    const role = user?.role || UserRole.PROMO;
+    const role = user?.role || UserRole.TERMINAL;
 
     return {
       role,
       capabilities: ROLE_CAPABILITIES[role],
       displayName: ROLE_DISPLAY_NAMES[role],
       description: ROLE_DESCRIPTIONS[role],
-      isAdmin: role === UserRole.ADMIN,
-      isPromo: role === UserRole.PROMO,
+      isAdmin: role === UserRole.CORE,
+      isTerminal: role === UserRole.TERMINAL,
       isPro: role === UserRole.PRO,
-      isVIP: role === UserRole.VIP,
+      isSovereign: role === UserRole.SOVEREIGN,
+      isCore: role === UserRole.CORE,
       // Легасі-аліаси для зворотної сумісності
-      isPremium: role === UserRole.PRO || role === UserRole.VIP,
-      isBasic: role === UserRole.PROMO,
-      isDRPO: role === UserRole.VIP,
+      isPromo: role === UserRole.TERMINAL,
+      isVIP: role === UserRole.SOVEREIGN,
+      isPremium: role === UserRole.PRO || role === UserRole.SOVEREIGN,
+      isBasic: role === UserRole.TERMINAL,
+      isDRPO: role === UserRole.SOVEREIGN,
     };
   }
 }));
@@ -46,20 +52,23 @@ export const useRoleStore = create<RoleState>((_set, _get) => ({
 // Note: This needs to be a hook to subscribe to user state changes
 export const useRole = () => {
   const user = useUserStore((state) => state.user);
-  const role = user?.role || UserRole.PROMO;
+  const role = user?.role || UserRole.TERMINAL;
 
   return {
     role,
     capabilities: ROLE_CAPABILITIES[role],
     displayName: ROLE_DISPLAY_NAMES[role],
     description: ROLE_DESCRIPTIONS[role],
-    isAdmin: role === UserRole.ADMIN,
-    isPromo: role === UserRole.PROMO,
+    isAdmin: role === UserRole.CORE,
+    isTerminal: role === UserRole.TERMINAL,
     isPro: role === UserRole.PRO,
-    isVIP: role === UserRole.VIP,
+    isSovereign: role === UserRole.SOVEREIGN,
+    isCore: role === UserRole.CORE,
     // Легасі-аліаси для зворотної сумісності
-    isPremium: role === UserRole.PRO || role === UserRole.VIP,
-    isBasic: role === UserRole.PROMO,
-    isDRPO: role === UserRole.VIP,
+    isPromo: role === UserRole.TERMINAL,
+    isVIP: role === UserRole.SOVEREIGN,
+    isPremium: role === UserRole.PRO || role === UserRole.SOVEREIGN,
+    isBasic: role === UserRole.TERMINAL,
+    isDRPO: role === UserRole.SOVEREIGN,
   };
 };
