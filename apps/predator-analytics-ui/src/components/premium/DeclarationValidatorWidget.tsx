@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   FileCheck, FileWarning, UploadCloud,
-  CheckCircle2, AlertOctagon, ShieldCheck, Download
+  CheckCircle2, AlertOctagon, ShieldCheck, Download, Loader2
 } from 'lucide-react';
 import { cn } from '../../utils/cn';
 import { premiumLocales } from '../../locales/uk/premium';

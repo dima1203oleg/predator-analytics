@@ -14,7 +14,7 @@ import {
     Terminal, Play, CheckCircle2, XCircle, Code, Brain, RefreshCcw, Clock, Shield,
     Zap, ZapOff, Activity, ShieldAlert, Cpu,
     ChevronRight, ArrowRight, Target, Share2, Maximize2,
-    Lock, Unlock, Bot, Search, Boxes, Network
+    Lock, Unlock, Bot, Search, Boxes, Network, Loader2
 } from 'lucide-react';
 import { api } from '../services/api';
 import { HoloContainer } from './HoloContainer';

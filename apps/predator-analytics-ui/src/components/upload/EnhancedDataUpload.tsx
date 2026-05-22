@@ -3,7 +3,7 @@ import React, { useState, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Upload, FileText, X, Check, AlertCircle,
-  File, FileSpreadsheet, Image, Archive, Cloud, Database
+  File, FileSpreadsheet, Image, Archive, Cloud, Database, Loader2
 } from 'lucide-react';
 
 // ============================================================================

@@ -12,7 +12,7 @@ import {
   Eye, EyeOff, Lock, Unlock, Undo, Redo, Copy,
   Maximize2, Play, Pause, RefreshCw, Sparkles,
   Layout, PanelLeft, PanelLeftClose, ChevronDown,
-  Crown, FileText, ArrowRight
+  Crown, FileText, ArrowRight, Loader2
 } from 'lucide-react';
 import {
   WidgetConfig, WidgetData, DashboardTemplate, SavedDashboard,
