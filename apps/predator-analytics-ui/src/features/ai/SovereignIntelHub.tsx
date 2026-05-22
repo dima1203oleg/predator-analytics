@@ -44,29 +44,7 @@ export default function SovereignIntelHub() {
         { role: 'system', content: `СУВЕРЕННИЙ ІНТЕЛЕКТ PREDATOR GLM-5.1 АКТИВОВАНО. Зв'язок через ${isOffline ? 'ЛОКАЛЬНИЙ ЕМУЛЯТО ' : 'ZROK тунель'}: ВСТАНОВЛЕНО.` }
     ]);
 
-    useEffect(() => {
-        if (isOffline) {
-            window.dispatchEvent(new CustomEvent('predator-error', {
-                detail: {
-                    service: 'SovereignHub',
-                    message: 'AI Хаб перейшов у режим обмеженої когнітивної функціональності (LOCAL_CORE). ZROK-зв’язок втрачено.',
-                    severity: 'warning',
-                    timestamp: new Date().toISOString(),
-                    code: 'LOCAL_CORE'
-                }
-            }));
-        } else {
-            window.dispatchEvent(new CustomEvent('predator-error', {
-                detail: {
-                    service: 'SovereignHub',
-                    message: 'СИНХРОНІЗАЦІЯ З ОРАКУЛОМ УСПІШНА (SOVEREIGN_SUCCESS). Прямий доступ до NVIDIA-кластера.',
-                    severity: 'info',
-                    timestamp: new Date().toISOString(),
-                    code: 'SOVEREIGN_SUCCESS'
-                }
-            }));
-        }
-    }, [isOffline]);
+    // Нав'язливі toast-повідомлення видалено (HR-04 compliant)
 
     const [input, setInput] = useState('');
     const scrollRef = useRef<HTMLDivElement>(null);

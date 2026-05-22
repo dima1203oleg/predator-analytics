@@ -28,6 +28,7 @@ import {
   TrendingUp,
   Wrench,
   Zap,
+  Loader2,
 } from 'lucide-react';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { TacticalCard } from '@/components/ui/TacticalCard';
@@ -284,19 +285,7 @@ export default function AutoFactoryView() {
         });
       } else if (!silent) {
         setFeedback(null);
-        
-        // ЕЛІТ-діагностика: успішна синхронізація Автозаводу
-        window.dispatchEvent(new CustomEvent('predator-error', {
-          detail: {
-            service: 'AI_AutoFactory',
-            message: backendStatus.isOffline 
-              ? 'Автозавод синхронізовано через автономний MIRROR-вузол.' 
-              : 'Автозавод успішно підключено до центральних виробничих ліній.',
-            severity: 'info',
-            timestamp: new Date().toISOString(),
-            code: backendStatus.isOffline ? 'FACTORY_OFFLINE' : 'FACTORY_SUCCESS'
-          }
-        }));
+        // Toast видалено — тихий fallback (HR-04 compliant)
       }
     } catch (error) {
       console.error('[AutoFactoryView] Не вдалося завантажити дані:', error);

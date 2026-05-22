@@ -265,19 +265,7 @@ const EnginesView: React.FC = () => {
         setAnimKey(k => k + 1);
     };
 
-    useEffect(() => {
-        if (isOffline) {
-            window.dispatchEvent(new CustomEvent('predator-error', {
-                detail: {
-                    service: 'EnginesMatrix',
-                    message: 'ПОМИЛКА ЗВ’ЯЗКУ З КЛАСТЕРОМ GPU (ENGINES_OFFLINE). Перехід на локальні когнітивні копії.',
-                    severity: 'warning',
-                    timestamp: new Date().toISOString(),
-                    code: 'ENGINES_OFFLINE'
-                }
-            }));
-        }
-    }, [isOffline]);
+    // Нав'язливі toast-повідомлення видалено (HR-04 compliant)
 
     // ECharts Options
     const gaugeOption = useMemo(() => ({

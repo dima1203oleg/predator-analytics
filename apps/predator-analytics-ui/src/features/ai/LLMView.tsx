@@ -28,29 +28,7 @@ const LLMView: React.FC = () => {
     const metrics = useSystemMetrics();
     const toast = useToast();
 
-    useEffect(() => {
-        if (isOffline) {
-            window.dispatchEvent(new CustomEvent('predator-error', {
-                detail: {
-                    service: 'LLM_Nexus',
-                    message: 'ПОМИЛКА ЗВ’ЯЗКУ З ЦЕНТ АЛЬНИМ ШІ (LLM_OFFLINE). Активовано локальний висновок.',
-                    severity: 'warning',
-                    timestamp: new Date().toISOString(),
-                    code: 'LLM_OFFLINE'
-                }
-            }));
-        } else {
-            window.dispatchEvent(new CustomEvent('predator-error', {
-                detail: {
-                    service: 'LLM_Nexus',
-                    message: 'ШІ-ЯДРО СИНХ ОНІЗОВАНО (LLM_SUCCESS). Доступний повний контекст NVIDIA.',
-                    severity: 'info',
-                    timestamp: new Date().toISOString(),
-                    code: 'LLM_SUCCESS'
-                }
-            }));
-        }
-    }, [isOffline]);
+    // Нав'язливі toast-повідомлення видалено (HR-04 compliant)
     const [activeTab, setActiveTab] = useState<LLMTab>('INFERENCE');
     const [activeModel, setActiveModel] = useState('llama3-70b-v45');
 

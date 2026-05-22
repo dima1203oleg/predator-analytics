@@ -25,6 +25,7 @@ import {
     Binary,
     Layers,
     History as HistoryIcon,
+    Loader2,
 } from 'lucide-react';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { CyberGrid } from '@/components/CyberGrid';
@@ -160,18 +161,7 @@ export default function ModelTrainingView() {
                 setFeedbackMessage('Центр навчання: Системна відмова синхронізації ML-вузла.');
             } else if (!silent) {
                 setFeedbackMessage(null);
-                
-                window.dispatchEvent(new CustomEvent('predator-error', {
-                    detail: {
-                        service: 'AI_ModelTraining',
-                        message: backendStatus.isOffline 
-                            ? 'Синхронізація з локальним ML-ядром (MIRROR_VRAM_SAFE).' 
-                            : 'ML-контур підключено до NVIDIA MASTER CLUSTER.',
-                        severity: 'info',
-                        timestamp: new Date().toISOString(),
-                        code: backendStatus.isOffline ? 'TRAINING_OFFLINE' : 'TRAINING_SUCCESS'
-                    }
-                }));
+                // Toast видалено — тихий fallback (HR-04 compliant)
             }
         } catch (error) {
             setFeedbackTone('amber');

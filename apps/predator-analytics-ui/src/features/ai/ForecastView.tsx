@@ -43,29 +43,7 @@ const ForecastView: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [monthsAhead, setMonthsAhead] = useState(6);
 
-    useEffect(() => {
-        if (isOffline) {
-            window.dispatchEvent(new CustomEvent('predator-error', {
-                detail: {
-                    service: 'Forecast_Engine',
-                    message: 'ПОМИЛКА ЗВ’ЯЗКУ ЗПРЕДИКТИВНИМ ЯДРОМ (FORECAST_OFFLINE). Використовуються локальні моделі прогнозування.',
-                    severity: 'warning',
-                    timestamp: new Date().toISOString(),
-                    code: 'FORECAST_OFFLINE'
-                }
-            }));
-        } else {
-            window.dispatchEvent(new CustomEvent('predator-error', {
-                detail: {
-                    service: 'Forecast_Engine',
-                    message: 'ПрЕДИКТИВНЕ ЯДРО СИНХ ОНІЗОВАНО (FORECAST_SUCCESS). Прогнози базуються на даних NVIDIA Titan.',
-                    severity: 'info',
-                    timestamp: new Date().toISOString(),
-                    code: 'FORECAST_SUCCESS'
-                }
-            }));
-        }
-    }, [isOffline]);
+    // Нав'язливі toast-повідомлення видалено (HR-04 compliant)
 
     const fetchForecast = async () => {
         try {

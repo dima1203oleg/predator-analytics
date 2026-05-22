@@ -164,29 +164,7 @@ const SystemVerificationSuite: React.FC = () => {
   const [jobId, setJobId] = useState<string | null>(null);
   const { isOffline, nodeSource, sourceLabel, activeFailover, healingProgress } = useBackendStatus();
 
-  useEffect(() => {
-    if (isOffline) {
-       window.dispatchEvent(new CustomEvent('predator-error', {
-          detail: {
-            service: 'VerificationCitadel',
-            message: `КрИТИЧНА ПОМИЛКА: Вузол ${nodeSource} недоступний. Автоматичне перемикання на FAILOVER (NODE_OFFLINE).`,
-            severity: 'critical',
-            timestamp: new Date().toISOString(),
-            code: 'NODE_OFFLINE'
-          }
-       }));
-    } else {
-       window.dispatchEvent(new CustomEvent('predator-error', {
-          detail: {
-            service: 'VerificationCitadel',
-            message: `ЦИТАДЕЛЬ_ВЕ ИФІКАЦІЇ [${nodeSource}]: Зв'язок з ядром встановлено. Системи цілісності в нормі.`,
-            severity: 'info',
-            timestamp: new Date().toISOString(),
-            code: 'VERIFICATION_SUCCESS'
-          }
-       }));
-    }
-  }, [isOffline, nodeSource]);
+  // Нав'язливі toast-повідомлення видалено (HR-04 compliant)
 
   const [storageChecks, setStorageChecks] = useState<StorageCheck[]>([
     { id: 'minio', name: 'S3 MinIO Cluster', type: 'minio', status: 'checking', count: 0, details: 'Raw Object Store', color: '#f43f5e' },

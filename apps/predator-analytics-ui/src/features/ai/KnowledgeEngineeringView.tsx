@@ -51,29 +51,7 @@ export const KnowledgeEngineeringView: React.FC = () => {
   const [costs, setCosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (isOffline) {
-      window.dispatchEvent(new CustomEvent('predator-error', {
-        detail: {
-          service: 'Knowledge_Engineering',
-          message: 'ПОМИЛКА ЗВ’ЯЗКУ З ІНЖЕНЕ НИМ КОНТУ ОМ (KNOWLEDGE_OFFLINE). Активовано локальний кеш правил.',
-          severity: 'warning',
-          timestamp: new Date().toISOString(),
-          code: 'KNOWLEDGE_OFFLINE'
-        }
-      }));
-    } else {
-      window.dispatchEvent(new CustomEvent('predator-error', {
-        detail: {
-          service: 'Knowledge_Engineering',
-          message: 'ІНЖЕНЕ НИЙ КОНТУ  СИНХ ОНІЗОВАНО (KNOWLEDGE_SUCCESS). Дані валідації актуальні.',
-          severity: 'info',
-          timestamp: new Date().toISOString(),
-          code: 'KNOWLEDGE_SUCCESS'
-        }
-      }));
-    }
-  }, [isOffline]);
+  // Нав'язливі toast-повідомлення видалено (HR-04 compliant)
 
   useEffect(() => {
     const fetchData = async () => {

@@ -55,19 +55,7 @@ export default function WarRoomView() {
 
   const { isOffline, nodeSource, healingProgress, activeFailover } = useBackendStatus();
 
-  useEffect(() => {
-    if (isOffline) {
-      window.dispatchEvent(new CustomEvent('predator-error', {
-        detail: {
-          service: 'WarRoom',
-          message: 'АКТИВОВАНО РЕЖИМ СИТУАЦІЙНОГО ВІДКЛЮЧЕННЯ (WAR_ROOM_ALPHA). Дані агрегуються з MIRROR-вузлів.',
-          severity: 'error',
-          timestamp: new Date().toISOString(),
-          code: 'WAR_ROOM_ALPHA'
-        }
-      }));
-    }
-  }, [isOffline]);
+  // Нав'язливі toast-повідомлення видалено (HR-04 compliant)
 
   return (
     <PageTransition>
