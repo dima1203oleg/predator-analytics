@@ -51,19 +51,7 @@ export default function ComprompatPersonView() {
   const [result, setResult] = useState<DossierResult | null>(null);
   const { isOffline, nodeSource, activeFailover, healingProgress } = useBackendStatus();
 
-  useEffect(() => {
-    if (isOffline) {
-       window.dispatchEvent(new CustomEvent('predator-error', {
-          detail: {
-            service: 'PersonalIntel',
-            message: 'АКТИВОВАНО РЕЖИМ ЛОКАЛЬНОГО ТРАСУВАННЯ (PERSON_OFFLINE). Синхронізація з центральним реєстром призупинена.',
-            severity: 'warning',
-            timestamp: new Date().toISOString(),
-            code: 'PERSON_OFFLINE'
-          }
-       }));
-    }
-  }, [isOffline]);
+  // Нав'язливі toast-повідомлення видалено (HR-04 compliant)
 
   const regions = [
     'Київська', 'Харківська', 'Одеська', 'Львівська', 'Дніпропетровська',

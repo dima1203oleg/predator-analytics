@@ -183,30 +183,7 @@ const EntityRadarView: React.FC = () => {
     loadRadar();
   }, [isOffline]);
 
-  useEffect(() => {
-    if (isOffline) {
-      // Видалимо нав'язливе повідомлення про автономний режим
-      // window.dispatchEvent(new CustomEvent('predator-error', {
-      //   detail: {
-      //     service: 'EntityRadar',
-      //     message: ' АДА  СУБ\'ЄКТІВ: Активовано автономний режим (ENTITY_RADAR_NODES). Використовується локальна база радарних виявлень.',
-      //     severity: 'warning',
-      //     timestamp: new Date().toISOString(),
-      //     code: 'RADAR_OFFLINE'
-      //   }
-      // }));
-    }
-
-    window.dispatchEvent(new CustomEvent('predator-error', {
-      detail: {
-        service: 'EntityRadar',
-        message: `РАДАР-МАТРИЦЯ [${nodeSource}]: Радар суб'єктів активовано. Готовність до сканування контуру GDS.`,
-        severity: 'info',
-        timestamp: new Date().toISOString(),
-        code: 'RADAR_SUCCESS'
-      }
-    }));
-  }, [isOffline, nodeSource]);
+  // Нав'язливі toast-повідомлення видалено (HR-04 compliant)
 
   const loadRadar = async () => {
     setLoading(true);
@@ -215,23 +192,14 @@ const EntityRadarView: React.FC = () => {
       const res = api.premium?.getCompetitorRadar ? await api.premium.getCompetitorRadar() : { data: [] };
       const data = Array.isArray(res) ? res : (res?.data || []);
       setEntities(data);
-      
-      window.dispatchEvent(new CustomEvent('predator-error', {
-        detail: {
-          service: 'EntityRadar',
-          message: `СЕРВЕР_РАДАРА [${nodeSource}]: Топологію ризику для ${data.length} об'єктів успішно синхронізовано.`,
-          severity: 'info',
-          timestamp: new Date().toISOString(),
-          code: 'RADAR_SUCCESS'
-        }
-      }));
+      // Success toast видалено — тихий fallback (HR-04 compliant)
     } catch (e) {
       console.error("Radar load error", e);
       setEntities([]);
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'EntityRadar',
-          message: `КрИТИЧНА ПОМИЛКА СКАНУВАННЯ ВУЗЛА ENTITY_RADAR_NODES. Перевірте з'єднання з ${nodeSource}.`,
+          message: `КРИТИЧНА ПОМИЛКА СКАНУВАННЯ ВУЗЛА ENTITY_RADAR_NODES. Перевірте з'єднання з ${nodeSource}.`,
           severity: 'critical',
           timestamp: new Date().toISOString(),
           code: 'ENTITY_RADAR_NODES'
