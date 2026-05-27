@@ -24,7 +24,7 @@ const NODE_URLS: Record<string, string> = {
     [NODE_IDS.LOCAL]:     '/api/v1',                                                                    // Vite proxy → iMac:8000
     [NODE_IDS.SOVEREIGN]: 'http://178.214.200.25:8000/api/v1',
     [NODE_IDS.HYBRID]:    'http://194.177.1.240:8000/api/v1',
-    [NODE_IDS.CLOUD]:     'https://dayton-developers-politics-enters.trycloudflare.com/api/v1',  // Kaggle CPU Backend v64.0 with SQLite
+    [NODE_IDS.CLOUD]:     'https://frozen-appeared-interracial-southern.trycloudflare.com/api/v1',  // Kaggle CPU Backend v65.0-ELITE with SQLite
     // MOCK disabled for production mode
 };
 
