@@ -29,6 +29,7 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sess
 import aiosqlite
 from jose import JWTError, jwt
 from passlib.context import CryptContext
+import hashlib
 
 # Налаштування
 SECRET_KEY = "predator-super-secret-key-change-in-production"
@@ -41,8 +42,15 @@ engine = create_async_engine(DATABASE_URL, echo=False)
 async_session = async_sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 Base = declarative_base()
 
-# Password hashing
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# Password hashing - простий hashlib для уникнення проблем з bcrypt версіями
+def get_password_hash(password: str) -> str:
+    """Просте хешування пароля з salt"""
+    salt = "predator-salt-v65"
+    return hashlib.sha256((password + salt).encode()).hexdigest()
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    """Перевірка пароля"""
+    return get_password_hash(plain_password) == hashed_password
 
 # Моделі бази даних
 class Company(Base):
@@ -97,12 +105,6 @@ app.add_middleware(
 )
 
 # ==================== УТІЛІТИ АУТЕНТИФІКАЦІЇ ====================
-
-def verify_password(plain_password, hashed_password):
-    return pwd_context.verify(plain_password, hashed_password)
-
-def get_password_hash(password):
-    return pwd_context.hash(password)
 
 def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()
