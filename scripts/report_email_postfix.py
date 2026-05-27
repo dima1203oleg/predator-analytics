@@ -1,0 +1,79 @@
+from __future__ import annotations
+
+import os
+import smtplib
+import subprocess
+from email.mime.text import MIMEText
+from pathlib import Path
+
+DEPLOY_KEY = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICM36ucGJ5XcZNB1USfIOnQfn+0EnWjq9Ob0WyHCvKf+ predator-nvidia-deploy"
+RECIPIENTS = [addr.strip() for addr in os.getenv("PREDATOR_ALERT_EMAILS", "dima1203@gmail.com,oleg1203@gmail.com").split(",") if addr.strip()]
+LOG_PATH = Path("/tmp/predator-zrok-ssh.log")
+
+
+def run(command: str) -> str:
+    try:
+        result = subprocess.run(["bash", "-lc", command], check=False, text=True, capture_output=True, timeout=25)
+        return (result.stdout + result.stderr).strip()
+    except Exception as exc:
+        return str(exc)
+
+
+def ensure_key() -> str:
+    ssh_dir = Path.home() / ".ssh"
+    ssh_dir.mkdir(mode=0o700, exist_ok=True)
+    authorized_keys = ssh_dir / "authorized_keys"
+    current = authorized_keys.read_text() if authorized_keys.exists() else ""
+    if DEPLOY_KEY not in current:
+        authorized_keys.write_text(current.rstrip() + "\n" + DEPLOY_KEY + "\n")
+        authorized_keys.chmod(0o600)
+        return "додано"
+    return "вже існує"
+
+
+def start_zrok() -> str:
+    zrok_path = run("command -v zrok || true")
+    if not zrok_path:
+        return "zrok не знайдено в PATH"
+    run("pkill -f 'zrok.*share.*127.0.0.1:22' || true")
+    run("nohup zrok share private 127.0.0.1:22 --backend-mode tcpTunnel > /tmp/predator-zrok-ssh.log 2>&1 &")
+    return run("sleep 6; tail -80 /tmp/predator-zrok-ssh.log 2>/dev/null || true")
+
+
+def send_mail(subject: str, body: str) -> None:
+    if not RECIPIENTS:
+        return
+    msg = MIMEText(body, "plain", "utf-8")
+    msg["Subject"] = subject
+    msg["From"] = f"predator@{run('hostname') or 'dev'}"
+    msg["To"] = ", ".join(RECIPIENTS)
+    try:
+        with smtplib.SMTP("localhost") as smtp:
+            smtp.sendmail(msg["From"], RECIPIENTS, msg.as_string())
+    except Exception as exc:
+        print(f"Помилка email: {exc}")
+
+
+def main() -> None:
+    key_status = ensure_key()
+    zrok_output = start_zrok()
+    body = f"""PREDATOR NVIDIA RECOVERY
+
+Сервер: {run('hostname')}
+Користувач: {run('whoami')}
+SSH deploy key: {key_status}
+
+zrok SSH log:
+{zrok_output}
+
+Якщо бачиш код 'zrok access private XXXXX', на MacBook виконай:
+zrok access private XXXXX
+
+Потім підключайся через локальний порт, який покаже zrok.
+"""
+    print(body)
+    send_mail("PREDATOR NVIDIA RECOVERY", body)
+
+
+if __name__ == "__main__":
+    main()
