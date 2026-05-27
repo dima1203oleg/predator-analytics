@@ -1,0 +1,69 @@
+name: NVIDIA Recovery zrok SSH
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  recovery-zrok:
+    name: Відновити zrok SSH на NVIDIA runner
+    runs-on: [self-hosted, linux, x64]
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Підготувати SSH ключ доступу
+        shell: bash
+        run: |
+          set -euo pipefail
+          DEPLOY_KEY="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICM36ucGJ5XcZNB1USfIOnQfn+0EnWjq9Ob0WyHCvKf+ predator-nvidia-deploy"
+          mkdir -p "$HOME/.ssh"
+          chmod 700 "$HOME/.ssh"
+          touch "$HOME/.ssh/authorized_keys"
+          grep -qF "$DEPLOY_KEY" "$HOME/.ssh/authorized_keys" || echo "$DEPLOY_KEY" >> "$HOME/.ssh/authorized_keys"
+          chmod 600 "$HOME/.ssh/authorized_keys"
+
+      - name: Запустити zrok SSH tunnel
+        shell: bash
+        run: |
+          set -euo pipefail
+          command -v zrok
+          pkill -f 'zrok.*share.*127.0.0.1:22' 2>/dev/null || true
+          nohup zrok share private 127.0.0.1:22 --backend-mode tcpTunnel > /tmp/predator-nvidia-zrok.log 2>&1 &
+          sleep 8
+          cat /tmp/predator-nvidia-zrok.log
+          TOKEN=$(grep -oE 'zrok access private [a-zA-Z0-9]+' /tmp/predator-nvidia-zrok.log | tail -1 | awk '{print $4}')
+          if [ -z "$TOKEN" ]; then
+            echo "Не вдалося отримати zrok token"
+            exit 1
+          fi
+          echo "ZROK_TOKEN=$TOKEN" >> "$GITHUB_ENV"
+          echo "Команда для MacBook: zrok access private $TOKEN"
+
+      - name: Надіслати recovery повідомлення в Telegram
+        shell: bash
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_ADMIN_ID: ${{ secrets.TELEGRAM_ADMIN_ID }}
+        run: |
+          set -euo pipefail
+          if [ -z "${TELEGRAM_BOT_TOKEN:-}" ]; then
+            echo "TELEGRAM_BOT_TOKEN не задано — пропускаю Telegram повідомлення"
+            exit 0
+          fi
+          CHAT_ID="${TELEGRAM_ADMIN_ID:-1020504147}"
+          MSG="🦅 PREDATOR NVIDIA Recovery%0A%0AКоманда для MacBook:%0A%60zrok access private ${ZROK_TOKEN}%60%0A%0AПісля запуску zrok access скопіюй локальний порт сюди."
+          curl -fsS -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            -d "chat_id=${CHAT_ID}" \
+            -d "text=${MSG}" \
+            -d "parse_mode=Markdown" || true
+
+      - name: Тримати tunnel активним
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Tunnel active. Команда: zrok access private ${ZROK_TOKEN}"
+          sleep 3300
