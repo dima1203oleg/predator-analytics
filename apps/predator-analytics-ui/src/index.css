@@ -2027,3 +2027,81 @@ tbody tr:hover {
   transform: translateY(-2px);
 }
 
+/* ── THERMAL HOVER EFFECT v65.0 ── */
+.thermal-hover {
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  position: relative;
+  overflow: hidden;
+}
+.thermal-hover::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.12), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+.thermal-hover:hover {
+  border-color: rgba(245, 158, 11, 0.35);
+  box-shadow: 0 8px 32px rgba(245, 158, 11, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  transform: translateY(-1px);
+}
+.thermal-hover:hover::before {
+  opacity: 1;
+}
+
+/* ── GLASS THERMAL CARD ── */
+.glass-thermal {
+  background: rgba(5, 5, 5, 0.85);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  position: relative;
+  overflow: hidden;
+}
+.glass-thermal::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent 45%, rgba(245, 158, 11, 0.04) 50%, transparent 55%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+.glass-thermal:hover {
+  border-color: rgba(245, 158, 11, 0.25);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.7), 0 0 20px rgba(245, 158, 11, 0.08);
+  transform: translateY(-2px);
+}
+.glass-thermal:hover::after {
+  opacity: 1;
+  animation: thermal-sweep 2s linear infinite;
+}
+@keyframes thermal-sweep {
+  0% { transform: translate(-30%, -30%) rotate(0deg); }
+  100% { transform: translate(30%, 30%) rotate(360deg); }
+}
+
+/* ── GRID GLOW BACKGROUND ── */
+.grid-glow {
+  background-image:
+    linear-gradient(rgba(225, 29, 72, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(225, 29, 72, 0.06) 1px, transparent 1px);
+  background-size: 40px 40px;
+  position: relative;
+}
+.grid-glow::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(225, 29, 72, 0.06) 0%, transparent 40%);
+  pointer-events: none;
+  z-index: 0;
+}
+

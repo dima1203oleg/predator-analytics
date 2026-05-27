@@ -37,6 +37,7 @@ export const LEGACY_ROLE_MAP: Record<string, UserRole> = {
   admin: UserRole.CORE,
   commander: UserRole.CORE,
   core: UserRole.CORE,
+  tech_admin: UserRole.CORE,
 
   // Sovereign (VIP / Elite)
   vip: UserRole.SOVEREIGN,
@@ -44,6 +45,7 @@ export const LEGACY_ROLE_MAP: Record<string, UserRole> = {
   client_drpo: UserRole.SOVEREIGN,
   investigator: UserRole.SOVEREIGN,
   drpo: UserRole.SOVEREIGN,
+  vip_client: UserRole.SOVEREIGN,
 
   // Pro (Premium / Analyst)
   pro: UserRole.PRO,
@@ -64,6 +66,7 @@ export const LEGACY_ROLE_MAP: Record<string, UserRole> = {
   ceo: UserRole.TERMINAL,
   owner: UserRole.TERMINAL,
   promo: UserRole.TERMINAL,
+  standard_client: UserRole.TERMINAL,
 };
 
 /** Перетворює будь-яку legacy роль у канонічну PREDATOR ELITE роль */

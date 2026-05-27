@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { UserRole } from '../config/roles';
+import { UserRole, resolveUserRole } from '../config/roles';
 export { UserRole };
 
 // ============================================================================
@@ -57,13 +57,47 @@ interface UserContextType {
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
+function decodeTokenPayload(token: string): any | null {
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload;
+  } catch {
+    return null;
+  }
+}
+
+function buildUserFromToken(token: string): UserProfile | null {
+  const payload = decodeTokenPayload(token);
+  if (!payload) return null;
+  const rawRole = payload.role || payload.rol || 'terminal';
+  const resolvedRole = resolveUserRole(rawRole);
+  return {
+    id: payload.sub || payload.user_id || 'unknown',
+    name: payload.full_name || payload.name || rawRole,
+    email: payload.email || '',
+    role: resolvedRole,
+    tier: resolvedRole === UserRole.CORE ? SubscriptionTier.ENTERPRISE
+      : resolvedRole === UserRole.SOVEREIGN ? SubscriptionTier.PRO
+      : SubscriptionTier.FREE,
+    tenant_id: payload.tenant_id || 'default',
+    tenant_name: payload.tenant_name || 'PREDATOR',
+    last_login: new Date().toISOString(),
+    data_sectors: payload.data_sectors || [],
+  };
+}
+
 export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUserState] = useState<UserProfile | null>(null);
+  const [user, setUserState] = useState<UserProfile | null>(() => {
+    const token = localStorage.getItem('token') || sessionStorage.getItem('predator_auth_token');
+    if (token && token.includes('.')) {
+      return buildUserFromToken(token);
+    }
+    return null;
+  });
   const [isLoading, setIsLoading] = useState(false);
 
   const setUser = (newUser: UserProfile) => {
     setUserState(newUser);
-    // Simple mock token
     sessionStorage.setItem('predator_auth_token', newUser.role === UserRole.CORE ? 'core-token' : 'user-token');
   };
 

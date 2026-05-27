@@ -72,9 +72,10 @@ const ChatBot = () => {
   };
 
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="wait">
       {!isOpen && (
         <motion.button
+          key="chat-fab"
           initial={{ opacity: 0, scale: 0.82, y: 18 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.82, y: 18 }}
@@ -90,24 +91,28 @@ const ChatBot = () => {
       )}
 
       {isOpen && (
-        <>
-          <motion.button
-            type="button"
-            aria-label="Закрити панель ШІ"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setIsOpen(false)}
-            className="fixed inset-0 z-40 cursor-default bg-black/50 backdrop-blur-sm"
-          />
-          <motion.div
-            ref={panelRef}
-            initial={{ opacity: 0, x: 120, scale: 0.96 }}
-            animate={{ opacity: 1, x: 0, scale: 1 }}
-            exit={{ opacity: 0, x: 120, scale: 0.96 }}
-            transition={{ type: 'spring', stiffness: 240, damping: 28 }}
-            className="fixed bottom-8 right-8 z-50 flex h-[min(600px,calc(100vh-5rem))] w-[min(400px,calc(100vw-2rem))] origin-bottom-right flex-col overflow-hidden rounded-3xl border border-red-500/20 bg-slate-950/90 shadow-2xl shadow-black/70 backdrop-blur-2xl"
-          >
+        <motion.button
+          key="chat-backdrop"
+          type="button"
+          aria-label="Закрити панель ШІ"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={() => setIsOpen(false)}
+          className="fixed inset-0 z-40 cursor-default bg-black/50 backdrop-blur-sm"
+        />
+      )}
+
+      {isOpen && (
+        <motion.div
+          key="chat-panel"
+          ref={panelRef}
+          initial={{ opacity: 0, x: 120, scale: 0.96 }}
+          animate={{ opacity: 1, x: 0, scale: 1 }}
+          exit={{ opacity: 0, x: 120, scale: 0.96 }}
+          transition={{ type: 'spring', stiffness: 240, damping: 28 }}
+          className="fixed bottom-8 right-8 z-50 flex h-[min(600px,calc(100vh-5rem))] w-[min(400px,calc(100vw-2rem))] origin-bottom-right flex-col overflow-hidden rounded-3xl border border-red-500/20 bg-slate-950/90 shadow-2xl shadow-black/70 backdrop-blur-2xl"
+        >
         {/* Header */}
         <div className="p-5 border-b border-white/5 flex items-center justify-between bg-primary/10 rounded-t-3xl ">
           <div className="flex items-center gap-3">
@@ -209,7 +214,6 @@ const ChatBot = () => {
           </div>
         </div>
           </motion.div>
-        </>
       )}
     </AnimatePresence>
   );

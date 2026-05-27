@@ -422,7 +422,7 @@ export const BootSequenceELITE: React.FC<{ onComplete: () => void }> = ({ onComp
   }, [phase]);
 
   return (
-    <div className={`fixed inset-0 z-[99999] bg-[#010101] flex items-center justify-center overflow-hidden px-4 py-6 font-mono select-none sm:px-8 ${matchLine ? 'animate-subtle-shake' : ''}`}>
+    <div className={`fixed inset-0 z-[99999] bg-[#010101] flex items-center justify-center overflow-hidden px-4 py-0 font-mono select-none sm:px-8 ${matchLine ? 'animate-subtle-shake' : ''}`}>
       <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }} />
       
       {/* HUD OVERLAYS */}
@@ -488,13 +488,13 @@ export const BootSequenceELITE: React.FC<{ onComplete: () => void }> = ({ onComp
         )}
 
         {phase === 1 && (
-          <motion.div 
+          <motion.div
             key="logo"
             initial={{ opacity: 0, scale: 0.8, filter: 'blur(40px)' }}
             animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
             exit={{ opacity: 0, filter: 'blur(50px)', scale: 1.1 }}
             transition={{ duration: 4, ease: "easeOut" }}
-            className="flex w-full max-w-[92vw] flex-col items-center justify-center z-10 text-center"
+            className="flex h-full w-full max-w-[92vw] flex-col items-center justify-center z-10 text-center"
           >
             <div className="mb-10 brightness-150 filter sm:mb-16">
                <GeometricRaptor className="h-[min(28vmin,14rem)] w-[min(28vmin,14rem)] text-[#D4AF37]" />
@@ -598,11 +598,11 @@ export const BootSequenceELITE: React.FC<{ onComplete: () => void }> = ({ onComp
         {/* Phase 2.5 removal: directly to final phase */}
 
         {phase === 3 && (
-          <motion.div 
+          <motion.div
             key="final"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="flex w-full max-w-[92vw] flex-col items-center justify-center z-10 text-center"
+            className="flex h-full w-full max-w-[92vw] flex-col items-center justify-center z-10 text-center"
           >
             <div className="relative max-w-full overflow-hidden border-[0.5px] border-[#D4AF37]/30 bg-black p-[clamp(2.5rem,8vmin,12rem)]">
                <motion.div 
