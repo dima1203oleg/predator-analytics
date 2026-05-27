@@ -4,8 +4,8 @@ import asyncio
 import shlex
 from typing import Any
 
-from libs.core.governance import OperationalPolicy
-from libs.core.logger import setup_logger
+from app.libs.core.governance import OperationalPolicy
+from app.libs.core.logger import setup_logger
 
 logger = setup_logger("predator.agents.ops")
 

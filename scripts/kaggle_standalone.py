@@ -17,7 +17,10 @@ from uuid import uuid4
 from fastapi import FastAPI, BackgroundTasks, APIRouter, HTTPException, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from qdrant_client import QdrantClient
+try:
+    from qdrant_client import QdrantClient
+except ModuleNotFoundError:
+    QdrantClient = None
 
 # --- [1] КЕРУВАННЯ РЕСУРСАМИ ---
 class Sentinel:

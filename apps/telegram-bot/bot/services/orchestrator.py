@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from libs.agents.core import TrinityCore
+from app.libs.agents.core import TrinityCore
 
 from bot.config import settings
 from bot.services.agents.aider_agent import AiderAgent

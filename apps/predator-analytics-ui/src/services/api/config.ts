@@ -21,10 +21,10 @@ export const NODE_IDS = {
 } as const;
 
 const NODE_URLS: Record<string, string> = {
-    [NODE_IDS.LOCAL]:     '/api/v1',                                    // Vite proxy → iMac:8000
+    [NODE_IDS.LOCAL]:     '/api/v1',                                                                    // Vite proxy → iMac:8000
     [NODE_IDS.SOVEREIGN]: 'http://178.214.200.25:8000/api/v1',
     [NODE_IDS.HYBRID]:    'http://194.177.1.240:8000/api/v1',
-    [NODE_IDS.CLOUD]:     'https://predator.share.zrok.io/api/v1',
+    [NODE_IDS.CLOUD]:     'https://manor-buttons-shell-solutions.trycloudflare.com/api/v1',  // Kaggle CPU Backend
     // MOCK disabled for production mode
 };
 
@@ -48,7 +48,7 @@ const getGlobalWindow = () => (typeof window !== 'undefined' ? window : {}) as a
 // ─── Визначення Активного Вузла ──────────────────────────────────────────────
 
 const resolveInitialUrl = (): string => {
-    if (typeof window === 'undefined') return NODE_URLS[NODE_IDS.HYBRID];
+    if (typeof window === 'undefined') return NODE_URLS[NODE_IDS.CLOUD];
 
     try {
         // 1. Ручний вибір користувача (пріоритет #1)
@@ -62,9 +62,9 @@ const resolveInitialUrl = (): string => {
 
     // 2. Явна настройка через .env
     if (metaEnv.VITE_API_URL) return metaEnv.VITE_API_URL;
-    
-    // 3. Дефолт — Vite proxy (працює і на локальному, і на production)
-    return NODE_URLS[NODE_IDS.LOCAL];
+
+    // 3. Дефолт — CLOUD (Kaggle CPU Backend)
+    return NODE_URLS[NODE_IDS.CLOUD];
 };
 
 export let API_BASE_URL = resolveInitialUrl();

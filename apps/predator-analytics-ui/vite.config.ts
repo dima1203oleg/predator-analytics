@@ -60,24 +60,36 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 3030,
       strictPort: true,
-      host: '127.0.0.1',
+      host: '0.0.0.0',
       allowedHosts: true,
       hmr: {
         clientPort: 3030,
       },
       configureServer(server: any) {
-        // Динамічний імпорт щоб уникнути server.listen під час build
-        import('./mock-api-server.mjs').then(({ mockApiHandler }) => {
-          server.middlewares.use((req: any, res: any, next: any) => {
-            mockApiHandler(req, res, next);
+        // Завантажуємо mock-api-server ТІЛЬКИ коли явно увімкнено через env
+        const enableMock = env.VITE_ENABLE_MOCK_API === 'true';
+        if (enableMock) {
+          import('./mock-api-server.mjs').then((mod: any) => {
+            const mockApp = mod.default || mod.app;
+            if (mockApp) {
+              server.middlewares.use((req: any, res: any, next: any) => {
+                mockApp(req, res, next);
+              });
+              console.log('[Vite] ⚠️ Mock API middleware увімкнено');
+            }
+          }).catch(() => {
+            // Якщо mock-api-server недоступний — пропускаємо
           });
-        });
+        } else {
+          console.log(`[Vite] ✅ Proxy → ${proxyTarget} (mock вимкнено)`);
+        }
       },
       proxy: {
         '/api': {
           target: proxyTarget,
           changeOrigin: true,
           ws: true,
+          secure: false,
           configure: (proxy) => {
             proxy.on('error', (err) => {
               console.warn(`[Vite Proxy] Backend (${proxyTarget}) недоступний:`, err.message);
