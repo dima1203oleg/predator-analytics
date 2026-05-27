@@ -40,6 +40,13 @@ def start_zrok() -> str:
     return run("sleep 6; tail -80 /tmp/predator-zrok-ssh.log 2>/dev/null || true")
 
 
+def extract_share_token(log_text: str) -> str:
+    marker = "zrok access private "
+    if marker not in log_text:
+        return ""
+    return log_text.split(marker, 1)[1].split()[0].strip("`'\"")
+
+
 def send_mail(subject: str, body: str) -> None:
     if not RECIPIENTS:
         return
@@ -57,6 +64,8 @@ def send_mail(subject: str, body: str) -> None:
 def main() -> None:
     key_status = ensure_key()
     zrok_output = start_zrok()
+    share_token = extract_share_token(zrok_output)
+    access_command = f"zrok access private {share_token}" if share_token else "очікуємо token у логах zrok"
     body = f"""PREDATOR NVIDIA RECOVERY
 
 Сервер: {run('hostname')}
@@ -66,8 +75,8 @@ SSH deploy key: {key_status}
 zrok SSH log:
 {zrok_output}
 
-Якщо бачиш код 'zrok access private XXXXX', на MacBook виконай:
-zrok access private XXXXX
+На MacBook виконай:
+{access_command}
 
 Потім підключайся через локальний порт, який покаже zrok.
 """

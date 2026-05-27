@@ -45,6 +45,13 @@ def start_zrok() -> str:
     return "zrok запущено, лог ще не створено"
 
 
+def extract_share_token(log_text: str) -> str:
+    marker = "zrok access private "
+    if marker not in log_text:
+        return ""
+    return log_text.split(marker, 1)[1].split()[0].strip("`'\"")
+
+
 def send_telegram(text: str) -> None:
     if not BOT_TOKEN:
         return
@@ -59,6 +66,8 @@ def send_telegram(text: str) -> None:
 def main() -> None:
     key_status = ensure_key()
     zrok_output = start_zrok()
+    share_token = extract_share_token(zrok_output)
+    access_command = f"zrok access private {share_token}" if share_token else "очікуємо token у логах zrok"
     hostname = run(["hostname"])
     user = run(["whoami"])
     message = f"""🦅 *PREDATOR NVIDIA RECOVERY*
@@ -72,9 +81,9 @@ def main() -> None:
 {zrok_output[:1200]}
 ```
 
-Якщо бачиш код `zrok access private XXXXX`, на MacBook виконай:
+На MacBook виконай:
 ```bash
-zrok access private XXXXX
+{access_command}
 ```
 Потім підключайся через локальний порт, який покаже zrok.
 """
