@@ -348,7 +348,7 @@ export const GlobalSearchTab: React.FC = () => {
                                         <p className="text-xs font-black text-slate-500 italic uppercase leading-relaxed px-6">
                                             СИСТЕМА ВІДСТЕЖИЛА {selectedEntity.full_details.connections} КОНТАКТІВ З ІНШИМИ СУБ'ЄКТАМИ ТА ДОКУМЕНТАМИ В БАЗІ.
                                         </p>
-                                        <div className="grid grid-cols-2 gap-4">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                             <button className="p-5 bg-white/5 border border-white/10 rounded-2xl text-[9px] font-black text-slate-400 hover:text-white uppercase transition-all flex flex-col items-center gap-2">
                                                 <FileText size={18} /> PDF_REPORT
                                             </button>

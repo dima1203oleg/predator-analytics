@@ -263,7 +263,7 @@ export const ResourceGuardTab: React.FC = () => {
                   </div>
                </div>
                
-               <div className="grid grid-cols-2 gap-6 mb-10 relative z-10">
+               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10 relative z-10">
                   <div className="p-5 bg-white/5 border border-white/5 rounded-2xl flex flex-col gap-1 group-hover:border-emerald-500/20 transition-all duration-700 shadow-inner">
                      <span className="text-[8px] text-white/20 uppercase font-black tracking-widest italic">СТАТУС_ВУЗЛА</span>
                      <span className="text-[12px] font-black text-emerald-500 uppercase tracking-widest italic">АКТИВНИЙ_L3</span>

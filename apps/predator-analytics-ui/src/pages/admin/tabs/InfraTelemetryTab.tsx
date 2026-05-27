@@ -149,7 +149,7 @@ const NodeCard: React.FC<{ node: NodeMetric }> = ({ node }) => {
 
       {node.status !== 'offline' && (
         <div className="space-y-8 relative z-10">
-          <div className="grid grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
             <GaugeBar value={node.cpu} label="ОБЧИСЛЕННЯ_CPU" />
             <GaugeBar value={node.ram} label="ПАМ'ЯТЬ_RAM" />
           </div>

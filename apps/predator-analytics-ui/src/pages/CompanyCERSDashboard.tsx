@@ -641,7 +641,7 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                                         негайного задіювання протоколу <span className="text-white font-bold">"ТІНЬОВИЙ_ШЛЮЗ"</span> для мінімізації втрат капіталу.
                                                     </p>
                                                 </div>
-                                                <div className="grid grid-cols-2 gap-4 pt-4">
+                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
                                                     <div className="bg-slate-900/60 p-3 rounded-sm border border-white/5">
                                                         <span className="block text-[8px] font-black text-slate-500 uppercase mb-1">Потенційні Втрати</span>
                                                         <span className="text-lg font-black text-rose-500 tracking-tighter italic">~ 4.2M ₴</span>

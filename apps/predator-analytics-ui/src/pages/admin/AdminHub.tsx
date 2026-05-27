@@ -455,7 +455,7 @@ const TabLoader: React.FC = () => (
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-x-20 gap-y-3 opacity-40 max-w-lg">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-20 gap-y-3 opacity-40 max-w-lg">
         {[
           "НЕЙРОННИЙ_ЗВ'ЯЗОК: 10.4 GB/S",
           "З’ЄДНАННЯ_ЯДРА: ПІДТВЕРДЖЕНО",

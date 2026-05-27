@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Building2, MapPin, CheckCircle, AlertCircle, Siren, 
   Search, Filter, ExternalLink, Mail, Sparkles, Target,
-  RefreshCw, TrendingUp
+  RefreshCw, TrendingUp, Loader2
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { intelligenceApi } from '@/services/api';
@@ -135,7 +135,7 @@ export const SupplierRadarTab: React.FC = () => {
                     exit={{ height: 0, opacity: 0 }}
                     className="mt-6 pt-6 border-t border-white/5 flex flex-col gap-4"
                   >
-                     <div className="grid grid-cols-2 gap-3">
+                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <button className="flex items-center justify-center gap-2 py-3 bg-white/5 border border-white/10 rounded-xl text-[9px] font-black uppercase text-slate-400 hover:text-white transition-all">
                            <ExternalLink size={14} /> Профіль
                         </button>
