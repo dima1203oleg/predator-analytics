@@ -1,4 +1,4 @@
-# KAGGLE CLOUDFLARED ONE-CELL: скопiй усe в одну кодову клiтинку i натисни Run
+# KAGGLE CLOUDFLARED ONE-CELL v64.0: з SQLite базою даних
 # Вимоги: CPU Only, Internet ON
 # Cloudflared quick tunnel — без акаунта, без токена
 
@@ -8,8 +8,7 @@ import subprocess, sys, os, re, threading, time
 subprocess.run([sys.executable, "-m", "pip", "install", "-q", "fastapi", "uvicorn[standard]", "psutil", "httpx", "sqlalchemy", "aiosqlite"])
 
 # 2. Запис backend
-backend = r'''
-import os, subprocess, threading, time
+backend_code = '''import os, subprocess, threading, time
 from datetime import UTC, datetime
 import psutil
 from fastapi import FastAPI
@@ -71,7 +70,8 @@ async def startup():
         await conn.run_sync(Base.metadata.create_all)
     # Seed дані
     async with async_session() as session:
-        if await session.query(Company).count() == 0:
+        from sqlalchemy import select, func
+        if (await session.execute(select(func.count()).select_from(Company))).scalar() == 0:
             seed_companies = [
                 Company(ueid="COMP-001", name="ТОВ ТЕСТОВА КОМПАНІЯ", status="ACTIVE", risk_score=74.2),
                 Company(ueid="COMP-002", name="ПП ЕКСПЕРТ", status="ACTIVE", risk_score=45.0),
@@ -82,7 +82,7 @@ async def startup():
             for company in seed_companies:
                 session.add(company)
         
-        if await session.query(Alert).count() == 0:
+        if (await session.execute(select(func.count()).select_from(Alert))).scalar() == 0:
             seed_alerts = [
                 Alert(id="alert-1", severity="CRITICAL", message="High risk company detected", company_ueid="COMP-005"),
                 Alert(id="alert-2", severity="WARNING", message="Unusual transaction pattern", company_ueid="COMP-001"),
@@ -91,7 +91,7 @@ async def startup():
             for alert in seed_alerts:
                 session.add(alert)
         
-        if await session.query(RiskAssessment).count() == 0:
+        if (await session.execute(select(func.count()).select_from(RiskAssessment))).scalar() == 0:
             seed_risks = [
                 RiskAssessment(ueid="COMP-001", score=74.2, level="CRITICAL", structural=88, behavioral=62, sanctions=95, aml=45, explanation="Виявлено аномальну активність у Kaggle CPU node."),
                 RiskAssessment(ueid="COMP-002", score=45.0, level="MEDIUM", structural=55, behavioral=40, sanctions=30, aml=50, explanation="Помірний ризик фіктивності."),
@@ -207,7 +207,6 @@ async def company_risk(ueid: str):
                 "explanation": risk.explanation,
             }
         else:
-            # Якщо немає в базі, повертаємо дефолтні дані
             return {
                 "ueid": ueid,
                 "score": 50.0,
@@ -225,7 +224,6 @@ async def diligence(ueid: str):
         company = result.scalar_one_or_none()
         
         if company:
-            # Генеруємо red flags на основі risk_score
             red_flags = []
             if company.risk_score >= 70:
                 red_flags.append("HIGH_RISK_SCORE")
@@ -294,7 +292,6 @@ async def delete_company(ueid: str):
         else:
             return {"error": "Company not found"}, 404
 
-# Додаткові ендпоінти для повної сумісності з frontend
 @app.get("/api/v1/agents")
 async def agents():
     return {
@@ -499,13 +496,12 @@ def run_cloudflared_tunnel(port: int = 8000):
     )
     for line in process.stdout:
         print(f"[cloudflared] {line.rstrip()}", flush=True)
-        # try-cloudflared.com — це quick tunnel
         match = re.search(r"(https://[a-z0-9-]+\.trycloudflare\.com)", line)
         if match:
-            print("\n" + "=" * 60, flush=True)
+            print("\\n" + "=" * 60, flush=True)
             print("PREDATOR KAGGLE CPU NODE IS LIVE", flush=True)
             print(f"PUBLIC URL: {match.group(1)}", flush=True)
-            print("=" * 60 + "\n", flush=True)
+            print("=" * 60 + "\\n", flush=True)
 
 if __name__ == "__main__":
     import uvicorn
@@ -515,8 +511,8 @@ if __name__ == "__main__":
 '''
 
 with open('/kaggle/working/predator_app.py', 'w') as f:
-    f.write(backend)
+    f.write(backend_code)
 
 # 3. Запуск backend + cloudflared
-print("Запуск PREDATOR Kaggle Backend (cloudflared)...")
+print("Запуск PREDATOR Kaggle Backend (cloudflared) v64.0 з SQLite...")
 subprocess.run([sys.executable, "/kaggle/working/predator_app.py"])
