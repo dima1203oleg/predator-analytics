@@ -382,10 +382,10 @@ const startWatchdog = () => {
         for (const node of gw.__BACKEND_NODES__) {
             try {
                 // Для відносного URL (Vite proxy) — перевіряємо локальний health
-                const healthUrl = node.url.startsWith('/') 
-                    ? '/health' 
-                    : node.url.replace('/api/v1', '/health');
-                await axios.get(healthUrl, { timeout: 3000 });
+                const healthUrl = node.url.startsWith('/')
+                    ? '/api/v1/health'
+                    : `${node.url.replace(/\/?$/, '')}/health`;
+                await axios.get(healthUrl, { timeout: 8000 });
                 node.status = 'online';
             } catch {
                 node.status = node.active ? 'offline' : 'offline';
