@@ -3,7 +3,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Bot, Send, Cpu, Shield, Zap, Terminal, Activity,
-  Sparkles, Layers
+  Sparkles, Layers, Loader
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { AdvancedBackground } from '@/components/AdvancedBackground';

@@ -7,7 +7,8 @@ import {
     CheckCircle2,
     ChevronRight,
     Settings,
-    X
+    X,
+    Loader
 } from "lucide-react"
 import React, { useEffect, useRef } from "react"
 import { IngestionJob, useIngestionStore } from "../../store/useIngestionStore"

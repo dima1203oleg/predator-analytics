@@ -2,7 +2,7 @@ import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React from 'react';
 import { motion } from 'framer-motion';
 import { 
-  Bug, Flame, Wrench, CheckCircle2
+  Bug, Flame, Wrench, CheckCircle2, Loader
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { Button } from '@/components/ui/button';

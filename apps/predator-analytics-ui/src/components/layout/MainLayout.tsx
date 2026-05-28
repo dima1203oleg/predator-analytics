@@ -15,6 +15,8 @@ import ShellCommandPalette from './ShellCommandPalette';
 import BottomNav from './BottomNav';
 import { SystemMetricsHUD } from './SystemMetricsHUD';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
+import { useViewport } from '@/hooks/useViewport';
+import { AdaptiveNavigation } from './AdaptiveNavigation';
 import { isSidebarOpenAtom, shellContextRailOpenAtom } from '../../store/atoms';
 import { isShellV2Enabled } from '../../services/shell/userWorkspace';
 import { ConstitutionalShield } from '../shared/ConstitutionalShield';
@@ -44,6 +46,7 @@ interface MainLayoutProps {
  */
 export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const isMobile = useMediaQuery('(max-width: 768px)');
+  const { isCompact, isMedium, isExpanded, safeArea } = useViewport();
   const rootRef = useRef<HTMLDivElement | null>(null);
   const [isSidebarExpanded, setIsSidebarExpanded] = useAtom(isSidebarOpenAtom);
   const [isContextRailOpen, setIsContextRailOpen] = useAtom(shellContextRailOpenAtom);
@@ -157,38 +160,14 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         }}
       />
 
-      {isMobileDrawerOpen && isMobile && (
-        <div className="fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label="Мобільна навігація">
-          <button
-            type="button"
-            aria-label="Закрити навігацію"
-            onClick={() => setIsMobileDrawerOpen(false)}
-            className="absolute inset-0 bg-slate-950/90"
-          />
-          <motion.div
-            className="absolute left-0 top-0 h-full"
-            initial={{ x: '-100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '-100%' }}
-          >
-            <Sidebar />
-          </motion.div>
-        </div>
-      )}
+      {/* ── ADAPTIVE NAVIGATION ── */}
+      <AdaptiveNavigation />
 
-      {/* Floating menu button — приховано на мобільних (BottomNav замінює) */}
-      {isMobile && !isMobileDrawerOpen && (
-        <button
-          type="button"
-          aria-label="Відкрити меню"
-          onClick={() => setIsMobileDrawerOpen(true)}
-          className="fixed left-4 top-3 z-[100] hidden sm:flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-slate-950/80 text-white transition hover:bg-slate-900"
-        >
-          <Menu className="h-5 w-5" />
-        </button>
-      )}
+      {/* Desktop sidebar для expanded/wide */}
+      {isExpanded && <Sidebar />}
 
-      {!isMobile && <Sidebar />}
+      {/* Tablet rail замість повного sidebar — керується AdaptiveNavigation */}
+      {isMedium && null}
 
       <InfrastructureFailoverBanner />
 
@@ -210,16 +189,23 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           <span>РІВЕНЬ ДОПУСКУ 6</span>
           <span className="classification-dot" />
         </div>
-        <main className="relative flex-1 overflow-y-auto custom-scrollbar pb-16 md:pb-0">
+        <main
+          className="relative flex-1 overflow-y-auto custom-scrollbar"
+          style={{
+            paddingBottom: isCompact
+              ? `calc(${safeArea.bottom}px + 4rem)`
+              : '0px',
+          }}
+        >
 
           <div className={cn("relative mx-auto px-3 sm:px-5 lg:px-7 py-5 xl:px-10 pb-4 md:pb-16 transition-[max-width] duration-500", displayFrameClass)}>
             <div className={`grid grid-cols-12 gap-6`}>
-              <div className={shellV2Enabled && !isMobile && isContextRailOpen ? 'col-span-12 xl:col-span-9' : 'col-span-12'}>
+              <div className={shellV2Enabled && isExpanded && isContextRailOpen ? 'col-span-12 xl:col-span-9' : 'col-span-12'}>
                 <AnimatedPage pageKey={location.pathname} variant="tactical">
                   {children}
                 </AnimatedPage>
               </div>
-              {shellV2Enabled && !isMobile && isContextRailOpen && (
+              {shellV2Enabled && isExpanded && isContextRailOpen && (
                 <div className="col-span-12 xl:col-span-3">
                   <ContextRail />
                 </div>
@@ -229,8 +215,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         </main>
       </div>
 
-      {/* ── BOTTOM NAV (mobile only) ── */}
-      {isMobile && <BottomNav onMenuClick={() => setIsMobileDrawerOpen(true)} />}
+      {/* BottomNav тепер у AdaptiveNavigation для compact */}
 
       <ChatBot />
       {shellV2Enabled && <ShellCommandPalette />}

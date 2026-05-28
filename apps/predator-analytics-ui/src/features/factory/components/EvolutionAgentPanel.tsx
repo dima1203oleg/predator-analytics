@@ -30,6 +30,7 @@ import {
   Minus,
   X,
   Zap,
+  Loader,
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { Badge } from '@/components/ui/badge';
