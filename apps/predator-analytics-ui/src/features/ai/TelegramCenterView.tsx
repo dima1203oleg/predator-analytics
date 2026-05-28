@@ -14,6 +14,7 @@ import {
   Terminal, UserCheck, Zap, Radio, Globe, Lock,
   Slash, AlertTriangle, RefreshCw
 } from 'lucide-react';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/utils/cn';
@@ -55,7 +56,7 @@ export default function TelegramCenterView() {
         </div>
 
         <div className="flex gap-4">
-           <TacticalCard variant="cyber" className="px-8 py-4 flex items-center gap-6 bg-slate-950/50 border-sky-500/20">
+           <HoloCard variant="cyber" className="px-8 py-4 flex items-center gap-6 bg-slate-950/50 border-sky-500/20">
               <div className="text-right">
                  <div className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Статус бота</div>
                  <div className={cn("text-2xl font-black italic", isBotActive ? "text-emerald-500" : "text-rose-500")}>
@@ -64,13 +65,13 @@ export default function TelegramCenterView() {
               </div>
               <div className="w-px h-10 bg-white/5" />
               <Radio className={isBotActive ? "text-emerald-500 " : "text-rose-500"} size={24} />
-           </TacticalCard>
+           </HoloCard>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="space-y-8">
-          <TacticalCard variant="holographic" title="Журнал команд" className="rounded-[40px] border-sky-500/20 bg-slate-950/50 p-8">
+          <HoloCard variant="holographic" title="Журнал команд" className="rounded-[40px] border-sky-500/20 bg-slate-950/50 p-8">
             <div className="space-y-4">
                {MOCK_LOGS.map((log, i) => (
                  <div key={log.id} className="flex items-center justify-between p-5 bg-black/40 border border-white/5 rounded-2xl">
@@ -98,9 +99,9 @@ export default function TelegramCenterView() {
             <button className="w-full mt-6 py-4 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl text-[10px] font-black text-slate-500 uppercase tracking-widest italic transition-all">
                ЗАВАНТАЖИТИ_ПОВНИЙ_ЛОГ
             </button>
-          </TacticalCard>
+          </HoloCard>
 
-          <TacticalCard variant="cyber" className="p-8 rounded-[36px] bg-rose-600/5 border-rose-500/30">
+          <HoloCard variant="cyber" className="p-8 rounded-[36px] bg-rose-600/5 border-rose-500/30">
               <div className="flex items-center gap-6 mb-8">
                  <div className="p-4 bg-rose-600/20 rounded-2xl text-rose-500 shadow-2xl">
                     <ShieldAlert size={32} />
@@ -113,11 +114,11 @@ export default function TelegramCenterView() {
               <button className="w-full py-6 bg-rose-600 hover:bg-rose-500 text-white rounded-3xl text-sm font-black uppercase tracking-[0.4em] italic transition-all shadow-4xl shadow-rose-900/40">
                 АКТИВУВАТИ_КІЛЛ-СВІТЧ
               </button>
-           </TacticalCard>
+           </HoloCard>
         </div>
 
         <div className="space-y-8">
-           <TacticalCard variant="holographic" title="Налаштування сповіщень" className="rounded-[40px] border-sky-500/20 bg-slate-950/50 p-8">
+           <HoloCard variant="holographic" title="Налаштування сповіщень" className="rounded-[40px] border-sky-500/20 bg-slate-950/50 p-8">
               <div className="space-y-6">
                  {[
                    { label: 'Критичні помилки', status: true, icon: AlertTriangle },
@@ -144,9 +145,9 @@ export default function TelegramCenterView() {
                    </div>
                  ))}
               </div>
-           </TacticalCard>
+           </HoloCard>
 
-           <TacticalCard variant="cyber" className="p-8 rounded-[36px] bg-slate-900/60 border-white/5">
+           <HoloCard variant="cyber" className="p-8 rounded-[36px] bg-slate-900/60 border-white/5">
               <div className="flex items-center gap-5 mb-6">
                  <div className="p-3 bg-slate-950 rounded-2xl text-slate-500">
                     <Globe size={20} />
@@ -168,7 +169,7 @@ export default function TelegramCenterView() {
                     <Lock size={10} /> Шифрування за замовчуванням
                  </div>
               </div>
-           </TacticalCard>
+           </HoloCard>
         </div>
       </div>
     </div>
