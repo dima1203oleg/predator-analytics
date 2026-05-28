@@ -453,10 +453,10 @@ export const Sidebar: React.FC = () => {
       initial={false}
       animate={{ width: isOpen ? 296 : 80 }}
       transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-      className="relative sticky top-0 z-50 flex h-screen shrink-0 flex-col overflow-visible glass-premium"
+      className="relative sticky top-0 z-50 flex h-screen shrink-0 flex-col overflow-visible glass-obsidian"
       style={{
-        borderRight: '1px solid rgba(196, 18, 48, 0.15)',
-        boxShadow: '8px 0 40px rgba(0,0,0,0.6)',
+        borderRight: '1px solid rgba(201, 162, 39, 0.12)',
+        boxShadow: '8px 0 40px rgba(0,0,0,0.6), inset 0 0 60px rgba(201,162,39,0.02)',
       }}
     >
       {/* Ambient фоновий ефект - більш виражений для візабіліті */}
@@ -464,19 +464,19 @@ export const Sidebar: React.FC = () => {
         <div
           className="absolute top-0 left-0 right-0 h-[60%]"
           style={{
-            background: 'radial-gradient(circle at 0% 0%, rgba(225,29,72,0.2) 0%, transparent 70%)',
+            background: 'radial-gradient(circle at 0% 0%, rgba(201,162,39,0.12) 0%, transparent 70%)',
           }}
         />
         <div
           className="absolute bottom-0 right-0 w-full h-[50%]"
           style={{
-            background: 'radial-gradient(circle at 100% 100%, rgba(225,29,72,0.1) 0%, transparent 80%)',
+            background: 'radial-gradient(circle at 100% 100%, rgba(201,162,39,0.06) 0%, transparent 80%)',
           }}
         />
-        <div className="absolute inset-0 cyber-scan-grid opacity-[0.04]" />
-        
-        {/* Edge Highlight */}
-        <div className="absolute inset-y-0 right-0 w-[1px] bg-gradient-to-b from-transparent via-rose-500/40 to-transparent" />
+        <div className="absolute inset-0 cyber-scan-grid opacity-[0.03]" />
+
+        {/* Edge Highlight — aurum gold */}
+        <div className="absolute inset-y-0 right-0 w-[1px] bg-gradient-to-b from-transparent via-[#c9a227]/30 to-transparent" />
       </div>
 
       {/* ── HEADER: Лого + статус ── */}
@@ -485,10 +485,10 @@ export const Sidebar: React.FC = () => {
         style={{ borderColor: 'rgba(255,255,255,0.07)', borderBottomWidth: '1px' }}
         title={`Джерело: ${backendStatus.sourceLabel}. Роль: ${roleLabel}. Блоків: ${totals.sections}. Модулів: ${totals.items}.`}
       >
-        {/* Верхня лінія акценту */}
+        {/* Верхня лінія акценту — aurum gold */}
         <div
           className="absolute top-0 left-0 right-0 h-[2px]"
-          style={{ background: 'linear-gradient(90deg, transparent 0%, rgba(225,29,72,0.6) 50%, transparent 100%)' }}
+          style={{ background: 'linear-gradient(90deg, transparent 0%, rgba(201,162,39,0.5) 50%, transparent 100%)' }}
         />
         <div className="flex items-center gap-3 px-3 py-3">
           <Logo size="sm" animated={false} className="shrink-0" />
@@ -504,7 +504,7 @@ export const Sidebar: React.FC = () => {
               >
                 <div
                   className="text-[13px] font-black uppercase tracking-[0.18em] leading-none"
-                  style={{ color: '#c41230' }}
+                  style={{ color: '#c9a227' }}
                 >
                   PREDATOR
                 </div>
