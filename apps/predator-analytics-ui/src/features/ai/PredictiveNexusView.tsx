@@ -24,6 +24,7 @@ import { PageTransition } from '@/components/layout/PageTransition';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -40,7 +41,7 @@ import { useBackendStatus } from '../../hooks/useBackendStatus';
 // Сценарії тепер завантажуються через API
 
 const PredictionCard = ({ scenario }: { scenario: Scenario }) => (
-  <TacticalCard variant="premium" className="group">
+  <HoloCard glowColor={scenario.impact === 'critical' || scenario.impact === 'high' ? 'rgba(225,29,72,0.4)' : undefined} className="group p-5">
     <div className="flex justify-between items-start mb-4">
       <div className="h-10 w-10 rounded-xl bg-slate-900 border border-white/10 flex items-center justify-center ">
         <Brain className="w-5 h-5 text-rose-500" />
@@ -59,7 +60,7 @@ const PredictionCard = ({ scenario }: { scenario: Scenario }) => (
         <span>Ймовірність: {scenario.probability}%</span>
         <span>ETA: {scenario.eta}</span>
     </div>
-  </TacticalCard>
+  </HoloCard>
 );
 
 interface Scenario {
