@@ -31,6 +31,7 @@ import {
   Loader,
 } from 'lucide-react';
 import { PageTransition } from '@/components/layout/PageTransition';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { Badge } from '@/components/ui/badge';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
@@ -130,13 +131,13 @@ const MetricCard = ({ card }: { card: AutoFactoryMetricCard }) => {
   const tone = toneClasses[card.tone];
 
   return (
-    <TacticalCard variant="holographic" className={cn('rounded-[32px] border bg-slate-950/50 p-6', tone.border)}>
+    <HoloCard className={cn('rounded-[32px] p-6', tone.border)}>
       <div className="space-y-3">
         <div className="text-[10px] font-black uppercase tracking-[0.26em] text-slate-500">{card.label}</div>
         <div className={cn('text-4xl font-black tracking-tight', tone.text)}>{card.value}</div>
         <div className="text-sm leading-6 text-slate-400">{card.hint}</div>
       </div>
-    </TacticalCard>
+    </HoloCard>
   );
 };
 
@@ -466,7 +467,7 @@ export default function AutoFactoryView() {
               </div>
 
               {tab === 'pipeline' && (
-                <TacticalCard variant="holographic" title="Поточний цикл OODA" className="rounded-[40px] border-[#D4AF37]/20 bg-slate-950/50 p-8">
+                <HoloCard variant="gold" title="Поточний цикл OODA" className="rounded-[40px] border-[#D4AF37]/20 bg-slate-950/50 p-8">
                   {snapshot.hasAnyData ? (
                     <div className="space-y-8">
                       <div className="grid gap-4 lg:grid-cols-5">
@@ -508,11 +509,11 @@ export default function AutoFactoryView() {
                       description="Factory API не повернув статус автономного циклу. Візуалізація етапів не генерується локально."
                     />
                   )}
-                </TacticalCard>
+                </HoloCard>
               )}
 
               {tab === 'fixes' && (
-                <TacticalCard variant="holographic" title="Черга виправлень" className="rounded-[40px] border-[#D4AF37]/20 bg-slate-950/50 p-8">
+                <HoloCard variant="gold" title="Черга виправлень" className="rounded-[40px] border-[#D4AF37]/20 bg-slate-950/50 p-8">
                   {snapshot.bugs.length > 0 ? (
                     <div className="space-y-5">
                       {snapshot.bugs.map((bug) => (
@@ -525,14 +526,14 @@ export default function AutoFactoryView() {
                       description="`/factory/bugs` не повернув елементів. Матриця патчів не заповнюється демо-багами."
                     />
                   )}
-                </TacticalCard>
+                </HoloCard>
               )}
 
               {tab === 'axioms' && (
                 <div className="space-y-6">
                   <div className="grid gap-6 md:grid-cols-2">
                     {AXIOMS.map((axiom) => (
-                      <TacticalCard key={axiom.code} variant="holographic" className="rounded-[36px] border-white/10 bg-slate-950/50 p-8">
+                      <HoloCard key={axiom.code} variant="gold" className="rounded-[36px] p-8">
                         <div className="flex items-start gap-5">
                           <div className="rounded-[24px] border border-[#D4AF37]/20 bg-[#D4AF37]/10 px-4 py-3 text-sm font-black text-[#D4AF37]">
                             {axiom.code}
@@ -542,22 +543,22 @@ export default function AutoFactoryView() {
                             <div className="mt-3 text-sm leading-6 text-slate-400">{axiom.detail}</div>
                           </div>
                         </div>
-                      </TacticalCard>
+                      </HoloCard>
                     ))}
                   </div>
 
-                  <TacticalCard variant="holographic" title="Суверенний контур" className="rounded-[40px] border-[#D4AF37]/20 bg-slate-950/50 p-8">
+                  <HoloCard variant="gold" title="Суверенний контур" className="rounded-[40px] border-[#D4AF37]/20 bg-slate-950/50 p-8">
                     <div className="grid gap-4 md:grid-cols-3">
                       {snapshot.engines.map((engine) => (
                         <EngineCard key={engine.id} engine={engine} />
                       ))}
                     </div>
-                  </TacticalCard>
+                  </HoloCard>
                 </div>
               )}
 
               {tab === 'terminal' && (
-                <TacticalCard variant="holographic" title="Журнал ядра" className="rounded-[40px] border-[#D4AF37]/20 bg-slate-950/80 p-0 overflow-hidden">
+                <HoloCard variant="gold" title="Журнал ядра" className="rounded-[40px] border-[#D4AF37]/20 bg-slate-950/80 p-0 overflow-hidden">
                   <div className="border-b border-white/10 bg-black/30 px-6 py-4 text-[10px] font-black uppercase tracking-[0.28em] text-slate-400">
                     Потік підтверджених подій Factory API
                   </div>
@@ -576,12 +577,12 @@ export default function AutoFactoryView() {
                       />
                     )}
                   </div>
-                </TacticalCard>
+                </HoloCard>
               )}
             </div>
 
             <div className="space-y-6">
-              <TacticalCard variant="holographic" title="Керування контуром" className="rounded-[40px] border-[#D4AF37]/20 bg-slate-950/50 p-8">
+              <HoloCard variant="gold" title="Керування контуром" className="rounded-[40px] border-[#D4AF37]/20 bg-slate-950/50 p-8">
                 <div className="space-y-6">
                   <div className="rounded-[28px] border border-white/10 bg-black/20 p-5">
                     <div className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-500">Стан бекенду</div>
@@ -626,17 +627,17 @@ export default function AutoFactoryView() {
                     </button>
                   </div>
                 </div>
-              </TacticalCard>
+              </HoloCard>
 
-              <TacticalCard variant="holographic" title="Контурні сигнали" className="rounded-[40px] border-[#D4AF37]/20 bg-slate-950/50 p-8">
+              <HoloCard variant="gold" title="Контурні сигнали" className="rounded-[40px] border-[#D4AF37]/20 bg-slate-950/50 p-8">
                 <div className="space-y-4">
                   {snapshot.engines.map((engine) => (
                     <EngineCard key={engine.id} engine={engine} />
                   ))}
                 </div>
-              </TacticalCard>
+              </HoloCard>
 
-              <TacticalCard variant="holographic" title="Надійність контуру" className="rounded-[40px] border-[#D4AF37]/20 bg-slate-950/50 p-8">
+              <HoloCard variant="gold" title="Надійність контуру" className="rounded-[40px] border-[#D4AF37]/20 bg-slate-950/50 p-8">
                 {snapshot.reliability.some((bar) => bar.value != null) ? (
                   <div className="space-y-4">
                     {snapshot.reliability.map((bar) => (
@@ -649,7 +650,7 @@ export default function AutoFactoryView() {
                       description="Factory API і System API не повернули достатньо даних для побудови індикаторів надійності."
                   />
                 )}
-              </TacticalCard>
+              </HoloCard>
 
               <div className="rounded-[36px] border border-[#D4AF37]/20 bg-[linear-gradient(135deg,rgba(168,162,158,0.1),rgba(15,23,42,0.92))] p-6 shadow-[0_22px_60px_rgba(212,175,55,0.15)]">
                 <div className="flex items-start gap-4">
