@@ -499,15 +499,15 @@ export const BootSequenceELITE: React.FC<{ onComplete: () => void }> = ({ onComp
             <div className="mb-10 brightness-150 filter sm:mb-16">
                <GeometricRaptor className="h-[min(28vmin,14rem)] w-[min(28vmin,14rem)] text-[#D4AF37]" />
             </div>
-            <h1 className="relative mb-8 max-w-full text-center text-[clamp(3rem,12vw,12rem)] font-thin uppercase leading-none tracking-[clamp(0.18em,2.8vw,0.8em)] text-white">
+            <h1 className="relative mb-8 max-w-full text-center text-[clamp(2rem,8vw,12rem)] font-thin uppercase leading-none tracking-[clamp(0.05em,1.2vw,0.5em)] text-white">
               PREDATOR
-              <motion.div 
+              <motion.div
                 animate={{ opacity: [0.1, 0.4, 0.1], width: ['0%', '100%', '0%'] }}
                 transition={{ repeat: Infinity, duration: 3 }}
                 className="absolute inset-x-0 bottom-0 h-1 bg-[#D4AF37] blur-md mx-auto"
               />
             </h1>
-            <p className="max-w-[90vw] text-center text-[clamp(0.55rem,1.4vw,0.875rem)] font-black uppercase tracking-[clamp(0.35em,2.5vw,3em)] text-[#D4AF37] opacity-20 italic">
+            <p className="max-w-[90vw] text-center text-[clamp(0.5rem,1.2vw,0.875rem)] font-black uppercase tracking-[clamp(0.2em,1.5vw,2em)] text-[#D4AF37] opacity-20 italic">
                Світ — це дані. Ми — Предатори.
             </p>
           </motion.div>

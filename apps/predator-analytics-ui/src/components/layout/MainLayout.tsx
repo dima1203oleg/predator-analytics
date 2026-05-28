@@ -6,7 +6,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useAtom } from 'jotai';
 import { Menu } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import Header from './Header';
 import ChatBot from '../ai/ChatBot';
@@ -26,6 +26,8 @@ import { NeuralBackground } from '../ui/NeuralBackground';
 import { cn } from '@/utils/cn';
 import { AnimatedPage } from '../polish/AnimatedPage';
 import { API_BASE_URL } from '@/services/api/config';
+import { useKeyboardShortcuts, defaultShortcuts } from '@/hooks/useKeyboardShortcuts';
+import { useAppStore } from '@/store/useAppStore';
 import { colabPanelOpenAtom, colabNodeDataAtom } from '../../store/atoms';
 import { ColabDetailedPanel } from '@/features/infrastructure/components/ColabDetailedPanel';
 import { useSystemNodes } from '@/hooks/useAdminApi';
@@ -49,6 +51,16 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const { isOffline, nodes: backendNodes } = useBackendStatus();
   const shellV2Enabled = isShellV2Enabled();
   const location = useLocation();
+  const navigate = useNavigate();
+  const { setCopilotOpen } = useAppStore();
+
+  useKeyboardShortcuts(
+    defaultShortcuts(
+      (path) => navigate(path),
+      () => setCopilotOpen(true),
+      () => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }))
+    )
+  );
   const { mode } = useTheme();
   const { mode: displayMode } = useDisplayMode();
   const displayFrameClass =
