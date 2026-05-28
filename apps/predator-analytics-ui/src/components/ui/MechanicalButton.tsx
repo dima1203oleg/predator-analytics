@@ -10,7 +10,7 @@ import { motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 import { cn } from '@/utils/cn';
 
-interface MechanicalButtonProps {
+interface MechanicalButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
   variant?: 'default' | 'primary' | 'danger' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
@@ -48,6 +48,7 @@ export const MechanicalButton = React.forwardRef<HTMLButtonElement, MechanicalBu
       onClick,
       className,
       as: Component = 'button',
+      ...rest
     },
     ref
   ) => {
@@ -58,6 +59,7 @@ export const MechanicalButton = React.forwardRef<HTMLButtonElement, MechanicalBu
         ref={ref as any}
         onClick={onClick}
         disabled={disabled || isLoading}
+        {...rest}
         className={cn(
           'relative inline-flex items-center justify-center gap-2 rounded-lg font-interface font-medium transition-all duration-200',
           'active:scale-[0.97]',

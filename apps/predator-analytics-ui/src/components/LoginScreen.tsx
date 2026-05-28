@@ -15,6 +15,7 @@ import { UserRole } from '../config/roles';
 import { SubscriptionTier, useUser } from '../context/UserContext';
 import { apiClient } from '../services/api/config';
 import { GeometricRaptor } from './Logo';
+import { MechanicalButton } from './ui/MechanicalButton';
 
 interface LoginScreenProps {
     onLogin: () => void;
@@ -124,8 +125,8 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
     }, [step]);
 
 
-    const handleLoginSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleLoginSubmit = async (e?: React.FormEvent) => {
+        e?.preventDefault();
         setError(null);
         setStep('scanning');
 
@@ -514,14 +515,17 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                     />
                                 </div>
 
-                                <motion.button
+                                <MechanicalButton
                                     type="submit"
-                                    whileHover={{ scale: 1.02, backgroundColor: 'rgba(225,29,72,0.1)' }}
-                                    whileTap={{ scale: 0.98 }}
-                                    className="w-full bg-rose-600 text-black font-black py-4 rounded tracking-[0.8em] text-[11px] transition-all uppercase  border border-rose-400/50 mt-4"
+                                    variant="danger"
+                                    size="lg"
+                                    className="w-full uppercase tracking-[0.3em] mt-4"
                                 >
-                                    УВІЙТИ В СИСТЕМУ
-                                </motion.button>
+                                    <span className="flex items-center justify-center gap-3">
+                                        <Lock size={16} />
+                                        <span>УВІЙТИ В СИСТЕМУ</span>
+                                    </span>
+                                </MechanicalButton>
 
                                 <div className="text-center pt-2">
                                     <span className="text-[7px] text-slate-600 tracking-[0.2em] font-bold">
