@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { cn } from '@/utils/cn';
 import { Sparkles, RotateCcw } from 'lucide-react';
@@ -26,7 +27,7 @@ export function AnalyticVerticalControls({
   };
 
   return (
-    <TacticalCard title="АНАЛІТИЧНИЙ ІНТЕЛЕКТ" variant="cyber" className="border-rose-500/30">
+    <HoloCard title="АНАЛІТИЧНИЙ ІНТЕЛЕКТ" variant="cyber" className="border-rose-500/30">
       <div className="p-4 space-y-4">
         <div className="grid grid-cols-1 gap-2">
            {analyticOptions.map(opt => (
@@ -50,6 +51,6 @@ export function AnalyticVerticalControls({
            <Button onClick={onUpdateKnowledgeMap} variant="cyber" className="w-full text-[10px] h-11"><RotateCcw size={14} className="mr-2"/> Синхронізувати Гравітацію Фактів</Button>
         </div>
       </div>
-    </TacticalCard>
+    </HoloCard>
   );
 }

@@ -22,6 +22,7 @@ import {
     Layers, MousePointer2, Share2, Award, ZapOff, Globe, Crown
 } from 'lucide-react';
 import { api } from '@/services/api';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { HoloContainer } from '@/components/HoloContainer';

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { cn } from '@/utils/cn';
 import { Wrench, History, Scan } from 'lucide-react';
@@ -24,7 +25,7 @@ export function TechVerticalControls({
   };
 
   return (
-    <TacticalCard title="ТЕХНОЛОГІЧНИЙ СТЕК" variant="cyber" className="border-yellow-500/30">
+    <HoloCard title="ТЕХНОЛОГІЧНИЙ СТЕК" variant="cyber" className="border-yellow-500/30">
       <div className="p-4 space-y-4">
         <div className="grid grid-cols-1 gap-2">
            {techOptions.map(opt => (
@@ -51,6 +52,6 @@ export function TechVerticalControls({
            </div>
         </div>
       </div>
-    </TacticalCard>
+    </HoloCard>
   );
 }

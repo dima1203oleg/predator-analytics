@@ -16,6 +16,7 @@ import {
     Database
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { cn } from '@/utils/cn';
 
@@ -95,7 +96,7 @@ export const UBOMapTab: React.FC = () => {
 
                 {/* Left Floating HUD: Tools */}
                 <div className="absolute top-24 left-6 z-30 flex flex-col gap-3">
-                    <TacticalCard className="!p-1.5 bg-slate-950/80  border-rose-500/20">
+                    <HoloCard className="!p-1.5 bg-slate-950/80  border-rose-500/20">
                         <div className="flex flex-col gap-1">
                             {[
                                 { icon: Globe, label: 'Глобал' },
@@ -112,9 +113,9 @@ export const UBOMapTab: React.FC = () => {
                                 </button>
                             ))}
                         </div>
-                    </TacticalCard>
+                    </HoloCard>
 
-                    <TacticalCard className="!p-3 bg-slate-950/80  border-white/5">
+                    <HoloCard className="!p-3 bg-slate-950/80  border-white/5">
                         <div className="flex flex-col gap-3">
                              <div className="flex flex-col gap-1">
                                 <span className="text-[8px] font-black text-slate-600 uppercase">МАСШТАБ</span>
@@ -123,7 +124,7 @@ export const UBOMapTab: React.FC = () => {
                                 </div>
                              </div>
                         </div>
-                    </TacticalCard>
+                    </HoloCard>
                 </div>
 
                 {/* Center Target Indicator */}
@@ -170,7 +171,7 @@ export const UBOMapTab: React.FC = () => {
                                 animate={{ x: 0, opacity: 1 }}
                                 className="h-full flex flex-col gap-4 pointer-events-auto"
                             >
-                                <TacticalCard className="bg-slate-950/90  border-white/5 flex flex-col max-h-full">
+                                <HoloCard className="bg-slate-950/90  border-white/5 flex flex-col max-h-full">
                                     <div className="flex items-center justify-between mb-4 border-b border-white/5 pb-3">
                                         <div className="flex items-center gap-2">
                                             <Target size={14} className="text-red-500" />
@@ -219,9 +220,9 @@ export const UBOMapTab: React.FC = () => {
                                     <button className="mt-4 w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-[9px] font-black text-slate-400 uppercase tracking-widest transition-all">
                                         Завантажити Повний реєстр
                                     </button>
-                                </TacticalCard>
+                                </HoloCard>
 
-                                <TacticalCard className="bg-slate-950/90  border-rose-500/20">
+                                <HoloCard className="bg-slate-950/90  border-rose-500/20">
                                     <h4 className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-3">Статус Аналізатора</h4>
                                     <div className="space-y-3">
                                         <div className="flex justify-between items-end">
@@ -235,7 +236,7 @@ export const UBOMapTab: React.FC = () => {
                                             Всі системи працюють в штатному режимі. Синхронізація з Qdrant успішна.
                                         </p>
                                     </div>
-                                </TacticalCard>
+                                </HoloCard>
                             </motion.div>
                         )}
                     </AnimatePresence>
@@ -243,7 +244,7 @@ export const UBOMapTab: React.FC = () => {
 
                 {/* Bottom Legend Overlay */}
                 <div className="absolute bottom-6 left-6 z-30 flex items-center gap-3">
-                    <TacticalCard className="!px-6 !py-3 bg-slate-950/90  border-white/10 flex items-center gap-8">
+                    <HoloCard className="!px-6 !py-3 bg-slate-950/90  border-white/10 flex items-center gap-8">
                         {[
                             { label: 'ОФШОРНА ЗОНА', color: 'bg-rose-600', glow: 'shadow-rose-600/50' },
                             { label: 'САНКЦІЙНА ЛОКАЦІЯ', color: 'bg-orange-500', glow: 'shadow-orange-500/50' },
@@ -254,7 +255,7 @@ export const UBOMapTab: React.FC = () => {
                                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">{item.label}</span>
                             </div>
                         ))}
-                    </TacticalCard>
+                    </HoloCard>
                     
                     <button className="p-3 bg-slate-900 border border-white/10 rounded-2xl text-slate-400 hover:text-white transition-all shadow-2xl">
                         <Maximize2 size={18} />

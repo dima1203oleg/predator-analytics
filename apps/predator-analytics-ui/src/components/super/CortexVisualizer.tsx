@@ -80,27 +80,27 @@ export const CortexVisualizer: React.FC = () => {
             {/* Header Metrics */}
             {data && (
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <TacticalCard variant="holographic" title="SYSTEM STATUS" glow="blue">
+                    <HoloCard variant="holographic" title="SYSTEM STATUS" glow="blue">
                         <div className="text-2xl font-bold text-blue-400 font-mono flex items-center gap-2">
                             <Activity className="" /> {data.system_status}
                         </div>
-                    </TacticalCard>
-                    <TacticalCard variant="holographic" title="COMPLIANCE SCORE" glow={data.compliance_score > 0.8 ? "green" : "yellow"}>
+                    </HoloCard>
+                    <HoloCard variant="holographic" title="COMPLIANCE SCORE" glow={data.compliance_score > 0.8 ? "green" : "yellow"}>
                         <div className={`text-2xl font-bold font-mono ${data.compliance_score > 0.8 ? "text-green-400" : "text-amber-400"}`}>
                             {(data.compliance_score * 100).toFixed(1)}%
                         </div>
                         <div className="text-xs text-slate-500 mt-1">PYTHON 3.12 PURITY</div>
-                    </TacticalCard>
-                    <TacticalCard variant="holographic" title="NODES SCANNED" glow="purple">
+                    </HoloCard>
+                    <HoloCard variant="holographic" title="NODES SCANNED" glow="purple">
                         <div className="text-2xl font-bold text-purple-400 font-mono">
                             {data.nodes.length}
                         </div>
-                    </TacticalCard>
-                    <TacticalCard variant="holographic" title="LAST SCAN" glow="blue">
+                    </HoloCard>
+                    <HoloCard variant="holographic" title="LAST SCAN" glow="blue">
                         <div className="text-xs font-mono text-cyan-400 mt-2">
                             {new Date(data.timestamp).toLocaleTimeString()}
                         </div>
-                    </TacticalCard>
+                    </HoloCard>
                 </div>
             )}
 
@@ -113,7 +113,7 @@ export const CortexVisualizer: React.FC = () => {
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: i * 0.05 }}
                     >
-                        <TacticalCard variant="holographic"
+                        <HoloCard variant="holographic"
                             className={`h-full border ${node.compliant ? 'border-emerald-500/20' : 'border-rose-500/20'}`}
                             glow={node.compliant ? 'green' : 'red'}
                             title={node.name.toUpperCase()}
@@ -163,7 +163,7 @@ export const CortexVisualizer: React.FC = () => {
                                     </div>
                                 )}
                             </div>
-                        </TacticalCard>
+                        </HoloCard>
                     </motion.div>
                 ))}
             </div>

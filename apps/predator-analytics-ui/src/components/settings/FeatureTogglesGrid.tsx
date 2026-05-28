@@ -22,7 +22,7 @@ export const FeatureTogglesGrid: React.FC<FeatureTogglesGridProps> = ({
     featureToggles
 }) => {
     return (
-        <TacticalCard variant="holographic" title={`Функції (${currentEnv.name})`} className="mb-6 border-slate-700/30">
+        <HoloCard variant="holographic" title={`Функції (${currentEnv.name})`} className="mb-6 border-slate-700/30">
             <div className="mb-4 p-4 bg-slate-950/50 border border-slate-800 rounded-lg text-xs text-slate-400 flex items-start gap-3">
                 <Sparkles size={16} className="text-amber-500 shrink-0 mt-0.5" />
                 <p>{currentEnv.description}</p>
@@ -75,6 +75,6 @@ export const FeatureTogglesGrid: React.FC<FeatureTogglesGridProps> = ({
                     );
                 })}
             </div>
-        </TacticalCard>
+        </HoloCard>
     );
 };

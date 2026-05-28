@@ -36,7 +36,7 @@ export const GoogleAdvisoryPanel: React.FC = () => {
     }, []);
 
     return (
-        <TacticalCard variant="holographic" title="🤖 Google AI Advisory (Assistant Mode)" className="border-blue-500/30">
+        <HoloCard variant="holographic" title="🤖 Google AI Advisory (Assistant Mode)" className="border-blue-500/30">
             <div className="space-y-4">
                {/* Controls */}
                <div className="flex justify-end">
@@ -102,7 +102,7 @@ export const GoogleAdvisoryPanel: React.FC = () => {
                    )}
                </div>
             </div>
-        </TacticalCard>
+        </HoloCard>
     );
 }
 

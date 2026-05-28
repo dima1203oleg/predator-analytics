@@ -17,6 +17,7 @@ import {
     Lock, ExternalLink, RefreshCcw, Landmark, Satellite, Fingerprint
 } from 'lucide-react';
 import { apiClient } from '@/services/api/config';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { CyberGrid } from '@/components/CyberGrid';
@@ -153,7 +154,7 @@ export const DocumentsTab = () => {
             </div>
 
             {/* DOCUMENT GRID/TABLE */}
-            <TacticalCard variant="cyber" className="p-10 rounded-[4rem] bg-black border-2 border-white/[0.03] shadow-3xl overflow-hidden">
+            <HoloCard variant="cyber" className="p-10 rounded-[4rem] bg-black border-2 border-white/[0.03] shadow-3xl overflow-hidden">
                 <div className="overflow-x-auto no-scrollbar">
                     <table className="w-full text-left">
                         <thead className="border-b border-white/[0.04] text-slate-700 text-[10px] font-black uppercase tracking-[0.4em] italic">
@@ -206,7 +207,7 @@ export const DocumentsTab = () => {
                         </tbody>
                     </table>
                 </div>
-            </TacticalCard>
+            </HoloCard>
 
             <style dangerouslySetInnerHTML={{ __html: `
                 .shadow-3xl { box-shadow: 0 60px 100px -30px rgba(0,0,0,0.8); }

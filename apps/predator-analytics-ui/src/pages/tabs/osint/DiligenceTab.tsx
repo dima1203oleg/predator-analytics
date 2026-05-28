@@ -12,6 +12,7 @@ import {
     Lock, Eye, Cpu, Database, RefreshCw
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { diligenceApi } from '@/features/diligence/api/diligence';
 import { SovereignAudio } from '@/utils/sovereign-audio';
@@ -60,7 +61,7 @@ export const DiligenceTab: React.FC = () => {
             
             {/* Intelligence Rail - Left */}
             <div className="hidden xl:flex w-72 flex-col gap-4 overflow-hidden shrink-0 z-10">
-                <TacticalCard title="ВУЗОЛ МОНІТОРИНГУ" icon={<Brain size={16} className="text-rose-500" />} className="bg-rose-500/[0.03] border-rose-500/10 ">
+                <HoloCard title="ВУЗОЛ МОНІТОРИНГУ" icon={<Brain size={16} className="text-rose-500" />} className="bg-rose-500/[0.03] border-rose-500/10 ">
                     <div className="space-y-4">
                         <div className="text-center py-4 relative">
                             <div className="absolute inset-0 bg-rose-500/5 blur-2xl " />
@@ -97,9 +98,9 @@ export const DiligenceTab: React.FC = () => {
                             ))}
                         </div>
                     </div>
-                </TacticalCard>
+                </HoloCard>
 
-                <TacticalCard title="ОПЕРАТИВНИЙ ЖУРНАЛ" icon={<Activity size={16} className="text-rose-500" />} className="flex-1 overflow-hidden">
+                <HoloCard title="ОПЕРАТИВНИЙ ЖУРНАЛ" icon={<Activity size={16} className="text-rose-500" />} className="flex-1 overflow-hidden">
                     <div className="space-y-3 font-mono text-[9px] overflow-y-auto max-h-full custom-scrollbar pr-2">
                         {[1,2,3,4,5,6,7,8].map(i => (
                             <div key={i} className="border-l border-rose-500/20 pl-3 py-1">
@@ -108,7 +109,7 @@ export const DiligenceTab: React.FC = () => {
                             </div>
                         ))}
                     </div>
-                </TacticalCard>
+                </HoloCard>
             </div>
 
             {/* Main Viewport */}

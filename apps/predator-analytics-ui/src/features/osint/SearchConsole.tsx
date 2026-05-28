@@ -23,6 +23,7 @@ import { apiClient } from '@/services/api/config';
 import ReactECharts from '@/components/ECharts';
 import { HoloContainer } from '@/components/HoloContainer';
 import { CyberOrb } from '@/components/CyberOrb';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
@@ -370,7 +371,7 @@ export default function SearchConsole() {
                                     { title: 'ФІНАНСОВІ_ПОТОКИ', icon: Key, desc: 'Детекція офшорних аномалій' },
                                     { title: 'ВПК_СТРАТЕГІЯ', icon: Target, desc: 'Моніторинг критичного імпорту' }
                                 ].map((item, i) => (
-                                    <TacticalCard key={i} variant="cyber" className="p-12 space-y-8 hover:border-yellow-500/40 transition-all rounded-[3.5rem] bg-black border-2 border-white/[0.04] shadow-3xl">
+                                    <HoloCard key={i} variant="cyber" className="p-12 space-y-8 hover:border-yellow-500/40 transition-all rounded-[3.5rem] bg-black border-2 border-white/[0.04] shadow-3xl">
                                         <div className="w-16 h-16 bg-yellow-600/10 rounded-2xl border border-yellow-600/30 flex items-center justify-center text-yellow-500 shadow-2xl">
                                             <item.icon size={32} />
                                         </div>
@@ -378,7 +379,7 @@ export default function SearchConsole() {
                                             <h4 className="text-2xl font-black text-white italic tracking-tighter uppercase skew-x-[-2deg] leading-none">{item.title}</h4>
                                             <p className="text-[11px] text-slate-500 font-black uppercase tracking-widest italic leading-relaxed opacity-60">{item.desc}</p>
                                         </div>
-                                    </TacticalCard>
+                                    </HoloCard>
                                 ))}
                             </div>
                         )}

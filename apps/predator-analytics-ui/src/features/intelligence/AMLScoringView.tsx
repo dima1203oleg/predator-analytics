@@ -22,6 +22,7 @@ import { AxiosError } from 'axios';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { PageTransition } from '@/components/layout/PageTransition';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { CyberGrid } from '@/components/CyberGrid';
 import { ViewHeader } from '@/components/ViewHeader';
@@ -631,7 +632,7 @@ const AMLScoringView: React.FC = () => {
                     <div className="col-span-12 lg:col-span-4 flex flex-col gap-10">
 
                         {!batchMode ? (
-                            <TacticalCard variant="holographic" className="p-10 flex flex-col gap-8 rounded-[3.5rem] border-rose-500/10 shadow-4xl bg-black/60 ">
+                            <HoloCard variant="holographic" className="p-10 flex flex-col gap-8 rounded-[3.5rem] border-rose-500/10 shadow-4xl bg-black/60 ">
                                 <h3 className="text-[11px] font-black text-white uppercase tracking-[0.4em] flex items-center gap-4 italic font-serif">
                                     <Crosshair size={24} className="text-rose-500 " /> ПА АМЕТрИ_СКАНУВАННЯ
                                 </h3>
@@ -716,9 +717,9 @@ const AMLScoringView: React.FC = () => {
                                         <p className="text-[11px] text-rose-300 font-black uppercase italic leading-relaxed">{error}</p>
                                     </div>
                                 )}
-                            </TacticalCard>
+                            </HoloCard>
                         ) : (
-                            <TacticalCard variant="holographic" className="p-10 flex flex-col gap-8 rounded-[3.5rem] border-rose-500/10 shadow-4xl bg-black/60 ">
+                            <HoloCard variant="holographic" className="p-10 flex flex-col gap-8 rounded-[3.5rem] border-rose-500/10 shadow-4xl bg-black/60 ">
                                 <h3 className="text-[11px] font-black text-white uppercase tracking-[0.4em] flex items-center gap-4 italic font-serif">
                                     <Upload size={24} className="text-rose-500" /> МАСОВЕ_ЗАВАНТАЖЕННЯ_МАСИВУ
                                 </h3>
@@ -765,11 +766,11 @@ const AMLScoringView: React.FC = () => {
                                         : <><Zap size={24} /> ЗАПУСТИТИ_ПАКЕТНИЙ_СКАН</>
                                     }
                                 </button>
-                            </TacticalCard>
+                            </HoloCard>
                         )}
 
                         {/* Шкаларизику ELITE */}
-                        <TacticalCard variant="cyber" className="p-10 rounded-[3.5rem] border-white/5 bg-black/40 shadow-inner">
+                        <HoloCard variant="cyber" className="p-10 rounded-[3.5rem] border-white/5 bg-black/40 shadow-inner">
                             <h3 className="text-[11px] font-black text-slate-700 uppercase tracking-[0.5em] mb-8 flex items-center gap-4 italic font-bold">
                                 <Info size={16} className="text-rose-600/40" /> МАТрИЦЯ_ОЦІНКИ_ РИЗИКІВ
                             </h3>
@@ -790,7 +791,7 @@ const AMLScoringView: React.FC = () => {
                                     );
                                 })}
                             </div>
-                        </TacticalCard>
+                        </HoloCard>
                     </div>
 
                     {/* ===== ПРАВА ПАНЕЛЬ: результати ELITE ===== */}
@@ -804,7 +805,7 @@ const AMLScoringView: React.FC = () => {
                                     initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
                                     className="flex flex-col gap-10"
                                 >
-                                    <TacticalCard variant="holographic" className="p-12 rounded-[4rem] border-rose-500/10 shadow-4xl bg-black/80  relative overflow-hidden">
+                                    <HoloCard variant="holographic" className="p-12 rounded-[4rem] border-rose-500/10 shadow-4xl bg-black/80  relative overflow-hidden">
                                         <div className="absolute top-0 right-0 p-16 opacity-[0.03] pointer-events-none">
                                             <Database size={300} className="text-rose-500" />
                                         </div>
@@ -832,7 +833,7 @@ const AMLScoringView: React.FC = () => {
                                                 </div>
                                             ))}
                                         </div>
-                                    </TacticalCard>
+                                    </HoloCard>
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                         {batchResult.results?.map((res, i) => (
@@ -865,7 +866,7 @@ const AMLScoringView: React.FC = () => {
                                 >
                                     <div className="grid grid-cols-12 gap-10">
                                         {/* Скор-метр панель */}
-                                        <TacticalCard variant="holographic" className="col-span-12 xl:col-span-5 p-12 rounded-[5rem] border-rose-500/10 shadow-4xl bg-black/80  flex flex-col items-center justify-center relative overflow-hidden">
+                                        <HoloCard variant="holographic" className="col-span-12 xl:col-span-5 p-12 rounded-[5rem] border-rose-500/10 shadow-4xl bg-black/80  flex flex-col items-center justify-center relative overflow-hidden">
                                             <div className="absolute top-0 left-0 p-16 opacity-[0.02] pointer-events-none w-full h-full flex items-center justify-center">
                                                 <Radar size={400} className="text-rose-500 animate-spin-slow" />
                                             </div>
@@ -883,10 +884,10 @@ const AMLScoringView: React.FC = () => {
                                                     </p>
                                                 </div>
                                             </div>
-                                        </TacticalCard>
+                                        </HoloCard>
 
                                         {/*  адар факторів */}
-                                        <TacticalCard variant="cyber" className="col-span-12 xl:col-span-7 p-12 rounded-[5rem] border-white/5 bg-black/40 shadow-inner flex flex-col relative overflow-hidden">
+                                        <HoloCard variant="cyber" className="col-span-12 xl:col-span-7 p-12 rounded-[5rem] border-white/5 bg-black/40 shadow-inner flex flex-col relative overflow-hidden">
                                             <div className="absolute -top-10 -right-10 p-20 opacity-[0.03] pointer-events-none">
                                                 <Network size={200} className="text-rose-600" />
                                             </div>
@@ -906,7 +907,7 @@ const AMLScoringView: React.FC = () => {
                                                     <span className="text-2xl font-black text-white font-mono italic">ELITE</span>
                                                 </div>
                                             </div>
-                                        </TacticalCard>
+                                        </HoloCard>
                                     </div>
 
                                     {/* Список факторів ELITE */}

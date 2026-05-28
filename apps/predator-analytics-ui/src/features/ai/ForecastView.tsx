@@ -280,7 +280,7 @@ const ForecastView: React.FC = () => {
                                     </p>
                                 </div>
                             </div>
-                        </TacticalCard>
+                        </HoloCard>
                     </div>
                 </div>
             </div>

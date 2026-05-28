@@ -32,6 +32,7 @@ import {
 import { cn } from '@/utils/cn';
 import { api } from '@/services/api';
 import { SearchResultRadar } from '@/components/premium/SearchResultRadar';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { HoloContainer } from '@/components/HoloContainer';
@@ -226,7 +227,7 @@ const AIAnswerCard = ({
                         </div>
                     </div>
                 </div>
-            </TacticalCard>
+            </HoloCard>
         </motion.div>
     );
 };
@@ -543,7 +544,7 @@ const CompanyCard = ({
                         </motion.div>
                     )}
                 </AnimatePresence>
-            </TacticalCard>
+            </HoloCard>
         </motion.div>
     );
 };
@@ -827,7 +828,7 @@ export const SearchView = () => {
                                 ))}
                             </div>
                         </div>
-                    </TacticalCard>
+                    </HoloCard>
                 </div>
             </div>
 
@@ -947,9 +948,9 @@ export const SearchView = () => {
                         </div>
                     </div>
 
-                    <TacticalCard variant="cyber" className="gap-0 p-1">
+                    <HoloCard variant="cyber" className="gap-0 p-1">
                         <AIInsightsHub isWidgetMode={true} />
-                    </TacticalCard>
+                    </HoloCard>
                 </div>
             )}
 

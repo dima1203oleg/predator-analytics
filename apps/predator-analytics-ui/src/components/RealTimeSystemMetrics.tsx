@@ -257,7 +257,7 @@ export const RealTimeSystemMetrics: React.FC<{ compact?: boolean }> = ({ compact
 
         {/* Vitality Score Main Hub */}
         <div className="col-span-12 xl:col-span-4 flex flex-col gap-8">
-          <TacticalCard variant="holographic" title="СИСТЕМНЕ_ЯДРО_ЖИТТЄДІЯЛЬНОСТІ" className="flex-1 p-10 flex flex-col items-center justify-center bg-slate-950/60 shadow-2xl overflow-hidden group">
+          <HoloCard variant="holographic" title="СИСТЕМНЕ_ЯДРО_ЖИТТЄДІЯЛЬНОСТІ" className="flex-1 p-10 flex flex-col items-center justify-center bg-slate-950/60 shadow-2xl overflow-hidden group">
             <div className="absolute inset-0 bg-cyber-scanline opacity-[0.03] pointer-events-none" />
             <div className="relative mb-8 mt-4">
               <div className={cn(
@@ -280,7 +280,7 @@ export const RealTimeSystemMetrics: React.FC<{ compact?: boolean }> = ({ compact
                 Агрегований індекс стабільності вузлів обробки v61.0-ELITE
               </p>
             </div>
-          </TacticalCard>
+          </HoloCard>
 
           <div className="grid grid-cols-2 gap-8">
             <div className="p-8 rounded-[36px] bg-slate-950/40 border border-white/5 shadow-xl flex flex-col gap-4 group hover:bg-slate-900/60 transition-all duration-500">
@@ -350,7 +350,7 @@ export const RealTimeSystemMetrics: React.FC<{ compact?: boolean }> = ({ compact
           </div>
 
           {/* Latency Matrix Visualization */}
-          <TacticalCard variant="holographic" title="СПЕКТР_МЕРЕЖЕВОЇ_ЗАТРИМКИ" className="p-10 border-white/5 bg-slate-950/40 overflow-hidden relative group">
+          <HoloCard variant="holographic" title="СПЕКТР_МЕРЕЖЕВОЇ_ЗАТРИМКИ" className="p-10 border-white/5 bg-slate-950/40 overflow-hidden relative group">
             <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
             <div className="flex items-center gap-6 mb-10">
               <div className="p-3 bg-amber-500/10 rounded-2xl border border-amber-500/20 text-amber-400">
@@ -385,7 +385,7 @@ export const RealTimeSystemMetrics: React.FC<{ compact?: boolean }> = ({ compact
                 </motion.div>
               ))}
             </div>
-          </TacticalCard>
+          </HoloCard>
         </div>
       </div>
     </div>

@@ -22,6 +22,7 @@ import {
 import { cn } from '@/utils/cn';
 import { apiClient } from '@/services/api/config';
 import { PageTransition } from '@/components/layout/PageTransition';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
@@ -236,7 +237,7 @@ export default function FirmDossierView() {
 
                    {/* DETAIL GRID */}
                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                      <TacticalCard variant="cyber" className="p-10 rounded-[3.5rem] space-y-8">
+                      <HoloCard variant="cyber" className="p-10 rounded-[3.5rem] space-y-8">
                          <h4 className="text-[11px] font-black text-sky-500 uppercase tracking-[0.4em] italic border-b border-sky-500/10 pb-6">БЕНЕФІЦІА НА_СТРУКТУРА</h4>
                          <div className="space-y-4">
                             {result.owners.map((o: string, i: number) => (
@@ -246,8 +247,8 @@ export default function FirmDossierView() {
                               </div>
                             ))}
                          </div>
-                      </TacticalCard>
-                      <TacticalCard variant="holographic" className="p-10 rounded-[3.5rem] space-y-8 border-sky-500/20 bg-sky-500/[0.02]">
+                      </HoloCard>
+                      <HoloCard variant="holographic" className="p-10 rounded-[3.5rem] space-y-8 border-sky-500/20 bg-sky-500/[0.02]">
                          <h4 className="text-[11px] font-black text-sky-500 uppercase tracking-[0.4em] italic border-b border-sky-500/10 pb-6">ОСТАННЯ_АКЦЕНТОВА_ПОДІЯ</h4>
                          <div className="flex gap-8">
                             <div className="p-5 bg-sky-600/10 rounded-2xl border border-sky-600/30 text-sky-500 h-fit">
@@ -261,7 +262,7 @@ export default function FirmDossierView() {
                                </div>
                             </div>
                          </div>
-                      </TacticalCard>
+                      </HoloCard>
                    </div>
                 </motion.div>
 

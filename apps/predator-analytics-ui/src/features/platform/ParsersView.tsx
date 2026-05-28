@@ -23,6 +23,7 @@ import {
 
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { ViewHeader } from '@/components/ViewHeader';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { useUISound, UISoundType } from '@/hooks/useUISound';
 import { CyberOrb } from '@/components/CyberOrb';
@@ -206,7 +207,7 @@ const ParsersView: React.FC = () => {
                         { label: 'WORKERS АКТИВНО', value: '32', icon: Cpu, color: 'sky' },
                         { label: 'ЧЕ ГА ІНДЕКСАЦІЇ', value: '12,402', icon: Layers, color: 'purple' },
                     ].map((m, i) => (
-                        <TacticalCard key={i} variant="glass" className="p-6 rounded-[32px] flex items-center gap-6 border-white/5 bg-slate-900/40">
+                        <HoloCard key={i} variant="glass" className="p-6 rounded-[32px] flex items-center gap-6 border-white/5 bg-slate-900/40">
                             <div className="p-4 bg-slate-900 border border-white/10 rounded-2xl text-slate-400">
                                 <m.icon size={24} />
                             </div>
@@ -214,7 +215,7 @@ const ParsersView: React.FC = () => {
                                 <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">{m.label}</p>
                                 <p className="text-2xl font-black text-white italic tracking-tighter tabular-nums">{m.value}</p>
                             </div>
-                        </TacticalCard>
+                        </HoloCard>
                     ))}
                 </div>
 
@@ -251,7 +252,7 @@ const ParsersView: React.FC = () => {
                 </div>
 
                 {/* ETL Status Panel */}
-                <TacticalCard variant="holographic" title="Індекс Здоров'я Пайплайну (Pipeline Health)" className="p-10 bg-slate-950/40 border-white/5 rounded-[60px] panel-3d shadow-2xl">
+                <HoloCard variant="holographic" title="Індекс Здоров'я Пайплайну (Pipeline Health)" className="p-10 bg-slate-950/40 border-white/5 rounded-[60px] panel-3d shadow-2xl">
                     <div className="flex flex-col lg:flex-row gap-12 items-center">
                         <div className="w-full lg:w-1/3 relative flex items-center justify-center">
                             <div className="absolute inset-0 bg-emerald-500/10 blur-[80px] rounded-full scale-150 " />
@@ -282,7 +283,7 @@ const ParsersView: React.FC = () => {
                             </button>
                         </div>
                     </div>
-                </TacticalCard>
+                </HoloCard>
             </div>
 
             <style dangerouslySetInnerHTML={{ __html: `

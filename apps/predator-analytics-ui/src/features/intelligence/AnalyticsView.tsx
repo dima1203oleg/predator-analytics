@@ -31,6 +31,7 @@ import { useUISound, UISoundType } from '@/hooks/useUISound';
 import { api } from '@/services/api';
 import { cn } from '@/utils/cn';
 import { premiumLocales } from '@/locales/uk/premium';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { CyberOrb } from '@/components/CyberOrb';
 import { HoloContainer } from '@/components/HoloContainer';
@@ -558,7 +559,7 @@ const AnalyticsView: React.FC = () => {
                                             className="flex flex-col gap-10 h-full"
                                         >
                                             {/* Primary Entity Card ELITE */}
-                                            <TacticalCard variant="holographic" className="p-12 bg-black shadow-4xl rounded-[4rem] border-yellow-500/10 relative overflow-hidden group/entity">
+                                            <HoloCard variant="holographic" className="p-12 bg-black shadow-4xl rounded-[4rem] border-yellow-500/10 relative overflow-hidden group/entity">
                                                 <div className="absolute top-0 right-0 p-12 opacity-[0.03] group-hover/entity:opacity-20 transition-all duration-[5s] rotate-45 group-hover/entity:rotate-0 scale-150">
                                                     {CATEGORY_MAP[selectedEntity.label]?.icon || <Network size={200} />}
                                                 </div>
@@ -584,7 +585,7 @@ const AnalyticsView: React.FC = () => {
                                                         <Share2 size={26} />
                                                     </button>
                                                 </div>
-                                            </TacticalCard>
+                                            </HoloCard>
 
                                             {/* Parameters Breakdown ELITE */}
                                             <div className="p-10 bg-black/60 border-2 border-white/5 rounded-[4rem] shadow-4xl  relative overflow-hidden group/params">

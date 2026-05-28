@@ -69,7 +69,7 @@ export const ExplorerShell: React.FC<ExplorerShellProps> = ({
       </QuantumCard>
 
       {/* Recent Activity */}
-      <TacticalCard variant="glass" title="📊 ОСТАННІ_ДОСЛІДЖЕННЯ" className="lg:col-span-2">
+      <HoloCard variant="glass" title="📊 ОСТАННІ_ДОСЛІДЖЕННЯ" className="lg:col-span-2">
         <div className="space-y-4 p-2">
           {recentSearches?.map((search, idx) => (
             <motion.div
@@ -96,10 +96,10 @@ export const ExplorerShell: React.FC<ExplorerShellProps> = ({
             </motion.div>
           ))}
         </div>
-      </TacticalCard>
+      </HoloCard>
 
       {/* Quick Actions */}
-      <TacticalCard variant="glass" title="✨ ІНСТРУМЕНТА ІЙ">
+      <HoloCard variant="glass" title="✨ ІНСТРУМЕНТА ІЙ">
         <div className="grid grid-cols-1 gap-4 p-2">
           {[
             { icon: Search, label: 'ГЛОБАЛЬНИЙ_ПОШУК', color: 'purple', action: 'search', desc: 'Пошук по всій БД' },
@@ -130,7 +130,7 @@ export const ExplorerShell: React.FC<ExplorerShellProps> = ({
             </motion.button>
           ))}
         </div>
-      </TacticalCard>
+      </HoloCard>
     </div>
   );
 };

@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { ViewHeader } from '@/components/ViewHeader';
 import { api } from '@/services/api';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { Brain, Database, Network, Search, GitBranch, Sparkles, Zap, Layers } from 'lucide-react';
 
@@ -319,7 +320,7 @@ export const GraphView = () => {
                 </div>
               </div>
             )}
-          </TacticalCard>
+          </HoloCard>
         </div>
       </div>
     </div>

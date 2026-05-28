@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { ViewHeader } from '@/components/ViewHeader';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { CardSkeleton } from '@/components/Skeleton';
 import {
@@ -151,7 +152,7 @@ const DeploymentView: React.FC = () => {
                             </div>
 
                              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                                <TacticalCard variant="holographic"  title="Реєстр  елізів Ядра" className="glass-morphism panel-3d">
+                                <HoloCard variant="holographic"  title="Реєстр  елізів Ядра" className="glass-morphism panel-3d">
                                     <div className="flex items-center gap-8 p-4">
                                         <motion.div animate={{ rotate: [0, 10, 0] }} transition={{ repeat: Infinity, duration: 4 }} className="p-6 bg-blue-600/10 rounded-2xl border border-blue-500/20 text-blue-500 shadow-xl shadow-blue-500/5">
                                             <GitBranch size={48} />
@@ -174,9 +175,9 @@ const DeploymentView: React.FC = () => {
                                             <div className="text-xs font-bold text-emerald-400 font-mono">1.2с ХОЛОДНИЙ СТА Т</div>
                                         </div>
                                     </div>
-                                </TacticalCard>
+                                </HoloCard>
 
-                                <TacticalCard variant="holographic"  title="Узгодження GitOps" className="glass-morphism panel-3d" action={<span className="text-[10px] font-bold text-emerald-500 tracking-widest uppercase px-3 py-1 bg-emerald-500/10 rounded-lg">ЗДО ОВО</span>}>
+                                <HoloCard variant="holographic"  title="Узгодження GitOps" className="glass-morphism panel-3d" action={<span className="text-[10px] font-bold text-emerald-500 tracking-widest uppercase px-3 py-1 bg-emerald-500/10 rounded-lg">ЗДО ОВО</span>}>
                                     <div className="space-y-6 mt-4">
                                         {envs.map((e) => (
                                             <div key={e.id} className="group">
@@ -196,7 +197,7 @@ const DeploymentView: React.FC = () => {
                                             </div>
                                         ))}
                                     </div>
-                                </TacticalCard>
+                                </HoloCard>
                             </div>
                         </motion.div>
                     )}

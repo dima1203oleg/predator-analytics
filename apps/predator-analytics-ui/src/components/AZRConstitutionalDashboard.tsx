@@ -316,7 +316,7 @@ export const AZRConstitutionalDashboard: React.FC = () => {
 
         {/* Core Guardians Status */}
         <div className="col-span-12 xl:col-span-4 flex flex-col gap-8">
-          <TacticalCard variant="holographic" title="CONSTITUTIONAL_CORE_PROTECTION" className="p-10 flex flex-col items-center justify-center bg-slate-950/60 shadow-2xl relative overflow-hidden group">
+          <HoloCard variant="holographic" title="CONSTITUTIONAL_CORE_PROTECTION" className="p-10 flex flex-col items-center justify-center bg-slate-950/60 shadow-2xl relative overflow-hidden group">
             <div className="absolute inset-0 bg-cyber-scanline opacity-[0.03] pointer-events-none" />
             <div className="relative mb-10 mt-6 scale-110">
               <div className={cn(
@@ -344,7 +344,7 @@ export const AZRConstitutionalDashboard: React.FC = () => {
                 </div>
               </div>
             </div>
-          </TacticalCard>
+          </HoloCard>
 
           <div className="grid grid-cols-2 gap-8">
             <div className="p-8 rounded-[40px] bg-slate-950/40 border border-white/5 shadow-xl flex flex-col gap-4 group hover:bg-slate-900/60 transition-all">

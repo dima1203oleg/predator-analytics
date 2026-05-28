@@ -1,5 +1,6 @@
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import {
@@ -762,7 +763,7 @@ const AgentsView: React.FC = () => {
                 <div className="space-y-5">
 
                     {/* ── NEURAL NETWORK ВІЗУАЛІЗАЦІЯ + ДЕТАЛЬНИЙ СТАТУС ── */}
-                    <TacticalCard variant="holographic" title={premiumLocales.agentsView.tabs.telemetry} className="overflow-hidden">
+                    <HoloCard variant="holographic" title={premiumLocales.agentsView.tabs.telemetry} className="overflow-hidden">
                         <AnimatePresence mode="wait">
                             {selectedAgent ? (
                                 <motion.div
@@ -871,7 +872,7 @@ const AgentsView: React.FC = () => {
                                 </motion.div>
                             )}
                         </AnimatePresence>
-                    </TacticalCard>
+                    </HoloCard>
 
                     {/* ── СПОВІЩЕННЯ ФЛОТУ ── */}
                     <TacticalCard
@@ -920,7 +921,7 @@ const AgentsView: React.FC = () => {
                                 </motion.div>
                             )}
                         </div>
-                    </TacticalCard>
+                    </HoloCard>
 
                     {/* ── АВТО ИТЕТ АГЕНТІВ (Authority Level) ── */}
                     <div className="p-4 rounded-3xl border border-white/[0.06] bg-slate-900/40 space-y-3">

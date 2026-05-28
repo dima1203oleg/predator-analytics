@@ -408,7 +408,7 @@ export const ETLPipelineVisualizer: React.FC = () => {
                   <span>Global_Consensus</span>
                 </div>
               </div>
-            </TacticalCard>
+            </HoloCard>
           </motion.div>
         ) : (
           <div className="py-40 flex flex-col items-center justify-center border-2 border-dashed border-white/5 rounded-[64px] bg-slate-900/10 group">

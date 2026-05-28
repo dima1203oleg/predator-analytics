@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { PageTransition } from '@/components/layout/PageTransition';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { Badge } from '@/components/ui/badge';
@@ -298,7 +299,7 @@ export default function SupplyChainAnalyticsView() {
                       </div>
 
                       <div className="col-span-12 xl:col-span-4 space-y-10">
-                         <TacticalCard variant="holographic" className="p-10 rounded-[3.5rem] border-cyan-500/20 bg-cyan-500/[0.02] space-y-8">
+                         <HoloCard variant="holographic" className="p-10 rounded-[3.5rem] border-cyan-500/20 bg-cyan-500/[0.02] space-y-8">
                             <h3 className="text-xl font-black text-white italic uppercase flex items-center gap-4">
                                <ShieldCheck size={24} className="text-cyan-500" /> ЦИФРОВІ_ДВІЙНИКИ
                             </h3>
@@ -315,7 +316,7 @@ export default function SupplyChainAnalyticsView() {
                                ))}
                             </div>
                             <CyberOrb size={180} status="active" />
-                         </TacticalCard>
+                         </HoloCard>
 
                          <div className="p-10 rounded-[3.5rem] bg-black border border-white/[0.04] shadow-3xl space-y-8">
                             <h3 className="text-[12px] font-black text-slate-500 italic uppercase tracking-[0.4em]">ФОРЕНЗІК_АКЦІЇ</h3>

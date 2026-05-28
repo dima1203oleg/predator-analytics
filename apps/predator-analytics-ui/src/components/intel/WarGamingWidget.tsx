@@ -65,7 +65,7 @@ export const WarGamingWidget: React.FC = () => {
     };
 
     return (
-        <TacticalCard 
+        <HoloCard 
             variant="holographic" 
             title="⚔️ WAR-GAMING HORIZON" 
             className="border-indigo-500/30 bg-indigo-950/10 min-h-[400px]"
@@ -151,6 +151,6 @@ export const WarGamingWidget: React.FC = () => {
                     </button>
                 </div>
             </div>
-        </TacticalCard>
+        </HoloCard>
     );
 };

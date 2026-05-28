@@ -352,7 +352,7 @@ export const StorageAnalytics: React.FC = () => {
               <div className="text-4xl font-black text-white font-display tracking-tighter mb-2 group-hover:scale-110 transition-transform origin-left">{stat.value}</div>
               <div className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] italic opacity-60">{stat.sub}</div>
             </div>
-          </TacticalCard>
+          </HoloCard>
         ))}
       </div>
 
@@ -367,7 +367,7 @@ export const StorageAnalytics: React.FC = () => {
             <DatabaseCard key={db.name} db={db} index={i} />
           ))}
         </div>
-      </TacticalCard>
+      </HoloCard>
 
       {/* Object Matrices */}
       <div>
@@ -478,7 +478,7 @@ export const StorageAnalytics: React.FC = () => {
             </div>
           ))}
         </div>
-      </TacticalCard>
+      </HoloCard>
 
       {/* Optimization Footer */}
       <div className="p-10 rounded-[48px] border border-dashed border-white/10 bg-slate-950/20 flex flex-col md:flex-row items-center justify-between gap-8 group">

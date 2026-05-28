@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { apiClient } from '@/services/api/config';
 import { PageTransition } from '@/components/layout/PageTransition';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { Badge } from '@/components/ui/badge';
@@ -187,7 +188,7 @@ export default function DataGovView() {
                       <AnimatePresence>
                          {selectedDataset && (
                            <motion.div initial={{ opacity: 0, x: 100 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 100 }} className="col-span-12 lg:col-span-5">
-                              <TacticalCard variant="holographic" className="p-16 border-2 border-blue-500/20 rounded-[4rem] bg-black/80  shadow-3xl space-y-12 sticky top-12">
+                              <HoloCard variant="holographic" className="p-16 border-2 border-blue-500/20 rounded-[4rem] bg-black/80  shadow-3xl space-y-12 sticky top-12">
                                  <div className="flex justify-between items-start">
                                     <div className="space-y-2">
                                        <Badge className="bg-blue-600/10 text-blue-500 border border-blue-500/30 px-4 py-1.5 text-[9px] font-black uppercase italic rounded-lg">DATASET_PASSPORT</Badge>
@@ -235,7 +236,7 @@ export default function DataGovView() {
                                        <ExternalLink size={24} /> ВІДКрИТИ НА ПО ТАЛІ
                                     </a>
                                  </div>
-                              </TacticalCard>
+                              </HoloCard>
                            </motion.div>
                          )}
                       </AnimatePresence>

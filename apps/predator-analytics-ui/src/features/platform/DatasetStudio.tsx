@@ -19,6 +19,7 @@ import { cn } from '@/utils/cn';
 import { api, mlStudioApi } from '@/services/api';
 import { premiumLocales } from '../../locales/uk/premium';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { DatabasePipelineMonitor } from '@/components/pipeline/DatabasePipelineMonitor';
@@ -194,7 +195,7 @@ const DatasetStudio: React.FC = () => {
 
                             {/* Right: Generation Forge & LLM */}
                             <div className="space-y-6">
-                                <TacticalCard title="КУЗНЯ СИНТЕТИКИ" subtitle="Генерація даних для тренування LLM" variant="holographic">
+                                <HoloCard title="КУЗНЯ СИНТЕТИКИ" subtitle="Генерація даних для тренування LLM" variant="holographic">
                                     <div className="p-6 space-y-6">
                                         <div className="space-y-4">
                                             <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{premiumLocales.datasetStudio.panels.generation.prototype.label}</label>
@@ -271,7 +272,7 @@ const DatasetStudio: React.FC = () => {
                                             СТВО ИТИ (СИНТЕЗ)
                                         </button>
                                     </div>
-                                </TacticalCard>
+                                </HoloCard>
 
                                 {/* LLM Models Status */}
                                 <div className="p-6 bg-slate-900/80 border border-emerald-500/20 rounded-3xl relative overflow-hidden group">
@@ -315,7 +316,7 @@ const DatasetStudio: React.FC = () => {
                         >
                             {/* Left: ML Infrastructure Status */}
                             <div className="lg:col-span-1 space-y-6">
-                                <TacticalCard title="ІНФ АСТРУКТУРА ML" variant="cyber">
+                                <HoloCard title="ІНФ АСТРУКТУРА ML" variant="cyber">
                                     <div className="p-6 space-y-6">
                                         <div className="flex items-center justify-between">
                                             <span className="text-[10px] font-black text-slate-500 uppercase">Трекінг MLflow</span>
@@ -394,13 +395,13 @@ const DatasetStudio: React.FC = () => {
                                             ))}
                                         </div>
                                     </div>
-                                </TacticalCard>
+                                </HoloCard>
                             </div>
 
                             {/* Center-Right: LoRA fine-tuning & MLflow Runs */}
                             <div className="lg:col-span-3 space-y-8">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    <TacticalCard title="LoRA ДОНАВЧАННЯ" variant="holographic">
+                                    <HoloCard title="LoRA ДОНАВЧАННЯ" variant="holographic">
                                         <div className="p-6 space-y-6">
                                             <div className="space-y-4">
                                                 <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
@@ -440,9 +441,9 @@ const DatasetStudio: React.FC = () => {
                                                 </button>
                                             </div>
                                         </div>
-                                    </TacticalCard>
+                                    </HoloCard>
 
-                                    <TacticalCard title="ЕКСПЕ ИМЕНТИ MLflow" variant="cyber">
+                                    <HoloCard title="ЕКСПЕ ИМЕНТИ MLflow" variant="cyber">
                                         <div className="p-0">
                                             <div className="overflow-x-auto">
                                                 <table className="w-full">
@@ -475,7 +476,7 @@ const DatasetStudio: React.FC = () => {
                                                 </table>
                                             </div>
                                         </div>
-                                    </TacticalCard>
+                                    </HoloCard>
                                 </div>
 
                                 {/* Active Learning Feedback Loop */}

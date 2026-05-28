@@ -25,6 +25,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { Badge } from '@/components/ui/badge';
 import { ViewHeader } from '@/components/ViewHeader';
@@ -416,7 +417,7 @@ export default function FactorsView() {
                                     }
                                 />
                             )}
-                        </TacticalCard>
+                        </HoloCard>
                     </section>
 
                     {loading && (

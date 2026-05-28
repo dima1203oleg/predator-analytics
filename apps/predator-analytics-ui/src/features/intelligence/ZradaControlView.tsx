@@ -20,6 +20,7 @@ import {
   Lock
 } from 'lucide-react';
 import { PageTransition } from '@/components/layout/PageTransition';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -249,7 +250,7 @@ export default function ZradaControlView() {
                  <AnimatePresence mode="wait">
                     {selectedSubject ? (
                       <motion.div key={selectedSubject.id} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-10">
-                         <TacticalCard variant="holographic" className="p-10 rounded-[4rem] border-white/5 relative overflow-hidden h-fit">
+                         <HoloCard variant="holographic" className="p-10 rounded-[4rem] border-white/5 relative overflow-hidden h-fit">
                             <div className="absolute top-0 right-0 p-12 opacity-[0.03] pointer-events-none rotate-12">
                                <Fingerprint size={300} className="text-rose-600" />
                             </div>
@@ -282,7 +283,7 @@ export default function ZradaControlView() {
                                    </div>
                                 </div>
                             </div>
-                         </TacticalCard>
+                         </HoloCard>
 
                          <div className="p-10 rounded-[4rem] bg-black border-2 border-white/[0.04] shadow-3xl space-y-10 flex-1 overflow-y-auto no-scrollbar border-t-rose-600/10">
                               <div className="flex items-center gap-6 pb-6 border-b border-white/[0.04]">

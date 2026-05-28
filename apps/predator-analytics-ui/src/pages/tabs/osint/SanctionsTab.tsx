@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ShieldAlert, Search, Filter, Download, ExternalLink, AlertTriangle } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { cn } from '@/lib/utils';
@@ -24,7 +25,7 @@ export const SanctionsTab: React.FC = () => {
   return (
     <div className="flex flex-col h-full gap-4 p-4 lg:p-6 overflow-y-auto custom-scrollbar bg-slate-950/40">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <TacticalCard className="md:col-span-1 border-white/5 bg-slate-900/40 ">
+        <HoloCard className="md:col-span-1 border-white/5 bg-slate-900/40 ">
           <div className="space-y-6">
             <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
               <Filter size={14} className="text-rose-500" />
@@ -55,7 +56,7 @@ export const SanctionsTab: React.FC = () => {
                 Експорт Списку
             </button>
           </div>
-        </TacticalCard>
+        </HoloCard>
 
         <div className="md:col-span-3 space-y-6">
           <div className="relative group">
@@ -78,7 +79,7 @@ export const SanctionsTab: React.FC = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: idx * 0.1 }}
               >
-                <TacticalCard variant="interactive" className="group border-white/5 bg-slate-900/20 hover:bg-slate-900/40 transition-all">
+                <HoloCard variant="interactive" className="group border-white/5 bg-slate-900/20 hover:bg-slate-900/40 transition-all">
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div className="flex items-center gap-5">
                       <div className={cn(
@@ -128,7 +129,7 @@ export const SanctionsTab: React.FC = () => {
                     </div>
                     <p className="text-xs text-slate-400 italic leading-relaxed">{item.reason}</p>
                   </div>
-                </TacticalCard>
+                </HoloCard>
               </motion.div>
             ))}
           </div>

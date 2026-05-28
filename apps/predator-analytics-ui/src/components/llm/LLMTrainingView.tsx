@@ -38,7 +38,7 @@ export const LLMTrainingView: React.FC<LLMTrainingViewProps> = ({
 }) => {
     return (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <TacticalCard variant="holographic" title={premiumLocales.llm.training.title} className="glass-morphism panel-3d">
+            <HoloCard variant="holographic" title={premiumLocales.llm.training.title} className="glass-morphism panel-3d">
                 <div className="space-y-8">
                     <div className="grid grid-cols-2 gap-4">
                         {(Object.keys(TRAINING_CONFIGS) as TrainingDomain[]).map((dom) => (
@@ -98,9 +98,9 @@ export const LLMTrainingView: React.FC<LLMTrainingViewProps> = ({
                         </motion.button>
                     </div>
                 </div>
-            </TacticalCard>
+            </HoloCard>
 
-            <TacticalCard variant="holographic" title={premiumLocales.llm.training.matrix} className="glass-morphism panel-3d">
+            <HoloCard variant="holographic" title={premiumLocales.llm.training.matrix} className="glass-morphism panel-3d">
                 <div className="space-y-4">
                     <div className="h-[300px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
@@ -134,7 +134,7 @@ export const LLMTrainingView: React.FC<LLMTrainingViewProps> = ({
                         {premiumLocales.llm.training.synthesize}
                     </button>
                 </div>
-            </TacticalCard>
+            </HoloCard>
         </motion.div>
     );
 };

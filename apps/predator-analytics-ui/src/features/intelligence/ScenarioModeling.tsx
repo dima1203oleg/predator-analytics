@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import ReactECharts from '@/components/ECharts';
 import { PageTransition } from '@/components/layout/PageTransition';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { cn } from '@/utils/cn';

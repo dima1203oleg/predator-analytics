@@ -165,7 +165,7 @@ export const LLMCouncilPanel: React.FC<LLMCouncilPanelProps> = ({ isLockdown }) 
                 <div className="col-span-12 xl:col-span-4 flex flex-col gap-10">
 
                     {/* Fleet Matrix */}
-                    <TacticalCard variant="holographic" title="COUNCIL_FLEET_SELECTION" className="p-8 border-white/5 bg-slate-950/40">
+                    <HoloCard variant="holographic" title="COUNCIL_FLEET_SELECTION" className="p-8 border-white/5 bg-slate-950/40">
                         <div className="flex flex-col gap-5">
                             {availableModels.map(m => {
                                 const isSelected = selectedModels.includes(m.id);
@@ -208,12 +208,12 @@ export const LLMCouncilPanel: React.FC<LLMCouncilPanelProps> = ({ isLockdown }) 
                                 );
                             })}
                         </div>
-                    </TacticalCard>
+                    </HoloCard>
 
                     {/* Input Directive */}
                     <div className="relative group">
                         <div className="absolute inset-0 bg-cyan-500/5 blur-[100px] rounded-[48px] opacity-0 group-hover:opacity-100 transition-all duration-1000" />
-                        <TacticalCard variant="holographic" title="INPUT_DIRECTIVE" className="p-1 border-white/5 bg-slate-950/60 shadow-2xl overflow-hidden">
+                        <HoloCard variant="holographic" title="INPUT_DIRECTIVE" className="p-1 border-white/5 bg-slate-950/60 shadow-2xl overflow-hidden">
                             <textarea
                                 value={query}
                                 onChange={(e) => setQuery(e.target.value)}
@@ -221,7 +221,7 @@ export const LLMCouncilPanel: React.FC<LLMCouncilPanelProps> = ({ isLockdown }) 
                                 className="w-full h-64 bg-transparent p-10 font-mono text-base text-slate-200 focus:text-white outline-none transition-all resize-none placeholder:text-slate-800 selection:bg-cyan-500/30"
                                 disabled={isDeliberating}
                             />
-                        </TacticalCard>
+                        </HoloCard>
                     </div>
 
                     {/* Progress Phases */}
@@ -344,7 +344,7 @@ export const LLMCouncilPanel: React.FC<LLMCouncilPanelProps> = ({ isLockdown }) 
                                 className="flex-1 flex flex-col gap-10"
                             >
                                 {/* Master Verdict Panel */}
-                                <TacticalCard variant="holographic" title="FINAL_COUNCIL_SYNTHESIS" className="p-1 border-white/10 bg-slate-950/80 shadow-2xl relative overflow-hidden group">
+                                <HoloCard variant="holographic" title="FINAL_COUNCIL_SYNTHESIS" className="p-1 border-white/10 bg-slate-950/80 shadow-2xl relative overflow-hidden group">
                                     <div className="absolute -top-40 -right-40 w-[600px] h-[600px] bg-cyan-600/10 blur-[150px] rounded-full group-hover:bg-cyan-500/20 transition-all duration-1000" />
                                     <div className="p-12 md:p-16 relative z-10">
                                         <div className="flex items-center justify-between mb-12">
@@ -361,11 +361,11 @@ export const LLMCouncilPanel: React.FC<LLMCouncilPanelProps> = ({ isLockdown }) 
                                             {result.final_answer}
                                         </div>
                                     </div>
-                                </TacticalCard>
+                                </HoloCard>
 
                                 {/* Participants Hub */}
                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-                                    <TacticalCard variant="holographic" title="CONTRIBUTING_NEURAL_NODES" className="p-10 border-white/5 bg-slate-950/40">
+                                    <HoloCard variant="holographic" title="CONTRIBUTING_NEURAL_NODES" className="p-10 border-white/5 bg-slate-950/40">
                                         <div className="flex items-center justify-between mb-12">
                                             <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Active Node Distribution</span>
                                             <div className="flex items-center gap-2 px-3 py-1 bg-emerald-500/10 rounded-full border border-emerald-500/30">
@@ -396,9 +396,9 @@ export const LLMCouncilPanel: React.FC<LLMCouncilPanelProps> = ({ isLockdown }) 
                                                 </div>
                                             ))}
                                         </div>
-                                    </TacticalCard>
+                                    </HoloCard>
 
-                                    <TacticalCard variant="holographic" title="DIVERGENT_ANALYSIS" className="p-10 border-white/5 bg-slate-950/40">
+                                    <HoloCard variant="holographic" title="DIVERGENT_ANALYSIS" className="p-10 border-white/5 bg-slate-950/40">
                                         <div className="flex items-center justify-between mb-12">
                                             <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Divergent Paradigms</span>
                                             {result.dissenting_opinions.length > 0 && (
@@ -438,11 +438,11 @@ export const LLMCouncilPanel: React.FC<LLMCouncilPanelProps> = ({ isLockdown }) 
                                                 <p className="text-[9px] text-slate-600 font-mono uppercase tracking-[0.3em]">Відхилення парадигм не виявлено в поточному циклі</p>
                                             </div>
                                         )}
-                                    </TacticalCard>
+                                    </HoloCard>
                                 </div>
 
                                 {/* Peer Review Matrix */}
-                                <TacticalCard variant="holographic" title="PEER_REVIEW_METADATA" className="p-10 border-white/5 bg-slate-950/60 shadow-2xl relative overflow-hidden">
+                                <HoloCard variant="holographic" title="PEER_REVIEW_METADATA" className="p-10 border-white/5 bg-slate-950/60 shadow-2xl relative overflow-hidden">
                                     <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-blue-500/20 to-transparent" />
                                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
                                         {Object.entries(result.peer_review_summary?.by_model || {}).slice(0, 4).map(([model, reviews], idx) => (
@@ -469,7 +469,7 @@ export const LLMCouncilPanel: React.FC<LLMCouncilPanelProps> = ({ isLockdown }) 
                                             </div>
                                         ))}
                                     </div>
-                                </TacticalCard>
+                                </HoloCard>
                             </motion.div>
                         )}
                     </AnimatePresence>

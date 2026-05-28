@@ -81,7 +81,7 @@ export const ApiKeysConfig: React.FC = () => {
     };
 
     return (
-        <TacticalCard variant="holographic" title={premiumLocales.apiKeys.title} className="panel-3d bg-slate-950/40 border-slate-800/50">
+        <HoloCard variant="holographic" title={premiumLocales.apiKeys.title} className="panel-3d bg-slate-950/40 border-slate-800/50">
             <div className="space-y-6">
                 <div className="flex items-start gap-4 p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-2xl">
                     <div className="p-2 bg-emerald-500/10 rounded-lg">
@@ -220,6 +220,6 @@ export const ApiKeysConfig: React.FC = () => {
                     </p>
                 </div>
             </div>
-        </TacticalCard>
+        </HoloCard>
     );
 };

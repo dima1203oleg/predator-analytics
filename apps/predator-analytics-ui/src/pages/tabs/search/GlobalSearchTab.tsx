@@ -15,6 +15,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { CyberOrb } from '@/components/CyberOrb';
 import { ViewHeader } from '@/components/ViewHeader';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { apiClient } from '@/services/api/config';
 import { cn } from '@/utils/cn';
@@ -251,7 +252,7 @@ export const GlobalSearchTab: React.FC = () => {
                                             onClick={() => fetchEntityDetails(res)}
                                             className="group cursor-pointer"
                                         >
-                                            <TacticalCard variant="holographic" className="p-10 h-full relative overflow-hidden flex flex-col group-hover:border-red-600/40 transition-all border-white/5 bg-black/40 rounded-[3rem]">
+                                            <HoloCard variant="holographic" className="p-10 h-full relative overflow-hidden flex flex-col group-hover:border-red-600/40 transition-all border-white/5 bg-black/40 rounded-[3rem]">
                                                 <div className="absolute -right-10 -bottom-10 p-12 opacity-[0.02] group-hover:opacity-[0.06] transition-all scale-150 rotate-[-15deg] pointer-events-none">
                                                     {res.severity === 'CRITICAL' ? <Skull size={240} className="text-red-500" /> : <ShieldAlert size={240} className="text-red-500" />}
                                                 </div>
@@ -293,7 +294,7 @@ export const GlobalSearchTab: React.FC = () => {
                                                       <Fingerprint size={24} />
                                                    </div>
                                                 </div>
-                                            </TacticalCard>
+                                            </HoloCard>
                                         </motion.div>
                                     ))}
                                 </AnimatePresence>
@@ -339,7 +340,7 @@ export const GlobalSearchTab: React.FC = () => {
 
                         <div className="grid grid-cols-12 gap-10">
                             {/* Entity Header/Quick Info */}
-                            <TacticalCard variant="holographic" className="col-span-12 p-12 rounded-[4rem] relative overflow-hidden flex flex-col lg:flex-row items-center gap-12 bg-black/60 border-red-900/20">
+                            <HoloCard variant="holographic" className="col-span-12 p-12 rounded-[4rem] relative overflow-hidden flex flex-col lg:flex-row items-center gap-12 bg-black/60 border-red-900/20">
                                 <div className="relative">
                                     <div className="absolute inset-0 bg-red-600/20 blur-[80px] rounded-full scale-110" />
                                     <div className="relative w-48 h-48 bg-slate-950 border-2 border-red-600/30 rounded-[3.5rem] flex items-center justify-center shadow-3xl">
@@ -359,11 +360,11 @@ export const GlobalSearchTab: React.FC = () => {
                                     <p className={cn("text-6xl font-black italic tracking-tighter font-mono", selectedEntity.risk > 70 ? 'text-red-500' : 'text-emerald-500')}>{selectedEntity.risk}%</p>
                                     <p className="text-[9px] font-black text-slate-500 uppercase italic mt-2">КАТЕГОРІЯ: КРИТИЧНО</p>
                                 </div>
-                            </TacticalCard>
+                            </HoloCard>
 
                             {/* Details Grid */}
                             <div className="col-span-12 lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-10">
-                                <TacticalCard variant="cyber" className="p-10 rounded-[3rem] space-y-8">
+                                <HoloCard variant="cyber" className="p-10 rounded-[3rem] space-y-8">
                                     <h3 className="text-xs font-black text-red-500 uppercase tracking-[0.4em] italic flex items-center gap-4 border-b border-white/5 pb-6">
                                         <Info size={18} /> КЛЮЧОВІ_ ЕКВІЗИТИ
                                     </h3>
@@ -383,9 +384,9 @@ export const GlobalSearchTab: React.FC = () => {
                                             </div>
                                         ))}
                                     </div>
-                                </TacticalCard>
+                                </HoloCard>
 
-                                <TacticalCard variant="cyber" className="p-10 rounded-[3rem] space-y-8 h-full bg-red-950/5 border-red-900/20">
+                                <HoloCard variant="cyber" className="p-10 rounded-[3rem] space-y-8 h-full bg-red-950/5 border-red-900/20">
                                     <h3 className="text-xs font-black text-amber-500 uppercase tracking-[0.4em] italic flex items-center gap-4 border-b border-white/5 pb-6">
                                         <ShieldAlert size={18} /> САНКЦІЙНІ_АЛЕ ТИ
                                     </h3>
@@ -407,11 +408,11 @@ export const GlobalSearchTab: React.FC = () => {
                                             <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic">САНКЦІЙНИХ ОБМЕЖЕНЬ НЕ ВИЯВЛЕНО</p>
                                         </div>
                                     )}
-                                </TacticalCard>
+                                </HoloCard>
                             </div>
 
                             <div className="col-span-12 lg:col-span-4 flex flex-col gap-10">
-                                <TacticalCard variant="cyber" className="p-10 rounded-[3rem] flex-1 bg-black border-white/5">
+                                <HoloCard variant="cyber" className="p-10 rounded-[3rem] flex-1 bg-black border-white/5">
                                     <h3 className="text-xs font-black text-slate-500 uppercase tracking-[0.4em] italic flex items-center gap-4 border-b border-white/5 pb-6 mb-6">
                                         <Target size={18} /> АНАЛІТИЧНИЙ_КОНТЕКСТ
                                     </h3>
@@ -436,7 +437,7 @@ export const GlobalSearchTab: React.FC = () => {
                                             </button>
                                         </div>
                                     </div>
-                                </TacticalCard>
+                                </HoloCard>
                             </div>
                         </div>
                     </motion.div>

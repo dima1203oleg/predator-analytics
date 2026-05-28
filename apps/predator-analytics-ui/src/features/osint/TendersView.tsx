@@ -25,6 +25,7 @@ import {
 } from 'recharts';
 import { analyticsService } from '@/services/unified/analytics.service';
 import { PageTransition } from '@/components/layout/PageTransition';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { Badge } from '@/components/ui/badge';
@@ -141,7 +142,7 @@ const TenderCard: React.FC<{ tender: any; idx: number }> = ({ tender, idx }) => 
                       </button>
                    </div>
                 </div>
-            </TacticalCard>
+            </HoloCard>
         </motion.div>
     );
 };

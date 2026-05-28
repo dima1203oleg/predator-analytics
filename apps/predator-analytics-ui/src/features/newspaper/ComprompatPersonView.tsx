@@ -21,6 +21,7 @@ import {
 import { cn } from '@/utils/cn';
 import { apiClient } from '@/services/api/config';
 import { PageTransition } from '@/components/layout/PageTransition';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { Badge } from '@/components/ui/badge';
@@ -272,7 +273,7 @@ export default function ComprompatPersonView() {
 
                    {/* SUB-SECTION GRID */}
                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                      <TacticalCard variant="cyber" className="p-10 rounded-[3.5rem] space-y-8">
+                      <HoloCard variant="cyber" className="p-10 rounded-[3.5rem] space-y-8">
                          <h4 className="text-[11px] font-black text-orange-500 uppercase tracking-[0.4em] italic border-b border-orange-500/10 pb-6">БІЗНЕС_ІНТЕ ЕСИ</h4>
                          <div className="space-y-4">
                             {result.related_companies.map((c, i) => (
@@ -285,9 +286,9 @@ export default function ComprompatPersonView() {
                               </div>
                             ))}
                          </div>
-                      </TacticalCard>
+                      </HoloCard>
 
-                      <TacticalCard variant="holographic" className="p-10 rounded-[3.5rem] space-y-8 border-orange-500/20 bg-orange-500/[0.02]">
+                      <HoloCard variant="holographic" className="p-10 rounded-[3.5rem] space-y-8 border-orange-500/20 bg-orange-500/[0.02]">
                          <h4 className="text-[11px] font-black text-orange-500 uppercase tracking-[0.4em] italic border-b border-orange-500/10 pb-6">ЦИФ ОВИЙ_СЛІД</h4>
                          <div className="grid grid-cols-2 gap-4">
                             {result.social_profiles.map((s, i) => (
@@ -304,7 +305,7 @@ export default function ComprompatPersonView() {
                             <Eye size={18} />
                             <p className="text-[10px] font-black uppercase tracking-widest opacity-80">ВИЯВЛЕНОПРИХОВАНІ МЕДІА-П ИВ'ЯЗКИ</p>
                          </div>
-                      </TacticalCard>
+                      </HoloCard>
                    </div>
                 </motion.div>
 

@@ -15,6 +15,7 @@ import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
 import { PageTransition } from '@/components/layout/PageTransition';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 
 import { useDataOpsStatus } from '@/hooks/useAdminApi';
@@ -829,7 +830,7 @@ export default function SystemFactoryView() {
         {/* ── Вертикальний Sidebar-Навігатор ── */}
         <div className="hidden xl:flex flex-col gap-2 w-56 shrink-0">
           {/* Логотип Factory */}
-          <TacticalCard variant="holographic" className="mb-4 border-rose-500/30 bg-rose-500/5">
+          <HoloCard variant="holographic" className="mb-4 border-rose-500/30 bg-rose-500/5">
             <div className="flex items-center gap-3 mb-2">
               <div className="w-8 h-8 rounded-xl bg-rose-500/20 border border-rose-500/40 flex items-center justify-center ">
                 <Factory size={16} className="text-rose-400" />
@@ -849,7 +850,7 @@ export default function SystemFactoryView() {
                 <span className="text-slate-500 flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-slate-700" />SYSTEM STANDBY</span>
               )}
             </div>
-          </TacticalCard>
+          </HoloCard>
 
           <div className="space-y-1">
             {TABS.map(tab => {

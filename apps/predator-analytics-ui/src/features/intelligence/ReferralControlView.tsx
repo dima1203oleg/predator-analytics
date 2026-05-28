@@ -35,6 +35,7 @@ import {
   Activity
 } from 'lucide-react';
 import { PageTransition } from '@/components/layout/PageTransition';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -228,7 +229,7 @@ export default function ReferralControlView() {
                 { label: 'Voluntary факти', value: stats.voluntary, icon: Zap, color: 'text-cyan-400', bg: 'bg-cyan-500/5' },
                 { label: 'Втрачена вигода', value: stats.lost, icon: TrendingUp, color: 'text-amber-400', bg: 'bg-amber-500/5' },
               ].map((s, i) => (
-                <TacticalCard key={i} variant="cyber" className="p-6">
+                <HoloCard key={i} variant="cyber" className="p-6">
                   <div className="flex items-center justify-between mb-4">
                     <div className={cn('p-3 rounded-xl', s.bg)}>
                       <s.icon className={cn('w-6 h-6', s.color)} />
@@ -241,7 +242,7 @@ export default function ReferralControlView() {
                   <div className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">
                     {s.label}
                   </div>
-                </TacticalCard>
+                </HoloCard>
               ))}
             </div>
 
@@ -304,7 +305,7 @@ export default function ReferralControlView() {
 
               {/* Side Panel: Intelligence Summary */}
               <div className="col-span-12 lg:col-span-4 space-y-6">
-                <TacticalCard variant="cyber" className="p-6 bg-yellow-500/5">
+                <HoloCard variant="cyber" className="p-6 bg-yellow-500/5">
                   <h3 className="text-sm font-black uppercase tracking-tighter mb-4 text-white flex items-center gap-2">
                     <Target className="w-4 h-4 text-cyan-400" />
                     Статус Моніторингу
@@ -330,7 +331,7 @@ export default function ReferralControlView() {
                       </p>
                     </div>
                   </div>
-                </TacticalCard>
+                </HoloCard>
 
                 <div className="relative group overflow-hidden rounded-[2rem] p-6 bg-gradient-to-br from-amber-500/10 to-yellow-500/10 border border-white/10 hover:border-yellow-500/30 transition-all cursor-pointer">
                    <div className="relative z-10">
@@ -532,7 +533,7 @@ export default function ReferralControlView() {
 
               {/* Right Column: Actions & Files */}
               <div className="col-span-12 lg:col-span-4 space-y-6">
-                 <TacticalCard variant="cyber" className="p-6">
+                 <HoloCard variant="cyber" className="p-6">
                     <h3 className="text-sm font-black uppercase tracking-tighter mb-4 text-white">Доступні Дії</h3>
                     <div className="space-y-3">
                        <Button className="w-full bg-amber-600 hover:bg-amber-500 text-white border-none uppercase tracking-widest font-black text-[10px] gap-2">
@@ -548,7 +549,7 @@ export default function ReferralControlView() {
                          Затушити Контроль
                        </Button>
                     </div>
-                 </TacticalCard>
+                 </HoloCard>
 
                  <Card className="bg-slate-950/40 border-white/5">
                    <CardHeader>

@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/utils/cn';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { CyberGrid } from '@/components/CyberGrid';
 import { FinancialFlowPanel } from '@/components/graph/FinancialFlowPanel';
@@ -320,7 +321,7 @@ const NetworkMapPage: React.FC = () => {
                             exit={{ x: 400, opacity: 0 }}
                             className="absolute top-10 right-10 bottom-10 w-[450px] z-40"
                         >
-                            <TacticalCard 
+                            <HoloCard 
                                 variant="cyber" 
                                 className="h-full bg-black/90 border-rose-500/30 shadow-[0_40px_100px_rgba(0,0,0,0.9)] overflow-hidden"
                                 noPadding
@@ -401,7 +402,7 @@ const NetworkMapPage: React.FC = () => {
                                         </button>
                                     </div>
                                 </div>
-                            </TacticalCard>
+                            </HoloCard>
                         </motion.div>
                     )}
                 </AnimatePresence>

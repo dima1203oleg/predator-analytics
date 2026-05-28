@@ -19,6 +19,7 @@ import {
 import { useIngestionStore, IngestionJob } from '@/store/useIngestionStore';
 import { apiClient as api } from '@/services/api/config';
 import { cn } from '@/utils/cn';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { CyberOrb } from '@/components/CyberOrb';
 import { HoloContainer } from '@/components/HoloContainer';
@@ -293,7 +294,7 @@ const DataIngestionHub: React.FC = () => {
 
             {/* Tactical Actions Sidebar */}
             <div className="col-span-12 xl:col-span-4 flex flex-col gap-10">
-                <TacticalCard variant="cyber" className="p-10 flex flex-col gap-8 bg-blue-500/5">
+                <HoloCard variant="cyber" className="p-10 flex flex-col gap-8 bg-blue-500/5">
                     <div className="flex items-center gap-4">
                         <Terminal size={24} className="text-blue-400" />
                         <h3 className="text-xl font-black text-white uppercase italic tracking-tighter">ВИКОНАВЧИЙ_ТЕРМІНАЛ_v6</h3>
@@ -316,7 +317,7 @@ const DataIngestionHub: React.FC = () => {
                              </div>
                          </div>
                     </div>
-                </TacticalCard>
+                </HoloCard>
 
                 <HoloContainer className="p-10 flex flex-col gap-8 border-amber-500/20 bg-amber-500/5 relative overflow-hidden group/osint">
                     <div className="absolute -right-10 -bottom-10 opacity-5 group-hover/osint:opacity-20 transition-all duration-1000">
@@ -344,7 +345,7 @@ const DataIngestionHub: React.FC = () => {
                     </div>
                 </HoloContainer>
 
-                <TacticalCard variant="glass" className="p-10 flex flex-col gap-6 bg-slate-900">
+                <HoloCard variant="glass" className="p-10 flex flex-col gap-6 bg-slate-900">
                      <div className="flex items-center gap-4 text-emerald-400">
                          <ShieldCheck size={24} />
                          <span className="text-[10px] font-black uppercase tracking-[0.4em]">ПРОТОКОЛИ_БЕЗПЕКИ</span>
@@ -362,7 +363,7 @@ const DataIngestionHub: React.FC = () => {
                             </div>
                         ))}
                      </div>
-                </TacticalCard>
+                </HoloCard>
             </div>
         </div>
 

@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 
 import { cn } from '@/utils/cn';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { HoloContainer } from '@/components/HoloContainer';
 import { CyberOrb } from '@/components/CyberOrb';
@@ -116,7 +117,7 @@ const MobileCommandCenter: React.FC = () => {
         {/* Welcome Banner */}
         <section>
           <h2 className="text-[11px] font-black text-slate-500 uppercase tracking-[0.4em] mb-4">Щоденний Брифінг (Daily Briefing)</h2>
-          <TacticalCard variant="holographic" className="p-8 group overflow-hidden">
+          <HoloCard variant="holographic" className="p-8 group overflow-hidden">
             <div className="absolute top-0 right-0 p-6 opacity-10 rotate-12 group-hover:rotate-0 transition-transform duration-1000">
               <Globe size={120} className="text-blue-500" />
             </div>
@@ -134,7 +135,7 @@ const MobileCommandCenter: React.FC = () => {
                 </button>
               </div>
             </div>
-          </TacticalCard>
+          </HoloCard>
         </section>
 
         {/* Quick Stats Grid */}

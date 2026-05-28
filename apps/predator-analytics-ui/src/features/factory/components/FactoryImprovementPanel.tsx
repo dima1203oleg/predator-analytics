@@ -9,6 +9,7 @@ import { cn } from '@/utils/cn';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 
 export interface FactoryImprovementPanelProps {
@@ -78,7 +79,7 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
   return (
     <div className="space-y-6">
       {/* Sovereign Control Center Header */}
-      <TacticalCard variant="holographic" className="border-rose-500/40 bg-rose-500/5 ">
+      <HoloCard variant="holographic" className="border-rose-500/40 bg-rose-500/5 ">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="flex items-center gap-5">
             <div className="w-16 h-16 rounded-2xl bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-rose-400  shrink-0">
@@ -130,11 +131,11 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
              </Button>
           </div>
         </div>
-      </TacticalCard>
+      </HoloCard>
 
       {/* Mode Selection Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <TacticalCard 
+          <HoloCard 
             onClick={() => setImprovementMode('tech')}
             variant={improvementMode === 'tech' ? 'holographic' : 'minimal'}
             className={cn("cursor-pointer py-10 flex flex-col items-center gap-5 transition-all group border-rose-500/20", 
@@ -148,9 +149,9 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
               <span className="text-sm font-black uppercase tracking-[0.2em] block text-white">Технологічна Вертикаль</span>
               <span className="text-[10px] text-rose-500/80 font-mono mt-2 uppercase tracking-widest">Інфраструктура та Core API</span>
             </div>
-          </TacticalCard>
+          </HoloCard>
 
-          <TacticalCard 
+          <HoloCard 
             onClick={() => setImprovementMode('analytic')}
             variant={improvementMode === 'analytic' ? 'holographic' : 'minimal'}
             className={cn("cursor-pointer py-10 flex flex-col items-center gap-5 transition-all group border-rose-500/20", 
@@ -164,9 +165,9 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
               <span className="text-sm font-black uppercase tracking-[0.2em] block text-white">Аналітична Вертикаль</span>
               <span className="text-[10px] text-rose-500/80 font-mono mt-2 uppercase tracking-widest">Карти Знань та Патерни</span>
             </div>
-          </TacticalCard>
+          </HoloCard>
 
-          <TacticalCard 
+          <HoloCard 
             onClick={() => setImprovementMode('complex')}
             variant={improvementMode === 'complex' ? 'holographic' : 'minimal'}
             className={cn("cursor-pointer py-10 flex flex-col items-center gap-5 transition-all group border-rose-500/20", 
@@ -180,13 +181,13 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
               <span className="text-sm font-black uppercase tracking-[0.2em] block text-white">Комплексний Нагляд</span>
               <span className="text-[10px] text-rose-500/80 font-mono mt-2 uppercase tracking-widest">Суверенне Розгортання</span>
             </div>
-          </TacticalCard>
+          </HoloCard>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Technical Column */}
         {(improvementMode === 'tech' || improvementMode === 'complex') && (
-          <TacticalCard variant="cyber" className="border-rose-500/30 overflow-hidden">
+          <HoloCard variant="cyber" className="border-rose-500/30 overflow-hidden">
             <div className="flex items-center gap-3 mb-6 p-4 border-b border-rose-500/20 bg-rose-500/5">
               <div className="w-2 h-2 rounded-full bg-rose-500 " />
               <h2 className="text-xs font-black uppercase tracking-widest text-white">Технологічний Стек</h2>
@@ -212,12 +213,12 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
                  </div>
               </div>
             </div>
-          </TacticalCard>
+          </HoloCard>
         )}
 
         {/* Analytical Column */}
         {(improvementMode === 'analytic' || improvementMode === 'complex') && (
-          <TacticalCard variant="cyber" className="border-rose-500/30 overflow-hidden">
+          <HoloCard variant="cyber" className="border-rose-500/30 overflow-hidden">
             <div className="flex items-center gap-3 mb-6 p-4 border-b border-rose-500/20 bg-rose-500/5">
               <div className="w-2 h-2 rounded-full bg-rose-500 " />
               <h2 className="text-xs font-black uppercase tracking-widest text-white">Аналітичний Інтелект</h2>
@@ -240,11 +241,11 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
                  <Button onClick={handleUpdateKnowledgeMap} variant="cyber" className="w-full text-[10px] h-12 border-white/10 text-slate-400 hover:text-white"><RotateCcw size={14} className="mr-2"/> Синхронізувати Гравітацію Фактів</Button>
               </div>
             </div>
-          </TacticalCard>
+          </HoloCard>
         )}
       </div>
 
-      <TacticalCard variant="minimal" className="border-rose-500/20 bg-black/40">
+      <HoloCard variant="minimal" className="border-rose-500/20 bg-black/40">
         <div className="flex items-center gap-3 mb-6 p-4 border-b border-white/5">
           <div className="w-2 h-2 rounded-full bg-emerald-500 " />
           <h2 className="text-xs font-black uppercase tracking-widest text-white">Суверенні Інтеграції</h2>
@@ -283,11 +284,11 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
               <Badge variant="neon" className="bg-rose-500/20 text-rose-400 text-[8px] shrink-0">ОФЛАЙН</Badge>
            </div>
          </div>
-       </TacticalCard>
+       </HoloCard>
 
        {/* Realtime Progress & Results UI */}
        {(improvementStatus === 'running' || improvementStatus === 'done' || infiniteRunning) && (
-         <TacticalCard variant="holographic" className="border-rose-500/30 mt-6">
+         <HoloCard variant="holographic" className="border-rose-500/30 mt-6">
            <div className="flex items-center gap-3 mb-6 p-4 border-b border-rose-500/20 bg-rose-500/5">
              <div className="w-2 h-2 rounded-full bg-rose-500  " />
              <h2 className="text-xs font-black uppercase tracking-widest text-white">Канал Подій Заводу (Events)</h2>
@@ -372,7 +373,7 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
                </div>
              )}
            </div>
-         </TacticalCard>
+         </HoloCard>
        )}
     </div>
   );

@@ -19,6 +19,7 @@ import {
 import { api } from '@/services/api';
 import { cn } from '@/utils/cn';
 import { PageTransition } from '@/components/layout/PageTransition';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
@@ -414,7 +415,7 @@ const AdvancedChartsPremium: React.FC = () => {
               ))
             ) : (
               <>
-                <TacticalCard variant="holographic" className="md:col-span-2 p-12 rounded-[4rem] space-y-10 group/card">
+                <HoloCard variant="holographic" className="md:col-span-2 p-12 rounded-[4rem] space-y-10 group/card">
                    <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-5">
                          <div className="p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-xl text-yellow-500 shadow-2xl group-hover/card:scale-110 transition-transform">
@@ -425,9 +426,9 @@ const AdvancedChartsPremium: React.FC = () => {
                       <div className="text-[8px] font-black text-slate-700 uppercase tracking-[0.5em] font-mono italic">UNIT: MILLION_USD // FREQUENCY: REAL_TIME</div>
                    </div>
                    <AnimatedBarChart data={marketTrends} height={350} />
-                </TacticalCard>
+                </HoloCard>
 
-                <TacticalCard variant="holographic" className="p-12 rounded-[4rem] space-y-10 group/card">
+                <HoloCard variant="holographic" className="p-12 rounded-[4rem] space-y-10 group/card">
                    <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-5">
                          <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-500 shadow-2xl group-hover/card:scale-110 transition-transform">
@@ -439,9 +440,9 @@ const AdvancedChartsPremium: React.FC = () => {
                    <div className="flex items-center justify-center py-6">
                       <AnimatedDonutChart data={categories} size={320} />
                    </div>
-                </TacticalCard>
+                </HoloCard>
 
-                <TacticalCard variant="holographic" className="p-12 rounded-[4rem] space-y-10 group/card">
+                <HoloCard variant="holographic" className="p-12 rounded-[4rem] space-y-10 group/card">
                    <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-5">
                          <div className="p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-500 shadow-2xl group-hover/card:scale-110 transition-transform">
@@ -452,10 +453,10 @@ const AdvancedChartsPremium: React.FC = () => {
                       <span className="bg-emerald-500/10 border border-emerald-500/30 text-emerald-500 px-4 py-1.5 text-[10px] font-black italic rounded-lg">+14.2%</span>
                    </div>
                    <AnimatedLineChart data={marketTrends} height={250} filled color="#10b981" glowColor="rgba(16, 185, 129, 0.4)" />
-                </TacticalCard>
+                </HoloCard>
 
                 {/* Growth Chart Elite */}
-                <TacticalCard variant="holographic" className="md:col-span-2 p-12 rounded-[4rem] flex flex-col gap-10 group/card overflow-hidden">
+                <HoloCard variant="holographic" className="md:col-span-2 p-12 rounded-[4rem] flex flex-col gap-10 group/card overflow-hidden">
                    <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-5">
                          <div className="p-4 bg-purple-500/10 border border-purple-500/30 rounded-xl text-purple-500 shadow-2xl">
@@ -493,7 +494,7 @@ const AdvancedChartsPremium: React.FC = () => {
                         );
                       })}
                    </div>
-                </TacticalCard>
+                </HoloCard>
               </>
             )}
           </div>

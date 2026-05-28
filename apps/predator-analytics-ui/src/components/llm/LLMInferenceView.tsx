@@ -35,7 +35,7 @@ export const LLMInferenceView: React.FC<LLMInferenceViewProps> = ({
     return (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 flex flex-col h-[650px] relative">
-                <TacticalCard variant="holographic" title={`${premiumLocales.llm.inference.title}: ${activeModel}`} className="flex-1 flex flex-col p-0 glass-morphism panel-3d border-white/5" noPadding>
+                <HoloCard variant="holographic" title={`${premiumLocales.llm.inference.title}: ${activeModel}`} className="flex-1 flex flex-col p-0 glass-morphism panel-3d border-white/5" noPadding>
                     <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar bg-slate-950/40 relative">
                         {/* Background Neural Decoration */}
                         <div className="absolute inset-0 opacity-[0.03] pointer-events-none neural-mesh" />
@@ -135,11 +135,11 @@ export const LLMInferenceView: React.FC<LLMInferenceViewProps> = ({
                              </div>
                         </div>
                     </div>
-                </TacticalCard>
+                </HoloCard>
             </div>
 
             <div className="space-y-6">
-                <TacticalCard variant="holographic" title={premiumLocales.llm.inference.params.title} className="glass-morphism panel-3d">
+                <HoloCard variant="holographic" title={premiumLocales.llm.inference.params.title} className="glass-morphism panel-3d">
                     <div className="space-y-6">
                         <div>
                             <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 block">{premiumLocales.llm.inference.params.directives}</label>
@@ -157,9 +157,9 @@ export const LLMInferenceView: React.FC<LLMInferenceViewProps> = ({
                             ))}
                         </div>
                     </div>
-                </TacticalCard>
+                </HoloCard>
 
-                <TacticalCard variant="holographic" title={premiumLocales.llm.inference.router.title} className="glass-morphism panel-3d">
+                <HoloCard variant="holographic" title={premiumLocales.llm.inference.router.title} className="glass-morphism panel-3d">
                     <div className="space-y-4">
                         {[
                             { name: `${premiumLocales.common.local} Llama-3`, status: premiumLocales.llm.inference.router.active, type: 'CORE', model: 'v45.0 Meta' },
@@ -177,7 +177,7 @@ export const LLMInferenceView: React.FC<LLMInferenceViewProps> = ({
                             </motion.div>
                         ))}
                     </div>
-                </TacticalCard>
+                </HoloCard>
             </div>
         </motion.div>
     );

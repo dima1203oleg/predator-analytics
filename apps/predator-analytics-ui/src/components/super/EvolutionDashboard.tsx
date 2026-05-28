@@ -93,7 +93,7 @@ const EvolutionDashboard: React.FC = () => {
 
             {/* Matrix Stats */}
             <div className="col-span-12 md:col-span-4 space-y-4">
-                <TacticalCard title="Приріст Еволюції" icon={<Brain className="w-4 h-4 text-purple-400" />}>
+                <HoloCard title="Приріст Еволюції" icon={<Brain className="w-4 h-4 text-purple-400" />}>
                     <div className="flex flex-col items-center justify-center py-8">
                         <div className="relative">
                             <svg className="w-32 h-32 transform -rotate-90">
@@ -122,10 +122,10 @@ const EvolutionDashboard: React.FC = () => {
                             </div>
                         </div>
                     </div>
-                </TacticalCard>
+                </HoloCard>
 
                 {/* Anomaly Prediction Sub-Panel */}
-                <TacticalCard title="Двигун Прогнозування" icon={<AlertTriangle className="w-4 h-4 text-yellow-400" />}>
+                <HoloCard title="Двигун Прогнозування" icon={<AlertTriangle className="w-4 h-4 text-yellow-400" />}>
                      <div className="space-y-3">
                         <div className="flex justify-between items-center bg-white/5 p-2 rounded">
                              <div className="flex flex-col">
@@ -149,12 +149,12 @@ const EvolutionDashboard: React.FC = () => {
                             </div>
                         )}
                      </div>
-                </TacticalCard>
+                </HoloCard>
             </div>
 
             {/* Deep Experience Ledger */}
             <div className="col-span-12 md:col-span-4 flex flex-col">
-                <TacticalCard title="Системна Телеметрія" icon={<Activity className="w-4 h-4 text-blue-400" />}>
+                <HoloCard title="Системна Телеметрія" icon={<Activity className="w-4 h-4 text-blue-400" />}>
                      <div className="grid grid-cols-2 gap-2 mb-4">
                          <div className="bg-white/5 p-2 rounded">
                              <div className="text-[10px] text-white/50">НАВАНТАЖЕННЯ ЦП</div>
@@ -196,7 +196,7 @@ const EvolutionDashboard: React.FC = () => {
                             ))}
                         </AnimatePresence>
                     </div>
-                </TacticalCard>
+                </HoloCard>
             </div>
 
             {/* Autonomous Learning Stack */}

@@ -16,6 +16,7 @@ import {
   Layers, Database, Sparkles, ChevronRight,
   TrendingDown, Globe, PieChart, Activity, RefreshCw
 } from 'lucide-react';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { cn } from '@/utils/cn';
 import { useDashboardOverview, useMorningBrief } from '@/hooks/useDashboard';
@@ -96,7 +97,7 @@ export const ExecutiveBrief: React.FC = () => {
       {/* ── CORE METRICS ── */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
         {coreStats.map((stat, i) => (
-          <TacticalCard key={i} className="p-8 border-white/5 bg-black/40 hover:border-white/10 transition-all group overflow-hidden relative">
+          <HoloCard key={i} className="p-8 border-white/5 bg-black/40 hover:border-white/10 transition-all group overflow-hidden relative">
              <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none group-hover:scale-110 transition-transform">
                 <stat.icon size={80} />
              </div>
@@ -109,7 +110,7 @@ export const ExecutiveBrief: React.FC = () => {
                    </span>
                 </div>
              </div>
-          </TacticalCard>
+          </HoloCard>
         ))}
       </div>
 
@@ -117,7 +118,7 @@ export const ExecutiveBrief: React.FC = () => {
       <div className="grid grid-cols-12 gap-10">
         {/* Q1: AI Intelligence Brief */}
         <div className="col-span-12 xl:col-span-7">
-          <TacticalCard variant="holographic" className="p-10 border-white/5 bg-black/60 rounded-[3rem] h-full">
+          <HoloCard variant="holographic" className="p-10 border-white/5 bg-black/60 rounded-[3rem] h-full">
             <div className="flex items-center justify-between mb-8 pb-6 border-b border-white/5">
               <div className="flex items-center gap-4">
                 <div className="p-3 bg-emerald-500/10 rounded-xl text-emerald-500 border border-emerald-500/20">
@@ -168,12 +169,12 @@ export const ExecutiveBrief: React.FC = () => {
                 </div>
               )}
             </div>
-          </TacticalCard>
+          </HoloCard>
         </div>
 
         {/* Q2: Tactical Snapshot */}
         <div className="col-span-12 xl:col-span-5 space-y-10">
-          <TacticalCard className="p-10 border-white/5 bg-black/60 rounded-[3rem]">
+          <HoloCard className="p-10 border-white/5 bg-black/60 rounded-[3rem]">
             <div className="flex items-center gap-6 mb-8">
               <div className="p-3 bg-blue-500/10 rounded-xl text-blue-500 border border-blue-500/20">
                 <Layers size={20} />
@@ -196,9 +197,9 @@ export const ExecutiveBrief: React.FC = () => {
                 </div>
               ))}
             </div>
-          </TacticalCard>
+          </HoloCard>
 
-          <TacticalCard className="p-10 border-rose-500/20 bg-rose-600/5 rounded-[3rem] relative overflow-hidden group">
+          <HoloCard className="p-10 border-rose-500/20 bg-rose-600/5 rounded-[3rem] relative overflow-hidden group">
             <div className="absolute top-0 right-0 p-8 opacity-[0.02] pointer-events-none group-hover:scale-125 transition-transform duration-1000">
               <MessageSquare size={120} className="text-rose-600" />
             </div>
@@ -215,13 +216,13 @@ export const ExecutiveBrief: React.FC = () => {
                 </p>
               </div>
             </div>
-          </TacticalCard>
+          </HoloCard>
         </div>
       </div>
 
       {/* ── STRATEGIC ROI & RISK MATRIX ── */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <TacticalCard className="p-8 border-emerald-500/10 bg-emerald-500/[0.02] rounded-[2rem] hover:bg-emerald-500/[0.05] transition-all group">
+        <HoloCard className="p-8 border-emerald-500/10 bg-emerald-500/[0.02] rounded-[2rem] hover:bg-emerald-500/[0.05] transition-all group">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-emerald-500/10 rounded-lg text-emerald-500 border border-emerald-500/20">
@@ -241,9 +242,9 @@ export const ExecutiveBrief: React.FC = () => {
             </div>
             <p className="text-[9px] text-slate-500 font-medium italic">ШІ прогнозує прискорення повернення інвестицій зарахунок оптимізації митних зборів.</p>
           </div>
-        </TacticalCard>
+        </HoloCard>
 
-        <TacticalCard className="p-8 border-blue-500/10 bg-blue-500/[0.02] rounded-[2rem] hover:bg-blue-500/[0.05] transition-all group">
+        <HoloCard className="p-8 border-blue-500/10 bg-blue-500/[0.02] rounded-[2rem] hover:bg-blue-500/[0.05] transition-all group">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-blue-500/10 rounded-lg text-blue-500 border border-blue-500/20">
@@ -261,9 +262,9 @@ export const ExecutiveBrief: React.FC = () => {
             </div>
             <p className="text-[9px] text-slate-500 font-medium italic">Висока ймовірність успішного виходу на нові сегменти (Польща, Німеччина).</p>
           </div>
-        </TacticalCard>
+        </HoloCard>
 
-        <TacticalCard className="p-8 border-rose-500/10 bg-rose-500/[0.02] rounded-[2rem] hover:bg-rose-500/[0.05] transition-all group">
+        <HoloCard className="p-8 border-rose-500/10 bg-rose-500/[0.02] rounded-[2rem] hover:bg-rose-500/[0.05] transition-all group">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-rose-500/10 rounded-lg text-rose-500 border border-rose-500/20">
@@ -284,7 +285,7 @@ export const ExecutiveBrief: React.FC = () => {
             ))}
           </div>
           <p className="text-[9px] text-slate-500 font-medium italic">Система спостерігає стабілізацію в секторі металургії. Загрози мінімальні.</p>
-        </TacticalCard>
+        </HoloCard>
       </div>
     </div>
   );

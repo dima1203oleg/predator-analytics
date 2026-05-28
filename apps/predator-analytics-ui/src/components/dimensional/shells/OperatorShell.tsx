@@ -56,7 +56,7 @@ export const OperatorShell: React.FC<OperatorShellProps> = ({
           { icon: Network, label: 'NET_Т АФІК', value: metrics.network, unit: '%', color: 'purple', desc: 'Вхідні пакети' },
           { icon: Activity, label: 'SYS_HEALTH', value: metrics.health, unit: '%', color: 'green', desc: 'Загальна стабільність' },
         ].map((metric, idx) => (
-          <TacticalCard key={idx} variant="holographic" className="p-0 overflow-hidden" title={metric.label}>
+          <HoloCard key={idx} variant="holographic" className="p-0 overflow-hidden" title={metric.label}>
             <div className="p-6 bg-black/40 relative group/metric">
               <div className={cn("absolute top-0 right-0 p-4 opacity-20", `text-${metric.color}-400`)}>
                 <metric.icon size={40} />
@@ -79,13 +79,13 @@ export const OperatorShell: React.FC<OperatorShellProps> = ({
                 </div>
               </div>
             </div>
-          </TacticalCard>
+          </HoloCard>
         ))}
       </div>
 
       {/* Active Operations & Alerts Split */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <TacticalCard variant="holographic" title="🔄 АКТИВНІ_ОПЕ АЦІЇ_ЯД А">
+        <HoloCard variant="holographic" title="🔄 АКТИВНІ_ОПЕ АЦІЇ_ЯД А">
           <div className="space-y-4 p-2">
             {activeProcesses.length === 0 ? (
               <div className="p-10 text-center border border-dashed border-slate-800 rounded-[2rem] bg-slate-900/20">
@@ -133,9 +133,9 @@ export const OperatorShell: React.FC<OperatorShellProps> = ({
               ))
             )}
           </div>
-        </TacticalCard>
+        </HoloCard>
 
-        <TacticalCard variant="holographic" title=" ️ ТЕ МІНОВІ_СПОВІЩЕННЯ">
+        <HoloCard variant="holographic" title=" ️ ТЕ МІНОВІ_СПОВІЩЕННЯ">
           <div className="space-y-3 p-2 max-h-[400px] overflow-y-auto pr-4 custom-scrollbar">
             {alerts.length === 0 ? (
               <div className="p-10 text-center border border-dashed border-slate-800 rounded-[2rem] bg-green-500/5">
@@ -173,7 +173,7 @@ export const OperatorShell: React.FC<OperatorShellProps> = ({
               ))
             )}
           </div>
-        </TacticalCard>
+        </HoloCard>
       </div>
 
       {/* Google AI Integrative Panel - Full Width */}

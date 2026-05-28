@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { PageTransition } from '@/components/layout/PageTransition';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { Badge } from '@/components/ui/badge';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
@@ -621,7 +622,7 @@ const ReportBuilderPage: React.FC = () => {
                             </div>
                         </div>
 
-                        <TacticalCard variant="cyber" className="mt-auto p-6">
+                        <HoloCard variant="cyber" className="mt-auto p-6">
                             <div className="mb-4 flex items-center justify-between">
                                 <div className="flex items-center gap-3">
                                     <BrainCircuit size={18} className="text-cyan-300" />
@@ -696,7 +697,7 @@ const ReportBuilderPage: React.FC = () => {
                                     <Send size={16} />
                                 </button>
                             </div>
-                        </TacticalCard>
+                        </HoloCard>
                     </div>
 
                     <div className="col-span-12 flex flex-col gap-8 lg:col-span-6">
@@ -815,7 +816,7 @@ const ReportBuilderPage: React.FC = () => {
                                 )}
 
                                 {batchResults.length > 0 && (
-                                    <TacticalCard variant="cyber" className="p-6">
+                                    <HoloCard variant="cyber" className="p-6">
                                         <div className="mb-4 flex items-center gap-3">
                                             <ClipboardList size={18} className="text-cyan-300" />
                                             <h4 className="text-sm font-black uppercase tracking-widest text-white">
@@ -856,7 +857,7 @@ const ReportBuilderPage: React.FC = () => {
                                                 </button>
                                             ))}
                                         </div>
-                                    </TacticalCard>
+                                    </HoloCard>
                                 )}
                             </div>
 
@@ -905,7 +906,7 @@ const ReportBuilderPage: React.FC = () => {
                                 animate={{ opacity: 1, x: 0 }}
                                 className="flex flex-1 flex-col"
                             >
-                                <TacticalCard variant="cyber" className="flex flex-1 flex-col overflow-hidden p-0">
+                                <HoloCard variant="cyber" className="flex flex-1 flex-col overflow-hidden p-0">
                                     <div className="border-b border-white/10 p-6">
                                         <div className="mb-4 flex items-start justify-between gap-4">
                                             <div>
@@ -984,10 +985,10 @@ const ReportBuilderPage: React.FC = () => {
                                             </div>
                                         </div>
                                     )}
-                                </TacticalCard>
+                                </HoloCard>
                             </motion.div>
                         ) : sessionReports.length > 0 ? (
-                            <TacticalCard variant="cyber" className="p-8">
+                            <HoloCard variant="cyber" className="p-8">
                                 <div className="mb-6 flex items-center justify-between">
                                     <h3 className="text-sm font-black uppercase tracking-tight text-amber-300">
                                         Останні запуски цієї сесії
@@ -1019,7 +1020,7 @@ const ReportBuilderPage: React.FC = () => {
                                         </button>
                                     ))}
                                 </div>
-                            </TacticalCard>
+                            </HoloCard>
                         ) : (
                             <div className="rounded-[3rem] border border-white/10 bg-black/30 p-10 text-center">
                                 <ScanText size={40} className="mx-auto mb-4 text-slate-600" />

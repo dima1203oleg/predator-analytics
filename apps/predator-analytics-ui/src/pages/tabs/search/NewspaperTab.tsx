@@ -21,6 +21,7 @@ import { cn } from '@/utils/cn';
 import { newspaperApi } from '@/services/api/newspaper';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import type { NewspaperData } from '@/services/api/newspaper';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { CyberOrb } from '@/components/CyberOrb';

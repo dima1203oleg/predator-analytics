@@ -19,6 +19,7 @@ import {
     Circle, Square, Triangle, Terminal, Radio, Binary, Fingerprint,
     ListFilter, MoreVertical, LayoutGrid, LayoutList
 } from 'lucide-react';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { PageTransition } from '@/components/layout/PageTransition';
@@ -214,7 +215,7 @@ const GraphAnalyticsPage: React.FC = () => {
                         
                         {/* Main Graph Playground */}
                         <div className="col-span-12 xl:col-span-9 space-y-10">
-                            <TacticalCard 
+                            <HoloCard 
                                 variant="holographic" 
                                 className="h-[800px] overflow-hidden relative group/graph shadow-[0_40px_100px_rgba(0,0,0,0.6)]"
                                 noPadding
@@ -353,7 +354,7 @@ const GraphAnalyticsPage: React.FC = () => {
                                 <AnimatePresence>
                                     {selectedNode && <NodeDetailPanel node={selectedNode} onClose={() => setSelectedNode(null)} />}
                                 </AnimatePresence>
-                            </TacticalCard>
+                            </HoloCard>
 
                             {/* Additional Intelligence Cards */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
@@ -392,7 +393,7 @@ const GraphAnalyticsPage: React.FC = () => {
                                      </div>
                                 </HoloContainer>
 
-                                <TacticalCard variant="cyber" className="p-10 h-[450px] border-indigo-500/20 relative overflow-hidden group/ops">
+                                <HoloCard variant="cyber" className="p-10 h-[450px] border-indigo-500/20 relative overflow-hidden group/ops">
                                      <div className="flex items-center justify-between mb-10">
                                          <div className="flex items-center gap-4">
                                              <div className="p-3 bg-amber-500/20 rounded-xl">
@@ -415,7 +416,7 @@ const GraphAnalyticsPage: React.FC = () => {
                                      <div className="absolute -right-20 -bottom-20 opacity-[0.03] group-hover/ops:opacity-[0.08] transition-opacity">
                                          <Binary size={320} className="text-indigo-400" />
                                      </div>
-                                </TacticalCard>
+                                </HoloCard>
                             </div>
                         </div>
 
@@ -466,7 +467,7 @@ const GraphAnalyticsPage: React.FC = () => {
                                  </div>
                              </HoloContainer>
 
-                             <TacticalCard variant="glass" className="p-10 border border-white/10 rounded-[3rem] overflow-hidden relative group/diag">
+                             <HoloCard variant="glass" className="p-10 border border-white/10 rounded-[3rem] overflow-hidden relative group/diag">
                                  <div className="flex items-center gap-5 mb-10">
                                      <div className="p-4 bg-emerald-500/10 rounded-2xl group-hover/diag:">
                                          <Radio size={24} className="text-emerald-400" />
@@ -505,7 +506,7 @@ const GraphAnalyticsPage: React.FC = () => {
                                  <button className="w-full mt-10 py-6 border border-white/10 rounded-[2rem] text-[10px] font-black text-slate-600 uppercase tracking-[0.4em] hover:text-white hover:bg-white/5 transition-all flex items-center justify-center gap-4 group active:scale-95">
                                       <RefreshCw size={16} className="group-hover:rotate-180 transition-transform duration-700" /> ПЕ ЕЗАВАНТАЖИТИ_ГЕОМЕТ ІЮ
                                  </button>
-                             </TacticalCard>
+                             </HoloCard>
                         </div>
                     </div>
                 </div>

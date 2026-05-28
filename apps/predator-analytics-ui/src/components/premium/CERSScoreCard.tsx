@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Shield, ShieldAlert, ShieldCheck, Activity, Target, RefreshCw, Layers, AlertTriangle } from 'lucide-react';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { diligenceApi } from '@/features/diligence/api/diligence';
 import { CERSCompany, CERSScoreSegment } from '@/types';
@@ -90,23 +91,23 @@ export const CERSScoreCard: React.FC<CERSScoreCardProps> = ({ edrpou, className 
 
     if (isLoading) {
         return (
-            <TacticalCard variant="holographic" className={cn("min-h-[300px] flex items-center justify-center", className)}>
+            <HoloCard variant="holographic" className={cn("min-h-[300px] flex items-center justify-center", className)}>
                 <div className="flex flex-col items-center gap-4 text-emerald-500/50">
                     <Activity size={32} className="animate-spin" />
                     <span className="text-[10px] uppercase font-black tracking-widest">Агрегація CERS-реєстрів...</span>
                 </div>
-            </TacticalCard>
+            </HoloCard>
         );
     }
 
     if (error) {
         return (
-            <TacticalCard variant="holographic" className={cn("min-h-[300px] flex items-center justify-center", className)}>
+            <HoloCard variant="holographic" className={cn("min-h-[300px] flex items-center justify-center", className)}>
                 <div className="flex flex-col items-center gap-4 text-red-500/50">
                     <AlertTriangle size={32} />
                     <span className="text-[10px] uppercase font-black tracking-widest">{error}</span>
                 </div>
-            </TacticalCard>
+            </HoloCard>
         );
     }
 
@@ -125,7 +126,7 @@ export const CERSScoreCard: React.FC<CERSScoreCardProps> = ({ edrpou, className 
     };
 
     return (
-        <TacticalCard 
+        <HoloCard 
             title="CERS SCORECARD"
             subtitle="Центральне скорингове оцінювання сутностей"
             icon={<Shield className="text-emerald-400" size={18} />}
@@ -239,7 +240,7 @@ export const CERSScoreCard: React.FC<CERSScoreCardProps> = ({ edrpou, className 
                     </div>
                 </div>
             </div>
-        </TacticalCard>
+        </HoloCard>
     );
 };
 

@@ -203,7 +203,7 @@ const NeuralChart: React.FC<{
   };
 
   return (
-    <TacticalCard variant="holographic" title={title.toUpperCase()} className="p-1 overflow-hidden">
+    <HoloCard variant="holographic" title={title.toUpperCase()} className="p-1 overflow-hidden">
       <div className="p-8">
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
@@ -232,7 +232,7 @@ const NeuralChart: React.FC<{
           <ReactECharts option={chartOption} style={{ height: '100%', width: '100%' }} theme="dark" />
         </div>
       </div>
-    </TacticalCard>
+    </HoloCard>
   );
 };
 
@@ -466,7 +466,7 @@ export const AnalyticsDashboard: React.FC = () => {
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
 
         {/* Storage Distribution Strategy */}
-        <TacticalCard variant="holographic" title="STORAGE_RESOURCE_DISTRIBUTION" className="p-12 overflow-hidden bg-slate-950/40 border-white/5 relative group">
+        <HoloCard variant="holographic" title="STORAGE_RESOURCE_DISTRIBUTION" className="p-12 overflow-hidden bg-slate-950/40 border-white/5 relative group">
           <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
           <div className="flex flex-col md:flex-row items-center gap-12 relative z-10">
             <div className="relative w-[280px] h-[280px] shrink-0">
@@ -522,7 +522,7 @@ export const AnalyticsDashboard: React.FC = () => {
               ))}
             </div>
           </div>
-        </TacticalCard>
+        </HoloCard>
 
         {/* ── ЖИВА СТ ІЧКА ПОДІЙ (REALTIME INTEL) ── */}
         <IntelligenceFeed />

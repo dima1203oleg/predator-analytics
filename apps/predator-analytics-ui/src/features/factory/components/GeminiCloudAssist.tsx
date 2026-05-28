@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { cn } from '@/utils/cn';
 
@@ -69,7 +70,7 @@ export function GeminiCloudAssist() {
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         {/* ── Main Panel ── */}
         <div className="xl:col-span-2 space-y-6">
-          <TacticalCard variant="holographic" className="border-blue-500/20 bg-blue-500/5">
+          <HoloCard variant="holographic" className="border-blue-500/20 bg-blue-500/5">
             <div className="p-6">
                <AnimatePresence mode="wait">
                  {activeTab === 'chat' && (
@@ -139,7 +140,7 @@ export function GeminiCloudAssist() {
                  )}
                </AnimatePresence>
             </div>
-          </TacticalCard>
+          </HoloCard>
 
           <div className="grid grid-cols-2 gap-4">
              <div className="p-5 rounded-3xl bg-black/40 border border-white/5 group hover:border-emerald-500/30 transition-colors">

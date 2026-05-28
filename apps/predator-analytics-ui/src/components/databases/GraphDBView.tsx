@@ -156,7 +156,7 @@ export const GraphDBView: React.FC<GraphDBViewProps> = ({ cypherQuery, onCypherQ
                             </div>
                         </div>
                     </div>
-                </TacticalCard>
+                </HoloCard>
             </div>
 
             {/* Cypher Console Section */}
@@ -202,7 +202,7 @@ export const GraphDBView: React.FC<GraphDBViewProps> = ({ cypherQuery, onCypherQ
                             </button>
                         </div>
                     </div>
-                </TacticalCard>
+                </HoloCard>
             </div>
         </motion.div>
     );

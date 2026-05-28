@@ -21,6 +21,7 @@ import {
 import { cn } from '@/utils/cn';
 import { apiClient as api } from '@/services/api/config';
 import { PageTransition } from '@/components/layout/PageTransition';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
@@ -252,7 +253,7 @@ export default function TradeFlowMapPremium() {
                  <AnimatePresence mode="wait">
                     {selectedCountry ? (
                       <motion.div key={selectedCountry.id} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} className="space-y-8">
-                         <TacticalCard variant="holographic" className="p-8 rounded-[3rem] border-[#D4AF37]/20 bg-[#D4AF37]/[0.02]">
+                         <HoloCard variant="holographic" className="p-8 rounded-[3rem] border-[#D4AF37]/20 bg-[#D4AF37]/[0.02]">
                             <h3 className="text-2xl font-black text-white italic tracking-tighter uppercase mb-2">{selectedCountry.name}</h3>
                             <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest italic mb-6">ISO_CODE: {selectedCountry.code} // ID: {selectedCountry.id}</p>
                             
@@ -266,7 +267,7 @@ export default function TradeFlowMapPremium() {
                                   <p className="text-3xl font-black text-white italic font-mono tracking-tighter">$12.4M</p>
                                </div>
                             </div>
-                         </TacticalCard>
+                         </HoloCard>
 
                          <div className="p-8 rounded-[3rem] bg-black border-2 border-white/[0.04] shadow-3xl space-y-8">
                             <h4 className="text-[10px] font-black text-amber-500 italic uppercase tracking-[0.4em] border-b border-white/[0.04] pb-6 flex items-center gap-4">

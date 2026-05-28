@@ -388,7 +388,7 @@ export const LLMHealthMonitor: React.FC<{ compact?: boolean }> = ({ compact = fa
                 )}
               />
             </div>
-          </TacticalCard>
+          </HoloCard>
         ))}
       </div>
 

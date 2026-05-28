@@ -21,6 +21,7 @@ import {
 import ReactECharts from '@/components/ECharts';
 import { cn } from '@/utils/cn';
 import { PageTransition } from '@/components/layout/PageTransition';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
@@ -271,7 +272,7 @@ export default function ConversationIntelView() {
 
                       {/* SIDE ANALYTICS */}
                       <div className="col-span-12 xl:col-span-5 space-y-12 h-screen overflow-y-auto no-scrollbar pr-4">
-                         <TacticalCard variant="holographic" className="p-12 bg-black border-2 border-white/5 rounded-[4rem] shadow-4xl space-y-12 relative overflow-hidden group">
+                         <HoloCard variant="holographic" className="p-12 bg-black border-2 border-white/5 rounded-[4rem] shadow-4xl space-y-12 relative overflow-hidden group">
                              <div className="absolute top-0 right-0 p-20 opacity-[0.03] pointer-events-none group-hover:scale-125 transition-transform duration-[5s]">
                                 <Signal size={350} className="text-emerald-500" />
                              </div>
@@ -295,9 +296,9 @@ export default function ConversationIntelView() {
                                    </div>
                                 </div>
                              </div>
-                         </TacticalCard>
+                         </HoloCard>
 
-                         <TacticalCard className="p-12 bg-black/80 border-2 border-white/5 rounded-[4rem] shadow-4xl space-y-10 relative overflow-hidden group">
+                         <HoloCard className="p-12 bg-black/80 border-2 border-white/5 rounded-[4rem] shadow-4xl space-y-10 relative overflow-hidden group">
                              <div className="absolute -bottom-10 -left-10 opacity-5">
                                 <Hash size={120} className="text-emerald-500 group-hover:rotate-12 transition-transform duration-700" />
                              </div>
@@ -325,9 +326,9 @@ export default function ConversationIntelView() {
                                    ))}
                                 </div>
                              </div>
-                         </TacticalCard>
+                         </HoloCard>
 
-                         <TacticalCard className="p-10 bg-emerald-900/10 border-2 border-emerald-500/20 rounded-[3rem] relative overflow-hidden shadow-4xl group">
+                         <HoloCard className="p-10 bg-emerald-900/10 border-2 border-emerald-500/20 rounded-[3rem] relative overflow-hidden shadow-4xl group">
                              <div className="flex items-center gap-8 relative z-10">
                                 <div className="p-5 bg-black border-2 border-emerald-500/30 rounded-[2rem] text-emerald-500 shadow-4xl">
                                    <Cpu size={32} className="" />
@@ -342,7 +343,7 @@ export default function ConversationIntelView() {
                              <div className="absolute top-0 right-0 p-8 opacity-10">
                                 <Signal size={40} className="text-emerald-600 animate-ping" />
                              </div>
-                         </TacticalCard>
+                         </HoloCard>
                       </div>
 
                    </div>

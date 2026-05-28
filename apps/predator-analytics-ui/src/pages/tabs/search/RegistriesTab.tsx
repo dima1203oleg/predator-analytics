@@ -16,6 +16,7 @@ import {
     Target, RefreshCw, CheckCircle, Radar, RefreshCcw, Layout, Scan, Satellite, Zap, AlertCircle
 } from 'lucide-react';
 import { apiClient } from '@/services/api/config';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { CyberOrb } from '@/components/CyberOrb';
@@ -249,7 +250,7 @@ export const RegistriesTab = () => {
             {selectedCompany && !loading && (
                 <div className="grid grid-cols-12 gap-10">
                     <motion.div initial={{ opacity: 0, x: -50 }} animate={{ opacity: 1, x: 0 }} className="col-span-12 xl:col-span-4 flex flex-col gap-10">
-                        <TacticalCard variant="holographic" className="p-12 flex flex-col items-center relative overflow-hidden h-full rounded-[4rem]">
+                        <HoloCard variant="holographic" className="p-12 flex flex-col items-center relative overflow-hidden h-full rounded-[4rem]">
                             <div className="absolute top-0 right-0 p-10 opacity-[0.03] -z-10">
                                 <Building2 size={300} className="text-emerald-500" />
                             </div>
@@ -307,12 +308,12 @@ export const RegistriesTab = () => {
                                     </button>
                                 </div>
                             </div>
-                        </TacticalCard>
+                        </HoloCard>
                     </motion.div>
 
                     <motion.div initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} className="col-span-12 xl:col-span-8 flex flex-col gap-10">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                            <TacticalCard variant="cyber" className="p-10 rounded-[3.5rem] space-y-10">
+                            <HoloCard variant="cyber" className="p-10 rounded-[3.5rem] space-y-10">
                                 <h3 className="text-[12px] font-black text-emerald-500 uppercase tracking-[0.4em] italic flex items-center gap-4 border-b border-white/[0.04] pb-6 mb-2">
                                     <Users size={18} /> БЕНЕФІЦІА НА_МАТрИЦЯ
                                 </h3>
@@ -340,9 +341,9 @@ export const RegistriesTab = () => {
                                         ))}
                                     </div>
                                 </div>
-                            </TacticalCard>
+                            </HoloCard>
 
-                            <TacticalCard variant="holographic" className="p-10 rounded-[3.5rem] bg-amber-600/[0.01] border-amber-500/20 space-y-8">
+                            <HoloCard variant="holographic" className="p-10 rounded-[3.5rem] bg-amber-600/[0.01] border-amber-500/20 space-y-8">
                                 <h3 className="text-[12px] font-black text-amber-500 uppercase tracking-[0.4em] italic flex items-center gap-4 border-b border-amber-500/10 pb-6">
                                     <ShieldAlert size={20} /> ФАКТО И_РИЗИКУ_DETECTED
                                 </h3>
@@ -357,10 +358,10 @@ export const RegistriesTab = () => {
                                 <button className="w-full py-6 mt-4 bg-amber-700 text-white rounded-[1.5rem] text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-amber-600 shadow-3xl transition-all flex items-center justify-center gap-4">
                                     <Zap size={20} /> ЗАПУСТИТИ_ГЛИБИННИЙ_AML_АНАЛІЗ
                                 </button>
-                            </TacticalCard>
+                            </HoloCard>
                         </div>
 
-                        <TacticalCard variant="cyber" className="p-12 rounded-[4rem] space-y-10 relative overflow-hidden">
+                        <HoloCard variant="cyber" className="p-12 rounded-[4rem] space-y-10 relative overflow-hidden">
                             <div className="absolute top-0 right-0 p-12 opacity-[0.03] group-hover:scale-110 transition-transform">
                                 <Layout size={300} className="text-emerald-500" />
                             </div>
@@ -375,7 +376,7 @@ export const RegistriesTab = () => {
                                     </div>
                                 ))}
                             </div>
-                        </TacticalCard>
+                        </HoloCard>
 
                         <div className="flex items-center gap-6 px-10 py-5 bg-black border border-white/[0.04] rounded-[2.5rem] w-fit shadow-2xl">
                             <CheckCircle size={18} className="text-emerald-500" />

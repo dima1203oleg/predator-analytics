@@ -15,6 +15,7 @@ import {
     Terminal, Sparkles, Radio,
     PieChart, Atom, Fingerprint
 } from 'lucide-react';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { PageTransition } from '@/components/layout/PageTransition';
@@ -235,7 +236,7 @@ const IntelligencePage: React.FC = () => {
 
                                {/* Central Strategic Visualizer & VRAM Guard */}
                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-                                   <TacticalCard variant="holographic" className="h-[450px] relative overflow-hidden group/viz" noPadding>
+                                   <HoloCard variant="holographic" className="h-[450px] relative overflow-hidden group/viz" noPadding>
                                        <AdvancedBackground />
                                        <CyberGrid color="rgba(220, 38, 38, 0.05)" />
 
@@ -272,7 +273,7 @@ const IntelligencePage: React.FC = () => {
                                                </div>
                                            </div>
                                        </div>
-                                   </TacticalCard>
+                                   </HoloCard>
 
                                    <div className="space-y-10">
                                        <VramSentinel />
@@ -347,7 +348,7 @@ const IntelligencePage: React.FC = () => {
                                  </div>
                              </HoloContainer>
 
-                             <TacticalCard variant="cyber" className="p-10 border-red-600/20 bg-[#0a0a0a]/40 rounded-[3rem] relative overflow-hidden group/log">
+                             <HoloCard variant="cyber" className="p-10 border-red-600/20 bg-[#0a0a0a]/40 rounded-[3rem] relative overflow-hidden group/log">
                                  <div className="flex items-center gap-5 mb-10">
                                      <div className="p-4 bg-red-600/10 rounded-2xl">
                                          <Terminal size={24} className="text-red-600" />
@@ -397,7 +398,7 @@ const IntelligencePage: React.FC = () => {
                                  <button className="w-full mt-10 py-5 bg-white/5 hover:bg-red-600 hover:text-white rounded-2xl text-[9px] font-black uppercase tracking-[0.4em] transition-all flex items-center justify-center gap-4 group/btn">
                                      БІЛЬШЕ ПОДІЙ <Activity size={14} className="group-hover/btn:animate-spin" />
                                  </button>
-                             </TacticalCard>
+                             </HoloCard>
 
                              <HoloContainer className="p-10 h-[250px] relative overflow-hidden group">
                                   <div className="absolute top-0 right-0 p-8">

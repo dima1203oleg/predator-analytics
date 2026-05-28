@@ -7,6 +7,7 @@ import {
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
 import { ViewHeader } from '@/components/ViewHeader';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { security } from '@/services/dataService';
 import { EmptyState } from '@/components/shared/EmptyState';
@@ -127,7 +128,7 @@ export const ComplianceView = () => {
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Integrity Section */}
-                    <TacticalCard variant="holographic" title="ЦІЛІСНІСТЬ СИСТЕМИ (INTEGRITY)" className="lg:col-span-1">
+                    <HoloCard variant="holographic" title="ЦІЛІСНІСТЬ СИСТЕМИ (INTEGRITY)" className="lg:col-span-1">
                         <div className="space-y-6">
                             <div className="p-6 rounded-2xl bg-emerald-500/5 border border-emerald-500/20 flex flex-col items-center justify-center text-center">
                                 <motion.div
@@ -157,14 +158,14 @@ export const ComplianceView = () => {
                                 </div>
                             </div>
                         </div>
-                    </TacticalCard>
+                    </HoloCard>
 
                     {/* Reports Gen Section */}
                     <TacticalReportsSection />
                 </div>
 
                 {/* Audit Log Table */}
-                <TacticalCard variant="minimal" title="ЖУ НАЛ ДІЙ (AUDIT TRAIL)" className="w-full">
+                <HoloCard variant="minimal" title="ЖУ НАЛ ДІЙ (AUDIT TRAIL)" className="w-full">
                     {loading ? (
                         <div className="p-6 space-y-4">
                             <SkeletonGroup count={8} variant="text" itemClassName="h-12" />
@@ -214,7 +215,7 @@ export const ComplianceView = () => {
                             </table>
                         </div>
                     )}
-                </TacticalCard>
+                </HoloCard>
 
             </div>
         </div>
@@ -223,7 +224,7 @@ export const ComplianceView = () => {
 
 // Sub-component for clarity
 const TacticalReportsSection = () => (
-    <TacticalCard variant="holographic" title="ЗВІТНІСТЬ ТА ЕКСПОРТ" className="lg:col-span-2">
+    <HoloCard variant="holographic" title="ЗВІТНІСТЬ ТА ЕКСПОРТ" className="lg:col-span-2">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {REPORTS.map(report => (
                 <div key={report.id} className="bg-slate-900/40 border border-white/5 rounded-2xl p-4 flex items-start gap-4 hover:border-yellow-500/30 transition-all group cursor-pointer">
@@ -258,7 +259,7 @@ const TacticalReportsSection = () => (
                 Архів Звітів <Download size={14} />
             </button>
         </div>
-    </TacticalCard>
+    </HoloCard>
 );
 
 export default ComplianceView;

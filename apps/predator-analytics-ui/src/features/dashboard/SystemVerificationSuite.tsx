@@ -28,6 +28,7 @@ import { cn } from "@/utils/cn";
 import { premiumLocales } from '@/locales/uk/premium';
 
 /** Components */
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { NeuralCore } from '@/components/NeuralCore';
 import { CyberOrb } from '@/components/CyberOrb';
@@ -431,7 +432,7 @@ const SystemVerificationSuite: React.FC = () => {
         <div className="col-span-12 xl:col-span-8 space-y-10">
 
           {/* Step 1: Data Ingestion Hub */}
-          <TacticalCard variant="holographic" className="p-8 group overflow-hidden">
+          <HoloCard variant="holographic" className="p-8 group overflow-hidden">
             <div className="flex items-center justify-between mb-8">
               <div>
                 <h3 className="text-xl font-black text-white uppercase tracking-tighter">01. Завантаження Контрольних Даних</h3>
@@ -478,10 +479,10 @@ const SystemVerificationSuite: React.FC = () => {
                 ))}
               </div>
             )}
-          </TacticalCard>
+          </HoloCard>
 
           {/* Step 2: Live Pipeline Execution */}
-          <TacticalCard variant="glass" className="p-8">
+          <HoloCard variant="glass" className="p-8">
             <div className="flex items-center justify-between mb-8">
               <div>
                 <h3 className="text-xl font-black text-white uppercase tracking-tighter">02. Виконання ETL Пайплайну</h3>
@@ -493,10 +494,10 @@ const SystemVerificationSuite: React.FC = () => {
             <div className="space-y-1">
               {stages.map((stage, i) => <StageIndicator key={stage.id} stage={stage} index={i} />)}
             </div>
-          </TacticalCard>
+          </HoloCard>
 
           {/* Step 3: Experimental Control Query */}
-          <TacticalCard variant="holographic" className="p-8 relative overflow-hidden">
+          <HoloCard variant="holographic" className="p-8 relative overflow-hidden">
             <div className="absolute inset-0 bg-cyber-grid opacity-[0.05]" />
             <div className="flex items-center justify-between mb-8 relative z-10">
               <div>
@@ -570,7 +571,7 @@ const SystemVerificationSuite: React.FC = () => {
                 ))}
               </motion.div>
             )}
-          </TacticalCard>
+          </HoloCard>
         </div>
 
         {/* Right Section: Storage Watchdog */}
@@ -590,7 +591,7 @@ const SystemVerificationSuite: React.FC = () => {
           </div>
 
           {/* System Diagnostics Terminal */}
-          <TacticalCard variant="glass" className="p-8 min-h-[400px] flex flex-col">
+          <HoloCard variant="glass" className="p-8 min-h-[400px] flex flex-col">
             <div className="flex items-center gap-3 mb-8">
               <Terminal size={18} className="text-slate-500" />
               <h3 className="text-[11px] font-black text-white uppercase tracking-[0.4em]">ІНТЕГ ОВАНА ДІАГНОСТИКА</h3>
@@ -619,7 +620,7 @@ const SystemVerificationSuite: React.FC = () => {
               <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-2">Токен Сесії Верифікації</span>
               <span className="text-[10px] font-mono font-black text-amber-400 select-all tracking-tighter">PRDTR-2026-MAR-E2E-CITADEL-V55-BETA</span>
             </div>
-          </TacticalCard>
+          </HoloCard>
         </div>
       </div>
     </div>

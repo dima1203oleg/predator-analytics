@@ -21,7 +21,7 @@ export const NasArenaView: React.FC<NasArenaViewProps> = ({ tournaments, candida
             className="grid grid-cols-1 lg:grid-cols-3 gap-6"
         >
             <div className="lg:col-span-2 space-y-6">
-                <TacticalCard variant="holographic"
+                <HoloCard variant="holographic"
                     title="Межа Парето (Точність vs Затримка)"
                     className="h-[430px] panel-3d border-slate-700/50 glass-morphism  relative"
                     icon={<TrendingUp size={16} />}
@@ -50,7 +50,7 @@ export const NasArenaView: React.FC<NasArenaViewProps> = ({ tournaments, candida
                             </Scatter>
                         </ScatterChart>
                     </ResponsiveContainer>
-                </TacticalCard>
+                </HoloCard>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <AnimatePresence mode="popLayout">
@@ -136,7 +136,7 @@ export const NasArenaView: React.FC<NasArenaViewProps> = ({ tournaments, candida
             </div>
 
             <div className="space-y-6">
-                <TacticalCard variant="holographic" title="Потік Навчання НАЖИВО" className="h-[640px] flex flex-col panel-3d glass-morphism p-0 " noPadding>
+                <HoloCard variant="holographic" title="Потік Навчання НАЖИВО" className="h-[640px] flex flex-col panel-3d glass-morphism p-0 " noPadding>
                     <div className="bg-slate-900/80 p-3 border-b border-slate-800 flex justify-between items-center relative z-10">
                         <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
                             <Activity size={12} className="text-blue-400 " /> Кандидати в реальному часі
@@ -212,7 +212,7 @@ export const NasArenaView: React.FC<NasArenaViewProps> = ({ tournaments, candida
                             ))}
                         </AnimatePresence>
                     </div>
-                </TacticalCard>
+                </HoloCard>
             </div>
         </motion.div>
     );

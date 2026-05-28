@@ -123,7 +123,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ privacyMode, onSel
 
             {/* Main Chart Area (8 cols) */}
             <div className="lg:col-span-8 space-y-6">
-                <TacticalCard title="Аналітика Обсягів та Прогнозів" className="h-[350px] panel-3d">
+                <HoloCard title="Аналітика Обсягів та Прогнозів" className="h-[350px] panel-3d">
                     <ResponsiveContainer width="100%" height="100%">
                         <AreaChart data={chartData}>
                             <defs>
@@ -147,7 +147,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ privacyMode, onSel
                             <Area type="monotone" dataKey="value" stroke="#3b82f6" strokeWidth={3} fill="url(#colorVal)" name="Фактичні Дані" animationDuration={500} />
                         </AreaChart>
                     </ResponsiveContainer>
-                </TacticalCard>
+                </HoloCard>
 
                 {/* Quick Actions Grid */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -183,11 +183,11 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ privacyMode, onSel
 
             {/* Right Column: Radar & Top List (4 cols) */}
             <div className="lg:col-span-4 space-y-6">
-                <TacticalCard title="Жива Карта Активів (Live)" className="panel-3d">
+                <HoloCard title="Жива Карта Активів (Live)" className="panel-3d">
                     <AssetMap />
-                </TacticalCard>
+                </HoloCard>
 
-                <TacticalCard title="Ваш Профільризику (360°)" className="h-[300px] panel-3d">
+                <HoloCard title="Ваш Профільризику (360°)" className="h-[300px] panel-3d">
                     <ResponsiveContainer width="100%" height="100%">
                         <RadarChart cx="50%" cy="50%" outerRadius="70%" data={RISK_RADAR_DATA}>
                             <PolarGrid stroke="#334155" />
@@ -200,9 +200,9 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ privacyMode, onSel
                             />
                         </RadarChart>
                     </ResponsiveContainer>
-                </TacticalCard>
+                </HoloCard>
 
-                <TacticalCard title="Топ Контрагентів (Моніторинг)" className="panel-3d">
+                <HoloCard title="Топ Контрагентів (Моніторинг)" className="panel-3d">
                     <div className="space-y-3">
                         {TOP_ENTITIES.map((ent) => (
                             <div 
@@ -227,7 +227,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ privacyMode, onSel
                             </div>
                         ))}
                     </div>
-                </TacticalCard>
+                </HoloCard>
             </div>
         </div>
     );

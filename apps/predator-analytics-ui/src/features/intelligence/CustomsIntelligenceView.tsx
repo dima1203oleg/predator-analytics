@@ -29,6 +29,7 @@ import {
 import { cn } from '@/lib/utils';
 import { analyticsService } from '@/services/unified/analytics.service';
 import { PageTransition } from '@/components/layout/PageTransition';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { CyberGrid } from '@/components/CyberGrid';
 import { ViewHeader } from '@/components/ViewHeader';
@@ -529,7 +530,7 @@ export default function CustomsIntelligenceView() {
                           </div>
                        </div>
                        <div className="col-span-12 xl:col-span-4 space-y-10">
-                          <TacticalCard variant="holographic" className="p-12 rounded-[4rem] border-4 border-rose-500/20 bg-rose-500/[0.03] shadow-4xl relative overflow-hidden">
+                          <HoloCard variant="holographic" className="p-12 rounded-[4rem] border-4 border-rose-500/20 bg-rose-500/[0.03] shadow-4xl relative overflow-hidden">
                              <div className="absolute -right-8 -top-8 opacity-10 rotate-12">
                                 <Scan size={180} className="text-rose-500" />
                              </div>
@@ -548,7 +549,7 @@ export default function CustomsIntelligenceView() {
                                    <span className="text-[11px] text-rose-800 font-mono italic font-black uppercase">OFFLINE_ERR</span>
                                 </div>
                              </div>
-                          </TacticalCard>
+                          </HoloCard>
 
                           <div className="p-10 rounded-[4rem] bg-black border-2 border-rose-500/10 shadow-4xl relative overflow-hidden group hover:border-rose-500/30 transition-all cursor-crosshair">
                              <div className="absolute inset-0 bg-gradient-to-br from-rose-500/5 to-transparent pointer-events-none" />

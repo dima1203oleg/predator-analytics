@@ -365,7 +365,7 @@ export const JobQueueMonitor: React.FC = () => {
           { label: 'Operational_Success', value: stats.completed, color: 'emerald', icon: <CheckCircle2 size={16} />, title: "УСПІХ" },
           { label: 'Critical_Failures', value: stats.failed, color: 'rose', icon: <AlertTriangle size={16} />, title: "ЗБІЙ" }
         ].map(({ label, value, color, icon, title }) => (
-          <TacticalCard variant="holographic" key={label} title={title} className="py-6 px-8 border-white/5 bg-slate-950/40 group hover:border-blue-500/20 transition-all">
+          <HoloCard variant="holographic" key={label} title={title} className="py-6 px-8 border-white/5 bg-slate-950/40 group hover:border-blue-500/20 transition-all">
             <div className="flex justify-between items-start mb-4">
               <div className={cn(
                 "p-3 rounded-xl transition-all duration-500 shadow-lg",
@@ -381,7 +381,7 @@ export const JobQueueMonitor: React.FC = () => {
             </div>
             <div className={cn("text-3xl font-black font-display tracking-tighter mb-1", `text-${color}-400`)}>{value}</div>
             <div className="text-[9px] text-slate-500 uppercase font-black tracking-widest leading-none opacity-60">{label}</div>
-          </TacticalCard>
+          </HoloCard>
         ))}
       </div>
 

@@ -181,7 +181,7 @@ export const TripleAgentPanel: React.FC<TripleAgentPanelProps> = ({ isLockdown }
                 </div>
 
                 {/* Command Input Area */}
-                <TacticalCard variant="holographic" title="MISSION_DIRECTIVE_INPUT" className="p-1 border-white/5 overflow-hidden">
+                <HoloCard variant="holographic" title="MISSION_DIRECTIVE_INPUT" className="p-1 border-white/5 overflow-hidden">
                     <div className="relative group p-10 bg-slate-950/40">
                         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-purple-500/30 to-transparent opacity-0 group-focus-within:opacity-100 transition-opacity" />
                         <textarea
@@ -212,7 +212,7 @@ export const TripleAgentPanel: React.FC<TripleAgentPanelProps> = ({ isLockdown }
                             </motion.button>
                         </div>
                     </div>
-                </TacticalCard>
+                </HoloCard>
 
                 {/* Progress Matrix */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -280,7 +280,7 @@ export const TripleAgentPanel: React.FC<TripleAgentPanelProps> = ({ isLockdown }
                             className="flex flex-col gap-8"
                         >
                             {/* Strategy/Response Card */}
-                            <TacticalCard variant="holographic" title="STRATEGIC_RESULT_SYNTHESIS" className="p-1 border-white/5 bg-slate-950/60 shadow-2xl">
+                            <HoloCard variant="holographic" title="STRATEGIC_RESULT_SYNTHESIS" className="p-1 border-white/5 bg-slate-950/60 shadow-2xl">
                                 <div className="p-10 space-y-8">
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-4">
@@ -330,11 +330,11 @@ export const TripleAgentPanel: React.FC<TripleAgentPanelProps> = ({ isLockdown }
                                         </motion.div>
                                     )}
                                 </div>
-                            </TacticalCard>
+                            </HoloCard>
 
                             {/* Code Generator Block */}
                             {result.code && (
-                                <TacticalCard variant="holographic" title="GENERATED_NEXUS_ARTIFACT" className="p-1 border-white/5 overflow-hidden">
+                                <HoloCard variant="holographic" title="GENERATED_NEXUS_ARTIFACT" className="p-1 border-white/5 overflow-hidden">
                                     <div className="p-0 bg-black/40 flex flex-col font-mono text-sm group min-h-[400px]">
                                         <div className="bg-slate-950/80 px-8 py-4 border-b border-white/5 flex justify-between items-center group-hover:bg-slate-900/40 transition-colors">
                                             <div className="flex items-center gap-4">
@@ -362,7 +362,7 @@ export const TripleAgentPanel: React.FC<TripleAgentPanelProps> = ({ isLockdown }
                                             {result.code}
                                         </div>
                                     </div>
-                                </TacticalCard>
+                                </HoloCard>
                             )}
                         </motion.div>
                     )}
@@ -392,7 +392,7 @@ export const TripleAgentPanel: React.FC<TripleAgentPanelProps> = ({ isLockdown }
             <div className="col-span-12 lg:col-span-4 flex flex-col gap-8">
 
                 {/* Real-time Audit Matrix */}
-                <TacticalCard variant="holographic" title="NEURAL_AUDIT_MATRIX" className="flex-1 border-white/5 bg-slate-950/40 min-h-[850px] relative overflow-hidden">
+                <HoloCard variant="holographic" title="NEURAL_AUDIT_MATRIX" className="flex-1 border-white/5 bg-slate-950/40 min-h-[850px] relative overflow-hidden">
                     <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
                     <div className="p-8 h-full flex flex-col">
                         <div className="flex items-center justify-between mb-10 pb-6 border-b border-white/5">
@@ -459,7 +459,7 @@ export const TripleAgentPanel: React.FC<TripleAgentPanelProps> = ({ isLockdown }
                             </div>
                         </div>
                     </div>
-                </TacticalCard>
+                </HoloCard>
             </div>
         </div>
     );

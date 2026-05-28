@@ -12,6 +12,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
     Flame, Waves, Wind, Cpu, Database, RefreshCcw, Play, Target, ShieldAlert, Activity, ChevronRight, Zap
 } from 'lucide-react';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/utils/cn';
@@ -231,7 +232,7 @@ export default function StrategicScenarioView() {
 
         {/* SIMULATION ENGINE */}
         <div className="w-full xl:w-[650px]">
-          <TacticalCard 
+          <HoloCard 
             title="S.E.N.T.I.N.E.L ENGINE" 
             subtitle="STRATEGIC_EVOLUTION_NETWORK"
             className="h-full bg-black/40  border-2 border-white/[0.04] p-10 rounded-[4rem] shadow-4xl"
@@ -343,7 +344,7 @@ export default function StrategicScenarioView() {
                 </div>
               )}
             </div>
-          </TacticalCard>
+          </HoloCard>
         </div>
       </div>
 
@@ -358,7 +359,7 @@ export default function StrategicScenarioView() {
           >
             {/* FORECAST CHART */}
             <div className="col-span-12 lg:col-span-8">
-              <TacticalCard title="ПРОГНОЗ РЕЗИЛЬЄНТНОСТІ" subtitle="STABILITY_DECAY_FORECAST" className="bg-black/40 border-2 border-white/[0.04] p-10 rounded-[4rem] shadow-4xl">
+              <HoloCard title="ПРОГНОЗ РЕЗИЛЬЄНТНОСТІ" subtitle="STABILITY_DECAY_FORECAST" className="bg-black/40 border-2 border-white/[0.04] p-10 rounded-[4rem] shadow-4xl">
                 <div className="h-[450px] w-full mt-12 p-8 bg-black/60 rounded-[3rem] border border-white/5">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={activeScenario.forecast} margin={{ top: 20, right: 20, left: -20, bottom: 0 }}>
@@ -380,7 +381,7 @@ export default function StrategicScenarioView() {
                     </AreaChart>
                   </ResponsiveContainer>
                 </div>
-              </TacticalCard>
+              </HoloCard>
             </div>
 
             {/* AI COPILOT RECOMMENDATIONS */}

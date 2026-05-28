@@ -29,6 +29,7 @@ import { PageTransition } from '@/components/layout/PageTransition';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { DiagnosticsTerminal } from '@/components/intelligence/DiagnosticsTerminal';
@@ -389,7 +390,7 @@ const PortfolioRiskView: React.FC = () => {
                     initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }}
                     className="space-y-8"
                   >
-                    <TacticalCard variant="holographic" className="p-10 bg-black/80 border-2 border-rose-500/20 rounded-[4rem] shadow-4xl relative overflow-hidden">
+                    <HoloCard variant="holographic" className="p-10 bg-black/80 border-2 border-rose-500/20 rounded-[4rem] shadow-4xl relative overflow-hidden">
                        <div className="absolute top-0 right-0 p-24 opacity-[0.03] pointer-events-none">
                           <Target size={260} className="text-rose-500" />
                        </div>
@@ -447,10 +448,10 @@ const PortfolioRiskView: React.FC = () => {
                             </button>
                           </div>
                        </div>
-                    </TacticalCard>
+                    </HoloCard>
 
                     {/* ── ТАЙМЛАЙН ELITE ── */}
-                    <TacticalCard className="p-10 bg-black/60 border-2 border-white/5 rounded-[3.5rem] shadow-3xl">
+                    <HoloCard className="p-10 bg-black/60 border-2 border-white/5 rounded-[3.5rem] shadow-3xl">
                        <h3 className="text-[11px] font-black text-slate-700 uppercase tracking-[0.6em] mb-10 flex items-center gap-4 italic relative">
                           <Activity size={18} className="text-rose-600 " />
                           ХРОНОЛОГІЯ_ШВИДКОСТІ_РИЗИКУ
@@ -476,10 +477,10 @@ const PortfolioRiskView: React.FC = () => {
                            </AreaChart>
                          </ResponsiveContainer>
                        </div>
-                    </TacticalCard>
+                    </HoloCard>
 
                     {/* ── СЕКТОРНИЙ РОЗПОДІЛ ELITE ── */}
-                    <TacticalCard className="p-10 bg-black/60 border-2 border-white/5 rounded-[3.5rem] shadow-3xl overflow-hidden relative">
+                    <HoloCard className="p-10 bg-black/60 border-2 border-white/5 rounded-[3.5rem] shadow-3xl overflow-hidden relative">
                        <div className="absolute top-0 right-0 p-8 opacity-5">
                           <Radar size={100} className="text-rose-500" />
                        </div>
@@ -502,7 +503,7 @@ const PortfolioRiskView: React.FC = () => {
                             ))}
                           </div>
                        </div>
-                    </TacticalCard>
+                    </HoloCard>
                   </motion.div>
                 )}
               </AnimatePresence>

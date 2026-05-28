@@ -16,7 +16,7 @@ export const NasProvidersView: React.FC<NasProvidersViewProps> = ({ providers })
             exit={{ opacity: 0, scale: 0.95 }}
             className="grid grid-cols-1 gap-6"
         >
-            <TacticalCard variant="holographic" title=" оутер AI Провайдерів (Квоти ресурсів)" className="panel-3d glass-morphism" icon={<Cloud size={16} />}>
+            <HoloCard variant="holographic" title=" оутер AI Провайдерів (Квоти ресурсів)" className="panel-3d glass-morphism" icon={<Cloud size={16} />}>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {providers.map(p => {
                         const usagePercent = p.currentLoad ?? 0;
@@ -89,7 +89,7 @@ export const NasProvidersView: React.FC<NasProvidersViewProps> = ({ providers })
                         );
                     })}
                 </div>
-            </TacticalCard>
+            </HoloCard>
         </motion.div>
     );
 };

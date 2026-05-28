@@ -33,6 +33,7 @@ import { useAgents } from '@/context/AgentContext';
 import { api } from '@/services/api';
 import { cn } from '@/utils/cn';
 import { premiumLocales } from '@/locales/uk/premium';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { CyberOrb } from '@/components/CyberOrb';
 import { CyberGrid } from '@/components/CyberGrid';
@@ -80,7 +81,7 @@ const MetricCard: React.FC<{
   color: string;
   trend?: string;
 }> = ({ icon: Icon, label, value, unit, color, trend }) => (
-  <TacticalCard variant="glass" className="p-8 group/metric overflow-hidden">
+  <HoloCard variant="glass" className="p-8 group/metric overflow-hidden">
     <div className="absolute inset-0 bg-cyber-grid opacity-[0.03]" />
     <div className="flex items-center gap-6 relative z-10">
       <div className={cn("p-4 rounded-2xl bg-slate-900 border border-white/5 shadow-2xl transition-transform group-hover/metric:scale-110", `text-[${color}]`)}>
@@ -105,7 +106,7 @@ const MetricCard: React.FC<{
         </div>
       </div>
     </div>
-  </TacticalCard>
+  </HoloCard>
 );
 
 const AgentCard: React.FC<{ agent: AgentStatus }> = ({ agent }) => {
@@ -118,7 +119,7 @@ const AgentCard: React.FC<{ agent: AgentStatus }> = ({ agent }) => {
   const config = statusConfig[agent.status];
 
   return (
-    <TacticalCard variant="holographic" className="p-8 group/agent overflow-hidden relative">
+    <HoloCard variant="holographic" className="p-8 group/agent overflow-hidden relative">
       <div className="absolute top-0 right-0 p-6 opacity-10 group-hover/agent:opacity-20 transition-all duration-1000 rotate-12 group-hover/agent:rotate-0 scale-150">
         <Brain size={80} style={{ color: config.color }} />
       </div>
@@ -162,7 +163,7 @@ const AgentCard: React.FC<{ agent: AgentStatus }> = ({ agent }) => {
           </div>
         </div>
       </div>
-    </TacticalCard>
+    </HoloCard>
   );
 };
 
@@ -302,7 +303,7 @@ const OmniscienceView: React.FC = () => {
               <div className="grid grid-cols-12 gap-10">
                 {/* Neural Core Centerpiece */}
                 <div className="col-span-12 xl:col-span-8 flex flex-col gap-10">
-                  <TacticalCard variant="holographic" className="p-0 h-[600px] bg-slate-950 flex flex-col relative overflow-hidden group/viz">
+                  <HoloCard variant="holographic" className="p-0 h-[600px] bg-slate-950 flex flex-col relative overflow-hidden group/viz">
                     <div className="absolute top-10 left-10 z-20 flex items-center gap-4">
                       <div className="p-3 bg-blue-500/20 rounded-xl border border-blue-500/30 text-blue-400">
                         <Target size={20} className="" />
@@ -336,10 +337,10 @@ const OmniscienceView: React.FC = () => {
                         <span className="text-sm font-black text-emerald-400 font-mono">99.2%</span>
                       </div>
                     </div>
-                  </TacticalCard>
+                  </HoloCard>
 
                   <div className="grid grid-cols-2 gap-10">
-                    <TacticalCard variant="glass" className="p-8 h-[300px] overflow-hidden">
+                    <HoloCard variant="glass" className="p-8 h-[300px] overflow-hidden">
                       <h3 className="text-[11px] font-black text-white uppercase tracking-[0.4em] mb-6 flex items-center gap-3">
                         <Activity size={18} className="text-blue-500" /> Системний Осцилограф
                       </h3>
@@ -347,8 +348,8 @@ const OmniscienceView: React.FC = () => {
                         <div className="absolute inset-0 bg-noise opacity-20" />
                         <NeuralPulse color="rgba(59,130,246,0.5)" size={200} />
                       </div>
-                    </TacticalCard>
-                    <TacticalCard variant="glass" className="p-8 h-[300px] overflow-hidden">
+                    </HoloCard>
+                    <HoloCard variant="glass" className="p-8 h-[300px] overflow-hidden">
                       <h3 className="text-[11px] font-black text-white uppercase tracking-[0.4em] mb-6 flex items-center gap-3">
                         <Zap size={18} className="text-amber-500" /> Детектор Аномалій
                       </h3>
@@ -365,13 +366,13 @@ const OmniscienceView: React.FC = () => {
                           </div>
                         ))}
                       </div>
-                    </TacticalCard>
+                    </HoloCard>
                   </div>
                 </div>
 
                 {/* Right Sidebar: Agents & Thoughts */}
                 <div className="col-span-12 xl:col-span-4 flex flex-col gap-10">
-                  <TacticalCard variant="holographic" className="p-8 bg-slate-950/40 flex flex-col h-full">
+                  <HoloCard variant="holographic" className="p-8 bg-slate-950/40 flex flex-col h-full">
                     <h3 className="text-[11px] font-black text-white uppercase tracking-[0.4em] mb-8 flex items-center gap-3">
                       <Users size={18} className="text-purple-400" /> Активні Агенти
                     </h3>
@@ -412,7 +413,7 @@ const OmniscienceView: React.FC = () => {
                         <div className="text-blue-500 ">_</div>
                       </div>
                     </div>
-                  </TacticalCard>
+                  </HoloCard>
                 </div>
               </div>
             </motion.div>
@@ -425,13 +426,13 @@ const OmniscienceView: React.FC = () => {
             >
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
                 {agents.map(agent => <AgentCard key={agent.id} agent={agent} />)}
-                <TacticalCard variant="glass" className="p-10 flex flex-col items-center justify-center border-dashed border-white/10 group/new cursor-pointer hover:border-blue-500/30 transition-all">
+                <HoloCard variant="glass" className="p-10 flex flex-col items-center justify-center border-dashed border-white/10 group/new cursor-pointer hover:border-blue-500/30 transition-all">
                   <div className="w-20 h-20 bg-white/5 border border-white/10 rounded-[32px] flex items-center justify-center mb-6 group-hover/new:scale-110 group-hover/new:bg-blue-600/10 group-hover/new:border-blue-500/30 transition-all">
                     <Zap size={32} className="text-slate-600 group-hover/new:text-blue-400 group-hover/new:" />
                   </div>
                   <h3 className="text-xl font-black text-slate-600 uppercase tracking-tighter group-hover/new:text-white transition-colors">Створити Нового Агента</h3>
                   <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest mt-2 group-hover/new:text-blue-500">ІНІЦІАЛІЗАЦІЯ_ПРОТОКОЛУ_НС</p>
-                </TacticalCard>
+                </HoloCard>
               </div>
             </motion.div>
           )}
@@ -524,7 +525,7 @@ const ShadowControlView: React.FC = () => (
       { icon: Binary, label: 'Глибока Діагностика', color: '#06b6d4', action: 'START_DOCTOR' },
       { icon: Shield, label: 'Калібрування Матриці Довіри', color: '#10b981', action: 'RESET_POLICY' }
     ].map((ctrl, i) => (
-      <TacticalCard key={i} variant="glass" className="p-10 flex flex-col group/ctrl cursor-pointer border-white/5 hover:border-white/20 transition-all relative overflow-hidden">
+      <HoloCard key={i} variant="glass" className="p-10 flex flex-col group/ctrl cursor-pointer border-white/5 hover:border-white/20 transition-all relative overflow-hidden">
         <div className="absolute top-0 right-0 p-8 opacity-5 group-hover/ctrl:opacity-10 transition-all">
           <ctrl.icon size={100} style={{ color: ctrl.color }} />
         </div>
@@ -536,7 +537,7 @@ const ShadowControlView: React.FC = () => (
           <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">КОМАНДА</span>
           <span className="px-4 py-1.5 bg-black/60 rounded-xl text-[10px] font-black font-mono border border-white/5" style={{ color: ctrl.color }}>{ctrl.action}</span>
         </div>
-      </TacticalCard>
+      </HoloCard>
     ))}
   </div>
 );
@@ -544,15 +545,15 @@ const ShadowControlView: React.FC = () => (
 const KnowledgeMatrixView: React.FC<{ onThought: (t: string) => void }> = ({ onThought }) => (
   <div className="grid grid-cols-12 gap-10 h-full">
     <div className="col-span-12 xl:col-span-8">
-      <TacticalCard variant="holographic" className="p-0 h-[600px] bg-slate-950 overflow-hidden relative">
+      <HoloCard variant="holographic" className="p-0 h-[600px] bg-slate-950 overflow-hidden relative">
         <div className="absolute inset-0 bg-cyber-grid opacity-[0.05]" />
         <div className="relative h-full w-full z-10">
           <NeuralCore data={{ categories: [] }} />
         </div>
-      </TacticalCard>
+      </HoloCard>
     </div>
     <div className="col-span-12 xl:col-span-4 flex flex-col gap-10">
-      <TacticalCard variant="glass" className="p-8 h-full">
+      <HoloCard variant="glass" className="p-8 h-full">
         <h3 className="text-[11px] font-black text-white uppercase tracking-[0.4em] mb-8">Матриця Таксономії</h3>
         <div className="space-y-6">
           {['Особи', 'Організації', 'Локації', 'Активи', 'Події'].map((cat, i) => (
@@ -567,7 +568,7 @@ const KnowledgeMatrixView: React.FC<{ onThought: (t: string) => void }> = ({ onT
             </div>
           ))}
         </div>
-      </TacticalCard>
+      </HoloCard>
     </div>
   </div>
 );

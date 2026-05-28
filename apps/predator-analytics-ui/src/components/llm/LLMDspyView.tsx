@@ -21,7 +21,7 @@ export const LLMDspyView: React.FC<LLMDspyViewProps> = ({
 }) => {
     return (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <TacticalCard variant="holographic" title={premiumLocales.llm.dspy.title} className="glass-morphism panel-3d" action={
+            <HoloCard variant="holographic" title={premiumLocales.llm.dspy.title} className="glass-morphism panel-3d" action={
                 <motion.button
                     whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                     onClick={() => onDspyOptimizingChange(!dspyOptimizing)}
@@ -81,9 +81,9 @@ export const LLMDspyView: React.FC<LLMDspyViewProps> = ({
                         </div>
                     )}
                 </div>
-            </TacticalCard>
+            </HoloCard>
 
-            <TacticalCard variant="holographic" title={premiumLocales.llm.dspy.logs.title} className="glass-morphism panel-3d">
+            <HoloCard variant="holographic" title={premiumLocales.llm.dspy.logs.title} className="glass-morphism panel-3d">
                 <div className="h-[600px] overflow-y-auto custom-scrollbar font-mono text-[11px] space-y-3 p-4 bg-slate-950/30 rounded-3xl border border-white/5 relative">
                     <div className="absolute top-0 right-0 p-8 opacity-[0.03]"><Sparkles size={120} /></div>
                     {dspyOptimizing && (
@@ -97,7 +97,7 @@ export const LLMDspyView: React.FC<LLMDspyViewProps> = ({
                     )}
                     {!dspyOptimizing && <div className="text-slate-800 text-center mt-32 font-bold uppercase tracking-[0.3em]">{premiumLocales.llm.dspy.logs.idle}</div>}
                 </div>
-            </TacticalCard>
+            </HoloCard>
         </motion.div>
     );
 };

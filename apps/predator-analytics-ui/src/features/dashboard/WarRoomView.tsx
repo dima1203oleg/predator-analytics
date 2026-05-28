@@ -27,6 +27,7 @@ import { PageTransition } from '@/components/layout/PageTransition';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { DiagnosticsTerminal } from '@/components/intelligence/DiagnosticsTerminal';
@@ -128,7 +129,7 @@ export default function WarRoomView() {
              
              {/* Q1: GLOBAL INTEL (Radar/Globe) */}
              <div className="col-span-12 xl:col-span-4 row-span-2">
-                <TacticalCard 
+                <HoloCard 
                   variant="holographic"
                   className={cn(
                     "h-full flex flex-col p-8 transition-all duration-700 bg-black/60 border-amber-500/10 rounded-[4rem] relative overflow-hidden shadow-4xl",
@@ -183,12 +184,12 @@ export default function WarRoomView() {
                          ))}
                       </div>
                    </div>
-                </TacticalCard>
+                </HoloCard>
              </div>
 
              {/* Q2: SYSTEM KERNEL (Metrics/Logs) */}
              <div className="col-span-12 xl:col-span-5">
-                <TacticalCard 
+                <HoloCard 
                   className={cn(
                     "h-full p-8 flex flex-col bg-black/60 border-white/5 rounded-[4rem] relative overflow-hidden shadow-4xl",
                     expanded === 'q2' ? "fixed inset-12 z-[100] bg-black border-white/20" : ""
@@ -248,12 +249,12 @@ export default function WarRoomView() {
                          </div>
                       </div>
                    </div>
-                </TacticalCard>
+                </HoloCard>
              </div>
 
              {/* Q3: PORTFOLIO RISK (P&L Display) */}
              <div className="col-span-12 xl:col-span-3">
-                <TacticalCard 
+                <HoloCard 
                   variant="holographic"
                   className={cn(
                     "h-full p-8 flex flex-col bg-black/60 border-rose-500/10 rounded-[4rem] relative overflow-hidden shadow-4xl",
@@ -298,12 +299,12 @@ export default function WarRoomView() {
                          <p className="text-4xl font-black text-rose-500 italic tracking-tighter font-serif leading-none">$127.4M</p>
                       </div>
                    </div>
-                </TacticalCard>
+                </HoloCard>
              </div>
 
              {/* Q4: PREDICTIONS & ALERTS (AI / Scenarios) */}
              <div className="col-span-12 xl:col-span-8 overflow-hidden h-full">
-                <TacticalCard 
+                <HoloCard 
                   variant="holographic"
                   className={cn(
                     "h-full p-10 flex flex-col bg-black/60 border-rose-500/10 rounded-[4rem] relative overflow-hidden shadow-4xl",
@@ -387,7 +388,7 @@ export default function WarRoomView() {
                    <div className="absolute -bottom-10 -right-10 p-32 opacity-5 pointer-events-none">
                       <Fingerprint size={300} className="text-rose-500" />
                    </div>
-                </TacticalCard>
+                </HoloCard>
              </div>
 
           </div>

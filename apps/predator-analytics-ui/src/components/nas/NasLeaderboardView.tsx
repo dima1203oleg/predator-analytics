@@ -22,7 +22,7 @@ export const NasLeaderboardView: React.FC<NasLeaderboardViewProps> = ({ models }
                     { label: 'Середня Точність', value: '94.2%', color: 'success' }
                 ]}
             />
-            <TacticalCard variant="holographic" title="Архитектурна Еліта (Зала Слави)" className="bg-slate-900/40 border-white/5">
+            <HoloCard variant="holographic" title="Архитектурна Еліта (Зала Слави)" className="bg-slate-900/40 border-white/5">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-separate border-spacing-y-3">
                         <thead>
@@ -78,7 +78,7 @@ export const NasLeaderboardView: React.FC<NasLeaderboardViewProps> = ({ models }
                         </tbody>
                     </table>
                 </div>
-            </TacticalCard>
+            </HoloCard>
         </div>
     );
 };

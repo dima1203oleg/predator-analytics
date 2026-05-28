@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { cn } from '@/utils/cn';
 import { Cloud, Scan, BarChart3, Globe } from 'lucide-react';
@@ -22,7 +23,7 @@ export function GoogleIntegralityCard({
   setGoogleIntegrality
 }: GoogleIntegralityCardProps) {
   return (
-    <TacticalCard title="ІНТЕГ АЦІЯ GOOGLE" variant="holographic" className="border-emerald-500/30 bg-emerald-500/5">
+    <HoloCard title="ІНТЕГ АЦІЯ GOOGLE" variant="holographic" className="border-emerald-500/30 bg-emerald-500/5">
       <div className="p-4 space-y-4">
         <div className="flex items-center gap-3 p-3 rounded-2xl bg-black/40 border border-emerald-500/20">
            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400">
@@ -68,6 +69,6 @@ export function GoogleIntegralityCard({
            </Button>
         </div>
       </div>
-    </TacticalCard>
+    </HoloCard>
   );
 }

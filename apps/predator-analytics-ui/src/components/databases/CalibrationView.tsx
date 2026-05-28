@@ -20,7 +20,7 @@ export const CalibrationView: React.FC<CalibrationViewProps> = ({ trainingPairs,
         >
             {/* Core RLHF Control Section */}
             <div className="lg:col-span-2 space-y-8">
-                <TacticalCard variant="holographic" title="TEXT-TO-SQL RLHF CALIBRATION v61.0-ELITE" className="panel-3d group">
+                <HoloCard variant="holographic" title="TEXT-TO-SQL RLHF CALIBRATION v61.0-ELITE" className="panel-3d group">
                     <div className="space-y-8">
                         {/* Model Status Module */}
                         <div className="relative p-8 bg-slate-900/60 border border-white/5 rounded-[40px] overflow-hidden">
@@ -140,12 +140,12 @@ export const CalibrationView: React.FC<CalibrationViewProps> = ({ trainingPairs,
                             </AnimatePresence>
                         </div>
                     </div>
-                </TacticalCard>
+                </HoloCard>
             </div>
 
             {/* Neural Insights Section */}
             <div className="space-y-8">
-                <TacticalCard variant="holographic" title="CALIBRATION METRICS" className="h-fit">
+                <HoloCard variant="holographic" title="CALIBRATION METRICS" className="h-fit">
                     <div className="space-y-8 p-4">
                         <div className="text-center py-10 bg-slate-900/40 border border-white/5 rounded-[40px] relative overflow-hidden group/stats">
                             <div className="absolute inset-0 bg-blue-500/5 opacity-0 group-hover/stats:opacity-100 transition-opacity" />
@@ -178,7 +178,7 @@ export const CalibrationView: React.FC<CalibrationViewProps> = ({ trainingPairs,
                             </button>
                         </div>
                     </div>
-                </TacticalCard>
+                </HoloCard>
 
                 {/* System Logs v61.0-ELITE */}
                 <div className="p-8 bg-slate-900/40  border border-white/5 rounded-[40px] space-y-4">

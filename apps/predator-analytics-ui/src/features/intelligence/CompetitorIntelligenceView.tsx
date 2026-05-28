@@ -25,6 +25,7 @@ import { ViewHeader } from '@/components/ViewHeader';
 import { cn } from '@/utils/cn';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { useUISound, UISoundType } from '@/hooks/useUISound';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { CyberOrb } from '@/components/CyberOrb';
 import { HoloContainer } from '@/components/HoloContainer';
@@ -278,7 +279,7 @@ const CompetitorCardELITE: React.FC<{
           </motion.div>
         )}
       </AnimatePresence>
-    </TacticalCard>
+    </HoloCard>
   );
 }
 
@@ -556,7 +557,7 @@ const CompetitorIntelligenceView: React.FC = () => {
                     <Crosshair size={32} className="text-slate-900 animate-spin-slow" />
                   </div>
                 </div>
-              </TacticalCard>
+              </HoloCard>
             </aside>
           </div>
         </div>

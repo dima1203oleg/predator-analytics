@@ -101,12 +101,12 @@ export const VectorDBView: React.FC<VectorDBViewProps> = ({ vectorData, selected
                             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 border border-white/5 rounded-full" />
                         </div>
                     </div>
-                </TacticalCard>
+                </HoloCard>
             </div>
 
             {/* Vector Inspector Section */}
             <div className="space-y-6">
-                <TacticalCard variant="holographic" title="SEMANTIC INSPECTOR" className="h-[600px] flex flex-col group">
+                <HoloCard variant="holographic" title="SEMANTIC INSPECTOR" className="h-[600px] flex flex-col group">
                     <AnimatePresence mode="wait">
                         {selectedVector ? (
                             <motion.div
@@ -197,7 +197,7 @@ export const VectorDBView: React.FC<VectorDBViewProps> = ({ vectorData, selected
                             </div>
                         )}
                     </AnimatePresence>
-                </TacticalCard>
+                </HoloCard>
             </div>
         </motion.div>
     );

@@ -41,6 +41,7 @@ import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
 import { CyberOrb } from '@/components/CyberOrb';
 import { PageTransition } from '@/components/layout/PageTransition';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { GeoGlobe } from '@/components/polish/GeoGlobe';
@@ -459,7 +460,7 @@ const SanctionsScreening: React.FC = () => {
                         { label: 'PEP виявлено', value: summary.pep, icon: Crown, cls: 'text-rose-500', bg: 'from-rose-500/10', border: 'border-rose-500/20', glow: 'shadow-rose-900/20' },
                     ].map((item, index) => (
                         <motion.div key={item.label} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.1 }}>
-                            <TacticalCard variant="cyber" className={cn('relative overflow-hidden border-2 p-10 shadow-4xl rounded-[3rem]', item.border, item.glow)}>
+                            <HoloCard variant="cyber" className={cn('relative overflow-hidden border-2 p-10 shadow-4xl rounded-[3rem]', item.border, item.glow)}>
                                 <div className={cn('absolute inset-0 bg-gradient-to-br to-transparent opacity-40', item.bg)} />
                                 <div className="relative z-10 flex items-center justify-between">
                                     <div>
@@ -468,13 +469,13 @@ const SanctionsScreening: React.FC = () => {
                                     </div>
                                     <item.icon className={cn(item.cls, 'opacity-40 shadow-2xl')} size={48} />
                                 </div>
-                            </TacticalCard>
+                            </HoloCard>
                         </motion.div>
                     ))}
                 </div>
 
                 {/* SEARCH SECTION ELITE */}
-                <TacticalCard variant="holographic" className="relative mb-16 overflow-hidden p-16 rounded-[4rem] bg-black border-2 border-white/[0.04] shadow-4xl group/search">
+                <HoloCard variant="holographic" className="relative mb-16 overflow-hidden p-16 rounded-[4rem] bg-black border-2 border-white/[0.04] shadow-4xl group/search">
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(225,29,72,0.03),transparent_70%)] pointer-events-none" />
                     <CyberOrb color="rose" size="lg" intensity="low" className="right-0 top-0 opacity-[0.05]" />
 
@@ -556,7 +557,7 @@ const SanctionsScreening: React.FC = () => {
                             })}
                         </div>
                     </div>
-                </TacticalCard>
+                </HoloCard>
 
                 <div className="grid grid-cols-1 gap-12 lg:grid-cols-5 h-full min-h-[800px]">
                     {/* LEFT: SESSION LOG ELITE */}
@@ -569,7 +570,7 @@ const SanctionsScreening: React.FC = () => {
 
                         <div className="flex-1 overflow-y-auto custom-scrollbar pr-4 space-y-6">
                             {history.length === 0 ? (
-                                <TacticalCard variant="cyber" className="rounded-[4rem] border-2 border-white/5 p-12 bg-black/40 shadow-inner">
+                                <HoloCard variant="cyber" className="rounded-[4rem] border-2 border-white/5 p-12 bg-black/40 shadow-inner">
                                     <div className="flex min-h-[300px] flex-col items-center justify-center text-center opacity-20">
                                         <History size={80} className="mb-10 text-slate-800 " />
                                         <h4 className="text-2xl font-black uppercase tracking-tighter text-white font-serif italic">EMPTY_SESSION_LEDGER</h4>
@@ -577,7 +578,7 @@ const SanctionsScreening: React.FC = () => {
                                             AWAITING_CONFIRMED_API_CALLBACK_FOR_DECRYPTION
                                         </p>
                                     </div>
-                                </TacticalCard>
+                                </HoloCard>
                             ) : (
                                 <AnimatePresence mode="popLayout">
                                     {history.map((result, index) => (
@@ -604,7 +605,7 @@ const SanctionsScreening: React.FC = () => {
                         <AnimatePresence mode="wait">
                             {selected ? (
                                 <motion.div key={selected.id} initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }} className="h-full">
-                                    <TacticalCard variant="holographic" className="relative overflow-hidden p-16 rounded-[4rem] bg-black border-2 border-white/[0.04] shadow-4xl h-full flex flex-col">
+                                    <HoloCard variant="holographic" className="relative overflow-hidden p-16 rounded-[4rem] bg-black border-2 border-white/[0.04] shadow-4xl h-full flex flex-col">
                                         <CyberOrb
                                             color={selected.status === 'blocked' ? 'rose' : selected.status === 'warning' ? 'rose' : 'emerald'}
                                             size="xl" intensity="low"
@@ -709,7 +710,7 @@ const SanctionsScreening: React.FC = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                    </TacticalCard>
+                                    </HoloCard>
                                 </motion.div>
                             ) : (
                                 <EmptyPanel

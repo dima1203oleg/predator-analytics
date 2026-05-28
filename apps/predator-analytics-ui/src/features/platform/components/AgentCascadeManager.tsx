@@ -2,6 +2,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Zap, Shield, Search, Code, Activity, Server, Radio, Waypoints, Cpu } from 'lucide-react';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { premiumLocales } from '@/locales/uk/premium';
 import { useAgents } from '@/context/AgentContext';
@@ -154,7 +155,7 @@ const AgentCascadeManager: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <TacticalCard title="КОНТРОЛЬ ПА АЛЕЛІЗМУ" className="bg-[#0b0f1a]/80  border-white/5" variant="holographic">
+                <HoloCard title="КОНТРОЛЬ ПА АЛЕЛІЗМУ" className="bg-[#0b0f1a]/80  border-white/5" variant="holographic">
                     <div className="space-y-6 pt-4">
                         <div className="flex justify-between items-end">
                             <div>
@@ -175,9 +176,9 @@ const AgentCascadeManager: React.FC = () => {
                             />
                         </div>
                     </div>
-                </TacticalCard>
+                </HoloCard>
 
-                <TacticalCard title="СИНХРОНІЗАЦІЯ SAGA" className="bg-[#0b0f1a]/80  border-white/5" variant="holographic">
+                <HoloCard title="СИНХРОНІЗАЦІЯ SAGA" className="bg-[#0b0f1a]/80  border-white/5" variant="holographic">
                     <div className="space-y-4 pt-4">
                         {(activeCascade.steps || []).map((step: string, i: number) => {
                             const isCurrent = step === activeCascade.current_step;
@@ -224,7 +225,7 @@ const AgentCascadeManager: React.FC = () => {
                             );
                         })}
                     </div>
-                </TacticalCard>
+                </HoloCard>
             </div>
         </div>
     );

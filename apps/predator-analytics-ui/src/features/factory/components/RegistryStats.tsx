@@ -1,4 +1,5 @@
 import React from 'react';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { Database, Network, Search, HardDrive, Cpu, Activity } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -126,7 +127,7 @@ export function RegistryStats({ stats }: RegistryStatsProps) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: idx * 0.05 }}
         >
-          <TacticalCard 
+          <HoloCard 
             title={item.name.toUpperCase()} 
             variant="cyber" 
             className={item.border}
@@ -150,7 +151,7 @@ export function RegistryStats({ stats }: RegistryStatsProps) {
                 </span>
               </div>
             </div>
-          </TacticalCard>
+          </HoloCard>
         </motion.div>
         );
       })}

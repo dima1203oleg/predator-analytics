@@ -18,6 +18,7 @@ import {
     Database, Satellite, Fingerprint, Layout
 } from 'lucide-react';
 import { PageTransition } from '@/components/layout/PageTransition';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
@@ -157,7 +158,7 @@ const EventCard: React.FC<{ event: TimelineEvent; isLast: boolean }> = ({ event,
                     </div>
                 </div>
 
-                <TacticalCard 
+                <HoloCard 
                     variant="cyber" 
                     className={cn(
                         "p-8 rounded-[3rem] transition-all cursor-pointer group",
@@ -228,7 +229,7 @@ const EventCard: React.FC<{ event: TimelineEvent; isLast: boolean }> = ({ event,
                             </motion.div>
                         )}
                     </AnimatePresence>
-                </TacticalCard>
+                </HoloCard>
             </div>
         </div>
     );
