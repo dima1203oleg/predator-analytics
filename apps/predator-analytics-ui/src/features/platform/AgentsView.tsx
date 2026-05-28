@@ -549,7 +549,7 @@ const AgentsView: React.FC = () => {
                     disabled={refreshing}
                     className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-slate-200 transition hover:bg-white/10 disabled:opacity-60"
                 >
-                    {refreshing ? <Loader2 size={14} className="animate-spin" /> : <RefreshCw size={14} />}
+                    {refreshing ? <Loader size={14} className="animate-spin" /> : <RefreshCw size={14} />}
                     Оновити дані
                 </button>
             </div>

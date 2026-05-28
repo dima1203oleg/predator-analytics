@@ -25,7 +25,7 @@ import {
     Binary,
     Layers,
     History as HistoryIcon,
-    Loader2,
+    Loader,
 } from 'lucide-react';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { CyberGrid } from '@/components/CyberGrid';
@@ -353,7 +353,7 @@ export default function ModelTrainingView() {
                                                     : "bg-rose-600 hover:bg-rose-500 text-white  hover: border-none"
                                             )}
                                         >
-                                            {starting ? <Loader2 className="animate-spin mr-3" size={18} /> : <Play className="mr-3" size={16} fill="currentColor" />}
+                                            {starting ? <Loader className="animate-spin mr-3" size={18} /> : <Play className="mr-3" size={16} fill="currentColor" />}
                                             ІНІЦІАЛІЗУВАТИ_НАВЧАННЯ
                                         </Button>
                                         <Button 

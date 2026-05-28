@@ -15,7 +15,7 @@ import {
   Clock, Zap, Eye, ArrowUpRight, RefreshCw, Download,
   Filter, ChevronRight, Network, DollarSign, Globe,
   Activity, Lock, FileText, Send, Star, Fingerprint, Cpu, Search, Radar,
-  Loader2
+  Loader
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
@@ -303,7 +303,7 @@ const HypothesisEngineView: React.FC = () => {
                   : "bg-yellow-500 text-black border-none hover:brightness-110"
               )}
             >
-              {generating ? <Loader2 size={24} className="animate-spin" /> : <Send size={24} />}
+              {generating ? <Loader size={24} className="animate-spin" /> : <Send size={24} />}
               {generating ? 'АНАЛІЗ...' : 'АКТИВУВАТИ'}
             </motion.button>
           </div>

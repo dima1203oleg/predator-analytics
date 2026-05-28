@@ -1,7 +1,7 @@
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Loader2 } from 'lucide-react';
+import { Loader } from 'lucide-react';
 
 interface LoadingStateProps {
   message?: string;
@@ -35,7 +35,7 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
           animate={{ rotate: 360 }}
           transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
         >
-          <Loader2 className={`${sizeClasses[size]} text-blue-400`} />
+          <Loader className={`${sizeClasses[size]} text-blue-400`} />
         </motion.div>
         {message && (
           <p className="text-sm font-medium text-slate-400 ">

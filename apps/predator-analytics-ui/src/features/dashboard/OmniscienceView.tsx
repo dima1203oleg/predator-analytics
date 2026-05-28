@@ -111,7 +111,7 @@ const MetricCard: React.FC<{
 const AgentCard: React.FC<{ agent: AgentStatus }> = ({ agent }) => {
   const statusConfig = {
     active: { color: '#10b981', label: premiumLocales.omniscience.agentCouncil.status.active, icon: CheckCircle2 },
-    thinking: { color: '#06b6d4', label: premiumLocales.omniscience.agentCouncil.status.thinking, icon: Loader2 },
+    thinking: { color: '#06b6d4', label: premiumLocales.omniscience.agentCouncil.status.thinking, icon: Loader },
     idle: { color: '#64748b', label: premiumLocales.omniscience.agentCouncil.status.idle, icon: Clock },
     error: { color: '#f43f5e', label: premiumLocales.omniscience.agentCouncil.status.error, icon: XCircle },
   };

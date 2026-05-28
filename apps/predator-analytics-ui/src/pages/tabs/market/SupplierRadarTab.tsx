@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Building2, MapPin, CheckCircle, AlertCircle, Siren, 
   Search, Filter, ExternalLink, Mail, Sparkles, Target,
-  RefreshCw, TrendingUp, Loader2
+  RefreshCw, TrendingUp, Loader
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { intelligenceApi } from '@/services/api';
@@ -84,7 +84,7 @@ export const SupplierRadarTab: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {loading && suppliers.length === 0 ? (
            <div className="col-span-full py-20 flex flex-col items-center justify-center space-y-4 opacity-50">
-              <Loader2 size={48} className="text-yellow-500 animate-spin" />
+              <Loader size={48} className="text-yellow-500 animate-spin" />
               <p className="text-xs font-black text-white uppercase tracking-[0.4em] italic">Сканування глобальних ринків...</p>
            </div>
         ) : filtered.map((s, i) => (

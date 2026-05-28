@@ -2,7 +2,7 @@ import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  CheckCircle2, XCircle, AlertTriangle, HelpCircle, ChevronRight, X, Loader2
+  CheckCircle2, XCircle, AlertTriangle, HelpCircle, ChevronRight, X, Loader
 } from 'lucide-react';
 import { cn } from '../../utils/cn';
 import { useSystemEvents } from '../../hooks/useSystemEvents';
@@ -114,7 +114,7 @@ const toastStyles: Record<ToastType, { icon: React.ReactNode; colors: string }> 
     colors: 'bg-blue-500/10 border-blue-500/30 text-blue-400'
   },
   loading: {
-    icon: <Loader2 size={18} className="animate-spin" />,
+    icon: <Loader size={18} className="animate-spin" />,
     colors: 'bg-indigo-500/10 border-indigo-500/30 text-indigo-400'
   }
 };

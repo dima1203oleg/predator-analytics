@@ -672,7 +672,7 @@ const ReportBuilderPage: React.FC = () => {
 
                                 {aiTyping && (
                                     <div className="flex items-center gap-2 px-2 text-[10px] font-semibold text-cyan-300">
-                                        <Loader2 size={14} className="animate-spin" />
+                                        <Loader size={14} className="animate-spin" />
                                         Copilot формує відповідь...
                                     </div>
                                 )}
@@ -867,7 +867,7 @@ const ReportBuilderPage: React.FC = () => {
                                         exit={{ opacity: 0 }}
                                         className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-6 bg-slate-950/90 p-10 "
                                     >
-                                        <Loader2 size={42} className="animate-spin text-amber-300" />
+                                        <Loader size={42} className="animate-spin text-amber-300" />
                                         <div className="text-center">
                                             <h4 className="text-2xl font-black uppercase tracking-tight text-white">
                                                 Формування звіту впроцесі

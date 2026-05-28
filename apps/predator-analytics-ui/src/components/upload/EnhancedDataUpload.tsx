@@ -3,7 +3,7 @@ import React, { useState, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Upload, FileText, X, Check, AlertCircle,
-  File, FileSpreadsheet, Image, Archive, Cloud, Database, Loader2
+  File, FileSpreadsheet, Image, Archive, Cloud, Database, Loader
 } from 'lucide-react';
 
 // ============================================================================
@@ -115,7 +115,7 @@ const FilePreview = ({ file, onRemove }: { file: UploadedFile; onRemove: () => v
           <X size={16} className="text-slate-400" />
         </button>
       ) : (
-        <Loader2 size={20} className="text-cyan-400 animate-spin" />
+        <Loader size={20} className="text-cyan-400 animate-spin" />
       )}
     </motion.div>
   );

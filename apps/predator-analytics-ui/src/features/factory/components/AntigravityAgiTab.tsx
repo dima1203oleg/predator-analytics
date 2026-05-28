@@ -27,7 +27,7 @@ import {
   Clock,
   DollarSign,
   Globe,
-  Loader2,
+  Loader,
   Plus,
   RefreshCw,
   Send,
@@ -268,7 +268,7 @@ const TaskRow = ({
             title="Скасувати задачу"
           >
             {cancelling === task.task_id ? (
-              <Loader2 size={14} className="animate-spin" />
+              <Loader size={14} className="animate-spin" />
             ) : (
               <X size={14} />
             )}
@@ -770,7 +770,7 @@ export function AntigravityAgiTab() {
                 className="flex w-full items-center justify-center gap-2 rounded-[18px] border border-rose-500/25 bg-rose-500/10 px-4 py-2.5 text-[11px] font-black uppercase tracking-wider text-rose-300 transition hover:bg-rose-500/15"
               >
                 {cancelling === selectedTask.task_id ? (
-                  <Loader2 size={13} className="animate-spin" />
+                  <Loader size={13} className="animate-spin" />
                 ) : (
                   <XCircle size={13} />
                 )}
@@ -880,7 +880,7 @@ export function AntigravityAgiTab() {
                       'hover:bg-[#D4AF37]/25 disabled:cursor-not-allowed disabled:opacity-50',
                     )}
                   >
-                    {creating ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
+                    {creating ? <Loader size={14} className="animate-spin" /> : <Send size={14} />}
                     Запустити AGI-задачу
                   </button>
                   <button

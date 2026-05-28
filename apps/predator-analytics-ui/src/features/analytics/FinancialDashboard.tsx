@@ -14,7 +14,7 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   AlertCircle,
-  Loader2
+  Loader
 } from 'lucide-react';
 import { cersService } from '@/services/unified/cers.service';
 import { TacticalCard } from '@/components/ui/TacticalCard';
@@ -47,7 +47,7 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({ ueid: pr
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[600px] text-white">
-        <Loader2 size={48} className="text-amber-500 animate-spin mb-4" />
+        <Loader size={48} className="text-amber-500 animate-spin mb-4" />
         <p className="text-lg font-bold uppercase tracking-[0.2em] ">Завантаження фінансових даних...</p>
       </div>
     );

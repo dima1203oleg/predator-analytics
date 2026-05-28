@@ -14,7 +14,7 @@ import {
     Terminal, Play, CheckCircle2, XCircle, Code, Brain, RefreshCcw, Clock, Shield,
     Zap, ZapOff, Activity, ShieldAlert, Cpu,
     ChevronRight, ArrowRight, Target, Share2, Maximize2,
-    Lock, Unlock, Bot, Search, Boxes, Network, Loader2
+    Lock, Unlock, Bot, Search, Boxes, Network, Loader
 } from 'lucide-react';
 import { api } from '../services/api';
 import { HoloContainer } from './HoloContainer';
@@ -207,7 +207,7 @@ export const TripleAgentPanel: React.FC<TripleAgentPanelProps> = ({ isLockdown }
                                 disabled={isProcessing || !command.trim()}
                                 className="px-10 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-[24px] font-black text-[11px] uppercase tracking-[0.3em] flex items-center gap-4 shadow-2xl shadow-purple-500/20 group active:scale-95 disabled:opacity-30 transition-all font-display"
                             >
-                                {isProcessing ? <Loader2 size={18} className="animate-spin" /> : <Play size={18} className="group-hover:translate-x-1 transition-transform" fill="currentColor" />}
+                                {isProcessing ? <Loader size={18} className="animate-spin" /> : <Play size={18} className="group-hover:translate-x-1 transition-transform" fill="currentColor" />}
                                 {isProcessing ? "EXECUTING_CHAIN" : "INITIALIZE_NEXUS"}
                             </motion.button>
                         </div>

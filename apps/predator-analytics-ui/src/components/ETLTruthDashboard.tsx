@@ -178,7 +178,7 @@ const PhaseIndicator: React.FC<{
             transition={{ repeat: Infinity, duration: 2, ease: 'linear' }}
             className="absolute -top-1 -right-1"
           >
-            <Loader2 size={14} className="text-blue-400" />
+            <Loader size={14} className="text-blue-400" />
           </motion.div>
         )}
         <Icon size={20} className={
@@ -275,7 +275,7 @@ const JobCard: React.FC<{ job: ETLJob; expanded: boolean; onToggle: () => void }
               'bg-slate-800'}
           `}>
             {isActive ? (
-              <Loader2 size={18} className="text-blue-400 animate-spin" />
+              <Loader size={18} className="text-blue-400 animate-spin" />
             ) : (
               <Icon size={18} className={`text-${config.color}-400`} />
             )}

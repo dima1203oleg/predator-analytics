@@ -207,7 +207,7 @@ export function EvolutionAgentPanel() {
               className="bg-[#D4AF37]/15 text-[#D4AF37] border-[#D4AF37]/40 hover:bg-[#D4AF37]/25 font-black uppercase tracking-widest text-[10px] h-11 px-5"
             >
               {isAnalyzing
-                ? <><Loader2 size={14} className="mr-2 animate-spin" /> Аналіз...</>
+                ? <><Loader size={14} className="mr-2 animate-spin" /> Аналіз...</>
                 : <><Sparkles size={14} className="mr-2" /> Запустити аналіз</>
               }
             </Button>

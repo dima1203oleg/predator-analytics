@@ -226,7 +226,7 @@ export const OmniverseInsights: React.FC = () => {
               className="flex justify-start"
             >
               <div className="flex gap-3 items-center text-blue-400/60 bg-blue-500/5 px-4 py-2 rounded-full border border-blue-500/10">
-                <Loader2 size={14} className="animate-spin" />
+                <Loader size={14} className="animate-spin" />
                 <span className="text-xs font-mono tracking-widest uppercase">Thinking...</span>
               </div>
             </motion.div>

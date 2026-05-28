@@ -26,7 +26,7 @@ import {
   Flame,
   GitMerge,
   Layers,
-  Loader2,
+  Loader,
   Monitor,
   Network,
   Play,
@@ -631,7 +631,7 @@ export function FabrykaAutonomousTab() {
               )}
             >
               {isSwitching ? (
-                <Loader2 size={18} className="absolute inset-0 m-auto animate-spin text-white" />
+                <Loader size={18} className="absolute inset-0 m-auto animate-spin text-white" />
               ) : (
                 <motion.div
                   animate={{ x: isAutonomous ? 4 : 42 }}
@@ -696,7 +696,7 @@ export function FabrykaAutonomousTab() {
                   : 'border-white/10 bg-white/5 text-slate-500 hover:text-slate-300',
               )}
             >
-              {isCoderSwitching && coderSource !== 'ollama' ? <Loader2 size={12} className="animate-spin" /> : <WifiOff size={12} />}
+              {isCoderSwitching && coderSource !== 'ollama' ? <Loader size={12} className="animate-spin" /> : <WifiOff size={12} />}
               Ollama · Локально
             </button>
             <div className="text-slate-600 text-[11px] font-black">/</div>
@@ -711,7 +711,7 @@ export function FabrykaAutonomousTab() {
                   : 'border-white/10 bg-white/5 text-slate-500 hover:text-slate-300',
               )}
             >
-              {isCoderSwitching && coderSource !== 'api' ? <Loader2 size={12} className="animate-spin" /> : <Wifi size={12} />}
+              {isCoderSwitching && coderSource !== 'api' ? <Loader size={12} className="animate-spin" /> : <Wifi size={12} />}
               API · Хмара
             </button>
           </div>
@@ -1281,7 +1281,7 @@ export function FabrykaAutonomousTab() {
                     <AnimatePresence mode="wait">
                       {isRunning ? (
                         <div className="flex items-center gap-2 text-[10px] text-rose-400 font-black uppercase">
-                          <Loader2 size={12} className="animate-spin" />
+                          <Loader size={12} className="animate-spin" />
                           Виконується...
                         </div>
                       ) : isPending ? (

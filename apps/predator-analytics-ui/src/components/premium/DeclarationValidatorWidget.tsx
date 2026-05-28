@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   FileCheck, FileWarning, UploadCloud,
-  CheckCircle2, AlertOctagon, ShieldCheck, Download, Loader2
+  CheckCircle2, AlertOctagon, ShieldCheck, Download, Loader
 } from 'lucide-react';
 import { cn } from '../../utils/cn';
 import { premiumLocales } from '../../locales/uk/premium';
@@ -129,7 +129,7 @@ export const DeclarationValidatorWidget: React.FC<{ persona: string }> = ({ pers
                 >
                     <div className="relative">
                         <div className="absolute inset-0 bg-emerald-500/20 blur-xl rounded-full" />
-                        <Loader2 size={48} className="text-emerald-400 animate-spin relative z-10" />
+                        <Loader size={48} className="text-emerald-400 animate-spin relative z-10" />
                     </div>
                     <div className="text-center">
                         <h4 className="text-lg font-black text-white ">{premiumLocales.declarationValidator.scanning}</h4>

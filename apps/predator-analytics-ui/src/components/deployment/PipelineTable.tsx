@@ -1,7 +1,7 @@
 
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React from 'react';
-import { GitCommit, Clock, CheckCircle2, XCircle, RotateCcw, Box, ArrowRight, Loader2 } from 'lucide-react';
+import { GitCommit, Clock, CheckCircle2, XCircle, RotateCcw, Box, ArrowRight, Loader } from 'lucide-react';
 import { PipelineRun } from '../../types';
 
 interface PipelineTableProps {
@@ -39,7 +39,7 @@ export const PipelineTable: React.FC<PipelineTableProps> = ({ pipelines, onRollb
                                     }`}>
                                         {run.status === 'SUCCESS' && <CheckCircle2 size={16} />}
                                         {run.status === 'FAILED' && <XCircle size={16} />}
-                                        {run.status === 'RUNNING' && <Loader2 size={16} className="animate-spin" />}
+                                        {run.status === 'RUNNING' && <Loader size={16} className="animate-spin" />}
                                     </div>
                                     <div className="flex flex-col">
                                         <span className={`text-xs font-bold ${

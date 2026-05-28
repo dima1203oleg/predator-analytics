@@ -16,7 +16,7 @@ export const PipelineDetailsModal: React.FC<PipelineDetailsModalProps> = ({ run,
         switch (status) {
             case 'SUCCESS': return <CheckCircle2 size={18} className="text-green-500" />;
             case 'FAILED': return <XCircle size={18} className="text-red-500" />;
-            case 'RUNNING': return <Loader2 size={18} className="text-blue-500 animate-spin" />;
+            case 'RUNNING': return <Loader size={18} className="text-blue-500 animate-spin" />;
             case 'SKIPPED': return <AlertTriangle size={18} className="text-slate-600" />;
             default: return <Circle size={18} className="text-slate-700" />;
         }

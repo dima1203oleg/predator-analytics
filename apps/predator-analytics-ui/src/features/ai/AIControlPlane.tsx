@@ -320,7 +320,7 @@ export default function AIControlPlane() {
                   isRefreshing && 'cursor-not-allowed opacity-60',
                 )}
               >
-                {isRefreshing ? <Loader2 size={15} className="animate-spin" /> : <RefreshCw size={15} />}
+                {isRefreshing ? <Loader size={15} className="animate-spin" /> : <RefreshCw size={15} />}
                 Оновити дані
               </button>
             )}

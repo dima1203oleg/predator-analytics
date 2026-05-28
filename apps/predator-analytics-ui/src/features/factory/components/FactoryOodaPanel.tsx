@@ -228,7 +228,7 @@ export const FactoryOodaPanel: React.FC<FactoryOodaPanelProps> = ({
           })}
           {infiniteRunning && (
             <div className="flex items-center gap-2 text-rose-400 mt-2">
-              <Loader2 size={11} className="animate-spin" />
+              <Loader size={11} className="animate-spin" />
               <span className="">
                 {infiniteLogs[infiniteLogs.length - 1]?.includes('ERROR') 
                     ? 'Відновлення з\'єднання...' 

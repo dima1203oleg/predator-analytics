@@ -127,7 +127,7 @@ export const FactoryCoordinatorChat: React.FC<FactoryCoordinatorChatProps> = ({
                 className="flex items-center gap-4 p-6 bg-rose-500/5 border-2 border-rose-500/20 rounded-[2rem] "
                >
                   <div className="p-2 bg-rose-500/20 rounded-lg animate-spin">
-                    <Loader2 size={18} className="text-rose-500" /> 
+                    <Loader size={18} className="text-rose-500" /> 
                   </div>
                   <div className="space-y-1">
                     <span className="text-[11px] font-black tracking-[0.3em] text-rose-500 uppercase italic ">СИНТЕЗ ВІДПОВІДІ...</span>

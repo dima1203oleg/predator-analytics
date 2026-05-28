@@ -122,7 +122,7 @@ export function GlobalIngestionController() {
                         <div className="flex-1 overflow-y-auto p-8 custom-scrollbar space-y-8">
                             {jobIds.length === 0 ? (
                                 <div className="h-full flex flex-col items-center justify-center text-center opacity-50">
-                                    <Loader2 size={48} className="text-slate-800 mb-4 animate-spin" />
+                                    <Loader size={48} className="text-slate-800 mb-4 animate-spin" />
                                     <h3 className="text-lg font-black text-slate-500 uppercase">Активніпроцеси відсутні</h3>
                                     <p className="text-sm text-slate-600 mt-2">Запустіть імпорт даних, щоб побачити телеметрію в реальному часі.</p>
                                 </div>
@@ -304,5 +304,5 @@ function JobHubItem({ job, onRemove }: { job: IngestionJob; onRemove: () => void
 }
 
 function LoaderPlaceholderIcon({ className }: { className?: string }) {
-    return <Loader2 className={className} size={24} />
+    return <Loader className={className} size={24} />
 }

@@ -16,7 +16,7 @@ import {
     ChevronRight,
     Factory,
     Radar,
-    Loader2,
+    Loader,
     RefreshCw,
     Server,
     Shield,
@@ -218,7 +218,7 @@ export default function FactorsView() {
                                 disabled={refreshing}
                                 className="inline-flex items-center gap-3 rounded-[24px] border border-white/10 bg-white/5 px-5 py-3 text-[11px] font-black uppercase tracking-[0.2em] text-white transition hover:bg-white/10 disabled:opacity-60"
                             >
-                                {refreshing ? <Loader2 size={16} className="animate-spin" /> : <RefreshCw size={16} />}
+                                {refreshing ? <Loader size={16} className="animate-spin" /> : <RefreshCw size={16} />}
                                 Синхронізувати
                             </button>
                         )}

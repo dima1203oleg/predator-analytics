@@ -395,7 +395,7 @@ export default function ClientsHubView() {
                   refreshing && 'cursor-not-allowed opacity-60',
                 )}
               >
-                {refreshing ? <Loader2 size={15} className="animate-spin" /> : <RefreshCw size={15} />}
+                {refreshing ? <Loader size={15} className="animate-spin" /> : <RefreshCw size={15} />}
                 Оновити дані
               </button>
             )}

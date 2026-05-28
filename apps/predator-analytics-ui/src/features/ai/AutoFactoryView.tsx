@@ -28,7 +28,7 @@ import {
   TrendingUp,
   Wrench,
   Zap,
-  Loader2,
+  Loader,
 } from 'lucide-react';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { TacticalCard } from '@/components/ui/TacticalCard';
@@ -606,7 +606,7 @@ export default function AutoFactoryView() {
                         busy && 'cursor-not-allowed opacity-60',
                       )}
                     >
-                      {busy ? <Loader2 size={16} className="animate-spin" /> : snapshot.isRunning ? <Pause size={16} /> : <Play size={16} />}
+                      {busy ? <Loader size={16} className="animate-spin" /> : snapshot.isRunning ? <Pause size={16} /> : <Play size={16} />}
                       {snapshot.isRunning ? 'Зупинити цикл' : 'Запустити цикл'}
                     </button>
 
@@ -621,7 +621,7 @@ export default function AutoFactoryView() {
                         refreshing && 'cursor-not-allowed opacity-60',
                       )}
                     >
-                      {refreshing ? <Loader2 size={16} className="animate-spin" /> : <RefreshCw size={16} />}
+                      {refreshing ? <Loader size={16} className="animate-spin" /> : <RefreshCw size={16} />}
                       Оновити дані
                     </button>
                   </div>
