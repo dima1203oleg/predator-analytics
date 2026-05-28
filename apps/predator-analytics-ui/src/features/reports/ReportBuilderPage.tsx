@@ -20,7 +20,8 @@ import {
     GitBranch,
     Copy,
     Download,
-    Eye
+    Eye,
+    Loader
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { PageTransition } from '@/components/layout/PageTransition';

@@ -67,7 +67,7 @@ export const GlobalSearchTab: React.FC = () => {
         error,
         refresh,
         sentinelRef,
-    } = useInfiniteScroll({
+    } = useInfiniteScroll<any>({
         limit: 12,
         fetcher: useCallback(async (offset: number, limit: number) => {
             const response = await apiClient.get('/companies', {
@@ -191,12 +191,12 @@ export const GlobalSearchTab: React.FC = () => {
                                     className="flex-1 bg-transparent border-none text-4xl font-black text-white italic tracking-tighter placeholder:text-red-950/20 focus:outline-none focus:ring-0 leading-none uppercase"
                                     value={query}
                                     onChange={(e) => setQuery(e.target.value)}
-                                    onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                                    onKeyDown={(e) => e.key === 'Enter' && refresh()}
                                 />
-                                <motion.button 
+                                <motion.button
                                     whileHover={{ scale: 1.02, x: 5 }}
                                     whileTap={{ scale: 0.98 }}
-                                    onClick={handleSearch}
+                                    onClick={refresh}
                                     className="px-12 py-6 bg-red-700 text-white font-black rounded-2xl text-[12px] uppercase tracking-[0.3em] shadow-2xl hover:bg-red-600 transition-all flex items-center gap-6 italic"
                                 >
                                     <span>ІНІЦІЮВАТИ_ПОШУК</span>

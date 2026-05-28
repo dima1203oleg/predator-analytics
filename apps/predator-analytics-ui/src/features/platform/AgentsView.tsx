@@ -5,7 +5,7 @@ import { ViewHeader } from '@/components/ViewHeader';
 import {
     Bot, Activity, Server, Zap, Network, Cpu, HardDrive,
     AlertCircle, Eye, Shield, Target, Radar,
-    ScanLine, BrainCircuit, GitBranch, Terminal, Globe, Lock, RefreshCw
+    ScanLine, BrainCircuit, GitBranch, Terminal, Globe, Lock, RefreshCw, Loader
 } from 'lucide-react';
 import { useAgents } from '@/context/AgentContext';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';

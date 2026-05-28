@@ -6,9 +6,10 @@ import {
   Send, 
   Sparkles, 
   Bot, 
-  User, 
+  User,
   Database,
-  ArrowRight
+  ArrowRight,
+  Loader
 } from 'lucide-react';
 import { omniverseService } from '../../../services/omniverse';
 import ReactMarkdown from 'react-markdown';

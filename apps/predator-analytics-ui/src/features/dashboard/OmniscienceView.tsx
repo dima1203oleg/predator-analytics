@@ -25,7 +25,7 @@ import {
   RefreshCw, Search, Send, Shield, Sparkles, Target, Terminal,
   TrendingUp, Users, XCircle, Zap, Globe, Hexagon, Box, Boxes,
   ChevronRight, ArrowUpRight, Power, Settings, Eye, Workflow, BarChart3,
-  Flame, Monitor, ShieldAlert, ZapOff, RadioReceiver, Binary
+  Flame, Monitor, ShieldAlert, ZapOff, RadioReceiver, Binary, Loader
 } from 'lucide-react';
 
 import { useAppStore } from '@/store/useAppStore';

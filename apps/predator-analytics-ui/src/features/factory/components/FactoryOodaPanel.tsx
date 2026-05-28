@@ -2,7 +2,7 @@ import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React from 'react';
 import { motion } from 'framer-motion';
 import { 
-  Infinity, Power, Play, RefreshCw, Zap, CheckCircle2, Eye, BrainCircuit, Cog, Terminal, ChevronRight
+  Infinity, Power, Play, RefreshCw, Zap, CheckCircle2, Eye, BrainCircuit, Cog, Terminal, ChevronRight, Loader
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { Button } from '@/components/ui/button';

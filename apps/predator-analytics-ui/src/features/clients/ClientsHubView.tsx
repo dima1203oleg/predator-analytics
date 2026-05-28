@@ -17,6 +17,7 @@ import {
   ShieldAlert,
   Sparkles,
   Zap,
+  Loader,
 } from 'lucide-react';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
