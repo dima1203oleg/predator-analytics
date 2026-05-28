@@ -7,7 +7,15 @@ import { motion } from 'framer-motion';
 import { GlassPanel } from './GlassPanel';
 import { StatusLed } from './StatusLed';
 import { MilitaryLabel } from './MilitaryLabel';
-import { Shield, Terminal, Activity, TrendingUp, AlertTriangle } from 'lucide-react';
+import { Shield, Terminal, Activity, TrendingUp, AlertTriangle, Search, Command, Database, Brain, Crosshair } from 'lucide-react';
+import { KineticText } from './KineticText';
+import { GlitchText } from './GlitchText';
+import { HoloCard } from './HoloCard';
+import { TacticalTable } from './TacticalTable';
+import { MechanicalButton } from './MechanicalButton';
+import { ThreatLevel } from './ThreatLevel';
+import { TerminalCommandBar } from './TerminalCommandBar';
+import { TacticalModal } from './TacticalModal';
 
 export const AurumShowcase: React.FC = () => {
   return (
@@ -134,6 +142,105 @@ export const AurumShowcase: React.FC = () => {
               <MilitaryLabel variant="muted">FONT INTERFACE</MilitaryLabel>
               <p className="font-interface text-xl text-[#e8e8e8]">Inter — Navigation & Labels</p>
             </div>
+          </div>
+        </GlassPanel>
+      </section>
+
+      {/* Kinetic Text */}
+      <section className="space-y-4">
+        <MilitaryLabel variant="primary" size="md">KINETIC TEXT</MilitaryLabel>
+        <GlassPanel variant="default">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="space-y-2">
+              <MilitaryLabel variant="muted">SCRAMBLE</MilitaryLabel>
+              <KineticText value="1,247.89" scramble className="text-2xl text-[#c9a227]" />
+            </div>
+            <div className="space-y-2">
+              <MilitaryLabel variant="muted">PLAIN</MilitaryLabel>
+              <KineticText value="99.97%" className="text-2xl text-[#4ecdc4]" />
+            </div>
+            <div className="space-y-2">
+              <MilitaryLabel variant="muted">GLITCH ALERT</MilitaryLabel>
+              <GlitchText className="text-xl">BREACH DETECTED</GlitchText>
+            </div>
+          </div>
+        </GlassPanel>
+      </section>
+
+      {/* HoloCard */}
+      <section className="space-y-4">
+        <MilitaryLabel variant="primary" size="md">HOLOGRAPHIC CARDS</MilitaryLabel>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <HoloCard variant="gold" glow tilt>
+            <div className="space-y-2">
+              <MilitaryLabel variant="muted">SYSTEM HEALTH</MilitaryLabel>
+              <p className="font-data text-3xl font-bold text-[#c9a227]">98.4%</p>
+              <p className="font-interface text-xs text-[#5a5a5a]">All subsystems nominal</p>
+            </div>
+          </HoloCard>
+          <HoloCard variant="rose" glow tilt>
+            <div className="space-y-2">
+              <MilitaryLabel variant="muted">THREAT COUNT</MilitaryLabel>
+              <p className="font-data text-3xl font-bold text-[#e11d48]">12</p>
+              <p className="font-interface text-xs text-[#5a5a5a]">Elevated risk detected</p>
+            </div>
+          </HoloCard>
+          <HoloCard variant="teal" glow tilt>
+            <div className="space-y-2">
+              <MilitaryLabel variant="muted">ACTIVE SESSIONS</MilitaryLabel>
+              <p className="font-data text-3xl font-bold text-[#4ecdc4]">847</p>
+              <p className="font-interface text-xs text-[#5a5a5a]">Concurrent users</p>
+            </div>
+          </HoloCard>
+        </div>
+      </section>
+
+      {/* Tactical Table */}
+      <section className="space-y-4">
+        <MilitaryLabel variant="primary" size="md">TACTICAL TABLE</MilitaryLabel>
+        <TacticalTable
+          data={[
+            { id: '1', entity: 'ТОВ "ОМЕГА-ТИТАН"', type: 'COMPANY', risk: 94, status: 'CRITICAL' },
+            { id: '2', entity: 'Декларація UA-4001', type: 'DECLARATION', risk: 62, status: 'HIGH' },
+            { id: '3', entity: 'Хустський Лог. Хаб', type: 'LOCATION', risk: 55, status: 'MEDIUM' },
+            { id: '4', entity: 'О. Бєзніков', type: 'PERSON', risk: 28, status: 'LOW' },
+          ]}
+          columns={[
+            { key: 'entity', header: 'ОБ\'ЄКТ', render: (row: any) => <span className="font-interface font-semibold text-[#e8e8e8]">{row.entity}</span> },
+            { key: 'type', header: 'ТИП', render: (row: any) => <span className="font-interface text-xs text-[#8a8a8a]">{row.type}</span> },
+            { key: 'risk', header: 'РИЗИК', align: 'right', render: (row: any) => <span className="font-data text-[#c9a227]">{row.risk}%</span> },
+            { key: 'status', header: 'СТАТУС', render: (row: any) => {
+              const colors: Record<string, string> = { CRITICAL: 'text-[#e11d48]', HIGH: 'text-[#c9a227]', MEDIUM: 'text-[#8a8a8a]', LOW: 'text-[#4ecdc4]' };
+              return <span className={`font-display text-[10px] font-semibold uppercase tracking-wider ${colors[row.status] || 'text-[#5a5a5a]'}`}>{row.status}</span>;
+            }},
+          ]}
+          keyExtractor={(row: any) => row.id}
+        />
+      </section>
+
+      {/* Buttons */}
+      <section className="space-y-4">
+        <MilitaryLabel variant="primary" size="md">MECHANICAL BUTTONS</MilitaryLabel>
+        <GlassPanel variant="default">
+          <div className="flex flex-wrap gap-4">
+            <MechanicalButton variant="default">Default</MechanicalButton>
+            <MechanicalButton variant="primary">Primary</MechanicalButton>
+            <MechanicalButton variant="danger">Aurum Gold</MechanicalButton>
+            <MechanicalButton variant="ghost">Ghost</MechanicalButton>
+            <MechanicalButton variant="primary" isLoading>Loading</MechanicalButton>
+          </div>
+        </GlassPanel>
+      </section>
+
+      {/* Threat Level */}
+      <section className="space-y-4">
+        <MilitaryLabel variant="primary" size="md">THREAT INDICATORS</MilitaryLabel>
+        <GlassPanel variant="default">
+          <div className="flex flex-wrap gap-8">
+            <ThreatLevel level="low" />
+            <ThreatLevel level="elevated" />
+            <ThreatLevel level="high" />
+            <ThreatLevel level="severe" />
           </div>
         </GlassPanel>
       </section>
