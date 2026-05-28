@@ -15,7 +15,7 @@ import {useNavigate} from 'react-router-dom';
 import {cersService} from '@/services/unified/cers.service';
 import {Card} from '@/components/ui/card';
 import {Alert} from '@/components/ui/alert';
-import {DataTable} from '@/components/ui/data-table';
+import {TacticalTable} from '@/components/ui/TacticalTable';
 import {useRole} from '@/context/RoleContext';
 import {maskFinancialValue, maskIdentifier, maskPersonalData} from '@/lib/dataMasking';
 import {EntityActionMenu} from '@/components/shared/EntityActionMenu';
@@ -299,104 +299,84 @@ export const SmartCompanySearch: React.FC = () => {
 
         {/* Results Table */}
         {results && results.length > 0 && (
-          <div className="bg-slate-900 rounded-lg border border-slate-700 overflow-hidden">
-            <DataTable
-              data={results}
-              columns={[
-                {
-                  key: 'name',
-                  label: 'Назва компанії',
-                  width: '30%',
-                  sortable: true,
-                  render: (row: Company) => (
-                    <div>
-                      <div className="font-bold text-white">
-                        {maskPersonalData(row.name, capabilities.personalDataAccess)}
-                      </div>
-                      <div className="text-xs text-gray-500">
-                        {maskIdentifier(row.ueid, capabilities.identifierMasking)}
-                      </div>
+          <TacticalTable<Company>
+            data={results}
+            columns={[
+              {
+                key: 'name',
+                header: 'НАЗВА КОМПАНІЇ',
+                width: '30%',
+                render: (row: Company) => (
+                  <div>
+                    <div className="font-interface font-semibold text-[#e8e8e8]">
+                      {maskPersonalData(row.name, capabilities.personalDataAccess)}
                     </div>
-                  )
-                },
-                {
-                  key: 'region',
-                  label: '🗺️ регіон',
-                  width: '15%',
-                  sortable: true,
-                  render: (row: Company) => (
-                    <span className="text-gray-300">{row.region}</span>
-                  )
-                },
-                {
-                  key: 'status',
-                  label: '📊 Статус',
-                  width: '15%',
-                  sortable: true,
-                  render: (row: Company) => {
-                    const statusColors = {
-                      active: 'bg-green-900 text-green-300',
-                      inactive: 'bg-gray-700 text-gray-300',
-                      suspended: 'bg-yellow-900 text-yellow-300',
-                      liquidated: 'bg-red-900 text-red-300'
-                    };
-                    return (
-                      <span className={`px-2 py-1 rounded text-sm font-bold ${statusColors[row.status]}`}>
-                        {row.status}
-                      </span>
-                    );
-                  }
-                },
-                {
-                  key: 'type',
-                  label: '📋 Тип',
-                  width: '12%',
-                  sortable: true,
-                  render: (row: Company) => <span className="text-gray-300">{row.type}</span>
-                },
-                {
-                  key: 'employees',
-                  label: '👥 Працівники',
-                  width: '12%',
-                  sortable: true,
-                  render: (row: Company) => (
-                    <span className="text-gray-300">{row.employees?.toLocaleString() || '-'}</span>
-                  )
-                },
-                {
-                  key: 'revenue',
-                  label: '💰 Дохід',
-                  width: '16%',
-                  sortable: true,
-                  render: (row: Company) => (
-                    <span className="text-gray-300">
-                      {row.revenue ? maskFinancialValue(row.revenue, capabilities.financialPrecision) : '-'}
+                    <div className="font-data text-[10px] text-[#5a5a5a]">
+                      {maskIdentifier(row.ueid, capabilities.identifierMasking)}
+                    </div>
+                  </div>
+                )
+              },
+              {
+                key: 'region',
+                header: 'РЕГІОН',
+                width: '15%',
+                render: (row: Company) => (
+                  <span className="font-interface text-xs text-[#8a8a8a]">{row.region}</span>
+                )
+              },
+              {
+                key: 'status',
+                header: 'СТАТУС',
+                width: '15%',
+                render: (row: Company) => {
+                  const statusConfig = {
+                    active: { bg: 'bg-[#4ecdc4]/10', text: 'text-[#4ecdc4]', border: 'border-[#4ecdc4]/30', label: 'АКТИВНО' },
+                    inactive: { bg: 'bg-[#5a5a5a]/10', text: 'text-[#8a8a8a]', border: 'border-[#5a5a5a]/30', label: 'НЕАКТИВНО' },
+                    suspended: { bg: 'bg-[#c9a227]/10', text: 'text-[#c9a227]', border: 'border-[#c9a227]/30', label: 'ПРИЗУПИНЕНО' },
+                    liquidated: { bg: 'bg-[#e11d48]/10', text: 'text-[#e11d48]', border: 'border-[#e11d48]/30', label: 'ЛІКВІДОВАНО' }
+                  };
+                  const cfg = statusConfig[row.status];
+                  return (
+                    <span className={`inline-flex px-2 py-1 rounded-lg text-[10px] font-display font-semibold uppercase tracking-wider border ${cfg.bg} ${cfg.text} ${cfg.border}`}>
+                      {cfg.label}
                     </span>
-                  )
-                },
-                {
-                  key: 'actions',
-                  label: 'Дії',
-                  width: '5%',
-                  render: (row: Company) => (
-                    <div onClick={(e) => e.stopPropagation()}>
-                      <EntityActionMenu 
-                        entityId={row.ueid} 
-                        entityType="company" 
-                        entityName={row.name}
-                      />
-                    </div>
-                  )
+                  );
                 }
-              ]}
-              onRowClick={(row) => {
-                // Перейти до фінансової аналітики
-                navigate(`/financials/${row.ueid}`);
-              }}
-              searchable
-              exportable={false}
-            />
-          </div>
+              },
+              {
+                key: 'type',
+                header: 'ТИП',
+                width: '12%',
+                render: (row: Company) => <span className="font-interface text-xs text-[#8a8a8a]">{row.type}</span>
+              },
+              {
+                key: 'employees',
+                header: 'ПРАЦІВНИКИ',
+                width: '12%',
+                align: 'right',
+                render: (row: Company) => (
+                  <span className="font-data text-xs text-[#e8e8e8]">{row.employees?.toLocaleString() || '-'}</span>
+                )
+              },
+              {
+                key: 'revenue',
+                header: 'ДОХІД',
+                width: '16%',
+                align: 'right',
+                render: (row: Company) => (
+                  <span className="font-data text-xs text-[#c9a227]">
+                    {row.revenue ? maskFinancialValue(row.revenue, capabilities.financialPrecision) : '-'}
+                  </span>
+                )
+              }
+            ]}
+            keyExtractor={(row) => row.ueid}
+            onRowClick={(row) => {
+              navigate(`/financials/${row.ueid}`);
+            }}
+            emptyMessage="Компанії не знайдено"
+          />
         )}
       </div>
     </div>
