@@ -29,6 +29,7 @@ import {
 } from 'lucide-react';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { PageTransition } from '@/components/layout/PageTransition';
@@ -118,7 +119,7 @@ const MetricCard = ({ metric }: { metric: AIControlMetricCard }) => {
   const Icon = metricIcons[metric.id] ?? Activity;
 
   return (
-    <TacticalCard variant="holographic" className={cn('rounded-[30px] border bg-slate-950/50 p-6', tone.border)}>
+    <HoloCard className={cn('rounded-[30px] p-6', tone.border)}>
       <div className="flex items-start justify-between gap-4">
         <div className={cn('rounded-[18px] border p-3', tone.border, tone.panel)}>
           <Icon className={cn('h-5 w-5', tone.text)} />
@@ -132,7 +133,7 @@ const MetricCard = ({ metric }: { metric: AIControlMetricCard }) => {
         <div className={cn('text-4xl font-black tracking-tight', tone.text)}>{metric.value}</div>
         <div className="text-sm leading-6 text-slate-400">{metric.hint}</div>
       </div>
-    </TacticalCard>
+    </HoloCard>
   );
 };
 
@@ -389,7 +390,13 @@ export default function AIControlPlane() {
 
           {activeTab === 'engines' && (
             <div className="grid gap-6 xl:grid-cols-[1.3fr_0.9fr]">
-              <TacticalCard variant="holographic" title="Реєстр рушіїв" className="rounded-[40px] border-[#D4AF37]/20 bg-slate-950/50 p-8">
+              <HoloCard variant="gold" className="rounded-[40px] p-8">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="p-2 bg-[#c9a227]/10 rounded-lg">
+                    <Cpu size={18} className="text-[#c9a227]" />
+                  </div>
+                  <h4 className="text-sm font-black text-white uppercase tracking-tight">Реєстр рушіїв</h4>
+                </div>
                 {snapshot.engines.length > 0 ? (
                   <div className="space-y-4">
                     {snapshot.engines.map((engine) => (
@@ -402,10 +409,16 @@ export default function AIControlPlane() {
                     description="`/system/engines` не повернув елементів. Панель не домальовує локальний список мовних, векторних чи графових модулів."
                   />
                 )}
-              </TacticalCard>
+              </HoloCard>
 
               <div className="space-y-6">
-                <TacticalCard variant="holographic" title="Стан контуру" className="rounded-[40px] border-[#D4AF37]/20 bg-slate-950/50 p-8">
+                <HoloCard variant="gold" className="rounded-[40px] p-8">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="p-2 bg-[#c9a227]/10 rounded-lg">
+                      <Activity size={18} className="text-[#c9a227]" />
+                    </div>
+                    <h4 className="text-sm font-black text-white uppercase tracking-tight">Стан контуру</h4>
+                  </div>
                   <div className="space-y-4">
                     {[
                       { label: 'Оптимальні', value: String(snapshot.activeCount), tone: 'emerald' as const },
@@ -420,9 +433,15 @@ export default function AIControlPlane() {
                       </div>
                     ))}
                   </div>
-                </TacticalCard>
+                </HoloCard>
 
-                <TacticalCard variant="holographic" title="Висновок" className="rounded-[40px] border-[#D4AF37]/20 bg-slate-950/50 p-8">
+                <HoloCard variant="gold" className="rounded-[40px] p-8">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="p-2 bg-[#c9a227]/10 rounded-lg">
+                      <Terminal size={18} className="text-[#c9a227]" />
+                    </div>
+                    <h4 className="text-sm font-black text-white uppercase tracking-tight">Висновок</h4>
+                  </div>
                   <div className="rounded-[28px] border border-white/10 bg-[linear-gradient(135deg,rgba(14,116,144,0.18),rgba(2,6,23,0.92))] p-5">
                     <div className="flex items-start gap-4">
                       <div className="rounded-[20px] border border-[#D4AF37]/20 bg-[#D4AF37]/10 p-3 text-[#D4AF37]">
@@ -440,7 +459,7 @@ export default function AIControlPlane() {
                       </div>
                     </div>
                   </div>
-                </TacticalCard>
+                </HoloCard>
               </div>
             </div>
           )}
@@ -448,7 +467,7 @@ export default function AIControlPlane() {
           {activeTab === 'governance' && (
             <div className="grid gap-6 lg:grid-cols-3">
               {governanceCards.map((card) => (
-                <TacticalCard key={card.id} variant="holographic" className="rounded-[36px] border-[#D4AF37]/20 bg-slate-950/50 p-8">
+                <HoloCard key={card.id} variant="gold" className="rounded-[36px] p-8">
                   <div className="flex items-start gap-4">
                     <div className="rounded-[22px] border border-[#D4AF37]/20 bg-[#D4AF37]/10 p-3 text-[#D4AF37]">
                       <ShieldAlert className="h-5 w-5" />
@@ -458,13 +477,16 @@ export default function AIControlPlane() {
                       <div className="mt-3 text-sm leading-6 text-slate-300">{card.detail}</div>
                     </div>
                   </div>
-                </TacticalCard>
+                </HoloCard>
               ))}
             </div>
           )}
 
           {activeTab === 'logs' && (
-            <TacticalCard variant="holographic" title="Журнал системного контуру" className="rounded-[40px] border-[#D4AF37]/20 bg-slate-950/75 p-0 overflow-hidden">
+            <HoloCard variant="gold" className="rounded-[40px] p-0 overflow-hidden">
+              <div className="p-4 border-b border-white/5">
+                <h4 className="text-sm font-black text-white uppercase tracking-tight">Журнал системного контуру</h4>
+              </div>
               <div className="border-b border-white/10 bg-black/30 px-6 py-4 text-[10px] font-black uppercase tracking-[0.28em] text-slate-400">
                 Потік підтверджених подій `/system/logs/stream`
               </div>
@@ -480,7 +502,7 @@ export default function AIControlPlane() {
                   />
                 )}
               </div>
-            </TacticalCard>
+            </HoloCard>
           )}
         </div>
       </div>
