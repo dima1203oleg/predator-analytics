@@ -19,6 +19,7 @@ import { PageTransition } from '@/components/layout/PageTransition';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -151,7 +152,7 @@ export default function SovereignIntelHub() {
                         
                         {/*   LEFT: Thought Stream (AI Logs) */}
                         <div className="col-span-12 lg:col-span-4 flex flex-col gap-10 overflow-hidden">
-                            <TacticalCard variant="holographic" elite scanGrid className="flex-1 p-10 relative overflow-hidden flex flex-col">
+                            <HoloCard className="flex-1 p-10 relative overflow-hidden flex flex-col">
                                 <div className="flex items-center justify-between mb-10">
                                     <h3 className="text-[12px] font-black text-rose-500 uppercase tracking-[0.6em] flex items-center gap-4 italic font-bold">
                                         <Terminal size={20} className="text-rose-500" /> ПОТІК_МИСЛЕННЯ_GLM
@@ -208,7 +209,7 @@ export default function SovereignIntelHub() {
                                         />
                                     </div>
                                 </div>
-                            </TacticalCard>
+                            </HoloCard>
 
                             <HoloContainer className="p-10 min-h-[240px] bg-black/60 glass-wraith border-rose-500/20 rounded-[3.5rem] relative overflow-hidden group shadow-4xl">
                                 <div className="absolute inset-0 cyber-scan-grid opacity-[0.03]" />
