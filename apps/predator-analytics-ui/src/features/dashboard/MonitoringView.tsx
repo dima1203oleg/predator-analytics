@@ -99,22 +99,22 @@ export default function MonitoringView() {
       {/* ═══════════════════════════════════════════════
          TACTICAL HEADER — System Status Overview
          ═══════════════════════════════════════════════ */}
-      <motion.section 
+      <motion.section
         variants={fadeUp}
-        className="relative overflow-hidden rounded-[2.5rem] border border-white/5 bg-black/40  p-8 sm:p-10 shadow-2xl"
+        className="relative overflow-hidden rounded-3xl glass-obsidian p-8 sm:p-10"
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-transparent to-rose-500/5 pointer-events-none" />
-        
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
           <div>
-            <div className="inline-flex items-center gap-3 rounded-full border border-rose-500/20 bg-rose-500/5 px-4 py-1.5 text-[10px] font-black tracking-[0.3em] text-rose-500 uppercase italic">
-              <div className="h-1.5 w-1.5 rounded-full bg-rose-500 shadow-[0_0_12px_#f43f5e] " />
-              SYSTEM_MONITOR v63.0
+            <div className="inline-flex items-center gap-3">
+              <div className="h-1.5 w-1.5 rounded-full bg-[#e11d48] shadow-[0_0_12px_rgba(225,29,72,0.5)] animate-breathe" />
+              <span className="font-display text-[10px] font-semibold uppercase tracking-[0.12em] text-[#e11d48]">
+                SYSTEM_MONITOR v63.0
+              </span>
             </div>
-            <h1 className="mt-4 text-4xl font-black text-white italic tracking-tighter uppercase">
-              ТАКТИЧНИЙ <span className="text-rose-500">МОНІТОРИНГ</span>
+            <h1 className="mt-4 font-display text-4xl font-extrabold text-[#e8e8e8] tracking-tighter uppercase">
+              ТАКТИЧНИЙ <span className="text-[#e11d48]">МОНІТОРИНГ</span>
             </h1>
-            <p className="mt-2 text-[10px] font-bold text-slate-500 uppercase tracking-[0.5em] italic opacity-60">
+            <p className="mt-2 font-display text-[10px] font-semibold text-[#5a5a5a] uppercase tracking-[0.1em]">
               ЯДРО КЕРУВАННЯ ТА МОНІТОРИНГУ ІНФРАСТРУКТУРИ
             </p>
           </div>
@@ -186,7 +186,7 @@ export default function MonitoringView() {
               {/* System Performance HUD */}
               <div className="space-y-6">
                 <div className="flex items-center justify-between px-4">
-                   <h2 className="text-xl font-black text-white italic uppercase tracking-tighter">ПРОДУКТИВНІСТЬ <span className="text-rose-500">ЯДРА</span></h2>
+                   <h2 className="font-display text-lg font-extrabold text-[#e8e8e8] uppercase tracking-tight">ПРОДУКТИВНІСТЬ <span className="text-[#e11d48]">ЯДРА</span></h2>
                    <Activity className="h-5 w-5 text-rose-500 " />
                 </div>
                 <div className="grid gap-6 sm:grid-cols-2">
