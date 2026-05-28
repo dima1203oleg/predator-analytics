@@ -1,0 +1,39 @@
+name: Zrok Rescue
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  rescue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Rescue Zrok
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.NVIDIA_HOST }}
+          username: ${{ secrets.NVIDIA_USER }}
+          key: ${{ secrets.NVIDIA_SSH_KEY }}
+          port: ${{ secrets.NVIDIA_SSH_PORT || '22' }}
+          script: |
+            echo "Starting Zrok Rescue"
+            cd ~/predator-analytics || cd /opt/predator-analytics || exit 1
+            pkill -f 'zrok.*share.*127.0.0.1:22' || true
+            nohup zrok share private 127.0.0.1:22 --backend-mode tcpTunnel > /tmp/predator-nvidia-zrok.log 2>&1 &
+            sleep 5
+            cat /tmp/predator-nvidia-zrok.log
+            TOKEN=$(grep -oE 'zrok access private [a-zA-Z0-9]+' /tmp/predator-nvidia-zrok.log | tail -1 | awk '{print $4}')
+            echo "NEW ZROK TOKEN: $TOKEN"
+            
+            # Якщо є телеграм бот, відправити йому токен
+            if [ -n "${{ secrets.TELEGRAM_BOT_TOKEN }}" ]; then
+              CHAT_ID="${{ secrets.TELEGRAM_ADMIN_ID }}"
+              [ -z "$CHAT_ID" ] && CHAT_ID="1020504147"
+              MSG="🦅 ZROK RESCUE SUCCESS!%0A%0AКоманда:%0A%60zrok access private $TOKEN%60"
+              curl -fsS -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+                -d "chat_id=${CHAT_ID}" \
+                -d "text=${MSG}" \
+                -d "parse_mode=Markdown" || true
+            fi
