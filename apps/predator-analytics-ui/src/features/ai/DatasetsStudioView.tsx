@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { ViewHeader } from '@/components/ViewHeader';
 import { CyberGrid } from '@/components/CyberGrid';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -83,7 +84,7 @@ const DatasetsStudioView = () => {
           {/* Global Summary Stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {stats.map(s => (
-              <TacticalCard key={s.label} variant="holographic" className="bg-black/40 border-white/5 group hover:border-rose-500/20 transition-all duration-500">
+              <HoloCard key={s.label} variant="holographic" className="bg-black/40 border-white/5 group hover:border-rose-500/20 transition-all duration-500">
                  <div className="flex items-center gap-6">
                     <div className="p-4 bg-rose-500/5 rounded-sm text-rose-500 border border-rose-500/10 group-hover:bg-rose-500/10 transition-colors">
                       {s.icon}
@@ -93,14 +94,14 @@ const DatasetsStudioView = () => {
                       <h3 className="text-2xl font-black text-white italic tracking-tight">{s.value}</h3>
                     </div>
                  </div>
-              </TacticalCard>
+              </HoloCard>
             ))}
           </div>
 
           <div className="grid grid-cols-12 gap-8">
             {/* Sidebar Navigation */}
             <div className="col-span-12 lg:col-span-3 space-y-4">
-              <TacticalCard variant="holographic" title="МОДУЛІ_СТУДІЇ" className="bg-black/40 border-white/5">
+              <HoloCard variant="holographic" title="МОДУЛІ_СТУДІЇ" className="bg-black/40 border-white/5">
                 <div className="space-y-2 mt-4">
                   {[
                     { id: 'sources', label: 'Джерела Даних', icon: Server, desc: 'Зовнішні API та DB канали' },
@@ -142,9 +143,9 @@ const DatasetsStudioView = () => {
                       <Download size={14} className="mr-2" /> ЕКСПОРТ_ГЛОБАЛЬНОГО_ІНДЕКСУ
                    </Button>
                 </div>
-              </TacticalCard>
+              </HoloCard>
 
-              <TacticalCard variant="holographic" title="ЗДОРОВ'Я_СХОВИЩА" className="bg-black/40 border-white/5">
+              <HoloCard variant="holographic" title="ЗДОРОВ'Я_СХОВИЩА" className="bg-black/40 border-white/5">
                 <div className="mt-4 space-y-4">
                    <div className="flex justify-between text-[8px] font-mono font-black text-white/20 tracking-widest uppercase">
                       <span>NVMe_POOL_X1</span>
@@ -155,12 +156,12 @@ const DatasetsStudioView = () => {
                    </div>
                    <p className="text-[9px] font-mono text-white/30 italic">IOPS: 420K | ЗАТрИМКА: 0.12ms</p>
                 </div>
-              </TacticalCard>
+              </HoloCard>
             </div>
 
             {/* Main Content Area */}
             <div className="col-span-12 lg:col-span-9 space-y-8">
-              <TacticalCard variant="cyber" className="bg-black/40 border-white/5 relative overflow-hidden">
+              <HoloCard variant="cyber" className="bg-black/40 border-white/5 relative overflow-hidden">
                  <div className="absolute top-0 right-0 p-8 opacity-5 pointer-events-none">
                     <Binary size={180} />
                  </div>
@@ -261,7 +262,7 @@ const DatasetsStudioView = () => {
                        </tbody>
                     </table>
                  </div>
-              </TacticalCard>
+              </HoloCard>
 
               {/* Training Connection Callout */}
               <motion.div 
