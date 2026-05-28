@@ -27,6 +27,8 @@ import { WorkspaceBusinessStrip } from './WorkspaceBusinessStrip';
 import { NeuralBackground } from '../ui/NeuralBackground';
 import { SovereignEye } from '../ui/SovereignEye';
 import { ThreatLevel } from '../ui/ThreatLevel';
+import { OrbitalRail } from '../ui/OrbitalRail';
+import { Search, LayoutDashboard, Activity, Sparkles } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { AnimatedPage } from '../polish/AnimatedPage';
 import { API_BASE_URL } from '@/services/api/config';
@@ -214,6 +216,22 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
             </div>
           </div>
         </main>
+
+        {/* ── FLOATING ORBITAL DOCK — AURUM OBSIDIAN (desktop only) ── */}
+        {isExpanded && (
+          <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[60]">
+            <OrbitalRail
+              items={[
+                { id: 'search', label: 'ПОШУК', icon: Search, path: '/search' },
+                { id: 'dashboard', label: 'ЦЕНТР', icon: LayoutDashboard, path: '/command' },
+                { id: 'monitoring', label: 'МОНІТОР', icon: Activity, path: '/admin/command?tab=infra' },
+                { id: 'aurum', label: 'AURUM', icon: Sparkles, path: '/aurum' },
+              ]}
+              orientation="horizontal"
+              collapsed={false}
+            />
+          </div>
+        )}
       </div>
 
       {/* BottomNav тепер у AdaptiveNavigation для compact */}
