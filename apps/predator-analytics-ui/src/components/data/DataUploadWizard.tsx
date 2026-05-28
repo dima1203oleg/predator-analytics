@@ -2,6 +2,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FileSearch, X, Check, CheckCircle, RefreshCw } from 'lucide-react';
+import { MechanicalButton } from '../ui/MechanicalButton';
 
 interface DataUploadWizardProps {
     wizardStep: 'idle' | 'preview' | 'uploading' | 'success';
@@ -72,12 +73,15 @@ export const DataUploadWizard: React.FC<DataUploadWizardProps> = ({
                                 </div>
 
                                 <div className="flex justify-end gap-4 pt-4">
-                                    <button onClick={onCancel} className="px-6 py-3 border border-slate-700 text-slate-400 rounded-xl font-bold hover:bg-slate-800 transition-colors">
+                                    <MechanicalButton variant="ghost" onClick={onCancel}>
                                         СКАСУВАТИ
-                                    </button>
-                                    <button onClick={onConfirm} className="px-8 py-3 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-500 transition-all flex items-center gap-2 shadow-lg shadow-emerald-500/20">
-                                        <Check size={20} /> ПІДТВЕ ДИТИ ІМПОРТ
-                                    </button>
+                                    </MechanicalButton>
+                                    <MechanicalButton variant="primary" onClick={onConfirm}>
+                                        <span className="flex items-center gap-2">
+                                            <Check size={20} />
+                                            <span>ПІДТВЕРДИТИ ІМПОРТ</span>
+                                        </span>
+                                    </MechanicalButton>
                                 </div>
                             </div>
                         ) : wizardStep === 'success' ? (
