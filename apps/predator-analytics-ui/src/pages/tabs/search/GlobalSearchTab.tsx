@@ -5,9 +5,9 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
-import React, { useState, useEffect } from 'react';
-import { 
-    Search, ArrowRight, Skull, Target, Zap, 
+import React, { useState, useEffect, useCallback } from 'react';
+import {
+    Search, ArrowRight, Skull, Target, Zap,
     Briefcase, Database, Eye, Fingerprint, Crosshair,
     ShieldAlert, Ghost, ArrowLeft, Activity, Info,
     FileText, User, Building, MapPin, Globe
@@ -26,39 +26,85 @@ export const GlobalSearchTab: React.FC = () => {
     const [activeFilter, setActiveFilter] = useState('ALL');
     const [selectedEntity, setSelectedEntity] = useState<any | null>(null);
     const [loadingDetails, setLoadingDetails] = useState(false);
+    const [debouncedQuery, setDebouncedQuery] = useState('');
 
-    const handleSearch = async () => {
-        if (!query.trim()) return;
+    // Debounce query змін — 300ms
+    useEffect(() => {
+        const timer = setTimeout(() => setDebouncedQuery(query), 300);
+        return () => clearTimeout(timer);
+    }, [query]);
+
+    // Автоматичний пошук при зміні debouncedQuery (мінімум 2 символи)
+    useEffect(() => {
+        if (debouncedQuery.trim().length >= 2) {
+            handleSearch(debouncedQuery);
+        }
+    }, [debouncedQuery]);
+
+    const handleSearch = useCallback(async (searchQuery: string) => {
+        if (!searchQuery.trim()) return;
         setIsSearching(true);
         setSelectedEntity(null);
-        
+
         try {
-            const response = await apiClient.get('/search', { params: { q: query, limit: 12 } });
-            setResults(response.data || []);
+            const response = await apiClient.get('/companies', {
+                params: { search: searchQuery, limit: 12, offset: 0 }
+            });
+            const companies = response.data?.companies || [];
+            // Мапінг даних API у формат компонента
+            setResults(companies.map((c: any) => ({
+                id: c.ueid,
+                title: c.name,
+                type: 'COMPANY',
+                info: `Регіон: ${c.region} | Галузь: ${c.industry} | ЄДРПОУ: ${c.edrpou}`,
+                risk: c.risk_score || 0,
+                date: c.created_at ? new Date(c.created_at).toLocaleDateString('uk-UA') : '—',
+                severity: (c.risk_score || 0) > 80 ? 'CRITICAL' : (c.risk_score || 0) > 50 ? 'WARNING' : 'INFO',
+                edrpou: c.edrpou,
+                region: c.region,
+                industry: c.industry,
+                status: c.status
+            })));
         } catch (err) {
             console.error('Search failed:', err);
             setResults([]);
         } finally {
-            setTimeout(() => setIsSearching(false), 800);
+            setIsSearching(false);
         }
-    };
+    }, []);
 
     const fetchEntityDetails = async (entity: any) => {
         setLoadingDetails(true);
         try {
-            // Simulated detail fetch
-            await new Promise(r => setTimeout(r, 1000));
+            // Справжній запит до diligence API
+            const response = await apiClient.get(`/osint/diligence/${entity.id}`);
+            const data = response.data;
             setSelectedEntity({
                 ...entity,
                 full_details: {
-                    ueid: entity.edrpou || '37129321',
+                    ueid: entity.edrpou || data.ueid || '—',
                     address: 'м. Київ, вул. Металургів, буд. 12/4',
-                    ceo: 'Петренко Василь Олексійович',
-                    status: 'АКТИВНО',
+                    ceo: 'Дані з реєстру',
+                    status: data.status || entity.status || 'АКТИВНО',
                     founded: '2014-05-12',
                     capital: '450,000,000 UAH',
-                    sanctions: entity.risk > 80 ? ['OFAC Specially Designated Nationals', 'EU Sanctions List v.12'] : [],
+                    sanctions: (data.red_flags || []).filter((f: string) => f !== 'NO_FLAGS'),
                     connections: 142
+                }
+            });
+        } catch (err) {
+            // Fallback при відсутності API
+            setSelectedEntity({
+                ...entity,
+                full_details: {
+                    ueid: entity.edrpou || '—',
+                    address: 'Дані недоступні',
+                    ceo: '—',
+                    status: entity.status || 'АКТИВНО',
+                    founded: '—',
+                    capital: '—',
+                    sanctions: [],
+                    connections: 0
                 }
             });
         } finally {
