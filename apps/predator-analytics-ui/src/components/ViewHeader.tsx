@@ -42,7 +42,7 @@ export const ViewHeader: React.FC<ViewHeaderProps> = ({
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
       className={cn(
         "flex flex-col gap-6 relative overflow-hidden transition-all duration-700",
-        "bg-[rgba(15,15,17,0.97)] p-8 rounded-[3rem] border border-white/[0.06]",
+        "glass-obsidian p-8 rounded-3xl",
         className
       )}
     >
@@ -57,7 +57,7 @@ export const ViewHeader: React.FC<ViewHeaderProps> = ({
           {icon && (
             <motion.div
               whileHover={{ scale: 1.1, rotate: 2 }}
-              className="p-5 bg-[rgba(20,20,22,0.95)] rounded-[2rem] border border-rose-500/20 text-rose-500 shrink-0 relative group"
+              className="p-5 glass-obsidian rounded-2xl border border-[#c9a227]/20 text-[#c9a227] shrink-0 relative group"
             >
               {typeof icon === 'function' || (typeof icon === 'object' && 'render' in (icon as any))
                 ? React.createElement(icon as any, { className: 'w-8 h-8' })
@@ -68,22 +68,22 @@ export const ViewHeader: React.FC<ViewHeaderProps> = ({
           <div className="min-w-0">
             {/* Breadcrumbs */}
             {breadcrumbs.length > 0 && (
-              <div className="flex items-center gap-2.5 text-[9px] font-black text-slate-500 uppercase tracking-[0.4em] mb-3 flex-wrap italic">
+              <div className="flex items-center gap-2.5 mb-3 flex-wrap">
                 {breadcrumbs.map((crumb, idx) => (
                 <React.Fragment key={idx}>
                   <span className={cn(
-                    "transition-colors duration-300",
-                    idx === breadcrumbs.length - 1 ? "text-rose-500" : "text-slate-600 hover:text-slate-400 cursor-default"
+                    "font-display text-[10px] font-semibold uppercase tracking-[0.12em] transition-colors duration-300",
+                    idx === breadcrumbs.length - 1 ? "text-[#c9a227]" : "text-[#5a5a5a] hover:text-[#8a8a8a] cursor-default"
                   )}>
                     {crumb}
                   </span>
-                  {idx < breadcrumbs.length - 1 && <ChevronRight size={12} className="text-slate-800 shrink-0" />}
+                  {idx < breadcrumbs.length - 1 && <ChevronRight size={12} className="text-[#2a2a2a] shrink-0" />}
                 </React.Fragment>
               ))}
               </div>
             )}
             <div className="flex flex-wrap items-center gap-5">
-              <h1 className="text-4xl font-black text-white leading-none truncate tracking-tighter italic uppercase glint-elite chromatic-elite">
+              <h1 className="font-display text-4xl font-extrabold text-[#e8e8e8] leading-none truncate tracking-tighter uppercase">
                 {title}
               </h1>
               {badges.length > 0 && (
@@ -111,7 +111,7 @@ export const ViewHeader: React.FC<ViewHeaderProps> = ({
                 </div>
               )}
             </div>
-            {subtitle && <p className="text-[13px] mt-3 text-slate-500 font-medium tracking-tight max-w-2xl">{subtitle}</p>}
+            {subtitle && <p className="font-interface text-[13px] mt-3 text-[#5a5a5a] font-medium tracking-tight max-w-2xl">{subtitle}</p>}
           </div>
         </div>
 
@@ -123,7 +123,7 @@ export const ViewHeader: React.FC<ViewHeaderProps> = ({
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.1 * idx }}
-              className="flex items-center gap-5 bg-[rgba(20,20,22,0.95)] px-6 py-3 rounded-[1.5rem] border border-white/5 hover:border-rose-500/20 transition-all duration-500 group"
+              className="flex items-center gap-5 glass-obsidian px-6 py-3 rounded-xl group"
             >
               {stat.icon && (
                 <span className={cn(
@@ -140,9 +140,9 @@ export const ViewHeader: React.FC<ViewHeaderProps> = ({
                 </span>
               )}
               <div className="flex flex-col items-end leading-none">
-                <span className="text-[9px] text-slate-600 uppercase font-black tracking-[0.3em] italic mb-1.5">{stat.label}</span>
+                <span className="font-display text-[10px] text-[#5a5a5a] uppercase font-semibold tracking-[0.1em] mb-1.5">{stat.label}</span>
                 <span className={cn(
-                  "text-base font-mono font-black italic tracking-tighter",
+                  "font-data text-base font-bold tracking-tighter",
                   stat.color === 'success' || stat.color === 'emerald' ? 'text-emerald-400' :
                   stat.color === 'warning' || stat.color === 'amber' || stat.color === 'gold' ? 'text-amber-400' :
                   stat.color === 'danger' || stat.color === 'error' || stat.color === 'rose' || stat.color === 'crimson' ? 'text-rose-400' :
