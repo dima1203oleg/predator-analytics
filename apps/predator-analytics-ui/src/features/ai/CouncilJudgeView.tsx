@@ -13,6 +13,7 @@ import {
   ShieldCheck, Brain, Cpu, Sparkles, Scale, AlertTriangle, 
   CheckCircle2, XCircle, Clock, Zap, MessageSquare, Fingerprint
 } from 'lucide-react';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/utils/cn';
@@ -53,14 +54,14 @@ export default function CouncilJudgeView() {
         </div>
 
         <div className="flex gap-4">
-           <TacticalCard variant="cyber" className="px-8 py-4 flex items-center gap-6 bg-slate-950/50 border-rose-500/20">
+           <HoloCard glowColor="rgba(239,68,68,0.3)" className="px-8 py-4 flex items-center gap-6">
               <div className="text-right">
                  <div className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Рівень консенсусу</div>
                  <div className="text-2xl font-black text-emerald-500 italic">66.7%</div>
               </div>
               <div className="w-px h-10 bg-white/5" />
               <Scale className="text-rose-500" size={24} />
-           </TacticalCard>
+           </HoloCard>
         </div>
       </div>
 
@@ -72,10 +73,9 @@ export default function CouncilJudgeView() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
           >
-            <TacticalCard 
-              variant="holographic" 
+            <HoloCard 
               className={cn(
-                "p-8 space-y-6 rounded-[32px] border transition-all duration-500",
+                "p-8 space-y-6 rounded-[32px] transition-all duration-500",
                 vote.vote === 'approve' ? "border-emerald-500/20 bg-emerald-500/5" : "border-rose-500/20 bg-rose-500/5"
               )}
             >
@@ -118,12 +118,12 @@ export default function CouncilJudgeView() {
               <p className="text-sm text-slate-400 leading-relaxed italic border-l-2 border-white/5 pl-6">
                 "{vote.reason}"
               </p>
-            </TacticalCard>
+            </HoloCard>
           </motion.div>
         ))}
       </div>
 
-      <TacticalCard variant="cyber" className="p-10 rounded-[40px] border-rose-500/30 bg-slate-950/80 relative overflow-hidden">
+      <HoloCard glowColor="rgba(239,68,68,0.3)" className="p-10 rounded-[40px] relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-rose-500/5 blur-[120px] pointer-events-none" />
         
         <div className="flex flex-col md:flex-row items-center gap-12 relative z-10">
@@ -169,7 +169,7 @@ export default function CouncilJudgeView() {
               </button>
            </div>
         </div>
-      </TacticalCard>
+      </HoloCard>
     </div>
   );
 }
