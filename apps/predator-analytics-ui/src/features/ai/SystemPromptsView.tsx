@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -65,7 +66,7 @@ const SystemPromptsView = () => {
            <div className="space-y-4">
               <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] px-2 mb-6 italic">КАТЕГО ІЇ_СУТНОСТЕЙ</h3>
               {promptCategories.map(cat => (
-                 <TacticalCard key={cat.id} variant="holographic" className="p-5 hover:border-rose-500/30 transition-all cursor-pointer group">
+                 <HoloCard key={cat.id} variant="holographic" className="p-5 hover:border-rose-500/30 transition-all cursor-pointer group">
                     <div className="flex items-center justify-between mb-4">
                        <div className="p-3 bg-rose-500/10 rounded-xl text-rose-500 border border-rose-500/20 group-hover:scale-110 transition-transform">
                           <cat.icon size={18} />
@@ -78,17 +79,17 @@ const SystemPromptsView = () => {
                        <h4 className="text-[12px] font-black text-white group-hover:text-rose-400 transition-colors uppercase">{cat.label}</h4>
                        <p className="text-[10px] font-mono text-slate-600 uppercase tracking-widest leading-none">{cat.count} ДИ ЕКТИВ</p>
                     </div>
-                 </TacticalCard>
+                 </HoloCard>
               ))}
            </div>
            
-           <TacticalCard variant="cyber" className="p-6 bg-rose-500/5 border-rose-500/20">
+           <HoloCard variant="cyber" className="p-6 bg-rose-500/5 border-rose-500/20">
               <div className="flex items-center gap-3 mb-6">
                  <Shield className="text-rose-500 h-5 w-5" />
                  <span className="text-[10px] font-black text-white uppercase tracking-widest italic leading-none">CORTEX SECURITY OK</span>
               </div>
               <p className="text-[11px] text-slate-500 uppercase tracking-tighter sm:font-mono italic">Усі системні промпти проходять через Firewall на наявність Leak-ін'єкцій.</p>
-           </TacticalCard>
+           </HoloCard>
         </div>
 
         {/* Middle Column: Prompts List */}
@@ -138,7 +139,7 @@ const SystemPromptsView = () => {
 
         {/* Right Column: Code Editor */}
         <div className="lg:col-span-5 space-y-8">
-           <TacticalCard variant="holographic" className="p-0 overflow-hidden flex flex-col bg-black/60 border-white/10 min-h-[600px]">
+           <HoloCard variant="holographic" className="p-0 overflow-hidden flex flex-col bg-black/60 border-white/10 min-h-[600px]">
               <div className="flex items-center justify-between px-6 py-4 bg-white/5 border-b border-white/5">
                  <div className="flex items-center gap-4">
                     <div className="flex items-center gap-3">
@@ -223,7 +224,7 @@ const SystemPromptsView = () => {
                     <Play size={12} className="mr-2" /> ТЕСТ_ІНФЕ ЕНСУ
                  </Button>
               </div>
-           </TacticalCard>
+           </HoloCard>
         </div>
       </div>
     </div>
