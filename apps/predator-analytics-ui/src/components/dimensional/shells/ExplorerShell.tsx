@@ -2,6 +2,7 @@ import React from 'react';
 import { cn } from '../../../lib/utils';
 import { motion } from 'framer-motion';
 import { Sparkles, Search, FileText, TrendingUp, Filter, Database, Activity } from 'lucide-react';
+import { HoloCard } from '../../../components/ui/HoloCard';
 import { QuantumCard, ExplorerView } from '../'; // Import from index of dimensional components
 import { TacticalCard } from '../../../components'; // Import shared components
 import { SystemMetrics } from '../../../types/metrics'; // Assume metrics types exist
@@ -46,22 +47,22 @@ export const ExplorerShell: React.FC<ExplorerShellProps> = ({
               { label: "Якість Даних", value: metrics?.health.toFixed(1) + '%', color: 'blue', icon: Activity },
               { label: "Активні Сесії", value: recentSearches?.length || 0, color: 'cyan', icon: Search }
             ].map((stat, idx) => (
-              <div key={idx} className="p-6 bg-white/[0.02] border border-white/5 rounded-[2rem] group/stat hover:bg-white/[0.04] transition-all">
+              <HoloCard key={idx} variant="gold" glow tilt className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                   <div className={cn("p-2 rounded-xl bg-opacity-10", `bg-${stat.color}-500/10`)}>
-                      <stat.icon className={cn("w-5 h-5", `text-${stat.color}-400`)} />
+                   <div className="p-2 rounded-xl bg-white/[0.03]">
+                      <stat.icon className="w-5 h-5 text-[#c9a227]" />
                    </div>
-                   <span className="text-[9px] font-black text-slate-600 uppercase tracking-[0.3em] italic">{stat.label}</span>
+                   <span className="font-display text-[10px] font-semibold text-[#5a5a5a] uppercase tracking-[0.1em]">{stat.label}</span>
                 </div>
-                <div className="text-5xl font-black text-white italic tracking-tighter mb-2">{stat.value}</div>
-                <div className={cn("h-1 w-full bg-slate-800 rounded-full overflow-hidden p-[1px]", `border-${stat.color}-500/20`)}>
-                   <motion.div 
+                <div className="font-data text-5xl font-bold text-[#e8e8e8] tracking-tighter mb-2">{stat.value}</div>
+                <div className="h-1 w-full bg-[#1a1a1c] rounded-full overflow-hidden">
+                   <motion.div
                      initial={{ width: 0 }}
                      animate={{ width: '70%' }}
-                     className={cn("h-full rounded-full", `bg-${stat.color}-500 shadow-[0_0_10px_rgba(var(--${stat.color}-500),0.4)]`)}
+                     className="h-full rounded-full bg-[#c9a227] shadow-[0_0_10px_rgba(201,162,39,0.4)]"
                    />
                 </div>
-              </div>
+              </HoloCard>
             ))}
           </div>
         </div>

@@ -25,6 +25,7 @@ import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { InfrastructureFailoverBanner } from '../InfrastructureFailoverBanner';
 import { WorkspaceBusinessStrip } from './WorkspaceBusinessStrip';
 import { NeuralBackground } from '../ui/NeuralBackground';
+import { SovereignEye } from '../ui/SovereignEye';
 import { cn } from '@/utils/cn';
 import { AnimatedPage } from '../polish/AnimatedPage';
 import { API_BASE_URL } from '@/services/api/config';
@@ -154,13 +155,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         }}
       />
       {/* Sovereign Eye — ambient glow реагує на system health */}
-      <div
-        className="pointer-events-none absolute inset-0 z-[2] opacity-60"
-        style={{
-          background:
-            'radial-gradient(400px circle at var(--predator-radar-x, 50%) var(--predator-radar-y, 50%), rgba(201,162,39,0.08), rgba(225,29,72,0.03) 40%, transparent 70%)',
-        }}
-      />
+      <SovereignEye health="healthy" />
 
       {/* ── ADAPTIVE NAVIGATION ── */}
       <AdaptiveNavigation />
