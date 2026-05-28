@@ -8,7 +8,6 @@ import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
 import { ViewHeader } from '@/components/ViewHeader';
 import { HoloCard } from '@/components/ui/HoloCard';
-import { TacticalCard } from '@/components/ui/TacticalCard';
 import { security } from '@/services/dataService';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { DataSkeleton, SkeletonGroup } from '@/components/shared/DataSkeleton';

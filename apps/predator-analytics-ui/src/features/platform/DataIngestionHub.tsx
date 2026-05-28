@@ -20,7 +20,6 @@ import { useIngestionStore, IngestionJob } from '@/store/useIngestionStore';
 import { apiClient as api } from '@/services/api/config';
 import { cn } from '@/utils/cn';
 import { HoloCard } from '@/components/ui/HoloCard';
-import { TacticalCard } from '@/components/ui/TacticalCard';
 import { CyberOrb } from '@/components/CyberOrb';
 import { HoloContainer } from '@/components/HoloContainer';
 import { AdvancedBackground } from '@/components/AdvancedBackground';

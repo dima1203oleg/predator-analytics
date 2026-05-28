@@ -25,7 +25,6 @@ import {
 } from 'lucide-react';
 import { api } from '../services/api';
 import { cn } from '../lib/utils';
-import { TacticalCard } from './ui/TacticalCard';
 
 interface QueueInfo {
   name: string;

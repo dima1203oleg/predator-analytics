@@ -3,7 +3,6 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Zap, Shield, Search, Code, Activity, Server, Radio, Waypoints, Cpu } from 'lucide-react';
 import { HoloCard } from '@/components/ui/HoloCard';
-import { TacticalCard } from '@/components/ui/TacticalCard';
 import { premiumLocales } from '@/locales/uk/premium';
 import { useAgents } from '@/context/AgentContext';
 import { cn } from '@/utils/cn';

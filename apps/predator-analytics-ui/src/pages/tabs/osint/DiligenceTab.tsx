@@ -13,7 +13,6 @@ import {
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { HoloCard } from '@/components/ui/HoloCard';
-import { TacticalCard } from '@/components/ui/TacticalCard';
 import { diligenceApi } from '@/features/diligence/api/diligence';
 import { SovereignAudio } from '@/utils/sovereign-audio';
 import { useBackendStatus } from '@/hooks/useBackendStatus';

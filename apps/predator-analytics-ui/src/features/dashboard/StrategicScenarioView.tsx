@@ -13,7 +13,6 @@ import {
     Flame, Waves, Wind, Cpu, Database, RefreshCcw, Play, Target, ShieldAlert, Activity, ChevronRight, Zap
 } from 'lucide-react';
 import { HoloCard } from '@/components/ui/HoloCard';
-import { TacticalCard } from '@/components/ui/TacticalCard';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/utils/cn';
 import { factoryApi } from '@/services/api/factory';

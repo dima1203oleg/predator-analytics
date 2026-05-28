@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { cn } from '@/utils/cn';
 import { HoloCard } from '@/components/ui/HoloCard';
-import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { LogEntry } from '@/types';
 import {

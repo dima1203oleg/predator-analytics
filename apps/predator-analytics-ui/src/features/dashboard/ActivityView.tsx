@@ -16,7 +16,6 @@ import { api } from '@/services/api';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { HoloCard } from '@/components/ui/HoloCard';
-import { TacticalCard } from '@/components/ui/TacticalCard';
 import { CyberGrid } from '@/components/CyberGrid';
 import { cn } from '@/utils/cn';
 import { useUISound, UISoundType } from '@/hooks/useUISound';

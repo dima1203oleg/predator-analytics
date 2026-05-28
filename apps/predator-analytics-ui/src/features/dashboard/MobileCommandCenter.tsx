@@ -24,7 +24,6 @@ import {
 
 import { cn } from '@/utils/cn';
 import { HoloCard } from '@/components/ui/HoloCard';
-import { TacticalCard } from '@/components/ui/TacticalCard';
 import { HoloContainer } from '@/components/HoloContainer';
 import { CyberOrb } from '@/components/CyberOrb';
 import { premiumLocales } from '@/locales/uk/premium';

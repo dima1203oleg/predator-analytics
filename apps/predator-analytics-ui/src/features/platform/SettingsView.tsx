@@ -4,7 +4,6 @@ import { useToast } from "@/context/ToastContext";
 import { api } from "@/services/api";
 import { ViewHeader } from "@/components/ViewHeader";
 import { HoloCard } from "@/components/ui/HoloCard";
-import { TacticalCard } from "@/components/ui/TacticalCard";
 import { Switch } from "@/components/ui/switch";
 import { useAppStore } from "@/store/useAppStore";
 import {

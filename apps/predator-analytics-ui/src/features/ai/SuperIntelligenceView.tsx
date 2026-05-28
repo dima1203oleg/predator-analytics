@@ -1,7 +1,6 @@
 
 import React, { useRef, useState, useEffect, Suspense } from 'react';
 import { HoloCard } from '@/components/ui/HoloCard';
-import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import {
     Zap, BrainCircuit, Activity, Scale, GitBranch,

@@ -26,7 +26,6 @@ import {
 import { toast } from 'sonner';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { HoloCard } from '@/components/ui/HoloCard';
-import { TacticalCard } from '@/components/ui/TacticalCard';
 import { Badge } from '@/components/ui/badge';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { HoloContainer } from '@/components/HoloContainer';

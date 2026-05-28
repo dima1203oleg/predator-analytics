@@ -14,7 +14,6 @@ import {
   CheckCircle2, XCircle, Clock, Zap, MessageSquare, Fingerprint
 } from 'lucide-react';
 import { HoloCard } from '@/components/ui/HoloCard';
-import { TacticalCard } from '@/components/ui/TacticalCard';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/utils/cn';
 

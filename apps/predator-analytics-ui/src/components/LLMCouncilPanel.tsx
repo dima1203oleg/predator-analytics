@@ -21,7 +21,6 @@ import { cn } from '../utils/cn';
 import { api, apiClient } from '../services/api';
 import { CouncilResult } from '../types';
 import { HoloContainer } from './HoloContainer';
-import { TacticalCard } from './ui/TacticalCard';
 import { CyberOrb } from './CyberOrb';
 
 interface LLMCouncilPanelProps {

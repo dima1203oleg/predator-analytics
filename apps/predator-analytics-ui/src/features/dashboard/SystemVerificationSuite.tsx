@@ -29,7 +29,6 @@ import { premiumLocales } from '@/locales/uk/premium';
 
 /** Components */
 import { HoloCard } from '@/components/ui/HoloCard';
-import { TacticalCard } from '@/components/ui/TacticalCard';
 import { NeuralCore } from '@/components/NeuralCore';
 import { CyberOrb } from '@/components/CyberOrb';
 import { HoloContainer } from '@/components/HoloContainer';

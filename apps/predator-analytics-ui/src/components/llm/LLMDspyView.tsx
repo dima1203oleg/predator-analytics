@@ -2,7 +2,6 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { RefreshCw, Play, Sparkles, AlertCircle } from 'lucide-react';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
-import { TacticalCard } from '../ui/TacticalCard';
 import { premiumLocales } from '../../locales/uk/premium';
 import { DSPyOptimization } from '../../types';
 

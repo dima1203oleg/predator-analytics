@@ -18,7 +18,6 @@ import {
 } from 'lucide-react';
 import { api } from '../services/api';
 import { HoloContainer } from './HoloContainer';
-import { TacticalCard } from './ui/TacticalCard';
 import { CyberOrb } from './CyberOrb';
 import { cn } from '../lib/utils';
 

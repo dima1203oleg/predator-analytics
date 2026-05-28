@@ -16,7 +16,6 @@ import {
   ArrowUpRight, ArrowDownRight, Circle
 } from 'lucide-react';
 import { cn } from '../utils/cn';
-import { TacticalCard } from './ui/TacticalCard';
 
 interface SystemMetrics {
   cpu: number;

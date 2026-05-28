@@ -22,7 +22,6 @@ import {
   Cpu, Hexagon, Globe, Boxes, Layers, Terminal
 } from 'lucide-react';
 import { cn } from '../utils/cn';
-import { TacticalCard } from './ui/TacticalCard';
 import { HoloContainer } from './HoloContainer';
 import { CyberOrb } from './CyberOrb';
 

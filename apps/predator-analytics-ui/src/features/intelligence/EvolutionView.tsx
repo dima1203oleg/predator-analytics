@@ -45,7 +45,6 @@ import { AZRImprovementTrace } from '@/components/super/AZRImprovementTrace';
 import { AZRDeploymentCenter } from '@/components/super/AZRDeploymentCenter';
 import { premiumLocales } from '@/locales/uk/premium';
 import { HoloCard } from '@/components/ui/HoloCard';
-import { TacticalCard } from '@/components/ui/TacticalCard';
 import { CyberOrb } from '@/components/CyberOrb';
 import { CyberGrid } from '@/components/CyberGrid';
 import { AdvancedBackground } from '@/components/AdvancedBackground';

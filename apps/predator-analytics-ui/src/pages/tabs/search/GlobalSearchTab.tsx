@@ -16,7 +16,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { CyberOrb } from '@/components/CyberOrb';
 import { ViewHeader } from '@/components/ViewHeader';
 import { HoloCard } from '@/components/ui/HoloCard';
-import { TacticalCard } from '@/components/ui/TacticalCard';
 import { apiClient } from '@/services/api/config';
 import { cn } from '@/utils/cn';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';

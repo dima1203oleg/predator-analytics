@@ -2,7 +2,6 @@ import React from 'react';
 import { cn } from '../../../lib/utils';
 import { motion } from 'framer-motion';
 import { Cpu, Activity, Network, Zap, AlertTriangle, HardDrive } from 'lucide-react';
-import { CyberOrb, TacticalCard } from '../../../components'; // Shared components
 import { SystemMetrics } from '../../../types/metrics';
 import GoogleAdvisoryPanel from '../GoogleAdvisoryPanel';
 

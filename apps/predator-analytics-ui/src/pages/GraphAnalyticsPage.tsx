@@ -20,7 +20,6 @@ import {
     ListFilter, MoreVertical, LayoutGrid, LayoutList
 } from 'lucide-react';
 import { HoloCard } from '@/components/ui/HoloCard';
-import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { Badge } from '@/components/ui/badge';

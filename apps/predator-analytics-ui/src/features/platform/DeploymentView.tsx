@@ -2,7 +2,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ViewHeader } from '@/components/ViewHeader';
 import { HoloCard } from '@/components/ui/HoloCard';
-import { TacticalCard } from '@/components/ui/TacticalCard';
 import { CardSkeleton } from '@/components/Skeleton';
 import {
   Rocket, RefreshCw, GitBranch, Terminal, FileText, Activity, LayoutGrid,

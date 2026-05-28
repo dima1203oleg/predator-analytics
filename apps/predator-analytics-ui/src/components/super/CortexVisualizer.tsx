@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Zap, Shield, AlertTriangle, Layers, Server, Activity, CheckCircle2 } from 'lucide-react';
-import { TacticalCard } from '../ui/TacticalCard';
 import { HoloContainer } from '../HoloContainer';
 import { api } from '../../services/api';
 import { API_BASE_URL } from '../../services/api/config';

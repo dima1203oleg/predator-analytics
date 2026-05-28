@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import { Sparkles, Search, FileText, TrendingUp, Filter, Database, Activity } from 'lucide-react';
 import { HoloCard } from '../../../components/ui/HoloCard';
 import { QuantumCard, ExplorerView } from '../'; // Import from index of dimensional components
-import { TacticalCard } from '../../../components'; // Import shared components
 import { SystemMetrics } from '../../../types/metrics'; // Assume metrics types exist
 
 interface ExplorerShellProps {

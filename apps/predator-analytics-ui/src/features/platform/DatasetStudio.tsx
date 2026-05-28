@@ -20,7 +20,6 @@ import { api, mlStudioApi } from '@/services/api';
 import { premiumLocales } from '../../locales/uk/premium';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { HoloCard } from '@/components/ui/HoloCard';
-import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { DatabasePipelineMonitor } from '@/components/pipeline/DatabasePipelineMonitor';
 import { UserDatasetsPanel, UserDataset } from '@/components/datasets/UserDatasetsPanel';

@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { BrainCircuit } from 'lucide-react';
-import { TacticalCard } from '../ui/TacticalCard';
 
 interface BrainTrainerConfigProps {
     schedule: string;
