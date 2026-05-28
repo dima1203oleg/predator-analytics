@@ -37,6 +37,7 @@ const Predator = React.lazy(() => import('./components/premium/AICopilot').then(
 const OnboardingWizard = React.lazy(() => import('./components/premium/OnboardingWizard'));
 const QuickActionsBar = React.lazy(() => import('./components/premium/QuickActionsBar'));
 const LiveAgentTerminal = React.lazy(() => import('./components/intelligence/LiveAgentTerminal').then(m => ({ default: m.LiveAgentTerminal })));
+const TerminalCommandBar = React.lazy(() => import('./components/ui/TerminalCommandBar'));
 
 // Setup Query Client with optimized settings
 const queryClient = new QueryClient({
@@ -65,6 +66,23 @@ function App() {
 
   // Global error capture for runtime issues (shows overlay with details)
   const [globalError, setGlobalError] = useState<{ message: string; stack?: string } | null>(null);
+
+  // Terminal Command Bar (Cmd+K)
+  const [isCommandBarOpen, setIsCommandBarOpen] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setIsCommandBarOpen((prev) => !prev);
+      }
+      if (e.key === 'Escape') {
+        setIsCommandBarOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   useEffect(() => {
     const onError = (event: ErrorEvent) => {
@@ -195,6 +213,17 @@ function App() {
                                       <OnboardingWizard />
                                       <Predator />
                                       <LiveAgentTerminal />
+                                      <TerminalCommandBar
+                                        isOpen={isCommandBarOpen}
+                                        onClose={() => setIsCommandBarOpen(false)}
+                                        commands={[
+                                          { id: 'search', label: 'Пошук компаній', shortcut: '⌘S', action: () => window.location.href = '/search' },
+                                          { id: 'dashboard', label: 'Командний центр', shortcut: '⌘D', action: () => window.location.href = '/command' },
+                                          { id: 'monitoring', label: 'Тактичний моніторинг', action: () => window.location.href = '/admin/command?tab=infra' },
+                                          { id: 'aurum', label: 'AURUM OBSIDIAN Style Guide', action: () => window.location.href = '/aurum' },
+                                          { id: 'logout', label: 'Вихід з системи', action: () => setAppState('LOGIN') },
+                                        ]}
+                                      />
                                     </React.Suspense>
                                   </motion.div>
                                 )}
