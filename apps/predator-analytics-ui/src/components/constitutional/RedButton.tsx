@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SlideToExecute } from '../polish/SlideToExecute';
+import { TacticalModal } from '../ui/TacticalModal';
 import { useUISound, UISoundType } from '@/hooks/useUISound';
 
 /**
@@ -457,68 +458,63 @@ export const RedButton: React.FC<RedButtonProps> = ({
         </div>
       )}
 
-      <AnimatePresence>
-        {showConfirmDialog && selectedLevel && (
-          <motion.div
-            className="confirm-dialog-overlay"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={handleCancel}
-          >
-            <motion.div
-              className="confirm-dialog"
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="confirm-title">
-                 ️ ПІДТВЕ ДЖЕННЯ ЕКСТ ЕНОГОПРОТОКОЛУ
-              </div>
+      <TacticalModal
+        isOpen={showConfirmDialog}
+        onClose={handleCancel}
+        title={`ПІДТВЕРДЖЕННЯ ЕКСТРЕНОГО ПРОТОКОЛУ — РІВЕНЬ ${selectedLevel}`}
+        confirmLabel="АКТИВУВАТИ"
+        cancelLabel="СКАСУВАТИ"
+        onConfirm={handleConfirm}
+        danger
+        variant="critical"
+        glitch
+      >
+        <div className="space-y-6">
+          <div className="glass-obsidian rounded-xl p-6 border-l-2 border-[#e11d48]/40">
+            <p className="font-interface text-sm text-[#8a8a8a] leading-relaxed">
+              Ви збираєтесь активувати <strong className="text-[#e11d48]">рівень {selectedLevel}: {selectedLevel ? EMERGENCY_LEVELS[selectedLevel].nameUk : ''}</strong>.
+              <br /><br />
+              {selectedLevel ? EMERGENCY_LEVELS[selectedLevel].description : ''}
+              <br /><br />
+              Для підтвердження введіть код нижче:
+            </p>
+          </div>
 
-              <div className="confirm-warning">
-                <p>
-                  Ви збираєтесь активувати <strong>рівень {selectedLevel}: {EMERGENCY_LEVELS[selectedLevel].nameUk}</strong>.
-                  <br /><br />
-                  {EMERGENCY_LEVELS[selectedLevel].description}.
-                  <br /><br />
-                  Для підтвердження введіть код нижче:
-                </p>
-              </div>
+          <div>
+            <label className="font-display text-[10px] font-semibold text-[#5a5a5a] uppercase tracking-[0.1em] mb-2 block">
+              КОД ПІДТВЕРДЖЕННЯ
+            </label>
+            <div className="font-data text-lg text-[#c9a227] tracking-wider mb-3">
+              {selectedLevel ? EMERGENCY_LEVELS[selectedLevel].code : ''}
+            </div>
+            <input
+              type="text"
+              className="w-full bg-[#0a0a0c] border border-[#1a1a1c] rounded-xl px-4 py-3 font-data text-sm text-[#e8e8e8] placeholder-[#3a3a3c] focus:border-[#e11d48]/40 focus:outline-none transition-colors"
+              placeholder="Введіть код підтвердження..."
+              value={confirmationInput}
+              onChange={(e) => setConfirmationInput(e.target.value)}
+              autoFocus
+            />
+          </div>
 
-              <label className="confirm-input-label">
-                Код підтвердження:
-              </label>
-              <div className="confirm-code-hint">
-                {EMERGENCY_LEVELS[selectedLevel].code}
-              </div>
+          {error && (
+            <div className="font-display text-xs text-[#e11d48] uppercase tracking-wider">
+              {error}
+            </div>
+          )}
 
-              <input
-                type="text"
-                className="confirm-input"
-                placeholder="Введіть код підтвердження..."
-                value={confirmationInput}
-                onChange={(e) => setConfirmationInput(e.target.value)}
-                autoFocus
-              />
-
-              {error && <div className="confirm-error">{error}</div>}
-
-              <div className="mt-6">
-                <SlideToExecute
-                  label="ПОВЗУНОК ДЛЯ АКТИВАЦІЇ"
-                  confirmLabel={`АКТИВОВАНО ${EMERGENCY_LEVELS[selectedLevel as 1 | 2 | 3].nameUk}`}
-                  onExecute={handleConfirm}
-                  onCancel={handleCancel}
-                  danger
-                  disabled={!confirmationInput || isLoading}
-                />
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          <div>
+            <SlideToExecute
+              label="ПОВЗУНОК ДЛЯ АКТИВАЦІЇ"
+              confirmLabel={`АКТИВОВАНО ${selectedLevel ? EMERGENCY_LEVELS[selectedLevel as 1 | 2 | 3].nameUk : ''}`}
+              onExecute={handleConfirm}
+              onCancel={handleCancel}
+              danger
+              disabled={!confirmationInput || isLoading}
+            />
+          </div>
+        </div>
+      </TacticalModal>
     </div>
   );
 };
