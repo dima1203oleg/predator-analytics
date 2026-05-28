@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap');
 
 /* Канонічні дизайн-токени — єдине джерело істини */
 @import './styles/tokens.css';
@@ -29,8 +29,25 @@
     --wraith-accent: #f43f5e; /* Elite Rose */
     --wraith-accent-deep: #9f1239;
 
+    /* ── AURUM OBSIDIAN TOKENS v2.0 ── */
+    --aurum-gold: #c9a227;
+    --aurum-gold-muted: rgba(201, 162, 39, 0.6);
+    --aurum-glow: rgba(201, 162, 39, 0.25);
+    --titanium: #8a8a8a;
+    --titanium-muted: #5a5a5a;
+    --obsidian: #010101;
+    --obsidian-surface: #0a0a0c;
+    --tactical-teal: #4ecdc4;
+    --tactical-teal-glow: rgba(78, 205, 196, 0.3);
+
     --aura-gold: hsla(348, 100%, 60%, 0.18);
     --aura-amber: hsla(340, 100%, 50%, 0.12);
+
+    --glass-bg: rgba(12, 12, 14, 0.85);
+    --glass-border: rgba(255, 255, 255, 0.04);
+    --glass-highlight: rgba(255, 255, 255, 0.03);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    --glass-inset: inset 0 1px 0 rgba(255, 255, 255, 0.03);
 
     --glint-speed: 4s;
     --scan-speed: 10s;
@@ -2156,5 +2173,233 @@ tbody tr:hover {
 .no-select {
   user-select: none;
   -webkit-user-select: none;
+}
+
+/* ── AURUM OBSIDIAN GLASS v2.0 ── */
+.glass-obsidian {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(120%);
+  -webkit-backdrop-filter: blur(20px) saturate(120%);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.5), var(--glass-shadow), var(--glass-inset);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-obsidian::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02) 0%, transparent 40%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Scan line overlay */
+.scan-lines {
+  position: relative;
+}
+.scan-lines::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.03) 2px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 999;
+  animation: scan-drift 20s linear infinite;
+}
+
+@keyframes scan-drift {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 100vh; }
+}
+
+/* Chromatic aberration on hover */
+.chromatic-hover {
+  transition: text-shadow 0.15s ease;
+}
+.chromatic-hover:hover {
+  text-shadow:
+    calc(var(--chromatic-offset) * -1) 0 0 rgba(255, 0, 0, 0.3),
+    var(--chromatic-offset) 0 0 rgba(0, 255, 255, 0.3);
+}
+
+/* Aurum gradient text */
+.text-aurum {
+  background: linear-gradient(135deg, var(--aurum-gold) 0%, var(--elite-red) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Vignette effect */
+.vignette {
+  position: relative;
+}
+.vignette::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.4) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Noise texture overlay */
+.noise-overlay {
+  position: relative;
+}
+.noise-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.02;
+  pointer-events: none;
+  z-index: 999;
+}
+
+/* Tabular nums для даних */
+.font-data {
+  font-family: 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+}
+
+.font-display {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.font-interface {
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* Status indicators */
+.status-led {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-led--healthy {
+  background: var(--tactical-teal);
+  box-shadow: 0 0 4px var(--tactical-teal-glow);
+  animation: breathe 2s ease-in-out infinite;
+}
+
+.status-led--warning {
+  background: var(--aurum-gold);
+  box-shadow: 0 0 4px var(--aurum-glow);
+  animation: blink 1s step-end infinite;
+}
+
+.status-led--critical {
+  background: var(--elite-red);
+  box-shadow: 0 0 6px var(--elite-red-glow);
+  animation: blink 0.5s step-end infinite;
+}
+
+@keyframes breathe {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* Military uppercase labels */
+.label-military {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--titanium-muted);
+}
+
+/* Kinetic number display */
+.kinetic-value {
+  font-family: 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  transition: color 0.2s ease;
+}
+
+.kinetic-value--up {
+  color: var(--tactical-teal);
+}
+
+.kinetic-value--down {
+  color: var(--elite-red);
+}
+
+/* ── ADDITIONAL ANIMATIONS ── */
+@keyframes blink-fast {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@keyframes blink-slow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.animate-blink-fast {
+  animation: blink-fast 0.5s step-end infinite;
+}
+
+.animate-blink-slow {
+  animation: blink-slow 1s step-end infinite;
+}
+
+.animate-breathe {
+  animation: breathe 2s ease-in-out infinite;
+}
+
+/* Glitch text effect */
+.glitch-text {
+  position: relative;
+}
+
+.glitch-text::before,
+.glitch-text::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.glitch-text::before {
+  left: 2px;
+  text-shadow: -1px 0 #e11d48;
+  clip-path: inset(44% 0 61% 0);
+  animation: glitch-anim 2s infinite linear alternate-reverse;
+}
+
+.glitch-text::after {
+  left: -2px;
+  text-shadow: -1px 0 #4ecdc4;
+  clip-path: inset(54% 0 31% 0);
+  animation: glitch-anim 2s infinite linear alternate;
+}
+
+@keyframes glitch-anim {
+  0% { clip-path: inset(20% 0 80% 0); }
+  20% { clip-path: inset(60% 0 10% 0); }
+  40% { clip-path: inset(40% 0 50% 0); }
+  60% { clip-path: inset(80% 0 5% 0); }
+  80% { clip-path: inset(10% 0 70% 0); }
+  100% { clip-path: inset(30% 0 40% 0); }
 }
 

@@ -140,23 +140,25 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       data-testid="main-layout"
       data-op-mode={mode}
       data-display-mode={displayMode}
-      className="relative flex min-h-screen overflow-hidden bg-black text-foreground op-mode-transition"
+      className="relative flex min-h-screen overflow-hidden bg-[#010101] text-foreground op-mode-transition scan-lines noise-overlay vignette"
     >
       <NeuralBackground />
+      {/* Tactical Grid — AURUM OBSIDIAN */}
       <div
-        className="pointer-events-none absolute inset-0 z-[1] opacity-70"
+        className="pointer-events-none absolute inset-0 z-[1] opacity-50"
         style={{
           backgroundImage:
-            'linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px)',
-          backgroundSize: '42px 42px',
-          transform: 'translate3d(calc(var(--predator-depth-x, 0px) * -0.35), calc(var(--predator-depth-y, 0px) * -0.35), 0)',
+            'linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)',
+          backgroundSize: '48px 48px',
+          transform: 'translate3d(calc(var(--predator-depth-x, 0px) * -0.25), calc(var(--predator-depth-y, 0px) * -0.25), 0)',
         }}
       />
+      {/* Sovereign Eye — ambient glow реагує на system health */}
       <div
-        className="pointer-events-none absolute inset-0 z-[2] opacity-80"
+        className="pointer-events-none absolute inset-0 z-[2] opacity-60"
         style={{
           background:
-            'radial-gradient(360px circle at var(--predator-radar-x, 50%) var(--predator-radar-y, 50%), rgba(185,28,28,0.18), rgba(185,28,28,0.05) 35%, transparent 68%)',
+            'radial-gradient(400px circle at var(--predator-radar-x, 50%) var(--predator-radar-y, 50%), rgba(201,162,39,0.08), rgba(225,29,72,0.03) 40%, transparent 70%)',
         }}
       />
 
