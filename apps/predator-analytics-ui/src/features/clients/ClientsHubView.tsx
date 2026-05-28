@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { createMetric, createRisk, createStandardContextActions } from '@/components/layout/contextRail.builders';
@@ -204,14 +205,14 @@ const SummaryCard = ({ card }: { card: ClientsHubSummaryCard }) => {
   const tone = summaryToneClasses[card.tone];
 
   return (
-    <TacticalCard variant="holographic" className={cn('rounded-[32px] border bg-slate-950/50 p-6', tone.border)}>
+    <HoloCard className={cn('rounded-[32px] p-6', tone.border)}>
       <div className="space-y-3">
         <div className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-500">{card.label}</div>
         <div className={cn('text-4xl font-black tracking-tight', tone.value)}>{card.value}</div>
         <div className="text-sm leading-6 text-slate-400">{card.hint}</div>
       </div>
       <div className={cn('mt-5 h-1.5 rounded-full', tone.panel)} />
-    </TacticalCard>
+    </HoloCard>
   );
 };
 
@@ -452,10 +453,9 @@ export default function ClientsHubView() {
                   whileHover={{ y: -4 }}
                   className="group"
                 >
-                  <TacticalCard
-                    variant="holographic"
+                  <HoloCard
                     className={cn(
-                      'relative h-full overflow-hidden rounded-[36px] border bg-slate-950/60 p-7 shadow-[0_28px_70px_rgba(2,6,23,0.28)]',
+                      'relative h-full overflow-hidden rounded-[36px] p-7',
                       segment.accent.border,
                     )}
                   >
@@ -541,7 +541,7 @@ export default function ClientsHubView() {
                         </button>
                       </div>
                     </div>
-                  </TacticalCard>
+                  </HoloCard>
                 </motion.div>
               );
             })}

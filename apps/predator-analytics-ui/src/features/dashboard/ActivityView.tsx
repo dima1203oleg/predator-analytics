@@ -15,6 +15,7 @@ import { useAgents } from '@/context/AgentContext';
 import { api } from '@/services/api';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { CyberGrid } from '@/components/CyberGrid';
 import { cn } from '@/utils/cn';
@@ -80,7 +81,7 @@ const EventCard: React.FC<{ event: ActivityEvent }> = ({ event }) => {
         <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: typeConfig.color }} />
       </div>
 
-      <TacticalCard variant="holographic" className="flex-1 panel-3d group-hover:bg-slate-900/40 p-0 overflow-hidden border-white/5" noPadding>
+      <HoloCard className="flex-1 panel-3d p-0 overflow-hidden border-white/5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 relative">
           <div className="flex items-start gap-6">
             <div className="p-4 rounded-2xl border border-white/5 bg-black/40 text-slate-400 group-hover:text-white transition-colors">
@@ -121,7 +122,7 @@ const EventCard: React.FC<{ event: ActivityEvent }> = ({ event }) => {
         </div>
 
         <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-      </TacticalCard>
+      </HoloCard>
     </motion.div>
   );
 };
