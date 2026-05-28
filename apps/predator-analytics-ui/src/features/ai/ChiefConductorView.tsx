@@ -7,6 +7,7 @@ import {
   Bot, ShieldCheck, Microscope, Database
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/utils/cn';
@@ -90,11 +91,13 @@ export default function ChiefConductorView() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
         <div className="lg:col-span-2 space-y-10">
-          <TacticalCard 
-            variant="glass" 
-            title="Очередь AGI-Задач" 
-            className="rounded-[48px] border-white/5 bg-slate-900/40 p-8"
-          >
+          <HoloCard className="rounded-[48px] p-8">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-2 bg-[#c9a227]/10 rounded-lg">
+                <ListFilter size={18} className="text-[#c9a227]" />
+              </div>
+              <h4 className="text-sm font-black text-white uppercase tracking-tight">Очередь AGI-Задач</h4>
+            </div>
             <div className="flex items-center justify-between mb-8 px-4">
                <div className="flex items-center gap-3">
                   <div className="w-2 h-2 bg-emerald-500 rounded-full " />
@@ -176,11 +179,17 @@ export default function ChiefConductorView() {
                ))}
                </AnimatePresence>
             </div>
-          </TacticalCard>
+          </HoloCard>
         </div>
 
         <div className="space-y-8">
-           <TacticalCard variant="holographic" title="Swarm Registry" className="rounded-[40px] border-yellow-500/20 bg-slate-950/50 p-8">
+           <HoloCard variant="gold" className="rounded-[40px] p-8">
+             <div className="flex items-center gap-3 mb-6">
+               <div className="p-2 bg-[#c9a227]/10 rounded-lg">
+                 <Bot size={18} className="text-[#c9a227]" />
+               </div>
+               <h4 className="text-sm font-black text-white uppercase tracking-tight">Swarm Registry</h4>
+             </div>
               <div className="space-y-6">
                  {agentsLoading ? (
                     <div className="text-center py-10 text-slate-600  italic">Синхронізація реєстру...</div>
@@ -208,9 +217,9 @@ export default function ChiefConductorView() {
                     );
                  })}
               </div>
-           </TacticalCard>
+           </HoloCard>
 
-           <TacticalCard variant="cyber" className="p-8 rounded-[36px] bg-yellow-600/5 border-yellow-500/20">
+           <HoloCard variant="gold" className="p-8 rounded-[36px]">
               <div className="flex items-center gap-5 mb-6">
                  <div className="p-3 bg-yellow-600/20 rounded-2xl text-yellow-500">
                     <Activity size={20} />
@@ -227,9 +236,15 @@ export default function ChiefConductorView() {
                     <span>Nodes: {agentData?.stats?.alive || '0'}</span>
                  </div>
               </div>
-           </TacticalCard>
+           </HoloCard>
 
-           <TacticalCard variant="glass" title="Chaos Scenario" className="p-8 rounded-[36px] bg-rose-600/5 border-rose-500/10">
+           <HoloCard className="p-8 rounded-[36px]">
+             <div className="flex items-center gap-3 mb-6">
+               <div className="p-2 bg-rose-500/10 rounded-lg">
+                 <Zap size={18} className="text-rose-500" />
+               </div>
+               <h4 className="text-sm font-black text-white uppercase tracking-tight">Chaos Scenario</h4>
+             </div>
               <div className="flex items-center gap-5 mb-6">
                  <div className="p-3 bg-rose-600/20 rounded-2xl text-rose-500">
                     <Zap size={20} />
@@ -259,7 +274,7 @@ export default function ChiefConductorView() {
                    </button>
                  ))}
               </div>
-           </TacticalCard>
+           </HoloCard>
         </div>
       </div>
     </div>
