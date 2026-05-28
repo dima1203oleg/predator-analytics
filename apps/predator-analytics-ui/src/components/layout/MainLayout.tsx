@@ -26,6 +26,7 @@ import { InfrastructureFailoverBanner } from '../InfrastructureFailoverBanner';
 import { WorkspaceBusinessStrip } from './WorkspaceBusinessStrip';
 import { NeuralBackground } from '../ui/NeuralBackground';
 import { SovereignEye } from '../ui/SovereignEye';
+import { ThreatLevel } from '../ui/ThreatLevel';
 import { cn } from '@/utils/cn';
 import { AnimatedPage } from '../polish/AnimatedPage';
 import { API_BASE_URL } from '@/services/api/config';
@@ -185,6 +186,9 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           <span className="mx-2 opacity-40">|</span>
           <span>РІВЕНЬ ДОПУСКУ 6</span>
           <span className="classification-dot" />
+          <div className="ml-auto">
+            <ThreatLevel level="low" />
+          </div>
         </div>
         <main
           className="relative flex-1 overflow-y-auto custom-scrollbar"

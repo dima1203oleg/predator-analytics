@@ -117,7 +117,7 @@ export const QuickActionsBar: React.FC = () => {
             initial={{ opacity: 0, scale: 0.9, y: 20, x: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20, x: 20 }}
-            className="mb-6 bg-[rgba(15,15,17,0.97)] border border-rose-500/20 rounded-[2.5rem] p-4 relative overflow-hidden"
+            className="mb-6 glass-obsidian rounded-2xl p-4 relative overflow-hidden border border-[#1a1a1c]"
           >
             <div  />
             <div className="flex flex-col gap-3 relative z-10">
@@ -131,19 +131,19 @@ export const QuickActionsBar: React.FC = () => {
                   disabled={loading === action.id}
                   title={action.label}
                   className={cn(
-                    'flex items-center gap-4 px-6 py-4 rounded-2xl transition-all group hover:scale-[1.02] border',
-                    action.color,
+                    'flex items-center gap-4 px-6 py-4 rounded-xl transition-all group hover:scale-[1.02] border',
+                    'glass-obsidian border-white/[0.05] hover:border-[#c9a227]/30',
                     loading === action.id && 'opacity-50 cursor-wait'
                   )}
                 >
-                  <div className="p-2 bg-white/5 rounded-lg group-hover:scale-110 transition-transform">
+                  <div className="p-2 bg-white/[0.03] rounded-lg group-hover:scale-110 transition-transform">
                     {loading === action.id ? (
-                      <Activity size={18} className="" />
+                      <Activity size={16} className="text-[#c9a227]" />
                     ) : (
-                      action.icon
+                      <span className="text-[#c9a227]">{action.icon}</span>
                     )}
                   </div>
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em] chromatic-elite">{action.label}</span>
+                  <span className="font-display text-[10px] font-semibold uppercase tracking-[0.1em] text-[#e8e8e8]">{action.label}</span>
                 </motion.button>
               ))}
             </div>
@@ -157,19 +157,19 @@ export const QuickActionsBar: React.FC = () => {
         onClick={() => { SovereignAudio.playPulse(); setExpanded(!expanded); }}
         title={expanded ? locales.quickActions.collapse : locales.quickActions.expand}
         className={cn(
-          'w-16 h-16 rounded-[2rem] flex items-center justify-center transition-all relative overflow-hidden group',
-          'bg-black border-2 border-rose-500/30 hover:border-rose-500/60'
+          'w-16 h-16 rounded-2xl flex items-center justify-center transition-all relative overflow-hidden group',
+          'glass-obsidian border border-[#c9a227]/30 hover:border-[#c9a227]/60'
         )}
       >
-        <div  />
-        <div className="absolute inset-0 glint-elite opacity-20 pointer-events-none" />
-        
+        <div className="absolute inset-0 glow-gold opacity-10 pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(201,162,39,0.15),transparent_50%)] pointer-events-none" />
+
         <motion.div
           animate={{ rotate: expanded ? 180 : 0 }}
           transition={{ type: 'spring', stiffness: 300 }}
           className="relative z-10"
         >
-          {expanded ? <ChevronDown size={28} className="text-rose-500" /> : <Plus size={28} className="text-rose-500" />}
+          {expanded ? <ChevronDown size={24} className="text-[#c9a227]" /> : <Plus size={24} className="text-[#c9a227]" />}
         </motion.div>
       </motion.button>
     </motion.div>

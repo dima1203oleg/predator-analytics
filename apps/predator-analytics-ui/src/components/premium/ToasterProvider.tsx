@@ -1,4 +1,5 @@
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
+import { GlitchText } from '@/components/ui/GlitchText';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -98,24 +99,24 @@ const useToasts = () => {
 
 const toastStyles: Record<ToastType, { icon: React.ReactNode; colors: string }> = {
   success: {
-    icon: <CheckCircle2 size={18} />,
-    colors: 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
+    icon: <CheckCircle2 size={16} />,
+    colors: 'glass-obsidian border-l-2 border-[#4ecdc4]/40 text-[#4ecdc4]'
   },
   error: {
-    icon: <XCircle size={18} />,
-    colors: 'bg-rose-500/10 border-rose-500/30 text-rose-400'
+    icon: <XCircle size={16} />,
+    colors: 'glass-obsidian border-l-2 border-[#e11d48]/40 text-[#e11d48]'
   },
   warning: {
-    icon: <AlertTriangle size={18} />,
-    colors: 'bg-amber-500/10 border-amber-500/30 text-amber-400'
+    icon: <AlertTriangle size={16} />,
+    colors: 'glass-obsidian border-l-2 border-[#c9a227]/40 text-[#c9a227]'
   },
   info: {
-    icon: <HelpCircle size={18} />,
-    colors: 'bg-blue-500/10 border-blue-500/30 text-blue-400'
+    icon: <HelpCircle size={16} />,
+    colors: 'glass-obsidian border-l-2 border-[#8a8a8a]/40 text-[#8a8a8a]'
   },
   loading: {
-    icon: <Loader size={18} className="animate-spin" />,
-    colors: 'bg-indigo-500/10 border-indigo-500/30 text-indigo-400'
+    icon: <Loader size={16} className="animate-spin" />,
+    colors: 'glass-obsidian border-l-2 border-[#c9a227]/40 text-[#c9a227]'
   }
 };
 
@@ -172,9 +173,13 @@ export const ToasterProvider: React.FC = () => {
                   {style.icon}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h4 className="text-sm font-bold text-white mb-0.5">{t.title}</h4>
+                  {t.type === 'error' ? (
+                    <GlitchText className="text-[11px] font-display font-bold uppercase tracking-wider mb-0.5">{t.title}</GlitchText>
+                  ) : (
+                    <h4 className="font-display text-[11px] font-bold text-[#e8e8e8] uppercase tracking-wider mb-0.5">{t.title}</h4>
+                  )}
                   {t.message && (
-                    <p className="text-xs text-slate-400 line-clamp-2">{t.message}</p>
+                    <p className="font-interface text-[11px] text-[#5a5a5a] line-clamp-2">{t.message}</p>
                   )}
                   {t.action && (
                     <button
