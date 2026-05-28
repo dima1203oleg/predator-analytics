@@ -26,7 +26,6 @@ import {
 import { analyticsService } from '@/services/unified/analytics.service';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { HoloCard } from '@/components/ui/HoloCard';
-import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { Badge } from '@/components/ui/badge';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
@@ -76,8 +75,7 @@ const TenderCard: React.FC<{ tender: any; idx: number }> = ({ tender, idx }) => 
             transition={{ delay: idx * 0.04 }}
             className="group"
         >
-            <TacticalCard
-                variant="cyber"
+            <HoloCard
                 className={cn(
                     "p-8 border-2 transition-all duration-500 h-full flex flex-col relative overflow-hidden rounded-[3rem]",
                     isCritical ? "bg-amber-950/20 border-amber-500/20 hover:border-amber-500/50" : "bg-black border-white/[0.04] hover:border-emerald-500/30"

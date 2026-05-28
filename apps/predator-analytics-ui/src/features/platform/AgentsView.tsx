@@ -1,7 +1,6 @@
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { HoloCard } from '@/components/ui/HoloCard';
-import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import {
     Bot, Activity, Server, Zap, Network, Cpu, HardDrive,
@@ -875,11 +874,13 @@ const AgentsView: React.FC = () => {
                     </HoloCard>
 
                     {/* ── СПОВІЩЕННЯ ФЛОТУ ── */}
-                    <TacticalCard
-                        variant="holographic"
-                        title={premiumLocales.agentsView.panels.fleetAlerts}
+                    <HoloCard
                         className="border-white/5 bg-slate-950/40"
                     >
+                        <div className="flex items-center gap-3 mb-4 p-2">
+                            <AlertCircle size={18} className="text-[#c9a227]" />
+                            <h4 className="text-[10px] font-black text-[#c9a227] uppercase tracking-tight">{premiumLocales.agentsView.panels.fleetAlerts}</h4>
+                        </div>
                         <div className="space-y-3">
                             {realAlerts.length > 0 ? (
                                 realAlerts.slice(0, 4).map((alert, idx: number) => (
