@@ -14,6 +14,7 @@ import { cn } from '@/utils/cn';
 import { ViewHeader } from '@/components/ViewHeader';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { CyberOrb } from '@/components/CyberOrb';
 import { CyberGrid } from '@/components/CyberGrid';
@@ -385,7 +386,13 @@ const EnginesView: React.FC = () => {
                     
                     {/* Left Panel: Engine Selection */}
                     <div className="lg:col-span-3 space-y-8">
-                        <TacticalCard variant="holographic" title="СПИСОК ДВИГУНІВ" className="p-6 bg-slate-950/40 border-white/5 rounded-[40px] panel-3d">
+                        <HoloCard variant="gold" className="p-6 rounded-[40px] panel-3d">
+                            <div className="flex items-center gap-3 mb-6">
+                                <div className="p-2 bg-[#c9a227]/10 rounded-lg">
+                                    <Cpu size={18} className="text-[#c9a227]" />
+                                </div>
+                                <h4 className="text-sm font-black text-white uppercase tracking-tight">СПИСОК ДВИГУНІВ</h4>
+                            </div>
                             <div className="space-y-3">
                                 {engines.map(engine => (
                                     <EngineListItem 
@@ -410,7 +417,7 @@ const EnginesView: React.FC = () => {
                                     </div>
                                 ))}
                             </div>
-                        </TacticalCard>
+                        </HoloCard>
 
                         <button className="w-full py-6 bg-purple-600/10 border border-purple-500/20 rounded-[32px] text-[10px] font-black text-purple-400 uppercase tracking-[0.5em] hover:bg-purple-600/20 hover:text-white transition-all italic flex items-center justify-center gap-4 group">
                             <RefreshCw size={16} className="group-hover:rotate-180 transition-transform duration-1000" />
@@ -428,15 +435,18 @@ const EnginesView: React.FC = () => {
                                 exit={{ opacity: 0, scale: 1.02, y: -20 }}
                                 className="space-y-12"
                             >
-                                <TacticalCard variant="holographic" className="p-12 overflow-hidden relative border-white/5 bg-slate-950/40 rounded-[60px] panel-3d">
+                                <HoloCard className="p-12 overflow-hidden relative rounded-[60px] panel-3d">
                                     <div className="absolute top-0 right-0 p-20 opacity-5 group-hover:scale-110 transition-transform">
                                         <selectedEngine.icon size={300} style={{ color: selectedEngine.color }} />
                                     </div>
                                     <EngineCardHeader engine={selectedEngine} />
-                                </TacticalCard>
+                                </HoloCard>
 
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-                                    <TacticalCard variant="glass" title="ЕФЕКТИВНІСТЬ" className="p-8 h-[300px] rounded-[48px] overflow-hidden flex flex-col items-center">
+                                    <HoloCard className="p-8 h-[300px] rounded-[48px] overflow-hidden flex flex-col items-center">
+                                        <div className="p-2 bg-[#c9a227]/10 rounded-lg mb-4 self-start">
+                                            <h4 className="text-[10px] font-black text-[#c9a227] uppercase tracking-tight">ЕФЕКТИВНІСТЬ</h4>
+                                        </div>
                                         <div className="flex-1 w-full relative">
                                             <ReactECharts option={gaugeOption} style={{ height: '220px', width: '100%' }} />
                                         </div>
@@ -446,9 +456,12 @@ const EnginesView: React.FC = () => {
                                                 {selectedEngine.trend > 0 ? '+' : ''}{selectedEngine.trend}% (24г)
                                             </span>
                                         </div>
-                                    </TacticalCard>
+                                    </HoloCard>
 
-                                    <TacticalCard variant="glass" title="ТОЧНІСТЬ ВАЛІДАЦІЇ" className="p-8 h-[300px] rounded-[48px] overflow-hidden flex flex-col items-center">
+                                    <HoloCard className="p-8 h-[300px] rounded-[48px] overflow-hidden flex flex-col items-center">
+                                        <div className="p-2 bg-[#c9a227]/10 rounded-lg mb-4 self-start">
+                                            <h4 className="text-[10px] font-black text-[#c9a227] uppercase tracking-tight">ТОЧНІСТЬ ВАЛІДАЦІЇ</h4>
+                                        </div>
                                         <div className="flex-1 w-full relative flex items-center justify-center">
                                             <div className="absolute inset-0 flex items-center justify-center">
                                                 <div className="text-3xl font-black text-white italic tracking-tighter">{selectedEngine.metrics.accuracy}%</div>
@@ -456,9 +469,12 @@ const EnginesView: React.FC = () => {
                                             <ReactECharts option={accuracyOption} style={{ height: '200px', width: '200px' }} />
                                         </div>
                                         <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-4">ІНДЕКС_ВПЕВНЕНОСТІ: {selectedEngine.confidence.toFixed(2)}</p>
-                                    </TacticalCard>
+                                    </HoloCard>
 
-                                    <TacticalCard variant="glass" title="ВЕКТОРНІ СУБ-СКОРИ" className="p-8 h-[300px] rounded-[48px] overflow-hidden">
+                                    <HoloCard className="p-8 h-[300px] rounded-[48px] overflow-hidden">
+                                        <div className="p-2 bg-[#c9a227]/10 rounded-lg mb-4">
+                                            <h4 className="text-[10px] font-black text-[#c9a227] uppercase tracking-tight">ВЕКТОРНІ СУБ-СКОРИ</h4>
+                                        </div>
                                         <div className="space-y-6 mt-4">
                                             {selectedEngine.subScores.map((sub: any, i: number) => (
                                                 <div key={i} className="space-y-2">
@@ -477,17 +493,23 @@ const EnginesView: React.FC = () => {
                                                 </div>
                                             ))}
                                         </div>
-                                    </TacticalCard>
+                                    </HoloCard>
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                                    <TacticalCard variant="holographic" title="ДИНАМІКА ПОТОКУ (24 ГОДИННИ)" className="p-10 rounded-[60px] bg-slate-950/40 border-white/5">
+                                    <HoloCard className="p-10 rounded-[60px]">
+                                        <div className="p-2 bg-[#c9a227]/10 rounded-lg mb-4">
+                                            <h4 className="text-[10px] font-black text-[#c9a227] uppercase tracking-tight">ДИНАМІКА ПОТОКУ (24 ГОДИННИ)</h4>
+                                        </div>
                                         <div className="h-[250px] w-full">
                                             <ReactECharts option={historyOption} style={{ height: '100%', width: '100%' }} />
                                         </div>
-                                    </TacticalCard>
+                                    </HoloCard>
 
-                                    <TacticalCard variant="holographic" title="АКТИВНИЙ ПОТІК СИГНАЛІВ" className="p-10 rounded-[60px] bg-slate-950/40 border-white/5">
+                                    <HoloCard className="p-10 rounded-[60px]">
+                                        <div className="p-2 bg-[#c9a227]/10 rounded-lg mb-4">
+                                            <h4 className="text-[10px] font-black text-[#c9a227] uppercase tracking-tight">АКТИВНИЙ ПОТІК СИГНАЛІВ</h4>
+                                        </div>
                                         <div className="space-y-4 max-h-[300px] overflow-y-auto custom-scrollbar pr-4">
                                             {selectedEngine.recentSignals.map((sig: any, i: number) => {
                                                 const cfg = SEVERITY_CONFIG[sig.severity as RiskLevelValue] || SEVERITY_CONFIG.low;
@@ -514,7 +536,7 @@ const EnginesView: React.FC = () => {
                                                 );
                                             })}
                                         </div>
-                                    </TacticalCard>
+                                    </HoloCard>
                                 </div>
                             </motion.div>
                         </AnimatePresence>
