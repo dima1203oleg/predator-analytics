@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { cn } from '@/utils/cn';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { LogEntry } from '@/types';
@@ -217,10 +218,8 @@ const SecurityView: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10">
 
                 <div className="lg:col-span-2 space-y-6">
-                    <TacticalCard variant="holographic"
-                        title="Глобальна Карта Загроз"
+                    <HoloCard
                         className="panel-3d relative overflow-hidden h-[500px] bg-slate-900/60"
-                        noPadding
                     >
                         <div className="relative w-full h-full bg-black/20 rounded-[32px] overflow-hidden group">
                             <div className="scanline" />
@@ -249,16 +248,22 @@ const SecurityView: React.FC = () => {
                                 </div>
                             </div>
                         </div>
-                    </TacticalCard>
+                    </HoloCard>
 
-                    <TacticalCard variant="holographic" title="Ланцюг Атаки (Kill Chain)" className="panel-3d bg-slate-900/40  border-white/5">
+                    <HoloCard className="panel-3d bg-slate-900/40 border-white/5">
+                        <div className="p-4 border-b border-white/5 mb-4">
+                            <h4 className="text-sm font-black text-white uppercase tracking-tight">Ланцюг Атаки (Kill Chain)</h4>
+                        </div>
                         <KillChainViz />
-                    </TacticalCard>
+                    </HoloCard>
                 </div>
 
                 {/* 2. RIGHT COLUMN */}
                 <div className="space-y-6">
-                    <TacticalCard variant="holographic" title="рівень Загрози (DEFCON)" className="panel-3d glass-morphism" glow={state.defconLevel === 1 ? 'red' : 'none'}>
+                    <HoloCard glowColor={state.defconLevel === 1 ? 'rgba(239,68,68,0.4)' : undefined} className="panel-3d glass-morphism">
+                        <div className="p-4 border-b border-white/5 mb-4">
+                            <h4 className="text-sm font-black text-white uppercase tracking-tight">рівень Загрози (DEFCON)</h4>
+                        </div>
                         <div className="flex flex-col items-center justify-center p-2">
                             <div className="w-full flex flex-col-reverse gap-2">
                                 {[1, 2, 3, 4, 5].map((level) => (
@@ -284,21 +289,30 @@ const SecurityView: React.FC = () => {
                                 ))}
                             </div>
                         </div>
-                    </TacticalCard>
+                    </HoloCard>
 
-                    <TacticalCard variant="holographic" title="Активний Захист" className="panel-3d bg-slate-900/40  border-white/5">
+                    <HoloCard className="panel-3d bg-slate-900/40 border-white/5">
+                        <div className="p-4 border-b border-white/5 mb-4">
+                            <h4 className="text-sm font-black text-white uppercase tracking-tight">Активний Захист</h4>
+                        </div>
                         <ActiveDefenses />
-                    </TacticalCard>
+                    </HoloCard>
 
-                    <TacticalCard variant="holographic" title="Матриця Довіри" className="panel-3d bg-slate-900/40  border-white/5">
+                    <HoloCard className="panel-3d bg-slate-900/40 border-white/5">
+                        <div className="p-4 border-b border-white/5 mb-4">
+                            <h4 className="text-sm font-black text-white uppercase tracking-tight">Матриця Довіри</h4>
+                        </div>
                         <IdentityTrustMatrix />
-                    </TacticalCard>
+                    </HoloCard>
                 </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 relative z-10">
                 {/* WAF Logs */}
-                <TacticalCard variant="holographic" title="Перехоплення WAF НАЖИВО" glow="red" className="panel-3d glass-morphism p-0 overflow-hidden" noPadding>
+                <HoloCard glowColor="rgba(239,68,68,0.4)" className="panel-3d glass-morphism overflow-hidden">
+                    <div className="p-4 border-b border-white/5">
+                        <h4 className="text-sm font-black text-white uppercase tracking-tight">Перехоплення WAF НАЖИВО</h4>
+                    </div>
                     <div className="bg-black/80 p-4 h-[300px] font-mono text-[11px] space-y-1 relative">
                         <div className="sticky top-0 bg-black py-2 text-slate-500 border-b border-white/5 mb-3 z-10 flex justify-between px-2 font-bold tracking-widest uppercase text-[10px]">
                             <span className="w-20">Час</span>
@@ -333,10 +347,13 @@ const SecurityView: React.FC = () => {
                             <RefreshCw size={10} className="animate-spin" /> Глибоке сканування пакетів активне
                         </div>
                     </div>
-                </TacticalCard>
+                </HoloCard>
 
                 {/* Encryption Stats */}
-                <TacticalCard variant="holographic" title="Статус Квантової Стійкості" className="panel-3d glass-morphism">
+                <HoloCard className="panel-3d glass-morphism">
+                    <div className="p-4 border-b border-white/5 mb-4">
+                        <h4 className="text-sm font-black text-white uppercase tracking-tight">Статус Квантової Стійкості</h4>
+                    </div>
                     <EncryptionEntropy />
                     <div className="grid grid-cols-2 gap-4 mt-4">
                         <motion.div
@@ -360,7 +377,7 @@ const SecurityView: React.FC = () => {
                             <RefreshCw size={18} className="text-blue-500/50 group-hover:text-blue-500 transition-colors" />
                         </motion.div>
                     </div>
-                </TacticalCard>
+                </HoloCard>
             </div>
         </div>
     );
