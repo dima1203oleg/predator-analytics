@@ -23,6 +23,7 @@ import { ViewHeader } from '@/components/ViewHeader';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { Badge } from '@/components/ui/badge';
 import { NeuralPulse } from '@/components/ui/NeuralPulse';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberOrb } from '@/components/CyberOrb';
 import { CyberGrid } from '@/components/CyberGrid';
@@ -391,38 +392,41 @@ const DashboardView: React.FC = () => {
              </div>
           ) : (
             <>
-              {/* Grand Metrics Row */}
+              {/* Grand Metrics Row — AURUM OBSIDIAN HoloCard */}
               <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-8 relative z-10">
                 {[
-                  { label: 'ФІНАНСОВИЙ_ПОТІК', value: formatCurrency(overview!.summary.total_value_usd), icon: <TrendingUp size={24} />, color: 'red', sub: 'Загальна вартість' },
-                  { label: 'ІМПОРТ_ВВЕЗЕННЯ', value: formatNumber(overview!.summary.import_count), icon: <Ship size={24} />, color: 'cyan', sub: 'Вантажні судна' },
-                  { label: 'ЕКСПОРТ_ВИВЕЗЕННЯ', value: formatNumber(overview!.summary.export_count), icon: <Package size={24} />, color: 'emerald', sub: 'Логістичні партії' },
-                  { label: 'ЗОНА_КРИТИЧНОСТІ', value: String(overview!.summary.high_risk_count), icon: <ShieldAlert size={24} />, color: 'amber', sub: 'Високий ризик' },
-                  { label: 'СЕМАНТИЧНИЙ_ГРАФ', value: formatNumber(overview!.summary.graph_nodes), icon: <Network size={24} />, color: 'purple', sub: 'Вузли системи' },
-                  { label: 'НЕЙРО_МАТРИЦЯ', value: formatNumber(overview!.summary.vectors), icon: <Brain size={24} />, color: 'rose', sub: 'Векторні індекси' },
+                  { label: 'ФІНАНСОВИЙ_ПОТІК', value: formatCurrency(overview!.summary.total_value_usd), icon: TrendingUp, color: '#e11d48', sub: 'Загальна вартість' },
+                  { label: 'ІМПОРТ_ВВЕЗЕННЯ', value: formatNumber(overview!.summary.import_count), icon: Ship, color: '#06b6d4', sub: 'Вантажні судна' },
+                  { label: 'ЕКСПОРТ_ВИВЕЗЕННЯ', value: formatNumber(overview!.summary.export_count), icon: Package, color: '#10b981', sub: 'Логістичні партії' },
+                  { label: 'ЗОНА_КРИТИЧНОСТІ', value: String(overview!.summary.high_risk_count), icon: ShieldAlert, color: '#f59e0b', sub: 'Високий ризик' },
+                  { label: 'СЕМАНТИЧНИЙ_ГРАФ', value: formatNumber(overview!.summary.graph_nodes), icon: Network, color: '#8b5cf6', sub: 'Вузли системи' },
+                  { label: 'НЕЙРО_МАТРИЦЯ', value: formatNumber(overview!.summary.vectors), icon: Brain, color: '#f43f5e', sub: 'Векторні індекси' },
                 ].map((m, i) => (
                   <motion.div
                     key={m.label}
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.05, type: "spring", stiffness: 100 }}
-                    className="p-8 bg-black/40  border border-white/5 rounded-[2.5rem] relative overflow-hidden group hover:border-rose-500/40 transition-all duration-500 shadow-[0_30px_60px_-12px_rgba(0,0,0,0.8)]"
                   >
-                    <div className="absolute inset-0 bg-gradient-to-br from-rose-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                    <div className={cn(
-                      "absolute top-6 right-6 p-4 rounded-[1.5rem] bg-white/5 border border-white/5 group-hover:bg-rose-500/10 group-hover:border-rose-500/20 transition-all duration-500 shadow-xl",
-                    )}>
-                      <div className={`text-slate-400 group-hover:text-rose-500 group-hover:scale-110 transition-all duration-500`}>{m.icon}</div>
-                    </div>
-                    <div className="space-y-4 relative z-10">
-                      <div className="space-y-1">
-                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic group-hover:text-rose-500 transition-colors duration-500">{m.label}</p>
-                        <p className="text-[9px] font-bold text-slate-700 uppercase tracking-tighter italic">{m.sub}</p>
+                    <HoloCard
+                      glowColor={m.color}
+                      className="h-full"
+                    >
+                      <div className="p-6 relative z-10">
+                        <div className="absolute top-4 right-4 p-3 rounded-2xl bg-white/[0.03] border border-white/[0.05]"
+                          style={{ color: m.color }}
+                        >
+                          <m.icon size={20} />
+                        </div>
+                        <div className="space-y-3 pt-2">
+                          <div className="space-y-1">
+                            <p className="font-display text-[9px] font-black uppercase tracking-[0.15em] italic" style={{ color: m.color }}>{m.label}</p>
+                            <p className="font-interface text-[8px] font-bold text-[#5a5a5a] uppercase tracking-tighter italic">{m.sub}</p>
+                          </div>
+                          <p className="font-data text-3xl font-black text-[#e8e8e8] italic tracking-tighter">{m.value}</p>
+                        </div>
                       </div>
-                      <p className="text-4xl font-mono font-black text-white italic tracking-tighter group-hover:text-rose-500 transition-colors duration-500">{m.value}</p>
-                    </div>
-                    {/* Corner accent */}
-                    <div className="absolute bottom-0 right-0 w-12 h-12 bg-gradient-to-br from-transparent to-rose-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </HoloCard>
                   </motion.div>
                 ))}
               </div>

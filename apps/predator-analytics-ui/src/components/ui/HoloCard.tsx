@@ -10,6 +10,7 @@ interface HoloCardProps {
   children: React.ReactNode;
   className?: string;
   variant?: 'default' | 'gold' | 'rose' | 'teal';
+  glowColor?: string; // Custom hex/rgba for glow edge
   glow?: boolean;
   tilt?: boolean;
   onClick?: () => void;
@@ -27,6 +28,7 @@ export const HoloCard: React.FC<HoloCardProps> = ({
   children,
   className,
   variant = 'default',
+  glowColor,
   glow = true,
   tilt = true,
   onClick,
@@ -84,7 +86,7 @@ export const HoloCard: React.FC<HoloCardProps> = ({
       <motion.div
         className="absolute inset-0 rounded-xl opacity-0 pointer-events-none"
         style={{
-          background: `conic-gradient(from 0deg, transparent 0deg, transparent 300deg, ${variant === 'gold' ? 'rgba(201,162,39,0.4)' : variant === 'rose' ? 'rgba(225,29,72,0.4)' : 'rgba(138,138,138,0.4)'} 360deg)`,
+          background: `conic-gradient(from 0deg, transparent 0deg, transparent 300deg, ${glowColor || (variant === 'gold' ? 'rgba(201,162,39,0.4)' : variant === 'rose' ? 'rgba(225,29,72,0.4)' : 'rgba(138,138,138,0.4)')} 360deg)`,
         }}
         animate={{
           opacity: isHovered && glow ? 1 : 0,
