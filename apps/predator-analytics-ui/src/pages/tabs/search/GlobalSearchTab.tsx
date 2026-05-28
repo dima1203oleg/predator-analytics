@@ -18,11 +18,35 @@ import { ViewHeader } from '@/components/ViewHeader';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { apiClient } from '@/services/api/config';
 import { cn } from '@/utils/cn';
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
+
+// ── Skeleton карточка для завантаження ──
+const SkeletonCard = () => (
+    <div className="rounded-[3rem] border border-white/5 bg-black/40 p-10 h-full space-y-6 animate-pulse">
+        <div className="flex items-center justify-between">
+            <div className="flex items-center gap-5">
+                <div className="h-12 w-12 rounded-2xl bg-slate-800/60" />
+                <div className="space-y-2">
+                    <div className="h-3 w-24 rounded bg-slate-800/60" />
+                    <div className="h-2 w-16 rounded bg-slate-800/40" />
+                </div>
+            </div>
+            <div className="h-6 w-16 rounded-full bg-slate-800/60" />
+        </div>
+        <div className="h-8 w-3/4 rounded bg-slate-800/60" />
+        <div className="h-16 rounded-2xl bg-slate-800/40" />
+        <div className="flex items-center justify-between pt-4">
+            <div className="flex gap-10">
+                <div className="space-y-1"><div className="h-2 w-12 rounded bg-slate-800/40" /><div className="h-6 w-10 rounded bg-slate-800/60" /></div>
+                <div className="space-y-1"><div className="h-2 w-12 rounded bg-slate-800/40" /><div className="h-6 w-10 rounded bg-slate-800/60" /></div>
+            </div>
+            <div className="h-10 w-10 rounded-xl bg-slate-800/60" />
+        </div>
+    </div>
+);
 
 export const GlobalSearchTab: React.FC = () => {
     const [query, setQuery] = useState('');
-    const [isSearching, setIsSearching] = useState(false);
-    const [results, setResults] = useState<any[]>([]);
     const [activeFilter, setActiveFilter] = useState('ALL');
     const [selectedEntity, setSelectedEntity] = useState<any | null>(null);
     const [loadingDetails, setLoadingDetails] = useState(false);
@@ -34,25 +58,24 @@ export const GlobalSearchTab: React.FC = () => {
         return () => clearTimeout(timer);
     }, [query]);
 
-    // Автоматичний пошук при зміні debouncedQuery (мінімум 2 символи)
-    useEffect(() => {
-        if (debouncedQuery.trim().length >= 2) {
-            handleSearch(debouncedQuery);
-        }
-    }, [debouncedQuery]);
-
-    const handleSearch = useCallback(async (searchQuery: string) => {
-        if (!searchQuery.trim()) return;
-        setIsSearching(true);
-        setSelectedEntity(null);
-
-        try {
+    // Infinite scroll для компаній
+    const {
+        items: results,
+        isLoading,
+        isLoadingMore,
+        hasMore,
+        error,
+        refresh,
+        sentinelRef,
+    } = useInfiniteScroll({
+        limit: 12,
+        fetcher: useCallback(async (offset: number, limit: number) => {
             const response = await apiClient.get('/companies', {
-                params: { search: searchQuery, limit: 12, offset: 0 }
+                params: { search: debouncedQuery, limit, offset }
             });
             const companies = response.data?.companies || [];
-            // Мапінг даних API у формат компонента
-            setResults(companies.map((c: any) => ({
+            const total = response.data?.total || 0;
+            const mapped = companies.map((c: any) => ({
                 id: c.ueid,
                 title: c.name,
                 type: 'COMPANY',
@@ -64,14 +87,16 @@ export const GlobalSearchTab: React.FC = () => {
                 region: c.region,
                 industry: c.industry,
                 status: c.status
-            })));
-        } catch (err) {
-            console.error('Search failed:', err);
-            setResults([]);
-        } finally {
-            setIsSearching(false);
-        }
-    }, []);
+            }));
+            return { items: mapped, total };
+        }, [debouncedQuery]),
+    });
+
+    // Оновлення пошуку при зміні debouncedQuery
+    useEffect(() => {
+        refresh();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [debouncedQuery]);
 
     const fetchEntityDetails = async (entity: any) => {
         setLoadingDetails(true);
@@ -202,19 +227,18 @@ export const GlobalSearchTab: React.FC = () => {
                     </div>
 
                     <div className="mt-8 min-h-[500px]">
-                        {isSearching ? (
-                            <div className="flex flex-col items-center justify-center py-32 gap-16">
-                                <div className="relative">
-                                    <div className="absolute inset-0 bg-red-600/10 blur-[100px] scale-150 " />
-                                    <CyberOrb size={180} color="#dc2626" intensity={0.6} pulse />
-                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                                        <Target size={48} className="text-white animate-spin-slow" />
-                                    </div>
-                                </div>
-                                <div className="text-center space-y-4">
-                                    <span className="text-3xl font-black text-red-600 uppercase tracking-[1em] italic  block">ДЕКОДУВАННЯ_СИГНАЛУ</span>
-                                    <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.5em] italic">SEARCH_SCAN_v63.0-ELITE // {query.toUpperCase()}</p>
-                                </div>
+                        {isLoading ? (
+                            // Skeleton grid
+                            <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-8">
+                                {Array.from({ length: 6 }).map((_, i) => (
+                                    <SkeletonCard key={i} />
+                                ))}
+                            </div>
+                        ) : error ? (
+                            <div className="flex flex-col items-center justify-center py-32 text-center gap-6 border-2 border-dashed border-rose-500/10 rounded-[4rem]">
+                                <ShieldAlert size={64} className="text-rose-500/30" />
+                                <p className="text-lg font-black text-rose-500/60 uppercase tracking-widest italic">ПОМИЛКА ЗВ'ЯЗКУ</p>
+                                <p className="text-xs text-slate-600 max-w-md">{error}</p>
                             </div>
                         ) : results.length > 0 ? (
                             <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-8">
@@ -223,7 +247,7 @@ export const GlobalSearchTab: React.FC = () => {
                                         <motion.div
                                             key={res.id}
                                             initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
-                                            transition={{ delay: i * 0.05 }}
+                                            transition={{ delay: Math.min(i * 0.03, 0.3) }}
                                             onClick={() => fetchEntityDetails(res)}
                                             className="group cursor-pointer"
                                         >
@@ -273,14 +297,23 @@ export const GlobalSearchTab: React.FC = () => {
                                         </motion.div>
                                     ))}
                                 </AnimatePresence>
+                                {/* Infinite scroll sentinel */}
+                                <div ref={sentinelRef} className="col-span-full h-8 flex items-center justify-center">
+                                    {isLoadingMore && (
+                                        <div className="flex items-center gap-3 text-slate-600">
+                                            <Target size={16} className="animate-spin" />
+                                            <span className="text-[10px] font-black uppercase tracking-widest italic">ЗАВАНТАЖЕННЯ...</span>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         ) : (
                             <div className="flex flex-col items-center justify-center py-32 text-center gap-10 border-2 border-dashed border-white/5 rounded-[4rem]">
                                 <Ghost size={120} className="text-red-950/10 " />
                                 <div className="space-y-4">
-                                   <p className="text-4xl font-black text-red-950/20 uppercase tracking-[0.5em] italic leading-tight">ГО ИЗОНТ ПОДІЙ ПО ОЖНІЙ</p>
+                                   <p className="text-4xl font-black text-red-950/20 uppercase tracking-[0.5em] italic leading-tight">ГОЛОВНТ ПОДІЙ ПО ОЖНІЙ</p>
                                    <p className="text-[11px] text-red-950/10 font-bold uppercase tracking-[0.3em] italic max-w-lg mx-auto leading-relaxed">
-                                      СИСТЕМА ГОТОВА ДО СКАНУВАННЯ. ВВЕДІТЬ ПА АМЕТрИ ЦІЛІ ДЛЯ ПОШУКУ В ГЛОБАЛЬНОМУ ОСІНТ-КОНТУ І.
+                                      СИСТЕМА ГОТОВА ДО СКАНУВАННЯ. ВВЕДІТЬ ПАРАМЕТРИ ЦІЛІ ДЛЯ ПОШУКУ В ГЛОБАЛЬНОМУ ОСІНТ-КОНТУРІ.
                                    </p>
                                 </div>
                             </div>
