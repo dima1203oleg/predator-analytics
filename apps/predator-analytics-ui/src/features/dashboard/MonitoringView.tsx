@@ -7,6 +7,8 @@
 
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import { ThermalCard } from '@/components/polish/ThermalCard';
+import { StatusLed } from '@/components/ui/StatusLed';
+import { KineticText } from '@/components/ui/KineticText';
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -203,8 +205,10 @@ export default function MonitoringView() {
                               <m.icon className={cn("h-5 w-5", m.tone.text)} />
                            </div>
                          </div>
-                         <div className="text-3xl font-black italic tracking-tighter text-white tabular-nums mb-1">{m.value}</div>
-                         <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic group-hover:text-rose-400 transition-colors">{m.label}</div>
+                         <div className="text-3xl font-data font-bold tracking-tighter text-[#e8e8e8] tabular-nums mb-1">
+                           <KineticText value={m.value} scramble />
+                         </div>
+                         <div className="font-display text-[10px] font-semibold text-[#5a5a5a] uppercase tracking-[0.1em] group-hover:text-[#e11d48] transition-colors">{m.label}</div>
                        </div>
                      </ThermalCard>
                    ))}
@@ -214,26 +218,27 @@ export default function MonitoringView() {
               {/* Data Sources Status */}
               <div className="space-y-6">
                 <div className="flex items-center justify-between px-4">
-                   <h2 className="text-xl font-black text-white italic uppercase tracking-tighter">ДЖЕРЕЛА <span className="text-indigo-400">ДОВІРИ</span></h2>
+                   <h2 className="font-display text-lg font-extrabold text-[#e8e8e8] uppercase tracking-tight">ДЖЕРЕЛА <span className="text-[#4ecdc4]">ДОВІРИ</span></h2>
                    <Shield className="h-5 w-5 text-indigo-400" />
                 </div>
                 <div className="rounded-3xl border border-white/5 bg-black/40  p-8 shadow-xl">
                    <div className="space-y-4">
                      {[
-                       { label: 'PostgreSQL (SSOT)', status: 'АКТИВНО', latency: '2ms', color: 'text-emerald-400' },
-                       { label: 'ClickHouse (OLAP)', status: 'ОНЛАЙН', latency: '45ms', color: 'text-emerald-400' },
-                       { label: 'Neo4j (GRAPH)', status: 'АКТИВНО', latency: '12ms', color: 'text-emerald-400' },
-                       { label: 'OpenSearch', status: 'ІНДЕКСАЦІЯ', latency: '120ms', color: 'text-sky-400' },
-                       { label: 'Qdrant (VECTOR)', status: 'АКТИВНО', latency: '8ms', color: 'text-emerald-400' },
+                       { label: 'PostgreSQL (SSOT)', status: 'АКТИВНО', latency: '2ms', led: 'healthy' as const },
+                       { label: 'ClickHouse (OLAP)', status: 'ОНЛАЙН', latency: '45ms', led: 'healthy' as const },
+                       { label: 'Neo4j (GRAPH)', status: 'АКТИВНО', latency: '12ms', led: 'healthy' as const },
+                       { label: 'OpenSearch', status: 'ІНДЕКСАЦІЯ', latency: '120ms', led: 'warning' as const },
+                       { label: 'Qdrant (VECTOR)', status: 'АКТИВНО', latency: '8ms', led: 'healthy' as const },
                      ].map((db) => (
-                       <div key={db.label} className="flex items-center justify-between rounded-2xl bg-white/[0.02] border border-white/5 p-4 hover:bg-white/[0.04] transition-all group">
+                       <div key={db.label} className="flex items-center justify-between rounded-xl glass-obsidian p-4 hover:border-[#c9a227]/20 transition-all group">
                          <div className="flex items-center gap-4">
-                            <Database size={16} className="text-slate-600 group-hover:text-rose-500 transition-colors" />
-                            <span className="text-xs font-black text-slate-400 italic group-hover:text-white">{db.label}</span>
+                            <Database size={16} className="text-[#5a5a5a] group-hover:text-[#c9a227] transition-colors" />
+                            <span className="font-interface text-xs font-medium text-[#8a8a8a] group-hover:text-[#e8e8e8]">{db.label}</span>
                          </div>
-                         <div className="flex items-center gap-6">
-                            <span className="text-[10px] font-mono text-slate-600">{db.latency}</span>
-                            <span className={cn("text-[10px] font-black italic tracking-widest", db.color)}>{db.status}</span>
+                         <div className="flex items-center gap-4">
+                            <span className="font-data text-[10px] text-[#5a5a5a]">{db.latency}</span>
+                            <StatusLed status={db.led} size="sm" pulse />
+                            <span className="font-display text-[10px] font-semibold uppercase tracking-[0.1em] text-[#8a8a8a]">{db.status}</span>
                          </div>
                        </div>
                      ))}
