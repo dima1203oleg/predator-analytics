@@ -17,6 +17,7 @@ import {
   Loader
 } from 'lucide-react';
 import { cersService } from '@/services/unified/cers.service';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { Badge } from '@/components/ui/badge';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
@@ -115,7 +116,7 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({ ueid: pr
 
         {/* KPI Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <TacticalCard variant="holographic" className="p-6">
+          <HoloCard variant="gold" className="p-6">
             <div className="flex justify-between items-start">
               <div className="p-2 bg-amber-500/10 rounded-lg"><DollarSign size={20} className="text-amber-500" /></div>
               {previous && (
@@ -131,9 +132,9 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({ ueid: pr
               <div className="text-[10px] text-slate-500 uppercase font-black tracking-widest">Дохід</div>
               <div className="text-3xl font-black text-white mt-1">{formatCurrency(latest.revenue)} <span className="text-xs text-slate-400 ml-1">МЛН ₴</span></div>
             </div>
-          </TacticalCard>
+          </HoloCard>
 
-          <TacticalCard variant="holographic" className="p-6">
+          <HoloCard variant="gold" className="p-6">
             <div className="flex justify-between items-start">
               <div className="p-2 bg-amber-500/10 rounded-lg"><TrendingUp size={20} className="text-amber-400" /></div>
             </div>
@@ -141,9 +142,9 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({ ueid: pr
               <div className="text-[10px] text-slate-500 uppercase font-black tracking-widest">Витрати</div>
               <div className="text-3xl font-black text-white mt-1">{formatCurrency(latest.expenses)} <span className="text-xs text-slate-400 ml-1">МЛН ₴</span></div>
             </div>
-          </TacticalCard>
+          </HoloCard>
 
-          <TacticalCard variant="holographic" className="p-6">
+          <HoloCard variant="gold" className="p-6">
             <div className="flex justify-between items-start">
               <div className="p-2 bg-emerald-500/10 rounded-lg"><BarChart3 size={20} className="text-emerald-400" /></div>
             </div>
@@ -151,9 +152,9 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({ ueid: pr
               <div className="text-[10px] text-slate-500 uppercase font-black tracking-widest">Прибуток</div>
               <div className="text-3xl font-black text-white mt-1">{formatCurrency(latest.profit)} <span className="text-xs text-slate-400 ml-1">МЛН ₴</span></div>
             </div>
-          </TacticalCard>
+          </HoloCard>
 
-          <TacticalCard variant="holographic" className="p-6">
+          <HoloCard variant="gold" className="p-6">
             <div className="flex justify-between items-start">
               <div className="p-2 bg-yellow-500/10 rounded-lg"><PieChart size={20} className="text-yellow-400" /></div>
             </div>
@@ -161,11 +162,11 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({ ueid: pr
               <div className="text-[10px] text-slate-500 uppercase font-black tracking-widest">Рентабельність</div>
               <div className="text-3xl font-black text-white mt-1">{latest.profitMargin.toFixed(1)} <span className="text-xs text-slate-400 ml-1">%</span></div>
             </div>
-          </TacticalCard>
+          </HoloCard>
         </div>
 
         {/* History Table */}
-        <TacticalCard variant="glass" title="📋 Історичні дані" className="overflow-hidden">
+        <HoloCard variant="default" className="overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
@@ -194,7 +195,7 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({ ueid: pr
               </tbody>
             </table>
           </div>
-        </TacticalCard>
+        </HoloCard>
 
         {/* System Diagnostics */}
         <div className="mt-12">
