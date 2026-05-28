@@ -29,6 +29,7 @@ import {
 } from 'lucide-react';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { CyberGrid } from '@/components/CyberGrid';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -292,7 +293,7 @@ export default function ModelTrainingView() {
                         
                         {/* Left Column: Active Session & Controls */}
                         <div className="col-span-12 xl:col-span-4 space-y-8">
-                            <TacticalCard variant="holographic" title="ДАНІ_АКТИВНОЇ_СЕСІЇ" className="bg-black/40 border-white/5 shadow-2xl relative overflow-hidden">
+                            <HoloCard variant="holographic" title="ДАНІ_АКТИВНОЇ_СЕСІЇ" className="bg-black/40 border-white/5 shadow-2xl relative overflow-hidden">
                                 <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
                                     <Binary size={120} />
                                 </div>
@@ -367,9 +368,9 @@ export default function ModelTrainingView() {
                                         </Button>
                                     </div>
                                 </div>
-                            </TacticalCard>
+                            </HoloCard>
 
-                            <TacticalCard variant="holographic" title="СПОЖИВАННЯ_РЕСУРСІВ" className="bg-black/40 border-white/5">
+                            <HoloCard variant="holographic" title="СПОЖИВАННЯ_РЕСУРСІВ" className="bg-black/40 border-white/5">
                                 <div className="grid grid-cols-2 gap-4 mt-4">
                                     {[
                                         { label: 'CPU_POWER', value: snapshot.resources.cpuLabel, icon: Activity },
@@ -386,12 +387,12 @@ export default function ModelTrainingView() {
                                         </div>
                                     ))}
                                 </div>
-                            </TacticalCard>
+                            </HoloCard>
                         </div>
 
                         {/* Middle Column: Visualization & History */}
                         <div className="col-span-12 xl:col-span-5 space-y-8">
-                            <TacticalCard variant="cyber" title="ПОТІК_НЕЙ ОННОЇ_ТОЧНОСТІ" className="bg-black/40 border-white/5 h-[400px] flex flex-col">
+                            <HoloCard variant="cyber" title="ПОТІК_НЕЙ ОННОЇ_ТОЧНОСТІ" className="bg-black/40 border-white/5 h-[400px] flex flex-col">
                                 <div className="flex-1 min-h-0 mt-8">
                                     <ResponsiveContainer width="100%" height="100%">
                                         <AreaChart data={snapshot.metrics}>
@@ -437,7 +438,7 @@ export default function ModelTrainingView() {
                                     </div>
                                     <span>З АЗКИ: {snapshot.metrics.length} ЦИКЛІВ</span>
                                 </div>
-                            </TacticalCard>
+                            </HoloCard>
 
                             <div className="space-y-6">
                                 <div className="flex items-center justify-between px-2">
@@ -465,7 +466,7 @@ export default function ModelTrainingView() {
 
                         {/* Right Column: Terminal Logs */}
                         <div className="col-span-12 xl:col-span-3">
-                            <TacticalCard variant="holographic" title="ПОТІК_НЕЙ ОННИХ_ЛОГІВ" className="bg-black/60 border-white/5 h-full flex flex-col min-h-[600px]">
+                            <HoloCard variant="holographic" title="ПОТІК_НЕЙ ОННИХ_ЛОГІВ" className="bg-black/60 border-white/5 h-full flex flex-col min-h-[600px]">
                                 <div className="flex-1 overflow-auto p-4 font-mono text-[9px] space-y-3 custom-scrollbar">
                                     {snapshot.logs.length > 0 ? (
                                         snapshot.logs.map((log, i) => (
@@ -501,7 +502,7 @@ export default function ModelTrainingView() {
                                     </div>
                                     <ScrollText size={14} className="text-white/20" />
                                 </div>
-                            </TacticalCard>
+                            </HoloCard>
                         </div>
 
                     </div>
