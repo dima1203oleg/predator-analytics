@@ -9,6 +9,7 @@ import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import { ThermalCard } from '@/components/polish/ThermalCard';
 import { StatusLed } from '@/components/ui/StatusLed';
 import { KineticText } from '@/components/ui/KineticText';
+import { ViewHeader } from '@/components/ViewHeader';
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -99,58 +100,37 @@ export default function MonitoringView() {
       <NeuralPulse color="rgba(129, 140, 248, 0.03)" size={1600} />
 
       {/* ═══════════════════════════════════════════════
-         TACTICAL HEADER — System Status Overview
+         TACTICAL HEADER — AURUM OBSIDIAN ViewHeader
          ═══════════════════════════════════════════════ */}
-      <motion.section
-        variants={fadeUp}
-        className="relative overflow-hidden rounded-3xl glass-obsidian p-8 sm:p-10"
-      >
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
-          <div>
-            <div className="inline-flex items-center gap-3">
-              <div className="h-1.5 w-1.5 rounded-full bg-[#e11d48] shadow-[0_0_12px_rgba(225,29,72,0.5)] animate-breathe" />
-              <span className="font-display text-[10px] font-semibold uppercase tracking-[0.12em] text-[#e11d48]">
-                SYSTEM_MONITOR v63.0
-              </span>
-            </div>
-            <h1 className="mt-4 font-display text-4xl font-extrabold text-[#e8e8e8] tracking-tighter uppercase">
-              ТАКТИЧНИЙ <span className="text-[#e11d48]">МОНІТОРИНГ</span>
-            </h1>
-            <p className="mt-2 font-display text-[10px] font-semibold text-[#5a5a5a] uppercase tracking-[0.1em]">
-              ЯДРО КЕРУВАННЯ ТА МОНІТОРИНГУ ІНФРАСТРУКТУРИ
-            </p>
-          </div>
+      <ViewHeader
+        title={
+          <span>
+            ТАКТИЧНИЙ <span className="text-[#e11d48]">МОНІТОРИНГ</span>
+          </span>
+        }
+        subtitle="ЯДРО КЕРУВАННЯ ТА МОНІТОРИНГУ ІНФРАСТРУКТУРИ"
+        icon={Activity}
+        breadcrumbs={['ПЛАТФОРМА', 'СИСТЕМА', 'МОНІТОРИНГ']}
+        badges={[
+          { label: isTruthData ? 'ПРАВДА' : 'МОК', icon: <div className={cn('h-1.5 w-1.5 rounded-full', isTruthData ? 'bg-emerald-400' : 'bg-amber-400')} />, color: isTruthData ? 'emerald' : 'amber' },
+          { label: 'v63.0', color: 'default' },
+        ]}
+        stats={[
+          { label: 'ОНОВЛЕННЯ', value: lastUpdateLabel, color: 'rose' },
+          { label: 'СТАТУС', value: cluster.statusLabel.toUpperCase(), color: cluster.statusLabel === 'Справно' ? 'emerald' : 'rose' },
+        ]}
+        actions={
+          <button 
+            onClick={refresh}
+            disabled={isLoading}
+            className="group flex h-14 w-14 items-center justify-center rounded-2xl border border-[#e11d48]/20 bg-[#e11d48]/5 text-[#e11d48] transition-all hover:bg-[#e11d48]/10"
+          >
+            <RefreshCcw className={cn("h-6 w-6 transition-transform", isLoading && "animate-spin")} />
+          </button>
+        }
+      />
 
-          <div className="flex items-center gap-6">
-            <div className="text-right">
-              <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1 italic">ОСТАННЄ ОНОВЛЕННЯ</p>
-              <p className="text-xs font-mono font-bold text-rose-400 italic">{lastUpdateLabel}</p>
-            </div>
-            {/* Індикатор джерела даних — Правда vs Мок */}
-            <div
-              className={cn(
-                'flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[8px] font-black uppercase tracking-[0.14em]',
-                isTruthData
-                  ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400'
-                  : 'border-amber-500/30 bg-amber-500/10 text-amber-400',
-              )}
-              title={isTruthData ? 'Дані отримано з реальних сенсорів інфраструктури' : 'Демонстраційні дані (backend недоступний)'}
-            >
-              <span className={cn('h-1.5 w-1.5 rounded-full', isTruthData ? 'bg-emerald-400 shadow-[0_0_6px_#34d399]' : 'bg-amber-400 shadow-[0_0_6px_#fbbf24]')} />
-              {isTruthData ? 'ПРАВДА' : 'МОК'}
-            </div>
-            <button 
-              onClick={refresh}
-              disabled={isLoading}
-              className="group flex h-14 w-14 items-center justify-center rounded-2xl border border-rose-500/20 bg-rose-500/5 text-rose-500 transition-all hover:bg-rose-500/10 hover:"
-            >
-              <RefreshCcw className={cn("h-6 w-6 transition-transform", isLoading && "animate-spin")} />
-            </button>
-            <CyberOrb size="sm" status={cluster.statusLabel === 'Справно' ? 'active' : 'alert'} pulsing />
-          </div>
-        </div>
-
-        {/* Tactical Tabs */}
+      {/* Tactical Tabs */}
         <div className="relative z-10 mt-12 flex flex-wrap gap-2">
           {tabs.map((tab) => (
             <button
@@ -168,7 +148,6 @@ export default function MonitoringView() {
             </button>
           ))}
         </div>
-      </motion.section>
 
       {/* ═══════════════════════════════════════════════
          CONTENT LAYOUT
