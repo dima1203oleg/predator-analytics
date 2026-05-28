@@ -239,6 +239,22 @@ class Alert(Base):
     timestamp = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     company_ueid = Column(String, nullable=True)
     resolved = Column(Boolean, default=False)
+    alert_type = Column(String, default="risk")  # risk, sanctions, tax, compliance
+
+class Transaction(Base):
+    __tablename__ = "transactions"
+    id = Column(String, primary_key=True)
+    company_ueid = Column(String, nullable=False)
+    direction = Column(String, nullable=False)  # import / export
+    goods_description = Column(Text, nullable=False)
+    value_usd = Column(Float, nullable=False)
+    weight_kg = Column(Float, nullable=False)
+    origin_country = Column(String, nullable=False)
+    destination_country = Column(String, nullable=False)
+    customs_office = Column(String, nullable=True)
+    declaration_date = Column(DateTime, nullable=False)
+    risk_flag = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
 class RiskAssessment(Base):
     __tablename__ = "risk_assessments"
@@ -289,6 +305,54 @@ async def get_current_user(token: str = Query(...)):
             raise HTTPException(401, "Invalid credentials")
         return user
 
+# ─── ГЕНЕРАТОР РЕАЛІСТИЧНИХ ДАНИХ ──────────────────────────────
+
+_UA_COMPANY_PREFIXES = ["ТОВ", "ПП", "ТДВ", "АТ", "ФОП"]
+_UA_COMPANY_NAMES_1 = [
+    "УКРАЇНСЬКИЙ", "НОВИЙ", "СХІДНИЙ", "ЗАХІДНИЙ", "ЄВРО", "ГЛОБАЛ",
+    "ПРОМИСЛОВИЙ", "ТОРГОВИЙ", "ФІНАНСОВИЙ", "ТЕХНО", "ІНФО",
+    "БУДІВЕЛЬНИЙ", "АГРО", "МЕДІА", "ТРАНС", "ЕКСПОРТНИЙ",
+    "ІМПОРТНИЙ", "ЕНЕРГЕТИЧНИЙ", "ЛОГІСТИЧНИЙ", "ІНВЕСТИЦІЙНИЙ",
+    "ДЕВЕЛОПМЕНТ", "КОНСАЛТИНГ", "СЕКЬЮРІТІ", "СОФТВЕР", "ХОЛДИНГ"
+]
+_UA_COMPANY_NAMES_2 = [
+    "ЦЕНТР", "СТАНДАРТ", "ПРОМИНЬ", "ШЛЯХ", "ФОРМАТ", "ВЕКТОР",
+    "РІШЕННЯ", "ПРОЕКТ", "ГРУП", "АЛЬЯНС", "ПАРТНЕР", "ЛІДЕР",
+    "ІННОВАЦІЯ", "РЕГІОН", "КОНТАКТ", "ПОТЕНЦІАЛ", "СИСТЕМА",
+    "ТЕХНОЛОДЖІ", "ПЛЮС", "МАКС", "ПРЕМІУМ", "БІЗНЕС", "СЕРВІС",
+    "ПРАЙМ", "ФАКТОР", "ЕКСПЕРТ", "КОМПЛЕКС", "СТРАТЕГІЯ"
+]
+_UA_CITIES = ["Kyiv", "Lviv", "Odesa", "Kharkiv", "Dnipro", "Zaporizhzhia", "Vinnytsia", "Poltava", "Chernihiv", "Ivano-Frankivsk", "Lutsk", "Rivne", "Ternopil", "Khmelnytskyi", "Chernivtsi", "Uzhhorod", "Zhytomyr", "Cherkasy", "Sumy", "Kropyvnytskyi"]
+_UA_INDUSTRIES = ["IT", "Finance", "Trade", "Logistics", "Construction", "Agriculture", "Energy", "Pharma", "Manufacturing", "Media", "Telecom", "Real Estate", "Consulting", "Security", "Transport", "Import", "Investment", "Food", "Textile", "Mining", "Automotive", "Chemical", "Healthcare", "Education", "Tourism"]
+_UA_GOODS = [
+    "Нефть сира", "Залізна руда", "Пшениця", "Кукурудза", "Соняшникова олія",
+    "Металопрокат", "Пластмаси", "Хімікати промислові", "Фармацевтика",
+    "Електроніка", "Автозапчастини", "Текстиль", "Меблі", "Будматеріали",
+    "Вугілля кам'яне", "Природний газ", "Деревина", "Папір", "Шоколад",
+    "Кава", "Чай", "Вино", "Пиво", "Спирт", "Добрива мінеральні",
+    "Цемент", "Скло", "Алюміній", "Мідь", "Титан", "Уран",
+    "Ртуть", "Свинець", "Цинк", "Нікель", "Кобальт", "Літій"
+]
+_COUNTRIES = ["UA", "PL", "DE", "CN", "US", "TR", "GB", "FR", "IT", "ES", "NL", "BE", "CZ", "HU", "RO", "BG", "GR", "BY", "RU", "KZ", "IN", "JP", "KR", "VN", "EG", "IL", "AE", "SA", "QA", "KW"]
+_CUSTOMS_OFFICES = ["Київ-Центральний", "Львів-Галицький", "Одеса-Портовий", "Харків-Східний", "Дніпро-Промисловий", "Запоріжжя-Південний", "Вінниця-Західний", "Полтава-Центральний"]
+
+def _gen_edrpou(idx: int) -> str:
+    return f"{((idx * 37129 + 1234567) % 89999999) + 10000000:08d}"
+
+def _gen_company_name(idx: int) -> str:
+    p = _UA_COMPANY_PREFIXES[idx % len(_UA_COMPANY_PREFIXES)]
+    n1 = _UA_COMPANY_NAMES_1[idx % len(_UA_COMPANY_NAMES_1)]
+    n2 = _UA_COMPANY_NAMES_2[(idx * 7) % len(_UA_COMPANY_NAMES_2)]
+    return f"{p} {n1} {n2}"
+
+def _gen_risk_score(idx: int) -> float:
+    base = (idx * 17 + 43) % 100
+    if idx % 13 == 0:
+        return round(90.0 + (idx % 10), 1)
+    if idx % 7 == 0:
+        return round(75.0 + (idx % 15), 1)
+    return round(float(base), 1)
+
 # Init DB
 async def init_all_databases():
     for eng, base in [(engine, Base), (clickhouse_engine, ClickHouseBase), (opensearch_engine, OpenSearchBase),
@@ -297,62 +361,104 @@ async def init_all_databases():
             await conn.run_sync(base.metadata.create_all)
     
     async with async_session() as session:
+        # ── Користувачі ──
         if not (await session.execute(select(func.count()).select_from(User))).scalar():
             for u in [("admin", "tech_admin"), ("client", "standard_client"), ("vip", "vip_client")]:
                 session.add(User(username=u[0], email=f"{u[0]}@predator.ua",
                                 hashed_password=get_password_hash(f"{u[0]}123"), role=u[1]))
         
+        # ── 150 Компаній ──
         if not (await session.execute(select(func.count()).select_from(Company))).scalar():
-            companies = [
-                ("COMP-001", "ТОВ ТЕСТОВА КОМПАНІЯ", "12345678", "ACTIVE", 74.2, "Kyiv", "IT"),
-                ("COMP-002", "ПП ЕКСПЕРТ", "23456789", "ACTIVE", 45.0, "Lviv", "Consulting"),
-                ("COMP-003", "ТОВ АЛЬФА ГРУП", "34567890", "ACTIVE", 88.5, "Kyiv", "Finance"),
-                ("COMP-004", "ПП БЕТА СЕРВІС", "45678901", "ACTIVE", 32.0, "Odesa", "Logistics"),
-                ("COMP-005", "ТОВ ГАММА ТРЕЙД", "56789012", "ACTIVE", 91.2, "Kyiv", "Trade"),
-                ("COMP-006", "ТОВ ДЕЛЬТА ЛОДЖИСТИКС", "67890123", "ACTIVE", 67.0, "Kharkiv", "Logistics"),
-                ("COMP-007", "ПП ЕПСИЛОН КОНСАЛТИНГ", "78901234", "ACTIVE", 23.5, "Dnipro", "Consulting"),
-                ("COMP-008", "ТОВ ЗЕТА БІЛДІНГ", "89012345", "ACTIVE", 82.1, "Kyiv", "Construction"),
-                ("COMP-009", "ПП ЕТА ТРЕЙДІНГ", "90123456", "ACTIVE", 55.0, "Lviv", "Trade"),
-                ("COMP-010", "ТОВ ТЕТА ІНВЕСТ", "01234567", "ACTIVE", 78.3, "Kyiv", "Investment"),
-                ("COMP-011", "ПП ЙОТА СЕКЬЮРИТІ", "11223344", "ACTIVE", 42.0, "Odesa", "Security"),
-                ("COMP-012", "ТОВ КАППА ФІНАНС", "22334455", "ACTIVE", 95.0, "Kyiv", "Finance"),
-                ("COMP-013", "ПП ЛЯМБДА ТЕХ", "33445566", "ACTIVE", 36.0, "Kharkiv", "IT"),
-                ("COMP-014", "ТОВ МЮ ФАРМА", "44556677", "ACTIVE", 71.5, "Lviv", "Pharma"),
-                ("COMP-015", "ПП НЮ ЕНЕРДЖІ", "55667788", "ACTIVE", 60.0, "Dnipro", "Energy"),
-                ("COMP-016", "ТОВ КСІ АГРО", "66778899", "ACTIVE", 48.0, "Kyiv", "Agriculture"),
-                ("COMP-017", "ПП ОМІКРОН МЕДІА", "77889900", "ACTIVE", 85.0, "Odesa", "Media"),
-                ("COMP-018", "ТОВ ПІ АЙ ТЕХНОЛОДЖІ", "88990011", "ACTIVE", 39.0, "Kharkiv", "IT"),
-                ("COMP-019", "ПП РО СОФТВЕР", "99001122", "ACTIVE", 52.0, "Lviv", "Software"),
-                ("COMP-020", "ТОВ СИГМА КОНСТРАКШН", "00112233", "ACTIVE", 76.0, "Kyiv", "Construction"),
-                ("COMP-021", "ПП ТАУ ТРАНСПОРТ", "11002233", "ACTIVE", 33.0, "Dnipro", "Transport"),
-                ("COMP-022", "ТОВ ІПСИЛОН ІМПОРТ", "22003344", "ACTIVE", 88.0, "Odesa", "Import"),
-                ("COMP-023", "ПП ФІ ДЕВЕЛОПМЕНТ", "33004455", "ACTIVE", 64.0, "Kyiv", "Real Estate"),
-                ("COMP-024", "ТОВ ХІ МАНУФАКТУРІНГ", "44005566", "ACTIVE", 41.0, "Lviv", "Manufacturing"),
-                ("COMP-025", "ПП ПСІ ТЕЛЕКОМ", "55006677", "ACTIVE", 79.0, "Kharkiv", "Telecom")
-            ]
-            for d in companies:
-                session.add(Company(ueid=d[0], name=d[1], edrpou=d[2], status=d[3],
-                                    risk_score=d[4], region=d[5], industry=d[6]))
+            for i in range(1, 151):
+                ueid = f"COMP-{i:03d}"
+                name = _gen_company_name(i)
+                edrpou = _gen_edrpou(i)
+                risk = _gen_risk_score(i)
+                region = _UA_CITIES[i % len(_UA_CITIES)]
+                industry = _UA_INDUSTRIES[i % len(_UA_INDUSTRIES)]
+                session.add(Company(ueid=ueid, name=name, edrpou=edrpou, status="ACTIVE",
+                                    risk_score=risk, region=region, industry=industry))
         
+        # ── 600 Транзакцій ──
+        if not (await session.execute(select(func.count()).select_from(Transaction))).scalar():
+            for i in range(1, 601):
+                comp_idx = (i % 150) + 1
+                ueid = f"COMP-{comp_idx:03d}"
+                direction = "import" if i % 2 == 0 else "export"
+                goods = _UA_GOODS[i % len(_UA_GOODS)]
+                value = round(10000 + (i * 137.53) % 990000, 2)
+                weight = round(500 + (i * 89.17) % 49500, 2)
+                orig = _COUNTRIES[(i * 3) % len(_COUNTRIES)]
+                dest = "UA" if direction == "import" else _COUNTRIES[(i * 5) % len(_COUNTRIES)]
+                customs = _CUSTOMS_OFFICES[i % len(_CUSTOMS_OFFICES)]
+                decl_date = datetime.now(timezone.utc) - timedelta(days=i % 365)
+                risk_flag = comp_idx % 13 == 0 or value > 500000
+                session.add(Transaction(
+                    id=f"TXN-{i:06d}", company_ueid=ueid, direction=direction,
+                    goods_description=goods, value_usd=value, weight_kg=weight,
+                    origin_country=orig, destination_country=dest,
+                    customs_office=customs, declaration_date=decl_date,
+                    risk_flag=risk_flag))
+        
+        # ── 60 Алертів ──
         if not (await session.execute(select(func.count()).select_from(Alert))).scalar():
-            for a in [
-                ("alert-1", "CRITICAL", "Критичний ризик санкцій для ТОВ ГАММА ТРЕЙД", "COMP-005"),
-                ("alert-2", "HIGH", "Аномальні транзакції у ТОВ ТЕСТОВА КОМПАНІЯ", "COMP-001"),
-                ("alert-3", "MEDIUM", "Зміна директора ПП ЕКСПЕРТ", "COMP-002"),
-                ("alert-4", "HIGH", "Підозріла активність ТОВ АЛЬФА ГРУП", "COMP-003"),
-                ("alert-5", "CRITICAL", "Санкційний ризик ПП ЕПСИЛОН КОНСАЛТИНГ", "COMP-007")
-            ]:
-                session.add(Alert(id=a[0], severity=a[1], message=a[2], company_ueid=a[3]))
+            alert_templates = [
+                ("CRITICAL", "Критичний ризик санкцій для {name}", "sanctions"),
+                ("HIGH", "Аномальні транзакції у {name}", "risk"),
+                ("MEDIUM", "Зміна директора {name}", "compliance"),
+                ("HIGH", "Підозріла активність {name}", "risk"),
+                ("CRITICAL", "Санкційний ризик {name}", "sanctions"),
+                ("LOW", "Затримка подачі звітності {name}", "tax"),
+                ("MEDIUM", "Зміна бенефіціара {name}", "compliance"),
+                ("HIGH", "Виявлено подвійне інвойсування {name}", "risk"),
+                ("CRITICAL", "Можливе відмивання коштів через {name}", "risk"),
+                ("MEDIUM", "Перевищення ліміту операцій {name}", "risk"),
+                ("LOW", "Автоматичне сповіщення: перевірка {name}", "compliance"),
+                ("HIGH", "Співпадіння з PEP-реєстром у {name}", "sanctions"),
+            ]
+            for i in range(1, 61):
+                comp_idx = (i % 150) + 1
+                ueid = f"COMP-{comp_idx:03d}"
+                tmpl = alert_templates[i % len(alert_templates)]
+                comp = _gen_company_name(comp_idx)
+                msg = tmpl[1].format(name=comp)
+                severity = tmpl[0]
+                alert_type = tmpl[2]
+                ts = datetime.now(timezone.utc) - timedelta(hours=i * 4)
+                session.add(Alert(id=f"ALERT-{i:03d}", severity=severity, message=msg,
+                                  company_ueid=ueid, alert_type=alert_type, timestamp=ts))
         
+        # ── Оцінки ризику для всіх компаній з ризиком >50 ──
         if not (await session.execute(select(func.count()).select_from(RiskAssessment))).scalar():
-            for r in [
-                ("COMP-001", 74.2, "CRITICAL", 88, 62, 95, 45, "Аномальні фінансові транзакції."),
-                ("COMP-003", 88.5, "CRITICAL", 92, 78, 88, 85, "Високий ризик відмивання коштів."),
-                ("COMP-005", 91.2, "CRITICAL", 95, 88, 98, 75, "Критичний ризик санкційних порушень."),
-                ("COMP-012", 95.0, "CRITICAL", 98, 92, 95, 90, "Максимальний рівень ризику.")
-            ]:
-                session.add(RiskAssessment(ueid=r[0], score=r[1], level=r[2],
-                    structural=r[3], behavioral=r[4], sanctions=r[5], aml=r[6], explanation=r[7]))
+            for i in range(1, 151):
+                risk = _gen_risk_score(i)
+                if risk >= 50.0:
+                    level = "CRITICAL" if risk >= 90 else "HIGH" if risk >= 70 else "MEDIUM"
+                    structural = min(100.0, risk * 0.9 + (i % 15))
+                    behavioral = min(100.0, risk * 0.7 + (i % 23))
+                    sanctions = min(100.0, risk * 0.8 + (i % 11))
+                    aml = min(100.0, risk * 0.6 + (i % 19))
+                    expl = f"Автоматична оцінка: {level} рівень ризику."
+                    session.add(RiskAssessment(
+                        ueid=f"COMP-{i:03d}", score=risk, level=level,
+                        structural=structural, behavioral=behavioral,
+                        sanctions=sanctions, aml=aml, explanation=expl))
+        
+        # ── Збагачення Neo4j graph реалістичними зв'язками ──
+        for i in range(1, 151):
+            node_id = f"COMP-{i:03d}"
+            if node_id not in neo4j.graph:
+                neo4j.graph.add_node(node_id, type="company", industry=_UA_INDUSTRIES[i % len(_UA_INDUSTRIES)])
+        # Створення зв'язків власності (кожна компанія володіє 1-3 іншими)
+        for i in range(1, 151):
+            owner = f"COMP-{i:03d}"
+            for j in range(1, 4):
+                target_idx = ((i * 7 + j * 13) % 150) + 1
+                if target_idx != i:
+                    target = f"COMP-{target_idx:03d}"
+                    rel_type = ["owns", "invests", "supplies", "partners", "competes"][(i + j) % 5]
+                    neo4j.graph.add_edge(owner, target, relation=rel_type)
+        
         await session.commit()
 
 # OODA Loop
@@ -481,18 +587,42 @@ async def companies(search: str = "", region: str = "", industry: str = "",
             "total": total, "limit": limit, "offset": offset
         }
 
+@app.get("/api/v1/transactions")
+async def transactions(company_ueid: str = "", direction: str = "", risk_flag: bool = None,
+                       min_value: float = 0.0, max_value: float = 999999999.0,
+                       limit: int = 25, offset: int = 0):
+    async with async_session() as session:
+        q = select(Transaction).order_by(Transaction.declaration_date.desc())
+        if company_ueid: q = q.where(Transaction.company_ueid == company_ueid)
+        if direction: q = q.where(Transaction.direction == direction)
+        if risk_flag is not None: q = q.where(Transaction.risk_flag == risk_flag)
+        if min_value > 0: q = q.where(Transaction.value_usd >= min_value)
+        if max_value < 999999999: q = q.where(Transaction.value_usd <= max_value)
+        total = (await session.execute(select(func.count()).select_from(q.subquery()))).scalar()
+        items = (await session.execute(q.offset(offset).limit(limit))).scalars().all()
+        return {
+            "transactions": [{"id": t.id, "company_ueid": t.company_ueid, "direction": t.direction,
+                              "goods_description": t.goods_description, "value_usd": t.value_usd,
+                              "weight_kg": t.weight_kg, "origin_country": t.origin_country,
+                              "destination_country": t.destination_country, "customs_office": t.customs_office,
+                              "declaration_date": t.declaration_date.isoformat() if t.declaration_date else None,
+                              "risk_flag": t.risk_flag} for t in items],
+            "total": total, "limit": limit, "offset": offset
+        }
+
 @app.get("/api/v1/alerts")
-async def alerts(severity: str = "", resolved: bool = None, limit: int = 10, offset: int = 0):
+async def alerts(severity: str = "", resolved: bool = None, alert_type: str = "", limit: int = 10, offset: int = 0):
     async with async_session() as session:
         q = select(Alert).order_by(Alert.timestamp.desc())
         if severity: q = q.where(Alert.severity == severity)
         if resolved is not None: q = q.where(Alert.resolved == resolved)
+        if alert_type: q = q.where(Alert.alert_type == alert_type)
         total = (await session.execute(select(func.count()).select_from(q.subquery()))).scalar()
         items = (await session.execute(q.offset(offset).limit(limit))).scalars().all()
         return {
             "alerts": [{"id": a.id, "severity": a.severity, "message": a.message,
                         "timestamp": a.timestamp.isoformat(), "company_ueid": a.company_ueid,
-                        "resolved": a.resolved} for a in items],
+                        "resolved": a.resolved, "alert_type": a.alert_type} for a in items],
             "total": total, "limit": limit, "offset": offset
         }
 

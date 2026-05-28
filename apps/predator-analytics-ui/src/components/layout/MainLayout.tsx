@@ -12,6 +12,7 @@ import Header from './Header';
 import ChatBot from '../ai/ChatBot';
 import ContextRail from './ContextRail';
 import ShellCommandPalette from './ShellCommandPalette';
+import BottomNav from './BottomNav';
 import { SystemMetricsHUD } from './SystemMetricsHUD';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 import { isSidebarOpenAtom, shellContextRailOpenAtom } from '../../store/atoms';
@@ -163,12 +164,13 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         </div>
       )}
 
+      {/* Floating menu button — приховано на мобільних (BottomNav замінює) */}
       {isMobile && !isMobileDrawerOpen && (
         <button
           type="button"
           aria-label="Відкрити меню"
           onClick={() => setIsMobileDrawerOpen(true)}
-          className="fixed left-4 top-3 z-[100] flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-slate-950/80 text-white transition hover:bg-slate-900"
+          className="fixed left-4 top-3 z-[100] hidden sm:flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-slate-950/80 text-white transition hover:bg-slate-900"
         >
           <Menu className="h-5 w-5" />
         </button>
@@ -186,7 +188,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       >
         <Header />
         <WorkspaceBusinessStrip />
-        <div className="classification-banner">
+        <div className="classification-banner hidden sm:flex">
           <span className="classification-dot" />
           <span>ЦІЛКОМ ТАЄМНО // СІ // ОСОБЛИВОЇ ВАЖЛИВОСТІ</span>
           <span className="classification-dot" />
@@ -196,9 +198,9 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           <span>РІВЕНЬ ДОПУСКУ 6</span>
           <span className="classification-dot" />
         </div>
-        <main className="relative flex-1 overflow-y-auto custom-scrollbar">
+        <main className="relative flex-1 overflow-y-auto custom-scrollbar pb-16 md:pb-0">
 
-          <div className={cn("relative mx-auto px-3 sm:px-5 lg:px-7 py-5 xl:px-10 pb-16 transition-[max-width] duration-500", displayFrameClass)}>
+          <div className={cn("relative mx-auto px-3 sm:px-5 lg:px-7 py-5 xl:px-10 pb-4 md:pb-16 transition-[max-width] duration-500", displayFrameClass)}>
             <div className={`grid grid-cols-12 gap-6`}>
               <div className={shellV2Enabled && !isMobile && isContextRailOpen ? 'col-span-12 xl:col-span-9' : 'col-span-12'}>
                 <AnimatedPage pageKey={location.pathname} variant="tactical">
@@ -215,6 +217,9 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         </main>
       </div>
 
+      {/* ── BOTTOM NAV (mobile only) ── */}
+      {isMobile && <BottomNav onMenuClick={() => setIsMobileDrawerOpen(true)} />}
+
       <ChatBot />
       {shellV2Enabled && <ShellCommandPalette />}
       <ConstitutionalShield />
@@ -225,10 +230,10 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         node={colabNodeData}
       />
 
-      {/* ── STATUS BAR (v63.0-ELITE) ── */}
+      {/* ── STATUS BAR (desktop only) ── */}
       <motion.div
         initial={{ y: 100 }} animate={{ y: 0 }} transition={{ type: "spring", stiffness: 200, damping: 20 }}
-        className="fixed bottom-0 left-0 right-0 z-[60] h-9 flex items-center px-4 justify-between overflow-hidden"
+        className="fixed bottom-0 left-0 right-0 z-[60] h-9 hidden md:flex items-center px-4 justify-between overflow-hidden"
         style={{ 
           background: 'rgba(2,6,18,0.85)', 
           backdropFilter: 'blur(30px) saturate(150%)',

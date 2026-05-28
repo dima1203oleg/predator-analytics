@@ -187,7 +187,7 @@ export default function ExecutiveBoardView() {
               PREDATOR v63.0-ELITE
             </div>
             <div className="mt-4 flex items-center gap-4">
-              <h1 className="text-5xl font-black text-white italic tracking-tighter uppercase skew-x-[-3deg]">
+              <h1 className="text-3xl sm:text-5xl font-black text-white italic tracking-tighter uppercase skew-x-[-3deg]">
                 ВИКОНАВЧА <span className="text-rose-600">РАДА</span>
               </h1>
               <div className="h-0.5 w-24 bg-gradient-to-r from-rose-600 to-transparent" />
@@ -420,8 +420,8 @@ export default function ExecutiveBoardView() {
         </motion.div>
       </motion.section>
 
-      {/* Strategic Information Ticker */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-black/80  border-t border-rose-500/20 h-14 flex items-center overflow-hidden shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
+      {/* Strategic Information Ticker (desktop only) */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 hidden md:flex bg-black/80 border-t border-rose-500/20 h-14 items-center overflow-hidden shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
         <div className="px-8 bg-rose-600 h-full flex items-center shrink-0 border-r border-white/10 shadow-[20px_0_40px_rgba(225,29,72,0.4)] relative z-10 italic text-white font-black text-[11px] tracking-[0.3em] uppercase">
           <div className="flex items-center gap-4">
              <Activity size={20} className="" />
