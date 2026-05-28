@@ -20,6 +20,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { ViewHeader } from '@/components/ViewHeader';
 import { PageTransition } from '@/components/layout/PageTransition';
+import { MechanicalButton } from '@/components/ui/MechanicalButton';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
 import { Badge } from '@/components/ui/badge';
@@ -115,15 +116,18 @@ const SearchPage: React.FC = () => {
                                     onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                                 />
                                 <div className="flex items-center gap-6">
-                                    <motion.button 
-                                        whileHover={{ scale: 1.05, x: 5 }}
-                                        whileTap={{ scale: 0.95 }}
+                                    <MechanicalButton
                                         onClick={handleSearch}
-                                        className="px-14 py-5 bg-red-700 text-white font-black rounded-[1.5rem] text-[11px] uppercase tracking-[0.4em] shadow-xl hover:bg-red-600 transition-all flex items-center gap-6 italic"
+                                        isLoading={isSearching}
+                                        variant="danger"
+                                        size="lg"
+                                        className="uppercase tracking-[0.2em]"
                                     >
-                                        <span>ІНІЦІЮВАТИ_ПОШУК</span>
-                                        <ArrowRight size={20} />
-                                    </motion.button>
+                                        <span className="flex items-center gap-3">
+                                            <span>ІНІЦІЮВАТИ ПОШУК</span>
+                                            <ArrowRight size={18} />
+                                        </span>
+                                    </MechanicalButton>
                                 </div>
                             </div>
                         </section>
