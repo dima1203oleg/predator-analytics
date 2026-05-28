@@ -9,6 +9,7 @@ import {
 import { UserRole } from '../../context/UserContext';
 import { useShell, UIShell } from '../../context/ShellContext';
 import { NeutralizedContent } from '../NeutralizedContent';
+import { HoloCard } from '../ui/HoloCard';
 
 export type CaseStatus = 'КРИТИЧНО' | 'УВАГА' | 'БЕЗПЕЧНО' | 'А ХІВ';
 export type CaseSector = 'GOV' | 'BIZ' | 'MED' | 'SCI';
@@ -130,12 +131,10 @@ export const CaseCard: React.FC<CaseCardProps> = ({
   const isCommanderMode = currentShell === UIShell.COMMANDER;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{ scale: 1.01, y: -2 }}
+    <HoloCard
+      glowColor={caseItem.status === 'КРИТИЧНО' ? 'rgba(239,68,68,0.4)' : caseItem.status === 'УВАГА' ? 'rgba(245,158,11,0.4)' : 'rgba(16,185,129,0.4)'}
       className={`
-        relative p-6 rounded-[32px] border  transition-all cursor-pointer  group
+        relative p-6 rounded-[32px] border cursor-pointer group
         ${isCommanderMode ? 'bg-amber-500/[0.03] border-amber-500/20 shadow-amber-500/5' :
           isOperatorMode ? 'bg-emerald-500/[0.03] border-emerald-500/20 shadow-emerald-500/5' :
           statusConfig.bg + ' ' + statusConfig.border + ' ' + statusConfig.glow}
@@ -267,6 +266,6 @@ export const CaseCard: React.FC<CaseCardProps> = ({
           </button>
         </div>
       </div>
-    </motion.div>
+    </HoloCard>
   );
 };
