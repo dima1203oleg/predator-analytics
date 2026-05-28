@@ -92,6 +92,9 @@ const MarketEntryView        = lazy(() => import('./features/intelligence/Market
 const WarRoomView            = lazy(() => import('./features/dashboard/WarRoomView'));
 const SovereignIntelHub      = lazy(() => import('./features/ai/SovereignIntelHub'));
 
+// AURUM OBSIDIAN Style Guide
+const AurumShowcase          = lazy(() => import('./components/ui/AurumShowcase'));
+
 // ✅ Нові модулі v59.0-NEXUS (Фаза 3)
 const DecisionsJournal      = lazy(() => import('./features/decisions/DecisionsJournal'));
 const AlertCenterView       = lazy(() => import('./features/alerts/AlertCenterView'));
@@ -331,6 +334,9 @@ export const AppRoutesNew = () => {
               {/* Клієнтські маршрути */}
               <Route path="/clients" element={<PremiumOnly><ClientsHubView /></PremiumOnly>} />
               <Route path="/clients/:segment" element={<PremiumOnly><ClientSegmentView /></PremiumOnly>} />
+
+              {/* AURUM OBSIDIAN Style Guide */}
+              <Route path="/aurum" element={<AurumShowcase />} />
 
               {/* Блокування адмін-зони для не-адмінів */}
               <Route path="/admin/*" element={<Navigate to="/" replace />} />
