@@ -22,7 +22,7 @@ import {
   ChevronRight
 } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { TacticalCard } from './ui/TacticalCard';
+import { HoloCard } from '@/components/ui/HoloCard';
 
 interface BucketInfo {
   name: string;
@@ -333,7 +333,7 @@ export const StorageAnalytics: React.FC = () => {
           { label: 'VAULT_NODES', value: buckets.length, sub: 'OBJECT_MATRICES', icon: <Folder size={20} />, color: 'amber' },
           { label: 'QUERY_RESERVE', value: indices.length, sub: 'SEARCH_VECTORS', icon: <Search size={20} />, color: 'cyan' }
         ].map((stat, idx) => (
-          <TacticalCard
+          <HoloCard
             key={idx}
             variant="holographic"
             title={stat.label}
@@ -357,7 +357,7 @@ export const StorageAnalytics: React.FC = () => {
       </div>
 
       {/* Relational Cores */}
-      <TacticalCard
+      <HoloCard
         variant="holographic"
         title="RELATIONAL_CORES_ARRAY"
         className="p-1 border-white/5 bg-slate-950/20"
@@ -408,7 +408,7 @@ export const StorageAnalytics: React.FC = () => {
       </div>
 
       {/* Storage Matrix Distribution */}
-      <TacticalCard
+      <HoloCard
         variant="holographic"
         title="STORAGE_ALLOCATION_STRATUM"
         className="p-12 border-white/5 bg-slate-950/40 relative group overflow-hidden"

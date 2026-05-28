@@ -1,3 +1,4 @@
+import { HoloCard } from '@/components/ui/HoloCard';
 import React, { useState, useEffect } from 'react';
 import { Lightbulb, Code, ExternalLink, RefreshCw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';

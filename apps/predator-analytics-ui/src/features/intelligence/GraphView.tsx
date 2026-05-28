@@ -5,7 +5,6 @@ import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { ViewHeader } from '@/components/ViewHeader';
 import { api } from '@/services/api';
 import { HoloCard } from '@/components/ui/HoloCard';
-import { TacticalCard } from '@/components/ui/TacticalCard';
 import { Brain, Database, Network, Search, GitBranch, Sparkles, Zap, Layers } from 'lucide-react';
 
 // Custom Node component for our CSS-based graph
@@ -232,7 +231,7 @@ export const GraphView = () => {
 
         {/* Main Graph Visualization */}
         <div className="flex-1 mt-6 relative">
-          <TacticalCard
+          <HoloCard
             variant="holographic"
             title="ІНТЕ АКТИВНА НЕЙ ОННА МОДЕЛЬ"
             className="border-white/5 bg-slate-950/40  hud-frame h-full min-h-[600px] flex flex-col"

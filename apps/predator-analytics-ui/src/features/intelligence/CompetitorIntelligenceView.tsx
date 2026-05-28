@@ -26,7 +26,6 @@ import { cn } from '@/utils/cn';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { useUISound, UISoundType } from '@/hooks/useUISound';
 import { HoloCard } from '@/components/ui/HoloCard';
-import { TacticalCard } from '@/components/ui/TacticalCard';
 import { CyberOrb } from '@/components/CyberOrb';
 import { HoloContainer } from '@/components/HoloContainer';
 import { PageTransition } from '@/components/layout/PageTransition';
@@ -103,7 +102,7 @@ const CompetitorCardELITE: React.FC<{
   play: (type: UISoundType) => void;
 }> = ({ competitor, isExpanded, onToggle, onTrack, play }) => {
   return (
-    <TacticalCard
+    <HoloCard
       variant={isExpanded ? "holographic" : "cyber"}
       glow={competitor.riskScore > 50 ? 'red' : isExpanded ? 'gold' : 'blue'}
       className="transition-all duration-500 border-white/[0.03]"
@@ -529,7 +528,7 @@ const CompetitorIntelligenceView: React.FC = () => {
               </div>
 
               {/* Market Scanning Status Card */}
-              <TacticalCard
+              <HoloCard
                 title="СТАТУС СКАНУВАННЯ"
                 glow="gold"
                 variant="minimal"

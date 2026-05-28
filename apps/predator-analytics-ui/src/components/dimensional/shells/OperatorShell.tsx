@@ -1,3 +1,4 @@
+import { HoloCard } from '@/components/ui/HoloCard';
 import React from 'react';
 import { cn } from '../../../lib/utils';
 import { motion } from 'framer-motion';

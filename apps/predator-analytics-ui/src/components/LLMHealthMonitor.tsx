@@ -20,7 +20,7 @@ import {
   Network
 } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { TacticalCard } from './ui/TacticalCard';
+import { HoloCard } from '@/components/ui/HoloCard';
 
 interface LLMProvider {
   id: string;
@@ -356,7 +356,7 @@ export const LLMHealthMonitor: React.FC<{ compact?: boolean }> = ({ compact = fa
           { label: 'Financial_Burn', value: `$${totalCost.toFixed(3)}`, sub: 'REAL_TIME_COST', icon: <DollarSign size={20} />, color: 'emerald' },
           { label: 'Signal_Efficiency', value: `${((onlineCount / providers.length) * 100).toFixed(1)}%`, sub: 'NETWORK_CONFIDENCE', icon: <Zap size={20} />, color: 'blue' }
         ].map((stat, idx) => (
-          <TacticalCard
+          <HoloCard
             key={idx}
             variant="holographic"
             title={stat.label}

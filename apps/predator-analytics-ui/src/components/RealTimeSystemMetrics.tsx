@@ -1,3 +1,4 @@
+import { HoloCard } from '@/components/ui/HoloCard';
 /**
  * RealTimeSystemMetrics - v61.0-ELITE Omniscience Real-Time Matrix
  * 

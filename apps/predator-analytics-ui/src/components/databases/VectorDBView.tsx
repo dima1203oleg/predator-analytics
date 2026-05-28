@@ -3,7 +3,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Binary, Scan, Target, Cpu, Activity, Info, ChevronRight, Zap } from 'lucide-react';
 import { ResponsiveContainer, ScatterChart, Scatter, XAxis, YAxis, ZAxis, Tooltip, CartesianGrid, Cell } from 'recharts';
-import { TacticalCard } from '../ui/TacticalCard';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { cn } from '../../utils/cn';
 
 interface VectorData {
@@ -29,7 +29,7 @@ export const VectorDBView: React.FC<VectorDBViewProps> = ({ vectorData, selected
         >
             {/* Semantic Radar Section */}
             <div className="lg:col-span-2">
-                <TacticalCard
+                <HoloCard
                     variant="holographic"
                     title="QDRANT SEMANTIC RADAR v61.0-ELITE"
                     className="h-[600px] panel-3d overflow-hidden group"

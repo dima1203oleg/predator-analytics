@@ -1,3 +1,4 @@
+import { HoloCard } from '@/components/ui/HoloCard';
 
 import React from 'react';
 import { 

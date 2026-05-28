@@ -1,3 +1,4 @@
+import { HoloCard } from '@/components/ui/HoloCard';
 import React, { useState } from 'react';
 import { cn } from '../../../lib/utils';
 import { motion } from 'framer-motion';
@@ -32,7 +33,7 @@ export const CommanderShell: React.FC<CommanderShellProps> = ({ metrics, onActio
 
       {/* Strategic Overview Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
-        <TacticalCard
+        <HoloCard
           variant="holographic"
           title="🖥️ ІНФРАСТРУКТУРА_CORE"
           className="border-blue-500/20"
@@ -57,7 +58,7 @@ export const CommanderShell: React.FC<CommanderShellProps> = ({ metrics, onActio
             </div>
         </HoloCard>
 
-        <TacticalCard variant="holographic" title="🤖 ЯДРО_СУПЕРІНТЕЛЕКТУ" className="border-purple-500/20">
+        <HoloCard variant="holographic" title="🤖 ЯДРО_СУПЕРІНТЕЛЕКТУ" className="border-purple-500/20">
           <PermissionLayer sensitivity="TOP_SECRET">
             <div className="space-y-4">
               <div className="flex items-center justify-between p-4 bg-purple-500/5 rounded-2xl border border-purple-500/20 group/row hover:bg-purple-500/10 transition-colors">
@@ -79,7 +80,7 @@ export const CommanderShell: React.FC<CommanderShellProps> = ({ metrics, onActio
           </PermissionLayer>
         </HoloCard>
 
-        <TacticalCard
+        <HoloCard
           variant="holographic"
           title="💾 ГЛОБАЛЬНИЙ_ШАР_ДАНИХ"
           className="border-cyan-500/20"
@@ -152,7 +153,7 @@ export const CommanderShell: React.FC<CommanderShellProps> = ({ metrics, onActio
       </div>
 
       {/* God Mode / Shadow Protocols */}
-      <TacticalCard variant="holographic" title="🎛️ ТІНЬОВІ_ПРОТОКОЛИ_КЕРУВАННЯ" className="border-red-500/30 bg-gradient-to-br from-red-950/20 to-slate-950/80 rounded-[3rem]">
+      <HoloCard variant="holographic" title="🎛️ ТІНЬОВІ_ПРОТОКОЛИ_КЕРУВАННЯ" className="border-red-500/30 bg-gradient-to-br from-red-950/20 to-slate-950/80 rounded-[3rem]">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 p-2">
           {[
             { icon: Lock, label: 'БЛОКУВАННЯ', color: 'red', code: 'S-LOCK' },

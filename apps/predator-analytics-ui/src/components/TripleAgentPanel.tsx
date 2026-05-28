@@ -1,3 +1,4 @@
+import { HoloCard } from '@/components/ui/HoloCard';
 /**
  * Панель Trinity Nexus | v61.0-ELITE Trident Agent Controller
  * 

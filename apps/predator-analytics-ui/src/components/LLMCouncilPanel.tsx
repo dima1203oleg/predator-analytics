@@ -1,3 +1,4 @@
+import { HoloCard } from '@/components/ui/HoloCard';
 /**
  * NEURAL_COUNCIL Arbitrator | v61.0-ELITE Premium Edition
  * 

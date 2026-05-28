@@ -2,7 +2,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Play, Share2, Activity, Database, Zap, Cpu, Terminal, ShieldAlert, Network, Box } from 'lucide-react';
-import { TacticalCard } from '../ui/TacticalCard';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { cn } from '../../utils/cn';
 
 interface GraphDBViewProps {
@@ -20,7 +20,7 @@ export const GraphDBView: React.FC<GraphDBViewProps> = ({ cypherQuery, onCypherQ
         >
             {/* Graph Visualizer Section */}
             <div className="lg:col-span-2">
-                <TacticalCard
+                <HoloCard
                     variant="holographic"
                     title="NEO4J KNOWLEDGE TOPOLOGY v61.0-ELITE"
                     className="h-[600px] panel-3d overflow-hidden group"
@@ -161,7 +161,7 @@ export const GraphDBView: React.FC<GraphDBViewProps> = ({ cypherQuery, onCypherQ
 
             {/* Cypher Console Section */}
             <div className="space-y-6">
-                <TacticalCard
+                <HoloCard
                     variant="holographic"
                     title="CYPHER GRAPH CONSOLE"
                     className="h-[600px] flex flex-col group"

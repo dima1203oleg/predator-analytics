@@ -33,7 +33,6 @@ import { cn } from '@/utils/cn';
 import { api } from '@/services/api';
 import { SearchResultRadar } from '@/components/premium/SearchResultRadar';
 import { HoloCard } from '@/components/ui/HoloCard';
-import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { HoloContainer } from '@/components/HoloContainer';
 import { ExplainabilityPanel } from '@/components/explain/ExplainabilityPanel';
@@ -193,7 +192,7 @@ const AIAnswerCard = ({
 
     return (
         <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} className="mb-10">
-            <TacticalCard
+            <HoloCard
                 title="Аналітичний висновок за запитом"
                 subtitle={`Запит: ${query}`}
                 icon={<BrainCircuit className="text-cyan-400" />}
@@ -257,7 +256,7 @@ const CompanyCard = ({
             className="group relative"
         >
             <div className="absolute -inset-0.5 rounded-[2.5rem] bg-gradient-to-r from-primary-500/15 to-cyan-500/10 blur-xl opacity-0 transition-opacity duration-700 group-hover:opacity-100" />
-            <TacticalCard
+            <HoloCard
                 title={company.name}
                 subtitle={`${company.type || 'Субʼєкт'} · Ідентифікатор: ${company.identifier}`}
                 icon={
@@ -739,7 +738,7 @@ export const SearchView = () => {
                         ))}
                     </div>
 
-                    <TacticalCard
+                    <HoloCard
                         title=""
                         variant="holographic"
                         noPadding

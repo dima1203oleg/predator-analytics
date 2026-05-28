@@ -21,7 +21,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { TacticalCard } from './ui/TacticalCard';
+import { HoloCard } from '@/components/ui/HoloCard';
 
 interface PipelineStep {
   id: string;
@@ -333,7 +333,7 @@ export const ETLPipelineVisualizer: React.FC = () => {
             exit={{ opacity: 0, scale: 1.02 }}
             transition={{ duration: 0.8 }}
           >
-            <TacticalCard
+            <HoloCard
               variant="holographic"
               title="AUTOMATED_DATA_FABRIC_MODEL_V56.5"
               className="p-12 border-white/5 bg-slate-950/40 relative overflow-hidden"

@@ -26,7 +26,6 @@ import { useNavigate } from 'react-router-dom';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
 import { HoloCard } from '@/components/ui/HoloCard';
-import { TacticalCard } from '@/components/ui/TacticalCard';
 import { Badge } from '@/components/ui/badge';
 import { ViewHeader } from '@/components/ViewHeader';
 import { PageTransition } from '@/components/layout/PageTransition';
@@ -379,7 +378,7 @@ export default function FactorsView() {
                             })}
                         </div>
 
-                        <TacticalCard
+                        <HoloCard
                             title="Останні сигнали"
                             icon={<Zap size={18} className="text-emerald-300" />}
                             variant="holographic"

@@ -1,3 +1,4 @@
+import { HoloCard } from '@/components/ui/HoloCard';
 /**
  * Аналітичний Дашборд Predator v61.0-ELITE | Neural Analytics Matrix
  *
