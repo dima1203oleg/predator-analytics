@@ -101,7 +101,7 @@ const AdminSidebar: React.FC = () => {
         x: isMobile && !isOpen ? -280 : 0
       }}
       className={cn(
-        "flex flex-col h-screen bg-[#050505] border-r border-white/10 overflow-hidden relative z-[9999] group shrink-0",
+        "flex flex-col h-screen glass-obsidian border-r border-white/10 overflow-hidden relative z-[9999] group shrink-0",
         isMobile && "fixed inset-y-0 left-0 shadow-2xl"
       )}
     >
@@ -110,8 +110,8 @@ const AdminSidebar: React.FC = () => {
       {/* Логотип */}
       <div className="flex items-center justify-between px-4 py-6 border-b border-white/5 relative z-10">
         <div className="flex items-center gap-4 overflow-hidden">
-          <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/30 shrink-0">
-            <Shield className="w-5 h-5 text-rose-500" />
+          <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-[#c9a227]/10 border border-[#c9a227]/30 shrink-0">
+            <Shield className="w-5 h-5 text-[#c9a227]" />
           </div>
           <AnimatePresence>
             {isOpen && (
@@ -121,11 +121,11 @@ const AdminSidebar: React.FC = () => {
                 exit={{ opacity: 0, x: -10 }}
                 className="whitespace-nowrap"
               >
-                <div className="text-xs font-black text-white italic tracking-[0.25em] uppercase leading-none">
+                <div className="text-xs font-black text-[#c9a227] italic tracking-[0.25em] uppercase leading-none">
                   PREDATOR
                 </div>
-                <div className="text-[7px] font-black text-rose-500/60 tracking-[0.3em] leading-none mt-1.5 italic uppercase">
-                  COMMAND_CENTER_v60
+                <div className="text-[7px] font-black text-[#c9a227]/60 tracking-[0.3em] leading-none mt-1.5 italic uppercase">
+                  COMMAND_CENTER_v63
                 </div>
               </motion.div>
             )}
@@ -150,7 +150,7 @@ const AdminSidebar: React.FC = () => {
             <div key={group} className="mb-6">
               {/* Заголовок групи */}
               <div className="px-3 py-2 flex items-center gap-2 overflow-hidden">
-                <div className="w-1 h-1 rounded-full bg-rose-500/40 shrink-0" />
+                <div className="w-1 h-1 rounded-full bg-[#c9a227]/40 shrink-0" />
                 {isOpen && (
                   <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.25em] italic whitespace-nowrap">
                     {group}
@@ -170,20 +170,20 @@ const AdminSidebar: React.FC = () => {
                       className={cn(
                         'flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 group/nav relative overflow-hidden',
                         active
-                          ? 'bg-rose-500/10 border border-rose-500/30'
+                          ? 'bg-[#c9a227]/10 border border-[#c9a227]/30'
                           : 'hover:bg-white/[0.03] border border-transparent hover:border-white/5',
                       )}
                     >
                       {active && (
                         <motion.div 
                           layoutId="admin-nav-active"
-                          className="absolute inset-0 bg-gradient-to-r from-rose-500/10 to-transparent pointer-events-none"
+                          className="absolute inset-0 bg-gradient-to-r from-[#c9a227]/10 to-transparent pointer-events-none"
                         />
                       )}
                       <Icon
                         className={cn(
                           'w-4 h-4 shrink-0 transition-all duration-300 relative z-10',
-                          active ? 'text-rose-400 scale-105' : 'text-slate-400 group-hover/nav:text-white group-hover/nav:scale-105',
+                          active ? 'text-[#c9a227] scale-105' : 'text-slate-400 group-hover/nav:text-white group-hover/nav:scale-105',
                           !isOpen && "mx-auto"
                         )}
                       />
@@ -277,14 +277,14 @@ const AdminStatusBar: React.FC = () => {
 
   return (
     <header className="flex items-center justify-between px-6 h-12 bg-black/40 glass-wraith border-b border-white/5 shrink-0 relative z-50">
-      <div className="absolute inset-0 bg-gradient-to-r from-rose-500/5 via-transparent to-blue-500/5 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[#c9a227]/5 via-transparent to-[#c9a227]/5 pointer-events-none" />
       
       <div className="flex items-center gap-6 relative z-10">
         {/* Мобільне меню */}
         {isMobile && (
           <button 
             onClick={() => setSidebarOpen(!isSidebarOpen)}
-            className="p-1 rounded-lg bg-white/5 border border-white/10 text-rose-500"
+            className="p-1 rounded-lg bg-white/5 border border-white/10 text-[#c9a227]"
           >
             {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
@@ -294,10 +294,10 @@ const AdminStatusBar: React.FC = () => {
         <div className="flex items-center gap-3">
           <div className="flex gap-1">
              {[...Array(3)].map((_, i) => (
-               <div key={i} className="w-1 h-3 bg-rose-500 rounded-full" style={{ animationDelay: `${i * 0.2}s` }} />
+               <div key={i} className="w-1 h-3 bg-[#c9a227] rounded-full" style={{ animationDelay: `${i * 0.2}s` }} />
              ))}
           </div>
-          <span className="text-[10px] font-black text-rose-500 italic tracking-[0.25em] uppercase">
+          <span className="text-[10px] font-black text-[#c9a227] italic tracking-[0.25em] uppercase">
             SOVEREIGN_NODE // LOCAL_K3S
           </span>
         </div>
