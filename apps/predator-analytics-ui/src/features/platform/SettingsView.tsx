@@ -3,6 +3,7 @@ import React, { useMemo, useState } from "react";
 import { useToast } from "@/context/ToastContext";
 import { api } from "@/services/api";
 import { ViewHeader } from "@/components/ViewHeader";
+import { HoloCard } from "@/components/ui/HoloCard";
 import { TacticalCard } from "@/components/ui/TacticalCard";
 import { Switch } from "@/components/ui/switch";
 import { useAppStore } from "@/store/useAppStore";
@@ -304,11 +305,16 @@ const SettingsView: React.FC = () => {
                             </div>
                         </div>
 
-                        <TacticalCard
-                            variant="glass"
-                            title="Видимість інтерфейсу"
-                            subtitle="Підсилений контраст, чіткі фокуси та краща читабельність"
-                        >
+                        <HoloCard variant="gold" className="p-6">
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="p-2 bg-[#c9a227]/10 rounded-lg">
+                                    <SettingsIcon size={18} className="text-[#c9a227]" />
+                                </div>
+                                <div>
+                                    <h4 className="text-sm font-black text-white uppercase tracking-tight">Видимість інтерфейсу</h4>
+                                    <p className="text-[10px] text-slate-500">Підсилений контраст, чіткі фокуси</p>
+                                </div>
+                            </div>
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                 <div className="space-y-1">
                                     <p className="text-sm font-semibold text-slate-100">Висока видимість</p>
@@ -330,7 +336,7 @@ const SettingsView: React.FC = () => {
                                     />
                                 </div>
                             </div>
-                        </TacticalCard>
+                        </HoloCard>
 
                         <FeatureTogglesGrid
                             currentEnv={currentEnv}
@@ -345,11 +351,14 @@ const SettingsView: React.FC = () => {
                             onScheduleChange={handleScheduleChange}
                         />
 
-                        <TacticalCard variant="holographic" title="Конфігурація JSON" className="opacity-60 hover:opacity-100 transition-opacity" noPadding>
+                        <HoloCard variant="default" className="opacity-60 hover:opacity-100 transition-opacity overflow-hidden">
+                            <div className="p-4 border-b border-white/5">
+                                <h4 className="text-sm font-black text-white uppercase tracking-tight">Конфігурація JSON</h4>
+                            </div>
                             <pre className="text-[10px] leading-relaxed bg-[#050a14]/80 p-6 text-emerald-500/80 font-mono overflow-auto max-h-48">
                                 {JSON.stringify(currentEnv, null, 2)}
                             </pre>
-                        </TacticalCard>
+                        </HoloCard>
                     </HoloContainer>
                 </motion.div>
             </AnimatePresence>
