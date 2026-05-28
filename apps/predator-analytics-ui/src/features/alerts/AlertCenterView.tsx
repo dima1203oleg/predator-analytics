@@ -125,18 +125,18 @@ export const AlertCenterView: React.FC = () => {
   const fetchAlerts = async () => {
     setIsLoading(true);
     try {
-      const res = await apiClient.get('/alerts');
-      const data = Array.isArray(res.data) ? res.data : [];
-      setAlerts(data.map((a: any) => ({
+      const res = await apiClient.get('/alerts', { params: { limit: 50, offset: 0 } });
+      const raw = res.data?.alerts || (Array.isArray(res.data) ? res.data : []);
+      setAlerts(raw.map((a: any) => ({
         id: a.id,
-        title: a.title,
-        description: a.description,
-        severity: a.severity as AlertSeverity,
-        source: a.source,
-        status: a.is_read ? 'RESOLVED' : 'ACTIVE',
+        title: a.message || 'Алерт без назви',
+        description: a.message || '',
+        severity: (a.severity || 'INFO') as AlertSeverity,
+        source: a.alert_type || 'system',
+        status: a.resolved ? 'RESOLVED' : 'ACTIVE',
         timestamp: a.timestamp,
-        affectedEntity: a.metadata?.ueid || a.source,
-        category: a.category
+        affectedEntity: a.company_ueid || '—',
+        category: a.alert_type || 'general'
       })));
     } catch (err) {
       console.error('Failed to fetch alerts', err);
