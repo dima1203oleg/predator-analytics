@@ -16,6 +16,7 @@ import {
 import { cn } from '../../utils/cn';
 import { api } from '../../services/api';
 import { premiumLocales } from '../../locales/uk/premium';
+import { TacticalModal } from '../ui/TacticalModal';
 
 export interface UserDataset {
     id: string;
@@ -43,6 +44,7 @@ export const UserDatasetsPanel: React.FC<UserDatasetsPanelProps> = ({ className,
     const [uploading, setUploading] = useState(false);
     const [showUploadModal, setShowUploadModal] = useState(false);
     const [uploadFile, setUploadFile] = useState<File | null>(null);
+    const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
 
 
 
@@ -132,15 +134,16 @@ export const UserDatasetsPanel: React.FC<UserDatasetsPanelProps> = ({ className,
     };
 
     // Delete dataset
-    const handleDelete = useCallback(async (id: string) => {
-        if (!confirm(premiumLocales.datasetStudio.panels.userDatasets.dataset.deleteConfirm)) return;
+    const handleDelete = useCallback(async () => {
+        if (!deleteTarget) return;
         try {
-            await api.datasets.delete(id);
-            setDatasets(prev => prev.filter(ds => ds.id !== id));
+            await api.datasets.delete(deleteTarget);
+            setDatasets(prev => prev.filter(ds => ds.id !== deleteTarget));
+            setDeleteTarget(null);
         } catch (e) {
             console.error('Delete failed', e);
         }
-    }, []);
+    }, [deleteTarget]);
 
     const formatSize = (bytes: number) => {
         if (bytes < 1024) return `${bytes} B`;
@@ -295,7 +298,7 @@ export const UserDatasetsPanel: React.FC<UserDatasetsPanelProps> = ({ className,
 
                                     {/* Delete */}
                                     <button
-                                        onClick={() => handleDelete(dataset.id)}
+                                        onClick={() => setDeleteTarget(dataset.id)}
                                         className="p-2 text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
                                         title="Видалити"
                                     >
@@ -395,6 +398,30 @@ export const UserDatasetsPanel: React.FC<UserDatasetsPanelProps> = ({ className,
                     </motion.div>
                 )}
             </AnimatePresence>
+
+            {/* Delete Confirmation — AURUM OBSIDIAN TacticalModal */}
+            <TacticalModal
+                isOpen={!!deleteTarget}
+                onClose={() => setDeleteTarget(null)}
+                title="ВИДАЛЕННЯ ДАТАСЕТУ"
+                confirmLabel="ВИДАЛИТИ"
+                cancelLabel="СКАСУВАТИ"
+                onConfirm={handleDelete}
+                danger
+                variant="critical"
+                glitch
+            >
+                <div className="space-y-4">
+                    <p className="font-interface text-sm text-[#8a8a8a] leading-relaxed">
+                        Ви збираєтесь видалити датасет. Ця дія <strong className="text-[#e11d48]">необоротна</strong>.
+                    </p>
+                    <div className="glass-obsidian rounded-xl p-4 border-l-2 border-[#e11d48]/40">
+                        <p className="font-interface text-xs text-[#5a5a5a]">
+                            Датасет буде повністю видалено з системи без можливості відновлення.
+                        </p>
+                    </div>
+                </div>
+            </TacticalModal>
         </div>
     );
 };
