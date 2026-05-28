@@ -55,7 +55,7 @@ export const CommanderShell: React.FC<CommanderShellProps> = ({ metrics, onActio
                    <span className="text-[10px] text-slate-500">99.9% UPTIME</span>
                  </div>
             </div>
-        </TacticalCard>
+        </HoloCard>
 
         <TacticalCard variant="holographic" title="🤖 ЯДРО_СУПЕРІНТЕЛЕКТУ" className="border-purple-500/20">
           <PermissionLayer sensitivity="TOP_SECRET">
@@ -77,7 +77,7 @@ export const CommanderShell: React.FC<CommanderShellProps> = ({ metrics, onActio
               </div>
             </div>
           </PermissionLayer>
-        </TacticalCard>
+        </HoloCard>
 
         <TacticalCard
           variant="holographic"
@@ -99,7 +99,7 @@ export const CommanderShell: React.FC<CommanderShellProps> = ({ metrics, onActio
                     />
                  ))}
             </div>
-        </TacticalCard>
+        </HoloCard>
 
         {/* [NEW] War-gaming Strategic Horizon */}
         <WarGamingWidget />
@@ -181,7 +181,7 @@ export const CommanderShell: React.FC<CommanderShellProps> = ({ metrics, onActio
             </motion.button>
           ))}
         </div>
-      </TacticalCard>
+      </HoloCard>
     </div>
   );
 };
