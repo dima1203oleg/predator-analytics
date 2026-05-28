@@ -1,5 +1,6 @@
 
 import React, { useRef, useState, useEffect, Suspense } from 'react';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import {
@@ -148,16 +149,20 @@ const SuperIntelligenceView: React.FC = () => {
 
                 {!isFocusMode && (
                     <div className="flex flex-col gap-8 h-full order-1 lg:order-2">
-                        <TacticalCard variant="holographic" title="Когнітивна Синхронізація (GPU Кластер)" className="h-[180px] glass-morphism panel-3d">
+                        <HoloCard className="h-[180px] glass-morphism panel-3d">
+                            <div className="flex items-center gap-3 mb-2 p-2">
+                                <Activity size={18} className="text-[#c9a227]" />
+                                <h4 className="text-[10px] font-black text-[#c9a227] uppercase tracking-tight">Когнітивна Синхронізація (GPU Кластер)</h4>
+                            </div>
                             <ResponsiveContainer width="100%" height="100%">
                                 <AreaChart data={loadData}>
                                     <defs><linearGradient id="siLoad" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#6366f1" stopOpacity={0.4} /><stop offset="95%" stopColor="#6366f1" stopOpacity={0} /></linearGradient></defs>
                                     <Area type="monotone" dataKey="load" stroke="#6366f1" fill="url(#siLoad)" strokeWidth={3} />
                                 </AreaChart>
                             </ResponsiveContainer>
-                        </TacticalCard>
+                        </HoloCard>
 
-                        <TacticalCard variant="holographic" title="СИНАПСИС" className="flex-1 flex flex-col overflow-hidden glass-morphism panel-3d p-0" noPadding>
+                        <HoloCard className="flex-1 flex flex-col overflow-hidden glass-morphism panel-3d p-0">
                             <div className="flex bg-slate-950/50  border-b border-white/5 p-1 gap-1">
                                 {[
                                     { id: 'STREAM', icon: Radio, label: 'Потік' },
@@ -242,9 +247,13 @@ const SuperIntelligenceView: React.FC = () => {
                                     )}
                                 </AnimatePresence>
                             </div>
-                        </TacticalCard>
+                        </HoloCard>
 
-                        <TacticalCard variant="holographic" title="Арбітраж  ішень" className="h-[250px] glass-morphism panel-3d">
+                        <HoloCard className="h-[250px] glass-morphism panel-3d">
+                            <div className="flex items-center gap-3 mb-2 p-2">
+                                <Scale size={18} className="text-[#c9a227]" />
+                                <h4 className="text-[10px] font-black text-[#c9a227] uppercase tracking-tight">Арбітраж рішень</h4>
+                            </div>
                             <ResponsiveContainer width="100%" height="100%">
                                 <RadarChart cx="50%" cy="50%" outerRadius="75%" data={[
                                     { s: 'Безпека', A: arbitrationScores[0]?.criteria.safety * 100 || 0, B: arbitrationScores[1]?.criteria.safety * 100 || 0 },
@@ -258,7 +267,7 @@ const SuperIntelligenceView: React.FC = () => {
                                     <Tooltip contentStyle={{ backgroundColor: '#020617', border: '1px solid #ffffff10', borderRadius: '12px', fontSize: '9px' }} />
                                 </RadarChart>
                             </ResponsiveContainer>
-                        </TacticalCard>
+                        </HoloCard>
                     </div>
                 )}
             </div>
