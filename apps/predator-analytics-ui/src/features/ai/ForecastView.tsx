@@ -28,6 +28,7 @@ import {
 } from 'recharts';
 import { forecastApi } from '@/features/forecast';
 import { ForecastResponse, ForecastPoint } from '@/features/forecast/types';
+import { HoloCard } from '@/components/ui/HoloCard';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { HoloContainer } from '@/components/HoloContainer';
 import { CyberOrb } from '@/components/CyberOrb';
@@ -179,35 +180,40 @@ const ForecastView: React.FC = () => {
 
                         {/* Bottom Details */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <TacticalCard
-                                variant="cyber"
-                                title="Оцінка  инку"
-                                icon={<Box size={18} className="text-purple-400" />}
-                                metrics={[{ label: 'MAPE', value: `${(forecast?.mape || 0).toFixed(2)}%` }]}
-                            />
-                            <TacticalCard
-                                variant="cyber"
-                                title="Дані для навчання"
-                                icon={<Cpu size={18} className="text-yellow-400" />}
-                                metrics={[{ label: 'Точок', value: forecast?.data_points_used || 0 }]}
-                            />
-                            <TacticalCard
-                                variant="cyber"
-                                title="Статус Моделі"
-                                icon={<RefreshCw size={18} className="text-emerald-400" />}
-                                metrics={[{ label: 'Health', value: 'Dynamic' }]}
-                            />
+                            <HoloCard className="p-6">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <Box size={18} className="text-purple-400" />
+                                    <h4 className="text-sm font-black text-white uppercase tracking-tight">Оцінка ринку</h4>
+                                </div>
+                                <div className="text-2xl font-black text-white">{(forecast?.mape || 0).toFixed(2)}%</div>
+                                <div className="text-[10px] text-slate-500 mt-1">MAPE</div>
+                            </HoloCard>
+                            <HoloCard className="p-6">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <Cpu size={18} className="text-yellow-400" />
+                                    <h4 className="text-sm font-black text-white uppercase tracking-tight">Дані для навчання</h4>
+                                </div>
+                                <div className="text-2xl font-black text-white">{forecast?.data_points_used || 0}</div>
+                                <div className="text-[10px] text-slate-500 mt-1">Точок</div>
+                            </HoloCard>
+                            <HoloCard className="p-6">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <RefreshCw size={18} className="text-emerald-400" />
+                                    <h4 className="text-sm font-black text-white uppercase tracking-tight">Статус Моделі</h4>
+                                </div>
+                                <div className="text-2xl font-black text-white">Dynamic</div>
+                                <div className="text-[10px] text-slate-500 mt-1">Health</div>
+                            </HoloCard>
                         </div>
                     </div>
 
                     {/* AI Insights & Controls */}
                     <div className="xl:col-span-4 space-y-8">
-                        <TacticalCard
-                            variant="holographic"
-                            glow="purple"
-                            title="AI Інтерпретація"
-                            icon={<CyberOrb size="sm" status="active" />}
-                        >
+                        <HoloCard className="p-8">
+                            <div className="flex items-center gap-3 mb-6">
+                                <CyberOrb size="sm" status="active" />
+                                <h4 className="text-sm font-black text-white uppercase tracking-tight">AI Інтерпретація</h4>
+                            </div>
                             <div className="space-y-6">
                                 <div className="p-5 bg-purple-500/5 border border-purple-500/20 rounded-2xl">
                                     <p className="text-sm leading-relaxed text-slate-300 italic">
@@ -241,9 +247,13 @@ const ForecastView: React.FC = () => {
                                     Сформувати повний звіт
                                 </button>
                             </div>
-                        </TacticalCard>
+                        </HoloCard>
 
-                        <TacticalCard variant="glass" title="Параметри Симуляції">
+                        <HoloCard className="p-8">
+                            <div className="flex items-center gap-3 mb-6">
+                                <Settings size={18} className="text-[#c9a227]" />
+                                <h4 className="text-sm font-black text-white uppercase tracking-tight">Параметри Симуляції</h4>
+                            </div>
                             <div className="space-y-4">
                                 <div>
                                     <label className="text-[10px] font-black text-slate-500 uppercase mb-2 block">Горизонт прогнозу</label>
