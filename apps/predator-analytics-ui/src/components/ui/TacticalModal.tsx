@@ -18,6 +18,12 @@ interface TacticalModalProps {
   children: React.ReactNode;
   size?: 'sm' | 'md' | 'lg' | 'xl';
   className?: string;
+  confirmLabel?: string;
+  cancelLabel?: string;
+  onConfirm?: () => void | Promise<void>;
+  danger?: boolean;
+  variant?: string;
+  glitch?: boolean;
 }
 
 const sizeMap = {
@@ -34,6 +40,10 @@ export const TacticalModal: React.FC<TacticalModalProps> = ({
   children,
   size = 'md',
   className,
+  confirmLabel,
+  cancelLabel,
+  onConfirm,
+  danger,
 }) => {
   const [typedTitle, setTypedTitle] = useState('');
   const [showCursor, setShowCursor] = useState(true);
@@ -137,6 +147,33 @@ export const TacticalModal: React.FC<TacticalModalProps> = ({
               <div className="p-5">
                 {children}
               </div>
+
+              {/* Confirm/Cancel Actions */}
+              {(confirmLabel || cancelLabel) && (
+                <div className="px-5 pb-5 flex gap-3 justify-end">
+                  {cancelLabel && (
+                    <button
+                      onClick={onClose}
+                      className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-[#8a8a8a] text-sm font-medium hover:bg-white/[0.08] hover:text-[#e8e8e8] transition-all"
+                    >
+                      {cancelLabel}
+                    </button>
+                  )}
+                  {confirmLabel && onConfirm && (
+                    <button
+                      onClick={onConfirm}
+                      className={cn(
+                        "px-4 py-2 rounded-lg text-sm font-medium transition-all",
+                        danger
+                          ? "bg-[#e11d48]/20 border border-[#e11d48]/40 text-[#e11d48] hover:bg-[#e11d48]/30"
+                          : "bg-[#c9a227]/20 border border-[#c9a227]/40 text-[#c9a227] hover:bg-[#c9a227]/30"
+                      )}
+                    >
+                      {confirmLabel}
+                    </button>
+                  )}
+                </div>
+              )}
 
               {/* Bottom accent line */}
               <div className="h-0.5 bg-gradient-to-r from-transparent via-[#c9a227]/50 to-transparent" />

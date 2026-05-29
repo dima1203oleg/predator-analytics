@@ -19,6 +19,7 @@ interface MechanicalButtonProps {
   onClick?: () => void;
   className?: string;
   as?: keyof JSX.IntrinsicElements;
+  type?: 'button' | 'submit' | 'reset';
 }
 
 const variantMap = {
@@ -48,6 +49,7 @@ export const MechanicalButton = React.forwardRef<HTMLButtonElement, MechanicalBu
       onClick,
       className,
       as: Component = 'button',
+      type,
       ...rest
     },
     ref
@@ -59,6 +61,7 @@ export const MechanicalButton = React.forwardRef<HTMLButtonElement, MechanicalBu
         ref={ref as any}
         onClick={onClick}
         disabled={disabled || isLoading}
+        type={type}
         {...rest}
         className={cn(
           'relative inline-flex items-center justify-center gap-2 rounded-lg font-interface font-medium transition-all duration-200',
