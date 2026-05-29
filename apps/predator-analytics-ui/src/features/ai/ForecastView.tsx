@@ -13,7 +13,8 @@ import {
     RefreshCw,
     Search,
     Box,
-    Cpu
+    Cpu,
+    Settings
 } from 'lucide-react';
 import {
     LineChart,

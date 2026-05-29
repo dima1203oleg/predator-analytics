@@ -46,12 +46,6 @@ export const SensitiveDataToggle: React.FC = () => {
         isOpen={showModal}
         onClose={() => setShowModal(false)}
         title="ДОСТУП ДО ЧУТЛИВИХ ДАНИХ"
-        confirmLabel="ПІДТВЕРДИТИ"
-        cancelLabel="СКАСУВАТИ"
-        onConfirm={handleConfirm}
-        danger
-        variant="critical"
-        glitch
       >
         <div className="space-y-6">
           <div className="flex items-center gap-3">

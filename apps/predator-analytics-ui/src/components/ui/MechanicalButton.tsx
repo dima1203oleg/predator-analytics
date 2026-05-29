@@ -10,7 +10,7 @@ import { motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 import { cn } from '@/utils/cn';
 
-interface MechanicalButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface MechanicalButtonProps {
   children: React.ReactNode;
   variant?: 'default' | 'primary' | 'danger' | 'ghost';
   size?: 'sm' | 'md' | 'lg';

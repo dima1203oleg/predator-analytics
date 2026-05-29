@@ -1,6 +1,6 @@
-
 import React from 'react';
 import { BrainCircuit } from 'lucide-react';
+import { HoloCard } from '@/components/ui/HoloCard';
 
 interface BrainTrainerConfigProps {
     schedule: string;

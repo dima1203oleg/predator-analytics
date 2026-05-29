@@ -1,3 +1,4 @@
+import { HoloCard } from '@/components/ui/HoloCard';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShieldAlert, Zap, TrendingDown, Target, Activity, Play, RefreshCw, AlertTriangle } from 'lucide-react';

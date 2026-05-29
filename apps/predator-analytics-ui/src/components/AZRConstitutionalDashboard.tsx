@@ -1,3 +1,4 @@
+import { HoloCard } from '@/components/ui/HoloCard';
 /**
  * 🏛️ AZR Constitutional Sovereign Controller | v61.0-ELITE Premium Matrix
  * Predator v61.0-ELITE | Neural Analytics*

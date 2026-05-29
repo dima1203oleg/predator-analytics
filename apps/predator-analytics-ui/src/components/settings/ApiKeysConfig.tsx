@@ -1,3 +1,4 @@
+import { HoloCard } from '@/components/ui/HoloCard';
 
 import React, { useState, useEffect } from 'react';
 import { ShieldCheck, Plus, Trash2, Zap, RefreshCw, Key, Info, CheckCircle2, AlertCircle } from 'lucide-react';
