@@ -8,7 +8,7 @@ import http from 'http';
 
 
 
-const PORT = 3031;
+const PORT = 9080;
 
 // ─── Стан Системи (Dynamic State) ───────────────────────────────────────────
 

@@ -1,8 +1,5 @@
-/**
- * 🖥️ useViewport — повна адаптивна інформація про viewport
- * Mobile-first breakpoints: compact < 640px, medium 640-1024px, expanded > 1024px
- */
 import { useEffect, useState, useCallback } from 'react';
+import { useDisplayMode, DisplayMode } from '../context/DisplayModeContext';
 
 export type Breakpoint = 'compact' | 'medium' | 'expanded' | 'wide';
 export type Orientation = 'portrait' | 'landscape';
@@ -52,19 +49,39 @@ function getSafeArea(): { top: number; bottom: number; left: number; right: numb
 const TOUCH_MEDIA = '(pointer: coarse)';
 
 export function useViewport(): ViewportState & { refresh: () => void } {
+  const { mode: displayMode } = useDisplayMode();
+
+  const getResponsiveValues = useCallback((w: number, h: number) => {
+    const bp = getBreakpoint(w);
+    const isCompact = displayMode === DisplayMode.MOBILE || (displayMode === DisplayMode.DESKTOP && bp === 'compact');
+    const isMedium = displayMode === DisplayMode.TABLET || (displayMode === DisplayMode.DESKTOP && bp === 'medium');
+    const isExpanded = displayMode === DisplayMode.DESKTOP && (bp === 'expanded' || bp === 'wide');
+    const isWide = displayMode === DisplayMode.DESKTOP && bp === 'wide';
+    return { bp, isCompact, isMedium, isExpanded, isWide };
+  }, [displayMode]);
+
   const [state, setState] = useState<ViewportState>(() => {
     const w = typeof window !== 'undefined' ? window.innerWidth : 1024;
     const h = typeof window !== 'undefined' ? window.innerHeight : 768;
     const bp = getBreakpoint(w);
+    
+    const saved = typeof localStorage !== 'undefined' ? localStorage.getItem('predator_display_mode') as DisplayMode : DisplayMode.DESKTOP;
+    const currentMode = saved || DisplayMode.DESKTOP;
+
+    const isCompact = currentMode === DisplayMode.MOBILE || (currentMode === DisplayMode.DESKTOP && bp === 'compact');
+    const isMedium = currentMode === DisplayMode.TABLET || (currentMode === DisplayMode.DESKTOP && bp === 'medium');
+    const isExpanded = currentMode === DisplayMode.DESKTOP && (bp === 'expanded' || bp === 'wide');
+    const isWide = currentMode === DisplayMode.DESKTOP && bp === 'wide';
+
     return {
       width: w,
       height: h,
       breakpoint: bp,
       orientation: w > h ? 'landscape' : 'portrait',
-      isCompact: bp === 'compact',
-      isMedium: bp === 'medium',
-      isExpanded: bp === 'expanded' || bp === 'wide',
-      isWide: bp === 'wide',
+      isCompact,
+      isMedium,
+      isExpanded,
+      isWide,
       isTouch: typeof window !== 'undefined' ? window.matchMedia(TOUCH_MEDIA).matches : false,
       isPortrait: w <= h,
       isLandscape: w > h,
@@ -76,26 +93,29 @@ export function useViewport(): ViewportState & { refresh: () => void } {
   const refresh = useCallback(() => {
     const w = window.innerWidth;
     const h = window.innerHeight;
-    const bp = getBreakpoint(w);
+    const { bp, isCompact, isMedium, isExpanded, isWide } = getResponsiveValues(w, h);
     setState({
       width: w,
       height: h,
       breakpoint: bp,
       orientation: w > h ? 'landscape' : 'portrait',
-      isCompact: bp === 'compact',
-      isMedium: bp === 'medium',
-      isExpanded: bp === 'expanded' || bp === 'wide',
-      isWide: bp === 'wide',
+      isCompact,
+      isMedium,
+      isExpanded,
+      isWide,
       isTouch: window.matchMedia(TOUCH_MEDIA).matches,
       isPortrait: w <= h,
       isLandscape: w > h,
       dpr: window.devicePixelRatio || 1,
       safeArea: getSafeArea(),
     });
-  }, []);
+  }, [getResponsiveValues]);
 
   useEffect(() => {
     refresh();
+  }, [displayMode, refresh]);
+
+  useEffect(() => {
     let raf: number;
     const onResize = () => {
       cancelAnimationFrame(raf);

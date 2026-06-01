@@ -87,10 +87,14 @@ const Header: React.FC = () => {
   const shellV2Enabled = isShellV2Enabled();
   const { isTerminalOpen, setTerminalOpen } = useAppStore();
   const { mode: displayMode, setMode: setDisplayMode } = useDisplayMode();
-  const deviceModes = [
-    { mode: DisplayMode.DESKTOP, label: 'Десктоп', icon: Monitor },
+  const isMobileMode = displayMode === DisplayMode.MOBILE;
+  const isTabletMode = displayMode === DisplayMode.TABLET;
+
+  // Режими пристроїв для емулятора
+  const deviceModes: { mode: DisplayMode; label: string; icon: React.FC<{ className?: string }> }[] = [
+    { mode: DisplayMode.DESKTOP, label: `Комп'ютер`, icon: Monitor },
     { mode: DisplayMode.TABLET, label: 'Планшет', icon: Tablet },
-    { mode: DisplayMode.MOBILE, label: 'Смартфон', icon: Smartphone },
+    { mode: DisplayMode.MOBILE, label: 'Телефон', icon: Smartphone },
   ];
 
   return (
@@ -146,7 +150,7 @@ const Header: React.FC = () => {
                 >
                   {section?.label ?? 'ПЛАТФОРМА'}
                 </span>
-                {item && (
+                {item && !isMobileMode && (
                   <>
                     <ChevronRight className="h-3 w-3 text-slate-700 shrink-0" />
                     <span className="text-slate-500 hover:text-slate-300 transition-colors cursor-default ">{item.label}</span>
@@ -159,7 +163,12 @@ const Header: React.FC = () => {
             <div className="flex items-center gap-5">
               <div className="min-w-0">
                 <h1
-                  className="font-display text-[1.75rem] font-bold leading-none tracking-tight text-white  sm:text-[1.85rem]"
+                  className={cn(
+                    "font-display font-bold leading-none tracking-tight text-white transition-all",
+                    isMobileMode 
+                      ? "text-[1.25rem] tracking-tight" 
+                      : "text-[1.75rem] sm:text-[1.85rem]"
+                  )}
                   style={{ letterSpacing: '-0.035em' }}
                 >
                   {item?.label ?? 'ПАНЕЛЬ УПРАВЛІННЯ'}
@@ -167,34 +176,37 @@ const Header: React.FC = () => {
               </div>
               
               {/* Статусні теги в одному рядку з заголовком */}
-              <div className="hidden xl:flex items-center gap-3">
-                <div className="h-4 w-px bg-white/10" />
-                <div className="flex items-center gap-3">
-                   <div className="flex items-center gap-2 rounded-full border border-white/[0.06] bg-white/[0.03] px-3 py-1 text-[9px] font-semibold uppercase tracking-widest text-slate-500">
-                      <Calendar className="h-3 w-3 text-sky-500/70" />
-                      {currentDate}
-                   </div>
-                   
-                   <div className={cn(
-                      "flex items-center gap-2 rounded-full border px-3 py-1 text-[9px] font-semibold uppercase tracking-widest",
-                      backendStatus.isOffline 
-                        ? "bg-rose-500/5 border-rose-500/20 text-rose-400" 
-                        : "bg-emerald-500/5 border-emerald-500/20 text-emerald-400"
-                   )}>
-                      <span className={cn(
-                        "w-1.5 h-1.5 rounded-full",
-                        backendStatus.isOffline ? "bg-rose-500" : "bg-emerald-500"
-                      )} />
-                      {backendStatus.statusLabel}
-                   </div>
+              {!isMobileMode && !isTabletMode && (
+                <div className="hidden xl:flex items-center gap-3">
+                  <div className="h-4 w-px bg-white/10" />
+                  <div className="flex items-center gap-3">
+                     <div className="flex items-center gap-2 rounded-full border border-white/[0.06] bg-white/[0.03] px-3 py-1 text-[9px] font-semibold uppercase tracking-widest text-slate-500">
+                        <Calendar className="h-3 w-3 text-sky-500/70" />
+                        {currentDate}
+                     </div>
+                     
+                     <div className={cn(
+                        "flex items-center gap-2 rounded-full border px-3 py-1 text-[9px] font-semibold uppercase tracking-widest",
+                        backendStatus.isOffline 
+                          ? "bg-rose-500/5 border-rose-500/20 text-rose-400" 
+                          : "bg-emerald-500/5 border-emerald-500/20 text-emerald-400"
+                     )}>
+                        <span className={cn(
+                          "w-1.5 h-1.5 rounded-full",
+                          backendStatus.isOffline ? "bg-rose-500" : "bg-emerald-500"
+                        )} />
+                        {backendStatus.statusLabel}
+                     </div>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
 
           {/* ── ПРАВА ЧАСТИНА: Пошук + Дії ── */}
           <div className="flex items-center gap-4 shrink-0">
-            <SystemPulseIndicator />
+            {!isMobileMode && <SystemPulseIndicator />}
+            
             <div className="hidden items-center gap-1 rounded-2xl border border-white/5 bg-black/40 p-1.5 shadow-lg lg:flex">
               {deviceModes.map(({ mode, label, icon: Icon }) => (
                 <button
@@ -214,26 +226,28 @@ const Header: React.FC = () => {
             </div>
             
             {/* Командний пошук */}
-            <div
-              className="relative hidden md:block group cursor-pointer"
-              onClick={() => setIsPaletteOpen(true)}
-            >
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                <Search className="h-4 w-4 text-slate-600 transition-colors group-hover:text-red-400" />
+            {!isMobileMode && (
+              <div
+                className="relative hidden md:block group cursor-pointer"
+                onClick={() => setIsPaletteOpen(true)}
+              >
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                  <Search className="h-4 w-4 text-slate-600 transition-colors group-hover:text-red-400" />
+                </div>
+                <div className="flex h-10 w-56 items-center rounded-xl border border-white/[0.07] bg-black/45 pl-10 pr-12 text-[11px] font-medium tracking-tight text-slate-400 shadow-[inset_0_2px_4px_rgba(0,0,0,0.45)] transition-all group-hover:border-red-500/25 group-hover:bg-red-500/[0.03] lg:w-72">
+                  Знайти модуль, звіт або дію…
+                </div>
+                <div className="absolute inset-y-0 right-2.5 flex items-center gap-1">
+                  <kbd className="hidden items-center justify-center rounded border border-white/10 bg-black/50 px-1.5 py-0.5 text-[9px] font-semibold text-slate-500 transition-all group-hover:border-red-500/30 group-hover:text-red-300/90 lg:flex">
+                    ⌘K
+                  </kbd>
+                </div>
               </div>
-              <div className="flex h-10 w-56 items-center rounded-xl border border-white/[0.07] bg-black/45 pl-10 pr-12 text-[11px] font-medium tracking-tight text-slate-400 shadow-[inset_0_2px_4px_rgba(0,0,0,0.45)] transition-all group-hover:border-red-500/25 group-hover:bg-red-500/[0.03] lg:w-72">
-                Знайти модуль, звіт або дію…
-              </div>
-              <div className="absolute inset-y-0 right-2.5 flex items-center gap-1">
-                <kbd className="hidden items-center justify-center rounded border border-white/10 bg-black/50 px-1.5 py-0.5 text-[9px] font-semibold text-slate-500 transition-all group-hover:border-red-500/30 group-hover:text-red-300/90 lg:flex">
-                  ⌘K
-                </kbd>
-              </div>
-            </div>
+            )}
 
             {/* Контекстні дії */}
             <div className="flex items-center gap-2 p-1.5 bg-black/40 border border-white/5 rounded-2xl shadow-lg">
-              {shellV2Enabled && (
+              {shellV2Enabled && !isMobileMode && (
                 <button
                   title={isContextRailOpen ? 'Згорнути контекстну панель' : 'Відкрити контекстну панель'}
                   onClick={() => setIsContextRailOpen((current) => !current)}
@@ -257,19 +271,21 @@ const Header: React.FC = () => {
                 <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-rose-600 rounded-full" />
               </button>
 
-              <button
-                id="header-terminal-toggle"
-                title={isTerminalOpen ? 'Закрити термінал' : 'Відкрити термінал'}
-                onClick={() => setTerminalOpen(!isTerminalOpen)}
-                className={cn(
-                  "flex h-9 w-9 items-center justify-center rounded-xl transition-all duration-300 relative group",
-                  isTerminalOpen 
-                    ? "bg-rose-500/10 text-rose-400 shadow-[inset_0_0_12px_rgba(225,29,72,0.2)]" 
-                    : "text-slate-600 hover:text-white hover:bg-white/[0.05]"
-                )}
-              >
-                <Terminal className="h-4 w-4" />
-              </button>
+              {!isMobileMode && (
+                <button
+                  id="header-terminal-toggle"
+                  title={isTerminalOpen ? 'Закрити термінал' : 'Відкрити термінал'}
+                  onClick={() => setTerminalOpen(!isTerminalOpen)}
+                  className={cn(
+                    "flex h-9 w-9 items-center justify-center rounded-xl transition-all duration-300 relative group",
+                    isTerminalOpen 
+                      ? "bg-rose-500/10 text-rose-400 shadow-[inset_0_0_12px_rgba(225,29,72,0.2)]" 
+                      : "text-slate-600 hover:text-white hover:bg-white/[0.05]"
+                  )}
+                >
+                  <Terminal className="h-4 w-4" />
+                </button>
+              )}
             </div>
 
             {/* Профіль та операційний режим */}
@@ -278,17 +294,19 @@ const Header: React.FC = () => {
               
               {/* Профіль */}
               <div className="flex items-center gap-3 pl-1 group cursor-pointer">
-                <div className="text-right hidden lg:block">
-                  <div className="text-[11px] font-semibold uppercase tracking-tight text-white">{user?.name || 'ADMIN_CORE'}</div>
-                  <div className="mt-0.5 text-[8px] uppercase tracking-[0.18em] text-slate-500">{roleLabel}</div>
-                </div>
+                {!isMobileMode && !isTabletMode && (
+                  <div className="text-right hidden lg:block">
+                    <div className="text-[11px] font-semibold uppercase tracking-tight text-white">{user?.name || 'ADMIN_CORE'}</div>
+                    <div className="mt-0.5 text-[8px] uppercase tracking-[0.18em] text-slate-500">{roleLabel}</div>
+                  </div>
+                )}
                 <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl border border-white/[0.08] bg-gradient-to-br from-slate-800 to-slate-950 shadow-lg transition-all group-hover:border-red-500/35">
                    <div className="absolute inset-0 bg-red-500/5 opacity-0 transition-opacity group-hover:opacity-100" />
                    <UserCircle className="h-6 w-6 text-slate-500 transition-colors group-hover:text-red-300" />
                 </div>
               </div>
 
-              <OperationalModeSwitch />
+              {!isMobileMode && <OperationalModeSwitch />}
             </div>
           </div>
         </div>

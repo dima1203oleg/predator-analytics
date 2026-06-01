@@ -27,6 +27,7 @@ import { ActiveJobsPanel } from '@/components/pipeline/ActiveJobsPanel';
 import { DatabasePipelineMonitor } from '@/components/pipeline/DatabasePipelineMonitor';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { Badge } from '@/components/ui/badge';
+import { useDisplayMode, DisplayMode } from '@/context/DisplayModeContext';
 
 // === ТИПИ ТА КОНФІГУ АЦІЯ ===
 interface DataSource {
@@ -124,6 +125,9 @@ const FileItem = ({ file, onRemove }: any) => (
 );
 
 const DataIngestionHub: React.FC = () => {
+  const { mode: displayMode } = useDisplayMode();
+  const isMobile = displayMode === DisplayMode.MOBILE;
+  const isTablet = displayMode === DisplayMode.TABLET;
   const [sources, setSources] = useState<DataSource[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -180,35 +184,35 @@ const DataIngestionHub: React.FC = () => {
         <AdvancedBackground />
 
         {/* Global Situational Awareness Header */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-10 z-10">
-           <div className="flex items-center gap-8">
-              <div className="relative group cursor-pointer">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6 md:gap-10 z-10">
+           <div className="flex items-center gap-4 md:gap-8 w-full md:w-auto">
+              <div className="relative group cursor-pointer shrink-0">
                   <div className="absolute inset-0 bg-emerald-500/20 blur-2xl rounded-full group-hover:scale-125 transition-transform" />
-                  <div className="relative p-6 bg-slate-900 border border-emerald-500/30 rounded-[2.5rem] shadow-2xl">
-                      <CloudLightning size={40} className="text-emerald-400" />
+                  <div className="relative p-4 md:p-6 bg-slate-900 border border-emerald-500/30 rounded-[1.5rem] md:rounded-[2.5rem] shadow-2xl">
+                      <CloudLightning size={isMobile ? 24 : 40} className="text-emerald-400" />
                   </div>
               </div>
               <div>
-                  <div className="flex items-center gap-3 mb-2">
-                       <span className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.4em] ">ЯДРО_ЗЛИТТЯ_ДАНИХ_v6.1</span>
-                       <Badge variant="outline" className="text-[8px] bg-emerald-500/10 text-emerald-400 border-emerald-500/20">LIVE_BRIDGE</Badge>
+                  <div className="flex items-center gap-2 md:gap-3 mb-1 md:mb-2">
+                       <span className="text-[8px] md:text-[10px] font-black text-emerald-500 uppercase tracking-[0.3em] ">ЯДРО_ЗЛИТТЯ_v6.1</span>
+                       <Badge variant="outline" className="text-[7px] md:text-[8px] bg-emerald-500/10 text-emerald-400 border-emerald-500/20">LIVE</Badge>
                   </div>
-                  <h1 className="text-5xl font-black text-white italic tracking-tighter uppercase leading-tight font-display">
+                  <h1 className={cn("font-black text-white italic tracking-tighter uppercase leading-tight font-display", isMobile ? "text-3xl" : "text-5xl")}>
                       ЦЕНТ  <span className="text-emerald-400 ">ІНГЕСТІЇ</span>
                   </h1>
               </div>
            </div>
 
-           <div className="flex items-center gap-8">
-                <div className="flex flex-col text-right">
-                    <span className="text-[9px] font-black text-slate-300 uppercase tracking-[0.3em] mb-1">СИНХРОНІЗАЦІЯ_ОЗЕ А</span>
-                    <span className="text-lg font-black text-emerald-400 font-mono italic">{lastUpdate}</span>
+           <div className={cn("flex items-center gap-6 md:gap-8 w-full md:w-auto justify-between md:justify-end", isMobile && "flex-col-reverse items-stretch gap-4")}>
+                <div className={cn("flex flex-col text-right", isMobile && "text-center")}>
+                    <span className="text-[8px] md:text-[9px] font-black text-slate-300 uppercase tracking-[0.2em] md:tracking-[0.3em] mb-1">СИНХРОНІЗАЦІЯ_ОЗЕРА</span>
+                    <span className="text-sm md:text-lg font-black text-emerald-400 font-mono italic">{lastUpdate}</span>
                 </div>
                 <button 
                   onClick={() => setIsModalOpen(true)}
-                  className="px-10 py-6 bg-emerald-500 text-black font-black rounded-[2rem] text-xs uppercase tracking-[0.2em]  hover:bg-emerald-400 transition-all flex items-center gap-3 group active:scale-95"
+                  className="px-6 md:px-10 py-4 md:py-6 bg-emerald-500 text-black font-black rounded-2xl md:rounded-[2rem] text-xs uppercase tracking-[0.2em] hover:bg-emerald-400 transition-all flex items-center justify-center gap-3 group active:scale-95"
                 >
-                  <Plus size={20} className="group-hover:rotate-90 transition-transform duration-500" />
+                  <Plus size={isMobile ? 16 : 20} className="group-hover:rotate-90 transition-transform duration-500" />
                   ПІДКЛЮЧИТИ ДЖЕРЕЛО_v2
                 </button>
            </div>
@@ -233,56 +237,97 @@ const DataIngestionHub: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="overflow-x-auto custom-scrollbar">
-                        <table className="w-full text-left border-separate border-spacing-y-4">
-                            <thead>
-                                <tr>
-                                    <th className="px-6 text-[10px] font-black text-slate-300 uppercase tracking-widest">ID_КОНЕКТО А</th>
-                                    <th className="px-6 text-[10px] font-black text-slate-300 uppercase tracking-widest">ТИП_ІНФО</th>
-                                    <th className="px-6 text-[10px] font-black text-slate-300 uppercase tracking-widest text-center">СТАТУС_КАНАЛУ</th>
-                                    <th className="px-6 text-[10px] font-black text-slate-300 uppercase tracking-widest text-right">ОБ'ЄМ_ЗНАНЬ</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {sources.map(source => (
-                                    <motion.tr 
-                                        key={source.id}
-                                        initial={{ opacity: 0, y: 10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        className="group cursor-pointer"
-                                    >
-                                        <td className="bg-slate-900/40 border border-white/5 border-r-0 rounded-l-[1.5rem] px-6 py-5">
-                                            <div className="flex items-center gap-4">
-                                                <div className="p-3 bg-slate-950 rounded-xl border border-white/5 group-hover:border-blue-500/30 transition-all">
-                                                    <Database size={16} className="text-slate-300 group-hover:text-blue-300" />
-                                                </div>
-                                                <div className="flex flex-col">
-                                                    <span className="text-[12px] font-black text-white uppercase italic">{source.name}</span>
-                                                    <span className="text-[9px] font-mono text-slate-400 uppercase tracking-tighter">UID: {source.id}</span>
-                                                </div>
+                    {isMobile ? (
+                        <div className="flex flex-col gap-4">
+                            {sources.map(source => (
+                                <motion.div 
+                                    key={source.id}
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className="p-5 bg-slate-900/60 border border-white/5 rounded-2xl flex flex-col gap-4"
+                                >
+                                    <div className="flex justify-between items-start">
+                                        <div className="flex items-center gap-3">
+                                            <div className="p-3 bg-slate-950 rounded-xl border border-white/5">
+                                                <Database size={16} className="text-slate-300" />
                                             </div>
-                                        </td>
-                                        <td className="bg-slate-900/40 border-y border-white/5 px-6 py-5">
-                                            <Badge variant="outline" className="text-[9px] font-black text-blue-400 uppercase tracking-widest border-blue-500/30 px-3 py-1">
-                                                {source.type}
-                                            </Badge>
-                                        </td>
-                                        <td className="bg-slate-900/40 border-y border-white/5 px-6 py-5 text-center">
-                                            <div className={cn("inline-flex items-center gap-2 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-[0.2em]", 
-                                                source.status === 'active' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-slate-500/10 text-slate-300')}>
-                                                <div className={cn("w-1.5 h-1.5 rounded-full", source.status === 'active' ? 'bg-emerald-500 ' : 'bg-slate-400')} />
+                                            <div className="flex flex-col">
+                                                <span className="text-[12px] font-black text-white uppercase italic">{source.name}</span>
+                                                <span className="text-[8px] font-mono text-slate-500">ID: {source.id.slice(0, 8)}...</span>
+                                            </div>
+                                        </div>
+                                        <Badge variant="outline" className="text-[8px] font-black text-blue-400 uppercase tracking-widest border-blue-500/30 px-2 py-0.5">
+                                            {source.type}
+                                        </Badge>
+                                    </div>
+
+                                    <div className="flex justify-between items-center bg-black/45 p-3 rounded-xl border border-white/5">
+                                        <div className="flex items-center gap-2">
+                                            <div className={cn("w-1.5 h-1.5 rounded-full", source.status === 'active' ? 'bg-emerald-500 ' : 'bg-slate-400')} />
+                                            <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest">
                                                 {source.status === 'active' ? 'АКТИВНИЙ' : 'ОЧІКУВАННЯ'}
-                                            </div>
-                                        </td>
-                                        <td className="bg-slate-900/40 border border-white/5 border-l-0 rounded-r-[1.5rem] px-6 py-5 text-right font-mono italic">
-                                            <span className="text-lg font-black text-white">{source.itemsCount.toLocaleString()}</span>
-                                            <span className="text-[9px] text-slate-400 ml-2 uppercase font-black">ENTITIES</span>
-                                        </td>
-                                    </motion.tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
+                                            </span>
+                                        </div>
+                                        <div className="text-right">
+                                            <span className="text-sm font-black text-white font-mono">{source.itemsCount.toLocaleString()}</span>
+                                            <span className="text-[8px] text-slate-500 ml-1.5 uppercase font-black">ENTITIES</span>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="overflow-x-auto custom-scrollbar">
+                            <table className="w-full text-left border-separate border-spacing-y-4">
+                                <thead>
+                                    <tr>
+                                        <th className="px-6 text-[10px] font-black text-slate-300 uppercase tracking-widest">ID_КОНЕКТО А</th>
+                                        <th className="px-6 text-[10px] font-black text-slate-300 uppercase tracking-widest">ТИП_ІНФО</th>
+                                        <th className="px-6 text-[10px] font-black text-slate-300 uppercase tracking-widest text-center">СТАТУС_КАНАЛУ</th>
+                                        <th className="px-6 text-[10px] font-black text-slate-300 uppercase tracking-widest text-right">ОБ'ЄМ_ЗНАНЬ</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {sources.map(source => (
+                                        <motion.tr 
+                                            key={source.id}
+                                            initial={{ opacity: 0, y: 10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            className="group cursor-pointer"
+                                        >
+                                            <td className="bg-slate-900/40 border border-white/5 border-r-0 rounded-l-[1.5rem] px-6 py-5">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="p-3 bg-slate-950 rounded-xl border border-white/5 group-hover:border-blue-500/30 transition-all">
+                                                        <Database size={16} className="text-slate-300 group-hover:text-blue-300" />
+                                                    </div>
+                                                    <div className="flex flex-col">
+                                                        <span className="text-[12px] font-black text-white uppercase italic">{source.name}</span>
+                                                        <span className="text-[9px] font-mono text-slate-400 uppercase tracking-tighter">UID: {source.id}</span>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="bg-slate-900/40 border-y border-white/5 px-6 py-5">
+                                                <Badge variant="outline" className="text-[9px] font-black text-blue-400 uppercase tracking-widest border-blue-500/30 px-3 py-1">
+                                                    {source.type}
+                                                </Badge>
+                                            </td>
+                                            <td className="bg-slate-900/40 border-y border-white/5 px-6 py-5 text-center">
+                                                <div className={cn("inline-flex items-center gap-2 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-[0.2em]", 
+                                                    source.status === 'active' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-slate-500/10 text-slate-300')}>
+                                                    <div className={cn("w-1.5 h-1.5 rounded-full", source.status === 'active' ? 'bg-emerald-500 ' : 'bg-slate-400')} />
+                                                    {source.status === 'active' ? 'АКТИВНИЙ' : 'ОЧІКУВАННЯ'}
+                                                </div>
+                                            </td>
+                                            <td className="bg-slate-900/40 border border-white/5 border-l-0 rounded-r-[1.5rem] px-6 py-5 text-right font-mono italic">
+                                                <span className="text-lg font-black text-white">{source.itemsCount.toLocaleString()}</span>
+                                                <span className="text-[9px] text-slate-400 ml-2 uppercase font-black">ENTITIES</span>
+                                            </td>
+                                        </motion.tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
                 </HoloContainer>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -369,49 +414,49 @@ const DataIngestionHub: React.FC = () => {
         {/* Ingestion Modal - The Core Refinery */}
         <AnimatePresence>
             {isModalOpen && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-8">
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8">
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsModalOpen(false)} className="absolute inset-0 bg-black/90 " />
                     <motion.div
                         initial={{ scale: 0.9, y: 50, opacity: 0 }}
                         animate={{ scale: 1, y: 0, opacity: 1 }}
                         exit={{ scale: 0.9, opacity: 0 }}
-                        className="relative w-full max-w-6xl bg-[#020617] border border-white/10 rounded-[4rem]  overflow-hidden h-[90vh] flex flex-col"
+                        className="relative w-full max-w-6xl bg-[#020617] border border-white/10 rounded-[2rem] md:rounded-[4rem] overflow-hidden h-[95vh] md:h-[90vh] flex flex-col"
                     >
-                        <div className="p-12 flex items-start justify-between border-b border-white/5">
-                            <div className="flex items-center gap-8">
-                                <div className="p-6 bg-emerald-500/10 border border-emerald-500/20 rounded-[2rem] text-emerald-400">
-                                    <Layers size={40} />
+                        <div className="p-6 md:p-12 flex items-center justify-between border-b border-white/5">
+                            <div className="flex items-center gap-4 md:gap-8 w-full md:w-auto">
+                                <div className="p-3 md:p-6 bg-emerald-500/10 border border-emerald-500/20 rounded-xl md:rounded-[2rem] text-emerald-400 shrink-0">
+                                    <Layers size={isMobile ? 24 : 40} />
                                 </div>
                                 <div>
-                                    <h2 className="text-4xl font-black text-white italic tracking-tighter uppercase mb-2 font-display">ІНІЦІАЛІЗАЦІЯ_КОНВЕЄ А</h2>
-                                    <p className="text-slate-300 font-medium tracking-wide uppercase text-sm border-l-2 border-emerald-500/30 pl-4">Створення нового каналу поглинання знань</p>
+                                    <h2 className={cn("font-black text-white italic tracking-tighter uppercase font-display", isMobile ? "text-xl" : "text-4xl mb-2")}>ІНІЦІАЛІЗАЦІЯ_КОНВЕЄРА</h2>
+                                    {!isMobile && <p className="text-slate-300 font-medium tracking-wide uppercase text-sm border-l-2 border-emerald-500/30 pl-4">Створення нового каналу поглинання знань</p>}
                                 </div>
                             </div>
-                            <button onClick={() => setIsModalOpen(false)} className="p-5 bg-white/5 border border-white/10 rounded-3xl text-slate-300 hover:text-white transition-all active:scale-90">
-                                <X size={32} />
+                            <button onClick={() => setIsModalOpen(false)} className="p-3 md:p-5 bg-white/5 border border-white/10 rounded-2xl md:rounded-3xl text-slate-300 hover:text-white transition-all active:scale-90">
+                                <X size={isMobile ? 20 : 32} />
                             </button>
                         </div>
 
-                        <div className="flex-1 overflow-y-auto p-12 custom-scrollbar">
-                            <div className="grid grid-cols-12 gap-12">
-                                <div className="col-span-12 lg:col-span-12">
-                                    <h3 className="text-[11px] font-black text-emerald-400 uppercase tracking-[0.4em] mb-8 flex items-center gap-3">
-                                        <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full " /> ВИБЕ ІТЬ ТИП ТА Т ІЄ  ДЖЕ ЕЛА
+                        <div className="flex-1 overflow-y-auto p-6 md:p-12 custom-scrollbar">
+                            <div className="grid grid-cols-12 gap-6 md:gap-12">
+                                <div className="col-span-12">
+                                    <h3 className="text-[10px] md:text-[11px] font-black text-emerald-400 uppercase tracking-[0.3em] md:tracking-[0.4em] mb-4 md:mb-8 flex items-center gap-3">
+                                        <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full " /> ВИБЕРІТЬ ДЖЕРЕЛО ДАНИХ
                                     </h3>
-                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
                                         {SOURCE_TYPES.map(type => (
                                             <button 
                                                 key={type.id} 
                                                 onClick={() => setSelectedType(type.id)}
                                                 className={`
-                                                    p-8 rounded-[2.5rem] border transition-all flex flex-col items-center gap-4 group relative overflow-hidden
+                                                    p-4 md:p-8 rounded-2xl md:rounded-[2.5rem] border transition-all flex flex-col items-center gap-3 md:gap-4 group relative overflow-hidden
                                                     ${selectedType === type.id ? 'bg-emerald-500/10 border-emerald-500/40 shadow-xl scale-[1.02]' : 'bg-black/40 border-white/5 opacity-50 hover:opacity-100 hover:bg-black/60'}
                                                 `}
                                             >
-                                                <div className={`p-4 rounded-2xl ${selectedType === type.id ? 'bg-emerald-500 text-black' : 'bg-slate-900 text-slate-300'} transition-all`}>
-                                                    <type.icon size={28} />
+                                                <div className={`p-2.5 md:p-4 rounded-xl md:rounded-2xl ${selectedType === type.id ? 'bg-emerald-500 text-black' : 'bg-slate-900 text-slate-300'} transition-all`}>
+                                                    <type.icon size={isMobile ? 20 : 28} />
                                                 </div>
-                                                <span className={`text-[10px] font-black uppercase tracking-widest text-center ${selectedType === type.id ? 'text-white' : 'text-slate-300'}`}>{type.label}</span>
+                                                <span className={`text-[8px] md:text-[10px] font-black uppercase tracking-widest text-center ${selectedType === type.id ? 'text-white' : 'text-slate-300'}`}>{type.label}</span>
                                                 {selectedType === type.id && <motion.div layoutId="modal-sel" className="absolute inset-0 bg-emerald-500/[0.03] pointer-events-none" />}
                                             </button>
                                         ))}
@@ -420,7 +465,7 @@ const DataIngestionHub: React.FC = () => {
 
                                 <div className="col-span-12">
                                     <div 
-                                        className="p-16 bg-black/60 border-2 border-dashed border-white/10 rounded-[4rem] flex flex-col items-center group relative cursor-pointer hover:border-emerald-500/40 transition-all"
+                                        className="p-8 md:p-16 bg-black/60 border-2 border-dashed border-white/10 rounded-3xl md:rounded-[4rem] flex flex-col items-center group relative cursor-pointer hover:border-emerald-500/40 transition-all"
                                         onDragOver={(e) => e.preventDefault()}
                                         onDrop={(e) => {
                                             e.preventDefault();
@@ -432,18 +477,18 @@ const DataIngestionHub: React.FC = () => {
                                              const selected = Array.from(e.target.files || []);
                                              setFiles(prev => [...prev, ...selected.map(f => ({ file: f, progress: 0, status: 'pending' as const }))]);
                                         }} />
-                                        <div className="p-10 bg-emerald-500/10 rounded-[3rem] border border-emerald-500/20 mb-8 group-hover:scale-110 transition-transform duration-700">
-                                            <Upload size={64} className="text-emerald-400 animate-bounce" />
+                                        <div className="p-6 md:p-10 bg-emerald-500/10 rounded-2xl md:rounded-[3rem] border border-emerald-500/20 mb-4 md:mb-8 group-hover:scale-110 transition-transform duration-700">
+                                            <Upload size={isMobile ? 32 : 64} className="text-emerald-400 animate-bounce" />
                                         </div>
-                                        <h4 className="text-2xl font-black text-white italic uppercase tracking-tighter mb-2">ПЕ ЕТЯГНІТЬ ФАЙЛИ ДЛЯ АНАЛІЗУ</h4>
-                                        <p className="text-[10px] font-mono text-slate-300 uppercase tracking-[0.4em]">MAX_LIMIT: 2.0GB_PER_PART // AI_VALIDATION_ENABLED</p>
+                                        <h4 className="text-lg md:text-2xl font-black text-white italic uppercase tracking-tighter mb-2 text-center">ОБРАТИ ФАЙЛ З ПРИСТРОЮ</h4>
+                                        <p className="text-[8px] md:text-[10px] font-mono text-slate-400 uppercase tracking-[0.2em] md:tracking-[0.4em] text-center">ГРАНИЧНИЙ ОБ'ЄМ: 2.0GB // AI-ВАЛІДАЦІЯ</p>
                                     </div>
                                 </div>
 
                                 {files.length > 0 && (
                                     <div className="col-span-12 space-y-4">
                                         <div className="flex items-center justify-between mb-4">
-                                            <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em]">ОЧЕ ЕДЬ_ЗАВАНТАЖЕННЯ: {files.length} ОБ'ЄКТІВ</span>
+                                            <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em]">ОЧЕРЕДЬ_ЗАВАНТАЖЕННЯ: {files.length} ОБ'ЄКТІВ</span>
                                             <button onClick={() => setFiles([])} className="text-[10px] font-black text-amber-500 uppercase tracking-widest hover:text-amber-400 transition-colors">ОЧИСТИТИ ВСЕ</button>
                                         </div>
                                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -456,21 +501,24 @@ const DataIngestionHub: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="p-12 border-t border-white/5 bg-slate-900/40 flex items-center justify-between">
-                            <div className="flex items-center gap-4 text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">
+                        <div className="p-6 md:p-12 border-t border-white/5 bg-slate-900/40 flex flex-col md:flex-row items-center justify-between gap-6">
+                            <div className="hidden md:flex items-center gap-4 text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">
                                 <ShieldCheck size={16} className="text-emerald-500" /> СЕАНС_ЗАХИЩЕНО_v61.0-ELITE
                             </div>
-                            <div className="flex gap-6">
-                                <button onClick={() => setIsModalOpen(false)} className="px-12 py-6 bg-white/5 border border-white/10 rounded-[2rem] text-[10px] font-black text-slate-300 uppercase tracking-[0.3em] hover:text-white transition-all">
-                                    СКАСУВАТИ_ВХІД
+                            <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+                                <button 
+                                    onClick={() => setIsModalOpen(false)} 
+                                    className="w-full md:w-auto px-8 py-4 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] hover:text-white transition-all text-center"
+                                >
+                                    СКАСУВАТИ
                                 </button>
                                 <button 
                                     onClick={initIngestion}
                                     disabled={isSubmitting || (files.length === 0)}
-                                    className="px-16 py-6 bg-emerald-500 text-black font-black rounded-[2rem] text-[10px] uppercase tracking-[0.3em]  hover:bg-emerald-400 transition-all flex items-center gap-4 disabled:opacity-50"
+                                    className="w-full md:w-auto px-10 py-5 bg-emerald-500 text-black font-black rounded-xl text-[10px] uppercase tracking-[0.2em] hover:bg-emerald-400 transition-all flex items-center justify-center gap-4 disabled:opacity-50"
                                 >
-                                    {isSubmitting ? <RefreshCw className="animate-spin" size={18} /> : <Zap size={18} />}
-                                    {isSubmitting ? 'ІНІЦІАЛІЗАЦІЯ_ВУЗЛА...' : " ОЗПОЧАТИ_Ф'ЮЖН_ДАНИХ"}
+                                    {isSubmitting ? <RefreshCw className="animate-spin" size={16} /> : <Zap size={16} />}
+                                    {isSubmitting ? 'ЗАВАНТАЖЕННЯ...' : "РОЗПОЧАТИ Ф'ЮЖН ДАНИХ"}
                                 </button>
                             </div>
                         </div>

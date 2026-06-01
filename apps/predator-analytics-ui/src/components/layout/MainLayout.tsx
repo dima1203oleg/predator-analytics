@@ -49,8 +49,8 @@ interface MainLayoutProps {
  * покращений мобільний drawer з backdrop-blur.
  */
 export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
-  const isMobile = useMediaQuery('(max-width: 768px)');
   const { isCompact, isMedium, isExpanded, safeArea } = useViewport();
+  const isMobile = isCompact;
   const rootRef = useRef<HTMLDivElement | null>(null);
   const [isSidebarExpanded, setIsSidebarExpanded] = useAtom(isSidebarOpenAtom);
   const [isContextRailOpen, setIsContextRailOpen] = useAtom(shellContextRailOpenAtom);

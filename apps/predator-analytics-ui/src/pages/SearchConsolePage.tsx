@@ -30,6 +30,8 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/utils/cn';
 import { CyberOrb } from '@/components/CyberOrb';
 
+import { useDisplayMode, DisplayMode } from '@/context/DisplayModeContext';
+
 // ========================
 // Types & Defaults
 // ========================
@@ -121,6 +123,9 @@ const SemanticFieldParticles: React.FC = () => {
 // ========================
 
 export const SearchConsolePage: React.FC = () => {
+    const { mode: displayMode } = useDisplayMode();
+    const isMobile = displayMode === DisplayMode.MOBILE;
+    const isTablet = displayMode === DisplayMode.TABLET;
     const { userRole } = useAppStore();
     const [query, setQuery] = useState('');
     const [results, setResults] = useState<SearchResult[]>([]);
@@ -229,61 +234,106 @@ export const SearchConsolePage: React.FC = () => {
                         <motion.div 
                             initial={{ scale: 0.95, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
-                            className="relative group p-1.5 rounded-[56px] bg-gradient-to-tr from-[#D4AF37]/30 via-transparent to-[#E11D48]/30 "
+                            className="relative group p-1.5 rounded-[32px] md:rounded-[56px] bg-gradient-to-tr from-[#D4AF37]/30 via-transparent to-[#E11D48]/30 "
                         >
-                            <div className="relative bg-[#050505]/95  rounded-[50px] border border-white/5 overflow-hidden">
-                                <div className="flex items-center px-12 py-10 gap-8">
-                                    <button 
-                                        onClick={() => setShowFilters(!showFilters)}
-                                        className={cn(
-                                            "p-5 rounded-[28px] transition-all panel-3d border border-white/5",
-                                            showFilters ? "bg-[#D4AF37] text-black shadow-[#D4AF37]/40" : "bg-white/5 text-slate-500 hover:text-white"
-                                        )}
-                                    >
-                                        <ListFilter size={28} />
-                                    </button>
-
-                                    <div className="flex-1 relative">
-                                        <input
-                                            ref={inputRef}
-                                            value={query}
-                                            onChange={(e) => setQuery(e.target.value)}
-                                            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                                            placeholder="ЗАПИТАЙТЕ У МАТрИЦІ... (напр. 'Експорт титану 2026')"
-                                            className="w-full bg-transparent text-3xl font-bold text-white placeholder-slate-800 focus:outline-none tracking-tight skew-x-[-1deg]"
-                                        />
-                                        <div className="absolute -bottom-2 left-0 w-0 h-0.5 bg-[#D4AF37] group-focus-within:w-full transition-all duration-700" />
-                                    </div>
-
-                                    <div className="flex items-center gap-6">
-                                        <NeuralWaveform active={voiceStatus === 'LISTENING'} />
-                                        
-                                        <button 
-                                            onClick={() => voiceStatus === 'LISTENING' ? stopListening() : startListening()}
-                                            className={cn(
-                                                "p-5 rounded-[28px] transition-all panel-3d border-2",
-                                                voiceStatus === 'LISTENING' ? "bg-rose-600 border-rose-400 text-white " : "bg-white/5 border-transparent text-slate-500 hover:text-[#D4AF37]"
-                                            )}
-                                        >
-                                            <Mic size={28} />
-                                        </button>
-
+                            <div className="relative bg-[#050505]/95 rounded-[28px] md:rounded-[50px] border border-white/5 overflow-hidden">
+                                {isMobile ? (
+                                    <div className="flex flex-col p-6 gap-6">
+                                        <div className="relative">
+                                            <input
+                                                ref={inputRef}
+                                                value={query}
+                                                onChange={(e) => setQuery(e.target.value)}
+                                                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                                                placeholder="Введіть запит для аналізу..."
+                                                className="w-full bg-slate-950/60 border border-white/10 rounded-2xl py-4 px-4 text-xl font-bold text-white placeholder-slate-600 focus:outline-none tracking-tight"
+                                            />
+                                        </div>
+                                        <div className="flex gap-4 items-center">
+                                            <button 
+                                                onClick={() => setShowFilters(!showFilters)}
+                                                className={cn(
+                                                    "py-4 rounded-xl flex-1 transition-all border border-white/5 flex items-center justify-center gap-2",
+                                                    showFilters ? "bg-[#D4AF37] text-black shadow-[#D4AF37]/20" : "bg-white/5 text-slate-400 hover:text-white"
+                                                )}
+                                            >
+                                                <ListFilter size={18} />
+                                                <span className="text-[10px] font-black tracking-widest uppercase">ФІЛЬТР</span>
+                                            </button>
+                                            <button 
+                                                onClick={() => voiceStatus === 'LISTENING' ? stopListening() : startListening()}
+                                                className={cn(
+                                                    "py-4 rounded-xl flex-1 transition-all border flex items-center justify-center gap-2",
+                                                    voiceStatus === 'LISTENING' ? "bg-rose-600 border-rose-400 text-white " : "bg-white/5 border-transparent text-slate-400 hover:text-[#D4AF37]"
+                                                )}
+                                            >
+                                                <Mic size={18} />
+                                                <span className="text-[10px] font-black tracking-widest uppercase">{voiceStatus === 'LISTENING' ? 'ЗАПИС...' : 'ГОЛОС'}</span>
+                                            </button>
+                                        </div>
                                         <button 
                                             onClick={() => handleSearch()}
                                             disabled={isLoading}
-                                            className="px-14 py-6 bg-[#D4AF37] hover:bg-[#B8962E] text-black rounded-[32px] text-xs font-black uppercase tracking-[0.3em] flex items-center gap-4 shadow-3xl shadow-[#D4AF37]/20 relative group overflow-hidden panel-3d border border-[#D4AF37]/30"
+                                            className="w-full py-5 bg-[#D4AF37] hover:bg-[#B8962E] text-black rounded-2xl text-xs font-black uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-xl active:scale-95 border border-[#D4AF37]/30"
                                         >
-                                            {isLoading ? <RefreshCw className="animate-spin" size={24} /> : <Search size={24} className="group-hover:scale-110 transition-transform" />}
-                                            <span>ЗНАЙТИ</span>
+                                            {isLoading ? <RefreshCw className="animate-spin" size={18} /> : <Search size={18} />}
+                                            <span>ЗНАЙТИ ОБ'ЄКТ</span>
                                         </button>
                                     </div>
-                                </div>
+                                ) : (
+                                    <div className="flex items-center px-12 py-10 gap-8">
+                                        <button 
+                                            onClick={() => setShowFilters(!showFilters)}
+                                            className={cn(
+                                                "p-5 rounded-[28px] transition-all panel-3d border border-white/5",
+                                                showFilters ? "bg-[#D4AF37] text-black shadow-[#D4AF37]/40" : "bg-white/5 text-slate-500 hover:text-white"
+                                            )}
+                                        >
+                                            <ListFilter size={28} />
+                                        </button>
+
+                                        <div className="flex-1 relative">
+                                            <input
+                                                ref={inputRef}
+                                                value={query}
+                                                onChange={(e) => setQuery(e.target.value)}
+                                                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                                                placeholder="ЗАПИТАЙТЕ У МАТрИЦІ... (напр. 'Експорт титану 2026')"
+                                                className="w-full bg-transparent text-3xl font-bold text-white placeholder-slate-800 focus:outline-none tracking-tight skew-x-[-1deg]"
+                                            />
+                                            <div className="absolute -bottom-2 left-0 w-0 h-0.5 bg-[#D4AF37] group-focus-within:w-full transition-all duration-700" />
+                                        </div>
+
+                                        <div className="flex items-center gap-6">
+                                            <NeuralWaveform active={voiceStatus === 'LISTENING'} />
+                                            
+                                            <button 
+                                                onClick={() => voiceStatus === 'LISTENING' ? stopListening() : startListening()}
+                                                className={cn(
+                                                    "p-5 rounded-[28px] transition-all panel-3d border-2",
+                                                    voiceStatus === 'LISTENING' ? "bg-rose-600 border-rose-400 text-white " : "bg-white/5 border-transparent text-slate-500 hover:text-[#D4AF37]"
+                                                )}
+                                            >
+                                                <Mic size={28} />
+                                            </button>
+
+                                            <button 
+                                                onClick={() => handleSearch()}
+                                                disabled={isLoading}
+                                                className="px-14 py-6 bg-[#D4AF37] hover:bg-[#B8962E] text-black rounded-[32px] text-xs font-black uppercase tracking-[0.3em] flex items-center gap-4 shadow-3xl shadow-[#D4AF37]/20 relative group overflow-hidden panel-3d border border-[#D4AF37]/30"
+                                            >
+                                                {isLoading ? <RefreshCw className="animate-spin" size={24} /> : <Search size={24} className="group-hover:scale-110 transition-transform" />}
+                                                <span>ЗНАЙТИ</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
 
                                 {/* Intelligent History Ticker */}
                                 {history.length > 0 && !results.length && !isLoading && (
                                     <motion.div 
                                         initial={{ height: 0 }} animate={{ height: 'auto' }}
-                                        className="px-12 py-6 border-t border-white/5 bg-white/[0.02] flex items-center gap-6 overflow-x-auto no-scrollbar"
+                                        className="px-6 md:px-12 py-6 border-t border-white/5 bg-white/[0.02] flex items-center gap-6 overflow-x-auto no-scrollbar"
                                     >
                                         <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest shrink-0 flex items-center gap-2">
                                             <Clock size={12} /> ІСТО ІЯ:
@@ -303,7 +353,7 @@ export const SearchConsolePage: React.FC = () => {
                         </motion.div>
 
                         {/* Search Modes (v63.0-ELITE Visuals) */}
-                        <div className="flex flex-wrap justify-center gap-8">
+                        <div className="flex flex-wrap justify-center gap-4 md:gap-8">
                             {[
                                 { id: 'semantic', label: 'СЕМАНТИЧНИЙ ПОШУК', icon: Sparkles, color: '#D4AF37' },
                                 { id: 'rerank', label: 'НЕЙ О- РЕ ЕЙТИНГ', icon: TrendingUp, color: '#D4AF37', premium: true },
@@ -315,16 +365,16 @@ export const SearchConsolePage: React.FC = () => {
                                     whileHover={{ y: -5, scale: 1.02 }}
                                     onClick={mode.onToggle || (() => setSearchModes(s => ({ ...s, [mode.id]: !s[mode.id as keyof typeof s] })))}
                                     className={cn(
-                                        "px-8 py-4 rounded-[28px] border transition-all flex items-center gap-4 relative overflow-hidden panel-3d shadow-xl ",
+                                        "px-6 md:px-8 py-3.5 md:py-4 rounded-[20px] md:rounded-[28px] border transition-all flex items-center gap-3 md:gap-4 relative overflow-hidden panel-3d shadow-xl ",
                                         (mode.active ?? (searchModes as any)[mode.id])
                                             ? "bg-[#D4AF37]/10 border-[#D4AF37]/40 text-[#D4AF37] "
                                             : "bg-[#0a0a0a]/60 border-white/5 text-slate-500 hover:text-slate-300"
                                     )}
                                 >
-                                    <mode.icon size={20} style={{ color: (mode.active ?? (searchModes as any)[mode.id]) ? mode.color : undefined }} />
-                                    <span className="text-[10px] font-black tracking-widest uppercase">{mode.label}</span>
+                                    <mode.icon size={16} style={{ color: (mode.active ?? (searchModes as any)[mode.id]) ? mode.color : undefined }} />
+                                    <span className="text-[9px] md:text-[10px] font-black tracking-widest uppercase">{mode.label}</span>
                                     {mode.premium && (
-                                        <Badge className="ml-2 bg-[#D4AF37] text-black text-[7px] font-black border-none px-2 uppercase">П О</Badge>
+                                        <Badge className="ml-1 md:ml-2 bg-[#D4AF37] text-black text-[7px] font-black border-none px-1.5 md:px-2 uppercase">П О</Badge>
                                     )}
                                     {(mode.active ?? (searchModes as any)[mode.id]) && (
                                         <div className="absolute bottom-0 left-0 h-1 w-full" style={{ backgroundColor: mode.color }} />
@@ -372,67 +422,117 @@ export const SearchConsolePage: React.FC = () => {
                                             initial={{ opacity: 0, x: -30 }}
                                             animate={{ opacity: 1, x: 0 }}
                                             transition={{ delay: i * 0.1 }}
-                                            className="group relative p-1 rounded-[40px] bg-white/[0.02] hover:bg-gradient-to-r hover:from-[#D4AF37]/20 hover:to-[#E11D48]/10 transition-all duration-500 shadow-2xl"
+                                            className="group relative p-1 rounded-[32px] md:rounded-[40px] bg-white/[0.02] hover:bg-gradient-to-r hover:from-[#D4AF37]/20 hover:to-[#E11D48]/10 transition-all duration-500 shadow-2xl"
                                         >
-                                            <div className="bg-[#050505]/90  rounded-[39px] p-8 relative overflow-hidden">
+                                            <div className="bg-[#050505]/90 rounded-[28px] md:rounded-[39px] p-5 md:p-8 relative overflow-hidden">
                                                 <div className="absolute top-0 right-0 w-40 h-40 bg-[#D4AF37]/5 blur-[50px] pointer-events-none" />
                                                 
-                                                <div className="flex items-start gap-8">
-                                                    <div className="flex flex-col items-center gap-4">
-                                                        <div className="w-16 h-16 bg-[#0a0a0a] border border-white/5 rounded-2xl flex items-center justify-center text-xl font-black text-slate-600 group-hover:text-[#D4AF37] group-hover:border-[#D4AF37]/30 transition-all shadow-inner">
-                                                            #{i+1}
-                                                        </div>
-                                                        <div className="p-3 bg-[#D4AF37]/10 rounded-xl text-[#D4AF37] border border-[#D4AF37]/10">
-                                                            {result.searchType === 'semantic' ? <Brain size={20} /> : <Database size={20} />}
-                                                        </div>
-                                                    </div>
-
-                                                    <div className="flex-1 space-y-4">
-                                                        <div className="flex justify-between items-start">
-                                                            <div className="space-y-2">
-                                                                <div className="flex items-center gap-4">
-                                                                    <h4 className="text-2xl font-black text-white tracking-tight group-hover:text-[#D4AF37] transition-colors uppercase">{result.title}</h4>
-                                                                    <Badge variant="outline" className="text-[8px] font-black tracking-widest border-[#D4AF37]/30 text-[#D4AF37]">{result.source}</Badge>
-                                                                </div>
-                                                                <div className="flex items-center gap-6">
-                                                                    <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest flex items-center gap-2">
-                                                                        <Clock size={12} /> {result.date}
-                                                                    </span>
-                                                                    <span className="text-[10px] font-black text-[#E11D48] uppercase tracking-widest flex items-center gap-2">
-                                                                        <Fingerprint size={12} /> ІСТИННІСТЬ: {((result.truthScore || 0) * 100).toFixed(0)}%
-                                                                    </span>
-                                                                </div>
+                                                {isMobile ? (
+                                                    <div className="flex flex-col gap-4">
+                                                        <div className="flex justify-between items-center border-b border-white/5 pb-3">
+                                                            <div className="flex items-center gap-2">
+                                                                <span className="text-[10px] font-mono text-slate-500">#{i+1}</span>
+                                                                <Badge variant="outline" className="text-[8px] font-black border-[#D4AF37]/30 text-[#D4AF37]">{result.source}</Badge>
                                                             </div>
                                                             <div className="text-right">
-                                                                <div className="text-3xl font-mono font-black text-[#D4AF37]">{(result.score * 100).toFixed(1)}%</div>
-                                                                <div className="text-[9px] font-black text-slate-700 uppercase tracking-widest"> ЕЙТИНГ AI</div>
+                                                                <span className="text-xl font-mono font-black text-[#D4AF37]">{(result.score * 100).toFixed(0)}%</span>
+                                                                <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest ml-1">AI</span>
                                                             </div>
                                                         </div>
 
-                                                        <p className="text-lg text-slate-400 leading-relaxed font-medium italic group-hover:text-slate-200 transition-colors">
+                                                        <h4 className="text-lg font-black text-white uppercase tracking-tight group-hover:text-[#D4AF37] transition-colors">{result.title}</h4>
+
+                                                        <div className="flex flex-col gap-1.5 text-[9px] font-black text-slate-500 uppercase tracking-widest">
+                                                            <div className="flex items-center gap-2">
+                                                                <Clock size={10} className="text-slate-600" />
+                                                                <span>{result.date}</span>
+                                                            </div>
+                                                            <div className="flex items-center gap-2 text-[#E11D48]">
+                                                                <Fingerprint size={10} />
+                                                                <span>ІСТИННІСТЬ: {((result.truthScore || 0) * 100).toFixed(0)}%</span>
+                                                            </div>
+                                                        </div>
+
+                                                        <p className="text-sm text-slate-400 italic leading-relaxed">
                                                             "{result.snippet}"
                                                         </p>
 
-                                                        <div className="flex items-center justify-between pt-4">
-                                                            <div className="flex gap-4">
-                                                                {result.tags?.map(tag => (
-                                                                    <span key={tag} className="text-[9px] font-black text-[#D4AF37]/60 uppercase tracking-widest">#{tag}</span>
-                                                                ))}
+                                                        <div className="flex flex-wrap gap-2 pt-2">
+                                                            {result.tags?.map(tag => (
+                                                                <span key={tag} className="text-[8px] font-black text-[#D4AF37]/60 uppercase">#{tag}</span>
+                                                            ))}
+                                                        </div>
+
+                                                        <div className="flex gap-2 pt-3 border-t border-white/5">
+                                                            <button className="flex-1 py-3 bg-[#D4AF37]/10 hover:bg-[#D4AF37] border border-[#D4AF37]/20 text-[#D4AF37] hover:text-black rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2">
+                                                                <Brain size={12} /> АНАЛІЗ
+                                                            </button>
+                                                            <button className="p-3 bg-white/5 hover:bg-[#D4AF37]/20 border border-white/5 rounded-xl text-slate-500 hover:text-[#D4AF37] transition-all flex items-center justify-center">
+                                                                <Target size={14} />
+                                                            </button>
+                                                            <button className="p-3 bg-white/5 hover:bg-[#E11D48]/20 border border-white/5 rounded-xl text-slate-500 hover:text-[#E11D48] transition-all flex items-center justify-center">
+                                                                <Key size={14} />
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                ) : (
+                                                    <div className="flex items-start gap-8">
+                                                        <div className="flex flex-col items-center gap-4">
+                                                            <div className="w-16 h-16 bg-[#0a0a0a] border border-white/5 rounded-2xl flex items-center justify-center text-xl font-black text-slate-600 group-hover:text-[#D4AF37] group-hover:border-[#D4AF37]/30 transition-all shadow-inner">
+                                                                #{i+1}
                                                             </div>
-                                                            <div className="flex gap-3">
-                                                                <button className="px-6 py-2.5 bg-[#D4AF37]/10 hover:bg-[#D4AF37] border border-[#D4AF37]/20 text-[#D4AF37] hover:text-black rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-3">
-                                                                    <Brain size={14} /> АНАЛІЗ
-                                                                </button>
-                                                                <button className="p-3 bg-white/5 hover:bg-[#D4AF37]/20 border border-white/5 rounded-xl text-slate-500 hover:text-[#D4AF37] transition-all">
-                                                                    <Target size={16} />
-                                                                </button>
-                                                                <button className="p-3 bg-white/5 hover:bg-[#E11D48]/20 border border-white/5 rounded-xl text-slate-500 hover:text-[#E11D48] transition-all">
-                                                                    <Key size={16} />
-                                                                </button>
+                                                            <div className="p-3 bg-[#D4AF37]/10 rounded-xl text-[#D4AF37] border border-[#D4AF37]/10">
+                                                                {result.searchType === 'semantic' ? <Brain size={20} /> : <Database size={20} />}
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="flex-1 space-y-4">
+                                                            <div className="flex justify-between items-start">
+                                                                <div className="space-y-2">
+                                                                    <div className="flex items-center gap-4">
+                                                                        <h4 className="text-2xl font-black text-white tracking-tight group-hover:text-[#D4AF37] transition-colors uppercase">{result.title}</h4>
+                                                                        <Badge variant="outline" className="text-[8px] font-black tracking-widest border-[#D4AF37]/30 text-[#D4AF37]">{result.source}</Badge>
+                                                                    </div>
+                                                                    <div className="flex items-center gap-6">
+                                                                        <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest flex items-center gap-2">
+                                                                            <Clock size={12} /> {result.date}
+                                                                        </span>
+                                                                        <span className="text-[10px] font-black text-[#E11D48] uppercase tracking-widest flex items-center gap-2">
+                                                                            <Fingerprint size={12} /> ІСТИННІСТЬ: {((result.truthScore || 0) * 100).toFixed(0)}%
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="text-right">
+                                                                    <div className="text-3xl font-mono font-black text-[#D4AF37]">{(result.score * 100).toFixed(1)}%</div>
+                                                                    <div className="text-[9px] font-black text-slate-700 uppercase tracking-widest"> ЕЙТИНГ AI</div>
+                                                                </div>
+                                                            </div>
+
+                                                            <p className="text-lg text-slate-400 leading-relaxed font-medium italic group-hover:text-slate-200 transition-colors">
+                                                                "{result.snippet}"
+                                                            </p>
+
+                                                            <div className="flex items-center justify-between pt-4">
+                                                                <div className="flex gap-4">
+                                                                    {result.tags?.map(tag => (
+                                                                        <span key={tag} className="text-[9px] font-black text-[#D4AF37]/60 uppercase tracking-widest">#{tag}</span>
+                                                                    ))}
+                                                                </div>
+                                                                <div className="flex gap-3">
+                                                                    <button className="px-6 py-2.5 bg-[#D4AF37]/10 hover:bg-[#D4AF37] border border-[#D4AF37]/20 text-[#D4AF37] hover:text-black rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-3">
+                                                                        <Brain size={14} /> АНАЛІЗ
+                                                                    </button>
+                                                                    <button className="p-3 bg-white/5 hover:bg-[#D4AF37]/20 border border-white/5 rounded-xl text-slate-500 hover:text-[#D4AF37] transition-all">
+                                                                        <Target size={16} />
+                                                                    </button>
+                                                                    <button className="p-3 bg-white/5 hover:bg-[#E11D48]/20 border border-white/5 rounded-xl text-slate-500 hover:text-[#E11D48] transition-all">
+                                                                        <Key size={16} />
+                                                                    </button>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                )}
                                                 
                                                 {/* Left accent strip */}
                                                 <div className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-[#D4AF37] to-transparent opacity-40" />
