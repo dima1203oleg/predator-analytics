@@ -10,10 +10,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/utils/cn';
 import { HubTabs } from './HubTabs';
 import { NavAccent, navAccentStyles } from '@/config/navigation';
-import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
-import { NeuralPulse } from '@/components/ui/NeuralPulse';
-import { NeuralHUD } from '@/components/ui/NeuralHUD';
+import { useViewport } from '@/hooks/useViewport';
 
 interface HubLayoutProps {
   title: string;
@@ -47,6 +45,7 @@ export const HubLayout: React.FC<HubLayoutProps> = ({
   accent = 'rose'
 }) => {
   const styles = navAccentStyles[accent];
+  const { isCompact, isMedium } = useViewport();
 
   return (
     <div className={cn("flex flex-col w-full min-h-screen bg-[#020202] text-slate-200 relative overflow-hidden", className)}>
@@ -54,41 +53,71 @@ export const HubLayout: React.FC<HubLayoutProps> = ({
       <CyberGrid opacity={0.04} />
       
       {/* ── HUB HEADER — Tactical Navigation Control ── */}
-      <header className="flex flex-col gap-6 p-8 lg:p-12 border-b border-white/5 bg-[rgba(15,15,17,0.97)] relative z-20 shadow-[0_8px_32px_rgba(0,0,0,0.6)]">
+      <header className={cn(
+        "flex flex-col border-b border-white/5 bg-[rgba(15,15,17,0.97)] relative z-20 shadow-[0_8px_32px_rgba(0,0,0,0.6)]",
+        isCompact ? "gap-3 p-4" : isMedium ? "gap-4 p-6" : "gap-6 p-8 lg:p-12"
+      )}>
 
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 relative z-10">
-          <div className="flex items-center gap-10">
+        <div className={cn(
+          "flex justify-between relative z-10",
+          isCompact ? "flex-col gap-4" : isMedium ? "flex-col gap-5" : "flex-col lg:flex-row lg:items-center gap-8"
+        )}>
+          <div className={cn("flex items-center", isCompact ? "gap-4" : isMedium ? "gap-6" : "gap-10")}>
+            {/* Іконка — адаптивний розмір */}
             {icon && (
               <motion.div 
-                whileHover={{ scale: 1.05, rotate: 2 }}
+                whileHover={isCompact ? undefined : { scale: 1.05, rotate: 2 }}
                 className={cn(
-                  "flex items-center justify-center w-24 h-24 rounded-[2.5rem] border-2 transition-all duration-700 bg-[rgba(20,20,22,0.95)] group relative",
+                  "flex items-center justify-center rounded-[2.5rem] border-2 transition-all duration-700 bg-[rgba(20,20,22,0.95)] group relative shrink-0",
+                  isCompact ? "w-12 h-12 rounded-2xl" : isMedium ? "w-16 h-16 rounded-[1.5rem]" : "w-24 h-24",
                   styles.iconBorder,
                   styles.icon,
                 )}
               >
-                {React.cloneElement(icon as React.ReactElement, { size: 48, className: "group-hover:scale-105 transition-transform relative z-10" })}
+                {React.cloneElement(
+                  icon as React.ReactElement, 
+                  { 
+                    size: isCompact ? 24 : isMedium ? 32 : 48, 
+                    className: "group-hover:scale-105 transition-transform relative z-10" 
+                  }
+                )}
               </motion.div>
             )}
-            <div>
-              <div className="flex items-center gap-4 mb-3">
-                <div className={cn("h-2 w-2 rounded-full", styles.icon)} />
-                <span className="text-[10px] font-black uppercase tracking-[0.35em] text-slate-500 italic leading-none opacity-80">
-                  {eyebrow ?? 'Робочий простір · аналітика та рішення для бізнесу'}
-                </span>
-              </div>
-              <h1 className="text-6xl font-black tracking-tighter text-white uppercase italic leading-none skew-x-[-3deg]">
+            <div className="min-w-0">
+              {/* Eyebrow — приховано на телефоні */}
+              {!isCompact && (
+                <div className="flex items-center gap-4 mb-3">
+                  <div className={cn("h-2 w-2 rounded-full", styles.icon)} />
+                  <span className="text-[10px] font-black uppercase tracking-[0.35em] text-slate-500 italic leading-none opacity-80">
+                    {eyebrow ?? 'Робочий простір · аналітика та рішення для бізнесу'}
+                  </span>
+                </div>
+              )}
+              {/* Заголовок — адаптивний розмір */}
+              <h1 className={cn(
+                "font-black tracking-tighter text-white uppercase italic leading-none",
+                isCompact 
+                  ? "text-xl" 
+                  : isMedium 
+                    ? "text-3xl skew-x-[-2deg]" 
+                    : "text-6xl skew-x-[-3deg]"
+              )}>
                 <span className={cn(styles.icon)}>{title}</span>
               </h1>
-              {subtitle && (
-                <div className="mt-6 flex items-center gap-6">
+              {/* Subtitle — тільки планшет і десктоп */}
+              {subtitle && !isCompact && (
+                <div className={cn("flex items-center gap-6", isMedium ? "mt-3" : "mt-6")}>
                    <div className="h-0.5 w-16 bg-white/10" />
-                   <p className="text-slate-400 text-[12px] font-black uppercase tracking-[0.4em] italic leading-none opacity-80">
+                   <p className={cn(
+                     "text-slate-400 font-black uppercase italic leading-none opacity-80",
+                     isMedium ? "text-[11px] tracking-[0.3em]" : "text-[12px] tracking-[0.4em]"
+                   )}>
                      {subtitle}
                    </p>
                 </div>
               )}
-              {businessCaption && (
+              {/* Business caption — тільки десктоп */}
+              {businessCaption && !isCompact && !isMedium && (
                 <p className="mt-5 max-w-4xl text-sm font-medium leading-relaxed text-slate-400 normal-case not-italic tracking-normal">
                   {businessCaption}
                 </p>
@@ -96,13 +125,19 @@ export const HubLayout: React.FC<HubLayoutProps> = ({
             </div>
           </div>
           
-          <div className="flex items-center gap-6">
-            {actions}
-          </div>
+          {/* Actions — тільки десктоп */}
+          {actions && !isCompact && (
+            <div className="flex items-center gap-6 shrink-0">
+              {actions}
+            </div>
+          )}
         </div>
 
-        {/* Tactical Tab Bar */}
-        <div className="flex items-center justify-start mt-6 pt-6 border-t border-white/5">
+        {/* Tactical Tab Bar — адаптивний */}
+        <div className={cn(
+          "flex items-center justify-start",
+          isCompact ? "mt-1 -mx-4 px-4" : isMedium ? "mt-3 pt-3 border-t border-white/5 -mx-6 px-6" : "mt-6 pt-6 border-t border-white/5"
+        )}>
           <HubTabs 
             tabs={tabs} 
             activeTab={activeTab} 
@@ -113,7 +148,10 @@ export const HubLayout: React.FC<HubLayoutProps> = ({
       </header>
 
       {/* ── MAIN CONTENT ARENA ── */}
-      <main className="flex-1 p-8 lg:p-12 overflow-hidden relative z-10 flex flex-col">
+      <main className={cn(
+        "flex-1 overflow-hidden relative z-10 flex flex-col",
+        isCompact ? "p-3" : isMedium ? "p-5" : "p-8 lg:p-12"
+      )}>
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
