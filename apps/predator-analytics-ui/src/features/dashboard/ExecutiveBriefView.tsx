@@ -45,6 +45,7 @@ import CyberGlobe from '@/components/3d/CyberGlobe';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/utils/cn';
 import { dashboardApi, type DashboardOverview } from '@/services/api/dashboard';
+import { useViewport } from '@/hooks/useViewport';
 
 // Premium Components
 import { NeuralPulse } from '@/components/ui/NeuralPulse';
@@ -70,6 +71,7 @@ const fadeUp = {
 };
 
 export default function ExecutiveBriefView() {
+  const { isCompact } = useViewport();
   const [overview, setOverview] = useState<DashboardOverview | null>(null);
   const [events, setEvents] = useState([
     { id: 1, time: '10:45:02', msg: 'ІНГЕСТІЯ: Оновлення реєстру ДПС...', type: 'info' },
@@ -145,7 +147,10 @@ export default function ExecutiveBriefView() {
       {/* ── HEADER CONTOUR — Tactical Briefing Header ── */}
       <motion.header 
         variants={fadeUp}
-        className="relative overflow-hidden rounded-[3rem] border border-white/5 bg-black/40  p-10 sm:p-12 shadow-2xl"
+        className={cn(
+          "relative overflow-hidden border border-white/5 bg-black/40 shadow-2xl",
+          isCompact ? "rounded-3xl p-5" : "rounded-[3rem] p-10 sm:p-12"
+        )}
       >
         <div className="absolute inset-0 bg-gradient-to-br from-rose-500/5 via-transparent to-transparent pointer-events-none" />
         
@@ -157,7 +162,7 @@ export default function ExecutiveBriefView() {
                </div>
                <div className="w-2 h-2 rounded-full bg-rose-600  shadow-[0_0_12px_#f43f5e]" />
             </div>
-            <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg]">
+            <h1 className={cn("font-black text-white tracking-tighter uppercase italic skew-x-[-3deg]", isCompact ? "text-3xl" : "text-5xl")}>
               СУВЕРЕННЕ <span className="text-rose-600">СТРАТЕГІЧНЕ ЗВЕДЕННЯ</span>
             </h1>
             <p className="text-slate-500 font-black text-[11px] tracking-[0.4em] uppercase italic opacity-60">
@@ -167,7 +172,7 @@ export default function ExecutiveBriefView() {
           
           <div className="flex gap-10 items-center">
             <div className="text-right">
-              <div className="text-5xl font-black text-white italic tracking-tighter tabular-nums leading-none">
+              <div className={cn("font-black text-white italic tracking-tighter tabular-nums leading-none", isCompact ? "text-3xl" : "text-5xl")}>
                 {overview?.summary ? (overview.summary.total_declarations / 1000).toFixed(1) + 'k' : '14.2k'}
               </div>
               <div className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-600 mt-2 italic">
@@ -176,7 +181,7 @@ export default function ExecutiveBriefView() {
             </div>
             <div className="w-px h-16 bg-white/10 hidden lg:block" />
             <div className="text-right">
-              <div className="text-5xl font-black text-emerald-500 italic tracking-tighter tabular-nums leading-none">
+              <div className={cn("font-black text-emerald-500 italic tracking-tighter tabular-nums leading-none", isCompact ? "text-3xl" : "text-5xl")}>
                 {overview?.summary ? '$' + (overview.summary.total_value_usd / 1000000000).toFixed(1) + 'B' : '$12.4B'}
               </div>
               <div className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-600 mt-2 italic">
@@ -195,7 +200,7 @@ export default function ExecutiveBriefView() {
         <div className="col-span-12 lg:col-span-8 space-y-10">
           
           {/* Activity Matrix HUD */}
-          <motion.section variants={fadeUp} className="relative overflow-hidden rounded-[3rem] border border-white/5 bg-black/40  p-10 shadow-2xl">
+          <motion.section variants={fadeUp} className={cn("relative overflow-hidden border border-white/5 bg-black/40 shadow-2xl", isCompact ? "rounded-3xl p-5" : "rounded-[3rem] p-10")}>
             <div className="flex items-center justify-between mb-10">
               <div className="flex items-center gap-6">
                 <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-500 shadow-lg">
@@ -236,8 +241,8 @@ export default function ExecutiveBriefView() {
           </motion.section>
 
           {/* Priority Targets HUD Table */}
-          <motion.section variants={fadeUp} className="relative overflow-hidden rounded-[3rem] border border-white/5 bg-black/40  shadow-2xl">
-            <div className="p-10 border-b border-white/5 flex items-center justify-between">
+          <motion.section variants={fadeUp} className={cn("relative overflow-hidden border border-white/5 bg-black/40 shadow-2xl", isCompact ? "rounded-3xl" : "rounded-[3rem]")}>
+            <div className={cn("border-b border-white/5 flex items-center justify-between", isCompact ? "p-5" : "p-10")}>
               <div className="flex items-center gap-6">
                 <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-500">
                   <Target size={24} />
@@ -293,7 +298,7 @@ export default function ExecutiveBriefView() {
         <div className="col-span-12 lg:col-span-4 space-y-10">
           
           {/* Globe Scan HUD */}
-          <motion.section variants={fadeUp} className="h-[380px] relative overflow-hidden rounded-[3rem] border border-white/5 bg-black/40  shadow-2xl group">
+          <motion.section variants={fadeUp} className={cn("relative overflow-hidden border border-white/5 bg-black/40 shadow-2xl group", isCompact ? "h-[200px] rounded-3xl" : "h-[380px] rounded-[3rem]")}>
             <div className="absolute inset-0 z-0 opacity-60 group-hover:opacity-100 transition-all duration-1000">
               <CyberGlobe />
             </div>
@@ -318,7 +323,7 @@ export default function ExecutiveBriefView() {
           </motion.section>
 
           {/* Neural Terminal Stream HUD */}
-          <motion.section variants={fadeUp} className="relative flex flex-col rounded-[3rem] border border-white/5 bg-black/40  p-8 shadow-2xl overflow-hidden min-h-[500px]">
+          <motion.section variants={fadeUp} className={cn("relative flex flex-col border border-white/5 bg-black/40 shadow-2xl overflow-hidden min-h-[500px]", isCompact ? "rounded-3xl p-5" : "rounded-[3rem] p-8")}>
             <div className="absolute top-0 right-0 w-1 h-full bg-rose-600/30" />
             
             <div className="flex items-center justify-between mb-8 border-b border-white/5 pb-8">

@@ -45,6 +45,7 @@ import { getVisibleNavigation, navAccentStyles } from '@/config/navigation';
 import { resolveUserRole } from '@/config/roles';
 import { cn } from '@/utils/cn';
 import { ThermalCard } from '@/components/polish/ThermalCard';
+import { useViewport } from '@/hooks/useViewport';
 
 // Premium Components
 import { NeuralPulse } from '@/components/ui/NeuralPulse';
@@ -121,6 +122,7 @@ export default function ExecutiveBoardView() {
   const backendStatus = useBackendStatus();
   const currentRole = resolveUserRole(user?.role);
   const navigationSections = useMemo(() => getVisibleNavigation(currentRole), [currentRole]);
+  const { isCompact, isMedium } = useViewport();
 
   const { data: overview, isLoading: isOverviewLoading } = useDashboardOverview();
   const { data: alertsData, isLoading: isAlertsLoading } = useDashboardAlerts(6);
@@ -151,7 +153,7 @@ export default function ExecutiveBoardView() {
 
   return (
     <motion.div 
-      className="relative min-h-screen p-6 sm:p-10 space-y-12 overflow-hidden" 
+      className={cn("relative min-h-screen space-y-12 overflow-hidden", isCompact ? "p-3" : "p-6 sm:p-10")} 
       variants={stagger} 
       initial="hidden" 
       animate="visible"
@@ -166,12 +168,15 @@ export default function ExecutiveBoardView() {
          ═══════════════════════════════════════════════ */}
       <motion.section 
         variants={fadeUp} 
-        className="relative overflow-hidden rounded-[3rem] border border-white/5 bg-black/40  p-8 sm:p-12 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.8)]"
+        className={cn(
+          "relative overflow-hidden border border-white/5 bg-black/40 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.8)]",
+          isCompact ? "rounded-3xl p-5" : "rounded-[3rem] p-8 sm:p-12"
+        )}
       >
         <div className="absolute inset-0 bg-gradient-to-br from-rose-500/5 via-transparent to-transparent pointer-events-none" />
         
         {/* Orb Status Indicator */}
-        <div className="absolute top-10 right-10 flex items-center gap-6">
+        <div className={cn("absolute flex items-center gap-6", isCompact ? "top-5 right-5" : "top-10 right-10")}>
           <div className="text-right">
             <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] mb-1 italic">СТАТУС_КЛАСТЕРА</p>
             <p className="text-sm font-bold text-rose-500 italic uppercase">{backendStatus.statusLabel}</p>
@@ -187,10 +192,10 @@ export default function ExecutiveBoardView() {
               PREDATOR v63.0-ELITE
             </div>
             <div className="mt-4 flex items-center gap-4">
-              <h1 className="text-3xl sm:text-5xl font-black text-white italic tracking-tighter uppercase skew-x-[-3deg]">
+              <h1 className={cn("font-black text-white italic tracking-tighter uppercase skew-x-[-3deg]", isCompact ? "text-2xl max-w-[200px] leading-tight" : "text-3xl sm:text-5xl")}>
                 ВИКОНАВЧА <span className="text-rose-600">РАДА</span>
               </h1>
-              <div className="h-0.5 w-24 bg-gradient-to-r from-rose-600 to-transparent" />
+              {!isCompact && <div className="h-0.5 w-24 bg-gradient-to-r from-rose-600 to-transparent" />}
             </div>
             <p className="mt-2 text-xs font-bold text-slate-500 uppercase tracking-[0.5em] italic opacity-60">
               ЦЕНТРАЛЬНИЙ ШТАБ УПРАВЛІННЯ ТА СТРАТЕГІЧНОГО ПЛАНУВАННЯ
@@ -211,7 +216,8 @@ export default function ExecutiveBoardView() {
                 key={kpi.label}
                 variants={scaleIn}
                 className={cn(
-                  "group relative overflow-hidden rounded-[2rem] border border-white/5 bg-[#060c18]/60 p-8 transition-all duration-700 hover:border-rose-500/30 hover:bg-[#060c18]/80 shadow-2xl",
+                  "group relative overflow-hidden border border-white/5 bg-[#060c18]/60 transition-all duration-700 hover:border-rose-500/30 hover:bg-[#060c18]/80 shadow-2xl",
+                  isCompact ? "rounded-2xl p-5" : "rounded-[2rem] p-8",
                   t.glow
                 )}
                 whileHover={{ y: -5 }}
@@ -323,7 +329,7 @@ export default function ExecutiveBoardView() {
         <motion.div variants={fadeUp} className="space-y-8">
           
           {/* Critical Signals HUD */}
-          <div className="rounded-[2.5rem] border border-white/5 bg-black/40  p-8 shadow-2xl relative overflow-hidden">
+          <div className={cn("border border-white/5 bg-black/40 shadow-2xl relative overflow-hidden", isCompact ? "rounded-3xl p-5" : "rounded-[2.5rem] p-8")}>
             <div className="absolute top-0 right-0 w-1 h-full bg-rose-600/30" />
             
             <div className="flex items-center justify-between mb-8">
@@ -387,7 +393,7 @@ export default function ExecutiveBoardView() {
           </div>
 
           {/* Quick Actions HUD */}
-          <div className="rounded-[2.5rem] border border-white/5 bg-black/40  p-8 shadow-2xl overflow-hidden relative">
+          <div className={cn("border border-white/5 bg-black/40 shadow-2xl overflow-hidden relative", isCompact ? "rounded-3xl p-5" : "rounded-[2.5rem] p-8")}>
             <div className="absolute inset-0 bg-gradient-to-tr from-rose-500/[0.03] to-transparent pointer-events-none" />
             <h2 className="text-sm font-black text-white mb-6 flex items-center gap-3 uppercase italic tracking-widest">
               <Sparkles className="h-4 w-4 text-rose-500 " />
