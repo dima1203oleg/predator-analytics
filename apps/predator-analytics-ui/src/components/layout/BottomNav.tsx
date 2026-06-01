@@ -28,12 +28,12 @@ export const BottomNav: React.FC<BottomNavProps> = ({ onMenuClick }) => {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-[70] h-16 border-t"
+      className="fixed bottom-0 left-0 right-0 z-[70] h-20 border-t pb-2"
       style={{
-        background: 'rgba(2,6,18,0.92)',
+        background: 'rgba(2,6,18,0.95)',
         backdropFilter: 'blur(20px) saturate(150%)',
-        borderColor: 'rgba(255,255,255,0.06)',
-        boxShadow: '0 -4px 24px rgba(0,0,0,0.6)',
+        borderColor: 'rgba(255,255,255,0.08)',
+        boxShadow: '0 -4px 24px rgba(0,0,0,0.8)',
       }}
     >
       <div className="flex h-full items-center justify-around px-2">
@@ -45,7 +45,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ onMenuClick }) => {
               key={item.path}
               to={item.path}
               className={cn(
-                'flex flex-col items-center justify-center gap-0.5 min-w-[64px] h-12 rounded-xl transition-all duration-200',
+                'flex flex-col items-center justify-center gap-1 min-w-[72px] h-14 rounded-xl transition-all duration-200',
                 active
                   ? 'text-rose-400'
                   : 'text-slate-500 hover:text-slate-300'
@@ -53,12 +53,12 @@ export const BottomNav: React.FC<BottomNavProps> = ({ onMenuClick }) => {
             >
               <div className={cn(
                 'relative flex items-center justify-center',
-                active && 'after:absolute after:-bottom-1 after:h-0.5 after:w-4 after:rounded-full after:bg-rose-500'
+                active && 'after:absolute after:-bottom-1.5 after:h-0.5 after:w-5 after:rounded-full after:bg-rose-500'
               )}>
-                <Icon className={cn('h-5 w-5', active && 'drop-shadow-[0_0_6px_rgba(225,29,72,0.5)]')} />
+                <Icon className={cn('h-6 w-6', active && 'drop-shadow-[0_0_8px_rgba(225,29,72,0.6)]')} />
               </div>
               <span className={cn(
-                'text-[9px] font-bold uppercase tracking-wider',
+                'text-[10px] font-bold uppercase tracking-wider',
                 active ? 'text-rose-400' : 'text-slate-500'
               )}>
                 {item.label}
@@ -70,10 +70,10 @@ export const BottomNav: React.FC<BottomNavProps> = ({ onMenuClick }) => {
         <button
           type="button"
           onClick={onMenuClick}
-          className="flex flex-col items-center justify-center gap-0.5 min-w-[64px] h-12 rounded-xl text-slate-500 hover:text-slate-300 transition-all"
+          className="flex flex-col items-center justify-center gap-1 min-w-[72px] h-14 rounded-xl text-slate-500 hover:text-slate-300 transition-all"
         >
-          <Menu className="h-5 w-5" />
-          <span className="text-[9px] font-bold uppercase tracking-wider text-slate-500">Меню</span>
+          <Menu className="h-6 w-6" />
+          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Меню</span>
         </button>
       </div>
     </nav>

@@ -196,12 +196,12 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           className="relative flex-1 overflow-y-auto custom-scrollbar"
           style={{
             paddingBottom: isCompact
-              ? `calc(${safeArea.bottom}px + 4rem)`
+              ? `calc(${safeArea.bottom}px + 5.5rem)`
               : '0px',
           }}
         >
 
-          <div className={cn("relative mx-auto px-3 sm:px-5 lg:px-7 py-5 xl:px-10 pb-4 md:pb-16 transition-[max-width] duration-500", displayFrameClass)}>
+          <div className={cn("relative mx-auto px-3 sm:px-5 lg:px-7 py-5 xl:px-10 pb-6 md:pb-16 transition-[max-width] duration-500", displayFrameClass)}>
             <div className={`grid grid-cols-12 gap-6`}>
               <div className={shellV2Enabled && isExpanded && isContextRailOpen ? 'col-span-12 xl:col-span-9' : 'col-span-12'}>
                 <AnimatedPage pageKey={location.pathname} variant="tactical">

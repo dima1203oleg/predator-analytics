@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { NavAccent, navAccentStyles } from '@/config/navigation';
+import { useViewport } from '@/hooks/useViewport';
 
 interface Tab {
   id: string;
@@ -29,9 +30,14 @@ export const HubTabs: React.FC<HubTabsProps> = ({
   accent = 'rose'
 }) => {
   const styles = navAccentStyles[accent];
+  const { isCompact, isMedium } = useViewport();
 
   return (
-    <div className={cn("flex items-center gap-2 p-1 bg-slate-950/60 border border-slate-800/50 rounded-xl", className)}>
+    <div className={cn(
+      "flex items-center bg-slate-950/60 border border-slate-800/50 rounded-xl overflow-x-auto no-scrollbar w-full",
+      isCompact ? "gap-2 p-1.5" : "gap-2 p-1",
+      className
+    )}>
       {tabs.map((tab) => {
         const isActive = activeTab === tab.id;
         
@@ -40,12 +46,17 @@ export const HubTabs: React.FC<HubTabsProps> = ({
             key={tab.id}
             onClick={() => onChange(tab.id)}
             className={cn(
-              "relative flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors duration-300 rounded-lg outline-none",
+              "relative flex items-center justify-center gap-2 font-medium transition-colors duration-300 rounded-lg outline-none shrink-0 whitespace-nowrap",
+              isCompact 
+                ? "min-h-[52px] px-5 py-3 text-xs flex-1" 
+                : isMedium 
+                  ? "min-h-[44px] px-4 py-2.5 text-sm" 
+                  : "px-4 py-2 text-sm",
               isActive ? styles.icon : "text-slate-400 hover:text-slate-200 hover:bg-white/5"
             )}
           >
             {tab.icon && (
-              <span className={cn("transition-transform duration-300", isActive && "scale-110")}>
+              <span className={cn("transition-transform duration-300 flex-shrink-0", isActive && "scale-110")}>
                 {tab.icon}
               </span>
             )}
@@ -55,7 +66,7 @@ export const HubTabs: React.FC<HubTabsProps> = ({
               <motion.div
                 layoutId="hub-active-tab"
                 className={cn(
-                  "absolute inset-0 border rounded-lg",
+                  "absolute inset-0 border rounded-lg pointer-events-none",
                   styles.sectionBorder,
                   "bg-white/5"
                 )}
