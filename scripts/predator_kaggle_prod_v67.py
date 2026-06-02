@@ -69,7 +69,7 @@ _install_deps()
 import numpy as np
 import networkx as nx
 import psutil
-from fastapi import FastAPI, Depends, HTTPException, Query, Request
+from fastapi import FastAPI, Depends, HTTPException, Query, Request, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
@@ -108,9 +108,6 @@ class Base(DeclarativeBase):
 main_engine = create_async_engine(
     f"sqlite+aiosqlite:///{DB_DIR}/predator_main.db", echo=False
 )
-main_session = async_sessionmaker(
-    main_engine, expire_on_commit=False, class_=AsyncSession
-)
 
 # --- ClickHouse emulation (OLAP) ---
 ch_engine = create_async_engine(
@@ -143,6 +140,19 @@ mongo_engine = create_async_engine(
 
 class MongoBase(DeclarativeBase):
     pass
+
+# --- Консолідований sessionmaker з підтримкою 10 баз даних ---
+main_session = async_sessionmaker(
+    binds={
+        Base: main_engine,
+        ClickHouseBase: ch_engine,
+        OpenSearchBase: os_engine,
+        TimescaleBase: ts_engine,
+        MongoBase: mongo_engine,
+    },
+    expire_on_commit=False,
+    class_=AsyncSession,
+)
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -673,7 +683,7 @@ async def _run_etl_simulation():
         try:
             await asyncio.sleep(300) # Кожні 5 хвилин
             async with main_session() as session:
-                # Симуляція додавання нових повідомлень з Telegram
+                # 1. Симуляція додавання нових повідомлень з Telegram
                 new_msg = TelegramMessage(
                     id=f"TG-LIVE-{uuid4().hex[:8]}",
                     channel_name="@live_intel",
@@ -682,8 +692,41 @@ async def _run_etl_simulation():
                     timestamp=datetime.now(UTC)
                 )
                 session.add(new_msg)
+                
+                # 2. Симуляція згадок у даркнеті
+                new_darknet = DarknetMention(
+                    id=f"DN-LIVE-{uuid4().hex[:8]}",
+                    source="ShadowMarket",
+                    content=f"Знайдено пропозицію продажу бази даних для {_GOODS[int(time.time()) % len(_GOODS)]}",
+                    threat_level="HIGH",
+                    timestamp=datetime.now(UTC)
+                )
+                session.add(new_darknet)
+                
+                # 3. Симуляція нових записів у реєстрах
+                new_registry = RegistryRecord(
+                    id=f"REG-LIVE-{uuid4().hex[:8]}",
+                    registry_name="Державний реєстр юридичних осіб",
+                    entity_id=f"COMP-{(int(time.time()) % NUM_COMPANIES) + 1:04d}",
+                    data={"event": "зміна керівника", "status": "АКТИВНО"},
+                    timestamp=datetime.now(UTC)
+                )
+                session.add(new_registry)
+                
+                # 4. Симуляція торгових потоків
+                new_flow = TradeFlow(
+                    id=f"FLOW-LIVE-{uuid4().hex[:8]}",
+                    source_country=_COUNTRIES[int(time.time()) % len(_COUNTRIES)],
+                    target_country="UA",
+                    amount_usd=round(5000.0 + (time.time() % 10000), 2),
+                    product_category=_GOODS[int(time.time()) % len(_GOODS)],
+                    risk_score=0.45,
+                    timestamp=datetime.now(UTC)
+                )
+                session.add(new_flow)
+                
                 await session.commit()
-                print(f"[ETL-PARSER] Спаршено нове повідомлення з Telegram: {new_msg.id}")
+                print(f"[ETL-PARSER] Спаршено нові дані ETL (TG: {new_msg.id}, DN: {new_darknet.id}, REG: {new_registry.id}, FLOW: {new_flow.id})")
         except Exception as e:
             print(f"[ETL-PARSER] Помилка фонового парсингу: {e}")
             await asyncio.sleep(60)
@@ -1715,10 +1758,50 @@ async def darknet_mentions():
         return {"items": result}
 
 
+async def _run_manual_etl_process():
+    """Симуляція ручного запуску Multi-Database ETL."""
+    try:
+        async with main_session() as session:
+            # Створимо нові повідомлення та потоки
+            new_msg = TelegramMessage(
+                id=f"TG-MANUAL-{uuid4().hex[:8]}",
+                channel_name="@customs_intel",
+                content="Ручний запуск ETL виявив підозріле декларування товарної групи.",
+                risk_score=0.91,
+                timestamp=datetime.now(UTC)
+            )
+            session.add(new_msg)
+
+            new_darknet = DarknetMention(
+                id=f"DN-MANUAL-{uuid4().hex[:8]}",
+                source="SovereignLeakers",
+                content="Опубліковано свіжий звіт по контрабанді напівпровідників.",
+                threat_level="CRITICAL",
+                timestamp=datetime.now(UTC)
+            )
+            session.add(new_darknet)
+
+            new_flow = TradeFlow(
+                id=f"FLOW-MANUAL-{uuid4().hex[:8]}",
+                source_country="CN",
+                target_country="UA",
+                amount_usd=120000.0,
+                product_category="Електроніка",
+                risk_score=0.88,
+                timestamp=datetime.now(UTC)
+            )
+            session.add(new_flow)
+
+            await session.commit()
+            print("[ETL-TRIGGER] Ручний запуск ETL успішно завершено")
+    except Exception as e:
+        print(f"[ETL-TRIGGER] Помилка ручного ETL процесу: {e}")
+
+
 @app.post("/api/v1/etl/trigger")
-async def etl_trigger(background_tasks: fastapi.BackgroundTasks):
+async def etl_trigger(background_tasks: BackgroundTasks):
     """Ручний запуск Multi-Database ETL."""
-    # Емуляція запуску
+    background_tasks.add_task(_run_manual_etl_process)
     return {"status": "started", "message": "ETL process initiated."}
 
 
