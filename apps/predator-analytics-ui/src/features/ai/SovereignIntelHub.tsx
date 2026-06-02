@@ -33,9 +33,7 @@ import { useBackendStatus } from '@/hooks/useBackendStatus';
 
 // --- MOCK DATA FOR ELITE ---
 const MOCK_THOUGHTS: AIThought[] = [
-    { id: '1', stage: 'observation', content: '[GLM-5.1] Виявлено критичне відхилення у ланцюгу постачання пального. Джерело: NVIDIA-CLUSTER.', confidence: 0.99, timestamp: new Date().toISOString() },
-    { id: '2', stage: 'analysis', content: 'Активація SWE-Bench Pro для аудиту аномальних транзакцій. Кореляція з ZROK-трафіком позитивна.', confidence: 0.97, timestamp: new Date().toISOString() },
-    { id: '3', stage: 'decision', content: 'Переведення інтелекту в режим П ЯМОГО ВПЛИВУ. Ініціація OSINT-контрзаходів.', confidence: 0.98, timestamp: new Date().toISOString() },
+    { id: '1', stage: 'observation', content: '[GLM-5.1] Система в очікуванні ввідних даних. Нейронні потоки стабілізовані.', confidence: 1.0, timestamp: new Date().toISOString() }
 ];
 
 export default function SovereignIntelHub() {
