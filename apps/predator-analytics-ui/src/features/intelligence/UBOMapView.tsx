@@ -27,85 +27,17 @@ import { SovereignAudio } from '@/utils/sovereign-audio';
 // ─── TYPES ──────────────────────────────────────────────────────────
 // UBONode imported from analyticsService
 
-const MOCK_UBO_TREE: UBONode = {
-  id: 'root',
-  name: 'ТОВ "АГРО-ЛІДЕР ГРУП"',
-  type: 'company',
-  risk: 87,
-  country: '🇺🇦',
-  children: [
-    {
-      id: 'c1',
-      name: 'Kyoto Holdings Ltd',
-      type: 'offshore',
-      share: 60,
-      risk: 94,
-      country: '🇻🇬',
-      sanctioned: false,
-      children: [
-        {
-          id: 'p1',
-          name: 'Ткаченко Валерій Михайлович',
-          type: 'person',
-          share: 100,
-          risk: 91,
-          nationality: '🇺🇦',
-          pep: true,
-          children: []
-        }
-      ]
-    },
-    {
-      id: 'c2',
-      name: 'Agroholding Cyprus Ltd',
-      type: 'offshore',
-      share: 30,
-      risk: 72,
-      country: '🇨🇾',
-      children: [
-        {
-          id: 'p2',
-          name: 'Ковальчук Ірина Степанівна',
-          type: 'person',
-          share: 50,
-          risk: 45,
-          nationality: '🇺🇦',
-          pep: false,
-          children: []
-        },
-        {
-          id: 'p3',
-          name: 'Mykola Petrenko (Shadow)',
-          type: 'person',
-          share: 50,
-          risk: 88,
-          nationality: '🇺🇦',
-          pep: true,
-          children: []
-        }
-      ]
-    },
-    {
-      id: 'c3',
-      name: 'Державна частка',
-      type: 'state',
-      share: 10,
-      risk: 20,
-      country: '🇺🇦',
-      children: []
-    }
-  ]
-};
-
-const PEP_DATABASE = [
-  { name: 'Ткаченко В.М.', position: 'Нар. депутат III скликання', risk: 91, links: 8,  status: 'АКТИВНИЙ' },
-  { name: 'Петренко М.О.', position: 'Заст. міністра (2018-2021)', risk: 88, links: 12, status: 'АКТИВНИЙ' },
-  { name: 'Коваль Д.С.',   position: 'Голова ДФСУ (2019-2022)',    risk: 76, links: 6,  status: 'ЗАВЕРШЕНО' },
-  { name: 'Бойко А.П.',    position: 'Радник Кабміну',             risk: 63, links: 4,  status: 'АКТИВНИЙ' },
-  { name: 'Мельник Т.В.', position: 'Член ЦВК (2015-2019)',         risk: 54, links: 3,  status: 'ЗАВЕРШЕНО' },
-];
+import { intelligenceApi } from '@/services/api';
 
 type ActiveView = 'ubo-tree' | 'pep-tracker' | 'shadow-director';
+
+interface PEP {
+  name: string;
+  position: string;
+  risk: number;
+  links: number;
+  status: string;
+}
 
 // ─── NODE RENDERER ─────────────────────────────────────────
 
@@ -242,6 +174,7 @@ const UBOMapView: React.FC = () => {
   const [activeView, setActiveView] = useState<ActiveView>('ubo-tree');
   const [searchQuery, setSearchQuery] = useState('');
   const [company, setCompany] = useState('ТОВ "АГРО-ЛІДЕР ГРУП"');
+  const [pepDatabase, setPepDatabase] = useState<PEP[]>([]);
   const { isOffline, nodeSource, healingProgress } = useBackendStatus();
 
   // Нав'язливі toast-повідомлення видалено (HR-04 compliant)
@@ -278,6 +211,21 @@ const UBOMapView: React.FC = () => {
 
   React.useEffect(() => {
     fetchUboData();
+    // Load PEP database mock/placeholder or real endpoint
+    const fetchPep = async () => {
+      try {
+        const data = await intelligenceApi.getSanctionsResults();
+        // Fallback for demo since we removed mocks:
+        if (data && Array.isArray(data) && data.length > 0) {
+           setPepDatabase(data as any);
+        } else {
+           setPepDatabase([]);
+        }
+      } catch (err) {
+        setPepDatabase([]);
+      }
+    };
+    fetchPep();
   }, [fetchUboData]);
 
   const views: Array<{ id: ActiveView; label: string; icon: React.ElementType; badge?: string }> = [
@@ -563,7 +511,7 @@ const UBOMapView: React.FC = () => {
                   </h2>
                   <div className="px-6 py-2 bg-yellow-500/10 border border-yellow-500/20 rounded-full">
                     <span className="text-[10px] font-black text-yellow-500 tracking-[0.2em] font-mono whitespace-nowrap">
-                      {PEP_DATABASE.length} DETECTED · GLOBAL_SYNC_ACTIVE
+                      {pepDatabase.length} DETECTED · GLOBAL_SYNC_ACTIVE
                     </span>
                   </div>
                 </div>
@@ -577,7 +525,7 @@ const UBOMapView: React.FC = () => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
-                      {PEP_DATABASE.map((pep, i) => (
+                      {pepDatabase.map((pep, i) => (
                         <motion.tr
                           key={i}
                           initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.07 }}
