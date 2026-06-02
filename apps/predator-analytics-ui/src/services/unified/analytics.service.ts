@@ -140,6 +140,7 @@ export interface FinancialSigintResult {
   suspicious: SuspiciousTx[];
   frozen: FrozenAsset[];
   aml: AmlRadarData[];
+  aml_verdict?: any;
   flow?: TransactionFlow[];
 }
 
