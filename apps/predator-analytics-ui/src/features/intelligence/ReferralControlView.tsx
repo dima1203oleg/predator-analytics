@@ -43,6 +43,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ViewHeader } from '@/components/ViewHeader';
 import { cn } from '@/utils/cn';
+import { intelligenceApi } from '@/services/api/intelligence';
 
 // --- Types ---
 
