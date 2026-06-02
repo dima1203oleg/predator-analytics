@@ -49,7 +49,7 @@ export const MobileSovereignCommandCenter: React.FC = () => {
         "bg-sky-500/10 border-sky-500/40 text-sky-500"
       )}>
         <div className="flex items-center justify-between mb-4">
-          <span className="text-xs font-black uppercase tracking-widest opacity-80">LLM OODA ROUTING</span>
+          <span className="text-xs font-black uppercase tracking-widest opacity-80">МАРШРУТИЗАЦІЯ LLM OODA</span>
           <Globe size={24} className="animate-spin-slow" />
         </div>
         <span className="text-4xl font-black tracking-widest italic">{llmTriStateMode}</span>
@@ -60,21 +60,21 @@ export const MobileSovereignCommandCenter: React.FC = () => {
       <div className="grid grid-cols-2 gap-4">
         <div className="flex flex-col p-4 bg-black/60 border border-white/10 rounded-2xl">
           <div className="flex items-center justify-between mb-2 opacity-50">
-            <span className="text-[9px] font-bold uppercase tracking-widest">VRAM</span>
+            <span className="text-[9px] font-bold uppercase tracking-widest">ВІДЕОПАМ'ЯТЬ</span>
             <Zap size={14} className="text-rose-500" />
           </div>
           <span className="text-xl font-black">{vramGb} GB</span>
         </div>
         <div className="flex flex-col p-4 bg-black/60 border border-white/10 rounded-2xl">
           <div className="flex items-center justify-between mb-2 opacity-50">
-            <span className="text-[9px] font-bold uppercase tracking-widest">CPU LOAD</span>
+            <span className="text-[9px] font-bold uppercase tracking-widest">ЗАВАНТАЖЕННЯ CPU</span>
             <Cpu size={14} className="text-sky-500" />
           </div>
           <span className="text-xl font-black">{cpuLoad}</span>
         </div>
         <div className="flex flex-col p-4 bg-black/60 border border-white/10 rounded-2xl">
           <div className="flex items-center justify-between mb-2 opacity-50">
-            <span className="text-[9px] font-bold uppercase tracking-widest">NODE IMAC</span>
+            <span className="text-[9px] font-bold uppercase tracking-widest">ВУЗОЛ IMAC</span>
             <Globe size={14} className={status?.healthy ? "text-emerald-500" : "text-rose-500"} />
           </div>
           <span className={cn("text-lg font-black", status?.healthy ? "text-emerald-500" : "text-rose-500")}>
@@ -83,7 +83,7 @@ export const MobileSovereignCommandCenter: React.FC = () => {
         </div>
         <div className="flex flex-col p-4 bg-black/60 border border-white/10 rounded-2xl">
           <div className="flex items-center justify-between mb-2 opacity-50">
-            <span className="text-[9px] font-bold uppercase tracking-widest">ENGINES</span>
+            <span className="text-[9px] font-bold uppercase tracking-widest">ДВИГУНИ ШІ</span>
             <Activity size={14} className="text-amber-500" />
           </div>
           <span className="text-xl font-black">{activeEnginesCount}</span>
