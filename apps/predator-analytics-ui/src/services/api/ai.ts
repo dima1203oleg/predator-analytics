@@ -23,5 +23,11 @@ export const aiApi = {
     },
     getAutonomousStatus: async () => {
         return (await apiClient.get('/ai/autonomous/status')).data;
+    },
+    getCouncilVotes: async () => {
+        return (await apiClient.get('/ai/council-votes')).data;
+    },
+    getBotLogs: async () => {
+        return (await apiClient.get('/ai/bot-logs')).data;
     }
 };

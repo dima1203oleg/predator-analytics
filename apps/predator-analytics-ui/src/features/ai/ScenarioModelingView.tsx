@@ -27,6 +27,8 @@ import {
   Zap,
 } from 'lucide-react';
 
+import { intelligenceApi } from '@/services/api';
+
 // ─── Типи ────────────────────────────────────────────────────────────────────
 
 type ScenarioStatus = 'draft' | 'running' | 'completed' | 'failed';
@@ -61,59 +63,6 @@ interface Scenario {
   confidence?: number;
   createdAt: string;
 }
-
-// ─── Mock-дані ────────────────────────────────────────────────────────────────
-
-const MOCK_SCENARIOS: Scenario[] = [
-  {
-    id: 'SCN-001',
-    name: 'Ескалація митних ставок +15%',
-    category: 'market',
-    status: 'completed',
-    description: 'Моделювання впливу підвищення ввізного мита на торговий портфель клієнтів.',
-    confidence: 82,
-    createdAt: '2025-04-19',
-    params: [
-      { key: 'tariff_delta', label: 'Зростання мита', value: 15, min: 0, max: 50, unit: '%' },
-      { key: 'period_days', label: 'Горизонт', value: 90, min: 30, max: 365, unit: 'днів' },
-    ],
-    results: [
-      { metric: 'Ризик портфелю', baseline: 32, projected: 51, unit: '%', trend: 'up', impact: 'negative' },
-      { metric: 'Прибутковість', baseline: 100, projected: 78, unit: '%', trend: 'down', impact: 'negative' },
-      { metric: 'Обсяг транзакцій', baseline: 100, projected: 87, unit: '%', trend: 'down', impact: 'negative' },
-      { metric: 'AML-тригери', baseline: 12, projected: 19, unit: 'шт/міс', trend: 'up', impact: 'negative' },
-    ],
-  },
-  {
-    id: 'SCN-002',
-    name: 'Введення санкцій проти сектору',
-    category: 'geopolitical',
-    status: 'completed',
-    description: 'Сценарій введення секторальних санкцій проти агропромислових компаній  Ф/БЛ.',
-    confidence: 67,
-    createdAt: '2025-04-18',
-    params: [
-      { key: 'sanction_coverage', label: 'Охоплення ринку', value: 40, min: 0, max: 100, unit: '%' },
-      { key: 'response_time', label: 'Реакція ринку', value: 14, min: 1, max: 90, unit: 'днів' },
-    ],
-    results: [
-      { metric: 'Ризик портфелю', baseline: 32, projected: 68, unit: '%', trend: 'up', impact: 'negative' },
-      { metric: 'Нові можливості', baseline: 0, projected: 23, unit: 'клієнтів', trend: 'up', impact: 'positive' },
-      { metric: 'Відтік клієнтів', baseline: 5, projected: 18, unit: '%', trend: 'up', impact: 'negative' },
-    ],
-  },
-  {
-    id: 'SCN-003',
-    name: 'Зниження ставки НБУ на 200 bp',
-    category: 'risk',
-    status: 'draft',
-    description: 'Вплив зниження облікової ставки на AML-ризики та фінансові потоки клієнтів.',
-    createdAt: '2025-04-20',
-    params: [
-      { key: 'rate_delta', label: 'Зниження ставки', value: 2, min: 0.5, max: 5, unit: 'pp' },
-    ],
-  },
-];
 
 // ─── Конфігурація категорій ───────────────────────────────────────────────────
 
@@ -262,6 +211,22 @@ function ScenarioCard({ scenario }: { scenario: Scenario }) {
 // ─── Головний компонент ───────────────────────────────────────────────────────
 
 export const ScenarioModelingView: React.FC = () => {
+  const [scenarios, setScenarios] = React.useState<Scenario[]>([]);
+
+  React.useEffect(() => {
+    const fetchScenarios = async () => {
+      try {
+        const data = await intelligenceApi.getScenarios();
+        if (data && Array.isArray(data)) {
+          setScenarios(data);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    fetchScenarios();
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#0a0a0f] text-white p-6 space-y-6">
       {/* Заголовок */}
@@ -287,10 +252,10 @@ export const ScenarioModelingView: React.FC = () => {
       {/* Статистика */}
       <div className="grid grid-cols-4 gap-3">
         {[
-          { label: 'Всього сценаріїв', value: MOCK_SCENARIOS.length, color: 'text-white/60', icon: GitBranch },
-          { label: 'Завершені', value: MOCK_SCENARIOS.filter(s => s.status === 'completed').length, color: 'text-emerald-400', icon: CheckCircle2 },
-          { label: 'Серед. впевненість', value: '74%', color: 'text-rose-400', icon: Sparkles },
-          { label: 'Чернетки', value: MOCK_SCENARIOS.filter(s => s.status === 'draft').length, color: 'text-rose-400', icon: FlaskConical },
+          { label: 'Всього сценаріїв', value: scenarios.length, color: 'text-white/60', icon: GitBranch },
+          { label: 'Завершені', value: scenarios.filter(s => s.status === 'completed').length, color: 'text-emerald-400', icon: CheckCircle2 },
+          { label: 'Серед. впевненість', value: scenarios.length ? `${Math.round(scenarios.reduce((acc, s) => acc + (s.confidence || 0), 0) / scenarios.length)}%` : '0%', color: 'text-rose-400', icon: Sparkles },
+          { label: 'Чернетки', value: scenarios.filter(s => s.status === 'draft').length, color: 'text-rose-400', icon: FlaskConical },
         ].map(({ label, value, color, icon: Icon }) => (
           <div key={label} className="p-4 rounded-lg bg-white/[0.03] border border-white/[0.06]">
             <div className="flex items-center gap-2 mb-2">
@@ -313,7 +278,7 @@ export const ScenarioModelingView: React.FC = () => {
 
       {/* Сценарії */}
       <div className="space-y-4">
-        {MOCK_SCENARIOS.map((scenario) => (
+        {scenarios.map((scenario) => (
           <ScenarioCard key={scenario.id} scenario={scenario} />
         ))}
       </div>

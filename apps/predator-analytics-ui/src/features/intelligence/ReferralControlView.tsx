@@ -70,53 +70,6 @@ interface ReferralFact {
   isHiddenByPartner: boolean;
 }
 
-// --- Mock Data ---
-
-const MOCK_CLIENTS: ControlledClient[] = [
-  {
-    id: '1',
-    name: 'ТОВ "Глобал Постач"',
-    edrpou: '38472910',
-    phone: '+380501234567',
-    email: 'info@global.ua',
-    startDate: '2025-10-15',
-    comment: 'Великий імпортер взуття',
-    status: 'Прихований',
-    factsCount: 3,
-    lastCheck: '2026-03-24 10:30',
-  },
-  {
-    id: '2',
-    name: 'Іванов Петро Сидорович',
-    edrpou: '2938475610',
-    phone: '+380679876543',
-    startDate: '2026-01-20',
-    comment: 'Привів сьогодні нового клієнта',
-    status: 'Приведений',
-    factsCount: 1,
-    lastCheck: '2026-03-24 12:15',
-  },
-  {
-    id: '3',
-    name: 'ПП "Вектор Плюс"',
-    edrpou: '40123456',
-    email: 'vector@plus.com',
-    startDate: '2025-11-05',
-    status: 'Самостійний',
-    factsCount: 2,
-    lastCheck: '2026-03-23 15:45',
-  },
-  {
-    id: '4',
-    name: 'ТОВ "Меридіан"',
-    edrpou: '39556677',
-    startDate: '2026-02-12',
-    status: 'Підозра',
-    factsCount: 0,
-    lastCheck: '2026-03-24 09:00',
-  }
-];
-
 // --- Sub-components ---
 
 const StatusBadge = ({ status }: { status: ReferralStatus }) => {
@@ -148,18 +101,31 @@ export default function ReferralControlView() {
   const [isAddingMode, setIsAddingMode] = useState(false);
   const { isOffline, nodeSource } = useBackendStatus();
 
+  // --- State ---
+  const [clients, setClients] = useState<ControlledClient[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch referral clients from backend
+  useEffect(() => {
+    const fetchClients = async () => {
+      setIsLoading(true);
+      try {
+        const data = await intelligenceApi.getReferralClients();
+        setClients(data as ControlledClient[]);
+      } catch (e: any) {
+        console.error('Failed to fetch referral clients', e);
+        setError(e?.message ?? 'Помилка завантаження клієнтів');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchClients();
+  }, []);
+
   useEffect(() => {
     if (isOffline) {
       // Видалимо нав'язливе повідомлення про автономний режим
-      // window.dispatchEvent(new CustomEvent('predator-error', {
-      //   detail: {
-      //     service: 'ReferralControl',
-      //     message: ' ЕФЕ АЛЬНИЙ КОНТРОЛЬ: Активовано автономний режим. Перевірка прихованих зв\'язків проводиться через MIRROR_OSINT_NODE.',
-      //     severity: 'warning',
-      //     timestamp: new Date().toISOString(),
-      //     code: 'REFERRAL_SCAN_OFFLINE'
-      //   }
-      // }));
     }
     
     window.dispatchEvent(new CustomEvent('predator-error', {
@@ -175,20 +141,20 @@ export default function ReferralControlView() {
 
   // Статистика
   const stats = useMemo(() => ({
-    total: MOCK_CLIENTS.length,
-    hidden: MOCK_CLIENTS.filter(c => c.status === 'Прихований').length,
-    voluntary: MOCK_CLIENTS.filter(c => c.status === 'Самостійний').length,
+    total: clients.length,
+    hidden: clients.filter(c => c.status === 'Прихований').length,
+    voluntary: clients.filter(c => c.status === 'Самостійний').length,
     lost: 12,
-  }), []);
+  }), [clients]);
 
   // Фільтровані клієнти (пошук + статус)
   const filteredClients = useMemo(() => {
-    return MOCK_CLIENTS.filter(c => {
+    return clients.filter(c => {
       const matchesSearch = c.name.toLowerCase().includes(searchQuery.toLowerCase()) || c.edrpou.includes(searchQuery);
       const matchesStatus = filterStatus === 'Всі' || c.status === filterStatus;
       return matchesSearch && matchesStatus;
     });
-  }, [searchQuery, filterStatus]);
+  }, [clients, searchQuery, filterStatus]);
 
   return (
     <PageTransition>
@@ -259,7 +225,7 @@ export default function ReferralControlView() {
                 </div>
                 
                 <div className="space-y-4">
-                  {MOCK_CLIENTS.map((client) => (
+                  {clients.map((client) => (
                     <motion.div 
                       key={client.id}
                       initial={{ opacity: 0, y: 10 }}

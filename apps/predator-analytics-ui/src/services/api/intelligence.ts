@@ -24,7 +24,6 @@ export const optimizerApi = {
     }
 };
 
-
 export const intelligenceApi = {
     getAiInsights: async () => {
         return (await apiClient.get('/premium/ai-insights')).data;
@@ -41,6 +40,11 @@ export const intelligenceApi = {
     getTopImporters: async () => {
         return (await apiClient.get('/premium/top-importers')).data;
     },
+    // New endpoint for referral clients
+    getReferralClients: async () => {
+        // Returns an array of ControlledClient objects
+        return (await apiClient.get('/premium/referral-clients')).data;
+    },
     getHSAnalytics: async () => {
         return (await apiClient.get('/premium/hs-analytics')).data;
     },
@@ -55,6 +59,9 @@ export const intelligenceApi = {
     },
     getTimelineEvents: async (caseId?: string) => {
         return (await apiClient.get(`/premium/timeline-events${caseId ? `?caseId=${caseId}` : ''}`)).data;
+    },
+    getScenarios: async () => {
+        return (await apiClient.get('/premium/scenarios')).data;
     },
     getForensics: async (query: string) => {
         return (await apiClient.get(`/premium/forensics?query=${encodeURIComponent(query)}`)).data;
@@ -74,7 +81,7 @@ export const intelligenceApi = {
         return Array.isArray(res.data) ? res.data : (res.data?.recommendations ?? []);
     },
     getWidgetData: async (type: string, source: string = 'customs_registry') => {
-        return (await apiClient.get(`/premium/widget-data?type=${type}&source=${source}`)).data;
+        return (await apiClient.get(`/premium/widget-data?type=${type}\u0026source=${source}`)).data;
     },
     saveDashboard: async (dashboard: any) => {
         const endpoint = dashboard.id ? `/premium/dashboards/${dashboard.id}` : '/premium/dashboards';
@@ -137,8 +144,7 @@ export const intelligenceApi = {
         const endpoint = edrpou ? `/graph/investigation/${edrpou}` : '/graph/investigation/default';
         return (await apiClient.get(endpoint)).data;
     },
-
-    // ─── Knowledge Engineering (Rules + Costs) ─────────────────────────────────
+    // ─── Knowledge Engineering (Rules + Costs) ────────────────────────────────
     // AUDIT-FIX: Видалено inline mock datasets — при недоступності API повертається []
     getRules: async () => {
         const res = await apiClient.get('/premium/rules').catch(() => ({ data: [] }));
