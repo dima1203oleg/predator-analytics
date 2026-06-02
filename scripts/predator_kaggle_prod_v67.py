@@ -248,6 +248,48 @@ class MongoDocument(MongoBase):
     created_at = Column(DateTime, default=lambda: datetime.now(UTC))
 
 
+class TelegramMessage(OpenSearchBase):
+    """Спаршені повідомлення з Telegram."""
+    __tablename__ = "telegram_messages"
+    id = Column(String, primary_key=True)
+    channel_name = Column(String, nullable=False)
+    content = Column(Text, nullable=False)
+    risk_score = Column(Float, default=0.0)
+    timestamp = Column(DateTime, default=lambda: datetime.now(UTC))
+
+
+class DarknetMention(OpenSearchBase):
+    """Згадки в даркнет-ресурсах."""
+    __tablename__ = "darknet_mentions"
+    id = Column(String, primary_key=True)
+    source = Column(String, nullable=False)
+    content = Column(Text, nullable=False)
+    threat_level = Column(String, default="LOW")
+    timestamp = Column(DateTime, default=lambda: datetime.now(UTC))
+
+
+class RegistryRecord(Base):
+    """Дані з публічних реєстрів."""
+    __tablename__ = "registry_records"
+    id = Column(String, primary_key=True)
+    registry_name = Column(String, nullable=False)
+    entity_id = Column(String, nullable=True)
+    data = Column(JSON, nullable=False)
+    timestamp = Column(DateTime, default=lambda: datetime.now(UTC))
+
+
+class TradeFlow(ClickHouseBase):
+    """Торгові потоки (для TradeFlowTab)."""
+    __tablename__ = "trade_flows"
+    id = Column(String, primary_key=True)
+    source_country = Column(String, nullable=False)
+    target_country = Column(String, nullable=False)
+    amount_usd = Column(Float, nullable=False)
+    product_category = Column(String, nullable=False)
+    risk_score = Column(Float, default=0.0)
+    timestamp = Column(DateTime, default=lambda: datetime.now(UTC))
+
+
 # ═══════════════════════════════════════════════════════════════
 # 5. IN-MEMORY DB MOCKS (Neo4j, Redis, Qdrant, Kafka, MinIO)
 # ═══════════════════════════════════════════════════════════════
@@ -496,6 +538,51 @@ async def _seed_database() -> None:
                     username=uname, email=f"{uname}@predator.ua",
                     hashed_password=_hash_password(f"{uname}123"), role=role,
                 ))
+            await session.commit()
+            
+        # --- OSINT & ФІНАНСОВІ ПОТОКИ (Тіньовий парсинг) ---
+        if not (await session.execute(select(func.count()).select_from(TradeFlow))).scalar():
+            for i in range(1, 101):
+                session.add(TradeFlow(
+                    id=f"FLOW-{i:04d}",
+                    source_country=_COUNTRIES[(i * 3) % len(_COUNTRIES)],
+                    target_country="UA" if i % 2 == 0 else _COUNTRIES[(i * 5) % len(_COUNTRIES)],
+                    amount_usd=round(1000 + (i * 876.54) % 99000, 2),
+                    product_category=_GOODS[i % len(_GOODS)],
+                    risk_score=_gen_risk(i),
+                    timestamp=datetime.now(UTC) - timedelta(days=i % 30),
+                ))
+            
+            channels = ["@customs_leak", "@smugglers_chat", "@shadow_logistics", "@gray_import"]
+            for i in range(1, 51):
+                session.add(TelegramMessage(
+                    id=f"TG-{i:04d}",
+                    channel_name=channels[i % len(channels)],
+                    content=f"Знайдено підозрілу партію товару '{_GOODS[i % len(_GOODS)]}' для компанії {_gen_company_name((i % NUM_COMPANIES) + 1)}",
+                    risk_score=_gen_risk(i) / 100.0,
+                    timestamp=datetime.now(UTC) - timedelta(hours=i * 5),
+                ))
+            
+            darknet_sources = ["SilkRoad V3", "Hydra_Clone", "DarkForum", "OnionMarket"]
+            for i in range(1, 31):
+                session.add(DarknetMention(
+                    id=f"DN-{i:04d}",
+                    source=darknet_sources[i % len(darknet_sources)],
+                    content=f"Продам базу митних декларацій або послуги провозу через {_CITIES[i % len(_CITIES)]}",
+                    threat_level="CRITICAL" if i % 5 == 0 else "HIGH",
+                    timestamp=datetime.now(UTC) - timedelta(days=i * 2),
+                ))
+                
+            for i in range(1, 41):
+                comp_idx = (i % NUM_COMPANIES) + 1
+                session.add(RegistryRecord(
+                    id=f"REG-{i:04d}",
+                    registry_name="ЄДРПОУ_Оновлення",
+                    entity_id=f"COMP-{comp_idx:04d}",
+                    data={"new_director": "Іванов І.І.", "status": "У стані припинення"},
+                    timestamp=datetime.now(UTC) - timedelta(days=i),
+                ))
+            await session.commit()
 
         # --- Компанії ---
         if not (await session.execute(select(func.count()).select_from(Company))).scalar():
@@ -579,37 +666,27 @@ async def _seed_database() -> None:
 
         await session.commit()
 
-    # --- Збагачення Neo4j графа ---
-    for i in range(1, NUM_COMPANIES + 1):
-        node_id = f"COMP-{i:04d}"
-        neo4j.graph.add_node(node_id, type="company",
-                             industry=_INDUSTRIES[i % len(_INDUSTRIES)],
-                             region=_CITIES[i % len(_CITIES)])
-    # Створення зв'язків власності та партнерства
-    relations = ["owns", "invests", "supplies", "partners", "competes"]
-    for i in range(1, NUM_COMPANIES + 1):
-        owner = f"COMP-{i:04d}"
-        for j in range(1, 4):
-            target_idx = ((i * 7 + j * 13) % NUM_COMPANIES) + 1
-            if target_idx != i:
-                target = f"COMP-{target_idx:04d}"
-                neo4j.graph.add_edge(owner, target, relation=relations[(i + j) % 5])
 
-    # --- Qdrant seed ---
-    vectors_data = []
-    for i in range(1, min(201, NUM_COMPANIES + 1)):
-        vec = np.random.default_rng(seed=i).random(128).tolist()
-        vectors_data.append({
-            "id": f"COMP-{i:04d}",
-            "vector": vec,
-            "payload": {"name": _gen_company_name(i), "risk": _gen_risk(i)},
-        })
-    if vectors_data:
-        qdrant.upsert("companies", vectors_data)
-
-    print(f"✅ Seed: {NUM_COMPANIES} компаній, {NUM_TRANSACTIONS} транзакцій, "
-          f"{NUM_ALERTS} алертів, {neo4j.graph.number_of_nodes()} graph nodes, "
-          f"{neo4j.graph.number_of_edges()} graph edges")
+async def _run_etl_simulation():
+    """Фонова задача (scheduler), яка симулює безперервний ETL-парсинг."""
+    while True:
+        try:
+            await asyncio.sleep(300) # Кожні 5 хвилин
+            async with main_session() as session:
+                # Симуляція додавання нових повідомлень з Telegram
+                new_msg = TelegramMessage(
+                    id=f"TG-LIVE-{uuid4().hex[:8]}",
+                    channel_name="@live_intel",
+                    content=f"Автоматичний парсер виявив транзакцію. Категорія: {_GOODS[int(time.time()) % len(_GOODS)]}",
+                    risk_score=0.85,
+                    timestamp=datetime.now(UTC)
+                )
+                session.add(new_msg)
+                await session.commit()
+                print(f"[ETL-PARSER] Спаршено нове повідомлення з Telegram: {new_msg.id}")
+        except Exception as e:
+            print(f"[ETL-PARSER] Помилка фонового парсингу: {e}")
+            await asyncio.sleep(60)
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -681,13 +758,49 @@ async def lifespan(application: FastAPI):
     print("✅ Схеми створено")
 
     await _seed_database()
+    
+    # --- Збагачення Neo4j графа ---
+    for i in range(1, NUM_COMPANIES + 1):
+        node_id = f"COMP-{i:04d}"
+        neo4j.graph.add_node(node_id, type="company",
+                             industry=_INDUSTRIES[i % len(_INDUSTRIES)],
+                             region=_CITIES[i % len(_CITIES)])
+    # Створення зв'язків власності та партнерства
+    relations = ["owns", "invests", "supplies", "partners", "competes"]
+    for i in range(1, NUM_COMPANIES + 1):
+        owner = f"COMP-{i:04d}"
+        for j in range(1, 4):
+            target_idx = ((i * 7 + j * 13) % NUM_COMPANIES) + 1
+            if target_idx != i:
+                target = f"COMP-{target_idx:04d}"
+                neo4j.graph.add_edge(owner, target, relation=relations[(i + j) % 5])
+
+    # --- Qdrant seed ---
+    vectors_data = []
+    for i in range(1, min(201, NUM_COMPANIES + 1)):
+        vec = np.random.default_rng(seed=i).random(128).tolist()
+        vectors_data.append({
+            "id": f"COMP-{i:04d}",
+            "vector": vec,
+            "payload": {"name": _gen_company_name(i), "risk": _gen_risk(i)},
+        })
+    if vectors_data:
+        qdrant.upsert("companies", vectors_data)
+
+    print(f"✅ Seed: {NUM_COMPANIES} компаній, {NUM_TRANSACTIONS} транзакцій, "
+          f"{NUM_ALERTS} алертів, {neo4j.graph.number_of_nodes()} graph nodes, "
+          f"{neo4j.graph.number_of_edges()} graph edges")
 
     ooda.start()
     print("🧠 OODA Loop запущено")
+    
+    # Запуск фонового ETL процесу
+    etl_task = asyncio.create_task(_run_etl_simulation())
 
     yield
 
     # Shutdown
+    etl_task.cancel()
     ooda.stop()
     await main_engine.dispose()
 
@@ -1492,12 +1605,121 @@ async def contract_anomalies():
 
 @app.post("/api/v1/finance/portfolio-risk/var")
 async def portfolio_var():
-    """Value at Risk портфеля."""
+    """Фінансова розвідка (перехоплення для SwiftMonitorTab)."""
+    async with main_session() as session:
+        # Зберемо кілька транзакцій для імітації SWIFT
+        txs = (await session.execute(
+            select(Transaction).order_by(Transaction.created_at.desc()).limit(24)
+        )).scalars().all()
+        
+        swift_data = []
+        for i, t in enumerate(txs):
+            hour = (datetime.now(UTC) - timedelta(hours=23-i)).strftime("%H:00")
+            swift_data.append({
+                "hour": hour,
+                "normal": t.value_usd * 0.8,
+                "suspicious": t.value_usd * 0.2 if t.risk_flag else 0
+            })
+            
+        suspicious_txs = [
+            {
+                "id": t.id, "from": t.origin_country, "to": t.destination_country,
+                "amount": f"${t.value_usd:,.0f}", "currency": "USD",
+                "time": t.declaration_date.strftime("%Y-%m-%d %H:%M"),
+                "risk": 85 if t.risk_flag else 40,
+                "type": "SWIFT Transfer", "route": f"{t.origin_country} -> {t.destination_country}"
+            } for t in txs[:5] if t.risk_flag
+        ]
+        
     return {
-        "var_95": 124500.0, "var_99": 234000.0,
-        "confidence": 0.95,
-        "timestamp": datetime.now(UTC).isoformat(),
+        "swift": swift_data if swift_data else [{"hour": "12:00", "normal": 1000, "suspicious": 50}],
+        "offshore": [
+            {"name": "Кіпр", "value": 45, "amount": "$45M", "color": "#10b981"},
+            {"name": "БВІ", "value": 30, "amount": "$30M", "color": "#f59e0b"},
+            {"name": "Панама", "value": 15, "amount": "$15M", "color": "#ef4444"},
+            {"name": "Сейшели", "value": 10, "amount": "$10M", "color": "#3b82f6"}
+        ],
+        "suspicious": suspicious_txs,
+        "frozen": [
+            {"entity": "ТОВ ОФШОР", "amount": "$1.2M", "date": "2026-05-10", "authority": "ДСФМУ", "status": "Заморожено", "reason": "Санкції"}
+        ],
+        "aml": [
+            {"subject": "Митні брокери", "A": 80, "B": 60},
+            {"subject": "Транзит", "A": 90, "B": 70},
+            {"subject": "Офшори", "A": 95, "B": 85},
+            {"subject": "Готівка", "A": 60, "B": 50},
+            {"subject": "Крипта", "A": 85, "B": 40}
+        ]
     }
+
+
+@app.get("/api/v1/premium/trade-flows")
+async def premium_trade_flows():
+    """Торгові потоки (TradeFlowTab)."""
+    async with main_session() as session:
+        flows = (await session.execute(
+            select(TradeFlow).order_by(TradeFlow.timestamp.desc()).limit(50)
+        )).scalars().all()
+        
+        result = []
+        for f in flows:
+            result.append({
+                "id": f.id,
+                "source": f.source_country,
+                "target": f.target_country,
+                "value": f.amount_usd,
+                "category": f.product_category,
+                "risk_score": f.risk_score,
+                "timestamp": f.timestamp.isoformat()
+            })
+        return {"flows": result}
+
+
+@app.get("/api/v1/analytics/telegram/feed")
+async def telegram_feed():
+    """Потік сигналів Telegram."""
+    async with main_session() as session:
+        msgs = (await session.execute(
+            select(TelegramMessage).order_by(TelegramMessage.timestamp.desc()).limit(20)
+        )).scalars().all()
+        
+        result = []
+        for m in msgs:
+            result.append({
+                "id": m.id,
+                "channel": m.channel_name,
+                "text": m.content,
+                "risk": m.risk_score,
+                "time": m.timestamp.isoformat()
+            })
+        return {"items": result}
+
+
+@app.get("/api/v1/osint/darknet")
+async def darknet_mentions():
+    """Даркнет згадки."""
+    async with main_session() as session:
+        mentions = (await session.execute(
+            select(DarknetMention).order_by(DarknetMention.timestamp.desc()).limit(15)
+        )).scalars().all()
+        
+        result = []
+        for m in mentions:
+            result.append({
+                "id": m.id,
+                "source": m.source,
+                "content": m.content,
+                "threat": m.threat_level,
+                "time": m.timestamp.isoformat()
+            })
+        return {"items": result}
+
+
+@app.post("/api/v1/etl/trigger")
+async def etl_trigger(background_tasks: fastapi.BackgroundTasks):
+    """Ручний запуск Multi-Database ETL."""
+    # Емуляція запуску
+    return {"status": "started", "message": "ETL process initiated."}
 
 
 @app.get("/api/v1/portfolio/risk-positions")
