@@ -33,11 +33,13 @@ import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { useEffect } from 'react';
 
 import { intelligenceApi } from '@/services/api';
+import { useViewport } from '@/hooks/useViewport';
+import { MobileZradaControlView } from './MobileZradaControlView';
 
-type BetrayalRisk = 'Підтверджено' | 'Висока підозра' | 'Моніторинг' | 'Очищено';
-type EvidenceType = 'telegram' | 'тендер' | 'телефон' | 'соцмережі' | 'контракт' | 'аудіо' | 'відео' | 'геолокація' | 'крипто';
+export type BetrayalRisk = 'Підтверджено' | 'Висока підозра' | 'Моніторинг' | 'Очищено';
+export type EvidenceType = 'telegram' | 'тендер' | 'телефон' | 'соцмережі' | 'контракт' | 'аудіо' | 'відео' | 'геолокація' | 'крипто';
 
-interface BetrayalSubject {
+export interface BetrayalSubject {
   id: string;
   name: string;
   role: string;
@@ -52,7 +54,7 @@ interface BetrayalSubject {
   signals: BetrayalSignal[];
 }
 
-interface BetrayalSignal {
+export interface BetrayalSignal {
   id: string;
   type: EvidenceType;
   date: string;
@@ -71,6 +73,11 @@ export default function ZradaControlView() {
   const [isOsintLoading, setIsOsintLoading] = useState(false);
   const [subjects, setSubjects] = useState<BetrayalSubject[]>([]);
   const { isOffline } = useBackendStatus();
+  const { isCompact } = useViewport();
+
+  if (isCompact) {
+    return <MobileZradaControlView />;
+  }
 
   useEffect(() => {
     if (isOffline) {

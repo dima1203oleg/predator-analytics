@@ -18,8 +18,10 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/utils/cn';
 
 import { aiApi } from '@/services/api/ai';
+import { useViewport } from '@/hooks/useViewport';
+import { MobileCouncilJudgeView } from './MobileCouncilJudgeView';
 
-interface ModelVote {
+export interface ModelVote {
   model: string;
   vote: 'approve' | 'reject' | 'abstain';
   reason: string;
@@ -29,6 +31,11 @@ interface ModelVote {
 export default function CouncilJudgeView() {
   const [isJudging, setIsJudging] = useState(false);
   const [votes, setVotes] = useState<ModelVote[]>([]);
+  const { isCompact } = useViewport();
+
+  if (isCompact) {
+    return <MobileCouncilJudgeView />;
+  }
 
   React.useEffect(() => {
     const fetchVotes = async () => {
