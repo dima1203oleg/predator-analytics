@@ -18,6 +18,8 @@ import { HoloCard } from '@/components/ui/HoloCard';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/utils/cn';
 
+import { aiApi } from '@/services/api/ai';
+
 interface BotCommand {
   id: string;
   user: string;
@@ -26,14 +28,23 @@ interface BotCommand {
   status: 'success' | 'denied' | 'pending';
 }
 
-const MOCK_LOGS: BotCommand[] = [
-  { id: 'log-1', user: 'dima1203', command: '/status', timestamp: '12:45:01', status: 'success' },
-  { id: 'log-2', user: 'oleg_dev', command: '/rollback', timestamp: '12:42:30', status: 'denied' },
-  { id: 'log-3', user: 'dima1203', command: '/idea: "Додати логіку валідації"', timestamp: '12:30:15', status: 'success' },
-];
-
 export default function TelegramCenterView() {
   const [isBotActive, setIsBotActive] = useState(true);
+  const [logs, setLogs] = useState<BotCommand[]>([]);
+
+  React.useEffect(() => {
+    const fetchLogs = async () => {
+      try {
+        const data = await aiApi.getBotLogs();
+        if (data && Array.isArray(data)) {
+          setLogs(data);
+        }
+      } catch (e) {
+        setLogs([]);
+      }
+    };
+    fetchLogs();
+  }, []);
 
   return (
     <div className="space-y-8 p-8">
@@ -72,7 +83,7 @@ export default function TelegramCenterView() {
         <div className="space-y-8">
           <HoloCard variant="holographic" title="Журнал команд" className="rounded-[40px] border-sky-500/20 bg-slate-950/50 p-8">
             <div className="space-y-4">
-               {MOCK_LOGS.map((log, i) => (
+               {logs.map((log, i) => (
                  <div key={log.id} className="flex items-center justify-between p-5 bg-black/40 border border-white/5 rounded-2xl">
                     <div className="flex items-center gap-6">
                        <div className={cn(

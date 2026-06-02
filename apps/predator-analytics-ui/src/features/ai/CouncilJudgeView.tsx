@@ -17,6 +17,8 @@ import { HoloCard } from '@/components/ui/HoloCard';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/utils/cn';
 
+import { aiApi } from '@/services/api/ai';
+
 interface ModelVote {
   model: string;
   vote: 'approve' | 'reject' | 'abstain';
@@ -24,14 +26,23 @@ interface ModelVote {
   confidence: number;
 }
 
-const MOCK_VOTES: ModelVote[] = [
-  { model: 'LLaMA 3.1 70B', vote: 'approve', confidence: 0.94, reason: 'Архітектурна цілісність збережена. Ризики регресії мінімальні.' },
-  { model: 'Qwen 2.5 Coder', vote: 'approve', confidence: 0.98, reason: 'Код відповідає стандартам HR-01 та HR-02. Тести пройдено.' },
-  { model: 'Gemini 1.5 Pro', vote: 'reject', confidence: 0.45, reason: 'Виявлено потенційну вразливість у логіці валідації токенів.' },
-];
-
 export default function CouncilJudgeView() {
   const [isJudging, setIsJudging] = useState(false);
+  const [votes, setVotes] = useState<ModelVote[]>([]);
+
+  React.useEffect(() => {
+    const fetchVotes = async () => {
+      try {
+        const data = await aiApi.getCouncilVotes();
+        if (data && Array.isArray(data)) {
+          setVotes(data);
+        }
+      } catch (err) {
+        setVotes([]);
+      }
+    };
+    fetchVotes();
+  }, []);
 
   return (
     <div className="space-y-8 p-8">
@@ -56,7 +67,7 @@ export default function CouncilJudgeView() {
            <HoloCard glowColor="rgba(239,68,68,0.3)" className="px-8 py-4 flex items-center gap-6">
               <div className="text-right">
                  <div className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Рівень консенсусу</div>
-                 <div className="text-2xl font-black text-emerald-500 italic">66.7%</div>
+                 <div className="text-2xl font-black text-emerald-500 italic">{votes.length ? `${((votes.filter(v => v.vote === 'approve').length / votes.length) * 100).toFixed(1)}%` : '0%'}</div>
               </div>
               <div className="w-px h-10 bg-white/5" />
               <Scale className="text-rose-500" size={24} />
@@ -65,7 +76,7 @@ export default function CouncilJudgeView() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {MOCK_VOTES.map((vote, i) => (
+        {votes.map((vote, i) => (
           <motion.div
             key={vote.model}
             initial={{ opacity: 0, y: 20 }}
