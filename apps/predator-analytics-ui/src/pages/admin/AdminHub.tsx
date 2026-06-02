@@ -100,6 +100,12 @@ const PortfolioRiskView        = lazy(() => import('@/features/dashboard/Portfol
 const MATargetScannerView      = lazy(() => import('@/features/intelligence/MATargetScannerView'));
 const MarketEntryView          = lazy(() => import('@/features/intelligence/MarketEntryView'));
 
+// Final Spec Additions
+const WhatIfSimulatorView      = lazy(() => import('@/features/forecast/WhatIfSimulatorView'));
+const DigitalTwinView          = lazy(() => import('@/features/modeling/DigitalTwinView'));
+const RegulatoryRadarView      = lazy(() => import('@/features/intelligence/RegulatoryRadarView'));
+const ConnectionExplorer3DView = lazy(() => import('@/features/network/ConnectionExplorer3DView'));
+const PanicControlView         = lazy(() => import('@/features/security/PanicControlView'));
 // ─── Конфіг вкладок ───────────────────────────────────────────────────────────
 
 type TabCategory = 'SYSTEM_CORE' | 'AI_LAB' | 'INTEL_OSINT' | 'BUSINESS_INTEL' | 'PLATFORM' | 'AUTONOMOUS_FACTORY';
@@ -186,6 +192,13 @@ const TABS: TabConfig[] = [
   { id: 'factory-conductor', category: 'AUTONOMOUS_FACTORY', label: 'ДИРИГЕНТ', badge: 'AGI', icon: Orbit, component: ChiefConductorView },
   { id: 'factory-council', category: 'AUTONOMOUS_FACTORY', label: 'LLM_РАДА', badge: 'СУДДЯ', icon: Scale, component: CouncilJudgeView },
   { id: 'factory-telegram', category: 'AUTONOMOUS_FACTORY', label: 'ТЕЛЕГРАМ', badge: 'БОТ', icon: MessageSquare, component: TelegramCenterView },
+
+  // ─── FINAL SPEC (NEW) ──────────────────────────────────────────────────────
+  { id: 'what-if', category: 'AI_LAB', label: 'WHAT-IF_СИМУЛЯТОР', badge: 'СИМУЛЯЦІЯ', icon: TrendingUp, component: WhatIfSimulatorView },
+  { id: 'digital-twin', category: 'SYSTEM_CORE', label: 'ЦИФРОВИЙ_ДВІЙНИК', badge: 'СТРЕС-ТЕСТ', icon: Activity, component: DigitalTwinView },
+  { id: 'reg-radar', category: 'INTEL_OSINT', label: 'REGULATORY_RADAR', badge: 'ЗАКОН', icon: Scale, component: RegulatoryRadarView },
+  { id: 'conn-3d', category: 'INTEL_OSINT', label: '3D_ГРАФ_ЗВ\'ЯЗКІВ', badge: 'THREE.JS', icon: Network, component: ConnectionExplorer3DView },
+  { id: 'panic', category: 'PLATFORM', label: 'PANIC_CONTROL', badge: 'DEFCON-1', icon: ShieldAlert, component: PanicControlView },
 ];
 
 const DEFAULT_TAB = 'brief';
