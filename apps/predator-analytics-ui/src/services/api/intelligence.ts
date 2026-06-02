@@ -50,6 +50,12 @@ export const intelligenceApi = {
     getProductsPricing: async () => {
         return (await apiClient.get('/premium/products-pricing')).data;
     },
+    getZradaControl: async () => {
+        return (await apiClient.get('/premium/zrada-control')).data;
+    },
+    getTimelineEvents: async (caseId?: string) => {
+        return (await apiClient.get(`/premium/timeline-events${caseId ? `?caseId=${caseId}` : ''}`)).data;
+    },
     getForensics: async (query: string) => {
         return (await apiClient.get(`/premium/forensics?query=${encodeURIComponent(query)}`)).data;
     },

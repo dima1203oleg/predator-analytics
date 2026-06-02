@@ -32,6 +32,8 @@ import { CyberGrid } from '@/components/CyberGrid';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { useEffect } from 'react';
 
+import { intelligenceApi } from '@/services/api';
+
 type BetrayalRisk = 'Підтверджено' | 'Висока підозра' | 'Моніторинг' | 'Очищено';
 type EvidenceType = 'telegram' | 'тендер' | 'телефон' | 'соцмережі' | 'контракт' | 'аудіо' | 'відео' | 'геолокація' | 'крипто';
 
@@ -60,42 +62,6 @@ interface BetrayalSignal {
   metadata?: Record<string, string>;
 }
 
-const MOCK_SUBJECTS: BetrayalSubject[] = [
-  {
-    id: '1',
-    name: 'Ковальчук Дмитро Олексійович',
-    role: 'Партнер-посередник',
-    company: 'ТОВ "Меркурій Торг"',
-    phone: '+380501112233',
-    email: 'kovalchuk@mercury.ua',
-    addedDate: '2026-01-10',
-    lastSignal: '2026-03-23 18:40',
-    risk: 'Підтверджено',
-    evidenceCount: 7,
-    competitor: 'ТОВ "КОНКУ ЕНТ-АЛЬФА"',
-    signals: [
-      { id: 's1', type: 'telegram', date: '2026-03-22', description: 'Виявлено в Telegram-каналі конкурента «Альфа-Бізнес» — коментує та ставить реакції на 12 постах', source: 'PREDATOR_TG_PARSER', confidence: 91 },
-      { id: 's2', type: 'тендер', date: '2026-03-15', description: 'Спільний тендер на ProZorro: ТОВ "Меркурій Торг" + ТОВ "Конкурент-Альфа"', source: 'PROZORRO_API', confidence: 98 },
-      { id: 's3', type: 'аудіо', date: '2026-03-05', description: 'Перехоплення розмови: обговорення відкатів за передачу клієнтської бази', source: 'SIGINT_AUDIO', confidence: 94, metadata: { duration: '1:42', quality: 'High' } }
-    ],
-  },
-  {
-    id: '2',
-    name: 'Зінченко Марина Вікторівна',
-    role: 'Постачальник',
-    phone: '+380672223344',
-    addedDate: '2026-02-01',
-    lastSignal: '2026-03-20 09:15',
-    risk: 'Висока підозра',
-    evidenceCount: 4,
-    competitor: 'БЕТА_Г УП',
-    signals: [
-      { id: 's4', type: 'соцмережі', date: '2026-03-19', description: 'Спільне фото з директором БетаГруп на корпоративі (Instagram)', source: 'OSINT_SOCIAL', confidence: 65 },
-      { id: 's11', type: 'крипто', date: '2026-03-18', description: 'Транзакція 2.5 ETH з гаманця, асоційованого з конкурентом', source: 'BLOCKCHAIN_FORENSIC', confidence: 72 }
-    ],
-  }
-];
-
 export default function ZradaControlView() {
   const { play } = useUISound();
   const [selectedSubject, setSelectedSubject] = useState<BetrayalSubject | null>(null);
@@ -103,6 +69,7 @@ export default function ZradaControlView() {
   const [filterRisk, setFilterRisk] = useState<BetrayalRisk | 'Всі'>('Всі');
   const [isAddingMode, setIsAddingMode] = useState(false);
   const [isOsintLoading, setIsOsintLoading] = useState(false);
+  const [subjects, setSubjects] = useState<BetrayalSubject[]>([]);
   const { isOffline } = useBackendStatus();
 
   useEffect(() => {
@@ -120,15 +87,31 @@ export default function ZradaControlView() {
     }
   }, [isOffline]);
 
+  useEffect(() => {
+    const fetchZrada = async () => {
+      try {
+        const data = await intelligenceApi.getZradaControl();
+        if (data && Array.isArray(data)) {
+          setSubjects(data);
+        } else {
+          setSubjects([]);
+        }
+      } catch (err) {
+        setSubjects([]);
+      }
+    };
+    fetchZrada();
+  }, []);
+
   const stats = useMemo(() => ({
-    total: MOCK_SUBJECTS.length,
-    confirmed: MOCK_SUBJECTS.filter(s => s.risk === 'Підтверджено').length,
-    suspicious: MOCK_SUBJECTS.filter(s => s.risk === 'Висока підозра').length,
-    monitoring: MOCK_SUBJECTS.filter(s => s.risk === 'Моніторинг').length,
-  }), []);
+    total: subjects.length,
+    confirmed: subjects.filter(s => s.risk === 'Підтверджено').length,
+    suspicious: subjects.filter(s => s.risk === 'Висока підозра').length,
+    monitoring: subjects.filter(s => s.risk === 'Моніторинг').length,
+  }), [subjects]);
 
   const filtered = useMemo(() =>
-    MOCK_SUBJECTS.filter(s => {
+    subjects.filter(s => {
       const q = searchQuery.toLowerCase();
       const matchSearch = s.name.toLowerCase().includes(q) || s.company?.toLowerCase().includes(q) || s.role.toLowerCase().includes(q);
       const matchRisk = filterRisk === 'Всі' || s.risk === filterRisk;

@@ -26,6 +26,8 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/utils/cn';
 import Modal from '@/components/Modal';
 
+import { intelligenceApi } from '@/services/api';
+
 // ========================
 // Types
 // ========================
@@ -60,46 +62,6 @@ const CATEGORY_CONFIG: Record<EventCategory, { label: string; color: string; bg:
     risk:          { label: 'РИЗИК', color: '#f43f5e', bg: 'bg-rose-500/10', icon: AlertTriangle },
     investigation: { label: 'СЛІДСТВО', color: '#a855f7', bg: 'bg-purple-500/10', icon: Eye },
 };
-
-const MOCK_EVENTS: TimelineEvent[] = [
-    {
-        id: 'EVT-001',
-        date: '2026-01-15',
-        time: '09:30',
-        category: 'financial',
-        title: 'ВІДКРИТТЯ_РАХУНКУ_MONOBANK',
-        description: 'Відкрито поточний рахунок UA213206490000026007233566001. Первісний депозит 50,000 UAH.',
-        source: 'БАНКІВСЬКІ_РЕЄСТРИ',
-        confidence: 98,
-        relatedEntities: ['Марченко І.Г.', 'Monobank'],
-        caseId: 'CASE-2026-089',
-        verified: true,
-    },
-    {
-        id: 'EVT-002',
-        date: '2026-02-03',
-        category: 'legal',
-        title: 'РЕЄСТРАЦІЯ_ТОВ_ГОЛДЕН_ТРЕЙД',
-        description: 'Зареєстровано нову юридичну особу. КВЕДи: 46.39, 46.90. Статутний капітал 1,000 UAH.',
-        source: 'ЄДР_УКРАЇНИ',
-        confidence: 100,
-        relatedEntities: ['ТОВ "ГОЛДЕН ТРЕЙД"', 'Марченко І.Г.'],
-        verified: true,
-    },
-    {
-        id: 'EVT-003',
-        date: '2026-02-28',
-        time: '14:15',
-        category: 'risk',
-        title: 'ІДЕНТИФІКАЦІЯ_PEP_ЗВ\'ЯЗКУ',
-        description: 'Встановлено ділові відносини з Олещуком В.О. — заступником міністра. Ризик: HIGH.',
-        source: 'АНАЛІТИЧНИЙ_ЯДРО_PREDATOR',
-        confidence: 92,
-        relatedEntities: ['Марченко І.Г.', 'Олещук В.О.'],
-        caseId: 'CASE-2026-089',
-        verified: true,
-    }
-];
 
 // ========================
 // Sub-Components
@@ -242,14 +204,31 @@ const TimelineBuilderView: React.FC = () => {
     const [search, setSearch] = useState('');
     const [categoryFilter, setCategoryFilter] = useState<EventCategory | 'ALL'>('ALL');
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const [events, setEvents] = useState<TimelineEvent[]>([]);
+
+    React.useEffect(() => {
+        const fetchEvents = async () => {
+            try {
+                const data = await intelligenceApi.getTimelineEvents();
+                if (data && Array.isArray(data)) {
+                    setEvents(data);
+                } else {
+                    setEvents([]);
+                }
+            } catch (err) {
+                setEvents([]);
+            }
+        };
+        fetchEvents();
+    }, []);
 
     const filtered = useMemo(() => {
-        return MOCK_EVENTS.filter((e) => {
+        return events.filter((e) => {
             const matchSearch = !search || e.title.toLowerCase().includes(search.toLowerCase()) || e.description.toLowerCase().includes(search.toLowerCase());
             const matchCategory = categoryFilter === 'ALL' || e.category === categoryFilter;
             return matchSearch && matchCategory;
         }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-    }, [search, categoryFilter]);
+    }, [search, categoryFilter, events]);
 
     return (
         <PageTransition>
@@ -287,9 +266,9 @@ const TimelineBuilderView: React.FC = () => {
                             </div>
                         }
                         stats={[
-                            { label: 'ПОДІЙ_В_КЕЙСІ', value: '142', icon: <Hash size={14} />, color: 'primary' },
-                            { label: 'ВЕРИФІКОВАНО', value: '89.4%', icon: <Shield size={14} />, color: 'success', animate: true },
-                            { label: 'АКТИВНІ_ВЕКТОРИ', value: '12', icon: <Target size={14} />, color: 'warning' }
+                            { label: 'ПОДІЙ_В_КЕЙСІ', value: String(events.length), icon: <Hash size={14} />, color: 'primary' },
+                            { label: 'ВЕРИФІКОВАНО', value: events.length ? `${((events.filter(e => e.verified).length / events.length) * 100).toFixed(1)}%` : '0%', icon: <Shield size={14} />, color: 'success', animate: true },
+                            { label: 'АКТИВНІ_ВЕКТОРИ', value: String(new Set(events.map(e => e.category)).size), icon: <Target size={14} />, color: 'warning' }
                         ]}
                         actions={
                             <div className="flex gap-4">
