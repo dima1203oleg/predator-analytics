@@ -25,6 +25,7 @@ import {
 import { useAppStore } from '@/store/useAppStore';
 import { api } from '@/services/api';
 import { cn } from '@/utils/cn';
+import { useViewport } from '@/hooks/useViewport';
 
 import { CyberOrb } from '@/components/CyberOrb';
 import { HoloContainer } from '@/components/HoloContainer';
@@ -69,6 +70,7 @@ const ControlRing: React.FC<{
 
 // === ГОЛОВНИЙ КОМПОНЕНТ ===
 const SOMView: React.FC = () => {
+  const { isCompact } = useViewport();
   const [systemHealth, setSystemHealth] = useState<number>(98.4);
   const [constitutionalStatus, setConstitutionalStatus] = useState<'SECURE' | 'WARNING' | 'BREACH'>('SECURE');
   const [activeHypotheses, setActiveHypotheses] = useState<any[]>([]);
@@ -124,7 +126,7 @@ const SOMView: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col p-10 gap-10 relative z-10 animate-in fade-in duration-1000 bg-[#010409]">
+    <div className={cn("min-h-screen flex flex-col relative z-10 animate-in fade-in duration-1000 bg-[#010409]", isCompact ? "p-4 gap-6 pb-24" : "p-10 gap-10")}>
       <CyberGrid color="rgba(244, 63, 94, 0.05)" />
 
       <ViewHeader
@@ -157,16 +159,16 @@ const SOMView: React.FC = () => {
         ]}
       />
 
-      <main className="flex-1 grid grid-cols-12 gap-10">
+      <main className={cn("flex-1", isCompact ? "flex flex-col gap-6" : "grid grid-cols-12 gap-10")}>
 
         {/* LEFT: Structural Sovereignty (The Rings) */}
-        <div className="col-span-12 xl:col-span-4 flex flex-col gap-10">
-          <section className="relative h-[500px] flex flex-col items-center justify-center p-10 overflow-hidden bg-black/40  border border-white/5 rounded-[4rem] shadow-2xl">
-            <h2 className="absolute top-10 left-10 text-[11px] font-black text-white uppercase tracking-[0.4em] flex items-center gap-3 italic">
+        <div className={cn("flex flex-col", isCompact ? "w-full gap-6" : "col-span-12 xl:col-span-4 gap-10")}>
+          <section className={cn("relative flex flex-col items-center justify-center overflow-hidden bg-black/40 border border-white/5 shadow-2xl", isCompact ? "p-5 rounded-[2.5rem] h-[650px]" : "p-10 h-[500px] rounded-[4rem]")}>
+            <h2 className={cn("absolute top-10 left-10 font-black text-white uppercase tracking-[0.4em] flex items-center gap-3 italic", isCompact ? "text-[9px]" : "text-[11px]")}>
               <Shield size={16} className="text-rose-500" /> КІЛЬЦЯ КОНТРОЛЮ
             </h2>
 
-            <div className="relative w-80 h-80 flex items-center justify-center mt-10 scale-110">
+            <div className={cn("relative flex items-center justify-center", isCompact ? "w-64 h-64 mt-12 scale-90" : "w-80 h-80 mt-10 scale-110")}>
               <ControlRing
                 size={340} label="РІВЕНЬ III: ЛЮДСЬКА ВЛАДА"
                 active={selectedRing === 3} color="#f43f5e"
@@ -190,8 +192,8 @@ const SOMView: React.FC = () => {
               </div>
             </div>
 
-            <div className="absolute bottom-10 inset-x-10 p-8 bg-black/60 border border-rose-500/10 rounded-[2.5rem]  shadow-xl">
-              <div className="flex justify-between items-center mb-3">
+            <div className={cn("absolute bottom-10 inset-x-10 bg-black/60 border border-rose-500/10 shadow-xl", isCompact ? "p-6 rounded-[2rem]" : "p-8 rounded-[2.5rem]")}>
+              <div className={cn("flex items-center mb-3", isCompact ? "flex-col items-start gap-2" : "justify-between")}>
                 <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest italic">ПРОТОКОЛ_АКТИВНОГО_РІВНЯ</span>
                 <span className="text-[9px] font-black text-rose-500 uppercase tracking-widest italic">
                   {selectedRing === 3 ? 'АБСОЛЮТНИЙ_ОТРИМУВАЧ' : selectedRing === 2 ? 'ЮРИДИЧНА_ВЕРИФІКАЦІЯ' : 'АВТОНОМНИЙ_СКАН'}
@@ -205,7 +207,7 @@ const SOMView: React.FC = () => {
             </div>
           </section>
 
-          <section className="relative p-10 overflow-hidden bg-rose-950/20  border border-rose-500/20 rounded-[4rem] shadow-2xl group/emerg">
+          <section className={cn("relative overflow-hidden bg-rose-950/20 border border-rose-500/20 shadow-2xl group/emerg", isCompact ? "p-6 rounded-[2.5rem]" : "p-10 rounded-[4rem]")}>
             <div className="flex items-center gap-4 mb-6">
               <div className="w-2 h-2 bg-rose-500 rounded-full  shadow-[0_0_10px_#f43f5e]" />
               <div>
@@ -220,7 +222,8 @@ const SOMView: React.FC = () => {
             <button
               onClick={handleEmergencyProtocol}
               className={cn(
-                "w-full py-8 rounded-[2.5rem] font-black tracking-[0.4em] text-[12px] uppercase flex items-center justify-center gap-6 transition-all duration-700 shadow-2xl overflow-hidden relative border-4",
+                "w-full rounded-[2.5rem] font-black uppercase flex items-center justify-center gap-6 transition-all duration-700 shadow-2xl overflow-hidden relative border-4",
+                isCompact ? "py-6 text-[10px] tracking-[0.2em]" : "py-8 text-[12px] tracking-[0.4em]",
                 emergencyMode
                   ? "bg-slate-900 text-slate-600 cursor-not-allowed border-slate-800"
                   : "bg-rose-600 text-white border-rose-500/30 hover:brightness-110 hover:scale-[1.02]"
@@ -241,8 +244,8 @@ const SOMView: React.FC = () => {
         </div>
 
         {/* CENTER: Organism Intelligence (Analytics & Twin) */}
-        <div className="col-span-12 xl:col-span-5 flex flex-col gap-10">
-          <HoloContainer className="p-10 flex flex-col gap-10 overflow-hidden bg-black/40 border-white/5 rounded-[4rem] shadow-2xl">
+        <div className={cn("flex flex-col", isCompact ? "w-full gap-6" : "col-span-12 xl:col-span-5 gap-10")}>
+          <HoloContainer className={cn("flex flex-col overflow-hidden bg-black/40 border-white/5 shadow-2xl", isCompact ? "p-5 gap-6 rounded-[2.5rem]" : "p-10 gap-10 rounded-[4rem]")}>
             <div className="flex items-center justify-between">
               <h2 className="text-[11px] font-black text-white uppercase tracking-[0.4em] flex items-center gap-3 italic">
                 <Activity size={18} className="text-rose-500" /> МАТРИЦЯ ЗДОРОВ'Я ОРГАНІЗМУ
@@ -253,8 +256,8 @@ const SOMView: React.FC = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-8">
-              <div className="p-8 bg-black/60 border border-white/5 rounded-[3rem] shadow-inner group hover:border-rose-500/30 transition-all">
+            <div className={cn("grid", isCompact ? "grid-cols-1 gap-4" : "grid-cols-2 gap-8")}>
+              <div className={cn("bg-black/60 border border-white/5 shadow-inner group hover:border-rose-500/30 transition-all", isCompact ? "p-5 rounded-[2rem]" : "p-8 rounded-[3rem]")}>
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-[9px] font-black text-rose-400 uppercase tracking-widest italic">ЧИСТОТА_МЕРЕЖІ</span>
                   <span className="text-xs font-black text-rose-300 font-mono italic">94.2%</span>
@@ -263,7 +266,7 @@ const SOMView: React.FC = () => {
                   <motion.div initial={{ width: 0 }} animate={{ width: '94.2%' }} className="h-full bg-rose-500 " />
                 </div>
               </div>
-              <div className="p-8 bg-black/60 border border-white/5 rounded-[3rem] shadow-inner group hover:border-rose-400/30 transition-all">
+              <div className={cn("bg-black/60 border border-white/5 shadow-inner group hover:border-rose-400/30 transition-all", isCompact ? "p-5 rounded-[2rem]" : "p-8 rounded-[3rem]")}>
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest italic">СИНХ_СУТНОСТЕЙ</span>
                   <span className="text-xs font-black text-rose-200 font-mono italic">14.2%</span>
@@ -274,23 +277,24 @@ const SOMView: React.FC = () => {
               </div>
             </div>
 
-            <div className="p-10 bg-black/80 border border-white/5 rounded-[3.5rem] shadow-2xl">
+            <div className={cn("bg-black/80 border border-white/5 shadow-2xl", isCompact ? "p-6 rounded-[2.5rem]" : "p-10 rounded-[3.5rem]")}>
               <div className="flex items-center gap-4 mb-8">
                 <Layers size={20} className="text-rose-500" />
                 <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em] italic">СТАН ПРОХОДЖЕННЯ ПАЙПЛАЙНІВ</span>
               </div>
-              <div className="flex items-center gap-3 mb-6">
+              <div className={cn("flex gap-3 mb-6", isCompact ? "flex-col" : "items-center")}>
                 {['INGEST_ВХІД', 'ПАРСИНГ', 'ВАЛІДАЦІЯ', 'РЕЗОЛВІНГ', 'ЗБЕРЕЖЕНО'].map((step, i) => (
-                  <div key={i} className="flex-1 flex flex-col gap-3">
+                  <div key={i} className={cn("flex-1 flex gap-3", isCompact ? "flex-row items-center" : "flex-col")}>
                     <div className={cn(
-                      "h-2.5 rounded-full transition-all duration-1000 shadow-lg",
+                      "rounded-full transition-all duration-1000 shadow-lg",
+                      isCompact ? "w-3 h-3" : "h-2.5",
                       i < 3 ? "bg-rose-500 shadow-rose-500/20" : i === 3 ? "bg-amber-500  shadow-amber-500/20" : "bg-slate-800"
                     )} />
-                    <span className="text-[8px] font-black text-slate-600 uppercase text-center truncate italic tracking-tighter">{step}</span>
+                    <span className={cn("font-black text-slate-600 uppercase truncate italic tracking-tighter", isCompact ? "text-[10px] text-left" : "text-[8px] text-center")}>{step}</span>
                   </div>
                 ))}
               </div>
-              <div className="flex justify-between text-[9px] font-mono text-slate-500 uppercase italic tracking-widest opacity-60">
+              <div className={cn("flex text-[9px] font-mono text-slate-500 uppercase italic tracking-widest opacity-60", isCompact ? "flex-col gap-2 mt-4" : "justify-between")}>
                 <span>АКТИВНО: ДВИГУН_РЕЗОЛВІНГУ_СУТНОСТЕЙ</span>
                 <span>T-МІНУС: 18.2S</span>
               </div>
@@ -300,8 +304,8 @@ const SOMView: React.FC = () => {
               <h3 className="text-[11px] font-black text-white uppercase tracking-[0.4em] flex items-center gap-3 italic">
                 <Hexagon size={18} className="text-rose-500" /> ПІСОЧНИЦЯ ЦИФРОВОГО ДВІЙНИКА
               </h3>
-              <div className="grid grid-cols-2 gap-8">
-                <div className="p-8 bg-black/60 border border-white/5 rounded-[3.5rem] group/item transition-all hover:border-rose-500/40 shadow-xl">
+              <div className={cn("grid", isCompact ? "grid-cols-1 gap-4" : "grid-cols-2 gap-8")}>
+                <div className={cn("bg-black/60 border border-white/5 group/item transition-all hover:border-rose-500/40 shadow-xl", isCompact ? "p-5 rounded-[2.5rem]" : "p-8 rounded-[3.5rem]")}>
                   <div className="flex items-center gap-3 mb-5">
                     <Database size={18} className="text-slate-500 group-hover/item:text-rose-400" />
                     <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest italic leading-none">ЖУРНАЛ_ІСТИНИ (TRUTH LEDGER)</span>
@@ -309,7 +313,7 @@ const SOMView: React.FC = () => {
                   <div className="text-4xl font-black text-white font-mono tracking-tighter italic">42,817</div>
                   <div className="text-[9px] font-black text-rose-500 uppercase mt-3 font-mono italic">● СИНХ_0MS</div>
                 </div>
-                <div className="p-8 bg-black/60 border border-white/5 rounded-[3.5rem] group/item transition-all hover:border-rose-400/40 shadow-xl">
+                <div className={cn("bg-black/60 border border-white/5 group/item transition-all hover:border-rose-400/40 shadow-xl", isCompact ? "p-5 rounded-[2.5rem]" : "p-8 rounded-[3.5rem]")}>
                   <div className="flex items-center gap-3 mb-5">
                     <Cpu size={18} className="text-slate-500 group-hover/item:text-rose-300" />
                     <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest italic leading-none">СТАДІЯ_ДВИГУНА_RCE</span>
@@ -321,8 +325,8 @@ const SOMView: React.FC = () => {
             </div>
           </HoloContainer>
 
-          <section className="relative p-10 overflow-hidden bg-rose-950/10  border border-rose-500/20 rounded-[4rem] shadow-2xl mt-10">
-            <div className="flex items-center justify-between mb-10">
+          <section className={cn("relative overflow-hidden bg-rose-950/10 border border-rose-500/20 shadow-2xl", isCompact ? "p-6 rounded-[2.5rem] mt-6" : "p-10 rounded-[4rem] mt-10")}>
+            <div className={cn("flex mb-10", isCompact ? "flex-col gap-4 items-start" : "items-center justify-between")}>
               <div className="flex items-center gap-4">
                 <div className="w-2 h-2 bg-rose-500 rounded-full  shadow-[0_0_10px_#f43f5e]" />
                 <div>
@@ -342,10 +346,10 @@ const SOMView: React.FC = () => {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.15 }}
-                  className="p-8 bg-black/60 border border-white/5 rounded-[3rem] group/h hover:border-rose-500/40 transition-all cursor-pointer relative overflow-hidden shadow-xl"
+                  className={cn("bg-black/60 border border-white/5 group/h hover:border-rose-500/40 transition-all cursor-pointer relative overflow-hidden shadow-xl", isCompact ? "p-5 rounded-[2rem]" : "p-8 rounded-[3rem]")}
                 >
                   <div className="absolute inset-y-0 left-0 w-1 bg-transparent group-hover/h:bg-rose-500 transition-all" />
-                  <div className="flex justify-between items-center mb-5">
+                  <div className={cn("flex mb-5", isCompact ? "flex-col gap-3 items-start" : "justify-between items-center")}>
                     <div className="flex items-center gap-4">
                       <span className="text-[9px] font-black bg-black px-3 py-1.5 rounded-xl text-slate-500 border border-white/10 font-mono italic">{h.id}</span>
                       <span className={cn(
@@ -361,11 +365,11 @@ const SOMView: React.FC = () => {
                   <p className="text-[14px] text-slate-300 group-hover/h:text-white transition-colors leading-relaxed mb-8 font-black uppercase italic tracking-tight">
                     {h.desc}
                   </p>
-                  <div className="flex gap-4 h-0 overflow-hidden group-hover/h:h-12 transition-all duration-500">
-                    <button className="flex-1 px-8 bg-rose-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition-all italic shadow-xl">ЗАПУСТИТИ_СИМУЛЯЦІЮ</button>
+                  <div className={cn("flex gap-4 h-0 overflow-hidden group-hover/h:h-12 transition-all duration-500", isCompact ? "flex-col h-auto group-hover/h:h-auto mt-4" : "")}>
+                    <button className={cn("bg-rose-600 text-white rounded-2xl font-black uppercase hover:brightness-110 transition-all italic shadow-xl", isCompact ? "w-full py-4 text-[9px] tracking-widest" : "flex-1 px-8 text-[10px] tracking-widest")}>ЗАПУСТИТИ_СИМУЛЯЦІЮ</button>
                     <button
                       onClick={() => setSelectedHypothesisUeid(h.id)}
-                      className="px-8 bg-white/5 border border-white/10 text-slate-400 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:text-white hover:bg-white/10 transition-all italic"
+                      className={cn("bg-white/5 border border-white/10 text-slate-400 rounded-2xl font-black uppercase hover:text-white hover:bg-white/10 transition-all italic", isCompact ? "w-full py-4 text-[9px] tracking-widest" : "px-8 text-[10px] tracking-widest")}
                     >
                       ЗАПИТАТИ_ПОЯСНЕННЯ
                     </button>
@@ -401,8 +405,8 @@ const SOMView: React.FC = () => {
         </div>
 
         {/* RIGHT: Agent Swarm & Logs */}
-        <div className="col-span-12 xl:col-span-3 flex flex-col gap-10">
-          <section className="relative p-10 flex flex-col h-full overflow-hidden bg-black/40  border border-white/5 rounded-[4rem] shadow-2xl">
+        <div className={cn("flex flex-col", isCompact ? "w-full gap-6" : "col-span-12 xl:col-span-3 gap-10")}>
+          <section className={cn("relative flex flex-col h-full overflow-hidden bg-black/40 border border-white/5 shadow-2xl", isCompact ? "p-5 rounded-[2.5rem]" : "p-10 rounded-[4rem]")}>
             <div className="flex items-center gap-4 mb-8">
               <div className="w-2 h-2 bg-rose-500 rounded-full  shadow-[0_0_10px_#f43f5e]" />
               <div>
@@ -434,7 +438,7 @@ const SOMView: React.FC = () => {
               ))}
             </div>
 
-            <div className="mt-10 p-10 bg-black/80 border border-white/5 rounded-[3.5rem] shadow-2xl relative overflow-hidden">
+            <div className={cn("bg-black/80 border border-white/5 shadow-2xl relative overflow-hidden", isCompact ? "mt-6 p-6 rounded-[2.5rem]" : "mt-10 p-10 rounded-[3.5rem]")}>
               <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none">
                  <Terminal size={120} className="text-rose-500" />
               </div>
@@ -458,11 +462,11 @@ const SOMView: React.FC = () => {
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
-        className="p-12 bg-black/60 border border-rose-500/20 rounded-[4rem]  shadow-4xl relative overflow-hidden"
+        className={cn("bg-black/60 border border-rose-500/20 shadow-4xl relative overflow-hidden", isCompact ? "p-6 rounded-[2.5rem]" : "p-12 rounded-[4rem]")}
       >
         <div className="absolute inset-0 bg-gradient-to-r from-rose-500/[0.03] via-transparent to-transparent pointer-events-none" />
-        <div className="flex flex-col md:flex-row items-center justify-between gap-12 relative z-10">
-          <div className="flex items-center gap-10">
+        <div className={cn("flex relative z-10", isCompact ? "flex-col gap-8" : "flex-row items-center justify-between gap-12")}>
+          <div className={cn("flex items-center", isCompact ? "gap-6" : "gap-10")}>
             <div className="relative">
               <div className="absolute inset-0 bg-rose-500/20 blur-3xl rounded-full scale-125 " />
               <div className="p-5 bg-black border-2 border-rose-500/30 rounded-full shadow-2xl">
@@ -474,7 +478,7 @@ const SOMView: React.FC = () => {
               <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.3em] italic opacity-60">ПОВНИЙ КОНТРОЛЬ НАД ЦИФРОВИМ ДВІЙНИКОМ РЕАЛЬНОСТІ В РЕЖИМІ SOM_V63.0-ELITE</p>
             </div>
           </div>
-          <div className="flex gap-16">
+          <div className={cn("flex", isCompact ? "flex-col gap-6" : "gap-16")}>
             <div className="flex flex-col">
               <span className="text-[9px] font-black text-slate-600 uppercase tracking-[0.4em] mb-2 flex items-center gap-3 italic">
                 <Shield size={12} className="text-rose-500" /> АНКЛАВ_БЕЗПЕКИ
@@ -488,7 +492,7 @@ const SOMView: React.FC = () => {
               <span className="text-sm font-black text-white uppercase font-mono italic tracking-widest">ШИФРУВАННЯ_AES256</span>
             </div>
           </div>
-          <button className="px-14 py-6 bg-rose-600 text-white rounded-[2.5rem] text-[11px] font-black uppercase tracking-[0.5em] hover:brightness-110 transition-all shadow-4xl flex items-center gap-5 italic border-4 border-rose-500/20">
+          <button className={cn("bg-rose-600 text-white font-black uppercase hover:brightness-110 transition-all shadow-4xl flex items-center gap-5 italic border-4 border-rose-500/20 justify-center", isCompact ? "px-8 py-5 rounded-[2rem] text-[10px] tracking-[0.3em] w-full" : "px-14 py-6 rounded-[2.5rem] text-[11px] tracking-[0.5em]")}>
             РОЗШИРИТИ_ГОРИЗОНТ_НАГЛЯДУ <ArrowUpRight size={22} />
           </button>
         </div>

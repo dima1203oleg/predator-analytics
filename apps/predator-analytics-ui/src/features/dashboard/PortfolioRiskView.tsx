@@ -25,6 +25,7 @@ import {
 } from 'recharts';
 import { cn } from '@/utils/cn';
 import { useThermalHover } from '@/hooks/useThermalHover';
+import { useViewport } from '@/hooks/useViewport';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
@@ -148,6 +149,7 @@ const RiskPositionCard: React.FC<{
   selectedPos: RiskPosition | null;
   setSelectedPos: (pos: RiskPosition) => void;
 }> = ({ pos, index, selectedPos, setSelectedPos }) => {
+  const { isCompact } = useViewport();
   const { ref: thermalRef, style: thermalStyle } = useThermalHover(1.2);
   const isSelected = selectedPos?.id === pos.id;
 
@@ -159,7 +161,8 @@ const RiskPositionCard: React.FC<{
       initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: index * 0.08 }}
       onClick={() => setSelectedPos(pos)}
       className={cn(
-        "p-10 border-2 cursor-pointer transition-all relative overflow-hidden group rounded-[3.5rem] shadow-3xl",
+        "border-2 cursor-pointer transition-all relative overflow-hidden group shadow-3xl",
+        isCompact ? "p-5 rounded-3xl" : "p-10 rounded-[3.5rem]",
         isSelected
           ? "bg-rose-600/[0.03] border-rose-500/30 shadow-4xl"
           : "bg-black/60 border-white/5 hover:border-white/20"
@@ -169,9 +172,12 @@ const RiskPositionCard: React.FC<{
         <div className="absolute left-0 inset-y-0 w-2.5 bg-rose-600 shadow-[0_0_20px_#f43f5e]" />
       )}
 
-      <div className="flex items-start gap-10 pl-4">
-        <div className="w-24 h-24 shrink-0 rounded-[2rem] bg-black/80 border-2 border-white/5 flex flex-col items-center justify-center shadow-inner group-hover:border-rose-500/30 transition-all">
-          <span className="text-3xl font-black font-mono italic tracking-tighter leading-none" style={{ color: RISK_COLOR[pos.riskLevel] }}>
+      <div className={cn("flex items-start", isCompact ? "gap-4 pl-0" : "gap-10 pl-4")}>
+        <div className={cn(
+          "shrink-0 rounded-[2rem] bg-black/80 border-2 border-white/5 flex flex-col items-center justify-center shadow-inner group-hover:border-rose-500/30 transition-all",
+          isCompact ? "w-16 h-16 rounded-2xl" : "w-24 h-24 rounded-[2rem]"
+        )}>
+          <span className={cn("font-black font-mono italic tracking-tighter leading-none", isCompact ? "text-xl" : "text-3xl")} style={{ color: RISK_COLOR[pos.riskLevel] }}>
             {pos.riskPct}%
           </span>
           <span className="text-[8px] font-black uppercase text-slate-700 mt-2 tracking-widest italic">РИЗИК</span>
@@ -182,7 +188,7 @@ const RiskPositionCard: React.FC<{
             <span className="text-[11px] font-black font-mono text-slate-700 uppercase tracking-widest">{pos.id}</span>
             <span className="text-[10px] font-black text-rose-500/60 uppercase tracking-widest italic">{pos.country}</span>
           </div>
-          <h3 className="text-3xl font-black text-white group-hover:text-rose-500 transition-colors uppercase italic tracking-tighter leading-none mb-4">
+          <h3 className={cn("font-black text-white group-hover:text-rose-500 transition-colors uppercase italic tracking-tighter leading-none mb-4", isCompact ? "text-xl" : "text-3xl")}>
             {pos.counterparty}
           </h3>
           <div className="flex items-center gap-8 mb-6">
@@ -197,14 +203,14 @@ const RiskPositionCard: React.FC<{
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-10">
+          <div className={cn("grid gap-6", isCompact ? "grid-cols-1" : "grid-cols-2 gap-10")}>
             <div>
               <p className="text-[9px] text-slate-700 uppercase font-black tracking-[0.4em] mb-2 italic">ЕКСПОЗИЦІЯ_NET</p>
-              <p className="text-2xl font-black text-white font-mono italic">{pos.exposure}</p>
+              <p className={cn("font-black text-white font-mono italic", isCompact ? "text-xl" : "text-2xl")}>{pos.exposure}</p>
             </div>
             <div>
               <p className="text-[9px] text-slate-700 uppercase font-black tracking-[0.4em] mb-2 italic">У_ЗОНІ_РИЗИКУ</p>
-              <p className="text-2xl font-black font-mono italic" style={{ color: RISK_COLOR[pos.riskLevel] }}>{pos.atRisk}</p>
+              <p className={cn("font-black font-mono italic", isCompact ? "text-xl" : "text-2xl")} style={{ color: RISK_COLOR[pos.riskLevel] }}>{pos.atRisk}</p>
             </div>
           </div>
         </div>
@@ -230,6 +236,7 @@ const PortfolioRiskView: React.FC = () => {
   const [filter, setFilter] = useState<RiskLevelValue | 'all'>('all');
   const [refreshing, setRefreshing] = useState(false);
   const { isOffline, nodeSource, healingProgress } = useBackendStatus();
+  const { isCompact } = useViewport();
 
   // Нав'язливі повідомлення про автономний режим видалено (HR-04 compliant)
 
@@ -253,11 +260,11 @@ const PortfolioRiskView: React.FC = () => {
 
   return (
     <PageTransition>
-      <div className="min-h-screen text-slate-200 font-sans pb-32 relative overflow-hidden bg-[#010409]">
+      <div className={cn("min-h-screen text-slate-200 font-sans relative overflow-hidden bg-[#010409]", isCompact ? "pb-10" : "pb-32")}>
         <AdvancedBackground mode="sovereign" />
         <CyberGrid color="rgba(244, 63, 94, 0.05)" />
 
-        <div className="relative z-10 max-w-[1850px] mx-auto p-12 space-y-12">
+        <div className={cn("relative z-10 max-w-[1850px] mx-auto space-y-12", isCompact ? "p-4" : "p-12")}>
           
           <ViewHeader
             title={
@@ -276,8 +283,8 @@ const PortfolioRiskView: React.FC = () => {
                       ЦЕНТР ПОРТФЕЛЬНИХ РИЗИКІВ · v63.0-ELITE
                     </span>
                   </div>
-                  <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg]">
-                    P&L <span className="text-rose-600 underline decoration-rose-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">РИЗИКІВ</span>
+                  <h1 className={cn("font-black text-white tracking-tighter uppercase italic skew-x-[-3deg]", isCompact ? "text-4xl" : "text-6xl")}>
+                    P&L <span className={cn("text-rose-600 underline decoration-rose-600/30 underline-offset-[12px] italic uppercase tracking-tighter", isCompact ? "decoration-[8px]" : "decoration-[14px]")}>РИЗИКІВ</span>
                   </h1>
                   <p className="text-[12px] text-slate-600 font-black uppercase tracking-[0.5em] mt-6 italic border-l-4 border-rose-500/30 pl-8 opacity-90 max-w-2xl">
                     МОНІТОРИНГ ДЕФОЛТНИХ ВЕКТОРІВ · КРИТИЧНА ЕКСПОЗИЦІЯ · СУВЕРЕННИЙ АНАЛІЗ
@@ -316,14 +323,14 @@ const PortfolioRiskView: React.FC = () => {
                 </button>
                 <button className="px-14 py-6 bg-rose-600 text-white text-[12px] font-black uppercase tracking-[0.4em] italic hover:brightness-110 transition-all rounded-[2rem] shadow-4xl flex items-center gap-4 font-bold">
                   <Download size={24} />
-                  ДОСЬЄ_УПРАВЛІННЯ_ЕЛІТА
+                  {!isCompact && "ДОСЬЄ_УПРАВЛІННЯ_ЕЛІТА"}
                 </button>
               </div>
             }
           />
 
           {/* ── KPI GRID ELITE ── */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className={cn("grid", isCompact ? "grid-cols-1 gap-4" : "grid-cols-2 lg:grid-cols-4 gap-8")}>
             {[
               { l: 'КРИТИЧНІ ЛОТИ',    v: '2',          sub: 'POS-001, POS-002',       c: '#f43f5e' },
               { l: 'ІНДЕКС_РИЗИКУ',    v: '15.1%',      sub: 'Від загальних активів',       c: '#fb7185' },
@@ -333,7 +340,7 @@ const PortfolioRiskView: React.FC = () => {
               <motion.div
                 key={m.l}
                 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
-                className="p-10 bg-black/60  border-2 border-white/5 hover:border-rose-500/30 transition-all rounded-[3.5rem] shadow-2xl group relative overflow-hidden"
+                className={cn("bg-black/60 border-2 border-white/5 hover:border-rose-500/30 transition-all shadow-2xl group relative overflow-hidden", isCompact ? "p-5 rounded-3xl" : "p-10 rounded-[3.5rem]")}
               >
                 <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-rose-500/40 to-transparent opacity-40" />
                 <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.6em] mb-4 italic">{m.l}</p>
@@ -343,12 +350,12 @@ const PortfolioRiskView: React.FC = () => {
             ))}
           </div>
 
-          <div className="grid grid-cols-12 gap-10">
+          <div className={cn("grid grid-cols-12", isCompact ? "gap-4" : "gap-10")}>
             {/* ── ЛІВА ПАНЕЛЬ: ПОЗИЦІЇ ── */}
             <div className="col-span-12 xl:col-span-8 space-y-8">
               
-              <div className="flex items-center gap-4 p-3 bg-black border-2 border-white/5 rounded-[2.5rem] w-fit shadow-4xl ">
-                <div className="flex gap-2 bg-black border-2 border-white/5 p-2 rounded-2xl shadow-inner">
+              <div className="flex items-center gap-4 p-3 bg-black border-2 border-white/5 rounded-[2.5rem] w-full max-w-full overflow-x-auto no-scrollbar shadow-4xl ">
+                <div className="flex gap-2 bg-black border-2 border-white/5 p-2 rounded-2xl shadow-inner min-w-max">
                   {(['all', 'critical', 'high', 'medium'] as const).map(f => (
                     <button
                       key={f}
@@ -389,7 +396,7 @@ const PortfolioRiskView: React.FC = () => {
                     initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }}
                     className="space-y-8"
                   >
-                    <HoloCard variant="holographic" className="p-10 bg-black/80 border-2 border-rose-500/20 rounded-[4rem] shadow-4xl relative overflow-hidden">
+                    <HoloCard variant="holographic" className={cn("bg-black/80 border-2 border-rose-500/20 shadow-4xl relative overflow-hidden", isCompact ? "p-6 rounded-[2.5rem]" : "p-10 rounded-[4rem]")}>
                        <div className="absolute top-0 right-0 p-24 opacity-[0.03] pointer-events-none">
                           <Target size={260} className="text-rose-500" />
                        </div>
@@ -405,22 +412,22 @@ const PortfolioRiskView: React.FC = () => {
                           </div>
 
                           <div>
-                             <h2 className="text-[42px] font-black text-white leading-none tracking-tighter italic uppercase mb-4">{selectedPos.counterparty}</h2>
-                             <p className="text-[12px] text-rose-600 font-black uppercase tracking-[0.5em] italic bg-rose-500/5 px-6 py-2 rounded-full w-fit border border-rose-500/10">
+                             <h2 className={cn("font-black text-white leading-none tracking-tighter italic uppercase mb-4", isCompact ? "text-[28px]" : "text-[42px]")}>{selectedPos.counterparty}</h2>
+                             <p className="text-[12px] text-rose-600 font-black uppercase tracking-[0.5em] italic bg-rose-500/5 px-6 py-2 rounded-full w-fit border border-rose-500/10 max-w-full overflow-hidden text-ellipsis whitespace-nowrap">
                                {selectedPos.country} · {selectedPos.type}
                              </p>
                           </div>
 
-                          <div className="grid grid-cols-2 gap-6">
+                          <div className={cn("grid gap-4", isCompact ? "grid-cols-1" : "grid-cols-2 gap-6")}>
                             {[
                               { l: 'ЕКСПОЗИЦІЯ', v: selectedPos.exposure },
                               { l: 'NET_РИЗИК',   v: selectedPos.atRisk },
                               { l: 'ІНДЕКС_X',     v: `${selectedPos.riskPct}%` },
                               { l: 'ЗРІЛІСТЬ',     v: selectedPos.daysToMaturity > 0 ? `${selectedPos.daysToMaturity} ДН` : 'ДЕФОЛТ' },
                             ].map((f, i) => (
-                              <div key={i} className="p-6 border-2 border-white/5 bg-black rounded-[2.5rem] shadow-inner group hover:border-rose-500/20 transition-all">
+                              <div key={i} className={cn("border-2 border-white/5 bg-black shadow-inner group hover:border-rose-500/20 transition-all", isCompact ? "p-4 rounded-[1.5rem]" : "p-6 rounded-[2.5rem]")}>
                                 <p className="text-[9px] text-slate-800 uppercase font-black tracking-widest mb-3 group-hover:text-rose-500/60 transition-colors italic">{f.l}</p>
-                                <p className="text-2xl font-black text-white font-mono italic tracking-tighter">{f.v}</p>
+                                <p className={cn("font-black text-white font-mono italic tracking-tighter", isCompact ? "text-xl" : "text-2xl")}>{f.v}</p>
                               </div>
                             ))}
                           </div>
@@ -450,7 +457,7 @@ const PortfolioRiskView: React.FC = () => {
                     </HoloCard>
 
                     {/* ── ТАЙМЛАЙН ELITE ── */}
-                    <HoloCard className="p-10 bg-black/60 border-2 border-white/5 rounded-[3.5rem] shadow-3xl">
+                    <HoloCard className={cn("bg-black/60 border-2 border-white/5 shadow-3xl", isCompact ? "p-5 rounded-3xl" : "p-10 rounded-[3.5rem]")}>
                        <h3 className="text-[11px] font-black text-slate-700 uppercase tracking-[0.6em] mb-10 flex items-center gap-4 italic relative">
                           <Activity size={18} className="text-rose-600 " />
                           ХРОНОЛОГІЯ_ШВИДКОСТІ_РИЗИКУ
@@ -479,12 +486,12 @@ const PortfolioRiskView: React.FC = () => {
                     </HoloCard>
 
                     {/* ── СЕКТОРНИЙ РОЗПОДІЛ ELITE ── */}
-                    <HoloCard className="p-10 bg-black/60 border-2 border-white/5 rounded-[3.5rem] shadow-3xl overflow-hidden relative">
+                    <HoloCard className={cn("bg-black/60 border-2 border-white/5 shadow-3xl overflow-hidden relative", isCompact ? "p-5 rounded-3xl" : "p-10 rounded-[3.5rem]")}>
                        <div className="absolute top-0 right-0 p-8 opacity-5">
                           <Radar size={100} className="text-rose-500" />
                        </div>
                        <h3 className="text-[11px] font-black text-slate-700 uppercase tracking-[0.6em] mb-8 italic leading-none">РАДАР_СЕКТОРНОГО_РИЗИКУ</h3>
-                       <div className="flex items-center gap-10">
+                       <div className={cn("flex", isCompact ? "flex-col items-center gap-6" : "items-center gap-10")}>
                           <PieChart width={140} height={140}>
                              <Pie data={RISK_BREAKDOWN} innerRadius={42} outerRadius={62} paddingAngle={4} dataKey="value" cx="50%" cy="50%">
                                {RISK_BREAKDOWN.map((e, i) => <Cell key={i} fill={e.color} stroke="transparent" />)}

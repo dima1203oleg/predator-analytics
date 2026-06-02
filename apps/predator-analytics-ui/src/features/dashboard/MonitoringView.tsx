@@ -12,6 +12,7 @@ import { KineticText } from '@/components/ui/KineticText';
 import { ViewHeader } from '@/components/ViewHeader';
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useViewport } from '@/hooks/useViewport';
 import {
   Activity,
   Box,
@@ -79,6 +80,7 @@ const statusTones = {
 export default function MonitoringView() {
   const [activeTab, setActiveTab] = useState<'overview' | 'nodes' | 'logs' | 'pipelines'>('overview');
   const { metrics, cluster, logs, pipelines, lastUpdateLabel, isLoading, refresh, isTruthData } = useMonitoringCore();
+  const { isCompact } = useViewport();
 
   const tabs = [
     { id: 'overview', label: 'ЗАГАЛЬНИЙ МОНІТОРИНГ', icon: Activity },
@@ -89,7 +91,7 @@ export default function MonitoringView() {
 
   return (
     <motion.div 
-      className="relative min-h-screen p-6 sm:p-10 space-y-10 overflow-hidden"
+      className={cn("relative min-h-screen space-y-10 overflow-hidden", isCompact ? "p-2" : "p-6 sm:p-10")}
       variants={stagger}
       initial="hidden"
       animate="visible"

@@ -247,7 +247,7 @@ export default function ExecutiveBoardView() {
       {/* ═══════════════════════════════════════════════
          OPERATIONAL CONTOUR — Strategic Modules
          ═══════════════════════════════════════════════ */}
-      <motion.section variants={stagger} className="grid gap-10 xl:grid-cols-[minmax(0,1.8fr)_minmax(380px,0.8fr)]">
+      <motion.section variants={stagger} className={cn(isCompact ? "grid gap-10 grid-cols-1" : "grid gap-10 xl:grid-cols-[minmax(0,1.8fr)_minmax(380px,0.8fr)]")}>
         
         {/* Left Column: Module Matrix */}
         <motion.div variants={fadeUp} className="space-y-8">

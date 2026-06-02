@@ -16,6 +16,7 @@ import { HoloCard } from '@/components/ui/HoloCard';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/utils/cn';
 import { factoryApi } from '@/services/api/factory';
+import { useViewport } from '@/hooks/useViewport';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, 
   Tooltip, ResponsiveContainer, BarChart, Bar, Cell
@@ -167,21 +168,23 @@ export default function StrategicScenarioView() {
     ];
   }, [activeScenario]);
 
+  const { isCompact, isMedium } = useViewport();
+
   return (
-    <div className="space-y-12 p-2">
+    <div className={cn("space-y-6 sm:space-y-12", isCompact ? "p-3" : "p-2")}>
       
       {/* HUD SECTION */}
-      <div className="flex flex-col xl:flex-row gap-12">
+      <div className={cn("flex flex-col xl:flex-row", isCompact ? "gap-6" : "gap-12")}>
         
         {/* SCENARIO SELECTOR */}
-        <div className="flex-1 space-y-8">
-          <div className="flex items-center justify-between mb-10">
+        <div className={cn("flex-1", isCompact ? "space-y-4" : "space-y-8")}>
+          <div className={cn("flex items-center justify-between", isCompact ? "mb-4" : "mb-10")}>
             <div className="space-y-2">
-              <h2 className="text-4xl font-black text-white italic tracking-tighter uppercase">БІБЛІОТЕКА СЦЕНАРІЇВ</h2>
+              <h2 className={cn("font-black text-white italic tracking-tighter uppercase", isCompact ? "text-xl" : isMedium ? "text-2xl" : "text-4xl")}>БІБЛІОТЕКА СЦЕНАРІЇВ</h2>
               <p className="text-[10px] text-rose-500 font-black tracking-[0.4em] uppercase italic">STRATEGIC_INTEL // V63.0-ELITE</p>
             </div>
-            <button className="p-5 bg-black/40 border border-white/10 rounded-3xl text-slate-500 hover:text-rose-500 transition-all shadow-xl">
-              <RefreshCcw size={22} />
+            <button className={cn("bg-black/40 border border-white/10 rounded-3xl text-slate-500 hover:text-rose-500 transition-all shadow-xl", isCompact ? "p-3" : "p-5")}>
+              <RefreshCcw size={isCompact ? 18 : 22} />
             </button>
           </div>
 
@@ -193,30 +196,35 @@ export default function StrategicScenarioView() {
             ) : scenarios.map((s) => (
               <motion.div
                 key={s.id}
-                whileHover={{ scale: 1.01, x: 10 }}
+                whileHover={{ scale: 1.01, x: isCompact ? 4 : 10 }}
                 onClick={() => setActiveScenario(s)}
                 className={cn(
-                  "p-10 rounded-[3.5rem] border-2 cursor-pointer transition-all duration-500 relative overflow-hidden group shadow-2xl",
+                  "rounded-[2.5rem] sm:rounded-[3.5rem] border-2 cursor-pointer transition-all duration-500 relative overflow-hidden group shadow-2xl",
+                  isCompact ? "p-4" : isMedium ? "p-6" : "p-10",
                   activeScenario?.id === s.id 
                     ? "bg-rose-600/10 border-rose-500 " 
                     : "bg-black border-white/[0.03] hover:border-white/10"
                 )}
               >
-                <div className="flex items-start justify-between relative z-10">
-                  <div className="flex gap-8">
+                <div className={cn("flex items-start justify-between relative z-10", isCompact && "flex-wrap gap-3")}>
+                  <div className={cn("flex", isCompact ? "gap-4" : "gap-8")}>
                     <div className={cn(
-                      "w-20 h-20 rounded-[2rem] flex items-center justify-center border-2 shadow-2xl transition-all duration-500",
+                      "rounded-[1.5rem] sm:rounded-[2rem] flex items-center justify-center border-2 shadow-2xl transition-all duration-500 shrink-0",
+                      isCompact ? "w-11 h-11" : isMedium ? "w-14 h-14" : "w-20 h-20",
                       activeScenario?.id === s.id ? "bg-rose-600 text-white border-rose-400" : "bg-white/5 text-slate-500 border-white/10"
                     )}>
-                      {s.id.includes('LOG') || s.id.includes('WAR') ? <Waves size={36} /> : <ShieldAlert size={36} />}
+                      {s.id.includes('LOG') || s.id.includes('WAR')
+                        ? <Waves size={isCompact ? 20 : isMedium ? 26 : 36} />
+                        : <ShieldAlert size={isCompact ? 20 : isMedium ? 26 : 36} />}
                     </div>
-                    <div className="space-y-2">
-                      <h3 className="text-2xl font-black text-white italic tracking-tighter uppercase group-hover:text-rose-400 transition-colors">{s.name}</h3>
-                      <p className="text-sm text-slate-500 font-black uppercase tracking-tight leading-relaxed max-w-lg italic opacity-80">{s.description}</p>
+                    <div className="space-y-1 sm:space-y-2">
+                      <h3 className={cn("font-black text-white italic tracking-tighter uppercase group-hover:text-rose-400 transition-colors", isCompact ? "text-base" : isMedium ? "text-lg" : "text-2xl")}>{s.name ?? s.title}</h3>
+                      {!isCompact && <p className="text-sm text-slate-500 font-black uppercase tracking-tight leading-relaxed max-w-lg italic opacity-80">{s.description}</p>}
+                      {isCompact && <p className="text-[10px] text-slate-500 uppercase tracking-tight leading-relaxed italic opacity-80 line-clamp-2">{s.description}</p>}
                     </div>
                   </div>
-                  <div className="text-right">
-                    <span className="text-3xl font-black italic font-mono text-white tabular-nums">{s.probability}%</span>
+                  <div className={cn("text-right", isCompact && "ml-auto")}>
+                    <span className={cn("font-black italic font-mono text-white tabular-nums", isCompact ? "text-xl" : "text-3xl")}>{s.probability}%</span>
                     <p className="text-[9px] font-black text-slate-700 uppercase tracking-widest mt-1">PROBABILITY</p>
                   </div>
                 </div>
@@ -230,11 +238,11 @@ export default function StrategicScenarioView() {
         </div>
 
         {/* SIMULATION ENGINE */}
-        <div className="w-full xl:w-[650px]">
+        <div className={cn("w-full", !isCompact && "xl:w-[600px]")}>
           <HoloCard 
             title="S.E.N.T.I.N.E.L ENGINE" 
             subtitle="STRATEGIC_EVOLUTION_NETWORK"
-            className="h-full bg-black/40  border-2 border-white/[0.04] p-10 rounded-[4rem] shadow-4xl"
+            className={cn("h-full bg-black/40 border-2 border-white/[0.04] rounded-[3rem] sm:rounded-[4rem] shadow-4xl", isCompact ? "p-4" : isMedium ? "p-6" : "p-10")}
           >
             <div className="h-full flex flex-col justify-between py-6">
               {!activeScenario ? (
@@ -298,7 +306,7 @@ export default function StrategicScenarioView() {
                       <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.5em] italic">ВЕКТОР ВПЛИВУ</span>
                       <div className="px-4 py-1.5 rounded-full bg-rose-500/10 border border-rose-500/30 text-[9px] font-black text-rose-500 uppercase italic tracking-widest">REAL_TIME_CALC</div>
                     </div>
-                    <div className="h-[280px] w-full p-6 bg-black/40 rounded-[3rem] border border-white/5">
+                    <div className={cn("w-full bg-black/40 rounded-[2rem] sm:rounded-[3rem] border border-white/5", isCompact ? "h-[200px] p-3" : "h-[280px] p-6")}>
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={impactData} layout="vertical" margin={{ left: -30, right: 20 }}>
                           <XAxis type="number" hide domain={[0, 100]} />
@@ -327,19 +335,20 @@ export default function StrategicScenarioView() {
                     </div>
                   </div>
 
-                  <button 
-                    disabled={isSimulating}
-                    onClick={() => startSimulation(activeScenario)}
-                    className={cn(
-                      "w-full py-8 rounded-[2.5rem] text-[13px] font-black uppercase tracking-[0.5em] italic transition-all flex items-center justify-center gap-6 border-4",
-                      isSimulating 
-                        ? "bg-slate-900 text-slate-600 border-slate-800 cursor-not-allowed" 
-                        : "bg-rose-600 text-white border-rose-500/30 hover:brightness-110 shadow-4xl"
-                    )}
-                  >
-                    {isSimulating ? <RefreshCcw size={24} className="animate-spin" /> : <Play size={24} />}
-                    {isSimulating ? 'ОБРОБКА СЦЕНАРІЮ...' : 'ЗАПУСТИТИ СИМУЛЯЦІЮ'}
-                  </button>
+                <button
+                  disabled={isSimulating}
+                  onClick={() => startSimulation(activeScenario)}
+                  className={cn(
+                    "w-full rounded-[2.5rem] text-[13px] font-black uppercase tracking-[0.5em] italic transition-all flex items-center justify-center gap-6 border-4",
+                    isSimulating 
+                      ? "bg-slate-900 text-slate-600 border-slate-800 cursor-not-allowed" 
+                      : "bg-rose-600 text-white border-rose-500/30 hover:brightness-110 shadow-4xl",
+                    isCompact ? "py-6" : "py-8"
+                  )}
+                >
+                  {isSimulating ? <RefreshCcw size={24} className="animate-spin" /> : <Play size={24} />}
+                  {isSimulating ? 'ОБРОБКА СЦЕНАРІЮ...' : 'ЗАПУСТИТИ СИМУЛЯЦІЮ'}
+                </button>
                 </div>
               )}
             </div>
@@ -354,12 +363,12 @@ export default function StrategicScenarioView() {
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
-            className="grid grid-cols-12 gap-12"
+            className={cn("grid grid-cols-12", isCompact ? "gap-6" : "gap-12")}
           >
             {/* FORECAST CHART */}
             <div className="col-span-12 lg:col-span-8">
-              <HoloCard title="ПРОГНОЗ РЕЗИЛЬЄНТНОСТІ" subtitle="STABILITY_DECAY_FORECAST" className="bg-black/40 border-2 border-white/[0.04] p-10 rounded-[4rem] shadow-4xl">
-                <div className="h-[450px] w-full mt-12 p-8 bg-black/60 rounded-[3rem] border border-white/5">
+              <HoloCard title="ПРОГНОЗ РЕЗИЛЬЄНТНОСТІ" subtitle="STABILITY_DECAY_FORECAST" className={cn("bg-black/40 border-2 border-white/[0.04] rounded-[3rem] sm:rounded-[4rem] shadow-4xl", isCompact ? "p-4" : isMedium ? "p-6" : "p-10")}>
+                <div className={cn("w-full bg-black/60 rounded-[2rem] sm:rounded-[3rem] border border-white/5", isCompact ? "h-[220px] mt-4 p-3" : "h-[400px] sm:h-[450px] mt-12 p-8")}>
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={activeScenario.forecast} margin={{ top: 20, right: 20, left: -20, bottom: 0 }}>
                       <defs>
@@ -385,19 +394,19 @@ export default function StrategicScenarioView() {
 
             {/* AI COPILOT RECOMMENDATIONS */}
             <div className="col-span-12 lg:col-span-4">
-              <div className="h-full p-12 rounded-[4rem] bg-black/40 border-2 border-rose-500/20 shadow-4xl space-y-10 relative overflow-hidden group">
+              <div className={cn("h-full rounded-[3rem] sm:rounded-[4rem] bg-black/40 border-2 border-rose-500/20 shadow-4xl relative overflow-hidden group", isCompact ? "p-5 space-y-5" : isMedium ? "p-8 space-y-6" : "p-12 space-y-10")}>
                 <div className="absolute -top-24 -right-24 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity duration-1000">
                     <Zap size={350} className="text-rose-500" />
                 </div>
                 
-                <div className="space-y-4 relative z-10">
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 bg-rose-500/10 rounded-2xl border border-rose-500/20">
-                      <Cpu size={24} className="text-rose-500 " />
+                <div className="space-y-3 sm:space-y-4 relative z-10">
+                  <div className="flex items-center gap-3 sm:gap-4">
+                    <div className="p-2 sm:p-3 bg-rose-500/10 rounded-xl sm:rounded-2xl border border-rose-500/20 shrink-0">
+                      <Cpu size={isCompact ? 18 : 24} className="text-rose-500" />
                     </div>
                     <div>
-                      <span className="text-[10px] font-black text-rose-500 uppercase tracking-[0.5em] italic">AI_CEO_COPILOT</span>
-                      <h3 className="text-3xl font-black text-white italic tracking-tighter uppercase leading-tight">СТРАТЕГІЧНІ РЕКОМЕНДАЦІЇ</h3>
+                      <span className="text-[9px] sm:text-[10px] font-black text-rose-500 uppercase tracking-[0.4em] sm:tracking-[0.5em] italic">AI_CEO_COPILOT</span>
+                      <h3 className={cn("font-black text-white italic tracking-tighter uppercase leading-tight", isCompact ? "text-xl" : isMedium ? "text-2xl" : "text-3xl")}>СТРАТЕГІЧНІ РЕКОМЕНДАЦІЇ</h3>
                     </div>
                   </div>
                 </div>
@@ -409,7 +418,7 @@ export default function StrategicScenarioView() {
                     "Збільшити резерви ліквідності на 15% протягом 48 годин.",
                     "Перевести аналітичний двигун у режим 'Truth-Only'."
                   ].map((rec, i) => (
-                    <div key={i} className="flex gap-6 p-7 bg-black/60 border border-white/5 rounded-[2.5rem] hover:border-rose-500/30 transition-all group/rec shadow-xl">
+                    <div key={i} className={cn("flex bg-black/60 border border-white/5 rounded-[2rem] sm:rounded-[2.5rem] hover:border-rose-500/30 transition-all group/rec shadow-xl", isCompact ? "gap-3 p-4" : "gap-6 p-7")}>
                       <div className="w-8 h-8 rounded-full bg-rose-500/10 border border-rose-500/30 flex items-center justify-center shrink-0 shadow-inner group-hover/rec:bg-rose-500 group-hover/rec:text-white transition-all">
                         <span className="text-[11px] font-black italic">{i + 1}</span>
                       </div>
@@ -418,8 +427,8 @@ export default function StrategicScenarioView() {
                   ))}
                 </div>
 
-                <button className="w-full mt-6 py-6 bg-rose-600 text-white rounded-[2.5rem] text-[11px] font-black uppercase tracking-[0.4em] italic hover:brightness-110 transition-all flex items-center justify-center gap-5 shadow-4xl relative z-10 border-4 border-rose-500/20">
-                   ПРИЙНЯТИ СТРАТЕГІЮ <ChevronRight size={20} />
+                <button className={cn("w-full bg-rose-600 text-white rounded-[2rem] sm:rounded-[2.5rem] text-[11px] font-black uppercase tracking-[0.4em] italic hover:brightness-110 transition-all flex items-center justify-center gap-5 shadow-4xl relative z-10 border-4 border-rose-500/20", isCompact ? "mt-4 py-4" : "mt-6 py-6")}>
+                   ПРИЙНЯТИ СТРАТЕГІЮ <ChevronRight size={isCompact ? 16 : 20} />
                 </button>
               </div>
             </div>

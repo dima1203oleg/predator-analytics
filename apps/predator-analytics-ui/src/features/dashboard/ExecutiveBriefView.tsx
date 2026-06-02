@@ -194,7 +194,7 @@ export default function ExecutiveBriefView() {
       </motion.header>
 
       {/* ── GRID CONTENT ── */}
-      <div className="grid grid-cols-12 gap-10">
+      <div className={cn(isCompact ? "grid grid-cols-1 gap-6" : "grid grid-cols-12 gap-10", "")}>
         
         {/* LEFT: Charts & Targets (Columns 1-8) */}
         <div className="col-span-12 lg:col-span-8 space-y-10">

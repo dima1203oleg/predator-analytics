@@ -5,6 +5,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useViewport } from '@/hooks/useViewport';
 import {
   Activity, Clock, FileText, User, Search, Database,
   AlertCircle, CheckCircle, AlertTriangle, Bot, Zap,
@@ -129,6 +130,7 @@ const EventCard: React.FC<{ event: ActivityEvent }> = ({ event }) => {
 const ActivityView: React.FC = () => {
   const { play } = useUISound();
   const { logs } = useAgents();
+  const { isCompact } = useViewport();
   const [events, setEvents] = useState<ActivityEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState<EventType | 'all'>('all');
@@ -199,7 +201,7 @@ const ActivityView: React.FC = () => {
   }, [filteredEvents]);
 
   return (
-    <div className="min-h-screen bg-[#02040a] text-slate-200 relative overflow-hidden font-sans pb-32">
+    <div className={cn("min-h-screen bg-[#02040a] text-slate-200 relative overflow-hidden font-sans pb-32", isCompact ? "p-2" : "p-4 sm:p-10")}>
       <AdvancedBackground />
 
       <div className="relative z-10 max-w-[1700px] mx-auto p-4 sm:p-10 space-y-12">

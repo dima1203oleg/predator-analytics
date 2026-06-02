@@ -21,8 +21,8 @@ import {
   ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip,
   PieChart, Pie, Cell
 } from 'recharts';
-import CyberGlobe from '@/components/3d/CyberGlobe';
 import { cn } from '@/utils/cn';
+import { useViewport } from '@/hooks/useViewport';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
@@ -45,6 +45,7 @@ const RISK_PIE_DATA = [
 
 // ─── КОМПОНЕНТ ────────────────────────────────────────────────────────
 export default function WarRoomView() {
+  const { isCompact } = useViewport();
   const [expanded, setExpanded] = useState<string | null>(null);
   const [ticker, setTicker] = useState(0);
 
@@ -59,11 +60,11 @@ export default function WarRoomView() {
 
   return (
     <PageTransition>
-      <div className="min-h-screen bg-[#010409] text-slate-200 overflow-hidden relative font-sans flex flex-col">
+      <div className={cn("min-h-screen bg-[#010409] text-slate-200 overflow-hidden relative font-sans flex flex-col", isCompact ? "pb-24" : "")}>
         <AdvancedBackground mode="sovereign" />
         <CyberGrid color="rgba(244, 63, 94, 0.05)" />
         
-        <div className="relative z-10 flex-1 flex flex-col p-10 h-screen overflow-hidden max-w-[1950px] mx-auto w-full space-y-8">
+        <div className={cn("relative z-10 flex-1 flex flex-col max-w-[1950px] mx-auto w-full", isCompact ? "p-4 space-y-6 overflow-y-auto" : "p-10 h-screen overflow-hidden space-y-8")}>
           
           <ViewHeader
             title={
@@ -81,8 +82,8 @@ export default function WarRoomView() {
                         {isOffline ? 'СУВЕРЕННИЙ_РЕЖИМ_НС' : 'ТАКТИЧНИЙ КОМАНДНИЙ ЦЕНТР'} · v63.0-ELITE
                       </span>
                     </div>
-                    <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic leading-none">
-                      СИТУАЦІЙНИЙ <span className={cn("underline decoration-[12px] underline-offset-8", isOffline ? "text-amber-500 decoration-amber-500/20" : "text-rose-600 decoration-rose-600/20")}>ЦЕНТР</span>
+                    <h1 className={cn("font-black text-white tracking-tighter uppercase italic leading-none", isCompact ? "text-3xl" : "text-5xl")}>
+                      СИТУАЦІЙНИЙ <span className={cn("underline underline-offset-8", isCompact ? "decoration-[6px]" : "decoration-[12px]", isOffline ? "text-amber-500 decoration-amber-500/20" : "text-rose-600 decoration-rose-600/20")}>ЦЕНТР</span>
                     </h1>
                  </div>
               </div>
@@ -117,21 +118,22 @@ export default function WarRoomView() {
                     </span>
                  </div>
                  <button className="px-10 py-5 bg-rose-600 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.3em] italic hover:brightness-110 shadow-4xl transition-all">
-                    ДЕФОРМАТУВАТИ // АВАРІЙНИЙ_ВИХІД
+                    {!isCompact && "ДЕФОРМАТУВАТИ // "}АВАРІЙНИЙ_ВИХІД
                  </button>
               </div>
             }
           />
 
           {/* ── QUADRANTS GRID ELITE ── */}
-          <div className="flex-1 grid grid-cols-12 grid-rows-2 gap-8 overflow-hidden pb-10">
+          <div className={cn("flex-1 overflow-hidden pb-10", isCompact ? "flex flex-col gap-6 overflow-y-auto" : "grid grid-cols-12 grid-rows-2 gap-8")}>
              
              {/* Q1: GLOBAL INTEL (Radar/Globe) */}
-             <div className="col-span-12 xl:col-span-4 row-span-2">
+              <div className={cn(isCompact ? "w-full" : "col-span-12 xl:col-span-4 row-span-2")}>
                 <HoloCard 
                   variant="holographic"
                   className={cn(
-                    "h-full flex flex-col p-8 transition-all duration-700 bg-black/60 border-amber-500/10 rounded-[4rem] relative overflow-hidden shadow-4xl",
+                    "flex flex-col transition-all duration-700 bg-black/60 relative overflow-hidden shadow-4xl",
+                    isCompact ? "p-5 rounded-[2.5rem] min-h-[450px]" : "h-full p-8 border-amber-500/10 rounded-[4rem]",
                     expanded === 'q1' ? "fixed inset-12 z-[100] bg-black/98 border-amber-500/40" : ""
                   )}
                 >
@@ -148,10 +150,8 @@ export default function WarRoomView() {
                    </div>
 
                    <div className="flex-1 flex flex-col space-y-10 relative z-10 overflow-hidden">
-                      <div className="h-[45%] relative rounded-[3rem] overflow-hidden border-2 border-white/5 bg-black/40 shadow-inner group">
-                         <div className="absolute inset-0 z-0 opacity-40 group-hover:opacity-100 transition-opacity duration-1000">
-                            <CyberGlobe />
-                         </div>
+                      <div className={cn("relative rounded-[3rem] overflow-hidden border-2 border-white/5 bg-black/40 shadow-inner group", isCompact ? "h-[180px] mb-6" : "h-[45%]")}>
+                         <div className="absolute inset-0 z-0 opacity-40 group-hover:opacity-100 transition-opacity duration-1000 bg-amber-500/5" />
                          <div className="absolute top-6 left-6 z-10 bg-black/80 px-5 py-2.5 rounded-2xl border border-amber-500/20 ">
                             <p className="text-[10px] font-black text-amber-500 uppercase italic tracking-widest flex items-center gap-3">
                                <Satellite size={12} className="" /> ОРБІТАЛЬНА_ФАЗА: АКТИВНО
@@ -187,10 +187,11 @@ export default function WarRoomView() {
              </div>
 
              {/* Q2: SYSTEM KERNEL (Metrics/Logs) */}
-             <div className="col-span-12 xl:col-span-5">
+             <div className={cn(isCompact ? "w-full" : "col-span-12 xl:col-span-5")}>
                 <HoloCard 
                   className={cn(
-                    "h-full p-8 flex flex-col bg-black/60 border-white/5 rounded-[4rem] relative overflow-hidden shadow-4xl",
+                    "flex flex-col bg-black/60 border-white/5 relative overflow-hidden shadow-4xl",
+                    isCompact ? "p-5 rounded-[2.5rem] min-h-[400px]" : "h-full p-8 rounded-[4rem]",
                     expanded === 'q2' ? "fixed inset-12 z-[100] bg-black border-white/20" : ""
                   )}
                 >
@@ -206,9 +207,9 @@ export default function WarRoomView() {
                       </button>
                    </div>
 
-                   <div className="flex-1 grid grid-cols-2 gap-10 relative z-10 h-full overflow-hidden">
+                   <div className={cn("flex-1 relative z-10 h-full overflow-hidden", isCompact ? "flex flex-col gap-6" : "grid grid-cols-2 gap-10")}>
                       <div className="space-y-8 flex flex-col">
-                         <div className="flex-1 w-full border-2 border-white/5 rounded-[2.5rem] bg-black/40 p-6 shadow-inner relative overflow-hidden group">
+                         <div className={cn("w-full border-2 border-white/5 bg-black/40 shadow-inner relative overflow-hidden group", isCompact ? "h-[150px] rounded-[2rem] p-4" : "flex-1 rounded-[2.5rem] p-6")}>
                             <div className="absolute inset-0 bg-emerald-500/[0.02] opacity-0 group-hover:opacity-100 transition-opacity" />
                             <ResponsiveContainer width="100%" height="100%">
                                <AreaChart data={MOCK_LINE_DATA}>
@@ -252,11 +253,12 @@ export default function WarRoomView() {
              </div>
 
              {/* Q3: PORTFOLIO RISK (P&L Display) */}
-             <div className="col-span-12 xl:col-span-3">
+             <div className={cn(isCompact ? "w-full" : "col-span-12 xl:col-span-3")}>
                 <HoloCard 
                   variant="holographic"
                   className={cn(
-                    "h-full p-8 flex flex-col bg-black/60 border-rose-500/10 rounded-[4rem] relative overflow-hidden shadow-4xl",
+                    "flex flex-col bg-black/60 relative overflow-hidden shadow-4xl",
+                    isCompact ? "p-5 rounded-[2.5rem] border-rose-500/20" : "h-full p-8 border-rose-500/10 rounded-[4rem]",
                     expanded === 'q3' ? "fixed inset-12 z-[100] bg-black border-rose-500/40" : ""
                   )}
                 >
@@ -302,11 +304,12 @@ export default function WarRoomView() {
              </div>
 
              {/* Q4: PREDICTIONS & ALERTS (AI / Scenarios) */}
-             <div className="col-span-12 xl:col-span-8 overflow-hidden h-full">
+             <div className={cn(isCompact ? "w-full" : "col-span-12 xl:col-span-8 overflow-hidden h-full")}>
                 <HoloCard 
                   variant="holographic"
                   className={cn(
-                    "h-full p-10 flex flex-col bg-black/60 border-rose-500/10 rounded-[4rem] relative overflow-hidden shadow-4xl",
+                    "flex flex-col bg-black/60 border-rose-500/10 relative overflow-hidden shadow-4xl",
+                    isCompact ? "p-5 rounded-[2.5rem]" : "h-full p-10 rounded-[4rem]",
                     expanded === 'q4' ? "fixed inset-12 z-[100] bg-black border-rose-500/40" : ""
                   )}
                 >
@@ -322,14 +325,14 @@ export default function WarRoomView() {
                       </button>
                    </div>
 
-                   <div className="flex-1 grid grid-cols-12 gap-12 relative z-10 overflow-hidden">
-                      <div className="col-span-7 space-y-10 flex flex-col h-full">
-                         <div className="flex items-center gap-8 mb-4">
-                            <div className="p-5 rounded-[2rem] bg-rose-500/10 text-rose-500 border-2 border-rose-500/30 ">
+                   <div className={cn("flex-1 relative z-10 overflow-hidden", isCompact ? "flex flex-col gap-8" : "grid grid-cols-12 gap-12")}>
+                      <div className={cn("flex flex-col h-full", isCompact ? "w-full space-y-6" : "col-span-7 space-y-10")}>
+                         <div className="flex items-center gap-6 mb-4">
+                            <div className="p-4 rounded-[1.5rem] bg-rose-500/10 text-rose-500 border-2 border-rose-500/30 ">
                                <Radar size={32} className="" />
                             </div>
                             <div>
-                               <h4 className="text-4xl font-black text-white uppercase italic tracking-tighter leading-none mb-3 font-serif">СЦЕНАРІЙ: ОМЕГА-4</h4>
+                               <h4 className={cn("font-black text-white uppercase italic tracking-tighter leading-none mb-2 font-serif", isCompact ? "text-2xl" : "text-4xl")}>СЦЕНАРІЙ: ОМЕГА-4</h4>
                                <p className="text-[11px] font-black text-slate-800 uppercase tracking-[0.4em] leading-none italic">ПРЕДИКТИВНА МОДЕЛЬ ВЕКТОРУ РОЗШИРЕННЯ КОНФЛІКТУ</p>
                             </div>
                          </div>
@@ -352,8 +355,8 @@ export default function WarRoomView() {
                             ЗАПУСТИТИ_СИМУЛЯЦІЮ_РИЗИКУ_ELITE
                          </button>
                       </div>
-                      <div className="col-span-5 flex flex-col space-y-8 h-full overflow-hidden">
-                         <div className="flex items-center justify-between text-[11px] font-black text-slate-900 uppercase tracking-[0.6em] italic mb-4">
+                      <div className={cn("flex flex-col space-y-6 h-full overflow-hidden", isCompact ? "w-full" : "col-span-5")}>
+                         <div className="flex items-center justify-between text-[11px] font-black text-slate-900 uppercase tracking-[0.6em] italic mb-2">
                             <span>АКТИВНІ АЛЕРТИ</span>
                             <span className="text-rose-600">РЕЖИМ_ХИЖАКА</span>
                          </div>
