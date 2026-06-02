@@ -534,6 +534,227 @@ CREATE TRIGGER set_updated_at_jobs BEFORE UPDATE ON ingestion_jobs
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- ============================================================
+-- Податкові дані (для датасетів #6, #17, #39, #59, #72)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS tax_records (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    company_ueid VARCHAR(64) NOT NULL,
+    company_edrpou VARCHAR(10),
+    period_start DATE NOT NULL,
+    period_end DATE NOT NULL,
+    vat_obligations NUMERIC(18, 2),
+    vat_paid NUMERIC(18, 2),
+    income_tax NUMERIC(18, 2),
+    total_tax_obligations NUMERIC(18, 2),
+    total_tax_paid NUMERIC(18, 2),
+    source VARCHAR(100),
+    raw_data JSONB,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_tax_company ON tax_records(company_ueid);
+CREATE INDEX IF NOT EXISTS idx_tax_period ON tax_records(period_start, period_end);
+CREATE INDEX IF NOT EXISTS idx_tax_tenant ON tax_records(tenant_id);
+
+-- ============================================================
+-- Податкові накладні (для датасету #17)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS vat_invoices (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    invoice_number VARCHAR(50) NOT NULL,
+    company_ueid VARCHAR(64) NOT NULL,
+    invoice_date DATE NOT NULL,
+    amount NUMERIC(18, 2),
+    vat_amount NUMERIC(18, 2),
+    related_declaration_id UUID REFERENCES declarations(id),
+    source VARCHAR(100),
+    raw_data JSONB,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_vat_company ON vat_invoices(company_ueid);
+CREATE INDEX IF NOT EXISTS idx_vat_date ON vat_invoices(invoice_date);
+CREATE INDEX IF NOT EXISTS idx_vat_declaration ON vat_invoices(related_declaration_id);
+
+-- ============================================================
+-- Митні брокери (для датасетів #9, #71)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS customs_brokers (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    broker_ueid VARCHAR(64) NOT NULL UNIQUE,
+    license_number VARCHAR(50),
+    name VARCHAR(500) NOT NULL,
+    name_normalized VARCHAR(500),
+    registration_date DATE,
+    status VARCHAR(50) DEFAULT 'active',
+    address TEXT,
+    contact_person VARCHAR(255),
+    phone VARCHAR(50),
+    email VARCHAR(255),
+    specializations JSONB DEFAULT '[]',
+    source VARCHAR(100),
+    raw_data JSONB,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_brokers_tenant ON customs_brokers(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_brokers_ueid ON customs_brokers(broker_ueid);
+CREATE INDEX IF NOT EXISTS idx_brokers_name_gin ON customs_brokers USING gin(name gin_trgm_ops);
+CREATE INDEX IF NOT EXISTS idx_brokers_status ON customs_brokers(status);
+
+-- ============================================================
+-- Зв'язки Брокер ↔ Декларація
+-- ============================================================
+CREATE TABLE IF NOT EXISTS broker_declaration_links (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    broker_id UUID NOT NULL REFERENCES customs_brokers(id) ON DELETE CASCADE,
+    declaration_id UUID NOT NULL REFERENCES declarations(id) ON DELETE CASCADE,
+    role VARCHAR(50),
+    source VARCHAR(100),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_broker_decl_tenant ON broker_declaration_links(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_broker_decl_broker ON broker_declaration_links(broker_id);
+CREATE INDEX IF NOT EXISTS idx_broker_decl_declaration ON broker_declaration_links(declaration_id);
+
+-- ============================================================
+-- Нормативні акти (для датасетів #1, #76)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS regulatory_acts (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    act_number VARCHAR(100) NOT NULL,
+    act_type VARCHAR(50) NOT NULL,
+    act_date DATE NOT NULL,
+    effective_date DATE,
+    title TEXT NOT NULL,
+    description TEXT,
+    issuer VARCHAR(255),
+    uktzed_codes_affected JSONB DEFAULT '[]',
+    source VARCHAR(100),
+    raw_data JSONB,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_reg_acts_date ON regulatory_acts(act_date);
+CREATE INDEX IF NOT EXISTS idx_reg_acts_type ON regulatory_acts(act_type);
+CREATE INDEX IF NOT EXISTS idx_reg_acts_number ON regulatory_acts(act_number);
+
+-- ============================================================
+-- Ринкові ціни (для датасетів #5, #44, #89)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS market_prices (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    uktzed_code VARCHAR(20) NOT NULL,
+    country VARCHAR(100),
+    price_min_usd NUMERIC(18, 4),
+    price_max_usd NUMERIC(18, 4),
+    price_avg_usd NUMERIC(18, 4),
+    price_date DATE NOT NULL,
+    source VARCHAR(100),
+    confidence_level NUMERIC(3, 2),
+    raw_data JSONB,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_market_uktzed ON market_prices(uktzed_code);
+CREATE INDEX IF NOT EXISTS idx_market_date ON market_prices(price_date);
+CREATE INDEX IF NOT EXISTS idx_market_country ON market_prices(country);
+
+-- ============================================================
+-- Геодані митних постів (для датасетів #3, #46, #62)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS customs_posts_geo (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    post_code VARCHAR(50) NOT NULL UNIQUE,
+    post_name VARCHAR(255) NOT NULL,
+    latitude NUMERIC(10, 8),
+    longitude NUMERIC(11, 8),
+    country VARCHAR(100),
+    region VARCHAR(100),
+    border_type VARCHAR(50),
+    infrastructure_type VARCHAR(50),
+    source VARCHAR(100),
+    raw_data JSONB,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_geo_post_code ON customs_posts_geo(post_code);
+CREATE INDEX IF NOT EXISTS idx_geo_location ON customs_posts_geo USING GIST (point(longitude, latitude));
+
+-- ============================================================
+-- Виробничі дані країн (для датасетів #15, #68)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS country_production (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    country_code VARCHAR(3) NOT NULL,
+    uktzed_code VARCHAR(20) NOT NULL,
+    has_production BOOLEAN NOT NULL,
+    production_capacity VARCHAR(255),
+    major_producers JSONB DEFAULT '[]',
+    source VARCHAR(100),
+    raw_data JSONB,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_production_country ON country_production(country_code);
+CREATE INDEX IF NOT EXISTS idx_production_uktzed ON country_production(uktzed_code);
+
+-- ============================================================
+-- Бренд-реєстр (для датасетів #8, #53, #98)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS brand_registry (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    brand_name VARCHAR(255) NOT NULL,
+    brand_name_normalized VARCHAR(255),
+    owner_company VARCHAR(500),
+    registration_country VARCHAR(100),
+    registration_date DATE,
+    categories JSONB DEFAULT '[]',
+    is_verified BOOLEAN DEFAULT false,
+    source VARCHAR(100),
+    raw_data JSONB,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_brand_name ON brand_registry(brand_name);
+CREATE INDEX IF NOT EXISTS idx_brand_normalized ON brand_registry(brand_name_normalized);
+CREATE INDEX IF NOT EXISTS idx_brand_owner ON brand_registry(owner_company);
+
+-- ============================================================
+-- Ліцензії та дозволи (для датасету #76)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS licenses_permits (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    company_ueid VARCHAR(64) NOT NULL,
+    license_type VARCHAR(100) NOT NULL,
+    license_number VARCHAR(100),
+    issue_date DATE,
+    expiry_date DATE,
+    issuing_authority VARCHAR(255),
+    scope TEXT,
+    uktzed_codes_affected JSONB DEFAULT '[]',
+    source VARCHAR(100),
+    raw_data JSONB,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_licenses_company ON licenses_permits(company_ueid);
+CREATE INDEX IF NOT EXISTS idx_licenses_type ON licenses_permits(license_type);
+CREATE INDEX IF NOT EXISTS idx_licenses_date ON licenses_permits(issue_date);
+
+-- ============================================================
 -- Seed (DEV ONLY)
 -- ============================================================
 INSERT INTO tenants (id, name, slug, plan)

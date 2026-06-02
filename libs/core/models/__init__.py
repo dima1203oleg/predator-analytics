@@ -1,10 +1,17 @@
 from .analytics import (
     BehavioralProfile,
+    BrandDetection,
+    BrokerPattern,
+    DecisionArtifact,
     InfluenceGraph,
     InstitutionalBias,
     MarketPulse,
+    PriceAnomaly,
     PredictiveAlert,
+    RegulatoryImpact,
+    RouteAnomaly,
     StructuralAnomaly,
+    TaxCompliance,
 )
 from .entities import (
     AugmentedDataset,

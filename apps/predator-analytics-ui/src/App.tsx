@@ -32,7 +32,7 @@ import { CommandPalette } from './components/polish/CommandPalette';
 
 // Lazy-loaded великі компоненти для зменшення initial bundle
 const BootSequenceELITE = React.lazy(() => import('./components/BootSequenceELITE'));
-const LoginScreen = React.lazy(() => import('./components/LoginScreen'));
+const LoginScreen = React.lazy(() => import('@/components/LoginScreen'));
 const Predator = React.lazy(() => import('./components/premium/AICopilot').then(m => ({ default: m.Predator })));
 const OnboardingWizard = React.lazy(() => import('./components/premium/OnboardingWizard'));
 const QuickActionsBar = React.lazy(() => import('./components/premium/QuickActionsBar'));

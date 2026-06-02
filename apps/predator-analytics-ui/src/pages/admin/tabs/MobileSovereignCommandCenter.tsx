@@ -33,11 +33,11 @@ export const MobileSovereignCommandCenter: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col gap-2">
         <h2 className="text-3xl font-black text-white uppercase tracking-tighter italic text-shadow-glow-rose">
-          СУВЕРЕННИЙ <span className="text-rose-500">ЦЕНТР</span>
+          {t('nav.commandCenter')}
         </h2>
         <div className="flex items-center gap-2 px-3 py-1 bg-rose-500/10 border border-rose-500/30 rounded-lg self-start">
           <div className="w-2 h-2 bg-rose-500 rounded-full animate-ping" />
-          <span className="text-[10px] font-black text-rose-500 tracking-widest uppercase italic">MASTER_PULSE</span>
+          <span className="text-[10px] font-black text-rose-500 tracking-widest uppercase italic">{t('status.masterPulse')}</span>
         </div>
       </div>
 

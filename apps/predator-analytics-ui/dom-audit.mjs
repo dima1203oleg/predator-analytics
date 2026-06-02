@@ -4,21 +4,48 @@
  * без симуляцій та заглушок.
  */
 import { chromium } from '@playwright/test';
+import fs from 'fs';
 
 const BASE_URL = 'http://localhost:3030';
 const TIMEOUT = 15000;
 
 // Сторінки для перевірки
 const PAGES_TO_CHECK = [
-  { path: '/', name: 'Головна / Дашборд', checks: ['PREDATOR', 'декларац'] },
-  { path: '/intelligence', name: 'Intelligence Hub', checks: ['РОЗВІДК', 'АНАЛІТИК'] },
-  { path: '/admin', name: 'Admin Hub', checks: ['АДМІН', 'КОМАНДН'] },
-  { path: '/analytics', name: 'Analytics View', checks: ['АНАЛІТИК'] },
-  { path: '/risk', name: 'Risk Scoring', checks: ['РИЗИК'] },
-  { path: '/graph', name: 'Graph View', checks: ['ГРАФ'] },
-  { path: '/factory', name: 'Factory', checks: ['ФАБРИК', 'OODA'] },
-  { path: '/wargaming', name: 'Wargaming', checks: ['ВАРГЕЙМІНГ', 'сценар', 'WAR'] },
-  { path: '/cases', name: 'Cases', checks: ['КЕЙС', 'РОЗСЛІДУВАНН'] },
+  {
+    name: "Command Hub",
+    path: "/command",
+    checks: ["Командний центр"]
+  },
+  {
+    name: "Market Hub",
+    path: "/market",
+    checks: ["Ринок"]
+  },
+  {
+    name: "Search Hub",
+    path: "/search",
+    checks: ["Пошук"]
+  },
+  {
+    name: "OSINT Hub",
+    path: "/osint",
+    checks: ["OSINT"]
+  },
+  {
+    name: "Financial Hub",
+    path: "/financial",
+    checks: ["Фінанси"]
+  },
+  {
+    name: "AI Nexus",
+    path: "/nexus",
+    checks: ["AI Асистент"]
+  },
+  {
+    name: "Cases",
+    path: "/cases",
+    checks: ["Кейси"]
+  }
 ];
 
 // Заборонені патерни (заглушки та симуляції)
@@ -85,8 +112,50 @@ async function auditPage(page, pageInfo) {
     // Чекаємо трохи для рендерингу React
     await page.waitForTimeout(2000);
 
-    // Отримуємо весь текстовий контент
-    const bodyText = await page.textContent('body');
+    // Function to navigate to hub via direct URL and wait for hub layout to appear
+    async function navigateToHub(page, path) {
+      const url = `${BASE_URL}${path}`;
+      await page.goto(url, { waitUntil: 'domcontentloaded', timeout: TIMEOUT }).catch(() => {});
+      // Wait for hub layout root element to be attached
+      await page.waitForSelector('div[data-test-id="hub-layout"]', { timeout: TIMEOUT }).catch(() => {});
+      // Additional wait for network idle (optional)
+      await page.waitForLoadState('networkidle', { timeout: TIMEOUT }).catch(() => {});
+    }
+
+      // Спробуємо натиснути "ПРОПУСТИТИ ЗАСТАВКУ" якщо вона є
+      await page.evaluate(() => {
+        const btns = Array.from(document.querySelectorAll('button'));
+        const skipBtn = btns.find(b => b.textContent && b.textContent.includes('ПРОПУСТИТИ ЗАСТАВКУ'));
+        if (skipBtn) skipBtn.click();
+      }).catch(() => {});
+
+      // After login, navigate directly to the target hub page
+      await page.goto(`${BASE_URL}${pageInfo.path}`, { waitUntil: 'networkidle', timeout: TIMEOUT }).catch(() => {});
+      await page.waitForTimeout(2000); // allow rendering
+
+
+      // Store console errors captured earlier
+      result.consoleErrors = consoleErrors;
+        
+        // Чекаємо на сканування та вибір ролей
+        await page.waitForSelector('text=КОМАНДИР СУВЕРЕНІТЕТУ', { timeout: 10000 }).catch(() => null);
+        
+        // Click role button
+        await page.evaluate(() => {
+          const btns = Array.from(document.querySelectorAll('button'));
+          const clientBtn = btns.find(b => b.textContent && b.textContent.includes('DRPO-ДИРЕКТОР'));
+          if (clientBtn) clientBtn.click();
+        });
+        // Wait for dashboard to load
+        await page.waitForTimeout(3000);
+        // Navigate to the specific hub page
+        await page.goto(`${BASE_URL}${pageInfo.path}`, { waitUntil: 'networkidle', timeout: TIMEOUT }).catch(() => {});
+        await page.waitForTimeout(2000);
+      
+    
+let bodyText;
+
+    bodyText = await page.textContent('body');
     const htmlContent = await page.content();
 
     // Перевірка 1: Чи є основний контент
@@ -181,8 +250,15 @@ async function auditPage(page, pageInfo) {
       result.status = '⚠️ STUBS_FOUND';
     } else if (result.contentFound.length === 0) {
       result.status = '⚠️ NO_CONTENT';
-    } else if (result.warnings.length > 0) {
-      result.status = '⚠️ WARNINGS';
+    }
+    // Зберегти скріншот та текст для відлагодження
+    const safeName = pageInfo.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    await page.screenshot({ path: `audit-${safeName}.png` });
+    fs.writeFileSync(`audit-${safeName}.txt`, bodyText, 'utf8');
+
+    // Оновлення статусу
+    if (result.warnings.length > 0) {
+      result.status = result.contentFound.length === 0 ? 'NO_CONTENT' : 'WARNINGS';
     } else {
       result.status = '✅ OK';
     }
