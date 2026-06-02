@@ -29,19 +29,12 @@ import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
 import { HoloCard } from '@/components/ui/HoloCard';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { useDashboardOverview, useDashboardAlerts } from '@/hooks/useDashboard';
 import { DiagnosticsTerminal } from '@/components/intelligence/DiagnosticsTerminal';
 
 // ─── ДАНІ ────────────────────────────────────────────────────────────
-const MOCK_LINE_DATA = Array.from({ length: 20 }, (_, i) => ({
-  time: `${i}:00`,
-  val: 30 + Math.random() * 40
-}));
-
-const RISK_PIE_DATA = [
-  { name: 'Санкції', value: 400, color: '#f43f5e' },
-  { name: 'Логістика', value: 300, color: '#fbbf24' },
-  { name: 'Фін-ризики', value: 200, color: '#f59e0b' },
-];
+// ─── ДАНІ (Тепер динамічні) ─────────────────────────────────────────────
+// Використовуємо реальні дані з API, але залишаємо fallback для завантаження
 
 // ─── КОМПОНЕНТ ────────────────────────────────────────────────────────
 export default function WarRoomView() {
@@ -55,6 +48,46 @@ export default function WarRoomView() {
   }, []);
 
   const { isOffline, nodeSource, healingProgress, activeFailover } = useBackendStatus();
+
+  const { data: overviewData } = useDashboardOverview();
+  const { data: alertsData } = useDashboardAlerts(5);
+
+  const lineData = overviewData?.radar
+    ? overviewData.radar.map((item) => ({
+        time: item.name,
+        val: item.value
+      }))
+    : Array.from({ length: 20 }, (_, i) => ({
+        time: `${i}:00`,
+        val: 30 + Math.random() * 40
+      }));
+
+  const riskPieData = overviewData?.categories 
+    ? Object.entries(overviewData.categories)
+        .slice(0, 3)
+        .map(([key, stat], idx) => ({
+          name: key,
+          value: stat.value,
+          color: idx === 0 ? '#f43f5e' : idx === 1 ? '#fbbf24' : '#f59e0b'
+        }))
+    : [
+        { name: 'Санкції', value: 400, color: '#f43f5e' },
+        { name: 'Логістика', value: 300, color: '#fbbf24' },
+        { name: 'Фін-ризики', value: 200, color: '#f59e0b' },
+      ];
+
+  const alertsList = alertsData?.items?.length
+    ? alertsData.items.map(a => ({
+        msg: a.message,
+        type: a.severity === 'critical' ? 'error' : a.severity
+      }))
+    : [
+        { msg: 'Виявлено збіг КБВ (POS-001)', type: 'error' },
+        { msg: 'Нова реєстрація шелл-компанії (БВО)', type: 'warning' },
+        { msg: 'Аномальна транзакція: Абу-Дабі', type: 'warning' },
+        { msg: 'Оновлено Реєстр ПЕП Україна', type: 'info' },
+        { msg: 'Детектовано новий паттерн відмивання', type: 'error' },
+      ];
 
   // Нав'язливі toast-повідомлення видалено (HR-04 compliant)
 
@@ -212,7 +245,7 @@ export default function WarRoomView() {
                           <div className={cn("w-full border-2 border-white/5 bg-black/40 shadow-inner relative overflow-hidden group", isCompact ? "h-[200px] rounded-[2rem] p-4" : "flex-1 rounded-[2.5rem] p-6")}>
                             <div className="absolute inset-0 bg-emerald-500/[0.02] opacity-0 group-hover:opacity-100 transition-opacity" />
                             <ResponsiveContainer width="100%" height="100%">
-                               <AreaChart data={MOCK_LINE_DATA}>
+                               <AreaChart data={lineData}>
                                   <defs>
                                     <linearGradient id="q2gradElite" x1="0" y1="0" x2="0" y2="1">
                                       <stop offset="5%" stopColor="#10b981" stopOpacity={0.4}/>
@@ -278,13 +311,13 @@ export default function WarRoomView() {
                       <div className="flex items-center justify-center p-10 relative">
                          <div className="absolute inset-0 bg-rose-500/10 blur-3xl rounded-full scale-110" />
                          <PieChart width={160} height={160}>
-                            <Pie data={RISK_PIE_DATA} cx="50%" cy="50%" innerRadius={45} outerRadius={65} dataKey="value" paddingAngle={5}>
-                               {RISK_PIE_DATA.map((e, i) => <Cell key={i} fill={e.color} stroke="transparent" />)}
+                            <Pie data={riskPieData} cx="50%" cy="50%" innerRadius={45} outerRadius={65} dataKey="value" paddingAngle={5}>
+                               {riskPieData.map((e, i) => <Cell key={i} fill={e.color} stroke="transparent" />)}
                             </Pie>
                          </PieChart>
                       </div>
                       <div className="space-y-4 flex-1 overflow-y-auto no-scrollbar">
-                         {RISK_PIE_DATA.map((r, i) => (
+                         {riskPieData.map((r, i) => (
                             <div key={i} className="flex items-center justify-between p-6 rounded-[2rem] border-2 border-white/5 bg-black hover:border-rose-500/30 transition-all group/it shadow-2xl">
                                <div className="flex items-center gap-5">
                                   <div className="w-3 h-3 rounded-full transition-transform group-hover/it:scale-125 shadow-[0_0_10px_currentColor]" style={{ backgroundColor: r.color, color: r.color }} />
@@ -361,13 +394,7 @@ export default function WarRoomView() {
                             <span className="text-rose-600">РЕЖИМ_ХИЖАКА</span>
                          </div>
                          <div className="space-y-4 flex-1 overflow-y-auto pr-4 custom-scrollbar pb-10">
-                            {[
-                               { msg: 'Виявлено збіг КБВ (POS-001)', type: 'error' },
-                               { msg: 'Нова реєстрація шелл-компанії (БВО)', type: 'warning' },
-                               { msg: 'Аномальна транзакція: Абу-Дабі', type: 'warning' },
-                               { msg: 'Оновлено Реєстр ПЕП Україна', type: 'info' },
-                               { msg: 'Детектовано новий паттерн відмивання', type: 'error' },
-                            ].map((a, i) => (
+                            {alertsList.map((a, i) => (
                                <motion.div 
                                  key={i} 
                                  initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.1 }}

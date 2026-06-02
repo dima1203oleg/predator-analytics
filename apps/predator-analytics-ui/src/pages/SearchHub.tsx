@@ -1,15 +1,17 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Search, FileText, Database, Newspaper } from 'lucide-react';
+import { Search, FileText, Database, Newspaper, ArrowLeft } from 'lucide-react';
 import { HubLayout } from '@/components/layout/HubLayout';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useRole } from '@/context/RoleContext';
+import { useViewport } from '@/hooks/useViewport';
 
 import { GlobalSearchTab } from './tabs/search/GlobalSearchTab';
 import { RegistriesTab } from './tabs/search/RegistriesTab';
 import { DocumentsTab } from './tabs/search/DocumentsTab';
 import { NewspaperTab } from './tabs/search/NewspaperTab';
+import { MobileSearchHub } from './MobileSearchHub';
 
-type SearchHubTab = 'global' | 'registries' | 'documents' | 'newspaper';
+type SearchHubTab = 'global' | 'registries' | 'documents' | 'newspaper' | 'menu';
 
 const ALL_TABS = [
   { id: 'global', label: 'Пошук Суб\'єктів', icon: <Search size={16} /> },
@@ -20,48 +22,77 @@ const ALL_TABS = [
 
 const SearchHub: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const { isPremium } = useRole();
+  const { isCompact } = useViewport();
+  
   const tabParam = searchParams.get('tab') as SearchHubTab;
-  const [activeTab, setActiveTab] = useState<SearchHubTab>(tabParam || 'global');
+  const initialTab = isCompact && !tabParam ? 'menu' : (tabParam || 'global');
+  const [activeTab, setActiveTab] = useState<SearchHubTab>(initialTab);
 
   const hubTabs = useMemo(() => {
     return ALL_TABS.filter(t => !t.premium || isPremium);
   }, [isPremium]);
 
   useEffect(() => {
+    if (isCompact && !tabParam) {
+      setActiveTab('menu');
+      return;
+    }
+    
     if (tabParam && tabParam !== activeTab) {
       const isPremiumTab = ALL_TABS.find(t => t.id === tabParam)?.premium;
       if (isPremiumTab && !isPremium) {
-        setActiveTab('global');
-        setSearchParams({ tab: 'global' });
+        setActiveTab(isCompact ? 'menu' : 'global');
+        setSearchParams(isCompact ? {} : { tab: 'global' });
       } else {
         setActiveTab(tabParam);
       }
     }
-  }, [tabParam, activeTab, isPremium, setSearchParams]);
+  }, [tabParam, activeTab, isPremium, setSearchParams, isCompact]);
 
   const handleTabChange = (id: string) => {
     setActiveTab(id as SearchHubTab);
     setSearchParams({ tab: id });
   };
 
+  if (isCompact && activeTab === 'menu') {
+    return <MobileSearchHub />;
+  }
+
   return (
-    <HubLayout
-      title="СИНАПТИЧНИЙ ПОШУК"
-      subtitle="Синаптичний пошук та робота з реєстрами"
-      icon={<Search size={24} />}
-      tabs={hubTabs}
-      activeTab={activeTab}
-      onTabChange={handleTabChange}
-      accent="amber"
-    >
-      <div className="h-full">
-        {activeTab === 'global' && <GlobalSearchTab />}
-        {activeTab === 'registries' && <RegistriesTab />}
-        {activeTab === 'documents' && <DocumentsTab />}
-        {activeTab === 'newspaper' && <NewspaperTab />}
-      </div>
-    </HubLayout>
+    <div className="flex flex-col h-full w-full">
+      {isCompact && activeTab !== 'menu' && (
+        <div className="p-4 bg-black border-b border-white/10 flex items-center gap-4">
+          <button 
+            onClick={() => {
+              setActiveTab('menu');
+              setSearchParams({});
+            }}
+            className="p-3 rounded-2xl bg-white/5 border border-white/10 text-white"
+          >
+            <ArrowLeft size={24} />
+          </button>
+          <h2 className="text-lg font-black text-white italic tracking-widest uppercase">НАЗАД ДО МЕНЮ</h2>
+        </div>
+      )}
+      <HubLayout
+        title="СИНАПТИЧНИЙ ПОШУК"
+        subtitle="Синаптичний пошук та робота з реєстрами"
+        icon={<Search size={24} />}
+        tabs={hubTabs}
+        activeTab={activeTab === 'menu' ? 'global' : activeTab}
+        onTabChange={handleTabChange}
+        accent="amber"
+      >
+        <div className="h-full bg-slate-950/20 rounded-2xl overflow-hidden border border-white/5">
+          {activeTab === 'global' && <GlobalSearchTab />}
+          {activeTab === 'registries' && <RegistriesTab />}
+          {activeTab === 'documents' && <DocumentsTab />}
+          {activeTab === 'newspaper' && <NewspaperTab />}
+        </div>
+      </HubLayout>
+    </div>
   );
 };
 

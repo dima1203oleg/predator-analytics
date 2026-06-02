@@ -10,14 +10,10 @@ import { cn } from '@/lib/utils';
 
 import { analyticsService, FrozenAsset } from '@/services/unified/analytics.service';
 
-const MOCK_FROZEN = [
-  { entity: 'ПУМБ  АХУНОК 4521', amount: '$12.4M', date: '2025-12-01', authority: 'РНБО', reason: 'Санкційний список', status: 'ЗАМО ОЖЕНО' },
-  { entity: 'ТОВ "АЛЬФА-ХОЛДИНГ"', amount: '$7.8M',  date: '2026-01-15', authority: 'EU SDN', reason: 'Фінансування агресії', status: 'ЗАМО ОЖЕНО' },
-  { entity: 'ЯХТА "SOVEREIGN"', amount: '$18.5M', date: '2026-03-08', authority: 'MAS', reason: 'Ухилення від санкцій', status: 'КОНФІСКОВАНО' },
-];
+// Дані отримуються виключно через API
 
 export const AssetTrackerTab: React.FC = () => {
-  const [frozenAssets, setFrozenAssets] = useState<FrozenAsset[]>(MOCK_FROZEN);
+  const [frozenAssets, setFrozenAssets] = useState<FrozenAsset[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,7 +23,8 @@ export const AssetTrackerTab: React.FC = () => {
           setFrozenAssets(result.frozen);
         }
       } catch (err) {
-        console.warn('Using fallback data for AssetTrackerTab');
+        console.warn('API OFFLINE: Збій отримання заморожених активів', err);
+        setFrozenAssets([]);
       }
     };
     fetchData();

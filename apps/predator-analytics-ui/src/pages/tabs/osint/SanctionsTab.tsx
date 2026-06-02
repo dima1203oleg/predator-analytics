@@ -5,12 +5,9 @@ import { HoloCard } from '@/components/ui/HoloCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { cn } from '@/lib/utils';
 
-const MOCK_SANCTIONS = [
-  { id: 1, name: 'ТОВ "Вектор Плюс"', type: 'Юридична особа', list: 'OFAC SDN', date: '2024-03-12', reason: 'Сприяння обходу санкцій', risk: 'Critical' },
-  { id: 2, name: 'Іванов Сергій Петрович', type: 'Фізична особа', list: 'РНБО', date: '2023-11-05', reason: 'Фінансування тероризму', risk: 'High' },
-  { id: 3, name: 'Банк Євразія', type: 'Юридична особа', list: 'EU Consolidated', date: '2024-01-20', reason: 'Секторальні санкції', risk: 'Medium' },
-];
+import { intelligenceApi } from '@/services/api';
 
+// Дані отримуються виключно через API
 const riskLabels: Record<string, string> = {
   'Critical': 'Критичний',
   'High': 'Високий',
@@ -20,6 +17,16 @@ const riskLabels: Record<string, string> = {
 
 export const SanctionsTab: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [sanctions, setSanctions] = useState<any[]>([]);
+
+  React.useEffect(() => {
+    intelligenceApi.getSanctionsResults()
+      .then(res => setSanctions(res || []))
+      .catch(err => {
+        console.warn('API OFFLINE: Збій отримання санкцій', err);
+        setSanctions([]);
+      });
+  }, []);
 
   return (
     <div className="flex flex-col h-full gap-4 p-4 lg:p-6 overflow-y-auto custom-scrollbar bg-slate-950/40">
@@ -71,7 +78,7 @@ export const SanctionsTab: React.FC = () => {
           </div>
 
           <div className="space-y-4">
-            {MOCK_SANCTIONS.map((item, idx) => (
+            {sanctions.map((item, idx) => (
               <motion.div
                 key={item.id}
                 initial={{ opacity: 0, x: 20 }}

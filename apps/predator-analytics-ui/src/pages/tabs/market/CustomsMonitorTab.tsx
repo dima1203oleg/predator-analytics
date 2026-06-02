@@ -14,18 +14,12 @@ import { useBackendStatus } from '@/hooks/useBackendStatus';
 
 import { intelligenceApi, marketApi } from '@/services/api';
 
-// --- MOCK DATA FALLBACK ---
-const MOCK_TRADE_VOLUME = [
-  { day: '01.03', import: 420, export: 310 },
-  { day: '10.03', import: 510, export: 340 },
-  { day: '20.03', import: 620, export: 380 },
-  { day: '30.03', import: 710, export: 490 },
-];
+// Дані отримуються виключно через API
 
 export const CustomsMonitorTab: React.FC = () => {
   const [activeSubTab, setActiveSubTab] = useState<'analytics' | 'risks'>('analytics');
   const [alerts, setAlerts] = useState<any[]>([]);
-  const [trends, setTrends] = useState<any[]>(MOCK_TRADE_VOLUME);
+  const [trends, setTrends] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const { isOffline } = useBackendStatus();
 

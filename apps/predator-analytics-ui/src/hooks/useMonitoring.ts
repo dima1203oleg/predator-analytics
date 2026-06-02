@@ -75,103 +75,16 @@ interface MonitoringCoreResult {
 
 /* ── Mock-дані (offline fallback) ──────────────────────── */
 
-const MOCK_METRICS: CoreMetrics = {
-  cpu_usage_pct: 34.2,
-  memory_usage_pct: 61.8,
-  api_latency_ms: 4.2,
-  disk_usage_pct: 47.5,
+const EMPTY_METRICS: CoreMetrics = {
+  cpu_usage_pct: 0,
+  memory_usage_pct: 0,
+  api_latency_ms: 0,
+  disk_usage_pct: 0,
 };
 
-const MOCK_NODES: ClusterNode[] = [
-  {
-    id: 'node-imac-199',
-    name: 'iMac-Compute-199',
-    statusLabel: 'АКТИВНИЙ',
-    tone: 'emerald',
-    cpu_percent: 42,
-    memory_percent: 58,
-    detail: '192.168.0.200 | k3s master | 32GB RAM',
-  },
-  {
-    id: 'node-nvidia-240',
-    name: 'NVIDIA-Server-240',
-    statusLabel: 'АКТИВНИЙ',
-    tone: 'emerald',
-    cpu_percent: 67,
-    memory_percent: 73,
-    detail: '194.177.1.240 | GPU H100 | 128GB RAM',
-  },
-  {
-    id: 'node-worker-01',
-    name: 'Worker-Kafka-01',
-    statusLabel: 'ОБРОБКА',
-    tone: 'sky',
-    cpu_percent: 28,
-    memory_percent: 45,
-    detail: 'Kafka Consumer | Partitions: 12',
-  },
-  {
-    id: 'node-worker-02',
-    name: 'Worker-Graph-02',
-    statusLabel: 'СИНХРОНІЗАЦІЯ',
-    tone: 'amber',
-    cpu_percent: 55,
-    memory_percent: 62,
-    detail: 'Neo4j GDS Projection | 847k вузлів',
-  },
-];
-
-const MOCK_LOGS: LogEntry[] = [
-  { timestampLabel: '14:08:42', level: 'INFO', service: 'CORE-API', message: 'Маршрутизація запиту /api/v1/dashboard/overview завершена', latencyLabel: '4.2ms' },
-  { timestampLabel: '14:08:38', level: 'INFO', service: 'ІНГЕСТІЯ', message: 'Оброблено пакет 1,247 декларацій (CSV формат)', latencyLabel: '1.8s' },
-  { timestampLabel: '14:08:35', level: 'WARNING', service: 'GRAPH-SVC', message: 'Високе навантаження Neo4j — GDS projection повторно обчислюється', latencyLabel: '12.4s' },
-  { timestampLabel: '14:08:30', level: 'INFO', service: 'SEARCH', message: 'OpenSearch індекс оновлено: 42,891 документів', latencyLabel: '340ms' },
-  { timestampLabel: '14:08:22', level: 'ERROR', service: 'QDRANT', message: 'Тайм-аут при вставці 500 embedding-векторів у колекцію predator_docs', latencyLabel: '30s' },
-  { timestampLabel: '14:08:15', level: 'INFO', service: 'REDIS', message: 'Очищення кешу сесій: видалено 124 застарілих ключі', latencyLabel: '12ms' },
-  { timestampLabel: '14:08:10', level: 'INFO', service: 'LLM', message: 'GLM-5.1: Генерація ризик-звіту для UEID-4592 завершена', latencyLabel: '2.1s' },
-  { timestampLabel: '14:07:58', level: 'CRITICAL', service: 'KAFKA', message: 'Lag споживача ingestion-group-1 перевищив 10,000 повідомлень', latencyLabel: undefined },
-  { timestampLabel: '14:07:45', level: 'INFO', service: 'MINIO', message: 'Завантажено сканований документ до бакету predator-docs: scan_2026-05-06.pdf' },
-  { timestampLabel: '14:07:30', level: 'WARNING', service: 'AUTH', message: 'Спроба автентифікації з невідомого IP: 91.234.xx.xx (заблоковано)' },
-];
-
-const MOCK_PIPELINES: PipelineJob[] = [
-  {
-    id: 'PL-001',
-    title: 'ІНГЕСТІЯ_МИТНИХ_ДАНИХ',
-    statusLabel: 'ВИКОНУЄТЬСЯ',
-    stageLabel: 'ПАРСИНГ CSV',
-    tone: 'emerald',
-    isActive: true,
-    progress: 68,
-    progressLabel: '68%',
-    processedLabel: '8,421 / 12,400 записів',
-    startedAtLabel: 'Запущено: 14:02:00',
-  },
-  {
-    id: 'PL-002',
-    title: 'ГРАФ_СИНХРОНІЗАЦІЯ',
-    statusLabel: 'ЧЕРГА',
-    stageLabel: 'ОЧІКУВАННЯ ВУЗЛІВ',
-    tone: 'amber',
-    isActive: false,
-    progress: 0,
-    progressLabel: '0%',
-    processedLabel: undefined,
-    startedAtLabel: 'У черзі з 14:05:00',
-  },
-  {
-    id: 'PL-003',
-    title: 'VECTOR_EMBEDDING_BATCH',
-    statusLabel: 'ВИКОНУЄТЬСЯ',
-    stageLabel: 'ГЕНЕРАЦІЯ EMBEDDINGS',
-    tone: 'sky',
-    isActive: true,
-    progress: 34,
-    progressLabel: '34%',
-    processedLabel: '4,200 / 12,000 документів',
-    startedAtLabel: 'Запущено: 13:55:00',
-  },
-];
+const EMPTY_NODES: ClusterNode[] = [];
+const EMPTY_LOGS: LogEntry[] = [];
+const EMPTY_PIPELINES: PipelineJob[] = [];
 
 /* ── Mappers: API → UI типи ───────────────────────────── */
 
@@ -184,7 +97,7 @@ const mapApiStatsToMetrics = (stats: any): CoreMetrics => ({
 
 const mapApiClusterToNodes = (cluster: any): ClusterNode[] => {
   const nodes = Array.isArray(cluster?.nodes) ? cluster.nodes : cluster?.items ?? [];
-  if (nodes.length === 0) return MOCK_NODES;
+  if (nodes.length === 0) return EMPTY_NODES;
   return nodes.map((n: any, i: number) => ({
     id: String(n.id ?? n.name ?? `node-${i}`),
     name: String(n.name ?? n.id ?? `Вузол ${i + 1}`),
@@ -197,7 +110,7 @@ const mapApiClusterToNodes = (cluster: any): ClusterNode[] => {
 };
 
 const mapApiLogsToEntries = (logs: any[]): LogEntry[] => {
-  if (!Array.isArray(logs) || logs.length === 0) return MOCK_LOGS;
+  if (!Array.isArray(logs) || logs.length === 0) return EMPTY_LOGS;
   return logs.slice(0, 20).map((log: any) => ({
     timestampLabel: typeof log.timestamp === 'string'
       ? log.timestamp.slice(11, 19)
@@ -210,7 +123,7 @@ const mapApiLogsToEntries = (logs: any[]): LogEntry[] => {
 };
 
 const mapApiJobsToPipelines = (jobs: any[]): PipelineJob[] => {
-  if (!Array.isArray(jobs) || jobs.length === 0) return MOCK_PIPELINES;
+  if (!Array.isArray(jobs) || jobs.length === 0) return EMPTY_PIPELINES;
   return jobs.slice(0, 10).map((job: any, i: number) => ({
     id: String(job.id ?? job.job_id ?? `PL-${String(i).padStart(3, '0')}`),
     title: String(job.title ?? job.name ?? job.type ?? `JOB_${i}`).toUpperCase(),
@@ -315,15 +228,15 @@ export function useMonitoringCore(): MonitoringCoreResult {
   }, [fetchRealData]);
 
   // Вибір: реальні дані або мок (fallback)
-  const metrics = realMetrics ?? MOCK_METRICS;
+  const metrics = realMetrics ?? EMPTY_METRICS;
   const cluster = realCluster ?? {
-    statusLabel: 'Справно',
-    nodeCount: MOCK_NODES.length,
-    podCount: 24,
-    nodes: MOCK_NODES,
+    statusLabel: 'Офлайн',
+    nodeCount: EMPTY_NODES.length,
+    podCount: 0,
+    nodes: EMPTY_NODES,
   };
-  const logs = realLogs ?? MOCK_LOGS;
-  const pipelines = realPipelines ?? MOCK_PIPELINES;
+  const logs = realLogs ?? EMPTY_LOGS;
+  const pipelines = realPipelines ?? EMPTY_PIPELINES;
 
   const lastUpdateLabel = useMemo(() => {
     const diff = Date.now() - lastUpdate.getTime();

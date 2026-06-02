@@ -9,12 +9,7 @@ import {
 import { cn } from '@/utils/cn';
 import { intelligenceApi } from '@/services/api';
 
-// --- MOCK DATA ---
-const MOCK_SUPPLIERS = [
-  { id: 'S1', name: 'ZHEJIANG ELECTRONICS CO.', country: 'China', city: 'Shenzhen', reliability: 94, competitiveness: 88, products: ['Chips', 'Circuit Boards'] },
-  { id: 'S2', name: 'NORDIC LOGISTICS AG', country: 'Germany', city: 'Hamburg', reliability: 98, competitiveness: 65, products: ['Engines', 'Pumps'] },
-  { id: 'S3', name: 'GLOBAL AGRO TRADE', country: 'Turkey', city: 'Istanbul', reliability: 45, competitiveness: 92, products: ['Seeds', 'Fertilizers'] },
-];
+// Дані отримуються виключно через API
 
 const ReliabilityBadge: React.FC<{ score: number }> = ({ score }) => {
   const isHigh = score >= 90;
@@ -46,7 +41,7 @@ export const SupplierRadarTab: React.FC = () => {
         setSuppliers(data || []);
       } catch (error) {
         console.error('Failed to fetch suppliers', error);
-        setSuppliers(MOCK_SUPPLIERS);
+        setSuppliers([]);
       } finally {
         setLoading(false);
       }
@@ -55,7 +50,7 @@ export const SupplierRadarTab: React.FC = () => {
   }, []);
 
   const filtered = useMemo(() => {
-    const list = suppliers.length > 0 ? suppliers : MOCK_SUPPLIERS;
+    const list = suppliers;
     return list.filter(s => 
       s.name.toLowerCase().includes(search.toLowerCase()) || 
       (s.products && Array.isArray(s.products) && s.products.some((p: string) => p.toLowerCase().includes(search.toLowerCase())))

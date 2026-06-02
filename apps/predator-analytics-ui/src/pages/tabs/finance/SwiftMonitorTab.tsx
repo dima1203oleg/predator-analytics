@@ -22,26 +22,11 @@ import { Badge } from '@/components/ui/badge';
 import { analyticsService, SuspiciousTx } from '@/services/unified/analytics.service';
 import { SovereignAudio } from '@/utils/sovereign-audio';
 
-const MOCK_SWIFT_FLOW = [
-  { hour: '00:00', normal: 12, suspicious: 0.2 },
-  { hour: '04:00', normal: 5,  suspicious: 0.4 },
-  { hour: '08:00', normal: 45, suspicious: 1.2 },
-  { hour: '12:00', normal: 120, suspicious: 14.4 },
-  { hour: '16:00', normal: 84, suspicious: 4.8 },
-  { hour: '20:00', normal: 38, suspicious: 1.6 },
-  { hour: '23:59', normal: 14, suspicious: 0.3 },
-];
-
-const MOCK_SUSPICIOUS_TX = [
-  { id: 'TX-ELITE-8821', from: 'ТОВ "АГ О-ЛІДЕ "', to: 'Kyoto Holdings Ltd (BVI)', amount: '$4.7M', currency: 'USD', time: '12:14:22', risk: 98, type: 'Фіктивна компанія', route: 'UA → BVI → ОАЕ' },
-  { id: 'TX-ELITE-7203', from: 'БФ "ВІД ОДЖЕННЯ"', to: 'Sunrise Capital Ltd (CY)', amount: '$2.1M', currency: 'USD', time: '10:47:08', risk: 89, type: 'Шайрування', route: 'UA → CY → MT' },
-  { id: 'TX-ELITE-5509', from: 'ФОП ТКАЧЕНКО В.М.', to: 'Gulf Meridian FZCO (UAE)', amount: '$1.4M', currency: 'AED', time: '08:55:19', risk: 94, type: 'PEP експозиція', route: 'UA → AE → SA' },
-  { id: 'TX-ELITE-4412', from: 'ТОВ "МЕТАЛ-Г УП"', to: 'Belize Trust Corp (BZ)', amount: '$3.2M', currency: 'USD', time: '07:14:55', risk: 92, type: 'Санкційний вузол', route: 'UA → BZ → PA' },
-];
+// Дані отримуються виключно через API
 
 export const SwiftMonitorTab: React.FC = () => {
-  const [swiftData, setSwiftData] = useState(MOCK_SWIFT_FLOW);
-  const [suspiciousTx, setSuspiciousTx] = useState<SuspiciousTx[]>(MOCK_SUSPICIOUS_TX);
+  const [swiftData, setSwiftData] = useState<any[]>([]);
+  const [suspiciousTx, setSuspiciousTx] = useState<SuspiciousTx[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -53,7 +38,9 @@ export const SwiftMonitorTab: React.FC = () => {
           if (result.suspicious) setSuspiciousTx(result.suspicious);
         }
       } catch (err) {
-        console.warn('Using fallback data for SwiftMonitorTab');
+        console.warn('API OFFLINE: Збій отримання SWIFT даних', err);
+        setSwiftData([]);
+        setSuspiciousTx([]);
       }
     };
     fetchData();

@@ -20,17 +20,10 @@ import { cn } from '@/lib/utils';
 import { CyberOrb } from '@/components/CyberOrb';
 import { analyticsService } from '@/services/unified/analytics.service';
 
-const MOCK_AML_RADAR = [
-  { subject: 'СТ УКТУ УВАННЯ', A: 120, B: 110 },
-  { subject: 'ШАЙ УВАННЯ', A: 98, B: 130 },
-  { subject: 'ОФШО ІЗАЦІЯ', A: 86, B: 130 },
-  { subject: 'PEP-РИЗИК', A: 140, B: 100 },
-  { subject: 'САНКЦІЇ', A: 125, B: 90 },
-  { subject: 'ТЕ  ПОТОКИ', A: 65, B: 85 },
-];
+// Дані отримуються виключно через API
 
 export const AMLRadarTab: React.FC = () => {
-  const [amlRadar, setAmlRadar] = useState(MOCK_AML_RADAR);
+  const [amlRadar, setAmlRadar] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,7 +33,8 @@ export const AMLRadarTab: React.FC = () => {
           setAmlRadar(result.aml as any);
         }
       } catch (err) {
-        console.warn('Using fallback data for AMLRadarTab');
+        console.warn('API OFFLINE: Збій отримання AML даних', err);
+        setAmlRadar([]);
       }
     };
     fetchData();

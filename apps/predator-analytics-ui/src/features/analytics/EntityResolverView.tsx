@@ -51,97 +51,7 @@ interface EntityMatch {
   suggestedAction: 'merge' | 'review' | 'reject';
 }
 
-// ─── Mock-дані ────────────────────────────────────────────────────────────────
-
-const MOCK_MATCHES: EntityMatch[] = [
-  {
-    id: 'MATCH-001',
-    confidence: 97,
-    status: 'high',
-    suggestedAction: 'merge',
-    matchedFields: ['ЄДРПОУ', 'Назва', 'Адреса'],
-    primaryRecord: {
-      id: 'ENT-001',
-      source: 'ЄДРУкраїни',
-      name: 'ТОВ "ГОЛДЕН Т ЕЙД"',
-      type: 'company',
-      identifiers: [
-        { key: 'ЄДРПОУ', value: '44891234' },
-        { key: 'МФО', value: '320478' },
-      ],
-      lastSeen: '2025-04-20',
-    },
-    duplicateRecord: {
-      id: 'ENT-002',
-      source: 'Митні декларації',
-      name: 'ТОВ ГОЛДЕН Т ЕЙД',
-      type: 'company',
-      identifiers: [
-        { key: 'ЄДРПОУ', value: '44891234' },
-        { key: 'Декларант', value: 'UA80E0' },
-      ],
-      lastSeen: '2025-04-18',
-    },
-  },
-  {
-    id: 'MATCH-002',
-    confidence: 84,
-    status: 'high',
-    suggestedAction: 'merge',
-    matchedFields: ['ІПН', 'Прізвище', 'Дата народження'],
-    primaryRecord: {
-      id: 'ENT-003',
-      source: 'Санкційний список OFAC',
-      name: 'Marchenko Roman H.',
-      type: 'person',
-      identifiers: [
-        { key: 'Дата нар.', value: '1978-03-12' },
-        { key: 'Паспорт', value: 'FH123456' },
-      ],
-      lastSeen: '2025-04-01',
-    },
-    duplicateRecord: {
-      id: 'ENT-004',
-      source: 'ОСМД-база',
-      name: 'Марченко  оман Григорович',
-      type: 'person',
-      identifiers: [
-        { key: 'ІПН', value: '2834891234' },
-        { key: 'Дата нар.', value: '12.03.1978' },
-      ],
-      lastSeen: '2025-04-20',
-    },
-  },
-  {
-    id: 'MATCH-003',
-    confidence: 61,
-    status: 'medium',
-    suggestedAction: 'review',
-    matchedFields: ['Адреса', 'Телефон'],
-    primaryRecord: {
-      id: 'ENT-005',
-      source: 'ЄДРУкраїни',
-      name: 'АГ О-П АЙМ ТОВ',
-      type: 'company',
-      identifiers: [
-        { key: 'ЄДРПОУ', value: '38012345' },
-        { key: 'Директор', value: 'Петренко М.О.' },
-      ],
-      lastSeen: '2025-03-15',
-    },
-    duplicateRecord: {
-      id: 'ENT-006',
-      source: 'Судовий реєстр',
-      name: 'ТОВ АГ ОП АЙМ',
-      type: 'company',
-      identifiers: [
-        { key: 'ЄДРПОУ', value: '38012345' },
-        { key: 'Позивач', value: 'АП-2024-1234' },
-      ],
-      lastSeen: '2024-11-20',
-    },
-  },
-];
+// Дані отримуються виключно через API
 
 // ─── Конфігурація ─────────────────────────────────────────────────────────────
 
@@ -259,7 +169,7 @@ function MatchCard({ match, onResolve }: { match: EntityMatch; onResolve: (id: s
 // ─── Головний компонент ───────────────────────────────────────────────────────
 
 export const EntityResolverView: React.FC = () => {
-  const [matches, setMatches] = useState<EntityMatch[]>(MOCK_MATCHES);
+  const [matches, setMatches] = useState<EntityMatch[]>([]);
   const [resolved, setResolved] = useState<string[]>([]);
 
   const handleResolve = (id: string, action: 'merge' | 'reject') => {
@@ -293,9 +203,9 @@ export const EntityResolverView: React.FC = () => {
       {/* Статистика */}
       <div className="grid grid-cols-4 gap-3">
         {[
-          { label: 'Потенційних дублів', value: MOCK_MATCHES.length, icon: Layers, color: 'text-white/60' },
-          { label: 'Висока впевненість', value: MOCK_MATCHES.filter(m => m.confidence >= 85).length, icon: CheckCircle2, color: 'text-emerald-400' },
-          { label: 'На перевірці', value: MOCK_MATCHES.filter(m => m.suggestedAction === 'review').length, icon: Eye, color: 'text-amber-400' },
+          { label: 'Потенційних дублів', value: matches.length, icon: Layers, color: 'text-white/60' },
+          { label: 'Висока впевненість', value: matches.filter(m => m.confidence >= 85).length, icon: CheckCircle2, color: 'text-emerald-400' },
+          { label: 'На перевірці', value: matches.filter(m => m.suggestedAction === 'review').length, icon: Eye, color: 'text-amber-400' },
           { label: 'Вирішено', value: resolved.length, icon: Check, color: 'text-sky-400' },
         ].map(({ label, value, icon: Icon, color }) => (
           <div key={label} className="p-4 rounded-lg bg-white/[0.03] border border-white/[0.06]">

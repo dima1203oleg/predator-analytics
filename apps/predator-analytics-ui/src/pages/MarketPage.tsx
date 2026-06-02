@@ -35,8 +35,11 @@ import {
 } from 'lucide-react';
 
 import { ValueScreen, type ValueBreakdown } from '@/components/shared/ValueScreen';
+import { useViewport } from '@/hooks/useViewport';
+import { MobileMarketHub } from './MobileMarketHub';
+import { ArrowLeft } from 'lucide-react';
 
-type MarketTab = 'overview' | 'declarations' | 'competitors' | 'customs' | 'arbitrage';
+type MarketTab = 'overview' | 'declarations' | 'competitors' | 'customs' | 'arbitrage' | 'menu';
 
 interface OverviewStats {
   total_declarations: number;
@@ -273,32 +276,11 @@ const buildCustomsChartOption = (declarations: DeclarationResponse[]) => {
   };
 };
 
-// --- MOCK DATA FALLBACK (v62.7-ELITE) ---
-const MOCK_MARKET_OVERVIEW = {
-  overview: {
-    stats: {
-      total_declarations: 5842190,
-      declarations_change: 18.2,
-      total_value_usd: 14200000000,
-      value_change: 11.4,
-      active_companies: 18940,
-      companies_change: 6.8,
-      total_products: 112450,
-      products_change: 22.1,
-    },
-    top_products: [
-      { product_code: "8517", product_name: "Смартфони та обладнання зв'язку", total_value_usd: 520000000, growth_rate: 28.4 },
-      { product_code: "2710", product_name: "Нафтопродукти (Дизель/Бензин)", total_value_usd: 1150000000, growth_rate: 15.2 },
-      { product_code: "8703", product_name: "Транспортні засоби", total_value_usd: 420000000, growth_rate: -2.1 },
-      { product_code: "8471", product_name: "Обчислювальні машини / Сервери", total_value_usd: 180000000, growth_rate: 52.3 },
-      { product_code: "3004", product_name: "Лікарські засоби", total_value_usd: 290000000, growth_rate: 8.7 },
-    ]
-  }
-} as MarketOverviewPayload;
-
+// No mock fallback anymore - exclusively using Kaggle backend.
 export default function MarketPage() {
   const backendStatus = useBackendStatus();
-  const [activeTab, setActiveTab] = useState<MarketTab>('overview');
+  const { isCompact } = useViewport();
+  const [activeTab, setActiveTab] = useState<MarketTab>(isCompact ? 'menu' : 'overview');
   const [overviewData, setOverviewData] = useState<MarketOverviewPayload | null>(null);
   const [declarations, setDeclarations] = useState<DeclarationResponse[]>([]);
   const [competitors, setCompetitors] = useState<Competitor[]>([]);
@@ -367,9 +349,8 @@ export default function MarketPage() {
         const data = await dashboardApi.getOverview();
         setOverviewData(data as unknown as MarketOverviewPayload);
       } catch (error) {
-        console.warn('[MarketPage] API OFFLINE, FALLBACK TO MOCK:', error);
-        setOverviewData(MOCK_MARKET_OVERVIEW);
-        setOverviewError('СИСТЕМА В АВТОНОМНОМУ РЕЖИМІ. Дані базуються на останньому збереженому зліпку ринку.');
+        console.warn('[MarketPage] API OFFLINE:', error);
+        setOverviewError('СИСТЕМА В АВТОНОМНОМУ РЕЖИМІ. Дані недоступні.');
       } finally {
         setLoadingOverview(false);
       }
@@ -459,104 +440,128 @@ export default function MarketPage() {
 
   useContextRail(marketRailPayload);
 
+  if (isCompact && activeTab === 'menu') {
+    return (
+      <div className="p-3">
+        <MobileMarketHub onSelectTab={(tab) => setActiveTab(tab as MarketTab)} />
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-6">
+    <div className={cn("space-y-6", isCompact ? "p-3" : "")}>
+      {isCompact && activeTab !== 'menu' && (
+        <div className="p-4 bg-black border border-white/10 rounded-2xl flex items-center gap-4 mb-4">
+          <button 
+            onClick={() => setActiveTab('menu')}
+            className="p-3 rounded-2xl bg-white/5 border border-white/10 text-white"
+          >
+            <ArrowLeft size={24} />
+          </button>
+          <h2 className="text-lg font-black text-white italic tracking-widest uppercase">НАЗАД ДО МЕНЮ</h2>
+        </div>
+      )}
+      
       {/* ELITE HERO SECTION */}
-      <section className="relative overflow-hidden rounded-[48px] border border-red-500/20 bg-[#020202] p-8 shadow-[0_40px_120px_rgba(220,38,38,0.15)] sm:p-12">
-        <div className="absolute top-0 right-0 p-12 opacity-[0.05] pointer-events-none transform rotate-45 scale-150">
-          <BarChart3 size={320} strokeWidth={0.2} className="text-red-600" />
-        </div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_-30%,rgba(220,38,38,0.18),transparent_60%)] pointer-events-none" />
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-600/40 to-transparent" />
+      {!isCompact && (
+        <section className="relative overflow-hidden rounded-[48px] border border-red-500/20 bg-[#020202] p-8 shadow-[0_40px_120px_rgba(220,38,38,0.15)] sm:p-12">
+          <div className="absolute top-0 right-0 p-12 opacity-[0.05] pointer-events-none transform rotate-45 scale-150">
+            <BarChart3 size={320} strokeWidth={0.2} className="text-red-600" />
+          </div>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_-30%,rgba(220,38,38,0.18),transparent_60%)] pointer-events-none" />
+          <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-600/40 to-transparent" />
 
-        <div className="flex flex-col gap-12 xl:flex-row xl:items-start xl:justify-between relative z-10">
-          <div className="flex-1 space-y-8">
-            <div className="flex flex-wrap items-center gap-4">
-              <div className="flex items-center gap-2 rounded-full border border-red-500/30 bg-red-500/10 px-4 py-1.5 ">
-                <div className="h-1.5 w-1.5 rounded-full bg-red-500 " />
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-red-500 italic">PREDATOR v62.7-ELITE</span>
+          <div className="flex flex-col gap-12 xl:flex-row xl:items-start xl:justify-between relative z-10">
+            <div className="flex-1 space-y-8">
+              <div className="flex flex-wrap items-center gap-4">
+                <div className="flex items-center gap-2 rounded-full border border-red-500/30 bg-red-500/10 px-4 py-1.5 ">
+                  <div className="h-1.5 w-1.5 rounded-full bg-red-500 " />
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-red-500 italic">PREDATOR v62.7-ELITE</span>
+                </div>
+                <div className={cn(
+                  "rounded-full border px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] ",
+                  backendStatus.isOffline ? "border-rose-500/30 text-rose-500 bg-rose-500/5" : "border-emerald-500/30 text-emerald-500 bg-emerald-500/5"
+                )}>
+                  {backendStatus.statusLabel}
+                </div>
               </div>
-              <div className={cn(
-                "rounded-full border px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] ",
-                backendStatus.isOffline ? "border-rose-500/30 text-rose-500 bg-rose-500/5" : "border-emerald-500/30 text-emerald-500 bg-emerald-500/5"
-              )}>
-                {backendStatus.statusLabel}
+
+              <div className="space-y-4">
+                <h1 className="flex flex-col text-5xl font-black tracking-tighter text-white sm:text-7xl lg:text-8xl uppercase italic leading-none">
+                  <span>РИНКОВИЙ</span>
+                  <span className="text-red-600 ">ІНТЕЛЕКТ</span>
+                </h1>
+                <p className="max-w-xl text-xl font-medium leading-relaxed text-slate-400/80 [text-wrap:balance]">
+                  Глобальна дешифровка митних потоків, моніторинг цінового арбітражу та розвідка конкурентного середовища.
+                </p>
               </div>
             </div>
 
-            <div className="space-y-4">
-              <h1 className="flex flex-col text-5xl font-black tracking-tighter text-white sm:text-7xl lg:text-8xl uppercase italic leading-none">
-                <span>РИНКОВИЙ</span>
-                <span className="text-red-600 ">ІНТЕЛЕКТ</span>
-              </h1>
-              <p className="max-w-xl text-xl font-medium leading-relaxed text-slate-400/80 [text-wrap:balance]">
-                Глобальна дешифровка митних потоків, моніторинг цінового арбітражу та розвідка конкурентного середовища.
-              </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 xl:w-[540px]">
+              <div className="group rounded-[32px] border border-white/[0.08] bg-white/[0.02] p-6 transition-all hover:border-red-500/40 hover:bg-red-500/[0.02]">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="h-2 w-2 rounded-full bg-red-600" />
+                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">КОНЦЕНТРАЦІЯ</span>
+                </div>
+                <div className="text-3xl font-black text-white italic">{marketHHI}</div>
+                <div className="text-[10px] text-red-500/80 mt-2 font-bold uppercase tracking-wider">HHI INDEX | {marketHHI > 2500 ? 'МОНОПОЛІЯ' : 'КОНКУРЕНЦІЯ'}</div>
+              </div>
+
+              <div className="group rounded-[32px] border border-white/[0.08] bg-white/[0.02] p-6 transition-all hover:border-red-500/40 hover:bg-red-500/[0.02]">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="h-2 w-2 rounded-full bg-emerald-500" />
+                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">АРБІТРАЖ</span>
+                </div>
+                <div className="text-3xl font-black text-white italic">4.2%</div>
+                <div className="text-[10px] text-emerald-500/80 mt-2 font-bold uppercase tracking-wider">PRICE DEVIATION DETECTED</div>
+              </div>
+
+              <Button 
+                className="col-span-1 sm:col-span-2 h-20 rounded-[32px] bg-red-600 text-white hover:bg-red-700 shadow-[0_20px_40px_rgba(220,38,38,0.3)] group overflow-hidden relative"
+                onClick={() => handleSimulateValue("Глобальний ринок")}
+              >
+                <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.1)_50%,transparent_75%)] bg-[length:250%_250%] animate-[shimmer_3s_infinite]" />
+                <div className="relative z-10 flex items-center justify-center gap-4 text-xl font-black uppercase italic tracking-tighter">
+                  <Target size={28} />
+                  ГЕНЕРУВАТИ СТРАТЕГІЧНИЙ ROI
+                </div>
+              </Button>
             </div>
           </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 xl:w-[540px]">
-            <div className="group rounded-[32px] border border-white/[0.08] bg-white/[0.02] p-6 transition-all hover:border-red-500/40 hover:bg-red-500/[0.02]">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="h-2 w-2 rounded-full bg-red-600" />
-                <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">КОНЦЕНТРАЦІЯ</span>
-              </div>
-              <div className="text-3xl font-black text-white italic">{marketHHI}</div>
-              <div className="text-[10px] text-red-500/80 mt-2 font-bold uppercase tracking-wider">HHI INDEX | {marketHHI > 2500 ? 'МОНОПОЛІЯ' : 'КОНКУРЕНЦІЯ'}</div>
-            </div>
-
-            <div className="group rounded-[32px] border border-white/[0.08] bg-white/[0.02] p-6 transition-all hover:border-red-500/40 hover:bg-red-500/[0.02]">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="h-2 w-2 rounded-full bg-emerald-500" />
-                <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">АРБІТРАЖ</span>
-              </div>
-              <div className="text-3xl font-black text-white italic">4.2%</div>
-              <div className="text-[10px] text-emerald-500/80 mt-2 font-bold uppercase tracking-wider">PRICE DEVIATION DETECTED</div>
-            </div>
-
-            <Button 
-              className="col-span-1 sm:col-span-2 h-20 rounded-[32px] bg-red-600 text-white hover:bg-red-700 shadow-[0_20px_40px_rgba(220,38,38,0.3)] group overflow-hidden relative"
-              onClick={() => handleSimulateValue("Глобальний ринок")}
-            >
-              <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.1)_50%,transparent_75%)] bg-[length:250%_250%] animate-[shimmer_3s_infinite]" />
-              <div className="relative z-10 flex items-center justify-center gap-4 text-xl font-black uppercase italic tracking-tighter">
-                <Target size={28} />
-                ГЕНЕРУВАТИ СТРАТЕГІЧНИЙ ROI
-              </div>
-            </Button>
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* TABS NAV */}
-      <div className="flex items-center justify-between p-2 rounded-[28px] border border-white/[0.08] bg-white/[0.02] ">
-        <div className="flex flex-wrap gap-2">
-          {tabs.map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key)}
-              className={cn(
-                'group flex items-center gap-3 rounded-2xl border px-6 py-3 text-[11px] font-black uppercase tracking-widest transition-all italic',
-                activeTab === tab.key
-                  ? 'border-red-500/40 bg-red-500/10 text-red-500 '
-                  : 'border-transparent text-slate-500 hover:text-slate-200 hover:bg-white/5',
-              )}
-            >
-              <span className={cn("transition-transform group-hover:scale-110", activeTab === tab.key && "")}>
-                {tab.icon}
-              </span>
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="hidden md:flex items-center gap-4 px-6 border-l border-white/[0.08]">
-          <div className="flex flex-col items-end">
-            <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">ПОТОКОВИЙ АНАЛІЗ</span>
-            <span className="text-xs font-bold text-red-500">АКТИВНИЙ</span>
+      {!isCompact && (
+        <div className="flex items-center justify-between p-2 rounded-[28px] border border-white/[0.08] bg-white/[0.02] ">
+          <div className="flex flex-wrap gap-2">
+            {tabs.map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={cn(
+                  'group flex items-center gap-3 rounded-2xl border px-6 py-3 text-[11px] font-black uppercase tracking-widest transition-all italic',
+                  activeTab === tab.key
+                    ? 'border-red-500/40 bg-red-500/10 text-red-500 '
+                    : 'border-transparent text-slate-500 hover:text-slate-200 hover:bg-white/5',
+                )}
+              >
+                <span className={cn("transition-transform group-hover:scale-110", activeTab === tab.key && "")}>
+                  {tab.icon}
+                </span>
+                {tab.label}
+              </button>
+            ))}
           </div>
-          <Activity size={18} className="text-red-600 " />
+          <div className="hidden md:flex items-center gap-4 px-6 border-l border-white/[0.08]">
+            <div className="flex flex-col items-end">
+              <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">ПОТЕНЦІЙНИЙ ПРИБУТОК</span>
+              <span className="text-xs font-bold text-red-500">АКТИВНИЙ</span>
+            </div>
+            <Activity size={18} className="text-red-600 " />
+          </div>
         </div>
-      </div>
+      )}
 
       <AnimatePresence mode="wait">
         <motion.div
