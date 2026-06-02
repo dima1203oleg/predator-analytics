@@ -71,9 +71,9 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const { mode } = useTheme();
   const { mode: displayMode } = useDisplayMode();
   const displayFrameClass =
-    displayMode === DisplayMode.MOBILE
-      ? 'max-w-[430px]'
-      : displayMode === DisplayMode.TABLET
+    isCompact
+      ? 'w-full'
+      : isMedium
         ? 'max-w-[940px]'
         : 'max-w-[1920px]';
 

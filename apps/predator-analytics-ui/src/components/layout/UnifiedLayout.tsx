@@ -1,7 +1,7 @@
 import React, { useState, ReactNode, useEffect } from 'react';
 import { Sidebar } from './Sidebar';
 import { TopBar } from './TopBar';
-import { useDisplayMode, DisplayMode } from '../../context/DisplayModeContext';
+import { useViewport } from '../../hooks/useViewport';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { useLocation } from 'react-router-dom';
@@ -11,14 +11,14 @@ interface UnifiedLayoutProps {
 }
 
 export const UnifiedLayout: React.FC<UnifiedLayoutProps> = ({ children }) => {
-  const { mode } = useDisplayMode();
+  const { isCompact, isMedium, isExpanded } = useViewport();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const location = useLocation();
 
   // Responsive rules based on display mode
-  const isDesktop = mode === DisplayMode.DESKTOP;
-  const isTablet = mode === DisplayMode.TABLET;
-  const isMobile = mode === DisplayMode.MOBILE;
+  const isMobile = isCompact;
+  const isTablet = isMedium && !isCompact;
+  const isDesktop = isExpanded;
 
   // Sidebar Layout Properties
   // Desktop: Fixed width 288px (w-72)
@@ -29,7 +29,7 @@ export const UnifiedLayout: React.FC<UnifiedLayoutProps> = ({ children }) => {
   // Close sidebar automatically when switching to Desktop/Tablet from Mobile
   useEffect(() => {
     if (!isMobile) setIsSidebarOpen(false);
-  }, [mode]);
+  }, [isMobile]);
 
   return (
     <div className="flex min-h-screen bg-[#050508] text-slate-200 font-sans selection:bg-rose-500/30 overflow-hidden">

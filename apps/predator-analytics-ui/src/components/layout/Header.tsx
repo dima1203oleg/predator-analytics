@@ -28,6 +28,7 @@ import { isShellV2Enabled } from '../../services/shell/userWorkspace';
 import OperationalModeSwitch from '../premium/OperationalModeSwitch';
 import { SystemPulseIndicator } from '../SystemPulseIndicator';
 import { DisplayMode, useDisplayMode } from '../../context/DisplayModeContext';
+import { useViewport } from '../../hooks/useViewport';
 
 // Кольорові акценти для кожного типу розділу
 const sectionGlowMap: Record<string, { gradient: string; glow: string; border: string }> = {
@@ -87,8 +88,9 @@ const Header: React.FC = () => {
   const shellV2Enabled = isShellV2Enabled();
   const { isTerminalOpen, setTerminalOpen } = useAppStore();
   const { mode: displayMode, setMode: setDisplayMode } = useDisplayMode();
-  const isMobileMode = displayMode === DisplayMode.MOBILE;
-  const isTabletMode = displayMode === DisplayMode.TABLET;
+  const { isCompact, isMedium } = useViewport();
+  const isMobileMode = isCompact;
+  const isTabletMode = isMedium && !isCompact;
 
   // Режими пристроїв для емулятора
   const deviceModes: { mode: DisplayMode; label: string; icon: React.FC<{ className?: string }> }[] = [
