@@ -17,48 +17,42 @@ export const useSystemEvents = () => {
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const connect = () => {
-    // Формуємо WS URL на основі активного API_BASE_URL
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const baseUrl = API_BASE_URL.startsWith('http')
-      ? API_BASE_URL.replace(/^http/, 'ws')
-      : `${protocol}//${window.location.host}${API_BASE_URL}`;
-    const socket = new WebSocket(`${baseUrl}/ws/system/events`);
+    // Використовуємо SSE замість WebSocket (для підтримки zrok / Kaggle)
+    const baseUrl = API_BASE_URL;
+    const eventSource = new EventSource(`${baseUrl}/events/stream`);
 
-    socket.onopen = () => {
-      console.log('✅ System Events WebSocket Connected');
+    eventSource.onopen = () => {
+      console.log('✅ System Events SSE Connected');
       setConnected(true);
     };
 
-    socket.onmessage = (event) => {
+    eventSource.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
         setLastEvent(data);
         setEvents((prev) => [data, ...prev].slice(0, 100));
       } catch (e) {
-        console.error('Error parsing WebSocket message:', e);
+        console.error('Error parsing SSE message:', e);
       }
     };
 
-    socket.onclose = () => {
-      console.log('❌ System Events WebSocket Disconnected');
+    eventSource.onerror = (error) => {
+      console.error('SSE Error:', error);
+      eventSource.close();
       setConnected(false);
       // Attempt to reconnect after 5 seconds
       reconnectTimeoutRef.current = setTimeout(connect, 5000);
     };
 
-    socket.onerror = (error) => {
-      console.error('WebSocket Error:', error);
-      socket.close();
-    };
-
-    socketRef.current = socket;
+    // Зберігаємо посилання на eventSource у socketRef (тип Any для спрощення, або просто як EventSource)
+    (socketRef as any).current = eventSource;
   };
 
   useEffect(() => {
     connect();
     return () => {
       if (socketRef.current) {
-        socketRef.current.close();
+        (socketRef.current as any).close();
       }
       if (reconnectTimeoutRef.current) {
         clearTimeout(reconnectTimeoutRef.current);
