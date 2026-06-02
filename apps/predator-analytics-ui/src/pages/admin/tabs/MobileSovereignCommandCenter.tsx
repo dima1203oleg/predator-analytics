@@ -33,7 +33,7 @@ export const MobileSovereignCommandCenter: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col gap-2">
         <h2 className="text-3xl font-black text-white uppercase tracking-tighter italic text-shadow-glow-rose">
-          SOVEREIGN <span className="text-rose-500">CENTER</span>
+          СУВЕРЕННИЙ <span className="text-rose-500">ЦЕНТР</span>
         </h2>
         <div className="flex items-center gap-2 px-3 py-1 bg-rose-500/10 border border-rose-500/30 rounded-lg self-start">
           <div className="w-2 h-2 bg-rose-500 rounded-full animate-ping" />

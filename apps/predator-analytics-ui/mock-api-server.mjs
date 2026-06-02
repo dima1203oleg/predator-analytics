@@ -372,6 +372,20 @@ export function mockApiHandler(req, res, next) {
     return sendJSON(res, { status: 'ok', uptime: systemState.system.status.uptime });
   }
 
+  // Auth check
+  if (path === '/api/v1/auth/token' && req.method === 'POST') {
+    return sendJSON(res, {
+      access_token: 'mock_jwt_token_123',
+      token_type: 'bearer',
+      user: {
+        id: 'admin-1',
+        email: 'admin@predator.ai',
+        role: 'admin',
+        permissions: ['read', 'write', 'admin']
+      }
+    });
+  }
+
   // 7. System (V1)
   if (path === '/api/v1/system/status' && req.method === 'GET') {
     systemState.system.status.timestamp = new Date().toISOString();
