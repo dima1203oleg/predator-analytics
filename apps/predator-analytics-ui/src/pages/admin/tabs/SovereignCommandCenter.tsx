@@ -45,9 +45,13 @@ const PulseIndicator: React.FC<{ active?: boolean; color?: string }> = ({ active
   </div>
 );
 
+import { useViewport } from '@/hooks/useViewport';
+import { MobileSovereignCommandCenter } from './MobileSovereignCommandCenter';
+
 // ─── SovereignCommandCenter ────────────────────────────────────────────────────
 
 export const SovereignCommandCenter: React.FC = () => {
+  const { isCompact } = useViewport();
   const { data: status } = useSystemStatus();
   const { data: stats } = useSystemStats();
   const { data: engines } = useAIEngines();
@@ -65,6 +69,10 @@ export const SovereignCommandCenter: React.FC = () => {
   const vramGb = stats?.gpu_mem_used ? (stats.gpu_mem_used / 1024).toFixed(1) : "0.0";
   const activeEnginesCount = engines?.length || 0;
   const cpuLoad = stats?.cpu_percent ? `${stats.cpu_percent.toFixed(1)}%` : "Н/Д";
+
+  if (isCompact) {
+    return <MobileSovereignCommandCenter />;
+  }
 
   return (
     <div className="p-12 h-full flex flex-col gap-10 overflow-hidden relative select-none">
