@@ -192,7 +192,7 @@ export const DiligenceTab: React.FC = () => {
                             <Filter className="w-3 h-3 text-slate-500" />
                             <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">ФІЛЬТР РИЗИКУ:</span>
                         </div>
-                        <div className="flex gap-1.5 overflow-x-auto hide-scrollbar py-1 -mx-2 px-2">
+                        <div className="flex flex-wrap gap-2 mt-2">
                             {riskFilters.map(filter => (
                                 <button 
                                     key={filter.value}
@@ -201,9 +201,9 @@ export const DiligenceTab: React.FC = () => {
                                         SovereignAudio.playPulse();
                                     }}
                                     className={cn(
-                                        "px-3.5 py-2 rounded-full text-[9px] font-black uppercase tracking-widest transition-all shrink-0 border",
+                                        "flex-1 min-w-[30%] py-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border flex items-center justify-center",
                                         riskFilter === filter.value 
-                                            ? "bg-rose-600 text-white border-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.2)]" 
+                                            ? "bg-rose-600 text-white border-rose-500 shadow-[0_0_15px_rgba(244,63,94,0.3)]" 
                                             : "bg-white/5 text-slate-400 border-white/5 hover:bg-white/10"
                                     )}
                                 >

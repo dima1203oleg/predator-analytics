@@ -59,7 +59,7 @@ export const AdaptiveNavigation: React.FC = () => {
       <>
         {/* BottomNav */}
         <nav
-          className="fixed bottom-0 left-0 right-0 z-[70] h-16 safe-area-pb"
+          className="fixed bottom-0 left-0 right-0 z-[70] h-20 safe-area-pb"
           style={{
             background: 'rgba(2,6,18,0.92)',
             backdropFilter: 'blur(20px) saturate(150%)',
@@ -76,7 +76,7 @@ export const AdaptiveNavigation: React.FC = () => {
                   key={item.id}
                   to={item.path}
                   className={cn(
-                    'flex flex-col items-center justify-center gap-0.5 min-w-[56px] h-12 rounded-xl transition-all duration-200',
+                    'flex flex-col items-center justify-center gap-1 min-w-[64px] h-16 rounded-2xl transition-all duration-200',
                     active ? 'text-rose-400' : 'text-slate-500 hover:text-slate-300'
                   )}
                 >
@@ -84,7 +84,7 @@ export const AdaptiveNavigation: React.FC = () => {
                     'relative flex items-center justify-center',
                     active && 'after:absolute after:-bottom-1 after:h-0.5 after:w-4 after:rounded-full after:bg-rose-500'
                   )}>
-                    <Icon className={cn('h-[18px] w-[18px]', active && 'drop-shadow-[0_0_6px_rgba(225,29,72,0.5)]')} />
+                    <Icon className={cn('h-[24px] w-[24px]', active && 'drop-shadow-[0_0_6px_rgba(225,29,72,0.5)]')} />
                     {item.badge && (
                       <span className="absolute -top-1 -right-1.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-rose-500 text-[8px] font-bold text-white">
                         {item.badge}
@@ -92,7 +92,7 @@ export const AdaptiveNavigation: React.FC = () => {
                     )}
                   </div>
                   <span className={cn(
-                    'text-[9px] font-bold uppercase tracking-wider leading-none',
+                    'text-[10px] font-bold uppercase tracking-wider leading-none mt-0.5',
                     active ? 'text-rose-400' : 'text-slate-500'
                   )}>
                     {item.shortLabel}
@@ -105,10 +105,10 @@ export const AdaptiveNavigation: React.FC = () => {
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen(true)}
-              className="flex flex-col items-center justify-center gap-0.5 min-w-[56px] h-12 rounded-xl text-slate-500 hover:text-slate-300 transition-all"
+              className="flex flex-col items-center justify-center gap-1 min-w-[64px] h-16 rounded-2xl text-slate-500 hover:text-slate-300 transition-all"
             >
-              <Menu className="h-[18px] w-[18px]" />
-              <span className="text-[9px] font-bold uppercase tracking-wider text-slate-500 leading-none">Меню</span>
+              <Menu className="h-[24px] w-[24px]" />
+              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 leading-none mt-0.5">Меню</span>
             </button>
           </div>
         </nav>
@@ -137,14 +137,14 @@ export const AdaptiveNavigation: React.FC = () => {
                     to={item.path}
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={cn(
-                      'flex flex-col items-center gap-2 p-3 rounded-xl transition-all',
+                      'flex flex-col items-center justify-center gap-3 p-4 rounded-2xl min-h-[100px] transition-all',
                       active
                         ? 'bg-rose-500/10 border border-rose-500/30 text-rose-400'
                         : 'bg-white/5 border border-white/5 text-slate-400 hover:bg-white/10'
                     )}
                   >
-                    <Icon className="w-5 h-5" />
-                    <span className="text-[10px] font-medium text-center leading-tight">{item.shortLabel}</span>
+                    <Icon className="w-8 h-8" />
+                    <span className="text-[11px] font-bold text-center leading-tight uppercase tracking-wider">{item.shortLabel}</span>
                   </NavLink>
                 );
               })}

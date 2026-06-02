@@ -64,7 +64,7 @@ export default function WarRoomView() {
         <AdvancedBackground mode="sovereign" />
         <CyberGrid color="rgba(244, 63, 94, 0.05)" />
         
-        <div className={cn("relative z-10 flex-1 flex flex-col max-w-[1950px] mx-auto w-full", isCompact ? "p-4 space-y-6 overflow-y-auto" : "p-10 h-screen overflow-hidden space-y-8")}>
+        <div className={cn("relative z-10 flex-1 flex flex-col max-w-[1950px] mx-auto w-full", isCompact ? "p-4 space-y-8 overflow-y-auto" : "p-10 h-screen overflow-hidden space-y-8")}>
           
           <ViewHeader
             title={
@@ -150,7 +150,7 @@ export default function WarRoomView() {
                    </div>
 
                    <div className="flex-1 flex flex-col space-y-10 relative z-10 overflow-hidden">
-                      <div className={cn("relative rounded-[3rem] overflow-hidden border-2 border-white/5 bg-black/40 shadow-inner group", isCompact ? "h-[180px] mb-6" : "h-[45%]")}>
+                      <div className={cn("relative rounded-[3rem] overflow-hidden border-2 border-white/5 bg-black/40 shadow-inner group", isCompact ? "h-[220px] mb-6" : "h-[45%]")}>
                          <div className="absolute inset-0 z-0 opacity-40 group-hover:opacity-100 transition-opacity duration-1000 bg-amber-500/5" />
                          <div className="absolute top-6 left-6 z-10 bg-black/80 px-5 py-2.5 rounded-2xl border border-amber-500/20 ">
                             <p className="text-[10px] font-black text-amber-500 uppercase italic tracking-widest flex items-center gap-3">
@@ -209,7 +209,7 @@ export default function WarRoomView() {
 
                    <div className={cn("flex-1 relative z-10 h-full overflow-hidden", isCompact ? "flex flex-col gap-6" : "grid grid-cols-2 gap-10")}>
                       <div className="space-y-8 flex flex-col">
-                         <div className={cn("w-full border-2 border-white/5 bg-black/40 shadow-inner relative overflow-hidden group", isCompact ? "h-[150px] rounded-[2rem] p-4" : "flex-1 rounded-[2.5rem] p-6")}>
+                          <div className={cn("w-full border-2 border-white/5 bg-black/40 shadow-inner relative overflow-hidden group", isCompact ? "h-[200px] rounded-[2rem] p-4" : "flex-1 rounded-[2.5rem] p-6")}>
                             <div className="absolute inset-0 bg-emerald-500/[0.02] opacity-0 group-hover:opacity-100 transition-opacity" />
                             <ResponsiveContainer width="100%" height="100%">
                                <AreaChart data={MOCK_LINE_DATA}>
@@ -223,12 +223,12 @@ export default function WarRoomView() {
                                </AreaChart>
                             </ResponsiveContainer>
                          </div>
-                         <div className="grid grid-cols-2 gap-6">
-                            <div className="p-6 rounded-3xl bg-black border-2 border-white/5 shadow-inner group hover:border-emerald-500/30 transition-all">
+                          <div className={cn("grid", isCompact ? "grid-cols-2 gap-3" : "grid-cols-2 gap-6")}>
+                             <div className="p-6 rounded-3xl bg-black border-2 border-white/5 shadow-inner group hover:border-emerald-500/30 transition-all flex flex-col justify-center">
                                <p className="text-[9px] font-black text-slate-800 uppercase tracking-widest leading-none mb-3 italic">ОБЧИСЛЕННЯ_ЦП</p>
                                <p className="text-3xl font-black text-emerald-500 font-mono italic tracking-tighter">34.2%</p>
                             </div>
-                            <div className="p-6 rounded-3xl bg-black border-2 border-white/5 shadow-inner group hover:border-amber-500/30 transition-all">
+                             <div className="p-6 rounded-3xl bg-black border-2 border-white/5 shadow-inner group hover:border-amber-500/30 transition-all flex flex-col justify-center">
                                <p className="text-[9px] font-black text-slate-800 uppercase tracking-widest leading-none mb-3 italic">НЕЙРО-НАВАНТАЖЕННЯ</p>
                                <p className="text-3xl font-black text-amber-500 font-mono italic tracking-tighter">12.1T</p>
                             </div>
@@ -396,7 +396,7 @@ export default function WarRoomView() {
           </div>
         </div>
 
-        <div className="max-w-[1950px] mx-auto px-10 pb-24 mt-4">
+        <div className={cn("max-w-[1950px] mx-auto pb-24 mt-4 w-full", isCompact ? "px-4" : "px-10")}>
             <DiagnosticsTerminal />
         </div>
 

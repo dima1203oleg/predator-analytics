@@ -118,7 +118,7 @@ const Header: React.FC = () => {
       />
 
       <div className="mx-auto max-w-[1920px] px-3 sm:px-5 lg:px-7 xl:px-10 relative z-10">
-        <div className="flex items-center gap-6 py-4">
+        <div className={cn("flex gap-4 py-4", isMobileMode ? "flex-col" : "items-center")}>
 
           {/* ── ЛІВА ЧАСТИНА: Breadcrumb + Title ── */}
           <div className="flex-1 min-w-0">
@@ -206,23 +206,24 @@ const Header: React.FC = () => {
           </div>
 
           {/* ── ПРАВА ЧАСТИНА: Пошук + Дії ── */}
-          <div className="flex items-center gap-4 shrink-0">
+          <div className={cn("flex items-center shrink-0", isMobileMode ? "justify-between w-full" : "gap-4")}>
             {!isMobileMode && <SystemPulseIndicator />}
             
-            <div className="hidden items-center gap-1 rounded-2xl border border-white/5 bg-black/40 p-1.5 shadow-lg lg:flex">
+            <div className={cn("flex items-center gap-1 rounded-2xl border border-white/5 bg-black/40 p-1.5 shadow-lg", isMobileMode ? "" : "hidden lg:flex")}>
               {deviceModes.map(({ mode, label, icon: Icon }) => (
                 <button
                   key={mode}
                   title={`Емулятор: ${label}`}
                   onClick={() => setDisplayMode(mode)}
                   className={cn(
-                    "flex h-9 w-9 items-center justify-center rounded-xl transition-all duration-300",
+                    "flex items-center justify-center rounded-xl transition-all duration-300",
+                    isMobileMode ? "h-12 w-12" : "h-9 w-9",
                     displayMode === mode
                       ? "border border-red-500/30 bg-red-500/10 text-red-300 shadow-[inset_0_0_14px_rgba(185,28,28,0.18)]"
                       : "text-slate-600 hover:bg-white/[0.05] hover:text-white"
                   )}
                 >
-                  <Icon className="h-4 w-4" />
+                  <Icon className={cn(isMobileMode ? "h-6 w-6" : "h-4 w-4")} />
                 </button>
               ))}
             </div>
@@ -266,11 +267,14 @@ const Header: React.FC = () => {
 
               <button
                 title="Сповіщення"
-                className="relative flex h-9 w-9 items-center justify-center rounded-xl text-slate-600 hover:text-white hover:bg-white/[0.05] transition-all duration-300 group"
+                className={cn(
+                  "relative flex items-center justify-center rounded-xl text-slate-600 hover:text-white hover:bg-white/[0.05] transition-all duration-300 group",
+                  isMobileMode ? "h-12 w-12" : "h-9 w-9"
+                )}
               >
-                <Bell className="h-4 w-4" />
-                <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-rose-500 rounded-full animate-ping" />
-                <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-rose-600 rounded-full" />
+                <Bell className={cn(isMobileMode ? "h-6 w-6" : "h-4 w-4")} />
+                <span className={cn("absolute bg-rose-500 rounded-full animate-ping", isMobileMode ? "top-3 right-3 w-2 h-2" : "top-2 right-2 w-1.5 h-1.5")} />
+                <span className={cn("absolute bg-rose-600 rounded-full", isMobileMode ? "top-3 right-3 w-2 h-2" : "top-2 right-2 w-1.5 h-1.5")} />
               </button>
 
               {!isMobileMode && (
@@ -302,9 +306,9 @@ const Header: React.FC = () => {
                     <div className="mt-0.5 text-[8px] uppercase tracking-[0.18em] text-slate-500">{roleLabel}</div>
                   </div>
                 )}
-                <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl border border-white/[0.08] bg-gradient-to-br from-slate-800 to-slate-950 shadow-lg transition-all group-hover:border-red-500/35">
+                <div className={cn("relative flex items-center justify-center overflow-hidden rounded-xl border border-white/[0.08] bg-gradient-to-br from-slate-800 to-slate-950 shadow-lg transition-all group-hover:border-red-500/35", isMobileMode ? "h-14 w-14 rounded-2xl" : "h-10 w-10")}>
                    <div className="absolute inset-0 bg-red-500/5 opacity-0 transition-opacity group-hover:opacity-100" />
-                   <UserCircle className="h-6 w-6 text-slate-500 transition-colors group-hover:text-red-300" />
+                   <UserCircle className={cn("text-slate-500 transition-colors group-hover:text-red-300", isMobileMode ? "h-8 w-8" : "h-6 w-6")} />
                 </div>
               </div>
 

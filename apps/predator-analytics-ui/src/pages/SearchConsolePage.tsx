@@ -31,6 +31,8 @@ import { cn } from '@/utils/cn';
 import { CyberOrb } from '@/components/CyberOrb';
 
 import { useViewport } from '@/hooks/useViewport';
+import { SwipeableDrawer } from '@/components/layout/SwipeableDrawer';
+import { X, SlidersHorizontal, Settings2 } from 'lucide-react';
 
 // ========================
 // Types & Defaults
@@ -243,38 +245,38 @@ export const SearchConsolePage: React.FC = () => {
                                                 value={query}
                                                 onChange={(e) => setQuery(e.target.value)}
                                                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                                                placeholder="Введіть запит для аналізу..."
-                                                className="w-full bg-slate-950/60 border border-white/10 rounded-2xl py-4 px-4 text-xl font-bold text-white placeholder-slate-600 focus:outline-none tracking-tight"
+                                                placeholder="ВВЕДІТЬ ЗАПИТ..."
+                                                className="w-full bg-slate-950/80 border-2 border-white/10 focus:border-[#D4AF37]/50 rounded-[32px] py-6 px-6 text-2xl font-black text-white placeholder-slate-600 focus:outline-none tracking-tight shadow-inner"
                                             />
                                         </div>
                                         <div className="flex gap-4 items-center">
                                             <button 
                                                 onClick={() => setShowFilters(!showFilters)}
                                                 className={cn(
-                                                    "py-4 rounded-xl flex-1 transition-all border border-white/5 flex items-center justify-center gap-2",
-                                                    showFilters ? "bg-[#D4AF37] text-black shadow-[#D4AF37]/20" : "bg-white/5 text-slate-400 hover:text-white"
+                                                    "h-16 rounded-[24px] flex-1 transition-all border-2 border-white/5 flex items-center justify-center gap-3",
+                                                    showFilters ? "bg-[#D4AF37] text-black shadow-lg shadow-[#D4AF37]/20 border-[#D4AF37]" : "bg-white/5 text-slate-400 hover:text-white"
                                                 )}
                                             >
-                                                <ListFilter size={18} />
-                                                <span className="text-[10px] font-black tracking-widest uppercase">ФІЛЬТР</span>
+                                                <ListFilter size={24} />
+                                                <span className="text-xs font-black tracking-widest uppercase">ФІЛЬТР</span>
                                             </button>
                                             <button 
                                                 onClick={() => voiceStatus === 'LISTENING' ? stopListening() : startListening()}
                                                 className={cn(
-                                                    "py-4 rounded-xl flex-1 transition-all border flex items-center justify-center gap-2",
-                                                    voiceStatus === 'LISTENING' ? "bg-rose-600 border-rose-400 text-white " : "bg-white/5 border-transparent text-slate-400 hover:text-[#D4AF37]"
+                                                    "h-16 rounded-[24px] flex-1 transition-all border-2 flex items-center justify-center gap-3",
+                                                    voiceStatus === 'LISTENING' ? "bg-rose-600 border-rose-400 text-white animate-pulse" : "bg-white/5 border-transparent text-slate-400 hover:text-[#D4AF37]"
                                                 )}
                                             >
-                                                <Mic size={18} />
-                                                <span className="text-[10px] font-black tracking-widest uppercase">{voiceStatus === 'LISTENING' ? 'ЗАПИС...' : 'ГОЛОС'}</span>
+                                                <Mic size={24} />
+                                                <span className="text-xs font-black tracking-widest uppercase">{voiceStatus === 'LISTENING' ? 'ЗАПИС...' : 'ГОЛОС'}</span>
                                             </button>
                                         </div>
                                         <button 
                                             onClick={() => handleSearch()}
                                             disabled={isLoading}
-                                            className="w-full py-5 bg-[#D4AF37] hover:bg-[#B8962E] text-black rounded-2xl text-xs font-black uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-xl active:scale-95 border border-[#D4AF37]/30"
+                                            className="w-full h-20 bg-[#D4AF37] hover:bg-[#B8962E] text-black rounded-[28px] text-sm font-black uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-xl active:scale-95 border-2 border-[#D4AF37]/30"
                                         >
-                                            {isLoading ? <RefreshCw className="animate-spin" size={18} /> : <Search size={18} />}
+                                            {isLoading ? <RefreshCw className="animate-spin" size={24} /> : <Search size={24} />}
                                             <span>ЗНАЙТИ ОБ'ЄКТ</span>
                                         </button>
                                     </div>
@@ -351,7 +353,7 @@ export const SearchConsolePage: React.FC = () => {
                         </motion.div>
 
                         {/* Search Modes (v63.0-ELITE Visuals) */}
-                        <div className="flex flex-wrap justify-center gap-4 md:gap-8">
+                        <div className={cn("flex flex-wrap justify-center", isCompact ? "grid grid-cols-2 gap-3" : "gap-4 md:gap-8")}>
                             {[
                                 { id: 'semantic', label: 'СЕМАНТИЧНИЙ ПОШУК', icon: Sparkles, color: '#D4AF37' },
                                 { id: 'rerank', label: 'НЕЙ О- РЕ ЕЙТИНГ', icon: TrendingUp, color: '#D4AF37', premium: true },
@@ -360,22 +362,24 @@ export const SearchConsolePage: React.FC = () => {
                             ].map((mode) => (
                                 <motion.button
                                     key={mode.id}
-                                    whileHover={{ y: -5, scale: 1.02 }}
+                                    whileHover={isCompact ? {} : { y: -5, scale: 1.02 }}
+                                    whileTap={{ scale: 0.95 }}
                                     onClick={mode.onToggle || (() => setSearchModes(s => ({ ...s, [mode.id]: !s[mode.id as keyof typeof s] })))}
                                     className={cn(
-                                        "px-6 md:px-8 py-3.5 md:py-4 rounded-[20px] md:rounded-[28px] border transition-all flex items-center gap-3 md:gap-4 relative overflow-hidden panel-3d shadow-xl ",
+                                        "transition-all flex flex-col md:flex-row items-center justify-center gap-3 md:gap-4 relative overflow-hidden panel-3d shadow-xl",
+                                        isCompact ? "h-24 rounded-[24px] border-2" : "px-6 md:px-8 py-3.5 md:py-4 rounded-[20px] md:rounded-[28px] border",
                                         (mode.active ?? (searchModes as any)[mode.id])
                                             ? "bg-[#D4AF37]/10 border-[#D4AF37]/40 text-[#D4AF37] "
                                             : "bg-[#0a0a0a]/60 border-white/5 text-slate-500 hover:text-slate-300"
                                     )}
                                 >
-                                    <mode.icon size={16} style={{ color: (mode.active ?? (searchModes as any)[mode.id]) ? mode.color : undefined }} />
-                                    <span className="text-[9px] md:text-[10px] font-black tracking-widest uppercase">{mode.label}</span>
-                                    {mode.premium && (
+                                    <mode.icon size={isCompact ? 24 : 16} style={{ color: (mode.active ?? (searchModes as any)[mode.id]) ? mode.color : undefined }} />
+                                    <span className={cn("font-black tracking-widest uppercase text-center", isCompact ? "text-[10px] leading-tight" : "text-[9px] md:text-[10px]")}>{mode.label}</span>
+                                    {mode.premium && !isCompact && (
                                         <Badge className="ml-1 md:ml-2 bg-[#D4AF37] text-black text-[7px] font-black border-none px-1.5 md:px-2 uppercase">П О</Badge>
                                     )}
                                     {(mode.active ?? (searchModes as any)[mode.id]) && (
-                                        <div className="absolute bottom-0 left-0 h-1 w-full" style={{ backgroundColor: mode.color }} />
+                                        <div className="absolute bottom-0 left-0 h-1.5 w-full" style={{ backgroundColor: mode.color }} />
                                     )}
                                 </motion.button>
                             ))}
@@ -461,15 +465,15 @@ export const SearchConsolePage: React.FC = () => {
                                                             ))}
                                                         </div>
 
-                                                        <div className="flex gap-2 pt-3 border-t border-white/5">
-                                                            <button className="flex-1 py-3 bg-[#D4AF37]/10 hover:bg-[#D4AF37] border border-[#D4AF37]/20 text-[#D4AF37] hover:text-black rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2">
-                                                                <Brain size={12} /> АНАЛІЗ
+                                                        <div className="flex gap-3 pt-5 border-t border-white/5">
+                                                            <button className="flex-[2] h-14 bg-[#D4AF37]/10 hover:bg-[#D4AF37] border-2 border-[#D4AF37]/20 text-[#D4AF37] hover:text-black rounded-[20px] text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2">
+                                                                <Brain size={18} /> АНАЛІЗ
                                                             </button>
-                                                            <button className="p-3 bg-white/5 hover:bg-[#D4AF37]/20 border border-white/5 rounded-xl text-slate-500 hover:text-[#D4AF37] transition-all flex items-center justify-center">
-                                                                <Target size={14} />
+                                                            <button className="flex-1 h-14 bg-white/5 hover:bg-[#D4AF37]/20 border-2 border-white/5 rounded-[20px] text-slate-500 hover:text-[#D4AF37] transition-all flex items-center justify-center">
+                                                                <Target size={20} />
                                                             </button>
-                                                            <button className="p-3 bg-white/5 hover:bg-[#E11D48]/20 border border-white/5 rounded-xl text-slate-500 hover:text-[#E11D48] transition-all flex items-center justify-center">
-                                                                <Key size={14} />
+                                                            <button className="flex-1 h-14 bg-white/5 hover:bg-[#E11D48]/20 border-2 border-white/5 rounded-[20px] text-slate-500 hover:text-[#E11D48] transition-all flex items-center justify-center">
+                                                                <Key size={20} />
                                                             </button>
                                                         </div>
                                                     </div>
@@ -568,6 +572,69 @@ export const SearchConsolePage: React.FC = () => {
                         )}
                     </div>
                 </div>
+
+                {/* Mobile Filters Bottom Sheet */}
+                {isCompact && (
+                    <SwipeableDrawer
+                        isOpen={showFilters}
+                        onClose={() => setShowFilters(false)}
+                        position="bottom"
+                        maxHeight="85vh"
+                    >
+                        <div className="p-6 h-full flex flex-col gap-8">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <SlidersHorizontal className="text-[#D4AF37]" size={24} />
+                                    <h2 className="text-lg font-black uppercase tracking-widest text-white">ПА АМЕТ И ПОШУКУ</h2>
+                                </div>
+                                <button onClick={() => setShowFilters(false)} className="p-3 rounded-2xl bg-white/5 hover:bg-white/10 active:scale-95 transition-all">
+                                    <X className="w-6 h-6 text-slate-400" />
+                                </button>
+                            </div>
+                            
+                            <div className="flex-1 space-y-8 overflow-y-auto custom-scrollbar pb-10">
+                                <div className="space-y-4">
+                                    <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
+                                        <Database size={12} /> ДЖЕ ЕЛА ДАНИХ
+                                    </h3>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        {['МИТНИЦЯ', 'САНКЦІЇ', 'ФІНМОНІТО ИНГ', 'РОЗВІДКА'].map((src, i) => (
+                                            <button key={src} className={cn(
+                                                "h-14 rounded-[20px] border-2 font-black text-[10px] tracking-widest uppercase transition-all",
+                                                i === 0 || i === 1 ? "bg-[#D4AF37]/10 border-[#D4AF37]/30 text-[#D4AF37]" : "bg-white/5 border-white/5 text-slate-400"
+                                            )}>
+                                                {src}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className="space-y-4">
+                                    <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
+                                        <Settings2 size={12} /> ЧАСОВИЙ ДІАПАЗОН
+                                    </h3>
+                                    <div className="grid grid-cols-1 gap-3">
+                                        {['ОСТАННІ 24 ГОДИНИ', 'ПОТОЧНИЙ ТИЖДЕНЬ', 'ОСТАННІЙ МІСЯЦЬ', 'ВЕСЬ ЧАС'].map((time, i) => (
+                                            <button key={time} className={cn(
+                                                "h-14 rounded-[20px] border-2 font-black text-xs tracking-widest uppercase transition-all",
+                                                i === 3 ? "bg-[#E11D48]/10 border-[#E11D48]/30 text-[#E11D48]" : "bg-white/5 border-white/5 text-slate-400"
+                                            )}>
+                                                {time}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button 
+                                onClick={() => setShowFilters(false)}
+                                className="w-full h-16 bg-[#D4AF37] text-black rounded-[24px] text-sm font-black uppercase tracking-[0.2em] flex items-center justify-center shadow-xl active:scale-95 shrink-0"
+                            >
+                                ЗАСТОСУВАТИ
+                            </button>
+                        </div>
+                    </SwipeableDrawer>
+                )}
 
                 <style dangerouslySetInnerHTML={{
                     __html: `

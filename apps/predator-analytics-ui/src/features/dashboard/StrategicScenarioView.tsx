@@ -343,7 +343,7 @@ export default function StrategicScenarioView() {
                     isSimulating 
                       ? "bg-slate-900 text-slate-600 border-slate-800 cursor-not-allowed" 
                       : "bg-rose-600 text-white border-rose-500/30 hover:brightness-110 shadow-4xl",
-                    isCompact ? "py-6" : "py-8"
+                    isCompact ? "h-20 text-sm" : "py-8"
                   )}
                 >
                   {isSimulating ? <RefreshCcw size={24} className="animate-spin" /> : <Play size={24} />}
