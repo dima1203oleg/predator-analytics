@@ -9,7 +9,7 @@ import {
   Lock, MessageSquare, Anchor, FileText, Share2, AlertTriangle,
   ZapOff, Terminal, Sparkles, Radio, Shield, Zap as ZapIcon,
   Atom, Box, Boxes, PieChart, ChevronRight, Maximize2,
-  RefreshCw, Orbit, Scale
+  RefreshCw, Orbit, Scale, Blocks
 } from 'lucide-react';
 import { VerticalTabNav } from '@/components/layout/VerticalTabNav';
 import { cn } from '@/lib/utils';
@@ -106,6 +106,7 @@ const DigitalTwinView          = lazy(() => import('@/features/modeling/DigitalT
 const RegulatoryRadarView      = lazy(() => import('@/features/intelligence/RegulatoryRadarView'));
 const ConnectionExplorer3DView = lazy(() => import('@/features/network/ConnectionExplorer3DView'));
 const PanicControlView         = lazy(() => import('@/features/security/PanicControlView'));
+const PluginEcosystemView      = lazy(() => import('@/features/platform/PluginEcosystemView'));
 // ─── Конфіг вкладок ───────────────────────────────────────────────────────────
 
 type TabCategory = 'SYSTEM_CORE' | 'AI_LAB' | 'INTEL_OSINT' | 'BUSINESS_INTEL' | 'PLATFORM' | 'AUTONOMOUS_FACTORY';
@@ -199,6 +200,7 @@ const TABS: TabConfig[] = [
   { id: 'reg-radar', category: 'INTEL_OSINT', label: 'REGULATORY_RADAR', badge: 'ЗАКОН', icon: Scale, component: RegulatoryRadarView },
   { id: 'conn-3d', category: 'INTEL_OSINT', label: '3D_ГРАФ_ЗВ\'ЯЗКІВ', badge: 'THREE.JS', icon: Network, component: ConnectionExplorer3DView },
   { id: 'panic', category: 'PLATFORM', label: 'PANIC_CONTROL', badge: 'DEFCON-1', icon: ShieldAlert, component: PanicControlView },
+  { id: 'plugins', category: 'PLATFORM', label: 'ЕКОСИСТЕМА_ПЛАГІНІВ', badge: 'WASI', icon: Blocks, component: PluginEcosystemView },
 ];
 
 const DEFAULT_TAB = 'brief';

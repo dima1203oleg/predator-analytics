@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
-import React from 'react';
-import MobileCouncilJudgeView from '../MobileCouncilJudgeView';
+
+import { vi } from 'vitest';
+import { MobileCouncilJudgeView } from '../MobileCouncilJudgeView';
 
 vi.mock('framer-motion', () => ({
   motion: {

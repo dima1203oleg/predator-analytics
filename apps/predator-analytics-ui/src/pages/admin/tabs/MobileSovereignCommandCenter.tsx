@@ -136,3 +136,4 @@ export const MobileSovereignCommandCenter: React.FC = () => {
     </div>
   );
 };
+export default MobileSovereignCommandCenter;

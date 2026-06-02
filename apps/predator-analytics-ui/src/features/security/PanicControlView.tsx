@@ -25,7 +25,7 @@ export default function PanicControlView() {
               <p className="text-sm font-black text-red-500/70 uppercase tracking-[0.5em] italic">СИСТЕМА ЕКСТРЕНОГО РЕАГУВАННЯ (DEFCON-1)</p>
            </div>
 
-           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-16">
+           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
               
               {/* GHOST MODE */}
               <div className="p-10 bg-black border-4 border-slate-800 hover:border-slate-600 rounded-[3rem] transition-all flex flex-col gap-6 group relative overflow-hidden">
@@ -56,7 +56,7 @@ export default function PanicControlView() {
                     <h2 className="text-3xl font-black text-white uppercase italic tracking-tighter">PANIC <span className="text-red-600">MODE</span></h2>
                  </div>
                  <p className="text-sm font-black text-red-500/70 uppercase tracking-widest leading-relaxed">
-                    Миттєве блокування системи. Шифрування RAM-диску, знищення криптографічних ключів, обрив усіх зовнішніх з'єднань (Kill Switch).
+                    Миттєве блокування системи. Шифрування RAM-диску, обрив усіх зовнішніх з'єднань (Kill Switch).
                  </p>
                  <div className="pt-8 mt-auto relative z-10">
                     <SlideToExecute 
@@ -65,6 +65,29 @@ export default function PanicControlView() {
                        confirmLabel="СИСТЕМУ ЗАБЛОКОВАНО"
                        variant="critical"
                     />
+                 </div>
+              </div>
+
+              {/* DEAD MAN'S SWITCH */}
+              <div className="p-10 bg-black border-4 border-amber-900/30 hover:border-amber-600 rounded-[3rem] transition-all flex flex-col gap-6 group relative overflow-hidden">
+                 <div className="absolute -right-10 -bottom-10 opacity-5 group-hover:opacity-10 transition-opacity">
+                    <Zap size={200} className="text-amber-500" />
+                 </div>
+                 <div className="flex items-center gap-4">
+                    <ShieldAlert size={32} className="text-amber-500 animate-pulse" />
+                    <h2 className="text-2xl font-black text-white uppercase italic tracking-tighter">DEAD MAN'S <span className="text-amber-500">SWITCH</span></h2>
+                 </div>
+                 <div className="flex-1 space-y-4">
+                    <p className="text-xs font-black text-amber-500/70 uppercase tracking-widest">АВТОМАТИЧНИЙ PANIC-ТРИГЕР ПРИ ВІДСУТНОСТІ СИГНАЛУ</p>
+                    <div className="p-4 bg-amber-950/40 border border-amber-900/50 rounded-2xl text-center space-y-2">
+                       <span className="text-3xl font-black text-amber-500 font-mono tracking-widest">23:59:59</span>
+                       <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">ДО АКТИВАЦІЇ ПРОТОКОЛУ</p>
+                    </div>
+                 </div>
+                 <div className="pt-4 mt-auto relative z-10">
+                    <button onClick={() => play(UISoundType.CLICK)} className="w-full py-4 bg-amber-950/20 border border-amber-900/50 text-amber-500 hover:text-white hover:bg-amber-600 font-black uppercase tracking-[0.3em] italic rounded-2xl transition-all">
+                      I'M ALIVE (CHECK-IN)
+                    </button>
                  </div>
               </div>
 

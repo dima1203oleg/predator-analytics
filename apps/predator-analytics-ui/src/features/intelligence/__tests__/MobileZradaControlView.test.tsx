@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import React from 'react';
-import MobileZradaControlView from '../MobileZradaControlView';
+import { vi } from 'vitest';
+import { MobileZradaControlView } from '../MobileZradaControlView';
 
 vi.mock('framer-motion', () => ({
   motion: {

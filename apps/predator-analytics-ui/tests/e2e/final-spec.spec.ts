@@ -34,6 +34,7 @@ test.describe('Final Spec Elite Views (E2E)', () => {
   test('should load PanicControlView and trigger Ghost Mode', async ({ page }) => {
     await page.click('text="PANIC_CONTROL"');
     await expect(page.locator('text="ПРЕМІУМ БЕЗПЕКА"')).toBeVisible();
+    await expect(page.locator('text="DEAD MAN\'S"')).toBeVisible();
     
     // Simulate clicking Ghost Mode
     const ghostButton = page.locator('text="АКТИВУВАТИ GHOST"');
@@ -42,5 +43,11 @@ test.describe('Final Spec Elite Views (E2E)', () => {
     
     // Verify Protocol Init
     await expect(page.locator('text="ПРОТОКОЛ [GHOST] ІНІЦІЙОВАНО"')).toBeVisible();
+  });
+
+  test('should load PluginEcosystemView', async ({ page }) => {
+    await page.click('text="ЕКОСИСТЕМА_ПЛАГІНІВ"');
+    await expect(page.locator('text="ЕКОСИСТЕМА ПЛАГІНІВ"')).toBeVisible();
+    await expect(page.locator('text="OSINT_TELEGRAM_SCRAPER"')).toBeVisible();
   });
 });
