@@ -52,6 +52,7 @@ import { NeuralPulse } from '@/components/ui/NeuralPulse';
 import { CyberGrid } from '@/components/CyberGrid';
 import { CyberOrb } from '@/components/CyberOrb';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
+import { LiveThreatRadar } from './LiveThreatRadar';
 
 /* ── Утиліти форматування ── */
 const formatCurrency = (value: number): string => {
@@ -332,14 +333,22 @@ export default function ExecutiveBoardView() {
           <div className={cn("border border-white/5 bg-black/40 shadow-2xl relative overflow-hidden", isCompact ? "rounded-3xl p-5" : "rounded-[2.5rem] p-8")}>
             <div className="absolute top-0 right-0 w-1 h-full bg-rose-600/30" />
             
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="text-lg font-black text-white flex items-center gap-3 uppercase italic tracking-tighter">
-                <Flame className="h-5 w-5 text-rose-500 " />
-                КРИТИЧНІ СИГНАЛИ
-              </h2>
-              <span className="bg-rose-500/10 border border-rose-500/20 text-rose-500 px-3 py-1 text-[10px] font-black italic rounded-md">
-                {alerts.length} АКТИВНО
-              </span>
+            <div className="flex flex-col sm:flex-row items-center gap-6 mb-8 border-b border-white/5 pb-6">
+              <div className="flex-1 w-full">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-black text-white flex items-center gap-3 uppercase italic tracking-tighter">
+                    <Flame className="h-5 w-5 text-rose-500 " />
+                    КРИТИЧНІ СИГНАЛИ
+                  </h2>
+                  <span className="bg-rose-500/10 border border-rose-500/20 text-rose-500 px-3 py-1 text-[10px] font-black italic rounded-md">
+                    {alerts.length} АКТИВНО
+                  </span>
+                </div>
+                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest italic mb-4">РАДАР АКТИВНИХ ЗАГРОЗ У РЕАЛЬНОМУ ЧАСІ</p>
+              </div>
+              <div className="shrink-0">
+                <LiveThreatRadar />
+              </div>
             </div>
 
             <div className="space-y-4 max-h-[500px] overflow-y-auto no-scrollbar pr-2">

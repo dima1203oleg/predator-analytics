@@ -11,15 +11,18 @@ import { HypothesisEngineTab } from './tabs/ai/HypothesisEngineTab';
 import { AgentsTab } from './tabs/ai/AgentsTab';
 import { InsightsTab } from './tabs/ai/InsightsTab';
 import { KnowledgeBaseTab } from './tabs/ai/KnowledgeBaseTab';
+import { LiveAgentTerminalTab } from './tabs/ai/LiveAgentTerminalTab';
 import { MobileAIHub } from './MobileAIHub';
+import { Terminal } from 'lucide-react';
 
-type AIHubTab = 'nexus' | 'oracle' | 'hypothesis' | 'agents' | 'insights' | 'knowledge' | 'menu';
+type AIHubTab = 'nexus' | 'oracle' | 'hypothesis' | 'agents' | 'insights' | 'knowledge' | 'terminal' | 'menu';
 
 const ALL_TABS = [
   { id: 'nexus', label: 'Предиктивний Нексус', icon: <BrainCircuit size={16} /> },
   { id: 'oracle', label: 'Суверенний Оракул', icon: <Sparkles size={16} /> },
   { id: 'hypothesis', label: 'Генератор Гіпотез', icon: <FlaskConical size={16} />, premium: true },
   { id: 'agents', label: 'Автономні Агенти', icon: <Users size={16} />, premium: true },
+  { id: 'terminal', label: 'LIVE Термінал', icon: <Terminal size={16} />, premium: true },
   { id: 'insights', label: 'Центр ШІ-Інсайтів', icon: <Zap size={16} /> },
   { id: 'knowledge', label: 'Інженерія Знань', icon: <Database size={16} />, premium: true },
 ];
@@ -89,6 +92,7 @@ const AIHub: React.FC = () => {
           {activeTab === 'oracle' && <SovereignOracleTab />}
           {activeTab === 'hypothesis' && <HypothesisEngineTab />}
           {activeTab === 'agents' && <AgentsTab />}
+          {activeTab === 'terminal' && <LiveAgentTerminalTab />}
           {activeTab === 'insights' && <InsightsTab />}
           {activeTab === 'knowledge' && <KnowledgeBaseTab />}
         </div>

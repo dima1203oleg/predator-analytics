@@ -1,17 +1,20 @@
 /**
  * 🕸️ Network Graph Visualization
- * Interactive company relationships using Cytoscape.js
- * Shows: Shareholders, Partners, Suppliers, Customers
+ * Інтерактивна візуалізація зв'язків компаній (дані з Neo4j/Graph API)
+ * Показує: акціонерів, партнерів, постачальників, клієнтів
+ * 
+ * ⚠️ MOCK ПОВНІСТЮ ВИДАЛЕНО — усі дані з реального backend.
  */
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Maximize2, Minimize2, Download, Loader, AlertCircle } from 'lucide-react';
+import { Maximize2, Minimize2, Download, Loader, AlertCircle, RefreshCw } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Alert } from '@/components/ui/alert';
+import { apiClient } from '@/services/api/config';
 
 // ──────────────────────────────────────────────────────────────
-// Types
+// Типи
 // ──────────────────────────────────────────────────────────────
 
 interface GraphNode {
@@ -36,15 +39,35 @@ interface NetworkData {
 }
 
 // ──────────────────────────────────────────────────────────────
-// Main Component
+// Маппінг кольорів за типом вузла
+// ──────────────────────────────────────────────────────────────
+
+const NODE_COLORS: Record<string, string> = {
+  company: '#00ff88',
+  shareholder: '#ffd700',
+  partner: '#00aaff',
+  supplier: '#ff9900',
+  customer: '#ff0099',
+};
+
+const NODE_SIZES: Record<string, number> = {
+  company: 45,
+  shareholder: 30,
+  partner: 25,
+  supplier: 22,
+  customer: 22,
+};
+
+// ──────────────────────────────────────────────────────────────
+// Головний компонент
 // ──────────────────────────────────────────────────────────────
 
 export const NetworkGraph: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const cyRef = useRef<any>(null);
 
   const [data, setData] = useState<NetworkData>({ nodes: [], edges: [] });
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
   const [stats, setStats] = useState({
@@ -54,210 +77,199 @@ export const NetworkGraph: React.FC = () => {
   });
 
   // ──────────────────────────────────────────────────────────────
-  // Mock Data (в реальності від Neo4j API)
+  // Завантаження реальних даних з API
   // ──────────────────────────────────────────────────────────────
 
-  useEffect(() => {
-    // Simulate loading network data
-    const mockData: NetworkData = {
-      nodes: [
-        // Main company
-        {
-          id: 'company_1',
-          label: 'АТ Укрнафта',
-          type: 'company',
-          revenue: 50000000,
-          size: 50,
-          color: '#00ff00'
-        },
-        // Shareholders
-        {
-          id: 'shareholder_1',
-          label: 'Держава (49%)',
-          type: 'shareholder',
-          size: 35,
-          color: '#ffff00'
-        },
-        {
-          id: 'shareholder_2',
-          label: 'Приватні інвестори (51%)',
-          type: 'shareholder',
-          size: 30,
-          color: '#ffff00'
-        },
-        // Partners
-        {
-          id: 'partner_1',
-          label: 'Shell Ukraine',
-          type: 'partner',
-          size: 25,
-          color: '#0099ff'
-        },
-        {
-          id: 'partner_2',
-          label: 'ПетроПлус',
-          type: 'partner',
-          size: 20,
-          color: '#0099ff'
-        },
-        // Suppliers
-        {
-          id: 'supplier_1',
-          label: 'БудматеріалиПлюс',
-          type: 'supplier',
-          size: 18,
-          color: '#ff9900'
-        },
-        {
-          id: 'supplier_2',
-          label: 'ТехСервісПро',
-          type: 'supplier',
-          size: 16,
-          color: '#ff9900'
-        },
-        // Customers
-        {
-          id: 'customer_1',
-          label: 'ОККО Автозаправка',
-          type: 'customer',
-          size: 22,
-          color: '#ff0099'
-        },
-        {
-          id: 'customer_2',
-          label: 'BRSM-Nafta',
-          type: 'customer',
-          size: 20,
-          color: '#ff0099'
-        }
-      ],
-      edges: [
-        // Ownership
-        { source: 'shareholder_1', target: 'company_1', type: 'ownership', weight: 0.49 },
-        { source: 'shareholder_2', target: 'company_1', type: 'ownership', weight: 0.51 },
-        // Partnerships
-        { source: 'company_1', target: 'partner_1', type: 'partnership', weight: 0.8 },
-        { source: 'company_1', target: 'partner_2', type: 'partnership', weight: 0.6 },
-        // Supply
-        { source: 'supplier_1', target: 'company_1', type: 'supply', weight: 0.5 },
-        { source: 'supplier_2', target: 'company_1', type: 'supply', weight: 0.3 },
-        // Customer
-        { source: 'company_1', target: 'customer_1', type: 'purchase', weight: 0.7 },
-        { source: 'company_1', target: 'customer_2', type: 'purchase', weight: 0.5 }
-      ]
-    };
+  const fetchGraphData = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      // Запит до реального Graph API backend
+      const response = await apiClient.get('/graph/network');
+      const graphData = response.data;
 
-    setData(mockData);
-    setStats({
-      nodes: mockData.nodes.length,
-      edges: mockData.edges.length,
-      clusters: 5
-    });
-    setIsLoading(false);
+      // Нормалізація відповіді від backend
+      const nodes: GraphNode[] = (graphData.nodes || []).map((n: any) => ({
+        id: n.id || n.node_id || String(n.edrpou || ''),
+        label: n.label || n.name || n.company_name || 'Невідомо',
+        type: n.type || n.node_type || 'company',
+        revenue: n.revenue || n.annual_revenue,
+        size: NODE_SIZES[n.type || 'company'] || 25,
+        color: NODE_COLORS[n.type || 'company'] || '#00ff88',
+      }));
+
+      const edges: GraphEdge[] = (graphData.edges || graphData.relationships || []).map((e: any) => ({
+        source: e.source || e.from_id || e.from,
+        target: e.target || e.to_id || e.to,
+        type: e.type || e.relationship_type || 'partnership',
+        weight: e.weight || e.strength || 0.5,
+      }));
+
+      setData({ nodes, edges });
+      setStats({
+        nodes: nodes.length,
+        edges: edges.length,
+        clusters: graphData.clusters || graphData.communities || Math.ceil(nodes.length / 5),
+      });
+    } catch (err: any) {
+      console.error('[NetworkGraph] Помилка завантаження графа:', err);
+      setError(err?.response?.data?.detail || err.message || 'Помилка завантаження даних графа');
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
+  useEffect(() => {
+    fetchGraphData();
+  }, [fetchGraphData]);
+
   // ──────────────────────────────────────────────────────────────
-  // Initialize Cytoscape
+  // SVG візуалізація
   // ──────────────────────────────────────────────────────────────
 
   useEffect(() => {
     if (!containerRef.current || data.nodes.length === 0) return;
 
-    // In production, you would initialize Cytoscape here
-    // For now, render basic visualization
     const canvas = containerRef.current;
+    // Розрахунок позицій вузлів (force-directed спрощений)
+    const nodePositions = data.nodes.map((node, i) => {
+      const angle = (2 * Math.PI * i) / data.nodes.length;
+      const radius = 200 + (i % 3) * 40;
+      return {
+        ...node,
+        x: 400 + radius * Math.cos(angle),
+        y: 300 + radius * Math.sin(angle),
+      };
+    });
+
     canvas.innerHTML = `
-      <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 20px; border-radius: 8px;">
-        <svg width="100%" height="100%" viewBox="0 0 800 600">
-          <!-- Nodes -->
-          ${data.nodes.map((node, i) => {
-            const x = 150 + (i % 3) * 250 + Math.random() * 50;
-            const y = 100 + Math.floor(i / 3) * 200 + Math.random() * 50;
-            return `
-              <circle cx="${x}" cy="${y}" r="${node.size}" fill="${node.color}" opacity="0.8" stroke="white" stroke-width="2"/>
-              <text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle" fill="black" font-size="12" font-weight="bold">${node.label.substring(0, 8)}</text>
-            `;
-          })}
-          <!-- Edges -->
-          ${data.edges.map((edge, i) => {
-            const source = data.nodes.find(n => n.id === edge.source);
-            const target = data.nodes.find(n => n.id === edge.target);
+      <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #0a0a1a 0%, #111827 50%, #0f172a 100%); padding: 20px; border-radius: 12px; position: relative; overflow: hidden;">
+        <div style="position: absolute; inset: 0; background: radial-gradient(circle at 50% 50%, rgba(0, 255, 136, 0.03) 0%, transparent 70%);"></div>
+        <svg width="100%" height="100%" viewBox="0 0 800 600" style="position: relative; z-index: 1;">
+          <defs>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="3.5" result="coloredBlur"/>
+              <feMerge>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+          </defs>
+          <!-- Зв'язки -->
+          ${data.edges.map((edge) => {
+            const source = nodePositions.find(n => n.id === edge.source);
+            const target = nodePositions.find(n => n.id === edge.target);
             if (!source || !target) return '';
-            const sourceIdx = data.nodes.indexOf(source);
-            const targetIdx = data.nodes.indexOf(target);
-            const x1 = 150 + (sourceIdx % 3) * 250 + Math.random() * 50;
-            const y1 = 100 + Math.floor(sourceIdx / 3) * 200 + Math.random() * 50;
-            const x2 = 150 + (targetIdx % 3) * 250 + Math.random() * 50;
-            const y2 = 100 + Math.floor(targetIdx / 3) * 200 + Math.random() * 50;
-            return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>`;
-          })}
+            const opacity = 0.2 + (edge.weight || 0.5) * 0.4;
+            return `<line x1="${source.x}" y1="${source.y}" x2="${target.x}" y2="${target.y}" stroke="rgba(0, 255, 136, ${opacity})" stroke-width="${1 + (edge.weight || 0.5) * 2}" stroke-dasharray="${edge.type === 'ownership' ? 'none' : '4,4'}"/>`;
+          }).join('')}
+          <!-- Вузли -->
+          ${nodePositions.map((node) => {
+            const size = node.size || 25;
+            return `
+              <g filter="url(#glow)">
+                <circle cx="${node.x}" cy="${node.y}" r="${size}" fill="${node.color}" opacity="0.75" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                <text x="${node.x}" y="${node.y + size + 14}" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="10" font-family="Inter, system-ui, sans-serif">${node.label.length > 16 ? node.label.substring(0, 14) + '…' : node.label}</text>
+              </g>
+            `;
+          }).join('')}
         </svg>
       </div>
     `;
   }, [data]);
 
   // ──────────────────────────────────────────────────────────────
-  // Render
+  // Рендер
   // ──────────────────────────────────────────────────────────────
 
   if (isLoading) {
     return (
       <Card className="p-8 flex items-center justify-center gap-3">
         <Loader className="animate-spin" size={24} />
-        <span className="text-gray-400">Завантаження графа мережі...</span>
+        <span className="text-gray-400">Завантаження графа мережі з backend...</span>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card className="p-8">
+        <Alert>
+          <AlertCircle className="h-4 w-4" />
+          <div>
+            <p className="font-semibold text-red-400">Помилка завантаження графа</p>
+            <p className="text-sm text-gray-400 mt-1">{error}</p>
+            <button
+              onClick={fetchGraphData}
+              className="mt-3 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 rounded-lg text-white text-sm flex items-center gap-2"
+            >
+              <RefreshCw size={14} />
+              Повторити запит
+            </button>
+          </div>
+        </Alert>
       </Card>
     );
   }
 
   return (
     <div className={`space-y-6 ${isFullscreen ? 'fixed inset-0 z-50 p-6 bg-slate-950' : 'p-6 max-w-7xl mx-auto'}`}>
-      {/* Header */}
+      {/* Заголовок */}
       <div className="space-y-2 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-            🕸️ Network Graph Visualization
+            🕸️ Граф Мережі Зв'язків
           </h1>
           <p className="text-gray-400">Взаємозв'язки компанії: акціонери, партнери, постачальники, клієнти</p>
         </div>
-        <button
-          onClick={() => setIsFullscreen(!isFullscreen)}
-          className="p-2 bg-yellow-600 hover:bg-yellow-700 rounded-lg text-white"
-        >
-          {isFullscreen ? <Minimize2 size={24} /> : <Maximize2 size={24} />}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={fetchGraphData}
+            className="p-2 bg-emerald-600 hover:bg-emerald-700 rounded-lg text-white"
+            title="Оновити дані"
+          >
+            <RefreshCw size={20} />
+          </button>
+          <button
+            onClick={() => setIsFullscreen(!isFullscreen)}
+            className="p-2 bg-yellow-600 hover:bg-yellow-700 rounded-lg text-white"
+          >
+            {isFullscreen ? <Minimize2 size={24} /> : <Maximize2 size={24} />}
+          </button>
+        </div>
       </div>
 
-      {/* Stats */}
+      {/* Статистика */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card variant="highlight" className="p-4">
           <p className="text-sm text-gray-400">Вузлів у мережі</p>
-          <p className="text-3xl font-bold text-white">{stats.nodes}</p>
+          <p className="text-3xl font-bold text-white">{stats.nodes.toLocaleString('uk-UA')}</p>
         </Card>
         <Card variant="highlight" className="p-4">
           <p className="text-sm text-gray-400">Зв'язків</p>
-          <p className="text-3xl font-bold text-white">{stats.edges}</p>
+          <p className="text-3xl font-bold text-white">{stats.edges.toLocaleString('uk-UA')}</p>
         </Card>
         <Card variant="highlight" className="p-4">
           <p className="text-sm text-gray-400">Кластерів</p>
-          <p className="text-3xl font-bold text-white">{stats.clusters}</p>
+          <p className="text-3xl font-bold text-white">{stats.clusters.toLocaleString('uk-UA')}</p>
         </Card>
       </div>
 
-      {/* Graph Container */}
+      {/* Контейнер графа */}
       <Card className="p-4 overflow-hidden" style={{ height: isFullscreen ? 'calc(100vh - 300px)' : '600px' }}>
         <div ref={containerRef} style={{ width: '100%', height: '100%' }} />
       </Card>
 
-      {/* Legend */}
+      {/* Легенда */}
       <Card className="p-4">
         <h2 className="text-lg font-bold text-white mb-4">📋 Легенда</h2>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           {[
-            { color: '#00ff00', label: 'Компанія' },
-            { color: '#ffff00', label: 'Акціонер' },
-            { color: '#0099ff', label: 'Партнер' },
-            { color: '#ff9900', label: 'Постачальник' },
-            { color: '#ff0099', label: 'Клієнт' }
+            { color: NODE_COLORS.company, label: 'Компанія' },
+            { color: NODE_COLORS.shareholder, label: 'Акціонер' },
+            { color: NODE_COLORS.partner, label: 'Партнер' },
+            { color: NODE_COLORS.supplier, label: 'Постачальник' },
+            { color: NODE_COLORS.customer, label: 'Клієнт' }
           ].map((item) => (
             <div key={item.label} className="flex items-center gap-2">
               <div
@@ -266,7 +278,8 @@ export const NetworkGraph: React.FC = () => {
                   height: '20px',
                   backgroundColor: item.color,
                   borderRadius: '50%',
-                  opacity: 0.8
+                  opacity: 0.8,
+                  boxShadow: `0 0 8px ${item.color}40`
                 }}
               />
               <span className="text-sm text-gray-300">{item.label}</span>
@@ -275,7 +288,7 @@ export const NetworkGraph: React.FC = () => {
         </div>
       </Card>
 
-      {/* Node Details */}
+      {/* Деталі вибраного вузла */}
       {selectedNode && (
         <Card variant="highlight" className="p-4">
           <h2 className="text-lg font-bold text-white mb-2">{selectedNode.label}</h2>
@@ -290,4 +303,3 @@ export const NetworkGraph: React.FC = () => {
 };
 
 export default NetworkGraph;
-

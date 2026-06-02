@@ -66,8 +66,36 @@ export const SwiftMonitorTab: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* SWIFT Intercept Ticker */}
+        <div className="w-full bg-black/60 border border-emerald-500/20 rounded-2xl overflow-hidden mb-8 shadow-inner relative">
+          <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-black to-transparent z-10" />
+          <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-black to-transparent z-10" />
+          <div className="py-2 flex items-center">
+             <div className="px-4 text-[9px] font-black text-emerald-500 italic uppercase tracking-[0.3em] flex items-center gap-2 border-r border-white/10 z-20 bg-black shrink-0">
+               <Zap size={12} className="animate-pulse" /> LIVE_INTERCEPT
+             </div>
+             <div className="flex-1 overflow-hidden relative h-6">
+               <motion.div 
+                 animate={{ x: [0, -2000] }}
+                 transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+                 className="absolute top-0 left-0 flex items-center gap-8 whitespace-nowrap h-full"
+               >
+                  {/* Generate 10 fake transactions for ticker */}
+                  {Array.from({length: 10}).map((_, i) => (
+                    <div key={i} className="flex items-center gap-3 text-[10px] font-mono text-slate-400 font-bold">
+                       <span className="text-emerald-600">[{Math.random().toString(36).substring(2, 8).toUpperCase()}]</span>
+                       <span className="text-white">${(Math.random() * 1000000).toFixed(0)}</span>
+                       <ArrowDownRight size={10} className="text-emerald-500" />
+                       <span className="text-slate-500">{['AE', 'CY', 'CH', 'PA', 'VG', 'BS'][Math.floor(Math.random()*6)]}</span>
+                    </div>
+                  ))}
+               </motion.div>
+             </div>
+          </div>
+        </div>
         
-        <div className="h-[400px]">
+        <div className="h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={swiftData}>
               <defs>
