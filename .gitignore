@@ -140,3 +140,4 @@ scratch/
 
 # Playwright generated artifacts
 apps/predator-analytics-ui/playwright-report/
+zrok
