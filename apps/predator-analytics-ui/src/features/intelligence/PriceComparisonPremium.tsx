@@ -53,43 +53,34 @@ interface Product {
   offers: PriceOffer[];
 }
 
-// ─── MOCK DATA ────────────────────────────────────────────────────────
-
-const MOCK_PRODUCTS: Product[] = [
-  {
-    id: 'p1',
-    name: 'ГЕНЕ АТО И_ДИЗЕЛЬ_5KW',
-    category: 'ЕНЕ ГЕТИКА',
-    hsCode: '8502 11 20 00',
-    unit: 'ШТ',
-    avgPrice: 1250,
-    offers: [
-      { id: 'o1', supplierName: 'SINO_TECH_EXPORT', country: 'КИТАЙ', countryCode: 'CN', price: 980, currency: 'USD', minQuantity: 10, leadTime: 25, reliability: 98, lastUpdated: '2026-03-28', isVerified: true, isBestPrice: true },
-      { id: 'o2', supplierName: 'EURO_POWER_GMBH', country: 'НІМЕЧЧИНА', countryCode: 'DE', price: 1450, currency: 'USD', minQuantity: 2, leadTime: 7, reliability: 99, lastUpdated: '2026-03-30', isVerified: true, isBestPrice: false },
-      { id: 'o3', supplierName: 'TR_ENERGY_SOLUTIONS', country: 'ТУ ЕЧЧИНА', countryCode: 'TR', price: 1120, currency: 'USD', minQuantity: 5, leadTime: 14, reliability: 85, lastUpdated: '2026-03-25', isVerified: false, isBestPrice: false },
-    ]
-  },
-  {
-    id: 'p2',
-    name: 'А МАТУ А_СТАЛЕВА_12MM',
-    category: 'БУДІВНИЦТВО',
-    hsCode: '7214 20 00 00',
-    unit: 'ТОННА',
-    avgPrice: 840,
-    offers: [
-      { id: 'o4', supplierName: 'POL_STEEL_WORKS', country: 'ПОЛЬЩА', countryCode: 'PL', price: 790, currency: 'USD', minQuantity: 20, leadTime: 5, reliability: 96, lastUpdated: '2026-03-29', isVerified: true, isBestPrice: true },
-      { id: 'o5', supplierName: 'METALL_GROUP_BG', country: 'БОЛГА ІЯ', countryCode: 'BG', price: 820, currency: 'USD', minQuantity: 60, leadTime: 8, reliability: 92, lastUpdated: '2026-03-27', isVerified: true, isBestPrice: false },
-    ]
-  }
-];
-
 import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { intelligenceApi } from '@/services/api';
 
 export default function PriceComparisonPremium() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [expandedProduct, setExpandedProduct] = useState<string | null>('p1');
+  const [expandedProduct, setExpandedProduct] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [products, setProducts] = useState<Product[]>([]);
   const { isOffline, nodeSource } = useBackendStatus();
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      try {
+        const data = await intelligenceApi.getProductsPricing();
+        if (data && Array.isArray(data)) {
+          setProducts(data);
+        } else if (data && data.products) {
+          setProducts(data.products);
+        }
+      } catch (err) {
+        console.error('Failed to load products pricing:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
 
   useEffect(() => {
     if (isOffline) {
@@ -174,7 +165,7 @@ export default function PriceComparisonPremium() {
 
            {/* PRODUCTS GRID */}
            <div className="space-y-10">
-              {MOCK_PRODUCTS.filter(p => 
+              {products.filter(p => 
                 p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                 p.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 p.hsCode.toLowerCase().includes(searchQuery.toLowerCase())

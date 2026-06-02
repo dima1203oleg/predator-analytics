@@ -47,6 +47,9 @@ export const intelligenceApi = {
     getPriceAnomalies: async () => {
         return (await apiClient.get('/premium/price-anomalies')).data;
     },
+    getProductsPricing: async () => {
+        return (await apiClient.get('/premium/products-pricing')).data;
+    },
     getForensics: async (query: string) => {
         return (await apiClient.get(`/premium/forensics?query=${encodeURIComponent(query)}`)).data;
     },

@@ -47,25 +47,8 @@ interface TradeFlow {
   color: string;
 }
 
-// ─── MOCK DATA ────────────────────────────────────────────────────────
-
-const MOCK_COUNTRIES: Country[] = [
-  { id: 'ua', name: 'Україна', code: 'UA', x: 55, y: 35, imports: 0, exports: 0 },
-  { id: 'cn', name: 'Китай', code: 'CN', x: 80, y: 45, imports: 120000000, exports: 0 },
-  { id: 'us', name: 'США', code: 'US', x: 20, y: 40, imports: 85000000, exports: 0 },
-  { id: 'de', name: 'Німеччина', code: 'DE', x: 50, y: 30, imports: 65000000, exports: 0 },
-  { id: 'pl', name: 'Польща', code: 'PL', x: 53, y: 32, imports: 45000000, exports: 0 },
-  { id: 'tr', name: 'Туреччина', code: 'TR', x: 58, y: 42, imports: 35000000, exports: 0 },
-];
-
-const MOCK_FLOWS: TradeFlow[] = [
-  { id: 'f1', from: 'cn', to: 'ua', value: 45000000, product: 'ЕЛЕКТ ОНІКА', color: '#D4AF37' },
-  { id: 'f2', from: 'de', to: 'ua', value: 32000000, product: 'МАШИНОБУДУВАННЯ', color: '#E11D48' },
-  { id: 'f3', from: 'tr', to: 'ua', value: 18000000, product: 'ТЕКСТИЛЬ', color: '#D4AF37' },
-  { id: 'f4', from: 'us', to: 'ua', value: 25000000, product: 'IT-ПОСЛУГИ', color: '#D4AF37' },
-];
-
 import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { intelligenceApi } from '@/services/api';
 
 export default function TradeFlowMapPremium() {
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
@@ -74,7 +57,26 @@ export default function TradeFlowMapPremium() {
   const [animationProgress, setAnimationProgress] = useState(0);
   const [zoom, setZoom] = useState(1);
   const [refreshing, setRefreshing] = useState(false);
+  
+  const [countries, setCountries] = useState<Country[]>([]);
+  const [flows, setFlows] = useState<TradeFlow[]>([]);
+  
   const { isOffline, nodeSource } = useBackendStatus();
+
+  useEffect(() => {
+    const fetchTradeFlows = async () => {
+      try {
+        const data = await intelligenceApi.getTradeFlows();
+        if (data) {
+          if (data.countries && data.countries.length > 0) setCountries(data.countries);
+          if (data.flows && data.flows.length > 0) setFlows(data.flows);
+        }
+      } catch (error) {
+        console.error('Збій завантаження потоків', error);
+      }
+    };
+    fetchTradeFlows();
+  }, []);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -86,23 +88,22 @@ export default function TradeFlowMapPremium() {
 
   useEffect(() => {
     if (isOffline) {
-      // Видалимо нав'язливе повідомлення про автономний режим
-      // window.dispatchEvent(new CustomEvent('predator-error', {
-      //   detail: {
-      //     service: 'GeoIntel',
-      //     message: 'АКТИВОВАНО АВТОНОМНИЙ РЕЖИМ ГЕОП ОСТО ОВОЇ  РОЗВІДКИ (GEOSPATIAL_NODES). Візуалізація на базі локальних дзеркал.',
-      //     severity: 'warning',
-      //     timestamp: new Date().toISOString(),
-      //     code: 'GEOSPATIAL_NODES'
-      //   }
-      // }));
     }
   }, [isOffline]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
-    await new Promise(r => setTimeout(r, 1500));
-    setRefreshing(false);
+    try {
+      const data = await intelligenceApi.getTradeFlows();
+      if (data) {
+        if (data.countries && data.countries.length > 0) setCountries(data.countries);
+        if (data.flows && data.flows.length > 0) setFlows(data.flows);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setRefreshing(false);
+    }
     
     if (isOffline) {
       window.dispatchEvent(new CustomEvent('predator-error', {
@@ -156,8 +157,8 @@ export default function TradeFlowMapPremium() {
                 { label: 'GEOSPATIAL_T1', color: 'primary', icon: <Navigation size={10} /> },
               ]}
               stats={[
-                { label: 'КРАЇН-ПА ТНЕ ІВ', value: String(MOCK_COUNTRIES.length - 1), icon: <Navigation size={14} />, color: 'primary' },
-                { label: 'АКТИВНИХ_ЛІНІЙ', value: String(MOCK_FLOWS.length), icon: <Zap size={14} />, color: 'warning', animate: true },
+                { label: 'КРАЇН-ПА ТНЕ ІВ', value: String(countries.length > 0 ? countries.length - 1 : 0), icon: <Navigation size={14} />, color: 'primary' },
+                { label: 'АКТИВНИХ_ЛІНІЙ', value: String(flows.length), icon: <Zap size={14} />, color: 'warning', animate: true },
                 { label: 'ОБСЯГ_TRADE (Σ)', value: '$120.4M', icon: <DollarSign size={14} />, color: 'success' },
                 { label: 'AI_GEOSPATIAL', value: 'READY', icon: <Sparkles size={14} />, color: 'gold' },
               ]}
@@ -189,9 +190,10 @@ export default function TradeFlowMapPremium() {
                     </defs>
 
                     {/* TRADE LINES */}
-                    {MOCK_FLOWS.map((flow) => {
-                       const from = MOCK_COUNTRIES.find(c => c.id === flow.from)!;
-                       const to = MOCK_COUNTRIES.find(c => c.id === flow.to)!;
+                    {flows.map((flow) => {
+                       const from = countries.find(c => c.id === flow.from);
+                       const to = countries.find(c => c.id === flow.to);
+                       if (!from || !to) return null;
                        const midX = (from.x + to.x) / 2;
                        const midY = (from.y + to.y) / 2 - 10;
                        const path = `M ${from.x} ${from.y} Q ${midX} ${midY} ${to.x} ${to.y}`;
@@ -208,7 +210,7 @@ export default function TradeFlowMapPremium() {
                     })}
 
                     {/* COUNTRY NODES */}
-                    {MOCK_COUNTRIES.map((c) => (
+                    {countries.map((c) => (
                        <g key={c.id} onClick={() => setSelectedCountry(c)} className="cursor-pointer group/node">
                           <circle cx={c.x} cy={c.y} r={c.id === 'ua' ? 1.5 : 1} fill={c.id === 'ua' ? '#D4AF37' : '#334155'} className="group-hover/node:fill-white transition-colors" />
                           <circle cx={c.x} cy={c.y} r={c.id === 'ua' ? 3 : 2} fill={c.id === 'ua' ? '#D4AF37' : '#334155'} fillOpacity={0.2} className="" />
@@ -223,7 +225,7 @@ export default function TradeFlowMapPremium() {
                        <Layers size={16} className="text-[#D4AF37]" /> АКТИВНІ_ПОТОКИ
                     </h4>
                     <div className="space-y-4">
-                       {MOCK_FLOWS.map(f => (
+                       {flows.map(f => (
                          <div key={f.id} onClick={() => setSelectedFlow(f)} className={cn("p-4 rounded-2xl border transition-all cursor-pointer group", selectedFlow?.id === f.id ? "bg-[#D4AF37]/10 border-[#D4AF37]/40" : "bg-black/40 border-white/5 hover:border-[#D4AF37]/20")}>
                             <div className="flex items-center justify-between mb-2">
                                <div className="flex items-center gap-3">
@@ -232,7 +234,7 @@ export default function TradeFlowMapPremium() {
                                </div>
                                <p className="text-[10px] font-black text-[#D4AF37] font-mono">{formatValue(f.value)}</p>
                             </div>
-                            <p className="text-[8px] font-black text-slate-700 uppercase italic tracking-widest">{MOCK_COUNTRIES.find(c => c.id === f.from)?.name} → UA</p>
+                            <p className="text-[8px] font-black text-slate-700 uppercase italic tracking-widest">{countries.find(c => c.id === f.from)?.name} → UA</p>
                          </div>
                        ))}
                     </div>
@@ -259,7 +261,7 @@ export default function TradeFlowMapPremium() {
                             <div className="space-y-4">
                                <div className="p-6 bg-black border border-white/5 rounded-[2rem] shadow-xl">
                                   <p className="text-[9px] font-black text-slate-600 uppercase italic mb-1">ІМПОРТ_З_КРАЇНИ</p>
-                                  <p className="text-3xl font-black text-[#D4AF37] italic font-mono tracking-tighter">{formatValue(MOCK_FLOWS.filter(f => f.from === selectedCountry.id).reduce((a, b) => a + b.value, 0))}</p>
+                                  <p className="text-3xl font-black text-[#D4AF37] italic font-mono tracking-tighter">{formatValue(flows.filter(f => f.from === selectedCountry.id).reduce((a, b) => a + b.value, 0))}</p>
                                </div>
                                <div className="p-6 bg-black border border-white/5 rounded-[2rem] shadow-xl">
                                   <p className="text-[9px] font-black text-slate-600 uppercase italic mb-1">ОБСЯГ_ЕКСПОРТУ</p>
