@@ -17,26 +17,25 @@ import { cn } from '@/lib/utils';
 
 import { analyticsService } from '@/services/unified/analytics.service';
 
-const MOCK_OFFSHORE = [
-  { name: 'Б ИТ. ВІ Г. О-ВИ', value: 38, amount: '$142.5M', color: '#10b981' },
-  { name: 'КІП ', value: 27, amount: '$98.2M',  color: '#059669' },
-  { name: 'ОАЕ',  value: 18, amount: '$67.0M',  color: '#047857' },
-  { name: 'БЕЛІЗ', value: 11, amount: '$41.1M', color: '#064e3b' },
-  { name: 'ІНШІ', value: 6,  amount: '$22.0M',  color: '#022c22' },
-];
-
 export const OffshoreDetectorTab: React.FC = () => {
-  const [offshoreData, setOffshoreData] = useState(MOCK_OFFSHORE);
+  const [offshoreData, setOffshoreData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         const result = await analyticsService.getFinancialSigint();
-        if (result && result.offshore) {
+        if (result && result.offshore && result.offshore.length > 0) {
           setOffshoreData(result.offshore as any);
+        } else {
+          setOffshoreData([]);
         }
       } catch (err) {
-        console.warn('Using fallback data for OffshoreDetectorTab');
+        console.warn('API OFFLINE: Збій отримання офшорних даних', err);
+        setOffshoreData([]);
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
@@ -44,11 +43,11 @@ export const OffshoreDetectorTab: React.FC = () => {
 
   return (
     <div className="grid grid-cols-12 gap-8 p-6 h-full overflow-y-auto custom-scrollbar">
-      {/* Ліва колонка:  адар офшорів */}
+      {/* Ліва колонка: Радар офшорів */}
       <div className="col-span-12 xl:col-span-5 p-8 rounded-[3rem] bg-black/40 border border-white/5 shadow-2xl space-y-8 relative overflow-hidden">
         <h2 className="text-sm font-black text-emerald-500 italic uppercase tracking-[0.4em] border-b border-white/10 pb-6 flex items-center gap-4">
           <Globe size={20} className="animate-spin-slow text-emerald-500" /> 
-           АДА _ОФШО НОЇ_ЛІКВІДНОСТІ
+          РАДАР ОФШОРНОЇ ЛІКВІДНОСТІ
         </h2>
         
         <div className="flex items-center justify-center p-6 bg-slate-900/40 rounded-[3rem] relative group border border-white/5 shadow-inner">

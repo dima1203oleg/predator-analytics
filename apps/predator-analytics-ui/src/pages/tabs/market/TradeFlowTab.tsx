@@ -10,24 +10,12 @@ import { useBackendStatus } from '@/hooks/useBackendStatus';
 
 import { intelligenceApi } from '@/services/api';
 
-// --- MOCK DATA ---
-const MOCK_COUNTRIES = [
-  { id: 'ua', name: 'Україна', code: 'UA', x: 55, y: 35 },
-  { id: 'cn', name: 'Китай', code: 'CN', x: 80, y: 45 },
-  { id: 'us', name: 'США', code: 'US', x: 20, y: 40 },
-  { id: 'de', name: 'Німеччина', code: 'DE', x: 50, y: 30 },
-];
-
-const MOCK_FLOWS = [
-  { id: 'f1', from: 'cn', to: 'ua', value: 45000000, product: 'ЕЛЕКТ ОНІКА', color: '#D4AF37' },
-  { id: 'f2', from: 'de', to: 'ua', value: 32000000, product: 'МАШИНОБУДУВАННЯ', color: '#E11D48' },
-];
-
+// Порожні дані за замовчуванням — завантажуються з API
 export const TradeFlowTab: React.FC = () => {
   const [zoom, setZoom] = useState(1);
   const [selectedCountry, setSelectedCountry] = useState<any>(null);
-  const [countries, setCountries] = useState<any[]>(MOCK_COUNTRIES);
-  const [flows, setFlows] = useState<any[]>(MOCK_FLOWS);
+  const [countries, setCountries] = useState<any[]>([]);
+  const [flows, setFlows] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const { isOffline } = useBackendStatus();
 
@@ -37,11 +25,13 @@ export const TradeFlowTab: React.FC = () => {
             setLoading(true);
             const data = await intelligenceApi.getTradeFlows();
             if (data) {
-                if (data.countries) setCountries(data.countries);
-                if (data.flows) setFlows(data.flows);
+                if (data.countries && data.countries.length > 0) setCountries(data.countries);
+                if (data.flows && data.flows.length > 0) setFlows(data.flows);
             }
         } catch (error) {
-            console.error('Failed to fetch flows', error);
+            console.error('Збій завантаження торгових потоків', error);
+            setCountries([]);
+            setFlows([]);
         } finally {
             setLoading(false);
         }
@@ -124,15 +114,15 @@ export const TradeFlowTab: React.FC = () => {
                     <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest italic mb-8">ISO_CODE: {selectedCountry.code}</p>
                     
                     <div className="space-y-4">
-                       <div className="p-5 rounded-2xl bg-black/60 border border-white/5 shadow-inner">
-                          <p className="text-[8px] font-black text-slate-600 uppercase italic mb-1 tracking-widest">Обсяг імпорту</p>
-                          <p className="text-2xl font-black text-[#D4AF37] italic font-mono tracking-tighter">$450.2M</p>
-                       </div>
-                       <div className="p-5 rounded-2xl bg-black/60 border border-white/5 shadow-inner">
-                          <p className="text-[8px] font-black text-slate-600 uppercase italic mb-1 tracking-widest">Обсяг експорту</p>
-                          <p className="text-2xl font-black text-white italic font-mono tracking-tighter">$12.4M</p>
-                       </div>
-                    </div>
+                        <div className="p-5 rounded-2xl bg-black/60 border border-white/5 shadow-inner">
+                           <p className="text-[8px] font-black text-slate-600 uppercase italic mb-1 tracking-widest">Обсяг імпорту</p>
+                           <p className="text-2xl font-black text-[#D4AF37] italic font-mono tracking-tighter">{selectedCountry.import_volume ? `$${(selectedCountry.import_volume / 1e6).toFixed(1)}M` : 'Н/Д'}</p>
+                        </div>
+                        <div className="p-5 rounded-2xl bg-black/60 border border-white/5 shadow-inner">
+                           <p className="text-[8px] font-black text-slate-600 uppercase italic mb-1 tracking-widest">Обсяг експорту</p>
+                           <p className="text-2xl font-black text-white italic font-mono tracking-tighter">{selectedCountry.export_volume ? `$${(selectedCountry.export_volume / 1e6).toFixed(1)}M` : 'Н/Д'}</p>
+                        </div>
+                     </div>
                  </div>
 
                  <div className="p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/5 space-y-6">

@@ -278,8 +278,8 @@ export const MarketOverviewTab: React.FC = () => {
                   <div className="text-xs text-white font-black uppercase italic w-44 truncate leading-none">{p.product_name}</div>
                 </div>
                 <div className="text-right">
-                  <div className="text-base font-black text-rose-500 italic tabular-nums tracking-tighter shadow-rose-500/20 drop-shadow-md">$12.4M</div>
-                  <div className="text-[10px] text-emerald-400 font-black italic tracking-widest">+{p.growth_rate}%</div>
+                  <div className="text-base font-black text-rose-500 italic tabular-nums tracking-tighter shadow-rose-500/20 drop-shadow-md">${p.total_value_usd ? `${(p.total_value_usd / 1e6).toFixed(1)}M` : 'Н/Д'}</div>
+                  <div className="text-[10px] text-emerald-400 font-black italic tracking-widest">+{p.growth_rate ?? 0}%</div>
                 </div>
               </motion.div>
             ))}
