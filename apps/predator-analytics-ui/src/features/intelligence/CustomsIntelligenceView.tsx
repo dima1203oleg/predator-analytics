@@ -121,32 +121,8 @@ const ManifestXrayTerminal: React.FC = () => {
     );
 };
 
-// ─── MOCK DATA ────────────────────────────────────────────────────────
-
-const TRADE_VOLUME_DATA = [
-  { day: '01.03', import: 420, export: 310 },
-  { day: '05.03', import: 380, export: 290 },
-  { day: '10.03', import: 510, export: 340 },
-  { day: '15.03', import: 440, export: 410 },
-  { day: '20.03', import: 620, export: 380 },
-  { day: '25.03', import: 550, export: 450 },
-  { day: '30.03', import: 710, export: 490 },
-];
-
-const CATEGORY_DATA = [
-  { name: 'ЕЛЕКТРОНІКА', value: 35, color: '#e11d48' },
-  { name: 'МАШИНОБУДУВАННЯ', value: 25, color: '#fb7185' },
-  { name: 'АГРО-СЕКТОР', value: 20, color: '#be123c' },
-  { name: 'ХІМІЯ', value: 12, color: '#9f1239' },
-  { name: 'ІНШЕ', value: 8, color: '#475569' },
-];
-
-const MOCK_TOP_IMPORTERS = [
-  { name: 'ТОВ "МЕТАЛ-ТРЕЙД ОПТ"', value: '$14.2M', share: '12%', trend: 'up' },
-  { name: 'ПАТ "ЕНЕРГО-СИСТЕМИ"', value: '$9.8M', share: '8%', trend: 'up' },
-  { name: 'ТОВ "АГРО-ІМПОРТ ПЛЮС"', value: '$7.4M', share: '6%', trend: 'down' },
-  { name: 'ФОП КОВАЛЕНКО О.В.', value: '$3.1M', share: '2%', trend: 'stable' },
-];
+// AUDIT-FIX: Видалено inline MOCK дані (TRADE_VOLUME_DATA, CATEGORY_DATA, MOCK_TOP_IMPORTERS, RISK_ALERTS)
+// При недоступності API використовується graceful fallback на []
 
 interface RiskAlert {
   id: string;
@@ -168,20 +144,14 @@ const SEVERITY_CONFIG: Record<RiskLevelValue, { label: string; color: string; bg
   elevated:  { label: 'ПІДВИЩЕНА',  color: '#f43f5e', bg: 'bg-rose-400/10' },
 };
 
-const RISK_ALERTS: RiskAlert[] = [
-  { id: 'R-702', title: 'ЗАНИЖЕННЯ_МИТНОЇ_ВАРТОСТІ', source: 'HS-8517', severity: 'critical', status: 'АКТИВНА', desc: 'Декларування iPhone 15 Pro за ціною $240/од.' },
-  { id: 'R-614', title: 'ЗМІНА_КРАЇНИ_ПОХОДЖЕННЯ', source: 'UA-PL-DE', severity: 'high', status: 'ПЕРЕВІРКА', desc: 'Різка зміна логістичного плеча через фіктивні хаби в Польщі.' },
-  { id: 'R-509', title: 'САНКЦІЙНИЙ_ТРАНЗИТ', source: 'EU-SDN', severity: 'critical', status: 'БЛОКОВАНО', desc: 'Спроба ввезення комплектуючих подвійного призначення.' },
-];
-
 export default function CustomsIntelligenceView() {
   const { play } = useUISound();
   const [activeTab, setActiveTab] = useState<'analytics' | 'importers' | 'risks' | 'signals'>('analytics');
   const [refreshing, setRefreshing] = useState(false);
-  const [tradeVolume, setTradeVolume] = useState<any[]>(TRADE_VOLUME_DATA);
-  const [categoryData, setCategoryData] = useState<any[]>(CATEGORY_DATA);
-  const [topImporters, setTopImporters] = useState<any[]>(MOCK_TOP_IMPORTERS);
-  const [riskAlerts, setRiskAlerts] = useState<RiskAlert[]>(RISK_ALERTS);
+  const [tradeVolume, setTradeVolume] = useState<any[]>([]);
+  const [categoryData, setCategoryData] = useState<any[]>([]);
+  const [topImporters, setTopImporters] = useState<any[]>([]);
+  const [riskAlerts, setRiskAlerts] = useState<RiskAlert[]>([]);
 
   const { isOffline, nodeSource, healingProgress } = useBackendStatus();
 

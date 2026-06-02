@@ -27,6 +27,7 @@ import { ViewHeader } from '@/components/ViewHeader';
 import { DiagnosticsTerminal } from '@/components/intelligence/DiagnosticsTerminal';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { GeoGlobe } from '@/components/polish/GeoGlobe';
+import { analyticsService } from '@/services/unified/analytics.service';
 
 // ─── TYPES ────────────────────────────────────────────────────────────
 
@@ -44,53 +45,12 @@ interface ManifestItem {
   status: 'SAFE' | 'WARNING' | 'CRITICAL';
 }
 
-// ─── MOCK DATA ────────────────────────────────────────────────────────
-
-const MOCK_MANIFESTS: ManifestItem[] = [
-  {
-    id: 'm1',
-    manifestId: 'UA/ODS/22901',
-    consignee: 'ТОВ_САН_МА ІНО_Т ЕЙД',
-    consignor: 'GOLDEN_DRAGON_LOGISTICS_XIAMEN',
-    goodsDescription: 'ЕЛЕКТ ОННІ_КОМПОНЕНТИ_ТА_ЗАПЧАСТИНИ',
-    hsCode: '8541 10 00 00',
-    weight: 1240,
-    declaredValue: 45200,
-    riskScore: 88,
-    anomalies: ['VALUE_UNDERESTIMATION', 'WEIGHT_MISMATCH'],
-    status: 'CRITICAL'
-  },
-  {
-    id: 'm2',
-    manifestId: 'UA/LVV/11405',
-    consignee: 'АГ О_ТЕХ_СЕ ВІС_ПЛЮС',
-    consignor: 'AGRO_GLOBAL_GMBH_BERLIN',
-    goodsDescription: 'ЗАПЧАСТИНИ_ДО_Т АКТО ІВ_ДЛЯ_СІЛЬСЬКОГО_ГОСПОДА СТВА',
-    hsCode: '8433 90 00 00',
-    weight: 4500,
-    declaredValue: 128000,
-    riskScore: 12,
-    anomalies: [],
-    status: 'SAFE'
-  },
-  {
-    id: 'm3',
-    manifestId: 'UA/ODS/22912',
-    consignee: 'ТЕХНО_П ОМ_Г УП',
-    consignor: 'TURK_EXPORT_LOGISTIC_IST',
-    goodsDescription: 'ТКАНИНИ_СИНТЕТИЧНІ_ УЛОННІ',
-    hsCode: '5407 10 00 00',
-    weight: 850,
-    declaredValue: 1200,
-    riskScore: 65,
-    anomalies: ['CODE_MISCLASSIFICATION'],
-    status: 'WARNING'
-  }
-];
+// AUDIT-FIX: Видалено inline MOCK_MANIFESTS — при недоступності API повертається []
 
 export default function CargoManifestPremium() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedManifest, setSelectedManifest] = useState<ManifestItem | null>(MOCK_MANIFESTS[0]);
+  const [manifests, setManifests] = useState<ManifestItem[]>([]);
+  const [selectedManifest, setSelectedManifest] = useState<ManifestItem | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const { isOffline, nodeSource, healingProgress } = useBackendStatus();
 
@@ -118,18 +78,35 @@ export default function CargoManifestPremium() {
     }
   }, [isOffline, nodeSource]);
 
+  // Завантаження маніфестів з API
+  const fetchManifests = async () => {
+    try {
+      const data = await analyticsService.getCargoManifests();
+      if (data.length) {
+        setManifests(data);
+        if (!selectedManifest) setSelectedManifest(data[0]);
+      }
+    } catch (err) {
+      console.error('[CargoForensic] Помилка завантаження маніфестів:', err);
+    }
+  };
+
+  useEffect(() => {
+    fetchManifests();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   const handleRefresh = async () => {
     setRefreshing(true);
-    await new Promise(r => setTimeout(r, 1200));
+    await fetchManifests();
     setRefreshing(false);
   };
 
   const filteredManifests = useMemo<ManifestItem[]>(() => {
-    return MOCK_MANIFESTS.filter(m => 
+    return manifests.filter(m => 
       m.manifestId.toLowerCase().includes(searchQuery.toLowerCase()) ||
       m.consignee.toLowerCase().includes(searchQuery.toLowerCase())
     );
-  }, [searchQuery]);
+  }, [searchQuery, manifests]);
 
   return (
     <PageTransition>

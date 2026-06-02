@@ -115,47 +115,7 @@ const FinancialInterceptorTerminal: React.FC = () => {
 
 // Використовуємо типи з analytics.service.ts
 
-// ─── MOCK DATA (Fallback) ───────────────────────────────────────────
-
-const MOCK_SWIFT_FLOW = [
-  { hour: '00:00', normal: 12, suspicious: 0.2 },
-  { hour: '04:00', normal: 5,  suspicious: 0.4 },
-  { hour: '08:00', normal: 45, suspicious: 1.2 },
-  { hour: '12:00', normal: 120, suspicious: 14.4 },
-  { hour: '16:00', normal: 84, suspicious: 4.8 },
-  { hour: '20:00', normal: 38, suspicious: 1.6 },
-  { hour: '23:59', normal: 14, suspicious: 0.3 },
-];
-
-const MOCK_OFFSHORE = [
-  { name: 'Б ИТ. ВІ Г. О-ВИ', value: 38, amount: '$142.5M', color: '#D97706' },
-  { name: 'КІП ', value: 27, amount: '$98.2M',  color: '#D4AF37' },
-  { name: 'ОАЕ',  value: 18, amount: '$67.0M',  color: '#F59E0B' },
-  { name: 'БЕЛІЗ', value: 11, amount: '$41.1M', color: '#D4AF37' },
-  { name: 'ІНШІ', value: 6,  amount: '$22.0M',  color: '#1e293b' },
-];
-
-const MOCK_SUSPICIOUS_TX = [
-  { id: 'TX-ELITE-8821', from: 'ТОВ "АГ О-ЛІДЕ "', to: 'Kyoto Holdings Ltd (BVI)', amount: '$4.7M', currency: 'USD', time: '12:14:22', risk: 98, type: 'Фіктивна компанія', route: 'UA → BVI → ОАЕ' },
-  { id: 'TX-ELITE-7203', from: 'БФ "ВІД ОДЖЕННЯ"', to: 'Sunrise Capital Ltd (CY)', amount: '$2.1M', currency: 'USD', time: '10:47:08', risk: 89, type: 'Шайрування', route: 'UA → CY → MT' },
-  { id: 'TX-ELITE-5509', from: 'ФОП ТКАЧЕНКО В.М.', to: 'Gulf Meridian FZCO (UAE)', amount: '$1.4M', currency: 'AED', time: '08:55:19', risk: 94, type: 'PEP експозиція', route: 'UA → AE → SA' },
-  { id: 'TX-ELITE-4412', from: 'ТОВ "МЕТАЛ-Г УП"', to: 'Belize Trust Corp (BZ)', amount: '$3.2M', currency: 'USD', time: '07:14:55', risk: 92, type: 'Санкційний вузол', route: 'UA → BZ → PA' },
-];
-
-const MOCK_FROZEN = [
-  { entity: 'ПУМБ  АХУНОК 4521', amount: '$12.4M', date: '2025-12-01', authority: 'РНБО', reason: 'Санкційний список', status: 'ЗАМО ОЖЕНО' },
-  { entity: 'ТОВ "АЛЬФА-ХОЛДИНГ"', amount: '$7.8M',  date: '2026-01-15', authority: 'EU SDN', reason: 'Фінансування агресії', status: 'ЗАМО ОЖЕНО' },
-  { entity: 'ЯХТА "SOVEREIGN"', amount: '$18.5M', date: '2026-03-08', authority: 'MAS', reason: 'Ухилення від санкцій', status: 'КОНФІСКОВАНО' },
-];
-
-const MOCK_AML_RADAR = [
-  { subject: 'СТ УКТУ УВАННЯ', A: 120, B: 110 },
-  { subject: 'ШАЙ УВАННЯ', A: 98, B: 130 },
-  { subject: 'ОФШО ІЗАЦІЯ', A: 86, B: 130 },
-  { subject: 'PEP-РИЗИК', A: 140, B: 100 },
-  { subject: 'САНКЦІЇ', A: 125, B: 90 },
-  { subject: 'ТЕ  ПОТОКИ', A: 65, B: 85 },
-];
+// ─── INIT DATA (Empty State) ───────────────────────────────────────────
 
 type ActiveModule = 'swift' | 'offshore' | 'contracts' | 'frozen' | 'aml';
 
@@ -168,11 +128,11 @@ export default function FinancialSigintView() {
   const { isOffline, activeFailover } = backendStatus;
   
   // Real Data State
-  const [swiftData, setSwiftData] = useState(MOCK_SWIFT_FLOW);
-  const [offshoreData, setOffshoreData] = useState(MOCK_OFFSHORE);
-  const [suspiciousTx, setSuspiciousTx] = useState<SuspiciousTx[]>(MOCK_SUSPICIOUS_TX);
-  const [frozenAssets, setFrozenAssets] = useState<FrozenAsset[]>(MOCK_FROZEN);
-  const [amlRadar, setAmlRadar] = useState(MOCK_AML_RADAR);
+  const [swiftData, setSwiftData] = useState<any[]>([]);
+  const [offshoreData, setOffshoreData] = useState<any[]>([]);
+  const [suspiciousTx, setSuspiciousTx] = useState<SuspiciousTx[]>([]);
+  const [frozenAssets, setFrozenAssets] = useState<FrozenAsset[]>([]);
+  const [amlRadar, setAmlRadar] = useState<any[]>([]);
 
   const fetchData = async () => {
     try {

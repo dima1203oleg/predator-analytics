@@ -465,6 +465,20 @@ export class AnalyticsService {
       return null;
     }
   }
+
+  /**
+   * 📦 CARGO MANIFEST FORENSIC // ВАНТАЖНІ МАНІФЕСТИ
+   * Отримує список маніфестів для форензик-аналізу.
+   */
+  async getCargoManifests(): Promise<any[]> {
+    try {
+      const res = await apiClient.get('/analytics/customs/manifests');
+      return Array.isArray(res.data) ? res.data : res.data?.items || [];
+    } catch (err) {
+      console.warn('[AnalyticsService] getCargoManifests API недоступний:', err);
+      return [];
+    }
+  }
 }
 
 export const analyticsService = AnalyticsService.getInstance();

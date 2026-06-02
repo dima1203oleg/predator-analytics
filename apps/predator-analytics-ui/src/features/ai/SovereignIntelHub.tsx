@@ -31,11 +31,6 @@ import { DiagnosticsTerminal } from '@/components/intelligence/DiagnosticsTermin
 
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 
-// --- MOCK DATA FOR ELITE ---
-const MOCK_THOUGHTS: AIThought[] = [
-    { id: '1', stage: 'observation', content: '[GLM-5.1] Система в очікуванні ввідних даних. Нейронні потоки стабілізовані.', confidence: 1.0, timestamp: new Date().toISOString() }
-];
-
 export default function SovereignIntelHub() {
     const { isOffline, nodeSource, healingProgress } = useBackendStatus();
     const [messages, setMessages] = useState<ChatMessage[]>([
@@ -161,7 +156,7 @@ export default function SovereignIntelHub() {
                                 </div>
                                 
                                 <div className="flex-1 overflow-y-auto space-y-8 pr-6 custom-scrollbar font-mono">
-                                    {(messages[messages.length - 1]?.thought_process || MOCK_THOUGHTS).map((t, i) => (
+                                    {(messages[messages.length - 1]?.thought_process || []).map((t, i) => (
                                         <motion.div 
                                             key={t.id}
                                             initial={{ opacity: 0, x: -20 }}

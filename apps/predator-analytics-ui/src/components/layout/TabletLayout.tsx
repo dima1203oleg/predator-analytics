@@ -19,11 +19,11 @@ export const TabletLayout: React.FC<TabletLayoutProps> = ({ children }) => {
   return (
     <div className="relative flex min-h-screen bg-[#010101] text-foreground">
       {/* Header with safe area padding */}
-      <Header
-        style={{ paddingTop: `calc(1rem + ${safeArea.top}px)`, paddingBottom: `calc(0.5rem + ${safeArea.bottom}px)` }}
-      />
+      <div style={{ paddingTop: `calc(1rem + ${safeArea.top}px)`, paddingBottom: `calc(0.5rem + ${safeArea.bottom}px)` }}>
+        <Header />
+      </div>
       {/* Sidebar – narrow version */}
-      <Sidebar className="w-64 shrink-0" />
+      <Sidebar />
       {/* Main content area */}
       <main
         className={cn(
