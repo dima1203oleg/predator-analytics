@@ -30,7 +30,7 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/utils/cn';
 import { CyberOrb } from '@/components/CyberOrb';
 
-import { useDisplayMode, DisplayMode } from '@/context/DisplayModeContext';
+import { useViewport } from '@/hooks/useViewport';
 
 // ========================
 // Types & Defaults
@@ -123,9 +123,7 @@ const SemanticFieldParticles: React.FC = () => {
 // ========================
 
 export const SearchConsolePage: React.FC = () => {
-    const { mode: displayMode } = useDisplayMode();
-    const isMobile = displayMode === DisplayMode.MOBILE;
-    const isTablet = displayMode === DisplayMode.TABLET;
+    const { isCompact, isMedium } = useViewport();
     const { userRole } = useAppStore();
     const [query, setQuery] = useState('');
     const [results, setResults] = useState<SearchResult[]>([]);
@@ -195,9 +193,9 @@ export const SearchConsolePage: React.FC = () => {
                 <SemanticFieldParticles />
                 
                 {/* Visual Accent */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1200px] h-[400px] bg-[#D4AF37]/5 blur-[150px] rounded-full" />
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[1200px] h-[400px] bg-[#D4AF37]/5 blur-[150px] rounded-full overflow-hidden" />
                 
-                <div className="relative z-10 max-w-[1900px] mx-auto p-4 sm:p-8 lg:p-12 space-y-16">
+                <div className={cn("relative z-10 max-w-[1900px] mx-auto p-4 sm:p-8 lg:p-12", isCompact ? "space-y-8" : "space-y-16")}>
                     
                     {/* View Header v61.0-ELITE */}
                     <ViewHeader
@@ -210,7 +208,7 @@ export const SearchConsolePage: React.FC = () => {
                                     </div>
                                 </div>
                                 <div className="flex flex-col">
-                                    <h1 className="text-4xl font-black text-white tracking-widest uppercase leading-none italic skew-x-[-4deg]">
+                                    <h1 className={cn("font-black text-white tracking-widest uppercase leading-none italic skew-x-[-4deg]", isCompact ? "text-2xl" : "text-4xl")}>
                                         СИНАПТИЧНИЙ <span className="text-[#D4AF37]">ПОШУК</span>
                                     </h1>
                                     <p className="text-[10px] font-mono font-black text-[#D4AF37]/70 uppercase tracking-[0.6em] mt-3 flex items-center gap-3">
@@ -237,7 +235,7 @@ export const SearchConsolePage: React.FC = () => {
                             className="relative group p-1.5 rounded-[32px] md:rounded-[56px] bg-gradient-to-tr from-[#D4AF37]/30 via-transparent to-[#E11D48]/30 "
                         >
                             <div className="relative bg-[#050505]/95 rounded-[28px] md:rounded-[50px] border border-white/5 overflow-hidden">
-                                {isMobile ? (
+                                {isCompact ? (
                                     <div className="flex flex-col p-6 gap-6">
                                         <div className="relative">
                                             <input
@@ -425,9 +423,9 @@ export const SearchConsolePage: React.FC = () => {
                                             className="group relative p-1 rounded-[32px] md:rounded-[40px] bg-white/[0.02] hover:bg-gradient-to-r hover:from-[#D4AF37]/20 hover:to-[#E11D48]/10 transition-all duration-500 shadow-2xl"
                                         >
                                             <div className="bg-[#050505]/90 rounded-[28px] md:rounded-[39px] p-5 md:p-8 relative overflow-hidden">
-                                                <div className="absolute top-0 right-0 w-40 h-40 bg-[#D4AF37]/5 blur-[50px] pointer-events-none" />
+                                                <div className="absolute top-0 right-0 w-40 h-40 bg-[#D4AF37]/5 blur-[50px] pointer-events-none overflow-hidden" />
                                                 
-                                                {isMobile ? (
+                                                {isCompact ? (
                                                     <div className="flex flex-col gap-4">
                                                         <div className="flex justify-between items-center border-b border-white/5 pb-3">
                                                             <div className="flex items-center gap-2">
@@ -550,7 +548,7 @@ export const SearchConsolePage: React.FC = () => {
                                 </div>
                             </div>
                         ) : (
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-10 opacity-70">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 opacity-70">
                                 {[
                                     { title: 'ГЛОБАЛЬНА ТО ГІВЛЯ', icon: Globe, desc: 'Аналіз морських та наземних шляхів' },
                                     { title: 'ФІНАНСОВІ ПОТОКИ', icon: Key, desc: 'Детекція офшорних аномалій' },

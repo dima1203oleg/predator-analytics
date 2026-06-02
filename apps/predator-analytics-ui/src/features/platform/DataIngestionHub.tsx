@@ -27,7 +27,7 @@ import { ActiveJobsPanel } from '@/components/pipeline/ActiveJobsPanel';
 import { DatabasePipelineMonitor } from '@/components/pipeline/DatabasePipelineMonitor';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { Badge } from '@/components/ui/badge';
-import { useDisplayMode, DisplayMode } from '@/context/DisplayModeContext';
+import { useViewport } from '@/hooks/useViewport';
 
 // === ТИПИ ТА КОНФІГУ АЦІЯ ===
 interface DataSource {
@@ -125,9 +125,7 @@ const FileItem = ({ file, onRemove }: any) => (
 );
 
 const DataIngestionHub: React.FC = () => {
-  const { mode: displayMode } = useDisplayMode();
-  const isMobile = displayMode === DisplayMode.MOBILE;
-  const isTablet = displayMode === DisplayMode.TABLET;
+  const { isCompact, isMedium } = useViewport();
   const [sources, setSources] = useState<DataSource[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -180,7 +178,7 @@ const DataIngestionHub: React.FC = () => {
 
   return (
     <PageTransition>
-      <div className="min-h-screen p-8 flex flex-col gap-10 relative overflow-hidden bg-[#020617]">
+      <div className={cn("min-h-screen flex flex-col relative overflow-hidden bg-[#020617]", isCompact ? "p-3 gap-6" : "p-8 gap-10")}>
         <AdvancedBackground />
 
         {/* Global Situational Awareness Header */}
@@ -189,7 +187,7 @@ const DataIngestionHub: React.FC = () => {
               <div className="relative group cursor-pointer shrink-0">
                   <div className="absolute inset-0 bg-emerald-500/20 blur-2xl rounded-full group-hover:scale-125 transition-transform" />
                   <div className="relative p-4 md:p-6 bg-slate-900 border border-emerald-500/30 rounded-[1.5rem] md:rounded-[2.5rem] shadow-2xl">
-                      <CloudLightning size={isMobile ? 24 : 40} className="text-emerald-400" />
+                      <CloudLightning size={isCompact ? 24 : 40} className="text-emerald-400" />
                   </div>
               </div>
               <div>
@@ -197,14 +195,14 @@ const DataIngestionHub: React.FC = () => {
                        <span className="text-[8px] md:text-[10px] font-black text-emerald-500 uppercase tracking-[0.3em] ">ЯДРО_ЗЛИТТЯ_v6.1</span>
                        <Badge variant="outline" className="text-[7px] md:text-[8px] bg-emerald-500/10 text-emerald-400 border-emerald-500/20">LIVE</Badge>
                   </div>
-                  <h1 className={cn("font-black text-white italic tracking-tighter uppercase leading-tight font-display", isMobile ? "text-3xl" : "text-5xl")}>
+                  <h1 className={cn("font-black text-white italic tracking-tighter uppercase leading-tight font-display", isCompact ? "text-3xl" : "text-5xl")}>
                       ЦЕНТ  <span className="text-emerald-400 ">ІНГЕСТІЇ</span>
                   </h1>
               </div>
            </div>
 
-           <div className={cn("flex items-center gap-6 md:gap-8 w-full md:w-auto justify-between md:justify-end", isMobile && "flex-col-reverse items-stretch gap-4")}>
-                <div className={cn("flex flex-col text-right", isMobile && "text-center")}>
+           <div className={cn("flex items-center gap-6 md:gap-8 w-full md:w-auto justify-between md:justify-end", isCompact && "flex-col-reverse items-stretch gap-4")}>
+                <div className={cn("flex flex-col text-right", isCompact && "text-center")}>
                     <span className="text-[8px] md:text-[9px] font-black text-slate-300 uppercase tracking-[0.2em] md:tracking-[0.3em] mb-1">СИНХРОНІЗАЦІЯ_ОЗЕРА</span>
                     <span className="text-sm md:text-lg font-black text-emerald-400 font-mono italic">{lastUpdate}</span>
                 </div>
@@ -212,7 +210,7 @@ const DataIngestionHub: React.FC = () => {
                   onClick={() => setIsModalOpen(true)}
                   className="px-6 md:px-10 py-4 md:py-6 bg-emerald-500 text-black font-black rounded-2xl md:rounded-[2rem] text-xs uppercase tracking-[0.2em] hover:bg-emerald-400 transition-all flex items-center justify-center gap-3 group active:scale-95"
                 >
-                  <Plus size={isMobile ? 16 : 20} className="group-hover:rotate-90 transition-transform duration-500" />
+                  <Plus size={isCompact ? 16 : 20} className="group-hover:rotate-90 transition-transform duration-500" />
                   ПІДКЛЮЧИТИ ДЖЕРЕЛО_v2
                 </button>
            </div>
@@ -237,7 +235,7 @@ const DataIngestionHub: React.FC = () => {
                         </div>
                     </div>
 
-                    {isMobile ? (
+                    {isCompact ? (
                         <div className="flex flex-col gap-4">
                             {sources.map(source => (
                                 <motion.div 
@@ -425,15 +423,15 @@ const DataIngestionHub: React.FC = () => {
                         <div className="p-6 md:p-12 flex items-center justify-between border-b border-white/5">
                             <div className="flex items-center gap-4 md:gap-8 w-full md:w-auto">
                                 <div className="p-3 md:p-6 bg-emerald-500/10 border border-emerald-500/20 rounded-xl md:rounded-[2rem] text-emerald-400 shrink-0">
-                                    <Layers size={isMobile ? 24 : 40} />
+                                    <Layers size={isCompact ? 24 : 40} />
                                 </div>
                                 <div>
-                                    <h2 className={cn("font-black text-white italic tracking-tighter uppercase font-display", isMobile ? "text-xl" : "text-4xl mb-2")}>ІНІЦІАЛІЗАЦІЯ_КОНВЕЄРА</h2>
-                                    {!isMobile && <p className="text-slate-300 font-medium tracking-wide uppercase text-sm border-l-2 border-emerald-500/30 pl-4">Створення нового каналу поглинання знань</p>}
+                                    <h2 className={cn("font-black text-white italic tracking-tighter uppercase font-display", isCompact ? "text-xl" : "text-4xl mb-2")}>ІНІЦІАЛІЗАЦІЯ_КОНВЕЄРА</h2>
+                                    {!isCompact && <p className="text-slate-300 font-medium tracking-wide uppercase text-sm border-l-2 border-emerald-500/30 pl-4">Створення нового каналу поглинання знань</p>}
                                 </div>
                             </div>
                             <button onClick={() => setIsModalOpen(false)} className="p-3 md:p-5 bg-white/5 border border-white/10 rounded-2xl md:rounded-3xl text-slate-300 hover:text-white transition-all active:scale-90">
-                                <X size={isMobile ? 20 : 32} />
+                                <X size={isCompact ? 20 : 32} />
                             </button>
                         </div>
 
@@ -454,7 +452,7 @@ const DataIngestionHub: React.FC = () => {
                                                 `}
                                             >
                                                 <div className={`p-2.5 md:p-4 rounded-xl md:rounded-2xl ${selectedType === type.id ? 'bg-emerald-500 text-black' : 'bg-slate-900 text-slate-300'} transition-all`}>
-                                                    <type.icon size={isMobile ? 20 : 28} />
+                                                    <type.icon size={isCompact ? 20 : 28} />
                                                 </div>
                                                 <span className={`text-[8px] md:text-[10px] font-black uppercase tracking-widest text-center ${selectedType === type.id ? 'text-white' : 'text-slate-300'}`}>{type.label}</span>
                                                 {selectedType === type.id && <motion.div layoutId="modal-sel" className="absolute inset-0 bg-emerald-500/[0.03] pointer-events-none" />}
@@ -478,7 +476,7 @@ const DataIngestionHub: React.FC = () => {
                                              setFiles(prev => [...prev, ...selected.map(f => ({ file: f, progress: 0, status: 'pending' as const }))]);
                                         }} />
                                         <div className="p-6 md:p-10 bg-emerald-500/10 rounded-2xl md:rounded-[3rem] border border-emerald-500/20 mb-4 md:mb-8 group-hover:scale-110 transition-transform duration-700">
-                                            <Upload size={isMobile ? 32 : 64} className="text-emerald-400 animate-bounce" />
+                                            <Upload size={isCompact ? 32 : 64} className="text-emerald-400 animate-bounce" />
                                         </div>
                                         <h4 className="text-lg md:text-2xl font-black text-white italic uppercase tracking-tighter mb-2 text-center">ОБРАТИ ФАЙЛ З ПРИСТРОЮ</h4>
                                         <p className="text-[8px] md:text-[10px] font-mono text-slate-400 uppercase tracking-[0.2em] md:tracking-[0.4em] text-center">ГРАНИЧНИЙ ОБ'ЄМ: 2.0GB // AI-ВАЛІДАЦІЯ</p>
