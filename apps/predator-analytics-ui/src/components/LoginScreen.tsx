@@ -82,7 +82,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
     const [step, setStep] = useState<'initial' | 'scanning' | 'roles'>('initial');
     const [scanProgress, setScanProgress] = useState(0);
     const [threatPulse, setThreatPulse] = useState(false);
-    const [email, setEmail] = useState('admin@predator.ai');
+    const [email, setEmail] = useState('admin');
     const [password, setPassword] = useState('admin123');
     const [error, setError] = useState<string | null>(null);
     const clock = useClock();
@@ -131,33 +131,31 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
         setStep('scanning');
 
         try {
-            const formData = new URLSearchParams();
-            formData.append('username', email);
-            formData.append('password', password);
-
-            const response = await apiClient.post('/auth/token', formData, {
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                }
+            // Kaggle backend приймає JSON {username, password} на /auth/login
+            const response = await apiClient.post('/auth/login', {
+                username: email,
+                password: password,
             });
 
             if (response.data && response.data.access_token) {
+                const realToken = response.data.access_token;
+                // Зберігаємо токен одразу
+                sessionStorage.setItem('predator_auth_token', realToken);
                 // Simulate biometric scanning before redirect
                 setTimeout(() => {
                     const userData = response.data.user;
                     flushSync(() => {
                         setUser({
-                            id: userData.id,
-                            name: userData.full_name || userData.role,
-                            email: userData.email,
+                            id: userData.id || userData.username || 'admin',
+                            name: userData.full_name || userData.username || userData.role,
+                            email: userData.email || `${userData.username}@predator.ua`,
                             role: userData.role as UserRole,
-                            tier: userData.role === UserRole.ADMIN ? SubscriptionTier.ENTERPRISE : SubscriptionTier.PRO,
-                            tenant_id: userData.tenant_id,
+                            tier: userData.role === 'admin' ? SubscriptionTier.ENTERPRISE : SubscriptionTier.PRO,
+                            tenant_id: userData.tenant_id || 'predator',
                             tenant_name: 'PREDATOR_CORP',
                             last_login: new Date().toISOString(),
                             data_sectors: ['ALPHA', 'GAMMA', 'DELTA-9']
-                        });
-                        sessionStorage.setItem('predator_auth_token', response.data.access_token);
+                        }, realToken);
                     });
                     onLogin();
                 }, 2000); // 2 sec scan animation
@@ -495,10 +493,10 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                         <User size={16} />
                                     </div>
                                     <input
-                                        type="email"
+                                        type="text"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
-                                        placeholder="ОПЕРАТИВНИЙ КОД (EMAIL)"
+                                        placeholder="ОПЕРАТИВНИЙ КОД (ЛОГІН)"
                                         className="w-full bg-black/80 border border-rose-900/40 rounded py-3 pl-10 pr-4 text-[11px] tracking-[0.2em] font-black text-white placeholder:text-rose-900/50 focus:border-rose-600/60 outline-none transition-all shadow-inner"
                                     />
                                 </div>

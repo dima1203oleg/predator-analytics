@@ -41,6 +41,28 @@ class TelegramIngestRequest(BaseModel):
     limit: int = 100
 
 
+class ApiIngestRequest(BaseModel):
+    url: str
+    method: str = "GET"
+    headers: dict = {}
+    body: dict | None = None
+    name: str | None = None
+    limit: int = 100
+
+
+class RssIngestRequest(BaseModel):
+    url: str
+    name: str | None = None
+    limit: int = 100
+
+
+class WebsiteIngestRequest(BaseModel):
+    url: str
+    name: str | None = None
+    depth: int = 1
+    limit: int = 100
+
+
 async def process_file_async(
     job_id: str,
     content: bytes,
@@ -297,6 +319,306 @@ async def process_telegram_async(job_id: str, url: str, limit: int, user_id: str
         job.updated_at = datetime.utcnow()
 
 
+async def process_website_async(job_id: str, url: str, limit: int, user_id: str, config: dict):
+    """Асинхронне фонове завдання для парсингу веб-сайту."""
+    job = ingestion_jobs.get(job_id)
+    if not job:
+        return
+
+    import httpx
+    from html.parser import HTMLParser
+    from app.etl.processor import etl_processor
+    from app.services.indexing_service import indexing_service
+
+    class WebTextParser(HTMLParser):
+        def __init__(self):
+            super().__init__()
+            self.text_parts = []
+            self.in_script_or_style = False
+            self.title = ""
+            self.in_title = False
+
+        def handle_starttag(self, tag, attrs):
+            if tag in ["script", "style"]:
+                self.in_script_or_style = True
+            elif tag == "title":
+                self.in_title = True
+
+        def handle_endtag(self, tag):
+            if tag in ["script", "style"]:
+                self.in_script_or_style = False
+            elif tag == "title":
+                self.in_title = False
+
+        def handle_data(self, data):
+            if self.in_title:
+                self.title = data.strip()
+            elif not self.in_script_or_style:
+                text = data.strip()
+                if text:
+                    self.text_parts.append(text)
+
+        def get_text(self):
+            return " ".join(self.text_parts)
+
+    try:
+        # Фаза 1: Валідація та підключення
+        job.status = IngestionStatus.VALIDATING
+        job.progress.stage = "CONNECTING"
+        job.progress.message = f"Підключення до {url}..."
+        job.updated_at = datetime.utcnow()
+        await asyncio.sleep(0.5)
+
+        # Фаза 2: Отримання контенту
+        job.status = IngestionStatus.PARSING
+        job.progress.stage = "FETCHING"
+        job.progress.message = "Завантаження сторінки..."
+        job.updated_at = datetime.utcnow()
+
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            response = await client.get(url, follow_redirects=True)
+            response.raise_for_status()
+            html_content = response.text
+
+        # Фаза 3: Парсинг
+        job.progress.stage = "PARSING"
+        job.progress.message = "Парсинг вмісту сторінки..."
+        job.updated_at = datetime.utcnow()
+
+        parser = WebTextParser()
+        parser.feed(html_content)
+        
+        record = {
+            "url": url,
+            "title": parser.title or url,
+            "content": parser.get_text()[:5000],
+            "ingested_at": datetime.utcnow().isoformat(),
+            "source_type": "website"
+        }
+
+        # Фаза 4: ETL та трансформація
+        job.status = IngestionStatus.EMBEDDING
+        job.progress.stage = "ETL"
+        job.progress.message = "Трансформація даних через ETL пайплайн..."
+        job.updated_at = datetime.utcnow()
+
+        etl_res = await etl_processor.process([record], pipeline="default")
+        if not etl_res.success:
+            raise ValueError(f"Помилка ETL: {', '.join(etl_res.errors)}")
+
+        # Фаза 5: Індексація
+        job.status = IngestionStatus.INDEXING
+        job.progress.stage = "INDEXING"
+        job.progress.message = "Індексація в бази даних..."
+        job.updated_at = datetime.utcnow()
+
+        await indexing_service.index_documents([record], dataset_type="website", index_name="websites")
+
+        # Завершення
+        job.status = IngestionStatus.READY
+        job.progress.stage = "READY"
+        job.progress.percent = 100
+        job.progress.message = f"Успішно оброблено веб-сторінку: {parser.title or url}"
+        job.updated_at = datetime.utcnow()
+
+    except Exception as e:
+        logger.exception(f"Website ingestion failed for job {job_id}")
+        job.status = IngestionStatus.FAILED
+        job.progress.stage = "failed"
+        job.error = str(e)
+        job.progress.message = f"Помилка: {e!s}"
+        job.updated_at = datetime.utcnow()
+
+
+async def process_api_async(job_id: str, url: str, method: str, headers: dict, body: dict | None, limit: int, user_id: str, config: dict):
+    """Асинхронне фонове завдання для парсингу API."""
+    job = ingestion_jobs.get(job_id)
+    if not job:
+        return
+
+    import httpx
+    from app.etl.processor import etl_processor
+    from app.services.indexing_service import indexing_service
+
+    try:
+        # Фаза 1: Валідація та підключення
+        job.status = IngestionStatus.VALIDATING
+        job.progress.stage = "CONNECTING"
+        job.progress.message = f"Надсилання запиту до API: {method} {url}..."
+        job.updated_at = datetime.utcnow()
+        await asyncio.sleep(0.5)
+
+        # Фаза 2: Отримання контенту
+        job.status = IngestionStatus.PARSING
+        job.progress.stage = "FETCHING"
+        job.progress.message = "Очікування відповіді від API..."
+        job.updated_at = datetime.utcnow()
+
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            if method.upper() == "POST":
+                response = await client.post(url, headers=headers, json=body)
+            else:
+                response = await client.get(url, headers=headers)
+            response.raise_for_status()
+            
+            try:
+                api_data = response.json()
+            except Exception:
+                api_data = {"response_text": response.text}
+
+        # Фаза 3: Парсинг та підготовка записів
+        job.progress.stage = "PARSING"
+        job.progress.message = "Структурування відповіді API..."
+        job.updated_at = datetime.utcnow()
+
+        records = []
+        if isinstance(api_data, list):
+            for i, item in enumerate(api_data[:limit]):
+                records.append({
+                    "source_url": url,
+                    "index": i,
+                    "data": item,
+                    "ingested_at": datetime.utcnow().isoformat(),
+                    "source_type": "api"
+                })
+        else:
+            records.append({
+                "source_url": url,
+                "data": api_data,
+                "ingested_at": datetime.utcnow().isoformat(),
+                "source_type": "api"
+            })
+
+        job.progress.total_items = len(records)
+
+        # Фаза 4: ETL та трансформація
+        job.status = IngestionStatus.EMBEDDING
+        job.progress.stage = "ETL"
+        job.progress.message = f"Трансформація {len(records)} записів..."
+        job.updated_at = datetime.utcnow()
+
+        etl_res = await etl_processor.process(records, pipeline="default")
+        if not etl_res.success:
+            raise ValueError(f"Помилка ETL: {', '.join(etl_res.errors)}")
+
+        # Фаза 5: Індексація
+        job.status = IngestionStatus.INDEXING
+        job.progress.stage = "INDEXING"
+        job.progress.message = "Індексація даних в сховища..."
+        job.updated_at = datetime.utcnow()
+
+        await indexing_service.index_documents(records, dataset_type="api", index_name="api_data")
+
+        # Завершення
+        job.status = IngestionStatus.READY
+        job.progress.stage = "READY"
+        job.progress.percent = 100
+        job.progress.message = f"Успішно оброблено {len(records)} записів з API"
+        job.updated_at = datetime.utcnow()
+
+    except Exception as e:
+        logger.exception(f"API ingestion failed for job {job_id}")
+        job.status = IngestionStatus.FAILED
+        job.progress.stage = "failed"
+        job.error = str(e)
+        job.progress.message = f"Помилка: {e!s}"
+        job.updated_at = datetime.utcnow()
+
+
+async def process_rss_async(job_id: str, url: str, limit: int, user_id: str, config: dict):
+    """Асинхронне фонове завдання для парсингу RSS-стрічки."""
+    job = ingestion_jobs.get(job_id)
+    if not job:
+        return
+
+    import httpx
+    import xml.etree.ElementTree as ET
+    from app.etl.processor import etl_processor
+    from app.services.indexing_service import indexing_service
+
+    try:
+        # Фаза 1: Валідація та підключення
+        job.status = IngestionStatus.VALIDATING
+        job.progress.stage = "CONNECTING"
+        job.progress.message = f"Підключення до RSS: {url}..."
+        job.updated_at = datetime.utcnow()
+        await asyncio.sleep(0.5)
+
+        # Фаза 2: Отримання контенту
+        job.status = IngestionStatus.PARSING
+        job.progress.stage = "FETCHING"
+        job.progress.message = "Завантаження RSS-стрічки..."
+        job.updated_at = datetime.utcnow()
+
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            response = await client.get(url)
+            response.raise_for_status()
+            xml_content = response.content
+
+        # Фаза 3: Парсинг XML
+        job.progress.stage = "PARSING"
+        job.progress.message = "Аналіз XML структури..."
+        job.updated_at = datetime.utcnow()
+
+        root = ET.fromstring(xml_content)
+        items = root.findall(".//item")
+        
+        records = []
+        for item in items[:limit]:
+            title = item.findtext("title") or "No Title"
+            link = item.findtext("link") or ""
+            desc = item.findtext("description") or ""
+            pub_date = item.findtext("pubDate") or ""
+            
+            records.append({
+                "title": title,
+                "link": link,
+                "description": desc,
+                "pub_date": pub_date,
+                "source_url": url,
+                "ingested_at": datetime.utcnow().isoformat(),
+                "source_type": "rss"
+            })
+
+        if not records:
+            raise ValueError("Не знайдено жодного запису <item> в RSS")
+
+        job.progress.total_items = len(records)
+
+        # Фаза 4: ETL та трансформація
+        job.status = IngestionStatus.EMBEDDING
+        job.progress.stage = "ETL"
+        job.progress.message = f"Трансформація {len(records)} новин RSS..."
+        job.updated_at = datetime.utcnow()
+
+        etl_res = await etl_processor.process(records, pipeline="default")
+        if not etl_res.success:
+            raise ValueError(f"Помилка ETL: {', '.join(etl_res.errors)}")
+
+        # Фаза 5: Індексація
+        job.status = IngestionStatus.INDEXING
+        job.progress.stage = "INDEXING"
+        job.progress.message = "Індексація новин RSS..."
+        job.updated_at = datetime.utcnow()
+
+        await indexing_service.index_documents(records, dataset_type="rss", index_name="rss_feeds")
+
+        # Завершення
+        job.status = IngestionStatus.READY
+        job.progress.stage = "READY"
+        job.progress.percent = 100
+        job.progress.message = f"Успішно імпортовано {len(records)} новин з RSS"
+        job.updated_at = datetime.utcnow()
+
+    except Exception as e:
+        logger.exception(f"RSS ingestion failed for job {job_id}")
+        job.status = IngestionStatus.FAILED
+        job.progress.stage = "failed"
+        job.error = str(e)
+        job.progress.message = f"Помилка: {e!s}"
+        job.updated_at = datetime.utcnow()
+
+
 @router.get("/health")
 async def health():
     return {"status": "healthy", "timestamp": datetime.utcnow().isoformat()}
@@ -401,6 +723,129 @@ async def ingest_telegram(
         "job_id": job_id,
         "source_id": job_id,  # Frontend compat
         "message": "Парсинг розпочато",
+    }
+
+
+@router.post("/website", response_model=dict)
+async def ingest_website(
+    request: WebsiteIngestRequest,
+    background_tasks: BackgroundTasks,
+    current_user=Depends(get_current_user),
+):
+    """Initiate Website parsing."""
+    job_id = str(uuid.uuid4())
+    job = IngestionJob(
+        id=job_id,
+        filename=f"website_{request.url.split('/')[-1]}",
+        file_size=0,
+        file_type="website",
+        status=IngestionStatus.UPLOADING,
+        user_id=getattr(current_user, "id", "anonymous"),
+        created_at=datetime.utcnow(),
+        progress=IngestionProgress(
+            stage="CREATED", percent=0, message="Запит на парсинг веб-сайту прийнято"
+        ),
+    )
+
+    ingestion_jobs[job_id] = job
+
+    background_tasks.add_task(
+        process_website_async,
+        job_id=job_id,
+        url=request.url,
+        limit=request.limit,
+        user_id=getattr(current_user, "id", "anonymous"),
+        config={"name": request.name, "depth": request.depth},
+    )
+
+    return {
+        "status": "success",
+        "job_id": job_id,
+        "source_id": job_id,
+        "message": "Парсинг веб-сайту розпочато",
+    }
+
+
+@router.post("/api", response_model=dict)
+async def ingest_api(
+    request: ApiIngestRequest,
+    background_tasks: BackgroundTasks,
+    current_user=Depends(get_current_user),
+):
+    """Initiate API parsing."""
+    job_id = str(uuid.uuid4())
+    job = IngestionJob(
+        id=job_id,
+        filename=f"api_{request.url.split('/')[-1]}",
+        file_size=0,
+        file_type="api",
+        status=IngestionStatus.UPLOADING,
+        user_id=getattr(current_user, "id", "anonymous"),
+        created_at=datetime.utcnow(),
+        progress=IngestionProgress(
+            stage="CREATED", percent=0, message="Запит на парсинг API прийнято"
+        ),
+    )
+
+    ingestion_jobs[job_id] = job
+
+    background_tasks.add_task(
+        process_api_async,
+        job_id=job_id,
+        url=request.url,
+        method=request.method,
+        headers=request.headers,
+        body=request.body,
+        limit=request.limit,
+        user_id=getattr(current_user, "id", "anonymous"),
+        config={"name": request.name},
+    )
+
+    return {
+        "status": "success",
+        "job_id": job_id,
+        "source_id": job_id,
+        "message": "Парсинг API розпочато",
+    }
+
+
+@router.post("/rss", response_model=dict)
+async def ingest_rss(
+    request: RssIngestRequest,
+    background_tasks: BackgroundTasks,
+    current_user=Depends(get_current_user),
+):
+    """Initiate RSS parsing."""
+    job_id = str(uuid.uuid4())
+    job = IngestionJob(
+        id=job_id,
+        filename=f"rss_{request.url.split('/')[-1]}",
+        file_size=0,
+        file_type="rss",
+        status=IngestionStatus.UPLOADING,
+        user_id=getattr(current_user, "id", "anonymous"),
+        created_at=datetime.utcnow(),
+        progress=IngestionProgress(
+            stage="CREATED", percent=0, message="Запит на парсинг RSS прийнято"
+        ),
+    )
+
+    ingestion_jobs[job_id] = job
+
+    background_tasks.add_task(
+        process_rss_async,
+        job_id=job_id,
+        url=request.url,
+        limit=request.limit,
+        user_id=getattr(current_user, "id", "anonymous"),
+        config={"name": request.name},
+    )
+
+    return {
+        "status": "success",
+        "job_id": job_id,
+        "source_id": job_id,
+        "message": "Парсинг RSS розпочато",
     }
 
 

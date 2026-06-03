@@ -20,7 +20,7 @@ if "VIRTUAL_ENV" in os.environ:
 REPO_ROOT = Path(__file__).resolve().parent
 
 # Core repo-level paths
-for base in (REPO_ROOT, REPO_ROOT / "libs", REPO_ROOT / "libs" / "predator-common", REPO_ROOT / "app"):
+for base in (REPO_ROOT, REPO_ROOT / "libs", REPO_ROOT / "libs" / "predator-common"):
     _ensure_path(base)
 
 
@@ -45,3 +45,9 @@ extra_paths = (
 )
 for path in extra_paths:
     _ensure_path(path)
+
+# Ensure root imports take precedence
+if str(REPO_ROOT) in sys.path:
+    sys.path.remove(str(REPO_ROOT))
+sys.path.insert(0, str(REPO_ROOT))
+

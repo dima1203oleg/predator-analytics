@@ -96,9 +96,11 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   });
   const [isLoading, setIsLoading] = useState(false);
 
-  const setUser = (newUser: UserProfile) => {
+  const setUser = (newUser: UserProfile, token?: string) => {
     setUserState(newUser);
-    sessionStorage.setItem('predator_auth_token', newUser.role === UserRole.CORE ? 'core-token' : 'user-token');
+    // Зберігаємо реальний JWT якщо є, або ключ ролі як fallback
+    const tokenToStore = token || sessionStorage.getItem('predator_auth_token') || 'user-token';
+    sessionStorage.setItem('predator_auth_token', tokenToStore);
   };
 
   const logout = () => {
