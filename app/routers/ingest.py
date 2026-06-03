@@ -131,44 +131,8 @@ async def process_file_async(
                 fused_repo = FusedRecordRepository(db)
                 bus = SignalBus.get_instance()
 
-                for i, record in enumerate(records):
-                    # Try to extract company name and edrpou from common column names
-                    name = str(record.get("company_name") or record.get("name") or record.get("declarant_name") or "Unknown Entity")
-                    edrpou = record.get("edrpou") or record.get("inn")
-
-                    if edrpou:
-                        # Clean up numeric representation or float parsing errors
-                        try:
-                            edrpou_str = str(int(float(edrpou)))
-                            edrpou = edrpou_str.zfill(8) if len(edrpou_str) <= 8 else edrpou_str
-                        except (ValueError, TypeError):
-                            edrpou = str(edrpou).strip()
-
-                    entity, _is_new = await repo.resolve_or_create(
-                        name=name,
-                        entity_type="company",
-                        edrpou=edrpou,
-                        metadata={"source_file": filename}
-                    )
-
-                    record["ueid"] = str(entity.ueid)
-                    unique_ueids.add(str(entity.ueid))
-
-                    # Store FusedRecord for engines
-                    fprint = hashlib.md5(str(record).encode("utf-8")).hexdigest()
-                    await fused_repo.save_record(
-                        ueid=entity.ueid,
-                        source="file_upload",
-                        raw_data=record,
-                        normalized_data={},
-                        fingerprint=fprint,
-                        quality_score=0.75,
-                    )
-
-                    if i % 100 == 0:
-                        job.progress.current_item = i
-                        job.progress.message = f"Резолюція UEID: {i}/{len(records)}"
-                        await db.flush()
+                # Use IngestionService to resolve entities, fetch registry data and store fused records
+                unique_ueids = await service.resolve_entities(records, filename, repo, fused_repo, job, db)
 
                 await db.commit()
 

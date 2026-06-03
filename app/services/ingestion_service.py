@@ -1,11 +1,15 @@
 import io
 import logging
+import json
+import hashlib
+import redis.asyncio as aioredis
 from typing import Any
 
 import pandas as pd
 
 from app.services.embedding_service import get_embedding_service
 from app.services.indexing_service import indexing_service
+from app.services.registry_fetcher import RegistryFetcher
 
 logger = logging.getLogger(__name__)
 
@@ -42,6 +46,63 @@ class IngestionService:
                 raise ValueError(f"Invalid JSON file: {e!s}")
 
         return True
+
+    async def resolve_entities(self, records: list[dict[str, Any]], filename: str, repo: Any, fused_repo: Any, job: Any, db: Any):
+        """Perform entity resolution and fetch registry data."""
+        unique_ueids = set()
+        cache = aioredis.from_url("redis://localhost:6379")
+        
+        for i, record in enumerate(records):
+            # Try to extract company name and edrpou from common column names
+            name = str(record.get("company_name") or record.get("name") or record.get("declarant_name") or "Unknown Entity")
+            edrpou = record.get("edrpou") or record.get("inn")
+
+            if edrpou:
+                # Clean up numeric representation or float parsing errors
+                try:
+                    edrpou_str = str(int(float(edrpou)))
+                    edrpou = edrpou_str.zfill(8) if len(edrpou_str) <= 8 else edrpou_str
+                except (ValueError, TypeError):
+                    edrpou = str(edrpou).strip()
+
+            entity, _is_new = await repo.resolve_or_create(
+                name=name,
+                entity_type="company",
+                edrpou=edrpou,
+                metadata={"source_file": filename}
+            )
+
+            record["ueid"] = str(entity.ueid)
+            unique_ueids.add(str(entity.ueid))
+
+            # Fetch public registry data (EDRPOU) with caching
+            if edrpou:
+                cache_key = f"registry:edrpou:{edrpou}"
+                cached = await cache.get(cache_key)
+                if cached:
+                    registry_data = json.loads(cached)
+                else:
+                    fetcher = RegistryFetcher()
+                    registry_data = await fetcher.fetch_edrpou(edrpou)
+                    await cache.setex(cache_key, 86400, json.dumps(registry_data))
+                    await fetcher.close()
+                record["registry"] = registry_data
+
+            # Store FusedRecord for engines
+            fprint = hashlib.md5(str(record).encode("utf-8")).hexdigest()
+            await fused_repo.save_record(
+                ueid=entity.ueid,
+                source="file_upload",
+                raw_data=record,
+                normalized_data={},
+                fingerprint=fprint,
+                quality_score=0.75,
+            )
+
+            if i % 100 == 0:
+                job.progress.current_item = i
+                job.progress.message = f"Резолюція UEID: {i}/{len(records)}"
+                await db.flush()
 
     async def parse_excel(self, content: bytes, filename: str) -> list[dict[str, Any]]:
         """Parse Excel/CSV file into list of records.
