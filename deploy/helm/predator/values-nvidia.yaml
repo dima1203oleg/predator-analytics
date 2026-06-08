@@ -34,7 +34,8 @@ frontend:
   enabled: true
   replicaCount: 1
   image:
-    repository: ghcr.io/dima1203oleg/predator-analytics/frontend
+    repository: predator/frontend
+    tag: v61.0-ELITE
     pullPolicy: IfNotPresent
   service:
     type: NodePort
@@ -88,7 +89,8 @@ coreApi:
   enabled: true
   replicaCount: 1
   image:
-    repository: ghcr.io/dima1203oleg/predator-analytics/core-api
+    repository: predator/core-api
+    tag: v61.0-ELITE
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
@@ -135,7 +137,8 @@ graphService:
   enabled: true
   replicaCount: 1
   image:
-    repository: ghcr.io/dima1203oleg/predator-analytics/graph-service
+    repository: predator/graph-service
+    tag: v61.0-ELITE
     pullPolicy: IfNotPresent
   resources:
     limits:
@@ -165,7 +168,8 @@ ingestionWorker:
   enabled: true
   replicaCount: 1
   image:
-    repository: ghcr.io/dima1203oleg/predator-analytics/ingestion-worker
+    repository: predator/ingestion-worker
+    tag: v61.0-ELITE
     pullPolicy: IfNotPresent
   resources:
     limits:
