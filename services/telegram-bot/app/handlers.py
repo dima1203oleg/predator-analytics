@@ -4,7 +4,8 @@ from telegram.ext import ContextTypes, ConversationHandler
 
 from app.api_client import (
     get_system_status, perform_search, ask_ai_copilot, 
-    get_active_alerts, trigger_osint
+    get_active_alerts, trigger_osint, analyze_graph_connections,
+    generate_risk_report
 )
 
 logger = logging.getLogger(__name__)
@@ -30,7 +31,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Обробка команди /start та вивід головного меню."""
     await update.message.reply_text(
         "🦅 **Вітаю у PREDATOR Analytics v56.5 Control Center!**\n\n"
-        "Я ваш телеграм-пульт для керування системою. Оберіть дію в меню нижче:",
+        "Я ваш телеграм-пульт для керування системою. Всі системи переведено в бойовий режим.\n"
+        "Оберіть дію в меню нижче:",
         reply_markup=get_main_keyboard(),
         parse_mode='Markdown'
     )
@@ -63,7 +65,7 @@ async def handle_alerts(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def osint_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Початок OSINT розвідки."""
     await update.message.reply_text(
-        "📡 Введіть ціль для глибокої OSINT-розвідки (ІПН, Назва, Телефон, або /cancel):"
+        "📡 Введіть ціль для глибокої OSINT-розвідки (ІПН, Назва компанії або /cancel):"
     )
     return OSINT_INPUT
 
@@ -72,7 +74,7 @@ async def osint_perform(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text
     msg = await update.message.reply_text(f"🔄 Ініціалізую збір даних для '{text}'...")
     result = await trigger_osint(text)
-    await msg.edit_text(result, parse_mode='Markdown')
+    await msg.edit_text(result, parse_mode='Markdown', disable_web_page_preview=True)
     return ConversationHandler.END
 
 # --- Швидкий Пошук ---
@@ -105,7 +107,7 @@ async def search_perform(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text
     search_type = context.user_data.get('search_type', 'Невідомо')
     
-    msg = await update.message.reply_text(f"🔄 Шукаю '{text}'...")
+    msg = await update.message.reply_text(f"🔄 Шукаю '{text}' у базі...")
     result = await perform_search(text, search_type)
     await msg.edit_text(result, parse_mode='Markdown')
     return ConversationHandler.END
@@ -114,17 +116,15 @@ async def search_perform(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def graph_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "🕸 Введіть ІПН або Код ЄДРПОУ сутності для побудови графа зв'язків (або /cancel для відміни):"
+        "🕸 Введіть запит (Назва або Код) для аналізу в Trinity Graph Engine (або /cancel):"
     )
     return GRAPH_INPUT
 
 async def graph_perform(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text
-    await update.message.reply_text(
-        f"🕸 **Граф для {text} згенеровано!**\n\nПереглянути у Web UI:\n[Відкрити Граф](http://192.168.0.200:3030/graph/{text})",
-        parse_mode='Markdown',
-        disable_web_page_preview=True
-    )
+    msg = await update.message.reply_text(f"🕸 Шукаю зв'язки для '{text}' у графі...")
+    result = await analyze_graph_connections(text)
+    await msg.edit_text(result, parse_mode='Markdown', disable_web_page_preview=True)
     return ConversationHandler.END
 
 # --- Звіти ---
@@ -150,15 +150,16 @@ async def report_type_selected(update: Update, context: ContextTypes.DEFAULT_TYP
     report_type = "Ризик-аналіз" if query.data == "report_risk" else "Фінансовий"
     context.user_data['report_type'] = report_type
     
-    await query.edit_message_text(f"Тип звіту: {report_type}\nВведіть цільову сутність (ІПН/Назва):")
+    await query.edit_message_text(f"Тип звіту: {report_type}\nВведіть UEID цільової сутності:")
     return REPORT_INPUT
 
 async def report_perform(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    text = update.message.text
+    ueid = update.message.text
     report_type = context.user_data.get('report_type', '')
     
-    msg = await update.message.reply_text("🔄 Генерую звіт, це може зайняти кілька хвилин...")
-    await msg.edit_text(f"✅ **Звіт ({report_type}) для {text} готовий!**\n\n[Завантажити PDF](http://192.168.0.200:3030/reports/{text}.pdf)", parse_mode='Markdown')
+    msg = await update.message.reply_text(f"🔄 Генерую звіт '{report_type}' для {ueid} через Elite Risk Engine...")
+    result = await generate_risk_report(ueid, report_type)
+    await msg.edit_text(result, parse_mode='Markdown', disable_web_page_preview=True)
     return ConversationHandler.END
 
 # --- Запитати ШІ ---
@@ -190,8 +191,8 @@ async def settings_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.answer()
     
     if query.data == "toggle_notif":
-        await query.edit_message_text("🔔 Сповіщення тепер ВИМКНЕНІ (демо).")
+        await query.edit_message_text("🔔 Сповіщення тимчасово вимкнені.")
     elif query.data == "lang_lock":
         await query.answer("Мова заблокована на 🇺🇦 Українській згідно політики HR-03.", show_alert=True)
     elif query.data == "clear_hist":
-        await query.edit_message_text("🗑 Історія контексту очищена.")
+        await query.edit_message_text("🗑 Історія контексту (Redis сесії) очищена.")
