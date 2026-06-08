@@ -28,23 +28,23 @@ monitoring:
   enabled: false
 
 osintService:
-  enabled: false
+  enabled: true
 
 clickhouse:
   enabled: true
-  replicaCount: 0
+  replicaCount: 1
 
 kafka:
-  enabled: false
-  replicaCount: 0
+  enabled: true
+  replicaCount: 1
 
 qdrant:
   enabled: true
-  replicaCount: 0
+  replicaCount: 1
 
 opensearch:
-  enabled: false
-  replicaCount: 0
+  enabled: true
+  replicaCount: 1
 
 neo4j:
   enabled: true

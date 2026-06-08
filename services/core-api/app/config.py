@@ -128,6 +128,7 @@ class Settings(BaseSettings):
     MINIO_BUCKET_REPORTS: str = "reports"
 
     # AI / LiteLLM / MCP
+    LITELLM_GATEWAY_URL: str = "http://localhost:4000"
     LITELLM_API_BASE: str = "http://localhost:4000/v1"
     OLLAMA_MODEL: str = "glm-5.1:latest"
     MCP_ROUTER_URL: str = "http://localhost:8080/v1/query"

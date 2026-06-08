@@ -132,7 +132,8 @@ coreApi:
     periodSeconds: 5
     timeoutSeconds: 3
     failureThreshold: 12
-
+  env:
+    LITELLM_GATEWAY_URL: "http://{{ include \"predator.fullname\" . }}-litellm:4000"
 graphService:
   enabled: true
   replicaCount: 1
