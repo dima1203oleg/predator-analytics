@@ -4271,7 +4271,7 @@ async def list_all_datasets() -> list[dict[str, str]]:
 
 
 def _resolve_dataset_id(dataset_key: str) -> int:
-    """Перетворити ID або slug датасету на числовий ідентифікатор."""
+    """Перетворити ID або псевдонім датасету на числовий ідентифікатор."""
     normalized = dataset_key.strip().strip("/")
     if normalized.isdigit():
         dataset_id = int(normalized)
@@ -4329,7 +4329,7 @@ async def _kaggle_dataset_rows(dataset_id: int, limit: int = 100) -> list[dict[s
 
 @app.get("/api/v1/datasets/{dataset_key}")
 async def get_registered_dataset(dataset_key: str, limit: int = 100) -> list[dict[str, Any]]:
-    """Отримати дані датасету за ID або канонічним slug."""
+    """Отримати дані датасету за ID або канонічним псевдонімом."""
     dataset_id = _resolve_dataset_id(dataset_key)
     rows = await _kaggle_dataset_rows(dataset_id, limit=limit)
     route, title = _DATASET_BY_ID[dataset_id]
@@ -4349,7 +4349,7 @@ async def dataset_1_customs_spike(days_before: int = 30, days_after: int = 30):
                 Transaction.declaration_date >= datetime.now(UTC) - timedelta(days=days_before + days_after)
             ).order_by(Transaction.declaration_date.desc()).limit(100)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 
 @app.get("/api/v1/datasets/2-overnight-import")
@@ -4361,7 +4361,7 @@ async def dataset_2_overnight_import(days_threshold: int = 7):
                 Company.created_at >= datetime.now(UTC) - timedelta(days=days_threshold)
             ).limit(100)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 
 @app.get("/api/v1/datasets/11-customs-official-profile")
@@ -4371,7 +4371,7 @@ async def dataset_11_customs_official_profile():
         result = await session.execute(
             select(CustomsOfficial).where(CustomsOfficial.status == "active").limit(100)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 
 @app.get("/api/v1/datasets/21-line-of-influence")
@@ -4381,7 +4381,7 @@ async def dataset_21_line_of_influence():
         result = await session.execute(
             select(OfficialVisit).order_by(OfficialVisit.visit_date.desc()).limit(100)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 
 @app.get("/api/v1/datasets/67-exit-from-shadow")
@@ -4391,7 +4391,7 @@ async def dataset_67_exit_from_shadow():
         result = await session.execute(
             select(MediaInvestigation).order_by(MediaInvestigation.publication_date.desc()).limit(100)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 
 @app.get("/api/v1/datasets/70-rollback-cascade")
@@ -4401,7 +4401,7 @@ async def dataset_70_rollback_cascade():
         result = await session.execute(
             select(FinancialTransaction).order_by(FinancialTransaction.transaction_date.desc()).limit(100)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 
 @app.get("/api/v1/datasets/83-virtual-destination-point")
@@ -4411,7 +4411,7 @@ async def dataset_83_virtual_destination_point():
         result = await session.execute(
             select(WarehouseRegistry).limit(100)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 
 @app.get("/api/v1/datasets/93-country-that-does-not-know-about-its-export")
@@ -4421,7 +4421,7 @@ async def dataset_93_country_that_does_not_know_about_its_export():
         result = await session.execute(
             select(ComtradeData).order_by(ComtradeData.year.desc()).limit(100)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 
 
@@ -4432,7 +4432,7 @@ async def dataset_3_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/4-auto-generated")
 async def dataset_4_auto():
@@ -4441,7 +4441,7 @@ async def dataset_4_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/5-auto-generated")
 async def dataset_5_auto():
@@ -4450,7 +4450,7 @@ async def dataset_5_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/6-auto-generated")
 async def dataset_6_auto():
@@ -4459,7 +4459,7 @@ async def dataset_6_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/7-auto-generated")
 async def dataset_7_auto():
@@ -4468,7 +4468,7 @@ async def dataset_7_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/8-auto-generated")
 async def dataset_8_auto():
@@ -4477,7 +4477,7 @@ async def dataset_8_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/9-auto-generated")
 async def dataset_9_auto():
@@ -4486,7 +4486,7 @@ async def dataset_9_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/10-auto-generated")
 async def dataset_10_auto():
@@ -4495,7 +4495,7 @@ async def dataset_10_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/11-auto-generated")
 async def dataset_11_auto():
@@ -4504,7 +4504,7 @@ async def dataset_11_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/12-auto-generated")
 async def dataset_12_auto():
@@ -4513,7 +4513,7 @@ async def dataset_12_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/13-auto-generated")
 async def dataset_13_auto():
@@ -4522,7 +4522,7 @@ async def dataset_13_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/14-auto-generated")
 async def dataset_14_auto():
@@ -4531,7 +4531,7 @@ async def dataset_14_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/15-auto-generated")
 async def dataset_15_auto():
@@ -4540,7 +4540,7 @@ async def dataset_15_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/16-auto-generated")
 async def dataset_16_auto():
@@ -4549,7 +4549,7 @@ async def dataset_16_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/17-auto-generated")
 async def dataset_17_auto():
@@ -4558,7 +4558,7 @@ async def dataset_17_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/18-auto-generated")
 async def dataset_18_auto():
@@ -4567,7 +4567,7 @@ async def dataset_18_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/19-auto-generated")
 async def dataset_19_auto():
@@ -4576,7 +4576,7 @@ async def dataset_19_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/20-auto-generated")
 async def dataset_20_auto():
@@ -4585,7 +4585,7 @@ async def dataset_20_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/21-auto-generated")
 async def dataset_21_auto():
@@ -4594,7 +4594,7 @@ async def dataset_21_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/22-auto-generated")
 async def dataset_22_auto():
@@ -4603,7 +4603,7 @@ async def dataset_22_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/23-auto-generated")
 async def dataset_23_auto():
@@ -4612,7 +4612,7 @@ async def dataset_23_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/24-auto-generated")
 async def dataset_24_auto():
@@ -4621,7 +4621,7 @@ async def dataset_24_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/25-auto-generated")
 async def dataset_25_auto():
@@ -4630,7 +4630,7 @@ async def dataset_25_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/26-auto-generated")
 async def dataset_26_auto():
@@ -4639,7 +4639,7 @@ async def dataset_26_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/27-auto-generated")
 async def dataset_27_auto():
@@ -4648,7 +4648,7 @@ async def dataset_27_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/28-auto-generated")
 async def dataset_28_auto():
@@ -4657,7 +4657,7 @@ async def dataset_28_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/29-auto-generated")
 async def dataset_29_auto():
@@ -4666,7 +4666,7 @@ async def dataset_29_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/30-auto-generated")
 async def dataset_30_auto():
@@ -4675,7 +4675,7 @@ async def dataset_30_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/31-auto-generated")
 async def dataset_31_auto():
@@ -4684,7 +4684,7 @@ async def dataset_31_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/32-auto-generated")
 async def dataset_32_auto():
@@ -4693,7 +4693,7 @@ async def dataset_32_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/33-auto-generated")
 async def dataset_33_auto():
@@ -4702,7 +4702,7 @@ async def dataset_33_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/34-auto-generated")
 async def dataset_34_auto():
@@ -4711,7 +4711,7 @@ async def dataset_34_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/35-auto-generated")
 async def dataset_35_auto():
@@ -4720,7 +4720,7 @@ async def dataset_35_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/36-auto-generated")
 async def dataset_36_auto():
@@ -4729,7 +4729,7 @@ async def dataset_36_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/37-auto-generated")
 async def dataset_37_auto():
@@ -4738,7 +4738,7 @@ async def dataset_37_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/38-auto-generated")
 async def dataset_38_auto():
@@ -4747,7 +4747,7 @@ async def dataset_38_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/39-auto-generated")
 async def dataset_39_auto():
@@ -4756,7 +4756,7 @@ async def dataset_39_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/40-auto-generated")
 async def dataset_40_auto():
@@ -4765,7 +4765,7 @@ async def dataset_40_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/41-auto-generated")
 async def dataset_41_auto():
@@ -4774,7 +4774,7 @@ async def dataset_41_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/42-auto-generated")
 async def dataset_42_auto():
@@ -4783,7 +4783,7 @@ async def dataset_42_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/43-auto-generated")
 async def dataset_43_auto():
@@ -4792,7 +4792,7 @@ async def dataset_43_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/44-auto-generated")
 async def dataset_44_auto():
@@ -4801,7 +4801,7 @@ async def dataset_44_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/45-auto-generated")
 async def dataset_45_auto():
@@ -4810,7 +4810,7 @@ async def dataset_45_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/46-auto-generated")
 async def dataset_46_auto():
@@ -4819,7 +4819,7 @@ async def dataset_46_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/47-auto-generated")
 async def dataset_47_auto():
@@ -4828,7 +4828,7 @@ async def dataset_47_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/48-auto-generated")
 async def dataset_48_auto():
@@ -4837,7 +4837,7 @@ async def dataset_48_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/49-auto-generated")
 async def dataset_49_auto():
@@ -4846,7 +4846,7 @@ async def dataset_49_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/50-auto-generated")
 async def dataset_50_auto():
@@ -4855,7 +4855,7 @@ async def dataset_50_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/51-auto-generated")
 async def dataset_51_auto():
@@ -4864,7 +4864,7 @@ async def dataset_51_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/52-auto-generated")
 async def dataset_52_auto():
@@ -4873,7 +4873,7 @@ async def dataset_52_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/53-auto-generated")
 async def dataset_53_auto():
@@ -4882,7 +4882,7 @@ async def dataset_53_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/54-auto-generated")
 async def dataset_54_auto():
@@ -4891,7 +4891,7 @@ async def dataset_54_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/55-auto-generated")
 async def dataset_55_auto():
@@ -4900,7 +4900,7 @@ async def dataset_55_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/56-auto-generated")
 async def dataset_56_auto():
@@ -4909,7 +4909,7 @@ async def dataset_56_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/57-auto-generated")
 async def dataset_57_auto():
@@ -4918,7 +4918,7 @@ async def dataset_57_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/58-auto-generated")
 async def dataset_58_auto():
@@ -4927,7 +4927,7 @@ async def dataset_58_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/59-auto-generated")
 async def dataset_59_auto():
@@ -4936,7 +4936,7 @@ async def dataset_59_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/60-auto-generated")
 async def dataset_60_auto():
@@ -4945,7 +4945,7 @@ async def dataset_60_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/61-auto-generated")
 async def dataset_61_auto():
@@ -4954,7 +4954,7 @@ async def dataset_61_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/62-auto-generated")
 async def dataset_62_auto():
@@ -4963,7 +4963,7 @@ async def dataset_62_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/63-auto-generated")
 async def dataset_63_auto():
@@ -4972,7 +4972,7 @@ async def dataset_63_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/64-auto-generated")
 async def dataset_64_auto():
@@ -4981,7 +4981,7 @@ async def dataset_64_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/65-auto-generated")
 async def dataset_65_auto():
@@ -4990,7 +4990,7 @@ async def dataset_65_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/66-auto-generated")
 async def dataset_66_auto():
@@ -4999,7 +4999,7 @@ async def dataset_66_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/67-auto-generated")
 async def dataset_67_auto():
@@ -5008,7 +5008,7 @@ async def dataset_67_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/68-auto-generated")
 async def dataset_68_auto():
@@ -5017,7 +5017,7 @@ async def dataset_68_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/69-auto-generated")
 async def dataset_69_auto():
@@ -5026,7 +5026,7 @@ async def dataset_69_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/70-auto-generated")
 async def dataset_70_auto():
@@ -5035,7 +5035,7 @@ async def dataset_70_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/71-auto-generated")
 async def dataset_71_auto():
@@ -5044,7 +5044,7 @@ async def dataset_71_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/72-auto-generated")
 async def dataset_72_auto():
@@ -5053,7 +5053,7 @@ async def dataset_72_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/73-auto-generated")
 async def dataset_73_auto():
@@ -5062,7 +5062,7 @@ async def dataset_73_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/74-auto-generated")
 async def dataset_74_auto():
@@ -5071,7 +5071,7 @@ async def dataset_74_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/75-auto-generated")
 async def dataset_75_auto():
@@ -5080,7 +5080,7 @@ async def dataset_75_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/76-auto-generated")
 async def dataset_76_auto():
@@ -5089,7 +5089,7 @@ async def dataset_76_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/77-auto-generated")
 async def dataset_77_auto():
@@ -5098,7 +5098,7 @@ async def dataset_77_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/78-auto-generated")
 async def dataset_78_auto():
@@ -5107,7 +5107,7 @@ async def dataset_78_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/79-auto-generated")
 async def dataset_79_auto():
@@ -5116,7 +5116,7 @@ async def dataset_79_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 @app.get("/api/v1/datasets/80-auto-generated")
 async def dataset_80_auto():
@@ -5125,23 +5125,7 @@ async def dataset_80_auto():
         result = await session.execute(
             select(Transaction).order_by(Transaction.declaration_date.desc()).limit(10)
         )
-        return [dict(row._mapping) for row in result.fetchall()]
-
-# Загальний endpoint для інших датасетів (повертає загальну статистику)
-@app.get("/api/v1/datasets/{dataset_id}")
-async def get_dataset(dataset_id: str):
-    """Отримати дані для конкретного датасету."""
-    async with main_session() as session:
-        # Для простоти повертаємо транзакції для всіх датасетів
-        result = await session.execute(
-            select(Transaction).order_by(Transaction.declaration_date.desc()).limit(100)
-        )
-        return {
-            "dataset_id": dataset_id,
-            "data": [dict(row._mapping) for row in result.fetchall()],
-            "note": "Kaggle backend використовує спрощену логіку для всіх датасетів"
-        }
-
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
 
 # ═══════════════════════════════════════════════════════════════
 # 44. ПАРСЕР REST API ENDPOINTS
