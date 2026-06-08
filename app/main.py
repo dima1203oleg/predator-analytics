@@ -10,7 +10,6 @@ from libs.core.autonomy.orchestrator import orchestrator
 from libs.core.autonomy.pulse_agent import SystemPulseAgent
 
 from app.api.v1.canonical_router import api_v1_router
-from app.api.v1.datasets import router as datasets_router
 from app.core.settings import get_settings
 from app.libs.core.mq import broker
 from app.libs.core.otel import setup_otel
@@ -30,6 +29,7 @@ async def lifespan(app: FastAPI):
     # 1. Ініціалізація бази даних та схем (PostgreSQL SSOT)
     try:
         from sqlalchemy import text as sa_text
+
         from app.core.database import engine as db_engine
 
         async with db_engine.begin() as conn:
@@ -70,7 +70,7 @@ async def lifespan(app: FastAPI):
 
     # ── SHUTDOWN (Граціозне завершення) ──
     logger.info("⏳ PREDATOR_SHUTDOWN_INIT: деактивація протоколів...")
-    
+
     await orchestrator.stop()
     await broker.disconnect()
 
@@ -104,7 +104,6 @@ app.add_middleware(
 # ═══════════════════════════════════════════════════════════════════════════
 
 app.include_router(api_v1_router)
-app.include_router(datasets_router)
 
 # Перевірка здоров'я для систем моніторингу (Prometheus/K8s)
 @app.get("/api/v1/health/live")
@@ -132,4 +131,4 @@ async def root():
 if __name__ == "__main__":
     import uvicorn
     # Запуск у режимі розробки
-    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("app.main:app", host="127.0.0.1", port=8000, reload=True)

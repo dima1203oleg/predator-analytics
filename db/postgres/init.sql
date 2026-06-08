@@ -551,7 +551,7 @@ CREATE TABLE IF NOT EXISTS tax_records (
     source VARCHAR(100),
     raw_data JSONB,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL NOW()
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX IF NOT EXISTS idx_tax_company ON tax_records(company_ueid);
@@ -599,7 +599,7 @@ CREATE TABLE IF NOT EXISTS customs_brokers (
     source VARCHAR(100),
     raw_data JSONB,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL NOW()
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX IF NOT EXISTS idx_brokers_tenant ON customs_brokers(tenant_id);
@@ -640,7 +640,7 @@ CREATE TABLE IF NOT EXISTS regulatory_acts (
     source VARCHAR(100),
     raw_data JSONB,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL NOW()
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX IF NOT EXISTS idx_reg_acts_date ON regulatory_acts(act_date);
@@ -684,7 +684,7 @@ CREATE TABLE IF NOT EXISTS customs_posts_geo (
     source VARCHAR(100),
     raw_data JSONB,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL NOW()
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX IF NOT EXISTS idx_geo_post_code ON customs_posts_geo(post_code);
@@ -703,7 +703,7 @@ CREATE TABLE IF NOT EXISTS country_production (
     source VARCHAR(100),
     raw_data JSONB,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL NOW()
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX IF NOT EXISTS idx_production_country ON country_production(country_code);
@@ -724,7 +724,7 @@ CREATE TABLE IF NOT EXISTS brand_registry (
     source VARCHAR(100),
     raw_data JSONB,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL NOW()
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX IF NOT EXISTS idx_brand_name ON brand_registry(brand_name);
@@ -747,7 +747,7 @@ CREATE TABLE IF NOT EXISTS licenses_permits (
     source VARCHAR(100),
     raw_data JSONB,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL NOW()
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX IF NOT EXISTS idx_licenses_company ON licenses_permits(company_ueid);
@@ -770,7 +770,7 @@ CREATE TABLE IF NOT EXISTS customs_officials (
     source VARCHAR(100),
     raw_data JSONB,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL NOW()
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX IF NOT EXISTS idx_officials_tenant ON customs_officials(tenant_id);
@@ -829,7 +829,7 @@ CREATE TABLE IF NOT EXISTS warehouse_registry (
     source VARCHAR(100),
     raw_data JSONB,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL NOW()
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX IF NOT EXISTS idx_warehouse_code ON warehouse_registry(warehouse_code);
@@ -874,7 +874,7 @@ CREATE TABLE IF NOT EXISTS media_investigations (
     status VARCHAR(50) DEFAULT 'published',
     raw_data JSONB,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL NOW()
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX IF NOT EXISTS idx_media_date ON media_investigations(publication_date);
@@ -932,7 +932,7 @@ CREATE TABLE IF NOT EXISTS product_specifications (
     source VARCHAR(100),
     raw_data JSONB,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT DEFAULT NOW()
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX IF NOT EXISTS idx_specs_uktzed ON product_specifications(uktzed_code);
@@ -968,7 +968,7 @@ CREATE TABLE IF NOT EXISTS port_logistics (
     source VARCHAR(100),
     raw_data JSONB,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL NOW()
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX IF NOT EXISTS idx_port_name ON port_logistics(port_name);
@@ -1203,7 +1203,7 @@ CREATE TABLE IF NOT EXISTS quota_system (
     source VARCHAR(100),
     raw_data JSONB,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL NOW()
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX IF NOT EXISTS idx_quota_code ON quota_system(quota_code);
@@ -1310,7 +1310,7 @@ CREATE TABLE IF NOT EXISTS institution_types (
     source VARCHAR(100),
     raw_data JSONB,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL NOW()
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX IF NOT EXISTS idx_inst_company ON institution_types(company_ueid);
@@ -1328,7 +1328,7 @@ CREATE TABLE IF NOT EXISTS domestic_tracking (
     source VARCHAR(100),
     raw_data JSONB,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL NOW()
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX IF NOT EXISTS idx_domestic_tracking_declaration ON domestic_tracking(declaration_id);
@@ -1367,7 +1367,7 @@ CREATE TABLE IF NOT EXISTS software_registry (
     source VARCHAR(100),
     raw_data JSONB,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL NOW()
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX IF NOT EXISTS idx_software_name ON software_registry(software_name);
@@ -1406,7 +1406,7 @@ CREATE TABLE IF NOT EXISTS infrastructure_projects (
     source VARCHAR(100),
     raw_data JSONB,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL NOW()
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX IF NOT EXISTS idx_project_name ON infrastructure_projects(project_name);

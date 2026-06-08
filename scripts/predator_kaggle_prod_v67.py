@@ -4149,18 +4149,195 @@ async def customs_risk_profile(ueid: str):
 # 45. 100 АНАЛІТИЧНИХ ДАТАСЕТІВ
 # ═══════════════════════════════════════════════════════════════
 
+_DATASET_ROUTES: tuple[tuple[int, str, str], ...] = (
+    (1, "1-customs-spike", "Митний сплеск за розпорядженням"),
+    (2, "2-overnight-import", "Бум за ніч"),
+    (3, "3-route-anomalies", "Маршрутні аномалії"),
+    (4, "4-customs-chessboard", "Митне шахівниця"),
+    (5, "5-dumping-carousel", "Демпінг-карусель"),
+    (6, "6-shadow-settles", "Тіньова осідає"),
+    (7, "7-private-customs", "Приватна митниця"),
+    (8, "8-brand-without-brand", "Бренд без бренду"),
+    (9, "9-backstage-corridors", "Кулуарні коридори"),
+    (10, "10-declaration-copy-paste", "Деклараційний копіпаст"),
+    (11, "11-customs-official-profile", "Профіль митного чиновника"),
+    (12, "12-chameleon-counterparty", "Хамелеон-контрагент"),
+    (13, "13-incubator-scheme", "Інкубатор-схема"),
+    (14, "14-dead-seasonality", "Мертва сезонність"),
+    (15, "15-phantom-countries", "Фантомні країни"),
+    (16, "16-premium-customs", "Преміум-митниця"),
+    (17, "17-payment-gap", "Платіжний розрив"),
+    (18, "18-form-without-goods", "Форма без товару"),
+    (19, "19-parallel-import", "Паралельний імпорт"),
+    (20, "20-zero-after-storm", "Нульове після бурі"),
+    (21, "21-line-of-influence", "Лінія впливу"),
+    (22, "22-dust-in-declaration", "Пил у декларації"),
+    (23, "23-one-day-one-firm", "Один день - одна фірма"),
+    (24, "24-port-that-spoke", "Порт, що заговорив"),
+    (25, "25-stable-randomness", "Стабільна випадковість"),
+    (26, "26-eternal-order", "Вічне замовлення"),
+    (27, "27-duplicating-traffic", "Дублюючий трафік"),
+    (28, "28-proxy-for-silence", "Прокладка в обмін на мовчання"),
+    (29, "29-waiting-list", "Список очікування"),
+    (30, "30-closed-for-export", "Закриті на експорт"),
+    (31, "31-instruction-for-customs-officer", "Інструкція для митника"),
+    (32, "32-weight-migration", "Міграція ваги"),
+    (33, "33-customs-mono-group", "Митна моногрупа"),
+    (34, "34-gold-packaging", "Золота упаковка"),
+    (35, "35-air-trade", "Торгівля повітрям"),
+    (36, "36-late-evening-agreement", "Угода пізнього вечора"),
+    (37, "37-record-holder-for-pause", "Рекордсмен по паузі"),
+    (38, "38-full-name-indicator", "ПІБ-індикатор"),
+    (39, "39-benefit-virtuality", "Пільгова віртуальність"),
+    (40, "40-deja-vu-supply", "Дежавю постачання"),
+    (41, "41-parallel-economy-borders", "Межі паралельної економіки"),
+    (42, "42-buying-loyalty", "Купівля лояльності"),
+    (43, "43-export-cleansing", "Очищення експорту"),
+    (44, "44-price-second", "Ціна друга"),
+    (45, "45-lost-customs-documents", "Загублені митні документи"),
+    (46, "46-border-off-the-map", "Кордон за межами карти"),
+    (47, "47-rotation-of-trust", "Ротація довіри"),
+    (48, "48-regional-replacement", "Регіональна заміна"),
+    (49, "49-country-bypassing-sanctions", "Країна в обхід санкцій"),
+    (50, "50-human-signature", "Людина-підпис"),
+    (51, "51-customs-twin-brothers-map", "Карта митних братів-близнюків"),
+    (52, "52-unspoken-hunting-season", "Негласний сезон полювання"),
+    (53, "53-marketing-as-weapon", "Маркування як зброя"),
+    (54, "54-customs-silence-after-storm", "Митна тиша після бурі"),
+    (55, "55-price-of-hugs", "Ціна обіймів"),
+    (56, "56-ghost-at-checkpoint", "Привид на ПП"),
+    (57, "57-customs-ufo", "Митний НЛО"),
+    (58, "58-cargo-from-future", "Вантаж з майбутнього"),
+    (59, "59-credit-customs", "Кредитне митництво"),
+    (60, "60-counterparty-kamikaze", "Контрагент-камікадзе"),
+    (61, "61-dark-fta-statistics", "Темна статистика ЗВТ"),
+    (62, "62-logistics-paradox", "Логістичний парадокс"),
+    (63, "63-re-export-from-oblivion", "Реекспорт із забуття"),
+    (64, "64-symmetric-shadow-mirror", "Симетричне тіньове дзеркало"),
+    (65, "65-smart-quota", "Смарт-квота"),
+    (66, "66-masking-legend", "Маскувальна легенда"),
+    (67, "67-exit-from-shadow", "Вихід з тіні"),
+    (68, "68-operation-reverse-egypt", "Операція 'Зворотній Єгипет'"),
+    (69, "69-deep-merger", "Глибоке злиття"),
+    (70, "70-rollback-cascade", "Відкатний каскад"),
+    (71, "71-broker-invisible", "Брокер-невидимка"),
+    (72, "72-green-declaration-black-essence", "Зелена декларація, чорна суть"),
+    (73, "73-trading-with-themselves", "Торгівля з самими собою"),
+    (74, "74-buy-for-3-sell-for-300", "Купи за 3 - продай за 300"),
+    (75, "75-reverse-offshore", "Зворотній офшор"),
+    (76, "76-import-in-exchange-for-influence", "Імпорт в обмін на вплив"),
+    (77, "77-customs-teleport", "Митний телепорт"),
+    (78, "78-two-in-room-one-declaration", "Двоє в кімнаті - одна декларація"),
+    (79, "79-shadow-cashback", "Тіньовий кешбек"),
+    (80, "80-cargo-without-addressee", "Вантаж без адресата"),
+    (81, "81-synchronized-silence", "Синхронізоване мовчання"),
+    (82, "82-declaration-doppelganger", "Деклараційний доппельгангер"),
+    (83, "83-virtual-destination-point", "Пункт віртуального призначення"),
+    (84, "84-chain-of-hidden-giant", "Ланцюг прихованого гіганта"),
+    (85, "85-customs-lens-of-time", "Митна лінза часу"),
+    (86, "86-bribe-for-silence", "Прокладка в обмін на мовчання"),
+    (87, "87-ghost-territory", "Привид території"),
+    (88, "88-declaration-parallel-state", "Деклараційна паралельна держава"),
+    (89, "89-anti-correlation-gap", "Анти-кореляційна шпарина"),
+    (90, "90-unseen-under-zero", "Небачене під нуль"),
+    (91, "91-shadow-consensus", "Тіньовий консенсус"),
+    (92, "92-institutional-cover", "Інституційний покрив"),
+    (93, "93-country-that-does-not-know-about-its-export", "Країна, що не знає про свій експорт"),
+    (94, "94-form-of-economy-without-subject", "Форма економіки без суб'єкта"),
+    (95, "95-import-for-future-body", "Імпорт для майбутнього тіла"),
+    (96, "96-lost-satellite-of-economy", "Загублений супутник економіки"),
+    (97, "97-declaration-mimicry", "Деклараційна мімікрія"),
+    (98, "98-phantom-under-key-name", "Фантом під ключовим ім'ям"),
+    (99, "99-import-as-counter-intelligence", "Імпорт як контрзвітування"),
+    (100, "100-digital-legend-for-export", "Цифрова легенда на вивіз"),
+)
+_DATASET_BY_ID = {dataset_id: (route, title) for dataset_id, route, title in _DATASET_ROUTES}
+_DATASET_ID_BY_ROUTE = {route: dataset_id for dataset_id, route, _ in _DATASET_ROUTES}
+
+
+@app.get("/api/v1/datasets")
 @app.get("/api/v1/datasets/")
-async def list_all_datasets():
-    """Отримати список всіх доступних датасетів."""
-    datasets = []
-    for i in range(1, 101):
-        datasets.append({
-            "id": str(i),
-            "endpoint": f"/datasets/{i}",
-            "name": f"Dataset #{i}",
-            "description": f"Аналітичний датасет #{i}"
-        })
-    return datasets
+async def list_all_datasets() -> list[dict[str, str]]:
+    """Отримати канонічний список 100 аналітичних датасетів."""
+    return [
+        {
+            "id": str(dataset_id),
+            "endpoint": f"/api/v1/datasets/{route}",
+            "name": title,
+            "description": f"Аналітичний датасет #{dataset_id}: {title}",
+        }
+        for dataset_id, route, title in _DATASET_ROUTES
+    ]
+
+
+def _resolve_dataset_id(dataset_key: str) -> int:
+    """Перетворити ID або slug датасету на числовий ідентифікатор."""
+    normalized = dataset_key.strip().strip("/")
+    if normalized.isdigit():
+        dataset_id = int(normalized)
+    elif normalized in _DATASET_ID_BY_ROUTE:
+        dataset_id = _DATASET_ID_BY_ROUTE[normalized]
+    else:
+        match = re.match(r"^0*(\d{1,3})(?:-|$)", normalized)
+        dataset_id = int(match.group(1)) if match else 0
+    if dataset_id not in _DATASET_BY_ID:
+        raise HTTPException(status_code=404, detail="Датасет не знайдено")
+    return dataset_id
+
+
+def _serialize_dataset_record(record: Any) -> dict[str, Any]:
+    """Серіалізувати SQLAlchemy модель у JSON-сумісний словник."""
+    table = getattr(record, "__table__", None)
+    if table is None:
+        return {"value": str(record)}
+    payload: dict[str, Any] = {}
+    for column in table.columns:
+        value = getattr(record, column.name)
+        payload[column.name] = value.isoformat() if isinstance(value, datetime) else value
+    return payload
+
+
+async def _kaggle_dataset_rows(dataset_id: int, limit: int = 100) -> list[dict[str, Any]]:
+    """Повернути дані з найближчої доступної таблиці Kaggle-емуляції."""
+    bounded_limit = max(1, min(limit, 500))
+    model: Any = Transaction
+    order_column: Any = Transaction.declaration_date
+
+    if dataset_id in {11, 47, 50}:
+        model, order_column = CustomsOfficial, CustomsOfficial.full_name
+    elif dataset_id == 21:
+        model, order_column = OfficialVisit, OfficialVisit.visit_date
+    elif dataset_id in {67, 97}:
+        model, order_column = MediaInvestigation, MediaInvestigation.publication_date
+    elif dataset_id in {70, 79}:
+        model, order_column = FinancialTransaction, FinancialTransaction.transaction_date
+    elif dataset_id in {83, 96, 99}:
+        model, order_column = WarehouseRegistry, WarehouseRegistry.name
+    elif dataset_id == 93:
+        model, order_column = ComtradeData, ComtradeData.year
+    elif dataset_id in {9, 71}:
+        model, order_column = CustomsBroker, CustomsBroker.name
+    elif dataset_id in {12, 13, 28, 84, 86, 92, 94}:
+        model, order_column = Company, Company.created_at
+    elif dataset_id in {49, 98}:
+        model, order_column = SanctionsList, SanctionsList.entity_name
+
+    async with main_session() as session:
+        result = await session.execute(select(model).order_by(order_column.desc()).limit(bounded_limit))
+        return [_serialize_dataset_record(item) for item in result.scalars().all()]
+
+
+@app.get("/api/v1/datasets/{dataset_key}")
+async def get_registered_dataset(dataset_key: str, limit: int = 100) -> list[dict[str, Any]]:
+    """Отримати дані датасету за ID або канонічним slug."""
+    dataset_id = _resolve_dataset_id(dataset_key)
+    rows = await _kaggle_dataset_rows(dataset_id, limit=limit)
+    route, title = _DATASET_BY_ID[dataset_id]
+    for row in rows:
+        row.setdefault("dataset_id", str(dataset_id))
+        row.setdefault("dataset_slug", route)
+        row.setdefault("dataset_name", title)
+    return rows
 
 
 @app.get("/api/v1/datasets/1-customs-spike")
