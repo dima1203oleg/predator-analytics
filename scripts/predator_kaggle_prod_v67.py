@@ -33,7 +33,6 @@ from uuid import uuid4
 # ═══════════════════════════════════════════════════════════════
 # 1. ЗАЛЕЖНОСТІ
 
-import os
 
 # Читаємо Telegram‑креденшіали з змінних оточення (Kaggle Secrets або .env.local)
 TELEGRAM_API_ID = int(os.getenv("TELEGRAM_API_ID", "0"))
@@ -48,15 +47,16 @@ def _install_deps() -> None:
         "fastapi", "uvicorn[standard]", "psutil", "httpx",
         "python-jose[cryptography]", "sqlalchemy", "aiosqlite",
         "networkx", "orjson", "numpy", "sse-starlette", "telethon",
+        "greenlet"
     ]
     try:
         import fastapi, uvicorn, psutil, jose, sqlalchemy  # noqa: F401
-        import aiosqlite, networkx, numpy, telethon  # noqa: F401
+        import aiosqlite, networkx, numpy, telethon, greenlet  # noqa: F401
         print("✅ Залежності вже встановлені")
     except ImportError:
         print("🔧 Встановлення залежностей...")
         subprocess.run(
-            [sys.executable, "-m", "pip", "install", "-q", *required],
+            [sys.executable, "-m", "pip", "install", "-q", "--break-system-packages", *required],
             check=False,
         )
         print("✅ Залежності встановлено")
@@ -66,11 +66,14 @@ def _install_deps() -> None:
         import nest_asyncio  # noqa: F401
     except ImportError:
         subprocess.run(
-            [sys.executable, "-m", "pip", "install", "-q", "nest_asyncio"],
+            [sys.executable, "-m", "pip", "install", "-q", "--break-system-packages", "nest_asyncio"],
             check=False,
         )
-    import nest_asyncio
-    nest_asyncio.apply()
+    try:
+        import nest_asyncio
+        nest_asyncio.apply()
+    except ImportError:
+        print("⚠️ nest_asyncio недоступний (можна ігнорувати поза Jupyter)")
 
 _install_deps()
 
@@ -924,7 +927,7 @@ async def _parse_data_gov_ua():
 
 async def _parse_nbu_exchange():
     """Парсер курсів валют НБУ (API)."""
-    url = f"https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json"
+    url = "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json"
     data = await _fetch_url(url, timeout=10.0)
     if not data:
         return []
@@ -1234,7 +1237,7 @@ async def _run_etl_simulation():
                 )
                 session.add(new_flow)
                 await session.commit()
-                print(f"[ETL-SIM] Додано синтетичні дані")
+                print("[ETL-SIM] Додано синтетичні дані")
         except Exception as e:
             print(f"[ETL-SIM] Помилка: {e}")
             await asyncio.sleep(60)
@@ -1298,7 +1301,7 @@ ooda = OODALoop()
 async def lifespan(application: FastAPI):
     """Ініціалізація при старті, очищення при зупинці."""
     # Startup
-    print(f"🗄️ Ініціалізація 10 баз даних...")
+    print("🗄️ Ініціалізація 10 баз даних...")
     for eng, base_cls in [
         (main_engine, Base), (ch_engine, ClickHouseBase),
         (os_engine, OpenSearchBase), (ts_engine, TimescaleBase),
@@ -2533,19 +2536,19 @@ async def process_dataset_query(query: str, session: AsyncSession) -> dict:
         
     if "подвійн" in q and "інвойс" in q:
         return {
-            "response": f"📑 [DATASET #3: Подвійне інвойсування]\nСпівставлення з дзеркальними даними митниць ЄС виявило розбіжності у 12 вантажівках (РП 34%). Вартість на виїзді з ЄС: $2.4M, вартість на в'їзді в UA: $1.2M. Розбіжність становить $1.2M.",
+            "response": "📑 [DATASET #3: Подвійне інвойсування]\nСпівставлення з дзеркальними даними митниць ЄС виявило розбіжності у 12 вантажівках (РП 34%). Вартість на виїзді з ЄС: $2.4M, вартість на в'їзді в UA: $1.2M. Розбіжність становить $1.2M.",
             "confidence": 0.88, "dataset_id": 3
         }
         
     if "кільцев" in q or "карусел" in q:
         return {
-            "response": f"🔄 [DATASET #4: Кільцевий імпорт/експорт]\nГрафовий аналіз Neo4j виявив 3 циклічні ланцюги постачання (UA -> PL -> CZ -> UA) для оптимізації ПДВ. До схеми залучено 5 пов'язаних компаній (визначено через Beneficial Owners).",
+            "response": "🔄 [DATASET #4: Кільцевий імпорт/експорт]\nГрафовий аналіз Neo4j виявив 3 циклічні ланцюги постачання (UA -> PL -> CZ -> UA) для оптимізації ПДВ. До схеми залучено 5 пов'язаних компаній (визначено через Beneficial Owners).",
             "confidence": 0.96, "dataset_id": 4
         }
         
     if "дробленн" in q or "split" in q:
         return {
-            "response": f"📦 [DATASET #5: Штучне дроблення]\nАналітична модель виявила 45 партій товару від одного китайського відправника до 15 різних ФОП в Україні протягом 24 годин. Вага кожної партії штучно занижена до митного ліміту.",
+            "response": "📦 [DATASET #5: Штучне дроблення]\nАналітична модель виявила 45 партій товару від одного китайського відправника до 15 різних ФОП в Україні протягом 24 годин. Вага кожної партії штучно занижена до митного ліміту.",
             "confidence": 0.91, "dataset_id": 5
         }
         
@@ -2565,7 +2568,7 @@ async def process_dataset_query(query: str, session: AsyncSession) -> dict:
         
     if "банкрут" in q:
         return {
-            "response": f"💥 [DATASET #10: Контрольований банкрут]\nВиявлено патерн 'Фенікс': кластер з 4 компаній. Компанія А накопичила 15М грн боргу і подала на ліквідацію, активи та контракти переведені на компанію Б (з тими ж UBO).",
+            "response": "💥 [DATASET #10: Контрольований банкрут]\nВиявлено патерн 'Фенікс': кластер з 4 компаній. Компанія А накопичила 15М грн боргу і подала на ліквідацію, активи та контракти переведені на компанію Б (з тими ж UBO).",
             "confidence": 0.94, "dataset_id": 10
         }
         
@@ -2971,7 +2974,7 @@ async def process_telegram_async(job_id: str, url: str, limit: int, user_id: str
         job.progress.message = "Трансформація повідомлень..."
         job.updated_at = datetime.now(UTC)
 
-        etl_res = await etl_processor.process(messages, pipeline="telegram")
+        await etl_processor.process(messages, pipeline="telegram")
 
         # Індексуємо в бази даних
         job.status = IngestionStatus.INDEXING
