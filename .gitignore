@@ -106,6 +106,7 @@ deploy_*.tar.gz
 *.pem
 *.key
 secrets/
+!helm/predator/subcharts/secrets/
 keys/
 **/dynamic_keys.json
 dynamic_keys.json
