@@ -1,61 +1,94 @@
 import logging
 
-from telegram import KeyboardButton, ReplyKeyboardMarkup, Update
-from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, MessageHandler, filters
+from telegram.ext import (
+    ApplicationBuilder, 
+    CommandHandler, 
+    MessageHandler, 
+    filters,
+    ConversationHandler,
+    CallbackQueryHandler
+)
 
 from app.config import TELEGRAM_BOT_TOKEN
+from app.handlers import (
+    start, cancel, handle_status, 
+    search_start, search_type_selected, search_perform,
+    graph_start, graph_perform,
+    report_start, report_type_selected, report_perform,
+    ai_start, ai_perform,
+    settings_menu, settings_callback,
+    SEARCH_INPUT, AI_INPUT, GRAPH_INPUT, REPORT_INPUT
+)
 
-# Налаштування логування
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     level=logging.INFO
 )
+logger = logging.getLogger(__name__)
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Обробка команди /start та вивід головного меню."""
-    keyboard = [
-        [KeyboardButton("📊 Статус Системи"), KeyboardButton("🔍 Швидкий Пошук")],
-        [KeyboardButton("🕸 Граф Зв'язків"), KeyboardButton("📄 Згенерувати Звіт")],
-        [KeyboardButton("🤖 Запитати ШІ"), KeyboardButton("⚙️ Налаштування")]
-    ]
-    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
-
-    await update.message.reply_text(
-        "🦅 **Вітаю у PREDATOR Analytics v55.1 Control Center!**\n\n"
-        "Я ваш телеграм-пульт для керування системою. Ви можете використовувати кнопки нижче "
-        "або просто писати мені запити природною українською мовою.",
-        reply_markup=reply_markup,
-        parse_mode='Markdown'
-    )
-
-async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Обробка природної мови та натискання кнопок."""
-    text = update.message.text
-
-    if text == "📊 Статус Системи":
-        await update.message.reply_text("🔄 Отримую дані від сервісів...")
-        # Тут буде логіка запиту до health-ендпоінтів
-        await update.message.reply_text("✅ Всі системи (Core, Graph, Ingestion) — ONLINE.")
-
-    elif text == "🔍 Швидкий Пошук":
-        await update.message.reply_text("Введіть ІПН, Код або Назву сутності для пошуку:")
-
-    elif text == "🤖 Запитати ШІ" or not text.startswith("/"):
-        # Логіка інтеграції з AI Copilot
-        await update.message.reply_text(f"🧠 Обробляю ваш запит: '{text}'...")
-        # Тут виклик до /api/v1/copilot/query
-        await update.message.reply_text("Отримав відповідь від DeepSeek-V3: Згідно з аналізом, сутність має високий ризик через зв'язки з санкційними списками.")
-
-    else:
-        await update.message.reply_text("Я вас не зовсім зрозумів. Спробуйте скористатися меню.")
-
-if __name__ == '__main__':
+def main():
     application = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
 
-    start_handler = CommandHandler('start', start)
-    msg_handler = MessageHandler(filters.TEXT & (~filters.COMMAND), handle_message)
+    # Обробники меню першого рівня без станів
+    application.add_handler(CommandHandler('start', start))
+    application.add_handler(MessageHandler(filters.Regex("^📊 Статус Системи$"), handle_status))
+    application.add_handler(MessageHandler(filters.Regex("^⚙️ Налаштування$"), settings_menu))
+    application.add_handler(CallbackQueryHandler(settings_callback, pattern="^(toggle_notif|lang_lock|clear_hist)$"))
 
-    application.add_handler(start_handler)
-    application.add_handler(msg_handler)
+    # Швидкий пошук Conversation
+    search_conv = ConversationHandler(
+        entry_points=[MessageHandler(filters.Regex("^🔍 Швидкий Пошук$"), search_start)],
+        states={
+            SEARCH_INPUT: [
+                CallbackQueryHandler(search_type_selected, pattern="^(search_company|search_person|cancel)$"),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, search_perform)
+            ]
+        },
+        fallbacks=[CommandHandler('cancel', cancel)]
+    )
+    application.add_handler(search_conv)
 
+    # Граф Зв'язків Conversation
+    graph_conv = ConversationHandler(
+        entry_points=[MessageHandler(filters.Regex("^🕸 Граф Зв'язків$"), graph_start)],
+        states={
+            GRAPH_INPUT: [MessageHandler(filters.TEXT & ~filters.COMMAND, graph_perform)]
+        },
+        fallbacks=[CommandHandler('cancel', cancel)]
+    )
+    application.add_handler(graph_conv)
+
+    # Звіти Conversation
+    report_conv = ConversationHandler(
+        entry_points=[MessageHandler(filters.Regex("^📄 Згенерувати Звіт$"), report_start)],
+        states={
+            REPORT_INPUT: [
+                CallbackQueryHandler(report_type_selected, pattern="^(report_risk|report_fin|cancel)$"),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, report_perform)
+            ]
+        },
+        fallbacks=[CommandHandler('cancel', cancel)]
+    )
+    application.add_handler(report_conv)
+
+    # AI Copilot Conversation
+    ai_conv = ConversationHandler(
+        entry_points=[MessageHandler(filters.Regex("^🤖 Запитати ШІ$"), ai_start)],
+        states={
+            AI_INPUT: [MessageHandler(filters.TEXT & ~filters.COMMAND, ai_perform)]
+        },
+        fallbacks=[CommandHandler('cancel', cancel)]
+    )
+    application.add_handler(ai_conv)
+
+    # Глобальний fallback для невідомих команд/текстів
+    async def unknown(update, context):
+        await update.message.reply_text("Я вас не зовсім зрозумів. Спробуйте скористатися меню або натисніть /start.")
+
+    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, unknown))
+
+    logger.info("Бот запущений і готовий до роботи.")
     application.run_polling()
+
+if __name__ == '__main__':
+    main()
