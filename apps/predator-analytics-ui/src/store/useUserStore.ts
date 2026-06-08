@@ -71,7 +71,7 @@ export const useUserStore = create<UserState>((set, get) => ({
       isClient: user?.role === UserRole.CLIENT_BASIC || user?.role === UserRole.CLIENT_PREMIUM || user?.role === UserRole.CLIENT_DRPO
     });
     if (user) {
-      sessionStorage.setItem('predator_auth_token', user.role === UserRole.ADMIN ? 'admin-token' : 'user-token');
+      sessionStorage.setItem('predator_auth_token', user.role === UserRole.ADMIN ? 'PREDATOR-ELITE-V68-STATIC-TOKEN-999' : 'demo-token');
     } else {
       sessionStorage.removeItem('predator_auth_token');
     }

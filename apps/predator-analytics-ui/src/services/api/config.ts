@@ -156,9 +156,12 @@ export const apiClient = axios.create({
     timeout: 15000,
     headers: {
         'Content-Type': 'application/json',
-        'X-Client-Version': '67.0.0-ELITE',
+        'X-Client-Version': '68.0.0-ELITE',
     },
 });
+
+// Статичний токен для автоматичної авторизації з Kaggle бекендом (HR-06: через env)
+const STATIC_TOKEN = metaEnv.VITE_STATIC_TOKEN || '';
 
 // Alias for backward compatibility
 export const v45Client = apiClient;
@@ -169,7 +172,7 @@ export const API_V45_URL = API_BASE_URL;
 // HR-15: 0% mock у production — ЗАСТОСОВАНО.
 
 apiClient.interceptors.request.use((config) => {
-    const token = sessionStorage.getItem('predator_auth_token');
+    const token = sessionStorage.getItem('predator_auth_token') || STATIC_TOKEN;
     if (token) config.headers.Authorization = `Bearer ${token}`;
     return config;
 });
