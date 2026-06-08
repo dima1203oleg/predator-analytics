@@ -1,0 +1,183 @@
+# ----------------------------------------------
+# 📦 GitHub Actions – CI/CD для Predator Analytics
+# Опис: Автоматичне тестування, збірка Docker‑образів,
+#       публікація в реєстр і синхронізація через Argo CD.
+# Мова коментарів – українська, згідно з HR‑04.
+# ----------------------------------------------
+
+name: CI / CD (Argo CD)
+
+on:
+  push:
+    branches: [ "main", "master", "release/**" ]
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+env:
+  # Docker‑registry (можна замінити на ваш власний)
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}/predator
+  # ArgoCD‑сервер (використовуємо секрети)
+  ARGOCD_SERVER: ${{ secrets.ARGOCD_SERVER }}
+  ARGOCD_APP: predator-analytics
+  ARGOCD_TOKEN: ${{ secrets.ARGOCD_TOKEN }}
+
+jobs:
+  # -------------------------------------------------
+  # 1️⃣ Тестування бекенду (Python) + линтер + типізація
+  # -------------------------------------------------
+  backend-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./services
+    steps:
+      - name: ⟡ Checkout репозиторію
+        uses: actions/checkout@v4
+
+      - name: 🐍 Setup Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 📥 Кеш pip‑залежностей
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: 📦 Install dependencies (backend)
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r services/core-api/requirements.txt
+          pip install -r services/ingestion-worker/requirements.txt
+          pip install -r services/graph-service/requirements.txt
+
+      - name: 🔍 Run Ruff linter
+        run: ruff check .
+
+      - name: 🧪 Run MyPy (strict)
+        run: mypy --strict .
+
+      - name: ✅ Run Pytest (backend)
+        run: pytest services/**/tests -n auto --cov=services --cov-report=xml
+
+      - name: 📤 Upload coverage to Codecov (optional)
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+  # -------------------------------------------------
+  # 2️⃣ Тестування фронтенду (React + Vite) + lint
+  # -------------------------------------------------
+  frontend-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./apps/predator-analytics-ui
+    steps:
+      - name: ⟡ Checkout репозиторію
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js (18)
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: 📦 Install deps
+        run: npm ci
+
+      - name: 📐 Lint (ESLint + Prettier)
+        run: npm run lint
+
+      - name: 🧪 Vitest (unit + component tests)
+        run: npm test -- --coverage
+
+      - name: 📤 Upload frontend coverage (optional)
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage/coverage-final.json
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+  # -------------------------------------------------
+  # 3️⃣ Build & push Docker images (backend + UI)
+  # -------------------------------------------------
+  build-and-push:
+    needs: [backend-test, frontend-test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⟡ Checkout репозиторію
+        uses: actions/checkout@v4
+
+      - name: 🔐 Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🛠️ Set up QEMU (для multi‑arch)
+        uses: docker/setup-qemu-action@v3
+
+      - name: 🏗️ Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: 📦 Build & push core‑api образ
+        uses: docker/build-push-action@v5
+        with:
+          context: ./services/core-api
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-core-api:latest
+          platforms: linux/amd64,linux/arm64
+
+      - name: 📦 Build & push UI образ
+        uses: docker/build-push-action@v5
+        with:
+          context: ./apps/predator-analytics-ui
+          file: ./apps/predator-analytics-ui/Dockerfile
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-ui:latest
+          platforms: linux/amd64,linux/arm64
+
+  # -------------------------------------------------
+  # 4️⃣ Deploy via Argo CD
+  # -------------------------------------------------
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⟡ Checkout репозиторію (для доступу до manifests)
+        uses: actions/checkout@v4
+
+      - name: 📥 Install ArgoCD CLI
+        uses: argoproj/argocd-action@v2
+        with:
+          version: v2.10.0
+
+      - name: 🔐 Login to ArgoCD
+        run: |
+          argocd login ${{ env.ARGOCD_SERVER }} \
+            --grpc-web \
+            --username admin \
+            --password ${{ env.ARGOCD_TOKEN }} \
+            --insecure
+
+      - name: 🚀 Sync Application
+        run: |
+          argocd app sync ${{ env.ARGOCD_APP }} \
+            --prune \
+            --auto-prune \
+            --refresh
+
+      - name: 📊 Wait for Health (max 5 min)
+        run: |
+          argocd app wait ${{ env.ARGOCD_APP }} \
+            --health \
+            --timeout 300
+
+      - name: ✅ Deploy finished
+        run: echo "✅ Argo CD sync completed successfully"
