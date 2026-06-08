@@ -1124,11 +1124,15 @@ async def _run_real_parsers():
             async with main_session() as session:
                 for item in prozorro:
                     doc_id = f"FTS-PRZ-{item['id'][:10]}"
-                    session.add(Document(
-                        id=doc_id, title=item["title"],
-                        content=f"Prozorro тендер: {item['title']}. Замовник: {item['buyer']}. Сума: {item['amount']} {item['currency']}.",
-                        doc_type="prozorro",
-                    ))
+                    existing_doc = (await session.execute(
+                        select(Document).where(Document.id == doc_id)
+                    )).scalar_one_or_none()
+                    if not existing_doc:
+                        session.add(Document(
+                            id=doc_id, title=item["title"],
+                            content=f"Prozorro тендер: {item['title']}. Замовник: {item['buyer']}. Сума: {item['amount']} {item['currency']}.",
+                            doc_type="prozorro",
+                        ))
                 await session.commit()
             # DB6: Neo4j — граф зв'язків замовників
             for item in prozorro:
@@ -1188,11 +1192,16 @@ async def _run_real_parsers():
             # DB3: OpenSearch
             async with main_session() as session:
                 for item in nazk:
-                    session.add(Document(
-                        id=f"FTS-NAZK-{item['id'][:10]}", title=f"Санкція: {item['name']}",
-                        content=f"Санкційний список РНБО/НАЗК: {item['name']}. Тип: {item['sanction_type']}.",
-                        doc_type="sanction",
-                    ))
+                    doc_id = f"FTS-NAZK-{item['id'][:10]}"
+                    existing_doc = (await session.execute(
+                        select(Document).where(Document.id == doc_id)
+                    )).scalar_one_or_none()
+                    if not existing_doc:
+                        session.add(Document(
+                            id=doc_id, title=f"Санкція: {item['name']}",
+                            content=f"Санкційний список РНБО/НАЗК: {item['name']}. Тип: {item['sanction_type']}.",
+                            doc_type="sanction",
+                        ))
                 await session.commit()
             # DB6: Neo4j — санкційні вузли
             for item in nazk:
@@ -1242,11 +1251,16 @@ async def _run_real_parsers():
             async with main_session() as session:
                 for item in court:
                     hid = hashlib.md5(item["title"].encode()).hexdigest()[:10]
-                    session.add(Document(
-                        id=f"FTS-COURT-{hid}", title=item["title"],
-                        content=f"Судове рішення: {item['title']}. {item.get('description','')[:500]}",
-                        doc_type="court_decision",
-                    ))
+                    doc_id = f"FTS-COURT-{hid}"
+                    existing_doc = (await session.execute(
+                        select(Document).where(Document.id == doc_id)
+                    )).scalar_one_or_none()
+                    if not existing_doc:
+                        session.add(Document(
+                            id=doc_id, title=item["title"],
+                            content=f"Судове рішення: {item['title']}. {item.get('description','')[:500]}",
+                            doc_type="court_decision",
+                        ))
                 await session.commit()
             # DB8: Qdrant
             for item in court:
@@ -1287,11 +1301,16 @@ async def _run_real_parsers():
             # DB3: OpenSearch
             async with main_session() as session:
                 for item in dgua:
-                    session.add(Document(
-                        id=f"FTS-DGUA-{item['id'][:10]}", title=item["title"],
-                        content=f"data.gov.ua: {item['title']}. {item.get('notes','')[:500]}",
-                        doc_type="open_data",
-                    ))
+                    doc_id = f"FTS-DGUA-{item['id'][:10]}"
+                    existing_doc = (await session.execute(
+                        select(Document).where(Document.id == doc_id)
+                    )).scalar_one_or_none()
+                    if not existing_doc:
+                        session.add(Document(
+                            id=doc_id, title=item["title"],
+                            content=f"data.gov.ua: {item['title']}. {item.get('notes','')[:500]}",
+                            doc_type="open_data",
+                        ))
                 await session.commit()
             if dgua:
                 minio.put_object("parsed-raw", f"data_gov_{datetime.now(UTC).strftime('%Y%m%d_%H%M%S')}.json",
