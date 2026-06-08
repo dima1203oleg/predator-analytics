@@ -1,6 +1,6 @@
 # 🦅 PREDATOR Analytics — Інструкції деплою на Kaggle
 
-> **Версія**: v67.0-ELITE  
+> **Версія**: v68.0-ELITE (100 Datasets Coverage)  
 > **Режим**: CPU Only, Max RAM (30 GB)  
 > **Тунель**: zrok (HR-23 compliant)  
 > **Час деплою**: ~3 хвилини
@@ -164,6 +164,17 @@ npm run dev
 | TimescaleDB | SQLite (hypertable) | Часові ряди |
 | MongoDB | SQLite (document) | Документи |
 
+### Нові таблиці для 100 датасетів (v68.0-ELITE)
+
+| Таблиця | Опис | Кількість записів |
+|--------|------|-------------------|
+| customs_officials | Митні чиновники | 50 |
+| official_visits | Візити чиновників на митні пости | 100 |
+| warehouse_registry | Реєстр складів | 30 |
+| comtrade_data | Дані COMTRADE | 200 |
+| media_investigations | Медіа-розслідування | 50 |
+| financial_transactions | Фінансові транзакції | 300 |
+
 ### Seed дані
 
 | Сутність | Кількість |
@@ -175,8 +186,14 @@ npm run dev
 | Graph Nodes | 500 |
 | Graph Edges | ~1500 |
 | Користувачі | 4 |
+| **Митні чиновники** | **50** |
+| **Візити чиновників** | **100** |
+| **Склади** | **30** |
+| **COMTRADE дані** | **200** |
+| **Медіа-розслідування** | **50** |
+| **Фінансові транзакції** | **300** |
 
-### API Endpoints (105 async функцій)
+### API Endpoints (105 async функцій + 100 аналітичних датасетів)
 
 - **Health & Monitoring** — `/health`, `/api/v1/health`, `/api/v1/azr/status`
 - **Auth** — login, me
@@ -211,6 +228,7 @@ npm run dev
 - **Customs** — declarations, statistics, HS codes, risk profiles
 - **SSE** — real-time event stream
 - **Admin v2** — telemetry, agents, chaos
+- **100 Аналітичних Датасетів** — `/api/v1/datasets/` (список), `/api/v1/datasets/{1-100}` (конкретні датасети)
 
 ---
 
@@ -255,6 +273,50 @@ zrok не підтримує WebSocket. Використовується SSE (Se
 ```
 GET /api/v1/events/stream
 ```
+
+---
+
+## 🧪 Тестування 100 датасетів
+
+Після запуску бекенду на Kaggle, ви можете протестувати 100 аналітичних датасетів:
+
+### Отримання списку всіх датасетів
+```bash
+curl https://YOUR-ZROK-URL.share.zrok.io/api/v1/datasets/
+```
+
+### Тестування конкретних датасетів
+```bash
+# #1 Митний сплеск за розпорядженням
+curl "https://YOUR-ZROK-URL.share.zrok.io/api/v1/datasets/1-customs-spike?days_before=30&days_after=30"
+
+# #2 Бум за ніч
+curl "https://YOUR-ZROK-URL.share.zrok.io/api/v1/datasets/2-overnight-import?days_threshold=7"
+
+# #11 Профіль митного чиновника
+curl https://YOUR-ZROK-URL.share.zrok.io/api/v1/datasets/11-customs-official-profile
+
+# #21 Лінія впливу
+curl https://YOUR-ZROK-URL.share.zrok.io/api/v1/datasets/21-line-of-influence
+
+# #67 Вихід з тіні
+curl https://YOUR-ZROK-URL.share.zrok.io/api/v1/datasets/67-exit-from-shadow
+
+# #70 Відкатний каскад
+curl https://YOUR-ZROK-URL.share.zrok.io/api/v1/datasets/70-rollback-cascade
+
+# #83 Пункт віртуального призначення
+curl https://YOUR-ZROK-URL.share.zrok.io/api/v1/datasets/83-virtual-destination-point
+
+# #93 Країна, що не знає про свій експорт
+curl https://YOUR-ZROK-URL.share.zrok.io/api/v1/datasets/93-country-that-does-not-know-about-its-export
+
+# Будь-який датасет (загальний endpoint)
+curl https://YOUR-ZROK-URL.share.zrok.io/api/v1/datasets/42
+```
+
+### Примітка
+Kaggle backend використовує SQLite emulation та генеровані дані для тестування API endpoints та логіки датасетів. Для повноцінного тестування з реальними даними треба розгорнути на iMac або NVIDIA сервер.
 
 ---
 

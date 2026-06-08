@@ -45,7 +45,7 @@ from app.api.v1.self_improvement import router as self_improvement_router
 from app.api.v1.smb import router as smb_router
 from app.api.v1.twin import router as twin_router
 from app.api.v1.warroom import router as warroom_router
-from app.api.v1.datasets_100 import router as datasets_100_router
+from app.api.v1.datasets import router as datasets_router
 from app.api.v1.historical_declarations import router as historical_declarations_router
 
 api_v1_router = APIRouter(prefix="/api/v1")
@@ -129,5 +129,5 @@ from app.api.v1.warroom_v2 import router as warroom_router
 
 api_v1_router.include_router(warroom_router, tags=["Command Center & Shadow Cartography"])
 # --- Phase 13 SM: 100 Datasets Coverage ---
-api_v1_router.include_router(datasets_100_router, tags=["100 Datasets Coverage"])
+api_v1_router.include_router(datasets_router, tags=["100 Datasets Coverage"])
 api_v1_router.include_router(historical_declarations_router, tags=["Historical Declarations"])
