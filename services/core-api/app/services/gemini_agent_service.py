@@ -15,9 +15,10 @@ Free Tier ліміти: 500 RPD / 15 RPM для gemini-2.5-flash.
 
 from __future__ import annotations
 
+from collections.abc import AsyncIterator
 import os
 import time
-from typing import Any, AsyncIterator
+from typing import Any
 
 from predator_common.circuit_breaker import CircuitBreaker
 from predator_common.logging import get_logger
@@ -178,7 +179,7 @@ class GeminiAgentService:
             for chunk in response_stream:
                 if chunk.text:
                     yield chunk.text
-            
+
             _gemini_breaker.record_success()
 
         except Exception as e:

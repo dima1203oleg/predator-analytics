@@ -3,6 +3,7 @@
 Дозволяє воркерам викликати AI-функціонал через Core API.
 """
 import httpx
+
 from app.config import get_settings
 from predator_common.logging import get_logger
 
@@ -12,14 +13,14 @@ settings = get_settings()
 class AIServiceClient:
     def __init__(self):
         # В реальному середовищі ми викликаємо внутрішній URL core-api
-        self.base_url = "http://core-api:8000/api/v1/omniverse" 
+        self.base_url = "http://core-api:8000/api/v1/omniverse"
 
     async def generate_insight(self, prompt: str) -> str:
         """Виклик AI через внутрішній проксі (імітація)."""
         # У спрощеній версії ми можемо викликати LiteLLM напряму,
-        # якщо воркер має доступ до ключів. 
+        # якщо воркер має доступ до ключів.
         # Тут ми зробимо заглушку або виклик LiteLLM якщо конфіг дозволяє.
-        
+
         try:
             # Спроба прямого виклику LiteLLM для швидкості воркера
             async with httpx.AsyncClient() as client:

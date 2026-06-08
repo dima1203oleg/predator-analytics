@@ -16,8 +16,6 @@ import logging
 import time
 from typing import TYPE_CHECKING, Any
 
-import numpy as np
-
 from app.core.settings import get_settings
 
 if TYPE_CHECKING:

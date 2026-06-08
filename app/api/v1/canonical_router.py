@@ -17,12 +17,14 @@ from app.api.v1.copilot import router as copilot_router
 from app.api.v1.core_ai import router as core_ai_router
 from app.api.v1.counter_intel import router as counter_intel_router
 from app.api.v1.dashboard import router as dashboard_router
+from app.api.v1.datasets import router as datasets_router
 from app.api.v1.diligence import router as diligence_router
 from app.api.v1.finance import router as finance_router
 from app.api.v1.forecast import router as forecast_router
 from app.api.v1.gitops import router as gitops_router
 from app.api.v1.graph import router as graph_router
 from app.api.v1.health import router as health_router
+from app.api.v1.historical_declarations import router as historical_declarations_router
 from app.api.v1.infra_clickhouse import router as infra_clickhouse_router
 from app.api.v1.infra_db_neo4j import router as infra_db_neo4j_router
 from app.api.v1.infra_db_postgres import router as infra_db_postgres_router
@@ -45,8 +47,6 @@ from app.api.v1.self_improvement import router as self_improvement_router
 from app.api.v1.smb import router as smb_router
 from app.api.v1.twin import router as twin_router
 from app.api.v1.warroom import router as warroom_router
-from app.api.v1.datasets import router as datasets_router
-from app.api.v1.historical_declarations import router as historical_declarations_router
 
 api_v1_router = APIRouter(prefix="/api/v1")
 

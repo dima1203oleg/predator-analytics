@@ -1,7 +1,7 @@
-import pytest
-import pandas as pd
 import numpy as np
+import pandas as pd
 from services.synthetic_data_engine.app.analyzer.dataset_profiler import DatasetProfiler
+
 
 def test_profiler_basic():
     df = pd.DataFrame({
@@ -9,9 +9,9 @@ def test_profiler_basic():
         'B': ['a', 'b', 'c', 'd', 'e'],
         'C': [1.1, 2.2, 3.3, 4.4, 5.5]
     })
-    
+
     result = DatasetProfiler.profile(df)
-    
+
     assert result['num_rows'] == 5
     assert result['num_columns'] == 3
     assert 'A' in result['numeric_cols']
@@ -24,8 +24,8 @@ def test_profiler_with_missing():
         'A': [1, 2, np.nan, 4, 5],
         'B': ['a', 'b', 'c', 'd', 'e'],
     })
-    
+
     result = DatasetProfiler.profile(df)
-    
+
     assert result['missing_stats']['A'] == 1
     assert result['recommended_generator'] == 'TVAE'

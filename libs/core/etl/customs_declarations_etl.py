@@ -6,14 +6,13 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
+from datetime import datetime
 import logging
 import os
-from dataclasses import dataclass
-from datetime import date, datetime
 from pathlib import Path
 from typing import Any
 
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger(__name__)
@@ -22,6 +21,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class ETLConfig:
     """Конфігурація ETL процесу."""
+
     source_directory: str
     tenant_id: str
     start_year: int
@@ -33,6 +33,7 @@ class ETLConfig:
 @dataclass
 class ETLStats:
     """Статистика ETL процесу."""
+
     total_files: int
     processed_files: int
     total_rows: int
@@ -59,8 +60,8 @@ class CustomsDeclarationsETL:
             errors=[],
         )
         # Ініціалізація multi-database ETL
-        from libs.core.etl.multi_database_etl import MultiDatabaseETL, DatabaseConfig
-        
+        from libs.core.etl.multi_database_etl import DatabaseConfig, MultiDatabaseETL
+
         self.multi_db_config = DatabaseConfig(
             postgres_url=os.getenv("DATABASE_URL", ""),
             clickhouse_host=os.getenv("CLICKHOUSE_HOST", "localhost"),
@@ -101,10 +102,10 @@ class CustomsDeclarationsETL:
         source_dir = Path(self.config.source_directory)
         files = list(source_dir.glob("*.xlsx"))
         files.extend(source_dir.glob("*.xls"))
-        
+
         self.stats.total_files = len(files)
         logger.info(f"Знайдено {len(files)} Excel файлів")
-        
+
         return files
 
     async def check_existing_data(
@@ -118,6 +119,7 @@ class CustomsDeclarationsETL:
             
         Returns:
             True якщо дані вже імпортовані
+
         """
         # TODO: Реалізувати перевірку по хешу файлу або метаданих
         return False
@@ -133,44 +135,45 @@ class CustomsDeclarationsETL:
             
         Returns:
             Результат обробки
+
         """
         from libs.core.integrations.customs_excel_import import CustomsExcelImporter
-        
+
         logger.info(f"Обробка файлу: {file_path.name}")
-        
+
         # Перевірити чи вже імпортовано
         if await self.check_existing_data(str(file_path)):
             logger.info(f"Файл вже імпортовано: {file_path.name}")
             return {"status": "skipped", "file": str(file_path)}
-        
+
         # Створити імпортер
         importer = CustomsExcelImporter(self.db_session)
-        
+
         try:
             # Прочитати та нормалізувати дані з Excel
             from libs.core.integrations.customs_excel_import import ExcelImportConfig
-            
+
             config = ExcelImportConfig(
                 file_path=str(file_path),
                 sheet_name=0,
                 chunk_size=10000,
             )
-            
+
             df = importer.read_excel_file(config)
             df = importer.normalize_dataframe(df)
-            
+
             # Конвертувати в список словників
             data_list = df.to_dict("records")
-            
+
             # Розподілити по 8 базах даних через multi-database ETL
             commit_message = f"feat(etl): імпорт митних декларацій з {file_path.name}"
             multi_db_result = await self.multi_db_etl.run(data_list, commit_message)
-            
+
             self.stats.processed_files += 1
             self.stats.total_rows += len(data_list)
             self.stats.imported_rows += multi_db_result.postgres_rows
             self.stats.failed_rows += len(multi_db_result.errors)
-            
+
             logger.info(
                 f"Успішно імпортовано в 8 баз даних: "
                 f"PG={multi_db_result.postgres_rows}, "
@@ -181,7 +184,7 @@ class CustomsDeclarationsETL:
                 f"Redis={multi_db_result.redis_keys}, "
                 f"MinIO={multi_db_result.minio_objects}"
             )
-            
+
             return {
                 "status": "success",
                 "file": str(file_path),
@@ -197,12 +200,12 @@ class CustomsDeclarationsETL:
                     "minio": multi_db_result.minio_objects,
                 },
             }
-            
+
         except Exception as e:
             error_msg = f"Помилка імпорту {file_path.name}: {e}"
             logger.error(error_msg)
             self.stats.errors.append(error_msg)
-            
+
             return {
                 "status": "error",
                 "file": str(file_path),
@@ -214,36 +217,37 @@ class CustomsDeclarationsETL:
         
         Returns:
             Статистика ETL процесу
+
         """
         logger.info("Початок ETL процесу")
-        
+
         # Перевірити директорію
         if not await self.validate_source_directory():
             raise ValueError("Невірна директорія джерела")
-        
+
         # Знайти файли
         files = await self.discover_files()
-        
+
         if not files:
             logger.warning("Файли не знайдено")
             return self.stats
-        
+
         # Обробити файли
         for file_path in files:
             result = await self.process_file(file_path)
-            
+
             if result["status"] == "error":
                 logger.error(f"Помилка обробки: {result['error']}")
-        
+
         # Завершити
         self.stats.end_time = datetime.now()
-        
+
         duration = (self.stats.end_time - self.stats.start_time).total_seconds()
         logger.info(f"ETL процес завершено за {duration:.2f} секунд")
         logger.info(f"Оброблено файлів: {self.stats.processed_files}/{self.stats.total_files}")
         logger.info(f"Імпортовано рядків: {self.stats.imported_rows}")
         logger.info(f"Помилок: {self.stats.failed_rows}")
-        
+
         return self.stats
 
     async def run_monthly_import(
@@ -253,35 +257,36 @@ class CustomsDeclarationsETL:
         
         Returns:
             Статистика ETL процесу
+
         """
         months_ukr = [
             "Січень", "Лютий", "Березень", "Квітень", "Травень", "Червень",
             "Липень", "Серпень", "Вересень", "Жовтень", "Листопад", "Грудень"
         ]
-        
+
         source_dir = Path(self.config.source_directory)
         files_to_process = []
-        
+
         for year in range(self.config.start_year, self.config.end_year + 1):
             for month_idx, month_name in enumerate(months_ukr, 1):
                 file_name = f"{month_name}_{year}.xlsx"
                 file_path = source_dir / file_name
-                
+
                 if file_path.exists():
                     files_to_process.append(file_path)
                     logger.info(f"Знайдено файл: {file_name}")
                 else:
                     logger.warning(f"Файл не знайдено: {file_name}")
-        
+
         self.stats.total_files = len(files_to_process)
-        
+
         # Обробити файли
         for file_path in files_to_process:
             await self.process_file(file_path)
-        
+
         # Завершити
         self.stats.end_time = datetime.now()
-        
+
         return self.stats
 
 
@@ -308,6 +313,7 @@ class HistoricalDataLoader:
             
         Returns:
             Статистика завантаження
+
         """
         config = ETLConfig(
             source_directory=source_directory,
@@ -315,10 +321,10 @@ class HistoricalDataLoader:
             start_year=start_year,
             end_year=end_year,
         )
-        
+
         etl = CustomsDeclarationsETL(self.db_session, config)
         stats = await etl.run_monthly_import()
-        
+
         return stats
 
     async def estimate_data_volume(
@@ -332,16 +338,17 @@ class HistoricalDataLoader:
             
         Returns:
             Оцінка обсягу даних
+
         """
         source_dir = Path(source_directory)
         files = list(source_dir.glob("*.xlsx"))
-        
+
         total_size = sum(f.stat().st_size for f in files)
         avg_size = total_size / len(files) if files else 0
-        
+
         # Оцінка кількості рядків (припускаємо ~1KB на рядок)
         estimated_rows = int(total_size / 1024)
-        
+
         return {
             "total_files": len(files),
             "total_size_mb": total_size / (1024 * 1024),
@@ -368,6 +375,7 @@ async def run_customs_etl(
         
     Returns:
         Статистика ETL процесу
+
     """
     loader = HistoricalDataLoader(db_session)
     stats = await loader.load_historical_data(

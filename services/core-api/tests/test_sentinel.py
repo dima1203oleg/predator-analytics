@@ -1,11 +1,14 @@
-import pytest
 from unittest.mock import AsyncMock, patch
+
+import pytest
+
 from app.services.vram_watchdog import VramSentinel, VramStatus
+
 
 @pytest.mark.asyncio
 async def test_sentinel_mode_recommendation():
     sentinel = VramSentinel()
-    
+
     # Тестуємо розрахунок рекомендацій через мок реальної VRAM
     with patch.object(sentinel, '_get_real_vram', new_callable=AsyncMock) as mock_get:
         # Симулюємо низьке навантаження
@@ -13,13 +16,13 @@ async def test_sentinel_mode_recommendation():
         stats = await sentinel.get_stats()
         assert stats.mode_recommendation == "SOVEREIGN"
         assert not stats.critical
-        
+
         # Симулюємо середнє навантаження
         mock_get.return_value = 6.8
         stats = await sentinel.get_stats()
         assert stats.mode_recommendation == "HYBRID"
         assert not stats.critical
-        
+
         # Симулюємо критичне навантаження
         mock_get.return_value = 7.8
         stats = await sentinel.get_stats()

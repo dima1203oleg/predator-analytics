@@ -10,12 +10,9 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 from app.core.settings import get_settings
-
-if TYPE_CHECKING:
-    pass
 
 settings = get_settings()
 logger = logging.getLogger(__name__)
@@ -32,12 +29,12 @@ def setup_opentelemetry(
     try:
         from opentelemetry import trace
         from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+        from opentelemetry.instrumentation.aiokafka import AioKafkaInstrumentor
         from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+        from opentelemetry.instrumentation.httpx import HTTPXInstrumentor
         from opentelemetry.instrumentation.redis import RedisInstrumentor
         from opentelemetry.instrumentation.sqlalchemy import SQLAlchemyInstrumentor
-        from opentelemetry.instrumentation.httpx import HTTPXInstrumentor
-        from opentelemetry.instrumentation.aiokafka import AioKafkaInstrumentor
-        from opentelemetry.sdk.resources import Resource, SERVICE_NAME
+        from opentelemetry.sdk.resources import SERVICE_NAME, Resource
         from opentelemetry.sdk.trace import TracerProvider
         from opentelemetry.sdk.trace.export import BatchSpanProcessor
 

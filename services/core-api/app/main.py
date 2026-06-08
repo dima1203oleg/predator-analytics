@@ -80,10 +80,10 @@ from app.services.factory_runtime import (
     ensure_factory_improvement_task,
     run_factory_watchdog_loop,
 )
-from app.services.oss_automation_scheduler import create_oss_automation_scheduler
 from app.services.guardian import guardian_service
 from app.services.kafka_service import close_kafka, init_kafka
 from app.services.minio_service import close_minio, init_minio
+from app.services.oss_automation_scheduler import create_oss_automation_scheduler
 from app.services.redis_service import close_redis, init_redis
 from app.services.vram_watchdog import vram_sentinel
 from predator_common.logging import get_logger

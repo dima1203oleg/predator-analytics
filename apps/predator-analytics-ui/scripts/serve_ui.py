@@ -1,6 +1,5 @@
-import socketserver
 import http.server
-import os
+import socketserver
 
 PORT = 3030
 DIRECTORY = "/Users/Shared/Predator_60/apps/predator-analytics-ui/dist"

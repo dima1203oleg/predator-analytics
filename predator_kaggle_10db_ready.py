@@ -1,10 +1,18 @@
 #!/usr/bin/env python3
 """🦅 PREDATOR Analytics v66.0-ELITE: Kaggle 10-DB Ready-to-Run"""
 
-import os, subprocess, sys, time, threading, re, json, hashlib, tarfile, urllib.request
-from datetime import datetime, timezone, timedelta
-from typing import Any, List, Optional, Dict
 from collections import defaultdict
+from datetime import UTC, datetime, timedelta
+import hashlib
+import json
+import os
+import re
+import subprocess
+import sys
+import tarfile
+import threading
+import time
+import urllib.request
 
 ZROK_TOKEN = "1eeje4um7yvA"
 SECRET_KEY = "predator-super-secret-key-change-in-production"
@@ -25,7 +33,15 @@ except ImportError:
 # ─── ЗАЛЕЖНОСТІ ─────────────────────────────────────────────────
 print("📦 Перевірка залежностей...")
 try:
-    import fastapi, uvicorn, psutil, httpx, jose, sqlalchemy, aiosqlite, networkx, numpy
+    import aiosqlite
+    import fastapi
+    import httpx
+    import jose
+    import networkx
+    import numpy
+    import psutil
+    import sqlalchemy
+    import uvicorn
     print("✅ Залежності вже встановлені")
 except ImportError:
     print("🔧 Встановлення залежностей...")
@@ -51,17 +67,16 @@ if not os.path.exists(ZROK_BIN):
             tag = json.loads(r.read())["tag_name"]
     except Exception:
         tag = "v1.0.0"
-    
+
     ver = tag.lstrip("v")
     url = f"https://github.com/openziti/zrok/releases/download/{tag}/zrok_{ver}_linux_amd64.tar.gz"
     tar_path = f"{ZROK_DIR}/zrok.tar.gz"
-    
+
     print(f"🔽 Завантаження zrok {tag}...")
     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-    with urllib.request.urlopen(req, timeout=120) as resp:
-        with open(tar_path, "wb") as f:
-            f.write(resp.read())
-    
+    with urllib.request.urlopen(req, timeout=120) as resp, open(tar_path, "wb") as f:
+        f.write(resp.read())
+
     if os.path.exists(tar_path):
         with tarfile.open(tar_path, "r:gz") as tar:
             for member in tar.getmembers():
@@ -78,7 +93,7 @@ if not os.path.exists(ZROK_BIN):
     else:
         print("❌ Не вдалося завантажити zrok")
 else:
-    print(f"✅ zrok вже є")
+    print("✅ zrok вже є")
 
 # ─── АКТИВАЦІЯ ZROK ────────────────────────────────────────────
 if os.path.exists(ZROK_BIN):
@@ -92,15 +107,25 @@ else:
     print("⚠️ zrok бінарник не знайдено — тунель неможливий")
 
 # ─── БЕКЕНД ─────────────────────────────────────────────────────
-from fastapi import FastAPI, Depends, HTTPException, Query
+from fastapi import Depends, FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import create_engine, Column, String, Integer, Float, DateTime, Boolean, Text, select, func, JSON
-from sqlalchemy.orm import declarative_base
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
-import aiosqlite
 from jose import JWTError, jwt
-import numpy as np
 import networkx as nx
+import numpy as np
+from sqlalchemy import (
+    JSON,
+    Boolean,
+    Column,
+    DateTime,
+    Float,
+    Integer,
+    String,
+    Text,
+    func,
+    select,
+)
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.orm import declarative_base
 
 # 10 БД
 DATABASE_URL = "sqlite+aiosqlite:///./predator_main.db"
@@ -120,7 +145,7 @@ class Document(OpenSearchBase):
     title = Column(Text, nullable=False)
     content = Column(Text, nullable=False)
     ueid = Column(String, nullable=True)
-    timestamp = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    timestamp = Column(DateTime, default=lambda: datetime.now(UTC))
 
 timescale_engine = create_async_engine("sqlite+aiosqlite:///./predator_timescale.db", echo=False)
 TimescaleBase = declarative_base()
@@ -130,7 +155,7 @@ class TimeSeries(TimescaleBase):
     id = Column(Integer, primary_key=True, autoincrement=True)
     metric_name = Column(String, nullable=False)
     value = Column(Float, nullable=False)
-    timestamp = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    timestamp = Column(DateTime, default=lambda: datetime.now(UTC))
     tags = Column(JSON, default={})
 
 mongo_engine = create_async_engine("sqlite+aiosqlite:///./predator_mongo.db", echo=False)
@@ -141,7 +166,7 @@ class MongoDocument(MongoBase):
     _id = Column(String, primary_key=True)
     collection = Column(String, nullable=False)
     data = Column(JSON, nullable=False)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
 
 # Neo4j mock
 class Neo4jMock:
@@ -229,14 +254,14 @@ class Company(Base):
     risk_score = Column(Float, default=0.0)
     region = Column(String, default="Kyiv")
     industry = Column(String, default="Unknown")
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
 
 class Alert(Base):
     __tablename__ = "alerts"
     id = Column(String, primary_key=True)
     severity = Column(String, nullable=False)
     message = Column(Text, nullable=False)
-    timestamp = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    timestamp = Column(DateTime, default=lambda: datetime.now(UTC))
     company_ueid = Column(String, nullable=True)
     resolved = Column(Boolean, default=False)
     alert_type = Column(String, default="risk")  # risk, sanctions, tax, compliance
@@ -254,7 +279,7 @@ class Transaction(Base):
     customs_office = Column(String, nullable=True)
     declaration_date = Column(DateTime, nullable=False)
     risk_flag = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
 
 class RiskAssessment(Base):
     __tablename__ = "risk_assessments"
@@ -266,7 +291,7 @@ class RiskAssessment(Base):
     sanctions = Column(Float, default=0.0)
     aml = Column(Float, default=0.0)
     explanation = Column(Text, nullable=True)
-    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(UTC))
 
 class User(Base):
     __tablename__ = "users"
@@ -276,7 +301,7 @@ class User(Base):
     hashed_password = Column(String, nullable=False)
     role = Column(String, default="standard_client")
     is_active = Column(Boolean, default=True)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
 
 # Auth utils
 def get_password_hash(pw):
@@ -287,7 +312,7 @@ def verify_password(pw, hp):
 
 def create_access_token(data, expires_delta=None):
     to_encode = data.copy()
-    expire = datetime.now(timezone.utc) + (expires_delta or timedelta(minutes=15))
+    expire = datetime.now(UTC) + (expires_delta or timedelta(minutes=15))
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
@@ -359,14 +384,14 @@ async def init_all_databases():
                        (timescale_engine, TimescaleBase), (mongo_engine, MongoBase)]:
         async with eng.begin() as conn:
             await conn.run_sync(base.metadata.create_all)
-    
+
     async with async_session() as session:
         # ── Користувачі ──
         if not (await session.execute(select(func.count()).select_from(User))).scalar():
             for u in [("admin", "tech_admin"), ("client", "standard_client"), ("vip", "vip_client")]:
                 session.add(User(username=u[0], email=f"{u[0]}@predator.ua",
                                 hashed_password=get_password_hash(f"{u[0]}123"), role=u[1]))
-        
+
         # ── 150 Компаній ──
         if not (await session.execute(select(func.count()).select_from(Company))).scalar():
             for i in range(1, 151):
@@ -378,7 +403,7 @@ async def init_all_databases():
                 industry = _UA_INDUSTRIES[i % len(_UA_INDUSTRIES)]
                 session.add(Company(ueid=ueid, name=name, edrpou=edrpou, status="ACTIVE",
                                     risk_score=risk, region=region, industry=industry))
-        
+
         # ── 600 Транзакцій ──
         if not (await session.execute(select(func.count()).select_from(Transaction))).scalar():
             for i in range(1, 601):
@@ -391,7 +416,7 @@ async def init_all_databases():
                 orig = _COUNTRIES[(i * 3) % len(_COUNTRIES)]
                 dest = "UA" if direction == "import" else _COUNTRIES[(i * 5) % len(_COUNTRIES)]
                 customs = _CUSTOMS_OFFICES[i % len(_CUSTOMS_OFFICES)]
-                decl_date = datetime.now(timezone.utc) - timedelta(days=i % 365)
+                decl_date = datetime.now(UTC) - timedelta(days=i % 365)
                 risk_flag = comp_idx % 13 == 0 or value > 500000
                 session.add(Transaction(
                     id=f"TXN-{i:06d}", company_ueid=ueid, direction=direction,
@@ -399,7 +424,7 @@ async def init_all_databases():
                     origin_country=orig, destination_country=dest,
                     customs_office=customs, declaration_date=decl_date,
                     risk_flag=risk_flag))
-        
+
         # ── 60 Алертів ──
         if not (await session.execute(select(func.count()).select_from(Alert))).scalar():
             alert_templates = [
@@ -424,10 +449,10 @@ async def init_all_databases():
                 msg = tmpl[1].format(name=comp)
                 severity = tmpl[0]
                 alert_type = tmpl[2]
-                ts = datetime.now(timezone.utc) - timedelta(hours=i * 4)
+                ts = datetime.now(UTC) - timedelta(hours=i * 4)
                 session.add(Alert(id=f"ALERT-{i:03d}", severity=severity, message=msg,
                                   company_ueid=ueid, alert_type=alert_type, timestamp=ts))
-        
+
         # ── Оцінки ризику для всіх компаній з ризиком >50 ──
         if not (await session.execute(select(func.count()).select_from(RiskAssessment))).scalar():
             for i in range(1, 151):
@@ -443,7 +468,7 @@ async def init_all_databases():
                         ueid=f"COMP-{i:03d}", score=risk, level=level,
                         structural=structural, behavioral=behavioral,
                         sanctions=sanctions, aml=aml, explanation=expl))
-        
+
         # ── Збагачення Neo4j graph реалістичними зв'язками ──
         for i in range(1, 151):
             node_id = f"COMP-{i:03d}"
@@ -458,7 +483,7 @@ async def init_all_databases():
                     target = f"COMP-{target_idx:03d}"
                     rel_type = ["owns", "invests", "supplies", "partners", "competes"][(i + j) % 5]
                     neo4j.graph.add_edge(owner, target, relation=rel_type)
-        
+
         await session.commit()
 
 # OODA Loop
@@ -514,7 +539,7 @@ async def health():
         "mode": "KAGGLE_10DB_NATIVE",
         "node": "KAGGLE_RESERVE",
         "version": "66.0-ELITE",
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "ram_used_gb": round(mem.used / 1024**3, 2),
         "ram_total_gb": round(mem.total / 1024**3, 2),
         "ram_percent": mem.percent,
@@ -535,7 +560,7 @@ async def health():
 
 @app.get("/api/v1/health/ready")
 async def health_ready():
-    return {"status": "ready", "timestamp": datetime.now(timezone.utc).isoformat()}
+    return {"status": "ready", "timestamp": datetime.now(UTC).isoformat()}
 
 @app.get("/api/v1/azr/status")
 async def azr_status():
@@ -633,10 +658,10 @@ async def dashboard_overview():
         hr = (await session.execute(select(func.count()).select_from(Company).where(Company.risk_score >= 70))).scalar()
         cr = (await session.execute(select(func.count()).select_from(Company).where(Company.risk_score >= 90))).scalar()
         at = (await session.execute(select(func.count()).select_from(Alert).where(
-            Alert.timestamp >= datetime.now(timezone.utc).replace(hour=0, minute=0, second=0)))).scalar()
+            Alert.timestamp >= datetime.now(UTC).replace(hour=0, minute=0, second=0)))).scalar()
         ua = (await session.execute(select(func.count()).select_from(Alert).where(Alert.resolved == False))).scalar()
         return {
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "total_companies": tc, "high_risk": hr, "critical_risk": cr,
             "alerts_today": at, "unresolved_alerts": ua,
             "ooda_cycles": ooda.cycles_completed,
@@ -701,7 +726,7 @@ async def stop_ooda():
 
 @app.get("/api/v1/tornado/stats")
 async def get_tornado():
-    return {"timestamp": datetime.now(timezone.utc).isoformat(), "modules": [
+    return {"timestamp": datetime.now(UTC).isoformat(), "modules": [
         {"id": "forecast", "accuracy": 94.2, "status": "ACTIVE"},
         {"id": "market", "entities": 1200, "status": "LIVE"},
         {"id": "graph", "nodes": neo4j.graph.number_of_nodes(), "status": "ACTIVE"},
@@ -713,7 +738,7 @@ async def get_tornado():
 @app.get("/api/v1/system/stats")
 async def system_stats():
     mem = psutil.virtual_memory()
-    return {"timestamp": datetime.now(timezone.utc).isoformat(),
+    return {"timestamp": datetime.now(UTC).isoformat(),
             "cpu_percent": psutil.cpu_percent(interval=0.1),
             "cpu_count": psutil.cpu_count(),
             "ram_used_gb": round(mem.used / 1024**3, 2),
@@ -743,20 +768,21 @@ async def databases_status():
 # ─── ГОЛОВНИЙ БЛОК ─────────────────────────────────────────────
 if __name__ == "__main__":
     import asyncio
+
     import uvicorn
-    
+
     print("=" * 60)
     print("🦅 PREDATOR Analytics v66.0-ELITE: Kaggle 10-DB Node")
     print("=" * 60)
-    
+
     print("\n🗄️ Ініціалізація 10 баз даних...")
     loop = asyncio.get_event_loop()
     loop.run_until_complete(init_all_databases())
     print("✅ Всі 10 баз даних готові")
-    
+
     print("🧠 Запуск OODA Loop...")
     ooda.start()
-    
+
     # Тунель
     PUBLIC_URL = None
     def run_tunnel():
@@ -784,7 +810,7 @@ if __name__ == "__main__":
                 print("=" * 60 + "\n")
                 break
     threading.Thread(target=run_tunnel, daemon=True).start()
-    
+
     # Запуск сервера
     print("🚀 Запуск FastAPI сервера на порту 8000...\n")
     config = uvicorn.Config(app, host="0.0.0.0", port=8000, log_level="warning", loop="asyncio")

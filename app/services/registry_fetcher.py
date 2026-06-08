@@ -1,4 +1,6 @@
-import httpx, json
+
+import httpx
+
 
 class RegistryFetcher:
     """Клас для отримання даних з державних реєстрів (наприклад, ЄДРПОУ).

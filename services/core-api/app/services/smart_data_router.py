@@ -13,9 +13,9 @@
 
 from __future__ import annotations
 
-import re
 from dataclasses import dataclass
 from enum import Enum
+import re
 from typing import Any
 
 from predator_common.logging import get_logger

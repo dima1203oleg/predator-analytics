@@ -8,9 +8,9 @@
 """
 
 import asyncio
+from dataclasses import dataclass
 import logging
 from typing import Any
-from dataclasses import dataclass
 
 from aiokafka import AIOKafkaProducer
 from asyncpg import connect
@@ -21,6 +21,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class CDCEvent:
     """Подія зміни даних."""
+
     operation: str  # INSERT, UPDATE, DELETE
     table: str
     record_id: str
@@ -85,13 +86,13 @@ class CDCPipeline:
         # TODO: Реалізувати logical replication (pgoutput/wal2json)
         # Поки що placeholder для скелетону
         conn = await connect(self.postgres_url)
-        
+
         # В реальній реалізації тут буде:
         # 1. Підключення до replication slot
         # 2. Отримання WAL events
         # 3. Парсинг змін
         # 4. Публікація в Kafka через publish_event
-        
+
         await conn.close()
         logger.info("PostgreSQL CDC listener запущено (placeholder)")
 

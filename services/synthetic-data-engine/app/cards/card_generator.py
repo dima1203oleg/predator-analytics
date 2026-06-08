@@ -1,9 +1,10 @@
 """Генерація Data Card та Model Card для артефактів."""
 
-import pandas as pd
-from typing import Dict, Any, List
 import datetime
+from typing import Any
 import uuid
+
+import pandas as pd
 import structlog
 
 logger = structlog.get_logger("sde.cards")
@@ -17,12 +18,12 @@ class CardGenerator:
         domain: str,
         data: pd.DataFrame,
         generation_method: str,
-        quality_metrics: Dict[str, Any],
+        quality_metrics: dict[str, Any],
         author: str = "PREDATOR Synthetic Engine"
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Генерує Data Card для синтетичного датасету."""
         logger.info(f"Генерація Data Card для '{dataset_name}'")
-        
+
         card = {
             "id": f"dc-{uuid.uuid4().hex[:8]}",
             "name": dataset_name,
@@ -57,13 +58,13 @@ class CardGenerator:
     def generate_model_card(
         model_name: str,
         task_type: str,
-        metrics: Dict[str, Any],
+        metrics: dict[str, Any],
         training_data_ref: str,
-        hyperparameters: Dict[str, Any] = None
-    ) -> Dict[str, Any]:
+        hyperparameters: dict[str, Any] = None
+    ) -> dict[str, Any]:
         """Генерує Model Card для навченої на синтетиці моделі."""
         logger.info(f"Генерація Model Card для '{model_name}'")
-        
+
         card = {
             "id": f"mc-{uuid.uuid4().hex[:8]}",
             "name": model_name,

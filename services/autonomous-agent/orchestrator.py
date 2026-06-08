@@ -1,21 +1,16 @@
-"""
-Orchestrator for the LLM Council (Autonomous OODA Loop).
+"""Orchestrator for the LLM Council (Autonomous OODA Loop).
 Натхненно підходом karpathy/llm-council.
 """
 
-import os
-from loguru import logger
-from langgraph.graph import StateGraph, END
-from typing import Dict, Any, TypedDict
-
-import os
-from loguru import logger
-from langgraph.graph import StateGraph, END
-from typing import Dict, Any, TypedDict
-from git_manager import GitManager
-from test_runner import TestRunner
-from council_judge import CouncilJudge
 import asyncio
+from typing import TypedDict
+
+from council_judge import CouncilJudge
+from git_manager import GitManager
+from langgraph.graph import END, StateGraph
+from loguru import logger
+from test_runner import TestRunner
+
 
 # Mypy strict requires explicit types
 class AgentState(TypedDict):
@@ -35,16 +30,16 @@ class ChiefConductor:
         self.council = CouncilJudge()
         self._setup_graph()
         self.app = self.workflow.compile()
-    
+
     def _setup_graph(self) -> None:
         self.workflow.add_node("planner", self.node_planner)
         self.workflow.add_node("council_session", self.node_council_session)
         self.workflow.add_node("ui_optimizer", self.node_ui_optimizer)
         self.workflow.add_node("coder", self.node_coder)
         self.workflow.add_node("qa_reviewer", self.node_qa_reviewer)
-        
+
         self.workflow.set_entry_point("planner")
-        
+
         # Planner decides if it needs Council for strategic decisions
         self.workflow.add_conditional_edges(
             "planner",
@@ -55,11 +50,11 @@ class ChiefConductor:
                 "routine": "coder"
             }
         )
-        
+
         self.workflow.add_edge("council_session", "coder")
         self.workflow.add_edge("ui_optimizer", "qa_reviewer")
         self.workflow.add_edge("coder", "qa_reviewer")
-        
+
         self.workflow.add_conditional_edges(
             "qa_reviewer",
             self.route_qa_result,
@@ -110,20 +105,21 @@ class ChiefConductor:
         # Run full suite (HR-09)
         lint_ok, _ = self.tester.run_python_lint()
         # Тут також запуск Playwright для UI (UI-Tester)
-        
+
         if not lint_ok:
             state['qa_status'] = 'fail'
             return state
-            
+
         state['qa_status'] = 'pass'
         diff_str = self.git.get_diff()
         if diff_str:
             self.git.commit_changes(f"feat(factory): {state['task']} [OODA Cycle]")
-            
+
             # Telegram notification
-            from bot import bot as tg_bot, send_notification
+            from bot import bot as tg_bot
+            from bot import send_notification
             asyncio.create_task(send_notification(tg_bot, f"🚀 Factory Cycle #{state['iteration']} Success!\nTask: {state['task']}\nStatus: COMMITTED & DEPLOYED"))
-            
+
         return state
 
     def route_qa_result(self, state: AgentState) -> str:
@@ -135,7 +131,7 @@ class ChiefConductor:
         while True:
             # 1. Скрапінг задач / аналіз логів / Sentinel alerts
             task = "Optimize Neo4j query performance" # Example
-            
+
             initial_state: AgentState = {
                 "task": task,
                 "code_diff": "",
@@ -145,9 +141,9 @@ class ChiefConductor:
                 "proposals": [],
                 "decision": ""
             }
-            
+
             # 2. Виконання циклу
             # await self.app.ainvoke(initial_state)
-            
+
             await asyncio.sleep(900) # Every 15 mins (Step 3 in plan)
             logger.debug("Factory resting for 15 mins...")

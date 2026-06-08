@@ -6,12 +6,11 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
+from datetime import datetime
 import logging
 import os
-from dataclasses import dataclass
-from datetime import date, datetime
 from pathlib import Path
-from typing import Any
 
 import pandas as pd
 
@@ -21,6 +20,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class ExcelImportConfig:
     """Конфігурація імпорту Excel."""
+
     file_path: str
     sheet_name: str | int = 0
     chunk_size: int = 10000
@@ -32,6 +32,7 @@ class ExcelImportConfig:
 @dataclass
 class ImportStats:
     """Статистика імпорту."""
+
     total_rows: int
     imported_rows: int
     failed_rows: int
@@ -56,9 +57,10 @@ class CustomsExcelImporter:
             
         Returns:
             DataFrame з даними
+
         """
         logger.info(f"Читання Excel файлу: {config.file_path}")
-        
+
         # Використовуємо pandas для читання Excel
         df = pd.read_excel(
             config.file_path,
@@ -66,7 +68,7 @@ class CustomsExcelImporter:
             skiprows=config.skip_rows,
             engine="openpyxl",
         )
-        
+
         logger.info(f"Завантажено {len(df)} рядків з Excel файлу")
         return df
 
@@ -81,13 +83,14 @@ class CustomsExcelImporter:
             
         Yields:
             Частина DataFrame
+
         """
         logger.info(f"Читання Excel файлу по частинах: {config.file_path}")
-        
+
         # Для Excel файлів pandas не підтримує chunking напряму
         # Тому читаємо весь файл, але обробляємо по частинах
         df = self.read_excel_file(config)
-        
+
         for i in range(0, len(df), config.chunk_size):
             yield df.iloc[i:i + config.chunk_size]
 
@@ -102,6 +105,7 @@ class CustomsExcelImporter:
             
         Returns:
             Нормалізований DataFrame
+
         """
         # Перейменування колонок на латиницю
         column_mapping = {
@@ -121,28 +125,28 @@ class CustomsExcelImporter:
             "Режим": "regime",
             # Додати більше мапінгів за потреби
         }
-        
+
         # Нормалізація назв колонок
         df.columns = df.columns.str.strip()
         df.columns = df.columns.str.lower()
-        
+
         # Застосування мапінгу
         df = df.rename(columns=column_mapping)
-        
+
         # Конвертація типів даних
         if "declaration_date" in df.columns:
             df["declaration_date"] = pd.to_datetime(df["declaration_date"], errors="coerce")
-        
+
         if "weight_kg" in df.columns:
             df["weight_kg"] = pd.to_numeric(df["weight_kg"], errors="coerce")
-        
+
         if "value_usd" in df.columns:
             df["value_usd"] = pd.to_numeric(df["value_usd"], errors="coerce")
-        
+
         # Видалення рядків з пропущеними критичними даними
         required_columns = ["declaration_date", "uktzed_code", "value_usd"]
         df = df.dropna(subset=required_columns)
-        
+
         return df
 
     def import_to_database(
@@ -158,23 +162,24 @@ class CustomsExcelImporter:
             
         Returns:
             Статистика імпорту
+
         """
         start_time = datetime.now()
         total_rows = len(df)
         imported_rows = 0
         failed_rows = 0
-        
+
         logger.info(f"Початок імпорту {total_rows} рядків")
-        
+
         try:
             # Імпорт по частинах для оптимізації пам'яті
             chunk_size = 1000
             for i in range(0, len(df), chunk_size):
                 chunk = df.iloc[i:i + chunk_size]
-                
+
                 # Конвертація в словники
                 records = chunk.to_dict("records")
-                
+
                 # Імпорт в БД
                 for record in records:
                     try:
@@ -184,22 +189,22 @@ class CustomsExcelImporter:
                     except Exception as e:
                         logger.error(f"Помилка імпорту рядка: {e}")
                         failed_rows += 1
-                
+
                 # Комміт кожні chunk_size рядків
                 if i % (chunk_size * 10) == 0:
                     self.db_session.commit()
                     logger.info(f"Імпортовано {imported_rows}/{total_rows} рядків")
-            
+
             # Фінальний комміт
             self.db_session.commit()
-            
+
         except Exception as e:
             logger.error(f"Критична помилка імпорту: {e}")
             self.db_session.rollback()
             raise
-        
+
         end_time = datetime.now()
-        
+
         return ImportStats(
             total_rows=total_rows,
             imported_rows=imported_rows,
@@ -223,21 +228,22 @@ class CustomsExcelImporter:
             
         Returns:
             Статистика імпорту
+
         """
         config = ExcelImportConfig(
             file_path=file_path,
             sheet_name=sheet_name,
         )
-        
+
         # Читання файлу
         df = self.read_excel_file(config)
-        
+
         # Нормалізація
         df = self.normalize_dataframe(df)
-        
+
         # Імпорт в БД
         stats = self.import_to_database(df, tenant_id)
-        
+
         return stats
 
 
@@ -262,14 +268,15 @@ class BatchExcelImporter:
             
         Returns:
             Список статистики імпорту для кожного файлу
+
         """
         directory = Path(directory_path)
         files = list(directory.glob(pattern))
-        
+
         logger.info(f"Знайдено {len(files)} файлів для імпорту")
-        
+
         stats_list = []
-        
+
         for file_path in files:
             logger.info(f"Імпорт файлу: {file_path}")
             try:
@@ -281,7 +288,7 @@ class BatchExcelImporter:
                 logger.info(f"Успішно імпортовано: {file_path}")
             except Exception as e:
                 logger.error(f"Помилка імпорту {file_path}: {e}")
-        
+
         return stats_list
 
     def import_monthly_files(
@@ -301,19 +308,20 @@ class BatchExcelImporter:
             
         Returns:
             Список статистики імпорту
+
         """
         stats_list = []
-        
+
         months_ukr = [
             "Січень", "Лютий", "Березень", "Квітень", "Травень", "Червень",
             "Липень", "Серпень", "Вересень", "Жовтень", "Листопад", "Грудень"
         ]
-        
+
         for year in range(start_year, end_year + 1):
             for month_idx, month_name in enumerate(months_ukr, 1):
                 file_name = f"{month_name}_{year}.xlsx"
                 file_path = os.path.join(base_directory, file_name)
-                
+
                 if os.path.exists(file_path):
                     logger.info(f"Імпорт файлу: {file_name}")
                     try:
@@ -326,7 +334,7 @@ class BatchExcelImporter:
                         logger.error(f"Помилка імпорту {file_name}: {e}")
                 else:
                     logger.warning(f"Файл не знайдено: {file_path}")
-        
+
         return stats_list
 
 

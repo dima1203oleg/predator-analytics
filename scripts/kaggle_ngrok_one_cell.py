@@ -2,7 +2,8 @@
 # Вимоги: CPU Only, Internet ON
 # Примітка: ngrok безкоштовний план — тимчасовий URL, 1 тунель
 
-import subprocess, sys, os, re, threading, time, json
+import subprocess
+import sys
 
 # 1. Залежностi
 subprocess.run([sys.executable, "-m", "pip", "install", "-q", "fastapi", "uvicorn[standard]", "psutil", "httpx"])

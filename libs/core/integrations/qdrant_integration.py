@@ -5,13 +5,13 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 import logging
 import os
-from dataclasses import dataclass
 from typing import Any
 
 from qdrant_client import QdrantClient
-from qdrant_client.models import Distance, VectorParams, PointStruct
+from qdrant_client.models import Distance, PointStruct, VectorParams
 
 logger = logging.getLogger(__name__)
 
@@ -19,6 +19,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class QdrantConfig:
     """Конфігурація Qdrant."""
+
     url: str = "http://localhost:6333"
     api_key: str | None = None
     collection_name: str = "declarations"
@@ -58,6 +59,7 @@ class QdrantIntegration:
             
         Returns:
             Вектор
+
         """
         # TODO: Інтегрувати з реальним embedding сервісом (наприклад, OpenAI, SentenceTransformers)
         # Тимчасова заглушка - випадковий вектор
@@ -73,15 +75,16 @@ class QdrantIntegration:
             
         Returns:
             Кількість вставлених векторів
+
         """
         try:
             # Генерація вектора з опису товару
             text = declaration_data.get('goods_description', '')
             if not text:
                 text = f"{declaration_data.get('uktzed_code', '')} {declaration_data.get('origin_country', '')}"
-            
+
             vector = self.generate_embedding(text)
-            
+
             # Підготовка payload
             payload = {
                 "id": declaration_id,
@@ -93,7 +96,7 @@ class QdrantIntegration:
                 "origin_country": declaration_data.get('origin_country'),
                 "importer_ueid": declaration_data.get('importer_ueid'),
             }
-            
+
             # Вставка
             self.client.upsert(
                 collection_name=self.config.collection_name,
@@ -105,10 +108,10 @@ class QdrantIntegration:
                     )
                 ]
             )
-            
+
             logger.debug(f"Вектор вставлено в Qdrant: {declaration_id}")
             return 1
-            
+
         except Exception as e:
             logger.error(f"Помилка вставки в Qdrant: {e}")
             return 0
@@ -121,20 +124,21 @@ class QdrantIntegration:
             
         Returns:
             Кількість вставлених векторів
+
         """
         if not declarations:
             return 0
-        
+
         points = []
-        
+
         for declaration_id, declaration_data in declarations:
             # Генерація вектора
             text = declaration_data.get('goods_description', '')
             if not text:
                 text = f"{declaration_data.get('uktzed_code', '')} {declaration_data.get('origin_country', '')}"
-            
+
             vector = self.generate_embedding(text)
-            
+
             # Підготовка payload
             payload = {
                 "id": declaration_id,
@@ -146,7 +150,7 @@ class QdrantIntegration:
                 "origin_country": declaration_data.get('origin_country'),
                 "importer_ueid": declaration_data.get('importer_ueid'),
             }
-            
+
             points.append(
                 PointStruct(
                     id=declaration_id,
@@ -154,16 +158,16 @@ class QdrantIntegration:
                     payload=payload
                 )
             )
-        
+
         try:
             self.client.upsert(
                 collection_name=self.config.collection_name,
                 points=points
             )
-            
+
             logger.info(f"Вставлено {len(points)} векторів в Qdrant")
             return len(points)
-            
+
         except Exception as e:
             logger.error(f"Помилка пакетної вставки в Qdrant: {e}")
             return 0
@@ -177,18 +181,19 @@ class QdrantIntegration:
             
         Returns:
             Список схожих декларацій
+
         """
         try:
             # Генерація вектора запиту
             query_vector = self.generate_embedding(query_text)
-            
+
             # Пошук
             search_result = self.client.search(
                 collection_name=self.config.collection_name,
                 query_vector=query_vector,
                 limit=limit
             )
-            
+
             results = []
             for hit in search_result:
                 results.append({
@@ -196,9 +201,9 @@ class QdrantIntegration:
                     "score": hit.score,
                     "payload": hit.payload
                 })
-            
+
             return results
-            
+
         except Exception as e:
             logger.error(f"Помилка пошуку в Qdrant: {e}")
             return []
@@ -211,16 +216,17 @@ class QdrantIntegration:
             
         Returns:
             True якщо успішно
+
         """
         try:
             self.client.delete(
                 collection_name=self.config.collection_name,
                 points_selector=[declaration_id]
             )
-            
+
             logger.debug(f"Вектор видалено з Qdrant: {declaration_id}")
             return True
-            
+
         except Exception as e:
             logger.error(f"Помилка видалення з Qdrant: {e}")
             return False

@@ -13,7 +13,6 @@ from fastapi import HTTPException, Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.responses import StreamingResponse
 
-from app.services.chaos_service import ChaosService
 from predator_common.logging import get_logger
 
 from .optimization import rate_limiters

@@ -9,10 +9,10 @@
 from __future__ import annotations
 
 import asyncio
+from dataclasses import dataclass, field
+from datetime import UTC, datetime
 import json
 import logging
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any
 
 from app.core.settings import get_settings
@@ -113,7 +113,7 @@ class SSEManager:
         event = {
             "event": event_type,
             "data": json.dumps(data, default=str),
-            "id": datetime.now(timezone.utc).isoformat(),
+            "id": datetime.now(UTC).isoformat(),
         }
 
         for queue in queues:
@@ -145,7 +145,7 @@ async def sse_endpoint(user_id: str, sse_manager: SSEManager) -> AsyncGenerator[
             try:
                 event = await asyncio.wait_for(queue.get(), timeout=30)
                 yield f"event: {event['event']}\nid: {event['id']}\ndata: {event['data']}\n\n"
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 # Keep-alive
                 yield ": keepalive\n\n"
     except asyncio.CancelledError:
@@ -165,7 +165,7 @@ class OptimisticUpdate:
     entity_id: str
     changes: dict[str, Any]
     previous_state: dict[str, Any] | None = None
-    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
 
 class OptimisticUIManager:

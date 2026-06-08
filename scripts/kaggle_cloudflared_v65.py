@@ -2,7 +2,8 @@
 # Вимоги: CPU Only, Internet ON
 # Cloudflared quick tunnel — без акаунта, без токена
 
-import subprocess, sys, os, re, threading, time
+import subprocess
+import sys
 
 # 1. Залежностi
 subprocess.run([sys.executable, "-m", "pip", "install", "-q", "fastapi", "uvicorn[standard]", "psutil", "httpx", "sqlalchemy", "aiosqlite", "python-jose[cryptography]", "passlib[bcrypt]"])
@@ -881,7 +882,7 @@ def run_cloudflared_tunnel(port: int = 8000):
     )
     for line in process.stdout:
         print(f"[cloudflared] {line.rstrip()}", flush=True)
-        match = re.search(r"(https://[a-z0-9-]+\.trycloudflare\.com)", line)
+        match = re.search(r"(https://[a-z0-9-]+\\.trycloudflare\\.com)", line)
         if match:
             print("\\n" + "=" * 60, flush=True)
             print("PREDATOR KAGGLE CPU NODE IS LIVE", flush=True)

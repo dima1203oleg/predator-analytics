@@ -11,14 +11,15 @@
 import argparse
 import asyncio
 import logging
-import sys
 from pathlib import Path
+import sys
 
 # Додавання проектного шляху до sys.path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from app.database import get_async_session
 from libs.core.etl.customs_declarations_etl import HistoricalDataLoader
+
+from app.database import get_async_session
 
 logging.basicConfig(
     level=logging.INFO,
@@ -58,28 +59,28 @@ async def main():
         action="store_true",
         help="Тільки оцінити обсяг даних без імпорту"
     )
-    
+
     args = parser.parse_args()
-    
+
     # Перевірка директорії
     directory = Path(args.directory)
     if not directory.exists():
         logger.error(f"Директорія не існує: {args.directory}")
         sys.exit(1)
-    
+
     if not directory.is_dir():
         logger.error(f"Шлях не є директорією: {args.directory}")
         sys.exit(1)
-    
+
     # Отримання сесії БД
     async with get_async_session() as db_session:
         loader = HistoricalDataLoader(db_session)
-        
+
         if args.estimate_only:
             # Тільки оцінка обсягу
             logger.info("Оцінка обсягу даних...")
             estimate = await loader.estimate_data_volume(args.directory)
-            
+
             print("\n" + "=" * 60)
             print("ОЦІНКА ОБСЯГУ ДАНИХ")
             print("=" * 60)
@@ -88,30 +89,30 @@ async def main():
             print(f"Середній розмір: {estimate['avg_size_mb']:.2f} MB")
             print(f"Оцінка рядків: {estimate['estimated_rows']:,}")
             print("=" * 60)
-            
+
             # Оцінка часу імпорту (припускаємо ~1000 рядків/секунду)
             estimated_seconds = estimate['estimated_rows'] / 1000
             estimated_minutes = estimated_seconds / 60
             estimated_hours = estimated_minutes / 60
-            
-            print(f"Оцінка часу імпорту:")
+
+            print("Оцінка часу імпорту:")
             print(f"  - {estimated_seconds:.0f} секунд")
             print(f"  - {estimated_minutes:.0f} хвилин")
             print(f"  - {estimated_hours:.1f} годин")
             print("=" * 60)
-            
+
         else:
             # Повний імпорт
             logger.info(f"Початок імпорту з {args.directory}")
             logger.info(f"Період: {args.start_year} - {args.end_year}")
-            
+
             stats = await loader.load_historical_data(
                 args.directory,
                 args.tenant_id,
                 args.start_year,
                 args.end_year,
             )
-            
+
             # Вивід результатів
             print("\n" + "=" * 60)
             print("РЕЗУЛЬТАТИ ІМПОРТУ")
@@ -121,22 +122,22 @@ async def main():
             print(f"Загальна кількість рядків: {stats.total_rows:,}")
             print(f"Імпортовано рядків: {stats.imported_rows:,}")
             print(f"Помилок: {stats.failed_rows:,}")
-            
+
             if stats.end_time:
                 duration = (stats.end_time - stats.start_time).total_seconds()
                 print(f"Час виконання: {duration:.2f} секунд")
-                
+
                 if stats.imported_rows > 0:
                     rows_per_second = stats.imported_rows / duration
                     print(f"Швидкість: {rows_per_second:.0f} рядків/секунду")
-            
+
             if stats.errors:
                 print("\nПОМИЛКИ:")
                 for error in stats.errors[:10]:  # Показати перші 10 помилок
                     print(f"  - {error}")
                 if len(stats.errors) > 10:
                     print(f"  ... та ще {len(stats.errors) - 10} помилок")
-            
+
             print("=" * 60)
 
 

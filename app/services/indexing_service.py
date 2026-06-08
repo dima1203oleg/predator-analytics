@@ -21,11 +21,11 @@ class IndexingService:
     ):
         """Real bulk indexing across multiple databases (v67)."""
         logger.info(f"Initiating real indexing for {len(documents)} documents across databases")
-        
+
         # 1. OpenSearch and Qdrant (Search and Vector)
         # Using gather to parallelize the indexing tasks
         tasks = []
-        
+
         # Task 1: OpenSearch (Search) & Qdrant (Vector)
         # Assuming opensearch_indexer handles both or delegates
         tasks.append(
@@ -37,23 +37,23 @@ class IndexingService:
                 tenant_id="default",
             )
         )
-        
+
         # Task 2: PostgreSQL (SSOT Metadata)
         tasks.append(self._index_postgresql(documents))
-        
+
         # Task 3: ClickHouse (OLAP)
         tasks.append(self._index_clickhouse(documents))
-        
+
         # Task 4: Neo4j (Graph)
         tasks.append(self._index_neo4j(documents))
-        
+
         # Run all indexing tasks concurrently
         results = await asyncio.gather(*tasks, return_exceptions=True)
-        
+
         for i, result in enumerate(results):
             if isinstance(result, Exception):
                 logger.error(f"Error in indexing task {i}: {result}")
-                
+
         return True
 
     async def _index_postgresql(self, documents: list):

@@ -57,7 +57,7 @@ class Settings(BaseSettings):
     # Database (DATABASE_URL overrides parts)
     DATABASE_URL: str | None = None
     POSTGRES_USER: str = "predator"
-    POSTGRES_PASSWORD: str = ""  # noqa: S105 — тільки через env var (HR-06)
+    POSTGRES_PASSWORD: str = ""
     POSTGRES_SERVER: str = "localhost"
     POSTGRES_PORT: str = "5432"
     POSTGRES_DB: str = "predator"
@@ -85,12 +85,12 @@ class Settings(BaseSettings):
     # Neo4j (Graph)
     NEO4J_URI: str = "bolt://localhost:7687"
     NEO4J_USER: str = "neo4j"
-    NEO4J_PASSWORD: str = ""  # noqa: S105 — тільки через env var (HR-06)
+    NEO4J_PASSWORD: str = ""
 
     # OpenSearch / пошук
     OPENSEARCH_HOSTS: str = "https://localhost:9200"
     OPENSEARCH_USERNAME: str = "admin"
-    OPENSEARCH_PASSWORD: str = ""  # noqa: S105 — тільки через env var (HR-06)
+    OPENSEARCH_PASSWORD: str = ""
     OPENSEARCH_TLS_VERIFY: bool = False
 
     # ClickHouse / аналітика

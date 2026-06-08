@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-PREDATOR Analytics v65.0-ELITE: Kaggle Backend Node
+"""PREDATOR Analytics v65.0-ELITE: Kaggle Backend Node
 CPU-Only | Max RAM: 30GB | SQLite + RBAC + Filters + CSV
 
 Features v65.0:
@@ -18,18 +17,22 @@ Features v65.0:
 3. Після запуску отримаєш Cloudflared URL
 """
 
-import os, subprocess, threading, time, csv, io, json
+import csv
 from datetime import UTC, datetime, timedelta
-import psutil
-from fastapi import FastAPI, Depends, HTTPException, Query, WebSocket
-from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import create_engine, Column, String, Integer, Float, DateTime, Boolean, Text, select, func
-from sqlalchemy.orm import declarative_base
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
-import aiosqlite
-from jose import JWTError, jwt
-from passlib.context import CryptContext
 import hashlib
+import io
+import os
+import subprocess
+import threading
+import time
+
+from fastapi import Depends, FastAPI, HTTPException, Query, WebSocket
+from fastapi.middleware.cors import CORSMiddleware
+from jose import JWTError, jwt
+import psutil
+from sqlalchemy import Boolean, Column, DateTime, Float, Integer, String, Text, func, select
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.orm import declarative_base
 
 # Налаштування
 SECRET_KEY = "predator-super-secret-key-change-in-production"
@@ -124,7 +127,7 @@ async def get_current_user(token: str = Query(..., description="JWT token")):
             raise credentials_exception
     except JWTError:
         raise credentials_exception
-    
+
     async with async_session() as session:
         query = select(User).where(User.username == username)
         result = await session.execute(query)
@@ -138,7 +141,7 @@ async def get_current_user(token: str = Query(..., description="JWT token")):
 async def init_database():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-    
+
     async with async_session() as session:
         # Seed Users
         if (await session.execute(select(func.count()).select_from(User))).scalar() == 0:
@@ -149,7 +152,7 @@ async def init_database():
             ]
             for user in seed_users:
                 session.add(user)
-        
+
         # Seed Companies (25 українських)
         if (await session.execute(select(func.count()).select_from(Company))).scalar() == 0:
             companies_data = [
@@ -181,7 +184,7 @@ async def init_database():
             ]
             for data in companies_data:
                 session.add(Company(ueid=data[0], name=data[1], edrpou=data[2], status=data[3], risk_score=data[4], region=data[5], industry=data[6]))
-        
+
         # Seed Alerts
         if (await session.execute(select(func.count()).select_from(Alert))).scalar() == 0:
             alerts_data = [
@@ -196,7 +199,7 @@ async def init_database():
             ]
             for data in alerts_data:
                 session.add(Alert(id=data[0], severity=data[1], message=data[2], company_ueid=data[3]))
-        
+
         # Seed Risk Assessments
         if (await session.execute(select(func.count()).select_from(RiskAssessment))).scalar() == 0:
             risks_data = [
@@ -212,7 +215,7 @@ async def init_database():
             ]
             for data in risks_data:
                 session.add(RiskAssessment(ueid=data[0], score=data[1], level=data[2], structural=data[3], behavioral=data[4], sanctions=data[5], aml=data[6], explanation=data[7]))
-        
+
         await session.commit()
 
 # ==================== OODA LOOP ====================
@@ -290,10 +293,10 @@ async def login(username: str, password: str):
         query = select(User).where(User.username == username)
         result = await session.execute(query)
         user = result.scalar_one_or_none()
-        
+
         if not user or not verify_password(password, user.hashed_password):
             raise HTTPException(status_code=401, detail="Incorrect username or password")
-        
+
         access_token = create_access_token(
             data={"sub": user.username, "role": user.role},
             expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -334,7 +337,7 @@ async def companies(
 ):
     async with async_session() as session:
         query = select(Company)
-        
+
         # Фільтрація
         if search:
             query = query.where(Company.name.ilike(f"%{search}%"))
@@ -348,23 +351,23 @@ async def companies(
             query = query.where(Company.risk_score <= max_risk)
         if status:
             query = query.where(Company.status == status)
-        
+
         # Сортування
         sort_column = getattr(Company, sort_by, Company.name)
         if sort_order.lower() == "desc":
             query = query.order_by(sort_column.desc())
         else:
             query = query.order_by(sort_column.asc())
-        
+
         # Пагінація
         total_query = select(func.count()).select_from(query.subquery())
         total_result = await session.execute(total_query)
         total = total_result.scalar()
-        
+
         query = query.offset(offset).limit(limit)
         result = await session.execute(query)
         companies = result.scalars().all()
-        
+
         return {
             "companies": [
                 {
@@ -424,16 +427,16 @@ async def update_company(
         query = select(Company).where(Company.ueid == ueid)
         result = await session.execute(query)
         company = result.scalar_one_or_none()
-        
+
         if not company:
             raise HTTPException(status_code=404, detail="Company not found")
-        
+
         if name is not None: company.name = name
         if status is not None: company.status = status
         if risk_score is not None: company.risk_score = risk_score
         if region is not None: company.region = region
         if industry is not None: company.industry = industry
-        
+
         await session.commit()
         await session.refresh(company)
         return {"ueid": company.ueid, "name": company.name, "status": company.status, "risk_score": company.risk_score}
@@ -444,10 +447,10 @@ async def delete_company(ueid: str):
         query = select(Company).where(Company.ueid == ueid)
         result = await session.execute(query)
         company = result.scalar_one_or_none()
-        
+
         if not company:
             raise HTTPException(status_code=404, detail="Company not found")
-        
+
         await session.delete(company)
         await session.commit()
         return {"message": "Компанію успішно видалено"}
@@ -468,16 +471,16 @@ async def export_companies_csv(
             query = query.where(Company.risk_score >= min_risk)
         if max_risk < 100:
             query = query.where(Company.risk_score <= max_risk)
-        
+
         result = await session.execute(query)
         companies = result.scalars().all()
-        
+
         output = io.StringIO()
         writer = csv.writer(output)
         writer.writerow(["UEID", "Name", "EDRPOU", "Status", "Risk Score", "Region", "Industry"])
         for c in companies:
             writer.writerow([c.ueid, c.name, c.edrpou, c.status, c.risk_score, c.region, c.industry])
-        
+
         return {"csv": output.getvalue(), "count": len(companies)}
 
 @app.post("/api/v1/companies/import/csv")
@@ -511,20 +514,20 @@ async def alerts(
 ):
     async with async_session() as session:
         query = select(Alert).order_by(Alert.timestamp.desc())
-        
+
         if severity:
             query = query.where(Alert.severity == severity)
         if resolved is not None:
             query = query.where(Alert.resolved == resolved)
-        
+
         total_query = select(func.count()).select_from(query.subquery())
         total_result = await session.execute(total_query)
         total = total_result.scalar()
-        
+
         query = query.offset(offset).limit(limit)
         result = await session.execute(query)
         alerts = result.scalars().all()
-        
+
         return {
             "alerts": [
                 {
@@ -548,10 +551,10 @@ async def resolve_alert(alert_id: str):
         query = select(Alert).where(Alert.id == alert_id)
         result = await session.execute(query)
         alert = result.scalar_one_or_none()
-        
+
         if not alert:
             raise HTTPException(status_code=404, detail="Alert not found")
-        
+
         alert.resolved = True
         await session.commit()
         return {"message": "Алерт відмічено як вирішений", "alert_id": alert_id}
@@ -566,17 +569,17 @@ async def dashboard_overview():
         critical_risk = (await session.execute(select(func.count()).select_from(Company).where(Company.risk_score >= 90))).scalar()
         alerts_today = (await session.execute(select(func.count()).select_from(Alert).where(Alert.timestamp >= datetime.now(UTC).replace(hour=0, minute=0, second=0)))).scalar()
         unresolved_alerts = (await session.execute(select(func.count()).select_from(Alert).where(Alert.resolved == False))).scalar()
-        
+
         # Розподіл по регіонах
         region_query = select(Company.region, func.count()).group_by(Company.region)
         region_result = await session.execute(region_query)
         regions = {r[0]: r[1] for r in region_result.all()}
-        
+
         # Розподіл по індустріям
         industry_query = select(Company.industry, func.count()).group_by(Company.industry)
         industry_result = await session.execute(industry_query)
         industries = {i[0]: i[1] for i in industry_result.all()}
-        
+
         return {
             "timestamp": datetime.now(UTC).isoformat(),
             "total_companies": total_companies,
@@ -597,7 +600,7 @@ async def company_risk(ueid: str):
         query = select(RiskAssessment).where(RiskAssessment.ueid == ueid)
         result = await session.execute(query)
         risk = result.scalar_one_or_none()
-        
+
         if risk:
             return {
                 "ueid": risk.ueid,
@@ -629,7 +632,7 @@ async def diligence(ueid: str):
         query = select(Company).where(Company.ueid == ueid)
         result = await session.execute(query)
         company = result.scalar_one_or_none()
-        
+
         if company:
             red_flags = []
             if company.risk_score >= 70:
@@ -640,7 +643,7 @@ async def diligence(ueid: str):
                 red_flags.append("CRITICAL_FRAUD_RISK")
             if company.status != "ACTIVE":
                 red_flags.append("INACTIVE_STATUS")
-            
+
             return {
                 "ueid": ueid,
                 "name": company.name,
@@ -873,7 +876,7 @@ async def websocket_endpoint(websocket: WebSocket):
 # ==================== CLOUDFLARED TUNNEL ====================
 
 def run_cloudflared_tunnel(port: int = 8000):
-    import urllib.request, re
+    import re
     cf_path = "/kaggle/working/cloudflared"
     if not os.path.exists(cf_path):
         print("Завантаження cloudflared...")
@@ -897,24 +900,26 @@ def run_cloudflared_tunnel(port: int = 8000):
 
 # ==================== MAIN ENTRY POINT ====================
 
-import uvicorn
 import asyncio
+
+import uvicorn
+
 
 async def main():
     # Ініціалізація бази даних
     print("Ініціалізація бази даних...")
     await init_database()
     print("База даних готова.")
-    
+
     # Запуск OODA Loop
     ooda.start()
     print("OODA Loop запущено.")
-    
+
     # Запуск cloudflared тунелю (тільки в Kaggle)
     if os.path.exists("/kaggle"):
         print("Запуск cloudflared тунелю...")
         threading.Thread(target=run_cloudflared_tunnel, args=(8000,), daemon=True).start()
-    
+
     # Запуск сервера
     print("Запуск сервера на порту 8000...")
     config = uvicorn.Config(app, host="0.0.0.0", port=8000)

@@ -115,7 +115,6 @@ async def process_file_async(
         job.progress.message = "Резолюція суб'єктів (UEID)..."
         job.updated_at = datetime.utcnow()
 
-        import hashlib
 
         from app.core.signal_bus import SignalBus
         from app.libs.core.database import get_db_ctx
@@ -289,8 +288,10 @@ async def process_website_async(job_id: str, url: str, limit: int, user_id: str,
     if not job:
         return
 
-    import httpx
     from html.parser import HTMLParser
+
+    import httpx
+
     from app.etl.processor import etl_processor
     from app.services.indexing_service import indexing_service
 
@@ -351,7 +352,7 @@ async def process_website_async(job_id: str, url: str, limit: int, user_id: str,
 
         parser = WebTextParser()
         parser.feed(html_content)
-        
+
         record = {
             "url": url,
             "title": parser.title or url,
@@ -401,6 +402,7 @@ async def process_api_async(job_id: str, url: str, method: str, headers: dict, b
         return
 
     import httpx
+
     from app.etl.processor import etl_processor
     from app.services.indexing_service import indexing_service
 
@@ -424,7 +426,7 @@ async def process_api_async(job_id: str, url: str, method: str, headers: dict, b
             else:
                 response = await client.get(url, headers=headers)
             response.raise_for_status()
-            
+
             try:
                 api_data = response.json()
             except Exception:
@@ -495,8 +497,10 @@ async def process_rss_async(job_id: str, url: str, limit: int, user_id: str, con
     if not job:
         return
 
-    import httpx
     import xml.etree.ElementTree as ET
+
+    import httpx
+
     from app.etl.processor import etl_processor
     from app.services.indexing_service import indexing_service
 
@@ -526,14 +530,14 @@ async def process_rss_async(job_id: str, url: str, limit: int, user_id: str, con
 
         root = ET.fromstring(xml_content)
         items = root.findall(".//item")
-        
+
         records = []
         for item in items[:limit]:
             title = item.findtext("title") or "No Title"
             link = item.findtext("link") or ""
             desc = item.findtext("description") or ""
             pub_date = item.findtext("pubDate") or ""
-            
+
             records.append({
                 "title": title,
                 "link": link,

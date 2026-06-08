@@ -9,15 +9,12 @@
 
 from __future__ import annotations
 
-import logging
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from typing import TYPE_CHECKING, Any
+from datetime import UTC, datetime
+import logging
+from typing import Any
 
 from app.core.settings import get_settings
-
-if TYPE_CHECKING:
-    pass
 
 settings = get_settings()
 logger = logging.getLogger(__name__)
@@ -35,7 +32,7 @@ class AuditEntry:
     changes: dict[str, Any] = field(default_factory=dict)
     ip_address: str = ""
     user_agent: str = ""
-    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
     immutable: bool = True  # WORM: заборонено UPDATE/DELETE
 
 
@@ -47,7 +44,7 @@ class DataLineageEntry:
     job_name: str
     inputs: list[dict[str, str]]
     outputs: list[dict[str, str]]
-    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
 
 @dataclass
@@ -59,7 +56,7 @@ class RightToForgetRequest:
     entity_type: str
     entity_id: str
     status: str = "pending"
-    created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    created_at: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
     completed_at: str | None = None
 
 
@@ -223,7 +220,7 @@ class RightToForgetManager:
         # 6. Записати аудит
 
         request.status = "completed"
-        request.completed_at = datetime.now(timezone.utc).isoformat()
+        request.completed_at = datetime.now(UTC).isoformat()
 
         await self._audit.log(
             action="right_to_forget_executed",

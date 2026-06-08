@@ -5,12 +5,12 @@ Endpoints для доступу до історичних даних за 5-8 р
 
 from __future__ import annotations
 
+from datetime import date
 import logging
-from datetime import date, datetime
 from typing import Any
 
-from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy import select, func
+from fastapi import APIRouter, Depends, Query
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
@@ -41,25 +41,25 @@ async def get_historical_declarations(
         Declaration.declaration_date >= start_date,
         Declaration.declaration_date <= end_date
     )
-    
+
     # Додавання фільтрів
     if importer_ueid:
         query = query.where(Declaration.importer_ueid == importer_ueid)
-    
+
     if uktzed_code:
         query = query.where(Declaration.uktzed_code == uktzed_code)
-    
+
     if customs_post:
         query = query.where(Declaration.customs_post == customs_post)
-    
+
     # Сортування та пагінація
     query = query.order_by(Declaration.declaration_date.desc())
     query = query.limit(limit).offset(offset)
-    
+
     # Виконання запиту
     result = await db.execute(query)
     declarations = result.scalars().all()
-    
+
     # Отримання загальної кількості
     count_query = select(func.count()).select_from(
         select(Declaration).where(
@@ -67,17 +67,17 @@ async def get_historical_declarations(
             Declaration.declaration_date <= end_date
         )
     )
-    
+
     if importer_ueid:
         count_query = count_query.where(Declaration.importer_ueid == importer_ueid)
     if uktzed_code:
         count_query = count_query.where(Declaration.uktzed_code == uktzed_code)
     if customs_post:
         count_query = count_query.where(Declaration.customs_post == customs_post)
-    
+
     count_result = await db.execute(count_query)
     total_count = count_result.scalar()
-    
+
     return {
         "total": total_count,
         "limit": limit,
@@ -123,10 +123,10 @@ async def get_monthly_statistics(
     ).order_by(
         func.date_trunc('month', Declaration.declaration_date)
     )
-    
+
     result = await db.execute(query)
     stats = result.all()
-    
+
     return {
         "data": [
             {
@@ -161,17 +161,17 @@ async def get_uktzed_statistics(
         Declaration.declaration_date >= start_date,
         Declaration.declaration_date <= end_date
     )
-    
+
     if uktzed_code:
         query = query.where(Declaration.uktzed_code == uktzed_code)
-    
+
     query = query.group_by(Declaration.uktzed_code)
     query = query.order_by(func.sum(Declaration.value_usd).desc())
     query = query.limit(limit)
-    
+
     result = await db.execute(query)
     stats = result.all()
-    
+
     return {
         "data": [
             {
@@ -205,17 +205,17 @@ async def get_importer_statistics(
         Declaration.declaration_date >= start_date,
         Declaration.declaration_date <= end_date
     )
-    
+
     if importer_ueid:
         query = query.where(Declaration.importer_ueid == importer_ueid)
-    
+
     query = query.group_by(Declaration.importer_ueid)
     query = query.order_by(func.sum(Declaration.value_usd).desc())
     query = query.limit(limit)
-    
+
     result = await db.execute(query)
     stats = result.all()
-    
+
     return {
         "data": [
             {
@@ -249,17 +249,17 @@ async def get_customs_post_statistics(
         Declaration.declaration_date >= start_date,
         Declaration.declaration_date <= end_date
     )
-    
+
     if customs_post:
         query = query.where(Declaration.customs_post == customs_post)
-    
+
     query = query.group_by(Declaration.customs_post)
     query = query.order_by(func.sum(Declaration.value_usd).desc())
     query = query.limit(limit)
-    
+
     result = await db.execute(query)
     stats = result.all()
-    
+
     return {
         "data": [
             {
@@ -291,31 +291,31 @@ async def get_trends(
         Declaration.declaration_date >= start_date,
         Declaration.declaration_date <= end_date
     )
-    
+
     if uktzed_code:
         query = query.where(Declaration.uktzed_code == uktzed_code)
-    
+
     if importer_ueid:
         query = query.where(Declaration.importer_ueid == importer_ueid)
-    
+
     query = query.group_by(func.date_trunc('month', Declaration.declaration_date))
     query = query.order_by(func.date_trunc('month', Declaration.declaration_date))
-    
+
     result = await db.execute(query)
     trends = result.all()
-    
+
     # Розрахунок тренду
     if len(trends) >= 2:
         first_value = float(trends[0].total_value_usd) if trends[0].total_value_usd else 0.0
         last_value = float(trends[-1].total_value_usd) if trends[-1].total_value_usd else 0.0
-        
+
         if first_value > 0:
             growth_rate = ((last_value - first_value) / first_value) * 100
         else:
             growth_rate = 0.0
     else:
         growth_rate = 0.0
-    
+
     return {
         "growth_rate": growth_rate,
         "data": [
@@ -348,10 +348,10 @@ async def get_historical_summary(
         Declaration.declaration_date >= start_date,
         Declaration.declaration_date <= end_date
     )
-    
+
     result = await db.execute(query)
     summary = result.one()
-    
+
     return {
         "total_declarations": summary.total_declarations,
         "total_value_usd": float(summary.total_value_usd) if summary.total_value_usd else 0.0,

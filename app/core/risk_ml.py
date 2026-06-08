@@ -11,20 +11,15 @@ Impact: FP -60%, виявлення схем +40%.
 
 from __future__ import annotations
 
-import json
-import logging
-import pickle
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
+import logging
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 import numpy as np
 
 from app.core.settings import get_settings
-
-if TYPE_CHECKING:
-    from collections.abc import Sequence
 
 settings = get_settings()
 logger = logging.getLogger(__name__)
@@ -113,7 +108,7 @@ class RiskPrediction:
     shap_values: dict[str, float] = field(default_factory=dict)
     top_factors: list[tuple[str, float]] = field(default_factory=list)
     model_version: str = "v63.0-ELITE"
-    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
     def explain(self) -> str:
         """Генерує текстовий опис причин ризику."""

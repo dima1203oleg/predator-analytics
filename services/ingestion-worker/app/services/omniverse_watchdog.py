@@ -5,10 +5,9 @@
 import asyncio
 import json
 import uuid
-from datetime import datetime, UTC
 
-from app.sinks.clickhouse_sink import ClickHouseSink
 from app.services.ai_service_client import AIServiceClient  # Припускаємо наявність клієнта
+from app.sinks.clickhouse_sink import ClickHouseSink
 from predator_common.logging import get_logger
 
 logger = get_logger("ingestion_worker.watchdog")
@@ -23,13 +22,13 @@ class OmniverseWatchdog:
     async def start(self):
         self.running = True
         logger.info(f"Omniverse Watchdog started with interval {self.interval}s")
-        
+
         while self.running:
             try:
                 await self._run_cycle()
             except Exception as e:
                 logger.error(f"Watchdog cycle error: {e}", exc_info=True)
-            
+
             await asyncio.sleep(self.interval)
 
     async def stop(self):
@@ -73,7 +72,7 @@ class OmniverseWatchdog:
 
         suspicious_query = f"SELECT * EXCEPT(_tenant_id, _job_id) FROM {table} ORDER BY {num_cols[0]} DESC LIMIT 5"
         suspicious_res = self.clickhouse.execute_query(suspicious_query)
-        
+
         # 3. Аналізуємо через AI
         prompt = f"""
         Ти - Autonomous Watchdog платформи PREDATOR.
@@ -89,7 +88,7 @@ class OmniverseWatchdog:
             "detected_at": "ISO timestamp"
         }}
         """
-        
+
         # Виклик AI (через AIServiceClient)
         analysis_raw = await self.ai_client.generate_insight(prompt)
         try:
@@ -103,7 +102,7 @@ class OmniverseWatchdog:
         """Записує алерт у ClickHouse WORM таблицю `omniverse_alerts`."""
         alert_id = str(uuid.uuid4())
         tenant_id = table.split("_")[1] if "_" in table else "system"
-        
+
         # Створюємо таблицю алертів якщо її немає
         create_query = """
         CREATE TABLE IF NOT EXISTS omniverse_alerts (

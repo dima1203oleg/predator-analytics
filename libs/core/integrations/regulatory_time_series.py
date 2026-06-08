@@ -5,9 +5,9 @@
 
 from __future__ import annotations
 
-import logging
 from dataclasses import dataclass
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
+import logging
 from typing import Any
 
 logger = logging.getLogger(__name__)
@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class TimeSeriesPoint:
     """Точка часового ряду."""
+
     date: date
     value: float
 
@@ -23,6 +24,7 @@ class TimeSeriesPoint:
 @dataclass
 class RegulatoryImpactAnalysis:
     """Результат аналізу впливу нормативного акту."""
+
     act_date: date
     uktzed_code: str
     import_before: float
@@ -55,6 +57,7 @@ class RegulatoryTimeSeriesAnalyzer:
             
         Returns:
             Обсяг імпорту в USD
+
         """
         # TODO: Отримувати дані з ClickHouse або PostgreSQL
         # Тимчасова заглушка
@@ -73,36 +76,37 @@ class RegulatoryTimeSeriesAnalyzer:
             
         Returns:
             Результат аналізу
+
         """
         # Визначаємо періоди до і після акту
         period_before_start = act_date - timedelta(days=self.window_days)
         period_before_end = act_date - timedelta(days=1)
-        
+
         period_after_start = act_date + timedelta(days=1)
         period_after_end = act_date + timedelta(days=self.window_days)
-        
+
         # Розраховуємо обсяги імпорту
         import_before = self.calculate_import_volume(
             uktzed_code,
             period_before_start,
             period_before_end,
         )
-        
+
         import_after = self.calculate_import_volume(
             uktzed_code,
             period_after_start,
             period_after_end,
         )
-        
+
         # Розраховуємо зростання
         if import_before > 0:
             growth_pct = ((import_after - import_before) / import_before) * 100
         else:
             growth_pct = 0.0
-        
+
         # Визначаємо чи підозріло
         is_suspicious = growth_pct > self.growth_threshold
-        
+
         # Визначаємо тренд
         if growth_pct > 50:
             trend = "increasing"
@@ -110,10 +114,10 @@ class RegulatoryTimeSeriesAnalyzer:
             trend = "decreasing"
         else:
             trend = "stable"
-        
+
         # Розраховуємо впевненість
         confidence = min(abs(growth_pct) / 100, 1.0)
-        
+
         return RegulatoryImpactAnalysis(
             act_date=act_date,
             uktzed_code=uktzed_code,
@@ -140,6 +144,7 @@ class RegulatoryTimeSeriesAnalyzer:
             
         Returns:
             Список підозрілих сплесків
+
         """
         # TODO: Отримати нормативні акти за період
         # Тимчасова заглушка
@@ -165,6 +170,7 @@ class RegulatoryImpactService:
             
         Returns:
             Результат аналізу
+
         """
         return self.analyzer.analyze_regulatory_impact(act_date, uktzed_code)
 
@@ -183,6 +189,7 @@ class RegulatoryImpactService:
             
         Returns:
             Список підозрілих актів
+
         """
         # TODO: Отримати всі акти за період та проаналізувати
         return []

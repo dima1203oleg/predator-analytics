@@ -1,7 +1,8 @@
 # KAGGLE ONE-CELL: скопiюй цей файл повнiстю у одну кодову клiтинку Kaggle Notebook i натисни Run
 # Вимоги: Kaggle Notebook, CPU Only, Internet ON
 
-import subprocess, sys, os, re, threading, time
+import subprocess
+import sys
 
 # 1. Залежностi
 subprocess.run([sys.executable, "-m", "pip", "install", "-q", "fastapi", "uvicorn[standard]", "psutil", "httpx"])

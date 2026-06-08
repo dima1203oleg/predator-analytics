@@ -11,10 +11,10 @@ from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from predator_common.models import Alert, Declaration, RiskScore
-from app.services.ai_service import AIService, LLMRoute
+from app.services.ai_service import AIService
 from app.services.vram_watchdog import vram_sentinel
 from predator_common.logging import get_logger
+from predator_common.models import Alert, Declaration, RiskScore
 
 logger = get_logger("websocket")
 
@@ -206,7 +206,7 @@ async def websocket_system_events(websocket: WebSocket):
     try:
         while True:
             data = await websocket.receive_text()
-            
+
             try:
                 message = json.loads(data)
                 # Handle messages if needed
@@ -224,7 +224,7 @@ async def websocket_system_events(websocket: WebSocket):
 async def websocket_copilot(websocket: WebSocket):
     """WebSocket endpoint для інтерактивного Copilot чату з підтримкою стрімінгу."""
     await websocket.accept()
-    
+
     try:
         while True:
             # Отримуємо запит від клієнта
@@ -233,13 +233,13 @@ async def websocket_copilot(websocket: WebSocket):
                 payload = json.loads(data)
                 message = payload.get("message")
                 history = payload.get("history", [])
-                
+
                 if not message:
                     continue
-                
+
                 # Отримуємо статус VRAM для Tri-State Routing
                 vram_stats = await vram_sentinel.get_stats()
-                
+
                 # Початок відповіді
                 await websocket.send_json({
                     "type": "thinking",
@@ -252,7 +252,7 @@ async def websocket_copilot(websocket: WebSocket):
                     },
                     "timestamp": datetime.now(UTC).isoformat()
                 })
-                
+
                 # Стрімінг від AIService
                 full_reply = ""
                 async for chunk in AIService.chat_completion_stream(
@@ -264,14 +264,14 @@ async def websocket_copilot(websocket: WebSocket):
                         "text": chunk,
                         "timestamp": datetime.now(UTC).isoformat()
                     })
-                
+
                 # Завершення відповіді
                 await websocket.send_json({
                     "type": "complete",
                     "reply": full_reply,
                     "timestamp": datetime.now(UTC).isoformat()
                 })
-                
+
             except json.JSONDecodeError:
                 await websocket.send_json({
                     "type": "error",
@@ -283,7 +283,7 @@ async def websocket_copilot(websocket: WebSocket):
                     "type": "error",
                     "message": str(e)
                 })
-                
+
     except WebSocketDisconnect:
         logger.info("Copilot WebSocket disconnected")
     except Exception as e:

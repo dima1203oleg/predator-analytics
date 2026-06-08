@@ -1,15 +1,15 @@
-"""
-Predator Agents OS — Entry Point
+"""Predator Agents OS — Entry Point
 Цей файл ініціалізує API-сервер для керування автономними агентами.
 """
 
-import uvicorn
+import os
+from typing import Any
+
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import Dict, Any, Optional
-import os
-from dotenv import load_dotenv
+import uvicorn
 
 # Завантаження оточення
 load_dotenv()
@@ -31,7 +31,7 @@ app.add_middleware(
 
 class AgentRequest(BaseModel):
     task: str
-    context: Optional[Dict[str, Any]] = None
+    context: dict[str, Any] | None = None
     priority: str = "normal"
 
 @app.get("/")
@@ -45,10 +45,10 @@ async def root():
 
 from core.orchestrator import run_orchestrator
 
+
 @app.post("/api/v1/execute")
 async def execute_task(request: AgentRequest):
-    """
-    Ендпоїнт для запуску завдання через Orchestrator.
+    """Ендпоїнт для запуску завдання через Orchestrator.
     """
     try:
         result = await run_orchestrator(request.task)

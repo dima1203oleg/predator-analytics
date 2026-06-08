@@ -5,12 +5,11 @@
 
 from __future__ import annotations
 
-import logging
 from dataclasses import dataclass
-from datetime import date, datetime
+from datetime import date
+import logging
 from typing import Any
 
-import orjson
 from clickhouse_connect import get_client as get_clickhouse_client
 
 logger = logging.getLogger(__name__)
@@ -19,6 +18,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class ClickHouseConfig:
     """Конфігурація ClickHouse."""
+
     host: str = "localhost"
     port: int = 8123
     username: str = "default"
@@ -69,7 +69,7 @@ class ClickHouseIntegration:
         ORDER BY (declaration_date, importer_ueid, uktzed_code)
         SETTINGS index_granularity = 8192
         """
-        
+
         try:
             self.client.command(create_table_sql)
             logger.info("Таблиця declarations створена в ClickHouse")
@@ -85,6 +85,7 @@ class ClickHouseIntegration:
             
         Returns:
             Кількість вставлених рядків
+
         """
         try:
             # Підготовка даних
@@ -111,7 +112,7 @@ class ClickHouseIntegration:
                 data.get('created_at'),
                 data.get('updated_at'),
             )
-            
+
             # Вставка
             self.client.insert(
                 'declarations',
@@ -124,10 +125,10 @@ class ClickHouseIntegration:
                     'regime', 'procedure_code', 'status', 'created_at', 'updated_at'
                 ]
             )
-            
+
             logger.debug(f"Вставлено декларацію в ClickHouse: {data.get('id')}")
             return 1
-            
+
         except Exception as e:
             logger.error(f"Помилка вставки в ClickHouse: {e}")
             return 0
@@ -140,10 +141,11 @@ class ClickHouseIntegration:
             
         Returns:
             Кількість вставлених рядків
+
         """
         if not data_list:
             return 0
-        
+
         try:
             # Підготовка даних
             rows = []
@@ -172,7 +174,7 @@ class ClickHouseIntegration:
                     data.get('updated_at'),
                 )
                 rows.append(row)
-            
+
             # Пакетна вставка
             self.client.insert(
                 'declarations',
@@ -185,10 +187,10 @@ class ClickHouseIntegration:
                     'regime', 'procedure_code', 'status', 'created_at', 'updated_at'
                 ]
             )
-            
+
             logger.info(f"Вставлено {len(rows)} декларацій в ClickHouse")
             return len(rows)
-            
+
         except Exception as e:
             logger.error(f"Помилка пакетної вставки в ClickHouse: {e}")
             return 0
@@ -210,6 +212,7 @@ class ClickHouseIntegration:
             
         Returns:
             Список статистики
+
         """
         query = """
         SELECT
@@ -224,7 +227,7 @@ class ClickHouseIntegration:
         GROUP BY month
         ORDER BY month
         """
-        
+
         try:
             result = self.client.query(
                 query,
@@ -233,7 +236,7 @@ class ClickHouseIntegration:
                     'end_date': end_date
                 }
             )
-            
+
             stats = []
             for row in result.named_results():
                 stats.append({
@@ -244,9 +247,9 @@ class ClickHouseIntegration:
                     'unique_importers': row['unique_importers'],
                     'unique_uktzed_codes': row['unique_uktzed_codes'],
                 })
-            
+
             return stats
-            
+
         except Exception as e:
             logger.error(f"Помилка отримання статистики: {e}")
             return []

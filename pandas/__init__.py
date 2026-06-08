@@ -1,8 +1,9 @@
 # Minimal stub for pandas used in ingestion_service.
 import typing as _t
 
+
 class _SimpleDataFrame:
-    def __init__(self, records: _t.List[dict]):
+    def __init__(self, records: list[dict]):
         self._records = records
         self.columns = list(records[0].keys()) if records else []
 
@@ -41,4 +42,4 @@ api = _api()
 
 DataFrame = _SimpleDataFrame
 
-__all__ = ["read_excel", "read_csv", "DataFrame", "api"]
+__all__ = ["DataFrame", "api", "read_csv", "read_excel"]

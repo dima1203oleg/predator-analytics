@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 import os
+from pathlib import Path
 import subprocess
 import time
 import urllib.parse
 import urllib.request
-from pathlib import Path
 
 ADMIN_ID = os.getenv("TELEGRAM_ADMIN_ID", "1020504147")
 BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")

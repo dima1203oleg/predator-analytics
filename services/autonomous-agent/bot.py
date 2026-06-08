@@ -1,11 +1,11 @@
-"""
-Telegram bot for PREDATOR Analytics Autonomous Agent notifications.
+"""Telegram bot for PREDATOR Analytics Autonomous Agent notifications.
 """
 
-import os
 import asyncio
+import os
+
 from aiogram import Bot, Dispatcher
-from aiogram.filters import CommandStart, Command
+from aiogram.filters import Command, CommandStart
 from aiogram.types import Message
 from loguru import logger
 
@@ -66,7 +66,7 @@ async def start_bot() -> None:
     if not bot:
         logger.error("No TELEGRAM_BOT_TOKEN provided. Running in mock mode.")
         return
-    
+
     await dp.start_polling(bot)
 
 if __name__ == "__main__":

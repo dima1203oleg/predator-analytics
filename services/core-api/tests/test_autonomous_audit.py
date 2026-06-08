@@ -4,11 +4,12 @@ PREDATOR ELITE v56.5
 
 from collections.abc import AsyncGenerator
 import os
-import pytest
-from httpx import ASGITransport, AsyncClient
-
 import sys
 from unittest.mock import MagicMock
+
+from httpx import ASGITransport, AsyncClient
+import pytest
+
 
 # Mock DatasetGeneratorTrainer before importing app.main to avoid package shadowing imports
 class MockDatasetGeneratorTrainer:
@@ -35,7 +36,7 @@ sys.modules["apscheduler.triggers"] = mock_sched_mod
 sys.modules["apscheduler.triggers.interval"] = mock_sched_mod
 
 from app.main import app
-from app.services.autonomous_audit import sovereign_audit_engine, CERTIFICATION_DIR
+from app.services.autonomous_audit import CERTIFICATION_DIR, sovereign_audit_engine
 
 
 @pytest.fixture
@@ -53,17 +54,17 @@ async def test_audit_engine_execution() -> None:
     """Тестує безпосереднє виконання повного forensic-аудиту двигуном."""
     # Очищуємо стан перед тестом
     sovereign_audit_engine.is_auditing = False
-    
+
     # Виконуємо повний forensic-аудит
     results = await sovereign_audit_engine.execute_full_forensic_audit()
-    
+
     assert results is not None
     assert "audit_id" in results
     assert results["audit_id"].startswith("audit-")
     assert "planes" in results
     assert "integrity_passed" in results
     assert "readiness_status" in results
-    
+
     # Перевірка наявності всіх 9 площин контролю
     required_planes = [
         "visual_interaction",
@@ -87,13 +88,13 @@ async def test_autofix_pipeline_trigger() -> None:
     """Тестує виконання 10-ступеневого контуру самовідновлення AutoFix."""
     # Очищуємо стан логів перед перевіркою
     sovereign_audit_engine.remediation_logs = []
-    
+
     # Запускаємо контур самолікування для площин інфраструктури та локалізації
     success = await sovereign_audit_engine.trigger_autofix_pipeline(["infrastructure", "localization"])
-    
+
     assert success is True
     assert len(sovereign_audit_engine.remediation_logs) > 0
-    
+
     latest_fix = sovereign_audit_engine.remediation_logs[0]
     assert latest_fix["resolved"] is True
     assert "steps" in latest_fix
@@ -107,7 +108,7 @@ async def test_certification_artifacts_generation() -> None:
     """Тестує наявність генерованих фізичних Markdown-звітів на диску."""
     # Запускаємо аудит для генерації свіжих файлів
     await sovereign_audit_engine.execute_full_forensic_audit()
-    
+
     # Перевіряємо наявність основних звітів
     required_files = [
         "forensic_audit_report.md",
@@ -121,7 +122,7 @@ async def test_certification_artifacts_generation() -> None:
         "executive_production_readiness_summary.md",
         "autonomous_remediation_log.md"
     ]
-    
+
     for filename in required_files:
         filepath = os.path.join(CERTIFICATION_DIR, filename)
         assert os.path.exists(filepath) is True
@@ -137,14 +138,14 @@ async def test_audit_api_endpoints(test_client: AsyncClient) -> None:
     data = response.json()
     assert "audit_id" in data
     assert data["readiness_status"] in ["VALID", "INVALID", "ERROR"]
-    
+
     # Тест отримання списку звітів сертифікації для UI
     response = await test_client.get("/api/v1/antigravity/audit/reports")
     assert response.status_code == 200
     reports = response.json()
     assert isinstance(reports, list)
     assert len(reports) > 0
-    
+
     # Перевіряємо структуру першого звіту
     first_report = reports[0]
     assert "name" in first_report

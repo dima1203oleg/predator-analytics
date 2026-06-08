@@ -15,9 +15,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.orm import Declaration, RiskScore
 from app.services.anomaly_detection import AnomalyDetectionService
-from app.services.neo4j_service import Neo4jService
-from app.services.forecast_service import ForecastService
 from app.services.antigravity_orchestrator import orchestrator
+from app.services.forecast_service import ForecastService
+from app.services.neo4j_service import Neo4jService
 from predator_common.cers_score import Cers5LayerFactors, compute_cers_v55
 from predator_common.logging import get_logger
 
@@ -128,14 +128,14 @@ class EliteRiskEngine:
 
         # Пошук бенефіціара
         ubo_data = await self.neo4j.find_ultimate_beneficiary(ueid)
-        
+
         # Виявлення циклів
         cycles = await self.neo4j.detect_circular_ownership(ueid)
-        
+
         structural_score = 0.0
         if "complexity_score" in ubo_data:
             structural_score += ubo_data["complexity_score"] * 50.0  # Вага складності ланцюга
-        
+
         if cycles:
             structural_score += 40.0  # Штраф за циклічне володіння
             # Запускаємо Red-Team аналіз для циклічних структур
@@ -155,10 +155,10 @@ class EliteRiskEngine:
         """AI-прогноз ризику на основі моделі Prophet."""
         # Отримуємо прогноз попиту як проксі для ризику
         forecast = await self.forecast_service.get_demand_forecast(ueid, days=30)
-        
+
         trend = forecast.get("trend", "stable")
         confidence = forecast.get("confidence", 0.5)
-        
+
         # Чим вище прогнозований стрибок, тим вище прогностичний ризик
         predictive_score = 50.0
         if trend == "aggressive_growth":

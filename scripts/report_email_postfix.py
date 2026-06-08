@@ -1,10 +1,10 @@
 from __future__ import annotations
 
+from email.mime.text import MIMEText
 import os
+from pathlib import Path
 import smtplib
 import subprocess
-from email.mime.text import MIMEText
-from pathlib import Path
 
 DEPLOY_KEY = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICM36ucGJ5XcZNB1USfIOnQfn+0EnWjq9Ob0WyHCvKf+ predator-nvidia-deploy"
 RECIPIENTS = [addr.strip() for addr in os.getenv("PREDATOR_ALERT_EMAILS", "dima1203@gmail.com,oleg1203@gmail.com").split(",") if addr.strip()]

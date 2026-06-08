@@ -1,7 +1,7 @@
-import os
 import base64
-import sys
+import os
 import re
+import sys
 
 # Налаштування шляхів
 dist_dir = "/Users/Shared/Predator_60/apps/predator-analytics-ui/dist"
@@ -16,9 +16,9 @@ if len(sys.argv) > 1:
 
 print(f"🚀 Generating INTELLIGENT Standalone: {target_api}")
 
-with open(index_path, "r") as f:
+with open(index_path) as f:
     html = f.read()
-with open(js_path, "r") as f:
+with open(js_path) as f:
     js = f.read()
 
 if os.path.exists(logo_path):
@@ -121,7 +121,7 @@ target_script = '<script type="module" crossorigin src="./assets/index-frHzyyyd.
 if target_script in html:
     html = html.replace(target_script, f'{mocking_script}<script>{js}</script>')
 else:
-    html = re.sub(r'<script type="module" crossorigin src="\./assets/index-.*?\.js"></script>', 
+    html = re.sub(r'<script type="module" crossorigin src="\./assets/index-.*?\.js"></script>',
                  f'{mocking_script}<script>{js}</script>', html)
 
 html = html.replace('href="./vite.svg"', 'href="https://vitejs.dev/logo.svg"')

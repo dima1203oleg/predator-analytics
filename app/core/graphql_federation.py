@@ -9,12 +9,9 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 from app.core.settings import get_settings
-
-if TYPE_CHECKING:
-    pass
 
 settings = get_settings()
 logger = logging.getLogger(__name__)

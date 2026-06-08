@@ -1,10 +1,9 @@
-import uvicorn
 from fastapi import FastAPI
+import uvicorn
 
 # 🇺🇦 Основний бекенд з усіма реєстрами та сервісами
 # В цьому файлі ми створюємо FastAPI‑додаток, підключаємо усі роутери
 # та ініціалізуємо `RegistryFetcher` для отримання даних з публічних реєстрів.
-
 from app.api.v1.canonical_router import api_v1_router  # основний роутер API
 from app.services.registry_fetcher import RegistryFetcher
 

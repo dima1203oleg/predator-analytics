@@ -1,12 +1,11 @@
-import os
-import sys
-import shutil
 from pathlib import Path
+import sys
+
 
 def switch_node(node_name):
     node_name = node_name.upper()
     env_file = Path(".env")
-    
+
     nodes = {
         "NVIDIA": {
             "IP": "194.177.1.240",
@@ -27,19 +26,19 @@ def switch_node(node_name):
             "URL": "https://z7onbbru9393.share.zrok.io"
         }
     }
-    
+
     if node_name not in nodes:
         print(f"❌ Unknown node: {node_name}. Available: {list(nodes.keys())}")
         return
 
     node = nodes[node_name]
     print(f"🚀 Switching to node: {node_name} ({node['IP']})...")
-    
+
     if not env_file.exists():
         print("❌ .env file not found!")
         return
 
-    with open(env_file, "r") as f:
+    with open(env_file) as f:
         lines = f.readlines()
 
     new_lines = []

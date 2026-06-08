@@ -9,10 +9,10 @@ Enterprise patterns для distributed systems:
 
 from __future__ import annotations
 
+from dataclasses import dataclass, field
+from datetime import UTC, datetime
 import json
 import logging
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any
 
 from app.core.settings import get_settings
@@ -35,7 +35,7 @@ class Command:
     command_type: str
     aggregate_id: str
     payload: dict[str, Any]
-    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
 
 @dataclass
@@ -87,7 +87,7 @@ class DomainEvent:
     aggregate_type: str
     data: dict[str, Any]
     version: int = 1
-    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
 
 class EventStore:
@@ -188,7 +188,7 @@ class OutboxMessage:
     event_type: str
     payload: dict[str, Any]
     status: str = "pending"
-    created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    created_at: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
     processed_at: str | None = None
     retry_count: int = 0
 
@@ -229,7 +229,7 @@ class OutboxProcessor:
                     value=json.dumps(msg.payload).encode(),
                 )
                 msg.status = "processed"
-                msg.processed_at = datetime.now(timezone.utc).isoformat()
+                msg.processed_at = datetime.now(UTC).isoformat()
                 processed += 1
             except Exception as e:
                 msg.retry_count += 1

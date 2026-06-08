@@ -1,11 +1,12 @@
-"""
-Predator Agents OS — Graph Tools
+"""Predator Agents OS — Graph Tools
 Інструменти для взаємодії з Neo4j.
 """
 
 import os
+from typing import Any
+
 from neo4j import GraphDatabase
-from typing import List, Dict, Any
+
 
 class GraphTools:
     def __init__(self):
@@ -17,17 +18,15 @@ class GraphTools:
     def close(self):
         self.driver.close()
 
-    def query(self, cypher: str, parameters: Dict[str, Any] = None) -> List[Dict[str, Any]]:
-        """
-        Виконує Cypher-запит до Neo4j.
+    def query(self, cypher: str, parameters: dict[str, Any] = None) -> list[dict[str, Any]]:
+        """Виконує Cypher-запит до Neo4j.
         """
         with self.driver.session() as session:
             result = session.run(cypher, parameters)
             return [record.data() for record in result]
 
-    def get_company_connections(self, ueid: str) -> List[Dict[str, Any]]:
-        """
-        Знаходить усіх пов'язаних контрагентів для компанії за її ЄДРПОУ (ueid).
+    def get_company_connections(self, ueid: str) -> list[dict[str, Any]]:
+        """Знаходить усіх пов'язаних контрагентів для компанії за її ЄДРПОУ (ueid).
         """
         cypher = """
         MATCH (c:Company {ueid: $ueid})-[r]-(connected)

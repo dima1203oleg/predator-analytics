@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""
-Масова заміна Loader2 → BrandLoaderFallback
+"""Масова заміна Loader2 → BrandLoaderFallback
 v64.10-ELITE · Автоматична заміна спіннерів
 """
-import re, sys, os
 from pathlib import Path
+import re
+import sys
 
 UI_DIR = Path('/Users/Shared/Predator_60/apps/predator-analytics-ui/src')
 

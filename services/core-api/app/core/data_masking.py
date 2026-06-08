@@ -6,12 +6,13 @@
 - VIP: повний доступ до чутливих даних (з можливістю перемикання)
 - ADMIN: жодного доступу до бізнес-даних
 """
-from typing import Any, Dict
 from enum import StrEnum
+from typing import Any
 
 
 class DataSensitivity(StrEnum):
     """Рівні чутливості даних."""
+
     PUBLIC = "public"           # Публічні дані (без маскування)
     MASKED_PROMO = "masked_promo"  # Маскування для PROMO (суворе)
     MASKED_PRO = "masked_pro"      # Маскування для PRO (без деанонімізації)
@@ -170,14 +171,14 @@ class DataMaskingService:
 
         return value
 
-    def _mask_dict(self, data: Dict[str, Any]) -> Dict[str, Any]:
+    def _mask_dict(self, data: dict[str, Any]) -> dict[str, Any]:
         """Маскує словник даних."""
         masked = {}
         for key, value in data.items():
             # Визначаємо тип поля на основі назви ключа
             field_type = self._infer_field_type(key)
             sensitivity = self._infer_sensitivity(key, field_type)
-            
+
             if self.should_mask(sensitivity):
                 masked[key] = self.mask_value(value, field_type)
             else:
@@ -241,5 +242,5 @@ def mask_response_data(data: Any, role: str) -> Any:
         return service._mask_dict(data)
     if isinstance(data, list):
         return [service._mask_dict(item) if isinstance(item, dict) else item for item in data]
-    
+
     return data

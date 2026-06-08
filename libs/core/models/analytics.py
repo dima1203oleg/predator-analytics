@@ -16,18 +16,17 @@
 """
 
 from datetime import datetime
-from typing import Any
-from uuid import UUID
 
-from sqlalchemy import JSON, Column, DateTime, Float, ForeignKey, Integer, String, Boolean
+from sqlalchemy import JSON, Boolean, Column, DateTime, Float, Integer, String
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
-from sqlalchemy.orm import declarative_base, relationship
+from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
 
 
 class BehavioralProfile(Base):
     """Layer 1: Behavioral Profile (101-120)."""
+
     __tablename__ = "behavioral_profiles"
 
     id = Column(PG_UUID(as_uuid=True), primary_key=True)
@@ -41,6 +40,7 @@ class BehavioralProfile(Base):
 
 class InstitutionalBias(Base):
     """Layer 2: Institutional Bias (121-140)."""
+
     __tablename__ = "institutional_biases"
 
     id = Column(PG_UUID(as_uuid=True), primary_key=True)
@@ -55,6 +55,7 @@ class InstitutionalBias(Base):
 
 class InfluenceGraph(Base):
     """Layer 3: Influence Graph (141-160)."""
+
     __tablename__ = "influence_graphs"
 
     id = Column(PG_UUID(as_uuid=True), primary_key=True)
@@ -68,6 +69,7 @@ class InfluenceGraph(Base):
 
 class StructuralAnomaly(Base):
     """Layer 4: Structural Anomaly (161-180)."""
+
     __tablename__ = "structural_anomalies"
 
     id = Column(PG_UUID(as_uuid=True), primary_key=True)
@@ -82,6 +84,7 @@ class StructuralAnomaly(Base):
 
 class PredictiveAlert(Base):
     """Layer 5: Predictive Alert (181-200)."""
+
     __tablename__ = "predictive_alerts"
 
     id = Column(PG_UUID(as_uuid=True), primary_key=True)
@@ -95,6 +98,7 @@ class PredictiveAlert(Base):
 
 class MarketPulse(Base):
     """Market Pulse (200)."""
+
     __tablename__ = "market_pulses"
 
     id = Column(PG_UUID(as_uuid=True), primary_key=True)
@@ -109,6 +113,7 @@ class MarketPulse(Base):
 
 class DecisionArtifact(Base):
     """Decision Artifacts (WORM)."""
+
     __tablename__ = "decision_artifacts"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -133,6 +138,7 @@ class TaxCompliance(Base):
     """Layer 6: Tax Compliance (201-220).
     Для датасетів: #6, #17, #39, #59, #72
     """
+
     __tablename__ = "tax_compliance"
 
     id = Column(PG_UUID(as_uuid=True), primary_key=True)
@@ -149,6 +155,7 @@ class RouteAnomaly(Base):
     """Layer 7: Route Anomaly (221-240).
     Для датасетів: #3, #46, #62
     """
+
     __tablename__ = "route_anomalies"
 
     id = Column(PG_UUID(as_uuid=True), primary_key=True)
@@ -164,6 +171,7 @@ class PriceAnomaly(Base):
     """Layer 8: Price Anomaly (241-260).
     Для датасетів: #5, #44, #89
     """
+
     __tablename__ = "price_anomalies"
 
     id = Column(PG_UUID(as_uuid=True), primary_key=True)
@@ -181,6 +189,7 @@ class BrandDetection(Base):
     """Layer 9: Brand Detection (261-280).
     Для датасетів: #8, #53, #98
     """
+
     __tablename__ = "brand_detections"
 
     id = Column(PG_UUID(as_uuid=True), primary_key=True)
@@ -195,6 +204,7 @@ class RegulatoryImpact(Base):
     """Layer 10: Regulatory Impact (281-300).
     Для датасетів: #1, #76
     """
+
     __tablename__ = "regulatory_impacts"
 
     id = Column(PG_UUID(as_uuid=True), primary_key=True)
@@ -211,6 +221,7 @@ class BrokerPattern(Base):
     """Layer 11: Broker Pattern (301-320).
     Для датасетів: #9, #71
     """
+
     __tablename__ = "broker_patterns"
 
     id = Column(PG_UUID(as_uuid=True), primary_key=True)

@@ -2,11 +2,13 @@
 
 Агрегує дані з усіх модулів OMNIVERSE для створення Executive Summary.
 """
-from typing import Dict, Any
+from typing import Any
+
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.database import get_clickhouse_client
 from app.services.elite_risk_engine import EliteRiskEngine
 from app.services.forecast_service import ForecastService
-from sqlalchemy.ext.asyncio import AsyncSession
 from predator_common.logging import get_logger
 
 logger = get_logger("core_api.omniverse_briefing")
@@ -17,22 +19,22 @@ class OmniverseBriefing:
         self.client = get_clickhouse_client()
 
     async def generate_entity_intelligence_brief(
-        self, 
-        ueid: str, 
+        self,
+        ueid: str,
         db: AsyncSession
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Генерує глибокий аналітичний звіт для конкретної сутності."""
         logger.info(f"Generating high-fidelity intelligence brief for {ueid}")
-        
+
         # 1. Розраховуємо повний ризик через EliteRiskEngine
         risk_engine = EliteRiskEngine(db)
         risk_data = await risk_engine.compute_full_risk(ueid, self.tenant_id)
-        
+
         # 2. Отримуємо прогнози попиту/діяльності
         # (Використовуємо ueid як product_code для демонстрації агрегації)
         forecast_service = ForecastService()
         forecast_data = await forecast_service.get_demand_forecast(ueid)
-        
+
         # 3. Формуємо стратегічний контекст
         brief = {
             "entity_ueid": ueid,
@@ -52,10 +54,10 @@ class OmniverseBriefing:
                 f"Рекомендовано: {'Посилений моніторинг' if risk_data['cers'] > 50 else 'Стандартний нагляд'}."
             )
         }
-        
+
         return brief
 
-    async def generate_executive_brief(self) -> Dict[str, Any]:
+    async def generate_executive_brief(self) -> dict[str, Any]:
         """Генерує зведення останніх подій та інсайтів."""
         try:
             # 1. Отримуємо останні алерти (Watchdog)
@@ -70,7 +72,7 @@ class OmniverseBriefing:
 
             # 3. Формуємо AI Briefing (через AIService в роутері)
             # Тут ми просто повертаємо агреговані дані, які AI перетворить на текст у роутері
-            
+
             return {
                 "summary": {
                     "total_datasets": table_count,

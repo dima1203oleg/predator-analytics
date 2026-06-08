@@ -18,12 +18,14 @@ class ProcessorResult:
 
 class Transformer(Protocol):
     """Protocol for ETL transformers."""
+
     async def transform(self, record: dict[str, Any]) -> dict[str, Any]:
         ...
 
 
 class NormalizationTransform:
     """Normalize fields like dates, strings."""
+
     async def transform(self, record: dict[str, Any]) -> dict[str, Any]:
         # Basic normalization logic
         for key, value in list(record.items()):
@@ -34,6 +36,7 @@ class NormalizationTransform:
 
 class EnrichmentTransform:
     """Enrich records with additional metadata."""
+
     async def transform(self, record: dict[str, Any]) -> dict[str, Any]:
         if "metadata" not in record:
             record["metadata"] = {}

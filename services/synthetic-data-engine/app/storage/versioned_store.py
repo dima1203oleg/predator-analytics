@@ -1,9 +1,8 @@
 """Зберігання датасетів та артефактів."""
 
+from typing import Any
+
 import pandas as pd
-import io
-import json
-from typing import Dict, Any, Optional
 import structlog
 
 logger = structlog.get_logger("sde.storage")
@@ -17,16 +16,16 @@ class VersionedDatasetStore:
     def __init__(self, bucket_name: str = "synthetic-datasets"):
         self.bucket_name = bucket_name
         self.cards_bucket = "data-cards"
-        
-    async def save_dataset(self, name: str, data: pd.DataFrame, metadata: Dict[str, Any] = None) -> str:
+
+    async def save_dataset(self, name: str, data: pd.DataFrame, metadata: dict[str, Any] = None) -> str:
         """Зберігає DataFrame у MinIO як parquet."""
         logger.info(f"Збереження датасету {name} в {self.bucket_name}")
-        
+
         # MOCK РЕАЛІЗАЦІЯ ДЛЯ ТЕСТУВАННЯ
         # buffer = io.BytesIO()
         # data.to_parquet(buffer)
         # buffer.seek(0)
-        # 
+        #
         # object_name = f"{name}.parquet"
         # await minio_service.upload_file(
         #     bucket=self.bucket_name,
@@ -36,17 +35,17 @@ class VersionedDatasetStore:
         #     content_type="application/octet-stream",
         #     metadata=metadata
         # )
-        
+
         object_path = f"s3://{self.bucket_name}/{name}.parquet"
         return object_path
-        
-    async def save_card(self, card_data: Dict[str, Any], is_model_card: bool = False) -> str:
+
+    async def save_card(self, card_data: dict[str, Any], is_model_card: bool = False) -> str:
         """Зберігає Data/Model Card у MinIO."""
         bucket = "model-cards" if is_model_card else self.cards_bucket
         card_id = card_data["id"]
-        
+
         logger.info(f"Збереження картки {card_id} в {bucket}")
-        
+
         # MOCK РЕАЛІЗАЦІЯ
         # content = json.dumps(card_data, indent=2).encode('utf-8')
         # await minio_service.upload_file(
@@ -56,9 +55,9 @@ class VersionedDatasetStore:
         #     length=len(content),
         #     content_type="application/json"
         # )
-        
+
         return f"s3://{bucket}/{card_id}.json"
-        
+
     async def load_dataset(self, path: str) -> pd.DataFrame:
         """Завантажує датасет з MinIO."""
         logger.info(f"Завантаження датасету {path}")

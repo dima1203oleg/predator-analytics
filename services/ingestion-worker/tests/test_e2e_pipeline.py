@@ -5,13 +5,8 @@
 
 from __future__ import annotations
 
-import asyncio
-import hashlib
 import io
-import json
 import os
-import tempfile
-from datetime import UTC, datetime
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -397,7 +392,7 @@ class TestFullPipeline:
             "UA10002025/000001,2025-01-15,00123456,Товар А,1001000000,15000\n"
             "UA10002025/000002,2025-01-16,BAD,Товар Б,7202000000,25000\n"
             "UA10002025/000003,2025-01-17,00345678,Товар В,2905000000,35000\n"
-        ).encode("utf-8")
+        ).encode()
 
         with patch("app.pipelines.file_ingestion.PostgresSink") as MockPg, \
              patch("app.pipelines.file_ingestion.Neo4jSink") as MockNeo, \

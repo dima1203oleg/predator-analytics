@@ -12,7 +12,7 @@ import logging
 import os
 import re
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 from sqlalchemy import text
 
@@ -187,17 +187,17 @@ class AutonomousSovereignAuditEngine:
                     if file.endswith((".ts", ".tsx", ".css", ".json")):
                         filepath = os.path.join(root, file)
                         try:
-                            with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
+                            with open(filepath, encoding="utf-8", errors="ignore") as f:
                                 content = f.read()
-                                
+
                                 # Пошук російських літер
                                 if ru_letters.search(content) and "locales/en" not in filepath:
                                     results["untranslated_ru"].append(filepath)
-                                
+
                                 # Пошук моків
                                 if mock_pattern.search(content):
                                     results["mocks_detected"].append(filepath)
-                                
+
                                 # Пошук мертвих кнопок
                                 if dead_btn_pattern.search(content):
                                     results["dead_buttons"].append(filepath)
@@ -211,7 +211,7 @@ class AutonomousSovereignAuditEngine:
                     if file.endswith(".py"):
                         filepath = os.path.join(root, file)
                         try:
-                            with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
+                            with open(filepath, encoding="utf-8", errors="ignore") as f:
                                 content = f.read()
                                 if worm_violation_pattern.search(content):
                                     results["worm_violations"].append(filepath)
@@ -229,7 +229,7 @@ class AutonomousSovereignAuditEngine:
         # Перевірка наявності cyberpunk та hexagonal топології
         hex_found = scan["hexagonal_layouts_found"]
         styles_ok = scan["cyberpunk_styles_found"]
-        
+
         # Перевірка антифлікер статусу
         anti_flicker = "STABLE"
         if len(scan["mocks_detected"]) > 15:
@@ -423,7 +423,7 @@ class AutonomousSovereignAuditEngine:
     async def _audit_localization(self, scan: dict[str, Any]) -> dict[str, Any]:
         """Площина 8: Localization Governance Layer (100% українська мова)."""
         ru_violations = len(scan["untranslated_ru"])
-        
+
         # Zero-tolerance: якщо є російські тексти — FAIL
         status = "OK"
         if ru_violations > 0:
@@ -535,7 +535,6 @@ class AutonomousSovereignAuditEngine:
 
     async def _generate_certification_artifacts(self, audit_data: dict[str, Any], scan: dict[str, Any]) -> None:
         """Автоматично генерує 10 розширених звітів сертифікації у форматі Markdown."""
-        
         # 1. Forensic Audit Report
         await self._write_report(
             "forensic_audit_report.md",
@@ -719,7 +718,7 @@ graph TD
         await self._write_report(
             "executive_production_readiness_summary.md",
             "⭐ Executive Production Readiness Summary",
-            f"""### Стратегічне резюме готовності до експлуатації платформи «PREDATOR ELITE»
+            """### Стратегічне резюме готовності до експлуатації платформи «PREDATOR ELITE»
 
 > [!IMPORTANT]
 > **Реліз:** `v56.5-ELITE`

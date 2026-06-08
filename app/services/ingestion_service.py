@@ -1,11 +1,11 @@
-import io
-import logging
-import json
 import hashlib
-import redis.asyncio as aioredis
+import io
+import json
+import logging
 from typing import Any
 
 import pandas as pd
+import redis.asyncio as aioredis
 
 from app.services.embedding_service import get_embedding_service
 from app.services.indexing_service import indexing_service
@@ -51,7 +51,7 @@ class IngestionService:
         """Perform entity resolution and fetch registry data."""
         unique_ueids = set()
         cache = aioredis.from_url("redis://localhost:6379")
-        
+
         for i, record in enumerate(records):
             # Try to extract company name and edrpou from common column names
             name = str(record.get("company_name") or record.get("name") or record.get("declarant_name") or "Unknown Entity")

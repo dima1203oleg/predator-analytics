@@ -1,7 +1,9 @@
 import json
 import logging
-from typing import Any, Optional
+from typing import Any
+
 import redis.asyncio as redis
+
 from app.config import get_settings
 
 settings = get_settings()
@@ -11,7 +13,7 @@ class CacheService:
     """Сервіс для асинхронного кешування (Redis)."""
 
     def __init__(self):
-        self._redis: Optional[redis.Redis] = None
+        self._redis: redis.Redis | None = None
 
     async def connect(self):
         """Підключення до Redis."""
@@ -28,11 +30,11 @@ class CacheService:
                 logger.error(f"❌ Redis connection failed: {e}")
                 self._redis = None
 
-    async def get(self, key: str) -> Optional[Any]:
+    async def get(self, key: str) -> Any | None:
         """Отримати значення з кешу."""
         if not self._redis:
             await self.connect()
-        
+
         if not self._redis:
             return None
 
@@ -47,7 +49,7 @@ class CacheService:
         """Зберегти значення в кеш з TTL (за замовчуванням 1 година)."""
         if not self._redis:
             await self.connect()
-        
+
         if not self._redis:
             return
 
@@ -64,7 +66,7 @@ class CacheService:
         """Видалити ключ з кешу."""
         if not self._redis:
             await self.connect()
-        
+
         if self._redis:
             await self._redis.delete(key)
 

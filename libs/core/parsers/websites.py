@@ -8,13 +8,12 @@
 
 from __future__ import annotations
 
-import logging
 from datetime import datetime
+import logging
 from typing import Any
 
 from bs4 import BeautifulSoup
-
-from libs.core.parsers.base import BaseParser, DataSourceType, ParseResult, ParserConfig
+from libs.core.parsers.base import BaseParser, DataSourceType, ParseResult
 
 logger = logging.getLogger(__name__)
 
@@ -26,17 +25,17 @@ class WebsiteParser(BaseParser):
         """Парсити дані з веб-сайту."""
         try:
             html_content = await self.fetch_data()
-            
+
             if isinstance(html_content, str):
                 soup = BeautifulSoup(html_content, 'html.parser')
                 data = self.extract_data(soup)
             else:
                 data = []
-            
+
             errors = []
-            
+
             logger.info(f"Парсинг веб-сайту з {self.config.source_url}")
-            
+
             return ParseResult(
                 source_type=DataSourceType.WEBSITE,
                 source_url=self.config.source_url,
@@ -44,7 +43,7 @@ class WebsiteParser(BaseParser):
                 parsed_at=datetime.now(),
                 errors=errors,
             )
-            
+
         except Exception as e:
             logger.error(f"Помилка парсингу веб-сайту: {e}")
             return ParseResult(
@@ -63,10 +62,11 @@ class WebsiteParser(BaseParser):
             
         Returns:
             Список даних
+
         """
         # Базова реалізація - витягує заголовки та посилання
         data = []
-        
+
         # Витягти заголовки
         for heading in soup.find_all(['h1', 'h2', 'h3']):
             data.append({
@@ -74,7 +74,7 @@ class WebsiteParser(BaseParser):
                 'text': heading.get_text(strip=True),
                 'tag': heading.name,
             })
-        
+
         # Витягти посилання
         for link in soup.find_all('a', href=True):
             data.append({
@@ -82,7 +82,7 @@ class WebsiteParser(BaseParser):
                 'text': link.get_text(strip=True),
                 'url': link['href'],
             })
-        
+
         return data
 
     async def validate_source(self) -> bool:
@@ -102,10 +102,10 @@ class NewsSiteParser(WebsiteParser):
     def extract_data(self, soup: BeautifulSoup) -> list[dict[str, Any]]:
         """Витягнути новини з сайту."""
         data = []
-        
+
         # TODO: Реалізувати специфічну логіку для кожного сайту
         # Витягує заголовки новин, дати, авторів
-        
+
         for article in soup.find_all('article'):
             title = article.find(['h1', 'h2', 'h3'])
             if title:
@@ -114,7 +114,7 @@ class NewsSiteParser(WebsiteParser):
                     'title': title.get_text(strip=True),
                     'url': article.get('data-url', ''),
                 })
-        
+
         return data
 
 
@@ -124,10 +124,10 @@ class GovernmentSiteParser(WebsiteParser):
     def extract_data(self, soup: BeautifulSoup) -> list[dict[str, Any]]:
         """Витягнути офіційні документи."""
         data = []
-        
+
         # TODO: Реалізувати специфічну логіку для урядових сайтів
         # Витягує документи, нормативні акти, оголошення
-        
+
         for doc in soup.find_all('a', href=True):
             if doc['href'].endswith(('.pdf', '.doc', '.docx')):
                 data.append({
@@ -136,7 +136,7 @@ class GovernmentSiteParser(WebsiteParser):
                     'url': doc['href'],
                     'format': doc['href'].split('.')[-1],
                 })
-        
+
         return data
 
 
@@ -146,14 +146,14 @@ class BusinessSiteParser(WebsiteParser):
     def extract_data(self, soup: BeautifulSoup) -> list[dict[str, Any]]:
         """Витягти бізнес-інформацію."""
         data = []
-        
+
         # TODO: Реалізувати специфічну логіку для бізнес-сайтів
         # Витягує компанії, контакти, продукти
-        
+
         for company in soup.find_all('div', class_=lambda x: x and 'company' in x.lower()):
             data.append({
                 'type': 'company',
                 'name': company.get_text(strip=True),
             })
-        
+
         return data

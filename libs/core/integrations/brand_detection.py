@@ -5,10 +5,9 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 import logging
 import re
-from dataclasses import dataclass
-from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -16,6 +15,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class BrandMatch:
     """Знайдений бренд."""
+
     brand_name: str
     confidence: float
     position: int
@@ -25,6 +25,7 @@ class BrandMatch:
 @dataclass
 class BrandDetectionResult:
     """Результат виявлення брендів."""
+
     detected_brands: list[BrandMatch]
     is_counterfeit: bool
     confidence: float
@@ -87,6 +88,7 @@ class BrandDetector:
             
         Returns:
             Результат виявлення брендів
+
         """
         text_lower = text.lower()
         detected_brands = []
@@ -99,7 +101,7 @@ class BrandDetector:
                 brand_name = match.group()
                 is_verified = self.registry.is_known_brand(brand_name)
                 confidence = 0.9 if is_verified else 0.5
-                
+
                 detected_brands.append(BrandMatch(
                     brand_name=brand_name,
                     confidence=confidence,
@@ -110,13 +112,13 @@ class BrandDetector:
         # Аналіз підозрілих індикаторів
         if "no name" in text_lower or "no-name" in text_lower:
             suspicious_indicators.append("Товар декларується як no-name")
-        
+
         if "generic" in text_lower:
             suspicious_indicators.append("Товар декларується як generic")
-        
+
         if "unbranded" in text_lower:
             suspicious_indicators.append("Товар декларується як unbranded")
-        
+
         # Якщо знайдено бренд але декларується як no-name
         if detected_brands and any("no name" in ind.lower() for ind in suspicious_indicators):
             suspicious_indicators.append("Бренд виявлено але декларується як no-name")
@@ -125,7 +127,7 @@ class BrandDetector:
         overall_confidence = 0.0
         if detected_brands:
             overall_confidence = sum(b.confidence for b in detected_brands) / len(detected_brands)
-        
+
         # Визначення чи це підробка
         is_counterfeit = (
             len(detected_brands) > 0
@@ -158,6 +160,7 @@ class BrandDetectionService:
             
         Returns:
             Результат аналізу
+
         """
         return self.detector.detect_brands(goods_description)
 

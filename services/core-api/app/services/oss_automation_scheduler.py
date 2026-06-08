@@ -1,5 +1,4 @@
-"""
-Планувальник фонових задач на базі APScheduler (Apache License 2.0, opensource).
+"""Планувальник фонових задач на базі APScheduler (Apache License 2.0, opensource).
 
 Додає планові «пульси» автоматизації поверх asyncio-фабрики: синхронізація оркестратора,
 розширювані cron-події без пропрієтарних залежностей.
@@ -11,6 +10,7 @@ from typing import TYPE_CHECKING
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.interval import IntervalTrigger
+
 from predator_common.logging import get_logger
 
 if TYPE_CHECKING:
@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 logger = get_logger("core_api.oss_scheduler")
 
 
-def create_oss_automation_scheduler(app: "FastAPI", interval_minutes: int) -> AsyncIOScheduler:
+def create_oss_automation_scheduler(app: FastAPI, interval_minutes: int) -> AsyncIOScheduler:
     """Створює AsyncIOScheduler із завданнями розширення автоматизації."""
     scheduler = AsyncIOScheduler()
 

@@ -9,9 +9,9 @@
 """
 
 import asyncio
+from dataclasses import dataclass
 import logging
 from typing import Any
-from dataclasses import dataclass
 
 from asyncpg import connect
 import httpx
@@ -22,6 +22,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class SearchResult:
     """Результат пошуку з конкретної БД."""
+
     source: str  # postgresql, clickhouse, opensearch, qdrant, neo4j
     score: float
     data: dict[str, Any]

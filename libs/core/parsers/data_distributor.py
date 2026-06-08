@@ -14,10 +14,9 @@ from __future__ import annotations
 
 import logging
 import os
-from datetime import datetime
 from typing import Any
 
-from libs.core.etl.multi_database_etl import MultiDatabaseETL, DatabaseConfig
+from libs.core.etl.multi_database_etl import DatabaseConfig, MultiDatabaseETL
 from libs.core.parsers.base import ParseResult
 
 logger = logging.getLogger(__name__)
@@ -35,6 +34,7 @@ class DataDistributor:
         
         Args:
             db_session: Сесія бази даних
+
         """
         self.multi_db_etl = MultiDatabaseETL(self.db_config, db_session)
 
@@ -46,6 +46,7 @@ class DataDistributor:
             
         Returns:
             Статистика розподілу
+
         """
         if not self.multi_db_etl:
             logger.error("Multi-database ETL не ініціалізовано")
@@ -77,10 +78,11 @@ class DataDistributor:
             
         Returns:
             Кількість вставлених рядків
+
         """
         if not self.multi_db_etl:
             return 0
-        
+
         return await self.multi_db_etl.import_to_postgresql(data)
 
     async def distribute_to_clickhouse(self, data: dict[str, Any]) -> int:
@@ -91,10 +93,11 @@ class DataDistributor:
             
         Returns:
             Кількість вставлених рядків
+
         """
         if not self.multi_db_etl:
             return 0
-        
+
         return await self.multi_db_etl.import_to_clickhouse(data)
 
     async def distribute_to_opensearch(self, data: dict[str, Any]) -> int:
@@ -105,10 +108,11 @@ class DataDistributor:
             
         Returns:
             Кількість вставлених документів
+
         """
         if not self.multi_db_etl:
             return 0
-        
+
         return await self.multi_db_etl.import_to_opensearch(data)
 
     async def distribute_to_neo4j(self, data: dict[str, Any]) -> tuple[int, int]:
@@ -119,10 +123,11 @@ class DataDistributor:
             
         Returns:
             Кількість вузлів, кількість зв'язків
+
         """
         if not self.multi_db_etl:
             return (0, 0)
-        
+
         return await self.multi_db_etl.import_to_neo4j(data)
 
     async def distribute_to_qdrant(self, data: dict[str, Any]) -> int:
@@ -133,10 +138,11 @@ class DataDistributor:
             
         Returns:
             Кількість вставлених векторів
+
         """
         if not self.multi_db_etl:
             return 0
-        
+
         return await self.multi_db_etl.import_to_qdrant(data)
 
     async def distribute_to_redis(self, data: dict[str, Any]) -> int:
@@ -147,10 +153,11 @@ class DataDistributor:
             
         Returns:
             Кількість вставлених ключів
+
         """
         if not self.multi_db_etl:
             return 0
-        
+
         return await self.multi_db_etl.import_to_redis(data)
 
     async def distribute_to_minio(self, data: dict[str, Any]) -> int:
@@ -161,10 +168,11 @@ class DataDistributor:
             
         Returns:
             Кількість вставлених об'єктів
+
         """
         if not self.multi_db_etl:
             return 0
-        
+
         return await self.multi_db_etl.import_to_minio(data)
 
 
@@ -176,6 +184,7 @@ def get_data_distributor(db_config: DatabaseConfig) -> DataDistributor:
         
     Returns:
         Інстанс розподільника
+
     """
     return DataDistributor(db_config)
 

@@ -1,6 +1,6 @@
 import asyncio
 from datetime import UTC, datetime
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 import uuid
 
 if TYPE_CHECKING:
@@ -106,7 +106,7 @@ class AntigravityOrchestrator:
         """Запуск фонового циклу оркестрації."""
         if app:
             self.app = app
-            
+
         if self._loop_task is None or self._loop_task.done():
             self.status.is_running = True
             self.status.orchestrator_status = "online"
@@ -118,7 +118,7 @@ class AntigravityOrchestrator:
         repo = getattr(app.state, "factory_repo", None)
         if not repo:
             return
-            
+
         try:
             status = await repo.get_improvement()
             if status.is_running:
@@ -127,7 +127,7 @@ class AntigravityOrchestrator:
                     msg = f"[{log.timestamp.strftime('%H:%M:%S')}] 🤖 AGENT({log.agent_type or 'SYSTEM'}): {log.message}"
                     if msg not in status.logs:
                         status.logs.append(msg)
-                
+
                 status.last_update = datetime.now(UTC)
                 await repo.update_improvement(status)
         except Exception as e:
@@ -221,7 +221,7 @@ class AntigravityOrchestrator:
             except Exception as e:
                 logger.error(f"Red Team analysis failed: {e}")
                 task.progress += 15
-        
+
         # Випадковий прогрес 5-20%
         import random
         inc = random.randint(5, 20)

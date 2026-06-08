@@ -472,7 +472,7 @@ class HealthCheckService:
             }
         try:
             return await asyncio.wait_for(check_func(), timeout=timeout)
-        except asyncio.TimeoutError:
+        except TimeoutError:
             return {
                 "status": "timeout",
                 "duration_seconds": timeout,

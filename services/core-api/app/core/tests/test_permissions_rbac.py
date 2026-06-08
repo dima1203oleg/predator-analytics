@@ -1,5 +1,4 @@
-"""
-RBAC Permissions Tests — Тестування прав доступу на API endpoints згідно з RBAC v61.0
+"""RBAC Permissions Tests — Тестування прав доступу на API endpoints згідно з RBAC v61.0
 
 Сценарії тестування:
 1. PROMO роль: базовий доступ (READ_CORP_DATA, RUN_ANALYTICS)
@@ -7,9 +6,7 @@ RBAC Permissions Tests — Тестування прав доступу на API
 3. VIP роль: повний доступ + чутливі дані (READ_SENSITIVE_DATA, READ_RAW_DATA)
 4. ADMIN роль: тільки системне управління (MANAGE_USERS, MANAGE_INFRASTRUCTURE, VIEW_LOGS)
 """
-import pytest
-from app.core.permissions import Role, Permission, ROLE_PERMISSIONS
-from app.dependencies import PermissionChecker
+from app.core.permissions import ROLE_PERMISSIONS, Permission, Role
 
 
 class TestRolePermissions:
@@ -18,10 +15,10 @@ class TestRolePermissions:
     def test_promo_role_permissions(self):
         """PROMO роль: базовий доступ."""
         permissions = ROLE_PERMISSIONS[Role.PROMO]
-        
+
         assert Permission.READ_CORP_DATA in permissions
         assert Permission.RUN_ANALYTICS in permissions
-        
+
         # PROMO не має доступу до:
         assert Permission.READ_COMPANIES not in permissions
         assert Permission.READ_CUSTOMS not in permissions
@@ -35,7 +32,7 @@ class TestRolePermissions:
     def test_pro_role_permissions(self):
         """PRO роль: повний аналітичний доступ."""
         permissions = ROLE_PERMISSIONS[Role.PRO]
-        
+
         assert Permission.READ_CORP_DATA in permissions
         assert Permission.READ_COMPANIES in permissions
         assert Permission.READ_CUSTOMS in permissions
@@ -43,7 +40,7 @@ class TestRolePermissions:
         assert Permission.RUN_ANALYTICS in permissions
         assert Permission.RUN_GRAPH in permissions
         assert Permission.VIEW_WARROOM in permissions
-        
+
         # PRO не має доступу до:
         assert Permission.READ_SENSITIVE_DATA not in permissions
         assert Permission.READ_RAW_DATA not in permissions
@@ -52,7 +49,7 @@ class TestRolePermissions:
     def test_vip_role_permissions(self):
         """VIP роль: повний доступ + чутливі дані."""
         permissions = ROLE_PERMISSIONS[Role.VIP]
-        
+
         assert Permission.READ_CORP_DATA in permissions
         assert Permission.READ_COMPANIES in permissions
         assert Permission.READ_CUSTOMS in permissions
@@ -62,7 +59,7 @@ class TestRolePermissions:
         assert Permission.VIEW_WARROOM in permissions
         assert Permission.READ_SENSITIVE_DATA in permissions
         assert Permission.READ_RAW_DATA in permissions
-        
+
         # VIP не має доступу до системного управління:
         assert Permission.MANAGE_USERS not in permissions
         assert Permission.MANAGE_INFRASTRUCTURE not in permissions
@@ -70,11 +67,11 @@ class TestRolePermissions:
     def test_admin_role_permissions(self):
         """ADMIN роль: тільки системне управління."""
         permissions = ROLE_PERMISSIONS[Role.ADMIN]
-        
+
         assert Permission.MANAGE_USERS in permissions
         assert Permission.MANAGE_INFRASTRUCTURE in permissions
         assert Permission.VIEW_LOGS in permissions
-        
+
         # ADMIN не має доступу до бізнес-даних:
         assert Permission.READ_CORP_DATA not in permissions
         assert Permission.READ_COMPANIES not in permissions
@@ -114,28 +111,28 @@ class TestLegacyRoleAliases:
         """Легасі-аліас analyst → pro."""
         permissions = ROLE_PERMISSIONS[Role.ANALYST]
         pro_permissions = ROLE_PERMISSIONS[Role.PRO]
-        
+
         assert permissions == pro_permissions
 
     def test_business_alias_maps_to_promo(self):
         """Легасі-аліас business → promo."""
         permissions = ROLE_PERMISSIONS[Role.BUSINESS]
         promo_permissions = ROLE_PERMISSIONS[Role.PROMO]
-        
+
         assert permissions == promo_permissions
 
     def test_guest_alias_maps_to_promo(self):
         """Легасі-аліас guest → promo."""
         permissions = ROLE_PERMISSIONS[Role.GUEST]
         promo_permissions = ROLE_PERMISSIONS[Role.PROMO]
-        
+
         assert permissions == promo_permissions
 
     def test_bank_alias_maps_to_pro(self):
         """Легасі-аліас bank → pro."""
         permissions = ROLE_PERMISSIONS[Role.BANK]
         pro_permissions = ROLE_PERMISSIONS[Role.PRO]
-        
+
         # Bank має трохи більше прав, ніж PRO
         assert Permission.READ_CORP_DATA in permissions
         assert Permission.READ_COMPANIES in permissions
@@ -145,7 +142,7 @@ class TestLegacyRoleAliases:
         """Легасі-аліас gov → vip."""
         permissions = ROLE_PERMISSIONS[Role.GOV]
         vip_permissions = ROLE_PERMISSIONS[Role.VIP]
-        
+
         # Gov має майже ті ж права, що VIP, але без чутливих даних
         assert Permission.READ_CORP_DATA in permissions
         assert Permission.READ_COMPANIES in permissions
@@ -162,10 +159,10 @@ class TestPermissionIsolation:
         """PROMO не може доступатися до PRO-функцій."""
         promo_permissions = ROLE_PERMISSIONS[Role.PROMO]
         pro_permissions = ROLE_PERMISSIONS[Role.PRO]
-        
+
         # PRO має права, яких немає у PROMO
         pro_only_permissions = set(pro_permissions) - set(promo_permissions)
-        
+
         assert len(pro_only_permissions) > 0
         assert Permission.READ_COMPANIES in pro_only_permissions
         assert Permission.READ_CUSTOMS in pro_only_permissions
@@ -176,10 +173,10 @@ class TestPermissionIsolation:
         """PRO не може доступатися до VIP-функцій."""
         pro_permissions = ROLE_PERMISSIONS[Role.PRO]
         vip_permissions = ROLE_PERMISSIONS[Role.VIP]
-        
+
         # VIP має права, яких немає у PRO
         vip_only_permissions = set(vip_permissions) - set(pro_permissions)
-        
+
         assert len(vip_only_permissions) > 0
         assert Permission.READ_SENSITIVE_DATA in vip_only_permissions
         assert Permission.READ_RAW_DATA in vip_only_permissions
@@ -188,15 +185,15 @@ class TestPermissionIsolation:
         """ADMIN не може доступатися до бізнес-даних."""
         admin_permissions = ROLE_PERMISSIONS[Role.ADMIN]
         business_permissions = ROLE_PERMISSIONS[Role.PRO]
-        
+
         # ADMIN має тільки системні права
         admin_only_permissions = set(admin_permissions) - set(business_permissions)
-        
+
         assert len(admin_only_permissions) > 0
         assert Permission.MANAGE_USERS in admin_only_permissions
         assert Permission.MANAGE_INFRASTRUCTURE in admin_only_permissions
         assert Permission.VIEW_LOGS in admin_only_permissions
-        
+
         # ADMIN не має бізнес-прав
         assert Permission.READ_CORP_DATA not in admin_permissions
         assert Permission.READ_COMPANIES not in admin_permissions
@@ -210,7 +207,7 @@ class TestPermissionHierarchy:
         """Ієрархія: PROMO < PRO."""
         promo_permissions = set(ROLE_PERMISSIONS[Role.PROMO])
         pro_permissions = set(ROLE_PERMISSIONS[Role.PRO])
-        
+
         # PRO має всі права PROMO + додаткові
         assert promo_permissions.issubset(pro_permissions)
         assert len(pro_permissions) > len(promo_permissions)
@@ -219,7 +216,7 @@ class TestPermissionHierarchy:
         """Ієрархія: PRO < VIP."""
         pro_permissions = set(ROLE_PERMISSIONS[Role.PRO])
         vip_permissions = set(ROLE_PERMISSIONS[Role.VIP])
-        
+
         # VIP має всі права PRO + додаткові
         assert pro_permissions.issubset(vip_permissions)
         assert len(vip_permissions) > len(pro_permissions)
@@ -228,10 +225,10 @@ class TestPermissionHierarchy:
         """ADMIN - окрема ієрархія (системне управління)."""
         admin_permissions = set(ROLE_PERMISSIONS[Role.ADMIN])
         business_permissions = set(ROLE_PERMISSIONS[Role.VIP])
-        
+
         # ADMIN не має спільних прав з бізнес-ролями
         common_permissions = admin_permissions & business_permissions
-        
+
         assert len(common_permissions) == 0
 
 
@@ -254,7 +251,7 @@ class TestPermissionEnum:
             Permission.MANAGE_INFRASTRUCTURE,
             Permission.VIEW_LOGS,
         ]
-        
+
         # Всі права повинні бути у enum
         for perm in required_permissions:
             assert isinstance(perm, Permission)
@@ -277,7 +274,7 @@ class TestRoleEnum:
             Role.GOV,
             Role.JOURNALIST,
         ]
-        
+
         # Всі ролі повинні бути у enum
         for role in required_roles:
             assert isinstance(role, Role)

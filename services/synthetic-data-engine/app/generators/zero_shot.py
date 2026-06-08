@@ -1,10 +1,11 @@
 """Zero-Shot генератор для різних доменів."""
 
-import pandas as pd
-from typing import Any, Dict, Optional
-import structlog
+from typing import Any
+
 from faker import Faker
+import pandas as pd
 from services.synthetic_data_engine.app.generators.base import BaseSyntheticGenerator
+import structlog
 
 logger = structlog.get_logger("sde.generators.zeroshot")
 
@@ -35,32 +36,32 @@ DOMAIN_TEMPLATES = {
 class ZeroShotDomainGenerator(BaseSyntheticGenerator):
     """Генерація з нуля на основі конфігурації домену."""
 
-    def __init__(self, domain: str, config: Dict[str, Any] = None):
+    def __init__(self, domain: str, config: dict[str, Any] = None):
         super().__init__(config)
         self.domain = domain.lower()
         self.fake = Faker('uk_UA')
-        
+
         if self.domain not in DOMAIN_TEMPLATES and "custom_schema" not in (config or {}):
             raise ValueError(f"Unknown domain '{self.domain}' and no custom schema provided.")
-            
+
         self.schema = DOMAIN_TEMPLATES.get(self.domain, (config or {}).get("custom_schema", {}))
         self.is_fitted = True # Не потребує даних для навчання
 
-    def fit(self, data: pd.DataFrame, metadata: Optional[Dict[str, Any]] = None) -> None:
+    def fit(self, data: pd.DataFrame, metadata: dict[str, Any] | None = None) -> None:
         """Zero-Shot не потребує fit."""
         pass
 
     def sample(self, num_rows: int) -> pd.DataFrame:
         """Генерація за схемою."""
         logger.info(f"Zero-Shot генерація для домену {self.domain} ({num_rows} рядків)")
-        
+
         data = []
         for _ in range(num_rows):
             row = {}
             for col, faker_method in self.schema.items():
                 row[col] = self._generate_field(faker_method)
             data.append(row)
-            
+
         return pd.DataFrame(data)
 
     def _generate_field(self, method_spec: str) -> Any:
@@ -89,6 +90,6 @@ class ZeroShotDomainGenerator(BaseSyntheticGenerator):
         else:
             method_name = method_spec
             kwargs = {}
-            
+
         method = getattr(self.fake, method_name)
         return method(**kwargs)

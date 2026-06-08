@@ -8,10 +8,10 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
+from datetime import UTC, datetime
 import json
 import logging
-from dataclasses import dataclass
-from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any
 
 from app.core.settings import get_settings
@@ -95,13 +95,14 @@ class KafkaMessage:
 
     def __post_init__(self) -> None:
         if not self.timestamp:
-            self.timestamp = datetime.now(timezone.utc).isoformat()
+            self.timestamp = datetime.now(UTC).isoformat()
 
     def to_avro_bytes(self) -> bytes:
         """Серіалізує в Avro (якщо доступно)."""
         try:
-            import fastavro
             from io import BytesIO
+
+            import fastavro
 
             schema = PREDATOR_AVRO_SCHEMAS.get(self.topic)
             if schema is None:
@@ -134,7 +135,7 @@ class DeadLetterEntry:
     last_failure: str = ""
 
     def __post_init__(self) -> None:
-        now = datetime.now(timezone.utc).isoformat()
+        now = datetime.now(UTC).isoformat()
         if not self.first_failure:
             self.first_failure = now
         self.last_failure = now

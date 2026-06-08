@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
+"""Масова заміна Loader2 → BrandLoaderFallback v65.1-ELITE
 """
-Масова заміна Loader2 → BrandLoaderFallback v65.1-ELITE
-"""
-import re
 from pathlib import Path
+import re
 
 UI_DIR = Path('/Users/Shared/Predator_60/apps/predator-analytics-ui/src')
 

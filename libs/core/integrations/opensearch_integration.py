@@ -5,13 +5,12 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 import logging
 import os
-from dataclasses import dataclass
 from typing import Any
 
 import httpx
-import orjson
 
 logger = logging.getLogger(__name__)
 
@@ -19,6 +18,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class OpenSearchConfig:
     """Конфігурація OpenSearch."""
+
     url: str = "http://localhost:9200"
     index: str = "declarations"
     username: str | None = None
@@ -86,7 +86,7 @@ class OpenSearchIntegration:
                 }
             }
         }
-        
+
         try:
             response = await self.client.put(
                 f"/{self.config.index}",
@@ -111,6 +111,7 @@ class OpenSearchIntegration:
             
         Returns:
             Кількість індексованих документів
+
         """
         try:
             response = await self.client.put(
@@ -118,10 +119,10 @@ class OpenSearchIntegration:
                 json=data
             )
             response.raise_for_status()
-            
+
             logger.debug(f"Документ індексовано в OpenSearch: {doc_id}")
             return 1
-            
+
         except Exception as e:
             logger.error(f"Помилка індексування документа: {e}")
             return 0
@@ -134,15 +135,16 @@ class OpenSearchIntegration:
             
         Returns:
             Кількість індексованих документів
+
         """
         if not documents:
             return 0
-        
+
         indexed_count = 0
-        
+
         for doc_id, data in documents:
             indexed_count += await self.index_document(doc_id, data)
-        
+
         logger.info(f"Індексовано {indexed_count} документів в OpenSearch")
         return indexed_count
 
@@ -172,6 +174,7 @@ class OpenSearchIntegration:
             
         Returns:
             Список документів
+
         """
         search_body = {
             "query": {
@@ -193,7 +196,7 @@ class OpenSearchIntegration:
             },
             "size": limit
         }
-        
+
         # Додавання фільтрів по даті
         if start_date or end_date:
             range_filter = {"range": {"declaration_date": {}}}
@@ -202,23 +205,23 @@ class OpenSearchIntegration:
             if end_date:
                 range_filter["range"]["declaration_date"]["lte"] = end_date
             search_body["query"]["bool"]["must"].append(range_filter)
-        
+
         try:
             response = await self.client.post(
                 f"/{self.config.index}/_search",
                 json=search_body
             )
             response.raise_for_status()
-            
+
             result = response.json()
             hits = result.get("hits", {}).get("hits", [])
-            
+
             documents = []
             for hit in hits:
                 documents.append(hit["_source"])
-            
+
             return documents
-            
+
         except Exception as e:
             logger.error(f"Помилка пошуку: {e}")
             return []
@@ -231,14 +234,15 @@ class OpenSearchIntegration:
             
         Returns:
             True якщо успішно
+
         """
         try:
             response = await self.client.delete(f"/{self.config.index}/_doc/{doc_id}")
             response.raise_for_status()
-            
+
             logger.debug(f"Документ видалено з OpenSearch: {doc_id}")
             return True
-            
+
         except Exception as e:
             logger.error(f"Помилка видалення документа: {e}")
             return False

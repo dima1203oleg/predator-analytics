@@ -1,22 +1,17 @@
-"""
-🦅 PREDATOR Analytics v63.0-ELITE: Kaggle Standalone Backend
+"""🦅 PREDATOR Analytics v63.0-ELITE: Kaggle Standalone Backend
 Оптимізовано для CPU-Only оточення з максимальним RAM.
 """
 
-import asyncio
-import threading
-import time
-import json
-import psutil
+from datetime import UTC, datetime
 import os
 import subprocess
-from datetime import datetime, UTC
-from typing import Any, List, Optional
-from uuid import uuid4
+import threading
+import time
 
-from fastapi import FastAPI, BackgroundTasks, APIRouter, HTTPException, Depends, Request
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+import psutil
+
 try:
     from qdrant_client import QdrantClient
 except ModuleNotFoundError:
@@ -180,17 +175,17 @@ def run_zrok_tunnel(token: str):
     if not os.path.exists("./zrok"):
         print("📦 Завантаження zrok...")
         subprocess.run("wget -q https://github.com/openziti/zrok/releases/download/v0.4.42/zrok_0.4.42_linux_amd64.tar.gz && tar -xzf zrok_*.tar.gz && chmod +x zrok", shell=True)
-    
+
     # Активація
     subprocess.run(f"./zrok enable {token}", shell=True)
-    
+
     # Запуск
     print("🚀 Запуск тунелю zrok...")
     process = subprocess.Popen(
         ["./zrok", "share", "public", "http://localhost:8000", "--headless"],
         stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
     )
-    
+
     for line in process.stdout:
         if "access your share at" in line:
             url = line.split("access your share at")[-1].strip()
@@ -203,8 +198,8 @@ if __name__ == "__main__":
     # Авто-старт тунелю якщо є токен у ENV
     token = os.getenv("ZROK_TOKEN", "1eeje4um7yvA")
     threading.Thread(target=run_zrok_tunnel, args=(token,), daemon=True).start()
-    
+
     # Авто-старт OODA
     ooda.start()
-    
+
     uvicorn.run(app, host="0.0.0.0", port=8000)

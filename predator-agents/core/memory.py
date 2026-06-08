@@ -1,14 +1,16 @@
-"""
-Predator Agents OS — Agent Memory
+"""Predator Agents OS — Agent Memory
 Система довгострокової пам'яті на базі Qdrant.
 """
 
 import os
+from typing import Any
+import uuid
+
 from qdrant_client import QdrantClient
 from qdrant_client.http import models
-from typing import List, Dict, Any, Optional
-import uuid
+
 from core.llm import LLMManager
+
 
 class AgentMemory:
     def __init__(self, collection_name: str = "agent_memories"):
@@ -20,8 +22,7 @@ class AgentMemory:
         self._ensure_collection()
 
     def _ensure_collection(self):
-        """
-        Перевіряє наявність колекції, створює її за потреби.
+        """Перевіряє наявність колекції, створює її за потреби.
         """
         try:
             collections = self.client.get_collections().collections
@@ -34,12 +35,11 @@ class AgentMemory:
         except Exception as e:
             print(f"Помилка ініціалізації Qdrant: {e}")
 
-    async def add_memory(self, text: str, metadata: Dict[str, Any] = None):
-        """
-        Додає новий факт у пам'ять.
+    async def add_memory(self, text: str, metadata: dict[str, Any] = None):
+        """Додає новий факт у пам'ять.
         """
         vector = self.embeddings.embed_query(text)
-        
+
         self.client.upsert(
             collection_name=self.collection_name,
             points=[
@@ -51,16 +51,15 @@ class AgentMemory:
             ]
         )
 
-    async def query_memories(self, query_text: str, limit: int = 5) -> List[Dict[str, Any]]:
-        """
-        Шукає схожі факти в пам'яті.
+    async def query_memories(self, query_text: str, limit: int = 5) -> list[dict[str, Any]]:
+        """Шукає схожі факти в пам'яті.
         """
         vector = self.embeddings.embed_query(query_text)
-        
+
         results = self.client.search(
             collection_name=self.collection_name,
             query_vector=vector,
             limit=limit
         )
-        
+
         return [hit.payload for hit in results]

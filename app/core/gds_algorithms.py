@@ -8,14 +8,11 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 import logging
-from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 from app.core.settings import get_settings
-
-if TYPE_CHECKING:
-    from collections.abc import Sequence
 
 settings = get_settings()
 logger = logging.getLogger(__name__)

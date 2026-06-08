@@ -8,11 +8,10 @@
 
 from __future__ import annotations
 
-import logging
 from datetime import datetime
-from typing import Any
+import logging
 
-from libs.core.parsers.base import BaseParser, DataSourceType, ParseResult, ParserConfig
+from libs.core.parsers.base import BaseParser, DataSourceType, ParseResult
 
 logger = logging.getLogger(__name__)
 
@@ -25,12 +24,12 @@ class TelegramChannelParser(BaseParser):
         try:
             # TODO: Інтегрувати з Telegram Bot API
             # Потребує bot token та канал username
-            
+
             data = []
             errors = []
-            
+
             logger.info(f"Парсинг Telegram каналу з {self.config.source_url}")
-            
+
             return ParseResult(
                 source_type=DataSourceType.TELEGRAM,
                 source_url=self.config.source_url,
@@ -38,7 +37,7 @@ class TelegramChannelParser(BaseParser):
                 parsed_at=datetime.now(),
                 errors=errors,
             )
-            
+
         except Exception as e:
             logger.error(f"Помилка парсингу Telegram каналу: {e}")
             return ParseResult(
@@ -53,7 +52,7 @@ class TelegramChannelParser(BaseParser):
         """Перевірити доступність Telegram каналу."""
         try:
             # TODO: Перевірити доступність через Telegram Bot API
-            logger.warning(f"Перевірка Telegram каналу потребує bot token")
+            logger.warning("Перевірка Telegram каналу потребує bot token")
             return False
         except Exception as e:
             logger.error(f"Telegram канал недоступний: {e}")
@@ -68,12 +67,12 @@ class TelegramGroupParser(BaseParser):
         try:
             # TODO: Інтегрувати з Telegram Bot API
             # Моніторинг обговорень у групах
-            
+
             data = []
             errors = []
-            
+
             logger.info(f"Парсинг Telegram групи з {self.config.source_url}")
-            
+
             return ParseResult(
                 source_type=DataSourceType.TELEGRAM,
                 source_url=self.config.source_url,
@@ -81,7 +80,7 @@ class TelegramGroupParser(BaseParser):
                 parsed_at=datetime.now(),
                 errors=errors,
             )
-            
+
         except Exception as e:
             logger.error(f"Помилка парсингу Telegram групи: {e}")
             return ParseResult(
@@ -96,7 +95,7 @@ class TelegramGroupParser(BaseParser):
         """Перевірити доступність Telegram групи."""
         try:
             # TODO: Перевірити доступність через Telegram Bot API
-            logger.warning(f"Перевірка Telegram групи потребує bot token")
+            logger.warning("Перевірка Telegram групи потребує bot token")
             return False
         except Exception as e:
             logger.error(f"Telegram група недоступна: {e}")

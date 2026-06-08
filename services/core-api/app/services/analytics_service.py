@@ -2,10 +2,10 @@
 
 Цей сервіс відповідає за швидку агрегацію великих масивів даних для Dashboard та Analytics.
 """
-from typing import Any, Dict, List
-from datetime import datetime, timedelta
-from app.database import get_clickhouse_client
 import logging
+from typing import Any
+
+from app.database import get_clickhouse_client
 
 logger = logging.getLogger(__name__)
 
@@ -15,7 +15,7 @@ class AnalyticsService:
     def __init__(self):
         self.client = get_clickhouse_client()
 
-    def get_dashboard_stats(self, tenant_id: str) -> Dict[str, Any]:
+    def get_dashboard_stats(self, tenant_id: str) -> dict[str, Any]:
         """Отримати агреговану статистику для дашборду."""
         try:
             # 1. Загальна сума та кількість декларацій
@@ -29,12 +29,12 @@ class AnalyticsService:
                 WHERE tenant_id = '{tenant_id}'
             """
             stats_result = self.client.query(stats_query)
-            
+
             if not stats_result.result_rows:
                 return {}
 
             row = stats_result.result_rows[0]
-            
+
             # 2. Топ категорій (УКТЗЕД)
             categories_query = f"""
                 SELECT 
@@ -77,7 +77,7 @@ class AnalyticsService:
             logger.error(f"Error fetching ClickHouse stats: {e}")
             return {}
 
-    def get_anomaly_trends(self, tenant_id: str, days: int = 30) -> Dict[str, Any]:
+    def get_anomaly_trends(self, tenant_id: str, days: int = 30) -> dict[str, Any]:
         """Отримати тренди системних подій (як проксі для аномалій)."""
         try:
             query = f"""
@@ -92,7 +92,7 @@ class AnalyticsService:
                 ORDER BY date ASC
             """
             result = self.client.query(query)
-            
+
             daily_counts = []
             for row in result.result_rows:
                 daily_counts.append({
@@ -100,7 +100,7 @@ class AnalyticsService:
                     "type": row[1],
                     "count": row[2]
                 })
-                
+
             return {
                 "daily_counts": daily_counts
             }

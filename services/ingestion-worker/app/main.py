@@ -21,8 +21,8 @@ from app.fusion_engine import ДвигунЗлиттяДаних
 from app.health import set_health_status, start_health_server, stop_health_server
 from app.pipelines.file_ingestion import FileIngestionPipeline
 from app.pipelines.omniverse_pipeline import OmniversePipeline
-from app.services.omniverse_watchdog import OmniverseWatchdog
 from app.registries.ua_registries import УкраїнськийРеєстр
+from app.services.omniverse_watchdog import OmniverseWatchdog
 from app.sinks.postgres_sink import PostgresSink
 from predator_common.logging import get_logger
 
@@ -175,7 +175,7 @@ async def process_omniverse_ingestion(
 
     try:
         await postgres_sink.update_job_progress(job_id=job_id, status="processing", progress=10)
-        
+
         pipeline = OmniversePipeline(
             job_id=job_id,
             tenant_id=tenant_id,
@@ -183,16 +183,16 @@ async def process_omniverse_ingestion(
             s3_path=s3_path,
             schema_definition=schema
         )
-        
+
         result = await pipeline.run()
-        
+
         await postgres_sink.update_job_progress(
             job_id=job_id,
             status="completed",
             progress=100,
             records_processed=result.get("total_rows", 0)
         )
-        
+
         logger.info("omniverse.success", job_id=job_id, rows=result.get("total_rows"))
 
     except Exception as e:
@@ -397,7 +397,7 @@ async def main() -> None:
         loop.add_signal_handler(sig, stop_event.set)
 
     consumer_task = asyncio.create_task(consume())
-    
+
     # Запускаємо OMNIVERSE Watchdog
     watchdog = OmniverseWatchdog(interval_seconds=300)
     watchdog_task = asyncio.create_task(watchdog.start())

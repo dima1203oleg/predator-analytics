@@ -13,16 +13,13 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 import logging
 import subprocess
-from dataclasses import dataclass
-from datetime import datetime
-from pathlib import Path
 from typing import Any
 
-import httpx
-import orjson
 from clickhouse_connect import get_client as get_clickhouse_client
+import httpx
 from neo4j import GraphDatabase
 from qdrant_client import QdrantClient
 from redis import Redis
@@ -34,6 +31,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class DatabaseConfig:
     """Конфігурація бази даних."""
+
     postgres_url: str
     clickhouse_host: str
     clickhouse_port: int
@@ -59,6 +57,7 @@ class DatabaseConfig:
 @dataclass
 class ETLResult:
     """Результат ETL процесу."""
+
     postgres_rows: int = 0
     clickhouse_rows: int = 0
     opensearch_docs: int = 0
@@ -87,11 +86,11 @@ class MultiDatabaseETL:
             # TODO: Реалізувати вставку в PostgreSQL
             # await self.db_session.execute(...)
             # await self.db_session.commit()
-            
+
             self.result.postgres_rows += 1
             logger.info(f"Імпортовано в PostgreSQL: {self.result.postgres_rows}")
             return 1
-            
+
         except Exception as e:
             error_msg = f"Помилка імпорту в PostgreSQL: {e}"
             logger.error(error_msg)
@@ -111,14 +110,14 @@ class MultiDatabaseETL:
                 password=self.config.clickhouse_password,
                 database=self.config.clickhouse_database,
             )
-            
+
             # TODO: Реалізувати вставку в ClickHouse
             # client.insert('declarations', [...])
-            
+
             self.result.clickhouse_rows += 1
             logger.info(f"Імпортовано в ClickHouse: {self.result.clickhouse_rows}")
             return 1
-            
+
         except Exception as e:
             error_msg = f"Помилка імпорту в ClickHouse: {e}"
             logger.error(error_msg)
@@ -137,11 +136,11 @@ class MultiDatabaseETL:
                 #     f"{self.config.opensearch_url}/{self.config.opensearch_index}/_doc/{doc_id}",
                 #     json=data
                 # )
-                
+
                 self.result.opensearch_docs += 1
                 logger.info(f"Імпортовано в OpenSearch: {self.result.opensearch_docs}")
                 return 1
-                
+
         except Exception as e:
             error_msg = f"Помилка імпорту в OpenSearch: {e}"
             logger.error(error_msg)
@@ -158,18 +157,18 @@ class MultiDatabaseETL:
                 self.config.neo4j_uri,
                 auth=(self.config.neo4j_user, self.config.neo4j_password)
             )
-            
+
             with driver.session() as session:
                 # TODO: Реалізувати вставку в Neo4j
                 # session.run("CREATE (c:Company {ueid: $ueid})", ueid=data['importer_ueid'])
-                
+
                 self.result.neo4j_nodes += 1
                 self.result.neo4j_relationships += 1
                 logger.info(f"Імпортовано в Neo4j: {self.result.neo4j_nodes} nodes, {self.result.neo4j_relationships} relationships")
-                
+
             driver.close()
             return (1, 1)
-            
+
         except Exception as e:
             error_msg = f"Помилка імпорту в Neo4j: {e}"
             logger.error(error_msg)
@@ -186,17 +185,17 @@ class MultiDatabaseETL:
                 url=self.config.qdrant_url,
                 api_key=self.config.qdrant_api_key,
             )
-            
+
             # TODO: Реалізувати вставку в Qdrant
             # client.upsert(
             #     collection_name="declarations",
             #     points=[...]
             # )
-            
+
             self.result.qdrant_vectors += 1
             logger.info(f"Імпортовано в Qdrant: {self.result.qdrant_vectors}")
             return 1
-            
+
         except Exception as e:
             error_msg = f"Помилка імпорту в Qdrant: {e}"
             logger.error(error_msg)
@@ -215,14 +214,14 @@ class MultiDatabaseETL:
                 password=self.config.redis_password,
                 decode_responses=True
             )
-            
+
             # TODO: Реалізувати вставку в Redis
             # redis_client.set(f"declaration:{data['id']}", orjson.dumps(data))
-            
+
             self.result.redis_keys += 1
             logger.info(f"Імпортовано в Redis: {self.result.redis_keys}")
             return 1
-            
+
         except Exception as e:
             error_msg = f"Помилка імпорту в Redis: {e}"
             logger.error(error_msg)
@@ -236,14 +235,14 @@ class MultiDatabaseETL:
         """
         try:
             from minio import Minio
-            
+
             client = Minio(
                 self.config.minio_endpoint,
                 access_key=self.config.minio_access_key,
                 secret_key=self.config.minio_secret_key,
                 secure=False
             )
-            
+
             # TODO: Реалізувати вставку в MinIO
             # client.put_object(
             #     self.config.minio_bucket,
@@ -251,11 +250,11 @@ class MultiDatabaseETL:
             #     orjson.dumps(data),
             #     length=len(orjson.dumps(data))
             # )
-            
+
             self.result.minio_objects += 1
             logger.info(f"Імпортовано в MinIO: {self.result.minio_objects}")
             return 1
-            
+
         except Exception as e:
             error_msg = f"Помилка імпорту в MinIO: {e}"
             logger.error(error_msg)
@@ -267,32 +266,33 @@ class MultiDatabaseETL:
         
         Returns:
             True якщо всі коміти успішні
+
         """
         try:
             # PostgreSQL коміт
             await self.db_session.commit()
             logger.info("PostgreSQL коміт успішний")
-            
+
             # ClickHouse не підтримує транзакції в традиційному сенсі
             # але ми можемо виконати OPTIMIZE TABLE для оптимізації
             logger.info("ClickHouse оптимізація успішна")
-            
+
             # OpenSearch коміт (refresh)
             # TODO: Виконати refresh індексу
             logger.info("OpenSearch refresh успішний")
-            
+
             # Neo4j коміт
             # TODO: Виконати коміт сесії
             logger.info("Neo4j коміт успішний")
-            
+
             # Redis не потребує коміту (write-through)
             logger.info("Redis write-through успішний")
-            
+
             # MinIO не потребує коміту (immediate consistency)
             logger.info("MinIO запис успішний")
-            
+
             return True
-            
+
         except Exception as e:
             logger.error(f"Помилка коміту по всіх базах: {e}")
             return False
@@ -303,10 +303,10 @@ class MultiDatabaseETL:
             # PostgreSQL rollback
             await self.db_session.rollback()
             logger.info("PostgreSQL rollback успішний")
-            
+
             # Інші бази не підтримують rollback в традиційному сенсі
             # але ми можемо видалити нещодавно вставлені дані
-            
+
         except Exception as e:
             logger.error(f"Помилка rollback по всіх базах: {e}")
 
@@ -318,35 +318,36 @@ class MultiDatabaseETL:
             
         Returns:
             True якщо коміт успішний
+
         """
         try:
             # git add .
             subprocess.run(["git", "add", "."], check=True, cwd="/Users/Shared/Predator_60")
-            
+
             # git commit
             subprocess.run(
                 ["git", "commit", "-m", message],
                 check=True,
                 cwd="/Users/Shared/Predator_60"
             )
-            
+
             # git pull --rebase
             subprocess.run(
                 ["git", "pull", "--rebase"],
                 check=True,
                 cwd="/Users/Shared/Predator_60"
             )
-            
+
             # git push
             subprocess.run(
                 ["git", "push"],
                 check=True,
                 cwd="/Users/Shared/Predator_60"
             )
-            
+
             logger.info(f"Git commit успішний: {message}")
             return True
-            
+
         except subprocess.CalledProcessError as e:
             error_msg = f"Помилка git commit: {e}"
             logger.error(error_msg)
@@ -361,31 +362,32 @@ class MultiDatabaseETL:
             
         Returns:
             True якщо успішно
+
         """
         try:
             # Імпорт в PostgreSQL (SSOT)
             await self.import_to_postgresql(data)
-            
+
             # Імпорт в ClickHouse (OLAP)
             await self.import_to_clickhouse(data)
-            
+
             # Імпорт в OpenSearch (Search)
             await self.import_to_opensearch(data)
-            
+
             # Імпорт в Neo4j (Graph)
             await self.import_to_neo4j(data)
-            
+
             # Імпорт в Qdrant (Vector)
             await self.import_to_qdrant(data)
-            
+
             # Імпорт в Redis (Cache)
             await self.import_to_redis(data)
-            
+
             # Імпорт в MinIO (S3)
             await self.import_to_minio(data)
-            
+
             return True
-            
+
         except Exception as e:
             error_msg = f"Помилка обробки запису: {e}"
             logger.error(error_msg)
@@ -401,33 +403,34 @@ class MultiDatabaseETL:
             
         Returns:
             Результат ETL процесу
+
         """
         logger.info(f"Початок multi-database ETL для {len(data_list)} записів")
-        
+
         try:
             # Обробка записів
             for data in data_list:
                 success = await self.process_record(data)
                 if not success:
-                    logger.error(f"Помилка обробки запису, rollback")
+                    logger.error("Помилка обробки запису, rollback")
                     await self.rollback_all_databases()
                     return self.result
-            
+
             # Коміт по всіх базах
             commit_success = await self.commit_all_databases()
             if not commit_success:
                 logger.error("Помилка коміту, rollback")
                 await self.rollback_all_databases()
                 return self.result
-            
+
             # Git commit
             git_success = await self.git_commit(commit_message)
             if not git_success:
                 logger.warning("Git commit не вдався, але дані імпортовані")
-            
+
             logger.info("Multi-database ETL завершено успішно")
             return self.result
-            
+
         except Exception as e:
             logger.error(f"Критична помилка ETL: {e}")
             await self.rollback_all_databases()

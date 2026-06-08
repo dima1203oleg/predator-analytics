@@ -9,15 +9,12 @@
 
 from __future__ import annotations
 
-import asyncio
 import logging
-from datetime import datetime, timedelta
 from typing import Any
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-
-from libs.core.etl.multi_database_etl import MultiDatabaseETL, DatabaseConfig
-from libs.core.parsers.base import get_parser_registry, ParseResult
+from libs.core.etl.multi_database_etl import DatabaseConfig
+from libs.core.parsers.base import ParseResult, get_parser_registry
 
 logger = logging.getLogger(__name__)
 
@@ -36,9 +33,9 @@ class ParserScheduler:
         if self.running:
             logger.warning("Планувальник вже запущено")
             return
-        
+
         self.running = True
-        
+
         # Додати завдання для кожного парсера
         for parser_name in self.parser_registry.list_parsers():
             config = self.parser_registry.parser_configs.get(parser_name)
@@ -52,7 +49,7 @@ class ParserScheduler:
                     replace_existing=True,
                 )
                 logger.info(f"Планувальник додано для парсера: {parser_name}")
-        
+
         self.scheduler.start()
         logger.info("Планувальник парсерів запущено")
 
@@ -60,7 +57,7 @@ class ParserScheduler:
         """Зупинити планувальник."""
         if not self.running:
             return
-        
+
         self.scheduler.shutdown()
         self.running = False
         logger.info("Планувальник парсерів зупинено")
@@ -70,33 +67,34 @@ class ParserScheduler:
         
         Args:
             parser_name: Назва парсера
+
         """
         logger.info(f"Запуск парсера: {parser_name}")
-        
+
         parser = self.parser_registry.get_parser(parser_name)
         if not parser:
             logger.error(f"Парсер не знайдено: {parser_name}")
             return
-        
+
         try:
             # Перевірка доступності джерела
             is_valid = await parser.validate_source()
             if not is_valid:
                 logger.warning(f"Джерело недоступне для парсера {parser_name}")
                 return
-            
+
             # Парсинг даних
             result = await parser.parse()
-            
+
             if result.errors:
                 logger.error(f"Помилки парсингу {parser_name}: {result.errors}")
-            
+
             # Розподіл спаршених даних по базах
             if result.data:
                 await self.distribute_data(result)
-            
+
             logger.info(f"Парсер {parser_name} завершено: {len(result.data)} записів")
-            
+
         except Exception as e:
             logger.error(f"Критична помилка парсера {parser_name}: {e}")
 
@@ -105,12 +103,13 @@ class ParserScheduler:
         
         Args:
             parse_result: Результат парсингу
+
         """
         # TODO: Реалізувати розподіл даних по базах
         # Використовувати MultiDatabaseETL
-        
+
         logger.info(f"Розподіл {len(parse_result.data)} записів по базах")
-        
+
         # Тимчасова заглушка - просто логування
         for record in parse_result.data:
             logger.debug(f"Запис для розподілу: {record}")
@@ -121,6 +120,7 @@ class ParserScheduler:
         Args:
             parser_name: Назва парсера
             parser_config: Конфігурація парсера
+
         """
         # TODO: Реалізувати динамічне додавання парсерів
         logger.info(f"Додавання парсера: {parser_name}")
@@ -137,9 +137,10 @@ class ParserMonitor:
         
         Returns:
             Статус парсерів
+
         """
         status = {}
-        
+
         for parser_name in self.parser_registry.list_parsers():
             config = self.parser_registry.parser_configs.get(parser_name)
             status[parser_name] = {
@@ -148,7 +149,7 @@ class ParserMonitor:
                 "parse_interval": config.parse_interval_minutes if config else None,
                 "last_parse": None,  # TODO: Отримувати з БД
             }
-        
+
         return status
 
     async def get_errors(self, limit: int = 100) -> list[dict[str, Any]]:
@@ -159,6 +160,7 @@ class ParserMonitor:
             
         Returns:
             Список помилок
+
         """
         # TODO: Отримувати помилки з БД
         return []
@@ -169,6 +171,7 @@ async def start_parser_scheduler(db_config: DatabaseConfig):
     
     Args:
         db_config: Конфігурація бази даних
+
     """
     scheduler = ParserScheduler(db_config)
     await scheduler.start()
@@ -180,5 +183,6 @@ async def stop_parser_scheduler(scheduler: ParserScheduler):
     
     Args:
         scheduler: Інстанс планувальника
+
     """
     await scheduler.stop()

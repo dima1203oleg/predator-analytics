@@ -9,11 +9,10 @@
 
 from __future__ import annotations
 
-import logging
 from datetime import datetime
-from typing import Any
+import logging
 
-from libs.core.parsers.base import BaseParser, DataSourceType, ParseResult, ParserConfig
+from libs.core.parsers.base import BaseParser, DataSourceType, ParseResult
 
 logger = logging.getLogger(__name__)
 
@@ -26,13 +25,13 @@ class CustomsDeclarationsParser(BaseParser):
         try:
             # TODO: Реалізувати парсинг з реального API
             # https://api.customs.gov.ua/declarations
-            
+
             data = []
             errors = []
-            
+
             # Тимчасова заглушка
             logger.info(f"Парсинг митних декларацій з {self.config.source_url}")
-            
+
             return ParseResult(
                 source_type=DataSourceType.PUBLIC_REGISTRY,
                 source_url=self.config.source_url,
@@ -40,7 +39,7 @@ class CustomsDeclarationsParser(BaseParser):
                 parsed_at=datetime.now(),
                 errors=errors,
             )
-            
+
         except Exception as e:
             logger.error(f"Помилка парсингу митних декларацій: {e}")
             return ParseResult(
@@ -70,12 +69,12 @@ class TaxPayersParser(BaseParser):
         try:
             # TODO: Реалізувати парсинг з реального API
             # https://api.tax.gov.ua/payers
-            
+
             data = []
             errors = []
-            
+
             logger.info(f"Парсинг платників податків з {self.config.source_url}")
-            
+
             return ParseResult(
                 source_type=DataSourceType.PUBLIC_REGISTRY,
                 source_url=self.config.source_url,
@@ -83,7 +82,7 @@ class TaxPayersParser(BaseParser):
                 parsed_at=datetime.now(),
                 errors=errors,
             )
-            
+
         except Exception as e:
             logger.error(f"Помилка парсингу платників податків: {e}")
             return ParseResult(
@@ -113,12 +112,12 @@ class SanctionsParser(BaseParser):
         try:
             # TODO: Реалізувати парсинг з реального API
             # https://api.sanctions.gov.ua/sanctions
-            
+
             data = []
             errors = []
-            
+
             logger.info(f"Парсинг санкцій з {self.config.source_url}")
-            
+
             return ParseResult(
                 source_type=DataSourceType.PUBLIC_REGISTRY,
                 source_url=self.config.source_url,
@@ -126,7 +125,7 @@ class SanctionsParser(BaseParser):
                 parsed_at=datetime.now(),
                 errors=errors,
             )
-            
+
         except Exception as e:
             logger.error(f"Помилка парсингу санкцій: {e}")
             return ParseResult(
@@ -156,12 +155,12 @@ class LicensesParser(BaseParser):
         try:
             # TODO: Реалізувати парсинг з реального API
             # https://api.licenses.gov.ua/licenses
-            
+
             data = []
             errors = []
-            
+
             logger.info(f"Парсинг ліцензій з {self.config.source_url}")
-            
+
             return ParseResult(
                 source_type=DataSourceType.PUBLIC_REGISTRY,
                 source_url=self.config.source_url,
@@ -169,7 +168,7 @@ class LicensesParser(BaseParser):
                 parsed_at=datetime.now(),
                 errors=errors,
             )
-            
+
         except Exception as e:
             logger.error(f"Помилка парсингу ліцензій: {e}")
             return ParseResult(

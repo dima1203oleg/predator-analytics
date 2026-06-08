@@ -8,10 +8,9 @@
 
 from __future__ import annotations
 
-import logging
 from dataclasses import dataclass
 from datetime import date
-from typing import Any
+import logging
 
 import httpx
 
@@ -21,6 +20,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class MarketPrice:
     """Ринкова ціна товару."""
+
     uktzed_code: str
     country: str
     price_min_usd: float
@@ -48,7 +48,7 @@ class COMTRADEIntegration:
         """Отримати ринкові ціни з COMTRADE."""
         try:
             logger.info(f"Отримання цін з COMTRADE для УКТЗЕД {uktzed_code}")
-            
+
             # TODO: Реалізувати реальний API виклик
             # response = await self.client.get(
             #     f"{self.base_url}/api/get",
@@ -64,7 +64,7 @@ class COMTRADEIntegration:
             #     },
             #     headers={"Authorization": f"Bearer {self.api_key}"}
             # )
-            
+
             # Тимчасова заглушка
             return [
                 MarketPrice(
@@ -102,7 +102,7 @@ class ITCIntegration:
         """Отримати ринкові ціни з ITC Trade Map."""
         try:
             logger.info(f"Отримання цін з ITC для УКТЗЕД {uktzed_code}")
-            
+
             # TODO: Реалізувати реальний API виклик
             return [
                 MarketPrice(
@@ -138,22 +138,22 @@ class MarketPriceService:
     ) -> MarketPrice:
         """Отримати агреговані ціни з усіх джерел."""
         prices = []
-        
+
         # Отримуємо з COMTRADE
         comtrade_prices = await self.comtrade.get_market_prices(uktzed_code, country)
         prices.extend(comtrade_prices)
-        
+
         # Отримуємо з ITC
         itc_prices = await self.itc.get_market_prices(uktzed_code, country)
         prices.extend(itc_prices)
-        
+
         # Агрегуємо
         if prices:
             avg_price = sum(p.price_avg_usd for p in prices) / len(prices)
             min_price = min(p.price_min_usd for p in prices)
             max_price = max(p.price_max_usd for p in prices)
             avg_confidence = sum(p.confidence_level for p in prices) / len(prices)
-            
+
             return MarketPrice(
                 uktzed_code=uktzed_code,
                 country=country or "World",
@@ -163,7 +163,7 @@ class MarketPriceService:
                 price_date=date.today(),
                 confidence_level=avg_confidence,
             )
-        
+
         # Заглушка якщо немає даних
         return MarketPrice(
             uktzed_code=uktzed_code,

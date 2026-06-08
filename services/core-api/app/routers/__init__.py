@@ -27,10 +27,6 @@
 """
 
 # Експортуємо всі роутери для зручності імпорту
-from .cloud_assist import router as cloud_assist_router
-from .factory import router as factory_router
-from .osint_vision import router as osint_vision_router
-
 from .admin_chaos import router as admin_chaos_router
 from .admin_v2 import router as admin_v2_router
 from .agents import router as agents_router
@@ -39,13 +35,16 @@ from .analytics import router as analytics_router
 from .antigravity import router as antigravity_router
 from .auth import router as auth_router
 from .cases import router as cases_router
+from .cloud_assist import router as cloud_assist_router
 from .companies import router as companies_router
 from .competitors import router as competitors_router
 from .copilot import router as copilot_router
 from .dashboard import router as dashboard_router
 from .db_admin import router as db_admin_router
+
 # from .decisions import router as decisions_router
 from .declarations import router as declarations_router
+from .factory import router as factory_router
 from .forecast import router as forecast_router
 from .graph import router as graph_router
 from .graph_intelligence import router as graph_intelligence_router
@@ -55,11 +54,12 @@ from .maritime import router as maritime_router
 from .market import router as market_router
 from .ml_studio import router as ml_studio_router
 from .newspaper import router as newspaper_router
+from .omniverse import router as omniverse_router
 from .optimizer import router as optimizer_router
 from .orchestrator import router as orchestrator_router
 from .osint import router as osint_router
-from .omniverse import router as omniverse_router
 from .osint_ua import router as osint_ua_router
+from .osint_vision import router as osint_vision_router
 from .persons import router as persons_router
 from .premium import router as premium_router
 from .public_api import router as public_api_router
@@ -69,14 +69,15 @@ from .risk import router as risk_router
 from .sanctions import router as sanctions_router
 from .search import router as search_router
 from .som import router as som_router
+
 try:
     from .synthetic_data import router as synthetic_data_router
 except ImportError:
     synthetic_data_router = None
 from .system import router as system_router
 from .system import stats_router
-from .warroom import router as warroom_router
 from .wargaming import router as wargaming_router
+from .warroom import router as warroom_router
 from .websocket import router as websocket_router
 
 __all__ = [

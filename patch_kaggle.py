@@ -1,8 +1,7 @@
-import re
 
 file_path = "/Users/Shared/Predator_60/scripts/predator_kaggle_prod_v67.py"
 
-with open(file_path, "r", encoding="utf-8") as f:
+with open(file_path, encoding="utf-8") as f:
     content = f.read()
 
 # 1. Update AI Routing logic in process_dataset_query

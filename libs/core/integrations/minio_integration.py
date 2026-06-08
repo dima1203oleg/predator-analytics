@@ -5,16 +5,15 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 import logging
 import os
-from dataclasses import dataclass
-from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-import orjson
 from minio import Minio
 from minio.error import S3Error
+import orjson
 
 logger = logging.getLogger(__name__)
 
@@ -22,6 +21,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class MinIOConfig:
     """Конфігурація MinIO."""
+
     endpoint: str = "localhost:9000"
     access_key: str = "minioadmin"
     secret_key: str = "minioadmin"
@@ -62,14 +62,15 @@ class MinIOIntegration:
             
         Returns:
             Кількість завантажених об'єктів
+
         """
         try:
             # Конвертація в JSON
             json_data = orjson.dumps(declaration_data)
-            
+
             # Формування шляху
             object_name = f"declarations/{declaration_id}.json"
-            
+
             # Завантаження
             self.client.put_object(
                 self.config.bucket,
@@ -78,10 +79,10 @@ class MinIOIntegration:
                 length=len(json_data),
                 content_type="application/json"
             )
-            
+
             logger.debug(f"JSON завантажено в MinIO: {object_name}")
             return 1
-            
+
         except S3Error as e:
             logger.error(f"Помилка завантаження JSON в MinIO: {e}")
             return 0
@@ -96,24 +97,25 @@ class MinIOIntegration:
             
         Returns:
             Кількість завантажених об'єктів
+
         """
         try:
             # Перевірка існування файлу
             if not Path(file_path).exists():
                 logger.error(f"Файл не існує: {file_path}")
                 return 0
-            
+
             # Визначення content type
             content_type = "application/octet-stream"
             if file_type == "pdf":
                 content_type = "application/pdf"
             elif file_type == "scan":
                 content_type = "image/jpeg"
-            
+
             # Формування шляху
             file_extension = Path(file_path).suffix
             object_name = f"declarations/{declaration_id}/{file_type}{file_extension}"
-            
+
             # Завантаження
             self.client.fput_object(
                 self.config.bucket,
@@ -121,10 +123,10 @@ class MinIOIntegration:
                 file_path,
                 content_type=content_type
             )
-            
+
             logger.debug(f"Файл завантажено в MinIO: {object_name}")
             return 1
-            
+
         except S3Error as e:
             logger.error(f"Помилка завантаження файлу в MinIO: {e}")
             return 0
@@ -137,17 +139,18 @@ class MinIOIntegration:
             
         Returns:
             Дані декларації або None
+
         """
         try:
             object_name = f"declarations/{declaration_id}.json"
-            
+
             response = self.client.get_object(self.config.bucket, object_name)
             json_data = response.read()
-            
+
             declaration_data = orjson.loads(json_data)
             logger.debug(f"JSON завантажено з MinIO: {object_name}")
             return declaration_data
-            
+
         except S3Error as e:
             logger.error(f"Помилка завантаження JSON з MinIO: {e}")
             return None
@@ -160,15 +163,16 @@ class MinIOIntegration:
             
         Returns:
             Список імен файлів
+
         """
         try:
             prefix = f"declarations/{declaration_id}/"
             objects = self.client.list_objects(self.config.bucket, prefix=prefix)
-            
+
             file_names = [obj.object_name for obj in objects]
             logger.debug(f"Знайдено {len(file_names)} файлів для декларації {declaration_id}")
             return file_names
-            
+
         except S3Error as e:
             logger.error(f"Помилка отримання списку файлів: {e}")
             return []
@@ -181,6 +185,7 @@ class MinIOIntegration:
             
         Returns:
             Кількість видалених об'єктів
+
         """
         try:
             # Видалення JSON
@@ -189,11 +194,11 @@ class MinIOIntegration:
                 self.client.remove_object(self.config.bucket, json_object)
             except S3Error:
                 pass
-            
+
             # Видалення всіх файлів
             prefix = f"declarations/{declaration_id}/"
             objects = self.client.list_objects(self.config.bucket, prefix=prefix)
-            
+
             deleted_count = 0
             for obj in objects:
                 try:
@@ -201,10 +206,10 @@ class MinIOIntegration:
                     deleted_count += 1
                 except S3Error:
                     pass
-            
+
             logger.info(f"Видалено {deleted_count} файлів декларації {declaration_id} з MinIO")
             return deleted_count
-            
+
         except S3Error as e:
             logger.error(f"Помилка видалення декларації з MinIO: {e}")
             return 0
@@ -214,19 +219,20 @@ class MinIOIntegration:
         
         Returns:
             Статистика бакета
+
         """
         try:
             objects = self.client.list_objects(self.config.bucket, recursive=True)
-            
+
             total_size = sum(obj.size for obj in objects)
             total_count = len(objects)
-            
+
             return {
                 "total_objects": total_count,
                 "total_size_bytes": total_size,
                 "total_size_mb": total_size / (1024 * 1024),
             }
-            
+
         except S3Error as e:
             logger.error(f"Помилка отримання статистики бакета: {e}")
             return {

@@ -11,14 +11,17 @@ from datetime import UTC, datetime
 from enum import StrEnum
 import logging
 from typing import Any
+
 try:
     import clickhouse_connect
+
     from app.database import HAS_CLICKHOUSE
 except ImportError:
     clickhouse_connect = None
     HAS_CLICKHOUSE = False
 
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.services.search_service import SearchService
 
 logger = logging.getLogger(__name__)
@@ -175,7 +178,7 @@ class CompetitorsAnalysisService:
     ) -> list[CompetitorMatch]:
         """Знайти реальних конкурентів через SearchService та ClickHouse."""
         logger.info(f"Finding real competitors for {edrpou}")
-        
+
         # Використовуємо SearchService для пошуку схожих компаній
         similar_entities = await SearchService.recommend_similar_entities(
             ueid=edrpou,
@@ -187,10 +190,10 @@ class CompetitorsAnalysisService:
         competitors = []
         for entity in similar_entities:
             comp_ueid = entity.get("ueid", "unknown")
-            
+
             # Отримуємо виторг з ClickHouse
             revenue = await self._get_revenue_from_clickhouse(comp_ueid)
-            
+
             # Мапимо результат пошуку на CompanyProfile
             profile = CompanyProfile(
                 edrpou=comp_ueid,
@@ -199,7 +202,7 @@ class CompetitorsAnalysisService:
                 kved_name=entity.get("industry", "N/A"),
                 revenue=revenue,
             )
-            
+
             competitors.append(CompetitorMatch(
                 company=profile,
                 similarity_score=entity.get("similarity_score", 0.5) * 100,
@@ -222,7 +225,7 @@ class CompetitorsAnalysisService:
                 username=os.getenv("CLICKHOUSE_USER", "default"),
                 password=os.getenv("CLICKHOUSE_PASSWORD", "predator2026")
             )
-            
+
             # Агрегуємо суму за останній доступний рік
             query = f"""
             SELECT sum(total_value) as revenue 

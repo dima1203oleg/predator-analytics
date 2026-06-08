@@ -19,11 +19,11 @@ class MockFaker:
         return lambda *args, **kwargs: "mock_value"
 
 heavy_packages = [
-    'faker', 
-    'xgboost', 
-    'sdv', 
-    'sdv.metadata', 
-    'sdv.single_table', 
+    'faker',
+    'xgboost',
+    'sdv',
+    'sdv.metadata',
+    'sdv.single_table',
     'sdv.evaluation.single_table'
 ]
 

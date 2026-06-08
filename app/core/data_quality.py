@@ -8,16 +8,12 @@
 
 from __future__ import annotations
 
-import json
-import logging
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from typing import TYPE_CHECKING, Any
+from datetime import UTC, datetime
+import logging
+from typing import Any
 
 from app.core.settings import get_settings
-
-if TYPE_CHECKING:
-    from collections.abc import Sequence
 
 settings = get_settings()
 logger = logging.getLogger(__name__)
@@ -51,7 +47,7 @@ class DataQualityResult:
         self.passed_checks = sum(1 for c in self.checks if c.passed)
         self.passed = self.passed_checks == self.total_checks
         if not self.timestamp:
-            self.timestamp = datetime.now(timezone.utc).isoformat()
+            self.timestamp = datetime.now(UTC).isoformat()
 
 
 # ── Data Contracts ───────────────────────────────────────────

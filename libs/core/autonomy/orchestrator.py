@@ -1,5 +1,4 @@
 import asyncio
-import contextlib
 import logging
 from typing import TYPE_CHECKING, Any
 
@@ -9,13 +8,12 @@ if TYPE_CHECKING:
 logger = logging.getLogger("predator.autonomy.orchestrator")
 
 class AgentOrchestrator:
-    """
-    Оркестратор автономних агентів PREDATOR Analytics v61.0-ELITE.
+    """Оркестратор автономних агентів PREDATOR Analytics v61.0-ELITE.
     Керує життєвим циклом агентів, забезпечуючи їх стабільну роботу та моніторинг.
     """
 
     def __init__(self):
-        self.agents: list["AutonomousAgent"] = []
+        self.agents: list[AutonomousAgent] = []
         self._tasks: list[asyncio.Task] = []
         self.is_running = False
 
@@ -57,8 +55,8 @@ class AgentOrchestrator:
         """Отримання статистики виконання від усіх агентів."""
         return [
             {
-                "name": agent.name, 
-                "stats": agent.stats, 
+                "name": agent.name,
+                "stats": agent.stats,
                 "is_running": agent.is_running,
                 "node": "SOVEREIGN"
             }

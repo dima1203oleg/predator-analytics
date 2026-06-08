@@ -8,11 +8,10 @@
 
 from __future__ import annotations
 
-import logging
 from datetime import datetime
-from typing import Any
+import logging
 
-from libs.core.parsers.base import BaseParser, DataSourceType, ParseResult, ParserConfig
+from libs.core.parsers.base import BaseParser, DataSourceType, ParseResult
 
 logger = logging.getLogger(__name__)
 
@@ -25,12 +24,12 @@ class DarknetForumParser(BaseParser):
         try:
             # TODO: Реалізувати парсинг через Tor або проксі
             # Підтримка .onion доменів
-            
+
             data = []
             errors = []
-            
+
             logger.info(f"Парсинг даркнет форуму з {self.config.source_url}")
-            
+
             return ParseResult(
                 source_type=DataSourceType.DARKNET,
                 source_url=self.config.source_url,
@@ -38,7 +37,7 @@ class DarknetForumParser(BaseParser):
                 parsed_at=datetime.now(),
                 errors=errors,
             )
-            
+
         except Exception as e:
             logger.error(f"Помилка парсингу даркнет форуму: {e}")
             return ParseResult(
@@ -69,12 +68,12 @@ class DarknetMarketParser(BaseParser):
         try:
             # TODO: Реалізувати парсинг через Tor або проксі
             # Моніторинг цін на товари
-            
+
             data = []
             errors = []
-            
+
             logger.info(f"Парсинг даркнет ринку з {self.config.source_url}")
-            
+
             return ParseResult(
                 source_type=DataSourceType.DARKNET,
                 source_url=self.config.source_url,
@@ -82,7 +81,7 @@ class DarknetMarketParser(BaseParser):
                 parsed_at=datetime.now(),
                 errors=errors,
             )
-            
+
         except Exception as e:
             logger.error(f"Помилка парсингу даркнет ринку: {e}")
             return ParseResult(
@@ -112,12 +111,12 @@ class DarknetLeakParser(BaseParser):
         try:
             # TODO: Реалізувати парсинг через Tor або проксі
             # Виявлення витоків митних декларацій
-            
+
             data = []
             errors = []
-            
+
             logger.info(f"Парсинг витоку даних з {self.config.source_url}")
-            
+
             return ParseResult(
                 source_type=DataSourceType.DARKNET,
                 source_url=self.config.source_url,
@@ -125,7 +124,7 @@ class DarknetLeakParser(BaseParser):
                 parsed_at=datetime.now(),
                 errors=errors,
             )
-            
+
         except Exception as e:
             logger.error(f"Помилка парсингу витоку даних: {e}")
             return ParseResult(

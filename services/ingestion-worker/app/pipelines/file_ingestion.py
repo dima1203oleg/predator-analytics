@@ -21,12 +21,12 @@ import pandas as pd
 from app.minio_service import get_minio_service
 from app.normalizers.company import CompanyNormalizer
 from app.sinks.clickhouse_sink import ClickHouseSink
+from app.sinks.kafka_emitter import KafkaEmitter
 from app.sinks.neo4j_sink import Neo4jSink
 from app.sinks.opensearch_sink import OpenSearchSink
 from app.sinks.postgres_sink import PostgresSink
 from app.sinks.qdrant_sink import QdrantSink
 from app.sinks.redis_sink import RedisSink
-from app.sinks.kafka_emitter import KafkaEmitter
 from app.validators.declaration import DeclarationValidator, Severity
 from predator_common.logging import get_logger
 

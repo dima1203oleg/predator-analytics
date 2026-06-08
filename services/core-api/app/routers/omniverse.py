@@ -5,17 +5,17 @@
 генерувати онтології (схеми графа та таблиць) за допомогою LLM.
 """
 import hashlib
-import uuid
 import json
 from typing import Any
+import uuid
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from pydantic import BaseModel
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.permissions import Permission
-from app.dependencies import PermissionChecker, get_current_active_user, get_tenant_id
 from app.database import get_db
-from sqlalchemy.ext.asyncio import AsyncSession
+from app.dependencies import PermissionChecker, get_current_active_user, get_tenant_id
 from app.services.ai_service import AIService
 from app.services.kafka_service import get_kafka_service
 from app.services.minio_service import get_minio_service
@@ -28,7 +28,7 @@ router = APIRouter(prefix="/omniverse", tags=["omniverse", "ingestion"])
 
 class SchemaInferenceResponse(BaseModel):
     """Модель відповіді для результату автоматичного виведення схеми."""
-    
+
     status: str
     inferred_schema: dict[str, Any]
     preview_data: list[dict[str, Any]]
@@ -37,7 +37,7 @@ class SchemaInferenceResponse(BaseModel):
 
 class IngestResponse(BaseModel):
     """Модель відповіді для запуску процесу інгестії."""
-    
+
     job_id: str
     status: str
     file_size_bytes: int
@@ -51,8 +51,7 @@ async def infer_schema(
     current_user: dict = Depends(get_current_active_user),
     _ = Depends(PermissionChecker([Permission.READ_CORP_DATA])),
 ):
-    """
-    Зчитує семпл файлу (до 50 рядків) та використовує Sovereign AI
+    """Зчитує семпл файлу (до 50 рядків) та використовує Sovereign AI
     для виведення універсальної онтології: структури таблиць ClickHouse
     та вузлів/зв'язків Neo4j.
     """
@@ -70,7 +69,7 @@ async def infer_schema(
     # Зчитуємо тільки семпл даних (перші ~50КБ щоб отримати кілька рядків)
     content = await file.read(50 * 1024)
     text_content = content.decode("utf-8", errors="replace")
-    
+
     # Витягуємо перші рядки для розуміння
     lines = text_content.splitlines()
     sample_lines = lines[:20]
@@ -97,7 +96,7 @@ async def infer_schema(
             prompt=prompt,
             context={"task": "schema_inference", "filename": file.filename}
         )
-        
+
         # Спроба розпарсити відповідь як JSON
         # Інколи LLM повертає JSON в маркдаун блоках ```json ... ```
         clean_json = llm_response.strip()
@@ -105,9 +104,9 @@ async def infer_schema(
             clean_json = clean_json[7:-3].strip()
         elif clean_json.startswith("```"):
             clean_json = clean_json[3:-3].strip()
-            
+
         inferred_schema = json.loads(clean_json)
-        
+
     except json.JSONDecodeError as e:
         logger.error(f"Помилка парсингу LLM JSON схеми: {e}, Response: {llm_response}")
         inferred_schema = {
@@ -135,8 +134,7 @@ async def universal_ingest(
     current_user: dict = Depends(get_current_active_user),
     _ = Depends(PermissionChecker([Permission.READ_CORP_DATA])),
 ):
-    """
-    Завантажує файл разом із затвердженою користувачем схемою.
+    """Завантажує файл разом із затвердженою користувачем схемою.
     Ініціює універсальний процес інгестії, передаючи файл до Kafka.
     """
     if not file.filename:
@@ -151,7 +149,7 @@ async def universal_ingest(
     content = await file.read()
     file_size = len(content)
     content_hash = hashlib.sha256(content).hexdigest()
-    
+
     job_id = str(uuid.uuid4())
     user_id = current_user.get("sub", "system")
 
@@ -198,6 +196,7 @@ async def universal_ingest(
 
 class QueryRequest(BaseModel):
     """Запит для отримання даних з таблиці."""
+
     limit: int = 100
     offset: int = 0
     filters: dict[str, Any] | None = None
@@ -212,11 +211,11 @@ async def list_omniverse_tables(
     """Повертає список усіх таблиць OMNIVERSE для поточного тенанта."""
     from app.database import get_clickhouse_client
     client = get_clickhouse_client()
-    
+
     # Шукаємо таблиці, що починаються на omniverse_{tenant_id}
     query = f"SHOW TABLES LIKE 'omniverse_{tenant_id}_%'"
     result = client.query(query)
-    
+
     tables = [row[0] for row in result.result_rows]
     return {"tables": tables}
 
@@ -232,16 +231,16 @@ async def get_table_schema(
     # Безпека: дозволяємо доступ тільки до таблиць свого тенанта
     if not table_name.startswith(f"omniverse_{tenant_id}_"):
         raise HTTPException(status_code=403, detail="Доступ до цієї таблиці заборонено")
-        
+
     from app.database import get_clickhouse_client
     client = get_clickhouse_client()
-    
+
     query = f"DESCRIBE TABLE {table_name}"
     result = client.query(query)
-    
+
     columns = [
-        {"name": row[0], "type": row[1]} 
-        for row in result.result_rows 
+        {"name": row[0], "type": row[1]}
+        for row in result.result_rows
         if not row[0].startswith("_")  # Приховуємо системні поля
     ]
     return {"table": table_name, "columns": columns}
@@ -261,7 +260,7 @@ async def query_table_data(
 
     from app.database import get_clickhouse_client
     client = get_clickhouse_client()
-    
+
     # Базовий запит
     where_clause = f"WHERE _tenant_id = '{tenant_id}'"
     if request.filters:
@@ -271,18 +270,18 @@ async def query_table_data(
                 where_clause += f" AND `{key}` = '{value}'"
             else:
                 where_clause += f" AND `{key}` = {value}"
-                
+
     query = f"SELECT * EXCEPT(_tenant_id) FROM {table_name} {where_clause} ORDER BY _ingested_at DESC LIMIT {request.limit} OFFSET {request.offset}"
-    
+
     try:
         result = client.query(query)
         data = [dict(zip(result.column_names, row)) for row in result.result_rows]
-        
+
         # Отримуємо загальну кількість для пагінації
         count_query = f"SELECT count() FROM {table_name} {where_clause}"
         count_result = client.query(count_query)
         total_count = count_result.result_rows[0][0]
-        
+
         return {
             "data": data,
             "total": total_count,
@@ -303,7 +302,7 @@ async def get_omniverse_graph(
     """Отримує всі вузли та зв'язки OMNIVERSE для поточного тенанта."""
     from app.services.neo4j_service import Neo4jService
     neo4j = Neo4jService()
-    
+
     # Отримуємо вузли, що мають tenant_id
     query = """
     MATCH (n)
@@ -313,13 +312,13 @@ async def get_omniverse_graph(
     RETURN n, r, m
     LIMIT 1000
     """
-    
+
     try:
         records = await neo4j.run_query(query, {"tenant": tenant_id})
-        
+
         nodes = {}
         edges = []
-        
+
         for record in records:
             n = record.get("n")
             if n:
@@ -330,7 +329,7 @@ async def get_omniverse_graph(
                         "labels": list(n.labels),
                         "properties": dict(n)
                     }
-            
+
             m = record.get("m")
             if m:
                 node_id = str(m.element_id)
@@ -340,7 +339,7 @@ async def get_omniverse_graph(
                         "labels": list(m.labels),
                         "properties": dict(m)
                     }
-            
+
             r = record.get("r")
             if r and n and m:
                 edges.append({
@@ -350,7 +349,7 @@ async def get_omniverse_graph(
                     "target": str(m.element_id),
                     "properties": dict(r)
                 })
-        
+
         return {
             "nodes": list(nodes.values()),
             "edges": edges
@@ -362,6 +361,7 @@ async def get_omniverse_graph(
 
 class InsightRequest(BaseModel):
     """Запит для отримання AI аналітики."""
+
     table_name: str
     question: str
 
@@ -373,8 +373,7 @@ async def get_omniverse_insight(
     current_user: dict = Depends(get_current_active_user),
     _ = Depends(PermissionChecker([Permission.READ_CORP_DATA])),
 ):
-    """
-    Використовує Sovereign AI для аналізу даних у таблиці та надання відповідей
+    """Використовує Sovereign AI для аналізу даних у таблиці та надання відповідей
     на питання користувача у вільному форматі.
     """
     if not request.table_name.startswith(f"omniverse_{tenant_id}_"):
@@ -382,24 +381,24 @@ async def get_omniverse_insight(
 
     from app.database import get_clickhouse_client
     client = get_clickhouse_client()
-    
+
     try:
         # Отримуємо семпл даних (100 рядків) для контексту LLM
         query = f"SELECT * EXCEPT(_tenant_id, _job_id) FROM {request.table_name} WHERE _tenant_id = '{tenant_id}' LIMIT 100"
         result = client.query(query)
         data_sample = [dict(zip(result.column_names, row)) for row in result.result_rows]
-        
+
         # Отримуємо схему таблиці
         schema_query = f"DESCRIBE TABLE {request.table_name}"
         schema_result = client.query(schema_query)
         schema_info = [f"{row[0]} ({row[1]})" for row in schema_result.result_rows if not row[0].startswith("_")]
-        
+
         context = {
             "table_name": request.table_name,
             "columns": schema_info,
             "data_sample_preview": data_sample[:10]  # Тільки перші 10 для промпту, щоб не перевантажувати токени
         }
-        
+
         prompt = f"""
         Ти - Senior OSINT Analyst платформи PREDATOR OMNIVERSE.
         Твоя задача - проаналізувати надані дані з таблиці '{request.table_name}' та відповісти на питання користувача.
@@ -417,12 +416,12 @@ async def get_omniverse_insight(
         Якщо дані дозволяють, зроби висновки про ризики, тренди або аномалії.
         Якщо для відповіді недостатньо даних, поясни чому.
         """
-        
+
         insight = await AIService.generate_insight(
             prompt=prompt,
             context={"task": "omniverse_insight", "table": request.table_name}
         )
-        
+
         return {
             "answer": insight,
             "context_used": {
@@ -430,7 +429,7 @@ async def get_omniverse_insight(
                 "table": request.table_name
             }
         }
-        
+
     except Exception as e:
         logger.error(f"Помилка генерації інсайту для OMNIVERSE: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -441,15 +440,14 @@ async def get_omniverse_prediction(
     current_user: dict = Depends(get_current_active_user),
     _ = Depends(PermissionChecker([Permission.READ_CORP_DATA])),
 ):
-    """
-    Використовує AI для прогнозування трендів на основі історичних даних у таблиці.
+    """Використовує AI для прогнозування трендів на основі історичних даних у таблиці.
     """
     if not request.table_name.startswith(f"omniverse_{tenant_id}_"):
         raise HTTPException(status_code=403, detail="Доступ до цієї таблиці заборонено")
 
     from app.database import get_clickhouse_client
     client = get_clickhouse_client()
-    
+
     try:
         # Для прогнозу нам потрібно більше даних та агрегація
         # Шукаємо часові мітки (DateTime)
@@ -494,12 +492,12 @@ async def get_omniverse_prediction(
         2. Зроби прогноз на наступний період.
         3. Оціни ризики відхилення від прогнозу.
         """
-        
+
         prediction = await AIService.generate_insight(
             prompt=prompt,
             context={"task": "omniverse_prediction", "table": request.table_name}
         )
-        
+
         return {
             "prediction": prediction,
             "trend_data": trend_data,
@@ -520,15 +518,14 @@ async def get_omniverse_anomalies(
     current_user: dict = Depends(get_current_active_user),
     _ = Depends(PermissionChecker([Permission.READ_CORP_DATA])),
 ):
-    """
-    Виявляє статистичні та логічні аномалії у датасеті.
+    """Виявляє статистичні та логічні аномалії у датасеті.
     """
     if not request.table_name.startswith(f"omniverse_{tenant_id}_"):
         raise HTTPException(status_code=403, detail="Доступ до цієї таблиці заборонено")
 
     from app.database import get_clickhouse_client
     client = get_clickhouse_client()
-    
+
     try:
         # Отримуємо статистику по числових колонках
         schema_query = f"DESCRIBE TABLE {request.table_name}"
@@ -565,12 +562,12 @@ async def get_omniverse_anomalies(
         2. Поясни потенційну причину цих відхилень (напр. фрод, помилка вводу, екстремальна ринкова подія).
         3. Надай рекомендації щодо перевірки.
         """
-        
+
         analysis = await AIService.generate_insight(
             prompt=prompt,
             context={"task": "omniverse_anomalies", "table": request.table_name}
         )
-        
+
         return {
             "analysis": analysis,
             "detected_potential_outliers": len(outliers)
@@ -588,13 +585,13 @@ async def list_omniverse_alerts(
     """Повертає список автономних алертів від Watchdog."""
     from app.database import get_clickhouse_client
     client = get_clickhouse_client()
-    
+
     try:
         query = f"SELECT * FROM omniverse_alerts WHERE tenant_id = '{tenant_id}' ORDER BY detected_at DESC LIMIT 50"
         result = client.query(query)
         alerts = [dict(zip(result.column_names, row)) for row in result.result_rows]
         return {"alerts": alerts}
-    except Exception as e:
+    except Exception:
         # Якщо таблиці ще немає — повертаємо пустий список
         return {"alerts": []}
 
@@ -619,7 +616,7 @@ async def synergy_simulate(
     """Симуляція сценаріїв на основі даних Omniverse."""
     from app.services.ai_service import AIService
     ai = AIService()
-    
+
     prompt = f"""
     ВИКОНАЙ СТРАТЕГІЧНУ СИМУЛЯЦІЮ (SCENARIO ANALYSIS).
     ПАРАМЕТРИ: {params}
@@ -637,7 +634,7 @@ async def synergy_simulate(
       "recommendations": ["пункт1", "пункт2"]
     }}
     """
-    
+
     insight = await ai.generate_insight(prompt)
     import json
     try:
@@ -654,12 +651,12 @@ async def get_command_briefing(
     current_user: dict = Depends(get_current_active_user),
 ):
     """Генерує фінальний стратегічний звіт для керівництва."""
-    from app.services.omniverse_briefing import OmniverseBriefing
     from app.services.ai_service import AIService
-    
+    from app.services.omniverse_briefing import OmniverseBriefing
+
     briefing = OmniverseBriefing(tenant_id)
     data = await briefing.generate_executive_brief()
-    
+
     ai = AIService()
     prompt = f"""
     СФОРМУЙ СТРАТЕГІЧНИЙ БРИФІНГ (EXECUTIVE BRIEFING) ДЛЯ ДИРЕКТОРА.
@@ -672,7 +669,7 @@ async def get_command_briefing(
     
     Поверни відповідь у форматі Markdown.
     """
-    
+
     report_text = await ai.generate_insight(prompt)
     return {"report": report_text, "data": data}
 
@@ -685,10 +682,10 @@ async def get_entity_intelligence_briefing(
 ):
     """Генерує глибокий аналітичний звіт для конкретної сутності (UEID)."""
     from app.services.omniverse_briefing import OmniverseBriefing
-    
+
     briefing = OmniverseBriefing(tenant_id)
     data = await briefing.generate_entity_intelligence_brief(ueid, db)
-    
+
     return data
 
 @router.get("/command/ooda")
@@ -699,27 +696,27 @@ async def get_ooda_loop(
     """Повертає стан циклу OODA для Omniverse на основі реальних даних AGI."""
     from app.services.antigravity_orchestrator import orchestrator
     from app.services.vram_watchdog import vram_sentinel
-    
+
     status = orchestrator.get_status()
     vram = await vram_sentinel.get_stats()
     tasks = orchestrator.get_tasks()
-    
+
     pending = [
-        {"id": t.task_id, "action": t.description, "priority": t.priority} 
+        {"id": t.task_id, "action": t.description, "priority": t.priority}
         for t in tasks if t.status == "PENDING"
     ][:3]
-    
+
     executed = len([t for t in tasks if t.status == "COMPLETED"])
-    
+
     return {
         "observe": {
-            "status": "ACTIVE", 
-            "last_update": "Just now", 
+            "status": "ACTIVE",
+            "last_update": "Just now",
             "focus": f"Inference Mode: {vram.get('mode')}",
             "vram_usage": vram.get("vram_usage_gb")
         },
         "orient": {
-            "status": "ACTIVE", 
+            "status": "ACTIVE",
             "active_agents": status.active_agents,
             "total_tasks": len(tasks)
         },
@@ -727,7 +724,7 @@ async def get_ooda_loop(
             "pending_actions": pending if pending else [{"id": "IDLE", "action": "Очікування нових інсайтів", "priority": "LOW"}]
         },
         "act": {
-            "executed_today": executed, 
+            "executed_today": executed,
             "efficiency": f"{min(99, 85 + executed)}%"
         }
     }

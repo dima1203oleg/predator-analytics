@@ -1,12 +1,12 @@
-"""
-Predator Agents OS — LLM Interface
+"""Predator Agents OS — LLM Interface
 Інтерфейс для взаємодії з Ollama (локально на NVIDIA Server).
 """
 
 import os
-from typing import List, Optional
-from langchain_ollama import ChatOllama
+
 from langchain_core.messages import BaseMessage
+from langchain_ollama import ChatOllama
+
 
 class LLMManager:
     def __init__(self, model_name: str = "qwen3:8b"):
@@ -22,8 +22,7 @@ class LLMManager:
         return self.llm
 
     def get_embeddings(self):
-        """
-        Повертає об'єкт для генерації embeddings.
+        """Повертає об'єкт для генерації embeddings.
         """
         from langchain_ollama import OllamaEmbeddings
         return OllamaEmbeddings(
@@ -31,9 +30,8 @@ class LLMManager:
             base_url=self.host
         )
 
-    async def invoke(self, messages: List[BaseMessage]) -> BaseMessage:
-        """
-        Викликає модель з набором повідомлень.
+    async def invoke(self, messages: list[BaseMessage]) -> BaseMessage:
+        """Викликає модель з набором повідомлень.
         """
         return await self.llm.ainvoke(messages)
 

@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-🦅 PREDATOR Analytics v67.0-ELITE — Kaggle Production Backend
+"""🦅 PREDATOR Analytics v67.0-ELITE — Kaggle Production Backend
 ═══════════════════════════════════════════════════════════════
 Єдиний консолідований бекенд для Kaggle CPU-Only Node.
 Покриває 80+ ендпоінтів mock-api-server.mjs.
@@ -12,7 +11,10 @@
 from __future__ import annotations
 
 import asyncio
+from collections import defaultdict
+from contextlib import asynccontextmanager
 import csv
+from datetime import UTC, datetime, timedelta
 import hashlib
 import io
 import json
@@ -23,11 +25,8 @@ import sys
 import tarfile
 import threading
 import time
-import urllib.request
-from collections import defaultdict
-from contextlib import asynccontextmanager
-from datetime import UTC, datetime, timedelta
 from typing import Any
+import urllib.request
 from uuid import uuid4
 
 # ═══════════════════════════════════════════════════════════════
@@ -50,8 +49,16 @@ def _install_deps() -> None:
         "greenlet"
     ]
     try:
-        import fastapi, uvicorn, psutil, jose, sqlalchemy  # noqa: F401
-        import aiosqlite, networkx, numpy, telethon, greenlet  # noqa: F401
+        import aiosqlite
+        import fastapi
+        import greenlet  # noqa: F401
+        import jose
+        import networkx
+        import numpy
+        import psutil
+        import sqlalchemy  # noqa: F401
+        import telethon
+        import uvicorn
         print("✅ Залежності вже встановлені")
     except ImportError:
         print("🔧 Встановлення залежностей...")
@@ -63,7 +70,7 @@ def _install_deps() -> None:
 
     # nest_asyncio для Kaggle/Jupyter
     try:
-        import nest_asyncio  # noqa: F401
+        import nest_asyncio
     except ImportError:
         subprocess.run(
             [sys.executable, "-m", "pip", "install", "-q", "--break-system-packages", "nest_asyncio"],
@@ -95,22 +102,32 @@ if TelegramClient is not None and all([TELEGRAM_API_ID, TELEGRAM_API_HASH, TELEG
 else:
     telegram_client = None
 
-import numpy as np
-import networkx as nx
-import psutil
-from fastapi import FastAPI, Depends, HTTPException, Query, Request, BackgroundTasks
+from fastapi import BackgroundTasks, Depends, FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
+from jose import JWTError, jwt
+import networkx as nx
+import numpy as np
+import psutil
 from pydantic import BaseModel
 from sqlalchemy import (
-    Column, String, Integer, Float, DateTime, Boolean, Text, JSON,
-    select, func,
+    JSON,
+    Boolean,
+    Column,
+    DateTime,
+    Float,
+    Integer,
+    String,
+    Text,
+    func,
+    select,
+)
+from sqlalchemy.ext.asyncio import (
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
 )
 from sqlalchemy.orm import DeclarativeBase
-from sqlalchemy.ext.asyncio import (
-    create_async_engine, AsyncSession, async_sessionmaker,
-)
-from jose import JWTError, jwt
 
 # ═══════════════════════════════════════════════════════════════
 # 2. КОНФІГУРАЦІЯ (HR-06: секрети через env vars)
@@ -131,6 +148,7 @@ if not os.path.exists(DB_DIR):
 
 class Base(DeclarativeBase):
     """Базовий клас SQLAlchemy 2.0."""
+
     pass
 
 # --- Головна БД (PostgreSQL emulation) ---
@@ -190,6 +208,7 @@ main_session = async_sessionmaker(
 
 class Company(Base):
     """Реєстр компаній (PostgreSQL SSOT)."""
+
     __tablename__ = "companies"
     ueid = Column(String, primary_key=True)
     name = Column(String, nullable=False)
@@ -203,6 +222,7 @@ class Company(Base):
 
 class Alert(Base):
     """Система алертів."""
+
     __tablename__ = "alerts"
     id = Column(String, primary_key=True)
     severity = Column(String, nullable=False)
@@ -215,6 +235,7 @@ class Alert(Base):
 
 class Transaction(Base):
     """Митні транзакції."""
+
     __tablename__ = "transactions"
     id = Column(String, primary_key=True)
     company_ueid = Column(String, nullable=False)
@@ -233,6 +254,7 @@ class Transaction(Base):
 
 class RiskAssessment(Base):
     """Оцінки ризику (Risk Engine v56.5)."""
+
     __tablename__ = "risk_assessments"
     ueid = Column(String, primary_key=True)
     score = Column(Float, nullable=False)
@@ -247,6 +269,7 @@ class RiskAssessment(Base):
 
 class User(Base):
     """Користувачі системи."""
+
     __tablename__ = "users"
     id = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(String, unique=True, nullable=False)
@@ -259,6 +282,7 @@ class User(Base):
 
 class Document(OpenSearchBase):
     """Документи для повнотекстового пошуку."""
+
     __tablename__ = "documents"
     id = Column(String, primary_key=True)
     title = Column(Text, nullable=False)
@@ -270,6 +294,7 @@ class Document(OpenSearchBase):
 
 class TimeSeries(TimescaleBase):
     """Метрики часових рядів."""
+
     __tablename__ = "timeseries"
     id = Column(Integer, primary_key=True, autoincrement=True)
     metric_name = Column(String, nullable=False)
@@ -280,6 +305,7 @@ class TimeSeries(TimescaleBase):
 
 class MongoDocument(MongoBase):
     """Document store emulation."""
+
     __tablename__ = "documents"
     _id = Column(String, primary_key=True)
     collection = Column(String, nullable=False)
@@ -289,6 +315,7 @@ class MongoDocument(MongoBase):
 
 class TelegramMessage(OpenSearchBase):
     """Спаршені повідомлення з Telegram."""
+
     __tablename__ = "telegram_messages"
     id = Column(String, primary_key=True)
     channel_name = Column(String, nullable=False)
@@ -299,6 +326,7 @@ class TelegramMessage(OpenSearchBase):
 
 class DarknetMention(OpenSearchBase):
     """Згадки в даркнет-ресурсах."""
+
     __tablename__ = "darknet_mentions"
     id = Column(String, primary_key=True)
     source = Column(String, nullable=False)
@@ -309,6 +337,7 @@ class DarknetMention(OpenSearchBase):
 
 class RegistryRecord(Base):
     """Дані з публічних реєстрів."""
+
     __tablename__ = "registry_records"
     id = Column(String, primary_key=True)
     registry_name = Column(String, nullable=False)
@@ -319,6 +348,7 @@ class RegistryRecord(Base):
 
 class TradeFlow(ClickHouseBase):
     """Торгові потоки (для TradeFlowTab)."""
+
     __tablename__ = "trade_flows"
     id = Column(String, primary_key=True)
     source_country = Column(String, nullable=False)
@@ -331,6 +361,7 @@ class TradeFlow(ClickHouseBase):
 
 class RegulatoryAct(Base):
     """Нормативні акти та розпорядження (для датасету #1)."""
+
     __tablename__ = "regulatory_acts"
     id = Column(String, primary_key=True)
     title = Column(String, nullable=False)
@@ -340,6 +371,7 @@ class RegulatoryAct(Base):
 
 class MarketPrice(Base):
     """Ринкові ціни (індикативи) (для датасету #2)."""
+
     __tablename__ = "market_prices"
     id = Column(Integer, primary_key=True, autoincrement=True)
     hs_code = Column(String, nullable=False)
@@ -349,6 +381,7 @@ class MarketPrice(Base):
 
 class CustomsBroker(Base):
     """Митні брокери (для датасету #12)."""
+
     __tablename__ = "customs_brokers"
     id = Column(String, primary_key=True)
     name = Column(String, nullable=False)
@@ -358,6 +391,7 @@ class CustomsBroker(Base):
 
 class SanctionsList(Base):
     """Санкційні списки (для датасету #14)."""
+
     __tablename__ = "sanctions_list"
     id = Column(String, primary_key=True)
     entity_name = Column(String, nullable=False)
@@ -367,6 +401,7 @@ class SanctionsList(Base):
 
 class AISData(Base):
     """Дані трекінгу суден (для датасету #9)."""
+
     __tablename__ = "ais_data"
     id = Column(String, primary_key=True)
     vessel_name = Column(String, nullable=False)
@@ -377,6 +412,7 @@ class AISData(Base):
 
 class BeneficialOwner(Base):
     """Кінцеві бенефіціари (для датасету #6)."""
+
     __tablename__ = "beneficial_owners"
     id = Column(String, primary_key=True)
     company_ueid = Column(String, nullable=False)
@@ -387,6 +423,7 @@ class BeneficialOwner(Base):
 
 class ParsedRegistryEntry(Base):
     """Записи, отримані з реальних публічних реєстрів (парсери)."""
+
     __tablename__ = "parsed_registry_entries"
     id = Column(String, primary_key=True)
     source = Column(String, nullable=False)  # prozorro, nazk, court, data_gov
@@ -401,6 +438,7 @@ class ParsedRegistryEntry(Base):
 # Нові моделі для 100 датасетів
 class CustomsOfficial(Base):
     """Митні чиновники (для датасетів #11, #47, #50)."""
+
     __tablename__ = "customs_officials"
     id = Column(String, primary_key=True)
     full_name = Column(String, nullable=False)
@@ -413,6 +451,7 @@ class CustomsOfficial(Base):
 
 class OfficialVisit(Base):
     """Візити чиновників на митні пости (для датасету #21)."""
+
     __tablename__ = "official_visits"
     id = Column(String, primary_key=True)
     official_id = Column(String, nullable=False)
@@ -423,6 +462,7 @@ class OfficialVisit(Base):
 
 class WarehouseRegistry(Base):
     """Реєстр складів (для датасету #83)."""
+
     __tablename__ = "warehouse_registry"
     id = Column(String, primary_key=True)
     name = Column(String, nullable=False)
@@ -433,6 +473,7 @@ class WarehouseRegistry(Base):
 
 class ComtradeData(Base):
     """Дані COMTRADE (для датасету #93)."""
+
     __tablename__ = "comtrade_data"
     id = Column(String, primary_key=True)
     reporter_country = Column(String, nullable=False)
@@ -445,6 +486,7 @@ class ComtradeData(Base):
 
 class MediaInvestigation(Base):
     """Медіа-розслідування (для датасетів #67, #97)."""
+
     __tablename__ = "media_investigations"
     id = Column(String, primary_key=True)
     title = Column(String, nullable=False)
@@ -456,6 +498,7 @@ class MediaInvestigation(Base):
 
 class FinancialTransaction(Base):
     """Фінансові транзакції (для датасетів #70, #79)."""
+
     __tablename__ = "financial_transactions"
     id = Column(String, primary_key=True)
     from_ueid = Column(String, nullable=False)
@@ -471,6 +514,7 @@ class FinancialTransaction(Base):
 
 class Neo4jMock:
     """Графова БД через NetworkX."""
+
     def __init__(self) -> None:
         self.graph = nx.DiGraph()
 
@@ -495,6 +539,7 @@ class Neo4jMock:
 
 class RedisMock:
     """Redis cache emulation."""
+
     def __init__(self) -> None:
         self.store: dict[str, Any] = {}
         self.ttl: dict[str, float] = {}
@@ -516,6 +561,7 @@ class RedisMock:
 
 class QdrantMock:
     """Векторна БД emulation."""
+
     def __init__(self) -> None:
         self.vectors: dict[str, dict] = {}
         self.payloads: dict[str, dict] = {}
@@ -543,6 +589,7 @@ class QdrantMock:
 
 class KafkaMock:
     """Kafka topics emulation."""
+
     def __init__(self) -> None:
         self.topics: dict[str, list] = defaultdict(list)
 
@@ -557,6 +604,7 @@ class KafkaMock:
 
 class MinIOMock:
     """Файлове сховище emulation."""
+
     def __init__(self, base_path: str = "/kaggle/working/storage") -> None:
         self.base_path = base_path
         os.makedirs(base_path, exist_ok=True)
@@ -716,7 +764,7 @@ async def _seed_database() -> None:
                     hashed_password=_hash_password(f"{uname}123"), role=role,
                 ))
             await session.commit()
-            
+
         # --- OSINT & ФІНАНСОВІ ПОТОКИ (Тіньовий парсинг) ---
         if not (await session.execute(select(func.count()).select_from(TradeFlow))).scalar():
             for i in range(1, 101):
@@ -729,7 +777,7 @@ async def _seed_database() -> None:
                     risk_score=_gen_risk(i),
                     timestamp=datetime.now(UTC) - timedelta(days=i % 30),
                 ))
-            
+
             channels = ["@customs_leak", "@smugglers_chat", "@shadow_logistics", "@gray_import"]
             for i in range(1, 51):
                 session.add(TelegramMessage(
@@ -739,7 +787,7 @@ async def _seed_database() -> None:
                     risk_score=_gen_risk(i) / 100.0,
                     timestamp=datetime.now(UTC) - timedelta(hours=i * 5),
                 ))
-            
+
             darknet_sources = ["SilkRoad V3", "Hydra_Clone", "DarkForum", "OnionMarket"]
             for i in range(1, 31):
                 session.add(DarknetMention(
@@ -749,7 +797,7 @@ async def _seed_database() -> None:
                     threat_level="CRITICAL" if i % 5 == 0 else "HIGH",
                     timestamp=datetime.now(UTC) - timedelta(days=i * 2),
                 ))
-                
+
             for i in range(1, 41):
                 comp_idx = (i % NUM_COMPANIES) + 1
                 session.add(RegistryRecord(
@@ -1385,6 +1433,7 @@ async def _run_etl_simulation():
 
 class OODALoop:
     """Цикл автономного аналізу OODA."""
+
     def __init__(self) -> None:
         self.is_running = False
         self.current_phase = "IDLE"
@@ -1449,7 +1498,7 @@ async def lifespan(application: FastAPI):
 
     # ВІДКЛЮЧЕНО: Працюємо тільки з реальними даними та реєстрами
     # await _seed_database()
-    
+
     # --- Збагачення Neo4j графа ---
     for i in range(1, NUM_COMPANIES + 1):
         node_id = f"COMP-{i:04d}"
@@ -1484,7 +1533,7 @@ async def lifespan(application: FastAPI):
 
     ooda.start()
     print("🧠 OODA Loop запущено")
-    
+
     # Запуск фонового ETL процесу (синтетика)
     etl_task = asyncio.create_task(_run_etl_simulation())
     # Запуск РЕАЛЬНИХ парсерів публічних реєстрів
@@ -1579,6 +1628,7 @@ async def azr_status():
 
 class LoginRequest(BaseModel):
     """Модель запиту логіну."""
+
     username: str
     password: str
 
@@ -2306,7 +2356,7 @@ async def portfolio_var():
         txs = (await session.execute(
             select(Transaction).order_by(Transaction.created_at.desc()).limit(24)
         )).scalars().all()
-        
+
         swift_data = []
         for i, t in enumerate(txs):
             hour = (datetime.now(UTC) - timedelta(hours=23-i)).strftime("%H:00")
@@ -2315,7 +2365,7 @@ async def portfolio_var():
                 "normal": t.value_usd * 0.8,
                 "suspicious": t.value_usd * 0.2 if t.risk_flag else 0
             })
-            
+
         suspicious_txs = [
             {
                 "id": t.id, "from": t.origin_country, "to": t.destination_country,
@@ -2325,7 +2375,7 @@ async def portfolio_var():
                 "type": "SWIFT Transfer", "route": f"{t.origin_country} -> {t.destination_country}"
             } for t in txs[:5] if t.risk_flag
         ]
-        
+
     return {
         "swift": swift_data if swift_data else [{"hour": "12:00", "normal": 1000, "suspicious": 50}],
         "offshore": [
@@ -2355,7 +2405,7 @@ async def premium_trade_flows():
         flows = (await session.execute(
             select(TradeFlow).order_by(TradeFlow.timestamp.desc()).limit(50)
         )).scalars().all()
-        
+
         result = []
         for f in flows:
             result.append({
@@ -2377,7 +2427,7 @@ async def telegram_feed():
         msgs = (await session.execute(
             select(TelegramMessage).order_by(TelegramMessage.timestamp.desc()).limit(20)
         )).scalars().all()
-        
+
         result = []
         for m in msgs:
             result.append({
@@ -2397,7 +2447,7 @@ async def darknet_mentions():
         mentions = (await session.execute(
             select(DarknetMention).order_by(DarknetMention.timestamp.desc()).limit(15)
         )).scalars().all()
-        
+
         result = []
         for m in mentions:
             result.append({
@@ -2652,7 +2702,7 @@ async def prozorro_analytics():
 
 async def process_dataset_query(query: str, session: AsyncSession) -> dict:
     q = query.lower()
-    
+
     # Dataset 1
     if "сплеск" in q or "розпорядженн" in q:
         return {"response": "📊 [DATASET #1: Митний сплеск за розпорядженням]\nАналіз бази даних виявив аномалію: після виходу постанови, кількість оформлень різко зросла на 270%. Зафіксовано 142 транзакції.", "confidence": 0.95, "dataset_id": 1}
@@ -2840,7 +2890,7 @@ async def ai_query(request: Request):
     query = body.get("query", body.get("message", ""))
     async with main_session() as session:
         result = await process_dataset_query(query, session)
-        
+
     return {
         "response": result["response"],
         "confidence": result["confidence"],
@@ -2856,7 +2906,7 @@ async def copilot_chat(request: Request):
     message = body.get("message", body.get("query", ""))
     async with main_session() as session:
         result = await process_dataset_query(message, session)
-        
+
     return {
         "response": result["response"],
         "model": "PREDATOR-Copilot-v67-SMART",
@@ -2911,6 +2961,7 @@ async def council_history():
 # ═══════════════════════════════════════════════════════════════
 from enum import Enum
 
+
 class IngestionStatus(str, Enum):
     UPLOADING = "uploading"
     UPLOADED = "uploaded"
@@ -2950,6 +3001,7 @@ ingestion_jobs: dict[str, IngestionJob] = {}
 
 class NormalizationTransform:
     """Нормалізація полів (видалення пробілів)."""
+
     async def transform(self, record: dict[str, Any]) -> dict[str, Any]:
         for key, value in list(record.items()):
             if isinstance(value, str):
@@ -2959,6 +3011,7 @@ class NormalizationTransform:
 
 class EnrichmentTransform:
     """Збагачення метаданими."""
+
     async def transform(self, record: dict[str, Any]) -> dict[str, Any]:
         if "metadata" not in record:
             record["metadata"] = {}
@@ -2968,6 +3021,7 @@ class EnrichmentTransform:
 
 class ETLProcessor:
     """Процесор ETL для Kaggle."""
+
     def __init__(self):
         self.pipelines = {
             "default": [NormalizationTransform(), EnrichmentTransform()],
@@ -3006,6 +3060,7 @@ etl_processor = ETLProcessor()
 
 class IndexingService:
     """Сервіс індексації з підтримкою 10 БД (емуляція та SQLite)."""
+
     async def index_documents(self, documents: list, dataset_type: str = "custom", index_name: str = "documents"):
         async with main_session() as session:
             for doc in documents:
@@ -3019,7 +3074,7 @@ class IndexingService:
                     timestamp=datetime.now(UTC)
                 )
                 session.add(db_doc)
-                
+
                 # 2. Запис в PostgreSQL (Registry Record)
                 db_reg = RegistryRecord(
                     id=f"reg-{uuid4().hex[:8]}",
@@ -3029,7 +3084,7 @@ class IndexingService:
                     timestamp=datetime.now(UTC)
                 )
                 session.add(db_reg)
-                
+
                 # 3. Запис в ClickHouse (Trade Flow)
                 if dataset_type == "customs" or "amount_usd" in doc or "value_usd" in doc:
                     db_flow = TradeFlow(
@@ -3042,14 +3097,14 @@ class IndexingService:
                         timestamp=datetime.now(UTC)
                     )
                     session.add(db_flow)
-                    
+
                 # 4. Запис у граф Neo4j
                 if doc.get("ueid"):
                     neo4j.graph.add_node(doc["ueid"], name=doc.get("company_name", doc.get("name", "Unknown")), type="company")
                     if doc.get("partner_ueid"):
                         neo4j.graph.add_node(doc["partner_ueid"], name=doc.get("partner_name", "Unknown"), type="company")
                         neo4j.graph.add_edge(doc["ueid"], doc["partner_ueid"], relation="trade")
-                        
+
                 # 5. Запис у векторний Qdrant
                 qdrant.upsert(
                     collection=index_name,
@@ -3114,7 +3169,7 @@ async def process_file_async(job_id: str, content: bytes, filename: str, file_ty
             for idx, r in enumerate(records):
                 name = r.get("company_name") or r.get("name") or "Unknown Company"
                 edrpou = r.get("edrpou") or r.get("edrpou_code")
-                
+
                 # Шукаємо або створюємо компанію
                 stmt = select(Company).where(Company.name == name)
                 res = await session.execute(stmt)
@@ -3261,8 +3316,9 @@ async def process_website_async(job_id: str, url: str, limit: int, user_id: str,
         job.progress.message = "Завантаження контенту веб-сайту..."
         job.updated_at = datetime.now(UTC)
 
-        import httpx
         from html.parser import HTMLParser
+
+        import httpx
 
         class WebTextParser(HTMLParser):
             def __init__(self):
@@ -3404,8 +3460,9 @@ async def process_rss_async(job_id: str, url: str, limit: int, user_id: str, con
         job.progress.message = "Читання RSS стрічки..."
         job.updated_at = datetime.now(UTC)
 
-        import httpx
         import xml.etree.ElementTree as ET
+
+        import httpx
         async with httpx.AsyncClient(timeout=10.0) as client:
             res = await client.get(url)
             res.raise_for_status()
@@ -3460,11 +3517,11 @@ async def ingest_upload(background_tasks: BackgroundTasks, request: Request, dat
     file = form.get("file")
     if not file:
         raise HTTPException(status_code=400, detail="Файл відсутній")
-    
+
     content = await file.read()
     file_ext = "." + file.filename.split(".")[-1].lower() if "." in file.filename else ""
     job_id = str(uuid4())
-    
+
     job = IngestionJob(
         id=job_id,
         filename=file.filename,
@@ -3477,7 +3534,7 @@ async def ingest_upload(background_tasks: BackgroundTasks, request: Request, dat
         progress=IngestionProgress(stage="QUEUED", percent=0.0, message="В черзі...")
     )
     ingestion_jobs[job_id] = job
-    
+
     background_tasks.add_task(
         process_file_async,
         job_id=job_id,
@@ -3487,7 +3544,7 @@ async def ingest_upload(background_tasks: BackgroundTasks, request: Request, dat
         user_id=job.user_id,
         dataset_name=dataset_name
     )
-    
+
     return {
         "job_id": job_id,
         "status": IngestionStatus.UPLOADING,
@@ -3511,7 +3568,7 @@ async def ingest_stream(job_id: str):
     """Стрімінг статусу інгестії через SSE."""
     if job_id not in ingestion_jobs:
         raise HTTPException(status_code=404, detail="Job не знайдено")
-        
+
     async def event_generator():
         last_percent = -1.0
         while True:
@@ -3531,7 +3588,7 @@ async def ingest_stream(job_id: str):
             if job.status in [IngestionStatus.READY, IngestionStatus.FAILED]:
                 break
             await asyncio.sleep(0.5)
-            
+
     return StreamingResponse(event_generator(), media_type="text/event-stream")
 
 
@@ -3900,7 +3957,7 @@ async def ingest_telegram(background_tasks: BackgroundTasks, request: Request, c
     url = body.get("url")
     limit = int(body.get("limit", 100))
     job_id = str(uuid4())
-    
+
     job = IngestionJob(
         id=job_id,
         filename=f"telegram_{url.split('/')[-1]}",
@@ -3913,7 +3970,7 @@ async def ingest_telegram(background_tasks: BackgroundTasks, request: Request, c
         progress=IngestionProgress(stage="QUEUED", percent=0.0, message="Запит на Telegram прийнято")
     )
     ingestion_jobs[job_id] = job
-    
+
     background_tasks.add_task(
         process_telegram_async,
         job_id=job_id,
@@ -3922,7 +3979,7 @@ async def ingest_telegram(background_tasks: BackgroundTasks, request: Request, c
         user_id=job.user_id,
         config=body
     )
-    
+
     return {
         "status": "success",
         "job_id": job_id,
@@ -3938,7 +3995,7 @@ async def ingest_website(background_tasks: BackgroundTasks, request: Request, cu
     url = body.get("url")
     limit = int(body.get("limit", 100))
     job_id = str(uuid4())
-    
+
     job = IngestionJob(
         id=job_id,
         filename=f"website_{url.split('/')[-1]}",
@@ -3951,7 +4008,7 @@ async def ingest_website(background_tasks: BackgroundTasks, request: Request, cu
         progress=IngestionProgress(stage="QUEUED", percent=0.0, message="Запит на веб-сайт прийнято")
     )
     ingestion_jobs[job_id] = job
-    
+
     background_tasks.add_task(
         process_website_async,
         job_id=job_id,
@@ -3960,7 +4017,7 @@ async def ingest_website(background_tasks: BackgroundTasks, request: Request, cu
         user_id=job.user_id,
         config=body
     )
-    
+
     return {
         "status": "success",
         "job_id": job_id,
@@ -3979,7 +4036,7 @@ async def ingest_api(background_tasks: BackgroundTasks, request: Request, curren
     api_body = body.get("body")
     limit = int(body.get("limit", 100))
     job_id = str(uuid4())
-    
+
     job = IngestionJob(
         id=job_id,
         filename=f"api_{url.split('/')[-1]}",
@@ -3992,7 +4049,7 @@ async def ingest_api(background_tasks: BackgroundTasks, request: Request, curren
         progress=IngestionProgress(stage="QUEUED", percent=0.0, message="Запит на API прийнято")
     )
     ingestion_jobs[job_id] = job
-    
+
     background_tasks.add_task(
         process_api_async,
         job_id=job_id,
@@ -4004,7 +4061,7 @@ async def ingest_api(background_tasks: BackgroundTasks, request: Request, curren
         user_id=job.user_id,
         config=body
     )
-    
+
     return {
         "status": "success",
         "job_id": job_id,
@@ -4020,7 +4077,7 @@ async def ingest_rss(background_tasks: BackgroundTasks, request: Request, curren
     url = body.get("url")
     limit = int(body.get("limit", 100))
     job_id = str(uuid4())
-    
+
     job = IngestionJob(
         id=job_id,
         filename=f"rss_{url.split('/')[-1]}",
@@ -4033,7 +4090,7 @@ async def ingest_rss(background_tasks: BackgroundTasks, request: Request, curren
         progress=IngestionProgress(stage="QUEUED", percent=0.0, message="Запит на RSS прийнято")
     )
     ingestion_jobs[job_id] = job
-    
+
     background_tasks.add_task(
         process_rss_async,
         job_id=job_id,
@@ -4042,7 +4099,7 @@ async def ingest_rss(background_tasks: BackgroundTasks, request: Request, curren
         user_id=job.user_id,
         config=body
     )
-    
+
     return {
         "status": "success",
         "job_id": job_id,
@@ -4065,16 +4122,16 @@ async def copilot_chat_stream(request: Request):
         async with main_session() as session:
             result = await process_dataset_query(message, session)
             full_text = result["response"]
-            
+
         words = full_text.split(" ")
         for word in words:
             data = json.dumps({"type": "token", "content": word + " "})
             yield f"data: {data}\n\n"
             await asyncio.sleep(0.02)
-            
+
         data_src = json.dumps({"type": "sources", "content": f"\n\n[Джерела: SQLite Facts, Dataset Module #{result['dataset_id']}, Neo4j Graph]"})
         yield f"data: {data_src}\n\n"
-            
+
         done = json.dumps({"type": "done", "content": ""})
         yield f"data: {done}\n\n"
 
@@ -5286,9 +5343,8 @@ def _download_zrok() -> str | None:
     print(f"🔽 Завантаження zrok {tag}...")
     try:
         req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-        with urllib.request.urlopen(req, timeout=120) as resp:
-            with open(tar_path, "wb") as f:
-                f.write(resp.read())
+        with urllib.request.urlopen(req, timeout=120) as resp, open(tar_path, "wb") as f:
+            f.write(resp.read())
 
         if os.path.exists(tar_path):
             with tarfile.open(tar_path, "r:gz") as tar:

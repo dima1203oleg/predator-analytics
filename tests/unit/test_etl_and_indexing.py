@@ -1,10 +1,10 @@
-import asyncio
 from unittest.mock import AsyncMock, MagicMock, patch
+
 import pytest
 
 from app.etl.processor import (
-    ETLProcessor,
     EnrichmentTransform,
+    ETLProcessor,
     NormalizationTransform,
     ProcessorResult,
 )

@@ -1,15 +1,16 @@
-"""
-Test Runner for Autonomous Agent.
+"""Test Runner for Autonomous Agent.
 Executes Ruff, Pytest, and Vitest to ensure code quality before committing.
 """
 
 import subprocess
+
 from loguru import logger
+
 
 class TestRunner:
     def __init__(self, repo_path: str = "/app"):
         self.repo_path = repo_path
-    
+
     def run_cmd(self, cmd: list[str], cwd: str = None) -> tuple[bool, str]:
         target_dir = cwd if cwd else self.repo_path
         try:

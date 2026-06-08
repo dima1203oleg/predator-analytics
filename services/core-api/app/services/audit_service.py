@@ -1,7 +1,7 @@
 import asyncio
-import logging
-from typing import Any, List, Optional
 from datetime import UTC, datetime
+import logging
+from typing import Any
 
 from sqlalchemy import text
 
@@ -15,7 +15,7 @@ class AuditService:
 
     def __init__(self):
         self._queue: asyncio.Queue = asyncio.Queue()
-        self._worker_task: Optional[asyncio.Task] = None
+        self._worker_task: asyncio.Task | None = None
 
     @property
     def queue(self) -> asyncio.Queue:
@@ -55,20 +55,20 @@ class AuditService:
             "ip_address": ip_address,
             "timestamp": datetime.now(UTC).isoformat()
         }
-        
+
         # Додавання підпису в деталі
         signed_details = {**(details or {}), "sig": IntegritySentinel.sign_data(log_payload)}
         log_payload["details"] = signed_details
 
         await self.queue.put(log_payload)
-        
+
         if self._worker_task is None:
             self.start_worker()
 
     async def _batch_worker(self):
         """Фоновий процес, що збирає логі та записує їх пачками."""
         while True:
-            batch: List[dict] = []
+            batch: list[dict] = []
             # Чекаємо хоча б одного елемента
             first_item = await self.queue.get()
             batch.append(first_item)
@@ -78,16 +78,16 @@ class AuditService:
                 while len(batch) < 50:
                     item = await asyncio.wait_for(self.queue.get(), timeout=1.0)
                     batch.append(item)
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 pass # Час вийшов, записуємо те, що є
 
             if batch:
                 await self._write_batch(batch)
-            
+
             for _ in range(len(batch)):
                 self.queue.task_done()
 
-    async def _write_batch(self, batch: List[dict]):
+    async def _write_batch(self, batch: list[dict]):
         """Запис пачки логів у базу."""
         if SessionLocal is None:
             return

@@ -8,15 +8,15 @@ LiteLLM MCP Router з підтримкою:
 """
 from collections.abc import AsyncIterator
 from enum import StrEnum
-from typing import Any, AsyncIterator
+from typing import Any
 
 import httpx
 
 from app.config import get_settings
 from app.services.gemini_agent_service import gemini_service
+from app.services.vram_watchdog import vram_sentinel
 from predator_common.circuit_breaker import CircuitBreaker
 from predator_common.logging import get_logger
-from app.services.vram_watchdog import vram_sentinel
 
 logger = get_logger("ai_service")
 settings = get_settings()
@@ -58,7 +58,7 @@ class AIService:
         if include_reasoning:
             # Додаємо інструкцію для Chain-of-Thought
             reasoning_msg = {
-                "role": "system", 
+                "role": "system",
                 "content": "Перед наданням фінальної відповіді, виконай покроковий аналіз (Chain-of-Thought) та вияви можливі суперечності. Надай відповідь у форматі: <thought>...</thought> <answer>...</answer>"
             }
             messages.insert(0, reasoning_msg)
@@ -107,7 +107,7 @@ class AIService:
     ) -> AsyncIterator[str]:
         """Streaming відповідь для AI Copilot з VRAM Guard."""
         vram_stats = await vram_sentinel.get_stats()
-        
+
         # Якщо VRAM критична, стрімимо через Gemini Cloud
         if vram_stats.critical:
             logger.warning(f"🚨 VRAM GUARD: Перемикання Copilot на CLOUD ({vram_stats.used_gb}GB)")

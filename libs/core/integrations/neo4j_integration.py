@@ -5,9 +5,9 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 import logging
 import os
-from dataclasses import dataclass
 from typing import Any
 
 from neo4j import GraphDatabase
@@ -18,6 +18,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class Neo4jConfig:
     """Конфігурація Neo4j."""
+
     uri: str = "bolt://localhost:7687"
     user: str = "neo4j"
     password: str = "neo4j"
@@ -42,7 +43,7 @@ class Neo4jIntegration:
             "CREATE INDEX IF NOT EXISTS FOR (c:Company) ON (c.edrpou)",
             "CREATE INDEX IF NOT EXISTS FOR (d:Declaration) ON (d.declaration_date)",
         ]
-        
+
         with self.driver.session() as session:
             for constraint in constraints:
                 try:
@@ -61,6 +62,7 @@ class Neo4jIntegration:
             
         Returns:
             Кількість створених вузлів
+
         """
         with self.driver.session() as session:
             query = """
@@ -68,14 +70,14 @@ class Neo4jIntegration:
             SET c.edrpou = $edrpou, c.name = $name, c.updated_at = datetime()
             RETURN c
             """
-            
+
             result = session.run(
                 query,
                 ueid=ueid,
                 edrpou=edrpou,
                 name=name
             )
-            
+
             logger.debug(f"Створено вузол компанії: {ueid}")
             return 1
 
@@ -87,6 +89,7 @@ class Neo4jIntegration:
             
         Returns:
             Кількість створених вузлів
+
         """
         with self.driver.session() as session:
             query = """
@@ -101,7 +104,7 @@ class Neo4jIntegration:
                 d.updated_at = datetime()
             RETURN d
             """
-            
+
             result = session.run(
                 query,
                 id=str(declaration_data.get('id')),
@@ -113,7 +116,7 @@ class Neo4jIntegration:
                 origin_country=declaration_data.get('origin_country'),
                 customs_post=declaration_data.get('customs_post'),
             )
-            
+
             logger.debug(f"Створено вузол декларації: {declaration_data.get('id')}")
             return 1
 
@@ -126,6 +129,7 @@ class Neo4jIntegration:
             
         Returns:
             Кількість створених зв'язків
+
         """
         with self.driver.session() as session:
             query = """
@@ -135,13 +139,13 @@ class Neo4jIntegration:
             SET r.created_at = datetime()
             RETURN r
             """
-            
+
             result = session.run(
                 query,
                 company_ueid=company_ueid,
                 declaration_id=str(declaration_id)
             )
-            
+
             logger.debug(f"Створено зв'язок імпорту: {company_ueid} -> {declaration_id}")
             return 1
 
@@ -154,6 +158,7 @@ class Neo4jIntegration:
             
         Returns:
             Кількість створених зв'язків
+
         """
         with self.driver.session() as session:
             query = """
@@ -163,13 +168,13 @@ class Neo4jIntegration:
             SET r.created_at = datetime()
             RETURN r
             """
-            
+
             result = session.run(
                 query,
                 exporter_name=exporter_name,
                 declaration_id=str(declaration_id)
             )
-            
+
             logger.debug(f"Створено зв'язок експорту: {exporter_name} -> {declaration_id}")
             return 1
 
@@ -181,13 +186,14 @@ class Neo4jIntegration:
             
         Returns:
             Кількість вузлів, кількість зв'язків
+
         """
         nodes = 0
         relationships = 0
-        
+
         # Створити вузол декларації
         nodes += self.create_declaration_node(declaration_data)
-        
+
         # Створити вузол компанії-імпортера
         importer_ueid = declaration_data.get('importer_ueid')
         if importer_ueid:
@@ -200,7 +206,7 @@ class Neo4jIntegration:
                 importer_ueid,
                 declaration_data.get('id')
             )
-        
+
         # Створити вузол експортера та зв'язок
         exporter_name = declaration_data.get('exporter_name')
         if exporter_name:
@@ -208,7 +214,7 @@ class Neo4jIntegration:
                 exporter_name,
                 declaration_data.get('id')
             )
-        
+
         return nodes, relationships
 
     def find_company_connections(self, company_ueid: str, max_depth: int = 3) -> list[dict[str, Any]]:
@@ -220,6 +226,7 @@ class Neo4jIntegration:
             
         Returns:
             Список зв'язків
+
         """
         with self.driver.session() as session:
             query = f"""
@@ -227,9 +234,9 @@ class Neo4jIntegration:
             RETURN path
             LIMIT 100
             """
-            
+
             result = session.run(query, ueid=company_ueid)
-            
+
             connections = []
             for record in result:
                 path = record["path"]
@@ -237,7 +244,7 @@ class Neo4jIntegration:
                     "nodes": [node["ueid"] for node in path.nodes],
                     "relationships": [rel.type for rel in path.relationships]
                 })
-            
+
             return connections
 
     def close(self):

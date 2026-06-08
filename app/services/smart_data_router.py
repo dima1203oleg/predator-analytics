@@ -3,9 +3,10 @@
 """
 from __future__ import annotations
 
-from enum import Enum
 from dataclasses import dataclass
-from typing import Dict, Any
+from enum import Enum
+from typing import Any
+
 
 class DatabaseTarget(Enum):
     KAFKA = "kafka"
@@ -29,7 +30,7 @@ class SmartDataRouter:
     """
 
     def __init__(self) -> None:
-        self._stats: Dict[str, Any] = {
+        self._stats: dict[str, Any] = {
             "total_decisions": 0,
             "fallback_count": 0,
             "per_target": {},
@@ -99,7 +100,7 @@ class SmartDataRouter:
         return decision
 
     # ------------------------------------------------------------------
-    def stats(self) -> Dict[str, Any]:
+    def stats(self) -> dict[str, Any]:
         total = self._stats["total_decisions"] or 1
         fallback_rate = self._stats["fallback_count"] / total
         return {

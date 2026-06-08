@@ -1,6 +1,6 @@
 import json
 
-with open('/Users/Shared/Predator_60/scripts/kaggle_cloudflared_v65.py', 'r') as f:
+with open('/Users/Shared/Predator_60/scripts/kaggle_cloudflared_v65.py') as f:
     code = f.read()
 
 start = code.find("backend_code = '''") + len("backend_code = '''")

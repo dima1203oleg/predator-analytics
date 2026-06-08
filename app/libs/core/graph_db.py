@@ -20,10 +20,10 @@ class Neo4jGraph:
         self.uri = uri or os.getenv("NEO4J_URI", "bolt://neo4j:7687")
         self.user = user or os.getenv("NEO4J_USER", "neo4j")
         self.password = password or os.getenv("NEO4J_PASSWORD", "666666")
-        
+
         # Оптимізація пулу з'єднань для Sovereign Node
         self._driver = AsyncGraphDatabase.driver(
-            self.uri, 
+            self.uri,
             auth=(self.user, self.password),
             max_connection_pool_size=50,
             connection_timeout=30.0,

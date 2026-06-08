@@ -1,16 +1,17 @@
 import asyncio
 import logging
+
 from celery import shared_task
+
 from app.services.forecast_service import ForecastService
-from app.services.cache_service import cache_service
 
 logger = logging.getLogger(__name__)
 
 async def precalculate_forecasts_async():
     """Фонове обчислення прогнозів для топ-кодів."""
     # У реальній системі цей список можна брати з ClickHouse (топ за об'ємом)
-    top_product_codes = ["8517", "8703", "8471", "3004"] 
-    
+    top_product_codes = ["8517", "8703", "8471", "3004"]
+
     for code in top_product_codes:
         logger.info(f"🔄 Background training for product code: {code}")
         try:
@@ -31,5 +32,5 @@ def precalculate_top_forecasts():
     except RuntimeError:
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
-    
+
     loop.run_until_complete(precalculate_forecasts_async())

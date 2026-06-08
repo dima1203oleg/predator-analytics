@@ -10,12 +10,11 @@
 
 from __future__ import annotations
 
-import logging
-import os
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
+import logging
 from typing import Any
 
 import httpx
@@ -25,6 +24,7 @@ logger = logging.getLogger(__name__)
 
 class DataSourceType(Enum):
     """Тип джерела даних."""
+
     PUBLIC_REGISTRY = "public_registry"
     DARKNET = "darknet"
     TELEGRAM = "telegram"
@@ -35,6 +35,7 @@ class DataSourceType(Enum):
 @dataclass
 class ParseResult:
     """Результат парсингу."""
+
     source_type: DataSourceType
     source_url: str
     data: list[dict[str, Any]]
@@ -45,6 +46,7 @@ class ParseResult:
 @dataclass
 class ParserConfig:
     """Конфігурація парсера."""
+
     source_url: str
     parse_interval_minutes: int = 60
     enabled: bool = True
@@ -66,6 +68,7 @@ class BaseParser(ABC):
         
         Returns:
             Результат парсингу
+
         """
         pass
 
@@ -75,6 +78,7 @@ class BaseParser(ABC):
         
         Returns:
             True якщо джерело доступне
+
         """
         pass
 
@@ -83,19 +87,18 @@ class BaseParser(ABC):
         
         Returns:
             Дані у вигляді рядка або байтів
+
         """
         try:
             response = await self.client.get(self.config.source_url)
             response.raise_for_status()
-            
+
             content_type = response.headers.get("content-type", "")
-            if "application/json" in content_type:
-                return response.text
-            elif "text/html" in content_type:
+            if "application/json" in content_type or "text/html" in content_type:
                 return response.text
             else:
                 return response.content
-                
+
         except httpx.HTTPStatusError as e:
             logger.error(f"HTTP помилка при отриманні даних: {e}")
             raise
@@ -122,6 +125,7 @@ class ParserRegistry:
             name: Назва парсера
             parser: Інстанс парсера
             config: Конфігурація парсера
+
         """
         self.parsers[name] = parser
         self.parser_configs[name] = config
@@ -135,6 +139,7 @@ class ParserRegistry:
             
         Returns:
             Інстанс парсера або None
+
         """
         return self.parsers.get(name)
 
@@ -143,6 +148,7 @@ class ParserRegistry:
         
         Returns:
             Список назв парсерів
+
         """
         return list(self.parsers.keys())
 
@@ -151,6 +157,7 @@ class ParserRegistry:
         
         Returns:
             Список назв увімкнених парсерів
+
         """
         return [
             name for name, config in self.parser_configs.items()
@@ -174,6 +181,7 @@ def register_parser(name: str, parser: BaseParser, config: ParserConfig):
         name: Назва парсера
         parser: Інстанс парсера
         config: Конфігурація парсера
+
     """
     _parser_registry.register_parser(name, parser, config)
 
@@ -193,10 +201,11 @@ class AIAnalyzer:
             
         Returns:
             Результат аналізу
+
         """
         # TODO: Використати LLM для аналізу структури джерела
         # та рекомендації по створенню парсера
-        
+
         return {
             "source_url": source_url,
             "source_type": "unknown",
@@ -213,6 +222,7 @@ class AIAnalyzer:
             
         Returns:
             Згенерований код парсера
+
         """
         # TODO: Використати LLM для генерації коду парсера
         pass

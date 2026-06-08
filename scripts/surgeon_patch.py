@@ -1,6 +1,6 @@
-import sqlite3
 import json
 import os
+import sqlite3
 import uuid
 
 storage_path = os.path.expanduser("~/Library/Application Support/Cursor/User/globalStorage/storage.json")
@@ -11,12 +11,12 @@ print("🦅 PREDATOR SURGEON: Starting...")
 
 # 1. Update storage.json
 try:
-    with open(storage_path, 'r') as f:
+    with open(storage_path) as f:
         data = json.load(f)
-    
+
     data["telemetry.devDeviceId"] = str(uuid.uuid4())
     data["telemetry.machineId"] = str(uuid.uuid4())
-    
+
     with open(storage_path, 'w') as f:
         json.dump(data, f, indent=4)
     print("✅ storage.json updated (devDeviceId & machineId)")
@@ -28,11 +28,11 @@ try:
     # Attempt to connect even if locked
     conn = sqlite3.connect(f"file:{db_path}?mode=rw", uri=True)
     cursor = conn.cursor()
-    
+
     # Try to set Pro status
     cursor.execute("INSERT OR REPLACE INTO itemTable (key, value) VALUES ('cursorAuth/accessToken', ?)", (token,))
     cursor.execute("INSERT OR REPLACE INTO itemTable (key, value) VALUES ('cursorAuth/stripeMembershipType', 'pro')")
-    
+
     conn.commit()
     conn.close()
     print("✅ state.vscdb updated (PRO Status injected)")

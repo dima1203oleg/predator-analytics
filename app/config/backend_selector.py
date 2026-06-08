@@ -5,10 +5,9 @@
 (можна змінити через `HEALTH_PORT`). Якщо сервер недоступний – повертає
 резервний.
 """
+import asyncio
 import os
 import socket
-import asyncio
-from typing import Tuple
 
 # Читання параметрів середовища (можна задати у .env)
 IMAC_HOST = os.getenv("IMAC_HOST", "imac.local")

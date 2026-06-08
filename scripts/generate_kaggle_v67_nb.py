@@ -1,15 +1,16 @@
 import json
 import os
 
+
 def generate_notebook():
     src_path = '/Users/Shared/Predator_60/scripts/predator_kaggle_prod_v67.py'
     out_path = '/Users/Shared/Predator_60/predator_kaggle_v67_standalone.ipynb'
-    
+
     if not os.path.exists(src_path):
         print(f"Помилка: файл {src_path} не знайдено.")
         return
 
-    with open(src_path, 'r', encoding='utf-8') as f:
+    with open(src_path, encoding='utf-8') as f:
         backend_code = f.read()
 
     # Означення структури Jupyter Notebook (nbformat v4)

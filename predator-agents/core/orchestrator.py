@@ -1,18 +1,19 @@
-"""
-Predator Agents OS — Orchestrator
+"""Predator Agents OS — Orchestrator
 Центральний вузол керування агентами на базі LangGraph.
 """
 
-from typing import Annotated, TypedDict, List, Dict, Any, Union
-from langgraph.graph import StateGraph, END
-from langchain_core.messages import BaseMessage, HumanMessage, AIMessage, SystemMessage
-from core.llm import planner_llm, coder_llm
-from core.memory import AgentMemory
+import json
+import operator
+from typing import Annotated, Any, TypedDict
+
 from agents.graph_analyst import GraphAnalyst
 from agents.researcher import ResearcherAgent
 from agents.sysadmin import SysAdminAgent
-import operator
-import json
+from core.memory import AgentMemory
+from langchain_core.messages import BaseMessage, HumanMessage, SystemMessage
+from langgraph.graph import END, StateGraph
+
+from core.llm import coder_llm, planner_llm
 
 # Ініціалізація
 graph_analyst = GraphAnalyst()
@@ -22,11 +23,11 @@ memory = AgentMemory()
 
 # Визначення стану графа
 class AgentState(TypedDict):
-    messages: Annotated[List[BaseMessage], operator.add]
+    messages: Annotated[list[BaseMessage], operator.add]
     task: str
-    plan: List[str]
-    results: List[Dict[str, Any]]
-    context: List[str] # Пам'ять про попередні події
+    plan: list[str]
+    results: list[dict[str, Any]]
+    context: list[str] # Пам'ять про попередні події
     next_step: str
 
 # Системні промпти
@@ -49,21 +50,20 @@ REPORTER_PROMPT = """
 
 # Ноди
 async def planner_node(state: AgentState):
-    """
-    Аналізує завдання та створює план, враховуючи пам'ять.
+    """Аналізує завдання та створює план, враховуючи пам'ять.
     """
     print("--- [ORCHESTRATOR] Planning with Memory ---")
-    
+
     # Пошук у пам'яті
     past_memories = await memory.query_memories(state["task"], limit=3)
     context_str = "\n".join([m["text"] for m in past_memories])
-    
+
     messages = [
         SystemMessage(content=PLANNER_PROMPT),
         HumanMessage(content=f"КОНТЕКСТ З ПАМ'ЯТІ:\n{context_str}\n\nЗАВДАННЯ: {state['task']}")
     ]
     response = await planner_llm.ainvoke(messages)
-    
+
     try:
         plan_data = json.loads(response.content)
         plan = plan_data.get("plan", [])
@@ -77,16 +77,15 @@ async def planner_node(state: AgentState):
     }
 
 async def executor_node(state: AgentState):
+    """Виконує кроки плану.
     """
-    Виконує кроки плану.
-    """
-    print(f"--- [ORCHESTRATOR] Executing Plan ---")
+    print("--- [ORCHESTRATOR] Executing Plan ---")
     results = []
-    
+
     for step in state["plan"]:
         agent_type = step.get("agent")
         sub_task = step.get("task")
-        
+
         if agent_type == "graph_analyst":
             res = await graph_analyst.analyze(sub_task)
             results.append(res)
@@ -103,22 +102,21 @@ async def executor_node(state: AgentState):
     }
 
 async def reporter_node(state: AgentState):
-    """
-    Формує відповідь та зберігає нові факти в пам'ять.
+    """Формує відповідь та зберігає нові факти в пам'ять.
     """
     print("--- [ORCHESTRATOR] Reporting & Memorizing ---")
     results_str = json.dumps(state["results"], ensure_ascii=False, indent=2)
-    
+
     # Збереження результатів у пам'ять для майбутнього
     summary_for_memory = f"Завдання: {state['task']}. Результат: {results_str[:500]}"
     await memory.add_memory(summary_for_memory, metadata={"source": "orchestrator", "task": state["task"]})
-    
+
     messages = [
         SystemMessage(content=REPORTER_PROMPT),
         HumanMessage(content=f"Результати:\n{results_str}")
     ]
     response = await coder_llm.ainvoke(messages)
-    
+
     return {
         "messages": [response],
         "next_step": END

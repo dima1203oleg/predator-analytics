@@ -9,9 +9,9 @@
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import StrEnum
+import hashlib
 import logging
 import os
-import hashlib
 from typing import Any
 
 from neo4j import AsyncDriver, AsyncGraphDatabase, AsyncSession
@@ -575,8 +575,7 @@ class Neo4jService:
                 return GraphResult(success=False, errors=[str(e)])
 
     async def find_ubo_by_edrpou(self, edrpou: str, max_depth: int = 15) -> dict[str, Any]:
-        """
-        Пошук кінцевого бенефіціарного власника (UBO) через ланцюги власності.
+        """Пошук кінцевого бенефіціарного власника (UBO) через ланцюги власності.
         """
         query = """
         MATCH (org:Organization {edrpou: $edrpou})
@@ -589,7 +588,7 @@ class Neo4jService:
         ORDER BY depth ASC
         LIMIT 1
         """
-        
+
         async with await self._get_session() as session:
             result = await session.run(query, edrpou=edrpou, max_depth=max_depth)
             record = await result.single()
@@ -604,8 +603,7 @@ class Neo4jService:
         return {"error": "Бенефіціара не знайдено"}
 
     async def detect_circular_ownership(self, edrpou: str, max_depth: int = 4) -> list[dict[str, Any]]:
-        """
-        Виявлення циклічного володіння (Circular Ownership).
+        """Виявлення циклічного володіння (Circular Ownership).
         Це часто вказує на схеми приховування активів.
         """
         query = f"""
@@ -614,7 +612,7 @@ class Neo4jService:
         RETURN [node in nodes(path) | node.edrpou] as cycle, 
                length(path) as length
         """
-        
+
         cycles = []
         async with await self._get_session() as session:
             result = await session.run(query, edrpou=edrpou)
@@ -934,8 +932,7 @@ class Neo4jService:
     # ======================== SIMULATION (SHADOW GRAPH) ========================
 
     async def create_simulation_context(self, scenario_id: str, base_edrpou: str) -> bool:
-        """
-        Створює симуляційний контекст (копію вузла та зв'язків) для 'What-if' аналізу.
+        """Створює симуляційний контекст (копію вузла та зв'язків) для 'What-if' аналізу.
         Використовує мітку :Simulation для ідентифікації.
         """
         query = """

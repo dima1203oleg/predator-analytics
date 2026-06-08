@@ -13,6 +13,7 @@ from enum import StrEnum
 import logging
 import math
 from typing import Any
+
 import numpy as np
 from sklearn.ensemble import IsolationForest
 
@@ -294,14 +295,13 @@ class AnomalyDetectionService:
         return [i for i, pred in enumerate(preds) if pred == -1]
 
     def get_unified_anomaly_score(self, values: list[float]) -> float:
-        """
-        Об'єднує результати різних методів для отримання фінального балу аномальності (0.0 - 1.0).
+        """Об'єднує результати різних методів для отримання фінального балу аномальності (0.0 - 1.0).
         """
         if not values:
             return 0.0
 
         scores = []
-        
+
         # 1. Isolation Forest (як найбільш надійний для складних даних)
         if len(values) >= 10:
             x = np.array(values).reshape(-1, 1)

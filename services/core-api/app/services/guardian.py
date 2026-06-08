@@ -27,7 +27,7 @@ class SovereignGuardian:
                 logger.warning("⚠️ Guardian: ZROK tunnel process not found. Attempting RESTART...")
                 # Спроба перезапуску
                 subprocess.run(["systemctl", "restart", "zrok"], capture_output=False)
-            
+
             # Перевірка LHR (LocalHostRun)
             result = subprocess.run(["pgrep", "-f", "lhr.life"], capture_output=True)
             if result.returncode != 0:
@@ -105,9 +105,9 @@ class SovereignGuardian:
 
     async def generate_active_scenarios(self):
         """Генерація реальних OSINT-сценаріїв через War-gaming Engine."""
-        from app.services.wargaming_engine import wargaming_engine
         from app.services.redis_service import get_redis_service
-        
+        from app.services.wargaming_engine import wargaming_engine
+
         redis = get_redis_service()
         if not redis._connected: return
 
@@ -129,12 +129,12 @@ class SovereignGuardian:
                 if counter % 5 == 0: await self.record_metrics()
                 if counter % 15 == 0: await self.generate_active_scenarios()
                 if counter % 60 == 0: await self.trigger_sync()
-                
+
                 try:
                     with open("/tmp/predator_heartbeat", "w") as f:
                         f.write(datetime.now().isoformat())
                 except: pass
-                
+
                 counter += 1
                 await asyncio.sleep(self.interval)
             except Exception as e:

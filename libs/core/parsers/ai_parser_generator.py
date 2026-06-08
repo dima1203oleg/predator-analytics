@@ -5,8 +5,8 @@
 
 from __future__ import annotations
 
-import logging
 from dataclasses import dataclass
+import logging
 from typing import Any
 
 from libs.core.parsers.base import AIAnalyzer, ParserConfig
@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class ParserGenerationRequest:
     """Запит на генерацію парсера."""
+
     source_url: str
     sample_data: str | None = None
     source_type: str | None = None
@@ -26,6 +27,7 @@ class ParserGenerationRequest:
 @dataclass
 class ParserGenerationResult:
     """Результат генерації парсера."""
+
     parser_name: str
     parser_code: str
     config: ParserConfig
@@ -47,6 +49,7 @@ class AIParserGenerator:
             
         Returns:
             Результат аналізу
+
         """
         return await self.ai_analyzer.analyze_source(source_url)
 
@@ -61,34 +64,35 @@ class AIParserGenerator:
             
         Returns:
             Результат генерації
+
         """
         try:
             # Аналіз джерела
             analysis = await self.analyze_source(request.source_url)
-            
+
             # Генерація коду парсера
             parser_code = await self.ai_analyzer.generate_parser_code(
                 request.source_url,
                 request.sample_data or ""
             )
-            
+
             # Генерація назви парсера
             parser_name = f"auto_{hash(request.source_url) % 10000:04d}"
-            
+
             # Генерація конфігурації
             config = ParserConfig(
                 source_url=request.source_url,
                 parse_interval_minutes=60,
                 enabled=True,
             )
-            
+
             return ParserGenerationResult(
                 parser_name=parser_name,
                 parser_code=parser_code,
                 config=config,
                 confidence=analysis.get("confidence", 0.0),
             )
-            
+
         except Exception as e:
             logger.error(f"Помилка генерації парсера: {e}")
             return ParserGenerationResult(
@@ -110,14 +114,15 @@ class AIParserGenerator:
             
         Returns:
             Список результатів генерації
+
         """
         results = []
-        
+
         for url in source_urls:
             request = ParserGenerationRequest(source_url=url)
             result = await self.generate_parser(request)
             results.append(result)
-        
+
         return results
 
 

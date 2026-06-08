@@ -2,11 +2,12 @@
 """Тести для модуля RegistryFetcher.
 Перевіряє, що методи коректно роблять запити та обробляють відповіді.
 """
-import json
-import pytest
 from unittest.mock import AsyncMock, MagicMock
 
+import pytest
+
 from app.services.registry_fetcher import RegistryFetcher
+
 
 @pytest.fixture
 def mock_async_client(monkeypatch):

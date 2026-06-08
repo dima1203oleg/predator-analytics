@@ -234,12 +234,12 @@ class TaxAnalyzer:
                 total_obligations = sum(r.total_tax_obligations for r in tax_records)
                 total_paid = sum(r.total_tax_paid for r in tax_records)
                 tax_gap = total_obligations - total_paid
-                
+
                 # VAT невідповідність
                 total_vat_obligations = sum(r.vat_obligations for r in tax_records)
                 total_vat_paid = sum(r.vat_paid for r in tax_records)
                 vat_discrepancy = total_vat_obligations - total_vat_paid
-                
+
                 # Флаги
                 if tax_gap > 1000000:
                     flags.append("potential_tax_evasion")
@@ -276,8 +276,8 @@ class GeospatialAnalyzer:
     async def analyze_route_anomalies(self, declaration_id: str):
         logger.info(f"🗺️ Analyzing route anomalies for declaration {declaration_id}")
         async with get_db_ctx() as db:
-            from libs.core.models.analytics import RouteAnomaly
             from app.models import Declaration
+            from libs.core.models.analytics import RouteAnomaly
 
             # 3. "Маршрутні аномалії" - відстань від митного поста до складу
             # 46. "Кордон за межами карти" - GPS невідповідність
@@ -328,8 +328,8 @@ class PriceAnalyzer:
     async def analyze_price_anomalies(self, uktzed_code: str, company_ueid: str):
         logger.info(f"💰 Analyzing price anomalies for {uktzed_code}")
         async with get_db_ctx() as db:
-            from libs.core.models.analytics import PriceAnomaly
             from app.models import Declaration
+            from libs.core.models.analytics import PriceAnomaly
 
             # 5. "Демпінг-карусель" - заниження цін
             # 44. "Ціна друга" - відхилення від середньої ціни
@@ -385,7 +385,7 @@ class BrandAnalyzer:
         self.brand_service = get_brand_detection_service()
 
     async def detect_brand_fraud(self, goods_description: str):
-        logger.info(f"🏷️ Detecting brand fraud in description")
+        logger.info("🏷️ Detecting brand fraud in description")
         async with get_db_ctx() as db:
             from libs.core.models.analytics import BrandDetection
 
@@ -454,8 +454,8 @@ class BrokerAnalyzer:
     async def analyze_broker_patterns(self, broker_ueid: str):
         logger.info(f"👔 Analyzing broker patterns for {broker_ueid}")
         async with get_db_ctx() as db:
-            from libs.core.models.analytics import BrokerPattern
             from app.models import BrokerDeclarationLink
+            from libs.core.models.analytics import BrokerPattern
 
             # 9. "Кулуарні коридори" - монополія брокера
             # 71. "Брокер-невидимка" - внутрішній брокер
@@ -470,7 +470,7 @@ class BrokerAnalyzer:
             if links:
                 total_declarations = len(links)
                 unique_clients = len(set(l.declaration_id for l in links))
-                
+
                 # Розраховуємо концентрацію
                 if total_declarations > 0:
                     concentration_ratio = 1.0 / unique_clients if unique_clients > 0 else 1.0

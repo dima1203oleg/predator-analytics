@@ -1,6 +1,6 @@
 import json
 
-with open("scripts/predator_kaggle_prod_v67.py", "r") as f:
+with open("scripts/predator_kaggle_prod_v67.py") as f:
     backend_code = f.read()
 
 notebook = {

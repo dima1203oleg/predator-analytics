@@ -1,8 +1,6 @@
 import asyncio
-import subprocess
-import shutil
 from dataclasses import dataclass
-from typing import Optional
+import shutil
 
 try:
     import pynvml
@@ -40,7 +38,7 @@ class VramSentinel:
             except Exception as e:
                 logger.debug(f"NVML init failed: {e}")
 
-    async def _get_real_vram(self) -> Optional[float]:
+    async def _get_real_vram(self) -> float | None:
         """Отримати реальне використання VRAM (через NVML або nvidia-smi)."""
         # 1. Спробувати NVML (найшвидше)
         if HAS_NVML and self._nvml_initialized:
@@ -54,7 +52,7 @@ class VramSentinel:
         # 2. Фоллбек на nvidia-smi (повільніше)
         if not self._nvidia_smi_path:
             return None
-        
+
         try:
             # Запит: використана пам'ять у MB
             result = await asyncio.create_subprocess_exec(
@@ -74,7 +72,7 @@ class VramSentinel:
         """Отримати статистику VRAM (реальну або симуляцію)."""
         real_vram = await self._get_real_vram()
         gpu_found = real_vram is not None
-        
+
         if real_vram is not None:
             used_gb = real_vram
         else:
@@ -111,12 +109,12 @@ class VramSentinel:
         while True:
             try:
                 status = await self.get_stats()
-                
+
                 if status.critical and self._current_mode != "CLOUD":
                     logger.warning(f"🚨 VRAM CRITICAL: {status.used_gb}GB. Автоматичний FAILOVER на CLOUD.")
                     self._current_mode = "CLOUD"
                     # Тут можна додати логіку сповіщення LiteLLM сервісу
-                
+
                 elif not status.critical and status.used_gb < VRAM_RECOVERY_THRESHOLD and self._current_mode == "CLOUD":
                     logger.info(f"✅ VRAM RECOVRED: {status.used_gb}GB. Повернення в режим SOVEREIGN.")
                     self._current_mode = "SOVEREIGN"

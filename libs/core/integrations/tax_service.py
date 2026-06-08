@@ -8,10 +8,9 @@
 
 from __future__ import annotations
 
-import logging
 from dataclasses import dataclass
-from datetime import date, datetime
-from typing import Any
+from datetime import date
+import logging
 
 import httpx
 
@@ -21,6 +20,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class TaxRecord:
     """Податковий запис компанії."""
+
     company_ueid: str
     company_edrpou: str
     period_start: date
@@ -35,6 +35,7 @@ class TaxRecord:
 @dataclass
 class VATInvoice:
     """Податкова накладна."""
+
     invoice_number: str
     company_ueid: str
     invoice_date: date
@@ -60,7 +61,7 @@ class TaxServiceIntegration:
         try:
             # Симуляція API виклику (реальний API потребує аутентифікації)
             logger.info(f"Отримання податкових даних для ЄДРПОУ {company_edrpou}")
-            
+
             # TODO: Реалізувати реальний API виклик
             # response = await self.client.get(
             #     f"{self.base_url}/companies/{company_edrpou}/tax",
@@ -68,7 +69,7 @@ class TaxServiceIntegration:
             #     headers={"Authorization": f"Bearer {self.api_key}"}
             # )
             # data = response.json()
-            
+
             # Тимчасова заглушка для демонстрації
             return [
                 TaxRecord(
@@ -95,7 +96,7 @@ class TaxServiceIntegration:
         """Отримати податкові накладні компанії за датою."""
         try:
             logger.info(f"Отримання ПДВ накладних для ЄДРПОУ {company_edrpou}")
-            
+
             # TODO: Реалізувати реальний API виклик
             return [
                 VATInvoice(

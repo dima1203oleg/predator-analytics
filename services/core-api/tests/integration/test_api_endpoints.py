@@ -4,7 +4,7 @@
 Використовує повністю мокований шар доступу до бази даних для автономності тестування.
 """
 
-from datetime import date, datetime
+from datetime import date
 from typing import Any
 from unittest.mock import MagicMock
 
@@ -15,13 +15,13 @@ from app.database import get_db
 from app.main import app
 from app.services.analytics_service import AnalyticsService
 
-
 # ═══════════════════════════════════════════════════════════════
 # MOCK DATABASE LAYER
 # ═══════════════════════════════════════════════════════════════
 
 class MockRow:
     """Mock-рядок результату запиту SQLAlchemy."""
+
     def __init__(self, **kwargs: Any) -> None:
         for k, v in kwargs.items():
             setattr(self, k, v)
@@ -29,7 +29,7 @@ class MockRow:
 
 class MockAsyncSession:
     """Mock асинхронної сесії SQLAlchemy для тестування без SQL-рушія."""
-    
+
     async def scalar(self, statement: Any, *args: Any, **kwargs: Any) -> Any:
         return 100
 
@@ -51,7 +51,7 @@ class MockAsyncSession:
                 id=1,
             )
         ]
-        
+
         result = MagicMock()
         result.scalars.return_value.all.return_value = []
         result.all.return_value = mock_rows
@@ -80,8 +80,8 @@ async def client(test_db: MockAsyncSession, monkeypatch):
     async def override_get_db():
         yield test_db
 
-    from app.dependencies import get_tenant_id
     from app.core.security import get_current_user_payload
+    from app.dependencies import get_tenant_id
 
     # VIP роль має повний доступ до бізнес-даних згідно з ТЗ RBAC v61.0
     mock_user = {

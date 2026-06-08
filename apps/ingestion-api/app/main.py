@@ -1,7 +1,7 @@
+from contextlib import asynccontextmanager
 import logging
 import os
 import uuid
-from contextlib import asynccontextmanager
 
 from confluent_kafka import Producer
 from fastapi import FastAPI, File, Form, HTTPException, Request, Response, UploadFile
@@ -20,27 +20,26 @@ RAW_DATA_TOPIC = "raw-data"
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """
-    Керування життєвим циклом застосунку.
+    """Керування життєвим циклом застосунку.
     Ініціалізація та очищення ресурсів (Kafka Producer).
     """
     logger.info("🚀 Ingestion API запускається...")
-    
+
     # Ініціалізація Kafka Producer
     producer_conf = {
         'bootstrap.servers': KAFKA_BROKERS,
         'client.id': 'ingestion-api'
     }
-    
+
     app.state.kafka_producer = None
     try:
         app.state.kafka_producer = Producer(producer_conf)
         logger.info(f"✅ Підключено до Redpanda за адресою {KAFKA_BROKERS}")
     except Exception as e:
         logger.error(f"❌ Помилка підключення до Redpanda: {e}")
-        
+
     yield
-    
+
     # Очищення ресурсів
     if app.state.kafka_producer:
         logger.info("⏳ Очікування завершення черги повідомлень Kafka...")
@@ -61,8 +60,8 @@ app.add_middleware(
     allow_headers=["*"],
     # Заголовки, необхідні для роботи протоколу Tus
     expose_headers=[
-        "Upload-Offset", "Location", "Upload-Length", "Tus-Resumable", 
-        "Tus-Version", "Tus-Max-Size", "Tus-Extension", "Upload-Metadata", 
+        "Upload-Offset", "Location", "Upload-Length", "Tus-Resumable",
+        "Tus-Version", "Tus-Max-Size", "Tus-Extension", "Upload-Metadata",
         "Upload-Defer-Length", "Upload-Concat"
     ]
 )

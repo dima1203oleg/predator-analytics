@@ -31,20 +31,19 @@ class PostgresSink:
             f"@{settings.POSTGRES_HOST}:{settings.POSTGRES_PORT}/{settings.POSTGRES_DB}"
         )
         self.engine = create_async_engine(
-            db_url, 
+            db_url,
             pool_pre_ping=True,
             pool_size=10,
             max_overflow=20
         )
         self.async_session = sessionmaker(
-            bind=self.engine, 
-            class_=AsyncSession, 
+            bind=self.engine,
+            class_=AsyncSession,
             expire_on_commit=False
         )  # type: ignore[call-overload]
 
     async def upsert_companies(self, batch: list[dict[str, Any]]) -> None:
-        """
-        Виконує ідемпотентний UPSERT для компаній за UEID.
+        """Виконує ідемпотентний UPSERT для компаній за UEID.
         Оновлює метадані компанії в SSOT.
         """
         if not batch:

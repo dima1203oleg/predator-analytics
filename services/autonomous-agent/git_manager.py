@@ -1,16 +1,16 @@
-"""
-Git Manager for Autonomous Agent.
+"""Git Manager for Autonomous Agent.
 Handles branching, committing, and pushing changes autonomously.
 """
 
-import os
-from loguru import logger
 import subprocess
+
+from loguru import logger
+
 
 class GitManager:
     def __init__(self, repo_path: str = "/app"):
         self.repo_path = repo_path
-    
+
     def run_cmd(self, cmd: list[str]) -> tuple[bool, str]:
         try:
             result = subprocess.run(cmd, cwd=self.repo_path, capture_output=True, text=True, check=False)
