@@ -1,8 +1,11 @@
 import logging
-from telegram import Update, KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import Update, KeyboardButton, ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes, ConversationHandler
 
-from app.api_client import get_system_status, perform_search, ask_ai_copilot
+from app.api_client import (
+    get_system_status, perform_search, ask_ai_copilot, 
+    get_active_alerts, trigger_osint
+)
 
 logger = logging.getLogger(__name__)
 
@@ -11,11 +14,13 @@ SEARCH_INPUT = 1
 AI_INPUT = 2
 GRAPH_INPUT = 3
 REPORT_INPUT = 4
+OSINT_INPUT = 5
 
-# Головне меню
+# Головне меню з новими корисними кнопками
 def get_main_keyboard():
     keyboard = [
         [KeyboardButton("📊 Статус Системи"), KeyboardButton("🔍 Швидкий Пошук")],
+        [KeyboardButton("🚨 Активні Загрози"), KeyboardButton("📡 OSINT Розвідка")],
         [KeyboardButton("🕸 Граф Зв'язків"), KeyboardButton("📄 Згенерувати Звіт")],
         [KeyboardButton("🤖 Запитати ШІ"), KeyboardButton("⚙️ Налаштування")]
     ]
@@ -46,10 +51,33 @@ async def handle_status(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await msg.edit_text(status_text, parse_mode='Markdown')
     return ConversationHandler.END
 
+async def handle_alerts(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Отримання активних загроз."""
+    msg = await update.message.reply_text("🔄 Перевіряю систему на наявність нових загроз...", reply_markup=get_main_keyboard())
+    alerts_text = await get_active_alerts()
+    await msg.edit_text(alerts_text, parse_mode='Markdown')
+    return ConversationHandler.END
+
+# --- OSINT Розвідка ---
+
+async def osint_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Початок OSINT розвідки."""
+    await update.message.reply_text(
+        "📡 Введіть ціль для глибокої OSINT-розвідки (ІПН, Назва, Телефон, або /cancel):"
+    )
+    return OSINT_INPUT
+
+async def osint_perform(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Запуск OSINT."""
+    text = update.message.text
+    msg = await update.message.reply_text(f"🔄 Ініціалізую збір даних для '{text}'...")
+    result = await trigger_osint(text)
+    await msg.edit_text(result, parse_mode='Markdown')
+    return ConversationHandler.END
+
 # --- Швидкий Пошук ---
 
 async def search_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Початок швидкого пошуку."""
     keyboard = [
         [InlineKeyboardButton("🏢 Компанія", callback_data="search_company")],
         [InlineKeyboardButton("👤 Людина", callback_data="search_person")],
@@ -60,7 +88,6 @@ async def search_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return SEARCH_INPUT
 
 async def search_type_selected(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Обробка вибору типу пошуку."""
     query = update.callback_query
     await query.answer()
 
@@ -75,27 +102,23 @@ async def search_type_selected(update: Update, context: ContextTypes.DEFAULT_TYP
     return SEARCH_INPUT
 
 async def search_perform(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Виконання пошуку."""
     text = update.message.text
     search_type = context.user_data.get('search_type', 'Невідомо')
     
     msg = await update.message.reply_text(f"🔄 Шукаю '{text}'...")
     result = await perform_search(text, search_type)
     await msg.edit_text(result, parse_mode='Markdown')
-    
     return ConversationHandler.END
 
 # --- Граф Зв'язків ---
 
 async def graph_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Початок побудови графа."""
     await update.message.reply_text(
         "🕸 Введіть ІПН або Код ЄДРПОУ сутності для побудови графа зв'язків (або /cancel для відміни):"
     )
     return GRAPH_INPUT
 
 async def graph_perform(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Генерація посилання на граф."""
     text = update.message.text
     await update.message.reply_text(
         f"🕸 **Граф для {text} згенеровано!**\n\nПереглянути у Web UI:\n[Відкрити Граф](http://192.168.0.200:3030/graph/{text})",
@@ -107,7 +130,6 @@ async def graph_perform(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # --- Звіти ---
 
 async def report_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Вибір звіту."""
     keyboard = [
         [InlineKeyboardButton("🔴 Ризик-аналіз", callback_data="report_risk")],
         [InlineKeyboardButton("💰 Фінансовий", callback_data="report_fin")],
@@ -136,7 +158,6 @@ async def report_perform(update: Update, context: ContextTypes.DEFAULT_TYPE):
     report_type = context.user_data.get('report_type', '')
     
     msg = await update.message.reply_text("🔄 Генерую звіт, це може зайняти кілька хвилин...")
-    # Мок-логіка
     await msg.edit_text(f"✅ **Звіт ({report_type}) для {text} готовий!**\n\n[Завантажити PDF](http://192.168.0.200:3030/reports/{text}.pdf)", parse_mode='Markdown')
     return ConversationHandler.END
 

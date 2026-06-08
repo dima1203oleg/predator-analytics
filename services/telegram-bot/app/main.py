@@ -11,13 +11,14 @@ from telegram.ext import (
 
 from app.config import TELEGRAM_BOT_TOKEN
 from app.handlers import (
-    start, cancel, handle_status, 
+    start, cancel, handle_status, handle_alerts,
     search_start, search_type_selected, search_perform,
     graph_start, graph_perform,
     report_start, report_type_selected, report_perform,
     ai_start, ai_perform,
+    osint_start, osint_perform,
     settings_menu, settings_callback,
-    SEARCH_INPUT, AI_INPUT, GRAPH_INPUT, REPORT_INPUT
+    SEARCH_INPUT, AI_INPUT, GRAPH_INPUT, REPORT_INPUT, OSINT_INPUT
 )
 
 logging.basicConfig(
@@ -32,6 +33,7 @@ def main():
     # Обробники меню першого рівня без станів
     application.add_handler(CommandHandler('start', start))
     application.add_handler(MessageHandler(filters.Regex("^📊 Статус Системи$"), handle_status))
+    application.add_handler(MessageHandler(filters.Regex("^🚨 Активні Загрози$"), handle_alerts))
     application.add_handler(MessageHandler(filters.Regex("^⚙️ Налаштування$"), settings_menu))
     application.add_handler(CallbackQueryHandler(settings_callback, pattern="^(toggle_notif|lang_lock|clear_hist)$"))
 
@@ -47,6 +49,16 @@ def main():
         fallbacks=[CommandHandler('cancel', cancel)]
     )
     application.add_handler(search_conv)
+
+    # OSINT Розвідка Conversation
+    osint_conv = ConversationHandler(
+        entry_points=[MessageHandler(filters.Regex("^📡 OSINT Розвідка$"), osint_start)],
+        states={
+            OSINT_INPUT: [MessageHandler(filters.TEXT & ~filters.COMMAND, osint_perform)]
+        },
+        fallbacks=[CommandHandler('cancel', cancel)]
+    )
+    application.add_handler(osint_conv)
 
     # Граф Зв'язків Conversation
     graph_conv = ConversationHandler(
@@ -81,7 +93,7 @@ def main():
     )
     application.add_handler(ai_conv)
 
-    # Глобальний fallback для невідомих команд/текстів
+    # Глобальний fallback
     async def unknown(update, context):
         await update.message.reply_text("Я вас не зовсім зрозумів. Спробуйте скористатися меню або натисніть /start.")
 
