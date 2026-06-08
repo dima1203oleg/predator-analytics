@@ -149,17 +149,21 @@ check_ssh_access() {
 
   echo -n "  ├─ Пробую SSH підключення... "
   if ssh -o BatchMode=yes \
-         -o ConnectTimeout=5 \
+         -o ConnectTimeout=8 \
          -o StrictHostKeyChecking=no \
          -o UserKnownHostsFile=/dev/null \
+         -o ServerAliveInterval=10 \
+         -o ServerAliveCountMax=3 \
          -i "$keyfile" \
          -p "$port" \
-         "$user@$hostname" "echo 'SSH_OK'" 2>/dev/null | grep -q "SSH_OK"; then
+         "$user@$hostname" "echo 'SSH_OK'" 2>"$ZROK_LOG_DIR/ssh_debug_${alias}.log" | grep -q "SSH_OK"; then
     echo -e "${GREEN}✅ УСПІШНО!${NC}"
+    echo -e "${BLUE}🔍 Діагностика SSH (лог): $ZROK_LOG_DIR/ssh_debug_${alias}.log${NC}"
     return 0
   fi
 
   echo -e "${RED}❌ ПОМИЛКА SSH${NC}"
+  echo -e "${YELLOW}🔎 Перегляньте лог: $ZROK_LOG_DIR/ssh_debug_${alias}.log${NC}"
   return 1
 }
 
@@ -277,6 +281,7 @@ done
 echo -e "${YELLOW}🔍 ФАЗА 1: Пошук робочого SSH підключення${NC}"
 echo ""
 
+ZROK_FORCE_RESTART=1
 ensure_zrok_access "$ZROK_SSH_SHARE" "$ZROK_SSH_BIND_HOST" "$ZROK_SSH_BIND_PORT" "SSH zrok-тунель" || true
 ensure_zrok_access "$ZROK_K8S_SHARE" "$ZROK_K8S_BIND_HOST" "$ZROK_K8S_BIND_PORT" "K8s zrok-тунель" || true
 echo ""

@@ -4,7 +4,7 @@
 # Використання: ./scripts/server-connect.sh [command]
 
 # === КОНФІГУРАЦІЯ ===
-SSH_ALIAS="predator-server"
+SSH_ALIAS="dev-ngrok"
 REMOTE_DIR="predator-analytics"
 
 echo "🚀 Підключення до сервера Predator Analytics ($SSH_ALIAS)..."

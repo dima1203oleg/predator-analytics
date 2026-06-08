@@ -146,18 +146,7 @@ ssh dev-ngrok
 # COMMAND HANDLERS
 # ============================================================
 
-COMMANDS = {}
-EMOJI_MAP = {
-    "статус": "status",
-    "status": "status",
-    "disk": "disk",
-    "memory": "memory",
-    "cpu": "cpu",
-    "docker": "docker",
-    "k8s": "k8s_cluster",
-    "ngrok": "ngrok",
-    "help": "help"
-}
+
 
 async def cmd_start(args: str) -> str:
     return """🚀 *Predator Analytics Assistant*
@@ -407,37 +396,6 @@ Top Indices:"""
 
 
 # Register commands
-COMMANDS = {
-    "start": cmd_start,
-    "help": cmd_help,
-    "status": cmd_status,
-    "disk": cmd_disk,
-    "memory": cmd_memory,
-    "cpu": cmd_cpu,
-    "uptime": cmd_uptime,
-    "docker": cmd_docker,
-    "pods": cmd_pods,
-    "logs": cmd_logs,
-    "ngrok": cmd_ngrok,
-    "ssh": cmd_ssh,
-    "connect": cmd_connect,
-    "git": cmd_git,
-    "deploy": cmd_deploy,
-    "opensearch": cmd_opensearch,
-    "qdrant": cmd_qdrant,
-    "celery": cmd_celery_status,
-    "etl": cmd_etl_jobs,
-    "cluster": cmd_k8s_cluster,
-    "predator": cmd_full_status,
-    "parsing": cmd_parsing_status,
-    "indexing": cmd_indexing_status,
-    "code": cmd_code,
-    "bash": cmd_bash,
-    "test": cmd_test,
-    "create": cmd_create_file,
-    "llm_providers": cmd_llm_providers,
-    "llm_add": cmd_llm_add
-}
 
 async def cmd_help_updated(args: str) -> str:
     return """📖 *Predator Helper*
@@ -1725,3 +1683,47 @@ async def run_bot():
 if __name__ == "__main__":
     with contextlib.suppress(KeyboardInterrupt):
         asyncio.run(run_bot())
+
+COMMANDS = {}
+EMOJI_MAP = {
+    "статус": "status",
+    "status": "status",
+    "disk": "disk",
+    "memory": "memory",
+    "cpu": "cpu",
+    "docker": "docker",
+    "k8s": "k8s_cluster",
+    "ngrok": "ngrok",
+    "help": "help"
+}
+COMMANDS = {
+    "start": cmd_start,
+    "help": cmd_help,
+    "status": cmd_status,
+    "disk": cmd_disk,
+    "memory": cmd_memory,
+    "cpu": cmd_cpu,
+    "uptime": cmd_uptime,
+    "docker": cmd_docker,
+    "pods": cmd_pods,
+    "logs": cmd_logs,
+    "ngrok": cmd_ngrok,
+    "ssh": cmd_ssh,
+    "connect": cmd_connect,
+    "git": cmd_git,
+    "deploy": cmd_deploy,
+    "opensearch": cmd_opensearch,
+    "qdrant": cmd_qdrant,
+    "celery": cmd_celery_status,
+    "etl": cmd_etl_jobs,
+    "cluster": cmd_k8s_cluster,
+    "predator": cmd_full_status,
+    "parsing": cmd_parsing_status,
+    "indexing": cmd_indexing_status,
+    "code": cmd_code,
+    "bash": cmd_bash,
+    "test": cmd_test,
+    "create": cmd_create_file,
+    "llm_providers": cmd_llm_providers,
+    "llm_add": cmd_llm_add
+}

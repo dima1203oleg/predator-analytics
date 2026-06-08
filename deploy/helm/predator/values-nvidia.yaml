@@ -5,6 +5,8 @@
 global:
   domain: "194.177.1.240.nip.io"
   imagePullPolicy: IfNotPresent
+  imagePullSecrets:
+    - name: ghcr-secret
   postgres:
     host: predator-postgresql
     port: 5432
@@ -22,7 +24,7 @@ global:
     port: 6333
 
 ingress:
-  enabled: true
+  enabled: false
   className: traefik
   tls:
     enabled: true
@@ -43,7 +45,7 @@ frontend:
     targetPort: 80
     nodePort: 30080
   ingress:
-    enabled: true
+    enabled: false
     hosts:
       - host: "{{ .Values.global.domain }}"
         paths:
@@ -361,7 +363,7 @@ redis:
         memory: 256Mi
 
 kafka:
-  enabled: true
+  enabled: false
   replicaCount: 1
   persistence:
     enabled: true
@@ -560,7 +562,7 @@ sealedSecrets:
 
 serviceMesh:
   enabled: false
-  type: linkerd
+  type: none
   mtls: true
   autoInject: true
 

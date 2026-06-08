@@ -2,8 +2,8 @@
 set -e
 
 # Configuration
-SERVER_IP="194.177.1.240"
-SSH_PORT="6666"
+SERVER_IP="5.tcp.eu.ngrok.io"
+SSH_PORT="17394"
 SSH_USER="dima"
 SSH_KEY="$HOME/.ssh/id_ed25519_dev"
 LOCAL_KUBE_CONFIG="$HOME/.kube/config"
