@@ -26,7 +26,7 @@ class WorkerSettings(BaseSettings):
     ROOT_TENANT_ID: str = "global-system"
 
     # ClickHouse Analytics
-    CLICKHOUSE_HOST: str = "localhost"
+    CLICKHOUSE_HOST: str = "clickhouse-predator-nvidia-s0-r0"
     CLICKHOUSE_PORT: int = 9000
     CLICKHOUSE_USER: str = "default"
     CLICKHOUSE_PASSWORD: str = ""
