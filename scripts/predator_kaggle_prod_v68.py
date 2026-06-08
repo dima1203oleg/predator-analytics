@@ -1478,9 +1478,7 @@ async def lifespan(application: FastAPI):
     if vectors_data:
         qdrant.upsert("companies", vectors_data)
 
-    print(f"✅ Seed: {NUM_COMPANIES} компаній, {NUM_TRANSACTIONS} транзакцій, "
-          f"{NUM_ALERTS} алертів, {neo4j.graph.number_of_nodes()} graph nodes, "
-          f"{neo4j.graph.number_of_edges()} graph edges")
+    print("✅ Схеми створено (БЕЗ мокових даних). Очікуйте запуску парсерів.")
 
     ooda.start()
     print("🧠 OODA Loop запущено")
