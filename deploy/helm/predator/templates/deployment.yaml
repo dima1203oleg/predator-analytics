@@ -28,13 +28,10 @@ spec:
           ports:
             - containerPort: 8001
           env:
-            - name: NEO4J_URI
-              value: "bolt://{{ .Release.Name }}:7687"
-            - name: NEO4J_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Release.Name }}-neo4j
-                  key: neo4j-password
+            {{- range $key, $val := .Values.graphService.env }}
+            - name: {{ $key }}
+              value: {{ tpl ($val | toString) $ | quote }}
+            {{- end }}
           livenessProbe:
             httpGet:
               path: /health
