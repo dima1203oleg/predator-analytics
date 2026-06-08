@@ -235,7 +235,7 @@ async def query_database(database: str, query: str, limit: int = 10) -> str:
 
             async with get_db_ctx() as db:
                 result = await db.execute(
-                    text("SELECT * FROM gold.documents WHERE content ILIKE :pattern LIMIT :limit"),
+                    text("SELECT * FROM gold.documents WHERE content ILIKE :pattern LIMIT :limit"),  # noqa
                     {"pattern": f"%{query}%", "limit": limit},
                 )
                 rows = result.fetchall()

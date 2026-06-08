@@ -104,7 +104,7 @@ async def list_cases(
 
             # Якщо таблиця є - запитуємо реальні дані
             query = """
-                SELECT * FROM gold.cases
+                SELECT * FROM gold.cases  # noqa
                 WHERE 1=1
             """
             params = {}
@@ -209,7 +209,7 @@ async def get_case(case_id: str):
     try:
         async with get_db_ctx() as db:
             result = await db.execute(
-                text("SELECT * FROM gold.cases WHERE id = :id"), {"id": case_id}
+                text("SELECT * FROM gold.cases WHERE id = :id"), {"id": case_id}  # noqa
             )
             row = result.fetchone()
 

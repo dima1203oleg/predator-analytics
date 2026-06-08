@@ -9,7 +9,7 @@ import sys
 
 from aiogram import Bot, Dispatcher, F, types
 from aiogram.fsm.storage.memory import MemoryStorage
-from aiogram.types import FSInputFile
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, FSInputFile
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
@@ -101,5 +101,45 @@ async def main():
     logger.info("Starting Trinity Bot...")
     await dp.start_polling(bot)
 
-if __name__ == "__main__":
-    asyncio.run(main())
+# New command to show control panel
+@dp.message(F.text == "/panel")
+async def handle_panel(message: types.Message):
+    if not bot:
+        return
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(text="🔒 Lock", callback_data="action_lock"),
+            InlineKeyboardButton(text="🔓 Unlock", callback_data="action_unlock")
+        ],
+        [
+            InlineKeyboardButton(text="🔁 Reboot", callback_data="action_reboot"),
+            InlineKeyboardButton(text="📈 Status", callback_data="action_status")
+        ]
+    ])
+    await message.answer("🖥️ Резервний пульт управління:", reply_markup=keyboard)
+
+# Callback query handler for actions
+@dp.callback_query(F.data.startswith("action_"))
+async def handle_action(callback: types.CallbackQuery):
+    if not bot:
+        return
+    action = callback.data.split("_")[1]
+    if action == "lock":
+        logger.info("Lock command triggered via Telegram panel.")
+        await callback.message.answer("🔒 Система заблокована.")
+    elif action == "unlock":
+        logger.info("Unlock command triggered via Telegram panel.")
+        await callback.message.answer("🔓 Система розблокована.")
+    elif action == "reboot":
+        logger.info("Reboot command triggered via Telegram panel.")
+        await callback.message.answer("🔁 Перезавантаження системи.")
+    elif action == "status":
+        logger.info("Status command triggered via Telegram panel.")
+        await callback.message.answer("📈 Стан системи: ОК.")
+    else:
+        await callback.message.answer("❓ Невідома команда.")
+    await callback.answer()
+
+# Existing main function remains unchanged
+# Duplicate block removed
+

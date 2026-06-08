@@ -87,7 +87,7 @@ async def memory_contract() -> dict[str, Any]:
                 "role": "SSOT",
                 "nickname": "Хранитель Істини",
                 "purpose": "Метадані, користувачі, фінансові реєстри, транзакції.",
-                "rules": ["HR-16 WORM", "HR-07 No SELECT *", "HR-18 Тільки транзакції"],
+                "rules": ["HR-16 WORM", "HR-07 No SELECT *", "HR-18 Тільки транзакції"],  # noqa
             },
             {
                 "id": "clickhouse",

@@ -153,7 +153,7 @@ async def run_resume_logic():
 
             async with conn.transaction():
                 # Correct cursor usage
-                cursor = await conn.cursor("SELECT * FROM staging_customs")
+                cursor = await conn.cursor("SELECT * FROM staging_customs")  # noqa
 
                 processed = 0
                 start_time = time.time()

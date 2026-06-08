@@ -38,7 +38,7 @@ class AnalyticsEngine:
     def analyze_csv(self, file_path: str, sql_query: str) -> list[dict[str, Any]]:
         """Directly queries a CSV file without loading it all into RAM."""
         try:
-            # DuckDB can query files directly: SELECT * FROM 'file.csv'
+            # DuckDB can query files directly: SELECT * FROM 'file.csv'  # noqa
             query = sql_query.replace("FROM table", f"FROM '{file_path}'")
             return self.query(query)
         except Exception as e:

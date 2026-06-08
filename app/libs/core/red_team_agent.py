@@ -227,7 +227,7 @@ class InjectionAttack(AttackTechnique):
             "'; DROP TABLE users; --",
             "1 OR 1=1",
             "admin'--",
-            "UNION SELECT * FROM passwords",
+            "UNION SELECT * FROM passwords",  # noqa
             "1; UPDATE users SET role='admin'",
         ]
 

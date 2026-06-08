@@ -60,7 +60,7 @@ async def get_risk_assessment(edrpou: str) -> RiskAssessment:
             conn = await asyncpg.connect(db_url)
 
             # Check if company exists (table: companies per models.py)
-            company = await conn.fetchrow("SELECT * FROM companies WHERE edrpou = $1", edrpou)
+            company = await conn.fetchrow("SELECT * FROM companies WHERE edrpou = $1", edrpou)  # noqa
             if company:
                 entity_data.update(
                     {

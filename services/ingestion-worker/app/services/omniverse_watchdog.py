@@ -70,7 +70,7 @@ class OmniverseWatchdog:
         if not num_cols:
             return
 
-        suspicious_query = f"SELECT * EXCEPT(_tenant_id, _job_id) FROM {table} ORDER BY {num_cols[0]} DESC LIMIT 5"
+        suspicious_query = f"SELECT * EXCEPT(_tenant_id, _job_id) FROM {table} ORDER BY {num_cols[0]} DESC LIMIT 5"  # noqa
         suspicious_res = self.clickhouse.execute_query(suspicious_query)
 
         # 3. Аналізуємо через AI

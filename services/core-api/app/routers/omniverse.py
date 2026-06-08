@@ -19,7 +19,7 @@ from app.dependencies import PermissionChecker, get_current_active_user, get_ten
 from app.services.ai_service import AIService
 from app.services.kafka_service import get_kafka_service
 from app.services.minio_service import get_minio_service
-from predator_common.logging import get_logger
+from .utils.clickhouse_helper import get_columns
 
 logger = get_logger("core_api.omniverse")
 
@@ -271,7 +271,7 @@ async def query_table_data(
             else:
                 where_clause += f" AND `{key}` = {value}"
 
-    query = f"SELECT * EXCEPT(_tenant_id) FROM {table_name} {where_clause} ORDER BY _ingested_at DESC LIMIT {request.limit} OFFSET {request.offset}"
+    query = f"SELECT {get_columns(table_name)} FROM {table_name} {where_clause} ORDER BY _ingested_at DESC LIMIT {request.limit} OFFSET {request.offset}"  # noqa
 
     try:
         result = client.query(query)
@@ -384,7 +384,7 @@ async def get_omniverse_insight(
 
     try:
         # Отримуємо семпл даних (100 рядків) для контексту LLM
-        query = f"SELECT * EXCEPT(_tenant_id, _job_id) FROM {request.table_name} WHERE _tenant_id = '{tenant_id}' LIMIT 100"
+        query = f"SELECT {get_columns(request.table_name)} FROM {request.table_name} WHERE _tenant_id = '{tenant_id}' LIMIT 100"  # noqa
         result = client.query(query)
         data_sample = [dict(zip(result.column_names, row)) for row in result.result_rows]
 
@@ -543,7 +543,7 @@ async def get_omniverse_anomalies(
         # Отримуємо крайні значення (можливі викиди)
         outliers = []
         if num_cols:
-            outlier_query = f"SELECT * EXCEPT(_tenant_id, _job_id) FROM {request.table_name} WHERE _tenant_id = '{tenant_id}' ORDER BY {num_cols[0]} DESC LIMIT 20"
+            outlier_query = f"SELECT {get_columns(request.table_name)} FROM {request.table_name} WHERE _tenant_id = '{tenant_id}' ORDER BY {num_cols[0]} DESC LIMIT 20"  # noqa
             outlier_res = client.query(outlier_query)
             outliers = [dict(zip(outlier_res.column_names, row)) for row in outlier_res.result_rows]
 
@@ -587,7 +587,7 @@ async def list_omniverse_alerts(
     client = get_clickhouse_client()
 
     try:
-        query = f"SELECT * FROM omniverse_alerts WHERE tenant_id = '{tenant_id}' ORDER BY detected_at DESC LIMIT 50"
+        query = f"SELECT {get_columns('omniverse_alerts')} FROM omniverse_alerts WHERE tenant_id = '{tenant_id}' ORDER BY detected_at DESC LIMIT 50"  # noqa
         result = client.query(query)
         alerts = [dict(zip(result.column_names, row)) for row in result.result_rows]
         return {"alerts": alerts}

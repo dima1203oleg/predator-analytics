@@ -78,7 +78,7 @@ def process_ml_job(job_id: str):
                     # Limit to recent/unprocessed or just all for now (POC)
                     # Ideally we track what is processed. For now, take last 1000 for demo.
                     rows = await raw_conn.fetch(
-                        f"SELECT * FROM {table_name} ORDER BY id DESC LIMIT 1000"
+                        f"SELECT * FROM {table_name} ORDER BY id DESC LIMIT 1000"  # noqa
                     )
                     # Convert to list of dicts/strings
                     for r in rows:

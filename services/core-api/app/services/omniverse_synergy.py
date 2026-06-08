@@ -5,7 +5,7 @@
 from typing import Any
 
 from app.database import get_clickhouse_client
-from predator_common.logging import get_logger
+from app.utils.clickhouse_helper import get_columns
 
 logger = get_logger("core_api.omniverse_synergy")
 
@@ -34,20 +34,13 @@ class OmniverseSynergy:
 
                 # Пошук по всіх колонках (спрощено)
                 # В реальності ми б шукали лише в 'name', 'edrpou' тощо.
-                search_query = f"""
-                    SELECT * FROM {table} 
-                    WHERE arrayExists(x -> toString(x) ILIKE '%{search_term}%', tupleElement(*, 1)) -- спрощено для MVP
-                    OR toString(*) ILIKE '%{search_term}%'
-                    LIMIT 5
-                """
-                # Оскільки ClickHouse не підтримує універсальний пошук по всіх колонках так легко без динаміки:
-                # Ми будемо шукати по перших 3 текстових колонках
                 text_cols = [c for c in columns if 'String' in str(schema.result_rows[columns.index(c)][1])]
-                if not text_cols: continue
+                if not text_cols:
+                    continue
 
                 where_clause = " OR ".join([f"{c} ILIKE '%{search_term}%'" for c in text_cols[:3]])
-                query = f"SELECT * FROM {table} WHERE {where_clause} LIMIT 10"
-
+                columns = get_columns(table)
+                query = f"SELECT {columns} FROM {table} WHERE {where_clause} LIMIT 10"  # noqa
                 result = self.client.query(query)
                 for row in result.result_rows:
                     data = dict(zip(result.column_names, row))

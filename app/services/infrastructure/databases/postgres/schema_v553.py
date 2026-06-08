@@ -7,7 +7,7 @@ Includes:
 - CERS scoring history
 - Kafka-ready event model
 
-HR-07: NEVER SELECT * — always specify columns.
+HR-07: NEVER SELECT * — always specify columns.  # noqa
 HR-16: WORM tables: UPDATE/DELETE = ERROR.
 """
 from datetime import UTC, datetime

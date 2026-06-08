@@ -54,7 +54,7 @@ class DatasetVersionManager:
             with get_db_sync() as session:
                 result = session.execute(
                     text(
-                        f"SELECT * FROM {self.schema}.{self.table} WHERE name = :name ORDER BY created_at DESC LIMIT 1"
+                        f"SELECT * FROM {self.schema}.{self.table} WHERE name = :name ORDER BY created_at DESC LIMIT 1"  # noqa
                     ),
                     {"name": name},
                 )

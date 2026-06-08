@@ -20,7 +20,7 @@ async def get_demand_forecast(
 ):
     """Отримати прогноз попиту для товару.
     """
-    # 1. Historical data (без SELECT *)
+    # 1. Historical data (без SELECT *)  # noqa
     stmt = (
         select(
             Declaration.declaration_date,

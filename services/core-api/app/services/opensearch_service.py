@@ -6,7 +6,7 @@ Tenant-ізоляція через окремі індекси: {entity}-{tenant
 Модуль відповідає:
 - FR-003: Full-text search з підсвіткою результатів
 - FR-044: Індексація при інгестії (Phase 3)
-- HR-07: Конкретні поля (ніколи SELECT *)
+- HR-07: Конкретні поля (ніколи SELECT *)  # noqa
 """
 from dataclasses import dataclass, field
 from typing import Any
