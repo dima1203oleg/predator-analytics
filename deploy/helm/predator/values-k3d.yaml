@@ -35,8 +35,8 @@ clickhouse:
   replicaCount: 1
 
 kafka:
-  enabled: true
-  replicaCount: 1
+  enabled: false
+  replicaCount: 0
 
 qdrant:
   enabled: true
