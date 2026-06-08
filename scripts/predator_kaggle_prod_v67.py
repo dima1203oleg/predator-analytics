@@ -33,23 +33,12 @@ from uuid import uuid4
 # ═══════════════════════════════════════════════════════════════
 # 1. ЗАЛЕЖНОСТІ
 
-# 📦 Додаткові залежності для Telegram (Telethon)
 import os
-from telethon import TelegramClient
 
 # Читаємо Telegram‑креденшіали з змінних оточення (Kaggle Secrets або .env.local)
 TELEGRAM_API_ID = int(os.getenv("TELEGRAM_API_ID", "0"))
 TELEGRAM_API_HASH = os.getenv("TELEGRAM_API_HASH")
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-
-if not all([TELEGRAM_API_ID, TELEGRAM_API_HASH, TELEGRAM_BOT_TOKEN]):
-    import logging
-    logging.warning("Telegram credentials missing; Telegram integration disabled.")
-    telegram_client = None
-else:
-    telegram_client = TelegramClient("predator_bot", TELEGRAM_API_ID, TELEGRAM_API_HASH).start(
-        bot_token=TELEGRAM_BOT_TOKEN
-    )
 
 # ═══════════════════════════════════════════════════════════════
 
@@ -58,11 +47,11 @@ def _install_deps() -> None:
     required = [
         "fastapi", "uvicorn[standard]", "psutil", "httpx",
         "python-jose[cryptography]", "sqlalchemy", "aiosqlite",
-        "networkx", "orjson", "numpy", "sse-starlette",
+        "networkx", "orjson", "numpy", "sse-starlette", "telethon",
     ]
     try:
         import fastapi, uvicorn, psutil, jose, sqlalchemy  # noqa: F401
-        import aiosqlite, networkx, numpy  # noqa: F401
+        import aiosqlite, networkx, numpy, telethon  # noqa: F401
         print("✅ Залежності вже встановлені")
     except ImportError:
         print("🔧 Встановлення залежностей...")
@@ -84,6 +73,24 @@ def _install_deps() -> None:
     nest_asyncio.apply()
 
 _install_deps()
+
+# Безпечний імпорт telethon після встановлення залежностей
+try:
+    from telethon import TelegramClient
+except ImportError:
+    TelegramClient = None
+
+if TelegramClient is not None and all([TELEGRAM_API_ID, TELEGRAM_API_HASH, TELEGRAM_BOT_TOKEN]):
+    try:
+        telegram_client = TelegramClient("predator_bot", TELEGRAM_API_ID, TELEGRAM_API_HASH).start(
+            bot_token=TELEGRAM_BOT_TOKEN
+        )
+    except Exception as e:
+        import logging
+        logging.error(f"Не вдалося запустити TelegramClient: {e}")
+        telegram_client = None
+else:
+    telegram_client = None
 
 import numpy as np
 import networkx as nx
