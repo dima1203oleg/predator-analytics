@@ -9,12 +9,12 @@ class Settings(BaseSettings):
     VERSION: str = "55.1.0"
 
     # Neo4j
-    NEO4J_URI: str = "bolt://localhost:7687"
+    NEO4J_URI: str = "bolt://predator-nvidia-neo4j:7687"
     NEO4J_USER: str = "neo4j"
     NEO4J_PASSWORD: str = "predator_graph_secret"
 
     # Kafka (опціонально)
-    KAFKA_BROKERS: str = "localhost:9092"
+    KAFKA_BROKERS: str = "predator-nvidia-kafka:9092"
     KAFKA_TOPIC_ENRICHMENT: str = "tenant.default.enrichment.events"
 
     # KEDA & Telemetry
