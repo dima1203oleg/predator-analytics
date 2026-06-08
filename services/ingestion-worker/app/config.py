@@ -17,7 +17,7 @@ class WorkerSettings(BaseSettings):
     NEO4J_USER: str = "neo4j"
     NEO4J_PASSWORD: str = "password"  # noqa: S105
 
-    REDIS_URL: str = "redis://localhost:6379/0"
+    REDIS_URL: str = "redis://predator-nvidia-redis-master:6379/0"
 
     KAFKA_BOOTSTRAP_SERVERS: str = "predator-redpanda:9092"
     KAFKA_TOPIC_INGESTION_RAW: str = "tenant.default.ingestion.raw"
