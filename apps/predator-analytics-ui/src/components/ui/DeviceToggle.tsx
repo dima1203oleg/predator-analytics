@@ -26,6 +26,10 @@ export const DeviceToggle: React.FC<DeviceToggleProps> = ({
     const saved = localStorage.getItem('predator-device-mode') as DeviceMode;
     if (saved && ['desktop', 'tablet', 'smartphone'].includes(saved)) {
       setCurrentMode(saved);
+    } else {
+      // Якщо немає збереженого значення, встановлюємо desktop за замовчуванням
+      setCurrentMode('desktop');
+      localStorage.setItem('predator-device-mode', 'desktop');
     }
   }, []);
 

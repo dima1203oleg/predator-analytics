@@ -51,7 +51,12 @@ const STORAGE_KEY = 'predator_display_mode';
 export const DisplayModeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [mode, setModeState] = useState<DisplayMode>(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
-    return (saved as DisplayMode) || DisplayMode.DESKTOP;
+    if (saved && Object.values(DisplayMode).includes(saved as DisplayMode)) {
+      return saved as DisplayMode;
+    }
+    // За замовчуванням встановлюємо desktop
+    localStorage.setItem(STORAGE_KEY, DisplayMode.DESKTOP);
+    return DisplayMode.DESKTOP;
   });
 
   const setMode = (newMode: DisplayMode) => {

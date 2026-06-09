@@ -46,12 +46,15 @@ class User(Base):
 
 
 class Company(Base):
-    """Ukrainian company from EDR."""
+    """Ukrainian company from EDR.
+    Ontology v56.5-ELITE: Компанія / Юридична особа / ФОП
+    """
 
     __tablename__ = "companies"
 
     id = Column(Integer, primary_key=True, index=True)
     edrpou = Column(String(10), unique=True, index=True, nullable=False)
+    ueid = Column(String(100), unique=True, index=True)  # Унікальний ідентифікатор сутності
     name = Column(String(500), nullable=False)
     short_name = Column(String(200))
     status = Column(String(50))  # active, closed, in_liquidation
@@ -68,6 +71,11 @@ class Company(Base):
     founders = Column(JSON)  # List of founders
     authorized_capital = Column(Float)
 
+    # Ontology v56.5-ELITE additions
+    is_fop = Column(Boolean, default=False)  # Чи є ФОП
+    tenant_id = Column(UUID(as_uuid=True), index=True)
+    cers_score = Column(Float)  # CERS score
+
     # Metadata
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
@@ -81,6 +89,8 @@ class Company(Base):
     __table_args__ = (
         Index("idx_companies_kved", "kved"),
         Index("idx_companies_status", "status"),
+        Index("idx_companies_ueid", "ueid"),
+        Index("idx_companies_reg_date", "registration_date"),
         {"schema": "gold"},
     )
 
@@ -608,3 +618,177 @@ class Case(Base):
 
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+
+# ============================================================================
+# ONTOLOGY v56.5-ELITE: Neo4j Graph Models
+# (Support for 100+ Analytical Datasets)
+# ============================================================================
+
+class Person(Base):
+    """Фізична особа.
+    Ontology v56.5-ELITE: Person (Фізична особа)
+    """
+
+    __tablename__ = "persons"
+    __table_args__ = {"schema": "gold"}
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    inn = Column(String(10), unique=True, index=True)  # ІНН
+    ueid = Column(String(100), unique=True, index=True)  # Унікальний ідентифікатор сутності
+    full_name = Column(String(500), nullable=False)
+    citizenship = Column(String(3))  # ISO код країни
+
+    # PEP & Sanctions
+    is_pep = Column(Boolean, default=False)  # Politically Exposed Person
+    is_sanctioned = Column(Boolean, default=False)
+
+    # Metadata
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, onupdate=func.now())
+
+    __table_args__ = (
+        Index("idx_persons_name", "full_name"),
+        Index("idx_persons_inn", "inn"),
+        Index("idx_persons_is_pep", "is_pep"),
+        Index("idx_persons_is_sanctioned", "is_sanctioned"),
+        {"schema": "gold"},
+    )
+
+
+class Declaration(Base):
+    """Митна декларація.
+    Ontology v56.5-ELITE: Declaration (Митна декларація)
+    """
+
+    __tablename__ = "declarations"
+    __table_args__ = {"schema": "gold"}
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    decl_id = Column(String(100), unique=True, index=True, nullable=False)
+    date = Column(DateTime, index=True, nullable=False)
+    type = Column(String(10))  # IM/EK
+    total_invoice_value = Column(Float, index=True)
+    currency = Column(String(3), default="UAH")
+
+    # Metadata
+    created_at = Column(DateTime, server_default=func.now())
+
+    __table_args__ = (
+        Index("idx_declarations_date", "date"),
+        Index("idx_declarations_type", "type"),
+        Index("idx_declarations_value", "total_invoice_value"),
+        {"schema": "gold"},
+    )
+
+
+class Product(Base):
+    """Товар / УКТЗЕД.
+    Ontology v56.5-ELITE: Product (Товар / УКТЗЕД)
+    """
+
+    __tablename__ = "products"
+    __table_args__ = {"schema": "gold"}
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    hs_code = Column(String(10), unique=True, index=True, nullable=False)  # Код УКТЗЕД
+    uktzed_code = Column(String(10), unique=True, index=True)  # Код УКТЗЕД (legacy)
+    description = Column(Text, index=True)
+    category = Column(String(100), index=True)
+    name_uk = Column(String(500))  # Назва українською
+
+    # Metadata
+    created_at = Column(DateTime, server_default=func.now())
+
+    __table_args__ = (
+        Index("idx_products_desc", "description"),
+        Index("idx_products_category", "category"),
+        {"schema": "gold"},
+    )
+
+
+class CustomsPost(Base):
+    """Митний пост / КПП.
+    Ontology v56.5-ELITE: CustomsPost (Митний пост / КПП)
+    """
+
+    __tablename__ = "customs_posts"
+    __table_args__ = {"schema": "gold"}
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    post_code = Column(String(20), unique=True, index=True, nullable=False)
+    code = Column(String(20), unique=True, index=True)  # Legacy code
+    name = Column(String(500), nullable=False)
+    region = Column(String(100))
+    location = Column(String(200))  # Coordinates
+
+    # Metadata
+    created_at = Column(DateTime, server_default=func.now())
+
+    __table_args__ = (
+        Index("idx_customs_posts_region", "region"),
+        {"schema": "gold"},
+    )
+
+
+class Broker(Base):
+    """Митний брокер.
+    Ontology v56.5-ELITE: Broker (Митний брокер)
+    """
+
+    __tablename__ = "brokers"
+    __table_args__ = {"schema": "gold"}
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    license_id = Column(String(50), unique=True, index=True, nullable=False)
+    name = Column(String(500), nullable=False)
+
+    # Metadata
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, onupdate=func.now())
+
+
+class Address(Base):
+    """Локація / Юридична адреса.
+    Ontology v56.5-ELITE: Address (Локація / Юридична адреса)
+    """
+
+    __tablename__ = "addresses"
+    __table_args__ = {"schema": "gold"}
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    address_hash = Column(String(64), unique=True, index=True, nullable=False)  # Нормалізований хеш адреси
+    full_address = Column(Text, index=True)
+
+    # Metadata
+    created_at = Column(DateTime, server_default=func.now())
+
+    __table_args__ = (
+        Index("idx_addresses_full", "full_address"),
+        {"schema": "gold"},
+    )
+
+
+class Country(Base):
+    """Країна.
+    Ontology v56.5-ELITE: Country (Країна)
+    """
+
+    __tablename__ = "countries"
+    __table_args__ = {"schema": "gold"}
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    iso_code = Column(String(3), unique=True, index=True, nullable=False)
+    name = Column(String(100), nullable=False)
+    is_offshore = Column(Boolean, default=False)
+    is_sanctioned = Column(Boolean, default=False)
+    risk_level = Column(String(20))  # low/medium/high/critical
+
+    # Metadata
+    created_at = Column(DateTime, server_default=func.now())
+
+    __table_args__ = (
+        Index("idx_countries_offshore", "is_offshore"),
+        Index("idx_countries_sanctioned", "is_sanctioned"),
+        {"schema": "gold"},
+    )

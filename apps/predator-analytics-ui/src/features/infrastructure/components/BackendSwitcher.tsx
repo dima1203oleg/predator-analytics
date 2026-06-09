@@ -20,7 +20,7 @@ export function BackendSwitcher() {
       case NODE_IDS.SOVEREIGN: return Server;
       case NODE_IDS.HYBRID: return Globe;
       case NODE_IDS.CLOUD: return Cpu;
-      case NODE_IDS.MOCK: return Shield;
+      case NODE_IDS.LOCAL: return Laptop;
       default: return Activity;
     }
   };

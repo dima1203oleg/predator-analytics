@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import App from '../../App';
+import App from '../App';
 
 // Тест перевіряє, що в UI не залишилось англійських слів (латинських букв) у візуальному тексті.
 describe('Локалізація UI', () => {

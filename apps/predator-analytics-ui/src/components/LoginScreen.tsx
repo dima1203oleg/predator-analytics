@@ -155,7 +155,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                             tenant_name: 'PREDATOR_CORP',
                             last_login: new Date().toISOString(),
                             data_sectors: ['ALPHA', 'GAMMA', 'DELTA-9']
-                        }, realToken);
+                        });
                     });
                     onLogin();
                 }, 2000); // 2 sec scan animation

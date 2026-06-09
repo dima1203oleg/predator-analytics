@@ -194,20 +194,10 @@ export const NetworkGraph: React.FC = () => {
   if (error) {
     return (
       <Card className="p-8">
-        <Alert>
-          <AlertCircle className="h-4 w-4" />
-          <div>
-            <p className="font-semibold text-red-400">Помилка завантаження графа</p>
-            <p className="text-sm text-gray-400 mt-1">{error}</p>
-            <button
-              onClick={fetchGraphData}
-              className="mt-3 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 rounded-lg text-white text-sm flex items-center gap-2"
-            >
-              <RefreshCw size={14} />
-              Повторити запит
-            </button>
-          </div>
-        </Alert>
+        <Alert type="error" title="Помилка завантаження графа" message={error} action={{
+          label: 'Повторити',
+          onClick: fetchGraphData
+        }} />
       </Card>
     );
   }

@@ -17,6 +17,10 @@ from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
 from pydantic import ValidationError
 
 from app.config import get_settings
+from app.core.nlp_pipeline import get_nlp_pipeline
+from app.core.pattern_discovery import get_pattern_discovery_engine
+from app.core.schema_evolution import get_schema_evolution_engine
+from app.core.neo4j_auto_sync import get_neo4j_auto_sync
 from app.fusion_engine import ДвигунЗлиттяДаних
 from app.health import set_health_status, start_health_server, stop_health_server
 from app.pipelines.file_ingestion import FileIngestionPipeline
@@ -384,6 +388,61 @@ async def consume() -> None:
         await postgres_sink.close()
 
 
+async def autonomous_schema_synthesis_loop() -> None:
+    """Фоновий цикл для Autonomous Schema Synthesis.
+    
+    Запускає Pattern Discovery кожні 30 хвилин для виявлення нових патернів
+    та автоматичної еволюції схеми Neo4j.
+    """
+    logger.info("ASS: Autonomous Schema Synthesis loop запущено")
+    
+    # Ініціалізація модулів
+    nlp_pipeline = await get_nlp_pipeline()
+    pattern_engine = await get_pattern_discovery_engine()
+    schema_engine = await get_schema_evolution_engine()
+    sync = get_neo4j_auto_sync()
+    
+    while True:
+        try:
+            logger.info("ASS: Запуск Pattern Discovery")
+            
+            # Виявлення нових патернів
+            patterns = await pattern_engine.discover_new_patterns(
+                sample_size=1000,
+                monte_carlo_iterations=100
+            )
+            
+            if patterns:
+                logger.info(f"ASS: Виявлено {len(patterns)} нових патернів")
+                
+                # Еволюція схеми
+                update = await schema_engine.evolve_schema(patterns)
+                
+                if update.status.value == "APPROVED":
+                    logger.info(f"ASS: Схема оновлена: {update.update_id}")
+                    
+                    # Синхронізація з Neo4j
+                    sync_result = await sync.apply_schema_update(update)
+                    
+                    if sync_result.status.value == "COMPLETED":
+                        logger.info(
+                            f"ASS: Синхронізація успішна: "
+                            f"{sync_result.relationships_created} нових зв'язків"
+                        )
+                    else:
+                        logger.warning(f"ASS: Синхронізація не вдалася: {sync_result.error_message}")
+            else:
+                logger.info("ASS: Нових патернів не виявлено")
+            
+            # Чекаємо 30 хвилин перед наступним запуском
+            await asyncio.sleep(1800)
+            
+        except Exception as e:
+            logger.exception(f"ASS: Помилка в циклі Pattern Discovery: {e}")
+            # Чекаємо 5 хвилин перед retry
+            await asyncio.sleep(300)
+
+
 async def main() -> None:
     """Точка входу воркера."""
     loop = asyncio.get_running_loop()
@@ -401,13 +460,17 @@ async def main() -> None:
     # Запускаємо OMNIVERSE Watchdog
     watchdog = OmniverseWatchdog(interval_seconds=300)
     watchdog_task = asyncio.create_task(watchdog.start())
+    
+    # Запускаємо Autonomous Schema Synthesis loop
+    ass_task = asyncio.create_task(autonomous_schema_synthesis_loop())
 
     await stop_event.wait()
     logger.info("ingestion_worker.stopping")
     consumer_task.cancel()
     watchdog_task.cancel()
+    ass_task.cancel()
     with contextlib.suppress(asyncio.CancelledError):
-        await asyncio.gather(consumer_task, watchdog_task)
+        await asyncio.gather(consumer_task, watchdog_task, ass_task)
 
     # Зупиняємо health check сервер
     await stop_health_server(health_runner)

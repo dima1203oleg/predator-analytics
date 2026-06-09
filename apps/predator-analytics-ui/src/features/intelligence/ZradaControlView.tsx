@@ -75,10 +75,6 @@ export default function ZradaControlView() {
   const { isOffline } = useBackendStatus();
   const { isCompact } = useViewport();
 
-  if (isCompact) {
-    return <MobileZradaControlView />;
-  }
-
   useEffect(() => {
     if (isOffline) {
       // Видалимо нав'язливе повідомлення про автономний режим
@@ -130,6 +126,10 @@ export default function ZradaControlView() {
     setIsOsintLoading(true);
     setTimeout(() => setIsOsintLoading(false), 3000);
   };
+
+  if (isCompact) {
+    return <MobileZradaControlView />;
+  }
 
   return (
     <PageTransition>

@@ -92,7 +92,6 @@ export function useInfiniteScroll<T>({
   // Початкове завантаження
   useEffect(() => {
     fetchItems(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return { items, isLoading, isLoadingMore, hasMore, error, refresh, sentinelRef };

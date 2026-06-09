@@ -71,10 +71,15 @@ class Settings(BaseSettings):
     # ── AI Gateway (LiteLLM) ──────────────────────────────────
     LITELLM_GATEWAY_URL: str = "http://localhost:4000"
     LITELLM_MASTER_KEY: str = ""
+    
+    # ── LLM Models (ReAct Agent) ─────────────────────────────
+    LLM_MODEL_PATH: str = "/models/deepseek-r1.gguf"
+    EMBEDDING_MODEL_PATH: str = "/models/embedding-model"
 
     # ── Qdrant (Vector Memory) ────────────────────────────────
     QDRANT_URL: str = "http://localhost:6333"
     QDRANT_COLLECTION: str = "predator_knowledge"
+    QDRANT_API_KEY: str = ""
 
     # ── Keycloak (Identity) ───────────────────────────────────
     KEYCLOAK_URL: str = "http://localhost:8080"

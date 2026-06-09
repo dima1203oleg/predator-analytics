@@ -26,9 +26,9 @@ interface ViewportState {
 }
 
 function getBreakpoint(width: number): Breakpoint {
-  if (width < 640) return 'compact';
-  if (width < 1024) return 'medium';
-  if (width < 1440) return 'expanded';
+  if (width < 480) return 'compact';
+  if (width < 768) return 'medium';
+  if (width < 1024) return 'expanded';
   return 'wide';
 }
 
@@ -66,7 +66,8 @@ export function useViewport(): ViewportState & { refresh: () => void } {
     const bp = getBreakpoint(w);
     
     const saved = typeof localStorage !== 'undefined' ? localStorage.getItem('predator_display_mode') as DisplayMode : DisplayMode.DESKTOP;
-    const currentMode = saved || DisplayMode.DESKTOP;
+    // За замовчуванням завжди desktop, якщо явно не встановлено інше
+    const currentMode = (saved && Object.values(DisplayMode).includes(saved as DisplayMode)) ? saved : DisplayMode.DESKTOP;
 
     const isCompact = currentMode === DisplayMode.MOBILE || (currentMode === DisplayMode.DESKTOP && bp === 'compact');
     const isMedium = currentMode === DisplayMode.TABLET || (currentMode === DisplayMode.DESKTOP && bp === 'medium');

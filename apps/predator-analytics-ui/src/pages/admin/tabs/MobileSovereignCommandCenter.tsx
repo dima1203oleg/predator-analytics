@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Activity, Cpu, Zap, Globe, RefreshCw, Shield, BrainCircuit, Database, Target,
   PieChart, Lock, ChevronRight, Terminal, Factory
@@ -12,6 +13,7 @@ import { cn } from '@/lib/utils';
 import { SlideToExecute } from '@/components/ui/SlideToExecute';
 
 export const MobileSovereignCommandCenter: React.FC = () => {
+  const { t } = useTranslation();
   const { data: status } = useSystemStatus();
   const { data: stats } = useSystemStats();
   const { data: engines } = useAIEngines();

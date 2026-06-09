@@ -88,6 +88,7 @@ export default function TradeFlowMapPremium() {
 
   useEffect(() => {
     if (isOffline) {
+      // Логіка для офлайн режиму може бути додана пізніше
     }
   }, [isOffline]);
 

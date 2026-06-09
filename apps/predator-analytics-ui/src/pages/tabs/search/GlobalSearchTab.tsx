@@ -95,7 +95,6 @@ export const GlobalSearchTab: React.FC = () => {
     // Оновлення пошуку при зміні debouncedQuery
     useEffect(() => {
         refresh();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [debouncedQuery]);
 
     const fetchEntityDetails = async (entity: any) => {

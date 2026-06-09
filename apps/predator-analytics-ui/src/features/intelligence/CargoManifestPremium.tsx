@@ -93,7 +93,7 @@ export default function CargoManifestPremium() {
 
   useEffect(() => {
     fetchManifests();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleRefresh = async () => {
     setRefreshing(true);

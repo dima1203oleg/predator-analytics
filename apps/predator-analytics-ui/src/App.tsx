@@ -29,6 +29,10 @@ import { AdvancedBackground } from './components/AdvancedBackground';
 import NeuralPulse from './components/NeuralPulse';
 import { TechGridBackground } from './components/TechGridBackground';
 import { CommandPalette } from './components/polish/CommandPalette';
+import { ParticleBackground } from './components/ParticleBackground';
+import { AIVoiceAssistant } from './components/AIVoiceAssistant';
+import { CustomCursor } from './components/CustomCursor';
+import { ThemeCustomizer } from './components/ThemeCustomizer';
 
 // Lazy-loaded великі компоненти для зменшення initial bundle
 const BootSequenceELITE = React.lazy(() => import('./components/BootSequenceELITE'));
@@ -164,6 +168,7 @@ function App() {
                         <GlobalProvider>
                           <ThemeProvider>
                             <SuperIntelligenceProvider>
+                              <ParticleBackground />
                               <AdvancedBackground />
                               <NeuralPulse />
                               <TechGridBackground />
@@ -213,6 +218,9 @@ function App() {
                                       <OnboardingWizard />
                                       <Predator />
                                       <LiveAgentTerminal />
+                                      <AIVoiceAssistant />
+                                      <CustomCursor />
+                                      <ThemeCustomizer />
                                       <TerminalCommandBar
                                         isOpen={isCommandBarOpen}
                                         onClose={() => setIsCommandBarOpen(false)}

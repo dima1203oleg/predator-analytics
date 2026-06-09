@@ -10,6 +10,7 @@ from libs.core.autonomy.orchestrator import orchestrator
 from libs.core.autonomy.pulse_agent import SystemPulseAgent
 
 from app.api.v1.canonical_router import api_v1_router
+from app.api.v1.react_agent_router import router as react_agent_router
 from app.core.settings import get_settings
 from app.libs.core.mq import broker
 from app.libs.core.otel import setup_otel
@@ -104,6 +105,7 @@ app.add_middleware(
 # ═══════════════════════════════════════════════════════════════════════════
 
 app.include_router(api_v1_router)
+app.include_router(react_agent_router)
 
 # Перевірка здоров'я для систем моніторингу (Prometheus/K8s)
 @app.get("/api/v1/health/live")

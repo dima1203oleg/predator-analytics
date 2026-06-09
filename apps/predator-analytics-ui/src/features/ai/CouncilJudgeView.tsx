@@ -33,10 +33,6 @@ export default function CouncilJudgeView() {
   const [votes, setVotes] = useState<ModelVote[]>([]);
   const { isCompact } = useViewport();
 
-  if (isCompact) {
-    return <MobileCouncilJudgeView />;
-  }
-
   React.useEffect(() => {
     const fetchVotes = async () => {
       try {
@@ -50,6 +46,10 @@ export default function CouncilJudgeView() {
     };
     fetchVotes();
   }, []);
+
+  if (isCompact) {
+    return <MobileCouncilJudgeView />;
+  }
 
   return (
     <div className="space-y-8 p-8">
