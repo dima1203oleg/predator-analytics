@@ -1,0 +1,23 @@
+name: Deploy Predator Helm Chart
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  helm-deploy:
+    runs-on: self-hosted # expects a runner with access to the Kubernetes cluster
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.12.0
+      - name: Deploy with Helm
+        run: |
+          helm upgrade --install predator ./deploy/helm/predator \
+            --namespace predator \
+            --create-namespace \
+            -f ./deploy/helm/predator/values.yaml
