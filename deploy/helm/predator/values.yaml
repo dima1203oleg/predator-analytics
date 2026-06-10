@@ -416,3 +416,17 @@ qdrant:
     requests:
       cpu: 200m
       memory: 256Mi
+
+advDvs:
+  enabled: true
+  image:
+    repository: predator/adv-dvs
+    tag: v61.0-ELITE
+    pullPolicy: IfNotPresent
+  resources:
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+    requests:
+      cpu: "250m"
+      memory: "256Mi"

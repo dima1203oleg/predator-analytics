@@ -1,0 +1,15 @@
+# adv-dvs Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: adv-dvs
+  labels:
+    app: adv-dvs
+spec:
+  type: ClusterIP
+  selector:
+    app: adv-dvs
+  ports:
+    - name: http
+      port: 8002
+      targetPort: 8002

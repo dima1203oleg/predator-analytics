@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: adv-dvs-config
+  labels:
+    app: adv-dvs
+data:
+  LOG_LEVEL: "INFO"
+  # Add additional configuration keys as needed

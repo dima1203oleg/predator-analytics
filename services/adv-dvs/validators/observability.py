@@ -1,0 +1,74 @@
+"""
+Валідатори observability (Рівень 10)
+"""
+
+import asyncio
+import aiohttp
+from typing import Dict, Any
+import logging
+
+from ..core.validator import ValidationResult, ValidationLevel, ValidationStatus
+
+
+logger = logging.getLogger(__name__)
+
+
+async def validate_observability() -> ValidationResult:
+    """Валідація observability систем"""
+    details = {}
+    errors = []
+    warnings = []
+    
+    # Перевірка Prometheus
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get('http://localhost:9090/api/v1/query', 
+                                   params={'query': 'up'}, 
+                                   timeout=aiohttp.ClientTimeout(total=10)) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    details['prometheus'] = 'OK'
+                    details['prometheus_metrics'] = len(data.get('data', {}).get('result', []))
+                else:
+                    errors.append('Prometheus not accessible')
+    except Exception as e:
+        warnings.append(f'Prometheus validation error: {str(e)}')
+    
+    # Перевірка Grafana
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get('http://localhost:3000/api/health', 
+                                   timeout=aiohttp.ClientTimeout(total=10)) as response:
+                if response.status == 200:
+                    details['grafana'] = 'OK'
+                else:
+                    warnings.append('Grafana not accessible')
+    except Exception as e:
+        warnings.append(f'Grafana validation error: {str(e)}')
+    
+    # Перевірка Loki
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get('http://localhost:3100/ready', 
+                                   timeout=aiohttp.ClientTimeout(total=10)) as response:
+                if response.status == 200:
+                    details['loki'] = 'OK'
+                else:
+                    warnings.append('Loki not accessible')
+    except Exception as e:
+        warnings.append(f'Loki validation error: {str(e)}')
+    
+    status = ValidationStatus.PASSED
+    if errors:
+        status = ValidationStatus.FAILED
+    elif warnings:
+        status = ValidationStatus.WARNING
+    
+    return ValidationResult(
+        level=ValidationLevel.OBSERVABILITY,
+        name='Observability Validation',
+        status=status,
+        details=details,
+        errors=errors,
+        warnings=warnings
+    )
