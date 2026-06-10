@@ -3,6 +3,7 @@
 Cross-Origin Resource Sharing налаштування для frontend.
 """
 
+import os
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
@@ -31,6 +32,11 @@ def get_cors_origins() -> list[str]:
 def add_cors_middleware(app):
     """Додати CORS middleware до FastAPI додатку."""
     origins = get_cors_origins()
+
+    # Додати ZROK URL, якщо він визначений у змінній середовища
+    zrok_url = os.getenv("ZROK_URL")
+    if zrok_url:
+        origins.append(zrok_url.rstrip("/"))
 
     # Default origins для development
     if not origins and settings.ENV == "development":
