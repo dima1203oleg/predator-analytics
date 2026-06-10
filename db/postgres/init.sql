@@ -300,7 +300,7 @@ CREATE INDEX IF NOT EXISTS idx_alert_events_tenant ON alert_events(tenant_id);
 
 -- ============================================================
 -- Аудит (WORM — тільки INSERT)
--- HR-16: UPDATE/DELETE заборонені тригером
+-- HR-16: UPDATE/DELETE заборонені тригером (крім міграцій Alembic)
 -- ============================================================
 CREATE TABLE IF NOT EXISTS audit_log (
     id BIGSERIAL PRIMARY KEY,
@@ -315,11 +315,41 @@ CREATE TABLE IF NOT EXISTS audit_log (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+-- ============================================================
+-- Службова функція для розпізнавання контексту міграції Alembic
+-- Використовується WORM-тригерами для пропуску системних змін
+--
+-- ПРИКЛАД ВИКОРИСТАННЯ В ALEMBIC МІГРАЦІЇ:
+-- ```python
+-- def upgrade():
+--     op.execute("SET LOCAL app.alembic_migration = 'true'")
+--     op.add_column('audit_log', sa.Column('new_field', sa.String()))
+-- ```
+--
+-- HR-16: WORM таблиці (audit_log, decision_artifacts) захищені тригерами
+-- ============================================================
+CREATE OR REPLACE FUNCTION is_alembic_migration()
+RETURNS BOOLEAN AS $$
+BEGIN
+    -- Перевіряємо, чи встановлено прапор міграції
+    -- Використовується в Alembic міграціях через: SET LOCAL app.alembic_migration = 'true';
+    RETURN COALESCE(current_setting('app.alembic_migration', true), 'false')::BOOLEAN;
+END;
+$$ LANGUAGE plpgsql STABLE;
+
+-- ============================================================
+-- Канонічний WORM-тригер для audit_log
+-- Забороняє модифікацію, крім контексту міграції Alembic
+-- ============================================================
 CREATE OR REPLACE FUNCTION prevent_audit_modification()
 RETURNS TRIGGER AS $$
 BEGIN
-    RAISE EXCEPTION 'Модифікація журналу аудиту заборонена (WORM)';
-    RETURN NULL;
+    -- Пропускаємо, якщо це міграція Alembic
+    IF is_alembic_migration() THEN
+        RETURN NEW;
+    END IF;
+    
+    RAISE EXCEPTION 'Модифікація журналу аудиту заборонена (WORM). Використовуйте app.alembic_migration=true для системних змін.';
 END;
 $$ LANGUAGE plpgsql;
 
@@ -341,7 +371,7 @@ CREATE INDEX IF NOT EXISTS idx_audit_created ON audit_log(created_at);
 
 -- ============================================================
 -- Артефакти ШІ-рішень (WORM)
--- HR-16: UPDATE/DELETE заборонені тригером
+-- HR-16: UPDATE/DELETE заборонені тригером (крім міграцій Alembic)
 -- ============================================================
 CREATE TABLE IF NOT EXISTS decision_artifacts (
     id BIGSERIAL PRIMARY KEY,
@@ -358,11 +388,19 @@ CREATE TABLE IF NOT EXISTS decision_artifacts (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+-- ============================================================
+-- Канонічний WORM-тригер для decision_artifacts
+-- Забороняє модифікацію, крім контексту міграції Alembic
+-- ============================================================
 CREATE OR REPLACE FUNCTION prevent_decision_modification()
 RETURNS TRIGGER AS $$
 BEGIN
-    RAISE EXCEPTION 'Модифікація артефактів рішень заборонена (WORM)';
-    RETURN NULL;
+    -- Пропускаємо, якщо це міграція Alembic
+    IF is_alembic_migration() THEN
+        RETURN NEW;
+    END IF;
+    
+    RAISE EXCEPTION 'Модифікація артефактів рішень заборонена (WORM). Використовуйте app.alembic_migration=true для системних змін.';
 END;
 $$ LANGUAGE plpgsql;
 

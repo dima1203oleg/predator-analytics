@@ -499,8 +499,8 @@ services:
       - BOOTSTRAP_SERVERS=redpanda:9092
       - GROUP_ID=1
       - CONFIG_STORAGE_TOPIC=connect-configs
-           - OFFSET_STORAGE_TOPIC=connect-offsets
-           - STATUS_STORAGE_TOPIC=connect-statuses
+      - OFFSET_STORAGE_TOPIC=connect-offsets
+      - STATUS_STORAGE_TOPIC=connect-statuses
     volumes:
       - ./config/debezium:/kafka/config
     depends_on:

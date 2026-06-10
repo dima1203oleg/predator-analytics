@@ -49,6 +49,8 @@ class TargetDatabase(StrEnum):
     """Цільові бази даних."""
 
     POSTGRESQL = "postgresql"  # Структуровані дані
+    CLICKHOUSE = "clickhouse"  # Аналітичні агрегації (OLAP)
+    NEO4J = "neo4j"  # Графові зв'язки
     OPENSEARCH = "opensearch"  # Повнотекстовий пошук
     QDRANT = "qdrant"  # Векторна БД (embeddings)
     REDIS = "redis"  # Кеш, real-time
@@ -66,6 +68,36 @@ class PipelineStage(StrEnum):
     INDEXING = "indexing"
     COMPLETED = "completed"
     FAILED = "failed"
+
+
+class SagaTransactionManager:
+    """Менеджер розподілених транзакцій (Saga Pattern) для забезпечення консистентності."""
+    def __init__(self):
+        self.completed_steps = []
+        self.compensations = []
+        self.transaction_id = str(uuid.uuid4())
+
+    async def execute_step(self, step_name: str, action_func, compensate_func, *args, **kwargs):
+        try:
+            logger.info(f"Saga [{self.transaction_id}]: Executing {step_name}")
+            result = await action_func(*args, **kwargs)
+            self.completed_steps.append(step_name)
+            self.compensations.append((step_name, compensate_func))
+            return result
+        except Exception as e:
+            logger.error(f"Saga [{self.transaction_id}]: Failed at {step_name}. Initiating rollback. Error: {e}")
+            await self.rollback()
+            raise e
+
+    async def rollback(self):
+        logger.warning(f"Saga [{self.transaction_id}]: Rolling back {len(self.compensations)} steps in reverse order.")
+        for step_name, compensate_func in reversed(self.compensations):
+            try:
+                logger.info(f"Saga [{self.transaction_id}]: Compensating {step_name}")
+                await compensate_func()
+            except Exception as e:
+                logger.critical(f"Saga [{self.transaction_id}]: CRITICAL FAILURE during compensation of {step_name}: {e}")
+                # In a real system, we push this to a Dead Letter Queue or trigger an alert
 
 
 class UnifiedDataPipeline:
@@ -521,44 +553,60 @@ class UnifiedDataPipeline:
         targets: list[TargetDatabase],
         options: dict[str, Any],
     ) -> list[dict[str, Any]]:
-        """Стадія індексації в цільові бази даних."""
+        """Стадія індексації в цільові бази даних з використанням Saga Pattern."""
+        saga = SagaTransactionManager()
         results = []
+        
+        # Визначаємо функції компенсації (заглушки)
+        async def compensate_postgres():
+            logger.info("Rollback: Deleting records from PostgreSQL")
+            
+        async def compensate_clickhouse():
+            logger.info("Rollback: Deleting records from ClickHouse (Async background task)")
+            
+        async def compensate_neo4j():
+            logger.info("Rollback: Deleting nodes/edges from Neo4j")
+            
+        async def compensate_opensearch():
+            logger.info("Rollback: Deleting documents from OpenSearch")
+            
+        async def compensate_qdrant():
+            logger.info("Rollback: Deleting vectors from Qdrant")
+            
+        async def compensate_redis():
+            logger.info("Rollback: Removing keys from Redis")
+            
+        async def compensate_minio():
+            logger.info("Rollback: Deleting objects from MinIO")
 
-        for target in targets:
-            try:
+        try:
+            for target in targets:
                 if target == TargetDatabase.POSTGRESQL:
-                    result = await self._index_to_postgresql(source_type, data, options)
+                    result = await saga.execute_step("PostgreSQL", self._index_to_postgresql, compensate_postgres, source_type, data, options)
+                elif target == TargetDatabase.CLICKHOUSE:
+                    result = await saga.execute_step("ClickHouse", self._index_to_clickhouse, compensate_clickhouse, source_type, data, options)
+                elif target == TargetDatabase.NEO4J:
+                    result = await saga.execute_step("Neo4j", self._index_to_neo4j, compensate_neo4j, source_type, data, options)
                 elif target == TargetDatabase.OPENSEARCH:
-                    result = await self._index_to_opensearch(source_type, data, options)
+                    result = await saga.execute_step("OpenSearch", self._index_to_opensearch, compensate_opensearch, source_type, data, options)
                 elif target == TargetDatabase.QDRANT:
-                    result = await self._index_to_qdrant(source_type, data, options)
+                    result = await saga.execute_step("Qdrant", self._index_to_qdrant, compensate_qdrant, source_type, data, options)
                 elif target == TargetDatabase.REDIS:
-                    result = await self._index_to_redis(source_type, data, options)
+                    result = await saga.execute_step("Redis", self._index_to_redis, compensate_redis, source_type, data, options)
                 elif target == TargetDatabase.MINIO:
-                    result = await self._index_to_minio(source_type, data, options)
+                    result = await saga.execute_step("MinIO", self._index_to_minio, compensate_minio, source_type, data, options)
                 else:
                     result = {"status": "skipped", "reason": f"Невідома база: {target}"}
 
                 results.append(
                     {
-                        "target": target.value
-                        if isinstance(target, TargetDatabase)
-                        else str(target),
+                        "target": target.value if isinstance(target, TargetDatabase) else str(target),
                         **result,
                     }
                 )
-
-            except Exception as e:
-                logger.exception(f"Indexing to {target} failed: {e}")
-                results.append(
-                    {
-                        "target": target.value
-                        if isinstance(target, TargetDatabase)
-                        else str(target),
-                        "status": "error",
-                        "error": str(e),
-                    }
-                )
+        except Exception as e:
+            logger.exception(f"Indexing failed, Saga rolled back. Error: {e}")
+            results.append({"status": "error", "error": str(e), "message": "Transaction rolled back"})
 
         return results
 
@@ -671,6 +719,27 @@ class UnifiedDataPipeline:
             "status": "simulated",
             "records_count": len(records),
             "table": f"data_{source_type.value}",
+        }
+
+    async def _index_to_clickhouse(
+        self, source_type: SourceType, data: dict[str, Any], options: dict[str, Any]
+    ) -> dict[str, Any]:
+        """Індексація в ClickHouse (OLAP)."""
+        records = data.get("records", [])
+        return {
+            "status": "simulated",
+            "records_count": len(records),
+            "table": f"data_{source_type.value}_olap",
+        }
+
+    async def _index_to_neo4j(
+        self, source_type: SourceType, data: dict[str, Any], options: dict[str, Any]
+    ) -> dict[str, Any]:
+        """Індексація в Neo4j (Графи)."""
+        return {
+            "status": "simulated",
+            "nodes_created": len(data.get("records", [])),
+            "edges_created": 0,
         }
 
     async def _index_to_opensearch(

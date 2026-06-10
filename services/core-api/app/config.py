@@ -20,6 +20,11 @@ class Settings(BaseSettings):
     FF_RAG_ENABLED: bool = False
     FF_ANOMALY_DETECTION: bool = True
     FF_SOVEREIGN_AI: bool = False
+    FF_GRAPH_SERVICE_ENABLED: bool = True  # Увімкнути Graph Service
+    FF_MCP_ROUTER_ENABLED: bool = True   # Увімкнути MCP Router
+    FF_RTB_ENGINE_ENABLED: bool = False  # Опціональний RTB Engine
+    LLM_ROUTING_MODEL: str = "ollama/glm-5.1:latest"
+    RTB_ENGINE_URL: str = "http://localhost:9600"
 
     # Автономна фабрика (OODA): за замовчуванням увімкнено; зупинка через API /factory/infinite/stop
     FACTORY_AUTO_START: bool = True
