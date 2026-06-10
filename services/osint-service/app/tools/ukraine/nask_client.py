@@ -67,12 +67,12 @@ class NASKTool(BaseTool):
 
         try:
             async with httpx.AsyncClient(timeout=self.timeout) as client:
-                params = {"q": target}
+                params = {"query": target}
                 if year:
                     params["year"] = year
 
                 response = await client.get(
-                    f"{self.base_url}/declarations",
+                    f"{self.base_url}/documents/list",
                     params=params,
                 )
 

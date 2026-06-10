@@ -1,4 +1,8 @@
 """
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+
 Валідатори Security (Рівень 11)
 """
 
@@ -9,7 +13,7 @@ from typing import Dict, Any
 import logging
 import os
 
-from ..core.validator import ValidationResult, ValidationLevel, ValidationStatus
+from core.validator import ValidationResult, ValidationLevel, ValidationStatus
 
 
 logger = logging.getLogger(__name__)
@@ -27,7 +31,7 @@ async def validate_vault() -> ValidationResult:
         
         if not vault_token:
             errors.append('VAULT_TOKEN not set')
-            return ValidationResult(
+            return ValidationResult(duration=0.0, 
                 level=ValidationLevel.SECURITY,
                 name='Vault Validation',
                 status=ValidationStatus.FAILED,
@@ -49,7 +53,7 @@ async def validate_vault() -> ValidationResult:
     except Exception as e:
         errors.append(f'Vault validation error: {str(e)}')
     
-    return ValidationResult(
+    return ValidationResult(duration=0.0, 
         level=ValidationLevel.SECURITY,
         name='Vault Validation',
         status=ValidationStatus.PASSED if not errors else ValidationStatus.FAILED,
@@ -81,7 +85,7 @@ async def validate_keycloak() -> ValidationResult:
     except Exception as e:
         errors.append(f'Keycloak validation error: {str(e)}')
     
-    return ValidationResult(
+    return ValidationResult(duration=0.0, 
         level=ValidationLevel.SECURITY,
         name='Keycloak Validation',
         status=ValidationStatus.PASSED if not errors else ValidationStatus.FAILED,
@@ -116,7 +120,7 @@ async def validate_jwt() -> ValidationResult:
     except Exception as e:
         errors.append(f'JWT validation error: {str(e)}')
     
-    return ValidationResult(
+    return ValidationResult(duration=0.0, 
         level=ValidationLevel.SECURITY,
         name='JWT Validation',
         status=ValidationStatus.PASSED if not errors else ValidationStatus.FAILED,
@@ -148,7 +152,7 @@ async def validate_rls() -> ValidationResult:
     except Exception as e:
         errors.append(f'RLS validation error: {str(e)}')
     
-    return ValidationResult(
+    return ValidationResult(duration=0.0, 
         level=ValidationLevel.SECURITY,
         name='RLS Validation',
         status=ValidationStatus.PASSED if not errors else ValidationStatus.FAILED,

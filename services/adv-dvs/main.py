@@ -7,10 +7,18 @@ import sys
 import json
 from datetime import datetime
 import logging
+from pathlib import Path
 
-from core.orchestrator import ValidationOrchestrator
-from core.validator import DeploymentReport
-from reports.generator import ReportGenerator
+# Додавання шляху до проекту
+sys.path.insert(0, str(Path(__file__).parent))
+
+import core.orchestrator as orchestrator_module
+import core.validator as validator_module
+import reports.generator as generator_module
+
+ValidationOrchestrator = orchestrator_module.ValidationOrchestrator
+DeploymentReport = validator_module.DeploymentReport
+ReportGenerator = generator_module.ReportGenerator
 
 
 # Налаштування логування

@@ -2,13 +2,17 @@
 Оркестратор валідації
 """
 
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 from typing import Dict, List, Optional
 from dataclasses import dataclass
 import asyncio
 from datetime import datetime
 import logging
 
-from .validator import (
+from core.validator import (
     DeploymentValidator,
     ValidationLevel,
     ValidationStatus,
@@ -44,18 +48,18 @@ class ValidationOrchestrator:
     
     async def _register_validators(self):
         """Реєстрація валідаторів для всіх рівнів"""
-        from ..validators.infrastructure import validate_docker, validate_kubernetes, validate_argocd, validate_helm
-        from ..validators.containers import validate_containers
-        from ..validators.databases import validate_postgresql, validate_neo4j, validate_clickhouse, validate_redis
-        from ..validators.dom import validate_dom_pages
-        from ..validators.api import validate_api_endpoints
-        from ..validators.observability import validate_observability
-        from ..validators.user_journey import validate_user_journey_scenario_1, validate_user_journey_scenario_2, validate_user_journey_scenario_3
-        from ..validators.etl import validate_etl
-        from ..validators.telegram import validate_telegram
-        from ..validators.ai import validate_ollama
-        from ..validators.security import validate_vault, validate_keycloak, validate_jwt, validate_rls
-        from ..validators.chaos import validate_chaos_postgresql, validate_chaos_neo4j, validate_chaos_backend
+        from validators.infrastructure import validate_docker, validate_kubernetes, validate_argocd, validate_helm
+        from validators.containers import validate_containers
+        from validators.databases import validate_postgresql, validate_neo4j, validate_clickhouse, validate_redis
+        from validators.dom import validate_dom_pages
+        from validators.api import validate_api_endpoints
+        from validators.observability import validate_observability
+        from validators.user_journey import validate_user_journey_scenario_1, validate_user_journey_scenario_2, validate_user_journey_scenario_3
+        from validators.etl import validate_etl
+        from validators.telegram import validate_telegram
+        from validators.ai import validate_ollama
+        from validators.security import validate_vault, validate_keycloak, validate_jwt, validate_rls
+        from validators.chaos import validate_chaos_postgresql, validate_chaos_neo4j, validate_chaos_backend
         
         # Рівень 1 - Infrastructure
         self.validator.register_validator(ValidationLevel.INFRASTRUCTURE, validate_docker)

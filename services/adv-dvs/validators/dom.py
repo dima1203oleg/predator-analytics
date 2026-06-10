@@ -1,4 +1,8 @@
 """
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+
 Валідатори DOM тестування (Рівень 4)
 """
 
@@ -7,7 +11,7 @@ from typing import Dict, Any, List
 import logging
 from playwright.async_api import async_playwright
 
-from ..core.validator import ValidationResult, ValidationLevel, ValidationStatus
+from core.validator import ValidationResult, ValidationLevel, ValidationStatus
 
 
 logger = logging.getLogger(__name__)
@@ -93,7 +97,7 @@ async def validate_dom_pages() -> ValidationResult:
     elif warnings:
         status = ValidationStatus.WARNING
     
-    return ValidationResult(
+    return ValidationResult(duration=0.0, 
         level=ValidationLevel.DOM,
         name='DOM Validation',
         status=status,

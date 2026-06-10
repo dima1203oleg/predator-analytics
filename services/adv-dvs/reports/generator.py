@@ -1,4 +1,8 @@
 """
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 Генератор звітів (JSON, HTML, PDF, Excel)
 """
 
@@ -7,7 +11,7 @@ from typing import Dict, Any
 from datetime import datetime
 import logging
 
-from ..core.validator import DeploymentReport
+from core.validator import DeploymentReport
 
 
 logger = logging.getLogger(__name__)

@@ -1,4 +1,8 @@
 """
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+
 Валідатори контейнерів (Рівень 2)
 """
 
@@ -7,7 +11,7 @@ import subprocess
 from typing import Dict, Any, List
 import logging
 
-from ..core.validator import ValidationResult, ValidationLevel, ValidationStatus
+from core.validator import ValidationResult, ValidationLevel, ValidationStatus
 
 
 logger = logging.getLogger(__name__)
@@ -49,7 +53,7 @@ async def validate_containers() -> ValidationResult:
         
         if result.returncode != 0:
             errors.append('Failed to get container list')
-            return ValidationResult(
+            return ValidationResult(duration=0.0, 
                 level=ValidationLevel.CONTAINER,
                 name='Container Validation',
                 status=ValidationStatus.FAILED,
@@ -115,7 +119,7 @@ async def validate_containers() -> ValidationResult:
     elif warnings:
         status = ValidationStatus.WARNING
     
-    return ValidationResult(
+    return ValidationResult(duration=0.0, 
         level=ValidationLevel.CONTAINER,
         name='Container Validation',
         status=status,

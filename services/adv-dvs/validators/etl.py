@@ -1,4 +1,8 @@
 """
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+
 Валідатори ETL (Рівень 7)
 """
 
@@ -8,7 +12,7 @@ from typing import Dict, Any
 import logging
 import os
 
-from ..core.validator import ValidationResult, ValidationLevel, ValidationStatus
+from core.validator import ValidationResult, ValidationLevel, ValidationStatus
 
 
 logger = logging.getLogger(__name__)
@@ -89,7 +93,7 @@ async def validate_etl() -> ValidationResult:
     elif warnings:
         status = ValidationStatus.WARNING
     
-    return ValidationResult(
+    return ValidationResult(duration=0.0, 
         level=ValidationLevel.ETL,
         name='ETL Validation',
         status=status,

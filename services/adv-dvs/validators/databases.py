@@ -1,4 +1,8 @@
 """
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+
 Валідатори баз даних (Рівень 3)
 """
 
@@ -7,7 +11,7 @@ import subprocess
 from typing import Dict, Any
 import logging
 
-from ..core.validator import ValidationResult, ValidationLevel, ValidationStatus
+from core.validator import ValidationResult, ValidationLevel, ValidationStatus
 
 
 logger = logging.getLogger(__name__)
@@ -63,7 +67,7 @@ async def validate_postgresql() -> ValidationResult:
     except Exception as e:
         errors.append(f'PostgreSQL validation error: {str(e)}')
     
-    return ValidationResult(
+    return ValidationResult(duration=0.0, 
         level=ValidationLevel.DATABASE,
         name='PostgreSQL Validation',
         status=ValidationStatus.PASSED if not errors else ValidationStatus.FAILED,
@@ -102,7 +106,7 @@ async def validate_neo4j() -> ValidationResult:
     except Exception as e:
         errors.append(f'Neo4j validation error: {str(e)}')
     
-    return ValidationResult(
+    return ValidationResult(duration=0.0, 
         level=ValidationLevel.DATABASE,
         name='Neo4j Validation',
         status=ValidationStatus.PASSED if not errors else ValidationStatus.FAILED,
@@ -136,7 +140,7 @@ async def validate_clickhouse() -> ValidationResult:
     except Exception as e:
         errors.append(f'ClickHouse validation error: {str(e)}')
     
-    return ValidationResult(
+    return ValidationResult(duration=0.0, 
         level=ValidationLevel.DATABASE,
         name='ClickHouse Validation',
         status=ValidationStatus.PASSED if not errors else ValidationStatus.FAILED,
@@ -169,7 +173,7 @@ async def validate_redis() -> ValidationResult:
     except Exception as e:
         errors.append(f'Redis validation error: {str(e)}')
     
-    return ValidationResult(
+    return ValidationResult(duration=0.0, 
         level=ValidationLevel.DATABASE,
         name='Redis Validation',
         status=ValidationStatus.PASSED if not errors else ValidationStatus.FAILED,

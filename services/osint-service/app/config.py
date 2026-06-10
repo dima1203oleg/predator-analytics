@@ -47,6 +47,10 @@ class Settings(BaseSettings):
     SHODAN_API_KEY: str = ""
     VIRUSTOTAL_API_KEY: str = ""
     FULLCONTACT_API_KEY: str = ""
+    
+    # Ukrainian Public Registries API Keys
+    OPENDATABOT_API_KEY: str = ""
+    YOUCONTROL_API_KEY: str = ""
 
     # Rate Limiting
     OSINT_RATE_LIMIT_PER_MINUTE: int = 60

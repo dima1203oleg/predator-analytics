@@ -1,4 +1,8 @@
 """
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+
 Валідатори Chaos (Рівень 12)
 """
 
@@ -7,7 +11,7 @@ import subprocess
 from typing import Dict, Any
 import logging
 
-from ..core.validator import ValidationResult, ValidationLevel, ValidationStatus
+from core.validator import ValidationResult, ValidationLevel, ValidationStatus
 
 
 logger = logging.getLogger(__name__)
@@ -60,7 +64,7 @@ async def validate_chaos_postgresql() -> ValidationResult:
         except:
             pass
     
-    return ValidationResult(
+    return ValidationResult(duration=0.0, 
         level=ValidationLevel.CHAOS,
         name='Chaos PostgreSQL Validation',
         status=ValidationStatus.PASSED if not errors else ValidationStatus.FAILED,
@@ -116,7 +120,7 @@ async def validate_chaos_neo4j() -> ValidationResult:
         except:
             pass
     
-    return ValidationResult(
+    return ValidationResult(duration=0.0, 
         level=ValidationLevel.CHAOS,
         name='Chaos Neo4j Validation',
         status=ValidationStatus.PASSED if not errors else ValidationStatus.FAILED,
@@ -172,7 +176,7 @@ async def validate_chaos_backend() -> ValidationResult:
         except:
             pass
     
-    return ValidationResult(
+    return ValidationResult(duration=0.0, 
         level=ValidationLevel.CHAOS,
         name='Chaos Backend Validation',
         status=ValidationStatus.PASSED if not errors else ValidationStatus.FAILED,

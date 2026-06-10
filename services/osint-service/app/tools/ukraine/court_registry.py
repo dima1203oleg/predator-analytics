@@ -74,7 +74,7 @@ class CourtRegistryTool(BaseTool):
         risk_indicators = []
 
         try:
-            # Симуляція пошуку (реальний API потребує парсингу сайту)
+            # Пошук справ через Opendatabot API
             cases = await self._search_cases(target, case_type, date_from, date_to)
 
             # Аналіз ризиків
@@ -142,35 +142,52 @@ class CourtRegistryTool(BaseTool):
         date_from: str | None,
         date_to: str | None,
     ) -> list[dict]:
-        """Пошук справ (симуляція)."""
-        # В реальності — парсинг reyestr.court.gov.ua
-        return [
-            {
-                "id": "12345678",
-                "case_number": "910/1234/23",
-                "case_type": 3,
-                "court_name": "Господарський суд м. Києва",
-                "date": "2023-05-15",
+        """Пошук справ через Opendatabot API."""
+        from app.config import get_settings
+        settings = get_settings()
+        api_key = settings.OPENDATABOT_API_KEY
+        
+        if not api_key:
+            logger.warning("No OPENDATABOT_API_KEY provided, returning empty list of cases")
+            return []
+
+        # Якщо query - це 8 цифр (ЄДРПОУ), шукаємо справи компанії
+        if query.isdigit() and len(query) == 8:
+            url = f"https://opendatabot.com/api/v3/court/company/{query}"
+        else:
+            # Пошук за назвою чи номером справи через загальний пошук
+            url = f"https://opendatabot.com/api/v3/search/court?q={query}"
+
+        headers = {"Authorization": f"Bearer {api_key}"}
+        
+        import httpx
+        async with httpx.AsyncClient(timeout=self.timeout) as client:
+            response = await client.get(url, headers=headers)
+            if response.status_code == 404:
+                return []
+            response.raise_for_status()
+            data = response.json()
+
+        cases = []
+        raw_cases = data.get("documents", []) if "documents" in data else data.get("court_cases", [])
+        
+        for item in raw_cases[:20]:  # Limit to 20 results for performance
+            # Opendatabot court items format
+            cases.append({
+                "id": item.get("id", ""),
+                "case_number": item.get("number", ""),
+                "case_type": item.get("form", {}).get("code", 3), # Наближено до нашої мапи
+                "court_name": item.get("court_name", ""),
+                "date": item.get("date", ""),
                 "status": "Розглянуто",
-                "description": "Стягнення заборгованості",
-                "plaintiff": "ТОВ КРЕДИТОР",
+                "description": item.get("category", ""),
+                "plaintiff": "",
                 "defendant": query,
-                "amount": 500000.00,
-                "decision": "Задоволено частково",
-            },
-            {
-                "id": "12345679",
-                "case_number": "640/5678/22",
-                "case_type": 4,
-                "court_name": "Окружний адміністративний суд м. Києва",
-                "date": "2022-11-20",
-                "status": "Розглянуто",
-                "description": "Оскарження рішення ДПС",
-                "plaintiff": query,
-                "defendant": "ГУ ДПС у м. Києві",
-                "decision": "Відмовлено",
-            },
-        ]
+                "amount": 0.0,
+                "decision": item.get("judgment", {}).get("name", ""),
+            })
+            
+        return cases
 
     def _summarize_case_types(self, cases: list[dict]) -> dict[str, int]:
         """Підсумок за типами справ."""

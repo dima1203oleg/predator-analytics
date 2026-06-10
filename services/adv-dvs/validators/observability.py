@@ -1,4 +1,8 @@
 """
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+
 Валідатори observability (Рівень 10)
 """
 
@@ -7,7 +11,7 @@ import aiohttp
 from typing import Dict, Any
 import logging
 
-from ..core.validator import ValidationResult, ValidationLevel, ValidationStatus
+from core.validator import ValidationResult, ValidationLevel, ValidationStatus
 
 
 logger = logging.getLogger(__name__)
@@ -64,7 +68,7 @@ async def validate_observability() -> ValidationResult:
     elif warnings:
         status = ValidationStatus.WARNING
     
-    return ValidationResult(
+    return ValidationResult(duration=0.0, 
         level=ValidationLevel.OBSERVABILITY,
         name='Observability Validation',
         status=status,

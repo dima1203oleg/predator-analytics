@@ -133,58 +133,73 @@ class EDRTool(BaseTool):
         )
 
     async def _search_by_edrpou(self, client: httpx.AsyncClient, edrpou: str) -> dict | None:
-        """Пошук за ЄДРПОУ."""
-        # Симуляція — в реальності запит до data.gov.ua або opendatabot
+        """Пошук за ЄДРПОУ через Opendatabot."""
+        if not self.api_key:
+            logger.warning("No OPENDATABOT_API_KEY provided, returning empty result")
+            return None
+
+        headers = {"Authorization": f"Bearer {self.api_key}"}
+        url = f"https://opendatabot.com/api/v3/company/{edrpou}"
+        
+        response = await client.get(url, headers=headers)
+        if response.status_code == 404:
+            return None
+            
+        response.raise_for_status()
+        data = response.json()
+        
+        # Transform Opendatabot data to internal format
         return {
             "edrpou": edrpou,
-            "name": f"ТОВ КОМПАНІЯ {edrpou}",
-            "name_en": f"COMPANY {edrpou} LLC",
-            "short_name": f"КОМПАНІЯ {edrpou}",
-            "status": "зареєстровано",
-            "registration_date": "2015-01-15",
-            "address": "м. Київ, вул. Хрещатик, 1",
-            "kved": [
-                {"code": "46.90", "name": "Неспеціалізована оптова торгівля", "primary": True},
-                {"code": "47.19", "name": "Інші види роздрібної торгівлі", "primary": False},
-            ],
-            "authorized_capital": 100000.00,
-            "authorized_capital_currency": "UAH",
+            "name": data.get("name"),
+            "short_name": data.get("short_name"),
+            "status": data.get("status", {}).get("name"),
+            "registration_date": data.get("founded_at"),
+            "address": data.get("location"),
+            "kved": [{"code": data.get("kved", {}).get("code"), "name": data.get("kved", {}).get("name"), "primary": True}],
+            "authorized_capital": data.get("statutory_capital"),
             "director": {
-                "name": "Іванов Іван Іванович",
+                "name": data.get("director", {}).get("full_name", ""),
                 "position": "Директор",
-                "appointment_date": "2015-01-15",
             },
             "founders": [
                 {
-                    "name": "Петров Петро Петрович",
-                    "type": "person",
-                    "share": 60.0,
-                    "role": "Засновник",
-                },
-                {
-                    "name": "ТОВ ХОЛДИНГ",
-                    "type": "company",
-                    "edrpou": "12345678",
-                    "share": 40.0,
-                    "role": "Засновник",
-                },
+                    "name": founder.get("name"),
+                    "type": "person" if "ІНН" in founder.get("code", "") or founder.get("is_beneficial_owner") else "company",
+                    "edrpou": founder.get("code") if "ІНН" not in founder.get("code", "") else None,
+                    "share": founder.get("share"),
+                    "role": "Кінцевий бенефіціар" if founder.get("is_beneficial_owner") else "Засновник",
+                }
+                for founder in data.get("founders", [])
             ],
             "tax_info": {
-                "is_vat_payer": True,
-                "vat_number": "123456789012",
-                "tax_system": "загальна",
+                "is_vat_payer": data.get("vat_payer", False),
             },
         }
 
     async def _search_by_name(self, client: httpx.AsyncClient, name: str) -> list[dict]:
-        """Пошук за назвою."""
-        # Симуляція
-        return [
-            {
-                "edrpou": "12345678",
-                "name": name,
-                "status": "зареєстровано",
-                "address": "м. Київ",
-                "founders": [],
-            }
-        ]
+        """Пошук за назвою через Opendatabot."""
+        if not self.api_key:
+            return []
+
+        headers = {"Authorization": f"Bearer {self.api_key}"}
+        url = f"https://opendatabot.com/api/v3/search/companies?q={name}"
+        
+        response = await client.get(url, headers=headers)
+        if response.status_code == 404:
+            return []
+            
+        response.raise_for_status()
+        data = response.json()
+        
+        companies = []
+        for item in data.get("companies", [])[:5]:  # Limit to 5 results
+            companies.append({
+                "edrpou": item.get("code"),
+                "name": item.get("name"),
+                "status": item.get("status", {}).get("name"),
+                "address": item.get("location"),
+                "founders": [],  # Usually not included in basic search
+            })
+            
+        return companies

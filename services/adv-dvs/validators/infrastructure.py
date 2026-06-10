@@ -1,4 +1,8 @@
 """
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+
 Валідатори інфраструктури (Рівень 1)
 """
 
@@ -7,7 +11,7 @@ import subprocess
 from typing import Dict, Any
 import logging
 
-from ..core.validator import ValidationResult, ValidationLevel, ValidationStatus
+from core.validator import ValidationResult, ValidationLevel, ValidationStatus
 
 
 logger = logging.getLogger(__name__)
@@ -53,7 +57,7 @@ async def validate_docker() -> ValidationResult:
     except Exception as e:
         errors.append(f'Docker validation error: {str(e)}')
     
-    return ValidationResult(
+    return ValidationResult(duration=0.0, 
         level=ValidationLevel.INFRASTRUCTURE,
         name='Docker Validation',
         status=ValidationStatus.PASSED if not errors else ValidationStatus.FAILED,
@@ -103,7 +107,7 @@ async def validate_kubernetes() -> ValidationResult:
     except Exception as e:
         errors.append(f'Kubernetes validation error: {str(e)}')
     
-    return ValidationResult(
+    return ValidationResult(duration=0.0, 
         level=ValidationLevel.INFRASTRUCTURE,
         name='Kubernetes Validation',
         status=ValidationStatus.PASSED if not errors else ValidationStatus.FAILED,
@@ -138,7 +142,7 @@ async def validate_argocd() -> ValidationResult:
     except Exception as e:
         errors.append(f'ArgoCD validation error: {str(e)}')
     
-    return ValidationResult(
+    return ValidationResult(duration=0.0, 
         level=ValidationLevel.INFRASTRUCTURE,
         name='ArgoCD Validation',
         status=ValidationStatus.PASSED if not errors else ValidationStatus.FAILED,
@@ -173,7 +177,7 @@ async def validate_helm() -> ValidationResult:
     except Exception as e:
         errors.append(f'Helm validation error: {str(e)}')
     
-    return ValidationResult(
+    return ValidationResult(duration=0.0, 
         level=ValidationLevel.INFRASTRUCTURE,
         name='Helm Validation',
         status=ValidationStatus.PASSED if not errors else ValidationStatus.FAILED,

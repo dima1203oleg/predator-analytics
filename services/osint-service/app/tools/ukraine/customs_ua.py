@@ -145,52 +145,51 @@ class CustomsUATool(BaseTool):
         period_months: int,
         direction: str,
     ) -> dict[str, Any]:
-        """Отримання митних даних (симуляція)."""
-        # В реальності — API до OpenDataBot або власної бази
-        return {
+        """Отримання митних даних через API Opendatabot."""
+        from app.config import get_settings
+        settings = get_settings()
+        api_key = settings.OPENDATABOT_API_KEY
+        
+        empty_data = {
             "company": target,
-            "total_import_usd": 2_500_000,
-            "total_export_usd": 800_000,
-            "declarations_count": 156,
-            "countries": [
-                {"code": "CN", "name": "Китай", "value_usd": 1_500_000, "share_pct": 60},
-                {"code": "DE", "name": "Німеччина", "value_usd": 500_000, "share_pct": 20},
-                {"code": "TR", "name": "Туреччина", "value_usd": 300_000, "share_pct": 12},
-                {"code": "PL", "name": "Польща", "value_usd": 200_000, "share_pct": 8},
-            ],
-            "hs_codes": [
-                {"code": "8471", "description": "Комп'ютери", "value_usd": 800_000},
-                {"code": "8517", "description": "Телефони", "value_usd": 600_000},
-                {"code": "6403", "description": "Взуття", "value_usd": 400_000},
-            ],
-            "customs_posts": [
-                {"name": "Київська митниця", "declarations": 89},
-                {"name": "Одеська митниця", "declarations": 45},
-                {"name": "Львівська митниця", "declarations": 22},
-            ],
-            "declarations": [
-                {
-                    "id": "UA2026/123456",
-                    "date": "2026-03-01",
-                    "hs_code": "8471",
-                    "description": "Ноутбуки",
-                    "quantity": 500,
-                    "value_usd": 75_000,
-                    "price_per_unit": 150,
-                    "origin": "CN",
-                },
-                {
-                    "id": "UA2026/123457",
-                    "date": "2026-02-28",
-                    "hs_code": "8517",
-                    "description": "Смартфони",
-                    "quantity": 1000,
-                    "value_usd": 50_000,
-                    "price_per_unit": 50,
-                    "origin": "CN",
-                },
-            ],
+            "total_import_usd": 0,
+            "total_export_usd": 0,
+            "declarations_count": 0,
+            "countries": [],
+            "hs_codes": [],
+            "customs_posts": [],
+            "declarations": [],
         }
+
+        if not api_key:
+            logger.warning("No OPENDATABOT_API_KEY provided, returning empty customs data")
+            return empty_data
+
+        url = f"https://opendatabot.com/api/v3/company/{target}/customs"
+        headers = {"Authorization": f"Bearer {api_key}"}
+
+        import httpx
+        try:
+            async with httpx.AsyncClient(timeout=self.timeout) as client:
+                response = await client.get(url, headers=headers)
+                if response.status_code in (404, 403):
+                    return empty_data
+                response.raise_for_status()
+                data = response.json()
+                
+            return {
+                "company": target,
+                "total_import_usd": data.get("total_import", 0),
+                "total_export_usd": data.get("total_export", 0),
+                "declarations_count": data.get("declarations_count", 0),
+                "countries": data.get("countries", []),
+                "hs_codes": data.get("hs_codes", []),
+                "customs_posts": data.get("customs_posts", []),
+                "declarations": data.get("declarations", [])[:20],
+            }
+        except Exception as e:
+            logger.error(f"Error fetching customs data from Opendatabot: {e}")
+            return empty_data
 
     def _detect_price_anomalies(self, declarations: list[dict]) -> list[dict]:
         """Виявлення цінових аномалій."""

@@ -1,0 +1,339 @@
+
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PREDATOR Analytics Deployment Audit</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0f;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #1a1a2e;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            color: #e11d48;
+            border-bottom: 2px solid #e11d48;
+            padding-bottom: 10px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .readiness-index {
+            font-size: 48px;
+            font-weight: bold;
+            color: #ef4444;
+        }
+        .readiness-label {
+            font-size: 14px;
+            color: #9ca3af;
+            text-transform: uppercase;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #e11d48;
+            margin-bottom: 15px;
+        }
+        .result-item {
+            background: #16213e;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border-left: 4px solid #ef4444;
+        }
+        .result-name {
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .result-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-left: 10px;
+        }
+        .status-passed { background: #22c55e; color: white; }
+        .status-failed { background: #ef4444; color: white; }
+        .status-warning { background: #f59e0b; color: white; }
+        .status-skipped { background: #6b7280; color: white; }
+        .result-details {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #9ca3af;
+        }
+        .errors {
+            color: #ef4444;
+            margin-top: 5px;
+        }
+        .warnings {
+            color: #f59e0b;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>PREDATOR Analytics Deployment Audit</h1>
+                <p>Deployment ID: deployment-20260610-212946</p>
+                <p>Timestamp: 2026-06-10 21:29:46</p>
+            </div>
+            <div style="text-align: right;">
+                <div class="readiness-label">Deployment Readiness Index</div>
+                <div class="readiness-index">0.0%</div>
+                <div class="readiness-label">Overall Status: FAILED</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">Validation Results</div>
+
+            <div class="result-item">
+                <div>
+                    <span class="result-name">validate_docker</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 0.00s
+                </div>
+<div class="errors">Errors: ValidationResult.__init__() missing 1 required positional argument: 'duration'</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">validate_kubernetes</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 0.00s
+                </div>
+<div class="errors">Errors: ValidationResult.__init__() missing 1 required positional argument: 'duration'</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">validate_argocd</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 0.00s
+                </div>
+<div class="errors">Errors: ValidationResult.__init__() missing 1 required positional argument: 'duration'</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">validate_helm</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 0.00s
+                </div>
+<div class="errors">Errors: ValidationResult.__init__() missing 1 required positional argument: 'duration'</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">validate_containers</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 0.00s
+                </div>
+<div class="errors">Errors: ValidationResult.__init__() missing 1 required positional argument: 'duration'</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">validate_postgresql</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 0.00s
+                </div>
+<div class="errors">Errors: ValidationResult.__init__() missing 1 required positional argument: 'duration'</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">validate_neo4j</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 0.00s
+                </div>
+<div class="errors">Errors: ValidationResult.__init__() missing 1 required positional argument: 'duration'</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">validate_clickhouse</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 0.00s
+                </div>
+<div class="errors">Errors: ValidationResult.__init__() missing 1 required positional argument: 'duration'</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">validate_redis</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 0.00s
+                </div>
+<div class="errors">Errors: ValidationResult.__init__() missing 1 required positional argument: 'duration'</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">validate_dom_pages</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 0.00s
+                </div>
+<div class="errors">Errors: ValidationResult.__init__() missing 1 required positional argument: 'duration'</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">validate_user_journey_scenario_1</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 0.00s
+                </div>
+<div class="errors">Errors: ValidationResult.__init__() missing 1 required positional argument: 'duration'</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">validate_user_journey_scenario_2</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 0.00s
+                </div>
+<div class="errors">Errors: ValidationResult.__init__() missing 1 required positional argument: 'duration'</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">validate_user_journey_scenario_3</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 0.00s
+                </div>
+<div class="errors">Errors: ValidationResult.__init__() missing 1 required positional argument: 'duration'</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">validate_api_endpoints</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 0.00s
+                </div>
+<div class="errors">Errors: ValidationResult.__init__() missing 1 required positional argument: 'duration'</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">validate_etl</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 0.00s
+                </div>
+<div class="errors">Errors: ValidationResult.__init__() missing 1 required positional argument: 'duration'</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">validate_telegram</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 0.00s
+                </div>
+<div class="errors">Errors: ValidationResult.__init__() missing 1 required positional argument: 'duration'</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">validate_ollama</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 0.00s
+                </div>
+<div class="errors">Errors: ValidationResult.__init__() missing 1 required positional argument: 'duration'</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">validate_observability</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 0.00s
+                </div>
+<div class="errors">Errors: ValidationResult.__init__() missing 1 required positional argument: 'duration'</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">validate_vault</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 0.00s
+                </div>
+<div class="errors">Errors: ValidationResult.__init__() missing 1 required positional argument: 'duration'</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">validate_keycloak</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 0.00s
+                </div>
+<div class="errors">Errors: ValidationResult.__init__() missing 1 required positional argument: 'duration'</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">validate_jwt</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 0.00s
+                </div>
+<div class="errors">Errors: ValidationResult.__init__() missing 1 required positional argument: 'duration'</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">validate_rls</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 0.00s
+                </div>
+<div class="errors">Errors: ValidationResult.__init__() missing 1 required positional argument: 'duration'</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">validate_chaos_postgresql</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 0.00s
+                </div>
+<div class="errors">Errors: ValidationResult.__init__() missing 1 required positional argument: 'duration'</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">validate_chaos_neo4j</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 0.00s
+                </div>
+<div class="errors">Errors: ValidationResult.__init__() missing 1 required positional argument: 'duration'</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">validate_chaos_backend</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 0.00s
+                </div>
+<div class="errors">Errors: ValidationResult.__init__() missing 1 required positional argument: 'duration'</div></div>
+        </div>
+    </div>
+</body>
+</html>

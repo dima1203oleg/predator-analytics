@@ -1,4 +1,8 @@
 """
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+
 Валідатори User Journey Testing (Рівень 5)
 """
 
@@ -7,7 +11,7 @@ from typing import Dict, Any, List
 import logging
 from playwright.async_api import async_playwright
 
-from ..core.validator import ValidationResult, ValidationLevel, ValidationStatus
+from core.validator import ValidationResult, ValidationLevel, ValidationStatus
 
 
 logger = logging.getLogger(__name__)
@@ -93,7 +97,7 @@ async def validate_user_journey_scenario_1() -> ValidationResult:
         
         await browser.close()
     
-    return ValidationResult(
+    return ValidationResult(duration=0.0, 
         level=ValidationLevel.USER_JOURNEY,
         name='User Journey Scenario 1',
         status=ValidationStatus.PASSED if not errors else ValidationStatus.FAILED,
@@ -151,7 +155,7 @@ async def validate_user_journey_scenario_2() -> ValidationResult:
         
         await browser.close()
     
-    return ValidationResult(
+    return ValidationResult(duration=0.0, 
         level=ValidationLevel.USER_JOURNEY,
         name='User Journey Scenario 2',
         status=ValidationStatus.PASSED if not errors else ValidationStatus.FAILED,
@@ -208,7 +212,7 @@ async def validate_user_journey_scenario_3() -> ValidationResult:
         
         await browser.close()
     
-    return ValidationResult(
+    return ValidationResult(duration=0.0, 
         level=ValidationLevel.USER_JOURNEY,
         name='User Journey Scenario 3',
         status=ValidationStatus.PASSED if not errors else ValidationStatus.FAILED,
