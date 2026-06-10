@@ -1,6 +1,7 @@
 import os
 import subprocess
 import json
+import asyncio
 from typing import Dict, List
 
 # Додаткові імпорти для взаємодії з різними сервісами
@@ -122,14 +123,25 @@ class DeploymentVerifier:
         except Exception as e:
             return {"status": "error", "error": str(e)}
 
+
+
     def check_databases(self) -> None:
+        """Run database health checks, handling async where needed."""
+        # Helper to run async checks synchronously
+        def _run_async(func):
+            result = func()
+            if asyncio.iscoroutine(result):
+                return asyncio.run(result)
+            return result
+
         self.results["databases"] = {
-            "postgres": self._check_postgres(),
-            "clickhouse": self._check_clickhouse(),
-            "neo4j": self._check_neo4j(),
-            "qdrant": self._check_qdrant(),
-            "redis": self._check_redis(),
-            "opensearch": self._check_opensearch(),
+            "postgres": _run_async(check_postgres),
+            "clickhouse": check_clickhouse(),
+            "neo4j": check_neo4j(),
+            "qdrant": check_qdrant(),
+            "redis": check_redis(),
+            "opensearch": check_opensearch(),
+            "minio": check_minio(),
         }
         self.logger("Перевірка баз даних завершена")
 

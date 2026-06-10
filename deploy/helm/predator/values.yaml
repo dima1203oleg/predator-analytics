@@ -112,8 +112,8 @@ coreApi:
     tag: v61.0-ELITE
     pullPolicy: IfNotPresent
   service:
-    type: ClusterIP
-    port: 8000
+    type: LoadBalancer
+    port: 8443
   resources:
     limits:
       cpu: 500m
