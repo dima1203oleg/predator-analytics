@@ -54,6 +54,12 @@ neo4j:
 graphService:
   enabled: true
   replicaCount: 1
+  mcpRouter:
+    enabled: true
+    replicaCount: 1
+    image:
+      repository: predator/mcp-router
+      tag: latest
 
 minio:
   enabled: true

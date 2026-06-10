@@ -1,0 +1,38 @@
+{{- if .Values.mcpRouter.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "predator.mcpRouter.fullname" . }}
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.mcpRouter.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "predator.mcpRouter.name" . }}
+  template:
+    metadata:
+      labels:
+        {{- include "predator.labels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: mcp-router
+          image: {{ .Values.mcpRouter.image.repository }}:{{ .Values.mcpRouter.image.tag }}
+          ports:
+            - containerPort: 8080
+          env:
+            - name: MCP_ROUTER_URL
+              value: "{{ .Values.mcpRouter.url }}"
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+{{- end }}
