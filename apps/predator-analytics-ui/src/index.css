@@ -249,14 +249,34 @@ body {
     min-height: 100dvh;
     margin: 0;
     padding: 0;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
     overflow-x: hidden;
     -webkit-tap-highlight-color: transparent;
     -webkit-font-smoothing: antialiased;
+    -webkit-overflow-scrolling: touch;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
     text-rendering: optimizeLegibility;
     background-attachment: fixed;
     font-family: var(--font-sans, 'Plus Jakarta Sans', system-ui, sans-serif);
     line-height: 1.58;
     letter-spacing: 0.011em;
+    position: fixed;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    height: 100%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
 }
 
 #root {
@@ -347,6 +367,14 @@ textarea:focus-visible,
 /* Smooth scrolling для всіх scroll контейнерів */
 .scroll-smooth {
     scroll-behavior: smooth;
+}
+
+/* iOS-specific fixes */
+@supports (-webkit-touch-callout: none) {
+    * {
+        -webkit-tap-highlight-color: transparent;
+        -webkit-touch-callout: none;
+    }
 }
 
 /* Покращений scrollbar для всіх браузерів */
