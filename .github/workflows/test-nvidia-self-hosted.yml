@@ -1,0 +1,32 @@
+name: Test on NVIDIA (Self-Hosted)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+jobs:
+  test-nvidia:
+    name: Run Tests on NVIDIA Server
+    runs-on: [self-hosted, linux, x64]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip pytest pytest-asyncio pytest-cov pre-commit
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          if [ -f services/adv-dvs/requirements.txt ]; then pip install -r services/adv-dvs/requirements.txt; fi
+          pip install -e services/adv-dvs
+
+      - name: Run ADV-DVS Tests
+        run: |
+          pytest services/adv-dvs/tests -v
