@@ -105,7 +105,8 @@ mcpRouter:
       cpu: 100m
       memory: 128Mi
   env:
-    MCP_ROUTER_URL: "http://{{ include \"predator.fullname\" . }}-mcp-router:8080"
+    MCP_ROUTER_URL: "{{ .Values.mcpRouter.url }}"
+  url: "http://{{ include \"predator.fullname\" . }}-mcp-router:{{ .Values.mcpRouter.service.port }}"
   autoscaling:
     enabled: true
     minReplicas: 1
