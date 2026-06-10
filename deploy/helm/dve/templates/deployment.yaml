@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dve
+  labels:
+    app: dve
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dve
+  template:
+    metadata:
+      labels:
+        app: dve
+    spec:
+      serviceAccountName: dve-sa
+      containers:
+        - name: dve
+          image: predator/dve:0.1.0
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - secretRef:
+                name: dve-secrets
+          env:
+            - name: DVE_EXPECTED_CONTAINERS
+              value: "core-api,graph-service,mcp-router"
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+          volumeMounts:
+            - name: config
+              mountPath: /app/config
+      volumes:
+        - name: config
+          configMap:
+            name: dve-config

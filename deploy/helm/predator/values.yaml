@@ -24,9 +24,7 @@ neo4j:
     password: predator_graph_secret
     name: predator-graph
   clusterDomain: cluster.local
-  volumes:
-    data:
-      mode: defaultStorageClass
+
 
 # Global defaults
 global:

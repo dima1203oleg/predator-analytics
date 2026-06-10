@@ -1,0 +1,31 @@
+# values.yaml for DVE Helm chart
+# Default values for DVE deployment
+replicaCount: 1
+
+image:
+  repository: predator/dve
+  tag: "0.1.0"
+  pullPolicy: IfNotPresent
+
+serviceAccount:
+  create: true
+  name: "dve-sa"
+
+resources:
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
+  requests:
+    cpu: "250m"
+    memory: "256Mi"
+
+env:
+  DVE_EXPECTED_CONTAINERS: "core-api,graph-service,mcp-router"
+  # Additional environment variables can be added here
+
+# Secret reference (must be created separately)
+secretName: "dve-secrets"
+
+nodeSelector: {}
+ tolerations: []
+ affinity: {}

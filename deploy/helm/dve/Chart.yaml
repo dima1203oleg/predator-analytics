@@ -1,0 +1,7 @@
+# Chart.yaml
+apiVersion: v2
+name: dve
+description: Deployment Verification Engine for Predator Analytics
+type: application
+version: 0.1.0
+appVersion: "0.1"

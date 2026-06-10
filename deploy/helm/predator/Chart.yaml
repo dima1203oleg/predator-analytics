@@ -34,4 +34,8 @@ dependencies:
     version: 29.3.0
     repository: https://charts.bitnami.com/bitnami
     condition: kafka.enabled
+  - name: dve
+    version: 0.1.0
+    repository: file://../dve
+    condition: dve.enabled
 
