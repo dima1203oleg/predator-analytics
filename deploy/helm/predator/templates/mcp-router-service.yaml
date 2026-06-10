@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "predator.fullname" . }}-mcp-router
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app: mcp-router
+spec:
+  type: {{ .Values.mcpRouter.service.type }}
+  ports:
+    - port: {{ .Values.mcpRouter.service.port }}
+      targetPort: {{ .Values.mcpRouter.service.port }}
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "predator.selectorLabels" . | nindent 4 }}
+    app: mcp-router

@@ -87,6 +87,31 @@ frontend:
     timeoutSeconds: 3
     failureThreshold: 2
 
+mcpRouter:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: predator/mcp-router
+    tag: v61.0-ELITE
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8080
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  env:
+    MCP_ROUTER_URL: "http://{{ include \"predator.fullname\" . }}-mcp-router:8080"
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 3
+    targetCPUUtilizationPercentage: 70
+
 coreApi:
   enabled: true
   replicaCount: 1

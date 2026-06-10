@@ -5,6 +5,7 @@ metadata:
   name: {{ include "predator.mcpRouter.fullname" . }}
   labels:
     {{- include "predator.labels" . | nindent 4 }}
+    app: mcp-router
 spec:
   replicas: {{ .Values.mcpRouter.replicaCount }}
   selector:
@@ -18,21 +19,24 @@ spec:
       containers:
         - name: mcp-router
           image: {{ .Values.mcpRouter.image.repository }}:{{ .Values.mcpRouter.image.tag }}
+          imagePullPolicy: {{ .Values.mcpRouter.image.pullPolicy | default "IfNotPresent" }}
           ports:
-            - containerPort: 8080
+            - containerPort: {{ .Values.mcpRouter.service.port }}
           env:
             - name: MCP_ROUTER_URL
               value: "{{ .Values.mcpRouter.url }}"
           resources:
-            limits:
-              cpu: "500m"
-              memory: "512Mi"
+            {{- toYaml .Values.mcpRouter.resources | nindent 12 }}
           livenessProbe:
             httpGet:
               path: /health
-              port: 8080
+              port: {{ .Values.mcpRouter.service.port }}
+            initialDelaySeconds: 30
+            periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /health
-              port: 8080
+              port: {{ .Values.mcpRouter.service.port }}
+            initialDelaySeconds: 5
+            periodSeconds: 5
 {{- end }}
