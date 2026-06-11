@@ -209,7 +209,7 @@ const Header: React.FC = () => {
           <div className={cn("flex items-center shrink-0", isMobileMode ? "justify-between w-full" : "gap-4")}>
             {!isMobileMode && <SystemPulseIndicator />}
             
-            <div className={cn("flex items-center gap-1 rounded-2xl border border-white/5 bg-black/40 p-1.5 shadow-lg", isMobileMode ? "" : "hidden lg:flex")}>
+            <div className={cn("flex items-center gap-1 rounded-2xl border border-white/5 bg-black/40 p-1.5 shadow-lg", isMobileMode ? "" : "flex")}>
               {deviceModes.map(({ mode, label, icon: Icon }) => (
                 <button
                   key={mode}

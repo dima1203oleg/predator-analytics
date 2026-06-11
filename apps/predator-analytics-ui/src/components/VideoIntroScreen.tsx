@@ -20,6 +20,7 @@ const VideoIntroScreen: React.FC<VideoIntroScreenProps> = ({
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const hasCompleted = useRef(false);
+  const [isBlocked, setIsBlocked] = React.useState(false);
 
   const complete = useCallback(() => {
     if (hasCompleted.current) return;
@@ -31,17 +32,14 @@ const VideoIntroScreen: React.FC<VideoIntroScreenProps> = ({
     const video = videoRef.current;
     if (!video) return;
 
-    // Автозапуск без звуку (обхід autoplay-policy браузерів)
-    video.muted = true;
     video.playsInline = true;
 
     const handleEnded = () => complete();
-    const handleError = () => complete(); // У разі помилки — переходимо далі
+    const handleError = () => complete();
 
     video.addEventListener('ended', handleEnded);
     video.addEventListener('error', handleError);
 
-    // Клавіша/клік для пропуску
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' || e.key === ' ' || e.key === 'Enter') {
         complete();
@@ -49,10 +47,8 @@ const VideoIntroScreen: React.FC<VideoIntroScreenProps> = ({
     };
     window.addEventListener('keydown', handleKeyDown);
 
-    // Спроба відтворення
     video.play().catch(() => {
-      // Якщо автозапуск заблоковано — пропускаємо заставку
-      complete();
+      setIsBlocked(true);
     });
 
     return () => {
@@ -61,6 +57,15 @@ const VideoIntroScreen: React.FC<VideoIntroScreenProps> = ({
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [complete]);
+
+  const handleContainerClick = () => {
+    if (isBlocked && videoRef.current) {
+      setIsBlocked(false);
+      videoRef.current.play().catch(() => complete());
+    } else {
+      complete();
+    }
+  };
 
   return (
     <div
@@ -71,7 +76,7 @@ const VideoIntroScreen: React.FC<VideoIntroScreenProps> = ({
         backgroundColor: '#000',
         cursor: 'none',
       }}
-      onClick={complete}
+      onClick={handleContainerClick}
     >
       <video
         ref={videoRef}
@@ -81,29 +86,59 @@ const VideoIntroScreen: React.FC<VideoIntroScreenProps> = ({
           height: '100%',
           objectFit: 'cover',
           display: 'block',
+          cursor: isBlocked ? 'pointer' : 'default',
         }}
-        muted
         playsInline
         preload="auto"
       />
 
+      {isBlocked && (
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            zIndex: 10,
+          }}
+        >
+          <div style={{
+            color: '#e8888f',
+            fontFamily: 'monospace',
+            fontSize: '18px',
+            letterSpacing: '0.2em',
+            border: '1px solid rgba(232, 136, 143, 0.4)',
+            padding: '16px 32px',
+            borderRadius: '8px',
+            backgroundColor: 'rgba(232, 136, 143, 0.1)',
+            cursor: 'pointer',
+          }}>
+            НАТИСНІТЬ ДЛЯ ЗАПУСКУ
+          </div>
+        </div>
+      )}
+
       {/* Підказка пропуску — ледь помітна */}
-      <div
-        style={{
-          position: 'absolute',
-          bottom: '2rem',
-          right: '2.5rem',
-          color: 'rgba(255,255,255,0.18)',
-          fontFamily: 'monospace',
-          fontSize: '10px',
-          letterSpacing: '0.4em',
-          textTransform: 'uppercase',
-          userSelect: 'none',
-          pointerEvents: 'none',
-        }}
-      >
-        натисніть щоб пропустити
-      </div>
+      {!isBlocked && (
+        <div
+          style={{
+            position: 'absolute',
+            bottom: '2rem',
+            right: '2.5rem',
+            color: 'rgba(255,255,255,0.18)',
+            fontFamily: 'monospace',
+            fontSize: '10px',
+            letterSpacing: '0.4em',
+            textTransform: 'uppercase',
+            userSelect: 'none',
+            pointerEvents: 'none',
+          }}
+        >
+          натисніть щоб пропустити
+        </div>
+      )}
     </div>
   );
 };
