@@ -12,5 +12,5 @@ if [ ! -d "node_modules" ]; then
 fi
 
 # Start development server
-echo "🌐 Starting Vite dev server on port 3030..."
-npm run dev -- --port 3030 --host
+echo "🌐 Starting Vite dev server on port 3040..."
+npm run dev -- --port 3040 --host

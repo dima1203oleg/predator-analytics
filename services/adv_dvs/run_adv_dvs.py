@@ -1,5 +1,5 @@
 import asyncio
-from orchestrator import AdvDvsOrchestrator
+from adv_dvs.orchestrator import AdvDvsOrchestrator
 import json
 
 async def run():

@@ -1507,8 +1507,8 @@ VALUES
    'Глядач', 'viewer')
 ON CONFLICT (email) DO NOTHING;
 
-INSERT INTO audit_log (event_type, description, user_id) 
-VALUES ('SYSTEM_UPGRADE', 'Платформа оновлена до v63.0-ELITE (War-gaming Horizon). Впроваджено двигун стратегічного моделювання.', '00000000-0000-0000-0000-000000000000');
+INSERT INTO audit_log (action, details, user_id) 
+VALUES ('SYSTEM_UPGRADE', '{"message": "Платформа оновлена до v63.0-ELITE (War-gaming Horizon). Впроваджено двигун стратегічного моделювання."}'::jsonb, '00000000-0000-0000-0000-000000000000');
 
 INSERT INTO audit_log (tenant_id, action, details)
 VALUES ('a0000000-0000-0000-0000-000000000001', 'system_init',

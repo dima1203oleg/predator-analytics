@@ -5,7 +5,7 @@
 # ============================================================
 # Stage 1: Builder — встановлення залежностей
 # ============================================================
-FROM python:3.12-slim-bookworm AS builder
+FROM python:3.12-bookworm AS builder
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
@@ -13,7 +13,6 @@ ENV PYTHONUNBUFFERED=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    gcc libc6-dev \
     libpq-dev \
     curl \
     && rm -rf /var/lib/apt/lists/*

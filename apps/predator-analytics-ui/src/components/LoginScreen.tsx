@@ -79,13 +79,22 @@ const speak = (text: string) => {
 
 const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
     const { setUser } = useUser();
-    const [step, setStep] = useState<'initial' | 'scanning' | 'roles'>('initial');
+    const [step, setStep] = useState<'intro_video' | 'intro_image' | 'initial' | 'scanning' | 'roles'>('intro_video');
     const [scanProgress, setScanProgress] = useState(0);
     const [threatPulse, setThreatPulse] = useState(false);
     const [email, setEmail] = useState('admin');
     const [password, setPassword] = useState('admin123');
     const [error, setError] = useState<string | null>(null);
     const clock = useClock();
+
+    useEffect(() => {
+        if (step === 'intro_image') {
+            const timer = setTimeout(() => {
+                setStep('initial');
+            }, 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [step]);
 
     // Лічильники глобальної активності
     const interceptedTx = useLiveCounter(2_847_391, 47, 200);
@@ -205,6 +214,42 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
 
     return (
         <div className="h-screen max-h-screen bg-[#020617] flex flex-col items-center justify-center relative overflow-hidden font-mono text-slate-200 select-none">
+            
+            <AnimatePresence>
+                {step === 'intro_video' && (
+                    <motion.div
+                        key="intro_video"
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 1 }}
+                        className="absolute inset-0 z-[100] bg-black flex items-center justify-center"
+                    >
+                        <video
+                            src="/predator-intro.mp4"
+                            autoPlay
+                            muted
+                            playsInline
+                            onEnded={() => setStep('intro_image')}
+                            className="w-full h-full object-cover"
+                        />
+                    </motion.div>
+                )}
+                {step === 'intro_image' && (
+                    <motion.div
+                        key="intro_image"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 1 }}
+                        className="absolute inset-0 z-[100] bg-black flex items-center justify-center"
+                    >
+                        <img 
+                            src="/predator-intro-image.png" 
+                            alt="Predator Intro"
+                            className="w-full h-full object-cover"
+                        />
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             {/* ═══ ФОНОВИЙ ШАР: Сітка / Матриця ═══ */}
             <div className="absolute inset-0 pointer-events-none z-0">
@@ -409,6 +454,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                         >
                             {/* МОНЕТА */}
                             <div className="relative group cursor-pointer" onClick={() => setStep('scanning')}>
+
                                 {/* Зовнішні орбіти */}
                                 <motion.div
                                     animate={{ rotate: 360 }}

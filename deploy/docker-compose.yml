@@ -1,4 +1,4 @@
-version: '3.8'
+
 
 services:
   # ============================================================
@@ -166,6 +166,7 @@ services:
     volumes:
       - neo4jdata:/data
       - neo4jplugins:/plugins
+    user: "neo4j"
     networks:
       - predator-sovereign-net
     healthcheck:
@@ -181,7 +182,7 @@ services:
     image: clickhouse/clickhouse-server:latest
     ports:
       - "8123:8123"
-      - "9000:9000"
+      - "9002:9000"
     volumes:
       - chdata:/var/lib/clickhouse
       - ../db/clickhouse/init.sql:/docker-entrypoint-initdb.d/init.sql
