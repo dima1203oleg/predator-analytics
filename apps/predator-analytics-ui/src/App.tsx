@@ -35,7 +35,7 @@ import { CustomCursor } from './components/CustomCursor';
 import { ThemeCustomizer } from './components/ThemeCustomizer';
 
 // Lazy-loaded великі компоненти для зменшення initial bundle
-const BootSequenceELITE = React.lazy(() => import('./components/BootSequenceELITE'));
+const VideoIntroScreen = React.lazy(() => import('./components/VideoIntroScreen'));
 const LoginScreen = React.lazy(() => import('@/components/LoginScreen'));
 const Predator = React.lazy(() => import('./components/premium/AICopilot').then(m => ({ default: m.Predator })));
 const OnboardingWizard = React.lazy(() => import('./components/premium/OnboardingWizard'));
@@ -181,8 +181,8 @@ function App() {
                                     transition={{ duration: 0.6, ease: 'easeInOut' }}
                                     className="fixed inset-0 z-[99999]"
                                   >
-                                    <React.Suspense fallback={<div className="fixed inset-0 bg-[#010101]" />}>
-                                      <BootSequenceELITE onComplete={handleBootComplete} />
+                                    <React.Suspense fallback={<div className="fixed inset-0 bg-[#000]" />}>
+                                      <VideoIntroScreen onComplete={handleBootComplete} />
                                     </React.Suspense>
                                   </motion.div>
                                 )}
