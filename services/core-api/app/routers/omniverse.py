@@ -19,7 +19,7 @@ from app.dependencies import PermissionChecker, get_current_active_user, get_ten
 from app.services.ai_service import AIService
 from app.services.kafka_service import get_kafka_service
 from app.services.minio_service import get_minio_service
-from .utils.clickhouse_helper import get_columns
+from app.utils.clickhouse_helper import get_columns
 
 logger = get_logger("core_api.omniverse")
 

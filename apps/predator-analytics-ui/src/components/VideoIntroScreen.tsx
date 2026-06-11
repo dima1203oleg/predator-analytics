@@ -4,6 +4,7 @@ import React, { useRef, useEffect, useCallback } from 'react';
  * 🦅 PREDATOR Analytics // VIDEO INTRO SCREEN
  * ============================================
  * Відтворює вступний ролик на весь екран.
+ * CRT-ефект (scanlines + vignette) для кіберпанк-атмосфери.
  * Після завершення або натискання клавіші — перехід на заставку.
  */
 
@@ -16,7 +17,7 @@ interface VideoIntroScreenProps {
 
 const VideoIntroScreen: React.FC<VideoIntroScreenProps> = ({
   onComplete,
-  src = '/intro.mp4',
+  src = '/intro.mp4?v=14',
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const hasCompleted = useRef(false);
@@ -78,6 +79,7 @@ const VideoIntroScreen: React.FC<VideoIntroScreenProps> = ({
       }}
       onClick={handleContainerClick}
     >
+      {/* Відео без нав'язливих ефектів — чисте відтворення */}
       <video
         ref={videoRef}
         src={src}
@@ -90,6 +92,30 @@ const VideoIntroScreen: React.FC<VideoIntroScreenProps> = ({
         }}
         playsInline
         preload="auto"
+      />
+
+      {/* CRT Scanline overlay — тонкі горизонтальні лінії */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          pointerEvents: 'none',
+          backgroundImage:
+            'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px)',
+          zIndex: 2,
+        }}
+      />
+
+      {/* Vignette — затемнення країв для кінематографічності */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          pointerEvents: 'none',
+          background:
+            'radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.6) 100%)',
+          zIndex: 3,
+        }}
       />
 
       {isBlocked && (
@@ -134,6 +160,7 @@ const VideoIntroScreen: React.FC<VideoIntroScreenProps> = ({
             textTransform: 'uppercase',
             userSelect: 'none',
             pointerEvents: 'none',
+            zIndex: 4,
           }}
         >
           натисніть щоб пропустити

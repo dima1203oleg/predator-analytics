@@ -50,8 +50,8 @@ const speak = (text: string) => {
     const synth = window.speechSynthesis;
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'uk-UA';
-    utterance.rate = 1.1;
-    utterance.pitch = 0.8;
+    utterance.rate = 0.85;
+    utterance.pitch = 0.3;
     utterance.volume = 1.0;
 
     const voices = synth.getVoices();
@@ -79,7 +79,7 @@ const speak = (text: string) => {
 
 const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
     const { setUser } = useUser();
-    const [step, setStep] = useState<'intro_video' | 'intro_image' | 'initial' | 'scanning' | 'roles'>('intro_video');
+    const [step, setStep] = useState<'intro_video' | 'intro_image' | 'initial' | 'scanning' | 'roles'>('initial');
     const [scanProgress, setScanProgress] = useState(0);
     const [threatPulse, setThreatPulse] = useState(false);
     const [email, setEmail] = useState('admin');
@@ -213,8 +213,44 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
     const formatDate = (d: Date) => d.toLocaleDateString('uk-UA', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
     return (
-        <div className="h-screen max-h-screen bg-[#020617] flex flex-col items-center justify-center relative overflow-hidden font-mono text-slate-200 select-none">
+        <div className="h-screen max-h-screen bg-transparent flex flex-col items-center justify-center relative overflow-hidden font-mono text-slate-200 select-none">
             
+            {/* Black Hole Background */}
+            <div className="absolute inset-0 z-0 overflow-hidden bg-black pointer-events-none">
+                <style>{`
+                    @keyframes blackHolePulse {
+                        0% { transform: scale(1) translate(0, 0) rotate(0deg); }
+                        25% { transform: scale(1.01) translate(-0.5px, 0.3px) rotate(0.5deg); }
+                        50% { transform: scale(0.99) translate(0.5px, -0.5px) rotate(0deg); }
+                        75% { transform: scale(1.015) translate(0.3px, 0.5px) rotate(-0.3deg); }
+                        100% { transform: scale(1) translate(0, 0) rotate(0deg); }
+                    }
+                    @keyframes accretionDiskSpin {
+                        0% { transform: rotate(0deg) scale(1) skewX(20deg); opacity: 0.8; }
+                        50% { transform: rotate(180deg) scale(1.1) skewX(20deg); opacity: 0.4; }
+                        100% { transform: rotate(360deg) scale(1) skewX(20deg); opacity: 0.8; }
+                    }
+                    @keyframes accretionDiskSpinFast {
+                        0% { transform: rotate(0deg) scale(1) skewY(-15deg); opacity: 0.9; }
+                        50% { transform: rotate(-180deg) scale(1.05) skewY(-15deg); opacity: 0.6; }
+                        100% { transform: rotate(-360deg) scale(1) skewY(-15deg); opacity: 0.9; }
+                    }
+                `}</style>
+                
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-gray-900 via-black to-black opacity-80" />
+                
+                <div className="absolute inset-0 flex items-center justify-center" style={{ animation: 'blackHolePulse 3s ease-in-out infinite' }}>
+                    {/* Event Horizon */}
+                    <div className="absolute w-[300px] h-[300px] bg-black rounded-full shadow-[0_0_150px_80px_rgba(200,50,0,0.5)] z-10" />
+                    
+                    {/* Accretion Disk 1 */}
+                    <div className="absolute w-[800px] h-[800px] rounded-full border-[30px] border-orange-600/40 border-t-orange-400/90 border-b-red-700/80 mix-blend-screen blur-[12px] z-0" style={{ animation: 'accretionDiskSpin 4s linear infinite' }} />
+                    
+                    {/* Accretion Disk 2 */}
+                    <div className="absolute w-[600px] h-[600px] rounded-full border-[15px] border-yellow-500/30 border-l-orange-300/80 border-r-red-500/60 mix-blend-screen blur-[8px] z-0" style={{ animation: 'accretionDiskSpinFast 2.5s linear infinite' }} />
+                </div>
+            </div>
+
             <AnimatePresence>
                 {step === 'intro_video' && (
                     <motion.div

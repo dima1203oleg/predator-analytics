@@ -159,14 +159,17 @@ services:
     image: neo4j:5.17.0
     environment:
       NEO4J_AUTH: neo4j/${NEO4J_PASSWORD:-predator_neo4j}
-      NEO4J_PLUGINS: '["apoc", "graph-data-science"]'
+      NEO4J_PLUGINS: '["apoc"]'
+      NEO4J_server_memory_heap_initial__size: 512M
+      NEO4J_server_memory_heap_max__size: 1G
+      NEO4J_server_memory_pagecache_size: 512M
     ports:
       - "7474:7474"
       - "7687:7687"
     volumes:
       - neo4jdata:/data
       - neo4jplugins:/plugins
-    user: "neo4j"
+    # user: "neo4j"
     networks:
       - predator-sovereign-net
     healthcheck:

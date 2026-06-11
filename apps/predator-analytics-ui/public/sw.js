@@ -77,6 +77,9 @@ sw.addEventListener('fetch', (event) => {
   // Skip chrome-extension and other non-http(s) requests
   if (!url.protocol.startsWith('http')) return;
 
+  // Bypass media files from SW interception completely
+  if (url.pathname.endsWith('.mp4') || url.pathname.endsWith('.mp3')) return;
+
   // API requests - Network first with cache fallback
   if (url.pathname.startsWith('/api')) {
     event.respondWith(networkFirstStrategy(event.request, API_CACHE));

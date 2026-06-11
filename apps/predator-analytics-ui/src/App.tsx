@@ -176,10 +176,11 @@ function App() {
                                 {appState === 'BOOTING' && (
                                   <motion.div
                                     key="booting"
-                                    initial={{ opacity: 1 }}
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
                                     exit={{ opacity: 0 }}
-                                    transition={{ duration: 0.6, ease: 'easeInOut' }}
-                                    className="fixed inset-0 z-[99999]"
+                                    transition={{ duration: 0.8, ease: 'easeInOut' }}
+                                    className="fixed inset-0 z-[99999] bg-black"
                                   >
                                     <React.Suspense fallback={<div className="fixed inset-0 bg-[#000]" />}>
                                       <VideoIntroScreen onComplete={handleBootComplete} />
@@ -193,9 +194,11 @@ function App() {
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
                                     exit={{ opacity: 0 }}
-                                    transition={{ duration: 0.5, ease: 'easeInOut' }}
+                                    transition={{ duration: 0.8, ease: 'easeInOut' }}
                                     className="fixed inset-0 z-[99998]"
                                   >
+                                    {/* Фоновий гул чорної діри — тільки на екрані авторизації */}
+                                    <audio src="/blackhole.mp3?v=4" autoPlay loop className="hidden" />
                                     <React.Suspense fallback={<div className="fixed inset-0 bg-[#010101]" />}>
                                       <LoginScreen onLogin={handleLogin} />
                                     </React.Suspense>
