@@ -12,6 +12,7 @@ import logging
 from playwright.async_api import async_playwright
 
 from core.validator import ValidationResult, ValidationLevel, ValidationStatus
+from config import config
 
 
 logger = logging.getLogger(__name__)
@@ -22,8 +23,7 @@ async def validate_user_journey_scenario_1() -> ValidationResult:
     details = {}
     errors = []
     warnings = []
-    
-    base_url = "http://localhost:3030"
+    base_url = config.FRONTEND_URL
     
     async with async_playwright() as p:
         browser = await p.chromium.launch(headless=True)
@@ -112,8 +112,7 @@ async def validate_user_journey_scenario_2() -> ValidationResult:
     details = {}
     errors = []
     warnings = []
-    
-    base_url = "http://localhost:3030"
+    base_url = config.FRONTEND_URL
     
     async with async_playwright() as p:
         browser = await p.chromium.launch(headless=True)
@@ -170,8 +169,7 @@ async def validate_user_journey_scenario_3() -> ValidationResult:
     details = {}
     errors = []
     warnings = []
-    
-    base_url = "http://localhost:3030"
+    base_url = config.FRONTEND_URL
     
     async with async_playwright() as p:
         browser = await p.chromium.launch(headless=True)

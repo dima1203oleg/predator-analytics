@@ -12,6 +12,7 @@ from typing import Dict, Any
 import logging
 
 from core.validator import ValidationResult, ValidationLevel, ValidationStatus
+from config import config
 
 
 logger = logging.getLogger(__name__)
@@ -26,7 +27,7 @@ async def validate_observability() -> ValidationResult:
     # Перевірка Prometheus
     try:
         async with aiohttp.ClientSession() as session:
-            async with session.get('http://localhost:9090/api/v1/query', 
+            async with session.get(f'{config.PROMETHEUS_URL}/api/v1/query', 
                                    params={'query': 'up'}, 
                                    timeout=aiohttp.ClientTimeout(total=10)) as response:
                 if response.status == 200:
@@ -41,7 +42,7 @@ async def validate_observability() -> ValidationResult:
     # Перевірка Grafana
     try:
         async with aiohttp.ClientSession() as session:
-            async with session.get('http://localhost:3000/api/health', 
+            async with session.get(f'{config.GRAFANA_URL}/api/health', 
                                    timeout=aiohttp.ClientTimeout(total=10)) as response:
                 if response.status == 200:
                     details['grafana'] = 'OK'
@@ -53,7 +54,7 @@ async def validate_observability() -> ValidationResult:
     # Перевірка Loki
     try:
         async with aiohttp.ClientSession() as session:
-            async with session.get('http://localhost:3100/ready', 
+            async with session.get(f'{config.LOKI_URL}/ready', 
                                    timeout=aiohttp.ClientTimeout(total=10)) as response:
                 if response.status == 200:
                     details['loki'] = 'OK'

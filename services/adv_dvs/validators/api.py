@@ -12,6 +12,7 @@ from typing import Dict, Any, List
 import logging
 
 from core.validator import ValidationResult, ValidationLevel, ValidationStatus
+from config import config
 
 
 logger = logging.getLogger(__name__)
@@ -32,7 +33,7 @@ async def validate_api_endpoints() -> ValidationResult:
     errors = []
     warnings = []
     
-    base_url = "http://localhost:8000"  # TODO: отримати з конфігурації
+    base_url = config.BACKEND_API_URL
     
     async with aiohttp.ClientSession() as session:
         endpoint_results = {}

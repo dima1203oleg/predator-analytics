@@ -334,6 +334,26 @@ services:
           memory: 500M
           cpus: '0.5'
 
+  # ============================================================
+  # 5.3. ADV-DVS (Advanced Diagnostic Verification System)
+  # ============================================================
+  adv-dvs:
+    build:
+      context: ../
+      dockerfile: services/adv_dvs/Dockerfile
+    ports:
+      - "8003:8003"
+    env_file:
+      - ../.env
+    restart: always
+    networks:
+      - predator-sovereign-net
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+          cpus: '0.5'
+
 networks:
   predator-sovereign-net:
     driver: bridge

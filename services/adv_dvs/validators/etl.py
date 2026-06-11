@@ -13,6 +13,7 @@ import logging
 import os
 
 from core.validator import ValidationResult, ValidationLevel, ValidationStatus
+from config import config
 
 
 logger = logging.getLogger(__name__)
@@ -23,8 +24,7 @@ async def validate_etl() -> ValidationResult:
     details = {}
     errors = []
     warnings = []
-    
-    base_url = "http://localhost:8000"
+    base_url = config.BACKEND_API_URL
     
     # Створення тестового файлу
     test_file_path = "/tmp/test_etl.csv"

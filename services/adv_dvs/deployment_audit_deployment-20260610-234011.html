@@ -1,0 +1,339 @@
+
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PREDATOR Analytics Deployment Audit</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0f;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #1a1a2e;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            color: #e11d48;
+            border-bottom: 2px solid #e11d48;
+            padding-bottom: 10px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .readiness-index {
+            font-size: 48px;
+            font-weight: bold;
+            color: #ef4444;
+        }
+        .readiness-label {
+            font-size: 14px;
+            color: #9ca3af;
+            text-transform: uppercase;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #e11d48;
+            margin-bottom: 15px;
+        }
+        .result-item {
+            background: #16213e;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border-left: 4px solid #ef4444;
+        }
+        .result-name {
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .result-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-left: 10px;
+        }
+        .status-passed { background: #22c55e; color: white; }
+        .status-failed { background: #ef4444; color: white; }
+        .status-warning { background: #f59e0b; color: white; }
+        .status-skipped { background: #6b7280; color: white; }
+        .result-details {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #9ca3af;
+        }
+        .errors {
+            color: #ef4444;
+            margin-top: 5px;
+        }
+        .warnings {
+            color: #f59e0b;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>PREDATOR Analytics Deployment Audit</h1>
+                <p>Deployment ID: deployment-20260610-234011</p>
+                <p>Timestamp: 2026-06-10 23:40:11</p>
+            </div>
+            <div style="text-align: right;">
+                <div class="readiness-label">Deployment Readiness Index</div>
+                <div class="readiness-index">19.2%</div>
+                <div class="readiness-label">Overall Status: FAILED</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">Validation Results</div>
+
+            <div class="result-item">
+                <div>
+                    <span class="result-name">Docker Validation</span>
+                    <span class="result-status status-passed">passed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 0.30s
+                </div>
+</div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">Kubernetes Validation</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 0.44s
+                </div>
+<div class="errors">Errors: kubectl get pods failed, kubectl get nodes failed</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">ArgoCD Validation</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 0.62s
+                </div>
+<div class="errors">Errors: argocd app list failed</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">Helm Validation</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 0.27s
+                </div>
+<div class="errors">Errors: helm list failed</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">Container Validation</span>
+                    <span class="result-status status-warning">warning</span>
+                </div>
+                <div class="result-details">
+                    Duration: 0.16s
+                </div>
+<div class="warnings">Warnings: Missing containers: predator_backend, predator_frontend, predator_postgres, predator_clickhouse, predator_neo4j, predator_qdrant, predator_opensearch, predator_minio, predator_redpanda, predator_redis, predator_ollama, predator_graph_service, predator_osint_service, predator_mcp_router, predator_orchestrator, predator_telegram_bot</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">PostgreSQL Validation</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 0.04s
+                </div>
+<div class="errors">Errors: PostgreSQL connection failed</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">Neo4j Validation</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 0.04s
+                </div>
+<div class="errors">Errors: Neo4j connection failed</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">ClickHouse Validation</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 0.03s
+                </div>
+<div class="errors">Errors: ClickHouse connection failed</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">Redis Validation</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 0.02s
+                </div>
+<div class="errors">Errors: Redis connection failed</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">DOM Validation</span>
+                    <span class="result-status status-passed">passed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 11.06s
+                </div>
+</div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">User Journey Scenario 1</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 3.96s
+                </div>
+<div class="errors">Errors: Login form not found, Search input not found</div><div class="warnings">Warnings: Company card not found, skipping, Risk section not found, Graph button not found, PDF button not found, Download button not found</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">User Journey Scenario 2</span>
+                    <span class="result-status status-passed">passed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 1.74s
+                </div>
+<div class="warnings">Warnings: Create scenario button not found, Monte-Carlo button not found, Result section not found</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">User Journey Scenario 3</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 1.96s
+                </div>
+<div class="errors">Errors: Chat input not found, AI response not found</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">API Validation</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 0.07s
+                </div>
+<div class="errors">Errors: Endpoint /api/v1/health returned 400, Endpoint /api/v1/companies returned 400, Endpoint /api/v1/search returned 400, Endpoint /api/v1/risks returned 400, Endpoint /api/v1/graph returned 400, Endpoint /api/v1/etl returned 400</div><div class="warnings">Warnings: Endpoint /api/v1/health did not return valid JSON, Endpoint /api/v1/companies did not return valid JSON, Endpoint /api/v1/search did not return valid JSON, Endpoint /api/v1/risks did not return valid JSON, Endpoint /api/v1/graph did not return valid JSON, Endpoint /api/v1/etl did not return valid JSON</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">ETL Validation</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 0.02s
+                </div>
+<div class="errors">Errors: ETL upload failed with status 400</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">Telegram Validation</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 0.00s
+                </div>
+<div class="errors">Errors: TELEGRAM_BOT_TOKEN not set</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">AI Validation</span>
+                    <span class="result-status status-warning">warning</span>
+                </div>
+                <div class="result-details">
+                    Duration: 65.02s
+                </div>
+<div class="warnings">Warnings: Missing models: gemma, phi, nemotron, Test query response unexpected</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">Observability Validation</span>
+                    <span class="result-status status-warning">warning</span>
+                </div>
+                <div class="result-details">
+                    Duration: 32.87s
+                </div>
+<div class="warnings">Warnings: Prometheus validation error: , Grafana validation error: , Loki validation error: </div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">Vault Validation</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 0.00s
+                </div>
+<div class="errors">Errors: VAULT_TOKEN not set</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">Keycloak Validation</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 31.22s
+                </div>
+<div class="errors">Errors: Keycloak validation error: </div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">JWT Validation</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 0.42s
+                </div>
+<div class="errors">Errors: JWT login failed</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">RLS Validation</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 0.06s
+                </div>
+<div class="errors">Errors: RLS not working correctly</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">Chaos PostgreSQL Validation</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 101.96s
+                </div>
+<div class="errors">Errors: Chaos PostgreSQL error: Command '['docker', 'ps', '--filter', 'name=predator_postgres', '--format', '{{.Status}}']' timed out after 30 seconds</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">Chaos Neo4j Validation</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 30.71s
+                </div>
+<div class="errors">Errors: Neo4j did not recover</div></div>
+            <div class="result-item">
+                <div>
+                    <span class="result-name">Chaos Backend Validation</span>
+                    <span class="result-status status-failed">failed</span>
+                </div>
+                <div class="result-details">
+                    Duration: 30.47s
+                </div>
+<div class="errors">Errors: Backend did not recover</div></div>
+        </div>
+    </div>
+</body>
+</html>

@@ -12,6 +12,7 @@ from typing import Dict, Any
 import logging
 
 from core.validator import ValidationResult, ValidationLevel, ValidationStatus
+from config import config
 
 
 logger = logging.getLogger(__name__)

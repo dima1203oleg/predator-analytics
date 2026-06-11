@@ -15,6 +15,7 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 // ─── AdminHub (System Command Center) ────────────────────────────────────────
 const AdminHub = lazy(() => import('./pages/admin/AdminHub'));
 const DatabaseCommandCenter = lazy(() => import('./features/admin/DatabaseCommandCenter'));
+const AdvDvsDashboard = lazy(() => import('./pages/diagnostics/AdvDvsDashboard'));
 
 // Lazy loaded views
 const SearchPage = lazy(() => import('./features/search/SearchPage'));
@@ -213,6 +214,16 @@ export const AppRoutesNew = () => {
                 element={
                   <AdminGuard>
                     <DatabaseCommandCenter />
+                  </AdminGuard>
+                }
+              />
+
+              {/* ADV-DVS Diagnostic Center */}
+              <Route
+                path="/admin/adv-dvs"
+                element={
+                  <AdminGuard>
+                    <AdvDvsDashboard />
                   </AdminGuard>
                 }
               />

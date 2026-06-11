@@ -14,6 +14,7 @@ import logging
 import os
 
 from core.validator import ValidationResult, ValidationLevel, ValidationStatus
+from config import config
 
 
 logger = logging.getLogger(__name__)
@@ -26,8 +27,8 @@ async def validate_vault() -> ValidationResult:
     
     try:
         # Отримання секрету з Vault
-        vault_addr = os.getenv('VAULT_ADDR', 'http://localhost:8200')
-        vault_token = os.getenv('VAULT_TOKEN')
+        vault_addr = config.VAULT_URL
+        vault_token = config.VAULT_TOKEN
         
         if not vault_token:
             errors.append('VAULT_TOKEN not set')
@@ -68,7 +69,7 @@ async def validate_keycloak() -> ValidationResult:
     errors = []
     
     try:
-        keycloak_url = os.getenv('KEYCLOAK_URL', 'http://localhost:8080')
+        keycloak_url = config.KEYCLOAK_URL
         
         async with aiohttp.ClientSession() as session:
             # Перевірка доступності Keycloak
@@ -100,7 +101,7 @@ async def validate_jwt() -> ValidationResult:
     errors = []
     
     try:
-        base_url = "http://localhost:8000"
+        base_url = config.BACKEND_API_URL
         
         async with aiohttp.ClientSession() as session:
             # Отримання токена
@@ -136,7 +137,7 @@ async def validate_rls() -> ValidationResult:
     
     try:
         # Спроба доступу до іншого tenant
-        base_url = "http://localhost:8000"
+        base_url = config.BACKEND_API_URL
         
         async with aiohttp.ClientSession() as session:
             # Спроба доступу без правильних credentials

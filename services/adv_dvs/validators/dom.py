@@ -12,6 +12,7 @@ import logging
 from playwright.async_api import async_playwright
 
 from core.validator import ValidationResult, ValidationLevel, ValidationStatus
+from config import config
 
 
 logger = logging.getLogger(__name__)
@@ -34,8 +35,7 @@ async def validate_dom_pages() -> ValidationResult:
     details = {}
     errors = []
     warnings = []
-    
-    base_url = "http://localhost:3030"  # TODO: отримати з конфігурації
+    base_url = config.FRONTEND_URL
     
     async with async_playwright() as p:
         browser = await p.chromium.launch(headless=True)

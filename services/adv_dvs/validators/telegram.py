@@ -10,9 +10,9 @@ import asyncio
 import aiohttp
 from typing import Dict, Any
 import logging
-import os
 
 from core.validator import ValidationResult, ValidationLevel, ValidationStatus
+from config import config
 
 
 logger = logging.getLogger(__name__)
@@ -24,8 +24,8 @@ async def validate_telegram() -> ValidationResult:
     errors = []
     warnings = []
     
-    bot_token = os.getenv('TELEGRAM_BOT_TOKEN')
-    test_chat_id = os.getenv('TELEGRAM_TEST_CHAT_ID')
+    bot_token = config.TELEGRAM_BOT_TOKEN
+    test_chat_id = config.TELEGRAM_TEST_CHAT_ID
     
     if not bot_token:
         errors.append('TELEGRAM_BOT_TOKEN not set')
