@@ -18,7 +18,7 @@ interface VideoIntroScreenProps {
 
 const VideoIntroScreen: React.FC<VideoIntroScreenProps> = ({
   onComplete,
-  src = '/intro.mp4?v=19',
+  src = '/intro.mp4?v=20',
   explosionAt = 7.0,
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);

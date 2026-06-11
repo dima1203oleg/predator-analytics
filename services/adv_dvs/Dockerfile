@@ -10,7 +10,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /app
 
 COPY requirements.txt .
-RUN pip wheel --timeout=1000 --retries=10 --no-cache-dir --wheel-dir /app/wheels -r requirements.txt
+RUN pip wheel --timeout=1000 --retries=10 --no-cache-dir --wheel-dir /app/wheels -r requirements.txt && \
+    apt-get purge -y build-essential && apt-get autoremove -y && rm -rf /var/lib/apt/lists/*
 
 FROM python:3.12-slim
 

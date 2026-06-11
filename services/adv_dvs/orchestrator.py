@@ -16,18 +16,23 @@ class AdvDvsOrchestrator:
     
     def __init__(self):
         self.validators = {
-            1: Level1InfraValidator(),
-            2: Level2ContainersValidator(),
-            3: Level3DatabasesValidator(),
-            4: Level4DOMValidator(),
-            5: Level5JourneyValidator(),
-            6: Level6ApiValidator(),
-            7: Level7EtlValidator(),
-            8: Level8TelegramValidator(),
-            9: Level9AiValidator(),
-            10: Level10ObservabilityValidator(),
-            11: Level11SecurityValidator(),
-            12: Level12ChaosValidator()
+            1: InfraValidator(),
+            2: BackendValidator(),
+            3: FrontendValidator(),
+            4: SyncValidator(),
+            5: DatabasesValidator(),
+            6: EtlValidator(),
+            7: ParsersValidator(),
+            8: IntegrationsValidator(),
+            9: DatasetsValidator(),
+            10: AutoMLValidator(),
+            11: LlmValidator(),
+            12: AiPipelinesValidator(),
+            13: DataFlowValidator(),
+            14: PerformanceValidator(),
+            15: SecurityValidator(),
+            16: BackupValidator(),
+            17: E2eValidator()
         }
         self.report_gen = ReportGenerator()
 
@@ -35,23 +40,22 @@ class AdvDvsOrchestrator:
         """Запуск повної перевірки системи."""
         results = {}
         total_score = 0.0
-        max_score = 120.0 # 12 рівнів по 10 балів (або ваги)
+        max_score = len(self.validators) * 10.0 # 17 рівнів по 10 балів
         
-        # Виконання рівнів 1-3 паралельно (інфра)
+        # Виконання рівнів 1-2 паралельно (інфра, backend)
         tasks_infra = [
             self.validators[1].validate(),
             self.validators[2].validate(),
-            self.validators[3].validate()
         ]
         
         infra_res = await asyncio.gather(*tasks_infra, return_exceptions=True)
-        for i, level in enumerate([1, 2, 3]):
+        for i, level in enumerate([1, 2]):
             results[level] = infra_res[i] if not isinstance(infra_res[i], Exception) else {"level": level, "status": "error", "error": str(infra_res[i])}
             
-        # Інші рівні можна запускати теж паралельно або послідовно (DOM/Journey краще послідовно для стабільності)
-        for level in range(4, 13):
-            if level == 12 and not chaos_mode:
-                results[level] = await self.validators[12].validate() # поверне warning/skip
+        # Інші рівні запускаємо послідовно для стабільності
+        for level in range(3, 18):
+            if level == 14 and not chaos_mode: # Performance testing can be optional/skipped if not chaos_mode
+                results[level] = await self.validators[14].validate()
                 continue
                 
             try:
@@ -73,7 +77,8 @@ class AdvDvsOrchestrator:
         dri = (total_score / max_score * 100) if max_score > 0 else 0
         
         # Перевірка критерію успіху (100% критичних працюють, DRI >= 95%)
-        critical_passed = all(results[L].get("status") in ["pass", "warning", "skip"] for L in [1,2,3,6])
+        critical_levels = [1, 2, 5, 11] # Infra, Backend, DBs, LLM
+        critical_passed = all(results.get(L, {}).get("status") in ["pass", "warning", "skip"] for L in critical_levels)
         is_ready = critical_passed and dri >= 95.0
         
         final_report = {

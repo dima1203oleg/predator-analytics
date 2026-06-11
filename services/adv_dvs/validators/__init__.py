@@ -1,27 +1,26 @@
-from .level1_infra import Level1InfraValidator
-from .level2_containers import Level2ContainersValidator
-from .level3_databases import Level3DatabasesValidator
-from .level4_dom import Level4DOMValidator
-from .level5_journey import Level5JourneyValidator
-from .level6_api import Level6ApiValidator
-from .level7_etl import Level7EtlValidator
-from .level8_telegram import Level8TelegramValidator
-from .level9_ai import Level9AiValidator
-from .level10_observability import Level10ObservabilityValidator
-from .level11_security import Level11SecurityValidator
-from .level12_chaos import Level12ChaosValidator
+from .base import BaseValidator
+from .level1_infra import InfraValidator
+from .level2_backend import BackendValidator
+from .level3_frontend import FrontendValidator
+from .level4_sync import SyncValidator
+from .level5_databases import DatabasesValidator
+from .level6_etl import EtlValidator
+from .level7_parsers import ParsersValidator
+from .level8_integrations import IntegrationsValidator
+from .level9_datasets import DatasetsValidator
+from .level10_automl import AutoMLValidator
+from .level11_llm import LlmValidator
+from .level12_ai_pipelines import AiPipelinesValidator
+from .level13_data_flow import DataFlowValidator
+from .level14_performance import PerformanceValidator
+from .level15_security import SecurityValidator
+from .level16_backup import BackupValidator
+from .level17_e2e import E2eValidator
 
-__all__ = [
-    "Level1InfraValidator",
-    "Level2ContainersValidator",
-    "Level3DatabasesValidator",
-    "Level4DOMValidator",
-    "Level5JourneyValidator",
-    "Level6ApiValidator",
-    "Level7EtlValidator",
-    "Level8TelegramValidator",
-    "Level9AiValidator",
-    "Level10ObservabilityValidator",
-    "Level11SecurityValidator",
-    "Level12ChaosValidator"
+VALIDATORS = [
+    InfraValidator, BackendValidator, FrontendValidator, SyncValidator,
+    DatabasesValidator, EtlValidator, ParsersValidator, IntegrationsValidator,
+    DatasetsValidator, AutoMLValidator, LlmValidator, AiPipelinesValidator,
+    DataFlowValidator, PerformanceValidator, SecurityValidator, BackupValidator,
+    E2eValidator
 ]

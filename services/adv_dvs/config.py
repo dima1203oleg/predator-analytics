@@ -54,5 +54,13 @@ REDIS_TIMEOUT: float = float(os.getenv("ADV_DVS_REDIS_TIMEOUT", "3.0"))
 DB_TIMEOUT: float = float(os.getenv("ADV_DVS_DB_TIMEOUT", "5.0"))
 NEO4J_TIMEOUT: float = float(os.getenv("ADV_DVS_NEO4J_TIMEOUT", "5.0"))
 
+# ─── Ollama (Локальний LLM) ──────────────────────────────────────────────────
+OLLAMA_URL: str = os.getenv("OLLAMA_URL", "http://localhost:11434")
+OLLAMA_REQUIRED_MODEL: str = os.getenv("OLLAMA_REQUIRED_MODEL", "deepseek-r1:latest")
+OLLAMA_INFERENCE_TIMEOUT: float = float(os.getenv("OLLAMA_INFERENCE_TIMEOUT", "120.0"))
+
+# ─── LiteLLM (Проксі до всіх LLM) ──────────────────────────────────────────
+LITELLM_URL: str = os.getenv("LITELLM_URL", "http://localhost:4000")
+
 # ─── Фоновий планувальник ────────────────────────────────────────────────────
 CHECK_INTERVAL_SECONDS: int = int(os.getenv("ADV_DVS_CHECK_INTERVAL", "60"))
