@@ -35,7 +35,7 @@ class ApiLayer(BaseLayer):
         start = time.time()
         try:
             async with httpx.AsyncClient(timeout=3.0) as client:
-                resp = await client.get(f"{CORE_API_URL.rstrip('/')}/openapi.json")
+                resp = await client.get(f"{CORE_API_URL.rstrip('/')}/api/openapi.json")
                 latency = (time.time() - start) * 1000
                 if resp.status_code == 200:
                     spec = resp.json()
@@ -60,12 +60,12 @@ class ApiLayer(BaseLayer):
         """Перевірка що захищені роути повертають 401 Unauthorized."""
         try:
             async with httpx.AsyncClient(timeout=3.0) as client:
-                resp = await client.get(f"{CORE_API_URL.rstrip('/')}/api/v1/users/me")
+                resp = await client.get(f"{CORE_API_URL.rstrip('/')}/api/v1/auth/me")
                 passed = resp.status_code in (401, 403)
                 self.add_check(CheckResult(
                     name="api_authorization_guard",
                     passed=passed,
-                    message=f"Ендпоінт /users/me успішно захищений (HTTP {resp.status_code})",
+                    message=f"Ендпоінт /auth/me успішно захищений (HTTP {resp.status_code})",
                     details={"status_code": resp.status_code}
                 ))
         except Exception as e:

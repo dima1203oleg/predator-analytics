@@ -1,13 +1,4 @@
-# Predator Analytics v61.0-ELITE (Zero-Cost Sovereign Edition)
-# Single network: predator-network | No hardcoded secrets | No duplicates
-# Profiles: dev (iMac, 52.5GB), prod (NVIDIA, full stack)
-
 services:
-
-  # ═══════════════════════════════════════════════════════════════ʼʼ
-  # 1. DATA STACK (PostgreSQL, Redis, Neo4j, Qdrant, OpenSearch, MinIO, Kafka)
-  # ═══════════════════════════════════════════════════════════════
-
   postgres:
     image: timescale/timescaledb:latest-pg15
     container_name: predator_postgres
@@ -15,13 +6,15 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB:-predator_db}
-      POSTGRES_INITDB_ARGS: "-c shared_preload_libraries=timescaledb,postgis"
-    ports: ["5432:5432"]
+    ports:
+    - 5432:5432
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./db/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    - postgres_data:/var/lib/postgresql/data
+    - ./db/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      test:
+      - CMD-SHELL
+      - pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}
       interval: 10s
       timeout: 5s
       retries: 5
@@ -30,46 +23,57 @@ services:
         limits:
           memory: 3G
     restart: unless-stopped
-    networks: [predator-network]
-    profiles: ["dev", "prod"]
-
+    networks:
+    - predator-network
+    profiles:
+    - dev
+    - prod
   redis:
     image: redis:7-alpine
     container_name: predator_redis
-    ports: ["6379:6379"]
-    volumes: [redis_data:/data]
+    ports:
+    - 6379:6379
+    volumes:
+    - redis_data:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test:
+      - CMD
+      - redis-cli
+      - ping
       interval: 10s
     deploy:
       resources:
         limits:
           memory: 2G
     restart: unless-stopped
-    networks: [predator-network]
-    profiles: ["dev", "prod"]
-
+    networks:
+    - predator-network
+    profiles:
+    - dev
+    - prod
   neo4j:
     image: neo4j:5.16.0
     container_name: predator_neo4j
     environment:
-      - NEO4J_AUTH=neo4j/${NEO4J_PASSWORD}
-      - NEO4J_apoc_export_file_enabled=true
-      - NEO4J_apoc_import_file_enabled=true
-      - NEO4J_apoc_import_file_use__neo4j__config=true
-      - NEO4J_PLUGINS=["apoc"]
-      - NEO4J_dbms_memory_heap_max__size=1G
-      - NEO4J_dbms_memory_pagecache_size=2G
+    - NEO4J_AUTH=neo4j/${NEO4J_PASSWORD}
+    - NEO4J_apoc_export_file_enabled=true
+    - NEO4J_apoc_import_file_enabled=true
+    - NEO4J_apoc_import_file_use__neo4j__config=true
+    - NEO4J_PLUGINS=["apoc"]
+    - NEO4J_dbms_memory_heap_max__size=1G
+    - NEO4J_dbms_memory_pagecache_size=2G
     ports:
-      - "7474:7474"
-      - "7687:7687"
+    - 7474:7474
+    - 7687:7687
     volumes:
-      - neo4j_data:/data
-      - neo4j_logs:/logs
-      - neo4j_import:/var/lib/neo4j/import
-      - neo4j_plugins:/plugins
+    - neo4j_data:/data
+    - neo4j_logs:/logs
+    - neo4j_import:/var/lib/neo4j/import
+    - neo4j_plugins:/plugins
     healthcheck:
-      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider localhost:7474 || exit 1"]
+      test:
+      - CMD-SHELL
+      - wget --no-verbose --tries=1 --spider localhost:7474 || exit 1
       interval: 10s
       timeout: 5s
       retries: 5
@@ -78,74 +82,107 @@ services:
         limits:
           memory: 4G
     restart: unless-stopped
-    networks: [predator-network]
-    profiles: ["dev", "prod"]
-
+    networks:
+    - predator-network
+    profiles:
+    - dev
+    - prod
   qdrant:
     image: qdrant/qdrant:latest
     container_name: predator_qdrant
-    ports: ["6333:6333", "6334:6334"]
-    volumes: [qdrant_data:/qdrant/storage]
+    ports:
+    - 6333:6333
+    - 6334:6334
+    volumes:
+    - qdrant_data:/qdrant/storage
     deploy:
       resources:
         limits:
           memory: 4G
     restart: unless-stopped
-    networks: [predator-network]
-    profiles: ["dev", "prod"]
-
+    networks:
+    - predator-network
+    profiles:
+    - dev
+    - prod
   opensearch:
     image: opensearchproject/opensearch:2.17.1
     container_name: predator_opensearch
     environment:
-      - discovery.type=single-node
-      - bootstrap.memory_lock=false
-      - "OPENSEARCH_JAVA_OPTS=-Xms2g -Xmx2g"
-      - DISABLE_SECURITY_PLUGIN=true
+    - discovery.type=single-node
+    - bootstrap.memory_lock=false
+    - OPENSEARCH_JAVA_OPTS=-Xms2g -Xmx2g
+    - DISABLE_SECURITY_PLUGIN=true
     ulimits:
-      memlock: { soft: -1, hard: -1 }
-    ports: ["9200:9200", "9600:9600"]
-    volumes: [opensearch_data:/usr/share/opensearch/data]
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+    - 9200:9200
+    - 9600:9600
+    volumes:
+    - opensearch_data:/usr/share/opensearch/data
     deploy:
       resources:
         limits:
-          memory: 4G
+          memory: 30G
     restart: unless-stopped
-    networks: [predator-network]
-    profiles: ["dev", "prod"]
-
+    networks:
+    - predator-network
+    profiles:
+    - dev
+    - prod
   minio:
     image: minio/minio
     container_name: predator_minio
     command: server /data --console-address ":9001"
-    ports: ["9000:9000", "9001:9001"]
+    ports:
+    - 9000:9000
+    - 9001:9001
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
-    volumes: [minio_data:/data]
+    volumes:
+    - minio_data:/data
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      test:
+      - CMD
+      - curl
+      - -f
+      - http://localhost:9000/minio/health/live
       interval: 30s
     deploy:
       resources:
         limits:
           memory: 2G
     restart: unless-stopped
-    networks: [predator-network]
-    profiles: ["dev", "prod"]
-
+    networks:
+    - predator-network
+    profiles:
+    - dev
+    - prod
   clickhouse:
     image: clickhouse/clickhouse-server:latest
     container_name: predator_clickhouse
+    environment:
+      CLICKHOUSE_USER: default
+      CLICKHOUSE_PASSWORD: predator_secret_ch
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
     ports:
-      - "8123:8123"
-      - "9000:9000"
+    - 8123:8123
     volumes:
-      - clickhouse_data:/var/lib/clickhouse
-      - ./db/clickhouse/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./db/clickhouse/config.xml:/etc/clickhouse-server/config.d/max_memory.xml
+    - clickhouse_data:/var/lib/clickhouse
+    - ./db/clickhouse/init.sql:/docker-entrypoint-initdb.d/init.sql
+    - ./db/clickhouse/config.xml:/etc/clickhouse-server/config.d/max_memory.xml
+    - ./db/clickhouse/listen.xml:/etc/clickhouse-server/config.d/listen.xml
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "localhost:8123/ping"]
+      test:
+      - CMD
+      - wget
+      - --no-verbose
+      - --tries=1
+      - --spider
+      - localhost:8123/ping
       interval: 10s
       timeout: 5s
       retries: 5
@@ -154,29 +191,33 @@ services:
         limits:
           memory: 4G
     restart: unless-stopped
-    networks: [predator-network]
-    profiles: ["dev", "prod"]
-
+    networks:
+    - predator-network
+    profiles:
+    - dev
+    - prod
   redpanda:
     image: redpandadata/redpanda:v24.2.19
     container_name: predator_redpanda
     command:
-      - redpanda
-      - start
-      - --smp 1
-      - --overprovisioned
-      - --kafka-addr internal://0.0.0.0:9092,external://0.0.0.0:19092
-      - --advertise-kafka-addr internal://redpanda:9092,external://localhost:19092
-      - --pandaproxy-addr internal://0.0.0.0:8082,external://0.0.0.0:18082
-      - --advertise-pandaproxy-addr internal://redpanda:8082,external://localhost:18082
+    - redpanda
+    - start
+    - --smp 1
+    - --overprovisioned
+    - --kafka-addr internal://0.0.0.0:9092,external://0.0.0.0:19092
+    - --advertise-kafka-addr internal://redpanda:9092,external://localhost:19092
+    - --pandaproxy-addr internal://0.0.0.0:8082,external://0.0.0.0:18082
+    - --advertise-pandaproxy-addr internal://redpanda:8082,external://localhost:18082
     ports:
-      - "19092:19092"
-      - "18082:18082"
-      - "9644:9644"
+    - 19092:19092
+    - 18082:18082
+    - 9644:9644
     volumes:
-      - redpanda_data:/var/lib/redpanda/data
+    - redpanda_data:/var/lib/redpanda/data
     healthcheck:
-      test: ["CMD-SHELL", "curl -f localhost:9644/v1/status/ready || exit 1"]
+      test:
+      - CMD-SHELL
+      - curl -f localhost:9644/v1/status/ready || exit 1
       interval: 10s
       timeout: 5s
       retries: 5
@@ -185,57 +226,59 @@ services:
         limits:
           memory: 3G
     restart: unless-stopped
-    networks: [predator-network]
-    profiles: ["dev", "prod"]
-
-  # ═══════════════════════════════════════════════════════════════
-  # 2. CORE STACK (Backend, Celery, Frontend)
-  # ═══════════════════════════════════════════════════════════════
-
+    networks:
+    - predator-network
+    profiles:
+    - dev
+    - prod
   rtb-engine:
     build:
       context: .
       dockerfile: services/rtb-engine/Dockerfile
     ports:
-      - "9010:8000"
+    - 9010:8000
     environment:
-      - CEREBRO_URL=http://cerebro:8000/orchestrate/ret
+    - CEREBRO_URL=http://cerebro:8000/orchestrate/ret
     depends_on:
-      - cerebro
+    - cerebro
     deploy:
       resources:
         limits:
           memory: 512M
     restart: unless-stopped
-    networks: [predator-network]
-    profiles: ["dev", "prod"]
-
+    networks:
+    - predator-network
+    profiles:
+    - dev
+    - prod
   cerebro:
     build:
       context: .
       dockerfile: services/cerebro/Dockerfile
     ports:
-      - "9020:8000"
+    - 9020:8000
     environment:
-      - TRAINING_CONTROLLER_URL=http://training-controller:8000
-      - VALIDATION_CONTROLLER_URL=http://validation-controller:8000
+    - TRAINING_CONTROLLER_URL=http://training-controller:8000
+    - VALIDATION_CONTROLLER_URL=http://validation-controller:8000
     deploy:
       resources:
         limits:
           memory: 512M
     restart: unless-stopped
-    networks: [predator-network]
-    profiles: ["dev", "prod"]
-
+    networks:
+    - predator-network
+    profiles:
+    - dev
+    - prod
   mcp-router:
     build:
       context: .
       dockerfile: services/mcp-router/Dockerfile
     ports:
-      - "8080:8080"
+    - 8088:8080
     environment:
-      - REDIS_URL=redis://redis:6379/1
-      - OLLAMA_BASE_URL=http://ollama:11434
+    - REDIS_URL=redis://redis:6379/1
+    - OLLAMA_BASE_URL=http://ollama:11434
     depends_on:
       redis:
         condition: service_healthy
@@ -244,58 +287,62 @@ services:
         limits:
           memory: 512M
     restart: unless-stopped
-    networks: [predator-network]
-    profiles: ["dev", "prod"]
-
+    networks:
+    - predator-network
+    profiles:
+    - dev
+    - prod
   graph-service:
     build:
       context: .
       dockerfile: services/graph-service/Dockerfile
     ports:
-      - "8001:8001"
+    - 8001:8001
     environment:
-      - NEO4J_URI=bolt://neo4j:7687
-      - NEO4J_USER=neo4j
-      - NEO4J_PASSWORD=${NEO4J_PASSWORD}
+    - NEO4J_URI=bolt://predator_neo4j:7687
+    - NEO4J_USER=neo4j
+    - NEO4J_PASSWORD=${NEO4J_PASSWORD}
     depends_on:
-      - neo4j
+    - neo4j
     deploy:
       resources:
         limits:
           memory: 2G
     restart: unless-stopped
-    networks: [predator-network]
-    profiles: ["dev", "prod"]
-
+    networks:
+    - predator-network
+    profiles:
+    - dev
+    - prod
   ingestion-worker:
     build:
       context: .
       dockerfile: services/ingestion-worker/Dockerfile
     container_name: predator_ingestion_worker
     environment:
-      - KAFKA_BOOTSTRAP_SERVERS=redpanda:9092
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB:-predator_db}
-      - POSTGRES_HOST=postgres
-      - POSTGRES_PORT=5432
-      - NEO4J_URI=bolt://neo4j:7687
-      - NEO4J_USER=neo4j
-      - NEO4J_PASSWORD=${NEO4J_PASSWORD}
-      - OPENSEARCH_HOSTS=http://opensearch:9200
-      - OPENSEARCH_USERNAME=${OPENSEARCH_USERNAME}
-      - OPENSEARCH_PASSWORD=${OPENSEARCH_PASSWORD}
-      - OPENSEARCH_TLS_VERIFY=false
-      - QDRANT_URL=http://qdrant:6333
-      - MINIO_ENDPOINT=minio:9000
-      - MINIO_ACCESS_KEY=${MINIO_ROOT_USER}
-      - MINIO_SECRET_KEY=${MINIO_ROOT_PASSWORD}
-      - MINIO_SECURE=false
-      - MINIO_BUCKET_INGESTION=raw-uploads
-      - CLICKHOUSE_HOST=clickhouse
-      - CLICKHOUSE_PORT=9000
-      - CLICKHOUSE_USER=default
-      - CLICKHOUSE_PASSWORD=
+    - KAFKA_BOOTSTRAP_SERVERS=redpanda:9092
+    - POSTGRES_USER=${POSTGRES_USER}
+    - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    - POSTGRES_DB=${POSTGRES_DB:-predator_db}
+    - POSTGRES_HOST=postgres
+    - POSTGRES_PORT=5432
+    - NEO4J_URI=bolt://neo4j:7687
+    - NEO4J_USER=neo4j
+    - NEO4J_PASSWORD=${NEO4J_PASSWORD}
+    - OPENSEARCH_HOSTS=http://opensearch:9200
+    - OPENSEARCH_USERNAME=${OPENSEARCH_USERNAME}
+    - OPENSEARCH_PASSWORD=${OPENSEARCH_PASSWORD}
+    - OPENSEARCH_TLS_VERIFY=false
+    - QDRANT_URL=http://qdrant:6333
+    - MINIO_ENDPOINT=minio:9000
+    - MINIO_ACCESS_KEY=${MINIO_ROOT_USER}
+    - MINIO_SECRET_KEY=${MINIO_ROOT_PASSWORD}
+    - MINIO_SECURE=false
+    - MINIO_BUCKET_INGESTION=raw-uploads
+    - CLICKHOUSE_HOST=clickhouse
+    - CLICKHOUSE_PORT=9000
+    - CLICKHOUSE_USER=default
+    - CLICKHOUSE_PASSWORD=
     depends_on:
       redpanda:
         condition: service_healthy
@@ -308,11 +355,13 @@ services:
     deploy:
       resources:
         limits:
-          memory: 2G
+          memory: 30G
     restart: unless-stopped
-    networks: [predator-network]
-    profiles: ["dev", "prod"]
-
+    networks:
+    - predator-network
+    profiles:
+    - dev
+    - prod
   backend:
     image: predator-backend:latest
     build:
@@ -320,29 +369,30 @@ services:
       dockerfile: services/core-api/Dockerfile
     container_name: predator_backend
     ports:
-      - "8090:8000"
-    extra_hosts: ["host.docker.internal:host-gateway"]
+    - 8090:8000
+    extra_hosts:
+    - host.docker.internal:host-gateway
     volumes:
-      - ./services/core-api/app:/app/app
-      - ./libs:/libs
+    - ./services/core-api/app:/app/app
+    - ./libs:/libs
     env_file:
-      - .env
+    - .env
     environment:
-      - DATABASE_URL=${DATABASE_URL:-postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}}
-      - REDIS_URL=redis://redis:6379/0
-      - QDRANT_URL=http://qdrant:6333
-      - OPENSEARCH_HOSTS=http://opensearch:9200
-      - NEO4J_URI=bolt://neo4j:7687
-      - NEO4J_USER=neo4j
-      - NEO4J_PASSWORD=${NEO4J_PASSWORD}
-      - MINIO_ENDPOINT=minio:9000
-      - MINIO_ACCESS_KEY=${MINIO_ROOT_USER}
-      - MINIO_SECRET_KEY=${MINIO_ROOT_PASSWORD}
-      - KAFKA_BROKERS=redpanda:9092
-      - MCP_ROUTER_URL=http://mcp-router:8080/v1/query
-      - GRAPH_SERVICE_URL=http://graph-service:8001
-      - CLICKHOUSE_HOST=clickhouse
-      - CLICKHOUSE_PORT=8123
+    - DATABASE_URL=${DATABASE_URL:-postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}}
+    - REDIS_URL=redis://redis:6379/0
+    - QDRANT_URL=http://qdrant:6333
+    - OPENSEARCH_HOSTS=http://opensearch:9200
+    - NEO4J_URI=bolt://neo4j:7687
+    - NEO4J_USER=neo4j
+    - NEO4J_PASSWORD=${NEO4J_PASSWORD}
+    - MINIO_ENDPOINT=minio:9000
+    - MINIO_ACCESS_KEY=${MINIO_ROOT_USER}
+    - MINIO_SECRET_KEY=${MINIO_ROOT_PASSWORD}
+    - KAFKA_BROKERS=redpanda:9092
+    - MCP_ROUTER_URL=http://mcp-router:8080/v1/query
+    - GRAPH_SERVICE_URL=http://graph-service:8001
+    - CLICKHOUSE_HOST=clickhouse
+    - CLICKHOUSE_PORT=8123
     depends_on:
       postgres:
         condition: service_healthy
@@ -355,29 +405,32 @@ services:
     deploy:
       resources:
         limits:
-          memory: 8G
+          memory: 30G
     restart: unless-stopped
-    networks: [predator-network]
-    profiles: ["dev", "prod"]
-
+    networks:
+    - predator-network
+    profiles:
+    - dev
+    - prod
   celery_worker:
     image: predator-backend:latest
     container_name: predator_celery_worker
-    command: celery -A app.core.celery_app worker --loglevel=info -Q etl,ingestion,maintenance,monitoring --prefetch-multiplier=1 --concurrency=4
+    command: celery -A app.core.celery_app worker --loglevel=info -Q etl,ingestion,maintenance,monitoring
+      --prefetch-multiplier=1 --concurrency=4
     volumes:
-      - ./services/core-api/app:/app/app
-      - ./libs:/libs
+    - ./services/core-api/app:/app/app
+    - ./libs:/libs
     env_file:
-      - .env
+    - .env
     environment:
-      - DATABASE_URL=${DATABASE_URL:-postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}}
-      - REDIS_URL=redis://redis:6379/0
-      - QDRANT_URL=http://qdrant:6333
-      - OPENSEARCH_HOSTS=http://opensearch:9200
-      - MINIO_ENDPOINT=minio:9000
-      - MINIO_ACCESS_KEY=${MINIO_ROOT_USER}
-      - MINIO_SECRET_KEY=${MINIO_ROOT_PASSWORD}
-      - KAFKA_BROKERS=redpanda:9092
+    - DATABASE_URL=${DATABASE_URL:-postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}}
+    - REDIS_URL=redis://redis:6379/0
+    - QDRANT_URL=http://qdrant:6333
+    - OPENSEARCH_HOSTS=http://opensearch:9200
+    - MINIO_ENDPOINT=minio:9000
+    - MINIO_ACCESS_KEY=${MINIO_ROOT_USER}
+    - MINIO_SECRET_KEY=${MINIO_ROOT_PASSWORD}
+    - KAFKA_BROKERS=redpanda:9092
     depends_on:
       postgres:
         condition: service_healthy
@@ -388,21 +441,23 @@ services:
         limits:
           memory: 512M
     restart: unless-stopped
-    networks: [predator-network]
-    profiles: ["dev", "prod"]
-
+    networks:
+    - predator-network
+    profiles:
+    - dev
+    - prod
   celery_beat:
     image: predator-backend:latest
     container_name: predator_celery_beat
     command: celery -A app.core.celery_app beat --loglevel=info
     volumes:
-      - ./services/core-api/app:/app/app
-      - ./libs:/libs
+    - ./services/core-api/app:/app/app
+    - ./libs:/libs
     env_file:
-      - .env
+    - .env
     environment:
-      - DATABASE_URL=${DATABASE_URL:-postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}}
-      - REDIS_URL=redis://redis:6379/0
+    - DATABASE_URL=${DATABASE_URL:-postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}}
+    - REDIS_URL=redis://redis:6379/0
     depends_on:
       redis:
         condition: service_healthy
@@ -411,48 +466,55 @@ services:
         limits:
           memory: 256M
     restart: unless-stopped
-    networks: [predator-network]
-    profiles: ["dev", "prod"]
-
+    networks:
+    - predator-network
+    profiles:
+    - dev
+    - prod
   frontend:
     build:
-      context: ./apps/predator-analytics-ui
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: apps/predator-analytics-ui/Dockerfile
     container_name: predator_frontend
-    ports: ["3030:3030"]
+    ports:
+    - 3030:3030
     environment:
-      - API_UPSTREAM=http://predator_backend:8000
-    depends_on: [backend]
+    - API_UPSTREAM=http://predator_backend:8000
+    depends_on:
+    - backend
     deploy:
       resources:
         limits:
-          memory: 2G
+          memory: 30G
     restart: unless-stopped
-    networks: [predator-network]
-    profiles: ["dev", "prod"]
-
-  # ═══════════════════════════════════════════════════════════════
-  # 3. AI/ML STACK (Ollama, Orchestrator, H2O)
-  # ═══════════════════════════════════════════════════════════════
-
+    networks:
+    - predator-network
+    profiles:
+    - dev
+    - prod
   ollama:
     image: ollama/ollama:latest
     container_name: predator_ollama
-    ports: ["11434:11434"]
-    volumes: [ollama_data:/root/.ollama]
+    # ports:
+    # - 11434:11434
+    volumes:
+    - /usr/share/ollama/.ollama:/root/.ollama
     deploy:
       resources:
         limits:
           memory: 4G
         reservations:
           devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
+          - driver: nvidia
+            count: 1
+            capabilities:
+            - gpu
     restart: unless-stopped
-    networks: [predator-network]
-    profiles: ["dev", "prod"]
-
+    networks:
+    - predator-network
+    profiles:
+    - dev
+    - prod
   orchestrator:
     image: predator-orchestrator:v61.0-ELITE
     build:
@@ -460,22 +522,22 @@ services:
       dockerfile: apps/self-improve-orchestrator/Dockerfile
     container_name: predator_orchestrator
     env_file:
-      - .env
+    - .env
     environment:
-      - DATABASE_URL=${DATABASE_URL:-postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}}
-      - REDIS_URL=redis://redis:6379/1
-      - QDRANT_URL=http://qdrant:6333
-      - OPENSEARCH_URL=http://opensearch:9200
-      - OLLAMA_BASE_URL=http://ollama:11434
+    - DATABASE_URL=${DATABASE_URL:-postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}}
+    - REDIS_URL=redis://redis:6379/1
+    - QDRANT_URL=http://qdrant:6333
+    - OPENSEARCH_URL=http://opensearch:9200
+    - OLLAMA_BASE_URL=http://ollama:11434
     volumes:
-      - ./apps/self-improve-orchestrator:/app/orchestrator
-      - ./services/core-api/app:/app/app
-      - ./libs:/app/libs
-      - orchestrator_logs:/app/logs
+    - ./apps/self-improve-orchestrator:/app/orchestrator
+    - ./services/core-api/app:/app/app
+    - ./libs:/app/libs
+    - orchestrator_logs:/app/logs
     deploy:
       resources:
         limits:
-          memory: 2G
+          memory: 30G
     depends_on:
       postgres:
         condition: service_healthy
@@ -484,25 +546,24 @@ services:
       backend:
         condition: service_started
     restart: unless-stopped
-    networks: [predator-network]
-    profiles: ["dev", "prod"]
-
-  # ═══════════════════════════════════════════════════════════════
-  # 3.5 CDC (Debezium)
-  # ═══════════════════════════════════════════════════════════════
-
+    networks:
+    - predator-network
+    profiles:
+    - dev
+    - prod
   debezium:
     image: debezium/connect:2.5
     container_name: predator_debezium
-    ports: ["8083:8083"]
+    ports:
+    - 8083:8083
     environment:
-      - BOOTSTRAP_SERVERS=redpanda:9092
-      - GROUP_ID=1
-      - CONFIG_STORAGE_TOPIC=connect-configs
-      - OFFSET_STORAGE_TOPIC=connect-offsets
-      - STATUS_STORAGE_TOPIC=connect-statuses
+    - BOOTSTRAP_SERVERS=redpanda:9092
+    - GROUP_ID=1
+    - CONFIG_STORAGE_TOPIC=connect-configs
+    - OFFSET_STORAGE_TOPIC=connect-offsets
+    - STATUS_STORAGE_TOPIC=connect-statuses
     volumes:
-      - ./config/debezium:/kafka/config
+    - ./config/debezium:/kafka/config
     depends_on:
       redpanda:
         condition: service_healthy
@@ -511,26 +572,25 @@ services:
     deploy:
       resources:
         limits:
-          memory: 2G
+          memory: 30G
     restart: unless-stopped
-    networks: [predator-network]
-    profiles: ["dev", "prod"]
-
-  # ═══════════════════════════════════════════════════════════════
-  # 3.6 OSINT SERVICE
-  # ═══════════════════════════════════════════════════════════════
-
+    networks:
+    - predator-network
+    profiles:
+    - dev
+    - prod
   osint-service:
     build:
       context: .
       dockerfile: services/osint-service/Dockerfile
-    ports: ["9201:9201"]
+    ports:
+    - 9201:9201
     environment:
-      - REDIS_URL=redis://redis:6379/0
-      - POSTGRES_DSN=${DATABASE_URL:-postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}}
-      - NEO4J_URI=bolt://neo4j:7687
-      - NEO4J_USER=neo4j
-      - NEO4J_PASSWORD=${NEO4J_PASSWORD}
+    - REDIS_URL=redis://redis:6379/0
+    - POSTGRES_DSN=${DATABASE_URL:-postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}}
+    - NEO4J_URI=bolt://neo4j:7687
+    - NEO4J_USER=neo4j
+    - NEO4J_PASSWORD=${NEO4J_PASSWORD}
     depends_on:
       redis:
         condition: service_healthy
@@ -543,13 +603,11 @@ services:
         limits:
           memory: 2G
     restart: unless-stopped
-    networks: [predator-network]
-    profiles: ["dev", "prod"]
-
-  # ═══════════════════════════════════════════════════════════════
-  # 3.7 SECURITY & IDENTITY (Keycloak, Vault) - prod only
-  # ═══════════════════════════════════════════════════════════════
-
+    networks:
+    - predator-network
+    profiles:
+    - dev
+    - prod
   keycloak:
     image: quay.io/keycloak/keycloak:22.0.5
     container_name: predator_keycloak
@@ -561,38 +619,42 @@ services:
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
     command: start-dev
-    ports: ["8080:8080"]
+    security_opt:
+      - seccomp:unconfined
+      - apparmor:unconfined
+    ports:
+    - 8080:8080
     depends_on:
       postgres:
         condition: service_healthy
     deploy:
       resources:
         limits:
-          memory: 2G
+          memory: 30G
     restart: unless-stopped
-    networks: [predator-network]
-    profiles: ["prod"]
-
+    networks:
+    - predator-network
+    profiles:
+    - prod
   vault:
     image: hashicorp/vault:1.15
     container_name: predator_vault
     environment:
       VAULT_DEV_ROOT_TOKEN_ID: root
       VAULT_DEV_LISTEN_ADDRESS: 0.0.0.0:8200
-    ports: ["8200:8200"]
-    cap_add: ["IPC_LOCK"]
+    ports:
+    - 8200:8200
+    cap_add:
+    - IPC_LOCK
     deploy:
       resources:
         limits:
           memory: 1G
     restart: unless-stopped
-    networks: [predator-network]
-    profiles: ["prod"]
-
-  # ═══════════════════════════════════════════════════════════════
-  # 3.8 API GATEWAY (Kong) - prod only, uses existing PostgreSQL
-  # ═══════════════════════════════════════════════════════════════
-
+    networks:
+    - predator-network
+    profiles:
+    - prod
   kong:
     image: kong:3.6
     container_name: predator_kong
@@ -609,9 +671,9 @@ services:
       KONG_ADMIN_LISTEN: 0.0.0.0:8001
       KONG_PROXY_LISTEN: 0.0.0.0:8000
     ports:
-      - "80:8000"
-      - "443:8443"
-      - "8001:8001"
+    - 80:8000
+    - 443:8443
+    - 8001:8001
     depends_on:
       postgres:
         condition: service_healthy
@@ -620,84 +682,88 @@ services:
         limits:
           memory: 1G
     restart: unless-stopped
-    networks: [predator-network]
-    profiles: ["prod"]
-
-  # ═══════════════════════════════════════════════════════════════
-  # 4. OBSERVABILITY (Prometheus, Grafana)
-  # ═══════════════════════════════════════════════════════════════
-
+    networks:
+    - predator-network
+    profiles:
+    - prod
   prometheus:
     image: prom/prometheus:latest
     container_name: predator_prometheus
-    ports: ["9090:9090"]
+    ports:
+    - 9090:9090
     volumes:
-      - prometheus_data:/prometheus
+    - prometheus_data:/prometheus
     deploy:
       resources:
         limits:
           memory: 2G
     restart: unless-stopped
-    networks: [predator-network]
-    profiles: ["prod"]
-
+    networks:
+    - predator-network
+    profiles:
+    - prod
   alertmanager:
     image: prom/alertmanager:latest
     container_name: predator_alertmanager
-    ports: ["9093:9093"]
+    ports:
+    - 9093:9093
     volumes:
-      - alertmanager_data:/alertmanager
+    - alertmanager_data:/alertmanager
     restart: unless-stopped
-    networks: [predator-network]
-    profiles: ["prod"]
-
+    networks:
+    - predator-network
+    profiles:
+    - prod
   grafana:
     image: grafana/grafana:latest
     container_name: predator_grafana
-    ports: ["3001:3000"]
+    ports:
+    - 3001:3000
     volumes:
-      - grafana_data:/var/lib/grafana
+    - grafana_data:/var/lib/grafana
     deploy:
       resources:
         limits:
           memory: 1G
     restart: unless-stopped
-    networks: [predator-network]
-    profiles: ["prod"]
-
+    networks:
+    - predator-network
+    profiles:
+    - prod
   loki:
     image: grafana/loki:latest
     container_name: predator_loki
-    ports: ["3100:3100"]
+    ports:
+    - 3100:3100
     volumes:
-      - loki_data:/loki
+    - loki_data:/loki
     deploy:
       resources:
         limits:
           memory: 2G
     restart: unless-stopped
-    networks: [predator-network]
-    profiles: ["prod"]
-
+    networks:
+    - predator-network
+    profiles:
+    - prod
   dcgm-exporter:
     image: nvcr.io/nvidia/k8s/dcgm-exporter:3.3.0-3.2.0-ubuntu22.04
     container_name: predator_dcgm_exporter
-    ports: ["9400:9400"]
+    ports:
+    - 9400:9400
     deploy:
       resources:
         reservations:
           devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
+          - driver: nvidia
+            count: 1
+            capabilities:
+            - gpu
     restart: unless-stopped
-    networks: [predator-network]
-    profiles: ["prod"]
-
-  # ═══════════════════════════════════════════════════════════════
-  # 5. TELEGRAM BOT
-  # ═══════════════════════════════════════════════════════════════
-
+    networks:
+    - predator-network
+    profiles:
+    - prod
   telegram-bot:
     build:
       context: .
@@ -705,46 +771,86 @@ services:
     container_name: predator_telegram_bot
     command: python3 -m orchestrator.telegram.bot
     environment:
-      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
-      - TELEGRAM_ADMIN_IDS=${TELEGRAM_ADMIN_IDS}
-      - REDIS_URL=redis://redis:6379/1
-      - POSTGRES_DSN=${DATABASE_URL:-postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}}
-      - ENVIRONMENT=production
+    - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+    - TELEGRAM_ADMIN_IDS=${TELEGRAM_ADMIN_IDS}
+    - REDIS_URL=redis://redis:6379/1
+    - POSTGRES_DSN=${DATABASE_URL:-postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}}
+    - ENVIRONMENT=production
     depends_on:
       redis:
         condition: service_healthy
       postgres:
         condition: service_healthy
     volumes:
-      - ./apps/self-improve-orchestrator:/app/orchestrator
-      - ./libs:/app/libs
+    - ./apps/self-improve-orchestrator:/app/orchestrator
+    - ./libs:/app/libs
     restart: unless-stopped
-    networks: [predator-network]
-    profiles: ["dev", "prod"]
-
+    networks:
+    - predator-network
+    profiles:
+    - dev
+    - prod
+  utos:
+    build:
+      context: .
+      dockerfile: services/utos/Dockerfile
+    container_name: predator_utos
+    env_file:
+    - .env
+    environment:
+    - NEO4J_URI=bolt://neo4j:7687
+    - NEO4J_USER=neo4j
+    - NEO4J_PASSWORD=${NEO4J_PASSWORD}
+    - REDIS_URL=redis://redis:6379/2
+    - POSTGRES_DSN=postgresql://admin:predator_password@postgres:5432/predator_db
+    - QDRANT_URL=http://qdrant:6333
+    - OPENSEARCH_URL=http://opensearch:9200
+    - MINIO_URL=http://minio:9000
+    - OLLAMA_URL=http://ollama:11434
+    - LITELLM_URL=http://litellm:4000
+    - CORE_API_URL=http://backend:8000
+    - CLICKHOUSE_URL=http://clickhouse:8123
+    - OLLAMA_REQUIRED_MODEL=llama3.2:latest-optimized
+    volumes:
+    - ./services/utos:/app/utos
+    - ./libs:/app/libs
+    depends_on:
+      neo4j:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+    restart: unless-stopped
+    networks:
+    - predator-network
+    profiles:
+    - dev
+    - prod
 volumes:
-  postgres_data:
-  redis_data:
-  neo4j_data:
-  neo4j_logs:
-  neo4j_import:
-  neo4j_plugins:
-  qdrant_data:
-  opensearch_data:
-  minio_data:
-  redpanda_data:
+  postgres_data: null
+  redis_data: null
+  neo4j_data: null
+  neo4j_logs: null
+  neo4j_import: null
+  neo4j_plugins: null
+  qdrant_data: null
+  opensearch_data: null
+  minio_data: null
+  redpanda_data: null
   clickhouse_data: {}
-  ollama_data:
-  orchestrator_logs:
-  prometheus_data:
-  grafana_data:
-  loki_data:
-  alertmanager_data:
-  debezium_config:
-
+  ollama_data: null
+  orchestrator_logs: null
+  prometheus_data: null
+  grafana_data: null
+  loki_data: null
+  alertmanager_data: null
+  debezium_config: null
 networks:
   predator-network:
     driver: bridge
     ipam:
       config:
-        - subnet: 172.20.0.0/16
+      - subnet: 172.25.0.0/16

@@ -20,6 +20,7 @@ from app.services.ai_service import AIService
 from app.services.kafka_service import get_kafka_service
 from app.services.minio_service import get_minio_service
 from app.utils.clickhouse_helper import get_columns
+from predator_common.logging import get_logger
 
 logger = get_logger("core_api.omniverse")
 

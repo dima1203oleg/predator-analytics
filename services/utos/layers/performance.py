@@ -34,7 +34,7 @@ class PerformanceLayer(BaseLayer):
         client = httpx.AsyncClient(timeout=10.0)
         try:
             # Складний агрегаційний запит для виміру
-            query = "SELECT count(), uniq(system) FROM system.parts"
+            query = "SELECT count() FROM system.parts"
             headers = {}
             if CLICKHOUSE_USER:
                 headers["X-ClickHouse-User"] = CLICKHOUSE_USER
