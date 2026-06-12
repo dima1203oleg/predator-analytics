@@ -1,0 +1,23 @@
+fastapi==0.115.0
+uvicorn[standard]==0.30.0
+pydantic==2.9.0
+pydantic-settings==2.5.0
+httpx==0.27.0
+redis==5.1.0
+asyncpg==0.31.0
+neo4j==5.25.0
+opensearch-py[async]>=2.4.2
+qdrant-client==1.8.2
+aiokafka==0.14.0
+
+# ADV-DVS Specific 
+docker==7.1.0
+kubernetes==30.1.0
+playwright==1.47.0
+openpyxl==3.1.5
+weasyprint==62.3
+jinja2==3.1.4
+pandas==2.2.2
+scrapy==2.11.1
+pymupdf==1.24.1
+pytesseract==0.3.10
