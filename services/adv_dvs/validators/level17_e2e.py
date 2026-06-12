@@ -1,3 +1,4 @@
+import os
 """
 Рівень 17: End-to-End сценарій.
 Повний ланцюг: завантаження → ETL → БД → API → WebSocket → Frontend → DOM.
@@ -112,16 +113,17 @@ class E2eValidator(BaseValidator):
                     return
 
                 models = r.json().get("models", [])
-                if not models:
+                text_models = [m for m in models if "embed" not in m["name"].lower()]
+                if not text_models:
                     self.add_check(CheckResult(
                         name="e2e_ollama_generate",
                         passed=False,
-                        message="Жодної моделі не встановлено в Ollama",
+                        message="Жодної генеративної моделі не знайдено (є тільки embedding)",
                         severity="warning",
                     ))
                     return
 
-                model_name = models[0]["name"]
+                model_name = text_models[0]["name"]
                 r2 = await client.post(
                     f"{config.OLLAMA_URL}/api/generate",
                     json={"model": model_name, "prompt": "Скажи 'OK'", "stream": False},
@@ -151,7 +153,7 @@ class E2eValidator(BaseValidator):
 
     async def _e2e_codebase_integrity(self):
         """E2E: Перевірка цілісності кодової бази."""
-        root = Path("/Users/Shared/Predator_60")
+        root = Path(os.getenv("PREDATOR_ROOT", "/Users/Shared/Predator_60"))
 
         critical_dirs = {
             "apps/predator-analytics-ui": root / "apps" / "predator-analytics-ui",

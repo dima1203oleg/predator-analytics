@@ -6,7 +6,7 @@
 import os
 
 # ─── Backend API ────────────────────────────────────────────────────────────
-CORE_API_URL: str = os.getenv("CORE_API_URL", "http://localhost:8000")
+CORE_API_URL: str = os.getenv("CORE_API_URL", "http://localhost:8090")
 CORE_API_HEALTH_PATH: str = os.getenv("CORE_API_HEALTH_PATH", "/api/v1/health")
 
 # ─── Frontend UI ─────────────────────────────────────────────────────────────
