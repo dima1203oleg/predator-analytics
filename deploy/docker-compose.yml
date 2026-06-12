@@ -339,16 +339,27 @@ services:
           cpus: '0.5'
 
   # ============================================================
-  # 5.3. ADV-DVS (Advanced Diagnostic Verification System)
+  # 5.3. UTOS (Unified Testing Operating System)
   # ============================================================
-  adv-dvs:
+  utos:
     build:
       context: ../
-      dockerfile: services/adv_dvs/Dockerfile
+      dockerfile: services/utos/Dockerfile
     ports:
       - "8003:8003"
     env_file:
       - ../.env
+    environment:
+      POSTGRES_DSN: "postgresql://predator:${POSTGRES_PASSWORD:-predator_secret}@postgres:5432/predator_db"
+      REDIS_URL: "redis://:${REDIS_PASSWORD:-predator_redis}@redis:6379/0"
+      NEO4J_URI: "bolt://neo4j:7687"
+      CLICKHOUSE_URL: "http://clickhouse:8123"
+      QDRANT_URL: "http://qdrant:6333"
+      OPENSEARCH_URL: "http://opensearch:9200"
+      MINIO_URL: "http://minio:9000"
+      KAFKA_BOOTSTRAP_SERVERS: "redpanda:9092"
+      CORE_API_URL: "http://core-api:8000"
+      FRONTEND_URL: "http://ui:3030"
     restart: always
     networks:
       - predator-sovereign-net

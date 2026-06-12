@@ -13,7 +13,7 @@ chardet
 tenacity
 minio
 clickhouse-connect
-neo4j==5.18.0
+neo4j==5.17.0
 redis==5.1.0
 spacy>=3.8.0
 rapidfuzz>=3.0.0
