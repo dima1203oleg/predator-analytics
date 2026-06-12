@@ -733,8 +733,7 @@ volumes:
   opensearch_data:
   minio_data:
   redpanda_data:
-  clickhouse_data:
-      - ./db/clickhouse/config.xml:/etc/clickhouse-server/config.d/max_memory.xml
+  clickhouse_data: null
   ollama_data:
   orchestrator_logs:
   prometheus_data:
