@@ -733,7 +733,7 @@ volumes:
   opensearch_data:
   minio_data:
   redpanda_data:
-  clickhouse_data: null
+  clickhouse_data: {}
   ollama_data:
   orchestrator_logs:
   prometheus_data:
