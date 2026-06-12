@@ -9,7 +9,7 @@ import pytest
 import importlib.util, os
 
 # Dynamically load ADVValidator from the validator module with hyphenated path
-validator_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'adv-dvs', 'validator.py'))
+validator_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'adv_dvs', 'validator.py'))
 spec = importlib.util.spec_from_file_location('adv_dvs_validator', validator_path)
 validator_module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(validator_module)

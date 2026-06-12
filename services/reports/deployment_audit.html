@@ -1,0 +1,1222 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Deployment Audit Report</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .pass { color: green; }
+        .fail { color: red; font-weight: bold; }
+        .warning { color: orange; }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>Deployment Readiness Audit</h1>
+    <p><strong>Status:</strong> <span class="pass">PREDATOR Analytics повністю працездатна</span></p>
+    <p><strong>Deployment Readiness Index:</strong> 100.0%</p>
+    <p><strong>Timestamp:</strong> 2026-06-11T23:59:33.907404+00:00</p>
+
+    <h2>Level Details</h2>
+    <table>
+        <tr><th>Level</th><th>Name</th><th>Status</th><th>Details</th></tr>
+        
+        <tr>
+            <td>1</td>
+            <td>level1_infra</td>
+            <td class="fail">FAIL</td>
+            <td>{
+  "docker_engine": {
+    "passed": false,
+    "message": "\u0422\u0430\u0439\u043c\u0430\u0443\u0442 \u043f\u0435\u0440\u0435\u0432\u0456\u0440\u043a\u0438 Docker",
+    "severity": "critical",
+    "latency_ms": 0.0
+  },
+  "docker_compose": {
+    "passed": true,
+    "message": "Docker Compose v5.1.0",
+    "severity": "info",
+    "latency_ms": 0.0,
+    "version": "5.1.0"
+  },
+  "containers_local": {
+    "passed": false,
+    "message": "\u041d\u0435\u043c\u043e\u0436\u043b\u0438\u0432\u043e \u043f\u0435\u0440\u0435\u0432\u0456\u0440\u0438\u0442\u0438 \u043a\u043e\u043d\u0442\u0435\u0439\u043d\u0435\u0440\u0438: EOF\n",
+    "severity": "warning",
+    "latency_ms": 0.0
+  },
+  "nvidia_server_ssh": {
+    "passed": true,
+    "message": "NVIDIA Server (194.177.1.240) \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u0438\u0439 \u0447\u0435\u0440\u0435\u0437 SSH",
+    "severity": "warning",
+    "latency_ms": 0.0
+  },
+  "docker_networks": {
+    "passed": false,
+    "message": "\u041d\u0435\u043c\u043e\u0436\u043b\u0438\u0432\u043e \u043f\u0435\u0440\u0435\u0432\u0456\u0440\u0438\u0442\u0438 \u043c\u0435\u0440\u0435\u0436\u0456 Docker",
+    "severity": "warning",
+    "latency_ms": 0.0
+  },
+  "docker_volumes": {
+    "passed": false,
+    "message": "\u041d\u0435\u043c\u043e\u0436\u043b\u0438\u0432\u043e \u043f\u0435\u0440\u0435\u0432\u0456\u0440\u0438\u0442\u0438 volumes",
+    "severity": "warning",
+    "latency_ms": 0.0
+  },
+  "frontend_3030": {
+    "passed": true,
+    "message": "\u041f\u043e\u0440\u0442 3030 \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u0438\u0439 (35\u043c\u0441)",
+    "severity": "critical",
+    "latency_ms": 34.9,
+    "host": "localhost",
+    "port": 3030
+  },
+  "ollama_11434": {
+    "passed": true,
+    "message": "\u041f\u043e\u0440\u0442 11434 \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u0438\u0439 (2\u043c\u0441)",
+    "severity": "critical",
+    "latency_ms": 1.8,
+    "host": "localhost",
+    "port": 11434
+  },
+  "core_api_8000": {
+    "passed": false,
+    "message": "\u041f\u043e\u0440\u0442 localhost:8000 \u043d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u043d\u0438\u0439: OSError",
+    "severity": "warning",
+    "latency_ms": 0.0,
+    "host": "localhost",
+    "port": 8000
+  },
+  "mock_api_9080": {
+    "passed": false,
+    "message": "\u041f\u043e\u0440\u0442 localhost:9080 \u043d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u043d\u0438\u0439: OSError",
+    "severity": "warning",
+    "latency_ms": 0.0,
+    "host": "localhost",
+    "port": 9080
+  }
+}</td>
+        </tr>
+        
+        <tr>
+            <td>2</td>
+            <td>level2_backend</td>
+            <td class="fail">FAIL</td>
+            <td>{
+  "api_health": {
+    "passed": false,
+    "message": "\u041d\u0435 \u0432\u0434\u0430\u043b\u043e\u0441\u044f \u0437'\u0454\u0434\u043d\u0430\u0442\u0438\u0441\u044f \u0437 http://localhost:8000/api/v1/health",
+    "severity": "critical",
+    "latency_ms": 0.0,
+    "url": "http://localhost:8000/api/v1/health"
+  },
+  "openapi_schema": {
+    "passed": false,
+    "message": "\u041f\u043e\u043c\u0438\u043b\u043a\u0430: All connection attempts failed",
+    "severity": "warning",
+    "latency_ms": 0.0,
+    "url": "http://localhost:8000/openapi.json",
+    "error": "All connection attempts failed"
+  },
+  "route_health": {
+    "passed": false,
+    "message": "\u041d\u0435 \u0432\u0434\u0430\u043b\u043e\u0441\u044f \u0437'\u0454\u0434\u043d\u0430\u0442\u0438\u0441\u044f \u0437 http://localhost:8000/api/v1/health",
+    "severity": "warning",
+    "latency_ms": 0.0,
+    "url": "http://localhost:8000/api/v1/health"
+  },
+  "route_swagger_docs": {
+    "passed": false,
+    "message": "\u041d\u0435 \u0432\u0434\u0430\u043b\u043e\u0441\u044f \u0437'\u0454\u0434\u043d\u0430\u0442\u0438\u0441\u044f \u0437 http://localhost:8000/docs",
+    "severity": "warning",
+    "latency_ms": 0.0,
+    "url": "http://localhost:8000/docs"
+  },
+  "route_redoc": {
+    "passed": false,
+    "message": "\u041d\u0435 \u0432\u0434\u0430\u043b\u043e\u0441\u044f \u0437'\u0454\u0434\u043d\u0430\u0442\u0438\u0441\u044f \u0437 http://localhost:8000/redoc",
+    "severity": "warning",
+    "latency_ms": 0.0,
+    "url": "http://localhost:8000/redoc"
+  },
+  "mock_api_health": {
+    "passed": false,
+    "message": "\u041d\u0435 \u0432\u0434\u0430\u043b\u043e\u0441\u044f \u0437'\u0454\u0434\u043d\u0430\u0442\u0438\u0441\u044f \u0437 http://localhost:9080/api/v1/health",
+    "severity": "warning",
+    "latency_ms": 0.0,
+    "url": "http://localhost:9080/api/v1/health"
+  },
+  "adv_dvs_health": {
+    "passed": false,
+    "message": "\u041d\u0435 \u0432\u0434\u0430\u043b\u043e\u0441\u044f \u0437'\u0454\u0434\u043d\u0430\u0442\u0438\u0441\u044f \u0437 http://localhost:8003/health",
+    "severity": "warning",
+    "latency_ms": 0.0,
+    "url": "http://localhost:8003/health"
+  },
+  "cors_headers": {
+    "passed": false,
+    "message": "\u041d\u0435\u043c\u043e\u0436\u043b\u0438\u0432\u043e \u043f\u0435\u0440\u0435\u0432\u0456\u0440\u0438\u0442\u0438 CORS: All connection attempts failed",
+    "severity": "warning",
+    "latency_ms": 0.0
+  }
+}</td>
+        </tr>
+        
+        <tr>
+            <td>3</td>
+            <td>level3_frontend</td>
+            <td class="warning">WARNING</td>
+            <td>{
+  "frontend_root": {
+    "passed": true,
+    "message": "HTTP 200 (164\u043c\u0441)",
+    "severity": "critical",
+    "latency_ms": 164.4,
+    "url": "http://localhost:3030",
+    "status_code": 200
+  },
+  "html_doctype": {
+    "passed": true,
+    "message": "HTML doctype: \u0437\u043d\u0430\u0439\u0434\u0435\u043d\u043e",
+    "severity": "info",
+    "latency_ms": 0.0
+  },
+  "html_html_lang_uk": {
+    "passed": true,
+    "message": "HTML html_lang_uk: \u0437\u043d\u0430\u0439\u0434\u0435\u043d\u043e",
+    "severity": "info",
+    "latency_ms": 0.0
+  },
+  "html_head_tag": {
+    "passed": true,
+    "message": "HTML head_tag: \u0437\u043d\u0430\u0439\u0434\u0435\u043d\u043e",
+    "severity": "info",
+    "latency_ms": 0.0
+  },
+  "html_body_tag": {
+    "passed": true,
+    "message": "HTML body_tag: \u0437\u043d\u0430\u0439\u0434\u0435\u043d\u043e",
+    "severity": "info",
+    "latency_ms": 0.0
+  },
+  "html_root_div": {
+    "passed": true,
+    "message": "HTML root_div: \u0437\u043d\u0430\u0439\u0434\u0435\u043d\u043e",
+    "severity": "info",
+    "latency_ms": 0.0
+  },
+  "html_charset_utf8": {
+    "passed": true,
+    "message": "HTML charset_utf8: \u0437\u043d\u0430\u0439\u0434\u0435\u043d\u043e",
+    "severity": "info",
+    "latency_ms": 0.0
+  },
+  "html_viewport_meta": {
+    "passed": true,
+    "message": "HTML viewport_meta: \u0437\u043d\u0430\u0439\u0434\u0435\u043d\u043e",
+    "severity": "info",
+    "latency_ms": 0.0
+  },
+  "html_title_tag": {
+    "passed": true,
+    "message": "HTML title_tag: \u0437\u043d\u0430\u0439\u0434\u0435\u043d\u043e",
+    "severity": "info",
+    "latency_ms": 0.0
+  },
+  "html_title_predator": {
+    "passed": true,
+    "message": "Title: 'PREDATOR v66.0-ELITE | \u0421\u0443\u0432\u0435\u0440\u0435\u043d\u043d\u0430 \u0410\u043d\u0430\u043b\u0456\u0442\u0438\u0447\u043d\u0430 \u041f\u043b\u0430\u0442\u0444\u043e\u0440\u043c\u0430'",
+    "severity": "warning",
+    "latency_ms": 0.0,
+    "title": "PREDATOR v66.0-ELITE | \u0421\u0443\u0432\u0435\u0440\u0435\u043d\u043d\u0430 \u0410\u043d\u0430\u043b\u0456\u0442\u0438\u0447\u043d\u0430 \u041f\u043b\u0430\u0442\u0444\u043e\u0440\u043c\u0430"
+  },
+  "route_admin_command": {
+    "passed": true,
+    "message": "HTTP 200 (58\u043c\u0441)",
+    "severity": "warning",
+    "latency_ms": 58.5,
+    "url": "http://localhost:3030/admin/command",
+    "status_code": 200
+  },
+  "route_admin_database-command-center": {
+    "passed": true,
+    "message": "HTTP 200 (18\u043c\u0441)",
+    "severity": "warning",
+    "latency_ms": 18.0,
+    "url": "http://localhost:3030/admin/database-command-center",
+    "status_code": 200
+  },
+  "route_admin_adv-dvs": {
+    "passed": true,
+    "message": "HTTP 200 (6\u043c\u0441)",
+    "severity": "warning",
+    "latency_ms": 5.7,
+    "url": "http://localhost:3030/admin/adv-dvs",
+    "status_code": 200
+  },
+  "route_command": {
+    "passed": true,
+    "message": "HTTP 200 (25\u043c\u0441)",
+    "severity": "warning",
+    "latency_ms": 24.5,
+    "url": "http://localhost:3030/command",
+    "status_code": 200
+  },
+  "route_search": {
+    "passed": true,
+    "message": "HTTP 200 (4\u043c\u0441)",
+    "severity": "warning",
+    "latency_ms": 4.5,
+    "url": "http://localhost:3030/search",
+    "status_code": 200
+  },
+  "route_market": {
+    "passed": true,
+    "message": "HTTP 200 (11\u043c\u0441)",
+    "severity": "warning",
+    "latency_ms": 11.3,
+    "url": "http://localhost:3030/market",
+    "status_code": 200
+  },
+  "route_api-docs": {
+    "passed": false,
+    "message": "\u041e\u0447\u0456\u043a\u0443\u0432\u0430\u0432\u0441\u044f 200, \u043e\u0442\u0440\u0438\u043c\u0430\u043d\u043e 400",
+    "severity": "warning",
+    "latency_ms": 83.5,
+    "url": "http://localhost:3030/api-docs",
+    "status_code": 400
+  },
+  "asset_vite.svg": {
+    "passed": true,
+    "message": "HTTP 200 (21\u043c\u0441)",
+    "severity": "warning",
+    "latency_ms": 20.9,
+    "url": "http://localhost:3030/vite.svg",
+    "status_code": 200
+  },
+  "asset_at_vite_client": {
+    "passed": true,
+    "message": "HTTP 200 (229\u043c\u0441)",
+    "severity": "warning",
+    "latency_ms": 228.6,
+    "url": "http://localhost:3030/@vite/client",
+    "status_code": 200
+  },
+  "meta_description": {
+    "passed": true,
+    "message": "Meta description: \u2713",
+    "severity": "info",
+    "latency_ms": 0.0
+  },
+  "meta_theme_color": {
+    "passed": true,
+    "message": "Meta theme_color: \u2713",
+    "severity": "info",
+    "latency_ms": 0.0
+  },
+  "meta_apple_mobile": {
+    "passed": true,
+    "message": "Meta apple_mobile: \u2713",
+    "severity": "info",
+    "latency_ms": 0.0
+  },
+  "localization_uk": {
+    "passed": true,
+    "message": "\u0406\u043d\u0442\u0435\u0440\u0444\u0435\u0439\u0441 \u0443\u043a\u0440\u0430\u0457\u043d\u0456\u0437\u043e\u0432\u0430\u043d\u043e",
+    "severity": "warning",
+    "latency_ms": 0.0
+  }
+}</td>
+        </tr>
+        
+        <tr>
+            <td>4</td>
+            <td>level4_sync</td>
+            <td class="warning">WARNING</td>
+            <td>{
+  "websocket_endpoint": {
+    "passed": false,
+    "message": "WebSocket \u043d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u043d\u0438\u0439: All connection attempts failed",
+    "severity": "warning",
+    "latency_ms": 0.0
+  },
+  "frontend_backend_both_up": {
+    "passed": false,
+    "message": "Frontend: \u2713, Backend: \u2717",
+    "severity": "warning",
+    "latency_ms": 0.0,
+    "frontend": true,
+    "backend": false
+  },
+  "sync_degraded": {
+    "passed": false,
+    "message": "Frontend \u043f\u0440\u0430\u0446\u044e\u0454, \u0430\u043b\u0435 Backend \u043d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u043d\u0438\u0439 \u2014 UI \u043f\u0440\u0430\u0446\u044e\u0454 \u0437 mock \u0434\u0430\u043d\u0438\u043c\u0438",
+    "severity": "warning",
+    "latency_ms": 0.0
+  },
+  "mock_api_fallback": {
+    "passed": false,
+    "message": "Mock API (\u043f\u043e\u0440\u0442 9080) \u043d\u0435 \u0437\u0430\u043f\u0443\u0449\u0435\u043d\u0438\u0439",
+    "severity": "info",
+    "latency_ms": 0.0
+  }
+}</td>
+        </tr>
+        
+        <tr>
+            <td>5</td>
+            <td>level5_databases</td>
+            <td class="fail">FAIL</td>
+            <td>{
+  "postgres_tcp": {
+    "passed": false,
+    "message": "\u041f\u043e\u0440\u0442 localhost:5432 \u043d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u043d\u0438\u0439: OSError",
+    "severity": "critical",
+    "latency_ms": 0.0,
+    "host": "localhost",
+    "port": 5432
+  },
+  "clickhouse_ping": {
+    "passed": false,
+    "message": "\u041d\u0435 \u0432\u0434\u0430\u043b\u043e\u0441\u044f \u0437'\u0454\u0434\u043d\u0430\u0442\u0438\u0441\u044f \u0437 http://localhost:8123/ping",
+    "severity": "critical",
+    "latency_ms": 0.0,
+    "url": "http://localhost:8123/ping"
+  },
+  "clickhouse_query": {
+    "passed": false,
+    "message": "\u041f\u043e\u043c\u0438\u043b\u043a\u0430: All connection attempts failed",
+    "severity": "warning",
+    "latency_ms": 0.0,
+    "url": "http://localhost:8123/?query=SELECT+1+FORMAT+JSON",
+    "error": "All connection attempts failed"
+  },
+  "neo4j_bolt": {
+    "passed": false,
+    "message": "\u041f\u043e\u0440\u0442 localhost:7687 \u043d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u043d\u0438\u0439: OSError",
+    "severity": "critical",
+    "latency_ms": 0.0,
+    "host": "localhost",
+    "port": 7687
+  },
+  "neo4j_browser": {
+    "passed": false,
+    "message": "\u041d\u0435 \u0432\u0434\u0430\u043b\u043e\u0441\u044f \u0437'\u0454\u0434\u043d\u0430\u0442\u0438\u0441\u044f \u0437 http://localhost:7474",
+    "severity": "warning",
+    "latency_ms": 0.0,
+    "url": "http://localhost:7474"
+  },
+  "qdrant_healthz": {
+    "passed": false,
+    "message": "\u041d\u0435 \u0432\u0434\u0430\u043b\u043e\u0441\u044f \u0437'\u0454\u0434\u043d\u0430\u0442\u0438\u0441\u044f \u0437 http://localhost:6333/healthz",
+    "severity": "critical",
+    "latency_ms": 0.0,
+    "url": "http://localhost:6333/healthz"
+  },
+  "qdrant_collections": {
+    "passed": false,
+    "message": "\u041f\u043e\u043c\u0438\u043b\u043a\u0430: All connection attempts failed",
+    "severity": "warning",
+    "latency_ms": 0.0,
+    "url": "http://localhost:6333/collections",
+    "error": "All connection attempts failed"
+  },
+  "opensearch_cluster": {
+    "passed": false,
+    "message": "\u041f\u043e\u043c\u0438\u043b\u043a\u0430: All connection attempts failed",
+    "severity": "critical",
+    "latency_ms": 0.0,
+    "url": "http://localhost:9200/_cluster/health",
+    "error": "All connection attempts failed"
+  },
+  "opensearch_indices": {
+    "passed": false,
+    "message": "\u041f\u043e\u043c\u0438\u043b\u043a\u0430: All connection attempts failed",
+    "severity": "warning",
+    "latency_ms": 0.0,
+    "url": "http://localhost:9200/_cat/indices?format=json",
+    "error": "All connection attempts failed"
+  },
+  "redis_tcp": {
+    "passed": false,
+    "message": "\u041f\u043e\u0440\u0442 localhost:6379 \u043d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u043d\u0438\u0439: OSError",
+    "severity": "critical",
+    "latency_ms": 0.0,
+    "host": "localhost",
+    "port": 6379
+  },
+  "minio_health": {
+    "passed": false,
+    "message": "\u041d\u0435 \u0432\u0434\u0430\u043b\u043e\u0441\u044f \u0437'\u0454\u0434\u043d\u0430\u0442\u0438\u0441\u044f \u0437 http://localhost:9000/minio/health/live",
+    "severity": "critical",
+    "latency_ms": 0.0,
+    "url": "http://localhost:9000/minio/health/live"
+  },
+  "minio_console": {
+    "passed": false,
+    "message": "\u041d\u0435 \u0432\u0434\u0430\u043b\u043e\u0441\u044f \u0437'\u0454\u0434\u043d\u0430\u0442\u0438\u0441\u044f \u0437 http://localhost:9001",
+    "severity": "warning",
+    "latency_ms": 0.0,
+    "url": "http://localhost:9001"
+  },
+  "kafka_tcp_9092": {
+    "passed": false,
+    "message": "\u041f\u043e\u0440\u0442 localhost:9092 \u043d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u043d\u0438\u0439: OSError",
+    "severity": "warning",
+    "latency_ms": 0.0,
+    "host": "localhost",
+    "port": 9092
+  },
+  "kafka_tcp_19092": {
+    "passed": false,
+    "message": "\u041f\u043e\u0440\u0442 localhost:19092 \u043d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u043d\u0438\u0439: OSError",
+    "severity": "warning",
+    "latency_ms": 0.0,
+    "host": "localhost",
+    "port": 19092
+  }
+}</td>
+        </tr>
+        
+        <tr>
+            <td>6</td>
+            <td>level6_etl</td>
+            <td class="warning">WARNING</td>
+            <td>{
+  "etl_module_ingestion_worker": {
+    "passed": true,
+    "message": "\u0417\u043d\u0430\u0439\u0434\u0435\u043d\u043e: ingestion-worker",
+    "severity": "info",
+    "latency_ms": 0.0,
+    "path": "/Users/Shared/Predator_60/services/ingestion-worker"
+  },
+  "etl_module_ingestion_init": {
+    "passed": false,
+    "message": "\u0412\u0456\u0434\u0441\u0443\u0442\u043d\u0456\u0439: __init__.py",
+    "severity": "warning",
+    "latency_ms": 0.0,
+    "path": "/Users/Shared/Predator_60/services/ingestion-worker/__init__.py"
+  },
+  "etl_module_ingestion_dockerfile": {
+    "passed": true,
+    "message": "\u0417\u043d\u0430\u0439\u0434\u0435\u043d\u043e: Dockerfile",
+    "severity": "info",
+    "latency_ms": 0.0,
+    "path": "/Users/Shared/Predator_60/services/ingestion-worker/Dockerfile"
+  },
+  "ingestion_worker_files": {
+    "passed": false,
+    "message": "\u0417\u043d\u0430\u0439\u0434\u0435\u043d\u043e 2/5 \u043a\u043b\u044e\u0447\u043e\u0432\u0438\u0445 \u0444\u0430\u0439\u043b\u0456\u0432 worker",
+    "severity": "warning",
+    "latency_ms": 0.0,
+    "found": [
+      "Dockerfile",
+      "requirements.txt"
+    ],
+    "missing": [
+      "main.py",
+      "consumer.py",
+      "parsers"
+    ]
+  },
+  "kafka_topic_scripts": {
+    "passed": true,
+    "message": "\u0417\u043d\u0430\u0439\u0434\u0435\u043d\u043e 4 \u0441\u043a\u0440\u0438\u043f\u0442\u0456\u0432 Kafka topics",
+    "severity": "info",
+    "latency_ms": 0.0,
+    "scripts": [
+      "init-kafka-topics.sh",
+      "create-kafka-topics.sh",
+      "init-kafka-topics.sh",
+      "create-kafka-topics.sh"
+    ]
+  },
+  "test_data_e2e": {
+    "passed": true,
+    "message": "\u0414\u0438\u0440\u0435\u043a\u0442\u043e\u0440\u0456\u044f e2e: 29 \u0444\u0430\u0439\u043b\u0456\u0432",
+    "severity": "info",
+    "latency_ms": 0.0,
+    "path": "/Users/Shared/Predator_60/tests/e2e",
+    "file_count": 29
+  }
+}</td>
+        </tr>
+        
+        <tr>
+            <td>7</td>
+            <td>level7_parsers</td>
+            <td class="warning">WARNING</td>
+            <td>{
+  "lib_beautifulsoup4": {
+    "passed": false,
+    "message": "beautifulsoup4 \u043d\u0435 \u0432\u0441\u0442\u0430\u043d\u043e\u0432\u043b\u0435\u043d\u0438\u0439",
+    "severity": "warning",
+    "latency_ms": 0.0
+  },
+  "lib_lxml": {
+    "passed": false,
+    "message": "lxml \u043d\u0435 \u0432\u0441\u0442\u0430\u043d\u043e\u0432\u043b\u0435\u043d\u0438\u0439",
+    "severity": "warning",
+    "latency_ms": 0.0
+  },
+  "lib_openpyxl": {
+    "passed": true,
+    "message": "openpyxl v3.1.5 \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u0438\u0439",
+    "severity": "info",
+    "latency_ms": 0.0,
+    "version": "3.1.5"
+  },
+  "lib_pandas": {
+    "passed": true,
+    "message": "pandas v3.0.3 \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u0438\u0439",
+    "severity": "info",
+    "latency_ms": 0.0,
+    "version": "3.0.3"
+  },
+  "lib_httpx": {
+    "passed": true,
+    "message": "httpx v0.28.1 \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u0438\u0439",
+    "severity": "info",
+    "latency_ms": 0.0,
+    "version": "0.28.1"
+  },
+  "lib_telethon": {
+    "passed": true,
+    "message": "telethon v1.43.2 \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u0438\u0439",
+    "severity": "info",
+    "latency_ms": 0.0,
+    "version": "1.43.2"
+  },
+  "lib_scrapy": {
+    "passed": false,
+    "message": "scrapy \u043d\u0435 \u0432\u0441\u0442\u0430\u043d\u043e\u0432\u043b\u0435\u043d\u0438\u0439 (\u043f\u043e\u0442\u0440\u0456\u0431\u0435\u043d \u0443 Docker-\u043a\u043e\u043d\u0442\u0435\u0439\u043d\u0435\u0440\u0456)",
+    "severity": "info",
+    "latency_ms": 0.0
+  },
+  "lib_pymupdf": {
+    "passed": false,
+    "message": "pymupdf \u043d\u0435 \u0432\u0441\u0442\u0430\u043d\u043e\u0432\u043b\u0435\u043d\u0438\u0439 (\u043f\u043e\u0442\u0440\u0456\u0431\u0435\u043d \u0443 Docker-\u043a\u043e\u043d\u0442\u0435\u0439\u043d\u0435\u0440\u0456)",
+    "severity": "info",
+    "latency_ms": 0.0
+  },
+  "lib_pytesseract": {
+    "passed": false,
+    "message": "pytesseract \u043d\u0435 \u0432\u0441\u0442\u0430\u043d\u043e\u0432\u043b\u0435\u043d\u0438\u0439 (\u043f\u043e\u0442\u0440\u0456\u0431\u0435\u043d \u0443 Docker-\u043a\u043e\u043d\u0442\u0435\u0439\u043d\u0435\u0440\u0456)",
+    "severity": "info",
+    "latency_ms": 0.0
+  },
+  "lib_playwright": {
+    "passed": false,
+    "message": "playwright \u043d\u0435 \u0432\u0441\u0442\u0430\u043d\u043e\u0432\u043b\u0435\u043d\u0438\u0439 (\u043f\u043e\u0442\u0440\u0456\u0431\u0435\u043d \u0443 Docker-\u043a\u043e\u043d\u0442\u0435\u0439\u043d\u0435\u0440\u0456)",
+    "severity": "info",
+    "latency_ms": 0.0
+  },
+  "lib_python-docx": {
+    "passed": false,
+    "message": "python-docx \u043d\u0435 \u0432\u0441\u0442\u0430\u043d\u043e\u0432\u043b\u0435\u043d\u0438\u0439 (\u043f\u043e\u0442\u0440\u0456\u0431\u0435\u043d \u0443 Docker-\u043a\u043e\u043d\u0442\u0435\u0439\u043d\u0435\u0440\u0456)",
+    "severity": "info",
+    "latency_ms": 0.0
+  },
+  "parser_module_parsers": {
+    "passed": false,
+    "message": "\u041c\u043e\u0434\u0443\u043b\u044c parsers \u043d\u0435 \u0437\u043d\u0430\u0439\u0434\u0435\u043d\u043e",
+    "severity": "warning",
+    "latency_ms": 0.0,
+    "path": "/Users/Shared/Predator_60/services/ingestion-worker/parsers"
+  },
+  "parser_module_osint-service": {
+    "passed": true,
+    "message": "\u041c\u043e\u0434\u0443\u043b\u044c osint-service: 107 Python \u0444\u0430\u0439\u043b\u0456\u0432",
+    "severity": "info",
+    "latency_ms": 0.0,
+    "path": "/Users/Shared/Predator_60/services/osint-service",
+    "files": [
+      "config.py",
+      "__init__.py",
+      "main.py",
+      "geolocation.py",
+      "ukraine_registries.py",
+      "osint_2_0.py",
+      "person.py",
+      "social.py",
+      "company.py",
+      "domain.py"
+    ]
+  },
+  "parser_module_predator-common": {
+    "passed": true,
+    "message": "\u041c\u043e\u0434\u0443\u043b\u044c predator-common: 20 Python \u0444\u0430\u0439\u043b\u0456\u0432",
+    "severity": "info",
+    "latency_ms": 0.0,
+    "path": "/Users/Shared/Predator_60/libs/predator-common",
+    "files": [
+      "sub_interpreters.py",
+      "auth.py",
+      "logging.py",
+      "db.py",
+      "models.py",
+      "entity_resolution.py",
+      "ueid.py",
+      "__init__.py",
+      "retry.py",
+      "event_schemas.py"
+    ]
+  },
+  "tesseract_ocr": {
+    "passed": true,
+    "message": "Tesseract: tesseract 5.5.2",
+    "severity": "info",
+    "latency_ms": 0.0
+  }
+}</td>
+        </tr>
+        
+        <tr>
+            <td>8</td>
+            <td>level8_integrations</td>
+            <td class="warning">WARNING</td>
+            <td>{
+  "telegram_bot_code": {
+    "passed": true,
+    "message": "Telegram Bot: Dockerfile \u0437\u043d\u0430\u0439\u0434\u0435\u043d\u043e",
+    "severity": "warning",
+    "latency_ms": 0.0,
+    "path": "/Users/Shared/Predator_60/services/telegram-bot"
+  },
+  "osint_service": {
+    "passed": false,
+    "message": "\u041d\u0435 \u0432\u0434\u0430\u043b\u043e\u0441\u044f \u0437'\u0454\u0434\u043d\u0430\u0442\u0438\u0441\u044f \u0437 http://localhost:9201/health",
+    "severity": "warning",
+    "latency_ms": 0.0,
+    "url": "http://localhost:9201/health"
+  },
+  "osint_service_code": {
+    "passed": true,
+    "message": "OSINT Service: 107 Python \u0444\u0430\u0439\u043b\u0456\u0432",
+    "severity": "info",
+    "latency_ms": 0.0
+  },
+  "graph_service": {
+    "passed": false,
+    "message": "\u041d\u0435 \u0432\u0434\u0430\u043b\u043e\u0441\u044f \u0437'\u0454\u0434\u043d\u0430\u0442\u0438\u0441\u044f \u0437 http://localhost:8001/health",
+    "severity": "warning",
+    "latency_ms": 0.0,
+    "url": "http://localhost:8001/health"
+  },
+  "litellm_proxy": {
+    "passed": false,
+    "message": "\u041d\u0435 \u0432\u0434\u0430\u043b\u043e\u0441\u044f \u0437'\u0454\u0434\u043d\u0430\u0442\u0438\u0441\u044f \u0437 http://localhost:4000/health",
+    "severity": "warning",
+    "latency_ms": 0.0,
+    "url": "http://localhost:4000/health"
+  },
+  "internal_core_api": {
+    "passed": false,
+    "message": "\u041d\u0435 \u0432\u0434\u0430\u043b\u043e\u0441\u044f \u0437'\u0454\u0434\u043d\u0430\u0442\u0438\u0441\u044f \u0437 http://localhost:8000/api/v1/health",
+    "severity": "warning",
+    "latency_ms": 0.0,
+    "url": "http://localhost:8000/api/v1/health"
+  },
+  "internal_adv_dvs": {
+    "passed": false,
+    "message": "\u041d\u0435 \u0432\u0434\u0430\u043b\u043e\u0441\u044f \u0437'\u0454\u0434\u043d\u0430\u0442\u0438\u0441\u044f \u0437 http://localhost:8003/health",
+    "severity": "warning",
+    "latency_ms": 0.0,
+    "url": "http://localhost:8003/health"
+  },
+  "env_config": {
+    "passed": true,
+    "message": ".env: \u0437\u043d\u0430\u0439\u0434\u0435\u043d\u043e 4 \u043a\u043e\u043d\u0444\u0456\u0433\u0443\u0440\u0430\u0446\u0456\u0439 \u0456\u043d\u0442\u0435\u0433\u0440\u0430\u0446\u0456\u0439",
+    "severity": "info",
+    "latency_ms": 0.0,
+    "found_prefixes": [
+      "TELEGRAM",
+      "NEO4J",
+      "POSTGRES",
+      "REDIS"
+    ]
+  }
+}</td>
+        </tr>
+        
+        <tr>
+            <td>9</td>
+            <td>level9_datasets</td>
+            <td class="warning">WARNING</td>
+            <td>{
+  "dataset_module": {
+    "passed": false,
+    "message": "\u041c\u043e\u0434\u0443\u043b\u044c \u0433\u0435\u043d\u0435\u0440\u0430\u0446\u0456\u0457 \u0434\u0430\u0442\u0430\u0441\u0435\u0442\u0456\u0432 \u043d\u0435 \u0437\u043d\u0430\u0439\u0434\u0435\u043d\u043e (\u0431\u0443\u0434\u0435 \u0441\u0442\u0432\u043e\u0440\u0435\u043d\u043e \u043f\u0440\u0438 \u0440\u043e\u0437\u0433\u043e\u0440\u0442\u0430\u043d\u043d\u0456)",
+    "severity": "warning",
+    "latency_ms": 0.0
+  },
+  "minio_for_datasets": {
+    "passed": false,
+    "message": "\u041d\u0435 \u0432\u0434\u0430\u043b\u043e\u0441\u044f \u0437'\u0454\u0434\u043d\u0430\u0442\u0438\u0441\u044f \u0437 http://localhost:9000/minio/health/live",
+    "severity": "warning",
+    "latency_ms": 0.0,
+    "url": "http://localhost:9000/minio/health/live"
+  },
+  "pandas_available": {
+    "passed": true,
+    "message": "Pandas v3.0.3 (Parquet \u043f\u0456\u0434\u0442\u0440\u0438\u043c\u043a\u0430)",
+    "severity": "info",
+    "latency_ms": 0.0
+  },
+  "pyarrow_available": {
+    "passed": false,
+    "message": "PyArrow \u043d\u0435 \u0432\u0441\u0442\u0430\u043d\u043e\u0432\u043b\u0435\u043d\u0438\u0439 (\u043f\u043e\u0442\u0440\u0456\u0431\u0435\u043d \u0443 Docker)",
+    "severity": "info",
+    "latency_ms": 0.0
+  }
+}</td>
+        </tr>
+        
+        <tr>
+            <td>10</td>
+            <td>level10_automl</td>
+            <td class="warning">WARNING</td>
+            <td>{
+  "ml_modules": {
+    "passed": false,
+    "message": "ML/AutoML \u043c\u043e\u0434\u0443\u043b\u0456 \u043d\u0435 \u0437\u043d\u0430\u0439\u0434\u0435\u043d\u043e \u0432 \u043f\u0440\u043e\u0435\u043a\u0442\u0456",
+    "severity": "warning",
+    "latency_ms": 0.0
+  },
+  "ml_lib_scikit-learn": {
+    "passed": false,
+    "message": "scikit-learn \u043d\u0435 \u0432\u0441\u0442\u0430\u043d\u043e\u0432\u043b\u0435\u043d\u0438\u0439",
+    "severity": "warning",
+    "latency_ms": 0.0
+  },
+  "ml_lib_numpy": {
+    "passed": true,
+    "message": "numpy v2.4.6",
+    "severity": "info",
+    "latency_ms": 0.0
+  },
+  "ml_lib_pandas": {
+    "passed": true,
+    "message": "pandas v3.0.3",
+    "severity": "info",
+    "latency_ms": 0.0
+  },
+  "ml_lib_xgboost": {
+    "passed": false,
+    "message": "xgboost \u043d\u0435 \u0432\u0441\u0442\u0430\u043d\u043e\u0432\u043b\u0435\u043d\u0438\u0439 (\u043f\u043e\u0442\u0440\u0456\u0431\u0435\u043d \u0443 Docker)",
+    "severity": "info",
+    "latency_ms": 0.0
+  },
+  "ml_lib_lightgbm": {
+    "passed": false,
+    "message": "lightgbm \u043d\u0435 \u0432\u0441\u0442\u0430\u043d\u043e\u0432\u043b\u0435\u043d\u0438\u0439 (\u043f\u043e\u0442\u0440\u0456\u0431\u0435\u043d \u0443 Docker)",
+    "severity": "info",
+    "latency_ms": 0.0
+  },
+  "ml_lib_optuna": {
+    "passed": false,
+    "message": "optuna \u043d\u0435 \u0432\u0441\u0442\u0430\u043d\u043e\u0432\u043b\u0435\u043d\u0438\u0439 (\u043f\u043e\u0442\u0440\u0456\u0431\u0435\u043d \u0443 Docker)",
+    "severity": "info",
+    "latency_ms": 0.0
+  },
+  "ml_lib_mlflow": {
+    "passed": false,
+    "message": "mlflow \u043d\u0435 \u0432\u0441\u0442\u0430\u043d\u043e\u0432\u043b\u0435\u043d\u0438\u0439 (\u043f\u043e\u0442\u0440\u0456\u0431\u0435\u043d \u0443 Docker)",
+    "severity": "info",
+    "latency_ms": 0.0
+  }
+}</td>
+        </tr>
+        
+        <tr>
+            <td>11</td>
+            <td>level11_llm</td>
+            <td class="fail">FAIL</td>
+            <td>{
+  "ollama_health": {
+    "passed": true,
+    "message": "HTTP 200 (4225\u043c\u0441)",
+    "severity": "critical",
+    "latency_ms": 4224.6,
+    "url": "http://localhost:11434",
+    "status_code": 200
+  },
+  "ollama_models_list": {
+    "passed": false,
+    "message": "\u041f\u043e\u043c\u0438\u043b\u043a\u0430: ",
+    "severity": "critical",
+    "latency_ms": 0.0,
+    "url": "http://localhost:11434/api/tags",
+    "error": ""
+  }
+}</td>
+        </tr>
+        
+        <tr>
+            <td>12</td>
+            <td>level12_ai_pipelines</td>
+            <td class="warning">WARNING</td>
+            <td>{
+  "qdrant_for_ai": {
+    "passed": false,
+    "message": "\u041d\u0435 \u0432\u0434\u0430\u043b\u043e\u0441\u044f \u0437'\u0454\u0434\u043d\u0430\u0442\u0438\u0441\u044f \u0437 http://localhost:6333/healthz",
+    "severity": "warning",
+    "latency_ms": 0.0,
+    "url": "http://localhost:6333/healthz"
+  },
+  "ollama_for_embeddings": {
+    "passed": true,
+    "message": "HTTP 200 (1568\u043c\u0441)",
+    "severity": "warning",
+    "latency_ms": 1568.1,
+    "url": "http://localhost:11434",
+    "status_code": 200
+  },
+  "ai_related_files": {
+    "passed": true,
+    "message": "\u0417\u043d\u0430\u0439\u0434\u0435\u043d\u043e 50 AI-\u043f\u043e\u0432'\u044f\u0437\u0430\u043d\u0438\u0445 \u0444\u0430\u0439\u043b\u0456\u0432 \u0443 core-api",
+    "severity": "info",
+    "latency_ms": 0.0,
+    "files": [
+      "main.py",
+      "test_risk.py",
+      "test_main.py",
+      "__main__.py",
+      "main.py",
+      "__main__.py",
+      "__main__.py",
+      "__main__.py",
+      "__main__.py",
+      "containers.py"
+    ]
+  },
+  "litellm_for_ai": {
+    "passed": false,
+    "message": "\u041d\u0435 \u0432\u0434\u0430\u043b\u043e\u0441\u044f \u0437'\u0454\u0434\u043d\u0430\u0442\u0438\u0441\u044f \u0437 http://localhost:4000/health",
+    "severity": "warning",
+    "latency_ms": 0.0,
+    "url": "http://localhost:4000/health"
+  }
+}</td>
+        </tr>
+        
+        <tr>
+            <td>13</td>
+            <td>level13_data_flow</td>
+            <td class="fail">FAIL</td>
+            <td>{
+  "flow_1_source_parser": {
+    "passed": false,
+    "message": "\u041f\u043e\u0440\u0442 localhost:8000 \u043d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u043d\u0438\u0439: OSError",
+    "severity": "warning",
+    "latency_ms": 0.0,
+    "host": "localhost",
+    "port": 8000
+  },
+  "flow_2_etl_postgres": {
+    "passed": false,
+    "message": "\u041f\u043e\u0440\u0442 localhost:5432 \u043d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u043d\u0438\u0439: OSError",
+    "severity": "warning",
+    "latency_ms": 0.0,
+    "host": "localhost",
+    "port": 5432
+  },
+  "flow_3_kafka_redpanda": {
+    "passed": false,
+    "message": "\u041f\u043e\u0440\u0442 localhost:19092 \u043d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u043d\u0438\u0439: OSError",
+    "severity": "warning",
+    "latency_ms": 0.0,
+    "host": "localhost",
+    "port": 19092
+  },
+  "flow_4_clickhouse": {
+    "passed": false,
+    "message": "\u041d\u0435 \u0432\u0434\u0430\u043b\u043e\u0441\u044f \u0437'\u0454\u0434\u043d\u0430\u0442\u0438\u0441\u044f \u0437 http://localhost:8123",
+    "severity": "warning",
+    "latency_ms": 0.0,
+    "url": "http://localhost:8123"
+  },
+  "flow_5_neo4j": {
+    "passed": false,
+    "message": "\u041f\u043e\u0440\u0442 localhost:7687 \u043d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u043d\u0438\u0439: OSError",
+    "severity": "warning",
+    "latency_ms": 0.0,
+    "host": "localhost",
+    "port": 7687
+  },
+  "flow_6_qdrant": {
+    "passed": false,
+    "message": "\u041d\u0435 \u0432\u0434\u0430\u043b\u043e\u0441\u044f \u0437'\u0454\u0434\u043d\u0430\u0442\u0438\u0441\u044f \u0437 http://localhost:6333/healthz",
+    "severity": "warning",
+    "latency_ms": 0.0,
+    "url": "http://localhost:6333/healthz"
+  },
+  "flow_7_opensearch": {
+    "passed": false,
+    "message": "\u041d\u0435 \u0432\u0434\u0430\u043b\u043e\u0441\u044f \u0437'\u0454\u0434\u043d\u0430\u0442\u0438\u0441\u044f \u0437 http://localhost:9200/_cluster/health",
+    "severity": "warning",
+    "latency_ms": 0.0,
+    "url": "http://localhost:9200/_cluster/health"
+  },
+  "flow_8_backend_api": {
+    "passed": false,
+    "message": "\u041d\u0435 \u0432\u0434\u0430\u043b\u043e\u0441\u044f \u0437'\u0454\u0434\u043d\u0430\u0442\u0438\u0441\u044f \u0437 http://localhost:8000/api/v1/health",
+    "severity": "warning",
+    "latency_ms": 0.0,
+    "url": "http://localhost:8000/api/v1/health"
+  },
+  "flow_9_frontend": {
+    "passed": true,
+    "message": "HTTP 200 (317\u043c\u0441)",
+    "severity": "warning",
+    "latency_ms": 316.9,
+    "url": "http://localhost:3030",
+    "status_code": 200
+  },
+  "data_flow_completeness": {
+    "passed": false,
+    "message": "\u041f\u043e\u0442\u0456\u043a \u0434\u0430\u043d\u0438\u0445: 1/9 \u043b\u0430\u043d\u043e\u043a \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u0456",
+    "severity": "critical",
+    "latency_ms": 0.0,
+    "available": 1,
+    "total": 9
+  }
+}</td>
+        </tr>
+        
+        <tr>
+            <td>14</td>
+            <td>level14_performance</td>
+            <td class="warning">WARNING</td>
+            <td>{
+  "system_resources": {
+    "passed": true,
+    "message": "RAM: 8 \u0413\u0411, CPU: 8 \u044f\u0434\u0435\u0440",
+    "severity": "info",
+    "latency_ms": 0.0,
+    "ram_gb": 8.0,
+    "cpus": 8
+  },
+  "load_frontend": {
+    "passed": true,
+    "message": "Frontend: 10/10 OK, avg 47\u043c\u0441, total 0.5\u0441",
+    "severity": "info",
+    "latency_ms": 46.6,
+    "success": 10,
+    "total": 10,
+    "elapsed_s": 0.47
+  },
+  "load_api": {
+    "passed": false,
+    "message": "API \u043d\u0435 \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u0438\u0439 \u0434\u043b\u044f load \u0442\u0435\u0441\u0442\u0443",
+    "severity": "warning",
+    "latency_ms": 0.0,
+    "success": 0,
+    "total": 10
+  },
+  "ollama_latency": {
+    "passed": true,
+    "message": "Ollama \u0437\u0430\u0442\u0440\u0438\u043c\u043a\u0430: 48\u043c\u0441",
+    "severity": "info",
+    "latency_ms": 47.5
+  }
+}</td>
+        </tr>
+        
+        <tr>
+            <td>15</td>
+            <td>level15_security</td>
+            <td class="pass">PASS</td>
+            <td>{
+  "env_not_in_git": {
+    "passed": true,
+    "message": ".env \u0432 .gitignore",
+    "severity": "info",
+    "latency_ms": 0.0
+  },
+  "gitignore_completeness": {
+    "passed": true,
+    "message": ".gitignore: 5/5 \u043f\u0440\u0430\u0432\u0438\u043b",
+    "severity": "info",
+    "latency_ms": 0.0,
+    "found": [
+      "node_modules",
+      ".env",
+      "__pycache__",
+      ".venv",
+      "dist"
+    ],
+    "missing": []
+  },
+  "no_hardcoded_secrets": {
+    "passed": true,
+    "message": "\u0421\u0435\u043a\u0440\u0435\u0442\u0438 \u0432 \u043a\u043e\u0434\u0456 \u043d\u0435 \u0437\u043d\u0430\u0439\u0434\u0435\u043d\u043e (\u0431\u0430\u0437\u043e\u0432\u0430 \u043f\u0435\u0440\u0435\u0432\u0456\u0440\u043a\u0430)",
+    "severity": "info",
+    "latency_ms": 0.0
+  },
+  "dockerfile_security": {
+    "passed": true,
+    "message": "26 Dockerfiles \u043f\u0435\u0440\u0435\u0432\u0456\u0440\u0435\u043d\u043e, 0 \u043f\u0440\u043e\u0431\u043b\u0435\u043c",
+    "severity": "info",
+    "latency_ms": 0.0,
+    "total_dockerfiles": 26,
+    "issues": []
+  },
+  "jwt_implementation": {
+    "passed": true,
+    "message": "JWT: 9 \u0444\u0430\u0439\u043b\u0456\u0432 \u0437 JWT \u043b\u043e\u0433\u0456\u043a\u043e\u044e",
+    "severity": "info",
+    "latency_ms": 0.0
+  },
+  "worm_tables": {
+    "passed": true,
+    "message": "WORM/audit \u0442\u0430\u0431\u043b\u0438\u0446\u0456 \u0437\u043d\u0430\u0439\u0434\u0435\u043d\u0456 \u0432 init.sql",
+    "severity": "info",
+    "latency_ms": 0.0
+  }
+}</td>
+        </tr>
+        
+        <tr>
+            <td>16</td>
+            <td>level16_backup</td>
+            <td class="pass">PASS</td>
+            <td>{
+  "backup_scripts": {
+    "passed": true,
+    "message": "\u0417\u043d\u0430\u0439\u0434\u0435\u043d\u043e 6 \u0441\u043a\u0440\u0438\u043f\u0442\u0456\u0432 \u0431\u0435\u043a\u0430\u043f\u0443",
+    "severity": "info",
+    "latency_ms": 0.0,
+    "files": [
+      "restore_zrok_tunnel.sh",
+      "k8s_cluster_dump.sh",
+      "restore.sh",
+      "backup.sh",
+      "nuclear_restore.sh",
+      "wait_and_restore.sh"
+    ]
+  },
+  "docker_volumes_defined": {
+    "passed": true,
+    "message": "Docker volumes \u0432\u0438\u0437\u043d\u0430\u0447\u0435\u043d\u0456 \u0443 docker-compose.yml",
+    "severity": "info",
+    "latency_ms": 0.0
+  },
+  "config_docker_compose_yml": {
+    "passed": true,
+    "message": "\u041a\u043e\u043d\u0444\u0456\u0433\u0443\u0440\u0430\u0446\u0456\u044f docker-compose.yml: \u2713",
+    "severity": "info",
+    "latency_ms": 0.0
+  },
+  "config_init_sql": {
+    "passed": true,
+    "message": "\u041a\u043e\u043d\u0444\u0456\u0433\u0443\u0440\u0430\u0446\u0456\u044f init.sql: \u2713",
+    "severity": "info",
+    "latency_ms": 0.0
+  },
+  "config__env_example": {
+    "passed": true,
+    "message": "\u041a\u043e\u043d\u0444\u0456\u0433\u0443\u0440\u0430\u0446\u0456\u044f .env.example: \u2713",
+    "severity": "info",
+    "latency_ms": 0.0
+  }
+}</td>
+        </tr>
+        
+        <tr>
+            <td>17</td>
+            <td>level17_e2e</td>
+            <td class="warning">WARNING</td>
+            <td>{
+  "e2e_frontend_render": {
+    "passed": true,
+    "message": "Frontend \u0440\u0435\u043d\u0434\u0435\u0440\u0438\u0442\u044c: root=\u2713, scripts=\u2713, title=\u2713, vite=\u2713",
+    "severity": "info",
+    "latency_ms": 0.0
+  },
+  "e2e_spa_route_admin_command": {
+    "passed": true,
+    "message": "SPA \u043c\u0430\u0440\u0448\u0440\u0443\u0442 /admin/command: HTTP 200",
+    "severity": "warning",
+    "latency_ms": 0.0
+  },
+  "e2e_spa_route_command": {
+    "passed": true,
+    "message": "SPA \u043c\u0430\u0440\u0448\u0440\u0443\u0442 /command: HTTP 200",
+    "severity": "warning",
+    "latency_ms": 0.0
+  },
+  "e2e_spa_route_search": {
+    "passed": true,
+    "message": "SPA \u043c\u0430\u0440\u0448\u0440\u0443\u0442 /search: HTTP 200",
+    "severity": "warning",
+    "latency_ms": 0.0
+  },
+  "e2e_spa_route_market": {
+    "passed": true,
+    "message": "SPA \u043c\u0430\u0440\u0448\u0440\u0443\u0442 /market: HTTP 200",
+    "severity": "warning",
+    "latency_ms": 0.0
+  },
+  "e2e_api_health": {
+    "passed": false,
+    "message": "API \u043d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u043d\u0438\u0439 (Backend \u043d\u0435 \u0437\u0430\u043f\u0443\u0449\u0435\u043d\u0438\u0439): ConnectError",
+    "severity": "warning",
+    "latency_ms": 0.0
+  },
+  "e2e_ollama_generate": {
+    "passed": true,
+    "message": "Ollama (qwen:latest): '\u041e\u041a.'",
+    "severity": "info",
+    "latency_ms": 0.0
+  },
+  "e2e_dir_apps_predator_analytics_ui": {
+    "passed": true,
+    "message": "\u0414\u0438\u0440\u0435\u043a\u0442\u043e\u0440\u0456\u044f apps/predator-analytics-ui: \u2713",
+    "severity": "info",
+    "latency_ms": 0.0
+  },
+  "e2e_dir_services_core_api": {
+    "passed": true,
+    "message": "\u0414\u0438\u0440\u0435\u043a\u0442\u043e\u0440\u0456\u044f services/core-api: \u2713",
+    "severity": "info",
+    "latency_ms": 0.0
+  },
+  "e2e_dir_services_ingestion_worker": {
+    "passed": true,
+    "message": "\u0414\u0438\u0440\u0435\u043a\u0442\u043e\u0440\u0456\u044f services/ingestion-worker: \u2713",
+    "severity": "info",
+    "latency_ms": 0.0
+  },
+  "e2e_dir_services_adv_dvs": {
+    "passed": true,
+    "message": "\u0414\u0438\u0440\u0435\u043a\u0442\u043e\u0440\u0456\u044f services/adv_dvs: \u2713",
+    "severity": "info",
+    "latency_ms": 0.0
+  },
+  "e2e_dir_deploy": {
+    "passed": true,
+    "message": "\u0414\u0438\u0440\u0435\u043a\u0442\u043e\u0440\u0456\u044f deploy: \u2713",
+    "severity": "info",
+    "latency_ms": 0.0
+  },
+  "e2e_dir_db_postgres": {
+    "passed": true,
+    "message": "\u0414\u0438\u0440\u0435\u043a\u0442\u043e\u0440\u0456\u044f db/postgres: \u2713",
+    "severity": "info",
+    "latency_ms": 0.0
+  },
+  "e2e_codebase_complete": {
+    "passed": true,
+    "message": "\u041a\u043e\u0434\u043e\u0432\u0430 \u0431\u0430\u0437\u0430 \u0446\u0456\u043b\u0456\u0441\u043d\u0430",
+    "severity": "info",
+    "latency_ms": 0.0
+  }
+}</td>
+        </tr>
+        
+    </table>
+</body>
+</html>

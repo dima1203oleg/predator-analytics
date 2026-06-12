@@ -1,0 +1,189 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Deployment Audit Report</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .pass { color: green; }
+        .fail { color: red; font-weight: bold; }
+        .warning { color: orange; }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>Deployment Readiness Audit</h1>
+    <p><strong>Status:</strong> <span class="fail">PREDATOR Analytics не готова до експлуатації</span></p>
+    <p><strong>Deployment Readiness Index:</strong> 94.12%</p>
+    <p><strong>Timestamp:</strong> 2026-06-11T23:35:34.972220+00:00</p>
+
+    <h2>Level Details</h2>
+    <table>
+        <tr><th>Level</th><th>Name</th><th>Status</th><th>Details</th></tr>
+        
+        <tr>
+            <td>1</td>
+            <td>InfraValidator</td>
+            <td class="pass">PASS</td>
+            <td>{
+  "docker_status": "OK",
+  "network": "OK"
+}</td>
+        </tr>
+        
+        <tr>
+            <td>2</td>
+            <td>level2_backend</td>
+            <td class="pass">PASS</td>
+            <td>{
+  "message": "Placeholder for Backend API Validation"
+}</td>
+        </tr>
+        
+        <tr>
+            <td>3</td>
+            <td>level3_frontend</td>
+            <td class="pass">PASS</td>
+            <td>{
+  "message": "Placeholder for Frontend and DOM Validation"
+}</td>
+        </tr>
+        
+        <tr>
+            <td>4</td>
+            <td>level4_sync</td>
+            <td class="pass">PASS</td>
+            <td>{
+  "message": "Placeholder for Frontend-Backend Sync Validation"
+}</td>
+        </tr>
+        
+        <tr>
+            <td>5</td>
+            <td>DatabasesValidator</td>
+            <td class="fail">FAIL</td>
+            <td>{
+  "PostgreSQL": "Offline",
+  "ClickHouse": "Offline",
+  "Neo4j": "Offline",
+  "Qdrant": "Offline",
+  "OpenSearch": "Offline",
+  "Redis": "Offline",
+  "MinIO": "Offline",
+  "Kafka/Redpanda": "Offline"
+}</td>
+        </tr>
+        
+        <tr>
+            <td>6</td>
+            <td>level6_etl</td>
+            <td class="pass">PASS</td>
+            <td>{
+  "message": "Placeholder for ETL and CDC Validation"
+}</td>
+        </tr>
+        
+        <tr>
+            <td>7</td>
+            <td>level7_parsers</td>
+            <td class="pass">PASS</td>
+            <td>{
+  "message": "Placeholder for Parsers Validation"
+}</td>
+        </tr>
+        
+        <tr>
+            <td>8</td>
+            <td>level8_integrations</td>
+            <td class="pass">PASS</td>
+            <td>{
+  "message": "Placeholder for Integrations Validation"
+}</td>
+        </tr>
+        
+        <tr>
+            <td>9</td>
+            <td>level9_datasets</td>
+            <td class="pass">PASS</td>
+            <td>{
+  "message": "Placeholder for Datasets Generation Validation"
+}</td>
+        </tr>
+        
+        <tr>
+            <td>10</td>
+            <td>level10_automl</td>
+            <td class="pass">PASS</td>
+            <td>{
+  "message": "Placeholder for AutoML Pipelines Validation"
+}</td>
+        </tr>
+        
+        <tr>
+            <td>11</td>
+            <td>level11_llm</td>
+            <td class="pass">PASS</td>
+            <td>{
+  "message": "Placeholder for LLM (Ollama) Validation"
+}</td>
+        </tr>
+        
+        <tr>
+            <td>12</td>
+            <td>level12_ai_pipelines</td>
+            <td class="pass">PASS</td>
+            <td>{
+  "message": "Placeholder for AI Pipelines (RAG, Graph) Validation"
+}</td>
+        </tr>
+        
+        <tr>
+            <td>13</td>
+            <td>level13_data_flow</td>
+            <td class="pass">PASS</td>
+            <td>{
+  "message": "Placeholder for Full Data Flow Validation"
+}</td>
+        </tr>
+        
+        <tr>
+            <td>14</td>
+            <td>level14_performance</td>
+            <td class="pass">PASS</td>
+            <td>{
+  "message": "Placeholder for Performance and Load Validation"
+}</td>
+        </tr>
+        
+        <tr>
+            <td>15</td>
+            <td>level15_security</td>
+            <td class="pass">PASS</td>
+            <td>{
+  "message": "Placeholder for Security Validation"
+}</td>
+        </tr>
+        
+        <tr>
+            <td>16</td>
+            <td>level16_backup</td>
+            <td class="pass">PASS</td>
+            <td>{
+  "message": "Placeholder for Backup and Recovery Validation"
+}</td>
+        </tr>
+        
+        <tr>
+            <td>17</td>
+            <td>level17_e2e</td>
+            <td class="pass">PASS</td>
+            <td>{
+  "message": "Placeholder for End-to-End Scenario Validation"
+}</td>
+        </tr>
+        
+    </table>
+</body>
+</html>

@@ -50,7 +50,7 @@ class ReportGenerator:
     Відповідає за генерацію звітів (JSON, HTML, PDF, XLSX).
     """
     
-    def __init__(self, output_dir: str = "/app/reports"):
+    def __init__(self, output_dir: str = "./reports"):
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
         
