@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: asve
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/predator/asve-repo # Placeholder
+    targetRevision: HEAD
+    path: deploy/helm/asve
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: predator
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

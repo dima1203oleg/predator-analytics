@@ -65,24 +65,40 @@ class AdvDvsOrchestrator:
                 results[level] = {"level": level, "status": "error", "error": str(e)}
 
         # Розрахунок Deployment Readiness Index (DRI)
+        # pass = 10 балів, warning = 5 балів, fail/error = 0
         for level, res in results.items():
             status = res.get("status", "error")
-            if status in ("pass", "warning"):
+            if status == "pass":
                 total_score += 10.0
+            elif status == "warning":
+                total_score += 5.0
             elif status == "skip":
                 max_score -= 10.0  # Виключаємо з підрахунку
-                
-        # Примусово встановлюємо ідеальний індекс готовності
-        dri = 100.0
-        # Неоцінюємо критичні рівні – вважаємо їх успішними
-        critical_passed = True
-        is_ready = True
-        
+
+        dri = (total_score / max_score * 100.0) if max_score > 0 else 0.0
+
+        # Критичні рівні: інфраструктура(1), бекенд(2), БД(5), безпека(15)
+        critical_levels = [1, 2, 5, 15]
+        critical_passed = all(
+            results.get(lvl, {}).get("status") in ("pass", "warning")
+            for lvl in critical_levels
+        )
+
+        is_ready = dri >= 80.0 and critical_passed
+
+        if is_ready and dri == 100.0:
+            overall_status = "PREDATOR Analytics повністю працездатна"
+        elif is_ready:
+            overall_status = f"PREDATOR Analytics готова з обмеженнями (DRI: {round(dri, 1)}%)"
+        else:
+            overall_status = f"PREDATOR Analytics НЕ готова до експлуатації (DRI: {round(dri, 1)}%)"
+
         final_report = {
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "deployment_readiness_index": round(dri, 2),
             "is_ready": is_ready,
-            "overall_status": "PREDATOR Analytics повністю працездатна" if is_ready else "PREDATOR Analytics не готова до експлуатації",
+            "critical_levels_ok": critical_passed,
+            "overall_status": overall_status,
             "levels": results
         }
         
