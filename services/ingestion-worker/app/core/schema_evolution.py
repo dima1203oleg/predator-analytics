@@ -434,7 +434,7 @@ class SchemaEvolutionEngine:
     
     def _generate_relationship_constraints(self, rel_type: str) -> list[str]:
         """Генерує Cypher constraints для нового relationship type."""
-        rel_type_safe = rel_type.lower().replace("-", "_").replace(" ", "_")
+        rel_type_safe = rel_type.lower().replace("-", "_").replace(" ", "_").replace("`", "")
         
         commands = [
             f"""
@@ -443,11 +443,11 @@ class SchemaEvolutionEngine:
 // Generated at: {datetime.now(UTC).isoformat()}
 
 CREATE INDEX rel_{rel_type_safe}_date IF NOT EXISTS
-FOR ()-[r:{rel_type}]-() ON (r.created_at);
+FOR ()-[r:`{rel_type}`]-() ON (r.created_at);
 """,
             f"""
 CREATE INDEX rel_{rel_type_safe}_confidence IF NOT EXISTS
-FOR ()-[r:{rel_type}]-() ON (r.confidence);
+FOR ()-[r:`{rel_type}`]-() ON (r.confidence);
 """
         ]
         
@@ -455,7 +455,7 @@ FOR ()-[r:{rel_type}]-() ON (r.confidence);
     
     def _generate_entity_constraints(self, entity_type: str) -> list[str]:
         """Генерує Cypher constraints для нового entity type."""
-        entity_type_safe = entity_type.lower().replace("-", "_").replace(" ", "_")
+        entity_type_safe = entity_type.lower().replace("-", "_").replace(" ", "_").replace("`", "")
         
         commands = [
             f"""
@@ -464,11 +464,11 @@ FOR ()-[r:{rel_type}]-() ON (r.confidence);
 // Generated at: {datetime.now(UTC).isoformat()}
 
 CREATE INDEX {entity_type_safe}_name IF NOT EXISTS
-FOR (n:{entity_type}) ON (n.name);
+FOR (n:`{entity_type}`) ON (n.name);
 """,
             f"""
 CREATE INDEX {entity_type_safe}_created_at IF NOT EXISTS
-FOR (n:{entity_type}) ON (n.created_at);
+FOR (n:`{entity_type}`) ON (n.created_at);
 """
         ]
         
