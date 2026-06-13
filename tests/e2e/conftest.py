@@ -43,3 +43,10 @@ def test_tenant_id():
 def test_user_id():
     """ID тестового користувача."""
     return "b0000000-0000-0000-0000-000000000e2e"
+
+import nest_asyncio
+nest_asyncio.apply()
+
+os.environ["MINIO_ACCESS_KEY"] = "admin"
+os.environ["MINIO_SECRET_KEY"] = "password"
+os.environ["MINIO_ENDPOINT"] = "localhost:9000"

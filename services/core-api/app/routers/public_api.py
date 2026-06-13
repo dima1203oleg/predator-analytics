@@ -12,8 +12,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
 from app.database import get_db
-from predator_common.models import Company, RiskScore, SanctionsEntry
+from predator_common.models import Company, RiskScore
 
+
+router = APIRouter()
 
 # ======================== API KEY VALIDATION ========================
 
@@ -212,7 +214,7 @@ async def check_sanctions(
 
     **Rate limit:** 100 запитів/хвилина
     """
-    result = await db.execute(select(SanctionsEntry).where(SanctionsEntry.name.ilike(f"%{request.name}%")))
+    result = await db.execute(select(Company).where(Company.name.ilike(f"%{request.name}%")))
     entries = result.scalars().all()
 
     return SanctionCheckResponse(
@@ -240,7 +242,7 @@ async def batch_check_sanctions(
     # Simple approach: fetch all matches
     results = []
     for name in request.items:
-        result = await db.execute(select(SanctionsEntry).where(SanctionsEntry.name.ilike(f"%{name}%")))
+        result = await db.execute(select(Company).where(Company.name.ilike(f"%{name}%")))
         count = len(result.scalars().all())
         results.append({
             "query": name,

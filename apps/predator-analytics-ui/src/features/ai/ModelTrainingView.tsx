@@ -193,6 +193,7 @@ export default function ModelTrainingView() {
         setFeedbackMessage(null);
 
         try {
+            await fetch('http://localhost:8000/api/v1/optimizer/cycle/start', { method: 'POST' });
             await trainingApi.trigger({ domain: 'ml' });
             setFeedbackTone('emerald');
             setFeedbackMessage('Запуск ML-сесії підтверджено. Ініціалізація ваг нейромережі...');

@@ -29,3 +29,10 @@ scikit-learn>=1.4.0
 pandas>=2.2.0
 # Планувальник (oss_automation_scheduler)
 apscheduler>=3.10.0
+# HuggingFace & Fine-Tuning 
+torch>=2.2.0
+transformers>=4.40.0
+peft>=0.10.0
+trl>=0.8.0
+datasets>=2.19.0
+bitsandbytes>=0.43.0

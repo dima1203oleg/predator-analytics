@@ -33,12 +33,51 @@ const DatasetsStudioView = () => {
     { label: 'ЦІЛІСНІСТЬ_ДАНИХ', value: '98.4%', icon: <ShieldCheck size={14} />, color: 'warning' }
   ];
 
-  const datasets = [
+  const [datasets, setDatasets] = useState([
     { id: 'DS-001', name: 'Митні декларації 2024-2026', source: 'ДМСУ (API)', size: '1.2 GB', status: 'АКТИВНО', quality: 99 },
     { id: 'DS-002', name: 'Реєстр бенефіціарів (EDR)', source: 'МінЮст', size: '450 MB', status: 'МОНІТОРИНГ', quality: 94 },
     { id: 'DS-003', name: 'Судові рішення OSINT', source: 'Crawler-v4', size: '2.8 GB', status: 'ОБ ОБКА', quality: 87 },
     { id: 'DS-004', name: 'Санкційні списки OFAC/ЄС', source: 'Global Sync', size: '12 MB', status: 'АКТИВНО', quality: 100 },
-  ];
+  ]);
+
+  const fetchDatasets = async () => {
+    try {
+      const res = await fetch('http://localhost:8000/api/v1/optimizer/datasets');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.datasets && data.datasets.length > 0) {
+          const autoDatasets = data.datasets.map((d: any) => ({
+            id: d.id,
+            name: d.name,
+            source: 'Auto-Optimizer',
+            size: `${(d.size_bytes / 1024).toFixed(2)} KB`,
+            status: 'АКТИВНО',
+            quality: 100
+          }));
+          setDatasets(prev => {
+            const merged = [...autoDatasets, ...prev.filter(p => p.source !== 'Auto-Optimizer')];
+            return merged;
+          });
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  useEffect(() => {
+    fetchDatasets();
+    const interval = setInterval(fetchDatasets, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const triggerAutoGeneration = async () => {
+    try {
+      await fetch('http://localhost:8000/api/v1/optimizer/cycle/start', { method: 'POST' });
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   return (
     <PageTransition>
@@ -135,8 +174,8 @@ const DatasetsStudioView = () => {
                 </div>
 
                 <div className="mt-8 pt-6 border-t border-white/5 space-y-4">
-                   <Button variant="outline" className="w-full h-12 rounded-sm border-dashed border-white/10 text-white/40 hover:text-rose-500 hover:border-rose-500/30 font-black tracking-widest text-[10px] uppercase italic">
-                      <Plus size={14} className="mr-2" /> СТВО ИТИ_НОВИЙ_ДАТАСЕТ
+                   <Button variant="outline" onClick={triggerAutoGeneration} className="w-full h-12 rounded-sm border-dashed border-white/10 text-white/40 hover:text-rose-500 hover:border-rose-500/30 font-black tracking-widest text-[10px] uppercase italic">
+                      <Plus size={14} className="mr-2" /> СТВОРИТИ_НОВИЙ_ДАТАСЕТ_АВТОМАТИЧНО
                    </Button>
                    <Button variant="outline" className="w-full h-12 rounded-sm border-white/5 bg-white/[0.02] text-white/20 hover:text-white font-black tracking-widest text-[10px] uppercase italic">
                       <Download size={14} className="mr-2" /> ЕКСПОРТ_ГЛОБАЛЬНОГО_ІНДЕКСУ
@@ -285,8 +324,8 @@ const DatasetsStudioView = () => {
                     </div>
                  </div>
                  
-                 <Button className="h-14 bg-rose-600 hover:bg-rose-500 text-white font-black text-[11px] uppercase tracking-[0.3em] rounded-sm px-12  hover: transition-all duration-500 border-none relative z-10">
-                   ЗАПУСТИТИ_ЦИКЛ_НАВЧАННЯ
+                 <Button onClick={triggerAutoGeneration} className="h-14 bg-rose-600 hover:bg-rose-500 text-white font-black text-[11px] uppercase tracking-[0.3em] rounded-sm px-12  hover: transition-all duration-500 border-none relative z-10">
+                   ЗАПУСТИТИ_ЦИКЛ_НАВЧАННЯ_АВТОМАТИЧНО
                  </Button>
               </motion.div>
             </div>

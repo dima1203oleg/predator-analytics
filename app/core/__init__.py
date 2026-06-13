@@ -1,1 +1,1 @@
-from app.core.redis import redis_client
+from app.core.redis_client_mgr import redis_client

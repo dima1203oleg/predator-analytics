@@ -34,7 +34,7 @@ async def test_excel_ingestion_full_cycle(db_session, test_tenant_id, test_user_
     # Зберігаємо базові лічильники до імпорту
     ch_count_before = await MultiDBClient.get_clickhouse_count(test_tenant_id)
     neo_count_before = await MultiDBClient.get_neo4j_nodes_count(test_tenant_id)
-    redis_count_before = MultiDBClient.get_redis_keys_count()
+    redis_count_before = await MultiDBClient.get_redis_keys_count()
     
     # 2. Завантаження через API (імітація фронтенду)
     api_url = os.getenv("API_URL", "http://localhost:8000")
@@ -130,7 +130,7 @@ async def test_excel_ingestion_full_cycle(db_session, test_tenant_id, test_user_
     assert any("declaration" in idx for idx in os_indices), "OpenSearch індекси не створені"
     
     # 4.5 Redis (Кешування)
-    redis_count_after = MultiDBClient.get_redis_keys_count()
+    redis_count_after = await MultiDBClient.get_redis_keys_count()
     assert redis_count_after >= redis_count_before, "Redis ключі не оновлено"
     
     # 4.6 MinIO (Збереження файлів)

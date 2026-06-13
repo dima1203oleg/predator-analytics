@@ -4,7 +4,7 @@
 
 set -e
 
-PROJECT_ROOT="/Users/dima-mac/Documents/Predator_21"
+PROJECT_ROOT="/Users/Shared/Predator_60"
 cd "$PROJECT_ROOT"
 
 echo "🔍 Predator v45 | Neural Analytics.1 PRODUCTION READINESS CHECK"

@@ -19,6 +19,14 @@ PORTS=(
     "9090:8000:Backend API"
     "9432:5432:PostgreSQL"
     "9379:6379:Redis"
+    "8123:8123:ClickHouse"
+    "6333:6333:Qdrant"
+    "9200:9200:OpenSearch"
+    "7687:7687:Neo4j"
+    "9000:9000:MinIO"
+    "9092:9092:Kafka"
+    "11434:11434:Ollama"
+    "4000:4000:LiteLLM"
     # Kubernetes API (додається при бажанні)
     # "6443:6443:K8s API"
 )
