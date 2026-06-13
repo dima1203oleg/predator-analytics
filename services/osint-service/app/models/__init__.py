@@ -17,12 +17,14 @@ from .schemas import (
     ScanStatus,
     ScanType,
     Severity,
+    ScanProgress,
 )
 
 __all__ = [
     "ScanType",
     "ScanStatus",
     "Severity",
+    "ScanProgress",
     "OSINTScanRequest",
     "OSINTScanResponse",
     "OSINTFinding",

@@ -27,8 +27,9 @@ async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
 app = FastAPI(
     title="ADV-DVS — Autonomous Deployment Validation System",
     description=(
-        "Повна автономна перевірка системи за 12 рівнями: Infra, Containers, Databases, "
-        "DOM, Journey, API, ETL, Telegram, AI, Observability, Security, Chaos."
+        "Повна автономна перевірка системи за 17 рівнями: Infra, Backend, Frontend, "
+        "Sync, Databases, ETL, Parsers, Integrations, Datasets, AutoML, LLM, "
+        "AI Pipelines, DataFlow, Performance, Security, Backup, E2E."
     ),
     version="61.0.0",
     lifespan=lifespan,

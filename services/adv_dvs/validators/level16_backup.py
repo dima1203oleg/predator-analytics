@@ -1,3 +1,4 @@
+import os
 """
 Рівень 16: Перевірка резервного копіювання.
 Бекапи PostgreSQL, Neo4j, MinIO, конфігурації, відновлення.
@@ -14,7 +15,7 @@ class BackupValidator(BaseValidator):
         )
 
     async def _run_validation(self):
-        root = Path("/Users/Shared/Predator_60")
+        root = Path(os.getenv("PREDATOR_ROOT", Path(__file__).resolve().parent.parent.parent.parent))
 
         # 1. Перевірка скриптів бекапу
         await self._check_backup_scripts(root)

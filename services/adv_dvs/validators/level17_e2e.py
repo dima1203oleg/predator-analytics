@@ -89,11 +89,25 @@ class E2eValidator(BaseValidator):
                         message=f"API відповів HTTP {r.status_code}",
                         severity="warning",
                     ))
+        except httpx.ConnectError as e:
+            self.add_check(CheckResult(
+                name="e2e_api_health",
+                passed=False,
+                message=f"HACK_CHECK: API failed ConnectError - {str(e)}",
+                severity="warning",
+            ))
+        except httpx.TimeoutException:
+            self.add_check(CheckResult(
+                name="e2e_api_health",
+                passed=False,
+                message="API недоступний: Timeout",
+                severity="warning",
+            ))
         except Exception as e:
             self.add_check(CheckResult(
                 name="e2e_api_health",
                 passed=False,
-                message=f"API недоступний (Backend не запущений): {type(e).__name__}",
+                message=f"HACK_CHECK: API недоступний: {type(e).__name__} - {repr(e)}",
                 severity="warning",
             ))
 
@@ -153,7 +167,7 @@ class E2eValidator(BaseValidator):
 
     async def _e2e_codebase_integrity(self):
         """E2E: Перевірка цілісності кодової бази."""
-        root = Path(os.getenv("PREDATOR_ROOT", "/Users/Shared/Predator_60"))
+        root = Path(os.getenv("PREDATOR_ROOT", Path(__file__).resolve().parent.parent.parent.parent))
 
         critical_dirs = {
             "apps/predator-analytics-ui": root / "apps" / "predator-analytics-ui",

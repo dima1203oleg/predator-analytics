@@ -1,3 +1,4 @@
+import os
 """
 Рівень 11: Перевірка LLM.
 deepseek-r1:latest через Ollama, генерація відповідей, інтеграція з RAG/embeddings.

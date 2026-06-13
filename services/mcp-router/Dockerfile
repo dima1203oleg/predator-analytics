@@ -7,11 +7,11 @@ WORKDIR /app
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
-    build-essential \
+    
     && rm -rf /var/lib/apt/lists/*
 
 COPY services/mcp-router/requirements.txt .
-RUN pip install --user --no-cache-dir -r requirements.txt
+RUN pip install --timeout=1000 --retries=10 --user --no-cache-dir -r requirements.txt
 
 FROM python:3.12-slim-bookworm AS runtime
 

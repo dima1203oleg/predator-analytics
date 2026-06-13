@@ -1,3 +1,4 @@
+import os
 """
 Рівень 9: Перевірка генерації датасетів.
 Формування, очищення, feature engineering, версіонування, Parquet, MinIO.
@@ -15,7 +16,7 @@ class DatasetsValidator(BaseValidator):
         )
 
     async def _run_validation(self):
-        root = Path("/Users/Shared/Predator_60")
+        root = Path(os.getenv("PREDATOR_ROOT", Path(__file__).resolve().parent.parent.parent.parent))
 
         # 1. Перевірка модуля datasets
         await self._check_dataset_module(root)

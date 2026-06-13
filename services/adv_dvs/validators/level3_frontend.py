@@ -1,3 +1,4 @@
+import os
 """
 Рівень 3: Перевірка Frontend.
 DOM-аудит: HTML, маршрути, JS-помилки, Cytoscape, Three.js, WebGL,

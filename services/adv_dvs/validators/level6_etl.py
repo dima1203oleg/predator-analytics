@@ -17,7 +17,7 @@ class EtlValidator(BaseValidator):
         )
 
     async def _run_validation(self):
-        project_root = Path("/Users/Shared/Predator_60")
+        project_root = Path(os.getenv("PREDATOR_ROOT", Path(__file__).resolve().parent.parent.parent.parent))
 
         # 1. Перевірка наявності ETL модулів
         await self._check_etl_modules(project_root)
@@ -32,7 +32,7 @@ class EtlValidator(BaseValidator):
         """Перевірка наявності ETL модулів."""
         modules = {
             "ingestion_worker": root / "services" / "ingestion-worker",
-            "ingestion_init": root / "services" / "ingestion-worker" / "__init__.py",
+            "ingestion_init": root / "services" / "ingestion-worker" / "app" / "__init__.py",
             "ingestion_dockerfile": root / "services" / "ingestion-worker" / "Dockerfile",
         }
 
@@ -59,7 +59,7 @@ class EtlValidator(BaseValidator):
             return
 
         # Перевіряємо ключові файли
-        key_files = ["main.py", "consumer.py", "parsers", "Dockerfile", "requirements.txt"]
+        key_files = ["app/main.py", "app/consumer.py", "app/parsers", "Dockerfile", "requirements.txt"]
         found = []
         missing = []
         for f in key_files:

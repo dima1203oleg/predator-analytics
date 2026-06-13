@@ -1,3 +1,4 @@
+import os
 """
 Рівень 8: Перевірка інтеграцій.
 Telegram, реєстри, митні джерела, зовнішні та внутрішні API.
@@ -32,7 +33,7 @@ class IntegrationsValidator(BaseValidator):
 
     async def _check_telegram_bot(self):
         """Перевірка Telegram Bot."""
-        project_root = Path("/Users/Shared/Predator_60")
+        project_root = Path(os.getenv("PREDATOR_ROOT", Path(__file__).resolve().parent.parent.parent.parent))
         bot_dir = project_root / "services" / "telegram-bot"
         if bot_dir.exists():
             dockerfile = bot_dir / "Dockerfile"
@@ -59,7 +60,7 @@ class IntegrationsValidator(BaseValidator):
             severity="warning",
         )
         # Перевірка коду
-        project_root = Path("/Users/Shared/Predator_60")
+        project_root = Path(os.getenv("PREDATOR_ROOT", Path(__file__).resolve().parent.parent.parent.parent))
         osint_dir = project_root / "services" / "osint-service"
         if osint_dir.exists():
             py_files = list(osint_dir.rglob("*.py"))
@@ -97,7 +98,7 @@ class IntegrationsValidator(BaseValidator):
 
     async def _check_integration_configs(self):
         """Перевірка конфігурацій інтеграцій."""
-        project_root = Path("/Users/Shared/Predator_60")
+        project_root = Path(os.getenv("PREDATOR_ROOT", Path(__file__).resolve().parent.parent.parent.parent))
         env_file = project_root / ".env"
         if env_file.exists():
             content = env_file.read_text()

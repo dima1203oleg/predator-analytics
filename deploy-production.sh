@@ -80,7 +80,7 @@ run_database_migrations() {
     log_info "Running database migrations..."
     
     # Run Alembic migrations
-    if docker-compose exec -T core-api alembic upgrade head 2>/dev/null; then
+    if docker compose --profile prod exec -T core-api alembic upgrade head 2>/dev/null; then
         log_success "Database migrations completed successfully"
     else
         log_warning "Database migrations skipped (database may not be ready yet)"
@@ -97,19 +97,22 @@ build_and_deploy() {
     
     # Pull latest images (if using remote registry)
     log_info "Pulling latest images..."
-    docker-compose pull || true
+    docker compose --profile prod pull || true
     
     # Build services
     log_info "Building services..."
-    docker-compose build --no-cache
+    for service in $(docker compose --profile prod config --services); do
+        log_info "Building service $service..."
+        docker compose --profile prod build "$service"
+    done
     
     # Stop old containers gracefully
     log_info "Stopping old containers..."
-    docker-compose down --timeout 30 || true
+    docker compose --profile prod down --timeout 30 || true
     
     # Start new containers
     log_info "Starting new containers..."
-    docker-compose up -d
+    docker compose --profile prod up -d
     
     log_success "Deployment initiated"
 }
@@ -196,13 +199,13 @@ rollback_deployment() {
     log_warning "Rolling back deployment..."
     
     # Stop current containers
-    docker-compose down --timeout 10 || true
+    docker compose --profile prod down --timeout 10 || true
     
     # Restart previous version (if backup exists)
     if [ -f "docker-compose.backup.yml" ]; then
         log_info "Restoring previous version from backup..."
         mv docker-compose.backup.yml docker-compose.yml
-        docker-compose up -d
+        docker compose --profile prod up -d
         log_success "Rollback completed"
     else
         log_error "No backup found. Manual intervention required."

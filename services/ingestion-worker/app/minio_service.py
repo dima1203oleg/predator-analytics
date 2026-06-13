@@ -55,10 +55,9 @@ class MinioService:
             raise
 
     def parse_s3_path(self, s3_path: str) -> tuple[str, str]:
-        """Парсить s3_path у bucket та object_name.
-
-        Формат: bucket/tenant_id/job_id/filename.csv
-        """
+        """Парсить s3_path у bucket та object_name."""
+        if s3_path.startswith("s3://"):
+            s3_path = s3_path[5:]
         parts = s3_path.split("/", 1)
         if len(parts) == 2:
             return parts[0], parts[1]

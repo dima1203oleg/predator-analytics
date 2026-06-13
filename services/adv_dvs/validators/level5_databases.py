@@ -1,3 +1,4 @@
+import os
 """
 Рівень 5: Перевірка баз даних (8 систем).
 PostgreSQL, ClickHouse, Neo4j, Qdrant, OpenSearch, Redis, MinIO, Redpanda/Kafka.

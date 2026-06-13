@@ -1,3 +1,4 @@
+import os
 """
 Рівень 12: Перевірка AI-пайплайнів.
 Embeddings, векторний пошук, RAG, ранжування, Risk Engine.
@@ -29,7 +30,7 @@ class AiPipelinesValidator(BaseValidator):
 
     async def _check_ai_modules(self):
         """Перевірка AI модулів."""
-        root = Path("/Users/Shared/Predator_60")
+        root = Path(os.getenv("PREDATOR_ROOT", Path(__file__).resolve().parent.parent.parent.parent))
         ai_paths = {
             "risk_engine": root / "services" / "core-api" / "risk",
             "ai_module": root / "services" / "core-api" / "ai",

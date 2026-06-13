@@ -159,14 +159,13 @@ class FileIngestionPipeline:
             # 3. Декодування та парсинг
             self.stats.current_stage = "parse"
             await self._update_progress()
-            text_content = file_content.decode(encoding, errors="replace")
 
             # 4. Обробка по чанках
             self.stats.current_stage = "process"
             chunk_num = 0
             batch: list[dict[str, Any]] = []
 
-            async for record in self._parse_and_process(text_content):
+            async for record in self._parse_and_process(file_content, encoding):
                 batch.append(record)
 
                 if len(batch) >= CHUNK_SIZE:
@@ -235,24 +234,27 @@ class FileIngestionPipeline:
         return encoding
 
     async def _parse_and_process(
-        self, content: str
+        self, content: bytes, encoding: str
     ) -> AsyncGenerator[dict[str, Any], None]:
         """Парсить та обробляє контент файлу."""
         # Визначаємо формат
         file_ext = "." + self.file_name.rsplit(".", 1)[-1].lower()
 
         if file_ext == ".csv":
-            async for record in self._parse_csv(content):
+            text_content = content.decode(encoding, errors="replace")
+            async for record in self._parse_csv(text_content):
                 yield record
         elif file_ext == ".json":
-            async for record in self._parse_json(content):
+            text_content = content.decode(encoding, errors="replace")
+            async for record in self._parse_json(text_content):
                 yield record
         elif file_ext in [".xlsx", ".xls"]:
-            async for record in self._parse_excel(file_ext, content if isinstance(content, bytes) else content.encode()):
+            async for record in self._parse_excel(file_ext, content):
                 yield record
         else:
             logger.warning(f"Unsupported format {file_ext}, falling back to CSV")
-            async for record in self._parse_csv(content if isinstance(content, str) else content.decode()):
+            text_content = content.decode(encoding, errors="replace")
+            async for record in self._parse_csv(text_content):
                 yield record
 
     async def _parse_csv(self, content: str) -> AsyncGenerator[dict[str, Any], None]:
@@ -386,8 +388,8 @@ class FileIngestionPipeline:
     async def _parse_excel(self, file_ext: str, content: bytes) -> AsyncGenerator[dict[str, Any], None]:
         """Парсить Excel контент."""
         try:
-            # Використовуємо pandas для читання Excel
-            df = pd.read_excel(io.BytesIO(content))
+            logger.info(f"Excel content length: {len(content)} bytes")
+            df = pd.read_excel(io.BytesIO(content), engine="openpyxl")
 
             # Конвертуємо назви колонок
             df.columns = [
@@ -488,6 +490,7 @@ class FileIngestionPipeline:
                     companies[ueid]["declarations"].append(record)
 
             await self.postgres_sink.upsert_companies(list(companies.values()))
+            await self.postgres_sink.insert_declarations(batch)
         except Exception as e:
             logger.error(f"Failed to store in PostgreSQL: {e}")
 

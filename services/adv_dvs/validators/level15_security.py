@@ -1,3 +1,4 @@
+import os
 """
 Рівень 15: Перевірка безпеки.
 JWT, Keycloak, RBAC, Vault, mTLS, WORM, аудит, секрети.
@@ -15,7 +16,7 @@ class SecurityValidator(BaseValidator):
         )
 
     async def _run_validation(self):
-        root = Path("/Users/Shared/Predator_60")
+        root = Path(os.getenv("PREDATOR_ROOT", Path(__file__).resolve().parent.parent.parent.parent))
 
         # 1. .env файл не в git
         await self._check_env_not_in_git(root)

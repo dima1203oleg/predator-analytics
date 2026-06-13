@@ -6,60 +6,60 @@
 import os
 
 # ─── Backend API ────────────────────────────────────────────────────────────
-CORE_API_URL: str = os.getenv("CORE_API_URL", "http://localhost:8000")
+CORE_API_URL: str = os.getenv("CORE_API_URL", "http://backend:8000")
 CORE_API_HEALTH_PATH: str = os.getenv("CORE_API_HEALTH_PATH", "/api/v1/health")
 
 # ─── Frontend UI ─────────────────────────────────────────────────────────────
-FRONTEND_URL: str = os.getenv("FRONTEND_URL", "http://localhost:3030")
+FRONTEND_URL: str = os.getenv("FRONTEND_URL", "http://frontend:3030")
 
 # ─── Kafka / Redpanda ────────────────────────────────────────────────────────
-KAFKA_BOOTSTRAP_SERVERS: str = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "localhost:19092")
+KAFKA_BOOTSTRAP_SERVERS: str = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "redpanda:9092")
 KAFKA_PROBE_TOPIC: str = os.getenv("KAFKA_PROBE_TOPIC", "__utos_probe__")
 
 # ─── Redis ───────────────────────────────────────────────────────────────────
-REDIS_URL: str = os.getenv("REDIS_URL", "redis://:predator_redis@localhost:6379/0")
+REDIS_URL: str = os.getenv("REDIS_URL", "redis://redis:6379/0")
 REDIS_TIMEOUT: float = float(os.getenv("UTOS_REDIS_TIMEOUT", "3.0"))
 
 # ─── PostgreSQL (SSOT) ──────────────────────────────────────────────────────
 POSTGRES_DSN: str = os.getenv(
     "POSTGRES_DSN",
-    "postgresql://predator:predator_secret@localhost:5432/predator_db",
+    "postgresql://predator:predator_secret@postgres:5432/predator_db",
 )
 
 # ─── Neo4j (Graph Brain) ────────────────────────────────────────────────────
-NEO4J_URI: str = os.getenv("NEO4J_URI", "bolt://localhost:7687")
+NEO4J_URI: str = os.getenv("NEO4J_URI", "bolt://neo4j:7687")
 NEO4J_USER: str = os.getenv("NEO4J_USER", "neo4j")
 NEO4J_PASSWORD: str = os.getenv("NEO4J_PASSWORD", "predator_neo4j")
 NEO4J_TIMEOUT: float = float(os.getenv("UTOS_NEO4J_TIMEOUT", "5.0"))
 NEO4J_GRAPH_ENABLED: bool = os.getenv("UTOS_NEO4J_GRAPH_ENABLED", "true").lower() == "true"
 
 # ─── ClickHouse (OLAP) ──────────────────────────────────────────────────────
-CLICKHOUSE_URL: str = os.getenv("CLICKHOUSE_URL", "http://localhost:8123")
+CLICKHOUSE_URL: str = os.getenv("CLICKHOUSE_URL", "http://clickhouse:8123")
 CLICKHOUSE_USER: str = os.getenv("CLICKHOUSE_USER", "default")
-CLICKHOUSE_PASSWORD: str = os.getenv("CLICKHOUSE_PASSWORD", "")
+CLICKHOUSE_PASSWORD: str = os.getenv("CLICKHOUSE_PASSWORD", "predator_secret_ch")
 
 # ─── OpenSearch (Повнотекстовий пошук) ──────────────────────────────────────
-OPENSEARCH_URL: str = os.getenv("OPENSEARCH_URL", "http://localhost:9200")
+OPENSEARCH_URL: str = os.getenv("OPENSEARCH_URL", "http://opensearch:9200")
 
 # ─── Qdrant (Векторна пам'ять) ──────────────────────────────────────────────
-QDRANT_URL: str = os.getenv("QDRANT_URL", "http://localhost:6333")
+QDRANT_URL: str = os.getenv("QDRANT_URL", "http://qdrant:6333")
 
 # ─── MinIO (S3 сховище) ─────────────────────────────────────────────────────
-MINIO_URL: str = os.getenv("MINIO_URL", "http://localhost:9000")
+MINIO_URL: str = os.getenv("MINIO_URL", "http://minio:9000")
 MINIO_HEALTH_PATH: str = os.getenv("MINIO_HEALTH_PATH", "/minio/health/live")
 
 # ─── Ollama (Локальний LLM) ─────────────────────────────────────────────────
-OLLAMA_URL: str = os.getenv("OLLAMA_URL", "http://localhost:11434")
+OLLAMA_URL: str = os.getenv("OLLAMA_URL", "http://ollama:11434")
 OLLAMA_REQUIRED_MODEL: str = os.getenv("OLLAMA_REQUIRED_MODEL", "deepseek-r1:latest")
 OLLAMA_INFERENCE_TIMEOUT: float = float(os.getenv("OLLAMA_INFERENCE_TIMEOUT", "120.0"))
 
 # ─── LiteLLM (Проксі до всіх LLM) ──────────────────────────────────────────
-LITELLM_URL: str = os.getenv("LITELLM_URL", "http://localhost:4000")
+LITELLM_URL: str = os.getenv("LITELLM_URL", "http://litellm:4000")
 
 # ─── Observability ───────────────────────────────────────────────────────────
-PROMETHEUS_URL: str = os.getenv("PROMETHEUS_URL", "http://localhost:9090")
-GRAFANA_URL: str = os.getenv("GRAFANA_URL", "http://localhost:3000")
-LOKI_URL: str = os.getenv("LOKI_URL", "http://localhost:3100")
+PROMETHEUS_URL: str = os.getenv("PROMETHEUS_URL", "http://prometheus:9090")
+GRAFANA_URL: str = os.getenv("GRAFANA_URL", "http://grafana:3000")
+LOKI_URL: str = os.getenv("LOKI_URL", "http://loki:3100")
 
 # ─── CI/CD Self-Healing ─────────────────────────────────────────────────────
 GITHUB_ACTIONS_TOKEN: str = os.getenv("GITHUB_ACTIONS_TOKEN", "")

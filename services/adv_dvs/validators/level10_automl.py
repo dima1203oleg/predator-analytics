@@ -1,3 +1,4 @@
+import os
 """
 Рівень 10: Перевірка AutoML.
 Автоматичний запуск, підбір моделей, гіперпараметри, метрики.
@@ -14,7 +15,7 @@ class AutoMLValidator(BaseValidator):
         )
 
     async def _run_validation(self):
-        root = Path("/Users/Shared/Predator_60")
+        root = Path(os.getenv("PREDATOR_ROOT", Path(__file__).resolve().parent.parent.parent.parent))
 
         # 1. Перевірка ML-модулів
         await self._check_ml_modules(root)

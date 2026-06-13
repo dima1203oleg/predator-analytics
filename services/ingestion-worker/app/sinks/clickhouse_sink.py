@@ -40,31 +40,46 @@ class ClickHouseSink:
     async def insert_declarations(self, data: list[dict[str, Any]]):
         if not self.client:
             self.connect()
+            
+        if not self.client:
+            return
 
         try:
             # Мапінг даних до колонок ClickHouse
+            from dateutil.parser import parse as parse_date
+            
             rows = []
             for item in data:
+                decl_date_raw = item.get("declaration_date")
+                decl_date = None
+                if decl_date_raw:
+                    try:
+                        decl_date = parse_date(str(decl_date_raw)).date()
+                    except Exception:
+                        decl_date = None
+                        
                 rows.append([
-                    item.get('id'),
-                    item.get('declaration_number'),
-                    item.get('declaration_date'),
-                    item.get('exporter_name'),
-                    item.get('exporter_ueid'),
-                    item.get('importer_name'),
-                    item.get('importer_ueid'),
-                    item.get('hs_code'),
-                    item.get('hs_description'),
-                    item.get('weight_kg'),
-                    item.get('value_usd'),
-                    item.get('origin_country'),
-                    item.get('destination_country'),
-                    item.get('customs_post_code'),
+                    str(item.get('_record_hash'))[:32] if item.get('_record_hash') else None, # id
+                    str(item.get('declaration_number')) if item.get('declaration_number') is not None else None,
+                    decl_date,
+                    str(item.get('exporter_name')) if item.get('exporter_name') is not None else None,
+                    str(item.get('exporter_ueid')) if item.get('exporter_ueid') is not None else None,
+                    str(item.get('importer_name')) if item.get('importer_name') is not None else None,
+                    str(item.get('ueid')) if item.get('ueid') is not None else None,          # importer_ueid
+                    str(item.get('uktzed_code')) if item.get('uktzed_code') is not None else None,   # hs_code
+                    str(item.get('product_description')) if item.get('product_description') is not None else None, # hs_description
+                    item.get('weight'),        # weight_kg
+                    item.get('customs_value'), # value_usd
+                    str(item.get('country_origin')) if item.get('country_origin') is not None else None,# origin_country
+                    str(item.get('country_destination')) if item.get('country_destination') is not None else None, # destination_country
+                    str(item.get('customs_post')) if item.get('customs_post') is not None else None,  # customs_post_code
                     item.get('risk_score', 0.0)
                 ])
 
             if rows:
-                self.client.insert(
+                import asyncio
+                await asyncio.to_thread(
+                    self.client.insert,
                     'customs_declarations',
                     rows,
                     column_names=[
@@ -86,7 +101,8 @@ class ClickHouseSink:
             logger.warning("ClickHouse недоступний — execute_query пропущено")
             return None
         try:
-            return self.client.command(query, parameters=params)
+            # Використовуємо .query() для отримання результатів (рядків)
+            return self.client.query(query, parameters=params).result_rows
         except Exception as e:
             logger.error("ClickHouse query execution error", query=query, error=str(e))
             raise

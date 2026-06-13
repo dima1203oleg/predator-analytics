@@ -1,17 +1,38 @@
-FROM mcr.microsoft.com/playwright/python:v1.42.0-jammy
+# PREDATOR UTOS Service — Multi-stage Dockerfile
+# HR-05: Multi-stage build, non-root user (USER predator)
+# HR-01: Python 3.12 ONLY (playwright python image provides python environment)
+
+# ============================================================
+# Stage 1: Builder
+# ============================================================
+FROM mcr.microsoft.com/playwright/python:v1.42.0-jammy AS builder
+
+WORKDIR /build
+
+COPY services/utos/requirements.txt .
+RUN pip install --timeout=1000 --retries=10 --prefix=/install -r requirements.txt
+
+# ============================================================
+# Stage 2: Runtime
+# ============================================================
+FROM mcr.microsoft.com/playwright/python:v1.42.0-jammy AS runtime
+
+# Створюємо користувача predator
+RUN useradd --create-home --shell /bin/bash predator
 
 WORKDIR /app
 
-# Install Python dependencies
-COPY services/utos/requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Копіюємо Python пакети
+COPY --from=builder /install /usr/local
 
-# Copy application
-COPY services/utos /app/utos
+# Копіюємо application code
+COPY --chown=predator:predator services/utos /app/utos
 
-ENV PYTHONPATH=/app
-ENV HOST=0.0.0.0
-ENV PORT=8003
+USER predator
+
+ENV PYTHONPATH=/app \
+    HOST=0.0.0.0 \
+    PORT=8003
 
 EXPOSE 8003
 

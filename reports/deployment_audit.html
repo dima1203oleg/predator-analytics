@@ -15,9 +15,9 @@
 </head>
 <body>
     <h1>Deployment Readiness Audit</h1>
-    <p><strong>Status:</strong> <span class="fail">PREDATOR Analytics НЕ готова до експлуатації (DRI: 41.2%)</span></p>
-    <p><strong>Deployment Readiness Index:</strong> 41.18%</p>
-    <p><strong>Timestamp:</strong> 2026-06-12T00:09:06.371830+00:00</p>
+    <p><strong>Status:</strong> <span class="fail">PREDATOR Analytics НЕ готова до експлуатації (DRI: 38.2%)</span></p>
+    <p><strong>Deployment Readiness Index:</strong> 38.24%</p>
+    <p><strong>Timestamp:</strong> 2026-06-12T04:58:00.643519+00:00</p>
 
     <h2>Level Details</h2>
     <table>
@@ -67,9 +67,9 @@
   },
   "frontend_3030": {
     "passed": true,
-    "message": "\u041f\u043e\u0440\u0442 3030 \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u0438\u0439 (234\u043c\u0441)",
+    "message": "\u041f\u043e\u0440\u0442 3030 \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u0438\u0439 (6\u043c\u0441)",
     "severity": "critical",
-    "latency_ms": 234.0,
+    "latency_ms": 6.3,
     "host": "localhost",
     "port": 3030
   },
@@ -77,7 +77,7 @@
     "passed": true,
     "message": "\u041f\u043e\u0440\u0442 11434 \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u0438\u0439 (1\u043c\u0441)",
     "severity": "critical",
-    "latency_ms": 1.4,
+    "latency_ms": 1.0,
     "host": "localhost",
     "port": 11434
   },
@@ -171,9 +171,9 @@
             <td>{
   "frontend_root": {
     "passed": true,
-    "message": "HTTP 200 (331\u043c\u0441)",
+    "message": "HTTP 200 (250\u043c\u0441)",
     "severity": "critical",
-    "latency_ms": 331.5,
+    "latency_ms": 250.4,
     "url": "http://localhost:3030",
     "status_code": 200
   },
@@ -234,49 +234,49 @@
   },
   "route_admin_command": {
     "passed": true,
-    "message": "HTTP 200 (36\u043c\u0441)",
+    "message": "HTTP 200 (31\u043c\u0441)",
     "severity": "warning",
-    "latency_ms": 35.5,
+    "latency_ms": 31.2,
     "url": "http://localhost:3030/admin/command",
     "status_code": 200
   },
   "route_admin_database-command-center": {
     "passed": true,
-    "message": "HTTP 200 (141\u043c\u0441)",
+    "message": "HTTP 200 (14\u043c\u0441)",
     "severity": "warning",
-    "latency_ms": 141.5,
+    "latency_ms": 13.6,
     "url": "http://localhost:3030/admin/database-command-center",
     "status_code": 200
   },
   "route_admin_adv-dvs": {
     "passed": true,
-    "message": "HTTP 200 (8\u043c\u0441)",
+    "message": "HTTP 200 (3\u043c\u0441)",
     "severity": "warning",
-    "latency_ms": 7.8,
+    "latency_ms": 3.1,
     "url": "http://localhost:3030/admin/adv-dvs",
     "status_code": 200
   },
   "route_command": {
     "passed": true,
-    "message": "HTTP 200 (6\u043c\u0441)",
+    "message": "HTTP 200 (4\u043c\u0441)",
     "severity": "warning",
-    "latency_ms": 5.9,
+    "latency_ms": 4.0,
     "url": "http://localhost:3030/command",
     "status_code": 200
   },
   "route_search": {
     "passed": true,
-    "message": "HTTP 200 (15\u043c\u0441)",
+    "message": "HTTP 200 (16\u043c\u0441)",
     "severity": "warning",
-    "latency_ms": 14.7,
+    "latency_ms": 16.1,
     "url": "http://localhost:3030/search",
     "status_code": 200
   },
   "route_market": {
     "passed": true,
-    "message": "HTTP 200 (8\u043c\u0441)",
+    "message": "HTTP 200 (10\u043c\u0441)",
     "severity": "warning",
-    "latency_ms": 7.9,
+    "latency_ms": 10.2,
     "url": "http://localhost:3030/market",
     "status_code": 200
   },
@@ -284,23 +284,23 @@
     "passed": false,
     "message": "\u041e\u0447\u0456\u043a\u0443\u0432\u0430\u0432\u0441\u044f 200, \u043e\u0442\u0440\u0438\u043c\u0430\u043d\u043e 400",
     "severity": "warning",
-    "latency_ms": 192.2,
+    "latency_ms": 97.2,
     "url": "http://localhost:3030/api-docs",
     "status_code": 400
   },
   "asset_vite.svg": {
     "passed": true,
-    "message": "HTTP 200 (9\u043c\u0441)",
+    "message": "HTTP 200 (8\u043c\u0441)",
     "severity": "warning",
-    "latency_ms": 9.0,
+    "latency_ms": 7.9,
     "url": "http://localhost:3030/vite.svg",
     "status_code": 200
   },
   "asset_at_vite_client": {
     "passed": true,
-    "message": "HTTP 200 (33\u043c\u0441)",
+    "message": "HTTP 200 (37\u043c\u0441)",
     "severity": "warning",
-    "latency_ms": 32.9,
+    "latency_ms": 37.5,
     "url": "http://localhost:3030/@vite/client",
     "status_code": 200
   },
@@ -837,17 +837,17 @@
             <td>{
   "ollama_health": {
     "passed": true,
-    "message": "HTTP 200 (1409\u043c\u0441)",
+    "message": "HTTP 200 (168\u043c\u0441)",
     "severity": "critical",
-    "latency_ms": 1408.7,
+    "latency_ms": 168.0,
     "url": "http://localhost:11434",
     "status_code": 200
   },
   "ollama_models_list": {
     "passed": true,
-    "message": "OK (311\u043c\u0441)",
+    "message": "OK (578\u043c\u0441)",
     "severity": "critical",
-    "latency_ms": 311.4,
+    "latency_ms": 578.3,
     "url": "http://localhost:11434/api/tags"
   },
   "ollama_models_count": {
@@ -876,12 +876,10 @@
     "latency_ms": 0.0
   },
   "ollama_inference": {
-    "passed": true,
-    "message": "\u0406\u043d\u0444\u0435\u0440\u0435\u043d\u0441 (qwen:latest): 2975\u043c\u0441 \u2014 '4.'",
-    "severity": "info",
-    "latency_ms": 2975.3,
-    "model": "qwen:latest",
-    "response_preview": "4."
+    "passed": false,
+    "message": "\u0406\u043d\u0444\u0435\u0440\u0435\u043d\u0441 \u0442\u0430\u0439\u043c\u0430\u0443\u0442/\u043f\u043e\u043c\u0438\u043b\u043a\u0430: ",
+    "severity": "warning",
+    "latency_ms": 0.0
   }
 }</td>
         </tr>
@@ -900,9 +898,9 @@
   },
   "ollama_for_embeddings": {
     "passed": true,
-    "message": "HTTP 200 (68\u043c\u0441)",
+    "message": "HTTP 200 (97\u043c\u0441)",
     "severity": "warning",
-    "latency_ms": 68.1,
+    "latency_ms": 97.4,
     "url": "http://localhost:11434",
     "status_code": 200
   },
@@ -1001,9 +999,9 @@
   },
   "flow_9_frontend": {
     "passed": true,
-    "message": "HTTP 200 (90\u043c\u0441)",
+    "message": "HTTP 200 (66\u043c\u0441)",
     "severity": "warning",
-    "latency_ms": 89.8,
+    "latency_ms": 66.2,
     "url": "http://localhost:3030",
     "status_code": 200
   },
@@ -1033,12 +1031,12 @@
   },
   "load_frontend": {
     "passed": true,
-    "message": "Frontend: 10/10 OK, avg 6\u043c\u0441, total 0.1\u0441",
+    "message": "Frontend: 10/10 OK, avg 5\u043c\u0441, total 0.1\u0441",
     "severity": "info",
-    "latency_ms": 6.3,
+    "latency_ms": 5.3,
     "success": 10,
     "total": 10,
-    "elapsed_s": 0.06
+    "elapsed_s": 0.05
   },
   "load_api": {
     "passed": false,
@@ -1050,9 +1048,9 @@
   },
   "ollama_latency": {
     "passed": true,
-    "message": "Ollama \u0437\u0430\u0442\u0440\u0438\u043c\u043a\u0430: 27\u043c\u0441",
+    "message": "Ollama \u0437\u0430\u0442\u0440\u0438\u043c\u043a\u0430: 5\u043c\u0441",
     "severity": "info",
-    "latency_ms": 27.1
+    "latency_ms": 5.4
   }
 }</td>
         </tr>
@@ -1060,7 +1058,7 @@
         <tr>
             <td>15</td>
             <td>level15_security</td>
-            <td class="pass">PASS</td>
+            <td class="warning">WARNING</td>
             <td>{
   "env_not_in_git": {
     "passed": true,
@@ -1089,12 +1087,14 @@
     "latency_ms": 0.0
   },
   "dockerfile_security": {
-    "passed": true,
-    "message": "26 Dockerfiles \u043f\u0435\u0440\u0435\u0432\u0456\u0440\u0435\u043d\u043e, 0 \u043f\u0440\u043e\u0431\u043b\u0435\u043c",
-    "severity": "info",
+    "passed": false,
+    "message": "\u041f\u0440\u043e\u0431\u043b\u0435\u043c\u0438: services/utos/Dockerfile: \u0432\u0456\u0434\u0441\u0443\u0442\u043d\u0456\u0439 USER (\u0437\u0430\u043f\u0443\u0441\u043a \u0432\u0456\u0434 root)",
+    "severity": "warning",
     "latency_ms": 0.0,
-    "total_dockerfiles": 26,
-    "issues": []
+    "total_dockerfiles": 28,
+    "issues": [
+      "services/utos/Dockerfile: \u0432\u0456\u0434\u0441\u0443\u0442\u043d\u0456\u0439 USER (\u0437\u0430\u043f\u0443\u0441\u043a \u0432\u0456\u0434 root)"
+    ]
   },
   "jwt_implementation": {
     "passed": true,
@@ -1200,7 +1200,7 @@
   },
   "e2e_ollama_generate": {
     "passed": true,
-    "message": "Ollama (qwen:latest): 'OK.'",
+    "message": "Ollama (qwen:latest): '\u041e\u041a.'",
     "severity": "info",
     "latency_ms": 0.0
   },

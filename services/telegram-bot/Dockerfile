@@ -9,11 +9,11 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 # Спочатку встановимо локальну лібу predator-common
 COPY libs/predator-common /libs/predator-common
-RUN pip install --no-cache-dir /libs/predator-common
+RUN pip install --timeout=1000 --retries=10 --no-cache-dir /libs/predator-common
 
 # Встановлення залежностей бота
 COPY services/telegram-bot/pyproject.toml /app/
-RUN pip install --no-cache-dir .
+RUN pip install --timeout=1000 --retries=10 --no-cache-dir .
 
 # Копіювання коду
 COPY services/telegram-bot/app /app/app

@@ -15,8 +15,8 @@ ENV POETRY_HOME="/opt/poetry" \
     PIP_NO_CACHE_DIR=1
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl build-essential \
-    && pip install --no-cache-dir "poetry==1.8.5" \
+    curl  \
+    && pip install --timeout=1000 --retries=10 --no-cache-dir "poetry==1.8.5" \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -25,6 +25,7 @@ COPY libs/ /libs/
 COPY services/graph-service/pyproject.toml services/graph-service/poetry.lock* ./
 COPY services/graph-service/app/ ./app/
 
+RUN ls -la /libs/predator-common && cat /libs/predator-common/pyproject.toml
 RUN poetry install --no-root
 
 # ============================================================

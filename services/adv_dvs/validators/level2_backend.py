@@ -1,3 +1,4 @@
+import os
 """
 Рівень 2: Перевірка Backend.
 FastAPI, REST API, JWT, WebSocket, HTTP-відповіді, швидкодія.

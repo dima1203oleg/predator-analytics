@@ -18,6 +18,7 @@ class ComponentType(StrEnum):
     API = "api"
     ANALYTICS = "analytics"
     CORE = "core"
+    GRAPH_DB = "graph-db"
 
 
 class PatternType(StrEnum):

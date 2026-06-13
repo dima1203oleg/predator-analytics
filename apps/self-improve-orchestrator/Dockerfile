@@ -23,7 +23,7 @@ RUN playwright install chromium
 # Copy orchestrator code
 COPY apps/self-improve-orchestrator ./orchestrator
 # Legacy dependency on backend app structure (models/services)
-COPY apps/backend/app ./app
+COPY services/core-api/app ./app
 # Shared Core Libraries
 COPY libs ./libs
 # CLI scripts for agents

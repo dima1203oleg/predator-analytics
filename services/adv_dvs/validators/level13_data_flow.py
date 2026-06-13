@@ -1,3 +1,4 @@
+import os
 """
 Рівень 13: Перевірка повного потоку даних.
 Джерело → Парсер → ETL → PostgreSQL → Redpanda → ClickHouse → Neo4j →

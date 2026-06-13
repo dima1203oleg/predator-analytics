@@ -1,3 +1,4 @@
+import os
 """
 Рівень 7: Перевірка парсерів.
 Telethon, Playwright, Scrapy, BeautifulSoup, PyMuPDF, OCR/Tesseract,
@@ -86,7 +87,7 @@ class ParsersValidator(BaseValidator):
 
     async def _check_parser_modules(self):
         """Перевірка модулів парсерів у кодовій базі."""
-        project_root = Path("/Users/Shared/Predator_60")
+        project_root = Path(os.getenv("PREDATOR_ROOT", Path(__file__).resolve().parent.parent.parent.parent))
         parser_locations = [
             project_root / "services" / "ingestion-worker" / "parsers",
             project_root / "services" / "osint-service",

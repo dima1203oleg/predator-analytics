@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY libs/predator-common /libs/predator-common
 
 # Встановлюємо Python залежності без важкого resolver Poetry
-RUN pip install --no-cache-dir \
+RUN pip install --timeout=1000 --retries=10 --no-cache-dir \
     /libs/predator-common \
     "fastapi>=0.110.0" \
     "uvicorn[standard]>=0.29.0" \
@@ -61,7 +61,7 @@ COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/pytho
 COPY --from=builder /usr/local/bin /usr/local/bin
 
 # Встановлюємо Python OSINT інструменти
-RUN pip install --no-cache-dir \
+RUN pip install --timeout=1000 --retries=10 --no-cache-dir \
     sherlock-project \
     maigret \
     theHarvester \

@@ -21,11 +21,11 @@ WORKDIR /build
 
 # Копіюємо predator-common спочатку (рідко змінюється — кешується)
 COPY libs/predator-common /libs/predator-common
-RUN pip install --prefix=/install /libs/predator-common
+RUN pip install --timeout=1000 --retries=10 --prefix=/install /libs/predator-common
 
 # Копіюємо requirements core-api
 COPY services/core-api/requirements.txt .
-RUN pip install --prefix=/install -r requirements.txt
+RUN pip install --timeout=1000 --retries=10 --prefix=/install -r requirements.txt
 
 # ============================================================
 # Stage 2: Runtime — тільки необхідне

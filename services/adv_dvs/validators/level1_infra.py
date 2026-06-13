@@ -1,3 +1,4 @@
+import os
 """
 Рівень 1: Перевірка розгортання інфраструктури.
 Docker Engine, Docker Compose, контейнери, мережі, volumes,
@@ -165,20 +166,25 @@ class InfraValidator(BaseValidator):
             ))
 
     async def _check_remote_server(self):
-        """Перевірка NVIDIA Server через SSH."""
+        """Перевірка NVIDIA Server через SSH або локально."""
         try:
-            proc = await asyncio.create_subprocess_exec(
-                "ssh", "-o", "ConnectTimeout=5", "-o", "StrictHostKeyChecking=no",
-                "nvidia-server", "echo", "OK",
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE,
-            )
-            stdout, _ = await asyncio.wait_for(proc.communicate(), timeout=10)
-            reachable = proc.returncode == 0 and "OK" in stdout.decode()
+            if os.uname().sysname == "Linux":
+                # Ми вже на NVIDIA сервері
+                reachable = True
+            else:
+                proc = await asyncio.create_subprocess_exec(
+                    "ssh", "-o", "ConnectTimeout=5", "-o", "StrictHostKeyChecking=no",
+                    "nvidia-server", "echo", "OK",
+                    stdout=asyncio.subprocess.PIPE,
+                    stderr=asyncio.subprocess.PIPE,
+                )
+                stdout, _ = await asyncio.wait_for(proc.communicate(), timeout=10)
+                reachable = proc.returncode == 0 and "OK" in stdout.decode()
+            
             self.add_check(CheckResult(
                 name="nvidia_server_ssh",
                 passed=reachable,
-                message="NVIDIA Server (194.177.1.240) доступний через SSH" if reachable
+                message="NVIDIA Server (194.177.1.240) доступний" if reachable
                         else "NVIDIA Server недоступний",
                 severity="warning",
             ))
@@ -259,12 +265,16 @@ class InfraValidator(BaseValidator):
 
     async def _check_platform_ports(self):
         """Перевірка ключових портів платформи."""
-        ports = {
+        # Перевірка базових портів
+        ports_to_check = {
+            "postgres_5432": ("localhost", 5432),
+            "redis_6379": ("localhost", 6379),
+            "neo4j_7687": ("localhost", 7687),
             "frontend_3030": ("localhost", 3030),
             "ollama_11434": ("localhost", 11434),
-            "core_api_8000": ("localhost", 8000),
+            "core_api_8000": ("localhost", 8090),  # Host maps to 8090
             "mock_api_9080": ("localhost", 9080),
         }
-        for name, (host, port) in ports.items():
+        for name, (host, port) in ports_to_check.items():
             severity = "warning" if name in ("core_api_8000", "mock_api_9080") else "critical"
             await self.tcp_check(name, host, port, timeout=2.0, severity=severity)

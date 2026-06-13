@@ -6,7 +6,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
+     \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
@@ -34,6 +34,8 @@ COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/pytho
 WORKDIR /app
 # Копіюємо вміст app/ та залежний shared
 COPY services/rtb-engine/app/ ./app/
+COPY services/rtb-engine/audit/ ./app/audit/
+COPY services/rtb-engine/rules/ ./app/rules/
 COPY services/shared/ ./services/shared/
 COPY libs/ /libs/
 

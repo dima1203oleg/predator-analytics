@@ -26,8 +26,8 @@ WORKDIR /app
 COPY --from=builder /app/wheels /wheels
 COPY --from=builder /app/requirements.txt .
 
-RUN pip install --no-index --find-links /wheels -r requirements.txt
-RUN pip install playwright
+RUN pip install --timeout=1000 --retries=10 --no-index --find-links /wheels -r requirements.txt
+RUN pip install --timeout=1000 --retries=10 playwright
 RUN playwright install --with-deps chromium
 
 COPY . .

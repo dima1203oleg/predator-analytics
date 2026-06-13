@@ -10,8 +10,8 @@ ENV PYTHONPATH=/app/services
 
 # Встановлення залежностей
 COPY services/asve/requirements.txt /app/
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+RUN pip install --timeout=1000 --retries=10 --no-cache-dir --upgrade pip && \
+    pip install --timeout=1000 --retries=10 --no-cache-dir -r requirements.txt
 
 # Копіювання коду ASVE
 COPY services/asve /app/services/asve

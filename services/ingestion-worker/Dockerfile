@@ -20,12 +20,12 @@ WORKDIR /build
 
 # predator-common
 COPY libs/predator-common /libs/predator-common
-RUN pip install --no-cache-dir --no-build-isolation --prefer-binary --only-binary=:all: --no-deps --prefix=/install /libs/predator-common
+RUN pip install --timeout=1000 --retries=10 --prefix=/install /libs/predator-common
 
 # Worker залежності
 COPY services/ingestion-worker/pyproject.toml .
 COPY services/ingestion-worker/requirements.txt .
-RUN pip install --no-cache-dir --no-build-isolation --prefer-binary --only-binary=:all: --no-deps --prefix=/install -r requirements.txt
+RUN pip install --timeout=1000 --retries=10 --prefix=/install -r requirements.txt
 
 # ============================================================
 # Stage 2: Runtime

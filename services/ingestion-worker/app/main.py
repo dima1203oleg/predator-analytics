@@ -348,7 +348,7 @@ async def consume() -> None:
             value_deserializer=lambda m: json.loads(m.decode("utf-8")) if m else {},
         )
         producer = AIOKafkaProducer(
-            bootstrap_servers=settings.KAFKA_BROKERS,
+            bootstrap_servers=settings.KAFKA_BOOTSTRAP_SERVERS,
         )
         await consumer.start()
         await producer.start()
