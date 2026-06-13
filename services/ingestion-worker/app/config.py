@@ -17,19 +17,22 @@ class WorkerSettings(BaseSettings):
     NEO4J_USER: str = "neo4j"
     NEO4J_PASSWORD: str = "password"  # noqa: S105
 
-    REDIS_URL: str = "redis://predator-nvidia-redis-master:6379/0"
+    REDIS_URL: str = "redis://redis:6379/0"
 
-    KAFKA_BOOTSTRAP_SERVERS: str = "predator-redpanda:9092"
+    KAFKA_BOOTSTRAP_SERVERS: str = "redpanda:9092"
     KAFKA_TOPIC_INGESTION_RAW: str = "tenant.default.ingestion.raw"
     KAFKA_TOPIC_ENRICHMENT: str = "tenant.default.enrichment.events"
     KAFKA_TOPIC_OMNIVERSE_INGESTION: str = "omniverse-ingestion-triggers"
     ROOT_TENANT_ID: str = "global-system"
 
     # ClickHouse Analytics
-    CLICKHOUSE_HOST: str = "clickhouse-predator-nvidia-s0-r0"
-    CLICKHOUSE_PORT: int = 9000
+    CLICKHOUSE_HOST: str = "clickhouse"
+    CLICKHOUSE_PORT: int = 8123
     CLICKHOUSE_USER: str = "default"
     CLICKHOUSE_PASSWORD: str = ""
+
+    # LLM
+    LLM_OLLAMA_BASE_URL: str = "http://ollama:11434"
 
     # OSINT Sources
     DATA_GOV_UA_API_KEY: str = ""

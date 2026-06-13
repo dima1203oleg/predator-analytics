@@ -26,6 +26,7 @@ RUN pip install --timeout=1000 --retries=10 --prefix=/install /libs/predator-com
 COPY services/ingestion-worker/pyproject.toml .
 COPY services/ingestion-worker/requirements.txt .
 RUN pip install --timeout=1000 --retries=10 --prefix=/install -r requirements.txt
+RUN pip install --timeout=1000 --retries=10 --prefix=/install https://github.com/explosion/spacy-models/releases/download/uk_core_news_sm-3.8.0/uk_core_news_sm-3.8.0-py3-none-any.whl
 
 # ============================================================
 # Stage 2: Runtime
