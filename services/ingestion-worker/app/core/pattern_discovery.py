@@ -169,8 +169,8 @@ class PatternDiscoveryEngine:
                 # Отримуємо випадкові вузли та зв'язки
                 result = await session.run("""
                     MATCH (n)
-                    WITH n, rand() AS r
-                    ORDER BY r
+                    WITH n, rand() AS rnd
+                    ORDER BY rnd
                     LIMIT $limit
                     MATCH (n)-[r]-(m)
                     RETURN n, r, m
