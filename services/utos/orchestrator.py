@@ -96,5 +96,19 @@ class UtosOrchestrator:
             "layers": results_map
         }
 
+        # Збереження звіту на диск
+        import os
+        import json
+        from utos.config import UTOS_REPORT_DIR
+        
+        os.makedirs(UTOS_REPORT_DIR, exist_ok=True)
+        report_path = os.path.join(UTOS_REPORT_DIR, "latest_report.json")
+        try:
+            with open(report_path, "w", encoding="utf-8") as f:
+                json.dump(report, f, ensure_ascii=False, indent=2)
+            logger.info(f"Звіт успішно збережено у {report_path}")
+        except Exception as e:
+            logger.error(f"Помилка збереження звіту: {e}")
+
         logger.info(f"📊 Фінальний результат UTOS: Score={report['utos_score']}/100, Статус={status}")
         return report

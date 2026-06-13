@@ -52,6 +52,51 @@ async def run_utos_diagnostics():
         raise HTTPException(status_code=500, detail=f"Внутрішня помилка діагностики: {e}")
 
 
+@app.get("/api/v1/utos/reports/latest")
+async def get_latest_report():
+    """Отримання останнього збереженого звіту UTOS."""
+    import os
+    import json
+    from utos.config import UTOS_REPORT_DIR
+    
+    report_path = os.path.join(UTOS_REPORT_DIR, "latest_report.json")
+    if not os.path.exists(report_path):
+        return {"status": "no_data", "message": "Звітів ще не знайдено."}
+        
+    try:
+        with open(report_path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as e:
+        logger.error(f"Помилка читання звіту: {e}")
+        raise HTTPException(status_code=500, detail="Помилка читання останнього звіту.")
+
+@app.get("/api/v1/utos/reports/download/{format}")
+async def download_report(format: str):
+    """Завантаження останнього звіту у вибраному форматі."""
+    import os
+    from fastapi.responses import FileResponse
+    from utos.config import UTOS_REPORT_DIR
+
+    report_path = os.path.join(UTOS_REPORT_DIR, "latest_report.json")
+    if not os.path.exists(report_path):
+        raise HTTPException(status_code=404, detail="Звіт не знайдено.")
+
+    # На даному етапі підтримуємо лише JSON-завантаження (інші формати можна генерувати тут)
+    if format.lower() == "json":
+        return FileResponse(
+            path=report_path,
+            media_type="application/json",
+            filename="utos_report.json"
+        )
+    else:
+        # Для pdf/xlsx повертаємо той самий JSON як fallback або генеруємо
+        # TODO: Додати повноцінну генерацію pdf/xlsx у UTOS
+        return FileResponse(
+            path=report_path,
+            media_type="application/json",
+            filename=f"utos_report_{format}_stub.json"
+        )
+
 if __name__ == "__main__":
     import uvicorn
     logger.info(f"Запуск UTOS API на порту {UTOS_PORT}...")

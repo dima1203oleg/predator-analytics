@@ -7,11 +7,11 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface ValidationResult {
   status: string;
-  deployment_readiness_index?: number;
-  overall_status?: string;
-  is_ready?: boolean;
-  levels?: Record<string, any>;
+  utos_score?: number;
+  layers?: Record<string, any>;
   message?: string;
+  total_checks?: number;
+  failed_checks?: number;
 }
 
 export default function DeploymentCommandCenter() {
@@ -21,9 +21,7 @@ export default function DeploymentCommandCenter() {
 
   const fetchLatest = async () => {
     try {
-      // Припускаємо, що API доступне через Nginx/Proxy або напряму до ADV-DVS на 8003
-      // Для цілей цього ТЗ, зробимо запит до локального бекенду ADV-DVS
-      const res = await fetch("http://localhost:8003/api/v1/reports/latest");
+      const res = await fetch("http://localhost:8003/api/v1/utos/reports/latest");
       const json = await res.json();
       setData(json);
     } catch (err: any) {
@@ -40,10 +38,11 @@ export default function DeploymentCommandCenter() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`http://localhost:8003/api/v1/validate/all?chaos_mode=${chaosMode}`, {
+      // UTOS v61.0-ELITE endpoint
+      const res = await fetch(`http://localhost:8003/api/v1/utos/run`, {
         method: "POST"
       });
-      if (!res.ok) throw new Error("Помилка запуску валідації");
+      if (!res.ok) throw new Error("Помилка запуску валідації UTOS");
       const json = await res.json();
       setData(json);
     } catch (err: any) {
@@ -54,7 +53,7 @@ export default function DeploymentCommandCenter() {
   };
 
   const downloadReport = (format: string) => {
-    window.open(`http://localhost:8003/api/v1/reports/download/${format}`, "_blank");
+    window.open(`http://localhost:8003/api/v1/utos/reports/download/${format}`, "_blank");
   };
 
   const getStatusIcon = (status: string) => {
@@ -62,10 +61,14 @@ export default function DeploymentCommandCenter() {
       case "pass": return <CheckCircle2 className="w-5 h-5 text-green-500" />;
       case "warning": return <AlertTriangle className="w-5 h-5 text-amber-500" />;
       case "fail":
-      case "error": return <AlertCircle className="w-5 h-5 text-red-500" />;
+      case "error":
+      case "CRITICAL": return <AlertCircle className="w-5 h-5 text-red-500" />;
+      case "HEALTHY": return <CheckCircle2 className="w-5 h-5 text-green-500" />;
       default: return <span className="text-gray-400">-</span>;
     }
   };
+
+  const isReady = data?.status === "HEALTHY" || data?.status === "WARNING";
 
   return (
     <div className="p-6 space-y-6">
@@ -77,10 +80,10 @@ export default function DeploymentCommandCenter() {
         <div className="space-x-2">
           <Button onClick={() => runValidation(false)} disabled={loading} className="bg-blue-600 hover:bg-blue-700 text-white">
             {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Play className="w-4 h-4 mr-2" />}
-            Запустити аудит
+            Запустити UTOS Аудит
           </Button>
           <Button onClick={() => runValidation(true)} disabled={loading} variant="destructive">
-            Chaos Mode
+            Chaos Mode (В розробці)
           </Button>
         </div>
       </div>
@@ -98,12 +101,12 @@ export default function DeploymentCommandCenter() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card className="bg-gray-900 border-gray-800">
               <CardHeader>
-                <CardTitle className="text-gray-200">Readiness Index (DRI)</CardTitle>
+                <CardTitle className="text-gray-200">UTOS Score (Readiness)</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-5xl font-bold text-center">
-                  <span className={data.deployment_readiness_index! >= 95 ? "text-green-500" : "text-amber-500"}>
-                    {data.deployment_readiness_index}%
+                  <span className={data.utos_score! >= 95 ? "text-green-500" : (data.utos_score! >= 70 ? "text-amber-500" : "text-red-500")}>
+                    {data.utos_score}%
                   </span>
                 </div>
               </CardContent>
@@ -111,11 +114,11 @@ export default function DeploymentCommandCenter() {
 
             <Card className="bg-gray-900 border-gray-800 md:col-span-2">
               <CardHeader>
-                <CardTitle className="text-gray-200">Статус системи</CardTitle>
+                <CardTitle className="text-gray-200">Статус системи UTOS</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center space-x-4">
-                  {data.is_ready ? (
+                  {isReady ? (
                     <div className="p-3 bg-green-500/20 text-green-500 rounded-full">
                       <CheckCircle2 className="w-8 h-8" />
                     </div>
@@ -125,9 +128,12 @@ export default function DeploymentCommandCenter() {
                     </div>
                   )}
                   <div>
-                    <h2 className={`text-2xl font-bold ${data.is_ready ? "text-green-400" : "text-red-400"}`}>
-                      {data.overall_status}
+                    <h2 className={`text-2xl font-bold ${isReady ? "text-green-400" : "text-red-400"}`}>
+                      {data.status}
                     </h2>
+                    <p className="text-sm text-gray-400 mt-1">
+                      Перевірок: {data.total_checks} | Провалено: {data.failed_checks}
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -135,14 +141,17 @@ export default function DeploymentCommandCenter() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {data.levels && Object.entries(data.levels).map(([level, info]: [string, any]) => (
-              <Card key={level} className="bg-gray-900 border-gray-800">
+            {data.layers && Object.entries(data.layers).map(([layerName, info]: [string, any]) => (
+              <Card key={layerName} className="bg-gray-900 border-gray-800">
                 <CardHeader className="pb-2">
                   <div className="flex justify-between items-center">
-                    <CardTitle className="text-lg text-gray-200">Рівень {level}</CardTitle>
+                    <CardTitle className="text-lg text-gray-200 capitalize">Layer: {layerName}</CardTitle>
                     {getStatusIcon(info.status)}
                   </div>
-                  <CardDescription className="text-gray-400">{info.name}</CardDescription>
+                  <CardDescription className="text-gray-400">{info.description || info.name}</CardDescription>
+                  <div className="text-xs text-gray-500 mt-2">
+                    Score: {(info.layer_score * 100).toFixed(0)}% | Вага: {info.weight}
+                  </div>
                 </CardHeader>
               </Card>
             ))}
