@@ -241,6 +241,9 @@ class PatternDiscoveryEngine:
         simulated_nodes = graph.nodes.copy()
         simulated_relationships = graph.relationships.copy()
         
+        if not simulated_nodes:
+            return graph
+        
         # Додаємо шум та варіації
         if random.random() < 0.3:  # 30% шанс додати новий зв'язок
             source = random.choice(simulated_nodes)
