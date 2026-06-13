@@ -8,10 +8,10 @@ set -uo pipefail
 echo "🚀 Активація Predator Analytics Full Stack..."
 
 # ─── Конфігурація ───────────────────────────────────────────────
-NVIDIA_USER="dmytrokizima"
-NVIDIA_PASS="1204"
+NVIDIA_USER="dima"
+NVIDIA_PASS="Dima@1203"
 # ФІКС: обмежуємо спроби автентифікації щоб уникнути "Too many auth failures"
-SSH_OPTS="-o StrictHostKeyChecking=no -o PubkeyAuthentication=no -o PreferredAuthentications=password -o ConnectTimeout=10 -o NumberOfPasswordPrompts=1 -o ServerAliveInterval=5"
+SSH_OPTS="-o StrictHostKeyChecking=no -o PubkeyAuthentication=no -o PreferredAuthentications=password -o ConnectTimeout=10 -o NumberOfPasswordPrompts=1 -o ServerAliveInterval=5 -p 6666"
 
 export SSHPASS="$NVIDIA_PASS"
 
@@ -26,7 +26,7 @@ NVIDIA_IP=""
 
 for ip in "${NVIDIA_IPS[@]}"; do
     echo "⚡ Перевірка $ip..."
-    if nc -z -G 4 "$ip" 22 2>/dev/null; then
+    if nc -z -G 4 "$ip" 6666 2>/dev/null; then
         NVIDIA_IP="$ip"
         echo "✅ Знайдено робочий IP: $NVIDIA_IP"
         break
