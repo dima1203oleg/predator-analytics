@@ -61,30 +61,8 @@ export const RegistriesTab = () => {
                     setRegistries(categories);
                 }
             } catch (e) {
-                // Mock registries if API fails
-                setRegistries([
-                    {
-                        id: 'STATE_CORE',
-                        name: 'ДЕ ЖАВНІ_РЕЄСТРИ',
-                        icon: 'Database',
-                        color: '#10b981',
-                        registries: [
-                            { id: 'edr', name: 'ЄДР(Юридичні особи)', status: 'online', records: '1.4M', latency: '45ms' },
-                            { id: 'tax', name: 'Державна Податкова Служба', status: 'online', records: '4.2M', latency: '32ms' },
-                            { id: 'customs', name: 'Митна база (HS-CORE)', status: 'online', records: '115M', latency: '28ms' }
-                        ]
-                    },
-                    {
-                        id: 'FIN_INTEL',
-                        name: 'ФІНАНСОВА_РОЗВІДКА',
-                        icon: 'Shield',
-                        color: '#f59e0b',
-                        registries: [
-                            { id: 'aml', name: 'AML-Моніторинг', status: 'online', records: '840K', latency: '12ms' },
-                            { id: 'pep', name: 'PEP-Особи (Politically Exposed)', status: 'online', records: '24K', latency: '15ms' }
-                        ]
-                    }
-                ]);
+                console.error("Failed to fetch registries:", e);
+                setRegistries([]);
             }
         };
         fetchRegistries();
@@ -97,12 +75,9 @@ export const RegistriesTab = () => {
             const res = await apiClient.get(`/registries/search?q=${query}`);
             setResults(res.data?.results || []);
             setSelectedCompany(null);
-        } catch {
-            // Mock Results
-            setResults([
-                { edrpou: '37129321', name: 'ТОВ "ГЛОБАЛ СТІЛ ЮК ЕЙН"', status: 'АКТИВНО', type: 'ТОВ' },
-                { edrpou: '00192312', name: 'П АТ "ОДЕСЬКИЙ ПО Т"', status: 'АКТИВНО', type: 'АКЦІОНЕ НЕ ТОВ' }
-            ]);
+        } catch (e) {
+            console.error("Search failed:", e);
+            setResults([]);
         } finally {
             setTimeout(() => setSearching(false), 1200);
         }
@@ -113,21 +88,9 @@ export const RegistriesTab = () => {
         try {
             const res = await apiClient.get(`/registries/company/${edrpou}`);
             setSelectedCompany(res.data);
-        } catch {
-            // Mock Company Details
-            setSelectedCompany({
-                edrpou,
-                name: 'ТОВ "ГЛОБАЛ СТІЛ ЮК ЕЙН"',
-                address: 'м. Київ, вул. Металургів, буд. 12/4',
-                status: 'АКТИВНО',
-                authorized_capital: '45,000,000 UAH',
-                activities: ['Торгівля металами', 'Логістика', 'Експортне фінансування'],
-                risk_factors: ['Офшорні зв\'язки бенефіціара', 'Аномальні обсяги ПДВ'],
-                beneficiaries: ['Іванов Іван Іванович', 'Smith John (UK)'],
-                directors: ['Петренко Василь Олексійович'],
-                cers_score: 72,
-                last_updated: new Date().toISOString()
-            });
+        } catch (e) {
+            console.error("Failed to fetch company details:", e);
+            setSelectedCompany(null);
         } finally {
             setTimeout(() => setLoading(false), 1500);
         }

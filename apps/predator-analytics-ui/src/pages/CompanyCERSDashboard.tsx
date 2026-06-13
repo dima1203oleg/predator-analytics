@@ -751,24 +751,26 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
  * Visualizes hidden connections, UBOs, and potential risk clusters.
  */
 function ShadowNetworkAnalysis({ onClose, companyName }: { onClose: () => void; companyName: string }) {
-    // Mock data for the shadow network
-    const nodes = [
-        { id: 1, label: companyName, type: 'main', x: 400, y: 300 },
-        { id: 2, label: 'KRAKEN ASSETS LTD (BVI)', type: 'offshore', x: 200, y: 150 },
-        { id: 3, label: 'ПЕТРЕНКО О.В. (UBO)', type: 'ubo', x: 600, y: 150 },
-        { id: 4, label: 'ТОВ "ЦЕНТР-ЛОГІСТИК"', type: 'subsidiary', x: 300, y: 500 },
-        { id: 5, label: 'НК "МАГІСТРАЛЬ"', type: 'subsidiary', x: 500, y: 500 },
-        { id: 6, label: 'ВУЗОЛ_ТРАНЗИТ_ДЕЛЬТА', type: 'transit', x: 650, y: 400 },
-    ];
+    const [nodes, setNodes] = useState<any[]>([]);
+    const [links, setLinks] = useState<any[]>([]);
 
-    const links = [
-        { from: 1, to: 2, label: 'Власник 100%', color: '#f43f5e' },
-        { from: 1, to: 3, label: 'Бенефіціар', color: '#fbbf24' },
-        { from: 4, to: 1, label: 'Дочірня 100%', color: '#10b981' },
-        { from: 5, to: 1, label: 'Дочірня 40%', color: '#10b981' },
-        { from: 3, to: 6, label: 'Зв\'язок через IP', color: '#6366f1' },
-        { from: 2, to: 6, label: 'Транзакції', color: '#6366f1' },
-    ];
+    useEffect(() => {
+        const fetchNetwork = async () => {
+            try {
+                // TODO: Replace with real API call when graph visualization supports dynamic layout
+                // const res = await networkApi.searchNodes(companyName);
+                // setNodes(res.nodes);
+                // setLinks(res.edges);
+                setNodes([]);
+                setLinks([]);
+            } catch (err) {
+                console.error("Failed to fetch shadow network", err);
+                setNodes([]);
+                setLinks([]);
+            }
+        };
+        fetchNetwork();
+    }, [companyName]);
 
     return (
         <motion.div 

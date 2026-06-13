@@ -39,43 +39,7 @@ export const NewspaperTab = () => {
       setData(result);
     } catch (err) {
       console.error('Newspaper fetch error:', err);
-      // Fallback mock
-      setData({
-        headline: {
-          title: 'ВИЯВЛЕНОПРИХОВАНУ МЕ ЕЖУ ДОЧІ НІХ КОМПАНІЙ " ОС-ТИТАН" В ОДЕСЬКОМУ ПОРТУ',
-          subtitle: 'Аналіз графа зв\'язків підтвердив 12 транзакцій через стамбульського посередника.',
-          riskScore: 94,
-          tag: 'РОЗСЛІДУВАННЯ',
-          hook: 'КрИТИЧНА ЗАГРОЗА НАЦІОНАЛЬНІЙ БЕЗПЕЦІ',
-          edrpou: '40012921',
-          declarationNumber: 'UA-4001/26',
-          date: '2026-04-13'
-        },
-        compromat: [
-          { id: '1', title: 'ОЛЕКСІЙ КОВАЛЬОВ (ЗАМ.МИТНИЦІ)', subtitle: 'Невідповідність доходів: придбано 3 авто Bentley в січні', risk: '92%', hook: 'ДЕТЕКЦІЯ PEP АНОМАЛІЇ', riskLevel: 'high', source: 'РЕЄСТР_ДПС' },
-          { id: '2', title: 'ТОВ "МИТНИЙ-Б ОКЕ "', subtitle: 'Систематичне заниження ваги на 40% для HS-72', risk: '78%', hook: 'СХЕМА "ПЕ ЕВАНТАЖЕННЯ"', riskLevel: 'high', source: 'МИТНИЦЯ_UA' }
-        ],
-        trends: [
-          { id: 't1', title: 'ІМПОРТ ЕЛЕКТ ОНІКИ', subtitle: 'HS-85: Критичне зростання потоку з Китаю', hook: 'СЕРЕДНІЙ РИЗИК: +142%', direction: 'up', percent: 142, hsCode: '8517', count: 1240, totalValue: 42000000 },
-          { id: 't2', title: 'ЕКСПОРТ ЗЕ НОВИХ', subtitle: 'HS-10: Сезонне зниження активності', hook: 'СТАБІЛЬНИЙ СЕКТО : -12%', direction: 'down', percent: 12, hsCode: '1001', count: 4500, totalValue: 128000000 }
-        ],
-        customs: [
-          { id: 'c1', title: 'НОВИЙ МА Ш УТ: ПОТІ - ХУСТ', subtitle: 'Використання малих вантажних хабів для уникнення алертов', hook: 'МОНІТОРИНГ ГДЗ', type: 'risk', avgRisk: 65 },
-          { id: 'c2', title: 'ВІДКрИТТЯ ХАБУ "ДЕСНА"', subtitle: 'Оптимізація логістики для чесних експортерів', hook: 'ОПТИМІЗАЦІЯ', type: 'opportunity', avgRisk: 12 }
-        ],
-        alerts: [
-          { id: 'a1', text: 'КРИТИЧНО: Спроба ввезення товарів подвійного призначення під виглядом с/г техніки.', urgency: 'high', time: '10:42' },
-          { id: 'a2', text: 'УВАГА:  ізка зміна курсу митної вартості для HS-7308.', urgency: 'medium', time: '10:35' },
-          { id: 'a3', text: 'ІНФО: Синхронізація з базою OFAC завершена успішно.', urgency: 'info', time: '10:15' }
-        ],
-        metrics: {
-          materials: 12, riskAlerts: 4, trends: 8, customsEvents: 24,
-          totalDeclarations: 14205, totalValueUsd: 1240000000,
-          importCount: 8420, exportCount: 5785
-        },
-        summary: 'ОПЕРАТИВНИЙ ДАЙДЖЕСТ: ВИСОКИЙ РІВЕНЬ АНОМАЛЬНОЇ АКТИВНОСТІ В СЕКТО І ТИТАНУ',
-        generated_at: '2026-04-13T10:00:00Z'
-      });
+      setData(null);
     } finally {
       setLoading(false);
       setIsRefreshing(false);

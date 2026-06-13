@@ -40,12 +40,8 @@ export const DocumentsTab = () => {
             });
             setDocuments(response.data?.documents || []);
         } catch (e) {
-            console.error(e);
-            // Mock fallback
-            setDocuments([
-                { id: 'doc-001', title: 'ЗВІТ_МИТНИЦЯ_АНТОНОВ_2026', snippet: 'Аналіз ланцюгів постачання компонентів для АН-178.', category: 'customs', source: 'UA_CUSTOMS', created_at: '2026-04-12' },
-                { id: 'doc-002', title: 'Ю ИДИЧНИЙ_ВИСНОВОК_ГЛОБАЛ_СТІЛ', snippet: 'Оцінка офшорнихризиків бенефіціарів групи.', category: 'legal', source: 'COMPLIANCE_DEPT', created_at: '2026-04-11' }
-            ]);
+            console.error("Failed to fetch documents:", e);
+            setDocuments([]);
         } finally {
             setLoading(false);
         }
