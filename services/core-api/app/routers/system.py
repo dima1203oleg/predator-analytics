@@ -1,9 +1,12 @@
 import asyncio
 from datetime import UTC, datetime, timedelta
+import json
+import os
 import subprocess
 from typing import Any
+import uuid
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, BackgroundTasks, File, HTTPException, Request, UploadFile
 import psutil
 
 from app.config import get_settings
@@ -566,5 +569,49 @@ async def retry_dlq_messages(tenant_id: str, target_topic: str) -> dict[str, Any
         "dlq_topic": dlq_topic,
         "target_topic": target_topic
     }
+
+# ======================== E2E AUDIT API ========================
+
+@router.post("/e2e-audit/start")
+async def start_e2e_audit(background_tasks: BackgroundTasks, file: UploadFile = File(...)) -> dict[str, Any]:
+    """Запускає повний E2E аудит для завантаженого Excel файлу у фоновому режимі."""
+    if not file.filename.endswith((".xlsx", ".xls")):
+        raise HTTPException(status_code=400, detail="Only Excel files are supported")
+
+    content = await file.read()
+    audit_id = str(uuid.uuid4())
+
+    # Імпортуємо локально, щоб не створювати циклічних залежностей
+    from app.test_excel_e2e import run_e2e_validation
+
+    # Додаємо завдання у background
+    background_tasks.add_task(run_e2e_validation, content, file.filename, audit_id)
+
+    return {
+        "status": "started",
+        "audit_id": audit_id,
+        "message": "E2E audit started in the background. Polling status endpoint."
+    }
+
+@router.get("/e2e-audit/status/{audit_id}")
+async def get_e2e_audit_status(audit_id: str) -> dict[str, Any]:
+    """Перевіряє статус виконання E2E аудиту."""
+    report_path = f"/tmp/predator_reports/audit_{audit_id}.json"
+
+    if not os.path.exists(report_path):
+        return {"status": "running"}
+
+    try:
+        with open(report_path, encoding="utf-8") as f:
+            report_data = json.load(f)
+        return {
+            "status": "completed",
+            "report": report_data
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "detail": f"Failed to read report: {e!s}"
+        }
 
 router.include_router(dlq_router)

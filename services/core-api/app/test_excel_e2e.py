@@ -1,32 +1,33 @@
-"""
-E2E Тестування імпорту та обробки Excel-реєстрів митних декларацій.
+"""E2E Тестування імпорту та обробки Excel-реєстрів митних декларацій.
 Повна наскрізну валідація життєвого циклу даних згідно розширеного ТЗ.
 Канонічна локалізація: УКРАЇНСЬКА (HR-03).
 """
 import asyncio
+from datetime import UTC, datetime
+import hashlib
 import os
 import sys
-import uuid
-import hashlib
 import time
-from datetime import datetime, UTC
-import pandas as pd
+import uuid
+
 from sqlalchemy import select, text
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
 # Додаємо шляхи для імпортів
 sys.path.insert(0, "/libs")
 sys.path.insert(0, "/app")
 
-from predator_common.models import IngestionJob, Tenant, User
-from app.services.minio_service import get_minio_service
-from app.services.kafka_service import get_kafka_service
-from redis import Redis
-import httpx
-
 # Налаштування логування
 import logging
+
+import httpx
+from redis import Redis
+
+from app.services.kafka_service import get_kafka_service
+from app.services.minio_service import get_minio_service
+from predator_common.models import IngestionJob, Tenant, User
+
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger("excel_e2e_validator")
 
@@ -91,29 +92,22 @@ async def ensure_test_tenant_and_user(session: AsyncSession):
     else:
         logger.info("Тестовий користувач вже існує")
 
-async def run_e2e_validation():
+async def run_e2e_validation(file_content: bytes, file_name: str, audit_id: str):
     start_time = time.time()
-    
+
     # 0. Ініціалізація сесії PostgreSQL
     engine = create_async_engine(DATABASE_URL, echo=False)
     async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
-    
+
     async with async_session() as session:
         await ensure_test_tenant_and_user(session)
 
-    if not os.path.exists(EXCEL_FILE_PATH):
-        logger.error(f"Excel-файл не знайдено за шляхом: {EXCEL_FILE_PATH}")
-        return
-
-    # Читання файлу для отримання хешу та розміру
-    with open(EXCEL_FILE_PATH, "rb") as f:
-        file_content = f.read()
     file_size = len(file_content)
-    logger.info(f"File size read from disk: {file_size} bytes")
+    logger.info(f"File size for audit {audit_id}: {file_size} bytes")
     content_hash = hashlib.sha256(file_content).hexdigest()
-    
-    # Створення унікального Job ID
-    job_id = uuid.uuid4()
+
+    # Використовуємо переданий audit_id як job_id
+    job_id = uuid.UUID(audit_id)
     logger.info(f"Запуск E2E Job ID: {job_id}")
 
     # 1. Завантаження у MinIO
@@ -123,7 +117,7 @@ async def run_e2e_validation():
     await minio.ensure_tenant_buckets(str(TENANT_UUID))
     bucket_name = minio.get_raw_bucket(str(TENANT_UUID))
     object_name = f"{job_id}/Березень_2024.xlsx"
-    
+
     success, s3_path, _ = await minio.upload_file(
         bucket=bucket_name,
         object_name=object_name,
@@ -143,7 +137,7 @@ async def run_e2e_validation():
             tenant_id=TENANT_UUID,
             user_id=USER_UUID,
             job_type="file_upload",
-            file_name="Березень_2024.xlsx",
+            file_name=file_name,
             file_size=file_size,
             status="queued",
             progress=0,
@@ -163,7 +157,7 @@ async def run_e2e_validation():
         job_id=str(job_id),
         tenant_id=str(TENANT_UUID),
         user_id=str(USER_UUID),
-        file_name="Березень_2024.xlsx",
+        file_name=file_name,
         file_size=file_size,
         content_hash=content_hash,
         s3_path=s3_path
@@ -178,14 +172,14 @@ async def run_e2e_validation():
     records_errors = 0
     timeout_limit = 900  # 15 хвилин ліміт очікування
     poll_start = time.time()
-    
+
     while status in ["queued", "processing", "pending"]:
         if time.time() - poll_start > timeout_limit:
             logger.error("Перевищено час очікування обробки (Timeout)")
             break
-            
+
         await asyncio.sleep(5)
-        
+
         async with async_session() as session:
             result = await session.execute(select(IngestionJob).where(IngestionJob.id == job_id))
             job = result.scalar_one_or_none()
@@ -205,7 +199,7 @@ async def run_e2e_validation():
     logger.info("Крок 5: Повний аудит цілісності даних по базах даних...")
     audit_results = {}
     pg_count = 0
-    
+
     # 5.1 PostgreSQL (SSOT)
     try:
         async with async_session() as session:
@@ -246,7 +240,7 @@ async def run_e2e_validation():
     # 5.3 Neo4j (Graph) - Використовуємо REST API Neo4j на порту 7474
     try:
         # Спробуємо підключитись по HTTP
-        neo_url = f"http://neo4j:7474/db/neo4j/tx/commit"
+        neo_url = "http://neo4j:7474/db/neo4j/tx/commit"
         auth = httpx.BasicAuth(NEO4J_USER, NEO4J_PASSWORD)
         async with httpx.AsyncClient(timeout=10) as client:
             payload = {
@@ -335,7 +329,7 @@ async def run_e2e_validation():
     passed_checks = sum(1 for res in audit_results.values() if res.get("status") in ["pass", "warning"])
     total_checks = len(audit_results)
     dri = (passed_checks / total_checks) * 100
-    
+
     # Готовність
     is_ready = dri >= 99.0 and status == "completed"
 
@@ -352,13 +346,13 @@ async def run_e2e_validation():
     }
 
     # Створення папки звітів
-    os.makedirs("/app/app/reports", exist_ok=True)
-    
+    os.makedirs("/tmp/predator_reports", exist_ok=True)
+
     # Збереження JSON звіту
     import json
-    with open("/app/app/reports/deployment_audit_excel.json", "w", encoding="utf-8") as f:
+    with open(f"/tmp/predator_reports/audit_{audit_id}.json", "w", encoding="utf-8") as f:
         json.dump(report, f, indent=2, ensure_ascii=False)
-        
+
     # Збереження HTML звіту
     html_content = f"""
     <html>
@@ -402,12 +396,12 @@ async def run_e2e_validation():
     </body>
     </html>
     """
-    with open("/app/app/reports/deployment_audit_excel.html", "w", encoding="utf-8") as f:
+    with open(f"/tmp/predator_reports/audit_{audit_id}.html", "w", encoding="utf-8") as f:
         f.write(html_content)
 
     logger.info("=== ВАЛІДАЦІЮ ЗАВЕРШЕНО ===")
     logger.info(f"DRI: {round(dri, 2)}% | Готовність: {is_ready}")
-    logger.info("Звіти збережено в /app/app/reports/deployment_audit_excel.json та .html")
+    logger.info("Звіти збережено в /tmp/predator_reports/")
 
 if __name__ == "__main__":
-    asyncio.run(run_e2e_validation())
+    pass  # Цей файл тепер викликається з бекенду
