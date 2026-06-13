@@ -290,52 +290,85 @@ body {
 
 /* Режим високої видимості */
 .high-visibility body {
-    background-color: #02050f;
+    background-color: #030712; /* Rich dark gray-blue for maximum contrast */
     color: #f8fafc;
+    background-image: none !important; /* Disable grid noise pattern */
+}
+
+/* Вимикаємо розмиття, шуми та сканування для кристальної чіткості */
+.high-visibility .scan-lines::after,
+.high-visibility .noise-overlay::after,
+.high-visibility .vignette::before,
+.high-visibility .vignette::after,
+.high-visibility .cyber-scanline,
+.high-visibility .animate-scanline,
+.high-visibility .animate-scanline-fast,
+.high-visibility .bg-cyber-noise,
+.high-visibility .bg-noise {
+    display: none !important;
+    animation: none !important;
+    background-image: none !important;
+}
+
+/* Збільшуємо контрастність токенів */
+.high-visibility {
+    --elite-black: #000000 !important;
+    --elite-black-deep: #000000 !important;
+    --bg-canvas: #030712 !important;
+    --bg-surface: #0f172a !important;
+    --bg-elevated: #1e293b !important;
+    --fg-primary: #ffffff !important;
+    --fg-secondary: #f1f5f9 !important;
+    --fg-muted: #94a3b8 !important;
+    --border-subtle: rgba(255, 255, 255, 0.16) !important;
+    --border-default: rgba(255, 255, 255, 0.28) !important;
+    --border-strong: rgba(255, 255, 255, 0.45) !important;
+    --glass-bg: rgba(15, 23, 42, 0.98) !important;
+    --glass-border: rgba(255, 255, 255, 0.3) !important;
 }
 
 .high-visibility .glass-ultra {
-    background: rgba(2, 6, 23, 0.85);
-    border-color: rgba(148, 163, 184, 0.35);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.65);
+    background: rgba(15, 23, 42, 0.95);
+    border-color: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
 }
 
 .high-visibility :where(input, textarea, select) {
-    background-color: rgba(2, 6, 23, 0.85);
-    color: #f8fafc;
-    border-color: rgba(148, 163, 184, 0.45);
+    background-color: rgba(15, 23, 42, 0.95);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.35);
 }
 
 .high-visibility :where(input, textarea, select):focus {
-    border-color: rgba(56, 189, 248, 0.7);
-    box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.25);
+    border-color: #38bdf8;
+    box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.35);
 }
 
 .high-visibility ::placeholder {
-    color: #cbd5f5;
-    opacity: 0.9;
+    color: #94a3b8;
+    opacity: 1;
 }
 
 .high-visibility .text-slate-400 {
-    color: #e2e8f0 !important;
+    color: #f1f5f9 !important;
 }
 
 .high-visibility .text-slate-500 {
-    color: #cbd5f5 !important;
+    color: #cbd5e1 !important;
 }
 
 .high-visibility .text-slate-600 {
-    color: #b7c2d9 !important;
+    color: #94a3b8 !important;
 }
 
 .high-visibility .border-white\/10 {
-    border-color: rgba(148, 163, 184, 0.35) !important;
+    border-color: rgba(255, 255, 255, 0.25) !important;
 }
 
 .high-visibility .border-slate-800\/50,
 .high-visibility .border-slate-800\/60,
 .high-visibility .border-slate-800\/80 {
-    border-color: rgba(148, 163, 184, 0.35) !important;
+    border-color: rgba(255, 255, 255, 0.25) !important;
 }
 
 /* Покращена видимість фокусу */

@@ -56,7 +56,7 @@ export const useAppStore = create<AppState>()(
       isSidebarOpen: true,
       language: 'ua',
       isTerminalOpen: false,
-      highVisibility: false,
+      highVisibility: true,
       azrStatus: {
         status: 'stable',
         progress: 100,

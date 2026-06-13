@@ -80,14 +80,15 @@ services:
     environment:
       - CLICKHOUSE_HOST=clickhouse
       - CLICKHOUSE_PORT=8123
-      - CLICKHOUSE_PASSWORD=predator_secret_ch
+      - CLICKHOUSE_PASSWORD=${CLICKHOUSE_PASSWORD:-}
       - KAFKA_BOOTSTRAP_SERVERS=redpanda:9092
       - POSTGRES_HOST=postgres
-      - POSTGRES_PASSWORD=predator_secret
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-predator_secret}
       - POSTGRES_USER=predator
       - POSTGRES_DB=predator_db
       - NEO4J_URI=bolt://neo4j:7687
-      - REDIS_URL=redis://:predator_redis@redis:6379/0
+      - NEO4J_PASSWORD=${NEO4J_PASSWORD:-predator_neo4j}
+      - REDIS_URL=redis://:${REDIS_PASSWORD:-predator_redis}@redis:6379/0
       - MINIO_ENDPOINT=minio:9000
       - MINIO_ACCESS_KEY=admin
       - MINIO_SECRET_KEY=predator_password

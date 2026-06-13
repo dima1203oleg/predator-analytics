@@ -15,6 +15,8 @@ import {
   Terminal,
   Smartphone,
   Tablet,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { getNavigationContext, navAccentStyles } from '../../config/navigation';
@@ -86,7 +88,7 @@ const Header: React.FC = () => {
   const [isPaletteOpen, setIsPaletteOpen] = useAtom(shellCommandPaletteOpenAtom);
   const [isContextRailOpen, setIsContextRailOpen] = useAtom(shellContextRailOpenAtom);
   const shellV2Enabled = isShellV2Enabled();
-  const { isTerminalOpen, setTerminalOpen } = useAppStore();
+  const { isTerminalOpen, setTerminalOpen, highVisibility, setHighVisibility } = useAppStore();
   const { mode: displayMode, setMode: setDisplayMode } = useDisplayMode();
   const { isCompact, isMedium } = useViewport();
   const isMobileMode = isCompact;
@@ -275,6 +277,20 @@ const Header: React.FC = () => {
                 <Bell className={cn(isMobileMode ? "h-6 w-6" : "h-4 w-4")} />
                 <span className={cn("absolute bg-rose-500 rounded-full animate-ping", isMobileMode ? "top-3 right-3 w-2 h-2" : "top-2 right-2 w-1.5 h-1.5")} />
                 <span className={cn("absolute bg-rose-600 rounded-full", isMobileMode ? "top-3 right-3 w-2 h-2" : "top-2 right-2 w-1.5 h-1.5")} />
+              </button>
+
+              <button
+                title={highVisibility ? 'Режим звичайної видимості' : 'Режим високої видимості (Контраст)'}
+                onClick={() => setHighVisibility(!highVisibility)}
+                className={cn(
+                  "flex items-center justify-center rounded-xl transition-all duration-300 relative group",
+                  isMobileMode ? "h-12 w-12" : "h-9 w-9",
+                  highVisibility 
+                    ? "bg-amber-500/15 text-amber-400 border border-amber-500/30 shadow-[inset_0_0_12px_rgba(245,158,11,0.2)]" 
+                    : "text-slate-600 hover:text-white hover:bg-white/[0.05]"
+                )}
+              >
+                {highVisibility ? <EyeOff className={cn(isMobileMode ? "h-6 w-6" : "h-4 w-4")} /> : <Eye className={cn(isMobileMode ? "h-6 w-6" : "h-4 w-4")} />}
               </button>
 
               {!isMobileMode && (

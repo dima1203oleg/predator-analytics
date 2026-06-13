@@ -33,6 +33,7 @@ class WorkerSettings(BaseSettings):
 
     # LLM
     LLM_OLLAMA_BASE_URL: str = "http://ollama:11434"
+    OLLAMA_MODEL: str = "nemotron-mini"
 
     # OSINT Sources
     DATA_GOV_UA_API_KEY: str = ""
