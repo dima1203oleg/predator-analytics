@@ -21,7 +21,7 @@ RUN pip install --timeout=1000 --retries=10 --no-cache-dir \
     "uvicorn[standard]>=0.29.0" \
     "sqlalchemy[asyncio]>=2.0.29" \
     "asyncpg>=0.29.0" \
-    "pydantic>=2.6.4" \
+    "pydantic[email]>=2.6.4" \
     "pydantic-settings>=2.2.1" \
     "celery[redis]>=5.3.6" \
     "redis>=5.0.0" \
