@@ -112,62 +112,7 @@ class CompetitorsAnalysisService:
         self.db = db
         # self.companies_db більше не потрібен як єдине джерело
 
-    def _init_mock_companies(self) -> dict[str, CompanyProfile]: # Властивості словника можуть бути довільними
-        """Ініціалізація mock даних компаній."""
-        return {
-            "12345678": CompanyProfile(
-                edrpou="12345678",
-                name="ТОВ \"ТЕСТ\"",
-                kved="62.01",
-                kved_name="Комп'ютерне програмування",
-                revenue=50_000_000,
-                employees=150,
-                founded_year=2015,
-                region="Київська",
-                market_share=2.5,
-                growth_rate=15.0,
-                risk_score=25,
-            ),
-            "87654321": CompanyProfile(
-                edrpou="87654321",
-                name="ТОВ \"КОНКУРЕНТ А\"",
-                kved="62.01",
-                kved_name="Комп'ютерне програмування",
-                revenue=80_000_000,
-                employees=250,
-                founded_year=2010,
-                region="Київська",
-                market_share=4.0,
-                growth_rate=20.0,
-                risk_score=15,
-            ),
-            "11111111": CompanyProfile(
-                edrpou="11111111",
-                name="ТОВ \"КОНКУРЕНТ Б\"",
-                kved="62.01",
-                kved_name="Комп'ютерне програмування",
-                revenue=120_000_000,
-                employees=400,
-                founded_year=2008,
-                region="Київська",
-                market_share=6.0,
-                growth_rate=12.0,
-                risk_score=20,
-            ),
-            "22222222": CompanyProfile(
-                edrpou="22222222",
-                name="ТОВ \"ЛІДЕР РИНКУ\"",
-                kved="62.01",
-                kved_name="Комп'ютерне програмування",
-                revenue=300_000_000,
-                employees=1000,
-                founded_year=2005,
-                region="Київська",
-                market_share=15.0,
-                growth_rate=8.0,
-                risk_score=10,
-            ),
-        }
+
 
     async def find_competitors(
         self,
@@ -307,11 +252,7 @@ class CompetitorsAnalysisService:
 
     async def analyze_market(self, kved: str, region: str | None = None) -> MarketAnalysis:
         """Проаналізувати ринок за КВЕД."""
-        # Фільтруємо компанії
-        companies = [
-            c for c in self.companies_db.values()
-            if c.kved == kved and (not region or c.region == region)
-        ]
+        raise NotImplementedError("Market analysis requires actual ClickHouse queries. Not implemented yet.")
 
         if not companies:
             return MarketAnalysis(
@@ -361,15 +302,7 @@ class CompetitorsAnalysisService:
         metrics: list[ComparisonMetric],
     ) -> list[BenchmarkResult]:
         """Бенчмаркінг компанії."""
-        company = self.companies_db.get(edrpou)
-        if not company:
-            return []
-
-        # Отримуємо компанії з того ж ринку
-        market_companies = [
-            c for c in self.companies_db.values()
-            if c.kved == company.kved
-        ]
+        raise NotImplementedError("Benchmarking requires actual ClickHouse queries. Not implemented yet.")
 
         results = []
 
@@ -444,16 +377,7 @@ class CompetitorsAnalysisService:
 
     async def competitive_analysis(self, edrpou: str) -> CompetitiveAnalysis:
         """Комплексний конкурентний аналіз."""
-        company = self.companies_db.get(edrpou)
-        if not company:
-            company = CompanyProfile(
-                edrpou=edrpou,
-                name=f"Компанія {edrpou}",
-                kved="62.01",
-                kved_name="Комп'ютерне програмування",
-            )
-
-        # Знаходимо конкурентів
+        raise NotImplementedError("Competitive analysis requires actual DB/ClickHouse queries. Not implemented yet.")
         competitors = await self.find_competitors(edrpou, limit=5)
 
         # Аналізуємо ринок
@@ -573,8 +497,7 @@ class CompetitorsAnalysisService:
         edrpou2: str,
     ) -> dict[str, Any]: # Властивості словника можуть бути довільними
         """Порівняти дві компанії."""
-        company1 = self.companies_db.get(edrpou1)
-        company2 = self.companies_db.get(edrpou2)
+        raise NotImplementedError("Company comparison requires actual DB/ClickHouse queries. Not implemented yet.")
 
         if not company1 or not company2:
             return {"error": "Одна або обидві компанії не знайдені"}

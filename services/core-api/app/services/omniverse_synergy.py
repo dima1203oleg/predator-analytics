@@ -57,9 +57,4 @@ class OmniverseSynergy:
         """Формує 360-профіль сутності на основі її UEID (якщо він є в даних)."""
         # В Omniverse ми додаємо ueid_ column під час інгестії (опціонально)
         # Якщо ueid немає, ми намагаємось знайти за назвою
-        return {
-            "ueid": ueid,
-            "domains": ["Customs", "Finance", "Shipping"], # Mock
-            "risk_index": 42,
-            "connections": 15
-        }
+        raise NotImplementedError("Synergy profiling requires full Omniverse Entity Resolution implementation. Not implemented yet.")

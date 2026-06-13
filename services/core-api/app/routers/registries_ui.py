@@ -3,6 +3,10 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Query
 
 from app.dependencies import get_tenant_id
+from app.database import get_db
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+from predator_common.models import RiskScore, Company
 from app.services.ukraine_registries import UkraineRegistriesService
 
 router = APIRouter(prefix="/registries", tags=["Registries UI"])
@@ -50,6 +54,7 @@ async def search_registries_ui(
 async def get_company_details_ui(
     edrpou: str,
     tenant_id: Annotated[str, Depends(get_tenant_id)],
+    db: AsyncSession = Depends(get_db)
 ):
     """Отримати деталі компанії за ЄДРПОУ для UI досьє."""
     service = UkraineRegistriesService()
@@ -57,6 +62,14 @@ async def get_company_details_ui(
         company = await service.get_company(edrpou)
         if not company:
             return {"error": "Компанію не знайдено"}
+
+        # Отримуємо справжній risk_score
+        company_model = await db.scalar(select(Company).where(Company.edrpou == edrpou).limit(1))
+        risk_score = 0
+        if company_model:
+            score_model = await db.scalar(select(RiskScore).where(RiskScore.entity_ueid == company_model.ueid).order_by(RiskScore.score_date.desc()).limit(1))
+            if score_model:
+                risk_score = int(score_model.cers)
 
         return {
             "edrpou": company.edrpou,
@@ -66,7 +79,7 @@ async def get_company_details_ui(
             "address": company.address.full if company.address else None,
             "kved": company.kved_primary,
             "founders": [f.name for f in company.founders],
-            "risk_score": 15, # Mock
+            "risk_score": risk_score,
             "diligence_status": "verified"
         }
     finally:

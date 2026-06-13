@@ -24,30 +24,44 @@ class GlobalSanctionsService:
     async def check_entity(self, name: str, entity_type: str = "organization") -> dict[str, Any]:
         """Перевірка особи або компанії за міжнародними списками.
 
-        Повертає статус та перелік знайдених збігів.
+        Повертає статус та перелік знайдених збігів з OpenSearch.
         """
         logger.info(f"Checking global sanctions for: {name}")
 
-        # Для демонстрації та відсутності токенів використовуємо Mock-логіку
-        # У продакшн-режимі тут буде httpx.post(source_url, json={"queries": [...]})
+        try:
+            from app.services.opensearch_service import opensearch_service
+            
+            search_result = await opensearch_service.search(
+                entity="sanctions",
+                tenant_id="global",
+                query=name,
+                fields=["name", "aliases", "keywords"],
+                size=5
+            )
 
-        # Симуляція перевірки (можна розширити логікою збігу імен)
-        matches = []
-        suspicious_keywords = ["al-qaeda", "isis", "hezbollah", "wagner", "rosatom"]
+            matches = []
+            for hit in search_result.hits:
+                # Вважаємо збіг, якщо score вище певного порогу (наприклад 5.0)
+                if hit.score > 5.0:
+                    matches.append({
+                        "list": hit.source.get("dataset", "Unknown Sanctions List"),
+                        "reason": f"OpenSearch match with score {hit.score:.2f}",
+                        "confidence": min(hit.score / 20.0, 0.99)
+                    })
 
-        for keyword in suspicious_keywords:
-            if keyword in name.lower():
-                matches.append({
-                    "list": "OFAC / SDN",
-                    "reason": f"Match with keyword '{keyword}'",
-                    "confidence": 0.95
-                })
-
-        return {
-            "is_sanctioned": len(matches) > 0,
-            "matches": matches,
-            "checked_at": "now"
-        }
+            return {
+                "is_sanctioned": len(matches) > 0,
+                "matches": matches,
+                "checked_at": "now"
+            }
+        except Exception as e:
+            logger.error(f"GlobalSanctionsService error: {e}")
+            return {
+                "is_sanctioned": False,
+                "matches": [],
+                "checked_at": "now",
+                "error": str(e)
+            }
 
     async def get_sanction_risk_increase(self, name: str) -> float:
         """Повертає вагу ризику на основі санкцій."""

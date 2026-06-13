@@ -357,9 +357,8 @@ class UkraineRegistriesService:
 
     async def get_company(self, edrpou: str) -> Company | None:
         """Отримати дані компанії з ЄДР."""
-        # В реальності тут буде запит до API ЄДР
-        # Поки що повертаємо mock дані
-        return self._mock_company(edrpou)
+        # Без інтеграції з API повертаємо None
+        return None
 
     async def search_companies(
         self,
@@ -370,121 +369,33 @@ class UkraineRegistriesService:
         limit: int = 50,
         offset: int = 0,
     ) -> tuple[list[Company], int]:
-        """Пошук компаній за критеріями."""
-        # Mock реалізація
-        companies = [self._mock_company("12345678")]
+        # Без інтеграції з API повертаємо порожній список
+        companies = []
         return companies, len(companies)
 
     async def get_company_history(self, edrpou: str) -> list[dict]:
-        """Отримати історію змін компанії."""
-        return [
-            {
-                "date": "2025-01-15",
-                "type": "director_change",
-                "old_value": "Іванов І.І.",
-                "new_value": "Петров П.П.",
-            },
-            {
-                "date": "2024-06-01",
-                "type": "address_change",
-                "old_value": "м. Київ, вул. Хрещатик, 1",
-                "new_value": "м. Київ, вул. Хрещатик, 10",
-            },
-        ]
+        return []
 
-    def _mock_company(self, edrpou: str) -> Company:
-        """Mock дані компанії."""
-        return Company(
-            edrpou=edrpou,
-            name=f"ТОВ \"КОМПАНІЯ {edrpou}\"",
-            short_name=f"КОМПАНІЯ {edrpou}",
-            status=CompanyStatus.ACTIVE,
-            registration_date=date(2015, 3, 20),
-            address=Address(
-                full="01001, м. Київ, вул. Хрещатик, 1",
-                region="Київська",
-                city="Київ",
-                street="Хрещатик",
-                building="1",
-            ),
-            kved_primary="62.01",
-            kved_primary_name="Комп'ютерне програмування",
-            kved_secondary=["62.02", "63.11"],
-            authorized_capital=100000.0,
-            founders=[
-                Founder(
-                    name="Іванов Іван Іванович",
-                    type="person",
-                    share=50.0,
-                    rnokpp="1234567890",
-                ),
-                Founder(
-                    name="ТОВ \"ХОЛДИНГ\"",
-                    type="organization",
-                    share=50.0,
-                    edrpou="87654321",
-                ),
-            ],
-            managers=[
-                Manager(
-                    name="Петров Петро Петрович",
-                    position="Директор",
-                    appointment_date=date(2020, 1, 15),
-                ),
-            ],
-            beneficiaries=[
-                Beneficiary(
-                    name="Іванов Іван Іванович",
-                    ownership_percentage=75.0,
-                    country="UA",
-                ),
-            ],
-            phone="+380441234567",
-            email="info@company.ua",
-            website="https://company.ua",
-        )
 
     # ======================== ПДВ ========================
 
     async def check_vat_status(self, edrpou: str) -> VATStatus:
         """Перевірка статусу платника ПДВ."""
-        return VATStatus(
-            edrpou=edrpou,
-            name=f"ТОВ \"КОМПАНІЯ {edrpou}\"",
-            ipn="123456789012",
-            is_vat_payer=True,
-            registration_date=date(2015, 4, 1),
-            status="active",
-            tax_office="ДПІ у Шевченківському районі м. Києва",
-        )
+        # Без інтеграції повертаємо None
+        return None
 
     # ======================== БОРЖНИКИ ========================
 
     async def check_debtor(self, edrpou: str) -> DebtorInfo:
         """Перевірка податкових боргів."""
+        # Без інтеграції повертаємо порожню інформацію про борги
         return DebtorInfo(
             edrpou=edrpou,
             name=f"ТОВ \"КОМПАНІЯ {edrpou}\"",
-            has_debt=True,
-            total_debt=1500000.0,
-            debts=[
-                TaxDebt(
-                    type="tax",
-                    amount=1000000.0,
-                    date=date(2025, 6, 15),
-                    description="Податок на прибуток",
-                ),
-                TaxDebt(
-                    type="penalty",
-                    amount=500000.0,
-                    date=date(2025, 9, 1),
-                    description="Штрафні санкції",
-                ),
-            ],
-            is_restructured=False,
+            has_debt=False,
         )
 
-    # ======================== СУДОВИЙ РЕЄСТР ========================
+    # ======================== СУДОВІ СПРАВИ ========================
 
     async def search_court_cases(
         self,
@@ -497,36 +408,7 @@ class UkraineRegistriesService:
         limit: int = 50,
     ) -> tuple[list[CourtCase], int]:
         """Пошук судових справ."""
-        cases = [
-            CourtCase(
-                case_number="910/1234/26",
-                court="Господарський суд міста Києва",
-                date=date(2026, 1, 15),
-                type=CaseType.COMMERCIAL,
-                status="розглядається",
-                parties=[
-                    CourtParty(
-                        name="ТОВ \"КОМПАНІЯ\"",
-                        role=PartyRole.PLAINTIFF,
-                        edrpou="12345678",
-                    ),
-                    CourtParty(
-                        name="ТОВ \"КОНТРАГЕНТ\"",
-                        role=PartyRole.DEFENDANT,
-                        edrpou="87654321",
-                    ),
-                ],
-                subject="Стягнення заборгованості",
-                amount=500000.0,
-                decisions=[
-                    CourtDecision(
-                        date=date(2026, 2, 20),
-                        type="ухвала",
-                        summary="Відкрито провадження у справі",
-                    ),
-                ],
-            ),
-        ]
+        cases = []
         return cases, len(cases)
 
     async def get_court_case(self, case_number: str) -> CourtCase | None:
@@ -548,33 +430,7 @@ class UkraineRegistriesService:
         limit: int = 50,
     ) -> tuple[list[Tender], int]:
         """Пошук тендерів у Prozorro."""
-        tenders = [
-            Tender(
-                tender_id="UA-2026-03-01-000001-a",
-                title="Закупівля комп'ютерного обладнання",
-                status="complete",
-                procuring_entity_name="Міністерство цифрової трансформації",
-                procuring_entity_edrpou="00000001",
-                expected_value=1000000.0,
-                currency="UAH",
-                participants=[
-                    TenderParticipant(
-                        name="ТОВ \"КОМПАНІЯ\"",
-                        edrpou="12345678",
-                        bid_amount=950000.0,
-                        is_winner=True,
-                    ),
-                    TenderParticipant(
-                        name="ТОВ \"КОНКУРЕНТ\"",
-                        edrpou="11111111",
-                        bid_amount=980000.0,
-                        is_winner=False,
-                    ),
-                ],
-                award_date=date(2026, 3, 15),
-                contract_amount=950000.0,
-            ),
-        ]
+        tenders = []
         return tenders, len(tenders)
 
     async def get_tender(self, tender_id: str) -> Tender | None:
@@ -591,12 +447,12 @@ class UkraineRegistriesService:
         rnokpp: str | None = None,
     ) -> SanctionCheck:
         """Перевірка у санкційних списках."""
-        # Mock — в реальності запит до API РНБО
+        # Без інтеграції з API повертаємо порожній результат
         return SanctionCheck(
             query=name,
             is_sanctioned=False,
             matches=[],
-            checked_lists=["rnbo_ua", "ofac", "eu", "uk", "un"],
+            checked_lists=[],
             checked_at=datetime.now(UTC),
         )
 
@@ -611,17 +467,7 @@ class UkraineRegistriesService:
         limit: int = 50,
     ) -> list[RealEstate]:
         """Пошук нерухомості."""
-        return [
-            RealEstate(
-                cadastral_number="8000000000:01:001:0001",
-                address="м. Київ, вул. Хрещатик, 1, кв. 1",
-                type="apartment",
-                area_sqm=120.5,
-                owner_name="Іванов Іван Іванович",
-                owner_rnokpp="1234567890",
-                registration_date=date(2018, 5, 10),
-            ),
-        ]
+        return []
 
     # ======================== ТРАНСПОРТ ========================
 
@@ -635,19 +481,7 @@ class UkraineRegistriesService:
         limit: int = 50,
     ) -> list[Vehicle]:
         """Пошук транспортних засобів."""
-        return [
-            Vehicle(
-                vin="WVWZZZ3CZWE123456",
-                plate_number="АА1234ВВ",
-                brand="Volkswagen",
-                model="Passat",
-                year=2020,
-                color="чорний",
-                owner_name="Іванов Іван Іванович",
-                owner_rnokpp="1234567890",
-                registration_date=date(2020, 3, 15),
-            ),
-        ]
+        return []
 
     # ======================== КОМПЛЕКСНЕ РОЗСЛІДУВАННЯ ========================
 

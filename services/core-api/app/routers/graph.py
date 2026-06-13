@@ -47,15 +47,9 @@ async def search_graph(
         edges = []
 
         if not raw_results:
-            # Fallback для демонстрації, якщо база порожня (але в стилі PREDATOR)
             return {
-                "nodes": [
-                    {"id": "mock-1", "name": f"ТОВ '{request.q}' (MIRROR)", "label": "ORGANIZATION", "properties": {}},
-                    {"id": "mock-2", "name": "Бенефіціар А", "label": "PERSON", "properties": {}}
-                ],
-                "edges": [
-                    {"id": "e1", "source": "mock-1", "target": "mock-2", "relation": "OWNS", "weight": 1.0}
-                ]
+                "nodes": [],
+                "edges": []
             }
 
         for row in raw_results:
@@ -96,11 +90,10 @@ async def search_graph(
             "edges": edges
         }
     except Exception as e:
-        # В автономному режимі повертаємо принаймні щось
-        return {
-            "nodes": [{"id": "err", "name": f"Помилка графу: {e!s}", "label": "CONCEPT"}],
-            "edges": []
-        }
+            return {
+                "nodes": [],
+                "edges": []
+            }
 
 
 @router.get("/summary", summary="Зведена статистика графу")
@@ -215,16 +208,10 @@ async def get_cartels(
     try:
         results = await graph_db.run_query(query, {"tenant_id": tenant_id})
         if not results:
-            return [
-                {"communityId": 101, "size": 42, "entities": [{"name": "ТОВ \"ЕНЕРГО-СИНДИКАТ\"", "risk": 98}]},
-                {"communityId": 202, "size": 24, "entities": [{"name": "ГРУПА КЛІЧКО-ТАБАЧНИКА", "risk": 94}]},
-                {"communityId": 303, "size": 12, "entities": [{"name": "ОФШОР \"PANAMA_CORP\"", "risk": 88}]}
-            ]
+            return []
         return results
     except Exception:
-        return [
-            {"communityId": 1, "size": 15, "entities": [{"name": "MOCKED_CARTELL_A", "risk": 90}]}
-        ]
+        return []
 
 
 @router.get("/entities/ubo/{ueid}", summary="Кінцевий бенефіціар (UBO Tracer)")
@@ -274,10 +261,10 @@ async def get_influence_metrics(
         }
     except Exception:
         return {
-            "centrality": 0.85,
-            "closeness": 0.72,
-            "influence_score": 78.5,
-            "status": "mocked"
+            "centrality": 0.0,
+            "closeness": 0.0,
+            "influence_score": 0.0,
+            "status": "error"
         }
 
 

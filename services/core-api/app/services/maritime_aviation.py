@@ -140,7 +140,7 @@ class MarineTrafficClient:
         """Отримати поточну позицію судна за MMSI."""
         if not self.api_key:
             logger.warning("MarineTraffic API key не налаштовано")
-            return self._mock_vessel_position(mmsi)
+            return None
 
         try:
             url = f"{self.BASE_URL}/exportvessel/v:5/{self.api_key}"
@@ -173,7 +173,7 @@ class MarineTrafficClient:
             )
         except Exception as e:
             logger.error(f"Помилка MarineTraffic API: {e}")
-            return self._mock_vessel_position(mmsi)
+            return None
 
     async def search_vessels_in_area(
         self,
@@ -184,7 +184,7 @@ class MarineTrafficClient:
     ) -> list[VesselPosition]:
         """Пошук суден у заданому районі."""
         if not self.api_key:
-            return self._mock_vessels_in_area()
+            return []
 
         try:
             url = f"{self.BASE_URL}/exportvessels/v:8/{self.api_key}"
@@ -223,12 +223,12 @@ class MarineTrafficClient:
             return vessels
         except Exception as e:
             logger.error(f"Помилка MarineTraffic API: {e}")
-            return self._mock_vessels_in_area()
+            return []
 
     async def get_vessel_info(self, mmsi: str) -> VesselInfo | None:
         """Отримати детальну інформацію про судно."""
         if not self.api_key:
-            return self._mock_vessel_info(mmsi)
+            return None
 
         try:
             url = f"{self.BASE_URL}/vesselmaster/v:3/{self.api_key}"
@@ -261,12 +261,12 @@ class MarineTrafficClient:
             )
         except Exception as e:
             logger.error(f"Помилка MarineTraffic API: {e}")
-            return self._mock_vessel_info(mmsi)
+            return None
 
     async def get_port_calls(self, mmsi: str, days: int = 90) -> list[PortCall]:
         """Отримати історію заходів у порти."""
         if not self.api_key:
-            return self._mock_port_calls()
+            return []
 
         try:
             url = f"{self.BASE_URL}/portcalls/v:4/{self.api_key}"
@@ -291,7 +291,7 @@ class MarineTrafficClient:
             return port_calls
         except Exception as e:
             logger.error(f"Помилка MarineTraffic API: {e}")
-            return self._mock_port_calls()
+            return []
 
     def _parse_vessel_type(self, type_code: int | str | None) -> VesselType:
         """Парсинг типу судна."""
@@ -336,86 +336,7 @@ class MarineTrafficClient:
         except ValueError:
             return None
 
-    def _mock_vessel_position(self, mmsi: str) -> VesselPosition:
-        """Mock дані для тестування."""
-        return VesselPosition(
-            mmsi=mmsi,
-            imo="9876543",
-            name="MOCK VESSEL",
-            callsign="MOCK1",
-            vessel_type=VesselType.CARGO,
-            flag="UA",
-            latitude=46.4825,
-            longitude=30.7233,
-            speed=12.5,
-            course=180.0,
-            heading=182.0,
-            destination="ODESA",
-            eta=datetime.now(UTC),
-            draught=8.5,
-        )
 
-    def _mock_vessels_in_area(self) -> list[VesselPosition]:
-        """Mock список суден."""
-        return [
-            self._mock_vessel_position("123456789"),
-            VesselPosition(
-                mmsi="987654321",
-                imo="1234567",
-                name="MOCK TANKER",
-                callsign="MOCK2",
-                vessel_type=VesselType.TANKER,
-                flag="PA",
-                latitude=46.5,
-                longitude=30.8,
-                speed=8.0,
-                course=90.0,
-                heading=92.0,
-                destination="ISTANBUL",
-                eta=None,
-                draught=10.2,
-            ),
-        ]
-
-    def _mock_vessel_info(self, mmsi: str) -> VesselInfo:
-        """Mock інформація про судно."""
-        return VesselInfo(
-            mmsi=mmsi,
-            imo="9876543",
-            name="MOCK VESSEL",
-            callsign="MOCK1",
-            vessel_type=VesselType.CARGO,
-            flag="UA",
-            gross_tonnage=25000,
-            deadweight=35000,
-            length=180.0,
-            beam=28.0,
-            year_built=2015,
-            owner="Mock Shipping Ltd",
-            manager="Mock Management",
-            insurer="Mock Insurance",
-        )
-
-    def _mock_port_calls(self) -> list[PortCall]:
-        """Mock історія портів."""
-        return [
-            PortCall(
-                port_name="Odesa",
-                port_code="UAODS",
-                country="Ukraine",
-                arrival=datetime(2026, 3, 1, 10, 0, tzinfo=UTC),
-                departure=datetime(2026, 3, 3, 14, 0, tzinfo=UTC),
-                duration_hours=52.0,
-            ),
-            PortCall(
-                port_name="Istanbul",
-                port_code="TRIST",
-                country="Turkey",
-                arrival=datetime(2026, 2, 25, 8, 0, tzinfo=UTC),
-                departure=datetime(2026, 2, 27, 16, 0, tzinfo=UTC),
-                duration_hours=56.0,
-            ),
-        ]
 
     async def close(self):
         """Закриття клієнта."""
@@ -435,7 +356,7 @@ class FlightRadarClient:
         """Отримати поточну позицію літака за реєстрацією."""
         if not self.api_key:
             logger.warning("FlightRadar24 API key не налаштовано")
-            return self._mock_aircraft_position(registration)
+            return None
 
         try:
             url = f"{self.BASE_URL}/common/v1/flight/list.json"
@@ -470,7 +391,7 @@ class FlightRadarClient:
             )
         except Exception as e:
             logger.error(f"Помилка FlightRadar24 API: {e}")
-            return self._mock_aircraft_position(registration)
+            return None
 
     async def search_flights_in_area(
         self,
@@ -481,7 +402,7 @@ class FlightRadarClient:
     ) -> list[AircraftPosition]:
         """Пошук літаків у заданому районі."""
         if not self.api_key:
-            return self._mock_flights_in_area()
+            return []
 
         try:
             url = f"{self.BASE_URL}/common/v1/flight/list.json"
@@ -522,7 +443,7 @@ class FlightRadarClient:
             return aircraft_list
         except Exception as e:
             logger.error(f"Помилка FlightRadar24 API: {e}")
-            return self._mock_flights_in_area()
+            return []
 
     async def get_flight_history(
         self,
@@ -531,7 +452,7 @@ class FlightRadarClient:
     ) -> list[dict]:
         """Отримати історію польотів."""
         if not self.api_key:
-            return self._mock_flight_history()
+            return []
 
         try:
             url = f"{self.BASE_URL}/common/v1/flight/list.json"
@@ -563,69 +484,9 @@ class FlightRadarClient:
             return history
         except Exception as e:
             logger.error(f"Помилка FlightRadar24 API: {e}")
-            return self._mock_flight_history()
+            return []
 
-    def _mock_aircraft_position(self, registration: str) -> AircraftPosition:
-        """Mock дані для тестування."""
-        return AircraftPosition(
-            icao24="508035",
-            callsign="PS101",
-            registration=registration,
-            aircraft_type="B738",
-            origin="KBP",
-            destination="IST",
-            latitude=41.2,
-            longitude=29.0,
-            altitude=35000,
-            speed=450,
-            heading=180,
-            vertical_rate=0,
-            on_ground=False,
-        )
 
-    def _mock_flights_in_area(self) -> list[AircraftPosition]:
-        """Mock список літаків."""
-        return [
-            self._mock_aircraft_position("UR-PSA"),
-            AircraftPosition(
-                icao24="508036",
-                callsign="PS102",
-                registration="UR-PSB",
-                aircraft_type="E190",
-                origin="ODS",
-                destination="WAW",
-                latitude=50.1,
-                longitude=24.5,
-                altitude=32000,
-                speed=420,
-                heading=315,
-                vertical_rate=500,
-                on_ground=False,
-            ),
-        ]
-
-    def _mock_flight_history(self) -> list[dict]:
-        """Mock історія польотів."""
-        return [
-            {
-                "flight_number": "PS101",
-                "callsign": "AUI101",
-                "origin": "KBP",
-                "destination": "IST",
-                "departure_time": "2026-03-10T08:00:00Z",
-                "arrival_time": "2026-03-10T10:30:00Z",
-                "status": "Landed",
-            },
-            {
-                "flight_number": "PS102",
-                "callsign": "AUI102",
-                "origin": "IST",
-                "destination": "KBP",
-                "departure_time": "2026-03-10T12:00:00Z",
-                "arrival_time": "2026-03-10T14:30:00Z",
-                "status": "Landed",
-            },
-        ]
 
     async def close(self):
         """Закриття клієнта."""

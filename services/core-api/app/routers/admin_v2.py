@@ -75,48 +75,8 @@ async def get_infra_telemetry(
     _ = Depends(PermissionChecker([Permission.MANAGE_USERS]))
 ):
     """Отримання повної телеметрії інфраструктури."""
-    # Mock nodes data representing the actual cluster setup
-    nodes = [
-        NodeMetric(
-            id="node-199",
-            node="IMAC-COMPUTE-01",
-            role="Compute Node / AI Engine",
-            cpu=45.2,
-            ram=68.5,
-            vram=12.4,
-            vramGb=2.1,
-            temp=52.0,
-            net="rx: 1.2GB/s | tx: 0.8GB/s",
-            status="online",
-            uptime="17h 42m",
-            ip="192.168.0.200"
-        ),
-        NodeMetric(
-            id="node-240",
-            node="NVIDIA-CLOUD-FALLBACK",
-            role="GPU Master / Cloud Mirror",
-            cpu=12.1,
-            ram=24.3,
-            vram=5.2,
-            vramGb=0.8,
-            temp=38.0,
-            net="rx: 0.1GB/s | tx: 0.05GB/s",
-            status="online",
-            uptime="42d 12h",
-            ip="192.168.0.240"
-        ),
-        NodeMetric(
-            id="node-mac",
-            node="MACBOOK-PRO-CONTROL",
-            role="Edge Node / UI Gateway",
-            cpu=28.5,
-            ram=82.1,
-            net="rx: 0.5GB/s | tx: 0.2GB/s",
-            status="online",
-            uptime="3h 15m",
-            ip="127.0.0.1"
-        )
-    ]
+    # Без інтеграції з hardware агентами повертаємо порожній список
+    nodes = []
 
     # Check actual services
     services = []
@@ -203,12 +163,12 @@ async def get_agents_stats(
             alive=alive,
             dead=dead,
             idle=idle,
-            avgCpu=15.4 # Mock
+            avgCpu=0.0
         ),
         list=[a.model_dump() for a in agents_list]
     )
 
-# ─── Інші (Mocks для UI) ───────────────────────────────────────────────────────
+# ─── Інші ───────────────────────────────────────────────────────
 
 @router.get("/failover", response_model=FailoverStatus)
 async def get_failover_status():

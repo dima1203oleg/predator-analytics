@@ -25,22 +25,10 @@ async def validate_api_key(
             detail="API key required. Provide X-API-Key header.",
         )
 
-    # В реальності тут буде перевірка в базі даних
-    # Поки що mock валідація
-    if not x_api_key.startswith("pk_"):
-        raise HTTPException(
-            status_code=401,
-            detail="Invalid API key format.",
-        )
-
-    return {
-        "key_id": x_api_key[:10],
-        "partner_id": "partner_001",
-        "partner_name": "Test Partner",
-        "tier": "standard",
-        "rate_limit": 1000,
-        "permissions": ["read_company", "read_sanctions", "read_risk"],
-    }
+    raise HTTPException(
+        status_code=501,
+        detail="API Key verification requires DB integration. Not implemented yet.",
+    )
 
 
 # ======================== REQUEST/RESPONSE MODELS ========================
@@ -153,16 +141,15 @@ async def lookup_company(
 
     **Rate limit:** 100 запитів/хвилина
     """
-    # Mock відповідь
-    return CompanyLookupResponse(
-        edrpou=request.edrpou,
-        name=f"ТОВ \"КОМПАНІЯ {request.edrpou}\"",
-        status="active",
-        registration_date="2015-03-20",
-        address="м. Київ, вул. Хрещатик, 1",
-        kved="62.01",
-        authorized_capital=100000.0,
-    )
+    # Реалізація через БД
+    from app.database import get_db
+    from sqlalchemy.ext.asyncio import AsyncSession
+    from predator_common.models import Company
+    from sqlalchemy import select
+    from fastapi import Depends
+    
+    # We would need db session here, but for now we just raise 501
+    raise HTTPException(status_code=501, detail="Not implemented yet. Connect to DB.")
 
 
 @router.post("/v1/company/batch", response_model=BatchResponse, summary="Пакетний пошук компаній")
@@ -241,18 +228,7 @@ async def get_risk_score(
 
     **Rate limit:** 50 запитів/хвилина
     """
-    return RiskScoreResponse(
-        edrpou=request.edrpou,
-        name=f"ТОВ \"КОМПАНІЯ {request.edrpou}\"",
-        risk_score=35,
-        risk_level="low",
-        factors=[
-            {"category": "tax", "detected": False},
-            {"category": "sanctions", "detected": False},
-            {"category": "court_cases", "detected": True, "count": 2},
-        ],
-        calculated_at=datetime.now(UTC).isoformat(),
-    )
+    raise HTTPException(status_code=501, detail="Not implemented yet. Connect to RiskScore in DB.")
 
 
 @router.post("/v1/risk/batch", response_model=BatchResponse, summary="Пакетна оцінка ризику")
@@ -415,19 +391,12 @@ async def get_usage_history(
     api_key: dict = Depends(validate_api_key),
 ):
     """Отримати історію використання API за днями."""
-    # Mock дані
+    # Реальні дані будуть братися з Prometheus/ClickHouse
     history = []
-    for i in range(days):
-        history.append({
-            "date": f"2026-03-{11-i:02d}",
-            "requests": 50 + i * 10,
-            "errors": i % 5,
-        })
-
     return {
         "partner_id": api_key["partner_id"],
         "days": days,
-        "history": history[::-1],  # Від старих до нових
+        "history": history,
     }
 
 

@@ -23,8 +23,9 @@ async def get_dashboard_overview(
     high_risk_count = await db.scalar(
         select(func.count()).select_from(RiskScore).where(RiskScore.cers >= 80)
     ) or 0
-    medium_risk_count = 156 # Mock
-
+    medium_risk_count = await db.scalar(
+        select(func.count()).select_from(RiskScore).where(RiskScore.cers >= 40, RiskScore.cers < 80)
+    ) or 0
     # 2. Останні алерти
     last_alerts = (await db.execute(
         select(Alert).order_by(Alert.created_at.desc()).limit(10)
@@ -57,6 +58,8 @@ async def get_dashboard_overview(
             {"name": "ТОВ 'Газ-Трейд'", "value": 92.5, "count": 14},
             {"name": "ПП 'Медуза'", "value": 85.1, "count": 8},
             {"name": "Брокер-А", "value": 78.4, "count": 45}
+        ] if high_risk_count == 0 else [
+            {"name": "Компанія", "value": 90.0, "count": 10} # Simplified fallback
         ],
         "top_risk_companies": [
             {
@@ -65,15 +68,8 @@ async def get_dashboard_overview(
                 "maxRisk": 98,
                 "totalValue": 45000000,
                 "count": 112
-            },
-            {
-                "name": "Транс-Груп",
-                "edrpou": "40112345",
-                "maxRisk": 88,
-                "totalValue": 12000000,
-                "count": 45
             }
-        ],
+        ] if high_risk_count == 0 else [],
         "alerts": [
             {
                 "id": str(a.id),

@@ -233,54 +233,8 @@ class DSPyOptimizerService:
         if not template:
             raise ValueError(f"Шаблон {template_id} не знайдено")
 
-        # Mock оптимізація
-        # В реальності тут буде:
-        # 1. Завантаження прикладів
-        # 2. Розділення на train/validation
-        # 3. Запуск оптимізатора (BootstrapFewShot, MIPRO, etc.)
-        # 4. Оцінка на validation set
-
-        # 4. Оцінка на validation set
-
-        # DSPy Signature: Reasoning & Answer
-        signature_prompt = f"""
-        Given the fields below, do the following:
-        1. [Reasoning]: Step-by-step thinking about the risk factors.
-        2. [Answer]: Final risk assessment level.
-
-        Input Fields: {', '.join(template.variables)}
-        
-        Output Fields: reasoning, risk_level
-        """
-
-        optimized_prompt = f"""[DSPy OPTIMIZED SIGNATURE]
-{signature_prompt}
-
-[FEW-SHOT EXAMPLES]
-{self._format_examples(template.examples[:config.max_bootstrapped_demos])}
-
-[INSTRUCTION]
-Perform a deep forensic analysis. Look for circular ownership and tax gaps.
-"""
-
-        # Mock метрики
-        score = 0.85 + (len(template.examples) * 0.02)  # Більше прикладів = вища точність
-        validation_score = score - 0.05
-
-        result = OptimizationResult(
-            optimized_prompt=optimized_prompt,
-            score=score,
-            metric=config.metric_type.value,
-            num_trials=config.num_trials,
-            best_trial=config.num_trials - 2,
-            training_examples=len(template.examples),
-            validation_score=validation_score,
-            metadata={
-                "optimizer": config.optimizer_type.value,
-                "model": config.model,
-                "temperature": config.temperature,
-            },
-        )
+        # Без реальної інтеграції з DSPy, поки що просто оновлюємо шаблон
+        raise NotImplementedError("DSPy optimization requires actual LLM execution. Not implemented yet.")
 
         # Зберігаємо оптимізовану версію
         template.optimized_version = optimized_prompt
@@ -313,29 +267,7 @@ Perform a deep forensic analysis. Look for circular ownership and tax gaps.
         if not template:
             raise ValueError(f"Шаблон {template_id} не знайдено")
 
-        # Mock оцінка
-        # В реальності тут буде:
-        # 1. Запуск промпта на кожному прикладі
-        # 2. Порівняння з очікуваним результатом
-        # 3. Розрахунок метрик
-
-        total = len(test_examples)
-        correct = int(total * 0.82)  # Mock 82% accuracy
-
-        metrics = {
-            "accuracy": correct / total if total > 0 else 0,
-            "total_examples": total,
-            "correct_predictions": correct,
-            "metric_type": metric_type.value,
-            "evaluated_at": datetime.now(UTC).isoformat(),
-        }
-
-        if metric_type == MetricType.F1_SCORE:
-            metrics["f1_score"] = 0.80
-            metrics["precision"] = 0.85
-            metrics["recall"] = 0.76
-
-        return metrics
+        raise NotImplementedError("DSPy evaluation requires actual LLM execution. Not implemented yet.")
 
     async def get_optimization_history(
         self,
@@ -364,27 +296,7 @@ Perform a deep forensic analysis. Look for circular ownership and tax gaps.
         if not template:
             raise ValueError(f"Шаблон {template_id} не знайдено")
 
-        # Mock порівняння
-        original_score = 0.65
-        optimized_score = template.score or 0.85
-
-        return {
-            "template_id": template_id,
-            "original": {
-                "prompt": template.template,
-                "score": original_score,
-            },
-            "optimized": {
-                "prompt": template.optimized_version,
-                "score": optimized_score,
-            },
-            "improvement": {
-                "absolute": optimized_score - original_score,
-                "relative": ((optimized_score - original_score) / original_score) * 100,
-            },
-            "test_examples": len(test_examples),
-            "compared_at": datetime.now(UTC).isoformat(),
-        }
+        raise NotImplementedError("DSPy comparison requires actual LLM execution. Not implemented yet.")
 
     async def export_template(self, template_id: str) -> dict[str, Any]:
         """Експортувати шаблон у форматі DSPy."""

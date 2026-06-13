@@ -569,8 +569,7 @@ async def factory_observer_websocket(websocket: WebSocket):
             # 1. Отримуємо метрики заліза
             vram = await vram_sentinel.get_stats()
 
-            # 2. Формуємо знімок стану (тут зазвичай дані з Redis/Neo4j)
-            # Для демонстрації "в роботі" використовуємо mock-генератор
+            # Реальні дані будуть отримуватись з бази
             data = {
                 "type": "FACTORY_STATE_UPDATE",
                 "timestamp": datetime.now(UTC).isoformat(),
@@ -580,33 +579,8 @@ async def factory_observer_websocket(websocket: WebSocket):
                     "critical": vram.critical,
                     "recommendation": vram.mode_recommendation
                 },
-                "swarm": [
-                    {
-                        "id": "agent-planner",
-                        "name": "ArchiCore",
-                        "role": "Lead Architect",
-                        "status": "THINKING" if random.random() > 0.5 else "IDLE",
-                        "vram_usage_gb": 1.2
-                    },
-                    {
-                        "id": "agent-coder",
-                        "name": "SurgicalCoder",
-                        "role": "Code Generator",
-                        "status": "EXECUTING" if random.random() > 0.3 else "IDLE",
-                        "vram_usage_gb": 2.1
-                    }
-                ],
-                "latest_step": {
-                    "id": str(uuid.uuid4()),
-                    "thought": random.choice([
-                        "Аналізую вузькі місця в Neo4j запитах...",
-                        "Виявлено деградацію latency в API Gateway.",
-                        "Планую рефакторинг модуля Auth (HR-02 breach).",
-                        "Оптимізую VRAM споживання для Phi-4-mini."
-                    ]),
-                    "action": "QUERY_OPTIMIZATION",
-                    "observation": "Success"
-                }
+                "swarm": [],
+                "latest_step": None
             }
 
             await websocket.send_json(data)

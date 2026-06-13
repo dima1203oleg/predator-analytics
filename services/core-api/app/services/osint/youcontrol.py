@@ -21,9 +21,9 @@ class YouControlCollector:
 
     async def get_dossier(self, edrpou: str) -> dict[str, Any]:
         """Отримати повне досьє компанії."""
-        if self.api_key == "mock":
-            logger.info(f"Using mock data for YouControl (EDRPOU: {edrpou})")
-            return self._generate_mock_dossier(edrpou)
+        if not self.api_key:
+            logger.error(f"YouControl API key is missing. Cannot fetch dossier for EDRPOU: {edrpou}")
+            return {"error": "API Key missing", "edrpou": edrpou}
 
         async with httpx.AsyncClient(timeout=10.0) as client:
             try:
@@ -36,16 +36,3 @@ class YouControlCollector:
             except Exception as e:
                 logger.error(f"YouControl Collector failed: {e!s}")
                 return {"error": "Source connection failed", "edrpou": edrpou}
-
-    def _generate_mock_dossier(self, edrpou: str) -> dict[str, Any]:
-        """Генерація якісних mock-даних для тестування UI."""
-        return {
-            "edrpou": edrpou,
-            "name": "ТОВ 'ПРЕДАТОР ОСІНТ ГРУП'",
-            "status": "активно",
-            "risk_level": "low",
-            "registration_date": "2020-01-01",
-            "authorized_capital": 1000000,
-            "address": "м. Київ, вул. Різницька, 1",
-            "is_mock": True
-        }

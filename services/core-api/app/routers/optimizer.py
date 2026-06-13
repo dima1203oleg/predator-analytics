@@ -298,7 +298,7 @@ async def compare_prompts(
     """Порівняти оригінальний та оптимізований промпт."""
     service = DSPyOptimizerService()
 
-    # Mock тестові приклади
+    # Тестові приклади
     from app.services.dspy_optimizer import Example
     test_examples = [Example(input={}, output={})]
 
