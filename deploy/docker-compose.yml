@@ -313,6 +313,10 @@ services:
     volumes:
       - ./litellm/config.yaml:/app/config.yaml
     command: ["--config", "/app/config.yaml", "--port", "4000"]
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      - DATABASE_URL=""
     env_file:
       - ../.env
     networks:

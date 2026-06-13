@@ -7,14 +7,7 @@ import httpx
 
 logger = logging.getLogger("deepseek_core")
 
-# LiteLLM proxy URL for routing
-LITELLM_URL = os.getenv("LITELLM_URL", "http://litellm:4000")
-
-class DeepSeekMode:
-    SYSTEM_BRAIN = "system_brain"
-    DATASET_DESIGN = "dataset_design"
-    MODEL_STRATEGY = "model_strategy"
-    EXPLANATION = "explanation"
+OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434")
 
 class CognitiveDecision(BaseModel):
     decision: str
@@ -23,18 +16,12 @@ class CognitiveDecision(BaseModel):
     parameters: Dict[str, Any]
 
 class DeepSeekCore:
-    """
-    Central Cognitive Orchestrator using DeepSeek R1.
-    Handles decision making for datasets, models, and orchestration.
-    """
-    
-    def __init__(self, model_name: str = "cognitive_core"):
+    def __init__(self, model_name: str = "deepseek-r1:latest"):
         self.model_name = model_name
-        self.api_url = f"{LITELLM_URL.rstrip('/')}/v1/chat/completions"
+        self.api_url = f"{OLLAMA_URL.rstrip('/')}/v1/chat/completions"
         self.headers = {"Content-Type": "application/json"}
 
     async def _invoke(self, system_prompt: str, user_prompt: str, temperature: float = 0.2) -> Dict[str, Any]:
-        """Base invocation to the Cognitive Core via LiteLLM."""
         payload = {
             "model": self.model_name,
             "messages": [
@@ -45,7 +32,7 @@ class DeepSeekCore:
             "response_format": {"type": "json_object"}
         }
         
-        async with httpx.AsyncClient(timeout=120.0) as client:
+        async with httpx.AsyncClient(timeout=300.0) as client:
             try:
                 response = await client.post(self.api_url, json=payload, headers=self.headers)
                 response.raise_for_status()
@@ -53,8 +40,7 @@ class DeepSeekCore:
                 content = data["choices"][0]["message"]["content"]
                 return json.loads(content)
             except Exception as e:
-                logger.error(f"DeepSeek Core invocation failed: {e}")
-                # Fallback format if error occurs to not break the pipeline
+                import traceback; traceback.print_exc()
                 return {
                     "decision": "ERROR",
                     "rationale": f"API Exception: {str(e)}",
@@ -63,45 +49,66 @@ class DeepSeekCore:
                 }
 
     async def evaluate_drift(self, drift_metrics: Dict[str, Any]) -> CognitiveDecision:
-        """System Brain Mode: Decide whether drift is concept, data, or noise."""
         system_prompt = (
-            "You are the System Brain of PREDATOR Analytics. You analyze data/concept drift "
-            "metrics and decide the retrain strategy. Return JSON with: decision (string: "
-            "'FULL_RETRAIN', 'INCREMENTAL', 'PARTIAL', 'IGNORE'), rationale (string), "
-            "confidence (float 0-1), and parameters (dict)."
+            "Ти є Системним Мозком (System Brain) платформи PREDATOR Analytics. Твоє завдання - аналізувати "
+            "метрики дрифту даних/концептів (data/concept drift) і приймати рішення щодо стратегії перенавчання моделі. "
+            "ПОВЕРНИ ВИКЛЮЧНО JSON з такими полями: decision (рядок: 'FULL_RETRAIN', 'INCREMENTAL', 'PARTIAL', 'IGNORE'), "
+            "rationale (рядок з детальним обґрунтуванням українською мовою), confidence (десяткове число 0-1) "
+            "та parameters (словник). УСІ ТЕКСТИ ПОВИННІ БУТИ УКРАЇНСЬКОЮ МОВОЮ."
         )
-        user_prompt = f"Analyze the following drift metrics: {json.dumps(drift_metrics)}"
+        user_prompt = f"Проаналізуй наступні метрики дрифту: {json.dumps(drift_metrics)}"
         res = await self._invoke(system_prompt, user_prompt, temperature=0.1)
         return CognitiveDecision(**res)
 
     async def design_dataset(self, raw_metadata: Dict[str, Any]) -> CognitiveDecision:
-        """Dataset Design Mode: Recommend features, balances, synthetic data."""
         system_prompt = (
-            "You are the Dataset Architect. Analyze raw metadata and recommend dataset structure. "
-            "Return JSON with: decision (string: dataset blueprint name), rationale (string), "
-            "confidence (float), and parameters (dict containing feature_engineering, "
-            "imbalance_strategy, synthetic_data_needs)."
+            "Ти є Архітектором Датасетів (Dataset Architect). Твоє завдання - аналізувати сирі метадані та рекомендувати структуру "
+            "датасету. ПОВЕРНИ ВИКЛЮЧНО JSON з полями: decision (рядок: назва стратегії/блюпринту), rationale (обґрунтування українською мовою), "
+            "confidence (десяткове число), та parameters (словник, що містить feature_engineering, imbalance_strategy, synthetic_data_needs). "
+            "УСІ ВНУТРІШНІ ТЕКСТИ В РІШЕННЯХ ТА РЕКОМЕНДАЦІЯХ МАЮТЬ БУТИ ВИКЛЮЧНО УКРАЇНСЬКОЮ МОВОЮ."
         )
-        user_prompt = f"Metadata: {json.dumps(raw_metadata)}"
+        user_prompt = f"Метадані датасету: {json.dumps(raw_metadata)}"
         res = await self._invoke(system_prompt, user_prompt, temperature=0.3)
         return CognitiveDecision(**res)
 
-    async def strategy_optimizer(self, task_desc: Dict[str, Any]) -> CognitiveDecision:
-        """Model Strategy Mode: Define search space, models, loss for AutoML."""
+    async def generate_novel_blueprint(self, context_seed: str, history: List[str]) -> CognitiveDecision:
         system_prompt = (
-            "You are the AI Meta-Optimizer. Define the AutoML strategy. "
-            "Return JSON with: decision (model family e.g., 'tree-ensemble', 'neural'), "
-            "rationale, confidence, parameters (search_space, loss_function, hyperparams)."
+            "Ти є Елітним Аналітиком-Розслідувачем. Твоє завдання — згенерувати АБСОЛЮТНО НОВИЙ, "
+            "унікальний блюпринт датасету для митної/економічної аналітики, який відкриває нову корупційну або економічну схему. "
+            "ЗАБОРОНЕНО повторювати ідеї, які є в історії (history). Шукай нові сфери (медицина, ІТ, тендери, крипта, благодійність тощо). "
+            "ПОВЕРНИ ВИКЛЮЧНО JSON формату: \n"
+            "{\n"
+            "  \"decision\": \"Назва нового датасету\",\n"
+            "  \"rationale\": \"Опис того, що саме він виявляє (українською)\",\n"
+            "  \"confidence\": 0.9,\n"
+            "  \"parameters\": {\n"
+            "    \"суть\": \"Яку глибинну логіку або схему ти атакуєш\",\n"
+            "    \"поля\": [\"Колонка 1\", \"Колонка 2\"],\n"
+            "    \"приклад_кейса\": \"Як виглядає реальний запис\"\n"
+            "  }\n"
+            "}\n"
+            "УСІ ТЕКСТИ МАЮТЬ БУТИ ВИКЛЮЧНО УКРАЇНСЬКОЮ МОВОЮ, СТИЛЬ РАДИКАЛЬНИЙ І ТОЧНИЙ."
         )
-        user_prompt = f"Task Description: {json.dumps(task_desc)}"
+        user_prompt = f"ІСТОРІЯ ВЖЕ ІСНУЮЧИХ ІДЕЙ (НЕ ПОВТОРЮВАТИ):\n{json.dumps(history[-20:])}\n\nКОНТЕКСТ ВІД КОРИСТУВАЧА:\n{context_seed[:2000]}...\n\nЗГЕНЕРУЙ НОВУ ІДЕЮ №{len(history) + 101}!"
+        res = await self._invoke(system_prompt, user_prompt, temperature=0.8) # Висока температура для креативності
+        return CognitiveDecision(**res)
+
+    async def strategy_optimizer(self, task_desc: Dict[str, Any]) -> CognitiveDecision:
+        system_prompt = (
+            "Ти є AI Мета-Оптимізатором. Твоє завдання - визначити стратегію AutoML. "
+            "ПОВЕРНИ ВИКЛЮЧНО JSON з полями: decision (сімейство моделей, наприклад 'tree-ensemble', 'neural'), "
+            "rationale (детальне обґрунтування українською мовою), confidence (десяткове число 0-1), parameters (словник з search_space, "
+            "loss_function, hyperparams). УСІ ТЕКСТИ ТА КОМЕНТАРІ МАЮТЬ БУТИ ВІДПОВІДНО УКРАЇНСЬКОЮ МОВОЮ."
+        )
+        user_prompt = f"Опис завдання: {json.dumps(task_desc)}"
         res = await self._invoke(system_prompt, user_prompt, temperature=0.2)
         return CognitiveDecision(**res)
 
     async def explain_results(self, shap_values: Dict[str, Any], predictions: List[float]) -> str:
-        """Explanation Mode: Human readable insights."""
         system_prompt = (
-            "You are the Explainability Core. Convert SHAP values and predictions into a "
-            "human-readable business insight. Focus on risk factors and recommendations."
+            "Ти є Ядром Пояснення (Explainability Core). Твоє завдання - конвертувати SHAP-значення та передбачення моделі "
+            "у зрозумілий для людини бізнес-інсайт. Сфокусуйся на факторах ризику та рекомендаціях. "
+            "ВІДПОВІДАЙ ВИКЛЮЧНО УКРАЇНСЬКОЮ МОВОЮ, професійним стилем митного аналітика."
         )
         user_prompt = json.dumps({"shap": shap_values, "predictions": predictions})
         
@@ -114,11 +121,11 @@ class DeepSeekCore:
             "temperature": 0.4
         }
         
-        async with httpx.AsyncClient(timeout=60.0) as client:
+        async with httpx.AsyncClient(timeout=120.0) as client:
             try:
                 response = await client.post(self.api_url, json=payload, headers=self.headers)
                 response.raise_for_status()
                 return response.json()["choices"][0]["message"]["content"]
             except Exception as e:
-                logger.error(f"Explanation failed: {e}")
-                return "Explainability generation failed."
+                logger.error(f"Помилка генерації пояснення: {e}")
+                return "Помилка генерації пояснення через AI."

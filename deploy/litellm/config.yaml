@@ -26,12 +26,12 @@ model_list:
   - model_name: ultra-router-coding
     litellm_params:
       model: mistral/codestral-latest
-      api_key: ${MISTRAL_API_KEY}
+      api_key: ${MISTRAL_API_KEY:-dummy}
       api_base: https://api.mistral.ai/v1
   - model_name: ultra-router-coding
     litellm_params:
       model: deepseek/deepseek-coder
-      api_key: ${DEEPSEEK_API_KEY}
+      api_key: ${DEEPSEEK_API_KEY:-dummy}
       api_base: https://api.deepseek.com/v1
 
   # ==============================================================
@@ -69,7 +69,7 @@ model_list:
   - model_name: ultra-router-reasoning
     litellm_params:
       model: deepseek/deepseek-reasoner
-      api_key: ${DEEPSEEK_API_KEY}
+      api_key: ${DEEPSEEK_API_KEY:-dummy}
       api_base: https://api.deepseek.com/v1
   - model_name: ultra-router-reasoning
     litellm_params:
@@ -91,7 +91,7 @@ model_list:
   - model_name: cognitive_core
     litellm_params:
       model: deepseek/deepseek-reasoner
-      api_key: ${DEEPSEEK_API_KEY}
+      api_key: ${DEEPSEEK_API_KEY:-dummy}
       api_base: https://api.deepseek.com/v1
   - model_name: cognitive_core
     litellm_params:
@@ -126,7 +126,7 @@ model_list:
 # Загальні налаштування LiteLLM (Без БД)
 # ================================================================
 general_settings:
-  master_key: ${LITELLM_MASTER_KEY}
+  master_key: ${LITELLM_MASTER_KEY:-sk-1234}
   database_url: null
   store_model_in_db: false
 
