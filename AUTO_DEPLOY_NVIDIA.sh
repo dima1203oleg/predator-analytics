@@ -126,12 +126,12 @@ NVIDIA_ssh "
 
     if [ -f .venv/bin/activate ]; then
         source .venv/bin/activate
-        PIP_CMD="pip"
-        PYTHON_CMD="python"
+        PIP_CMD=\"pip\"
+        PYTHON_CMD=\"python\"
     else
         echo '⚠️ venv не створено. Використовуємо системний pip з --break-system-packages'
-        PIP_CMD="pip3 --break-system-packages"
-        PYTHON_CMD="python3"
+        PIP_CMD=\"pip3 --break-system-packages\"
+        PYTHON_CMD=\"python3\"
     fi
 
     # ФІКС: Примусово встановлюємо numpy та ML бібліотеки (ключові залежності)
