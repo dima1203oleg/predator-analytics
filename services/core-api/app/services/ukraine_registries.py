@@ -386,14 +386,10 @@ class UkraineRegistriesService:
 
     # ======================== БОРЖНИКИ ========================
 
-    async def check_debtor(self, edrpou: str) -> DebtorInfo:
+    async def check_debtor(self, edrpou: str) -> DebtorInfo | None:
         """Перевірка податкових боргів."""
-        # Без інтеграції повертаємо порожню інформацію про борги
-        return DebtorInfo(
-            edrpou=edrpou,
-            name=f"ТОВ \"КОМПАНІЯ {edrpou}\"",
-            has_debt=False,
-        )
+        # Без інтеграції повертаємо None
+        return None
 
     # ======================== СУДОВІ СПРАВИ ========================
 

@@ -8,8 +8,11 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Header, HTTPException, Query
 from pydantic import BaseModel, Field
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 
-router = APIRouter(prefix="/public", tags=["публічний API"])
+from app.database import get_db
+from predator_common.models import Company, RiskScore, SanctionsEntry
 
 
 # ======================== API KEY VALIDATION ========================
@@ -136,43 +139,65 @@ async def health_check():
 async def lookup_company(
     request: CompanyLookupRequest,
     api_key: dict = Depends(validate_api_key),
+    db: AsyncSession = Depends(get_db)
 ):
     """Отримати базову інформацію про компанію за ЄДРПОУ.
 
     **Rate limit:** 100 запитів/хвилина
     """
-    # Реалізація через БД
-    from app.database import get_db
-    from sqlalchemy.ext.asyncio import AsyncSession
-    from predator_common.models import Company
-    from sqlalchemy import select
-    from fastapi import Depends
-    
-    # We would need db session here, but for now we just raise 501
-    raise HTTPException(status_code=501, detail="Not implemented yet. Connect to DB.")
+    result = await db.execute(select(Company).where(Company.edrpou == request.edrpou))
+    company = result.scalar_one_or_none()
+
+    if not company:
+        raise HTTPException(status_code=404, detail="Company not found")
+
+    return CompanyLookupResponse(
+        edrpou=company.edrpou,
+        name=company.name,
+        status=company.status or "unknown",
+        region=company.address.split(',')[0] if company.address else None,
+        kved=company.industry,
+    )
 
 
 @router.post("/v1/company/batch", response_model=BatchResponse, summary="Пакетний пошук компаній")
 async def batch_lookup_companies(
     request: BatchRequest,
     api_key: dict = Depends(validate_api_key),
+    db: AsyncSession = Depends(get_db)
 ):
     """Пакетний пошук компаній (до 100 за запит).
 
     **Rate limit:** 10 запитів/хвилина
     """
+    if not request.items:
+        return BatchResponse(total=0, processed=0, results=[])
+
+    result = await db.execute(select(Company).where(Company.edrpou.in_(request.items)))
+    companies = result.scalars().all()
+    found_edrpou = {c.edrpou: c for c in companies}
+
     results = []
     for edrpou in request.items:
-        results.append({
-            "edrpou": edrpou,
-            "name": f"ТОВ \"КОМПАНІЯ {edrpou}\"",
-            "status": "active",
-            "found": True,
-        })
+        company = found_edrpou.get(edrpou)
+        if company:
+            results.append({
+                "edrpou": company.edrpou,
+                "name": company.name,
+                "status": company.status,
+                "found": True,
+            })
+        else:
+            results.append({
+                "edrpou": edrpou,
+                "name": None,
+                "status": None,
+                "found": False,
+            })
 
     return BatchResponse(
         total=len(request.items),
-        processed=len(results),
+        processed=len(companies),
         results=results,
     )
 
@@ -181,15 +206,19 @@ async def batch_lookup_companies(
 async def check_sanctions(
     request: SanctionCheckRequest,
     api_key: dict = Depends(validate_api_key),
+    db: AsyncSession = Depends(get_db)
 ):
     """Перевірка у санкційних списках (РНБО, OFAC, EU, UK, UN).
 
     **Rate limit:** 100 запитів/хвилина
     """
+    result = await db.execute(select(SanctionsEntry).where(SanctionsEntry.name.ilike(f"%{request.name}%")))
+    entries = result.scalars().all()
+
     return SanctionCheckResponse(
         query=request.name,
-        is_sanctioned=False,
-        matches_count=0,
+        is_sanctioned=len(entries) > 0,
+        matches_count=len(entries),
         lists_checked=["rnbo_ua", "ofac", "eu", "uk", "un"],
         checked_at=datetime.now(UTC).isoformat(),
     )
@@ -199,17 +228,24 @@ async def check_sanctions(
 async def batch_check_sanctions(
     request: BatchRequest,
     api_key: dict = Depends(validate_api_key),
+    db: AsyncSession = Depends(get_db)
 ):
     """Пакетна перевірка санкцій (до 100 за запит).
 
     **Rate limit:** 10 запитів/хвилина
     """
+    if not request.items:
+        return BatchResponse(total=0, processed=0, results=[])
+
+    # Simple approach: fetch all matches
     results = []
     for name in request.items:
+        result = await db.execute(select(SanctionsEntry).where(SanctionsEntry.name.ilike(f"%{name}%")))
+        count = len(result.scalars().all())
         results.append({
             "query": name,
-            "is_sanctioned": False,
-            "matches_count": 0,
+            "is_sanctioned": count > 0,
+            "matches_count": count,
         })
 
     return BatchResponse(
@@ -223,34 +259,63 @@ async def batch_check_sanctions(
 async def get_risk_score(
     request: RiskScoreRequest,
     api_key: dict = Depends(validate_api_key),
+    db: AsyncSession = Depends(get_db)
 ):
     """Отримати AML-скор компанії.
 
     **Rate limit:** 50 запитів/хвилина
     """
-    raise HTTPException(status_code=501, detail="Not implemented yet. Connect to RiskScore in DB.")
+    result = await db.execute(select(Company).where(Company.edrpou == request.edrpou))
+    company = result.scalar_one_or_none()
+    
+    if not company:
+        raise HTTPException(status_code=404, detail="Company not found")
+        
+    return RiskScoreResponse(
+        edrpou=request.edrpou,
+        risk_score=company.cers_score or 0,
+        risk_level=company.cers_level or "low",
+        factors=[],
+        calculated_at=company.cers_updated_at.isoformat() if company.cers_updated_at else datetime.now(UTC).isoformat()
+    )
 
 
 @router.post("/v1/risk/batch", response_model=BatchResponse, summary="Пакетна оцінка ризику")
 async def batch_risk_score(
     request: BatchRequest,
     api_key: dict = Depends(validate_api_key),
+    db: AsyncSession = Depends(get_db)
 ):
     """Пакетна оцінка ризику (до 100 за запит).
 
     **Rate limit:** 5 запитів/хвилина
     """
+    if not request.items:
+        return BatchResponse(total=0, processed=0, results=[])
+
+    result = await db.execute(select(Company).where(Company.edrpou.in_(request.items)))
+    companies = result.scalars().all()
+    found_edrpou = {c.edrpou: c for c in companies}
+
     results = []
     for edrpou in request.items:
-        results.append({
-            "edrpou": edrpou,
-            "risk_score": 35,
-            "risk_level": "low",
-        })
+        company = found_edrpou.get(edrpou)
+        if company:
+            results.append({
+                "edrpou": edrpou,
+                "risk_score": company.cers_score or 0,
+                "risk_level": company.cers_level or "low",
+            })
+        else:
+            results.append({
+                "edrpou": edrpou,
+                "risk_score": None,
+                "risk_level": None,
+            })
 
     return BatchResponse(
         total=len(request.items),
-        processed=len(results),
+        processed=len(companies),
         results=results,
     )
 
@@ -260,50 +325,21 @@ async def get_monitoring_status(
     edrpou: str,
     api_key: dict = Depends(validate_api_key),
 ):
-    """Отримати статус моніторингу компанії.
-
-    **Rate limit:** 100 запитів/хвилина
-    """
-    return {
-        "edrpou": edrpou,
-        "is_monitored": True,
-        "monitoring_since": "2025-01-15T10:00:00Z",
-        "last_check": datetime.now(UTC).isoformat(),
-        "alerts_count": 0,
-        "next_check": "2026-03-12T00:00:00Z",
-    }
-
+    raise HTTPException(status_code=501, detail="Monitoring not implemented yet.")
 
 @router.post("/v1/company/{edrpou}/monitoring/start", summary="Почати моніторинг")
 async def start_monitoring(
     edrpou: str,
     api_key: dict = Depends(validate_api_key),
 ):
-    """Додати компанію до моніторингу.
-
-    **Rate limit:** 10 запитів/хвилина
-    """
-    return {
-        "edrpou": edrpou,
-        "status": "monitoring_started",
-        "started_at": datetime.now(UTC).isoformat(),
-    }
-
+    raise HTTPException(status_code=501, detail="Monitoring not implemented yet.")
 
 @router.delete("/v1/company/{edrpou}/monitoring/stop", summary="Зупинити моніторинг")
 async def stop_monitoring(
     edrpou: str,
     api_key: dict = Depends(validate_api_key),
 ):
-    """Видалити компанію з моніторингу.
-
-    **Rate limit:** 10 запитів/хвилина
-    """
-    return {
-        "edrpou": edrpou,
-        "status": "monitoring_stopped",
-        "stopped_at": datetime.now(UTC).isoformat(),
-    }
+    raise HTTPException(status_code=501, detail="Monitoring not implemented yet.")
 
 
 # ======================== WEBHOOKS ========================
@@ -314,39 +350,14 @@ async def configure_webhook(
     config: WebhookConfig,
     api_key: dict = Depends(validate_api_key),
 ):
-    """Налаштувати webhook для отримання сповіщень.
-
-    **Події:**
-    - `risk_change` — зміна рівня ризику
-    - `sanction_match` — збіг у санкційних списках
-    - `new_case` — нова судова справа
-    - `status_change` — зміна статусу компанії
-    """
-    return {
-        "webhook_id": "wh_001",
-        "url": config.url,
-        "events": config.events,
-        "status": "active",
-        "created_at": datetime.now(UTC).isoformat(),
-    }
+    raise HTTPException(status_code=501, detail="Webhooks not implemented yet.")
 
 
 @router.get("/v1/webhooks", summary="Список webhooks")
 async def list_webhooks(
     api_key: dict = Depends(validate_api_key),
 ):
-    """Отримати список налаштованих webhooks."""
-    return {
-        "webhooks": [
-            {
-                "webhook_id": "wh_001",
-                "url": "https://partner.example.com/webhook",
-                "events": ["risk_change", "sanction_match"],
-                "status": "active",
-                "last_triggered": "2026-03-10T15:30:00Z",
-            },
-        ],
-    }
+    raise HTTPException(status_code=501, detail="Webhooks not implemented yet.")
 
 
 @router.delete("/v1/webhooks/{webhook_id}", summary="Видалити webhook")
@@ -354,12 +365,7 @@ async def delete_webhook(
     webhook_id: str,
     api_key: dict = Depends(validate_api_key),
 ):
-    """Видалити webhook."""
-    return {
-        "webhook_id": webhook_id,
-        "status": "deleted",
-        "deleted_at": datetime.now(UTC).isoformat(),
-    }
+    raise HTTPException(status_code=501, detail="Webhooks not implemented yet.")
 
 
 # ======================== USAGE & BILLING ========================
@@ -371,18 +377,7 @@ async def get_usage(
     api_key: dict = Depends(validate_api_key),
 ):
     """Отримати статистику використання API."""
-    return APIUsageResponse(
-        partner_id=api_key["partner_id"],
-        period=period,
-        requests_total=1500,
-        requests_remaining=8500,
-        rate_limit=api_key["rate_limit"],
-        endpoints={
-            "/v1/company/lookup": 800,
-            "/v1/sanctions/check": 500,
-            "/v1/risk/score": 200,
-        },
-    )
+    raise HTTPException(status_code=501, detail="Usage statistics not implemented yet.")
 
 
 @router.get("/v1/usage/history", summary="Історія використання")
@@ -408,24 +403,7 @@ async def list_api_keys(
     api_key: dict = Depends(validate_api_key),
 ):
     """Отримати список API ключів партнера."""
-    return {
-        "keys": [
-            {
-                "key_id": "pk_live_xxx",
-                "name": "Production",
-                "created_at": "2025-01-01T00:00:00Z",
-                "last_used": "2026-03-11T20:00:00Z",
-                "status": "active",
-            },
-            {
-                "key_id": "pk_test_xxx",
-                "name": "Testing",
-                "created_at": "2025-01-01T00:00:00Z",
-                "last_used": "2026-03-10T15:00:00Z",
-                "status": "active",
-            },
-        ],
-    }
+    raise HTTPException(status_code=501, detail="API Keys management not implemented yet.")
 
 
 @router.post("/v1/keys/rotate", summary="Ротація API ключа")
@@ -433,11 +411,7 @@ async def rotate_api_key(
     api_key: dict = Depends(validate_api_key),
 ):
     """Згенерувати новий API ключ (старий буде деактивовано через 24 години)."""
-    return {
-        "new_key": "pk_live_new_xxx",
-        "old_key_expires_at": "2026-03-12T23:00:00Z",
-        "created_at": datetime.now(UTC).isoformat(),
-    }
+    raise HTTPException(status_code=501, detail="API Keys rotation not implemented yet.")
 
 
 # ======================== DOCUMENTATION ========================
