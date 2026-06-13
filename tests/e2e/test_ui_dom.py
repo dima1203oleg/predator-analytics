@@ -69,3 +69,33 @@ async def test_ui_file_upload_flow(page):
     # Перевірка оновлення таблиці недавніх імпортів
     recent_table = page.locator("[data-testid='recent-imports-table']")
     assert await recent_table.is_visible()
+
+@pytest.mark.asyncio
+async def test_ui_empty_states_and_errors(page):
+    """
+    Перевірка відсутності порожніх блоків (empty states) 
+    та відображення повідомлень про помилки.
+    """
+    await page.goto(f"{FRONTEND_URL}/import")
+    await page.wait_for_load_state("networkidle")
+    
+    # Assert no empty blocks with class 'empty-state' or similar unless expected
+    empty_blocks = await page.locator(".empty-state").count()
+    # Accept 0 or 1 empty block if it's the "No files uploaded yet" message
+    assert empty_blocks <= 1, f"Found {empty_blocks} empty states, expected 0 or 1"
+    
+    # Try uploading invalid file
+    test_file_path = "/tmp/ui_test_invalid_file.txt"
+    with open(test_file_path, "w") as f:
+        f.write("This is an invalid file format")
+        
+    file_input = page.locator("input[type='file']")
+    await file_input.set_input_files(test_file_path)
+    
+    upload_btn = page.locator("button:has-text('Завантажити')")
+    await upload_btn.click()
+    
+    # Expecting an error toast or message
+    error_msg = page.locator("text='Помилка'").first
+    await error_msg.wait_for(state="visible", timeout=10000)
+    assert await error_msg.is_visible()

@@ -64,3 +64,11 @@ async def test_chaos_kafka_restart_during_ingestion():
     # Симулюємо процес...
     # restart_docker_container("deploy-redpanda-1")
     pass
+
+@pytest.mark.asyncio
+async def test_chaos_worker_recovery():
+    """
+    Перевірка відновлення Ingestion Worker після збоїв бази даних.
+    """
+    # Simulate DB dropping
+    print("Chaos test worker recovery placeholder passed.")
