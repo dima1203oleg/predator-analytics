@@ -26,7 +26,7 @@ export const AdvDvsDashboard: React.FC = () => {
   const fetchStatus = async () => {
     try {
       // Підключення до ADV-DVS сервісу на порту 8003
-      const response = await fetch('http://192.168.0.200:8003/api/v1/diagnostics/run');
+      const response = await fetch('http://194.177.1.240:8003/api/v1/diagnostics/run');
       if (!response.ok) throw new Error('Помилка завантаження даних');
       const json = await response.json();
       setData(json);

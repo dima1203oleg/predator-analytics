@@ -17,7 +17,7 @@ interface TerminalLine {
 export const PtyTerminal: React.FC = () => {
     const [lines, setLines] = useState<TerminalLine[]>([
         { text: 'PREDATOR OS v61.0-ELITE (Build 2026.04.26-MASTER)', type: 'system', timestamp: new Date().toLocaleTimeString() },
-        { text: 'ВСТАНОВЛЕННЯ_ЗВ’ЯЗКУ_З_КЛАСТЕ ОМ_IMAC... [192.168.0.200]', type: 'system', timestamp: new Date().toLocaleTimeString() },
+        { text: 'ВСТАНОВЛЕННЯ_ЗВ’ЯЗКУ_З_КЛАСТЕ ОМ_IMAC... [194.177.1.240]', type: 'system', timestamp: new Date().toLocaleTimeString() },
         { text: 'PTY_SUBSYSTEM: READY [QUANTUM_LINK_ESTABLISHED]', type: 'system', timestamp: new Date().toLocaleTimeString() },
         { text: 'ВІТАЄМО, SENIOR ENGINEER. ЯДРО СУВЕРЕННОГОРУПРАВЛІННЯ ГОТОВЕ ДО ДИ ЕКТИВ.', type: 'system', timestamp: new Date().toLocaleTimeString() },
     ]);

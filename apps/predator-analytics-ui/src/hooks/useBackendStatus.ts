@@ -32,7 +32,7 @@ const getSourceLabel = (): string => {
 /** Людиночитана мітка активного вузла для відображення в UI */
 const getNodeSource = (): string => {
     if (API_BASE_URL.includes('localhost:8001'))  return 'LOCAL_IMAC_BRIDGE';
-    if (API_BASE_URL.includes('192.168.0.200'))   return 'SOVEREIGN_IMAC';
+    if (API_BASE_URL.includes('194.177.1.240'))   return 'SOVEREIGN_IMAC';
     if (API_BASE_URL.includes('194.177.1'))       return 'HYBRID_NVIDIA';
     if (API_BASE_URL.includes('zrok.io')) {
         if (API_BASE_URL.includes('mirror'))      return 'CLOUD_COLAB_MIRROR';
