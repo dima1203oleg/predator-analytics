@@ -118,6 +118,12 @@ echo "🐍 Встановлення залежностей та запуск Cor
 NVIDIA_ssh "
     cd ~/Predator_60/services/core-api
 
+    # Перевірка на "зламаний" venv (якщо його скопійовано з Mac)
+    if [ -L .venv/bin/python ] && [ ! -e .venv/bin/python ]; then
+        echo 'Видалення зламаного .venv...'
+        rm -rf .venv
+    fi
+
     # Створюємо venv якщо немає
     if [ ! -d '.venv' ]; then
         echo 'Створення venv...'
