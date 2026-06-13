@@ -1,11 +1,11 @@
 import sys
 import asyncio
-from services.adv_dvs.models import ValidationResult
+from services.adv_dvs.models import CheckResult, CheckStatus
 
 sys.path.append("/Users/Shared/Predator_60/libs/predator-common")
 from predator_common.ai.deepseek_core import DeepSeekCore
 
-async def run_check(context: dict) -> ValidationResult:
+async def run_check(context: dict) -> CheckResult:
     """
     [Level 11] DeepSeek R1 Cognitive Core Integration Validation
     
@@ -26,25 +26,25 @@ async def run_check(context: dict) -> ValidationResult:
         decision = await brain.strategy_optimizer(task_desc)
         
         if not decision or not decision.decision:
-            return ValidationResult(
+            return CheckResult(
                 name="DeepSeek R1 Core Response",
-                status="FAILED",
-                error_message="DeepSeekCore returned an empty or invalid decision for strategy optimization."
+                status=CheckStatus.FAIL,
+                details="DeepSeekCore returned an empty or invalid decision for strategy optimization."
             )
             
-        return ValidationResult(
+        return CheckResult(
             name="DeepSeek R1 Core Connection",
-            status="PASSED",
+            status=CheckStatus.OK,
             details=f"Successfully received strategy from AI: {decision.decision} (Confidence: {decision.confidence})"
         )
 
     except Exception as e:
-        return ValidationResult(
+        return CheckResult(
             name="DeepSeek R1 Core Connection",
-            status="FAILED",
-            error_message=f"DeepSeekCore integration test failed: {e!s}"
+            status=CheckStatus.FAIL,
+            details=f"DeepSeekCore integration test failed: {e!s}"
         )
 
 if __name__ == "__main__":
     res = asyncio.run(run_check({}))
-    print(f"[{res.status}] {res.name}: {res.details or res.error_message}")
+    print(f"[{res.status.value}] {res.name}: {res.details}")
