@@ -143,7 +143,7 @@ export const SovereignCommandCenter: React.FC = () => {
             <div className="grid grid-cols-2 gap-6">
               <MiniStatus label="ТИСК_VRAM" value={`${vramGb} GB`} icon={Zap} />
               <MiniStatus label="ЗАВАНТАЖ_CPU" value={cpuLoad} icon={Cpu} color="sky" />
-              <MiniStatus label="ВУЗОЛ_IMAC" value={status?.healthy ? "АКТИВНИЙ" : "ОФЛАЙН"} icon={Globe} color={status?.healthy ? "emerald" : "rose"} />
+              <MiniStatus label="ВУЗОЛ_NVIDIA" value={status?.healthy ? "АКТИВНИЙ" : "ОФЛАЙН"} icon={Globe} color={status?.healthy ? "emerald" : "rose"} />
               <MiniStatus label="ШІ_ДВИГУНИ" value={String(activeEnginesCount)} icon={Activity} />
             </div>
             <div className="p-8 glass-wraith rounded-[2.5rem] border-2 border-white/5 space-y-6 shadow-4xl group hover:border-rose-500/40 transition-all duration-700 overflow-hidden relative">

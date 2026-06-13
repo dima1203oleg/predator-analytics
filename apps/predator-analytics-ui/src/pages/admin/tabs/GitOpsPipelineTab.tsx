@@ -276,7 +276,7 @@ export const GitOpsPipelineTab: React.FC = () => {
           <span className="opacity-20">•</span>
           <div className="flex items-center gap-3 text-rose-500/40">
              <Shield size={14} />
-             <span>КЛАСТЕР: PREDATOR_ELITE_COMPUTE_iMAC</span>
+             <span>КЛАСТЕР: PREDATOR_ELITE_COMPUTE_NVIDIA</span>
           </div>
         </div>
       </div>

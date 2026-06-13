@@ -1,5 +1,5 @@
 #!/bin/bash
-# deploy_imac_sovereign.sh
+# deploy_nvidia_sovereign.sh
 # Автоматизоване розгортання PREDATOR на NVIDIA (Sovereign Node)
 
 set -e

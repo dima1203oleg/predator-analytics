@@ -390,7 +390,7 @@ export const Predator: React.FC = () => {
               <div className="flex items-center gap-3">
                 <div className={`w-2.5 h-2.5 rounded-full  shadow-lg ${nodeStatus === 'KAGGLE_RESERVE' ? 'bg-blue-400 shadow-blue-500/50' : 'bg-emerald-400 shadow-emerald-500/50'}`} />
                 <span className="text-[10px] uppercase font-black tracking-[0.2em] text-white/40">
-                  Active_Node: <span className="text-white/80">{nodeStatus === 'KAGGLE_RESERVE' ? 'Kaggle_Reserve_Node_01' : 'Sovereign_Primary_iMac'}</span>
+                  Active_Node: <span className="text-white/80">{nodeStatus === 'KAGGLE_RESERVE' ? 'Kaggle_Reserve_Node_01' : 'Sovereign_Primary_NVIDIA'}</span>
                 </span>
               </div>
               

@@ -98,7 +98,7 @@ while true; do
     manage_access "predatorgpu" "127.0.0.1" "2224"
     
     # 2. NVIDIA (.199)
-    manage_access "predatorimacssh" "127.0.0.1" "2225"
+    manage_access "predatornvidiassh" "127.0.0.1" "2225"
 
     # 3. K8s API (якщо потрібно)
     # manage_access "predatork8s" "127.0.0.1" "6443"

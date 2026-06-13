@@ -1,5 +1,5 @@
 #!/bin/bash
-# deploy_imac_full_stack.sh
+# deploy_nvidia_full_stack.sh
 # Повне автономне розгортання PREDATOR (8 DBs + API + UI) на NVIDIA
 # v60.5-ELITE
 

@@ -11,15 +11,15 @@ sync_nvidia() {
   rsync -avz --exclude="node_modules" --exclude=".git" --exclude=".venv" $PROJECT_DIR/ nvidia-server:$REMOTE_DIR/
 }
 
-sync_imac() {
+sync_nvidia() {
   echo "🖥 Синхронізація з NVIDIA (Fallback)..."
   rsync -avz --exclude="node_modules" --exclude=".git" --exclude=".venv" $PROJECT_DIR/ NVIDIA:$REMOTE_DIR/
 }
 
 case $SYNC_TARGET in
   1) sync_nvidia ;;
-  2) sync_imac ;;
-  3) sync_nvidia; sync_imac ;;
+  2) sync_nvidia ;;
+  3) sync_nvidia; sync_nvidia ;;
   *) echo "Невідомий вибір" ;;
 esac
 

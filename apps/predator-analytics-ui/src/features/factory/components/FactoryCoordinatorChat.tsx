@@ -70,7 +70,7 @@ export const FactoryCoordinatorChat: React.FC<FactoryCoordinatorChatProps> = ({
           <div className="flex flex-col items-end gap-1">
             <div className="flex items-center gap-3 px-4 py-1.5 bg-white/5 border border-white/10 rounded-xl">
               <Cpu size={12} className="text-rose-500" />
-              <span className="text-[10px] font-mono text-slate-400 font-black tracking-widest uppercase">NODE_IMAC_ELITE</span>
+              <span className="text-[10px] font-mono text-slate-400 font-black tracking-widest uppercase">NODE_NVIDIA_ELITE</span>
             </div>
             <span className="text-[8px] font-mono text-slate-600 uppercase tracking-widest italic opacity-50">CANONICAL_AGI_V1</span>
           </div>

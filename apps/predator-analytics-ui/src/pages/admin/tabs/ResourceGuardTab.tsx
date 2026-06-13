@@ -295,7 +295,7 @@ export const ResourceGuardTab: React.FC = () => {
                <div className="flex items-center justify-between mb-8 relative z-10">
                   <div className="flex flex-col">
                      <span className="text-[10px] font-black font-mono text-rose-500/60 uppercase tracking-[0.4em] italic mb-2">СУВЕРЕННИЙ_ОФЛОАД</span>
-                     <span className="text-2xl font-black text-white italic tracking-tighter uppercase glint-elite">SOVEREIGN_NODE_IMAC</span>
+                     <span className="text-2xl font-black text-white italic tracking-tighter uppercase glint-elite">SOVEREIGN_NODE_NVIDIA</span>
                   </div>
                   <div className="p-4 bg-rose-500/10 rounded-2xl border-2 border-rose-500/20 group-hover:bg-rose-500/20 transition-all duration-700">
                      <Server size={24} className="text-rose-500" />

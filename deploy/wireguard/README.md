@@ -4,7 +4,7 @@
 
 ## 📋 Файли
 1. `PREDATOR_MACBOOK.conf` — Імпортуйте цей файл у додаток WireGuard на MacBook.
-2. `PREDATOR_IMAC.conf` — Встановіть цей конфіг на NVIDIA (`/etc/wireguard/wg0.conf`).
+2. `PREDATOR_NVIDIA.conf` — Встановіть цей конфіг на NVIDIA (`/etc/wireguard/wg0.conf`).
 
 ## 🚀 Інструкція
 1. Відкрийте **WireGuard** на MacBook.

@@ -29,7 +29,7 @@ rsync -avz -e "ssh -o ConnectTimeout=5" $EXCLUDE_ARGS ./ $REMOTE_USER@$REMOTE_IP
 
 if [ $? -eq 0 ]; then
   echo "✅ Синхронізація успішна. Перезапуск сервісів на NVIDIA..."
-  ssh $REMOTE_USER@$REMOTE_IP "cd $REMOTE_PATH && ./AUTO_DEPLOY_IMAC.sh --fast"
+  ssh $REMOTE_USER@$REMOTE_IP "cd $REMOTE_PATH && ./AUTO_DEPLOY_NVIDIA.sh --fast"
 else
   echo "❌ Помилка синхронізації. Перевірте з'єднання з NVIDIA."
 fi

@@ -37,7 +37,7 @@ const NODE_URLS: Record<string, string> = {
 
 const NODE_NAMES: Record<string, string> = {
     [NODE_IDS.LOCAL]:     'LOCAL_DEVELOPER',
-    [NODE_IDS.SOVEREIGN]: 'SOVEREIGN_NODE_IMAC',
+    [NODE_IDS.SOVEREIGN]: 'SOVEREIGN_NODE_NVIDIA',
     [NODE_IDS.HYBRID]:    'HYBRID_MASTER_NVIDIA',
     [NODE_IDS.CLOUD]:     'CLOUD_KAGGLE_PRODUCTION',
 };

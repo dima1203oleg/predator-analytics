@@ -1,5 +1,5 @@
 #!/bin/bash
-# AUTO_DEPLOY_IMAC.sh - v63.0-ELITE
+# AUTO_DEPLOY_NVIDIA.sh - v63.0-ELITE
 # Повний автоматичний деплой PREDATOR на NVIDIA Compute Node
 # Фікси: colima PATH, numpy встановлення, SSH max-retries, colima install
 
@@ -173,7 +173,7 @@ echo "☸️ Перевірка та запуск K3d кластера..."
 NVIDIA_ssh "
     if docker ps >/dev/null 2>&1; then
         echo '✅ Docker активний. Запуск K3d у фоні...'
-        /usr/bin/nohup bash ~/Predator_60/deploy/scripts/deploy_imac_full_stack.sh \
+        /usr/bin/nohup bash ~/Predator_60/deploy/scripts/deploy_nvidia_full_stack.sh \
             > ~/k3d_deploy.log 2>&1 &
         echo 'K3d деплой запущено у фоні'
     else
