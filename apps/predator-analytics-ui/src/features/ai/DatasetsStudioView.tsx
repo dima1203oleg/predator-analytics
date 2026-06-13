@@ -73,7 +73,7 @@ const DatasetsStudioView = () => {
 
   const triggerAutoGeneration = async () => {
     try {
-      await fetch('http://localhost:8000/api/v1/optimizer/cycle/start', { method: 'POST' });
+      await fetch('http://localhost:8000/api/v1/deepseek-tuning/trigger', { method: 'POST' });
     } catch (e) {
       console.error(e);
     }
