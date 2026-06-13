@@ -4,6 +4,10 @@
 import logging
 import os
 from typing import Any
+import sys
+
+sys.path.append("/Users/Shared/Predator_60/libs/predator-common")
+from predator_common.ai.deepseek_core import DeepSeekCore
 
 import httpx
 
@@ -37,34 +41,39 @@ class RETEngine:
             except Exception as e:
                 logger.warning(f"⚠️ [OVERSIGHT_FAILED] Не вдалося зв'язатися з SOM: {e!s}")
 
-            # 1. ANALYSIS phase (Sovereign Advisor)
+            brain = DeepSeekCore(model_name="cognitive_core")
+            
+            # 1. ANALYSIS phase (Drift Intelligence & Retrain Policy)
             try:
                 drift = context.get("drift", 0.0)
-                logger.info(f"🧠 [ANALYSIS] Запит до Sovereign Advisor для пояснення дрифту {drift}...")
+                logger.info(f"🧠 [ANALYSIS] Запит до DeepSeek R1 (System Brain) для аналізу дрифту {drift}...")
 
-                analysis_resp = await client.post(
-                    MCP_URL,
-                    json={
-                        "prompt": f"Проаналізуй причини деградації моделі {model_id}. Дрифт: {drift}. Метрики: {context.get('metrics')}",
-                        "task_type": "reasoning",
-                        "context": context
-                    }
-                )
-                if analysis_resp.status_code == 200:
-                    insight = analysis_resp.json().get("content", "Немає інсайтів")
-                    logger.info(f"💡 [INSIGHT] Advisor: {insight[:100]}...")
-                    context["advisor_insight"] = insight
+                decision = await brain.evaluate_drift({
+                    "model_id": model_id,
+                    "drift_score": drift,
+                    "metrics": context.get("metrics")
+                })
+                
+                context["advisor_insight"] = decision.rationale
+                strategy_from_ai = decision.decision
+                logger.info(f"💡 [INSIGHT] DeepSeek R1 Strategy: {strategy_from_ai}. Rationale: {decision.rationale[:100]}...")
             except Exception as e:
-                logger.warning(f"⚠️ [ANALYSIS_FAILED] Sovereign Advisor недоступний: {e!s}")
+                logger.warning(f"⚠️ [ANALYSIS_FAILED] DeepSeek R1 недоступний: {e!s}")
+                strategy_from_ai = "FINETUNE"
 
             # 2. RETRY / EXECUTION loop
             for attempt in range(2):
                 try:
                     # EVALUATION & STRATEGY
-                    drift = context.get("drift", 0.0)
                     force_automl = context.get("force_automl", False)
-                    strategy = "AUTOML" if drift > 0.15 or force_automl else "FINETUNE"
-                    logger.info(f"📋 [EVAL] Attempt {attempt+1}. Стратегія: {strategy} (Force: {force_automl})")
+                    if force_automl or strategy_from_ai == "FULL_RETRAIN":
+                        strategy = "AUTOML"
+                    elif strategy_from_ai in ["INCREMENTAL", "PARTIAL", "FINETUNE"]:
+                        strategy = "FINETUNE"
+                    else:
+                        strategy = "FINETUNE" # fallback
+                        
+                    logger.info(f"📋 [EVAL] Attempt {attempt+1}. Стратегія: {strategy} (AI Decision: {strategy_from_ai})")
 
                     # TRAINING phase
                     train_endpoint = "/train" if strategy == "FINETUNE" else "/automl/run"

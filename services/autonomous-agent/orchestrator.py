@@ -5,11 +5,15 @@
 import asyncio
 from typing import TypedDict
 
-from council_judge import CouncilJudge
-from git_manager import GitManager
 from langgraph.graph import END, StateGraph
 from loguru import logger
 from test_runner import TestRunner
+from git_manager import GitManager
+import sys
+import os
+
+sys.path.append("/Users/Shared/Predator_60/libs/predator-common")
+from predator_common.ai.deepseek_core import DeepSeekCore
 
 
 # Mypy strict requires explicit types
@@ -27,7 +31,7 @@ class ChiefConductor:
         self.workflow = StateGraph(AgentState)
         self.git = GitManager()
         self.tester = TestRunner()
-        self.council = CouncilJudge()
+        self.brain = DeepSeekCore(model_name="cognitive_core")
         self._setup_graph()
         self.app = self.workflow.compile()
 
@@ -78,9 +82,12 @@ class ChiefConductor:
         return state
 
     async def node_council_session(self, state: AgentState) -> AgentState:
-        logger.info("ChiefConductor: Convening strategic Council Session...")
-        decision = await self.council.get_council_decision(state['task'], "Sovereign Factory Context")
-        state['decision'] = decision
+        logger.info("ChiefConductor: Consult DeepSeek R1 System Brain...")
+        # Використовуємо DeepSeekCore для оцінки задачі та дрифту
+        # Тут можна передати поточні метрики
+        metrics = {"task": state['task'], "status": "planning"}
+        decision = await self.brain.evaluate_drift(metrics)
+        state['decision'] = decision.decision
         return state
 
     def node_ui_optimizer(self, state: AgentState) -> AgentState:

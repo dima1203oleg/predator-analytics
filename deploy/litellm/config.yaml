@@ -68,6 +68,11 @@ model_list:
   # ==============================================================
   - model_name: ultra-router-reasoning
     litellm_params:
+      model: deepseek/deepseek-reasoner
+      api_key: ${DEEPSEEK_API_KEY}
+      api_base: https://api.deepseek.com/v1
+  - model_name: ultra-router-reasoning
+    litellm_params:
       model: gemini/gemini-2.5-flash
       api_key: ${GEMINI_API_KEY}
   - model_name: ultra-router-reasoning
@@ -79,6 +84,19 @@ model_list:
       model: together_ai/Qwen/Qwen2.5-72B-Instruct-Turbo
       api_key: ${TOGETHER_API_KEY}
       api_base: https://api.together.xyz/v1
+
+  # ==============================================================
+  # COGNITIVE CORE — Центральний розум (DeepSeek R1)
+  # ==============================================================
+  - model_name: cognitive_core
+    litellm_params:
+      model: deepseek/deepseek-reasoner
+      api_key: ${DEEPSEEK_API_KEY}
+      api_base: https://api.deepseek.com/v1
+  - model_name: cognitive_core
+    litellm_params:
+      model: ollama/deepseek-r1
+      api_base: http://host.docker.internal:11434
 
   # ==============================================================
   # CHAT — Загальний чат / AI Copilot
@@ -126,7 +144,8 @@ litellm_settings:
   fallbacks:
     - {"ultra-router-coding": ["ultra-router-fast"]}
     - {"ultra-router-fast": ["ultra-router-coding"]}
-    - {"ultra-router-reasoning": ["ultra-router-coding"]}
+    - {"ultra-router-reasoning": ["cognitive_core", "ultra-router-coding"]}
+    - {"cognitive_core": ["ultra-router-reasoning"]}
     - {"ultra-router-chat": ["ultra-router-fast"]}
 
 router_settings:
