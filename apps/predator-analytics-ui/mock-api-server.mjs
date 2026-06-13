@@ -772,6 +772,42 @@ export function mockApiHandler(req, res, next) {
     return;
   }
 
+  // ─── Data Ingestion (Real Excel test mock) ─────────────────────────────
+  if (path === '/api/v1/ingestion/upload' && req.method === 'POST') {
+    // Consume the request body so it doesn't hang
+    req.on('data', () => {});
+    req.on('end', () => {
+      const jobId = `job-${Date.now()}`;
+      sendJSON(res, {
+        job_id: jobId,
+        status: "queued",
+        file_size_bytes: 4200000,
+        estimated_rows: 15420,
+        chunks: 1,
+        progress_url: `/api/v1/ingestion/progress/${jobId}`,
+        estimated_completion_seconds: 45
+      }, 202);
+    });
+    return;
+  }
+
+  if (path.startsWith('/api/v1/ingestion/progress/') && req.method === 'GET') {
+    const jobId = path.split('/')[5];
+    // Simulate progression based on time or just return completed
+    sendJSON(res, {
+      job_id: jobId,
+      status: "completed",
+      file_name: "Березень_2024.xlsx",
+      total_records: 15420,
+      successful_records: 15420,
+      failed_records: 0,
+      progress_pct: 100,
+      started_at: new Date(Date.now() - 40000).toISOString(),
+      completed_at: new Date().toISOString()
+    });
+    return;
+  }
+
   // ─── Neural Training Start/Stop (v61.0-ELITE) ───────────────────────────
   if (path === '/api/v1/neural/training/start' && req.method === 'POST') {
     let body = '';

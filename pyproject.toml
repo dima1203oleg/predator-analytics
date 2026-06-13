@@ -122,3 +122,6 @@ exclude = [
 [tool.ruff.lint]
 select = ["E", "F", "W", "C90", "I"]
 ignore = ["E501"] # Line length is handled by formatter
+
+[tool.hatch.build.targets.wheel]
+packages = ["services/core-api/app", "libs/predator-common/predator_common"]
