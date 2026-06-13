@@ -283,8 +283,8 @@ class UkraineRegistriesService:
 
     async def get_registries_status(self) -> dict[str, Any]: # Властивості словника можуть бути довільними
         """Отримати статус підключення до всіх реєстрів у форматі для UI."""
-        edr_status = "online" if self.edr_api_key and "mock" not in self.edr_api_key.lower() else "mock"
-        court_status = "online" if self.court_api_key and "mock" not in self.court_api_key.lower() else "mock"
+        edr_status = "online" if self.edr_api_key else "offline"
+        court_status = "online" if self.court_api_key else "offline"
 
         categories = [
             {

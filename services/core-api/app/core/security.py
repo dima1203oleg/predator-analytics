@@ -186,13 +186,6 @@ async def get_current_user_payload(token: str = Depends(oauth2_scheme)) -> dict:
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        # Emergency mock tokens from UI
-        if token == "admin-token":
-            logger.warning("Using mock admin token (Emergency Mode)")
-            return {"sub": "admin-1", "role": "admin", "tenant_id": "demo-tenant"}
-        elif token == "user-token":
-            logger.warning("Using mock user token (Emergency Mode)")
-            return {"sub": "client-1", "role": "client_premium", "tenant_id": "demo-tenant"}
 
         if settings.AUTH_PROVIDER == "keycloak":
             try:
