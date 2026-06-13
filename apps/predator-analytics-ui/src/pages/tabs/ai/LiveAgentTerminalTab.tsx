@@ -2,35 +2,35 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Terminal, ShieldAlert, Cpu, HardDrive, Wifi, Zap, Lock, Skull, Globe } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// Mock system events for the terminal
-const MOCK_EVENTS = [
-  { type: 'info', src: 'NEXUS_CORE', msg: 'Синхронізація нейронних зв\'язків завершена.' },
-  { type: 'warning', src: 'OSINT_SPIDER', msg: 'Виявлено аномалію в потоці даних (Cyprus/Offshore).' },
-  { type: 'danger', src: 'AML_RADAR', msg: 'КРИТИЧНИЙ РИЗИК: Транзакція $4.2M заблокована (Shell Company).' },
-  { type: 'system', src: 'VRAM_GUARD', msg: 'Пам\'ять оптимізовано: 4.2GB / 8.0GB.' },
-  { type: 'info', src: 'LLM_POOL', msg: 'Qwen3-Coder-Next активний. Завантаження контексту...' },
-  { type: 'system', src: 'ZROK_TUNNEL', msg: 'Підключення до Kaggle Node стабільне (23ms).' },
-  { type: 'success', src: 'GRAPH_ENGINE', msg: 'Побудова графа власності успішна (420 вузлів).' },
-  { type: 'warning', src: 'PREDATOR_EYE', msg: 'Сканування даркнету виявило 3 нові витоки.' },
-];
-
+// Mock system events removed.
 export const LiveAgentTerminalTab: React.FC = () => {
   const [logs, setLogs] = useState<any[]>([]);
   const logsEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    let count = 0;
-    const interval = setInterval(() => {
-      const newLog = {
-        id: count++,
-        time: new Date().toISOString().split('T')[1].substring(0, 8),
-        ...MOCK_EVENTS[Math.floor(Math.random() * MOCK_EVENTS.length)],
-        hash: Math.random().toString(16).substring(2, 10).toUpperCase()
-      };
-      
-      setLogs(prev => [...prev.slice(-49), newLog]);
-    }, 1500);
-
+    const fetchLogs = async () => {
+      try {
+        const { systemApi } = await import('@/services/api/system');
+        const data = await systemApi.getLogs(50);
+        
+        // Map backend logs to UI format
+        const formattedLogs = data.map((log: any, index: number) => ({
+          id: log.id || log.hash || index,
+          time: log.timestamp ? new Date(log.timestamp).toISOString().split('T')[1].substring(0, 8) : new Date().toISOString().split('T')[1].substring(0, 8),
+          type: log.level === 'error' || log.level === 'critical' ? 'danger' : log.level === 'warning' ? 'warning' : 'info',
+          src: log.source || log.service || 'SYSTEM',
+          msg: log.message || log.msg,
+          hash: (log.hash || log.id || Math.random().toString(16).substring(2)).substring(0, 8).toUpperCase()
+        }));
+        
+        setLogs(formattedLogs);
+      } catch (err) {
+        console.error("Failed to fetch system logs", err);
+      }
+    };
+    
+    fetchLogs();
+    const interval = setInterval(fetchLogs, 3000);
     return () => clearInterval(interval);
   }, []);
 
