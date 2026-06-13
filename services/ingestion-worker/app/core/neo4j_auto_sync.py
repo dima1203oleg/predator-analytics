@@ -84,6 +84,15 @@ class Neo4jAutoSync:
     
     def __init__(self, neo4j_driver=None):
         self.neo4j_driver = neo4j_driver
+        if not self.neo4j_driver:
+            try:
+                from neo4j import AsyncGraphDatabase
+                self.neo4j_driver = AsyncGraphDatabase.driver(
+                    settings.NEO4J_URI,
+                    auth=(settings.NEO4J_USER, settings.NEO4J_PASSWORD),
+                )
+            except Exception as e:
+                logger.warning(f"Не вдалося ініціалізувати Neo4j драйвер: {e}")
         self._status = SyncStatus.IDLE
         self._current_sync_id: str | None = None
         self._retry_count = 0

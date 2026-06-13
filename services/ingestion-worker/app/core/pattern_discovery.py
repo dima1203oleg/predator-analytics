@@ -94,6 +94,18 @@ class PatternDiscoveryEngine:
             return
         
         try:
+            # Ініціалізація Neo4j клієнта
+            if not self.neo4j_driver:
+                try:
+                    from neo4j import AsyncGraphDatabase
+                    self.neo4j_driver = AsyncGraphDatabase.driver(
+                        settings.NEO4J_URI,
+                        auth=(settings.NEO4J_USER, settings.NEO4J_PASSWORD),
+                    )
+                    logger.info("Neo4j драйвер ініціалізовано для Pattern Discovery")
+                except Exception as e:
+                    logger.warning(f"Не вдалося ініціалізувати Neo4j драйвер: {e}")
+
             # Ініціалізація LLM клієнта (Ollama)
             try:
                 import httpx

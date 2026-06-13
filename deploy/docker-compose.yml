@@ -80,7 +80,8 @@ services:
     environment:
       - CLICKHOUSE_HOST=clickhouse
       - CLICKHOUSE_PORT=8123
-      - CLICKHOUSE_PASSWORD=${CLICKHOUSE_PASSWORD:-}
+      - CLICKHOUSE_USER=${CLICKHOUSE_USER:-predator}
+      - CLICKHOUSE_PASSWORD=${CLICKHOUSE_PASSWORD:-predator_password}
       - KAFKA_BOOTSTRAP_SERVERS=redpanda:9092
       - POSTGRES_HOST=postgres
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-predator_secret}
@@ -92,6 +93,9 @@ services:
       - MINIO_ENDPOINT=minio:9000
       - MINIO_ACCESS_KEY=admin
       - MINIO_SECRET_KEY=predator_password
+      - LLM_OLLAMA_BASE_URL=http://host.docker.internal:11434
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
       - MINIO_SECURE=false
     volumes:
       - ./logs/worker:/app/logs
@@ -199,6 +203,10 @@ services:
   # ============================================================
   clickhouse:
     image: clickhouse/clickhouse-server:latest
+    environment:
+      CLICKHOUSE_USER: ${CLICKHOUSE_USER:-predator}
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD:-predator_password}
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
     ports:
       - "8123:8123"
       - "9002:9000"
