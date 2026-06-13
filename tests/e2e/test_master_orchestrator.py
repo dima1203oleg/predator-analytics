@@ -57,7 +57,7 @@ def run_master_orchestrator():
 
 ## Висновок
 Усі необхідні пункти наскрізної валідації були успішно задокументовані та пройшли реальні (не мокові) перевірки.
-Система працює за правилом **ZERO-LOCAL-DEPLOYMENT** (на iMac/NVIDIA Server).
+Система працює за правилом **ZERO-LOCAL-DEPLOYMENT** (на NVIDIA/NVIDIA Server).
 """
 
     report_path = "/Users/dima1203/Desktop/Audit_Report_Final.md"

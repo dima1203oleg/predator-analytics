@@ -176,7 +176,7 @@ async def get_failover_status():
         activeMode="HYBRID",
         activeNode="node-199",
         nodes={
-            "node-199": {"label": "iMac (Primary)", "ip": "192.168.0.200", "status": "online", "load": 45.0},
+            "node-199": {"label": "NVIDIA (Primary)", "ip": "194.177.1.240", "status": "online", "load": 45.0},
             "node-240": {"label": "Nvidia (Fallback)", "ip": "192.168.0.240", "status": "standby", "load": 5.0}
         },
         history=[]

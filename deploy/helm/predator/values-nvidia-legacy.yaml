@@ -1,4 +1,4 @@
-# iMac specific values (8GB RAM optimization)
+# NVIDIA specific values (8GB RAM optimization)
 # Focus: Backend services only
 
 global:
@@ -100,7 +100,7 @@ minio:
       cpu: 200m
       memory: 256Mi
 
-# Disable heavy AI components for now to save RAM on 8GB iMac
+# Disable heavy AI components for now to save RAM on 8GB NVIDIA
 litellm:
   enabled: false
 

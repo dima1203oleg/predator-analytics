@@ -97,7 +97,7 @@ while true; do
     # 1. NVIDIA Server (.240)
     manage_access "predatorgpu" "127.0.0.1" "2224"
     
-    # 2. iMac (.199)
+    # 2. NVIDIA (.199)
     manage_access "predatorimacssh" "127.0.0.1" "2225"
 
     # 3. K8s API (якщо потрібно)

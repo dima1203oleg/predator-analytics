@@ -23,7 +23,7 @@ class Neo4jMock:
 ```
 **Проблема**: Використовує NetworkX замість реального Neo4j  
 **Рішення**: Замінити на `neo4j.GraphDatabase.driver()`  
-**Реальні дані**: Підключення до Neo4j на iMac (192.168.0.200:7687)
+**Реальні дані**: Підключення до Neo4j на NVIDIA (194.177.1.240:7687)
 
 ### 2. RedisMock (рядки 331-349)
 ```python
@@ -35,7 +35,7 @@ class RedisMock:
 ```
 **Проблема**: Використовує Dict замість реального Redis  
 **Рішення**: Замінити на `redis.Redis()`  
-**Реальні дані**: Підключення до Redis на iMac (192.168.0.200:6379)
+**Реальні дані**: Підключення до Redis на NVIDIA (194.177.1.240:6379)
 
 ### 3. QdrantMock (рядки 352-376)
 ```python
@@ -47,7 +47,7 @@ class QdrantMock:
 ```
 **Проблема**: Використовує NumPy замість реального Qdrant  
 **Рішення**: Замінити на `qdrant_client.QdrantClient()`  
-**Реальні дані**: Підключення до Qdrant на iMac (192.168.0.200:6333)
+**Реальні дані**: Підключення до Qdrant на NVIDIA (194.177.1.240:6333)
 
 ### 4. KafkaMock (рядки 379-390)
 ```python
@@ -58,7 +58,7 @@ class KafkaMock:
 ```
 **Проблема**: Використовує Threading замість реального Kafka  
 **Рішення**: Замінити на `aiokafka.AIOKafkaProducer/Consumer`  
-**Реальні дані**: Підключення до Kafka на iMac (192.168.0.200:9092)
+**Реальні дані**: Підключення до Kafka на NVIDIA (194.177.1.240:9092)
 
 ### 5. MinIOMock (рядки 393-410)
 ```python
@@ -70,7 +70,7 @@ class MinIOMock:
 ```
 **Проблема**: Використовує локальні файли замість реального MinIO  
 **Рішення**: Замінити на `minio.Minio()`  
-**Реальні дані**: Підключення до MinIO на iMac (192.168.0.200:9000)
+**Реальні дані**: Підключення до MinIO на NVIDIA (194.177.1.240:9000)
 
 ---
 
@@ -87,7 +87,7 @@ async def _seed_database() -> None:
 ```
 **Проблема**: Генерує фейкові компанії, транзакції, алерти  
 **Рішення**: 
-- Імпортувати реальні дані з PostgreSQL на iMac
+- Імпортувати реальні дані з PostgreSQL на NVIDIA
 - Використати реальні митні декларації
 - Використати реальні реєстри (ЄДРПОУ)
 
@@ -99,7 +99,7 @@ for i in range(1, NUM_COMPANIES + 1):
     neo4j.graph.add_node(node_id, ...)
 ```
 **Проблема**: Створює фейкові вузли та зв'язки  
-**Рішення**: Імпортувати реальний граф з Neo4j на iMac
+**Рішення**: Імпортувати реальний граф з Neo4j на NVIDIA
 
 ### 3. Qdrant Vectors Seed (рядки 821-831)
 ```python
@@ -108,7 +108,7 @@ for i in range(1, min(201, NUM_COMPANIES + 1)):
     vec = np.random.default_rng(seed=i).random(128).tolist()
 ```
 **Проблема**: Генерує випадкові вектори  
-**Рішення**: Використати реальні embeddings з Qdrant на iMac
+**Рішення**: Використати реальні embeddings з Qdrant на NVIDIA
 
 ### 4. ETL Simulation (рядки 680-732)
 ```python
@@ -142,23 +142,23 @@ for i in range(1, 51):
 ```python
 # Замість Neo4jMock
 from neo4j import GraphDatabase
-neo4j_driver = GraphDatabase.driver("bolt://192.168.0.200:7687", auth=("neo4j", "password"))
+neo4j_driver = GraphDatabase.driver("bolt://194.177.1.240:7687", auth=("neo4j", "password"))
 
 # Замість RedisMock
 import redis
-redis_client = redis.Redis(host="192.168.0.200", port=6379, db=0)
+redis_client = redis.Redis(host="194.177.1.240", port=6379, db=0)
 
 # Замість QdrantMock
 from qdrant_client import QdrantClient
-qdrant_client = QdrantClient(url="http://192.168.0.200:6333")
+qdrant_client = QdrantClient(url="http://194.177.1.240:6333")
 
 # Замість KafkaMock
 from aiokafka import AIOKafkaProducer, AIOKafkaConsumer
-kafka_producer = AIOKafkaProducer(bootstrap_servers="192.168.0.200:9092")
+kafka_producer = AIOKafkaProducer(bootstrap_servers="194.177.1.240:9092")
 
 # Замість MinIOMock
 from minio import Minio
-minio_client = Minio("192.168.0.200:9000", access_key="...", secret_key="...", secure=False)
+minio_client = Minio("194.177.1.240:9000", access_key="...", secret_key="...", secure=False)
 ```
 
 ### Крок 2: Заміна генерованих даних на реальні
@@ -166,8 +166,8 @@ minio_client = Minio("192.168.0.200:9000", access_key="...", secret_key="...", s
 ```python
 # Замість _seed_database()
 async def _import_real_data():
-    """Імпорт реальних даних з iMac PostgreSQL."""
-    # Підключення до PostgreSQL на iMac
+    """Імпорт реальних даних з NVIDIA PostgreSQL."""
+    # Підключення до PostgreSQL на NVIDIA
     # Імпорт компаній, транзакцій, алертів
     pass
 
@@ -184,13 +184,13 @@ async def _run_real_etl():
 
 ```python
 # Environment variables
-POSTGRES_HOST = "192.168.0.200"
+POSTGRES_HOST = "194.177.1.240"
 POSTGRES_PORT = 5432
-NEO4J_URI = "bolt://192.168.0.200:7687"
-REDIS_HOST = "192.168.0.200"
-QDRANT_HOST = "192.168.0.200"
-KAFKA_BOOTSTRAP = "192.168.0.200:9092"
-MINIO_ENDPOINT = "192.168.0.200:9000"
+NEO4J_URI = "bolt://194.177.1.240:7687"
+REDIS_HOST = "194.177.1.240"
+QDRANT_HOST = "194.177.1.240"
+KAFKA_BOOTSTRAP = "194.177.1.240:9092"
+MINIO_ENDPOINT = "194.177.1.240:9000"
 ```
 
 ---
@@ -201,7 +201,7 @@ MINIO_ENDPOINT = "192.168.0.200:9000"
 - [ ] Немає класів Neo4jMock, RedisMock, QdrantMock, KafkaMock, MinIOMock
 - [ ] Немає функції _seed_database() з генерованими даними
 - [ ] Немає _run_etl_simulation() з симуляцією
-- [ ] Всі підключення до реальних баз даних на iMac (192.168.0.200)
+- [ ] Всі підключення до реальних баз даних на NVIDIA (194.177.1.240)
 - [ ] Реальні дані імпортуються з PostgreSQL, Neo4j, Redis, Qdrant
 - [ ] Реальний ETL з реальних джерел (Telegram, Darknet, реєстри)
 
@@ -209,10 +209,10 @@ MINIO_ENDPOINT = "192.168.0.200:9000"
 
 ## ⚠️ Примітка про Kaggle
 
-Оскільки Kaggle не має доступу до локальної мережі (iMac 192.168.0.200), потрібно:
+Оскільки Kaggle не має доступу до локальної мережі (NVIDIA 194.177.1.240), потрібно:
 
 1. **Варіант A**: Розгорнути реальні бази даних в хмарі (AWS, GCP, Azure)
-2. **Варіант B**: Використувати VPN/tunnel для доступу до iMac з Kaggle
-3. **Варіант C**: Перенести бекенд з Kaggle на iMac (Compute Node)
+2. **Варіант B**: Використувати VPN/tunnel для доступу до NVIDIA з Kaggle
+3. **Варіант C**: Перенести бекенд з Kaggle на NVIDIA (Compute Node)
 
-**Рекомендовано**: Варіант C - розгорнути бекенд на iMac де вже є всі реальні бази даних.
+**Рекомендовано**: Варіант C - розгорнути бекенд на NVIDIA де вже є всі реальні бази даних.

@@ -26,11 +26,11 @@ Autonomous AI-driven analytical platform for OSINT, Financial Intelligence, and 
 
 ### Compute Nodes
 - **MacBook**: IDE + Frontend build (Zero-Local-Deploy)
-- **iMac (...199)**: 8 БД + Backend + AI Stack
+- **NVIDIA (...199)**: 8 БД + Backend + AI Stack
 - **NVIDIA (...240)**: Cloud Fallback + K8s
 - **Kaggle**: CPU-Only Backup (30GB RAM)
 
-**Total Required RAM**: ~50GB / 64GB (iMac) 
+**Total Required RAM**: ~50GB / 64GB (NVIDIA) 
 
 ---
 

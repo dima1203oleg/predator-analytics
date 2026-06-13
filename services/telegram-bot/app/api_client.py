@@ -108,7 +108,7 @@ async def analyze_graph_connections(query: str) -> str:
                 for n in nodes[:5]:
                     res_str += f"- {n.get('label', 'Вузол')}: **{n.get('name', 'N/A')}**\n"
                 
-                res_str += f"\nПовний граф: [Відкрити у Web UI](http://192.168.0.200:3030/graph/{query})"
+                res_str += f"\nПовний граф: [Відкрити у Web UI](http://194.177.1.240:3030/graph/{query})"
                 return res_str
             return f"⚠️ Помилка Графу (Код: {response.status_code})"
     except Exception as e:
@@ -136,7 +136,7 @@ async def generate_risk_report(ueid: str, report_type: str) -> str:
                     res_str = f"📄 **Ризик-звіт для {s.get('entity_name', ueid)}**\n\n"
                     res_str += f"CERS Індекс: **{s.get('cers', 0)}/100**\n"
                     res_str += f"Статус: **{s.get('interpretation', 'Невідомо')}**\n\n"
-                    res_str += "[Завантажити PDF (Web UI)](http://192.168.0.200:3030/reports)"
+                    res_str += "[Завантажити PDF (Web UI)](http://194.177.1.240:3030/reports)"
                     return res_str
                 else:
                     insight = data.get('insight', 'Дані відсутні')

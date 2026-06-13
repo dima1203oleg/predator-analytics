@@ -16,17 +16,35 @@ def generate_dataset(input_file: str) -> str:
     DATASET_DIR.mkdir(parents=True, exist_ok=True)
     dataset_path = DATASET_DIR / "deepseek_train.json"
 
-    # In a real scenario, we would use dataset_builder.py here.
-    # For autonomous pipeline, we mock the generation if file is missing
-    # or call the actual dataset builder.
+    import sys
+    sys.path.append("services/core-api/app")
+    from services.dataset_builder import dataset_builder_service
 
-    # Generate dummy data for illustration
-    dummy_data = [
-        {"instruction": "Analyze this risk.", "input": "Company A has suspicious activity.", "output": "Risk level is HIGH."},
-        {"instruction": "Classify this transaction.", "input": "Transaction of 10000 USD to unknown entity.", "output": "Flag for review."}
-    ]
-    with open(dataset_path, "w", encoding="utf-8") as f:
-        json.dump(dummy_data, f, indent=2)
+    # We determine if it's an excel/csv
+    file_path = Path(input_file)
+    if not file_path.exists():
+        logger.warning(f"File {input_file} not found. Generating dummy dataset fallback.")
+        dummy_data = [
+            {"instruction": "Analyze this risk.", "input": "Company A has suspicious activity.", "output": "Risk level is HIGH."},
+            {"instruction": "Classify this transaction.", "input": "Transaction of 10000 USD to unknown entity.", "output": "Flag for review."}
+        ]
+        with open(dataset_path, "w", encoding="utf-8") as f:
+            json.dump(dummy_data, f, indent=2)
+    else:
+        # Actually parse the Excel or CSV
+        ext = file_path.suffix.lower()
+        src_type = 'excel' if ext in ['.xlsx', '.xls'] else 'csv' if ext == '.csv' else 'json'
+        
+        logger.info(f"Processing real user file via DatasetBuilder: {file_path}")
+        sources = [{'type': src_type, 'path': str(file_path)}]
+        processed_data = dataset_builder_service.process_raw_data(sources)
+        
+        if not processed_data:
+            logger.warning("No valid 'instruction/input/output' columns found. Generating dummy data.")
+            processed_data = [{"instruction": "Test from File", "input": str(file_path.name), "output": "Parsed successfully but missing LLM columns"}]
+            
+        with open(dataset_path, "w", encoding="utf-8") as f:
+            json.dump(processed_data, f, indent=2)
 
     logger.info(f"Dataset generated at {dataset_path}")
     return str(dataset_path)

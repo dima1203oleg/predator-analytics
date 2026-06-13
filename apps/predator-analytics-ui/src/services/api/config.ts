@@ -3,10 +3,10 @@
  * Гібридний протокол відмовостійкості (Tri-State Routing)
  * 
  * ⚠️ MOCK-РЕЖИМ ПОВНІСТЮ ВИМКНЕНО (HR-15).
- * Усі запити йдуть до реального backend (Kaggle / iMac / NVIDIA).
+ * Усі запити йдуть до реального backend (Kaggle / NVIDIA / NVIDIA).
  * 
  * Вузли:
- *  1. SOVEREIGN (iMac) → http://178.214.200.25:8000/api/v1
+ *  1. SOVEREIGN (NVIDIA) → http://178.214.200.25:8000/api/v1
  *  2. HYBRID (NVIDIA)  → http://194.177.1.240:8000/api/v1
  *  3. CLOUD (Kaggle)   → VITE_API_URL (зазвичай через zrok тунель)
  */
@@ -23,13 +23,13 @@ const getGlobalWindow = () => (typeof window !== 'undefined' ? window : {}) as a
 
 export const NODE_IDS = {
     LOCAL:     'local',     // Local Developer API (MacBook)
-    SOVEREIGN: 'sovereign', // iMac (...199)
+    SOVEREIGN: 'sovereign', // NVIDIA (...199)
     HYBRID:    'hybrid',    // NVIDIA (...240)
     CLOUD:     'cloud',     // Kaggle CPU Backend (через zrok)
 } as const;
 
 const NODE_URLS: Record<string, string> = {
-    [NODE_IDS.LOCAL]:     '/api/v1',                                                                    // Vite proxy → iMac:8000
+    [NODE_IDS.LOCAL]:     '/api/v1',                                                                    // Vite proxy → NVIDIA:8000
     [NODE_IDS.SOVEREIGN]: 'http://178.214.200.25:8000/api/v1',
     [NODE_IDS.HYBRID]:    'http://194.177.1.240:8000/api/v1',
     [NODE_IDS.CLOUD]:     metaEnv.VITE_API_URL || 'https://predator-mirror.share.zrok.io/api/v1',

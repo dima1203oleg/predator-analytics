@@ -585,7 +585,7 @@ graph TD
             f"""### Звіт про верифікацію інфраструктури (8+ DBs)
 
 > [!NOTE]
-> Системний контракт пам'яті (Memory Contract v4.0) жорстко розмежовує ролі баз даних. MacBook використовується виключно як термінал розробника (Zero-Local-Deployment), уся база даних розгорнута на iMac Compute Node.
+> Системний контракт пам'яті (Memory Contract v4.0) жорстко розмежовує ролі баз даних. MacBook використовується виключно як термінал розробника (Zero-Local-Deployment), уся база даних розгорнута на NVIDIA Compute Node.
 
 - **VRAM Ліміт:** `{infra.get('vram_limit_status', 'SAFE_LIMIT_8GB')}`
 

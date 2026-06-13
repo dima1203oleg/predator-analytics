@@ -76,7 +76,7 @@ export const MobileSovereignCommandCenter: React.FC = () => {
         </div>
         <div className="flex flex-col p-4 bg-black/60 border border-white/10 rounded-2xl">
           <div className="flex items-center justify-between mb-2 opacity-50">
-            <span className="text-[9px] font-bold uppercase tracking-widest">ВУЗОЛ IMAC</span>
+            <span className="text-[9px] font-bold uppercase tracking-widest">ВУЗОЛ NVIDIA</span>
             <Globe size={14} className={status?.healthy ? "text-emerald-500" : "text-rose-500"} />
           </div>
           <span className={cn("text-lg font-black", status?.healthy ? "text-emerald-500" : "text-rose-500")}>

@@ -533,7 +533,7 @@ export function mockApiHandler(req, res, next) {
     return sendJSON(res, {
       nodes: [
         { id: 'n1', node: '0xPRED_MASTER', role: 'GPU Master', cpu: 42, ram: 65, vram: 78, vramGb: 18.5, temp: 62, net: 'rx 1.2/tx 0.8', status: 'online', uptime: '14d 2h' },
-        { id: 'n2', node: 'IMAC_COMPUTE', role: 'Compute Node', cpu: 15, ram: 45, temp: 48, net: 'rx 0.4/tx 0.2', status: 'online', uptime: '4d 12h' },
+        { id: 'n2', node: 'NVIDIA_COMPUTE', role: 'Compute Node', cpu: 15, ram: 45, temp: 48, net: 'rx 0.4/tx 0.2', status: 'online', uptime: '4d 12h' },
         { id: 'n3', node: 'CLOUD_RESERVE', role: 'Cloud Mirror', cpu: 0, ram: 0, status: 'offline', uptime: '0s' },
       ],
       services: [
@@ -571,7 +571,7 @@ export function mockApiHandler(req, res, next) {
       activeNode: 'n1',
       nodes: {
         n1: { label: 'MASTER_NVIDIA', ip: '192.168.0.240', status: 'online', load: 45 },
-        n2: { label: 'IMAC_FALLBACK', ip: '192.168.0.114', status: 'online', load: 12 },
+        n2: { label: 'NVIDIA_FALLBACK', ip: '192.168.0.114', status: 'online', load: 12 },
       },
       history: []
     });

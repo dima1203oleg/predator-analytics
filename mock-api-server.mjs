@@ -6720,7 +6720,7 @@ app.get('/api/v2/admin/infra/telemetry', (req, res) => {
   res.json({
     timestamp: new Date().toISOString(),
     nodes: [
-      { id: 'imac-sentinel', status: 'online', role: 'Compute Node', cpu: 45, mem: 62, gpu_usage: 12, disk: 45, uptime: '15d 4h' },
+      { id: 'NVIDIA-sentinel', status: 'online', role: 'Compute Node', cpu: 45, mem: 62, gpu_usage: 12, disk: 45, uptime: '15d 4h' },
       { id: 'nvidia-server', status: 'online', role: 'Cloud Fallback', cpu: 12, mem: 24, gpu_usage: 85, disk: 12, uptime: '42d 12h' },
       { id: 'macbook-terminal', status: 'online', role: 'IDE / Terminal', cpu: 8, mem: 48, gpu_usage: 0, disk: 82, uptime: '4h 12m' }
     ],

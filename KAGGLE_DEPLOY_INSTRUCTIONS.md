@@ -316,7 +316,7 @@ curl https://YOUR-ZROK-URL.share.zrok.io/api/v1/datasets/42
 ```
 
 ### Примітка
-Kaggle backend використовує SQLite emulation та генеровані дані для тестування API endpoints та логіки датасетів. Для повноцінного тестування з реальними даними треба розгорнути на iMac або NVIDIA сервер.
+Kaggle backend використовує SQLite emulation та генеровані дані для тестування API endpoints та логіки датасетів. Для повноцінного тестування з реальними даними треба розгорнути на NVIDIA або NVIDIA сервер.
 
 ---
 

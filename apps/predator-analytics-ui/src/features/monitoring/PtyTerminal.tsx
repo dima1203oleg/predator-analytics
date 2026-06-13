@@ -50,7 +50,7 @@ export const PtyTerminal: React.FC = () => {
             if (cmd === 'help') {
                 response = 'ДОСТУПНІ КОМАНДИ: help, status, pods, logs, clear, restart, deploy, factory, scan';
             } else if (cmd === 'status') {
-                response = 'CLUSTER_HEALTH: OPTIMAL [v61.0]\nVRAM: 5.4GB/8GB [LOAD: 67%]\nNODES: 2 ONLINE [iMac-Master, NVIDIA-Cloud]\nCPU_CORE: 4/4 ACTIVE';
+                response = 'CLUSTER_HEALTH: OPTIMAL [v61.0]\nVRAM: 5.4GB/8GB [LOAD: 67%]\nNODES: 2 ONLINE [NVIDIA-Master, NVIDIA-Cloud]\nCPU_CORE: 4/4 ACTIVE';
             } else if (cmd === 'pods') {
                 response = 'NAME                     STATUS   RESTARTS   AGE\npredator-core-api        Running  0          14h\npredator-graph-service   Running  0          14h\npredator-ingestion       Running  2          14h\npredator-ai-factory      Running  0          6h';
             } else if (cmd === 'clear') {
@@ -89,7 +89,7 @@ export const PtyTerminal: React.FC = () => {
                 <div className="flex items-center gap-10">
                     <div className="flex flex-col items-end gap-1">
                         <span className="text-[8px] text-white/20 uppercase tracking-widest font-black italic">ЛОКАЦІЯ_ВУЗЛА</span>
-                        <span className="text-[11px] text-white/70 font-black italic tracking-tighter uppercase">IMAC_COMPUTE_NODE_PROD</span>
+                        <span className="text-[11px] text-white/70 font-black italic tracking-tighter uppercase">NVIDIA_COMPUTE_NODE_PROD</span>
                     </div>
                     <div className="h-10 w-px bg-white/5" />
                     <div className="relative">

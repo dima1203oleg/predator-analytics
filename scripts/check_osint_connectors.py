@@ -112,7 +112,7 @@ async def main():
     
     print("❌ Backend недоступний на:")
     print("   - NVIDIA сервер (194.177.1.240) - SSH недоступний")
-    print("   - iMac (192.168.0.200) - SSH недоступний")
+    print("   - NVIDIA (194.177.1.240) - SSH недоступний")
     print("   - Локально - Docker не запущено")
     
     print("\n⚠️  Всі БД налаштовані на NVIDIA сервер:")
@@ -123,7 +123,7 @@ async def main():
     print("   - MinIO: 194.177.1.240:9000")
     print("   - Neo4j: 194.177.1.240:7687")
     
-    print("\n💡 Рекомендація: Запустіть backend на NVIDIA сервері або iMac")
+    print("\n💡 Рекомендація: Запустіть backend на NVIDIA сервері або NVIDIA")
 
 
 if __name__ == "__main__":

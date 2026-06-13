@@ -130,7 +130,7 @@ class ForecastService:
             raise RuntimeError("ClickHouse or Pandas not available")
 
         client = clickhouse_connect.get_client(
-            host=os.getenv("CLICKHOUSE_HOST", "192.168.0.200"),
+            host=os.getenv("CLICKHOUSE_HOST", "194.177.1.240"),
             port=int(os.getenv("CLICKHOUSE_PORT", "8123")),
             username=os.getenv("CLICKHOUSE_USER", "default"),
             password=os.getenv("CLICKHOUSE_PASSWORD", "predator2026")

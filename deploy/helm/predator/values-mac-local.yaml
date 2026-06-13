@@ -1,5 +1,5 @@
 # Local MacBook configuration for Frontend-only deployment
-# Backend is hosted on remote iMac (192.168.0.200)
+# Backend is hosted on remote NVIDIA (194.177.1.240)
 
 global:
   domain: local.predator.ua
@@ -11,9 +11,9 @@ frontend:
     type: NodePort
     port: 3030
   env:
-    VITE_API_URL: "http://192.168.0.200:8000/api/v1"
-    VITE_V45_API_URL: "http://192.168.0.200:8000/api/v45"
-    VITE_WS_URL: "ws://192.168.0.200:8000/ws"
+    VITE_API_URL: "http://194.177.1.240:8000/api/v1"
+    VITE_V45_API_URL: "http://194.177.1.240:8000/api/v45"
+    VITE_WS_URL: "ws://194.177.1.240:8000/ws"
     VITE_MODE: "remote"
     VITE_ENV: "production"
 

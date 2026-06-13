@@ -1,19 +1,19 @@
 #!/bin/bash
 # deploy_imac_full_stack.sh
-# Повне автономне розгортання PREDATOR (8 DBs + API + UI) на iMac
+# Повне автономне розгортання PREDATOR (8 DBs + API + UI) на NVIDIA
 # v60.5-ELITE
 
 set -e
 
-# Додаємо шляхи для iMac (Brew + Local)
+# Додаємо шляхи для NVIDIA (Brew + Local)
 export PATH=$PATH:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
 
 # Конфігурація
-REMOTE=${PREDATOR_REMOTE:-"imac-sovereign"}
+REMOTE=${PREDATOR_REMOTE:-"NVIDIA-sovereign"}
 SSH_OPTS="-o IdentitiesOnly=yes -o ConnectTimeout=5"
 CLUSTER_NAME="predator-full-stack"
 
-echo "🌌 Ініціалізація повного стеку PREDATOR на iMac..."
+echo "🌌 Ініціалізація повного стеку PREDATOR на NVIDIA..."
 
 # Жорстке очищення завислих k3d контейнерів
 echo "🧹 Очищення завислих процесів Docker..."
@@ -25,7 +25,7 @@ remote_exec() {
         eval "$1"
     else
         # Спроба перевірити чи резолвиться хост
-        if ! nslookup "$REMOTE" > /dev/null 2>&1 && [[ "$REMOTE" == "imac-sovereign" ]]; then
+        if ! nslookup "$REMOTE" > /dev/null 2>&1 && [[ "$REMOTE" == "NVIDIA-sovereign" ]]; then
              echo "⚠️ Хост $REMOTE не знайдено. Виконую локально на $(hostname)..."
              eval "$1"
         else
@@ -170,5 +170,5 @@ echo "🔍 Очікування стабілізації подів (60с)..."
 sleep 60
 remote_exec "kubectl get pods -n predator"
 
-echo "🏁 Всі системи (8 DBs + Core) ініціалізовано на iMac."
-echo "🔗 API доступний за адресою: http://192.168.0.200:8000/api/v1"
+echo "🏁 Всі системи (8 DBs + Core) ініціалізовано на NVIDIA."
+echo "🔗 API доступний за адресою: http://194.177.1.240:8000/api/v1"

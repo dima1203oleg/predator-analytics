@@ -127,7 +127,7 @@ Mobile Sovereign Command Center
 │   ├── Quick Stats Grid <-- 3c
 │   │   ├── VRAM Usage <-- MobileSovereignCommandCenter.tsx:66
 │   │   ├── CPU Load <-- MobileSovereignCommandCenter.tsx:73
-│   │   ├── iMac Node Status <-- MobileSovereignCommandCenter.tsx:80
+│   │   ├── NVIDIA Node Status <-- MobileSovereignCommandCenter.tsx:80
 │   │   └── AI Engines Count <-- MobileSovereignCommandCenter.tsx:89
 │   └── Slide-to-Execute Actions <-- 3d
 │       ├── Core Recalibration <-- MobileSovereignCommandCenter.tsx:117
@@ -145,7 +145,7 @@ Mobile Sovereign Command Center
 
 **Location ID: 3c**
 **Title**: Mobile Quick Stats Grid
-**Description**: 2x2 grid з VRAM, CPU, iMac status та AI engines count
+**Description**: 2x2 grid з VRAM, CPU, NVIDIA status та AI engines count
 **Path:LineNumber**: /Users/Shared/Predator_60/apps/predator-analytics-ui/src/pages/admin/tabs/MobileSovereignCommandCenter.tsx:60
 
 **Location ID: 3d**
@@ -276,7 +276,7 @@ Deployment Updates
     │   ├── Port: 3030 <-- HR-10
     │   ├── Mock API: 9080 <-- HR-10
     │   └── Zrok Tunnel: https://6t7yqkozh1li.share.zrok.io <-- memory
-    └── iMac (Compute Node) <-- HR-22
+    └── NVIDIA (Compute Node) <-- HR-22
         ├── Static IP: 178.214.200.25 <-- memory
         └── All 8 Databases Deployed <-- memory
 
@@ -324,7 +324,7 @@ Deployment Updates
 - ✅ Frontend образ v61.0.634 на NVIDIA сервері
 - ✅ Zrok tunnel для публічного доступу
 - ✅ MacBook як IDE only (HR-21)
-- ✅ iMac як Compute Node (HR-22)
+- ✅ NVIDIA як Compute Node (HR-22)
 
 ### Bug Fixes
 - ✅ Виправлення TS помилок

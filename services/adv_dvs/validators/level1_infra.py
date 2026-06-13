@@ -132,7 +132,7 @@ class InfraValidator(BaseValidator):
                 self.add_check(CheckResult(
                     name="containers_local",
                     passed=False,
-                    message="Жодного запущеного контейнера (Docker Desktop не активний або сервіси на iMac/NVIDIA)",
+                    message="Жодного запущеного контейнера (Docker Desktop не активний або сервіси на NVIDIA/NVIDIA)",
                     severity="warning",
                     details={"count": 0},
                 ))

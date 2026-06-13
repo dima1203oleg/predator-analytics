@@ -91,13 +91,13 @@ export function GeminiCloudAssist() {
                         <div className="flex gap-3 flex-row-reverse">
                            <div className="w-8 h-8 rounded-lg bg-rose-500/20 flex items-center justify-center shrink-0 border border-rose-500/30 text-rose-400">P</div>
                            <div className="bg-rose-500/10 rounded-2xl rounded-tr-none p-4 text-rose-100 max-w-[80%] border border-rose-500/20 leading-relaxed italic">
-                             Проаналізуй затримку між Core API та Neo4j у кластері iMac-Node.
+                             Проаналізуй затримку між Core API та Neo4j у кластері NVIDIA-Node.
                            </div>
                         </div>
                         <div className="flex gap-3">
                            <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center shrink-0 border border-blue-500/30 text-blue-400">G</div>
                            <div className="bg-white/5 rounded-2xl rounded-tl-none p-4 text-slate-300 max-w-[80%] border border-white/5 leading-relaxed">
-                             Аналізую... Виявлено затримку 150ms через DNS-резолвінг у VPC-тунелі. рекомендую перевірити налаштування `zrok` та локальний DNS-кеш на iMac.
+                             Аналізую... Виявлено затримку 150ms через DNS-резолвінг у VPC-тунелі. рекомендую перевірити налаштування `zrok` та локальний DNS-кеш на NVIDIA.
                            </div>
                         </div>
                      </div>

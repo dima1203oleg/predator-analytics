@@ -1,17 +1,17 @@
-# 🖥️ Налаштування iMac як Remote Dev-Server (v55.1)
+# 🖥️ Налаштування NVIDIA як Remote Dev-Server (v55.1)
 
-Цей гайд описує, як перетворити офісний/домашній iMac на потужний вузол для запуску k3d/Docker, звільнивши ресурси MacBook для написання коду.
+Цей гайд описує, як перетворити офісний/домашній NVIDIA на потужний вузол для запуску k3d/Docker, звільнивши ресурси MacBook для написання коду.
 
 ---
 
 ## 🎯 Ціль
-- MacBook підключається до iMac по SSH за ключами (без пароля).
-- iMac виконує важку роботу (Docker, k3d, ArgoCD).
+- MacBook підключається до NVIDIA по SSH за ключами (без пароля).
+- NVIDIA виконує важку роботу (Docker, k3d, ArgoCD).
 - MacBook виконує роль "Control Machine" та IDE.
 
 ---
 
-## 🔧 1. Підготовка сервера (iMac)
+## 🔧 1. Підготовка сервера (NVIDIA)
 
 ### Увімкнення SSH:
 ```bash
@@ -20,7 +20,7 @@ sudo systemsetup -setremotelogin on
 *Або: System Settings → General → Sharing → Remote Login ON.*
 
 ### Фіксація IP (Critical):
-Обов'язково зарезервуйте статичний IP для iMac у налаштуваннях роутера (DHCP Reservation) або вручну в налаштуваннях macOS. Наприклад: `192.168.1.45`.
+Обов'язково зарезервуйте статичний IP для NVIDIA у налаштуваннях роутера (DHCP Reservation) або вручну в налаштуваннях macOS. Наприклад: `192.168.1.45`.
 
 ---
 
@@ -32,15 +32,15 @@ ssh-keygen -t ed25519 -C "predator-dev-macbook"
 # Натисніть Enter для всіх запитів (без пароля для ключа)
 ```
 
-### Передача ключа на iMac:
+### Передача ключа на NVIDIA:
 ```bash
-# Замініть username та IMAC_IP на ваші дані
+# Замініть username та NVIDIA_IP на ваші дані
 ssh-copy-id username@192.168.1.45
 ```
 
 ---
 
-## 🔒 3. Hardening (Безпека iMac)
+## 🔒 3. Hardening (Безпека NVIDIA)
 
 Після перевірки входу по ключах, рекомендується вимкнути вхід по паролю:
 
@@ -78,29 +78,29 @@ ssh predator-server
 
 ## 🛰️ 6. Remote Kubeconfig Bridge (Direct K8s Access)
 
-🎯 **Ціль**: З MacBook `kubectl get pods` працює напряму з кластером на iMac без SSH.
+🎯 **Ціль**: З MacBook `kubectl get pods` працює напряму з кластером на NVIDIA без SSH.
 
-### 🧩 КРОК 1. Забрати kubeconfig з iMac
+### 🧩 КРОК 1. Забрати kubeconfig з NVIDIA
 На MacBook:
 ```bash
-scp predator-server:~/.kube/config ~/.kube/config-imac
+scp predator-server:~/.kube/config ~/.kube/config-NVIDIA
 ```
 
 ### 🧩 КРОК 2. Виправити Server IP
 Відкрийте файл:
 ```bash
-nano ~/.kube/config-imac
+nano ~/.kube/config-NVIDIA
 ```
-Знайдіть `server: https://127.0.0.1:6443` і замініть на IP iMac:
+Знайдіть `server: https://127.0.0.1:6443` і замініть на IP NVIDIA:
 ```yaml
-server: https://IMAC_IP:6443 # наприклад 192.168.1.45
+server: https://NVIDIA_IP:6443 # наприклад 192.168.1.45
 ```
-*(Можна використати sed: `sed -i '' 's/127.0.0.1/192.168.1.45/g' ~/.kube/config-imac`)*
+*(Можна використати sed: `sed -i '' 's/127.0.0.1/192.168.1.45/g' ~/.kube/config-NVIDIA`)*
 
 ### 🧩 КРОК 3. Об'єднати конфіги
-Щоб мати доступ до локальних кластерів і паралельно до iMac:
+Щоб мати доступ до локальних кластерів і паралельно до NVIDIA:
 ```bash
-export KUBECONFIG=~/.kube/config:~/.kube/config-imac
+export KUBECONFIG=~/.kube/config:~/.kube/config-NVIDIA
 kubectl config view --flatten > ~/.kube/config-merged
 mv ~/.kube/config-merged ~/.kube/config
 ```
@@ -108,7 +108,7 @@ mv ~/.kube/config-merged ~/.kube/config
 ### 🧪 КРОК 4. Перевірка
 ```bash
 kubectl config get-contexts
-kubectl config use-context k3d-mycluster # або інший контекст iMac
+kubectl config use-context k3d-mycluster # або інший контекст NVIDIA
 kubectl get nodes
 ```
 
@@ -118,9 +118,9 @@ kubectl get nodes
 
 ## 🌐 7. Ingress + predator.local (Magic Networking)
 
-🎯 **Ціль**: На MacBook відкриваєте `http://predator.local` → і це працює з сервісом на iMac.
+🎯 **Ціль**: На MacBook відкриваєте `http://predator.local` → і це працює з сервісом на NVIDIA.
 
-### 🧩 КРОК 1. Nginx Ingress Controller (На iMac/Cluster)
+### 🧩 КРОК 1. Nginx Ingress Controller (На NVIDIA/Cluster)
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
 ```
@@ -167,7 +167,7 @@ spec:
 
 Це "святий Грааль" розробки:
 - Код змінюється на MacBook.
-- **Skaffold** автоматично синхронізує зміни у под на iMac.
+- **Skaffold** автоматично синхронізує зміни у под на NVIDIA.
 - Докер-образ не перезбирається щоразу (завдяки `sync` механізмам).
 - Результат миттєво видно на `http://192.168.1.45:3030`.
 

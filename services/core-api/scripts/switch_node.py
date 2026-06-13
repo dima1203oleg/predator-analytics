@@ -13,7 +13,7 @@ def switch_node(node_name):
             "NEO_PASS": "nvidia-prod-password",
             "URL": "https://predator.share.zrok.io"
         },
-        "IMAC": {
+        "NVIDIA": {
             "IP": "178.214.200.25",
             "DB_PASS": "predator",
             "NEO_PASS": "predator",
@@ -75,6 +75,6 @@ def switch_node(node_name):
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: python switch_node.py [NVIDIA|IMAC|COLAB]")
+        print("Usage: python switch_node.py [NVIDIA|NVIDIA|COLAB]")
     else:
         switch_node(sys.argv[1])

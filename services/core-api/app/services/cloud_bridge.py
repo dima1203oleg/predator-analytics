@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 class CloudBridgeService:
     """🦅 PREDATOR Cloud Bridge Service
-    Координує роботу між iMac (Local Compute) та Google Colab (Cloud Hybrid).
+    Координує роботу між NVIDIA (Local Compute) та Google Colab (Cloud Hybrid).
     """
 
     def __init__(self):

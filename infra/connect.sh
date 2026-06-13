@@ -4,8 +4,8 @@
 NVIDIA_IP="194.177.1.240" # IP або хост для перевірки (Primary)
 NVIDIA_PORT="6666"        # Порт, якщо пінг закритий або нестандартний
 
-IMAC_IP="192.168.1.100"   # Локальна або резервна IP (Fallback)
-IMAC_PORT="22"
+NVIDIA_IP="192.168.1.100"   # Локальна або резервна IP (Fallback)
+NVIDIA_PORT="22"
 
 echo "🦅 Перевірка доступності системи PREDATOR..."
 echo "----------------------------------------------"
@@ -17,15 +17,15 @@ then
   echo "✅ NVIDIA (Primary) доступна → підключення..."
   ssh nvidia-server
 else
-  echo "⚠️ NVIDIA недоступна → fallback на iMac..."
+  echo "⚠️ NVIDIA недоступна → fallback на NVIDIA..."
   
-  # Опціональна перевірка самого iMac, щоб не висіти в таймаутах
-  if nc -z -G 1 $IMAC_IP $IMAC_PORT &> /dev/null
+  # Опціональна перевірка самого NVIDIA, щоб не висіти в таймаутах
+  if nc -z -G 1 $NVIDIA_IP $NVIDIA_PORT &> /dev/null
   then
-    echo "🟢 iMac Online → підключення..."
-    ssh imac
+    echo "🟢 NVIDIA Online → підключення..."
+    ssh NVIDIA
   else
-    echo "❌ iMac також недоступний. Жоден сервер не відповідає!"
+    echo "❌ NVIDIA також недоступний. Жоден сервер не відповідає!"
     exit 1
   fi
 fi

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-read -p "🔄 Оберіть сервер для синхронізації (1 - NVIDIA, 2 - iMac, 3 - Обидва) [1]: " SYNC_TARGET
+read -p "🔄 Оберіть сервер для синхронізації (1 - NVIDIA, 2 - NVIDIA, 3 - Обидва) [1]: " SYNC_TARGET
 SYNC_TARGET=${SYNC_TARGET:-1}
 
 PROJECT_DIR="/Users/Shared/Predator_60"
@@ -12,8 +12,8 @@ sync_nvidia() {
 }
 
 sync_imac() {
-  echo "🖥 Синхронізація з iMac (Fallback)..."
-  rsync -avz --exclude="node_modules" --exclude=".git" --exclude=".venv" $PROJECT_DIR/ imac:$REMOTE_DIR/
+  echo "🖥 Синхронізація з NVIDIA (Fallback)..."
+  rsync -avz --exclude="node_modules" --exclude=".git" --exclude=".venv" $PROJECT_DIR/ NVIDIA:$REMOTE_DIR/
 }
 
 case $SYNC_TARGET in

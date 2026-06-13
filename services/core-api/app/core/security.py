@@ -177,7 +177,7 @@ def validate_security_on_startup():
 async def get_current_user_payload(token: str = Depends(oauth2_scheme)) -> dict:
     """Dependency для отримання payload з токену.
 
-    Emergency Mode: якщо Keycloak недоступний (iMac офлайн),
+    Emergency Mode: якщо Keycloak недоступний (NVIDIA офлайн),
     автоматично переключається на локальну JWT-валідацію.
     """
     credentials_exception = HTTPException(

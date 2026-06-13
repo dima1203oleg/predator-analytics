@@ -74,7 +74,7 @@ window.updateEliteApi = () => {
 const MOCK_DATA = {
     '/api/v1/health': { status: "OPERATIONAL", version: "63.0-ELITE", node: "COLAB-FAILOVER-SIM" },
     '/api/v1/infrastructure/nodes': [
-        { id: "imac-compute", name: "iMac Pro (Node-199)", status: "offline", load: 0, vram: "16GB" },
+        { id: "NVIDIA-compute", name: "NVIDIA Pro (Node-199)", status: "offline", load: 0, vram: "16GB" },
         { id: "colab-cluster", name: "Google Colab (Failover)", status: "degraded", load: 0, vram: "16GB" }
     ]
 };

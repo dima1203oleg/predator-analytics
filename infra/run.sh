@@ -11,6 +11,6 @@ then
   # Відправляємо команду на Primary Server
   ssh nvidia-server "$CMD"
 else
-  # Fallback на iMac
-  ssh imac "$CMD"
+  # Fallback на NVIDIA
+  ssh NVIDIA "$CMD"
 fi

@@ -310,7 +310,7 @@ HR-18  PostgreSQL: Тільки транзакції та метадані (SSOT
 HR-19  OpenSearch: Тільки повнотекстовий пошук, заборонено використовувати як Primary DB
 HR-20  Qdrant: Тільки векторна пам'ять (embeddings)
 HR-21  ZERO-LOCAL-DEPLOYMENT: MacBook — тільки IDE. Жодних K8s/Docker кластерів.
-HR-22  IMAC-COMPUTE-NODE: Всі 8 БД та аналітичні сервіси розгортаються ТІЛЬКИ на iMac (...200).
+HR-22  NVIDIA-COMPUTE-NODE: Всі 8 БД та аналітичні сервіси розгортаються ТІЛЬКИ на NVIDIA (...200).
 HR-23  TUNNELS: Тільки zrok (zrok.io). Використання Cloudflare Tunnel або Ngrok ЗАБОРОНЕНО.
 ```
 

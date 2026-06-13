@@ -1,16 +1,16 @@
 #!/bin/bash
 # fix_openlens_imac.sh
-# Автоматичне підключення OpenLens до iMac кластера
+# Автоматичне підключення OpenLens до NVIDIA кластера
 
-IMAC_IP="192.168.0.200"
+NVIDIA_IP="194.177.1.240"
 KUBECONFIG_PATH="$HOME/.kube/config"
 
-echo "🔗 Отримання kubeconfig з iMac..."
-ssh imac-sovereign "export PATH=\$PATH:/opt/homebrew/bin:/usr/local/bin; k3d kubeconfig get predator-full-stack" > /tmp/new_imac_kubeconfig
+echo "🔗 Отримання kubeconfig з NVIDIA..."
+ssh NVIDIA-sovereign "export PATH=\$PATH:/opt/homebrew/bin:/usr/local/bin; k3d kubeconfig get predator-full-stack" > /tmp/new_imac_kubeconfig
 
 if [ $? -eq 0 ]; then
     echo "⚙️ Налаштування IP адреси..."
-    sed -i '' "s/0.0.0.0/$IMAC_IP/g" /tmp/new_imac_kubeconfig
+    sed -i '' "s/0.0.0.0/$NVIDIA_IP/g" /tmp/new_imac_kubeconfig
     
     echo "📦 Оновлення локального kubeconfig..."
     # Використовуємо kubectl для злиття
@@ -19,5 +19,5 @@ if [ $? -eq 0 ]; then
     
     echo "✅ Готово! Тепер вибери контекст 'k3d-predator-full-stack' в OpenLens."
 else
-    echo "❌ Помилка: Кластер на iMac ще не запущений або недоступний."
+    echo "❌ Помилка: Кластер на NVIDIA ще не запущений або недоступний."
 fi

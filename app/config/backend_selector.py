@@ -1,6 +1,6 @@
 # app/config/backend_selector.py
 """Модуль для автоматичного вибору бекенд‑сервера.
-Пріоритет: `kellegen` (30 ГБ RAM) > `imac` (8 ГБ RAM).
+Пріоритет: `kellegen` (30 ГБ RAM) > `NVIDIA` (8 ГБ RAM).
 Модуль перевіряє доступність сервера за TCP‑з’єднанням на порту 8000
 (можна змінити через `HEALTH_PORT`). Якщо сервер недоступний – повертає
 резервний.
@@ -10,13 +10,13 @@ import os
 import socket
 
 # Читання параметрів середовища (можна задати у .env)
-IMAC_HOST = os.getenv("IMAC_HOST", "imac.local")
+NVIDIA_HOST = os.getenv("NVIDIA_HOST", "NVIDIA.local")
 KELLEGEN_HOST = os.getenv("KELLEGEN_HOST", "kellegen.local")
 BACKEND_PORT = int(os.getenv("BACKEND_PORT", "8000"))
 HEALTH_PORT = int(os.getenv("HEALTH_PORT", BACKEND_PORT))
 
 # Пріоритетний порядок
-PRIORITY = [KELLEGEN_HOST, IMAC_HOST]
+PRIORITY = [KELLEGEN_HOST, NVIDIA_HOST]
 
 async def _check_host(host: str) -> bool:
     """Спробувати відкрити TCP‑з’єднання з *host*.

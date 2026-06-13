@@ -659,7 +659,7 @@ externalDns:
   enabled: false
   provider: rfc2136
   rfc2136:
-    host: "192.168.0.200"
+    host: "194.177.1.240"
     zone: "nip.io"
     tsigKeyName: "predator-dns-key"
     tsigSecret: ""
