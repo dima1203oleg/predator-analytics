@@ -23,7 +23,7 @@ RUN useradd --create-home --shell /bin/bash predator
 WORKDIR /app
 
 # Копіюємо Python пакети
-COPY --from=builder /install /usr/local
+COPY --from=builder /install/local /usr/local
 
 # Копіюємо application code
 COPY --chown=predator:predator services/utos /app/utos

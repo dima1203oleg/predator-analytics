@@ -26,7 +26,7 @@ services:
     ports:
       - "8000:8000"
     env_file:
-      - .env
+      - ../.env
     volumes:
       - ./logs/core-api:/app/logs
     restart: always
@@ -55,7 +55,7 @@ services:
     ports:
       - "8001:8001"
     env_file:
-      - .env
+      - ../.env
     restart: always
     depends_on:
       neo4j:
@@ -76,7 +76,7 @@ services:
       context: ../
       dockerfile: services/ingestion-worker/Dockerfile
     env_file:
-      - .env
+      - ../.env
     environment:
       - CLICKHOUSE_HOST=clickhouse
       - CLICKHOUSE_PORT=8123
@@ -291,7 +291,7 @@ services:
     ports:
       - "9201:9200"  # Хост 9201 → контейнер 9200 (уникаємо конфлікту з OpenSearch 9200)
     env_file:
-      - .env
+      - ../.env
     restart: always
     depends_on:
       postgres:
@@ -314,7 +314,7 @@ services:
       - ./litellm/config.yaml:/app/config.yaml
     command: ["--config", "/app/config.yaml", "--port", "4000"]
     env_file:
-      - .env
+      - ../.env
     networks:
       - predator-sovereign-net
     deploy:
@@ -328,7 +328,7 @@ services:
       context: ../
       dockerfile: services/autonomous-agent/Dockerfile
     env_file:
-      - .env
+      - ../.env
     volumes:
       - ../:/app  # Щоб агент міг аналізувати та комітити код
       - ~/.gitconfig:/etc/gitconfig:ro
@@ -350,7 +350,7 @@ services:
       context: ../
       dockerfile: services/telegram-bot/Dockerfile
     env_file:
-      - .env
+      - ../.env
     restart: always
     depends_on:
       - core-api
@@ -372,7 +372,7 @@ services:
     ports:
       - "8003:8003"
     env_file:
-      - .env
+      - ../.env
     environment:
       POSTGRES_DSN: "postgresql://predator:${POSTGRES_PASSWORD:-predator_secret}@postgres:5432/predator_db"
       REDIS_URL: "redis://:${REDIS_PASSWORD:-predator_redis}@redis:6379/0"
