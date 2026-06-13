@@ -59,21 +59,21 @@ class ClickHouseSink:
                         decl_date = None
                         
                 rows.append([
-                    str(item.get('_record_hash'))[:32] if item.get('_record_hash') else None, # id
-                    str(item.get('declaration_number')) if item.get('declaration_number') is not None else None,
+                    str(item.get('_record_hash'))[:32] if item.get('_record_hash') else "00000000-0000-0000-0000-000000000000", # id
+                    str(item.get('declaration_number')) if item.get('declaration_number') is not None else "",
                     decl_date,
-                    str(item.get('exporter_name')) if item.get('exporter_name') is not None else None,
-                    str(item.get('exporter_ueid')) if item.get('exporter_ueid') is not None else None,
-                    str(item.get('importer_name')) if item.get('importer_name') is not None else None,
-                    str(item.get('ueid')) if item.get('ueid') is not None else None,          # importer_ueid
-                    str(item.get('uktzed_code')) if item.get('uktzed_code') is not None else None,   # hs_code
-                    str(item.get('product_description')) if item.get('product_description') is not None else None, # hs_description
-                    item.get('weight'),        # weight_kg
-                    item.get('customs_value'), # value_usd
-                    str(item.get('country_origin')) if item.get('country_origin') is not None else None,# origin_country
-                    str(item.get('country_destination')) if item.get('country_destination') is not None else None, # destination_country
-                    str(item.get('customs_post')) if item.get('customs_post') is not None else None,  # customs_post_code
-                    item.get('risk_score', 0.0)
+                    str(item.get("exporter_name")) if item.get("exporter_name") is not None else "",
+                    str(item.get("exporter_ueid")) if item.get("exporter_ueid") is not None else "",
+                    str(item.get("importer_name") or item.get("company_name") or ""),
+                    str(item.get("ueid")) if item.get("ueid") is not None else "",
+                    str(item.get("uktzed_code")) if item.get("uktzed_code") is not None else "000000",
+                    str(item.get("product_description")) if item.get("product_description") is not None else "", # hs_description
+                    float(item.get('weight')) if item.get('weight') is not None else 0.0,        # weight_kg
+                    float(item.get('customs_value')) if item.get('customs_value') is not None else 0.0, # value_usd
+                    str(item.get('country_origin')) if item.get('country_origin') is not None else "",# origin_country
+                    str(item.get('customs_post')) if item.get('customs_post') is not None else "", # destination_country
+                    str(item.get('customs_post')) if item.get('customs_post') is not None else "", # customs_post_code
+                    0.0, # risk_score
                 ])
 
             if rows:

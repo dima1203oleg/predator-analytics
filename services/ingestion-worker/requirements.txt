@@ -18,3 +18,5 @@ redis==5.1.0
 spacy>=3.8.0
 rapidfuzz>=3.0.0
 click
+qdrant-client
+sentence-transformers

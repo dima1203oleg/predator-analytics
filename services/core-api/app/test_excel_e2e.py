@@ -39,9 +39,9 @@ settings = get_settings()
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+asyncpg://predator:predator_secret@postgres:5432/predator_db")
 CLICKHOUSE_HOST = settings.CLICKHOUSE_HOST
 CLICKHOUSE_PORT = settings.CLICKHOUSE_PORT
-CLICKHOUSE_USER = settings.CLICKHOUSE_USER
-CLICKHOUSE_PASSWORD = settings.CLICKHOUSE_PASSWORD
-CLICKHOUSE_DATABASE = settings.CLICKHOUSE_DATABASE
+CLICKHOUSE_USER = os.getenv("CLICKHOUSE_USER", "predator")
+CLICKHOUSE_PASSWORD = os.getenv("CLICKHOUSE_PASSWORD", "predator_secret")
+CLICKHOUSE_DATABASE = os.getenv("CLICKHOUSE_DATABASE", "predator_analytics")
 NEO4J_URI = settings.NEO4J_URI
 NEO4J_USER = settings.NEO4J_USER
 NEO4J_PASSWORD = settings.NEO4J_PASSWORD
@@ -218,7 +218,7 @@ async def run_e2e_validation(file_content: bytes, file_name: str, audit_id: str)
     # 5.2 ClickHouse (OLAP) - Використовуємо REST API ClickHouse на порту 8123
     try:
         ch_url = f"http://{CLICKHOUSE_HOST}:{CLICKHOUSE_PORT}/"
-        ch_auth = httpx.BasicAuth("default", "predator_secret_ch")
+        ch_auth = httpx.BasicAuth(CLICKHOUSE_USER, CLICKHOUSE_PASSWORD)
         async with httpx.AsyncClient(timeout=10, auth=ch_auth) as client:
             ch_query = "SELECT COUNT() FROM predator_analytics.customs_declarations"
             response = await client.post(ch_url, content=ch_query)

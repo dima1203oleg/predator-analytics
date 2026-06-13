@@ -1513,3 +1513,11 @@ VALUES ('SYSTEM_UPGRADE', '{"message": "Платформа оновлена до
 INSERT INTO audit_log (tenant_id, action, details)
 VALUES ('a0000000-0000-0000-0000-000000000001', 'system_init',
         '{"message": "PREDATOR Analytics v62.0-ELITE ініціалізовано", "version": "62.0"}'::jsonb);
+
+CREATE TABLE IF NOT EXISTS processed_events (
+    event_id UUID PRIMARY KEY,
+    tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    source VARCHAR(255) NOT NULL,
+    status VARCHAR(50) NOT NULL DEFAULT 'SUCCESS',
+    processed_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
