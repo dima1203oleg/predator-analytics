@@ -121,21 +121,29 @@ NVIDIA_ssh "
     # Створюємо venv якщо немає
     if [ ! -d '.venv' ]; then
         echo 'Створення venv...'
-        python3.12 -m venv .venv 2>/dev/null || python3 -m venv .venv
+        python3.12 -m venv .venv 2>/dev/null || python3 -m venv .venv || true
     fi
 
-    source .venv/bin/activate
+    if [ -f .venv/bin/activate ]; then
+        source .venv/bin/activate
+        PIP_CMD="pip"
+        PYTHON_CMD="python"
+    else
+        echo '⚠️ venv не створено. Використовуємо системний pip з --break-system-packages'
+        PIP_CMD="pip3 --break-system-packages"
+        PYTHON_CMD="python3"
+    fi
 
     # ФІКС: Примусово встановлюємо numpy та ML бібліотеки (ключові залежності)
     echo '📦 Встановлення ML залежностей (numpy, scikit-learn, pandas)...'
-    pip install -q numpy scikit-learn pandas apscheduler 2>&1 | tail -3
+    \$PIP_CMD install -q numpy scikit-learn pandas apscheduler uvicorn fastapi 2>&1 | tail -3
 
     # Встановлення всіх вимог
     echo '📦 Встановлення requirements.txt...'
-    pip install -q -r requirements.txt 2>&1 | tail -5
+    \$PIP_CMD install -q -r requirements.txt 2>&1 | tail -5
 
     # Встановлення predator-common
-    pip install -q -e ../../libs/predator-common 2>&1 | tail -3
+    \$PIP_CMD install -q -e ../../libs/predator-common 2>&1 | tail -3
 
     echo '✅ Всі залежності встановлено. Запуск uvicorn...'
 
@@ -143,7 +151,7 @@ NVIDIA_ssh "
     rm -f ~/predator_api.log
 
     # Запуск через python -m uvicorn (з -u для зняття буферизації логів)
-    nohup python -u -m uvicorn app.main:app \
+    nohup \$PYTHON_CMD -u -m uvicorn app.main:app \
         --host 0.0.0.0 --port 8090 --workers 2 \
         > ~/predator_api.log 2>&1 &
 
