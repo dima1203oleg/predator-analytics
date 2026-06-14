@@ -4,6 +4,7 @@ from predator_common.logging import get_logger
 from services.adv_dvs.checks.kafka_check import check_kafka_connection
 from services.adv_dvs.checks.db_check import check_postgres, check_neo4j, check_clickhouse, check_qdrant
 from services.adv_dvs.checks.opensearch_check import check_opensearch
+from services.adv_dvs.checks.minio_check import check_minio
 from services.adv_dvs.report_generator import DVSReportGenerator
 
 logger = get_logger("adv_dvs.validators.level1")
@@ -36,6 +37,9 @@ async def run_level1_checks() -> dict:
     
     os_result = await check_opensearch()
     results["checks"].append(os_result)
+    
+    minio_result = await check_minio()
+    results["checks"].append(minio_result)
     
     # Перевірка загального статусу
     for check in results["checks"]:
