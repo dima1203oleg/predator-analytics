@@ -3,12 +3,16 @@ import logging
 import os
 import uuid
 
+import aiofiles
 from confluent_kafka import Producer
 from fastapi import FastAPI, File, Form, HTTPException, Request, Response, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
 # Припускаємо, що libs додано до PYTHONPATH під час деплою
 from libs.core.schemas.events import RawIngestionEvent
+
+from app.services.minio_client import minio_client
+from app.services.redis_client import redis_client
 
 # Налаштування логування
 logging.basicConfig(level=logging.INFO)
@@ -38,12 +42,19 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.error(f"❌ Помилка підключення до Redpanda: {e}")
 
+    await redis_client.connect()
+    minio_client.connect()
+
+    # Create temporary directory for TUS uploads
+    os.makedirs("/tmp/tus_uploads", exist_ok=True)  # noqa: S108
+
     yield
 
     # Очищення ресурсів
     if app.state.kafka_producer:
         logger.info("⏳ Очікування завершення черги повідомлень Kafka...")
         app.state.kafka_producer.flush()
+    await redis_client.close()
     logger.info("🛑 Ingestion API завершує роботу...")
 
 app = FastAPI(
@@ -100,7 +111,15 @@ async def tus_create(request: Request):
         raise HTTPException(status_code=400, detail="Заголовок Upload-Length відсутній")
 
     job_id = str(uuid.uuid4())
-    # TODO: Зберегти метадані в Redis
+    # Зберігаємо метадані в Redis
+    await redis_client.set_metadata(job_id, {
+        "upload_length": upload_length,
+        "upload_offset": "0"
+    })
+
+    # Створюємо порожній тимчасовий файл
+    tmp_path = f"/tmp/tus_uploads/{job_id}"  # noqa: S108
+    open(tmp_path, "wb").close()
 
     response = Response(status_code=201)
     response.headers["Tus-Resumable"] = "1.0.0"
@@ -116,14 +135,31 @@ async def tus_patch(request: Request, job_id: str):
 
     # Читання тіла запиту (фрагмент файлу)
     body = await request.body()
-    # TODO: Дописати дані у файл на диску або в MinIO за вказаним зміщенням
+
+    # Дописуємо дані у тимчасовий файл
+    tmp_path = f"/tmp/tus_uploads/{job_id}"  # noqa: S108
+    async with aiofiles.open(tmp_path, "ab") as f:
+        await f.write(body)
 
     new_offset = int(upload_offset) + len(body)
-    upload_length = request.headers.get("Upload-Length", new_offset)
+    upload_length = request.headers.get("Upload-Length")
 
-    if new_offset >= int(upload_length):
-        # Файл завантажено повністю — ініціюємо фіналізацію
-        await finalize_upload(job_id, "default_tenant", "auto", f"minio://uploads/{job_id}", "resumable_upload")
+    # Оновлюємо offset в Redis
+    await redis_client.set_metadata(job_id, {"upload_offset": str(new_offset)})
+
+    if upload_length and new_offset >= int(upload_length):
+        # Файл завантажено повністю — завантажуємо в MinIO та фіналізуємо
+        async with aiofiles.open(tmp_path, "rb") as f:
+            file_data = await f.read()
+
+        bucket = "uploads"
+        object_name = f"tus/{job_id}"
+        target_uri = await minio_client.upload_file(bucket, object_name, file_data)
+
+        await finalize_upload(job_id, "default_tenant", "auto", target_uri, "resumable_upload")
+
+        # Очищуємо тимчасовий файл
+        os.remove(tmp_path)
 
     response = Response(status_code=204)
     response.headers["Tus-Resumable"] = "1.0.0"
@@ -142,8 +178,13 @@ async def upload_direct(
 ):
     """Стандартний ендпоїнт для прямого завантаження файлів."""
     job_id = str(uuid.uuid4())
-    # TODO: Зберегти у MinIO
-    target_uri = f"minio://uploads/{tenant_id}/{job_id}_{file.filename}"
+
+    # Читаємо та завантажуємо у MinIO
+    file_data = await file.read()
+    bucket = "uploads"
+    object_name = f"{tenant_id}/{job_id}_{file.filename}"
+
+    target_uri = await minio_client.upload_file(bucket, object_name, file_data, content_type=file.content_type)
 
     await finalize_upload(job_id, tenant_id, source_type, target_uri, file.filename)
 

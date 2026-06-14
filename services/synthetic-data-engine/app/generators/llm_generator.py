@@ -4,14 +4,14 @@ import asyncio
 import json
 from typing import Any
 
+import httpx
 import pandas as pd
 from services.synthetic_data_engine.app.generators.base import BaseSyntheticGenerator
 import structlog
 
-logger = structlog.get_logger("sde.generators.llm")
+from app.config import config as engine_config
 
-# В реальності тут буде імпорт з core-api або власний клієнт до LLM API
-# from app.services.ai_service import AIService
+logger = structlog.get_logger("sde.generators.llm")
 
 class LLMSyntheticGenerator(BaseSyntheticGenerator):
     """Генератор синтетичних даних на основі LLM (через AIService)."""
@@ -38,13 +38,42 @@ class LLMSyntheticGenerator(BaseSyntheticGenerator):
 
     async def _generate_batch_async(self, batch_size: int, template_prompt: str) -> list[dict]:
         """Асинхронна генерація одного батчу."""
-        # TODO: Інтеграція з реальним AIService (Tri-State Routing)
-        # prompt = f"{template_prompt}\nGenerate {batch_size} rows."
-        # response = await AIService.chat_completion(...)
+        prompt = f"{template_prompt}\nGenerate {batch_size} rows."
+        logger.debug(f"Звернення до LLM для батчу ({batch_size} рядків)")
 
-        logger.debug(f"Mock-генерація батчу ({batch_size} рядків)")
+        messages = [{"role": "user", "content": prompt}]
 
-        # MOCK РЕАЛІЗАЦІЯ ДЛЯ ТЕСТУВАННЯ
+        async with httpx.AsyncClient() as client:
+            try:
+                response = await client.post(
+                    f"{engine_config.LITELLM_API_BASE}/chat/completions",
+                    json={
+                        "model": engine_config.LLM_MODEL,
+                        "messages": messages,
+                        "temperature": engine_config.LLM_TEMPERATURE,
+                        "response_format": { "type": "json_object" }
+                    },
+                    timeout=120.0
+                )
+                response.raise_for_status()
+                data = response.json()
+                content = data["choices"][0]["message"]["content"]
+
+                # Парсимо JSON (LLM має повернути об'єкт з ключем data або просто масив)
+                parsed = json.loads(content)
+                if isinstance(parsed, dict) and "data" in parsed:
+                    return parsed["data"]
+                elif isinstance(parsed, list):
+                    return parsed
+                else:
+                    logger.warning("Неочікуваний формат від LLM", content=content)
+                    return []
+            except Exception as e:
+                logger.error(f"LLM Error: {e}")
+                # Fallback для тестування у разі помилки
+                return self._mock_generate(batch_size)
+
+    def _mock_generate(self, batch_size: int) -> list[dict]:
         from faker import Faker
         fake = Faker('uk_UA')
         batch = []
@@ -74,7 +103,7 @@ class LLMSyntheticGenerator(BaseSyntheticGenerator):
 
         # Використовуємо існуючий event loop якщо є, інакше створюємо новий
         try:
-            loop = asyncio.get_running_loop()
+            _ = asyncio.get_running_loop()
             # Якщо ми вже в async контексті, ми маємо використовувати async версію
             # Це обгортка для сумісності з синхронним інтерфейсом
             raise RuntimeError("LLM generator is async, must be called with await sample_async()")
@@ -115,5 +144,5 @@ class LLMSyntheticGenerator(BaseSyntheticGenerator):
         if self.few_shot_examples:
             prompt += f"Приклади (Reference data): {json.dumps(self.few_shot_examples, ensure_ascii=False)}\n"
 
-        prompt += "Поверни ТІЛЬКИ валідний JSON масив об'єктів. Жодних пояснень."
+        prompt += "Поверни ТІЛЬКИ валідний JSON об'єкт з ключем 'data', що містить масив об'єктів. Жодних пояснень. JSON object MUST contain 'data' array."
         return prompt

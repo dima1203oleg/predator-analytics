@@ -27,6 +27,8 @@ class SyntheticEngineConfig(BaseSettings):
     LLM_BATCH_SIZE: int = 20
     LLM_MAX_RETRIES: int = 3
     LLM_TEMPERATURE: float = 0.7
+    LITELLM_API_BASE: str = "http://litellm:4000"
+    LLM_MODEL: str = "qwen3-coder-next"
 
     model_config = SettingsConfigDict(
         env_prefix="SDE_",

@@ -80,28 +80,69 @@ class WinSURFArchitect:
 
     async def _analyze_impact_with_ai(self, action: str, tech: str, desc: str) -> dict:
         """Uses AI (or heuristic fallback) to score Stability vs Complexity."""
-        # TODO: Implement actual LLM call here.
-        # For now, using deterministic heuristics for speed/stability in this demo.
+        try:
+            if not self.ai_client:
+                import os
 
-        complexity = 5
-        autonomy = 5
-        security_risk = "low"
+                import google.generativeai as genai
+                # Assuming GEMINI_API_KEY is configured in the bot environment
+                genai.configure(api_key=os.getenv("GEMINI_API_KEY", ""))
+                self.ai_client = genai.GenerativeModel("gemini-1.5-flash")
 
-        if "deploy" in action and self.stage == SecurityStage.PRODUCTION:
-            complexity = 8
-            security_risk = "medium"
+            prompt = f"""
+            Analyze the following architectural proposal and score its impact on the system.
+            Action: {action}
+            Technology: {tech}
+            Description: {desc}
+            
+            Return ONLY a valid JSON object with the following schema, and NO markdown formatting:
+            {{
+                "complexity": int (1-10, where 10 is very complex),
+                "autonomy": int (1-10, where 10 means fully autonomous/automated),
+                "security_risk": string ("low", "medium", "high", "critical")
+            }}
+            """
 
-        if "fix" in action:
-            autonomy = 9
+            # Since genai.GenerativeModel generation is synchronous in the basic SDK,
+            # we should technically run it in a thread, but for bot MVP async wrap or direct call:
+            import asyncio
+            response = await asyncio.to_thread(self.ai_client.generate_content, prompt)
 
-        if tech and tech.lower() not in self.approved_tech and tech != "standard":
-             complexity = 9 # Unknown tech is complex
+            text = response.text
+            # Clean possible markdown formatting
+            text = text.replace("```json", "").replace("```", "").strip()
+            result = json.loads(text)
 
-        return {
-            "complexity": complexity,
-            "autonomy": autonomy,
-            "security_risk": security_risk
-        }
+            # Validate output
+            return {
+                "complexity": int(result.get("complexity", 5)),
+                "autonomy": int(result.get("autonomy", 5)),
+                "security_risk": str(result.get("security_risk", "low")).lower()
+            }
+
+        except Exception as e:
+            logger.error(f"WinSURF LLM Error: {e}, falling back to heuristics")
+
+            # Fallback to heuristics
+            complexity = 5
+            autonomy = 5
+            security_risk = "low"
+
+            if "deploy" in action and self.stage == SecurityStage.PRODUCTION:
+                complexity = 8
+                security_risk = "medium"
+
+            if "fix" in action:
+                autonomy = 9
+
+            if tech and tech.lower() not in self.approved_tech and tech != "standard":
+                 complexity = 9 # Unknown tech is complex
+
+            return {
+                "complexity": complexity,
+                "autonomy": autonomy,
+                "security_risk": security_risk
+            }
 
     def _apply_matrix(self, impact: dict) -> dict:
         # Rule 1: Complexity must be justified by Autonomy

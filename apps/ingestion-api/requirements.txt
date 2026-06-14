@@ -6,3 +6,4 @@ confluent-kafka>=2.3.0
 tuspy>=1.0.0
 python-multipart>=0.0.6
 redis>=5.0.1
+minio>=7.2.4
