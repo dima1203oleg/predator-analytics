@@ -45,19 +45,24 @@ class AuditService:
     ):
         """Додати подію в чергу для запису."""
         # Підготовка даних та підпис відбувається негайно для забезпечення цілісності
+        now_ts = datetime.now(UTC).isoformat()
         log_payload = {
             "action": action,
-            "tenant_id": tenant_id,
-            "user_id": user_id,
+            "tenant_id": str(tenant_id) if tenant_id else None,
+            "user_id": str(user_id) if user_id else None,
             "resource_type": resource_type,
-            "resource_id": resource_id,
+            "resource_id": str(resource_id) if resource_id else None,
             "details": details or {},
-            "ip_address": ip_address,
-            "timestamp": datetime.now(UTC).isoformat()
+            "ip_address": str(ip_address) if ip_address else None,
+            "timestamp": now_ts
         }
 
-        # Додавання підпису в деталі
-        signed_details = {**(details or {}), "sig": IntegritySentinel.sign_data(log_payload)}
+        # Додавання підпису та timestamp в деталі
+        signed_details = {
+            **(details or {}),
+            "sig": IntegritySentinel.sign_data(log_payload),
+            "sig_timestamp": now_ts
+        }
         log_payload["details"] = signed_details
 
         await self.queue.put(log_payload)
