@@ -1,0 +1,63 @@
+name: E2E Excel Import Tests (NVIDIA Self-Hosted)
+
+on:
+  workflow_dispatch:
+    inputs:
+      test_file_path:
+        description: "Шлях до Excel файлу на NVIDIA сервері"
+        required: true
+        default: "/tmp/Березень_2024.xlsx"
+  schedule:
+    - cron: '0 2 * * *' # Кожної ночі о 02:00
+
+jobs:
+  run-e2e:
+    name: Run Real E2E Tests on NVIDIA Node
+    runs-on: [self-hosted, linux, x64]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-asyncio pytest-playwright httpx pytest-html
+          playwright install chromium
+          
+      - name: Run E2E Excel Import Tests
+        env:
+          REAL_EXCEL_FILE: ${{ github.event.inputs.test_file_path || '/tmp/Березень_2024.xlsx' }}
+          # Використовуємо внутрішні DNS імена кластера, так як це self-hosted runner
+          MINIO_ENDPOINT: "minio:9000"
+          CLICKHOUSE_HOST: "clickhouse"
+          QDRANT_URL: "http://qdrant:6333"
+          OPENSEARCH_URL: "http://opensearch:9200"
+          OLLAMA_URL: "http://ollama:11434"
+          NEO4J_URI: "bolt://neo4j:7687"
+          REDIS_URL: "redis://redis:6379/0"
+          POSTGRES_URL: "postgresql://dima:predator_password@postgres:5432/predator_db"
+          POSTGRES_ASYNC_URL: "postgresql+asyncpg://dima:predator_password@postgres:5432/predator_db"
+        run: |
+          if [ ! -f "$REAL_EXCEL_FILE" ]; then
+            echo "Помилка: Файл $REAL_EXCEL_FILE не знайдено на сервері!"
+            echo "Будь ласка, завантажте тестовий файл на NVIDIA сервер у відповідну директорію."
+            exit 1
+          fi
+          
+          echo "Запуск E2E тестів з файлом: $REAL_EXCEL_FILE"
+          pytest tests/e2e_real/ -v --tb=short --html=e2e-report.html --self-contained-html
+
+      - name: Upload Test Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: e2e-test-report
+          path: e2e-report.html
+          retention-days: 14
