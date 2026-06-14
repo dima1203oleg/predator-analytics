@@ -22,6 +22,8 @@ from app.services.kafka_service import get_kafka_service
 from app.services.minio_service import get_minio_service
 from predator_common.logging import get_logger
 from predator_common.models import IngestionJob
+from app.services.tus_service import get_tus_service
+from fastapi.responses import StreamingResponse, Response
 
 logger = get_logger("core_api.ingestion")
 
@@ -59,6 +61,177 @@ class JobStatusResponse(BaseModel):
 
 
 # ======================== ЕНДПОЇНТИ ========================
+
+@router.options("/tus/files")
+@router.options("/tus/files/{file_id}")
+async def tus_options():
+    """OPTIONS для TUS."""
+    return Response(
+        status_code=204,
+        headers={
+            "Tus-Resumable": "1.0.0",
+            "Tus-Version": "1.0.0",
+            "Tus-Extension": "creation,termination",
+            "Access-Control-Expose-Headers": "Tus-Resumable, Tus-Version, Tus-Extension, Upload-Offset, Upload-Length, Location",
+        }
+    )
+
+
+@router.post("/tus/files", status_code=201)
+async def tus_create_file(
+    request: Request,
+    tenant_id: str = Depends(get_tenant_id),
+    current_user: dict = Depends(get_current_active_user),
+    _ = Depends(PermissionChecker([Permission.READ_CORP_DATA])),
+):
+    """Створення нової TUS сесії."""
+    upload_length = int(request.headers.get("Upload-Length", 0))
+    upload_metadata = request.headers.get("Upload-Metadata", "")
+
+    if upload_length == 0:
+        raise HTTPException(status_code=400, detail="Upload-Length header is required and must be > 0")
+
+    job_id = str(uuid.uuid4())
+    user_id = current_user.get("sub")
+    
+    tus = get_tus_service()
+    await tus.create_upload(
+        file_id=job_id, 
+        upload_length=upload_length, 
+        metadata={"tenant_id": tenant_id, "user_id": user_id, "meta": upload_metadata}
+    )
+
+    return Response(
+        status_code=201,
+        headers={
+            "Location": f"/api/v1/ingestion/tus/files/{job_id}",
+            "Tus-Resumable": "1.0.0",
+            "Access-Control-Expose-Headers": "Location, Tus-Resumable",
+        }
+    )
+
+
+@router.head("/tus/files/{file_id}")
+async def tus_head_file(file_id: str):
+    """Отримання поточного стану TUS завантаження."""
+    tus = get_tus_service()
+    offset = await tus.get_offset(file_id)
+    if offset is None:
+        raise HTTPException(status_code=404, detail="Upload not found")
+        
+    length = await tus.get_length(file_id)
+    
+    return Response(
+        status_code=200,
+        headers={
+            "Upload-Offset": str(offset),
+            "Upload-Length": str(length),
+            "Tus-Resumable": "1.0.0",
+            "Access-Control-Expose-Headers": "Upload-Offset, Upload-Length, Tus-Resumable",
+        }
+    )
+
+
+@router.patch("/tus/files/{file_id}")
+async def tus_patch_file(
+    file_id: str,
+    request: Request,
+    db: AsyncSession = Depends(get_db)
+):
+    """Завантаження chunk'у даних."""
+    tus = get_tus_service()
+    offset = await tus.get_offset(file_id)
+    if offset is None:
+        raise HTTPException(status_code=404, detail="Upload not found")
+        
+    req_offset = int(request.headers.get("Upload-Offset", "-1"))
+    if req_offset != offset:
+        raise HTTPException(status_code=409, detail=f"Offset mismatch. Expected {offset}")
+
+    content_type = request.headers.get("Content-Type", "")
+    if content_type != "application/offset+octet-stream":
+        raise HTTPException(status_code=415, detail="Invalid Content-Type")
+
+    length = await tus.get_length(file_id)
+    chunk = await request.body()
+    
+    if not chunk:
+        # Empty chunk, just return current offset
+        return Response(status_code=204, headers={"Upload-Offset": str(offset), "Tus-Resumable": "1.0.0"})
+
+    import os
+    tmp_path = f"/tmp/tus_{file_id}.tmp"
+    with open(tmp_path, "ab") as f:
+        f.write(chunk)
+        
+    new_offset = offset + len(chunk)
+    await tus.update_offset(file_id, new_offset)
+    
+    # Якщо завантаження завершено
+    if new_offset >= length:
+        meta = await tus.get_metadata(file_id)
+        if meta:
+            tenant_id = meta.get("tenant_id")
+            user_id = meta.get("user_id")
+            
+            # 1. Запис в БД
+            new_job = IngestionJob(
+                id=file_id,
+                tenant_id=tenant_id,
+                user_id=user_id,
+                job_type="tus_upload",
+                file_name="tus_upload.bin",
+                file_size=length,
+                status="queued",
+                progress=0,
+            )
+            db.add(new_job)
+            await db.commit()
+
+            # 2. Перенесення файлу в MinIO
+            minio = get_minio_service()
+            try:
+                # Use a safe fallback if ensure_tenant_buckets fails
+                if hasattr(minio, "ensure_tenant_buckets"):
+                    await minio.ensure_tenant_buckets(tenant_id)
+            except Exception:
+                pass
+            bucket_name = minio.get_raw_bucket(tenant_id) if hasattr(minio, "get_raw_bucket") else "raw-uploads"
+            object_name = f"{file_id}/uploaded.bin"
+            
+            with open(tmp_path, "rb") as f:
+                data = f.read()
+                
+            content_hash = hashlib.sha256(data).hexdigest()
+            success, s3_path, _ = await minio.upload_file(
+                bucket=bucket_name,
+                object_name=object_name,
+                data=data,
+            )
+            
+            os.remove(tmp_path)
+            await tus.delete_upload(file_id)
+
+            # 3. Подія в Kafka
+            kafka = get_kafka_service()
+            await kafka.publish_file_upload(
+                job_id=file_id,
+                tenant_id=tenant_id,
+                user_id=user_id,
+                file_name="tus_upload.bin",
+                file_size=length,
+                content_hash=content_hash,
+                s3_path=s3_path,
+            )
+
+    return Response(
+        status_code=204,
+        headers={
+            "Upload-Offset": str(new_offset),
+            "Tus-Resumable": "1.0.0",
+            "Access-Control-Expose-Headers": "Upload-Offset, Tus-Resumable",
+        }
+    )
 
 @router.post("/upload", response_model=UploadResponse, status_code=202)
 async def upload_file(
