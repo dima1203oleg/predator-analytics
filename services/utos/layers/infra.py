@@ -3,7 +3,9 @@
 Перевіряє доступність портів, статусів сервісів та базове підключення до всіх 8 БД і шини Redpanda.
 """
 import asyncio
+import time
 from typing import Dict, Any
+from aiokafka.admin import AIOKafkaAdminClient
 
 from utos.config import (
     CORE_API_URL, CORE_API_HEALTH_PATH,
@@ -41,6 +43,9 @@ class InfraLayer(BaseLayer):
         # 2. HTTP Health Checks для ключових сервісів
         await self._validate_http_services()
 
+        # 3. Додатково: глибша перевірка Kafka (топіки, метадані)
+        await self._validate_kafka()
+
     async def _validate_tcp_endpoints(self) -> None:
         """Перевірка портів критичної інфраструктури."""
         import urllib.parse
@@ -60,7 +65,7 @@ class InfraLayer(BaseLayer):
         redis_host, redis_port = get_host_port(REDIS_URL, 6379)
         await self.tcp_check("tcp_redis", redis_host, redis_port, severity="critical")
         
-        # Redpanda / Kafka
+        # Redpanda / Kafka (TCP fallback fallback)
         kafka_host = KAFKA_BOOTSTRAP_SERVERS.split(":")[0]
         kafka_port = int(KAFKA_BOOTSTRAP_SERVERS.split(":")[1]) if ":" in KAFKA_BOOTSTRAP_SERVERS else 19092
         await self.tcp_check("tcp_redpanda", kafka_host, kafka_port, severity="critical")
@@ -117,3 +122,39 @@ class InfraLayer(BaseLayer):
             f"{PROMETHEUS_URL.rstrip('/')}/-/healthy",
             severity="warning"
         )
+
+    async def _validate_kafka(self) -> None:
+        """Перевірка підключення до Kafka/Redpanda через отримання метаданих."""
+        start = time.monotonic()
+        client: AIOKafkaAdminClient | None = None
+        try:
+            client = AIOKafkaAdminClient(
+                bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
+                request_timeout_ms=3000,
+            )
+            await client.start()
+            topics = await client.list_topics()
+            latency_ms = (time.monotonic() - start) * 1000
+            self.add_check(CheckResult(
+                name="kafka_metadata",
+                passed=True,
+                message=f"Kafka/Redpanda доступний, топіків: {len(topics)}",
+                latency_ms=round(latency_ms, 2),
+                details={"topic_count": len(topics)}
+            ))
+        except Exception as exc:  # noqa: BLE001
+            latency_ms = (time.monotonic() - start) * 1000
+            self.add_check(CheckResult(
+                name="kafka_metadata",
+                passed=False,
+                message=f"Kafka/Redpanda недоступний: {exc}",
+                severity="critical",
+                latency_ms=round(latency_ms, 2)
+            ))
+        finally:
+            if client is not None:
+                try:
+                    await client.close()
+                except Exception:
+                    pass
+
