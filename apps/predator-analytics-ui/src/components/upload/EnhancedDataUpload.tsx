@@ -1,5 +1,6 @@
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
+import * as tus from 'tus-js-client';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Upload, FileText, X, Check, AlertCircle,
@@ -127,6 +128,7 @@ export const EnhancedDataUpload: React.FC<{ onUploadComplete?: (files: UploadedF
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const uploadsRef = useRef<Record<string, tus.Upload>>({});
 
   const processFile = useCallback(async (file: File) => {
     const id = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -142,54 +144,53 @@ export const EnhancedDataUpload: React.FC<{ onUploadComplete?: (files: UploadedF
 
     setFiles(prev => [...prev, uploadedFile]);
 
-    // Simulate upload progress
-    for (let progress = 0; progress <= 100; progress += 10) {
-      await new Promise(resolve => setTimeout(resolve, 100));
-      setFiles(prev => prev.map(f =>
-        f.id === id ? { ...f, progress } : f
-      ));
-    }
-
-    // Switch to processing
-    setFiles(prev => prev.map(f =>
-      f.id === id ? { ...f, status: 'processing', progress: 0 } : f
-    ));
-
-    // Upload to API
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-
-      const response = await fetch('/api/v1/data-hub/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error('Помилка завантаження');
-      }
-
-      // Processing progress
-      for (let progress = 0; progress <= 100; progress += 20) {
-        await new Promise(resolve => setTimeout(resolve, 200));
+    const token = localStorage.getItem('token');
+    
+    const upload = new tus.Upload(file, {
+      endpoint: '/api/v1/ingestion/tus/files',
+      retryDelays: [0, 3000, 5000, 10000, 20000],
+      chunkSize: 5 * 1024 * 1024, // 5MB
+      metadata: {
+        filename: file.name,
+        filetype: file.type || 'application/octet-stream'
+      },
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
+      },
+      onError: (error) => {
         setFiles(prev => prev.map(f =>
-          f.id === id ? { ...f, progress } : f
+          f.id === id ? {
+            ...f,
+            status: 'error',
+            error: error.message || 'Помилка завантаження'
+          } : f
         ));
+      },
+      onProgress: (bytesUploaded, bytesTotal) => {
+        const percentage = Math.round((bytesUploaded / bytesTotal) * 100);
+        setFiles(prev => prev.map(f =>
+          f.id === id ? { ...f, progress: percentage } : f
+        ));
+      },
+      onSuccess: () => {
+        setFiles(prev => prev.map(f =>
+          f.id === id ? { ...f, status: 'completed', progress: 100 } : f
+        ));
+        // Remove from ref mapping
+        if (uploadsRef.current[id]) {
+          delete uploadsRef.current[id];
+        }
       }
+    });
 
-      setFiles(prev => prev.map(f =>
-        f.id === id ? { ...f, status: 'completed', progress: 100 } : f
-      ));
+    uploadsRef.current[id] = upload;
+    
+    // Switch to uploading and start
+    setFiles(prev => prev.map(f =>
+      f.id === id ? { ...f, status: 'uploading', progress: 0 } : f
+    ));
+    upload.start();
 
-    } catch (error) {
-      setFiles(prev => prev.map(f =>
-        f.id === id ? {
-          ...f,
-          status: 'error',
-          error: error instanceof Error ? error.message : 'Невідома помилка'
-        } : f
-      ));
-    }
   }, []);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
@@ -207,16 +208,31 @@ export const EnhancedDataUpload: React.FC<{ onUploadComplete?: (files: UploadedF
   }, [processFile]);
 
   const removeFile = useCallback((id: string) => {
+    if (uploadsRef.current[id]) {
+      // Abort upload if it's still running
+      uploadsRef.current[id].abort();
+      delete uploadsRef.current[id];
+    }
     setFiles(prev => prev.filter(f => f.id !== id));
   }, []);
 
   const completedFiles = files.filter(f => f.status === 'completed');
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (completedFiles.length > 0 && onUploadComplete) {
       onUploadComplete(completedFiles);
     }
-  }, [completedFiles.length]);
+  }, [completedFiles.length, onUploadComplete]);
+
+  // Clean up on unmount
+  useEffect(() => {
+    return () => {
+      Object.values(uploadsRef.current).forEach(upload => {
+        upload.abort();
+      });
+      uploadsRef.current = {};
+    };
+  }, []);
 
   return (
     <div className="space-y-4">
