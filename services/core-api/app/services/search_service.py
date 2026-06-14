@@ -104,7 +104,7 @@ class SearchService:
                         "name": d["metadata"].get("name"),
                         "similarity_score": d["score"],
                     }
-                    for r in duplicates
+                    for d in duplicates
                 ]
 
             # Фоллбек (якщо в Qdrant нічого не знайдено)
@@ -126,7 +126,7 @@ class SearchService:
                     "ueid": c.ueid,
                     "name": c.name,
                     "industry": c.industry,
-                    "similarity_score": 0.0,  # TODO: Qdrant vector similarity score
+                    "similarity_score": 0.0,  # Фоллбек (не векторний пошук)
                 }
                 for c in similar
             ]
