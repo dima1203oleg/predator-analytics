@@ -40,6 +40,8 @@ CLICKHOUSE_PASSWORD: str = os.getenv("CLICKHOUSE_PASSWORD", "predator_secret_ch"
 
 # ─── OpenSearch (Повнотекстовий пошук) ──────────────────────────────────────
 OPENSEARCH_URL: str = os.getenv("OPENSEARCH_URL", "http://opensearch:9200")
+OPENSEARCH_USER: str = os.getenv("OPENSEARCH_USER", "admin")
+OPENSEARCH_PASSWORD: str = os.getenv("OPENSEARCH_PASSWORD", "admin")
 
 # ─── Qdrant (Векторна пам'ять) ──────────────────────────────────────────────
 QDRANT_URL: str = os.getenv("QDRANT_URL", "http://qdrant:6333")

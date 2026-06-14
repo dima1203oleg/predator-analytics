@@ -11,7 +11,9 @@ import asyncpg
 import httpx
 from utos.config import (
     POSTGRES_DSN, CLICKHOUSE_URL, CLICKHOUSE_USER, CLICKHOUSE_PASSWORD,
-    NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD
+    NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD,
+    OPENSEARCH_URL, OPENSEARCH_USER, OPENSEARCH_PASSWORD,
+    QDRANT_URL
 )
 from utos.layers import BaseLayer, CheckResult
 
@@ -38,7 +40,13 @@ class DataLayer(BaseLayer):
         # 3. Тест Neo4j (Графова БД)
         neo4j_ok = await self._validate_neo4j()
 
-        # 4. Крос-системний аудит (Кількість записів у критичних таблицях)
+        # 4. Тест OpenSearch (Повнотекстовий пошук)
+        os_ok = await self._validate_opensearch()
+
+        # 5. Тест Qdrant (Векторна БД)
+        qdrant_ok = await self._validate_qdrant()
+
+        # 6. Крос-системний аудит (Кількість записів у критичних таблицях)
         if pg_ok and ch_ok:
             await self._audit_cross_database_consistency()
 
@@ -164,6 +172,71 @@ class DataLayer(BaseLayer):
                 name="neo4j_connection",
                 passed=False,
                 message=f"Помилка Neo4j: {e}",
+                severity="warning",
+            ))
+            return False
+        finally:
+            await client.aclose()
+
+    async def _validate_opensearch(self) -> bool:
+        """Перевірка доступності OpenSearch."""
+        start = time.time()
+        client = httpx.AsyncClient(timeout=5.0, verify=False) # OpenSearch часто з self-signed cert
+        try:
+            resp = await client.get(
+                OPENSEARCH_URL,
+                auth=(OPENSEARCH_USER, OPENSEARCH_PASSWORD),
+            )
+            latency = (time.time() - start) * 1000
+
+            if resp.status_code < 400:
+                slow = latency > 2500
+                self.add_check(CheckResult(
+                    name="opensearch_connection",
+                    passed=not slow,
+                    message=f"Кластер OpenSearch доступний — {'повільно ' if slow else 'OK '}({latency:.1f}мс)",
+                    severity="warning" if slow else "info",
+                    latency_ms=latency,
+                ))
+                return True
+            else:
+                raise ValueError(f"HTTP {resp.status_code}")
+        except Exception as e:
+            self.add_check(CheckResult(
+                name="opensearch_connection",
+                passed=False,
+                message=f"Помилка OpenSearch: {e}",
+                severity="warning",
+            ))
+            return False
+        finally:
+            await client.aclose()
+
+    async def _validate_qdrant(self) -> bool:
+        """Перевірка доступності Qdrant."""
+        start = time.time()
+        client = httpx.AsyncClient(timeout=5.0)
+        try:
+            resp = await client.get(f"{QDRANT_URL}/collections")
+            latency = (time.time() - start) * 1000
+
+            if resp.status_code < 400:
+                slow = latency > 2500
+                self.add_check(CheckResult(
+                    name="qdrant_connection",
+                    passed=not slow,
+                    message=f"Векторна пам'ять Qdrant доступна — {'повільно ' if slow else 'OK '}({latency:.1f}мс)",
+                    severity="warning" if slow else "info",
+                    latency_ms=latency,
+                ))
+                return True
+            else:
+                raise ValueError(f"HTTP {resp.status_code}")
+        except Exception as e:
+            self.add_check(CheckResult(
+                name="qdrant_connection",
+                passed=False,
+                message=f"Помилка Qdrant: {e}",
                 severity="warning",
             ))
             return False

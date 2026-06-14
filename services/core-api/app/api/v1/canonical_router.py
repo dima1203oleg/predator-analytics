@@ -6,7 +6,7 @@ from fastapi import APIRouter
 # Імпорти нових роутерів
 from services.mcp_router.app.main import app as mcp_app
 from services.graph_service.app.main import app as graph_app
-# (Фіктивні роутери AI та Forecast – створяться окремо, наразі підключаємо заглушки)
+from app.routers.forecast import router as forecast_router
 
 router = APIRouter()
 
@@ -38,5 +38,8 @@ router.include_router(
     tags=["llm"]
 )
 
-
-# TODO: додати forecast router після його реалізації
+# Підключення Forecast Router
+router.include_router(
+    forecast_router,
+    prefix="/v1", # it already has /forecast in its prefix
+)
