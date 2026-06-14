@@ -29,11 +29,11 @@ class MinioService:
             secret_key=self.secret_key,
             secure=self.secure,
         )
-        logger.info(f"MinIO client initialized: {self.endpoint}")
+        logger.info(f"Клієнт MinIO ініціалізовано: {self.endpoint}")
 
     def get_file_bytes(self, bucket_name: str, object_name: str) -> bytes:
         """Завантажує файл з MinIO як bytes."""
-        logger.info(f"Downloading {object_name} from {bucket_name}")
+        logger.info(f"Завантаження {object_name} з бакета {bucket_name}")
         try:
             response = self.client.get_object(bucket_name, object_name)
             data = response.read()
@@ -41,17 +41,17 @@ class MinioService:
             response.release_conn()
             return data
         except Exception as e:
-            logger.error(f"Failed to get object {object_name}: {e}")
+            logger.error(f"Не вдалося отримати об'єкт {object_name}: {e}")
             raise
 
     def get_file_stream(self, bucket_name: str, object_name: str) -> BinaryIO:
         """Отримує файл з MinIO як стрім (для великих файлів)."""
-        logger.info(f"Streaming {object_name} from {bucket_name}")
+        logger.info(f"Стрімінг {object_name} з бакета {bucket_name}")
         try:
             response = self.client.get_object(bucket_name, object_name)
             return response
         except Exception as e:
-            logger.error(f"Failed to stream object {object_name}: {e}")
+            logger.error(f"Не вдалося створити стрім об'єкта {object_name}: {e}")
             raise
 
     def parse_s3_path(self, s3_path: str) -> tuple[str, str]:
