@@ -1,26 +1,26 @@
-"""
-Шар тестування інфраструктури (Infra Layer) UTOS v61.0-ELITE.
+"""Шар тестування інфраструктури (Infra Layer) UTOS v61.0-ELITE.
 Перевіряє доступність портів, статусів сервісів та базове підключення до всіх 8 БД і шини Redpanda.
 """
-import asyncio
 import time
-from typing import Dict, Any
+
 from aiokafka.admin import AIOKafkaAdminClient
 
 from utos.config import (
-    CORE_API_URL, CORE_API_HEALTH_PATH,
+    CLICKHOUSE_URL,
+    CORE_API_HEALTH_PATH,
+    CORE_API_URL,
     FRONTEND_URL,
     KAFKA_BOOTSTRAP_SERVERS,
-    REDIS_URL,
-    POSTGRES_DSN,
-    NEO4J_URI,
-    CLICKHOUSE_URL,
-    OPENSEARCH_URL,
-    QDRANT_URL,
-    MINIO_URL, MINIO_HEALTH_PATH,
-    OLLAMA_URL,
     LITELLM_URL,
-    PROMETHEUS_URL, GRAFANA_URL, LOKI_URL,
+    MINIO_HEALTH_PATH,
+    MINIO_URL,
+    NEO4J_URI,
+    OLLAMA_URL,
+    OPENSEARCH_URL,
+    POSTGRES_DSN,
+    PROMETHEUS_URL,
+    QDRANT_URL,
+    REDIS_URL,
 )
 from utos.layers import BaseLayer, CheckResult
 
@@ -49,7 +49,7 @@ class InfraLayer(BaseLayer):
     async def _validate_tcp_endpoints(self) -> None:
         """Перевірка портів критичної інфраструктури."""
         import urllib.parse
-        
+
         def get_host_port(url_str, default_port):
             parsed = urllib.parse.urlparse(url_str)
             host = parsed.hostname or "localhost"
@@ -58,13 +58,13 @@ class InfraLayer(BaseLayer):
 
         ch_host, ch_port = get_host_port(CLICKHOUSE_URL, 8123)
         await self.tcp_check("tcp_clickhouse", ch_host, ch_port, severity="critical")
-        
+
         pg_host, pg_port = get_host_port(POSTGRES_DSN, 5432)
         await self.tcp_check("tcp_postgres", pg_host, pg_port, severity="critical")
-        
+
         redis_host, redis_port = get_host_port(REDIS_URL, 6379)
         await self.tcp_check("tcp_redis", redis_host, redis_port, severity="critical")
-        
+
         # Redpanda / Kafka (TCP fallback fallback)
         kafka_host = KAFKA_BOOTSTRAP_SERVERS.split(":")[0]
         kafka_port = int(KAFKA_BOOTSTRAP_SERVERS.split(":")[1]) if ":" in KAFKA_BOOTSTRAP_SERVERS else 19092
@@ -142,7 +142,7 @@ class InfraLayer(BaseLayer):
                 latency_ms=round(latency_ms, 2),
                 details={"topic_count": len(topics)}
             ))
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             latency_ms = (time.monotonic() - start) * 1000
             self.add_check(CheckResult(
                 name="kafka_metadata",

@@ -1,14 +1,13 @@
-"""
-Шар тестування штучного інтелекту (AI Layer) UTOS v61.0-ELITE.
+"""Шар тестування штучного інтелекту (AI Layer) UTOS v61.0-ELITE.
 Тестує підключення до Ollama та LiteLLM, перевіряє наявність потрібних моделей,
 а також виконує швидкий тест генерації (Inference Latency & Quality check).
 """
-import time
 import logging
-from typing import Dict, Any
+import time
 
 import httpx
-from utos.config import OLLAMA_URL, OLLAMA_REQUIRED_MODEL, OLLAMA_INFERENCE_TIMEOUT, LITELLM_URL
+
+from utos.config import LITELLM_URL, OLLAMA_INFERENCE_TIMEOUT, OLLAMA_REQUIRED_MODEL, OLLAMA_URL
 from utos.layers import BaseLayer, CheckResult
 
 logger = logging.getLogger(__name__)
@@ -71,10 +70,10 @@ class AiLayer(BaseLayer):
                 latency = (time.time() - start) * 1000
                 if resp.status_code != 200:
                     raise ValueError(f"HTTP {resp.status_code}")
-                
+
                 data = resp.json()
                 models = [m["name"] for m in data.get("models", [])]
-                
+
                 # Перевіряємо чи є потрібна модель
                 required = OLLAMA_REQUIRED_MODEL
                 has_model = any(required in m for m in models)
@@ -90,7 +89,7 @@ class AiLayer(BaseLayer):
                 self.add_check(CheckResult(
                     name="ollama_model_presence",
                     passed=has_model,
-                    message=f"Модель '{required}' знайдена локально" if has_model 
+                    message=f"Модель '{required}' знайдена локально" if has_model
                             else f"Модель '{required}' відсутня в Ollama (знайдено: {models})",
                     severity="warning"
                 ))
@@ -122,12 +121,12 @@ class AiLayer(BaseLayer):
                     json=prompt_data
                 )
                 latency = (time.time() - start) * 1000
-                
+
                 if resp.status_code == 200:
                     resp_json = resp.json()
                     response_text = resp_json.get("response", "").strip()
                     passed = "PREDATOR" in response_text.upper()
-                    
+
                     self.add_check(CheckResult(
                         name="llm_inference_latency",
                         passed=passed,

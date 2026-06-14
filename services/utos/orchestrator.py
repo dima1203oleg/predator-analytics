@@ -1,22 +1,21 @@
-"""
-Оркестратор UTOS v61.0-ELITE.
+"""Оркестратор UTOS v61.0-ELITE.
 Координує виконання всіх 8 шарів тестування, обчислює загальний зважений UTOS Score
 та будує фінальний звіт у форматі JSON/Markdown.
 """
 import asyncio
-import time
 import logging
-from typing import Dict, Any, List
+import time
+from typing import Any
 
 from utos.config import SCORE_WEIGHTS
-from utos.layers.infra import InfraLayer
-from utos.layers.data import DataLayer
 from utos.layers.ai import AiLayer
 from utos.layers.api import ApiLayer
-from utos.layers.frontend import FrontendLayer
+from utos.layers.data import DataLayer
 from utos.layers.dom import DomLayer
-from utos.layers.security import SecurityLayer
+from utos.layers.frontend import FrontendLayer
+from utos.layers.infra import InfraLayer
 from utos.layers.performance import PerformanceLayer
+from utos.layers.security import SecurityLayer
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +36,7 @@ class UtosOrchestrator:
             PerformanceLayer(),
         ]
 
-    async def execute_all(self) -> Dict[str, Any]:
+    async def execute_all(self) -> dict[str, Any]:
         """Запускає паралельну чи послідовну валідацію всіх шарів."""
         logger.info("⚡ Початок повного циклу валідації UTOS...")
         start_time = time.time()
@@ -51,14 +50,14 @@ class UtosOrchestrator:
 
         # Агрегуємо результати та обчислюємо зважений показник UTOS Score
         results_map = {res["name"]: res for res in results_list}
-        
+
         weighted_score = 0.0
         total_weight_used = 0.0
 
         for name, layer_res in results_map.items():
             weight = SCORE_WEIGHTS.get(name, 0.0)
             score = layer_res["layer_score"]  # 0.0–1.0
-            
+
             weighted_score += score * weight
             total_weight_used += weight
 
@@ -97,10 +96,11 @@ class UtosOrchestrator:
         }
 
         # Збереження звіту на диск
-        import os
         import json
+        import os
+
         from utos.config import UTOS_REPORT_DIR
-        
+
         os.makedirs(UTOS_REPORT_DIR, exist_ok=True)
         report_path = os.path.join(UTOS_REPORT_DIR, "latest_report.json")
         try:

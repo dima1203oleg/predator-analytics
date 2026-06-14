@@ -1,12 +1,11 @@
-"""
-Шар тестування безпеки (Security Layer) UTOS v61.0-ELITE.
+"""Шар тестування безпеки (Security Layer) UTOS v61.0-ELITE.
 Аналізує SSL/TLS конфігурації, заголовки безпеки (CORS, CSP),
 та валідує RLS (Row-Level Security) у базі даних PostgreSQL.
 """
 import logging
-from typing import Dict, Any
 
 import asyncpg
+
 from utos.config import POSTGRES_DSN
 from utos.layers import BaseLayer, CheckResult
 
@@ -32,7 +31,7 @@ class SecurityLayer(BaseLayer):
         conn = None
         try:
             conn = await asyncpg.connect(dsn=POSTGRES_DSN, timeout=3.0)
-            
+
             # Шукаємо таблиці з увімкненим RLS
             query = """
                 SELECT tablename, rowsecurity 
@@ -41,7 +40,7 @@ class SecurityLayer(BaseLayer):
                   AND tablename IN ('users', 'customs_declarations', 'audit_log');
             """
             rows = await conn.fetch(query)
-            
+
             if not rows:
                 self.add_check(CheckResult(
                     name="postgres_rls_enabled",
@@ -52,7 +51,7 @@ class SecurityLayer(BaseLayer):
                 return
 
             rls_status = {r["tablename"]: r["rowsecurity"] for r in rows}
-            
+
             # Перевіряємо чи увімкнено RLS хоча б для users
             users_rls = rls_status.get("users", False)
 

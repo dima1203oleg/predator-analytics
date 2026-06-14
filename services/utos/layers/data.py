@@ -1,19 +1,25 @@
-"""
-Шар тестування даних (Data Layer) UTOS v61.0-ELITE.
+"""Шар тестування даних (Data Layer) UTOS v61.0-ELITE.
 Виконує глибоку перевірку цілісності, валідації та узгодженості даних між PostgreSQL (SSOT) та ClickHouse (OLAP).
 Впроваджує WORM контракти, RLS та перевіряє ClickHouse на аномалії.
 """
-import time
 import logging
-from typing import Dict, Any
+import time
 
 import asyncpg
 import httpx
+
 from utos.config import (
-    POSTGRES_DSN, CLICKHOUSE_URL, CLICKHOUSE_USER, CLICKHOUSE_PASSWORD,
-    NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD,
-    OPENSEARCH_URL, OPENSEARCH_USER, OPENSEARCH_PASSWORD,
-    QDRANT_URL
+    CLICKHOUSE_PASSWORD,
+    CLICKHOUSE_URL,
+    CLICKHOUSE_USER,
+    NEO4J_PASSWORD,
+    NEO4J_URI,
+    NEO4J_USER,
+    OPENSEARCH_PASSWORD,
+    OPENSEARCH_URL,
+    OPENSEARCH_USER,
+    POSTGRES_DSN,
+    QDRANT_URL,
 )
 from utos.layers import BaseLayer, CheckResult
 
@@ -33,7 +39,7 @@ class DataLayer(BaseLayer):
     async def _run_validation(self) -> None:
         # 1. Тест PostgreSQL з'єднання та RLS/WORM контрактів
         pg_ok = await self._validate_postgres()
-        
+
         # 2. Тест ClickHouse з'єднання та аналітичних запитів
         ch_ok = await self._validate_clickhouse()
 
@@ -76,12 +82,12 @@ class DataLayer(BaseLayer):
                 "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'"
             )
             table_names = {t["table_name"] for t in tables}
-            
+
             worm_ok = "audit_log" in table_names or "decision_artifacts" in table_names
             self.add_check(CheckResult(
                 name="postgres_worm_schema",
                 passed=worm_ok,
-                message="WORM таблиці (audit_log) знайдені у схемі" if worm_ok 
+                message="WORM таблиці (audit_log) знайдені у схемі" if worm_ok
                         else "WORM таблиця audit_log відсутня у схемі",
                 severity="critical",
             ))
@@ -148,7 +154,7 @@ class DataLayer(BaseLayer):
         # Перетворюємо bolt:// на http:// з портом 7474 для HTTP API
         http_base = NEO4J_URI.replace("bolt://", "http://").replace(":7687", ":7474")
         url = f"{http_base}/db/neo4j/cluster/available"
-        
+
         client = httpx.AsyncClient(timeout=5.0)
         try:
             resp = await client.get(

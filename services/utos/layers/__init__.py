@@ -1,13 +1,12 @@
-"""
-Базовий клас валідатора UTOS v61.0-ELITE.
+"""Базовий клас валідатора UTOS v61.0-ELITE.
 Надає єдиний інтерфейс для всіх шарів тестування.
 Перенесено з ADV-DVS BaseValidator з розширеннями для UTOS.
 """
 import asyncio
+from dataclasses import dataclass, field
 import logging
 import time
-from typing import Dict, Any, List, Optional, Tuple
-from dataclasses import dataclass, field
+from typing import Any, Dict, List, Optional, Tuple
 
 import httpx
 
@@ -17,12 +16,13 @@ logger = logging.getLogger(__name__)
 @dataclass
 class CheckResult:
     """Результат однієї перевірки."""
+
     name: str
     passed: bool
     message: str
     severity: str = "info"  # info | warning | critical
     latency_ms: float = 0.0
-    details: Dict[str, Any] = field(default_factory=dict)
+    details: dict[str, Any] = field(default_factory=dict)
 
 
 class BaseLayer:
@@ -32,9 +32,9 @@ class BaseLayer:
         self.name = name
         self.description = description
         self.weight = weight
-        self.checks: List[CheckResult] = []
+        self.checks: list[CheckResult] = []
 
-    async def validate(self) -> Dict[str, Any]:
+    async def validate(self) -> dict[str, Any]:
         """Головний метод — запускає всі перевірки шару."""
         logger.info(f"{'='*60}")
         logger.info(f"🚀 Шар: {self.name} — {self.description}")
@@ -181,7 +181,7 @@ class BaseLayer:
                 severity=severity, latency_ms=latency,
                 details={"host": host, "port": port},
             )
-        except (asyncio.TimeoutError, OSError, ConnectionRefusedError) as e:
+        except (TimeoutError, OSError, ConnectionRefusedError) as e:
             result = CheckResult(
                 name=name, passed=False,
                 message=f"Порт {host}:{port} недоступний: {type(e).__name__}",
@@ -198,7 +198,7 @@ class BaseLayer:
         timeout: float = 5.0,
         severity: str = "critical",
         verify_ssl: bool = False,
-    ) -> Tuple[CheckResult, Optional[dict]]:
+    ) -> tuple[CheckResult, dict | None]:
         """HTTP GET → JSON parse."""
         start = time.time()
         try:
@@ -239,7 +239,7 @@ class BaseLayer:
         cmd: str,
         timeout: float = 10.0,
         severity: str = "warning",
-    ) -> Tuple[CheckResult, str]:
+    ) -> tuple[CheckResult, str]:
         """Виконати shell команду та перевірити результат."""
         start = time.time()
         try:
@@ -272,7 +272,7 @@ class BaseLayer:
             self.add_check(result)
             return result, output
 
-        except asyncio.TimeoutError:
+        except TimeoutError:
             result = CheckResult(
                 name=name, passed=False,
                 message=f"Таймаут команди ({timeout}с)",

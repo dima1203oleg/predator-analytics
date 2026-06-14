@@ -1,14 +1,13 @@
-"""
-Шар тестування продуктивності (Performance Layer) UTOS v61.0-ELITE.
+"""Шар тестування продуктивності (Performance Layer) UTOS v61.0-ELITE.
 Вимірює Latency ключових операцій, пропускну здатність бази даних ClickHouse
 та порівнює метрики швидкодії з вимогами ELITE-специфікації.
 """
-import time
 import logging
-from typing import Dict, Any
+import time
 
 import httpx
-from utos.config import CLICKHOUSE_URL, CLICKHOUSE_USER, CLICKHOUSE_PASSWORD
+
+from utos.config import CLICKHOUSE_PASSWORD, CLICKHOUSE_URL, CLICKHOUSE_USER
 from utos.layers import BaseLayer, CheckResult
 
 logger = logging.getLogger(__name__)
@@ -54,7 +53,7 @@ class PerformanceLayer(BaseLayer):
                 self.add_check(CheckResult(
                     name="clickhouse_olap_latency",
                     passed=passed,
-                    message=f"OLAP-запит виконано за {latency:.1f}мс" + 
+                    message=f"OLAP-запит виконано за {latency:.1f}мс" +
                             ("" if passed else " (Перевищено ліміт 250мс)"),
                     severity="warning" if not passed else "info",
                     latency_ms=latency

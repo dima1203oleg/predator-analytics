@@ -1,11 +1,9 @@
-"""
-Шар тестування інтелекту DOM (DOM Layer) UTOS v61.0-ELITE.
+"""Шар тестування інтелекту DOM (DOM Layer) UTOS v61.0-ELITE.
 Здійснює E2E аудит та аналіз DOM-дерева через Playwright.
 Використовує headless сесію для перевірки рендерингу UI.
 """
-import time
 import logging
-from typing import Dict, Any
+import time
 
 try:
     from playwright.async_api import async_playwright
@@ -52,14 +50,14 @@ class DomLayer(BaseLayer):
             async with async_playwright() as p:
                 browser = await p.chromium.launch(headless=True)
                 page = await browser.new_page()
-                
+
                 # Збираємо консольні помилки
                 console_errors = []
                 page.on("console", lambda msg: console_errors.append(msg.text) if msg.type == "error" else None)
                 page.on("pageerror", lambda exc: console_errors.append(str(exc)))
 
                 await page.goto(FRONTEND_URL, timeout=10000, wait_until="domcontentloaded")
-                
+
                 # Шукаємо root елемент React
                 root_element = await page.query_selector("#root")
                 has_root = root_element is not None
@@ -73,7 +71,7 @@ class DomLayer(BaseLayer):
                     message=f"Аналіз ієрархії DOM успішний (root знайдено) за {latency:.0f}мс" if has_root else "Root елемент не знайдено",
                     latency_ms=latency
                 ))
-                
+
                 self.add_check(CheckResult(
                     name="dom_console_errors",
                     passed=len(console_errors) == 0,

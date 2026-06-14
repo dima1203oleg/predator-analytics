@@ -1,12 +1,11 @@
-"""
-Шар тестування Backend API (API Layer) UTOS v61.0-ELITE.
+"""Шар тестування Backend API (API Layer) UTOS v61.0-ELITE.
 Тестує REST API FastAPI, авторизацію, валідацію схем та швидкість відповідей.
 """
-import time
 import logging
-from typing import Dict, Any
+import time
 
 import httpx
+
 from utos.config import CORE_API_URL
 from utos.layers import BaseLayer, CheckResult
 
