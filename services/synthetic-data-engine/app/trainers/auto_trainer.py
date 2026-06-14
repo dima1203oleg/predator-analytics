@@ -44,7 +44,7 @@ class AutoTrainer:
 
         # Кодування категорій для XGBoost
         for col in X_proc.select_dtypes(include=['object', 'category']).columns:
-            X_proc[col] = X_proc[col].astype('category')
+            X_proc[col] = X_proc[col].astype(str).astype('category')
 
         return X_proc
 
@@ -71,9 +71,9 @@ class AutoTrainer:
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
         if self.task_type == "classification":
-            self.model = XGBClassifier(enable_categorical=True, random_state=42)
+            self.model = XGBClassifier(enable_categorical=True, random_state=42, n_jobs=1)
         else:
-            self.model = XGBRegressor(enable_categorical=True, random_state=42)
+            self.model = XGBRegressor(enable_categorical=True, random_state=42, n_jobs=1)
 
         logger.info(f"Початок тренування {self.model.__class__.__name__}")
         self.model.fit(X_train, y_train)

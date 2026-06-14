@@ -146,12 +146,18 @@ class DeepSeekCore:
             "temperature": 0.4
         }
         
-        async with httpx.AsyncClient(timeout=120.0) as client:
+        async with httpx.AsyncClient(timeout=600.0) as client:
             try:
                 response = await client.post(self.api_url, json=payload, headers=self.headers)
                 response.raise_for_status()
                 data = response.json()
-                return data.get("response", "Помилка формату відповіді")
+                content = data.get("response", "Помилка формату відповіді")
+                
+                # Зрізаємо think-блок від DeepSeek R1
+                import re
+                content = re.sub(r'<think>.*?</think>', '', content, flags=re.DOTALL).strip()
+                
+                return content
             except Exception as e:
-                logger.error(f"Помилка генерації пояснення: {e}")
+                logger.error(f"Помилка генерації пояснення: {repr(e)}")
                 return "Помилка генерації пояснення через AI."

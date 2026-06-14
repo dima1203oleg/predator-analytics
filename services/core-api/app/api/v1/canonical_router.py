@@ -1,4 +1,4 @@
-'''module: canonical_router
+                                                      '''module: canonical_router
 '''Core API роутер для нових мікросервісів.
 
 from fastapi import APIRouter
