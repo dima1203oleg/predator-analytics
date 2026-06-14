@@ -77,17 +77,25 @@ async def generate_from_file(
 
 @router.post("/train/hybrid", summary="Запуск Hybrid Training Pipeline")
 async def run_hybrid_pipeline(
-    file: UploadFile = File(...),
+    file: UploadFile | None = File(None),
+    blueprint_id: str | None = Form(None),
     target_column: str = Form(...),
     synthetic_ratio: float = Form(1.0)
 ):
-    """Генерує синтетику на основі файлу та одразу тренує модель."""
-    if not file.filename.endswith('.csv'):
-        raise HTTPException(status_code=400, detail="Only CSV files are supported")
+    """Генерує синтетику на основі файлу (або blueprint) та одразу тренує модель."""
+    if file is None and blueprint_id is None:
+        raise HTTPException(status_code=400, detail="Must provide either file or blueprint_id")
 
     try:
-        content = await file.read()
-        df = pd.read_csv(io.BytesIO(content))
+        if file is not None:
+            if not file.filename.endswith('.csv'):
+                raise HTTPException(status_code=400, detail="Only CSV files are supported")
+            content = await file.read()
+            df = pd.read_csv(io.BytesIO(content))
+        else:
+            # Завантаження з БД за blueprint_id (мокаємо для майбутньої реалізації)
+            # df = await blueprint_service.load_data(blueprint_id)
+            raise HTTPException(status_code=501, detail="blueprint_id loading not implemented yet")
 
         if target_column not in df.columns:
             raise HTTPException(status_code=400, detail=f"Target column '{target_column}' not found in CSV")
