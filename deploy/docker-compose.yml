@@ -69,6 +69,43 @@ services:
           cpus: '1'
 
   # ============================================================
+  # 2.2. Federation Search Service
+  # ============================================================
+  federation-service:
+    build:
+      context: ../
+      dockerfile: services/federation-service/Dockerfile
+    ports:
+      - "8002:8002"
+    env_file:
+      - ../.env
+    environment:
+      - POSTGRES_URL=postgresql://predator:${POSTGRES_PASSWORD:-predator_secret}@postgres:5432/predator_db
+      - CLICKHOUSE_URL=http://clickhouse:8123
+      - OPENSEARCH_URL=http://opensearch:9200
+      - QDRANT_URL=http://qdrant:6333
+      - NEO4J_URL=bolt://neo4j:7687
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+      clickhouse:
+        condition: service_healthy
+      opensearch:
+        condition: service_healthy
+      qdrant:
+        condition: service_healthy
+      neo4j:
+        condition: service_healthy
+    networks:
+      - predator-sovereign-net
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '1'
+
+  # ============================================================
   # 3. Ingestion Worker
   # ============================================================
   ingestion-worker:
