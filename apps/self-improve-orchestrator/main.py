@@ -42,6 +42,9 @@ from .support import (
     reach_consensus,
 )
 
+from analyzers.log_analyzer import UtosLogAnalyzer
+from analyzers.reasoning import DeepSeekReasoner
+
 # --- LOGGING SETUP ---
 logger = setup_logger("predator.orchestrator", log_file='logs/system.log')
 
@@ -82,6 +85,9 @@ class AutonomousOrchestrator:
         self.power_monitor = None  # Initialized after Telegram
         self.voice_handler = None  # Initialized separately
         self.training_manager = TrainingManager()
+        
+        self.utos_analyzer = UtosLogAnalyzer()
+        self.utos_reasoner = DeepSeekReasoner(ollama_url=settings.LLM_OLLAMA_BASE_URL)
 
         self.iteration = 0
         self.deployment_failures = 0
@@ -412,6 +418,22 @@ class AutonomousOrchestrator:
                 "description": "Fix critical system issue",
                 "priority": 10
             }
+
+        # UTOS Audit Check
+        logger.info("🕵️ Перевірка останнього аудиту UTOS...")
+        audit_data = await self.utos_analyzer.fetch_latest_audit()
+        failures = self.utos_analyzer.extract_failures(audit_data)
+        
+        if failures:
+            logger.warning(f"⚠️ Знайдено помилки UTOS: {len(failures)}. Запуск DeepSeek-R1...")
+            await self.broadcast("analyst", "Виявлено помилки UTOS. Аналіз через DeepSeek-R1...", "loading")
+            plan = await self.utos_reasoner.analyze_failures(failures)
+            if plan:
+                return {
+                    "type": "hotfix",
+                    "description": f"Виправити помилки UTOS: {', '.join(failures[:2])}... План: {plan}",
+                    "priority": 10
+                }
 
         # Check if UI Guardian reported issues (only if Redis available)
         if self.redis:
