@@ -28,6 +28,7 @@ from app.pipelines.omniverse_pipeline import OmniversePipeline
 from app.registries.ua_registries import УкраїнськийРеєстр
 from app.services.omniverse_watchdog import OmniverseWatchdog
 from app.sinks.postgres_sink import PostgresSink
+from app.pipelines.automl_pipeline import AutoMLPipeline
 from predator_common.logging import get_logger
 
 logger = get_logger("ingestion_worker")
@@ -234,6 +235,26 @@ async def process_osint_enrichment(
         logger.error("ingestion_worker.osint_error", error=str(e), exc_info=True)
 
 
+async def process_automl_dataset(
+    msg_value: dict[str, Any],
+    producer: AIOKafkaProducer,
+    postgres_sink: PostgresSink,
+) -> None:
+    """Обробка створення датасетів та запуск AutoML."""
+    file_id = msg_value.get("job_id") or msg_value.get("file_id")
+    if not file_id:
+        logger.warning("ingestion_worker.skip_automl", reason="Відсутній file_id/job_id")
+        return
+
+    logger.info("ingestion_worker.automl_start", file_id=file_id)
+    try:
+        pipeline = AutoMLPipeline()
+        result = await pipeline.process_dataset(file_id=file_id, data=msg_value)
+        logger.info("ingestion_worker.automl_success", file_id=file_id, strategy=result.get("strategy"))
+    except Exception as e:
+        logger.error("ingestion_worker.automl_error", error=str(e), exc_info=True)
+
+
 async def process_message(
     msg_value: dict[str, Any],
     fusion_engine: ДвигунЗлиттяДаних,
@@ -269,6 +290,9 @@ async def process_message(
         elif "edrpou" in msg_value:
             # Це запит на OSINT збагачення
             await process_osint_enrichment(msg_value, fusion_engine, producer)
+        elif "automl_request" in msg_value:
+            # Запит на AutoML та створення датасетів
+            await process_automl_dataset(msg_value, producer, postgres_sink)
         else:
             logger.warning(
                 "ingestion_worker.unknown_message_type",

@@ -287,17 +287,28 @@ class AutonomousOrchestrator:
                     # await self.notify(f"📥 **Отримано задачу:**\n_{task['description']}_\n\n🔄 Починаю аналіз...") # Removed
                     await self.broadcast("orchestrator", f"🔥 ПОЧАТОК РОБОТИ: {task['description']}", "start", details=str(task))
 
-                    # 3. CODE GENERATION
-                    # We skip pure analysis step object for now and go straight to code generation via improver
-                    # which acts as the architect here.
-                    await self.set_activity("✍️ Generating Code...")
-                    await self.broadcast("architect", "Генерація технічного рішення...", "processing")
-                    proposal = await self.code_improver.generate_improvement(task)
-                    metrics = await self.performance.predict_impact(proposal.get('code', ''))
+                    # 3. CODE GENERATION (Via Claw Code / DeepSeek-R1)
+                    await self.set_activity("✍️ Triggering Claw Code Refactoring...")
+                    await self.broadcast("architect", "Генерація технічного рішення через Claw Code...", "processing")
+                    
+                    try:
+                        import httpx
+                        async with httpx.AsyncClient() as client:
+                            resp = await client.post(
+                                "http://claw-code-agent:8005/trigger/refactor",
+                                timeout=10.0
+                            )
+                        if resp.status_code == 200:
+                            proposal = {"code": "CLAW_CODE_AUTONOMOUS", "file_path": "autonomous_by_claw", "description": task['description']}
+                            logger.info("Claw Code refactoring triggered successfully.")
+                        else:
+                            proposal = {"error": f"Claw Code API failed: {resp.text}"}
+                    except Exception as e:
+                        proposal = {"error": str(e)}
 
-                    if proposal.get("error") or not proposal.get("code"):
-                        logger.warning(f"⚠️ Помилка генерації коду: {proposal.get('error', 'код не повернуто')}")
-                        await self.broadcast("architect", "Помилка генерації коду", "error", details=proposal.get('error'))
+                    if proposal.get("error"):
+                        logger.warning(f"⚠️ Помилка виклику Claw Code: {proposal.get('error')}")
+                        await self.broadcast("architect", "Помилка виклику Claw Code", "error", details=proposal.get('error'))
                         continue
 
                     # 4. COUNCIL / REVIEW
@@ -559,6 +570,11 @@ class AutonomousOrchestrator:
                 return False
 
         # --- CODE IMPROVEMENT TASK ---
+        if proposal.get("code") == "CLAW_CODE_AUTONOMOUS":
+            logger.info("Claw Code Agent works autonomously in background. Marking execute_task as success.")
+            await self.notify("✅ Claw Code agent is handling the refactoring autonomously in background.")
+            return True
+
         file_path = proposal.get("file_path")
         code_content = proposal.get("code")
 

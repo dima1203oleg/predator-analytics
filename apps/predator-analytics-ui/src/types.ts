@@ -126,6 +126,7 @@ export enum TabView {
     SEARCH = 'search',
     DATASET_STUDIO = 'dataset_studio',
     SYSTEM_HEALTH = 'system_health',
+    UTOS = 'utos',
     SETTINGS = 'settings',
     OMNISCIENCE = 'omniscience',
     OPPONENT = 'opponent',

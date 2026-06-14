@@ -434,6 +434,32 @@ services:
           memory: 500M
           cpus: '0.5'
 
+  # ============================================================
+  # 5.4. Claw Code Agent (Self-Improvement Orchestrator)
+  # ============================================================
+  claw-code-agent:
+    build:
+      context: ../
+      dockerfile: services/claw-code-agent/Dockerfile
+    ports:
+      - "8005:8005"
+    env_file:
+      - ../.env
+    environment:
+      - LLM_OLLAMA_BASE_URL=http://host.docker.internal:11434
+    volumes:
+      - ../:/workspace
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: always
+    networks:
+      - predator-sovereign-net
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '1'
+
 networks:
   predator-sovereign-net:
     driver: bridge
@@ -448,3 +474,4 @@ volumes:
   osdata:
   qdrantdata:
   miniodata:
+

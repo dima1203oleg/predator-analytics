@@ -1,0 +1,20 @@
+agent:
+  name: "ClawCodeOrchestrator"
+  version: "1.0.0"
+
+llm:
+  provider: "ollama"
+  base_url: "http://host.docker.internal:11434"
+  model: "deepseek-r1:latest"
+  temperature: 0.1
+
+repository:
+  path: "/workspace"
+  auto_commit: true
+  review_required: true
+
+tasks:
+  - type: "static_analysis"
+    schedule: "0 0 * * *"
+  - type: "refactoring"
+    schedule: "0 2 * * *"

@@ -31,11 +31,18 @@ router.include_router(
 )
 
 # Підключення LLM Router
-from app.api.v1.endpoints import llm
+from app.api.v1.endpoints import llm, claw_code
 router.include_router(
     llm.router,
     prefix="/v1/llm",
     tags=["llm"]
+)
+
+# Підключення Claw Code (Автономний Рефакторинг)
+router.include_router(
+    claw_code.router,
+    prefix="/v1/claw-code",
+    tags=["claw-code"]
 )
 
 # Підключення Forecast Router
