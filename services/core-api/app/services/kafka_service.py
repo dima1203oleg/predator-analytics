@@ -34,6 +34,7 @@ class KafkaTopics:
     RISK_ALERTS = settings.KAFKA_TOPIC_RISK_ALERTS
     DLQ = settings.KAFKA_TOPIC_DLQ
     QUARANTINE = settings.KAFKA_TOPIC_QUARANTINE
+    INGESTION_TRIGGERS = "ingestion-triggers"  # Внутрішній топік для тригерів
 
     @staticmethod
     def for_tenant(tenant_id: str, category: str, name: str) -> str:
@@ -54,6 +55,15 @@ class RawFileUpload(BaseModel):
     file_content_hash: str
     upload_timestamp: int
     s3_bucket_path: str
+
+
+class IngestionTriggerEvent(BaseModel):
+    """Повідомлення про тригер інгестії."""
+
+    source: str
+    tenant_id: str
+    triggered_by: str | None
+    timestamp: int
 
 
 class EntityUpsert(BaseModel):
@@ -307,6 +317,21 @@ class KafkaService:
             triggered_at=int(datetime.now(UTC).timestamp() * 1000),
         )
         return await self.send(KafkaTopics.RISK_ALERTS, event, key=alert_id)
+
+    async def publish_ingestion_trigger(
+        self,
+        source: str,
+        tenant_id: str,
+        triggered_by: str | None = None,
+    ) -> bool:
+        """Публікує подію тригеру інгестії."""
+        event = IngestionTriggerEvent(
+            source=source,
+            tenant_id=tenant_id,
+            triggered_by=triggered_by,
+            timestamp=int(datetime.now(UTC).timestamp() * 1000),
+        )
+        return await self.send(KafkaTopics.INGESTION_TRIGGERS, event, key=source)
 
 
 # ======================== SINGLETON ========================

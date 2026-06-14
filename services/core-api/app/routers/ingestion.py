@@ -270,10 +270,18 @@ async def stream_job_progress(
 @router.post("/trigger")
 async def trigger_ingestion(
     source: str,
+    tenant_id: str = Depends(get_tenant_id),
+    current_user: dict = Depends(get_current_active_user),
     _ = Depends(PermissionChecker([Permission.READ_CORP_DATA]))
 ):
     """Тригер запуску пайплайну імпорту даних."""
-    # TODO: Push to Kafka topic 'ingestion-triggers'
+    kafka = get_kafka_service()
+    user_id = current_user.get("sub")
+    await kafka.publish_ingestion_trigger(
+        source=source,
+        tenant_id=tenant_id,
+        triggered_by=user_id
+    )
     return {"status": "triggered", "source": source}
 
 

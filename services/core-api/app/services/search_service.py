@@ -45,7 +45,21 @@ class SearchService:
         )
         companies = list(result.scalars().all())
 
-        # TODO: Фаза 2 — додати Qdrant vector reranking для покращення релевантності
+        # Фаза 2: Qdrant vector reranking
+        try:
+            ere = EREService()
+            # Пошук за вектором запиту (поріг низький, бо це пошук, а не дедуплікація)
+            vector_results = await ere.find_duplicates(tenant_id, query, threshold=0.3, limit=limit * 2)
+            vector_scores = {res["entity_id"]: res["score"] for res in vector_results}
+
+            # Сортуємо результати: спочатку ті, що мають високий vector score, потім інші
+            companies.sort(
+                key=lambda c: vector_scores.get(str(c.id), 0.0) + vector_scores.get(c.ueid, 0.0),
+                reverse=True
+            )
+        except Exception as e:
+            logger.warning("Vector reranking failed or unavailable: %s", e)
+
         return companies
 
     @staticmethod
