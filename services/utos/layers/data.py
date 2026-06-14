@@ -9,7 +9,10 @@ from typing import Dict, Any
 
 import asyncpg
 import httpx
-from utos.config import POSTGRES_DSN, CLICKHOUSE_URL, CLICKHOUSE_USER, CLICKHOUSE_PASSWORD
+from utos.config import (
+    POSTGRES_DSN, CLICKHOUSE_URL, CLICKHOUSE_USER, CLICKHOUSE_PASSWORD,
+    NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD
+)
 from utos.layers import BaseLayer, CheckResult
 
 logger = logging.getLogger(__name__)
@@ -32,7 +35,10 @@ class DataLayer(BaseLayer):
         # 2. Тест ClickHouse з'єднання та аналітичних запитів
         ch_ok = await self._validate_clickhouse()
 
-        # 3. Крос-системний аудит (Кількість записів у критичних таблицях)
+        # 3. Тест Neo4j (Графова БД)
+        neo4j_ok = await self._validate_neo4j()
+
+        # 4. Крос-системний аудит (Кількість записів у критичних таблицях)
         if pg_ok and ch_ok:
             await self._audit_cross_database_consistency()
 
@@ -123,6 +129,42 @@ class DataLayer(BaseLayer):
                 passed=False,
                 message=f"Помилка ClickHouse: {e}",
                 severity="critical",
+            ))
+            return False
+        finally:
+            await client.aclose()
+
+    async def _validate_neo4j(self) -> bool:
+        """Перевірка графової бази даних Neo4j через HTTP API."""
+        start = time.time()
+        # Перетворюємо bolt:// на http:// з портом 7474 для HTTP API
+        http_base = NEO4J_URI.replace("bolt://", "http://").replace(":7687", ":7474")
+        url = f"{http_base}/db/neo4j/cluster/available"
+        
+        client = httpx.AsyncClient(timeout=5.0)
+        try:
+            resp = await client.get(
+                url,
+                auth=(NEO4J_USER, NEO4J_PASSWORD),
+            )
+            latency = (time.time() - start) * 1000
+
+            if resp.status_code < 400:
+                self.add_check(CheckResult(
+                    name="neo4j_connection",
+                    passed=True,
+                    message=f"Графова БД Neo4j доступна ({latency:.1f}мс)",
+                    latency_ms=latency,
+                ))
+                return True
+            else:
+                raise ValueError(f"HTTP {resp.status_code}")
+        except Exception as e:
+            self.add_check(CheckResult(
+                name="neo4j_connection",
+                passed=False,
+                message=f"Помилка Neo4j: {e}",
+                severity="warning",
             ))
             return False
         finally:

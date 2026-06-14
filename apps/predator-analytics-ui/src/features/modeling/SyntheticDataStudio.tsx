@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Brain, Database, Upload, Play, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
-import { apiClient } from '../../api/client';
+import { apiClient } from '../../services/api/config';
 
 export const SyntheticDataStudio: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);

@@ -42,12 +42,8 @@ BULK_FILE_TIMEOUT: int = int(os.getenv("E2E_BULK_FILE_TIMEOUT", "300"))
 
 
 # ─── Event Loop ─────────────────────────────────────────────────────────────
-@pytest.fixture(scope="session")
-def event_loop():
-    """Створює єдиний event loop для всієї сесії тестування."""
-    loop = asyncio.get_event_loop_policy().new_event_loop()
-    yield loop
-    loop.close()
+# Видалено кастомну фікстуру event_loop.
+# Для pytest-asyncio >= 0.23 використовуємо asyncio_default_fixture_loop_scope у pytest.ini.
 
 
 # ─── HTTP Клієнти ───────────────────────────────────────────────────────────

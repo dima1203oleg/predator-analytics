@@ -15,7 +15,7 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 // ─── AdminHub (System Command Center) ────────────────────────────────────────
 const AdminHub = lazy(() => import('./pages/admin/AdminHub'));
 const DatabaseCommandCenter = lazy(() => import('./features/admin/DatabaseCommandCenter'));
-const AdvDvsDashboard = lazy(() => import('./pages/diagnostics/AdvDvsDashboard'));
+const UtosDashboard = lazy(() => import('./pages/diagnostics/UtosDashboard'));
 
 // Lazy loaded views
 const SearchPage = lazy(() => import('./features/search/SearchPage'));
@@ -223,7 +223,7 @@ export const AppRoutesNew = () => {
                 path="/admin/adv-dvs"
                 element={
                   <AdminGuard>
-                    <AdvDvsDashboard />
+                    <UtosDashboard />
                   </AdminGuard>
                 }
               />
@@ -345,6 +345,7 @@ export const AppRoutesNew = () => {
               {/* Клієнтські маршрути */}
               <Route path="/clients" element={<PremiumOnly><ClientsHubView /></PremiumOnly>} />
               <Route path="/clients/:segment" element={<PremiumOnly><ClientSegmentView /></PremiumOnly>} />
+              <Route path="/data-import" element={<PremiumOnly><DatasetStudio /></PremiumOnly>} />
 
               {/* AURUM OBSIDIAN Style Guide */}
               <Route path="/aurum" element={<AurumShowcase />} />
