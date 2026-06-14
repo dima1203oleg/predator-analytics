@@ -10,6 +10,8 @@ interface SearchResult {
   title: string;
   subtitle: string;
   link?: string;
+  score?: number;
+  latency_ms?: number;
 }
 
 export const GlobalSearchOverlay: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, onClose }) => {
@@ -25,28 +27,52 @@ export const GlobalSearchOverlay: React.FC<{ isOpen: boolean; onClose: () => voi
     }
   }, [isOpen]);
 
-  // Mock Search Logic
+  // Real Search Logic via Federation API
   useEffect(() => {
-    if (!query) {
+    if (!query || query.length < 2) {
       setResults([]);
       return;
     }
 
-    const mockResults: SearchResult[] = [
-      { id: '1', type: 'company', title: 'ТОВ "Мега-Імпорт"', subtitle: 'Військова електроніка •  изик: 78%' },
-      { id: '2', type: 'product', title: 'Дрони DJI Mavic 3', subtitle: 'HS Code: 8806 • 1,204 імпортів' },
-      { id: '3', type: 'insight', title: 'Схема "Карусель" (Київ)', subtitle: 'Виявлено 12 пов\'язаних осіб' },
-      { id: '4', type: 'report', title: 'Звіт:  инок Сталі Q1 2026', subtitle: 'PDF • 24 сторінки' },
-      { id: '5', type: 'company', title: `ТОВ "${query}"`, subtitle: 'Пошук в реєстрі...' },
-    ];
+    const abortController = new AbortController();
 
-    // Filter simulation
-    const filtered = mockResults.filter(r =>
-        r.title.toLowerCase().includes(query.toLowerCase()) ||
-        query.length < 2 // Show suggestions on short query
-    );
-    setResults(filtered.slice(0, 5));
+    const fetchResults = async () => {
+      try {
+        const response = await fetch(`http://localhost:8002/api/v1/search?query=${encodeURIComponent(query)}&limit=10`, {
+          signal: abortController.signal
+        });
+        
+        if (!response.ok) throw new Error('Search failed');
+        
+        const data = await response.json();
+        
+        const mappedResults: SearchResult[] = data.results.map((r: any, idx: number) => {
+          let type: 'company' | 'product' | 'report' | 'insight' = 'company';
+          if (r.source === 'clickhouse') type = 'report';
+          if (r.source === 'opensearch' || r.source === 'qdrant') type = 'insight';
+          
+          return {
+            id: `res_${idx}_${r.source}`,
+            type,
+            title: r.data.name || r.data.title || `Result from ${r.source}`,
+            subtitle: `Score: ${(r.score || 0).toFixed(2)} • Latency: ${(r.latency_ms || 0).toFixed(0)}ms`,
+            score: r.score,
+            latency_ms: r.latency_ms
+          };
+        });
+        
+        setResults(mappedResults);
+      } catch (err: any) {
+        if (err.name === 'AbortError') return;
+        console.error('Federation Search Error:', err);
+      }
+    };
 
+    const timeoutId = setTimeout(fetchResults, 300); // 300ms debounce
+    return () => {
+      clearTimeout(timeoutId);
+      abortController.abort();
+    };
   }, [query]);
 
   // Key handlers
