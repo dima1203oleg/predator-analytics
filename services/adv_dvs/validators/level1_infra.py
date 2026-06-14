@@ -2,6 +2,7 @@
 import asyncio
 from predator_common.logging import get_logger
 from services.adv_dvs.checks.kafka_check import check_kafka_connection
+from services.adv_dvs.report_generator import DVSReportGenerator
 
 logger = get_logger("adv_dvs.validators.level1")
 
@@ -28,7 +29,11 @@ async def run_level1_checks() -> dict:
     else:
         logger.error("🔴 Деякі інфраструктурні перевірки не пройдено.")
         
-    return results
+    # Генерація та збереження звіту
+    report_gen = DVSReportGenerator()
+    final_report = report_gen.generate("LEVEL-1-INFRA", results)
+    
+    return final_report
 
 if __name__ == "__main__":
     asyncio.run(run_level1_checks())
