@@ -16,6 +16,7 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 const AdminHub = lazy(() => import('./pages/admin/AdminHub'));
 const DatabaseCommandCenter = lazy(() => import('./features/admin/DatabaseCommandCenter'));
 const UtosDashboard = lazy(() => import('./pages/diagnostics/UtosDashboard'));
+const AdvDvsDashboard = lazy(() => import('./pages/diagnostics/AdvDvsDashboard').then(m => ({ default: m.AdvDvsDashboard })));
 
 // Lazy loaded views
 const SearchPage = lazy(() => import('./features/search/SearchPage'));
@@ -223,7 +224,7 @@ export const AppRoutesNew = () => {
                 path="/admin/adv-dvs"
                 element={
                   <AdminGuard>
-                    <UtosDashboard />
+                    <AdvDvsDashboard />
                   </AdminGuard>
                 }
               />
