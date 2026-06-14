@@ -45,4 +45,13 @@ router.include_router(
     tags=["ai"]
 )
 
+# Підключення LLM Router
+from app.api.v1.endpoints import llm
+router.include_router(
+    llm.router,
+    prefix="/v1/llm",
+    tags=["llm"]
+)
+
+
 # TODO: додати forecast router після його реалізації

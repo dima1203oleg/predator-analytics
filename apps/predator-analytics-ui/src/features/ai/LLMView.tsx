@@ -48,6 +48,7 @@ const LLMView: React.FC = () => {
     const [dspyOptimizing, setDspyOptimizing] = useState(false);
     const [dspyData, setDspyData] = useState(DSPY_CHART_DATA);
     const [dspyOptimizations, setDspyOptimizations] = useState<DSPyOptimization[]>([]);
+    const [automlData, setAutomlData] = useState<any[]>([]);
     const [voiceStatus, setVoiceStatus] = useState<InteractionStatus>('IDLE');
     const { speak } = useVoiceControl(voiceStatus, setVoiceStatus, () => { });
 
@@ -66,6 +67,10 @@ const LLMView: React.FC = () => {
 
                 if (statusRes && statusRes.modules) {
                     setDspyOptimizations(statusRes.modules);
+                }
+                
+                if (auto && Array.isArray(auto)) {
+                    setAutomlData(auto);
                 }
 
                 if (historyRes && historyRes.history) {
@@ -148,6 +153,7 @@ const LLMView: React.FC = () => {
             <div className="flex p-1 bg-black/40  border border-white/5 rounded-[24px] overflow-x-auto scrollbar-hide shadow-2xl">
                 {[
                     { id: 'INFERENCE', label: premiumLocales.llm.tabs.inference, icon: MessageSquare, color: 'text-blue-400' },
+                    { id: 'AUTOML', label: 'Continuous Learning', icon: BrainCircuit, color: 'text-pink-400' },
                     { id: 'DSPY', label: premiumLocales.llm.tabs.dspy, icon: Sparkles, color: 'text-emerald-400' },
                     { id: 'TRAINING_LINK', label: 'Лабораторія Навчання', icon: Layers, color: 'text-purple-400', isLink: true },
                 ].map(tab => (
@@ -192,6 +198,39 @@ const LLMView: React.FC = () => {
                         onSystemPromptChange={setSystemPrompt}
                         chatEndRef={chatEndRef}
                     />
+                )}
+                {activeTab === 'AUTOML' && (
+                    <div className="space-y-6">
+                        <div className="bg-slate-900/50 border border-white/10 rounded-2xl p-6">
+                            <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                                <BrainCircuit className="text-pink-400" /> Continuous Learning Loop (AutoML)
+                            </h3>
+                            <p className="text-slate-400 mb-6">
+                                Система безперервного навчання DeepSeek R1. ШІ автономно генерує нові митні схеми, розширюючи базу знань з {automlData?.length || 65} датасетів.
+                            </p>
+                            
+                            <div className="grid grid-cols-1 gap-4">
+                                {(automlData || []).slice().reverse().map((bp: any, idx: number) => (
+                                    <div key={idx} className="bg-black/40 border border-white/5 p-4 rounded-xl flex flex-col gap-2">
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-pink-400 font-mono text-sm">#{bp.id || (automlData.length - idx)}</span>
+                                            <span className="text-xs bg-blue-500/20 text-blue-300 px-2 py-1 rounded">
+                                                {bp.fraud_indicators?.length || 0} Індикаторів
+                                            </span>
+                                        </div>
+                                        <h4 className="text-white font-bold">{bp.description || 'Нова схема (Генерація...)'}</h4>
+                                        <p className="text-slate-500 text-sm line-clamp-2">{(bp.fraud_indicators || []).join(', ')}</p>
+                                    </div>
+                                ))}
+                                {(!automlData || automlData.length === 0) && (
+                                    <div className="text-center text-slate-500 py-10">
+                                        <BrainCircuit className="mx-auto mb-4 opacity-50 animate-pulse" size={32} />
+                                        Очікування генерації першого датасету (Схема №101)...
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
                 )}
                 {activeTab === 'DSPY' && (
                     <LLMDspyView

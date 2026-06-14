@@ -18,29 +18,44 @@ class CognitiveDecision(BaseModel):
 class DeepSeekCore:
     def __init__(self, model_name: str = "deepseek-r1:latest"):
         self.model_name = model_name
-        self.api_url = f"{OLLAMA_URL.rstrip('/')}/v1/chat/completions"
+        self.api_url = f"{OLLAMA_URL.rstrip('/')}/api/generate"
         self.headers = {"Content-Type": "application/json"}
 
     async def _invoke(self, system_prompt: str, user_prompt: str, temperature: float = 0.2) -> Dict[str, Any]:
+        prompt = f"<|im_start|>system\n{system_prompt}<|im_end|>\n<|im_start|>user\n{user_prompt}<|im_end|>\n<|im_start|>assistant\n"
+        
         payload = {
             "model": self.model_name,
-            "messages": [
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt}
-            ],
+            "prompt": prompt,
+            "stream": False,
             "temperature": temperature,
-            "response_format": {"type": "json_object"}
+            "options": {
+                "num_ctx": 4096
+            }
         }
         
-        async with httpx.AsyncClient(timeout=300.0) as client:
+        async with httpx.AsyncClient(timeout=600.0) as client:
             try:
                 response = await client.post(self.api_url, json=payload, headers=self.headers)
                 response.raise_for_status()
                 data = response.json()
-                content = data["choices"][0]["message"]["content"]
+                content = data.get("response", "")
+                # Зрізаємо think-блок від DeepSeek R1
+                import re
+                raw_content = content
+                content = re.sub(r'<think>.*?</think>', '', content, flags=re.DOTALL)
+                match = re.search(r'```(?:json)?(.*?)```', content, flags=re.DOTALL)
+                if match:
+                    content = match.group(1)
+                content = content.strip()
+                
+                if not content:
+                    logger.error(f"Empty content after stripping. Raw was: {raw_content}")
+                    raise ValueError("Empty content from LLM")
+                    
                 return json.loads(content)
             except Exception as e:
-                import traceback; traceback.print_exc()
+                logger.error(f"API Invocation Error: {e}")
                 return {
                     "decision": "ERROR",
                     "rationale": f"API Exception: {str(e)}",
@@ -89,9 +104,19 @@ class DeepSeekCore:
             "}\n"
             "УСІ ТЕКСТИ МАЮТЬ БУТИ ВИКЛЮЧНО УКРАЇНСЬКОЮ МОВОЮ, СТИЛЬ РАДИКАЛЬНИЙ І ТОЧНИЙ."
         )
-        user_prompt = f"ІСТОРІЯ ВЖЕ ІСНУЮЧИХ ІДЕЙ (НЕ ПОВТОРЮВАТИ):\n{json.dumps(history[-20:])}\n\nКОНТЕКСТ ВІД КОРИСТУВАЧА:\n{context_seed[:2000]}...\n\nЗГЕНЕРУЙ НОВУ ІДЕЮ №{len(history) + 101}!"
-        res = await self._invoke(system_prompt, user_prompt, temperature=0.8) # Висока температура для креативності
-        return CognitiveDecision(**res)
+        user_prompt = f"ІСТОРІЯ ВЖЕ ІСНУЮЧИХ ІДЕЙ (НЕ ПОВТОРЮВАТИ):\n{json.dumps(history[-5:])}\n\nКОНТЕКСТ ВІД КОРИСТУВАЧА:\n{context_seed[:1000]}...\n\nЗГЕНЕРУЙ НОВУ ІДЕЮ №{len(history) + 101}!"
+        
+        try:
+            res = await self._invoke(system_prompt, user_prompt, temperature=0.8)
+            return CognitiveDecision(**res)
+        except Exception as e:
+            logger.error(f"API Invocation Error: {e}")
+            return CognitiveDecision(
+                decision="ERROR",
+                rationale=f"API Exception: {str(e)}",
+                confidence=0.0,
+                parameters={}
+            )
 
     async def strategy_optimizer(self, task_desc: Dict[str, Any]) -> CognitiveDecision:
         system_prompt = (
@@ -112,12 +137,12 @@ class DeepSeekCore:
         )
         user_prompt = json.dumps({"shap": shap_values, "predictions": predictions})
         
+        prompt = f"<|im_start|>system\n{system_prompt}<|im_end|>\n<|im_start|>user\n{user_prompt}<|im_end|>\n<|im_start|>assistant\n"
+        
         payload = {
             "model": self.model_name,
-            "messages": [
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt}
-            ],
+            "prompt": prompt,
+            "stream": False,
             "temperature": 0.4
         }
         
@@ -125,7 +150,8 @@ class DeepSeekCore:
             try:
                 response = await client.post(self.api_url, json=payload, headers=self.headers)
                 response.raise_for_status()
-                return response.json()["choices"][0]["message"]["content"]
+                data = response.json()
+                return data.get("response", "Помилка формату відповіді")
             except Exception as e:
                 logger.error(f"Помилка генерації пояснення: {e}")
                 return "Помилка генерації пояснення через AI."
