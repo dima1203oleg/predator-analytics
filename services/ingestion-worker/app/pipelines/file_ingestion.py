@@ -386,66 +386,82 @@ class FileIngestionPipeline:
             raise
 
     async def _parse_excel(self, file_ext: str, content: bytes) -> AsyncGenerator[dict[str, Any], None]:
-        """Парсить Excel контент."""
+        """Парсить Excel контент — УСІХ аркушів (multi-sheet)."""
         try:
             logger.info(f"Excel content length: {len(content)} bytes")
-            df = pd.read_excel(io.BytesIO(content), engine="openpyxl")
+            xls = pd.ExcelFile(io.BytesIO(content), engine="openpyxl")
+            sheet_names = xls.sheet_names
+            logger.info(
+                f"Excel має {len(sheet_names)} аркушів: {sheet_names}"
+            )
 
-            # Конвертуємо назви колонок
-            df.columns = [
-                self.COLUMN_MAPPING.get(str(c).lower().strip(), str(c).lower().strip())
-                for c in df.columns
-            ]
+            for sheet_idx, sheet_name in enumerate(sheet_names):
+                df = pd.read_excel(xls, sheet_name=sheet_name)
+                logger.info(
+                    f"Аркуш '{sheet_name}' ({sheet_idx + 1}/{len(sheet_names)}): "
+                    f"{len(df)} рядків, {len(df.columns)} колонок"
+                )
 
-            # Обробка рядків
-            for _, row in df.iterrows():
-                record = row.to_dict()
-                # Фільтруємо NaN
-                record = {k: (None if pd.isna(v) else v) for k, v in record.items()}
+                if df.empty:
+                    logger.warning(f"Аркуш '{sheet_name}' порожній, пропускаємо")
+                    continue
 
-                self.stats.total_rows += 1
+                # Конвертуємо назви колонок
+                df.columns = [
+                    self.COLUMN_MAPPING.get(str(c).lower().strip(), str(c).lower().strip())
+                    for c in df.columns
+                ]
 
-                # Валідація та обробка аналогічно CSV
-                validation = DeclarationValidator.validate_record(record)
+                # Обробка рядків
+                for _, row in df.iterrows():
+                    record = row.to_dict()
+                    # Фільтруємо NaN
+                    record = {k: (None if pd.isna(v) else v) for k, v in record.items()}
 
-                if validation.quarantine:
-                    self.stats.quarantined_rows += 1
-                    self.quarantine.append(
-                        QuarantineRecord(
-                            job_id=self.job_id,
-                            tenant_id=self.tenant_id,
-                            original_record=record,
-                            errors=[
-                                {
-                                    "field": e.field,
-                                    "message": e.message,
-                                    "severity": e.severity.value,
-                                }
-                                for e in validation.errors
-                            ],
+                    self.stats.total_rows += 1
+
+                    # Валідація та обробка аналогічно CSV
+                    validation = DeclarationValidator.validate_record(record)
+
+                    if validation.quarantine:
+                        self.stats.quarantined_rows += 1
+                        self.quarantine.append(
+                            QuarantineRecord(
+                                job_id=self.job_id,
+                                tenant_id=self.tenant_id,
+                                original_record=record,
+                                errors=[
+                                    {
+                                        "field": e.field,
+                                        "message": e.message,
+                                        "severity": e.severity.value,
+                                    }
+                                    for e in validation.errors
+                                ],
+                            )
                         )
-                    )
-                    continue
+                        continue
 
-                if validation.record_hash in self.seen_hashes:
-                    self.stats.duplicate_rows += 1
-                    continue
+                    if validation.record_hash in self.seen_hashes:
+                        self.stats.duplicate_rows += 1
+                        continue
 
-                self.seen_hashes.add(validation.record_hash)
-                normalized = validation.normalized_record
-                normalized["_record_hash"] = validation.record_hash
-                normalized["_job_id"] = self.job_id
-                normalized["_tenant_id"] = self.tenant_id
-                normalized["_ingested_at"] = datetime.now(UTC).isoformat()
+                    self.seen_hashes.add(validation.record_hash)
+                    normalized = validation.normalized_record
+                    normalized["_record_hash"] = validation.record_hash
+                    normalized["_job_id"] = self.job_id
+                    normalized["_tenant_id"] = self.tenant_id
+                    normalized["_ingested_at"] = datetime.now(UTC).isoformat()
+                    normalized["_sheet_name"] = sheet_name
 
-                edrpou = normalized.get("company_edrpou", "")
-                if edrpou:
-                    normalized["ueid"] = CompanyNormalizer.generate_ueid(
-                        str(edrpou), self.tenant_id
-                    )
+                    edrpou = normalized.get("company_edrpou", "")
+                    if edrpou:
+                        normalized["ueid"] = CompanyNormalizer.generate_ueid(
+                            str(edrpou), self.tenant_id
+                        )
 
-                self.stats.valid_rows += 1
-                yield normalized
+                    self.stats.valid_rows += 1
+                    yield normalized
 
         except Exception as e:
             logger.error(f"Failed to parse Excel: {e}")
