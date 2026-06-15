@@ -18,26 +18,41 @@ export const AdvDvsDashboard: React.FC = () => {
   const [report, setReport] = useState<AdvDvsReport | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Моковий fetch (заглушка для API)
   useEffect(() => {
     const fetchReport = async () => {
       setLoading(true);
-      // Імітація запиту до API /api/v1/adv-dvs/run
-      setTimeout(() => {
+      try {
+        const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+        const response = await fetch(`${baseUrl}/api/v1/adv-dvs/run`, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        setReport(data);
+      } catch (error) {
+        console.error("Failed to fetch ADV DVS report:", error);
+        // Fallback or error state
         setReport({
           timestamp: new Date().toISOString(),
           version: '61.0-ELITE',
-          validation_level: 'FULL-VALIDATION',
-          status: 'GO',
+          validation_level: 'ERROR',
+          status: 'NO-GO',
           details: [
-            { component: 'kafka', status: 'passed', message: 'З\'єднання встановлено' },
-            { component: 'postgres', status: 'passed', message: 'Головна БД активна' },
+            { component: 'api', status: 'fail', message: `Помилка підключення: ${error}` }
           ],
-          recommendations: ['Система готова до інгестії.']
+          recommendations: ['Перевірте чи працює Core API (FastAPI) та чи доступний порт.']
         });
+      } finally {
         setLoading(false);
-      }, 1500);
+      }
     };
+    
     fetchReport();
   }, []);
 
