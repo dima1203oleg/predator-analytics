@@ -101,38 +101,47 @@ export const useAppStore = create<AppState>()(
       setPlanMode: (isPlanMode) => set({ isPlanMode }),
       setCopilotOpen: (isCopilotOpen) => set({ isCopilotOpen }),
 
-      // Simulated AI Processing Action
-      processAICommand: (command) => {
+      // Async AI Processing Action with Mock API
+      processAICommand: async (command) => {
         set((state) => ({
           aiState: {
             ...state.aiState,
             isReasoning: true,
             response: null,
-            activeTools: ['RAG', 'Graph Analysis', 'Semantic Search'],
+            activeTools: ['RAG Search', 'Graph Analysis', 'Mock DB Query'],
           }
         }));
 
-        // Simulate async reasoning delay
-        setTimeout(() => {
+        try {
+          const res = await fetch('http://localhost:9080/api/v1/copilot/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: command })
+          });
+          
+          if (!res.ok) throw new Error('API Error');
+          
+          const data = await res.json();
+          
           set((state) => ({
             aiState: {
               ...state.aiState,
               isReasoning: false,
-              response: `Аналіз команди "${command}" завершено. Виявлено 4 ключові зв'язки. 2 активні судові справи, 1 зв'язок з бенефіціаром. Виводжу графову проекцію...`,
+              response: data.reply || 'Аналіз завершено. (Fallback response)',
+              threatLevel: data.sources && data.sources.length > 0 ? 'HIGH' : 'NORMAL',
+              activeTargetId: data.sources && data.sources.length > 0 ? 'target-x' : null
             }
           }));
-
-          // Simulate follow-up action (e.g., loading the graph target)
-          setTimeout(() => {
-            set((state) => ({
-              aiState: {
-                ...state.aiState,
-                threatLevel: 'HIGH',
-                activeTargetId: 'target-x'
-              }
-            }));
-          }, 1000);
-        }, 3000);
+        } catch (error) {
+          console.error('AI Command Error:', error);
+          set((state) => ({
+            aiState: {
+              ...state.aiState,
+              isReasoning: false,
+              response: `Помилка з'єднання з AI сервером: ${error instanceof Error ? error.message : 'Невідома помилка'}`,
+            }
+          }));
+        }
       },
 
       resetAIState: () => set((state) => ({
