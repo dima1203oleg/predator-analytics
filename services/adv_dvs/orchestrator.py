@@ -2,6 +2,7 @@
 import asyncio
 from predator_common.logging import get_logger
 from services.adv_dvs.validators.level1_infra import run_level1_checks
+from services.adv_dvs.validators.level2_data import run_level2_checks
 from services.adv_dvs.report_generator import DVSReportGenerator
 
 logger = get_logger("adv_dvs.orchestrator")
@@ -18,12 +19,21 @@ class ADVOrchestrator:
         
         # Рівень 1: Інфраструктура
         l1_results = await run_level1_checks()
-        # Якщо в майбутньому будуть інші рівні, вони додаються тут.
+        
+        # Якщо інфраструктура в нормі, запускаємо Рівень 2: Якість даних
+        all_checks = l1_results.get("details", [])
+        status = l1_results.get("status")
+        
+        if status == "GO":
+            l2_results = await run_level2_checks()
+            all_checks.extend(l2_results.get("details", []))
+            if l2_results.get("status") != "GO":
+                status = "NO-GO"
         
         # Формування агрегованого звіту
         final_report = self.report_gen.generate("FULL-VALIDATION", {
-            "status": l1_results.get("status"),
-            "checks": l1_results.get("details", [])
+            "status": "PASSED" if status == "GO" else "FAILED",
+            "checks": all_checks
         })
         
         return final_report
