@@ -31,8 +31,8 @@
 | HashiCorp Vault 1.15 | `docker-compose.yml:451` | ✅ (server profile) |
 | Prometheus + Grafana + Loki | `docker-compose.yml:471+` | ✅ (server profile) |
 | Celery Worker + Beat | `docker-compose.yml:309+` | ✅ Реалізовано |
-| MCP Router | `services/mcp-router/` | ✅ Реалізовано |
-| Graph Service (Neo4j) | `services/graph-service/` | ✅ Реалізовано |
+| MCP Router | `services/mcp_router/` | ✅ Реалізовано |
+| Graph Service (Neo4j) | `services/graph_service/` | ✅ Реалізовано |
 | Ingestion Worker | `services/ingestion-worker/` | ✅ Реалізовано |
 | Antigravity AGI Orchestrator | `app/services/antigravity_orchestrator.py` | ✅ Реалізовано |
 | Sovereign Guardian (auto-heal) | `app/services/guardian.py` | ✅ Реалізовано |
@@ -796,8 +796,8 @@ HR-25  Backend: ТІЛЬКИ async operations (синхронні заборон
 | `services/core-api/app/services/kafka_service.py` | Kafka producer/consumer |
 | `services/core-api/app/services/guardian.py` | Auto-healing |
 | `services/ingestion-worker/app/` | ETL pipeline |
-| `services/graph-service/app/` | Neo4j microservice |
-| `services/mcp-router/app/` | LLM gateway |
+| `services/graph_service/app/` | Neo4j microservice |
+| `services/mcp_router/app/` | LLM gateway |
 | `apps/predator-analytics-ui/src/App.tsx` | React entry + state machine |
 | `apps/predator-analytics-ui/src/AppRoutesNew.tsx` | 50+ маршрутів + RBAC |
 | `mock-api-server.mjs` | Mock server (порт 9080) |

@@ -20,6 +20,9 @@ FROM mcr.microsoft.com/playwright/python:v1.42.0-jammy AS runtime
 # Створюємо користувача predator
 RUN useradd --create-home --shell /bin/bash predator
 
+# Встановлюємо кириличні шрифти для генерації PDF звітів
+RUN apt-get update && apt-get install -y fonts-dejavu && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
 # Копіюємо Python пакети

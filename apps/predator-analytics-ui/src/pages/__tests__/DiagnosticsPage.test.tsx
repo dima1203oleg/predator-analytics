@@ -34,7 +34,7 @@ const mockedDiagnostics = {
   generated_at: '2026-03-23T10:00:00Z',
   results: {
     health_status: 'ok',
-    overall_status: 'В НО МІ',
+    overall_status: 'В НОРМІ',
     infrastructure: {
       postgres: {
         status: 'ok',
@@ -108,7 +108,7 @@ const mockedDiagnostics = {
       timestamp: '2026-03-23T10:00:00Z',
     },
   },
-  report_markdown: '# Звіт системної діагностики\n\n- Загальний стан: **В НО МІ**',
+  report_markdown: '# Звіт системної діагностики\n\n- Загальний стан: **В НОРМІ**',
 };
 
 describe('DiagnosticsPage', () => {

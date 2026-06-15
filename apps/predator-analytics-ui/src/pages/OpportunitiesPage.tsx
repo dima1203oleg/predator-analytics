@@ -241,7 +241,7 @@ export default function OpportunitiesPage() {
                                     <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400/60">Верифікація</span>
                                 </div>
                                 <div className="text-base font-black text-emerald-400 tracking-tighter uppercase leading-none">Ядро можливостей</div>
-                                <div className="text-[10px] text-emerald-500/40 mt-1 font-mono group-hover:">ДОВІ ЕНИЙ СЕКТО </div>
+                                <div className="text-[10px] text-emerald-500/40 mt-1 font-mono group-hover:">ДОВІРЕНИЙ СЕКТОР</div>
                             </div>
                     </div>
                 </div>

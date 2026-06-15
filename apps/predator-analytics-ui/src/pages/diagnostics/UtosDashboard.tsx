@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Activity, Server, Database, MessageSquare, Globe, ShieldAlert, CheckCircle, AlertTriangle, XCircle, Cpu, ShieldCheck } from 'lucide-react';
+import { Server, Database, Globe, ShieldAlert, CheckCircle, AlertTriangle, XCircle, Cpu, ShieldCheck, Activity, Target } from 'lucide-react';
 
-// Типи, які повертає UTOS API
 type CheckStatus = 'HEALTHY' | 'WARNING' | 'CRITICAL';
 
 interface IndividualCheck {
@@ -43,8 +42,6 @@ export const UtosDashboard: React.FC = () => {
   const fetchStatus = async () => {
     setLoading(true);
     try {
-      // Підключення до UTOS сервісу на порту 8003
-      // Використовуємо POST запит для запуску повного циклу
       const response = await fetch('http://194.177.1.240:8003/api/v1/utos/run', {
         method: 'POST',
         headers: {
@@ -64,140 +61,180 @@ export const UtosDashboard: React.FC = () => {
 
   useEffect(() => {
     fetchStatus();
-    // Оновлюємо рідше, бо це POST запит який ініціює реальні тести
-    const interval = setInterval(fetchStatus, 300000); // 5 хв
+    const interval = setInterval(fetchStatus, 300000);
     return () => clearInterval(interval);
   }, []);
 
   const getStatusColor = (status: CheckStatus | 'ok' | 'warn' | 'fail' | boolean) => {
-    if (status === 'HEALTHY' || status === 'ok' || status === true) return 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20';
-    if (status === 'WARNING' || status === 'warn') return 'text-amber-500 bg-amber-500/10 border-amber-500/20';
-    if (status === 'CRITICAL' || status === 'fail' || status === false) return 'text-rose-500 bg-rose-500/10 border-rose-500/20';
-    return 'text-slate-500 bg-slate-500/10 border-slate-500/20';
+    if (status === 'HEALTHY' || status === 'ok' || status === true) return 'text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]';
+    if (status === 'WARNING' || status === 'warn') return 'text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]';
+    if (status === 'CRITICAL' || status === 'fail' || status === false) return 'text-rose-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]';
+    return 'text-slate-500';
   };
 
-  const getStatusIcon = (status: CheckStatus | 'ok' | 'warn' | 'fail' | boolean) => {
-    if (status === 'HEALTHY' || status === 'ok' || status === true) return <CheckCircle className="w-5 h-5 text-emerald-500" />;
-    if (status === 'WARNING' || status === 'warn') return <AlertTriangle className="w-5 h-5 text-amber-500" />;
-    if (status === 'CRITICAL' || status === 'fail' || status === false) return <XCircle className="w-5 h-5 text-rose-500" />;
-    return <Activity className="w-5 h-5 text-slate-500" />;
+  const getStatusBorder = (status: CheckStatus | 'ok' | 'warn' | 'fail' | boolean) => {
+    if (status === 'HEALTHY' || status === 'ok' || status === true) return 'border-cyan-500/30 bg-cyan-500/10 shadow-[0_0_15px_rgba(34,211,238,0.1)]';
+    if (status === 'WARNING' || status === 'warn') return 'border-amber-500/30 bg-amber-500/10 shadow-[0_0_15px_rgba(251,191,36,0.1)]';
+    if (status === 'CRITICAL' || status === 'fail' || status === false) return 'border-rose-500/30 bg-rose-500/10 shadow-[0_0_15px_rgba(239,68,68,0.1)]';
+    return 'border-white/5 bg-black/40';
   };
 
-  const getServiceIcon = (name: string) => {
-    if (name.includes('frontend') || name.includes('dom')) return <Globe className="w-6 h-6" />;
-    if (name.includes('api')) return <Server className="w-6 h-6" />;
-    if (name.includes('data') || name.includes('infra')) return <Database className="w-6 h-6" />;
-    if (name.includes('security')) return <ShieldCheck className="w-6 h-6" />;
-    if (name.includes('ai')) return <Cpu className="w-6 h-6" />;
-    return <Activity className="w-6 h-6" />;
+  const getServiceIcon = (name: string, className = "w-6 h-6") => {
+    if (name.includes('frontend') || name.includes('dom')) return <Globe className={className} />;
+    if (name.includes('api')) return <Server className={className} />;
+    if (name.includes('data') || name.includes('infra')) return <Database className={className} />;
+    if (name.includes('security')) return <ShieldCheck className={className} />;
+    if (name.includes('ai')) return <Cpu className={className} />;
+    return <Activity className={className} />;
   };
+
+  const isReady = data?.status === "HEALTHY" || data?.status === "WARNING";
 
   return (
-    <div className="p-6 bg-slate-950 min-h-screen text-slate-200 font-sans">
-      <div className="max-w-6xl mx-auto space-y-6">
+    <div className="min-h-screen p-8 bg-[#020817] text-white relative overflow-hidden font-sans">
+      
+      {/* Global CRT Overlay */}
+      <div className="pointer-events-none absolute inset-0 z-50 overflow-hidden">
+        <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSJ0cmFuc3BhcmVudCIvPgo8cGF0aCBkPSJNMCAwTDAgNE0yIDBMMiA0IiBzdHJva2U9IiNmZmYiIHN0cm9rZS1vcGFjaXR5PSIwLjUiIHN0cm9rZS13aWR0aD0iMSIvPgo8L3N2Zz4=')] bg-repeat" />
+        <div className="absolute inset-0 shadow-[inset_0_0_100px_rgba(0,0,0,0.8)]" />
+      </div>
+
+      <div className="relative z-10 max-w-7xl mx-auto space-y-8 pt-4">
         
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-white/10 pb-6">
+        <div className="flex flex-col md:flex-row items-start md:items-end justify-between border-b border-cyan-500/20 pb-6 gap-6">
           <div>
-            <h1 className="text-3xl font-black tracking-tight text-white flex items-center gap-3">
-              <ShieldAlert className="w-8 h-8 text-cyan-400" />
-              UTOS <span className="text-slate-500 font-light">| Command Center</span>
+            <h1 className="text-4xl font-black tracking-widest text-white/90 drop-shadow-[0_0_15px_rgba(34,211,238,0.5)] flex items-center gap-4">
+              <Target className="w-10 h-10 text-cyan-400 animate-pulse" />
+              UTOS NEXUS
             </h1>
-            <p className="text-slate-400 mt-2">Unified Testing Operating System ({data?.utos_version || 'v61.0-ELITE'})</p>
+            <p className="text-cyan-500/70 font-mono text-sm tracking-widest mt-2 uppercase">Єдина Операційна Система Тестування [{data?.utos_version || 'v66.0-ELITE'}]</p>
           </div>
           
           <div className="flex items-center gap-4">
-            {loading && <div className="text-emerald-400 animate-pulse text-sm">Виконання аудиту...</div>}
+            {loading && <div className="text-cyan-400 animate-pulse text-sm font-mono tracking-widest">ВИКОНАННЯ_КВАНТОВОГО_АУДИТУ...</div>}
             <button 
               onClick={fetchStatus}
               disabled={loading}
-              className="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded border border-white/5 transition-colors text-sm font-medium disabled:opacity-50"
+              className="px-6 py-3 bg-cyan-500/10 hover:bg-cyan-400/20 rounded-none border border-cyan-400/50 transition-all text-sm font-mono tracking-widest disabled:opacity-50 text-cyan-300 shadow-[0_0_15px_rgba(34,211,238,0.15)]"
             >
-              Запустити UTOS Аудит
+              ІНІЦІЮВАТИ АУДИТ
             </button>
           </div>
         </div>
 
-        {/* Global Status Banner */}
-        <AnimatePresence>
+        <AnimatePresence mode="wait">
           {error && (
             <motion.div 
-              initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-              className="p-4 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center gap-3"
+              initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+              className="p-4 bg-red-950/50 border border-red-500/50 text-red-200 flex items-center gap-3 font-mono"
             >
-              <AlertTriangle className="w-5 h-5" />
-              Критична помилка зв'язку з UTOS: {error}
+              <AlertTriangle className="w-5 h-5 text-red-500" />
+              КРИТИЧНА ПОМИЛКА: {error}
             </motion.div>
           )}
 
           {data && (
             <motion.div 
+              key={data.timestamp}
               initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }}
-              className={`p-6 rounded-xl border flex flex-col md:flex-row items-start md:items-center justify-between gap-6 ${getStatusColor(data.status)}`}
+              className="space-y-8"
             >
-              <div>
-                <h2 className="text-xl font-bold mb-1">Загальний стан системи</h2>
-                <div className="text-sm opacity-80 flex items-center gap-2">
-                  <span>Останнє оновлення:</span>
-                  <span className="font-mono">{new Date(data.timestamp * 1000).toLocaleString('uk-UA')}</span>
-                  <span className="mx-2">|</span>
-                  <span>Час перевірки: {data.elapsed_seconds.toFixed(1)}с</span>
+              {/* Main Matrix Banner */}
+              <div className={`p-8 bg-[#0a0f1e]/80 backdrop-blur-md border flex flex-col lg:flex-row items-center justify-between gap-8 ${getStatusBorder(data.status)} shadow-lg`}>
+                <div className="flex flex-col">
+                  <h2 className="text-sm tracking-widest text-white/50 font-mono uppercase mb-2">Глобальний Стан Матриці</h2>
+                  <div className="text-xs font-mono text-cyan-400/80 flex items-center gap-3">
+                    <span className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-cyan-500 animate-ping" /> TELEMETRY_SYNC</span>
+                    <span className="text-white/20">|</span>
+                    <span>T: {data.elapsed_seconds.toFixed(2)}s</span>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-12">
+                  <div className="flex flex-col items-end">
+                    <div className="text-xs tracking-widest text-white/50 font-mono uppercase mb-1">UTOS SCORE</div>
+                    <div className={`text-6xl font-black font-mono tracking-tighter ${getStatusColor(data.status)}`}>
+                      {data.utos_score.toFixed(1)}
+                    </div>
+                  </div>
+                  
+                  <div className="h-16 w-px bg-white/10 hidden md:block" />
+                  
+                  <div className={`text-4xl font-black tracking-widest uppercase ${getStatusColor(data.status)} flex items-center gap-4`}>
+                    {data.status === 'HEALTHY' ? <CheckCircle className="w-12 h-12" /> : <AlertTriangle className="w-12 h-12" />}
+                    {data.status}
+                  </div>
                 </div>
               </div>
-              <div className="flex items-center gap-6">
-                <div className="text-right">
-                  <div className="text-sm opacity-80">UTOS Score</div>
-                  <div className="text-3xl font-black">{data.utos_score.toFixed(1)} / 100</div>
-                </div>
-                <div className="h-12 w-px bg-white/20 hidden md:block"></div>
-                <div className="text-4xl font-black uppercase tracking-wider text-center">
-                  {data.status}
-                </div>
+
+              {/* Matrix Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                {Object.values(data.layers).map((layer, idx) => (
+                  <motion.div 
+                    key={layer.name}
+                    initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.1 }}
+                    className={`bg-[#0a0f1e]/60 backdrop-blur-md border ${getStatusBorder(layer.status)} p-6 group flex flex-col relative overflow-hidden`}
+                  >
+                    {/* Hover scan effect */}
+                    <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-0 group-hover:opacity-100 group-hover:animate-scan-down pointer-events-none" />
+                    
+                    <div className="flex items-start justify-between mb-6">
+                      <div className="flex items-center gap-4">
+                        <div className={`p-3 bg-black/40 border border-white/5 shadow-inner ${getStatusColor(layer.status)}`}>
+                          {getServiceIcon(layer.name, "w-6 h-6")}
+                        </div>
+                        <div>
+                          <h3 className="font-bold tracking-widest uppercase text-white/90 font-mono">{layer.name}</h3>
+                          <div className="text-xs font-mono text-white/40 mt-1">SCORE: {(layer.layer_score * 100).toFixed(0)}%</div>
+                        </div>
+                      </div>
+                      <div className={`font-mono text-2xl font-black tracking-tighter ${getStatusColor(layer.status)}`}>
+                        {layer.failed === 0 ? 'OK' : `ERR:${layer.failed}`}
+                      </div>
+                    </div>
+                    
+                    <div className="flex-1 bg-black/50 border border-white/5 p-4 font-mono text-xs overflow-y-auto max-h-[160px] custom-scrollbar space-y-3">
+                      {layer.checks.map((c, i) => (
+                        <div key={i} className="flex gap-3 items-start border-b border-white/5 pb-2 last:border-0 last:pb-0">
+                          {c.passed ? (
+                            <span className="text-cyan-500 shrink-0 mt-0.5">●</span>
+                          ) : (
+                            <span className="text-rose-500 shrink-0 mt-0.5 animate-pulse">■</span>
+                          )}
+                          <div className="flex flex-col">
+                            <span className={c.passed ? "text-slate-300" : "text-rose-400 font-bold tracking-wide"}>{c.message}</span>
+                            {c.latency_ms !== undefined && (
+                              <span className="text-white/30 text-[10px] mt-0.5">LATENCY: {c.latency_ms.toFixed(1)}ms</span>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </motion.div>
+                ))}
               </div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Services Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-          {data && Object.values(data.layers).map((layer, idx) => (
-            <motion.div 
-              key={layer.name}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.1 }}
-              className="bg-slate-900 border border-white/5 rounded-xl p-5 hover:border-white/10 transition-colors flex flex-col"
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center gap-3 text-slate-300">
-                  <div className={`p-2 rounded-lg ${getStatusColor(layer.status)}`}>
-                    {getServiceIcon(layer.name)}
-                  </div>
-                  <div>
-                    <h3 className="font-semibold uppercase">{layer.name} LAYER</h3>
-                    <div className="text-xs text-slate-500">Score: {(layer.layer_score * 100).toFixed(0)}% | Checks: {layer.total_checks}</div>
-                  </div>
-                </div>
-                {getStatusIcon(layer.status)}
-              </div>
-              
-              <div className="bg-black/40 rounded p-3 text-sm font-mono text-slate-400 flex-1 overflow-y-auto max-h-[150px] custom-scrollbar space-y-2">
-                {layer.checks.map((c, i) => (
-                  <div key={i} className="flex gap-2">
-                    {c.passed ? <span className="text-emerald-500">✓</span> : <span className="text-rose-500">✗</span>}
-                    <span className={c.passed ? "text-slate-300" : "text-rose-400"}>{c.message}</span>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-          ))}
-        </div>
-
       </div>
+      
       <style dangerouslySetInnerHTML={{ __html: `
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(34,211,238,0.3); }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(34,211,238,0.5); }
+        
+        @keyframes scan-down {
+          0% { top: 0%; opacity: 0; }
+          10% { opacity: 1; }
+          90% { opacity: 1; }
+          100% { top: 100%; opacity: 0; }
+        }
+        .animate-scan-down {
+          animation: scan-down 2s linear infinite;
+        }
       `}} />
     </div>
   );

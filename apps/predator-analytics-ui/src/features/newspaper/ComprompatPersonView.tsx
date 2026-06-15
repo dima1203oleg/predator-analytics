@@ -134,7 +134,7 @@ export default function ComprompatPersonView() {
                        ДОСЬЄ <span className="text-orange-500 underline decoration-orange-600/20 decoration-8 italic uppercase">ОСОБИ</span>
                      </h1>
                      <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] italic opacity-80 leading-none">
-                        ПЕ СОНАЛЬНИЙ  ЕНТГЕН: СУДИ • БО ГИ • ЗВ'ЯЗКИ • СОЦМЕ ЕЖІ
+                        ПЕРСОНАЛЬНИЙ РЕНТГЕН: СУДИ • БОРГИ • ЗВ'ЯЗКИ • СОЦМЕРЕЖІ
                      </p>
                   </div>
                </div>

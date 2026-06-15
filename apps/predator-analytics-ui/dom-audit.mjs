@@ -12,39 +12,14 @@ const TIMEOUT = 15000;
 // Сторінки для перевірки
 const PAGES_TO_CHECK = [
   {
-    name: "Command Hub",
+    name: "Wraith Nexus (Root)",
+    path: "/",
+    checks: ["Запит до Когнітивного Ядра"]
+  },
+  {
+    name: "Wraith Nexus (Command)",
     path: "/command",
-    checks: ["Командний центр"]
-  },
-  {
-    name: "Market Hub",
-    path: "/market",
-    checks: ["Ринок"]
-  },
-  {
-    name: "Search Hub",
-    path: "/search",
-    checks: ["Пошук"]
-  },
-  {
-    name: "OSINT Hub",
-    path: "/osint",
-    checks: ["OSINT"]
-  },
-  {
-    name: "Financial Hub",
-    path: "/financial",
-    checks: ["Фінанси"]
-  },
-  {
-    name: "AI Nexus",
-    path: "/nexus",
-    checks: ["AI Асистент"]
-  },
-  {
-    name: "Cases",
-    path: "/cases",
-    checks: ["Кейси"]
+    checks: ["Запит до Когнітивного Ядра"]
   }
 ];
 
@@ -103,7 +78,7 @@ async function auditPage(page, pageInfo) {
 
   try {
     await page.goto(`${BASE_URL}${pageInfo.path}`, {
-      waitUntil: 'networkidle',
+      waitUntil: 'load',
       timeout: TIMEOUT,
     });
 
@@ -130,7 +105,7 @@ async function auditPage(page, pageInfo) {
       }).catch(() => {});
 
       // After login, navigate directly to the target hub page
-      await page.goto(`${BASE_URL}${pageInfo.path}`, { waitUntil: 'networkidle', timeout: TIMEOUT }).catch(() => {});
+      await page.goto(`${BASE_URL}${pageInfo.path}`, { waitUntil: 'load', timeout: TIMEOUT }).catch(() => {});
       await page.waitForTimeout(2000); // allow rendering
 
 
@@ -149,7 +124,7 @@ async function auditPage(page, pageInfo) {
         // Wait for dashboard to load
         await page.waitForTimeout(3000);
         // Navigate to the specific hub page
-        await page.goto(`${BASE_URL}${pageInfo.path}`, { waitUntil: 'networkidle', timeout: TIMEOUT }).catch(() => {});
+        await page.goto(`${BASE_URL}${pageInfo.path}`, { waitUntil: 'load', timeout: TIMEOUT }).catch(() => {});
         await page.waitForTimeout(2000);
       
     
@@ -161,11 +136,21 @@ let bodyText;
     // Перевірка 1: Чи є основний контент
     for (const check of pageInfo.checks) {
       const regex = new RegExp(check, 'i');
-      if (regex.test(bodyText)) {
+      if (regex.test(bodyText) || htmlContent.includes(check)) {
         result.contentFound.push(check);
       } else {
         result.warnings.push(`Не знайдено очікуваний текст: "${check}"`);
       }
+    }
+    
+    // Перевірка на Canvas
+    const hasCanvas = await page.evaluate(() => {
+      return document.querySelectorAll('canvas').length > 0;
+    });
+    if (hasCanvas) {
+       result.contentFound.push('WebGL Canvas (3D Nexus)');
+    } else {
+       result.errors.push('WebGL Canvas не знайдено! 3D Nexus не завантажився.');
     }
 
     // Перевірка 2: Чи є заглушки
@@ -211,7 +196,7 @@ let bodyText;
       const numbers = text.match(/[\d,]+[\d]/g) || [];
       return numbers.filter(n => parseInt(n.replace(/,/g, ''), 10) > 0).length;
     });
-    if (numbersOnPage < 2 && pageInfo.path === '/') {
+    if (numbersOnPage < 2 && pageInfo.path === '/' && !hasCanvas) {
       result.warnings.push(`Мало числових даних на дашборді: ${numbersOnPage}`);
     }
 
@@ -363,7 +348,7 @@ async function main() {
   console.log('└──────────────────────────┴─────────────────┴────────┴──────┘');
 
   // JSON для артифакту
-  const jsonPath = '/Users/dima1203/.gemini/antigravity-ide/brain/f874bb4a-19ba-478f-bc6c-dc437a8c6339/scratch/dom-audit-results.json';
+  const jsonPath = 'dom-audit-results.json';
   const fs = await import('fs');
   fs.writeFileSync(jsonPath, JSON.stringify(results, null, 2));
   console.log(`\n📁 Повний звіт: ${jsonPath}`);

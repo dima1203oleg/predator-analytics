@@ -6,8 +6,8 @@
 export const uk = {
   // Dimensions
   dimensions: {
-    nebula: 'П ОСТІ  NEBULA',
-    cortex: 'МЕ ЕЖА CORTEX',
+    nebula: 'ПРОСТІР NEBULA',
+    cortex: 'МЕРЕЖА CORTEX',
     nexus: 'КОМАНДНИЙ NEXUS',
   },
 
@@ -28,9 +28,9 @@ export const uk = {
   // Data Sensitivity
   sensitivity: {
     public: 'ПУБЛІЧНІ',
-    internal: 'ВНУТ ІШНІ',
+    internal: 'ВНУТРІШНІ',
     confidential: 'КОНФІДЕНЦІЙНІ',
-    classified: 'СЕК ЕТНІ',
+    classified: 'СЕКРЕТНІ',
   },
 
   // Security Messages
@@ -82,18 +82,18 @@ export const uk = {
 
   // Dashboard - Nexus (Commander)
   nexus: {
-    omniscienceMatrix: 'МАТрИЦЯ ВСЕЗНАННЯ СИСТЕМИ',
+    omniscienceMatrix: 'МАТРИЦЯ ВСЕЗНАННЯ СИСТЕМИ',
     neuralVisualization: '3D Нейронна Візуалізація',
     containers: 'Контейнери',
     infrastructure: 'Інфраструктура',
     aiCore: 'Ядро ШІ',
     dataLayer: 'Шар Даних',
-    shadowControls: 'ТІНЬОВІ КОНТ ОЛІ',
+    shadowControls: 'ТІНЬОВІ КОНТРОЛІ',
     lockdown: 'БЛОКУВАННЯ',
-    restart: 'ПЕ ЕЗАПУСК',
-    firewall: 'Б АНДМАУЕ ',
+    restart: 'ПЕРЕЗАПУСК',
+    firewall: 'БРАНДМАУЕР',
     terminal: 'ТЕРМІНАЛ',
-    forceSync: 'П ИМУСОВА СИН',
+    forceSync: 'ПРИМУСОВА СИНХРОНІЗАЦІЯ',
     audit: 'АУДИТ',
     cpuLoad: 'Навантаж. CPU',
     trainingStatus: 'Стан Навчання',
@@ -146,7 +146,7 @@ export const uk = {
     etlPipeline: 'ETL Конвеєр',
     mlTraining: 'ML Навчання',
     vectorIndexing: 'Векторна Індексація',
-    backupTask: 'Задача  езервування',
+    backupTask: 'Задача Резервування',
     dataSync: 'Синхронізація Даних',
   },
 
@@ -172,11 +172,11 @@ export const uk = {
 
   // Demo section titles
   demo: {
-    title: 'DIMENSIONAL UI - ДЕМО ЛАБО АТО ІЯ',
+    title: 'DIMENSIONAL UI - ДЕМО ЛАБОРАТОРІЯ',
     section1: 'Quantum Card - Адаптивний Багатостатусний Компонент',
     section2: 'Permission Layers - Візуальна Система Безпеки',
     section3: 'Progressive Reveal - Умовний Показ Контенту',
-    section4: 'Information Tiers - Пошарове  озкриття Даних',
+    section4: 'Information Tiers - Пошарове Розкриття Даних',
     section5: 'реальний Приклад - Повна Картка Компанії',
     simpleView: 'Простий Вигляд (Explorer)',
     detailedView: 'Детальний Вигляд (Operator)',

@@ -34,10 +34,12 @@ export const MissionQuestPlaque = ({ id, title, value, threatLevel, position, on
     }
   });
 
-  const { scale, neonColor, outlineColor } = useSpring({
+  const { scale, outlineColor, emissiveIntensity } = useSpring({
     scale: hovered ? 1.05 : 1,
-    neonColor: threatLevel === 'HIGH' ? '#FF0033' : '#00F5FF',
-    outlineColor: hovered ? (threatLevel === 'HIGH' ? '#FF0033' : '#00F5FF') : '#1e293b',
+    outlineColor: hovered 
+      ? (threatLevel === 'HIGH' ? '#FF0033' : '#00F5FF') 
+      : (threatLevel === 'HIGH' ? '#33000a' : '#002233'),
+    emissiveIntensity: hovered ? 0.6 : 0.1,
     config: { tension: 300, friction: 20 },
   });
 
@@ -50,15 +52,21 @@ export const MissionQuestPlaque = ({ id, title, value, threatLevel, position, on
       onPointerOut={(e) => { e.stopPropagation(); setHovered(false); document.body.style.cursor = 'auto'; }}
       onClick={(e) => { e.stopPropagation(); onClick(id); }}
     >
-      {/* Plaque Base */}
+      {/* Plaque Base (Glassmorphism) */}
       <mesh>
         <boxGeometry args={[4, 1.5, 0.2]} />
-        <meshPhysicalMaterial 
-          color="#0b1120"
-          metalness={0.8}
-          roughness={0.2}
+        <animated.meshPhysicalMaterial 
+          color="#020817"
+          metalness={0.5}
+          roughness={0.1}
+          transmission={0.9}
+          thickness={0.5}
+          ior={1.5}
+          clearcoat={1}
+          emissive={outlineColor as any}
+          emissiveIntensity={emissiveIntensity as any}
           transparent
-          opacity={0.9}
+          opacity={0.8}
         />
       </mesh>
 

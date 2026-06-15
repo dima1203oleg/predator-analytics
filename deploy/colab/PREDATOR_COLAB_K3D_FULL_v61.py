@@ -174,8 +174,8 @@ fi
 # Graph Service
 echo ''
 echo '🔗 [3/4] Збірка Graph Service...'
-if [ -f services/graph-service/Dockerfile ]; then
-    docker build -t predator/graph-service:v61.0-ELITE -f services/graph-service/Dockerfile services/graph-service/ 2>&1 | tail -5
+if [ -f services/graph_service/Dockerfile ]; then
+    docker build -t predator/graph-service:v61.0-ELITE -f services/graph_service/Dockerfile services/graph_service/ 2>&1 | tail -5
     echo '   ✅ Graph Service зібрано'
 else
     echo '   ⚠️ Dockerfile не знайдено, пропускаю'

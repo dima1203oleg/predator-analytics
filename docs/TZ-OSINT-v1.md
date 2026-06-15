@@ -721,7 +721,7 @@ async def scan_domain(
 ### 7.4 Інтеграція з Graph Service
 
 ```python
-# services/graph-service/app/osint_integration.py
+# services/graph_service/app/osint_integration.py
 
 async def ingest_osint_finding(finding: OSINTFinding):
     """Інтеграція OSINT знахідки в граф."""

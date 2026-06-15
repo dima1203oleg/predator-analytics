@@ -1,10 +1,11 @@
 import React, { useRef, useEffect, useCallback, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Play } from 'lucide-react';
 
 /**
  * 🦅 PREDATOR Analytics // VIDEO INTRO SCREEN
  * ============================================
- * Відтворює оригінальний вступний ролик на весь екран.
- * Плавне засвічення з темряви при старті.
+ * Відтворює вступний ролик на весь екран у стилі Sovereign Matrix.
  */
 
 interface VideoIntroScreenProps {
@@ -64,89 +65,72 @@ const VideoIntroScreen: React.FC<VideoIntroScreenProps> = ({
   };
 
   return (
-    <div
-      style={{ position: 'fixed', inset: 0, zIndex: 99999, backgroundColor: '#000', cursor: 'none' }}
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 1 }}
+      className="fixed inset-0 z-[99999] bg-[#020817] cursor-none overflow-hidden font-sans"
       onClick={handleContainerClick}
     >
-      <style>{`
-        /* Засвічення з темряви — 2.5с */
-        @keyframes introFadeIn {
-          0%   { opacity: 0; }
-          100% { opacity: 1; }
-        }
-
-        .intro-video-wrapper {
-          animation: introFadeIn 2.5s ease-out forwards;
-        }
-      `}</style>
-
-      {/* Обгортка — засвічується з темряви */}
-      <div className="intro-video-wrapper" style={{ position: 'absolute', inset: 0 }}>
+      {/* Container for Video */}
+      <motion.div 
+        initial={{ opacity: 0, scale: 1.05 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 2.5, ease: "easeOut" }}
+        className="absolute inset-0"
+      >
         <video
           ref={videoRef}
           src={src}
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            display: 'block',
-            cursor: isBlocked ? 'pointer' : 'default',
-          }}
+          className={`w-full h-full object-cover block ${isBlocked ? 'cursor-pointer' : 'cursor-none'}`}
           playsInline
           preload="auto"
         />
 
-        {/* CRT Scanlines */}
-        <div
-          style={{
-            position: 'absolute', inset: 0, pointerEvents: 'none',
-            backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px)',
-            zIndex: 2,
-          }}
-        />
+        {/* Global CRT Scanlines Overlay */}
+        <div className="pointer-events-none absolute inset-0 z-10 opacity-30 mix-blend-overlay bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSJ0cmFuc3BhcmVudCIvPgo8cGF0aCBkPSJNMCAwTDAgNE0yIDBMMiA0IiBzdHJva2U9IiNmZmYiIHN0cm9rZS1vcGFjaXR5PSIwLjUiIHN0cm9rZS13aWR0aD0iMSIvPgo8L3N2Zz4=')] bg-repeat" />
 
-        {/* Vignette */}
-        <div
-          style={{
-            position: 'absolute', inset: 0, pointerEvents: 'none',
-            background: 'radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,0.7) 100%)',
-            zIndex: 3,
-          }}
-        />
-      </div>
+        {/* Vignette & Corner Shadowing */}
+        <div className="absolute inset-0 pointer-events-none z-20 shadow-[inset_0_0_150px_rgba(0,0,0,0.9)] bg-[radial-gradient(ellipse_at_center,transparent_45%,rgba(0,0,0,0.7)_100%)]" />
+      </motion.div>
 
-      {isBlocked && (
-        <div
-          style={{
-            position: 'absolute', inset: 0, display: 'flex',
-            alignItems: 'center', justifyContent: 'center',
-            backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 20,
-          }}
-        >
-          <div style={{
-            color: '#e8888f', fontFamily: 'monospace', fontSize: '18px',
-            letterSpacing: '0.2em', border: '1px solid rgba(232,136,143,0.4)',
-            padding: '16px 32px', borderRadius: '8px',
-            backgroundColor: 'rgba(232,136,143,0.1)', cursor: 'pointer',
-          }}>
-            НАТИСНІТЬ ДЛЯ ЗАПУСКУ
-          </div>
-        </div>
-      )}
+      {/* Autoplay Blocked State */}
+      <AnimatePresence>
+        {isBlocked && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-30"
+          >
+            <motion.div 
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="flex items-center gap-3 px-8 py-4 border border-cyan-500/50 bg-cyan-500/10 rounded text-cyan-400 font-mono text-lg tracking-[0.2em] shadow-[0_0_20px_rgba(34,211,238,0.3)] cursor-pointer hover:bg-cyan-500/20 hover:border-cyan-400 transition-all"
+            >
+              <Play className="w-6 h-6" />
+              НАТИСНІТЬ ДЛЯ ЗАПУСКУ МАТРИЦІ
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
+      {/* Skip Button (Glassmorphism) */}
       {!isBlocked && (
-        <div
-          style={{
-            position: 'absolute', bottom: '2rem', right: '2.5rem',
-            color: 'rgba(255,255,255,0.15)', fontFamily: 'monospace',
-            fontSize: '10px', letterSpacing: '0.4em', textTransform: 'uppercase',
-            userSelect: 'none', pointerEvents: 'none', zIndex: 5,
-          }}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 2, duration: 1 }}
+          className="absolute bottom-10 right-12 z-30 pointer-events-none"
         >
-          натисніть щоб пропустити
-        </div>
+          <div className="px-4 py-2 border border-white/10 bg-black/40 backdrop-blur-md text-white/40 font-mono text-[10px] tracking-[0.4em] uppercase rounded flex items-center gap-2">
+            <div className="w-1.5 h-1.5 rounded-full bg-cyan-500/50 animate-ping" />
+            натисніть щоб пропустити
+          </div>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 };
 

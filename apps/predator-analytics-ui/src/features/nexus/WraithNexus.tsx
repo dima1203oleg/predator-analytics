@@ -1,4 +1,4 @@
-import { useState, Suspense } from 'react';
+import { useState, Suspense, useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Environment, PerspectiveCamera, Stars } from '@react-three/drei';
 import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
@@ -18,6 +18,13 @@ const initialQuests = [
 export const WraithNexus = () => {
   const [activeQuestId, setActiveQuestId] = useState<string | null>(null);
   const [aiResponse, setAiResponse] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    // Delay post-processing to avoid React 18 strict mode EffectComposer crashes
+    const timer = setTimeout(() => setMounted(true), 500);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleCommand = (cmd: string) => {
     // Simulated AI response
@@ -46,24 +53,31 @@ export const WraithNexus = () => {
         aiResponse={aiResponse} 
       />
 
+      {/* Global HUD Overlay (CRT Scanlines & Vignette) */}
+      <div className="pointer-events-none absolute inset-0 z-50 overflow-hidden">
+        <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSJ0cmFuc3BhcmVudCIvPgo8cGF0aCBkPSJNMCAwTDAgNE0yIDBMMiA0IiBzdHJva2U9IiNmZmYiIHN0cm9rZS1vcGFjaXR5PSIwLjUiIHN0cm9rZS13aWR0aD0iMSIvPgo8L3N2Zz4=')] bg-repeat" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#020817]/80 via-transparent to-[#020817]/30" />
+        <div className="absolute inset-0 shadow-[inset_0_0_150px_rgba(0,0,0,0.9)]" />
+      </div>
+
       {/* Background UI elements */}
-      <div className="absolute top-6 left-6 z-10 pointer-events-none">
-        <h1 className="text-3xl font-black tracking-widest text-white/90">
+      <div className="absolute top-6 left-6 z-40 pointer-events-none">
+        <h1 className="text-3xl font-black tracking-widest text-white/90 drop-shadow-[0_0_15px_rgba(34,211,238,0.5)]">
           WRAITH<span className="text-cyan-400">3D</span> NEXUS
         </h1>
         <div className="text-cyan-500/70 font-mono text-sm tracking-widest mt-1">SOVEREIGN ANALYTICAL MATRIX</div>
       </div>
 
-      <div className="absolute top-6 right-6 z-10 pointer-events-none flex gap-6">
+      <div className="absolute top-6 right-6 z-40 pointer-events-none flex gap-6">
         <div className="flex flex-col items-end">
           <div className="text-xs text-white/50 font-mono">THREAT LEVEL</div>
-          <div className={`text-xl font-bold font-mono ${threatLevel === 'HIGH' ? 'text-red-500' : 'text-emerald-400'}`}>
+          <div className={`text-xl font-bold font-mono ${threatLevel === 'HIGH' ? 'text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.8)]' : 'text-emerald-400 drop-shadow-[0_0_10px_rgba(52,211,153,0.8)]'}`}>
             {threatLevel === 'HIGH' ? 'CRITICAL' : 'NOMINAL'}
           </div>
         </div>
         <div className="flex flex-col items-end">
           <div className="text-xs text-white/50 font-mono">AI KERNEL</div>
-          <div className="text-xl font-bold font-mono text-cyan-400">ONLINE</div>
+          <div className="text-xl font-bold font-mono text-cyan-400 drop-shadow-[0_0_10px_rgba(34,211,238,0.8)]">ONLINE</div>
         </div>
       </div>
 
@@ -111,11 +125,13 @@ export const WraithNexus = () => {
         {/* 3D Graph (Shown only when active) */}
         <ConnectionExplorer3D active={!!activeQuestId} />
 
-        {/* Cinematic Post Processing */}
-        <EffectComposer>
-          <Bloom luminanceThreshold={0.2} mipmapBlur intensity={1.5} />
-          <Vignette eskil={false} offset={0.1} darkness={1.1} />
-        </EffectComposer>
+        {/* Cinematic Post Processing safely mounted */}
+        {mounted && (
+          <EffectComposer disableNormalPass>
+            <Bloom luminanceThreshold={0.2} mipmapBlur intensity={1.5} />
+            <Vignette eskil={false} offset={0.1} darkness={1.1} />
+          </EffectComposer>
+        )}
       </Canvas>
     </div>
   );

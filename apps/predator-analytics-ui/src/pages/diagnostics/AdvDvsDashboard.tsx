@@ -23,7 +23,11 @@ export const AdvDvsDashboard: React.FC = () => {
       setLoading(true);
       try {
         const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-        const response = await fetch(`${baseUrl}/api/v1/adv-dvs/run`, {
+        // Уникаємо дублювання /api/v1
+        const endpoint = baseUrl.endsWith('/api/v1') 
+          ? `${baseUrl}/adv-dvs/run` 
+          : `${baseUrl}/api/v1/adv-dvs/run`;
+        const response = await fetch(endpoint, {
           headers: {
             'Content-Type': 'application/json'
           }
@@ -67,7 +71,7 @@ export const AdvDvsDashboard: React.FC = () => {
   return (
     <div className="p-8 bg-gray-950 text-white min-h-screen">
       <h1 className="text-3xl font-bold mb-6 text-red-500 tracking-wider border-b border-red-900 pb-4">
-        SOVEREIGN COMMAND CENTER: ADV DVS
+        СУВЕРЕННИЙ КОМАНДНИЙ ЦЕНТР: ADV DVS
       </h1>
       
       {report && (

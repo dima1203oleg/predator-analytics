@@ -1,6 +1,6 @@
 import os
 
-files = ['services/graph-service/Dockerfile', 'services/rtb-engine/Dockerfile']
+files = ['services/graph_service/Dockerfile', 'services/rtb-engine/Dockerfile']
 for file_path in files:
     with open(file_path, 'r') as f:
         content = f.read()

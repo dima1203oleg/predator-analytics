@@ -9,7 +9,7 @@ steps:
   
   # 3. Build graph-service
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'europe-west3-docker.pkg.dev/$PROJECT_ID/predator-repo/graph-service:latest', '-f', 'services/graph-service/Dockerfile', '.']
+    args: ['build', '-t', 'europe-west3-docker.pkg.dev/$PROJECT_ID/predator-repo/graph-service:latest', '-f', 'services/graph_service/Dockerfile', '.']
   
   # 4. Build cerebro
   - name: 'gcr.io/cloud-builders/docker'
@@ -25,7 +25,7 @@ steps:
   
   # 7. Build mcp-router
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'europe-west3-docker.pkg.dev/$PROJECT_ID/predator-repo/mcp-router:latest', '-f', 'services/mcp-router/Dockerfile', '.']
+    args: ['build', '-t', 'europe-west3-docker.pkg.dev/$PROJECT_ID/predator-repo/mcp-router:latest', '-f', 'services/mcp_router/Dockerfile', '.']
 
 images:
   - 'europe-west3-docker.pkg.dev/$PROJECT_ID/predator-repo/core-api:latest'

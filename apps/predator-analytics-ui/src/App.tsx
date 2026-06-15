@@ -257,18 +257,48 @@ function App() {
       </QueryClientProvider>
       {/* Global runtime error overlay (helps capture crashes during user actions) */}
       {globalError && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-6">
-          <div className="bg-rose-900/95 text-white p-6 rounded-lg max-w-3xl w-full">
-            <h3 className="text-xl font-bold mb-2">Глобальна помилка виконання</h3>
-            <div className="text-sm font-mono mb-4 whitespace-pre-wrap">{globalError.message}</div>
+        <div className="fixed inset-0 z-[99999] bg-black/80 backdrop-blur-md flex items-center justify-center p-6 font-mono text-slate-200">
+          {/* Scanline overlay for error screen */}
+          <div className="pointer-events-none absolute inset-0 opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSJ0cmFuc3BhcmVudCIvPgo8cGF0aCBkPSJNMCAwTDAgNE0yIDBMMiA0IiBzdHJva2U9IiNmZmYiIHN0cm9rZS1vcGFjaXR5PSIwLjUiIHN0cm9rZS13aWR0aD0iMSIvPgo8L3N2Zz4=')] bg-repeat" />
+          
+          <div className="bg-rose-950/40 border border-rose-500/50 p-8 max-w-4xl w-full relative overflow-hidden shadow-[0_0_50px_rgba(225,29,72,0.15)]">
+            {/* Blinking alert line */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-rose-500 animate-pulse" />
+            
+            <div className="flex items-center gap-4 mb-6 border-b border-rose-500/30 pb-4">
+              <div className="p-3 bg-rose-500/10 border border-rose-500/30 text-rose-500 animate-pulse">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="square" strokeLinejoin="miter">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                  <line x1="12" y1="9" x2="12" y2="13"/>
+                  <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-2xl font-black text-rose-500 tracking-[0.2em] uppercase">Критичний збій матриці</h3>
+                <div className="text-xs text-rose-400/60 tracking-widest mt-1">SYSTEM_PANIC // KERNEL_HALT</div>
+              </div>
+            </div>
+            
+            <div className="bg-black/60 p-4 border border-rose-900/50 mb-6 text-sm whitespace-pre-wrap text-rose-200">
+              {globalError.message}
+            </div>
+            
             {globalError.stack && (
-              <details className="text-xs font-mono max-h-64 overflow-auto mb-4">
-                <summary className="cursor-pointer">Показати стек викликів</summary>
-                <pre className="mt-2 text-[11px]">{globalError.stack}</pre>
+              <details className="text-xs max-h-64 overflow-auto mb-6 bg-black/40 border border-slate-800 p-4 custom-scrollbar">
+                <summary className="cursor-pointer text-slate-400 hover:text-rose-400 transition-colors uppercase tracking-wider font-bold select-none outline-none">
+                  [+] Розгорнути дамп пам'яті (Stack Trace)
+                </summary>
+                <pre className="mt-4 text-[11px] text-slate-500 leading-relaxed">{globalError.stack}</pre>
               </details>
             )}
-            <div className="flex justify-end">
-              <button onClick={() => setGlobalError(null)} className="px-4 py-2 bg-white text-rose-700 rounded-lg font-bold">Закрити</button>
+            
+            <div className="flex justify-end pt-4 border-t border-rose-500/20">
+              <button 
+                onClick={() => setGlobalError(null)} 
+                className="px-6 py-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/50 font-bold uppercase tracking-widest transition-colors hover:shadow-[0_0_15px_rgba(225,29,72,0.4)]"
+              >
+                ПРИМУСОВИЙ ПЕРЕЗАПУСК (IGNORE)
+              </button>
             </div>
           </div>
         </div>

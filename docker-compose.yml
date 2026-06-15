@@ -273,7 +273,7 @@ services:
   mcp-router:
     build:
       context: .
-      dockerfile: services/mcp-router/Dockerfile
+      dockerfile: services/mcp_router/Dockerfile
     ports:
     - 8088:8080
     environment:
@@ -295,7 +295,7 @@ services:
   graph-service:
     build:
       context: .
-      dockerfile: services/graph-service/Dockerfile
+      dockerfile: services/graph_service/Dockerfile
     ports:
     - 8001:8001
     environment:

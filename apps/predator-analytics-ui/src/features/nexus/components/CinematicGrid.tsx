@@ -10,11 +10,7 @@ interface CinematicGridProps {
 export const CinematicGrid = ({ threatLevel = 'NORMAL' }: CinematicGridProps) => {
   const gridRef = useRef<GridHelper>(null);
 
-  // Animated color transition between Emerald (#00FF9D) and Red (#FF0033)
-  const { color } = useSpring({
-    color: threatLevel === 'NORMAL' ? '#00FF9D' : '#FF0033',
-    config: { tension: 50, friction: 20 },
-  });
+  const colorStr = threatLevel === 'NORMAL' ? '#00FF9D' : '#FF0033';
 
   useFrame((state) => {
     if (gridRef.current) {
@@ -27,9 +23,9 @@ export const CinematicGrid = ({ threatLevel = 'NORMAL' }: CinematicGridProps) =>
   return (
     <group position={[0, -2, 0]}>
       {/* Primary Grid */}
-      <animated.gridHelper
-        ref={gridRef}
-        args={[100, 50, color as any, color as any]}
+      <gridHelper
+        ref={gridRef as any}
+        args={[100, 50, colorStr, colorStr]}
         position={[0, 0, 0]}
       />
       {/* Fading overlay to obscure grid far away */}

@@ -426,11 +426,11 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
             <div className="absolute right-0 top-20 bottom-20 w-52 z-10 pointer-events-none flex flex-col justify-between py-4 pr-5 items-end text-right">
                 <div className="space-y-3">
                     {[
-                        { label: 'КрИСТАЛИ-КІБЕ -1024', status: 'АКТИВНО', color: 'text-rose-500', icon: Shield },
-                        { label: 'ДА КНЕТ / ONION СКАН', status: 'АКТИВНО', color: 'text-rose-500', icon: Radar },
+                        { label: 'КРИСТАЛИ-КІБЕР-1024', status: 'АКТИВНО', color: 'text-rose-500', icon: Shield },
+                        { label: 'ДАРКНЕТ / ONION СКАН', status: 'АКТИВНО', color: 'text-rose-500', icon: Radar },
                         { label: 'СУПУТН. ЗВ\'ЯЗОК [47]', status: 'ОНЛАЙН', color: 'text-rose-500', icon: Satellite },
                         { label: 'SWIFT/SEPA ПЕРЕХВАТ', status: 'АКТИВНО', color: 'text-rose-500', icon: Radio },
-                        { label: 'ЧЕРВОНА_КА ТКА_ІНТЕРПОЛУ', status: 'АКТИВНО', color: 'text-rose-500', icon: Crosshair },
+                        { label: 'ЧЕРВОНА_КАРТКА_ІНТЕРПОЛУ', status: 'АКТИВНО', color: 'text-rose-500', icon: Crosshair },
                         { label: 'БІОМЕТРІЯ / СІТКІВКА', status: 'ОЧІКУЄ', color: 'text-rose-600', icon: Fingerprint },
                     ].map((sys, i) => (
                         <motion.div
@@ -671,7 +671,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                         </motion.div>
                     )}
 
-                    {/* ═══ ВИБІ   ОЛІ ═══ */}
+                    {/* ═══ ВИБІР РОЛІ ═══ */}
                     {step === 'roles' && (
                         <motion.div
                             key="roles"
@@ -829,28 +829,28 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                             className="flex gap-12 whitespace-nowrap"
                         >
                             <span className="text-[9px] text-rose-500 font-bold tracking-widest">
-                                [ТРИВОГА] ПЕРЕХОПЛЕННЯ ШИФ ОВАНИХ ТРАНЗАКЦІЙ У СЕКТО І GAMMA-4 — АНАЛІЗ АКТИВНИЙ
+                                [ТРИВОГА] ПЕРЕХОПЛЕННЯ ШИФРОВАНИХ ТРАНЗАКЦІЙ У СЕКТОРІ GAMMA-4 — АНАЛІЗ АКТИВНИЙ
                             </span>
                             <span className="text-[9px] text-rose-600 font-bold tracking-widest">
-                                [КРИТИЧНО] ВИЯВЛЕНО ОФШОРНУ МЕ ЕЖУ $47M ЧЕ ЕЗ SHELL-КОМПАНІЇ У BVI — ДЕАННІМІЗАЦІЯ...
+                                [КРИТИЧНО] ВИЯВЛЕНО ОФШОРНУ МЕРЕЖУ $47M ЧЕРЕЗ SHELL-КОМПАНІЇ У BVI — ДЕАННІМІЗАЦІЯ...
                             </span>
                             <span className="text-[9px] text-rose-400 font-bold tracking-widest">
                                 [OK] СИНХРОНІЗАЦІЯ З СЕРВЕРАМИ МИТНИЦІ ПІДТВЕРДЖЕНА (NODE: КИЇВ-ЯДРО-03 · ПОЛІГОН-7)
                             </span>
                             <span className="text-[9px] text-rose-500 font-bold tracking-widest">
-                                [КОНТРОЛЬ] UEID-9472-BX: БЕНЕФІЦІАРА ВИЯВЛЕНО — $12.4M НЕОДЕКЛА РОВАНИХ АКТИВІВ — ЗАМОРОЖЕННЯ ІНІЦІЙОВАНО
+                                [КОНТРОЛЬ] UEID-9472-BX: БЕНЕФІЦІАРА ВИЯВЛЕНО — $12.4M НЕОДЕКЛАРОВАНИХ АКТИВІВ — ЗАМОРОЖЕННЯ ІНІЦІЙОВАНО
                             </span>
                             <span className="text-[9px] text-rose-600 font-bold tracking-widest">
-                                [УВАГА] ЧЕРВОНА_КА ТКА_ІНТЕРПОЛУ: 3 ОБ'ЄКТІВ У СИСТЕМІ — МІСЦЕЗНАХОДЖЕННЯ НЕВІДОМО — МОНІТОРИНГ
+                                [УВАГА] ЧЕРВОНА_КАРТКА_ІНТЕРПОЛУ: 3 ОБ'ЄКТІВ У СИСТЕМІ — МІСЦЕЗНАХОДЖЕННЯ НЕВІДОМО — МОНІТОРИНГ
                             </span>
                             <span className="text-[9px] text-slate-400 font-bold tracking-widest">
-                                [СУПУТНИК] СЕНТИНЕЛЬ-47 ОНЛАЙН · {(dataProcessedPb / 100).toFixed(1)} ГБ/с · ІНТЕ ЦЕПЦІЯ АКТИВНА
+                                [СУПУТНИК] СЕНТИНЕЛЬ-47 ОНЛАЙН · {(dataProcessedPb / 100).toFixed(1)} ГБ/с · ІНТЕРЦЕПЦІЯ АКТИВНА
                             </span>
                             <span className="text-[9px] text-yellow-700 font-bold tracking-widest">
                                 [ШІ ХАНТЕР] ЦІЛЬ ПІДТВЕРДЖЕНА: СПІВПАДІННЯ 99.97% — ПАКЕТ ПЕРЕДАНО ДО SBU/NABU — СПРАВА #PRD-28847
                             </span>
                             <span className="text-[9px] text-amber-600 font-bold tracking-widest">
-                                [СП БА ДОСТУПУ] НЕСАНКЦІОНОВАНА АВТОРИЗАЦІЯ З IP 185.12.92.X — ЗАБЛОКОВАНО — ORIGIN: TOR_EXIT
+                                [СПРОБА ДОСТУПУ] НЕСАНКЦІОНОВАНА АВТОРИЗАЦІЯ З IP 185.12.92.X — ЗАБЛОКОВАНО — ORIGIN: TOR_EXIT
                             </span>
                         </motion.div>
                     </div>

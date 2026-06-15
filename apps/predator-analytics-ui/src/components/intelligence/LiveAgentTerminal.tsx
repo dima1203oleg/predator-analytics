@@ -101,21 +101,21 @@ export const LiveAgentTerminal: React.FC = () => {
       const val = args[1];
       if (val === 'on') {
         setHighVisibility(true);
-        addLog('РЕЖИМ ВИСОКОЇ КОНТ АСТНОСТІ АКТИВОВАНО', 'success');
+        addLog('РЕЖИМ ВИСОКОЇ КОНТРАСТНОСТІ АКТИВОВАНО', 'success');
       } else if (val === 'off') {
         setHighVisibility(false);
-        addLog('РЕЖИМ ВИСОКОЇ КОНТ АСТНОСТІ ДЕАКТИВОВАНО', 'info');
+        addLog('РЕЖИМ ВИСОКОЇ КОНТРАСТНОСТІ ДЕАКТИВОВАНО', 'info');
       } else {
-        addLog('ПОМИЛКА: ВИКО ИСТОВУЙТЕ "highvis on" або "highvis off"', 'error');
+        addLog('ПОМИЛКА: ВИКОРИСТОВУЙТЕ "highvis on" або "highvis off"', 'error');
       }
     } else if (cmd.startsWith('persona')) {
       const p = args[1]?.toUpperCase();
       const validPersonas = ['TITAN', 'INQUISITOR', 'SOVEREIGN', 'BUSINESS', 'GOVERNMENT', 'INTELLIGENCE', 'BANKING', 'MEDIA'];
       if (validPersonas.includes(p)) {
         setPersona(p as any);
-        addLog(`СИСТЕМНУ ПЕ СОНУ ЗМІНЕНО НА: ${p}`, 'success');
+        addLog(`СИСТЕМНУ ПЕРСОНУ ЗМІНЕНО НА: ${p}`, 'success');
       } else {
-        addLog(`ПОМИЛКА: НЕВАЛІДНА ПЕ СОНА. ДОСТУПНІ: ${validPersonas.join(', ')}`, 'error');
+        addLog(`ПОМИЛКА: НЕВАЛІДНА ПЕРСОНА. ДОСТУПНІ: ${validPersonas.join(', ')}`, 'error');
       }
     } else if (cmd === 'scan') {
       addLog('ЗАПУСК ГЛИБИННОГО СКАНУВАННЯ ВУЗЛІВ ELITE...', 'process');

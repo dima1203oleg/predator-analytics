@@ -2,7 +2,10 @@
 import asyncio
 from predator_common.logging import get_logger
 from services.adv_dvs.checks.kafka_check import check_kafka_connection
-from services.adv_dvs.checks.db_check import check_postgres, check_neo4j, check_clickhouse, check_qdrant
+from services.adv_dvs.checks.postgres_check import check_postgres
+from services.adv_dvs.checks.neo4j_check import check_neo4j
+from services.adv_dvs.checks.clickhouse_check import check_clickhouse
+from services.adv_dvs.checks.qdrant_check import check_qdrant
 from services.adv_dvs.checks.opensearch_check import check_opensearch
 from services.adv_dvs.checks.minio_check import check_minio
 from services.adv_dvs.checks.redis_check import check_redis

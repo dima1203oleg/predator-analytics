@@ -51,7 +51,7 @@ services:
   graph-service:
     build:
       context: ../
-      dockerfile: services/graph-service/Dockerfile
+      dockerfile: services/graph_service/Dockerfile
     ports:
       - "8001:8001"
     env_file:

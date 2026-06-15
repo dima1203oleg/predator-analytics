@@ -223,7 +223,7 @@ export const GitOpsPipelineTab: React.FC = () => {
           />
           <Workflow className="absolute inset-0 m-auto w-8 h-8 text-rose-500 " />
         </div>
-        <div className="text-[14px] font-black font-mono uppercase tracking-[0.6em]  italic text-rose-500/60">АНАЛІЗ_МАГІСТРАЛЕЙ_GITOPS_V61...</div>
+        <div className="text-[14px] font-black font-mono uppercase tracking-[0.6em]  italic text-rose-500/60">АНАЛІЗ_МАГІСТРАЛЕЙ_GITOPS_V63...</div>
       </div>
     );
   }
@@ -235,7 +235,7 @@ export const GitOpsPipelineTab: React.FC = () => {
         <GitBranch size={64} className="text-rose-500/40 mb-10 " />
         <div className="text-3xl font-black uppercase tracking-tighter text-white mb-4 glint-elite">КРИТИЧНИЙ_ЗБІЙ_МАГІСТРАЛІ</div>
         <p className="text-[12px] font-black font-mono text-white/30 max-w-lg mb-12 leading-relaxed uppercase italic tracking-widest">
-          СИСТЕМА_НЕ_ЗМОГЛА_ОТРИМАТИ_СТАН_ARGOCD_ТА_ПЛАТФОРМ_CI_CD. ПЕРЕВІРТЕ_GITOPS_CONTROLLER_V61_ELITE.
+          СИСТЕМА_НЕ_ЗМОГЛА_ОТРИМАТИ_СТАН_ARGOCD_ТА_ПЛАТФОРМ_CI_CD. ПЕРЕВІРТЕ_GITOPS_CONTROLLER_V63_ELITE.
         </p>
         <button 
           onClick={() => window.location.reload()}

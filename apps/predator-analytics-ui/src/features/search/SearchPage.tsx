@@ -109,7 +109,7 @@ const SearchPage: React.FC = () => {
                                 </div>
                                 <input 
                                     type="text" 
-                                    placeholder="ВВЕДІТЬ НАЗВУ, UEID АБО ПЕ СОНУ..."
+                                    placeholder="ВВЕДІТЬ НАЗВУ, UEID АБО ПЕРСОНУ..."
                                     className="flex-1 bg-transparent border-none text-3xl font-black text-white italic tracking-tighter placeholder:text-red-950/40 focus:outline-none focus:ring-0 leading-none uppercase"
                                     value={query}
                                     onChange={(e) => setQuery(e.target.value)}

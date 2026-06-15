@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     
     && rm -rf /var/lib/apt/lists/*
 
-COPY services/mcp-router/requirements.txt .
+COPY services/mcp_router/requirements.txt .
 RUN pip install --timeout=1000 --retries=10 --user --no-cache-dir -r requirements.txt
 
 FROM python:3.12-slim-bookworm AS runtime
@@ -29,8 +29,8 @@ WORKDIR /app
 
 COPY --from=builder /root/.local /home/predator/.local
 # Копіюємо вміст app/ та інші конфіги
-COPY services/mcp-router/app/ ./app/
-COPY services/mcp-router/mcp_servers.json ./
+COPY services/mcp_router/app/ ./app/
+COPY services/mcp_router/mcp_servers.json ./
 COPY services/shared/ ./services/shared/
 COPY libs/ /libs/
 

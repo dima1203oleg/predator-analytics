@@ -186,7 +186,7 @@ export const GlobalSearchTab: React.FC = () => {
                                 </div>
                                 <input 
                                     type="text" 
-                                    placeholder="ВВЕДІТЬ НАЗВУ, UEID АБО ПЕ СОНУ ДЛЯ ГЛИБИННОГО АНАЛІЗУ..."
+                                    placeholder="ВВЕДІТЬ НАЗВУ, UEID АБО ПЕРСОНУ ДЛЯ ГЛИБИННОГО АНАЛІЗУ..."
                                     className="flex-1 bg-transparent border-none text-4xl font-black text-white italic tracking-tighter placeholder:text-red-950/20 focus:outline-none focus:ring-0 leading-none uppercase"
                                     value={query}
                                     onChange={(e) => setQuery(e.target.value)}

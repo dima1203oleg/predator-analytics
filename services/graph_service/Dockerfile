@@ -22,8 +22,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /app
 
 COPY libs/ /libs/
-COPY services/graph-service/pyproject.toml services/graph-service/poetry.lock* ./
-COPY services/graph-service/app/ ./app/
+COPY services/graph_service/pyproject.toml services/graph_service/poetry.lock* ./
+COPY services/graph_service/app/ ./app/
 
 RUN ls -la /libs/predator-common && cat /libs/predator-common/pyproject.toml
 RUN poetry install --no-root
@@ -46,7 +46,7 @@ RUN groupadd -g 1000 predator && \
     chown -R predator:predator /app
 
 COPY --from=builder /app/.venv /app/.venv
-COPY --chown=predator:predator services/graph-service/app/ ./app/
+COPY --chown=predator:predator services/graph_service/app/ ./app/
 COPY --chown=predator:predator services/shared/ ./services/shared/
 COPY --chown=predator:predator libs/ /libs/
 

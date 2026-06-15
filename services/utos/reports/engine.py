@@ -8,6 +8,8 @@ from typing import Any
 try:
     from reportlab.lib.pagesizes import letter
     from reportlab.pdfgen import canvas
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.pdfbase.ttfonts import TTFont
 except ImportError:
     pass
 
@@ -57,24 +59,35 @@ class ReportEngine:
     def generate_pdf(self, report: dict[str, Any], filepath: str) -> str:
         """Генерує PDF версію звіту."""
         try:
+            # Реєстрація кириличних шрифтів
+            try:
+                pdfmetrics.registerFont(TTFont("DejaVuSans", "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"))
+                pdfmetrics.registerFont(TTFont("DejaVuSans-Bold", "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"))
+                font_regular = "DejaVuSans"
+                font_bold = "DejaVuSans-Bold"
+            except Exception as e:
+                # Fallback якщо шрифти не знайдено
+                font_regular = "Helvetica"
+                font_bold = "Helvetica-Bold"
+
             c = canvas.Canvas(filepath, pagesize=letter)
             width, height = letter
 
-            c.setFont("Helvetica-Bold", 16)
+            c.setFont(font_bold, 16)
             c.drawString(50, height - 50, "PREDATOR UTOS - Diagnostic Report")
 
-            c.setFont("Helvetica", 12)
+            c.setFont(font_regular, 12)
             c.drawString(50, height - 80, f"Timestamp: {report.get('timestamp')}")
             c.drawString(50, height - 100, f"Version: {report.get('utos_version')}")
             c.drawString(50, height - 120, f"Status: {report.get('status')}")
             c.drawString(50, height - 140, f"Readiness Score: {report.get('readiness_score')}%")
 
             y = height - 170
-            c.setFont("Helvetica-Bold", 14)
+            c.setFont(font_bold, 14)
             c.drawString(50, y, "Layers Validation Details:")
             y -= 20
 
-            c.setFont("Helvetica", 12)
+            c.setFont(font_regular, 12)
             for layer, passed in report.get("layers", {}).items():
                 status_text = "PASSED" if passed else "FAILED"
                 c.drawString(70, y, f"- {layer}: {status_text}")
@@ -84,18 +97,14 @@ class ReportEngine:
                     y = height - 50
 
             y -= 10
-            c.setFont("Helvetica-Bold", 14)
+            c.setFont(font_bold, 14)
             c.drawString(50, y, "Recommendations:")
             y -= 20
 
-            c.setFont("Helvetica", 10)
+            c.setFont(font_regular, 10)
             for rec in report.get("recommendations", []):
-                # ASCII encode/decode or wrap text if needed, here just basic writing
-                # Note: reportlab standard fonts don't support Cyrillic well without custom fonts.
-                # Since this is a basic stub, we replace non-ascii chars to avoid crashes
-                # or we could register a TrueType font. We'll simplify for now.
-                safe_rec = rec.encode('ascii', 'ignore').decode('ascii')
-                c.drawString(70, y, f"- {safe_rec}")
+                # Текст рекомендацій виводимо без конвертацій
+                c.drawString(70, y, f"- {rec}")
                 y -= 15
                 if y < 50:
                     c.showPage()
