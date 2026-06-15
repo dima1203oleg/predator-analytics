@@ -34,6 +34,7 @@ interface AppState {
   // AI Copilot State (for Client Portal)
   aiState: {
     isReasoning: boolean;
+    isSpeaking: boolean;
     activeTools: string[];
     response: string | null;
     threatLevel: 'NORMAL' | 'HIGH';
@@ -57,6 +58,8 @@ interface AppState {
   // AI Actions
   processAICommand: (command: string) => void;
   resetAIState: () => void;
+  setSpeakingState: (isSpeaking: boolean) => void;
+  speakText: (text: string) => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -80,6 +83,7 @@ export const useAppStore = create<AppState>()(
       isCopilotOpen: false,
       aiState: {
         isReasoning: false,
+        isSpeaking: false,
         activeTools: [],
         response: null,
         threatLevel: 'NORMAL',
@@ -123,15 +127,19 @@ export const useAppStore = create<AppState>()(
           
           const data = await res.json();
           
+          const replyText = data.reply || 'Аналіз завершено. (Fallback response)';
           set((state) => ({
             aiState: {
               ...state.aiState,
               isReasoning: false,
-              response: data.reply || 'Аналіз завершено. (Fallback response)',
+              response: replyText,
               threatLevel: data.sources && data.sources.length > 0 ? 'HIGH' : 'NORMAL',
               activeTargetId: data.sources && data.sources.length > 0 ? 'target-x' : null
             }
           }));
+          
+          // Trigger TTS
+          set().speakText(replyText);
         } catch (error) {
           console.error('AI Command Error:', error);
           set((state) => ({
@@ -144,15 +152,37 @@ export const useAppStore = create<AppState>()(
         }
       },
 
-      resetAIState: () => set((state) => ({
-         aiState: {
-           isReasoning: false,
-           activeTools: [],
-           response: null,
-           threatLevel: 'NORMAL',
-           activeTargetId: null,
-         }
+      resetAIState: () => {
+         window.speechSynthesis.cancel();
+         set((state) => ({
+           aiState: {
+             isReasoning: false,
+             isSpeaking: false,
+             activeTools: [],
+             response: null,
+             threatLevel: 'NORMAL',
+             activeTargetId: null,
+           }
+         }));
+      },
+
+      setSpeakingState: (isSpeaking) => set((state) => ({
+        aiState: { ...state.aiState, isSpeaking }
       })),
+
+      speakText: (text) => {
+        window.speechSynthesis.cancel(); // stop current
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'uk-UA';
+        utterance.rate = 1.1;
+        utterance.pitch = 0.9; // Slightly lower pitch for cyber feel
+        
+        utterance.onstart = () => set().setSpeakingState(true);
+        utterance.onend = () => set().setSpeakingState(false);
+        utterance.onerror = () => set().setSpeakingState(false);
+        
+        window.speechSynthesis.speak(utterance);
+      },
     }),
     {
       name: 'predator-app-storage',

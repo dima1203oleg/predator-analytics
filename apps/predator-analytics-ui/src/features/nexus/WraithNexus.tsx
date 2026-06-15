@@ -6,7 +6,8 @@ import { CinematicGrid } from './components/CinematicGrid';
 import { ConnectionExplorer3D } from './components/ConnectionExplorer3D';
 import { SciFiForceGraph } from './components/SciFiForceGraph';
 import { CentralCommandConsole } from './components/CentralCommandConsole';
-import { HolographicCore } from './components/HolographicCore';
+import { CyberAvatar } from './components/CyberAvatar';
+import { VoiceCommandCenter } from './components/VoiceCommandCenter';
 import { CyberHeader } from './components/CyberHeader';
 import { AnalyticalPanelsRight } from './components/AnalyticalPanelsRight';
 import { GraphMetricsPanel } from './components/GraphMetricsPanel';
@@ -113,7 +114,7 @@ export const WraithNexus = () => {
               
               {/* Core or R3F Graph depending on state */}
               <group position={[0, activeTargetId ? 4 : 0, 0]}>
-                <HolographicCore />
+                <CyberAvatar />
               </group>
               
               {/* Keep the original R3F particles connection if needed, but we will show the ForceGraph over it */}
@@ -128,7 +129,7 @@ export const WraithNexus = () => {
           </div>
 
           {/* Bottom Console input (moved from CentralCommandConsole if needed, or keeping it isolated) */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-3/4 bg-black/60 backdrop-blur-md border border-emerald-500/30 rounded-lg p-4 flex items-center gap-4 z-20">
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-3/4 bg-black/60 backdrop-blur-md border border-emerald-500/30 rounded-lg p-4 flex items-center justify-between gap-4 z-20">
              <div className="flex-1 h-8 bg-emerald-900/20 rounded border border-emerald-500/20 flex items-center px-4 overflow-hidden relative">
                 {/* Simulated Audio Waveform / Input */}
                 <div className="w-full h-[2px] bg-emerald-500/30 flex items-center justify-between">
@@ -137,8 +138,11 @@ export const WraithNexus = () => {
                   ))}
                 </div>
              </div>
-             <div className="text-xs tracking-widest text-emerald-500/60 font-mono">
-               [ГОЛОСОВИЙ ВВІД]
+             <div className="shrink-0 flex items-center gap-2">
+               <div className="text-xs tracking-widest text-emerald-500/60 font-mono hidden md:block mr-2">
+                 [ГОЛОСОВИЙ ВВІД]
+               </div>
+               <VoiceCommandCenter />
              </div>
           </div>
         </div>
