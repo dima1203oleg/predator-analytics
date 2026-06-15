@@ -262,7 +262,83 @@ export const ConsoleCommands = () => {
     </div>
   );
 };
+// --- ЛІВА ПАНЕЛЬ (MISSION CONTROL & DOM) ---
+export const MissionControlPanel = () => {
+  const [metrics, setMetrics] = useState({ cpu: 45, gpu: 78, ram: 60, ollama: 'Активний' });
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setMetrics({
+        cpu: Math.floor(Math.random() * 20) + 40,
+        gpu: Math.floor(Math.random() * 30) + 60,
+        ram: Math.floor(Math.random() * 10) + 55,
+        ollama: 'Активний'
+      });
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="cognitive-panel" style={{ display: 'flex', flexDirection: 'column' }}>
+      <div className="cognitive-panel-header">MISSION CONTROL (NODE 01)</div>
+      <div style={{ fontSize: '11px', marginBottom: '12px', display: 'flex', justifyContent: 'space-between' }}>
+        <span>Апаратне ядро | Моніторинг <span style={{ color: 'var(--neon-cyan)' }}>Real-Time</span></span>
+        <div style={{ display: 'flex', gap: '4px' }}>
+          <button style={{ background: 'var(--neon-cyan)', color: '#000', border: 'none', cursor: 'pointer', padding: '2px 6px', fontSize: '10px', fontWeight: 'bold' }}>RESTART</button>
+          <button style={{ background: 'var(--neon-orange)', color: '#000', border: 'none', cursor: 'pointer', padding: '2px 6px', fontSize: '10px', fontWeight: 'bold' }}>PAUSE</button>
+          <button style={{ background: 'var(--neon-pink)', color: '#000', border: 'none', cursor: 'pointer', padding: '2px 6px', fontSize: '10px', fontWeight: 'bold' }}>STOP</button>
+        </div>
+      </div>
+      
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', fontSize: '12px' }}>
+        <div style={{ background: 'rgba(0, 255, 204, 0.1)', padding: '8px', border: '1px solid var(--neon-cyan)' }}>
+          <div style={{ color: 'var(--text-dim)' }}>CPU LOAD</div>
+          <div style={{ color: 'var(--neon-cyan)', fontSize: '16px', fontWeight: 'bold' }}>{metrics.cpu}%</div>
+        </div>
+        <div style={{ background: 'rgba(255, 0, 64, 0.1)', padding: '8px', border: '1px solid var(--neon-pink)' }}>
+          <div style={{ color: 'var(--text-dim)' }}>GPU VRAM</div>
+          <div style={{ color: 'var(--neon-pink)', fontSize: '16px', fontWeight: 'bold' }}>{metrics.gpu}%</div>
+        </div>
+        <div style={{ background: 'rgba(255, 136, 0, 0.1)', padding: '8px', border: '1px solid var(--neon-orange)' }}>
+          <div style={{ color: 'var(--text-dim)' }}>RAM USAGE</div>
+          <div style={{ color: 'var(--neon-orange)', fontSize: '16px', fontWeight: 'bold' }}>{metrics.ram}%</div>
+        </div>
+        <div style={{ background: 'rgba(0, 255, 204, 0.1)', padding: '8px', border: '1px solid var(--neon-cyan)' }}>
+          <div style={{ color: 'var(--text-dim)' }}>OLLAMA (Llama 3)</div>
+          <div style={{ color: 'var(--neon-cyan)', fontSize: '16px', fontWeight: 'bold' }}>{metrics.ollama}</div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export const DOMIntelligencePanel = () => {
+  const [domNodes, setDomNodes] = useState(0);
+
+  useEffect(() => {
+    // Імітація DOM Intelligence
+    setDomNodes(document.querySelectorAll('*').length);
+    const observer = new MutationObserver(() => {
+      setDomNodes(document.querySelectorAll('*').length);
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div className="cognitive-panel" style={{ display: 'flex', flexDirection: 'column', marginTop: '12px' }}>
+      <div className="cognitive-panel-header">DOM INTELLIGENCE ENGINE</div>
+      <div style={{ fontSize: '11px', marginBottom: '8px' }}>
+        Агентський зір | <span style={{ color: 'var(--neon-cyan)' }}>{domNodes} Nodes</span>
+      </div>
+      <div style={{ fontSize: '12px', color: 'var(--text-dim)' }}>
+        <div style={{ color: 'var(--neon-cyan)' }}>▶ Візуальний парсинг: ОК</div>
+        <div>▶ Семантичний аналіз: В процесі</div>
+        <div>▶ Інтерактивні елементи: {Math.floor(domNodes * 0.1)}</div>
+      </div>
+    </div>
+  );
+};
 // --- ПРАВА ПАНЕЛЬ ---
 export const RiskMapPanel = () => {
   const containerRef = useRef<HTMLDivElement>(null);

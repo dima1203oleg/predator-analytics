@@ -6,7 +6,9 @@ import {
   ChatAssistant, 
   ConsoleCommands, 
   RiskMapPanel, 
-  PriceAnomalies 
+  PriceAnomalies,
+  MissionControlPanel,
+  DOMIntelligencePanel
 } from './Panels';
 import { Canvas } from '@react-three/fiber';
 import { CyberAvatar } from '../nexus/components/CyberAvatar';
@@ -27,6 +29,10 @@ const CognitiveInterface = () => {
 
       {/* Ліва колонка */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', height: '100%' }}>
+        <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', gap: '2px' }}>
+          <MissionControlPanel />
+          <DOMIntelligencePanel />
+        </div>
         <div style={{ flex: 1, minHeight: 0 }}>
           <VerificationPanel />
         </div>
