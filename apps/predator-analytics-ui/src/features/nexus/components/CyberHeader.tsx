@@ -1,44 +1,199 @@
-import React from 'react';
-import { ShieldAlert, Activity, Cpu } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ShieldAlert, Cpu, Database, Zap, Radio, Globe } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { useUser } from '../../../context/UserContext';
+
+// Лічильник з плавним оновленням
+const useTick = (base: number, delta: number, ms: number) => {
+  const [v, setV] = useState(base);
+  useEffect(() => {
+    const t = setInterval(() => setV(x => +(x + (Math.random() - 0.3) * delta).toFixed(1)), ms);
+    return () => clearInterval(t);
+  }, [delta, ms]);
+  return v;
+};
+
+// Поточний час UTC+3
+const useClock = () => {
+  const [t, setT] = useState(new Date());
+  useEffect(() => { const i = setInterval(() => setT(new Date()), 1000); return () => clearInterval(i); }, []);
+  return t;
+};
+
+// Статуси сервісів
+const SERVICES = [
+  { key: 'PG', label: 'PostgreSQL', color: 'text-emerald-400' },
+  { key: 'CH', label: 'ClickHouse', color: 'text-cyan-400' },
+  { key: 'KF', label: 'Kafka',      color: 'text-yellow-400' },
+  { key: 'QD', label: 'Qdrant',     color: 'text-purple-400' },
+  { key: 'N4', label: 'Neo4j',      color: 'text-orange-400' },
+  { key: 'RD', label: 'Redis',      color: 'text-red-400' },
+];
+
+// Спрощений тікер загрозових подій у header
+const TICKERS = [
+  'AML ENGINE: SIGMA_OIL → $12.4M заблоковано',
+  'RНБО: +3 нових суб\u2019єкти у реєстрі санкцій',
+  'GRAPH GNN: CEO_IVANOV → PANAMA_CORP → EUR 8.7M',
+  'OFAC SDN: PRIME_HOLDING → 99.7% збіг',
+  'SWIFT: CRYSTAL_OIL → розщеплення транзакцій виявлено',
+];
 
 export const CyberHeader = ({ threatLevel = 'NORMAL' }: { threatLevel?: 'NORMAL' | 'HIGH' }) => {
+  const { user } = useUser();
+  const clock = useClock();
+  const gpu = useTick(78, 4, 1200);
+  const kafka = useTick(504, 30, 700);
+  const latency = useTick(1.4, 0.4, 900);
+  const [tick, setTick] = useState(0);
+  const [pulse, setPulse] = useState(false);
+
+  useEffect(() => {
+    const t = setInterval(() => setTick(i => (i + 1) % TICKERS.length), 3000);
+    return () => clearInterval(t);
+  }, []);
+
+  useEffect(() => {
+    const t = setInterval(() => setPulse(v => !v), 1500);
+    return () => clearInterval(t);
+  }, []);
+
+  const isHigh = threatLevel === 'HIGH';
+  const accentColor = isHigh ? 'rgba(239,68,68,0.6)' : 'rgba(16,185,129,0.6)';
+
   return (
-    <div className="w-full h-16 border-b border-emerald-500/30 bg-black/80 backdrop-blur-md flex items-center justify-between px-6 z-20">
-      <div className="flex items-center gap-4">
-        <div className="relative flex items-center justify-center w-10 h-10">
-          <ShieldAlert className="text-emerald-400 w-6 h-6 z-10" />
-          <div className="absolute inset-0 border-t-2 border-emerald-400 rounded-full animate-spin" />
+    <motion.div
+      initial={{ y: -60, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.6, ease: 'easeOut' }}
+      className="w-full flex-shrink-0 border-b border-emerald-500/20 bg-[#030810]/90 backdrop-blur-2xl z-30 relative"
+    >
+      {/* ── Glow border ── */}
+      <div
+        className="absolute bottom-0 left-0 right-0 h-[1px] pointer-events-none"
+        style={{ background: `linear-gradient(90deg, transparent, ${accentColor}, transparent)`, boxShadow: `0 0 12px ${accentColor}` }}
+      />
+
+      {/* ── TOP ROW ── */}
+      <div className="flex items-center justify-between px-5 h-12">
+
+        {/* Логотип */}
+        <div className="flex items-center gap-3 shrink-0">
+          <div className="relative flex items-center justify-center w-8 h-8">
+            <ShieldAlert className={`w-5 h-5 z-10 ${isHigh ? 'text-red-400' : 'text-emerald-400'}`} />
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
+              className={`absolute inset-0 border-t-[1.5px] rounded-full ${isHigh ? 'border-red-400' : 'border-emerald-400'}`}
+            />
+          </div>
+          <div>
+            <h1 className="text-sm font-black tracking-[0.3em] text-white leading-none"
+              style={{ textShadow: `0 0 12px ${accentColor}` }}>
+              PREDATOR
+            </h1>
+            <span className="text-[8px] tracking-[0.2em] text-emerald-500/50 font-bold">v61.0-ELITE · SOVEREIGN</span>
+          </div>
         </div>
-        <div className="flex flex-col">
-          <h1 className="text-xl font-black tracking-widest text-white drop-shadow-[0_0_10px_rgba(16,185,129,0.8)] leading-none">
-            PREDATOR
-          </h1>
-          <span className="text-[10px] tracking-[0.2em] text-emerald-500/70">ЕЛІТНИЙ НЕЙРОМАНТ ДАНИХ</span>
+
+        {/* Центр — Metrics */}
+        <div className="flex items-center gap-5 text-[9px] font-mono">
+          {/* GPU */}
+          <div className="flex items-center gap-1.5">
+            <Cpu size={10} className="text-cyan-500/60" />
+            <span className="text-emerald-500/50">GPU</span>
+            <span className={`font-black ${gpu > 85 ? 'text-red-400' : gpu > 70 ? 'text-yellow-400' : 'text-emerald-400'}`}>{gpu.toFixed(0)}%</span>
+          </div>
+          <div className="w-px h-4 bg-emerald-500/10" />
+          {/* Kafka */}
+          <div className="flex items-center gap-1.5">
+            <Radio size={10} className="text-cyan-500/60" />
+            <span className="text-emerald-500/50">KAFKA</span>
+            <span className="text-cyan-400 font-black">{kafka.toFixed(0)} MB/s</span>
+          </div>
+          <div className="w-px h-4 bg-emerald-500/10" />
+          {/* Latency */}
+          <div className="flex items-center gap-1.5">
+            <Zap size={10} className="text-yellow-500/60" />
+            <span className="text-emerald-500/50">P99</span>
+            <span className={`font-black ${latency > 3 ? 'text-red-400' : 'text-yellow-400'}`}>{latency.toFixed(1)}ms</span>
+          </div>
+          <div className="w-px h-4 bg-emerald-500/10" />
+          {/* System */}
+          <div className="flex items-center gap-1.5">
+            <motion.span animate={{ opacity: [1, 0.2, 1] }} transition={{ duration: 1, repeat: Infinity }}
+              className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#10b981]" />
+            <span className="text-emerald-400 font-black tracking-widest">ОНЛАЙН</span>
+          </div>
+        </div>
+
+        {/* Права частина — Threat + User */}
+        <div className="flex items-center gap-4 shrink-0">
+          {/* Threat Level */}
+          <div className={`flex items-center gap-2 px-3 py-1 rounded border ${isHigh ? 'border-red-500/40 bg-red-950/20' : 'border-emerald-500/20 bg-emerald-950/10'}`}>
+            <motion.span
+              animate={{ opacity: [1, 0.2, 1] }}
+              transition={{ duration: isHigh ? 0.5 : 2, repeat: Infinity }}
+              className={`inline-block w-2 h-2 rounded-full ${isHigh ? 'bg-red-500 shadow-[0_0_8px_#ef4444]' : 'bg-emerald-500 shadow-[0_0_6px_#10b981]'}`}
+            />
+            <span className={`text-[8px] font-black tracking-[0.2em] ${isHigh ? 'text-red-400' : 'text-emerald-400'}`}>
+              {isHigh ? 'ЗАГРОЗА: КРИТИЧНА' : 'ЗАГРОЗА: ПОМІРНА'}
+            </span>
+          </div>
+          {/* Clock */}
+          <div className="text-right">
+            <div className="text-[10px] font-black text-emerald-400/80 font-mono tabular-nums">
+              {clock.toLocaleTimeString('uk-UA', { hour12: false })} UTC+3
+            </div>
+            <div className="text-[7px] text-slate-600 tracking-widest">
+              {clock.toLocaleDateString('uk-UA')}
+            </div>
+          </div>
+          {/* User */}
+          <div className="flex items-center gap-2 pl-3 border-l border-emerald-500/20">
+            <div className="w-6 h-6 rounded-full bg-emerald-900/40 border border-emerald-500/30 flex items-center justify-center text-[8px] font-black text-emerald-400">
+              {(user?.name ?? 'USR').slice(0, 2).toUpperCase()}
+            </div>
+            <div>
+              <div className="text-[8px] text-white font-bold">{user?.name ?? 'COMMANDER'}</div>
+              <div className="text-[7px] text-emerald-500/40 tracking-wider">{user?.role ?? 'SOVEREIGN'}</div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="flex items-center gap-8 text-[11px] font-mono tracking-widest">
-        <div className="flex items-center gap-2">
-          <span className="text-emerald-500/60">СИСТЕМА:</span>
-          <span className="text-emerald-400 animate-pulse">ОНЛАЙН</span>
+      {/* ── BOTTOM ROW: Services status bar + Ticker ── */}
+      <div className="flex items-center justify-between px-5 h-6 border-t border-emerald-500/10 bg-black/30">
+        {/* Services */}
+        <div className="flex items-center gap-4">
+          {SERVICES.map(s => (
+            <div key={s.key} className="flex items-center gap-1">
+              <motion.span
+                animate={{ opacity: [1, 0.4, 1] }}
+                transition={{ duration: 1.5 + Math.random(), repeat: Infinity }}
+                className={`inline-block w-1 h-1 rounded-full ${s.color.replace('text-', 'bg-')}`}
+              />
+              <span className={`text-[8px] font-black ${s.color}`}>{s.key}</span>
+              <span className="text-[7px] text-emerald-400/30 font-bold">ON</span>
+            </div>
+          ))}
         </div>
-        <div className="flex items-center gap-2">
-          <span className="text-emerald-500/60">GPU UTILIZATION:</span>
-          <span className="text-amber-400">78%</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-emerald-500/60">DATA INGEST:</span>
-          <span className="text-cyan-400">500 TB/s</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-emerald-500/60">РЕСУРСИ DeepSeek-R1 Elite:</span>
-          <span className="text-emerald-400">96% ОПТИМІЗОВАНО</span>
-        </div>
-        <div className="flex items-center gap-2 pl-4 border-l border-emerald-500/30">
-          <span className="text-emerald-500/60">КОМАНДИР:</span>
-          <span className="text-white">І. ІВАНОВ</span>
+
+        {/* Ops Ticker */}
+        <div className="flex items-center gap-2 overflow-hidden max-w-md">
+          <Globe size={8} className="text-emerald-500/40 shrink-0" />
+          <motion.div
+            key={tick}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.25 }}
+            className="text-[8px] text-emerald-500/60 font-mono whitespace-nowrap truncate"
+          >
+            &gt;_ {TICKERS[tick]}
+          </motion.div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };

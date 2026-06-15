@@ -105,6 +105,12 @@ export const QuickActionsBar: React.FC = () => {
     }
   };
 
+  // Приховати QuickActionsBar на сторінках з власним повноекранним layout
+  const location = window.location;
+  if (location.pathname === '/cognitive') {
+    return null;
+  }
+
   return (
     <motion.div
       initial={{ y: 100, opacity: 0 }}

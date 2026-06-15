@@ -64,7 +64,7 @@ interface AppState {
 
 export const useAppStore = create<AppState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       userRole: UserRole.CLIENT_BASIC,
       persona: 'SOVEREIGN',
 
@@ -139,7 +139,7 @@ export const useAppStore = create<AppState>()(
           }));
           
           // Trigger TTS
-          set().speakText(replyText);
+          get().speakText(replyText);
         } catch (error) {
           console.error('AI Command Error:', error);
           set((state) => ({
@@ -177,9 +177,9 @@ export const useAppStore = create<AppState>()(
         utterance.rate = 1.1;
         utterance.pitch = 0.9; // Slightly lower pitch for cyber feel
         
-        utterance.onstart = () => set().setSpeakingState(true);
-        utterance.onend = () => set().setSpeakingState(false);
-        utterance.onerror = () => set().setSpeakingState(false);
+        utterance.onstart = () => get().setSpeakingState(true);
+        utterance.onend = () => get().setSpeakingState(false);
+        utterance.onerror = () => get().setSpeakingState(false);
         
         window.speechSynthesis.speak(utterance);
       },

@@ -9,76 +9,75 @@ export const VoiceCommandCenter = () => {
   const [transcript, setTranscript] = useState('');
   const [recognition, setRecognition] = useState<any>(null);
 
-  const wsRef = useRef<WebSocket | null>(null);
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-
   useEffect(() => {
-    // Connect to WebSocket
-    const ws = new WebSocket('ws://localhost:9080');
-    
-    ws.onopen = () => console.log('Avatar WS connected');
-    ws.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
-        if (data.type === 'transcription') {
-          setTranscript(data.text);
-        } else if (data.type === 'status') {
-          if (data.message === 'processing_llm') {
-            useAppStore.setState(s => ({
-              aiState: { ...s.aiState, isReasoning: true }
-            }));
-          } else if (data.message === 'idle') {
-            useAppStore.setState(s => ({
-              aiState: { ...s.aiState, isReasoning: false, isSpeaking: false }
-            }));
-          }
-        } else if (data.type === 'token') {
-          // Streaming text - in a real app we'd accumulate it
-          // and trigger TTS or use the viseme for Avatar
-          useAppStore.setState(s => ({
-            aiState: { ...s.aiState, isSpeaking: true }
-          }));
-        }
-      } catch(e) {}
-    };
-    
-    wsRef.current = ws;
-
-    return () => ws.close();
+    // Встановлюємо початкове значення для SpeechRecognition (Native STT)
   }, []);
 
-  const handleToggleListen = async () => {
+  const handleToggleListen = () => {
     if (isListening) {
       setIsListening(false);
-      mediaRecorderRef.current?.stop();
-    } else {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        const mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
-        
-        mediaRecorder.ondataavailable = (e) => {
-          if (e.data.size > 0 && wsRef.current?.readyState === WebSocket.OPEN) {
-            wsRef.current.send(e.data);
-          }
-        };
-
-        mediaRecorder.start(1000); // Send chunk every second
-        mediaRecorderRef.current = mediaRecorder;
-        setIsListening(true);
-        setTranscript('Запис аудіо...');
-      } catch (err) {
-        console.error('Mic error:', err);
+      if (recognition) {
+        recognition.stop();
       }
+    } else {
+      // Ініціалізація Web Speech API
+      const SpeechRecognition = window.SpeechRecognition || (window as any).webkitSpeechRecognition;
+      
+      if (!SpeechRecognition) {
+        alert("Голосовий ввід (Web Speech API) не підтримується у цьому браузері. Спробуйте Google Chrome.");
+        return;
+      }
+
+      const recog = new SpeechRecognition();
+      recog.lang = 'uk-UA'; // Жорстка прив'язка до української мови
+      recog.interimResults = true;
+      recog.continuous = false;
+
+      recog.onstart = () => {
+        setIsListening(true);
+        setTranscript('Слухаю (uk-UA)...');
+      };
+
+      recog.onresult = (event: any) => {
+        let interimTranscript = '';
+        let finalTranscript = '';
+
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            finalTranscript += event.results[i][0].transcript;
+          } else {
+            interimTranscript += event.results[i][0].transcript;
+          }
+        }
+        
+        if (finalTranscript) {
+          setTranscript(finalTranscript);
+          // Автоматично відправляємо команду, як тільки розпізнано фінальний текст
+          processAICommand(finalTranscript);
+          setIsListening(false);
+        } else {
+          setTranscript(interimTranscript);
+        }
+      };
+
+      recog.onerror = (event: any) => {
+        console.error('STT Error:', event.error);
+        setIsListening(false);
+        if (event.error !== 'no-speech') {
+          setTranscript('Помилка мікрофона: ' + event.error);
+        }
+      };
+
+      recog.onend = () => {
+        setIsListening(false);
+        // Скидаємо текст, якщо нічого не розпізнано
+        setTranscript((prev) => prev.startsWith('Слухаю') ? '' : prev);
+      };
+
+      recog.start();
+      setRecognition(recog);
     }
   };
-
-  // When listening stops and we have a transcript, send it
-  useEffect(() => {
-    if (!isListening && transcript && transcript !== 'Запис аудіо...' && !aiState.isReasoning) {
-      processAICommand(transcript);
-      setTranscript('');
-    }
-  }, [isListening, transcript, aiState.isReasoning, processAICommand]);
 
   return (
     <div className="flex flex-col items-center justify-center p-4 bg-slate-900/50 border border-emerald-500/30 rounded-lg backdrop-blur-sm">

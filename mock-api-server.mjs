@@ -6776,9 +6776,9 @@ app.use('/api', (req, res) => {
 });
 
 // WebSocket Server for Avatar Stream Simulation
-const wss = new WebSocketServer({ server });
+const avatarWss = new WebSocketServer({ server });
 
-wss.on('connection', (ws) => {
+avatarWss.on('connection', (ws) => {
   console.log('[WSS] Avatar WebSocket connected');
   
   ws.on('message', async (message) => {

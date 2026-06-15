@@ -17,7 +17,7 @@ interface AIVoiceAssistantProps {
 export const AIVoiceAssistant: React.FC<AIVoiceAssistantProps> = ({
   className = '',
   onCommand,
-  language = 'uk-UA'
+  language = 'uk-UA',
 }) => {
   const [isListening, setIsListening] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -29,10 +29,18 @@ export const AIVoiceAssistant: React.FC<AIVoiceAssistantProps> = ({
   const recognitionRef = useRef<any>(null);
   const synthesisRef = useRef<SpeechSynthesis | null>(null);
 
+  // Feature detection – fallback UI when unavailable
+  const isSpeechSupported =
+    typeof window !== 'undefined' &&
+    ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) &&
+    'speechSynthesis' in window;
+
   useEffect(() => {
+    if (!isSpeechSupported) return;
+
     // Initialize Speech Recognition
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (SpeechRecognition) {
       recognitionRef.current = new SpeechRecognition();
       recognitionRef.current.continuous = false;
       recognitionRef.current.interimResults = true;

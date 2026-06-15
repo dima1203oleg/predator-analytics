@@ -1,23 +1,65 @@
-import React from 'react';
-import '../styles/neon-grid.css';
-import { 
-  VerificationPanel, 
-  ActiveProcesses, 
-  ChatAssistant, 
-  ConsoleCommands, 
-  RiskMapPanel, 
+import React, { Suspense, useRef, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import './styles/neon-grid.css';
+import {
+  VerificationPanel,
+  ActiveProcesses,
+  RiskMapPanel,
   PriceAnomalies,
   MissionControlPanel,
-  DOMIntelligencePanel
-} from './Panels';
-import { Canvas } from '@react-three/fiber';
+  DOMIntelligencePanel,
+} from './components/Panels';
 import { CyberAvatar } from '../nexus/components/CyberAvatar';
+import { HUD } from '../nexus/components/HUD';
+import { useAudioAnalyser } from '../../hooks/useAudioAnalyser';
+import { useLocalAI } from '../../hooks/useLocalAI';
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1, delayChildren: 0.2 }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 30, filter: 'blur(10px)' },
+  show: { 
+    opacity: 1, 
+    y: 0, 
+    filter: 'blur(0px)',
+    transition: { type: "spring", stiffness: 260, damping: 20 } 
+  }
+};
 
 const CognitiveInterface = () => {
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const { analyser, initAnalyser } = useAudioAnalyser();
+
+  // Створення прихованого аудіо-тегу в DOM для Web Audio API
+  useEffect(() => {
+    const el = document.createElement("audio");
+    el.crossOrigin = "anonymous";
+    audioRef.current = el;
+    return () => {
+      el.remove();
+    };
+  }, []);
+
+  const { chatHistory, isProcessing, systemStatus, submitCommand } = useLocalAI(
+    audioRef.current,
+    initAnalyser
+  );
+
   return (
-    <div className="cognitive-grid">
+    <motion.div 
+      className="cognitive-grid"
+      variants={containerVariants}
+      initial="hidden"
+      animate="show"
+    >
       {/* Header */}
-      <div className="cognitive-header">
+      <motion.div className="cognitive-header" variants={itemVariants}>
         <span>🦾 PREDATOR ANALYTICS</span>
         <span>
           СИСТЕМА: <span className="neon-text">ОНЛАЙН</span>
@@ -25,54 +67,51 @@ const CognitiveInterface = () => {
         <span style={{ fontSize: '12px' }}>
           Генерація | Тест | Супервізія <span className="neon-text">Real-Time</span>
         </span>
-      </div>
+      </motion.div>
 
       {/* Ліва колонка */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', height: '100%' }}>
-        <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', gap: '2px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', height: '100%' }}>
+        <motion.div variants={itemVariants} style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <MissionControlPanel />
           <DOMIntelligencePanel />
-        </div>
-        <div style={{ flex: 1, minHeight: 0 }}>
+        </motion.div>
+        <motion.div variants={itemVariants} style={{ flex: 1, minHeight: 0 }}>
           <VerificationPanel />
-        </div>
-        <div style={{ height: '280px', flexShrink: 0 }}>
+        </motion.div>
+        <motion.div variants={itemVariants} style={{ height: '280px', flexShrink: 0 }}>
           <ActiveProcesses />
-        </div>
+        </motion.div>
       </div>
 
-      {/* Центральна колонка */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', height: '100%' }}>
-        <div style={{ flex: 1, minHeight: 0, position: 'relative', border: '1px solid var(--neon-cyan)', background: '#000808' }}>
-          <div className="cognitive-panel-header" style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10 }}>AI COGNITIVE AVATAR</div>
-          <div style={{ position: 'absolute', inset: 0, top: '24px' }}>
-            <Canvas camera={{ position: [0, 0, 3], fov: 50 }}>
-              <ambientLight intensity={0.5} />
-              <directionalLight position={[0, 2, 5]} intensity={1} />
-              <React.Suspense fallback={null}>
-                <CyberAvatar />
-              </React.Suspense>
-            </Canvas>
+      {/* Центральна колонка — 3D Аватар + HUD */}
+      <motion.div variants={itemVariants} style={{ display: 'flex', flexDirection: 'column', gap: '8px', height: '100%' }}>
+        <div style={{ flex: 1, minHeight: 0, position: 'relative', border: 'var(--panel-border)', background: 'var(--bg-glass)', borderRadius: '6px', overflow: 'hidden' }}>
+          <div className="cognitive-panel-header" style={{ position: 'absolute', top: 16, left: 16, right: 16, zIndex: 20 }}>
+            AI COGNITIVE AVATAR
+          </div>
+
+          <div style={{ position: 'absolute', inset: 0, top: '40px' }}>
+            <CyberAvatar audioAnalyser={analyser} systemStatus={systemStatus} />
+            <HUD 
+              chatHistory={chatHistory} 
+              isProcessing={isProcessing} 
+              systemStatus={systemStatus} 
+              onSubmit={submitCommand} 
+            />
           </div>
         </div>
-        <div style={{ flex: 1, minHeight: 0 }}>
-          <ChatAssistant />
-        </div>
-        <div style={{ height: '280px', flexShrink: 0 }}>
-          <ConsoleCommands />
-        </div>
-      </div>
+      </motion.div>
 
       {/* Права колонка */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', height: '100%' }}>
-        <div style={{ flex: 1, minHeight: 0 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', height: '100%' }}>
+        <motion.div variants={itemVariants} style={{ flex: 1, minHeight: 0 }}>
           <RiskMapPanel />
-        </div>
-        <div style={{ height: '280px', flexShrink: 0 }}>
+        </motion.div>
+        <motion.div variants={itemVariants} style={{ height: '280px', flexShrink: 0 }}>
           <PriceAnomalies />
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

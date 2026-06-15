@@ -71,13 +71,13 @@ export const ActiveProcesses = () => {
       const bus = useEventBus.getState();
       
       const unsub1 = bus.subscribe('AI_THOUGHT_LOG', (e) => {
-        setThoughts(prev => [{ id: e.id, text: e.payload.text, type: 'thought' }, ...prev].slice(0, 10));
+        setThoughts(prev => [{ id: e.id, text: String(e.payload.text), type: 'thought' as const }, ...prev].slice(0, 10));
       });
       const unsub2 = bus.subscribe('AI_TOOL_CALL', (e) => {
-        setThoughts(prev => [{ id: e.id, text: `Виклик MCP: ${e.payload.tool}`, type: 'tool' }, ...prev].slice(0, 10));
+        setThoughts(prev => [{ id: e.id, text: `Виклик MCP: ${e.payload.tool}`, type: 'tool' as const }, ...prev].slice(0, 10));
       });
       const unsub3 = bus.subscribe('ETL_PROGRESS', (e) => {
-        setThoughts(prev => [{ id: e.id, text: `Прогрес: ${e.payload.stage}`, type: 'progress' }, ...prev].slice(0, 10));
+        setThoughts(prev => [{ id: e.id, text: `Прогрес: ${e.payload.stage}`, type: 'progress' as const }, ...prev].slice(0, 10));
       });
 
       return () => {
@@ -143,7 +143,7 @@ export const ChatAssistant = () => {
         
         // Публікуємо в шину
         import('../../../store/useEventBus').then(({ useEventBus }) => {
-          useEventBus.getState().emit('VOICE_COMMAND_RECEIVED', { text: transcript });
+          useEventBus.getState().emit('VOICE_COMMAND_RECEIVED' as any, { text: transcript });
         });
       };
       
@@ -404,17 +404,17 @@ export const RiskMapPanel = () => {
   }, []);
 
   return (
-    <div className="cognitive-panel" style={{ display: 'flex', flexDirection: 'column' }}>
+    <div className="cognitive-panel" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <div className="cognitive-panel-header">ІНТЕРАКТИВНИЙ ГРАФ ЗВ'ЯЗКІВ</div>
-      <div ref={containerRef} style={{ height: '150px', border: '1px solid var(--neon-cyan)', position: 'relative', overflow: 'hidden' }}>
+      <div ref={containerRef} style={{ flex: 1, border: '1px solid var(--neon-cyan-dim)', borderRadius: '4px', position: 'relative', overflow: 'hidden', background: 'radial-gradient(circle at 50% 50%, rgba(0, 255, 204, 0.05) 0%, transparent 80%)' }}>
         <ForceGraph2D
           width={dimensions.width}
           height={dimensions.height}
           graphData={graphData}
           nodeLabel="name"
           nodeColor={node => node.color}
-          linkColor={() => 'rgba(0, 255, 204, 0.4)'}
-          backgroundColor="#000808"
+          linkColor={() => 'rgba(0, 255, 204, 0.2)'}
+          backgroundColor="transparent"
         />
       </div>
       <div style={{ marginTop: '12px', fontSize: '12px' }}>
@@ -428,40 +428,50 @@ export const RiskMapPanel = () => {
 
 export const PriceAnomalies = () => {
   return (
-    <div className="cognitive-panel">
-      <div className="cognitive-panel-header">ПРОДУКТИВНИЙ АНАЛІЗ ЦІНОВИХ АНОМАЛІЙ</div>
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '12px', fontSize: '11px' }}>
-        <span className="cognitive-glow-button">Генерація</span>
-        <span className="cognitive-glow-button">[Сценарій]</span>
-        <span style={{ marginLeft: 'auto', color: 'var(--neon-cyan)', alignSelf: 'center' }}>Real-Time</span>
+    <div className="cognitive-panel" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      <div className="cognitive-panel-header" style={{ lineHeight: 1.4 }}>
+        ПРОДУКТИВНИЙ АНАЛІЗ ЦІНОВИХ АНОМАЛІЙ
+      </div>
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', fontSize: '10px' }}>
+        <span className="cognitive-glow-button">ГЕНЕРАЦІЯ</span>
+        <span className="cognitive-glow-button">[СЦЕНАРІЙ]</span>
+        <span style={{ marginLeft: 'auto', color: 'var(--neon-pink)', alignSelf: 'center', animation: 'blink 2s infinite' }}>● REC</span>
       </div>
       
-      <table style={{ width: '100%', fontSize: '12px', borderCollapse: 'collapse', textAlign: 'left' }}>
-        <thead>
-          <tr style={{ borderBottom: '1px solid var(--neon-cyan)' }}>
-            <th style={{ paddingBottom: '4px' }}>Контрагент</th>
-            <th style={{ paddingBottom: '4px' }}>Відхилення</th>
-            <th style={{ paddingBottom: '4px' }}>Ризик</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td style={{ paddingTop: '8px' }}>ТОВ "X"</td>
-            <td style={{ color: 'var(--neon-pink)', paddingTop: '8px' }}>+18%</td>
-            <td className="critical-pulse" style={{ paddingTop: '8px' }}>КРИТИЧНИЙ</td>
-          </tr>
-          <tr>
-            <td style={{ paddingTop: '4px' }}>ТОВ "Y"</td>
-            <td style={{ color: 'var(--neon-orange)', paddingTop: '4px' }}>+9%</td>
-            <td style={{ color: 'var(--neon-orange)', paddingTop: '4px' }}>ВИСОКИЙ</td>
-          </tr>
-        </tbody>
-      </table>
+      <div style={{ flex: 1, overflowY: 'auto' }}>
+        <table style={{ width: '100%', fontSize: '12px', borderCollapse: 'collapse', textAlign: 'left' }}>
+          <thead>
+            <tr style={{ borderBottom: '1px solid var(--neon-cyan-dim)' }}>
+              <th style={{ paddingBottom: '8px', color: 'var(--text-dim)', fontWeight: 'normal' }}>КОНТРАГЕНТ</th>
+              <th style={{ paddingBottom: '8px', color: 'var(--text-dim)', fontWeight: 'normal' }}>Δ(%)</th>
+              <th style={{ paddingBottom: '8px', color: 'var(--text-dim)', fontWeight: 'normal' }}>РИЗИК</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+              <td style={{ padding: '8px 0', color: 'var(--text-primary)' }}>ТОВ "X"</td>
+              <td style={{ padding: '8px 0', color: 'var(--neon-pink)' }}>+18%</td>
+              <td style={{ padding: '8px 0' }} className="critical-pulse">КРИТИЧНИЙ</td>
+            </tr>
+            <tr>
+              <td style={{ padding: '8px 0', color: 'var(--text-primary)' }}>ТОВ "Y"</td>
+              <td style={{ padding: '8px 0', color: 'var(--neon-orange)' }}>+9%</td>
+              <td style={{ padding: '8px 0', color: 'var(--neon-orange)' }}>ВИСОКИЙ</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
       
-      <div style={{ marginTop: '16px', borderTop: '1px solid var(--neon-pink)', paddingTop: '12px' }}>
-        <div className="cognitive-panel-header" style={{ marginBottom: '8px', border: 'none', padding: 0 }}>КОМПАНІЯ В</div>
-        <div style={{ fontSize: '12px', color: 'var(--text-primary)' }}>Зв'язки: 23 контрагенти</div>
-        <div style={{ fontSize: '12px', color: 'var(--neon-pink)' }}>Санкції: РНБО (2024-12-15)</div>
+      <div style={{ marginTop: 'auto', borderTop: '1px solid var(--neon-pink-dim)', background: 'rgba(255,0,64,0.05)', padding: '12px', borderRadius: '4px' }}>
+        <div style={{ color: 'var(--neon-pink)', fontSize: '12px', fontWeight: 'bold', marginBottom: '8px', display: 'flex', justifyContent: 'space-between' }}>
+          <span>КОМПАНІЯ В</span>
+          <span className="critical-pulse">САНКЦІЇ РНБО</span>
+        </div>
+        <div style={{ fontSize: '11px', color: 'var(--text-dim)', marginBottom: '4px' }}>Виявлено: 2024-12-15</div>
+        <div style={{ fontSize: '11px', color: 'var(--text-primary)' }}>Контрагентів у зоні ризику: 23</div>
+        <div className="cyber-progress-bg" style={{ marginTop: '8px' }}>
+           <div className="cyber-progress-bar pink" style={{ width: '85%' }}></div>
+        </div>
       </div>
     </div>
   );

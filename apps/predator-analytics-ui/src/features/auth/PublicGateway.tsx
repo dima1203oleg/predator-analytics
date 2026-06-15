@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShieldAlert, Fingerprint, Lock, Terminal, Activity, Key } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -12,6 +12,10 @@ export const PublicGateway = () => {
   const [mfaCode, setMfaCode] = useState('');
   const navigate = useNavigate();
   const { setUser } = useUser();
+
+  useEffect(() => {
+    // Вхід тепер виконується інтерактивно через UI (Admin -> Command Center, інше -> WraithNexus)
+  }, []);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,13 +32,17 @@ export const PublicGateway = () => {
       // Simulate verification and login
       setTimeout(() => {
         // Mocking user role based on username
-        const role = username.toLowerCase().includes('admin') ? UserRole.CORE : UserRole.CLIENT;
+        const role = username.toLowerCase().includes('admin') ? UserRole.CORE : UserRole.SOVEREIGN;
         setUser({
           id: 'user-' + Date.now(),
-          username,
           role,
           name: username.toUpperCase(),
-          email: `${username}@predator.system`
+          email: `${username}@predator.system`,
+          tier: role === UserRole.CORE ? 'enterprise' as any : 'pro' as any,
+          tenant_id: 'default',
+          tenant_name: 'PREDATOR',
+          last_login: new Date().toISOString(),
+          data_sectors: []
         });
         
         if (role === UserRole.CORE) {

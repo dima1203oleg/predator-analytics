@@ -2,6 +2,9 @@
 Core API роутер для нових мікросервісів."""
 
 from fastapi import APIRouter
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi import HTTPException
+from prometheus_fastapi_instrumentator import Instrumentator
 
 # Імпорти внутрішніх роутерів
 from app.routers import (

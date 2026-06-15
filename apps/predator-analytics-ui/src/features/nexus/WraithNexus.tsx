@@ -1,22 +1,35 @@
-import { Suspense, useEffect } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Environment, PerspectiveCamera, Stars } from '@react-three/drei';
+import { EffectComposer, Bloom, Scanline, ChromaticAberration, Glitch } from '@react-three/postprocessing';
+import { BlendFunction } from 'postprocessing';
+import * as THREE from 'three';
 
 import { CinematicGrid } from './components/CinematicGrid';
 import { ConnectionExplorer3D } from './components/ConnectionExplorer3D';
 import { SciFiForceGraph } from './components/SciFiForceGraph';
 import { CentralCommandConsole } from './components/CentralCommandConsole';
-import { CyberAvatar } from './components/CyberAvatar';
+import { HoloFaceModel } from './components/HoloFaceModel';
 import { VoiceCommandCenter } from './components/VoiceCommandCenter';
 import { CyberHeader } from './components/CyberHeader';
 import { AnalyticalPanelsRight } from './components/AnalyticalPanelsRight';
 import { GraphMetricsPanel } from './components/GraphMetricsPanel';
 import { SciFiPanel } from './components/SciFiPanel';
-import { useAppStore } from "../../store/useAppStore";
+import { useAppStore } from "../../store";
+import { useAudioAnalyser } from '../../hooks/useAudioAnalyser';
+import { useLocalAI } from '../../hooks/useLocalAI';
 
 export const WraithNexus = () => {
   const { aiState, processAICommand, resetAIState } = useAppStore();
   const { activeTargetId, threatLevel } = aiState;
+
+  // Web Audio and AI Logic
+  const [audioEl, setAudioEl] = useState<HTMLAudioElement | null>(null);
+  const { analyser, initAnalyser } = useAudioAnalyser();
+  const { chatHistory, isProcessing, systemStatus, submitCommand } = useLocalAI(audioEl, initAnalyser);
+
+  // Sync AI system status with UI threat level
+  const activeSystemStatus = threatLevel === 'HIGH' || systemStatus === 'RISK' ? 'RISK' : 'HEALTHY';
 
   // Cleanup AI state on unmount
   useEffect(() => {
@@ -25,6 +38,7 @@ export const WraithNexus = () => {
 
   const handleCommand = (cmd: string) => {
     processAICommand(cmd);
+    submitCommand(cmd);
   };
 
   // Mock data for ForceGraph
@@ -52,10 +66,11 @@ export const WraithNexus = () => {
 
   return (
     <div className="w-full h-screen bg-[#02050A] text-emerald-500 font-mono overflow-hidden flex flex-col relative selection:bg-emerald-500/30">
+      <audio ref={setAudioEl} style={{ display: 'none' }} crossOrigin="anonymous" />
       
       {/* Background CRT Effects */}
       <div className="pointer-events-none absolute inset-0 z-50 overflow-hidden mix-blend-overlay">
-        <div className="absolute inset-0 opacity-10 bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_4px,3px_100%]" />
+        <div className="absolute inset-0 opacity-[0.07] bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.04),rgba(0,255,0,0.02),rgba(0,0,255,0.04))] bg-[length:100%_4px,3px_100%]" />
       </div>
 
       {/* HEADER */}
@@ -114,10 +129,34 @@ export const WraithNexus = () => {
               
               {/* Core or R3F Graph depending on state */}
               <group position={[0, activeTargetId ? 4 : 0, 0]}>
-                <CyberAvatar />
+                <HoloFaceModel audioAnalyser={analyser} systemStatus={activeSystemStatus} />
               </group>
               
-              {/* Keep the original R3F particles connection if needed, but we will show the ForceGraph over it */}
+              {/* CYBERPUNK POST-PROCESSING EFFECTS */}
+              <EffectComposer enableNormalPass={false}>
+                <Bloom 
+                  luminanceThreshold={0.2} 
+                  luminanceSmoothing={0.9} 
+                  intensity={1.5} 
+                  mipmapBlur 
+                />
+                <ChromaticAberration 
+                  blendFunction={BlendFunction.NORMAL} 
+                  offset={new THREE.Vector2(0.002, 0.002)} 
+                  radialModulation={false}
+                  modulationOffset={0}
+                />
+                <Scanline 
+                  blendFunction={BlendFunction.OVERLAY} 
+                  density={1.5} 
+                />
+                <Glitch 
+                  delay={new THREE.Vector2(1.5, 3.5)} 
+                  duration={new THREE.Vector2(0.1, 0.3)} 
+                  strength={new THREE.Vector2(0.3, 1.0)} 
+                  active={threatLevel === 'HIGH'} 
+                />
+              </EffectComposer>
             </Canvas>
 
             {/* Sci-Fi Force Graph Overlay */}
@@ -158,6 +197,27 @@ export const WraithNexus = () => {
           </div>
         </SciFiPanel>
 
+      </div>
+
+      {/* ── НИЖНІЙ СТАТУС-БАР ── */}
+      <div className="relative z-20 flex-shrink-0 h-7 bg-[#030810]/90 backdrop-blur border-t border-emerald-500/20 flex items-center px-4 gap-4 overflow-hidden">
+        {/* Червона крапка-статус */}
+        <div className="flex items-center gap-1.5 shrink-0">
+          <span className="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_6px_#ef4444] animate-pulse" />
+          <span className="text-[8px] font-black text-red-400 tracking-widest">КРИТИЧНИЙ</span>
+        </div>
+        <div className="w-px h-4 bg-emerald-500/10 shrink-0" />
+        {/* Ticker */}
+        <div className="flex-1 overflow-hidden">
+          <div className="text-[8px] text-emerald-500/50 font-mono whitespace-nowrap animate-marquee">
+            [КОНТРОЛЬ] UEID-9472-0X: БЕНЕФІЦІАРА ВИЯВЛЕНО — $12.4M НЕДЕКЛАРОВАНИХ АКТИВІВ — ЗАМОРОЖУВАННЯ ІНІЦІЙОВАНО &nbsp;&nbsp;·&nbsp;&nbsp;
+            [УВАГА] ЧЕРВОНА_КАРТКА_ІНТЕРПОЛУ: 3 ОБ'ЄКТИ У СИСТЕМІ — МІСЦЕЗНАХОДЖЕННЯ НЕВІДОМО — МОНІТОРИНГ &nbsp;&nbsp;·&nbsp;&nbsp;
+            [СУПУТНИК] СЕНТИНЕЛЬ-47 ОНЛАЙН · 15.7 ГБ/С · ІНТЕРЦЕПЦІЯ АКТИВНА &nbsp;&nbsp;·&nbsp;&nbsp;
+            [ГРАФ] NEO4J: НОВА МЕРЕЖА ОФШОРІВ — 23 ВУЗЛА — ГЛИБИНА 5 ХОПІВ &nbsp;&nbsp;·&nbsp;&nbsp;
+            [AI] QWEN3-CODER: ПАТЕРН РОЗЩЕПЛЕННЯ ТРАНЗАКЦІЙ — ВПЕВНЕНІСТЬ 98.2% &nbsp;&nbsp;·&nbsp;&nbsp;
+          </div>
+        </div>
+        <div className="shrink-0 text-[8px] text-emerald-500/30 font-mono">PREDATOR v61.0-ELITE</div>
       </div>
     </div>
   );

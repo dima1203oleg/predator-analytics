@@ -70,8 +70,8 @@ export default function DeploymentCommandCenter() {
   };
 
   const isReady = data?.status === "HEALTHY" || data?.status === "WARNING";
-  const scoreColor = data?.utos_score! >= 95 ? "text-red-500 drop-shadow-[0_0_15px_rgba(239,68,68,0.6)]" : 
-                     (data?.utos_score! >= 70 ? "text-amber-400 drop-shadow-[0_0_15px_rgba(251,191,36,0.6)]" : 
+  const scoreColor = (data?.utos_score ?? 0) >= 95 ? "text-red-500 drop-shadow-[0_0_15px_rgba(239,68,68,0.6)]" : 
+                     ((data?.utos_score ?? 0) >= 70 ? "text-amber-400 drop-shadow-[0_0_15px_rgba(251,191,36,0.6)]" : 
                      "text-red-500 drop-shadow-[0_0_15px_rgba(239,68,68,0.6)]");
 
   return (
@@ -119,10 +119,10 @@ export default function DeploymentCommandCenter() {
 
         {error && (
           <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-            <Alert className="bg-red-950/50 border-red-500/50 text-red-200">
+            <div className="rounded-lg border p-4 bg-red-950/50 border-red-500/50 text-red-200 flex items-center">
               <AlertCircle className="w-4 h-4 text-red-500" />
               <div className="ml-2 font-mono">СИСТЕМНА ПОМИЛКА: {error}</div>
-            </Alert>
+            </div>
           </motion.div>
         )}
 
