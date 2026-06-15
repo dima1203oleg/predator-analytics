@@ -5,6 +5,7 @@
  */
 import React, { useRef, useEffect, useState, ReactNode } from 'react';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
+import { cn } from '@/utils/cn';
 
 interface KineticScrollProps {
   children: ReactNode;

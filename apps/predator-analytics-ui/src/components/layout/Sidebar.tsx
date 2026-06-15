@@ -717,44 +717,43 @@ export const Sidebar: React.FC = () => {
                   {isOpen ? (
                     <button
                       onClick={() => toggleSection(section.id)}
-                      title={`${section.description} ${section.outcome}`}
-                      className="w-full rounded-xl px-2.5 py-2 text-left transition-all"
+                      title={`${section.description} — ${section.outcome}`}
+                      className="w-full rounded-xl px-2.5 py-2 text-left transition-all duration-200"
                       style={{
                         background: isCollapsed ? 'transparent' : colors.headerBg,
-                        border: `1px solid ${isCollapsed ? 'transparent' : colors.border}`,
+                        border: `1px solid ${isCollapsed ? 'rgba(255,255,255,0.04)' : colors.border}`,
                       }}
                     >
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2.5">
                         {/* Кольоровий індикатор секції */}
                         <div
-                          className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md"
+                          className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg"
                           style={{
                             background: colors.headerBg,
                             border: `1px solid ${colors.border}`,
+                            boxShadow: isCollapsed ? 'none' : `0 0 10px ${colors.glowColor}20`,
                           }}
                         >
                           <span
-                            className="h-1.5 w-1.5 rounded-full"
-                            style={{
-                              background: colors.dotColor,
-                            }}
+                            className="h-2 w-2 rounded-full"
+                            style={{ background: colors.dotColor }}
                           />
                         </div>
                         <div className="min-w-0 flex-1">
                           <div
-                            className="truncate text-[9px] font-black uppercase tracking-[0.16em] leading-none"
-                            style={{ color: isCollapsed ? '#64748b' : colors.headerText }}
+                            className="truncate text-[11px] font-bold uppercase tracking-[0.12em] leading-none"
+                            style={{ color: isCollapsed ? '#475569' : colors.headerText }}
                           >
                             {section.label}
                           </div>
-                          {!isCollapsed && (workspaceMode !== 'all' || search) && (
-                            <div className="mt-0.5 truncate text-[8px] text-slate-500">{section.outcome}</div>
+                          {!isCollapsed && (
+                            <div className="mt-1 truncate text-[9px] text-slate-600">{section.outcome}</div>
                           )}
                         </div>
                         <ChevronDown
-                          size={10}
-                          className={cn('shrink-0 transition-transform', isCollapsed && '-rotate-90')}
-                          style={{ color: colors.headerText, opacity: 0.6 }}
+                          size={12}
+                          className={cn('shrink-0 transition-transform duration-200', isCollapsed && '-rotate-90')}
+                          style={{ color: colors.headerText, opacity: 0.5 }}
                         />
                       </div>
                     </button>
@@ -803,13 +802,25 @@ export const Sidebar: React.FC = () => {
                         >
                           {(section.groups ?? []).map((group) => (
                             <div key={`${section.id}-${group.title ?? 'group'}`} className="space-y-0.5">
-                              {/* Заголовок підгрупи */}
+                              {/* Заголовок підгрупи — покращена читабельність */}
                               {isOpen && group.title && (
                                 <div
-                                  className="px-2 pt-1.5 pb-0.5 text-[7px] font-black uppercase tracking-[0.18em]"
-                                  style={{ color: colors.headerText, opacity: 0.5 }}
+                                  className="flex items-center gap-2 px-2 pt-2 pb-1"
                                 >
-                                  {group.title}
+                                  <div
+                                    className="h-px flex-1"
+                                    style={{ background: `${colors.border}` }}
+                                  />
+                                  <span
+                                    className="text-[10px] font-bold uppercase tracking-[0.14em] shrink-0"
+                                    style={{ color: colors.headerText, opacity: 0.6 }}
+                                  >
+                                    {group.title}
+                                  </span>
+                                  <div
+                                    className="h-px flex-1"
+                                    style={{ background: `${colors.border}` }}
+                                  />
                                 </div>
                               )}
 
@@ -894,19 +905,39 @@ export const Sidebar: React.FC = () => {
                                                   <AccessOrb level={item.accessLevel} userRole={userRole} />
                                                 )}
                                                 <span
-                                                  className="truncate text-[11px] font-bold leading-none"
-                                                  style={{ color: isActive ? '#ffffff' : '#cbd5e1' }}
+                                                  className="truncate text-[13px] font-semibold leading-none"
+                                                  style={{
+                                                    color: isActive
+                                                      ? '#ffffff'
+                                                      : isNavItemLocked(item, userRole)
+                                                        ? '#475569'
+                                                        : '#cbd5e1',
+                                                  }}
                                                 >
                                                   {item.label}
                                                 </span>
+                                                {/* Бейдж рівня доступу (замість замка) */}
                                                 {isNavItemLocked(item, userRole) && (
-                                                  <span title="Заблоковано для вашого рівня доступу">
-                                                    <Lock className="h-3 w-3 shrink-0 text-rose-400" />
+                                                  <span
+                                                    className="shrink-0 rounded px-1.5 py-0.5 text-[9px] font-black uppercase tracking-[0.08em] leading-none"
+                                                    style={{
+                                                      background: item.accessLevel === 'sovereign'
+                                                        ? 'rgba(225,29,72,0.15)'
+                                                        : 'rgba(245,158,11,0.15)',
+                                                      color: item.accessLevel === 'sovereign'
+                                                        ? '#fb7185'
+                                                        : '#fbbf24',
+                                                      border: `1px solid ${item.accessLevel === 'sovereign' ? 'rgba(225,29,72,0.25)' : 'rgba(245,158,11,0.25)'}`,
+                                                    }}
+                                                    title={`Доступно у плані ${item.accessLevel === 'sovereign' ? 'SOVEREIGN' : 'PRO'}`}
+                                                  >
+                                                    {item.accessLevel === 'sovereign' ? 'SOVEREIGN' : 'PRO'}
                                                   </span>
                                                 )}
-                                                {item.badge && (
+                                                {/* Звичайний бейдж (тільки якщо не заблоковано) */}
+                                                {item.badge && !isNavItemLocked(item, userRole) && (
                                                   <span
-                                                    className="shrink-0 rounded-full border px-1 py-0.5 text-[7px] font-black uppercase tracking-[0.1em] leading-none"
+                                                    className="shrink-0 rounded-full border px-1 py-0.5 text-[8px] font-bold uppercase tracking-[0.08em] leading-none"
                                                     style={{
                                                       background: colors.activeIconBg,
                                                       borderColor: colors.activeItemBorder,
@@ -918,7 +949,7 @@ export const Sidebar: React.FC = () => {
                                                 )}
                                               </div>
                                               {(search || workspaceMode !== 'all') && (
-                                                <p className="mt-0.5 line-clamp-1 text-[8px] leading-3 text-slate-600">
+                                                <p className="mt-0.5 line-clamp-1 text-[10px] leading-3 text-slate-500">
                                                   {item.description}
                                                 </p>
                                               )}

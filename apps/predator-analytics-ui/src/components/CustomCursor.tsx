@@ -131,7 +131,7 @@ export const CustomCursor: React.FC = () => {
         }}
       />
 
-      <style jsx>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         @keyframes spin {
           from {
             transform: rotate(0deg);
@@ -140,7 +140,7 @@ export const CustomCursor: React.FC = () => {
             transform: rotate(360deg);
           }
         }
-      `}</style>
+      ` }} />
     </>
   );
 };

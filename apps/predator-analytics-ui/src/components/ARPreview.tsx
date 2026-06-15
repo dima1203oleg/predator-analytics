@@ -15,8 +15,9 @@ interface ARPreviewProps {
 
 export const ARPreview: React.FC<ARPreviewProps> = ({
   className = '',
-  mode = 'camera'
+  mode: initialMode = 'camera'
 }) => {
+  const [mode, setMode] = useState(initialMode);
   const [isARActive, setIsARActive] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);

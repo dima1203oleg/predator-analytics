@@ -150,9 +150,9 @@ const AdminSidebar: React.FC = () => {
             <div key={group} className="mb-6">
               {/* Заголовок групи */}
               <div className="px-3 py-2 flex items-center gap-2 overflow-hidden">
-                <div className="w-1 h-1 rounded-full bg-[#c9a227]/40 shrink-0" />
+                <div className="w-1.5 h-1.5 rounded-full bg-[#c9a227]/40 shrink-0" />
                 {isOpen && (
-                  <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.25em] italic whitespace-nowrap">
+                  <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-[0.15em] whitespace-nowrap">
                     {group}
                   </span>
                 )}
@@ -290,34 +290,39 @@ const AdminStatusBar: React.FC = () => {
           </button>
         )}
 
-        {/* режим системи */}
+        {/* Режим системи — читабельний підпис */}
         <div className="flex items-center gap-3">
-          <div className="flex gap-1">
+          <div className="flex gap-[3px] items-end">
              {[...Array(3)].map((_, i) => (
-               <div key={i} className="w-1 h-3 bg-[#c9a227] rounded-full" style={{ animationDelay: `${i * 0.2}s` }} />
+               <div key={i} className="w-1 bg-[#c9a227] rounded-full" style={{ height: `${8 + i * 4}px`, animationDelay: `${i * 0.2}s` }} />
              ))}
           </div>
-          <span className="text-[10px] font-black text-[#c9a227] italic tracking-[0.25em] uppercase">
-            SOVEREIGN_NODE // LOCAL_K3S
-          </span>
+          <div className="flex flex-col">
+            <span className="text-[11px] font-bold text-[#c9a227] tracking-[0.1em] uppercase">
+              Командний Центр
+            </span>
+            <span className="text-[9px] text-[#c9a227]/40 tracking-[0.12em] font-mono">
+              Вузол: Локальний • k3s
+            </span>
+          </div>
         </div>
         
         <div className="w-px h-4 bg-white/10" />
         
         {/* Статус сервісів */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           {[
-            { label: 'API', ok: true, color: 'rose' },
-            { label: 'KAFKA', ok: true, color: 'blue' },
-            { label: 'NEO4J', ok: true, color: 'purple' },
-            { label: 'REDIS', ok: true, color: 'cyan' },
+            { label: 'API', title: 'Core API', ok: true },
+            { label: 'Kafka', title: 'Message Broker', ok: true },
+            { label: 'Neo4j', title: 'Graph DB', ok: true },
+            { label: 'Redis', title: 'Cache', ok: true },
           ].map((svc) => (
-            <div key={svc.label} className="flex items-center gap-2 group/svc cursor-help">
+            <div key={svc.label} className="flex items-center gap-1.5 group/svc cursor-help" title={svc.title}>
               <span className={cn(
-                'w-1.5 h-1.5 rounded-full', 
-                svc.ok ? `bg-${svc.color}-500` : 'bg-red-500 animate-ping'
+                'w-1.5 h-1.5 rounded-full shrink-0',
+                svc.ok ? 'bg-emerald-500' : 'bg-red-500 animate-ping'
               )} />
-              <span className="text-[8px] font-black text-slate-500 group-hover/svc:text-slate-300 transition-colors uppercase tracking-widest">{svc.label}</span>
+              <span className="text-[10px] font-medium text-slate-400 group-hover/svc:text-slate-200 transition-colors">{svc.label}</span>
             </div>
           ))}
         </div>
@@ -340,8 +345,8 @@ const AdminStatusBar: React.FC = () => {
         <div className="flex items-center gap-3 px-4 py-1 bg-amber-500/5 border border-amber-500/20 rounded-full group/vram">
           <Zap className="w-3 h-3 text-amber-400" />
           <div className="flex flex-col">
-            <span className="text-[8px] font-black text-amber-500/60 uppercase tracking-widest leading-none">VRAM_LOAD</span>
-            <span className="text-[10px] font-black text-amber-400 italic tracking-tight leading-tight mt-0.5">4.2 / 8.0 GB</span>
+            <span className="text-[9px] font-medium text-amber-500/60 uppercase tracking-wider leading-none">VRAM</span>
+            <span className="text-[11px] font-bold text-amber-400 leading-tight mt-0.5">4.2 / 8.0 GB</span>
           </div>
         </div>
       </div>

@@ -17,7 +17,7 @@ const DeploymentCommandCenter: React.FC = () => {
     setLoading(true);
     try {
       const res = await axios.get<{ data: AuditReport }>("/api/v1/adv-dvs/report");
-      setReport(res.data);
+      setReport(res.data.data);
     } catch (e) {
       console.error(e);
     } finally {

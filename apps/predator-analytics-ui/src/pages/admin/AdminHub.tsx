@@ -110,7 +110,7 @@ const PanicControlView         = lazy(() => import('@/features/security/PanicCon
 const PluginEcosystemView      = lazy(() => import('@/features/platform/PluginEcosystemView'));
 // ─── Конфіг вкладок ───────────────────────────────────────────────────────────
 
-type TabCategory = 'SYSTEM_CORE' | 'AI_LAB' | 'INTEL_OSINT' | 'BUSINESS_INTEL' | 'PLATFORM' | 'AUTONOMOUS_FACTORY';
+type TabCategory = 'SYSTEM_CORE' | 'AI_LAB' | 'INTEL_OSINT' | 'PLATFORM' | 'AUTONOMOUS_FACTORY';
 
 interface TabConfig {
   id: string;
@@ -122,13 +122,6 @@ interface TabConfig {
 }
 
 const TABS: TabConfig[] = [
-  // ─── BUSINESS_INTEL ────────────────────────────────────────────────────────
-  { id: 'brief',        category: 'BUSINESS_INTEL', label: 'РАНКОВИЙ_ЗВІТ', badge: 'ГД',      icon: TrendingUp,    component: ExecutiveBrief },
-  { id: 'risk-admin',   category: 'BUSINESS_INTEL', label: 'РИЗИКИ_ПОРТФЕЛЯ', badge: 'ФІН',    icon: PieChart,      component: PortfolioRiskView },
-  { id: 'ma-scanner',   category: 'BUSINESS_INTEL', label: 'СКАНЕР_M&A',     badge: 'УГОДА',   icon: Target,        component: MATargetScannerView },
-  { id: 'market-entry', category: 'BUSINESS_INTEL', label: 'АНАЛІЗ_РИНКУ',    badge: 'ЕКСПАНСІЯ', icon: Globe,        component: MarketEntryView },
-  { id: 'roi-audit',    category: 'BUSINESS_INTEL', label: 'АУДИТ_ROI',      badge: 'ГРОШІ',    icon: BarChart3,     component: FinancialDashboard },
-
   // ─── SYSTEM_CORE ───────────────────────────────────────────────────────────
   { id: 'command',      category: 'SYSTEM_CORE', label: 'КОМАНДНИЙ_ЦЕНТР', badge: 'СУВЕРЕН', icon: Zap,           component: SovereignCommandCenter },
   { id: 'infra',        category: 'SYSTEM_CORE', label: 'ТЕЛЕМЕТРІЯ',   badge: 'ЖИВИЙ',     icon: Activity,      component: InfraTelemetryTab },
@@ -139,6 +132,7 @@ const TABS: TabConfig[] = [
   { id: 'dataops',      category: 'SYSTEM_CORE', label: 'ЦЕНТР_DATAOPS',                   icon: Database,      component: DataOpsTab         },
   { id: 'chaos',        category: 'SYSTEM_CORE', label: 'ОПЕРАЦІЇ_ХАОСУ',    badge: 'НЕБЕЗПЕКА',   icon: Zap,           component: ChaosControlHub    },
   { id: 'res-guard',    category: 'SYSTEM_CORE', label: 'ЗАХИСТ_РЕСУРСІВ', badge: 'В-ПАМ',       icon: Shield,        component: ResourceGuardTab   },
+  { id: 'digital-twin', category: 'SYSTEM_CORE', label: 'ЦИФРОВИЙ_ДВІЙНИК', badge: 'СТРЕС-ТЕСТ', icon: Activity, component: DigitalTwinView },
   { id: 'pty',          category: 'SYSTEM_CORE', label: 'PTY_ТЕРМІНАЛ',    badge: 'КЛЮЧ',     icon: Terminal,      component: PtyTerminal        },
   
   // ─── AI_LAB ────────────────────────────────────────────────────────────────
@@ -205,7 +199,7 @@ const TABS: TabConfig[] = [
   { id: 'plugins', category: 'PLATFORM', label: 'ЕКОСИСТЕМА_ПЛАГІНІВ', badge: 'WASI', icon: Blocks, component: PluginEcosystemView },
 ];
 
-const DEFAULT_TAB = 'brief';
+const DEFAULT_TAB = 'command';
 
 // ─── HeartbeatLine Component ──────────────────────────────────────────────────
 
@@ -511,7 +505,6 @@ const TabNav: React.FC<TabNavProps> = ({ activeTab, onTabChange }) => {
   );
 
   const CATEGORIES: { id: TabCategory; label: string; subLabel: string; icon: any; color: string }[] = [
-    { id: 'BUSINESS_INTEL', label: 'БІЗНЕС-АНАЛІТИКА', subLabel: 'РАНКОВИЙ_ЗВІТ_&_KPI', icon: TrendingUp, color: 'emerald' },
     { id: 'SYSTEM_CORE', label: 'ЯДРО_СИСТЕМИ', subLabel: 'ІНФРАСТРУКТУРА_&_CONTROL', icon: Shield, color: 'rose' },
     { id: 'AI_LAB',      label: 'AI_ЛАБОРАТОРІЯ', subLabel: 'НАВЧАННЯ_&_АВТОЗАВОД', icon: BrainCircuit, color: 'rose' },
     { id: 'AUTONOMOUS_FACTORY', label: 'АВТОНОМНА_ФАБРИКА', subLabel: 'OODA_2.0_&_КОНТРОЛЬ', icon: Factory, color: 'gold' },

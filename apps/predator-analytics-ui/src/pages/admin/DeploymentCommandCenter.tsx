@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AlertCircle, CheckCircle2, Play, Download, Loader2, AlertTriangle } from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Alert } from "@/components/ui/alert";
 
 interface ValidationResult {
   status: string;
@@ -89,11 +89,7 @@ export default function DeploymentCommandCenter() {
       </div>
 
       {error && (
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Помилка</AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
+        <Alert type="error" title="Помилка" message={error} />
       )}
 
       {data && data.status !== "no_data" ? (

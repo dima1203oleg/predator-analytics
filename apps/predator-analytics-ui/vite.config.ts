@@ -69,6 +69,7 @@ export default defineConfig(({ mode }) => {
         // Завантажуємо mock-api-server ТІЛЬКИ коли явно увімкнено через env
         const enableMock = env.VITE_ENABLE_MOCK_API === 'true';
         if (enableMock) {
+          // @ts-ignore
           import('./mock-api-server.mjs').then((mod: any) => {
             const mockApp = mod.default || mod.app;
             if (mockApp) {
