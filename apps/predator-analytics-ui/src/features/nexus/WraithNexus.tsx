@@ -7,6 +7,8 @@ import { CinematicGrid } from './components/CinematicGrid';
 import { MissionQuestPlaque } from './components/MissionQuestPlaque';
 import { ConnectionExplorer3D } from './components/ConnectionExplorer3D';
 import { CentralCommandConsole } from './components/CentralCommandConsole';
+import { HolographicCore } from './components/HolographicCore';
+import { AgentMonitoringPanel } from './components/AgentMonitoringPanel';
 
 // Dummy initial quests
 const initialQuests = [
@@ -18,6 +20,8 @@ const initialQuests = [
 export const WraithNexus = () => {
   const [activeQuestId, setActiveQuestId] = useState<string | null>(null);
   const [aiResponse, setAiResponse] = useState<string | null>(null);
+  const [isReasoning, setIsReasoning] = useState(false);
+  const [activeTools, setActiveTools] = useState<string[]>([]);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -27,19 +31,32 @@ export const WraithNexus = () => {
   }, []);
 
   const handleCommand = (cmd: string) => {
-    // Simulated AI response
-    setAiResponse('Аналізую запит. Ініціюю квантовий пошук по графу зв\'язків...');
+    setIsReasoning(true);
+    setAiResponse(null);
+    setActiveTools(['RAG', 'Graph Analysis']);
     
-    // Simulate finding a target after a delay
+    // Simulated DeepSeek-R1 reasoning time
     setTimeout(() => {
-      setAiResponse('Сканую структуру зв\'язків. Виводжу тривимірну графову проекцію суб\'єктів...');
-      setActiveQuestId('search-result');
-    }, 2000);
+      setIsReasoning(false);
+      setAiResponse('Аналіз завершено. Знайдено приховані зв\'язки між ТОВ "ЕНЕРДЖІ-ГРУП" та офшорними юрисдикціями. Виводжу тривимірну графову проекцію суб\'єктів для подальшого аналізу...');
+      
+      // Simulate finding a target after response begins
+      setTimeout(() => {
+        setActiveQuestId('search-result');
+      }, 1500);
+    }, 3000);
   };
 
   const handleQuestClick = (id: string) => {
     setActiveQuestId(id);
-    setAiResponse(`Завантажую деталі місії... Побудова графа зв'язків ініційована.`);
+    setIsReasoning(true);
+    setAiResponse(null);
+    setActiveTools(['Database Loader']);
+    
+    setTimeout(() => {
+      setIsReasoning(false);
+      setAiResponse(`Завантажую деталі місії... Побудова графа зв'язків ініційована.`);
+    }, 1000);
   };
 
   const threatLevel = activeQuestId ? 'HIGH' : 'NORMAL';
@@ -51,6 +68,8 @@ export const WraithNexus = () => {
       <CentralCommandConsole 
         onCommand={handleCommand} 
         aiResponse={aiResponse} 
+        isReasoning={isReasoning}
+        activeTools={activeTools}
       />
 
       {/* Global HUD Overlay (CRT Scanlines & Vignette) */}
@@ -59,6 +78,9 @@ export const WraithNexus = () => {
         <div className="absolute inset-0 bg-gradient-to-t from-[#020817]/80 via-transparent to-[#020817]/30" />
         <div className="absolute inset-0 shadow-[inset_0_0_150px_rgba(0,0,0,0.9)]" />
       </div>
+
+      {/* Side Panels */}
+      <AgentMonitoringPanel />
 
       {/* Background UI elements */}
       <div className="absolute top-6 left-6 z-40 pointer-events-none">
@@ -109,6 +131,9 @@ export const WraithNexus = () => {
         {/* Grid Background */}
         <CinematicGrid threatLevel={threatLevel} />
 
+        {/* Holographic Neural Core */}
+        {!activeQuestId && <HolographicCore />}
+
         {/* Floating Quests (Hidden when exploring a graph) */}
         {!activeQuestId && initialQuests.map((quest) => (
           <MissionQuestPlaque 
@@ -126,12 +151,12 @@ export const WraithNexus = () => {
         <ConnectionExplorer3D active={!!activeQuestId} />
 
         {/* Cinematic Post Processing safely mounted */}
-        {mounted && (
+        {/* mounted && (
           <EffectComposer disableNormalPass>
             <Bloom luminanceThreshold={0.2} mipmapBlur intensity={1.5} />
             <Vignette eskil={false} offset={0.1} darkness={1.1} />
           </EffectComposer>
-        )}
+        ) */}
       </Canvas>
     </div>
   );

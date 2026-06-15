@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
-import { Mic, Send, Terminal } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Mic, Send, Terminal, Cpu, Database, Network } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface CentralCommandConsoleProps {
   onCommand: (command: string) => void;
   aiResponse: string | null;
+  isReasoning?: boolean;
+  activeTools?: string[];
 }
 
-export const CentralCommandConsole = ({ onCommand, aiResponse }: CentralCommandConsoleProps) => {
+export const CentralCommandConsole = ({ onCommand, aiResponse, isReasoning = false, activeTools = [] }: CentralCommandConsoleProps) => {
   const [input, setInput] = useState('');
   const [displayedResponse, setDisplayedResponse] = useState('');
 
@@ -39,64 +41,92 @@ export const CentralCommandConsole = ({ onCommand, aiResponse }: CentralCommandC
   const isTyping = aiResponse && displayedResponse.length < aiResponse.length;
 
   return (
-    <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-full max-w-3xl z-50 pointer-events-auto px-4">
+    <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-full max-w-3xl z-50 pointer-events-auto px-4 flex flex-col gap-4">
       
       {/* AI Voice/Text Response Display */}
-      {aiResponse && (
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-6 p-6 rounded-2xl bg-[#0b1120]/80 backdrop-blur-xl border border-cyan-500/30 shadow-[0_0_40px_rgba(34,211,238,0.15)] flex gap-4 items-start relative overflow-hidden"
-        >
-          {/* Subtle background glow */}
-          <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 to-transparent pointer-events-none" />
-          
-          <div className="p-3 rounded-full bg-cyan-500/10 text-cyan-400 mt-1 relative">
-            <div className="absolute inset-0 bg-cyan-400/20 blur-md rounded-full animate-pulse" />
-            <Terminal size={24} className="relative z-10" />
-          </div>
-          <div className="flex-1">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="text-cyan-400 font-mono text-sm tracking-wider font-bold">SOVEREIGN AI KERNEL</div>
-              {isTyping && (
-                <div className="flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse delay-75" />
-                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse delay-150" />
-                </div>
-              )}
-            </div>
-            <div className="text-white/90 text-lg leading-relaxed font-light min-h-[1.5rem]">
-              {displayedResponse}
-              {isTyping && <span className="inline-block w-2 h-4 bg-cyan-400 ml-1 animate-pulse" />}
+      <AnimatePresence>
+        {(aiResponse || isReasoning) && (
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            className="p-6 rounded-2xl bg-[#0b1120]/90 backdrop-blur-xl border border-cyan-500/30 shadow-[0_0_40px_rgba(34,211,238,0.15)] flex gap-4 items-start relative overflow-hidden"
+          >
+            {/* Subtle background glow */}
+            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 to-transparent pointer-events-none" />
+            
+            <div className="p-3 rounded-full bg-cyan-500/10 text-cyan-400 mt-1 relative shrink-0">
+              <div className="absolute inset-0 bg-cyan-400/20 blur-md rounded-full animate-pulse" />
+              <Terminal size={24} className="relative z-10" />
             </div>
             
-            {/* Advanced Simulated Voice Waveform */}
-            <div className="flex gap-[3px] mt-4 h-6 items-end opacity-80">
-              {[...Array(30)].map((_, i) => {
-                // Different heights and speeds for a more organic "bass" feel
-                const minH = 20 + (i % 3) * 10;
-                const maxH = isTyping ? 60 + Math.random() * 40 : minH + 5;
-                const duration = isTyping ? 0.4 + Math.random() * 0.3 : 2;
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-3">
+                  <div className="text-cyan-400 font-mono text-sm tracking-wider font-bold">DEEPSEEK-R1 KERNEL</div>
+                  {(isTyping || isReasoning) && (
+                    <div className="flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse delay-75" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse delay-150" />
+                    </div>
+                  )}
+                </div>
                 
-                return (
-                  <motion.div
-                    key={i}
-                    animate={{ height: [`${minH}%`, `${maxH}%`, `${minH}%`] }}
-                    transition={{ 
-                      duration, 
-                      repeat: Infinity, 
-                      delay: i * 0.05, 
-                      ease: 'easeInOut' 
-                    }}
-                    className={`w-1 rounded-t-sm ${isTyping ? 'bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]' : 'bg-cyan-500/40'}`}
-                  />
-                );
-              })}
+                {/* Active Tools / RAG Indicators */}
+                {activeTools.length > 0 && (
+                  <div className="flex gap-2">
+                    {activeTools.map((tool, idx) => (
+                      <div key={idx} className="flex items-center gap-1.5 bg-indigo-500/10 border border-indigo-500/30 px-2 py-0.5 rounded text-[10px] text-indigo-400 font-mono">
+                        {tool === 'RAG' ? <Database size={10} /> : tool === 'Graph' ? <Network size={10} /> : <Cpu size={10} />}
+                        {tool}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+              
+              {isReasoning && !aiResponse && (
+                 <div className="text-cyan-500/70 font-mono text-sm italic animate-pulse">
+                   Аналіз багатовимірного графа... Запит до RAG... Формування логічного ланцюга...
+                 </div>
+              )}
+
+              {aiResponse && (
+                <>
+                  <div className="text-white/90 text-lg leading-relaxed font-light min-h-[1.5rem] break-words">
+                    {displayedResponse}
+                    {isTyping && <span className="inline-block w-2 h-4 bg-cyan-400 ml-1 animate-pulse" />}
+                  </div>
+                  
+                  {/* Advanced Simulated Voice Waveform */}
+                  <div className="flex gap-[3px] mt-4 h-6 items-end opacity-80">
+                    {[...Array(30)].map((_, i) => {
+                      const minH = 20 + (i % 3) * 10;
+                      const maxH = isTyping ? 60 + Math.random() * 40 : minH + 5;
+                      const duration = isTyping ? 0.4 + Math.random() * 0.3 : 2;
+                      
+                      return (
+                        <motion.div
+                          key={i}
+                          animate={{ height: [`${minH}%`, `${maxH}%`, `${minH}%`] }}
+                          transition={{ 
+                            duration, 
+                            repeat: Infinity, 
+                            delay: i * 0.05, 
+                            ease: 'easeInOut' 
+                          }}
+                          className={`w-1 rounded-t-sm ${isTyping ? 'bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]' : 'bg-cyan-500/40'}`}
+                        />
+                      );
+                    })}
+                  </div>
+                </>
+              )}
             </div>
-          </div>
-        </motion.div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Input Console */}
       <form onSubmit={handleSubmit} className="relative group">
