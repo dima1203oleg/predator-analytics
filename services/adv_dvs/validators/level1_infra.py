@@ -5,6 +5,7 @@ from services.adv_dvs.checks.kafka_check import check_kafka_connection
 from services.adv_dvs.checks.db_check import check_postgres, check_neo4j, check_clickhouse, check_qdrant
 from services.adv_dvs.checks.opensearch_check import check_opensearch
 from services.adv_dvs.checks.minio_check import check_minio
+from services.adv_dvs.checks.redis_check import check_redis
 from services.adv_dvs.report_generator import DVSReportGenerator
 
 logger = get_logger("adv_dvs.validators.level1")
@@ -40,6 +41,9 @@ async def run_level1_checks() -> dict:
     
     minio_result = await check_minio()
     results["checks"].append(minio_result)
+    
+    redis_result = await check_redis()
+    results["checks"].append(redis_result)
     
     # Перевірка загального статусу
     for check in results["checks"]:
