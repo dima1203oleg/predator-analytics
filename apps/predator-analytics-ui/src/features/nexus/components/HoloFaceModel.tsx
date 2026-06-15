@@ -22,33 +22,54 @@ interface HoloFaceModelProps {
   systemStatus: "HEALTHY" | "RISK";
 }
 
-export const HoloFaceModel: React.FC<HoloFaceModelProps> = ({ audioAnalyser, systemStatus }) => {
+export const HoloFaceModel: React.FC<HoloFaceModelProps> = ({
+  audioAnalyser,
+  systemStatus,
+}) => {
   // Завантаження placeholder геометрії голови з локального репозиторію
   const { nodes } = useGLTF("/models/head.glb") as unknown as GLTFResult;
-  
+
   const groupRef = useRef<THREE.Group>(null);
   const gearTopRef = useRef<THREE.Mesh>(null);
   const gearBottomRef = useRef<THREE.Mesh>(null);
-  
+
   const { size, mouse } = useThree();
   const dataArray = useRef(new Uint8Array(0));
 
   const activeColor = systemStatus === "RISK" ? "#bd00ff" : "#00f5ff";
 
-  // Створення єдиного кастомного голографічного матеріалу
-  const holoMaterial = useRef(
+  // Реалістичний фізичний матеріал (метал + скло)
+  const realisticMaterial = useRef(
+    new THREE.MeshPhysicalMaterial({
+      color: new THREE.Color("#111827"), // Темна основа
+      emissive: new THREE.Color(activeColor),
+      emissiveIntensity: 0.2, // Легке внутрішнє світіння
+      metalness: 0.8,
+      roughness: 0.2,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.1,
+      transparent: true,
+      opacity: 0.95,
+      transmission: 0.4, // Ефект напівпрозорого скла
+      thickness: 0.5,
+    }),
+  );
+
+  // Голографічний дротяний контур для кібер-ефекту
+  const wireframeMaterial = useRef(
     new THREE.MeshBasicMaterial({
       color: new THREE.Color(activeColor),
       wireframe: true,
       transparent: true,
-      opacity: 0.8,
-      blending: THREE.AdditiveBlending
-    })
+      opacity: 0.15,
+      blending: THREE.AdditiveBlending,
+    }),
   );
 
-  // Оновлення кольору матеріалу при зміні статусу системи
+  // Оновлення кольору матеріалів при зміні статусу системи
   useEffect(() => {
-    holoMaterial.current.color.set(activeColor);
+    realisticMaterial.current.emissive.set(activeColor);
+    wireframeMaterial.current.color.set(activeColor);
   }, [activeColor]);
 
   useEffect(() => {
@@ -65,11 +86,13 @@ export const HoloFaceModel: React.FC<HoloFaceModelProps> = ({ audioAnalyser, sys
       groupRef.current.position.y = Math.sin(t * 1.2) * 0.05;
 
       // 2. Ефект Perspective Parallax: Обличчя плавно повертається за курсором миші
-      const targetX = (mouse.x * size.width) / size.width * 0.3;
-      const targetY = (mouse.y * size.height) / size.height * 0.2;
-      
-      groupRef.current.rotation.y += (targetX - groupRef.current.rotation.y) * 0.1;
-      groupRef.current.rotation.x += (-targetY - groupRef.current.rotation.x) * 0.1;
+      const targetX = ((mouse.x * size.width) / size.width) * 0.3;
+      const targetY = ((mouse.y * size.height) / size.height) * 0.2;
+
+      groupRef.current.rotation.y +=
+        (targetX - groupRef.current.rotation.y) * 0.1;
+      groupRef.current.rotation.x +=
+        (-targetY - groupRef.current.rotation.x) * 0.1;
     }
 
     // 3. Обертання технологічних 3D-шестерень над головою відповідно до навантаження
@@ -77,12 +100,16 @@ export const HoloFaceModel: React.FC<HoloFaceModelProps> = ({ audioAnalyser, sys
     if (gearBottomRef.current) gearBottomRef.current.rotation.y = -t * 0.8;
 
     // 4. Реалізація Real-Time Lip-Sync або Імітації для нативного TTS
-    const headMesh = nodes.Mesh_Head_Placeholder || Object.values(nodes).find(n => n.type === 'Mesh' || n.type === 'SkinnedMesh') as THREE.Mesh;
-    
+    const headMesh =
+      nodes.Mesh_Head_Placeholder ||
+      (Object.values(nodes).find(
+        (n) => n.type === "Mesh" || n.type === "SkinnedMesh",
+      ) as THREE.Mesh);
+
     if (headMesh && headMesh.morphTargetInfluences) {
       if (audioAnalyser && dataArray.current.length > 0) {
         audioAnalyser.getByteFrequencyData(dataArray.current);
-        
+
         // Обчислення середньої амплітуди звукової хвилі (гучності)
         let sum = 0;
         for (let i = 0; i < dataArray.current.length; i++) {
@@ -98,39 +125,58 @@ export const HoloFaceModel: React.FC<HoloFaceModelProps> = ({ audioAnalyser, sys
         const isSpeaking = useAppStore.getState().aiState.isSpeaking;
         if (isSpeaking) {
           // Симуляція артикуляції
-          const fakeVolume = Math.sin(t * 15) * 0.3 + Math.sin(t * 25) * 0.2 + 0.3;
+          const fakeVolume =
+            Math.sin(t * 15) * 0.3 + Math.sin(t * 25) * 0.2 + 0.3;
           headMesh.morphTargetInfluences[0] = Math.max(0, fakeVolume);
         } else {
           // Плавне закриття рота
-          headMesh.morphTargetInfluences[0] += (0 - headMesh.morphTargetInfluences[0]) * 0.2;
+          headMesh.morphTargetInfluences[0] +=
+            (0 - headMesh.morphTargetInfluences[0]) * 0.2;
         }
       }
     }
   });
 
   // Знайти головний меш, якщо він називається інакше
-  const headMesh = nodes.Mesh_Head_Placeholder || Object.values(nodes).find(n => n.type === 'Mesh' || n.type === 'SkinnedMesh') as THREE.Mesh;
+  const headMesh =
+    nodes.Mesh_Head_Placeholder ||
+    (Object.values(nodes).find(
+      (n) => n.type === "Mesh" || n.type === "SkinnedMesh",
+    ) as THREE.Mesh);
 
   return (
     <group ref={groupRef}>
       {/* Декоративні голографічні шестерні когнітивного процесу */}
-      <mesh ref={gearTopRef} position={[0, 1.1, 0]}>
-        <torusGeometry args={[0.4, 0.02, 8, 24]} />
-        <primitive object={holoMaterial.current} attach="material" />
+      <mesh ref={gearTopRef} position={[0, 1.3, 0]}>
+        <torusGeometry args={[0.3, 0.01, 16, 32]} />
+        <primitive object={wireframeMaterial.current} attach="material" />
       </mesh>
-      <mesh ref={gearBottomRef} position={[0, 1.2, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[0.2, 0.3, 6]} />
-        <primitive object={holoMaterial.current} attach="material" />
+      <mesh
+        ref={gearBottomRef}
+        position={[0, 1.4, 0]}
+        rotation={[Math.PI / 2, 0, 0]}
+      >
+        <ringGeometry args={[0.15, 0.25, 12]} />
+        <primitive object={wireframeMaterial.current} attach="material" />
       </mesh>
 
       {/* Головний меш кібер-обличчя */}
       {headMesh && (
-        <mesh 
-          geometry={headMesh.geometry} 
-          material={holoMaterial.current}
-          castShadow
-          receiveShadow
-        />
+        <group>
+          {/* Базовий реалістичний шар */}
+          <mesh
+            geometry={headMesh.geometry}
+            material={realisticMaterial.current}
+            castShadow
+            receiveShadow
+          />
+          {/* Голографічна сітка поверх обличчя */}
+          <mesh
+            geometry={headMesh.geometry}
+            material={wireframeMaterial.current}
+            scale={1.001} // Трохи більше, щоб не перетиналося з основою
+          />
+        </group>
       )}
     </group>
   );
