@@ -60,6 +60,9 @@ const SovereignObserverView = lazy(() => import('./features/dashboard/SovereignO
 const DataIngestionHub = lazy(() => import('./features/platform/DataIngestionHub'));
 const DataIngestionTerminal = lazy(() => import('./features/platform/components/DataIngestionTerminal').then(m => ({ default: m.DataIngestionTerminal })));
 
+// ─── Public Gateway (Auth / Landing) ────────────────────────────────────────
+const PublicGateway = lazy(() => import('./features/auth/PublicGateway').then(m => ({ default: m.PublicGateway })));
+
 // Клієнтський арсенал — Газета та Компромат
 const NewspaperView = lazy(() => import('./features/newspaper/NewspaperView'));
 const PowerStructureView = lazy(() => import('./features/newspaper/PowerStructureView'));
@@ -192,7 +195,27 @@ export const AppRoutesNew = () => {
   const effectiveRole = resolveUserRole(user?.role);
   const isAdmin = effectiveRole === UserRole.CORE;
 
+  // ─── PUBLIC TREE (/auth/*) ────────────────────────────────────────────────
+  // Якщо користувач не авторизований, він має доступ тільки до PublicGateway
+  if (!user && !location.pathname.startsWith('/auth')) {
+    return <Navigate to="/auth/login" state={{ from: location }} replace />;
+  }
+
+  if (!user || location.pathname.startsWith('/auth')) {
+    return (
+      <Suspense fallback={<LoadingSkeleton />}>
+        <ErrorBoundary>
+          <Routes location={location} key={location.pathname}>
+            <Route path="/auth/*" element={<PublicGateway />} />
+            <Route path="*" element={<Navigate to="/auth/login" replace />} />
+          </Routes>
+        </ErrorBoundary>
+      </Suspense>
+    );
+  }
+
   // ─── ADMIN TREE (/admin/*) ────────────────────────────────────────────────
+  // Ізольована зона адміністратора
   if (isAdmin) {
     return (
       <AdminLayout>
@@ -264,10 +287,13 @@ export const AppRoutesNew = () => {
   }
 
   // ─── CLIENT TREE (всі ролі крім admin) ───────────────────────────────────
+  // Ізольований портал для клієнта (WraithNexus)
   return (
     <Suspense fallback={<LoadingSkeleton />}>
       <ErrorBoundary>
         <Routes location={location} key={location.pathname}>
+          {/* Запобігаємо доступу до адмінської панелі для звичайного клієнта */}
+          <Route path="/admin/*" element={<Navigate to="/" replace />} />
           <Route path="/*" element={<WraithNexus />} />
         </Routes>
       </ErrorBoundary>
