@@ -21,6 +21,9 @@ const AdvDvsDashboard = lazy(() => import('./pages/diagnostics/AdvDvsDashboard')
 // ─── Client Nexus (WRAITH-3D) ────────────────────────────────────────
 import WraithNexus from './features/nexus/WraithNexus';
 
+// ─── Cognitive Interface (Cyberpunk HUD) ──────────────────────────────
+const CognitiveInterface = lazy(() => import('./features/cognitive/CognitiveInterface'));
+
 // Lazy loaded views
 const SearchPage = lazy(() => import('./features/search/SearchPage'));
 const CasesView = lazy(() => import('./features/intelligence/CasesView'));
@@ -252,6 +255,16 @@ export const AppRoutesNew = () => {
                 element={
                   <AdminGuard>
                     <AdvDvsDashboard />
+                  </AdminGuard>
+                }
+              />
+
+              {/* AI Cognitive Interface */}
+              <Route
+                path="/cognitive"
+                element={
+                  <AdminGuard>
+                    <CognitiveInterface />
                   </AdminGuard>
                 }
               />
