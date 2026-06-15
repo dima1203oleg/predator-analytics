@@ -4,11 +4,13 @@ import { OrbitControls, Environment, PerspectiveCamera, Stars } from '@react-thr
 
 import { CinematicGrid } from './components/CinematicGrid';
 import { ConnectionExplorer3D } from './components/ConnectionExplorer3D';
+import { SciFiForceGraph } from './components/SciFiForceGraph';
 import { CentralCommandConsole } from './components/CentralCommandConsole';
 import { HolographicCore } from './components/HolographicCore';
 import { CyberHeader } from './components/CyberHeader';
 import { AnalyticalPanelsRight } from './components/AnalyticalPanelsRight';
 import { GraphMetricsPanel } from './components/GraphMetricsPanel';
+import { SciFiPanel } from './components/SciFiPanel';
 import { useAppStore } from '../../../store/useAppStore';
 
 export const WraithNexus = () => {
@@ -22,6 +24,29 @@ export const WraithNexus = () => {
 
   const handleCommand = (cmd: string) => {
     processAICommand(cmd);
+  };
+
+  // Mock data for ForceGraph
+  const graphData = {
+    nodes: [
+      { id: 'TOW-ENERGY', group: 1, val: 20 },
+      { id: 'CYPRUS-OFFSHORE', group: 2, val: 10 },
+      { id: 'CEO-IVANOV', group: 2, val: 5 },
+      { id: 'PANAMA-CORP', group: 2, val: 10 },
+      { id: 'BANK-ACC-1', group: 3, val: 5 },
+      { id: 'BANK-ACC-2', group: 3, val: 5 },
+      { id: 'FRONT-COMPANY', group: 2, val: 15 },
+    ],
+    links: [
+      { source: 'TOW-ENERGY', target: 'CYPRUS-OFFSHORE' },
+      { source: 'CYPRUS-OFFSHORE', target: 'PANAMA-CORP' },
+      { source: 'CEO-IVANOV', target: 'TOW-ENERGY' },
+      { source: 'CEO-IVANOV', target: 'PANAMA-CORP' },
+      { source: 'PANAMA-CORP', target: 'BANK-ACC-1' },
+      { source: 'CYPRUS-OFFSHORE', target: 'BANK-ACC-2' },
+      { source: 'FRONT-COMPANY', target: 'TOW-ENERGY' },
+      { source: 'FRONT-COMPANY', target: 'BANK-ACC-2' },
+    ]
   };
 
   return (
@@ -39,10 +64,7 @@ export const WraithNexus = () => {
       <div className="flex-1 grid grid-cols-[400px_1fr_400px] gap-4 p-4 min-h-0 relative z-10">
         
         {/* LEFT COLUMN: AI Cognitive Panel */}
-        <div className="flex flex-col gap-4 overflow-hidden border border-emerald-500/20 bg-black/40 backdrop-blur-md rounded-xl p-4 shadow-[0_0_20px_rgba(16,185,129,0.1)] relative">
-          <div className="absolute top-0 left-4 w-32 h-[1px] bg-emerald-400" />
-          <div className="absolute bottom-0 right-4 w-32 h-[1px] bg-emerald-400" />
-          
+        <SciFiPanel className="flex flex-col gap-4 overflow-hidden h-full">
           <h2 className="text-lg font-black tracking-widest text-emerald-400 mb-2 flex items-center gap-2">
             <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
             AI КОГНІТИВНА ПАНЕЛЬ
@@ -57,7 +79,7 @@ export const WraithNexus = () => {
           <div className="mt-auto pt-4 border-t border-emerald-500/20">
             <GraphMetricsPanel />
           </div>
-        </div>
+        </SciFiPanel>
 
         {/* CENTER COLUMN: 3D Core & Graph */}
         <div className="flex flex-col relative rounded-xl overflow-hidden border border-emerald-500/10 shadow-[inset_0_0_50px_rgba(0,0,0,0.8)]">
@@ -89,17 +111,20 @@ export const WraithNexus = () => {
 
               <CinematicGrid threatLevel={threatLevel} />
               
-              {/* Core or Graph depending on state */}
+              {/* Core or R3F Graph depending on state */}
               <group position={[0, activeTargetId ? 4 : 0, 0]}>
                 <HolographicCore />
               </group>
               
-              {activeTargetId && (
-                <group position={[0, -2, 0]}>
-                  <ConnectionExplorer3D active={true} />
-                </group>
-              )}
+              {/* Keep the original R3F particles connection if needed, but we will show the ForceGraph over it */}
             </Canvas>
+
+            {/* Sci-Fi Force Graph Overlay */}
+            {activeTargetId && (
+              <div className="absolute inset-0 z-10 bg-black/80 backdrop-blur-sm">
+                <SciFiForceGraph data={graphData} />
+              </div>
+            )}
           </div>
 
           {/* Bottom Console input (moved from CentralCommandConsole if needed, or keeping it isolated) */}
@@ -119,10 +144,7 @@ export const WraithNexus = () => {
         </div>
 
         {/* RIGHT COLUMN: Analytical Panels */}
-        <div className="flex flex-col gap-4 overflow-hidden border border-emerald-500/20 bg-black/40 backdrop-blur-md rounded-xl p-4 shadow-[0_0_20px_rgba(16,185,129,0.1)] relative">
-          <div className="absolute top-0 right-4 w-32 h-[1px] bg-emerald-400" />
-          <div className="absolute bottom-0 left-4 w-32 h-[1px] bg-emerald-400" />
-          
+        <SciFiPanel className="flex flex-col gap-4 overflow-hidden h-full">
           <h2 className="text-lg font-black tracking-widest text-emerald-400 mb-2 flex items-center gap-2">
             ТАКТИЧНИЙ ХАБ МІСІЙ
           </h2>
@@ -130,7 +152,7 @@ export const WraithNexus = () => {
           <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
             <AnalyticalPanelsRight />
           </div>
-        </div>
+        </SciFiPanel>
 
       </div>
     </div>
