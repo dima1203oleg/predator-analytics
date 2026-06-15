@@ -41,7 +41,7 @@ export const CentralCommandConsole = ({ onCommand, aiResponse, isReasoning = fal
   const isTyping = aiResponse && displayedResponse.length < aiResponse.length;
 
   return (
-    <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-full max-w-3xl z-50 pointer-events-auto px-4 flex flex-col gap-4">
+    <div className="w-full flex flex-col justify-end gap-4 relative z-50 pointer-events-auto h-full">
       
       {/* AI Voice/Text Response Display */}
       <AnimatePresence>
@@ -129,9 +129,9 @@ export const CentralCommandConsole = ({ onCommand, aiResponse, isReasoning = fal
       </AnimatePresence>
 
       {/* Input Console */}
-      <form onSubmit={handleSubmit} className="relative group">
-        <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500/20 via-cyan-500/20 to-emerald-500/20 rounded-full blur opacity-50 group-hover:opacity-75 transition duration-500"></div>
-        <div className="relative flex items-center bg-[#020817]/90 backdrop-blur-xl border border-white/10 rounded-full p-2">
+      <form onSubmit={handleSubmit} className="relative group shrink-0">
+        <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500/20 via-cyan-500/20 to-emerald-500/20 rounded-lg blur opacity-50 group-hover:opacity-75 transition duration-500"></div>
+        <div className="relative flex items-center bg-[#020817]/90 backdrop-blur-xl border border-emerald-500/30 rounded-lg p-1">
           
           {/* Voice Input Button */}
           <button 
@@ -145,8 +145,8 @@ export const CentralCommandConsole = ({ onCommand, aiResponse, isReasoning = fal
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Запит до Когнітивного Ядра (Напр: Покажи структуру власності ТОВ ЕНЕРДЖІ-ГРУП)..."
-            className="flex-1 bg-transparent border-none outline-none text-white px-4 text-lg font-light placeholder:text-white/30"
+            placeholder="Запит..."
+            className="flex-1 bg-transparent border-none outline-none text-emerald-400 px-2 text-sm font-light placeholder:text-emerald-500/40"
           />
 
           <button
