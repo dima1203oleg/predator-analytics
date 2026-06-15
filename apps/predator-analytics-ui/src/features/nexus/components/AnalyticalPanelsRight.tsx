@@ -2,7 +2,7 @@ import { MissionHeatmap } from './charts/MissionHeatmap';
 import { AnomalyChart } from './charts/AnomalyChart';
 import { SectorTreemap } from './charts/SectorTreemap';
 import { UkraineRiskMap } from './charts/UkraineRiskMap';
-import { SciFiPanel } from '../SciFiPanel';
+import { SciFiPanel } from "./SciFiPanel";
 
 export const AnalyticalPanelsRight = () => {
   return (

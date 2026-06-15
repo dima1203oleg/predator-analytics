@@ -12,7 +12,7 @@ import { CyberHeader } from './components/CyberHeader';
 import { AnalyticalPanelsRight } from './components/AnalyticalPanelsRight';
 import { GraphMetricsPanel } from './components/GraphMetricsPanel';
 import { SciFiPanel } from './components/SciFiPanel';
-import { useAppStore } from '../../../store/useAppStore';
+import { useAppStore } from "../../store/useAppStore";
 
 export const WraithNexus = () => {
   const { aiState, processAICommand, resetAIState } = useAppStore();

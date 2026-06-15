@@ -1,6 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import ForceGraph3D from 'react-force-graph-3d';
-import * as THREE from 'three';
+import ForceGraph2D from 'react-force-graph-2d';
 
 interface SciFiForceGraphProps {
   data: {
@@ -32,7 +31,7 @@ export const SciFiForceGraph = ({ data }: SciFiForceGraphProps) => {
 
   return (
     <div ref={containerRef} className="w-full h-full relative" style={{ cursor: 'crosshair' }}>
-      <ForceGraph3D
+      <ForceGraph2D
         ref={fgRef}
         width={dimensions.width}
         height={dimensions.height}
@@ -40,37 +39,27 @@ export const SciFiForceGraph = ({ data }: SciFiForceGraphProps) => {
         backgroundColor="#000000"
         nodeLabel="id"
         nodeColor={(node: any) => node.group === 1 ? '#ef4444' : '#10b981'}
-        nodeResolution={16}
         linkColor={() => 'rgba(16, 185, 129, 0.4)'}
         linkWidth={1.5}
         linkDirectionalParticles={2}
         linkDirectionalParticleWidth={2}
         linkDirectionalParticleColor={() => '#3b82f6'}
         linkDirectionalParticleSpeed={d => Math.random() * 0.01 + 0.005}
-        nodeThreeObject={(node: any) => {
-          // Create glowing spheres
+        nodeCanvasObject={(node: any, ctx, globalScale) => {
           const isTarget = node.group === 1;
-          const geometry = new THREE.SphereGeometry(isTarget ? 8 : 4);
-          const material = new THREE.MeshBasicMaterial({ 
-            color: isTarget ? '#ef4444' : '#10b981',
-            transparent: true,
-            opacity: 0.8
-          });
-          const sphere = new THREE.Mesh(geometry, material);
+          const color = isTarget ? '#ef4444' : '#10b981';
+          const size = isTarget ? 8 : 4;
           
-          // Add a glowing halo
-          const haloGeo = new THREE.SphereGeometry(isTarget ? 12 : 6);
-          const haloMat = new THREE.MeshBasicMaterial({
-            color: isTarget ? '#f87171' : '#34d399',
-            transparent: true,
-            opacity: 0.2,
-            blending: THREE.AdditiveBlending,
-            side: THREE.BackSide
-          });
-          const halo = new THREE.Mesh(haloGeo, haloMat);
-          sphere.add(halo);
+          ctx.beginPath();
+          ctx.arc(node.x, node.y, size, 0, 2 * Math.PI, false);
+          ctx.fillStyle = color;
+          ctx.fill();
           
-          return sphere;
+          // Glow effect
+          ctx.beginPath();
+          ctx.arc(node.x, node.y, size + 4, 0, 2 * Math.PI, false);
+          ctx.fillStyle = isTarget ? 'rgba(239, 68, 68, 0.2)' : 'rgba(16, 185, 129, 0.2)';
+          ctx.fill();
         }}
       />
       {/* Sci-Fi Targeting Overlay */}
