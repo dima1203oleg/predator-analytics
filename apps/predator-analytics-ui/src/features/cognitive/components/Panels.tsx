@@ -119,18 +119,47 @@ export const ChatAssistant = () => {
   const [isListening, setIsListening] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const wsRef = useRef<WebSocket | null>(null);
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  
+  // Web Speech API STT ref
+  const recognitionRef = useRef<any>(null);
 
   useEffect(() => {
-    // Підключення до локального WebSocket для Голосу / Тексту
+    // Ініціалізація Web Speech API (STT)
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'uk-UA';
+      recognition.interimResults = false;
+      recognition.continuous = false;
+      
+      recognition.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        setMessages(prev => [...prev, { role: 'user', text: transcript }]);
+        
+        // Відправляємо розпізнаний текст на сервер
+        if (wsRef.current?.readyState === WebSocket.OPEN) {
+          wsRef.current.send(JSON.stringify({ type: 'text', text: transcript }));
+        }
+        
+        // Публікуємо в шину
+        import('../../../store/useEventBus').then(({ useEventBus }) => {
+          useEventBus.getState().emit('VOICE_COMMAND_RECEIVED', { text: transcript });
+        });
+      };
+      
+      recognition.onerror = (e: any) => console.error('Speech recognition error', e);
+      recognition.onend = () => setIsListening(false);
+      
+      recognitionRef.current = recognition;
+    }
+
+    // Підключення до локального WebSocket
     const ws = new WebSocket('ws://localhost:9080');
     ws.onopen = () => console.log('[ChatAssistant] WS connected');
     ws.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
-        if (data.type === 'transcription') {
-          setMessages(prev => [...prev, { role: 'user', text: data.text }]);
-        } else if (data.type === 'token') {
+        if (data.type === 'token') {
           // Імітуємо потік тексту
           setMessages(prev => {
             const newMsgs = [...prev];
@@ -142,7 +171,6 @@ export const ChatAssistant = () => {
             }
             return newMsgs;
           });
-          // Відправляємо подію для Avatar (Lip Sync)
           import('../../../store/useEventBus').then(({ useEventBus }) => {
             useEventBus.getState().emit('AVATAR_VISEME', { value: Math.random() * 0.8, speaking: true });
           });
@@ -151,31 +179,40 @@ export const ChatAssistant = () => {
           import('../../../store/useEventBus').then(({ useEventBus }) => {
             useEventBus.getState().emit('AVATAR_VISEME', { value: 0, speaking: false });
           });
+          
+          // Імітуємо TTS по завершенню генерації (з останнього повідомлення)
+          setMessages(prev => {
+            const lastAiMsg = prev.filter(m => m.role === 'ai').pop();
+            if (lastAiMsg && lastAiMsg.text.length > 0) {
+              const utterance = new SpeechSynthesisUtterance(lastAiMsg.text);
+              utterance.lang = 'uk-UA';
+              window.speechSynthesis.speak(utterance);
+            }
+            return prev;
+          });
+
         }
       } catch (e) {}
     };
     wsRef.current = ws;
-    return () => ws.close();
+    return () => {
+      ws.close();
+      window.speechSynthesis.cancel();
+    };
   }, [isProcessing]);
 
-  const toggleListen = async () => {
+  const toggleListen = () => {
     if (isListening) {
+      recognitionRef.current?.stop();
       setIsListening(false);
-      mediaRecorderRef.current?.stop();
     } else {
+      // Переривання TTS
+      window.speechSynthesis.cancel();
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        const mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
-        mediaRecorder.ondataavailable = (e) => {
-          if (e.data.size > 0 && wsRef.current?.readyState === WebSocket.OPEN) {
-            wsRef.current.send(e.data);
-          }
-        };
-        mediaRecorder.start(1000);
-        mediaRecorderRef.current = mediaRecorder;
+        recognitionRef.current?.start();
         setIsListening(true);
       } catch (err) {
-        console.error('Mic error:', err);
+        console.error('Speech recognition start error:', err);
       }
     }
   };

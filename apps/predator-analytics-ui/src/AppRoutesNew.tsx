@@ -259,7 +259,7 @@ export const AppRoutesNew = () => {
                 }
               />
 
-              {/* AI Cognitive Interface */}
+              {/* AI Cognitive Interface (Admin access) */}
               <Route
                 path="/cognitive"
                 element={
@@ -307,6 +307,7 @@ export const AppRoutesNew = () => {
         <Routes location={location} key={location.pathname}>
           {/* Запобігаємо доступу до адмінської панелі для звичайного клієнта */}
           <Route path="/admin/*" element={<Navigate to="/" replace />} />
+          <Route path="/cognitive" element={<CognitiveInterface />} />
           <Route path="/*" element={<WraithNexus />} />
         </Routes>
       </ErrorBoundary>
