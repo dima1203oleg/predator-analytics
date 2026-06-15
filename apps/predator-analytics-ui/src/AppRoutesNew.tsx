@@ -58,6 +58,7 @@ const SanctionsScreening = lazy(() => import('./features/intelligence/SanctionsS
 const AIInsightsHub = lazy(() => import('./features/ai/AIInsightsHub'));
 const SovereignObserverView = lazy(() => import('./features/dashboard/SovereignObserverView'));
 const DataIngestionHub = lazy(() => import('./features/platform/DataIngestionHub'));
+const DataIngestionTerminal = lazy(() => import('./features/platform/components/DataIngestionTerminal').then(m => ({ default: m.DataIngestionTerminal })));
 
 // Клієнтський арсенал — Газета та Компромат
 const NewspaperView = lazy(() => import('./features/newspaper/NewspaperView'));
@@ -236,7 +237,7 @@ export const AppRoutesNew = () => {
               <Route path="/system"            element={<Navigate to="/admin/command?tab=infra"      replace />} />
               <Route path="/monitoring"        element={<Navigate to="/admin/command?tab=infra"      replace />} />
               <Route path="/monitoring/realtime" element={<Navigate to="/admin/command?tab=infra"    replace />} />
-              <Route path="/ingestion"         element={<Navigate to="/admin/command?tab=dataops"    replace />} />
+              <Route path="/ingestion"         element={<DataIngestionTerminal />} />
               <Route path="/security"          element={<Navigate to="/admin/command?tab=security"   replace />} />
               <Route path="/deployment"        element={<Navigate to="/admin/command?tab=gitops"     replace />} />
               <Route path="/governance"        element={<Navigate to="/admin/command?tab=gitops"     replace />} />
