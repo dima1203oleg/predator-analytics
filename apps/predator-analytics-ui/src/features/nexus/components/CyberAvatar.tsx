@@ -64,9 +64,6 @@ export const CyberAvatar: React.FC<CyberAvatarProps> = ({ audioAnalyser, systemS
             luminanceSmoothing={0.9} 
             mipmapBlur
           />
-          <ChromaticAberration 
-            offset={new Vector2(0.0004, 0.0004)} 
-          />
           <Scanline 
             density={1.2} 
             opacity={0.03} 
