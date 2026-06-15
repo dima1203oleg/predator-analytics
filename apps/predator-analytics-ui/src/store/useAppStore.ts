@@ -31,6 +31,15 @@ interface AppState {
   isPlanMode: boolean;
   isCopilotOpen: boolean;
   
+  // AI Copilot State (for Client Portal)
+  aiState: {
+    isReasoning: boolean;
+    activeTools: string[];
+    response: string | null;
+    threatLevel: 'NORMAL' | 'HIGH';
+    activeTargetId: string | null;
+  };
+  
   // Actions
   setRole: (role: UserRole | string) => void;
   setPersona: (persona: InterlinkPersona) => void;
@@ -44,6 +53,10 @@ interface AppState {
   setTenant: (tenant: string) => void;
   setPlanMode: (isPlanMode: boolean) => void;
   setCopilotOpen: (isCopilotOpen: boolean) => void;
+  
+  // AI Actions
+  processAICommand: (command: string) => void;
+  resetAIState: () => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -65,6 +78,13 @@ export const useAppStore = create<AppState>()(
       tenant: 'Держмитслужба',
       isPlanMode: true,
       isCopilotOpen: false,
+      aiState: {
+        isReasoning: false,
+        activeTools: [],
+        response: null,
+        threatLevel: 'NORMAL',
+        activeTargetId: null,
+      },
 
       setRole: (userRole) => set({ userRole }),
       setPersona: (persona) => set({ persona }),
@@ -80,6 +100,50 @@ export const useAppStore = create<AppState>()(
       setTenant: (tenant) => set({ tenant }),
       setPlanMode: (isPlanMode) => set({ isPlanMode }),
       setCopilotOpen: (isCopilotOpen) => set({ isCopilotOpen }),
+
+      // Simulated AI Processing Action
+      processAICommand: (command) => {
+        set((state) => ({
+          aiState: {
+            ...state.aiState,
+            isReasoning: true,
+            response: null,
+            activeTools: ['RAG', 'Graph Analysis', 'Semantic Search'],
+          }
+        }));
+
+        // Simulate async reasoning delay
+        setTimeout(() => {
+          set((state) => ({
+            aiState: {
+              ...state.aiState,
+              isReasoning: false,
+              response: `Аналіз команди "${command}" завершено. Виявлено 4 ключові зв'язки. 2 активні судові справи, 1 зв'язок з бенефіціаром. Виводжу графову проекцію...`,
+            }
+          }));
+
+          // Simulate follow-up action (e.g., loading the graph target)
+          setTimeout(() => {
+            set((state) => ({
+              aiState: {
+                ...state.aiState,
+                threatLevel: 'HIGH',
+                activeTargetId: 'target-x'
+              }
+            }));
+          }, 1000);
+        }, 3000);
+      },
+
+      resetAIState: () => set((state) => ({
+         aiState: {
+           isReasoning: false,
+           activeTools: [],
+           response: null,
+           threatLevel: 'NORMAL',
+           activeTargetId: null,
+         }
+      })),
     }),
     {
       name: 'predator-app-storage',

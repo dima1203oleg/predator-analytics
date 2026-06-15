@@ -1,4 +1,4 @@
-import { useState, Suspense, useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Environment, PerspectiveCamera, Stars } from '@react-three/drei';
 
@@ -9,28 +9,19 @@ import { HolographicCore } from './components/HolographicCore';
 import { CyberHeader } from './components/CyberHeader';
 import { AnalyticalPanelsRight } from './components/AnalyticalPanelsRight';
 import { GraphMetricsPanel } from './components/GraphMetricsPanel';
+import { useAppStore } from '../../../store/useAppStore';
 
 export const WraithNexus = () => {
-  const [activeQuestId, setActiveQuestId] = useState<string | null>(null);
-  const [aiResponse, setAiResponse] = useState<string | null>(null);
-  const [isReasoning, setIsReasoning] = useState(false);
-  const [activeTools, setActiveTools] = useState<string[]>([]);
-  const [threatLevel, setThreatLevel] = useState<'NORMAL' | 'HIGH'>('NORMAL');
+  const { aiState, processAICommand, resetAIState } = useAppStore();
+  const { activeTargetId, threatLevel } = aiState;
+
+  // Cleanup AI state on unmount
+  useEffect(() => {
+    return () => resetAIState();
+  }, [resetAIState]);
 
   const handleCommand = (cmd: string) => {
-    setIsReasoning(true);
-    setAiResponse(null);
-    setActiveTools(['RAG', 'Graph Analysis', 'Semantic Search']);
-    
-    setTimeout(() => {
-      setIsReasoning(false);
-      setAiResponse('Аналіз завершено. Виявлено 4 ключові зв\'язки контрагента "Х". 2 активні судові справи, 1 зв\'язок з бенефіціаром. Виводжу графову проекцію...');
-      
-      setTimeout(() => {
-        setActiveQuestId('target-x');
-        setThreatLevel('HIGH');
-      }, 1000);
-    }, 3000);
+    processAICommand(cmd);
   };
 
   return (
@@ -60,9 +51,6 @@ export const WraithNexus = () => {
           <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
             <CentralCommandConsole 
               onCommand={handleCommand} 
-              aiResponse={aiResponse} 
-              isReasoning={isReasoning}
-              activeTools={activeTools}
             />
           </div>
 
@@ -102,11 +90,11 @@ export const WraithNexus = () => {
               <CinematicGrid threatLevel={threatLevel} />
               
               {/* Core or Graph depending on state */}
-              <group position={[0, activeQuestId ? 4 : 0, 0]}>
+              <group position={[0, activeTargetId ? 4 : 0, 0]}>
                 <HolographicCore />
               </group>
               
-              {activeQuestId && (
+              {activeTargetId && (
                 <group position={[0, -2, 0]}>
                   <ConnectionExplorer3D active={true} />
                 </group>

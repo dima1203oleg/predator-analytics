@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
 import { Mic, Send, Terminal, Cpu, Database, Network } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAppStore } from '../../../store/useAppStore';
 
 interface CentralCommandConsoleProps {
   onCommand: (command: string) => void;
-  aiResponse: string | null;
-  isReasoning?: boolean;
-  activeTools?: string[];
 }
 
-export const CentralCommandConsole = ({ onCommand, aiResponse, isReasoning = false, activeTools = [] }: CentralCommandConsoleProps) => {
+export const CentralCommandConsole = ({ onCommand }: CentralCommandConsoleProps) => {
+  const { aiState } = useAppStore();
+  const { isReasoning, activeTools, response: aiResponse } = aiState;
   const [input, setInput] = useState('');
   const [displayedResponse, setDisplayedResponse] = useState('');
 
