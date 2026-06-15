@@ -3,6 +3,7 @@ import asyncio
 from predator_common.logging import get_logger
 from services.adv_dvs.validators.level1_infra import run_level1_checks
 from services.adv_dvs.validators.level2_data import run_level2_checks
+from services.adv_dvs.validators.level3_security import run_level3_checks
 from services.adv_dvs.report_generator import DVSReportGenerator
 
 logger = get_logger("adv_dvs.orchestrator")
@@ -28,6 +29,13 @@ class ADVOrchestrator:
             l2_results = await run_level2_checks()
             all_checks.extend(l2_results.get("details", []))
             if l2_results.get("status") != "GO":
+                status = "NO-GO"
+                
+        # Рівень 3: Безпека
+        if status == "GO":
+            l3_results = await run_level3_checks()
+            all_checks.extend(l3_results.get("details", []))
+            if l3_results.get("status") != "GO":
                 status = "NO-GO"
         
         # Формування агрегованого звіту
