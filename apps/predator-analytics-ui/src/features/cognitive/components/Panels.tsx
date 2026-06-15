@@ -18,19 +18,49 @@ export const VerificationPanel = () => {
 };
 
 export const ActiveProcesses = () => {
+  const [thoughts, setThoughts] = useState<{id: string, text: string, type: 'thought'|'tool'|'progress'}[]>([
+    { id: '1', text: 'Ініціалізація когнітивного ядра...', type: 'progress' }
+  ]);
+
+  useEffect(() => {
+    import('../../../store/useEventBus').then(({ useEventBus }) => {
+      const bus = useEventBus.getState();
+      
+      const unsub1 = bus.subscribe('AI_THOUGHT_LOG', (e) => {
+        setThoughts(prev => [{ id: e.id, text: e.payload.text, type: 'thought' }, ...prev].slice(0, 10));
+      });
+      const unsub2 = bus.subscribe('AI_TOOL_CALL', (e) => {
+        setThoughts(prev => [{ id: e.id, text: `Виклик MCP: ${e.payload.tool}`, type: 'tool' }, ...prev].slice(0, 10));
+      });
+      const unsub3 = bus.subscribe('ETL_PROGRESS', (e) => {
+        setThoughts(prev => [{ id: e.id, text: `Прогрес: ${e.payload.stage}`, type: 'progress' }, ...prev].slice(0, 10));
+      });
+
+      return () => {
+        unsub1();
+        unsub2();
+        unsub3();
+      };
+    });
+  }, []);
+
   return (
-    <div className="cognitive-panel">
-      <div className="cognitive-panel-header">АКТИВНІ ПРОЦЕСИ МИСЛЕННЯ ШІ</div>
-      <div style={{ fontSize: '11px' }}>
+    <div className="cognitive-panel" style={{ display: 'flex', flexDirection: 'column' }}>
+      <div className="cognitive-panel-header">РЕЖИМ МИСЛЕННЯ (SAFE LOG)</div>
+      <div style={{ fontSize: '11px', marginBottom: '8px' }}>
         Генерація | Тест | Супервізій <span style={{ color: 'var(--neon-cyan)' }}>Real-Time</span>
       </div>
-      <div style={{ marginTop: '12px' }}>
-        <div style={{ width: '100%', height: '4px', background: '#111', borderRadius: '2px', overflow: 'hidden' }}>
-          <div style={{ width: '67%', height: '100%', background: 'var(--neon-cyan)', boxShadow: '0 0 5px var(--neon-cyan)' }}></div>
-        </div>
-        <div style={{ marginTop: '12px', fontSize: '12px', color: 'var(--text-primary)' }}>▶ Сканування графу...</div>
-        <div style={{ fontSize: '12px', color: 'var(--text-dim)' }}>▶ Аналіз офшорних зв'язків...</div>
-        <div style={{ fontSize: '12px', color: 'var(--text-dim)' }}>▶ Виявлення бенефіціарів...</div>
+      
+      <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+        {thoughts.map((t) => (
+          <div key={t.id} style={{ 
+            fontSize: '12px', 
+            color: t.type === 'tool' ? 'var(--neon-orange)' : (t.type === 'progress' ? 'var(--neon-cyan)' : 'var(--text-dim)')
+          }}>
+            {t.type === 'tool' ? '⚙️ ' : (t.type === 'progress' ? '▶ ' : '🧠 ')}
+            {t.text}
+          </div>
+        ))}
       </div>
     </div>
   );
