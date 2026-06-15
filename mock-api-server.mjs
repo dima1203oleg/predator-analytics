@@ -6775,6 +6775,53 @@ app.use('/api', (req, res) => {
   res.json({ success: true, message: 'Mock accepted' });
 });
 
+// WebSocket Server for Avatar Stream Simulation
+const wss = new WebSocketServer({ server });
+
+wss.on('connection', (ws) => {
+  console.log('[WSS] Avatar WebSocket connected');
+  
+  ws.on('message', async (message) => {
+    let userText = "Аудіо-дані отримано (MediaRecorder)";
+    
+    // Check if binary (audio)
+    if (message instanceof Buffer) {
+      console.log(`[WSS] Received audio buffer: ${message.length} bytes`);
+      ws.send(JSON.stringify({ type: 'transcription', text: 'Аудіо-команду розпізнано' }));
+      userText = "Аналіз";
+    } else {
+      try {
+        const data = JSON.parse(message);
+        if (data.text) userText = data.text;
+      } catch (e) {
+        userText = message.toString();
+      }
+    }
+
+    console.log(`[WSS] Processing command: ${userText}`);
+    ws.send(JSON.stringify({ type: 'status', message: 'processing_llm' }));
+    
+    const responseWords = [
+      "Прийнято.", "Я", "DeepSeek-R1.", "Синхронізація", "з", "базою", "даних", "завершена.",
+      "Ризики", "в", "нормі."
+    ];
+    
+    // Simulate streaming
+    for (const word of responseWords) {
+      await new Promise(r => setTimeout(r, 200)); // 200ms delay per word
+      ws.send(JSON.stringify({ 
+        type: 'token', 
+        text: word,
+        viseme: 'A' // fake viseme
+      }));
+    }
+    
+    ws.send(JSON.stringify({ type: 'status', message: 'idle' }));
+  });
+
+  ws.on('close', () => console.log('[WSS] Avatar WebSocket disconnected'));
+});
+
 server.listen(PORT, '127.0.0.1', () => {
     console.log(`🚀 Mock API Server running on http://127.0.0.1:${PORT}`);
 });

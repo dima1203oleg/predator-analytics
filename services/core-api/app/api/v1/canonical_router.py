@@ -12,6 +12,7 @@ from app.routers import (
     persons_router as users_router,
 )
 from app.api.v1.adv_dvs import router as adv_dvs_router
+from app.api.v1.endpoints import agents_control, llm, claw_code, avatar_stream
 
 router = APIRouter()
 
@@ -26,13 +27,18 @@ router.include_router(users_router, prefix="/v1/users", tags=["users"])
 router.include_router(risk_router, prefix="/v1/risk", tags=["risk"])
 router.include_router(search_router, prefix="/v1/search", tags=["search"])
 router.include_router(adv_dvs_router, prefix="/v1/adv-dvs", tags=["adv-dvs"])
-
 # Підключення LLM Router
-from app.api.v1.endpoints import llm, claw_code
 router.include_router(
     llm.router,
     prefix="/v1/llm",
     tags=["llm"]
+)
+
+# Підключення Avatar Stream WebSocket
+router.include_router(
+    avatar_stream.router,
+    prefix="/v1/copilot/avatar",
+    tags=["copilot", "avatar"]
 )
 
 # Підключення Claw Code (Автономний Рефакторинг)

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Mic, MicOff, Loader2 } from 'lucide-react';
 import { useAppStore } from '../../../store/useAppStore';
 import { motion } from 'framer-motion';
@@ -9,55 +9,73 @@ export const VoiceCommandCenter = () => {
   const [transcript, setTranscript] = useState('');
   const [recognition, setRecognition] = useState<any>(null);
 
+  const wsRef = useRef<WebSocket | null>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+
   useEffect(() => {
-    // Initialize SpeechRecognition
-    const SpeechRecognition = window.SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (SpeechRecognition) {
-      const rec = new SpeechRecognition();
-      rec.continuous = false;
-      rec.interimResults = true;
-      rec.lang = 'uk-UA';
+    // Connect to WebSocket
+    const ws = new WebSocket('ws://localhost:9080');
+    
+    ws.onopen = () => console.log('Avatar WS connected');
+    ws.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        if (data.type === 'transcription') {
+          setTranscript(data.text);
+        } else if (data.type === 'status') {
+          if (data.message === 'processing_llm') {
+            useAppStore.setState(s => ({
+              aiState: { ...s.aiState, isReasoning: true }
+            }));
+          } else if (data.message === 'idle') {
+            useAppStore.setState(s => ({
+              aiState: { ...s.aiState, isReasoning: false, isSpeaking: false }
+            }));
+          }
+        } else if (data.type === 'token') {
+          // Streaming text - in a real app we'd accumulate it
+          // and trigger TTS or use the viseme for Avatar
+          useAppStore.setState(s => ({
+            aiState: { ...s.aiState, isSpeaking: true }
+          }));
+        }
+      } catch(e) {}
+    };
+    
+    wsRef.current = ws;
 
-      rec.onstart = () => {
-        setIsListening(true);
-        setTranscript('');
-      };
-
-      rec.onresult = (event: any) => {
-        const current = event.resultIndex;
-        const result = event.results[current][0].transcript;
-        setTranscript(result);
-      };
-
-      rec.onend = () => {
-        setIsListening(false);
-        // We handle sending in a separate effect or directly if transcript is long enough
-        // but since onend fires, we can use the transcript from state if it's there
-      };
-
-      rec.onerror = (event: any) => {
-        console.error('Speech recognition error', event.error);
-        setIsListening(false);
-      };
-
-      setRecognition(rec);
-    } else {
-      console.warn('SpeechRecognition API not supported in this browser.');
-    }
+    return () => ws.close();
   }, []);
 
-  const handleToggleListen = () => {
+  const handleToggleListen = async () => {
     if (isListening) {
-      recognition?.stop();
+      setIsListening(false);
+      mediaRecorderRef.current?.stop();
     } else {
-      recognition?.start();
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+        
+        mediaRecorder.ondataavailable = (e) => {
+          if (e.data.size > 0 && wsRef.current?.readyState === WebSocket.OPEN) {
+            wsRef.current.send(e.data);
+          }
+        };
+
+        mediaRecorder.start(1000); // Send chunk every second
+        mediaRecorderRef.current = mediaRecorder;
+        setIsListening(true);
+        setTranscript('Запис аудіо...');
+      } catch (err) {
+        console.error('Mic error:', err);
+      }
     }
   };
 
   // When listening stops and we have a transcript, send it
   useEffect(() => {
-    if (!isListening && transcript.trim().length > 0 && !aiState.isReasoning) {
-      processAICommand(transcript.trim());
+    if (!isListening && transcript && transcript !== 'Запис аудіо...' && !aiState.isReasoning) {
+      processAICommand(transcript);
       setTranscript('');
     }
   }, [isListening, transcript, aiState.isReasoning, processAICommand]);
