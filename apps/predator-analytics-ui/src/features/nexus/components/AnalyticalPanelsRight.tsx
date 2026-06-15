@@ -1,7 +1,7 @@
-import React from 'react';
 import { MissionHeatmap } from './charts/MissionHeatmap';
 import { AnomalyChart } from './charts/AnomalyChart';
 import { SectorTreemap } from './charts/SectorTreemap';
+import { UkraineRiskMap } from './charts/UkraineRiskMap';
 import { SciFiPanel } from '../SciFiPanel';
 
 export const AnalyticalPanelsRight = () => {
@@ -18,11 +18,7 @@ export const AnalyticalPanelsRight = () => {
 
       {/* Map of Ukraine */}
       <SciFiPanel title="КАРТА РИЗИКІВ САНКЦІЙ РНБО">
-        <div className="h-32 w-full bg-[url('https://upload.wikimedia.org/wikipedia/commons/d/d4/Ukraine_map.svg')] bg-contain bg-center bg-no-repeat opacity-50 filter sepia hue-rotate-180 brightness-75 contrast-125 saturate-200">
-          {/* Overlay dots for risk */}
-          <div className="w-2 h-2 bg-red-500 rounded-full absolute mt-12 ml-16 animate-ping" />
-          <div className="w-2 h-2 bg-red-500 rounded-full absolute mt-16 ml-32 animate-pulse" />
-        </div>
+        <UkraineRiskMap />
       </SciFiPanel>
 
       {/* Charts */}
