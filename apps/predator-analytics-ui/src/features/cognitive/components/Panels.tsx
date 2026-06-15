@@ -1,14 +1,58 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import ForceGraph2D from 'react-force-graph-2d';
+import { useDropzone } from 'react-dropzone';
 
 // --- ЛІВА ПАНЕЛЬ ---
 export const VerificationPanel = () => {
+  const [isUploading, setIsUploading] = useState(false);
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    setIsUploading(true);
+    // Імітація ETL Pipeline
+    setTimeout(() => {
+      import('../../../store/useEventBus').then(({ useEventBus }) => {
+        const bus = useEventBus.getState();
+        bus.emit('ETL_PROGRESS', { stage: 'MinIO Upload Complete' });
+        setTimeout(() => bus.emit('ETL_PROGRESS', { stage: 'PostgreSQL Sync' }), 1000);
+        setTimeout(() => bus.emit('ETL_PROGRESS', { stage: 'Neo4j Graph Update' }), 2000);
+        setTimeout(() => bus.emit('ETL_PROGRESS', { stage: 'Qdrant Embeddings' }), 3000);
+        setTimeout(() => {
+          bus.emit('ETL_PROGRESS', { stage: 'OpenSearch Indexed' });
+          setIsUploading(false);
+        }, 4000);
+      });
+    }, 500);
+  }, []);
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop, accept: { 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'], 'application/vnd.ms-excel': ['.xls'] } });
+
   return (
-    <div className="cognitive-panel">
-      <div className="cognitive-panel-header">ВІКТОРИНІ ПЕРЕВІРКИ ГРАФУ</div>
+    <div className="cognitive-panel" style={{ display: 'flex', flexDirection: 'column' }}>
+      <div className="cognitive-panel-header">ВІКТОРИНІ ПЕРЕВІРКИ ГРАФУ & ETL</div>
       <div style={{ fontSize: '11px', marginBottom: '12px' }}>
         Генерація | Тест | Супервізій <span style={{ color: 'var(--neon-cyan)' }}>Real-Time</span>
       </div>
-      <ul style={{ listStyle: 'none', fontSize: '12px', padding: 0 }}>
+      
+      <div 
+        {...getRootProps()} 
+        style={{ 
+          border: `1px dashed ${isDragActive ? 'var(--neon-pink)' : 'var(--neon-cyan)'}`,
+          padding: '12px',
+          textAlign: 'center',
+          cursor: 'pointer',
+          marginBottom: '12px',
+          background: isDragActive ? 'rgba(255, 0, 64, 0.1)' : 'transparent',
+          transition: 'all 0.3s'
+        }}
+      >
+        <input {...getInputProps()} />
+        {isUploading ? (
+          <span style={{ color: 'var(--neon-orange)' }} className="critical-pulse">⏳ ЙДЕ ОБРОБКА ETL...</span>
+        ) : (
+          <span style={{ color: 'var(--neon-cyan)', fontSize: '11px' }}>D&D EXCEL (.XLSX) АБО КЛІКНІТЬ</span>
+        )}
+      </div>
+
+      <ul style={{ listStyle: 'none', fontSize: '12px', padding: 0, margin: 0, flex: 1, overflowY: 'auto' }}>
         <li className="critical-pulse" style={{ marginBottom: '8px' }}>⚠️ ТОВ "ЕНЕРДЖІ ГРУП" — перевірка</li>
         <li style={{ color: 'var(--neon-orange)', marginBottom: '8px' }}>⚠️ Консорцедований зв'язок: 13 офшорів</li>
         <li style={{ color: 'var(--neon-cyan)', marginBottom: '8px' }}>✅ Аналіз завершено: 4 ключові зв'язки</li>
@@ -221,14 +265,44 @@ export const ConsoleCommands = () => {
 
 // --- ПРАВА ПАНЕЛЬ ---
 export const RiskMapPanel = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [dimensions, setDimensions] = useState({ width: 300, height: 150 });
+  const graphData = {
+    nodes: [
+      { id: 'Energy', group: 1, name: 'ТОВ ЕНЕРДЖІ ГРУП', color: '#ff0040' },
+      { id: 'Prime', group: 2, name: 'ПРАЙМ ЕНЕРДЖІ', color: '#ff8800' },
+      { id: 'Yug', group: 3, name: 'ЮГ НАФТА', color: '#ffea00' },
+      { id: 'Offshore1', group: 4, name: 'Cyprus Ltd', color: '#00ffcc' }
+    ],
+    links: [
+      { source: 'Energy', target: 'Prime', value: 1 },
+      { source: 'Energy', target: 'Yug', value: 1 },
+      { source: 'Energy', target: 'Offshore1', value: 2 }
+    ]
+  };
+
+  useEffect(() => {
+    if (containerRef.current) {
+      setDimensions({
+        width: containerRef.current.clientWidth,
+        height: 150
+      });
+    }
+  }, []);
+
   return (
-    <div className="cognitive-panel">
-      <div className="cognitive-panel-header">КАРТА РИЗИКІВ САНКЦІЙ РНБО</div>
-      {/* Заглушка карти */}
-      <div style={{ height: '150px', background: 'linear-gradient(135deg, #001a1a, #000)', border: '1px solid var(--neon-cyan)', position: 'relative' }}>
-        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', opacity: 0.5 }}>
-          [ ІНТЕРАКТИВНА КАРТА ]
-        </div>
+    <div className="cognitive-panel" style={{ display: 'flex', flexDirection: 'column' }}>
+      <div className="cognitive-panel-header">ІНТЕРАКТИВНИЙ ГРАФ ЗВ'ЯЗКІВ</div>
+      <div ref={containerRef} style={{ height: '150px', border: '1px solid var(--neon-cyan)', position: 'relative', overflow: 'hidden' }}>
+        <ForceGraph2D
+          width={dimensions.width}
+          height={dimensions.height}
+          graphData={graphData}
+          nodeLabel="name"
+          nodeColor={node => node.color}
+          linkColor={() => 'rgba(0, 255, 204, 0.4)'}
+          backgroundColor="#000808"
+        />
       </div>
       <div style={{ marginTop: '12px', fontSize: '12px' }}>
         <div style={{ marginBottom: '4px' }}><span style={{ color: 'var(--neon-pink)' }}>⬤</span> ТОВ "ЕНЕРДЖІ ГРУП" — КРИТИЧНИЙ</div>
