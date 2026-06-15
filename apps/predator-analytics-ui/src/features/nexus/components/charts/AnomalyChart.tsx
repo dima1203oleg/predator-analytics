@@ -1,10 +1,19 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactECharts from 'echarts-for-react';
 
 export const AnomalyChart = () => {
-  const xAxisData = Array.from({ length: 30 }, (_, i) => `T-${30 - i}`);
-  const barData = xAxisData.map(() => Math.random() * 50 + 10);
-  const lineData = xAxisData.map((_, i) => barData[i] * 1.5 + Math.random() * 20);
+  const [data, setData] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch('http://localhost:9080/api/v1/neural/training/stats')
+      .then(res => res.json())
+      .then(setData)
+      .catch(console.error);
+  }, []);
+
+  const xAxisData = data.map(d => `Epoch ${d.epoch}`);
+  const barData = data.map(d => d.accuracy);
+  const lineData = data.map(d => d.loss * 10); // scale for visibility
 
   const option = {
     tooltip: { trigger: 'axis', backgroundColor: '#020817', borderColor: '#3b82f6', textStyle: { color: '#3b82f6' } },
@@ -22,7 +31,7 @@ export const AnomalyChart = () => {
     },
     series: [
       {
-        name: 'Volume',
+        name: 'Accuracy (Confidence)',
         type: 'bar',
         data: barData,
         itemStyle: {
@@ -31,7 +40,7 @@ export const AnomalyChart = () => {
         }
       },
       {
-        name: 'Anomaly Score',
+        name: 'Loss (Anomaly)',
         type: 'line',
         data: lineData,
         smooth: true,
