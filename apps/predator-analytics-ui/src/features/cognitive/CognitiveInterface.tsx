@@ -8,6 +8,8 @@ import {
   RiskMapPanel, 
   PriceAnomalies 
 } from './Panels';
+import { Canvas } from '@react-three/fiber';
+import { CyberAvatar } from '../nexus/components/CyberAvatar';
 
 const CognitiveInterface = () => {
   return (
@@ -35,6 +37,18 @@ const CognitiveInterface = () => {
 
       {/* Центральна колонка */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', height: '100%' }}>
+        <div style={{ flex: 1, minHeight: 0, position: 'relative', border: '1px solid var(--neon-cyan)', background: '#000808' }}>
+          <div className="cognitive-panel-header" style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10 }}>AI COGNITIVE AVATAR</div>
+          <div style={{ position: 'absolute', inset: 0, top: '24px' }}>
+            <Canvas camera={{ position: [0, 0, 3], fov: 50 }}>
+              <ambientLight intensity={0.5} />
+              <directionalLight position={[0, 2, 5]} intensity={1} />
+              <React.Suspense fallback={null}>
+                <CyberAvatar />
+              </React.Suspense>
+            </Canvas>
+          </div>
+        </div>
         <div style={{ flex: 1, minHeight: 0 }}>
           <ChatAssistant />
         </div>

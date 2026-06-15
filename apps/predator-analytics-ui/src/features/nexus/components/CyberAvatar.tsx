@@ -3,15 +3,24 @@ import { useFrame, useLoader } from '@react-three/fiber';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { VRMLoaderPlugin, VRM } from '@pixiv/three-vrm';
 import * as THREE from 'three';
-import { useAppStore } from '../../../store/useAppStore';
+import { useEventBus, SystemEvent } from '../../../store/useEventBus';
 
 export const CyberAvatar = () => {
-  const { aiState } = useAppStore();
   const vrmRef = useRef<VRM | null>(null);
   
   // Audio state
-  const isSpeaking = aiState.isSpeaking; // We'll add this to state
+  const [isSpeaking, setIsSpeaking] = useState(false);
   const [mouthOpen, setMouthOpen] = useState(0);
+
+  useEffect(() => {
+    // Підписка на віземи для Lip Sync
+    const unsubscribe = useEventBus.getState().subscribe('AVATAR_VISEME', (event: SystemEvent) => {
+      const { value, speaking } = event.payload;
+      if (speaking !== undefined) setIsSpeaking(speaking);
+      if (value !== undefined) setMouthOpen(value);
+    });
+    return unsubscribe;
+  }, []);
 
   // Load the VRM model
   const gltf = useLoader(GLTFLoader, '/avatar.vrm', (loader) => {

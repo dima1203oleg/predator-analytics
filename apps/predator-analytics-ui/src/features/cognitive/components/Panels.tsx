@@ -38,25 +38,115 @@ export const ActiveProcesses = () => {
 
 // --- ЦЕНТРАЛЬНА ПАНЕЛЬ ---
 export const ChatAssistant = () => {
+  const [messages, setMessages] = useState<{role: 'user' | 'ai', text: string}[]>([
+    { role: 'user', text: "Системний запит ініціалізовано..." },
+    { role: 'ai', text: "Слухаю вказівки. Готовий до аналізу." }
+  ]);
+  const [isListening, setIsListening] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const wsRef = useRef<WebSocket | null>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+
+  useEffect(() => {
+    // Підключення до локального WebSocket для Голосу / Тексту
+    const ws = new WebSocket('ws://localhost:9080');
+    ws.onopen = () => console.log('[ChatAssistant] WS connected');
+    ws.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        if (data.type === 'transcription') {
+          setMessages(prev => [...prev, { role: 'user', text: data.text }]);
+        } else if (data.type === 'token') {
+          // Імітуємо потік тексту
+          setMessages(prev => {
+            const newMsgs = [...prev];
+            if (newMsgs.length > 0 && newMsgs[newMsgs.length - 1].role === 'ai' && isProcessing) {
+              newMsgs[newMsgs.length - 1].text += data.text;
+            } else {
+              newMsgs.push({ role: 'ai', text: data.text });
+              setIsProcessing(true);
+            }
+            return newMsgs;
+          });
+          // Відправляємо подію для Avatar (Lip Sync)
+          import('../../../store/useEventBus').then(({ useEventBus }) => {
+            useEventBus.getState().emit('AVATAR_VISEME', { value: Math.random() * 0.8, speaking: true });
+          });
+        } else if (data.type === 'status' && data.message === 'idle') {
+          setIsProcessing(false);
+          import('../../../store/useEventBus').then(({ useEventBus }) => {
+            useEventBus.getState().emit('AVATAR_VISEME', { value: 0, speaking: false });
+          });
+        }
+      } catch (e) {}
+    };
+    wsRef.current = ws;
+    return () => ws.close();
+  }, [isProcessing]);
+
+  const toggleListen = async () => {
+    if (isListening) {
+      setIsListening(false);
+      mediaRecorderRef.current?.stop();
+    } else {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+        mediaRecorder.ondataavailable = (e) => {
+          if (e.data.size > 0 && wsRef.current?.readyState === WebSocket.OPEN) {
+            wsRef.current.send(e.data);
+          }
+        };
+        mediaRecorder.start(1000);
+        mediaRecorderRef.current = mediaRecorder;
+        setIsListening(true);
+      } catch (err) {
+        console.error('Mic error:', err);
+      }
+    }
+  };
+
   return (
-    <div className="cognitive-panel">
-      <div className="cognitive-panel-header">CHAT & AI-ASSISTANT</div>
-      <div className="cognitive-chat-message cognitive-chat-user">
-        👤 Покажи зв'язки мого контрагента "X" з сумами транзакцій
+    <div className="cognitive-panel" style={{ display: 'flex', flexDirection: 'column' }}>
+      <div className="cognitive-panel-header" style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <span>CHAT & AI-ASSISTANT</span>
+        <button 
+          onClick={toggleListen}
+          style={{ 
+            background: 'transparent', border: 'none', cursor: 'pointer', 
+            color: isListening ? 'var(--neon-pink)' : 'var(--neon-cyan)',
+            animation: isListening ? 'pulse 1s infinite' : 'none'
+          }}
+        >
+          {isListening ? '[ЗУПИНИТИ ЗАПИС]' : '[МІКРОФОН]'}
+        </button>
       </div>
-      <div className="cognitive-chat-message">
-        🤖 Аналіз завершено, Виявлено 4 ключові зв'язки.<br/>
-        Деталі: 2 активні судові справи; 1 зв'язок з бенефіціаром (раніше: блогер); 1 ідентифікований конкурент.
+      
+      <div style={{ flex: 1, overflowY: 'auto', marginBottom: '40px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        {messages.map((m, i) => (
+          <div key={i} className={`cognitive-chat-message ${m.role === 'user' ? 'cognitive-chat-user' : ''}`}>
+            {m.role === 'user' ? '👤 ' : '🤖 '}
+            {m.text}
+          </div>
+        ))}
       </div>
-      <button className="cognitive-glow-button" style={{ marginTop: '12px' }}>Повторити?</button>
       
       <div style={{ position: 'absolute', bottom: '12px', left: '12px', right: '12px' }}>
         <input 
           type="text" 
-          placeholder="Enter detailed query... (0/500)" 
+          placeholder="Введіть запит... (Enter для відправки)" 
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && e.currentTarget.value.trim() !== '') {
+              setMessages(prev => [...prev, { role: 'user', text: e.currentTarget.value }]);
+              if (wsRef.current?.readyState === WebSocket.OPEN) {
+                wsRef.current.send(JSON.stringify({ type: 'text', text: e.currentTarget.value }));
+              }
+              e.currentTarget.value = '';
+            }
+          }}
           style={{ 
             width: '100%', background: '#111', border: '1px solid var(--neon-cyan)', 
-            color: 'var(--neon-cyan)', padding: '8px', fontFamily: 'monospace' 
+            color: 'var(--neon-cyan)', padding: '8px', fontFamily: 'monospace', outline: 'none'
           }} 
         />
       </div>
