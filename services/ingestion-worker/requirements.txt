@@ -19,4 +19,5 @@ spacy>=3.8.0
 rapidfuzz>=3.0.0
 click
 qdrant-client
+--extra-index-url https://download.pytorch.org/whl/cpu
 sentence-transformers

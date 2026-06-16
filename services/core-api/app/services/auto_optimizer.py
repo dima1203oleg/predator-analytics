@@ -11,9 +11,9 @@ logger = logging.getLogger(__name__)
 
 class AutoOptimizerService:
     def __init__(self):
-        self.artifacts_dir = "artifacts/datasets"
+        self.artifacts_dir = "/app/data/artifacts/datasets"
         os.makedirs(self.artifacts_dir, exist_ok=True)
-        self.mlflow_mock_dir = "artifacts/mlflow"
+        self.mlflow_mock_dir = "/app/data/artifacts/mlflow"
         os.makedirs(self.mlflow_mock_dir, exist_ok=True)
 
     async def collect_metrics(self) -> Dict[str, float]:
