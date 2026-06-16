@@ -7,6 +7,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mic, MicOff, Sparkles, BrainCircuit, Volume2, VolumeX } from 'lucide-react';
 import { cn } from '@/utils/cn';
+import { useAppStore } from '@/store/useAppStore';
+import { Canvas } from '@react-three/fiber';
+import { HoloFaceModel } from '../features/nexus/components/HoloFaceModel';
 
 interface AIVoiceAssistantProps {
   className?: string;
@@ -79,6 +82,8 @@ export const AIVoiceAssistant: React.FC<AIVoiceAssistantProps> = ({
     };
   }, [language]);
 
+  const { setSpeakingState, speakText } = useAppStore();
+
   const handleCommand = async (command: string) => {
     setIsProcessing(true);
     setTranscript(command);
@@ -87,6 +92,12 @@ export const AIVoiceAssistant: React.FC<AIVoiceAssistantProps> = ({
     setTimeout(() => {
       const aiResponse = generateResponse(command);
       setResponse(aiResponse);
+      
+      // Оновлюємо глобальний стейт для аватара
+      useAppStore.setState((state) => ({
+        aiState: { ...state.aiState, response: aiResponse }
+      }));
+      
       speak(aiResponse);
       setIsProcessing(false);
 
@@ -124,11 +135,29 @@ export const AIVoiceAssistant: React.FC<AIVoiceAssistantProps> = ({
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = language;
     utterance.volume = volume;
-    utterance.rate = 1;
-    utterance.pitch = 1;
+    utterance.rate = 0.85; // Slower
+    utterance.pitch = 0.1; // Deep bass
 
-    utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => setIsSpeaking(false);
+    // Try to select a male voice if available
+    const voices = window.speechSynthesis.getVoices();
+    const ukVoices = voices.filter(v => v.lang.includes('uk'));
+    if (ukVoices.length > 0) {
+      const maleVoice = ukVoices.find(v => v.name.toLowerCase().includes('male'));
+      utterance.voice = maleVoice || ukVoices[0];
+    }
+
+    utterance.onstart = () => {
+      setIsSpeaking(true);
+      setSpeakingState(true);
+    };
+    utterance.onend = () => {
+      setIsSpeaking(false);
+      setSpeakingState(false);
+    };
+    utterance.onerror = () => {
+      setIsSpeaking(false);
+      setSpeakingState(false);
+    };
 
     synthesisRef.current.speak(utterance);
   };
@@ -153,7 +182,7 @@ export const AIVoiceAssistant: React.FC<AIVoiceAssistantProps> = ({
   };
 
   return (
-    <div className={cn('fixed bottom-6 right-6 z-50', className)}>
+    <div className={cn('fixed bottom-8 right-[120px] z-50', className)}>
       <motion.div
         className="relative"
         whileHover={{ scale: 1.05 }}
@@ -226,6 +255,18 @@ export const AIVoiceAssistant: React.FC<AIVoiceAssistantProps> = ({
               {response && (
                 <div className="border-t border-white/10 pt-2">
                   <p className="text-sm text-white font-medium">{response}</p>
+                </div>
+              )}
+
+              {/* Avatar 3D Popup */}
+              {isSpeaking && (
+                <div className="h-40 w-full mb-3 rounded-xl overflow-hidden border border-rose-500/20 bg-black/50">
+                  <Canvas shadows dpr={[1, 2]} camera={{ position: [0, 0, 3], fov: 40 }}>
+                    <ambientLight intensity={0.5} />
+                    <directionalLight position={[10, 10, 5]} intensity={1} />
+                    <pointLight position={[-10, -10, -10]} intensity={0.5} color="#bd00ff" />
+                    <HoloFaceModel audioAnalyser={null} systemStatus="HEALTHY" />
+                  </Canvas>
                 </div>
               )}
 

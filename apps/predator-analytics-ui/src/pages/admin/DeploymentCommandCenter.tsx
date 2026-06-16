@@ -18,7 +18,6 @@ export default function DeploymentCommandCenter() {
   const [data, setData] = useState<ValidationResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [scanLine, setScanLine] = useState(false);
 
   const fetchLatest = async () => {
     try {
@@ -32,8 +31,6 @@ export default function DeploymentCommandCenter() {
 
   useEffect(() => {
     fetchLatest();
-    const interval = setInterval(() => setScanLine(s => !s), 3000);
-    return () => clearInterval(interval);
   }, []);
 
   const runValidation = async (chaosMode = false) => {
@@ -59,70 +56,63 @@ export default function DeploymentCommandCenter() {
 
   const getStatusIcon = (status: string, className = "w-5 h-5") => {
     switch(status) {
-      case "pass": return <CheckCircle2 className={`${className} text-red-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]`} />;
-      case "warning": return <AlertTriangle className={`${className} text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]`} />;
+      case "pass": return <CheckCircle2 className={`${className} text-emerald-500`} />;
+      case "warning": return <AlertTriangle className={`${className} text-amber-500`} />;
       case "fail":
       case "error":
-      case "CRITICAL": return <AlertCircle className={`${className} text-red-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]`} />;
-      case "HEALTHY": return <CheckCircle2 className={`${className} text-red-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]`} />;
-      default: return <Cpu className={`${className} text-gray-500`} />;
+      case "CRITICAL": return <AlertCircle className={`${className} text-red-500`} />;
+      case "HEALTHY": return <CheckCircle2 className={`${className} text-emerald-500`} />;
+      default: return <Cpu className={`${className} text-slate-400`} />;
     }
   };
 
   const isReady = data?.status === "HEALTHY" || data?.status === "WARNING";
-  const scoreColor = (data?.utos_score ?? 0) >= 95 ? "text-red-500 drop-shadow-[0_0_15px_rgba(239,68,68,0.6)]" : 
-                     ((data?.utos_score ?? 0) >= 70 ? "text-amber-400 drop-shadow-[0_0_15px_rgba(251,191,36,0.6)]" : 
-                     "text-red-500 drop-shadow-[0_0_15px_rgba(239,68,68,0.6)]");
+  const scoreColor = (data?.utos_score ?? 0) >= 95 ? "text-emerald-600" : 
+                     ((data?.utos_score ?? 0) >= 70 ? "text-amber-500" : 
+                     "text-red-500");
 
   return (
-    <div className="min-h-screen p-8 bg-[#030000] matrix-grid text-white relative overflow-hidden font-sans">
-      
-      {/* CRT Scanline Effect */}
-      <div className="pointer-events-none absolute inset-0 z-50 overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.02] mix-blend-overlay bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSJ0cmFuc3BhcmVudCIvPgo8cGF0aCBkPSJNMCAwTDAgNE0yIDBMMiA0IiBzdHJva2U9IiNmZmYiIHN0cm9rZS1vcGFjaXR5PSIwLjUiIHN0cm9rZS13aWR0aD0iMSIvPgo8L3N2Zz4=')] bg-repeat" />
-        <motion.div 
-          animate={{ top: ["-10%", "110%"] }} 
-          transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-          className="absolute left-0 right-0 h-8 bg-gradient-to-b from-transparent via-red-500/10 to-transparent" 
-        />
-      </div>
-
-      <div className="relative z-10 max-w-7xl mx-auto space-y-8">
+    <div className="min-h-screen p-8 bg-slate-50 text-slate-900 font-sans">
+      <div className="max-w-7xl mx-auto space-y-8">
         
         {/* Header Section */}
-        <div className="flex justify-between items-end border-b border-red-900/40 pb-6">
+        <div className="flex justify-between items-end border-b border-slate-200 pb-6">
           <div>
-            <h1 className="text-4xl font-black tracking-widest text-white/90 drop-shadow-[0_0_15px_rgba(239,68,68,0.5)] flex items-center gap-3">
-              <ShieldAlert className="w-10 h-10 text-red-500" />
-              DEPLOYMENT COMMAND CENTER
+            <h1 className="text-3xl font-bold tracking-tight text-slate-900 flex items-center gap-3">
+              <ShieldAlert className="w-8 h-8 text-blue-600" />
+              ПАНЕЛЬ УПРАВЛІННЯ
             </h1>
-            <p className="text-red-500/70 font-mono text-sm tracking-widest mt-2 uppercase">Автономний моніторинг готовності платформи PREDATOR v66.0-ELITE</p>
+            <p className="text-slate-500 text-sm mt-2">
+              Система моніторингу готовності платформи PREDATOR v66.0-ELITE
+            </p>
           </div>
           <div className="flex space-x-4">
             <Button 
               onClick={() => runValidation(false)} 
               disabled={loading} 
-              className="bg-red-500/10 border border-red-500/50 hover:bg-red-500/20 text-red-400 transition-all shadow-[0_0_15px_rgba(239,68,68,0.15)] font-mono"
+              className="bg-blue-600 hover:bg-blue-700 text-white transition-all shadow-sm"
             >
               {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Play className="w-4 h-4 mr-2" />}
-              ІНІЦІЮВАТИ АУДИТ
+              Запустити Аудит
             </Button>
             <Button 
               onClick={() => runValidation(true)} 
               disabled={loading} 
-              className="bg-red-500/10 border border-red-500/50 hover:bg-red-500/20 text-red-400 transition-all font-mono"
+              variant="outline"
+              className="border-slate-300 text-slate-700 hover:bg-slate-100"
             >
-              CHAOS MODE
+              Chaos Mode
             </Button>
           </div>
         </div>
 
         {error && (
           <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-            <div className="rounded-lg border p-4 bg-red-950/50 border-red-500/50 text-red-200 flex items-center">
-              <AlertCircle className="w-4 h-4 text-red-500" />
-              <div className="ml-2 font-mono">СИСТЕМНА ПОМИЛКА: {error}</div>
-            </div>
+            <Alert variant="destructive" className="bg-red-50 border-red-200 text-red-900">
+              <AlertCircle className="h-4 w-4" />
+              <div className="font-semibold ml-2">Системна помилка</div>
+              <div className="ml-2 text-sm opacity-90">{error}</div>
+            </Alert>
           </motion.div>
         )}
 
@@ -130,40 +120,46 @@ export default function DeploymentCommandCenter() {
           <AnimatePresence mode="wait">
             <motion.div 
               key={data.utos_score}
-              initial={{ opacity: 0, scale: 0.95 }}
+              initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5 }}
+              transition={{ duration: 0.3 }}
               className="space-y-8"
             >
               {/* Main Score Metrics */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <Card className="bg-[#0a0000]/80 glass-wraith backdrop-blur-md border border-red-900/40 shadow-[0_0_30px_rgba(0,0,0,0.5)]">
-                  <CardHeader className="border-b border-red-900/20 pb-4">
-                    <CardTitle className="text-red-500/80 font-mono text-sm tracking-widest">РІВЕНЬ ГОТОВНОСТІ (UTOS SCORE)</CardTitle>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <Card className="bg-white border-slate-200 shadow-sm">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-slate-500 text-xs font-semibold uppercase tracking-wider">Рівень готовності (UTOS Score)</CardTitle>
                   </CardHeader>
-                  <CardContent className="pt-8 pb-8 flex justify-center items-center">
-                    <div className={`text-7xl font-black font-mono tracking-tighter ${scoreColor}`}>
+                  <CardContent className="flex justify-center items-center py-6">
+                    <div className={`text-6xl font-bold ${scoreColor}`}>
                       {data.utos_score}%
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className="bg-[#0a0000]/80 glass-wraith backdrop-blur-md border border-red-900/40 md:col-span-2 shadow-[0_0_30px_rgba(0,0,0,0.5)]">
-                  <CardHeader className="border-b border-red-900/20 pb-4">
-                    <CardTitle className="text-red-500/80 font-mono text-sm tracking-widest">СТАТУС СИСТЕМИ</CardTitle>
+                <Card className="bg-white border-slate-200 md:col-span-2 shadow-sm">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-slate-500 text-xs font-semibold uppercase tracking-wider">Статус системи</CardTitle>
                   </CardHeader>
-                  <CardContent className="pt-8 pb-8">
+                  <CardContent className="py-6">
                     <div className="flex items-center space-x-6">
-                      <div className={`p-5 rounded-xl border ${isReady ? 'bg-red-500/10 border-red-500/30' : 'bg-red-500/10 border-red-500/30'}`}>
-                        {getStatusIcon(data.status, "w-12 h-12")}
+                      <div className={`p-4 rounded-xl border ${isReady ? 'bg-emerald-50 border-emerald-100' : 'bg-red-50 border-red-100'}`}>
+                        {getStatusIcon(data.status, "w-10 h-10")}
                       </div>
                       <div>
-                        <h2 className={`text-4xl font-black tracking-widest uppercase ${isReady ? "text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]" : "text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]"}`}>
+                        <h2 className={`text-3xl font-bold uppercase ${isReady ? "text-emerald-600" : "text-red-600"}`}>
                           {data.status}
                         </h2>
-                        <div className="flex gap-6 mt-3 text-sm font-mono text-gray-400">
-                          <span className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-cyan-500/50" />Всього перевірок: <span className="text-white">{data.total_checks}</span></span>
-                          <span className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-red-500/50" />Провалено: <span className="text-red-400">{data.failed_checks}</span></span>
+                        <div className="flex gap-6 mt-2 text-sm text-slate-500">
+                          <span className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-blue-400" />
+                            Всього перевірок: <span className="font-medium text-slate-900">{data.total_checks}</span>
+                          </span>
+                          <span className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-red-400" />
+                            Провалено: <span className="font-medium text-red-600">{data.failed_checks}</span>
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -173,38 +169,37 @@ export default function DeploymentCommandCenter() {
 
               {/* Subsystems Breakdown */}
               <div>
-                <h3 className="text-red-500/80 font-mono text-sm tracking-widest mb-4 flex items-center gap-2">
-                  <Cpu className="w-4 h-4" />
-                  ДІАГНОСТИКА ПІДСИСТЕМ
+                <h3 className="text-slate-800 font-semibold mb-4 flex items-center gap-2">
+                  <Cpu className="w-5 h-5 text-slate-500" />
+                  Діагностика підсистем
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {data.layers && Object.entries(data.layers).map(([layerName, info]: [string, any], i) => (
                     <motion.div
                       key={layerName}
-                      initial={{ opacity: 0, y: 20 }}
+                      initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.1 }}
+                      transition={{ delay: i * 0.05 }}
                     >
-                      <Card className="bg-[#0a0000]/60 glass-wraith backdrop-blur-md border border-red-900/20 hover:border-red-500/30 transition-all group overflow-hidden relative">
-                        <div className="absolute top-0 left-0 w-1 h-full bg-cyan-500/20 group-hover:bg-red-500/80 transition-colors" />
-                        <CardHeader className="pb-3 pt-5 pl-6">
+                      <Card className="bg-white border-slate-200 hover:border-slate-300 transition-colors shadow-sm h-full">
+                        <CardHeader className="pb-3 pt-5">
                           <div className="flex justify-between items-start">
-                            <CardTitle className="text-xl text-gray-100 capitalize font-mono tracking-wide">{layerName}</CardTitle>
+                            <CardTitle className="text-lg font-semibold text-slate-800 capitalize">{layerName}</CardTitle>
                             {getStatusIcon(info.status)}
                           </div>
-                          <CardDescription className="text-gray-400/80 mt-2 text-sm leading-relaxed">{info.description || info.name}</CardDescription>
+                          <CardDescription className="text-slate-500 mt-1 text-sm">{info.description || info.name}</CardDescription>
                         </CardHeader>
-                        <CardContent className="pl-6 pb-5">
+                        <CardContent className="pb-5">
                           <div className="flex items-center gap-4 mt-2">
-                            <div className="flex-1 h-1.5 bg-gray-800 rounded-full overflow-hidden">
+                            <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
                               <motion.div 
                                 initial={{ width: 0 }} 
                                 animate={{ width: `${info.layer_score * 100}%` }}
-                                transition={{ duration: 1, delay: 0.5 }}
-                                className={`h-full ${info.layer_score >= 0.9 ? 'bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.8)]' : info.layer_score >= 0.7 ? 'bg-amber-400' : 'bg-red-500'}`} 
+                                transition={{ duration: 0.5, delay: 0.2 }}
+                                className={`h-full ${info.layer_score >= 0.9 ? 'bg-emerald-500' : info.layer_score >= 0.7 ? 'bg-amber-400' : 'bg-red-500'}`} 
                               />
                             </div>
-                            <span className="text-xs font-mono font-bold text-gray-300">
+                            <span className="text-sm font-semibold text-slate-700">
                               {(info.layer_score * 100).toFixed(0)}%
                             </span>
                           </div>
@@ -216,25 +211,25 @@ export default function DeploymentCommandCenter() {
               </div>
 
               {/* Action Bar */}
-              <div className="flex space-x-4 pt-6 border-t border-red-900/40">
-                <Button variant="outline" onClick={() => downloadReport("pdf")} className="bg-transparent text-red-400 border-red-500/30 hover:bg-red-500/10 hover:text-red-300 font-mono">
-                  <Download className="w-4 h-4 mr-2" /> ЕКСПОРТ .PDF
+              <div className="flex space-x-4 pt-6 mt-8 border-t border-slate-200">
+                <Button variant="outline" onClick={() => downloadReport("pdf")} className="text-slate-600">
+                  <Download className="w-4 h-4 mr-2" /> Експорт .PDF
                 </Button>
-                <Button variant="outline" onClick={() => downloadReport("xlsx")} className="bg-transparent text-red-400 border-red-500/30 hover:bg-red-500/10 hover:text-red-300 font-mono">
-                  <Download className="w-4 h-4 mr-2" /> ЕКСПОРТ .XLSX
+                <Button variant="outline" onClick={() => downloadReport("xlsx")} className="text-slate-600">
+                  <Download className="w-4 h-4 mr-2" /> Експорт .XLSX
                 </Button>
-                <Button variant="outline" onClick={() => downloadReport("json")} className="bg-transparent text-red-400 border-red-500/30 hover:bg-red-500/10 hover:text-red-300 font-mono">
-                  <Download className="w-4 h-4 mr-2" /> ЕКСПОРТ .JSON
+                <Button variant="outline" onClick={() => downloadReport("json")} className="text-slate-600">
+                  <Download className="w-4 h-4 mr-2" /> Експорт .JSON
                 </Button>
               </div>
             </motion.div>
           </AnimatePresence>
         ) : (
-          <Card className="bg-[#0a0000]/80 glass-wraith backdrop-blur-md border border-red-900/40 shadow-[0_0_30px_rgba(0,0,0,0.5)] mt-10">
-            <CardContent className="py-24 text-center text-red-500/50 flex flex-col items-center">
-              <ShieldAlert className="w-16 h-16 mb-4 opacity-50" />
-              <div className="font-mono tracking-widest text-lg uppercase">Очікування даних телеметрії</div>
-              <div className="text-sm mt-2 text-gray-500 font-mono">Ініціюйте аудит для завантаження поточного статусу системи</div>
+          <Card className="bg-white border-slate-200 shadow-sm mt-10">
+            <CardContent className="py-24 text-center text-slate-500 flex flex-col items-center">
+              <ShieldAlert className="w-12 h-12 mb-4 text-slate-300" />
+              <div className="text-lg font-medium text-slate-700">Очікування даних телеметрії</div>
+              <div className="text-sm mt-1">Ініціюйте аудит для завантаження поточного статусу системи</div>
             </CardContent>
           </Card>
         )}

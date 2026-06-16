@@ -50,7 +50,8 @@ export const CentralCommandConsole = ({ onCommand }: CentralCommandConsoleProps)
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
-            className="p-6 rounded-2xl bg-[#0b1120]/90 backdrop-blur-xl border border-cyan-500/30 shadow-[0_0_40px_rgba(34,211,238,0.15)] flex gap-4 items-start relative overflow-hidden"
+            className="p-6 bg-[#0b1120]/90 backdrop-blur-xl border border-cyan-500/30 shadow-[0_0_40px_rgba(34,211,238,0.15)] flex gap-4 items-start relative overflow-hidden"
+            style={{ clipPath: 'polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px)' }}
           >
             {/* Subtle background glow */}
             <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 to-transparent pointer-events-none" />

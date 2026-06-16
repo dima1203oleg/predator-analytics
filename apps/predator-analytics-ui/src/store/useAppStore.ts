@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 import { UserRole } from '../config/roles';
+import { apiClient } from '../services/api/config';
 
 export type InterlinkPersona = 'TITAN' | 'INQUISITOR' | 'SOVEREIGN' | 'BUSINESS' | 'GOVERNMENT' | 'INTELLIGENCE' | 'BANKING' | 'MEDIA';
 export type DeviceMode = 'desktop' | 'tablet' | 'mobile';
@@ -105,29 +106,22 @@ export const useAppStore = create<AppState>()(
       setPlanMode: (isPlanMode) => set({ isPlanMode }),
       setCopilotOpen: (isCopilotOpen) => set({ isCopilotOpen }),
 
-      // Async AI Processing Action with Mock API
+      // Async AI Processing — з'єднання з реальним Backend через apiClient (JWT auto)
       processAICommand: async (command) => {
         set((state) => ({
           aiState: {
             ...state.aiState,
             isReasoning: true,
             response: null,
-            activeTools: ['RAG Search', 'Graph Analysis', 'Mock DB Query'],
+            activeTools: ['RAG Search', 'Graph Analysis', 'DB Query'],
           }
         }));
 
         try {
-          const res = await fetch('http://localhost:9080/api/v1/copilot/chat', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: command })
-          });
+          // apiClient вже має baseURL і JWT через interceptor (config.ts)
+          const { data } = await apiClient.post('/copilot/chat', { message: command });
           
-          if (!res.ok) throw new Error('API Error');
-          
-          const data = await res.json();
-          
-          const replyText = data.reply || 'Аналіз завершено. (Fallback response)';
+          const replyText = data.reply || 'Аналіз завершено.';
           set((state) => ({
             aiState: {
               ...state.aiState,
@@ -140,15 +134,29 @@ export const useAppStore = create<AppState>()(
           
           // Trigger TTS
           get().speakText(replyText);
-        } catch (error) {
+        } catch (error: any) {
           console.error('AI Command Error:', error);
+          // Визначаємо тип помилки для зрозумілого повідомлення
+          let errorMsg: string;
+          const status = error?.response?.status;
+          if (status === 401) {
+            errorMsg = '⚠️ Сесія авторизації закінчилась. Будь ласка, увійдіть знову.';
+          } else if (status === 503 || status === 502) {
+            errorMsg = '⚠️ AI сервер тимчасово недоступний. Спробуйте через хвилину.';
+          } else if (!error?.response) {
+            errorMsg = `⚠️ Немає з'єднання з сервером. Перевірте мережу.`;
+          } else {
+            errorMsg = `⚠️ Помилка AI (${status}): ${error?.response?.data?.detail || error.message || 'Невідома помилка'}`;
+          }
           set((state) => ({
             aiState: {
               ...state.aiState,
               isReasoning: false,
-              response: `Помилка з'єднання з AI сервером: ${error instanceof Error ? error.message : 'Невідома помилка'}`,
+              response: errorMsg,
             }
           }));
+          // Trigger TTS even for errors so the face animates!
+          get().speakText(errorMsg);
         }
       },
 
@@ -174,9 +182,18 @@ export const useAppStore = create<AppState>()(
         window.speechSynthesis.cancel(); // stop current
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'uk-UA';
-        utterance.rate = 1.1;
-        utterance.pitch = 0.9; // Slightly lower pitch for cyber feel
+        utterance.rate = 0.85; // Slower
+        utterance.pitch = 0.1; // Deep bass for male cyber feel
         
+        // Try to select a male voice if available (some OS have multiple)
+        const voices = window.speechSynthesis.getVoices();
+        const ukVoices = voices.filter(v => v.lang.includes('uk'));
+        if (ukVoices.length > 0) {
+          // If we find one containing 'male' or just use the first and rely on pitch
+          const maleVoice = ukVoices.find(v => v.name.toLowerCase().includes('male'));
+          utterance.voice = maleVoice || ukVoices[0];
+        }
+
         utterance.onstart = () => get().setSpeakingState(true);
         utterance.onend = () => get().setSpeakingState(false);
         utterance.onerror = () => get().setSpeakingState(false);

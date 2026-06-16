@@ -44,117 +44,74 @@ class AIService:
         model: str | None = None,
         temperature: float = 0.2,
         max_tokens: int = 4096,
-        route: LLMRoute = LLMRoute.HYBRID,
+        route: LLMRoute = LLMRoute.SOVEREIGN,
         include_reasoning: bool = False,
     ) -> str:
-        """Виклик LiteLLM або Gemini з опціональним кроком міркування."""
-        # Автоматичний VRAM Guard: перевірка потреби у CLOUD режимі
-        vram_stats = await vram_sentinel.get_stats()
-        effective_route = route
-        if vram_stats.critical:
-            logger.warning(f"⚠️ VRAM CRITICAL ({vram_stats.used_gb}GB). FORCE CLOUD ROUTE.")
-            effective_route = LLMRoute.CLOUD
-
-        if include_reasoning:
-            # Додаємо інструкцію для Chain-of-Thought
-            reasoning_msg = {
-                "role": "system",
-                "content": "Перед наданням фінальної відповіді, виконай покроковий аналіз (Chain-of-Thought) та вияви можливі суперечності. Надай відповідь у форматі: <thought>...</thought> <answer>...</answer>"
-            }
-            messages.insert(0, reasoning_msg)
-
-        # CLOUD routing через Gemini SDK
-        if effective_route == LLMRoute.CLOUD:
-            prompt = "\n".join([f"{m['role']}: {m['content']}" for m in messages])
-            result = await gemini_service.generate(prompt)
-            return result["content"]
-
+        """Прямий виклик локальної моделі Ollama."""
         target_model = model or settings.OLLAMA_MODEL
 
-        if not _llm_breaker.allow_request():
-            logger.warning("LLM Circuit Breaker OPEN — запит відхилено")
-            return "AI Сервіс тимчасово недоступний. Спробуйте пізніше."
-
+        # Формуємо промпт
+        prompt = "\\n".join([f"{m['role']}: {m['content']}" for m in messages])
+        
         try:
             async with httpx.AsyncClient() as client:
                 response = await client.post(
-                    f"{settings.LITELLM_API_BASE}/chat/completions",
+                    f"{settings.OLLAMA_API_URL}/api/generate",
                     json={
                         "model": target_model,
-                        "messages": messages,
-                        "temperature": temperature,
-                        "max_tokens": max_tokens,
+                        "prompt": prompt,
+                        "stream": False,
+                        "options": {"temperature": temperature}
                     },
-                    timeout=60.0,
+                    timeout=120.0,
                 )
 
                 if response.status_code == 200:
                     result = response.json()
-                    _llm_breaker.record_success()
-                    return result["choices"][0]["message"]["content"]
-
-                _llm_breaker.record_failure()
-                return f"AI Error: {response.status_code} - {response.text[:200]}"
+                    return result.get("response", "")
+                
+                return f"Ollama Error: {response.status_code} - {response.text[:200]}"
         except Exception as e:
-            _llm_breaker.record_failure()
-            logger.error(f"AI Exception: {e!s}")
-            return f"AI Exception: {e!s}"
+            logger.error(f"Ollama Exception: {e!s}")
+            return f"Ollama Exception: {e!s}"
 
     async def chat_completion_stream(
         messages: list[dict[str, str]],
         model: str | None = None,
         temperature: float = 0.2,
     ) -> AsyncIterator[str]:
-        """Streaming відповідь для AI Copilot з VRAM Guard."""
-        vram_stats = await vram_sentinel.get_stats()
-
-        # Якщо VRAM критична, стрімимо через Gemini Cloud
-        if vram_stats.critical:
-            logger.warning(f"🚨 VRAM GUARD: Перемикання Copilot на CLOUD ({vram_stats.used_gb}GB)")
-            prompt = "\n".join([f"{m['role']}: {m['content']}" for m in messages])
-            # Примітка: gemini_service.generate_stream має бути реалізований
-            async for chunk in gemini_service.generate_stream(prompt):
-                yield chunk
-            return
-
+        """Streaming відповідь напряму через Ollama."""
         target_model = model or settings.OLLAMA_MODEL
-
-        if not _llm_breaker.allow_request():
-            yield "AI Сервіс тимчасово недоступний."
-            return
+        prompt = "\\n".join([f"{m['role']}: {m['content']}" for m in messages])
 
         try:
             async with httpx.AsyncClient() as client, client.stream(
                 "POST",
-                f"{settings.LITELLM_API_BASE}/chat/completions",
+                f"{settings.OLLAMA_API_URL}/api/generate",
                 json={
                     "model": target_model,
-                    "messages": messages,
-                    "temperature": temperature,
-                    "stream": True,
+                    "prompt": prompt,
+                    "options": {"temperature": temperature},
                 },
-                timeout=90.0,
+                timeout=120.0,
             ) as response:
                 if response.status_code != 200:
-                    _llm_breaker.record_failure()
-                    yield f"AI Error: {response.status_code}"
+                    yield f"Ollama Error: {response.status_code}"
                     return
 
-                _llm_breaker.record_success()
                 async for line in response.aiter_lines():
-                    if line.startswith("data: ") and line != "data: [DONE]":
-                        import orjson
-                        try:
-                            chunk = orjson.loads(line[6:])
-                            delta = chunk["choices"][0].get("delta", {})
-                            if content := delta.get("content"):
-                                yield content
-                        except (orjson.JSONDecodeError, KeyError, IndexError):
-                            continue
+                    if not line.strip():
+                        continue
+                    import json
+                    try:
+                        chunk = json.loads(line)
+                        if "response" in chunk:
+                            yield chunk["response"]
+                    except json.JSONDecodeError:
+                        pass
         except Exception as e:
-            _llm_breaker.record_failure()
             logger.error(f"Streaming exception: {e!s}")
-            yield f"AI Streaming Error: {e!s}"
+            yield f"Ollama Streaming Error: {e!s}"
 
     @staticmethod
     async def get_reasoning(

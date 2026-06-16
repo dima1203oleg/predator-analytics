@@ -17,8 +17,6 @@ import { GraphMetricsPanel } from './components/GraphMetricsPanel';
 import { SciFiPanel } from './components/SciFiPanel';
 import { useAppStore } from "../../store";
 import { useAudioAnalyser } from '../../hooks/useAudioAnalyser';
-import { useLocalAI } from '../../hooks/useLocalAI';
-
 export const WraithNexus = () => {
   const { aiState, processAICommand, resetAIState } = useAppStore();
   const { activeTargetId, threatLevel } = aiState;
@@ -26,10 +24,8 @@ export const WraithNexus = () => {
   // Web Audio and AI Logic
   const [audioEl, setAudioEl] = useState<HTMLAudioElement | null>(null);
   const { analyser, initAnalyser } = useAudioAnalyser();
-  const { chatHistory, isProcessing, systemStatus, submitCommand } = useLocalAI(audioEl, initAnalyser);
-
   // Sync AI system status with UI threat level
-  const activeSystemStatus = threatLevel === 'HIGH' || systemStatus === 'RISK' ? 'RISK' : 'HEALTHY';
+  const activeSystemStatus = threatLevel === 'HIGH' ? 'RISK' : 'HEALTHY';
 
   // Cleanup AI state on unmount
   useEffect(() => {
@@ -38,7 +34,6 @@ export const WraithNexus = () => {
 
   const handleCommand = (cmd: string) => {
     processAICommand(cmd);
-    submitCommand(cmd);
   };
 
   // Mock data for ForceGraph

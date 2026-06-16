@@ -73,7 +73,7 @@ export const AnalyticalPanelsRight = () => {
               LIVE INTERCEPTOR
             </span>
           </div>
-          <span className="text-[9px] font-mono text-emerald-400">
+          <span className="text-[9px] font-mono text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.8)] animate-pulse">
             {intercepted.toLocaleString()}
           </span>
         </div>
@@ -163,7 +163,7 @@ export const AnalyticalPanelsRight = () => {
       </SciFiPanel>
 
       {/* ── MISSION HEATMAP ── */}
-      <SciFiPanel title="МІСІЯ 1 · КОНТРАГЕНТ-Х">
+      <SciFiPanel title="МІСІЯ 1 · КОНТРАГЕНТ-Х" className="border border-emerald-400/50 shadow-[0_0_15px_rgba(52,211,153,0.2)]">
         <p className="text-[9px] text-emerald-500/50 mb-2 leading-relaxed">
           Аналіз транзакційних патернів за 7D. Аномалії у D5-D6.
         </p>

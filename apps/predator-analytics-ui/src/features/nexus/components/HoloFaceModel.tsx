@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
@@ -22,6 +22,15 @@ interface HoloFaceModelProps {
   systemStatus: "HEALTHY" | "RISK";
 }
 
+const VISEME_MAP: Record<string, number> = {
+  A: 0.8, О: 0.7, У: 0.4, Е: 0.5, Є: 0.5, И: 0.3, І: 0.3, Ї: 0.3, Я: 0.8, Ю: 0.4,
+  Б: 0.0, П: 0.0, М: 0.0,
+  Ф: 0.15, В: 0.15,
+  С: 0.1, З: 0.1, Ц: 0.1, Ш: 0.1, Ж: 0.1, Ч: 0.1, Щ: 0.1,
+  Л: 0.2, Р: 0.2,
+  Г: 0.25, К: 0.25, Х: 0.25
+};
+
 export const HoloFaceModel: React.FC<HoloFaceModelProps> = ({
   audioAnalyser,
   systemStatus,
@@ -32,6 +41,9 @@ export const HoloFaceModel: React.FC<HoloFaceModelProps> = ({
   const groupRef = useRef<THREE.Group>(null);
   const gearTopRef = useRef<THREE.Mesh>(null);
   const gearBottomRef = useRef<THREE.Mesh>(null);
+  const mouthTopRef = useRef<THREE.Mesh>(null);
+  const mouthBottomRef = useRef<THREE.Mesh>(null);
+  const voiceEqualizerRefs = useRef<(THREE.Mesh | null)[]>([]);
 
   const { size, mouse } = useThree();
   const dataArray = useRef(new Uint8Array(0));
@@ -78,6 +90,59 @@ export const HoloFaceModel: React.FC<HoloFaceModelProps> = ({
     }
   }, [audioAnalyser]);
 
+  // Віземи для нативного TTS
+  const lipTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const targetMouthOpen = useRef(0);
+  const currentMouthOpen = useRef(0);
+  const isSpeaking = useAppStore((state) => state.aiState.isSpeaking);
+  const response = useAppStore((state) => state.aiState.response);
+
+  useEffect(() => {
+    if (isSpeaking) {
+      if (lipTimerRef.current) clearInterval(lipTimerRef.current);
+      
+      const text = (response || "Ініціалізація зв'язку...").toUpperCase();
+      let charIndex = 0;
+      let pauseFrames = 0;
+
+      lipTimerRef.current = setInterval(() => {
+        if (pauseFrames > 0) {
+          pauseFrames--;
+          targetMouthOpen.current *= 0.4;
+          return;
+        }
+        if (charIndex >= text.length) {
+          charIndex = 0; // Зациклюємо, поки isSpeaking=true
+          pauseFrames = 10;
+          return;
+        }
+        const char = text[charIndex];
+        if (char === ' ' || char === '.' || char === ',' || char === '!' || char === '?') {
+          pauseFrames = char === ' ' ? 2 : 5;
+          targetMouthOpen.current *= 0.3;
+        } else {
+          const val = VISEME_MAP[char] !== undefined ? VISEME_MAP[char] : 0.15;
+          targetMouthOpen.current = targetMouthOpen.current * 0.3 + val * 0.7;
+        }
+        charIndex++;
+      }, 70);
+    } else {
+      if (lipTimerRef.current) clearInterval(lipTimerRef.current);
+      targetMouthOpen.current = 0;
+    }
+
+    return () => {
+      if (lipTimerRef.current) clearInterval(lipTimerRef.current);
+    };
+  }, [isSpeaking, response]);
+
+  // Знайти головний меш
+  const headMesh =
+    nodes.Mesh_Head_Placeholder ||
+    (Object.values(nodes).find(
+      (n) => n.type === "Mesh" || n.type === "SkinnedMesh",
+    ) as THREE.Mesh);
+
   useFrame((state) => {
     const t = state.clock.getElapsedTime();
 
@@ -95,54 +160,54 @@ export const HoloFaceModel: React.FC<HoloFaceModelProps> = ({
         (-targetY - groupRef.current.rotation.x) * 0.1;
     }
 
-    // 3. Обертання технологічних 3D-шестерень над головою відповідно до навантаження
+    // 3. Обертання технологічних 3D-шестерень
     if (gearTopRef.current) gearTopRef.current.rotation.y = t * 0.5;
     if (gearBottomRef.current) gearBottomRef.current.rotation.y = -t * 0.8;
 
-    // 4. Реалізація Real-Time Lip-Sync або Імітації для нативного TTS
-    const headMesh =
-      nodes.Mesh_Head_Placeholder ||
-      (Object.values(nodes).find(
-        (n) => n.type === "Mesh" || n.type === "SkinnedMesh",
-      ) as THREE.Mesh);
+    // 4. Плавна інтерполяція рота
+    currentMouthOpen.current += (targetMouthOpen.current - currentMouthOpen.current) * 0.3;
 
-    if (headMesh && headMesh.morphTargetInfluences) {
+    // Анімація декоративного кібер-рота
+    if (mouthBottomRef.current) {
+      // Опускаємо нижню губу
+      mouthBottomRef.current.position.y = -0.45 - currentMouthOpen.current * 0.15;
+    }
+    
+    // Анімація еквалайзера
+    voiceEqualizerRefs.current.forEach((mesh, i) => {
+      if (mesh) {
+        // Рандомізоване тремтіння базоване на відкритті рота
+        const jitter = currentMouthOpen.current > 0.1 ? Math.sin(t * (20 + i)) * 0.5 + 0.5 : 0;
+        // Make equalizer much more exaggerated
+        mesh.scale.y = 1 + currentMouthOpen.current * 8 + jitter * currentMouthOpen.current * 4;
+      }
+    });
+
+    if (headMesh) {
+      // Завжди використовуємо TTS Lip Sync для аватара
+      if (headMesh.morphTargetInfluences) {
+        headMesh.morphTargetInfluences[0] = currentMouthOpen.current * 1.5;
+      } else {
+        // Якщо немає morph targets, робимо імітацію набагато помітнішою
+        headMesh.scale.y = 1 - currentMouthOpen.current * 0.15; // Сильніше стискання голови
+        headMesh.position.y = -currentMouthOpen.current * 0.1;
+      }
+      
+      // Додамо легке пульсування від мікрофона ТІЛЬКИ до декоративних шестерень, щоб показати, що аватар "слухає"
       if (audioAnalyser && dataArray.current.length > 0) {
         audioAnalyser.getByteFrequencyData(dataArray.current);
-
-        // Обчислення середньої амплітуди звукової хвилі (гучності)
         let sum = 0;
-        for (let i = 0; i < dataArray.current.length; i++) {
-          sum += dataArray.current[i];
-        }
-        const averageVolume = sum / dataArray.current.length;
-        const normalizedVolume = averageVolume / 128.0; // Нормалізація в діапазон 0.0 - 1.0
-
-        // Індекс 0 за замовчуванням береться як індекс руху щелепи
-        headMesh.morphTargetInfluences[0] = normalizedVolume * 1.5;
+        for (let i = 0; i < dataArray.current.length; i++) sum += dataArray.current[i];
+        const normalizedVolume = (sum / dataArray.current.length) / 128.0;
+        
+        if (gearTopRef.current) gearTopRef.current.scale.setScalar(1 + normalizedVolume * 0.2);
+        if (gearBottomRef.current) gearBottomRef.current.scale.setScalar(1 + normalizedVolume * 0.2);
       } else {
-        // Фоллбек для нативного SpeechSynthesis (де немає доступу до AudioNode)
-        const isSpeaking = useAppStore.getState().aiState.isSpeaking;
-        if (isSpeaking) {
-          // Симуляція артикуляції
-          const fakeVolume =
-            Math.sin(t * 15) * 0.3 + Math.sin(t * 25) * 0.2 + 0.3;
-          headMesh.morphTargetInfluences[0] = Math.max(0, fakeVolume);
-        } else {
-          // Плавне закриття рота
-          headMesh.morphTargetInfluences[0] +=
-            (0 - headMesh.morphTargetInfluences[0]) * 0.2;
-        }
+        if (gearTopRef.current) gearTopRef.current.scale.setScalar(1);
+        if (gearBottomRef.current) gearBottomRef.current.scale.setScalar(1);
       }
     }
   });
-
-  // Знайти головний меш, якщо він називається інакше
-  const headMesh =
-    nodes.Mesh_Head_Placeholder ||
-    (Object.values(nodes).find(
-      (n) => n.type === "Mesh" || n.type === "SkinnedMesh",
-    ) as THREE.Mesh);
 
   return (
     <group ref={groupRef}>
@@ -159,6 +224,34 @@ export const HoloFaceModel: React.FC<HoloFaceModelProps> = ({
         <ringGeometry args={[0.15, 0.25, 12]} />
         <primitive object={wireframeMaterial.current} attach="material" />
       </mesh>
+
+      {/* Голографічна кібер-міміка (видима завжди, навіть якщо модель не підтримує morph targets) */}
+      <group position={[0, 0, 0.55]}>
+        {/* Верхня "губа" */}
+        <mesh ref={mouthTopRef} position={[0, -0.38, 0]}>
+          <boxGeometry args={[0.15, 0.01, 0.02]} />
+          <meshBasicMaterial color={activeColor} transparent opacity={0.6} blending={THREE.AdditiveBlending} />
+        </mesh>
+        {/* Нижня "губа" */}
+        <mesh ref={mouthBottomRef} position={[0, -0.45, 0]}>
+          <boxGeometry args={[0.12, 0.01, 0.02]} />
+          <meshBasicMaterial color={activeColor} transparent opacity={0.8} blending={THREE.AdditiveBlending} />
+        </mesh>
+        
+        {/* Еквалайзер міміки між губами */}
+        <group position={[0, -0.415, 0]}>
+          {[-2, -1, 0, 1, 2].map((xOffset, i) => (
+            <mesh 
+              key={i} 
+              position={[xOffset * 0.025, 0, 0]} 
+              ref={(el) => (voiceEqualizerRefs.current[i] = el)}
+            >
+              <boxGeometry args={[0.01, 0.02, 0.01]} />
+              <meshBasicMaterial color={activeColor} transparent opacity={0.9} blending={THREE.AdditiveBlending} />
+            </mesh>
+          ))}
+        </group>
+      </group>
 
       {/* Головний меш кібер-обличчя */}
       {headMesh && (
@@ -182,5 +275,4 @@ export const HoloFaceModel: React.FC<HoloFaceModelProps> = ({
   );
 };
 
-// Попереднє завантаження ассету в кеш Drei для усунення затримок рендерингу
 useGLTF.preload("/models/head.glb");

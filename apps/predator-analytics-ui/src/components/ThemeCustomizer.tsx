@@ -154,8 +154,8 @@ export const ThemeCustomizer: React.FC = () => {
       {/* Toggle button */}
       <motion.button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 left-6 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-rose-600 to-rose-800 border-2 border-rose-400/30 shadow-[0_0_30px_rgba(225,29,72,0.5)] flex items-center justify-center"
-        whileHover={{ scale: 1.1, boxShadow: '0 0 50px rgba(225,29,72,0.8)' }}
+        className="fixed bottom-6 left-6 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-indigo-700 to-cyan-800 border-2 border-cyan-400/30 shadow-[0_0_30px_rgba(6,182,212,0.5)] flex items-center justify-center"
+        whileHover={{ scale: 1.1, boxShadow: '0 0 50px rgba(6,182,212,0.8)' }}
         whileTap={{ scale: 0.95 }}
       >
         <Palette className="w-6 h-6 text-white" />
@@ -168,7 +168,7 @@ export const ThemeCustomizer: React.FC = () => {
             initial={{ opacity: 0, x: -300 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -300 }}
-            className="fixed left-0 top-0 bottom-0 w-96 bg-black/95 backdrop-blur-xl border-r border-rose-500/30 z-50 overflow-y-auto"
+            className="fixed left-0 top-0 bottom-0 w-96 bg-black/95 backdrop-blur-xl border-r border-cyan-500/30 z-50 overflow-y-auto"
           >
             {/* Header */}
             <div className="p-6 border-b border-white/10">

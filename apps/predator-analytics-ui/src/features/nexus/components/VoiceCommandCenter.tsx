@@ -80,7 +80,7 @@ export const VoiceCommandCenter = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center p-4 bg-slate-900/50 border border-emerald-500/30 rounded-lg backdrop-blur-sm">
+    <div className="flex flex-col items-center justify-center px-6 py-4 bg-black/40 border border-emerald-500/20 rounded-2xl backdrop-blur-md shadow-[0_0_30px_rgba(16,185,129,0.1)]">
       <button
         onClick={handleToggleListen}
         disabled={aiState.isReasoning}
@@ -101,19 +101,19 @@ export const VoiceCommandCenter = () => {
         )}
       </button>
       
-      <div className="mt-4 min-h-[40px] text-sm text-center">
+      <div className="mt-3 min-h-[20px] text-center">
         {isListening ? (
           <motion.p 
             initial={{ opacity: 0 }} 
             animate={{ opacity: 1 }} 
-            className="text-emerald-400 font-mono"
+            className="text-emerald-400 font-mono text-xs tracking-wide"
           >
-            {transcript || "Слухаю..."}
+            {transcript || "СЛУХАЮ..."}
           </motion.p>
         ) : aiState.isReasoning ? (
-          <p className="text-emerald-500/50 font-mono animate-pulse">Обробка директиви...</p>
+          <p className="text-emerald-500/50 font-mono text-xs tracking-widest uppercase animate-pulse">ОБРОБКА...</p>
         ) : (
-          <p className="text-slate-500 font-mono text-xs">Натисніть для голосової команди</p>
+          <p className="text-slate-500 font-mono text-[10px] tracking-widest uppercase">ОЧІКУВАННЯ КОМАНДИ</p>
         )}
       </div>
     </div>

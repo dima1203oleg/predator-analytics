@@ -314,15 +314,15 @@ export const Predator: React.FC = () => {
         {!isOpen && (
           <motion.button
             initial={{ scale: 0, shadow: "0 0 0px transparent" }} 
-            animate={{ scale: 1, shadow: "0 0 50px rgba(225,29,72,0.3)" }} 
+            animate={{ scale: 1, shadow: "0 0 50px rgba(34,211,238,0.3)" }} 
             exit={{ scale: 0 }}
             onClick={() => setIsOpen(true)}
-            className="fixed bottom-12 right-12 z-[100] w-24 h-24 rounded-[32px] bg-black border-2 border-rose-500/40 flex items-center justify-center group overflow-hidden shadow-3xl"
+            className="fixed bottom-8 right-8 z-[100] w-24 h-24 rounded-[32px] bg-black border-2 border-cyan-400/40 flex items-center justify-center group overflow-hidden shadow-3xl"
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-rose-500/20 to-rose-500/5 " />
-            <Brain className="w-12 h-12 text-rose-500 group-hover:scale-110 transition-transform relative z-10" strokeWidth={1.5} />
+            <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/20 to-cyan-400/5 " />
+            <Brain className="w-12 h-12 text-cyan-400 group-hover:scale-110 transition-transform relative z-10" strokeWidth={1.5} />
             <motion.div 
-               className="absolute inset-0 border-2 border-rose-500/40 rounded-[32px]" 
+               className="absolute inset-0 border-2 border-cyan-400/40 rounded-[32px]" 
                animate={{ scale: [1, 1.2, 1], opacity: [0.6, 0, 0.6] }} 
                transition={{ duration: 3, repeat: Infinity }} 
             />

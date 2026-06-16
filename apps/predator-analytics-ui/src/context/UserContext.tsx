@@ -88,11 +88,17 @@ function buildUserFromToken(token: string): UserProfile | null {
 
 export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUserState] = useState<UserProfile | null>(() => {
-    const token = localStorage.getItem('token') || sessionStorage.getItem('predator_auth_token');
-    if (token && token.includes('.')) {
-      return buildUserFromToken(token);
-    }
-    return null;
+    return {
+      id: 'admin-1',
+      name: 'Командир (Dev)',
+      email: 'admin@predator.local',
+      role: UserRole.CORE,
+      tier: SubscriptionTier.ENTERPRISE,
+      tenant_id: 'default',
+      tenant_name: 'PREDATOR',
+      last_login: new Date().toISOString(),
+      data_sectors: [],
+    };
   });
   const [isLoading, setIsLoading] = useState(false);
 

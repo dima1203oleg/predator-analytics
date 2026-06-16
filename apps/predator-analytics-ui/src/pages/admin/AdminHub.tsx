@@ -87,6 +87,7 @@ const DataGovView            = lazy(() => import('@/features/osint/DataGovView')
 // Platform
 const SettingsView           = lazy(() => import('@/features/platform/SettingsView'));
 const UtosDashboard        = lazy(() => import('@/pages/diagnostics/UtosDashboard'));
+const DeploymentCommandCenter = lazy(() => import('@/pages/admin/DeploymentCommandCenter'));
 
 // Analytics & Business Intel
 const SupplyChainAnalyticsView = lazy(() => import('@/features/supply-chain/SupplyChainAnalyticsView'));
@@ -183,6 +184,7 @@ const TABS: TabConfig[] = [
   { id: 'decisions',    category: 'PLATFORM', label: 'ЖУРНАЛ_РІШЕНЬ',    badge: 'АУДИТ',    icon: FileText,      component: lazy(() => import('@/features/decisions/DecisionsJournal')) },
   { id: 'logs',         category: 'PLATFORM', label: 'СИСТЕМНІ_ЛОГИ',    badge: 'СЕРВІСНІ',      icon: Terminal,      component: lazy(() => import('@/features/monitoring/RealTimeMonitor')) },
   { id: 'adv-dvs',      category: 'PLATFORM', label: 'UTOS_COMMAND_CENTER',  badge: 'UTOS',      icon: ShieldAlert,   component: UtosDashboard },
+  { id: 'deployment',   category: 'PLATFORM', label: 'КЛАСИЧНА_ПАНЕЛЬ_DEPLOY', badge: 'КЛАСИКА', icon: Activity, component: DeploymentCommandCenter },
 
   // ─── AUTONOMOUS_FACTORY ────────────────────────────────────────────────────
   { id: 'factory-ooda', category: 'AUTONOMOUS_FACTORY', label: 'OODA_ЦИКЛ', badge: 'ВІЧНИЙ', icon: Sparkles, component: AutoFactoryView },

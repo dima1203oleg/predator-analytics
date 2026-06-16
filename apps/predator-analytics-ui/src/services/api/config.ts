@@ -47,8 +47,11 @@ const NODE_NAMES: Record<string, string> = {
 const resolveInitialUrl = (): string => {
     if (typeof window === 'undefined') return NODE_URLS[NODE_IDS.CLOUD];
 
+    // 1. Явна настройка через .env (пріоритет #1 — розробник задав свідомо)
+    if (metaEnv.VITE_API_URL) return metaEnv.VITE_API_URL;
+
     try {
-        // 1. Ручний вибір користувача (пріоритет #1)
+        // 2. Ручний вибір користувача (пріоритет #2)
         const savedNode = localStorage.getItem('PREDATOR_ACTIVE_NODE');
         if (savedNode && NODE_URLS[savedNode]) {
             return NODE_URLS[savedNode];
@@ -57,14 +60,17 @@ const resolveInitialUrl = (): string => {
         // Ignore localStorage errors in test environment
     }
 
-    // 2. Явна настройка через .env
-    if (metaEnv.VITE_API_URL) return metaEnv.VITE_API_URL;
-
-    // 3. Дефолт — CLOUD (Kaggle CPU Backend)
-    return NODE_URLS[NODE_IDS.CLOUD];
+    // 3. Дефолт — LOCAL (через Vite proxy)
+    return NODE_URLS[NODE_IDS.LOCAL];
 };
 
 export let API_BASE_URL = resolveInitialUrl();
+
+(window as any).__PREDATOR_DEBUG = {
+    API_BASE_URL,
+    metaEnv,
+    NODE_URLS
+};
 
 // ─── Зовнішні сервіси (OpenSearch, etc.) ────────────────────────────────────
 /** Обчислювані URL для OpenSearch — оновлюються при перемиканні вузла */
@@ -153,7 +159,7 @@ export const switchToNode = (nodeId: string) => {
 
 export const apiClient = axios.create({
     baseURL: API_BASE_URL,
-    timeout: 15000,
+    timeout: 120000, // 120 seconds for local LLM (DeepSeek-R1)
     headers: {
         'Content-Type': 'application/json',
         'X-Client-Version': '68.0.0-ELITE',
