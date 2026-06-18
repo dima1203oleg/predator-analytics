@@ -16,10 +16,37 @@ concurrency:
   group: deploy-nvidia-ssh
   cancel-in-progress: false
 
+env:
+  CI_WORKFLOW: 'ci-cd-unified.yml'
+
 jobs:
+  ci-cd-gate:
+    name: Verify CI/CD Pipeline Success
+    runs-on: ubuntu-latest
+    outputs:
+      ci_status: ${{ steps.wait.outputs.conclusion }}
+    steps:
+      - name: Wait for CI/CD workflow
+        id: wait
+        uses: lewagon/wait-on-check-action@v1.3.1
+        with:
+          ref: ${{ github.sha }}
+          check-name: 'PREDATOR v61.0-ELITE Unified Pipeline'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 30
+        timeout-minutes: 10
+
+      - name: Fail if CI/CD didn't run or failed
+        if: steps.wait.outputs.conclusion != 'success'
+        run: |
+          echo "❌ CI/CD pipeline (ci-cd-unified.yml) ${CONCLUSION:-has not run}."
+          echo "Ensure 'services/**' or 'apps/**' changes trigger CI/CD first."
+          exit 1
+
   deploy-nvidia:
     name: Deploy to NVIDIA Server (SSH)
     runs-on: ubuntu-latest
+    needs: ci-cd-gate
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -71,11 +98,48 @@ jobs:
               --type merge \
               -p '{"operation":{"sync":{"prune":true}}}' || true
 
-            # 5. Health check
+            # 5. Capture previous release for rollback
+            echo "=== Capturing Previous Release ==="
+            PREV_RELEASE=$(helm history predator-nvidia -n predator-nvidia -o json 2>/dev/null | \
+              jq -r '[.[] | select(.status != "pending-upgrade")] | .[-2].version // .[-1].version' || echo "none")
+            echo "PREV_RELEASE=$PREV_RELEASE"
+
+            # 6. Health Check
             echo "=== Health Check ==="
             kubectl get pods -n predator-nvidia -o wide
             kubectl get svc -n predator-nvidia
 
+            # Wait for pods to be ready (max 5 minutes)
+            echo "Waiting for pods to be ready..."
+            timeout 300 bash -c '
+              until kubectl get pods -n predator-nvidia -o json | jq -e ".items | all(.status.phase == \"Running\" or .status.phase == \"Succeeded\")" > /dev/null 2>&1; do
+                echo "Waiting for pods..."
+                sleep 10
+              done
+            ' || {
+              echo "❌ ERROR: Pods not ready within 5 minutes"
+              echo "::set-output name=health_check_failed::true"
+              exit 1
+            }
+
+            # Verify all pods are Running and have 1/1 Ready containers
+            echo "Verifying pod health..."
+            kubectl wait --for=condition=ready pod -l app=predator -n predator-nvidia --timeout=300s || {
+              echo "❌ ERROR: Pods not ready"
+              kubectl get pods -n predator-nvidia -o wide
+              kubectl describe pods -l app=predator -n predator-nvidia || true
+              exit 1
+            }
+
+            # Check for CrashLoopBackOff or other failing states
+            FAILED_PODS=$(kubectl get pods -n predator-nvidia -o json | jq -r '.items[] | select(.status.phase != "Running" and .status.phase != "Succeeded") | .metadata.name')
+            if [ -n "$FAILED_PODS" ]; then
+              echo "❌ ERROR: Failed pods detected: $FAILED_PODS"
+              kubectl get pods -n predator-nvidia -o wide
+              exit 1
+            fi
+
+            echo "✅ Health Check PASSED"
             echo "=== Deploy Complete ==="
 
       - name: Notify result
@@ -86,3 +150,47 @@ jobs:
           else
             echo "⚠️ Деплой на NVIDIA сервер не вдався. Перевірте secrets та підключення."
           fi
+
+      - name: Rollback on Failure
+        if: failure()
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.NVIDIA_HOST }}
+          username: ${{ secrets.NVIDIA_USER }}
+          key: ${{ secrets.NVIDIA_SSH_KEY }}
+          port: ${{ secrets.NVIDIA_SSH_PORT || '22' }}
+        script: |
+          echo "=== Initiating Rollback ==="
+
+          # Get previous release
+          PREV_RELEASE=$(helm history predator-nvidia -n predator-nvidia -o json 2>/dev/null | \
+            jq -r '[.[] | select(.status != "pending-upgrade")] | .[-2].version // .[-1].version' || echo "none")
+
+          if [ "$PREV_RELEASE" = "none" ]; then
+            echo "⚠️ No previous release found. Skipping rollback."
+            exit 1
+          fi
+
+          echo "::notice title=Rollback Executed::Rolling back NVIDIA deployment to release $PREV_RELEASE"
+
+          # Rollback to previous release
+          helm rollback predator-nvidia $PREV_RELEASE -n predator-nvidia --timeout 10m --wait || {
+            echo "❌ Helm rollback failed, forcing cleanup..."
+            helm uninstall predator-nvidia -n predator-nvidia || true
+            helm install predator-nvidia deploy/helm/predator \
+              -f deploy/helm/predator/values.yaml \
+              -f environments/nvidia/values.yaml \
+              -n predator-nvidia \
+              --wait --timeout 10m
+          }
+
+          # Verify rollback health
+          echo "Verifying rollback health..."
+          kubectl wait --for=condition=ready pod -l app=predator -n predator-nvidia --timeout=300s || {
+            echo "❌ CRITICAL: Rollback health check failed - manual intervention required"
+            kubectl get pods -n predator-nvidia -o wide
+            exit 1
+          }
+
+          echo "✅ Rollback successful and verified"
+          echo "Previous release: $PREV_RELEASE"

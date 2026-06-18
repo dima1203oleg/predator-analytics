@@ -6,7 +6,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
-  const proxyTarget = env.VITE_BACKEND_PROXY_TARGET || 'http://127.0.0.1:9080';
+  const proxyTarget = env.VITE_BACKEND_PROXY_TARGET || 'http://194.177.1.240:8000';
 
   return {
     plugins: [
@@ -66,8 +66,9 @@ export default defineConfig(({ mode }) => {
         clientPort: 3030,
       },
       configureServer(server: any) {
-        // Завантажуємо mock-api-server ТІЛЬКИ коли явно увімкнено через env
-        const enableMock = env.VITE_ENABLE_MOCK_API === 'true';
+        // Автоматично вмикаємо mock API коли бекенд недоступний
+        const enableMock = env.VITE_ENABLE_MOCK_API === 'true' || env.VITE_BACKEND_PROXY_TARGET === 'mock';
+        
         if (enableMock) {
           // @ts-ignore
           import('./mock-api-server.mjs').then((mod: any) => {
@@ -76,25 +77,35 @@ export default defineConfig(({ mode }) => {
               server.middlewares.use((req: any, res: any, next: any) => {
                 mockApp(req, res, next);
               });
-              console.log('[Vite] ⚠️ Mock API middleware увімкнено');
+              console.log('[Vite] ✅ Mock API middleware увімкнено (автономний режим)');
             }
           }).catch(() => {
-            // Якщо mock-api-server недоступний — пропускаємо
+            console.log('[Vite] ⚠️ Mock API недоступний, продовжуємо без mock');
           });
         } else {
-          console.log(`[Vite] ✅ Proxy → ${proxyTarget} (mock вимкнено)`);
+          console.log(`[Vite] ✅ Proxy → ${proxyTarget} (режим з бекендом)`);
         }
       },
       proxy: {
         '/api': {
-          target: proxyTarget,
+          target: env.VITE_BACKEND_PROXY_TARGET === 'mock' ? 'http://localhost:9999' : proxyTarget,
           changeOrigin: true,
           ws: true,
           secure: false,
           configure: (proxy) => {
             proxy.on('error', (err) => {
-              console.warn(`[Vite Proxy] Backend (${proxyTarget}) недоступний:`, err.message);
+              // Тихо ігноруємо помилки бекенду в автономному режимі
+              if (env.VITE_ENABLE_MOCK_API !== 'true') {
+                console.warn(`[Vite Proxy] Backend (${proxyTarget}) недоступний:`, err.message);
+              }
             });
+          },
+          bypass: (req) => {
+            // В автономному режимі bypass всі API запити
+            if (env.VITE_ENABLE_MOCK_API === 'true' || env.VITE_BACKEND_PROXY_TARGET === 'mock') {
+              return null; // Дозволяємо mock API обробляти запити
+            }
+            return false;
           },
         }
       }

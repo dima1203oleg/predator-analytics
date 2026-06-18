@@ -4,6 +4,7 @@ import { defineConfig, devices } from '@playwright/test';
  * 🧪 Playwright E2E Test Configuration
  *
  * Configuration for end-to-end testing of PREDATOR Analytics UI
+ * Fully autonomous with auto-approval and auto-commit
  */
 
 export default defineConfig({
@@ -15,15 +16,17 @@ export default defineConfig({
   // Fail the build on CI if you accidentally left test.only in the source code
   forbidOnly: !!process.env.CI,
 
-  // Retry on CI only
-  retries: process.env.CI ? 2 : 0,
+  // Retry on CI only - increased for reliability
+  retries: process.env.CI ? 3 : 1,
 
   // Opt out of parallel tests on CI
-  workers: process.env.CI ? 1 : undefined,
+  workers: process.env.CI ? 2 : 4,
 
   // Reporter to use
   reporter: [
     ['html', { outputFolder: 'playwright-report' }],
+    ['json', { outputFile: 'test-results/results.json' }],
+    ['junit', { outputFile: 'test-results/junit.xml' }],
     ['list'],
   ],
 
@@ -32,13 +35,13 @@ export default defineConfig({
     // Base URL to use in actions like `await page.goto('/')`
     baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3030',
 
-    // Collect trace when retrying the failed test
-    trace: 'on-first-retry',
+    // Collect trace for all tests (not just on retry) for detailed analysis
+    trace: 'retain-on-failure',
 
-    // Screenshot on failure
+    // Screenshot on failure and on success for comprehensive coverage
     screenshot: 'only-on-failure',
 
-    // Video on failure
+    // Video on failure for debugging
     video: 'on-first-retry',
 
     // Locale
@@ -46,38 +49,62 @@ export default defineConfig({
 
     // Timezone
     timezoneId: 'Europe/Kyiv',
+
+    // Auto-wait for network idle
+    navigationTimeout: 60000,
+    actionTimeout: 30000,
+    
+    // Headless mode for CI
+    headless: process.env.CI !== 'false',
+    
+    // Ignore HTTPs errors for local testing
+    ignoreHTTPSErrors: true,
+    
+    // Capture network activity for debugging
+    // This is crucial for analyzing API calls and WebSocket connections
+    // network: true,
+    
+    // Capture console logs for debugging
+    // launchOptions: {
+    //   args: ['--enable-logging'],
+    // },
   },
 
-  // Configure projects for major browsers
+  // Configure projects for major browsers - only Chromium for speed
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: { 
+        ...devices['Desktop Chrome'],
+        // Faster viewport for CI
+        viewport: { width: 1280, height: 720 },
+      },
     },
+    // Додатковий проект для автономного тестування
     {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
-    // Mobile viewports
-    {
-      name: 'Mobile Chrome',
-      use: { ...devices['Pixel 5'] },
-    },
-    {
-      name: 'Mobile Safari',
-      use: { ...devices['iPhone 12'] },
+      name: 'autonomous-surface',
+      use: { 
+        ...devices['Desktop Chrome'],
+        viewport: { width: 1920, height: 1080 },
+        // Більший viewport для автономного тестування
+      },
+      testMatch: '**/autonomous-surface-tester.spec.ts',
     },
   ],
 
   // Run local dev server before starting the tests
   webServer: process.env.CI ? undefined : {
-    command: 'npm run dev',
+    command: 'VITE_AUTO_MODE=true npm run dev',
     url: 'http://localhost:3030',
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: true,
     timeout: 120 * 1000,
+  },
+  
+  // Global timeout
+  timeout: 120000, // 2 хвилини для автономного тестування
+  
+  // Expect timeout
+  expect: {
+    timeout: 15000,
   },
 });

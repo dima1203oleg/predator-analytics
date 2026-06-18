@@ -1,0 +1,255 @@
+# 🦅 Predator Analytics v61.0-ELITE - Test Environment
+# Docker Compose для тестового оточення з новими технологіями
+
+services:
+  # PostgreSQL для тестів
+  postgres-test:
+    image: postgres:16-alpine
+    container_name: predator-postgres-test
+    environment:
+      POSTGRES_DB: predator_test
+      POSTGRES_USER: predator_test
+      POSTGRES_PASSWORD: test_password
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U predator_test"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - predator-test-network
+
+  # Redis для тестів
+  redis-test:
+    image: redis:7-alpine
+    container_name: predator-redis-test
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_test_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - predator-test-network
+
+  # Neo4j для тестів
+  neo4j-test:
+    image: neo4j:5.15-community
+    container_name: predator-neo4j-test
+    environment:
+      NEO4J_AUTH: neo4j/test_password
+      NEO4J_dbms_memory_heap_max__size: 512m
+      NEO4J_dbms_memory_pagecache_size: 512m
+    ports:
+      - "7688:7687"
+      - "7474:7474"
+    volumes:
+      - neo4j_test_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:7474 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - predator-test-network
+
+  # Qdrant для тестів
+  qdrant-test:
+    image: qdrant/qdrant:v1.8.1
+    container_name: predator-qdrant-test
+    ports:
+      - "6334:6333"
+      - "6335:6334"
+    volumes:
+      - qdrant_test_data:/qdrant/storage
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:6333/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - predator-test-network
+
+  # MinIO для тестів
+  minio-test:
+    image: minio/minio:latest
+    container_name: predator-minio-test
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "9001:9000"
+      - "9002:9001"
+    volumes:
+      - minio_test_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9000/minio/health/live || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - predator-test-network
+
+  # ClickHouse для тестів
+  clickhouse-test:
+    image: clickhouse/clickhouse-server:latest
+    container_name: predator-clickhouse-test
+    ports:
+      - "8124:8123"
+    volumes:
+      - clickhouse_test_data:/var/lib/clickhouse
+    environment:
+      CLICKHOUSE_DB: predator_test
+      CLICKHOUSE_USER: default
+      CLICKHOUSE_PASSWORD: ""
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
+    healthcheck:
+      test: ["CMD-SHELL", "clickhouse-client --query 'SELECT 1' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - predator-test-network
+
+  # OpenSearch для тестів
+  opensearch-test:
+    image: opensearchproject/opensearch:2.12.0
+    container_name: predator-opensearch-test
+    environment:
+      - discovery.type=single-node
+      - DISABLE_INSTALL_DEMO_CONFIG=true
+      - DISABLE_SECURITY_PLUGIN=true
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9201:9200"
+    volumes:
+      - opensearch_test_data:/usr/share/opensearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - predator-test-network
+
+  # Redpanda для тестів
+  redpanda-test:
+    image: docker.redpanda.com/redpandadata/redpanda:v23.2.15
+    container_name: predator-redpanda-test
+    command:
+      - redpanda
+      - start
+      - --smp=1
+      - --memory=512m
+      - --reserve-memory=0
+      - --overprovisioned
+      - --node-id=0
+      - --kafka-addr=0.0.0.0:9092
+      - --advertise-kafka-addr=redpanda-test:9092
+    ports:
+      - "9093:9092"
+      - "9645:9644"
+    volumes:
+      - redpanda_test_data:/var/lib/redpanda/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9644/v1/cluster || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - predator-test-network
+
+  # Jaeger для distributed tracing
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: predator-jaeger
+    ports:
+      - "5775:5775/udp"
+      - "6831:6831/udp"
+      - "6832:6832/udp"
+      - "5778:5778"
+      - "16686:16686"
+      - "14268:14268"
+      - "14250:14250"
+      - "9411:9411"
+    environment:
+      - COLLECTOR_ZIPKIN_HOST_PORT=:9411
+    networks:
+      - predator-test-network
+
+  # Prometheus для моніторингу метрик
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: predator-prometheus
+    ports:
+      - "9091:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    networks:
+      - predator-test-network
+
+  # Grafana для візуалізації метрик
+  grafana:
+    image: grafana/grafana:latest
+    container_name: predator-grafana
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
+    depends_on:
+      - prometheus
+    networks:
+      - predator-test-network
+
+  # Sentry для error tracking (локальний)
+  sentry:
+    image: getsentry/sentry:latest
+    container_name: predator-sentry
+    ports:
+      - "9000:9000"
+    environment:
+      - SENTRY_SECRET_KEY=test-secret-key
+      - SENTRY_POSTGRES_HOST=postgres-test
+      - SENTRY_POSTGRES_PORT=5432
+      - SENTRY_DB_NAME=sentry
+      - SENTRY_DB_USER=sentry
+      - SENTRY_DB_PASSWORD=sentry
+    volumes:
+      - sentry_data:/var/lib/sentry
+    depends_on:
+      - postgres-test
+    networks:
+      - predator-test-network
+
+volumes:
+  postgres_test_data:
+  redis_test_data:
+  neo4j_test_data:
+  qdrant_test_data:
+  minio_test_data:
+  clickhouse_test_data:
+  opensearch_test_data:
+  redpanda_test_data:
+  prometheus_data:
+  grafana_data:
+  sentry_data:
+
+networks:
+  predator-test-network:
+    driver: bridge

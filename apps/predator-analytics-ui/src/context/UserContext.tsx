@@ -87,18 +87,24 @@ function buildUserFromToken(token: string): UserProfile | null {
 }
 
 export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  // Перемикання між автономним та користувацьким режимом
+  const autoMode = import.meta.env.VITE_AUTO_MODE === 'true';
+  
   const [user, setUserState] = useState<UserProfile | null>(() => {
-    return {
-      id: 'admin-1',
-      name: 'Командир (Dev)',
-      email: 'admin@predator.local',
-      role: UserRole.CORE,
-      tier: SubscriptionTier.ENTERPRISE,
-      tenant_id: 'default',
-      tenant_name: 'PREDATOR',
-      last_login: new Date().toISOString(),
-      data_sectors: [],
-    };
+    if (autoMode) {
+      return {
+        id: 'admin-1',
+        name: 'Командир (Dev)',
+        email: 'admin@predator.local',
+        role: UserRole.CORE,
+        tier: SubscriptionTier.ENTERPRISE,
+        tenant_id: 'default',
+        tenant_name: 'PREDATOR',
+        last_login: new Date().toISOString(),
+        data_sectors: [],
+      };
+    }
+    return null;
   });
   const [isLoading, setIsLoading] = useState(false);
 

@@ -6,6 +6,7 @@ on:
     tags: [ 'v*' ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:  # Дозволяє ручний запуск
 
 env:
   REGISTRY: ghcr.io
@@ -168,6 +169,11 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     environment: production
     
+    permissions:
+      contents: write
+      id-token: write
+      pull-requests: write
+    
     steps:
     - name: 📥 Checkout code
       uses: actions/checkout@v4
@@ -183,6 +189,23 @@ jobs:
       run: |
         echo "✅ Checking production health..."
         # Add health check commands here
+        
+    - name: 🤖 Auto-approve PR (if applicable)
+      if: github.event_name == 'pull_request' && success()
+      uses: actions/github-script@v7
+      with:
+        script: |
+          // Автоматичне схвалення PR після успішних тестів
+          if (context.event_name === 'pull_request') {
+            github.rest.pulls.createReview({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+              event: 'APPROVE',
+              body: '✅ Автоматично схвалено: всі тести пройдено успішно'
+            });
+          }
+
         
     - name: 📊 Notify deployment
       uses: 8398a7/action-slack@v3

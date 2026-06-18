@@ -8,10 +8,37 @@ on:
       - 'deploy/argocd/predator-nvidia.yaml'
       - 'environments/nvidia/**'
 
+env:
+  CI_WORKFLOW: 'ci-cd-unified.yml'
+
 jobs:
+  ci-cd-gate:
+    name: Verify CI/CD Pipeline Success
+    runs-on: ubuntu-latest
+    outputs:
+      ci_status: ${{ steps.wait.outputs.conclusion }}
+    steps:
+      - name: Wait for CI/CD workflow
+        id: wait
+        uses: lewagon/wait-on-check-action@v1.3.1
+        with:
+          ref: ${{ github.sha }}
+          check-name: 'PREDATOR v61.0-ELITE Unified Pipeline'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 30
+        timeout-minutes: 10
+
+      - name: Fail if CI/CD didn't run or failed
+        if: steps.wait.outputs.conclusion != 'success'
+        run: |
+          echo "❌ CI/CD pipeline (ci-cd-unified.yml) ${CONCLUSION:-has not run}."
+          echo "Ensure 'services/**' or 'apps/**' changes trigger CI/CD first."
+          exit 1
+
   deploy-nvidia:
     name: Deploy to NVIDIA Cluster
     runs-on: [self-hosted, linux, x64]
+    needs: ci-cd-gate
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -31,6 +58,83 @@ jobs:
         if: always()
         run: |
           echo "Attempting to sync ArgoCD app..."
-          # Assuming argocd CLI is installed on the runner or we use kubectl to patch
-          # Using kubectl to trigger refresh is easier if CLI isn't there
           kubectl patch application predator-nvidia -n argocd --type merge -p '{"operation": {"sync": {"prune": true}}}' || echo "Sync trigger failed, app might auto-sync later"
+
+      - name: Health Check - ArgoCD Application Status
+        id: health-check
+        run: |
+          echo "=== Starting Health Check ==="
+
+          # Capture previous sync revision for rollback
+          PREV_SYNC=$(kubectl get application predator-nvidia -n argocd -o json | jq -r '.status.sync.revision // "none"')
+          echo "PREV_SYNC=$PREV_SYNC"
+          echo "PREV_SYNC=$PREV_SYNC" >> $GITHUB_OUTPUT
+
+          # Wait for ArgoCD sync to complete
+          echo "Waiting for ArgoCD sync..."
+          timeout 300 bash -c '
+            until kubectl get application predator-nvidia -n argocd -o json | jq -e ".status.sync.status == \"Synced\"" > /dev/null 2>&1; do
+              echo "Waiting for sync..."
+              sleep 10
+            done
+          ' || { echo "❌ ERROR: ArgoCD sync timeout"; exit 1; }
+
+          # Verify application health
+          for i in {1..30}; do
+            HEALTH=$(kubectl get application predator-nvidia -n argocd -o json | jq -r '.status.health.status // "Unknown"')
+            SYNC_STATUS=$(kubectl get application predator-nvidia -n argocd -o json | jq -r '.status.sync.status // "Unknown"')
+            echo "[$i/30] Health: $HEALTH | Sync: $SYNC_STATUS"
+
+            if [ "$HEALTH" = "Healthy" ] && [ "$SYNC_STATUS" = "Synced" ]; then
+              echo "✅ Health Check PASSED"
+              exit 0
+            fi
+
+            if [ "$HEALTH" = "Degraded" ]; then
+              echo "❌ ERROR: Application degraded"
+              kubectl get pods -n predator-nvidia -o wide || true
+              kubectl describe application predator-nvidia -n argocd || true
+              exit 1
+            fi
+
+            sleep 10
+          done
+
+          echo "❌ ERROR: Health check timeout"
+          exit 1
+
+      - name: Rollback on Failure
+        if: failure() && steps.health-check.outputs.PREV_SYNC != 'none'
+        run: |
+          echo "::notice title=Rollback Executed::Rolling back NVIDIA cluster deployment"
+
+          PREV="${{ steps.health-check.outputs.PREV_SYNC }}"
+          echo "Rolling back to sync revision: $PREV"
+
+          # Trigger ArgoCD rollback via kubectl patch
+          kubectl patch application predator-nvidia -n argocd --type merge \
+            -p '{"spec":{"source":{"targetRevision":"'$PREV'"}}}' || echo "Warning: Failed to patch targetRevision"
+
+          # Force sync
+          kubectl patch application predator-nvidia -n argocd --type merge \
+            -p '{"operation":{"sync":{"prune":true,"revision":"'$PREV'"}}}' || echo "Warning: Failed to trigger sync"
+
+          echo "Rollback initiated, waiting for completion..."
+
+          # Verify rollback
+          for i in {1..30}; do
+            HEALTH=$(kubectl get application predator-nvidia -n argocd -o json | jq -r '.status.health.status // "Unknown"')
+            SYNC_STATUS=$(kubectl get application predator-nvidia -n argocd -o json | jq -r '.status.sync.status // "Unknown"')
+            echo "[$i/30] Rollback health: $HEALTH | Sync: $SYNC_STATUS"
+
+            if [ "$HEALTH" = "Healthy" ] && [ "$SYNC_STATUS" = "Synced" ]; then
+              echo "✅ Rollback successful"
+              exit 0
+            fi
+
+            sleep 10
+          done
+
+          echo "❌ CRITICAL: Rollback failed - manual intervention required"
+          kubectl get application predator-nvidia -n argocd -o yaml || true
+          exit 1

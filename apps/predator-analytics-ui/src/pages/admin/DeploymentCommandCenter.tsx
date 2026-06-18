@@ -108,11 +108,12 @@ export default function DeploymentCommandCenter() {
 
         {error && (
           <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-            <Alert variant="destructive" className="bg-red-50 border-red-200 text-red-900">
-              <AlertCircle className="h-4 w-4" />
-              <div className="font-semibold ml-2">Системна помилка</div>
-              <div className="ml-2 text-sm opacity-90">{error}</div>
-            </Alert>
+            <Alert
+              type="error"
+              title="Системна помилка"
+              message={error}
+              className="bg-red-50 border-red-200 text-red-900"
+            />
           </motion.div>
         )}
 

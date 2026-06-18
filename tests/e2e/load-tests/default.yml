@@ -1,0 +1,169 @@
+# 🦅 Predator Analytics Load Test Configuration
+# Artillery для навантажувального тестування E2E
+
+config:
+  target: "http://localhost:3030"
+  phases:
+    # Фаза розігріву
+    - duration: 60
+      arrivalRate: 1
+      name: "Warm up"
+    
+    # Основна фаза
+    - duration: 300
+      arrivalRate: 5
+      name: "Main load"
+    
+    # Пікова фаза
+    - duration: 60
+      arrivalRate: 10
+      name: "Peak load"
+    
+    # Фаза охолодження
+    - duration: 60
+      arrivalRate: 1
+      name: "Cool down"
+  
+  # Плагіни для моніторингу
+  plugins:
+    ensure:
+      maxErrorRate: 5
+      maxLatency: 2000
+    metrics-by-endpoint:
+      use: true
+    
+  # Налаштування HTTP
+  http:
+    timeout: 30
+    pool: 10
+    keepAlive: true
+
+scenarios:
+  # Сценарій 1: Завантаження головної сторінки
+  - name: "Load Dashboard"
+    flow:
+      - get:
+          url: "/"
+          name: "Load Dashboard"
+          expect:
+            - statusCode: 200
+      
+      - think: 2  # Пауза для імітації реальної поведінки користувача
+  
+  # Сценарій 2: Авторизація
+  - name: "Authentication"
+    flow:
+      - post:
+          url: "/api/auth/login"
+          json:
+            email: "test@example.com"
+            password: "test123"
+          name: "Login"
+          expect:
+            - statusCode: 200
+      
+      - think: 1
+  
+  # Сценарій 3: Імпорт Excel
+  - name: "Excel Import"
+    flow:
+      - post:
+          url: "/api/import/upload"
+          name: "Upload Excel"
+          multipart:
+            file: "test-data.xlsx"
+          expect:
+            - statusCode: 200
+      
+      - think: 5  # Час на обробку файлу
+      
+      - get:
+          url: "/api/import/status"
+          name: "Check Import Status"
+          expect:
+            - statusCode: 200
+  
+  # Сценарій 4: AI Chat запити
+  - name: "AI Chat Queries"
+    flow:
+      - post:
+          url: "/api/chat/query"
+          json:
+            query: "Покажи декларації за березень 2024"
+          name: "AI Query 1"
+          expect:
+            - statusCode: 200
+      
+      - think: 2
+      
+      - post:
+          url: "/api/chat/query"
+          json:
+            query: "Скільки записів було імпортовано?"
+          name: "AI Query 2"
+          expect:
+            - statusCode: 200
+  
+  # Сценарій 5: Пошук
+  - name: "Search Operations"
+    flow:
+      - get:
+          url: "/api/search?q=декларація"
+          name: "Search"
+          expect:
+            - statusCode: 200
+      
+      - think: 1
+      
+      - get:
+          url: "/api/search?q=контрагент"
+          name: "Search 2"
+          expect:
+            - statusCode: 200
+  
+  # Сценарій 6: Отримання даних
+  - name: "Data Retrieval"
+    flow:
+      - get:
+          url: "/api/declarations"
+          name: "Get Declarations"
+          expect:
+            - statusCode: 200
+      
+      - think: 1
+      
+      - get:
+          url: "/api/analytics/summary"
+          name: "Get Analytics"
+          expect:
+            - statusCode: 200
+  
+  # Сценарій 7: Графові запити
+  - name: "Graph Queries"
+    flow:
+      - get:
+          url: "/api/graph/connections"
+          name: "Get Graph Connections"
+          expect:
+            - statusCode: 200
+      
+      - think: 2
+      
+      - get:
+          url: "/api/graph/anomalies"
+          name: "Get Anomalies"
+          expect:
+            - statusCode: 200
+  
+  # Сценарій 8: WebSocket з'єднання
+  - name: "WebSocket Connection"
+    flow:
+      - connect:
+          target: "ws://localhost:3030/ws"
+          name: "WebSocket Connect"
+      
+      - think: 5
+      
+      - send:
+          payload: '{"type":"subscribe","channel":"import-status"}'
+          name: "Subscribe"

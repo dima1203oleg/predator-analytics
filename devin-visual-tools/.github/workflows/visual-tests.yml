@@ -1,0 +1,256 @@
+name: Devin Visual Tests
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+  push:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  visual-tests:
+    name: Visual Regression Tests
+    runs-on: macos-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+      
+      - name: Install @devin/visual-tools
+        run: npm install --save-dev @devin/visual-tools
+      
+      - name: Initialize visual testing
+        run: npx @devin/visual-tools init --force
+        continue-on-error: true
+      
+      - name: Run visual tests
+        run: npm run test:visual:ci
+        env:
+          CI: true
+          DEVIN_TEST_MODE: true
+      
+      - name: Upload visual test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-report-${{ matrix.node-version }}
+          path: visual-report/
+          retention-days: 30
+      
+      - name: Upload screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots-${{ matrix.node-version }}
+          path: |
+            visual-report/**/*.png
+            test-results/**/*.png
+          retention-days: 30
+      
+      - name: Comment PR with results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const reportPath = 'visual-report/report.json';
+            
+            if (fs.existsSync(reportPath)) {
+              const report = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
+              const { totalTests, passed, failed, skipped } = report;
+              
+              const body = `
+              ## 🎨 Visual Test Results
+              
+              - **Total Tests:** ${totalTests}
+              - **✅ Passed:** ${passed}
+              - **❌ Failed:** ${failed}
+              - **⏭️ Skipped:** ${skipped}
+              
+              ${failed > 0 ? '⚠️ Some visual tests failed. Please review the screenshots.' : '✅ All visual tests passed!'}
+              
+              ---
+              
+              💡 To update baselines, comment \`/accept-visual-changes\` on this PR.
+              `;
+              
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: body
+              });
+            }
+      
+      - name: Check for visual changes approval
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // Check for /accept-visual-changes command
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            
+            const acceptCommand = comments.data.find(comment => 
+              comment.user.type === 'User' && 
+              comment.body.includes('/accept-visual-changes')
+            );
+            
+            if (acceptCommand) {
+              // Set output for next step
+              core.setOutput('accept_changes', 'true');
+            }
+
+  accept-visual-changes:
+    name: Accept Visual Changes
+    runs-on: macos-latest
+    needs: visual-tests
+    if: needs.visual-tests.outputs.accept_changes == 'true'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+      
+      - name: Update visual baselines
+        run: npm run test:visual:update
+        env:
+          CI: true
+      
+      - name: Commit updated baselines
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add visual-tests/baseline/
+          git commit -m "chore: update visual baselines [skip ci]" || echo "No changes to commit"
+          git push origin HEAD:${{ github.ref }}
+      
+      - name: Comment approval
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '✅ Visual baselines updated successfully!'
+            });
+
+  performance-metrics:
+    name: Performance Metrics
+    runs-on: macos-latest
+    needs: visual-tests
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Download report
+        uses: actions/download-artifact@v4
+        with:
+          name: visual-report-20.x
+          path: visual-report/
+      
+      - name: Analyze performance
+        run: |
+          # Add performance analysis logic here
+          echo "Analyzing performance metrics..."
+          # Could integrate with performance monitoring tools
+      
+      - name: Comment performance issues
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '⚠️ Performance degradation detected in visual tests. Please investigate.'
+            });
+
+  lint-and-build:
+    name: Lint and Build
+    runs-on: macos-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Lint TypeScript
+        run: npm run lint
+      
+      - name: Build package
+        run: npm run build
+      
+      - name: Type check
+        run: npx tsc --noEmit
+
+  applitools-integration:
+    name: Applitools Integration (Optional)
+    runs-on: macos-latest
+    if: env.APPLITOOLS_API_KEY != ''
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Install Applitools SDK
+        run: npm install --save-dev @applitools/eyes-playwright
+      
+      - name: Run Applitools tests
+        run: npm run test:visual:applitools
+        env:
+          APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}

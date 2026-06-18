@@ -9,8 +9,9 @@ export default {
     extend: {
       fontFamily: {
         sans: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
-        mono: ['IBM Plex Mono', 'ui-monospace', 'monospace'],
+        mono: ['IBM Plex Mono', 'JetBrains Mono', 'ui-monospace', 'monospace'],
         display: ['Syne', 'Plus Jakarta Sans', 'sans-serif'],
+        cyber: ['JetBrains Mono', 'ui-monospace', 'monospace'], // Special cyberpunk font
       },
       colors: {
         background: '#050608',
@@ -95,6 +96,18 @@ export default {
           magenta: '#ff00ff',
           yellow: '#fff300',
           orange: '#ff6600',
+        },
+        // PREDATOR Cyberpunk Colors (exact from specs)
+        cyber: {
+          bg: '#06080D',
+          surface: '#0E121B',
+          border: '#1A2A3A',
+          neon: '#00F0FF',        // primary cyan
+          'neon-dim': '#0088AA',   // dimmed cyan
+          green: '#00FF41',        // cyberpunk green
+          red: '#FF3333',          // danger red
+          gold: '#FFB800',         // accent gold
+          pink: '#FF00FF',         // accent pink
         },
       },
       backgroundImage: {

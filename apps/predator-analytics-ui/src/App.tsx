@@ -56,8 +56,11 @@ const queryClient = new QueryClient({
 });
 
 function App() {
-  // SOVEREIGN NEXUS EXPERIENCE: Start with cinematic BootScreen
-  const [appState, setAppState] = useState<'BOOTING' | 'LOGIN' | 'READY'>('BOOTING');
+  // Перемикання між автономним та користувацьким режимом
+  const autoMode = import.meta.env.VITE_AUTO_MODE === 'true';
+  const [appState, setAppState] = useState<'BOOTING' | 'LOGIN' | 'READY'>(
+    autoMode ? 'READY' : 'BOOTING'
+  );
   const { highVisibility, isTerminalOpen } = useAppStore((state) => ({
     highVisibility: state.highVisibility,
     isTerminalOpen: state.isTerminalOpen
