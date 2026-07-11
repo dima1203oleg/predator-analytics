@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { BarChart3, FileText, Radar, Target, Globe2, ArrowRight } from 'lucide-react';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
@@ -36,7 +37,7 @@ export const MobileMarketHub: React.FC<MobileMarketHubProps> = ({ onSelectTab })
 
       <div className="grid grid-cols-1 gap-4">
         {MOBILE_MARKET_ACTIONS.map((action) => (
-          <button
+          <Button variant="cyber"
             key={action.id}
             onClick={() => onSelectTab(action.id)}
             className="flex items-center p-5 rounded-3xl bg-white/[0.03] border border-white/10 active:scale-95 transition-all shadow-lg text-left"
@@ -50,7 +51,7 @@ export const MobileMarketHub: React.FC<MobileMarketHubProps> = ({ onSelectTab })
             <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-400">
               <ArrowRight size={20} />
             </div>
-          </button>
+          </Button>
         ))}
       </div>
     </div>

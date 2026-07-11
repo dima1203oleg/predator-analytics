@@ -2,8 +2,6 @@
 # Infrastructure + Governance + AI Orchestration + Ingestion Pipeline
 # Optimized for NVIDIA Server Deployment
 
-version: "3.8"
-
 networks:
   predator-network:
     driver: bridge
@@ -48,38 +46,63 @@ services:
   # Backend API
   backend:
     build:
-      context: .
-      dockerfile: services/api_gateway/Dockerfile.prod
+      context: ./services/core-api
+      dockerfile: Dockerfile.prod
     container_name: predator-backend
     restart: unless-stopped
-    shm_size: '2gb'
-    env_file: .env
-    # === LARGE FILE SUPPORT (v45.0) ===
+    shm_size: '4gb'
+    env_file: .env.production
     deploy:
       resources:
         limits:
-          memory: 8G
+          memory: 16G
+          cpus: "4.0"
         reservations:
-          memory: 2G
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
     volumes:
-      - ./uploads:/app/uploads
+      - /app/uploads:/app/uploads
     environment:
       - UVICORN_TIMEOUT_KEEP_ALIVE=300
-      - DATABASE_URL=postgresql+asyncpg://predator:${POSTGRES_PASSWORD}@postgres:5432/predator_db
+      - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       - REDIS_URL=redis://redis:6379/0
-      - RABBITMQ_URL=amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672/
-      - QDRANT_URL=http://qdrant:6333
-      - OPENSEARCH_URL=http://opensearch:9200
-      - OLLAMA_BASE_URL=http://ollama:11434
+      - RISK_CACHE_TTL=3600
+      - NVIDIA_VISIBLE_DEVICES=all
     networks:
       predator-network:
         ipv4_address: 172.20.0.4
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      ollama:
+        condition: service_started
+
+  # Autonomous Agents (Self-Healing)
+  autonomous-agents:
+    build:
+      context: .
+      dockerfile: services/autonomous-agents/Dockerfile
+    container_name: predator-autonomous-agents
+    restart: unless-stopped
+    env_file: .env.production
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /app/scripts:/app/scripts
+    environment:
+      - BACKEND_URL=http://backend:8000/api/health
+      - ROLLBACK_FLAG=/tmp/rollback_flag
+      - UPDATE_AGENTS_FLAG=/tmp/update_agents
+      - NVIDIA_VISIBLE_DEVICES=all
+    networks:
+      predator-network:
+        ipv4_address: 172.20.0.20
+    depends_on:
+      - backend
       - redis
-      - rabbitmq
-      - governance
-      - ollama
 
   # Governance (SOM) - NEW v45
   governance:

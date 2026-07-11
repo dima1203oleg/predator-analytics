@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Truck, Ship, CheckCircle2, Clock, MapPin, Search, Package } from 'lucide-react';
@@ -76,13 +77,13 @@ export const LogisticsTrackerWidget: React.FC<{ persona: string }> = ({ persona 
                className="w-full bg-black/40 border border-white/10 rounded-xl py-3 pl-11 pr-4 text-sm font-mono text-white focus:outline-none focus:border-indigo-500/50 transition-all placeholder-slate-600"
              />
           </div>
-          <button
+          <Button variant="cyber"
             onClick={handleSearch}
             disabled={isSearching || !trackingId}
             className="px-6 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSearching ? <Clock className="animate-spin" size={18} /> : premiumLocales.logisticsTracker.search}
-          </button>
+          </Button>
         </div>
 
         {/* Results Timeline */}

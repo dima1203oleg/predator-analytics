@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useEffect } from 'react';
 
 export type ToastType = 'SUCCESS' | 'ERROR' | 'WARNING' | 'INFO';
@@ -112,7 +113,7 @@ const Toast: React.FC<ToastProps> = ({ toast, onClose }) => {
             </div>
 
             {/* close */}
-            <button
+            <Button variant="cyber"
                 onClick={() => onClose(toast.id)}
                 style={{
                     background: 'none',
@@ -129,7 +130,7 @@ const Toast: React.FC<ToastProps> = ({ toast, onClose }) => {
                 onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.4)')}
             >
                 ×
-            </button>
+            </Button>
         </div>
     );
 };

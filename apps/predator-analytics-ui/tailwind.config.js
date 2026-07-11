@@ -3,17 +3,63 @@ export default {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
+    // Tremor Raw — щоб Tailwind бачив класи з пакета
+    "./node_modules/@tremor/**/*.{js,ts,jsx,tsx}",
   ],
   darkMode: 'class',
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
-        mono: ['IBM Plex Mono', 'JetBrains Mono', 'ui-monospace', 'monospace'],
-        display: ['Syne', 'Plus Jakarta Sans', 'sans-serif'],
-        cyber: ['JetBrains Mono', 'ui-monospace', 'monospace'], // Special cyberpunk font
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
       },
       colors: {
+        // Tremor Raw Design Tokens — синхронізовані з PREDATOR палітрою
+        tremor: {
+          brand: {
+            faint: '#0B1929',      // obsidian-light
+            muted: '#164e63',      // primary-900
+            subtle: '#0e7490',     // primary-700
+            DEFAULT: '#06b6d4',    // primary-500
+            emphasis: '#22d3ee',   // primary-400
+            inverted: '#050608',   // background
+          },
+          background: {
+            muted: '#0a0e17',
+            subtle: '#0f1724',
+            DEFAULT: '#050608',
+            emphasis: '#1e293b',
+          },
+          border: {
+            DEFAULT: 'rgba(255,255,255,0.08)',
+          },
+          ring: {
+            DEFAULT: 'rgba(6,182,212,0.3)',
+          },
+          content: {
+            subtle: '#64748b',
+            DEFAULT: '#94a3b8',
+            emphasis: '#e2e8f0',
+            strong: '#f8fafc',
+            inverted: '#050608',
+          },
+        },
+        // Семантичні кольори для графіків (chart-1..chart-6)
+        chart: {
+          1: '#06b6d4', // cyan / primary
+          2: '#22c55e', // green / success
+          3: '#eab308', // amber / warning
+          4: '#ef4444', // red / danger
+          5: '#8b5cf6', // violet
+          6: '#f97316', // orange
+        },
+        obsidian: '#050B14',
+        cyan: {
+          tactical: '#00E5FF',
+        },
+        gold: {
+          strategic: '#FFC107',
+        },
         background: '#050608',
         foreground: '#f8fafc',
         border: 'rgba(255, 255, 255, 0.1)',
@@ -88,27 +134,22 @@ export default {
           900: '#7f1d1d',
           950: '#450a0a',
         },
-        neon: {
-          blue: '#00f3ff',
-          purple: '#bc13fe',
-          green: '#0aff0a',
-          cyan: '#00e5ff',
-          magenta: '#ff00ff',
-          yellow: '#fff300',
-          orange: '#ff6600',
-        },
-        // PREDATOR Cyberpunk Colors (exact from specs)
-        cyber: {
-          bg: '#06080D',
-          surface: '#0E121B',
-          border: '#1A2A3A',
-          neon: '#00F0FF',        // primary cyan
-          'neon-dim': '#0088AA',   // dimmed cyan
-          green: '#00FF41',        // cyberpunk green
-          red: '#FF3333',          // danger red
-          gold: '#FFB800',         // accent gold
-          pink: '#FF00FF',         // accent pink
-        },
+        // Professional Matte UI Theme Colors
+        matte: {
+          bg: 'var(--bg-primary)',
+          surface: 'var(--bg-surface)',
+          overlay: 'var(--bg-overlay)',
+          text: 'var(--text-primary)',
+          'text-muted': 'var(--text-secondary)',
+          border: 'var(--border-subtle)',
+          'border-strong': 'var(--border-strong)',
+          info: 'var(--accent-info)',
+          warning: 'var(--accent-warning)',
+          critical: 'var(--accent-critical)',
+          'signal-rooted': 'var(--signal-rooted)',
+          'signal-target': 'var(--signal-target)',
+          'signal-monitoring': 'var(--signal-monitoring)',
+        }
       },
       backgroundImage: {
         'grid-pattern': "linear-gradient(to right, #1e293b 1px, transparent 1px), linear-gradient(to bottom, #1e293b 1px, transparent 1px)",

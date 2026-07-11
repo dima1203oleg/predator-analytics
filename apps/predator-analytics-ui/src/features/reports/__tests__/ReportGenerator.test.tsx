@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import ReportGenerator from '../ReportGenerator';
@@ -9,7 +10,7 @@ vi.mock('framer-motion', async () => {
         ...actual as any,
         motion: {
             div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-            button: ({ children, ...props }: any) => <button {...props}>{children}</button>
+            button: ({ children, ...props }: any) => <Button variant="cyber" {...props}>{children}</Button>
         },
         AnimatePresence: ({ children }: any) => <>{children}</>
     };

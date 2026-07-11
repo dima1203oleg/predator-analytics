@@ -9,6 +9,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -165,12 +166,12 @@ export default function TradeFlowMapPremium() {
               ]}
               actions={
                 <div className="flex gap-4">
-                   <button onClick={() => setZoom(z => Math.min(z + 0.2, 2))} className="p-5 bg-black border-2 border-white/[0.04] rounded-2xl text-slate-400 hover:text-[#D4AF37] transition-all shadow-xl"><ZoomIn size={24} /></button>
-                   <button onClick={() => setZoom(z => Math.max(z - 0.2, 0.5))} className="p-5 bg-black border-2 border-white/[0.04] rounded-2xl text-slate-400 hover:text-[#D4AF37] transition-all shadow-xl"><ZoomOut size={24} /></button>
-                   <button onClick={handleRefresh} className={cn("p-5 bg-black border-2 border-white/[0.04] rounded-2xl text-slate-400 hover:text-[#D4AF37] transition-all shadow-xl", refreshing && "animate-spin")}><RefreshCw size={24} /></button>
-                   <button onClick={() => setIsPlaying(!isPlaying)} className={cn("px-8 py-5 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic shadow-2xl transition-all flex items-center gap-4", isPlaying ? "bg-amber-900/10 border-2 border-amber-500/20 text-amber-500" : "bg-emerald-900/10 border-2 border-emerald-500/20 text-emerald-500")}>
+                   <Button variant="cyber" onClick={() => setZoom(z => Math.min(z + 0.2, 2))} className="p-5 bg-black border-2 border-white/[0.04] rounded-2xl text-slate-400 hover:text-[#D4AF37] transition-all shadow-xl"><ZoomIn size={24} /></Button>
+                   <Button variant="cyber" onClick={() => setZoom(z => Math.max(z - 0.2, 0.5))} className="p-5 bg-black border-2 border-white/[0.04] rounded-2xl text-slate-400 hover:text-[#D4AF37] transition-all shadow-xl"><ZoomOut size={24} /></Button>
+                   <Button variant="cyber" onClick={handleRefresh} className={cn("p-5 bg-black border-2 border-white/[0.04] rounded-2xl text-slate-400 hover:text-[#D4AF37] transition-all shadow-xl", refreshing && "animate-spin")}><RefreshCw size={24} /></Button>
+                   <Button variant="cyber" onClick={() => setIsPlaying(!isPlaying)} className={cn("px-8 py-5 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic shadow-2xl transition-all flex items-center gap-4", isPlaying ? "bg-amber-900/10 border-2 border-amber-500/20 text-amber-500" : "bg-emerald-900/10 border-2 border-emerald-500/20 text-emerald-500")}>
                       {isPlaying ? <Pause size={20} /> : <Play size={20} />} {isPlaying ? 'ПАУЗА_АНІМАЦІЇ' : 'ЗАПУСТИТИ'}
-                   </button>
+                   </Button>
                 </div>
               }
             />

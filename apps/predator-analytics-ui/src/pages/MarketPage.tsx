@@ -452,12 +452,12 @@ export default function MarketPage() {
     <div className={cn("space-y-6", isCompact ? "p-3" : "")}>
       {isCompact && activeTab !== 'menu' && (
         <div className="p-4 bg-black border border-white/10 rounded-2xl flex items-center gap-4 mb-4">
-          <button 
+          <Button variant="cyber" 
             onClick={() => setActiveTab('menu')}
             className="p-3 rounded-2xl bg-white/5 border border-white/10 text-white"
           >
             <ArrowLeft size={24} />
-          </button>
+          </Button>
           <h2 className="text-lg font-black text-white italic tracking-widest uppercase">НАЗАД ДО МЕНЮ</h2>
         </div>
       )}
@@ -536,7 +536,7 @@ export default function MarketPage() {
         <div className="flex items-center justify-between p-2 rounded-[28px] border border-white/[0.08] bg-white/[0.02] ">
           <div className="flex flex-wrap gap-2">
             {tabs.map((tab) => (
-              <button
+              <Button variant="cyber"
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
                 className={cn(
@@ -550,7 +550,7 @@ export default function MarketPage() {
                   {tab.icon}
                 </span>
                 {tab.label}
-              </button>
+              </Button>
             ))}
           </div>
           <div className="hidden md:flex items-center gap-4 px-6 border-l border-white/[0.08]">

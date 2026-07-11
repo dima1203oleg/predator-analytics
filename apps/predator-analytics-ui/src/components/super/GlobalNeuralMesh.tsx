@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Server, Zap, Activity, ShieldCheck, Globe, Cpu, MoreHorizontal, Link as LinkIcon, Maximize2, Shield, Hexagon } from 'lucide-react';
@@ -158,10 +159,10 @@ const GlobalNeuralMesh: React.FC<GlobalNeuralMeshProps> = ({ status }) => {
           </AnimatePresence>
         </div>
 
-        <button className="w-full mt-8 py-5 bg-rose-500/5 hover:bg-rose-500/10 rounded-3xl border border-rose-500/20 text-[11px] font-black text-rose-500 uppercase tracking-[0.4em] flex items-center justify-center gap-3 transition-all group hover:tracking-[0.5em]">
+        <Button variant="cyber" className="w-full mt-8 py-5 bg-rose-500/5 hover:bg-rose-500/10 rounded-3xl border border-rose-500/20 text-[11px] font-black text-rose-500 uppercase tracking-[0.4em] flex items-center justify-center gap-3 transition-all group hover:tracking-[0.5em]">
           <LinkIcon size={16} className="group-hover:rotate-45 transition-transform" /> 
           ЗАК ІПИТИ НОВИЙ ВУЗОЛ ELITE
-        </button>
+        </Button>
       </div>
     </div>
   );

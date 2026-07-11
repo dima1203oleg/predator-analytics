@@ -9,7 +9,7 @@ FROM node:20-slim AS builder
 WORKDIR /build
 
 COPY apps/predator-analytics-ui/package*.json ./
-RUN npm ci --no-audit --no-fund
+RUN npm ci --no-audit --no-fund --legacy-peer-deps
 
 COPY apps/predator-analytics-ui/ ./
 RUN npm run build

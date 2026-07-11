@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { motion } from 'framer-motion';
 import { 
@@ -52,9 +53,9 @@ export default function WhatIfSimulatorView() {
                { label: 'ТОЧНІСТЬ_ПРОГНОЗУ', value: '92.4%', icon: <Crosshair size={14} />, color: 'success', animate: true },
              ]}
              actions={
-               <button onClick={() => play(UISoundType.CLICK)} className="px-6 py-3 bg-emerald-600/10 border border-emerald-500/20 text-emerald-500 rounded-xl text-[10px] font-black uppercase tracking-widest italic hover:bg-emerald-600 hover:text-white transition-all shadow-xl">
+               <Button variant="cyber" onClick={() => play(UISoundType.CLICK)} className="px-6 py-3 bg-emerald-600/10 border border-emerald-500/20 text-emerald-500 rounded-xl text-[10px] font-black uppercase tracking-widest italic hover:bg-emerald-600 hover:text-white transition-all shadow-xl">
                  <Save size={16} className="inline mr-2" /> ЗБЕРЕГТИ_СЦЕНАРІЙ
-               </button>
+               </Button>
              }
            />
 
@@ -81,7 +82,7 @@ export default function WhatIfSimulatorView() {
                       {/* Factor 2 */}
                       <div className="space-y-3 p-5 bg-white/[0.02] border border-white/5 rounded-2xl">
                          <div className="flex justify-between items-center">
-                            <span className="text-[10px] font-black text-rose-500 uppercase tracking-widest">ІНФЛЯЦІЙНИЙ_ТИСК (%)</span>
+                            <span className="text-[10px] font-black text-cyan-500 uppercase tracking-widest">ІНФЛЯЦІЙНИЙ_ТИСК (%)</span>
                             <span className="text-sm font-black text-white">8.5%</span>
                          </div>
                          <input type="range" className="w-full accent-rose-500" />
@@ -127,7 +128,7 @@ export default function WhatIfSimulatorView() {
                 <div className="grid grid-cols-3 gap-6">
                    <div className="p-6 bg-black border border-white/5 rounded-3xl flex flex-col gap-2 shadow-xl">
                       <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">ПЕСИМІСТИЧНИЙ_СЦЕНАРІЙ (P5)</span>
-                      <span className="text-2xl font-black text-rose-500">-12.4%</span>
+                      <span className="text-2xl font-black text-cyan-500">-12.4%</span>
                    </div>
                    <div className="p-6 bg-black border border-emerald-500/20 rounded-3xl flex flex-col gap-2 shadow-xl bg-emerald-500/5">
                       <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">БАЗОВИЙ_СЦЕНАРІЙ (P50)</span>

@@ -4,6 +4,7 @@
  * Повна українська локалізація
  */
 
+import { Button } from '@/components/ui/button';
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -259,7 +260,7 @@ export const DashboardBuilder: React.FC<DashboardBuilderProps> = ({
       <div className="px-6 py-4 flex items-center justify-between gap-4 border-b border-white/5 bg-black/40 ">
         {/* Left side */}
         <div className="flex items-center gap-3">
-          <button
+          <Button variant="cyber"
             onClick={() => setShowPalette(!showPalette)}
             className={cn(
               "p-2.5 rounded-xl border transition-all",
@@ -270,7 +271,7 @@ export const DashboardBuilder: React.FC<DashboardBuilderProps> = ({
             title={premiumLocales.dashboardBuilder.toolbar.widgetPalette}
           >
             {showPalette ? <PanelLeftClose size={18} /> : <PanelLeft size={18} />}
-          </button>
+          </Button>
 
           <div className="h-6 w-px bg-white/10" />
 
@@ -286,14 +287,14 @@ export const DashboardBuilder: React.FC<DashboardBuilderProps> = ({
 
           {/* Templates */}
           <div className="relative">
-            <button
+            <Button variant="cyber"
               onClick={() => setShowTemplates(!showTemplates)}
               className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black text-slate-400 uppercase tracking-widest hover:bg-white/10 transition-all flex items-center gap-2"
             >
               <FileText size={14} />
               {premiumLocales.dashboardBuilder.toolbar.templates}
               <ChevronDown size={14} />
-            </button>
+            </Button>
 
             <AnimatePresence>
               {showTemplates && (
@@ -310,7 +311,7 @@ export const DashboardBuilder: React.FC<DashboardBuilderProps> = ({
                   </div>
                   <div className="p-2 max-h-80 overflow-y-auto custom-scrollbar">
                     {personaTemplates.map((template) => (
-                      <button
+                      <Button variant="cyber"
                         key={template.id}
                         onClick={() => handleLoadTemplate(template)}
                         className="w-full p-3 text-left rounded-xl hover:bg-white/5 transition-colors"
@@ -324,7 +325,7 @@ export const DashboardBuilder: React.FC<DashboardBuilderProps> = ({
                             <div className="text-[9px] text-slate-500">{template.description}</div>
                           </div>
                         </div>
-                      </button>
+                      </Button>
                     ))}
                   </div>
                 </motion.div>
@@ -336,27 +337,27 @@ export const DashboardBuilder: React.FC<DashboardBuilderProps> = ({
         {/* Right side */}
         <div className="flex items-center gap-2">
           {/* Undo/Redo */}
-          <button
+          <Button variant="cyber"
             onClick={handleUndo}
             disabled={historyIndex === 0}
             className="p-2.5 bg-white/5 border border-white/10 rounded-xl text-slate-400 hover:text-white transition-all disabled:opacity-30"
             title={premiumLocales.dashboardBuilder.toolbar.undo}
           >
             <Undo size={16} />
-          </button>
-          <button
+          </Button>
+          <Button variant="cyber"
             onClick={handleRedo}
             disabled={historyIndex === history.length - 1}
             className="p-2.5 bg-white/5 border border-white/10 rounded-xl text-slate-400 hover:text-white transition-all disabled:opacity-30"
             title={premiumLocales.dashboardBuilder.toolbar.redo}
           >
             <Redo size={16} />
-          </button>
+          </Button>
 
           <div className="h-6 w-px bg-white/10" />
 
           {/* Auto-refresh toggle */}
-          <button
+          <Button variant="cyber"
             onClick={() => setAutoRefresh(!autoRefresh)}
             className={cn(
               "p-2.5 rounded-xl border transition-all flex items-center gap-2",
@@ -367,10 +368,10 @@ export const DashboardBuilder: React.FC<DashboardBuilderProps> = ({
             title={premiumLocales.dashboardBuilder.toolbar.autoRefresh}
           >
             {autoRefresh ? <Pause size={16} /> : <Play size={16} />}
-          </button>
+          </Button>
 
           {/* Edit/View toggle */}
-          <button
+          <Button variant="cyber"
             onClick={() => setIsEditing(!isEditing)}
             className={cn(
               "p-2.5 rounded-xl border transition-all",
@@ -381,28 +382,28 @@ export const DashboardBuilder: React.FC<DashboardBuilderProps> = ({
             title={isEditing ? premiumLocales.dashboardBuilder.toolbar.viewMode : premiumLocales.dashboardBuilder.toolbar.editMode}
           >
             {isEditing ? <Unlock size={16} /> : <Lock size={16} />}
-          </button>
+          </Button>
 
           <div className="h-6 w-px bg-white/10" />
 
           {/* Share */}
-          <button
+          <Button variant="cyber"
             className="p-2.5 bg-white/5 border border-white/10 rounded-xl text-slate-400 hover:text-white transition-all"
             title={premiumLocales.dashboardBuilder.toolbar.share}
           >
             <Share2 size={16} />
-          </button>
+          </Button>
 
           {/* Export */}
-          <button
+          <Button variant="cyber"
             className="p-2.5 bg-white/5 border border-white/10 rounded-xl text-slate-400 hover:text-white transition-all"
             title={premiumLocales.dashboardBuilder.toolbar.export}
           >
             <Download size={16} />
-          </button>
+          </Button>
 
           {/* Save */}
-          <button
+          <Button variant="cyber"
             onClick={handleSave}
             disabled={isSaving}
             className="px-5 py-2.5 bg-gradient-to-r from-amber-600 to-orange-600 rounded-xl text-[10px] font-black text-white uppercase tracking-widest shadow-lg shadow-amber-900/20 hover:scale-105 transition-all flex items-center gap-2 disabled:opacity-50"
@@ -413,7 +414,7 @@ export const DashboardBuilder: React.FC<DashboardBuilderProps> = ({
               <Save size={14} />
             )}
             {premiumLocales.dashboardBuilder.toolbar.save}
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -461,18 +462,18 @@ export const DashboardBuilder: React.FC<DashboardBuilderProps> = ({
                 </div>
 
                 <div className="flex justify-center gap-4">
-                  <button
+                  <Button variant="cyber"
                     onClick={() => handleAddWidget('kpi_card')}
                     className="px-6 py-3 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black text-white uppercase tracking-widest hover:bg-white/10 transition-all"
                   >
                     {premiumLocales.dashboardBuilder.canvas.addKpi}
-                  </button>
-                  <button
+                  </Button>
+                  <Button variant="cyber"
                     onClick={() => handleAddWidget('area_chart')}
                     className="px-6 py-3 bg-gradient-to-r from-amber-600 to-orange-600 rounded-xl text-[10px] font-black text-white uppercase tracking-widest shadow-lg hover:scale-105 transition-all"
                   >
                     {premiumLocales.dashboardBuilder.canvas.addChart}
-                  </button>
+                  </Button>
                 </div>
 
                 {/* AI Quick Recommendations */}
@@ -484,14 +485,14 @@ export const DashboardBuilder: React.FC<DashboardBuilderProps> = ({
                     </div>
                     <div className="flex flex-wrap justify-center gap-2">
                       {aiRecommendations.slice(0, 3).map(rec => (
-                        <button
+                        <Button variant="cyber"
                           key={rec.id}
                           onClick={() => handleAddWidget(rec.widgetType, rec.dataSource)}
                           className="px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-xl text-[9px] font-bold text-amber-400 hover:bg-amber-500/20 transition-all flex items-center gap-2"
                         >
                           {rec.title}
                           <ArrowRight size={12} />
-                        </button>
+                        </Button>
                       ))}
                     </div>
                   </div>
@@ -528,7 +529,7 @@ export const DashboardBuilder: React.FC<DashboardBuilderProps> = ({
                   {/* Edit controls */}
                   {isEditing && (
                     <div className="absolute -top-3 -right-3 z-20 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button
+                      <Button variant="cyber"
                         onClick={(e) => {
                           e.stopPropagation();
                           // Clone widget
@@ -540,8 +541,8 @@ export const DashboardBuilder: React.FC<DashboardBuilderProps> = ({
                         title={premiumLocales.dashboardBuilder.canvas.duplicate}
                       >
                         <Copy size={12} className="text-slate-400" />
-                      </button>
-                      <button
+                      </Button>
+                      <Button variant="cyber"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleDeleteWidget(widget.id);
@@ -550,7 +551,7 @@ export const DashboardBuilder: React.FC<DashboardBuilderProps> = ({
                         title={premiumLocales.dashboardBuilder.canvas.delete}
                       >
                         <Trash2 size={12} className="text-rose-400" />
-                      </button>
+                      </Button>
                     </div>
                   )}
 
@@ -598,9 +599,9 @@ export const DashboardBuilder: React.FC<DashboardBuilderProps> = ({
               <div className="text-xs font-black text-white uppercase">{premiumLocales.dashboardBuilder.paywall.upgradeTitle}</div>
               <div className="text-[10px] text-amber-300/70">{premiumLocales.dashboardBuilder.paywall.accessAllData}</div>
             </div>
-            <button className="px-4 py-2 bg-amber-500 text-black font-black rounded-xl text-[10px] uppercase tracking-widest hover:bg-amber-400 transition-colors">
+            <Button variant="cyber" className="px-4 py-2 bg-amber-500 text-black font-black rounded-xl text-[10px] uppercase tracking-widest hover:bg-amber-400 transition-colors">
               {premiumLocales.common.upgrade}
-            </button>
+            </Button>
           </motion.div>
         </div>
       )}

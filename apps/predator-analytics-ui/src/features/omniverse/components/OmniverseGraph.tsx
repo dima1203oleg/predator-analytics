@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useEffect, useRef, useState } from 'react';
 import cytoscape from 'cytoscape';
 import { motion } from 'framer-motion';
@@ -134,11 +135,11 @@ export const OmniverseGraph: React.FC = () => {
         
         {/* Controls */}
         <div className="absolute bottom-6 left-6 flex items-center space-x-2 bg-zinc-900/80 border border-white/10 p-1 rounded-lg  z-10">
-          <button onClick={zoomIn} className="p-2 hover:bg-white/10 rounded text-white/70 transition-colors" title="Zoom In"><ZoomIn size={16}/></button>
-          <button onClick={zoomOut} className="p-2 hover:bg-white/10 rounded text-white/70 transition-colors" title="Zoom Out"><ZoomOut size={16}/></button>
-          <button onClick={fit} className="p-2 hover:bg-white/10 rounded text-white/70 transition-colors" title="Fit View"><Maximize2 size={16}/></button>
+          <Button variant="cyber" onClick={zoomIn} className="p-2 hover:bg-white/10 rounded text-white/70 transition-colors" title="Zoom In"><ZoomIn size={16}/></Button>
+          <Button variant="cyber" onClick={zoomOut} className="p-2 hover:bg-white/10 rounded text-white/70 transition-colors" title="Zoom Out"><ZoomOut size={16}/></Button>
+          <Button variant="cyber" onClick={fit} className="p-2 hover:bg-white/10 rounded text-white/70 transition-colors" title="Fit View"><Maximize2 size={16}/></Button>
           <div className="w-px h-4 bg-white/10 mx-1" />
-          <button onClick={runLayout} className="p-2 hover:bg-white/10 rounded text-white/70 transition-colors" title="Refresh Layout"><RefreshCw size={16}/></button>
+          <Button variant="cyber" onClick={runLayout} className="p-2 hover:bg-white/10 rounded text-white/70 transition-colors" title="Refresh Layout"><RefreshCw size={16}/></Button>
         </div>
 
         {loading && (

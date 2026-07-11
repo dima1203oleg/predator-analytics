@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { HoloCard } from '@/components/ui/HoloCard';
 
 import React from 'react';
@@ -70,8 +71,8 @@ const AssetMap = () => (
             </div>
         </div>
         <div className="absolute bottom-2 right-2 flex gap-1">
-            <button className="p-1.5 bg-slate-900 rounded border border-slate-700 text-slate-400 hover:text-white hover:bg-slate-800 transition-colors btn-3d"><Navigation size={14}/></button>
-            <button className="p-1.5 bg-slate-900 rounded border border-slate-700 text-slate-400 hover:text-white hover:bg-slate-800 transition-colors btn-3d"><Layers size={14}/></button>
+            <Button variant="cyber" className="p-1.5 bg-slate-900 rounded border border-slate-700 text-slate-400 hover:text-white hover:bg-slate-800 transition-colors btn-3d"><Navigation size={14}/></Button>
+            <Button variant="cyber" className="p-1.5 bg-slate-900 rounded border border-slate-700 text-slate-400 hover:text-white hover:bg-slate-800 transition-colors btn-3d"><Layers size={14}/></Button>
         </div>
     </div>
 );
@@ -151,13 +152,13 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ privacyMode, onSel
 
                 {/* Quick Actions Grid */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                    <button className="flex flex-col items-center justify-center p-4 rounded-xl transition-all group shadow-sm hover:shadow-md btn-3d btn-3d-blue">
+                    <Button variant="cyber" className="flex flex-col items-center justify-center p-4 rounded-xl transition-all group shadow-sm hover:shadow-md btn-3d btn-3d-blue">
                         <div className="p-3 bg-blue-900/20 text-blue-400 rounded-full mb-2 group-hover:scale-110 transition-transform ">
                             <FileText size={20} className="icon-3d-blue"/>
                         </div>
                         <span className="text-xs font-bold text-slate-200">Звіт (PDF)</span>
-                    </button>
-                    <button 
+                    </Button>
+                    <Button variant="cyber" 
                         onClick={() => onSelectEntity(TOP_ENTITIES[0])}
                         className="flex flex-col items-center justify-center p-4 rounded-xl transition-all group shadow-sm hover:shadow-md btn-3d btn-3d-amber"
                     >
@@ -165,19 +166,19 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ privacyMode, onSel
                             <ShieldCheck size={20} className="icon-3d-amber"/>
                         </div>
                         <span className="text-xs font-bold text-slate-200">Аудит Контрагента</span>
-                    </button>
-                    <button className="flex flex-col items-center justify-center p-4 rounded-xl transition-all group shadow-sm hover:shadow-md btn-3d btn-3d-purple">
+                    </Button>
+                    <Button variant="cyber" className="flex flex-col items-center justify-center p-4 rounded-xl transition-all group shadow-sm hover:shadow-md btn-3d btn-3d-purple">
                         <div className="p-3 bg-purple-900/20 text-purple-400 rounded-full mb-2 group-hover:scale-110 transition-transform ">
                             <Fingerprint size={20} className="icon-3d-purple"/>
                         </div>
                         <span className="text-xs font-bold text-slate-200">Deep Scan</span>
-                    </button>
-                    <button className="flex flex-col items-center justify-center p-4 rounded-xl transition-all group shadow-sm hover:shadow-md btn-3d btn-3d-green">
+                    </Button>
+                    <Button variant="cyber" className="flex flex-col items-center justify-center p-4 rounded-xl transition-all group shadow-sm hover:shadow-md btn-3d btn-3d-green">
                         <div className="p-3 bg-green-900/20 text-green-400 rounded-full mb-2 group-hover:scale-110 transition-transform ">
                             <Download size={20} className="icon-3d-green"/>
                         </div>
                         <span className="text-xs font-bold text-slate-200">Експорт Даних</span>
-                    </button>
+                    </Button>
                 </div>
             </div>
 

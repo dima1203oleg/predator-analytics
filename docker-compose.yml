@@ -333,6 +333,7 @@ services:
     - OPENSEARCH_USERNAME=${OPENSEARCH_USERNAME}
     - OPENSEARCH_PASSWORD=${OPENSEARCH_PASSWORD}
     - OPENSEARCH_TLS_VERIFY=false
+    - CLICKHOUSE_PORT=8123
     - QDRANT_URL=http://qdrant:6333
     - MINIO_ENDPOINT=minio:9000
     - MINIO_ACCESS_KEY=${MINIO_ROOT_USER}
@@ -343,6 +344,11 @@ services:
     - CLICKHOUSE_PORT=9000
     - CLICKHOUSE_USER=default
     - CLICKHOUSE_PASSWORD=
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:9100/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     depends_on:
       redpanda:
         condition: service_healthy
@@ -495,8 +501,8 @@ services:
   ollama:
     image: ollama/ollama:latest
     container_name: predator_ollama
-    # ports:
-    # - 11434:11434
+    ports:
+    - 11434:11434
     volumes:
     - /usr/share/ollama/.ollama:/root/.ollama
     deploy:
@@ -673,7 +679,7 @@ services:
     ports:
     - 80:8000
     - 443:8443
-    - 8001:8001
+    - 8002:8001
     depends_on:
       postgres:
         condition: service_healthy

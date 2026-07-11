@@ -3,6 +3,7 @@
  * AR preview для mobile
  * Перевищує Palantir: WebXR, camera overlay, holographic projections
  */
+import { Button } from '@/components/ui/button';
 import React, { useRef, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Camera, Scan, Box, Globe, Layers, Zap, Eye, EyeOff, Maximize2, Minimize2 } from 'lucide-react';
@@ -198,12 +199,12 @@ export const ARPreview: React.FC<ARPreviewProps> = ({
 
         {/* Fullscreen toggle */}
         {isARActive && (
-          <button
+          <Button variant="cyber"
             onClick={toggleFullscreen}
             className="absolute top-4 right-4 p-2 rounded-lg bg-black/50 backdrop-blur-sm border border-white/20 hover:bg-black/70 transition-colors"
           >
             {isFullscreen ? <Minimize2 className="w-5 h-5 text-white" /> : <Maximize2 className="w-5 h-5 text-white" />}
-          </button>
+          </Button>
         )}
       </div>
 

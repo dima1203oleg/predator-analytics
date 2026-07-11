@@ -1,4 +1,5 @@
 // DeploymentCommandCenter.tsx
+import { Button } from '@/components/ui/button';
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -58,12 +59,12 @@ const DeploymentCommandCenter: React.FC = () => {
           </p>
         </div>
       )}
-      <button
+      <Button variant="cyber"
         onClick={triggerValidation}
         className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
       >
         Запустити перевірку
-      </button>
+      </Button>
     </div>
   );
 };

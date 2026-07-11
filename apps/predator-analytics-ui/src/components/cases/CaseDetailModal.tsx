@@ -1,4 +1,5 @@
 
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Case } from './CaseCard';
@@ -35,12 +36,12 @@ export const CaseDetailModal: React.FC<CaseDetailModalProps> = ({
             <p className="text-slate-400 mb-6">
               {selectedCase.situation}
             </p>
-            <button
+            <Button variant="cyber"
               onClick={onClose}
               className="px-6 py-3 bg-slate-800 text-white rounded-xl hover:bg-slate-700 transition-all"
             >
               Закрити
-            </button>
+            </Button>
           </motion.div>
         </motion.div>
       )}

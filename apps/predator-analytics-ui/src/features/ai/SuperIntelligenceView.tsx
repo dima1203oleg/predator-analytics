@@ -1,4 +1,5 @@
 
+import { Button } from '@/components/ui/button';
 import React, { useRef, useState, useEffect, Suspense } from 'react';
 import { HoloCard } from '@/components/ui/HoloCard';
 import { ViewHeader } from '@/components/ViewHeader';
@@ -83,7 +84,7 @@ const SuperIntelligenceView: React.FC = () => {
                                 whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                                 onClick={() => { play(UISoundType.CLICK); toggleLoop(); }}
                                 onMouseEnter={() => play(UISoundType.HOVER)}
-                                className={`flex-1 sm:flex-none px-8 py-2.5 rounded-[24px] text-[10px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all ${isActive ? 'bg-rose-600 shadow-[0_0_25px_#e11d48]' : 'bg-blue-600 shadow-[0_0_25px_#2563eb]'} text-white`}
+                                className={`flex-1 sm:flex-none px-8 py-2.5 rounded-[24px] text-[10px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all ${isActive ? 'bg-cyan-600 shadow-[0_0_25px_#e11d48]' : 'bg-blue-600 shadow-[0_0_25px_#2563eb]'} text-white`}
                             >
                                 {isActive ? <Pause size={14} /> : <Play size={14} />}
                                 {isActive ? 'ЗУПИНИТИ ЦИКЛ' : 'ЗАПУСК МАТрИЦІ'}
@@ -168,12 +169,12 @@ const SuperIntelligenceView: React.FC = () => {
                                     { id: 'EVIDENCE', icon: Database, label: 'Артефакти RAG' },
                                     { id: 'GENOME', icon: Dna, label: 'Геноми AI' },
                                 ].map(tab => (
-                                    <button
+                                    <Button variant="cyber"
                                         key={tab.id} onClick={() => { play(UISoundType.CLICK); setRightTab(tab.id as any); }} onMouseEnter={() => play(UISoundType.HOVER)}
                                         className={`flex-1 py-4 text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-3 rounded-2xl transition-all ${rightTab === tab.id ? 'bg-blue-600 text-white ' : 'text-slate-500 hover:text-slate-300'}`}
                                     >
                                         <tab.icon size={16} /> {tab.label}
-                                    </button>
+                                    </Button>
                                 ))}
                             </div>
 

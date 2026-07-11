@@ -3,6 +3,7 @@
  * Теми та персоналізація
  * Перевищує Palantir: holographic themes, dynamic color schemes, preset profiles
  */
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Palette, Sun, Moon, Zap, Settings, Eye, EyeOff } from 'lucide-react';
@@ -176,12 +177,12 @@ export const ThemeCustomizer: React.FC = () => {
                 <h2 className="text-xl font-bold text-white uppercase tracking-wider">
                   ТЕМИ
                 </h2>
-                <button
+                <Button variant="cyber"
                   onClick={() => setIsOpen(false)}
                   className="p-2 rounded-lg hover:bg-white/10 transition-colors"
                 >
                   <Settings className="w-5 h-5 text-slate-400" />
-                </button>
+                </Button>
               </div>
               <p className="text-sm text-slate-400">
                 Персоналізація інтерфейсу PREDATOR

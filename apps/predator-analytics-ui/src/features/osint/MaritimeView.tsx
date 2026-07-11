@@ -8,6 +8,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -212,12 +213,12 @@ export default function MaritimeView() {
                        { label: 'ПОРТИ_В_РОБОТІ', value: String(ports.length), icon: <Anchor size={14} />, color: 'success' }
                      ]}
                      actions={
-                       <button 
+                       <Button variant="cyber" 
                          onClick={fetchData}
                          className="p-4 bg-white/5 border-2 border-white/[0.03] rounded-2xl text-slate-400 hover:text-white hover:border-white/10 transition-all shadow-2xl"
                        >
                          <RefreshCcw size={20} className={loading ? 'animate-spin' : ''} />
-                       </button>
+                       </Button>
                      }
                    />
 
@@ -230,7 +231,7 @@ export default function MaritimeView() {
                              { id: 'RISK', label: 'РИЗИК' },
                              { id: 'PHANTOM', label: 'ФАНТОМИ' }
                            ].map(f => (
-                             <button
+                             <Button variant="cyber"
                                key={f.id}
                                onClick={() => setFilterMode(f.id as any)}
                                className={cn(
@@ -241,7 +242,7 @@ export default function MaritimeView() {
                                )}
                              >
                                {f.label}
-                             </button>
+                             </Button>
                            ))}
                          </div>
                          <div className="space-y-4 max-h-[700px] overflow-y-auto no-scrollbar pr-2">
@@ -272,7 +273,7 @@ export default function MaritimeView() {
                                        <h3 className="text-4xl font-black text-white italic tracking-tighter uppercase leading-none truncate max-w-[400px]">{selectedVessel.name}</h3>
                                        <p className="text-[10px] font-black text-slate-700 uppercase italic tracking-widest">OWNER_PROFILE // SANCTIONS_CHECK_READY</p>
                                     </div>
-                                    <button onClick={() => setSelectedVessel(null)} className="p-4 bg-white/5 rounded-xl hover:bg-amber-500 hover:text-white transition-all"><X size={24} /></button>
+                                    <Button variant="cyber" onClick={() => setSelectedVessel(null)} className="p-4 bg-white/5 rounded-xl hover:bg-amber-500 hover:text-white transition-all"><X size={24} /></Button>
                                  </div>
                                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6 relative z-10">
                                     {[

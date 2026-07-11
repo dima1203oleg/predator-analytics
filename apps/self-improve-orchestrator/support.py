@@ -60,6 +60,10 @@ class Analyst(LLMAgent):
     @property
     def fallback(self): return self.model
 
+    async def analyze(self, metrics: dict) -> str:
+        prompt = f"Analyze the following metrics and identify any anomalies or areas for improvement:\n{metrics}"
+        return await self.ask(prompt)
+
 class CodeImprover(LLMAgent):
     def __init__(self, api_key_ignored: Any, model: str):
         super().__init__("groq", model, "CodeImprover")

@@ -9,6 +9,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -175,7 +176,7 @@ const CompetitorCardELITE: React.FC<{
                   entityName={competitor.name}
                 />
               </div>
-              <button
+              <Button variant="cyber"
                 onClick={(e) => { e.stopPropagation(); play(UISoundType.CLICK); onTrack(); }} onMouseEnter={() => play(UISoundType.HOVER)}
                 className={cn(
                   "p-4 rounded-2xl transition-all duration-500 border shadow-2xl",
@@ -185,7 +186,7 @@ const CompetitorCardELITE: React.FC<{
                 )}
               >
                 <Star size={24} fill={competitor.isTracked ? "currentColor" : "none"} strokeWidth={competitor.isTracked ? 1.5 : 2} />
-              </button>
+              </Button>
               <div className={cn("transition-transform duration-700 text-slate-800 group-hover:text-[#D4AF37]", isExpanded && "rotate-180")}>
                 <ChevronDown size={32} />
               </div>
@@ -243,9 +244,9 @@ const CompetitorCardELITE: React.FC<{
                         <Network size={16} className="text-slate-800 group-hover/item:text-[#D4AF37] transition-colors" />
                         <span className="group-hover/item:text-white transition-colors">{s}</span>
                       </div>
-                      <button className="text-slate-800 hover:text-[#D4AF37] transition-all p-1.5 rounded-lg hover:bg-white/5">
+                      <Button variant="cyber" className="text-slate-800 hover:text-[#D4AF37] transition-all p-1.5 rounded-lg hover:bg-white/5">
                         <ExternalLink size={16} />
-                      </button>
+                      </Button>
                     </li>
                   ))}
                 </ul>
@@ -257,21 +258,21 @@ const CompetitorCardELITE: React.FC<{
                   {localLocales.card.actions.analytics}
                 </h4>
                 <div className="flex flex-col gap-4">
-                  <button className="flex items-center justify-between group/btn px-5 py-5 bg-[#D4AF37]/5 hover:bg-[#D4AF37]/10 border border-[#D4AF37]/20 rounded-2xl transition-all duration-400 shadow-2xl">
+                  <Button variant="cyber" className="flex items-center justify-between group/btn px-5 py-5 bg-[#D4AF37]/5 hover:bg-[#D4AF37]/10 border border-[#D4AF37]/20 rounded-2xl transition-all duration-400 shadow-2xl">
                     <div className="flex items-center gap-4">
                       <BarChart3 size={20} className="text-[#D4AF37]" />
                       <span className="text-[11px] font-black text-[#D4AF37] uppercase tracking-[0.2em] italic">{localLocales.card.actions.analytics}</span>
                     </div>
                     <ArrowUpRight size={18} className="text-[#D4AF37]/50 group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />
-                  </button>
+                  </Button>
 
-                  <button className="flex items-center gap-4 px-5 py-5 bg-black border border-white/5 rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] italic text-slate-500 hover:text-white hover:border-white/20 transition-all shadow-xl">
+                  <Button variant="cyber" className="flex items-center gap-4 px-5 py-5 bg-black border border-white/5 rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] italic text-slate-500 hover:text-white hover:border-white/20 transition-all shadow-xl">
                     <FileText size={20} className="text-amber-500" /> {localLocales.card.actions.report}
-                  </button>
+                  </Button>
 
-                  <button className="flex items-center gap-4 px-5 py-5 bg-black border border-white/5 rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] italic text-slate-500 hover:text-white hover:border-white/20 transition-all shadow-xl">
+                  <Button variant="cyber" className="flex items-center gap-4 px-5 py-5 bg-black border border-white/5 rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] italic text-slate-500 hover:text-white hover:border-white/20 transition-all shadow-xl">
                     <Share2 size={20} className="text-[#D4AF37]" /> {localLocales.card.actions.share}
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>
@@ -454,10 +455,10 @@ const CompetitorIntelligenceView: React.FC = () => {
                     <ChevronDown className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-700 group-hover:text-[#D4AF37] transition-colors pointer-events-none" size={20} />
                   </div>
 
-                  <button className="px-10 py-4 bg-[#D4AF37] hover:bg-white hover:text-black text-black rounded-2xl font-black text-[11px] tracking-[0.3em] uppercase shadow-2xl active:scale-95 transition-all flex items-center gap-4 group italic">
+                  <Button variant="cyber" className="px-10 py-4 bg-[#D4AF37] hover:bg-white hover:text-black text-black rounded-2xl font-black text-[11px] tracking-[0.3em] uppercase shadow-2xl active:scale-95 transition-all flex items-center gap-4 group italic">
                     <Filter size={18} className="group-hover:rotate-180 transition-transform duration-700" />
                     {localLocales.filters.btn}
-                  </button>
+                  </Button>
                 </div>
               </motion.div>
 

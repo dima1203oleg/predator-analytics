@@ -141,8 +141,8 @@ export function ChromeOrchestrator() {
             className="absolute z-30 pointer-events-none"
           >
             <div className="flex flex-col items-center">
-              <MousePointer2 size={24} className="text-rose-500 " />
-              <div className="mt-2 px-2 py-1 bg-rose-500 text-white text-[8px] font-black rounded uppercase">AI Agent Active</div>
+              <MousePointer2 size={24} className="text-cyan-500 " />
+              <div className="mt-2 px-2 py-1 bg-cyan-500 text-white text-[8px] font-black rounded uppercase">AI Agent Active</div>
             </div>
           </motion.div>
 

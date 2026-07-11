@@ -5,6 +5,7 @@
  * REST endpoints,приклади, тестування
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -208,13 +209,13 @@ const CopyButton: React.FC<{ text: string }> = ({ text }) => {
   };
 
   return (
-    <button
+    <Button variant="cyber"
       onClick={handleCopy}
       className="p-1.5 rounded-lg hover:bg-white/10 text-slate-300 hover:text-white transition-colors"
       title="Копіювати"
     >
       {copied ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} className="text-slate-300" />}
-    </button>
+    </Button>
   );
 };
 
@@ -347,10 +348,10 @@ const EndpointCard: React.FC<EndpointCardProps> = ({ endpoint, isExpanded, onTog
               )}
 
               {/* Try it */}
-              <button className="flex items-center gap-2 px-4 py-2 bg-cyan-500/20 border border-cyan-500/30 text-cyan-400 rounded-xl font-bold text-sm">
+              <Button variant="cyber" className="flex items-center gap-2 px-4 py-2 bg-cyan-500/20 border border-cyan-500/30 text-cyan-400 rounded-xl font-bold text-sm">
                 <Play size={16} />
                 Спробувати
-              </button>
+              </Button>
             </div>
           </motion.div>
         )}
@@ -409,10 +410,10 @@ const ApiDocumentationView: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-3">
-            <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-xl font-bold text-sm">
+            <Button variant="cyber" className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-xl font-bold text-sm">
               <Key size={16} />
               Отримати API ключ
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -458,16 +459,16 @@ const ApiDocumentationView: React.FC = () => {
           </div>
 
           <div className="flex gap-2 flex-wrap">
-            <button
+            <Button variant="cyber"
               onClick={() => setSelectedCategory('all')}
               className={`px-3 py-2 rounded-xl text-sm font-medium transition-colors ${
                 selectedCategory === 'all' ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-300 border border-white/5 hover:text-white hover:border-white/10'
               }`}
             >
               Всі
-            </button>
+            </Button>
             {categories.map((cat) => (
-              <button
+              <Button variant="cyber"
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
                 className={`px-3 py-2 rounded-xl text-sm font-medium transition-colors ${
@@ -475,7 +476,7 @@ const ApiDocumentationView: React.FC = () => {
                 }`}
               >
                 {cat}
-              </button>
+              </Button>
             ))}
           </div>
         </div>

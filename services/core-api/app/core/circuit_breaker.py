@@ -39,14 +39,14 @@ class CircuitBreaker:
         self.failures = 0
         self.state = CircuitState.CLOSED
         if self.state == CircuitState.HALF_OPEN:
-            logger.info(f"🟢 Circuit Breaker '{self.name}' is now CLOSED (Recovered)")
+            logger.info(f"🟢 Запобіжник '{self.name}' тепер ЗАКРИТИЙ (Відновлено)")
 
     def _on_failure(self):
         self.failures += 1
         self.last_failure_time = time.time()
         if self.failures >= self.failure_threshold:
             self.state = CircuitState.OPEN
-            logger.error(f"🔴 Circuit Breaker '{self.name}' is now OPEN (Threshold reached)")
+            logger.error(f"🔴 Запобіжник '{self.name}' тепер ВІДКРИТИЙ (Досягнуто ліміту помилок)")
 
     def call(self, func: Callable[..., Any]):
         @wraps(func)
@@ -54,10 +54,10 @@ class CircuitBreaker:
             if self.state == CircuitState.OPEN:
                 if time.time() - (self.last_failure_time or 0) > self.recovery_timeout:
                     self.state = CircuitState.HALF_OPEN
-                    logger.warning(f"🟡 Circuit Breaker '{self.name}' is now HALF_OPEN (Probing...)")
+                    logger.warning(f"🟡 Запобіжник '{self.name}' тепер НАПІВВІДКРИТИЙ (Зондування...)")
                 else:
-                    logger.debug(f"Circuit Breaker '{self.name}' is OPEN. Fast failing.")
-                    raise RuntimeError(f"Service {self.name} is temporarily unavailable (Circuit Breaker OPEN)")
+                    logger.debug(f"Запобіжник '{self.name}' ВІДКРИТИЙ. Швидка відмова.")
+                    raise RuntimeError(f"Сервіс {self.name} тимчасово недоступний (Запобіжник ВІДКРИТИЙ)")
 
             try:
                 result = await func(*args, **kwargs)

@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useRef } from 'react';
 import { Trophy, Activity, Cpu, Zap, Plus, Server } from 'lucide-react';
 import { ViewHeader } from '@/components/ViewHeader';
@@ -151,12 +152,12 @@ const NasView: React.FC = () => {
                     { label: 'AI ВАЖІЛЬ', value: '88%', icon: <Zap size={14} />, color: 'success' },
                 ]}
                 actions={
-                    <button
+                    <Button variant="cyber"
                         onClick={() => setIsCreateOpen(true)}
-                        className="px-5 py-2.5 bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-500 hover:to-rose-400 text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow-xl shadow-rose-500/20 transition-all btn-3d"
+                        className="px-5 py-2.5 bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-500 hover:to-rose-400 text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow-xl shadow-cyan-500/20 transition-all btn-3d"
                     >
                         <Plus size={18} /> Новий Турнір
-                    </button>
+                    </Button>
                 }
             />
 
@@ -166,7 +167,7 @@ const NasView: React.FC = () => {
                     { id: 'LEADERBOARD', label: 'Таблиця Лідерів', icon: <Activity size={16} />, color: 'amber' }, // Replaced BarChart3 with Activity as it was missing from imports but used for color logic
                     { id: 'PROVIDERS', label: 'Провайдери', icon: <Cpu size={16} />, color: 'emerald' }, // Replaced Cloud with Cpu
                 ].map(tab => (
-                    <button
+                    <Button variant="cyber"
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id as any)}
                         className={`
@@ -186,11 +187,11 @@ const NasView: React.FC = () => {
                         {activeTab === tab.id && (
                             <motion.div
                                 layoutId="activeTabGlow"
-                                className={`absolute -bottom-1 left-1/2 -translate-x-1/2 w-8 h-1 rounded-full blur-[2px] ${tab.color === 'blue' ? 'bg-blue-500' : tab.color === 'amber' ? 'bg-rose-500' : 'bg-emerald-500'
+                                className={`absolute -bottom-1 left-1/2 -translate-x-1/2 w-8 h-1 rounded-full blur-[2px] ${tab.color === 'blue' ? 'bg-blue-500' : tab.color === 'amber' ? 'bg-cyan-500' : 'bg-emerald-500'
                                     }`}
                             />
                         )}
-                    </button>
+                    </Button>
                 ))}
             </div>
 

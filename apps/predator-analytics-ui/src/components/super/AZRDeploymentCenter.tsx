@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -114,12 +115,12 @@ export const AZRDeploymentCenter: React.FC = () => {
                         <p className="text-[10px] text-slate-500 font-mono uppercase tracking-[0.2em] mt-1">Автономний Контролер Інфраструктури v8.2</p>
                     </div>
                     {!isDeploying ? (
-                        <button
+                        <Button variant="cyber"
                             onClick={handleStartDeployment}
                             className="px-10 py-5 bg-blue-600 hover:bg-blue-500 text-white rounded-3xl font-black text-xs uppercase tracking-[0.3em] transition-all shadow-2xl shadow-blue-500/20 flex items-center gap-3 active:scale-95"
                         >
                             <PlayIcon size={18} /> ІНІЦІЮВАТИ ROLL-OUT
-                        </button>
+                        </Button>
                     ) : (
                         <div className="flex items-center gap-6">
                             <div className="text-right">

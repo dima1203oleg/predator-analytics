@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Command, ArrowRight, Building2, Package, FileText, Zap, X } from 'lucide-react';
@@ -118,9 +119,9 @@ export const GlobalSearchOverlay: React.FC<{ isOpen: boolean; onClose: () => voi
             <kbd className="hidden md:inline-flex items-center gap-1 px-2 py-1 rounded bg-white/10 text-[10px] text-slate-400 font-mono border border-white/5">
               ESC
             </kbd>
-            <button onClick={onClose} aria-label="Close Search" className="p-1 hover:bg-white/10 rounded-lg transition-colors">
+            <Button variant="cyber" onClick={onClose} aria-label="Close Search" className="p-1 hover:bg-white/10 rounded-lg transition-colors">
               <X className="text-slate-400 hover:text-white" size={20} />
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -168,13 +169,13 @@ export const GlobalSearchOverlay: React.FC<{ isOpen: boolean; onClose: () => voi
               <div className="text-[10px] font-black uppercase text-slate-600 mb-4 tracking-wider">Швидкі запити</div>
               <div className="flex flex-wrap gap-2">
                 {['Samsung', 'ТОВ "Епіцентр"', 'Зерно 2024', 'Санкції  Ф'].map(tag => (
-                   <button
+                   <Button variant="cyber"
                      key={tag}
                      onClick={() => setQuery(tag)}
                      className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/5 text-xs text-slate-300 transition-colors"
                    >
                      {tag}
-                   </button>
+                   </Button>
                 ))}
               </div>
             </div>

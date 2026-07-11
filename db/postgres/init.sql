@@ -259,6 +259,23 @@ CREATE INDEX IF NOT EXISTS idx_jobs_status ON ingestion_jobs(status);
 CREATE INDEX IF NOT EXISTS idx_jobs_created ON ingestion_jobs(created_at);
 
 -- ============================================================
+-- Data Lineage Events (DFTL)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS ingestion_lineage_events (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    ingestion_id UUID NOT NULL REFERENCES ingestion_jobs(id) ON DELETE CASCADE,
+    step VARCHAR(100) NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    records_written INTEGER DEFAULT 0,
+    timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_lineage_ingestion ON ingestion_lineage_events(ingestion_id);
+CREATE INDEX IF NOT EXISTS idx_lineage_tenant ON ingestion_lineage_events(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_lineage_timestamp ON ingestion_lineage_events(timestamp);
+
+-- ============================================================
 -- Сповіщення
 -- ============================================================
 CREATE TABLE IF NOT EXISTS alerts (

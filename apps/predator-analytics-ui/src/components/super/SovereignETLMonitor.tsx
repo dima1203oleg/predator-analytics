@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -194,9 +195,9 @@ const SovereignETLMonitor: React.FC<SovereignETLMonitorProps> = ({ status }) => 
           <div className="text-[10px] text-slate-500 font-mono uppercase tracking-widest">
             Source Integrity: <span className="text-emerald-500 font-bold">100% (Verfied)</span>
           </div>
-          <button className="text-[10px] text-cyan-400 hover:text-cyan-300 transition-colors font-bold uppercase tracking-tighter">
+          <Button variant="cyber" className="text-[10px] text-cyan-400 hover:text-cyan-300 transition-colors font-bold uppercase tracking-tighter">
             View Ledger →
-          </button>
+          </Button>
         </div>
       </div>
     </div>

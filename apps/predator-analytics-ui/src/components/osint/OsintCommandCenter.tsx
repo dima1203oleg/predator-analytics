@@ -4,6 +4,7 @@
  * Усі тексти — українською (HR-03/HR-04).
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -141,13 +142,13 @@ export const OsintCommandCenter: React.FC = () => {
                                     placeholder="Введіть запит (напр. '32250101' або 'ПАТ Нафтогаз')..."
                                     className="w-full bg-slate-950/80 border-2 border-slate-800 rounded-2xl py-5 pl-16 pr-24 text-lg font-bold text-white focus:outline-none focus:border-rose-500/50 focus:ring-4 focus:ring-rose-500/5 transition-all placeholder:text-slate-600 shadow-inner"
                                 />
-                                <button 
+                                <Button variant="cyber" 
                                     onClick={() => runQuickScan(searchInput)}
                                     disabled={isScanning || !searchInput}
                                     className="absolute right-3 top-1/2 -translate-y-1/2 h-12 px-6 bg-rose-600 hover:bg-rose-500 disabled:bg-slate-800 text-white rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-lg active:scale-95"
                                 >
                                     {isScanning ? 'СКАНУВАННЯ...' : 'ЗАПУСК'}
-                                </button>
+                                </Button>
                             </div>
                         </div>
                         {/* DECORATIVE ELEMENTS */}
@@ -162,9 +163,9 @@ export const OsintCommandCenter: React.FC = () => {
                                 <Terminal size={14} className="text-rose-400" />
                                 Активна Інфраструктура (AI Agents)
                             </h3>
-                            <button className="text-[9px] font-bold text-slate-500 hover:text-white transition-colors flex items-center gap-1 uppercase">
+                            <Button variant="cyber" className="text-[9px] font-bold text-slate-500 hover:text-white transition-colors flex items-center gap-1 uppercase">
                                 Всі модулі <ChevronRight size={10} />
-                            </button>
+                            </Button>
                         </div>
                         <div className="grid grid-cols-2 gap-4 overflow-y-auto custom-scrollbar pr-2 pb-4">
                             {tools.map((tool) => (
@@ -237,9 +238,9 @@ export const OsintCommandCenter: React.FC = () => {
                     </div>
 
                     <div className="mt-6 pt-4 border-t border-slate-800/50">
-                        <button className="w-full py-3 bg-slate-800 hover:bg-slate-750 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">
+                        <Button variant="cyber" className="w-full py-3 bg-slate-800 hover:bg-slate-750 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">
                             Переглянути всі логи
-                        </button>
+                        </Button>
                     </div>
                 </aside>
 

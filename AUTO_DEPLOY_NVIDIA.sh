@@ -11,36 +11,27 @@ echo "🚀 Активація Predator Analytics Full Stack..."
 NVIDIA_USER="dima"
 NVIDIA_PASS="Dima@1203"
 # ФІКС: обмежуємо спроби автентифікації щоб уникнути "Too many auth failures"
-SSH_OPTS="-o StrictHostKeyChecking=no -o PubkeyAuthentication=no -o PreferredAuthentications=password -o ConnectTimeout=10 -o NumberOfPasswordPrompts=1 -o ServerAliveInterval=5 -p 6666"
+SSH_OPTS="-o StrictHostKeyChecking=no -o PubkeyAuthentication=no -o PreferredAuthentications=password -o ConnectTimeout=10 -o NumberOfPasswordPrompts=1 -o ServerAliveInterval=5 -p ${SSH_PORT:-6666}"
 
 export SSHPASS="$NVIDIA_PASS"
 
-# ─── 1. Очищення MacBook ────────────────────────────────────────
+# ─── 1. Створення резервної копії (Disaster Recovery) ─────────
+echo "💾 Запуск системи резервного копіювання..."
+bash /Users/Shared/Predator_60/scripts/predator-backup.sh || echo "⚠️ Бекап не вдався, продовжуємо..."
+
+# ─── 2. Очищення MacBook ────────────────────────────────────────
 echo "🧹 Звільнення порту 3030 на MacBook..."
 lsof -ti:3030 | xargs kill -9 2>/dev/null || true
 
-# ─── 2. Пошук доступного IP NVIDIA ───────────────────────────────
-echo "🔍 Пошук доступного IP для NVIDIA..."
-NVIDIA_IPS=("194.177.1.240" "10.8.0.1" "192.168.0.199")
-NVIDIA_IP=""
-
-for ip in "${NVIDIA_IPS[@]}"; do
-    echo "⚡ Перевірка $ip..."
-    if nc -z -G 4 "$ip" 6666 2>/dev/null; then
-        NVIDIA_IP="$ip"
-        echo "✅ Знайдено робочий IP: $NVIDIA_IP"
-        break
-    fi
-done
-
-if [ -z "$NVIDIA_IP" ]; then
-    echo "⚠️  Жоден IP не відповідає. Використовую дефолтний: 194.177.1.240"
-    NVIDIA_IP="194.177.1.240"
-fi
+echo "🔍 Примусове використання публічного IP для NVIDIA..."
+NVIDIA_IP="192.168.1.48"
+SSH_PORT=6666
+echo "✅ Встановлено робочий хост: $NVIDIA_IP:$SSH_PORT"
 
 # Функція для виконання SSH-команд (з правильним PATH)
 NVIDIA_ssh() {
-    sshpass -e ssh $SSH_OPTS "${NVIDIA_USER}@${NVIDIA_IP}" \
+    local REAL_SSH_OPTS="-o StrictHostKeyChecking=no -o PubkeyAuthentication=no -o PreferredAuthentications=password -o ConnectTimeout=10 -o NumberOfPasswordPrompts=1 -o ServerAliveInterval=5 -p ${SSH_PORT:-6666}"
+    sshpass -e ssh $REAL_SSH_OPTS "${NVIDIA_USER}@${NVIDIA_IP}" \
         "export PATH='/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:\$PATH'; $1"
 }
 
@@ -195,7 +186,23 @@ NVIDIA_ssh "
     fi
 " || echo "⚠️ K3d крок пропущено"
 
-# ─── 11. Запуск UI на MacBook ───────────────────────────────────
+# ─── 11. Запуск Безсмертного Охоронця (Self-Healing) та Збирача Бруду (Garbage Collector)
+echo "🛡️ Запуск Autonomous Guardian та Garbage Collector..."
+NVIDIA_ssh "
+    cd ~/Predator_60
+    chmod +x scripts/self_healing.sh scripts/garbage-collector.sh
+    pkill -f self_healing.sh || true
+    pkill -f garbage-collector.sh || true
+    nohup bash scripts/self_healing.sh > ~/self_healing.log 2>&1 &
+    nohup bash scripts/garbage-collector.sh > ~/garbage_collector.log 2>&1 &
+    echo '✅ Self-Healing daemon та Garbage Collector запущено у фоні'
+"
+
+# ─── 12. Розгортання Claw Code (Agent Predator Executor) ────────
+echo "🦀 Розгортання Claw Code на NVIDIA..."
+bash /Users/Shared/Predator_60/scripts/deploy-claw.sh || echo "⚠️ Помилка розгортання Claw Code"
+
+# ─── 13. Запуск UI на MacBook ───────────────────────────────────
 echo "🎨 Запуск веб-інтерфейсу на MacBook..."
 cd /Users/Shared/Predator_60/apps/predator-analytics-ui
 if ! lsof -ti:3030 >/dev/null 2>&1; then
@@ -205,7 +212,31 @@ else
     echo "✅ UI вже запущено на порту 3030"
 fi
 
-# ─── 12. Фінальний статус ───────────────────────────────────────
+# ─── 14. Публікація UI ────────────────────────────────────────────────────────
+echo ""
+echo "⏳ Очікування запуску UI (до 30 сек)..."
+UI_READY=false
+for attempt in $(seq 1 15); do
+    if curl -sf --max-time 2 "http://localhost:3030" > /dev/null 2>&1; then
+        UI_READY=true
+        break
+    fi
+    sleep 2
+done
+
+if [ "$UI_READY" = true ]; then
+    echo "🚀 UI доступний, починаємо публікацію..."
+    cd /Users/Shared/Predator_60/apps/predator-analytics-ui
+    npm run build --silent 2>&1 | tail -5
+    echo "✅ UI побудовано. Копіюємо артефакти..."
+    mkdir -p /Users/Shared/Predator_60/published_ui
+    cp -R dist/* /Users/Shared/Predator_60/published_ui/
+    echo "✅ Публікація завершена: /Users/Shared/Predator_60/published_ui"
+else
+    echo "⚠️ UI не відповів за 30 сек, пропускаємо публікацію."
+fi
+
+# ─── 15. Фінальний статус ───────────────────────────────────────
 echo ""
 echo "═══════════════════════════════════════════"
 echo "🏁 PREDATOR ELITE — ДЕПЛОЙ ЗАВЕРШЕНО!"

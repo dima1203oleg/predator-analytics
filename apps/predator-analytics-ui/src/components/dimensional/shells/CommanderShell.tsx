@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { HoloCard } from '@/components/ui/HoloCard';
 import React, { useState } from 'react';
 import { cn } from '../../../lib/utils';
@@ -118,7 +119,7 @@ export const CommanderShell: React.FC<CommanderShellProps> = ({ metrics, onActio
             { id: 'storage', label: 'СХОВИЩА', icon: <Database size={16}/>, color: 'cyan'  },
             { id: 'ledger', label: 'TRUTH_LEDGER', icon: <Fingerprint size={16}/>, color: 'emerald' }
           ].map(tab => (
-            <button
+            <Button variant="cyber"
               key={tab.id}
               onClick={() => setActiveMonitorTab(tab.id as any)}
               className={cn(
@@ -133,7 +134,7 @@ export const CommanderShell: React.FC<CommanderShellProps> = ({ metrics, onActio
               )}
               <span className="relative z-10">{tab.icon}</span>
               <span className="relative z-10">{tab.label}</span>
-            </button>
+            </Button>
           ))}
         </div>
 

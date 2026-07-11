@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Lock, FileText, Share2, Bookmark } from 'lucide-react';
@@ -94,16 +95,16 @@ export const Newspaper: React.FC = () => {
 
             {/* Actions Footer */}
             <div className="px-6 py-4 bg-slate-950/30 border-t border-white/5 flex items-center justify-between">
-              <button
+              <Button variant="cyber"
                 disabled={article.isPremium && !isPremium}
                 className={`text-sm font-medium transition-colors ${article.isPremium && !isPremium ? 'text-slate-600 cursor-not-allowed' : 'text-blue-400 hover:text-blue-300'}`}
               >
                 Читати повністю &rarr;
-              </button>
+              </Button>
 
               <div className="flex gap-4">
-                <button className="text-slate-500 hover:text-white transition-colors" title="Зберегти"><Bookmark size={18} /></button>
-                <button className="text-slate-500 hover:text-white transition-colors" title="Поділитися"><Share2 size={18} /></button>
+                <Button variant="cyber" className="text-slate-500 hover:text-white transition-colors" title="Зберегти"><Bookmark size={18} /></Button>
+                <Button variant="cyber" className="text-slate-500 hover:text-white transition-colors" title="Поділитися"><Share2 size={18} /></Button>
               </div>
             </div>
           </motion.article>

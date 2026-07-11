@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Swords, TrendingUp, TrendingDown, Users, DollarSign, Activity, Zap, ShieldCheck } from 'lucide-react';
@@ -130,9 +131,9 @@ export const CompetitorWarBoardWidget: React.FC<{ persona: string }> = ({ person
                <span className="text-[9px] text-slate-500 uppercase font-black">{premiumLocales.competitorWarBoard.aiForecast}</span>
                <span className="text-xs text-emerald-400 font-bold">{premiumLocales.competitorWarBoard.marketConsolidationForecast}</span>
             </div>
-            <button className="flex items-center gap-2 px-6 py-3 bg-white text-black rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-200 transition-all active:scale-95">
+            <Button variant="cyber" className="flex items-center gap-2 px-6 py-3 bg-white text-black rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-200 transition-all active:scale-95">
                {premiumLocales.competitorWarBoard.fullGapAnalysis}
-            </button>
+            </Button>
          </div>
       </div>
     </div>

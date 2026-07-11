@@ -10,7 +10,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 import jwt
 from jwt.exceptions import PyJWTError
-from passlib.context import CryptContext
+import bcrypt as _bcrypt
 
 from app.config import get_settings
 from app.core.keycloak import keycloak_auth
@@ -20,18 +20,27 @@ logger = get_logger("core_api.security")
 
 settings = get_settings()
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/token")
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """Перевірка паролю."""
-    return pwd_context.verify(plain_password, hashed_password)
+    """Перевірка паролю через bcrypt напряму (без passlib)."""
+    try:
+        return _bcrypt.checkpw(
+            plain_password.encode("utf-8"),
+            hashed_password.encode("utf-8"),
+        )
+    except Exception as e:  # type: ignore[broad-except]
+        logger.warning("Помилка перевірки паролю", error=str(e))
+        return False
 
 
 def get_password_hash(password: str) -> str:
-    """Хешування паролю."""
-    return pwd_context.hash(password)
+    """Хешування паролю через bcrypt напряму."""
+    return _bcrypt.hashpw(
+        password.encode("utf-8"),
+        _bcrypt.gensalt(prefix=b"2a"),
+    ).decode("utf-8")
 
 
 def validate_secret_key() -> bool:

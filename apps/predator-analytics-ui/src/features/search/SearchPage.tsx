@@ -7,6 +7,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { 
     Search, Filter, SlidersHorizontal, RefreshCw, 
@@ -134,7 +135,7 @@ const SearchPage: React.FC = () => {
 
                         <div className="flex flex-wrap justify-center gap-4">
                             {['ALL', 'COMPANIES', 'DECLARATIONS', 'PERSONS', 'LOCATIONS', 'CUSTOMS'].map((f) => (
-                                <button 
+                                <Button variant="cyber" 
                                     key={f}
                                     onClick={() => setActiveFilter(f)}
                                     className={cn(
@@ -145,7 +146,7 @@ const SearchPage: React.FC = () => {
                                     )}
                                 >
                                     {f}
-                                </button>
+                                </Button>
                             ))}
                         </div>
                     </div>
@@ -225,9 +226,9 @@ const SearchPage: React.FC = () => {
                                                          <p className="text-lg font-black text-slate-300 italic font-mono leading-none">{res.date}</p>
                                                       </div>
                                                    </div>
-                                                   <button className="flex items-center gap-4 text-[11px] font-black text-red-600 hover:text-white uppercase italic tracking-[0.2em] transition-all group/btn">
+                                                   <Button variant="cyber" className="flex items-center gap-4 text-[11px] font-black text-red-600 hover:text-white uppercase italic tracking-[0.2em] transition-all group/btn">
                                                       ДОСЬЄ_ОБ'ЄКТА <Fingerprint size={20} className="group-hover/btn:rotate-12 transition-transform" />
-                                                   </button>
+                                                   </Button>
                                                 </div>
                                             </section>
                                         </motion.div>

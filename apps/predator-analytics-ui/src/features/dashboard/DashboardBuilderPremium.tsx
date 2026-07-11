@@ -5,6 +5,7 @@
  * з drag-and-drop віджетами
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence, Reorder } from 'framer-motion';
 import {
@@ -200,28 +201,28 @@ const WidgetCard: React.FC<WidgetCardProps> = ({ widget, onRemove, onSettings, i
         </div>
 
         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          <button
+          <Button variant="cyber"
             onClick={() => setIsExpanded(!isExpanded)}
             className="p-1.5 rounded-lg hover:bg-white/5 text-slate-500 hover:text-white transition-colors"
             title={isExpanded ? 'Згорнути' : 'розгорнути'}
           >
             {isExpanded ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
-          </button>
-          <button
+          </Button>
+          <Button variant="cyber"
             onClick={() => onSettings(widget.id)}
             className="p-1.5 rounded-lg hover:bg-white/5 text-slate-500 hover:text-white transition-colors"
             title="Налаштування"
           >
             <Settings size={14} />
-          </button>
+          </Button>
           {isEditing && (
-            <button
+            <Button variant="cyber"
               onClick={() => onRemove(widget.id)}
               className="p-1.5 rounded-lg hover:bg-amber-500/10 text-slate-500 hover:text-amber-400 transition-colors"
               title="Видалити"
             >
               <Trash2 size={14} />
-            </button>
+            </Button>
           )}
         </div>
       </div>
@@ -337,9 +338,9 @@ const WidgetPicker: React.FC<WidgetPickerProps> = ({ isOpen, onClose, onAdd, isP
       >
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-black text-white">Додати віджет</h2>
-          <button onClick={onClose} className="text-slate-500 hover:text-white">
+          <Button variant="cyber" onClick={onClose} className="text-slate-500 hover:text-white">
             ✕
-          </button>
+          </Button>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -450,16 +451,16 @@ const DashboardBuilderPremium: React.FC = () => {
             <div className="flex items-center gap-3">
               {/* Layout Toggle */}
               <div className="flex items-center gap-1 p-1 bg-slate-900/60 rounded-lg border border-white/5">
-                <button className="p-2 rounded-md bg-white/10 text-white">
+                <Button variant="cyber" className="p-2 rounded-md bg-white/10 text-white">
                   <Grid3X3 size={16} />
-                </button>
-                <button className="p-2 rounded-md text-slate-500 hover:text-white">
+                </Button>
+                <Button variant="cyber" className="p-2 rounded-md text-slate-500 hover:text-white">
                   <Layout size={16} />
-                </button>
+                </Button>
               </div>
 
               {/* Actions */}
-              <button
+              <Button variant="cyber"
                 onClick={() => setIsEditing(!isEditing)}
                 className={`
                   flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm transition-all
@@ -470,17 +471,17 @@ const DashboardBuilderPremium: React.FC = () => {
               >
                 <Settings size={16} />
                 {isEditing ? 'Готово' : 'редагувати'}
-              </button>
+              </Button>
 
-              <button className="flex items-center gap-2 px-4 py-2 bg-slate-800 text-slate-300 rounded-xl font-bold text-sm hover:bg-slate-700">
+              <Button variant="cyber" className="flex items-center gap-2 px-4 py-2 bg-slate-800 text-slate-300 rounded-xl font-bold text-sm hover:bg-slate-700">
                 <Share2 size={16} />
                 Поділитися
-              </button>
+              </Button>
 
-              <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-xl font-bold text-sm">
+              <Button variant="cyber" className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-xl font-bold text-sm">
                 <Save size={16} />
                 Зберегти
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -509,15 +510,15 @@ const DashboardBuilderPremium: React.FC = () => {
 
                 <div className="h-6 w-px bg-white/10" />
 
-                <button className="flex items-center gap-2 px-3 py-2 text-slate-400 hover:text-white text-sm">
+                <Button variant="cyber" className="flex items-center gap-2 px-3 py-2 text-slate-400 hover:text-white text-sm">
                   <RefreshCw size={14} />
                   Скинути
-                </button>
+                </Button>
 
-                <button className="flex items-center gap-2 px-3 py-2 text-slate-400 hover:text-white text-sm">
+                <Button variant="cyber" className="flex items-center gap-2 px-3 py-2 text-slate-400 hover:text-white text-sm">
                   <Download size={14} />
                   Імпорт шаблону
-                </button>
+                </Button>
               </div>
             </div>
           </motion.div>

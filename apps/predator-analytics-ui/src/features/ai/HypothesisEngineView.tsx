@@ -7,6 +7,7 @@
  * Sovereign Power Design · Classified · Tier-1
  */
 
+import { Button } from '@/components/ui/button';
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -243,10 +244,10 @@ const HypothesisEngineView: React.FC = () => {
                   <p className="text-xl font-black text-yellow-500 font-mono italic">{isOffline ? 'ELITE_LOCAL' : 'PREDATOR_SIGINT'}</p>
                 </div>
               </div>
-              <button className="px-12 py-5 bg-gradient-to-r from-yellow-600 to-yellow-500 text-black text-[11px] font-black uppercase tracking-[0.3em] hover:brightness-110 transition-all rounded-2xl shadow-3xl flex items-center gap-4 italic font-bold">
+              <Button variant="cyber" className="px-12 py-5 bg-gradient-to-r from-yellow-600 to-yellow-500 text-black text-[11px] font-black uppercase tracking-[0.3em] hover:brightness-110 transition-all rounded-2xl shadow-3xl flex items-center gap-4 italic font-bold">
                 <Download size={20} />
                 СТРАТЕГІЧНИЙ_ЗВІТ_ELITE
-              </button>
+              </Button>
             </div>
           }
         />
@@ -351,7 +352,7 @@ const HypothesisEngineView: React.FC = () => {
               {(['all', 'confirmed', 'probable', 'possible'] as const).map(s => {
                 const sc = s !== 'all' ? STATUS_CFG[s] : null;
                 return (
-                  <button
+                  <Button variant="cyber"
                     key={s}
                     onClick={() => setFilterStatus(s)}
                     className={cn(
@@ -364,7 +365,7 @@ const HypothesisEngineView: React.FC = () => {
                     style={filterStatus === s && sc ? { backgroundColor: sc.color + '25', color: sc.color, borderColor: sc.color + '40', borderWidth: '1px' } : {}}
                   >
                     {s === 'all' ? 'УСІ_ВЕКТОРИ' : sc!.label}
-                  </button>
+                  </Button>
                 );
               })}
             </div>
@@ -504,10 +505,10 @@ const HypothesisEngineView: React.FC = () => {
                         </div>
                       </div>
                       <div className="flex items-center gap-4">
-                        <div className="p-3 bg-rose-500/10 rounded-2xl"><Target size={20} className="text-rose-500" /></div>
+                        <div className="p-3 bg-cyan-500/10 rounded-2xl"><Target size={20} className="text-cyan-500" /></div>
                         <div>
                            <p className="text-[10px] text-slate-500 font-black tracking-widest uppercase italic font-bold">ОПЕРАТИВНИЙ ВПЛИВ</p>
-                           <p className="text-[13px] font-black text-rose-500 font-mono italic uppercase">{selected.impactValue}</p>
+                           <p className="text-[13px] font-black text-cyan-500 font-mono italic uppercase">{selected.impactValue}</p>
                         </div>
                       </div>
                     </div>
@@ -558,8 +559,8 @@ const HypothesisEngineView: React.FC = () => {
 
                   {/* РЕКОМЕНДОВАНІ ДІЇ ELITE */}
                   <div className="bg-black/60 border-2 border-white/5 p-10 rounded-[3.5rem] shadow-3xl">
-                    <h3 className="text-[11px] font-black text-rose-500/60 uppercase tracking-[0.5em] mb-8 flex items-center gap-4 italic font-bold">
-                      <Target size={20} className="text-rose-500 " />
+                    <h3 className="text-[11px] font-black text-cyan-500/60 uppercase tracking-[0.5em] mb-8 flex items-center gap-4 italic font-bold">
+                      <Target size={20} className="text-cyan-500 " />
                       Цілі Операції
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -575,14 +576,14 @@ const HypothesisEngineView: React.FC = () => {
                   </div>
 
                   <div className="grid grid-cols-2 gap-8 pt-6">
-                    <button className="py-7 bg-gradient-to-r from-yellow-600 to-yellow-500 text-black text-[11px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all shadow-4xl rounded-3xl flex items-center justify-center gap-4 italic">
+                    <Button variant="cyber" className="py-7 bg-gradient-to-r from-yellow-600 to-yellow-500 text-black text-[11px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all shadow-4xl rounded-3xl flex items-center justify-center gap-4 italic">
                       <Sparkles size={22} className="" />
                       ГЛИБОКЕ_СЕНСОРНЕ_СКАНУВАННЯ
-                    </button>
-                    <button className="py-7 bg-black border-2 border-white/10 text-slate-500 text-[11px] font-black uppercase tracking-[0.4em] hover:text-white hover:border-yellow-500/40 transition-all rounded-3xl flex items-center justify-center gap-4 italic shadow-2xl">
+                    </Button>
+                    <Button variant="cyber" className="py-7 bg-black border-2 border-white/10 text-slate-500 text-[11px] font-black uppercase tracking-[0.4em] hover:text-white hover:border-yellow-500/40 transition-all rounded-3xl flex items-center justify-center gap-4 italic shadow-2xl">
                       <Download size={20} />
                       ЕКСПОРТ_МАТЕРІАЛІВ_СПРАВИ
-                    </button>
+                    </Button>
                   </div>
                 </motion.div>
               ) : (

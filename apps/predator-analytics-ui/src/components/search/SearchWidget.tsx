@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
 import { Search, ArrowRight, Zap, History, Star, TrendingUp, Skull, ShieldAlert } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -110,9 +111,9 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ className }) => {
                                     </div>
                                     <div className="flex flex-col gap-2">
                                         {['ТОВ "ОФШО -МИТО"', 'ЄДРПОУ 44923412', 'Микола Верес'].map(item => (
-                                            <button key={item} className="text-left py-2 px-3 hover:bg-yellow-600/5 rounded-lg text-sm text-slate-400 hover:text-yellow-400 transition-colors uppercase font-bold italic tracking-tight">
+                                            <Button variant="cyber" key={item} className="text-left py-2 px-3 hover:bg-yellow-600/5 rounded-lg text-sm text-slate-400 hover:text-yellow-400 transition-colors uppercase font-bold italic tracking-tight">
                                                 {item}
-                                            </button>
+                                            </Button>
                                         ))}
                                     </div>
                                 </div>
@@ -123,10 +124,10 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ className }) => {
                                     </div>
                                     <div className="flex flex-col gap-2">
                                         {['ПСЕНИЦЯ_ЕКСПОРТ', 'САНКЦІЇ_ Ф', 'ТИЛОВА_КОРУПЦІЯ'].map(item => (
-                                            <button key={item} className="text-left py-2 px-3 hover:bg-yellow-600/5 rounded-lg text-sm text-slate-400 hover:text-yellow-400 transition-colors flex items-center justify-between group/trend uppercase font-bold italic tracking-tight">
+                                            <Button variant="cyber" key={item} className="text-left py-2 px-3 hover:bg-yellow-600/5 rounded-lg text-sm text-slate-400 hover:text-yellow-400 transition-colors flex items-center justify-between group/trend uppercase font-bold italic tracking-tight">
                                                 <span>{item}</span>
                                                 <Zap size={12} className="text-amber-500 opacity-0 group-hover/trend:opacity-100 transition-opacity" />
-                                            </button>
+                                            </Button>
                                         ))}
                                     </div>
                                 </div>

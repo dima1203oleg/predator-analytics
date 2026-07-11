@@ -8,6 +8,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -103,20 +104,20 @@ export default function WarRoomView() {
             title={
               <div className="flex items-center gap-8">
                 <div className="relative group">
-                  <div className="absolute inset-0 bg-rose-600/20 blur-3xl rounded-full scale-150 " />
-                  <div className="relative p-7 bg-black border-2 border-rose-500/40 rounded-[2.5rem] shadow-4xl transform -rotate-2 hover:rotate-0 transition-all">
-                    <Target size={48} className="text-rose-600 " />
+                  <div className="absolute inset-0 bg-cyan-600/20 blur-3xl rounded-full scale-150 " />
+                  <div className="relative p-7 bg-black border-2 border-cyan-500/40 rounded-[2.5rem] shadow-4xl transform -rotate-2 hover:rotate-0 transition-all">
+                    <Target size={48} className="text-cyan-600 " />
                   </div>
                 </div>
                  <div>
                     <div className="flex items-center gap-4 mb-2">
-                      <span className={cn("w-1.5 h-1.5 rounded-full  shadow-[0_0_10px_currentColor]", isOffline ? "bg-amber-500 text-amber-500" : "bg-rose-600 text-rose-600")} />
-                      <span className={cn("text-[10px] font-black uppercase tracking-[0.8em] italic", isOffline ? "text-amber-500/80" : "text-rose-500/80")}>
+                      <span className={cn("w-1.5 h-1.5 rounded-full  shadow-[0_0_10px_currentColor]", isOffline ? "bg-amber-500 text-amber-500" : "bg-cyan-600 text-cyan-600")} />
+                      <span className={cn("text-[10px] font-black uppercase tracking-[0.8em] italic", isOffline ? "text-amber-500/80" : "text-cyan-500/80")}>
                         {isOffline ? 'СУВЕРЕННИЙ_РЕЖИМ_НС' : 'ТАКТИЧНИЙ КОМАНДНИЙ ЦЕНТР'} · v63.0-ELITE
                       </span>
                     </div>
                     <h1 className={cn("font-black text-white tracking-tighter uppercase italic leading-none", isCompact ? "text-3xl" : "text-5xl")}>
-                      СИТУАЦІЙНИЙ <span className={cn("underline underline-offset-8", isCompact ? "decoration-[6px]" : "decoration-[12px]", isOffline ? "text-amber-500 decoration-amber-500/20" : "text-rose-600 decoration-rose-600/20")}>ЦЕНТР</span>
+                      СИТУАЦІЙНИЙ <span className={cn("underline underline-offset-8", isCompact ? "decoration-[6px]" : "decoration-[12px]", isOffline ? "text-amber-500 decoration-amber-500/20" : "text-cyan-600 decoration-rose-600/20")}>ЦЕНТР</span>
                     </h1>
                  </div>
               </div>
@@ -150,9 +151,9 @@ export default function WarRoomView() {
                        {new Date().toLocaleTimeString('uk-UA')}
                     </span>
                  </div>
-                 <button className="px-10 py-5 bg-rose-600 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.3em] italic hover:brightness-110 shadow-4xl transition-all">
+                 <Button variant="cyber" className="px-10 py-5 bg-cyan-600 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.3em] italic hover:brightness-110 shadow-4xl transition-all">
                     {!isCompact && "ДЕФОРМАТУВАТИ // "}АВАРІЙНИЙ_ВИХІД
-                 </button>
+                 </Button>
               </div>
             }
           />
@@ -177,9 +178,9 @@ export default function WarRoomView() {
                          </div>
                          <h3 className="text-[11px] font-black text-amber-500 uppercase tracking-[0.6em] italic">ГЛОБАЛЬНА РОЗВІДКА</h3>
                       </div>
-                      <button onClick={() => setExpanded(expanded === 'q1' ? null : 'q1')} className="p-2 text-slate-700 hover:text-white transition-colors">
+                      <Button variant="cyber" onClick={() => setExpanded(expanded === 'q1' ? null : 'q1')} className="p-2 text-slate-700 hover:text-white transition-colors">
                         {expanded === 'q1' ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
-                      </button>
+                      </Button>
                    </div>
 
                    <div className="flex-1 flex flex-col space-y-10 relative z-10 overflow-hidden">
@@ -235,9 +236,9 @@ export default function WarRoomView() {
                          </div>
                          <h3 className="text-[11px] font-black text-emerald-500 uppercase tracking-[0.6em] italic">ЯДРО TITAN-01 // SOVEREIGN</h3>
                       </div>
-                      <button onClick={() => setExpanded(expanded === 'q2' ? null : 'q2')} className="p-2 text-slate-700 hover:text-white transition-colors">
+                      <Button variant="cyber" onClick={() => setExpanded(expanded === 'q2' ? null : 'q2')} className="p-2 text-slate-700 hover:text-white transition-colors">
                         {expanded === 'q2' ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
-                      </button>
+                      </Button>
                    </div>
 
                    <div className={cn("flex-1 relative z-10 h-full overflow-hidden", isCompact ? "flex flex-col gap-6" : "grid grid-cols-2 gap-10")}>
@@ -276,7 +277,7 @@ export default function WarRoomView() {
                          <div className="space-y-3 opacity-80 italic font-bold">
                             <p className="text-slate-700 leading-none">[14:32:01] <span className="text-emerald-600">ІНГЕСТІЯ:</span> Синхронізація підтверджена v63.0.1-HORIZON</p>
                             <p className="text-slate-700 leading-none">[14:32:05] <span className="text-rose-700">ТРИВОГА:</span> Порушення порогу ризику POS-001</p>
-                            <p className="text-slate-700 leading-none">[14:32:15] <span className="text-rose-600">СУВЕРЕН:</span> Резолюція Kyoto Holdings активна</p>
+                            <p className="text-slate-700 leading-none">[14:32:15] <span className="text-cyan-600">СУВЕРЕН:</span> Резолюція Kyoto Holdings активна</p>
                             <p className="text-slate-700 leading-none">[14:32:22] <span className="text-slate-900">СИСТЕМА:</span> Очікування сплеску кластера Kafka...</p>
                             <motion.p animate={{ opacity: [1, 0, 1] }} transition={{ duration: 0.8, repeat: Infinity }} className="text-emerald-500">_ГОТОВИЙ_ДО_КОМАНД</motion.p>
                          </div>
@@ -291,25 +292,25 @@ export default function WarRoomView() {
                   variant="holographic"
                   className={cn(
                     "flex flex-col bg-black/60 relative overflow-hidden shadow-4xl",
-                    isCompact ? "p-5 rounded-[2.5rem] border-rose-500/20" : "h-full p-8 border-rose-500/10 rounded-[4rem]",
-                    expanded === 'q3' ? "fixed inset-12 z-[100] bg-black border-rose-500/40" : ""
+                    isCompact ? "p-5 rounded-[2.5rem] border-cyan-500/20" : "h-full p-8 border-cyan-500/10 rounded-[4rem]",
+                    expanded === 'q3' ? "fixed inset-12 z-[100] bg-black border-cyan-500/40" : ""
                   )}
                 >
                    <div className="flex items-center justify-between mb-10 relative z-10">
                       <div className="flex items-center gap-4">
-                         <div className="p-3 bg-rose-500/10 rounded-2xl">
-                            <Layers size={20} className="text-rose-500" />
+                         <div className="p-3 bg-cyan-500/10 rounded-2xl">
+                            <Layers size={20} className="text-cyan-500" />
                          </div>
-                         <h3 className="text-[11px] font-black text-rose-500 uppercase tracking-[0.6em] italic">РИЗИК-МАТРИЦЯ</h3>
+                         <h3 className="text-[11px] font-black text-cyan-500 uppercase tracking-[0.6em] italic">РИЗИК-МАТРИЦЯ</h3>
                       </div>
-                      <button onClick={() => setExpanded(expanded === 'q3' ? null : 'q3')} className="p-2 text-slate-700 hover:text-white transition-colors">
+                      <Button variant="cyber" onClick={() => setExpanded(expanded === 'q3' ? null : 'q3')} className="p-2 text-slate-700 hover:text-white transition-colors">
                         {expanded === 'q3' ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
-                      </button>
+                      </Button>
                    </div>
 
                    <div className="flex-1 flex flex-col space-y-10 relative z-10">
                       <div className="flex items-center justify-center p-10 relative">
-                         <div className="absolute inset-0 bg-rose-500/10 blur-3xl rounded-full scale-110" />
+                         <div className="absolute inset-0 bg-cyan-500/10 blur-3xl rounded-full scale-110" />
                          <PieChart width={160} height={160}>
                             <Pie data={riskPieData} cx="50%" cy="50%" innerRadius={45} outerRadius={65} dataKey="value" paddingAngle={5}>
                                {riskPieData.map((e, i) => <Cell key={i} fill={e.color} stroke="transparent" />)}
@@ -318,19 +319,19 @@ export default function WarRoomView() {
                       </div>
                       <div className="space-y-4 flex-1 overflow-y-auto no-scrollbar">
                          {riskPieData.map((r, i) => (
-                            <div key={i} className="flex items-center justify-between p-6 rounded-[2rem] border-2 border-white/5 bg-black hover:border-rose-500/30 transition-all group/it shadow-2xl">
+                            <div key={i} className="flex items-center justify-between p-6 rounded-[2rem] border-2 border-white/5 bg-black hover:border-cyan-500/30 transition-all group/it shadow-2xl">
                                <div className="flex items-center gap-5">
                                   <div className="w-3 h-3 rounded-full transition-transform group-hover/it:scale-125 shadow-[0_0_10px_currentColor]" style={{ backgroundColor: r.color, color: r.color }} />
                                   <span className="text-[11px] font-black text-slate-700 group-hover/it:text-white transition-colors uppercase italic tracking-widest leading-none">{r.name}</span>
                                 </div>
-                                <span className="text-[13px] font-black text-rose-500 font-mono italic tabular-nums leading-none tracking-tighter">{(r.value / 10).toFixed(1)}%</span>
+                                <span className="text-[13px] font-black text-cyan-500 font-mono italic tabular-nums leading-none tracking-tighter">{(r.value / 10).toFixed(1)}%</span>
                             </div>
                          ))}
                       </div>
-                      <div className="mt-auto p-10 bg-rose-600/10 border-2 border-rose-500/30 rounded-[3.5rem] text-center shadow-inner relative group">
-                         <div className="absolute inset-0 bg-rose-600/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <div className="mt-auto p-10 bg-cyan-600/10 border-2 border-cyan-500/30 rounded-[3.5rem] text-center shadow-inner relative group">
+                         <div className="absolute inset-0 bg-cyan-600/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                          <p className="text-[10px] font-black text-rose-700 uppercase tracking-[0.5em] mb-4 italic">ЕКСПОЗИЦІЯ_РИЗИКУ</p>
-                         <p className="text-4xl font-black text-rose-500 italic tracking-tighter font-serif leading-none">$127.4M</p>
+                         <p className="text-4xl font-black text-cyan-500 italic tracking-tighter font-serif leading-none">$127.4M</p>
                       </div>
                    </div>
                 </HoloCard>
@@ -341,27 +342,27 @@ export default function WarRoomView() {
                 <HoloCard 
                   variant="holographic"
                   className={cn(
-                    "flex flex-col bg-black/60 border-rose-500/10 relative overflow-hidden shadow-4xl",
+                    "flex flex-col bg-black/60 border-cyan-500/10 relative overflow-hidden shadow-4xl",
                     isCompact ? "p-5 rounded-[2.5rem]" : "h-full p-10 rounded-[4rem]",
-                    expanded === 'q4' ? "fixed inset-12 z-[100] bg-black border-rose-500/40" : ""
+                    expanded === 'q4' ? "fixed inset-12 z-[100] bg-black border-cyan-500/40" : ""
                   )}
                 >
                    <div className="flex items-center justify-between mb-10 relative z-10">
                       <div className="flex items-center gap-4">
-                         <div className="p-3 bg-rose-500/10 rounded-2xl">
-                            <Zap size={20} className="text-rose-500 " />
+                         <div className="p-3 bg-cyan-500/10 rounded-2xl">
+                            <Zap size={20} className="text-cyan-500 " />
                          </div>
-                         <h3 className="text-[11px] font-black text-rose-500 uppercase tracking-[0.6em] italic">ШІ-ПРОГНОСТИКА ТА ЕЛІТНІ_АЛЕРТИ</h3>
+                         <h3 className="text-[11px] font-black text-cyan-500 uppercase tracking-[0.6em] italic">ШІ-ПРОГНОСТИКА ТА ЕЛІТНІ_АЛЕРТИ</h3>
                       </div>
-                      <button onClick={() => setExpanded(expanded === 'q4' ? null : 'q4')} className="p-2 text-slate-700 hover:text-white transition-colors">
+                      <Button variant="cyber" onClick={() => setExpanded(expanded === 'q4' ? null : 'q4')} className="p-2 text-slate-700 hover:text-white transition-colors">
                         {expanded === 'q4' ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
-                      </button>
+                      </Button>
                    </div>
 
                    <div className={cn("flex-1 relative z-10 overflow-hidden", isCompact ? "flex flex-col gap-8" : "grid grid-cols-12 gap-12")}>
                       <div className={cn("flex flex-col h-full", isCompact ? "w-full space-y-6" : "col-span-7 space-y-10")}>
                          <div className="flex items-center gap-6 mb-4">
-                            <div className="p-4 rounded-[1.5rem] bg-rose-500/10 text-rose-500 border-2 border-rose-500/30 ">
+                            <div className="p-4 rounded-[1.5rem] bg-cyan-500/10 text-cyan-500 border-2 border-cyan-500/30 ">
                                <Radar size={32} className="" />
                             </div>
                             <div>
@@ -375,23 +376,23 @@ export default function WarRoomView() {
                                { t: 'Локальні гравці:', v: '14 ФІГУРАНТІВ', c: '#ffffff', icon: Users },
                                { t: 'Ймовірність ескалації:', v: '92.4%', c: '#f43f5e', icon: Target },
                             ].map((s, i) => (
-                               <div key={i} className="flex items-center justify-between p-7 rounded-[3rem] bg-white/[0.01] border-2 border-white/5 hover:border-rose-500/20 transition-all group/ic shadow-xl">
+                               <div key={i} className="flex items-center justify-between p-7 rounded-[3rem] bg-white/[0.01] border-2 border-white/5 hover:border-cyan-500/20 transition-all group/ic shadow-xl">
                                   <div className="flex items-center gap-5">
-                                     <s.icon size={20} className="text-slate-800 group-hover/ic:text-rose-500 transition-colors" />
+                                     <s.icon size={20} className="text-slate-800 group-hover/ic:text-cyan-500 transition-colors" />
                                      <span className="text-[13px] font-black text-slate-700 uppercase tracking-tight italic group-hover/ic:text-slate-300 transition-colors">{s.t}</span>
                                   </div>
                                   <span className={cn("text-[18px] font-black italic uppercase font-mono tracking-tighter", s.v === '92.4%' && "")} style={{ color: s.c }}>{s.v}</span>
                                </div>
                             ))}
                          </div>
-                         <button className="w-full py-8 bg-rose-600 text-white rounded-[2.5rem] text-[13px] font-black uppercase tracking-[0.4em] italic shadow-4xl hover:scale-[1.02] transition-all border-4 border-rose-500/20">
+                         <Button variant="cyber" className="w-full py-8 bg-cyan-600 text-white rounded-[2.5rem] text-[13px] font-black uppercase tracking-[0.4em] italic shadow-4xl hover:scale-[1.02] transition-all border-4 border-cyan-500/20">
                             ЗАПУСТИТИ_СИМУЛЯЦІЮ_РИЗИКУ_ELITE
-                         </button>
+                         </Button>
                       </div>
                       <div className={cn("flex flex-col space-y-6 h-full overflow-hidden", isCompact ? "w-full" : "col-span-5")}>
                          <div className="flex items-center justify-between text-[11px] font-black text-slate-900 uppercase tracking-[0.6em] italic mb-2">
                             <span>АКТИВНІ АЛЕРТИ</span>
-                            <span className="text-rose-600">РЕЖИМ_ХИЖАКА</span>
+                            <span className="text-cyan-600">РЕЖИМ_ХИЖАКА</span>
                          </div>
                          <div className="space-y-4 flex-1 overflow-y-auto pr-4 custom-scrollbar pb-10">
                             {alertsList.map((a, i) => (
@@ -400,7 +401,7 @@ export default function WarRoomView() {
                                  initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.1 }}
                                  className={cn(
                                   "p-7 rounded-[2.5rem] border-2 flex items-center gap-6 transition-all hover:scale-[1.01] shadow-xl",
-                                  a.type === 'error' ? "bg-rose-600/10 border-rose-500/30 text-rose-500 shadow-rose-500/10" :
+                                  a.type === 'error' ? "bg-cyan-600/10 border-cyan-500/30 text-cyan-500 shadow-cyan-500/10" :
                                   a.type === 'warning' ? "bg-amber-600/10 border-amber-500/30 text-amber-500 shadow-amber-500/10" :
                                   "bg-white/5 border-white/10 text-slate-400 shadow-black"
                                 )}>
@@ -415,7 +416,7 @@ export default function WarRoomView() {
                       </div>
                    </div>
                    <div className="absolute -bottom-10 -right-10 p-32 opacity-5 pointer-events-none">
-                      <Fingerprint size={300} className="text-rose-500" />
+                      <Fingerprint size={300} className="text-cyan-500" />
                    </div>
                 </HoloCard>
              </div>

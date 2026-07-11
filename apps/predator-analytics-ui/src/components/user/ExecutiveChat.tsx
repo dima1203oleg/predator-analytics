@@ -1,4 +1,5 @@
 
+import { Button } from '@/components/ui/button';
 import React, { useRef, useEffect } from 'react';
 import { Send, Mic, MicOff, Activity, Bot, User, Minimize2, Sparkles } from 'lucide-react';
 import { InteractionStatus } from '../../hooks/useVoiceControl';
@@ -96,7 +97,7 @@ export const ExecutiveChat: React.FC<ExecutiveChatProps> = ({ messages, status, 
             {/* Input Area - Sticky for Mobile Keyboard */}
             <div className="sticky bottom-0 left-0 right-0 p-3 md:p-4 border-t border-slate-800/50 bg-[#0D0F12]/95  z-20 pb-safe">
                 <div className="flex gap-2 items-end bg-slate-900/50 border border-slate-700 rounded-xl p-1.5 focus-within:border-amber-500/50 focus-within:bg-slate-900 transition-all shadow-inner">
-                    <button 
+                    <Button variant="cyber" 
                         onClick={onVoiceToggle}
                         className={`p-3 rounded-lg transition-all active:scale-95 ${
                             status === 'LISTENING' 
@@ -105,7 +106,7 @@ export const ExecutiveChat: React.FC<ExecutiveChatProps> = ({ messages, status, 
                         }`}
                     >
                         {status === 'LISTENING' ? <MicOff size={20} /> : <Mic size={20} />}
-                    </button>
+                    </Button>
                     
                     <textarea 
                         value={input}
@@ -122,7 +123,7 @@ export const ExecutiveChat: React.FC<ExecutiveChatProps> = ({ messages, status, 
                         disabled={status === 'PROCESSING'}
                     />
                     
-                    <button 
+                    <Button variant="cyber" 
                         onClick={handleSubmit}
                         disabled={!input.trim() || status === 'PROCESSING'}
                         className={`p-3 rounded-lg transition-all active:scale-95 shadow-lg ${
@@ -132,7 +133,7 @@ export const ExecutiveChat: React.FC<ExecutiveChatProps> = ({ messages, status, 
                         }`}
                     >
                         <Send size={20} className={status === 'PROCESSING' ? 'opacity-50' : ''} />
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>

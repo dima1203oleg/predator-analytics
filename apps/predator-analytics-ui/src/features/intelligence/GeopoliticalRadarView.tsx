@@ -9,6 +9,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -483,7 +484,7 @@ const GeopoliticalRadarView: React.FC = () => {
                                </div>
                            </div>
                            <div className="flex flex-col items-center gap-2 opacity-0 group-hover:opacity-100 transition-all transform translate-x-4 group-hover:translate-x-0">
-                                <button className="p-4 bg-amber-600 rounded-2xl text-white shadow-xl hover:brightness-110"><Target size={20} /></button>
+                                <Button variant="cyber" className="p-4 bg-amber-600 rounded-2xl text-white shadow-xl hover:brightness-110"><Target size={20} /></Button>
                                 <ArrowUpRight size={24} className="text-amber-600" />
                            </div>
                          </motion.div>
@@ -585,9 +586,9 @@ const GeopoliticalRadarView: React.FC = () => {
                      </motion.div>
                    ))}
                 </div>
-                <button className="w-full py-8 text-[11px] font-black text-slate-700 hover:text-white hover:bg-white/5 transition-all flex items-center justify-center gap-5 uppercase tracking-[0.4em] italic border-t-2 border-white/[0.04] group/all">
+                <Button variant="cyber" className="w-full py-8 text-[11px] font-black text-slate-700 hover:text-white hover:bg-white/5 transition-all flex items-center justify-center gap-5 uppercase tracking-[0.4em] italic border-t-2 border-white/[0.04] group/all">
                    ПОВНИЙ_ЖУ НАЛ_ПЕ ЕХОПЛЕНЬ <ChevronRight size={18} className="group-hover/all:translate-x-2 transition-transform" />
-                </button>
+                </Button>
              </div>
 
              {/* SOVEREIGN VERDICT ELITE */}

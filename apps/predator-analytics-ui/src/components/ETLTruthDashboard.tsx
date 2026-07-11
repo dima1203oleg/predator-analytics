@@ -7,6 +7,7 @@
  * - реальні помилки (не приховані)
  */
 
+import { Button } from '@/components/ui/button';
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -263,7 +264,7 @@ const JobCard: React.FC<{ job: ETLJob; expanded: boolean; onToggle: () => void }
       `}
     >
       {/* Заголовок */}
-      <button
+      <Button variant="cyber"
         onClick={onToggle}
         className="w-full p-4 flex items-center justify-between hover:bg-white/5 transition-colors"
       >
@@ -318,7 +319,7 @@ const JobCard: React.FC<{ job: ETLJob; expanded: boolean; onToggle: () => void }
             className={`text-slate-500 transition-transform ${expanded ? 'rotate-180' : ''}`}
           />
         </div>
-      </button>
+      </Button>
 
       {/*  озгорнута інформація */}
       <AnimatePresence>
@@ -526,7 +527,7 @@ export const ETLTruthDashboard: React.FC = () => {
           { key: 'completed', label: 'Завершено', count: stats.completed, color: 'emerald' },
           { key: 'failed', label: 'Помилок', count: stats.failed, color: 'rose' }
         ].map(item => (
-          <button
+          <Button variant="cyber"
             key={item.key}
             onClick={() => setFilter(item.key as any)}
             className={`
@@ -538,7 +539,7 @@ export const ETLTruthDashboard: React.FC = () => {
           >
             <div className={`text-xl font-black text-${item.color}-400`}>{item.count}</div>
             <div className="text-[9px] text-slate-500 uppercase">{item.label}</div>
-          </button>
+          </Button>
         ))}
       </div>
 

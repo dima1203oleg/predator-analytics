@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/utils/cn';
@@ -265,13 +266,13 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                                                     {proposal.target_component}
                                                 </div>
                                                 {proposal.status === 'APPROVED' && (
-                                                    <button
+                                                    <Button variant="cyber"
                                                         onClick={(e) => { e.stopPropagation(); handleExecute(proposal.id); }}
                                                         className="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl text-xs font-bold shadow-lg shadow-indigo-500/20 flex items-center gap-2"
                                                     >
                                                         <Zap size={14} />
                                                         Виконати
-                                                    </button>
+                                                    </Button>
                                                 )}
                                             </div>
                                         </div>
@@ -284,7 +285,7 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                                     <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Активних пропозицій немає</h3>
                                     <p className="text-xs text-slate-500 mb-6 max-w-xs mx-auto">Система стабільна. Ви можете ініціювати новий цикл еволюції вручну.</p>
 
-                                    <button
+                                    <Button variant="cyber"
                                         onClick={async () => {
                                             try {
                                                 await api.ai.triggerSelfImprovement();
@@ -295,7 +296,7 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                                         className="px-6 py-2 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 rounded-xl text-xs font-bold uppercase tracking-wider transition-all"
                                     >
                                         Запустити Цикл
-                                    </button>
+                                    </Button>
                                 </div>
                             )}
                         </div>
@@ -419,14 +420,14 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                             </p>
 
                             <div className="grid grid-cols-2 gap-3">
-                                <button
+                                <Button variant="cyber"
                                     onClick={() => setImmunityModal(true)}
                                     className="py-3 bg-slate-800 hover:bg-slate-700 border border-white/5 rounded-2xl text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2"
                                 >
                                     <ShieldCheck size={14} className="text-blue-400" />
                                     Імунітет
-                                </button>
-                                <button
+                                </Button>
+                                <Button variant="cyber"
                                     onClick={() => {
                                         if (violations.length > 0) {
                                             setSelectedViolation(violations[0]);
@@ -439,7 +440,7 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                                 >
                                     <Unlock size={14} className="text-amber-400" />
                                     Скасувати
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     </section>
@@ -480,10 +481,10 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                                     </div>
                                 </div>
                             ))}
-                            <button className="w-full py-2 text-[10px] text-indigo-400 hover:text-indigo-300 font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition-colors">
+                            <Button variant="cyber" className="w-full py-2 text-[10px] text-indigo-400 hover:text-indigo-300 font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition-colors">
                                 Переглянути Архітектурну Теплокарту
                                 <ChevronRight size={14} />
-                            </button>
+                            </Button>
                         </div>
                     </section>
 
@@ -519,7 +520,7 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                                     <span className="text-xs text-slate-500 font-bold uppercase">Код доступу</span>
                                     <span className="text-lg font-mono text-white tracking-[0.5em] font-black">{isEmergency ? 'PAUSE_SOM_ALPHA' : 'PAUSE_SOM_ALPHA'}</span>
                                 </div>
-                                <button
+                                <Button variant="cyber"
                                     className="w-full py-4 bg-rose-600 hover:bg-rose-500 text-white rounded-2xl font-black uppercase tracking-[0.2em] shadow-lg shadow-rose-600/30 transition-all border border-rose-400/30"
                                     onClick={async () => {
                                         if (isEmergency) {
@@ -532,7 +533,7 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                                     }}
                                 >
                                     {isEmergency ? 'Деактивувати Протокол' : 'Підтвердити Активацію'}
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     </motion.div>
@@ -587,12 +588,12 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                                         <option value={1440}>24 Години</option>
                                     </select>
                                 </div>
-                                <button
+                                <Button variant="cyber"
                                     onClick={handleGrantImmunity}
                                     className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl font-black uppercase tracking-widest shadow-lg shadow-blue-600/20 transition-all border border-blue-400/30"
                                 >
                                     Підтвердити Імунітет
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     </motion.div>
@@ -664,13 +665,13 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                                         onChange={(e) => setOverruleReason(e.target.value)}
                                     />
                                 </div>
-                                <button
+                                <Button variant="cyber"
                                     onClick={handleOverrule}
                                     disabled={!selectedViolation || !overruleReason}
                                     className="w-full py-4 bg-amber-600 hover:bg-amber-500 disabled:opacity-30 disabled:hover:bg-amber-600 text-white rounded-2xl font-black uppercase tracking-widest shadow-lg shadow-amber-600/20 transition-all border border-amber-400/30"
                                 >
                                     Виконати Скасування
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     </motion.div>

@@ -6,6 +6,7 @@
  * Дозволяє завантажувати датасети та використовувати їх якприклади для генерації нових.
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -179,12 +180,12 @@ export const UserDatasetsPanel: React.FC<UserDatasetsPanelProps> = ({ className,
                         </div>
                     </div>
 
-                    <button
+                    <Button variant="cyber"
                         onClick={() => setShowUploadModal(true)}
                         className="flex items-center gap-2 px-5 py-3 bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-purple-600/20"
                     >
                         <Plus size={16} /> {premiumLocales.datasetStudio.panels.userDatasets.upload}
-                    </button>
+                    </Button>
                 </div>
             </div>
 
@@ -261,7 +262,7 @@ export const UserDatasetsPanel: React.FC<UserDatasetsPanelProps> = ({ className,
                                 // Actions
                                 <div className="flex items-center gap-3">
                                     {/* Reference Toggle */}
-                                    <button
+                                    <Button variant="cyber"
                                         onClick={() => activateReference(dataset.id)}
                                         className={cn(
                                             "p-2 rounded-xl transition-all",
@@ -270,10 +271,10 @@ export const UserDatasetsPanel: React.FC<UserDatasetsPanelProps> = ({ className,
                                         title="Встановити як еталонний датасет"
                                     >
                                         <Star size={18} fill={dataset.isReference ? "currentColor" : "none"} />
-                                    </button>
+                                    </Button>
 
                                     {/* Example Toggle */}
-                                    <button
+                                    <Button variant="cyber"
                                         onClick={() => toggleExample(dataset.id)}
                                         className={cn(
                                             "flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold transition-all",
@@ -294,16 +295,16 @@ export const UserDatasetsPanel: React.FC<UserDatasetsPanelProps> = ({ className,
                                                 <span className="uppercase tracking-wider">{premiumLocales.datasetStudio.panels.userDatasets.dataset.enable}</span>
                                             </>
                                         )}
-                                    </button>
+                                    </Button>
 
                                     {/* Delete */}
-                                    <button
+                                    <Button variant="cyber"
                                         onClick={() => setDeleteTarget(dataset.id)}
                                         className="p-2 text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
                                         title="Видалити"
                                     >
                                         <Trash2 size={16} />
-                                    </button>
+                                    </Button>
                                 </div>
                             </div>
 
@@ -338,9 +339,9 @@ export const UserDatasetsPanel: React.FC<UserDatasetsPanelProps> = ({ className,
                         >
                             <div className="p-6 border-b border-white/5 flex items-center justify-between bg-slate-950">
                                 <h3 className="text-lg font-bold text-white uppercase tracking-widest">{premiumLocales.datasetStudio.panels.userDatasets.uploadModal.title}</h3>
-                                <button onClick={() => setShowUploadModal(false)} className="text-slate-400 hover:text-white">
+                                <Button variant="cyber" onClick={() => setShowUploadModal(false)} className="text-slate-400 hover:text-white">
                                     <X size={20} />
-                                </button>
+                                </Button>
                             </div>
 
                             <div className="p-8">
@@ -376,7 +377,7 @@ export const UserDatasetsPanel: React.FC<UserDatasetsPanelProps> = ({ className,
                                     )}
                                 </div>
 
-                                <button
+                                <Button variant="cyber"
                                     onClick={handleUpload}
                                     disabled={!uploadFile || uploading}
                                     className="mt-6 w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold uppercase tracking-widest rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
@@ -392,7 +393,7 @@ export const UserDatasetsPanel: React.FC<UserDatasetsPanelProps> = ({ className,
                                             {premiumLocales.datasetStudio.panels.userDatasets.uploadModal.action}
                                         </>
                                     )}
-                                </button>
+                                </Button>
                             </div>
                         </motion.div>
                     </motion.div>

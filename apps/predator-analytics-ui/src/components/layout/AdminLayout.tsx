@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -6,7 +7,7 @@ import {
   Activity, Radio, Box, Database, Bot, Lock, BrainCircuit,
   Settings, FileText, LogOut, Terminal, ChevronRight,
   Shield, Cpu, Zap, Eye, ShieldAlert, Search,
-  ChevronLeft, Menu, X
+  ChevronLeft, Menu, X, Hexagon, Fingerprint
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useUser } from '@/context/UserContext';
@@ -16,6 +17,7 @@ import { LiveAgentTerminal } from '@/components/intelligence/LiveAgentTerminal';
 import { OfflineBanner } from '@/components/shared/OfflineBanner';
 import { AnimatedPage } from '@/components/polish/AnimatedPage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { AdvancedBackground } from '@/components/AdvancedBackground';
 
 // ─── Навігація системного командного центру ────────────────────────────────────
 
@@ -29,49 +31,24 @@ interface AdminNavItem {
 }
 
 const ADMIN_NAV: AdminNavItem[] = [
-  // Моніторинг
-  { id: 'infra',      label: 'Телеметрія Кластера',  path: '/admin/command?tab=infra',       icon: Activity,       badge: 'LIVE',  group: 'Моніторинг' },
-  { id: 'failover',   label: 'Резервування та Маршрути',   path: '/admin/command?tab=failover',    icon: Radio,                          group: 'Моніторинг' },
-  { id: 'chaos',      label: 'Контроль Хаосу',         path: '/admin/command?tab=chaos',       icon: Zap,                            group: 'Моніторинг' },
-  
-  // Пайплайни
-  { id: 'gitops',     label: 'GitOps та Пайплайни',    path: '/admin/command?tab=gitops',      icon: Box,                            group: 'Пайплайни' },
-  { id: 'dataops',    label: 'Хаб Даних',           path: '/admin/command?tab=dataops',     icon: Database,                       group: 'Пайплайни' },
-  
-  // Ядро ШІ
-  { id: 'ai-control', label: 'Плоскість Керування ШІ',      path: '/admin/command?tab=ai-control',  icon: Zap,            badge: 'NEXUS', group: 'Ядро ШІ' },
-  { id: 'ai-engines', label: 'Двигуни ШІ',            path: '/admin/command?tab=ai-engines',  icon: Cpu,            badge: 'CORE',  group: 'Ядро ШІ' },
-  { id: 'command',    label: 'Суверенна Розвідка',       path: '/admin/command?tab=command',     icon: Shield,         badge: 'ELITE', group: 'Ядро ШІ' },
-  
-  // ШІ Студія
-  { id: 'factory',    label: 'ШІ Фабрика',            path: '/admin/command?tab=factory',     icon: BrainCircuit,   badge: 'NEW',   group: 'ШІ Студія' },
-  { id: 'model-train',label: 'Моделі (Налаштування)',    path: '/admin/command?tab=model-train', icon: BrainCircuit,   badge: 'ML',    group: 'ШІ Студія' },
-  { id: 'datasets',   label: 'Студія Датасетів',       path: '/admin/command?tab=datasets',    icon: Database,                       group: 'ШІ Студія' },
-  { id: 'prompts',    label: 'Системні Промпти',        path: '/admin/command?tab=prompts',     icon: FileText,                       group: 'ШІ Студія' },
-  
-  // Розширена Аналітика
-  { id: 'nexus',      label: 'Прогностичний Нексус',      path: '/admin/command?tab=nexus',       icon: Zap,            badge: 'PREDICT',group: 'Розширена Аналітика' },
-  { id: 'ai-insights',label: 'Хаб ШІ Інсайтів',       path: '/admin/command?tab=ai-insights', icon: BrainCircuit,   badge: 'DEEP',  group: 'Розширена Аналітика' },
-  { id: 'hypothesis', label: 'Гіпотези та NAS',        path: '/admin/command?tab=hypothesis',  icon: Cpu,                            group: 'Розширена Аналітика' },
-  { id: 'forecast',   label: 'Прогнози та Тренди',     path: '/admin/command?tab=forecast',    icon: Activity,                       group: 'Розширена Аналітика' },
-  
-  // Агенти та Безпека
-  { id: 'agents-ops', label: 'Оркестрація Агентів',   path: '/admin/command?tab=agents-ops',  icon: Bot,                            group: 'Агенти та Безпека' },
-  { id: 'security',   label: 'Безпека Zero Trust',   path: '/admin/command?tab=security',    icon: Lock,                           group: 'Агенти та Безпека' },
-  
-  // Intelligence & OSINT
-  { id: 'intelligence',label: 'Митна Розвідка',       path: '/admin/command?tab=intelligence',icon: Eye,            badge: 'ELITE',group: 'Розвідка та OSINT' },
+  // Командний Центр
+  { id: 'command',    label: 'Командний Центр',       path: '/admin/command?tab=command',     icon: Shield,         badge: 'CORE',  group: 'Командний Центр' },
+  { id: 'infra',      label: 'Телеметрія',            path: '/admin/command?tab=infra',       icon: Activity,       badge: 'LIVE',  group: 'Командний Центр' },
+
+  // Розвідка та OSINT
   { id: 'osint',      label: 'Консоль Пошуку',        path: '/admin/command?tab=osint',       icon: Search,         badge: 'OSINT', group: 'Розвідка та OSINT' },
-  { id: 'zrada',      label: 'Контроль Зради',         path: '/admin/command?tab=zrada',       icon: ShieldAlert,    badge: 'ELITE', group: 'Розвідка та OSINT' },
-  { id: 'aml',        label: 'AML Оцінювання',           path: '/admin/command?tab=aml',         icon: Activity,       badge: 'RISK',  group: 'Розвідка та OSINT' },
-  { id: 'sanctions',  label: 'Глобальні Санкції',      path: '/admin/command?tab=sanctions',   icon: Lock,           badge: 'GLOBAL',group: 'Розвідка та OSINT' },
+  { id: 'intelligence',label: 'Митна Аналітика',      path: '/admin/command?tab=intelligence',icon: Eye,            badge: 'ELITE', group: 'Розвідка та OSINT' },
+  { id: 'zrada',      label: 'Оцінка Ризиків',        path: '/admin/command?tab=zrada',       icon: ShieldAlert,    badge: 'RISK',  group: 'Розвідка та OSINT' },
   
-  // Конфігурація
-  { id: 'settings',   label: 'Налаштування',          path: '/admin/command?tab=settings',    icon: Settings,                       group: 'Конфігурація' },
-  { id: 'api-docs',   label: 'API Документація',      path: '/api-docs',                      icon: FileText,                       group: 'Конфігурація' },
+  // ШІ Ядро
+  { id: 'ai-insights',label: 'Когнітивний Центр',     path: '/admin/command?tab=ai-insights', icon: BrainCircuit,   badge: 'NEXUS', group: 'ШІ Ядро' },
+  { id: 'factory',    label: 'Оркестрація Агентів',   path: '/admin/command?tab=factory',     icon: Bot,            badge: 'AI',    group: 'ШІ Ядро' },
+
+  // Дані
+  { id: 'dataops',    label: 'Імпорт Даних',          path: '/ingestion',                     icon: Database,                       group: 'Дані' },
 ];
 
-const GROUPS = ['Моніторинг', 'Пайплайни', 'Ядро ШІ', 'ШІ Студія', 'Розширена Аналітика', 'Розвідка та OSINT', 'Агенти та Безпека', 'Конфігурація'];
+const GROUPS = ['Командний Центр', 'Розвідка та OSINT', 'ШІ Ядро', 'Дані'];
 
 // ─── Компонент бічної панелі ──────────────────────────────────────────────────
 
@@ -97,21 +74,21 @@ const AdminSidebar: React.FC = () => {
     <motion.aside 
       initial={false}
       animate={{ 
-        width: isMobile ? (isOpen ? 280 : 0) : (isOpen ? 256 : 80),
+        width: isMobile ? (isOpen ? 280 : 0) : (isOpen ? 280 : 88),
         x: isMobile && !isOpen ? -280 : 0
       }}
       className={cn(
-        "flex flex-col h-screen glass-obsidian border-r border-white/10 overflow-hidden relative z-[9999] group shrink-0",
-        isMobile && "fixed inset-y-0 left-0 shadow-2xl"
+        "flex flex-col h-[calc(100vh-32px)] my-4 ml-4 rounded-[12px] bg-slate-900 border border-slate-800 overflow-hidden relative z-[9999] group shrink-0 shadow-lg",
+        isMobile && "fixed inset-y-0 left-0 shadow-2xl m-0 rounded-none h-screen"
       )}
     >
-      <div className="absolute inset-0 cyber-scan-grid opacity-[0.03] pointer-events-none" />
+      {/* Background layer removed for classic style */}
       
       {/* Логотип */}
-      <div className="flex items-center justify-between px-4 py-6 border-b border-white/5 relative z-10">
+      <div className="flex items-center justify-between px-6 py-8 border-b border-white/5 relative z-10">
         <div className="flex items-center gap-4 overflow-hidden">
-          <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/30 shrink-0">
-            <Shield className="w-5 h-5 text-rose-500" />
+          <div className="flex items-center justify-center w-10 h-10 rounded-md bg-blue-600/10 border border-blue-500/20 shrink-0">
+            <Hexagon className="w-5 h-5 text-blue-500" />
           </div>
           <AnimatePresence>
             {isOpen && (
@@ -121,11 +98,11 @@ const AdminSidebar: React.FC = () => {
                 exit={{ opacity: 0, x: -10 }}
                 className="whitespace-nowrap"
               >
-                <div className="text-xs font-black text-rose-500 italic tracking-[0.25em] uppercase leading-none">
-                  PREDATOR
+                <div className="text-sm font-semibold text-slate-100 uppercase leading-none">
+                  NEXUS CORE
                 </div>
-                <div className="text-[7px] font-black text-rose-500/60 tracking-[0.3em] leading-none mt-1.5 italic uppercase">
-                  COMMAND_CENTER_v63
+                <div className="text-[10px] font-medium text-slate-500 mt-1 uppercase">
+                  ENTERPRISE v66.0
                 </div>
               </motion.div>
             )}
@@ -133,33 +110,34 @@ const AdminSidebar: React.FC = () => {
         </div>
         
         {!isMobile && (
-          <button 
+          <Button variant="cyber" 
             onClick={() => setIsOpen(!isOpen)}
-            className="w-6 h-6 flex items-center justify-center rounded-lg bg-white/5 hover:bg-white/10 border border-white/5 transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-slate-800 border border-transparent transition-colors text-slate-400"
           >
-            {isOpen ? <ChevronLeft size={14} className="text-slate-400" /> : <ChevronRight size={14} className="text-slate-400" />}
-          </button>
+            {isOpen ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
+          </Button>
         )}
       </div>
 
       {/* Навігація */}
-      <nav className="flex-1 overflow-y-auto py-4 px-2 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/5 relative z-10">
+      <nav className="flex-1 overflow-y-auto py-6 px-4 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/5 relative z-10">
         {GROUPS.map((group) => {
           const items = ADMIN_NAV.filter((i) => i.group === group);
           return (
-            <div key={group} className="mb-6">
+            <div key={group} className="mb-8">
               {/* Заголовок групи */}
-              <div className="px-3 py-2 flex items-center gap-2 overflow-hidden">
-                <div className="w-1.5 h-1.5 rounded-full bg-rose-500/40 shrink-0" />
-                {isOpen && (
-                  <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-[0.15em] whitespace-nowrap">
+              <div className="px-3 py-2 flex items-center gap-3 overflow-hidden mb-1">
+                {isOpen ? (
+                  <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap">
                     {group}
                   </span>
+                ) : (
+                  <div className="w-4 h-px bg-slate-700 mx-auto" />
                 )}
               </div>
 
               {/* Пункти */}
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 {items.map((item) => {
                   const active = isActive(item);
                   const Icon = item.icon;
@@ -168,47 +146,36 @@ const AdminSidebar: React.FC = () => {
                       key={item.id}
                       to={item.path}
                       className={cn(
-                        'flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 group/nav relative overflow-hidden',
+                        'flex items-center gap-3 px-3 py-2.5 rounded-md transition-all duration-200 group/nav relative',
                         active
-                          ? 'bg-rose-500/10 border border-rose-500/30'
-                          : 'hover:bg-white/[0.03] border border-transparent hover:border-white/5',
+                          ? 'bg-blue-600/10 text-blue-400'
+                          : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200',
                       )}
                     >
                       {active && (
-                        <motion.div 
-                          layoutId="admin-nav-active"
-                          className="absolute inset-0 bg-gradient-to-r from-rose-500/10 to-transparent pointer-events-none"
-                        />
+                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-blue-500 rounded-r-full" />
                       )}
                       <Icon
                         className={cn(
-                          'w-4 h-4 shrink-0 transition-all duration-300 relative z-10',
-                          active ? 'text-rose-500 scale-105' : 'text-slate-400 group-hover/nav:text-white group-hover/nav:scale-105',
+                          'w-4 h-4 shrink-0 transition-all',
+                          active ? 'text-blue-500' : '',
                           !isOpen && "mx-auto"
                         )}
                       />
                       {isOpen && (
                         <>
-                          <span
-                            className={cn(
-                              'text-[11px] truncate transition-all duration-300 relative z-10 uppercase tracking-widest font-black italic',
-                              active ? 'text-white' : 'text-slate-300 group-hover/nav:text-white',
-                            )}
-                          >
+                          <span className="text-[13px] font-medium truncate">
                             {item.label}
                           </span>
                           {item.badge && (
                             <span className={cn(
-                              "ml-auto text-[7px] font-black px-1.5 py-0.5 rounded-md border italic relative z-10",
-                              active ? "bg-rose-500/20 border-rose-500/40 text-rose-400" : "bg-white/5 border-white/10 text-slate-400"
+                              "ml-auto text-[10px] font-medium px-2 py-0.5 rounded-sm border",
+                              active ? "bg-blue-500/10 border-blue-500/20 text-blue-400" : "bg-slate-800 border-slate-700 text-slate-500"
                             )}>
                               {item.badge}
                             </span>
                           )}
                         </>
-                      )}
-                      {active && (
-                        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-4 bg-rose-500 rounded-l-full" />
                       )}
                     </Link>
                   );
@@ -220,29 +187,29 @@ const AdminSidebar: React.FC = () => {
       </nav>
 
       {/* Профіль користувача */}
-      <div className="border-t border-white/8 p-2">
-        <div className="flex items-center gap-2 px-2 py-1.5 rounded-sm">
-          <div className="flex items-center justify-center w-5 h-5 rounded-full bg-rose-500/20 shrink-0">
-            <Cpu className="w-2.5 h-2.5 text-rose-500" />
+      <div className="p-4 border-t border-slate-800 bg-slate-900/50">
+        <div className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-800 transition-colors cursor-pointer">
+          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-500/20 text-blue-400 shrink-0">
+            <Fingerprint className="w-4 h-4" />
           </div>
           {isOpen && (
             <div className="flex-1 min-w-0">
-              <div className="text-[10px] font-semibold text-white/80 truncate">
-                {user?.name ?? 'Системний адмін'}
+              <div className="text-sm font-medium text-slate-200 truncate">
+                {user?.name ?? 'Адміністратор'}
               </div>
-              <div className="text-[8px] font-mono text-rose-500/50 uppercase tracking-wider">
-                ADMIN · {user?.tenant_name ?? 'PREDATOR'}
+              <div className="text-xs text-slate-500 mt-0.5">
+                Системний доступ
               </div>
             </div>
           )}
           {isOpen && (
-            <button
+            <Button variant="cyber"
               onClick={logout}
               title="Вийти"
-              className="p-1 rounded text-white/40 hover:text-red-400 hover:bg-red-500/15 transition-colors"
+              className="p-1.5 rounded-md text-slate-500 hover:text-slate-300 hover:bg-slate-700"
             >
-              <LogOut className="w-3 h-3" />
-            </button>
+              <LogOut className="w-4 h-4" />
+            </Button>
           )}
         </div>
       </div>
@@ -263,90 +230,71 @@ const AdminStatusBar: React.FC = () => {
     return () => clearInterval(id);
   }, []);
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Cmd/Ctrl + ` or Cmd/Ctrl + T (if not taken)
-      if ((e.metaKey || e.ctrlKey) && (e.key === '`')) {
-        e.preventDefault();
-        setTerminalOpen(!isTerminalOpen);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isTerminalOpen, setTerminalOpen]);
-
   return (
-    <header className="flex items-center justify-between px-6 h-12 bg-black/40 glass-wraith border-b border-white/5 shrink-0 relative z-50">
-      <div className="absolute inset-0 bg-gradient-to-r from-rose-500/5 via-transparent to-rose-500/5 pointer-events-none" />
-      
+    <header className="flex items-center justify-between px-6 h-14 bg-slate-900 border-b border-slate-800 shrink-0 relative z-50">
       <div className="flex items-center gap-6 relative z-10">
         {/* Мобільне меню */}
         {isMobile && (
-          <button 
+          <Button variant="cyber" 
             onClick={() => setSidebarOpen(!isSidebarOpen)}
-            className="p-1 rounded-lg bg-white/5 border border-white/10 text-rose-500"
+            className="p-2 rounded-xl bg-white/5 border border-white/10 text-cyan-400"
           >
             {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
+          </Button>
         )}
 
-        {/* Режим системи — читабельний підпис */}
+        {/* Режим системи */}
         <div className="flex items-center gap-3">
-          <div className="flex gap-[3px] items-end">
-             {[...Array(3)].map((_, i) => (
-               <div key={i} className="w-1 bg-rose-500 rounded-full" style={{ height: `${8 + i * 4}px`, animationDelay: `${i * 0.2}s` }} />
-             ))}
-          </div>
           <div className="flex flex-col">
-            <span className="text-[11px] font-bold text-rose-500 tracking-[0.1em] uppercase">
-              Командний Центр
+            <span className="text-[13px] font-semibold text-slate-200">
+              Адмін-консоль
             </span>
-            <span className="text-[9px] text-rose-500/40 tracking-[0.12em] font-mono">
-              Вузол: Локальний • k3s
+            <span className="text-[11px] text-slate-500 mt-0.5">
+              Вузол: ELITE-K3S
             </span>
           </div>
         </div>
         
-        <div className="w-px h-4 bg-white/10" />
+        <div className="w-px h-6 bg-slate-800" />
         
         {/* Статус сервісів */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           {[
             { label: 'API', title: 'Core API', ok: true },
-            { label: 'Kafka', title: 'Message Broker', ok: true },
-            { label: 'Neo4j', title: 'Graph DB', ok: true },
-            { label: 'Redis', title: 'Cache', ok: true },
+            { label: 'KAFKA', title: 'Message Broker', ok: true },
+            { label: 'NEO4J', title: 'Graph DB', ok: true },
+            { label: 'REDIS', title: 'Cache', ok: true },
           ].map((svc) => (
-            <div key={svc.label} className="flex items-center gap-1.5 group/svc cursor-help" title={svc.title}>
+            <div key={svc.label} className="flex items-center gap-2 group/svc cursor-help" title={svc.title}>
               <span className={cn(
                 'w-1.5 h-1.5 rounded-full shrink-0',
-                svc.ok ? 'bg-emerald-500' : 'bg-red-500 animate-ping'
+                svc.ok ? 'bg-emerald-500' : 'bg-red-500'
               )} />
-              <span className="text-[10px] font-medium text-slate-400 group-hover/svc:text-slate-200 transition-colors">{svc.label}</span>
+              <span className="text-[11px] font-medium text-slate-400">{svc.label}</span>
             </div>
           ))}
         </div>
       </div>
 
-        <div className="flex items-center gap-6 relative z-10">
-        <button 
+      <div className="flex items-center gap-4 relative z-10">
+        <Button variant="cyber" 
           onClick={() => setTerminalOpen(!isTerminalOpen)}
           className={cn(
-            "flex items-center gap-2 px-3 py-1 bg-white/5 border rounded-full transition-all duration-300",
-            isTerminalOpen ? "border-rose-500 bg-rose-500/10" : "border-white/10 hover:border-rose-500/50"
+            "flex items-center gap-2 px-3 py-1.5 rounded-md transition-colors border",
+            isTerminalOpen ? "bg-slate-800 border-slate-700 text-slate-200" : "bg-transparent border-transparent hover:bg-slate-800 text-slate-500"
           )}
         >
-           <Terminal className={cn("w-3 h-3 transition-colors", isTerminalOpen ? "text-rose-500" : "text-rose-400")} />
-           <span className="text-[10px] font-mono font-black text-rose-300 italic tracking-widerer">
+           <Terminal className="w-4 h-4" />
+           <span className="text-[11px] font-mono">
              {time.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
            </span>
-        </button>
+        </Button>
         
-        <div className="flex items-center gap-3 px-4 py-1 bg-amber-500/5 border border-amber-500/20 rounded-full group/vram">
-          <Zap className="w-3 h-3 text-amber-400" />
+        <div className="flex items-center gap-3 px-3 py-1.5 bg-slate-800/50 border border-slate-800 rounded-md">
+          <Cpu className="w-4 h-4 text-slate-400" />
           <div className="flex flex-col">
-            <span className="text-[9px] font-medium text-amber-500/60 uppercase tracking-wider leading-none">VRAM</span>
-            <span className="text-[11px] font-bold text-amber-400 leading-tight mt-0.5">4.2 / 8.0 GB</span>
+            <span className="text-[10px] text-slate-500 leading-none">GPU VRAM</span>
+            <span className="text-[11px] font-medium text-slate-300 mt-0.5">4.2 / 8.0 GB</span>
           </div>
         </div>
       </div>
@@ -361,25 +309,15 @@ interface AdminLayoutProps {
 }
 
 /**
- * AdminLayout — Military-Grade layout для System Command Center.
- * Замінює MainLayout для усіх маршрутів /admin/*.
- * - Без AI Copilot, QuickActionsBar, ContextRail
- * - Щільна типографіка, тональне підвищення без тіней
- * - Фіксована бічна панель з навігацією
+ * AdminLayout — Cyberpunk Glassmorphism layout для Sovereign Command Center.
+ * Замінює старий червоний дизайн на глибокий технологічний.
  */
 export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const [isSidebarOpen, setSidebarOpen] = useAtom(isSidebarOpenAtom);
   const isMobile = useMediaQuery('(max-width: 768px)');
 
   return (
-    <div
-      className="flex h-screen w-screen overflow-hidden relative"
-      style={{ backgroundColor: '#020203' }}
-    >
-      {/* Global Background HUD Layer */}
-      <div className="absolute inset-0 cyber-scan-grid opacity-[0.02] pointer-events-none" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(225,29,72,0.03),transparent_70%)] pointer-events-none" />
-
+    <div className="flex h-screen w-screen overflow-hidden bg-slate-950">
       {/* Бічна панель */}
       <AdminSidebar />
 
@@ -391,20 +329,18 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setSidebarOpen(false)}
-            className="fixed inset-0 bg-black/80 z-[90]"
+            className="fixed inset-0 bg-black/80 z-[90] backdrop-blur-sm"
           />
         )}
       </AnimatePresence>
 
-      {/* Основна область */}
-      <div className="flex flex-col flex-1 min-w-0 overflow-hidden relative z-10">
+      <div className="flex flex-col flex-1 min-w-0 overflow-hidden relative z-10 m-4 rounded-[12px] bg-slate-900 border border-slate-800 shadow-sm">
         {/* Статус-бар */}
         <AdminStatusBar />
 
         {/* Контентна зона */}
-        <main className="flex-1 overflow-auto relative" style={{ backgroundColor: 'rgba(5,2,2,0.4)' }}>
-          <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-[0.02] pointer-events-none" />
-          <AnimatedPage pageKey={location.pathname} variant="decrypt" className="h-full relative z-10">
+        <main className="flex-1 overflow-auto relative bg-slate-900">
+          <AnimatedPage pageKey={location.pathname} variant="fade" className="h-full relative z-10 p-6">
             {children}
           </AnimatedPage>
         </main>

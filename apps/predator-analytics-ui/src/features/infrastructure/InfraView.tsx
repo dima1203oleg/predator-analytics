@@ -111,7 +111,7 @@ export default function InfraView() {
           transition={{ duration: 0.5 }}
           className="relative z-10 h-full w-full flex flex-col"
         >
-          <div className="p-6 border-b border-rose-500/10 bg-black/60  flex items-center justify-between">
+          <div className="p-6 border-b border-cyan-500/10 bg-black/60  flex items-center justify-between">
             <ViewHeader
               title="Інфраструктура"
               subtitle="v61.0-ELITE • Моніторинг NVIDIA Server, MacBook та Google Colab"
@@ -130,11 +130,11 @@ export default function InfraView() {
                   className={cn(
                     "flex items-center gap-2 px-3 py-1.5 rounded-lg border cursor-pointer transition-all duration-300",
                     isFullyAutomated 
-                      ? "bg-rose-500/20 border-rose-500/30 text-rose-400 " 
+                      ? "bg-cyan-500/20 border-cyan-500/30 text-rose-400 " 
                       : "bg-slate-800/40 border-slate-700/50 text-slate-400"
                   )}
                 >
-                  <Bot className={cn("w-4 h-4", isFullyAutomated && " text-rose-500")} />
+                  <Bot className={cn("w-4 h-4", isFullyAutomated && " text-cyan-500")} />
                   <span className="text-[10px] font-black uppercase tracking-widest">
                     {isFullyAutomated ? "ПОВНИЙ АВТОПІЛОТ" : "ВТ УЧАННЯ ОПЕ АТО А"}
                   </span>
@@ -148,7 +148,7 @@ export default function InfraView() {
             {isLoading && !infrastructure ? (
               <div className="flex items-center justify-center h-full">
                 <motion.div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity }}>
-                  <RefreshCw className="w-8 h-8 text-rose-500" />
+                  <RefreshCw className="w-8 h-8 text-cyan-500" />
                 </motion.div>
               </div>
             ) : error ? (
@@ -194,7 +194,7 @@ export default function InfraView() {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <h2 className="text-xl font-black text-white flex items-center gap-3 uppercase tracking-tighter">
-                      <Layers className="text-rose-600 w-6 h-6" /> 
+                      <Layers className="text-cyan-600 w-6 h-6" /> 
                       МОНІТОРИНГ АПА АТНИХ ВУЗЛІВ
                     </h2>
                     <span className="text-[10px] text-slate-600 font-mono uppercase font-black">3 СИСТЕМИ ВИЯВЛЕНО</span>
@@ -221,7 +221,7 @@ export default function InfraView() {
                   <div className="lg:col-span-2 space-y-6">
                     <div className="bg-black/40 border border-white/5 rounded-xl p-6 ">
                       <h3 className="text-lg font-black text-white mb-2 flex items-center gap-2 uppercase tracking-tight">
-                        <Activity className="w-5 h-5 text-rose-500" /> ДИНАМІКА РЕСУРСІВ (24г)
+                        <Activity className="w-5 h-5 text-cyan-500" /> ДИНАМІКА РЕСУРСІВ (24г)
                       </h3>
                       <p className="text-[10px] text-slate-600 uppercase font-black tracking-widest mb-4">Моніторинг CPU та RAM у часі</p>
                       <ResourceDynamicsChart />
@@ -229,7 +229,7 @@ export default function InfraView() {
 
                     <div className="bg-black/40 border border-white/5 rounded-xl p-6 ">
                       <h3 className="text-lg font-black text-white mb-4 flex items-center gap-2 uppercase tracking-tight">
-                        <DatabaseIcon className="w-5 h-5 text-rose-600" /> БД ТА СХОВИЩА
+                        <DatabaseIcon className="w-5 h-5 text-cyan-600" /> БД ТА СХОВИЩА
                       </h3>
                       {infrastructure?.components ? (
                         <ServiceStatusGrid data={infrastructure.components} />
@@ -240,7 +240,7 @@ export default function InfraView() {
 
                     <div className="bg-black/40 border border-white/5 rounded-xl p-6 ">
                       <h3 className="text-lg font-black text-white mb-4 flex items-center gap-2 uppercase tracking-tight">
-                        <DatabaseIcon className="w-5 h-5 text-rose-500" /> РОЗПОДІЛ СХОВИЩА
+                        <DatabaseIcon className="w-5 h-5 text-cyan-500" /> РОЗПОДІЛ СХОВИЩА
                       </h3>
                       <StorageChart />
                     </div>

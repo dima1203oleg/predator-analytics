@@ -2,6 +2,7 @@
  * 📱 BottomSheet — стандартний mobile bottom sheet для деталей/фільтрів/дій
  * Snap points: 25%, 50%, 85%
  */
+import { Button } from '@/components/ui/button';
 import React, { useRef, useCallback, useState } from 'react';
 import { motion, PanInfo, useMotionValue, useTransform, AnimatePresence } from 'framer-motion';
 import { cn } from '@/utils/cn';
@@ -114,14 +115,14 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
                   </h3>
                 )}
                 {showCloseButton && (
-                  <button
+                  <Button variant="cyber"
                     type="button"
                     onClick={onClose}
                     className="p-1.5 rounded-lg hover:bg-white/10 transition-colors"
                     aria-label="Закрити"
                   >
                     <X className="w-4 h-4 text-slate-400" />
-                  </button>
+                  </Button>
                 )}
               </div>
             )}

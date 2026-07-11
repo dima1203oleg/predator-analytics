@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -101,7 +102,7 @@ export const DataReactorCore: React.FC<ReactorProps> = ({
 
             {/* Header / Mode Toggle */}
             <div className="absolute top-6 right-6 z-50 flex gap-4">
-                <button
+                <Button variant="cyber"
                     onClick={() => setXrayMode(!xrayMode)}
                     className={`flex items-center gap-2 px-4 py-2 rounded-lg border  transition-all ${xrayMode
                         ? 'bg-blue-500/20 border-blue-500/50 text-blue-400 '
@@ -110,7 +111,7 @@ export const DataReactorCore: React.FC<ReactorProps> = ({
                 >
                     <Glasses size={16} />
                     <span className="text-xs font-bold uppercase tracking-wider">режим X-Ray</span>
-                </button>
+                </Button>
             </div>
 
             {/* X-Ray specific grid backgrounds */}

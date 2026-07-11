@@ -1,4 +1,5 @@
 
+import { Button } from '@/components/ui/button';
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React from 'react';
 import { GitCommit, Clock, CheckCircle2, XCircle, RotateCcw, Box, ArrowRight, Loader } from 'lucide-react';
@@ -82,13 +83,13 @@ export const PipelineTable: React.FC<PipelineTableProps> = ({ pipelines, onRollb
                                 </div>
                             </td>
                             <td className="p-4 text-right">
-                                <button
+                                <Button variant="cyber"
                                     onClick={(e) => { e.stopPropagation(); onRollback(run.id); }}
                                     className="p-2 hover:bg-slate-800 rounded text-slate-300 hover:text-white transition-colors btn-3d border border-transparent hover:border-slate-700"
                                     title="Відкотити до цієї версії"
                                 >
                                     <RotateCcw size={14} />
-                                </button>
+                                </Button>
                             </td>
                         </tr>
                     ))}

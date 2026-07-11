@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAtom } from 'jotai';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -200,7 +201,7 @@ export const ShellCommandPalette: React.FC = () => {
                     const isSelected = index === selectedIndex;
 
                     return (
-                      <button
+                      <Button variant="cyber"
                         key={`${entry.kind}-${entry.id}`}
                         type="button"
                         data-testid={`palette-entry-${entry.id}`}
@@ -231,7 +232,7 @@ export const ShellCommandPalette: React.FC = () => {
                           </div>
                         </div>
                         <ArrowRight className={cn('h-4 w-4 shrink-0', isSelected ? 'text-cyan-200' : 'text-slate-600')} />
-                      </button>
+                      </Button>
                     );
                   })}
                 </div>

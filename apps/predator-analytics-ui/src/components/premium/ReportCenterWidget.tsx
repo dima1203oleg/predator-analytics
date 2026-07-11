@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -52,12 +53,12 @@ export const ReportCenterWidget: React.FC<{ persona: string }> = ({ persona }) =
           <p className="text-xs text-slate-500">{premiumLocales.reportCenter.subtitle}</p>
         </div>
         <div className="flex gap-2">
-            <button aria-label="Фільтрувати" className="p-2 hover:bg-white/5 rounded-xl text-slate-400 transition-all">
+            <Button variant="cyber" aria-label="Фільтрувати" className="p-2 hover:bg-white/5 rounded-xl text-slate-400 transition-all">
                 <Filter size={20} />
-            </button>
-            <button aria-label="Архів" className="p-2 hover:bg-white/5 rounded-xl text-slate-400 transition-all">
+            </Button>
+            <Button variant="cyber" aria-label="Архів" className="p-2 hover:bg-white/5 rounded-xl text-slate-400 transition-all">
                 <Clock size={20} />
-            </button>
+            </Button>
         </div>
       </div>
 
@@ -83,12 +84,12 @@ export const ReportCenterWidget: React.FC<{ persona: string }> = ({ persona }) =
                    {template.type === 'JSON' && <FileSearch size={24} />}
                  </div>
                  <div className="flex gap-2 opacity-0 group-hover/card:opacity-100 transition-opacity">
-                    <button aria-label="Попереднійперегляд" className="p-2 hover:bg-white/10 rounded-lg text-slate-400">
+                    <Button variant="cyber" aria-label="Попереднійперегляд" className="p-2 hover:bg-white/10 rounded-lg text-slate-400">
                         <Eye size={16} />
-                    </button>
-                    <button aria-label="Видалити" className="p-2 hover:bg-rose-500/20 rounded-lg text-rose-400">
+                    </Button>
+                    <Button variant="cyber" aria-label="Видалити" className="p-2 hover:bg-rose-500/20 rounded-lg text-rose-400">
                         <Trash2 size={16} />
-                    </button>
+                    </Button>
                  </div>
               </div>
 
@@ -101,7 +102,7 @@ export const ReportCenterWidget: React.FC<{ persona: string }> = ({ persona }) =
                 <div className="text-[10px] text-slate-600 font-mono">
                   {template.lastGenerated ? `${premiumLocales.reportCenter.generatedAt}: ${template.lastGenerated}` : premiumLocales.reportCenter.neverGenerated}
                 </div>
-                <button
+                <Button variant="cyber"
                   onClick={(e) => { e.stopPropagation(); handleGenerate(template.id); }}
                   disabled={isGenerating !== null}
                   className={cn(
@@ -117,7 +118,7 @@ export const ReportCenterWidget: React.FC<{ persona: string }> = ({ persona }) =
                       {template.type}
                     </>
                   )}
-                </button>
+                </Button>
               </div>
             </motion.div>
           ))}
@@ -130,9 +131,9 @@ export const ReportCenterWidget: React.FC<{ persona: string }> = ({ persona }) =
                 <h4 className="text-lg font-black text-white mb-2 uppercase tracking-wide">{premiumLocales.reportCenter.customExport.title}</h4>
                 <p className="text-sm text-slate-400">{premiumLocales.reportCenter.customExport.subtitle}</p>
               </div>
-              <button className="flex items-center gap-2 px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl text-xs font-black uppercase tracking-widest transition-all shadow-xl shadow-blue-500/20 active:scale-95">
+              <Button variant="cyber" className="flex items-center gap-2 px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl text-xs font-black uppercase tracking-widest transition-all shadow-xl shadow-blue-500/20 active:scale-95">
                  {premiumLocales.reportCenter.customExport.button} <ArrowRight size={18} />
-              </button>
+              </Button>
            </div>
         </div>
       </div>

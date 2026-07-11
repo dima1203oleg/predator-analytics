@@ -3,6 +3,7 @@
  * Голосовий AI-асистент з Web Speech API
  * Перевищує Palantir: українська мова, контекстна розуміння, holographic UI
  */
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mic, MicOff, Sparkles, BrainCircuit, Volume2, VolumeX } from 'lucide-react';
@@ -287,12 +288,12 @@ export const AIVoiceAssistant: React.FC<AIVoiceAssistantProps> = ({
 
               {/* Stop speaking button */}
               {isSpeaking && (
-                <button
+                <Button variant="cyber"
                   onClick={toggleSpeaking}
                   className="mt-2 w-full py-2 bg-rose-600/20 border border-rose-500/30 rounded-lg text-xs font-bold text-rose-400 hover:bg-rose-600/30 transition-colors"
                 >
                   ЗУПИНИТИ ВІДТВОРЕННЯ
-                </button>
+                </Button>
               )}
             </motion.div>
           )}

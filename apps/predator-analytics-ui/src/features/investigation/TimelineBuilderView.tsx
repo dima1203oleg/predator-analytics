@@ -8,6 +8,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -59,7 +60,7 @@ const CATEGORY_CONFIG: Record<EventCategory, { label: string; color: string; bg:
     contact:       { label: 'КОНТАКТ', color: '#0ea5e9', bg: 'bg-sky-500/10', icon: MessageSquare },
     travel:        { label: 'ТРАНСПОРТ', color: '#f59e0b', bg: 'bg-amber-500/10', icon: MapPin },
     document:      { label: 'ДОКУМЕНТ', color: '#6366f1', bg: 'bg-indigo-500/10', icon: FileText },
-    risk:          { label: 'РИЗИК', color: '#f43f5e', bg: 'bg-rose-500/10', icon: AlertTriangle },
+    risk:          { label: 'РИЗИК', color: '#f43f5e', bg: 'bg-cyan-500/10', icon: AlertTriangle },
     investigation: { label: 'СЛІДСТВО', color: '#a855f7', bg: 'bg-purple-500/10', icon: Eye },
 };
 
@@ -109,7 +110,7 @@ const EventCard: React.FC<{ event: TimelineEvent; isLast: boolean }> = ({ event,
                         {cfg.label}
                     </Badge>
                     {!event.verified && (
-                        <Badge className="bg-rose-600/10 text-rose-500 border-rose-500/20 text-[9px] font-black italic">УВАГА: НЕВЕРИФІКОВАНО</Badge>
+                        <Badge className="bg-cyan-600/10 text-cyan-500 border-cyan-500/20 text-[9px] font-black italic">УВАГА: НЕВЕРИФІКОВАНО</Badge>
                     )}
                     <div className="ml-auto flex items-center gap-2">
                         <div className="h-1 w-20 bg-white/5 rounded-full overflow-hidden border border-white/5">
@@ -175,12 +176,12 @@ const EventCard: React.FC<{ event: TimelineEvent; isLast: boolean }> = ({ event,
 
                                 <div className="flex items-center justify-between pt-6 border-t border-white/[0.04]">
                                     <div className="flex gap-4">
-                                        <button className="px-8 py-4 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black text-slate-400 uppercase tracking-widest italic hover:text-white transition-all flex items-center gap-3">
+                                        <Button variant="cyber" className="px-8 py-4 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black text-slate-400 uppercase tracking-widest italic hover:text-white transition-all flex items-center gap-3">
                                             <FileText size={16} /> ПЕРЕГЛЯНУТИ_ЗВІТ
-                                        </button>
-                                        <button className="px-8 py-4 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black text-slate-400 uppercase tracking-widest italic hover:text-white transition-all flex items-center gap-3">
+                                        </Button>
+                                        <Button variant="cyber" className="px-8 py-4 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black text-slate-400 uppercase tracking-widest italic hover:text-white transition-all flex items-center gap-3">
                                             <History size={16} /> ЛОГ_ЗМІН
-                                        </button>
+                                        </Button>
                                     </div>
                                     <div className="flex items-center gap-4 text-emerald-500">
                                         <Shield size={16} />
@@ -272,12 +273,12 @@ const TimelineBuilderView: React.FC = () => {
                         ]}
                         actions={
                             <div className="flex gap-4">
-                                <button onClick={() => {setSearch(''); setCategoryFilter('ALL');}} className="p-5 bg-black border border-white/[0.04] rounded-2xl text-slate-400 hover:text-white transition-all shadow-xl">
+                                <Button variant="cyber" onClick={() => {setSearch(''); setCategoryFilter('ALL');}} className="p-5 bg-black border border-white/[0.04] rounded-2xl text-slate-400 hover:text-white transition-all shadow-xl">
                                     <RefreshCcw size={24} />
-                                </button>
-                                <button onClick={() => setIsAddModalOpen(true)} className="px-8 py-5 bg-indigo-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-indigo-600 shadow-2xl transition-all flex items-center gap-4">
+                                </Button>
+                                <Button variant="cyber" onClick={() => setIsAddModalOpen(true)} className="px-8 py-5 bg-indigo-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-indigo-600 shadow-2xl transition-all flex items-center gap-4">
                                     <PlusCircle size={18} /> ДОДАТИ_ТЕМПОРАЛЬНИЙ_АРТЕФАКТ
-                                </button>
+                                </Button>
                             </div>
                         }
                     />
@@ -300,7 +301,7 @@ const TimelineBuilderView: React.FC = () => {
                                 <Filter className="w-6 h-6 text-indigo-500" />
                                 <span className="text-[10px] font-black text-slate-700 uppercase tracking-widest italic leading-none">ФІЛЬТР_КАТЕГОРІЙ</span>
                             </div>
-                            <button
+                            <Button variant="cyber"
                                 onClick={() => setCategoryFilter('ALL')}
                                 className={cn(
                                     "px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] italic transition-all border-2",
@@ -308,9 +309,9 @@ const TimelineBuilderView: React.FC = () => {
                                 )}
                             >
                                 ВСІ_ОБ'ЄКТИ
-                            </button>
+                            </Button>
                             {(Object.entries(CATEGORY_CONFIG) as [EventCategory, typeof CATEGORY_CONFIG[EventCategory]][]).map(([key, cfg]) => (
-                                <button
+                                <Button variant="cyber"
                                     key={key}
                                     onClick={() => setCategoryFilter(categoryFilter === key ? 'ALL' : key)}
                                     className={cn(
@@ -320,7 +321,7 @@ const TimelineBuilderView: React.FC = () => {
                                     style={{ color: categoryFilter === key ? cfg.color : undefined }}
                                 >
                                     {cfg.label}
-                                </button>
+                                </Button>
                             ))}
                         </div>
                     </div>
@@ -381,9 +382,9 @@ const TimelineBuilderView: React.FC = () => {
                             <textarea rows={4} placeholder="ДЕТАЛІ ПОДІЇ..." className="w-full bg-black/60 border border-white/10 p-6 rounded-3xl text-white outline-none focus:border-indigo-500/40 font-medium italic uppercase text-xs leading-relaxed" />
                         </div>
 
-                        <button className="w-full py-8 bg-indigo-600 hover:bg-indigo-500 text-white font-black uppercase tracking-[0.4em] italic rounded-[2rem] shadow-4xl transition-all flex items-center justify-center gap-6">
+                        <Button variant="cyber" className="w-full py-8 bg-indigo-600 hover:bg-indigo-500 text-white font-black uppercase tracking-[0.4em] italic rounded-[2rem] shadow-4xl transition-all flex items-center justify-center gap-6">
                             <Fingerprint size={24} /> ЗАКРІПИТИ_В_WORM_МАСИВІ
-                        </button>
+                        </Button>
                     </div>
                 </Modal>
 

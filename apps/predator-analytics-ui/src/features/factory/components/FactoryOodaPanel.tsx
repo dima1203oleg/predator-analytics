@@ -38,10 +38,10 @@ export const FactoryOodaPanel: React.FC<FactoryOodaPanelProps> = ({
   return (
     <div className="space-y-6">
       {/* ═══ 1. ЗАГОЛОВОК OODA ═══ */}
-      <div className="relative rounded-3xl border border-rose-500/30 bg-gradient-to-br from-rose-950/60 via-slate-950/80 to-yellow-950/40  p-6 lg:p-8 ">
+      <div className="relative rounded-3xl border border-cyan-500/30 bg-gradient-to-br from-rose-950/60 via-slate-950/80 to-yellow-950/40  p-6 lg:p-8 ">
         {infiniteRunning && (
           <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-3xl">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-rose-500/5 animate-ping" style={{ animationDuration: '3s' }} />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-cyan-500/5 animate-ping" style={{ animationDuration: '3s' }} />
           </div>
         )}
         <div className="relative z-10 flex flex-col gap-6">
@@ -49,11 +49,11 @@ export const FactoryOodaPanel: React.FC<FactoryOodaPanelProps> = ({
             <div className="flex items-center gap-5 min-w-0">
               <div className="relative shrink-0">
                 <div className={cn('w-14 h-14 lg:w-16 lg:h-16 rounded-2xl border-2 flex items-center justify-center transition-all duration-500',
-                  infiniteRunning ? 'bg-rose-500/20 border-rose-400 ' : 'bg-slate-900/80 border-slate-600'
+                  infiniteRunning ? 'bg-cyan-500/20 border-cyan-400 ' : 'bg-slate-900/80 border-slate-600'
                 )}>
                   <Infinity size={28} className={cn('transition-all', infiniteRunning ? 'text-rose-300 ' : 'text-slate-500')} />
                 </div>
-                {infiniteRunning && <div className="absolute -inset-1 rounded-2xl border border-rose-400/30 animate-ping opacity-40" />}
+                {infiniteRunning && <div className="absolute -inset-1 rounded-2xl border border-cyan-400/30 animate-ping opacity-40" />}
               </div>
               <div className="min-w-0 flex-1">
                 <div className="text-[10px] text-rose-400 font-black uppercase tracking-[0.15em] mb-1">🔄 ЦИКЛ OODA • АВТОНОМНИЙ ДВИГУН ВДОСКОНАЛЕННЯ</div>
@@ -74,15 +74,15 @@ export const FactoryOodaPanel: React.FC<FactoryOodaPanelProps> = ({
               onClick={handleInfiniteCycle}
               className={cn('h-12 px-8 font-black tracking-widest uppercase text-sm transition-all shrink-0 w-full lg:w-auto rounded-xl',
                 infiniteRunning
-                  ? 'bg-rose-700 hover:bg-rose-600 text-white  border border-rose-400/30'
-                  : 'bg-gradient-to-r from-rose-600 to-yellow-600 hover:from-rose-500 hover:to-yellow-500 text-white  border border-rose-400/30'
+                  ? 'bg-rose-700 hover:bg-cyan-600 text-white  border border-cyan-400/30'
+                  : 'bg-gradient-to-r from-rose-600 to-yellow-600 hover:from-rose-500 hover:to-yellow-500 text-white  border border-cyan-400/30'
               )}
             >
               {infiniteRunning ? <><Power size={16} className="mr-2" />ЗУПИНИТИ</> : <><Play size={16} className="mr-2" />ЗАПУСТИТИ</>}
             </Button>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-4 items-center bg-rose-500/5 border border-rose-500/15 rounded-2xl p-4">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-4 items-center bg-cyan-500/5 border border-cyan-500/15 rounded-2xl p-4">
             <div className="flex flex-wrap items-center gap-2">
               <Badge className={cn(
                 'border text-[10px] font-black uppercase tracking-widest px-3 py-1',
@@ -92,7 +92,7 @@ export const FactoryOodaPanel: React.FC<FactoryOodaPanelProps> = ({
               )}>
                 Сервер: {infiniteRunning ? 'АКТИВНИЙ' : 'ЗУПИНЕНИЙ'}
               </Badge>
-              <Badge className="border border-rose-400/20 bg-rose-500/10 text-rose-200 text-[10px] font-black uppercase tracking-widest px-3 py-1">
+              <Badge className="border border-cyan-400/20 bg-cyan-500/10 text-rose-200 text-[10px] font-black uppercase tracking-widest px-3 py-1">
                 Автовідновлення
               </Badge>
               <Badge className="border border-slate-400/20 bg-slate-500/10 text-slate-200 text-[10px] font-black uppercase tracking-widest px-3 py-1">
@@ -110,9 +110,9 @@ export const FactoryOodaPanel: React.FC<FactoryOodaPanelProps> = ({
       {/* ═══ 2. СТАТИСТИКА ═══ */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[
-          { label: 'Циклів OODA', value: infiniteStats.cycles, icon: RefreshCw, color: 'text-rose-400', bg: 'bg-rose-500/10 border-rose-500/20' },
+          { label: 'Циклів OODA', value: infiniteStats.cycles, icon: RefreshCw, color: 'text-rose-400', bg: 'bg-cyan-500/10 border-cyan-500/20' },
           { label: 'Покращень', value: infiniteStats.improvements, icon: Zap, color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20' },
-          { label: 'Багів виправлено', value: bugs.filter(b => b.status === 'fixed').length, icon: CheckCircle2, color: 'text-rose-400', bg: 'bg-rose-500/10 border-rose-500/20' },
+          { label: 'Багів виправлено', value: bugs.filter(b => b.status === 'fixed').length, icon: CheckCircle2, color: 'text-rose-400', bg: 'bg-cyan-500/10 border-cyan-500/20' },
         ].map(s => {
           const Icon = s.icon;
           return (
@@ -141,7 +141,7 @@ export const FactoryOodaPanel: React.FC<FactoryOodaPanelProps> = ({
           const isActive = infinitePhase === phase.id && infiniteRunning;
           const colorStyles: Record<string, { border: string; text: string; bg: string; glow: string }> = {
             slate:   { border: 'border-slate-500/60',   text: 'text-slate-300',   bg: 'bg-slate-900/30',   glow: '0 0 20px rgba(148,163,184,0.3)' },
-            amber:   { border: 'border-rose-500/60',   text: 'text-rose-300',   bg: 'bg-rose-900/30',   glow: '0 0 20px rgba(245,158,11,0.5)' },
+            amber:   { border: 'border-cyan-500/60',   text: 'text-rose-300',   bg: 'bg-rose-900/30',   glow: '0 0 20px rgba(245,158,11,0.5)' },
             orange:  { border: 'border-orange-500/60',  text: 'text-orange-300',  bg: 'bg-orange-900/30',  glow: '0 0 20px rgba(249,115,22,0.5)' },
             emerald: { border: 'border-emerald-500/60', text: 'text-emerald-300', bg: 'bg-emerald-900/30', glow: '0 0 20px rgba(16,185,129,0.5)' },
           };
@@ -172,12 +172,12 @@ export const FactoryOodaPanel: React.FC<FactoryOodaPanelProps> = ({
       </div>
 
       {/* ═══ 4. ЖИВИЙ ТЕРМІНАЛ ═══ */}
-      <div className="rounded-2xl border border-rose-500/20 bg-slate-950/90 overflow-hidden shadow-inner">
-        <div className="flex items-center justify-between px-4 py-2.5 border-b border-rose-500/20 bg-rose-500/5">
+      <div className="rounded-2xl border border-cyan-500/20 bg-slate-950/90 overflow-hidden shadow-inner">
+        <div className="flex items-center justify-between px-4 py-2.5 border-b border-cyan-500/20 bg-cyan-500/5">
           <div className="flex items-center gap-2 min-w-0">
             <div className="flex gap-1.5 shrink-0">
-              <div className="w-2.5 h-2.5 rounded-full bg-rose-500" />
-              <div className="w-2.5 h-2.5 rounded-full bg-rose-500" />
+              <div className="w-2.5 h-2.5 rounded-full bg-cyan-500" />
+              <div className="w-2.5 h-2.5 rounded-full bg-cyan-500" />
               <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
             </div>
             <span className="text-[10px] font-mono font-black text-slate-400 uppercase tracking-widest ml-2 truncate">
@@ -213,7 +213,7 @@ export const FactoryOodaPanel: React.FC<FactoryOodaPanelProps> = ({
             else if (log.includes('DECIDE')) cls = 'text-orange-400';
             else if (log.includes('ACT') || log.includes('✅')) cls = 'text-emerald-400';
             else if (log.includes('SYSTEM')) cls = 'text-rose-300 font-black';
-            else if (log.includes('❌') || log.includes('ERROR')) cls = 'text-rose-500';
+            else if (log.includes('❌') || log.includes('ERROR')) cls = 'text-cyan-500';
             return (
               <motion.div
                 key={i}

@@ -8,6 +8,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -199,12 +200,12 @@ export default function PowerStructureView() {
                      ]}
                      actions={
                        <div className="flex gap-4">
-                          <button onClick={() => { play(UISoundType.CLICK); fetchData(); }} onMouseEnter={() => play(UISoundType.HOVER)} className={cn("p-5 bg-black border border-white/[0.04] rounded-2xl text-slate-400 hover:text-white transition-all shadow-xl", loading && "animate-spin")}>
+                          <Button variant="cyber" onClick={() => { play(UISoundType.CLICK); fetchData(); }} onMouseEnter={() => play(UISoundType.HOVER)} className={cn("p-5 bg-black border border-white/[0.04] rounded-2xl text-slate-400 hover:text-white transition-all shadow-xl", loading && "animate-spin")}>
                              <RefreshCcw size={24} />
-                          </button>
-                          <button className="px-8 py-5 bg-cyan-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-cyan-600 shadow-2xl transition-all flex items-center gap-4">
+                          </Button>
+                          <Button variant="cyber" className="px-8 py-5 bg-cyan-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-cyan-600 shadow-2xl transition-all flex items-center gap-4">
                              <Radar size={18} /> СКАНУВАТИ_ВЕ ТИКАЛЬ
-                          </button>
+                          </Button>
                        </div>
                      }
                    />
@@ -297,9 +298,9 @@ export default function PowerStructureView() {
                                   </div>
                                 ))}
                              </div>
-                             <button className="w-full py-6 bg-yellow-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-yellow-600 shadow-3xl transition-all">
+                             <Button variant="cyber" className="w-full py-6 bg-yellow-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-yellow-600 shadow-3xl transition-all">
                                 ПЕ ЕГЛЯНУТИ_ГРАФ_ВПЛИВУ
-                             </button>
+                             </Button>
                          </section>
 
                          <section className="p-10 rounded-[3.5rem] bg-black border border-white/[0.04] shadow-3xl space-y-8 relative overflow-hidden">

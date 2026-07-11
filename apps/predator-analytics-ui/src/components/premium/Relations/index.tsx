@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { Network, Search, ZoomIn, ZoomOut, Share2 } from 'lucide-react';
 import { SensitiveDataToggle } from '../../shared/SensitiveDataToggle';
@@ -24,15 +25,15 @@ export const Relations: React.FC = () => {
         </div>
         <div className="flex gap-4">
           <SensitiveDataToggle />
-          <button title={premiumLocales.entityGraph.toolbar.share} className="p-2 bg-slate-800 rounded text-slate-400 hover:text-white"><Share2 size={20} /></button>
+          <Button variant="cyber" title={premiumLocales.entityGraph.toolbar.share} className="p-2 bg-slate-800 rounded text-slate-400 hover:text-white"><Share2 size={20} /></Button>
         </div>
       </div>
 
       <div className="flex-1 bg-slate-900 border border-slate-700 rounded-xl relative ">
         {/* Toolbar */}
         <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
-          <button title={premiumLocales.entityGraph.toolbar.zoomIn} className="p-2 bg-slate-800 rounded shadow border border-slate-700 hover:bg-slate-700 text-white"><ZoomIn size={18} /></button>
-          <button title={premiumLocales.entityGraph.toolbar.zoomOut} className="p-2 bg-slate-800 rounded shadow border border-slate-700 hover:bg-slate-700 text-white"><ZoomOut size={18} /></button>
+          <Button variant="cyber" title={premiumLocales.entityGraph.toolbar.zoomIn} className="p-2 bg-slate-800 rounded shadow border border-slate-700 hover:bg-slate-700 text-white"><ZoomIn size={18} /></Button>
+          <Button variant="cyber" title={premiumLocales.entityGraph.toolbar.zoomOut} className="p-2 bg-slate-800 rounded shadow border border-slate-700 hover:bg-slate-700 text-white"><ZoomOut size={18} /></Button>
         </div>
 
         {/* Mock Graph Visualization */}

@@ -570,11 +570,17 @@ class AutonomousE2EOrchestrator {
         this.report.ai_queries.push({
           query,
           response: responseText || 'Ответ получен',
-          components_used: ['PostgreSQL', 'Qdrant', 'OpenSearch'], // Припущення
+          services_used: ['PostgreSQL', 'Qdrant', 'OpenSearch'], // Припущення
           success: true,
-        });
+        } as unknown as AIQueryResult);
         
         console.log(`[🦅 AUTONOMOUS E2E] ✅ Відповідь отримана`);
+        
+        // Спроба пропустити відеозаставку
+        try {
+          await this.page.keyboard.press('Escape');
+          await this.page.waitForTimeout(1000);
+        } catch(e) {}
         
         // Затримка між запитами
         await this.page.waitForTimeout(2000);
@@ -584,9 +590,9 @@ class AutonomousE2EOrchestrator {
         this.report.ai_queries.push({
           query,
           response: '',
-          components_used: [],
+          services_used: [],
           success: false,
-        });
+        } as unknown as AIQueryResult);
         this.report.errors.push(`AI-чат помилка: ${query}`);
       }
     }
@@ -810,7 +816,7 @@ class AutonomousE2EOrchestrator {
 ${this.report.ai_queries.map((q, i) => `
 ### Запит ${i + 1}: "${q.query}"
 - **Success**: ${q.success ? '✅' : '❌'}
-- **Components Used**: ${q.components_used.join(', ')}
+- **Services Used**: ${q.services_used.join(', ')}
 - **Response**: ${q.response.substring(0, 200)}...
 `).join('\n')}
 

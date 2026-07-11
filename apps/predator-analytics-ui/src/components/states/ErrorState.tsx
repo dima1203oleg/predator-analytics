@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { motion } from 'framer-motion';
 import { AlertTriangle, RefreshCw, XCircle } from 'lucide-react';
@@ -56,13 +57,13 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
       </p>
 
       {onRetry && (
-        <button
+        <Button variant="cyber"
           onClick={onRetry}
           className={`flex items-center gap-2 px-6 py-2.5 ${theme.bg} hover:${theme.bg.replace('/10', '/20')} border ${theme.border} hover:${theme.border.replace('/30', '/50')} rounded-xl ${theme.text} font-semibold text-sm transition-all`}
         >
           <RefreshCw className="w-4 h-4" />
           Спробувати знову
-        </button>
+        </Button>
       )}
     </motion.div>
   );

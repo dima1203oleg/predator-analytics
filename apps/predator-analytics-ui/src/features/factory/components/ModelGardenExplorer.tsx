@@ -3,6 +3,7 @@
  * Візуальний вибір та конфігурація моделей з Model Garden.
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -48,7 +49,7 @@ export function ModelGardenExplorer() {
         </div>
         <div className="flex items-center gap-2 bg-black/40 p-1.5 rounded-xl border border-white/5">
           {['All', 'Language', 'Vision'].map(cat => (
-            <button 
+            <Button variant="cyber" 
               key={cat}
               onClick={() => setFilter(cat)}
               className={cn(
@@ -57,7 +58,7 @@ export function ModelGardenExplorer() {
               )}
             >
               {cat}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -109,9 +110,9 @@ export function ModelGardenExplorer() {
                     <span className="text-slate-500 text-[10px] uppercase font-black tracking-widest">Контекст: {selected.context}</span>
                   </div>
                 </div>
-                <button className="bg-white text-black px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-blue-400 hover:text-white transition-all shadow-xl">
+                <Button variant="cyber" className="bg-white text-black px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-blue-400 hover:text-white transition-all shadow-xl">
                   Активувати
-                </button>
+                </Button>
               </div>
 
               <div className="grid grid-cols-2 gap-4 mb-8">

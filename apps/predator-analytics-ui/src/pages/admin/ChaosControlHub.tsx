@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -170,7 +171,7 @@ const ChaosControlHub: React.FC = () => {
                   )}>
                     {isActive ? 'АКТИВНА_ІН\'ЄКЦІЯ' : 'СТАНД_БАЙ'}
                   </span>
-                  <button
+                  <Button variant="cyber"
                     onClick={() => toggleExperiment(cfg.id, !isActive)}
                     onMouseEnter={() => play(UISoundType.HOVER)}
                     disabled={loading}
@@ -184,7 +185,7 @@ const ChaosControlHub: React.FC = () => {
                       className="w-7 h-7 bg-white rounded-full shadow-2xl relative z-10"
                     />
                     <div className="absolute inset-0 bg-gradient-to-r from-rose-500/0 via-white/10 to-rose-500/0 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </button>
+                  </Button>
                 </div>
               </div>
 
@@ -232,7 +233,7 @@ const ChaosControlHub: React.FC = () => {
               <div className="w-3 h-3 rounded-full bg-sky-500 " />
               <span className="text-[11px] font-black text-sky-500 uppercase tracking-widest italic">КОЛАБ_ГІБРИД: ОЧІКУВАННЯ</span>
             </div>
-            <button
+            <Button variant="cyber"
               onClick={() => {
                 play(UISoundType.CLICK);
                 console.log('З\'єднання з Colab');
@@ -241,7 +242,7 @@ const ChaosControlHub: React.FC = () => {
               className="px-10 py-5 bg-sky-600 text-white rounded-2xl font-black uppercase tracking-widest text-[11px] hover:bg-sky-500 transition-all shadow-xl italic flex items-center gap-3"
             >
               <Link size={16} /> З'ЄДНАТИ_З_ХМАРОЮ
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -285,7 +286,7 @@ const ChaosControlHub: React.FC = () => {
             <p className="text-[13px] text-white/20 font-black uppercase tracking-[0.2em] mb-12 italic leading-relaxed max-w-xs">
               Автоматично згенерований звіт на основі останніх k6 стрес-тестів та ін'єкцій хаосу.
             </p>
-            <button
+            <Button variant="cyber"
               onClick={() => {
                 play(UISoundType.CLICK);
                 console.log('Генерація аналітики SLA');
@@ -295,7 +296,7 @@ const ChaosControlHub: React.FC = () => {
             >
                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000" />
                <span className="relative z-10">ГЕНЕРУВАТИ_АНАЛІТИКУ_SLA</span>
-            </button>
+            </Button>
         </div>
       </div>
 

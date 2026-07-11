@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { ViewHeader } from '@/components/ViewHeader';
@@ -39,9 +40,9 @@ export default function PluginEcosystemView() {
              ]}
              stats={[]}
              actions={
-               <button className="px-6 py-3 bg-fuchsia-600/10 border border-fuchsia-500/20 text-fuchsia-500 rounded-xl text-[10px] font-black uppercase tracking-widest italic hover:bg-fuchsia-600 hover:text-white transition-all shadow-xl">
+               <Button variant="cyber" className="px-6 py-3 bg-fuchsia-600/10 border border-fuchsia-500/20 text-fuchsia-500 rounded-xl text-[10px] font-black uppercase tracking-widest italic hover:bg-fuchsia-600 hover:text-white transition-all shadow-xl">
                  <Blocks size={16} className="inline mr-2" /> ЗАВАНТАЖИТИ_WASM
-               </button>
+               </Button>
              }
            />
 
@@ -79,10 +80,10 @@ export default function PluginEcosystemView() {
                          </div>
                          <div className="flex items-center justify-between p-3 bg-white/[0.02] rounded-xl border border-white/5 opacity-50">
                             <div className="flex items-center gap-3">
-                               <HardDrive size={14} className="text-rose-500" />
+                               <HardDrive size={14} className="text-cyan-500" />
                                <span className="text-[10px] font-black text-white uppercase tracking-widest">FILESYSTEM</span>
                             </div>
-                            <span className="text-[9px] font-mono text-rose-500">DENIED</span>
+                            <span className="text-[9px] font-mono text-cyan-500">DENIED</span>
                          </div>
                       </div>
                    </div>

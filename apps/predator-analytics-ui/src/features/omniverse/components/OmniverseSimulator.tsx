@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
 import { 
   Play, 
@@ -80,7 +81,7 @@ export const OmniverseSimulator: React.FC = () => {
               <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-2 block">Волатильність ринку</label>
               <div className="grid grid-cols-3 gap-2">
                 {['LOW', 'MED', 'HIGH'].map(v => (
-                  <button
+                  <Button variant="cyber"
                     key={v}
                     onClick={() => setParams({...params, market_volatility: v})}
                     className={`py-2 text-[10px] font-black rounded-lg border transition-all ${
@@ -90,13 +91,13 @@ export const OmniverseSimulator: React.FC = () => {
                     }`}
                   >
                     {v}
-                  </button>
+                  </Button>
                 ))}
               </div>
             </div>
           </div>
 
-          <button
+          <Button variant="cyber"
             onClick={runSimulation}
             disabled={loading}
             className="w-full py-4 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-xl flex items-center justify-center gap-3 group relative overflow-hidden disabled:opacity-50"
@@ -104,7 +105,7 @@ export const OmniverseSimulator: React.FC = () => {
             <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform" />
             {loading ? <RefreshCcw className="animate-spin" /> : <Play className="fill-white" />}
             <span className="font-black text-white uppercase tracking-widest italic">Run Simulation</span>
-          </button>
+          </Button>
         </div>
       </div>
 

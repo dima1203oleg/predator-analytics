@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { TrendingUp, TrendingDown, DollarSign, Activity, AlertCircle, Info } from 'lucide-react';
@@ -78,9 +79,9 @@ export const CommodityPricePredictor: React.FC<{ persona: string }> = ({ persona
             <p className="text-[10px] text-slate-500 font-mono uppercase tracking-widest">{premiumLocales.commodityPredictor.subtitle}</p>
           </div>
         </div>
-        <button aria-label="Більше інформації" title="Більше інформації" className="p-2 hover:bg-white/5 rounded-xl text-slate-500 transition-colors">
+        <Button variant="cyber" aria-label="Більше інформації" title="Більше інформації" className="p-2 hover:bg-white/5 rounded-xl text-slate-500 transition-colors">
           <Info size={20} />
-        </button>
+        </Button>
       </div>
 
       {/* Content */}
@@ -142,9 +143,9 @@ export const CommodityPricePredictor: React.FC<{ persona: string }> = ({ persona
             </div>
            </div>
 
-           <button className="w-full py-5 bg-amber-500 text-black font-black rounded-3xl text-xs uppercase tracking-widest hover:bg-amber-400 transition-all shadow-xl shadow-amber-500/20 active:scale-95">
+           <Button variant="cyber" className="w-full py-5 bg-amber-500 text-black font-black rounded-3xl text-xs uppercase tracking-widest hover:bg-amber-400 transition-all shadow-xl shadow-amber-500/20 active:scale-95">
               {premiumLocales.commodityPredictor.activateHedging}
-           </button>
+           </Button>
         </div>
       </div>
     </div>

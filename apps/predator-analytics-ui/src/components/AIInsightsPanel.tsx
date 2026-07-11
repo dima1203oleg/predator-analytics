@@ -3,6 +3,7 @@
  * AI-powered insights panel
  * Перевищує Palantir: real-time AI analysis, predictive insights, anomaly detection
  */
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BrainCircuit, Sparkles, AlertTriangle, TrendingUp, Target, Zap, ChevronRight, Lightbulb, Shield, Activity } from 'lucide-react';
@@ -187,12 +188,12 @@ export const AIInsightsPanel: React.FC = () => {
               <h3 className="text-sm font-bold text-white uppercase tracking-wider">
                 ДЕТАЛІ ІНСАЙТУ
               </h3>
-              <button
+              <Button variant="cyber"
                 onClick={() => setSelectedInsight(null)}
                 className="p-1 rounded-lg hover:bg-white/10 transition-colors"
               >
                 <ChevronRight className="w-4 h-4 text-slate-400 rotate-90" />
-              </button>
+              </Button>
             </div>
             <div className="space-y-3">
               <div className="flex items-center gap-2">

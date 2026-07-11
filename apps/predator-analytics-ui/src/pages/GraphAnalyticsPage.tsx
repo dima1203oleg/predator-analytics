@@ -8,7 +8,9 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { Button } from '@/components/ui/button';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import ForceGraph3D from 'react-force-graph-3d';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
     Network, Filter, Search, Share2, Download, Settings, 
@@ -25,12 +27,12 @@ import { PageTransition } from '@/components/layout/PageTransition';
 import { Badge } from '@/components/ui/badge';
 import { HoloContainer } from '@/components/HoloContainer';
 import { useAppStore } from '@/store/useAppStore';
-import { AdvancedBackground } from '@/components/AdvancedBackground';
-import { CyberGrid } from '@/components/CyberGrid';
 import { cn } from '@/utils/cn';
 import { NeuralPulse } from '@/components/ui/NeuralPulse';
 import { CyberOrb } from '@/components/CyberOrb';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { useQuery } from '@tanstack/react-query';
+import { networkApi } from '@/features/network/api/network';
 
 // ========================
 // Types
@@ -84,9 +86,9 @@ const NodeDetailPanel: React.FC<{ node: GraphNode | null; onClose: () => void }>
                         <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mt-1">ID: {node.id}</p>
                     </div>
                 </div>
-                <button onClick={onClose} className="p-3 hover:bg-white/5 rounded-xl transition-all text-slate-500 hover:text-white">
+                <Button variant="cyber" onClick={onClose} className="p-3 hover:bg-white/5 rounded-xl transition-all text-slate-500 hover:text-white">
                     <Minimize2 size={20} />
-                </button>
+                </Button>
             </div>
 
             <div className="flex-1 space-y-10 overflow-y-auto no-scrollbar">
@@ -133,8 +135,8 @@ const NodeDetailPanel: React.FC<{ node: GraphNode | null; onClose: () => void }>
                                         <Share2 size={16} />
                                     </div>
                                     <div>
-                                        <p className="text-[10px] font-black text-white uppercase">ТЕХНО-МАСТЕ  ТОВ</p>
-                                        <p className="text-[8px] font-mono text-slate-600 uppercase tracking-widest">ЧЕ ЕЗ: УЧАСНИК</p>
+                                        <p className="text-[10px] font-black text-white uppercase">ТЕХНО-МАСТЕР ТОВ</p>
+                                        <p className="text-[8px] font-mono text-slate-600 uppercase tracking-widest">ЧЕРЕЗ: УЧАСНИК</p>
                                     </div>
                                 </div>
                                 <div className="text-xs font-mono font-black text-red-500">92%</div>
@@ -144,9 +146,9 @@ const NodeDetailPanel: React.FC<{ node: GraphNode | null; onClose: () => void }>
                 </div>
             </div>
 
-            <button className="mt-10 w-full py-6 bg-rose-600 hover:bg-rose-500 text-white rounded-[2.5rem] text-[10px] font-black uppercase tracking-[0.4em] shadow-3xl shadow-rose-900/40 transition-all active:scale-95 flex items-center justify-center gap-4">
-               <Fingerprint size={16} /> ПЕ ЕЙТИ ДО ПОВНОГО ЗВІТУ
-            </button>
+            <Button variant="cyber" className="mt-10 w-full py-6 bg-rose-600 hover:bg-rose-500 text-white rounded-[2.5rem] text-[10px] font-black uppercase tracking-[0.4em] shadow-3xl shadow-rose-900/40 transition-all active:scale-95 flex items-center justify-center gap-4">
+               <Fingerprint size={16} /> ПЕРЕЙТИ ДО ПОВНОГО ЗВІТУ
+            </Button>
         </motion.div>
     );
 };
@@ -170,11 +172,45 @@ const GraphAnalyticsPage: React.FC = () => {
         setTimeout(() => setIsLoading(false), 1500);
     };
 
+    const { data: gData = { nodes: [], links: [] }, isLoading: isGraphLoading } = useQuery({
+        queryKey: ['graph-analytics'],
+        queryFn: async () => {
+            const data = await networkApi.getGraph();
+            return {
+                nodes: data.nodes.map((n: any) => ({
+                    ...n,
+                    color: n.type === 'company' ? '#6366f1' : (n.riskScore > 50 ? '#f43f5e' : '#38bdf8')
+                })),
+                links: data.edges.map((e: any) => ({
+                    ...e,
+                    source: e.source,
+                    target: e.target
+                }))
+            };
+        }
+    });
+
+    const fgRef = useRef<any>();
+
+    const handleNodeClick = useCallback((node: any) => {
+        setSelectedNode({ id: node.id, label: node.name, type: 'COMPANY', val: 100, risk: 0.88 });
+        
+        // Aim at node from outside it
+        const distance = 40;
+        const distRatio = 1 + distance/Math.hypot(node.x, node.y, node.z);
+
+        if (fgRef.current) {
+          fgRef.current.cameraPosition(
+            { x: node.x * distRatio, y: node.y * distRatio, z: node.z * distRatio },
+            node, // lookAt
+            3000  // ms transition duration
+          );
+        }
+    }, []);
+
     return (
         <PageTransition>
-            <div className="min-h-screen bg-[#020202] text-slate-200 relative overflow-hidden font-sans pb-40">
-                <AdvancedBackground />
-                <CyberGrid color="rgba(212, 175, 55, 0.08)" />
+            <div className="min-h-screen bg-transparent text-slate-200 relative overflow-hidden font-sans pb-40">
 
                 <div className="relative z-10 max-w-[1900px] mx-auto p-4 sm:p-8 lg:p-12 space-y-12">
                     
@@ -202,8 +238,8 @@ const GraphAnalyticsPage: React.FC = () => {
                             </div>
                         }
                         stats={[
-                            { label: 'ВУЗЛІВ ОП АЦЬОВАНО', value: '1.2M+', color: 'primary', icon: <Database size={14} />, animate: true },
-                            { label: 'КрИТИЧНІСТЬ МЕ ЕЖІ', value: '0.92', color: 'success', icon: <Share2 size={14} /> },
+                            { label: 'ВУЗЛІВ ОПРАЦЬОВАНО', value: '1.2M+', color: 'primary', icon: <Database size={14} />, animate: true },
+                            { label: 'КРИТИЧНІСТЬ МЕРЕЖІ', value: '0.92', color: 'success', icon: <Share2 size={14} /> },
                             { label: 'NODE_SOURCE', value: nodeSource, color: isOffline ? 'warning' : 'success', icon: <Cpu size={14} /> },
                             { label: 'LATENCY (OODA)', value: '8ms', color: 'warning', icon: <Zap size={14} />, animate: true }
                         ]}
@@ -223,7 +259,7 @@ const GraphAnalyticsPage: React.FC = () => {
                                 <div className="absolute top-10 left-10 z-20 flex items-center gap-10">
                                      <div className="flex bg-black/60  p-2 rounded-[2rem] border border-white/5 shadow-2xl">
                                          {['Pagerank', 'Louvain', 'Pathfinding'].map(alg => (
-                                             <button 
+                                             <Button variant="cyber" 
                                                 key={alg}
                                                 onClick={() => { setActiveAlgorithm(alg as any); toggleLoading(); }}
                                                 className={cn(
@@ -232,13 +268,13 @@ const GraphAnalyticsPage: React.FC = () => {
                                                 )}
                                              >
                                                 {alg}
-                                             </button>
+                                             </Button>
                                          ))}
                                      </div>
 
                                      <div className="flex gap-4">
-                                        <button className="p-4 bg-black/60 rounded-2xl border border-white/5 text-slate-500 hover:text-indigo-400 transition-all"><Search size={18} /></button>
-                                        <button className="p-4 bg-black/60 rounded-2xl border border-white/5 text-slate-500 hover:text-emerald-400 transition-all"><Filter size={18} /></button>
+                                        <Button variant="cyber" className="p-4 bg-black/60 rounded-2xl border border-white/5 text-slate-500 hover:text-indigo-400 transition-all"><Search size={18} /></Button>
+                                        <Button variant="cyber" className="p-4 bg-black/60 rounded-2xl border border-white/5 text-slate-500 hover:text-emerald-400 transition-all"><Filter size={18} /></Button>
                                      </div>
                                 </div>
 
@@ -250,17 +286,14 @@ const GraphAnalyticsPage: React.FC = () => {
                                         { icon: Maximize2, label: 'FS' },
                                         { icon: RefreshCw, label: 'RESET', rotate: true }
                                      ].map(ctrl => (
-                                         <button key={ctrl.label} className="p-5 bg-black/60  rounded-3xl border border-white/5 text-slate-500 hover:text-[#D4AF37] hover:border-[#D4AF37]/30 transition-all group/btn shadow-2xl">
+                                         <Button variant="cyber" key={ctrl.label} className="p-5 bg-black/60  rounded-3xl border border-white/5 text-slate-500 hover:text-[#D4AF37] hover:border-[#D4AF37]/30 transition-all group/btn shadow-2xl">
                                              <ctrl.icon size={22} className={cn("transition-transform group-hover/btn:scale-110", ctrl.rotate && "group-hover/btn:rotate-180 duration-500")} />
-                                         </button>
+                                         </Button>
                                      ))}
                                 </div>
 
                                 {/* Graph Rendering Simulation */}
                                 <div className="absolute inset-0 z-0">
-                                     <AdvancedBackground />
-                                     <CyberGrid color="rgba(99, 102, 241, 0.05)" />
-                                     
                                      {/* Simulated Graph Nodes */}
                                      {isLoading ? (
                                          <div className="absolute inset-0 flex flex-col items-center justify-center gap-10">
@@ -272,59 +305,26 @@ const GraphAnalyticsPage: React.FC = () => {
                                                  </div>
                                              </div>
                                              <div className="text-center space-y-4">
-                                                <h3 className="text-2xl font-black text-white px-10 uppercase tracking-[0.6em]  italic leading-none">НЕЙ О- ЕНДЕ ИНГ</h3>
-                                                <p className="text-[10px] font-mono text-indigo-500 uppercase tracking-widest">ОБ АХУНОК_АЛГО ИТМУ_{activeAlgorithm.toUpperCase()}...</p>
+                                                <h3 className="text-2xl font-black text-white px-10 uppercase tracking-[0.6em]  italic leading-none">НЕЙРО-РЕНДЕРИНГ</h3>
+                                                <p className="text-[10px] font-mono text-indigo-500 uppercase tracking-widest">ОБРАХУНОК_АЛГОРИТМУ_{activeAlgorithm.toUpperCase()}...</p>
                                              </div>
                                          </div>
                                      ) : (
-                                         <div className="w-full h-full relative cursor-crosshair overflow-hidden" onClick={() => setSelectedNode({ id: '1234', label: 'УК -ОБО ОН-ЕКСПОРТ', type: 'COMPANY', val: 100, risk: 0.88 })}>
-                                             {/* Abstract connection lines */}
-                                             <svg className="absolute inset-0 w-full h-full opacity-20 pointer-events-none">
-                                                 <line x1="20%" y1="20%" x2="50%" y2="50%" stroke="white" strokeWidth="0.5" strokeDasharray="10 5" />
-                                                 <line x1="80%" y1="30%" x2="50%" y2="50%" stroke="white" strokeWidth="0.5" />
-                                                 <line x1="40%" y1="80%" x2="50%" y2="50%" stroke="white" strokeWidth="0.5" strokeDasharray="5 5" />
-                                                 <line x1="20%" y1="20%" x2="10%" y2="40%" stroke="white" strokeWidth="0.5" />
-                                             </svg>
-
-                                             {/* Simulated Nodes */}
-                                             <motion.div 
-                                                initial={{ scale: 0 }} animate={{ scale: 1 }}
-                                                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-                                             >
-                                                 <div className="relative p-12 group/main hover:scale-110 transition-transform">
-                                                     <div className="absolute inset-0 bg-indigo-500/20 blur-[80px] rounded-full group-hover/main:blur-[120px] transition-all" />
-                                                     <div className="relative w-32 h-32 bg-slate-900 border-4 border-indigo-500 rounded-[2.5rem] flex items-center justify-center ">
-                                                         <Shield size={48} className="text-indigo-400 group-hover:scale-110 transition-transform duration-500" />
-                                                         <div className="absolute -top-10 left-1/2 -translate-x-1/2 whitespace-nowrap bg-indigo-500 text-black px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-2xl">ЦЕНТ АЛЬНИЙ ВУЗОЛ</div>
-                                                     </div>
-                                                 </div>
-                                             </motion.div>
-
-                                             {/* Satellite nodes */}
-                                             {[
-                                                 { pos: 'top-[20%] left-[20%]', icon: Box, color: 'text-emerald-400', label: 'ЛОГІСТИКА-А' },
-                                                 { pos: 'top-[30%] left-[80%]', icon: Target, color: 'text-rose-400', label: 'РИЗИК-ФАКТО ' },
-                                                 { pos: 'bottom-[20%] left-[40%]', icon: Cpu, color: 'text-amber-400', label: 'ТЕХНО-ХАБ' }
-                                             ].map((sat, i) => (
-                                                 <motion.div 
-                                                    key={i}
-                                                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 + i * 0.2 }}
-                                                    className={cn("absolute group/sat hover:scale-110 transition-all", sat.pos)}
-                                                 >
-                                                     <div className="relative p-6">
-                                                         <div className="absolute inset-0 bg-white/5 blur-3xl opacity-0 group-hover/sat:opacity-100 transition-opacity" />
-                                                         <div className="relative w-16 h-16 bg-slate-900 border border-white/10 rounded-2xl flex items-center justify-center shadow-xl group-hover:border-white/30">
-                                                             <sat.icon size={28} className={sat.color} />
-                                                             <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 whitespace-nowrap text-[8px] font-black text-slate-500 uppercase tracking-widest group-hover:text-white transition-colors">
-                                                                 {sat.label}
-                                                             </div>
-                                                         </div>
-                                                     </div>
-                                                 </motion.div>
-                                             ))}
-
-                                             {/* Graph Legend */}
-                                             <div className="absolute bottom-10 left-10 z-20 flex gap-8 items-center bg-black/40  p-6 rounded-[2rem] border border-white/5 shadow-2xl">
+                                         <div className="w-full h-full relative overflow-hidden bg-black/20">
+                                            <ForceGraph3D
+                                                ref={fgRef}
+                                                graphData={gData}
+                                                nodeLabel="name"
+                                                nodeColor={n => (n as any).color}
+                                                nodeVal={n => (n as any).val}
+                                                linkWidth={1}
+                                                linkColor={() => 'rgba(255,255,255,0.2)'}
+                                                backgroundColor="rgba(0,0,0,0)"
+                                                onNodeClick={handleNodeClick}
+                                            />
+                                         </div>
+                                     )}
+                                             <div className="absolute bottom-10 left-10 z-20 flex gap-8 items-center bg-black/40 p-6 rounded-[2rem] border border-white/5 shadow-2xl">
                                                  <div className="flex items-center gap-3">
                                                      <div className="w-3 h-3 rounded-full bg-red-600 " />
                                                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">КОМПАНІЇ</span>
@@ -347,8 +347,6 @@ const GraphAnalyticsPage: React.FC = () => {
                                                  </div>
                                              </div>
                                          </div>
-                                     )}
-                                 </div>
 
                                 <AnimatePresence>
                                     {selectedNode && <NodeDetailPanel node={selectedNode} onClose={() => setSelectedNode(null)} />}
@@ -370,7 +368,7 @@ const GraphAnalyticsPage: React.FC = () => {
                                      
                                      <div className="space-y-6 flex-1 overflow-y-auto no-scrollbar pr-4">
                                          {[
-                                            { label: 'КрИТИЧНІСТЬ_КЛАСТЕ У', val: 0.84, color: 'bg-indigo-500' },
+                                            { label: 'КРИТИЧНІСТЬ_КЛАСТЕРУ', val: 0.84, color: 'bg-indigo-500' },
                                             { label: 'ІНДЕКС_ІЗОЛЯЦІЇ', val: 0.12, color: 'bg-emerald-500' },
                                             { label: 'РИЗИК_КОНТАМІНАЦІЇ', val: 0.45, color: 'bg-amber-500' },
                                             { label: 'ШЛЯХ_OODA', val: 0.99, color: 'bg-rose-500' }
@@ -404,12 +402,12 @@ const GraphAnalyticsPage: React.FC = () => {
                                      </div>
 
                                      <div className="space-y-6 font-mono text-[11px] flex-1 overflow-y-auto no-scrollbar pr-4 text-emerald-500/80 italic">
-                                         <p className="border-l border-white/10 pl-4 py-1 hover:text-white transition-colors">{">> "} ПЕ ЕВІ КА ВУЗЛА 1234:5678... [OK]</p>
-                                         <p className="border-l border-white/10 pl-4 py-1 hover:text-white transition-colors">{">> "} ВИЯВЛЕНОПРИХОВАНУ ОБЛАСТЬ ЗВ'ЯЗКІВ L2</p>
+                                         <p className="border-l border-white/10 pl-4 py-1 hover:text-white transition-colors">{">> "} ПЕРЕВІРКА ВУЗЛА 1234:5678... [OK]</p>
+                                         <p className="border-l border-white/10 pl-4 py-1 hover:text-white transition-colors">{">> "} ВИЯВЛЕНО ПРИХОВАНУ ОБЛАСТЬ ЗВ'ЯЗКІВ L2</p>
                                          <p className="border-l border-indigo-500 pl-4 py-1 text-indigo-400 font-black uppercase">{">> "} ЗАПУСК PAGERANK_OPTIMIZED_v61.0-ELITE</p>
-                                         <p className="border-l border-white/10 pl-4 py-1 hover:text-white transition-colors">{">> "} МОДЕЛЬ_GNN: ВАХ_СКО  = 0.9984</p>
-                                         <p className="border-l border-amber-500 pl-4 py-1 text-amber-500">{">> "} УВАГА: АНОМАЛЬНИЙ ТРАФІК У КЛАСТЕ І "B-12"</p>
-                                         <p className="border-l border-white/10 pl-4 py-1 hover:text-white transition-colors">{">> "} А ХІВАЦІЯ СНАПШОТУ ГРАФА... [ЗАВЕ ШЕНО]</p>
+                                         <p className="border-l border-white/10 pl-4 py-1 hover:text-white transition-colors">{">> "} МОДЕЛЬ_GNN: МАКС_СКОР = 0.9984</p>
+                                         <p className="border-l border-amber-500 pl-4 py-1 text-amber-500">{">> "} УВАГА: АНОМАЛЬНИЙ ТРАФІК У КЛАСТЕРІ "B-12"</p>
+                                         <p className="border-l border-white/10 pl-4 py-1 hover:text-white transition-colors">{">> "} АРХІВАЦІЯ СНАПШОТУ ГРАФА... [ЗАВЕРШЕНО]</p>
                                      </div>
                                      
                                      <div className="absolute -right-20 -bottom-20 opacity-[0.03] group-hover/ops:opacity-[0.08] transition-opacity">
@@ -430,8 +428,8 @@ const GraphAnalyticsPage: React.FC = () => {
                                          <Target size={24} className="text-red-500" />
                                      </div>
                                      <div>
-                                         <h4 className="text-[11px] font-black text-white uppercase tracking-[0.4em] italic leading-none">ТОП КЛАСТЕ И</h4>
-                                         <p className="text-[8px] font-mono text-slate-600 mt-2 uppercase tracking-widest italic">ЗА ІНДЕКСОМ В АЗЛИВОСТІ</p>
+                                         <h4 className="text-[11px] font-black text-white uppercase tracking-[0.4em] italic leading-none">ТОП КЛАСТЕРИ</h4>
+                                         <p className="text-[8px] font-mono text-slate-600 mt-2 uppercase tracking-widest italic">ЗА ІНДЕКСОМ ВРАЗЛИВОСТІ</p>
                                      </div>
                                  </div>
 
@@ -472,7 +470,7 @@ const GraphAnalyticsPage: React.FC = () => {
                                          <Radio size={24} className="text-emerald-400" />
                                      </div>
                                      <div>
-                                         <h4 className="text-[11px] font-black text-white uppercase tracking-[0.4em] italic leading-none">ДІАГНОСТИКА_ЯД А</h4>
+                                         <h4 className="text-[11px] font-black text-white uppercase tracking-[0.4em] italic leading-none">ДІАГНОСТИКА_ЯДРА</h4>
                                          <p className="text-[8px] font-mono text-slate-600 mt-2 uppercase tracking-widest italic">GRAPH_LATENCY_v8.1</p>
                                      </div>
                                  </div>
@@ -502,9 +500,9 @@ const GraphAnalyticsPage: React.FC = () => {
                                      </div>
                                  </div>
 
-                                 <button className="w-full mt-10 py-6 border border-white/10 rounded-[2rem] text-[10px] font-black text-slate-600 uppercase tracking-[0.4em] hover:text-white hover:bg-white/5 transition-all flex items-center justify-center gap-4 group active:scale-95">
-                                      <RefreshCw size={16} className="group-hover:rotate-180 transition-transform duration-700" /> ПЕ ЕЗАВАНТАЖИТИ_ГЕОМЕТ ІЮ
-                                 </button>
+                                 <Button variant="cyber" className="w-full mt-10 py-6 border border-white/10 rounded-[2rem] text-[10px] font-black text-slate-600 uppercase tracking-[0.4em] hover:text-white hover:bg-white/5 transition-all flex items-center justify-center gap-4 group active:scale-95">
+                                      <RefreshCw size={16} className="group-hover:rotate-180 transition-transform duration-700" /> ПЕРЕЗАВАНТАЖИТИ_ГЕОМЕТРІЮ
+                                 </Button>
                              </HoloCard>
                         </div>
                     </div>

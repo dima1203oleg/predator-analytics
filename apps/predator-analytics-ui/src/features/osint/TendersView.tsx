@@ -8,6 +8,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { RiskLevelValue } from '@/types/intelligence';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -135,9 +136,9 @@ const TenderCard: React.FC<{ tender: any; idx: number }> = ({ tender, idx }) => 
                       >
                          <ExternalLink size={14} /> PROZORRO
                       </a>
-                      <button className="p-4 bg-white/5 border border-white/10 rounded-2xl text-slate-500 hover:text-white transition-all">
+                      <Button variant="cyber" className="p-4 bg-white/5 border border-white/10 rounded-2xl text-slate-500 hover:text-white transition-all">
                          <Target size={18} />
-                      </button>
+                      </Button>
                    </div>
                 </div>
             </HoloCard>
@@ -247,12 +248,12 @@ export default function TendersView() {
                      ]}
                      actions={
                        <div className="flex gap-4">
-                          <button onClick={fetchData} className="p-5 bg-black border border-white/[0.04] rounded-2xl text-slate-400 hover:text-white transition-all shadow-xl">
+                          <Button variant="cyber" onClick={fetchData} className="p-5 bg-black border border-white/[0.04] rounded-2xl text-slate-400 hover:text-white transition-all shadow-xl">
                              <RefreshCcw size={24} className={loading ? 'animate-spin' : ''} />
-                          </button>
-                          <button className="px-8 py-5 bg-emerald-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-emerald-600 shadow-2xl transition-all flex items-center gap-4">
+                          </Button>
+                          <Button variant="cyber" className="px-8 py-5 bg-emerald-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-emerald-600 shadow-2xl transition-all flex items-center gap-4">
                              <Radar size={18} /> ІНІЦІЮВАТИ_СУПЕ _ПОШУК
-                          </button>
+                          </Button>
                        </div>
                      }
                    />
@@ -270,12 +271,12 @@ export default function TendersView() {
                          </div>
                          <div className="flex gap-2 p-1.5 bg-white/[0.02] border border-white/[0.04] rounded-2xl">
                             {(['all', 'high', 'critical'] as const).map(f => (
-                               <button 
+                               <Button variant="cyber" 
                                  key={f} onClick={() => setFilterRisk(f)}
                                  className={cn("px-8 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest italic transition-all", filterRisk === f ? "bg-emerald-600 text-black shadow-2xl" : "text-slate-500 hover:text-white")}
                                >
                                   {f === 'all' ? 'УСІ' : f === 'high' ? 'РИЗИК 60%+' : 'КрИТИЧНІ 80%+'}
-                               </button>
+                               </Button>
                             ))}
                          </div>
                       </div>

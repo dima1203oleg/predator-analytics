@@ -90,13 +90,13 @@ model_list:
   # ==============================================================
   - model_name: cognitive_core
     litellm_params:
+      model: ollama/deepseek-r1
+      api_base: http://host.docker.internal:11434
+  - model_name: cognitive_core
+    litellm_params:
       model: deepseek/deepseek-reasoner
       api_key: ${DEEPSEEK_API_KEY:-dummy}
       api_base: https://api.deepseek.com/v1
-  - model_name: cognitive_core
-    litellm_params:
-      model: ollama/deepseek-r1
-      api_base: http://host.docker.internal:11434
 
   # ==============================================================
   # CHAT — Загальний чат / AI Copilot

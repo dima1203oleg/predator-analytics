@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SlideToExecute } from '../polish/SlideToExecute';
@@ -408,13 +409,13 @@ export const RedButton: React.FC<RedButtonProps> = ({
           <div style={{ color: '#94a3b8', fontSize: '14px' }}>
             {EMERGENCY_LEVELS[currentEmergencyLevel as 1 | 2 | 3].description}
           </div>
-          <button
+          <Button variant="cyber"
             className="deactivate-button"
             onClick={handleDeactivate}
             disabled={isLoading}
           >
             {isLoading ? '⏳ Деактивація...' : '✅ Деактивувати екстрений режим'}
-          </button>
+          </Button>
         </motion.div>
       ) : (
         <div className="emergency-levels">

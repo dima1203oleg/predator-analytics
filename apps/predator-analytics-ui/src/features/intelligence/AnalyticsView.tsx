@@ -14,6 +14,7 @@
  * © 2026 PREDATOR Analytics — Повна українізація v61.0-ELITE
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -478,13 +479,13 @@ const AnalyticsView: React.FC = () => {
                     />
                     <Search size={32} className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-800 group-focus-within:text-yellow-500 transition-colors" />
                     <div className="absolute right-4 top-3 bottom-3 flex items-center gap-4">
-                        <button
+                        <Button variant="cyber"
                             onClick={() => { play(UISoundType.CLICK); handleSearch(); }}
                             onMouseEnter={() => play(UISoundType.HOVER)}
                             className="px-12 h-full bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-500 hover:to-yellow-400 text-black rounded-[2rem] transition-all font-black text-[12px] uppercase tracking-[0.4em] italic flex items-center gap-4 shadow-4xl border-2 border-yellow-400/20"
                         >
                             {isScanning ? <Activity size={20} className="animate-spin" /> : <><Target size={20} /> EXECUTE_SCAN</>}
-                        </button>
+                        </Button>
                     </div>
                 </div>
 
@@ -493,7 +494,7 @@ const AnalyticsView: React.FC = () => {
                         { id: 'radar', label: 'RADAR_ARRAY', icon: Network },
                         { id: 'visual', label: 'VISUAL_VECTOR', icon: BarChart3 }
                     ].map(tab => (
-                        <button
+                        <Button variant="cyber"
                             key={tab.id}
                             onClick={() => { play(UISoundType.CLICK); setActiveTab(tab.id as any); }}
                             onMouseEnter={() => play(UISoundType.HOVER)}
@@ -506,10 +507,10 @@ const AnalyticsView: React.FC = () => {
                         >
                             <tab.icon size={20} />
                             <span className="text-[10px] font-black uppercase tracking-[0.3em]">{tab.label}</span>
-                        </button>
+                        </Button>
                     ))}
                     <div className="w-px h-10 bg-white/5 mx-2 self-center" />
-                    <button title="Фільтр" className="p-5 text-slate-700 hover:text-yellow-500 hover:bg-yellow-500/10 rounded-3xl transition-all"><Filter size={24} /></button>
+                    <Button variant="cyber" title="Фільтр" className="p-5 text-slate-700 hover:text-yellow-500 hover:bg-yellow-500/10 rounded-3xl transition-all"><Filter size={24} /></Button>
                 </div>
             </div>
 
@@ -577,12 +578,12 @@ const AnalyticsView: React.FC = () => {
                                                 </h2>
 
                                                 <div className="grid grid-cols-2 gap-6 relative z-10">
-                                                    <button className="flex-1 py-6 bg-yellow-600 border-2 border-yellow-500/40 text-black rounded-[2.5rem] text-[11px] font-black uppercase tracking-[0.4em] italic shadow-4xl hover:brightness-110 transition-all flex items-center justify-center gap-4">
+                                                    <Button variant="cyber" className="flex-1 py-6 bg-yellow-600 border-2 border-yellow-500/40 text-black rounded-[2.5rem] text-[11px] font-black uppercase tracking-[0.4em] italic shadow-4xl hover:brightness-110 transition-all flex items-center justify-center gap-4">
                                                         <Crosshair size={22} /> OPEN_DOSSIER
-                                                    </button>
-                                                    <button className="p-6 bg-white/[0.02] border-2 border-white/5 rounded-[2.5rem] text-slate-600 hover:text-white hover:border-white/20 transition-all flex items-center justify-center shadow-xl">
+                                                    </Button>
+                                                    <Button variant="cyber" className="p-6 bg-white/[0.02] border-2 border-white/5 rounded-[2.5rem] text-slate-600 hover:text-white hover:border-white/20 transition-all flex items-center justify-center shadow-xl">
                                                         <Share2 size={26} />
-                                                    </button>
+                                                    </Button>
                                                 </div>
                                             </HoloCard>
 
@@ -695,9 +696,9 @@ const AnalyticsView: React.FC = () => {
                         ))}
                     </div>
 
-                    <button className="px-14 py-8 bg-yellow-600 text-black border-2 border-yellow-500/40 rounded-[2.5rem] text-[12px] font-black uppercase tracking-[0.5em] italic hover:brightness-110 transition-all flex items-center gap-6 shadow-4xl font-bold">
+                    <Button variant="cyber" className="px-14 py-8 bg-yellow-600 text-black border-2 border-yellow-500/40 rounded-[2.5rem] text-[12px] font-black uppercase tracking-[0.5em] italic hover:brightness-110 transition-all flex items-center gap-6 shadow-4xl font-bold">
                         EXPAND_NETWORK_HORIZON <ArrowUpRight size={24} className="" />
-                    </button>
+                    </Button>
                 </div>
             </motion.div>
 

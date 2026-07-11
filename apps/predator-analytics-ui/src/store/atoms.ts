@@ -1,6 +1,22 @@
 import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
-import { Theme, Sale, ChatMessage } from '../types/index';
+export type Theme = 'light' | 'dark' | 'system';
+
+export interface Sale {
+  id: string;
+  date: string;
+  product: string;
+  amount: number;
+  status: string;
+}
+
+export interface ChatMessage {
+  id: string;
+  role: 'user' | 'assistant' | 'system';
+  content: string;
+  timestamp?: string;
+}
+
 import type { ContextRailPayload } from '../types/shell';
 import {
   NAV_FAVORITES_STORAGE_KEY,

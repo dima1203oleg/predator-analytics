@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { Globe, Lock, Eye } from 'lucide-react';
 
@@ -25,7 +26,7 @@ export const Jurisdictions: React.FC = () => {
                         </div>
                     </div>
                 </div>
-                <button className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-sm font-bold rounded-lg">Configure</button>
+                <Button variant="cyber" className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-sm font-bold rounded-lg">Configure</Button>
             </div>
           ))}
       </div>

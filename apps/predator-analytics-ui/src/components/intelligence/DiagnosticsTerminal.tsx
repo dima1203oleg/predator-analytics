@@ -6,6 +6,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useRef } from 'react';
 import { Terminal, ShieldAlert, X, ChevronRight, Activity, Trash2, Cpu, Database, Binary } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -58,7 +59,7 @@ export const DiagnosticsTerminal: React.FC = () => {
   return (
     <>
       {/* Floating Toggle Button */}
-      <button
+      <Button variant="cyber"
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
           "fixed bottom-8 right-8 z-[100] p-6 rounded-[2rem] border-2 transition-all shadow-2xl flex items-center gap-4 group",
@@ -75,7 +76,7 @@ export const DiagnosticsTerminal: React.FC = () => {
             ДІАГНОСТИКА: {logs.length}
           </span>
         )}
-      </button>
+      </Button>
 
       <AnimatePresence>
         {isOpen && (
@@ -97,19 +98,19 @@ export const DiagnosticsTerminal: React.FC = () => {
                 </div>
               </div>
               <div className="flex gap-4">
-                <button 
+                <Button variant="cyber" 
                   onClick={clearLogs}
                   className="p-3 text-slate-600 hover:text-rose-500 transition-colors"
                   title="Очистити логи"
                 >
                   <Trash2 size={16} />
-                </button>
-                <button 
+                </Button>
+                <Button variant="cyber" 
                   onClick={() => setIsOpen(false)}
                   className="p-3 text-slate-600 hover:text-white transition-colors"
                 >
                   <X size={20} />
-                </button>
+                </Button>
               </div>
             </div>
 

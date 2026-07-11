@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -55,7 +56,7 @@ export const CustomsMonitorTab: React.FC = () => {
         </div>
         <div className="flex gap-3">
           {['analytics', 'risks'].map((t) => (
-            <button
+            <Button variant="cyber"
               key={t}
               onClick={() => setActiveSubTab(t as any)}
               className={cn(
@@ -66,7 +67,7 @@ export const CustomsMonitorTab: React.FC = () => {
               )}
             >
               {t === 'analytics' ? 'Аналітика' : 'Митніризики'}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -157,9 +158,9 @@ export const CustomsMonitorTab: React.FC = () => {
                     <h4 className="text-2xl font-black text-white italic tracking-tighter uppercase group-hover:text-amber-500 transition-colors leading-none">{alert.title || alert.message}</h4>
                     <p className="text-sm text-slate-500 italic uppercase font-bold tracking-tight">{alert.desc || alert.description || 'Детальний аналізризику доступний у модулі розслідувань.'}</p>
                   </div>
-                  <button className="px-6 py-4 bg-white/5 hover:bg-amber-600 border border-white/5 rounded-2xl text-[10px] font-black uppercase italic transition-all hover:text-white tracking-widest">
+                  <Button variant="cyber" className="px-6 py-4 bg-white/5 hover:bg-amber-600 border border-white/5 rounded-2xl text-[10px] font-black uppercase italic transition-all hover:text-white tracking-widest">
                      озслідувати
-                  </button>
+                  </Button>
                 </div>
               ))
             ) : (

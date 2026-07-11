@@ -90,12 +90,21 @@ async def process_file_upload(
 
         # Callback для оновлення прогресу
         async def progress_callback(progress: dict[str, Any]) -> None:
+            stage = progress.get("stage", "processing")
+            status = "processing"
+            
+            if stage == "indexing":
+                status = "indexing"
+            elif stage == "vectorizing":
+                status = "vectorizing"
+            
             await postgres_sink.update_job_progress(
                 job_id=job_id,
-                status="processing",
+                status=status,
                 progress=progress.get("progress_pct", 0),
                 records_processed=progress.get("processed_rows", 0),
                 records_errors=progress.get("quarantined_rows", 0),
+                metadata_updates={"warnings": progress.get("warning_messages", [])},
             )
 
         # Запуск пайплайну інгестії файлу

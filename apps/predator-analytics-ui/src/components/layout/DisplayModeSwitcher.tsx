@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { Monitor, Tablet, Smartphone } from 'lucide-react';
 import { useDisplayMode, DisplayMode } from '../../context/DisplayModeContext';
@@ -14,7 +15,7 @@ export const DisplayModeSwitcher: React.FC = () => {
   return (
     <div className="flex items-center gap-1 bg-slate-800/50 p-1 rounded-lg border border-slate-700/50">
       {modes.map(({ id, icon: Icon, label }) => (
-        <button
+        <Button variant="cyber"
           key={id}
           onClick={() => setMode(id)}
           className={`
@@ -31,7 +32,7 @@ export const DisplayModeSwitcher: React.FC = () => {
           {mode === id && (
             <span className="absolute -top-1 -right-1 w-2 h-2 bg-blue-400 rounded-full border-2 border-slate-900" />
           )}
-        </button>
+        </Button>
       ))}
     </div>
   );

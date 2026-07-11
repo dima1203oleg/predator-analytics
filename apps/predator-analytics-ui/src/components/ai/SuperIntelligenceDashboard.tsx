@@ -10,6 +10,7 @@
  * - Self-improvement cycle control
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -228,7 +229,7 @@ export const SuperIntelligenceDashboard: React.FC = () => {
       {/* Tab Navigation */}
       <div className="flex flex-wrap gap-2 mb-6">
         {(['dashboard', 'agents', 'query', 'logs', 'workflows'] as const).map((tab) => (
-          <button
+          <Button variant="cyber"
             key={tab}
             onClick={() => setActiveTab(tab)}
             className={`px-4 py-2 rounded-lg transition-all ${
@@ -242,7 +243,7 @@ export const SuperIntelligenceDashboard: React.FC = () => {
             {tab === 'query' && '💬 Query'}
             {tab === 'logs' && '📋 Logs'}
             {tab === 'workflows' && '⚙️ Workflows'}
-          </button>
+          </Button>
         ))}
       </div>
 
@@ -397,7 +398,7 @@ export const SuperIntelligenceDashboard: React.FC = () => {
               {/* Mode Selection */}
               <div className="flex flex-wrap gap-2 mb-4">
                 {['auto', 'fast', 'chat', 'deep', 'council', 'tactical'].map((m) => (
-                  <button
+                  <Button variant="cyber"
                     key={m}
                     onClick={() => setMode(m)}
                     className={`px-3 py-1.5 rounded-lg text-sm transition-all ${
@@ -407,7 +408,7 @@ export const SuperIntelligenceDashboard: React.FC = () => {
                     }`}
                   >
                     {m.toUpperCase()}
-                  </button>
+                  </Button>
                 ))}
               </div>
 
@@ -421,13 +422,13 @@ export const SuperIntelligenceDashboard: React.FC = () => {
                   placeholder="Введіть запит до SuperIntelligence..."
                   className="flex-1 bg-slate-900/50 border border-slate-600 rounded-lg px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/50"
                 />
-                <button
+                <Button variant="cyber"
                   onClick={handleQuery}
                   disabled={isLoading || !query.trim()}
                   className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-lg font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
                 >
                   {isLoading ? '⏳' : '🚀'} Надіслати
-                </button>
+                </Button>
               </div>
             </div>
 

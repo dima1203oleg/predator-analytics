@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -222,14 +223,14 @@ export const AddSourceModal: React.FC<AddSourceModalProps> = ({
                     <div className="flex items-center justify-between p-6 border-b border-white/10">
                         <div className="flex items-center gap-4">
                             {step === 2 && (
-                                <button
+                                <Button variant="cyber"
                                     onClick={handleBack}
                                     className="p-2 hover:bg-white/10 rounded-xl transition-colors"
                                     title="Назад"
                                     aria-label="Назад"
                                 >
                                     <ChevronDown className="rotate-90 text-slate-400" size={20} />
-                                </button>
+                                </Button>
                             )}
                             <div>
                                 <h2 className="text-xl font-bold text-white">
@@ -242,14 +243,14 @@ export const AddSourceModal: React.FC<AddSourceModalProps> = ({
                                 </p>
                             </div>
                         </div>
-                        <button
+                        <Button variant="cyber"
                             onClick={handleClose}
                             className="p-2 hover:bg-white/10 rounded-xl transition-colors"
                             title="Закрити"
                             aria-label="Закрити"
                         >
                             <X className="text-slate-400" size={20} />
-                        </button>
+                        </Button>
                     </div>
 
                     {/* Content */}
@@ -357,13 +358,13 @@ export const AddSourceModal: React.FC<AddSourceModalProps> = ({
                                                     placeholder="sk-..."
                                                     className="w-full bg-slate-800 border border-white/10 rounded-xl pl-12 pr-12 py-3 text-white placeholder-slate-500 focus:border-cyan-500 outline-none transition-colors"
                                                 />
-                                                <button
+                                                <Button variant="cyber"
                                                     type="button"
                                                     onClick={() => setShowApiKey(!showApiKey)}
                                                     className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white"
                                                 >
                                                     {showApiKey ? <EyeOff size={18} /> : <Eye size={18} />}
-                                                </button>
+                                                </Button>
                                             </div>
                                         </div>
                                     )}
@@ -480,29 +481,29 @@ export const AddSourceModal: React.FC<AddSourceModalProps> = ({
                     {/* Footer */}
                     {step === 2 && (
                         <div className="flex items-center justify-between p-6 border-t border-white/10 bg-slate-950/50">
-                            <button
+                            <Button variant="cyber"
                                 onClick={handleTest}
                                 disabled={isSubmitting}
                                 className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors disabled:opacity-50"
                             >
                                 <RefreshCw size={16} className={isSubmitting ? 'animate-spin' : ''} />
                                 Тестувати
-                            </button>
+                            </Button>
                             <div className="flex items-center gap-3">
-                                <button
+                                <Button variant="cyber"
                                     onClick={handleClose}
                                     className="px-5 py-2.5 rounded-xl text-slate-400 hover:text-white transition-colors"
                                 >
                                     Скасувати
-                                </button>
-                                <button
+                                </Button>
+                                <Button variant="cyber"
                                     onClick={handleSubmit}
                                     disabled={isSubmitting}
                                     className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold hover:shadow-lg hover:shadow-cyan-500/25 transition-all disabled:opacity-50"
                                 >
                                     <Save size={16} />
                                     {isSubmitting ? 'Збереження...' : 'Зберегти'}
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     )}

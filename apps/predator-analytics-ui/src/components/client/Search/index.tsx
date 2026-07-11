@@ -5,6 +5,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
 import { 
   Search as SearchIcon, Filter, Clock, Building, ArrowRight,
@@ -101,22 +102,22 @@ export const Search: React.FC = () => {
               className="w-full bg-black/60 border-2 border-white/[0.04] group-focus-within:border-blue-600/40 rounded-[2.5rem] px-10 py-8 pl-20 text-xl font-black italic text-white placeholder:text-slate-700 outline-none shadow-3xl  transition-all"
             />
             <SearchIcon className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-700 group-focus-within:text-blue-500 transition-colors" size={32} />
-            <button
+            <Button variant="cyber"
               type="submit"
               disabled={isSearching || !query.trim()}
               className="absolute right-4 top-1/2 -translate-y-1/2 px-12 py-5 bg-blue-700 hover:bg-blue-600 disabled:bg-slate-900 disabled:text-slate-700 text-white font-black rounded-3xl transition-all uppercase text-[10px] tracking-[0.3em] shadow-2xl active:scale-95 italic"
             >
               {isSearching ? 'ОБ ОБКА...' : 'ЗНАЙТИ_ОБʼЄКТ'}
-            </button>
+            </Button>
           </form>
 
           <div className="flex items-center gap-4 overflow-x-auto pb-4 no-scrollbar opacity-80">
-            <button className="flex items-center gap-3 px-6 py-2.5 bg-white/[0.02] border border-white/[0.05] rounded-xl text-slate-500 text-[9px] uppercase font-black tracking-widest transition-all hover:border-blue-500/30 hover:text-blue-400">
+            <Button variant="cyber" className="flex items-center gap-3 px-6 py-2.5 bg-white/[0.02] border border-white/[0.05] rounded-xl text-slate-500 text-[9px] uppercase font-black tracking-widest transition-all hover:border-blue-500/30 hover:text-blue-400">
               <Filter size={14} /> ВСІ_ФІЛЬТрИ
-            </button>
+            </Button>
             <div className="h-4 w-px bg-white/5" />
-            <button className="px-6 py-2.5 bg-white/[0.02] border border-white/[0.05] rounded-xl text-slate-500 text-[9px] uppercase font-black tracking-widest transition-all hover:border-blue-500/30 hover:text-blue-400">Ю ИДИЧНІ_ОСОБИ</button>
-            <button className="px-6 py-2.5 bg-white/[0.02] border border-white/[0.05] rounded-xl text-slate-500 text-[9px] uppercase font-black tracking-widest transition-all hover:border-blue-500/30 hover:text-blue-400">ФІЗИЧНІ_ОСОБИ</button>
+            <Button variant="cyber" className="px-6 py-2.5 bg-white/[0.02] border border-white/[0.05] rounded-xl text-slate-500 text-[9px] uppercase font-black tracking-widest transition-all hover:border-blue-500/30 hover:text-blue-400">Ю ИДИЧНІ_ОСОБИ</Button>
+            <Button variant="cyber" className="px-6 py-2.5 bg-white/[0.02] border border-white/[0.05] rounded-xl text-slate-500 text-[9px] uppercase font-black tracking-widest transition-all hover:border-blue-500/30 hover:text-blue-400">ФІЗИЧНІ_ОСОБИ</Button>
           </div>
         </div>
 
@@ -172,12 +173,12 @@ export const Search: React.FC = () => {
                           </div>
                         </div>
                       </div>
-                      <button 
+                      <Button variant="cyber" 
                          onClick={() => window.location.href = `/company/${result.id}/cers`}
                          className="flex items-center gap-4 px-10 py-5 bg-white/[0.03] hover:bg-blue-600 text-white border border-white/5 hover:border-blue-500 rounded-3xl transition-all text-[10px] font-black uppercase tracking-[0.3em] italic group-hover:shadow-2xl active:scale-95"
                       >
                         ВІДКрИТИ_ДОСЬЄ <ArrowRight size={18} />
-                      </button>
+                      </Button>
                     </div>
                     
                     <div className="mt-10 pt-8 border-t border-white/[0.03] flex flex-wrap gap-4 relative z-10">

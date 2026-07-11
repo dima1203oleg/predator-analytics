@@ -1,4 +1,5 @@
 
+import { Button } from '@/components/ui/button';
 import React, { useMemo, useState } from "react";
 import { useToast } from "@/context/ToastContext";
 import { api } from "@/services/api";
@@ -284,7 +285,7 @@ const SettingsView: React.FC = () => {
                                 <h3 className="text-lg font-black text-white uppercase tracking-tighter">Налаштування Середовища</h3>
                             </div>
                             <div className="flex gap-3">
-                                <button
+                                <Button variant="cyber"
                                     onClick={() => {
                                       play(UISoundType.CLICK);
                                       handleGenerateYamlPreview();
@@ -294,7 +295,7 @@ const SettingsView: React.FC = () => {
                                 >
                                     <Copy size={16} />
                                     YAML Код
-                                </button>
+                                </Button>
                                 <SlideToExecute
                                     onConfirm={handleSave}
                                     label="ПЕРЕТЯГНІТЬ ДЛЯ ЗБЕРЕЖЕННЯ"

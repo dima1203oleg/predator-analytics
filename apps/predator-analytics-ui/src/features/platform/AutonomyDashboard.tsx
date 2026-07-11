@@ -11,6 +11,7 @@
  * © 2026 PREDATOR Analytics | Maximum Value Extraction
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -161,7 +162,7 @@ export const AutonomyDashboard: React.FC = () => {
                             { id: 'constitution', label: uk.tabs.constitution, icon: Lock },
                             { id: 'progress', label: uk.tabs.progress, icon: TrendingUp },
                         ].map(tab => (
-                            <button
+                            <Button variant="cyber"
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id as any)}
                                 className={cn(
@@ -176,7 +177,7 @@ export const AutonomyDashboard: React.FC = () => {
                                 {activeTab === tab.id && (
                                     <motion.div layoutId="nav-glow" className="absolute bottom-0 left-0 w-full h-1 bg-white/40" />
                                 )}
-                            </button>
+                            </Button>
                         ))}
                     </div>
 

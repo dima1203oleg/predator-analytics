@@ -2,6 +2,7 @@
  * 🧭 AdaptiveNavigation — Unified navigation для всіх breakpoints
  * Compact: BottomNav | Medium: Rail | Expanded: Full Sidebar
  */
+import { Button } from '@/components/ui/button';
 import React, { useState, useCallback } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -102,14 +103,14 @@ export const AdaptiveNavigation: React.FC = () => {
             })}
 
             {/* More button */}
-            <button
+            <Button variant="cyber"
               type="button"
               onClick={() => setIsMobileMenuOpen(true)}
               className="flex flex-col items-center justify-center gap-1 min-w-[64px] h-16 rounded-2xl text-slate-500 hover:text-slate-300 transition-all"
             >
               <Menu className="h-[24px] w-[24px]" />
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 leading-none mt-0.5">Меню</span>
-            </button>
+            </Button>
           </div>
         </nav>
 
@@ -123,9 +124,9 @@ export const AdaptiveNavigation: React.FC = () => {
           <div className="p-4">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-sm font-bold uppercase tracking-wider text-white/80">Навігація</h2>
-              <button onClick={() => setIsMobileMenuOpen(false)} className="p-1.5 rounded-lg hover:bg-white/10">
+              <Button variant="cyber" onClick={() => setIsMobileMenuOpen(false)} className="p-1.5 rounded-lg hover:bg-white/10">
                 <X className="w-4 h-4 text-slate-400" />
-              </button>
+              </Button>
             </div>
             <div className="grid grid-cols-3 gap-2">
               {NAV_ITEMS.map((item) => {
@@ -163,13 +164,13 @@ export const AdaptiveNavigation: React.FC = () => {
         className="relative flex flex-col h-screen bg-[#050505] border-r border-white/10 shrink-0 z-[9999]"
       >
         {/* Toggle */}
-        <button
+        <Button variant="cyber"
           type="button"
           onClick={() => setIsRailExpanded(!isRailExpanded)}
           className="absolute -right-3 top-6 w-6 h-6 rounded-full bg-rose-500/20 border border-rose-500/40 flex items-center justify-center z-10 hover:bg-rose-500/30 transition-colors"
         >
           {isRailExpanded ? <ChevronLeft className="w-3 h-3 text-rose-400" /> : <ChevronRight className="w-3 h-3 text-rose-400" />}
-        </button>
+        </Button>
 
         {/* Logo */}
         <div className="flex items-center justify-center h-14 border-b border-white/5">

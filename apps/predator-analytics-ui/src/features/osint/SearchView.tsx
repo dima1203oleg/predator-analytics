@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -722,7 +723,7 @@ export const SearchView = () => {
 
                     <div className="mb-0 flex gap-1">
                         {SEARCH_MODES.map((mode) => (
-                            <button
+                            <Button variant="cyber"
                                 key={mode.id}
                                 onClick={() => setSearchMode(mode.id)}
                                 className={cn(
@@ -734,7 +735,7 @@ export const SearchView = () => {
                             >
                                 <mode.icon size={14} className={cn(searchMode === mode.id && mode.color)} />
                                 {mode.label}
-                            </button>
+                            </Button>
                         ))}
                     </div>
 
@@ -817,13 +818,13 @@ export const SearchView = () => {
                             </div>
                             <div className="flex flex-wrap gap-3">
                                 {QUICK_QUERIES.map((item) => (
-                                    <button
+                                    <Button variant="cyber"
                                         key={item}
                                         onClick={() => setQuery(item)}
                                         className="rounded-2xl border border-white/5 bg-white/[0.02] px-4 py-2 text-[10px] font-black uppercase tracking-widest text-slate-400 transition-all hover:border-primary-500/40 hover:bg-primary-500/10 hover:text-white"
                                     >
                                         {item}
-                                    </button>
+                                    </Button>
                                 ))}
                             </div>
                         </div>
@@ -912,12 +913,12 @@ export const SearchView = () => {
                             </p>
 
                             {searchMode !== 'exact' && (
-                                <button
+                                <Button variant="cyber"
                                     onClick={() => setSearchMode('exact')}
                                     className="mt-8 rounded-3xl border border-white/10 bg-white/5 px-8 py-4 text-[11px] font-black uppercase tracking-[0.3em] text-slate-300 transition-all hover:border-amber-500/30 hover:bg-amber-500/10 hover:text-white"
                                 >
                                     Перемкнути на точний режим
-                                </button>
+                                </Button>
                             )}
                         </div>
                     </motion.div>

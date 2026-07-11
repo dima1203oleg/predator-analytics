@@ -9,6 +9,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -270,9 +271,9 @@ const GraphAnalyticsPage: React.FC = () => {
                                 <h3 className="text-xl font-black text-white italic uppercase tracking-[0.5em] font-serif">LIVE_TOPOLOGY_SCREEN</h3>
                             </div>
                             <div className="absolute top-12 right-12 z-20 flex gap-6">
-                               <button onClick={fetchData} className="p-6 bg-black border-2 border-white/5 rounded-[1.5rem] text-slate-600 hover:text-yellow-500 transition-all shadow-xl group/btn">
+                               <Button variant="cyber" onClick={fetchData} className="p-6 bg-black border-2 border-white/5 rounded-[1.5rem] text-slate-600 hover:text-yellow-500 transition-all shadow-xl group/btn">
                                   <RefreshCw size={26} className={cn("transition-transform group-hover/btn:rotate-180", loading ? "animate-spin" : "")} />
-                               </button>
+                               </Button>
                             </div>
                             <div className="w-full h-full relative z-10">
                                 {loading && !graphData ? (
@@ -353,9 +354,9 @@ const GraphAnalyticsPage: React.FC = () => {
                                       </div>
                                    ))}
                                 </div>
-                                <button onClick={handleRunLouvain} className="mt-10 w-full py-8 bg-amber-600 text-white rounded-[2rem] tracking-[0.5em] text-[12px] font-black uppercase italic hover:brightness-110 shadow-4xl transition-all border-4 border-amber-500/20 font-bold">
+                                <Button variant="cyber" onClick={handleRunLouvain} className="mt-10 w-full py-8 bg-amber-600 text-white rounded-[2rem] tracking-[0.5em] text-[12px] font-black uppercase italic hover:brightness-110 shadow-4xl transition-all border-4 border-amber-500/20 font-bold">
                                    <Zap size={18} className="inline mr-4 mb-1" /> ЗАПУСТИТИ_GDS_АНАЛІЗ
-                                </button>
+                                </Button>
                             </section>
                         </aside>
                     </div>

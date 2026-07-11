@@ -11,6 +11,7 @@
  * © 2026 PREDATOR Analytics - Повна українізація v61.0-ELITE
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -100,13 +101,13 @@ const MobileCommandCenter: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-3">
-          <button className="p-3 bg-white/5 border border-white/10 rounded-2xl relative">
+          <Button variant="cyber" className="p-3 bg-white/5 border border-white/10 rounded-2xl relative">
             <Bell size={20} className="text-slate-400" />
             <span className="absolute top-2 right-2 w-2 h-2 bg-amber-500 rounded-full " />
-          </button>
-          <button onClick={() => setIsMenuOpen(true)} className="p-3 bg-white/5 border border-white/10 rounded-2xl">
+          </Button>
+          <Button variant="cyber" onClick={() => setIsMenuOpen(true)} className="p-3 bg-white/5 border border-white/10 rounded-2xl">
             <Menu size={20} className="text-slate-400" />
-          </button>
+          </Button>
         </div>
       </header>
 
@@ -126,12 +127,12 @@ const MobileCommandCenter: React.FC = () => {
                 Сьогодні система AZR виявила 3 нових вікна можливостей для оптимізації митних зборів. Економія: <span className="text-emerald-400 font-black">+$42,102</span>.
               </p>
               <div className="mt-8 flex gap-3">
-                <button className="px-6 py-3 bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl ">
+                <Button variant="cyber" className="px-6 py-3 bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl ">
                   Аналізувати
-                </button>
-                <button className="px-6 py-3 bg-white/5 border border-white/10 text-slate-300 text-[10px] font-black uppercase tracking-widest rounded-xl">
+                </Button>
+                <Button variant="cyber" className="px-6 py-3 bg-white/5 border border-white/10 text-slate-300 text-[10px] font-black uppercase tracking-widest rounded-xl">
                   Ігнорувати
-                </button>
+                </Button>
               </div>
             </div>
           </HoloCard>
@@ -148,7 +149,7 @@ const MobileCommandCenter: React.FC = () => {
         <section>
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-[11px] font-black text-slate-500 uppercase tracking-[0.4em]">Тактична Матриця (Tactical Matrix)</h2>
-            <button className="text-[10px] font-black text-blue-400 uppercase tracking-widest underline underline-offset-4">Конфіг</button>
+            <Button variant="cyber" className="text-[10px] font-black text-blue-400 uppercase tracking-widest underline underline-offset-4">Конфіг</Button>
           </div>
           <div className="grid grid-cols-4 gap-4 p-4 bg-slate-900/60 border border-white/5 rounded-[32px] panel-3d">
             {[
@@ -157,7 +158,7 @@ const MobileCommandCenter: React.FC = () => {
               { icon: Shield, label: ' изики', color: '#f43f5e', badge: 3 },
               { icon: BarChart3, label: 'Тренди', color: '#f59e0b' },
             ].map((item, i) => (
-              <button key={i} className="flex flex-col items-center gap-3 py-4 group">
+              <Button variant="cyber" key={i} className="flex flex-col items-center gap-3 py-4 group">
                 <div className="relative p-4 bg-black/40 border border-white/5 rounded-2xl group-active:scale-90 transition-transform" style={{ color: item.color }}>
                   <item.icon size={22} className="" />
                   {item.badge && (
@@ -167,7 +168,7 @@ const MobileCommandCenter: React.FC = () => {
                   )}
                 </div>
                 <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">{item.label}</span>
-              </button>
+              </Button>
             ))}
           </div>
         </section>
@@ -198,7 +199,7 @@ const MobileCommandCenter: React.FC = () => {
         <section className="pb-10">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-[11px] font-black text-slate-500 uppercase tracking-[0.4em]">Прямий Ефір (Live Stream)</h2>
-            <button className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Історія</button>
+            <Button variant="cyber" className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Історія</Button>
           </div>
           <div className="space-y-4">
             {[
@@ -242,7 +243,7 @@ const MobileCommandCenter: React.FC = () => {
             { id: 'alerts', icon: Bell, label: 'Алерти', badge: 7 },
             { id: 'profile', icon: User, label: 'Профіль' },
           ].map((tab) => (
-            <button
+            <Button variant="cyber"
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={cn(
@@ -262,7 +263,7 @@ const MobileCommandCenter: React.FC = () => {
               {activeTab === tab.id && (
                 <motion.div layoutId="mobileNavGlow" className="absolute -bottom-1 w-1.5 h-1.5 bg-blue-400 rounded-full blur-[2px]" />
               )}
-            </button>
+            </Button>
           ))}
         </div>
       </footer>
@@ -283,9 +284,9 @@ const MobileCommandCenter: React.FC = () => {
             >
               <div className="flex items-center justify-between mb-12">
                 <h2 className="text-2xl font-black text-white uppercase tracking-tighter">Системне Меню</h2>
-                <button onClick={() => setIsMenuOpen(false)} className="p-3 bg-white/5 border border-white/10 rounded-2xl">
+                <Button variant="cyber" onClick={() => setIsMenuOpen(false)} className="p-3 bg-white/5 border border-white/10 rounded-2xl">
                   <X size={24} className="text-slate-400" />
-                </button>
+                </Button>
               </div>
 
               <div className="space-y-4 flex-1">
@@ -297,7 +298,7 @@ const MobileCommandCenter: React.FC = () => {
                   { icon: Globe, label: 'Матриця Світу', color: 'yellow' },
                   { icon: Settings, label: 'Нейронні Параметри', color: 'slate' },
                 ].map((item, i) => (
-                  <button key={i} className="w-full flex items-center gap-6 p-6 bg-black/40 border border-white/5 rounded-[32px] hover:border-white/20 transition-all group overflow-hidden relative">
+                  <Button variant="cyber" key={i} className="w-full flex items-center gap-6 p-6 bg-black/40 border border-white/5 rounded-[32px] hover:border-white/20 transition-all group overflow-hidden relative">
                     <div className={cn("inline-flex p-4 rounded-2xl bg-white/5 text-slate-400 group-hover:text-blue-400 transition-colors")}>
                       <item.icon size={22} />
                     </div>
@@ -310,7 +311,7 @@ const MobileCommandCenter: React.FC = () => {
                         {item.badge}
                       </span>
                     )}
-                  </button>
+                  </Button>
                 ))}
               </div>
 
@@ -322,9 +323,9 @@ const MobileCommandCenter: React.FC = () => {
                     <div className="text-[10px] font-black text-slate-500 uppercase">Суверенний Адмін</div>
                   </div>
                 </div>
-                <button className="p-3 bg-white/5 border border-white/10 rounded-2xl text-amber-500">
+                <Button variant="cyber" className="p-3 bg-white/5 border border-white/10 rounded-2xl text-amber-500">
                   <Power size={20} />
-                </button>
+                </Button>
               </div>
             </motion.div>
           </>

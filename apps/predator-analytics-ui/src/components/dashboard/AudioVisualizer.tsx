@@ -5,6 +5,7 @@
  * згідно з технічною специфікацією PREDATOR
  */
 
+import { Button } from '@/components/ui/button';
 import { useEffect, useRef } from 'react';
 import { useCyberDashboardStore } from '../../store/cyber-dashboard-store';
 
@@ -141,7 +142,7 @@ export default function AudioVisualizer() {
   return (
     <div className="flex items-center gap-4 bg-cyber-surface/50 border border-cyber-border/50 p-4 rounded-lg">
       {/* Кнопка мікрофона */}
-      <button
+      <Button variant="cyber"
         onClick={handleToggleMic}
         className={`
           relative p-3 rounded-full transition-all duration-300
@@ -170,7 +171,7 @@ export default function AudioVisualizer() {
         {isListening && (
           <div className="absolute inset-0 rounded-full bg-cyber-neon/20 animate-ping" />
         )}
-      </button>
+      </Button>
       
       {/* Візуалізація */}
       <div className="flex-1 h-16 relative">
@@ -182,9 +183,9 @@ export default function AudioVisualizer() {
         {/* Статус текст */}
         <div className="absolute top-0 right-0 text-xs font-mono">
           {isListening ? (
-            <span className="text-cyber-green animate-pulse">● RECORDING</span>
+            <span className="text-cyber-green animate-pulse">● ЗАПИС</span>
           ) : (
-            <span className="text-cyber-neon/50">○ READY</span>
+            <span className="text-cyber-neon/50">○ ГОТОВО</span>
           )}
         </div>
       </div>
@@ -203,7 +204,7 @@ export default function AudioVisualizer() {
       {/* Попередження якщо мікрофон недоступний */}
       {!isListening && (
         <div className="text-xs text-cyber-neon/30 font-mono">
-          {navigator.mediaDevices && 'getUserMedia' in navigator.mediaDevices ? 'CLICK MIC' : 'MIC BLOCKED'}
+          {navigator.mediaDevices && 'getUserMedia' in navigator.mediaDevices ? 'НАЖМІТЬ МІКРОФОН' : 'МІКРОФОН БЛОКОВАНО'}
         </div>
       )}
     </div>

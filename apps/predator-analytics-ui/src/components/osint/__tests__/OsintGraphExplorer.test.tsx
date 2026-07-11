@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
 import { OsintGraphExplorer } from '../OsintGraphExplorer';
@@ -19,14 +20,14 @@ vi.mock('../../graph/GraphViewer', () => {
         default: ({ nodes, onNodeClick, onNodeDoubleClick }: { nodes: any[], onNodeClick: Function, onNodeDoubleClick: Function }) => (
             <div data-testid="mock-graph-viewer">
                 {nodes.map(n => (
-                    <button 
+                    <Button variant="cyber" 
                         key={n.id} 
                         data-testid={`node-${n.id}`}
                         onClick={() => onNodeClick(n)}
                         onDoubleClick={() => onNodeDoubleClick(n)}
                     >
                         {n.label}
-                    </button>
+                    </Button>
                 ))}
             </div>
         )

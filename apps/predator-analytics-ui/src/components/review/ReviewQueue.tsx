@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -206,7 +207,7 @@ export const ReviewQueue: React.FC<ReviewQueueProps> = ({
         {/* Filters */}
         <div className="flex gap-2 mt-4">
           {(['all', 'critical', 'high', 'normal'] as const).map(f => (
-            <button
+            <Button variant="cyber"
               key={f}
               onClick={() => setFilter(f)}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase transition-all ${
@@ -216,7 +217,7 @@ export const ReviewQueue: React.FC<ReviewQueueProps> = ({
               }`}
             >
               {f === 'all' ? 'Всі' : PRIORITY_CONFIG[f].label}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -405,29 +406,29 @@ export const ReviewQueue: React.FC<ReviewQueueProps> = ({
 
               {/* Actions */}
               <div className="p-6 border-t border-slate-800 flex gap-3">
-                <button
+                <Button variant="cyber"
                   onClick={() => handleDecision(selectedTask.id, 'approve')}
                   className="flex-1 flex items-center justify-center gap-2 py-3 bg-emerald-500 hover:bg-emerald-400 text-white font-bold rounded-xl transition-colors"
                 >
                   <ThumbsUp size={18} />
                   Підтвердити
-                </button>
+                </Button>
 
-                <button
+                <Button variant="cyber"
                   onClick={() => handleDecision(selectedTask.id, 'modify')}
                   className="flex-1 flex items-center justify-center gap-2 py-3 bg-amber-500 hover:bg-amber-400 text-white font-bold rounded-xl transition-colors"
                 >
                   <Edit3 size={18} />
                   Змінити
-                </button>
+                </Button>
 
-                <button
+                <Button variant="cyber"
                   onClick={() => handleDecision(selectedTask.id, 'reject')}
                   className="flex-1 flex items-center justify-center gap-2 py-3 bg-rose-500 hover:bg-rose-400 text-white font-bold rounded-xl transition-colors"
                 >
                   <ThumbsDown size={18} />
                   Відхилити
-                </button>
+                </Button>
               </div>
             </motion.div>
           </motion.div>

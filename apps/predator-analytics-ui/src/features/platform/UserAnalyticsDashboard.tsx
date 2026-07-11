@@ -5,6 +5,7 @@
  * Активність, сесії, поведінка
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -195,7 +196,7 @@ const UserAnalyticsDashboard: React.FC = () => {
           <div className="flex items-center gap-3">
             <div className="flex bg-slate-900/60 border border-white/10 rounded-xl p-1">
               {['today', 'week', 'month'].map((range) => (
-                <button
+                <Button variant="cyber"
                   key={range}
                   onClick={() => setTimeRange(range as typeof timeRange)}
                   className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
@@ -203,14 +204,14 @@ const UserAnalyticsDashboard: React.FC = () => {
                   }`}
                 >
                   {range === 'today' ? 'Сьогодні' : range === 'week' ? 'Тиждень' : 'Місяць'}
-                </button>
+                </Button>
               ))}
             </div>
 
-            <button className="flex items-center gap-2 px-4 py-2 bg-slate-800 text-slate-300 rounded-xl text-sm">
+            <Button variant="cyber" className="flex items-center gap-2 px-4 py-2 bg-slate-800 text-slate-300 rounded-xl text-sm">
               <Download size={16} />
               Експорт
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -263,7 +264,7 @@ const UserAnalyticsDashboard: React.FC = () => {
           <div className="bg-slate-900/60 border border-white/5 rounded-xl p-4">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-bold text-white">ТОП сторінки</h3>
-              <button className="text-xs text-cyan-400">Всі</button>
+              <Button variant="cyber" className="text-xs text-cyan-400">Всі</Button>
             </div>
 
             <div className="space-y-3">

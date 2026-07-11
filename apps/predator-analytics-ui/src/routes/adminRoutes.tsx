@@ -7,7 +7,9 @@ const DatabaseCommandCenter = lazy(() => import('../features/admin/DatabaseComma
 const AdvDvsDashboard = lazy(() => import('../pages/diagnostics/AdvDvsDashboard').then(m => ({ default: m.AdvDvsDashboard })));
 const CognitiveInterface = lazy(() => import('../features/cognitive/CognitiveInterface'));
 const ApiDocumentationView = lazy(() => import('../features/reports/ApiDocumentationView'));
-const DataIngestionTerminal = lazy(() => import('../features/platform/components/DataIngestionTerminal').then(m => ({ default: m.DataIngestionTerminal })));
+const UploadDataset = lazy(() => import('../features/platform/components/UploadDataset').then(m => ({ default: m.UploadDataset })));
+const CyberDashboard = lazy(() => import('../components/dashboard/CyberDashboard'));
+const GraphAnalyticsPage = lazy(() => import('../pages/GraphAnalyticsPage'));
 
 export const renderAdminRoutes = () => {
   return (
@@ -18,13 +20,15 @@ export const renderAdminRoutes = () => {
       <Route path="/admin/command" element={<AdminGuard><AdminHub /></AdminGuard>} />
       <Route path="/admin/database-command-center" element={<AdminGuard><DatabaseCommandCenter /></AdminGuard>} />
       <Route path="/admin/adv-dvs" element={<AdminGuard><AdvDvsDashboard /></AdminGuard>} />
+      <Route path="/command" element={<CyberDashboard />} />
+      <Route path="/graph" element={<AdminGuard><GraphAnalyticsPage /></AdminGuard>} />
 
       <Route path="/cognitive" element={<CognitiveInterface />} />
 
       <Route path="/system" element={<Navigate to="/admin/command?tab=infra" replace />} />
       <Route path="/monitoring" element={<Navigate to="/admin/command?tab=infra" replace />} />
       <Route path="/monitoring/realtime" element={<Navigate to="/admin/command?tab=infra" replace />} />
-      <Route path="/ingestion" element={<DataIngestionTerminal />} />
+      <Route path="/ingestion" element={<UploadDataset />} />
       <Route path="/security" element={<Navigate to="/admin/command?tab=security" replace />} />
       <Route path="/deployment" element={<Navigate to="/admin/command?tab=gitops" replace />} />
       <Route path="/governance" element={<Navigate to="/admin/command?tab=gitops" replace />} />

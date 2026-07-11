@@ -7,7 +7,7 @@
  * 
  * Вузли:
  *  1. SOVEREIGN (NVIDIA) → http://178.214.200.25:8000/api/v1
- *  2. HYBRID (NVIDIA)  → http://194.177.1.240:8000/api/v1
+ *  2. HYBRID (NVIDIA)  → http://194.177.1.240:6666/api/v1
  *  3. CLOUD (Kaggle)   → VITE_API_URL (зазвичай через zrok тунель)
  */
 import axios, { AxiosError } from 'axios';
@@ -30,8 +30,8 @@ export const NODE_IDS = {
 
 const NODE_URLS: Record<string, string> = {
     [NODE_IDS.LOCAL]:     '/api/v1',                                                                    // Vite proxy → NVIDIA:8000
-    [NODE_IDS.SOVEREIGN]: 'http://178.214.200.25:8000/api/v1',
-    [NODE_IDS.HYBRID]:    'http://194.177.1.240:8000/api/v1',
+    [NODE_IDS.SOVEREIGN]: 'https://178.214.200.25:8000/api/v1',
+    [NODE_IDS.HYBRID]:    'http://194.177.1.240:9010/api/v1', // OVERRIDDEN locally to prevent CORS errors
     [NODE_IDS.CLOUD]:     metaEnv.VITE_API_URL || 'https://predator-mirror.share.zrok.io/api/v1',
 };
 

@@ -8,6 +8,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -183,7 +184,7 @@ const CasesView: React.FC = () => {
               { label: 'THROUGHPUT', value: '94%', icon: <Zap size={14} />, color: 'success' },
             ]}
             actions={
-              <button
+              <Button variant="cyber"
                 onClick={() => { play(UISoundType.CLICK); setIsCreateModalOpen(true); }}
                 className="group relative px-10 py-5 overflow-hidden rounded-[1.8rem]"
               >
@@ -192,7 +193,7 @@ const CasesView: React.FC = () => {
                   <Plus size={20} /> НОВЕ_РОЗСЛІДУВАННЯ
                 </div>
                 <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-              </button>
+              </Button>
             }
           />
 
@@ -215,9 +216,9 @@ const CasesView: React.FC = () => {
                 activeFilter={activeFilter}
                 onFilterChange={setActiveFilter}
               />
-              <button className="px-8 py-6 bg-white/[0.02] border-2 border-white/[0.05] rounded-[2rem] text-slate-400 font-black text-[10px] uppercase tracking-[0.3em] italic hover:text-white transition-all shadow-xl">
+              <Button variant="cyber" className="px-8 py-6 bg-white/[0.02] border-2 border-white/[0.05] rounded-[2rem] text-slate-400 font-black text-[10px] uppercase tracking-[0.3em] italic hover:text-white transition-all shadow-xl">
                 <Filter size={18} className="text-blue-500 inline mr-3" /> ФІЛЬТрИ_ДАН ИХ
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -243,12 +244,12 @@ const CasesView: React.FC = () => {
                     <span className="text-slate-500 block text-lg font-bold mt-2 not-italic">Негайне втручаннярекомендовано для стабілізації контуру.</span>
                   </h3>
                 </div>
-                <button 
+                <Button variant="cyber" 
                   onClick={() => { play(UISoundType.CLICK); handleViewCase(cases.find(c => c.status === 'КРИТИЧНО')?.id || ''); }}
                   className="px-12 py-6 bg-amber-600 hover:bg-amber-500 text-white font-black text-[12px] uppercase tracking-[0.3em] italic rounded-[2rem] transition-all shadow-4xl active:scale-95"
                 >
                   ПЕ ЕЙТИ_ДО_ВІ УСУ
-                </button>
+                </Button>
               </div>
             </motion.div>
           )}
@@ -315,9 +316,9 @@ const CasesView: React.FC = () => {
                 className="relative w-full max-w-[800px] max-h-[90vh] overflow-y-auto bg-black border-2 border-white/[0.05] rounded-[4rem] shadow-4xl z-10 no-scrollbar p-12 perspective-1000"
               >
                  <div className="absolute top-0 right-0 p-10">
-                   <button onClick={() => setIsCreateModalOpen(false)} className="text-slate-700 hover:text-white transition-colors">
+                   <Button variant="cyber" onClick={() => setIsCreateModalOpen(false)} className="text-slate-700 hover:text-white transition-colors">
                      <X size={40} />
-                   </button>
+                   </Button>
                  </div>
 
                  <header className="space-y-6 mb-16">
@@ -365,7 +366,7 @@ const CasesView: React.FC = () => {
                       </label>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         {['low', 'medium', 'high'].map(p => (
-                          <button
+                          <Button variant="cyber"
                             key={p}
                             type="button"
                             onClick={() => { play(UISoundType.CLICK); setNewCaseData({ ...newCaseData, priority: p }); }}
@@ -379,19 +380,19 @@ const CasesView: React.FC = () => {
                             )}
                           >
                             {p === 'high' ? 'КРИТИЧНИЙ (S1)' : p === 'medium' ? 'СЕРЕДНІЙ (S2)' : 'ПЛАНОВИЙ (S3)'}
-                          </button>
+                          </Button>
                         ))}
                       </div>
                    </div>
 
-                   <button
+                   <Button variant="cyber"
                      type="submit"
                      disabled={createLoading}
                      className="w-full py-10 bg-blue-600 hover:bg-blue-500 text-white font-black text-2xl italic tracking-widest uppercase rounded-[3rem] shadow-4xl transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-6 group/submit"
                    >
                      {createLoading ? <div className="w-10 h-10 border-4 border-white/30 border-t-white rounded-full animate-spin" /> : <ShieldCheck size={32} className="group-hover/submit:scale-125 transition-transform" />}
                      ЗАРЕЄСТРУВАТИ КЕЙС У КОНТУ І
-                   </button>
+                   </Button>
                  </form>
               </motion.div>
             </div>

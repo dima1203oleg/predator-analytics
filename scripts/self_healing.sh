@@ -1,96 +1,7 @@
 #!/bin/bash
-# ═══════════════════════════════════════════════════════════════
-# 🧲 ANTIGRAVITY SELF-HEALING SCRIPT
-# ═══════════════════════════════════════════════════════════════
-# Auto-recovers ALL services. Runs forever. No human needed.
-# ═══════════════════════════════════════════════════════════════
 
-set -e
-
-# ════════════════════════════════════════════════════════════════
-# CONFIGURATION
-# ════════════════════════════════════════════════════════════════
-
-PROJECT_ROOT="/Users/dima-mac/Documents/Predator_21"
-BACKEND_DIR="$PROJECT_ROOT/apps/backend"
-FRONTEND_DIR="$PROJECT_ROOT/apps/frontend"
-LOG_FILE="/tmp/self_healing.log"
-CHECK_INTERVAL=30
-
-# ════════════════════════════════════════════════════════════════
-# COLORS
-# ════════════════════════════════════════════════════════════════
-
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
-
-# ════════════════════════════════════════════════════════════════
-# LOGGING
-# ════════════════════════════════════════════════════════════════
-
-log() {
-    echo -e "$(date '+%Y-%m-%d %H:%M:%S') $1" | tee -a "$LOG_FILE"
-}
-
-log_ok() {
-    log "${GREEN}✅ $1${NC}"
-}
-
-log_warn() {
-    log "${YELLOW}⚠️ $1${NC}"
-}
-
-log_error() {
-    log "${RED}❌ $1${NC}"
-}
-
-log_info() {
-    log "${BLUE}ℹ️ $1${NC}"
-}
-
-# ════════════════════════════════════════════════════════════════
-# HEALTH CHECKS
-# ════════════════════════════════════════════════════════════════
-
-check_backend() {
-    curl -s http://localhost:8000/health > /dev/null 2>&1
-    return $?
-}
-
-check_frontend() {
-    lsof -i :3000 > /dev/null 2>&1
-    return $?
-}
-
-check_ngrok() {
-    curl -s http://localhost:4040/api/tunnels > /dev/null 2>&1
-    return $?
-}
-
-check_docker() {
-    docker ps > /dev/null 2>&1
-    return $?
-}
-
-# ════════════════════════════════════════════════════════════════
-# RESTART FUNCTIONS
-# ════════════════════════════════════════════════════════════════
-
-restart_backend() {
-    log_info "Restarting backend..."
-    pkill -f "run_v45_bot.py" 2>/dev/null || true
-    sleep 2
-    cd "$BACKEND_DIR"
-    nohup python run_v45_bot.py > /tmp/backend.log 2>&1 &
-    sleep 5
-    if check_backend; then
-        log_ok "Backend restarted successfully"
-        return 0
-    else
-        log_error "Backend restart failed"
+# Запуск Python-скрипта для самовідновлення
+python3 scripts/self_healing.py
         return 1
     fi
 }
@@ -178,6 +89,26 @@ main_loop() {
         log_info "♾️ Iteration #$iteration complete. Sleeping ${CHECK_INTERVAL}s..."
         sleep $CHECK_INTERVAL
     done
+}
+
+# Автоматичний rollback при помилках
+check_rollback() {
+    if [ -f /tmp/rollback_flag ]; then
+        echo "🔙 Виконую rollback до попередньої версії..."
+        docker compose -f docker-compose.prod.yml pull
+        docker compose -f docker-compose.prod.yml up -d --remove-orphans
+        rm /tmp/rollback_flag
+    fi
+}
+
+# Автоматичне оновлення агентів
+check_agents() {
+    if [ -f /tmp/update_agents ]; then
+        echo "🔄 Оновлення автономних агентів..."
+        docker compose -f docker-compose.prod.yml pull predator_telegram_bot
+        docker compose -f docker-compose.prod.yml up -d predator_telegram_bot
+        rm /tmp/update_agents
+    fi
 }
 
 # ════════════════════════════════════════════════════════════════

@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Eye, Compass, Lightbulb, Zap, CheckCircle, ShieldAlert, Activity, Bot, Bell, ShieldOff } from 'lucide-react';
@@ -29,9 +30,9 @@ export function OODALoopPanel({
   const getStatusColor = (status: OODAStatus) => {
     switch (status) {
       case 'OBSERVING': return 'text-slate-400 border-slate-500/20 bg-slate-500/5';
-      case 'ORIENTING': return 'text-rose-400 border-rose-500/20 bg-rose-500/5';
-      case 'DECIDING': return 'text-rose-500 border-rose-500/30 bg-rose-500/10 ';
-      case 'ACTING': return 'text-rose-400 border-rose-500/40 bg-rose-500/20 ';
+      case 'ORIENTING': return 'text-rose-400 border-cyan-500/20 bg-cyan-500/5';
+      case 'DECIDING': return 'text-cyan-500 border-cyan-500/30 bg-cyan-500/10 ';
+      case 'ACTING': return 'text-rose-400 border-cyan-500/40 bg-cyan-500/20 ';
       default: return 'text-slate-500 border-slate-500/20 bg-slate-500/5';
     }
   };
@@ -40,13 +41,13 @@ export function OODALoopPanel({
     <div className="space-y-6">
       <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Activity className="w-4 h-4 text-rose-500" />
+            <Activity className="w-4 h-4 text-cyan-500" />
             <h4 className="text-[10px] font-black text-white uppercase tracking-widest">ELITE ДВИГУН • OODA ЦИКЛ</h4>
           </div>
           <div className={cn(
             "flex items-center gap-2 px-3 py-1 rounded-md border text-[8px] font-black tracking-[0.2em] uppercase",
-            alertLevel === 'CRITICAL' ? "bg-rose-500/20 border-rose-500/30 text-rose-500  " :
-            alertLevel === 'ELEVATED' ? "bg-rose-500/10 border-rose-500/20 text-rose-400" :
+            alertLevel === 'CRITICAL' ? "bg-cyan-500/20 border-cyan-500/30 text-cyan-500  " :
+            alertLevel === 'ELEVATED' ? "bg-cyan-500/10 border-cyan-500/20 text-rose-400" :
             "bg-slate-500/10 border-slate-500/20 text-slate-400"
           )}>
             <Bell className="w-3 h-3" />
@@ -70,14 +71,14 @@ export function OODALoopPanel({
           const isActive = currentStatus === step.id;
           const isDone = steps.findIndex(s => s.id === currentStatus) > idx;
 
-          const activeBg = step.color === 'rose' ? 'bg-rose-500/20 border-rose-500/40 text-rose-500 ' : 'bg-slate-500/20 border-slate-500/40 text-slate-400';
+          const activeBg = step.color === 'rose' ? 'bg-cyan-500/20 border-cyan-500/40 text-cyan-500 ' : 'bg-slate-500/20 border-slate-500/40 text-slate-400';
 
           return (
             <div key={step.id} className="relative z-10 flex flex-col items-center gap-4">
                {isActive && (
                 <motion.div 
                   layoutId="active-step-glow"
-                  className="absolute inset-[-12px] rounded-[1.5rem] bg-rose-500/5 border border-rose-500/20 blur-md pointer-events-none"
+                  className="absolute inset-[-12px] rounded-[1.5rem] bg-cyan-500/5 border border-cyan-500/20 blur-md pointer-events-none"
                 />
               )}
               <motion.div
@@ -86,7 +87,7 @@ export function OODALoopPanel({
                 className={cn(
                   "w-14 h-14 rounded-2xl flex items-center justify-center border transition-all duration-700 relative group/step",
                   isActive ? activeBg :
-                  isDone ? "bg-rose-500/10 border-rose-500/20 text-rose-500/60" :
+                  isDone ? "bg-cyan-500/10 border-cyan-500/20 text-cyan-500/60" :
                   "bg-slate-950 border-white/5 text-slate-700"
                 )}
               >
@@ -94,14 +95,14 @@ export function OODALoopPanel({
                   <motion.div 
                     animate={{ rotate: 360 }}
                     transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                    className="absolute inset-[-4px] border border-dashed border-rose-500/30 rounded-2xl pointer-events-none"
+                    className="absolute inset-[-4px] border border-dashed border-cyan-500/30 rounded-2xl pointer-events-none"
                   />
                 )}
                 {isDone ? <CheckCircle className="w-6 h-6" /> : React.cloneElement(step.icon as React.ReactElement, { className: "w-6 h-6" })}
               </motion.div>
               <span className={cn(
                 "text-[9px] font-black uppercase tracking-[0.3em] italic transition-colors duration-700 font-mono",
-                isActive ? (step.color === 'rose' ? 'text-rose-500' : 'text-slate-400') : "text-slate-700"
+                isActive ? (step.color === 'rose' ? 'text-cyan-500' : 'text-slate-400') : "text-slate-700"
               )}>
                 {step.label}
               </span>
@@ -140,7 +141,7 @@ export function OODALoopPanel({
                     <div className="mt-3 space-y-1.5">
                       {incident.action_plan.map((action, i) => (
                         <div key={i} className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest opacity-60 font-mono">
-                          <div className={cn("w-1 h-1 rounded-full", incident.status === 'ACTING' ? 'bg-rose-500 animate-ping' : 'bg-current')} />
+                          <div className={cn("w-1 h-1 rounded-full", incident.status === 'ACTING' ? 'bg-cyan-500 animate-ping' : 'bg-current')} />
                           {action}
                         </div>
                       ))}
@@ -150,8 +151,8 @@ export function OODALoopPanel({
                   {incident.assigned_agent && (
                     <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-lg bg-rose-500/10 border border-rose-500/20 flex items-center justify-center">
-                          <Bot className="w-3.5 h-3.5 text-rose-500" />
+                        <div className="w-6 h-6 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
+                          <Bot className="w-3.5 h-3.5 text-cyan-500" />
                         </div>
                         <div className="text-[9px] font-black text-white uppercase tracking-widest">
                           {incident.assigned_agent.name}
@@ -165,23 +166,23 @@ export function OODALoopPanel({
 
                   {/* Human Approval UI */}
                   {incident.human_approval_required && incident.status === 'DECIDING' && (
-                    <div className="mt-4 p-4 bg-rose-500/[0.03] rounded-xl border border-rose-500/20 space-y-3">
-                       <div className="flex items-center gap-2 text-[9px] font-black text-rose-500 uppercase tracking-widest ">
+                    <div className="mt-4 p-4 bg-cyan-500/[0.03] rounded-xl border border-cyan-500/20 space-y-3">
+                       <div className="flex items-center gap-2 text-[9px] font-black text-cyan-500 uppercase tracking-widest ">
                         <ShieldOff className="w-3 h-3" /> ПІДТВЕРДЖЕННЯ ОПЕРАТОРА
                       </div>
                       <div className="flex gap-3">
-                        <button 
+                        <Button variant="cyber" 
                           onClick={() => onApprove?.(incident.id)}
-                          className="flex-1 py-2 bg-rose-600 hover:bg-rose-500 text-white text-[9px] font-black rounded-lg transition-all duration-300 uppercase tracking-widest "
+                          className="flex-1 py-2 bg-cyan-600 hover:bg-cyan-500 text-white text-[9px] font-black rounded-lg transition-all duration-300 uppercase tracking-widest "
                         >
                           СХВАЛИТИ
-                        </button>
-                        <button 
+                        </Button>
+                        <Button variant="cyber" 
                           onClick={() => onDecline?.(incident.id)}
                           className="flex-1 py-2 bg-transparent hover:bg-white/5 border border-white/10 text-slate-400 hover:text-white text-[9px] font-black rounded-lg transition-all duration-300 uppercase tracking-widest"
                         >
                           ВІДХИЛИТИ
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   )}
@@ -193,11 +194,11 @@ export function OODALoopPanel({
                <motion.div 
                 animate={{ scale: [1, 1.05, 1], opacity: [0.03, 0.06, 0.03] }}
                 transition={{ duration: 4, repeat: Infinity }}
-                className="absolute inset-0 bg-rose-500/5 flex items-center justify-center pointer-events-none"
+                className="absolute inset-0 bg-cyan-500/5 flex items-center justify-center pointer-events-none"
               >
-                <CheckCircle className="w-48 h-48 text-rose-500" />
+                <CheckCircle className="w-48 h-48 text-cyan-500" />
               </motion.div>
-              <CheckCircle className="w-6 h-6 text-rose-500/40 relative z-10" />
+              <CheckCircle className="w-6 h-6 text-cyan-500/40 relative z-10" />
               <p className="text-[10px] text-slate-600 font-black uppercase tracking-[0.2em] relative z-10 leading-relaxed">
                 СИСТЕМИ В НОРМІ<br/>
                 <span className="text-[8px] opacity-60">OODA LOOP: ПАСИВНИЙ МОНІТОРИНГ</span>

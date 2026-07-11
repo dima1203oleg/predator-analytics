@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { User, Shield, CreditCard, Mail, Building, Crown } from 'lucide-react';
 import { useUser } from '../../../context/UserContext';
@@ -82,20 +83,20 @@ export const Profile: React.FC = () => {
                    <div className="text-slate-500 text-xs mt-1">Оновлено: {new Date(user.last_login).toLocaleDateString()}</div>
                  </div>
                  {role !== UserRole.ADMIN && (
-                   <button className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-sm font-medium rounded-lg transition-colors">
+                   <Button variant="cyber" className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-sm font-medium rounded-lg transition-colors">
                      Керувати
-                   </button>
+                   </Button>
                  )}
               </div>
             </div>
 
             <div className="pt-4 flex justify-end">
-              <button
+              <Button variant="cyber"
                 onClick={logout}
                 className="text-red-400 hover:text-red-300 hover:bg-red-500/10 px-4 py-2 rounded-lg transition-colors text-sm font-medium"
               >
                 Вийти з акаунту
-              </button>
+              </Button>
             </div>
           </div>
         </div>

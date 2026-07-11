@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -150,7 +151,7 @@ export const SignalsFeedWidget: React.FC<{ persona: string }> = ({ persona }) =>
         {/* Filter Tabs */}
         <div className="flex gap-1 bg-white/5 p-1 rounded-lg">
             {(['all', 'opportunity', 'threat'] as const).map(f => (
-                <button
+                <Button variant="cyber"
                     key={f}
                     onClick={() => setFilter(f)}
                     className={cn(
@@ -159,7 +160,7 @@ export const SignalsFeedWidget: React.FC<{ persona: string }> = ({ persona }) =>
                     )}
                 >
                     {f === 'all' ? premiumLocales.signalsFeed.all : f === 'opportunity' ? premiumLocales.signalsFeed.opportunity : premiumLocales.signalsFeed.threat}
-                </button>
+                </Button>
             ))}
         </div>
       </div>

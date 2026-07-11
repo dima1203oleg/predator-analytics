@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -64,10 +65,10 @@ const SEGMENTS: SegmentCardDefinition[] = [
     persona: 'BUSINESS',
     icon: Building2,
     accent: {
-      border: 'border-rose-500/20',
-      panel: 'bg-rose-500/10',
+      border: 'border-cyan-500/20',
+      panel: 'bg-cyan-500/10',
       text: 'text-rose-200',
-      badge: 'border-rose-500/20 bg-rose-500/10 text-rose-100',
+      badge: 'border-cyan-500/20 bg-cyan-500/10 text-rose-100',
       glow: 'from-rose-500/24 via-rose-500/8 to-transparent',
     },
   },
@@ -78,10 +79,10 @@ const SEGMENTS: SegmentCardDefinition[] = [
     persona: 'BANKING',
     icon: DollarSign,
     accent: {
-      border: 'border-rose-600/20',
-      panel: 'bg-rose-600/10',
+      border: 'border-cyan-600/20',
+      panel: 'bg-cyan-600/10',
       text: 'text-rose-300',
-      badge: 'border-rose-600/20 bg-rose-600/10 text-rose-100',
+      badge: 'border-cyan-600/20 bg-cyan-600/10 text-rose-100',
       glow: 'from-rose-600/24 via-rose-600/8 to-transparent',
     },
   },
@@ -106,10 +107,10 @@ const SEGMENTS: SegmentCardDefinition[] = [
     persona: 'INTELLIGENCE',
     icon: ShieldAlert,
     accent: {
-      border: 'border-rose-400/20',
+      border: 'border-cyan-400/20',
       panel: 'bg-rose-400/10',
       text: 'text-rose-200',
-      badge: 'border-rose-400/20 bg-rose-400/10 text-rose-100',
+      badge: 'border-cyan-400/20 bg-rose-400/10 text-rose-100',
       glow: 'from-rose-400/24 via-rose-400/8 to-transparent',
     },
   },
@@ -120,10 +121,10 @@ const SEGMENTS: SegmentCardDefinition[] = [
     persona: 'GOVERNMENT',
     icon: FileCheck,
     accent: {
-      border: 'border-rose-600/20',
-      panel: 'bg-rose-600/10',
+      border: 'border-cyan-600/20',
+      panel: 'bg-cyan-600/10',
       text: 'text-rose-200',
-      badge: 'border-rose-600/20 bg-rose-600/10 text-rose-100',
+      badge: 'border-cyan-600/20 bg-cyan-600/10 text-rose-100',
       glow: 'from-rose-600/24 via-rose-600/8 to-transparent',
     },
   },
@@ -145,7 +146,7 @@ const SEGMENTS: SegmentCardDefinition[] = [
 
 const toneClasses: Record<ClientsHubTone, { badge: string; text: string }> = {
   rose: {
-    badge: 'border-rose-500/20 bg-rose-500/10 text-rose-100',
+    badge: 'border-cyan-500/20 bg-cyan-500/10 text-rose-100',
     text: 'text-rose-200',
   },
   amber: {
@@ -164,8 +165,8 @@ const toneClasses: Record<ClientsHubTone, { badge: string; text: string }> = {
 
 const summaryToneClasses: Record<ClientsHubTone, { border: string; panel: string; value: string }> = {
   rose: {
-    border: 'border-rose-500/20',
-    panel: 'bg-rose-500/10',
+    border: 'border-cyan-500/20',
+    panel: 'bg-cyan-500/10',
     value: 'text-rose-200',
   },
   amber: {
@@ -336,15 +337,15 @@ export default function ClientsHubView() {
     <PageTransition>
       <div className="relative min-h-screen overflow-hidden bg-[#040915] pb-20 text-slate-100">
         <AdvancedBackground />
-        <CyberGrid color="rgba(225,29,72,0.05)" />
+        <CyberGrid color="rgba(6,182,212,0.05)" />
 
         <div className="relative z-10 mx-auto max-w-[1760px] space-y-8 px-4 py-8 sm:px-8 lg:px-12">
           <ViewHeader
             title={(
               <div className="flex items-center gap-5">
                 <div className="relative">
-                  <div className="absolute inset-0 rounded-full bg-rose-500/20 blur-[48px]" />
-                  <div className="relative flex h-16 w-16 items-center justify-center rounded-[26px] border border-rose-500/20 bg-slate-950/90 shadow-2xl">
+                  <div className="absolute inset-0 rounded-full bg-cyan-500/20 blur-[48px]" />
+                  <div className="relative flex h-16 w-16 items-center justify-center rounded-[26px] border border-cyan-500/20 bg-slate-950/90 shadow-2xl">
                     <Sparkles className="h-8 w-8 text-rose-400" />
                   </div>
                 </div>
@@ -383,7 +384,7 @@ export default function ClientsHubView() {
               },
             ]}
             actions={(
-              <button
+              <Button variant="cyber"
                 type="button"
                 onClick={() => {
                   play(UISoundType.CLICK);
@@ -398,7 +399,7 @@ export default function ClientsHubView() {
               >
                 {refreshing ? <Loader size={15} className="animate-spin" /> : <RefreshCw size={15} />}
                 Оновити дані
-              </button>
+              </Button>
             )}
           />
 
@@ -418,7 +419,7 @@ export default function ClientsHubView() {
           </div>
 
           {feedback && (
-            <div className="rounded-[24px] border border-rose-500/20 bg-rose-500/10 px-5 py-4 text-sm leading-6 text-rose-100">
+            <div className="rounded-[24px] border border-cyan-500/20 bg-cyan-500/10 px-5 py-4 text-sm leading-6 text-rose-100">
               {feedback}
             </div>
           )}
@@ -507,7 +508,7 @@ export default function ClientsHubView() {
                       </div>
 
                       <div className="mt-6 flex items-center gap-3">
-                        <button
+                        <Button variant="cyber"
                           type="button"
                           onClick={() => {
                             play(UISoundType.CLICK);
@@ -524,9 +525,9 @@ export default function ClientsHubView() {
                         >
                           <Sparkles className="h-4 w-4" />
                           Активувати контур
-                        </button>
+                        </Button>
 
-                        <button
+                        <Button variant="cyber"
                           type="button"
                           onClick={() => {
                             play(UISoundType.CLICK);
@@ -537,7 +538,7 @@ export default function ClientsHubView() {
                           aria-label={`Відкрити сегмент ${segment.title}`}
                         >
                           <ArrowRight className="h-5 w-5" />
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   </HoloCard>
@@ -546,9 +547,9 @@ export default function ClientsHubView() {
             })}
           </motion.div>
 
-          <div className="rounded-[36px] border border-rose-500/20 bg-[linear-gradient(135deg,rgba(71,0,36,0.72),rgba(2,6,23,0.94))] p-6 shadow-[0_24px_70px_rgba(159,18,57,0.22)]">
+          <div className="rounded-[36px] border border-cyan-500/20 bg-[linear-gradient(135deg,rgba(71,0,36,0.72),rgba(2,6,23,0.94))] p-6 shadow-[0_24px_70px_rgba(159,18,57,0.22)]">
             <div className="flex items-start gap-4">
-              <div className="rounded-[24px] border border-rose-500/20 bg-rose-500/10 p-3 text-rose-200">
+              <div className="rounded-[24px] border border-cyan-500/20 bg-cyan-500/10 p-3 text-rose-200">
                 <Radio className="h-6 w-6" />
               </div>
               <div>

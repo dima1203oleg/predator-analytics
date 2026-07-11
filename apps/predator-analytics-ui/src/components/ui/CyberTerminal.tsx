@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { AnimatePresence, motion } from "framer-motion";
 import { Activity, ChevronRight, Terminal as TerminalIcon, X, Zap } from "lucide-react";
 import React, { useEffect, useState } from "react";
@@ -65,12 +66,12 @@ export const CyberTerminal: React.FC = () => {
                                     <span className="text-[8px] font-mono text-emerald-500/50">ЗАХИЩЕНИЙ_ШИФ ОВАНИЙ_КАНАЛ</span>
                                 </div>
                             </div>
-                            <button
+                            <Button variant="cyber"
                                 onClick={() => setIsOpen(false)}
                                 className="p-1.5 hover:bg-white/5 rounded-lg transition-colors text-slate-500 hover:text-white"
                             >
                                 <X size={16} />
-                            </button>
+                            </Button>
                         </div>
                         <div className="flex-1 p-4 font-mono text-[10px] overflow-y-auto space-y-1.5 custom-scrollbar bg-black/40">
                             {logs.map((log, i) => (

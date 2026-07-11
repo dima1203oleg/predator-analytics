@@ -1,4 +1,5 @@
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -136,7 +137,7 @@ export const CommandPalette: React.FC = () => {
   return (
     <>
       {/* Trigger Button */}
-      <button
+      <Button variant="cyber"
         onClick={() => setIsOpen(true)}
         title={locales.commandPalette.trigger}
         className="fixed bottom-24 left-6 z-50 flex items-center gap-3 px-4 py-3 bg-slate-900/95 hover:bg-slate-800/95 border border-white/10 hover:border-red-500/30 rounded-2xl transition-all group"
@@ -148,7 +149,7 @@ export const CommandPalette: React.FC = () => {
         <kbd className="hidden lg:inline-flex items-center gap-0.5 px-2 py-1 bg-slate-800 rounded-lg text-[9px] font-mono text-slate-500 border border-white/5">
           ⌘K
         </kbd>
-      </button>
+      </Button>
 
       {/* Modal */}
       <AnimatePresence>
@@ -179,13 +180,13 @@ export const CommandPalette: React.FC = () => {
                     placeholder={locales.commandPalette.placeholder}
                     className="flex-1 bg-transparent text-white placeholder-slate-500 outline-none text-sm"
                   />
-                  <button
+                  <Button variant="cyber"
                     onClick={() => setIsOpen(false)}
                     title={locales.commandPalette.footer.close}
                     className="p-1.5 hover:bg-white/10 rounded-lg transition-colors"
                   >
                     <X size={16} className="text-slate-500" />
-                  </button>
+                  </Button>
                 </div>
 
                 <div className="max-h-[400px] overflow-y-auto p-2">
@@ -197,7 +198,7 @@ export const CommandPalette: React.FC = () => {
                   ) : (
                     <div className="space-y-1">
                       {filteredActions.map((action, index) => (
-                        <button
+                        <Button variant="cyber"
                           key={action.id}
                           onClick={() => executeAction(action)}
                           title={action.label}
@@ -240,7 +241,7 @@ export const CommandPalette: React.FC = () => {
                               selectedIndex === index && 'text-indigo-400 translate-x-1'
                             )} />
                           </div>
-                        </button>
+                        </Button>
                       ))}
                     </div>
                   )}

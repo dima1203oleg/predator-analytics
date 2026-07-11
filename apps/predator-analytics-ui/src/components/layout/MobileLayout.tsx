@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Home, ShieldAlert, LineChart, Settings, Bell, Search, Menu } from 'lucide-react';
@@ -43,13 +44,13 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({ children }) => {
         </div>
         
         <div className="flex items-center gap-4">
-          <button className="relative p-3 text-slate-400 hover:text-white transition-colors" style={{ minHeight: '44px', minWidth: '44px', touchAction: 'manipulation' }}>
+          <Button variant="cyber" className="relative p-3 text-slate-400 hover:text-white transition-colors" style={{ minHeight: '44px', minWidth: '44px', touchAction: 'manipulation' }}>
             <Bell size={20} />
             <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-rose-500" />
-          </button>
-          <button className="p-3 text-slate-400 hover:text-white transition-colors" style={{ minHeight: '44px', minWidth: '44px', touchAction: 'manipulation' }}>
+          </Button>
+          <Button variant="cyber" className="p-3 text-slate-400 hover:text-white transition-colors" style={{ minHeight: '44px', minWidth: '44px', touchAction: 'manipulation' }}>
             <Menu size={24} />
-          </button>
+          </Button>
         </div>
       </header>
 
@@ -76,7 +77,7 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({ children }) => {
           const isActive = location.pathname.startsWith(item.path) || (item.path === '/command' && location.pathname === '/');
           
           return (
-            <button
+            <Button variant="cyber"
               key={item.path}
               onClick={() => navigate(item.path)}
               className={cn(
@@ -96,7 +97,7 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({ children }) => {
               <item.icon size={22} className={cn("mb-1 relative z-10", isActive && "drop-shadow-[0_0_8px_rgba(244,63,94,0.5)]")} strokeWidth={isActive ? 2.5 : 2} />
               <span className="text-[9px] font-black uppercase tracking-wider relative z-10">{item.label}</span>
               <span className="sr-only">{item.label}</span>
-            </button>
+            </Button>
           );
         })}
       </nav>

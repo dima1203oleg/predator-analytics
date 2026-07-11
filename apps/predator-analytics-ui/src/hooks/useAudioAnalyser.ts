@@ -27,8 +27,8 @@ export const useAudioAnalyser = () => {
 
   useEffect(() => {
     return () => {
-      if (audioContextRef.current) {
-        audioContextRef.current.close();
+      if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
+        audioContextRef.current.close().catch(() => {});
       }
     };
   }, []);

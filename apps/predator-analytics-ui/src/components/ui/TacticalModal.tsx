@@ -6,6 +6,7 @@
 - Type-on effect для тексту
 - Close X з glitch effect
  */
+import { Button } from '@/components/ui/button';
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
@@ -152,15 +153,15 @@ export const TacticalModal: React.FC<TacticalModalProps> = ({
               {(confirmLabel || cancelLabel) && (
                 <div className="px-5 pb-5 flex gap-3 justify-end">
                   {cancelLabel && (
-                    <button
+                    <Button variant="cyber"
                       onClick={onClose}
                       className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-[#8a8a8a] text-sm font-medium hover:bg-white/[0.08] hover:text-[#e8e8e8] transition-all"
                     >
                       {cancelLabel}
-                    </button>
+                    </Button>
                   )}
                   {confirmLabel && onConfirm && (
-                    <button
+                    <Button variant="cyber"
                       onClick={onConfirm}
                       className={cn(
                         "px-4 py-2 rounded-lg text-sm font-medium transition-all",
@@ -170,7 +171,7 @@ export const TacticalModal: React.FC<TacticalModalProps> = ({
                       )}
                     >
                       {confirmLabel}
-                    </button>
+                    </Button>
                   )}
                 </div>
               )}

@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -222,11 +223,11 @@ export const FinancialFlowPanel: React.FC<FinancialFlowPanelProps> = ({ flows })
                    </div>
 
                    <div className="flex items-end justify-end gap-4">
-                      <button className="flex items-center gap-4 px-10 py-4 bg-white/5 hover:bg-rose-500/10 border border-white/10 hover:border-rose-500/50 text-white text-[11px] font-black uppercase tracking-[0.3em] transition-all rounded-2xl italic group/btn overflow-hidden relative shadow-2xl">
+                      <Button variant="cyber" className="flex items-center gap-4 px-10 py-4 bg-white/5 hover:bg-rose-500/10 border border-white/10 hover:border-rose-500/50 text-white text-[11px] font-black uppercase tracking-[0.3em] transition-all rounded-2xl italic group/btn overflow-hidden relative shadow-2xl">
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000" />
                         ДЕТАЛІ_ТРАНЗАКЦІЇ
                         <ArrowUpRight size={18} className="text-rose-500 group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />
-                      </button>
+                      </Button>
                    </div>
                 </div>
 
@@ -254,7 +255,7 @@ export const FinancialFlowPanel: React.FC<FinancialFlowPanelProps> = ({ flows })
                       </div>
                     </div>
                     <div className="flex items-center gap-6 relative z-10">
-                      <button 
+                      <Button variant="cyber" 
                         onClick={(e) => {
                           e.stopPropagation();
                           SovereignAudio.playImpact();
@@ -262,7 +263,7 @@ export const FinancialFlowPanel: React.FC<FinancialFlowPanelProps> = ({ flows })
                         className="px-10 py-4 bg-rose-500 text-black text-[12px] font-black uppercase tracking-[0.3em] rounded-2xl  hover:bg-rose-400 transition-all duration-500 border-b-4 border-rose-700 active:border-b-0 active:translate-y-1 glint-elite"
                       >
                         ЗАБЛОКУВАТИ_АКТИВ
-                      </button>
+                      </Button>
                     </div>
                     
                     {/* Background ID text decoration */}

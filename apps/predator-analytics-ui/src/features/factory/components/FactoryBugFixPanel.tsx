@@ -25,15 +25,15 @@ export const FactoryBugFixPanel: React.FC<FactoryBugFixPanelProps> = ({
           <motion.div key={bug.id} layout initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className={cn(
             "p-4 rounded-xl border  flex items-center justify-between transition-all",
             bug.status === 'fixed' && "bg-emerald-950/20 border-emerald-500/20",
-            bug.status === 'fixing' && "bg-rose-950/20 border-rose-500/30 ",
-            bug.status === 'detected' && "bg-rose-950/10 border-rose-500/10",
+            bug.status === 'fixing' && "bg-rose-950/20 border-cyan-500/30 ",
+            bug.status === 'detected' && "bg-rose-950/10 border-cyan-500/10",
           )}>
             <div className="flex items-center gap-4 w-full">
               <div className={cn(
                 "w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border",
-                bug.severity === 'critical' ? "bg-rose-600/20 text-rose-400 border-rose-500/50" : 
+                bug.severity === 'critical' ? "bg-cyan-600/20 text-rose-400 border-cyan-500/50" : 
                 bug.severity === 'high' ? "bg-orange-500/20 text-orange-400 border-orange-500/50" : 
-                bug.severity === 'medium' ? "bg-rose-500/20 text-rose-400 border-rose-500/50" : "bg-slate-700/20 text-slate-400 border-slate-500/50"
+                bug.severity === 'medium' ? "bg-cyan-500/20 text-rose-400 border-cyan-500/50" : "bg-slate-700/20 text-slate-400 border-slate-500/50"
               )}>
                  {bug.severity === 'critical' || bug.severity === 'high' ? <Flame size={18} /> : <Bug size={18} />}
               </div>
@@ -41,9 +41,9 @@ export const FactoryBugFixPanel: React.FC<FactoryBugFixPanelProps> = ({
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-[10px] font-mono text-slate-500">{bug.id}</span>
                   <Badge variant={bug.severity === 'critical' ? 'destructive' : bug.severity === 'high' ? 'outline' : 'default'} className={cn("text-[9px]", 
-                      bug.severity === 'critical' && "bg-rose-600/20 text-rose-400",
+                      bug.severity === 'critical' && "bg-cyan-600/20 text-rose-400",
                       bug.severity === 'high' && "bg-orange-500/20 text-orange-400",
-                      bug.severity === 'medium' && "bg-rose-500/20 text-rose-400",
+                      bug.severity === 'medium' && "bg-cyan-500/20 text-rose-400",
                       bug.severity === 'low' && "bg-slate-700/20 text-slate-400"
                   )}>{bug.severity}</Badge>
                   <span className="text-[10px] text-slate-500 font-mono">{bug.component}</span>
@@ -68,7 +68,7 @@ export const FactoryBugFixPanel: React.FC<FactoryBugFixPanelProps> = ({
               </div>
               <div className="shrink-0">
                 {bug.status === 'detected' && (
-                  <Button variant="neon" size="sm" className="bg-rose-600/20 text-rose-300 border-rose-500/50 text-[9px] uppercase font-black" onClick={() => handleFixBug(bug.id)}>
+                  <Button variant="neon" size="sm" className="bg-cyan-600/20 text-rose-300 border-cyan-500/50 text-[9px] uppercase font-black" onClick={() => handleFixBug(bug.id)}>
                     <Wrench size={12} className="mr-1" /> Виправити
                   </Button>
                 )}

@@ -5,6 +5,7 @@
  * and focus management for WCAG 2.1 compliance.
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useEffect, useRef, useCallback, ReactNode, KeyboardEvent } from 'react';
 import { cn } from './cn';
 
@@ -277,7 +278,7 @@ export const AccessibleButton: React.FC<AccessibleButtonProps> = ({
   const isDisabled = disabled || loading;
 
   return (
-    <button
+    <Button variant="cyber"
       {...props}
       disabled={isDisabled}
       aria-disabled={isDisabled}
@@ -301,7 +302,7 @@ export const AccessibleButton: React.FC<AccessibleButtonProps> = ({
           {icon && iconPosition === 'right' && <span aria-hidden="true">{icon}</span>}
         </>
       )}
-    </button>
+    </Button>
   );
 };
 

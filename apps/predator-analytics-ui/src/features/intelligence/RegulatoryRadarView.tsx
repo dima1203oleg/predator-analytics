@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { ViewHeader } from '@/components/ViewHeader';
@@ -40,9 +41,9 @@ export default function RegulatoryRadarView() {
              ]}
              stats={[]}
              actions={
-               <button className="px-6 py-3 bg-indigo-600/10 border border-indigo-500/20 text-indigo-500 rounded-xl text-[10px] font-black uppercase tracking-widest italic hover:bg-indigo-600 hover:text-white transition-all shadow-xl">
+               <Button variant="cyber" className="px-6 py-3 bg-indigo-600/10 border border-indigo-500/20 text-indigo-500 rounded-xl text-[10px] font-black uppercase tracking-widest italic hover:bg-indigo-600 hover:text-white transition-all shadow-xl">
                  <Filter size={16} className="inline mr-2" /> ОНОВИТИ_БАЗУ_ПРАВИЛ
-               </button>
+               </Button>
              }
            />
 
@@ -56,8 +57,8 @@ export default function RegulatoryRadarView() {
                          <p className="text-xs font-bold text-slate-300">Нові вимоги щодо звітності ESG (Екологія, Соціальна політика).</p>
                          <span className="text-[9px] font-mono text-slate-500 mt-2">НАБУВАЄ ЧИННОСТІ: 01.09.2026</span>
                       </div>
-                      <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-2xl flex flex-col gap-2">
-                         <span className="text-[10px] font-black text-rose-500 uppercase tracking-widest">AML/CFT_ПОПРАВКИ</span>
+                      <div className="p-4 bg-cyan-500/10 border border-cyan-500/20 rounded-2xl flex flex-col gap-2">
+                         <span className="text-[10px] font-black text-cyan-500 uppercase tracking-widest">AML/CFT_ПОПРАВКИ</span>
                          <p className="text-xs font-bold text-slate-300">Посилений фінмоніторинг криптоактивів.</p>
                          <span className="text-[9px] font-mono text-slate-500 mt-2">НАБУВАЄ ЧИННОСТІ: 15.07.2026</span>
                       </div>

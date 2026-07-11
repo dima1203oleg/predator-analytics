@@ -1,4 +1,5 @@
 
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FileText, Globe, CheckCircle, Database, RefreshCw, FileSearch, Trash2, Upload } from 'lucide-react';
@@ -98,20 +99,20 @@ export const DataSourcesGrid: React.FC<DataSourcesGridProps> = ({
 
                         {/* Накладання дій */}
                         <div className="absolute inset-0 bg-slate-900/90 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3 z-20 ">
-                            <button
+                            <Button variant="cyber"
                                 onClick={() => onAnalyze(source)}
                                 disabled={analyzingSourceId === source.id}
                                 className="p-3 bg-cyan-600 rounded-xl text-white hover:bg-cyan-500 transition-all shadow-lg shadow-cyan-500/30 disabled:opacity-50"
                                 title="Запустити AI Аналіз"
                             >
                                 {analyzingSourceId === source.id ? <RefreshCw className="animate-spin" size={18} /> : <FileSearch size={18} />}
-                            </button>
-                            <button className="p-3 bg-slate-800 rounded-xl text-white hover:bg-slate-700 transition-all" title="Синхронізувати">
+                            </Button>
+                            <Button variant="cyber" className="p-3 bg-slate-800 rounded-xl text-white hover:bg-slate-700 transition-all" title="Синхронізувати">
                                 <RefreshCw size={18} />
-                            </button>
-                            <button className="p-3 bg-rose-500/20 text-rose-400 rounded-xl hover:bg-rose-500 hover:text-white transition-all" title="Видалити">
+                            </Button>
+                            <Button variant="cyber" className="p-3 bg-rose-500/20 text-rose-400 rounded-xl hover:bg-rose-500 hover:text-white transition-all" title="Видалити">
                                 <Trash2 size={18} />
-                            </button>
+                            </Button>
                         </div>
                     </motion.div>
                 ))

@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -162,14 +163,14 @@ export const TelegramIntelligencePanel: React.FC = () => {
                   className="w-full bg-black/40 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-slate-700 focus:outline-none focus:border-blue-500/50 transition-all text-sm font-mono"
                 />
               </div>
-              <button
+              <Button variant="cyber"
                 disabled={isAdding || !newUrl}
                 type="submit"
                 className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black text-[10px] uppercase tracking-[0.3em] rounded-2xl shadow-xl shadow-blue-900/20 transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-3"
               >
                 {isAdding ? <RefreshCw className="animate-spin" size={16} /> : <Zap size={16} className="fill-current" />}
                 {isAdding ? "Establishing Link..." : "Initialize Parser"}
-              </button>
+              </Button>
             </form>
           </div>
 
@@ -239,12 +240,12 @@ export const TelegramIntelligencePanel: React.FC = () => {
                     className="p-6 rounded-[32px] bg-white/5 border border-white/5 hover:bg-white/10 hover:border-white/10 transition-all group/card relative overflow-hidden"
                   >
                     <div className="absolute top-0 right-0 p-4 opacity-0 group-hover/card:opacity-100 transition-opacity">
-                      <button
+                      <Button variant="cyber"
                         onClick={() => handleDelete(channel.id)}
                         className="p-2 hover:bg-rose-500/20 text-slate-500 hover:text-rose-400 rounded-xl transition-all"
                       >
                         <Trash2 size={16} />
-                      </button>
+                      </Button>
                     </div>
 
                     <div className="flex items-start gap-4 mb-6">

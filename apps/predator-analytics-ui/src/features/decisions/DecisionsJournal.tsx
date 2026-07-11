@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -42,7 +43,7 @@ interface Decision {
 
 const STATUS_CFG: Record<DecisionStatus, { label: string; color: string; bg: string; border: string; icon: any }> = {
   APPROVED:  { label: 'СХВАЛЕНО',    color: '#10b981', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', icon: CheckCircle2 },
-  REJECTED:  { label: 'ВІДХИЛЕНО',   color: '#f43f5e', bg: 'bg-rose-500/10',    border: 'border-rose-500/20',    icon: XCircle },
+  REJECTED:  { label: 'ВІДХИЛЕНО',   color: '#f43f5e', bg: 'bg-cyan-500/10',    border: 'border-cyan-500/20',    icon: XCircle },
   PENDING:   { label: 'ОЧІКУВАННЯ',  color: '#f59e0b', bg: 'bg-amber-500/10',   border: 'border-amber-500/20',   icon: Clock },
   ESCALATED: { label: 'ЕСКАЛЬОВАНО', color: '#fb923c', bg: 'bg-orange-500/10',  border: 'border-orange-500/20',  icon: AlertTriangle },
 };
@@ -73,15 +74,15 @@ const DecisionRow: React.FC<{ decision: Decision }> = ({ decision }) => {
       initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
       className={cn(
         "group relative border-2 rounded-[2rem] overflow-hidden transition-all duration-500",
-        isExpanded ? "bg-black border-rose-500/30 shadow-4xl" : "bg-black/40 border-white/5 hover:border-white/10"
+        isExpanded ? "bg-black border-cyan-500/30 shadow-4xl" : "bg-black/40 border-white/5 hover:border-white/10"
       )}
     >
-      <button
+      <Button variant="cyber"
         onClick={() => setIsExpanded(!isExpanded)}
         className="w-full flex items-center gap-8 p-8 text-left"
       >
         <div className="flex-shrink-0">
-          <div className={cn("p-4 rounded-2xl border transition-all", isExpanded ? "bg-rose-500 text-black" : "bg-white/5 text-slate-500")}>
+          <div className={cn("p-4 rounded-2xl border transition-all", isExpanded ? "bg-cyan-500 text-black" : "bg-white/5 text-slate-500")}>
             {isExpanded ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
           </div>
         </div>
@@ -89,7 +90,7 @@ const DecisionRow: React.FC<{ decision: Decision }> = ({ decision }) => {
         {/* ID & CASE */}
         <div className="w-48 flex-shrink-0 space-y-1">
           <div className="flex items-center gap-2">
-            <Hash size={14} className="text-rose-500/40" />
+            <Hash size={14} className="text-cyan-500/40" />
             <span className="text-[11px] font-black font-mono text-white/60 tracking-tighter truncate">{decision.id}</span>
           </div>
           {decision.caseId && (
@@ -116,7 +117,7 @@ const DecisionRow: React.FC<{ decision: Decision }> = ({ decision }) => {
            <div className="flex items-center gap-4">
               <div className="h-1.5 flex-1 bg-white/5 rounded-full overflow-hidden">
                  <div 
-                    className={cn("h-full rounded-full transition-all duration-1000", decision.riskScore > 70 ? "bg-rose-500" : decision.riskScore > 40 ? "bg-amber-500" : "bg-emerald-500")}
+                    className={cn("h-full rounded-full transition-all duration-1000", decision.riskScore > 70 ? "bg-cyan-500" : decision.riskScore > 40 ? "bg-amber-500" : "bg-emerald-500")}
                     style={{ width: `${decision.riskScore}%` }}
                  />
               </div>
@@ -134,9 +135,9 @@ const DecisionRow: React.FC<{ decision: Decision }> = ({ decision }) => {
 
         {/* LOCK */}
         <div className="flex-shrink-0 ml-4 opacity-20 group-hover:opacity-100 transition-opacity">
-          <Lock size={18} className="text-rose-500" />
+          <Lock size={18} className="text-cyan-500" />
         </div>
-      </button>
+      </Button>
 
       <AnimatePresence>
         {isExpanded && (
@@ -147,13 +148,13 @@ const DecisionRow: React.FC<{ decision: Decision }> = ({ decision }) => {
             <div className="p-10 ml-20 space-y-8">
                <div className="grid grid-cols-2 gap-12">
                   <div className="space-y-4">
-                     <h4 className="text-[10px] font-black text-rose-500 uppercase tracking-[0.5em] italic">ОБҐ УНТУВАННЯ_ ІШЕННЯ // RATIONALE</h4>
-                     <p className="text-sm text-slate-400 font-medium leading-relaxed uppercase border-l-2 border-rose-500/20 pl-6 italic">
+                     <h4 className="text-[10px] font-black text-cyan-500 uppercase tracking-[0.5em] italic">ОБҐ УНТУВАННЯ_ ІШЕННЯ // RATIONALE</h4>
+                     <p className="text-sm text-slate-400 font-medium leading-relaxed uppercase border-l-2 border-cyan-500/20 pl-6 italic">
                         {decision.rationale}
                      </p>
                   </div>
                   <div className="space-y-4">
-                     <h4 className="text-[10px] font-black text-rose-500 uppercase tracking-[0.5em] italic">МЕТАДАНІ_ВУЗЛА // NODE_INFO</h4>
+                     <h4 className="text-[10px] font-black text-cyan-500 uppercase tracking-[0.5em] italic">МЕТАДАНІ_ВУЗЛА // NODE_INFO</h4>
                      <div className="grid grid-cols-2 gap-4">
                         <div className="p-4 bg-white/5 rounded-2xl space-y-1">
                            <p className="text-[9px] font-black text-slate-700 uppercase tracking-widest">АНАЛІТИК</p>
@@ -169,14 +170,14 @@ const DecisionRow: React.FC<{ decision: Decision }> = ({ decision }) => {
 
                <div className="flex flex-wrap gap-3">
                   {decision.tags.map(tag => (
-                    <Badge key={tag} variant="secondary" className="bg-rose-500/5 text-rose-400 border-rose-500/20 text-[9px] font-black px-3 py-1 italic uppercase tracking-tighter">
+                    <Badge key={tag} variant="secondary" className="bg-cyan-500/5 text-rose-400 border-cyan-500/20 text-[9px] font-black px-3 py-1 italic uppercase tracking-tighter">
                        #{tag}
                     </Badge>
                   ))}
                </div>
 
-               <div className="flex items-center gap-3 p-4 bg-rose-500/5 border border-rose-500/20 rounded-2xl">
-                  <Fingerprint size={16} className="text-rose-500" />
+               <div className="flex items-center gap-3 p-4 bg-cyan-500/5 border border-cyan-500/20 rounded-2xl">
+                  <Fingerprint size={16} className="text-cyan-500" />
                   <p className="text-[10px] font-black text-rose-400 uppercase tracking-widest italic">
                      ЗАПИС ЗАХИЩЕНИЙ WORM-ПРОТОКОЛОМ. ВНЕСЕННЯ ЗМІН АБО ВИДАЛЕННЯ НЕМОЖЛИВЕ (HR-16).
                   </p>
@@ -251,21 +252,21 @@ export const DecisionsJournal: React.FC = () => {
             title={
               <div className="flex items-center gap-12">
                 <div className="relative group">
-                  <div className="absolute inset-0 bg-rose-500/20 blur-[80px] rounded-full scale-150 " />
-                  <div className="relative p-7 bg-black border-2 border-rose-500/40 rounded-[3rem] shadow-4xl transform -rotate-2 hover:rotate-0 transition-all duration-700">
-                    <BookOpen size={54} className="text-rose-500 " />
+                  <div className="absolute inset-0 bg-cyan-500/20 blur-[80px] rounded-full scale-150 " />
+                  <div className="relative p-7 bg-black border-2 border-cyan-500/40 rounded-[3rem] shadow-4xl transform -rotate-2 hover:rotate-0 transition-all duration-700">
+                    <BookOpen size={54} className="text-cyan-500 " />
                   </div>
                 </div>
                 <div className="space-y-4">
                   <div className="flex items-center gap-6">
-                    <span className="bg-rose-500/10 border border-rose-500/20 text-rose-500 px-5 py-1.5 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-xl">
+                    <span className="bg-cyan-500/10 border border-cyan-500/20 text-cyan-500 px-5 py-1.5 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-xl">
                       WORM · AUDIT_TRAIL · v59.0-NEXUS
                     </span>
-                    <div className="h-px w-16 bg-rose-500/20" />
+                    <div className="h-px w-16 bg-cyan-500/20" />
                     <span className="text-[10px] font-black text-rose-900 font-mono tracking-widest uppercase italic shadow-sm">CLASSIFIED</span>
                   </div>
                   <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
-                    DECISION <span className="text-rose-500 underline decoration-rose-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">JOURNAL</span>
+                    DECISION <span className="text-cyan-500 underline decoration-rose-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">JOURNAL</span>
                   </h1>
                 </div>
               </div>
@@ -277,16 +278,16 @@ export const DecisionsJournal: React.FC = () => {
               { label: 'АКТИВИ', value: decisions.length.toString(), icon: <Target />, color: 'success' },
             ]}
             actions={
-              <button className="px-14 py-6 bg-rose-600 text-black text-[12px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all rounded-[2rem] shadow-4xl flex items-center gap-4 italic font-bold">
+              <Button variant="cyber" className="px-14 py-6 bg-cyan-600 text-black text-[12px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all rounded-[2rem] shadow-4xl flex items-center gap-4 italic font-bold">
                  <Download size={22} /> ЕКСПОРТ_АУДИТУ_v58
-              </button>
+              </Button>
             }
           />
 
           {/* ФІЛЬТрИ ELITE */}
           <div className="flex flex-wrap gap-8 items-center p-4 bg-black/60  border-2 border-white/5 rounded-[3rem] w-fit shadow-2xl">
-            <div className="flex items-center gap-6 bg-black border-2 border-white/5 px-10 py-4 rounded-2xl group focus-within:border-rose-500/40 transition-all">
-              <Search size={22} className="text-slate-700 group-hover:text-rose-500 transition-colors" />
+            <div className="flex items-center gap-6 bg-black border-2 border-white/5 px-10 py-4 rounded-2xl group focus-within:border-cyan-500/40 transition-all">
+              <Search size={22} className="text-slate-700 group-hover:text-cyan-500 transition-colors" />
               <input
                 value={search} onChange={e => setSearch(e.target.value)}
                 placeholder="ФІЛЬТ _ПОШУКУ_ID_СУБ'ЄКТ..."
@@ -317,7 +318,7 @@ export const DecisionsJournal: React.FC = () => {
                </select>
             </div>
 
-            <div className="px-8 text-[11px] font-black text-rose-500 italic font-mono tracking-widest">
+            <div className="px-8 text-[11px] font-black text-cyan-500 italic font-mono tracking-widest">
                {filtered.length} // {decisions.length}_OBJECTS
             </div>
           </div>
@@ -327,8 +328,8 @@ export const DecisionsJournal: React.FC = () => {
             {isLoading ? (
                <div className="absolute inset-0 flex items-center justify-center bg-black/20  rounded-[3rem] z-20">
                   <div className="flex flex-col items-center gap-6">
-                     <RefreshCw className="text-rose-500 animate-spin" size={64} />
-                     <span className="text-[12px] font-black text-rose-500 uppercase tracking-[0.5em]  italic">СИНХРОНІЗАЦІЯ_WORM_МАТрИЦІ...</span>
+                     <RefreshCw className="text-cyan-500 animate-spin" size={64} />
+                     <span className="text-[12px] font-black text-cyan-500 uppercase tracking-[0.5em]  italic">СИНХРОНІЗАЦІЯ_WORM_МАТрИЦІ...</span>
                   </div>
                </div>
             ) : null}
@@ -344,8 +345,8 @@ export const DecisionsJournal: React.FC = () => {
           </div>
 
           {/* FOOTER ELITE */}
-          <div className="p-8 bg-rose-500/5 border-2 border-rose-500/10 rounded-[3rem] flex items-center gap-8">
-             <div className="p-5 bg-rose-500/20 rounded-[2rem] text-rose-500 shadow-2xl">
+          <div className="p-8 bg-cyan-500/5 border-2 border-cyan-500/10 rounded-[3rem] flex items-center gap-8">
+             <div className="p-5 bg-cyan-500/20 rounded-[2rem] text-cyan-500 shadow-2xl">
                 <ShieldAlert size={32} />
              </div>
              <p className="text-xs text-rose-400/60 uppercase font-black italic tracking-widest leading-loose">

@@ -6,6 +6,7 @@
  * 2. Self-Improvement Service (Навчання моделі)
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -239,23 +240,23 @@ const SystemPanel: React.FC<{
       {/* Control buttons */}
       <div className="flex gap-2">
         {system.status === 'running' || system.status === 'active' ? (
-          <button
+          <Button variant="cyber"
             onClick={onStop}
             disabled={isLoading}
             className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 rounded-xl text-red-400 transition-all disabled:opacity-50"
           >
             <Square size={16} />
             Зупинити
-          </button>
+          </Button>
         ) : (
-          <button
+          <Button variant="cyber"
             onClick={onStart}
             disabled={isLoading}
             className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 ${isCode ? 'bg-cyan-500/20 hover:bg-cyan-500/30 border-cyan-500/30 text-cyan-400' : 'bg-purple-500/20 hover:bg-purple-500/30 border-purple-500/30 text-purple-400'} border rounded-xl transition-all disabled:opacity-50`}
           >
             {isLoading ? <RefreshCw size={16} className="animate-spin" /> : <Play size={16} />}
             Запустити
-          </button>
+          </Button>
         )}
       </div>
     </motion.div>
@@ -392,13 +393,13 @@ export const UnifiedAutonomyDashboard: React.FC = () => {
           </div>
         </div>
 
-        <button
+        <Button variant="cyber"
           onClick={fetchMetrics}
           className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-gray-300 transition-all"
         >
           <RefreshCw size={16} />
           Оновити
-        </button>
+        </Button>
       </div>
 
       {/* Summary cards */}

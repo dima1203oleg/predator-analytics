@@ -9,6 +9,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactECharts from '@/components/ECharts';
@@ -197,11 +198,11 @@ const HolographicAccessGate: React.FC = () => {
             </div>
 
 
-            <button className="px-20 py-8 bg-[#E11D48] hover:brightness-110 text-white text-lg font-black tracking-[0.3em] uppercase rounded-[40px] shadow-2xl shadow-[#E11D48]/40 border border-[#E11D48]/30 transition-all hover:scale-105 active:scale-95 group italic">
+            <Button variant="cyber" className="px-20 py-8 bg-[#E11D48] hover:brightness-110 text-white text-lg font-black tracking-[0.3em] uppercase rounded-[40px] shadow-2xl shadow-[#E11D48]/40 border border-[#E11D48]/30 transition-all hover:scale-105 active:scale-95 group italic">
               <span className="flex items-center gap-4">
                 АКТИВУВАТИ ПОВНИЙ ДОСТУП <ArrowRight className="group-hover:translate-x-2 transition-transform" />
               </span>
-            </button>
+            </Button>
             <p className="text-[10px] font-mono text-slate-700 uppercase tracking-[0.4em]">ENCRYPTED_AUTH_v61.0-ELITE | SOVEREIGN_POWER</p>
           </div>
         </div>
@@ -305,14 +306,14 @@ const PremiumHubView: React.FC = () => {
                 title={
                     <div className="flex items-center gap-8">
                         <div className="relative group">
-                            <div className={cn("absolute inset-0 blur-[50px] rounded-full scale-150 ", persona === 'INQUISITOR' ? "bg-rose-500/20" : "bg-[#E11D48]/20")} />
+                            <div className={cn("absolute inset-0 blur-[50px] rounded-full scale-150 ", persona === 'INQUISITOR' ? "bg-cyan-500/20" : "bg-[#E11D48]/20")} />
                             <div className="relative w-16 h-16 bg-black border border-white/10 rounded-2xl flex items-center justify-center panel-3d shadow-2xl">
                                 <currentConfig.icon size={32} className={cn(persona === 'INQUISITOR' ? "text-rose-400" : "text-[#E11D48]", "")} />
                             </div>
                         </div>
                         <div>
                             <h1 className="text-4xl font-black text-white tracking-widest uppercase leading-none italic skew-x-[-4deg]">
-                               ПРЕМІУМ <span className={cn(persona === 'INQUISITOR' ? "text-rose-500" : "text-[#E11D48]")}>{persona}</span> ХАБ
+                               ПРЕМІУМ <span className={cn(persona === 'INQUISITOR' ? "text-cyan-500" : "text-[#E11D48]")}>{persona}</span> ХАБ
                             </h1>
                             <p className="text-[10px] font-mono font-black text-slate-500 uppercase tracking-[0.6em] mt-3 flex items-center gap-3">
                                 <Gem size={12} className="text-[#E11D48] hover:scale-125 transition-transform" /> 
@@ -364,7 +365,7 @@ const PremiumHubView: React.FC = () => {
                         { id: 'reports', label: 'ЗВІТИ', icon: FileText },
                         { id: 'builder', label: 'КОНСТРУКТОР', icon: Settings },
                     ].map(tab => (
-                        <button
+                        <Button variant="cyber"
                             key={tab.id}
                             onClick={() => { play(UISoundType.CLICK); setActiveTab(tab.id as any); }} onMouseEnter={() => play(UISoundType.HOVER)}
                             className={cn(
@@ -376,14 +377,14 @@ const PremiumHubView: React.FC = () => {
                         >
                             <tab.icon size={14} />
                             {tab.label}
-                        </button>
+                        </Button>
                     ))}
-                    <button 
+                    <Button variant="cyber" 
                         onClick={() => { play(UISoundType.CLICK); setIsSearchOpen(true); }} onMouseEnter={() => play(UISoundType.HOVER)}
                         className="p-3.5 rounded-[22px] bg-white/5 text-slate-500 hover:text-white transition-all border border-transparent hover:border-white/10"
                     >
                         <Search size={16} />
-                    </button>
+                    </Button>
                 </div>
             </div>
 
@@ -414,7 +415,7 @@ const PremiumHubView: React.FC = () => {
                                         <currentConfig.icon size={280} />
                                     </div>
                                     <div className="relative z-10 space-y-6">
-                                        <div className={cn("text-xs font-mono font-black uppercase tracking-[0.4em]", persona === 'INQUISITOR' ? "text-rose-500" : "text-[#E11D48]")}>
+                                        <div className={cn("text-xs font-mono font-black uppercase tracking-[0.4em]", persona === 'INQUISITOR' ? "text-cyan-500" : "text-[#E11D48]")}>
                                             {currentConfig.title}
                                         </div>
                                         <h2 className="text-4xl font-black text-white tracking-tight uppercase leading-tight italic">
@@ -435,7 +436,7 @@ const PremiumHubView: React.FC = () => {
                                             whileHover={{ scale: 1.02 }}
                                             className="p-6 bg-black/40 border border-white/5 rounded-[32px] group hover:border-[#E11D48]/20 transition-all cursor-pointer"
                                         >
-                                            <div className={cn("p-4 rounded-2xl mb-4 w-fit", persona === 'INQUISITOR' ? "bg-rose-500/10" : "bg-[#E11D48]/10")}>
+                                            <div className={cn("p-4 rounded-2xl mb-4 w-fit", persona === 'INQUISITOR' ? "bg-cyan-500/10" : "bg-[#E11D48]/10")}>
                                                 <feature.icon className={cn(persona === 'INQUISITOR' ? "text-rose-400" : "text-[#E11D48]", "group-hover:scale-110 transition-transform")} size={24} />
                                             </div>
                                             <h4 className="text-[10px] font-black text-white uppercase tracking-widest mb-2">{feature.label}</h4>
@@ -447,7 +448,7 @@ const PremiumHubView: React.FC = () => {
                                 {/* Neural Insights Feed */}
                                 <div className="p-8 bg-black/40 border border-white/5 rounded-[40px] space-y-6">
                                     <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-4">
-                                        <div className={cn("w-2 h-2 rounded-full ", persona === 'INQUISITOR' ? "bg-rose-500" : "bg-[#E11D48]")} />
+                                        <div className={cn("w-2 h-2 rounded-full ", persona === 'INQUISITOR' ? "bg-cyan-500" : "bg-[#E11D48]")} />
                                         НЕЙРОННІ ІНСАЙДИ (24h)
                                     </h3>
                                     <div className="space-y-4">
@@ -520,8 +521,8 @@ const PremiumHubView: React.FC = () => {
                     {['modeling', 'reports', 'builder'].includes(activeTab) && (
                         <div className="flex flex-col items-center justify-center py-40 gap-12 bg-slate-900/20 border border-dashed border-[#E11D48]/10 rounded-[60px]">
                             <div className="relative">
-                                <div className={cn("absolute inset-0 blur-[100px] rounded-full", persona === 'INQUISITOR' ? "bg-rose-500/20" : "bg-[#E11D48]/20")} />
-                                <Cpu size={80} className={cn(persona === 'INQUISITOR' ? "text-rose-500" : "text-[#E11D48]", "")} />
+                                <div className={cn("absolute inset-0 blur-[100px] rounded-full", persona === 'INQUISITOR' ? "bg-cyan-500/20" : "bg-[#E11D48]/20")} />
+                                <Cpu size={80} className={cn(persona === 'INQUISITOR' ? "text-cyan-500" : "text-[#E11D48]", "")} />
                             </div>
                             <div className="text-center space-y-4">
                                 <h3 className="text-2xl font-black text-white uppercase tracking-[0.4em] italic">МОДУЛЬ_В_ОБРОБЦІ</h3>

@@ -9,6 +9,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -142,9 +143,9 @@ export default function PriceComparisonPremium() {
               ]}
               actions={
                 <div className="flex gap-4">
-                   <button className="px-10 py-5 bg-[#D4AF37] text-black rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:brightness-110 shadow-4xl transition-all flex items-center gap-4">
+                   <Button variant="cyber" className="px-10 py-5 bg-[#D4AF37] text-black rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:brightness-110 shadow-4xl transition-all flex items-center gap-4">
                       <Sparkles size={20} /> AI_ПОШУК_ЦІН
-                   </button>
+                   </Button>
                 </div>
               }
             />
@@ -159,8 +160,8 @@ export default function PriceComparisonPremium() {
                    className="w-full bg-white/[0.01] border-2 border-white/[0.04] p-5 pl-18 rounded-2xl text-xl font-black text-white italic tracking-tighter focus:border-[#D4AF37]/40 outline-none transition-all placeholder:text-slate-800"
                  />
               </div>
-              <button className="p-5 bg-white/[0.04] border border-white/5 rounded-2xl text-slate-400 hover:text-white transition-all shadow-xl"><Filter size={24} /></button>
-              <button className="p-5 bg-white/[0.04] border border-white/5 rounded-2xl text-slate-400 hover:text-white transition-all shadow-xl"><Download size={24} /></button>
+              <Button variant="cyber" className="p-5 bg-white/[0.04] border border-white/5 rounded-2xl text-slate-400 hover:text-white transition-all shadow-xl"><Filter size={24} /></Button>
+              <Button variant="cyber" className="p-5 bg-white/[0.04] border border-white/5 rounded-2xl text-slate-400 hover:text-white transition-all shadow-xl"><Download size={24} /></Button>
            </section>
 
            {/* PRODUCTS GRID */}
@@ -194,9 +195,9 @@ export default function PriceComparisonPremium() {
                             <p className="text-3xl font-black italic font-mono tracking-tighter leading-none">-{(((Math.max(...product.offers.map(o => o.price)) - Math.min(...product.offers.map(o => o.price))) / Math.max(...product.offers.map(o => o.price))) * 100).toFixed(0)}%</p>
                             <p className="text-[9px] font-black uppercase tracking-widest leading-none mt-1">ОПТІМ_DEAL</p>
                          </div>
-                         <button onClick={() => setExpandedProduct(expandedProduct === product.id ? null : product.id)} className="p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-all border border-white/5">
+                         <Button variant="cyber" onClick={() => setExpandedProduct(expandedProduct === product.id ? null : product.id)} className="p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-all border border-white/5">
                             {expandedProduct === product.id ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
-                         </button>
+                         </Button>
                       </div>
                    </div>
 
@@ -235,9 +236,9 @@ export default function PriceComparisonPremium() {
                                             {Math.abs(((offer.price - product.avgPrice) / product.avgPrice) * 100).toFixed(1)}% ВІД СЕ ЕДНЬОЇ
                                          </p>
                                       </div>
-                                      <button className="p-6 bg-[#D4AF37] text-black rounded-2xl hover:brightness-110 shadow-2xl transition-all">
+                                      <Button variant="cyber" className="p-6 bg-[#D4AF37] text-black rounded-2xl hover:brightness-110 shadow-2xl transition-all">
                                          <ArrowRight size={24} />
-                                      </button>
+                                      </Button>
                                    </div>
                                 </div>
                               ))}

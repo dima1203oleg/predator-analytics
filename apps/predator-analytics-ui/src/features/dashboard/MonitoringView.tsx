@@ -5,6 +5,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { Button } from '@/components/ui/button';
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import { ThermalCard } from '@/components/polish/ThermalCard';
 import { StatusLed } from '@/components/ui/StatusLed';
@@ -72,7 +73,7 @@ const scaleIn = {
 const statusTones = {
   emerald: { bg: 'bg-emerald-500/10 border-emerald-500/20', text: 'text-emerald-400', glow: '' },
   amber: { bg: 'bg-amber-500/10 border-amber-500/20', text: 'text-amber-400', glow: '' },
-  rose: { bg: 'bg-rose-500/10 border-rose-500/20', text: 'text-rose-400', glow: '' },
+  rose: { bg: 'bg-cyan-500/10 border-cyan-500/20', text: 'text-rose-400', glow: '' },
   sky: { bg: 'bg-sky-500/10 border-sky-500/20', text: 'text-sky-400', glow: '' },
   slate: { bg: 'bg-slate-500/10 border-slate-500/20', text: 'text-slate-400', glow: 'shadow-none' },
 } as const;
@@ -122,32 +123,32 @@ export default function MonitoringView() {
           { label: 'СТАТУС', value: cluster.statusLabel.toUpperCase(), color: cluster.statusLabel === 'Справно' ? 'emerald' : 'rose' },
         ]}
         actions={
-          <button 
+          <Button variant="cyber" 
             onClick={refresh}
             disabled={isLoading}
             className="group flex h-14 w-14 items-center justify-center rounded-2xl border border-[#e11d48]/20 bg-[#e11d48]/5 text-[#e11d48] transition-all hover:bg-[#e11d48]/10"
           >
             <RefreshCcw className={cn("h-6 w-6 transition-transform", isLoading && "animate-spin")} />
-          </button>
+          </Button>
         }
       />
 
       {/* Tactical Tabs */}
         <div className="relative z-10 mt-12 flex flex-wrap gap-2">
           {tabs.map((tab) => (
-            <button
+            <Button variant="cyber"
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={cn(
                 "flex items-center gap-3 rounded-2xl px-6 py-4 text-[11px] font-black uppercase tracking-widest transition-all italic border",
                 activeTab === tab.id 
-                  ? "bg-rose-500/15 border-rose-500/40 text-white " 
+                  ? "bg-cyan-500/15 border-cyan-500/40 text-white " 
                   : "bg-white/[0.03] border-white/5 text-slate-500 hover:bg-white/[0.05] hover:text-slate-300"
               )}
             >
-              <tab.icon className={cn("h-4 w-4", activeTab === tab.id ? "text-rose-500" : "text-slate-600")} />
+              <tab.icon className={cn("h-4 w-4", activeTab === tab.id ? "text-cyan-500" : "text-slate-600")} />
               {tab.label}
-            </button>
+            </Button>
           ))}
         </div>
 
@@ -170,7 +171,7 @@ export default function MonitoringView() {
               <div className="space-y-6">
                 <div className="flex items-center justify-between px-4">
                    <h2 className="font-display text-lg font-extrabold text-[#e8e8e8] uppercase tracking-tight">ПРОДУКТИВНІСТЬ <span className="text-[#e11d48]">ЯДРА</span></h2>
-                   <Activity className="h-5 w-5 text-rose-500 " />
+                   <Activity className="h-5 w-5 text-cyan-500 " />
                 </div>
                 <div className="grid gap-6 sm:grid-cols-2">
                    {[
@@ -234,13 +235,13 @@ export default function MonitoringView() {
             <div className="space-y-10">
               <div className="flex items-center justify-between px-4">
                 <div>
-                   <h2 className="text-2xl font-black text-white italic uppercase tracking-tighter">ТОПОЛОГІЯ <span className="text-rose-500">КЛАСТЕРА</span></h2>
+                   <h2 className="text-2xl font-black text-white italic uppercase tracking-tighter">ТОПОЛОГІЯ <span className="text-cyan-500">КЛАСТЕРА</span></h2>
                    <p className="text-[10px] font-bold text-slate-600 uppercase tracking-[0.4em] italic mt-1">ВІЗУАЛІЗАЦІЯ ОБЧИСЛЮВАЛЬНИХ ВУЗЛІВ</p>
                 </div>
                 <div className="flex items-center gap-4">
                    <div className="text-right">
                       <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest italic">ВУЗЛИ / ПОДИ</p>
-                      <p className="text-sm font-black text-rose-500 italic">{cluster.nodeCount ?? 0} / {cluster.podCount ?? 0}</p>
+                      <p className="text-sm font-black text-cyan-500 italic">{cluster.nodeCount ?? 0} / {cluster.podCount ?? 0}</p>
                    </div>
                 </div>
               </div>
@@ -252,13 +253,13 @@ export default function MonitoringView() {
                     <motion.div
                       key={node.id}
                       variants={scaleIn}
-                      className="group relative rounded-3xl border border-white/5 bg-black/40  p-8 transition-all hover:border-rose-500/30 shadow-xl overflow-hidden"
+                      className="group relative rounded-3xl border border-white/5 bg-black/40  p-8 transition-all hover:border-cyan-500/30 shadow-xl overflow-hidden"
                       whileHover={{ y: -5 }}
                     >
                       <div className="absolute top-0 right-0 p-4">
                          <div className={cn("h-3 w-3 rounded-full ", tone.bg.replace('/10', ''), tone.glow)} />
                       </div>
-                      <Server className="h-8 w-8 text-slate-700 mb-6 group-hover:text-rose-500 transition-colors" />
+                      <Server className="h-8 w-8 text-slate-700 mb-6 group-hover:text-cyan-500 transition-colors" />
                       <h3 className="text-sm font-black text-white uppercase italic tracking-tight truncate">{node.name}</h3>
                       <div className={cn("text-[10px] font-black uppercase tracking-widest italic mt-1", tone.text)}>{node.statusLabel}</div>
                       
@@ -272,7 +273,7 @@ export default function MonitoringView() {
                                <motion.div 
                                  initial={{ width: 0 }}
                                  animate={{ width: `${node.cpu_percent}%` }}
-                                 className="h-full bg-rose-600 shadow-[0_0_10px_#f43f5e]"
+                                 className="h-full bg-cyan-600 shadow-[0_0_10px_#f43f5e]"
                                />
                             </div>
                          </div>
@@ -305,18 +306,18 @@ export default function MonitoringView() {
           {activeTab === 'logs' && (
             <div className="space-y-8">
               <div className="flex items-center justify-between px-4">
-                 <h2 className="text-2xl font-black text-white italic uppercase tracking-tighter">СИСТЕМНИЙ <span className="text-rose-500">ЖУРНАЛ</span></h2>
-                 <Terminal className="h-5 w-5 text-rose-500" />
+                 <h2 className="text-2xl font-black text-white italic uppercase tracking-tighter">СИСТЕМНИЙ <span className="text-cyan-500">ЖУРНАЛ</span></h2>
+                 <Terminal className="h-5 w-5 text-cyan-500" />
               </div>
               <div className="rounded-[2.5rem] border border-white/5 bg-black/40  p-8 shadow-2xl overflow-hidden relative">
-                <div className="absolute top-0 right-0 w-1 h-full bg-rose-600/30" />
+                <div className="absolute top-0 right-0 w-1 h-full bg-cyan-600/30" />
                 <div className="max-h-[600px] overflow-y-auto pr-4 space-y-3 font-mono no-scrollbar">
                   {logs.map((log, i) => (
                     <div key={i} className="group flex items-start gap-6 rounded-xl bg-white/[0.02] border border-white/5 p-4 hover:bg-white/[0.04] transition-all">
                       <span className="text-[10px] text-slate-600 shrink-0 font-black">{log.timestampLabel}</span>
                       <span className={cn(
                         "text-[10px] font-black shrink-0 w-20 px-2 py-0.5 rounded italic",
-                        log.level === 'ERROR' || log.level === 'CRITICAL' ? 'bg-rose-500/10 text-rose-500' : 
+                        log.level === 'ERROR' || log.level === 'CRITICAL' ? 'bg-cyan-500/10 text-cyan-500' : 
                         log.level === 'WARNING' ? 'bg-amber-500/10 text-amber-500' : 'bg-emerald-500/10 text-emerald-500'
                       )}>
                         {log.level}
@@ -337,8 +338,8 @@ export default function MonitoringView() {
           {activeTab === 'pipelines' && (
             <div className="space-y-8">
               <div className="flex items-center justify-between px-4">
-                 <h2 className="text-2xl font-black text-white italic uppercase tracking-tighter">ПОТОКИ <span className="text-rose-500">ДАНИХ</span></h2>
-                 <Waves className="h-5 w-5 text-rose-500 " />
+                 <h2 className="text-2xl font-black text-white italic uppercase tracking-tighter">ПОТОКИ <span className="text-cyan-500">ДАНИХ</span></h2>
+                 <Waves className="h-5 w-5 text-cyan-500 " />
               </div>
               <div className="grid gap-6">
                  {pipelines.length === 0 ? (
@@ -348,7 +349,7 @@ export default function MonitoringView() {
                  ) : pipelines.map((job) => {
                    const tone = statusTones[job.tone] || statusTones.slate;
                    return (
-                     <div key={job.id} className="group relative rounded-3xl border border-white/5 bg-black/40  p-8 transition-all hover:border-rose-500/30 overflow-hidden shadow-xl">
+                     <div key={job.id} className="group relative rounded-3xl border border-white/5 bg-black/40  p-8 transition-all hover:border-cyan-500/30 overflow-hidden shadow-xl">
                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                          <div className="flex items-center gap-6">
                             <div className={cn("p-4 rounded-2xl border", tone.bg)}>

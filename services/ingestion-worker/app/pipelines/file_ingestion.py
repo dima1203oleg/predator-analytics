@@ -47,6 +47,7 @@ class IngestionStats:
     duplicate_rows: int = 0
     error_rows: int = 0
     warnings: int = 0
+    warning_messages: list[str] = field(default_factory=list)
     current_stage: str = "init"
     started_at: datetime = field(default_factory=lambda: datetime.now(UTC))
     completed_at: datetime | None = None
@@ -386,38 +387,49 @@ class FileIngestionPipeline:
             raise
 
     async def _parse_excel(self, file_ext: str, content: bytes) -> AsyncGenerator[dict[str, Any], None]:
-        """Парсить Excel контент — УСІХ аркушів (multi-sheet)."""
+        """Парсить Excel контент порядово (streaming) для уникнення OOM (multi-sheet)."""
+        import openpyxl
         try:
-            logger.info(f"Excel content length: {len(content)} bytes")
-            xls = pd.ExcelFile(io.BytesIO(content), engine="openpyxl")
-            sheet_names = xls.sheet_names
-            logger.info(
-                f"Excel має {len(sheet_names)} аркушів: {sheet_names}"
-            )
+            logger.info(f"Excel content length: {len(content)} bytes. Using openpyxl read_only stream.")
+            # Використовуємо read_only=True для потокового читання великих файлів (200MB+)
+            wb = openpyxl.load_workbook(filename=io.BytesIO(content), read_only=True, data_only=True)
+            sheet_names = wb.sheetnames
+            logger.info(f"Excel має {len(sheet_names)} аркушів: {sheet_names}")
 
             for sheet_idx, sheet_name in enumerate(sheet_names):
-                df = pd.read_excel(xls, sheet_name=sheet_name)
-                logger.info(
-                    f"Аркуш '{sheet_name}' ({sheet_idx + 1}/{len(sheet_names)}): "
-                    f"{len(df)} рядків, {len(df.columns)} колонок"
-                )
+                ws = wb[sheet_name]
+                logger.info(f"Аркуш '{sheet_name}' ({sheet_idx + 1}/{len(sheet_names)}): початок стрімінгу")
 
-                if df.empty:
+                rows_iter = ws.iter_rows(values_only=True)
+                
+                # Читаємо хедери
+                try:
+                    headers = next(rows_iter)
+                except StopIteration:
                     logger.warning(f"Аркуш '{sheet_name}' порожній, пропускаємо")
+                    continue
+                
+                if not headers:
                     continue
 
                 # Конвертуємо назви колонок
-                df.columns = [
-                    self.COLUMN_MAPPING.get(str(c).lower().strip(), str(c).lower().strip())
-                    for c in df.columns
+                columns = [
+                    self.COLUMN_MAPPING.get(str(c).lower().strip(), str(c).lower().strip()) if c else f"col_{i}"
+                    for i, c in enumerate(headers)
                 ]
 
                 # Обробка рядків
-                for _, row in df.iterrows():
-                    record = row.to_dict()
-                    # Фільтруємо NaN
-                    record = {k: (None if pd.isna(v) else v) for k, v in record.items()}
+                row_count = 0
+                for row_values in rows_iter:
+                    # Якщо рядок повністю порожній, можемо пропустити
+                    if not any(row_values):
+                        continue
+                        
+                    record = dict(zip(columns, row_values))
+                    # Фільтруємо None
+                    record = {k: v for k, v in record.items() if v is not None}
 
+                    row_count += 1
                     self.stats.total_rows += 1
 
                     # Валідація та обробка аналогічно CSV
@@ -476,15 +488,25 @@ class FileIngestionPipeline:
             extra={"job_id": self.job_id},
         )
 
-        # Паралельний запис у всі сховища (5 із 8; Redis/Kafka/MinIO окремо)
+        # 1. SQL, Neo4j, ClickHouse - Load
+        self.stats.current_stage = "processing"
+        await self._update_progress()
         await asyncio.gather(
             self._store_postgres(batch),
             self._store_neo4j(batch),
-            self._store_opensearch(batch),
             self._store_clickhouse(batch),
-            self._store_qdrant(batch),
             return_exceptions=True,
         )
+
+        # 2. OpenSearch - Indexing
+        self.stats.current_stage = "indexing"
+        await self._update_progress()
+        await self._store_opensearch(batch)
+
+        # 3. Qdrant - Vectorizing
+        self.stats.current_stage = "vectorizing"
+        await self._update_progress()
+        await self._store_qdrant(batch)
 
         self.stats.processed_rows += len(batch)
 
@@ -507,37 +529,79 @@ class FileIngestionPipeline:
 
             await self.postgres_sink.upsert_companies(list(companies.values()))
             await self.postgres_sink.insert_declarations(batch)
+            await self.postgres_sink.emit_pipeline_event(
+                self.tenant_id, self.job_id, "postgres", "success", len(batch)
+            )
         except Exception as e:
             logger.error(f"Failed to store in PostgreSQL: {e}")
+            await self.postgres_sink.emit_pipeline_event(
+                self.tenant_id, self.job_id, "postgres", "failed", 0
+            )
 
     async def _store_neo4j(self, batch: list[dict[str, Any]]) -> None:
         """Зберігає батч у Neo4j."""
         try:
             for record in batch:
-                await self.neo4j_sink.upsert_company(record)
+                warning = await self.neo4j_sink.upsert_company(record)
+                if warning and warning not in self.stats.warning_messages:
+                    self.stats.warning_messages.append(warning)
+                    self.stats.warnings += 1
+
+            await self.postgres_sink.emit_pipeline_event(
+                self.tenant_id, self.job_id, "neo4j", "success", len(batch)
+            )
         except Exception as e:
             logger.error(f"Failed to store in Neo4j: {e}")
+            await self.postgres_sink.emit_pipeline_event(
+                self.tenant_id, self.job_id, "neo4j", "failed", 0
+            )
 
     async def _store_opensearch(self, batch: list[dict[str, Any]]) -> None:
         """Зберігає батч у OpenSearch."""
         try:
-            await self.opensearch_sink.bulk_index(batch, self.tenant_id)
+            warning = await self.opensearch_sink.bulk_index(batch, self.tenant_id)
+            if warning and warning not in self.stats.warning_messages:
+                self.stats.warning_messages.append(warning)
+                self.stats.warnings += 1
+
+            await self.postgres_sink.emit_pipeline_event(
+                self.tenant_id, self.job_id, "opensearch", "success", len(batch)
+            )
         except Exception as e:
             logger.error(f"Failed to store in OpenSearch: {e}")
+            await self.postgres_sink.emit_pipeline_event(
+                self.tenant_id, self.job_id, "opensearch", "failed", 0
+            )
 
     async def _store_clickhouse(self, batch: list[dict[str, Any]]) -> None:
         """Зберігає батч у ClickHouse для аналітики."""
         try:
             await self.clickhouse_sink.insert_declarations(batch)
+            await self.postgres_sink.emit_pipeline_event(
+                self.tenant_id, self.job_id, "clickhouse", "success", len(batch)
+            )
         except Exception as e:
             logger.error(f"Failed to store in ClickHouse: {e}")
+            await self.postgres_sink.emit_pipeline_event(
+                self.tenant_id, self.job_id, "clickhouse", "failed", 0
+            )
 
     async def _store_qdrant(self, batch: list[dict[str, Any]]) -> None:
         """Зберігає батч у Qdrant (векторне сховище)."""
         try:
-            await self.qdrant_sink.upsert_vectors(batch, self.tenant_id)
+            warning = await self.qdrant_sink.upsert_vectors(batch, self.tenant_id)
+            if warning and warning not in self.stats.warning_messages:
+                self.stats.warning_messages.append(warning)
+                self.stats.warnings += 1
+
+            await self.postgres_sink.emit_pipeline_event(
+                self.tenant_id, self.job_id, "qdrant", "success", len(batch)
+            )
         except Exception as e:
             logger.error(f"Failed to store in Qdrant: {e}")
+            await self.postgres_sink.emit_pipeline_event(
+                self.tenant_id, self.job_id, "qdrant", "failed", 0
+            )
 
     async def _save_quarantine(self) -> None:
         """Зберігає карантинні записи."""
@@ -565,6 +629,7 @@ class FileIngestionPipeline:
                 "valid_rows": self.stats.valid_rows,
                 "quarantined_rows": self.stats.quarantined_rows,
                 "duplicate_rows": self.stats.duplicate_rows,
+                "warning_messages": self.stats.warning_messages,
                 "progress_pct": (
                     int(self.stats.processed_rows / max(self.stats.total_rows, 1) * 100)
                     if self.stats.total_rows > 0

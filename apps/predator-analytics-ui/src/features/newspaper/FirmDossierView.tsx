@@ -8,6 +8,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { Button } from '@/components/ui/button';
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState, useEffect } from 'react';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
@@ -125,12 +126,12 @@ export default function FirmDossierView() {
               ]}
              actions={
                <div className="flex gap-4">
-                  <button onClick={() => { play(UISoundType.CLICK); setResult(null); setQuery('');}} onMouseEnter={() => play(UISoundType.HOVER)} className="p-5 bg-black border border-white/[0.04] rounded-2xl text-slate-400 hover:text-white transition-all shadow-xl">
+                  <Button variant="cyber" onClick={() => { play(UISoundType.CLICK); setResult(null); setQuery('');}} onMouseEnter={() => play(UISoundType.HOVER)} className="p-5 bg-black border border-white/[0.04] rounded-2xl text-slate-400 hover:text-white transition-all shadow-xl">
                      <RefreshCcw size={24} />
-                  </button>
-                  <button onClick={() => { play(UISoundType.CLICK); handleSearch(); }} onMouseEnter={() => play(UISoundType.HOVER)} disabled={isSearching} className="px-8 py-5 bg-sky-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-sky-600 shadow-2xl transition-all flex items-center gap-4 disabled:opacity-50 disabled:cursor-not-allowed">
+                  </Button>
+                  <Button variant="cyber" onClick={() => { play(UISoundType.CLICK); handleSearch(); }} onMouseEnter={() => play(UISoundType.HOVER)} disabled={isSearching} className="px-8 py-5 bg-sky-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-sky-600 shadow-2xl transition-all flex items-center gap-4 disabled:opacity-50 disabled:cursor-not-allowed">
                      <Radar size={18} /> СКАНУВАТИ_РЕЄСТРИ
-                  </button>
+                  </Button>
                </div>
              }
            />
@@ -157,12 +158,12 @@ export default function FirmDossierView() {
                          />
                       </div>
                    </div>
-                   <button 
+                   <Button variant="cyber" 
                       disabled={isSearching}
                       className="w-full py-8 bg-sky-700 text-white rounded-2xl text-[12px] font-black uppercase tracking-[0.4em] italic hover:bg-sky-600 transition-all shadow-3xl flex items-center justify-center gap-6"
                    >
                       <Zap size={28} /> ІНІЦІЮВАТИ_ПОВНИЙ_СПЕКТ _АНАЛІЗУ
-                   </button>
+                   </Button>
                 </form>
              </motion.section>
            )}
@@ -222,15 +223,15 @@ export default function FirmDossierView() {
                       </div>
 
                       <div className="flex flex-wrap items-center gap-6 pt-10 border-t border-white/[0.04] relative z-10">
-                         <button className="px-10 py-5 bg-amber-700 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] italic hover:bg-amber-600 shadow-2xl flex items-center gap-4">
+                         <Button variant="cyber" className="px-10 py-5 bg-amber-700 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] italic hover:bg-amber-600 shadow-2xl flex items-center gap-4">
                             <Lock size={20} /> БЛОКУВАТИ_В_МИТНОМУ_КОНТУ І
-                         </button>
-                         <button className="px-10 py-5 bg-white/5 border border-white/10 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] italic hover:bg-white/10 transition-all flex items-center gap-4">
+                         </Button>
+                         <Button variant="cyber" className="px-10 py-5 bg-white/5 border border-white/10 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] italic hover:bg-white/10 transition-all flex items-center gap-4">
                             <Share2 size={20} /> ГРАФ_ЗВ'ЯЗКІВ
-                         </button>
-                         <button className="px-10 py-5 bg-white/5 border border-white/10 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] italic hover:bg-white/10 transition-all flex items-center gap-4">
+                         </Button>
+                         <Button variant="cyber" className="px-10 py-5 bg-white/5 border border-white/10 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] italic hover:bg-white/10 transition-all flex items-center gap-4">
                             <FileText size={20} /> PDF_ЗВІТ
-                         </button>
+                         </Button>
                       </div>
                    </section>
 
@@ -294,9 +295,9 @@ export default function FirmDossierView() {
                             </div>
                          </div>
                       </div>
-                      <button className="w-full py-6 bg-sky-700/10 border border-sky-700/40 text-sky-500 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-sky-600 hover:text-white transition-all shadow-3xl">
+                      <Button variant="cyber" className="w-full py-6 bg-sky-700/10 border border-sky-700/40 text-sky-500 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-sky-600 hover:text-white transition-all shadow-3xl">
                          РОЗГОРНУТИ_ЖУ НАЛ_МИТНИЦІ
-                      </button>
+                      </Button>
                    </section>
 
                    <section className="p-10 rounded-[3.5rem] bg-black border border-white/[0.04] shadow-3xl space-y-8 relative overflow-hidden">

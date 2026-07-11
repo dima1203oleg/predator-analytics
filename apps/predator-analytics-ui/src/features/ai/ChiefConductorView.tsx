@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -29,7 +30,7 @@ const getStatusColor = (status: string) => {
   switch (status) {
     case 'in_progress': return 'text-yellow-500';
     case 'completed': return 'text-emerald-500';
-    case 'failed': return 'text-rose-500';
+    case 'failed': return 'text-cyan-500';
     case 'pending': return 'text-slate-400';
     default: return 'text-slate-500';
   }
@@ -37,7 +38,7 @@ const getStatusColor = (status: string) => {
 
 const getPriorityColor = (priority: string) => {
   switch (priority.toLowerCase()) {
-    case 'critical': return 'bg-rose-500/20 text-rose-500 border-rose-500/20';
+    case 'critical': return 'bg-cyan-500/20 text-cyan-500 border-cyan-500/20';
     case 'high': return 'bg-orange-500/20 text-orange-500 border-orange-500/20';
     case 'medium': return 'bg-yellow-500/20 text-yellow-500 border-yellow-500/20';
     default: return 'bg-slate-500/20 text-slate-400 border-slate-500/20';
@@ -82,9 +83,9 @@ export default function ChiefConductorView() {
             <div className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Активні задачі</div>
             <div className="text-2xl font-black text-yellow-500 italic tabular-nums">{activeTasksCount}</div>
           </div>
-          <button className="flex items-center gap-2 px-6 py-3 bg-yellow-500 text-black font-black rounded-2xl hover:scale-105 active:scale-95 transition-all text-xs uppercase tracking-tighter">
+          <Button variant="cyber" className="flex items-center gap-2 px-6 py-3 bg-yellow-500 text-black font-black rounded-2xl hover:scale-105 active:scale-95 transition-all text-xs uppercase tracking-tighter">
             <Play size={14} fill="currentColor" /> Нова Задача
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -103,8 +104,8 @@ export default function ChiefConductorView() {
                   <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">Синхронізація: Active</span>
                </div>
                <div className="flex items-center gap-2">
-                  <button className="p-2 text-slate-500 hover:text-white transition-colors"><ListFilter size={16} /></button>
-                  <button className="p-2 text-slate-500 hover:text-white transition-colors"><RefreshCw size={16} /></button>
+                  <Button variant="cyber" className="p-2 text-slate-500 hover:text-white transition-colors"><ListFilter size={16} /></Button>
+                  <Button variant="cyber" className="p-2 text-slate-500 hover:text-white transition-colors"><RefreshCw size={16} /></Button>
                </div>
             </div>
 
@@ -170,8 +171,8 @@ export default function ChiefConductorView() {
                         </div>
 
                         <div className="flex flex-col gap-2">
-                           <button className="p-3 bg-white/5 hover:bg-white/10 rounded-xl text-slate-500 hover:text-white transition-all"><Terminal size={16} /></button>
-                           <button className="p-3 bg-white/5 hover:bg-rose-500/20 rounded-xl text-slate-500 hover:text-rose-500 transition-all"><Square size={16} /></button>
+                           <Button variant="cyber" className="p-3 bg-white/5 hover:bg-white/10 rounded-xl text-slate-500 hover:text-white transition-all"><Terminal size={16} /></Button>
+                           <Button variant="cyber" className="p-3 bg-white/5 hover:bg-cyan-500/20 rounded-xl text-slate-500 hover:text-cyan-500 transition-all"><Square size={16} /></Button>
                         </div>
                      </div>
                   </motion.div>
@@ -239,13 +240,13 @@ export default function ChiefConductorView() {
 
            <HoloCard className="p-8 rounded-[36px]">
              <div className="flex items-center gap-3 mb-6">
-               <div className="p-2 bg-rose-500/10 rounded-lg">
-                 <Zap size={18} className="text-rose-500" />
+               <div className="p-2 bg-cyan-500/10 rounded-lg">
+                 <Zap size={18} className="text-cyan-500" />
                </div>
                <h4 className="text-sm font-black text-white uppercase tracking-tight">Chaos Scenario</h4>
              </div>
               <div className="flex items-center gap-5 mb-6">
-                 <div className="p-3 bg-rose-600/20 rounded-2xl text-rose-500">
+                 <div className="p-3 bg-cyan-600/20 rounded-2xl text-cyan-500">
                     <Zap size={20} />
                  </div>
                  <h4 className="text-lg font-black text-white uppercase tracking-tighter italic">Хаос-Експерименти</h4>
@@ -259,18 +260,18 @@ export default function ChiefConductorView() {
                    { id: 'agent_timeout', label: 'Timeout' },
                    { id: 'overheat_simulation', label: 'Overheat' },
                  ].map((exp) => (
-                   <button 
+                   <Button variant="cyber" 
                      key={exp.id}
                      onClick={() => setChaos.mutate({ name: exp.id as ChaosExperimentName, active: !chaosStatus?.[exp.id as ChaosExperimentName] })}
                      className={cn(
                        "p-3 rounded-xl border text-[9px] font-black uppercase tracking-widest transition-all text-center",
                        chaosStatus?.[exp.id as ChaosExperimentName] 
-                         ? "bg-rose-500 text-white border-rose-400 " 
-                         : "bg-black/40 text-slate-500 border-white/5 hover:border-rose-500/30"
+                         ? "bg-cyan-500 text-white border-cyan-400 " 
+                         : "bg-black/40 text-slate-500 border-white/5 hover:border-cyan-500/30"
                      )}
                    >
                      {exp.label}
-                   </button>
+                   </Button>
                  ))}
               </div>
            </HoloCard>

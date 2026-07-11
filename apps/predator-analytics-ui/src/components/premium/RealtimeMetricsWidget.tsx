@@ -5,6 +5,7 @@
  * Shows connection status and auto-reconnect capability.
  */
 
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Cpu, HardDrive, Activity, Wifi, WifiOff, RefreshCw } from 'lucide-react';
@@ -125,13 +126,13 @@ export const RealtimeMetricsWidget: React.FC<RealtimeMetricsWidgetProps> = ({
         </div>
 
         {!isConnected && (
-          <button
+          <Button variant="cyber"
             onClick={reconnect}
             className="flex items-center gap-2 px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-[10px] font-bold text-slate-400 hover:text-white hover:bg-white/10 transition-all"
           >
             <RefreshCw size={12} />
             Перепідключити
-          </button>
+          </Button>
         )}
       </div>
 

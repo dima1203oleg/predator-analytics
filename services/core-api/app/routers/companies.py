@@ -212,3 +212,39 @@ async def get_company(
         created_at=company_data.created_at,
         updated_at=company_data.updated_at,
     )
+
+@router.get("/{ueid}/score-details", summary="Деталізація скору")
+async def get_score_details(ueid: str, db: AsyncSession = Depends(get_db)):
+    """Мок деталізації CERS скору."""
+    return {
+        "totalScore": 75,
+        "segments": [
+            {"id": "behavioral", "name": "Поведінковий", "score": 80, "weight": 0.25, "impact": "high"},
+            {"id": "institutional", "name": "Інституційний", "score": 70, "weight": 0.20, "impact": "medium"},
+            {"id": "influence", "name": "Вплив", "score": 90, "weight": 0.20, "impact": "high"},
+            {"id": "structural", "name": "Структурний", "score": 60, "weight": 0.15, "impact": "medium"},
+            {"id": "predictive", "name": "Предиктивний", "score": 85, "weight": 0.20, "impact": "high"}
+        ]
+    }
+
+@router.post("/{ueid}/recalculate", summary="Перерахунок скору")
+async def recalculate_score(ueid: str, db: AsyncSession = Depends(get_db)):
+    """Мок примусового перерахунку."""
+    return {"success": True, "newScore": 82}
+
+@router.get("/{ueid}/artifacts", summary="Артефакти рішень")
+async def get_artifacts(ueid: str, db: AsyncSession = Depends(get_db)):
+    """Мок артефактів."""
+    return [
+        {"id": "art-1", "type": "document", "name": "Декларація 2023", "date": "2023-12-31"},
+        {"id": "art-2", "type": "report", "name": "Звіт про ризики", "date": "2024-01-15"}
+    ]
+
+@router.get("/{ueid}/financials", summary="Фінансові метрики")
+async def get_financial_metrics(ueid: str, db: AsyncSession = Depends(get_db)):
+    """Мок фінансових показників."""
+    return [
+        {"year": 2023, "revenue": 150000000, "expenses": 120000000, "profit": 30000000, "profitMargin": 20},
+        {"year": 2022, "revenue": 120000000, "expenses": 100000000, "profit": 20000000, "profitMargin": 16.7},
+        {"year": 2021, "revenue": 90000000, "expenses": 80000000, "profit": 10000000, "profitMargin": 11.1}
+    ]

@@ -8,6 +8,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -378,7 +379,7 @@ const AdvancedChartsPremium: React.FC = () => {
           <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-8 z-20">
              <div className="flex gap-4 p-3 bg-black border-2 border-white/5 rounded-[3rem] shadow-4xl ">
                 {(['week', 'month', 'quarter', 'year'] as const).map((r) => (
-                  <button 
+                  <Button variant="cyber" 
                     key={r} onClick={() => setTimeRange(r)}
                     className={cn(
                       "px-10 py-5 rounded-[2.5rem] text-[10px] font-black uppercase tracking-[0.3em] italic transition-all duration-500",
@@ -386,12 +387,12 @@ const AdvancedChartsPremium: React.FC = () => {
                     )}
                   >
                     {r === 'week' ? '7 ДНІВ' : r === 'month' ? '30 ДНІВ' : r === 'quarter' ? 'КВА ТАЛ' : ' ІК_2026'}
-                  </button>
+                  </Button>
                 ))}
              </div>
 
              <div className="flex items-center gap-6">
-                <button
+                <Button variant="cyber"
                   onClick={() => { setRefreshing(true); fetchData().then(() => setRefreshing(false)); }}
                   className={cn(
                     "p-7 bg-black border-2 border-white/[0.04] rounded-[2.5rem] text-slate-500 hover:text-[#D4AF37] transition-all shadow-4xl group/btn hover:border-yellow-500/30",
@@ -399,10 +400,10 @@ const AdvancedChartsPremium: React.FC = () => {
                   )}
                 >
                   <RefreshCw size={32} className={cn("transition-transform duration-700", !refreshing && "group-hover/btn:rotate-180")} />
-                </button>
-                <button className="px-14 py-8 bg-[#D4AF37] text-black border-2 border-yellow-400/40 rounded-[2.5rem] text-[12px] font-black uppercase tracking-[0.5em] italic hover:brightness-110 transition-all flex items-center gap-6 shadow-4xl">
+                </Button>
+                <Button variant="cyber" className="px-14 py-8 bg-[#D4AF37] text-black border-2 border-yellow-400/40 rounded-[2.5rem] text-[12px] font-black uppercase tracking-[0.5em] italic hover:brightness-110 transition-all flex items-center gap-6 shadow-4xl">
                    EXPORT_DATA_ARRAY <Download size={24} className="" />
-                </button>
+                </Button>
              </div>
           </div>
 
@@ -464,8 +465,8 @@ const AdvancedChartsPremium: React.FC = () => {
                          <h3 className="text-3xl font-black text-white italic tracking-tighter uppercase leading-none">ТОП-СЕГМЕНТИ // QUANTUM_ARRAY</h3>
                       </div>
                       <div className="flex gap-4">
-                         <button className="p-4 bg-white/5 rounded-xl text-slate-500 hover:text-white transition-all"><Settings size={18} /></button>
-                         <button className="p-4 bg-white/5 rounded-xl text-slate-500 hover:text-white transition-all"><Maximize2 size={18} /></button>
+                         <Button variant="cyber" className="p-4 bg-white/5 rounded-xl text-slate-500 hover:text-white transition-all"><Settings size={18} /></Button>
+                         <Button variant="cyber" className="p-4 bg-white/5 rounded-xl text-slate-500 hover:text-white transition-all"><Maximize2 size={18} /></Button>
                       </div>
                    </div>
                    

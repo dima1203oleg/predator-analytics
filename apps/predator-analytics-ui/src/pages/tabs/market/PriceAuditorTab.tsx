@@ -3,6 +3,7 @@
  * PREDATOR Analytics — Market Analysis & Procurement Intelligence
  */
 
+import { Button } from '@/components/ui/button';
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -99,12 +100,12 @@ export const PriceAuditorTab: React.FC = () => {
             className="w-full bg-white/[0.02] border border-white/[0.05] p-3 pl-12 rounded-xl text-sm font-bold text-white italic tracking-tight focus:border-[#D4AF37]/40 outline-none transition-all placeholder:text-slate-800"
           />
         </div>
-        <button className="p-3 bg-white/[0.04] border border-white/5 rounded-xl text-slate-400 hover:text-white transition-all shadow-lg">
+        <Button variant="cyber" className="p-3 bg-white/[0.04] border border-white/5 rounded-xl text-slate-400 hover:text-white transition-all shadow-lg">
           <Filter size={18} />
-        </button>
-        <button className="p-3 bg-white/[0.04] border border-white/5 rounded-xl text-slate-400 hover:text-white transition-all shadow-lg">
+        </Button>
+        <Button variant="cyber" className="p-3 bg-white/[0.04] border border-white/5 rounded-xl text-slate-400 hover:text-white transition-all shadow-lg">
           <Download size={18} />
-        </button>
+        </Button>
       </section>
 
       {/* PRODUCTS GRID */}
@@ -142,12 +143,12 @@ export const PriceAuditorTab: React.FC = () => {
                     </p>
                     <p className="text-[8px] font-black uppercase tracking-widest leading-none mt-1">ОПТІМ_DEAL</p>
                   </div>
-                  <button 
+                  <Button variant="cyber" 
                     onClick={() => setExpandedProduct(expandedProduct === product.id ? null : product.id)} 
                     className="p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-all border border-white/5"
                   >
                     {expandedProduct === product.id ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-                  </button>
+                  </Button>
                 </div>
               </div>
 
@@ -210,9 +211,9 @@ export const PriceAuditorTab: React.FC = () => {
                                 {Math.abs(((offer.price - product.avgPrice) / product.avgPrice) * 100).toFixed(1)}% ВІД СЕ ЕДНЬОЇ
                               </p>
                             </div>
-                            <button className="p-3 bg-[#D4AF37] text-black rounded-lg hover:brightness-110 shadow-lg transition-all">
+                            <Button variant="cyber" className="p-3 bg-[#D4AF37] text-black rounded-lg hover:brightness-110 shadow-lg transition-all">
                               <ArrowRight size={18} />
-                            </button>
+                            </Button>
                           </div>
                         </div>
                       ))}

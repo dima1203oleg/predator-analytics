@@ -58,39 +58,39 @@ const getTrendIcon = (direction: EvolutionTrend['direction']) => {
 };
 
 const getTrendColor = (direction: EvolutionTrend['direction']) => {
-  if (direction === 'improving') return 'text-emerald-400';
-  if (direction === 'degrading') return 'text-rose-400';
-  return 'text-slate-400';
+  if (direction === 'improving') return 'text-[#00ffcc]';
+  if (direction === 'degrading') return 'text-[#ff007f]';
+  return 'text-[#ffaa00]';
 };
 
 const getTrendBorder = (direction: EvolutionTrend['direction']) => {
-  if (direction === 'improving') return 'border-emerald-500/20 bg-emerald-950/10';
-  if (direction === 'degrading') return 'border-rose-500/20 bg-rose-950/10';
-  return 'border-white/5 bg-black/20';
+  if (direction === 'improving') return 'border-[#00ffcc]/30 bg-[#00ffcc]/5 shadow-[inset_0_0_15px_rgba(0,255,204,0.05)]';
+  if (direction === 'degrading') return 'border-[#ff007f]/30 bg-[#ff007f]/5 shadow-[inset_0_0_15px_rgba(255,0,127,0.05)]';
+  return 'border-white/5 bg-white/5';
 };
 
 const getPriorityBadge = (p: RefactorProposal['priority']) => {
-  if (p === 'high') return 'border-rose-500/30 bg-rose-500/10 text-rose-300';
-  if (p === 'medium') return 'border-rose-500/30 bg-rose-500/10 text-rose-300';
-  return 'border-slate-500/30 bg-slate-500/10 text-slate-400';
+  if (p === 'high') return 'border-[#ff007f]/50 bg-[#ff007f]/20 text-[#ff007f] shadow-[0_0_10px_rgba(255,0,127,0.3)]';
+  if (p === 'medium') return 'border-[#ffaa00]/50 bg-[#ffaa00]/20 text-[#ffaa00] shadow-[0_0_10px_rgba(255,170,0,0.3)]';
+  return 'border-[#00ffcc]/50 bg-[#00ffcc]/20 text-[#00ffcc] shadow-[0_0_10px_rgba(0,255,204,0.3)]';
 };
 
 const getPriorityLabel = (p: RefactorProposal['priority']) => {
-  if (p === 'high') return 'Критичний';
-  if (p === 'medium') return 'Середній';
-  return 'Низький';
+  if (p === 'high') return 'КРИТИЧНИЙ';
+  if (p === 'medium') return 'СЕРЕДНІЙ';
+  return 'НИЗЬКИЙ';
 };
 
 const getStatusBadge = (s: RefactorProposal['status']) => {
-  if (s === 'accepted') return 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300';
-  if (s === 'rejected') return 'border-slate-500/20 bg-slate-500/5 text-slate-600';
-  return 'border-rose-500/30 bg-rose-500/10 text-rose-300';
+  if (s === 'accepted') return 'border-[#00ffcc]/50 bg-[#00ffcc]/20 text-[#00ffcc] shadow-[0_0_10px_rgba(0,255,204,0.3)]';
+  if (s === 'rejected') return 'border-slate-500/50 bg-slate-500/20 text-slate-300';
+  return 'border-[#ff007f]/50 bg-[#ff007f]/20 text-[#ff007f] shadow-[0_0_10px_rgba(255,0,127,0.3)]';
 };
 
 const getStatusLabel = (s: RefactorProposal['status']) => {
-  if (s === 'accepted') return 'Прийнято';
-  if (s === 'rejected') return 'Відхилено';
-  return 'Очікує';
+  if (s === 'accepted') return 'ПРИЙНЯТО';
+  if (s === 'rejected') return 'ВІДХИЛЕНО';
+  return 'ОЧІКУЄ';
 };
 
 // ─── Мікро-граф тренду (sparkline) ───────────────────────────────────────────
@@ -106,10 +106,10 @@ const TrendSparkline = ({ direction, delta }: { direction: EvolutionTrend['direc
   const h = 30;
   const step = w / (points.length - 1);
   const pathD = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${i * step} ${h - (p / 100) * h}`).join(' ');
-  const color = direction === 'improving' ? '#10b981' : direction === 'degrading' ? '#f43f5e' : '#6b7280';
+  const color = direction === 'improving' ? '#00ffcc' : direction === 'degrading' ? '#ff007f' : '#ffaa00';
   return (
-    <svg width={w} height={h} className="overflow-visible">
-      <path d={pathD} fill="none" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" opacity={0.8} />
+    <svg width={w} height={h} className="overflow-visible" style={{ filter: `drop-shadow(0 0 5px ${color})` }}>
+      <path d={pathD} fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" opacity={0.9} />
     </svg>
   );
 };
@@ -145,7 +145,7 @@ export function EvolutionAgentPanel() {
     const ts = new Date().toLocaleTimeString('uk-UA');
     setAgentState((prev) => ({
       ...prev,
-      logs: [`[${ts}] 📡 EvolutionAgent: Чекаю підключення до Meta-Analysis API...`],
+      logs: [`[${ts}] 📡 EVOLUTION_CORE: Чекаю підключення до Meta-Analysis API...`],
       is_running: false,
       last_analysis: new Date().toISOString(),
     }));
@@ -161,43 +161,48 @@ export function EvolutionAgentPanel() {
   const improvingCount = agentState.trends.filter((t) => t.direction === 'improving').length;
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
 
       {/* ── EvolutionAgent Header ── */}
-      <div className="rounded-[32px] border border-[#D4AF37]/20 bg-gradient-to-br from-slate-950/90 to-black/70 p-6 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(225,29,72,0.06),transparent_60%)] pointer-events-none" />
+      <div className="border border-[#00ffcc]/30 bg-[#050b14]/80 p-6 relative overflow-hidden backdrop-blur-md shadow-[0_0_20px_rgba(0,255,204,0.1)] rounded-sm">
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(0,255,204,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,204,0.05)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none" />
         <div className="relative z-10 flex flex-wrap items-center justify-between gap-5">
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl border border-[#D4AF37]/30 bg-[#D4AF37]/10 flex items-center justify-center ">
-              <BrainCircuit size={28} className="text-[#D4AF37]" />
+          <div className="flex items-center gap-5">
+            <div className="w-16 h-16 border-2 border-[#00ffcc] bg-[#00ffcc]/10 flex items-center justify-center shadow-[0_0_15px_rgba(0,255,204,0.4)] relative">
+              <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-white" />
+              <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-white" />
+              <BrainCircuit size={32} className="text-[#00ffcc]" style={{ filter: 'drop-shadow(0 0 5px #00ffcc)' }} />
             </div>
             <div>
-              <div className="text-[10px] font-black uppercase tracking-[0.32em] text-slate-500 mb-1">
+              <div className="text-[11px] font-orbitron font-bold uppercase tracking-[0.4em] text-[#00ffcc]/70 mb-1">
                 EvolutionAgent · Meta-Analysis Core
               </div>
-              <div className="text-lg font-black text-white">Самооптимізуюча Екосистема</div>
-              <div className="text-[10px] font-mono text-slate-500 mt-0.5">
+              <div className="text-xl font-orbitron font-black text-white tracking-widest" style={{ textShadow: '0 0 10px rgba(255,255,255,0.5)' }}>САМООПТИМІЗУЮЧА ЕКОСИСТЕМА</div>
+              <div className="text-[10px] font-mono text-[#00ffcc]/50 mt-1">
                 {agentState.last_analysis
-                  ? `Останній аналіз: ${new Date(agentState.last_analysis).toLocaleString('uk-UA')}`
-                  : 'Аналіз ще не запускався в цій сесії'}
+                  ? `ОСТАННІЙ АНАЛІЗ: ${new Date(agentState.last_analysis).toLocaleString('uk-UA')}`
+                  : 'АНАЛІЗ ЩЕ НЕ ЗАПУСКАВСЯ В ЦІЙ СЕСІЇ'}
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             {/* KPI зведення */}
-            <div className="flex gap-3">
-              <div className="text-center px-4 py-3 border border-emerald-500/20 bg-emerald-950/20 rounded-2xl">
-                <div className="text-2xl font-black text-emerald-400">{improvingCount}</div>
-                <div className="text-[9px] text-slate-500 uppercase font-black">Покращуються</div>
+            <div className="flex gap-4">
+              <div className="text-center px-5 py-3 border border-[#00ffcc]/30 bg-[#00ffcc]/10 shadow-[inset_0_0_15px_rgba(0,255,204,0.1)] relative">
+                <div className="absolute top-0 right-0 w-1.5 h-1.5 bg-[#00ffcc]" />
+                <div className="text-2xl font-orbitron font-black text-[#00ffcc]" style={{ textShadow: '0 0 10px #00ffcc' }}>{improvingCount}</div>
+                <div className="text-[10px] text-[#00ffcc]/70 uppercase font-orbitron tracking-widest mt-1">ПОКРАЩУЮТЬСЯ</div>
               </div>
-              <div className="text-center px-4 py-3 border border-rose-500/20 bg-rose-950/20 rounded-2xl">
-                <div className="text-2xl font-black text-rose-400">{degradingCount}</div>
-                <div className="text-[9px] text-slate-500 uppercase font-black">Деградують</div>
+              <div className="text-center px-5 py-3 border border-[#ff007f]/30 bg-[#ff007f]/10 shadow-[inset_0_0_15px_rgba(255,0,127,0.1)] relative">
+                <div className="absolute top-0 right-0 w-1.5 h-1.5 bg-[#ff007f]" />
+                <div className="text-2xl font-orbitron font-black text-[#ff007f]" style={{ textShadow: '0 0 10px #ff007f' }}>{degradingCount}</div>
+                <div className="text-[10px] text-[#ff007f]/70 uppercase font-orbitron tracking-widest mt-1">ДЕГРАДУЮТЬ</div>
               </div>
-              <div className="text-center px-4 py-3 border border-rose-500/20 bg-rose-950/20 rounded-2xl">
-                <div className="text-2xl font-black text-rose-400">{proposals.filter((p) => p.status === 'pending').length}</div>
-                <div className="text-[9px] text-slate-500 uppercase font-black">Пропозиції</div>
+              <div className="text-center px-5 py-3 border border-[#ff007f]/30 bg-[#ff007f]/10 shadow-[inset_0_0_15px_rgba(255,0,127,0.1)] relative">
+                <div className="absolute top-0 right-0 w-1.5 h-1.5 bg-[#ff007f]" />
+                <div className="text-2xl font-orbitron font-black text-[#ff007f]" style={{ textShadow: '0 0 10px #ff007f' }}>{proposals.filter((p) => p.status === 'pending').length}</div>
+                <div className="text-[10px] text-[#ff007f]/70 uppercase font-orbitron tracking-widest mt-1">ПРОПОЗИЦІЇ</div>
               </div>
             </div>
 
@@ -205,11 +210,11 @@ export function EvolutionAgentPanel() {
               variant="neon"
               onClick={() => void handleRunAnalysis()}
               disabled={isAnalyzing}
-              className="bg-[#D4AF37]/15 text-[#D4AF37] border-[#D4AF37]/40 hover:bg-[#D4AF37]/25 font-black uppercase tracking-widest text-[10px] h-11 px-5"
+              className="bg-[#00ffcc]/20 text-[#00ffcc] border-2 border-[#00ffcc] hover:bg-[#00ffcc]/40 font-orbitron font-black uppercase tracking-[0.2em] text-[12px] h-12 px-6 shadow-[0_0_15px_rgba(0,255,204,0.4)]"
             >
               {isAnalyzing
-                ? <><Loader size={14} className="mr-2 animate-spin" /> Аналіз...</>
-                : <><Sparkles size={14} className="mr-2" /> Запустити аналіз</>
+                ? <><Loader size={16} className="mr-2 animate-spin" /> АНАЛІЗ...</>
+                : <><Sparkles size={16} className="mr-2" /> ЗАПУСТИТИ АНАЛІЗ</>
               }
             </Button>
           </div>
@@ -218,33 +223,36 @@ export function EvolutionAgentPanel() {
 
       {/* ── Тренди компонентів ── */}
       <div>
-        <div className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 px-1 mb-3">
-          Трендирефективності · {agentState.trends.length} компонентів
+        <div className="flex items-center gap-3 px-1 mb-4 border-b-2 border-[#00ffcc]/30 pb-2">
+          <div className="w-2 h-2 bg-[#00ffcc] shadow-[0_0_8px_#00ffcc]" />
+          <div className="text-[12px] font-orbitron font-bold uppercase tracking-[0.3em] text-[#00ffcc]">
+            ТРЕНДИ ЕФЕКТИВНОСТІ · {agentState.trends.length} КОМПОНЕНТІВ
+          </div>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
           {agentState.trends.map((trend, idx) => {
             const Icon = getTrendIcon(trend.direction);
             return (
               <motion.div
                 key={trend.component}
-                initial={{ opacity: 0, y: 6 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.06 }}
-                className={cn('rounded-[22px] border p-4 transition-all', getTrendBorder(trend.direction))}
+                className={cn('p-5 transition-all relative overflow-hidden backdrop-blur-sm', getTrendBorder(trend.direction))}
               >
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <Icon size={15} className={getTrendColor(trend.direction)} />
-                    <span className="text-[11px] font-black text-white uppercase tracking-wider">{trend.component}</span>
+                <div className="flex items-center justify-between mb-4 relative z-10">
+                  <div className="flex items-center gap-3">
+                    <Icon size={18} className={getTrendColor(trend.direction)} style={{ filter: `drop-shadow(0 0 5px currentColor)` }} />
+                    <span className="text-[12px] font-orbitron font-bold text-white uppercase tracking-widest">{trend.component}</span>
                   </div>
-                  <span className={cn('text-lg font-black', getTrendColor(trend.direction))}>
+                  <span className={cn('text-xl font-orbitron font-black', getTrendColor(trend.direction))} style={{ textShadow: '0 0 8px currentColor' }}>
                     {trend.delta_percent > 0 ? '+' : ''}{trend.delta_percent.toFixed(1)}%
                   </span>
                 </div>
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between relative z-10">
                   <TrendSparkline direction={trend.direction} delta={trend.delta_percent} />
-                  <div className="text-[9px] text-slate-600 font-mono text-right">
-                    {new Date(trend.last_checked).toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })}
+                  <div className="text-[10px] text-white/50 font-mono text-right bg-black/40 px-2 py-1 border border-white/10">
+                    {new Date(trend.last_checked).toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                   </div>
                 </div>
               </motion.div>
@@ -255,69 +263,72 @@ export function EvolutionAgentPanel() {
 
       {/* ── Пропозиції рефакторингу ── */}
       <div>
-        <div className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 px-1 mb-3">
-          Пропозиції рефакторингу · {proposals.filter((p) => p.status === 'pending').length} очікують рішення
+        <div className="flex items-center gap-3 px-1 mb-4 border-b-2 border-[#ff007f]/30 pb-2">
+          <div className="w-2 h-2 bg-[#ff007f] shadow-[0_0_8px_#ff007f] animate-pulse" />
+          <div className="text-[12px] font-orbitron font-bold uppercase tracking-[0.3em] text-[#ff007f]">
+            ПРОПОЗИЦІЇ РЕФАКТОРИНГУ · {proposals.filter((p) => p.status === 'pending').length} ОЧІКУЮТЬ РІШЕННЯ
+          </div>
         </div>
-        <div className="space-y-3">
+        <div className="space-y-4">
           {proposals.map((proposal, idx) => (
             <motion.div
               key={proposal.id}
-              initial={{ opacity: 0, x: -8 }}
+              initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: idx * 0.08 }}
               className={cn(
-                'rounded-[24px] border p-5 transition-all',
-                proposal.status === 'accepted' ? 'border-emerald-500/20 bg-emerald-950/10' :
-                proposal.status === 'rejected' ? 'border-white/5 bg-black/10 opacity-50' :
-                'border-rose-500/20 bg-rose-950/10',
+                'border p-6 transition-all relative overflow-hidden backdrop-blur-sm',
+                proposal.status === 'accepted' ? 'border-[#00ffcc]/30 bg-[#00ffcc]/10 shadow-[inset_0_0_20px_rgba(0,255,204,0.1)]' :
+                proposal.status === 'rejected' ? 'border-white/10 bg-black/40 opacity-50' :
+                'border-[#ff007f]/30 bg-[#ff007f]/10 shadow-[inset_0_0_20px_rgba(255,0,127,0.1)]',
               )}
             >
-              <div className="flex items-start justify-between gap-4 mb-3">
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-mono text-slate-500">{proposal.id}</span>
-                    <Badge className={cn('border text-[9px] font-black px-2', getPriorityBadge(proposal.priority))}>
+              <div className="flex items-start justify-between gap-4 mb-4 relative z-10">
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3">
+                    <span className="text-[11px] font-mono text-white/40">{proposal.id}</span>
+                    <Badge className={cn('border text-[10px] font-orbitron font-bold px-2.5 py-0.5 tracking-wider', getPriorityBadge(proposal.priority))}>
                       {getPriorityLabel(proposal.priority)}
                     </Badge>
-                    <Badge className={cn('border text-[9px] font-black px-2', getStatusBadge(proposal.status))}>
+                    <Badge className={cn('border text-[10px] font-orbitron font-bold px-2.5 py-0.5 tracking-wider', getStatusBadge(proposal.status))}>
                       {getStatusLabel(proposal.status)}
                     </Badge>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 shrink-0">
-                  <span className="text-[9px] text-slate-600 font-mono">
-                    {new Date(proposal.created_at).toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })}
+                <div className="flex items-center gap-2 shrink-0 bg-black/40 px-2 py-1 border border-white/10">
+                  <span className="text-[10px] text-white/50 font-mono">
+                    {new Date(proposal.created_at).toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                   </span>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 mb-2">
-                <ChevronRight size={11} className="text-rose-400 shrink-0" />
-                <span className="text-[11px] font-black uppercase tracking-wider text-rose-400">{proposal.component}</span>
+              <div className="flex items-center gap-3 mb-3 relative z-10">
+                <ChevronRight size={14} className="text-[#ff007f] shrink-0" style={{ filter: 'drop-shadow(0 0 5px #ff007f)' }} />
+                <span className="text-[13px] font-orbitron font-black uppercase tracking-widest text-[#ff007f]" style={{ textShadow: '0 0 8px #ff007f' }}>{proposal.component}</span>
               </div>
-              <p className="text-sm text-slate-300 leading-6 mb-4">{proposal.description}</p>
+              <p className="text-[14px] text-white/80 leading-relaxed mb-5 font-rajdhani relative z-10">{proposal.description}</p>
 
               {proposal.status === 'pending' && (
-                <div className="flex gap-2 pt-3 border-t border-white/5">
-                  <button
+                <div className="flex gap-3 pt-4 border-t-2 border-white/10 relative z-10">
+                  <Button variant="cyber"
                     type="button"
                     onClick={() => handleProposalAction(proposal.id, 'accepted')}
-                    className="flex-1 flex items-center justify-center gap-2 border border-emerald-500/30 bg-emerald-500/10 rounded-xl py-2 text-[10px] font-black uppercase text-emerald-300 hover:bg-emerald-500/20 transition"
+                    className="flex-1 flex items-center justify-center gap-2 border border-[#00ffcc]/50 bg-[#00ffcc]/20 py-3 text-[11px] font-orbitron font-black uppercase text-[#00ffcc] hover:bg-[#00ffcc]/40 transition-colors shadow-[0_0_10px_rgba(0,255,204,0.2)]"
                   >
-                    <CheckCircle2 size={11} /> Прийняти
-                  </button>
-                  <button
+                    <CheckCircle2 size={14} /> ПРИЙНЯТИ ДИРЕКТИВУ
+                  </Button>
+                  <Button variant="cyber"
                     type="button"
                     onClick={() => handleProposalAction(proposal.id, 'rejected')}
-                    className="flex-1 flex items-center justify-center gap-2 border border-white/10 bg-white/5 rounded-xl py-2 text-[10px] font-black uppercase text-slate-400 hover:text-white transition"
+                    className="flex-1 flex items-center justify-center gap-2 border border-[#ff007f]/50 bg-[#ff007f]/10 py-3 text-[11px] font-orbitron font-black uppercase text-[#ff007f] hover:bg-[#ff007f]/30 transition-colors shadow-[0_0_10px_rgba(255,0,127,0.2)]"
                   >
-                    <X size={11} /> Відхилити
-                  </button>
+                    <X size={14} /> ВІДХИЛИТИ
+                  </Button>
                 </div>
               )}
               {proposal.status === 'accepted' && (
-                <div className="flex items-center gap-2 text-emerald-400 text-[10px] font-black uppercase pt-2 border-t border-white/5">
-                  <CheckCircle2 size={12} /> Прийнято до впровадження
+                <div className="flex items-center gap-2 text-[#00ffcc] text-[11px] font-orbitron font-black uppercase pt-3 border-t-2 border-[#00ffcc]/20 relative z-10" style={{ textShadow: '0 0 8px #00ffcc' }}>
+                  <CheckCircle2 size={14} /> ПРИЙНЯТО ДО ВПРОВАДЖЕННЯ
                 </div>
               )}
             </motion.div>
@@ -327,32 +338,33 @@ export function EvolutionAgentPanel() {
 
       {/* ── Термінал EvolutionAgent ── */}
       {(agentState.logs.length > 0 || isAnalyzing) && (
-        <div className="rounded-[28px] border border-[#D4AF37]/15 bg-slate-950/80 overflow-hidden">
-          <div className="flex items-center gap-3 border-b border-white/5 bg-black/30 px-5 py-3.5">
-            <Terminal size={14} className="text-[#D4AF37]" />
-            <span className="text-[10px] font-black uppercase tracking-[0.28em] text-[#D4AF37]">EvolutionAgent · Термінал</span>
+        <div className="border border-[#00ffcc]/30 bg-[#050b14]/90 overflow-hidden shadow-[0_0_20px_rgba(0,255,204,0.15)] relative">
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(0,255,204,0.05)_1px,transparent_1px)] bg-[size:100%_4px] pointer-events-none" />
+          <div className="flex items-center gap-3 border-b-2 border-[#00ffcc]/30 bg-[#00ffcc]/10 px-5 py-3 relative z-10">
+            <Terminal size={16} className="text-[#00ffcc]" style={{ filter: 'drop-shadow(0 0 5px #00ffcc)' }} />
+            <span className="text-[11px] font-orbitron font-black uppercase tracking-[0.3em] text-[#00ffcc]">EVOLUTION_CORE · ТЕРМІНАЛ</span>
             {isAnalyzing && (
-              <span className="flex items-center gap-1.5 text-[10px] text-rose-300 font-black uppercase ml-auto">
-                <span className="w-1.5 h-1.5 rounded-full bg-rose-400 " />
-                виконується
+              <span className="flex items-center gap-2 text-[10px] text-[#ff007f] font-orbitron font-black uppercase ml-auto">
+                <span className="w-2 h-2 bg-[#ff007f] animate-ping" />
+                ВИКОНУЄТЬСЯ
               </span>
             )}
           </div>
-          <div className="p-4 font-mono text-[11px] max-h-[220px] overflow-y-auto space-y-0.5">
+          <div className="p-5 font-mono text-[12px] max-h-[250px] overflow-y-auto space-y-1 relative z-10">
             {agentState.logs.map((log, i) => (
               <div key={i} className={cn(
-                'py-0.5',
-                log.includes('[DETECTION]') ? 'text-rose-400' :
-                log.includes('[PROPOSALS]') ? 'text-rose-300' :
-                log.includes('[EVOLUTION]') ? 'text-[#D4AF37]' :
-                'text-slate-400',
+                'py-1 tracking-wide',
+                log.includes('[DETECTION]') ? 'text-[#ff007f]' :
+                log.includes('[PROPOSALS]') ? 'text-[#ffaa00]' :
+                log.includes('[EVOLUTION]') ? 'text-[#00ffcc]' :
+                'text-[#00ffcc]/70',
               )}>
                 {log}
               </div>
             ))}
             {isAnalyzing && (
-              <div className="flex items-center gap-1.5 text-slate-600 py-0.5">
-                <span className="">█</span>
+              <div className="flex items-center gap-2 text-[#00ffcc]/50 py-1">
+                <span className="animate-pulse">_</span>
               </div>
             )}
             <div ref={logsEndRef} />

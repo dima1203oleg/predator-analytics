@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Database, Search, Share2, Activity, ShieldCheck, Cpu, FileText } from 'lucide-react';
@@ -67,7 +68,7 @@ const OmniverseHub: React.FC = () => {
       {/* Navigation Tabs */}
       <nav className="px-6 py-2 bg-slate-900/50 border-b border-white/5 flex gap-2 z-10">
         {tabs.map(tab => (
-          <button
+          <Button variant="cyber"
             key={tab.id}
             onClick={() => setActiveTab(tab.id as any)}
             className={`flex items-center gap-2 px-6 py-3 rounded-t-lg font-bold text-xs uppercase tracking-wider transition-all relative overflow-hidden group ${
@@ -84,7 +85,7 @@ const OmniverseHub: React.FC = () => {
                 className={`absolute inset-0 bg-${tab.color}-500/5 blur-md -z-10`}
               />
             )}
-          </button>
+          </Button>
         ))}
       </nav>
 

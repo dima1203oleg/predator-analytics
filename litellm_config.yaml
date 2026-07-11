@@ -1,0 +1,57 @@
+# 🔑 LiteLLM Configuration — Налаштування для коректної роботи
+
+model_list:
+  - model_name: gemini-2.0-flash
+    litellm_params:
+      model: gemini/gemini-2.0-flash
+      api_key: "${GEMINI_API_KEY}"
+  - model_name: gemini-2.0-flash-thinking
+    litellm_params:
+      model: gemini/gemini-2.0-flash-thinking
+      api_key: "${GEMINI_API_KEY}"
+  - model_name: gemini-1.5-pro
+    litellm_params:
+      model: gemini/gemini-1.5-pro
+      api_key: "${GEMINI_API_KEY}"
+  - model_name: glm-5.1
+    litellm_params:
+      model: zhipu/glm-5.1
+      api_key: "${ZHIPU_API_KEY}"
+  - model_name: glm-5
+    litellm_params:
+      model: zhipu/glm-5
+      api_key: "${ZHIPU_API_KEY}"
+  - model_name: glm-4.7
+    litellm_params:
+      model: zhipu/glm-4.7
+      api_key: "${ZHIPU_API_KEY}"
+  - model_name: mistral
+    litellm_params:
+      model: mistral/mistral-tiny
+      api_key: "${MISTRAL_API_KEY}"
+  - model_name: cohere
+    litellm_params:
+      model: cohere/command-r-plus
+      api_key: "${COHERE_API_KEY}"
+  - model_name: KLAV-Agent-Backup
+    litellm_params:
+      model: openai/KLAV-Agent-Backup
+      api_key: "${KLAV_API_KEY}"
+  - model_name: KLAV-Agent-HugeCtx
+    litellm_params:
+      model: openai/KLAV-Agent-HugeCtx
+      api_key: "${KLAV_API_KEY}"
+
+# 🔄 Налаштування для автоматичної зміни моделі при зависанні
+fallback_models:
+  - gemini-2.0-flash
+  - gemini-2.0-flash-thinking
+  - gemini-1.5-pro
+  - glm-5.1
+  - glm-5
+  - glm-4.7
+  - mistral
+  - cohere
+  - openrouter
+  - together.ai
+  - kimi-2.7

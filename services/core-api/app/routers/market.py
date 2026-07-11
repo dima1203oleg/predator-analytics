@@ -6,8 +6,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.permissions import Permission
 from app.database import get_db
-from app.dependencies import PermissionChecker, get_tenant_id
+from app.dependencies import PermissionChecker, get_tenant_id, get_current_active_user
 from app.models.orm import CustomsDeclaration
+from app.services.analytics_service import AnalyticsService
 
 router = APIRouter(prefix="/market", tags=["ринок"])
 
@@ -15,54 +16,23 @@ router = APIRouter(prefix="/market", tags=["ринок"])
 async def get_market_overview(
     tenant_id: str = Depends(get_tenant_id),
     db: AsyncSession = Depends(get_db),
+    user: dict = Depends(get_current_active_user),
     _ = Depends(PermissionChecker([Permission.READ_INTEL]))
 ):
-    """Повертає агреговані дані по ринку для поточного тенанта."""
-    # Агрегація даних по ринку
-    total_value = await db.scalar(
-        select(func.sum(CustomsDeclaration.customs_value_usd))
-        .where(CustomsDeclaration.tenant_id == tenant_id)
-    ) or 0
+    analytics_service = AnalyticsService()
+    ch_stats = analytics_service.get_dashboard_stats(str(tenant_id))
 
-    total_declarations = await db.scalar(
-        select(func.count(CustomsDeclaration.id))
-        .where(CustomsDeclaration.tenant_id == tenant_id)
-    ) or 0
-
-    # Топ-5 категорій UKTZED
-    top_categories_stmt = (
-        select(
-            CustomsDeclaration.uktzed_code,
-            func.sum(CustomsDeclaration.customs_value_usd).label("value")
-        )
-        .where(CustomsDeclaration.tenant_id == tenant_id)
-        .group_by(CustomsDeclaration.uktzed_code)
-        .order_by(func.sum(CustomsDeclaration.customs_value_usd).desc())
-        .limit(5)
-    )
-    top_categories_result = await db.execute(top_categories_stmt)
-
-    # Топ-5 країн походження
-    top_countries_stmt = (
-        select(
-            CustomsDeclaration.country_origin,
-            func.count(CustomsDeclaration.id).label("count")
-        )
-        .where(CustomsDeclaration.tenant_id == tenant_id)
-        .group_by(CustomsDeclaration.country_origin)
-        .order_by(func.count(CustomsDeclaration.id).desc())
-        .limit(5)
-    )
-    top_countries_result = await db.execute(top_countries_stmt)
-
+    # Форматуємо відповідно до того, що очікує фронтенд або старий API
     return {
-        "total_value_usd": float(total_value),
-        "total_declarations": total_declarations,
+        "total_value_usd": float(ch_stats.get("total_value_usd", 0)),
+        "total_declarations": int(ch_stats.get("total_count", 0)),
         "top_categories": [
-            {"code": r.uktzed_code, "value": float(r.value)} for r in top_categories_result.all()
+            {"code": code, "value": float(data["value"])}
+            for code, data in ch_stats.get("categories", {}).items()
         ],
         "top_countries": [
-            {"country": r.country_origin, "count": r.count} for r in top_countries_result.all()
+            {"country": country, "count": int(data["count"])}
+            for country, data in ch_stats.get("countries", {}).items()
         ]
     }
 
@@ -72,6 +42,7 @@ async def list_market_declarations(
     offset: int = 0,
     tenant_id: str = Depends(get_tenant_id),
     db: AsyncSession = Depends(get_db),
+    user: dict = Depends(get_current_active_user),
     _ = Depends(PermissionChecker([Permission.READ_INTEL]))
 ):
     """Повертає список декларацій з обмеженим набором колонок (HR-07)."""
@@ -109,6 +80,7 @@ async def get_product_stats(
     code: str,
     tenant_id: str = Depends(get_tenant_id),
     db: AsyncSession = Depends(get_db),
+    user: dict = Depends(get_current_active_user),
     _ = Depends(PermissionChecker([Permission.READ_INTEL]))
 ):
     """Аналізує динаміку та гравців по конкретному коду UKTZED."""

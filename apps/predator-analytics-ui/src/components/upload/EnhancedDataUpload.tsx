@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import * as tus from 'tus-js-client';
@@ -109,12 +110,12 @@ const FilePreview = ({ file, onRemove }: { file: UploadedFile; onRemove: () => v
 
       {/* Actions */}
       {file.status === 'completed' || file.status === 'error' ? (
-        <button
+        <Button variant="cyber"
           onClick={onRemove}
           className="p-2 hover:bg-white/10 rounded-lg transition-colors"
         >
           <X size={16} className="text-slate-400" />
-        </button>
+        </Button>
       ) : (
         <Loader size={20} className="text-cyan-400 animate-spin" />
       )}

@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -40,7 +41,7 @@ const sessionCols: VirtualColumn<Session>[] = [
     mono: true, 
     render: (v) => (
       <div className="flex items-center gap-3">
-        <Users size={12} className="text-rose-500/40" />
+        <Users size={12} className="text-cyan-500/40" />
         <span className="font-black tracking-tight uppercase italic text-white glint-elite">{String(v)}</span>
       </div>
     )
@@ -49,11 +50,11 @@ const sessionCols: VirtualColumn<Session>[] = [
     key: 'role',         label: 'РІВЕНЬ_ДОСТУПУ',         width: '140px',
     render: (v) => {
       const s = String(v);
-      const color = s === 'admin' ? 'text-rose-500' : s === 'client_premium' ? 'text-rose-400' : 'text-white/35';
+      const color = s === 'admin' ? 'text-cyan-500' : s === 'client_premium' ? 'text-rose-400' : 'text-white/35';
       const label = s === 'admin' ? 'АДМІНІСТ АТО ' : s === 'client_premium' ? 'КЛІЄНТ_ПРЕМІУМ' : s.toUpperCase();
       return (
         <div className={cn('text-[10px] font-black tracking-[0.2em] flex items-center gap-2 italic uppercase', color)}>
-           <div className={cn("w-1.5 h-1.5 rounded-full", s === 'admin' ? 'bg-rose-500 ' : 'bg-current')} />
+           <div className={cn("w-1.5 h-1.5 rounded-full", s === 'admin' ? 'bg-cyan-500 ' : 'bg-current')} />
            {label}
         </div>
       );
@@ -62,7 +63,7 @@ const sessionCols: VirtualColumn<Session>[] = [
   { key: 'ip',           label: 'IP_АД ЕСА',           width: '130px',  mono: true, render: (v) => <span className="text-white/40 font-black italic text-[10px]">{String(v)}</span> },
   { key: 'userAgent',    label: 'ТЕРМІНАЛ_КЛІЄНТА',  width: '180px',  mono: true, render: (v) => <span className="text-white/20 font-black italic text-[9px] uppercase tracking-widest">{String(v)}</span> },
   { key: 'lastActivity', label: 'ОСТАННЯ_ДІЯ',   width: '120px',  mono: true, render: (v) => <span className="text-white/40 font-black italic text-[10px]">{String(v)}</span> },
-  { key: 'expiresIn',    label: 'ДО_ВИКЛЮЧЕННЯ', width: '110px',   mono: true, align: 'right', render: (v) => <span className="text-rose-500/60 font-black italic text-[10px]">{String(v)}</span> },
+  { key: 'expiresIn',    label: 'ДО_ВИКЛЮЧЕННЯ', width: '110px',   mono: true, align: 'right', render: (v) => <span className="text-cyan-500/60 font-black italic text-[10px]">{String(v)}</span> },
 ];
 
 const getSessionStatus = (row: Session): RowStatus =>
@@ -75,7 +76,7 @@ const auditCols: VirtualColumn<AuditEntry>[] = [
     key: 'method',    label: 'МЕТОД',    width: '80px',
     render: (v) => {
       const s = String(v);
-      const map: Record<string, string> = { GET: 'text-rose-400', POST: 'text-rose-600', PUT: 'text-amber-400', DELETE: 'text-red-500', PATCH: 'text-purple-400' };
+      const map: Record<string, string> = { GET: 'text-rose-400', POST: 'text-cyan-600', PUT: 'text-amber-400', DELETE: 'text-red-500', PATCH: 'text-purple-400' };
       return <span className={cn('text-[10px] font-black italic tracking-widest', map[s] ?? 'text-white/40')}>{s}</span>;
     },
   },
@@ -106,12 +107,12 @@ const keyCols: VirtualColumn<ApiKey>[] = [
   { key: 'owner',     label: 'ВЛАСНИК_АКТИВУ',   width: '180px', mono: true, render: (v) => <span className="text-white/45 font-black italic text-[10px] uppercase">{String(v)}</span> },
   { key: 'scopes',    label: 'ОБЛАСТЬ_ДОСТУПУ',                     mono: true, render: (v) => <span className="text-white/20 text-[9px] font-black italic uppercase tracking-widest">{String(v)}</span> },
   { key: 'lastUsed',  label: 'ОСТАННЯ_АКТИВ.', width: '120px', mono: true, render: (v) => <span className="text-white/40 font-black italic text-[10px]">{String(v)}</span> },
-  { key: 'expiresAt', label: 'ТЕ МІН_ДІЇ', width: '120px', mono: true, render: (v) => <span className="text-rose-500/40 font-black italic text-[10px] uppercase">{String(v)}</span> },
+  { key: 'expiresAt', label: 'ТЕ МІН_ДІЇ', width: '120px', mono: true, render: (v) => <span className="text-cyan-500/40 font-black italic text-[10px] uppercase">{String(v)}</span> },
   {
     key: 'status',    label: 'СТАТУС',    width: '120px',
     render: (v) => {
       const s = String(v);
-      const map: Record<string, string> = { active: 'text-rose-500', revoked: 'text-red-500', expired: 'text-white/30' };
+      const map: Record<string, string> = { active: 'text-cyan-500', revoked: 'text-red-500', expired: 'text-white/30' };
       const labelMap: Record<string, string> = { active: 'АКТИВНИЙ', revoked: 'ВІДКЛИКАНО', expired: 'П ОТЕ МІНОВАНО' };
       return (
         <div className={cn('text-[10px] font-black italic tracking-widest uppercase', map[s])}>
@@ -152,12 +153,12 @@ export const ZeroTrustSecurityTab: React.FC = () => {
       <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
 
       {/* Header Section */}
-      <div className="flex flex-col gap-3 border-l-4 border-rose-500 pl-10 py-2 relative z-10">
+      <div className="flex flex-col gap-3 border-l-4 border-cyan-500 pl-10 py-2 relative z-10">
         <div className="flex items-center gap-6">
           <h2 className="text-4xl font-black text-white uppercase tracking-tighter italic glint-elite">
-            ПЕ ИМЕТ  ZERO TRUST <span className="text-rose-500">& КІБЕ ЗАХИСТ</span>
+            ПЕ ИМЕТ  ZERO TRUST <span className="text-cyan-500">& КІБЕ ЗАХИСТ</span>
           </h2>
-          <div className="px-4 py-1.5 bg-rose-500/10 border-2 border-rose-500/30 rounded-lg text-[10px] font-black text-rose-500 tracking-[0.3em] uppercase italic shadow-2xl">
+          <div className="px-4 py-1.5 bg-cyan-500/10 border-2 border-cyan-500/30 rounded-lg text-[10px] font-black text-cyan-500 tracking-[0.3em] uppercase italic shadow-2xl">
             SECURITY_CORE_v61.0
           </div>
         </div>
@@ -168,11 +169,11 @@ export const ZeroTrustSecurityTab: React.FC = () => {
           </div>
           <span className="opacity-20">•</span>
           <div className="flex items-center gap-3">
-             <RefreshCw size={14} className="text-rose-500/60 animate-spin-slow" />
+             <RefreshCw size={14} className="text-cyan-500/60 animate-spin-slow" />
              <span>WORM_LOCK: АКТИВНО_ПОЖИТТЄВО</span>
           </div>
           <span className="opacity-20">•</span>
-          <div className="flex items-center gap-3 text-rose-500/40">
+          <div className="flex items-center gap-3 text-cyan-500/40">
              <Shield size={14} />
              <span>АЛГО ИТМ: AES-256-GCM + mTLS_v1.3</span>
           </div>
@@ -185,13 +186,13 @@ export const ZeroTrustSecurityTab: React.FC = () => {
           const Icon = t.icon;
           const active = section === t.id;
           return (
-            <button
+            <Button variant="cyber"
               key={t.id}
               onClick={() => setSection(t.id)}
               className={cn(
                 'flex flex-col items-start gap-4 px-8 py-8 rounded-[2.5rem] transition-all duration-700 relative overflow-hidden group shadow-4xl border-2',
                 active
-                  ? 'glass-wraith border-rose-500/40 bg-rose-500/5 shadow-rose-500/20'
+                  ? 'glass-wraith border-cyan-500/40 bg-cyan-500/5 shadow-cyan-500/20'
                   : 'bg-white/[0.02] border-white/5 hover:border-white/10 text-white/30 hover:text-white/60',
               )}
             >
@@ -199,14 +200,14 @@ export const ZeroTrustSecurityTab: React.FC = () => {
               <div className="flex items-center justify-between w-full relative z-10">
                 <div className={cn(
                    'p-4 rounded-2xl transition-all duration-700 border-2 shadow-inner',
-                   active ? 'bg-rose-500/20 border-rose-500/40 text-rose-500' : 'bg-white/5 border-white/5 text-white/20 group-hover:text-white/40 group-hover:border-white/10'
+                   active ? 'bg-cyan-500/20 border-cyan-500/40 text-cyan-500' : 'bg-white/5 border-white/5 text-white/20 group-hover:text-white/40 group-hover:border-white/10'
                 )}>
                   {t.loading && active ? <BrandLoaderFallback text="ЗАВАНТАЖЕННЯ" subtext="ОБРОБКА ДАНИХ" /> : <Icon className="w-6 h-6" />}
                 </div>
                 {active && (
                    <motion.div 
                      layoutId="security-tab-indicator-v61"
-                     className="w-1.5 h-1.5 bg-rose-500 rounded-full  "
+                     className="w-1.5 h-1.5 bg-cyan-500 rounded-full  "
                    />
                 )}
               </div>
@@ -214,11 +215,11 @@ export const ZeroTrustSecurityTab: React.FC = () => {
                  <div className={cn('text-xl font-black uppercase tracking-tighter italic glint-elite transition-colors duration-700', active ? 'text-white' : 'text-white/40')}>
                    {t.label}
                  </div>
-                 <div className="text-[10px] font-black font-mono text-white/10 uppercase tracking-[0.4em] mt-2 group-hover:text-rose-500/40 transition-colors italic">
+                 <div className="text-[10px] font-black font-mono text-white/10 uppercase tracking-[0.4em] mt-2 group-hover:text-cyan-500/40 transition-colors italic">
                    {t.count} ОБ'ЄКТІВ_СЕКТО А
                  </div>
               </div>
-            </button>
+            </Button>
           );
         })}
       </div>
@@ -238,11 +239,11 @@ export const ZeroTrustSecurityTab: React.FC = () => {
                   <motion.div 
                     animate={{ rotate: 360 }}
                     transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                    className="w-24 h-24 border-2 border-rose-500/20 rounded-full border-t-rose-500 "
+                    className="w-24 h-24 border-2 border-cyan-500/20 rounded-full border-t-rose-500 "
                   />
-                  <Shield className="absolute inset-0 m-auto w-8 h-8 text-rose-500 " />
+                  <Shield className="absolute inset-0 m-auto w-8 h-8 text-cyan-500 " />
                </div>
-               <div className="text-[14px] font-black font-mono text-rose-500/60 uppercase tracking-[0.6em]  italic">
+               <div className="text-[14px] font-black font-mono text-cyan-500/60 uppercase tracking-[0.6em]  italic">
                  СИНАПТИЧНИЙ_АНАЛІЗ_ПЕ ИМЕТ А_V61...
                </div>
             </motion.div>
@@ -296,17 +297,17 @@ export const ZeroTrustSecurityTab: React.FC = () => {
                        animate={{ opacity: 1, scale: 1 }}
                        transition={{ delay: i * 0.05 }}
                        whileHover={{ y: -5, scale: 1.02 }}
-                       className="p-8 rounded-[2.5rem] bg-white/[0.02] border-2 border-white/5 hover:border-rose-500/40 transition-all duration-700 group relative overflow-hidden shadow-4xl"
+                       className="p-8 rounded-[2.5rem] bg-white/[0.02] border-2 border-white/5 hover:border-cyan-500/40 transition-all duration-700 group relative overflow-hidden shadow-4xl"
                     >
                       <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
                       <div className="flex justify-between items-start relative z-10 mb-8">
                         <div className="flex flex-col gap-2">
-                           <span className="text-2xl font-black italic text-white group-hover:text-rose-500 transition-colors uppercase tracking-tighter glint-elite leading-none">{service.label}</span>
+                           <span className="text-2xl font-black italic text-white group-hover:text-cyan-500 transition-colors uppercase tracking-tighter glint-elite leading-none">{service.label}</span>
                            <span className="text-[10px] font-black font-mono text-white/20 uppercase tracking-[0.3em] italic">UUID: {service.name}</span>
                         </div>
                         <div className={cn(
                           "px-4 py-1.5 rounded-xl text-[10px] font-black tracking-[0.2em] italic border-2 transition-all shadow-4xl",
-                          service.status === 'ok' ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-500 shadow-emerald-500/10" : "bg-rose-500/10 border-rose-500/30 text-rose-500  shadow-rose-500/10"
+                          service.status === 'ok' ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-500 shadow-emerald-500/10" : "bg-cyan-500/10 border-cyan-500/30 text-cyan-500  shadow-cyan-500/10"
                         )}>
                           {service.status === 'ok' ? 'ВЕ ИФІКОВАНО' : 'ПОМИЛКА_СЕГМЕНТУ'}
                         </div>
@@ -325,7 +326,7 @@ export const ZeroTrustSecurityTab: React.FC = () => {
                          </div>
                          <div className="h-2 w-full bg-white/5 rounded-full relative overflow-hidden border border-white/5 p-[1px]">
                            <motion.div 
-                              className={cn("h-full rounded-full shadow-2xl", service.status === 'ok' ? "bg-emerald-500 shadow-emerald-500/40" : "bg-rose-500 shadow-rose-500/40")}
+                              className={cn("h-full rounded-full shadow-2xl", service.status === 'ok' ? "bg-emerald-500 shadow-emerald-500/40" : "bg-cyan-500 shadow-cyan-500/40")}
                               initial={{ width: 0 }}
                               animate={{ width: service.status === 'ok' ? '100%' : '30%' }}
                               transition={{ duration: 1.5, ease: 'circOut' }}
@@ -333,7 +334,7 @@ export const ZeroTrustSecurityTab: React.FC = () => {
                          </div>
                          <div className="flex justify-between items-center pt-2">
                             <span className="text-[9px] font-black font-mono text-white/10 uppercase tracking-[0.4em] italic">NODE_SECURITY_SYNC</span>
-                            <Server size={14} className="text-white/10 group-hover:text-rose-500/40 transition-colors" />
+                            <Server size={14} className="text-white/10 group-hover:text-cyan-500/40 transition-colors" />
                          </div>
                       </div>
                     </motion.div>
@@ -347,9 +348,9 @@ export const ZeroTrustSecurityTab: React.FC = () => {
 
       {/* Footer System Status */}
       <div className="flex items-center gap-8 relative z-10 opacity-60 hover:opacity-100 transition-opacity duration-700">
-        <div className="flex items-center gap-4 px-6 py-3 bg-rose-500/10 border-2 border-rose-500/20 rounded-2xl shadow-rose-500/10">
-           <AlertCircle className="w-5 h-5 text-rose-500 " />
-           <span className="text-[11px] font-black font-mono text-rose-500 uppercase tracking-[0.3em] italic">ЗАХИСТ_WORM_LOCK_АКТИВНИЙ</span>
+        <div className="flex items-center gap-4 px-6 py-3 bg-cyan-500/10 border-2 border-cyan-500/20 rounded-2xl shadow-cyan-500/10">
+           <AlertCircle className="w-5 h-5 text-cyan-500 " />
+           <span className="text-[11px] font-black font-mono text-cyan-500 uppercase tracking-[0.3em] italic">ЗАХИСТ_WORM_LOCK_АКТИВНИЙ</span>
         </div>
         <div className="h-[2px] flex-1 bg-gradient-to-r from-rose-500/40 via-white/5 to-transparent" />
         <span className="text-[10px] font-black font-mono text-white/20 uppercase tracking-[0.5em] italic glint-elite tracking-[0.2em]">Ядро Zero Trust v61.0-ELITE — СУВЕРЕННИЙ_ВА ТОВИЙ</span>
@@ -357,7 +358,7 @@ export const ZeroTrustSecurityTab: React.FC = () => {
 
       <style dangerouslySetInnerHTML={{ __html: `
           .shadow-4xl { box-shadow: 0 60px 120px -30px rgba(0,0,0,0.9); }
-          .glint-elite { text-shadow: 0 0 30px rgba(225,29,72,0.4); }
+          .glint-elite { text-shadow: 0 0 30px rgba(6,182,212,0.4); }
           .animate-spin-slow { animation: spin 10s linear infinite; }
           @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
       `}} />

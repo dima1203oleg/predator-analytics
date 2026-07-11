@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { HoloCard } from '@/components/ui/HoloCard';
 /**
  * NEURAL_COUNCIL Arbitrator | v61.0-ELITE Premium Edition
@@ -353,8 +354,8 @@ export const LLMCouncilPanel: React.FC<LLMCouncilPanelProps> = ({ isLockdown }) 
                                                 Result Consensus Verdict
                                             </div>
                                             <div className="flex gap-4">
-                                                <button className="p-4 bg-white/5 rounded-2xl text-slate-500 hover:text-cyan-400 transition-all border border-white/5 hover:border-cyan-500/30"><Maximize2 size={20} /></button>
-                                                <button className="p-4 bg-white/5 rounded-2xl text-slate-500 hover:text-cyan-400 transition-all border border-white/5 hover:border-cyan-500/30"><Share2 size={20} /></button>
+                                                <Button variant="cyber" className="p-4 bg-white/5 rounded-2xl text-slate-500 hover:text-cyan-400 transition-all border border-white/5 hover:border-cyan-500/30"><Maximize2 size={20} /></Button>
+                                                <Button variant="cyber" className="p-4 bg-white/5 rounded-2xl text-slate-500 hover:text-cyan-400 transition-all border border-white/5 hover:border-cyan-500/30"><Share2 size={20} /></Button>
                                             </div>
                                         </div>
                                         <div className="text-2xl md:text-3xl text-slate-100 leading-relaxed font-black tracking-tight hacker-terminal-text italic border-l-4 border-l-cyan-500 pl-10 py-4 shadow-inner bg-slate-900/40 rounded-r-[40px]">

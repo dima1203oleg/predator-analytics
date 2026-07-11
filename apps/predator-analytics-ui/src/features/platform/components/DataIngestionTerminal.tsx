@@ -1,6 +1,8 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { UploadCloud, FileSpreadsheet, Database, Network, Search, Cpu, CheckCircle2, ChevronRight, Play } from 'lucide-react';
+import { CyberOrb } from '@/components/CyberOrb';
 
 const PIPELINE_NODES = [
   { id: 'browser', label: 'Browser', icon: UploadCloud, color: 'text-slate-300' },
@@ -20,6 +22,19 @@ export const DataIngestionTerminal = () => {
   const [file, setFile] = useState<File | null>(null);
   const [progress, setProgress] = useState(0);
   const [activeNode, setActiveNode] = useState<string | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const [warnings, setWarnings] = useState<string[]>([]);
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setFile(e.target.files[0]);
+    }
+  };
+
+  const handleDivClick = () => {
+    fileInputRef.current?.click();
+  };
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -31,25 +46,135 @@ export const DataIngestionTerminal = () => {
     setIsDragging(false);
   };
 
-  const simulatePipeline = useCallback(() => {
-    setProgress(0);
-    let currentStep = 0;
+  const startPolling = useCallback((jobId: string) => {
+    let currentInterval: NodeJS.Timeout | null = null;
     
-    const interval = setInterval(() => {
-      if (currentStep < PIPELINE_NODES.length) {
-        setActiveNode(PIPELINE_NODES[currentStep].id);
-        setProgress((prev) => prev + (100 / PIPELINE_NODES.length));
-        currentStep++;
-      } else {
-        clearInterval(interval);
-        setTimeout(() => {
-          setActiveNode(null);
-          setFile(null);
-          setProgress(0);
-        }, 3000);
+    const poll = async () => {
+      try {
+        const { api } = await import('@/services/api');
+        const statusRes = await api.ingestion.getJobProgress(jobId);
+        setProgress(statusRes.progress_pct || 0);
+        if (statusRes.warnings && statusRes.warnings.length > 0) {
+          setWarnings(statusRes.warnings);
+        }
+        
+        const nodeIndex = Math.min(
+          PIPELINE_NODES.length - 1, 
+          Math.floor(((statusRes.progress_pct || 0) / 100) * PIPELINE_NODES.length)
+        );
+        setActiveNode(PIPELINE_NODES[nodeIndex].id);
+
+        if (statusRes.status === 'completed' || statusRes.status === 'failed' || statusRes.status === 'cancelled') {
+          if (currentInterval) clearInterval(currentInterval);
+          if (statusRes.status === 'failed') {
+             setErrorMsg(statusRes.error_summary || 'Помилка обробки файлу');
+          } else {
+             setProgress(100);
+             setActiveNode(PIPELINE_NODES[PIPELINE_NODES.length - 1].id);
+          }
+          
+          setTimeout(() => {
+            setActiveNode(null);
+            setFile(null);
+            setProgress(0);
+            setWarnings([]);
+            localStorage.removeItem('active_ingestion_job');
+          }, 8000);
+        }
+      } catch (e) {
+        console.error('Помилка під час отримання прогресу:', e);
+        if (currentInterval) clearInterval(currentInterval);
+        setErrorMsg('Помилка з\'єднання з сервером');
+        localStorage.removeItem('active_ingestion_job');
       }
-    }, 800);
+    };
+    
+    currentInterval = setInterval(poll, 2000);
+    poll(); // Initial call
   }, []);
+
+  React.useEffect(() => {
+    let active = true;
+    const restoreActiveJob = async () => {
+      try {
+        const savedJobId = localStorage.getItem('active_ingestion_job');
+        if (!savedJobId) return;
+
+        const { api } = await import('@/services/api');
+        const activeJob = await api.ingestion.getJobProgress(savedJobId);
+        
+        if (activeJob && active) {
+          setFile(new File([], activeJob.file_name || 'Відновлений сеанс', { type: 'text/plain' }));
+          setProgress(activeJob.progress_pct || 0);
+          if (activeJob.warnings && activeJob.warnings.length > 0) {
+            setWarnings(activeJob.warnings);
+          }
+          const nodeIndex = Math.min(
+            PIPELINE_NODES.length - 1, 
+            Math.floor(((activeJob.progress_pct || 0) / 100) * PIPELINE_NODES.length)
+          );
+          setActiveNode(PIPELINE_NODES[nodeIndex].id);
+
+          if (['completed', 'failed', 'cancelled'].includes(activeJob.status)) {
+            if (activeJob.status === 'failed') {
+               setErrorMsg(activeJob.error_summary || 'Помилка обробки файлу');
+            } else if (activeJob.status === 'completed') {
+               setProgress(100);
+               setActiveNode(PIPELINE_NODES[PIPELINE_NODES.length - 1].id);
+            }
+            setTimeout(() => {
+              setActiveNode(null);
+              setFile(null);
+              setProgress(0);
+              setWarnings([]);
+              localStorage.removeItem('active_ingestion_job');
+            }, 8000);
+          } else {
+            startPolling(activeJob.job_id);
+          }
+        }
+      } catch (e) {
+        console.error('Failed to restore active job:', e);
+        localStorage.removeItem('active_ingestion_job');
+      }
+    };
+    restoreActiveJob();
+    return () => { active = false; };
+  }, [startPolling]);
+
+  // Prevent accidental page reload during active upload (Browser node)
+  React.useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (activeNode === 'browser') {
+        const msg = 'Файл ще завантажується на сервер. Якщо ви оновите сторінку, завантаження перерветься.';
+        e.returnValue = msg;
+        return msg;
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [activeNode]);
+
+  const startIngestion = useCallback(async () => {
+    if (!file) return;
+    setProgress(0);
+    setErrorMsg(null);
+    setWarnings([]);
+    setActiveNode(PIPELINE_NODES[0].id);
+
+    try {
+      const { api } = await import('@/services/api');
+      
+      const uploadRes = await api.ingestion.uploadFile(file);
+      localStorage.setItem('active_ingestion_job', uploadRes.job_id);
+      startPolling(uploadRes.job_id);
+    } catch (e: any) {
+      console.error('Помилка завантаження:', e);
+      setErrorMsg(e.response?.data?.detail || e.message || 'Не вдалося розпочати імпорт');
+      setActiveNode(null);
+    }
+  }, [file, startPolling]);
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
@@ -68,11 +193,19 @@ export const DataIngestionTerminal = () => {
         </h2>
 
         {/* Drag & Drop Zone */}
+        <input 
+          type="file" 
+          ref={fileInputRef} 
+          onChange={handleFileSelect} 
+          className="hidden" 
+          accept=".xls,.xlsx,.csv,.json,.xml,.pdf"
+        />
         <div 
+          onClick={handleDivClick}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
-          className={`relative border-2 border-dashed rounded-2xl p-12 flex flex-col items-center justify-center transition-all duration-300 ${
+          className={`relative border-2 border-dashed rounded-2xl p-12 flex flex-col items-center justify-center transition-all duration-300 cursor-pointer ${
             isDragging 
               ? 'border-cyan-400 bg-cyan-500/10 shadow-[0_0_30px_rgba(34,211,238,0.2)]' 
               : 'border-slate-700 bg-slate-900/50 hover:border-slate-500'
@@ -84,23 +217,35 @@ export const DataIngestionTerminal = () => {
               <div className="text-xl font-mono text-white/90">{file.name}</div>
               <div className="text-sm text-slate-400">{(file.size / 1024 / 1024).toFixed(2)} MB</div>
               
-              {!activeNode && (
-                <button 
-                  onClick={simulatePipeline}
+              {errorMsg && (
+                <div className="text-sm font-mono text-red-400 bg-red-900/30 px-4 py-2 rounded border border-red-500/50 mt-2">
+                  {errorMsg}
+                </div>
+              )}
+              
+              {!activeNode && !errorMsg && (
+                <Button variant="cyber" 
+                  onClick={startIngestion}
                   className="mt-4 flex items-center gap-2 px-6 py-3 bg-emerald-500/20 text-emerald-400 border border-emerald-500/50 rounded hover:bg-emerald-500/30 font-bold tracking-widest transition-colors"
                 >
                   <Play size={18} />
                   ПОЧАТИ ІМПОРТ
-                </button>
+                </Button>
               )}
             </div>
           ) : (
             <>
-              <div className="p-4 rounded-full bg-slate-800/50 mb-4">
-                <UploadCloud size={48} className="text-slate-400" />
+              <div className="mb-6">
+                <CyberOrb size="md" status={isDragging ? 'quantum' : 'idle'} pulsing={true} />
               </div>
-              <p className="text-lg font-light text-slate-300">Перетягніть файл сюди або натисніть для вибору</p>
-              <p className="text-sm font-mono text-slate-500 mt-2">Підтримувані формати: XLS, XLSX, CSV, JSON, XML, PDF</p>
+              <p className="text-xl font-black tracking-widest text-slate-300 drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]">ПЕРЕТЯГНІТЬ ДАНІ В ЯДРО</p>
+              <p className="text-sm font-mono text-slate-500 mt-2">АБО НАТИСНІТЬ ДЛЯ ІНТЕГРАЦІЇ ФАЙЛІВ</p>
+              <div className="flex gap-4 mt-6 text-[10px] font-mono text-slate-600 uppercase tracking-widest">
+                <span className="border border-slate-700/50 px-2 py-1 rounded bg-slate-800/30">.CSV</span>
+                <span className="border border-slate-700/50 px-2 py-1 rounded bg-slate-800/30">.JSON</span>
+                <span className="border border-slate-700/50 px-2 py-1 rounded bg-slate-800/30">.XML</span>
+                <span className="border border-slate-700/50 px-2 py-1 rounded bg-slate-800/30">.PDF</span>
+              </div>
             </>
           )}
         </div>
@@ -171,6 +316,21 @@ export const DataIngestionTerminal = () => {
                   className="mt-8 text-center p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-lg text-emerald-400 font-mono text-sm"
                 >
                   [SUCCESS] Обробку завершено. Дані доступні для AI Copilot.
+                </motion.div>
+              )}
+
+              {warnings.length > 0 && (
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="mt-4 text-left p-4 bg-orange-500/10 border border-orange-500/30 rounded-lg text-orange-400 font-mono text-sm"
+                >
+                  <div className="font-bold mb-2">[УВАГА] Деградація конвеєра (Graceful Degradation):</div>
+                  <ul className="list-disc pl-5">
+                    {warnings.map((w, i) => (
+                      <li key={i}>{w}</li>
+                    ))}
+                  </ul>
                 </motion.div>
               )}
             </motion.div>

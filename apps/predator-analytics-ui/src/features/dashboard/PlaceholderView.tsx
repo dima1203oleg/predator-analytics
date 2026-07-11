@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Clock, Bell, ArrowRight, Construction, Zap } from 'lucide-react';
@@ -112,7 +113,7 @@ export const PlaceholderView = () => {
                     className="flex flex-col sm:flex-row items-center justify-center gap-4"
                 >
                     {!notified ? (
-                        <button
+                        <Button variant="cyber"
                             onClick={() => setNotified(true)}
                             className="group relative px-8 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-medium transition-all shadow-lg shadow-emerald-900/20 hover:shadow-emerald-500/30 overflow-hidden"
                         >
@@ -120,7 +121,7 @@ export const PlaceholderView = () => {
                                 <Bell className="w-4 h-4" /> Сповістити про запуск
                             </span>
                             <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 via-emerald-400 to-emerald-600 opacity-0 group-hover:opacity-20 transition-opacity" style={{ backgroundSize: '200% 100%' }} />
-                        </button>
+                        </Button>
                     ) : (
                         <motion.div
                             initial={{ scale: 0.9, opacity: 0 }}
@@ -131,9 +132,9 @@ export const PlaceholderView = () => {
                         </motion.div>
                     )}
 
-                    <button className="px-8 py-3 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded-lg border border-slate-700 transition-colors flex items-center gap-2">
+                    <Button variant="cyber" className="px-8 py-3 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded-lg border border-slate-700 transition-colors flex items-center gap-2">
                         Дізнатись деталі <ArrowRight className="w-4 h-4" />
-                    </button>
+                    </Button>
                 </motion.div>
 
                 <div className="mt-16 flex items-center justify-center gap-8 opacity-40">

@@ -1,4 +1,5 @@
 
+import { Button } from '@/components/ui/button';
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -67,25 +68,25 @@ export const AdminLicenseModal: React.FC<AdminLicenseModalProps> = ({ isOpen, on
                                 <p className="text-xs text-slate-500 font-mono text-red-500/80">НАДАНО ПОВНИЙ ДОСТУП [ROOT]</p>
                             </div>
                         </div>
-                        <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors text-slate-400 hover:text-white">
+                        <Button variant="cyber" onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors text-slate-400 hover:text-white">
                             <X size={20} />
-                        </button>
+                        </Button>
                     </div>
 
                     {/* Tabs */}
                     <div className="flex border-b border-white/5 bg-slate-900/50">
-                        <button
+                        <Button variant="cyber"
                             onClick={() => setActiveTab('license')}
                             className={`flex-1 py-4 text-xs font-bold uppercase tracking-widest transition-colors flex items-center justify-center gap-2 border-b-2 ${activeTab === 'license' ? 'border-red-500 text-white bg-white/5' : 'border-transparent text-slate-500 hover:text-slate-300'}`}
                         >
                             <Key size={14} /> Генерація Ліцензій
-                        </button>
-                        <button
+                        </Button>
+                        <Button variant="cyber"
                             onClick={() => setActiveTab('system')}
                             className={`flex-1 py-4 text-xs font-bold uppercase tracking-widest transition-colors flex items-center justify-center gap-2 border-b-2 ${activeTab === 'system' ? 'border-red-500 text-white bg-white/5' : 'border-transparent text-slate-500 hover:text-slate-300'}`}
                         >
                             <Server size={14} /> Статус Серверів
-                        </button>
+                        </Button>
                     </div>
 
                     {/* Content */}
@@ -113,7 +114,7 @@ export const AdminLicenseModal: React.FC<AdminLicenseModalProps> = ({ isOpen, on
                                             <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2">рівень Доступу</label>
                                             <div className="grid grid-cols-3 gap-4">
                                                 {['client', 'premium', 'admin'].map((r) => (
-                                                    <button
+                                                    <Button variant="cyber"
                                                         key={r}
                                                         type="button"
                                                         onClick={() => setRole(r)}
@@ -123,19 +124,19 @@ export const AdminLicenseModal: React.FC<AdminLicenseModalProps> = ({ isOpen, on
                                                             }`}
                                                     >
                                                         {r}
-                                                    </button>
+                                                    </Button>
                                                 ))}
                                             </div>
                                         </div>
 
-                                        <button
+                                        <Button variant="cyber"
                                             type="submit"
                                             disabled={loading || !email}
                                             className="w-full py-4 bg-gradient-to-r from-red-600 to-orange-600 text-white font-black uppercase tracking-widest rounded-xl shadow-lg shadow-red-900/20 hover:from-red-500 hover:to-orange-500 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                                         >
                                             {loading ? <BrandLoaderFallback text="ЗАВАНТАЖЕННЯ" subtext="ОБРОБКА ДАНИХ" /> : <UserPlus className="w-5 h-5" />}
                                             Згенерувати Ключ
-                                        </button>
+                                        </Button>
                                     </form>
                                 ) : (
                                     <div className="space-y-6 text-center py-4">
@@ -147,17 +148,17 @@ export const AdminLicenseModal: React.FC<AdminLicenseModalProps> = ({ isOpen, on
 
                                         <div className="bg-black/40 p-4 rounded-2xl border border-white/10 flex items-center justify-between gap-4 mt-6">
                                             <code className="text-emerald-400 font-mono text-lg font-bold tracking-wider">{generatedKey}</code>
-                                            <button onClick={copyToClipboard} className="p-2 hover:bg-white/10 rounded-lg text-slate-400 hover:text-white transition-colors">
+                                            <Button variant="cyber" onClick={copyToClipboard} className="p-2 hover:bg-white/10 rounded-lg text-slate-400 hover:text-white transition-colors">
                                                 <Copy size={18} />
-                                            </button>
+                                            </Button>
                                         </div>
 
-                                        <button
+                                        <Button variant="cyber"
                                             onClick={() => { setGeneratedKey(null); setEmail(''); }}
                                             className="text-slate-500 hover:text-white text-xs font-bold uppercase tracking-widest mt-8 underline decoration-slate-700 underline-offset-4"
                                         >
                                             Створити ще одну
-                                        </button>
+                                        </Button>
                                     </div>
                                 )}
                             </div>

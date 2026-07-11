@@ -3,6 +3,7 @@
  * PREDATOR Analytics — OSINT & Due Diligence Core
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -177,14 +178,14 @@ export const DiligenceTab: React.FC = () => {
                                 className="w-full bg-slate-950/80 border border-white/10 rounded-xl py-3.5 pl-10 pr-4 text-white font-mono text-[11px] tracking-wider focus:outline-none focus:border-rose-500/50 transition-all relative z-10"
                             />
                         </div>
-                        <button 
+                        <Button variant="cyber" 
                             type="submit"
                             disabled={loading}
                             className="w-full py-4.5 bg-rose-600 hover:bg-rose-500 text-white rounded-xl font-black text-[11px] uppercase tracking-[0.2em] italic transition-all flex items-center justify-center gap-3 disabled:opacity-50 shadow-[0_0_15px_rgba(244,63,94,0.2)] animate-pulse"
                         >
                             {loading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Zap className="w-4 h-4" />}
                             СКАНУВАТИ
-                        </button>
+                        </Button>
                     </form>
 
                     <div className="flex flex-col gap-2 mt-4">
@@ -194,7 +195,7 @@ export const DiligenceTab: React.FC = () => {
                         </div>
                         <div className="flex flex-wrap gap-2 mt-2">
                             {riskFilters.map(filter => (
-                                <button 
+                                <Button variant="cyber" 
                                     key={filter.value}
                                     onClick={() => {
                                         setRiskFilter(filter.value);
@@ -208,7 +209,7 @@ export const DiligenceTab: React.FC = () => {
                                     )}
                                 >
                                     {filter.label}
-                                </button>
+                                </Button>
                             ))}
                         </div>
                     </div>
@@ -230,14 +231,14 @@ export const DiligenceTab: React.FC = () => {
                             className="w-full bg-slate-950/80 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white font-mono text-xs tracking-widest focus:outline-none focus:border-rose-500/50 transition-all relative z-10"
                         />
                     </div>
-                    <button 
+                    <Button variant="cyber" 
                         type="submit"
                         disabled={loading}
                         className="px-10 bg-rose-600 hover:bg-rose-500 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] italic transition-all flex items-center gap-3 disabled:opacity-50"
                     >
                         {loading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Zap className="w-4 h-4" />}
                         СКАНУВАТИ
-                    </button>
+                    </Button>
                 </form>
 
                 <div className="flex items-center gap-6 mt-4 px-2">
@@ -247,7 +248,7 @@ export const DiligenceTab: React.FC = () => {
                     </div>
                     <div className="flex gap-2">
                         {riskFilters.map(filter => (
-                            <button 
+                            <Button variant="cyber" 
                                 key={filter.value}
                                 onClick={() => {
                                     setRiskFilter(filter.value);
@@ -261,7 +262,7 @@ export const DiligenceTab: React.FC = () => {
                                 )}
                             >
                                 {filter.label}
-                            </button>
+                            </Button>
                         ))}
                     </div>
                 </div>
@@ -320,12 +321,12 @@ export const DiligenceTab: React.FC = () => {
                                             <span className="text-[9px] font-black text-rose-500 uppercase tracking-widest italic">UEID_{entity.ueid?.slice(0, 8)}</span>
                                         </div>
                                         <div className="flex gap-2">
-                                            <button className="p-2 bg-white/5 rounded-lg hover:bg-rose-500/20 text-slate-500 hover:text-rose-400 transition-all">
+                                            <Button variant="cyber" className="p-2 bg-white/5 rounded-lg hover:bg-rose-500/20 text-slate-500 hover:text-rose-400 transition-all">
                                                 <Share2 size={14} />
-                                            </button>
-                                            <button className="p-2 bg-white/5 rounded-lg hover:bg-rose-500/20 text-slate-500 hover:text-rose-400 transition-all">
+                                            </Button>
+                                            <Button variant="cyber" className="p-2 bg-white/5 rounded-lg hover:bg-rose-500/20 text-slate-500 hover:text-rose-400 transition-all">
                                                 <ExternalLink size={14} />
-                                            </button>
+                                            </Button>
                                         </div>
                                     </div>
 
@@ -367,9 +368,9 @@ export const DiligenceTab: React.FC = () => {
                                                         <span className="text-xs font-black text-rose-500 italic">{scoring}</span>
                                                     </div>
                                                 </div>
-                                                <button className="w-full flex items-center justify-center gap-2 py-4 bg-rose-600/10 hover:bg-rose-600 text-rose-400 hover:text-white border border-rose-500/20 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all italic">
+                                                <Button variant="cyber" className="w-full flex items-center justify-center gap-2 py-4 bg-rose-600/10 hover:bg-rose-600 text-rose-400 hover:text-white border border-rose-500/20 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all italic">
                                                     ДЕТАЛІ <ChevronRight size={14} />
-                                                </button>
+                                                </Button>
                                             </div>
                                         ) : (
                                             <div className="pt-6 mt-6 border-t border-white/5 flex items-center justify-between">
@@ -384,9 +385,9 @@ export const DiligenceTab: React.FC = () => {
                                                         <span className="text-sm font-black text-rose-500 italic">{scoring}</span>
                                                     </div>
                                                 </div>
-                                                <button className="flex items-center gap-2 px-6 py-3 bg-white/5 hover:bg-rose-600 text-slate-400 hover:text-white border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all italic">
+                                                <Button variant="cyber" className="flex items-center gap-2 px-6 py-3 bg-white/5 hover:bg-rose-600 text-slate-400 hover:text-white border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all italic">
                                                     ДЕТАЛІ <ChevronRight size={14} />
-                                                </button>
+                                                </Button>
                                             </div>
                                         )}
                                     </div>
@@ -435,7 +436,7 @@ export const DiligenceTab: React.FC = () => {
                 {/* Вкладки перемикання для мобільних та планшетів */}
                 {(isCompact || isMedium) && (
                     <div className="flex gap-2 w-full shrink-0">
-                        <button
+                        <Button variant="cyber"
                             onClick={() => {
                                 setActiveTab('scan');
                                 SovereignAudio.playPulse();
@@ -449,8 +450,8 @@ export const DiligenceTab: React.FC = () => {
                         >
                             <Search size={14} />
                             СКАНЕР
-                        </button>
-                        <button
+                        </Button>
+                        <Button variant="cyber"
                             onClick={() => {
                                 setActiveTab('system');
                                 SovereignAudio.playPulse();
@@ -464,7 +465,7 @@ export const DiligenceTab: React.FC = () => {
                         >
                             <Brain size={14} />
                             МОНІТОРИНГ
-                        </button>
+                        </Button>
                     </div>
                 )}
 

@@ -6,6 +6,7 @@
  * Використовує Whisper AI (симуляція) для транскрибації та Sentiment Analysis.
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -184,12 +185,12 @@ export const MediaIntelligencePanel: React.FC = () => {
 
                                 {/* Actions */}
                                 <div className="pt-4 flex gap-2">
-                                    <button className="flex-1 py-2 bg-indigo-600/20 text-indigo-400 border border-indigo-600/30 rounded-lg text-xs font-bold uppercase hover:bg-indigo-600/30 transition-all flex items-center justify-center gap-2">
+                                    <Button variant="cyber" className="flex-1 py-2 bg-indigo-600/20 text-indigo-400 border border-indigo-600/30 rounded-lg text-xs font-bold uppercase hover:bg-indigo-600/30 transition-all flex items-center justify-center gap-2">
                                         <Search size={14} /> Пошук в Графі
-                                    </button>
-                                    <button className="flex-1 py-2 bg-rose-600/20 text-rose-400 border border-rose-600/30 rounded-lg text-xs font-bold uppercase hover:bg-rose-600/30 transition-all flex items-center justify-center gap-2">
+                                    </Button>
+                                    <Button variant="cyber" className="flex-1 py-2 bg-rose-600/20 text-rose-400 border border-rose-600/30 rounded-lg text-xs font-bold uppercase hover:bg-rose-600/30 transition-all flex items-center justify-center gap-2">
                                         <AlertTriangle size={14} /> Звіт
-                                    </button>
+                                    </Button>
                                 </div>
                             </motion.div>
                         </AnimatePresence>

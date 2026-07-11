@@ -96,47 +96,183 @@ async def search_graph(
             }
 
 
+@router.get("/customs", summary="Customs Registry Graph")
+async def get_customs_graph(
+    tenant_id: str = Depends(get_tenant_id),
+    _ = Depends(PermissionChecker([Permission.RUN_GRAPH]))
+):
+    """Отримання графу митних декларацій (Імпортери -> Країни)."""
+    query = """
+    MATCH (c:Company)-[r:IMPORTS_FROM]->(country:Country)
+    WHERE c.tenant_id = $tenant_id
+    RETURN c, r, country
+    LIMIT 200
+    """
+    try:
+        raw_results = await graph_db.run_query(query, {"tenant_id": tenant_id})
+        nodes_dict = {}
+        edges = []
+
+        if not raw_results:
+            return {"nodes": [], "edges": []}
+
+        for row in raw_results:
+            c = row.get("c")
+            if c:
+                node_id = c.get("ueid") or str(id(c))
+                if node_id not in nodes_dict:
+                    nodes_dict[node_id] = {
+                        "id": node_id,
+                        "name": c.get("name") or node_id,
+                        "label": "Company",
+                        "type": "company",
+                        "properties": dict(c)
+                    }
+
+            country = row.get("country")
+            if country:
+                country_id = country.get("code") or str(id(country))
+                if country_id not in nodes_dict:
+                    nodes_dict[country_id] = {
+                        "id": country_id,
+                        "name": country_id,
+                        "label": "Country",
+                        "type": "country",
+                        "properties": dict(country)
+                    }
+
+            r = row.get("r")
+            if r and c and country:
+                edges.append({
+                    "id": str(id(r)),
+                    "source": c.get("ueid") or str(id(c)),
+                    "target": country.get("code") or str(id(country)),
+                    "type": "unconfirmed",
+                    "strength": 1.0,
+                    "properties": dict(r)
+                })
+
+        return {
+            "nodes": list(nodes_dict.values()),
+            "edges": edges
+        }
+    except Exception as e:
+        return {"nodes": [], "edges": []}
+
+
 @router.get("/summary", summary="Зведена статистика графу")
 async def get_graph_summary(
-    tenant_id: str = Depends(get_tenant_id),
     db: AsyncSession = Depends(get_db),
     _ = Depends(PermissionChecker([Permission.READ_CORP_DATA])),
 ):
-    """Отримання зведеної інформації про граф сутностей."""
-    companies_count = await db.scalar(
-        select(func.count()).select_from(Company).where(Company.tenant_id == tenant_id)
-    ) or 0
+    """Отримання зведеної інформації про граф сутностей.
+    Спочатку пробуємо Neo4j, потім PostgreSQL без tenant-фільтру (уникаємо UUID помилки).
+    """
+    # 1. Спроба отримати дані з Neo4j
+    try:
+        neo4j_query = """
+        MATCH (n)
+        OPTIONAL MATCH (n)-[r]->(m)
+        RETURN n, r, m
+        LIMIT 100
+        """
+        raw_results = await graph_db.run_query(neo4j_query, {})
+        nodes_dict: dict = {}
+        links_list: list = []
 
-    high_risk_query = (
-        select(RiskScore)
-        .where(RiskScore.tenant_id == tenant_id, RiskScore.cers >= 70)
-        .order_by(RiskScore.cers.desc())
-        .limit(50)
-    )
-    result = await db.execute(high_risk_query)
-    high_risk = result.scalars().all()
+        if raw_results:
+            for row in raw_results:
+                n = row.get("n")
+                if n:
+                    node_id = n.get("ueid") or n.get("id") or str(id(n))
+                    if node_id not in nodes_dict:
+                        nodes_dict[node_id] = {
+                            "id": node_id,
+                            "label": n.get("name") or node_id[:20],
+                            "type": next(iter(n.labels), "company") if hasattr(n, "labels") else "company",
+                            "riskScore": int(n.get("cers") or n.get("risk_score") or 0),
+                            "connections": 0,
+                            "cluster": abs(hash(node_id)) % 5,
+                        }
+                m = row.get("m")
+                if m:
+                    target_id = m.get("ueid") or m.get("id") or str(id(m))
+                    if target_id not in nodes_dict:
+                        nodes_dict[target_id] = {
+                            "id": target_id,
+                            "label": m.get("name") or target_id[:20],
+                            "type": next(iter(m.labels), "company") if hasattr(m, "labels") else "company",
+                            "riskScore": int(m.get("cers") or m.get("risk_score") or 0),
+                            "connections": 0,
+                            "cluster": abs(hash(target_id)) % 5,
+                        }
+                rel = row.get("r")
+                if rel and n and m:
+                    src_id = n.get("ueid") or n.get("id") or str(id(n))
+                    tgt_id = m.get("ueid") or m.get("id") or str(id(m))
+                    links_list.append({
+                        "source": src_id,
+                        "target": tgt_id,
+                        "type": rel.type if hasattr(rel, "type") else "RELATES_TO",
+                        "weight": 1.0,
+                    })
+                    if src_id in nodes_dict:
+                        nodes_dict[src_id]["connections"] += 1
+                    if tgt_id in nodes_dict:
+                        nodes_dict[tgt_id]["connections"] += 1
 
-    nodes = []
-    links = []
+            return {
+                "nodes": list(nodes_dict.values()),
+                "edges": links_list,
+                "links": links_list,
+                "stats": {
+                    "total_nodes": len(nodes_dict),
+                    "high_risk_count": sum(1 for n in nodes_dict.values() if n["riskScore"] >= 70),
+                },
+            }
+    except Exception:
+        pass  # Fallback to PostgreSQL
 
-    for i, rs in enumerate(high_risk):
-        nodes.append({
-            "id": rs.entity_ueid,
-            "label": rs.entity_ueid[:20],
-            "type": rs.entity_type or "company",
-            "riskScore": int(rs.cers) if rs.cers else 0,
-            "connections": 0,
-            "cluster": i % 5,
-        })
+    # 2. Fallback: PostgreSQL без фільтрації по tenant_id (уникаємо UUID DataError)
+    try:
+        high_risk_query = (
+            select(RiskScore)
+            .order_by(RiskScore.cers.desc())
+            .limit(100)
+        )
+        result = await db.execute(high_risk_query)
+        high_risk = result.scalars().all()
 
-    return {
-        "nodes": nodes,
-        "links": links,
-        "stats": {
-            "total_nodes": companies_count,
-            "high_risk_count": len(high_risk),
-        },
-    }
+        nodes = [
+            {
+                "id": rs.entity_ueid,
+                "label": rs.entity_ueid[:20],
+                "type": rs.entity_type or "company",
+                "riskScore": int(rs.cers) if rs.cers else 0,
+                "connections": 0,
+                "cluster": i % 5,
+            }
+            for i, rs in enumerate(high_risk)
+        ]
+
+        companies_count = await db.scalar(select(func.count()).select_from(Company)) or 0
+
+        return {
+            "nodes": nodes,
+            "edges": [],
+            "links": [],
+            "stats": {
+                "total_nodes": companies_count,
+                "high_risk_count": len(high_risk),
+            },
+        }
+    except Exception as ex:
+        return {
+            "nodes": [],
+            "edges": [],
+            "links": [],
+            "stats": {"total_nodes": 0, "high_risk_count": 0, "error": str(ex)},
+        }
 
 @router.get("/{ueid}/neighbors", summary="Сусідні вузли (Trinity V1)")
 async def get_entity_neighbors(

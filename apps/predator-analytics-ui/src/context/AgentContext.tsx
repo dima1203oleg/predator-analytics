@@ -98,7 +98,7 @@ export const AgentProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             }
 
         } catch (e) {
-            console.error('Не вдалося оновити контекст агентів:', e);
+            console.warn('Не вдалося оновити контекст агентів (API недоступне):', e);
             setAgents([]);
             setCascades([]);
             setLogs([]);

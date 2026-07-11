@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -287,7 +288,7 @@ export const ETLPipelineVisualizer: React.FC = () => {
       {/* Ribbon: Logic Engines Selector */}
       <div className="flex gap-6 overflow-x-auto pb-6 custom-scrollbar scroll-smooth">
         {pipelines.map(pipeline => (
-          <button
+          <Button variant="cyber"
             key={pipeline.id}
             onClick={() => setActivePipeline(pipeline)}
             className={cn(
@@ -319,7 +320,7 @@ export const ETLPipelineVisualizer: React.FC = () => {
                 )}>{pipeline.totalProgress}%_SYNC</span>
               </div>
             </div>
-          </button>
+          </Button>
         ))}
       </div>
 

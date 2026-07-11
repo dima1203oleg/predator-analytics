@@ -30,7 +30,7 @@ export function GeminiCloudAssist() {
 
   const mockInsights = [
     { id: 1, title: 'Оптимізація BigQuery', desc: 'Виявлено 12 запитів з високим споживанням слотів.', priority: 'medium', icon: BarChart3, color: 'text-amber-400' },
-    { id: 2, title: 'Безпека GKE', desc: 'Застаріла версія Control Plane у кластері predator-prod.', priority: 'high', icon: ShieldAlert, color: 'text-rose-500' },
+    { id: 2, title: 'Безпека GKE', desc: 'Застаріла версія Control Plane у кластері predator-prod.', priority: 'high', icon: ShieldAlert, color: 'text-cyan-500' },
     { id: 3, title: 'VRAM Allocation', desc: 'рекомендовано збільшити квоту L4 GPU у регіоні us-central1.', priority: 'low', icon: Cpu, color: 'text-emerald-400' },
   ];
 
@@ -52,7 +52,7 @@ export function GeminiCloudAssist() {
         </div>
         <div className="flex gap-2">
            {['chat', 'architecture', 'health', 'costs'].map((t) => (
-             <button
+             <Button variant="cyber"
                key={t}
                onClick={() => setActiveTab(t as any)}
                className={cn(
@@ -61,7 +61,7 @@ export function GeminiCloudAssist() {
                )}
              >
                {t}
-             </button>
+             </Button>
            ))}
         </div>
       </div>
@@ -89,8 +89,8 @@ export function GeminiCloudAssist() {
                            </div>
                         </div>
                         <div className="flex gap-3 flex-row-reverse">
-                           <div className="w-8 h-8 rounded-lg bg-rose-500/20 flex items-center justify-center shrink-0 border border-rose-500/30 text-rose-400">P</div>
-                           <div className="bg-rose-500/10 rounded-2xl rounded-tr-none p-4 text-rose-100 max-w-[80%] border border-rose-500/20 leading-relaxed italic">
+                           <div className="w-8 h-8 rounded-lg bg-cyan-500/20 flex items-center justify-center shrink-0 border border-cyan-500/30 text-rose-400">P</div>
+                           <div className="bg-cyan-500/10 rounded-2xl rounded-tr-none p-4 text-rose-100 max-w-[80%] border border-cyan-500/20 leading-relaxed italic">
                              Проаналізуй затримку між Core API та Neo4j у кластері NVIDIA-Node.
                            </div>
                         </div>
@@ -115,9 +115,9 @@ export function GeminiCloudAssist() {
                               <Layout size={20} />
                            </label>
                         </div>
-                        <button className="absolute right-2 top-2 bottom-2 w-10 bg-blue-600 hover:bg-blue-500 rounded-xl flex items-center justify-center text-white transition-colors">
+                        <Button variant="cyber" className="absolute right-2 top-2 bottom-2 w-10 bg-blue-600 hover:bg-blue-500 rounded-xl flex items-center justify-center text-white transition-colors">
                            <ArrowRight size={18} />
-                        </button>
+                        </Button>
                      </div>
                    </motion.div>
                  )}

@@ -7,6 +7,7 @@
  * © 2026 PREDATOR Analytics - Повна українізація
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactECharts from '@/components/ECharts';
@@ -195,18 +196,18 @@ export const OpenSearch: React.FC = () => {
         <div className="flex items-center gap-2">
           {/* Перемикач режимів */}
           <div className="flex bg-slate-900 border border-white/5 rounded-xl p-1">
-            <button
+            <Button variant="cyber"
               onClick={() => setEmbedMode('native')}
               className={`px-3 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg transition-all ${embedMode === 'native' ? 'bg-orange-500 text-white' : 'text-slate-500 hover:text-white'}`}
             >
               Графіки
-            </button>
-            <button
+            </Button>
+            <Button variant="cyber"
               onClick={() => setEmbedMode('iframe')}
               className={`px-3 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-lg transition-all ${embedMode === 'iframe' ? 'bg-orange-500 text-white' : 'text-slate-500 hover:text-white'}`}
             >
               Дашборд
-            </button>
+            </Button>
           </div>
 
           <motion.button
@@ -219,13 +220,13 @@ export const OpenSearch: React.FC = () => {
             <RefreshCw size={16} className={isLoading ? 'animate-spin' : ''} />
           </motion.button>
 
-          <button
+          <Button variant="cyber"
             onClick={() => setIsFullscreen(!isFullscreen)}
             className="p-2 bg-slate-900 hover:bg-slate-800 border border-white/5 rounded-xl text-slate-400 hover:text-white transition-all"
             title="На весь екран"
           >
             {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
-          </button>
+          </Button>
 
           <a
             href={OPENSEARCH_URL}
@@ -343,12 +344,12 @@ export const OpenSearch: React.FC = () => {
                   <p className="text-sm text-slate-400 text-center max-w-md">
                     OpenSearch Dashboards недоступний. Перевірте підключення до сервера або використайте режим "Графіки" дляперегляду локальних метрик.
                   </p>
-                  <button
+                  <Button variant="cyber"
                     onClick={() => setEmbedMode('native')}
                     className="px-6 py-3 bg-orange-500 hover:bg-orange-400 text-white rounded-xl font-bold transition-all"
                   >
                     Перейти до Графіків
-                  </button>
+                  </Button>
                 </div>
               ) : (
                 <iframe

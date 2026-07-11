@@ -5,6 +5,7 @@
  * Налаштування та моніторинг подій
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useMemo, useEffect } from 'react';
 import { api } from '@/services/api';
 import { premiumLocales } from '@/locales/uk/premium';
@@ -177,20 +178,20 @@ const AlertCard: React.FC<{ alert: Alert; onAcknowledge: () => void; onResolve: 
         {/* Actions */}
         {alert.status === 'active' && (
           <div className="flex items-center gap-2">
-            <button
+            <Button variant="cyber"
               onClick={onAcknowledge}
               className="p-2 rounded-lg bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500/30 transition-colors"
               title={premiumLocales.alertCenter.actions.acknowledge}
             >
               <Eye size={16} />
-            </button>
-            <button
+            </Button>
+            <Button variant="cyber"
               onClick={onResolve}
               className="p-2 rounded-lg bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 transition-colors"
               title={premiumLocales.alertCenter.actions.resolve}
             >
               <Check size={16} />
-            </button>
+            </Button>
           </div>
         )}
       </div>
@@ -237,7 +238,7 @@ const RuleCard: React.FC<{ rule: AlertRule; onToggle: () => void }> = ({ rule, o
         </div>
       </div>
 
-      <button
+      <Button variant="cyber"
         onClick={onToggle}
         className={`
           w-12 flex flex-col items-center justify-center border-l border-white/5 transition-colors
@@ -249,7 +250,7 @@ const RuleCard: React.FC<{ rule: AlertRule; onToggle: () => void }> = ({ rule, o
         <span className="text-[10px] font-bold uppercase mt-1 vertical-text">
           {rule.isEnabled ? 'ON' : 'OFF'}
         </span>
-      </button>
+      </Button>
     </div>
   );
 };
@@ -375,10 +376,10 @@ const AlertCenterPremium: React.FC = () => {
                 <div className="text-[10px] text-slate-500 uppercase tracking-widest">{premiumLocales.alertCenter.stats.critical}</div>
               </div>
             </div>
-            <button className="flex items-center gap-2 px-6 py-3 bg-amber-500 text-black font-black rounded-xl hover:bg-amber-400 transition-colors shadow-lg shadow-amber-500/20">
+            <Button variant="cyber" className="flex items-center gap-2 px-6 py-3 bg-amber-500 text-black font-black rounded-xl hover:bg-amber-400 transition-colors shadow-lg shadow-amber-500/20">
               <Plus size={20} />
               <span className="hidden sm:inline">{premiumLocales.alertCenter.actions.addRule}</span>
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -419,7 +420,7 @@ const AlertCenterPremium: React.FC = () => {
 
         {/* Tabs */}
         <div className="flex items-center gap-4 mb-6">
-          <button
+          <Button variant="cyber"
             onClick={() => setTab('alerts')}
             className={`px-4 py-2 rounded-xl font-bold text-sm transition-colors ${tab === 'alerts' ? 'bg-amber-500/20 text-amber-400' : 'text-slate-500 hover:text-white'
               }`}
@@ -428,8 +429,8 @@ const AlertCenterPremium: React.FC = () => {
               <Bell size={16} />
               {premiumLocales.alertCenter.tabs.alerts} ({stats.active})
             </span>
-          </button>
-          <button
+          </Button>
+          <Button variant="cyber"
             onClick={() => setTab('rules')}
             className={`px-4 py-2 rounded-xl font-bold text-sm transition-colors ${tab === 'rules' ? 'bg-purple-500/20 text-purple-400' : 'text-slate-500 hover:text-white'
               }`}
@@ -438,7 +439,7 @@ const AlertCenterPremium: React.FC = () => {
               <Settings size={16} />
               {premiumLocales.alertCenter.tabs.rules} ({rules.length})
             </span>
-          </button>
+          </Button>
         </div>
 
         {/* Alerts Tab */}
@@ -459,7 +460,7 @@ const AlertCenterPremium: React.FC = () => {
 
               <div className="flex gap-2">
                 {(['all', 'critical', 'high', 'medium', 'low'] as const).map((f) => (
-                  <button
+                  <Button variant="cyber"
                     key={f}
                     onClick={() => setFilter(f)}
                     className={`px-3 py-2 rounded-xl text-sm font-medium transition-colors ${filter === f
@@ -472,7 +473,7 @@ const AlertCenterPremium: React.FC = () => {
                       }`}
                   >
                     {f === 'all' ? premiumLocales.alertCenter.stats.total : priorityConfig[f].label}
-                  </button>
+                  </Button>
                 ))}
               </div>
             </div>

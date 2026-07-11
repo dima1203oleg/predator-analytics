@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
@@ -44,9 +45,9 @@ export const NeuralAutomationWidget: React.FC<{ persona: string }> = ({ persona 
             <p className="text-[10px] text-slate-500 font-mono uppercase tracking-widest">{premiumLocales.neuralAutomation.subtitle}</p>
           </div>
         </div>
-        <button aria-label="Оновити статус" className="p-2 hover:bg-white/5 rounded-xl text-slate-400 transition-colors">
+        <Button variant="cyber" aria-label="Оновити статус" className="p-2 hover:bg-white/5 rounded-xl text-slate-400 transition-colors">
           <RefreshCw size={20} />
-        </button>
+        </Button>
       </div>
 
       {/* Content Area */}
@@ -71,18 +72,18 @@ export const NeuralAutomationWidget: React.FC<{ persona: string }> = ({ persona 
                    <h4 className="text-sm font-black text-white">{saga.name}</h4>
                 </div>
                 <div className="flex gap-2">
-                   <button
+                   <Button variant="cyber"
                      aria-label={saga.status === 'active' ? "Пауза" : "Запуск"}
                      className="p-2 bg-white/5 hover:bg-white/10 rounded-lg text-slate-400 transition-all"
                    >
                       {saga.status === 'active' ? <Pause size={14} /> : <Play size={14} />}
-                   </button>
-                   <button
+                   </Button>
+                   <Button variant="cyber"
                      aria-label="Налаштування саги"
                      className="p-2 bg-white/5 hover:bg-white/10 rounded-lg text-slate-400 transition-all"
                    >
                       <Settings size={14} />
-                   </button>
+                   </Button>
                 </div>
               </div>
 
@@ -125,7 +126,7 @@ export const NeuralAutomationWidget: React.FC<{ persona: string }> = ({ persona 
 
       {/* Integration Shortcuts */}
       <div className="p-6 border-t border-white/5 bg-black/40 grid grid-cols-2 gap-4">
-         <button
+         <Button variant="cyber"
            aria-label="Telegram Бот"
            className="flex items-center justify-center gap-3 py-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all"
          >
@@ -134,8 +135,8 @@ export const NeuralAutomationWidget: React.FC<{ persona: string }> = ({ persona 
                <div className="text-[10px] font-black text-white uppercase">{premiumLocales.neuralAutomation.telegramBot}</div>
                <div className="text-[8px] text-slate-500">{premiumLocales.neuralAutomation.notificationsDesc}</div>
             </div>
-         </button>
-         <button
+         </Button>
+         <Button variant="cyber"
            aria-label="API Документація"
            className="flex items-center justify-center gap-3 py-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all"
          >
@@ -144,7 +145,7 @@ export const NeuralAutomationWidget: React.FC<{ persona: string }> = ({ persona 
                <div className="text-[10px] font-black text-white uppercase">{premiumLocales.neuralAutomation.apiDocs}</div>
                <div className="text-[8px] text-slate-500">{premiumLocales.neuralAutomation.integrateDesc}</div>
             </div>
-         </button>
+         </Button>
       </div>
 
       <div className="p-4 bg-blue-500/10 text-center border-t border-blue-500/20">

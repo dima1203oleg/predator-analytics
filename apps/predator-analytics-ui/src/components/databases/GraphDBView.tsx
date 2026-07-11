@@ -1,4 +1,5 @@
 
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Play, Share2, Activity, Database, Zap, Cpu, Terminal, ShieldAlert, Network, Box } from 'lucide-react';
@@ -145,9 +146,9 @@ export const GraphDBView: React.FC<GraphDBViewProps> = ({ cypherQuery, onCypherQ
                         <div className="absolute bottom-10 inset-x-10 flex justify-between items-end pointer-events-none">
                             <div className="p-4 bg-black/40 rounded-2xl border border-white/5 pointer-events-auto">
                                 <div className="flex gap-4">
-                                    <button className="text-slate-500 hover:text-purple-400 transition-colors"><Cpu size={16} /></button>
-                                    <button className="text-slate-500 hover:text-purple-400 transition-colors"><Share2 size={16} /></button>
-                                    <button className="text-slate-500 hover:text-purple-400 transition-colors"><Activity size={16} /></button>
+                                    <Button variant="cyber" className="text-slate-500 hover:text-purple-400 transition-colors"><Cpu size={16} /></Button>
+                                    <Button variant="cyber" className="text-slate-500 hover:text-purple-400 transition-colors"><Share2 size={16} /></Button>
+                                    <Button variant="cyber" className="text-slate-500 hover:text-purple-400 transition-colors"><Activity size={16} /></Button>
                                 </div>
                             </div>
                             <div className="text-right">
@@ -193,13 +194,13 @@ export const GraphDBView: React.FC<GraphDBViewProps> = ({ cypherQuery, onCypherQ
                                 </div>
                             </div>
 
-                            <button
+                            <Button variant="cyber"
                                 onClick={onExecuteCypher}
                                 className="w-full py-5 bg-purple-600 hover:bg-purple-500 text-white rounded-3xl text-[11px] font-black uppercase tracking-[0.3em] shadow-xl shadow-purple-600/20 transition-all active:scale-95 flex items-center justify-center gap-3 group/btn"
                             >
                                 <Play size={16} className="fill-current group-hover/btn:scale-125 transition-transform" />
                                 Run Graph Discovery
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 </HoloCard>

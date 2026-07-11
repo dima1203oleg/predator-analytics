@@ -5,6 +5,7 @@
  * Live updates, streaming data, alerts
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -162,7 +163,7 @@ const useRealWebSocket = (isConnected: boolean) => {
 // ========================
 
 const ConnectionStatus: React.FC<{ isConnected: boolean; onToggle: () => void }> = ({ isConnected, onToggle }) => (
-  <button
+  <Button variant="cyber"
     onClick={onToggle}
     className={`flex items-center gap-2 px-3 py-1.5 rounded-lg transition-colors ${isConnected
       ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
@@ -179,7 +180,7 @@ const ConnectionStatus: React.FC<{ isConnected: boolean; onToggle: () => void }>
         <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
       </span>
     )}
-  </button>
+  </Button>
 );
 
 const LiveMetricCard: React.FC<{ metric: LiveMetric }> = ({ metric }) => {
@@ -356,14 +357,14 @@ const RealTimeDashboard: React.FC = () => {
           <div className="flex items-center gap-3">
             <ConnectionStatus isConnected={isConnected} onToggle={() => setIsLive(!isLive)} />
 
-            <button className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white transition-colors">
+            <Button variant="cyber" className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white transition-colors">
               <Settings size={18} />
-            </button>
+            </Button>
 
-            <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white rounded-xl font-bold text-sm">
+            <Button variant="cyber" className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white rounded-xl font-bold text-sm">
               <Zap size={16} />
               Subscribe
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -379,12 +380,12 @@ const RealTimeDashboard: React.FC = () => {
               <p className="font-bold text-amber-400">З'єднання втрачено</p>
               <p className="text-sm text-amber-400/70">Дані не оновлюються в реальному часі</p>
             </div>
-            <button
+            <Button variant="cyber"
               onClick={() => setIsLive(true)}
               className="px-4 py-2 bg-amber-500/20 text-amber-400 rounded-lg font-bold text-sm"
             >
               Перепідключити
-            </button>
+            </Button>
           </motion.div>
         )}
 

@@ -37,11 +37,11 @@ export const useSystemEvents = () => {
     };
 
     eventSource.onerror = (error) => {
-      console.error('SSE Error:', error);
+      console.warn('SSE Disconnected. Backend may be offline.', error);
       eventSource.close();
       setConnected(false);
-      // Attempt to reconnect after 5 seconds
-      reconnectTimeoutRef.current = setTimeout(connect, 5000);
+      // Attempt to reconnect after 15 seconds
+      reconnectTimeoutRef.current = setTimeout(connect, 15000);
     };
 
     // Зберігаємо посилання на eventSource у socketRef (тип Any для спрощення, або просто як EventSource)

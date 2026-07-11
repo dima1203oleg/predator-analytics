@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
@@ -115,12 +116,12 @@ export const OmniverseExplorer: React.FC = () => {
             ))}
           </select>
           
-          <button 
+          <Button variant="cyber" 
             onClick={() => selectedTable && loadTableData(selectedTable, page)}
             className="p-2 hover:bg-white/5 rounded-lg transition-colors text-white/70"
           >
             <RefreshCcw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -167,21 +168,21 @@ export const OmniverseExplorer: React.FC = () => {
               Показано <span className="text-white">{data.length}</span> з <span className="text-white">{total}</span> записів
             </div>
             <div className="flex items-center space-x-2">
-              <button 
+              <Button variant="cyber" 
                 disabled={page === 0}
                 onClick={() => setPage(p => Math.max(0, p - 1))}
                 className="p-1.5 hover:bg-white/10 disabled:opacity-30 rounded transition-colors"
               >
                 <ChevronLeft className="w-4 h-4" />
-              </button>
+              </Button>
               <span className="px-2">Сторінка {page + 1}</span>
-              <button 
+              <Button variant="cyber" 
                 disabled={(page + 1) * pageSize >= total}
                 onClick={() => setPage(p => p + 1)}
                 className="p-1.5 hover:bg-white/10 disabled:opacity-30 rounded transition-colors"
               >
                 <ChevronRight className="w-4 h-4" />
-              </button>
+              </Button>
             </div>
           </div>
         )}

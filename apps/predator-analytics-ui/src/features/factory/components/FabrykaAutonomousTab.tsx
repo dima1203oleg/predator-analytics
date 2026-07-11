@@ -176,15 +176,15 @@ const getRiskIcon = (level: RiskLevel) => {
 
 const getRiskColors = (level: RiskLevel) => {
   if (level === 'LOW') return { border: 'border-emerald-500/30', bg: 'bg-emerald-500/10', text: 'text-emerald-400', dot: 'bg-emerald-400' };
-  if (level === 'MEDIUM') return { border: 'border-rose-500/30', bg: 'bg-rose-500/10', text: 'text-rose-400', dot: 'bg-rose-400' };
-  return { border: 'border-rose-500/30', bg: 'bg-rose-500/10', text: 'text-rose-400', dot: 'bg-rose-400' };
+  if (level === 'MEDIUM') return { border: 'border-cyan-500/30', bg: 'bg-cyan-500/10', text: 'text-rose-400', dot: 'bg-rose-400' };
+  return { border: 'border-cyan-500/30', bg: 'bg-cyan-500/10', text: 'text-rose-400', dot: 'bg-rose-400' };
 };
 
 const getProviderColors = (provider: LlmCascadeEntry['provider']) => {
   if (provider === 'gemini') return 'border-emerald-500/40 text-emerald-400 bg-emerald-500/10';
-  if (provider === 'groq') return 'border-rose-500/40 text-rose-400 bg-rose-500/10';
+  if (provider === 'groq') return 'border-cyan-500/40 text-rose-400 bg-cyan-500/10';
   if (provider === 'zai') return 'border-indigo-500/40 text-indigo-400 bg-indigo-500/10';
-  if (provider === 'azure') return 'border-rose-500/40 text-rose-400 bg-rose-500/10';
+  if (provider === 'azure') return 'border-cyan-500/40 text-rose-400 bg-cyan-500/10';
   return 'border-white/20 text-white bg-white/5';
 };
 
@@ -531,7 +531,7 @@ export function FabrykaAutonomousTab() {
             <p className="text-[9px] text-slate-500 font-mono uppercase">GTX 1080 · 8GB GDDR5X</p>
           </div>
           {isCritical && (
-            <Badge className="bg-rose-500 text-white  border-none text-[8px] font-black italic">
+            <Badge className="bg-cyan-500 text-white  border-none text-[8px] font-black italic">
               VRAM_ПЕ ЕВАНТАЖЕННЯ_АКТИВНО
             </Badge>
           )}
@@ -543,7 +543,7 @@ export function FabrykaAutonomousTab() {
             <div className="text-xl font-black italic text-white">{localReserve} GB</div>
             <div className="text-[8px] text-slate-500 mt-1">ЗАБ ОНЬОВАНО ДЛЯ OLLAMA</div>
           </div>
-          <div className="p-4 rounded-2xl bg-rose-500/5 border border-rose-500/20">
+          <div className="p-4 rounded-2xl bg-cyan-500/5 border border-cyan-500/20">
             <div className="text-[8px] font-black text-rose-400 uppercase mb-2">Sovereign OS / UI</div>
             <div className="text-xl font-black italic text-white">{uiReserve} GB</div>
             <div className="text-[8px] text-slate-500 mt-1">ЗАБ ОНЬОВАНО ДЛЯ THREE.JS</div>
@@ -558,12 +558,12 @@ export function FabrykaAutonomousTab() {
           <div className="h-2 bg-white/5 rounded-full overflow-hidden relative">
             <div className="absolute inset-0 flex">
               <div className="h-full bg-emerald-500/40" style={{ width: `${(localReserve / total) * 100}%` }} />
-              <div className="h-full bg-rose-500/40 border-l border-white/10" style={{ width: `${(uiReserve / total) * 100}%` }} />
+              <div className="h-full bg-cyan-500/40 border-l border-white/10" style={{ width: `${(uiReserve / total) * 100}%` }} />
             </div>
             <motion.div 
               initial={{ width: 0 }}
               animate={{ width: `${usedPercent}%` }}
-              className={cn("h-full relative z-10", isCritical ? 'bg-rose-500' : 'bg-white/40')} 
+              className={cn("h-full relative z-10", isCritical ? 'bg-cyan-500' : 'bg-white/40')} 
             />
           </div>
           <div className="flex items-center justify-between text-[8px] text-slate-600 font-mono italic">
@@ -584,7 +584,7 @@ export function FabrykaAutonomousTab() {
         'relative rounded-[32px] border p-6 overflow-hidden transition-all duration-700',
         isAutonomous
           ? 'border-emerald-500/30 bg-gradient-to-br from-emerald-950/40 to-slate-950/60'
-          : 'border-rose-500/30 bg-gradient-to-br from-rose-950/40 to-slate-950/60',
+          : 'border-cyan-500/30 bg-gradient-to-br from-rose-950/40 to-slate-950/60',
       )}>
         <div className="absolute inset-0 opacity-5 pointer-events-none"
           style={{ backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 30px, rgba(255,255,255,0.03) 30px, rgba(255,255,255,0.03) 31px), repeating-linear-gradient(90deg, transparent, transparent 30px, rgba(255,255,255,0.03) 30px, rgba(255,255,255,0.03) 31px)' }}
@@ -595,7 +595,7 @@ export function FabrykaAutonomousTab() {
           <div className="flex items-center gap-5">
             <div className={cn(
               'w-16 h-16 rounded-2xl border flex items-center justify-center transition-all duration-500',
-              isAutonomous ? 'border-emerald-500/40 bg-emerald-500/15 text-emerald-400 ' : 'border-rose-500/40 bg-rose-500/15 text-rose-400 ',
+              isAutonomous ? 'border-emerald-500/40 bg-emerald-500/15 text-emerald-400 ' : 'border-cyan-500/40 bg-cyan-500/15 text-rose-400 ',
             )}>
               {isAutonomous ? <WifiOff size={28} /> : <Wifi size={28} />}
             </div>
@@ -621,13 +621,13 @@ export function FabrykaAutonomousTab() {
             <span className={cn('text-sm font-black uppercase tracking-widest', isAutonomous ? 'text-emerald-400' : 'text-slate-400')}>
               ЛОКАЛЬНО
             </span>
-            <button
+            <Button variant="cyber"
               type="button"
               disabled={isSwitching}
               onClick={() => handleModeSwitch(isAutonomous ? 'API' : 'AUTONOMOUS')}
               className={cn(
                 'relative w-20 h-10 rounded-full border-2 transition-all duration-500 cursor-pointer',
-                isAutonomous ? 'border-emerald-500/60 bg-emerald-950/50' : 'border-rose-500/60 bg-rose-950/50',
+                isAutonomous ? 'border-emerald-500/60 bg-emerald-950/50' : 'border-cyan-500/60 bg-rose-950/50',
               )}
             >
               {isSwitching ? (
@@ -642,7 +642,7 @@ export function FabrykaAutonomousTab() {
                   )}
                 />
               )}
-            </button>
+            </Button>
             <span className={cn('text-sm font-black uppercase tracking-widest', !isAutonomous ? 'text-rose-400' : 'text-slate-400')}>
               API
             </span>
@@ -658,7 +658,7 @@ export function FabrykaAutonomousTab() {
           {llmMode.rules.map((rule, i) => (
             <div key={i} className={cn(
               'flex items-center gap-2 border rounded-full px-3 py-1.5 text-[10px] font-mono',
-              rule.triggered ? 'border-rose-500/40 bg-rose-500/10 text-rose-300' : 'border-white/5 bg-white/5 text-slate-600',
+              rule.triggered ? 'border-cyan-500/40 bg-cyan-500/10 text-rose-300' : 'border-white/5 bg-white/5 text-slate-600',
             )}>
               {rule.triggered && <span className="w-1.5 h-1.5 rounded-full bg-rose-400 " />}
               <ChevronRight size={10} />
@@ -685,7 +685,7 @@ export function FabrykaAutonomousTab() {
           </div>
           {/* Великий перемикач Ollama ↔ API */}
           <div className="flex items-center gap-3">
-            <button
+            <Button variant="cyber"
               type="button"
               disabled={isCoderSwitching}
               onClick={() => void handleCoderSourceSwitch('ollama')}
@@ -698,22 +698,22 @@ export function FabrykaAutonomousTab() {
             >
               {isCoderSwitching && coderSource !== 'ollama' ? <Loader size={12} className="animate-spin" /> : <WifiOff size={12} />}
               Ollama · Локально
-            </button>
+            </Button>
             <div className="text-slate-600 text-[11px] font-black">/</div>
-            <button
+            <Button variant="cyber"
               type="button"
               disabled={isCoderSwitching}
               onClick={() => void handleCoderSourceSwitch('api')}
               className={cn(
                 'flex items-center gap-2 px-4 py-2.5 rounded-[14px] border text-[10px] font-black uppercase tracking-wider transition-all duration-300',
                 coderSource === 'api'
-                  ? 'border-rose-500/50 bg-rose-500/15 text-rose-300 '
+                  ? 'border-cyan-500/50 bg-cyan-500/15 text-rose-300 '
                   : 'border-white/10 bg-white/5 text-slate-500 hover:text-slate-300',
               )}
             >
               {isCoderSwitching && coderSource !== 'api' ? <Loader size={12} className="animate-spin" /> : <Wifi size={12} />}
               API · Хмара
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -787,13 +787,13 @@ export function FabrykaAutonomousTab() {
                   className={cn(
                     'w-full text-left rounded-[18px] border p-3.5 transition-all duration-200 relative overflow-hidden',
                     isActive
-                      ? 'border-rose-500/50 bg-rose-500/10 '
+                      ? 'border-cyan-500/50 bg-cyan-500/10 '
                       : model.online
                         ? 'border-white/8 bg-black/20 hover:border-white/20 hover:bg-white/5 cursor-pointer'
                         : 'border-white/4 bg-black/10 opacity-40 cursor-not-allowed',
                   )}
                 >
-                  {isActive && <div className="absolute right-0 top-0 w-16 h-16 bg-rose-500/10 rounded-full translate-x-6 -translate-y-6 blur-xl pointer-events-none" />}
+                  {isActive && <div className="absolute right-0 top-0 w-16 h-16 bg-cyan-500/10 rounded-full translate-x-6 -translate-y-6 blur-xl pointer-events-none" />}
                   <div className="flex items-start justify-between gap-2 relative">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
@@ -851,20 +851,20 @@ export function FabrykaAutonomousTab() {
           { id: 'flags', label: 'Прапорці функцій', icon: Sliders },
           { id: 'chaos', label: 'Хаос-інженерія', icon: Flame },
         ] as const).map(({ id, label, icon: Icon }) => (
-          <button
+          <Button variant="cyber"
             key={id}
             type="button"
             onClick={() => setActiveSection(id)}
             className={cn(
               'flex items-center gap-2 px-4 py-2 rounded-2xl border text-[10px] font-black uppercase tracking-wider transition-all',
               activeSection === id
-                ? 'border-rose-500/40 bg-rose-500/10 text-rose-300'
+                ? 'border-cyan-500/40 bg-cyan-500/10 text-rose-300'
                 : 'border-white/5 bg-white/5 text-slate-500 hover:text-slate-300 hover:border-white/10',
             )}
           >
             <Icon size={12} />
             {label}
-          </button>
+          </Button>
         ))}
       </div>
 
@@ -883,13 +883,13 @@ export function FabrykaAutonomousTab() {
           >
             {/* Observer Mode Header Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-black/40 rounded-3xl border border-white/5 p-5 flex items-center justify-between group hover:border-rose-500/20 transition-colors">
+              <div className="bg-black/40 rounded-3xl border border-white/5 p-5 flex items-center justify-between group hover:border-cyan-500/20 transition-colors">
                 <div>
                   <div className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Навантаження_ ою</div>
                   <div className="text-xl font-black text-white italic">{(swarm.reduce((acc, a) => acc + a.vram_usage_gb, 0)).toFixed(1)} ГБ VRAM</div>
                 </div>
-                <div className="w-10 h-10 rounded-xl bg-rose-500/10 flex items-center justify-center border border-rose-500/20 group-hover:scale-110 transition-transform">
-                  <Cpu size={18} className="text-rose-500" />
+                <div className="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20 group-hover:scale-110 transition-transform">
+                  <Cpu size={18} className="text-cyan-500" />
                 </div>
               </div>
               <div className="bg-black/40 rounded-3xl border border-white/5 p-5 flex items-center justify-between group hover:border-emerald-500/20 transition-colors">
@@ -901,13 +901,13 @@ export function FabrykaAutonomousTab() {
                   <ShieldCheck size={18} className="text-emerald-500" />
                 </div>
               </div>
-              <div className="bg-black/40 rounded-3xl border border-white/5 p-5 flex items-center justify-between group hover:border-rose-500/20 transition-colors">
+              <div className="bg-black/40 rounded-3xl border border-white/5 p-5 flex items-center justify-between group hover:border-cyan-500/20 transition-colors">
                 <div>
                   <div className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Швидкість_OODA</div>
                   <div className="text-xl font-black text-rose-400 italic">4.2 ОП/СЕК</div>
                 </div>
-                <div className="w-10 h-10 rounded-xl bg-rose-500/10 flex items-center justify-center border border-rose-500/20 group-hover:scale-110 transition-transform">
-                  <Zap size={18} className="text-rose-500" />
+                <div className="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20 group-hover:scale-110 transition-transform">
+                  <Zap size={18} className="text-cyan-500" />
                 </div>
               </div>
             </div>
@@ -949,10 +949,10 @@ export function FabrykaAutonomousTab() {
             </div>
 
             {/* VRAM Watchdog Protocol Overlay */}
-            <div className="p-6 rounded-[32px] border border-rose-500/20 bg-rose-500/5 flex items-center justify-between">
+            <div className="p-6 rounded-[32px] border border-cyan-500/20 bg-cyan-500/5 flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-rose-500/20 flex items-center justify-center border border-rose-500/40">
-                  <Activity size={24} className="text-rose-500 " />
+                <div className="w-12 h-12 rounded-2xl bg-cyan-500/20 flex items-center justify-center border border-cyan-500/40">
+                  <Activity size={24} className="text-cyan-500 " />
                 </div>
                 <div>
                   <h4 className="text-xs font-black text-white uppercase tracking-widest">Hardware Watchdog Protocol v5.0</h4>
@@ -961,7 +961,7 @@ export function FabrykaAutonomousTab() {
               </div>
               <div className="flex gap-2">
                 <Badge className="bg-emerald-500/20 text-emerald-400 border-none text-[8px] font-black italic">OLLAMA_MESH_LINK: OK</Badge>
-                <Badge className="bg-rose-500/20 text-rose-300 border-none text-[8px] font-black italic">VRAM_LOAD: 6.2GB</Badge>
+                <Badge className="bg-cyan-500/20 text-rose-300 border-none text-[8px] font-black italic">VRAM_LOAD: 6.2GB</Badge>
               </div>
             </div>
           </motion.div>
@@ -972,7 +972,7 @@ export function FabrykaAutonomousTab() {
           <motion.div key="vram" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
             <div className={cn(
               'rounded-[32px] border p-6 transition-all',
-              vram.warning ? 'border-rose-500/40 bg-rose-950/20' : 'border-rose-500/20 bg-slate-950/60',
+              vram.warning ? 'border-cyan-500/40 bg-rose-950/20' : 'border-cyan-500/20 bg-slate-950/60',
             )}>
               <div className="flex items-center justify-between mb-5">
                 <div>
@@ -986,7 +986,7 @@ export function FabrykaAutonomousTab() {
                 </div>
                 <Badge className={cn(
                   'border px-3 py-1.5 text-[10px] font-black uppercase',
-                  vram.warning ? 'border-rose-500/40 bg-rose-500/20 text-rose-300' : 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300',
+                  vram.warning ? 'border-cyan-500/40 bg-cyan-500/20 text-rose-300' : 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300',
                 )}>
                   {vram.used_percent}% VRAM
                 </Badge>
@@ -1041,7 +1041,7 @@ export function FabrykaAutonomousTab() {
                 {/* Score Banner */}
                 <div className={cn(
                   'rounded-[28px] border p-5 text-center relative overflow-hidden',
-                  fitness.passed ? 'border-emerald-500/30 bg-emerald-950/20' : 'border-rose-500/30 bg-rose-950/20',
+                  fitness.passed ? 'border-emerald-500/30 bg-emerald-950/20' : 'border-cyan-500/30 bg-rose-950/20',
                 )}>
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/2 to-transparent pointer-events-none" />
                   <div className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 mb-2">Fitness Score · Поточний коміт</div>
@@ -1059,7 +1059,7 @@ export function FabrykaAutonomousTab() {
                 {/* 4 колонки KPI */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
                   {/* Backend */}
-                  <div className="rounded-[24px] border border-rose-500/20 bg-black/30 p-5 space-y-3">
+                  <div className="rounded-[24px] border border-cyan-500/20 bg-black/30 p-5 space-y-3">
                     <div className="flex items-center gap-2 mb-2">
                       <Network size={14} className="text-rose-400" />
                       <span className="text-[10px] font-black uppercase tracking-widest text-rose-400">Backend</span>
@@ -1069,7 +1069,7 @@ export function FabrykaAutonomousTab() {
                   </div>
 
                   {/* Frontend */}
-                  <div className="rounded-[24px] border border-rose-500/20 bg-black/30 p-5 space-y-3">
+                  <div className="rounded-[24px] border border-cyan-500/20 bg-black/30 p-5 space-y-3">
                     <div className="flex items-center gap-2 mb-2">
                       <Monitor size={14} className="text-rose-400" />
                       <span className="text-[10px] font-black uppercase tracking-widest text-rose-400">Frontend</span>
@@ -1170,14 +1170,14 @@ export function FabrykaAutonomousTab() {
                           </div>
                         </div>
                         {!evt.resolved && (
-                          <button
+                          <Button variant="cyber"
                             type="button"
                             onClick={() => handleResolveRisk(evt.id)}
                             className="shrink-0 flex items-center gap-1.5 border border-white/10 bg-white/5 rounded-lg px-2.5 py-1.5 text-[9px] font-black uppercase text-slate-400 hover:text-white transition"
                           >
                             <UserCheck size={11} />
                             Підтвердити
-                          </button>
+                          </Button>
                         )}
                         {evt.resolved && (
                           <CheckCircle2 size={16} className="shrink-0 text-emerald-500" />
@@ -1206,7 +1206,7 @@ export function FabrykaAutonomousTab() {
               <div className="flex items-center gap-3 border-b border-white/5 bg-black/30 px-5 py-3.5">
                 <Sliders size={14} className="text-slate-400" />
                 <span className="text-[10px] font-black uppercase tracking-[0.28em] text-slate-400">Прапорці функцій (Feature Flags)</span>
-                <Badge className="border border-rose-500/25 bg-rose-500/10 px-2 py-0.5 text-[10px] font-black text-rose-300">
+                <Badge className="border border-cyan-500/25 bg-cyan-500/10 px-2 py-0.5 text-[10px] font-black text-rose-300">
                   {flags.filter((f) => f.enabled).length} активні
                 </Badge>
                 <div className="ml-auto text-[9px] text-slate-600 font-mono">Зберігаються локально · HR-15 compliant</div>
@@ -1219,7 +1219,7 @@ export function FabrykaAutonomousTab() {
                         <span className="text-sm font-black text-white">{flag.name}</span>
                         <Badge className={cn(
                           'border text-[9px] font-black px-1.5',
-                          flag.storage === 'postgresql' ? 'border-rose-500/30 bg-rose-500/10 text-rose-300' : 'border-slate-500/30 bg-slate-500/10 text-slate-400',
+                          flag.storage === 'postgresql' ? 'border-cyan-500/30 bg-cyan-500/10 text-rose-300' : 'border-slate-500/30 bg-slate-500/10 text-slate-400',
                         )}>
                           {flag.storage === 'postgresql' ? 'PostgreSQL' : 'Local'}
                         </Badge>
@@ -1230,7 +1230,7 @@ export function FabrykaAutonomousTab() {
                       <div className="text-[10px] text-slate-500 font-mono whitespace-nowrap">
                         Rollout: <span className="text-rose-400 font-black">{flag.rollout_percent}%</span>
                       </div>
-                      <button
+                      <Button variant="cyber"
                         type="button"
                         onClick={() => handleFlagToggle(flag.id)}
                         className="shrink-0"
@@ -1239,7 +1239,7 @@ export function FabrykaAutonomousTab() {
                           ? <ToggleRight size={28} className="text-emerald-400" />
                           : <ToggleLeft size={28} className="text-slate-500" />
                         }
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 ))}
@@ -1251,7 +1251,7 @@ export function FabrykaAutonomousTab() {
         {/* ── Chaos Engineering ── */}
         {activeSection === 'chaos' && (
           <motion.div key="chaos" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-4">
-            <div className="rounded-[28px] border border-rose-500/20 bg-rose-950/10 px-5 py-4 flex items-center gap-3">
+            <div className="rounded-[28px] border border-cyan-500/20 bg-rose-950/10 px-5 py-4 flex items-center gap-3">
               <AlertTriangle size={18} className="text-rose-400 shrink-0" />
               <div className="text-[11px] text-rose-300 leading-5">
                 <strong> ️ УВАГА:</strong> Chaos Engineering запускає  ЕАЛЬНІ деструктивні сценарії на кластері. Переконайтеся, що у вас є rollback-план і достатньо ресурсів. Кожен запуск логується.
@@ -1264,8 +1264,8 @@ export function FabrykaAutonomousTab() {
                 const isPending = confirmChaos === scenario.id;
                 const severityColors = {
                   low: 'border-emerald-500/20 bg-emerald-950/10',
-                  medium: 'border-rose-500/20 bg-rose-950/10',
-                  high: 'border-rose-500/25 bg-rose-950/15',
+                  medium: 'border-cyan-500/20 bg-rose-950/10',
+                  high: 'border-cyan-500/25 bg-rose-950/15',
                 };
                 return (
                   <div key={scenario.id} className={cn('rounded-[24px] border p-5 transition-all', severityColors[scenario.severity])}>
@@ -1286,30 +1286,30 @@ export function FabrykaAutonomousTab() {
                         </div>
                       ) : isPending ? (
                         <div className="flex gap-2">
-                          <button
+                          <Button variant="cyber"
                             type="button"
                             onClick={() => void handleLaunchChaos(scenario.id)}
-                            className="flex-1 flex items-center justify-center gap-2 border border-rose-500/40 bg-rose-500/15 rounded-xl py-2 text-[10px] font-black uppercase text-rose-300 hover:bg-rose-500/25 transition"
+                            className="flex-1 flex items-center justify-center gap-2 border border-cyan-500/40 bg-cyan-500/15 rounded-xl py-2 text-[10px] font-black uppercase text-rose-300 hover:bg-cyan-500/25 transition"
                           >
                             <Flame size={11} /> Підтвердити
-                          </button>
-                          <button
+                          </Button>
+                          <Button variant="cyber"
                             type="button"
                             onClick={() => setConfirmChaos(null)}
                             className="flex-1 flex items-center justify-center gap-2 border border-white/10 bg-white/5 rounded-xl py-2 text-[10px] font-black uppercase text-slate-400 hover:text-white transition"
                           >
                             Скасувати
-                          </button>
+                          </Button>
                         </div>
                       ) : (
-                        <button
+                        <Button variant="cyber"
                           type="button"
                           disabled={!!runningChaos}
                           onClick={() => setConfirmChaos(scenario.id)}
-                          className="w-full flex items-center justify-center gap-2 border border-slate-600/40 bg-slate-800/40 rounded-xl py-2 text-[10px] font-black uppercase text-slate-400 hover:border-rose-500/30 hover:text-rose-300 hover:bg-rose-950/20 transition disabled:opacity-30 disabled:cursor-not-allowed"
+                          className="w-full flex items-center justify-center gap-2 border border-slate-600/40 bg-slate-800/40 rounded-xl py-2 text-[10px] font-black uppercase text-slate-400 hover:border-cyan-500/30 hover:text-rose-300 hover:bg-rose-950/20 transition disabled:opacity-30 disabled:cursor-not-allowed"
                         >
                           <Play size={11} /> Запустити
-                        </button>
+                        </Button>
                       )}
                     </AnimatePresence>
                   </div>

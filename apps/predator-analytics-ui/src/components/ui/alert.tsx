@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { cn } from '@/utils/cn';
 
@@ -28,7 +29,7 @@ export const Alert: React.FC<AlertProps> = ({ type = 'info', title, message, act
       </div>
       {action && (
         <div className="flex-shrink-0">
-          <button onClick={action.onClick} className="px-3 py-2 rounded bg-white/10 hover:bg-white/20">{action.label}</button>
+          <Button variant="cyber" onClick={action.onClick} className="px-3 py-2 rounded bg-white/10 hover:bg-white/20">{action.label}</Button>
         </div>
       )}
     </div>

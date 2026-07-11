@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -224,7 +225,7 @@ export function AIResponse({
           <div className="flex items-center gap-3 pt-2 border-t">
             <span className="text-xs text-muted-foreground">Чи була відповідь корисною?</span>
             <div className="flex gap-2">
-              <button
+              <Button variant="cyber"
                 onClick={() => handleFeedback('positive')}
                 disabled={feedbackGiven !== null}
                 className={`p-2 rounded-md transition-colors ${
@@ -234,8 +235,8 @@ export function AIResponse({
                 } disabled:opacity-50 disabled:cursor-not-allowed`}
               >
                 <ThumbsUp className="h-4 w-4" />
-              </button>
-              <button
+              </Button>
+              <Button variant="cyber"
                 onClick={() => handleFeedback('negative')}
                 disabled={feedbackGiven !== null}
                 className={`p-2 rounded-md transition-colors ${
@@ -245,7 +246,7 @@ export function AIResponse({
                 } disabled:opacity-50 disabled:cursor-not-allowed`}
               >
                 <ThumbsDown className="h-4 w-4" />
-              </button>
+              </Button>
             </div>
           </div>
         )}

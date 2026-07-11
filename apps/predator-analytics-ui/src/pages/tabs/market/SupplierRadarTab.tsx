@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -131,16 +132,16 @@ export const SupplierRadarTab: React.FC = () => {
                     className="mt-6 pt-6 border-t border-white/5 flex flex-col gap-4"
                   >
                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <button className="flex items-center justify-center gap-2 py-3 bg-white/5 border border-white/10 rounded-xl text-[9px] font-black uppercase text-slate-400 hover:text-white transition-all">
+                        <Button variant="cyber" className="flex items-center justify-center gap-2 py-3 bg-white/5 border border-white/10 rounded-xl text-[9px] font-black uppercase text-slate-400 hover:text-white transition-all">
                            <ExternalLink size={14} /> Профіль
-                        </button>
-                        <button className="flex items-center justify-center gap-2 py-3 bg-white/5 border border-white/10 rounded-xl text-[9px] font-black uppercase text-slate-400 hover:text-white transition-all">
+                        </Button>
+                        <Button variant="cyber" className="flex items-center justify-center gap-2 py-3 bg-white/5 border border-white/10 rounded-xl text-[9px] font-black uppercase text-slate-400 hover:text-white transition-all">
                            <Mail size={14} /> Контакт
-                        </button>
+                        </Button>
                      </div>
-                     <button className="w-full py-4 bg-yellow-600 hover:bg-yellow-500 text-black rounded-xl text-[10px] font-black uppercase tracking-widest italic shadow-xl transition-all">
+                     <Button variant="cyber" className="w-full py-4 bg-yellow-600 hover:bg-yellow-500 text-black rounded-xl text-[10px] font-black uppercase tracking-widest italic shadow-xl transition-all">
                         ІНІЦІЮВАТИ_SOURCING
-                     </button>
+                     </Button>
                   </motion.div>
                 )}
              </AnimatePresence>

@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Eye, Compass, Brain, Zap, ArrowRight, Shield, Target, Activity } from 'lucide-react';
@@ -171,9 +172,9 @@ export const OODALoopVisualizer: React.FC<{ activeStep?: string }> = ({ activeSt
                     </div>
                     <span className="text-[9px] text-slate-500 font-mono uppercase tracking-widest">3 АГЕНТИ В СИНК ОНІ</span>
                 </div>
-                <button className="flex items-center gap-2 group text-[10px] font-black text-blue-400 uppercase tracking-widest hover:text-blue-300 transition-colors">
+                <Button variant="cyber" className="flex items-center gap-2 group text-[10px] font-black text-blue-400 uppercase tracking-widest hover:text-blue-300 transition-colors">
                     Детальна телеметрія <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                </button>
+                </Button>
             </div>
         </div>
     );

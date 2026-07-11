@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, CheckCircle, AlertTriangle, Info, Bell, Trash2, ShieldAlert } from 'lucide-react';
@@ -60,9 +61,9 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({ isOpen, 
                                 <span className="text-sm font-black text-iridescent tracking-widest uppercase">Системний Потік</span>
                                 <span className="text-[10px] bg-primary-500 text-slate-950 font-black px-2 py-0.5 rounded-full">48 АКТ</span>
                             </div>
-                            <button onClick={onClose} className="text-slate-400 hover:text-white transition-colors">
+                            <Button variant="cyber" onClick={onClose} className="text-slate-400 hover:text-white transition-colors">
                                 <X size={20} />
-                            </button>
+                            </Button>
                         </div>
 
                         <div className="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
@@ -96,9 +97,9 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({ isOpen, 
                         </div>
 
                         <div className="p-4 border-t border-slate-800 bg-slate-900/30">
-                            <button className="w-full py-2 flex items-center justify-center gap-2 text-xs font-bold text-slate-400 hover:text-white hover:bg-slate-800 rounded border border-transparent hover:border-slate-700 transition-all btn-3d">
+                            <Button variant="cyber" className="w-full py-2 flex items-center justify-center gap-2 text-xs font-bold text-slate-400 hover:text-white hover:bg-slate-800 rounded border border-transparent hover:border-slate-700 transition-all btn-3d">
                                 <Trash2 size={14} /> Очистити Все
-                            </button>
+                            </Button>
                         </div>
                     </motion.div>
                 </>

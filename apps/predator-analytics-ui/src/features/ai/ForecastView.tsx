@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -107,14 +108,14 @@ const ForecastView: React.FC = () => {
                                     placeholder="Код УКТЗЕД..."
                                 />
                             </div>
-                            <button
+                            <Button variant="cyber"
                                 onClick={fetchForecast}
                                 disabled={loading}
                                 className="bg-purple-600 hover:bg-purple-500 text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all flex items-center gap-3 disabled:opacity-50 shadow-2xl"
                             >
                                 {loading ? <RefreshCw className="animate-spin" size={18} /> : <Zap size={18} />}
                                 АНАЛІЗ
-                            </button>
+                            </Button>
                         </div>
                     ]}
                 />
@@ -243,9 +244,9 @@ const ForecastView: React.FC = () => {
                                     ))}
                                 </div>
 
-                                <button className="w-full py-4 bg-slate-800/50 hover:bg-slate-700 border border-white/5 rounded-2xl text-[10px] font-black text-slate-400 uppercase tracking-widest transition-all">
+                                <Button variant="cyber" className="w-full py-4 bg-slate-800/50 hover:bg-slate-700 border border-white/5 rounded-2xl text-[10px] font-black text-slate-400 uppercase tracking-widest transition-all">
                                     Сформувати повний звіт
-                                </button>
+                                </Button>
                             </div>
                         </HoloCard>
 
@@ -259,7 +260,7 @@ const ForecastView: React.FC = () => {
                                     <label className="text-[10px] font-black text-slate-500 uppercase mb-2 block">Горизонт прогнозу</label>
                                     <div className="grid grid-cols-3 gap-2">
                                         {[3, 6, 12].map(m => (
-                                            <button
+                                            <Button variant="cyber"
                                                 key={m}
                                                 onClick={() => setMonthsAhead(m)}
                                                 className={cn(
@@ -268,13 +269,13 @@ const ForecastView: React.FC = () => {
                                                 )}
                                             >
                                                 {m} МІС.
-                                            </button>
+                                            </Button>
                                         ))}
                                     </div>
                                 </div>
 
-                                <div className="p-4 bg-rose-500/5 border border-rose-500/20 rounded-xl flex items-start gap-3">
-                                    <AlertCircle className="text-rose-500 shrink-0" size={16} />
+                                <div className="p-4 bg-cyan-500/5 border border-cyan-500/20 rounded-xl flex items-start gap-3">
+                                    <AlertCircle className="text-cyan-500 shrink-0" size={16} />
                                     <p className="text-[10px] text-rose-200/70 leading-relaxed">
                                         УВАГА: результати базуються на імовірнісних моделях. Висока волатильність митних даних може впливати на точність.
                                     </p>

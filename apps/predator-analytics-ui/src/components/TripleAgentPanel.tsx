@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { HoloCard } from '@/components/ui/HoloCard';
 /**
  * Панель Trinity Nexus | v61.0-ELITE Trident Agent Controller
@@ -293,8 +294,8 @@ export const TripleAgentPanel: React.FC<TripleAgentPanelProps> = ({ isLockdown }
                                             </div>
                                         </div>
                                         <div className="flex gap-4">
-                                            <button className="p-3 bg-white/5 rounded-xl text-slate-500 hover:text-white transition-all"><Maximize2 size={16} /></button>
-                                            <button className="p-3 bg-white/5 rounded-xl text-slate-500 hover:text-white transition-all"><Share2 size={16} /></button>
+                                            <Button variant="cyber" className="p-3 bg-white/5 rounded-xl text-slate-500 hover:text-white transition-all"><Maximize2 size={16} /></Button>
+                                            <Button variant="cyber" className="p-3 bg-white/5 rounded-xl text-slate-500 hover:text-white transition-all"><Share2 size={16} /></Button>
                                         </div>
                                     </div>
 
@@ -347,14 +348,14 @@ export const TripleAgentPanel: React.FC<TripleAgentPanelProps> = ({ isLockdown }
                                                 <div className="flex items-center gap-2 px-3 py-1 bg-slate-900 border border-white/5 rounded-lg text-[9px] text-slate-500 font-mono">
                                                     <Activity size={10} /> 100%_SYNTHESIZED
                                                 </div>
-                                                <button
+                                                <Button variant="cyber"
                                                     onClick={() => {
                                                         navigator.clipboard.writeText(result.code);
                                                     }}
                                                     className="px-4 py-1.5 bg-purple-600/20 hover:bg-purple-600 border border-purple-500/40 text-purple-400 hover:text-white rounded-xl text-[9px] font-black uppercase transition-all shadow-lg active:scale-95"
                                                 >
                                                     Copy Artifact
-                                                </button>
+                                                </Button>
                                             </div>
                                         </div>
                                         <div className="p-10 overflow-y-auto text-purple-400/90 whitespace-pre scrollbar-hide max-h-[600px] leading-relaxed bg-[#020617] relative">
@@ -400,13 +401,13 @@ export const TripleAgentPanel: React.FC<TripleAgentPanelProps> = ({ isLockdown }
                                 <Clock size={20} className="text-slate-500" />
                                 <span className="text-[11px] font-black text-white uppercase tracking-[0.3em]">Historical Trace</span>
                             </div>
-                            <button
+                            <Button variant="cyber"
                                 onClick={fetchHistory}
                                 className="p-3 bg-white/5 rounded-xl text-slate-500 hover:text-white hover:bg-purple-600/20 transition-all"
                                 title="Force Neural Sync"
                             >
                                 <RefreshCcw size={16} className={cn(isProcessing ? "animate-spin" : "")} />
-                            </button>
+                            </Button>
                         </div>
 
                         <div className="flex-1 overflow-y-auto space-y-6 pr-4 custom-scrollbar">

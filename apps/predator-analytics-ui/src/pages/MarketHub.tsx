@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useMemo } from 'react';
 import { BarChart3, Globe2, Ship, Truck, Zap, Settings2, DollarSign } from 'lucide-react';
 import { HubLayout } from '@/components/layout/HubLayout';
@@ -66,9 +67,9 @@ const MarketHub: React.FC = () => {
             <Zap size={12} className="" />
             {backendStatus.statusLabel}
           </div>
-          <button className="p-2 rounded-lg bg-white/5 border border-white/10 text-slate-400 hover:text-white transition-colors">
+          <Button variant="cyber" className="p-2 rounded-lg bg-white/5 border border-white/10 text-slate-400 hover:text-white transition-colors">
             <Settings2 size={18} />
-          </button>
+          </Button>
         </div>
       }
     >

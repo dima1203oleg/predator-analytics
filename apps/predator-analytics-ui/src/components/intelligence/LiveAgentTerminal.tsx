@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -183,18 +184,18 @@ export const LiveAgentTerminal: React.FC = () => {
                 <div className="w-1.5 h-1.5 rounded-full bg-slate-600/40 border border-slate-500" />
               </div>
               <div className="flex items-center gap-2">
-                <button 
+                <Button variant="cyber" 
                   onClick={() => setIsMinimized(!isMinimized)}
                   className="p-2 hover:bg-white/5 rounded-xl transition-all text-slate-500 hover:text-white"
                 >
                   {isMinimized ? <Maximize2 size={14} /> : <Minimize2 size={14} />}
-                </button>
-                <button 
+                </Button>
+                <Button variant="cyber" 
                   onClick={() => setTerminalOpen(false)}
                   className="p-2 hover:bg-rose-500/20 rounded-xl transition-all text-slate-500 hover:text-rose-500 group/close"
                 >
                   <X size={16} className="group-hover/close:rotate-90 transition-transform duration-300" />
-                </button>
+                </Button>
               </div>
             </div>
           </div>

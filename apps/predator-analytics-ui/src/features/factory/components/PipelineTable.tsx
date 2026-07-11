@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
 import {
   createColumnHelper,
@@ -106,20 +107,20 @@ export function PipelineTable({ data }: { data: KnowledgePattern[] }) {
       </div>
       <div className="flex items-center justify-between text-sm text-slate-400 bg-black/20 p-2 rounded-lg border border-white/5">
         <div className="flex gap-2">
-           <button
+           <Button variant="cyber"
              onClick={() => table.previousPage()}
              disabled={!table.getCanPreviousPage()}
              className="p-2 rounded hover:bg-white/10 disabled:opacity-30 transition-colors"
            >
              <ChevronLeft className="w-4 h-4" />
-           </button>
-           <button
+           </Button>
+           <Button variant="cyber"
              onClick={() => table.nextPage()}
              disabled={!table.getCanNextPage()}
              className="p-2 rounded hover:bg-white/10 disabled:opacity-30 transition-colors"
            >
              <ChevronRight className="w-4 h-4" />
-           </button>
+           </Button>
         </div>
         <span className="pr-4 font-medium">
            Сторінка {table.getState().pagination.pageIndex + 1} з {Math.max(1, table.getPageCount())}

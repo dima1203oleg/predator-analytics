@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { Shield, Zap, Database, Globe, CheckCircle2, AlertCircle, RefreshCcw } from 'lucide-react';
 
@@ -36,12 +37,12 @@ export const PremiumRegistryMonitor: React.FC = () => {
           </h2>
           <p className="text-slate-400 text-sm mt-1">Моніторинг каналів збору даних у реальному часі</p>
         </div>
-        <button 
+        <Button variant="cyber" 
           onClick={refreshData}
           className="p-2 hover:bg-white/10 rounded-full transition-all border border-white/5"
         >
           <RefreshCcw className={`w-5 h-5 ${isRefreshing ? 'animate-spin' : ''}`} />
-        </button>
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

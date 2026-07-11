@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -360,12 +361,12 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                         </form>
                         
                         <div className="flex items-center gap-2">
-                            <button className="p-2 hover:bg-white/5 rounded-lg transition-colors text-slate-400">
+                            <Button variant="cyber" className="p-2 hover:bg-white/5 rounded-lg transition-colors text-slate-400">
                                 <Share2 className="w-4 h-4" />
-                            </button>
-                            <button className="p-2 hover:bg-white/5 rounded-lg transition-colors text-slate-400">
+                            </Button>
+                            <Button variant="cyber" className="p-2 hover:bg-white/5 rounded-lg transition-colors text-slate-400">
                                 <Download className="w-4 h-4" />
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 </div>
@@ -653,9 +654,9 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                                 </div>
                                             </div>
                                         </div>
-                                        <button className="mt-8 w-full py-4 bg-rose-600 hover:bg-rose-500 text-white text-[10px] font-black uppercase tracking-[0.3em] italic rounded-sm transition-all  hover: active:scale-[0.98]">
+                                        <Button variant="cyber" className="mt-8 w-full py-4 bg-rose-600 hover:bg-rose-500 text-white text-[10px] font-black uppercase tracking-[0.3em] italic rounded-sm transition-all  hover: active:scale-[0.98]">
                                             ЗГЕНЕРУВАТИ_ВИКОНАВЧИЙ_ЗВІТ
-                                        </button>
+                                        </Button>
                                     </div>
                                 </div>
 
@@ -673,12 +674,12 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                                     <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mt-1 italic">ВІЗУАЛІЗАЦІЯ_НЕЙРОННОЇ_МЕРЕЖІ_ВПЛИВУ_v7.4</p>
                                                 </div>
                                             </div>
-                                            <button 
+                                            <Button variant="cyber" 
                                                 onClick={() => setShowShadowNetwork(true)}
                                                 className="px-8 py-3 bg-rose-600/10 hover:bg-rose-600/20 border border-rose-600/30 text-rose-500 text-[10px] font-black uppercase tracking-[0.3em] italic rounded-sm transition-all"
                                             >
                                                  РОЗГОРНУТИ_ПОВНУ_КАРТУ
-                                            </button>
+                                            </Button>
                                         </div>
                                     </div>
                                 </div>
@@ -730,12 +731,12 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                 <p className="mt-4 text-slate-500 max-w-md font-mono text-xs uppercase tracking-widest leading-loose">
                                     ВУЗОЛ НЕ ПОВЕРНУВ ПЕРЕВІРЕНИХ ДАНИХ ДЛЯ ЗАПИТУ "{searchQuery}". ПЕРЕВІРТЕ ЄДРПОУ АБО СКОРИСТАЙТЕСЬ ГЛОБАЛЬНИМ ПОШУКОМ.
                                 </p>
-                                <button 
+                                <Button variant="cyber" 
                                     onClick={() => setSearchQuery('ТОВ ЕНЕРГО-РЕСУРС 41829391')}
                                     className="mt-8 px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest text-slate-400 transition-all"
                                 >
                                     Повернутись до Прикладу
-                                </button>
+                                </Button>
                             </motion.div>
                         ) : null}
                     </AnimatePresence>
@@ -790,12 +791,12 @@ function ShadowNetworkAnalysis({ onClose, companyName }: { onClose: () => void; 
                         <p className="text-xs font-mono text-rose-500/60 uppercase">Виявлення прихованих афіліацій та UBO-вузлів</p>
                     </div>
                 </div>
-                <button 
+                <Button variant="cyber" 
                     onClick={onClose}
                     className="px-6 py-2 bg-white/5 hover:bg-rose-500/20 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
                 >
                     Закрити Карту
-                </button>
+                </Button>
             </div>
 
             <div className="relative h-[600px] bg-black/60 rounded-[32px] border border-white/5 overflow-hidden group/graph">

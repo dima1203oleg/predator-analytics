@@ -171,12 +171,12 @@ export default function SupplyChainAnalyticsView() {
                      ]}
                      actions={
                        <div className="flex gap-4">
-                          <button onClick={() => { play(UISoundType.CLICK); void loadData(true); }} onMouseEnter={() => play(UISoundType.HOVER)} className={cn("p-5 bg-black border border-white/[0.04] rounded-2xl text-slate-400 hover:text-white transition-all shadow-xl", refreshing && "animate-spin")}>
+                          <Button variant="cyber" onClick={() => { play(UISoundType.CLICK); void loadData(true); }} onMouseEnter={() => play(UISoundType.HOVER)} className={cn("p-5 bg-black border border-white/[0.04] rounded-2xl text-slate-400 hover:text-white transition-all shadow-xl", refreshing && "animate-spin")}>
                              <RefreshCcw size={24} />
-                          </button>
-                          <button onClick={() => play(UISoundType.CLICK)} onMouseEnter={() => play(UISoundType.HOVER)} className="px-8 py-5 bg-cyan-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-cyan-600 shadow-2xl transition-all flex items-center gap-4">
+                          </Button>
+                          <Button variant="cyber" onClick={() => play(UISoundType.CLICK)} onMouseEnter={() => play(UISoundType.HOVER)} className="px-8 py-5 bg-cyan-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-cyan-600 shadow-2xl transition-all flex items-center gap-4">
                              <Database size={18} /> СИНХРОНІЗУВАТИ_AIS
-                          </button>
+                          </Button>
                        </div>
                      }
                    />
@@ -184,7 +184,7 @@ export default function SupplyChainAnalyticsView() {
                    {/* NAVIGATION TABS */}
                    <div className="flex flex-wrap gap-4 p-3 bg-black/60 border border-white/[0.03] rounded-[2.5rem] w-fit shadow-2xl">
                       {sections.map(section => (
-                        <button
+                        <Button variant="cyber"
                           key={section.id} onClick={() => { play(UISoundType.CLICK); setActiveSection(section.id); }} onMouseEnter={() => play(UISoundType.HOVER)}
                           className={cn(
                             "px-8 py-4 rounded-[1.8rem] text-[10px] font-black uppercase tracking-[0.2em] italic border transition-all flex items-center gap-3",
@@ -193,7 +193,7 @@ export default function SupplyChainAnalyticsView() {
                         >
                            <section.icon size={16} />
                            {section.label}
-                        </button>
+                        </Button>
                       ))}
                    </div>
 
@@ -325,13 +325,13 @@ export default function SupplyChainAnalyticsView() {
                                  { i: Globe, l: 'КАРТА_СУДЕН_AIS', c: 'text-yellow-500' },
                                  { i: BarChart3, l: 'ЕКСПОРТ_МАРШРУТІВ', c: 'text-emerald-500' },
                                ].map((a, i) => (
-                                 <button key={i} className="w-full flex items-center justify-between p-6 rounded-2xl bg-white/[0.01] border border-white/[0.03] hover:bg-cyan-600/[0.03] hover:border-cyan-500/30 transition-all group">
+                                 <Button variant="cyber" key={i} className="w-full flex items-center justify-between p-6 rounded-2xl bg-white/[0.01] border border-white/[0.03] hover:bg-cyan-600/[0.03] hover:border-cyan-500/30 transition-all group">
                                     <div className="flex items-center gap-6">
                                        <a.i size={20} className={a.c} />
                                        <span className="text-[11px] font-black text-slate-400 uppercase italic tracking-widest group-hover:text-white transition-colors">{a.l}</span>
                                     </div>
                                     <ChevronRight size={16} className="text-slate-800" />
-                                 </button>
+                                 </Button>
                                ))}
                             </div>
                          </div>

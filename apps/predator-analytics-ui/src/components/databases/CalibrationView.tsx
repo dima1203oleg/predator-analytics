@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { HoloCard } from '@/components/ui/HoloCard';
 
 import React from 'react';
@@ -109,18 +110,18 @@ export const CalibrationView: React.FC<CalibrationViewProps> = ({ trainingPairs,
                                                 <div className="flex flex-col gap-2">
                                                     {pair.status === 'PENDING' ? (
                                                         <>
-                                                            <button
+                                                            <Button variant="cyber"
                                                                 onClick={() => onVerifySql(pair.id, true)}
                                                                 className="w-full py-4 bg-emerald-500/10 hover:bg-emerald-500 text-emerald-500 hover:text-white border border-emerald-500/20 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2 group/btn"
                                                             >
                                                                 <CheckCircle2 size={14} /> APPROVE
-                                                            </button>
-                                                            <button
+                                                            </Button>
+                                                            <Button variant="cyber"
                                                                 onClick={() => onVerifySql(pair.id, false)}
                                                                 className="w-full py-4 bg-rose-500/10 hover:bg-rose-500 text-rose-500 hover:text-white border border-rose-500/20 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2"
                                                             >
                                                                 <X size={14} /> REJECT
-                                                            </button>
+                                                            </Button>
                                                         </>
                                                     ) : (
                                                         <div className={cn(
@@ -173,9 +174,9 @@ export const CalibrationView: React.FC<CalibrationViewProps> = ({ trainingPairs,
                                 <h5 className="text-[11px] font-black text-white uppercase tracking-widest">Synthesis Engine</h5>
                             </div>
                             <p className="text-[10px] text-slate-400 leading-relaxed font-medium">Fine-tuning cycle is ready for execution. This will update the local LoRA weights based on verified approval queue.</p>
-                            <button className="w-full py-5 bg-blue-600 hover:bg-blue-500 text-white rounded-[24px] text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-blue-500/40 transition-all flex items-center justify-center gap-3 group/train">
+                            <Button variant="cyber" className="w-full py-5 bg-blue-600 hover:bg-blue-500 text-white rounded-[24px] text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-blue-500/40 transition-all flex items-center justify-center gap-3 group/train">
                                 <RefreshCwIcon /> START RE-TRAINING
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 </HoloCard>

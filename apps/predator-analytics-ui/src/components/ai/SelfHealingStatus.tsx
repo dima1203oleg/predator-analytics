@@ -9,6 +9,7 @@
  * - Manual healing controls
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -147,12 +148,12 @@ export const SelfHealingStatus: React.FC = () => {
             {getHealthIcon(history?.current_health || 'unknown')} {history?.current_health?.toUpperCase() || 'LOADING'}
           </span>
 
-          <button
+          <Button variant="cyber"
             onClick={() => setShowDetails(!showDetails)}
             className="p-2 rounded-lg bg-slate-700/50 hover:bg-slate-600/50 transition-colors"
           >
             {showDetails ? '🔼' : '🔽'}
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -201,14 +202,14 @@ export const SelfHealingStatus: React.FC = () => {
                       {getHealthIcon(component.status)}
                       <span className="capitalize">{component.name}</span>
                     </div>
-                    <button
+                    <Button variant="cyber"
                       onClick={() => handleTriggerHealing(component.name)}
                       disabled={isHealing === component.name}
                       className="p-1.5 rounded bg-slate-700 hover:bg-slate-600 transition-colors disabled:opacity-50"
                       title="Запустити самовідновлення"
                     >
                       {isHealing === component.name ? '⏳' : '🔧'}
-                    </button>
+                    </Button>
                   </motion.div>
                 ))}
               </div>

@@ -11,6 +11,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська мова)
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -183,20 +184,20 @@ export function AutonomousAuditPanel() {
                 'border px-3 py-1 text-xs font-black uppercase tracking-widest',
                 auditData.readiness_status === 'VALID' 
                   ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-400' 
-                  : 'border-rose-500/20 bg-rose-500/10 text-rose-400'
+                  : 'border-cyan-500/20 bg-cyan-500/10 text-rose-400'
               )}>
                 {auditData.readiness_status === 'VALID' ? 'СЕРТИФІКОВАНО · ПОВНА ГОТОВНІСТЬ' : 'ДЕГРАДАЦІЯ · ПОТРЕБУЄ РЕМОНТУ'}
               </Badge>
             )}
             
-            <button
+            <Button variant="cyber"
               onClick={triggerAudit}
               disabled={loading}
               className="flex items-center gap-2 rounded-[16px] border border-white/10 bg-white/5 px-4 py-2.5 text-xs font-black uppercase tracking-wider text-slate-200 transition hover:bg-white/10"
             >
               <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
               Перевірити знову
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -204,7 +205,7 @@ export function AutonomousAuditPanel() {
       {/* ─── Навігація вкладок ────────────────────────────────────────────── */}
       <div className="flex border-b border-white/5 pb-px">
         {(['planes', 'reports', 'ooda'] as const).map((tab) => (
-          <button
+          <Button variant="cyber"
             key={tab}
             onClick={() => setActiveTab(tab)}
             className={cn(
@@ -217,7 +218,7 @@ export function AutonomousAuditPanel() {
             {tab === 'planes' && 'Площини контролю (9)'}
             {tab === 'reports' && 'Звіти сертифікації (10)'}
             {tab === 'ooda' && 'Контур AutoFix (OODA)'}
-          </button>
+          </Button>
         ))}
       </div>
 
@@ -239,7 +240,7 @@ export function AutonomousAuditPanel() {
                   animate={{ opacity: 1, y: 0 }}
                   className={cn(
                     'rounded-[28px] border p-5 bg-black/20 flex flex-col justify-between transition-all hover:bg-black/30',
-                    isFail ? 'border-rose-500/20 shadow-rose-950/10 shadow-lg' : 
+                    isFail ? 'border-cyan-500/20 shadow-rose-950/10 shadow-lg' : 
                     isWarn ? 'border-amber-500/20' : 'border-white/5'
                   )}
                 >
@@ -247,7 +248,7 @@ export function AutonomousAuditPanel() {
                     <div className="flex items-start justify-between">
                       <div className={cn(
                         'rounded-[18px] border p-3',
-                        isFail ? 'border-rose-500/30 bg-rose-500/5 text-rose-400' :
+                        isFail ? 'border-cyan-500/30 bg-cyan-500/5 text-rose-400' :
                         isWarn ? 'border-amber-500/30 bg-amber-500/5 text-amber-400' :
                         'border-[#D4AF37]/35 bg-[#D4AF37]/5 text-[#D4AF37]'
                       )}>
@@ -256,7 +257,7 @@ export function AutonomousAuditPanel() {
                       
                       <Badge className={cn(
                         'border px-2.5 py-1 text-[10px] font-black uppercase tracking-widest',
-                        isFail ? 'border-rose-500/20 bg-rose-500/10 text-rose-400' :
+                        isFail ? 'border-cyan-500/20 bg-cyan-500/10 text-rose-400' :
                         isWarn ? 'border-amber-500/20 bg-amber-500/10 text-amber-400' :
                         'border-emerald-500/20 bg-emerald-500/10 text-emerald-400'
                       )}>
@@ -324,7 +325,7 @@ export function AutonomousAuditPanel() {
               {reports.filter(r => r.name.endsWith('.md')).map((report) => {
                 const isSelected = selectedReport?.name === report.name;
                 return (
-                  <button
+                  <Button variant="cyber"
                     key={report.name}
                     onClick={() => setSelectedReport(report)}
                     className={cn(
@@ -336,7 +337,7 @@ export function AutonomousAuditPanel() {
                   >
                     <FileText size={14} className={isSelected ? 'text-[#D4AF37]' : 'text-slate-500'} />
                     <span className="truncate">{report.title}</span>
-                  </button>
+                  </Button>
                 );
               })}
             </div>
@@ -406,19 +407,19 @@ export function AutonomousAuditPanel() {
               </div>
 
               <div className="mt-6 pt-4 border-t border-white/5">
-                <button
+                <Button variant="cyber"
                   onClick={triggerAutofix}
                   disabled={runningAutofix || !auditData || auditData.readiness_status === 'VALID'}
                   className={cn(
                     'flex w-full items-center justify-center gap-2 rounded-[20px] border px-6 py-3.5 text-xs font-black uppercase tracking-[0.2em] transition',
                     auditData?.readiness_status !== 'VALID'
-                      ? 'border-rose-500/30 bg-rose-500/10 text-rose-400 hover:bg-rose-500/15'
+                      ? 'border-cyan-500/30 bg-cyan-500/10 text-rose-400 hover:bg-cyan-500/15'
                       : 'border-white/10 bg-white/5 text-slate-500 cursor-not-allowed'
                   )}
                 >
                   {runningAutofix ? <RefreshCw size={14} className="animate-spin" /> : <Zap size={14} />}
                   Запустити AutoFix самолікування
-                </button>
+                </Button>
               </div>
             </div>
 

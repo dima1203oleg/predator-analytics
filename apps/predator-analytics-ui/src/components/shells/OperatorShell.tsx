@@ -1,4 +1,5 @@
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -78,12 +79,12 @@ const OperatorShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange,
               </div>
             </div>
           )}
-          <button
+          <Button variant="cyber"
             onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
             className="p-1.5 hover:bg-emerald-500/10 rounded transition-colors ml-auto"
           >
             {isSidebarCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
-          </button>
+          </Button>
         </div>
 
         <div className="flex-1 overflow-y-auto overflow-x-hidden p-2 space-y-4">
@@ -95,7 +96,7 @@ const OperatorShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange,
                 </div>
               )}
               {section.items.map((item) => (
-                <button
+                <Button variant="cyber"
                   key={item.id}
                   onClick={() => onTabChange(item.id)}
                   className={`
@@ -109,7 +110,7 @@ const OperatorShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange,
                 >
                   <span className={activeTab === item.id ? 'text-emerald-400' : ''}>{item.icon}</span>
                   {!isSidebarCollapsed && <span className="text-xs font-bold uppercase">{item.label}</span>}
-                </button>
+                </Button>
               ))}
             </div>
           ))}
@@ -146,13 +147,13 @@ const OperatorShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange,
         )}
 
         <div className="p-2 border-t border-emerald-900/30">
-          <button
+          <Button variant="cyber"
             onClick={onLogout}
             className="w-full flex items-center gap-3 px-3 py-2 text-emerald-900 hover:text-red-400 transition-colors"
           >
             <LogOut size={16} />
             {!isSidebarCollapsed && <span className="text-[10px] font-black uppercase">Термінувати сеанс</span>}
-          </button>
+          </Button>
         </div>
       </motion.aside>
 

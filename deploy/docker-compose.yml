@@ -1,195 +1,87 @@
-
+version: '3.8'
 
 services:
-  # ============================================================
-  # 1. Frontend (React/Vite)
-  # ============================================================
-  ui:
-    build:
-      context: ../
-      dockerfile: apps/predator-analytics-ui/Dockerfile
-    ports:
-      - "3030:3030"
-    restart: always
-    depends_on:
-      - core-api
-    networks:
-      - predator-sovereign-net
-
-  # ============================================================
-  # 2. Core API (FastAPI)
-  # ============================================================
-  core-api:
-    build:
-      context: ../
-      dockerfile: services/core-api/Dockerfile
-    ports:
-      - "8000:8000"
-    env_file:
-      - ../.env
-    volumes:
-      - ./logs/core-api:/app/logs
-    restart: always
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-      redpanda:
-        condition: service_healthy
-    networks:
-      - predator-sovereign-net
-    deploy:
-      resources:
-        limits:
-          memory: 4G
-          cpus: '2'
-
-  # ============================================================
-  # 2.1. Graph Service (Neo4j Algos)
-  # ============================================================
-  graph-service:
-    build:
-      context: ../
-      dockerfile: services/graph_service/Dockerfile
-    ports:
-      - "8001:8001"
-    env_file:
-      - ../.env
-    restart: always
-    depends_on:
-      neo4j:
-        condition: service_healthy
-    networks:
-      - predator-sovereign-net
-    deploy:
-      resources:
-        limits:
-          memory: 2G
-          cpus: '1'
-
-  # ============================================================
-  # 2.2. Federation Search Service
-  # ============================================================
-  federation-service:
-    build:
-      context: ../
-      dockerfile: services/federation-service/Dockerfile
-    ports:
-      - "8002:8002"
-    env_file:
-      - ../.env
+  # ---------------------------------------------
+  # DATABASES (8 DB STACK)
+  # ---------------------------------------------
+  
+  # 1. PostgreSQL + TimescaleDB + pgvector (SSOT + History + Hybrid Search)
+  postgres:
+    image: timescale/timescaledb-ha:pg16
+    container_name: predator_postgres
     environment:
-      - POSTGRES_URL=postgresql://predator:${POSTGRES_PASSWORD:-predator_secret}@postgres:5432/predator_db
-      - CLICKHOUSE_URL=http://clickhouse:8123
-      - OPENSEARCH_URL=http://opensearch:9200
-      - QDRANT_URL=http://qdrant:6333
-      - NEO4J_URL=bolt://neo4j:7687
-    restart: always
-    depends_on:
-      postgres:
-        condition: service_healthy
-      clickhouse:
-        condition: service_healthy
-      opensearch:
-        condition: service_healthy
-      qdrant:
-        condition: service_healthy
-      neo4j:
-        condition: service_healthy
+      - POSTGRES_PASSWORD=predator_secret
+      - POSTGRES_USER=predator
+      - POSTGRES_DB=predator_analytics
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
     networks:
-      - predator-sovereign-net
+      - predator_net
     deploy:
       resources:
         limits:
           memory: 1G
-          cpus: '1'
 
-  # ============================================================
-  # 3. Ingestion Worker
-  # ============================================================
-  ingestion-worker:
-    build:
-      context: ../
-      dockerfile: services/ingestion-worker/Dockerfile
-    env_file:
-      - ../.env
-    environment:
-      - CLICKHOUSE_HOST=clickhouse
-      - CLICKHOUSE_PORT=8123
-      - CLICKHOUSE_USER=${CLICKHOUSE_USER:-predator}
-      - CLICKHOUSE_PASSWORD=${CLICKHOUSE_PASSWORD:-predator_password}
-      - KAFKA_BOOTSTRAP_SERVERS=redpanda:9092
-      - POSTGRES_HOST=postgres
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-predator_secret}
-      - POSTGRES_USER=${POSTGRES_USER:-predator}
-      - POSTGRES_DB=predator_db
-      - NEO4J_URI=bolt://neo4j:7687
-      - NEO4J_PASSWORD=${NEO4J_PASSWORD:-predator_neo4j}
-      - REDIS_URL=redis://:${REDIS_PASSWORD:-predator_redis}@redis:6379/0
-      - MINIO_ENDPOINT=minio:9000
-      - MINIO_ACCESS_KEY=admin
-      - MINIO_SECRET_KEY=predator_password
-      - MINIO_SECURE=false
-      - LLM_OLLAMA_BASE_URL=http://host.docker.internal:11434
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+  # 2. Qdrant (Vector DB for AI Embeddings)
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: predator_qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"
     volumes:
-      - ./logs/worker:/app/logs
-      - ../data/kafka_offline:/app/data/kafka_offline
-    restart: always
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redpanda:
-        condition: service_healthy
+      - qdrant-data:/qdrant/storage
     networks:
-      - predator-sovereign-net
+      - predator_net
     deploy:
       resources:
         limits:
-          memory: 2G
-          cpus: '1'
+          memory: 1G
 
-  # ============================================================
-  # 4. Infrastructure
-  # ============================================================
-  postgres:
-    image: postgres:16-alpine
+  # 3. OpenSearch (Full-text & Logs)
+  opensearch:
+    image: opensearchproject/opensearch:latest
+    container_name: predator_opensearch
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-predator}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-predator_secret}
-      POSTGRES_DB: predator_db
+      - discovery.type=single-node
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=Predator_Secret123!
     ports:
-      - "5432:5432"
+      - "9200:9200"
     volumes:
-      - pgdata:/var/lib/postgresql/data
-      - ../db/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U predator -d predator_db"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      - opensearch-data:/usr/share/opensearch/data
     networks:
-      - predator-sovereign-net
+      - predator_net
+    deploy:
+      resources:
+        limits:
+          memory: 1G
 
-  redis:
-    image: redis:7-alpine
-    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-predator_redis}
+  # 4. MinIO (Object Storage)
+  minio:
+    image: minio/minio:latest
+    container_name: predator_minio
+    command: server /data --console-address ":9001"
+    environment:
+      - MINIO_ROOT_USER=predator
+      - MINIO_ROOT_PASSWORD=predator_secret
     ports:
-      - "6379:6379"
+      - "9000:9000"
+      - "9001:9001"
     volumes:
-      - redisdata:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-predator_redis}", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      - minio-data:/data
     networks:
-      - predator-sovereign-net
+      - predator_net
+    deploy:
+      resources:
+        limits:
+          memory: 512M
 
+  # 5. Redpanda (Event Backbone - Persistence Layer)
   redpanda:
-    image: docker.redpanda.com/redpandadata/redpanda:v23.2.14
+    image: docker.redpanda.com/redpandadata/redpanda:v23.2.2
+    container_name: predator_redpanda
     command:
       - redpanda
       - start
@@ -198,280 +90,115 @@ services:
       - --reserve-memory 0M
       - --overprovisioned
       - --node-id 0
-      - --kafka-addr internal://0.0.0.0:9092,external://0.0.0.0:19092
-      - --advertise-kafka-addr internal://redpanda:9092,external://localhost:19092
+      - --check=false
+      - --kafka-addr PLAINTEXT://0.0.0.0:29092,OUTSIDE://0.0.0.0:9092
+      - --advertise-kafka-addr PLAINTEXT://redpanda:29092,OUTSIDE://localhost:9092
+      - --pandaproxy-addr 0.0.0.0:8082
+      - --advertise-pandaproxy-addr localhost:8082
     ports:
-      - "19092:19092"
+      - "9092:9092"
+      - "29092:29092"
+      - "8082:8082"
     volumes:
-      - redpandadata:/var/lib/redpanda/data
-    healthcheck:
-      test: ["CMD-SHELL", "rpk cluster health"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      - redpanda-data:/var/lib/redpanda/data
     networks:
-      - predator-sovereign-net
+      - predator_net
 
-  neo4j:
-    image: neo4j:5.17.0
-    environment:
-      NEO4J_AUTH: neo4j/${NEO4J_PASSWORD:-predator_neo4j}
-      NEO4J_PLUGINS: '["apoc"]'
-      NEO4J_server_memory_heap_initial__size: 512M
-      NEO4J_server_memory_heap_max__size: 1G
-      NEO4J_server_memory_pagecache_size: 512M
+  # ---------------------------------------------
+  # REALTIME STATE CACHE
+  # ---------------------------------------------
+  redis:
+    image: redis:7.2-alpine
+    container_name: predator_redis
     ports:
-      - "7474:7474"
-      - "7687:7687"
-    volumes:
-      - neo4jdata:/data
-      - neo4jplugins:/plugins
-    # user: "neo4j"
+      - "6379:6379"
     networks:
-      - predator-sovereign-net
-    healthcheck:
-      test: ["CMD", "cypher-shell", "-u", "neo4j", "-p", "${NEO4J_PASSWORD:-predator_neo4j}", "RETURN 1"]
-      interval: 20s
-      timeout: 10s
-      retries: 5
+      - predator_net
 
-  # ============================================================
-  # 5. Advanced Analytics & Storage
-  # ============================================================
-  clickhouse:
-    image: clickhouse/clickhouse-server:latest
-    environment:
-      CLICKHOUSE_USER: ${CLICKHOUSE_USER:-predator}
-      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD:-predator_password}
-      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
-    ports:
-      - "8123:8123"
-      - "9002:9000"
-    volumes:
-      - chdata:/var/lib/clickhouse
-      - ../db/clickhouse/init.sql:/docker-entrypoint-initdb.d/init.sql
-    ulimits:
-      nofile:
-        soft: 262144
-        hard: 262144
-    networks:
-      - predator-sovereign-net
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8123/ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  opensearch:
-    image: opensearchproject/opensearch:2.12.0
-    environment:
-      - cluster.name=predator-search
-      - node.name=predator-os1
-      - discovery.type=single-node
-      - bootstrap.memory_lock=true
-      - "OPENSEARCH_JAVA_OPTS=-Xms1g -Xmx1g"
-      - DISABLE_INSTALL_DEMO_CONFIG=true
-      - DISABLE_SECURITY_PLUGIN=true
-    ports:
-      - "9200:9200"
-    volumes:
-      - osdata:/usr/share/opensearch/data
-    networks:
-      - predator-sovereign-net
-    healthcheck:
-      test: ["CMD", "curl", "-s", "http://localhost:9200/_cluster/health?local=true"]
-      interval: 20s
-      timeout: 10s
-      retries: 5
-
-  qdrant:
-    image: qdrant/qdrant:v1.8.0
-    ports:
-      - "6333:6333"
-      - "6334:6334"
-    volumes:
-      - qdrantdata:/qdrant/storage
-    networks:
-      - predator-sovereign-net
-    healthcheck:
-      test: ["CMD", "sh", "-c", "exit 0"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  minio:
-    image: minio/minio:latest
-    command: server /data --console-address ":9001"
-    environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
-    ports:
-      - "9000:9000"
-      - "9001:9001"
-    volumes:
-      - miniodata:/data
-    networks:
-      - predator-sovereign-net
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  # ============================================================
-  # 5.1. OSINT Service (Intelligence Gathering)
-  # ============================================================
-  osint-service:
+  # ---------------------------------------------
+  # MICROSERVICES LAYER
+  # ---------------------------------------------
+  
+  # 1. API GATEWAY (FastAPI + WebSockets)
+  api-gateway:
     build:
-      context: ../
-      dockerfile: services/osint-service/Dockerfile
+      context: ../services/api-gateway-service
+      dockerfile: Dockerfile
+    container_name: predator_api_gateway
     ports:
-      - "9201:9200"  # Хост 9201 → контейнер 9200 (уникаємо конфлікту з OpenSearch 9200)
-    env_file:
-      - ../.env
-    restart: always
+      - "8000:8000"
+    environment:
+      - KAFKA_BROKER=redpanda:29092
+      - REDIS_URL=redis://redis:6379
+      - CORS_ORIGINS=http://localhost:3030,http://194.177.1.240:3030
     depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
+      - redpanda
+      - redis
     networks:
-      - predator-sovereign-net
-    deploy:
-      resources:
-        limits:
-          memory: 1G
-          cpus: '1'
+      - predator_net
 
-  litellm:
-    image: ghcr.io/berriai/litellm:main-latest
-    ports:
-      - "4000:4000"
-    volumes:
-      - ./litellm/config.yaml:/app/config.yaml
-    command: ["--config", "/app/config.yaml", "--port", "4000"]
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    environment:
-      - DATABASE_URL=""
-    env_file:
-      - ../.env
-    networks:
-      - predator-sovereign-net
-    deploy:
-      resources:
-        limits:
-          memory: 1G
-          cpus: '0.5'
-
-  autonomous-agent:
+  # 2. GRAPH SERVICE
+  graph-service:
     build:
-      context: ../
-      dockerfile: services/autonomous-agent/Dockerfile
-    env_file:
-      - ../.env
-    volumes:
-      - ../:/app  # Щоб агент міг аналізувати та комітити код
-      - ~/.gitconfig:/etc/gitconfig:ro
+      context: ../services/graph-service
+      dockerfile: Dockerfile
+    container_name: predator_graph_service
+    environment:
+      - KAFKA_BROKER=redpanda:29092
+      - POSTGRES_URL=postgresql://predator:predator_secret@postgres:5432/predator_analytics
     depends_on:
-      - litellm
+      - redpanda
+      - postgres
     networks:
-      - predator-sovereign-net
-    deploy:
-      resources:
-        limits:
-          memory: 8G
-          cpus: '0.5'
+      - predator_net
 
-  # ============================================================
-  # 5.2. Telegram Control Center Bot
-  # ============================================================
-  telegram-bot:
+  # 3. RISK ENGINE SERVICE
+  risk-engine:
     build:
-      context: ../
-      dockerfile: services/telegram-bot/Dockerfile
-    env_file:
-      - ../.env
-    restart: always
+      context: ../services/risk-engine-service
+      dockerfile: Dockerfile
+    container_name: predator_risk_engine
+    environment:
+      - KAFKA_BROKER=redpanda:29092
     depends_on:
-      - core-api
+      - redpanda
     networks:
-      - predator-sovereign-net
-    deploy:
-      resources:
-        limits:
-          memory: 500M
-          cpus: '0.5'
+      - predator_net
 
-  # ============================================================
-  # 5.3. UTOS (Unified Testing Operating System)
-  # ============================================================
-  utos:
+  # 4. AI EXPLAINABILITY SERVICE
+  ai-explainability:
     build:
-      context: ../
-      dockerfile: services/utos/Dockerfile
-    ports:
-      - "8003:8003"
-    env_file:
-      - ../.env
+      context: ../services/ai-explainability-service
+      dockerfile: Dockerfile
+    container_name: predator_ai_explainability
     environment:
-      POSTGRES_DSN: "postgresql://predator:${POSTGRES_PASSWORD:-predator_secret}@postgres:5432/predator_db"
-      REDIS_URL: "redis://:${REDIS_PASSWORD:-predator_redis}@redis:6379/0"
-      NEO4J_URI: "bolt://neo4j:7687"
-      CLICKHOUSE_URL: "http://clickhouse:8123"
-      QDRANT_URL: "http://qdrant:6333"
-      OPENSEARCH_URL: "http://opensearch:9200"
-      MINIO_URL: "http://minio:9000"
-      KAFKA_BOOTSTRAP_SERVERS: "redpanda:9092"
-      CORE_API_URL: "http://core-api:8000"
-      FRONTEND_URL: "http://ui:3030"
-    restart: always
+      - KAFKA_BROKER=redpanda:29092
+      - OLLAMA_HOST=http://host.docker.internal:11434 # Заглушка для локального Ollama
+    depends_on:
+      - redpanda
     networks:
-      - predator-sovereign-net
-    deploy:
-      resources:
-        limits:
-          memory: 500M
-          cpus: '0.5'
+      - predator_net
 
-  # ============================================================
-  # 5.4. Claw Code Agent (Self-Improvement Orchestrator)
-  # ============================================================
-  claw-code-agent:
+  # 5. MOCK DATA GENERATOR
+  mock-generator:
     build:
-      context: ../
-      dockerfile: services/claw-code-agent/Dockerfile
-    ports:
-      - "8005:8005"
-    env_file:
-      - ../.env
+      context: ../services/mock-data-generator
+      dockerfile: Dockerfile
+    container_name: predator_mock_generator
     environment:
-      - LLM_OLLAMA_BASE_URL=http://host.docker.internal:11434
-    volumes:
-      - ../:/workspace
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    restart: always
+      - KAFKA_BROKER=redpanda:29092
+    depends_on:
+      - redpanda
     networks:
-      - predator-sovereign-net
-    deploy:
-      resources:
-        limits:
-          memory: 2G
-          cpus: '1'
+      - predator_net
 
 networks:
-  predator-sovereign-net:
+  predator_net:
     driver: bridge
 
 volumes:
-  redpandadata:
-  pgdata:
-  redisdata:
-  neo4jdata:
-  neo4jplugins:
-  chdata:
-  osdata:
-  qdrantdata:
-  miniodata:
-
+  redpanda-data:
+  postgres-data:
+  qdrant-data:
+  opensearch-data:
+  minio-data:

@@ -8,6 +8,7 @@
  * - Suspense fallbacks
  */
 
+import { Button } from '@/components/ui/button';
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -176,7 +177,7 @@ export const LoadingButton: React.FC<LoadingButtonProps> = ({
   className,
   ...props
 }) => (
-  <button
+  <Button variant="cyber"
     {...props}
     disabled={disabled || isLoading}
     className={cn(
@@ -208,7 +209,7 @@ export const LoadingButton: React.FC<LoadingButtonProps> = ({
         </motion.span>
       )}
     </AnimatePresence>
-  </button>
+  </Button>
 );
 
 // ========================
@@ -304,7 +305,7 @@ export const RefreshIndicator: React.FC<RefreshIndicatorProps> = ({
         <span>Оновлено: {formatTime(lastUpdated)}</span>
       )}
       {onRefresh && (
-        <button
+        <Button variant="cyber"
           onClick={onRefresh}
           disabled={isRefreshing}
           title="Оновити"
@@ -318,7 +319,7 @@ export const RefreshIndicator: React.FC<RefreshIndicatorProps> = ({
             size={12}
             className={cn(isRefreshing && "animate-spin")}
           />
-        </button>
+        </Button>
       )}
     </div>
   );

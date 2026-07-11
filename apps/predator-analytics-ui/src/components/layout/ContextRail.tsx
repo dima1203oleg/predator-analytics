@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useMemo } from 'react';
 import { useAtom } from 'jotai';
 import {
@@ -245,14 +246,14 @@ export const ContextRail: React.FC = () => {
             <div className="text-[13px] font-black tracking-tight text-white leading-snug">{effectivePayload.title}</div>
             <div className="mt-1.5 text-[11px] leading-5 text-slate-500">{effectivePayload.subtitle}</div>
           </div>
-          <button
+          <Button variant="cyber"
             type="button"
             aria-label="Згорнути контекстну панель"
             onClick={() => setIsOpen(false)}
             className="flex h-9 w-9 shrink-0 items-center justify-center border border-red-900/40 bg-red-950/20 text-red-800 transition hover:border-red-700/60 hover:bg-red-900/30 hover:text-red-500"
           >
             <PanelRightClose className="h-3.5 w-3.5" />
-          </button>
+          </Button>
         </div>
 
         <div className={cn(
@@ -273,7 +274,7 @@ export const ContextRail: React.FC = () => {
           </div>
           <div className="space-y-2">
             {effectivePayload.actions.map((action) => (
-              <button
+              <Button variant="cyber"
                 key={action.id}
                 type="button"
                 onClick={() => handleAction(action)}
@@ -292,7 +293,7 @@ export const ContextRail: React.FC = () => {
                   </div>
                 </div>
                 <ArrowRight className="h-4 w-4 shrink-0 text-slate-600" />
-              </button>
+              </Button>
             ))}
           </div>
         </section>
@@ -305,7 +306,7 @@ export const ContextRail: React.FC = () => {
             <div className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-500">Документи</div>
             <div className="space-y-2">
               {effectivePayload.documents.map((document) => (
-                <button
+                <Button variant="cyber"
                   key={document.id}
                   type="button"
                   onClick={() => document.path && navigate(document.path)}
@@ -321,7 +322,7 @@ export const ContextRail: React.FC = () => {
                     </div>
                   </div>
                   <ArrowRight className="h-4 w-4 shrink-0 text-slate-600" />
-                </button>
+                </Button>
               ))}
             </div>
           </section>

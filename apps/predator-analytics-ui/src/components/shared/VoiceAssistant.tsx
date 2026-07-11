@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import axios from 'axios';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Mic, MicOff, Volume2, X } from 'lucide-react';
@@ -112,14 +113,14 @@ export const VoiceAssistant: React.FC = () => {
                   Predator Voice
                 </span>
               </div>
-              <button
+              <Button variant="cyber"
                 onClick={() => setIsOpen(false)}
                 className="text-slate-500 hover:text-white transition-colors"
                 aria-label="Закрити голосового асистента"
                 title="Закрити"
               >
                 <X size={16} />
-              </button>
+              </Button>
             </div>
 
             <div className="flex flex-col items-center justify-center py-6">
@@ -146,13 +147,13 @@ export const VoiceAssistant: React.FC = () => {
               </div>
             </div>
 
-            <button
+            <Button variant="cyber"
                 onClick={() => speak("Система готова. Чекаю ваших наказів.")}
                 className="mt-4 w-full py-2.5 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 rounded-xl text-emerald-400 text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2"
             >
                 <Volume2 size={14} />
                 Тест_Голосу
-            </button>
+            </Button>
           </motion.div>
         )}
       </AnimatePresence>

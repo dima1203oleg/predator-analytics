@@ -1,17 +1,60 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { 
-  Box, Cpu, Activity, ShieldCheck, Target, Layers, 
-  RotateCcw, Zap, Globe, Share2, Hexagon, AlertTriangle
-} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { ViewHeader } from '@/components/ViewHeader';
 import { HoloCard } from '@/components/ui/HoloCard';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { useUISound, UISoundType } from '@/hooks/useUISound';
+import { StateMachineVisualizer } from './components/StateMachineVisualizer';
+import type { MonteCarloParams, MonteCarloResult } from '@/workers/monteCarlo.worker';
+import { Cpu, Activity, ShieldCheck, Share2, Hexagon, Globe, Layers, AlertTriangle, Zap, RefreshCw } from 'lucide-react';
+import { cn } from '@/utils/cn';
 
 export default function DigitalTwinView() {
   const { play } = useUISound();
+  
+  const [simStatus, setSimStatus] = useState<'idle' | 'simulating' | 'completed'>('idle');
+  const [mcResults, setMcResults] = useState<MonteCarloResult | undefined>(undefined);
+  
+  const workerRef = useRef<Worker | null>(null);
+
+  useEffect(() => {
+    // Initialize worker
+    workerRef.current = new Worker(new URL('../../workers/monteCarlo.worker.ts', import.meta.url), { type: 'module' });
+    
+    workerRef.current.onmessage = (e: MessageEvent<MonteCarloResult>) => {
+      setMcResults(e.data);
+      setSimStatus('completed');
+      play(UISoundType.SUCCESS);
+    };
+
+    return () => {
+      workerRef.current?.terminate();
+    };
+  }, [play]);
+
+  const handleStartSimulation = useCallback(() => {
+    if (simStatus === 'simulating' || !workerRef.current) return;
+    
+    play(UISoundType.CLICK);
+    setSimStatus('simulating');
+    setMcResults(undefined);
+
+    const params: MonteCarloParams = {
+      iterations: 10000,
+      baseLiquidity: 500000,
+      monthlyBurnRate: 120000,
+      monthlyRevenueAvg: 135000,
+      revenueVolatility: 0.3,
+      monthsToSimulate: 12,
+      activeAnomalies: [
+        { id: 'cash_gap', riskMultiplier: 1.15 },
+        { id: 'logistic_delay', riskMultiplier: 1.05 }
+      ]
+    };
+
+    workerRef.current.postMessage(params);
+  }, [simStatus, play]);
 
   return (
     <PageTransition>
@@ -48,39 +91,46 @@ export default function DigitalTwinView() {
              ]}
              stats={[
                { label: 'АКТИВНІ_ВУЗЛИ', value: '1,492', icon: <Share2 size={14} />, color: 'primary' },
-               { label: 'ЗДОРОВ\'Я_СИСТЕМИ', value: '98.9%', icon: <ShieldCheck size={14} />, color: 'success', animate: true },
+               { label: 'ЗДОРОВ\'Я_СИСТЕМИ', value: mcResults ? `${mcResults.successRate.toFixed(1)}%` : '98.9%', icon: <ShieldCheck size={14} />, color: mcResults && mcResults.successRate < 80 ? 'warning' : 'success', animate: true },
              ]}
              actions={
-               <button onClick={() => play(UISoundType.CLICK)} className="px-6 py-3 bg-sky-600/10 border border-sky-500/20 text-sky-500 rounded-xl text-[10px] font-black uppercase tracking-widest italic hover:bg-sky-600 hover:text-white transition-all shadow-xl">
-                 <Zap size={16} className="inline mr-2" /> СТРЕС_ТЕСТ (INIT)
-               </button>
+               <Button variant="cyber" 
+                 onClick={handleStartSimulation} 
+                 disabled={simStatus === 'simulating'}
+                 className={cn(
+                   "px-6 py-3 border rounded-xl text-[10px] font-black uppercase tracking-widest italic transition-all shadow-xl flex items-center",
+                   simStatus === 'simulating' 
+                    ? "bg-slate-800 border-slate-700 text-slate-500 cursor-not-allowed" 
+                    : "bg-sky-600/10 border-sky-500/20 text-sky-500 hover:bg-sky-600 hover:text-white"
+                 )}
+               >
+                 {simStatus === 'simulating' ? (
+                   <><RefreshCw size={16} className="inline mr-2 animate-spin" /> ОБЧИСЛЕННЯ...</>
+                 ) : (
+                   <><Zap size={16} className="inline mr-2" /> СТРЕС_ТЕСТ (10K ITERS)</>
+                 )}
+               </Button>
              }
            />
 
            <div className="grid grid-cols-12 gap-8">
              <div className="col-span-12 xl:col-span-8 flex flex-col gap-6">
                 <HoloCard variant="cyber" className="p-10 rounded-[3rem] h-[600px] flex flex-col relative overflow-hidden border-sky-500/20 bg-sky-900/5">
-                   <div className="flex items-center justify-between mb-8">
+                   <div className="flex items-center justify-between mb-8 relative z-10">
                       <div className="flex items-center gap-4">
-                         <Globe size={24} className="text-sky-500 animate-pulse" />
+                         <Globe size={24} className={cn("text-sky-500", simStatus === 'simulating' && "animate-spin")} />
                          <h3 className="text-2xl font-black text-white italic uppercase tracking-widest">3D МАПА ПІДПРИЄМСТВА (STATE MACHINE)</h3>
                       </div>
-                      <span className="px-4 py-1.5 bg-black border border-sky-500/30 text-sky-500 text-[10px] font-black uppercase tracking-widest rounded-lg">SYNC_ONLINE</span>
+                      <span className={cn(
+                        "px-4 py-1.5 border text-[10px] font-black uppercase tracking-widest rounded-lg",
+                        simStatus === 'simulating' ? "bg-amber-500/20 border-amber-500 text-amber-500 animate-pulse" : "bg-black border-sky-500/30 text-sky-500"
+                      )}>
+                        {simStatus === 'simulating' ? 'SIMULATION_ACTIVE' : 'SYNC_ONLINE'}
+                      </span>
                    </div>
                    
-                   <div className="flex-1 border-2 border-dashed border-sky-500/20 rounded-2xl flex items-center justify-center bg-black/60 relative">
-                      <p className="text-sm font-black text-sky-500/50 tracking-widest uppercase">РЕНДЕР_STATE_MACHINE (CANVAS_PLACEHOLDER)</p>
-                      
-                      {/* Placeholder nodes */}
-                      <div className="absolute top-[20%] left-[20%] p-3 bg-sky-500/20 border border-sky-500 text-sky-500 rounded-full animate-bounce">
-                         <Box size={24} />
-                      </div>
-                      <div className="absolute top-[50%] left-[50%] p-4 bg-emerald-500/20 border border-emerald-500 text-emerald-500 rounded-full">
-                         <Target size={32} />
-                      </div>
-                      <div className="absolute bottom-[30%] right-[20%] p-3 bg-rose-500/20 border border-rose-500 text-rose-500 rounded-full animate-pulse">
-                         <Activity size={24} />
-                      </div>
+                   <div className="flex-1 rounded-2xl bg-black/60 relative overflow-hidden">
+                      <StateMachineVisualizer status={simStatus} results={mcResults} />
                    </div>
                 </HoloCard>
              </div>
@@ -93,10 +143,10 @@ export default function DigitalTwinView() {
                    </div>
                    
                    <div className="space-y-4">
-                      <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-2xl flex flex-col gap-2">
+                      <div className="p-4 bg-cyan-500/10 border border-cyan-500/20 rounded-2xl flex flex-col gap-2">
                          <div className="flex items-center justify-between">
-                            <span className="text-[10px] font-black text-rose-500 uppercase tracking-widest">КАСОВИЙ_РОЗРИВ_Q3</span>
-                            <AlertTriangle size={14} className="text-rose-500" />
+                            <span className="text-[10px] font-black text-cyan-500 uppercase tracking-widest">КАСОВИЙ_РОЗРИВ_Q3</span>
+                            <AlertTriangle size={14} className="text-cyan-500" />
                          </div>
                          <p className="text-xs font-bold text-slate-300">Імовірність виникнення розриву ліквідності у зв'язку з затримкою платежів від контрагента X.</p>
                       </div>
@@ -108,6 +158,17 @@ export default function DigitalTwinView() {
                          </div>
                          <p className="text-xs font-bold text-slate-300">Перевантаження транзитного хабу (Навантаження: 92%).</p>
                       </div>
+                   </div>
+
+                   {/* Simulation Config Panel */}
+                   <div className="mt-8 pt-8 border-t border-white/5">
+                     <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-4 block">ПАРАМЕТРИ MONTE CARLO</span>
+                     <div className="space-y-3 font-mono text-[11px] text-slate-400">
+                       <div className="flex justify-between"><span>ІТЕРАЦІЙ:</span><span className="text-sky-400">10,000</span></div>
+                       <div className="flex justify-between"><span>ГОРИЗОНТ:</span><span className="text-sky-400">12 МІСЯЦІВ</span></div>
+                       <div className="flex justify-between"><span>ВОЛАТИЛЬНІСТЬ:</span><span className="text-sky-400">30%</span></div>
+                       <div className="flex justify-between"><span>КОЕФ. РИЗИКУ:</span><span className="text-rose-400">HIGH (x1.2)</span></div>
+                     </div>
                    </div>
                 </div>
              </div>

@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import ReactECharts from '@/components/ECharts';
@@ -384,7 +385,7 @@ export default function ForecastPage() {
                     </label>
                 </div>
 
-                <button
+                <Button variant="cyber"
                     onClick={() => {
                         const nextRequest = {
                             ...request,
@@ -398,13 +399,13 @@ export default function ForecastPage() {
                 >
                     <RefreshCw size={16} className={cn(forecastLoading && 'animate-spin')} />
                     Оновити прогноз
-                </button>
+                </Button>
             </section>
 
             <div className="rounded-[28px] border border-white/[0.08] bg-white/[0.03] p-2">
                 <div className="flex flex-wrap gap-2">
                     {tabs.map((tab) => (
-                        <button
+                        <Button variant="cyber"
                             key={tab.key}
                             onClick={() => setActiveTab(tab.key)}
                             className={cn(
@@ -418,7 +419,7 @@ export default function ForecastPage() {
                                 {tab.icon}
                             </div>
                             {tab.label}
-                        </button>
+                        </Button>
                     ))}
                 </div>
             </div>

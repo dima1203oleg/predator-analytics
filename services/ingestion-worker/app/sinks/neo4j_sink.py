@@ -38,14 +38,14 @@ class Neo4jSink:
             self.driver = None
             self._connected = False
 
-    async def upsert_company(self, data: dict[str, Any]) -> None:
+    async def upsert_company(self, data: dict[str, Any]) -> str | None:
         """Створення або оновлення вузла компанії."""
         if not self._connected or not self.driver:
-            return
+            return "Neo4j connection not available, skipping"
 
         ueid = data.get("ueid")
         if not ueid:
-            return
+            return None
 
         query = """
         MERGE (c:Company {ueid: $ueid})

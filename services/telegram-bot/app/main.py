@@ -27,6 +27,9 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+MAIN_MENU_REGEX = "^(📊 Статус Системи|🚨 Активні Загрози|⚙️ Налаштування|🔍 Швидкий Пошук|📡 OSINT Розвідка|🕸 Граф Зв'язків|📄 Згенерувати Звіт|🤖 Запитати ШІ)$"
+INPUT_FILTER = filters.TEXT & ~filters.COMMAND & ~filters.Regex(MAIN_MENU_REGEX)
+
 def main():
     application = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
 
@@ -43,7 +46,7 @@ def main():
         states={
             SEARCH_INPUT: [
                 CallbackQueryHandler(search_type_selected, pattern="^(search_company|search_person|cancel)$"),
-                MessageHandler(filters.TEXT & ~filters.COMMAND, search_perform)
+                MessageHandler(INPUT_FILTER, search_perform)
             ]
         },
         fallbacks=[CommandHandler('cancel', cancel)]
@@ -54,7 +57,7 @@ def main():
     osint_conv = ConversationHandler(
         entry_points=[MessageHandler(filters.Regex("^📡 OSINT Розвідка$"), osint_start)],
         states={
-            OSINT_INPUT: [MessageHandler(filters.TEXT & ~filters.COMMAND, osint_perform)]
+            OSINT_INPUT: [MessageHandler(INPUT_FILTER, osint_perform)]
         },
         fallbacks=[CommandHandler('cancel', cancel)]
     )
@@ -64,7 +67,7 @@ def main():
     graph_conv = ConversationHandler(
         entry_points=[MessageHandler(filters.Regex("^🕸 Граф Зв'язків$"), graph_start)],
         states={
-            GRAPH_INPUT: [MessageHandler(filters.TEXT & ~filters.COMMAND, graph_perform)]
+            GRAPH_INPUT: [MessageHandler(INPUT_FILTER, graph_perform)]
         },
         fallbacks=[CommandHandler('cancel', cancel)]
     )
@@ -76,7 +79,7 @@ def main():
         states={
             REPORT_INPUT: [
                 CallbackQueryHandler(report_type_selected, pattern="^(report_risk|report_fin|cancel)$"),
-                MessageHandler(filters.TEXT & ~filters.COMMAND, report_perform)
+                MessageHandler(INPUT_FILTER, report_perform)
             ]
         },
         fallbacks=[CommandHandler('cancel', cancel)]
@@ -87,7 +90,7 @@ def main():
     ai_conv = ConversationHandler(
         entry_points=[MessageHandler(filters.Regex("^🤖 Запитати ШІ$"), ai_start)],
         states={
-            AI_INPUT: [MessageHandler(filters.TEXT & ~filters.COMMAND, ai_perform)]
+            AI_INPUT: [MessageHandler(INPUT_FILTER, ai_perform)]
         },
         fallbacks=[CommandHandler('cancel', cancel)]
     )
@@ -97,7 +100,7 @@ def main():
     async def unknown(update, context):
         await update.message.reply_text("Я вас не зовсім зрозумів. Спробуйте скористатися меню або натисніть /start.")
 
-    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, unknown))
+    application.add_handler(MessageHandler(INPUT_FILTER, unknown))
 
     logger.info("Бот запущений і готовий до роботи.")
     application.run_polling()

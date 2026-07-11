@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120" fill="none">
+  <path d="M0 0H120" stroke="#0F172A" stroke-opacity="0.06"/>
+  <path d="M0 30H120" stroke="#0F172A" stroke-opacity="0.06"/>
+  <path d="M0 60H120" stroke="#0F172A" stroke-opacity="0.06"/>
+  <path d="M0 90H120" stroke="#0F172A" stroke-opacity="0.06"/>
+  <path d="M0 120H120" stroke="#0F172A" stroke-opacity="0.06"/>
+  <path d="M0 0V120" stroke="#0F172A" stroke-opacity="0.06"/>
+  <path d="M30 0V120" stroke="#0F172A" stroke-opacity="0.06"/>
+  <path d="M60 0V120" stroke="#0F172A" stroke-opacity="0.06"/>
+  <path d="M90 0V120" stroke="#0F172A" stroke-opacity="0.06"/>
+  <path d="M120 0V120" stroke="#0F172A" stroke-opacity="0.06"/>
+</svg>

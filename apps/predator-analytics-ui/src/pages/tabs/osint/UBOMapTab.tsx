@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
 import { 
     Map as MapIcon, 
@@ -70,14 +71,14 @@ export const UBOMapTab: React.FC = () => {
                     
                     <div className="flex items-center gap-2 bg-slate-950/60  p-1.5 rounded-2xl border border-white/5">
                         {['ВУЗЛИ', 'МЕРЕЖІ', 'РИЗИКИ'].map((f) => (
-                            <button key={f} className="px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-all">
+                            <Button variant="cyber" key={f} className="px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-all">
                                 {f}
-                            </button>
+                            </Button>
                         ))}
                     </div>
 
                     <div className="ml-auto flex items-center gap-2">
-                        <button 
+                        <Button variant="cyber" 
                             onClick={startScan}
                             disabled={isScanning}
                             className={cn(
@@ -89,7 +90,7 @@ export const UBOMapTab: React.FC = () => {
                         >
                             <Crosshair size={14} className={cn(isScanning && "animate-spin")} />
                             {isScanning ? 'СКАНУВАННЯ...' : 'ІНІЦІЮВАТИ СКАН'}
-                        </button>
+                        </Button>
                     </div>
                 </div>
 
@@ -104,12 +105,12 @@ export const UBOMapTab: React.FC = () => {
                                 { icon: Database, label: 'Дані' },
                                 { icon: Target, label: 'Ціль' }
                             ].map((Tool, i) => (
-                                <button key={i} className="p-3 text-slate-400 hover:bg-rose-500/20 hover:text-rose-400 rounded-xl transition-all group relative">
+                                <Button variant="cyber" key={i} className="p-3 text-slate-400 hover:bg-rose-500/20 hover:text-rose-400 rounded-xl transition-all group relative">
                                     <Tool.icon size={20} />
                                     <span className="absolute left-16 bg-slate-900 border border-slate-700 text-white text-[9px] uppercase font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
                                         {Tool.label}
                                     </span>
-                                </button>
+                                </Button>
                             ))}
                         </div>
                     </HoloCard>
@@ -216,9 +217,9 @@ export const UBOMapTab: React.FC = () => {
                                         ))}
                                     </div>
 
-                                    <button className="mt-4 w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-[9px] font-black text-slate-400 uppercase tracking-widest transition-all">
+                                    <Button variant="cyber" className="mt-4 w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-[9px] font-black text-slate-400 uppercase tracking-widest transition-all">
                                         Завантажити Повний реєстр
-                                    </button>
+                                    </Button>
                                 </HoloCard>
 
                                 <HoloCard className="bg-slate-950/90  border-rose-500/20">
@@ -256,12 +257,12 @@ export const UBOMapTab: React.FC = () => {
                         ))}
                     </HoloCard>
                     
-                    <button className="p-3 bg-slate-900 border border-white/10 rounded-2xl text-slate-400 hover:text-white transition-all shadow-2xl">
+                    <Button variant="cyber" className="p-3 bg-slate-900 border border-white/10 rounded-2xl text-slate-400 hover:text-white transition-all shadow-2xl">
                         <Maximize2 size={18} />
-                    </button>
-                    <button className="p-3 bg-slate-900 border border-white/10 rounded-2xl text-slate-400 hover:text-white transition-all shadow-2xl">
+                    </Button>
+                    <Button variant="cyber" className="p-3 bg-slate-900 border border-white/10 rounded-2xl text-slate-400 hover:text-white transition-all shadow-2xl">
                         <Settings2 size={18} />
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>

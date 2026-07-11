@@ -107,7 +107,18 @@ export const dashboardApi = {
      */
     getAlerts: async (limit: number = 10): Promise<{ items: DashboardAlert[] }> => {
         const response = await apiClient.get(`/alerts?limit=${limit}`);
-        return response.data;
+        const rawAlerts = Array.isArray(response.data) ? response.data : (response.data.items || []);
+        const items: DashboardAlert[] = rawAlerts.map((a: any) => ({
+            id: a.id,
+            type: a.category || 'system',
+            message: a.title || a.description || '',
+            severity: a.severity || 'info',
+            timestamp: a.timestamp || new Date().toISOString(),
+            sector: a.source || 'Загальне',
+            company: a.entity_id || 'Система',
+            value: a.metadata?.value || 0
+        }));
+        return { items };
     },
 
     /**

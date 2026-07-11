@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Building2, ShieldCheck, AlertTriangle, Phone, Mail, Globe, Star, Users } from 'lucide-react';
@@ -90,13 +91,13 @@ export const SupplierScoutWidget: React.FC<{ persona: string }> = ({ persona }) 
                 placeholder={premiumLocales.supplierScout.placeholder}
                 className="w-full bg-black/40 border border-white/10 rounded-xl py-3 pl-11 pr-32 text-sm font-mono text-white focus:outline-none focus:border-emerald-500/50 transition-all placeholder-slate-600"
             />
-            <button
+            <Button variant="cyber"
                 onClick={handleSearch}
                 disabled={isSearching || !query}
                 className="absolute right-1 top-1 bottom-1 px-4 my-auto bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg transition-all disabled:opacity-50 disabled:bg-slate-800"
             >
                 {isSearching ? <span className=" text-[9px] uppercase">{premiumLocales.supplierScout.scanning}</span> : <span className="text-[10px] uppercase">{premiumLocales.supplierScout.search}</span>}
-            </button>
+            </Button>
         </div>
       </div>
 
@@ -150,12 +151,12 @@ export const SupplierScoutWidget: React.FC<{ persona: string }> = ({ persona }) 
                     </div>
 
                     <div className="flex gap-2 opacity-60 group-hover/card:opacity-100 transition-opacity">
-                        <button className="flex-1 py-1.5 rounded bg-white/5 text-[10px] text-slate-300 hover:bg-emerald-500/20 hover:text-emerald-400 transition-colors flex items-center justify-center gap-2">
+                        <Button variant="cyber" className="flex-1 py-1.5 rounded bg-white/5 text-[10px] text-slate-300 hover:bg-emerald-500/20 hover:text-emerald-400 transition-colors flex items-center justify-center gap-2">
                             <Globe size={12} /> {premiumLocales.supplierScout.website}
-                        </button>
-                        <button className="flex-1 py-1.5 rounded bg-white/5 text-[10px] text-slate-300 hover:bg-emerald-500/20 hover:text-emerald-400 transition-colors flex items-center justify-center gap-2">
+                        </Button>
+                        <Button variant="cyber" className="flex-1 py-1.5 rounded bg-white/5 text-[10px] text-slate-300 hover:bg-emerald-500/20 hover:text-emerald-400 transition-colors flex items-center justify-center gap-2">
                             <Mail size={12} /> {premiumLocales.supplierScout.contact}
-                        </button>
+                        </Button>
                     </div>
                 </motion.div>
             ))}

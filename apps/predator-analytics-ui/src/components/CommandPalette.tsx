@@ -42,7 +42,9 @@ export const CommandPalette: React.FC = () => {
   const commands: CommandItem[] = [
     // Навігація
     { id: 'nav-home', label: 'Перейти на Панель', icon: <Activity size={16} />, group: 'navigation', action: () => navigate('/') },
-    { id: 'nav-data', label: 'Менеджер Даних', icon: <Database size={16} />, group: 'navigation', action: () => navigate('/data') },
+    { id: 'nav-dashboard', label: 'Cyber Dashboard', icon: <Terminal size={16} />, group: 'navigation', action: () => navigate('/dashboard') },
+    { id: 'nav-omni', label: 'Omniscience View', icon: <Search size={16} />, group: 'navigation', action: () => navigate('/omniscience') },
+    { id: 'nav-ingestion', label: 'Імпорт Даних (Ingestion)', icon: <Database size={16} />, group: 'navigation', action: () => navigate('/ingestion') },
     { id: 'nav-monitoring', label: 'Системний Моніторинг', icon: <Server size={16} />, group: 'navigation', action: () => navigate('/monitoring') },
     { id: 'nav-neural', label: 'Нейронна Мережа', icon: <Brain size={16} />, group: 'navigation', action: () => navigate('/neural') },
 

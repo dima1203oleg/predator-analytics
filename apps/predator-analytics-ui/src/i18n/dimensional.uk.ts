@@ -50,7 +50,7 @@ export const uk = {
 
   // Dashboard - Nebula (Explorer)
   nebula: {
-    welcome: 'Вітаємо в Predator v45 | Neural Analytics!',
+    welcome: 'Вітаємо в Cognitive v45 | Neural Analytics!',
     subtitle: 'Ваш інтелектуальний помічник для аналізу даних',
     documents: 'Документів',
     systemHealthy: 'Система здорова',

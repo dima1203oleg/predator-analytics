@@ -33,7 +33,7 @@ export default defineConfig({
   // Shared settings for all the projects below
   use: {
     // Base URL to use in actions like `await page.goto('/')`
-    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3030',
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3050',
 
     // Collect trace for all tests (not just on retry) for detailed analysis
     trace: 'retain-on-failure',
@@ -42,7 +42,7 @@ export default defineConfig({
     screenshot: 'only-on-failure',
 
     // Video on failure for debugging
-    video: 'on-first-retry',
+    video: "off",
 
     // Locale
     locale: 'uk-UA',
@@ -59,15 +59,6 @@ export default defineConfig({
     
     // Ignore HTTPs errors for local testing
     ignoreHTTPSErrors: true,
-    
-    // Capture network activity for debugging
-    // This is crucial for analyzing API calls and WebSocket connections
-    // network: true,
-    
-    // Capture console logs for debugging
-    // launchOptions: {
-    //   args: ['--enable-logging'],
-    // },
   },
 
   // Configure projects for major browsers - only Chromium for speed
@@ -95,7 +86,7 @@ export default defineConfig({
   // Run local dev server before starting the tests
   webServer: process.env.CI ? undefined : {
     command: 'VITE_AUTO_MODE=true npm run dev',
-    url: 'http://localhost:3030',
+    url: 'http://localhost:3050',
     reuseExistingServer: true,
     timeout: 120 * 1000,
   },

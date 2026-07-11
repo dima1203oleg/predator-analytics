@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAtom } from 'jotai';
@@ -12,10 +13,10 @@ import {
   ChevronDown,
   BrainCircuit
 } from 'lucide-react';
-import { chatMessagesAtom, isTypingAtom } from '../../store/atoms';
-import { ChatMessage } from '../../types/index';
+import { chatMessagesAtom, isTypingAtom, type ChatMessage } from '../../store/atoms';
 import { cn } from '../../lib/utils';
 import { format } from 'date-fns';
+import { aiApi } from '../../services/api/ai';
 
 const ChatBot = () => {
   const { t } = useTranslation();
@@ -58,17 +59,41 @@ const ChatBot = () => {
     setInput('');
     setIsTyping(true);
 
-    // Симуляція відповіді від ultra-router-chat
-    setTimeout(() => {
+    try {
+      // Prepare messages for the API
+      const apiMessages = [...messages, userMessage].map(msg => ({
+        role: msg.role as 'user' | 'assistant' | 'system',
+        content: msg.content
+      }));
+
+      // Call the NVIDIA local server with DeepSeek R1
+      const response = await aiApi.chat(apiMessages, "deepseek-r1");
+      
+      // Parse the response
+      const replyContent = response?.choices?.[0]?.message?.content || 
+                           response?.reply || response?.content || response?.message?.content || 
+                           (typeof response === 'string' ? response : `[DeepSeek R1] З'єднання встановлено, але формат відповіді не розпізнано: ${JSON.stringify(response)}`);
+
       const botResponse: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: `Отримано запит: "${userText}". Аналізую дані Predator Analytics v61.0-ELITE... \n\nЯ бачу, що за останній період вашарефективність зросла на 14%. Всі системи працюють стабільно.`,
+        content: replyContent,
         timestamp: format(new Date(), 'HH:mm')
       };
+      
       setMessages(prev => [...prev, botResponse]);
+    } catch (error) {
+      console.error("AI API Error:", error);
+      const errorResponse: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: `[Системна помилка] Збій підключення до локальної моделі DeepSeek R1 на NVIDIA сервері. Сервіс тимчасово недоступний.`,
+        timestamp: format(new Date(), 'HH:mm')
+      };
+      setMessages(prev => [...prev, errorResponse]);
+    } finally {
       setIsTyping(false);
-    }, 1500);
+    }
   };
 
   return (
@@ -120,20 +145,20 @@ const ChatBot = () => {
               <Bot className="w-6 h-6" />
             </div>
             <div>
-              <div className="text-sm font-display font-bold text-foreground tracking-wide">ШІ КОПІЛОТ</div>
+              <div className="text-sm font-display font-bold text-foreground tracking-wide">DEEPSEEK R1 (LOCAL)</div>
               <div className="flex items-center gap-1.5 text-[10px] text-primary font-mono uppercase tracking-widest">
                 <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full " />
-                Нейромережа активна
+                Локальна модель активна
               </div>
             </div>
           </div>
-          <button 
+          <Button variant="cyber" 
             onClick={() => setIsOpen(false)}
             aria-label="Закрити ШІ-панель"
             className="p-2 hover:bg-white/5 rounded-lg text-slate-500 transition-colors"
           >
             <X className="w-5 h-5" />
-          </button>
+          </Button>
         </div>
 
         {/* Messages */}
@@ -197,20 +222,20 @@ const ChatBot = () => {
               placeholder={t('chat.placeholder')}
               className="w-full bg-slate-900/80 border border-white/10 rounded-2xl px-5 py-3.5 pr-14 text-sm focus:outline-none focus:ring-1 focus:ring-primary/40 focus:border-primary/40 transition-all resize-none h-[54px] min-h-[54px] max-h-[120px]"
             />
-            <button 
+            <Button variant="cyber" 
               onClick={handleSend}
               disabled={!input.trim()}
               className="absolute right-3 bottom-2.5 p-2 bg-primary/10 hover:bg-primary text-primary hover:text-background rounded-xl transition-all disabled:opacity-30 disabled:pointer-events-none group-hover:scale-110 active:scale-95"
             >
               <SendHorizonal className="w-5 h-5" />
-            </button>
+            </Button>
           </div>
           <div className="mt-4 flex items-center justify-between opacity-30 px-1">
             <div className="flex gap-4">
               <Terminal className="w-3.5 h-3.5 cursor-pointer hover:opacity-100 transition-opacity" />
               <ChevronDown className="w-3.5 h-3.5 cursor-pointer hover:opacity-100 transition-opacity" />
             </div>
-            <div className="text-[10px] font-mono tracking-tighter uppercase font-bold text-primary/60">ЯДРО PREDATOR AI v61.0-ELITE</div>
+            <div className="text-[10px] font-mono tracking-tighter uppercase font-bold text-primary/60">LOCAL AI: DEEPSEEK R1</div>
           </div>
         </div>
           </motion.div>

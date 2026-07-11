@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { HoloCard } from '@/components/ui/HoloCard';
 
 import React from 'react';
@@ -42,7 +43,7 @@ export const LLMTrainingView: React.FC<LLMTrainingViewProps> = ({
                 <div className="space-y-8">
                     <div className="grid grid-cols-2 gap-4">
                         {(Object.keys(TRAINING_CONFIGS) as TrainingDomain[]).map((dom) => (
-                            <button
+                            <Button variant="cyber"
                                 key={dom} onClick={() => onTrainingDomainChange(dom)}
                                 className={`p-4 rounded-2xl border-2 flex items-center gap-4 transition-all duration-300 ${trainingDomain === dom
                                     ? 'bg-blue-600/10 border-blue-500 text-white shadow-blue-500/10 shadow-xl'
@@ -51,7 +52,7 @@ export const LLMTrainingView: React.FC<LLMTrainingViewProps> = ({
                             >
                                 <div className={`p-2 rounded-xl border ${trainingDomain === dom ? 'bg-blue-500 text-white' : 'bg-slate-900 border-white/5'}`}>{TRAINING_CONFIGS[dom].icon}</div>
                                 <span className="text-[11px] font-bold uppercase tracking-widest">{dom}</span>
-                            </button>
+                            </Button>
                         ))}
                     </div>
 
@@ -130,9 +131,9 @@ export const LLMTrainingView: React.FC<LLMTrainingViewProps> = ({
                             </div>
                         ))}
                     </div>
-                    <button className="w-full py-4 border border-dashed border-white/5 text-slate-700 hover:text-slate-200 hover:border-blue-500/50 rounded-2xl text-[10px] uppercase tracking-[0.3em] font-bold transition-all mt-6">
+                    <Button variant="cyber" className="w-full py-4 border border-dashed border-white/5 text-slate-700 hover:text-slate-200 hover:border-blue-500/50 rounded-2xl text-[10px] uppercase tracking-[0.3em] font-bold transition-all mt-6">
                         {premiumLocales.llm.training.synthesize}
-                    </button>
+                    </Button>
                 </div>
             </HoloCard>
         </motion.div>

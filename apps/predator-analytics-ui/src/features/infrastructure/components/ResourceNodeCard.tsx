@@ -40,14 +40,14 @@ export function ResourceNodeCard({ node, onClick }: { node: NodeHardwareProps, o
       onClick={onClick}
       className={cn(
         "bg-white/[0.03] border border-white/5 rounded-2xl p-6  relative overflow-hidden group transition-all duration-500",
-        onClick && "cursor-pointer hover:border-rose-500/30 hover:bg-black/40 shadow-2xl hover:shadow-rose-500/5",
+        onClick && "cursor-pointer hover:border-cyan-500/30 hover:bg-black/40 shadow-2xl hover:shadow-cyan-500/5",
         !isOnline && "opacity-40 grayscale"
       )}
     >
       <div className="absolute top-0 right-0 p-4">
         <div className={cn(
           "px-2.5 py-1 rounded-md text-[9px] font-black uppercase tracking-widest border",
-          isOnline ? "bg-rose-500/10 text-rose-500 border-rose-500/20" : 
+          isOnline ? "bg-cyan-500/10 text-cyan-500 border-cyan-500/20" : 
           node.status === 'degraded' ? "bg-amber-500/10 text-amber-500 border-amber-500/20" :
           "bg-slate-800/20 text-slate-500 border-slate-700/30"
         )}>
@@ -57,8 +57,8 @@ export function ResourceNodeCard({ node, onClick }: { node: NodeHardwareProps, o
 
       <div className="flex items-center gap-4 mb-6 relative z-10">
         <div className={cn(
-          "p-3 rounded-2xl bg-black border border-white/10 shadow-inner group-hover:border-rose-500/30 transition-all duration-500",
-          node.type === 'SERVER' ? "text-rose-500" : node.type === 'LAPTOP' ? "text-rose-400" : "text-rose-600"
+          "p-3 rounded-2xl bg-black border border-white/10 shadow-inner group-hover:border-cyan-500/30 transition-all duration-500",
+          node.type === 'SERVER' ? "text-cyan-500" : node.type === 'LAPTOP' ? "text-rose-400" : "text-cyan-600"
         )}>
           {node.type === 'SERVER' ? <Box className="w-6 h-6 shadow-[0_0_10px_currentColor]" /> : <LaptopIcon className="w-6 h-6 shadow-[0_0_10px_currentColor]" />}
         </div>
@@ -110,7 +110,7 @@ export function ResourceNodeCard({ node, onClick }: { node: NodeHardwareProps, o
             <div key={i} className="bg-white/[0.02] border border-white/5 rounded-xl p-4 space-y-3">
               <div className="flex justify-between items-center text-[10px]">
                 <span className="text-slate-200 font-black uppercase tracking-tight">{g.model}</span>
-                <div className="flex items-center gap-2 text-rose-500">
+                <div className="flex items-center gap-2 text-cyan-500">
                   <Thermometer className="w-3.5 h-3.5" />
                   <span className="font-black font-mono">{g.temp}°C</span>
                 </div>
@@ -130,9 +130,9 @@ export function ResourceNodeCard({ node, onClick }: { node: NodeHardwareProps, o
 }
 
 function ResourceMiniStat({ icon: Icon, label, used, total, unit, percent, color }: any) {
-  const barColor = color === 'rose' ? 'bg-rose-500' : 'bg-slate-500';
+  const barColor = color === 'rose' ? 'bg-cyan-500' : 'bg-slate-500';
   const shadowColor = color === 'rose' ? '' : '';
-  const iconColor = color === 'rose' ? 'text-rose-500' : 'text-slate-500';
+  const iconColor = color === 'rose' ? 'text-cyan-500' : 'text-slate-500';
 
   const free = total - used;
   const isPercent = unit === '%';

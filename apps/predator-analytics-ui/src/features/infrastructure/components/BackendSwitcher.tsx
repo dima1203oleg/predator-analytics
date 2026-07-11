@@ -28,7 +28,7 @@ export function BackendSwitcher() {
   const getNodeColorClass = (id: string, active: boolean) => {
     if (!active) return "text-slate-500 group-hover:text-slate-200";
     switch (id) {
-      case NODE_IDS.SOVEREIGN: return "text-rose-500 ";
+      case NODE_IDS.SOVEREIGN: return "text-cyan-500 ";
       case NODE_IDS.HYBRID: return "text-emerald-500 ";
       case NODE_IDS.CLOUD: return "text-sky-400 ";
       default: return "text-amber-500";
@@ -46,7 +46,7 @@ export function BackendSwitcher() {
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
           "flex items-center gap-3 px-4 py-2 rounded-xl border cursor-pointer transition-all duration-500 group relative overflow-hidden",
-          llmTriStateMode === 'SOVEREIGN' ? "bg-rose-500/10 border-rose-500/30 text-rose-500 hover:bg-rose-500/20" :
+          llmTriStateMode === 'SOVEREIGN' ? "bg-cyan-500/10 border-cyan-500/30 text-cyan-500 hover:bg-cyan-500/20" :
           llmTriStateMode === 'HYBRID' ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20" :
           "bg-sky-500/10 border-sky-500/30 text-sky-400 hover:bg-sky-500/20"
         )}
@@ -55,7 +55,7 @@ export function BackendSwitcher() {
           {activeNode && React.createElement(getIcon(activeNode.id), { className: "w-5 h-5" })}
           <div className={cn(
             "absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full border-2 border-slate-950 ",
-            activeNode?.status === 'online' ? "bg-emerald-500 shadow-[0_0_8px_#10b981]" : "bg-rose-600 shadow-[0_0_8px_#e11d48]"
+            activeNode?.status === 'online' ? "bg-emerald-500 shadow-[0_0_8px_#10b981]" : "bg-cyan-600 shadow-[0_0_8px_#e11d48]"
           )} />
         </div>
         
@@ -88,7 +88,7 @@ export function BackendSwitcher() {
                  <span className="text-[11px] font-black uppercase tracking-[0.3em] text-white/90 italic">ЦЕНТ _МА Ш УТИЗАЦІЇ</span>
                  <span className="text-[7px] font-mono text-white/20 uppercase tracking-[0.1em]">Sovereign Headless Architecture v3.0</span>
                </div>
-               <div className="px-2 py-0.5 rounded-sm bg-rose-500/10 border border-rose-500/30 text-rose-500 text-[8px] font-black uppercase italic">ELITE_V61</div>
+               <div className="px-2 py-0.5 rounded-sm bg-cyan-500/10 border border-cyan-500/30 text-cyan-500 text-[8px] font-black uppercase italic">ELITE_V61</div>
             </div>
             
             <div className="p-3 space-y-2">
@@ -127,7 +127,7 @@ export function BackendSwitcher() {
                         "w-1.5 h-1.5 rounded-full",
                         node.status === 'online' 
                           ? "bg-emerald-500 shadow-[0_0_10px_#10b981]" 
-                          : "bg-rose-600 shadow-[0_0_10px_#e11d48]"
+                          : "bg-cyan-600 shadow-[0_0_10px_#e11d48]"
                       )} />
                       {isActive && <Check className="w-4 h-4 text-emerald-400 animate-in zoom-in-50 duration-500" />}
                     </div>
@@ -135,7 +135,7 @@ export function BackendSwitcher() {
                     {isActive && (
                       <div className={cn(
                         "absolute left-0 w-[2px] h-1/2 top-1/4 rounded-full",
-                        node.id === NODE_IDS.SOVEREIGN ? "bg-rose-500" :
+                        node.id === NODE_IDS.SOVEREIGN ? "bg-cyan-500" :
                         node.id === NODE_IDS.HYBRID ? "bg-emerald-500" : "bg-sky-400"
                       )} />
                     )}
@@ -146,7 +146,7 @@ export function BackendSwitcher() {
             
             <div className="p-4 bg-black/40 border-t border-white/5 group/footer">
               <div className="flex items-start gap-3">
-                <Activity size={12} className="text-white/20 mt-0.5 group-hover/footer:text-rose-500 transition-colors" />
+                <Activity size={12} className="text-white/20 mt-0.5 group-hover/footer:text-cyan-500 transition-colors" />
                 <p className="text-[9px] text-slate-500 leading-relaxed italic font-medium uppercase tracking-tight">
                   Адаптивна каскадна відмовостійкість: <span className="text-white/30">Sovereign ➔ Hybrid ➔ Cloud ➔ Mock</span>.  учне перемикання фіксує вузол як пріоритетний.
                 </p>

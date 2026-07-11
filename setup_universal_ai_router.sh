@@ -48,6 +48,130 @@ model_list:
       stream: true
   - model_name: ultra-router-fast-groq-2
     litellm_params:
+      model: groq/meta-llama/llama-4-scout-17b-16e-instruct
+      api_key: ${GROQ_API_KEY_2}
+      api_base: https://api.groq.com/openai/v1
+      timeout: 10
+      stream: true
+
+  # API Group: Cerebras (1M tokens/day)
+  - model_name: ultra-router-cerebras-qwen3-235b
+    litellm_params:
+      model: cerebras/qwen3-235b
+      api_key: ${CEREBRAS_API_KEY}
+      api_base: https://api.cerebras.ai/v1
+      timeout: 30
+      stream: true
+  - model_name: ultra-router-cerebras-gpt-oss-120b
+    litellm_params:
+      model: cerebras/gpt-oss-120b
+      api_key: ${CEREBRAS_API_KEY}
+      api_base: https://api.cerebras.ai/v1
+      timeout: 30
+      stream: true
+  - model_name: ultra-router-cerebras-llama-3.3-70b
+    litellm_params:
+      model: cerebras/llama-3.3-70b
+      api_key: ${CEREBRAS_API_KEY}
+      api_base: https://api.cerebras.ai/v1
+      timeout: 30
+      stream: true
+
+  # API Group: Mistral AI (1B tokens/month)
+  - model_name: ultra-router-mistral-large-3
+    litellm_params:
+      model: mistral/mistral-large-3
+      api_key: ${MISTRAL_API_KEY}
+      api_base: https://api.mistral.ai/v1
+      timeout: 10
+      stream: true
+  - model_name: ultra-router-mistral-codestral
+    litellm_params:
+      model: mistral/codestral
+      api_key: ${MISTRAL_API_KEY}
+      api_base: https://api.mistral.ai/v1
+      timeout: 10
+      stream: true
+  - model_name: ultra-router-mistral-small-4
+    litellm_params:
+      model: mistral/mistral-small-4
+      api_key: ${MISTRAL_API_KEY}
+      api_base: https://api.mistral.ai/v1
+      timeout: 10
+      stream: true
+
+  # API Group: SiliconFlow (High throughput)
+  - model_name: ultra-router-siliconflow-deepseek-r1-8b
+    litellm_params:
+      model: siliconcloud/deepseek-ai/DeepSeek-R1-0528-Qwen3-8B
+      api_key: ${SILICONFLOW_API_KEY}
+      api_base: https://api.siliconflow.cn/v1
+      timeout: 10
+      stream: true
+  - model_name: ultra-router-siliconflow-glm-4.1v-9b
+    litellm_params:
+      model: siliconcloud/THUDM/GLM-4.1V-9B-Thinking
+      api_key: ${SILICONFLOW_API_KEY}
+      api_base: https://api.siliconflow.cn/v1
+      timeout: 10
+      stream: true
+  - model_name: ultra-router-siliconflow-qwen3-8b
+    litellm_params:
+      model: siliconcloud/Qwen/Qwen3-8B
+      api_key: ${SILICONFLOW_API_KEY}
+      api_base: https://api.siliconflow.cn/v1
+      timeout: 10
+      stream: true
+
+  # API Group: LLM7.io (Aggregator)
+  - model_name: ultra-router-llm7-deepseek-r1
+    litellm_params:
+      model: llm7/deepseek-r1-0528
+      api_key: ${LLM7_API_KEY}
+      api_base: https://api.llm7.io/v1
+      timeout: 10
+      stream: true
+  - model_name: ultra-router-llm7-qwen2.5-coder
+    litellm_params:
+      model: llm7/qwen2.5-coder
+      api_key: ${LLM7_API_KEY}
+      api_base: https://api.llm7.io/v1
+      timeout: 10
+      stream: true
+  - model_name: ultra-router-llm7-gemini-flash-lite
+    litellm_params:
+      model: llm7/gemini-2.5-flash-lite
+      api_key: ${LLM7_API_KEY}
+      api_base: https://api.llm7.io/v1
+      timeout: 10
+      stream: true
+
+  # API Group: Zhipu AI (Basic models)
+  - model_name: ultra-router-zhipu-glm-4.7-flash
+    litellm_params:
+      model: zhipu/GLM-4.7-Flash
+      api_key: ${ZHIPU_API_KEY}
+      api_base: https://open.bigmodel.cn/api/paas/v4
+      timeout: 10
+      stream: true
+  - model_name: ultra-router-zhipu-glm-4.6v-flash
+    litellm_params:
+      model: zhipu/GLM-4.6V-Flash
+      api_key: ${ZHIPU_API_KEY}
+      api_base: https://open.bigmodel.cn/api/paas/v4
+      timeout: 10
+      stream: true
+  - model_name: ultra-router-zhipu-glm-4.5-flash
+    litellm_params:
+      model: zhipu/GLM-4.5-Flash
+      api_key: ${ZHIPU_API_KEY}
+      api_base: https://open.bigmodel.cn/api/paas/v4
+      timeout: 10
+      stream: true
+
+  # API Group: FAST (Groq x2 keys for redundancy/higher limits)
+  - model_name: ultra-router-fast-groq-1
+    litellm_params:
       model: groq/llama-3.3-70b-versatile
       api_key: ${GROQ_API_KEY_2}
       api_base: https://api.groq.com/openai/v1

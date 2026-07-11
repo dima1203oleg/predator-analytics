@@ -1,4 +1,5 @@
 
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Table as TableIcon, Layers, Terminal, ArrowRight, Hash, Database, Zap } from 'lucide-react';
@@ -85,16 +86,16 @@ export const RelationalView: React.FC<RelationalViewProps> = ({ tables, onOpenQu
                                     Status: <span className="text-emerald-500">ACTIVE // OPTIMIZED</span>
                                 </div>
                                 <div className="flex gap-2">
-                                    <button
+                                    <Button variant="cyber"
                                         onClick={() => onOpenQuery(table.name)}
                                         className="w-10 h-10 flex items-center justify-center bg-slate-950 border border-white/5 rounded-xl text-slate-400 hover:text-white hover:border-blue-500/50 hover:bg-blue-500/10 transition-all active:scale-95 shadow-lg"
                                         title="Відкрити SQL Термінал"
                                     >
                                         <Terminal size={14} />
-                                    </button>
-                                    <button className="w-10 h-10 flex items-center justify-center bg-slate-950 border border-white/5 rounded-xl text-slate-400 hover:text-white hover:border-white/20 transition-all active:scale-95 shadow-lg">
+                                    </Button>
+                                    <Button variant="cyber" className="w-10 h-10 flex items-center justify-center bg-slate-950 border border-white/5 rounded-xl text-slate-400 hover:text-white hover:border-white/20 transition-all active:scale-95 shadow-lg">
                                         <ArrowRight size={14} />
-                                    </button>
+                                    </Button>
                                 </div>
                             </div>
                         </motion.div>

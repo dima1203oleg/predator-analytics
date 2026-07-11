@@ -19,6 +19,7 @@ class DatasetBuilderService:
         Parses different sources and converts them to standard JSON format.
         """
         processed_data = []
+        self.seen_hashes.clear()
         for source in sources:
             try:
                 # Mocking parsing for various formats

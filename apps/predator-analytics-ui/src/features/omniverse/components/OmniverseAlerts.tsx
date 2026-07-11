@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { 
   AlertTriangle, 
@@ -98,12 +99,12 @@ export const OmniverseAlerts: React.FC = () => {
                   </p>
                   
                   <div className="flex items-center gap-4 pt-2">
-                    <button className="flex items-center gap-2 text-[10px] font-bold text-blue-400 uppercase tracking-widest hover:text-blue-300 transition-colors">
+                    <Button variant="cyber" className="flex items-center gap-2 text-[10px] font-bold text-blue-400 uppercase tracking-widest hover:text-blue-300 transition-colors">
                       View Source <ArrowRight size={10} />
-                    </button>
-                    <button className="flex items-center gap-2 text-[10px] font-bold text-white/30 uppercase tracking-widest hover:text-white/60 transition-colors border-l border-white/10 pl-4">
+                    </Button>
+                    <Button variant="cyber" className="flex items-center gap-2 text-[10px] font-bold text-white/30 uppercase tracking-widest hover:text-white/60 transition-colors border-l border-white/10 pl-4">
                       Dismiss
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>

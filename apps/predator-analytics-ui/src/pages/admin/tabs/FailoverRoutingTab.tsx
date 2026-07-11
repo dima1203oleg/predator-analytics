@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -27,8 +28,8 @@ const MODES: Record<string, { label: string; desc: string; color: string; bg: st
   SOVEREIGN: { 
     label: 'АВТОНОМНИЙ (SOVEREIGN)', 
     desc: '100% ЛОКАЛЬНЕ ВИКОНАННЯ (K3S + OLLAMA AI)',   
-    color: 'text-rose-500',    
-    bg: 'bg-rose-500/10 border-rose-500/30',
+    color: 'text-cyan-500',    
+    bg: 'bg-cyan-500/10 border-cyan-500/30',
     icon: Shield
   },
   HYBRID:    { 
@@ -78,8 +79,8 @@ const eventCols: VirtualColumn<FailoverEvent>[] = [
     mono: true, 
     render: (v) => (
       <div className="flex items-center gap-3">
-        <div className="w-1.5 h-1.5 rounded-full bg-rose-500 " />
-        <span className="text-rose-500 uppercase italic font-black tracking-tighter">
+        <div className="w-1.5 h-1.5 rounded-full bg-cyan-500 " />
+        <span className="text-cyan-500 uppercase italic font-black tracking-tighter">
           {String(v).replace('local-k3s', 'ЛОКАЛЬНИЙ_КЛАСТЕР').replace('nvidia-server', 'СЕРВЕР_NVIDIA').replace('colab-mirror', 'ДЗЕРКАЛО_COLAB')}
         </span> 
       </div>
@@ -129,30 +130,30 @@ export const FailoverRoutingTab: React.FC = () => {
           <motion.div 
             animate={{ rotate: 360 }}
             transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-            className="w-24 h-24 border-2 border-rose-500/20 rounded-full border-t-rose-500 "
+            className="w-24 h-24 border-2 border-cyan-500/20 rounded-full border-t-rose-500 "
           />
-          <Radio className="absolute inset-0 m-auto w-8 h-8 text-rose-500 " />
+          <Radio className="absolute inset-0 m-auto w-8 h-8 text-cyan-500 " />
         </div>
-        <div className="text-[14px] font-black font-mono uppercase tracking-[0.6em]  italic text-rose-500/60">АНАЛІЗ_ГЛОБАЛЬНИХ_МАРШРУТІВ_V61...</div>
+        <div className="text-[14px] font-black font-mono uppercase tracking-[0.6em]  italic text-cyan-500/60">АНАЛІЗ_ГЛОБАЛЬНИХ_МАРШРУТІВ_V61...</div>
       </div>
     );
   }
 
   if (isError || !data) {
     return (
-      <div className="flex flex-col items-center justify-center h-[700px] p-24 text-center glass-wraith m-12 border-2 border-rose-600/20 rounded-[4rem] relative overflow-hidden shadow-4xl">
+      <div className="flex flex-col items-center justify-center h-[700px] p-24 text-center glass-wraith m-12 border-2 border-cyan-600/20 rounded-[4rem] relative overflow-hidden shadow-4xl">
         <div className="absolute inset-0 bg-rose-900/5 blur-[120px] pointer-events-none" />
-        <AlertTriangle size={64} className="text-rose-500/40 mb-10 " />
+        <AlertTriangle size={64} className="text-cyan-500/40 mb-10 " />
         <div className="text-3xl font-black uppercase tracking-tighter text-white mb-4 glint-elite">ПОМИЛКА_МЕРЕЖЕВОГО_КАНАЛУ</div>
         <p className="text-[12px] font-black font-mono text-white/30 max-w-lg mb-12 leading-relaxed uppercase italic tracking-widest">
           СИСТЕМА_НЕ_ЗМОГЛА_ОТРИМАТИ_СТАН_FAILOVER_КЛАСТЕРА. ПЕРЕВІРТЕ_З'ЄДНАННЯ_З_ЦЕНТРАЛЬНИМ_КОНТРОЛЕРОМ_ELITE.
         </p>
-        <button 
+        <Button variant="cyber" 
           onClick={() => window.location.reload()}
-          className="px-12 py-5 bg-rose-600 text-white text-[11px] font-black uppercase tracking-[0.4em] rounded-xl hover:bg-rose-500 transition-all shadow-4xl italic"
+          className="px-12 py-5 bg-cyan-600 text-white text-[11px] font-black uppercase tracking-[0.4em] rounded-xl hover:bg-cyan-500 transition-all shadow-4xl italic"
         >
           ПЕРЕПІДКЛЮЧИТИСЬ_ДО_КАНАЛУ
-        </button>
+        </Button>
       </div>
     );
   }
@@ -179,12 +180,12 @@ export const FailoverRoutingTab: React.FC = () => {
       <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
 
       {/* Header Section */}
-      <div className="flex flex-col gap-3 border-l-4 border-rose-500 pl-10 py-2 relative z-10">
+      <div className="flex flex-col gap-3 border-l-4 border-cyan-500 pl-10 py-2 relative z-10">
         <div className="flex items-center gap-6">
           <h2 className="text-4xl font-black text-white uppercase tracking-tighter italic glint-elite">
-            ГЛОБАЛЬНЕ КЕРУВАННЯ <span className="text-rose-500">FAILOVER-ПОТОКАМИ</span>
+            ГЛОБАЛЬНЕ КЕРУВАННЯ <span className="text-cyan-500">FAILOVER-ПОТОКАМИ</span>
           </h2>
-          <div className="px-4 py-1.5 bg-rose-500/10 border-2 border-rose-500/30 rounded-lg text-[10px] font-black text-rose-500 tracking-[0.3em] uppercase italic shadow-2xl">
+          <div className="px-4 py-1.5 bg-cyan-500/10 border-2 border-cyan-500/30 rounded-lg text-[10px] font-black text-cyan-500 tracking-[0.3em] uppercase italic shadow-2xl">
             ROUTING_ELITE_v61.0
           </div>
         </div>
@@ -195,11 +196,11 @@ export const FailoverRoutingTab: React.FC = () => {
           </div>
           <span className="opacity-20">•</span>
           <div className="flex items-center gap-3">
-             <RefreshCw size={14} className="text-rose-500/60 animate-spin-slow" />
+             <RefreshCw size={14} className="text-cyan-500/60 animate-spin-slow" />
              <span> РЕЗЕРВУВАННЯ: {Object.values(nodes).filter((n: any) => n.status === 'online').length}/{Object.keys(nodes).length}</span>
           </div>
           <span className="opacity-20">•</span>
-          <div className="flex items-center gap-3 text-rose-500/40">
+          <div className="flex items-center gap-3 text-cyan-500/40">
              <Shield size={14} />
              <span>ПОЛІТИКА: АВТОМАТИЧНА_ПРЕВЕНТИВНА_ELITE</span>
           </div>
@@ -210,7 +211,7 @@ export const FailoverRoutingTab: React.FC = () => {
         {/* Tri-State режими */}
         <div className="space-y-8">
           <div className="flex items-center gap-6 px-4">
-             <div className="w-2 h-2 bg-rose-500 rotate-45 " />
+             <div className="w-2 h-2 bg-cyan-500 rotate-45 " />
              <span className="text-[12px] font-black font-mono text-white/40 uppercase tracking-[0.5em] italic glint-elite">СТРАТЕГІЯ_МАРШРУТИЗАЦІЇ_ШІ</span>
           </div>
           <div className="space-y-4">
@@ -218,24 +219,24 @@ export const FailoverRoutingTab: React.FC = () => {
               const m = MODES[mode];
               const active = activeMode === mode;
               return (
-                <button
+                <Button variant="cyber"
                   key={mode}
                   disabled={toggleMutation.isPending}
                   className={cn(
                     'w-full flex items-center gap-8 px-8 py-8 rounded-[2.5rem] border-2 text-left transition-all duration-700 relative overflow-hidden group shadow-4xl',
-                    active ? 'glass-wraith border-rose-500/40 bg-rose-500/5 shadow-rose-500/20' : 'bg-white/[0.02] border-white/5 hover:border-white/20',
+                    active ? 'glass-wraith border-cyan-500/40 bg-cyan-500/5 shadow-cyan-500/20' : 'bg-white/[0.02] border-white/5 hover:border-white/20',
                     toggleMutation.isPending && 'opacity-50 cursor-wait'
                   )}
                 >
                   <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
                   <div className={cn(
                     'w-16 h-16 rounded-2xl flex items-center justify-center border-2 transition-all duration-700',
-                    active ? 'bg-rose-500/20 border-rose-500/40 shadow-rose-500/30' : 'bg-white/5 border-white/10 group-hover:bg-white/10'
+                    active ? 'bg-cyan-500/20 border-cyan-500/40 shadow-cyan-500/30' : 'bg-white/5 border-white/10 group-hover:bg-white/10'
                   )}>
-                    <m.icon size={32} className={cn('transition-all duration-700 group-hover:scale-110', active ? 'text-rose-500' : 'text-white/20')} />
+                    <m.icon size={32} className={cn('transition-all duration-700 group-hover:scale-110', active ? 'text-cyan-500' : 'text-white/20')} />
                   </div>
                   <div className="relative z-10 flex-1">
-                    <div className={cn('text-xl font-black tracking-widest italic uppercase glint-elite', active ? 'text-rose-500' : 'text-white/60')}>
+                    <div className={cn('text-xl font-black tracking-widest italic uppercase glint-elite', active ? 'text-cyan-500' : 'text-white/60')}>
                       {m.label}
                     </div>
                     <div className="text-[10px] font-black font-mono text-white/20 mt-2 uppercase tracking-widest group-hover:text-white/40 transition-colors italic">{m.desc}</div>
@@ -243,12 +244,12 @@ export const FailoverRoutingTab: React.FC = () => {
                   {active && (
                     <motion.div 
                       layoutId="active-indicator-mode"
-                      className="p-3 bg-rose-500/20 border-2 border-rose-500/40 rounded-2xl shadow-rose-500/40 "
+                      className="p-3 bg-cyan-500/20 border-2 border-cyan-500/40 rounded-2xl shadow-cyan-500/40 "
                     >
-                      <CheckCircle className="w-6 h-6 text-rose-500" />
+                      <CheckCircle className="w-6 h-6 text-cyan-500" />
                     </motion.div>
                   )}
-                </button>
+                </Button>
               );
             })}
           </div>
@@ -257,7 +258,7 @@ export const FailoverRoutingTab: React.FC = () => {
         {/* Матриця вузлів */}
         <div className="space-y-8">
           <div className="flex items-center gap-6 px-4">
-             <div className="w-2 h-2 bg-rose-500 rotate-45 " />
+             <div className="w-2 h-2 bg-cyan-500 rotate-45 " />
              <span className="text-[12px] font-black font-mono text-white/40 uppercase tracking-[0.5em] italic glint-elite">МАТРИЦЯ_АКТИВНИХ_ВУЗЛІВ</span>
           </div>
           <div className="space-y-4">
@@ -272,17 +273,17 @@ export const FailoverRoutingTab: React.FC = () => {
                   key={nodeKey}
                   className={cn(
                     'flex items-center gap-8 px-8 py-8 rounded-[2.5rem] border-2 relative overflow-hidden group transition-all duration-700 shadow-4xl',
-                    isActive  ? 'glass-wraith border-rose-500/40 bg-rose-500/5 shadow-rose-500/20' :
-                    isOffline ? 'bg-black/60 border-rose-500/10 opacity-40' :
+                    isActive  ? 'glass-wraith border-cyan-500/40 bg-cyan-500/5 shadow-cyan-500/20' :
+                    isOffline ? 'bg-black/60 border-cyan-500/10 opacity-40' :
                                 'bg-white/[0.02] border-white/5 hover:border-white/10',
                   )}
                 >
                   <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
                   <div className={cn(
                     'w-14 h-14 rounded-2xl flex items-center justify-center border-2 transition-all duration-700',
-                    isActive ? 'bg-rose-500/20 border-rose-500/40 shadow-rose-500/30' : 'bg-white/5 border-white/10'
+                    isActive ? 'bg-cyan-500/20 border-cyan-500/40 shadow-cyan-500/30' : 'bg-white/5 border-white/10'
                   )}>
-                    <Server size={28} className={isActive ? 'text-rose-500' : 'text-white/20'} />
+                    <Server size={28} className={isActive ? 'text-cyan-500' : 'text-white/20'} />
                   </div>
                   <div className="flex-1 relative z-10">
                     <div className={cn('text-xl font-black tracking-widest italic uppercase glint-elite', isActive ? 'text-white' : 'text-white/60')}>
@@ -296,14 +297,14 @@ export const FailoverRoutingTab: React.FC = () => {
                       whileTap={{ scale: 0.95 }}
                       onClick={() => handleSwitch(nodeKey)}
                       disabled={toggleMutation.isPending}
-                      className="flex items-center gap-3 px-8 py-4 rounded-2xl bg-rose-500/10 border-2 border-rose-500/30 hover:bg-rose-500/20 hover:border-rose-500/50 transition-all group/btn shadow-4xl"
+                      className="flex items-center gap-3 px-8 py-4 rounded-2xl bg-cyan-500/10 border-2 border-cyan-500/30 hover:bg-cyan-500/20 hover:border-cyan-500/50 transition-all group/btn shadow-4xl"
                     >
-                      <ArrowRightLeft className="w-5 h-5 text-rose-500 group-hover/btn:rotate-180 transition-transform duration-1000" />
-                      <span className="text-[11px] text-rose-500 font-black uppercase tracking-[0.2em] italic">ПЕРЕМКНУТИ</span>
+                      <ArrowRightLeft className="w-5 h-5 text-cyan-500 group-hover/btn:rotate-180 transition-transform duration-1000" />
+                      <span className="text-[11px] text-cyan-500 font-black uppercase tracking-[0.2em] italic">ПЕРЕМКНУТИ</span>
                     </motion.button>
                   )}
                   {isActive && (
-                    <div className="px-8 py-4 bg-rose-600 rounded-2xl shadow-rose-500/50 relative z-10 border-2 border-rose-400/30">
+                    <div className="px-8 py-4 bg-cyan-600 rounded-2xl shadow-cyan-500/50 relative z-10 border-2 border-cyan-400/30">
                        <span className="text-[11px] font-black text-white uppercase tracking-[0.2em] italic">АКТИВНИЙ_ВУЗОЛ</span>
                     </div>
                   )}
@@ -321,15 +322,15 @@ export const FailoverRoutingTab: React.FC = () => {
             initial={{ opacity: 0, y: 50, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 50, scale: 0.9 }}
-            className="p-12 glass-wraith border-2 border-rose-500/40 rounded-[3rem] flex flex-col lg:flex-row items-center gap-12 shadow-4xl relative overflow-hidden z-50"
+            className="p-12 glass-wraith border-2 border-cyan-500/40 rounded-[3rem] flex flex-col lg:flex-row items-center gap-12 shadow-4xl relative overflow-hidden z-50"
           >
-            <div className="absolute inset-0 bg-rose-500/[0.03]  pointer-events-none" />
-            <div className="p-8 bg-rose-500/10 rounded-[2rem] border-2 border-rose-500/30 shadow-rose-500/20">
-               <AlertTriangle className="w-16 h-16 text-rose-500" />
+            <div className="absolute inset-0 bg-cyan-500/[0.03]  pointer-events-none" />
+            <div className="p-8 bg-cyan-500/10 rounded-[2rem] border-2 border-cyan-500/30 shadow-cyan-500/20">
+               <AlertTriangle className="w-16 h-16 text-cyan-500" />
             </div>
             <div className="flex-1 space-y-4 relative z-10 text-center lg:text-left">
               <div className="text-2xl text-white font-black uppercase tracking-tighter italic glint-elite">
-                ПІДТВЕРДЖЕННЯ РОТАЦІЇ <span className="text-rose-500">{nodes[confirming]?.label.replace('local-k3s', 'ЛОКАЛЬНИЙ_КЛАСТЕР').replace('nvidia-server', 'СЕРВЕР_NVIDIA').replace('colab-mirror', 'ДЗЕРКАЛО_COLAB') || confirming}</span>
+                ПІДТВЕРДЖЕННЯ РОТАЦІЇ <span className="text-cyan-500">{nodes[confirming]?.label.replace('local-k3s', 'ЛОКАЛЬНИЙ_КЛАСТЕР').replace('nvidia-server', 'СЕРВЕР_NVIDIA').replace('colab-mirror', 'ДЗЕРКАЛО_COLAB') || confirming}</span>
               </div>
               <p className="text-[12px] font-black font-mono text-white/30 uppercase tracking-[0.3em] leading-relaxed italic max-w-2xl">
                 УСІ_АКТИВНІ_ЗАПИТИ_БУДУТЬ_ПЕРЕНАПРАВЛЕНІ_НА_НОВИЙ_ВУЗОЛ_ЕЛІТНОГО_КЛАСУ. МОЖЛИВЕ_КОРОТКОЧАСНЕ_ПЕРЕРИВАННЯ_ПОТОКУ_ДАНИХ (OODA_SYNC_BREAK_V61).
@@ -341,7 +342,7 @@ export const FailoverRoutingTab: React.FC = () => {
                 whileTap={{ scale: 0.95 }}
                 onClick={confirmSwitch}
                 disabled={toggleMutation.isPending}
-                className="px-12 py-5 bg-rose-600 text-white text-[12px] font-black uppercase tracking-[0.3em] rounded-xl shadow-rose-500/50 hover:bg-rose-500 transition-all disabled:opacity-50 italic w-full"
+                className="px-12 py-5 bg-cyan-600 text-white text-[12px] font-black uppercase tracking-[0.3em] rounded-xl shadow-cyan-500/50 hover:bg-cyan-500 transition-all disabled:opacity-50 italic w-full"
               >
                 {toggleMutation.isPending ? 'СИНХРОНІЗАЦІЯ_L3...' : 'ПІДТВЕРДИТИ_РОТАЦІЮ'}
               </motion.button>
@@ -365,7 +366,7 @@ export const FailoverRoutingTab: React.FC = () => {
           <div className="flex flex-col items-center gap-3">
             <span className="text-2xl font-black text-white/50 uppercase tracking-[0.4em] italic glint-elite">ЖУРНАЛ_РОТАЦІЙ_МАРШРУТІВ (WORM_LOCK)</span>
             <div className="flex items-center gap-4">
-               <RefreshCw size={14} className="text-rose-500/40 animate-spin-slow" />
+               <RefreshCw size={14} className="text-cyan-500/40 animate-spin-slow" />
                <span className="text-[10px] font-black font-mono text-white/20 uppercase tracking-[0.3em] font-black italic">AUDIT_TRAIL_ACTIVE_V61.0_ELITE</span>
             </div>
           </div>
@@ -385,7 +386,7 @@ export const FailoverRoutingTab: React.FC = () => {
 
       <style dangerouslySetInnerHTML={{ __html: `
           .shadow-4xl { box-shadow: 0 60px 120px -30px rgba(0,0,0,0.9); }
-          .glint-elite { text-shadow: 0 0 30px rgba(225,29,72,0.4); }
+          .glint-elite { text-shadow: 0 0 30px rgba(6,182,212,0.4); }
           .animate-spin-slow { animation: spin 10s linear infinite; }
           @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
       `}} />

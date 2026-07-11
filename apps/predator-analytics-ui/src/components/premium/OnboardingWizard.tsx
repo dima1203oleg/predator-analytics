@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -150,13 +151,13 @@ export const OnboardingWizard: React.FC = () => {
                     {premiumLocales.onboarding.ui.step} {currentStep + 1} {premiumLocales.onboarding.ui.of} {onboardingSteps.length}
                   </span>
                 </div>
-                <button
+                <Button variant="cyber"
                   onClick={handleSkip}
                   className="p-2 hover:bg-white/5 rounded-lg transition-colors"
                   title={premiumLocales.onboarding.ui.close}
                 >
                   <X size={16} className="text-slate-500" />
-                </button>
+                </Button>
               </div>
 
               {/* Content */}
@@ -185,20 +186,20 @@ export const OnboardingWizard: React.FC = () => {
                   </p>
 
                   {step.action && (
-                    <button
+                    <Button variant="cyber"
                       onClick={() => handleAction(step.action!.path)}
                       className="w-full flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-xl py-3 px-4 text-sm font-bold text-white transition-all group mb-4"
                     >
                       {step.action.label}
                       <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
-                    </button>
+                    </Button>
                   )}
                 </motion.div>
               </AnimatePresence>
 
               {/* Footer */}
               <div className="p-4 sm:p-6 border-t border-white/5 flex items-center justify-between gap-2">
-                <button
+                <Button variant="cyber"
                   onClick={handlePrev}
                   disabled={currentStep === 0}
                   className={cn(
@@ -209,7 +210,7 @@ export const OnboardingWizard: React.FC = () => {
                   )}
                 >
                   {premiumLocales.onboarding.ui.back}
-                </button>
+                </Button>
 
                 <div className="flex gap-2">
                   {onboardingSteps.map((_, i) => (
@@ -227,7 +228,7 @@ export const OnboardingWizard: React.FC = () => {
                   ))}
                 </div>
 
-                <button
+                <Button variant="cyber"
                   onClick={handleNext}
                   className={cn(
                     'px-6 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-2',
@@ -245,7 +246,7 @@ export const OnboardingWizard: React.FC = () => {
                       {premiumLocales.onboarding.ui.next} <ArrowRight size={16} />
                     </>
                   )}
-                </button>
+                </Button>
               </div>
             </div>
           </motion.div>

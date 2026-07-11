@@ -3,6 +3,7 @@
  * PREDATOR Analytics — Master/Mirror Infrastructure Coordination
  */
 
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -127,13 +128,13 @@ export const InfrastructureFailoverBanner: React.FC = () => {
         )}
       >
         {/* Кнопка закриття — завжди видима */}
-        <button
+        <Button variant="cyber"
           onClick={(e) => { e.stopPropagation(); setIsVisible(false); setUserDismissed(true); localStorage.setItem(BANNER_DISMISS_KEY, String(Date.now())); }}
           className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-black border border-white/30 flex items-center justify-center text-white/70 hover:text-white hover:border-white/60 transition-all opacity-100 shadow-lg"
           title="Закрити"
         >
           <span className="text-xs font-bold">×</span>
-        </button>
+        </Button>
 
         {/* Core Status Block */}
         <div className="flex items-center gap-4">
@@ -207,13 +208,13 @@ export const InfrastructureFailoverBanner: React.FC = () => {
 
         {/* Global Control Buttons — мінімалістичний індикатор */}
         <div className="flex gap-2 ml-4">
-          <button
+          <Button variant="cyber"
             onClick={(e) => { e.stopPropagation(); setIsVisible(false); setUserDismissed(true); localStorage.setItem(BANNER_DISMISS_KEY, String(Date.now())); }}
             className="w-10 h-10 bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl flex items-center justify-center transition-all group"
             title="Закрити банер"
           >
             <Radio size={16} className="text-slate-500 group-hover:text-white" />
-          </button>
+          </Button>
           <div className={cn(
             "h-10 px-3 rounded-xl flex items-center gap-2 border transition-all text-[10px] font-black uppercase tracking-widest",
             llmTriStateMode === 'SOVEREIGN' ? 'border-rose-500/20 text-rose-400 bg-rose-500/5' :

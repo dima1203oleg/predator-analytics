@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { ViewHeader } from '@/components/ViewHeader';
@@ -40,9 +41,9 @@ export default function ConnectionExplorer3DView() {
                { label: 'ВУЗЛИ', value: '45,210', icon: <Share2 size={14} />, color: 'primary' },
              ]}
              actions={
-               <button className="px-6 py-3 bg-violet-600/10 border border-violet-500/20 text-violet-500 rounded-xl text-[10px] font-black uppercase tracking-widest italic hover:bg-violet-600 hover:text-white transition-all shadow-xl">
+               <Button variant="cyber" className="px-6 py-3 bg-violet-600/10 border border-violet-500/20 text-violet-500 rounded-xl text-[10px] font-black uppercase tracking-widest italic hover:bg-violet-600 hover:text-white transition-all shadow-xl">
                  <Maximize2 size={16} className="inline mr-2" /> ФУЛСКРІН
-               </button>
+               </Button>
              }
            />
 

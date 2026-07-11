@@ -8,6 +8,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { Button } from '@/components/ui/button';
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -119,12 +120,12 @@ export const NewspaperTab = () => {
         ]}
         actions={
           <div className="flex gap-4">
-            <button onClick={fetchData} className={cn("p-5 bg-black border border-white/[0.04] rounded-2xl text-slate-400 hover:text-white transition-all shadow-xl", isRefreshing && "animate-spin")}>
+            <Button variant="cyber" onClick={fetchData} className={cn("p-5 bg-black border border-white/[0.04] rounded-2xl text-slate-400 hover:text-white transition-all shadow-xl", isRefreshing && "animate-spin")}>
               <RefreshCcw size={24} />
-            </button>
-            <button className="px-8 py-5 bg-yellow-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-yellow-600 shadow-2xl transition-all flex items-center gap-4 text-center">
+            </Button>
+            <Button variant="cyber" className="px-8 py-5 bg-yellow-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-yellow-600 shadow-2xl transition-all flex items-center gap-4 text-center">
               <Bell size={20} /> ПЕ ЕДПЛАТИТИ_АЛЕ ТИ
-            </button>
+            </Button>
           </div>
         }
       />
@@ -154,12 +155,12 @@ export const NewspaperTab = () => {
               <span className="text-lg font-black text-amber-200 uppercase italic tracking-tighter">{data.headline.hook}</span>
             </div>
             <div className="flex items-center gap-4">
-              <button className="px-10 py-5 bg-amber-700 text-white rounded-2xl tracking-[0.2em] text-[11px] font-black uppercase italic hover:bg-amber-600 shadow-2xl flex items-center gap-4">
+              <Button variant="cyber" className="px-10 py-5 bg-amber-700 text-white rounded-2xl tracking-[0.2em] text-[11px] font-black uppercase italic hover:bg-amber-600 shadow-2xl flex items-center gap-4">
                 <FileText size={20} /> ПОВНЕ_ДОСЬЄ
-              </button>
-              <button className="px-10 py-5 bg-white/5 border border-white/10 text-white rounded-2xl tracking-[0.2em] text-[11px] font-black uppercase italic hover:bg-white/10 transition-all flex items-center gap-4">
+              </Button>
+              <Button variant="cyber" className="px-10 py-5 bg-white/5 border border-white/10 text-white rounded-2xl tracking-[0.2em] text-[11px] font-black uppercase italic hover:bg-white/10 transition-all flex items-center gap-4">
                 <Network size={20} /> ТРАСУВАННЯ
-              </button>
+              </Button>
             </div>
           </div>
         </div>

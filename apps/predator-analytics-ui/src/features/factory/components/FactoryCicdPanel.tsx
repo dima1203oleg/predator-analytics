@@ -67,13 +67,13 @@ export const FactoryCicdPanel: React.FC<FactoryCicdPanelProps> = ({
               <div className="text-[10px] text-slate-500 uppercase font-black">Якість Коду (Sonar)</div>
               <div className="text-2xl font-black text-yellow-400 mt-1">{systemScore.quality == null ? 'Н/д' : `${systemScore.quality}%`}</div>
             </div>
-            <div className="bg-slate-900/50 p-4 border border-rose-500/20 rounded-xl relative overflow-hidden group">
-              <div className="absolute bottom-0 left-0 h-1 bg-rose-500 transition-all duration-1000" style={{ width: `${systemScore.coverage ?? 0}%` }} />
+            <div className="bg-slate-900/50 p-4 border border-cyan-500/20 rounded-xl relative overflow-hidden group">
+              <div className="absolute bottom-0 left-0 h-1 bg-cyan-500 transition-all duration-1000" style={{ width: `${systemScore.coverage ?? 0}%` }} />
               <div className="text-[10px] text-slate-500 uppercase font-black">Тестове покриття</div>
               <div className="text-2xl font-black text-rose-400 mt-1">{systemScore.coverage == null ? 'Н/д' : `${systemScore.coverage}%`}</div>
             </div>
-            <div className="bg-slate-900/50 p-4 border border-rose-500/20 rounded-xl relative overflow-hidden group">
-              <div className="absolute bottom-0 left-0 h-1 bg-rose-500 transition-all duration-1000" style={{ width: `${systemScore.security ?? 0}%` }} />
+            <div className="bg-slate-900/50 p-4 border border-cyan-500/20 rounded-xl relative overflow-hidden group">
+              <div className="absolute bottom-0 left-0 h-1 bg-cyan-500 transition-all duration-1000" style={{ width: `${systemScore.security ?? 0}%` }} />
               <div className="text-[10px] text-slate-500 uppercase font-black">Безпека (Trivy + OPA)</div>
               <div className="text-2xl font-black text-rose-400 mt-1">{systemScore.security == null ? 'Н/д' : `${systemScore.security}%`}</div>
             </div>

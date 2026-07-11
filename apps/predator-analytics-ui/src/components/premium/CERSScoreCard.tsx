@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Shield, ShieldAlert, ShieldCheck, Activity, Target, RefreshCw, Layers, AlertTriangle } from 'lucide-react';
@@ -190,14 +191,14 @@ export const CERSScoreCard: React.FC<CERSScoreCardProps> = ({ edrpou, className 
                         <h4 className="text-[10px] uppercase font-black text-slate-500 tracking-widest flex items-center gap-2">
                             <Target size={12} /> ДЕТАЛІЗАЦІЯ ВЕКТО ІВ
                         </h4>
-                        <button 
+                        <Button variant="cyber" 
                             onClick={handleRecalculate}
                             disabled={isRecalculating}
                             className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-emerald-500 hover:text-emerald-400 transition-colors disabled:opacity-50"
                         >
                             <RefreshCw size={10} className={cn(isRecalculating && "animate-spin")} />
                             ПЕ РЕ АХУНОК
-                        </button>
+                        </Button>
                     </div>
 
                     <div className="grid grid-cols-1 gap-2">

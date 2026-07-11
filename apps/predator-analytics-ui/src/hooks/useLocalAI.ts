@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { useAppStore } from "../store";
+import { aiApi } from "../services/api/ai";
 
 interface MessagePayload {
   text: string;
@@ -28,25 +29,19 @@ export const useLocalAI = (audioElement: HTMLAudioElement | null, initAnalyser: 
     try {
       let aiTextResponse = "Аналізую команду...";
       try {
-        const ollamaResponse = await fetch("http://localhost:11434/api/generate", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            model: "llama3", // fallback to llama3 for current setup
-            prompt: `Ти — суверенний ШІ PREDATOR. Твоя відповідь має бути лаконічною, чіткою та українською мовою. Команда: ${userPrompt}`,
-            stream: false
-          })
-        });
+        const response = await aiApi.chat([
+          { role: 'system', content: 'Ти — суверенний ШІ PREDATOR. Твоя відповідь має бути лаконічною, чіткою та українською мовою.' },
+          { role: 'user', content: userPrompt }
+        ]);
 
-        if (ollamaResponse.ok) {
-          const jsonOllama = await ollamaResponse.json();
-          aiTextResponse = jsonOllama.response as string;
+        if (response && response.choices && response.choices.length > 0) {
+          aiTextResponse = response.choices[0].message.content;
           aiTextResponse = aiTextResponse.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
         } else {
-          throw new Error("Ollama connection failure");
+          throw new Error("Invalid response format from Core API");
         }
-      } catch (ollamaError) {
-        console.warn("Ollama offline, using fallback response", ollamaError);
+      } catch (apiError) {
+        console.warn("Core API offline, using fallback response", apiError);
         aiTextResponse = "Зв'язок із когнітивним ядром недоступний. Працюю в автономному режимі. Ви сказали: " + userPrompt;
       }
 

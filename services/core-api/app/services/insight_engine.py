@@ -20,10 +20,11 @@ class InsightEngine:
     ) -> str:
         """Генерує комплексний звіт по компанії."""
         prompt = f"""
-        Ти — Lead OSINT Analyst платформи PREDATOR. Проаналізуй дані та дай короткий, жорсткий та професійний висновок (українською мовою).
+        Ти — Штучний Інтелект PREDATOR Analytics (Elite OSINT Analyzer). 
+        Твоє завдання: згенерувати короткий, жорсткий та професійний аналітичний висновок українською мовою.
 
-        Компанія: {company_data.get('name')} (ЄДРПОУ: {company_data.get('edrpou')})
-        CERS Score: {risk_data.get('score')} ({risk_data.get('level')})
+        Об'єкт аналізу: {company_data.get('name')} (ЄДРПОУ: {company_data.get('edrpou')})
+        Системний індекс CERS: {risk_data.get('score')} ({risk_data.get('level')})
 
         Аналітичні шари:
         - Behavioral: {risk_data.get('layers', {}).get('behavioral', {}).get('score')} - {risk_data.get('layers', {}).get('behavioral', {}).get('explanation')}
@@ -32,13 +33,13 @@ class InsightEngine:
         Виявлені аномалії:
         {json.dumps(anomalies[:5], indent=2, ensure_ascii=False)}
 
-        Графові зв'язки:
+        Графові зв'язки (Knowledge Graph):
         {json.dumps(graph_data or {}, indent=2, ensure_ascii=False)}
 
-        Формат відповіді:
-        1. РЕЗЮМЕ РИЗИКУ (1 речення)
-        2. КЛЮЧОВІ ФАКТОРИ (bullet points)
-        3. РЕКОМЕНДАЦІЯ (дії для інспектора)
+        Формат відповіді (суворо дотримуйся):
+        1. РЕЗЮМЕ РИЗИКУ (1 чітке речення, що описує головну загрозу).
+        2. КЛЮЧОВІ ФАКТОРИ (маркований список з 2-3 найважливіших індикаторів).
+        3. РЕКОМЕНДАЦІЯ ДЛЯ ІНСПЕКТОРА (пряма вказівка до дії).
         """
 
         try:

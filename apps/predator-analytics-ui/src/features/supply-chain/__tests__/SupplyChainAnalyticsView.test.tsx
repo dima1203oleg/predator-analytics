@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -13,7 +14,7 @@ vi.mock('framer-motion', () => {
     return {
         motion: {
             div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-            button: React.forwardRef(({ children, ...props }: any, ref: any) => <button {...props} ref={ref}>{children}</button>),
+            button: React.forwardRef(({ children, ...props }: any, ref: any) => <Button variant="cyber" {...props} ref={ref}>{children}</Button>),
         },
         AnimatePresence: ({ children }: any) => <>{children}</>,
     };
@@ -57,7 +58,7 @@ vi.mock('@/components/ui/badge', () => ({
 }));
 
 vi.mock('@/components/ui/button', () => ({
-    Button: ({ children, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) => <button {...props}>{children}</button>,
+    Button: ({ children, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) => <Button variant="cyber" {...props}>{children}</Button>,
 }));
 
 vi.mock('@/hooks/useBackendStatus', () => ({

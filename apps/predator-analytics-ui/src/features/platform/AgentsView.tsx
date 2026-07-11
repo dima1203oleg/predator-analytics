@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { HoloCard } from '@/components/ui/HoloCard';
@@ -539,7 +540,7 @@ const AgentsView: React.FC = () => {
                 <Badge className="border border-white/10 bg-white/5 px-4 py-2 text-[11px] font-bold text-slate-200">
                     Синхронізовано: {syncLabel}
                 </Badge>
-                <button
+                <Button variant="cyber"
                     type="button"
                     onClick={() => {
                         play(UISoundType.CLICK);
@@ -551,13 +552,13 @@ const AgentsView: React.FC = () => {
                 >
                     {refreshing ? <Loader size={14} className="animate-spin" /> : <RefreshCw size={14} />}
                     Оновити дані
-                </button>
+                </Button>
             </div>
 
             {/* ── TABS ── */}
             <div className="flex gap-2 p-1.5 bg-slate-900/70  rounded-2xl border border-white/[0.06] w-fit">
                 {tabs.map((tab) => (
-                    <button
+                    <Button variant="cyber"
                         key={tab.id}
                         onClick={() => {
                             play(UISoundType.CLICK);
@@ -585,7 +586,7 @@ const AgentsView: React.FC = () => {
                                 {osintUnavailable ? 'Н/д' : String(osintSummary.onlineTools)}
                             </span>
                         )}
-                    </button>
+                    </Button>
                 ))}
             </div>
 

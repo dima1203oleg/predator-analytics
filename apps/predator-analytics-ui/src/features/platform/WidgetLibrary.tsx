@@ -5,6 +5,7 @@
  * Drag & Drop, налаштування, превью
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -340,7 +341,7 @@ const WidgetCard: React.FC<WidgetCardProps> = ({ widget, onAddWidget, onToggleFa
           <h4 className="font-bold text-white text-sm truncate">{widget.name}</h4>
           <p className="text-[10px] text-slate-500">{widget.usageCount} використань</p>
         </div>
-        <button
+        <Button variant="cyber"
           onClick={(e) => { e.stopPropagation(); onToggleFavorite(); }}
           className="p-1 hover:bg-white/10 rounded transition-colors"
         >
@@ -349,7 +350,7 @@ const WidgetCard: React.FC<WidgetCardProps> = ({ widget, onAddWidget, onToggleFa
           ) : (
             <StarOff size={14} className="text-slate-500" />
           )}
-        </button>
+        </Button>
       </div>
 
       {/* Preview */}
@@ -369,7 +370,7 @@ const WidgetCard: React.FC<WidgetCardProps> = ({ widget, onAddWidget, onToggleFa
             exit={{ opacity: 0, y: 10 }}
             className="flex gap-2"
           >
-            <button
+            <Button variant="cyber"
               onClick={onAddWidget}
               className={`flex-1 flex items-center justify-center gap-1 py-2 rounded-lg font-bold text-xs transition-colors ${
                 widget.isPremium
@@ -379,10 +380,10 @@ const WidgetCard: React.FC<WidgetCardProps> = ({ widget, onAddWidget, onToggleFa
             >
               {widget.isPremium ? <Lock size={12} /> : <Plus size={12} />}
               {widget.isPremium ? 'Upgrade' : 'Додати'}
-            </button>
-            <button className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white transition-colors">
+            </Button>
+            <Button variant="cyber" className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white transition-colors">
               <Eye size={14} />
-            </button>
+            </Button>
           </motion.div>
         )}
       </AnimatePresence>
@@ -453,7 +454,7 @@ const WidgetLibrary: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-3">
-            <button
+            <Button variant="cyber"
               onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm transition-colors ${
                 showFavoritesOnly ? 'bg-amber-500/20 text-amber-400' : 'bg-slate-800 text-slate-400'
@@ -461,11 +462,11 @@ const WidgetLibrary: React.FC = () => {
             >
               <Star size={16} />
               Улюблені
-            </button>
-            <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-bold text-sm">
+            </Button>
+            <Button variant="cyber" className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-bold text-sm">
               <Sparkles size={16} />
               Створити віджет
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -483,16 +484,16 @@ const WidgetLibrary: React.FC = () => {
           </div>
 
           <div className="flex gap-2 flex-wrap">
-            <button
+            <Button variant="cyber"
               onClick={() => setSelectedCategory('all')}
               className={`px-3 py-2 rounded-xl text-sm font-medium transition-colors ${
                 selectedCategory === 'all' ? 'bg-purple-500/20 text-purple-400' : 'text-slate-500 hover:text-white'
               }`}
             >
               Всі
-            </button>
+            </Button>
             {categories.map((cat) => (
-              <button
+              <Button variant="cyber"
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.id)}
                 className={`flex items-center gap-1 px-3 py-2 rounded-xl text-sm font-medium transition-colors ${
@@ -501,7 +502,7 @@ const WidgetLibrary: React.FC = () => {
               >
                 <cat.icon size={14} />
                 {cat.label}
-              </button>
+              </Button>
             ))}
           </div>
         </div>

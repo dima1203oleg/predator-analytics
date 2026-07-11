@@ -67,7 +67,7 @@ export const PtyTerminal: React.FC = () => {
     };
 
     return (
-        <div className="flex flex-col h-full bg-[#050101] text-emerald-500 font-mono p-10 selection:bg-rose-500/30 relative overflow-hidden">
+        <div className="flex flex-col h-full bg-[#050101] text-emerald-500 font-mono p-10 selection:bg-cyan-500/30 relative overflow-hidden">
             {/* Background Effects */}
             <div className="absolute inset-0 bg-noise opacity-[0.03] pointer-events-none" />
             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent " />
@@ -113,13 +113,13 @@ export const PtyTerminal: React.FC = () => {
                         <span className="text-white/10 text-[10px] shrink-0 font-black tracking-tighter opacity-40 group-hover/line:opacity-100 transition-opacity">[{line.timestamp}]</span>
                         <div className="flex flex-col gap-1 w-full">
                             <div className="flex items-center gap-3">
-                                {line.type === 'input' && <ChevronRight size={14} className="text-rose-500" />}
+                                {line.type === 'input' && <ChevronRight size={14} className="text-cyan-500" />}
                                 {line.type === 'system' && <Zap size={12} className="text-amber-500 " />}
-                                {line.type === 'error' && <ShieldAlert size={12} className="text-rose-600" />}
+                                {line.type === 'error' && <ShieldAlert size={12} className="text-cyan-600" />}
                                 <span className={cn(
                                     "text-[12px] whitespace-pre-wrap tracking-wide",
                                     line.type === 'input' ? 'text-white font-black italic glint-elite' :
-                                    line.type === 'error' ? 'text-rose-500 font-black' :
+                                    line.type === 'error' ? 'text-cyan-500 font-black' :
                                     line.type === 'system' ? 'text-amber-500/90 italic font-black' :
                                     'text-emerald-500/90 font-medium'
                                 )}>
@@ -134,7 +134,7 @@ export const PtyTerminal: React.FC = () => {
 
             {/* Terminal Input */}
             <form onSubmit={handleCommand} className="relative group/input">
-                <div className="absolute inset-y-0 left-6 flex items-center text-rose-500 group-focus-within/input:scale-125 transition-transform duration-500 z-10">
+                <div className="absolute inset-y-0 left-6 flex items-center text-cyan-500 group-focus-within/input:scale-125 transition-transform duration-500 z-10">
                     <ChevronRight size={20} strokeWidth={3} />
                 </div>
                 <input 
@@ -143,13 +143,13 @@ export const PtyTerminal: React.FC = () => {
                     onChange={(e) => setInputValue(e.target.value)}
                     autoFocus
                     spellCheck={false}
-                    className="w-full bg-emerald-950/5 border-2 border-emerald-900/20 rounded-[2rem] py-6 pl-16 pr-10 text-[14px] font-black tracking-[0.2em] text-white outline-none focus:border-rose-500/50 focus:bg-rose-500/5 transition-all placeholder:text-white/5 italic shadow-4xl"
+                    className="w-full bg-emerald-950/5 border-2 border-emerald-900/20 rounded-[2rem] py-6 pl-16 pr-10 text-[14px] font-black tracking-[0.2em] text-white outline-none focus:border-cyan-500/50 focus:bg-cyan-500/5 transition-all placeholder:text-white/5 italic shadow-4xl"
                     placeholder="ВВЕДІТЬ КОМАНДУ ДЛЯ СУВЕРЕННОГО ЯД А..."
                 />
                 <div className="absolute inset-y-0 right-8 flex items-center gap-6">
                     <div className="flex items-center gap-2">
                         <div className="px-3 py-1 bg-white/5 border border-white/10 rounded-lg text-[9px] text-white/30 font-black tracking-widest uppercase">ENTER</div>
-                        <div className="w-2 h-2 rounded-full bg-rose-500  " />
+                        <div className="w-2 h-2 rounded-full bg-cyan-500  " />
                     </div>
                 </div>
             </form>
@@ -158,7 +158,7 @@ export const PtyTerminal: React.FC = () => {
             <div className="mt-10 flex items-center justify-between opacity-30 group-hover:opacity-100 transition-opacity duration-700 text-[10px] font-black tracking-[0.4em] uppercase italic text-emerald-500/60">
                 <div className="flex items-center gap-12">
                     <div className="flex items-center gap-4 group cursor-help">
-                        <Activity size={14} className="text-rose-500" />
+                        <Activity size={14} className="text-cyan-500" />
                         <span className="group-hover:text-white transition-colors">ПОТІК_ТЕЛЕМЕТРІЇ: 14.8 КБ/с</span>
                     </div>
                     <div className="flex items-center gap-4 group cursor-help">
@@ -172,7 +172,7 @@ export const PtyTerminal: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-6">
                     <span className="text-white/20">ENCRYPTION: QUANTUM_AES_MASTER_512</span>
-                    <Globe size={14} className="text-rose-500/40" />
+                    <Globe size={14} className="text-cyan-500/40" />
                 </div>
             </div>
             

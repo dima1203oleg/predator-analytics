@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
 import { Eye, EyeOff, AlertTriangle } from 'lucide-react';
 import { useSensitiveData } from '../../context/SensitiveDataContext';
@@ -27,7 +28,7 @@ export const SensitiveDataToggle: React.FC = () => {
 
   return (
     <>
-      <button
+      <Button variant="cyber"
         onClick={handleToggle}
         disabled={isLoading}
         className={`
@@ -40,7 +41,7 @@ export const SensitiveDataToggle: React.FC = () => {
       >
         {isEnabled ? <Eye size={14} /> : <EyeOff size={14} />}
         <span>{isEnabled ? 'Чутливі дані: ВКЛ' : 'Чутливі дані: ВИКЛ'}</span>
-      </button>
+      </Button>
 
       <TacticalModal
         isOpen={showModal}

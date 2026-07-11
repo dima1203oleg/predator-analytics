@@ -91,13 +91,36 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const autoMode = import.meta.env.VITE_AUTO_MODE === 'true';
   
   const [user, setUserState] = useState<UserProfile | null>(() => {
+    const token = sessionStorage.getItem('predator_auth_token');
+    const storedRole = sessionStorage.getItem('predator_mock_role');
+    
+    if (token) {
+      const restored = buildUserFromToken(token);
+      if (restored) return restored;
+      
+      // Fallback for mock tokens
+      if (token === 'user-token') {
+          return {
+            id: 'mock-user-1',
+            name: storedRole === UserRole.CORE ? 'ADMIN' : 'Аналітик',
+            email: 'mock@predator.local',
+            role: (storedRole as UserRole) || UserRole.SOVEREIGN,
+            tier: SubscriptionTier.ENTERPRISE,
+            tenant_id: 'default',
+            tenant_name: 'PREDATOR',
+            last_login: new Date().toISOString(),
+            data_sectors: [],
+          };
+      }
+    }
+
     if (autoMode) {
       return {
-        id: 'admin-1',
-        name: 'Командир (Dev)',
-        email: 'admin@predator.local',
-        role: UserRole.CORE,
-        tier: SubscriptionTier.ENTERPRISE,
+        id: 'user-1',
+        name: 'Аналітик (Dev)',
+        email: 'analyst@predator.local',
+        role: UserRole.SOVEREIGN,
+        tier: SubscriptionTier.PRO,
         tenant_id: 'default',
         tenant_name: 'PREDATOR',
         last_login: new Date().toISOString(),
@@ -113,6 +136,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     // Зберігаємо реальний JWT якщо є, або ключ ролі як fallback
     const tokenToStore = token || sessionStorage.getItem('predator_auth_token') || 'user-token';
     sessionStorage.setItem('predator_auth_token', tokenToStore);
+    sessionStorage.setItem('predator_mock_role', newUser.role);
   };
 
   const logout = () => {

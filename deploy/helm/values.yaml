@@ -1,0 +1,43 @@
+# Default values for predator-analytics
+replicaCount: 3
+
+image:
+  repository: ghcr.io/your-repo/predator-backend
+  tag: latest
+  pullPolicy: Always
+
+resources:
+  limits:
+    cpu: "2"
+    memory: "8Gi"
+    nvidia.com/gpu: 1
+  requests:
+    cpu: "1"
+    memory: "4Gi"
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+
+env:
+  - name: DATABASE_URL
+    value: "postgresql+asyncpg://predator:your_secure_password@postgres:5432/predator_db"
+  - name: REDIS_URL
+    value: "redis://redis:6379/0"
+  - name: RISK_CACHE_TTL
+    value: "3600"
+
+postgresql:
+  enabled: true
+  replicaCount: 2
+  persistence:
+    enabled: true
+    size: 100Gi
+
+redis:
+  enabled: true
+  cluster:
+    enabled: true
+    slaveCount: 1

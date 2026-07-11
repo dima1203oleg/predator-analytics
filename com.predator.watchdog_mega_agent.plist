@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.predator.watchdog_mega_agent</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>/Users/Shared/Predator_60/scripts/watchdog_mega_agent.sh</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+    <key>StandardOutPath</key>
+    <string>/Users/Shared/Predator_60/logs/watchdog_mega_agent.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/Shared/Predator_60/logs/watchdog_mega_agent_error.log</string>
+    <key>WorkingDirectory</key>
+    <string>/Users/Shared/Predator_60</string>
+</dict>
+</plist>

@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -37,16 +38,16 @@ export const MobileSovereignCommandCenter: React.FC = () => {
         <h2 className="text-3xl font-black text-white uppercase tracking-tighter italic text-shadow-glow-rose">
           {t('nav.commandCenter')}
         </h2>
-        <div className="flex items-center gap-2 px-3 py-1 bg-rose-500/10 border border-rose-500/30 rounded-lg self-start">
-          <div className="w-2 h-2 bg-rose-500 rounded-full animate-ping" />
-          <span className="text-[10px] font-black text-rose-500 tracking-widest uppercase italic">{t('status.masterPulse')}</span>
+        <div className="flex items-center gap-2 px-3 py-1 bg-cyan-500/10 border border-cyan-500/30 rounded-lg self-start">
+          <div className="w-2 h-2 bg-cyan-500 rounded-full animate-ping" />
+          <span className="text-[10px] font-black text-cyan-500 tracking-widest uppercase italic">{t('status.masterPulse')}</span>
         </div>
       </div>
 
       {/* Global Strategy / LLM Mode */}
       <div className={cn(
         "flex flex-col p-5 rounded-2xl border-2 shadow-lg",
-        llmTriStateMode === 'SOVEREIGN' ? "bg-rose-500/10 border-rose-500/40 text-rose-500" :
+        llmTriStateMode === 'SOVEREIGN' ? "bg-cyan-500/10 border-cyan-500/40 text-cyan-500" :
         llmTriStateMode === 'HYBRID' ? "bg-emerald-500/10 border-emerald-500/40 text-emerald-500" :
         "bg-sky-500/10 border-sky-500/40 text-sky-500"
       )}>
@@ -63,7 +64,7 @@ export const MobileSovereignCommandCenter: React.FC = () => {
         <div className="flex flex-col p-4 bg-black/60 border border-white/10 rounded-2xl">
           <div className="flex items-center justify-between mb-2 opacity-50">
             <span className="text-[9px] font-bold uppercase tracking-widest">ВІДЕОПАМ'ЯТЬ</span>
-            <Zap size={14} className="text-rose-500" />
+            <Zap size={14} className="text-cyan-500" />
           </div>
           <span className="text-xl font-black">{vramGb} GB</span>
         </div>
@@ -77,9 +78,9 @@ export const MobileSovereignCommandCenter: React.FC = () => {
         <div className="flex flex-col p-4 bg-black/60 border border-white/10 rounded-2xl">
           <div className="flex items-center justify-between mb-2 opacity-50">
             <span className="text-[9px] font-bold uppercase tracking-widest">ВУЗОЛ NVIDIA</span>
-            <Globe size={14} className={status?.healthy ? "text-emerald-500" : "text-rose-500"} />
+            <Globe size={14} className={status?.healthy ? "text-emerald-500" : "text-cyan-500"} />
           </div>
-          <span className={cn("text-lg font-black", status?.healthy ? "text-emerald-500" : "text-rose-500")}>
+          <span className={cn("text-lg font-black", status?.healthy ? "text-emerald-500" : "text-cyan-500")}>
             {status?.healthy ? "ОНЛАЙН" : "ОФЛАЙН"}
           </span>
         </div>
@@ -96,10 +97,10 @@ export const MobileSovereignCommandCenter: React.FC = () => {
       <div className="flex flex-col gap-4 mt-2">
         <h3 className="text-xs font-black text-white/50 uppercase tracking-[0.3em] ml-2">ОПЕРАЦІЙНІ МАГІСТРАЛІ</h3>
         {[
-          { id: 'auto-factory', label: 'ШІ ЗАВОД PREDATOR', sub: 'ЦИКЛ БЕЗПЕРЕВНИЙ', icon: Factory, color: 'text-rose-500', bg: 'border-rose-500/30' },
+          { id: 'auto-factory', label: 'ШІ ЗАВОД PREDATOR', sub: 'ЦИКЛ БЕЗПЕРЕВНИЙ', icon: Factory, color: 'text-cyan-500', bg: 'border-cyan-500/30' },
           { id: 'models', label: 'НЕЙРОННИЙ ПОЛІГОН', sub: 'ЕТАП ВАЛІДАЦІЇ', icon: BrainCircuit, color: 'text-sky-500', bg: 'border-sky-500/30' }
         ].map((link) => (
-          <button
+          <Button variant="cyber"
             key={link.id}
             onClick={() => goToTab(link.id)}
             className={cn("flex items-center p-5 rounded-2xl border bg-black/40 active:scale-95 transition-all", link.bg)}
@@ -110,7 +111,7 @@ export const MobileSovereignCommandCenter: React.FC = () => {
               <span className="text-[9px] font-bold text-white/40 uppercase">{link.sub}</span>
             </div>
             <ChevronRight size={20} className="text-white/20" />
-          </button>
+          </Button>
         ))}
       </div>
 

@@ -5,8 +5,9 @@
  * згідно з технічною специфікацією PREDATOR
  */
 
+import { Button } from '@/components/ui/button';
 import { useEffect, useState, useRef } from 'react';
-import { motion, useSpring, useTransform } from 'framer-motion';
+import { motion, useSpring, useTransform, useMotionValueEvent } from 'framer-motion';
 import { useCyberDashboardStore } from '../../store/cyber-dashboard-store';
 import { Mic, Send, FileText, Activity, Database } from 'lucide-react';
 
@@ -17,10 +18,18 @@ export default function LeftPanel() {
   // Анімовані лічильники
   const documentsCount = useSpring(249);
   const documentsRounded = useTransform(documentsCount, (v) => Math.round(v));
+  const [docVal, setDocVal] = useState(249);
+  useMotionValueEvent(documentsRounded, "change", (latest) => setDocVal(latest));
+  
   const analysisCount = useSpring(1200);
   const analysisRounded = useTransform(analysisCount, (v) => Math.round(v));
+  const [anaVal, setAnaVal] = useState(1200);
+  useMotionValueEvent(analysisRounded, "change", (latest) => setAnaVal(latest));
+  
   const memoryUsage = useSpring(67);
   const memoryRounded = useTransform(memoryUsage, (v) => Math.round(v));
+  const [memVal, setMemVal] = useState(67);
+  useMotionValueEvent(memoryRounded, "change", (latest) => setMemVal(latest));
   
   // Автоматична прокрутка до нових повідомлень
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -31,23 +40,60 @@ export default function LeftPanel() {
     }
   }, [chatMessages]);
   
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
     
+    const userText = inputValue;
     addChatMessage({
       sender: 'user',
-      text: inputValue,
+      text: userText,
     });
     
-    // Simulate AI response
-    setTimeout(() => {
-      addChatMessage({
-        sender: 'ai',
-        text: `Обробка запиту: "${inputValue.substring(0, 20)}..."`,
-      });
-    }, 1000);
-    
     setInputValue('');
+    
+    addChatMessage({
+      sender: 'ai',
+      text: '...',
+    });
+    
+    try {
+      const res = await fetch('/api/v1/ai/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+        },
+        body: JSON.stringify({
+          messages: [
+            ...chatMessages.map(m => ({ role: m.sender === 'ai' ? 'assistant' : 'user', content: m.text })),
+            { role: 'user', content: userText }
+          ]
+        })
+      });
+      
+      const data = await res.json();
+      
+      if (data.choices && data.choices[0] && data.choices[0].message) {
+        useCyberDashboardStore.setState(state => {
+          const newMessages = [...state.chatMessages];
+          const lastMsg = newMessages[newMessages.length - 1];
+          if (lastMsg && lastMsg.text === '...') {
+             newMessages[newMessages.length - 1] = { ...lastMsg, text: data.choices[0].message.content };
+          }
+          return { chatMessages: newMessages };
+        });
+      }
+    } catch (err) {
+      console.error('Chat API Error:', err);
+      useCyberDashboardStore.setState(state => {
+        const newMessages = [...state.chatMessages];
+        const lastMsg = newMessages[newMessages.length - 1];
+        if (lastMsg && lastMsg.text === '...') {
+           newMessages[newMessages.length - 1] = { ...lastMsg, text: 'Помилка з\'єднання з Когнітивним Ядром.' };
+        }
+        return { chatMessages: newMessages };
+      });
+    }
   };
   
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -75,7 +121,7 @@ export default function LeftPanel() {
           AI КОГНІТИВНА ПАНЕЛЬ
         </h2>
         <div className="text-xs text-cyber-neon/50 mt-1 font-mono">
-          STATUS: ONLINE
+          СТАТУС: ОНЛАЙН
         </div>
       </div>
       
@@ -100,7 +146,7 @@ export default function LeftPanel() {
               `}
             >
               <div className="text-xs text-cyber-neon/70 mb-1 font-mono">
-                {message.sender === 'user' ? 'USER' : 'AI SYSTEM'}
+                {message.sender === 'user' ? 'ОПЕРАТОР' : 'СИСТЕМА ШІ'}
               </div>
               <div className="text-sm text-gray-200 break-words">
                 {message.text}
@@ -125,13 +171,13 @@ export default function LeftPanel() {
             placeholder="Введіть команду..."
             className="flex-1 bg-cyber-bg/50 border border-cyber-border/30 rounded px-3 py-2 text-sm text-gray-200 placeholder-cyber-neon/30 focus:outline-none focus:border-cyber-neon/50 font-mono"
           />
-          <button
+          <Button variant="cyber"
             onClick={handleSendMessage}
             disabled={!inputValue.trim()}
             className="p-2 bg-cyber-neon/20 border border-cyber-neon/30 rounded hover:bg-cyber-neon/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             <Send className="w-4 h-4 text-cyber-neon" />
-          </button>
+          </Button>
         </div>
       </div>
       
@@ -147,9 +193,9 @@ export default function LeftPanel() {
           <div className="flex-1">
             <div className="flex justify-between text-xs mb-1">
               <span className="text-gray-400">ДОКУМЕНТІВ</span>
-              <motion.span className="text-cyber-neon font-mono">
-                {documentsRounded}
-              </motion.span>
+              <span className="text-cyber-neon font-mono">
+                {docVal}
+              </span>
             </div>
             <div className="h-1 bg-cyber-bg/50 rounded overflow-hidden">
               <motion.div
@@ -168,9 +214,9 @@ export default function LeftPanel() {
           <div className="flex-1">
             <div className="flex justify-between text-xs mb-1">
               <span className="text-gray-400">АНАЛІЗІВ</span>
-              <motion.span className="text-cyber-green font-mono">
-                {analysisRounded}
-              </motion.span>
+              <span className="text-cyber-green font-mono">
+                {anaVal}
+              </span>
             </div>
             <div className="h-1 bg-cyber-bg/50 rounded overflow-hidden">
               <motion.div
@@ -189,9 +235,9 @@ export default function LeftPanel() {
           <div className="flex-1">
             <div className="flex justify-between text-xs mb-1">
               <span className="text-gray-400">ПАМ'ЯТЬ</span>
-              <motion.span className="text-cyber-gold font-mono">
-                {memoryRounded}%
-              </motion.span>
+              <span className="text-cyber-gold font-mono">
+                {memVal}%
+              </span>
             </div>
             <div className="h-1 bg-cyber-bg/50 rounded overflow-hidden">
               <motion.div

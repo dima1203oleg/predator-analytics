@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useEffect, useState, useRef } from 'react';
 import { Mic, MicOff, Loader2 } from 'lucide-react';
 import { useAppStore } from '../../../store/useAppStore';
@@ -81,7 +82,7 @@ export const VoiceCommandCenter = () => {
 
   return (
     <div className="flex flex-col items-center justify-center px-6 py-4 bg-black/40 border border-emerald-500/20 rounded-2xl backdrop-blur-md shadow-[0_0_30px_rgba(16,185,129,0.1)]">
-      <button
+      <Button variant="cyber"
         onClick={handleToggleListen}
         disabled={aiState.isReasoning}
         className={`p-4 rounded-full flex items-center justify-center transition-all ${
@@ -99,7 +100,7 @@ export const VoiceCommandCenter = () => {
         ) : (
           <MicOff className="w-6 h-6" />
         )}
-      </button>
+      </Button>
       
       <div className="mt-3 min-h-[20px] text-center">
         {isListening ? (

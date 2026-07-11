@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import ReactECharts from 'echarts-for-react';
+import { apiClient } from '../../../../services/api/config';
 
 export const AnomalyChart = () => {
   const [data, setData] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch('http://localhost:9080/api/v1/neural/training/stats')
-      .then(res => res.json())
-      .then(setData)
+    apiClient.get('/neural/training/stats')
+      .then(res => setData(res.data))
       .catch(console.error);
   }, []);
 

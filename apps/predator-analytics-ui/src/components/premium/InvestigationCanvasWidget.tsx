@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Activity, Search, ShieldAlert, Share2, Maximize2, X, Plus, Building2, User, Globe, AlertTriangle } from 'lucide-react';
@@ -72,15 +73,15 @@ export const InvestigationCanvasWidget: React.FC<{
           </div>
         </div>
         <div className="flex gap-2">
-           <button aria-label="Додати нотатку" className="p-2 hover:bg-white/5 rounded-lg text-slate-400 hover:text-white transition-colors">
+           <Button variant="cyber" aria-label="Додати нотатку" className="p-2 hover:bg-white/5 rounded-lg text-slate-400 hover:text-white transition-colors">
               <Plus size={16} />
-           </button>
-           <button aria-label="Пошук" className="p-2 hover:bg-white/5 rounded-lg text-slate-400 hover:text-white transition-colors">
+           </Button>
+           <Button variant="cyber" aria-label="Пошук" className="p-2 hover:bg-white/5 rounded-lg text-slate-400 hover:text-white transition-colors">
               <Search size={16} />
-           </button>
-           <button aria-label="Розгорнути" className="p-2 hover:bg-white/5 rounded-lg text-slate-400 hover:text-white transition-colors">
+           </Button>
+           <Button variant="cyber" aria-label="Розгорнути" className="p-2 hover:bg-white/5 rounded-lg text-slate-400 hover:text-white transition-colors">
               <Maximize2 size={16} />
-           </button>
+           </Button>
         </div>
       </div>
 
@@ -171,9 +172,9 @@ export const InvestigationCanvasWidget: React.FC<{
                         <h4 className="font-bold text-white text-sm">
                             {nodes.find(n => n.id === selectedNode)?.label}
                         </h4>
-                        <button aria-label="Закрити деталі" onClick={() => setSelectedNode(null)}>
+                        <Button variant="cyber" aria-label="Закрити деталі" onClick={() => setSelectedNode(null)}>
                             <X size={14} className="text-slate-500 hover:text-white" />
-                        </button>
+                        </Button>
                     </div>
                     {nodes.find(n => n.id === selectedNode)?.type === 'company' ? (
                         <div className="mt-4 border-t border-slate-700/50 pt-4">
@@ -198,7 +199,7 @@ export const InvestigationCanvasWidget: React.FC<{
                                 </div>
                             )}
                             <div className="pt-2 mt-2 border-t border-white/5">
-                                <button
+                                <Button variant="cyber"
                                   onClick={() => {
                                     const node = nodes.find(n => n.id === selectedNode);
                                     if (node) onOpenDossier?.(node.label);
@@ -206,7 +207,7 @@ export const InvestigationCanvasWidget: React.FC<{
                                   className="w-full py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg transition-colors border border-rose-500/20 font-black tracking-widest text-[9px] uppercase"
                                 >
                                     {premiumLocales.investigationCanvas.openFullDossier || " ОЗШИ ЕНЕ ДОСЬЄ"}
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     )}

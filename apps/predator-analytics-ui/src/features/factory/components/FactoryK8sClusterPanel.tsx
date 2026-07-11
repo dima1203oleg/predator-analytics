@@ -52,7 +52,7 @@ export const FactoryK8sClusterPanel: React.FC<FactoryK8sClusterPanelProps> = ({
                 <tr key={pod.id} className="hover:bg-white/5 transition-colors group">
                   <td className="p-4">
                     <div className="flex items-center gap-3">
-                      <div className={cn("w-2 h-2 rounded-full", pod.status === 'Running' ? "bg-emerald-500 shadow-[0_0_10px_#10b981]" : "bg-rose-500 ")} />
+                      <div className={cn("w-2 h-2 rounded-full", pod.status === 'Running' ? "bg-emerald-500 shadow-[0_0_10px_#10b981]" : "bg-cyan-500 ")} />
                       <div>
                         <div className="text-[13px] font-bold text-white flex items-center gap-2">
                           {pod.name}
@@ -64,7 +64,7 @@ export const FactoryK8sClusterPanel: React.FC<FactoryK8sClusterPanelProps> = ({
                   </td>
                   <td className="p-4">
                     <span className={cn("text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded", 
-                      pod.status === 'Running' ? "bg-emerald-500/10 text-emerald-400" : "bg-rose-500/10 text-rose-400")}>
+                      pod.status === 'Running' ? "bg-emerald-500/10 text-emerald-400" : "bg-cyan-500/10 text-rose-400")}>
                       {pod.status}
                     </span>
                   </td>
@@ -80,7 +80,7 @@ export const FactoryK8sClusterPanel: React.FC<FactoryK8sClusterPanelProps> = ({
                         onClick={() => handlePodRestart(pod.id)}
                         variant="ghost"
                         size="icon"
-                        className="p-2 h-10 w-10 bg-slate-800 hover:bg-rose-500/20 hover:text-rose-400 flex flex-col items-center justify-center hover:border-rose-500/50 rounded-lg border border-transparent transition-all disabled:opacity-40" title="Перезапустити Pod"
+                        className="p-2 h-10 w-10 bg-slate-800 hover:bg-cyan-500/20 hover:text-rose-400 flex flex-col items-center justify-center hover:border-cyan-500/50 rounded-lg border border-transparent transition-all disabled:opacity-40" title="Перезапустити Pod"
                       >
                         <Power size={14} />
                       </Button>

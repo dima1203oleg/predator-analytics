@@ -219,9 +219,10 @@ class RAGService:
         # 1. Embedding запитання
         query_embedding = await AIService.get_embeddings(question)
 
+        collection_name = f"predator-embeddings-{tenant_id}"
         # 2. Семантичний пошук у Qdrant
         search_result = await qdrant_service.search(
-            collection=COLLECTION_KNOWLEDGE,
+            collection=collection_name,
             query_vector=query_embedding,
             tenant_id=tenant_id,
             limit=top_k,
@@ -233,18 +234,26 @@ class RAGService:
         context_parts: list[str] = []
 
         for i, hit in enumerate(search_result.hits, 1):
-            content = hit.payload.get("content", "")
-            doc_id = hit.payload.get("document_id", "unknown")
-            chunk_id = hit.payload.get("chunk_id", "unknown")
+            payload = hit.payload or {}
+            content = payload.get("content", "")
+            if not content:
+                content_lines = []
+                for k, v in payload.items():
+                    if k not in ["tenant_id", "job_id", "document_id", "chunk_id"]:
+                        content_lines.append(f"{k}: {v}")
+                content = "\n".join(content_lines)
 
-            context_parts.append(f"[Джерело {i}] ({doc_id}):\n{content}")
+            doc_id = payload.get("ueid", payload.get("document_id", "unknown"))
+            chunk_id = payload.get("declaration_number", payload.get("chunk_id", "unknown"))
+
+            context_parts.append(f"[Джерело {i}] (ID: {doc_id}):\n{content}")
 
             citations.append(Citation(
-                document_id=doc_id,
-                chunk_id=chunk_id,
+                document_id=str(doc_id),
+                chunk_id=str(chunk_id),
                 content_snippet=content[:200],
                 relevance_score=hit.score,
-                metadata=hit.payload,
+                metadata=payload,
             ))
 
         context = "\n\n---\n\n".join(context_parts) if context_parts else ""

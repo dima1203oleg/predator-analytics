@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -122,7 +123,7 @@ const CommanderShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange
 
           <div className="flex items-center gap-2">
             {topNavItems.map((item) => (
-              <button
+              <Button variant="cyber"
                 key={item.id}
                 onClick={() => onTabChange(item.id)}
                 className={`
@@ -143,7 +144,7 @@ const CommanderShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange
                     className="absolute -bottom-[21px] left-0 right-0 h-[2px] bg-rose-500 shadow-[0_0_15px_#f43f5e]"
                   />
                 )}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -160,17 +161,17 @@ const CommanderShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange
           <div className="h-8 w-[1px] bg-white/10" />
 
           <div className="flex items-center gap-4">
-            <button className="relative p-2.5 text-slate-400 hover:text-white transition-colors">
+            <Button variant="cyber" className="relative p-2.5 text-slate-400 hover:text-white transition-colors">
               <Bell size={20} />
               <span className="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full border-2 border-black" />
-            </button>
-            <button 
+            </Button>
+            <Button variant="cyber" 
               onClick={onLogout}
               className="flex items-center gap-2 px-4 py-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 border border-rose-500/20 rounded-xl transition-all group"
             >
               <LogOut size={16} className="group-hover:translate-x-1 transition-transform" />
               <span className="text-[10px] font-black">ВИХІД</span>
-            </button>
+            </Button>
           </div>
         </div>
       </nav>
@@ -179,7 +180,7 @@ const CommanderShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange
       {!isZenMode && (
         <aside className="fixed left-0 top-20 bottom-0 w-24 bg-black/40  border-r border-white/5 flex flex-col items-center py-10 gap-6 z-40">
           {sideNavItems.map((item) => (
-            <button
+            <Button variant="cyber"
               key={item.id}
               onClick={() => onTabChange(item.id)}
               className={`
@@ -194,17 +195,17 @@ const CommanderShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange
               <div className="absolute left-full ml-4 px-3 py-1.5 bg-rose-950 border border-rose-500/30 rounded-lg text-[9px] font-black text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none tracking-widest whitespace-nowrap z-50">
                 {item.label}
               </div>
-            </button>
+            </Button>
           ))}
           
           <div className="mt-auto flex flex-col items-center gap-4 pb-8">
-            <button
+            <Button variant="cyber"
               onClick={() => setIsZenMode(!isZenMode)}
               className="p-3 text-slate-500 hover:text-rose-500 transition-colors"
               title="режим концентрації"
             >
               {isZenMode ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
-            </button>
+            </Button>
           </div>
         </aside>
       )}

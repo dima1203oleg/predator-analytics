@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Calendar, FileCode, Link2, Shield, User } from 'lucide-react';
@@ -179,12 +180,12 @@ export function ProvenanceCard({
             <span>Криптографічно захищено</span>
           </div>
           {onViewDetails && (
-            <button
+            <Button variant="cyber"
               onClick={() => onViewDetails(event.event_id)}
               className="text-primary hover:underline font-medium"
             >
               Детальніше →
-            </button>
+            </Button>
           )}
         </div>
 

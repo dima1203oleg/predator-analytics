@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -53,9 +54,9 @@ export const SanctionsIntelligenceWidget: React.FC<{ persona: string }> = ({ per
           </div>
         </div>
         <div className="hidden md:flex bg-slate-900 rounded-lg p-1 border border-white/5">
-           <button aria-label="Фільтр списків" className="p-2 hover:bg-white/5 rounded-lg text-slate-400 transition-all">
+           <Button variant="cyber" aria-label="Фільтр списків" className="p-2 hover:bg-white/5 rounded-lg text-slate-400 transition-all">
               <Filter size={18} />
-           </button>
+           </Button>
         </div>
       </div>
 
@@ -69,7 +70,7 @@ export const SanctionsIntelligenceWidget: React.FC<{ persona: string }> = ({ per
              placeholder={premiumLocales.sanctionsIntelligence.placeholder}
              className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-sm text-white focus:outline-none focus:border-rose-500/50 transition-all placeholder:text-slate-600"
            />
-           <button
+           <Button variant="cyber"
              onClick={handleScan}
              disabled={!searchTerm || isScanning}
              className={cn(
@@ -78,7 +79,7 @@ export const SanctionsIntelligenceWidget: React.FC<{ persona: string }> = ({ per
              )}
            >
               {isScanning ? <RefreshCw className="animate-spin" size={18} /> : <Search size={18} />}
-           </button>
+           </Button>
         </div>
 
         {/* Live Results */}
@@ -141,9 +142,9 @@ export const SanctionsIntelligenceWidget: React.FC<{ persona: string }> = ({ per
          <p className="text-[11px] text-slate-400 leading-relaxed bg-rose-500/5 p-4 rounded-2xl border border-rose-500/10 border-dashed">
            "{premiumLocales.sanctionsIntelligence.warningMessage}"
          </p>
-         <button className="w-full py-4 bg-rose-500/10 border border-rose-500/30 text-rose-400 font-black rounded-2xl text-[10px] uppercase tracking-widest hover:bg-rose-500/20 transition-all">
+         <Button variant="cyber" className="w-full py-4 bg-rose-500/10 border border-rose-500/30 text-rose-400 font-black rounded-2xl text-[10px] uppercase tracking-widest hover:bg-rose-500/20 transition-all">
             {premiumLocales.sanctionsIntelligence.fullReportButton}
-         </button>
+         </Button>
       </div>
 
       <div className="p-4 bg-rose-500/10 text-center border-t border-rose-500/20">

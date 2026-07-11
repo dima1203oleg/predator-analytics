@@ -4,6 +4,7 @@
  * Повна українська локалізація
  */
 
+import { Button } from '@/components/ui/button';
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
@@ -190,9 +191,9 @@ export const WidgetRenderer: React.FC<WidgetRendererProps> = ({
           <AlertTriangle className="w-8 h-8 text-rose-500" />
           <span className="text-[10px] text-rose-400 text-center">{data.error}</span>
           {onRefresh && (
-            <button onClick={onRefresh} className="text-[9px] text-amber-500 hover:underline">
+            <Button variant="cyber" onClick={onRefresh} className="text-[9px] text-amber-500 hover:underline">
               {'Спробувати знову'}
-            </button>
+            </Button>
           )}
         </div>
       );
@@ -420,31 +421,31 @@ export const WidgetRenderer: React.FC<WidgetRendererProps> = ({
       {/* Widget Actions */}
       <div className="absolute top-2 right-2 z-10 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
         {onRefresh && (
-          <button
+          <Button variant="cyber"
             onClick={onRefresh}
             className="p-1.5 bg-black/40 border border-white/10 rounded-lg hover:bg-white/10 transition-colors"
             title={premiumLocales.dashboardBuilder.canvas.refreshWidget}
           >
             <RefreshCw size={12} className="text-slate-400" />
-          </button>
+          </Button>
         )}
         {onExpand && (
-          <button
+          <Button variant="cyber"
             onClick={onExpand}
             className="p-1.5 bg-black/40 border border-white/10 rounded-lg hover:bg-white/10 transition-colors"
             title={premiumLocales.dashboardBuilder.canvas.expandWidget}
           >
             <Maximize2 size={12} className="text-slate-400" />
-          </button>
+          </Button>
         )}
         {onSettings && (
-          <button
+          <Button variant="cyber"
             onClick={onSettings}
             className="p-1.5 bg-black/40 border border-white/10 rounded-lg hover:bg-white/10 transition-colors"
             title={premiumLocales.dashboardBuilder.canvas.configureWidget}
           >
             <Settings size={12} className="text-slate-400" />
-          </button>
+          </Button>
         )}
       </div>
 

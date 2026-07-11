@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -76,13 +77,13 @@ export const UserOnboarding: React.FC = () => {
                         <div className="absolute bottom-0 left-0 w-48 h-48 sm:w-64 sm:h-64 bg-purple-500/10 blur-[60px] sm:blur-[80px] rounded-full pointer-events-none" />
 
                         {/* Close Button */}
-                        <button
+                        <Button variant="cyber"
                             onClick={handleClose}
                             aria-label="Закрити"
                             className="absolute top-4 right-4 p-2 text-slate-500 hover:text-white hover:bg-white/5 rounded-full transition-colors z-20"
                         >
                             <X size={20} />
-                        </button>
+                        </Button>
 
                         <div className="relative z-10">
                             {/* Step Indicator */}
@@ -124,13 +125,13 @@ export const UserOnboarding: React.FC = () => {
                                     </p>
                                 </motion.div>
 
-                                <button
+                                <Button variant="cyber"
                                     onClick={handleNext}
                                     className="w-full py-3 sm:py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-indigo-500/25 flex items-center justify-center gap-2 group"
                                 >
                                     {currentStep === steps.length - 1 ? premiumLocales.onboarding.ui.finish : premiumLocales.onboarding.ui.next}
                                     <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     </motion.div>

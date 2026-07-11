@@ -9,6 +9,7 @@
  * - Export capability
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Download, RefreshCw, Filter, AlertCircle, CheckCircle, Info, Zap } from 'lucide-react';
@@ -234,7 +235,7 @@ export const AIActivityLogs: React.FC<AIActivityLogsProps> = ({
           </select>
 
           {/* Pause/Resume */}
-          <button
+          <Button variant="cyber"
             onClick={() => setIsPaused(!isPaused)}
             className={`p-2 rounded-lg transition-colors ${
               isPaused
@@ -244,16 +245,16 @@ export const AIActivityLogs: React.FC<AIActivityLogsProps> = ({
             title={isPaused ? 'Відновити' : 'Пауза'}
           >
             {isPaused ? '▶️' : '⏸️'}
-          </button>
+          </Button>
 
           {/* Export */}
-          <button
+          <Button variant="cyber"
             onClick={exportLogs}
             className="p-2 rounded-lg bg-slate-700/50 text-slate-400 hover:bg-slate-600/50 transition-colors"
             title="Експорт журналу"
           >
             <Download size={16} />
-          </button>
+          </Button>
         </div>
       </div>
 

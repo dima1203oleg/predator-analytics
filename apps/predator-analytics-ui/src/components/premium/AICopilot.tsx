@@ -7,6 +7,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { Button } from '@/components/ui/button';
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -376,12 +377,12 @@ export const Predator: React.FC = () => {
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <button onClick={() => { if (!isClosingRef.current) setIsExpanded(!isExpanded); }} className="p-4 bg-white/5 border border-white/5 rounded-2xl hover:text-rose-500 transition-all hover:bg-rose-500/10" title={isExpanded ? "Згорнути" : "Розширити"}>
+                <Button variant="cyber" onClick={() => { if (!isClosingRef.current) setIsExpanded(!isExpanded); }} className="p-4 bg-white/5 border border-white/5 rounded-2xl hover:text-rose-500 transition-all hover:bg-rose-500/10" title={isExpanded ? "Згорнути" : "Розширити"}>
                   {isExpanded ? <Minimize2 size={24} /> : <Maximize2 size={24} />}
-                </button>
-                <button onClick={handleClose} className="p-4 bg-white/5 border border-white/5 rounded-2xl hover:text-rose-500 transition-all hover:bg-rose-500/10" title="Закрити">
+                </Button>
+                <Button variant="cyber" onClick={handleClose} className="p-4 bg-white/5 border border-white/5 rounded-2xl hover:text-rose-500 transition-all hover:bg-rose-500/10" title="Закрити">
                   <X size={24} />
-                </button>
+                </Button>
               </div>
             </div>
 

@@ -1,15 +1,41 @@
-"""Telegram Bot Configuration
-Centralized storage for texts, keyboard layouts, and settings.
+"""Telegram Bot Configuration — PREDATOR Analytics v56.5
+Централізоване зберігання текстів, клавіатур та налаштувань.
 """
 from enum import Enum
 import os
 
-# Bot Token
-BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-ADMIN_ID = int(os.getenv("TELEGRAM_ADMIN_ID", "0"))
+# ═══════════════════════════════════════════════════════════════════════════
+# ІДЕНТИФІКАЦІЯ
+# ═══════════════════════════════════════════════════════════════════════════
 
-# Constants
+BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
+
+def _parse_admin_ids() -> set[int]:
+    """Парсинг списку адмін ID з env (через кому або пробіл)."""
+    raw = os.getenv("TELEGRAM_ADMIN_ID", "") or os.getenv("TELEGRAM_ADMIN_IDS", "")
+    ids: set[int] = set()
+    for part in raw.replace(",", " ").split():
+        part = part.strip()
+        if part.isdigit():
+            ids.add(int(part))
+    return ids
+
+ADMIN_IDS: set[int] = _parse_admin_ids()
+
+# Гарантуємо, що основний оператор завжди має доступ
+_FALLBACK_ADMIN = 449035630
+if _FALLBACK_ADMIN not in ADMIN_IDS:
+    ADMIN_IDS.add(_FALLBACK_ADMIN)
+
+# Для зворотної сумісності
+ADMIN_ID: int = next(iter(ADMIN_IDS), 0)
+
+# ═══════════════════════════════════════════════════════════════════════════
+# КОНСТАНТИ
+# ═══════════════════════════════════════════════════════════════════════════
+
 PAGINATION_SIZE = 10
+BOT_VERSION = "v56.5-ELITE"
 
 class BotStates(Enum):
     MAIN_MENU = "MAIN_MENU"
@@ -17,38 +43,32 @@ class BotStates(Enum):
     CHAT_WITH_AI = "CHAT_WITH_AI"
     CONFIRMATION = "CONFIRMATION"
 
-# Keyboard Layouts
-MENUS = {
-    "main": [
-        [{"text": "🤖 Управління ШІ", "callback_data": "menu_ai"}, {"text": "📊 Аналітика", "callback_data": "menu_analytics"}],
-        [{"text": "🛠 Система", "callback_data": "menu_system"}, {"text": "🐙 Git Ops", "callback_data": "menu_git"}],
-        [{"text": "🔍 Пошук", "callback_data": "menu_search"}, {"text": "📂 База знань", "callback_data": "menu_knowledge"}],
-        [{"text": "💬 Чат з Копілотом", "callback_data": "start_chat"}]
-    ],
-    "ai": [
-        [{"text": "🧠 Рада LLM", "callback_data": "ai_council"}, {"text": "⚡ Статус агентів", "callback_data": "ai_agents"}],
-        [{"text": "🔗 Потрійний ланцюг", "callback_data": "ai_triple_chain"}, {"text": "🔄 Самовдосконалення", "callback_data": "ai_improve"}],
-        [{"text": "🔙 Назад", "callback_data": "menu_main"}]
-    ],
-    "system": [
-        [{"text": "🏥 Перевірка стану", "callback_data": "sys_health"}, {"text": "📈 Prometheus", "callback_data": "sys_prometheus"}],
-        [{"text": "📦 Деплой ArgoCD", "callback_data": "sys_deploy"}, {"text": "🧹 Очистити кеш", "callback_data": "sys_cache"}],
-        [{"text": "🔙 Назад", "callback_data": "menu_main"}]
-    ],
-    "git": [
-        [{"text": "📥 Оновити код", "callback_data": "git_pull"}, {"text": "📜 Статус", "callback_data": "git_status"}],
-        [{"text": "📝 Логи", "callback_data": "git_log"}, {"text": "🔙 Назад", "callback_data": "menu_main"}]
-    ]
-}
+# ═══════════════════════════════════════════════════════════════════════════
+# ТЕКСТИ (100% УКРАЇНСЬКОЮ — HR-04)
+# ═══════════════════════════════════════════════════════════════════════════
 
-# Texts
 MESSAGES = {
-    "welcome": "🚀 *Predator Analytics v45.0 - Omniscient Center*\n\nСистема активована. Канал зв'язку захищено.\nОберіть модуль для управління або надішліть голосову команду:",
+    "welcome": (
+        f"🦅 *PREDATOR Analytics {BOT_VERSION}*\n"
+        "━━━━━━━━━━━━━━━━━━━━━\n"
+        "Система активована. Канал захищено.\n\n"
+        "Оберіть модуль або надішліть текстовий запит:"
+    ),
+    "help": (
+        "📋 *Доступні команди:*\n\n"
+        "/start — Головне меню\n"
+        "/help — Ця довідка\n"
+        "/status — Статус системи\n"
+        "/search `<запит>` — Швидкий пошук\n"
+        "/ai `<запит>` — Запитати ШІ\n"
+        "/osint `<запит>` — OSINT Розвідка\n"
+        "/report — Згенерувати звіт\n\n"
+        "💡 Також можна просто надіслати текст — ШІ обробить запит автоматично."
+    ),
     "access_denied": "⛔ *Доступ заборонено*\nВи не авторизовані для використання цієї системи.",
-    "unknown_command": "❓ Невідома команда або інтент.",
+    "unknown_command": "❓ Невідома команда. Спробуйте /help",
     "processing": "⏳ Обробка запиту через Cortex...",
     "success": "✅ Операцію виконано успішно.",
     "error": "❌ Сталася помилка: {error}",
-    "chat_mode": "💬 *Режим ШІ-чату*\nНадішліть повідомлення для початку діалогу.\nВведіть /cancel для виходу.",
-    "chat_exit": "👋 Чат завершено.",
+    "no_query": "⚠️ Вкажіть запит після команди.\nПриклад: `/search митниця Одеса`",
 }

@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
@@ -154,9 +155,9 @@ export const AMLRadarTab: React.FC = () => {
           </div>
         </div>
 
-        <button className="w-full py-6 bg-emerald-600 text-slate-950 rounded-[2rem] tracking-[0.6em] text-[12px] font-black uppercase italic hover:bg-emerald-500 shadow-xl transition-all border border-emerald-400/20 active:scale-95">
+        <Button variant="cyber" className="w-full py-6 bg-emerald-600 text-slate-950 rounded-[2rem] tracking-[0.6em] text-[12px] font-black uppercase italic hover:bg-emerald-500 shadow-xl transition-all border border-emerald-400/20 active:scale-95">
           ВІДКРИТИ ПОВНУ ЕКСПЕРТИЗУ
-        </button>
+        </Button>
       </div>
     </div>
   );

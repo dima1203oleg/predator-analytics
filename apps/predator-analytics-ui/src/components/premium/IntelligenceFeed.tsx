@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { Bell, ShieldAlert, FileText, TrendingDown, Users, Ship, ExternalLink } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -68,9 +69,9 @@ export const IntelligenceFeed: React.FC = () => {
           ))}
        </div>
 
-       <button className="w-full mt-6 py-3 rounded-2xl border border-white/5 bg-white/5 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 hover:text-white hover:bg-cyan-500/10 hover:border-cyan-500/20 transition-all">
+       <Button variant="cyber" className="w-full mt-6 py-3 rounded-2xl border border-white/5 bg-white/5 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 hover:text-white hover:bg-cyan-500/10 hover:border-cyan-500/20 transition-all">
           Архів подій (2,450+)
-       </button>
+       </Button>
     </div>
   );
 };

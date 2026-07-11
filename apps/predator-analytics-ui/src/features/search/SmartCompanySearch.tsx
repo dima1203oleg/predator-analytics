@@ -8,6 +8,7 @@
  * - Пагінація для великих результатів
  */
 
+import { Button } from '@/components/ui/button';
 import React, {useCallback, useState} from 'react';
 import {useQuery} from '@tanstack/react-query';
 import {AlertCircle, ChevronDown, Download, Loader, Search} from 'lucide-react';
@@ -161,7 +162,7 @@ export const SmartCompanySearch: React.FC = () => {
       </Card>
 
       {/* Filters Toggle */}
-      <button
+      <Button variant="cyber"
         onClick={() => setShowFilters(!showFilters)}
         className="flex items-center gap-2 px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-gray-300 hover:text-white transition-colors"
       >
@@ -170,7 +171,7 @@ export const SmartCompanySearch: React.FC = () => {
           size={18}
           className={`transition-transform ${showFilters ? 'rotate-180' : ''}`}
         />
-      </button>
+      </Button>
 
       {/* Filters Panel */}
       {showFilters && (
@@ -287,13 +288,13 @@ export const SmartCompanySearch: React.FC = () => {
             <p className="text-sm text-gray-400">
               Знайдено <span className="font-bold text-yellow-400">{results.length}</span> компаній
             </p>
-            <button
+            <Button variant="cyber"
               onClick={handleExport}
               className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-white font-bold transition-colors"
             >
               <Download size={18}/>
               📥 Завантажити CSV
-            </button>
+            </Button>
           </div>
         )}
 

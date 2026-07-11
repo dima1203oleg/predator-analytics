@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -137,15 +138,15 @@ const DocumentModal: React.FC<Props> = ({ document, query, isOpen, onClose }) =>
                             </div>
 
                             <div className="flex items-center gap-4">
-                                <button onClick={handleCopy} className="p-5 bg-white/5 hover:bg-emerald-500/20 text-slate-400 hover:text-emerald-400 rounded-2xl border border-white/5 transition-all">
+                                <Button variant="cyber" onClick={handleCopy} className="p-5 bg-white/5 hover:bg-emerald-500/20 text-slate-400 hover:text-emerald-400 rounded-2xl border border-white/5 transition-all">
                                     {copied ? <Check className="w-6 h-6" /> : <Copy className="w-6 h-6" />}
-                                </button>
-                                <button className="p-5 bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white rounded-2xl border border-white/5 transition-all">
+                                </Button>
+                                <Button variant="cyber" className="p-5 bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white rounded-2xl border border-white/5 transition-all">
                                     <Download className="w-6 h-6" />
-                                </button>
-                                <button onClick={onClose} className="p-5 bg-white/5 hover:bg-rose-500/20 text-slate-400 hover:text-rose-500 rounded-2xl border border-white/5 transition-all">
+                                </Button>
+                                <Button variant="cyber" onClick={onClose} className="p-5 bg-white/5 hover:bg-rose-500/20 text-slate-400 hover:text-rose-500 rounded-2xl border border-white/5 transition-all">
                                     <X className="w-6 h-6" />
-                                </button>
+                                </Button>
                             </div>
                         </div>
 
@@ -156,7 +157,7 @@ const DocumentModal: React.FC<Props> = ({ document, query, isOpen, onClose }) =>
                                 { id: 'summary', label: 'AI_SUMMARIZATION', icon: <Sparkles size={18} /> },
                                 { id: 'similar', label: 'СХОЖІ_ОБ\'ЄКТИ', icon: <Users size={18} /> },
                             ].map(tab => (
-                                <button
+                                <Button variant="cyber"
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id as any)}
                                     className={cn(
@@ -167,7 +168,7 @@ const DocumentModal: React.FC<Props> = ({ document, query, isOpen, onClose }) =>
                                     )}
                                 >
                                     {tab.icon} {tab.label}
-                                </button>
+                                </Button>
                             ))}
                         </div>
 
@@ -202,14 +203,14 @@ const DocumentModal: React.FC<Props> = ({ document, query, isOpen, onClose }) =>
                                                     <h3 className="text-3xl font-black text-white uppercase italic tracking-tighter">СЕМАНТИЧНА_КОМПРЕСІЯ</h3>
                                                     <p className="text-slate-500 font-black uppercase italic text-xs tracking-[0.4em] max-w-md mx-auto">AI ПРОАНАЛІЗУЄ ДОКУМЕНТ ТА СТВОРИТЬ СТИСЛИЙ ВИКЛАД КЛЮЧОВИХ ТЕЗ</p>
                                                 </div>
-                                                <button
+                                                <Button variant="cyber"
                                                     onClick={handleGenerateSummary}
                                                     disabled={isSummarizing}
                                                     className="px-12 py-6 bg-emerald-700 hover:bg-emerald-600 text-white font-black uppercase tracking-[0.4em] italic rounded-[2rem] shadow-4xl transition-all disabled:opacity-50 flex items-center gap-4 mx-auto"
                                                 >
                                                     {isSummarizing ? <RefreshCw className="animate-spin" size={24} /> : <Zap size={24} />}
                                                     {isSummarizing ? "ОБ ОБКА..." : "ІНІЦІЮВАТИ_АНАЛІЗ"}
-                                                </button>
+                                                </Button>
                                             </div>
                                         )}
                                     </div>
@@ -296,14 +297,14 @@ const DocumentModal: React.FC<Props> = ({ document, query, isOpen, onClose }) =>
                                     <div className="pt-10 border-t border-white/5 space-y-6">
                                         <h4 className="text-[10px] font-black text-slate-700 uppercase tracking-[0.4em] italic">ЕКСПОРТ_В_ЗОВНІШНІ_СИСТЕМИ</h4>
                                         <div className="grid grid-cols-2 gap-4">
-                                            <button className="p-6 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl text-slate-500 hover:text-white transition-all flex flex-col items-center gap-3">
+                                            <Button variant="cyber" className="p-6 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl text-slate-500 hover:text-white transition-all flex flex-col items-center gap-3">
                                                 <Share2 size={24} />
                                                 <span className="text-[9px] font-black uppercase">NOTION</span>
-                                            </button>
-                                            <button className="p-6 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl text-slate-500 hover:text-white transition-all flex flex-col items-center gap-3">
+                                            </Button>
+                                            <Button variant="cyber" className="p-6 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl text-slate-500 hover:text-white transition-all flex flex-col items-center gap-3">
                                                 <ExternalLink size={24} />
                                                 <span className="text-[9px] font-black uppercase">CLOUD_S3</span>
-                                            </button>
+                                            </Button>
                                         </div>
                                     </div>
                                 </div>

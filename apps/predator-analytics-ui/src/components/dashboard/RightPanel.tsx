@@ -10,6 +10,8 @@ import { motion } from 'framer-motion';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Radar, Shield, MapPin, AlertTriangle, Activity } from 'lucide-react';
 import { useCyberDashboardStore } from '../../store/cyber-dashboard-store';
+import { RiskDistributionChart } from '../analytics/RiskDistributionChart';
+import { AnomalyTimelineChart } from '../analytics/AnomalyTimelineChart';
 
 // Mock дані для графіків
 const LIVE_INTERCEPTOR_DATA = [
@@ -34,26 +36,45 @@ const THREAT_MATRIX = [
   { id: 9, level: 1, color: '#00FF41' },
 ];
 
-const MOCK_INTEL = [
-  { id: 1, location: 'Київ', level: 'HIGH', time: '12:45' },
-  { id: 2, location: 'Одеса', level: 'MEDIUM', time: '11:30' },
-  { id: 3, location: 'Львів', level: 'LOW', time: '10:15' },
-];
-
 export default function RightPanel() {
   const { isPanelCollapsed, threatLevel } = useCyberDashboardStore();
-  const [liveData, setLiveData] = useState(LIVE_INTERCEPTOR_DATA);
+  const [liveData, setLiveData] = useState<any[]>([]);
+  const [intelData, setIntelData] = useState<any[]>([]);
+  const [topRisks, setTopRisks] = useState<any[]>([]);
   
-  // Оновлення графіку в реальному часі
+  // Завантаження реальних даних
   useEffect(() => {
-    const interval = setInterval(() => {
-      setLiveData(prev => prev.map(item => ({
-        ...item,
-        value: Math.max(20, Math.min(100, item.value + (Math.random() - 0.5) * 10)),
-      })));
-    }, 2000);
-    
-    return () => clearInterval(interval);
+    const fetchData = async () => {
+      try {
+        const res = await fetch('/api/v1/dashboard/overview', {
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('token') || ''}` }
+        });
+        const contentType = res.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          throw new Error(`Expected JSON but received: ${contentType}`);
+        }
+        const data = await res.json();
+        if (data.alerts && data.alerts.length > 0) {
+          setIntelData(data.alerts.slice(0, 4).map((a: any, i: number) => ({
+            id: a.id,
+            location: a.company || 'Невідомо',
+            level: a.severity === 'critical' ? 'ВИСОКА' : a.severity === 'warning' ? 'СЕРЕДНЯ' : 'НИЗЬКА',
+            time: new Date(a.timestamp).toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })
+          })));
+        }
+        if (data.top_risk_companies) {
+          setTopRisks(data.top_risk_companies);
+        }
+      } catch (err) {
+        console.error('Помилка завантаження даних дашборду', err);
+      }
+    };
+    fetchData();
+  }, []);
+  
+  // TODO: Implement WebSocket or polling to fetch live system metrics
+  useEffect(() => {
+    // Empty for now, waiting for real API to provide live active metric data
   }, []);
   
   if (isPanelCollapsed.right) {
@@ -75,7 +96,7 @@ export default function RightPanel() {
         </h2>
         <div className="flex items-center gap-2 mt-1">
           <div className="text-xs text-cyber-neon/50 font-mono">
-            LIVE INTERCEPTOR
+            ЖИВИЙ ПЕРЕХОПЛЮВАЧ
           </div>
           <div className="w-2 h-2 bg-cyber-green rounded-full animate-pulse" />
         </div>
@@ -161,7 +182,7 @@ export default function RightPanel() {
           РОЗВІДКА
         </h3>
         <div className="space-y-2">
-          {MOCK_INTEL.map((intel) => (
+          {intelData.map((intel) => (
             <motion.div
               key={intel.id}
               initial={{ opacity: 0, x: 20 }}
@@ -170,12 +191,12 @@ export default function RightPanel() {
             >
               <MapPin className="w-3 h-3 text-cyber-neon" />
               <div className="flex-1">
-                <div className="text-xs text-gray-300">{intel.location}</div>
+                <div className="text-xs text-gray-300 truncate w-32" title={intel.location}>{intel.location}</div>
                 <div className="text-xs text-cyber-neon/50 font-mono">{intel.time}</div>
               </div>
               <div className={`text-xs font-mono ${
-                intel.level === 'HIGH' ? 'text-cyber-red' :
-                intel.level === 'MEDIUM' ? 'text-cyber-gold' :
+                intel.level === 'ВИСОКА' ? 'text-cyber-red' :
+                intel.level === 'СЕРЕДНЯ' ? 'text-cyber-gold' :
                 'text-cyber-green'
               }`}>
                 {intel.level}
@@ -185,6 +206,12 @@ export default function RightPanel() {
         </div>
       </div>
       
+      {/* Advanced Analytics Widgets */}
+      <div className="p-4 border-b border-cyber-border overflow-y-auto custom-scrollbar">
+         <RiskDistributionChart />
+         <AnomalyTimelineChart />
+      </div>
+
       {/* Stylized Map */}
       <div className="p-4 flex-1 flex flex-col">
         <h3 className="text-cyber-neon/70 text-xs font-cyber tracking-wider mb-3">
@@ -227,13 +254,13 @@ export default function RightPanel() {
           />
           
           {/* Location Pins */}
-          {MOCK_INTEL.map((intel, index) => (
+          {intelData.map((intel, index) => (
             <motion.div
-              key={intel.id}
+              key={`pin-${intel.id}-${index}`}
               className="absolute"
               style={{
-                top: `${20 + index * 30}%`,
-                left: `${30 + index * 15}%`,
+                top: `${20 + (index * 20) % 60}%`,
+                left: `${30 + (index * 25) % 50}%`,
               }}
               animate={{
                 y: [0, -5, 0],
@@ -245,8 +272,8 @@ export default function RightPanel() {
               }}
             >
               <MapPin className={`w-4 h-4 ${
-                intel.level === 'HIGH' ? 'text-cyber-red' :
-                intel.level === 'MEDIUM' ? 'text-cyber-gold' :
+                intel.level === 'ВИСОКА' ? 'text-cyber-red' :
+                intel.level === 'СЕРЕДНЯ' ? 'text-cyber-gold' :
                 'text-cyber-green'
               }`} />
             </motion.div>
@@ -254,7 +281,7 @@ export default function RightPanel() {
           
           {/* Status */}
           <div className="absolute bottom-2 left-2 text-xs text-cyber-neon/50 font-mono">
-            SCANNING: ACTIVE
+            СКАНУВАННЯ: АКТИВНЕ
           </div>
         </div>
       </div>

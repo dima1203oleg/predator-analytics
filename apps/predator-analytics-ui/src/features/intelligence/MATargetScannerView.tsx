@@ -8,6 +8,7 @@
  * Sovereign Power Design · Classified · Tier-1
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { intelligence } from '@/services/dataService';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -201,10 +202,10 @@ const MATargetScannerView: React.FC = () => {
                     {targets.length}_ACTIVE_ASSETS
                   </span>
                 </div>
-                <button className="px-14 py-6 bg-yellow-500 text-black text-[12px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all rounded-[2rem] shadow-4xl flex items-center gap-4 italic font-bold">
+                <Button variant="cyber" className="px-14 py-6 bg-yellow-500 text-black text-[12px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all rounded-[2rem] shadow-4xl flex items-center gap-4 italic font-bold">
                   <Download size={22} />
                   ACQUISITION_PACK_ELITE
-                </button>
+                </Button>
               </div>
             }
           />
@@ -251,7 +252,7 @@ const MATargetScannerView: React.FC = () => {
                 </div>
                 <div className="flex gap-2 bg-black border-2 border-white/5 p-2 rounded-2xl shadow-inner">
                   {([['all', 'УСІ_ВЕКТОРИ'], ['distress', 'СТРЕС'], ['opportunity', 'НАГОДА'], ['watch', 'НАГЛЯД']] as const).map(([v, l]) => (
-                    <button
+                    <Button variant="cyber"
                       key={v}
                       onClick={() => setFilterStatus(v)}
                       className={cn(
@@ -260,7 +261,7 @@ const MATargetScannerView: React.FC = () => {
                       )}
                     >
                       {l}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </div>
@@ -283,12 +284,12 @@ const MATargetScannerView: React.FC = () => {
                         <p className="text-white font-black uppercase italic tracking-widest">{error}</p>
                         <p className="text-[10px] text-slate-500 uppercase font-bold tracking-[0.3em]">Truth Protocol: Відображення мок-даних заблоковано.</p>
                       </div>
-                      <button 
+                      <Button variant="cyber" 
                         onClick={() => window.location.reload()}
                         className="px-8 py-3 bg-amber-500/10 border border-amber-500/40 text-amber-500 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-amber-500 hover:text-black transition-all"
                       >
                         ПЕРЕЗАПУСТИТИ_СКАН
-                      </button>
+                      </Button>
                    </div>
                 )}
 
@@ -358,12 +359,12 @@ const MATargetScannerView: React.FC = () => {
                            {STATUS_CFG[selectedTarget.status].label}
                         </div>
                         <div className="flex gap-3">
-                           <button className="p-4 bg-white/5 border border-white/10 rounded-2xl text-white hover:bg-yellow-500 hover:text-black transition-all shadow-xl">
+                           <Button variant="cyber" className="p-4 bg-white/5 border border-white/10 rounded-2xl text-white hover:bg-yellow-500 hover:text-black transition-all shadow-xl">
                               <Star size={20} />
-                           </button>
-                           <button className="p-4 bg-white/5 border border-white/10 rounded-2xl text-white hover:bg-yellow-500 hover:text-black transition-all shadow-xl">
+                           </Button>
+                           <Button variant="cyber" className="p-4 bg-white/5 border border-white/10 rounded-2xl text-white hover:bg-yellow-500 hover:text-black transition-all shadow-xl">
                               <Share2 size={20} />
-                           </button>
+                           </Button>
                         </div>
                       </div>
                       <h2 className="text-4xl font-black text-white italic tracking-tighter uppercase leading-none">{selectedTarget.name}</h2>
@@ -412,10 +413,10 @@ const MATargetScannerView: React.FC = () => {
                        <p className="text-xs text-slate-300 italic font-medium uppercase leading-relaxed border-l-2 border-yellow-500/20 pl-6">{selectedTarget.assets}</p>
                     </div>
 
-                    <button className="w-full py-7 bg-yellow-600 hover:bg-yellow-500 text-black rounded-[2.5rem] text-[12px] font-black uppercase tracking-[0.5em] italic shadow-4xl transition-all relative overflow-hidden group/btn">
+                    <Button variant="cyber" className="w-full py-7 bg-yellow-600 hover:bg-yellow-500 text-black rounded-[2.5rem] text-[12px] font-black uppercase tracking-[0.5em] italic shadow-4xl transition-all relative overflow-hidden group/btn">
                        <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover/btn:translate-x-[100%] transition-transform duration-1000" />
                        CONTACT_ALPHA_ADVISOR
-                    </button>
+                    </Button>
                   </motion.div>
                 ) : (
                   <div className="h-full flex flex-col items-center justify-center p-20 opacity-20 transform translate-y-20">

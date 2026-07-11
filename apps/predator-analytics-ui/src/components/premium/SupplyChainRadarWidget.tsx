@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Radio, AlertCircle, TrendingUp, Zap, Globe, Crosshair, Target, Info } from 'lucide-react';
@@ -131,16 +132,16 @@ export const SupplyChainRadarWidget: React.FC<{ persona: string }> = ({ persona 
                        )}>
                          {premiumLocales.supplyChainRadar.pingTypes.tactical} {activePing.type === 'risk' ? premiumLocales.supplyChainRadar.pingTypes.risk : activePing.type === 'opportunity' ? premiumLocales.supplyChainRadar.pingTypes.opportunity : premiumLocales.supplyChainRadar.pingTypes.anomaly}
                        </span>
-                       <button aria-label="Закрити опис" onClick={() => setActivePing(null)} className="text-slate-500 hover:text-white">
+                       <Button variant="cyber" aria-label="Закрити опис" onClick={() => setActivePing(null)} className="text-slate-500 hover:text-white">
                           <AlertCircle size={14} />
-                       </button>
+                       </Button>
                     </div>
                     <div className="text-sm font-black text-white mb-1">{activePing.label}</div>
                     <div className="text-[10px] text-emerald-400 font-mono mb-3">{activePing.value}</div>
                     <p className="text-[10px] text-slate-400 leading-relaxed mb-4">{activePing.details}</p>
-                    <button className="w-full py-2 bg-white/5 border border-white/10 rounded-xl text-[9px] font-black uppercase tracking-widest text-white hover:bg-white/10 transition-all">
+                    <Button variant="cyber" className="w-full py-2 bg-white/5 border border-white/10 rounded-xl text-[9px] font-black uppercase tracking-widest text-white hover:bg-white/10 transition-all">
                        {premiumLocales.supplyChainRadar.exploreNode}
-                    </button>
+                    </Button>
                  </motion.div>
                )}
             </AnimatePresence>

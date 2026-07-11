@@ -3,6 +3,7 @@
  * Perspective tilt від mouse position, animated gradient border
  * Backward-compatible з TacticalCard (title, metrics, actions, тощо)
  */
+import { Button } from '@/components/ui/button';
 import React, { useRef, useState } from 'react';
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from 'framer-motion';
 import { cn } from '@/utils/cn';
@@ -167,7 +168,8 @@ export const HoloCard: React.FC<HoloCardProps> = ({
       }}
       className={cn(
         'relative overflow-hidden transition-all duration-500',
-        'bg-[rgba(15,15,17,0.97)] border border-white/[0.06] rounded-[3rem]',
+        'bg-[rgba(10,10,12,0.85)] backdrop-blur-xl border border-white/[0.04] rounded-[2rem]',
+        'shadow-[inset_0_1px_1px_rgba(255,255,255,0.05),0_8px_32px_rgba(0,0,0,0.4)]',
         elite && 'hover:scale-[1.01] hover:border-white/20',
         onClick && 'cursor-pointer',
         className
@@ -178,26 +180,28 @@ export const HoloCard: React.FC<HoloCardProps> = ({
     >
       {/* Procedural glow edge — animated gradient border */}
       <motion.div
-        className="absolute inset-0 rounded-xl opacity-0 pointer-events-none"
+        className="absolute inset-0 rounded-[2rem] opacity-0 pointer-events-none transition-opacity duration-1000"
         style={{
-          background: `conic-gradient(from 0deg, transparent 0deg, transparent 300deg, ${glowColor || (variant === 'gold' ? 'rgba(201,162,39,0.4)' : variant === 'rose' ? 'rgba(225,29,72,0.4)' : 'rgba(138,138,138,0.4)')} 360deg)`,
+          background: `conic-gradient(from 0deg, transparent 0deg, transparent 300deg, ${glowColor || 'rgba(255,255,255,0.1)'} 360deg)`,
         }}
         animate={{
-          opacity: isHovered && glow ? 1 : 0,
+          opacity: isHovered && glow ? 0.5 : 0,
           rotate: isHovered ? 360 : 0,
         }}
         transition={{
-          opacity: { duration: 0.2 },
-          rotate: { duration: 3, repeat: Infinity, ease: 'linear' },
+          opacity: { duration: 0.5 },
+          rotate: { duration: 4, repeat: Infinity, ease: 'linear' },
         }}
       />
+      {/* Matte Noise Texture */}
+      <div className="absolute inset-0 opacity-[0.015] pointer-events-none bg-noise mix-blend-overlay" />
 
       {/* Background Effects (backward-compat) */}
       {(scanGrid || elite) && (
         <div className="absolute inset-0 cyber-scan-grid opacity-[0.03] pointer-events-none" />
       )}
       {elite && (
-        <div className="absolute -right-20 -top-20 w-80 h-80 bg-current opacity-[0.02] blur-[100px] rounded-full pointer-events-none group-hover:opacity-[0.05] transition-opacity duration-1000" />
+        <div className="absolute -right-20 -top-20 w-80 h-80 bg-current opacity-[0.01] blur-[80px] rounded-full pointer-events-none group-hover:opacity-[0.03] transition-opacity duration-1000" />
       )}
 
       {/* HUD Accent Line */}
@@ -304,7 +308,7 @@ export const HoloCard: React.FC<HoloCardProps> = ({
               {actions && actions.length > 0 && (
                 <div className="flex gap-4 justify-end pt-8 border-t border-white/5">
                   {actions.map((act, idx) => (
-                    <button
+                    <Button variant="cyber"
                       key={idx}
                       onClick={act.onClick}
                       className={cn(
@@ -316,7 +320,7 @@ export const HoloCard: React.FC<HoloCardProps> = ({
                     >
                       {act.icon && <span className="group-hover/act:scale-110 transition-transform">{act.icon}</span>}
                       {act.label}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               )}
@@ -327,9 +331,9 @@ export const HoloCard: React.FC<HoloCardProps> = ({
 
       {/* Inner shadow for depth */}
       <div
-        className="absolute inset-0 rounded-xl pointer-events-none"
+        className="absolute inset-0 rounded-[2rem] pointer-events-none"
         style={{
-          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.03), inset 0 -1px 0 rgba(0,0,0,0.3)',
+          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.02)',
         }}
       />
     </MotionComponent>

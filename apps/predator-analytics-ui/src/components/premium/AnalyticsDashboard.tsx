@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { HoloCard } from '@/components/ui/HoloCard';
 /**
  * Аналітичний Дашборд Predator v61.0-ELITE | Neural Analytics Matrix
@@ -216,8 +217,8 @@ const NeuralChart: React.FC<{
             </div>
           </div>
           <div className="flex gap-2">
-            <button className="p-2 bg-white/5 rounded-lg text-slate-500 hover:text-white transition-colors"><Maximize2 size={14} /></button>
-            <button className="p-2 bg-white/5 rounded-lg text-slate-500 hover:text-white transition-colors"><Share2 size={14} /></button>
+            <Button variant="cyber" className="p-2 bg-white/5 rounded-lg text-slate-500 hover:text-white transition-colors"><Maximize2 size={14} /></Button>
+            <Button variant="cyber" className="p-2 bg-white/5 rounded-lg text-slate-500 hover:text-white transition-colors"><Share2 size={14} /></Button>
           </div>
         </div>
         <div className="h-[250px] relative group">

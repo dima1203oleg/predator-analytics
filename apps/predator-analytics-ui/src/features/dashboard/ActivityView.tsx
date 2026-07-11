@@ -3,6 +3,7 @@
  * Хронологічна матриця всіх системних маневрів та нейронних зсувів.
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useViewport } from '@/hooks/useViewport';
@@ -215,18 +216,18 @@ const ActivityView: React.FC = () => {
             { label: 'AI_ВТ УЧАННЯ', value: String(events.filter(e => e.type === 'ai').length), color: 'primary', icon: <Bot size={14} /> }
           ]}
           actions={
-            <button
+            <Button variant="cyber"
               onClick={() => { play(UISoundType.CLICK); window.location.reload(); }}
               className="px-8 py-3 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hover:text-white hover:bg-white/10 transition-all flex items-center gap-3"
             >
               <RefreshCw size={16} /> ОНОВИТИ_ДАНІ
-            </button>
+            </Button>
           }
         />
 
         {/* Global Filters */}
         <div className="flex flex-wrap items-center gap-3 p-1.5 bg-slate-900/40  rounded-[28px] border border-white/5 w-fit">
-          <button
+          <Button variant="cyber"
             onClick={() => { play(UISoundType.CLICK); setActiveFilter('all'); }}
             className={cn(
               "px-6 py-3 rounded-[22px] text-[10px] font-black tracking-widest uppercase transition-all",
@@ -234,13 +235,13 @@ const ActivityView: React.FC = () => {
             )}
           >
             УСІ_ПОДІЇ
-          </button>
+          </Button>
           <div className="w-px h-8 bg-white/10 mx-1" />
           {(Object.keys(EVENT_TYPE_CONFIG) as EventType[]).map((type) => {
             const config = EVENT_TYPE_CONFIG[type];
             const Icon = config.icon;
             return (
-              <button
+              <Button variant="cyber"
                 key={type}
                 onClick={() => { play(UISoundType.CLICK); setActiveFilter(type); }}
                 className={cn(
@@ -252,7 +253,7 @@ const ActivityView: React.FC = () => {
               >
                 <Icon size={14} />
                 {config.label}
-              </button>
+              </Button>
             );
           })}
         </div>

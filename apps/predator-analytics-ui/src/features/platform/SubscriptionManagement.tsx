@@ -5,6 +5,7 @@
  * Billing, upgrade, downgrade
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -228,7 +229,7 @@ const PlanCard: React.FC<{ plan: Plan; onSelect: () => void }> = ({ plan, onSele
         ))}
       </div>
 
-      <button
+      <Button variant="cyber"
         onClick={onSelect}
         disabled={plan.current}
         className={`
@@ -239,7 +240,7 @@ const PlanCard: React.FC<{ plan: Plan; onSelect: () => void }> = ({ plan, onSele
         `}
       >
         {plan.current ? 'Поточний план' : plan.price > 299 ? 'Upgrade' : 'Обрати план'}
-      </button>
+      </Button>
     </motion.div>
   );
 };
@@ -321,7 +322,7 @@ const SubscriptionManagement: React.FC = () => {
             { id: 'usage', label: 'Використання', icon: BarChart3 },
             { id: 'billing', label: 'Платежі', icon: CreditCard },
           ].map((tab) => (
-            <button
+            <Button variant="cyber"
               key={tab.id}
               onClick={() => setActiveTab(tab.id as typeof activeTab)}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm transition-colors ${
@@ -330,7 +331,7 @@ const SubscriptionManagement: React.FC = () => {
             >
               <tab.icon size={16} />
               {tab.label}
-            </button>
+            </Button>
           ))}
         </div>
 
@@ -388,9 +389,9 @@ const SubscriptionManagement: React.FC = () => {
                   <p className="font-bold text-white">Visa •••• 4242</p>
                   <p className="text-sm text-slate-500">Термін дії: 12/28</p>
                 </div>
-                <button className="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl text-sm">
+                <Button variant="cyber" className="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl text-sm">
                   Змінити
-                </button>
+                </Button>
               </div>
             </div>
 
@@ -408,9 +409,9 @@ const SubscriptionManagement: React.FC = () => {
                       <p className="text-xs text-slate-500">{new Date(invoice.date).toLocaleDateString('uk')}</p>
                     </div>
                     <span className="font-bold text-white">${invoice.amount}</span>
-                    <button className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white" title="Завантажити">
+                    <Button variant="cyber" className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white" title="Завантажити">
                       <Download size={16} />
-                    </button>
+                    </Button>
                   </div>
                 ))}
               </div>
@@ -428,9 +429,9 @@ const SubscriptionManagement: React.FC = () => {
               <h3 className="font-bold text-white text-lg">Upgrade зараз та отримай 20% знижку!</h3>
               <p className="text-sm text-amber-400/80">Пропозиція діє до кінця місяця</p>
             </div>
-            <button className="px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-black font-bold rounded-xl">
+            <Button variant="cyber" className="px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-black font-bold rounded-xl">
               Upgrade Now
-            </button>
+            </Button>
           </div>
         </div>
       </div>

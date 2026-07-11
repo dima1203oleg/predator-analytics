@@ -77,8 +77,17 @@ class SovereignGuardian:
     async def trigger_sync(self):
         """Синхронізація з Colab."""
         logger.info("📡 Guardian: Starting data sync...")
+        import os
+        script_path = os.getenv("SYNC_SCRIPT_PATH", "/app/deploy/scripts/push_to_colab_sync.sh")
+        if not os.path.exists(script_path):
+            script_path = "/Users/Shared/Predator_60/deploy/scripts/push_to_colab_sync.sh"
+            
+        if not os.path.exists(script_path):
+            logger.warning(f"⚠️ Guardian: Sync script not found at {script_path}")
+            return
+
         try:
-            result = subprocess.run(["bash", "/Users/Shared/Predator_60/deploy/scripts/push_to_colab_sync.sh"], capture_output=True, text=True)
+            result = subprocess.run(["bash", script_path], capture_output=True, text=True)
             if result.returncode == 0:
                 logger.info("✅ Guardian: Data sync successful.")
             else:

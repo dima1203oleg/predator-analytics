@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from '@/components/ui/button';
 import * as React from "react";
 import { cn } from "../../utils/cn";
 
@@ -55,7 +56,7 @@ const DropdownMenuTrigger = React.forwardRef<HTMLButtonElement, React.ButtonHTML
     }
 
     return (
-        <button
+        <Button variant="cyber"
             ref={ref}
             onClick={(e) => {
                 context?.toggle();
@@ -65,7 +66,7 @@ const DropdownMenuTrigger = React.forwardRef<HTMLButtonElement, React.ButtonHTML
             {...props}
         >
             {children}
-        </button>
+        </Button>
     );
 });
 DropdownMenuTrigger.displayName = "DropdownMenuTrigger";

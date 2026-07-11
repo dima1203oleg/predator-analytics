@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { LucideIcon } from 'lucide-react';
 import { useUISound, UISoundType } from '../hooks/useUISound';
@@ -60,7 +61,7 @@ export const EnhancedButton: React.FC<EnhancedButtonProps> = ({
     };
 
     return (
-        <button
+        <Button variant="cyber"
             onClick={handleClick}
             onMouseEnter={() => !disabled && !loading && play(UISoundType.HOVER)}
             disabled={disabled || loading}
@@ -89,6 +90,6 @@ export const EnhancedButton: React.FC<EnhancedButtonProps> = ({
             {Icon && !loading && <Icon size={size === 'sm' ? 14 : size === 'lg' ? 20 : 16} />}
 
             {children && <span className="relative z-10">{children}</span>}
-        </button>
+        </Button>
     );
 };

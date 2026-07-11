@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { RiskLevelValue } from '@/types/intelligence';
@@ -111,11 +112,11 @@ const NeuralGraph = ({ color }: { color: string }) => (
     
     <div className="relative h-full flex flex-col items-center justify-center gap-6">
        <div className="relative">
-          <div className="absolute inset-0 bg-rose-500/20 blur-3xl rounded-full scale-150 " />
-          <Radar size={56} className="text-rose-500 relative z-10 animate-spin-slow" style={{ animationDuration: '10s' }} />
+          <div className="absolute inset-0 bg-cyan-500/20 blur-3xl rounded-full scale-150 " />
+          <Radar size={56} className="text-cyan-500 relative z-10 animate-spin-slow" style={{ animationDuration: '10s' }} />
        </div>
        <div className="flex flex-col items-center gap-2">
-          <p className="text-[10px] font-black uppercase tracking-[0.5em] text-rose-500 glint-elite">НЕЙ ОННЕ_МА Ш УТУВАННЯ_АКТИВНЕ</p>
+          <p className="text-[10px] font-black uppercase tracking-[0.5em] text-cyan-500 glint-elite">НЕЙ ОННЕ_МА Ш УТУВАННЯ_АКТИВНЕ</p>
           <p className="text-[8px] font-black uppercase tracking-[0.3em] text-white/20 italic">V61.0_SOVEREIGN_NODE_READY</p>
        </div>
     </div>
@@ -172,19 +173,19 @@ const AIInsightsHub: React.FC<{ isWidgetMode?: boolean }> = ({ isWidgetMode = fa
 
   if (isWidgetMode) {
     return (
-      <div className="flex flex-col h-full bg-black/80  border-2 border-rose-500/20 overflow-hidden rounded-[3rem] shadow-4xl relative group">
+      <div className="flex flex-col h-full bg-black/80  border-2 border-cyan-500/20 overflow-hidden rounded-[3rem] shadow-4xl relative group">
         <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
-        <div className="p-8 border-b border-rose-500/10 flex items-center justify-between relative z-10">
+        <div className="p-8 border-b border-cyan-500/10 flex items-center justify-between relative z-10">
           <div className="flex items-center gap-4">
-            <Brain size={20} className="text-rose-500 glint-elite" />
-            <span className="text-[11px] font-black uppercase tracking-[0.4em] text-rose-500 italic">АНАЛІТИЧНИЙ_О АКУЛ</span>
+            <Brain size={20} className="text-cyan-500 glint-elite" />
+            <span className="text-[11px] font-black uppercase tracking-[0.4em] text-cyan-500 italic">АНАЛІТИЧНИЙ_О АКУЛ</span>
           </div>
-          <div className="w-2 h-2 rounded-full bg-rose-500  " />
+          <div className="w-2 h-2 rounded-full bg-cyan-500  " />
         </div>
         <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-5 relative z-10">
           {loading ? (
             <div className="flex flex-col items-center justify-center py-24 gap-6 opacity-30">
-              <RefreshCw size={32} className="animate-spin text-rose-500" />
+              <RefreshCw size={32} className="animate-spin text-cyan-500" />
               <span className="text-[10px] font-black uppercase tracking-[0.5em] italic">СИНХРОНІЗАЦІЯ_ЯД А_L7...</span>
             </div>
           ) : filtered.map((insight: any, idx: number) => (
@@ -194,7 +195,7 @@ const AIInsightsHub: React.FC<{ isWidgetMode?: boolean }> = ({ isWidgetMode = fa
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: idx * 0.05 }}
               onClick={() => openDetail(insight.id)}
-              className="p-6 border-2 border-white/5 hover:border-rose-500/40 bg-white/[0.02] hover:bg-rose-500/5 transition-all duration-700 cursor-pointer group/item rounded-[2rem] relative overflow-hidden shadow-xl"
+              className="p-6 border-2 border-white/5 hover:border-cyan-500/40 bg-white/[0.02] hover:bg-cyan-500/5 transition-all duration-700 cursor-pointer group/item rounded-[2rem] relative overflow-hidden shadow-xl"
             >
               <div className="flex items-center justify-between mb-4">
                 <span className="text-[9px] font-black uppercase tracking-[0.3em] italic" style={{ color: TYPE_CONFIG[insight.type]?.color || '#e11d48' }}>
@@ -223,14 +224,14 @@ const AIInsightsHub: React.FC<{ isWidgetMode?: boolean }> = ({ isWidgetMode = fa
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="fixed inset-0 z-[100] flex items-center justify-center p-8 sm:p-24 bg-black/95 "
           >
-            <div className="w-full max-w-7xl h-full max-h-[1000px] bg-[#050202] border-2 border-rose-500/30 rounded-[4rem] relative overflow-hidden flex flex-col shadow-4xl">
+            <div className="w-full max-w-7xl h-full max-h-[1000px] bg-[#050202] border-2 border-cyan-500/30 rounded-[4rem] relative overflow-hidden flex flex-col shadow-4xl">
                <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
                <HUDCorners color={TYPE_CONFIG[selectedInsight.type]?.color || '#e11d48'} />
                
-               <div className="p-12 border-b-2 border-rose-500/10 flex items-center justify-between relative z-10">
+               <div className="p-12 border-b-2 border-cyan-500/10 flex items-center justify-between relative z-10">
                   <div className="flex items-center gap-10">
-                     <div className="p-8 bg-rose-500/10 border-2 border-rose-500/20 rounded-[2.5rem] shadow-2xl relative group/icon">
-                        <div className="absolute inset-0 bg-rose-500/20 blur-2xl rounded-full scale-0 group-hover/icon:scale-150 transition-transform duration-1000 opacity-0 group-hover/icon:opacity-100" />
+                     <div className="p-8 bg-cyan-500/10 border-2 border-cyan-500/20 rounded-[2.5rem] shadow-2xl relative group/icon">
+                        <div className="absolute inset-0 bg-cyan-500/20 blur-2xl rounded-full scale-0 group-hover/icon:scale-150 transition-transform duration-1000 opacity-0 group-hover/icon:opacity-100" />
                         {React.createElement(TYPE_CONFIG[selectedInsight.type]?.icon || Brain, { size: 40, className: "relative z-10 glint-elite", style: { color: TYPE_CONFIG[selectedInsight.type]?.color || '#e11d48' } })}
                      </div>
                      <div className="space-y-2">
@@ -238,57 +239,57 @@ const AIInsightsHub: React.FC<{ isWidgetMode?: boolean }> = ({ isWidgetMode = fa
                            <span className="text-[11px] font-black uppercase tracking-[0.4em] italic" style={{ color: TYPE_CONFIG[selectedInsight.type]?.color || '#e11d48' }}>
                               {TYPE_CONFIG[selectedInsight.type]?.label || selectedInsight.type} // ІНСАЙТ_ЯД А
                            </span>
-                           <div className="w-1.5 h-1.5 rounded-full bg-rose-500 " />
+                           <div className="w-1.5 h-1.5 rounded-full bg-cyan-500 " />
                         </div>
                         <h2 className="text-5xl font-black text-white italic tracking-tighter uppercase glint-elite">{selectedInsight.title}</h2>
                      </div>
                   </div>
-                  <button onClick={() => setShowDetail(false)} className="p-8 bg-white/5 hover:bg-rose-500/20 rounded-[2rem] transition-all duration-700 group border-2 border-white/5 hover:border-rose-500/40">
+                  <Button variant="cyber" onClick={() => setShowDetail(false)} className="p-8 bg-white/5 hover:bg-cyan-500/20 rounded-[2rem] transition-all duration-700 group border-2 border-white/5 hover:border-cyan-500/40">
                      <X size={32} className="group-hover:rotate-90 transition-transform duration-700" />
-                  </button>
+                  </Button>
                </div>
 
                <div className="flex-1 overflow-y-auto p-16 custom-scrollbar grid grid-cols-12 gap-16 relative z-10">
                   <div className="col-span-8 space-y-16">
                     <section className="p-12 glass-wraith border-2 border-white/5 rounded-[4rem] text-2xl text-white/80 leading-relaxed italic font-black tracking-tight relative overflow-hidden group shadow-inner">
-                      <div className="absolute top-4 left-6 text-[10px] font-black text-rose-500/30 uppercase tracking-[0.6em]">ТЕКСТ_ІНСАЙТУ_L7</div>
+                      <div className="absolute top-4 left-6 text-[10px] font-black text-cyan-500/30 uppercase tracking-[0.6em]">ТЕКСТ_ІНСАЙТУ_L7</div>
                       <div className="relative z-10">{selectedInsight.description}</div>
                     </section>
                     <div className="grid grid-cols-2 gap-12">
                        <NeuralGraph color={TYPE_CONFIG[selectedInsight.type]?.color || '#e11d48'} />
                        <div className="p-12 glass-wraith border-2 border-white/5 rounded-[3rem] shadow-4xl relative overflow-hidden group">
-                          <div className="absolute top-4 left-6 text-[10px] font-black text-rose-500/30 uppercase tracking-[0.6em] italic">Т ЕНД_ВПЕВНЕНОСТІ_МОДЕЛІ</div>
+                          <div className="absolute top-4 left-6 text-[10px] font-black text-cyan-500/30 uppercase tracking-[0.6em] italic">Т ЕНД_ВПЕВНЕНОСТІ_МОДЕЛІ</div>
                           <ConfidenceTrend color={TYPE_CONFIG[selectedInsight.type]?.color || '#e11d48'} />
                        </div>
                     </div>
                   </div>
                   <div className="col-span-4 space-y-10">
-                     <div className="p-12 bg-rose-600/5 border-2 border-rose-500/20 rounded-[4rem] text-center space-y-6 shadow-4xl relative overflow-hidden group">
+                     <div className="p-12 bg-cyan-600/5 border-2 border-cyan-500/20 rounded-[4rem] text-center space-y-6 shadow-4xl relative overflow-hidden group">
                         <div className="absolute inset-0 bg-cyber-grid opacity-[0.05] pointer-events-none" />
-                        <p className="text-[12px] font-black text-rose-500 uppercase tracking-[0.6em] italic">СТРАТЕГІЧНИЙ_ВПЛИВ</p>
+                        <p className="text-[12px] font-black text-cyan-500 uppercase tracking-[0.6em] italic">СТРАТЕГІЧНИЙ_ВПЛИВ</p>
                         <p className="text-7xl font-black text-white italic glint-elite">{selectedInsight.impact || 'Н/Д'}</p>
-                        <div className="h-[2px] w-32 bg-rose-500/40 mx-auto rounded-full" />
+                        <div className="h-[2px] w-32 bg-cyan-500/40 mx-auto rounded-full" />
                         <p className="text-[10px] font-black text-white/20 uppercase tracking-[0.3em] italic">ОЦІНКА_LEAD_ARCHITECT</p>
                      </div>
                      <div className="p-10 glass-wraith border-2 border-white/5 rounded-[3rem] font-mono text-[11px] text-emerald-500/60 space-y-3 shadow-inner">
-                        <p className="text-rose-500/40 font-black italic mb-4 uppercase tracking-widest border-b border-rose-500/10 pb-2">ЛОГ_СИНТЕЗУ_ЯД А:</p>
+                        <p className="text-cyan-500/40 font-black italic mb-4 uppercase tracking-widest border-b border-cyan-500/10 pb-2">ЛОГ_СИНТЕЗУ_ЯД А:</p>
                         <p className="flex items-center gap-3">&gt; <span className="text-emerald-500">ІНІЦІАЛІЗАЦІЯ_ОБХОДУ_ГРАФА..._УСПІШНО</span></p>
                         <p className="flex items-center gap-3">&gt; <span className="text-emerald-500">ВЕ ИФІКАЦІЯ_ГІПОТЕЗИ_0x9F43..._П ОЙДЕНО</span></p>
                         <p className="flex items-center gap-3">&gt; <span className="text-emerald-500">СТАТУС: ГОТОВО_ДО_ ІШЕННЯ_L7</span></p>
-                        <p className="flex items-center gap-3 ">&gt; <span className="text-rose-500/40">ОЧІКУВАННЯ_ПІДТВЕ ДЖЕННЯ_СУВЕ ЕНУ...</span></p>
+                        <p className="flex items-center gap-3 ">&gt; <span className="text-cyan-500/40">ОЧІКУВАННЯ_ПІДТВЕ ДЖЕННЯ_СУВЕ ЕНУ...</span></p>
                      </div>
                   </div>
                </div>
 
-               <div className="p-12 border-t-2 border-rose-500/10 flex items-center justify-between relative z-10 bg-black/40">
+               <div className="p-12 border-t-2 border-cyan-500/10 flex items-center justify-between relative z-10 bg-black/40">
                   <div className="flex items-center gap-8 text-[11px] font-black font-mono text-white/20 tracking-[0.4em] uppercase italic">
                      <span>ID_Т АКЦІЇ: {selectedInsight.id.toUpperCase()}</span>
                      <span className="opacity-40">•</span>
                      <span>КЛАСИФІКАЦІЯ: {selectedInsight.category.toUpperCase()}</span>
                   </div>
                   <div className="flex gap-6">
-                     <button className="px-10 py-5 bg-white/5 border-2 border-white/5 rounded-[1.5rem] text-[11px] font-black uppercase tracking-[0.3em] italic hover:bg-white/10 transition-all">ЗБЕ ЕГТИ_В_А ХІВ</button>
-                     <button className="px-12 py-5 bg-rose-600 text-white rounded-[1.5rem] text-[11px] font-black uppercase tracking-[0.4em] italic shadow-4xl hover:bg-rose-500 transition-all border-2 border-rose-400/50">ВП ОВАДИТИ_ ІШЕННЯ</button>
+                     <Button variant="cyber" className="px-10 py-5 bg-white/5 border-2 border-white/5 rounded-[1.5rem] text-[11px] font-black uppercase tracking-[0.3em] italic hover:bg-white/10 transition-all">ЗБЕ ЕГТИ_В_А ХІВ</Button>
+                     <Button variant="cyber" className="px-12 py-5 bg-cyan-600 text-white rounded-[1.5rem] text-[11px] font-black uppercase tracking-[0.4em] italic shadow-4xl hover:bg-cyan-500 transition-all border-2 border-cyan-400/50">ВП ОВАДИТИ_ ІШЕННЯ</Button>
                   </div>
                </div>
             </div>
@@ -299,43 +300,43 @@ const AIInsightsHub: React.FC<{ isWidgetMode?: boolean }> = ({ isWidgetMode = fa
       <div className="relative z-10 max-w-[1800px] mx-auto p-16 space-y-20">
         {/* Header */}
         <div className="flex flex-col lg:flex-row items-center justify-between gap-12 relative">
-          <div className="flex items-center gap-12 border-l-4 border-rose-600 pl-12 py-4">
+          <div className="flex items-center gap-12 border-l-4 border-cyan-600 pl-12 py-4">
             <div className="relative group">
-              <div className="absolute inset-0 bg-rose-600/20 blur-[60px] rounded-full scale-150 " />
-              <div className="relative p-10 bg-black/60  border-2 border-rose-500/40 rounded-[3rem] shadow-4xl transform -rotate-3 group-hover:rotate-0 transition-all duration-700">
-                <Brain size={64} className="text-rose-500 " />
+              <div className="absolute inset-0 bg-cyan-600/20 blur-[60px] rounded-full scale-150 " />
+              <div className="relative p-10 bg-black/60  border-2 border-cyan-500/40 rounded-[3rem] shadow-4xl transform -rotate-3 group-hover:rotate-0 transition-all duration-700">
+                <Brain size={64} className="text-cyan-500 " />
               </div>
             </div>
             <div className="space-y-4">
               <div className="flex items-center gap-6">
-                <span className="px-5 py-1.5 bg-rose-600/10 border-2 border-rose-600/30 rounded-xl text-[11px] font-black text-rose-500 tracking-[0.5em] uppercase italic shadow-2xl">
+                <span className="px-5 py-1.5 bg-cyan-600/10 border-2 border-cyan-600/30 rounded-xl text-[11px] font-black text-cyan-500 tracking-[0.5em] uppercase italic shadow-2xl">
                    STRATEGIC_ORACLE_v61.0
                 </span>
-                <div className="h-[2px] w-16 bg-rose-500/40" />
+                <div className="h-[2px] w-16 bg-cyan-500/40" />
                 <span className="text-[11px] font-black text-white/30 uppercase tracking-[0.4em] italic font-mono">LEAD_ARCHITECT_ACTIVE_L7</span>
               </div>
-              <h1 className="text-8xl font-black text-white tracking-tighter uppercase italic leading-none glint-elite">АНАЛІТИЧНИЙ <span className="text-rose-500">О АКУЛ</span></h1>
-              <p className="text-[13px] text-white/40 font-black uppercase tracking-[0.6em] italic leading-none border-l-4 border-rose-900/50 pl-8">АВТОНОМНИЙ_СИНТЕЗ_ДЕ ЖАВНОЇ_СТРАТЕГІЇ_ТА_РИЗИКІВ</p>
+              <h1 className="text-8xl font-black text-white tracking-tighter uppercase italic leading-none glint-elite">АНАЛІТИЧНИЙ <span className="text-cyan-500">О АКУЛ</span></h1>
+              <p className="text-[13px] text-white/40 font-black uppercase tracking-[0.6em] italic leading-none border-l-4 border-cyan-900/50 pl-8">АВТОНОМНИЙ_СИНТЕЗ_ДЕ ЖАВНОЇ_СТРАТЕГІЇ_ТА_РИЗИКІВ</p>
             </div>
           </div>
 
           <div className="flex flex-col items-end gap-6">
-             <div className="flex items-center gap-6 p-4 bg-rose-500/5 border-2 border-rose-500/20 rounded-[2rem] shadow-4xl">
-                <div className="w-4 h-4 rounded-full bg-rose-600 animate-ping" />
+             <div className="flex items-center gap-6 p-4 bg-cyan-500/5 border-2 border-cyan-500/20 rounded-[2rem] shadow-4xl">
+                <div className="w-4 h-4 rounded-full bg-cyan-600 animate-ping" />
                 <div className="flex flex-col pr-6">
-                   <span className="text-[9px] font-black text-rose-500 uppercase tracking-widest italic leading-none mb-2">ПОТІК_СИНТЕЗУ</span>
+                   <span className="text-[9px] font-black text-cyan-500 uppercase tracking-widest italic leading-none mb-2">ПОТІК_СИНТЕЗУ</span>
                    <span className="text-lg font-black text-white uppercase italic tracking-tighter leading-none">АКТИВНИЙ_14.2_TFLOPS</span>
                 </div>
              </div>
-             <button 
+             <Button variant="cyber" 
                onClick={handleRefresh} 
                disabled={refreshing} 
-               className="group relative px-16 py-7 bg-black border-2 border-rose-500/40 text-rose-500 text-[12px] font-black uppercase tracking-[0.5em] rounded-[2rem] flex items-center gap-6 shadow-4xl hover:bg-rose-600 hover:text-white transition-all duration-700 italic overflow-hidden"
+               className="group relative px-16 py-7 bg-black border-2 border-cyan-500/40 text-cyan-500 text-[12px] font-black uppercase tracking-[0.5em] rounded-[2rem] flex items-center gap-6 shadow-4xl hover:bg-cyan-600 hover:text-white transition-all duration-700 italic overflow-hidden"
              >
                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
                <RefreshCw size={24} className={refreshing ? 'animate-spin' : 'group-hover:rotate-180 transition-transform duration-700'} /> 
                <span className="relative z-10">{refreshing ? 'СИНТЕЗУЄМО_ЗВ\'ЯЗКИ...' : 'ГЛИБОКИЙ_НЕЙ О-СКАН'}</span>
-             </button>
+             </Button>
           </div>
         </div>
 
@@ -347,16 +348,16 @@ const AIInsightsHub: React.FC<{ isWidgetMode?: boolean }> = ({ isWidgetMode = fa
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1, duration: 0.8 }}
-              className="p-12 glass-wraith border-2 border-white/5 rounded-[3.5rem] relative overflow-hidden group hover:border-rose-500/40 transition-all duration-1000 shadow-4xl"
+              className="p-12 glass-wraith border-2 border-white/5 rounded-[3.5rem] relative overflow-hidden group hover:border-cyan-500/40 transition-all duration-1000 shadow-4xl"
             >
               <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
               <div className="absolute top-6 right-10 opacity-5 group-hover:opacity-20 transition-opacity">
-                 <stat.icon size={64} className="text-rose-500" />
+                 <stat.icon size={64} className="text-cyan-500" />
               </div>
-              <p className="text-[11px] font-black text-white/20 uppercase italic tracking-[0.4em] mb-6 group-hover:text-rose-500/40 transition-colors">{stat.label}</p>
+              <p className="text-[11px] font-black text-white/20 uppercase italic tracking-[0.4em] mb-6 group-hover:text-cyan-500/40 transition-colors">{stat.label}</p>
               <h3 className="text-6xl font-black text-white italic tracking-tighter leading-none glint-elite">{stat.value}</h3>
-              <p className="text-[10px] font-black text-white/10 mt-8 uppercase tracking-[0.3em] font-bold italic group-hover:text-rose-500/60 transition-colors">{stat.sub}</p>
-              <div className="absolute bottom-6 right-10 w-12 h-[2px] bg-white/5 group-hover:bg-rose-500/60 transition-colors" />
+              <p className="text-[10px] font-black text-white/10 mt-8 uppercase tracking-[0.3em] font-bold italic group-hover:text-cyan-500/60 transition-colors">{stat.sub}</p>
+              <div className="absolute bottom-6 right-10 w-12 h-[2px] bg-white/5 group-hover:bg-cyan-500/60 transition-colors" />
             </motion.div>
           ))}
         </div>
@@ -366,20 +367,20 @@ const AIInsightsHub: React.FC<{ isWidgetMode?: boolean }> = ({ isWidgetMode = fa
           <div className="col-span-12 xl:col-span-8 space-y-12">
             <div className="flex items-center justify-between px-8">
                <h4 className="text-[13px] font-black text-white/30 uppercase tracking-[0.6em] italic flex items-center gap-6">
-                  <Terminal size={20} className="text-rose-600" /> ПОТІК_СТРАТЕГІЧНИХ_ВИСНОВКІВ
+                  <Terminal size={20} className="text-cyan-600" /> ПОТІК_СТРАТЕГІЧНИХ_ВИСНОВКІВ
                </h4>
                <div className="flex gap-4">
                   {['all', 'risk', 'anomaly', 'prediction'].map(f => (
-                    <button 
+                    <Button variant="cyber" 
                       key={f}
                       onClick={() => setFilter(f)}
                       className={cn(
                         "px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest italic border-2 transition-all duration-500",
-                        filter === f ? "bg-rose-600 border-rose-400 text-white shadow-rose-500/40" : "bg-white/5 border-white/5 text-white/30 hover:border-white/20"
+                        filter === f ? "bg-cyan-600 border-cyan-400 text-white shadow-cyan-500/40" : "bg-white/5 border-white/5 text-white/30 hover:border-white/20"
                       )}
                     >
                       {f.toUpperCase()}
-                    </button>
+                    </Button>
                   ))}
                </div>
             </div>
@@ -388,7 +389,7 @@ const AIInsightsHub: React.FC<{ isWidgetMode?: boolean }> = ({ isWidgetMode = fa
               <AnimatePresence mode="popLayout">
                 {loading ? (
                   <div className="py-40 text-center  flex flex-col items-center gap-8 glass-wraith rounded-[4rem] border-2 border-dashed border-white/5">
-                    <Atom size={64} className="text-rose-500 animate-spin-slow" />
+                    <Atom size={64} className="text-cyan-500 animate-spin-slow" />
                     <span className="text-2xl font-black text-white/20 uppercase tracking-[0.5em] italic">СИНТЕЗ_ДЕ ЖАВНОЇ_СТРАТЕГІЇ...</span>
                   </div>
                 ) : filtered.length === 0 ? (
@@ -404,17 +405,17 @@ const AIInsightsHub: React.FC<{ isWidgetMode?: boolean }> = ({ isWidgetMode = fa
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.05, duration: 0.8 }}
                     onClick={() => openDetail(insight.id)}
-                    className="p-16 glass-wraith border-2 border-white/5 rounded-[4.5rem] hover:border-rose-500/40 transition-all duration-1000 cursor-pointer group shadow-4xl relative overflow-hidden"
+                    className="p-16 glass-wraith border-2 border-white/5 rounded-[4.5rem] hover:border-cyan-500/40 transition-all duration-1000 cursor-pointer group shadow-4xl relative overflow-hidden"
                   >
                     <div className="absolute inset-0 bg-cyber-grid opacity-[0.01] pointer-events-none" />
                     <div className="absolute top-10 right-16 opacity-5 group-hover:opacity-30 transition-all duration-1000 transform group-hover:scale-125">
-                       {React.createElement(TYPE_CONFIG[insight.type]?.icon || Brain, { size: 120, className: "text-rose-500" })}
+                       {React.createElement(TYPE_CONFIG[insight.type]?.icon || Brain, { size: 120, className: "text-cyan-500" })}
                     </div>
                     
                     <div className="flex items-center gap-8 mb-10 relative z-10">
                       <div className={cn(
                         "px-8 py-2 rounded-full text-[11px] font-black uppercase tracking-[0.4em] italic border-2 transition-all duration-700 shadow-2xl",
-                        PRIORITY_CONFIG[insight.severity]?.color ? "bg-rose-600/10 border-rose-500/40 text-rose-500" : "bg-white/5 border-white/5 text-white/30"
+                        PRIORITY_CONFIG[insight.severity]?.color ? "bg-cyan-600/10 border-cyan-500/40 text-cyan-500" : "bg-white/5 border-white/5 text-white/30"
                       )}>
                         {PRIORITY_CONFIG[insight.severity]?.label || insight.severity || 'LOW'}
                       </div>
@@ -422,7 +423,7 @@ const AIInsightsHub: React.FC<{ isWidgetMode?: boolean }> = ({ isWidgetMode = fa
                       <span className="text-[11px] font-black font-mono text-white/20 uppercase tracking-widest italic">{insight.confidence || 90}% CONFIDENCE_SCORE_L7</span>
                     </div>
 
-                    <h3 className="text-5xl font-black text-white italic mb-8 group-hover:text-rose-500 transition-colors duration-700 tracking-tighter glint-elite relative z-10 uppercase leading-tight max-w-4xl">
+                    <h3 className="text-5xl font-black text-white italic mb-8 group-hover:text-cyan-500 transition-colors duration-700 tracking-tighter glint-elite relative z-10 uppercase leading-tight max-w-4xl">
                        {insight.title}
                     </h3>
                     
@@ -431,8 +432,8 @@ const AIInsightsHub: React.FC<{ isWidgetMode?: boolean }> = ({ isWidgetMode = fa
                     </p>
 
                     <div className="absolute bottom-10 right-16 flex items-center gap-6 opacity-0 group-hover:opacity-100 transition-all duration-700 translate-x-10 group-hover:translate-x-0">
-                       <span className="text-[10px] font-black text-rose-500 uppercase tracking-widest italic">ДЕТАЛЬНИЙ_АНАЛІЗ_ГРАФА</span>
-                       <div className="p-4 bg-rose-600 text-white rounded-full shadow-4xl border-2 border-rose-400/50">
+                       <span className="text-[10px] font-black text-cyan-500 uppercase tracking-widest italic">ДЕТАЛЬНИЙ_АНАЛІЗ_ГРАФА</span>
+                       <div className="p-4 bg-cyan-600 text-white rounded-full shadow-4xl border-2 border-cyan-400/50">
                           <Target size={24} />
                        </div>
                     </div>
@@ -443,13 +444,13 @@ const AIInsightsHub: React.FC<{ isWidgetMode?: boolean }> = ({ isWidgetMode = fa
           </div>
 
           <div className="col-span-12 xl:col-span-4 space-y-16">
-             <div className="p-16 glass-wraith border-2 border-rose-500/20 rounded-[5rem] flex flex-col items-center justify-center min-h-[600px] text-center shadow-4xl relative overflow-hidden group hover:border-rose-500/60 transition-all duration-1000">
+             <div className="p-16 glass-wraith border-2 border-cyan-500/20 rounded-[5rem] flex flex-col items-center justify-center min-h-[600px] text-center shadow-4xl relative overflow-hidden group hover:border-cyan-500/60 transition-all duration-1000">
                 <div className="absolute inset-0 bg-cyber-grid opacity-[0.03] pointer-events-none" />
                 <div className="relative mb-12">
-                   <div className="absolute inset-0 bg-rose-600/30 blur-[100px] rounded-full scale-150 " />
-                   <Orbit size={180} className="text-rose-500 relative z-10 animate-spin-slow" style={{ animationDuration: '30s' }} />
+                   <div className="absolute inset-0 bg-cyan-600/30 blur-[100px] rounded-full scale-150 " />
+                   <Orbit size={180} className="text-cyan-500 relative z-10 animate-spin-slow" style={{ animationDuration: '30s' }} />
                    <div className="absolute inset-0 flex items-center justify-center">
-                      <Atom size={80} className="text-rose-500 " />
+                      <Atom size={80} className="text-cyan-500 " />
                    </div>
                 </div>
                 <h3 className="text-5xl font-black text-white italic uppercase tracking-tighter glint-elite">СИНТЕЗ_ELITE</h3>
@@ -460,15 +461,15 @@ const AIInsightsHub: React.FC<{ isWidgetMode?: boolean }> = ({ isWidgetMode = fa
                    <motion.div 
                      animate={{ left: ['-100%', '100%'] }}
                      transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                     className="absolute top-0 bottom-0 w-1/2 bg-rose-500 "
+                     className="absolute top-0 bottom-0 w-1/2 bg-cyan-500 "
                    />
                 </div>
              </div>
 
-             <div className="p-12 glass-wraith border-2 border-white/5 rounded-[4rem] space-y-10 shadow-4xl relative group hover:border-rose-500/20 transition-all duration-1000">
+             <div className="p-12 glass-wraith border-2 border-white/5 rounded-[4rem] space-y-10 shadow-4xl relative group hover:border-cyan-500/20 transition-all duration-1000">
                 <div className="flex items-center justify-between border-b-2 border-white/5 pb-8">
                    <div className="flex items-center gap-4">
-                      <Fingerprint size={24} className="text-rose-500" />
+                      <Fingerprint size={24} className="text-cyan-500" />
                       <span className="text-[12px] font-black text-white uppercase tracking-[0.4em] italic">АКТИВНІСТЬ_ЯД А</span>
                    </div>
                    <div className="w-2 h-2 rounded-full bg-emerald-500 " />
@@ -479,9 +480,9 @@ const AIInsightsHub: React.FC<{ isWidgetMode?: boolean }> = ({ isWidgetMode = fa
                      { label: 'ШВИДКІСТЬ_СИНТЕЗУ', val: '0.42ms', icon: Zap },
                      { label: 'ОБСЯГ_ЗНАНЬ', val: '1.4 PB', icon: Layers },
                    ].map((item, i) => (
-                     <div key={i} className="flex items-center justify-between p-6 bg-white/[0.02] border-2 border-white/5 rounded-3xl hover:border-rose-500/20 transition-all">
+                     <div key={i} className="flex items-center justify-between p-6 bg-white/[0.02] border-2 border-white/5 rounded-3xl hover:border-cyan-500/20 transition-all">
                         <div className="flex items-center gap-4">
-                           <item.icon size={18} className="text-rose-500/60" />
+                           <item.icon size={18} className="text-cyan-500/60" />
                            <span className="text-[10px] font-black text-white/30 uppercase tracking-widest italic">{item.label}</span>
                         </div>
                         <span className="text-sm font-black text-white italic tracking-tighter">{item.val}</span>
@@ -495,13 +496,13 @@ const AIInsightsHub: React.FC<{ isWidgetMode?: boolean }> = ({ isWidgetMode = fa
 
       <style dangerouslySetInnerHTML={{ __html: `
           .shadow-4xl { box-shadow: 0 60px 120px -30px rgba(0,0,0,0.9); }
-          .glint-elite { text-shadow: 0 0 40px rgba(225,29,72,0.4); }
+          .glint-elite { text-shadow: 0 0 40px rgba(6,182,212,0.4); }
           .animate-spin-slow { animation: spin 20s linear infinite; }
           @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
           .custom-scrollbar::-webkit-scrollbar { width: 4px; }
           .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-          .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(225,29,72,0.1); border-radius: 10px; }
-          .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(225,29,72,0.3); }
+          .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(6,182,212,0.1); border-radius: 10px; }
+          .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(6,182,212,0.3); }
       `}} />
     </div>
   );

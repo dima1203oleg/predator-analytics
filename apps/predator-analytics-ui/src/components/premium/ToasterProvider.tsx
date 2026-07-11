@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import { GlitchText } from '@/components/ui/GlitchText';
 import React, { useState, useEffect } from 'react';
@@ -182,7 +183,7 @@ export const ToasterProvider: React.FC = () => {
                     <p className="font-interface text-[11px] text-[#5a5a5a] line-clamp-2">{t.message}</p>
                   )}
                   {t.action && (
-                    <button
+                    <Button variant="cyber"
                       onClick={() => {
                         t.action!.onClick();
                         dismissToast(t.id);
@@ -190,16 +191,16 @@ export const ToasterProvider: React.FC = () => {
                       className="mt-2 flex items-center gap-1 text-xs font-bold hover:underline transition-all"
                     >
                       {t.action.label} <ChevronRight size={12} />
-                    </button>
+                    </Button>
                   )}
                 </div>
-                <button
+                <Button variant="cyber"
                   onClick={() => dismissToast(t.id)}
                   className="flex-shrink-0 p-1 hover:bg-white/10 rounded-lg transition-colors"
                   title="Закрити сповіщення"
                 >
                   <X size={14} className="text-slate-500" />
-                </button>
+                </Button>
               </div>
             </motion.div>
           );

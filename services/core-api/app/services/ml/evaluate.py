@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 def evaluate_exact_match(predictions, references):
-    matches = sum(1 for p, r in zip(predictions, references) if p.strip() == r.strip())
+    matches = sum(1 for p, r in zip(predictions, references) if str(p).strip() == str(r).strip())
     return matches / len(predictions) if predictions else 0.0
 
 

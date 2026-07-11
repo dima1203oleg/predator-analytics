@@ -48,13 +48,13 @@ export const HubLayout: React.FC<HubLayoutProps> = ({
   const { isCompact, isMedium } = useViewport();
 
   return (
-    <div className={cn("flex flex-col w-full min-h-screen bg-[#020202] text-slate-200 relative overflow-hidden", className)}>
+    <div className={cn("flex flex-col w-full min-h-screen bg-transparent text-slate-200 relative overflow-hidden", className)}>
       {/* ── BACKGROUND LAYERS — Базові шари фону ── */}
       <CyberGrid opacity={0.04} />
       
       {/* ── HUB HEADER — Tactical Navigation Control ── */}
       <header className={cn(
-        "flex flex-col border-b border-white/5 bg-[rgba(15,15,17,0.97)] relative z-20 shadow-[0_8px_32px_rgba(0,0,0,0.6)]",
+        "flex flex-col border-b border-white/5 bg-black/20 backdrop-blur-md relative z-20 shadow-[0_8px_32px_rgba(0,0,0,0.6)]",
         isCompact ? "gap-3 p-4" : isMedium ? "gap-4 p-6" : "gap-6 p-8 lg:p-12"
       )}>
 

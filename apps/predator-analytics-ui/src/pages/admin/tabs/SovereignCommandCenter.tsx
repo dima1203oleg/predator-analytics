@@ -40,8 +40,8 @@ const MiniStatus: React.FC<{ label: string; value: string; color?: string; icon:
 
 const PulseIndicator: React.FC<{ active?: boolean; color?: string }> = ({ active = true, color = 'rose' }) => (
   <div className="relative flex items-center justify-center w-4 h-4">
-    {active && <div className={cn("absolute inset-0 rounded-full animate-ping opacity-30", color === 'rose' ? 'bg-rose-500' : color === 'emerald' ? 'bg-emerald-500' : 'bg-blue-500')} />}
-    <div className={cn("relative w-2 h-2 rounded-full shadow-2xl transition-all duration-1000", color === 'rose' ? 'bg-rose-500 shadow-rose-500/50' : color === 'emerald' ? 'bg-emerald-500 shadow-emerald-500/50' : 'bg-blue-500 shadow-blue-500/50')} />
+    {active && <div className={cn("absolute inset-0 rounded-full animate-ping opacity-30", color === 'rose' ? 'bg-cyan-500' : color === 'emerald' ? 'bg-emerald-500' : 'bg-blue-500')} />}
+    <div className={cn("relative w-2 h-2 rounded-full shadow-2xl transition-all duration-1000", color === 'rose' ? 'bg-cyan-500 shadow-cyan-500/50' : color === 'emerald' ? 'bg-emerald-500 shadow-emerald-500/50' : 'bg-blue-500 shadow-blue-500/50')} />
   </div>
 );
 
@@ -81,12 +81,12 @@ export const SovereignCommandCenter: React.FC = () => {
       
       {/* HUD Header */}
       <div className="flex flex-col lg:flex-row gap-10 justify-between items-start lg:items-center relative z-10 mb-4">
-        <div className="flex flex-col gap-3 border-l-4 border-rose-500 pl-10 py-2">
+        <div className="flex flex-col gap-3 border-l-4 border-cyan-500 pl-10 py-2">
           <div className="flex items-center gap-6">
             <h2 className="text-5xl font-black text-white uppercase tracking-tighter italic glint-elite">
-              SOVEREIGN <span className="text-rose-500">COMMAND CENTER</span>
+              SOVEREIGN <span className="text-cyan-500">COMMAND CENTER</span>
             </h2>
-            <div className="px-4 py-1.5 bg-rose-500/10 border-2 border-rose-500/30 rounded-lg text-[10px] font-black text-rose-500 tracking-[0.4em] uppercase italic shadow-2xl">
+            <div className="px-4 py-1.5 bg-cyan-500/10 border-2 border-cyan-500/30 rounded-lg text-[10px] font-black text-cyan-500 tracking-[0.4em] uppercase italic shadow-2xl">
               MASTER_PULSE_v61.0_ELITE
             </div>
           </div>
@@ -97,11 +97,11 @@ export const SovereignCommandCenter: React.FC = () => {
             </div>
             <span className="opacity-20">•</span>
             <div className="flex items-center gap-3">
-               <RefreshCw size={14} className="text-rose-500/60 animate-spin-slow" />
+               <RefreshCw size={14} className="text-cyan-500/60 animate-spin-slow" />
                <span>ОПЕРАЦІЙНИЙ_ЦИКЛ: 1.2с</span>
             </div>
             <span className="opacity-20">•</span>
-            <div className="flex items-center gap-3 text-rose-500/40">
+            <div className="flex items-center gap-3 text-cyan-500/40">
                <Shield size={14} />
                <span>ЗАХИСТ: ELITE_ELITE_ACTIVE</span>
             </div>
@@ -109,19 +109,19 @@ export const SovereignCommandCenter: React.FC = () => {
         </div>
 
         {/* Global Strategy Badge */}
-        <div className="flex items-center gap-6 bg-black/60  p-6 rounded-[2.5rem] border-2 border-white/5 shadow-4xl group hover:border-rose-500/30 transition-all duration-700">
+        <div className="flex items-center gap-6 bg-black/60  p-6 rounded-[2.5rem] border-2 border-white/5 shadow-4xl group hover:border-cyan-500/30 transition-all duration-700">
            <div className="flex flex-col items-end gap-1">
               <span className="text-[9px] font-black font-mono text-white/20 uppercase tracking-[0.4em] italic">ГЛОБАЛЬНА_СТРАТЕГІЯ_ШІ</span>
-              <span className="text-[12px] font-black text-white/60 italic uppercase tracking-tighter group-hover:text-rose-500 transition-colors">{nodeSource}</span>
+              <span className="text-[12px] font-black text-white/60 italic uppercase tracking-tighter group-hover:text-cyan-500 transition-colors">{nodeSource}</span>
            </div>
            <div className="h-12 w-[2px] bg-white/5 mx-2" />
            <div className={cn(
              "px-8 py-4 rounded-[1.5rem] border-2 flex items-center gap-5 transition-all duration-700 shadow-4xl",
-             llmTriStateMode === 'SOVEREIGN' ? "bg-rose-500/10 border-rose-500/40 text-rose-500 shadow-rose-500/10" :
+             llmTriStateMode === 'SOVEREIGN' ? "bg-cyan-500/10 border-cyan-500/40 text-cyan-500 shadow-cyan-500/10" :
              llmTriStateMode === 'HYBRID' ? "bg-emerald-500/10 border-emerald-500/40 text-emerald-500 shadow-emerald-500/10" :
              "bg-sky-500/10 border-sky-500/40 text-sky-500 shadow-sky-500/10"
            )}>
-             <Globe size={20} className={cn("animate-spin-slow", llmTriStateMode === 'SOVEREIGN' ? "text-rose-500" : llmTriStateMode === 'HYBRID' ? "text-emerald-500" : "text-sky-500")} />
+             <Globe size={20} className={cn("animate-spin-slow", llmTriStateMode === 'SOVEREIGN' ? "text-cyan-500" : llmTriStateMode === 'HYBRID' ? "text-emerald-500" : "text-sky-500")} />
              <div className="flex flex-col">
                 <span className="text-xl font-black tracking-widest italic glint-elite leading-none">{llmTriStateMode}</span>
                 <span className="text-[8px] font-black font-mono uppercase tracking-[0.3em] opacity-40 mt-1">LLM_OODA_ROUTING</span>
@@ -137,7 +137,7 @@ export const SovereignCommandCenter: React.FC = () => {
         <div className="col-span-12 xl:col-span-3 flex flex-col gap-10 overflow-y-auto pr-4 custom-scrollbar pb-10">
           <div className="space-y-6">
             <div className="flex items-center gap-4 px-4">
-              <div className="w-2 h-2 bg-rose-500 rotate-45 " />
+              <div className="w-2 h-2 bg-cyan-500 rotate-45 " />
               <span className="text-[12px] font-black font-mono text-white/40 uppercase tracking-[0.5em] italic glint-elite">ЯДРО_ІНФРАСТРУКТУРИ_ELITE</span>
             </div>
             <div className="grid grid-cols-2 gap-6">
@@ -146,7 +146,7 @@ export const SovereignCommandCenter: React.FC = () => {
               <MiniStatus label="ВУЗОЛ_NVIDIA" value={status?.healthy ? "АКТИВНИЙ" : "ОФЛАЙН"} icon={Globe} color={status?.healthy ? "emerald" : "rose"} />
               <MiniStatus label="ШІ_ДВИГУНИ" value={String(activeEnginesCount)} icon={Activity} />
             </div>
-            <div className="p-8 glass-wraith rounded-[2.5rem] border-2 border-white/5 space-y-6 shadow-4xl group hover:border-rose-500/40 transition-all duration-700 overflow-hidden relative">
+            <div className="p-8 glass-wraith rounded-[2.5rem] border-2 border-white/5 space-y-6 shadow-4xl group hover:border-cyan-500/40 transition-all duration-700 overflow-hidden relative">
               <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
               <div className="flex flex-col gap-3 relative z-10">
                 <div className="flex justify-between text-[10px] font-black font-mono text-white/30 italic uppercase tracking-widest">
@@ -189,10 +189,10 @@ export const SovereignCommandCenter: React.FC = () => {
                      <span className="text-[8px] text-white/20 uppercase font-black tracking-[0.3em] italic relative z-10">ОХОПЛЕННЯ_OSINT</span>
                      <span className="text-xl font-black text-white italic tracking-tighter relative z-10 glint-elite">142 ДЖЕРЕЛА</span>
                   </div>
-                  <div className="p-6 glass-wraith border-2 border-white/5 rounded-[2rem] flex flex-col gap-2 shadow-4xl group hover:border-rose-500/40 transition-all duration-700 overflow-hidden relative">
+                  <div className="p-6 glass-wraith border-2 border-white/5 rounded-[2rem] flex flex-col gap-2 shadow-4xl group hover:border-cyan-500/40 transition-all duration-700 overflow-hidden relative">
                      <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
                      <span className="text-[8px] text-white/20 uppercase font-black tracking-[0.3em] italic relative z-10">ВАРТІСТЬ_ЗАПИТУ</span>
-                     <span className="text-xl font-black text-rose-500 italic tracking-tighter relative z-10 glint-elite">₴0.0004</span>
+                     <span className="text-xl font-black text-cyan-500 italic tracking-tighter relative z-10 glint-elite">₴0.0004</span>
                   </div>
                </div>
             </div>
@@ -205,7 +205,7 @@ export const SovereignCommandCenter: React.FC = () => {
             </div>
             <div className="grid grid-cols-1 gap-6">
               {[
-                { id: 'auto-factory', label: 'ШІ_ЗАВОД_PREDATOR', sub: 'ЦИКЛ_БЕЗПЕРЕВНИЙ_L5', icon: Factory, color: 'text-rose-500', bg: 'rose' },
+                { id: 'auto-factory', label: 'ШІ_ЗАВОД_PREDATOR', sub: 'ЦИКЛ_БЕЗПЕРЕВНИЙ_L5', icon: Factory, color: 'text-cyan-500', bg: 'rose' },
                 { id: 'models', label: 'НЕЙРОННИЙ_ПОЛІГОН', sub: 'ЕТАП_ВЕРТИКАЛЬНОЇ_ВАЛІДАЦІЇ', icon: BrainCircuit, color: 'text-sky-500', bg: 'sky' }
               ].map((link, i) => (
                 <motion.button
@@ -217,15 +217,15 @@ export const SovereignCommandCenter: React.FC = () => {
                 >
                   <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
                   <div className="flex items-center gap-6 relative z-10">
-                    <div className={cn("p-4 rounded-2xl transition-all duration-700 border-2", link.bg === 'rose' ? 'bg-rose-500/10 border-rose-500/20 group-hover:bg-rose-500/20 group-hover:border-rose-500/40' : 'bg-sky-500/10 border-sky-500/20 group-hover:bg-sky-500/20 group-hover:border-sky-500/40')}>
+                    <div className={cn("p-4 rounded-2xl transition-all duration-700 border-2", link.bg === 'rose' ? 'bg-cyan-500/10 border-cyan-500/20 group-hover:bg-cyan-500/20 group-hover:border-cyan-500/40' : 'bg-sky-500/10 border-sky-500/20 group-hover:bg-sky-500/20 group-hover:border-sky-500/40')}>
                       <link.icon size={24} className={link.color} />
                     </div>
                     <div className="flex flex-col text-left gap-1">
-                      <span className="text-lg font-black text-white group-hover:text-rose-500 transition-colors uppercase italic tracking-tighter glint-elite">{link.label}</span>
+                      <span className="text-lg font-black text-white group-hover:text-cyan-500 transition-colors uppercase italic tracking-tighter glint-elite">{link.label}</span>
                       <span className="text-[9px] font-black font-mono text-white/20 uppercase tracking-[0.2em] italic group-hover:text-white/40 transition-colors">{link.sub}</span>
                     </div>
                   </div>
-                  <ChevronRight size={24} className="text-white/10 group-hover:text-rose-500 group-hover:translate-x-2 transition-all duration-500" />
+                  <ChevronRight size={24} className="text-white/10 group-hover:text-cyan-500 group-hover:translate-x-2 transition-all duration-500" />
                 </motion.button>
               ))}
             </div>
@@ -234,7 +234,7 @@ export const SovereignCommandCenter: React.FC = () => {
 
         {/* Center: 3D Neural Core & Global Command */}
         <div className="col-span-12 xl:col-span-6 flex flex-col gap-10">
-          <div className="flex-1 glass-wraith border-2 border-white/5 rounded-[4rem] relative overflow-hidden group shadow-4xl hover:border-rose-500/20 transition-all duration-[2000ms]">
+          <div className="flex-1 glass-wraith border-2 border-white/5 rounded-[4rem] relative overflow-hidden group shadow-4xl hover:border-cyan-500/20 transition-all duration-[2000ms]">
             <div className="absolute inset-0 bg-cyber-grid opacity-[0.03] pointer-events-none" />
             
             {/* Visualizer Header */}
@@ -244,10 +244,10 @@ export const SovereignCommandCenter: React.FC = () => {
                   СУВЕРЕННЕ_НЕЙРОННЕ_ЯДРО
                 </h3>
                 <div className="flex items-center gap-6">
-                  <div className="px-6 py-2 bg-rose-600 text-white text-[10px] font-black rounded-xl tracking-[0.4em]  border-2 border-rose-400/30 italic uppercase">PREDATOR_ELITE_v61</div>
+                  <div className="px-6 py-2 bg-cyan-600 text-white text-[10px] font-black rounded-xl tracking-[0.4em]  border-2 border-cyan-400/30 italic uppercase">PREDATOR_ELITE_v61</div>
                   <div className="flex items-center gap-4">
                     <PulseIndicator />
-                    <span className="text-rose-500 font-black font-mono text-[10px] tracking-[0.5em] uppercase  italic">СИНХРОНІЗАЦІЯ_РЕАЛЬНОСТІ_АКТИВНА</span>
+                    <span className="text-cyan-500 font-black font-mono text-[10px] tracking-[0.5em] uppercase  italic">СИНХРОНІЗАЦІЯ_РЕАЛЬНОСТІ_АКТИВНА</span>
                   </div>
                 </div>
               </div>
@@ -258,9 +258,9 @@ export const SovereignCommandCenter: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-4">
                   <span className="text-white/40 font-black font-mono text-[9px] tracking-widest uppercase italic">ТЕМП_ЯДРА_GPU</span>
-                  <span className="text-rose-500 font-black font-mono text-[11px] glint-elite">{stats?.gpu_temp ? `${stats.gpu_temp}°C` : "42.4°C"}</span>
+                  <span className="text-cyan-500 font-black font-mono text-[11px] glint-elite">{stats?.gpu_temp ? `${stats.gpu_temp}°C` : "42.4°C"}</span>
                 </div>
-                <div className="w-40 h-[2px] bg-gradient-to-l from-rose-500 to-transparent mt-2 rounded-full shadow-rose-500/20" />
+                <div className="w-40 h-[2px] bg-gradient-to-l from-rose-500 to-transparent mt-2 rounded-full shadow-cyan-500/20" />
               </div>
             </div>
 
@@ -311,14 +311,14 @@ export const SovereignCommandCenter: React.FC = () => {
           </div>
 
           <div className="h-64 grid grid-cols-3 gap-10 pb-10">
-             <div className="glass-wraith border-2 border-white/5 p-10 rounded-[3rem] flex flex-col justify-between shadow-4xl hover:border-rose-500/40 transition-all duration-700 group relative overflow-hidden border-t-4 border-t-rose-600">
-                <div className="absolute top-6 right-6 p-4 bg-rose-500/10 rounded-2xl border-2 border-rose-500/20 group-hover:bg-rose-500/20 transition-all">
-                  <Target size={24} className="text-rose-500" />
+             <div className="glass-wraith border-2 border-white/5 p-10 rounded-[3rem] flex flex-col justify-between shadow-4xl hover:border-cyan-500/40 transition-all duration-700 group relative overflow-hidden border-t-4 border-t-cyan-600">
+                <div className="absolute top-6 right-6 p-4 bg-cyan-500/10 rounded-2xl border-2 border-cyan-500/20 group-hover:bg-cyan-500/20 transition-all">
+                  <Target size={24} className="text-cyan-500" />
                 </div>
-                <span className="text-[11px] font-black font-mono text-rose-500 uppercase tracking-[0.5em] italic relative z-10">АКТИВНІ_НЕЙРО-АГЕНТИ</span>
+                <span className="text-[11px] font-black font-mono text-cyan-500 uppercase tracking-[0.5em] italic relative z-10">АКТИВНІ_НЕЙРО-АГЕНТИ</span>
                 <div className="flex items-end justify-between relative z-10">
                   <span className="text-6xl font-black text-white italic tracking-tighter glint-elite">{activeEnginesCount}</span>
-                  <Boxes size={48} className="text-rose-500/10 group-hover:text-rose-500 group-hover:scale-110 transition-all duration-700" />
+                  <Boxes size={48} className="text-cyan-500/10 group-hover:text-cyan-500 group-hover:scale-110 transition-all duration-700" />
                 </div>
              </div>
              <div className="glass-wraith border-2 border-white/5 p-10 rounded-[3rem] flex flex-col justify-between shadow-4xl hover:border-sky-500/40 transition-all duration-700 group relative overflow-hidden border-t-4 border-t-sky-600">
@@ -348,23 +348,23 @@ export const SovereignCommandCenter: React.FC = () => {
         <div className="col-span-12 xl:col-span-3 flex flex-col gap-10 overflow-y-auto pr-4 custom-scrollbar pb-10">
           <div className="space-y-6">
             <div className="flex items-center gap-4 px-4">
-              <div className="w-2 h-2 bg-rose-500 rotate-45 " />
+              <div className="w-2 h-2 bg-cyan-500 rotate-45 " />
               <span className="text-[12px] font-black font-mono text-white/40 uppercase tracking-[0.5em] italic glint-elite">СТРАТЕГІЧНИЙ_РЕЗЕРВ_ELITE</span>
             </div>
             <div className="grid grid-cols-1 gap-6">
               {[
-                { label: 'ДВИГУН_ОПТИМІЗАЦІЇ', sub: 'ШІ_ОПЕРАТОР: ГІБРИД_v61', value: '92%', icon: BrainCircuit, color: 'text-rose-500' },
+                { label: 'ДВИГУН_ОПТИМІЗАЦІЇ', sub: 'ШІ_ОПЕРАТОР: ГІБРИД_v61', value: '92%', icon: BrainCircuit, color: 'text-cyan-500' },
                 { label: 'БАЗА_НЕЙРО-ВІДБИТКІВ', sub: 'СИНХРОНІЗАЦІЯ_ГЛОБАЛ_L3', value: '12.8M', icon: Database, color: 'text-sky-500' }
               ].map((res, i) => (
                 <div key={i} className="p-8 glass-wraith border-2 border-white/5 rounded-[2.5rem] group hover:border-white/20 transition-all duration-700 shadow-4xl relative overflow-hidden">
                   <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
                   <div className="flex items-center justify-between mb-6 relative z-10">
                     <div className="flex items-center gap-4">
-                      <div className="p-3 bg-white/5 rounded-xl border border-white/5 group-hover:bg-rose-500/10 transition-all">
+                      <div className="p-3 bg-white/5 rounded-xl border border-white/5 group-hover:bg-cyan-500/10 transition-all">
                         <res.icon size={20} className={res.color} />
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-[11px] font-black text-white italic tracking-tighter uppercase group-hover:text-rose-500 transition-colors">{res.label}</span>
+                        <span className="text-[11px] font-black text-white italic tracking-tighter uppercase group-hover:text-cyan-500 transition-colors">{res.label}</span>
                         <span className="text-[8px] font-black font-mono text-white/20 uppercase tracking-[0.2em] italic">{res.sub}</span>
                       </div>
                     </div>
@@ -373,7 +373,7 @@ export const SovereignCommandCenter: React.FC = () => {
                      <span className={cn("text-3xl font-black italic glint-elite", res.color)}>{res.value}</span>
                      {res.label.includes('ОПТИМ') && (
                        <div className="w-24 h-[3px] bg-white/5 rounded-full overflow-hidden mb-2">
-                         <motion.div animate={{ width: '92%' }} className="h-full bg-rose-500 " />
+                         <motion.div animate={{ width: '92%' }} className="h-full bg-cyan-500 " />
                        </div>
                      )}
                   </div>
@@ -422,11 +422,11 @@ export const SovereignCommandCenter: React.FC = () => {
               <div className="flex-1 overflow-y-auto pr-4 custom-scrollbar space-y-4 font-black font-mono text-[10px] relative z-10">
                 {logData?.logs?.length ? (
                   logData.logs.slice(0, 30).map((log: any, i: number) => (
-                    <div key={i} className="flex gap-4 opacity-40 hover:opacity-100 transition-opacity group/log border-l-2 border-white/5 pl-4 hover:border-rose-500 transition-all duration-700">
-                      <span className="text-white/20 whitespace-nowrap group-hover/log:text-rose-500/60 transition-colors">[{new Date(log.timestamp).toLocaleTimeString('uk-UA')}]</span>
+                    <div key={i} className="flex gap-4 opacity-40 hover:opacity-100 transition-opacity group/log border-l-2 border-white/5 pl-4 hover:border-cyan-500 transition-all duration-700">
+                      <span className="text-white/20 whitespace-nowrap group-hover/log:text-cyan-500/60 transition-colors">[{new Date(log.timestamp).toLocaleTimeString('uk-UA')}]</span>
                       <span className={cn(
                         "tracking-widest italic uppercase",
-                        log.level === 'error' ? 'text-rose-500' : 'text-white/70'
+                        log.level === 'error' ? 'text-cyan-500' : 'text-white/70'
                       )}>{log.message}</span>
                     </div>
                   ))
@@ -439,7 +439,7 @@ export const SovereignCommandCenter: React.FC = () => {
               </div>
               <div className="mt-8 pt-6 border-t-2 border-white/5 relative z-10">
                 <div className="flex items-center gap-4 p-5 bg-white/5 border-2 border-white/10 rounded-[1.5rem] group/input cursor-text hover:bg-white/10 transition-all duration-700 shadow-inner group">
-                  <Terminal size={18} className="text-white/30 group-hover:text-rose-500 transition-colors duration-700" />
+                  <Terminal size={18} className="text-white/30 group-hover:text-cyan-500 transition-colors duration-700" />
                   <span className="text-[10px] font-black font-mono text-white/30 uppercase tracking-[0.4em]  italic">ЯДРО_ГОТОВЕ_ДО_ДИРЕКТИВ_ELITE_</span>
                 </div>
               </div>
@@ -450,13 +450,13 @@ export const SovereignCommandCenter: React.FC = () => {
 
       <style dangerouslySetInnerHTML={{ __html: `
           .shadow-4xl { box-shadow: 0 60px 120px -30px rgba(0,0,0,0.9); }
-          .glint-elite { text-shadow: 0 0 30px rgba(225,29,72,0.4); }
+          .glint-elite { text-shadow: 0 0 30px rgba(6,182,212,0.4); }
           .animate-spin-slow { animation: spin 15s linear infinite; }
           @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
           .custom-scrollbar::-webkit-scrollbar { width: 4px; }
           .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-          .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(225,29,72,0.1); border-radius: 10px; }
-          .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(225,29,72,0.3); }
+          .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(6,182,212,0.1); border-radius: 10px; }
+          .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(6,182,212,0.3); }
       `}} />
     </div>
   );

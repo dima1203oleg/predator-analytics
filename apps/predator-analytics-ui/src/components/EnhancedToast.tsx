@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useEffect, useState } from 'react';
 import { CheckCircle2, XCircle, AlertCircle, Info, X } from 'lucide-react';
 
@@ -110,12 +111,12 @@ export const Toast: React.FC<ToastProps> = ({
             </div>
 
             {/* Close Button */}
-            <button
+            <Button variant="cyber"
                 onClick={handleClose}
                 className="flex-shrink-0 text-slate-500 hover:text-slate-300 transition-colors p-1 rounded hover:bg-slate-800/50"
             >
                 <X size={16} />
-            </button>
+            </Button>
 
             {/* Progress Bar */}
             {duration > 0 && (

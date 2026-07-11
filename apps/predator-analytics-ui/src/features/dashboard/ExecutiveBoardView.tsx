@@ -93,14 +93,14 @@ const scaleIn = {
 /* ── Кольорова палітра ── */
 const tones = {
   rose: { 
-    bg: 'bg-rose-500/10 border-rose-500/20', 
-    icon: 'text-rose-500', 
+    bg: 'bg-cyan-500/10 border-cyan-500/20', 
+    icon: 'text-cyan-500', 
     glow: 'group-hover:', 
     line: 'from-rose-600 via-rose-500 to-transparent' 
   },
   crimson: { 
-    bg: 'bg-rose-600/10 border-rose-500/20', 
-    icon: 'text-rose-600', 
+    bg: 'bg-cyan-600/10 border-cyan-500/20', 
+    icon: 'text-cyan-600', 
     glow: 'group-hover:', 
     line: 'from-rose-700 via-rose-600 to-transparent' 
   },
@@ -180,7 +180,7 @@ export default function ExecutiveBoardView() {
         <div className={cn("absolute flex items-center gap-6", isCompact ? "top-5 right-5" : "top-10 right-10")}>
           <div className="text-right">
             <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] mb-1 italic">СТАТУС_КЛАСТЕРА</p>
-            <p className="text-sm font-bold text-rose-500 italic uppercase">{backendStatus.statusLabel}</p>
+            <p className="text-sm font-bold text-cyan-500 italic uppercase">{backendStatus.statusLabel}</p>
           </div>
           <CyberOrb size="md" status={s && s.high_risk_count > 50 ? 'critical' : 'active'} pulsing />
         </div>
@@ -188,13 +188,13 @@ export default function ExecutiveBoardView() {
         {/* Brand & Time */}
         <div className="relative z-10 flex items-center gap-6 mb-10">
           <div className="flex flex-col">
-            <div className="inline-flex items-center gap-3 rounded-full border border-rose-500/20 bg-rose-500/5 px-4 py-1.5 text-[10px] font-black tracking-[0.3em] text-rose-500 uppercase italic">
-              <div className="h-1.5 w-1.5 rounded-full bg-rose-500 shadow-[0_0_12px_#f43f5e] " />
+            <div className="inline-flex items-center gap-3 rounded-full border border-cyan-500/20 bg-cyan-500/5 px-4 py-1.5 text-[10px] font-black tracking-[0.3em] text-cyan-500 uppercase italic">
+              <div className="h-1.5 w-1.5 rounded-full bg-cyan-500 shadow-[0_0_12px_#f43f5e] " />
               PREDATOR v63.0-ELITE
             </div>
             <div className="mt-4 flex items-center gap-4">
               <h1 className={cn("font-black text-white italic tracking-tighter uppercase skew-x-[-3deg]", isCompact ? "text-2xl max-w-[200px] leading-tight" : "text-3xl sm:text-5xl")}>
-                ВИКОНАВЧА <span className="text-rose-600">РАДА</span>
+                ВИКОНАВЧА <span className="text-cyan-600">РАДА</span>
               </h1>
               {!isCompact && <div className="h-0.5 w-24 bg-gradient-to-r from-rose-600 to-transparent" />}
             </div>
@@ -217,7 +217,7 @@ export default function ExecutiveBoardView() {
                 key={kpi.label}
                 variants={scaleIn}
                 className={cn(
-                  "group relative overflow-hidden border border-white/5 bg-[#060c18]/60 transition-all duration-700 hover:border-rose-500/30 hover:bg-[#060c18]/80 shadow-2xl",
+                  "group relative overflow-hidden border border-white/5 bg-[#060c18]/60 transition-all duration-700 hover:border-cyan-500/30 hover:bg-[#060c18]/80 shadow-2xl",
                   isCompact ? "rounded-2xl p-5" : "rounded-[2rem] p-8",
                   t.glow
                 )}
@@ -238,7 +238,7 @@ export default function ExecutiveBoardView() {
                 <div className="text-[10px] text-slate-600 mt-2 font-bold uppercase tracking-widest">{kpi.hint}</div>
                 
                 {/* Visual Accent Line */}
-                <div className={cn("absolute bottom-0 left-0 right-0 h-[3px] opacity-0 group-hover:opacity-100 transition-all duration-700 bg-gradient-to-r shadow-[0_-10px_20px_rgba(225,29,72,0.3)]", t.line)} />
+                <div className={cn("absolute bottom-0 left-0 right-0 h-[3px] opacity-0 group-hover:opacity-100 transition-all duration-700 bg-gradient-to-r shadow-[0_-10px_20px_rgba(6,182,212,0.3)]", t.line)} />
               </motion.div>
             );
           })}
@@ -254,12 +254,12 @@ export default function ExecutiveBoardView() {
         <motion.div variants={fadeUp} className="space-y-8">
           <div className="flex items-center justify-between px-4">
             <div>
-              <h2 className="text-2xl font-black text-white italic tracking-tighter uppercase">ОПЕРАТИВНИЙ <span className="text-rose-500">КОНТУР</span></h2>
+              <h2 className="text-2xl font-black text-white italic tracking-tighter uppercase">ОПЕРАТИВНИЙ <span className="text-cyan-500">КОНТУР</span></h2>
               <p className="text-[10px] font-bold text-slate-600 uppercase tracking-[0.4em] italic mt-1">СТРАТЕГІЧНІ ТИТАН-МОДУЛІ УПРАВЛІННЯ</p>
             </div>
             <div className="flex items-center gap-4">
                <div className="h-px w-20 bg-white/5" />
-               <div className="inline-flex items-center gap-3 rounded-xl border border-rose-500/20 bg-rose-500/5 px-4 py-2 text-[10px] font-black text-rose-400 italic">
+               <div className="inline-flex items-center gap-3 rounded-xl border border-cyan-500/20 bg-cyan-500/5 px-4 py-2 text-[10px] font-black text-rose-400 italic">
                  <Layers3 className="h-4 w-4" />
                  {navigationSections.reduce((t, sec) => t + (sec.items?.length || 0), 0)} МОДУЛІВ_АКТИВНО
                </div>
@@ -301,16 +301,16 @@ export default function ExecutiveBoardView() {
                       <Link
                         key={item.id}
                         to={item.path}
-                        className="flex items-center justify-between rounded-xl border border-transparent bg-white/[0.03] px-4 py-3 text-[11px] font-bold text-slate-400 transition-all hover:border-rose-500/20 hover:bg-rose-500/10 hover:text-white group/link"
+                        className="flex items-center justify-between rounded-xl border border-transparent bg-white/[0.03] px-4 py-3 text-[11px] font-bold text-slate-400 transition-all hover:border-cyan-500/20 hover:bg-cyan-500/10 hover:text-white group/link"
                       >
                         <span className="truncate italic uppercase tracking-tight">{item.label}</span>
-                        <ArrowRight className="h-3.5 w-3.5 shrink-0 text-slate-700 transition-all group-hover/link:translate-x-1 group-hover/link:text-rose-500" />
+                        <ArrowRight className="h-3.5 w-3.5 shrink-0 text-slate-700 transition-all group-hover/link:translate-x-1 group-hover/link:text-cyan-500" />
                       </Link>
                     ))}
                   </div>
 
                   {items.length > 4 && (
-                    <div className="mt-4 text-[9px] font-black text-slate-600 px-4 italic uppercase tracking-widest flex items-center gap-2 group-hover:text-rose-600 transition-colors">
+                    <div className="mt-4 text-[9px] font-black text-slate-600 px-4 italic uppercase tracking-widest flex items-center gap-2 group-hover:text-cyan-600 transition-colors">
                       ЩЕ {items.length - 4} ПІДРОЗДІЛІВ <ArrowRight size={10} />
                     </div>
                   )}
@@ -331,16 +331,16 @@ export default function ExecutiveBoardView() {
           
           {/* Critical Signals HUD */}
           <div className={cn("border border-white/5 bg-black/40 shadow-2xl relative overflow-hidden", isCompact ? "rounded-3xl p-5" : "rounded-[2.5rem] p-8")}>
-            <div className="absolute top-0 right-0 w-1 h-full bg-rose-600/30" />
+            <div className="absolute top-0 right-0 w-1 h-full bg-cyan-600/30" />
             
             <div className="flex flex-col sm:flex-row items-center gap-6 mb-8 border-b border-white/5 pb-6">
               <div className="flex-1 w-full">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-lg font-black text-white flex items-center gap-3 uppercase italic tracking-tighter">
-                    <Flame className="h-5 w-5 text-rose-500 " />
+                    <Flame className="h-5 w-5 text-cyan-500 " />
                     КРИТИЧНІ СИГНАЛИ
                   </h2>
-                  <span className="bg-rose-500/10 border border-rose-500/20 text-rose-500 px-3 py-1 text-[10px] font-black italic rounded-md">
+                  <span className="bg-cyan-500/10 border border-cyan-500/20 text-cyan-500 px-3 py-1 text-[10px] font-black italic rounded-md">
                     {alerts.length} АКТИВНО
                   </span>
                 </div>
@@ -368,7 +368,7 @@ export default function ExecutiveBoardView() {
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: idx * 0.05 }}
-                    className="group relative rounded-2xl border border-white/5 bg-white/[0.02] p-5 transition-all hover:border-rose-500/30 hover:bg-rose-500/5 shadow-lg overflow-hidden"
+                    className="group relative rounded-2xl border border-white/5 bg-white/[0.02] p-5 transition-all hover:border-cyan-500/30 hover:bg-cyan-500/5 shadow-lg overflow-hidden"
                     whileHover={{ x: 5 }}
                   >
                     <div className="flex items-start justify-between gap-4">
@@ -380,7 +380,7 @@ export default function ExecutiveBoardView() {
                       </div>
                       <span className={cn(
                         'shrink-0 rounded-lg border px-3 py-1 text-[9px] font-black uppercase tracking-widest italic shadow-lg',
-                        alert.severity === 'critical' ? 'border-rose-500/40 bg-rose-600/20 text-rose-400'
+                        alert.severity === 'critical' ? 'border-cyan-500/40 bg-cyan-600/20 text-rose-400'
                           : alert.severity === 'warning' ? 'border-amber-500/40 bg-amber-600/20 text-amber-400'
                           : 'border-slate-500/40 bg-slate-600/20 text-slate-400',
                       )}>
@@ -392,7 +392,7 @@ export default function ExecutiveBoardView() {
                     <div className="mt-4 flex items-center justify-between text-[10px] font-mono font-black italic">
                       <span className="text-slate-600 group-hover:text-slate-400 transition-colors">{timeAgo(alert.timestamp)}</span>
                       {(alert.value ?? 0) > 0 && (
-                        <span className="text-rose-500 tabular-nums shadow-rose-500/20 drop-shadow-md">{formatCurrency(alert.value!)}</span>
+                        <span className="text-cyan-500 tabular-nums shadow-cyan-500/20 drop-shadow-md">{formatCurrency(alert.value!)}</span>
                       )}
                     </div>
                   </motion.div>
@@ -405,7 +405,7 @@ export default function ExecutiveBoardView() {
           <div className={cn("border border-white/5 bg-black/40 shadow-2xl overflow-hidden relative", isCompact ? "rounded-3xl p-5" : "rounded-[2.5rem] p-8")}>
             <div className="absolute inset-0 bg-gradient-to-tr from-rose-500/[0.03] to-transparent pointer-events-none" />
             <h2 className="text-sm font-black text-white mb-6 flex items-center gap-3 uppercase italic tracking-widest">
-              <Sparkles className="h-4 w-4 text-rose-500 " />
+              <Sparkles className="h-4 w-4 text-cyan-500 " />
               ШВИДКІ ДІЇ
             </h2>
             <div className="grid grid-cols-2 gap-3">
@@ -418,11 +418,11 @@ export default function ExecutiveBoardView() {
                 <Link
                   key={action.label}
                   to={action.path}
-                  className="group flex items-center gap-3 rounded-2xl border border-white/5 bg-white/[0.03] p-4 text-[10px] font-black uppercase tracking-widest text-slate-400 transition-all hover:border-rose-500/40 hover:bg-rose-500/10 hover:text-white shadow-md italic"
+                  className="group flex items-center gap-3 rounded-2xl border border-white/5 bg-white/[0.03] p-4 text-[10px] font-black uppercase tracking-widest text-slate-400 transition-all hover:border-cyan-500/40 hover:bg-cyan-500/10 hover:text-white shadow-md italic"
                 >
-                  <action.icon className="h-4 w-4 text-slate-500 group-hover:text-rose-500 transition-all group-hover:scale-110" />
+                  <action.icon className="h-4 w-4 text-slate-500 group-hover:text-cyan-500 transition-all group-hover:scale-110" />
                   {action.label}
-                  <ArrowUpRight className="h-3 w-3 ml-auto text-slate-800 group-hover:text-rose-500 transition-all group-hover:translate-x-1 group-hover:-translate-y-1" />
+                  <ArrowUpRight className="h-3 w-3 ml-auto text-slate-800 group-hover:text-cyan-500 transition-all group-hover:translate-x-1 group-hover:-translate-y-1" />
                 </Link>
               ))}
             </div>
@@ -436,8 +436,8 @@ export default function ExecutiveBoardView() {
       </motion.section>
 
       {/* Strategic Information Ticker (desktop only) */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 hidden md:flex bg-black/80 border-t border-rose-500/20 h-14 items-center overflow-hidden shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
-        <div className="px-8 bg-rose-600 h-full flex items-center shrink-0 border-r border-white/10 shadow-[20px_0_40px_rgba(225,29,72,0.4)] relative z-10 italic text-white font-black text-[11px] tracking-[0.3em] uppercase">
+      <div className="fixed bottom-0 left-0 right-0 z-50 hidden md:flex bg-black/80 border-t border-cyan-500/20 h-14 items-center overflow-hidden shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
+        <div className="px-8 bg-cyan-600 h-full flex items-center shrink-0 border-r border-white/10 shadow-[20px_0_40px_rgba(6,182,212,0.4)] relative z-10 italic text-white font-black text-[11px] tracking-[0.3em] uppercase">
           <div className="flex items-center gap-4">
              <Activity size={20} className="" />
              <span>ЖИВИЙ_ПОТІК_v63.0</span>
@@ -457,7 +457,7 @@ export default function ExecutiveBoardView() {
               `ЯДРО: NVIDIA_H100_NEXUS | ЛАТЕНТНІСТЬ: 4.2мс | ОПЕРАЦІЙНА ЧИСТОТА: 99.8%`
             ].map((log, i) => (
               <div key={i} className="flex items-center gap-8">
-                <div className="w-2 h-2 rounded-full bg-rose-600 shadow-[0_0_10px_#f43f5e] " />
+                <div className="w-2 h-2 rounded-full bg-cyan-600 shadow-[0_0_10px_#f43f5e] " />
                 <span className="text-[11px] font-mono text-slate-500 font-black uppercase tracking-[0.2em] italic">
                   {log}
                 </span>

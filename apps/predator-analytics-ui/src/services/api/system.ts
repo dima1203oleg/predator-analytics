@@ -148,4 +148,10 @@ export const systemApi = {
   syncConnector: async (id: string) => {
     return (await apiClient.post(`/system/connectors/${id}/sync`)).data;
   },
+  getUsers: async () => {
+    return (await apiClient.get('/system/users')).data;
+  },
+  getAgentsStatus: async () => {
+    return (await apiClient.get('/agents')).data;
+  },
 };

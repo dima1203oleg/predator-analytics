@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { HoloCard } from '@/components/ui/HoloCard';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -106,13 +107,13 @@ export const WarGamingWidget: React.FC = () => {
                                         <AlertTriangle size={14} />
                                         <span className="text-[11px] font-black uppercase tracking-tight italic">{s.title}</span>
                                     </div>
-                                    <button 
+                                    <Button variant="cyber" 
                                         onClick={() => handleRunSimulation(s.id)}
                                         disabled={simulating === s.id}
                                         className="p-1.5 rounded-lg bg-black/40 border border-white/10 hover:border-white/30 transition-all"
                                     >
                                         {simulating === s.id ? <RefreshCw size={12} className="animate-spin" /> : <Play size={12} />}
-                                    </button>
+                                    </Button>
                                 </div>
                                 <p className="text-[9px] text-slate-400 leading-tight italic line-clamp-2">
                                     {s.description}
@@ -135,20 +136,20 @@ export const WarGamingWidget: React.FC = () => {
 
                 {/* Actions */}
                 <div className="pt-4 border-t border-white/5 flex gap-3">
-                    <button 
+                    <Button variant="cyber" 
                         onClick={handleGenerate}
                         disabled={loading}
                         className="flex-1 py-3 rounded-xl bg-indigo-600/20 border border-indigo-500/30 text-[10px] font-black uppercase tracking-widest italic hover:bg-indigo-600/40 transition-all flex items-center justify-center gap-2"
                     >
                         <Zap size={14} className={loading ? '' : ''} />
                         ГЕНЕРУВАТИ СЦЕНАРІЇ
-                    </button>
-                    <button 
+                    </Button>
+                    <Button variant="cyber" 
                         onClick={fetchData}
                         className="px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all"
                     >
                         <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
-                    </button>
+                    </Button>
                 </div>
             </div>
         </HoloCard>

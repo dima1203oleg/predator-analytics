@@ -1,9 +1,10 @@
+import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAtom } from 'jotai';
 import { ArrowUpDown, Filter, Search, CheckCircle2, Clock } from 'lucide-react';
 import { salesAtom } from '../../store/atoms';
-import { SaleStatus } from '../../types/index';
+export type SaleStatus = 'completed' | 'pending' | 'failed' | string;
 import { cn } from '../../lib/utils';
 
 const DataTable = () => {
@@ -40,13 +41,13 @@ const DataTable = () => {
           </select>
         </div>
 
-        <button 
+        <Button variant="cyber" 
           onClick={toggleSort}
           className="flex items-center gap-2 px-4 py-2 bg-slate-900/50 border border-border rounded-lg hover:border-primary/30 transition-all text-sm group"
         >
           <ArrowUpDown className="w-4 h-4 text-slate-400 group-hover:text-primary transition-colors" />
           <span className="text-foreground">{t('table.sort_amount')}</span>
-        </button>
+        </Button>
       </div>
 
       <div className="glass-ultra rounded-2xl overflow-hidden border border-border">

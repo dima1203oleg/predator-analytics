@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Map, Clock, DollarSign, AlertCircle, ArrowRight, ShieldCheck, Globe } from 'lucide-react';
@@ -92,9 +93,9 @@ export const TradeCorridorWidget: React.FC<{ persona: string }> = ({ persona }) 
       </div>
 
       <div className="p-4 border-t border-white/5 bg-black/40">
-        <button className="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-2">
+        <Button variant="cyber" className="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-2">
            {premiumLocales.tradeCorridor.simulateRoute} <ArrowRight size={14} />
-        </button>
+        </Button>
       </div>
     </div>
   );

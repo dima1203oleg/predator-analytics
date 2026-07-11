@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { HoloCard } from '@/components/ui/HoloCard';
 /**
  * 🏛️ AZR Constitutional Sovereign Controller | v61.0-ELITE Premium Matrix
@@ -383,12 +384,12 @@ export const AZRConstitutionalDashboard: React.FC = () => {
                 <BookOpen size={24} className="text-indigo-500" />
                 <h3 className="text-lg font-black text-white uppercase tracking-tighter font-display">Ядерні Конституційні Аксіоми</h3>
               </div>
-              <button
+              <Button variant="cyber"
                 onClick={() => setShowAllAxioms(!showAllAxioms)}
                 className="px-6 py-2 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/5 text-[10px] font-black text-slate-500 uppercase tracking-widest transition-all"
               >
                 {showAllAxioms ? 'ЗГО НУТИ_МАТрИЦЮ' : 'ПОКАЗАТИ_ВСІ_АКСІОМИ'}
-              </button>
+              </Button>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {AXIOMS.slice(0, showAllAxioms ? 6 : 3).map(axiom => (

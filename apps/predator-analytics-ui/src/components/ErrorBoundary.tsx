@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -107,21 +108,21 @@ export class ErrorBoundary extends Component<Props, State> {
 
               {/* Actions */}
               <div className="flex gap-4 justify-center">
-                <button
+                <Button variant="cyber"
                   onClick={this.handleReset}
                   className="group flex items-center gap-3 px-6 py-3 bg-rose-600 hover:bg-rose-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-rose-600/20 hover:shadow-rose-500/30 hover:scale-105"
                 >
                   <RefreshCw className="w-5 h-5 group-hover:rotate-180 transition-transform duration-500" />
                   <span>Спробувати знову</span>
-                </button>
+                </Button>
 
-                <button
+                <Button variant="cyber"
                   onClick={this.handleGoHome}
                   className="group flex items-center gap-3 px-6 py-3 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl transition-all border border-white/10 hover:border-white/20"
                 >
                   <Home className="w-5 h-5" />
                   <span>На головну</span>
-                </button>
+                </Button>
               </div>
 
               {/* Help Text */}
@@ -154,13 +155,13 @@ export const ErrorFallback: React.FC<{ error?: Error; onReset?: () => void }> = 
       {error?.message || 'Не вдалося завантажити компонент'}
     </p>
     {onReset && (
-      <button
+      <Button variant="cyber"
         onClick={onReset}
         className="flex items-center gap-2 px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white text-sm font-bold rounded-lg transition-all"
       >
         <RefreshCw className="w-4 h-4" />
         Спробувати знову
-      </button>
+      </Button>
     )}
   </div>
 );

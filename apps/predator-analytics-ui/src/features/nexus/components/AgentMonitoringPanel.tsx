@@ -3,7 +3,7 @@ import { Activity, Database, Network, Search, ShieldAlert, Code2 } from 'lucide-
 
 const AGENTS = [
   { id: 'etl', name: 'ETL Agent', status: 'ACTIVE', load: 85, task: 'Parsing 100k rows CSV', icon: Database, color: 'text-cyan-400', bg: 'bg-cyan-500/10' },
-  { id: 'risk', name: 'Risk Agent', status: 'ACTIVE', load: 42, task: 'Analyzing UBO chains', icon: ShieldAlert, color: 'text-rose-400', bg: 'bg-rose-500/10' },
+  { id: 'risk', name: 'Risk Agent', status: 'ACTIVE', load: 42, task: 'Analyzing UBO chains', icon: ShieldAlert, color: 'text-rose-400', bg: 'bg-cyan-500/10' },
   { id: 'graph', name: 'Graph Agent', status: 'IDLE', load: 12, task: 'Awaiting updates', icon: Network, color: 'text-indigo-400', bg: 'bg-indigo-500/10' },
   { id: 'search', name: 'Search Agent', status: 'ACTIVE', load: 94, task: 'Vectorizing documents', icon: Search, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
   { id: 'claw', name: 'Claw Code Agent', status: 'ANALYZING', load: 60, task: 'Refactoring layout', icon: Code2, color: 'text-purple-400', bg: 'bg-purple-500/10' }

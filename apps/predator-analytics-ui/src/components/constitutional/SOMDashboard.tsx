@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { RedButton } from './RedButton';
@@ -482,7 +483,7 @@ export const SOMDashboard: React.FC = () => {
         </div>
 
         <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-          <button
+          <Button variant="cyber"
             className="analyze-btn"
             style={{
               background: 'rgba(255, 255, 255, 0.05)',
@@ -492,11 +493,11 @@ export const SOMDashboard: React.FC = () => {
             onClick={() => window.open('/api/v1/system/complexity', '_blank')}
           >
             📊 Складність
-          </button>
+          </Button>
 
-          <button className="analyze-btn" onClick={triggerAnalysis}>
+          <Button variant="cyber" className="analyze-btn" onClick={triggerAnalysis}>
             🔍 Запустити аналіз
-          </button>
+          </Button>
 
           {status && (
             <div className={`status-badge ${status.emergency_level ? 'emergency' : 'operational'}`}>
@@ -645,8 +646,8 @@ export const SOMDashboard: React.FC = () => {
                   </div>
                   <div className="proposal-description">{proposal.description}</div>
                   <div className="proposal-actions">
-                    <button className="proposal-btn approve">✓ Схвалити</button>
-                    <button className="proposal-btn reject">✗ Відхилити</button>
+                    <Button variant="cyber" className="proposal-btn approve">✓ Схвалити</Button>
+                    <Button variant="cyber" className="proposal-btn reject">✗ Відхилити</Button>
                   </div>
                 </div>
               ))
@@ -727,9 +728,9 @@ export const SOMDashboard: React.FC = () => {
                 ))
             )}
             <div style={{ textAlign: 'center', marginTop: 8 }}>
-                 <button className="proposal-btn approve" style={{ width: '100%', background: 'rgba(59, 130, 246, 0.15)', color: '#3b82f6' }}>
+                 <Button variant="cyber" className="proposal-btn approve" style={{ width: '100%', background: 'rgba(59, 130, 246, 0.15)', color: '#3b82f6' }}>
                    🔍 Перевірити цілісність ланцюга
-                 </button>
+                 </Button>
             </div>
           </div>
         </motion.div>

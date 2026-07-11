@@ -6,11 +6,9 @@
  */
 import React from 'react';
 
-import { Canvas } from '@react-three/fiber';
-import { Stars, PerspectiveCamera, OrbitControls, Float } from '@react-three/drei';
-import { CyberGrid } from './CyberGrid';
 import { useTheme } from '@/context/ThemeContext';
 import { cn } from '@/utils/cn';
+import { CyberGrid } from './CyberGrid';
 
 interface AdvancedBackgroundProps {
     showStars?: boolean;
@@ -55,42 +53,16 @@ export const AdvancedBackground: React.FC<AdvancedBackgroundProps> = ({
 
     return (
         <div className={cn("fixed inset-0 z-[-1] pointer-events-none overflow-hidden bg-black", className)}>
-            {/* 3D Deep Space Layer */}
-            {showStars && (
-                <div className="absolute inset-0 opacity-40">
-                    <Canvas>
-                        <PerspectiveCamera makeDefault position={[0, 0, 10]} />
-                        <Stars
-                            radius={100}
-                            depth={60}
-                            count={mode === 'sovereign' ? 8000 : starCount}
-                            factor={mode === 'sovereign' ? 8 : 6}
-                            saturation={mode === 'sovereign' ? 4 : 2}
-                            fade
-                            speed={mode === 'sovereign' ? 1.5 : 0.8}
-                        />
-                        <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
-                            <mesh position={[0, 0, -20]}>
-                                <sphereGeometry args={[40, 32, 32]} />
-                                <meshBasicMaterial 
-                                  color={mode === 'sovereign' ? "#78350f" : mode === 'threat' ? "#450a0a" : mode === 'vigilance' ? "#451a03" : "#020617"} 
-                                  wireframe 
-                                  opacity={0.05} 
-                                  transparent 
-                                />
-                            </mesh>
-                        </Float>
-                        <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={mode === 'sovereign' ? 0.6 : 0.3} />
-                    </Canvas>
-                </div>
-            )}
+
 
             {/* Tactical Grid */}
-            {showGrid && <CyberGrid color={gridColor || "rgba(255,255,255,0.02)"} opacity={0.4} />}
+            {showGrid && <CyberGrid color={gridColor || "rgba(14,165,233,0.05)"} opacity={0.6} />}
 
-            {/* Cinematic Nebula Glows */}
-            <div className={cn("absolute -top-[20%] -left-[10%] w-[60%] h-[60%] rounded-full blur-[160px] opacity-40 transition-colors duration-1000", getModeGlow())} />
-            <div className={cn("absolute -bottom-[20%] -right-[10%] w-[60%] h-[60%] rounded-full blur-[160px] opacity-30 transition-colors duration-1000", getModeGlow())} />
+            {/* Tactical Corners */}
+            <div className="absolute top-0 left-0 w-32 h-32 border-t-4 border-l-4 border-[#0ea5e9]/10" />
+            <div className="absolute top-0 right-0 w-32 h-32 border-t-4 border-r-4 border-[#0ea5e9]/10" />
+            <div className="absolute bottom-0 left-0 w-32 h-32 border-b-4 border-l-4 border-[#0ea5e9]/10" />
+            <div className="absolute bottom-0 right-0 w-32 h-32 border-b-4 border-r-4 border-[#0ea5e9]/10" />
 
             {/* Vignette & Gradients */}
             <div className={cn("absolute inset-0 bg-gradient-to-t opacity-90 transition-all duration-1000", getModeGradient())} />

@@ -5,6 +5,7 @@
  * © 2026 PREDATOR Analytics — HR-04 compliant, тільки українська
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -54,9 +55,9 @@ interface RiskLevelInfo {
 // ========================
 
 const RISK_CONFIG: Record<string, { label: string; color: string; bg: string; border: string; glow: string }> = {
-    critical: { label: 'КРИТИЧНИЙ',   color: '#E11D48', bg: 'bg-rose-950/20',    border: 'border-rose-500/40',    glow: '' },
+    critical: { label: 'КРИТИЧНИЙ',   color: '#E11D48', bg: 'bg-rose-950/20',    border: 'border-cyan-500/40',    glow: '' },
     high:     { label: 'ВИСОКИЙ',     color: '#9F1239', bg: 'bg-rose-950/20', border: 'border-rose-700/40',   glow: '' },
-    medium:   { label: 'СЕРЕДНІЙ',    color: '#E11D48', bg: 'bg-rose-900/20',   border: 'border-rose-500/40',   glow: '' },
+    medium:   { label: 'СЕРЕДНІЙ',    color: '#E11D48', bg: 'bg-rose-900/20',   border: 'border-cyan-500/40',   glow: '' },
     low:      { label: 'НИЗЬКИЙ',     color: '#71717a', bg: 'bg-zinc-900/20',     border: 'border-zinc-500/40',     glow: 'shadow-none' },
     minimal:  { label: 'МІНІМАЛЬНИЙ', color: '#3f3f46', bg: 'bg-zinc-950/20',     border: 'border-zinc-800/40',     glow: 'shadow-none' },
 };
@@ -119,15 +120,15 @@ const RadarChart: React.FC<{ factors: AMLFactor[] }> = ({ factors }) => {
             radius: '75%',
             startAngle: 90,
             axisName: {
-                color: 'rgba(225,29,72,0.6)',
+                color: 'rgba(6,182,212,0.6)',
                 fontSize: 10,
                 fontFamily: 'Inter, monospace',
                 fontWeight: '900',
                 fontStyle: 'italic'
             },
             splitNumber: 5,
-            axisLine: { lineStyle: { color: 'rgba(225,29,72,0.1)' } },
-            splitLine: { lineStyle: { color: 'rgba(225,29,72,0.1)' } },
+            axisLine: { lineStyle: { color: 'rgba(6,182,212,0.1)' } },
+            splitLine: { lineStyle: { color: 'rgba(6,182,212,0.1)' } },
             splitArea: { areaStyle: { color: ['rgba(0,0,0,0.4)', 'rgba(0,0,0,0.6)'] } },
         },
         series: [{
@@ -135,7 +136,7 @@ const RadarChart: React.FC<{ factors: AMLFactor[] }> = ({ factors }) => {
             data: [{
                 value: values,
                 name: 'AML Фактори',
-                areaStyle: { color: 'rgba(225,29,72,0.15)' },
+                areaStyle: { color: 'rgba(6,182,212,0.15)' },
                 areaColor: 'rgba(225, 29, 72, 0.4)',
                 lineStyle: { color: '#E11D48', width: 3 },
                 itemStyle: { color: '#E11D48' },
@@ -155,7 +156,7 @@ const RadarChart: React.FC<{ factors: AMLFactor[] }> = ({ factors }) => {
 const ELITE_Overlay: React.FC = () => (
     <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden mix-blend-overlay opacity-30">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.8)_100%)]" />
-        <div className="absolute inset-0 animate-scanline bg-[linear-gradient(to_bottom,transparent_0%,rgba(225,29,72,0.02)_50%,transparent_100%)] bg-[length:100%_4px]" />
+        <div className="absolute inset-0 animate-scanline bg-[linear-gradient(to_bottom,transparent_0%,rgba(6,182,212,0.02)_50%,transparent_100%)] bg-[length:100%_4px]" />
         <div className="absolute inset-0 bg-noise opacity-10" />
     </div>
 );
@@ -174,7 +175,7 @@ const ScanningHUD: React.FC<{ vramStatus: 'nominal' | 'warning' | 'critical' }> 
             />
 
             {/* Координати та цифри */}
-            <div className="absolute top-20 right-10 flex flex-col items-end gap-1 font-mono text-[8px] text-rose-500/40 italic">
+            <div className="absolute top-20 right-10 flex flex-col items-end gap-1 font-mono text-[8px] text-cyan-500/40 italic">
                 {[...Array(5)].map((_, i) => (
                     <motion.span
                         key={i}
@@ -186,8 +187,8 @@ const ScanningHUD: React.FC<{ vramStatus: 'nominal' | 'warning' | 'critical' }> 
                 ))}
             </div>
 
-            <div className="absolute bottom-24 left-10 flex flex-col gap-1 font-mono text-[8px] text-rose-500/40 italic">
-                <span className={cn("uppercase tracking-[0.3em] font-black", vramStatus === 'critical' ? 'text-rose-500 ' : '')}>
+            <div className="absolute bottom-24 left-10 flex flex-col gap-1 font-mono text-[8px] text-cyan-500/40 italic">
+                <span className={cn("uppercase tracking-[0.3em] font-black", vramStatus === 'critical' ? 'text-cyan-500 ' : '')}>
                     {vramStatus === 'critical' ? 'CUDA_GUARD: ОБМЕЖЕННЯ_АКТИВНЕ' : 'ЯДРО_ТЕМП: 42°C'}
                 </span>
                 <span className="uppercase tracking-[0.3em] font-black">НАВАНТАЖЕННЯ: {Math.floor(Math.random() * 100)}%</span>
@@ -257,16 +258,16 @@ const CognitiveParsingTerminal: React.FC<{ active: boolean; targetName: string; 
             initial={{ opacity: 0, height: 0, scale: 0.95 }}
             animate={{ opacity: 1, height: 'auto', scale: 1 }}
             exit={{ opacity: 0, height: 0, scale: 0.95 }}
-            className="mt-6 p-6 bg-black border-2 border-rose-500/30 rounded-[2rem] overflow-hidden  relative group"
+            className="mt-6 p-6 bg-black border-2 border-cyan-500/30 rounded-[2rem] overflow-hidden  relative group"
         >
-            <div className="absolute top-0 left-0 w-full h-1 bg-rose-500/40 " />
+            <div className="absolute top-0 left-0 w-full h-1 bg-cyan-500/40 " />
             <div className="flex items-center justify-between mb-4 border-b border-white/5 pb-2">
                 <div className="flex items-center gap-3">
-                    <Cpu size={14} className="text-rose-500 " />
-                    <span className="text-[9px] font-black text-rose-500 uppercase tracking-[0.3em] italic">ОБ ОБКА: {targetName?.toUpperCase() || 'НЕВІДОМИЙ_ВУЗОЛ'}</span>
+                    <Cpu size={14} className="text-cyan-500 " />
+                    <span className="text-[9px] font-black text-cyan-500 uppercase tracking-[0.3em] italic">ОБ ОБКА: {targetName?.toUpperCase() || 'НЕВІДОМИЙ_ВУЗОЛ'}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                    <Activity size={10} className="text-rose-500" />
+                    <Activity size={10} className="text-cyan-500" />
                     <span className="text-[8px] font-mono text-slate-500 uppercase italic">1.4 ТБ/С_ПОТІК_ДАНИХ</span>
                 </div>
             </div>
@@ -278,7 +279,7 @@ const CognitiveParsingTerminal: React.FC<{ active: boolean; targetName: string; 
                         animate={{ opacity: 1, x: 0 }}
                         className={cn(
                             "text-[9px] whitespace-nowrap overflow-hidden transition-colors border-l-2 pl-2 tracking-tighter italic",
-                            idx === lines.length - 1 ? "text-rose-400 border-rose-500 font-bold" : "text-slate-500 border-transparent"
+                            idx === lines.length - 1 ? "text-rose-400 border-cyan-500 font-bold" : "text-slate-500 border-transparent"
                         )}
                     >
                         {l}
@@ -312,13 +313,13 @@ const FactorCard: React.FC<{ factor: AMLFactor }> = ({ factor }) => {
             className={cn(
                 'p-6 rounded-[2rem] border-2 transition-all relative overflow-hidden',
                 factor.detected
-                    ? 'bg-rose-500/10 border-rose-500/30 '
+                    ? 'bg-cyan-500/10 border-cyan-500/30 '
                     : 'bg-black/60 border-white/5 hover:border-white/20'
             )}
         >
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-4">
-                    <span className={factor.detected ? 'text-rose-500' : 'text-slate-700'}>{icon}</span>
+                    <span className={factor.detected ? 'text-cyan-500' : 'text-slate-700'}>{icon}</span>
                     <span className={cn("text-[11px] font-black uppercase tracking-widest italic", factor.detected ? 'text-white' : 'text-slate-600')}>
                         {label}
                     </span>
@@ -326,7 +327,7 @@ const FactorCard: React.FC<{ factor: AMLFactor }> = ({ factor }) => {
                 <div className="flex items-center gap-4">
                     <span className="text-[9px] font-black font-mono text-slate-800 italic uppercase">ВАГА: {factor.weight}</span>
                     {factor.detected
-                        ? <span className="text-[9px] font-black text-rose-500 bg-rose-500/10 px-3 py-1 rounded-full border border-rose-500/20">ВИЯВЛЕНО</span>
+                        ? <span className="text-[9px] font-black text-cyan-500 bg-cyan-500/10 px-3 py-1 rounded-full border border-cyan-500/20">ВИЯВЛЕНО</span>
                         : <span className="text-[9px] font-black text-emerald-500 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">ЧИСТО</span>
                     }
                 </div>
@@ -549,29 +550,29 @@ const AMLScoringView: React.FC = () => {
                 <AdvancedBackground />
                 <ScanningHUD vramStatus={vramMetrics.status} />
                 <CyberGrid color="rgba(225, 29, 72, 0.04)" />
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(225,29,72,0.06),transparent_70%)] pointer-events-none" />
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,rgba(225,29,72,0.03),transparent_60%)] pointer-events-none" />
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(6,182,212,0.06),transparent_70%)] pointer-events-none" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,rgba(6,182,212,0.03),transparent_60%)] pointer-events-none" />
 
                 {/* === ViewHeader ELITE === */}
                 <ViewHeader
                     title={
                         <div className="flex items-center gap-10">
                             <div className="relative group">
-                                <div className="absolute inset-0 bg-rose-500/20 blur-3xl rounded-full scale-150 " />
-                                <div className="relative p-7 bg-black border-2 border-rose-500/40 rounded-[2.5rem] shadow-4xl transform -rotate-2 hover:rotate-0 transition-all">
-                                    <ShieldAlert size={42} className="text-rose-500 " />
+                                <div className="absolute inset-0 bg-cyan-500/20 blur-3xl rounded-full scale-150 " />
+                                <div className="relative p-7 bg-black border-2 border-cyan-500/40 rounded-[2.5rem] shadow-4xl transform -rotate-2 hover:rotate-0 transition-all">
+                                    <ShieldAlert size={42} className="text-cyan-500 " />
                                 </div>
                             </div>
                             <div className="space-y-2">
                                 <div className="flex items-center gap-4">
-                                    <span className="bg-rose-500/10 border border-rose-500/20 text-rose-500 px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg">
+                                    <span className="bg-cyan-500/10 border border-cyan-500/20 text-cyan-500 px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg">
                                         МЕХАНІЗМ_КОМПЛАЄНСУ // AML_СКОРИНГ
                                     </span>
-                                    <div className="h-px w-12 bg-rose-500/20" />
+                                    <div className="h-px w-12 bg-cyan-500/20" />
                                     <span className="text-[10px] font-black text-rose-800 font-mono tracking-widest uppercase italic shadow-sm">версія v61.0-ELITE</span>
                                 </div>
                                 <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
-                                    AML <span className="text-rose-600 underline decoration-rose-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">СКО ІНГ</span>
+                                    AML <span className="text-cyan-600 underline decoration-rose-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">СКО ІНГ</span>
                                 </h1>
                             </div>
                         </div>
@@ -598,8 +599,8 @@ const AMLScoringView: React.FC = () => {
                 {/* === Статус-бар ELITE === */}
                 <div className="z-10 flex items-center gap-6 py-4 px-8 bg-black border-2 border-white/5 rounded-[2rem] shadow-4xl  w-fit">
                     <div className="flex items-center gap-3">
-                        <span className="w-3 h-3 rounded-full bg-rose-600  " />
-                        <span className="text-[11px] font-black text-rose-500 uppercase tracking-[0.5em] font-mono italic">
+                        <span className="w-3 h-3 rounded-full bg-cyan-600  " />
+                        <span className="text-[11px] font-black text-cyan-500 uppercase tracking-[0.5em] font-mono italic">
                             СТАТУС_ЯД А: НОМІНАЛЬНИЙ // РЕЖИМ: ГЛИБОКИЙ_СКАН // {liveTime}
                         </span>
                     </div>
@@ -611,18 +612,18 @@ const AMLScoringView: React.FC = () => {
                         { id: false, label: 'ОДИНОЧНИЙ_АНАЛІЗ_ELITE',    icon: <Target size={18} /> },
                         { id: true,  label: 'ПАКЕТНИЙ_ДЕПЛОЙ_CSV', icon: <Upload size={18} /> },
                     ].map(({ id, label, icon }) => (
-                        <button
+                        <Button variant="cyber"
                             key={String(id)}
                             onClick={() => { play(UISoundType.CLICK); setBatchMode(id); }}
                             className={cn(
                                 'flex items-center gap-4 px-10 py-5 rounded-[2rem] border-2 text-[10px] font-black uppercase tracking-[0.3em] italic transition-all shadow-xl',
                                 batchMode === id
-                                    ? 'bg-rose-600 border-rose-500 text-white shadow-4xl scale-105'
-                                    : 'bg-black border-white/5 text-slate-600 hover:border-rose-500/30 hover:text-rose-400'
+                                    ? 'bg-cyan-600 border-cyan-500 text-white shadow-4xl scale-105'
+                                    : 'bg-black border-white/5 text-slate-600 hover:border-cyan-500/30 hover:text-rose-400'
                             )}
                         >
                             {icon} {label}
-                        </button>
+                        </Button>
                     ))}
                 </div>
 
@@ -631,26 +632,26 @@ const AMLScoringView: React.FC = () => {
                     <div className="col-span-12 lg:col-span-4 flex flex-col gap-10">
 
                         {!batchMode ? (
-                            <HoloCard variant="holographic" className="p-10 flex flex-col gap-8 rounded-[3.5rem] border-rose-500/10 shadow-4xl bg-black/60 ">
+                            <HoloCard variant="holographic" className="p-10 flex flex-col gap-8 rounded-[3.5rem] border-cyan-500/10 shadow-4xl bg-black/60 ">
                                 <h3 className="text-[11px] font-black text-white uppercase tracking-[0.4em] flex items-center gap-4 italic font-serif">
-                                    <Crosshair size={24} className="text-rose-500 " /> ПА АМЕТрИ_СКАНУВАННЯ
+                                    <Crosshair size={24} className="text-cyan-500 " /> ПА АМЕТрИ_СКАНУВАННЯ
                                 </h3>
 
                                 <div className="flex gap-4">
                                     {(['organization', 'person'] as const).map(t => (
-                                        <button
+                                        <Button variant="cyber"
                                             key={t}
                                             onClick={() => { play(UISoundType.CLICK); setEntityType(t); }}
                                             className={cn(
                                                 'flex-1 py-5 rounded-2xl border-2 text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-4 transition-all italic',
                                                 entityType === t
-                                                    ? 'bg-rose-500/10 border-rose-500/40 text-rose-400 shadow-xl'
+                                                    ? 'bg-cyan-500/10 border-cyan-500/40 text-rose-400 shadow-xl'
                                                     : 'bg-black border-white/5 text-slate-700 hover:border-white/20'
                                             )}
                                         >
                                             {t === 'organization' ? <Building2 size={16} /> : <Users size={16} />}
                                             {t === 'organization' ? 'КОМПАНІЯ' : 'ОСОБА'}
-                                        </button>
+                                        </Button>
                                     ))}
                                 </div>
 
@@ -664,7 +665,7 @@ const AMLScoringView: React.FC = () => {
                                             value={entityId}
                                             onChange={e => setEntityId(e.target.value)}
                                             placeholder={entityType === 'organization' ? '00000000' : '0000000000'}
-                                            className="bg-black border-2 border-white/5 rounded-2xl px-8 py-5 text-white font-mono text-xl placeholder:text-slate-900 focus:outline-none focus:border-rose-500/40 transition-all italic tracking-tighter"
+                                            className="bg-black border-2 border-white/5 rounded-2xl px-8 py-5 text-white font-mono text-xl placeholder:text-slate-900 focus:outline-none focus:border-cyan-500/40 transition-all italic tracking-tighter"
                                         />
                                     </div>
 
@@ -678,24 +679,24 @@ const AMLScoringView: React.FC = () => {
                                             onChange={e => setEntityName(e.target.value)}
                                             onKeyDown={e => e.key === 'Enter' && runScore()}
                                             placeholder={entityType === 'organization' ? 'ТОВ "Назва"...' : 'Прізвище Ім\'я...'}
-                                            className="bg-black border-2 border-white/5 rounded-2xl px-8 py-5 text-white text-lg placeholder:text-slate-900 focus:outline-none focus:border-rose-500/40 transition-all italic tracking-tight"
+                                            className="bg-black border-2 border-white/5 rounded-2xl px-8 py-5 text-white text-lg placeholder:text-slate-900 focus:outline-none focus:border-cyan-500/40 transition-all italic tracking-tight"
                                         />
                                     </div>
                                 </div>
 
-                                <button
+                                <Button variant="cyber"
                                     onClick={() => { play(UISoundType.CLICK); runScore(); }}
                                     onMouseEnter={() => play(UISoundType.HOVER)}
                                     disabled={loading || !entityId || !entityName}
                                     className={cn(
                                         "w-full py-8 text-white font-black text-sm rounded-[2rem] uppercase tracking-[0.4em] italic hover:brightness-110 transition-all shadow-4xl disabled:opacity-40 flex flex-col items-center justify-center gap-2 font-bold border-4 relative overflow-hidden group/btn",
-                                        loading ? "bg-black border-rose-500/20" : "bg-rose-600 border-rose-500/20"
+                                        loading ? "bg-black border-cyan-500/20" : "bg-cyan-600 border-cyan-500/20"
                                     )}
                                 >
                                     {loading ? (
                                         <div className="flex items-center gap-6">
-                                            <RefreshCw size={26} className="animate-spin text-rose-500" />
-                                            <span className="text-rose-500">ПА СИНГ_КОГНІТИВНОГО_МАСИВУ...</span>
+                                            <RefreshCw size={26} className="animate-spin text-cyan-500" />
+                                            <span className="text-cyan-500">ПА СИНГ_КОГНІТИВНОГО_МАСИВУ...</span>
                                         </div>
                                     ) : (
                                         <div className="flex items-center gap-6 text-lg">
@@ -706,43 +707,43 @@ const AMLScoringView: React.FC = () => {
                                     {!loading && <span className="text-[8px] opacity-40 group-hover/btn:opacity-100 transition-opacity">ДОСТУП TIER-1 АВТО ИЗОВАНО // ШИФ УВАННЯ: AES-512</span>}
                                     
                                     <div className="absolute inset-0 bg-white/5 opacity-0 group-hover/btn:opacity-100 group-active:bg-white/10 transition-all pointer-events-none" />
-                                </button>
+                                </Button>
 
                                 <CognitiveParsingTerminal active={loading} targetName={entityName} mode={llmTriStateMode} />
 
                                 {error && (
-                                    <div className="p-6 bg-rose-950/20 border-2 border-rose-500/30 rounded-2xl flex items-start gap-5 shadow-inner">
-                                        <AlertCircle size={20} className="text-rose-500 shrink-0 mt-1" />
+                                    <div className="p-6 bg-rose-950/20 border-2 border-cyan-500/30 rounded-2xl flex items-start gap-5 shadow-inner">
+                                        <AlertCircle size={20} className="text-cyan-500 shrink-0 mt-1" />
                                         <p className="text-[11px] text-rose-300 font-black uppercase italic leading-relaxed">{error}</p>
                                     </div>
                                 )}
                             </HoloCard>
                         ) : (
-                            <HoloCard variant="holographic" className="p-10 flex flex-col gap-8 rounded-[3.5rem] border-rose-500/10 shadow-4xl bg-black/60 ">
+                            <HoloCard variant="holographic" className="p-10 flex flex-col gap-8 rounded-[3.5rem] border-cyan-500/10 shadow-4xl bg-black/60 ">
                                 <h3 className="text-[11px] font-black text-white uppercase tracking-[0.4em] flex items-center gap-4 italic font-serif">
-                                    <Upload size={24} className="text-rose-500" /> МАСОВЕ_ЗАВАНТАЖЕННЯ_МАСИВУ
+                                    <Upload size={24} className="text-cyan-500" /> МАСОВЕ_ЗАВАНТАЖЕННЯ_МАСИВУ
                                 </h3>
                                 <p className="text-[10px] text-slate-700 leading-relaxed uppercase font-black tracking-widest bg-white/[0.02] p-4 rounded-xl border border-white/5 italic">
                                     ФОРМАТ: entity_id, name, type (org/pers) // ЛІМІТ: 100_ВУЗЛІВ
                                 </p>
-                                <button
+                                <Button variant="cyber"
                                     onClick={() => { play(UISoundType.CLICK); fileInputRef.current?.click(); }}
-                                    className="py-12 border-4 border-dashed border-white/5 rounded-[2.5rem] text-slate-700 hover:border-rose-500/40 hover:text-rose-500 transition-all flex flex-col items-center gap-6 bg-black/40 group shadow-inner"
+                                    className="py-12 border-4 border-dashed border-white/5 rounded-[2.5rem] text-slate-700 hover:border-cyan-500/40 hover:text-cyan-500 transition-all flex flex-col items-center gap-6 bg-black/40 group shadow-inner"
                                 >
                                     <Upload size={40} className="group-hover:scale-110 transition-transform opacity-40 group-hover:opacity-100" />
                                     <span className="text-[11px] font-black uppercase tracking-[0.4em] italic">ІМПОРТ_ЦІЛЬОВОГО_CSV</span>
-                                </button>
+                                </Button>
                                 <input ref={fileInputRef} type="file" accept=".csv" className="hidden" onChange={handleCSVImport} />
 
                                 {batchList.length > 0 && (
                                     <div className="flex flex-col gap-3 max-h-60 overflow-y-auto custom-scrollbar pr-2">
                                         <div className="flex items-center justify-between mb-2">
-                                            <span className="text-[10px] text-rose-600 font-black uppercase tracking-[0.4em] italic">
+                                            <span className="text-[10px] text-cyan-600 font-black uppercase tracking-[0.4em] italic">
                                                 ЗАВАНТАЖЕНО: {batchList.length}_ВУЗЛІВ
                                             </span>
-                                            <button onClick={() => { play(UISoundType.CLICK); setBatchList([]); }} onMouseEnter={() => play(UISoundType.HOVER)} className="p-2 text-slate-800 hover:text-rose-500 transition-colors">
+                                            <Button variant="cyber" onClick={() => { play(UISoundType.CLICK); setBatchList([]); }} onMouseEnter={() => play(UISoundType.HOVER)} className="p-2 text-slate-800 hover:text-cyan-500 transition-colors">
                                                 <X size={18} />
-                                            </button>
+                                            </Button>
                                         </div>
                                         {batchList.map(e => (
                                             <div key={e.id} className="flex items-center justify-between px-6 py-4 bg-black border-2 border-white/5 rounded-2xl group hover:border-white/20 transition-all">
@@ -754,24 +755,24 @@ const AMLScoringView: React.FC = () => {
                                     </div>
                                 )}
 
-                                <button
+                                <Button variant="cyber"
                                     onClick={() => { play(UISoundType.CLICK); runBatch(); }}
                                     onMouseEnter={() => play(UISoundType.HOVER)}
                                     disabled={batchLoading || batchList.length === 0}
-                                    className="w-full py-8 bg-rose-600 text-white font-black text-sm rounded-[2rem] uppercase tracking-[0.4em] italic hover:brightness-110 transition-all shadow-4xl disabled:opacity-40 flex items-center justify-center gap-6 font-bold border-4 border-rose-500/20"
+                                    className="w-full py-8 bg-cyan-600 text-white font-black text-sm rounded-[2rem] uppercase tracking-[0.4em] italic hover:brightness-110 transition-all shadow-4xl disabled:opacity-40 flex items-center justify-center gap-6 font-bold border-4 border-cyan-500/20"
                                 >
                                     {batchLoading
                                         ? <><RefreshCw size={24} className="animate-spin" /> СКАНУВАННЯ_МАСИВУ...</>
                                         : <><Zap size={24} /> ЗАПУСТИТИ_ПАКЕТНИЙ_СКАН</>
                                     }
-                                </button>
+                                </Button>
                             </HoloCard>
                         )}
 
                         {/* Шкаларизику ELITE */}
                         <HoloCard variant="cyber" className="p-10 rounded-[3.5rem] border-white/5 bg-black/40 shadow-inner">
                             <h3 className="text-[11px] font-black text-slate-700 uppercase tracking-[0.5em] mb-8 flex items-center gap-4 italic font-bold">
-                                <Info size={16} className="text-rose-600/40" /> МАТрИЦЯ_ОЦІНКИ_ РИЗИКІВ
+                                <Info size={16} className="text-cyan-600/40" /> МАТрИЦЯ_ОЦІНКИ_ РИЗИКІВ
                             </h3>
                             <div className="flex flex-col gap-4">
                                 {riskLevels.map(l => {
@@ -804,26 +805,26 @@ const AMLScoringView: React.FC = () => {
                                     initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
                                     className="flex flex-col gap-10"
                                 >
-                                    <HoloCard variant="holographic" className="p-12 rounded-[4rem] border-rose-500/10 shadow-4xl bg-black/80  relative overflow-hidden">
+                                    <HoloCard variant="holographic" className="p-12 rounded-[4rem] border-cyan-500/10 shadow-4xl bg-black/80  relative overflow-hidden">
                                         <div className="absolute top-0 right-0 p-16 opacity-[0.03] pointer-events-none">
-                                            <Database size={300} className="text-rose-500" />
+                                            <Database size={300} className="text-cyan-500" />
                                         </div>
                                         <div className="flex items-center justify-between mb-12 relative z-10">
                                             <div className="space-y-2">
                                                 <h2 className="text-4xl font-black text-white italic uppercase tracking-tighter">ПАКЕТНИЙ_ВЕ ДИКТ_DATA</h2>
-                                                <p className="text-[10px] font-black text-rose-500 uppercase tracking-[0.5em] italic">BATCH_ID: {Math.random().toString(36).substring(7).toUpperCase()}</p>
+                                                <p className="text-[10px] font-black text-cyan-500 uppercase tracking-[0.5em] italic">BATCH_ID: {Math.random().toString(36).substring(7).toUpperCase()}</p>
                                             </div>
                                             <div className="flex gap-4">
-                                                <button className="p-5 bg-black border-2 border-white/5 rounded-2xl text-slate-700 hover:text-white transition-all"><Download size={24} /></button>
-                                                <button className="p-5 bg-rose-600 text-white rounded-2xl shadow-4xl"><FileText size={24} /></button>
+                                                <Button variant="cyber" className="p-5 bg-black border-2 border-white/5 rounded-2xl text-slate-700 hover:text-white transition-all"><Download size={24} /></Button>
+                                                <Button variant="cyber" className="p-5 bg-cyan-600 text-white rounded-2xl shadow-4xl"><FileText size={24} /></Button>
                                             </div>
                                         </div>
 
                                         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative z-10">
                                             {[
                                                 { l: 'ОБРОБЛЕНО', v: batchResult.total_processed, c: 'text-white' },
-                                                { l: 'КРИТИЧНО', v: batchResult.distribution?.critical || 0, c: 'text-rose-500' },
-                                                { l: 'ВИСОКИЙ', v: batchResult.distribution?.high || 0, c: 'text-rose-600' },
+                                                { l: 'КРИТИЧНО', v: batchResult.distribution?.critical || 0, c: 'text-cyan-500' },
+                                                { l: 'ВИСОКИЙ', v: batchResult.distribution?.high || 0, c: 'text-cyan-600' },
                                                 { l: 'СЕРЕДНІЙ', v: batchResult.distribution?.medium || 0, c: 'text-rose-700' },
                                             ].map((stat, i) => (
                                                 <div key={i} className="p-8 rounded-[2.5rem] bg-black/60 border-2 border-white/5 flex flex-col items-center gap-3 shadow-inner">
@@ -840,10 +841,10 @@ const AMLScoringView: React.FC = () => {
                                                 key={i}
                                                 initial={{ opacity: 0, x: -20 }}
                                                 animate={{ opacity: 1, x: 0, transition: { delay: i * 0.05 } }}
-                                                className="p-8 rounded-[3rem] bg-black border-2 border-white/5 flex items-center justify-between group hover:border-rose-500/30 transition-all shadow-xl italic"
+                                                className="p-8 rounded-[3rem] bg-black border-2 border-white/5 flex items-center justify-between group hover:border-cyan-500/30 transition-all shadow-xl italic"
                                             >
                                                 <div className="flex items-center gap-6">
-                                                   <div className="w-16 h-16 rounded-2xl bg-black border-2 border-white/5 flex items-center justify-center text-rose-500 font-black font-mono text-xl italic group-hover:border-rose-500/40 transition-colors">{res.total_score}</div>
+                                                   <div className="w-16 h-16 rounded-2xl bg-black border-2 border-white/5 flex items-center justify-center text-cyan-500 font-black font-mono text-xl italic group-hover:border-cyan-500/40 transition-colors">{res.total_score}</div>
                                                    <div>
                                                       <h4 className="text-lg font-black text-white italic uppercase tracking-tight truncate max-w-[180px]">{res.entity_name}</h4>
                                                       <p className="text-[9px] font-black text-slate-800 uppercase tracking-widest mt-1 font-mono italic">{res.entity_id}</p>
@@ -865,12 +866,12 @@ const AMLScoringView: React.FC = () => {
                                 >
                                     <div className="grid grid-cols-12 gap-10">
                                         {/* Скор-метр панель */}
-                                        <HoloCard variant="holographic" className="col-span-12 xl:col-span-5 p-12 rounded-[5rem] border-rose-500/10 shadow-4xl bg-black/80  flex flex-col items-center justify-center relative overflow-hidden">
+                                        <HoloCard variant="holographic" className="col-span-12 xl:col-span-5 p-12 rounded-[5rem] border-cyan-500/10 shadow-4xl bg-black/80  flex flex-col items-center justify-center relative overflow-hidden">
                                             <div className="absolute top-0 left-0 p-16 opacity-[0.02] pointer-events-none w-full h-full flex items-center justify-center">
-                                                <Radar size={400} className="text-rose-500 animate-spin-slow" />
+                                                <Radar size={400} className="text-cyan-500 animate-spin-slow" />
                                             </div>
                                             <h3 className="text-[14px] font-black text-white uppercase tracking-[0.6em] mb-12 italic font-serif flex items-center gap-6 relative z-10">
-                                                <Target size={20} className="text-rose-500" />  РЕЗУЛЬТАТ_ELITE_SCAN
+                                                <Target size={20} className="text-cyan-500" />  РЕЗУЛЬТАТ_ELITE_SCAN
                                             </h3>
                                             <div className="relative z-10 w-full flex justify-center">
                                                 <ScoreMeter score={result.total_score} level={result.risk_level} />
@@ -888,10 +889,10 @@ const AMLScoringView: React.FC = () => {
                                         {/*  адар факторів */}
                                         <HoloCard variant="cyber" className="col-span-12 xl:col-span-7 p-12 rounded-[5rem] border-white/5 bg-black/40 shadow-inner flex flex-col relative overflow-hidden">
                                             <div className="absolute -top-10 -right-10 p-20 opacity-[0.03] pointer-events-none">
-                                                <Network size={200} className="text-rose-600" />
+                                                <Network size={200} className="text-cyan-600" />
                                             </div>
                                             <h3 className="text-[12px] font-black text-slate-700 uppercase tracking-[0.5em] mb-8 italic flex items-center gap-6">
-                                                <Activity size={20} className="text-rose-500" /> ВЕКТОР_AML_ РИЗИКІВ
+                                                <Activity size={20} className="text-cyan-500" /> ВЕКТОР_AML_ РИЗИКІВ
                                             </h3>
                                             <div className="flex-1 flex items-center justify-center relative z-10">
                                                 <RadarChart factors={result.factors} />
@@ -899,7 +900,7 @@ const AMLScoringView: React.FC = () => {
                                             <div className="mt-8 grid grid-cols-2 gap-4 relative z-10">
                                                 <div className="p-6 bg-black/60 border-2 border-white/5 rounded-3xl flex items-center justify-between italic">
                                                     <span className="text-[10px] font-black text-slate-800 uppercase tracking-widest italic">ВИЯВЛЕНО_ЗАГРОЗ</span>
-                                                    <span className="text-2xl font-black text-rose-500 font-mono italic">{detectedCount}</span>
+                                                    <span className="text-2xl font-black text-cyan-500 font-mono italic">{detectedCount}</span>
                                                 </div>
                                                 <div className="p-6 bg-black/60 border-2 border-white/5 rounded-3xl flex items-center justify-between italic">
                                                     <span className="text-[10px] font-black text-slate-800 uppercase tracking-widest italic">TIER_ОЦІНКИ</span>
@@ -912,7 +913,7 @@ const AMLScoringView: React.FC = () => {
                                     {/* Список факторів ELITE */}
                                     <div className="space-y-8">
                                         <h3 className="text-2xl font-black text-white italic uppercase tracking-[0.4em] flex items-center gap-6 pl-4 font-serif">
-                                            <Fingerprint size={28} className="text-rose-500" /> ДЕТАЛІЗАЦІЯ_ЗНАЙДЕНИХ_А ТЕФАКТІВ
+                                            <Fingerprint size={28} className="text-cyan-500" /> ДЕТАЛІЗАЦІЯ_ЗНАЙДЕНИХ_А ТЕФАКТІВ
                                         </h3>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                             {result.factors.map((f, i) => (
@@ -923,12 +924,12 @@ const AMLScoringView: React.FC = () => {
 
                                     {/* Footer дії ELITE */}
                                     <div className="flex gap-8 mt-4">
-                                        <button className="flex-1 py-10 bg-rose-600 text-white rounded-[3rem] font-black italic uppercase text-[12px] tracking-[0.5em] transition-all shadow-4xl hover:scale-[1.02] active:scale-95 border-4 border-rose-500/20">
+                                        <Button variant="cyber" className="flex-1 py-10 bg-cyan-600 text-white rounded-[3rem] font-black italic uppercase text-[12px] tracking-[0.5em] transition-all shadow-4xl hover:scale-[1.02] active:scale-95 border-4 border-cyan-500/20">
                                             ЗГЕНЕ УВАТИ_VIP_AML_REPORT
-                                        </button>
-                                        <button className="flex-1 py-10 bg-black border-2 border-white/5 text-slate-600 hover:text-white hover:border-rose-500/40 rounded-[3rem] font-black italic uppercase text-[11px] tracking-[0.4em] transition-all shadow-xl">
+                                        </Button>
+                                        <Button variant="cyber" className="flex-1 py-10 bg-black border-2 border-white/5 text-slate-600 hover:text-white hover:border-cyan-500/40 rounded-[3rem] font-black italic uppercase text-[11px] tracking-[0.4em] transition-all shadow-xl">
                                             ВІДП АВИТИ_В_REDRUM_КАНАЛ
-                                        </button>
+                                        </Button>
                                     </div>
                                 </motion.div>
                             )}
@@ -941,9 +942,9 @@ const AMLScoringView: React.FC = () => {
                                     className="h-[800px] rounded-[5rem] border-2 border-dashed border-white/5 bg-black/20 flex flex-col items-center justify-center gap-12 group p-20"
                                 >
                                     <div className="relative">
-                                        <div className="absolute inset-0 bg-rose-500/10 blur-[100px] rounded-full scale-150 " />
-                                        <div className="relative p-12 bg-black border-2 border-white/5 rounded-full group-hover:border-rose-500/40 transition-all duration-1000 shadow-4xl">
-                                            <ShieldAlert size={100} className="text-slate-900 group-hover:text-rose-500 transition-all duration-1000 group-hover:scale-110" />
+                                        <div className="absolute inset-0 bg-cyan-500/10 blur-[100px] rounded-full scale-150 " />
+                                        <div className="relative p-12 bg-black border-2 border-white/5 rounded-full group-hover:border-cyan-500/40 transition-all duration-1000 shadow-4xl">
+                                            <ShieldAlert size={100} className="text-slate-900 group-hover:text-cyan-500 transition-all duration-1000 group-hover:scale-110" />
                                         </div>
                                     </div>
                                     <div className="text-center space-y-4 max-w-2xl px-12">
@@ -973,7 +974,7 @@ const AMLScoringView: React.FC = () => {
 
                 {/* Внутрішній стиль для ELITE */}
                 <style dangerouslySetInnerHTML={{ __html: `
-                    .shadow-4xl { box-shadow: 0 80px 150px -40px rgba(0,0,0,0.95), 0 0 100px rgba(225,29,72,0.02); }
+                    .shadow-4xl { box-shadow: 0 80px 150px -40px rgba(0,0,0,0.95), 0 0 100px rgba(6,182,212,0.02); }
                     .animate-scanline { animation: scanline 4s linear infinite; }
                     @keyframes scanline { from { transform: translateY(-100%); } to { transform: translateY(100%); } }
                     .animate-spin-slow { animation: spin 30s linear infinite; }
@@ -981,8 +982,8 @@ const AMLScoringView: React.FC = () => {
                     .bg-noise { background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
                     .custom-scrollbar::-webkit-scrollbar { width: 4px; }
                     .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.5); }
-                    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(225,29,72,0.2); border-radius: 10px; }
-                    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(225,29,72,0.4); }
+                    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(6,182,212,0.2); border-radius: 10px; }
+                    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(6,182,212,0.4); }
                 `}} />
             </div>
         </PageTransition>

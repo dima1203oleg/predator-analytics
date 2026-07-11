@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useEffect, useRef, useState } from 'react';
 import cytoscape from 'cytoscape';
 import { networkApi } from '@/features/network/api/network';
@@ -26,7 +27,10 @@ import { CyberGrid } from '@/components/CyberGrid';
 import { FinancialFlowPanel } from '@/components/graph/FinancialFlowPanel';
 import { analyticsService } from '@/services/unified/analytics.service';
 import { HoloContainer } from '@/components/HoloContainer';
-import { KnowledgeGraph3D } from '@/components/graph/KnowledgeGraph3D';
+import { useGraphStore } from '@/core/state/graph.store';
+import { ObservatoryEntry } from '@/features/ObservatoryEntry';
+
+const KnowledgeGraph3D = React.lazy(() => import('@/components/graph/KnowledgeGraph3D'));
 
 const VramIndicator: React.FC = () => {
     const { data: vram } = useQuery({
@@ -59,15 +63,24 @@ const NetworkMapPage: React.FC = () => {
     const [cy, setCy] = useState<cytoscape.Core | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedNode, setSelectedNode] = useState<any>(null);
-    const [viewMode, setViewMode] = useState<'2d' | '3d'>('2d');
+    const [viewMode, setViewMode] = useState<'2d' | '3d'>('3d');
+    
+    const setGraphDataStore = useGraphStore(state => state.setGraphData);
 
     const { data: graphData, isLoading, refetch } = useQuery({
         queryKey: ['network-graph'],
         queryFn: () => networkApi.getGraph()
     });
 
+    // Sync data to the new 3D Observatory store regardless of 2D/3D view mode
     useEffect(() => {
-        if (!cyRef.current || !graphData) return;
+        if (graphData) {
+            setGraphDataStore(graphData.nodes, graphData.edges);
+        }
+    }, [graphData, setGraphDataStore]);
+
+    useEffect(() => {
+        if (!cyRef.current || !graphData || viewMode !== '2d') return;
 
         const cyInstance = cytoscape({
             container: cyRef.current,
@@ -178,7 +191,7 @@ const NetworkMapPage: React.FC = () => {
         return () => {
             cyInstance.destroy();
         };
-    }, [graphData]);
+    }, [graphData, viewMode]);
 
     const handleSearch = async () => {
         if (!searchQuery) return;
@@ -196,10 +209,11 @@ const NetworkMapPage: React.FC = () => {
     };
 
     return (
-        <div className="flex flex-col h-screen bg-[#02040a] text-white overflow-hidden relative">
+        <div className="flex flex-col h-screen bg-transparent text-white overflow-hidden relative">
             <CyberGrid color="rgba(225, 29, 72, 0.03)" />
             
-            {/* Header HUD */}
+            {/* Header HUD (Only in 2D mode) */}
+            {viewMode === '2d' && (
             <div className="p-8 border-b border-white/[0.03] bg-black/40  flex items-center justify-between z-30">
                 <div className="flex items-center gap-6">
                     <div className="relative group">
@@ -248,28 +262,40 @@ const NetworkMapPage: React.FC = () => {
                     </div>
                     
                     <div className="flex bg-black border border-white/5 p-1 rounded-2xl">
-                        <button 
+                        <Button variant={viewMode === '2d' ? 'sovereign' : 'ghost'}
                             onClick={() => setViewMode('2d')}
-                            className={cn("px-4 py-2 rounded-xl text-[10px] font-black uppercase transition-all", viewMode === '2d' ? "bg-rose-600 text-white" : "text-slate-500 hover:text-white")}
+                            className="rounded-xl w-16"
                         >
                             2D
-                        </button>
-                        <button 
+                        </Button>
+                        <Button variant={viewMode === '3d' ? 'sovereign' : 'ghost'}
                             onClick={() => setViewMode('3d')}
-                            className={cn("px-4 py-2 rounded-xl text-[10px] font-black uppercase transition-all", viewMode === '3d' ? "bg-rose-600 text-white" : "text-slate-500 hover:text-white")}
+                            className="rounded-xl w-16"
                         >
                             3D
-                        </button>
+                        </Button>
                     </div>
 
-                    <button 
+                    <Button variant="cyber" size="icon"
                         onClick={() => refetch()}
-                        className="p-5 bg-black border border-white/5 rounded-2xl hover:border-rose-500/40 transition-all text-slate-500 hover:text-rose-500 group"
+                        className="rounded-2xl"
                     >
                         <RefreshCw size={24} className={cn("transition-transform duration-1000", isLoading && "animate-spin")} />
-                    </button>
+                    </Button>
                 </div>
             </div>
+            )}
+
+            {/* Floating Toggle for 3D Mode */}
+            {viewMode === '3d' && (
+                <div className="absolute top-6 right-6 z-[100]">
+                    <Button variant="sovereign" size="lg"
+                        onClick={() => setViewMode('2d')}
+                    >
+                        ПОВЕРНУТИСЯ ДО 2D
+                    </Button>
+                </div>
+            )}
 
             <div className="flex-1 relative">
                 {/* Graph Container */}
@@ -277,28 +303,33 @@ const NetworkMapPage: React.FC = () => {
                     <div ref={cyRef} className="absolute inset-0" />
                 ) : (
                     <div className="absolute inset-0">
-                        <KnowledgeGraph3D />
+                        <React.Suspense fallback={<div className="flex items-center justify-center h-full w-full bg-[#020617] text-slate-400 font-mono text-sm tracking-widest">ІНІЦІАЛІЗАЦІЯ ОБСЕРВАТОРІЇ...</div>}>
+                            {/* Rendering the new Enterprise Observatory 3D Workspace */}
+                            <ObservatoryEntry />
+                        </React.Suspense>
                     </div>
                 )}
 
-                {/* HUD Overlay Elements */}
-                <div className="absolute inset-0 pointer-events-none border-[40px] border-black/40 z-10 border-double opacity-20" />
+                {viewMode === '2d' && (
+                    <>
+                        {/* HUD Overlay Elements */}
+                        <div className="absolute inset-0 pointer-events-none border-[40px] border-black/40 z-10 border-double opacity-20" />
                 <div className="absolute top-1/2 left-10 -translate-y-1/2 w-px h-64 bg-gradient-to-b from-transparent via-rose-500/40 to-transparent z-20" />
                 <div className="absolute top-1/2 right-10 -translate-y-1/2 w-px h-64 bg-gradient-to-b from-transparent via-rose-500/40 to-transparent z-20" />
 
                 {/* Controls HUD */}
                 <div className="absolute bottom-10 left-10 flex items-center gap-4 z-30">
-                    <div className="flex flex-col bg-black/60 border border-white/5 p-2 rounded-2xl ">
-                        <button onClick={() => cy?.zoom(cy.zoom() * 1.2)} className="p-4 text-slate-500 hover:text-rose-500 hover:bg-white/5 rounded-xl transition-all">
+                    <div className="flex flex-col bg-black/60 border border-white/5 p-2 rounded-2xl gap-2">
+                        <Button variant="holographic" size="icon" onClick={() => cy?.zoom(cy.zoom() * 1.2)} className="rounded-xl w-12 h-12">
                             <ZoomIn size={24} />
-                        </button>
-                        <button onClick={() => cy?.zoom(cy.zoom() / 1.2)} className="p-4 text-slate-500 hover:text-rose-500 hover:bg-white/5 rounded-xl transition-all">
+                        </Button>
+                        <Button variant="holographic" size="icon" onClick={() => cy?.zoom(cy.zoom() / 1.2)} className="rounded-xl w-12 h-12">
                             <ZoomOut size={24} />
-                        </button>
+                        </Button>
                     </div>
-                    <button onClick={() => cy?.fit()} className="p-6 bg-black/60 border border-white/5 rounded-[2rem] text-slate-500 hover:text-rose-500  transition-all shadow-2xl">
+                    <Button variant="cyber" size="icon" onClick={() => cy?.fit()} className="w-16 h-16 rounded-[2rem]">
                         <Maximize size={28} />
-                    </button>
+                    </Button>
                     <div className="ml-10 space-y-2">
                         <div className="flex items-center gap-3 px-4 py-2 bg-black/40 border border-white/5 rounded-full">
                             <div className="w-2 h-2 rounded-full bg-rose-500" />
@@ -336,9 +367,9 @@ const NetworkMapPage: React.FC = () => {
                                                 <p className="text-[8px] font-mono text-slate-600 mt-2 uppercase tracking-widest italic">ID: {selectedNode.id}</p>
                                             </div>
                                         </div>
-                                        <button onClick={() => setSelectedNode(null)} className="p-4 text-slate-700 hover:text-white transition-colors">
+                                        <Button variant="ghost" size="icon" onClick={() => setSelectedNode(null)} className="rounded-2xl text-slate-500">
                                             <Maximize className="rotate-45" size={24} />
-                                        </button>
+                                        </Button>
                                     </div>
 
                                     <div className="flex-1 overflow-y-auto no-scrollbar space-y-10">
@@ -393,18 +424,20 @@ const NetworkMapPage: React.FC = () => {
                                     </div>
 
                                     <div className="flex flex-col gap-4 mt-auto pt-10 border-t border-white/5">
-                                        <button className="w-full py-6 bg-rose-600 hover:bg-white text-white hover:text-black font-black rounded-3xl uppercase tracking-[0.4em] text-[10px] transition-all flex items-center justify-center gap-5 shadow-2xl">
-                                            <Share2 size={20} /> ВІДКрИТИ_CERS_ДОСЬЄ
-                                        </button>
-                                        <button className="w-full py-6 bg-white/5 hover:bg-white/10 text-slate-500 font-black rounded-3xl uppercase tracking-[0.4em] text-[10px] transition-all flex items-center justify-center gap-5">
-                                            <Radio size={20} /> МОНІТОРИНГ_ЗВʼЯЗКІВ
-                                        </button>
+                                        <Button variant="sovereign" size="lg" className="w-full flex items-center justify-center gap-5">
+                                            <Share2 size={20} /> ВІДКрИТИ CERS ДОСЬЄ
+                                        </Button>
+                                        <Button variant="holographic" size="lg" className="w-full flex items-center justify-center gap-5">
+                                            <Radio size={20} /> МОНІТОРИНГ ЗВʼЯЗКІВ
+                                        </Button>
                                     </div>
                                 </div>
                             </HoloCard>
                         </motion.div>
                     )}
                 </AnimatePresence>
+                </>
+            )}
             </div>
         </div>
     );

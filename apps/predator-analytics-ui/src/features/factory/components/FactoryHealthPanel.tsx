@@ -31,20 +31,20 @@ export const FactoryHealthPanel: React.FC<FactoryHealthPanelProps> = ({
       <CyberGrid opacity={0.05} color="rgba(225, 29, 72, 0.1)" />
       
       {/* Header Diagnostic Section */}
-      <div className="relative z-10 flex flex-col md:flex-row items-center justify-between p-10 bg-black/60  border-2 border-rose-500/20 rounded-[3rem] ">
+      <div className="relative z-10 flex flex-col md:flex-row items-center justify-between p-10 bg-black/60  border-2 border-cyan-500/20 rounded-[3rem] ">
         <div className="flex items-center gap-8">
           <div className="relative group">
-            <div className="absolute inset-0 bg-rose-500/20 blur-[50px] rounded-full scale-150 " />
-            <div className="relative p-6 bg-rose-600 rounded-[2rem] shadow-4xl transform -rotate-3 group-hover:rotate-0 transition-all duration-700">
+            <div className="absolute inset-0 bg-cyan-500/20 blur-[50px] rounded-full scale-150 " />
+            <div className="relative p-6 bg-cyan-600 rounded-[2rem] shadow-4xl transform -rotate-3 group-hover:rotate-0 transition-all duration-700">
               <HeartPulse size={42} className="text-white  " />
             </div>
           </div>
           <div>
             <div className="flex items-center gap-4 mb-3">
-              <span className="px-4 py-1 bg-rose-500/10 border border-rose-500/30 text-rose-500 text-[10px] font-black uppercase tracking-[0.4em] italic rounded-lg">
+              <span className="px-4 py-1 bg-cyan-500/10 border border-cyan-500/30 text-cyan-500 text-[10px] font-black uppercase tracking-[0.4em] italic rounded-lg">
                 DIAGNOSTICS_v61 // ELITE
               </span>
-              <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping " />
+              <span className="w-2 h-2 rounded-full bg-cyan-500 animate-ping " />
             </div>
             <h3 className="text-3xl font-black text-white uppercase italic tracking-tighter leading-none">СИСТЕМНА ДІАГНОСТИКА</h3>
             <p className="text-[11px] font-mono text-rose-400/50 uppercase mt-4 tracking-[0.2em] italic">
@@ -57,7 +57,7 @@ export const FactoryHealthPanel: React.FC<FactoryHealthPanelProps> = ({
           "px-10 py-5 rounded-2xl border-2 text-[12px] font-black uppercase tracking-[0.4em] italic transition-all duration-500 shadow-2xl",
           isAllHealthy
             ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-500 shadow-emerald-500/20"
-            : "bg-rose-500/10 border-rose-500/30 text-rose-500 shadow-rose-500/20"
+            : "bg-cyan-500/10 border-cyan-500/30 text-cyan-500 shadow-cyan-500/20"
         )}>
           {totalCount === 0 ? 'СТАТУС_Н/Д' : isAllHealthy ? 'СТАТУС_НОРМА' : 'СТАТУС_ДЕГРАДАЦІЯ'}
         </div>
@@ -76,7 +76,7 @@ export const FactoryHealthPanel: React.FC<FactoryHealthPanelProps> = ({
               whileHover={{ scale: 1.02, y: -5 }}
               className={cn(
                 "group relative p-6 rounded-[2.5rem] border-2 transition-all duration-500 overflow-hidden",
-                hc.status === 'healthy' ? "bg-black/40 border-white/5 hover:border-emerald-500/30" : "bg-rose-950/10 border-rose-500/30 "
+                hc.status === 'healthy' ? "bg-black/40 border-white/5 hover:border-emerald-500/30" : "bg-rose-950/10 border-cyan-500/30 "
               )}
             >
               <div className="absolute inset-0 bg-noise opacity-[0.02] pointer-events-none" />
@@ -84,7 +84,7 @@ export const FactoryHealthPanel: React.FC<FactoryHealthPanelProps> = ({
               <div className="flex items-center gap-6 relative z-10">
                 <div className={cn(
                   "w-16 h-16 rounded-2xl border-2 flex items-center justify-center shrink-0 transition-all duration-500 shadow-xl",
-                  hc.status === 'healthy' ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-500" : "bg-rose-500/10 border-rose-500/30 text-rose-500 "
+                  hc.status === 'healthy' ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-500" : "bg-cyan-500/10 border-cyan-500/30 text-cyan-500 "
                 )}>
                    {hc.status === 'healthy' ? <CheckCircle2 size={28} /> : hc.status === 'degraded' ? <AlertTriangle size={28} /> : <XCircle size={28} />}
                 </div>
@@ -98,7 +98,7 @@ export const FactoryHealthPanel: React.FC<FactoryHealthPanelProps> = ({
                   <div className="flex items-center gap-4 mt-3 pt-3 border-t border-white/5">
                     <div className="flex items-center gap-2">
                       <Zap size={10} className={cn(
-                        hc.latency == null ? 'text-slate-600' : hc.latency < 20 ? 'text-emerald-500' : 'text-rose-500'
+                        hc.latency == null ? 'text-slate-600' : hc.latency < 20 ? 'text-emerald-500' : 'text-cyan-500'
                       )} />
                       <span className={cn(
                         "text-[10px] font-black font-mono",
@@ -110,7 +110,7 @@ export const FactoryHealthPanel: React.FC<FactoryHealthPanelProps> = ({
                     <div className="w-1 h-1 bg-white/5 rounded-full" />
                     <span className={cn(
                       "text-[10px] font-black uppercase tracking-widest italic",
-                      hc.status === 'healthy' ? 'text-emerald-500/60' : 'text-rose-500/60'
+                      hc.status === 'healthy' ? 'text-emerald-500/60' : 'text-cyan-500/60'
                     )}>
                       {hc.status === 'healthy' ? 'НОРМА' : hc.status === 'degraded' ? 'ДЕГРАД' : 'ОФЛАЙН'}
                     </span>
@@ -148,7 +148,7 @@ export const FactoryHealthPanel: React.FC<FactoryHealthPanelProps> = ({
       </div>
 
       <style dangerouslySetInnerHTML={{ __html: `
-        .shadow-4xl { box-shadow: 0 40px 100px -20px rgba(225,29,72,0.3); }
+        .shadow-4xl { box-shadow: 0 40px 100px -20px rgba(6,182,212,0.3); }
       `}} />
     </div>
   );

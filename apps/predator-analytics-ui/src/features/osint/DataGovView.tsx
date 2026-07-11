@@ -8,6 +8,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -118,12 +119,12 @@ export default function DataGovView() {
                      ]}
                      actions={
                        <div className="flex gap-4">
-                          <button onClick={() => searchDatasets(searchTerm)} className="p-5 bg-black border border-white/[0.04] rounded-2xl text-slate-400 hover:text-white transition-all shadow-xl">
+                          <Button variant="cyber" onClick={() => searchDatasets(searchTerm)} className="p-5 bg-black border border-white/[0.04] rounded-2xl text-slate-400 hover:text-white transition-all shadow-xl">
                              <RefreshCcw size={24} className={loading ? 'animate-spin' : ''} />
-                          </button>
-                          <button className="px-8 py-5 bg-blue-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-blue-600 shadow-2xl transition-all flex items-center gap-4">
+                          </Button>
+                          <Button variant="cyber" className="px-8 py-5 bg-blue-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-blue-600 shadow-2xl transition-all flex items-center gap-4">
                              <Radar size={18} /> ІНІЦІЮВАТИ_МАТрИЦЮ
-                          </button>
+                          </Button>
                        </div>
                      }
                    />
@@ -143,12 +144,12 @@ export default function DataGovView() {
                                className="w-full bg-transparent py-10 text-3xl font-black text-white focus:outline-none placeholder:text-slate-800 tracking-tighter italic uppercase"
                             />
                          </form>
-                         <button 
+                         <Button variant="cyber" 
                            onClick={() => searchDatasets(searchTerm)}
                            className="mr-3 px-16 py-8 bg-blue-700 text-white font-black rounded-[2.5rem] uppercase tracking-[0.3em] italic hover:bg-blue-600 shadow-2xl shadow-blue-900/40 active:scale-95 transition-all duration-500 flex items-center gap-6"
                          >
                             {loading ? <RefreshCcw className="animate-spin" /> : <>ЦІЛЬ <LucideTarget size={24} /></>}
-                         </button>
+                         </Button>
                       </div>
                    </div>
 
@@ -193,7 +194,7 @@ export default function DataGovView() {
                                        <Badge className="bg-blue-600/10 text-blue-500 border border-blue-500/30 px-4 py-1.5 text-[9px] font-black uppercase italic rounded-lg">DATASET_PASSPORT</Badge>
                                        <h2 className="text-4xl font-black text-white italic tracking-tighter uppercase leading-none">ПАСПО Т <span className="text-blue-500">РЕЄСТРУ</span></h2>
                                     </div>
-                                    <button onClick={() => setSelectedDataset(null)} className="p-5 bg-white/5 rounded-[1.5rem] hover:bg-amber-500 transition-all text-slate-400 hover:text-white shadow-2xl"><X size={28} /></button>
+                                    <Button variant="cyber" onClick={() => setSelectedDataset(null)} className="p-5 bg-white/5 rounded-[1.5rem] hover:bg-amber-500 transition-all text-slate-400 hover:text-white shadow-2xl"><X size={28} /></Button>
                                  </div>
                                  
                                  <div className="space-y-8 overflow-y-auto max-h-[500px] no-scrollbar pr-4">

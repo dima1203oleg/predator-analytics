@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  klav-agent:
+    build: .
+    container_name: klav-agent
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./logs:/home/klav-agent/app/logs
+    environment:
+      - LITELLM_URL=http://192.168.1.58:4000/v1
+      - KLAV_AGENT_MODE=autonomous
+    networks:
+      - predator_network
+
+networks:
+  predator_network:
+    external: true

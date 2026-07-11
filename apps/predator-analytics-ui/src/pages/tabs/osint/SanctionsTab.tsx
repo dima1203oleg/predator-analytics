@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
 import { ShieldAlert, Search, Filter, Download, ExternalLink, AlertTriangle } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -57,10 +58,10 @@ export const SanctionsTab: React.FC = () => {
               </div>
             </div>
 
-            <button className="w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-400 transition-all flex items-center justify-center gap-2">
+            <Button variant="cyber" className="w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-400 transition-all flex items-center justify-center gap-2">
                 <Download size={14} />
                 Експорт Списку
-            </button>
+            </Button>
           </div>
         </HoloCard>
 
@@ -123,9 +124,9 @@ export const SanctionsTab: React.FC = () => {
                       )}>
                         РИЗИК: {riskLabels[item.risk]}
                       </div>
-                      <button className="p-2.5 bg-slate-950 border border-white/10 rounded-xl text-slate-500 hover:text-white hover:border-white/20 transition-all">
+                      <Button variant="cyber" className="p-2.5 bg-slate-950 border border-white/10 rounded-xl text-slate-500 hover:text-white hover:border-white/20 transition-all">
                         <ExternalLink size={16} />
-                      </button>
+                      </Button>
                     </div>
                   </div>
                   <div className="mt-5 p-4 bg-slate-950/40 rounded-2xl border border-white/5 group-hover:border-white/10 transition-all">

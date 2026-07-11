@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -56,7 +57,7 @@ const STATUS_CFG: Record<ReportStatus, { icon: any; color: string; label: string
   ready:      { icon: CheckCircle,  color: '#10b981', label: 'ГОТОВИЙ',     bg: 'bg-emerald-500/10' },
   generating: { icon: RefreshCw,   color: '#0ea5e9', label: 'ГЕНЕРУЄТЬСЯ', bg: 'bg-sky-500/10', animate: true },
   scheduled:  { icon: Calendar,    color: '#8b5cf6', label: 'ЗАПЛАНОВАНО', bg: 'bg-purple-500/10' },
-  error:      { icon: XCircle,     color: '#f43f5e', label: 'ПОМИЛКА',     bg: 'bg-rose-500/10' }
+  error:      { icon: XCircle,     color: '#f43f5e', label: 'ПОМИЛКА',     bg: 'bg-cyan-500/10' }
 };
 
 // ─── КОМПОНЕНТИ ──────────────────────────────────────────────────────────────
@@ -149,13 +150,13 @@ const ReportRow: React.FC<{ report: GeneratedReport }> = ({ report }) => {
 
       <div className="flex items-center gap-3">
         {report.status === 'ready' && (
-          <button className="p-4 rounded-2xl bg-amber-500 text-black hover:brightness-110 transition-all shadow-xl" title="Завантажити">
+          <Button variant="cyber" className="p-4 rounded-2xl bg-amber-500 text-black hover:brightness-110 transition-all shadow-xl" title="Завантажити">
             <Download size={20} />
-          </button>
+          </Button>
         )}
-        <button className="p-4 rounded-2xl bg-white/5 text-slate-500 hover:text-white transition-all border border-white/5" title="Переглянути">
+        <Button variant="cyber" className="p-4 rounded-2xl bg-white/5 text-slate-500 hover:text-white transition-all border border-white/5" title="Переглянути">
           <Eye size={20} />
-        </button>
+        </Button>
       </div>
     </motion.div>
   );
@@ -221,9 +222,9 @@ const ReportGenerator: React.FC = () => {
               { label: 'ЧЕРГА', value: '0_ЗАВДАНЬ', icon: <Clock4 />, color: 'success' },
             ]}
             actions={
-              <button className="px-14 py-6 bg-gradient-to-r from-amber-600 to-orange-600 text-black text-[12px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all rounded-[2rem] shadow-4xl flex items-center gap-4 italic font-bold">
+              <Button variant="cyber" className="px-14 py-6 bg-gradient-to-r from-amber-600 to-orange-600 text-black text-[12px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all rounded-[2rem] shadow-4xl flex items-center gap-4 italic font-bold">
                  <Plus size={22} /> НОВИЙ_ШАБЛОН_v60
-              </button>
+              </Button>
             }
           />
 
@@ -234,7 +235,7 @@ const ReportGenerator: React.FC = () => {
               { id: 'reports', label: 'МОЇ_АРХІВИ', icon: Database },
               { id: 'scheduled', label: 'АВТО_ПЛАНУВАННЯ', icon: Clock4 },
             ].map((tab) => (
-              <button
+              <Button variant="cyber"
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
                 className={cn(
@@ -246,7 +247,7 @@ const ReportGenerator: React.FC = () => {
               >
                 <tab.icon size={18} />
                 {tab.label}
-              </button>
+              </Button>
             ))}
           </div>
 
@@ -289,15 +290,15 @@ const ReportGenerator: React.FC = () => {
 
              <div className="flex flex-wrap gap-4 bg-black border-2 border-white/5 p-3 rounded-[2.5rem]">
                 {Object.entries(TYPE_CFG).map(([key, config]) => (
-                  <button key={key} className="flex items-center gap-4 px-8 py-4 bg-white/5 hover:bg-amber-500/20 text-slate-400 hover:text-amber-500 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all italic">
+                  <Button variant="cyber" key={key} className="flex items-center gap-4 px-8 py-4 bg-white/5 hover:bg-amber-500/20 text-slate-400 hover:text-amber-500 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all italic">
                     <config.icon size={16} />
                     {config.label}
-                  </button>
+                  </Button>
                 ))}
                 <div className="w-px h-10 bg-white/5 my-auto mx-2" />
-                <button className="px-10 py-4 bg-amber-500 text-black rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl hover:brightness-110 transition-all italic">
+                <Button variant="cyber" className="px-10 py-4 bg-amber-500 text-black rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl hover:brightness-110 transition-all italic">
                    ЕКСПОРТУВАТИ_ВСЕ
-                </button>
+                </Button>
              </div>
           </div>
         </div>

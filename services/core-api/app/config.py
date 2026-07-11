@@ -99,7 +99,7 @@ class Settings(BaseSettings):
     OPENSEARCH_TLS_VERIFY: bool = False
 
     # ClickHouse / аналітика
-    CLICKHOUSE_HOST: str = "localhost"
+    CLICKHOUSE_HOST: str = "clickhouse"
     CLICKHOUSE_PORT: int = 8123
     CLICKHOUSE_USER: str = "default"
     CLICKHOUSE_PASSWORD: str = ""
@@ -137,6 +137,7 @@ class Settings(BaseSettings):
     LITELLM_API_BASE: str = "http://localhost:4000/v1"
     OLLAMA_MODEL: str = "glm-5.1:latest"
     MCP_ROUTER_URL: str = "http://localhost:8080/v1/query"
+    OLLAMA_API_URL: str = "http://194.177.1.240:11434"
     LITELLM_MODEL: str = "ollama/glm-5.1:latest"
     LITELLM_REASONING_MODEL: str = "ollama/deepseek-r1:latest"
     LITELLM_ELITE_MODEL: str = "ollama/glm-5.1:latest"

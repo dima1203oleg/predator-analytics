@@ -9,6 +9,7 @@
  * - Статус нейронного тренування
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -154,7 +155,7 @@ export default function FactoryStudio() {
           <div className="px-6 pt-4 border-b border-white/5 bg-black/20 ">
             <div className="flex items-center gap-4 pb-4 overflow-x-auto no-scrollbar">
               {(['overview', 'knowledge-map', 'patterns', 'training', 'test'] as const).map((tab) => (
-                <button
+                <Button variant="cyber"
                   key={tab}
                   onClick={() => setActiveTab(tab as any)}
                   className={cn(
@@ -173,7 +174,7 @@ export default function FactoryStudio() {
                     : tab === 'training'
                     ? '  Тренування'
                     : '🧪 Тест'}
-                </button>
+                </Button>
               ))}
             </div>
           </div>
@@ -259,21 +260,21 @@ export default function FactoryStudio() {
                     </div>
                     <div>
                        {trainingStatus?.status === 'TRAINING' ? (
-                          <button 
+                          <Button variant="cyber" 
                             onClick={() => stopTraining.mutate()}
                             disabled={stopTraining.isPending}
                             className="bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/50 px-4 py-2 rounded-lg font-bold flex items-center gap-2"
                           >
                              <StopCircle className="w-5 h-5" /> Зупинити Тренування
-                          </button>
+                          </Button>
                        ) : (
-                          <button 
+                          <Button variant="cyber" 
                             onClick={() => startTraining.mutate()}
                             disabled={startTraining.isPending}
                             className="bg-yellow-600 hover:bg-yellow-500 text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2"
                           >
                              <PlayCircle className="w-5 h-5" /> Почати Тренування
-                          </button>
+                          </Button>
                        )}
                     </div>
                  </div>
@@ -394,7 +395,7 @@ export default function FactoryStudio() {
                     )}
 
                     {/* Button */}
-                    <button
+                    <Button variant="cyber"
                       onClick={handleTestIngest}
                       disabled={testIngestMutation.isPending}
                       className={cn(
@@ -406,7 +407,7 @@ export default function FactoryStudio() {
                     >
                       <Send size={16} />
                       {testIngestMutation.isPending ? 'Надсилаю...' : 'Надіслати результат'}
-                    </button>
+                    </Button>
 
                     {/* Result */}
                     {testResult && (
@@ -419,7 +420,7 @@ export default function FactoryStudio() {
                             ? 'bg-emerald-500/10 border-emerald-500/20'
                             : testResult.error 
                               ? 'bg-red-500/10 border-red-500/20'
-                              : 'bg-rose-500/10 border-rose-500/20'
+                              : 'bg-cyan-500/10 border-cyan-500/20'
                         )}
                       >
                         <div className="flex items-center gap-2">

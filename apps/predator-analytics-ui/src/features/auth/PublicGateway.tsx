@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShieldAlert, Fingerprint, Lock, Terminal, Activity, Key } from 'lucide-react';
@@ -121,13 +122,13 @@ export const PublicGateway = () => {
                   </div>
                 </div>
 
-                <button 
+                <Button variant="cyber" 
                   type="submit"
                   className="w-full bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/50 text-emerald-400 font-bold tracking-widest py-3 rounded transition-all hover:shadow-[0_0_20px_rgba(16,185,129,0.3)] flex justify-center items-center gap-2"
                 >
                   <Key className="w-5 h-5" />
                   ІНІЦІАЛІЗАЦІЯ
-                </button>
+                </Button>
               </motion.form>
             )}
 
@@ -155,13 +156,13 @@ export const PublicGateway = () => {
                   required
                 />
 
-                <button 
+                <Button variant="cyber" 
                   type="submit"
                   disabled={mfaCode.length !== 6}
                   className="w-full bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/50 text-emerald-400 font-bold tracking-widest py-3 rounded transition-all hover:shadow-[0_0_20px_rgba(16,185,129,0.3)] disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-2"
                 >
                   АВТОРИЗАЦІЯ
-                </button>
+                </Button>
               </motion.form>
             )}
 

@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { HoloCard } from '@/components/ui/HoloCard';
 
 import React, { useState, useEffect } from 'react';
@@ -141,31 +142,31 @@ export const ApiKeysConfig: React.FC = () => {
                                                 </div>
                                             )}
 
-                                            <button
+                                            <Button variant="cyber"
                                                 onClick={() => handleTest(provider.id)}
                                                 disabled={testingId === provider.id || !provider.enabled}
                                                 className="p-2.5 rounded-xl bg-slate-800 border border-white/5 text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 hover:border-blue-500/30 transition-all disabled:opacity-30"
                                                 title={premiumLocales.apiKeys.test}
                                             >
                                                 <Zap size={16} className={testingId === provider.id ? ' text-yellow-400' : ''} />
-                                            </button>
+                                            </Button>
 
-                                            <button
+                                            <Button variant="cyber"
                                                 onClick={() => setAddingKey(addingKey === provider.id ? null : provider.id)}
                                                 className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest hover:bg-blue-500 transition-all shadow-lg shadow-blue-900/20"
                                             >
                                                 <Plus size={14} />
                                                 <span>{premiumLocales.apiKeys.addKey}</span>
-                                            </button>
+                                            </Button>
 
                                             {provider.enabled && (
-                                                <button
+                                                <Button variant="cyber"
                                                     onClick={() => handleRemoveKey(provider.id)}
                                                     className="p-2.5 rounded-xl bg-slate-800 border border-white/5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 hover:border-red-500/30 transition-all"
                                                     title={premiumLocales.apiKeys.removeAll}
                                                 >
                                                     <Trash2 size={16} />
-                                                </button>
+                                                </Button>
                                             )}
                                         </div>
                                     </div>
@@ -188,12 +189,12 @@ export const ApiKeysConfig: React.FC = () => {
                                                             placeholder={premiumLocales.apiKeys.placeholder}
                                                         />
                                                     </div>
-                                                    <button
+                                                    <Button variant="cyber"
                                                         onClick={() => handleAddKey(provider.id)}
                                                         className="px-6 rounded-xl bg-emerald-600 text-white text-[10px] font-bold uppercase tracking-widest hover:bg-emerald-500 transition-all"
                                                     >
                                                         {premiumLocales.apiKeys.save}
-                                                    </button>
+                                                    </Button>
                                                 </div>
                                                 <p className="text-[9px] text-slate-500 mt-2 flex items-center gap-1">
                                                     <Info size={10} />

@@ -1,0 +1,19 @@
+title = "Gitleaks Configuration for PREDATOR Analytics"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Global allow list"
+paths = [
+    '''\.gitleaks\.toml''',
+    '''\.github/workflows/.*''',
+    '''tests/.*''',
+    '''migrations/.*'''
+]
+
+[[rules]]
+description = "Test secrets"
+id = "test-secret"
+regex = '''(?i)(password|secret|key|token|api[_-]?key)[\s:=]+['"][a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{8,}['"]'''
+tags = ["test"]

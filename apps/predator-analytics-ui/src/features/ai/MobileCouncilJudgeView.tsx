@@ -34,11 +34,11 @@ export const MobileCouncilJudgeView: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col gap-2">
         <h2 className="text-3xl font-black text-white uppercase tracking-tighter italic leading-none">
-          РАДА <span className="text-rose-500">СУДДІВ</span>
+          РАДА <span className="text-cyan-500">СУДДІВ</span>
         </h2>
-        <div className="flex items-center gap-2 px-3 py-1 bg-rose-500/10 border border-rose-500/30 rounded-lg self-start mt-1">
-          <div className="w-2 h-2 bg-rose-500 rounded-full animate-pulse" />
-          <span className="text-[10px] font-black text-rose-500 tracking-widest uppercase italic">СУВЕРЕННИЙ ВЕРДИКТ</span>
+        <div className="flex items-center gap-2 px-3 py-1 bg-cyan-500/10 border border-cyan-500/30 rounded-lg self-start mt-1">
+          <div className="w-2 h-2 bg-cyan-500 rounded-full animate-pulse" />
+          <span className="text-[10px] font-black text-cyan-500 tracking-widest uppercase italic">СУВЕРЕННИЙ ВЕРДИКТ</span>
         </div>
       </div>
 
@@ -48,7 +48,7 @@ export const MobileCouncilJudgeView: React.FC = () => {
           <span className="text-[10px] font-black text-white/50 uppercase tracking-widest">КОНСЕНСУС</span>
           <span className="text-3xl font-black text-emerald-500 italic">{approveRate}%</span>
         </div>
-        <Scale className="text-rose-500" size={32} />
+        <Scale className="text-cyan-500" size={32} />
       </div>
 
       {/* Votes List */}
@@ -59,20 +59,20 @@ export const MobileCouncilJudgeView: React.FC = () => {
             key={vote.model}
             className={cn(
               "flex flex-col gap-3 p-5 rounded-3xl border-2 transition-all",
-              vote.vote === 'approve' ? "bg-emerald-500/5 border-emerald-500/20" : "bg-rose-500/5 border-rose-500/20"
+              vote.vote === 'approve' ? "bg-emerald-500/5 border-emerald-500/20" : "bg-cyan-500/5 border-cyan-500/20"
             )}
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-black border border-white/10 rounded-xl">
-                  <Brain size={18} className={vote.vote === 'approve' ? "text-emerald-500" : "text-rose-500"} />
+                  <Brain size={18} className={vote.vote === 'approve' ? "text-emerald-500" : "text-cyan-500"} />
                 </div>
                 <div className="flex flex-col">
                   <span className="text-sm font-black text-white uppercase">{vote.model}</span>
                   <span className="text-[9px] font-black text-white/40 uppercase tracking-widest">AGENT_VOTER_ID: {i+1}</span>
                 </div>
               </div>
-              <span className={cn("px-2 py-1 rounded text-[9px] font-black uppercase tracking-widest", vote.vote === 'approve' ? "bg-emerald-500/20 text-emerald-400" : "bg-rose-500/20 text-rose-400")}>
+              <span className={cn("px-2 py-1 rounded text-[9px] font-black uppercase tracking-widest", vote.vote === 'approve' ? "bg-emerald-500/20 text-emerald-400" : "bg-cyan-500/20 text-rose-400")}>
                 {vote.vote === 'approve' ? 'СХВАЛЕНО' : 'ВІДХИЛЕНО'}
               </span>
             </div>
@@ -86,7 +86,7 @@ export const MobileCouncilJudgeView: React.FC = () => {
               </div>
               <div className="h-1.5 w-full bg-black/60 rounded-full overflow-hidden">
                 <div 
-                  className={cn("h-full", vote.vote === 'approve' ? "bg-emerald-500" : "bg-rose-500")}
+                  className={cn("h-full", vote.vote === 'approve' ? "bg-emerald-500" : "bg-cyan-500")}
                   style={{ width: `${vote.confidence * 100}%` }}
                 />
               </div>
@@ -96,9 +96,9 @@ export const MobileCouncilJudgeView: React.FC = () => {
       </div>
 
       {/* Final Verdict Card */}
-      <div className="p-6 bg-black border-2 border-rose-500/20 rounded-[2.5rem] flex flex-col gap-5 mt-4 shadow-xl relative overflow-hidden">
+      <div className="p-6 bg-black border-2 border-cyan-500/20 rounded-[2.5rem] flex flex-col gap-5 mt-4 shadow-xl relative overflow-hidden">
         <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none rotate-12">
-          <ShieldCheck size={120} className="text-rose-500" />
+          <ShieldCheck size={120} className="text-cyan-500" />
         </div>
         
         <div className="flex items-center justify-between relative z-10">
@@ -106,13 +106,13 @@ export const MobileCouncilJudgeView: React.FC = () => {
           <span className="px-3 py-1 bg-emerald-500/20 text-emerald-400 rounded-lg text-[10px] font-black uppercase tracking-widest">ПОЗИТИВНИЙ</span>
         </div>
         
-        <p className="text-xs font-black italic text-white/60 leading-relaxed border-l-2 border-rose-500/40 pl-4 relative z-10">
+        <p className="text-xs font-black italic text-white/60 leading-relaxed border-l-2 border-cyan-500/40 pl-4 relative z-10">
           "Незважаючи на зауваження Gemini 1.5 Pro щодо валідації токенів, загальна архітектурна цілісність та успішне проходження тестування Qwen 2.5 дозволяють схвалити розгортання."
         </p>
 
         <div className="flex items-center gap-4 relative z-10">
           <div className="flex items-center gap-2">
-            <Fingerprint className="text-rose-500" size={14} />
+            <Fingerprint className="text-cyan-500" size={14} />
             <span className="text-[8px] font-mono font-black text-white/50">JUDGE_FINAL_0x92...</span>
           </div>
           <div className="flex items-center gap-2">

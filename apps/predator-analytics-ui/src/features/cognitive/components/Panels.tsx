@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import ForceGraph2D from 'react-force-graph-2d';
 import { useDropzone } from 'react-dropzone';
@@ -153,8 +154,17 @@ export const ChatAssistant = () => {
       recognitionRef.current = recognition;
     }
 
-    // Підключення до локального WebSocket
-    const ws = new WebSocket('ws://localhost:9080');
+    // Підключення до WebSocket бекенду (динамічний URL на основі API_BASE_URL)
+    const wsUrl = (() => {
+      try {
+        const { API_BASE_URL } = require('../../../services/api/config');
+        const httpUrl = API_BASE_URL.replace('/api/v1', '');
+        return httpUrl.replace(/^https?/, 'ws');
+      } catch {
+        return 'ws://localhost:8000';
+      }
+    })();
+    const ws = new WebSocket(wsUrl);
     ws.onopen = () => console.log('[ChatAssistant] WS connected');
     ws.onmessage = (event) => {
       try {
@@ -221,7 +231,7 @@ export const ChatAssistant = () => {
     <div className="cognitive-panel" style={{ display: 'flex', flexDirection: 'column' }}>
       <div className="cognitive-panel-header" style={{ display: 'flex', justifyContent: 'space-between' }}>
         <span>CHAT & AI-ASSISTANT</span>
-        <button 
+        <Button variant="cyber" 
           onClick={toggleListen}
           style={{ 
             background: 'transparent', border: 'none', cursor: 'pointer', 
@@ -230,7 +240,7 @@ export const ChatAssistant = () => {
           }}
         >
           {isListening ? '[ЗУПИНИТИ ЗАПИС]' : '[МІКРОФОН]'}
-        </button>
+        </Button>
       </div>
       
       <div style={{ flex: 1, overflowY: 'auto', marginBottom: '40px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -321,9 +331,9 @@ export const MissionControlPanel = () => {
       <div style={{ fontSize: '11px', marginBottom: '12px', display: 'flex', justifyContent: 'space-between' }}>
         <span>Апаратне ядро | Моніторинг <span style={{ color: 'var(--neon-cyan)' }}>Real-Time</span></span>
         <div style={{ display: 'flex', gap: '4px' }}>
-          <button style={{ background: 'var(--neon-cyan)', color: '#000', border: 'none', cursor: 'pointer', padding: '2px 6px', fontSize: '10px', fontWeight: 'bold' }}>RESTART</button>
-          <button style={{ background: 'var(--neon-orange)', color: '#000', border: 'none', cursor: 'pointer', padding: '2px 6px', fontSize: '10px', fontWeight: 'bold' }}>PAUSE</button>
-          <button style={{ background: 'var(--neon-pink)', color: '#000', border: 'none', cursor: 'pointer', padding: '2px 6px', fontSize: '10px', fontWeight: 'bold' }}>STOP</button>
+          <Button variant="cyber" style={{ background: 'var(--neon-cyan)', color: '#000', border: 'none', cursor: 'pointer', padding: '2px 6px', fontSize: '10px', fontWeight: 'bold' }}>RESTART</Button>
+          <Button variant="cyber" style={{ background: 'var(--neon-orange)', color: '#000', border: 'none', cursor: 'pointer', padding: '2px 6px', fontSize: '10px', fontWeight: 'bold' }}>PAUSE</Button>
+          <Button variant="cyber" style={{ background: 'var(--neon-pink)', color: '#000', border: 'none', cursor: 'pointer', padding: '2px 6px', fontSize: '10px', fontWeight: 'bold' }}>STOP</Button>
         </div>
       </div>
       

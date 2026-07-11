@@ -1,4 +1,5 @@
 
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Server, Zap, RotateCcw } from 'lucide-react';
@@ -56,13 +57,13 @@ export const EnvSidebar: React.FC<EnvSidebarProps> = ({
                 </div>
 
                 <div className="mt-6 pt-4 border-t border-slate-800">
-                    <button
+                    <Button variant="cyber"
                         onClick={onResetEnv}
                         className="w-full flex items-center justify-center gap-2 text-xs px-3 py-2 rounded-lg border border-rose-900/50 text-rose-400 hover:bg-rose-900/10 transition-colors btn-3d"
                     >
                         <RotateCcw size={12} />
                         Скинути до початкових
-                    </button>
+                    </Button>
                 </div>
             </div>
         </HoloContainer>

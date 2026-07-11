@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { Settings, Activity, Lock, Upload, Box, Shield, Factory, ArrowLeft } from 'lucide-react';
 import { HubLayout } from '@/components/layout/HubLayout';
@@ -56,7 +57,7 @@ const SystemHub: React.FC = () => {
     <div className="flex flex-col h-full w-full">
       {isCompact && activeTab !== 'menu' && (
         <div className="p-4 bg-black border-b border-white/10 flex items-center gap-4">
-          <button 
+          <Button variant="cyber" 
             onClick={() => {
               setActiveTab('menu');
               setSearchParams({});
@@ -64,7 +65,7 @@ const SystemHub: React.FC = () => {
             className="p-3 rounded-2xl bg-white/5 border border-white/10 text-white"
           >
             <ArrowLeft size={24} />
-          </button>
+          </Button>
           <h2 className="text-lg font-black text-white italic tracking-widest uppercase">НАЗАД ДО МЕНЮ</h2>
         </div>
       )}

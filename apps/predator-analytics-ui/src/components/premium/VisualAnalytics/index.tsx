@@ -1,4 +1,5 @@
 
+import { Button } from '@/components/ui/button';
 import React, { useEffect, useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -117,21 +118,21 @@ export const VisualAnalytics: React.FC = () => {
 
              <div className="h-8 w-px bg-white/10 mx-2 hidden sm:block" />
 
-             <button
+             <Button variant="cyber"
                 onClick={loadData}
                 disabled={isLoading}
                 title={premiumLocales.common.refresh}
                 className="p-3 bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white rounded-2xl transition-all border border-white/5 active:scale-95 group"
              >
                 <RefreshCw size={18} className={cn(isLoading && "animate-spin text-emerald-400")} />
-             </button>
+             </Button>
 
-             <button
+             <Button variant="cyber"
                 title="Експорт у PDF"
                 className="flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-emerald-900/20 hover:scale-105 transition-all"
              >
                 <Download size={16} /> {premiumLocales.executiveBrief.actions.exportPdf}
-             </button>
+             </Button>
         </div>
       </div>
 
@@ -174,7 +175,7 @@ export const VisualAnalytics: React.FC = () => {
                         </h3>
                         <p className="text-[10px] text-slate-500 font-mono mt-1">SITUATIONAL_TRENDS v2.4</p>
                     </div>
-                    <button title={premiumLocales.common.viewDetails} className="p-2.5 bg-white/5 border border-white/10 rounded-xl text-slate-500 hover:text-white transition-all"><Maximize2 size={16} /></button>
+                    <Button variant="cyber" title={premiumLocales.common.viewDetails} className="p-2.5 bg-white/5 border border-white/10 rounded-xl text-slate-500 hover:text-white transition-all"><Maximize2 size={16} /></Button>
                 </div>
 
                 <div className="h-[300px] w-full">
@@ -332,12 +333,12 @@ export const VisualAnalytics: React.FC = () => {
                    {premiumLocales.visualAnalytics.piiWarning}
                 </p>
             </div>
-            <button
+            <Button variant="cyber"
                 title={premiumLocales.common.authorize}
                 className="ml-auto px-4 py-2 bg-amber-500/10 hover:bg-amber-500/20 rounded-xl text-[9px] font-black uppercase tracking-widest border border-amber-500/20 transition-all"
             >
                 {premiumLocales.common.authorize}
-            </button>
+            </Button>
         </motion.div>
       )}
     </div>

@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { format } from 'date-fns';
@@ -213,7 +214,7 @@ const Header: React.FC = () => {
             
             <div className={cn("flex items-center gap-1 rounded-2xl border border-white/5 bg-black/40 p-1.5 shadow-lg", isMobileMode ? "" : "flex")}>
               {deviceModes.map(({ mode, label, icon: Icon }) => (
-                <button
+                <Button variant="cyber"
                   key={mode}
                   title={`Емулятор: ${label}`}
                   onClick={() => setDisplayMode(mode)}
@@ -226,7 +227,7 @@ const Header: React.FC = () => {
                   )}
                 >
                   <Icon className={cn(isMobileMode ? "h-6 w-6" : "h-4 w-4")} />
-                </button>
+                </Button>
               ))}
             </div>
             
@@ -253,7 +254,7 @@ const Header: React.FC = () => {
             {/* Контекстні дії */}
             <div className="flex items-center gap-2 p-1.5 bg-black/40 border border-white/5 rounded-2xl shadow-lg">
               {shellV2Enabled && !isMobileMode && (
-                <button
+                <Button variant="cyber"
                   title={isContextRailOpen ? 'Згорнути контекстну панель' : 'Відкрити контекстну панель'}
                   onClick={() => setIsContextRailOpen((current) => !current)}
                   className={cn(
@@ -264,10 +265,10 @@ const Header: React.FC = () => {
                   )}
                 >
                   <PanelRight className="h-4 w-4" />
-                </button>
+                </Button>
               )}
 
-              <button
+              <Button variant="cyber"
                 title="Сповіщення"
                 className={cn(
                   "relative flex items-center justify-center rounded-xl text-slate-600 hover:text-white hover:bg-white/[0.05] transition-all duration-300 group",
@@ -277,9 +278,9 @@ const Header: React.FC = () => {
                 <Bell className={cn(isMobileMode ? "h-6 w-6" : "h-4 w-4")} />
                 <span className={cn("absolute bg-rose-500 rounded-full animate-ping", isMobileMode ? "top-3 right-3 w-2 h-2" : "top-2 right-2 w-1.5 h-1.5")} />
                 <span className={cn("absolute bg-rose-600 rounded-full", isMobileMode ? "top-3 right-3 w-2 h-2" : "top-2 right-2 w-1.5 h-1.5")} />
-              </button>
+              </Button>
 
-              <button
+              <Button variant="cyber"
                 title={highVisibility ? 'Режим звичайної видимості' : 'Режим високої видимості (Контраст)'}
                 onClick={() => setHighVisibility(!highVisibility)}
                 className={cn(
@@ -291,10 +292,10 @@ const Header: React.FC = () => {
                 )}
               >
                 {highVisibility ? <EyeOff className={cn(isMobileMode ? "h-6 w-6" : "h-4 w-4")} /> : <Eye className={cn(isMobileMode ? "h-6 w-6" : "h-4 w-4")} />}
-              </button>
+              </Button>
 
               {!isMobileMode && (
-                <button
+                <Button variant="cyber"
                   id="header-terminal-toggle"
                   title={isTerminalOpen ? 'Закрити термінал' : 'Відкрити термінал'}
                   onClick={() => setTerminalOpen(!isTerminalOpen)}
@@ -306,7 +307,7 @@ const Header: React.FC = () => {
                   )}
                 >
                   <Terminal className="h-4 w-4" />
-                </button>
+                </Button>
               )}
             </div>
 

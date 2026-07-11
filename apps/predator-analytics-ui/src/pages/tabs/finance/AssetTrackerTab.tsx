@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
@@ -45,9 +46,9 @@ export const AssetTrackerTab: React.FC = () => {
               ПЕ ЕЛІК ПЕ ЕКрИТИХ КАНАЛІВ ФІНАНСУВАННЯ ТА ВИЛУЧЕНОГО МАЙНА
             </p>
           </div>
-          <button className="px-8 py-4 bg-white/5 border border-white/10 text-white rounded-xl text-[10px] font-black uppercase tracking-widest italic hover:bg-white/10 hover:border-emerald-500/50 transition-all flex items-center gap-3">
+          <Button variant="cyber" className="px-8 py-4 bg-white/5 border border-white/10 text-white rounded-xl text-[10px] font-black uppercase tracking-widest italic hover:bg-white/10 hover:border-emerald-500/50 transition-all flex items-center gap-3">
             ARBITRAGE_МАТрИЦЯ <ArrowUpRight size={14} />
-          </button>
+          </Button>
         </div>
 
         <div className="overflow-x-auto custom-scrollbar">

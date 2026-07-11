@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Upload, Database, Zap, CheckCircle, AlertTriangle, Code, Play } from 'lucide-react';
@@ -105,7 +106,7 @@ export const OmniverseIngestion: React.FC = () => {
         <div className="flex items-center gap-3">
           <div className={`px-3 py-1 rounded-full text-[10px] font-bold border ${
             status === 'COMPLETED' ? 'bg-emerald-500/20 border-emerald-500 text-emerald-400' :
-            status === 'ERROR' ? 'bg-rose-500/20 border-rose-500 text-rose-400' :
+            status === 'ERROR' ? 'bg-cyan-500/20 border-cyan-500 text-rose-400' :
             'bg-blue-500/20 border-blue-500 text-blue-400'
           }`}>
             STATUS: {status}
@@ -196,19 +197,19 @@ export const OmniverseIngestion: React.FC = () => {
             </div>
 
             <div className="md:col-span-2 flex justify-end gap-4 mt-4">
-              <button 
+              <Button variant="cyber" 
                 onClick={() => setFile(null)}
-                className="px-6 py-2 border border-rose-500/50 text-rose-500 rounded font-bold hover:bg-rose-500/10 transition-all uppercase text-xs"
+                className="px-6 py-2 border border-cyan-500/50 text-cyan-500 rounded font-bold hover:bg-cyan-500/10 transition-all uppercase text-xs"
               >
                 Cancel
-              </button>
-              <button 
+              </Button>
+              <Button variant="cyber" 
                 onClick={startUniversalIngestion}
                 disabled={ingesting}
                 className="px-8 py-2 bg-emerald-500 text-slate-950 rounded font-black hover:bg-emerald-400 transition-all uppercase text-xs flex items-center gap-2 "
               >
                 {ingesting ? <><div className="w-3 h-3 border-2 border-slate-950/20 border-t-slate-950 rounded-full animate-spin" /> INGESTING...</> : <><Play size={14} /> EXECUTE UNIVERSAL INGESTION</>}
-              </button>
+              </Button>
             </div>
           </motion.div>
         )}
@@ -228,9 +229,9 @@ export const OmniverseIngestion: React.FC = () => {
             Ваші дані були успішно завантажені, нормалізовані та інтегровані в ClickHouse та Neo4j.
             Тепер ви можете досліджувати їх через Omniverse Explorer.
           </p>
-          <button className="px-10 py-3 bg-emerald-500 text-slate-950 font-black rounded-lg hover:scale-105 transition-all">
+          <Button variant="cyber" className="px-10 py-3 bg-emerald-500 text-slate-950 font-black rounded-lg hover:scale-105 transition-all">
             ПЕРЕЙТИ ДО АНАЛІТИКИ
-          </button>
+          </Button>
         </motion.div>
       )}
     </div>

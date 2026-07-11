@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Calculator, DollarSign, Globe, Percent, ArrowRight, RefreshCw, AlertTriangle, CheckCircle2 } from 'lucide-react';
@@ -70,18 +71,18 @@ export const SmartCalculatorWidget: React.FC<{ persona: string }> = ({ persona }
           </div>
         </div>
         <div className="flex bg-black/40 rounded-lg p-0.5 border border-white/10">
-          <button
+          <Button variant="cyber"
             onClick={() => setCurrency('USD')}
             className={cn("px-2 py-1 rounded-md text-[9px] font-bold transition-all", currency === 'USD' ? "bg-amber-500 text-white" : "text-slate-500")}
           >
             USD
-          </button>
-          <button
+          </Button>
+          <Button variant="cyber"
             onClick={() => setCurrency('EUR')}
             className={cn("px-2 py-1 rounded-md text-[9px] font-bold transition-all", currency === 'EUR' ? "bg-amber-500 text-white" : "text-slate-500")}
           >
             EUR
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -130,7 +131,7 @@ export const SmartCalculatorWidget: React.FC<{ persona: string }> = ({ persona }
         </div>
 
         {/* Action Button */}
-        <button
+        <Button variant="cyber"
           onClick={handleCalculate}
           disabled={calculating || !value || !hsCode}
           className={cn(
@@ -146,7 +147,7 @@ export const SmartCalculatorWidget: React.FC<{ persona: string }> = ({ persona }
               {premiumLocales.smartCalculator.calculate} <ArrowRight size={14} />
             </>
           )}
-        </button>
+        </Button>
 
         {/* Result Area */}
         <AnimatePresence>

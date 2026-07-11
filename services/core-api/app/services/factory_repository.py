@@ -125,6 +125,43 @@ class FactoryRepository:
             logger.debug(f"Neo4j get_gold_patterns failed: {e}")
             return []
 
+    async def get_patterns(self, component: str | None = None) -> list[Pattern]:
+        """Отримати всі патерни"""
+        try:
+            async with self.driver.session() as session:
+                query = "MATCH (p:Pattern)"
+                if component:
+                    query += " WHERE p.component = $component"
+                query += " RETURN p ORDER BY p.timestamp DESC LIMIT 100"
+
+                result = await session.run(
+                    query,
+                    component=component if component else None,
+                )
+                records = await result.fetch(100)
+
+                patterns = []
+                for record in records:
+                    p = record["p"]
+                    patterns.append(
+                        Pattern(
+                            id=str(p.id),
+                            component=p["component"],
+                            pattern_description=p["description"],
+                            pattern_type=p["pattern_type"],
+                            score=p["score"],
+                            gold=p["gold"],
+                            timestamp=datetime.fromisoformat(str(p["timestamp"])),
+                            hash=p["hash"],
+                            tags=p.get("tags", []),
+                            source_run_id=p["source_run_id"],
+                        )
+                    )
+                return patterns
+        except Exception as e:
+            logger.debug(f"Neo4j get_patterns failed: {e}")
+            return []
+
     async def get_stats(self) -> FactoryStats:
         """Отримати статистику Factory"""
         try:

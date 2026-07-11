@@ -1,165 +1,267 @@
-# ================================================================
-# Ultra-Router v5.0 — Universal Hybrid AI Router
-# PREDATOR Analytics — Єдина точка входу до всіх LLM
-#
-# Групи:
-#   ultra-router-chat    → Gemini 2.5 Flash (чат, українська)
-#   ultra-router-fast    → Groq Llama 3.3 70B x2 (швидкість, Vibe Coding)
-#   ultra-router-coding  → Mistral Codestral x2 (код, рефакторинг)
-#   ultra-router-local   → Ollama на NVIDIA (безлімітний резерв)
-#   ultra-router-auto    → Всі провайдери (least-busy, автовибір)
-#
-# Fallback-ланцюжок: хмара → ultra-router-local (Ollama)
-# ================================================================
+# Universal AI Router v5.0 config for PREDATOR
+# Antigravity-ready with 5 model groups (API + Local Ollama)
 
+# --- Define individual models / providers ---
 model_list:
-
-  # ═══════════════════════════════════════════════════════════
-  # CHAT — Gemini 2.5 Flash (чат, проста аналітика, українська)
-  # ═══════════════════════════════════════════════════════════
+  # API Group: CHAT (Gemini)
   - model_name: ultra-router-chat
     litellm_params:
       model: gemini/gemini-2.5-flash
-      api_key: os.environ/GEMINI_API_KEY
-      rpm: 15
-      timeout: 20
+      api_key: ${GEMINI_API_KEY}
+      api_base: https://generativelanguage.googleapis.com/v1beta
+      timeout: 10
+      stream: true # Enable streaming
 
-  # ═══════════════════════════════════════════════════════════
-  # FAST — Groq Llama 3.3 70B (2 ключі — незалежний rate-limit)
-  # Призначення: Vibe Coding, складний аналіз, швидкі відповіді
-  # ═══════════════════════════════════════════════════════════
-  - model_name: ultra-router-fast
+  # API Group: FAST (Groq x2 keys for redundancy/higher limits)
+  - model_name: ultra-router-fast-groq-1
     litellm_params:
       model: groq/llama-3.3-70b-versatile
-      api_key: os.environ/GROQ_API_KEY_1
-      rpm: 30
-      timeout: 12
+      api_key: ${GROQ_API_KEY_1}
+      api_base: https://api.groq.com/openai/v1
+      timeout: 10
+      stream: true
+  - model_name: ultra-router-fast-groq-2
+    litellm_params:
+      model: groq/meta-llama/llama-4-scout-17b-16e-instruct
+      api_key: ${GROQ_API_KEY_2}
+      api_base: https://api.groq.com/openai/v1
+      timeout: 10
+      stream: true
 
-  - model_name: ultra-router-fast
+  # API Group: Cerebras (1M tokens/day)
+  - model_name: ultra-router-cerebras-qwen3-235b
+    litellm_params:
+      model: cerebras/qwen3-235b
+      api_key: ${CEREBRAS_API_KEY}
+      api_base: https://api.cerebras.ai/v1
+      timeout: 30
+      stream: true
+  - model_name: ultra-router-cerebras-gpt-oss-120b
+    litellm_params:
+      model: cerebras/gpt-oss-120b
+      api_key: ${CEREBRAS_API_KEY}
+      api_base: https://api.cerebras.ai/v1
+      timeout: 30
+      stream: true
+  - model_name: ultra-router-cerebras-llama-3.3-70b
+    litellm_params:
+      model: cerebras/llama-3.3-70b
+      api_key: ${CEREBRAS_API_KEY}
+      api_base: https://api.cerebras.ai/v1
+      timeout: 30
+      stream: true
+
+  # API Group: Mistral AI (1B tokens/month)
+  - model_name: ultra-router-mistral-large-3
+    litellm_params:
+      model: mistral/mistral-large-3
+      api_key: ${MISTRAL_API_KEY}
+      api_base: https://api.mistral.ai/v1
+      timeout: 10
+      stream: true
+  - model_name: ultra-router-mistral-codestral
+    litellm_params:
+      model: mistral/codestral
+      api_key: ${MISTRAL_API_KEY}
+      api_base: https://api.mistral.ai/v1
+      timeout: 10
+      stream: true
+  - model_name: ultra-router-mistral-small-4
+    litellm_params:
+      model: mistral/mistral-small-4
+      api_key: ${MISTRAL_API_KEY}
+      api_base: https://api.mistral.ai/v1
+      timeout: 10
+      stream: true
+
+  # API Group: SiliconFlow (High throughput)
+  - model_name: ultra-router-siliconflow-deepseek-r1-8b
+    litellm_params:
+      model: siliconcloud/deepseek-ai/DeepSeek-R1-0528-Qwen3-8B
+      api_key: ${SILICONFLOW_API_KEY}
+      api_base: https://api.siliconflow.cn/v1
+      timeout: 10
+      stream: true
+  - model_name: ultra-router-siliconflow-glm-4.1v-9b
+    litellm_params:
+      model: siliconcloud/THUDM/GLM-4.1V-9B-Thinking
+      api_key: ${SILICONFLOW_API_KEY}
+      api_base: https://api.siliconflow.cn/v1
+      timeout: 10
+      stream: true
+  - model_name: ultra-router-siliconflow-qwen3-8b
+    litellm_params:
+      model: siliconcloud/Qwen/Qwen3-8B
+      api_key: ${SILICONFLOW_API_KEY}
+      api_base: https://api.siliconflow.cn/v1
+      timeout: 10
+      stream: true
+
+  # API Group: LLM7.io (Aggregator)
+  - model_name: ultra-router-llm7-deepseek-r1
+    litellm_params:
+      model: llm7/deepseek-r1-0528
+      api_key: ${LLM7_API_KEY}
+      api_base: https://api.llm7.io/v1
+      timeout: 10
+      stream: true
+  - model_name: ultra-router-llm7-qwen2.5-coder
+    litellm_params:
+      model: llm7/qwen2.5-coder
+      api_key: ${LLM7_API_KEY}
+      api_base: https://api.llm7.io/v1
+      timeout: 10
+      stream: true
+  - model_name: ultra-router-llm7-gemini-flash-lite
+    litellm_params:
+      model: llm7/gemini-2.5-flash-lite
+      api_key: ${LLM7_API_KEY}
+      api_base: https://api.llm7.io/v1
+      timeout: 10
+      stream: true
+
+  # API Group: Zhipu AI (Basic models)
+  - model_name: ultra-router-zhipu-glm-4.7-flash
+    litellm_params:
+      model: zhipu/GLM-4.7-Flash
+      api_key: ${ZHIPU_API_KEY}
+      api_base: https://open.bigmodel.cn/api/paas/v4
+      timeout: 10
+      stream: true
+  - model_name: ultra-router-zhipu-glm-4.6v-flash
+    litellm_params:
+      model: zhipu/GLM-4.6V-Flash
+      api_key: ${ZHIPU_API_KEY}
+      api_base: https://open.bigmodel.cn/api/paas/v4
+      timeout: 10
+      stream: true
+  - model_name: ultra-router-zhipu-glm-4.5-flash
+    litellm_params:
+      model: zhipu/GLM-4.5-Flash
+      api_key: ${ZHIPU_API_KEY}
+      api_base: https://open.bigmodel.cn/api/paas/v4
+      timeout: 10
+      stream: true
+
+  # API Group: FAST (Groq x2 keys for redundancy/higher limits)
+  - model_name: ultra-router-fast-groq-1
     litellm_params:
       model: groq/llama-3.3-70b-versatile
-      api_key: os.environ/GROQ_API_KEY_2
-      rpm: 30
-      timeout: 12
+      api_key: ${GROQ_API_KEY_2}
+      api_base: https://api.groq.com/openai/v1
+      timeout: 10
+      stream: true
 
-  # ═══════════════════════════════════════════════════════════
-  # CODING — Mistral Codestral (2 ключі — load balance)
-  # Призначення: генерація коду, рефакторинг, технічні завдання
-  # ═══════════════════════════════════════════════════════════
-  - model_name: ultra-router-coding
+  # API Group: CODING (Mistral x2 keys)
+  - model_name: ultra-router-coding-mistral-1
     litellm_params:
       model: mistral/codestral-latest
-      api_key: os.environ/MISTRAL_API_KEY_1
-      rpm: 20
-      timeout: 25
-
-  - model_name: ultra-router-coding
+      api_key: ${MISTRAL_API_KEY_1}
+      api_base: https://api.mistral.ai/v1
+      timeout: 15
+      stream: true
+  - model_name: ultra-router-coding-mistral-2
     litellm_params:
       model: mistral/codestral-latest
-      api_key: os.environ/MISTRAL_API_KEY_2
-      rpm: 20
-      timeout: 25
+      api_key: ${MISTRAL_API_KEY_2}
+      api_base: https://api.mistral.ai/v1
+      timeout: 15
+      stream: true
 
-  # ═══════════════════════════════════════════════════════════
-  # LOCAL — Ollama на NVIDIA сервері 194.177.1.240
-  # Призначення: безлімітний резерв, OSINT-завдання, тривалі сесії
-  # ═══════════════════════════════════════════════════════════
-  - model_name: ultra-router-local
+  # LOCAL Group: Unlimited (Ollama on NVIDIA Server)
+  - model_name: ultra-router-local-qwen3
     litellm_params:
       model: ollama/qwen3:8b
       api_base: http://194.177.1.240:11434
-      timeout: 60
-
-  - model_name: ultra-router-local
+      timeout: 60 # Longer timeout for local/larger models
+      stream: true
+  - model_name: ultra-router-local-deepseek-r1
     litellm_params:
       model: ollama/deepseek-r1:7b
       api_base: http://194.177.1.240:11434
       timeout: 60
-
-  - model_name: ultra-router-local
+      stream: true
+  - model_name: ultra-router-local-gemma3
     litellm_params:
       model: ollama/gemma3:4b
       api_base: http://194.177.1.240:11434
-      timeout: 45
+      timeout: 60
+      stream: true
 
-  # ═══════════════════════════════════════════════════════════
-  # AUTO — Всі провайдери в одному пулі (least-busy автовибір)
-  # Призначення: universal entry point для скриптів та автоматизації
-  # ═══════════════════════════════════════════════════════════
-  - model_name: ultra-router-auto
+# --- Define Antigravity-specific model groups/routes ---
+  # These are the models Antigravity will see and use
+  - model_name: ultra-router-chat # Simple chat
     litellm_params:
-      model: gemini/gemini-2.5-flash
-      api_key: os.environ/GEMINI_API_KEY
-      rpm: 15
-      timeout: 20
-
-  - model_name: ultra-router-auto
+      model: router # Use the LiteLLM router for dynamic selection
+      routing_strategy: "least-busy" # Route to the least busy model from the list below
+      model_list: ["ultra-router-chat"] # Only Gemini for this group
+      fallbacks: ["ultra-router-local-qwen3"] # Fallback to local if Gemini fails
+      
+  - model_name: ultra-router-fast # Vibe coding, quick creative
     litellm_params:
-      model: groq/llama-3.3-70b-versatile
-      api_key: os.environ/GROQ_API_KEY_1
-      rpm: 30
-      timeout: 12
-
-  - model_name: ultra-router-auto
+      model: router
+      routing_strategy: "least-busy"
+      model_list: ["ultra-router-fast-groq-1", "ultra-router-fast-groq-2"]
+      fallbacks: ["ultra-router-local-deepseek-r1"]
+      
+  - model_name: ultra-router-coding # Pure code, refactoring
     litellm_params:
-      model: groq/llama-3.3-70b-versatile
-      api_key: os.environ/GROQ_API_KEY_2
-      rpm: 30
-      timeout: 12
-
-  - model_name: ultra-router-auto
+      model: router
+      routing_strategy: "least-busy"
+      model_list: ["ultra-router-coding-mistral-1", "ultra-router-coding-mistral-2"]
+      fallbacks: ["ultra-router-local-deepseek-r1"]
+      
+  - model_name: ultra-router-auto # Dynamic selection based on complexity
     litellm_params:
-      model: mistral/codestral-latest
-      api_key: os.environ/MISTRAL_API_KEY_1
-      rpm: 20
-      timeout: 25
-
-  - model_name: ultra-router-auto
+      model: complexity-router # LiteLLM's built-in complexity router
+      config:
+        tiers:
+          SIMPLE: ultra-router-chat
+          MEDIUM: ultra-router-coding
+          COMPLEX: ultra-router-fast
+          REASONING: ultra-router-fast
+        custom_markers:
+          - "покроково"
+          - "розбери"
+          - "аналізуй"
+          - "що буде якщо"
+          - "напиши код"
+          - "рефактори"
+          - "step by step"
+          - "explain"
+          - "algorithm"
+        default_model: ultra-router-chat
+        fallback_on_error: ultra-router-local-qwen3
+        
+  - model_name: ultra-router-local # Direct access to local Ollama (unlimited)
     litellm_params:
-      model: mistral/codestral-latest
-      api_key: os.environ/MISTRAL_API_KEY_2
-      rpm: 20
-      timeout: 25
+      model: router
+      routing_strategy: "least-busy"
+      model_list: ["ultra-router-local-qwen3", "ultra-router-local-deepseek-r1", "ultra-router-local-gemma3"]
+      # No fallbacks for local models, as they are already the last resort
 
-# ================================================================
-# Глобальні налаштування LiteLLM
-# ================================================================
+# --- Global LiteLLM Proxy Settings ---
 litellm_settings:
-  routing_strategy: "least-busy"
+  master_key: ${LITELLM_MASTER_KEY}
+  # Use `least-busy` for high availability / load balancing across multiple keys
+  # `priority` is also an option if you want a strict order
+  routing_strategy: "least-busy" 
   num_retries: 5
-  request_timeout: 60
-  allowed_fails: 2
-  cooldown_time: 10
-  success_callback: []
-  failure_callback: []
-  # Fallback-ланцюжок: хмарні API → локальний Ollama (безлімітний)
+  request_timeout: 30 # Global timeout
+  # fallback_strategy: exponential_backoff # Can be enabled for more advanced fallback logic
+
+  # Fallback logic for API groups, if all API keys fail, route to local
   fallbacks:
     - {"ultra-router-chat": ["ultra-router-local"]}
     - {"ultra-router-fast": ["ultra-router-local"]}
     - {"ultra-router-coding": ["ultra-router-local"]}
-    - {"ultra-router-auto": ["ultra-router-local"]}
-  default_fallbacks: ["ultra-router-local"]
+  
+  # Default fallback if no specific fallback is defined or all defined fail
+  default_fallbacks: ultra-router-local # Routes to any available local model
 
-# ================================================================
-# Налаштування маршрутизатора
-# ================================================================
-router_settings:
-  routing_strategy: "least-busy"
-  num_retries: 5
-  timeout: 60
-  retry_after: 5
-  cooldown_time: 10
-  # Ключові слова для складних завдань (пріоритет на ultra-router-fast)
-  allowed_model_region: "eu"
-
-# ================================================================
-# Загальні налаштування (безпека + логування)
-# ================================================================
-general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+server:
+  host: "0.0.0.0"
+  port: 4000
+  litellm_master_key: ${LITELLM_MASTER_KEY} # Explicitly set master key for server
   enable_health_check: true
-  store_model_in_db: false
-  disable_spend_logs: false
-  database_url: os.environ/DATABASE_URL
-  # Prometheus метрики доступні на /metrics
-  prometheus_port: 4000
+  health_check_interval: 10 # seconds

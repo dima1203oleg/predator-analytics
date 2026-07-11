@@ -12,6 +12,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська мова)
  */
 
+import { Button } from '@/components/ui/button';
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -81,10 +82,10 @@ type ToneKey = 'amber' | 'emerald' | 'rose' | 'sky' | 'gold' | 'slate';
 
 const TONE_CLASSES: Record<ToneKey, { border: string; bg: string; text: string; badge: string; dot: string; bar: string }> = {
   amber: {
-    border: 'border-rose-500/25',
-    bg: 'bg-rose-500/10',
+    border: 'border-cyan-500/25',
+    bg: 'bg-cyan-500/10',
     text: 'text-rose-400',
-    badge: 'border-rose-500/25 bg-rose-500/10 text-rose-300',
+    badge: 'border-cyan-500/25 bg-cyan-500/10 text-rose-300',
     dot: 'bg-rose-400',
     bar: 'bg-rose-400/80',
   },
@@ -97,18 +98,18 @@ const TONE_CLASSES: Record<ToneKey, { border: string; bg: string; text: string; 
     bar: 'bg-emerald-400/80',
   },
   rose: {
-    border: 'border-rose-500/25',
-    bg: 'bg-rose-500/10',
+    border: 'border-cyan-500/25',
+    bg: 'bg-cyan-500/10',
     text: 'text-rose-400',
-    badge: 'border-rose-500/25 bg-rose-500/10 text-rose-300',
+    badge: 'border-cyan-500/25 bg-cyan-500/10 text-rose-300',
     dot: 'bg-rose-400',
     bar: 'bg-rose-400/80',
   },
   sky: {
-    border: 'border-rose-500/25',
-    bg: 'bg-rose-500/10',
+    border: 'border-cyan-500/25',
+    bg: 'bg-cyan-500/10',
     text: 'text-rose-400',
-    badge: 'border-rose-500/25 bg-rose-500/10 text-rose-300',
+    badge: 'border-cyan-500/25 bg-cyan-500/10 text-rose-300',
     dot: 'bg-rose-400',
     bar: 'bg-rose-400/80',
   },
@@ -217,7 +218,7 @@ const TaskRow = ({
       className={cn(
         'grid grid-cols-[1fr_120px_90px_90px_80px_36px] gap-3 rounded-[20px] border px-4 py-3.5 text-sm transition-all cursor-pointer',
         isSelected
-          ? 'border-rose-500/40 bg-rose-500/10'
+          ? 'border-cyan-500/40 bg-cyan-500/10'
           : 'border-white/5 bg-black/20 hover:bg-white/5',
       )}
     >
@@ -260,11 +261,11 @@ const TaskRow = ({
       {/* Дії */}
       <div className="flex items-center justify-center">
         {canCancel && (
-          <button
+          <Button variant="cyber"
             type="button"
             onClick={(e) => { e.stopPropagation(); onCancel(task.task_id); }}
             disabled={cancelling === task.task_id}
-            className="rounded-lg p-1.5 text-slate-500 transition hover:bg-rose-500/10 hover:text-rose-400"
+            className="rounded-lg p-1.5 text-slate-500 transition hover:bg-cyan-500/10 hover:text-rose-400"
             title="Скасувати задачу"
           >
             {cancelling === task.task_id ? (
@@ -272,7 +273,7 @@ const TaskRow = ({
             ) : (
               <X size={14} />
             )}
-          </button>
+          </Button>
         )}
       </div>
     </motion.div>
@@ -452,30 +453,30 @@ export function AntigravityAgiTab() {
       
       {/* ── Сегмент перемикання ── */}
       <div className="flex border-b border-white/5 pb-px">
-        <button
+        <Button variant="cyber"
           type="button"
           onClick={() => setSubTab('orchestrator')}
           className={cn(
             'px-6 py-3 text-xs font-black uppercase tracking-widest transition border-b-2',
             subTab === 'orchestrator'
-              ? 'border-rose-500 text-white'
+              ? 'border-cyan-500 text-white'
               : 'border-transparent text-slate-500 hover:text-slate-300'
           )}
         >
           🤖 AGI Оркестрація
-        </button>
-        <button
+        </Button>
+        <Button variant="cyber"
           type="button"
           onClick={() => setSubTab('audit')}
           className={cn(
             'px-6 py-3 text-xs font-black uppercase tracking-widest transition border-b-2',
             subTab === 'audit'
-              ? 'border-rose-500 text-white'
+              ? 'border-cyan-500 text-white'
               : 'border-transparent text-slate-500 hover:text-slate-300'
           )}
         >
           🛡️ Forensic Аудит та AutoFix
-        </button>
+        </Button>
       </div>
 
       {subTab === 'audit' ? (
@@ -492,18 +493,18 @@ export function AntigravityAgiTab() {
             className={cn(
               'flex items-center justify-between gap-4 rounded-[22px] border px-5 py-3.5 text-sm leading-6',
               feedback.tone === 'amber'
-                ? 'border-rose-500/25 bg-rose-500/10 text-rose-200'
+                ? 'border-cyan-500/25 bg-cyan-500/10 text-rose-200'
                 : 'border-emerald-500/25 bg-emerald-500/10 text-emerald-200',
             )}
           >
             <span>{feedback.message}</span>
-            <button
+            <Button variant="cyber"
               type="button"
               onClick={() => setFeedback(null)}
               className="shrink-0 text-slate-400 hover:text-white"
             >
               <X size={14} />
-            </button>
+            </Button>
           </motion.div>
         )}
       </AnimatePresence>
@@ -533,7 +534,7 @@ export function AntigravityAgiTab() {
                 Онлайн
               </span>
             )}
-            <button
+            <Button variant="cyber"
               type="button"
               onClick={() => void loadData()}
               disabled={refreshing}
@@ -541,14 +542,14 @@ export function AntigravityAgiTab() {
             >
               <RefreshCw size={12} className={refreshing ? 'animate-spin' : ''} />
               Оновити
-            </button>
+            </Button>
           </div>
         </div>
 
         {/* KPI-рядок */}
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
           {/* Активні задачі */}
-          <div className="rounded-[22px] border border-rose-500/20 bg-black/30 p-4">
+          <div className="rounded-[22px] border border-cyan-500/20 bg-black/30 p-4">
             <div className="text-[9px] font-black uppercase tracking-widest text-slate-500">
               Активні задачі
             </div>
@@ -564,7 +565,7 @@ export function AntigravityAgiTab() {
           </div>
 
           {/* Помилки */}
-          <div className="rounded-[22px] border border-rose-500/20 bg-black/30 p-4">
+          <div className="rounded-[22px] border border-cyan-500/20 bg-black/30 p-4">
             <div className="text-[9px] font-black uppercase tracking-widest text-slate-500">
               Помилки
             </div>
@@ -584,7 +585,7 @@ export function AntigravityAgiTab() {
               <div
                 className={cn(
                   'h-full rounded-full transition-all',
-                  snapshot.budgetUsedPercent > 85 ? 'bg-rose-500' : 'bg-[#D4AF37]/80',
+                  snapshot.budgetUsedPercent > 85 ? 'bg-cyan-500' : 'bg-[#D4AF37]/80',
                 )}
                 style={{ width: `${snapshot.budgetUsedPercent}%` }}
               />
@@ -650,23 +651,23 @@ export function AntigravityAgiTab() {
               <span className="text-[10px] font-black uppercase tracking-[0.28em] text-slate-300">
                 Черга AGI-задач
               </span>
-              <Badge className="border border-rose-500/25 bg-rose-500/10 px-2 py-0.5 text-[10px] font-black text-rose-300">
+              <Badge className="border border-cyan-500/25 bg-cyan-500/10 px-2 py-0.5 text-[10px] font-black text-rose-300">
                 {tasks.length}
               </Badge>
             </div>
-            <button
+            <Button variant="cyber"
               type="button"
               onClick={() => setShowForm((v) => !v)}
               className={cn(
                 'flex items-center gap-2 rounded-[16px] border px-3 py-2 text-[11px] font-black uppercase tracking-wider transition',
                 showForm
-                  ? 'border-rose-500/30 bg-rose-500/10 text-rose-300 hover:bg-rose-500/15'
+                  ? 'border-cyan-500/30 bg-cyan-500/10 text-rose-300 hover:bg-cyan-500/15'
                   : 'border-[#D4AF37]/30 bg-[#D4AF37]/10 text-[#D4AF37] hover:bg-[#D4AF37]/15',
               )}
             >
               {showForm ? <X size={12} /> : <Plus size={12} />}
               {showForm ? 'Закрити' : 'Нова задача'}
-            </button>
+            </Button>
           </div>
 
           {/* Заголовок таблиці */}
@@ -763,11 +764,11 @@ export function AntigravityAgiTab() {
           {/* Кнопка скасування */}
           {selectedTask && (selectedTask.status === 'pending' || selectedTask.status === 'in_progress') && (
             <div className="border-t border-white/5 bg-black/30 p-3">
-              <button
+              <Button variant="cyber"
                 type="button"
                 onClick={() => handleCancel(selectedTask.task_id)}
                 disabled={cancelling === selectedTask.task_id}
-                className="flex w-full items-center justify-center gap-2 rounded-[18px] border border-rose-500/25 bg-rose-500/10 px-4 py-2.5 text-[11px] font-black uppercase tracking-wider text-rose-300 transition hover:bg-rose-500/15"
+                className="flex w-full items-center justify-center gap-2 rounded-[18px] border border-cyan-500/25 bg-cyan-500/10 px-4 py-2.5 text-[11px] font-black uppercase tracking-wider text-rose-300 transition hover:bg-cyan-500/15"
               >
                 {cancelling === selectedTask.task_id ? (
                   <Loader size={13} className="animate-spin" />
@@ -775,7 +776,7 @@ export function AntigravityAgiTab() {
                   <XCircle size={13} />
                 )}
                 Скасувати задачу
-              </button>
+              </Button>
             </div>
           )}
         </div>
@@ -819,7 +820,7 @@ export function AntigravityAgiTab() {
                     onChange={(e) => setFormDesc(e.target.value)}
                     rows={4}
                     placeholder="Наприклад: Створити FastAPI сервіс з авторизацією через JWT та CRUD для товарів митна декларація. Включити Dockerfile та GitHub Actions CI…"
-                    className="w-full rounded-[18px] border border-white/10 bg-black/40 px-4 py-3 text-sm text-slate-200 placeholder:text-slate-600 focus:border-rose-500/50 focus:outline-none focus:ring-1 focus:ring-rose-500/30 resize-none"
+                    className="w-full rounded-[18px] border border-white/10 bg-black/40 px-4 py-3 text-sm text-slate-200 placeholder:text-slate-600 focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-rose-500/30 resize-none"
                   />
                   <div className="mt-1 flex justify-end">
                     <span className={cn('text-[10px] font-mono', formDesc.length < 10 ? 'text-slate-600' : 'text-slate-500')}>
@@ -838,7 +839,7 @@ export function AntigravityAgiTab() {
                       id="antigravity-task-priority"
                       value={formPriority}
                       onChange={(e) => setFormPriority(e.target.value as AgentTaskPriority)}
-                      className="w-full rounded-[18px] border border-white/10 bg-black/40 px-4 py-3 text-sm text-slate-200 focus:border-rose-500/50 focus:outline-none"
+                      className="w-full rounded-[18px] border border-white/10 bg-black/40 px-4 py-3 text-sm text-slate-200 focus:border-cyan-500/50 focus:outline-none"
                     >
                       <option value="low">Низький</option>
                       <option value="medium">Середній</option>
@@ -862,7 +863,7 @@ export function AntigravityAgiTab() {
                         value={formBudget}
                         onChange={(e) => setFormBudget(e.target.value)}
                         placeholder="5.00"
-                        className="w-full rounded-[18px] border border-white/10 bg-black/40 pl-9 pr-4 py-3 text-sm text-slate-200 placeholder:text-slate-600 focus:border-rose-500/50 focus:outline-none"
+                        className="w-full rounded-[18px] border border-white/10 bg-black/40 pl-9 pr-4 py-3 text-sm text-slate-200 placeholder:text-slate-600 focus:border-cyan-500/50 focus:outline-none"
                       />
                     </div>
                   </div>
@@ -870,7 +871,7 @@ export function AntigravityAgiTab() {
 
                 {/* Кнопки */}
                 <div className="flex items-center gap-3 pt-2">
-                  <button
+                  <Button variant="cyber"
                     type="button"
                     id="antigravity-task-submit"
                     onClick={() => void handleCreateTask()}
@@ -882,14 +883,14 @@ export function AntigravityAgiTab() {
                   >
                     {creating ? <Loader size={14} className="animate-spin" /> : <Send size={14} />}
                     Запустити AGI-задачу
-                  </button>
-                  <button
+                  </Button>
+                  <Button variant="cyber"
                     type="button"
                     onClick={() => setShowForm(false)}
                     className="rounded-[20px] border border-white/10 bg-white/5 px-5 py-3 text-[12px] font-black uppercase tracking-wider text-slate-400 transition hover:bg-white/10"
                   >
                     Відмінити
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>

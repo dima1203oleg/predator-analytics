@@ -3,8 +3,8 @@
 # Автоматична синхронізація коду з MacBook на NVIDIA Compute Node
 
 REMOTE_IP="194.177.1.240"
-REMOTE_USER="dima-mac"
-REMOTE_PATH="/Users/dima-mac/Documents/Predator_21"
+REMOTE_USER="dima"
+REMOTE_PATH="~/Predator_60"
 EXCLUDE_LIST=(
   ".git"
   "node_modules"
@@ -25,11 +25,11 @@ for item in "${EXCLUDE_LIST[@]}"; do
 done
 
 # Виконання rsync
-rsync -avz -e "ssh -o ConnectTimeout=5" $EXCLUDE_ARGS ./ $REMOTE_USER@$REMOTE_IP:$REMOTE_PATH
+rsync -avz -e "ssh -o ConnectTimeout=5" $EXCLUDE_ARGS ./ nvidia-server:$REMOTE_PATH
 
 if [ $? -eq 0 ]; then
   echo "✅ Синхронізація успішна. Перезапуск сервісів на NVIDIA..."
-  ssh $REMOTE_USER@$REMOTE_IP "cd $REMOTE_PATH && ./AUTO_DEPLOY_NVIDIA.sh --fast"
+  ssh nvidia-server "cd $REMOTE_PATH && bash deploy/scripts/deploy_nvidia_backend.sh"
 else
   echo "❌ Помилка синхронізації. Перевірте з'єднання з NVIDIA."
 fi

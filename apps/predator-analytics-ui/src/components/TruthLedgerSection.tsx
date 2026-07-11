@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -109,12 +110,12 @@ export const TruthLedgerSection: React.FC = () => {
                   {entry.hash.substring(0, 12)}...
                 </td>
                 <td className="p-3">
-                  <button
+                  <Button variant="cyber"
                     onClick={() => fetchReport(entry.id)}
                     className="p-1.5 rounded-lg bg-slate-800 hover:bg-cyan-500/20 hover:text-cyan-400 transition-all"
                   >
                     <ShieldCheck size={14} />
-                  </button>
+                  </Button>
                 </td>
               </tr>
             ))}
@@ -146,12 +147,12 @@ export const TruthLedgerSection: React.FC = () => {
                     </p>
                   </div>
                 </div>
-                <button
+                <Button variant="cyber"
                   onClick={() => setSelectedId(null)}
                   className="p-2 text-slate-500 hover:text-white"
                 >
                   <XCircle size={20} />
-                </button>
+                </Button>
               </div>
 
               <div className="p-6 space-y-6 max-h-[60vh] overflow-y-auto custom-scrollbar">
@@ -197,10 +198,10 @@ export const TruthLedgerSection: React.FC = () => {
                   <Hash size={12} />
                   <span className="font-mono">{report?.ledger_hash?.substring(0, 32)}...</span>
                 </div>
-                <button className="flex items-center gap-2 px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold rounded-xl transition-all">
+                <Button variant="cyber" className="flex items-center gap-2 px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold rounded-xl transition-all">
                   <ExternalLink size={14} />
                   Seal & Export (PDF/A)
-                </button>
+                </Button>
               </div>
             </div>
           </motion.div>

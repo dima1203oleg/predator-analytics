@@ -40,14 +40,14 @@ import { useBackendStatus } from '../../hooks/useBackendStatus';
 // Сценарії тепер завантажуються через API
 
 const PredictionCard = ({ scenario }: { scenario: Scenario }) => (
-  <HoloCard glowColor={scenario.impact === 'critical' || scenario.impact === 'high' ? 'rgba(225,29,72,0.4)' : undefined} className="group p-5">
+  <HoloCard glowColor={scenario.impact === 'critical' || scenario.impact === 'high' ? 'rgba(6,182,212,0.4)' : undefined} className="group p-5">
     <div className="flex justify-between items-start mb-4">
       <div className="h-10 w-10 rounded-xl bg-slate-900 border border-white/10 flex items-center justify-center ">
-        <Brain className="w-5 h-5 text-rose-500" />
+        <Brain className="w-5 h-5 text-cyan-500" />
       </div>
       <Badge className={cn(
         scenario.impact === 'critical' || scenario.impact === 'high' 
-          ? "bg-rose-900/40 text-rose-500 border border-rose-500/30" 
+          ? "bg-rose-900/40 text-cyan-500 border border-cyan-500/30" 
           : "bg-crimson-900/40 text-crimson-500 border border-crimson-500/30"
       )}>
         {scenario.impact === 'critical' || scenario.impact === 'high' ? 'КРИТИЧНО' : 'ПОМІТНО'}
@@ -123,7 +123,7 @@ export default function PredictiveNexusView() {
                             { label: stats?.last_sync ? `SYNC: ${formatDistanceToNow(new Date(stats.last_sync), { locale: uk, addSuffix: true })}` : 'СИНХРОНІЗАЦІЯ...', color: 'primary', icon: <RefreshCw size={10} /> },
                         ]}
                         actions={
-                            <Button onClick={startScan} disabled={isScanning} className="bg-rose-600 hover:bg-rose-500 text-slate-950 font-black gap-2 border border-rose-400 ">
+                            <Button onClick={startScan} disabled={isScanning} className="bg-cyan-600 hover:bg-cyan-500 text-slate-950 font-black gap-2 border border-cyan-400 ">
                                 <Zap size={16} className={isScanning ? "" : ""} />
                                 {isScanning ? "КВАНТУВАННЯ..." : "СИНТЕЗУВАТИ ПРЕКОГНІЦІЮ"}
                             </Button>
@@ -133,16 +133,16 @@ export default function PredictiveNexusView() {
                     <div className="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-6 mt-6 overflow-hidden">
                         {/* Ліву колонку: OODA Loop */}
                         <div className="lg:col-span-1 flex flex-col gap-6">
-                            <div className="bg-black/40 border border-rose-900/30 rounded-xl p-6  ">
-                                <h3 className="text-sm font-black text-rose-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+                            <div className="bg-black/40 border border-cyan-900/30 rounded-xl p-6  ">
+                                <h3 className="text-sm font-black text-cyan-500 uppercase tracking-widest mb-4 flex items-center gap-2">
                                     <Bot size={16} /> ЦИКЛ OODA
                                 </h3>
                                 <div className="grid grid-cols-2 gap-2">
                                     {['OBSERVE', 'ORIENT', 'DECIDE', 'ACT'].map((step, idx) => (
-                                        <div key={step} className={cn("p-2 rounded border text-center", idx === 0 ? "border-rose-500/30 text-rose-500" : "border-white/10 text-slate-600")}>
+                                        <div key={step} className={cn("p-2 rounded border text-center", idx === 0 ? "border-cyan-500/30 text-cyan-500" : "border-white/10 text-slate-600")}>
                                             <div className="text-[8px] font-black">{step}</div>
                                             <div className="h-1 w-full bg-white/5 mt-1 rounded-full overflow-hidden">
-                                                {idx === 0 && <motion.div className="h-full bg-rose-500" initial={{ width: 0 }} animate={{ width: '100%' }} transition={{ duration: 5, repeat: Infinity }} />}
+                                                {idx === 0 && <motion.div className="h-full bg-cyan-500" initial={{ width: 0 }} animate={{ width: '100%' }} transition={{ duration: 5, repeat: Infinity }} />}
                                             </div>
                                         </div>
                                     ))}

@@ -32,7 +32,7 @@ export const useOmniscienceWS = () => {
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
         // Use the same host as the API, handled by nginx if in production
         const host = window.location.host;
-        const url = `${protocol}//${host}/api/v45/ws/omniscience`;
+        const url = `${protocol}//${host}/api/v1/ws/dashboard`;
 
         console.log(`📡 Connecting to Omniscience WS: ${url}`);
         ws.current = new WebSocket(url);
@@ -40,6 +40,12 @@ export const useOmniscienceWS = () => {
         ws.current.onopen = () => {
             console.log('✅ Omniscience WS Connected');
             setIsConnected(true);
+            
+            // Subscribe to updates
+            ws.current?.send(JSON.stringify({
+                action: "subscribe",
+                tenant_id: "global-system" // Default tenant
+            }));
         };
 
         ws.current.onmessage = (event) => {

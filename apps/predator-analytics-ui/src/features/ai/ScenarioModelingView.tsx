@@ -4,6 +4,7 @@
  * War-gaming Horizon v63.0-ELITE.
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
 import {
   Activity,
@@ -67,8 +68,8 @@ interface Scenario {
 // ─── Конфігурація категорій ───────────────────────────────────────────────────
 
 const CATEGORY_CONFIG: Record<ScenarioCategory, { label: string; color: string; icon: React.ComponentType<{ className?: string }> }> = {
-  market: { label: 'Ринок', color: 'text-rose-400 bg-rose-500/10 border-rose-500/25', icon: TrendingUp },
-  risk: { label: 'Ризик', color: 'text-rose-400 bg-rose-500/10 border-rose-500/25', icon: AlertTriangle },
+  market: { label: 'Ринок', color: 'text-rose-400 bg-cyan-500/10 border-cyan-500/25', icon: TrendingUp },
+  risk: { label: 'Ризик', color: 'text-rose-400 bg-cyan-500/10 border-cyan-500/25', icon: AlertTriangle },
   aml: { label: 'AML', color: 'text-orange-400 bg-orange-500/10 border-orange-500/25', icon: Shield },
   geopolitical: { label: 'Геополітика', color: 'text-indigo-400 bg-indigo-500/10 border-indigo-500/25', icon: Globe },
 };
@@ -115,7 +116,7 @@ function ScenarioCard({ scenario }: { scenario: Scenario }) {
 
   return (
     <div className="border border-white/[0.07] rounded-xl overflow-hidden bg-white/[0.01]">
-      <button
+      <Button variant="cyber"
         onClick={() => setExpanded(!expanded)}
         className="w-full flex items-center gap-4 p-4 text-left hover:bg-white/[0.02] transition-colors"
       >
@@ -145,7 +146,7 @@ function ScenarioCard({ scenario }: { scenario: Scenario }) {
             {expanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
           </div>
         </div>
-      </button>
+      </Button>
 
       {expanded && (
         <div className="border-t border-white/[0.05] p-4 space-y-4">
@@ -197,10 +198,10 @@ function ScenarioCard({ scenario }: { scenario: Scenario }) {
           )}
 
           {scenario.status === 'draft' && (
-            <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-rose-500/10 border border-rose-500/25 text-sm text-rose-400 hover:bg-rose-500/20 transition-colors">
+            <Button variant="cyber" className="flex items-center gap-2 px-4 py-2 rounded-lg bg-cyan-500/10 border border-cyan-500/25 text-sm text-rose-400 hover:bg-cyan-500/20 transition-colors">
               <Play className="w-4 h-4" />
               Запустити симуляцію
-            </button>
+            </Button>
           )}
         </div>
       )}
@@ -232,7 +233,7 @@ export const ScenarioModelingView: React.FC = () => {
       {/* Заголовок */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
             <FlaskConical className="w-5 h-5 text-rose-400" />
           </div>
           <div>
@@ -243,10 +244,10 @@ export const ScenarioModelingView: React.FC = () => {
           </div>
         </div>
 
-        <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-rose-500/30 text-xs text-rose-400 hover:bg-rose-500/10 transition-colors">
+        <Button variant="cyber" className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-cyan-500/30 text-xs text-rose-400 hover:bg-cyan-500/10 transition-colors">
           <Plus className="w-3.5 h-3.5" />
           Новий сценарій
-        </button>
+        </Button>
       </div>
 
       {/* Статистика */}
@@ -268,7 +269,7 @@ export const ScenarioModelingView: React.FC = () => {
       </div>
 
       {/* AI-плашка */}
-      <div className="flex items-center gap-3 p-3 rounded-lg bg-rose-500/[0.04] border border-rose-500/[0.12]">
+      <div className="flex items-center gap-3 p-3 rounded-lg bg-cyan-500/[0.04] border border-cyan-500/[0.12]">
         <BrainCircuit className="w-4 h-4 text-rose-400 flex-shrink-0" />
         <p className="text-xs text-rose-400/70">
           ШІ-сценарії генеруються GLM-5.1 (Lead Architect) та верифікуються Nemotron-30B.

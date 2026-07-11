@@ -10,6 +10,7 @@
  * © 2026 PREDATOR Analytics
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactECharts from '@/components/ECharts';
@@ -208,7 +209,7 @@ const InsightCard: React.FC<{
             {insight.actions && (
               <div className="flex flex-wrap gap-2">
                 {insight.actions.map((action, i) => (
-                  <button
+                  <Button variant="cyber"
                     key={i}
                     onClick={(e) => { e.stopPropagation(); onAction?.(action.action); }}
                     className={cn(
@@ -217,7 +218,7 @@ const InsightCard: React.FC<{
                     )}
                   >
                     {action.label}
-                  </button>
+                  </Button>
                 ))}
               </div>
             )}
@@ -321,7 +322,7 @@ export const AIInsightsPanel: React.FC<{
           </div>
         </div>
 
-        <button
+        <Button variant="cyber"
           onClick={handleGenerateNew}
           disabled={isGenerating}
           className={cn(
@@ -333,7 +334,7 @@ export const AIInsightsPanel: React.FC<{
         >
           <RefreshCw size={14} className={cn(isGenerating && "animate-spin")} />
           {isGenerating ? premiumLocales.aiInsights.generating : premiumLocales.aiInsights.update}
-        </button>
+        </Button>
       </div>
 
       {/* Content */}

@@ -5,6 +5,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { Button } from '@/components/ui/button';
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import { ThermalCard } from '@/components/polish/ThermalCard';
 import React, { useState, useEffect, useMemo } from 'react';
@@ -157,13 +158,13 @@ export default function ExecutiveBriefView() {
         <div className="flex flex-col lg:flex-row justify-between items-start gap-8 relative z-10">
           <div className="space-y-4">
             <div className="flex items-center gap-4">
-               <div className="inline-flex items-center gap-3 rounded-full border border-rose-500/20 bg-rose-500/5 px-4 py-1.5 text-[10px] font-black tracking-[0.3em] text-rose-500 uppercase italic">
+               <div className="inline-flex items-center gap-3 rounded-full border border-cyan-500/20 bg-cyan-500/5 px-4 py-1.5 text-[10px] font-black tracking-[0.3em] text-cyan-500 uppercase italic">
                   ЦІЛКОМ ТАЄМНО // КОНТУР-S
                </div>
-               <div className="w-2 h-2 rounded-full bg-rose-600  shadow-[0_0_12px_#f43f5e]" />
+               <div className="w-2 h-2 rounded-full bg-cyan-600  shadow-[0_0_12px_#f43f5e]" />
             </div>
             <h1 className={cn("font-black text-white tracking-tighter uppercase italic skew-x-[-3deg]", isCompact ? "text-3xl" : "text-5xl")}>
-              СУВЕРЕННЕ <span className="text-rose-600">СТРАТЕГІЧНЕ ЗВЕДЕННЯ</span>
+              СУВЕРЕННЕ <span className="text-cyan-600">СТРАТЕГІЧНЕ ЗВЕДЕННЯ</span>
             </h1>
             <p className="text-slate-500 font-black text-[11px] tracking-[0.4em] uppercase italic opacity-60">
               ПРЕДИКТИВНИЙ АНАЛІЗ ЦЕНТРАЛЬНОГО ЯДРА | v63.0-ELITE
@@ -203,16 +204,16 @@ export default function ExecutiveBriefView() {
           <motion.section variants={fadeUp} className={cn("relative overflow-hidden border border-white/5 bg-black/40 shadow-2xl", isCompact ? "rounded-3xl p-5" : "rounded-[3rem] p-10")}>
             <div className="flex items-center justify-between mb-10">
               <div className="flex items-center gap-6">
-                <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-500 shadow-lg">
+                <div className="p-4 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-500 shadow-lg">
                   <Network size={24} />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-black text-white uppercase italic tracking-tighter">АКТИВНІСТЬ <span className="text-rose-500">ЗАГРОЗ</span></h2>
+                  <h2 className="text-2xl font-black text-white uppercase italic tracking-tighter">АКТИВНІСТЬ <span className="text-cyan-500">ЗАГРОЗ</span></h2>
                   <p className="text-[10px] text-slate-600 uppercase tracking-[0.3em] font-black italic mt-1">МОНІТОРИНГ В ПРЯМОМУ ЕФІРІ</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-rose-500/5 border border-rose-500/20">
-                 <span className="w-2 h-2 rounded-full bg-rose-600  shadow-[0_0_8px_#f43f5e]" />
+              <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-cyan-500/5 border border-cyan-500/20">
+                 <span className="w-2 h-2 rounded-full bg-cyan-600  shadow-[0_0_8px_#f43f5e]" />
                  <span className="text-[10px] font-black uppercase tracking-widest text-rose-400 italic">ЖИВИЙ_ПОТІК</span>
               </div>
             </div>
@@ -252,9 +253,9 @@ export default function ExecutiveBriefView() {
                   <p className="text-[10px] text-slate-600 uppercase tracking-[0.3em] font-black italic mt-1">КРИТИЧНИЙ РІВЕНЬ РИЗИКУ — АНАЛІЗ AI</p>
                 </div>
               </div>
-              <button className="text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-white italic flex items-center">
+              <Button variant="cyber" className="text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-white italic flex items-center">
                 ВЕСЬ ПЕРЕЛІК <ArrowRight size={14} className="ml-2" />
-              </button>
+              </Button>
             </div>
             
             <div className="overflow-x-auto no-scrollbar">
@@ -270,21 +271,21 @@ export default function ExecutiveBriefView() {
                 </thead>
                 <tbody className="divide-y divide-white/[0.03]">
                   {targets.map((target: any) => (
-                    <tr key={target.edrpou} className="group hover:bg-rose-500/[0.03] transition-all cursor-pointer">
-                      <td className="px-10 py-6 whitespace-nowrap font-mono text-[11px] text-slate-600 group-hover:text-rose-500 transition-colors">#{target.edrpou}</td>
+                    <tr key={target.edrpou} className="group hover:bg-cyan-500/[0.03] transition-all cursor-pointer">
+                      <td className="px-10 py-6 whitespace-nowrap font-mono text-[11px] text-slate-600 group-hover:text-cyan-500 transition-colors">#{target.edrpou}</td>
                       <td className="px-10 py-6 whitespace-nowrap font-black text-slate-200 italic group-hover:text-white transition-colors">{target.name}</td>
                       <td className="px-10 py-6 whitespace-nowrap font-mono text-emerald-500 font-black italic tabular-nums">
                         ${(target.totalValue / 1000000).toFixed(1)}M
                       </td>
                       <td className="px-10 py-6 whitespace-nowrap text-center">
-                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-500 text-[11px] font-black italic shadow-lg">
+                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-500 text-[11px] font-black italic shadow-lg">
                           {target.maxRisk}%
                         </div>
                       </td>
                       <td className="px-10 py-6 whitespace-nowrap text-right">
-                        <button className="p-3 rounded-xl bg-white/5 border border-white/5 hover:border-rose-500/40 hover:bg-rose-500/10 text-slate-500 hover:text-rose-500 transition-all group/btn">
+                        <Button variant="cyber" className="p-3 rounded-xl bg-white/5 border border-white/5 hover:border-cyan-500/40 hover:bg-cyan-500/10 text-slate-500 hover:text-cyan-500 transition-all group/btn">
                           <ArrowUpRight size={18} className="group-hover/btn:rotate-45 transition-transform" />
-                        </button>
+                        </Button>
                       </td>
                     </tr>
                   ))}
@@ -306,7 +307,7 @@ export default function ExecutiveBriefView() {
             
             <div className="absolute top-8 left-8 z-10 space-y-3">
               <div className="flex items-center gap-3">
-                <Globe className="text-rose-500 animate-spin-slow" size={20} />
+                <Globe className="text-cyan-500 animate-spin-slow" size={20} />
                 <span className="text-[11px] font-black text-white tracking-[0.4em] uppercase italic">ГЛОБАЛЬНИЙ СКАНИНГ</span>
               </div>
               <div className="flex items-center gap-3">
@@ -324,16 +325,16 @@ export default function ExecutiveBriefView() {
 
           {/* Neural Terminal Stream HUD */}
           <motion.section variants={fadeUp} className={cn("relative flex flex-col border border-white/5 bg-black/40 shadow-2xl overflow-hidden min-h-[500px]", isCompact ? "rounded-3xl p-5" : "rounded-[3rem] p-8")}>
-            <div className="absolute top-0 right-0 w-1 h-full bg-rose-600/30" />
+            <div className="absolute top-0 right-0 w-1 h-full bg-cyan-600/30" />
             
             <div className="flex items-center justify-between mb-8 border-b border-white/5 pb-8">
               <div className="flex items-center gap-4">
-                <div className="p-3 rounded-2xl bg-rose-500/10 text-rose-500 border border-rose-500/20 shadow-lg">
+                <div className="p-3 rounded-2xl bg-cyan-500/10 text-cyan-500 border border-cyan-500/20 shadow-lg">
                   <Terminal size={20} />
                 </div>
                 <h2 className="text-xl font-black text-white italic uppercase tracking-tighter">ЯДРО ТЕРМІНАЛУ</h2>
               </div>
-              <div className="h-2 w-2 rounded-full bg-rose-600 animate-ping shadow-[0_0_10px_#f43f5e]" />
+              <div className="h-2 w-2 rounded-full bg-cyan-600 animate-ping shadow-[0_0_10px_#f43f5e]" />
             </div>
             
             <div className="flex-1 space-y-4 font-mono text-[11px] max-h-[550px] overflow-hidden no-scrollbar pr-2">
@@ -345,7 +346,7 @@ export default function ExecutiveBriefView() {
                     animate={{ x: 0, opacity: 1 }}
                     className={cn(
                       "flex items-start gap-4 p-4 rounded-2xl border-l-4 transition-all hover:bg-white/[0.03] group/ev",
-                      ev.type === 'warning' ? "border-amber-500 bg-amber-500/[0.03]" : "border-rose-500 bg-rose-500/[0.03]"
+                      ev.type === 'warning' ? "border-amber-500 bg-amber-500/[0.03]" : "border-cyan-500 bg-cyan-500/[0.03]"
                     )}
                     style={{ opacity: `${Math.max(20, 100 - (i * 12))}%` }}
                   >
@@ -368,7 +369,7 @@ export default function ExecutiveBriefView() {
                   ОПТИМІЗАЦІЯ_ВУЗЛА: ПОВНА
                </div>
                <div className="flex gap-2">
-                  {[1,2,3].map(i => <div key={i} className="w-1.5 h-1.5 rounded-full bg-rose-500/20" />)}
+                  {[1,2,3].map(i => <div key={i} className="w-1.5 h-1.5 rounded-full bg-cyan-500/20" />)}
                </div>
             </div>
           </motion.section>
@@ -394,7 +395,7 @@ export default function ExecutiveBriefView() {
                   "p-4 rounded-2xl border transition-all group-hover:scale-110 shadow-lg",
                   action.accent === 'emerald' ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-500" :
                   action.accent === 'amber' ? "bg-amber-500/10 border-amber-500/20 text-amber-500" :
-                  "bg-rose-500/10 border-rose-500/20 text-rose-500"
+                  "bg-cyan-500/10 border-cyan-500/20 text-cyan-500"
                 )}>
                   <action.icon size={24} />
                 </div>
@@ -403,7 +404,7 @@ export default function ExecutiveBriefView() {
                   <div className="text-[10px] text-slate-600 font-black uppercase tracking-[0.2em] mt-1 italic group-hover:text-rose-400/60 transition-colors">{action.hint}</div>
                 </div>
               </div>
-              <ChevronRight size={20} className="text-slate-800 group-hover:text-rose-500 group-hover:translate-x-1 transition-all" />
+              <ChevronRight size={20} className="text-slate-800 group-hover:text-cyan-500 group-hover:translate-x-1 transition-all" />
             </motion.button>
           </ThermalCard>
         ))}

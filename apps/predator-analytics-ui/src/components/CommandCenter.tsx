@@ -1,4 +1,5 @@
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useRef } from 'react';
 import { Terminal, X, ChevronRight, RefreshCw, Sparkles, ShieldAlert, Activity, Search, Code, Zap, Globe, LayoutGrid, Server, Database, Trophy, Bot, Sword, Layers } from 'lucide-react';
 import { CommandLog, TabView } from '../types';
@@ -243,12 +244,12 @@ const CommandCenter: React.FC<CommandCenterProps> = ({ isOpen, onClose, onLock, 
             </span>
           </div>
           <div className="flex gap-2">
-            <button onClick={() => setMatrixMode(!matrixMode)} className={`p-1.5 rounded hover:bg-white/10 transition-colors btn-3d ${matrixMode ? 'text-green-500' : 'text-slate-400'}`} title="Переключити Матрицю">
+            <Button variant="cyber" onClick={() => setMatrixMode(!matrixMode)} className={`p-1.5 rounded hover:bg-white/10 transition-colors btn-3d ${matrixMode ? 'text-green-500' : 'text-slate-400'}`} title="Переключити Матрицю">
               <Code size={16} />
-            </button>
-            <button onClick={onClose} className={`p-1.5 rounded hover:bg-red-500/20 hover:text-red-400 transition-colors btn-3d ${matrixMode ? 'text-green-500' : 'text-slate-400'}`}>
+            </Button>
+            <Button variant="cyber" onClick={onClose} className={`p-1.5 rounded hover:bg-red-500/20 hover:text-red-400 transition-colors btn-3d ${matrixMode ? 'text-green-500' : 'text-slate-400'}`}>
               <X size={16} />
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -281,10 +282,10 @@ const CommandCenter: React.FC<CommandCenterProps> = ({ isOpen, onClose, onLock, 
         <div className={`p-2 border-t ${matrixMode ? 'border-green-900 bg-black' : 'border-slate-800 bg-slate-900'} relative z-10 overflow-x-auto`}>
           <div className="flex gap-2 text-[10px] font-mono">
             <span className="text-slate-500 px-2">Швидка Навігація:</span>
-            <button onClick={(e) => handleCommand(e, 'go god')} className="text-purple-400 hover:text-purple-300">go god</button>
-            <button onClick={(e) => handleCommand(e, 'go brain')} className="text-blue-400 hover:text-blue-300">go brain</button>
-            <button onClick={(e) => handleCommand(e, 'go nas')} className="text-yellow-400 hover:text-yellow-300">go nas</button>
-            <button onClick={(e) => handleCommand(e, 'go devops')} className="text-orange-400 hover:text-orange-300">go devops</button>
+            <Button variant="cyber" onClick={(e) => handleCommand(e, 'go god')} className="text-purple-400 hover:text-purple-300">go god</Button>
+            <Button variant="cyber" onClick={(e) => handleCommand(e, 'go brain')} className="text-blue-400 hover:text-blue-300">go brain</Button>
+            <Button variant="cyber" onClick={(e) => handleCommand(e, 'go nas')} className="text-yellow-400 hover:text-yellow-300">go nas</Button>
+            <Button variant="cyber" onClick={(e) => handleCommand(e, 'go devops')} className="text-orange-400 hover:text-orange-300">go devops</Button>
           </div>
         </div>
 

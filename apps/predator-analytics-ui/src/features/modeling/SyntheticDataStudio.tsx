@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Brain, Database, Upload, Play, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
@@ -130,14 +131,14 @@ export const SyntheticDataStudio: React.FC = () => {
                 </div>
               </div>
 
-              <button
+              <Button variant="cyber"
                 onClick={handleTrain}
                 disabled={isLoading}
                 className="w-full mt-4 flex items-center justify-center space-x-2 bg-red-600 hover:bg-red-700 disabled:bg-slate-800 disabled:text-slate-500 text-white py-3 rounded-lg font-medium transition-colors"
               >
                 {isLoading ? <Loader2 className="animate-spin" size={20} /> : <Play size={20} />}
                 <span>{isLoading ? 'Тренування в процесі...' : 'Запустити Hybrid Pipeline'}</span>
-              </button>
+              </Button>
 
               {error && (
                 <div className="p-3 bg-red-950/50 border border-red-900 rounded-lg flex items-start space-x-2 text-red-400 text-sm mt-4">

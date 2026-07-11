@@ -56,20 +56,20 @@ export const LiveThreatRadar: React.FC = () => {
   }, []);
 
   return (
-    <div className="relative w-full aspect-square max-w-[300px] mx-auto rounded-full border border-rose-500/30 bg-black/50 shadow-[0_0_30px_rgba(225,29,72,0.15)] overflow-hidden">
+    <div className="relative w-full aspect-square max-w-[300px] mx-auto rounded-full border border-cyan-500/30 bg-black/50 shadow-[0_0_30px_rgba(6,182,212,0.15)] overflow-hidden">
       {/* Radar Grid */}
-      <div className="absolute inset-0 rounded-full border border-rose-500/20 m-[10%]" />
-      <div className="absolute inset-0 rounded-full border border-rose-500/10 m-[30%]" />
-      <div className="absolute inset-0 rounded-full border border-rose-500/5 m-[50%]" />
+      <div className="absolute inset-0 rounded-full border border-cyan-500/20 m-[10%]" />
+      <div className="absolute inset-0 rounded-full border border-cyan-500/10 m-[30%]" />
+      <div className="absolute inset-0 rounded-full border border-cyan-500/5 m-[50%]" />
       
       {/* Crosshairs */}
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-full h-[1px] bg-rose-500/20" />
+        <div className="w-full h-[1px] bg-cyan-500/20" />
       </div>
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className="h-full w-[1px] bg-rose-500/20" />
+        <div className="h-full w-[1px] bg-cyan-500/20" />
       </div>
-      <div className="absolute inset-0 flex items-center justify-center text-rose-500/40">
+      <div className="absolute inset-0 flex items-center justify-center text-cyan-500/40">
         <Crosshair size={24} />
       </div>
 
@@ -114,12 +114,12 @@ export const LiveThreatRadar: React.FC = () => {
             )}>
               <div className={cn(
                 "w-2 h-2 rounded-full",
-                threat.risk_score >= 90 ? "bg-rose-500 shadow-[0_0_8px_#f43f5e]" : "bg-amber-500 shadow-[0_0_8px_#f59e0b]",
+                threat.risk_score >= 90 ? "bg-cyan-500 shadow-[0_0_8px_#f43f5e]" : "bg-amber-500 shadow-[0_0_8px_#f59e0b]",
                 isHighlighted ? "opacity-100" : "opacity-40"
               )} />
               
               {/* Tooltip */}
-              <div className="absolute left-4 top-0 hidden group-hover:block whitespace-nowrap bg-black/90 border border-rose-500/40 px-2 py-1 rounded text-[10px] text-rose-400 uppercase italic tracking-widest z-50">
+              <div className="absolute left-4 top-0 hidden group-hover:block whitespace-nowrap bg-black/90 border border-cyan-500/40 px-2 py-1 rounded text-[10px] text-rose-400 uppercase italic tracking-widest z-50">
                 <div className="flex items-center gap-1 font-bold">
                   {threat.risk_score >= 90 ? <ShieldAlert size={10} /> : <AlertTriangle size={10} />}
                   {threat.name}

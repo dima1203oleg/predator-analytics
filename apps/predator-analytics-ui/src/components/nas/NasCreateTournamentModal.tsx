@@ -1,4 +1,5 @@
 
+import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Trophy } from 'lucide-react';
@@ -85,7 +86,7 @@ export const NasCreateTournamentModal: React.FC<NasCreateTournamentModalProps> =
                     </div>
                 </div>
                 <div className="flex justify-end pt-6 border-t border-slate-800">
-                    <button
+                    <Button variant="cyber"
                         onClick={handleConfirm}
                         disabled={!name || !dataset}
                         className={`
@@ -96,7 +97,7 @@ export const NasCreateTournamentModal: React.FC<NasCreateTournamentModalProps> =
                         `}
                     >
                         Запустити NAS
-                    </button>
+                    </Button>
                 </div>
             </div>
         </Modal>

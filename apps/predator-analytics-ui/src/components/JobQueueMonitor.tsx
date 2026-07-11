@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { HoloCard } from '@/components/ui/HoloCard';
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -99,13 +100,13 @@ const QueueCard: React.FC<{ queue: QueueInfo, onPurge: (name: string) => void }>
       <div className="absolute top-0 right-0 w-32 h-32 bg-current opacity-[0.02] -mr-16 -mt-16 rounded-full blur-3xl pointer-events-none" />
 
       {queue.messages > 0 && (
-        <button
+        <Button variant="cyber"
           onClick={(e) => { e.stopPropagation(); onPurge(queue.name); }}
           className="absolute top-4 right-4 p-2 rounded-xl bg-rose-500/10 text-rose-500 opacity-0 group-hover:opacity-100 transition-all hover:bg-rose-500 hover:text-white shadow-lg"
           title="Очистити чергу"
         >
           <Trash2 size={14} />
-        </button>
+        </Button>
       )}
 
       <div className="flex items-center justify-between mb-6">
@@ -407,7 +408,7 @@ export const JobQueueMonitor: React.FC = () => {
           </div>
           <div className="flex gap-3 p-1 bg-slate-950/40 rounded-2xl border border-white/5  shrink-0">
             {(['all', 'running', 'completed', 'failed'] as const).map(f => (
-              <button
+              <Button variant="cyber"
                 key={f}
                 onClick={() => setFilter(f)}
                 className={cn(
@@ -416,7 +417,7 @@ export const JobQueueMonitor: React.FC = () => {
                 )}
               >
                 {f === 'all' ? 'Browse All' : f === 'running' ? 'Active Computation' : f === 'completed' ? 'Success Records' : 'Fault History'}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -522,29 +523,29 @@ export const JobQueueMonitor: React.FC = () => {
                   {/* ACTIONS */}
                   <div className="pt-12 border-t border-white/5 flex gap-6">
                     {selectedJob.status === 'failed' && (
-                      <button
+                      <Button variant="cyber"
                         onClick={() => handleRetry(selectedJob.id)}
                         className="flex-1 py-5 rounded-[24px] bg-blue-600 text-white text-[11px] font-black uppercase tracking-[0.2em]  hover:bg-blue-500 active:scale-95 transition-all flex items-center justify-center gap-3"
                       >
                         <RefreshCw size={18} /> Initialize_Retry
-                      </button>
+                      </Button>
                     )}
 
                     {selectedJob.status === 'running' && (
-                      <button
+                      <Button variant="cyber"
                         onClick={() => handleCancel(selectedJob.id)}
                         className="flex-1 py-5 rounded-[24px] bg-rose-600 text-white text-[11px] font-black uppercase tracking-[0.2em]  hover:bg-rose-500 active:scale-95 transition-all flex items-center justify-center gap-3"
                       >
                         <StopCircle size={18} /> Terminate_Process
-                      </button>
+                      </Button>
                     )}
 
-                    <button
+                    <Button variant="cyber"
                       onClick={() => setSelectedJob(null)}
                       className="px-10 py-5 rounded-[24px] bg-slate-900 border border-white/10 text-white text-[11px] font-black uppercase tracking-[0.2em] hover:bg-slate-800 transition-all active:scale-95"
                     >
                       Deactivate_View
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>

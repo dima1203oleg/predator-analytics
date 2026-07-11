@@ -8,6 +8,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { 
@@ -125,7 +126,7 @@ export const ExecutiveBrief: React.FC = () => {
                 </div>
                 <h3 className="text-xs font-black text-white italic uppercase tracking-[0.4em]">ШІ-АНАЛІТИКА ТА ІНСАЙТИ</h3>
               </div>
-              <button className="text-[10px] font-black text-slate-700 hover:text-white transition-colors uppercase italic tracking-widest">ДЕТАЛЬНИЙ_ЗВІТ</button>
+              <Button variant="cyber" className="text-[10px] font-black text-slate-700 hover:text-white transition-colors uppercase italic tracking-widest">ДЕТАЛЬНИЙ_ЗВІТ</Button>
             </div>
             
             <div className="space-y-6">

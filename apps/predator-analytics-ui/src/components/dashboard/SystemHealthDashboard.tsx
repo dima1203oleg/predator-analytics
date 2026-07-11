@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -347,13 +348,13 @@ const TruthVerification = ({ data, onVerify }: { data: any, onVerify: () => void
             </div>
           </div>
 
-          <button
+          <Button variant="cyber"
             onClick={onVerify}
             className="flex items-center gap-2 ml-2 px-4 py-3 rounded-xl bg-indigo-500/20 hover:bg-indigo-500/30 border border-indigo-500/30 text-indigo-300 text-xs font-bold transition-all hover:scale-105 active:scale-95"
           >
             <RefreshCw size={14} />
             ПЕ ЕВІ ИТИ
-          </button>
+          </Button>
         </div>
       </div>
 

@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShieldAlert, AlertTriangle, ArrowRight, GitMerge, FileSearch, Zap } from 'lucide-react';
@@ -103,9 +104,9 @@ export const SchemesWidget: React.FC<{ persona: string }> = ({ persona }) => {
                       {(scheme.impact / 1000000).toFixed(1)}M UAH
                     </div>
                   </div>
-                  <button className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white text-[10px] font-black uppercase rounded-lg shadow-lg shadow-red-900/20 transition-all flex items-center gap-2">
+                  <Button variant="cyber" className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white text-[10px] font-black uppercase rounded-lg shadow-lg shadow-red-900/20 transition-all flex items-center gap-2">
                     {premiumLocales.schemes.intercept} <ArrowRight size={12} />
-                  </button>
+                  </Button>
                 </div>
               </motion.div>
             ))}

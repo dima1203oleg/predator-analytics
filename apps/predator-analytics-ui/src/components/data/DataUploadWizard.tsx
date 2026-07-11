@@ -1,4 +1,5 @@
 
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FileSearch, X, Check, CheckCircle, RefreshCw } from 'lucide-react';
@@ -43,9 +44,9 @@ export const DataUploadWizard: React.FC<DataUploadWizardProps> = ({
                             </h2>
                             <p className="text-slate-400 font-mono text-xs mt-1 uppercase">Файл: {selectedFile?.name}</p>
                         </div>
-                        <button onClick={onCancel} className="p-2 hover:bg-slate-700 rounded-full transition-colors">
+                        <Button variant="cyber" onClick={onCancel} className="p-2 hover:bg-slate-700 rounded-full transition-colors">
                             <X size={24} className="text-slate-500" />
-                        </button>
+                        </Button>
                     </div>
 
                     <div className="p-8">

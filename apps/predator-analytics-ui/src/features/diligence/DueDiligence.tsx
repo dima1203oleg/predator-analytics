@@ -8,6 +8,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -117,9 +118,9 @@ export const DueDiligence: React.FC<{ ueid?: string; companyName?: string }> = (
                     {stats.risk}/100
                   </p>
                </div>
-               <button className="ml-4 px-10 py-4 bg-sky-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] hover:bg-sky-600 transition-all shadow-xl italic">
+               <Button variant="cyber" className="ml-4 px-10 py-4 bg-sky-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] hover:bg-sky-600 transition-all shadow-xl italic">
                   ЗВІТ_ДЛЯ_CEO
-               </button>
+               </Button>
             </div>
           </div>
 
@@ -151,7 +152,7 @@ export const DueDiligence: React.FC<{ ueid?: string; companyName?: string }> = (
                <div className="grid grid-cols-12 gap-8">
                   <div className="col-span-12 md:col-span-4 flex flex-col gap-4">
                      {(Object.keys(categoryNames) as Array<keyof typeof categoryNames>).map(catKey => (
-                       <button
+                       <Button variant="cyber"
                          key={catKey}
                          onClick={() => setActiveTab(catKey)}
                          className={cn(
@@ -173,7 +174,7 @@ export const DueDiligence: React.FC<{ ueid?: string; companyName?: string }> = (
                              </span>
                              <div className={cn("h-1 w-12 rounded-full", activeTab === catKey ? categoryNames[catKey].bg : 'bg-slate-800')} />
                           </div>
-                       </button>
+                       </Button>
                      ))}
                   </div>
 
@@ -254,7 +255,7 @@ export const DueDiligence: React.FC<{ ueid?: string; companyName?: string }> = (
                                   { id: 'in_progress', l: 'SYNCING', c: 'bg-amber-600/10 text-amber-500 border-amber-600/20' },
                                   { id: 'pending', l: 'IDLE', c: 'bg-slate-900 text-slate-600 border-white/5' },
                                ].map(st => (
-                                 <button
+                                 <Button variant="cyber"
                                    key={st.id}
                                    onClick={() => updateStatus(selectedId, st.id as any)}
                                    className={cn(
@@ -263,7 +264,7 @@ export const DueDiligence: React.FC<{ ueid?: string; companyName?: string }> = (
                                    )}
                                  >
                                     {st.l}
-                                 </button>
+                                 </Button>
                                ))}
                             </div>
                          </div>
@@ -277,9 +278,9 @@ export const DueDiligence: React.FC<{ ueid?: string; companyName?: string }> = (
                             />
                          </div>
 
-                         <button className="w-full py-5 bg-sky-700 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.3em] italic hover:bg-sky-600 shadow-xl flex items-center justify-center gap-4">
+                         <Button variant="cyber" className="w-full py-5 bg-sky-700 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.3em] italic hover:bg-sky-600 shadow-xl flex items-center justify-center gap-4">
                             <Save size={18} /> ЗБЕ ЕГТИ_СТАТУС
-                         </button>
+                         </Button>
                       </div>
                    </motion.section>
                  ) : (
@@ -293,12 +294,12 @@ export const DueDiligence: React.FC<{ ueid?: string; companyName?: string }> = (
                {/* Final Decision Panel */}
                <section className="rounded-[3rem] bg-black border-2 border-white/[0.04] p-10 shadow-3xl space-y-6">
                   <h3 className="text-[11px] font-black text-slate-500 uppercase tracking-[0.4em] italic mb-6">ФІНАЛЬНЕ  ІШЕННЯ</h3>
-                  <button className="w-full py-6 bg-emerald-700 text-white rounded-[1.5rem] text-[12px] font-black uppercase tracking-[0.3em] italic hover:bg-emerald-600 transition-all shadow-2xl flex items-center justify-center gap-4 group">
+                  <Button variant="cyber" className="w-full py-6 bg-emerald-700 text-white rounded-[1.5rem] text-[12px] font-black uppercase tracking-[0.3em] italic hover:bg-emerald-600 transition-all shadow-2xl flex items-center justify-center gap-4 group">
                      <CheckCircle size={20} className="group-hover:scale-110 transition-transform" /> ЗАТВЕ ДИТИ_КОНТ АГЕНТА
-                  </button>
-                  <button className="w-full py-6 bg-red-700 text-white rounded-[1.5rem] text-[12px] font-black uppercase tracking-[0.3em] italic hover:bg-red-600 transition-all shadow-2xl flex items-center justify-center gap-4 group">
+                  </Button>
+                  <Button variant="cyber" className="w-full py-6 bg-red-700 text-white rounded-[1.5rem] text-[12px] font-black uppercase tracking-[0.3em] italic hover:bg-red-600 transition-all shadow-2xl flex items-center justify-center gap-4 group">
                      <X size={20} className="group-hover:rotate-90 transition-transform" /> ВІДХИЛИТИ_РИЗИК
-                  </button>
+                  </Button>
                </section>
 
             </div>

@@ -14,7 +14,7 @@ try:
         TrainingArguments,
     )
     from peft import LoraConfig, get_peft_model
-    from trl import SFTTrainer
+    from transformers import Trainer, DataCollatorForLanguageModeling
 except ImportError as e:
     print(f"Error importing ML libraries: {e}")
     sys.exit(1)
@@ -93,16 +93,21 @@ def main():
         optim="adamw_torch",
         save_strategy="epoch",
         fp16=True, # enable fp16 for faster training
-        remove_unused_columns=False,
+        remove_unused_columns=True,
     )
 
+    # Tokenize the dataset
+    def tokenize_function(examples):
+        return tokenizer(examples["text"], truncation=True, max_length=512, padding="max_length")
+
+    tokenized_dataset = dataset.map(tokenize_function, batched=True, remove_columns=["text"])
+
     # Trainer
-    trainer = SFTTrainer(
+    trainer = Trainer(
         model=model,
-        train_dataset=dataset,
-        dataset_text_field="text",
-        max_seq_length=512,
+        train_dataset=tokenized_dataset,
         args=training_args,
+        data_collator=DataCollatorForLanguageModeling(tokenizer, mlm=False)
     )
 
     logger.info("Starting training loop...")

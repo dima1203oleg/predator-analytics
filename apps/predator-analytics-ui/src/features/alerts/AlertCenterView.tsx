@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -38,7 +39,7 @@ interface Alert {
 // ─── КОНФІГУ АЦІЯ ────────────────────────────────────────────────────────────
 
 const SEVERITY_CFG: Record<AlertSeverity, { label: string; color: string; bg: string; border: string; icon: any }> = {
-  CRITICAL: { label: 'КРИТИЧНО', color: '#f43f5e', bg: 'bg-rose-500/10', border: 'border-rose-500/20', icon: ShieldX },
+  CRITICAL: { label: 'КРИТИЧНО', color: '#f43f5e', bg: 'bg-cyan-500/10', border: 'border-cyan-500/20', icon: ShieldX },
   HIGH:     { label: 'ВИСОКИЙ',  color: '#fb923c', bg: 'bg-orange-500/10', border: 'border-orange-500/20', icon: AlertTriangle },
   MEDIUM:   { label: 'СЕРЕДНІЙ', color: '#f59e0b', bg: 'bg-amber-500/10', border: 'border-amber-500/20', icon: AlertCircle },
   LOW:      { label: 'НИЗЬКИЙ',  color: '#3b82f6', bg: 'bg-blue-500/10', border: 'border-blue-500/20', icon: Info },
@@ -94,20 +95,20 @@ const AlertRow: React.FC<{ alert: Alert; onAck: (id: string) => void }> = ({ ale
 
       <div className="flex items-center gap-3">
         {alert.status === 'ACTIVE' && (
-          <button 
+          <Button variant="cyber" 
             onClick={() => { play(UISoundType.CLICK); onAck(alert.id); }}
             onMouseEnter={() => play(UISoundType.HOVER)}
             className="p-4 bg-amber-500 text-black rounded-2xl hover:brightness-110 transition-all shadow-4xl"
           >
             <CheckCheck size={20} />
-          </button>
+          </Button>
         )}
-        <button 
+        <Button variant="cyber" 
           onMouseEnter={() => play(UISoundType.HOVER)}
           className="p-4 bg-white/5 text-slate-500 hover:text-white rounded-2xl border border-white/5 transition-all"
         >
           <Eye size={20} />
-        </button>
+        </Button>
       </div>
     </motion.div>
   );
@@ -208,13 +209,13 @@ export const AlertCenterView: React.FC = () => {
             ]}
             actions={
               <div className="flex gap-4">
-                 <button 
+                 <Button variant="cyber" 
                   onClick={() => { play(UISoundType.CLICK); fetchAlerts(); }}
                   onMouseEnter={() => play(UISoundType.HOVER)}
                   className="p-6 bg-white/5 border-2 border-white/5 text-slate-400 hover:text-white rounded-3xl transition-all"
                  >
                     <RefreshCw size={24} className={isLoading ? "animate-spin" : ""} />
-                 </button>
+                 </Button>
                  <SlideToExecute
                     onConfirm={() => {
                       play(UISoundType.SUCCESS);
@@ -235,7 +236,7 @@ export const AlertCenterView: React.FC = () => {
               { id: 'ACTIVE', label: 'НЕПРОЧИТАНІ', icon: Zap },
               { id: 'CRITICAL', label: 'КРИТИЧНІ_РИЗИКИ', icon: ShieldAlert },
             ].map((tab) => (
-              <button
+              <Button variant="cyber"
                 key={tab.id}
                 onClick={() => { play(UISoundType.CLICK); setActiveFilter(tab.id as any); }}
                 onMouseEnter={() => play(UISoundType.HOVER)}
@@ -248,7 +249,7 @@ export const AlertCenterView: React.FC = () => {
               >
                 <tab.icon size={18} />
                 {tab.label}
-              </button>
+              </Button>
             ))}
           </div>
 
@@ -277,8 +278,8 @@ export const AlertCenterView: React.FC = () => {
 
           {/* DIAGNOSTICS ELITE */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-             <div className="lg:col-span-2 p-10 bg-rose-500/5 border-2 border-rose-500/10 rounded-[3.5rem] flex items-center gap-8 shadow-inner">
-                <ShieldAlert size={40} className="text-rose-500" />
+             <div className="lg:col-span-2 p-10 bg-cyan-500/5 border-2 border-cyan-500/10 rounded-[3.5rem] flex items-center gap-8 shadow-inner">
+                <ShieldAlert size={40} className="text-cyan-500" />
                 <p className="text-xs text-rose-400/60 uppercase font-black italic tracking-widest leading-loose">
                    ЦЕНТ  МОНІТОРИНГУ П АЦЮЄ В РЕЖИМІ REAL-TIME. ВСІ СИГНАЛИ, ЩО ПЕ ЕВИЩУЮТЬ ПО ІГ 85 (CRITICAL), АВТОМАТИЧНО ДУБЛЮЮТЬСЯ В TELEGRAM ТА ЖУ НАЛ РІШЕНЬ.
                 </p>

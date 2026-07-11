@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>com.predator.monitor_agent_activity</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/bin/bash</string>
+		<string>-c</string>
+		<string>/Users/Shared/Predator_60/scripts/monitor_agent_activity.sh</string>
+	</array>
+	<key>RunAtLoad</key>
+	<true/>
+	<key>KeepAlive</key>
+	<true/>
+	<key>StandardOutPath</key>
+	<string>/Users/Shared/Predator_60/logs/monitor_agent_activity.log</string>
+	<key>StandardErrorPath</key>
+	<string>/Users/Shared/Predator_60/logs/monitor_agent_activity_error.log</string>
+</dict>
+</plist>

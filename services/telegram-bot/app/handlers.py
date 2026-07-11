@@ -30,11 +30,11 @@ def get_main_keyboard():
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Обробка команди /start та вивід головного меню."""
     await update.message.reply_text(
-        "🦅 **Вітаю у PREDATOR Analytics v56.5 Control Center!**\n\n"
+        "🦅 <b>Вітаю у PREDATOR Analytics v56.5 Control Center!</b>\n\n"
         "Я ваш телеграм-пульт для керування системою. Всі системи переведено в бойовий режим.\n"
         "Оберіть дію в меню нижче:",
         reply_markup=get_main_keyboard(),
-        parse_mode='Markdown'
+        parse_mode='HTML'
     )
     return ConversationHandler.END
 
@@ -50,14 +50,14 @@ async def handle_status(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Перевірка статусу системи."""
     msg = await update.message.reply_text("🔄 Отримую дані від сервісів...", reply_markup=get_main_keyboard())
     status_text = await get_system_status()
-    await msg.edit_text(status_text, parse_mode='Markdown')
+    await msg.edit_text(status_text, parse_mode='HTML')
     return ConversationHandler.END
 
 async def handle_alerts(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Отримання активних загроз."""
     msg = await update.message.reply_text("🔄 Перевіряю систему на наявність нових загроз...", reply_markup=get_main_keyboard())
     alerts_text = await get_active_alerts()
-    await msg.edit_text(alerts_text, parse_mode='Markdown')
+    await msg.edit_text(alerts_text, parse_mode='HTML')
     return ConversationHandler.END
 
 # --- OSINT Розвідка ---
@@ -74,7 +74,7 @@ async def osint_perform(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text
     msg = await update.message.reply_text(f"🔄 Ініціалізую збір даних для '{text}'...")
     result = await trigger_osint(text)
-    await msg.edit_text(result, parse_mode='Markdown', disable_web_page_preview=True)
+    await msg.edit_text(result, parse_mode='HTML', disable_web_page_preview=True)
     return ConversationHandler.END
 
 # --- Швидкий Пошук ---
@@ -109,7 +109,7 @@ async def search_perform(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     msg = await update.message.reply_text(f"🔄 Шукаю '{text}' у базі...")
     result = await perform_search(text, search_type)
-    await msg.edit_text(result, parse_mode='Markdown')
+    await msg.edit_text(result, parse_mode='HTML')
     return ConversationHandler.END
 
 # --- Граф Зв'язків ---
@@ -124,7 +124,7 @@ async def graph_perform(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text
     msg = await update.message.reply_text(f"🕸 Шукаю зв'язки для '{text}' у графі...")
     result = await analyze_graph_connections(text)
-    await msg.edit_text(result, parse_mode='Markdown', disable_web_page_preview=True)
+    await msg.edit_text(result, parse_mode='HTML', disable_web_page_preview=True)
     return ConversationHandler.END
 
 # --- Звіти ---
@@ -159,7 +159,7 @@ async def report_perform(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     msg = await update.message.reply_text(f"🔄 Генерую звіт '{report_type}' для {ueid} через Elite Risk Engine...")
     result = await generate_risk_report(ueid, report_type)
-    await msg.edit_text(result, parse_mode='Markdown', disable_web_page_preview=True)
+    await msg.edit_text(result, parse_mode='HTML', disable_web_page_preview=True)
     return ConversationHandler.END
 
 # --- Запитати ШІ ---
@@ -172,7 +172,7 @@ async def ai_perform(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text
     msg = await update.message.reply_text("🧠 ШІ аналізує...")
     result = await ask_ai_copilot(text)
-    await msg.edit_text(result, parse_mode='Markdown')
+    await msg.edit_text(result, parse_mode='HTML')
     return ConversationHandler.END
 
 # --- Налаштування ---
@@ -184,7 +184,7 @@ async def settings_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
         [InlineKeyboardButton("🗑 Очистити історію", callback_data="clear_hist")]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text("⚙️ **Налаштування**", reply_markup=reply_markup, parse_mode='Markdown')
+    await update.message.reply_text("⚙️ <b>Налаштування</b>", reply_markup=reply_markup, parse_mode='HTML')
 
 async def settings_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query

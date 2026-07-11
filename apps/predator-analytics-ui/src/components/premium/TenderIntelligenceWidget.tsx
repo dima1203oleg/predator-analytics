@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Gavel, TrendingUp, AlertCircle, CheckCircle2, Building, ArrowRight, DollarSign, Calendar } from 'lucide-react';
@@ -140,17 +141,17 @@ export const TenderIntelligenceWidget: React.FC<{ persona: string }> = ({ person
                     <div className="text-[10px] text-slate-500">
                         {tender.competitors} {premiumLocales.tenderIntelligence.competitors}
                     </div>
-                    <button className="text-[10px] font-bold text-white bg-blue-600 hover:bg-blue-500 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1">
+                    <Button variant="cyber" className="text-[10px] font-bold text-white bg-blue-600 hover:bg-blue-500 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1">
                         {premiumLocales.tenderIntelligence.applyButton} <ArrowRight size={12} />
-                    </button>
+                    </Button>
                 </div>
              </motion.div>
          ))}
 
          <div className="pt-2 text-center">
-            <button className="text-xs text-slate-500 hover:text-white transition-colors underline decoration-dotted">
+            <Button variant="cyber" className="text-xs text-slate-500 hover:text-white transition-colors underline decoration-dotted">
                 {premiumLocales.tenderIntelligence.viewMore.replace('{count}', '14')}
-            </button>
+            </Button>
          </div>
       </div>
     </div>

@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { 
   Eye, 
@@ -111,9 +112,9 @@ export const OmniverseOODA: React.FC = () => {
                   <div className={`w-1.5 h-1.5 rounded-full ${action.priority === 'HIGH' ? 'bg-red-500 ' : 'bg-orange-500'}`} />
                   <span className="text-sm text-white/80 font-medium">{action.action}</span>
                 </div>
-                <button className="p-2 bg-emerald-500/20 text-emerald-500 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                <Button variant="cyber" className="p-2 bg-emerald-500/20 text-emerald-500 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
                   <CheckCircle2 size={16} />
-                </button>
+                </Button>
               </div>
             ))}
           </div>

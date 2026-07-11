@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { useVibeStore } from '../../store/useVibeStore';
 import { Activity, Zap, Brain, MessageSquare, Code2 } from 'lucide-react';
@@ -24,7 +25,7 @@ export const UltraRouterStatus: React.FC = () => {
           <Zap className={mode === 'creative' ? 'text-pink-400 ' : 'text-blue-400'} />
           Ultra-Router Status
         </h3>
-        <button 
+        <Button variant="cyber" 
           onClick={toggleVibe}
           className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all ${
             mode === 'creative'
@@ -33,7 +34,7 @@ export const UltraRouterStatus: React.FC = () => {
           }`}
         >
           {mode === 'creative' ? '✨ Vibe ON' : '  Strict Mode'}
-        </button>
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 gap-3">

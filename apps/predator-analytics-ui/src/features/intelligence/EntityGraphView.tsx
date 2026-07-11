@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useRef, useMemo, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Html, Stars, PerspectiveCamera } from '@react-three/drei';
@@ -31,10 +32,20 @@ interface Link {
 }
 
 // === Завантаження графу з реального API ===
+const getAuthToken = (): string =>
+  sessionStorage.getItem('predator_auth_token') ||
+  localStorage.getItem('predator_auth_token') ||
+  (import.meta.env.VITE_STATIC_TOKEN as string) ||
+  '';
+
 const fetchGraphData = async (isOffline: boolean = false): Promise<{ nodes: Node[], links: Link[] }> => {
   try {
-    const response = await fetch('/api/v1/graph/summary');
+    const token = getAuthToken();
+    const response = await fetch('/api/v1/graph/summary', {
+      headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+    });
     if (!response.ok) throw new Error('API unavailable');
+
     const data = await response.json();
     
     // ... rest of processing ...
@@ -294,7 +305,7 @@ const NodeDetailsPanel = ({ node, onClose }: { node: Node; onClose: () => void }
             </div>
             <h2 className="text-3xl font-black text-white uppercase tracking-tighter leading-none">{node.label}</h2>
           </div>
-          <button onClick={onClose} className="p-2 bg-black/40 hover:bg-white/10 rounded-xl text-slate-400 hover:text-white transition-colors border border-white/5"><X size={20} /></button>
+          <Button variant="cyber" onClick={onClose} className="p-2 bg-black/40 hover:bg-white/10 rounded-xl text-slate-400 hover:text-white transition-colors border border-white/5"><X size={20} /></Button>
         </div>
         <p className="text-slate-400 font-medium text-sm mt-4 relative z-10">{node.details || premiumLocales.graph.nodeDetails.profile}</p>
       </div>
@@ -362,9 +373,9 @@ const NodeDetailsPanel = ({ node, onClose }: { node: Node; onClose: () => void }
       </div>
 
       <div className="p-6 border-t border-white/5 bg-slate-900/50 shrink-0">
-        <button className={cn("w-full py-4 rounded-xl font-black uppercase tracking-widest text-sm flex items-center justify-center gap-2 transition-all hover:scale-[1.02]", node.riskScore > 85 ? "bg-amber-600 hover:bg-amber-500 text-white " : "bg-cyan-600 hover:bg-cyan-500 text-white ")}>
+        <Button variant="cyber" className={cn("w-full py-4 rounded-xl font-black uppercase tracking-widest text-sm flex items-center justify-center gap-2 transition-all hover:scale-[1.02]", node.riskScore > 85 ? "bg-amber-600 hover:bg-amber-500 text-white " : "bg-cyan-600 hover:bg-cyan-500 text-white ")}>
           <Search size={16} /> {premiumLocales.graph.nodeDetails.fullAnalysis}
-        </button>
+        </Button>
       </div>
     </motion.div>
   );
@@ -461,12 +472,12 @@ const EntityGraphView = () => {
             </div>
           )}
           <div className="bg-slate-900/60  border border-white/10 rounded-2xl p-1.5 flex shadow-2xl">
-            <button onClick={() => setFilter('all')} className={cn("px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all", filter === 'all' ? "bg-cyan-500 text-white " : "text-slate-400 hover:text-white hover:bg-white/5")}>{premiumLocales.graph.filters.all}</button>
-            <button onClick={() => setFilter('risk')} className={cn("px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all", filter === 'risk' ? "bg-amber-500 text-white " : "text-slate-400 hover:text-white hover:bg-white/5")}>{premiumLocales.graph.filters.risk}</button>
+            <Button variant="cyber" onClick={() => setFilter('all')} className={cn("px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all", filter === 'all' ? "bg-cyan-500 text-white " : "text-slate-400 hover:text-white hover:bg-white/5")}>{premiumLocales.graph.filters.all}</Button>
+            <Button variant="cyber" onClick={() => setFilter('risk')} className={cn("px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all", filter === 'risk' ? "bg-amber-500 text-white " : "text-slate-400 hover:text-white hover:bg-white/5")}>{premiumLocales.graph.filters.risk}</Button>
           </div>
-          <button className="p-3 bg-slate-900/60  border border-white/10 rounded-2xl text-slate-400 hover:text-white transition-all hover:bg-white/10 hover:border-white/20 shadow-2xl">
+          <Button variant="cyber" className="p-3 bg-slate-900/60  border border-white/10 rounded-2xl text-slate-400 hover:text-white transition-all hover:bg-white/10 hover:border-white/20 shadow-2xl">
             <Filter size={20} />
-          </button>
+          </Button>
         </div>
       </div>
 

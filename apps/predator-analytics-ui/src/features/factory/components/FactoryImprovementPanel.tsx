@@ -78,16 +78,16 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
   return (
     <div className="space-y-6">
       {/* Sovereign Control Center Header */}
-      <HoloCard variant="holographic" className="border-rose-500/40 bg-rose-500/5 ">
+      <HoloCard variant="holographic" className="border-cyan-500/40 bg-cyan-500/5 ">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="flex items-center gap-5">
-            <div className="w-16 h-16 rounded-2xl bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-rose-400  shrink-0">
+            <div className="w-16 h-16 rounded-2xl bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-rose-400  shrink-0">
               <Factory size={32} className="" />
             </div>
             <div className="min-w-0">
               <h3 className="text-xl font-black uppercase tracking-[0.2em] text-white">ПУЛЬТ УПРАВЛІННЯ ЦИКЛОМ</h3>
               <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 font-mono text-[10px] uppercase">
-                <span className={cn(infiniteRunning ? "text-emerald-400" : "text-rose-500", "flex items-center gap-1.5")}>
+                <span className={cn(infiniteRunning ? "text-emerald-400" : "text-cyan-500", "flex items-center gap-1.5")}>
                    <span className="w-1.5 h-1.5 rounded-full bg-current " />
                    <span className="opacity-50 text-slate-400">СТАТУС:</span>
                    {infiniteRunning ? 'АКТИВНИЙ ЦИКЛ' : 'РЕЖИМ ОЧІКУВАННЯ'}
@@ -115,7 +115,7 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
              <Button 
                variant="neon" 
                size="sm" 
-               className="flex-1 lg:flex-none px-6 bg-rose-600/20 text-rose-400 border-rose-500/50 text-[10px] uppercase font-black h-12 "
+               className="flex-1 lg:flex-none px-6 bg-cyan-600/20 text-rose-400 border-cyan-500/50 text-[10px] uppercase font-black h-12 "
                onClick={handleStartImprovement}
              >
                <Play size={14} className="mr-2" /> ЗАПУСТИТИ
@@ -123,7 +123,7 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
              <Button 
                variant="cyber" 
                size="sm" 
-               className="flex-1 lg:flex-none px-4 bg-slate-800 text-slate-400 border-white/10 text-[10px] uppercase font-black h-12 hover:border-rose-500/50 hover:text-rose-500"
+               className="flex-1 lg:flex-none px-4 bg-slate-800 text-slate-400 border-white/10 text-[10px] uppercase font-black h-12 hover:border-cyan-500/50 hover:text-cyan-500"
                onClick={handleStopInfinite}
              >
                <AlertTriangle size={14} className="mr-2" /> ЗУПИНКА
@@ -137,48 +137,48 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
           <HoloCard 
             onClick={() => setImprovementMode('tech')}
             variant={improvementMode === 'tech' ? 'holographic' : 'minimal'}
-            className={cn("cursor-pointer py-10 flex flex-col items-center gap-5 transition-all group border-rose-500/20", 
-              improvementMode === 'tech' ? 'border-rose-500  bg-rose-500/5' : 'hover:border-rose-500/40 opacity-70 hover:opacity-100')}
+            className={cn("cursor-pointer py-10 flex flex-col items-center gap-5 transition-all group border-cyan-500/20", 
+              improvementMode === 'tech' ? 'border-cyan-500  bg-cyan-500/5' : 'hover:border-cyan-500/40 opacity-70 hover:opacity-100')}
           >
             <div className={cn("w-16 h-16 rounded-2xl flex items-center justify-center border transition-transform group-hover:scale-110 shadow-lg",
-              improvementMode === 'tech' ? "bg-rose-500/20 border-rose-500/40 text-rose-400" : "bg-white/5 border-white/10 text-slate-500")}>
+              improvementMode === 'tech' ? "bg-cyan-500/20 border-cyan-500/40 text-rose-400" : "bg-white/5 border-white/10 text-slate-500")}>
               <Binary size={32} />
             </div>
             <div className="text-center">
               <span className="text-sm font-black uppercase tracking-[0.2em] block text-white">Технологічна Вертикаль</span>
-              <span className="text-[10px] text-rose-500/80 font-mono mt-2 uppercase tracking-widest">Інфраструктура та Core API</span>
+              <span className="text-[10px] text-cyan-500/80 font-mono mt-2 uppercase tracking-widest">Інфраструктура та Core API</span>
             </div>
           </HoloCard>
 
           <HoloCard 
             onClick={() => setImprovementMode('analytic')}
             variant={improvementMode === 'analytic' ? 'holographic' : 'minimal'}
-            className={cn("cursor-pointer py-10 flex flex-col items-center gap-5 transition-all group border-rose-500/20", 
-              improvementMode === 'analytic' ? 'border-rose-500  bg-rose-500/5' : 'hover:border-rose-500/40 opacity-70 hover:opacity-100')}
+            className={cn("cursor-pointer py-10 flex flex-col items-center gap-5 transition-all group border-cyan-500/20", 
+              improvementMode === 'analytic' ? 'border-cyan-500  bg-cyan-500/5' : 'hover:border-cyan-500/40 opacity-70 hover:opacity-100')}
           >
             <div className={cn("w-16 h-16 rounded-2xl flex items-center justify-center border transition-transform group-hover:scale-110 shadow-lg",
-              improvementMode === 'analytic' ? "bg-rose-500/20 border-rose-500/40 text-rose-400" : "bg-white/5 border-white/10 text-slate-500")}>
+              improvementMode === 'analytic' ? "bg-cyan-500/20 border-cyan-500/40 text-rose-400" : "bg-white/5 border-white/10 text-slate-500")}>
               <BrainCircuit size={32} />
             </div>
             <div className="text-center">
               <span className="text-sm font-black uppercase tracking-[0.2em] block text-white">Аналітична Вертикаль</span>
-              <span className="text-[10px] text-rose-500/80 font-mono mt-2 uppercase tracking-widest">Карти Знань та Патерни</span>
+              <span className="text-[10px] text-cyan-500/80 font-mono mt-2 uppercase tracking-widest">Карти Знань та Патерни</span>
             </div>
           </HoloCard>
 
           <HoloCard 
             onClick={() => setImprovementMode('complex')}
             variant={improvementMode === 'complex' ? 'holographic' : 'minimal'}
-            className={cn("cursor-pointer py-10 flex flex-col items-center gap-5 transition-all group border-rose-500/20", 
-              improvementMode === 'complex' ? 'border-rose-500  bg-rose-500/5' : 'hover:border-rose-500/40 opacity-70 hover:opacity-100')}
+            className={cn("cursor-pointer py-10 flex flex-col items-center gap-5 transition-all group border-cyan-500/20", 
+              improvementMode === 'complex' ? 'border-cyan-500  bg-cyan-500/5' : 'hover:border-cyan-500/40 opacity-70 hover:opacity-100')}
           >
             <div className={cn("w-16 h-16 rounded-2xl flex items-center justify-center border transition-transform group-hover:scale-110 shadow-lg",
-              improvementMode === 'complex' ? "bg-rose-500/20 border-rose-500/40 text-rose-400" : "bg-white/5 border-white/10 text-slate-500")}>
+              improvementMode === 'complex' ? "bg-cyan-500/20 border-cyan-500/40 text-rose-400" : "bg-white/5 border-white/10 text-slate-500")}>
               <Sparkles size={32} />
             </div>
             <div className="text-center">
               <span className="text-sm font-black uppercase tracking-[0.2em] block text-white">Комплексний Нагляд</span>
-              <span className="text-[10px] text-rose-500/80 font-mono mt-2 uppercase tracking-widest">Суверенне Розгортання</span>
+              <span className="text-[10px] text-cyan-500/80 font-mono mt-2 uppercase tracking-widest">Суверенне Розгортання</span>
             </div>
           </HoloCard>
       </div>
@@ -186,16 +186,16 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Technical Column */}
         {(improvementMode === 'tech' || improvementMode === 'complex') && (
-          <HoloCard variant="cyber" className="border-rose-500/30 overflow-hidden">
-            <div className="flex items-center gap-3 mb-6 p-4 border-b border-rose-500/20 bg-rose-500/5">
-              <div className="w-2 h-2 rounded-full bg-rose-500 " />
+          <HoloCard variant="cyber" className="border-cyan-500/30 overflow-hidden">
+            <div className="flex items-center gap-3 mb-6 p-4 border-b border-cyan-500/20 bg-cyan-500/5">
+              <div className="w-2 h-2 rounded-full bg-cyan-500 " />
               <h2 className="text-xs font-black uppercase tracking-widest text-white">Технологічний Стек</h2>
             </div>
             <div className="p-4 space-y-4 pt-0">
               <div className="grid grid-cols-1 gap-2">
                  {techOptions.map(opt => (
                    <label key={opt.id} className={cn("flex items-center gap-3 p-4 rounded-xl border transition-all cursor-pointer", 
-                     techComponents.includes(opt.id) ? "bg-rose-500/10 border-rose-500/40" : "bg-black/20 border-white/5 hover:border-white/10")}>
+                     techComponents.includes(opt.id) ? "bg-cyan-500/10 border-cyan-500/40" : "bg-black/20 border-white/5 hover:border-white/10")}>
                       <input type="checkbox" checked={techComponents.includes(opt.id)} onChange={() => toggleSelection(opt.id, techComponents, setTechComponents)} className="accent-rose-500 w-4 h-4" />
                       <div className="flex flex-col">
                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-200">{opt.label}</span>
@@ -205,7 +205,7 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
                  ))}
               </div>
               <div className="pt-4 border-t border-white/10 flex flex-col gap-3">
-                 <Button onClick={handleStartImprovement} variant="neon" className="w-full bg-rose-600/20 text-rose-400 border-rose-500/50 font-black uppercase tracking-widest text-[10px] h-12 "><Wrench size={14} className="mr-2"/> Оптимізувати Ядро</Button>
+                 <Button onClick={handleStartImprovement} variant="neon" className="w-full bg-cyan-600/20 text-rose-400 border-cyan-500/50 font-black uppercase tracking-widest text-[10px] h-12 "><Wrench size={14} className="mr-2"/> Оптимізувати Ядро</Button>
                  <div className="grid grid-cols-2 gap-2">
                    <Button variant="cyber" className="text-[9px] h-10 border-white/10 text-slate-400 hover:text-white"><HistoryIcon size={12} className="mr-1"/> Відкат (Rollback)</Button>
                    <Button variant="cyber" className="text-[9px] h-10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/10"><Scan size={12} className="mr-1"/> Сканування Безпеки</Button>
@@ -217,16 +217,16 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
 
         {/* Analytical Column */}
         {(improvementMode === 'analytic' || improvementMode === 'complex') && (
-          <HoloCard variant="cyber" className="border-rose-500/30 overflow-hidden">
-            <div className="flex items-center gap-3 mb-6 p-4 border-b border-rose-500/20 bg-rose-500/5">
-              <div className="w-2 h-2 rounded-full bg-rose-500 " />
+          <HoloCard variant="cyber" className="border-cyan-500/30 overflow-hidden">
+            <div className="flex items-center gap-3 mb-6 p-4 border-b border-cyan-500/20 bg-cyan-500/5">
+              <div className="w-2 h-2 rounded-full bg-cyan-500 " />
               <h2 className="text-xs font-black uppercase tracking-widest text-white">Аналітичний Інтелект</h2>
             </div>
             <div className="p-4 space-y-4 pt-0">
               <div className="grid grid-cols-1 gap-2">
                  {analyticOptions.map(opt => (
                    <label key={opt.id} className={cn("flex items-center gap-3 p-4 rounded-xl border transition-all cursor-pointer", 
-                     analyticComponents.includes(opt.id) ? "bg-rose-500/10 border-rose-500/40" : "bg-black/20 border-white/5 hover:border-white/10")}>
+                     analyticComponents.includes(opt.id) ? "bg-cyan-500/10 border-cyan-500/40" : "bg-black/20 border-white/5 hover:border-white/10")}>
                       <input type="checkbox" checked={analyticComponents.includes(opt.id)} onChange={() => toggleSelection(opt.id, analyticComponents, setAnalyticComponents)} className="accent-rose-500 w-4 h-4" />
                       <div className="flex flex-col">
                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-200">{opt.label}</span>
@@ -236,7 +236,7 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
                  ))}
               </div>
               <div className="pt-4 border-t border-white/10 flex flex-col gap-3">
-                 <Button onClick={handleStartImprovement} variant="neon" className="w-full bg-rose-600/20 text-rose-400 border-rose-500/50 font-black uppercase tracking-widest text-[10px] h-12 "><Sparkles size={14} className="mr-2"/> Оновити Знання</Button>
+                 <Button onClick={handleStartImprovement} variant="neon" className="w-full bg-cyan-600/20 text-rose-400 border-cyan-500/50 font-black uppercase tracking-widest text-[10px] h-12 "><Sparkles size={14} className="mr-2"/> Оновити Знання</Button>
                  <Button onClick={handleUpdateKnowledgeMap} variant="cyber" className="w-full text-[10px] h-12 border-white/10 text-slate-400 hover:text-white"><RotateCcw size={14} className="mr-2"/> Синхронізувати Гравітацію Фактів</Button>
               </div>
             </div>
@@ -244,7 +244,7 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
         )}
       </div>
 
-      <HoloCard variant="minimal" className="border-rose-500/20 bg-black/40">
+      <HoloCard variant="minimal" className="border-cyan-500/20 bg-black/40">
         <div className="flex items-center gap-3 mb-6 p-4 border-b border-white/5">
           <div className="w-2 h-2 rounded-full bg-emerald-500 " />
           <h2 className="text-xs font-black uppercase tracking-widest text-white">Суверенні Інтеграції</h2>
@@ -261,35 +261,35 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
              <Badge variant="cyber" className="bg-slate-500/20 text-slate-400 text-[8px] shrink-0">Вимкнено</Badge>
           </div>
 
-          <div className="flex items-center gap-3 p-4 rounded-2xl bg-white/5 border border-rose-500/20">
-             <div className="w-12 h-12 rounded-xl bg-rose-500/10 flex items-center justify-center text-rose-400 shrink-0">
+          <div className="flex items-center gap-3 p-4 rounded-2xl bg-white/5 border border-cyan-500/20">
+             <div className="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center text-rose-400 shrink-0">
                <Server size={24} />
              </div>
              <div className="flex-1 min-w-0">
                <div className="text-[11px] font-black uppercase text-white truncate">Серверні Хаби</div>
                <div className="text-[8px] text-rose-400 font-mono mt-1">Внутрішні health телеметрії</div>
              </div>
-             <Badge variant="cyber" className="bg-rose-500/20 text-rose-400 text-[8px] shrink-0">{healthChecks.length > 0 ? 'АКТИВНО' : 'Н/Д'}</Badge>
+             <Badge variant="cyber" className="bg-cyan-500/20 text-rose-400 text-[8px] shrink-0">{healthChecks.length > 0 ? 'АКТИВНО' : 'Н/Д'}</Badge>
           </div>
 
-          <div className="flex items-center gap-3 p-4 rounded-2xl bg-white/5 border border-rose-500/20">
-             <div className="w-12 h-12 rounded-xl bg-rose-500/10 flex items-center justify-center text-rose-400 shrink-0">
+          <div className="flex items-center gap-3 p-4 rounded-2xl bg-white/5 border border-cyan-500/20">
+             <div className="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center text-rose-400 shrink-0">
                <Cloud size={24} />
              </div>
              <div className="flex-1 min-w-0">
                <div className="text-[11px] font-black uppercase text-white truncate">Хмарне Сполучення (Cloud Connect)</div>
                 <div className="text-[8px] text-rose-400 font-mono mt-1">Очікування контракту</div>
               </div>
-              <Badge variant="neon" className="bg-rose-500/20 text-rose-400 text-[8px] shrink-0">ОФЛАЙН</Badge>
+              <Badge variant="neon" className="bg-cyan-500/20 text-rose-400 text-[8px] shrink-0">ОФЛАЙН</Badge>
            </div>
          </div>
        </HoloCard>
 
        {/* Realtime Progress & Results UI */}
        {(improvementStatus === 'running' || improvementStatus === 'done' || infiniteRunning) && (
-         <HoloCard variant="holographic" className="border-rose-500/30 mt-6">
-           <div className="flex items-center gap-3 mb-6 p-4 border-b border-rose-500/20 bg-rose-500/5">
-             <div className="w-2 h-2 rounded-full bg-rose-500  " />
+         <HoloCard variant="holographic" className="border-cyan-500/30 mt-6">
+           <div className="flex items-center gap-3 mb-6 p-4 border-b border-cyan-500/20 bg-cyan-500/5">
+             <div className="w-2 h-2 rounded-full bg-cyan-500  " />
              <h2 className="text-xs font-black uppercase tracking-widest text-white">Канал Подій Заводу (Events)</h2>
            </div>
            <div className="p-4">
@@ -315,7 +315,7 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
                    </div>
                 </div>
 
-                <div className="bg-slate-950/80 rounded-2xl p-4 border border-rose-500/10 font-mono text-[10px] h-[200px] overflow-y-auto custom-scrollbar shadow-inner relative">
+                <div className="bg-slate-950/80 rounded-2xl p-4 border border-cyan-500/10 font-mono text-[10px] h-[200px] overflow-y-auto custom-scrollbar shadow-inner relative">
                    <div className="text-rose-400/60 mb-2 uppercase font-black tracking-widest">[ ПІДТВЕРДЖЕНІ ЛОГИ OODA ]</div>
                    {infiniteLogs.length > 0 ? (
                      <div className="space-y-1">
@@ -362,7 +362,7 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
                           <td className="p-3 text-emerald-400 font-bold">{infiniteRunning ? 'АКТИВНО' : 'ОЧІКУВАННЯ'}</td>
                         </tr>
                         <tr className="bg-white/5 rounded-xl transition-all hover:bg-white/10">
-                          <td className="p-3 text-rose-400 font-bold border-l-2 border-rose-500">Аналітична</td>
+                          <td className="p-3 text-rose-400 font-bold border-l-2 border-cyan-500">Аналітична</td>
                           <td className="p-3 text-slate-200">Gold patterns і bug queue</td>
                           <td className="p-3 text-emerald-400 font-bold">{goldPatterns.length > 0 || bugs.length > 0 ? 'ПІДТВЕРДЖЕНО' : 'Н/Д'}</td>
                         </tr>

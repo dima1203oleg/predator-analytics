@@ -42,7 +42,7 @@ export const MarketOverviewTab: React.FC<MarketOverviewTabProps> = ({
   return (
     <div className="space-y-6">
       {error && (
-        <div className="rounded-2xl border border-rose-500/20 bg-rose-500/10 px-5 py-4 text-sm text-rose-200 ">
+        <div className="rounded-2xl border border-cyan-500/20 bg-cyan-500/10 px-5 py-4 text-sm text-rose-200 ">
           {error}
         </div>
       )}
@@ -72,7 +72,7 @@ export const MarketOverviewTab: React.FC<MarketOverviewTabProps> = ({
                       "flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase",
                       card.positive
                         ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                        : "bg-rose-500/10 text-rose-400 border border-rose-500/20"
+                        : "bg-cyan-500/10 text-rose-400 border border-cyan-500/20"
                     )}
                   >
                     {card.positive ? <ArrowUpRight size={12} /> : <TrendingDown size={12} />}

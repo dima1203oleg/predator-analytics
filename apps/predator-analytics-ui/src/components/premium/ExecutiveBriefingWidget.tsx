@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FileText, AlertTriangle, TrendingUp, ArrowRight, ShieldCheck, Mail } from 'lucide-react';
@@ -27,9 +28,9 @@ export const ExecutiveBriefingWidget: React.FC<{
             <p className="text-[9px] text-slate-400 font-mono">02.02.2026 • 08:00</p>
           </div>
         </div>
-        <button className="text-[10px] uppercase font-bold text-slate-400 hover:text-white transition-colors flex items-center gap-1">
+        <Button variant="cyber" className="text-[10px] uppercase font-bold text-slate-400 hover:text-white transition-colors flex items-center gap-1">
             {premiumLocales.executiveBriefingWidget.archive} <ArrowRight size={10} />
-        </button>
+        </Button>
       </div>
 
       {/* Report Content */}

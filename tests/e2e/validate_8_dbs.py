@@ -5,12 +5,12 @@ import sys
 
 # Спроба імпортувати залежності бекенду, якщо доступні
 try:
-    from app.core.config import get_settings
+    from app.config import get_settings
     from app.db.postgres import async_session_maker
     BACKEND_AVAILABLE = True
-except ImportError:
+except ImportError as e:
     BACKEND_AVAILABLE = False
-    print("⚠️ Backend dependencies not available, using environment variables")
+    print(f"⚠️ Backend dependencies not available, using environment variables. Error: {e}")
 
 # Спроба імпортувати залежності для баз даних
 try:

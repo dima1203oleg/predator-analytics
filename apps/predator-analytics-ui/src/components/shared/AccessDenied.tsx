@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ShieldAlert, ArrowLeft } from 'lucide-react';
@@ -30,13 +31,13 @@ export const AccessDenied: React.FC<AccessDeniedProps> = ({
       </p>
 
       {showBack && (
-        <button
+        <Button variant="cyber"
           onClick={() => navigate(-1)}
           className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-medium rounded-lg transition-colors flex items-center gap-2"
         >
           <ArrowLeft size={18} />
           <span>Повернутися назад</span>
-        </button>
+        </Button>
       )}
     </motion.div>
   );

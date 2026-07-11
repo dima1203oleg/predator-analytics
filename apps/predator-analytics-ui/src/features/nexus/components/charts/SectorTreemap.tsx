@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import ReactECharts from 'echarts-for-react';
+import { apiClient } from '../../../../services/api/config';
 
 export const SectorTreemap = () => {
   const [data, setData] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch('http://localhost:9080/api/v1/premium/market-segments')
-      .then(res => res.json())
-      .then(fetchedData => {
+    apiClient.get('/premium/market-segments')
+      .then(res => {
+        const fetchedData = res.data;
         const formatted = fetchedData.map((item: any, i: number) => {
           const colors = ['rgba(220, 38, 38, 0.6)', 'rgba(16, 185, 129, 0.5)', 'rgba(59, 130, 246, 0.5)'];
           return {

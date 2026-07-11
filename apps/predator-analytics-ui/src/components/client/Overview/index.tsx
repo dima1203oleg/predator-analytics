@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Newspaper, TrendingUp, Search, ArrowRight, ShieldCheck } from 'lucide-react';
@@ -129,12 +130,12 @@ export const Overview: React.FC = () => {
               </p>
             </div>
           </div>
-          <button
+          <Button variant="cyber"
             onClick={() => confirm('Бажаєте оновити до Premium?') && window.location.reload()} // Demo action
             className="px-6 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-lg transition-colors whitespace-nowrap shadow-lg shadow-amber-500/10"
           >
             Активувати Преміум
-          </button>
+          </Button>
         </motion.div>
       )}
     </div>

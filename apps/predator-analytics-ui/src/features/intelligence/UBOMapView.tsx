@@ -7,6 +7,7 @@
  * Sovereign Power Design · Classified · Tier-1
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -261,12 +262,12 @@ const UBOMapView: React.FC = () => {
              <h2 className="text-3xl font-black text-white italic uppercase tracking-tighter">КРИТИЧНИЙ ЗБІЙ РОЗВІДКИ</h2>
              <p className="text-slate-400 font-bold uppercase tracking-widest text-xs leading-relaxed">{error || 'НЕВІДОМА ПОМИЛКА ЯДРА'}</p>
            </div>
-           <button 
+           <Button variant="cyber" 
              onClick={() => fetchUboData()}
              className="w-full py-6 bg-red-600 text-white font-black uppercase tracking-[0.4em] rounded-[2rem] hover:bg-red-500 transition-all shadow-[0_20px_40px_-10px_rgba(220,38,38,0.4)] italic scale-105 active:scale-95"
            >
              ПЕРЕЗАПУСТИТИ_ДАНІ
-           </button>
+           </Button>
         </div>
       </div>
     );
@@ -338,10 +339,10 @@ const UBOMapView: React.FC = () => {
               className="bg-transparent text-xl font-black text-white outline-none placeholder:text-slate-800 font-mono w-64 italic uppercase"
             />
           </div>
-          <button className="px-14 py-6 bg-yellow-500 text-black text-[12px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all rounded-[2rem] shadow-4xl flex items-center gap-4 italic">
+          <Button variant="cyber" className="px-14 py-6 bg-yellow-500 text-black text-[12px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all rounded-[2rem] shadow-4xl flex items-center gap-4 italic">
             <Crosshair size={24} />
             SCAN_UBO_NEXUS
-          </button>
+          </Button>
         </div>
 
         {/* ── МЕТрИКИ ELITE ── */}
@@ -370,7 +371,7 @@ const UBOMapView: React.FC = () => {
         {/* ── ВИБІ  МОДУЛЮ ELITE ── */}
         <div className="flex gap-3 p-3 bg-black border-2 border-white/5 rounded-[2.5rem] w-fit shadow-4xl ">
           {views.map(v => (
-            <button
+            <Button variant="cyber"
               key={v.id}
               onClick={() => setActiveView(v.id)}
               className={cn(
@@ -385,7 +386,7 @@ const UBOMapView: React.FC = () => {
               {v.badge && (
                 <span className={cn("text-[8px] px-3 py-1 font-black rounded-lg ml-2 tracking-widest", activeView === v.id ? "bg-black text-yellow-500" : "bg-white/5 text-slate-700")}>{v.badge}</span>
               )}
-            </button>
+            </Button>
           ))}
         </div>
 
@@ -409,9 +410,9 @@ const UBOMapView: React.FC = () => {
                       <div className="p-3 bg-yellow-500/10 rounded-xl"><Network size={22} className="text-yellow-500" /></div>
                       HIERARCHICAL_STRUCTURE · {company.toUpperCase()}
                     </h2>
-                    <button className="flex items-center gap-4 text-[10px] font-black text-slate-600 hover:text-yellow-500 transition-all uppercase tracking-[0.3em] italic bg-white/5 px-6 py-3 rounded-2xl border border-white/5">
+                    <Button variant="cyber" className="flex items-center gap-4 text-[10px] font-black text-slate-600 hover:text-yellow-500 transition-all uppercase tracking-[0.3em] italic bg-white/5 px-6 py-3 rounded-2xl border border-white/5">
                       <Download size={18} /> EXPORT_GRAPH_DOCKET
-                    </button>
+                    </Button>
                   </div>
                   <div className="overflow-x-auto pb-10 custom-scrollbar relative z-10">
                     <UBONodeCard node={uboData} depth={0} />
@@ -618,10 +619,10 @@ const UBOMapView: React.FC = () => {
                         </div>
                       ))}
                     </div>
-                    <button className="w-full py-6 bg-amber-600 text-white text-[12px] font-black uppercase tracking-[0.4em] hover:bg-amber-500 transition-all shadow-4xl rounded-3xl flex items-center justify-center gap-4 italic">
+                    <Button variant="cyber" className="w-full py-6 bg-amber-600 text-white text-[12px] font-black uppercase tracking-[0.4em] hover:bg-amber-500 transition-all shadow-4xl rounded-3xl flex items-center justify-center gap-4 italic">
                       <Target size={22} className="group-hover:scale-125 transition-transform" />
                       ESCALATE_TO_SOVEREIGN_JUDICIARY
-                    </button>
+                    </Button>
                   </motion.div>
                 ))}
               </div>

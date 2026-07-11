@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import {
@@ -92,12 +93,12 @@ export const ModelingDashboard: React.FC = () => {
         </div>
 
         <div className="flex gap-2">
-          <button className="p-3 bg-white/5 hover:bg-white/10 rounded-xl text-slate-400 hover:text-white border border-white/5 transition-all">
+          <Button variant="cyber" className="p-3 bg-white/5 hover:bg-white/10 rounded-xl text-slate-400 hover:text-white border border-white/5 transition-all">
             <Settings size={18} />
-          </button>
-          <button className="p-3 bg-white/5 hover:bg-white/10 rounded-xl text-slate-400 hover:text-white border border-white/5 transition-all">
+          </Button>
+          <Button variant="cyber" className="p-3 bg-white/5 hover:bg-white/10 rounded-xl text-slate-400 hover:text-white border border-white/5 transition-all">
             <Save size={18} />
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -141,14 +142,14 @@ export const ModelingDashboard: React.FC = () => {
             ))}
           </div>
 
-          <button
+          <Button variant="cyber"
             onClick={runSimulation}
             disabled={isSimulating}
             className="w-full py-4 mt-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-2 shadow-lg shadow-indigo-900/20 transition-all"
           >
             <Play size={14} fill="currentColor" />
             {isSimulating ? premiumLocales.modeling.actions.calculating : premiumLocales.modeling.actions.run}
-          </button>
+          </Button>
         </div>
 
         {/* Chart Area */}

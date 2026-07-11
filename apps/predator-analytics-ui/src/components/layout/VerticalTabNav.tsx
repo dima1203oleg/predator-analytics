@@ -8,6 +8,7 @@
  * © 2026 PREDATOR Analytics
  */
 
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '@/utils/cn';
@@ -53,7 +54,7 @@ export const VerticalTabNav: React.FC<VerticalTabNavProps> = ({
           const Icon = tab.icon;
 
           return (
-            <button
+            <Button variant="cyber"
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
               className={cn(
@@ -104,7 +105,7 @@ export const VerticalTabNav: React.FC<VerticalTabNavProps> = ({
                   />
                 </div>
               )}
-            </button>
+            </Button>
           );
         })}
       </div>

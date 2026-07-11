@@ -1,4 +1,5 @@
 
+import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -66,7 +67,7 @@ const ExplorerShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange,
           <nav className="space-y-1">
             {/* Група: Конституція */}
             {navItemsConstitutional.map((item) => (
-              <button
+              <Button variant="cyber"
                 key={item.id}
                 onClick={() => onTabChange(item.id)}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all mb-2 ${
@@ -80,12 +81,12 @@ const ExplorerShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange,
                 {activeTab === item.id && (
                   <motion.div layoutId="active-pill" className="ml-auto w-1.5 h-1.5 rounded-full bg-amber-400 " />
                 )}
-              </button>
+              </Button>
             ))}
 
             {/* Група: Головне */}
             {navItemsMain.map((item) => (
-              <button
+              <Button variant="cyber"
                 key={item.id}
                 onClick={() => onTabChange(item.id)}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all ${
@@ -99,7 +100,7 @@ const ExplorerShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange,
                 {activeTab === item.id && (
                   <motion.div layoutId="active-pill" className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-400 " />
                 )}
-              </button>
+              </Button>
             ))}
 
             {/*  оздільник: Дані */}
@@ -107,7 +108,7 @@ const ExplorerShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange,
               <div className="text-[10px] font-bold text-slate-600 uppercase tracking-widest px-4">📊 Дані</div>
             </div>
             {navItemsData.map((item) => (
-              <button
+              <Button variant="cyber"
                 key={item.id}
                 onClick={() => onTabChange(item.id)}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all ${
@@ -121,7 +122,7 @@ const ExplorerShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange,
                 {activeTab === item.id && (
                   <motion.div layoutId="active-pill-data" className="ml-auto w-1.5 h-1.5 rounded-full bg-emerald-400 " />
                 )}
-              </button>
+              </Button>
             ))}
 
             {/*  оздільник: ШІ */}
@@ -129,7 +130,7 @@ const ExplorerShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange,
               <div className="text-[10px] font-bold text-slate-600 uppercase tracking-widest px-4">🤖 Інтелект</div>
             </div>
             {navItemsAI.map((item) => (
-              <button
+              <Button variant="cyber"
                 key={item.id}
                 onClick={() => onTabChange(item.id)}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all ${
@@ -143,7 +144,7 @@ const ExplorerShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange,
                 {activeTab === item.id && (
                   <motion.div layoutId="active-pill-ai" className="ml-auto w-1.5 h-1.5 rounded-full bg-purple-400 " />
                 )}
-              </button>
+              </Button>
             ))}
           </nav>
         </div>
@@ -159,12 +160,12 @@ const ExplorerShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange,
                 <div className="text-[10px] text-slate-500 uppercase tracking-wider font-medium">Аналітик</div>
               </div>
             </div>
-            <button
+            <Button variant="cyber"
               onClick={onLogout}
               className="w-full py-2 text-xs font-bold text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-xl transition-colors"
             >
               Вийти
-            </button>
+            </Button>
           </div>
         </div>
       </aside>
@@ -174,9 +175,9 @@ const ExplorerShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange,
         {/* Header */}
         <header className="h-16 flex items-center justify-between px-6 border-b border-white/5 bg-slate-950/20  flex-shrink-0">
           <div className="flex items-center gap-4">
-            <button className="md:hidden p-2 text-slate-400" onClick={() => setIsMenuOpen(true)}>
+            <Button variant="cyber" className="md:hidden p-2 text-slate-400" onClick={() => setIsMenuOpen(true)}>
               <Menu size={20} />
-            </button>
+            </Button>
             <div className="flex items-center gap-2 text-sm font-medium text-slate-400">
               <span className="text-white">Головна</span>
               <span className="opacity-30">/</span>
@@ -193,10 +194,10 @@ const ExplorerShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange,
               />
               <Search size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500" />
             </div>
-            <button className="p-2 text-slate-400 hover:text-white transition-colors relative">
+            <Button variant="cyber" className="p-2 text-slate-400 hover:text-white transition-colors relative">
               <Bell size={20} />
               <span className="absolute top-2 right-2 w-2 h-2 bg-blue-500 rounded-full border-2 border-[#020617]" />
-            </button>
+            </Button>
           </div>
         </header>
 
@@ -243,14 +244,14 @@ const ExplorerShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange,
                   </div>
                   <span className="font-black text-white">PREDATOR</span>
                 </div>
-                <button onClick={() => setIsMenuOpen(false)} className="text-slate-500">
+                <Button variant="cyber" onClick={() => setIsMenuOpen(false)} className="text-slate-500">
                   <X size={24} />
-                </button>
+                </Button>
               </div>
 
               <div className="space-y-4">
                 {navItems.map((item) => (
-                  <button
+                  <Button variant="cyber"
                     key={item.id}
                     onClick={() => { onTabChange(item.id); setIsMenuOpen(false); }}
                     className={`w-full flex items-center gap-4 px-4 py-3 rounded-2xl ${
@@ -259,7 +260,7 @@ const ExplorerShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange,
                   >
                     {item.icon}
                     <span className="font-bold">{item.label}</span>
-                  </button>
+                  </Button>
                 ))}
               </div>
             </motion.aside>

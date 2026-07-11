@@ -7,6 +7,12 @@
 # ══════════════════════════════════════════════════════════════════
 
 model_list:
+  # ── DeepSeek R1 (Ollama Local) ──────────
+  - model_name: deepseek-r1
+    litellm_params:
+      model: ollama/deepseek-r1
+      api_base: http://localhost:11434
+
   # ── Gemini 2.0 Flash (основна модель — швидка і дешева) ──────────
   - model_name: gemini-flash          # публічна назва для запитів
     litellm_params:

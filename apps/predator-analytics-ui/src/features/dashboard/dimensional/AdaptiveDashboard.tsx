@@ -129,10 +129,7 @@ const AdaptiveDashboard: React.FC<AdaptiveDashboardProps> = ({ onNavigate }) => 
               results: 0
             })));
           } else {
-            setRecentSearches([
-              { query: 'Тендер на будівництво', time: '2 години тому', results: 47 },
-              { query: ' изик-аналіз компанії', time: '5 годин тому', results: 23 },
-            ]);
+            setRecentSearches([]);
           }
         }
       } catch (error) {

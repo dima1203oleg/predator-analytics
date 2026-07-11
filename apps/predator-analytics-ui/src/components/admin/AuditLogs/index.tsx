@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { ScrollText, Filter, Download } from 'lucide-react';
 
@@ -13,8 +14,8 @@ export const AuditLogs: React.FC = () => {
       <div className="flex justify-between items-center">
          <h1 className="text-2xl font-bold text-white">Журнал Аудиту</h1>
          <div className="flex gap-2">
-            <button className="p-2 bg-slate-800 rounded text-slate-300"><Filter size={18} /></button>
-            <button className="p-2 bg-slate-800 rounded text-slate-300"><Download size={18} /></button>
+            <Button variant="cyber" className="p-2 bg-slate-800 rounded text-slate-300"><Filter size={18} /></Button>
+            <Button variant="cyber" className="p-2 bg-slate-800 rounded text-slate-300"><Download size={18} /></Button>
          </div>
       </div>
 

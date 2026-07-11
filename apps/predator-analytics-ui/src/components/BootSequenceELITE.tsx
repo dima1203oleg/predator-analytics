@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GeometricRaptor } from './Logo';
@@ -444,7 +445,7 @@ export const BootSequenceELITE: React.FC<{ onComplete: () => void }> = ({ onComp
            <div className="text-white/20 font-mono text-[7px] sm:text-[9px] uppercase tracking-widest italic">НЕЙРОННИЙ_ЩИТ_АКТИВНИЙ // 2048-Q Шифрування</div>
         </div>
 
-        <button 
+        <Button variant="cyber" 
           onClick={() => {
             setPhase(3);
             sfx.playImpact();
@@ -453,7 +454,7 @@ export const BootSequenceELITE: React.FC<{ onComplete: () => void }> = ({ onComp
           className="absolute bottom-8 right-4 sm:bottom-16 sm:right-8 lg:bottom-32 lg:right-16 px-4 sm:px-6 py-2 border border-[#D4AF37]/30 text-[#D4AF37]/40 hover:text-[#D4AF37] hover:border-[#D4AF37] text-[9px] sm:text-[10px] tracking-[0.3em] sm:tracking-[0.4em] uppercase transition-all z-50 pointer-events-auto bg-black/50"
         >
          ПРОПУСТИТИ ЗАСТАВКУ
-        </button>
+        </Button>
       </div>
 
       {/* LEFT SIDE LOG STREAM */}

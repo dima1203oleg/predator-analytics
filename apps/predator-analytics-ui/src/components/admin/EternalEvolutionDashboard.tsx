@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Rocket, Zap, Brain, Shield, RefreshCw, CheckCircle2, AlertTriangle, Terminal } from 'lucide-react';
@@ -173,7 +174,7 @@ export const EternalEvolutionDashboard: React.FC = () => {
                 <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
                    <Shield size={14} className="text-blue-400" /> КОНСТИТУЦІЯ (DAO)
                 </h3>
-                 <button
+                 <Button variant="cyber"
                     onClick={async () => {
                         const title = window.prompt("Amendment Title:");
                         if (!title) return;
@@ -190,7 +191,7 @@ export const EternalEvolutionDashboard: React.FC = () => {
                     className="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-1 rounded hover:bg-blue-500 hover:text-white transition-all"
                  >
                     PROPOSE AMENDMENT
-                 </button>
+                 </Button>
               </div>
 
               <div className="space-y-2">
@@ -206,7 +207,7 @@ export const EternalEvolutionDashboard: React.FC = () => {
               </div>
             </div>
 
-          <button
+          <Button variant="cyber"
              onClick={async () => {
                 if (window.confirm("ВИ ВПЕВНЕНІ? Це зупинить всі автономніпроцеси AZR!")) {
                    await fetch('/api/v45/azr/freeze', { method: 'POST' });
@@ -216,7 +217,7 @@ export const EternalEvolutionDashboard: React.FC = () => {
              className="w-full p-4 rounded-2xl bg-red-950/30 border border-red-500/50 text-red-500 font-bold text-xs uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all flex items-center justify-center gap-2"
           >
              <AlertTriangle size={16} /> EMERGENCY FREEZE (KILL-SWITCH)
-          </button>
+          </Button>
 
             {/* Policy Config */}
             {/* Current Mission */}

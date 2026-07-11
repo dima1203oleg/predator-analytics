@@ -5,6 +5,7 @@
  * Відображає реальний статус 200+ компонентів, базуючись на їх фактичному залученні в пайплайнах.
  */
 
+import { Button } from '@/components/ui/button';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   Activity,
@@ -304,10 +305,10 @@ export const ComponentsRegistryView: React.FC = () => {
 
                             </div>
 
-                            <button className="w-full py-2 bg-slate-700/30 hover:bg-cyan-500/20 text-cyan-400 text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-2">
+                            <Button variant="cyber" className="w-full py-2 bg-slate-700/30 hover:bg-cyan-500/20 text-cyan-400 text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-2">
                               <Globe size={12} />
                               Документація
-                            </button>
+                            </Button>
                           </motion.div>
                         )}
 

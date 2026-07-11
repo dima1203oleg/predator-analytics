@@ -1,4 +1,5 @@
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useRef } from 'react';
 import { ViewHeader } from '@/components/ViewHeader';
 import { BrainCircuit, Cpu, Activity, Sparkles, Volume2, MessageSquare, Layers, Settings, Server } from 'lucide-react';
@@ -146,7 +147,7 @@ const LLMView: React.FC = () => {
                     { label: premiumLocales.llm.stats.optimizer, value: dspyOptimizing ? premiumLocales.llm.stats.active : premiumLocales.llm.stats.ready, icon: <Sparkles size={14} />, color: 'success' },
                 ]}
                 actions={[
-                    <button key="v" onClick={speakMetrics} title={premiumLocales.llm.actions.speak} className="p-3 bg-slate-900/50 border border-white/10 rounded-2xl text-slate-500 hover:text-white transition-all  shadow-xl"><Volume2 size={22} /></button>
+                    <Button variant="cyber" key="v" onClick={speakMetrics} title={premiumLocales.llm.actions.speak} className="p-3 bg-slate-900/50 border border-white/10 rounded-2xl text-slate-500 hover:text-white transition-all  shadow-xl"><Volume2 size={22} /></Button>
                 ]}
             />
 
@@ -157,7 +158,7 @@ const LLMView: React.FC = () => {
                     { id: 'DSPY', label: premiumLocales.llm.tabs.dspy, icon: Sparkles, color: 'text-emerald-400' },
                     { id: 'TRAINING_LINK', label: 'Лабораторія Навчання', icon: Layers, color: 'text-purple-400', isLink: true },
                 ].map(tab => (
-                    <button
+                    <Button variant="cyber"
                         key={tab.id}
                         onClick={() => {
                             if ((tab as any).isLink) {
@@ -180,7 +181,7 @@ const LLMView: React.FC = () => {
                             />
                         )}
                         {activeTab === tab.id && <motion.div layoutId="llmTabLine" className="absolute bottom-0 left-4 right-4 h-0.5 bg-blue-500 shadow-[0_0_15px_#3b82f6]" />}
-                    </button>
+                    </Button>
                 ))}
             </div>
 
@@ -197,6 +198,7 @@ const LLMView: React.FC = () => {
                         systemPrompt={systemPrompt}
                         onSystemPromptChange={setSystemPrompt}
                         chatEndRef={chatEndRef}
+                        onActiveModelChange={setActiveModel}
                     />
                 )}
                 {activeTab === 'AUTOML' && (

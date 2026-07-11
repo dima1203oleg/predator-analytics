@@ -4,6 +4,7 @@
  * Логування рішень, валідація та трасування логіки
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -79,14 +80,14 @@ export const AZRImprovementTrace: React.FC = () => {
                         <Terminal size={18} className="text-amber-400" />
                         <span className="text-xs font-black text-white uppercase tracking-widest">{premiumLocales.evolution.trace.logStream}</span>
                     </div>
-                    <button
+                    <Button variant="cyber"
                         onClick={fetchDecisions}
                         className="p-2 hover:bg-white/5 rounded-lg transition-colors"
                         title="Оновити дані"
                         aria-label="Оновити дані"
                     >
                         <RefreshCw size={14} className={cn("text-slate-500", loading && "animate-spin")} />
-                    </button>
+                    </Button>
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar" ref={scrollRef}>

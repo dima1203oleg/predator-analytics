@@ -6,10 +6,10 @@ import { CERSCompany, CERSScoreSegment } from '@/types';
  */
 export const cersService = {
     /**
-     * Отримує повний або частковий профіль компанії по коду ЄДРПОУ
+     * Отримує повний або частковий профіль компанії по коду ЄДРПОУ або UEID
      */
     getCompanyProfile: async (edrpou: string): Promise<CERSCompany> => {
-        const response = await apiClient.get(`/cers/company/${edrpou}`);
+        const response = await apiClient.get(`/companies/${edrpou}`);
         return response.data;
     },
 
@@ -17,7 +17,7 @@ export const cersService = {
      * Отримує деталізацію оцінки CERS (сегменти та їх вага) для конкретної компанії
      */
     getScoreDetails: async (edrpou: string): Promise<{ totalScore: number; segments: CERSScoreSegment[] }> => {
-        const response = await apiClient.get(`/cers/company/${edrpou}/score-details`);
+        const response = await apiClient.get(`/companies/${edrpou}/score-details`);
         return response.data;
     },
 
@@ -25,7 +25,7 @@ export const cersService = {
      * Запускає примусовий перерахунок CERS "суворості" для суб'єкта
      */
     recalculateScore: async (edrpou: string): Promise<{ success: boolean; newScore: number }> => {
-        const response = await apiClient.post(`/cers/company/${edrpou}/recalculate`);
+        const response = await apiClient.post(`/companies/${edrpou}/recalculate`);
         return response.data;
     },
 
@@ -33,7 +33,7 @@ export const cersService = {
      * Отримує список артефактів/документів, які були використані для формування CERS-рейтингу
      */
     getDecisionArtifacts: async (edrpou: string): Promise<any[]> => {
-        const response = await apiClient.get(`/cers/company/${edrpou}/artifacts`);
+        const response = await apiClient.get(`/companies/${edrpou}/artifacts`);
         return response.data;
     },
     
@@ -41,7 +41,7 @@ export const cersService = {
      * Отримує фінансові показники компанії за останні роки
      */
     getFinancialMetrics: async (edrpou: string): Promise<any[]> => {
-        const response = await apiClient.get(`/cers/company/${edrpou}/financials`);
+        const response = await apiClient.get(`/companies/${edrpou}/financials`);
         return response.data;
     },
 
@@ -49,7 +49,7 @@ export const cersService = {
      * Пошук компаній за назвою, УЕІД або іншими параметрами
      */
     searchCompanies: async (query: string, filters: any): Promise<any[]> => {
-        const response = await apiClient.get('/cers/search', { params: { q: query, ...filters } });
-        return response.data;
+        const response = await apiClient.get('/companies', { params: { search: query, ...filters } });
+        return response.data.data;
     }
 };

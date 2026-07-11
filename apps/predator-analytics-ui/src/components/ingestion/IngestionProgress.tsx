@@ -91,7 +91,7 @@ export function IngestionProgress({ jobId, onComplete }: IngestionProgressProps)
     }
 
     eventSource.onerror = (err) => {
-      console.error("SSE Error:", err)
+      console.warn("SSE Disconnected. Job may be finished or backend offline.", err)
       // Check if we already finished, sometimes error fires on close
       if (progress?.status !== 'ready' && progress?.status !== 'failed') {
           setError("Втрачено з'єднання з сервером")

@@ -179,12 +179,12 @@ export const MarketOverviewTab: React.FC = () => {
         <p className="text-[10px] font-black text-rose-500 uppercase tracking-[0.6em]  italic text-center">
           {error}
         </p>
-        <button 
+        <Button variant="cyber" 
           onClick={() => window.location.reload()}
           className="px-6 py-3 bg-rose-500/10 border border-rose-500/20 text-rose-500 rounded-xl text-[10px] font-black uppercase tracking-[0.3em] hover:bg-rose-500/20 transition-all"
         >
           ПЕРЕЗАВАНТАЖИТИ
-        </button>
+        </Button>
       </div>
     );
   }

@@ -111,12 +111,14 @@ class OpenSearchSink:
 
     async def bulk_index(
         self, documents: list[dict[str, Any]], tenant_id: str
-    ) -> None:
+    ) -> str | None:
         """Bulk індексація документів."""
         if not documents:
-            return
+            return None
 
         await self._ensure_index(tenant_id)
+        if not self._initialized:
+            return "OpenSearch connection failed, skipping indexing"
 
         index_name = f"{self.INDEX_NAME}-{tenant_id}"
         client = await self._get_client()
@@ -154,10 +156,13 @@ class OpenSearchSink:
             )
             if response.status_code >= 400:
                 logger.error(f"Bulk index failed: {response.text}")
+                return f"Bulk index failed: HTTP {response.status_code}"
             else:
                 logger.debug(f"Bulk indexed {len(documents)} documents")
+                return None
         except Exception as e:
             logger.error(f"Bulk index error: {e}")
+            return f"Bulk index exception: {e}"
 
     def _json_dumps(self, obj: dict[str, Any]) -> str:
         """Серіалізація в JSON без None значень."""

@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import SearchConsole from '../SearchConsole';
@@ -70,7 +71,7 @@ vi.mock('framer-motion', async () => {
                 <div className={className} onClick={onClick} style={style}>{children}</div>
             ),
             button: ({ children, className, onClick, style }: any) => (
-                <button className={className} onClick={onClick} style={style}>{children}</button>
+                <Button variant="cyber" className={className} onClick={onClick} style={style}>{children}</Button>
             )
         },
         AnimatePresence: ({ children }: any) => <>{children}</>

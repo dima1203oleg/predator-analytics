@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { 
   FileText, 
@@ -83,12 +84,12 @@ export const OmniverseBriefing: React.FC = () => {
             <h3 className="text-lg font-black text-white uppercase tracking-tighter italic">Intelligence Briefing</h3>
           </div>
           <div className="flex items-center gap-2">
-            <button className="p-2 hover:bg-white/10 rounded-lg text-white/60 transition-colors">
+            <Button variant="cyber" className="p-2 hover:bg-white/10 rounded-lg text-white/60 transition-colors">
               <Download size={18} />
-            </button>
-            <button className="p-2 hover:bg-white/10 rounded-lg text-white/60 transition-colors">
+            </Button>
+            <Button variant="cyber" className="p-2 hover:bg-white/10 rounded-lg text-white/60 transition-colors">
               <Share2 size={18} />
-            </button>
+            </Button>
           </div>
         </div>
 

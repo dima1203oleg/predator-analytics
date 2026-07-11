@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Coffee, Sparkles, TrendingUp, AlertTriangle, Shield, ArrowRight } from 'lucide-react';
@@ -123,9 +124,9 @@ export const MorningBriefing: React.FC<MorningBriefingProps> = ({ items, userNam
                 <MiniStat label="ринкова активність" value="+14%" trend="up" />
             </div>
 
-            <button className="mt-6 w-full rounded-2xl bg-cyan-500/10 border border-cyan-500/20 py-3 text-xs font-black uppercase tracking-[0.15em] text-cyan-200 transition-all hover:bg-cyan-500/20">
+            <Button variant="cyber" className="mt-6 w-full rounded-2xl bg-cyan-500/10 border border-cyan-500/20 py-3 text-xs font-black uppercase tracking-[0.15em] text-cyan-200 transition-all hover:bg-cyan-500/20">
                 ПОВНИЙ ЗВІТ ПОШТОЮ
-            </button>
+            </Button>
           </div>
         </div>
       </div>

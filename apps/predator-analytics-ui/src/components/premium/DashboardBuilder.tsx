@@ -5,6 +5,7 @@
  * Дозволяє користувачам створювати персоналізовані дашборди
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
 import { motion, Reorder, AnimatePresence } from 'framer-motion';
 import {
@@ -176,9 +177,9 @@ export const DashboardBuilder: React.FC<{ onSave?: (config: any) => void }> = ({
                             <div>
                                <div className="font-bold text-white text-sm">{rec.title}</div>
                                <div className="text-xs text-slate-400 mt-1">{rec.reason}</div>
-                               <button className="text-purple-400 text-xs font-bold mt-2 hover:text-purple-300">
+                               <Button variant="cyber" className="text-purple-400 text-xs font-bold mt-2 hover:text-purple-300">
                                   + Додати на дашборд
-                               </button>
+                               </Button>
                             </div>
                          </div>
                       </motion.div>
@@ -340,12 +341,12 @@ export const DashboardBuilder: React.FC<{ onSave?: (config: any) => void }> = ({
           <p className="text-slate-500 mb-8 max-w-md mx-auto">
              Ваш дашборд готовий до наповнення. Натисніть кнопку "Змінити", щоб додати перші метрики.
           </p>
-          <button
+          <Button variant="cyber"
             onClick={() => setIsEditMode(true)}
             className="px-8 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-xl text-white font-bold shadow-lg shadow-cyan-600/30 hover:shadow-cyan-600/50 transition-all transform hover:scale-105"
           >
             Створити Дашборд
-          </button>
+          </Button>
         </motion.div>
       )}
     </div>

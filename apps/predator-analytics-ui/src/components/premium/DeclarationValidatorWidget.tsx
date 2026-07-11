@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -174,10 +175,10 @@ export const DeclarationValidatorWidget: React.FC<{ persona: string }> = ({ pers
                     </div>
 
                     <div className="grid grid-cols-2 gap-3 w-full">
-                        <button className="flex items-center justify-center gap-2 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white text-xs font-bold transition-colors">
+                        <Button variant="cyber" className="flex items-center justify-center gap-2 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white text-xs font-bold transition-colors">
                             <FileCheck size={14} /> {premiumLocales.declarationValidator.actions.report}
-                        </button>
-                        <button
+                        </Button>
+                        <Button variant="cyber"
                             onClick={reset}
                             className={cn(
                                 "flex items-center justify-center gap-2 py-3 rounded-xl text-white text-xs font-bold transition-colors border",
@@ -188,7 +189,7 @@ export const DeclarationValidatorWidget: React.FC<{ persona: string }> = ({ pers
                         >
                             {status === 'safe' ? <Download size={14} /> : <FileWarning size={14} />}
                             {status === 'safe' ? premiumLocales.declarationValidator.actions.certificate : premiumLocales.declarationValidator.actions.fix}
-                        </button>
+                        </Button>
                     </div>
                 </motion.div>
             )}

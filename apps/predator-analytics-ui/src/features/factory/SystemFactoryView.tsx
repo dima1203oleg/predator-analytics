@@ -799,7 +799,7 @@ export default function SystemFactoryView() {
       <ViewHeader 
         title="СУВЕРЕННИЙ ЗАВОД PREDATOR"
         subtitle="Автономне вдосконалення · Kubernetes · CI/CD · Моніторинг інфраструктури"
-        icon={<Factory size={24} className="text-rose-500" />}
+        icon={<Factory size={24} className="text-cyan-500" />}
         breadcrumbs={['ПРЕДАТОР', 'АДМІНІСТРУВАННЯ', 'ЗАВОД']}
         stats={[
           {
@@ -829,17 +829,17 @@ export default function SystemFactoryView() {
         {/* ── Вертикальний Sidebar-Навігатор ── */}
         <div className="hidden xl:flex flex-col gap-2 w-56 shrink-0">
           {/* Логотип Factory */}
-          <HoloCard variant="holographic" className="mb-4 border-rose-500/30 bg-rose-500/5">
+          <HoloCard variant="holographic" className="mb-4 border-cyan-500/30 bg-cyan-500/5">
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-8 h-8 rounded-xl bg-rose-500/20 border border-rose-500/40 flex items-center justify-center ">
+              <div className="w-8 h-8 rounded-xl bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center ">
                 <Factory size={16} className="text-rose-400" />
               </div>
               <div>
-                <div className="text-[10px] font-black uppercase tracking-widest text-rose-500">FACTORY ELITE</div>
+                <div className="text-[10px] font-black uppercase tracking-widest text-cyan-500">FACTORY ELITE</div>
                 <div className="text-[8px] text-slate-500 font-mono uppercase tracking-tighter">v61.0-ELITE</div>
               </div>
             </div>
-            <div className="h-px bg-rose-500/20 my-2" />
+            <div className="h-px bg-cyan-500/20 my-2" />
             <div className="text-[9px] text-slate-400 font-mono">
               {activeTab === 'autonomous' || activeTab === 'evolution' ? (
                 <span className="text-rose-400 flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-rose-400 " />FABRYKA v2.0 ACTIVE</span>
@@ -857,7 +857,7 @@ export default function SystemFactoryView() {
               const isActive = activeTab === tab.id;
               
               return (
-                <button
+                <Button variant="cyber"
                   key={tab.id}
                   onClick={() => {
                     play(UISoundType.CLICK);
@@ -867,7 +867,7 @@ export default function SystemFactoryView() {
                   className={cn(
                     "flex items-center gap-3 w-full px-4 py-3 rounded-xl border transition-all relative group",
                     isActive 
-                      ? "bg-rose-500/10 border-rose-500/40 text-rose-400" 
+                      ? "bg-cyan-500/10 border-cyan-500/40 text-rose-400" 
                       : "border-transparent text-slate-500 hover:text-slate-300 hover:bg-white/5"
                   )}
                 >
@@ -876,10 +876,10 @@ export default function SystemFactoryView() {
                   {isActive && (
                     <motion.div 
                       layoutId="sidebar-active"
-                      className="absolute inset-0 bg-rose-500/5 rounded-xl -z-10"
+                      className="absolute inset-0 bg-cyan-500/5 rounded-xl -z-10"
                     />
                   )}
-                </button>
+                </Button>
               );
             })}
           </div>
@@ -968,9 +968,9 @@ export default function SystemFactoryView() {
 
             {activeTab === 'bugfix' && (
               <motion.div key="bugfix" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
-                <div className="flex items-center justify-between p-5 bg-gradient-to-r from-rose-950/40 to-slate-900/40 border border-rose-500/20 rounded-2xl ">
+                <div className="flex items-center justify-between p-5 bg-gradient-to-r from-rose-950/40 to-slate-900/40 border border-cyan-500/20 rounded-2xl ">
                   <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400">
+                    <div className="w-14 h-14 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-rose-400">
                       <Bug size={28} />
                     </div>
                     <div>
@@ -980,7 +980,7 @@ export default function SystemFactoryView() {
                       </p>
                     </div>
                   </div>
-                  <Button variant="neon" className="bg-rose-600/20 text-rose-300 border-rose-500/50 text-[9px] uppercase font-black" onClick={() => { play(UISoundType.CLICK); bugs.filter(b => b.status === 'detected').forEach(b => handleFixBug(b.id)); }}>
+                  <Button variant="neon" className="bg-cyan-600/20 text-rose-300 border-cyan-500/50 text-[9px] uppercase font-black" onClick={() => { play(UISoundType.CLICK); bugs.filter(b => b.status === 'detected').forEach(b => handleFixBug(b.id)); }}>
                     <Zap size={12} className="mr-1" /> Автовиправити все
                   </Button>
                 </div>

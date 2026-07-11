@@ -8,6 +8,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -146,7 +147,7 @@ export default function SearchConsole() {
         <PageTransition>
             <div className="min-h-screen bg-[#020617] text-slate-200 relative overflow-hidden font-sans pb-40">
                 <AdvancedBackground />
-                <CyberGrid color="rgba(99, 102, 241, 0.05)" />
+                <CyberGrid color="rgba(6, 182, 212, 0.05)" />
                 
                 <div className="relative z-10 max-w-[1780px] mx-auto p-4 sm:p-12 space-y-16">
                     
@@ -154,21 +155,21 @@ export default function SearchConsole() {
                         title={
                             <div className="flex items-center gap-10">
                                 <div className="relative group">
-                                    <div className="absolute inset-0 bg-yellow-500/20 blur-[50px] rounded-full scale-150 " />
+                                    <div className="absolute inset-0 bg-cyan-500/20 blur-[50px] rounded-full scale-150 " />
                                     <div className="relative w-16 h-16 bg-slate-900 border border-white/10 rounded-2xl flex items-center justify-center panel-3d shadow-2xl">
-                                        <Search size={32} className="text-yellow-400 " />
+                                        <Search size={32} className="text-cyan-400 " />
                                     </div>
                                 </div>
                                 <div className="space-y-1">
                                     <div className="flex items-center gap-3">
-                                        <span className="badge-v2 bg-yellow-600/10 border border-yellow-600/20 text-yellow-500 px-3 py-1 text-[10px] font-black tracking-[0.3em] uppercase italic">
+                                        <span className="badge-v2 bg-cyan-600/10 border border-cyan-600/20 text-cyan-500 px-3 py-1 text-[10px] font-black tracking-[0.3em] uppercase italic">
                                           СИНАПТИЧНИЙ_ПОШУК // ВСЕВІДЕННЯ_v58.2
                                         </span>
-                                        <div className="h-px w-10 bg-yellow-600/20" />
+                                        <div className="h-px w-10 bg-cyan-600/20" />
                                         <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v61.0-ELITE</span>
                                     </div>
                                     <h1 className="text-6xl font-black text-white tracking-widest uppercase leading-none italic skew-x-[-4deg]">
-                                        СИНАПТИЧНИЙ <span className="text-yellow-500 underline decoration-yellow-600/20 decoration-8 italic uppercase">ПОШУК</span>
+                                        СИНАПТИЧНИЙ <span className="text-cyan-500 underline decoration-cyan-600/20 decoration-8 italic uppercase">ПОШУК</span>
                                     </h1>
                                     <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.5em] italic mt-2 opacity-80 leading-none">
                                         ЯДРО СЕМАНТИЧНОГО ПОШУКУ ТА КВАНТОВОГО АНАЛІЗУ ДАНИХ
@@ -183,12 +184,12 @@ export default function SearchConsole() {
                         ]}
                         actions={
                             <div className="flex gap-4">
-                               <button onClick={() => {setQuery(''); setResults([]);}} className="p-5 bg-black border border-white/[0.04] rounded-2xl text-slate-400 hover:text-white transition-all shadow-xl">
+                               <Button variant="cyber" onClick={() => {setQuery(''); setResults([]);}} className="p-5 bg-black border border-white/[0.04] rounded-2xl text-slate-400 hover:text-white transition-all shadow-xl">
                                   <RefreshCcw size={24} />
-                               </button>
-                               <button className="px-8 py-5 bg-yellow-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-yellow-600 shadow-2xl transition-all flex items-center gap-4">
+                               </Button>
+                               <Button variant="cyber" className="px-8 py-5 bg-cyan-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-cyan-600 shadow-2xl transition-all flex items-center gap-4">
                                   <Database size={18} /> ЗАВАНТАЖИТИ_ДАТАСЕТ
-                               </button>
+                               </Button>
                             </div>
                         }
                     />
@@ -197,13 +198,13 @@ export default function SearchConsole() {
                     <div className="max-w-6xl mx-auto space-y-12 relative">
                         <motion.div 
                             initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-                            className="relative group p-1.5 rounded-[4rem] bg-gradient-to-tr from-yellow-500/30 via-transparent to-emerald-500/30 "
+                            className="relative group p-1.5 rounded-[4rem] bg-gradient-to-tr from-cyan-500/30 via-transparent to-emerald-500/30 "
                         >
-                            <div className="relative bg-[#0b0f1a]/95  rounded-[3.8rem] border border-white/5 overflow-hidden">
+                            <div className="relative bg-black/60 backdrop-blur-3xl rounded-[3.8rem] border border-white/5 overflow-hidden">
                                 <div className="flex items-center px-10 py-8 gap-8">
-                                    <button onClick={() => setShowFilters(!showFilters)} className={cn("p-6 rounded-[2rem] transition-all border border-white/5", showFilters ? "bg-yellow-600 text-white shadow-yellow-500/40" : "bg-white/5 text-slate-500 hover:text-white")}>
+                                    <Button variant="cyber" onClick={() => setShowFilters(!showFilters)} className={cn("p-6 rounded-[2rem] transition-all border border-white/5", showFilters ? "bg-cyan-600 text-white shadow-cyan-500/40" : "bg-white/5 text-slate-500 hover:text-white")}>
                                         <ListFilter size={28} />
-                                    </button>
+                                    </Button>
 
                                     <div className="flex-1 relative">
                                         <input
@@ -212,17 +213,17 @@ export default function SearchConsole() {
                                             placeholder="ЗАПИТАЙТЕ У МАТрИЦІ... (напр. 'Експорт титану 2026')"
                                             className="w-full bg-transparent text-3xl font-black text-white placeholder-slate-800 focus:outline-none tracking-tight skew-x-[-1deg] uppercase"
                                         />
-                                        <div className="absolute -bottom-2 left-0 w-0 h-0.5 bg-yellow-500 group-focus-within:w-full transition-all duration-700" />
+                                        <div className="absolute -bottom-2 left-0 w-0 h-0.5 bg-cyan-500 group-focus-within:w-full transition-all duration-700" />
                                     </div>
 
                                     <div className="flex items-center gap-6">
-                                        <button className="p-6 rounded-[2rem] bg-white/5 border border-transparent text-slate-500 hover:text-yellow-400 transition-all">
+                                        <Button variant="cyber" className="p-6 rounded-[2rem] bg-white/5 border border-transparent text-slate-500 hover:text-cyan-400 transition-all">
                                             <Mic size={28} />
-                                        </button>
-                                        <button onClick={() => handleSearch()} disabled={isLoading} className="px-14 py-7 bg-yellow-700 hover:bg-yellow-600 text-white rounded-[2.5rem] text-[12px] font-black uppercase tracking-[0.4em] italic flex items-center gap-4 shadow-3xl shadow-yellow-900/40 relative group overflow-hidden border border-yellow-400/30 transition-all">
+                                        </Button>
+                                        <Button variant="cyber" onClick={() => handleSearch()} disabled={isLoading} className="px-14 py-7 bg-cyan-700 hover:bg-cyan-600 text-white rounded-[2.5rem] text-[12px] font-black uppercase tracking-[0.4em] italic flex items-center gap-4 shadow-3xl shadow-cyan-900/40 relative group overflow-hidden border border-cyan-400/30 transition-all">
                                             {isLoading ? <RefreshCw className="animate-spin" size={24} /> : <Scan size={24} className="group-hover:scale-110 transition-transform" />}
                                             <span>ЗНАЙТИ</span>
-                                        </button>
+                                        </Button>
                                     </div>
                                 </div>
 
@@ -232,9 +233,9 @@ export default function SearchConsole() {
                                             <Clock size={12} /> ІСТО ІЯ_ЗАПИТІВ:
                                         </span>
                                         {history.map((h, i) => (
-                                            <button key={i} onClick={() => { setQuery(h); handleSearch(h); }} className="px-5 py-2.5 bg-white/5 hover:bg-yellow-500/10 border border-white/5 rounded-2xl text-[10px] font-black text-slate-600 hover:text-yellow-400 transition-all whitespace-nowrap uppercase italic tracking-tighter">
+                                            <Button variant="cyber" key={i} onClick={() => { setQuery(h); handleSearch(h); }} className="px-5 py-2.5 bg-white/5 hover:bg-cyan-500/10 border border-white/5 rounded-2xl text-[10px] font-black text-slate-600 hover:text-cyan-400 transition-all whitespace-nowrap uppercase italic tracking-tighter">
                                                 {h}
-                                            </button>
+                                            </Button>
                                         ))}
                                     </motion.div>
                                 )}
@@ -244,24 +245,24 @@ export default function SearchConsole() {
                         {/* MODE SELECTORS */}
                         <div className="flex flex-wrap justify-center gap-8">
                             {[
-                                { id: 'semantic', label: 'СЕМАНТИЧНИЙ_ПОШУК', icon: Sparkles, color: '#6366f1' },
+                                { id: 'semantic', label: 'СЕМАНТИЧНИЙ_ПОШУК', icon: Sparkles, color: '#06b6d4' },
                                 { id: 'rerank', label: 'НЕЙ О_ РЕ ЕЙТИНГ', icon: TrendingUp, color: '#10b981', premium: true },
-                                { id: 'chat', label: 'NEXUS_КО_ПІЛОТ', icon: MessageSquare, color: '#f59e0b', premium: true },
+                                { id: 'chat', label: 'NEXUS_КО_ПІЛОТ', icon: MessageSquare, color: '#0ea5e9', premium: true },
                                 { id: 'truth', label: 'ТІЛЬКИ_ІСТИНА', icon: ShieldCheck, color: '#ec4899', active: truthMode, onToggle: () => setTruthMode(!truthMode) }
                             ].map((mode) => (
                                 <motion.button
                                     key={mode.id} whileHover={{ y: -5, scale: 1.02 }}
                                     onClick={mode.onToggle || (() => setSearchModes(s => ({ ...s, [mode.id]: !s[mode.id as keyof typeof s] })))}
                                     className={cn(
-                                        "px-8 py-4 rounded-[2.5rem] border transition-all flex items-center gap-4 relative overflow-hidden shadow-xl",
+                                        "px-8 py-4 rounded-[2.5rem] border transition-all flex items-center gap-4 relative overflow-hidden shadow-xl backdrop-blur-md",
                                         (mode.active ?? (searchModes as any)[mode.id])
-                                            ? "bg-yellow-600/10 border-yellow-500/40 text-yellow-400 shadow-yellow-500/10"
-                                            : "bg-slate-900/40 border-white/5 text-slate-500 hover:text-slate-300"
+                                            ? "bg-cyan-600/10 border-cyan-500/40 text-cyan-400 shadow-cyan-500/10"
+                                            : "bg-black/40 border-white/5 text-slate-500 hover:text-slate-300"
                                     )}
                                 >
                                     <mode.icon size={20} style={{ color: (mode.active ?? (searchModes as any)[mode.id]) ? mode.color : undefined }} />
                                     <span className="text-[10px] font-black tracking-widest uppercase italic">{mode.label}</span>
-                                    {mode.premium && <Badge className="ml-2 bg-amber-500 text-black text-[7px] font-black border-none px-2 shadow-lg">PRO</Badge>}
+                                    {mode.premium && <Badge className="ml-2 bg-blue-500 text-white text-[7px] font-black border-none px-2 shadow-lg">PRO</Badge>}
                                 </motion.button>
                             ))}
                         </div>
@@ -271,24 +272,24 @@ export default function SearchConsole() {
                     <div className="max-w-6xl mx-auto">
                         {isLoading ? (
                             <div className="flex flex-col items-center justify-center py-40 gap-12 text-center">
-                                <CyberOrb size={220} status="processing" color="#6366f1" />
+                                <CyberOrb size={220} status="processing" color="#06b6d4" />
                                 <div className="space-y-4">
                                     <h3 className="text-2xl font-black text-white uppercase tracking-[0.8em]  italic">КВАНТОВИЙ_АНАЛІЗ_МАТрИЦІ</h3>
-                                    <p className="text-[10px] font-mono text-yellow-500 uppercase tracking-widest italic tracking-[0.4em]">ЗВЕ НЕННЯ_ДО_СЕМАНТИЧНОГО_ЯД А_v56_TITAN...</p>
+                                    <p className="text-[10px] font-mono text-cyan-500 uppercase tracking-widest italic tracking-[0.4em]">ЗВЕ НЕННЯ_ДО_СЕМАНТИЧНОГО_ЯД А_v56_TITAN...</p>
                                 </div>
                             </div>
                         ) : results.length > 0 ? (
                             <div className="space-y-12 pb-40">
                                 <div className="flex items-center justify-between border-b border-white/5 pb-10">
                                     <div className="flex items-center gap-8">
-                                        <div className="px-6 py-3 bg-yellow-500/10 border border-yellow-500/30 rounded-2xl shadow-2xl">
-                                            <span className="text-3xl font-black text-yellow-400 font-mono tracking-tighter">{results.length}</span>
+                                        <div className="px-6 py-3 bg-cyan-500/10 border border-cyan-500/30 rounded-2xl shadow-2xl">
+                                            <span className="text-3xl font-black text-cyan-400 font-mono tracking-tighter">{results.length}</span>
                                         </div>
                                         <span className="text-sm font-black text-slate-500 uppercase tracking-[0.4em] italic"> ЕЗУЛЬТАТІВ_ВИЯВЛЕНО</span>
                                     </div>
                                     <div className="flex gap-4">
-                                        <button className="p-5 bg-black border border-white/5 rounded-2xl text-slate-500 hover:text-white transition-all shadow-xl"><Layout size={20} /></button>
-                                        <button className="p-5 bg-black border border-white/5 rounded-2xl text-slate-500 hover:text-white transition-all shadow-xl"><RefreshCw size={20} /></button>
+                                        <Button variant="cyber" className="p-5 bg-black/60 backdrop-blur-md border border-white/5 rounded-2xl text-slate-500 hover:text-white transition-all shadow-xl"><Layout size={20} /></Button>
+                                        <Button variant="cyber" className="p-5 bg-black/60 backdrop-blur-md border border-white/5 rounded-2xl text-slate-500 hover:text-white transition-all shadow-xl"><RefreshCw size={20} /></Button>
                                     </div>
                                 </div>
 
@@ -296,17 +297,17 @@ export default function SearchConsole() {
                                     {results.map((result, i) => (
                                         <motion.div 
                                             key={result.id} initial={{ opacity: 0, scale: 0.98, y: 30 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ delay: i * 0.1 }}
-                                            className="group relative p-1 rounded-[4rem] bg-white/[0.01] hover:bg-gradient-to-r hover:from-yellow-600/30 hover:to-emerald-600/10 transition-all duration-700 shadow-3xl"
+                                            className="group relative p-1 rounded-[4rem] bg-white/[0.01] hover:bg-gradient-to-r hover:from-cyan-600/30 hover:to-emerald-600/10 transition-all duration-700 shadow-3xl"
                                         >
-                                            <div className="bg-[#0b0f1a]/95  rounded-[3.9rem] p-10 relative overflow-hidden border border-white/5">
-                                                <div className="absolute top-0 right-0 w-64 h-64 bg-yellow-600/5 blur-[80px] pointer-events-none group-hover:bg-yellow-600/10 transition-colors" />
+                                            <div className="bg-black/60 backdrop-blur-3xl rounded-[3.9rem] p-10 relative overflow-hidden border border-white/5">
+                                                <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-600/5 blur-[80px] pointer-events-none group-hover:bg-cyan-600/10 transition-colors" />
                                                 
                                                 <div className="flex items-start gap-10 relative z-10">
                                                     <div className="flex flex-col items-center gap-6">
-                                                        <div className="w-16 h-16 bg-slate-900 border border-white/5 rounded-[1.2rem] flex items-center justify-center text-xl font-black text-slate-700 group-hover:text-yellow-400 group-hover:border-yellow-500/40 transition-all shadow-2xl skew-x-[-2deg]">
+                                                        <div className="w-16 h-16 bg-slate-900/60 backdrop-blur-md border border-white/5 rounded-[1.2rem] flex items-center justify-center text-xl font-black text-slate-700 group-hover:text-cyan-400 group-hover:border-cyan-500/40 transition-all shadow-2xl skew-x-[-2deg]">
                                                             #{i+1}
                                                         </div>
-                                                        <div className="p-4 bg-yellow-500/10 rounded-2xl text-yellow-500 border border-yellow-500/20 shadow-inner">
+                                                        <div className="p-4 bg-cyan-500/10 rounded-2xl text-cyan-500 border border-cyan-500/20 shadow-inner">
                                                             {result.searchType === 'semantic' ? <Brain size={24} /> : <Database size={24} />}
                                                         </div>
                                                     </div>
@@ -315,8 +316,8 @@ export default function SearchConsole() {
                                                         <div className="flex justify-between items-start">
                                                             <div className="space-y-3">
                                                                 <div className="flex items-center gap-6">
-                                                                    <h4 className="text-3xl font-black text-white tracking-tighter group-hover:text-yellow-400 transition-colors uppercase italic leading-none">{result.title}</h4>
-                                                                    <Badge className="bg-yellow-600/10 text-yellow-400 border-yellow-500/30 uppercase italic font-black py-1 px-4 text-[10px] tracking-widest">{result.source}</Badge>
+                                                                    <h4 className="text-3xl font-black text-white tracking-tighter group-hover:text-cyan-400 transition-colors uppercase italic leading-none">{result.title}</h4>
+                                                                    <Badge className="bg-cyan-600/10 text-cyan-400 border-cyan-500/30 uppercase italic font-black py-1 px-4 text-[10px] tracking-widest">{result.source}</Badge>
                                                                 </div>
                                                                 <div className="flex items-center gap-8 text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] italic">
                                                                     <span className="flex items-center gap-2"><Clock size={14} /> {result.date}</span>
@@ -324,28 +325,28 @@ export default function SearchConsole() {
                                                                 </div>
                                                             </div>
                                                             <div className="text-right">
-                                                                <div className="text-4xl font-mono font-black text-yellow-500 italic tracking-tighter ">{(result.score * 100).toFixed(1)}%</div>
+                                                                <div className="text-4xl font-mono font-black text-cyan-500 italic tracking-tighter ">{(result.score * 100).toFixed(1)}%</div>
                                                                 <div className="text-[9px] font-black text-slate-700 uppercase tracking-widest italic mt-1">AI_ ЕЙТИНГ_ІСТИННОСТІ</div>
                                                             </div>
                                                         </div>
 
-                                                        <p className="text-[17px] text-slate-400 leading-relaxed font-black italic group-hover:text-slate-200 transition-colors border-l-4 border-yellow-600/20 pl-8">
+                                                        <p className="text-[17px] text-slate-400 leading-relaxed font-black italic group-hover:text-slate-200 transition-colors border-l-4 border-cyan-600/20 pl-8">
                                                             "{result.snippet}"
                                                         </p>
 
                                                         <div className="flex items-center justify-between pt-6 border-t border-white/[0.04]">
                                                             <div className="flex gap-4">
                                                                 {result.tags?.map(tag => (
-                                                                    <span key={tag} className="text-[10px] font-black text-yellow-500/50 uppercase tracking-[0.4em] italic">#{tag}</span>
+                                                                    <span key={tag} className="text-[10px] font-black text-cyan-500/50 uppercase tracking-[0.4em] italic">#{tag}</span>
                                                                 ))}
                                                             </div>
                                                             <div className="flex gap-4">
-                                                                <button className="px-8 py-4 bg-yellow-700/10 hover:bg-yellow-700 border border-yellow-500/30 text-yellow-400 hover:text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic transition-all flex items-center gap-3">
+                                                                <Button variant="cyber" className="px-8 py-4 bg-cyan-700/10 hover:bg-cyan-700 border border-cyan-500/30 text-cyan-400 hover:text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic transition-all flex items-center gap-3">
                                                                     <Brain size={18} /> СЕМАНТИЧНИЙ_ГРАФ
-                                                                </button>
-                                                                <button className="p-4 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl text-slate-500 hover:text-white transition-all shadow-xl">
+                                                                </Button>
+                                                                <Button variant="cyber" className="p-4 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl text-slate-500 hover:text-white transition-all shadow-xl">
                                                                     <Share2 size={18} />
-                                                                </button>
+                                                                </Button>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -356,7 +357,7 @@ export default function SearchConsole() {
                                 </div>
                             </div>
                         ) : query && !isLoading ? (
-                            <div className="flex flex-col items-center justify-center py-40 gap-10 bg-slate-950/40 border-2 border-dashed border-white/[0.03] rounded-[4rem] text-center shadow-inner">
+                            <div className="flex flex-col items-center justify-center py-40 gap-10 bg-black/40 backdrop-blur-2xl border-2 border-dashed border-white/[0.03] rounded-[4rem] text-center shadow-inner">
                                 <HelpCircle size={80} className="text-slate-800 " />
                                 <div>
                                     <h3 className="text-2xl font-black text-slate-700 uppercase tracking-[0.6em] italic">NEXUS_ПУСТИЙ_НАБІ </h3>
@@ -370,8 +371,8 @@ export default function SearchConsole() {
                                     { title: 'ФІНАНСОВІ_ПОТОКИ', icon: Key, desc: 'Детекція офшорних аномалій' },
                                     { title: 'ВПК_СТРАТЕГІЯ', icon: Target, desc: 'Моніторинг критичного імпорту' }
                                 ].map((item, i) => (
-                                    <HoloCard key={i} variant="cyber" className="p-12 space-y-8 hover:border-yellow-500/40 transition-all rounded-[3.5rem] bg-black border-2 border-white/[0.04] shadow-3xl">
-                                        <div className="w-16 h-16 bg-yellow-600/10 rounded-2xl border border-yellow-600/30 flex items-center justify-center text-yellow-500 shadow-2xl">
+                                    <HoloCard key={i} variant="cyber" className="p-12 space-y-8 hover:border-cyan-500/40 transition-all rounded-[3.5rem] bg-black/60 backdrop-blur-3xl border-2 border-white/[0.04] shadow-3xl">
+                                        <div className="w-16 h-16 bg-cyan-600/10 rounded-2xl border border-cyan-600/30 flex items-center justify-center text-cyan-500 shadow-2xl">
                                             <item.icon size={32} />
                                         </div>
                                         <div className="space-y-4">

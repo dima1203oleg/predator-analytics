@@ -23,7 +23,7 @@ export const ResourceDynamicsChart: React.FC = () => {
     const CustomTooltip = ({ active, payload, label }: any) => {
         if (active && payload && payload.length) {
             return (
-                <div className="bg-[#050505]/95 border border-rose-500/20 p-3 rounded-xl  shadow-2xl">
+                <div className="bg-[#050505]/95 border border-cyan-500/20 p-3 rounded-xl  shadow-2xl">
                     <p className="text-[10px] font-black text-slate-500 mb-2 uppercase tracking-widest">{label}</p>
                     {payload.map((entry: any, index: number) => (
                         <div key={index} className="flex items-center gap-2 mb-1 last:mb-0">

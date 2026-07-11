@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
@@ -42,7 +43,7 @@ export const HubTabs: React.FC<HubTabsProps> = ({
         const isActive = activeTab === tab.id;
         
         return (
-          <button
+          <Button variant="cyber"
             key={tab.id}
             onClick={() => onChange(tab.id)}
             className={cn(
@@ -74,7 +75,7 @@ export const HubTabs: React.FC<HubTabsProps> = ({
                 transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
               />
             )}
-          </button>
+          </Button>
         );
       })}
     </div>

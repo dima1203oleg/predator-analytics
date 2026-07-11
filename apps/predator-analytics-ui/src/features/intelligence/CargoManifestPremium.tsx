@@ -10,6 +10,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -157,7 +158,7 @@ export default function CargoManifestPremium() {
           />
 
           <div className="flex justify-end gap-6 mb-12">
-             <button 
+             <Button variant="cyber" 
               onClick={handleRefresh} 
               className={cn(
                 "p-7 bg-black border-2 border-white/[0.04] rounded-[2rem] text-slate-500 hover:text-amber-500 transition-all shadow-4xl group/btn",
@@ -165,14 +166,14 @@ export default function CargoManifestPremium() {
               )}
             >
               <RefreshCw size={32} className={cn("transition-transform duration-700", refreshing ? "" : "group-hover/btn:rotate-180")} />
-            </button>
-            <button className="relative px-12 py-7 h-fit group/main overflow-hidden rounded-[2.2rem]">
+            </Button>
+            <Button variant="cyber" className="relative px-12 py-7 h-fit group/main overflow-hidden rounded-[2.2rem]">
               <div className="absolute inset-0 bg-gradient-to-r from-amber-700 to-amber-600 transition-transform duration-500 group-hover/main:scale-105" />
               <div className="relative flex items-center gap-6 text-slate-950 font-black uppercase italic tracking-[0.3em] text-[12px]">
                 <Crosshair size={24} /> ЗАПУСТИТИ_СКАНУВАННЯ
               </div>
               <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover/main:translate-x-[100%] transition-transform duration-1000" />
-            </button>
+            </Button>
           </div>
 
           <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
@@ -283,12 +284,12 @@ export default function CargoManifestPremium() {
                               </div>
                            </div>
                            <div className="flex gap-4">
-                              <button className="p-6 bg-black border-2 border-white/[0.04] rounded-[1.8rem] text-slate-500 hover:text-amber-500 hover:border-amber-500/30 transition-all shadow-xl group/btn2">
+                              <Button variant="cyber" className="p-6 bg-black border-2 border-white/[0.04] rounded-[1.8rem] text-slate-500 hover:text-amber-500 hover:border-amber-500/30 transition-all shadow-xl group/btn2">
                                  <Download size={28} className="group-hover/btn2:scale-110 transition-transform" />
-                              </button>
-                             <button className="p-6 bg-amber-600 text-slate-950 rounded-[1.8rem] transition-all shadow-4xl hover:bg-amber-500 hover:scale-105 active:scale-95 duration-500 flex items-center justify-center">
+                              </Button>
+                             <Button variant="cyber" className="p-6 bg-amber-600 text-slate-950 rounded-[1.8rem] transition-all shadow-4xl hover:bg-amber-500 hover:scale-105 active:scale-95 duration-500 flex items-center justify-center">
                                  <Layers size={28} />
-                              </button>
+                              </Button>
                            </div>
                         </div>
 
@@ -354,12 +355,12 @@ export default function CargoManifestPremium() {
                               </div>
                            </div>
                            <div className="flex gap-6 w-full md:w-auto">
-                             <button className="flex-1 md:flex-none px-12 py-6 bg-black border-2 border-white/[0.05] text-slate-600 hover:text-white hover:border-white/20 rounded-[2.2rem] text-[11px] font-black uppercase tracking-[0.4em] italic shadow-xl transition-all">
+                             <Button variant="cyber" className="flex-1 md:flex-none px-12 py-6 bg-black border-2 border-white/[0.05] text-slate-600 hover:text-white hover:border-white/20 rounded-[2.2rem] text-[11px] font-black uppercase tracking-[0.4em] italic shadow-xl transition-all">
                                 ЗБЕ ЕГТИ_DOSSIER
-                             </button>
-                             <button className="flex-1 md:flex-none px-12 py-6 bg-white text-black rounded-[2.2rem] text-[11px] font-black uppercase tracking-[0.4em] italic hover:bg-slate-200 shadow-4xl active:scale-95 transition-all duration-300">
+                             </Button>
+                             <Button variant="cyber" className="flex-1 md:flex-none px-12 py-6 bg-white text-black rounded-[2.2rem] text-[11px] font-black uppercase tracking-[0.4em] italic hover:bg-slate-200 shadow-4xl active:scale-95 transition-all duration-300">
                                 ГЕНЕ УВАТИ_ПОВНИЙ_ЗВІТ
-                             </button>
+                             </Button>
                            </div>
                         </div>
                      </div>

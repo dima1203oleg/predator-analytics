@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -93,7 +94,7 @@ export const OmniverseInsights: React.FC = () => {
             <label className="text-[10px] text-white/40 uppercase font-bold px-1">Select Data Source</label>
             <div className="space-y-1">
               {tables.map(t => (
-                <button
+                <Button variant="cyber"
                   key={t}
                   onClick={() => setSelectedTable(t)}
                   className={`w-full text-left px-3 py-2 rounded-lg text-xs transition-all flex items-center justify-between group ${
@@ -104,7 +105,7 @@ export const OmniverseInsights: React.FC = () => {
                 >
                   <span className="truncate">{t.replace(/omniverse_[^_]+_/, 'DATA_')}</span>
                   {selectedTable === t && <ArrowRight size={12} />}
-                </button>
+                </Button>
               ))}
             </div>
           </div>
@@ -122,7 +123,7 @@ export const OmniverseInsights: React.FC = () => {
                 { id: 'PREDICT', label: 'Predictive Trend', icon: Sparkles },
                 { id: 'ANOMALIES', label: 'Anomaly Search', icon: Cpu }
               ].map(m => (
-                <button
+                <Button variant="cyber"
                   key={m.id}
                   onClick={() => setMode(m.id as any)}
                   className={`flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold transition-all border ${
@@ -133,7 +134,7 @@ export const OmniverseInsights: React.FC = () => {
                 >
                   <m.icon size={14} />
                   {m.label}
-                </button>
+                </Button>
               ))}
             </div>
           </div>
@@ -247,13 +248,13 @@ export const OmniverseInsights: React.FC = () => {
               disabled={!selectedTable || loading}
               className="w-full bg-zinc-900/50 border border-white/10 rounded-xl px-6 py-4 text-white text-sm focus:ring-2 focus:ring-blue-500/50 outline-none pr-16 transition-all"
             />
-            <button
+            <Button variant="cyber"
               onClick={handleSend}
               disabled={!input.trim() || !selectedTable || loading}
               className="absolute right-2 top-2 bottom-2 px-4 bg-blue-600 hover:bg-blue-500 disabled:opacity-30 disabled:hover:bg-blue-600 text-white rounded-lg transition-all flex items-center justify-center shadow-lg shadow-blue-600/20"
             >
               <Send size={18} />
-            </button>
+            </Button>
           </div>
           <p className="text-[10px] text-white/20 mt-3 text-center uppercase tracking-widest">Powered by Sovereign Reasoning Engine v61.0</p>
         </div>

@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { HoloCard } from '@/components/ui/HoloCard';
 import React, { useState, useEffect } from 'react';
 import {
@@ -74,7 +75,7 @@ const EvolutionDashboard: React.FC = () => {
                     <p className="text-white/40 text-xs font-mono">SOVEREIGN CORE V40.0 • АВТОНОМНА ЕВОЛЮЦІЯ АКТИВНА</p>
                 </div>
                 <div className="flex gap-4">
-                    <button
+                    <Button variant="cyber"
                         onClick={triggerChaos}
                         disabled={isThinking}
                         className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all ${
@@ -83,7 +84,7 @@ const EvolutionDashboard: React.FC = () => {
                     >
                         <Flame className={`w-4 h-4 ${isThinking ? 'animate-bounce' : ''}`} />
                         <span className="text-xs font-bold uppercase tracking-widest">Тест Хаосу</span>
-                    </button>
+                    </Button>
                     <div className="px-4 py-2 bg-blue-500/10 border border-blue-500/30 rounded-full flex items-center gap-2">
                         <div className="w-2 h-2 bg-blue-500 rounded-full  shadow-[0_0_10px_#3b82f6]" />
                         <span className="text-[10px] font-mono text-blue-400 uppercase">Self-Healer Онлайн</span>

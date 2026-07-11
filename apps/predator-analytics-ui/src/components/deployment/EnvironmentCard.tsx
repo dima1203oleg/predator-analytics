@@ -1,4 +1,5 @@
 
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { Server, RefreshCw, Cpu, Box, Terminal, Activity, AlertTriangle, Play, ShieldAlert, RotateCcw, MonitorPlay, FileText } from 'lucide-react';
 import { DeploymentEnvironment } from '../../types';
@@ -117,19 +118,19 @@ export const EnvironmentCard: React.FC<EnvironmentCardProps> = ({ env, onSync, o
 
             {/* Actions */}
             <div className="p-3 border-t border-slate-800 bg-slate-950 flex gap-2">
-                <button 
+                <Button variant="cyber" 
                     onClick={() => onSync(env.id)}
                     disabled={isSyncing}
                     className="flex-1 py-2 bg-primary-600 hover:bg-primary-500 text-white rounded text-xs font-bold flex items-center justify-center gap-2 transition-colors disabled:opacity-50 btn-3d btn-3d-blue"
                 >
                     <RefreshCw size={14} className={isSyncing ? "animate-spin" : ""} /> Sync
-                </button>
-                <button 
+                </Button>
+                <Button variant="cyber" 
                     onClick={() => onTest(env.name)}
                     className="flex-1 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-xs font-bold flex items-center justify-center gap-2 transition-colors btn-3d"
                 >
                     <FileText size={14} /> Logs
-                </button>
+                </Button>
             </div>
         </div>
     );

@@ -3,6 +3,7 @@
  * Advanced analytics dashboard з live charts
  * Перевищує Palantir: real-time data streams, holographic charts, predictive analytics
  */
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TrendingUp, TrendingDown, Activity, Zap, Target, BarChart3, LineChart, PieChart, Globe, Database, Cpu } from 'lucide-react';
@@ -246,15 +247,15 @@ export const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProp
             {metrics.find(m => m.id === selectedMetric)?.label}
           </h3>
           <div className="flex gap-2">
-            <button className="px-3 py-1 text-xs font-bold text-white bg-white/10 rounded-lg hover:bg-white/20 transition-colors">
+            <Button variant="cyber" className="px-3 py-1 text-xs font-bold text-white bg-white/10 rounded-lg hover:bg-white/20 transition-colors">
               1H
-            </button>
-            <button className="px-3 py-1 text-xs font-bold text-rose-500 bg-rose-500/10 rounded-lg">
+            </Button>
+            <Button variant="cyber" className="px-3 py-1 text-xs font-bold text-rose-500 bg-rose-500/10 rounded-lg">
               24H
-            </button>
-            <button className="px-3 py-1 text-xs font-bold text-white bg-white/10 rounded-lg hover:bg-white/20 transition-colors">
+            </Button>
+            <Button variant="cyber" className="px-3 py-1 text-xs font-bold text-white bg-white/10 rounded-lg hover:bg-white/20 transition-colors">
               7D
-            </button>
+            </Button>
           </div>
         </div>
         <canvas

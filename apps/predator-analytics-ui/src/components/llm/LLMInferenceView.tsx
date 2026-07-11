@@ -18,6 +18,7 @@ interface LLMInferenceViewProps {
     systemPrompt: string;
     onSystemPromptChange: (val: string) => void;
     chatEndRef: React.RefObject<HTMLDivElement>;
+    onActiveModelChange?: (model: string) => void;
 }
 
 export const LLMInferenceView: React.FC<LLMInferenceViewProps> = ({
@@ -30,7 +31,8 @@ export const LLMInferenceView: React.FC<LLMInferenceViewProps> = ({
     genMetrics,
     systemPrompt,
     onSystemPromptChange,
-    chatEndRef
+    chatEndRef,
+    onActiveModelChange
 }) => {
     return (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -162,10 +164,15 @@ export const LLMInferenceView: React.FC<LLMInferenceViewProps> = ({
                 <HoloCard variant="holographic" title={premiumLocales.llm.inference.router.title} className="glass-morphism panel-3d">
                     <div className="space-y-4">
                         {[
-                            { name: `${premiumLocales.common.local} Llama-3`, status: premiumLocales.llm.inference.router.active, type: 'CORE', model: 'v45.0 Meta' },
-                            { name: 'Gemini 3 Ultra', status: premiumLocales.llm.inference.router.standby, type: 'CLOUD', model: 'DeepMind API' },
+                            { name: `${premiumLocales.common.local} Llama-3`, status: premiumLocales.llm.inference.router.active, type: 'CORE', model: 'llama3-70b-v45' },
+                            { name: 'Gemini 3 Ultra', status: premiumLocales.llm.inference.router.standby, type: 'CLOUD', model: 'gemini-3-ultra' },
+                            { name: 'Ollama DeepSeek R1', status: premiumLocales.llm.inference.router.active, type: 'CORE', model: 'deepseek-r1:latest' }
                         ].map((p, i) => (
-                            <motion.div whileHover={{ x: 4 }} key={i} className="p-4 bg-slate-950/80 border border-white/5 rounded-2xl flex justify-between items-center group">
+                            <motion.div 
+                                onClick={() => onActiveModelChange && onActiveModelChange(p.model)}
+                                whileHover={{ x: 4 }} key={i} 
+                                className={`p-4 bg-slate-950/80 border ${activeModel === p.model ? 'border-blue-500' : 'border-white/5'} rounded-2xl flex justify-between items-center group cursor-pointer`}
+                            >
                                 <div className="flex items-center gap-4">
                                     <div className={`p-2.5 rounded-xl border ${p.type === 'CORE' ? 'bg-blue-500/10 border-blue-500/20 text-blue-500' : 'bg-purple-500/10 border-purple-500/20 text-purple-500'}`}><Cpu size={16} /></div>
                                     <div>
@@ -173,7 +180,7 @@ export const LLMInferenceView: React.FC<LLMInferenceViewProps> = ({
                                         <div className="text-[10px] text-slate-500 font-mono mt-0.5">{p.model}</div>
                                     </div>
                                 </div>
-                                <div className="text-[10px] font-bold text-emerald-500/50 group-hover:text-emerald-500 transition-colors uppercase tracking-widest">{premiumLocales.llm.inference.router.stable}</div>
+                                <div className="text-[10px] font-bold text-emerald-500/50 group-hover:text-emerald-500 transition-colors uppercase tracking-widest">{p.status}</div>
                             </motion.div>
                         ))}
                     </div>

@@ -81,6 +81,12 @@ from .wargaming import router as wargaming_router
 from .warroom import router as warroom_router
 from .websocket import router as websocket_router
 from .deepseek_tuning import router as deepseek_tuning_router
+from .ai import router as ai_router
+from .neural import router as neural_router
+from .voice import router as voice_router
+from .voice_ws import router as voice_ws_router
+from .rag import router as rag_router
+from .telemetry import router as telemetry_router
 
 __all__ = [
     "admin_chaos_router",
@@ -97,6 +103,8 @@ __all__ = [
     "dashboard_router",
     "db_admin_router",
     "deepseek_tuning_router",
+    "ai_router",
+    "neural_router",
     # "decisions_router",
     "declarations_router",
     "factory_router",
@@ -130,4 +138,10 @@ __all__ = [
     "warroom_router",
     "wargaming_router",
     "websocket_router",
+    "ai_router",
+    "neural_router",
+    "voice_router",
+    "voice_ws_router",
+    "rag_router",
+    "telemetry_router",
 ]

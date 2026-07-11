@@ -10,6 +10,7 @@
  * - Chaos engineering status
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useEffect, useState, useCallback } from 'react';
 import './AZRDashboard.css';
 
@@ -142,7 +143,7 @@ export const AZRDashboard: React.FC = () => {
       <div className="azr-dashboard azr-error">
         <span className="azr-error-icon">❌</span>
         <span>{error}</span>
-        <button onClick={fetchData}>Повторити</button>
+        <Button variant="cyber" onClick={fetchData}>Повторити</Button>
       </div>
     );
   }
@@ -168,13 +169,13 @@ export const AZRDashboard: React.FC = () => {
 
         <div className="azr-controls">
           {status.is_frozen ? (
-            <button className="azr-btn azr-btn-unfreeze" onClick={handleUnfreeze}>
+            <Button variant="cyber" className="azr-btn azr-btn-unfreeze" onClick={handleUnfreeze}>
               ♻️  озморозити
-            </button>
+            </Button>
           ) : (
-            <button className="azr-btn azr-btn-freeze" onClick={handleFreeze}>
+            <Button variant="cyber" className="azr-btn azr-btn-freeze" onClick={handleFreeze}>
               🛑 Заморозити
-            </button>
+            </Button>
           )}
         </div>
       </div>
@@ -218,30 +219,30 @@ export const AZRDashboard: React.FC = () => {
 
       {/* Tabs */}
       <div className="azr-tabs">
-        <button
+        <Button variant="cyber"
           className={`azr-tab ${selectedTab === 'overview' ? 'active' : ''}`}
           onClick={() => setSelectedTab('overview')}
         >
           📊 Огляд
-        </button>
-        <button
+        </Button>
+        <Button variant="cyber"
           className={`azr-tab ${selectedTab === 'health' ? 'active' : ''}`}
           onClick={() => setSelectedTab('health')}
         >
           💊 Здоров'я
-        </button>
-        <button
+        </Button>
+        <Button variant="cyber"
           className={`azr-tab ${selectedTab === 'experience' ? 'active' : ''}`}
           onClick={() => setSelectedTab('experience')}
         >
           📚 Досвід
-        </button>
-        <button
+        </Button>
+        <Button variant="cyber"
           className={`azr-tab ${selectedTab === 'chaos' ? 'active' : ''}`}
           onClick={() => setSelectedTab('chaos')}
         >
           🎲 Хаос
-        </button>
+        </Button>
       </div>
 
       {/* Tab Content */}
@@ -377,12 +378,12 @@ export const AZRDashboard: React.FC = () => {
             </div>
 
             <div className="azr-chaos-controls">
-              <button className="azr-btn azr-btn-chaos" onClick={() => fetch(`${API_BASE}/chaos/enable`, { method: 'POST' })}>
+              <Button variant="cyber" className="azr-btn azr-btn-chaos" onClick={() => fetch(`${API_BASE}/chaos/enable`, { method: 'POST' })}>
                 ⚡ Увімкнути
-              </button>
-              <button className="azr-btn azr-btn-chaos-off" onClick={() => fetch(`${API_BASE}/chaos/disable`, { method: 'POST' })}>
+              </Button>
+              <Button variant="cyber" className="azr-btn azr-btn-chaos-off" onClick={() => fetch(`${API_BASE}/chaos/disable`, { method: 'POST' })}>
                 🛡️ Вимкнути
-              </button>
+              </Button>
             </div>
 
             <div className="azr-chaos-scenarios">

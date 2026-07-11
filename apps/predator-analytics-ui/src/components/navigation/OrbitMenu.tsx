@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Cpu, Dna, Fingerprint, Network, Search, Trophy } from 'lucide-react';
 import React, { useState } from 'react';
@@ -72,7 +73,7 @@ const OrbitMenu: React.FC = () => {
                   transition={{ delay: i * 0.05, type: "spring", stiffness: 200 }}
                   className="absolute pointer-events-auto"
                 >
-                  <button
+                  <Button variant="cyber"
                     onClick={() => handleNavigate(item.path)}
                     className="flex flex-col items-center group"
                   >
@@ -92,7 +93,7 @@ const OrbitMenu: React.FC = () => {
                       </span>
                       <div className="w-1 h-1 bg-blue-500 rounded-full mt-1" />
                     </motion.div>
-                  </button>
+                  </Button>
                 </motion.div>
               );
             })}

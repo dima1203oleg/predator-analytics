@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { Lock, ShieldAlert, ShieldCheck, EyeOff, AlertTriangle } from 'lucide-react';
 import { cn } from '../../../lib/utils';
@@ -41,9 +42,9 @@ export const PermissionLayer: React.FC<PermissionLayerProps> = ({
           </div>
         </div>
 
-        <button className="mt-10 px-10 py-4 bg-rose-600 text-white text-[11px] font-black uppercase tracking-[0.4em] rounded-xl hover:bg-rose-700 transition-all  italic">
+        <Button variant="cyber" className="mt-10 px-10 py-4 bg-rose-600 text-white text-[11px] font-black uppercase tracking-[0.4em] rounded-xl hover:bg-rose-700 transition-all  italic">
           ЗАПИТАТИ ДОСТУП
-        </button>
+        </Button>
         
         {/* Security Scan Effect */}
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-rose-500/50 to-transparent animate-scan" />

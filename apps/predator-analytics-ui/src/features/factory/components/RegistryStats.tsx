@@ -20,8 +20,8 @@ export function RegistryStats({ stats }: RegistryStatsProps) {
 
     if (status === 'offline') {
       return {
-        dot: 'bg-rose-500 ',
-        text: 'text-rose-500',
+        dot: 'bg-cyan-500 ',
+        text: 'text-cyan-500',
         label: 'Помилка',
       };
     }
@@ -65,8 +65,8 @@ export function RegistryStats({ stats }: RegistryStatsProps) {
       name: 'OpenSearch', 
       icon: Search, 
       color: 'text-rose-400', 
-      bg: 'bg-rose-500/10',
-      border: 'border-rose-500/20',
+      bg: 'bg-cyan-500/10',
+      border: 'border-cyan-500/20',
       metrics: [
         { label: 'Документів', value: stats.opensearch.docs },
         { label: 'Індексів', value: stats.opensearch.indices }
@@ -91,8 +91,8 @@ export function RegistryStats({ stats }: RegistryStatsProps) {
       name: 'Redis Cache', 
       icon: Activity, 
       color: 'text-rose-400', 
-      bg: 'bg-rose-500/10',
-      border: 'border-rose-500/20',
+      bg: 'bg-cyan-500/10',
+      border: 'border-cyan-500/20',
       metrics: [
         { label: 'Ключів', value: stats.redis.keys },
         { label: 'Пам\'ять', value: stats.redis.memory }

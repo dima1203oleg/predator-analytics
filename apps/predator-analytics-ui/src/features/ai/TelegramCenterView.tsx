@@ -7,6 +7,7 @@
  * © 2026 PREDATOR Analytics
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
@@ -69,12 +70,12 @@ export default function TelegramCenterView() {
            <HoloCard variant="cyber" className="px-8 py-4 flex items-center gap-6 bg-slate-950/50 border-sky-500/20">
               <div className="text-right">
                  <div className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Статус бота</div>
-                 <div className={cn("text-2xl font-black italic", isBotActive ? "text-emerald-500" : "text-rose-500")}>
+                 <div className={cn("text-2xl font-black italic", isBotActive ? "text-emerald-500" : "text-cyan-500")}>
                     {isBotActive ? 'ОНЛАЙН' : 'ОФЛАЙН'}
                  </div>
               </div>
               <div className="w-px h-10 bg-white/5" />
-              <Radio className={isBotActive ? "text-emerald-500 " : "text-rose-500"} size={24} />
+              <Radio className={isBotActive ? "text-emerald-500 " : "text-cyan-500"} size={24} />
            </HoloCard>
         </div>
       </div>
@@ -88,7 +89,7 @@ export default function TelegramCenterView() {
                     <div className="flex items-center gap-6">
                        <div className={cn(
                          "p-3 rounded-xl border transition-all",
-                         log.status === 'success' ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-500" : "bg-rose-500/10 border-rose-500/20 text-rose-500"
+                         log.status === 'success' ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-500" : "bg-cyan-500/10 border-cyan-500/20 text-cyan-500"
                        )}>
                           <Terminal size={18} />
                        </div>
@@ -101,29 +102,29 @@ export default function TelegramCenterView() {
                     </div>
                     <Badge className={cn(
                       "text-[8px] font-black border-none",
-                      log.status === 'success' ? "bg-emerald-500/10 text-emerald-500" : "bg-rose-500/10 text-rose-500"
+                      log.status === 'success' ? "bg-emerald-500/10 text-emerald-500" : "bg-cyan-500/10 text-cyan-500"
                     )}>{log.status.toUpperCase()}</Badge>
                  </div>
                ))}
             </div>
-            <button className="w-full mt-6 py-4 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl text-[10px] font-black text-slate-500 uppercase tracking-widest italic transition-all">
+            <Button variant="cyber" className="w-full mt-6 py-4 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl text-[10px] font-black text-slate-500 uppercase tracking-widest italic transition-all">
                ЗАВАНТАЖИТИ_ПОВНИЙ_ЛОГ
-            </button>
+            </Button>
           </HoloCard>
 
-          <HoloCard variant="cyber" className="p-8 rounded-[36px] bg-rose-600/5 border-rose-500/30">
+          <HoloCard variant="cyber" className="p-8 rounded-[36px] bg-cyan-600/5 border-cyan-500/30">
               <div className="flex items-center gap-6 mb-8">
-                 <div className="p-4 bg-rose-600/20 rounded-2xl text-rose-500 shadow-2xl">
+                 <div className="p-4 bg-cyan-600/20 rounded-2xl text-cyan-500 shadow-2xl">
                     <ShieldAlert size={32} />
                  </div>
                  <div>
                     <h4 className="text-2xl font-black text-white uppercase tracking-tighter italic">Emergency Stop</h4>
-                    <p className="text-[10px] font-black text-rose-500/60 uppercase tracking-widest">МИТТЄВА_ЗУПИНКА_ВСІХ_АГЕНТІВ</p>
+                    <p className="text-[10px] font-black text-cyan-500/60 uppercase tracking-widest">МИТТЄВА_ЗУПИНКА_ВСІХ_АГЕНТІВ</p>
                  </div>
               </div>
-              <button className="w-full py-6 bg-rose-600 hover:bg-rose-500 text-white rounded-3xl text-sm font-black uppercase tracking-[0.4em] italic transition-all shadow-4xl shadow-rose-900/40">
+              <Button variant="cyber" className="w-full py-6 bg-cyan-600 hover:bg-cyan-500 text-white rounded-3xl text-sm font-black uppercase tracking-[0.4em] italic transition-all shadow-4xl shadow-rose-900/40">
                 АКТИВУВАТИ_КІЛЛ-СВІТЧ
-              </button>
+              </Button>
            </HoloCard>
         </div>
 
@@ -171,9 +172,9 @@ export default function TelegramCenterView() {
                       value="https://api.predator.ua/v1/tg/webhook/0x92f..."
                       className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-[10px] font-mono text-slate-500 focus:outline-none"
                     />
-                    <button className="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-slate-600 hover:text-white transition-all">
+                    <Button variant="cyber" className="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-slate-600 hover:text-white transition-all">
                        <RefreshCw size={14} />
-                    </button>
+                    </Button>
                  </div>
                  <div className="flex items-center gap-3 text-[8px] font-black text-slate-700 uppercase tracking-widest italic">
                     <Lock size={10} /> Шифрування за замовчуванням

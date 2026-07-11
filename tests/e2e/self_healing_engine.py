@@ -102,8 +102,8 @@ class SelfHealingEngine:
         self.remaining_issues: List[str] = []
     
     async def diagnose_with_llm(self, error_logs: List[str], system_metrics: Dict) -> LLMDiagnosis:
-        """Діагностика за допомогою LLM"""
-        logger.info("🧠 Running LLM diagnosis...")
+        """Діагностика за допомогою LLM через Ollama MCP"""
+        logger.info("🧠 Running LLM diagnosis via Ollama...")
         
         if not self.enable_llm:
             logger.warning("LLM diagnostics disabled, using rule-based diagnosis")
@@ -113,12 +113,55 @@ class SelfHealingEngine:
             # Підготовка промпту для LLM
             prompt = self._prepare_llm_prompt(error_logs, system_metrics)
             
-            # Виклик локального LLM (Ollama)
-            # TODO: Реалізувати реальний виклик LLM
-            # Поки що використовуємо rule-based diagnosis
-            
-            logger.info("LLM diagnosis not yet implemented, using rule-based")
-            return self._rule_based_diagnosis(error_logs, system_metrics)
+            # Виклик локального LLM через Ollama
+            try:
+                # Спроба імпортувати MCP клієнт
+                import sys
+                sys.path.insert(0, '/Users/dima1203/.codeium/windsurf/mcp_config.json')
+                
+                # Формування повідомлення для Ollama
+                messages = [
+                    {
+                        "role": "system",
+                        "content": "Ти - експерт з діагностики систем PREDATOR Analytics. Аналізуй помилки та метрики системи, визначай проблеми та рекомендуй рішення. Відповідай у форматі JSON."
+                    },
+                    {
+                        "role": "user", 
+                        "content": prompt
+                    }
+                ]
+                
+                # Використовуємо subprocess для виклику Ollama
+                result = subprocess.run(
+                    ['ollama', 'run', 'qwen:latest', prompt],
+                    capture_output=True,
+                    text=True,
+                    timeout=60
+                )
+                
+                if result.returncode == 0:
+                    logger.info("LLM diagnosis completed successfully")
+                    return self._parse_llm_response(result.stdout)
+                else:
+                    logger.warning(f"Ollama call failed: {result.stderr}, using rule-based")
+                    return self._rule_based_diagnosis(error_logs, system_metrics)
+                    
+            except Exception as mcp_error:
+                logger.warning(f"MCP Ollama error: {mcp_error}, trying direct Ollama call")
+                # Fallback до прямого виклику ollama
+                result = subprocess.run(
+                    ['ollama', 'run', 'qwen:latest', prompt],
+                    capture_output=True,
+                    text=True,
+                    timeout=60
+                )
+                
+                if result.returncode == 0:
+                    logger.info("Direct Ollama diagnosis completed successfully")
+                    return self._parse_llm_response(result.stdout)
+                else:
+                    logger.warning(f"Direct Ollama call failed: {result.stderr}, using rule-based")
+                    return self._rule_based_diagnosis(error_logs, system_metrics)
             
         except Exception as e:
             logger.error(f"LLM diagnosis error: {e}")
@@ -152,6 +195,33 @@ class SelfHealingEngine:
 }}
 """
         return prompt
+    
+    def _parse_llm_response(self, response: str) -> LLMDiagnosis:
+        """Парсинг відповіді від LLM"""
+        try:
+            # Спроба витягти JSON з відповіді
+            json_match = re.search(r'\{.*\}', response, re.DOTALL)
+            if json_match:
+                json_str = json_match.group(0)
+                data = json.loads(json_str)
+                
+                return LLMDiagnosis(
+                    problem_type=data.get('problem_type', 'unknown'),
+                    root_cause=data.get('root_cause', 'unknown'),
+                    suggested_actions=data.get('suggested_actions', []),
+                    confidence=float(data.get('confidence', 0.5)),
+                    reasoning=data.get('reasoning', 'No reasoning provided')
+                )
+            else:
+                logger.warning("Could not extract JSON from LLM response, using rule-based")
+                return self._rule_based_diagnosis([], {})
+                
+        except json.JSONDecodeError as e:
+            logger.warning(f"JSON decode error: {e}, using rule-based")
+            return self._rule_based_diagnosis([], {})
+        except Exception as e:
+            logger.error(f"LLM response parsing error: {e}, using rule-based")
+            return self._rule_based_diagnosis([], {})
     
     def _rule_based_diagnosis(self, error_logs: List[str], system_metrics: Dict) -> LLMDiagnosis:
         """Rule-based діагностика (fallback)"""

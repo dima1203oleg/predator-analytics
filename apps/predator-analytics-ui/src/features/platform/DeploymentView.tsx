@@ -1,4 +1,5 @@
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useRef } from 'react';
 import { ViewHeader } from '@/components/ViewHeader';
 import { HoloCard } from '@/components/ui/HoloCard';
@@ -121,7 +122,7 @@ const DeploymentView: React.FC = () => {
 
             <div className="flex p-1 bg-slate-950/50  border border-white/5 rounded-2xl overflow-x-auto scrollbar-hide">
                 {tabConfig.map(tab => (
-                    <button
+                    <Button variant="cyber"
                         key={tab.id} onClick={() => setActiveTab(tab.id as DeployTab)}
                         className={`
                             flex-1 min-w-[200px] py-4 rounded-xl text-[10px] font-bold transition-all flex items-center justify-center gap-4 relative overflow-hidden group
@@ -131,7 +132,7 @@ const DeploymentView: React.FC = () => {
                         <tab.icon size={16} />
                         <span className="uppercase tracking-[0.3em]">{tab.label}</span>
                         {activeTab === tab.id && <motion.div layoutId="deployTabGlow" className="absolute bottom-0 left-0 right-0 h-1 bg-blue-500 blur-[1px]" />}
-                    </button>
+                    </Button>
                 ))}
             </div>
 

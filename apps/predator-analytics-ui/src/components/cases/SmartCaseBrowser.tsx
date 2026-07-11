@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -126,9 +127,9 @@ const CaseCard = ({ caseItem, onClick }: { caseItem: Case; onClick: () => void }
             <span>{new Date(caseItem.created_at).toLocaleDateString('uk-UA')}</span>
           </div>
         </div>
-        <button className="p-1.5 hover:bg-white/10 rounded-lg transition-colors group">
+        <Button variant="cyber" className="p-1.5 hover:bg-white/10 rounded-lg transition-colors group">
           <ArrowUpRight size={16} className="text-slate-400 group-hover:text-cyan-400" />
-        </button>
+        </Button>
       </div>
     </motion.div>
   );
@@ -171,9 +172,9 @@ const CaseListItem = ({ caseItem, onClick }: { caseItem: Case; onClick: () => vo
         <span>{new Date(caseItem.created_at).toLocaleDateString('uk-UA')}</span>
       </div>
 
-      <button className="p-2 hover:bg-white/10 rounded-lg">
+      <Button variant="cyber" className="p-2 hover:bg-white/10 rounded-lg">
         <MoreHorizontal size={16} className="text-slate-400" />
-      </button>
+      </Button>
     </motion.div>
   );
 };
@@ -282,18 +283,18 @@ export const SmartCaseBrowser: React.FC<{ onCaseSelect?: (caseItem: Case) => voi
 
           {/* View Toggle */}
           <div className="flex items-center bg-white/5 rounded-xl border border-white/10 p-1">
-            <button
+            <Button variant="cyber"
               onClick={() => setViewMode('grid')}
               className={`p-2 rounded-lg transition-colors ${viewMode === 'grid' ? 'bg-white/10 text-cyan-400' : 'text-slate-400'}`}
             >
               <LayoutGrid size={18} />
-            </button>
-            <button
+            </Button>
+            <Button variant="cyber"
               onClick={() => setViewMode('list')}
               className={`p-2 rounded-lg transition-colors ${viewMode === 'list' ? 'bg-white/10 text-cyan-400' : 'text-slate-400'}`}
             >
               <List size={18} />
-            </button>
+            </Button>
           </div>
         </div>
       </div>

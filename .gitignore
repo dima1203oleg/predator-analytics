@@ -142,3 +142,9 @@ scratch/
 # Playwright generated artifacts
 apps/predator-analytics-ui/playwright-report/
 zrok
+.turbo/
+
+.turbo
+**/trace.zip
+**/video.webm
+**/error-context.md

@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Server, Database, Globe, ShieldAlert, CheckCircle, AlertTriangle, XCircle, Cpu, ShieldCheck, Activity, Target } from 'lucide-react';
@@ -113,13 +114,13 @@ export const UtosDashboard: React.FC = () => {
           
           <div className="flex items-center gap-4">
             {loading && <div className="text-cyan-400 animate-pulse text-sm font-mono tracking-widest">ВИКОНАННЯ_КВАНТОВОГО_АУДИТУ...</div>}
-            <button 
+            <Button variant="cyber" 
               onClick={fetchStatus}
               disabled={loading}
               className="px-6 py-3 bg-cyan-500/10 hover:bg-cyan-400/20 rounded-none border border-cyan-400/50 transition-all text-sm font-mono tracking-widest disabled:opacity-50 text-cyan-300 shadow-[0_0_15px_rgba(34,211,238,0.15)]"
             >
               ІНІЦІЮВАТИ АУДИТ
-            </button>
+            </Button>
           </div>
         </div>
 

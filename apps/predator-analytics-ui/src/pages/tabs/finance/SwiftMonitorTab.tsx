@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
@@ -161,11 +162,11 @@ export const SwiftMonitorTab: React.FC = () => {
           ))}
         </div>
 
-        <button className="mt-6 relative w-full py-5 group/btn overflow-hidden rounded-[1.5rem] border border-emerald-600/20 bg-emerald-600/5 hover:bg-emerald-600 transition-colors duration-500">
+        <Button variant="cyber" className="mt-6 relative w-full py-5 group/btn overflow-hidden rounded-[1.5rem] border border-emerald-600/20 bg-emerald-600/5 hover:bg-emerald-600 transition-colors duration-500">
           <div className="relative text-emerald-600 group-hover/btn:text-white font-black uppercase tracking-[0.4em] text-[10px] italic transition-colors">
             БЛОКУВАТИ ПОТІК
           </div>
-        </button>
+        </Button>
       </div>
       
       <style>{`

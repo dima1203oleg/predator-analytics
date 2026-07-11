@@ -10,6 +10,7 @@
  * © 2026 PREDATOR Analytics | High-Fidelity Data Engineering
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -31,7 +32,7 @@ import { PipelineMonitor } from '@/components/pipeline/PipelineMonitor';
 import { api } from '@/services/api';
 import { cn } from '@/utils/cn';
 import { Badge } from '@/components/ui/badge';
-
+import { TelegramIntelligencePanel } from '@/components/premium/TelegramIntelligencePanel';
 // ========================
 // Types & Constants
 // ========================
@@ -89,10 +90,10 @@ const ConnectorCard: React.FC<{
                     <Icon size={28} className={cn(connector.status === 'syncing' && "animate-spin")} />
                 </div>
                 <div className="flex gap-3">
-                    <button className="p-3 bg-white/5 border border-white/10 rounded-xl text-slate-500 hover:text-white transition-all">
+                    <Button variant="cyber" className="p-3 bg-white/5 border border-white/10 rounded-xl text-slate-500 hover:text-white transition-all">
                         <Settings size={16} />
-                    </button>
-                    <button
+                    </Button>
+                    <Button variant="cyber"
                         onClick={() => { play(UISoundType.CLICK); onSync(connector.id); }} onMouseEnter={() => play(UISoundType.HOVER)}
                         disabled={connector.status === 'syncing'}
                         className={cn(
@@ -102,7 +103,7 @@ const ConnectorCard: React.FC<{
                         )}
                     >
                         {connector.status === 'syncing' ? <RefreshCw size={16} className="animate-spin" /> : <Play size={16} className="fill-current" />}
-                    </button>
+                    </Button>
                 </div>
             </div>
 
@@ -239,7 +240,7 @@ const ParsersView: React.FC = () => {
                     ))}
                     
                     {/* Placeholder for "Add" */}
-                    <button 
+                    <Button variant="cyber" 
                         onClick={() => { play(UISoundType.CLICK); setIsModalOpen(true); }} onMouseEnter={() => play(UISoundType.HOVER)}
                         className="border-2 border-dashed border-white/5 rounded-[32px] p-8 flex flex-col items-center justify-center gap-4 text-slate-600 hover:border-emerald-500/30 hover:text-emerald-400 hover:bg-emerald-500/5 transition-all group min-h-[300px]"
                     >
@@ -247,7 +248,7 @@ const ParsersView: React.FC = () => {
                             <Plus size={32} />
                         </div>
                         <span className="font-black text-[10px] uppercase tracking-[0.5em] italic">ДОДАТИ_ВУЗОЛ_ДАНИХ</span>
-                    </button>
+                    </Button>
                 </div>
 
                 {/* ETL Status Panel */}
@@ -277,13 +278,36 @@ const ParsersView: React.FC = () => {
                             ))}
                         </div>
                         <div className="w-full lg:w-auto">
-                            <button className="w-full lg:w-auto px-10 py-6 bg-white/5 border border-white/10 rounded-[30px] text-[10px] font-black text-white uppercase tracking-[0.4em] hover:bg-white/10 transition-all flex items-center justify-center gap-4 group italic">
+                            <Button variant="cyber" className="w-full lg:w-auto px-10 py-6 bg-white/5 border border-white/10 rounded-[30px] text-[10px] font-black text-white uppercase tracking-[0.4em] hover:bg-white/10 transition-all flex items-center justify-center gap-4 group italic">
                                 ПЕ ЕГЛЯНУТИ_СИСТЕМНІ_ЛОГИ <Terminal size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 </HoloCard>
             </div>
+
+            <AnimatePresence>
+                {isModalOpen && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8">
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsModalOpen(false)} className="absolute inset-0 bg-black/90 backdrop-blur-sm" />
+                        <motion.div
+                            initial={{ scale: 0.95, y: 20, opacity: 0 }}
+                            animate={{ scale: 1, y: 0, opacity: 1 }}
+                            exit={{ scale: 0.95, opacity: 0 }}
+                            className="relative w-full max-w-7xl border border-white/10 rounded-[2rem] overflow-hidden h-[95vh] flex flex-col shadow-2xl"
+                        >
+                            <div className="absolute top-6 right-6 z-50">
+                                <Button variant="cyber" onClick={() => setIsModalOpen(false)} className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-2xl text-rose-400 hover:bg-rose-500/20 hover:text-rose-300 transition-all">
+                                    <X size={24} />
+                                </Button>
+                            </div>
+                            <div className="flex-1 overflow-hidden">
+                                <TelegramIntelligencePanel />
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
 
             <style dangerouslySetInnerHTML={{ __html: `
                 .panel-3d {

@@ -4,6 +4,7 @@
  * Ультрапреміальний інструмент стратегічного планування Horizon Engine
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -214,10 +215,10 @@ const ScenarioModeling: React.FC = () => {
                 ]}
                 actions={
                     <div className="flex gap-3">
-                        <button className="px-5 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-slate-300 font-bold text-xs uppercase tracking-widest hover:bg-slate-800 hover:text-white transition-all flex items-center gap-2">
+                        <Button variant="cyber" className="px-5 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-slate-300 font-bold text-xs uppercase tracking-widest hover:bg-slate-800 hover:text-white transition-all flex items-center gap-2">
                             <Save className="w-4 h-4" /> Зберегти
-                        </button>
-                        <button
+                        </Button>
+                        <Button variant="cyber"
                             onClick={runSimulation}
                             disabled={isSimulating}
                             className={cn(
@@ -234,7 +235,7 @@ const ScenarioModeling: React.FC = () => {
                                 {isSimulating ? <Activity className="w-4 h-4 " /> : <Play className="w-4 h-4" />}
                                 {isSimulating ? ` озрахунок... ${Math.round(scanProgress)}%` : 'Запустити'}
                             </div>
-                        </button>
+                        </Button>
                     </div>
                 }
             />
@@ -355,9 +356,9 @@ const ScenarioModeling: React.FC = () => {
 
                                 <div className="flex gap-2">
                                     {['Q1', 'Q2', 'Q3', 'Q4'].map((q, i) => (
-                                        <button key={q} className={cn("px-3 py-1 rounded text-xs font-black uppercase tracking-widest transition-colors", i === 2 ? "bg-violet-500/20 text-violet-400 border border-violet-500/30" : "bg-black/40 text-slate-500 border border-transparent hover:bg-white/5 hover:text-white")}>
+                                        <Button variant="cyber" key={q} className={cn("px-3 py-1 rounded text-xs font-black uppercase tracking-widest transition-colors", i === 2 ? "bg-violet-500/20 text-violet-400 border border-violet-500/30" : "bg-black/40 text-slate-500 border border-transparent hover:bg-white/5 hover:text-white")}>
                                             {q}
-                                        </button>
+                                        </Button>
                                     ))}
                                 </div>
                             </div>

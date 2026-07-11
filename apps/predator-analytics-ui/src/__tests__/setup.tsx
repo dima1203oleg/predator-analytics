@@ -3,6 +3,7 @@
 // Ініціалізація DOM-тестів: jsdom + jest-dom matchers
 // ═══════════════════════════════════════════════════════════════════════════════
 
+import { Button } from '@/components/ui/button';
 import { vi } from 'vitest'
 import React from 'react'
 import '@testing-library/jest-dom'
@@ -67,7 +68,7 @@ vi.mock('framer-motion', () => ({
     motion: {
         div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
         span: ({ children, ...props }: any) => <span {...props}>{children}</span>,
-        button: ({ children, ...props }: any) => <button {...props}>{children}</button>,
+        button: ({ children, ...props }: any) => <Button variant="cyber" {...props}>{children}</Button>,
         section: ({ children, ...props }: any) => <section {...props}>{children}</section>,
         article: ({ children, ...props }: any) => <article {...props}>{children}</article>,
         p: ({ children, ...props }: any) => <p {...props}>{children}</p>,

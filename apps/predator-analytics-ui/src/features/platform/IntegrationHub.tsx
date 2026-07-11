@@ -5,6 +5,7 @@
  * 1C, SAP, CRM, ERP, Webhooks
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -161,7 +162,7 @@ const IntegrationCard: React.FC<{ integration: Integration; onConnect: () => voi
             </>
           )}
 
-          <button
+          <Button variant="cyber"
             onClick={onConnect}
             disabled={integration.isPremium && integration.status === 'disconnected'}
             className={`mt-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${integration.status === 'connected'
@@ -173,7 +174,7 @@ const IntegrationCard: React.FC<{ integration: Integration; onConnect: () => voi
           >
             {integration.status === 'connected' ? 'Налаштувати' :
               integration.isPremium ? 'Оновити' : 'Підключити'}
-          </button>
+          </Button>
         </div>
       </div>
     </motion.div>
@@ -196,9 +197,9 @@ const WebhookRow: React.FC<{ webhook: WebhookConfig }> = ({ webhook }) => {
             <code className="text-xs text-slate-500 truncate max-w-xs">
               {showUrl ? webhook.url : webhook.url.replace(/\/\/.*@/, '//***@').slice(0, 40) + '...'}
             </code>
-            <button onClick={() => setShowUrl(!showUrl)} className="p-1">
+            <Button variant="cyber" onClick={() => setShowUrl(!showUrl)} className="p-1">
               {showUrl ? <EyeOff size={12} className="text-slate-500" /> : <Eye size={12} className="text-slate-500" />}
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -220,12 +221,12 @@ const WebhookRow: React.FC<{ webhook: WebhookConfig }> = ({ webhook }) => {
         </div>
 
         <div className="flex items-center gap-1">
-          <button className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white" title="Налаштування">
+          <Button variant="cyber" className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white" title="Налаштування">
             <Settings size={16} />
-          </button>
-          <button className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-amber-400" title="Видалити">
+          </Button>
+          <Button variant="cyber" className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-amber-400" title="Видалити">
             <Trash2 size={16} />
-          </button>
+          </Button>
         </div>
       </div>
     </div>
@@ -290,10 +291,10 @@ const IntegrationHub: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-3">
-            <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-xl font-bold text-sm">
+            <Button variant="cyber" className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-xl font-bold text-sm">
               <Plus size={16} />
               Нова інтеграція
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -339,7 +340,7 @@ const IntegrationHub: React.FC = () => {
             { id: 'webhooks', label: 'Webhooks', icon: Webhook },
             { id: 'api', label: 'API Keys', icon: Key },
           ].map((tab) => (
-            <button
+            <Button variant="cyber"
               key={tab.id}
               onClick={() => setActiveTab(tab.id as typeof activeTab)}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm transition-colors ${activeTab === tab.id ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-500 hover:text-white'
@@ -347,7 +348,7 @@ const IntegrationHub: React.FC = () => {
             >
               <tab.icon size={16} />
               {tab.label}
-            </button>
+            </Button>
           ))}
         </div>
 
@@ -368,22 +369,22 @@ const IntegrationHub: React.FC = () => {
               </div>
 
               <div className="flex gap-2">
-                <button
+                <Button variant="cyber"
                   onClick={() => setFilterType('all')}
                   className={`px-3 py-2 rounded-xl text-sm font-medium transition-colors ${filterType === 'all' ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-500 hover:text-white'
                     }`}
                 >
                   Всі
-                </button>
+                </Button>
                 {Object.entries(typeConfig).map(([key, config]) => (
-                  <button
+                  <Button variant="cyber"
                     key={key}
                     onClick={() => setFilterType(key as IntegrationType)}
                     className={`px-3 py-2 rounded-xl text-sm font-medium transition-colors ${filterType === key ? `bg-${config.color}-500/20 text-${config.color}-400` : 'text-slate-500 hover:text-white'
                       }`}
                   >
                     {config.label}
-                  </button>
+                  </Button>
                 ))}
               </div>
             </div>
@@ -406,10 +407,10 @@ const IntegrationHub: React.FC = () => {
           <div className="space-y-4">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-bold text-white">Налаштовані Webhooks</h3>
-              <button className="flex items-center gap-2 px-4 py-2 bg-purple-500/20 text-purple-400 rounded-xl text-sm font-bold">
+              <Button variant="cyber" className="flex items-center gap-2 px-4 py-2 bg-purple-500/20 text-purple-400 rounded-xl text-sm font-bold">
                 <Plus size={16} />
                 Новий Webhook
-              </button>
+              </Button>
             </div>
 
             {webhooks.map((webhook) => (
@@ -431,12 +432,12 @@ const IntegrationHub: React.FC = () => {
                     <p className="font-bold text-white text-sm">Виробничий ключ (Production)</p>
                     <code className="text-xs text-slate-500">pk_live_••••••••••••••••</code>
                   </div>
-                  <button className="p-2 rounded-lg bg-slate-700 text-slate-400 hover:text-white" title="Копіювати">
+                  <Button variant="cyber" className="p-2 rounded-lg bg-slate-700 text-slate-400 hover:text-white" title="Копіювати">
                     <Copy size={16} />
-                  </button>
-                  <button className="p-2 rounded-lg bg-slate-700 text-slate-400 hover:text-white" title=" егенерувати">
+                  </Button>
+                  <Button variant="cyber" className="p-2 rounded-lg bg-slate-700 text-slate-400 hover:text-white" title=" егенерувати">
                     <RefreshCw size={16} />
-                  </button>
+                  </Button>
                 </div>
 
                 <div className="flex items-center gap-4 p-4 bg-slate-800/50 rounded-xl">
@@ -445,19 +446,19 @@ const IntegrationHub: React.FC = () => {
                     <p className="font-bold text-white text-sm">Тестовий Ключ (Test)</p>
                     <code className="text-xs text-slate-500">pk_test_••••••••••••••••</code>
                   </div>
-                  <button className="p-2 rounded-lg bg-slate-700 text-slate-400 hover:text-white" title="Копіювати">
+                  <Button variant="cyber" className="p-2 rounded-lg bg-slate-700 text-slate-400 hover:text-white" title="Копіювати">
                     <Copy size={16} />
-                  </button>
-                  <button className="p-2 rounded-lg bg-slate-700 text-slate-400 hover:text-white" title=" егенерувати">
+                  </Button>
+                  <Button variant="cyber" className="p-2 rounded-lg bg-slate-700 text-slate-400 hover:text-white" title=" егенерувати">
                     <RefreshCw size={16} />
-                  </button>
+                  </Button>
                 </div>
               </div>
 
-              <button className="mt-4 flex items-center gap-2 px-4 py-2 bg-emerald-500/20 text-emerald-400 rounded-xl text-sm font-bold">
+              <Button variant="cyber" className="mt-4 flex items-center gap-2 px-4 py-2 bg-emerald-500/20 text-emerald-400 rounded-xl text-sm font-bold">
                 <Plus size={16} />
                 Створити новий ключ
-              </button>
+              </Button>
             </div>
           </div>
         )}

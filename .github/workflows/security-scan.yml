@@ -37,12 +37,46 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Scan for secrets
+        run: |
+          gitleaks detect --source . --config-path .gitleaks.toml --report-path gitleaks-report.json --verbose
+          if [ -s gitleaks-report.json ]; then exit 1; fi # Exit with error if secrets are found
+
   # ── 2. Сканування залежностей ──────────────────────────────
   dependency-scan:
     name: "📦 Dependency Scan"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
+
+  # ── 3. Сканування Docker-образів ──────────────────────────
+  trivy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'predator-backend:latest'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+
+  gitleaks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Gitleaks
+        uses: zricethezav/gitleaks-action@v2
+        with:
+          config-path: .gitleaks.toml
+          fail-on-error: true
       matrix:
         include:
           - name: "Python Backend"
@@ -189,3 +223,20 @@ jobs:
           path: |
             sbom-backend.spdx.json
             sbom-frontend.spdx.json
+
+  # ── 7. Telegram notifications ─────────────────────────────
+  notify:
+    needs: [trivy-scan, secret-scan]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Send Telegram notification
+      run: |
+        curl -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+          -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
+          -d text="🔍 Security Scan Completed: ${{ job.status }}"
+
+    - name: Upload report to Telegram
+      if: failure()
+      run: |
+        curl -F "document=@gitleaks-report.json" "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendDocument" \
+          -F chat_id="${{ secrets.TELEGRAM_CHAT_ID }}"

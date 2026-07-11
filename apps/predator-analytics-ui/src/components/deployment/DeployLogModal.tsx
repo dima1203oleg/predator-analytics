@@ -1,4 +1,5 @@
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Terminal, Download, Play, Pause } from 'lucide-react';
 
@@ -77,19 +78,19 @@ export const DeployLogModal: React.FC<DeployLogModalProps> = ({ isOpen, onClose,
                         <h3 className="text-sm font-bold text-slate-200 font-mono">Live Logs: {environmentName}</h3>
                     </div>
                     <div className="flex gap-2">
-                        <button 
+                        <Button variant="cyber" 
                             onClick={() => setIsPaused(!isPaused)}
                             className="p-1.5 hover:bg-slate-800 rounded text-slate-400 hover:text-white transition-colors"
                             title={isPaused ? "Відновити" : "Пауза"}
                         >
                             {isPaused ? <Play size={16} /> : <Pause size={16} />}
-                        </button>
-                        <button className="p-1.5 hover:bg-slate-800 rounded text-slate-400 hover:text-white transition-colors" title="Завантажити">
+                        </Button>
+                        <Button variant="cyber" className="p-1.5 hover:bg-slate-800 rounded text-slate-400 hover:text-white transition-colors" title="Завантажити">
                             <Download size={16} />
-                        </button>
-                        <button onClick={onClose} className="p-1.5 hover:bg-red-900/20 rounded text-slate-400 hover:text-red-400 transition-colors">
+                        </Button>
+                        <Button variant="cyber" onClick={onClose} className="p-1.5 hover:bg-red-900/20 rounded text-slate-400 hover:text-red-400 transition-colors">
                             <X size={16} />
-                        </button>
+                        </Button>
                     </div>
                 </div>
 

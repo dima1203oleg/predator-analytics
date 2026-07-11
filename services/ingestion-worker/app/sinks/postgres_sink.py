@@ -191,32 +191,71 @@ class PostgresSink:
         self,
         job_id: str,
         status: str,
-        progress: int,
-        records_processed: int,
-        records_errors: int,
+        progress: int = 0,
+        records_processed: int = 0,
+        records_errors: int = 0,
+        metadata_updates: dict[str, Any] | None = None,
     ) -> None:
         """Оновлює статус та прогрес завдання інгестії (Метадані)."""
         async with self.async_session() as session:
             try:
-                await session.execute(
-                    text("""
+                from sqlalchemy import text
+
+                # Load current metadata if there are updates
+                if metadata_updates:
+                    res = await session.execute(
+                        text("SELECT metadata FROM ingestion_jobs WHERE id = CAST(:id AS uuid)"),
+                        {"id": job_id},
+                    )
+                    row = res.fetchone()
+                    current_metadata = row[0] if row and row[0] else {}
+                    current_metadata.update(metadata_updates)
+                    
+                    query = text(
+                        """
                         UPDATE ingestion_jobs
                         SET status = :status,
                             progress = :progress,
                             records_processed = :records_processed,
                             records_errors = :records_errors,
-                            updated_at = :updated_at
-                        WHERE id = CAST(:job_id AS uuid)
-                    """),
-                    {
-                        "job_id": job_id,
-                        "status": status,
-                        "progress": progress,
-                        "records_processed": records_processed,
-                        "records_errors": records_errors,
-                        "updated_at": datetime.now(UTC),
-                    },
-                )
+                            metadata = :metadata,
+                            updated_at = now()
+                        WHERE id = CAST(:id AS uuid)
+                        """
+                    )
+                    await session.execute(
+                        query,
+                        {
+                            "id": job_id,
+                            "status": status,
+                            "progress": progress,
+                            "records_processed": records_processed,
+                            "records_errors": records_errors,
+                            "metadata": json.dumps(current_metadata),
+                        },
+                    )
+                else:
+                    query = text(
+                        """
+                        UPDATE ingestion_jobs
+                        SET status = :status,
+                            progress = :progress,
+                            records_processed = :records_processed,
+                            records_errors = :records_errors,
+                            updated_at = now()
+                        WHERE id = CAST(:id AS uuid)
+                        """
+                    )
+                    await session.execute(
+                        query,
+                        {
+                            "id": job_id,
+                            "status": status,
+                            "progress": progress,
+                            "records_processed": records_processed,
+                            "records_errors": records_errors,
+                        },
+                    )
                 await session.commit()
             except Exception as e:
                 logger.error(f"❌ Помилка оновлення прогресу завдання: {e}")
@@ -256,6 +295,35 @@ class PostgresSink:
                 await session.commit()
             except Exception as e:
                 logger.error(f"❌ Помилка маркування події: {e}")
+
+    async def emit_pipeline_event(
+        self, tenant_id: str, ingestion_id: str, step: str, status: str, records_written: int = 0
+    ) -> None:
+        """Записує подію Data Lineage Event (DFTL)."""
+        import uuid
+        async with self.async_session() as session:
+            try:
+                await session.execute(
+                    text("""
+                        INSERT INTO ingestion_lineage_events (
+                            id, tenant_id, ingestion_id, step, status, records_written, timestamp
+                        ) VALUES (
+                            gen_random_uuid(), CAST(:tenant_id AS uuid), CAST(:ingestion_id AS uuid),
+                            :step, :status, :records_written, :timestamp
+                        )
+                    """),
+                    {
+                        "tenant_id": tenant_id,
+                        "ingestion_id": ingestion_id,
+                        "step": step,
+                        "status": status,
+                        "records_written": records_written,
+                        "timestamp": datetime.now(UTC),
+                    }
+                )
+                await session.commit()
+            except Exception as e:
+                logger.error(f"❌ Помилка запису pipeline event: {e}")
 
     async def close(self) -> None:
         """Граціозне закриття з'єднань з БД."""

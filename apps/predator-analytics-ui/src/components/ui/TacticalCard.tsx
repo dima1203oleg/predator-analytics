@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { AnimatePresence, HTMLMotionProps, motion } from 'framer-motion';
 import { AlertCircle, ArrowDown, ArrowUp, CheckCircle, ChevronDown, Info, Minus } from 'lucide-react';
 import React, { useState } from 'react';
@@ -228,7 +229,7 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
               {actions && actions.length > 0 && (
                 <div className="flex gap-4 justify-end pt-8 border-t border-white/5">
                   {actions.map((act, idx) => (
-                    <button
+                    <Button variant="cyber"
                       key={idx}
                       onClick={act.onClick}
                       className={cn(
@@ -240,7 +241,7 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
                     >
                       {act.icon && <span className="group-hover/act:scale-110 transition-transform">{act.icon}</span>}
                       {act.label}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               )}

@@ -1,4 +1,5 @@
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
@@ -239,16 +240,16 @@ export const GraphView = () => {
           >
             {/* Action Toolbar */}
             <div className="absolute top-4 right-4 z-20 flex items-center gap-2 bg-slate-900/80  p-1.5 rounded-lg border border-white/10">
-                <button className="px-3 py-1.5 rounded-md text-[10px] font-black uppercase text-cyan-400 hover:bg-cyan-500/10 transition-colors">
+                <Button variant="cyber" className="px-3 py-1.5 rounded-md text-[10px] font-black uppercase text-cyan-400 hover:bg-cyan-500/10 transition-colors">
                     Повний Екран
-                </button>
+                </Button>
                 <div className="w-px h-4 bg-white/10 mx-1" />
-                <button className="px-3 py-1.5 rounded-md text-[10px] font-black uppercase text-slate-300 hover:bg-white/10 transition-colors">
+                <Button variant="cyber" className="px-3 py-1.5 rounded-md text-[10px] font-black uppercase text-slate-300 hover:bg-white/10 transition-colors">
                     Експорт (CSV/GML)
-                </button>
-                <button className="px-3 py-1.5 rounded-md text-[10px] font-black uppercase text-slate-300 hover:bg-white/10 transition-colors">
+                </Button>
+                <Button variant="cyber" className="px-3 py-1.5 rounded-md text-[10px] font-black uppercase text-slate-300 hover:bg-white/10 transition-colors">
                     Налаштування
-                </button>
+                </Button>
             </div>
 
             {loading ? (

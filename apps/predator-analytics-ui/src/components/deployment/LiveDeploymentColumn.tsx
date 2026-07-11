@@ -1,4 +1,5 @@
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useRef } from 'react';
 import { Server, Activity, AlertTriangle, Play, ShieldAlert, RotateCcw, MonitorPlay, FileText, Cpu, Box, Terminal, RefreshCw, XCircle, CheckCircle2 } from 'lucide-react';
 import { DeploymentEnvironment, DeploymentPod } from '../../types';
@@ -163,15 +164,15 @@ export const LiveDeploymentColumn: React.FC<LiveDeploymentColumnProps> = ({ env,
 
             {/* Actions */}
             <div className="p-3 border-t border-slate-800 bg-slate-950 flex gap-2">
-                <button className="flex-1 py-1.5 bg-slate-800 hover:bg-slate-700 rounded text-[10px] font-bold text-slate-300 transition-colors btn-3d">
+                <Button variant="cyber" className="flex-1 py-1.5 bg-slate-800 hover:bg-slate-700 rounded text-[10px] font-bold text-slate-300 transition-colors btn-3d">
                     <RotateCcw size={12} className="inline mr-1"/>  естарт
-                </button>
-                <button className="flex-1 py-1.5 bg-slate-800 hover:bg-slate-700 rounded text-[10px] font-bold text-slate-300 transition-colors btn-3d">
+                </Button>
+                <Button variant="cyber" className="flex-1 py-1.5 bg-slate-800 hover:bg-slate-700 rounded text-[10px] font-bold text-slate-300 transition-colors btn-3d">
                     <Terminal size={12} className="inline mr-1"/> Логи
-                </button>
-                <button className={`flex-1 py-1.5 rounded text-[10px] font-bold text-white transition-colors btn-3d ${env.status === 'DEGRADED' ? 'bg-red-600 hover:bg-red-500' : 'bg-blue-600 hover:bg-blue-500'}`}>
+                </Button>
+                <Button variant="cyber" className={`flex-1 py-1.5 rounded text-[10px] font-bold text-white transition-colors btn-3d ${env.status === 'DEGRADED' ? 'bg-red-600 hover:bg-red-500' : 'bg-blue-600 hover:bg-blue-500'}`}>
                     {env.status === 'DEGRADED' ? 'Скасувати' : 'Синх.'}
-                </button>
+                </Button>
             </div>
         </div>
     );

@@ -48,10 +48,10 @@ const toneClasses: Record<TrainingTone, { badge: string; panel: string; accent: 
         glow: 'bg-emerald-500/20',
     },
     amber: {
-        badge: 'border-rose-500/30 bg-rose-500/10 text-rose-400 ',
-        panel: 'border-rose-500/10 bg-rose-500/[0.02]',
+        badge: 'border-cyan-500/30 bg-cyan-500/10 text-rose-400 ',
+        panel: 'border-cyan-500/10 bg-cyan-500/[0.02]',
         accent: 'text-rose-400',
-        glow: 'bg-rose-500/20',
+        glow: 'bg-cyan-500/20',
     },
     slate: {
         badge: 'border-white/10 bg-white/5 text-slate-400',
@@ -60,16 +60,16 @@ const toneClasses: Record<TrainingTone, { badge: string; panel: string; accent: 
         glow: 'bg-slate-500/10',
     },
     rose: {
-        badge: 'border-rose-500/30 bg-rose-500/10 text-rose-400 ',
-        panel: 'border-rose-500/10 bg-rose-500/[0.02]',
+        badge: 'border-cyan-500/30 bg-cyan-500/10 text-rose-400 ',
+        panel: 'border-cyan-500/10 bg-cyan-500/[0.02]',
         accent: 'text-rose-400',
-        glow: 'bg-rose-500/20',
+        glow: 'bg-cyan-500/20',
     },
 };
 
 const EmptyState = ({ title, description }: { title: string; description: string }) => (
     <div className="flex min-h-[300px] flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 bg-black/40 px-8 text-center relative overflow-hidden group">
-        <div className="absolute inset-0 bg-rose-500/[0.02] opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+        <div className="absolute inset-0 bg-cyan-500/[0.02] opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
         <motion.div 
             animate={{ rotate: [0, 360] }}
             transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
@@ -77,7 +77,7 @@ const EmptyState = ({ title, description }: { title: string; description: string
         >
             <Brain size={200} />
         </motion.div>
-        <AlertCircle className="mb-6 h-12 w-12 text-rose-500/40 " />
+        <AlertCircle className="mb-6 h-12 w-12 text-cyan-500/40 " />
         <div className="text-xl font-black text-white/90 tracking-widest uppercase italic">{title}</div>
         <div className="mt-3 max-w-md text-xs leading-6 text-white/30 font-mono tracking-tighter">{description}</div>
     </div>
@@ -209,7 +209,7 @@ export default function ModelTrainingView() {
 
     return (
         <PageTransition>
-            <div className="relative min-h-full bg-[#050202] p-8 lg:p-12 overflow-hidden selection:bg-rose-500/30">
+            <div className="relative min-h-full bg-[#050202] p-8 lg:p-12 overflow-hidden selection:bg-cyan-500/30">
                 <CyberGrid opacity={0.04} />
                 
                 {/* Tactical Overlays */}
@@ -223,17 +223,17 @@ export default function ModelTrainingView() {
                             <div className="flex flex-col gap-2">
                                 <div className="flex items-center gap-4">
                                     <div className="relative group">
-                                        <div className="absolute inset-0 bg-rose-500/20 blur-2xl rounded-full scale-0 group-hover:scale-150 transition-transform duration-1000" />
-                                        <div className="relative w-14 h-14 bg-rose-500/10 border border-rose-500/20 rounded-sm flex items-center justify-center ">
-                                            <Brain size={28} className="text-rose-500 " />
+                                        <div className="absolute inset-0 bg-cyan-500/20 blur-2xl rounded-full scale-0 group-hover:scale-150 transition-transform duration-1000" />
+                                        <div className="relative w-14 h-14 bg-cyan-500/10 border border-cyan-500/20 rounded-sm flex items-center justify-center ">
+                                            <Brain size={28} className="text-cyan-500 " />
                                         </div>
                                     </div>
                                     <div className="flex flex-col">
                                         <h1 className="text-4xl font-black tracking-[0.2em] uppercase italic text-white/90">
-                                            Fine-Tune <span className="text-rose-500">Lab</span>
+                                            Fine-Tune <span className="text-cyan-500">Lab</span>
                                         </h1>
                                         <div className="flex items-center gap-3 text-[9px] font-mono font-black tracking-[0.4em] text-white/20 uppercase mt-1">
-                                            <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping" />
+                                            <div className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-ping" />
                                             Активна Нейронна Синхронізація [X-GRID]
                                         </div>
                                     </div>
@@ -274,11 +274,11 @@ export default function ModelTrainingView() {
                                 className={cn(
                                     'p-4 border rounded-sm text-[10px] font-mono font-black uppercase tracking-widest flex items-center gap-4',
                                     feedbackTone === 'amber'
-                                        ? 'bg-rose-500/10 border-rose-500/30 text-rose-400'
+                                        ? 'bg-cyan-500/10 border-cyan-500/30 text-rose-400'
                                         : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400',
                                 )}
                             >
-                                <div className={cn("w-2 h-2 rounded-full ", feedbackTone === 'amber' ? "bg-rose-500" : "bg-emerald-500")} />
+                                <div className={cn("w-2 h-2 rounded-full ", feedbackTone === 'amber' ? "bg-cyan-500" : "bg-emerald-500")} />
                                 {feedbackMessage}
                                 <div className="ml-auto flex gap-1">
                                     {[1,2,3].map(i => <div key={i} className="w-3 h-[1px] bg-current opacity-40" />)}
@@ -309,7 +309,7 @@ export default function ModelTrainingView() {
                                             </Badge>
                                         </div>
                                         
-                                        <p className="text-[11px] leading-relaxed text-white/50 font-mono tracking-tight border-l-2 border-rose-500/20 pl-4 italic">
+                                        <p className="text-[11px] leading-relaxed text-white/50 font-mono tracking-tight border-l-2 border-cyan-500/20 pl-4 italic">
                                             {snapshot.session.message}
                                         </p>
 
@@ -327,7 +327,7 @@ export default function ModelTrainingView() {
                                         <div className="space-y-2 pt-4">
                                             <div className="flex justify-between text-[8px] font-mono font-black text-white/30 tracking-widest uppercase">
                                                 <span>TRAINING_PHASE_COMPLETE</span>
-                                                <span className="text-rose-500">{snapshot.session.progressLabel}</span>
+                                                <span className="text-cyan-500">{snapshot.session.progressLabel}</span>
                                             </div>
                                             <div className="h-1.5 bg-white/5 rounded-full overflow-hidden p-[1px] border border-white/5">
                                                 <motion.div 
@@ -350,7 +350,7 @@ export default function ModelTrainingView() {
                                                 "h-14 rounded-sm font-black tracking-[0.3em] uppercase text-[11px] transition-all duration-700",
                                                 snapshot.session.isRunning 
                                                     ? "bg-white/5 text-white/20 cursor-not-allowed border border-white/5"
-                                                    : "bg-rose-600 hover:bg-rose-500 text-white  hover: border-none"
+                                                    : "bg-cyan-600 hover:bg-cyan-500 text-white  hover: border-none"
                                             )}
                                         >
                                             {starting ? <Loader className="animate-spin mr-3" size={18} /> : <Play className="mr-3" size={16} fill="currentColor" />}
@@ -380,7 +380,7 @@ export default function ModelTrainingView() {
                                         <div key={res.label} className="p-4 bg-white/[0.02] border border-white/5 flex flex-col gap-2 group hover:border-white/20 transition-all">
                                             <div className="flex justify-between items-center">
                                                 <span className="text-[7px] font-mono text-white/20 tracking-widest uppercase">{res.label}</span>
-                                                <res.icon size={10} className="text-white/20 group-hover:text-rose-500 transition-colors" />
+                                                <res.icon size={10} className="text-white/20 group-hover:text-cyan-500 transition-colors" />
                                             </div>
                                             <span className="text-[16px] font-black text-white/90 italic">{res.value}</span>
                                         </div>
@@ -432,7 +432,7 @@ export default function ModelTrainingView() {
                                 </div>
                                 <div className="p-4 border-t border-white/5 flex items-center justify-between text-[8px] font-mono tracking-widest text-white/20 uppercase">
                                     <div className="flex items-center gap-2">
-                                        <div className="w-2 h-2 rounded-full bg-rose-500 " />
+                                        <div className="w-2 h-2 rounded-full bg-cyan-500 " />
                                         <span>ЖИВА_ТЕЛЕМЕТ ІЯ_СИНХРОНІЗАЦІЯ_ФАЗИ</span>
                                     </div>
                                     <span>З АЗКИ: {snapshot.metrics.length} ЦИКЛІВ</span>
@@ -442,7 +442,7 @@ export default function ModelTrainingView() {
                             <div className="space-y-6">
                                 <div className="flex items-center justify-between px-2">
                                     <h3 className="text-[12px] font-black text-white/40 tracking-[0.3em] uppercase italic flex items-center gap-3">
-                                        <HistoryIcon size={14} className="text-rose-500" />
+                                        <HistoryIcon size={14} className="text-cyan-500" />
                                         Історія_Навчання (History)
                                     </h3>
                                     <span className="text-[8px] font-mono text-white/20 uppercase tracking-widest">ARCHIVE_L7</span>
@@ -475,7 +475,7 @@ export default function ModelTrainingView() {
                                                 key={i} 
                                                 className="flex gap-3 group"
                                             >
-                                                <span className="text-rose-500/40 shrink-0 font-black">{`0${i + 1}`.slice(-2)}</span>
+                                                <span className="text-cyan-500/40 shrink-0 font-black">{`0${i + 1}`.slice(-2)}</span>
                                                 <span className={cn(
                                                     "transition-colors duration-300",
                                                     log.includes('ERROR') ? 'text-rose-400 font-bold' : 
@@ -494,7 +494,7 @@ export default function ModelTrainingView() {
                                     )}
                                     <div ref={logsEndRef} />
                                 </div>
-                                <div className="p-4 bg-rose-500/[0.03] border-t border-rose-500/10 flex items-center justify-between">
+                                <div className="p-4 bg-cyan-500/[0.03] border-t border-cyan-500/10 flex items-center justify-between">
                                     <div className="flex items-center gap-2">
                                         <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 " />
                                         <span className="text-[8px] font-mono font-black text-emerald-500 uppercase tracking-widest italic">STREAM_READY</span>

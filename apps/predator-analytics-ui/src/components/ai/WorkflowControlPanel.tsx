@@ -9,6 +9,7 @@
  * - View workflow history
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { api } from '../../services/api';
@@ -143,7 +144,7 @@ export const WorkflowControlPanel: React.FC = () => {
 
               {/* Type Selection */}
               <div className="flex gap-3">
-                <button
+                <Button variant="cyber"
                   onClick={() => setWorkflowType('self-improvement')}
                   className={`flex-1 p-4 rounded-lg border transition-all ${
                     workflowType === 'self-improvement'
@@ -154,9 +155,9 @@ export const WorkflowControlPanel: React.FC = () => {
                   <div className="text-2xl mb-2"> </div>
                   <div className="font-medium">Self-Improvement</div>
                   <div className="text-xs opacity-70">Оптимізація AI</div>
-                </button>
+                </Button>
 
-                <button
+                <Button variant="cyber"
                   onClick={() => setWorkflowType('self-healing')}
                   className={`flex-1 p-4 rounded-lg border transition-all ${
                     workflowType === 'self-healing'
@@ -167,7 +168,7 @@ export const WorkflowControlPanel: React.FC = () => {
                   <div className="text-2xl mb-2">🏥</div>
                   <div className="font-medium">Self-Healing</div>
                   <div className="text-xs opacity-70">Відновлення системи</div>
-                </button>
+                </Button>
               </div>
 
               {/* Type-specific options */}
@@ -307,12 +308,12 @@ export const WorkflowControlPanel: React.FC = () => {
                 )}
               </div>
 
-              <button
+              <Button variant="cyber"
                 onClick={() => setSelectedWorkflow(null)}
                 className="mt-6 w-full py-2 bg-slate-700 rounded-lg text-slate-300 hover:bg-slate-600 transition-colors"
               >
                 Закрити
-              </button>
+              </Button>
             </motion.div>
           </motion.div>
         )}

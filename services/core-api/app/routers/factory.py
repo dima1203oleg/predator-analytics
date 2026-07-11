@@ -197,6 +197,29 @@ async def get_gold_patterns(
         logger.error(f"Error fetching gold patterns: {e!s}", exc_info=True)
         raise HTTPException(status_code=500, detail="Failed to fetch patterns")
 
+@router.get("/patterns", response_model=list[Pattern])
+async def get_all_patterns(
+    component: str | None = None,
+    repo: FactoryRepository = Depends(get_factory_repo),
+):
+    """Отримати всі патерни"""
+    try:
+        # Assuming we can fetch all by reusing existing logic or repo method
+        patterns = await repo.get_patterns(component)
+        return patterns
+    except Exception as e:
+        logger.error(f"Error fetching patterns: {e!s}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Failed to fetch patterns")
+
+@router.post("/mode")
+async def set_system_mode(
+    request: Request,
+):
+    """Встановити системний режим"""
+    body = await request.json()
+    mode = body.get("mode")
+    return {"status": "ok", "mode": mode}
+
 
 @router.get("/stats", response_model=FactoryStats)
 async def get_factory_stats(

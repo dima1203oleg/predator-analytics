@@ -8,6 +8,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -179,7 +180,7 @@ const EvolutionView: React.FC = () => {
                     />
 
                     <div className="flex justify-end gap-6 mb-12">
-                        <button 
+                        <Button variant="cyber" 
                             onClick={() => {
                                 play(UISoundType.CLICK);
                                 handleRefresh();
@@ -191,7 +192,7 @@ const EvolutionView: React.FC = () => {
                             )}
                         >
                             <RefreshCw size={32} className={cn("transition-transform duration-700", refreshing ? "" : "group-hover/btn:rotate-180")} />
-                        </button>
+                        </Button>
                         <SlideToExecute
                             onConfirm={() => {
                                 play(UISoundType.SUCCESS);
@@ -230,7 +231,7 @@ const EvolutionView: React.FC = () => {
                     <div className="flex flex-wrap gap-6 p-4 bg-black/80 border-2 border-white/[0.03] rounded-[3.5rem] w-fit shadow-4xl  mx-auto items-center">
                         <span className="px-6 text-[10px] font-black text-slate-800 uppercase tracking-[0.5em] italic border-r-2 border-white/5 h-10 flex items-center">MATRIX_SELECT</span>
                         {tabs.map(mod => (
-                            <button 
+                            <Button variant="cyber" 
                                 key={mod.id} onClick={() => { play(UISoundType.CLICK); setActiveTab(mod.id); }} onMouseEnter={() => play(UISoundType.HOVER)}
                                 className={cn(
                                     "px-10 py-5 rounded-[2.5rem] text-[11px] font-black uppercase tracking-[0.3em] italic border-2 transition-all duration-500 flex items-center gap-5 relative overflow-hidden group/tab",
@@ -241,7 +242,7 @@ const EvolutionView: React.FC = () => {
                             >
                                 {mod.icon}
                                 {mod.label}
-                            </button>
+                            </Button>
                         ))}
                     </div>
 

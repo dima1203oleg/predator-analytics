@@ -4,6 +4,7 @@
  * Фаза 3 v59.0-NEXUS.
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
 import {
   Activity,
@@ -56,12 +57,12 @@ interface EntityMatch {
 // ─── Конфігурація ─────────────────────────────────────────────────────────────
 
 const CONFIDENCE_COLOR = (score: number) =>
-  score >= 85 ? 'text-emerald-400 bg-emerald-500' : score >= 65 ? 'text-amber-400 bg-amber-500' : 'text-rose-400 bg-rose-500';
+  score >= 85 ? 'text-emerald-400 bg-emerald-500' : score >= 65 ? 'text-amber-400 bg-amber-500' : 'text-rose-400 bg-cyan-500';
 
 const ACTION_CONFIG = {
   merge: { label: 'Злити', color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/25', icon: GitMerge },
   review: { label: 'Перевірити', color: 'bg-amber-500/10 text-amber-400 border-amber-500/25', icon: Eye },
-  reject: { label: 'Відхилити', color: 'bg-rose-500/10 text-rose-400 border-rose-500/25', icon: XCircle },
+  reject: { label: 'Відхилити', color: 'bg-cyan-500/10 text-rose-400 border-cyan-500/25', icon: XCircle },
 };
 
 // ─── Компонент запису ─────────────────────────────────────────────────────────
@@ -147,20 +148,20 @@ function MatchCard({ match, onResolve }: { match: EntityMatch; onResolve: (id: s
 
       {/* Дії */}
       <div className="flex items-center gap-2 pt-2 border-t border-white/[0.05]">
-        <button
+        <Button variant="cyber"
           onClick={() => onResolve(match.id, 'merge')}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 transition-colors"
         >
           <GitMerge className="w-3.5 h-3.5" />
           Злити записи
-        </button>
-        <button
+        </Button>
+        <Button variant="cyber"
           onClick={() => onResolve(match.id, 'reject')}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-white/40 border border-white/10 hover:text-white/60 hover:border-white/20 transition-colors"
         >
           <XCircle className="w-3.5 h-3.5" />
           Відхилити
-        </button>
+        </Button>
       </div>
     </div>
   );
@@ -182,7 +183,7 @@ export const EntityResolverView: React.FC = () => {
       {/* Заголовок */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
             <Fingerprint className="w-5 h-5 text-rose-400" />
           </div>
           <div>

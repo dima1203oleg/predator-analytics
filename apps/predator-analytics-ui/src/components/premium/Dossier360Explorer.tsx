@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -110,9 +111,9 @@ export const Dossier360Explorer: React.FC<DossierProps> = ({ isOpen, onClose, en
               </div>
 
               <div className="pt-8 border-t border-white/5">
-                <button className="w-full py-4 bg-white text-black font-black rounded-2xl text-xs uppercase hover:bg-slate-200 transition-all">
+                <Button variant="cyber" className="w-full py-4 bg-white text-black font-black rounded-2xl text-xs uppercase hover:bg-slate-200 transition-all">
                   {premiumLocales.dossierExplorer.downloadFullReport}
-                </button>
+                </Button>
               </div>
             </div>
 
@@ -123,13 +124,13 @@ export const Dossier360Explorer: React.FC<DossierProps> = ({ isOpen, onClose, en
                   <h3 className="text-lg font-black text-white uppercase tracking-wider mb-1">{premiumLocales.dossierExplorer.title}</h3>
                   <p className="text-xs text-slate-500">{premiumLocales.dossierExplorer.lastUpdated}</p>
                 </div>
-                <button
+                <Button variant="cyber"
                   onClick={onClose}
                   aria-label="Закрити Провідник"
                   className="p-3 bg-white/5 hover:bg-white/10 rounded-2xl text-slate-400 hover:text-white transition-all"
                 >
                   <X size={20} />
-                </button>
+                </Button>
               </div>
 
               {/* Grid Content */}

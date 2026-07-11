@@ -124,15 +124,15 @@ export const AgentSwarmMap: React.FC<AgentSwarmMapProps> = ({ agents, onSelectAg
   return (
     <div className={cn("relative group transition-all duration-700", className)}>
       {/* Background Glow */}
-      <div className="absolute inset-0 bg-rose-500/5 rounded-full blur-[100px] pointer-events-none group-hover:bg-rose-500/10 transition-colors" />
+      <div className="absolute inset-0 bg-cyan-500/5 rounded-full blur-[100px] pointer-events-none group-hover:bg-cyan-500/10 transition-colors" />
       
       {/* Cy Container */}
       <div ref={containerRef} className="w-full h-full min-h-[400px]" />
       
       {/* Overlay Status */}
       <div className="absolute top-6 left-6 flex flex-col gap-1 pointer-events-none">
-        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-rose-500/40">Автономний_ ій</h4>
-        <div className="text-[12px] font-black text-rose-500 italic">NODE_MAP v61.0-ELITE</div>
+        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-cyan-500/40">Автономний_ ій</h4>
+        <div className="text-[12px] font-black text-cyan-500 italic">NODE_MAP v61.0-ELITE</div>
       </div>
 
       <div className="absolute bottom-6 right-6 pointer-events-none text-right">

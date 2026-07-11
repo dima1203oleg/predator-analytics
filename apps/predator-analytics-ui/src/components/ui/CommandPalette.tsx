@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowRight, Command, Lock, Search, X } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -179,14 +180,14 @@ export const CommandPalette = () => {
                 <Command className="h-3 w-3 text-slate-500" />
                 <span className="text-[10px] font-bold text-slate-500">K</span>
               </div>
-              <button
+              <Button variant="cyber"
                 onClick={() => setIsOpen(false)}
                 className="p-1.5 hover:bg-white/5 rounded-lg transition-colors"
                 title="Закрити"
                 aria-label="Закрити"
               >
                 <X className="w-4 h-4 text-slate-500 hover:text-white" />
-              </button>
+              </Button>
             </div>
 
             {/* Results */}
@@ -216,7 +217,7 @@ export const CommandPalette = () => {
                           const isSelected = idx === selectedIndex;
                           const locked = isNavItemLocked(item, userRole);
                           return (
-                            <button
+                            <Button variant="cyber"
                               key={item.id}
                               data-index={idx}
                               type="button"
@@ -267,7 +268,7 @@ export const CommandPalette = () => {
                               {isSelected && (
                                 <ArrowRight className="h-3.5 w-3.5 shrink-0" style={{ color }} />
                               )}
-                            </button>
+                            </Button>
                           );
                         })}
                       </div>

@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Lock, ArrowRight, Star, Shield, Zap, TrendingUp, CheckCircle2 } from 'lucide-react';
@@ -199,7 +200,7 @@ export const UpgradePrompt: React.FC<UpgradePromptProps> = ({
 
           {/* CTA кнопки */}
           <div className="flex items-center gap-3">
-            <button
+            <Button variant="cyber"
               type="button"
               onClick={handleUpgradeDemo}
               className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm bg-white text-slate-950 hover:bg-slate-100 shadow-lg hover:shadow-xl transition-all duration-200"
@@ -207,14 +208,14 @@ export const UpgradePrompt: React.FC<UpgradePromptProps> = ({
               <Zap className="w-4 h-4" />
               Перейти на {config.planName}
               <ArrowRight className="w-4 h-4" />
-            </button>
+            </Button>
 
-            <button
+            <Button variant="cyber"
               type="button"
               className="px-4 py-2.5 rounded-xl border border-white/10 text-slate-400 text-sm hover:border-white/20 hover:text-white transition-all duration-200"
             >
               Дізнатися більше
-            </button>
+            </Button>
           </div>
 
           {/* Підпис */}

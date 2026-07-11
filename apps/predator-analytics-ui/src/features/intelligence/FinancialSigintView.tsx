@@ -10,6 +10,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -278,7 +279,7 @@ export default function FinancialSigintView() {
                 <div className="flex-1 mr-10 hidden xl:block">
                     <FinancialInterceptorTerminal />
                 </div>
-              <button
+              <Button variant="cyber"
                onClick={() => { play(UISoundType.CLICK); handleRefresh(); }} 
                className={cn(
                  "p-7 bg-black border-2 border-white/[0.04] rounded-[2rem] text-slate-500 hover:text-yellow-500 transition-all shadow-4xl group/btn",
@@ -286,14 +287,14 @@ export default function FinancialSigintView() {
                )}
               >
                  <RefreshCw size={24} />
-              </button>
-              <button className="relative px-12 py-7 h-fit group/main overflow-hidden rounded-[2.2rem]">
+              </Button>
+              <Button variant="cyber" className="relative px-12 py-7 h-fit group/main overflow-hidden rounded-[2.2rem]">
                  <div className="absolute inset-0 bg-gradient-to-r from-yellow-600 to-yellow-500 transition-transform duration-500 group-hover/main:scale-105" />
                  <div className="relative flex items-center gap-6 text-black font-black uppercase italic tracking-[0.3em] text-[12px]">
                     <Wallet size={24} /> ГЕНЕ УВАТИ_РЕЄСТР_SIGINT
                  </div>
                  <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover/main:translate-x-[100%] transition-transform duration-1000" />
-              </button>
+              </Button>
             </div>
 
            {/* STATS GRID */}
@@ -323,7 +324,7 @@ export default function FinancialSigintView() {
            {/* MODULE TABS SOVEREIGN */}
            <div className="flex flex-wrap gap-6 p-4 bg-black/80 border-2 border-white/[0.03] rounded-[3.5rem] w-fit shadow-4xl  mx-auto">
               {modules.map(mod => (
-                <button
+                <Button variant="cyber"
                   key={mod.id} onClick={() => { play(UISoundType.CLICK); setActiveModule(mod.id as ActiveModule); }} onMouseEnter={() => play(UISoundType.HOVER)}
                   className={cn(
                     "px-10 py-5 rounded-[2.5rem] text-[11px] font-black uppercase tracking-[0.3em] italic border-2 transition-all duration-500 flex items-center gap-5 relative overflow-hidden group",
@@ -335,7 +336,7 @@ export default function FinancialSigintView() {
                    <mod.icon size={18} className={cn("transition-transform group-hover:scale-110", activeModule === mod.id ? "" : "")} />
                    {mod.label}
                    {mod.badge && <span className={cn("text-[9px] px-3 py-1 rounded-full font-black font-mono shadow-sm", activeModule === mod.id ? "bg-black/20 text-black" : "bg-yellow-500/10 text-yellow-500")}>{mod.badge}</span>}
-                </button>
+                </Button>
               ))}
            </div>
 
@@ -435,12 +436,12 @@ export default function FinancialSigintView() {
                               </div>
                             ))}
                          </div>
-                         <button className="relative w-full py-8 group/cancel overflow-hidden rounded-[2.5rem] border-2 border-amber-600/30">
+                         <Button variant="cyber" className="relative w-full py-8 group/cancel overflow-hidden rounded-[2.5rem] border-2 border-amber-600/30">
                             <div className="absolute inset-0 bg-amber-600/10 group-hover/cancel:bg-amber-600 transition-colors duration-500" />
                             <div className="relative text-amber-600 group-hover/cancel:text-white font-black uppercase tracking-[0.6em] text-[12px] italic transition-colors">
                                БЛОКУВАТИ ПОТІК
                             </div>
-                         </button>
+                         </Button>
                       </div>
                    </motion.div>
                  )}
@@ -621,9 +622,9 @@ export default function FinancialSigintView() {
                                ))}
                             </div>
                          </div>
-                         <button className="mt-4 w-full py-10 bg-yellow-500 text-black rounded-[3rem] tracking-[0.8em] text-[14px] font-black uppercase italic hover:bg-yellow-400 shadow-4xl transition-all border-4 border-yellow-700/20 active:scale-95 duration-500">
+                         <Button variant="cyber" className="mt-4 w-full py-10 bg-yellow-500 text-black rounded-[3rem] tracking-[0.8em] text-[14px] font-black uppercase italic hover:bg-yellow-400 shadow-4xl transition-all border-4 border-yellow-700/20 active:scale-95 duration-500">
                             ВІДКрИТИ ПОВНУ ЕКСПЕ ТИЗУ
-                         </button>
+                         </Button>
                       </div>
                    </motion.div>
                  )}
@@ -648,9 +649,9 @@ export default function FinancialSigintView() {
                                ПОВНИЙ ПЕ ЕЛІК ПЕ ЕКрИТИХ КАНАЛІВ ФІНАНСУВАННЯ ТА ВИЛУЧЕНОГО МАЙНА
                             </p>
                          </div>
-                         <button className="px-12 py-6 bg-white/5 border-2 border-white/10 text-white rounded-[2rem] text-[12px] font-black uppercase tracking-[0.3em] italic hover:bg-white/20 hover:border-yellow-500/50 transition-all shadow-xl group/btn">
+                         <Button variant="cyber" className="px-12 py-6 bg-white/5 border-2 border-white/10 text-white rounded-[2rem] text-[12px] font-black uppercase tracking-[0.3em] italic hover:bg-white/20 hover:border-yellow-500/50 transition-all shadow-xl group/btn">
                             ВІДКрИТИ_ARBITRAGE_МАТрИЦЮ <ArrowUpRight size={18} className="inline ml-4 transition-transform group-hover/btn:translate-x-2 group-hover/btn:-translate-y-2" />
-                         </button>
+                         </Button>
                       </div>
                       <div className="overflow-x-auto custom-scrollbar">
                          <table className="w-full text-left border-collapse">

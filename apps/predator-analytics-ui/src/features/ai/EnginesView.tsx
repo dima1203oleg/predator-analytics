@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { RiskLevelValue } from '@/types/intelligence';
 import ReactECharts from '@/components/ECharts';
@@ -124,7 +125,7 @@ const EngineCardHeader: React.FC<{ engine: any }> = ({ engine }) => {
                     <h2 className="text-3xl font-black text-white uppercase tracking-tighter italic">{engine.name}</h2>
                     <Badge className={cn(
                         "font-black text-[10px] px-3 py-1 italic tracking-widest uppercase",
-                        engine.status === 'ok' ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30" : "bg-rose-500/20 text-rose-400 border border-rose-500/30 "
+                        engine.status === 'ok' ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30" : "bg-cyan-500/20 text-rose-400 border border-cyan-500/30 "
                     )}>
                         {engine.label || engine.status}
                     </Badge>
@@ -418,10 +419,10 @@ const EnginesView: React.FC = () => {
                             </div>
                         </HoloCard>
 
-                        <button className="w-full py-6 bg-purple-600/10 border border-purple-500/20 rounded-[32px] text-[10px] font-black text-purple-400 uppercase tracking-[0.5em] hover:bg-purple-600/20 hover:text-white transition-all italic flex items-center justify-center gap-4 group">
+                        <Button variant="cyber" className="w-full py-6 bg-purple-600/10 border border-purple-500/20 rounded-[32px] text-[10px] font-black text-purple-400 uppercase tracking-[0.5em] hover:bg-purple-600/20 hover:text-white transition-all italic flex items-center justify-center gap-4 group">
                             <RefreshCw size={16} className="group-hover:rotate-180 transition-transform duration-1000" />
                             ПЕРЕКАЛІБРУВАТИ_ВСІ_ДВИГУНИ
-                        </button>
+                        </Button>
                     </div>
 
                     {/* Main Content: Engine Details */}
@@ -569,9 +570,9 @@ const EnginesView: React.FC = () => {
                                 </div>
                             ))}
                         </div>
-                        <button className="px-10 py-5 bg-white/5 border border-white/10 rounded-[28px] text-[10px] font-black text-white uppercase tracking-[0.3em] hover:bg-white/10 transition-all flex items-center gap-4 group italic">
+                        <Button variant="cyber" className="px-10 py-5 bg-white/5 border border-white/10 rounded-[28px] text-[10px] font-black text-white uppercase tracking-[0.3em] hover:bg-white/10 transition-all flex items-center gap-4 group italic">
                             ДІАГНОСТИКА_ВУЗЛІВ <Search size={18} className="group-hover:scale-110 transition-transform" />
-                        </button>
+                        </Button>
                     </div>
                 </div>
             </div>

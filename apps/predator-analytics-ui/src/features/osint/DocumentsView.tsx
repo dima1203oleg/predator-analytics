@@ -8,6 +8,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -108,12 +109,12 @@ export default function DocumentsView() {
                      ]}
                      actions={
                        <div className="flex gap-4">
-                          <button onClick={fetchDocuments} className="p-5 bg-black border border-white/[0.04] rounded-2xl text-slate-400 hover:text-white transition-all shadow-xl">
+                          <Button variant="cyber" onClick={fetchDocuments} className="p-5 bg-black border border-white/[0.04] rounded-2xl text-slate-400 hover:text-white transition-all shadow-xl">
                              <RefreshCcw size={24} className={loading ? 'animate-spin' : ''} />
-                          </button>
-                          <button className="px-8 py-5 bg-yellow-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-yellow-600 shadow-2xl transition-all flex items-center gap-4">
+                          </Button>
+                          <Button variant="cyber" className="px-8 py-5 bg-yellow-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-yellow-600 shadow-2xl transition-all flex items-center gap-4">
                              <Upload size={18} /> ДОДАТИ_МАТЕ ІАЛИ
-                          </button>
+                          </Button>
                        </div>
                      }
                    />
@@ -157,9 +158,9 @@ export default function DocumentsView() {
                          </select>
                       </div>
                       <div className="flex gap-4 p-2 bg-white/[0.01] rounded-2xl border border-white/[0.03]">
-                         <button className="p-4 bg-transparent text-slate-700 hover:text-white transition-all"><Layout size={20} /></button>
-                         <button className="p-4 bg-transparent text-slate-700 hover:text-white transition-all"><Filter size={20} /></button>
-                         <button className="p-4 bg-transparent text-slate-700 hover:text-amber-500 transition-all"><Trash2 size={20} /></button>
+                         <Button variant="cyber" className="p-4 bg-transparent text-slate-700 hover:text-white transition-all"><Layout size={20} /></Button>
+                         <Button variant="cyber" className="p-4 bg-transparent text-slate-700 hover:text-white transition-all"><Filter size={20} /></Button>
+                         <Button variant="cyber" className="p-4 bg-transparent text-slate-700 hover:text-amber-500 transition-all"><Trash2 size={20} /></Button>
                       </div>
                    </div>
 
@@ -207,8 +208,8 @@ export default function DocumentsView() {
                                        </td>
                                        <td className="px-8 py-8 text-right">
                                           <div className="flex justify-end gap-3 opacity-0 group-hover/row:opacity-100 transition-all scale-95 group-hover/row:scale-100">
-                                             <button className="p-3 bg-black border border-white/[0.04] rounded-xl text-slate-500 hover:text-white hover:border-yellow-500 transition-all"><Eye size={18} /></button>
-                                             <button className="p-3 bg-black border border-white/[0.04] rounded-xl text-slate-500 hover:text-white hover:border-emerald-500 transition-all"><Download size={18} /></button>
+                                             <Button variant="cyber" className="p-3 bg-black border border-white/[0.04] rounded-xl text-slate-500 hover:text-white hover:border-yellow-500 transition-all"><Eye size={18} /></Button>
+                                             <Button variant="cyber" className="p-3 bg-black border border-white/[0.04] rounded-xl text-slate-500 hover:text-white hover:border-emerald-500 transition-all"><Download size={18} /></Button>
                                           </div>
                                        </td>
                                     </motion.tr>

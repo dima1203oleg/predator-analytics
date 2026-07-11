@@ -1,4 +1,5 @@
 
+import { Button } from '@/components/ui/button';
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React from 'react';
 import { X, CheckCircle2, Circle, Clock, GitCommit, User, XCircle, AlertTriangle, Loader } from 'lucide-react';
@@ -41,9 +42,9 @@ export const PipelineDetailsModal: React.FC<PipelineDetailsModalProps> = ({ run,
                         </div>
                         <p className="text-sm text-slate-400 mt-1">{run.commitMessage}</p>
                     </div>
-                    <button onClick={onClose} className="text-slate-500 hover:text-white transition-colors">
+                    <Button variant="cyber" onClick={onClose} className="text-slate-500 hover:text-white transition-colors">
                         <X size={24} />
-                    </button>
+                    </Button>
                 </div>
 
                 {/* Metadata */}
@@ -99,9 +100,9 @@ export const PipelineDetailsModal: React.FC<PipelineDetailsModalProps> = ({ run,
 
                 {/* Footer */}
                 <div className="p-4 border-t border-slate-800 bg-slate-950 flex justify-end">
-                    <button onClick={onClose} className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded transition-colors btn-3d">
+                    <Button variant="cyber" onClick={onClose} className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded transition-colors btn-3d">
                         Закрити
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>

@@ -53,12 +53,12 @@ export const FactoryIngestionPanel: React.FC<FactoryIngestionPanelProps> = ({
             </div>
             <CheckCircle2 className="text-emerald-500/50" size={32} />
           </div>
-          <div className="bg-slate-900/50 border border-rose-500/20 p-4 rounded-xl flex items-center justify-between">
+          <div className="bg-slate-900/50 border border-cyan-500/20 p-4 rounded-xl flex items-center justify-between">
             <div className="flex flex-col">
               <span className="text-[9px] text-slate-500 font-bold uppercase tracking-widest"> отація Проксі-серверів</span>
               <div className="text-2xl text-rose-400 font-mono font-bold mt-1">{ingestionMetrics.proxies}</div>
             </div>
-            <Network className="text-rose-500/50" size={32} />
+            <Network className="text-cyan-500/50" size={32} />
           </div>
         </div>
 
@@ -68,7 +68,7 @@ export const FactoryIngestionPanel: React.FC<FactoryIngestionPanelProps> = ({
               <Terminal size={14} className="text-orange-500" /> Жива Стрічка Інгестії
             </span>
             <div className="flex gap-2">
-              <div className="w-2 h-2 rounded-full bg-rose-500 " />
+              <div className="w-2 h-2 rounded-full bg-cyan-500 " />
               <div className="text-[10px] text-rose-400 font-mono font-bold uppercase">Запис</div>
             </div>
           </div>

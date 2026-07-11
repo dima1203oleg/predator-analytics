@@ -4,6 +4,7 @@
  * Повна українська локалізація
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -155,14 +156,14 @@ export const WidgetPalette: React.FC<WidgetPaletteProps> = ({
             { type: 'bar_chart' as WidgetType, label: 'Стовпчаста', icon: BarChart },
             { type: 'pie_chart' as WidgetType, label: 'Кругова', icon: PieChart }
           ].map(({ type, label, icon: Icon }) => (
-            <button
+            <Button variant="cyber"
               key={type}
               onClick={() => onAddWidget(type)}
               className="p-3 bg-slate-900/40 border border-white/5 rounded-xl hover:border-amber-500/30 transition-all flex items-center gap-2"
             >
               <Icon size={14} className="text-amber-500" />
               <span className="text-[9px] font-bold text-white">{label}</span>
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -214,7 +215,7 @@ export const WidgetPalette: React.FC<WidgetPaletteProps> = ({
 
         return (
           <div key={category.id} className="border border-white/5 rounded-xl overflow-hidden">
-            <button
+            <Button variant="cyber"
               onClick={() => setExpandedCategory(expandedCategory === category.id ? null : category.id)}
               className="w-full px-4 py-3 flex items-center justify-between bg-slate-900/40 hover:bg-slate-900/60 transition-colors"
             >
@@ -228,7 +229,7 @@ export const WidgetPalette: React.FC<WidgetPaletteProps> = ({
               ) : (
                 <ChevronRight size={14} className="text-slate-500" />
               )}
-            </button>
+            </Button>
 
             <AnimatePresence>
               {expandedCategory === category.id && (
@@ -295,7 +296,7 @@ export const WidgetPalette: React.FC<WidgetPaletteProps> = ({
               if (sourceId.includes('owner') || sourceId.includes('pep')) IconComponent = Users;
 
               return (
-                <button
+                <Button variant="cyber"
                   key={sourceId}
                   onClick={() => !isLocked && onAddWidget('table', sourceId)}
                   disabled={isLocked}
@@ -321,7 +322,7 @@ export const WidgetPalette: React.FC<WidgetPaletteProps> = ({
                     <div className="text-[9px] text-slate-500">{source.description}</div>
                   </div>
                   <div className="text-[8px] text-slate-600 font-mono">{source.updateFrequency}</div>
-                </button>
+                </Button>
               );
             })}
           </div>
@@ -345,7 +346,7 @@ export const WidgetPalette: React.FC<WidgetPaletteProps> = ({
             { id: 'widgets', label: premiumLocales.dashboardBuilder.palette.tabs.widgets, icon: BarChart },
             { id: 'data', label: premiumLocales.dashboardBuilder.palette.tabs.data.replace(' Джерела ', ' '), icon: Table }
           ].map((tab) => (
-            <button
+            <Button variant="cyber"
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
               className={cn(
@@ -357,7 +358,7 @@ export const WidgetPalette: React.FC<WidgetPaletteProps> = ({
             >
               <tab.icon size={12} />
               {tab.label}
-            </button>
+            </Button>
           ))}
         </div>
       </div>

@@ -6,11 +6,11 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Monitoring View', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/monitoring');
+    await page.goto('/admin/command?tab=dataops');
   });
 
   test('should display monitoring dashboard', async ({ page }) => {
-    await expect(page).toHaveURL('/monitoring');
+    await expect(page).toHaveURL(/.*tab=dataops/);
 
     // Should have some metric cards
     const cards = page.locator('[data-testid="metric-card"], .rounded-xl, .rounded-2xl').first();
@@ -40,14 +40,14 @@ test.describe('Monitoring View', () => {
 
 test.describe('Agents View', () => {
   test('should display agents list', async ({ page }) => {
-    await page.goto('/agents');
+    await page.goto('/admin/command?tab=factory');
 
-    await expect(page).toHaveURL('/agents');
+    await expect(page).toHaveURL(/.*tab=factory/);
     await page.waitForLoadState('networkidle');
   });
 
   test('should show agent status', async ({ page }) => {
-    await page.goto('/agents');
+    await page.goto('/admin/command?tab=factory');
 
     // Should have status indicators
     await page.waitForLoadState('networkidle');
@@ -56,22 +56,22 @@ test.describe('Agents View', () => {
 
 test.describe('LLM View', () => {
   test('should display LLM providers', async ({ page }) => {
-    await page.goto('/llm');
+    await page.goto('/admin/command?tab=ai-insights');
 
-    await expect(page).toHaveURL('/llm');
+    await expect(page).toHaveURL(/.*tab=ai-insights/);
     await page.waitForLoadState('networkidle');
   });
 });
 
 test.describe('Settings View', () => {
   test('should display settings page', async ({ page }) => {
-    await page.goto('/settings');
+    await page.goto('/admin/settings');
 
-    await expect(page).toHaveURL('/settings');
+    await expect(page).toHaveURL('/admin/settings');
   });
 
   test('should have theme toggle', async ({ page }) => {
-    await page.goto('/settings');
+    await page.goto('/admin/settings');
 
     // Look for theme related elements
     const themeSection = page.locator('text=/тема|theme/i').first();
@@ -84,9 +84,9 @@ test.describe('Settings View', () => {
 
 test.describe('Graph View', () => {
   test('should load graph view', async ({ page }) => {
-    await page.goto('/graph');
+    await page.goto('/admin/command?tab=osint');
 
-    await expect(page).toHaveURL('/graph');
+    await expect(page).toHaveURL(/.*tab=osint/);
     await page.waitForLoadState('networkidle');
   });
 });
@@ -102,7 +102,7 @@ test.describe('API Integration', () => {
       });
     });
 
-    await page.goto('/monitoring');
+    await page.goto('/admin/command?tab=dataops');
 
     // Should show error state or fallback
     await page.waitForLoadState('networkidle');
@@ -135,7 +135,7 @@ test.describe('Offline Support', () => {
     await context.setOffline(true);
 
     // Navigate to another page
-    await page.goto('/monitoring').catch(() => {});
+    await page.goto('/admin/command?tab=dataops').catch(() => {});
 
     // Page should still show something (cached or offline message)
     await expect(page.locator('body')).toBeVisible();

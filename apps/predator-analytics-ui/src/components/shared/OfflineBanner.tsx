@@ -1,4 +1,5 @@
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { Activity, X, RefreshCw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -104,21 +105,21 @@ export const OfflineBanner = () => {
                         Фонове відновлення
                     </span>
                 </div>
-                <button
+                <Button variant="cyber"
                     onClick={handleRetry}
                     disabled={retrying}
                     className="flex items-center gap-1.5 rounded-full border border-amber-400/20 bg-amber-400/10 px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider text-amber-200 transition hover:bg-amber-400/20 disabled:opacity-50"
                 >
                     <RefreshCw size={11} className={retrying ? 'animate-spin' : ''} />
                     {retrying ? 'Перевірка' : 'Оновити'}
-                </button>
-                <button
+                </Button>
+                <Button variant="cyber"
                     onClick={handleDismiss}
                     title="Приховати на цю сесію"
                     className="rounded-full p-1 text-slate-500 transition hover:bg-white/10 hover:text-white"
                 >
                     <X size={13} />
-                </button>
+                </Button>
             </motion.div>
         </AnimatePresence>
     );

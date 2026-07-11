@@ -8,6 +8,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -194,12 +195,12 @@ export const SovereignReportWidget: React.FC<SovereignReportWidgetProps> = ({ ue
                                 <h4 className="text-xl font-black text-rose-500 uppercase italic mb-2 tracking-tighter">СИСТЕМНИЙ_ЗБІЙ_v63.0-ELITE</h4>
                                 <p className="text-slate-500 font-black uppercase text-[10px] tracking-widest">{error}</p>
                             </div>
-                            <button 
+                            <Button variant="cyber" 
                                 onClick={fetchReport} 
                                 className="px-8 py-3 bg-white/5 border border-white/10 rounded-xl text-[#D4AF37] text-[10px] uppercase font-black tracking-widest hover:bg-white/10 transition-all font-bold"
                             >
                                 Перепідключити_ядро
-                            </button>
+                            </Button>
                         </motion.div>
                     ) : report ? (
                         <motion.div

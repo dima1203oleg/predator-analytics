@@ -262,6 +262,20 @@ class IngestionJob(Base):
 
 
 # ============================================================
+# Ingestion Lineage Events
+# ============================================================
+class IngestionLineageEvent(Base):
+    __tablename__ = "ingestion_lineage_events"
+    id = Column(UUID(as_uuid=True), primary_key=True, default=_uuid.uuid4)
+    tenant_id = Column(UUID(as_uuid=True), ForeignKey("tenants.id", ondelete="CASCADE"), nullable=False, index=True)
+    ingestion_id = Column(UUID(as_uuid=True), ForeignKey("ingestion_jobs.id", ondelete="CASCADE"), nullable=False, index=True)
+    step = Column(String(100), nullable=False)
+    status = Column(String(50), nullable=False)
+    records_written = Column(Integer, default=0)
+    timestamp = Column(DateTime(timezone=True), server_default=text("now()"), nullable=False, index=True)
+
+
+# ============================================================
 # Alerts / Сповіщення
 # ============================================================
 class Alert(Base):

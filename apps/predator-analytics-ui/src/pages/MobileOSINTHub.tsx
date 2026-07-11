@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { Fingerprint, Share2, Map, Activity, ShieldAlert, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -34,7 +35,7 @@ export const MobileOSINTHub: React.FC = () => {
 
       <div className="grid grid-cols-1 gap-4">
         {MOBILE_OSINT_ACTIONS.map((action) => (
-          <button
+          <Button variant="cyber"
             key={action.id}
             onClick={() => navigate(`/osint?tab=${action.id}`)}
             className="flex items-center p-5 rounded-3xl bg-white/[0.03] border border-white/10 active:scale-95 transition-all shadow-lg text-left"
@@ -48,7 +49,7 @@ export const MobileOSINTHub: React.FC = () => {
             <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-400">
               <ArrowRight size={20} />
             </div>
-          </button>
+          </Button>
         ))}
       </div>
     </div>

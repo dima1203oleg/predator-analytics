@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AlertTriangle, Lock, ShieldAlert, Zap, Skull, Shield, Fingerprint } from 'lucide-react';
@@ -40,9 +41,9 @@ export default function PanicControlView() {
                     Режим роботи без збереження слідів на диску. Всі логі та кеші зберігаються виключно в RAM-диску. Знищуються при вимкненні живлення.
                  </p>
                  <div className="pt-8 mt-auto relative z-10">
-                    <button onClick={() => { play(UISoundType.ERROR); setActiveProtocol('GHOST'); }} className="w-full py-6 bg-slate-900 border border-slate-700 text-white font-black uppercase tracking-[0.3em] italic rounded-2xl hover:bg-slate-800 transition-colors">
+                    <Button variant="cyber" onClick={() => { play(UISoundType.ERROR); setActiveProtocol('GHOST'); }} className="w-full py-6 bg-slate-900 border border-slate-700 text-white font-black uppercase tracking-[0.3em] italic rounded-2xl hover:bg-slate-800 transition-colors">
                       АКТИВУВАТИ GHOST
-                    </button>
+                    </Button>
                  </div>
               </div>
 
@@ -85,9 +86,9 @@ export default function PanicControlView() {
                     </div>
                  </div>
                  <div className="pt-4 mt-auto relative z-10">
-                    <button onClick={() => play(UISoundType.CLICK)} className="w-full py-4 bg-amber-950/20 border border-amber-900/50 text-amber-500 hover:text-white hover:bg-amber-600 font-black uppercase tracking-[0.3em] italic rounded-2xl transition-all">
+                    <Button variant="cyber" onClick={() => play(UISoundType.CLICK)} className="w-full py-4 bg-amber-950/20 border border-amber-900/50 text-amber-500 hover:text-white hover:bg-amber-600 font-black uppercase tracking-[0.3em] italic rounded-2xl transition-all">
                       I'M ALIVE (CHECK-IN)
-                    </button>
+                    </Button>
                  </div>
               </div>
 

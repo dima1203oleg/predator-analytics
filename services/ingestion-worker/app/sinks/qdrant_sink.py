@@ -118,20 +118,21 @@ class QdrantSink:
 
     async def upsert_vectors(
         self, documents: list[dict[str, Any]], tenant_id: str
-    ) -> None:
+    ) -> str | None:
         """Зберігає вектори документів у Qdrant."""
         if not documents:
-            return
+            return None
 
         if not await self._ensure_collection(tenant_id):
-            return
+            return "Qdrant connection failed, skipping vectorization"
 
         client = self._get_client()
         model = self._get_embedding_model()
 
         if not client or not model:
             logger.warning("Qdrant or embedding model not available, skipping")
-            return
+            return "Qdrant or embedding model not available, skipping"
+
 
         collection_name = f"{self.COLLECTION_NAME}-{tenant_id}"
 
@@ -152,12 +153,12 @@ class QdrantSink:
                 valid_docs.append(doc)
 
         if not texts:
-            return
+            return None
 
         # Генеруємо ембединги
         embeddings = self.generate_embeddings(texts)
         if not embeddings:
-            return
+            return None
 
         try:
             from qdrant_client.models import PointStruct

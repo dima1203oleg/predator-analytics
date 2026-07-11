@@ -7,6 +7,7 @@
  * - /api/v1/system/stats
  */
 
+import { Button } from '@/components/ui/button';
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
@@ -212,7 +213,7 @@ export default function FactorsView() {
                             },
                         ]}
                         actions={(
-                            <button
+                            <Button variant="cyber"
                                 type="button"
                                 onClick={() => { play(UISoundType.CLICK); void loadData(true); }} onMouseEnter={() => play(UISoundType.HOVER)}
                                 disabled={refreshing}
@@ -220,7 +221,7 @@ export default function FactorsView() {
                             >
                                 {refreshing ? <Loader size={16} className="animate-spin" /> : <RefreshCw size={16} />}
                                 Синхронізувати
-                            </button>
+                            </Button>
                         )}
                     />
 
@@ -329,7 +330,7 @@ export default function FactorsView() {
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: 0.15 + index * 0.08 }}
                                     >
-                                        <button
+                                        <Button variant="cyber"
                                             type="button"
                                             onClick={() => { play(UISoundType.CLICK); navigate(module.path); }} onMouseEnter={() => play(UISoundType.HOVER)}
                                             className={cn(
@@ -372,7 +373,7 @@ export default function FactorsView() {
                                                     </span>
                                                 </div>
                                             </div>
-                                        </button>
+                                        </Button>
                                     </motion.div>
                                 );
                             })}

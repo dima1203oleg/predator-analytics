@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -45,18 +46,18 @@ export const FactoryCoordinatorChat: React.FC<FactoryCoordinatorChatProps> = ({
       <div className="absolute inset-0 bg-noise opacity-[0.02] pointer-events-none" />
 
       {/* Cinematic Header */}
-      <div className="relative z-20 p-8 border-b border-rose-500/10 bg-black/40  flex items-center justify-between">
+      <div className="relative z-20 p-8 border-b border-cyan-500/10 bg-black/40  flex items-center justify-between">
         <div className="flex items-center gap-6">
           <div className="relative">
-            <div className="absolute inset-0 bg-rose-500 blur-xl opacity-20 " />
-            <div className="relative p-4 bg-rose-600 border border-rose-400/30 rounded-2xl shadow-xl transform -rotate-3">
+            <div className="absolute inset-0 bg-cyan-500 blur-xl opacity-20 " />
+            <div className="relative p-4 bg-cyan-600 border border-cyan-400/30 rounded-2xl shadow-xl transform -rotate-3">
               <Bot className="w-6 h-6 text-white " />
             </div>
           </div>
           <div>
             <div className="flex items-center gap-3 mb-1">
               <h2 className="text-xl font-black text-white tracking-[0.1em] uppercase italic">КООРДИНАТОР ЯДРА</h2>
-              <span className="px-3 py-0.5 bg-rose-500/10 border border-rose-500/20 text-rose-500 text-[8px] font-black uppercase tracking-widest rounded-sm">v61.0</span>
+              <span className="px-3 py-0.5 bg-cyan-500/10 border border-cyan-500/20 text-cyan-500 text-[8px] font-black uppercase tracking-widest rounded-sm">v61.0</span>
             </div>
             <div className="flex items-center gap-3">
               <span className="flex h-2 w-2 rounded-full bg-emerald-500  shadow-[0_0_12px_#10b981]" />
@@ -69,7 +70,7 @@ export const FactoryCoordinatorChat: React.FC<FactoryCoordinatorChatProps> = ({
           <div className="h-10 w-[1px] bg-white/5" />
           <div className="flex flex-col items-end gap-1">
             <div className="flex items-center gap-3 px-4 py-1.5 bg-white/5 border border-white/10 rounded-xl">
-              <Cpu size={12} className="text-rose-500" />
+              <Cpu size={12} className="text-cyan-500" />
               <span className="text-[10px] font-mono text-slate-400 font-black tracking-widest uppercase">NODE_NVIDIA_ELITE</span>
             </div>
             <span className="text-[8px] font-mono text-slate-600 uppercase tracking-widest italic opacity-50">CANONICAL_AGI_V1</span>
@@ -96,15 +97,15 @@ export const FactoryCoordinatorChat: React.FC<FactoryCoordinatorChatProps> = ({
                  <div className={cn(
                    "max-w-[75%] p-6 rounded-[2rem] text-[14px] relative transition-all duration-500 shadow-2xl",
                    msg.sender === 'user' 
-                     ? "bg-rose-600 text-white rounded-tr-none border-2 border-rose-400/30 shadow-[0_15px_40px_rgba(225,29,72,0.2)] skew-x-[-1deg]" 
-                     : "bg-black/80 border-2 border-white/5 text-slate-200 rounded-tl-none hover:border-rose-500/30  skew-x-[1deg]"
+                     ? "bg-cyan-600 text-white rounded-tr-none border-2 border-cyan-400/30 shadow-[0_15px_40px_rgba(6,182,212,0.2)] skew-x-[-1deg]" 
+                     : "bg-black/80 border-2 border-white/5 text-slate-200 rounded-tl-none hover:border-cyan-500/30  skew-x-[1deg]"
                  )}>
                     <p className="leading-relaxed whitespace-pre-wrap font-sans tracking-wide italic font-medium">{msg.text}</p>
                     
                     {msg.sender === 'system' && (
                       <div className="absolute -left-12 top-0">
-                        <div className="p-2 bg-rose-500/10 rounded-xl border border-rose-500/20 shadow-xl">
-                          <Bot size={16} className="text-rose-500" />
+                        <div className="p-2 bg-cyan-500/10 rounded-xl border border-cyan-500/20 shadow-xl">
+                          <Bot size={16} className="text-cyan-500" />
                         </div>
                       </div>
                     )}
@@ -113,7 +114,7 @@ export const FactoryCoordinatorChat: React.FC<FactoryCoordinatorChatProps> = ({
                    "flex items-center gap-3 px-4 text-[9px] font-black font-mono text-slate-600 uppercase tracking-[0.3em] italic",
                    msg.sender === 'user' ? "flex-row-reverse" : "flex-row"
                  )}>
-                    <span className={msg.sender === 'user' ? 'text-rose-500' : 'text-white'}>
+                    <span className={msg.sender === 'user' ? 'text-cyan-500' : 'text-white'}>
                       {msg.sender === 'user' ? 'ОПЕРАТОР' : 'КООРДИНАТОР'}
                     </span>
                     <div className="w-1 h-1 bg-white/10 rounded-full" />
@@ -124,18 +125,18 @@ export const FactoryCoordinatorChat: React.FC<FactoryCoordinatorChatProps> = ({
             {isProcessing && (
                <motion.div 
                 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-4 p-6 bg-rose-500/5 border-2 border-rose-500/20 rounded-[2rem] "
+                className="flex items-center gap-4 p-6 bg-cyan-500/5 border-2 border-cyan-500/20 rounded-[2rem] "
                >
-                  <div className="p-2 bg-rose-500/20 rounded-lg animate-spin">
-                    <Loader size={18} className="text-rose-500" /> 
+                  <div className="p-2 bg-cyan-500/20 rounded-lg animate-spin">
+                    <Loader size={18} className="text-cyan-500" /> 
                   </div>
                   <div className="space-y-1">
-                    <span className="text-[11px] font-black tracking-[0.3em] text-rose-500 uppercase italic ">СИНТЕЗ ВІДПОВІДІ...</span>
+                    <span className="text-[11px] font-black tracking-[0.3em] text-cyan-500 uppercase italic ">СИНТЕЗ ВІДПОВІДІ...</span>
                     <div className="h-[2px] w-48 bg-white/5 rounded-full overflow-hidden">
                       <motion.div 
                         animate={{ x: ['-100%', '100%'] }}
                         transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-                        className="h-full w-1/2 bg-rose-500 "
+                        className="h-full w-1/2 bg-cyan-500 "
                       />
                     </div>
                   </div>
@@ -147,13 +148,13 @@ export const FactoryCoordinatorChat: React.FC<FactoryCoordinatorChatProps> = ({
 
         {/* HUD Elements */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-10">
-           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border border-rose-500/10 rounded-full" />
-           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] border border-dashed border-rose-500/5 rounded-full animate-spin-slow" />
+           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border border-cyan-500/10 rounded-full" />
+           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] border border-dashed border-cyan-500/5 rounded-full animate-spin-slow" />
         </div>
       </div>
 
       {/* Input Area */}
-      <div className="relative z-20 p-8 bg-black/80 border-t-2 border-rose-500/20 ">
+      <div className="relative z-20 p-8 bg-black/80 border-t-2 border-cyan-500/20 ">
          <form 
            onSubmit={(e) => { 
              e.preventDefault(); 
@@ -164,30 +165,30 @@ export const FactoryCoordinatorChat: React.FC<FactoryCoordinatorChatProps> = ({
            }} 
            className="relative group/input"
          >
-           <div className="absolute inset-0 bg-rose-500/5 blur-2xl opacity-0 group-focus-within/input:opacity-100 transition-opacity pointer-events-none" />
+           <div className="absolute inset-0 bg-cyan-500/5 blur-2xl opacity-0 group-focus-within/input:opacity-100 transition-opacity pointer-events-none" />
            
            <input
              type="text"
              value={inputText}
              onChange={(e) => setInputText(e.target.value)}
              placeholder="Введіть директиву для координатора..."
-             className="w-full bg-slate-950/60 border-2 border-white/5 focus:border-rose-500/50 rounded-[2rem] py-6 pl-8 pr-20 text-[15px] text-white placeholder-slate-600 focus:outline-none transition-all font-sans relative z-10 italic font-medium"
+             className="w-full bg-slate-950/60 border-2 border-white/5 focus:border-cyan-500/50 rounded-[2rem] py-6 pl-8 pr-20 text-[15px] text-white placeholder-slate-600 focus:outline-none transition-all font-sans relative z-10 italic font-medium"
              spellCheck="false"
              autoFocus
            />
            
-           <button 
+           <Button variant="cyber" 
              type="submit" 
              disabled={!inputText.trim() || isProcessing}
              className={cn(
                "absolute right-3 top-1/2 -translate-y-1/2 w-14 h-14 rounded-2xl flex items-center justify-center transition-all z-20 shadow-2xl",
                inputText.trim() && !isProcessing 
-                ? "bg-rose-600 text-white hover:scale-110 active:scale-95 shadow-rose-600/40" 
+                ? "bg-cyan-600 text-white hover:scale-110 active:scale-95 shadow-rose-600/40" 
                 : "bg-white/5 text-slate-800 opacity-50 cursor-not-allowed"
              )}
            >
               <Send size={22} className="drop-shadow-lg" />
-           </button>
+           </Button>
          </form>
          
          <div className="mt-6 flex items-center gap-10 px-4">
@@ -196,7 +197,7 @@ export const FactoryCoordinatorChat: React.FC<FactoryCoordinatorChatProps> = ({
                <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] italic">КАНАЛ_ЗАШИФРОВАНО</span>
             </div>
             <div className="flex items-center gap-3">
-               <Zap size={12} className="text-rose-500" />
+               <Zap size={12} className="text-cyan-500" />
                <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] italic">ПРІОРИТЕТ: ЕКСТРЕМАЛЬНИЙ</span>
             </div>
             <div className="flex items-center gap-3 ml-auto opacity-40">

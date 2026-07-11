@@ -1,4 +1,5 @@
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -255,14 +256,14 @@ const DataView: React.FC = () => {
             className="hidden"
             accept=".csv,.xlsx,.xls,.pdf"
           />
-          <button
+          <Button variant="cyber"
             onClick={() => fileInputRef.current?.click()}
             disabled={wizardStep !== 'idle'}
             className="px-6 py-3 bg-gradient-to-r from-yellow-600 to-purple-600 hover:from-yellow-500 hover:to-purple-500 text-white rounded-xl font-bold flex items-center gap-2 transition-all shadow-lg shadow-yellow-500/30 disabled:opacity-50 group"
           >
             <Upload size={20} className="group-hover:animate-bounce" />
             <span>ЗАВАНТАЖИТИ</span>
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -280,14 +281,14 @@ const DataView: React.FC = () => {
           { id: 'sources', label: 'ДЖЕ ЕЛА (SOURCES)', icon: Database },
           { id: 'pipelines', label: 'КОНВЕЄ И (PIPELINES)', icon: Layers }
         ].map(tab => (
-          <button
+          <Button variant="cyber"
             key={tab.id}
             onClick={() => setActiveTab(tab.id as any)}
             className={`flex items-center gap-2 px-6 py-3 rounded-t-xl font-bold uppercase text-xs tracking-wider transition-colors ${activeTab === tab.id ? 'bg-slate-800 text-white border-t border-x border-white/10' : 'text-slate-500 hover:text-slate-300'}`}
           >
             <tab.icon size={16} />
             {tab.label}
-          </button>
+          </Button>
         ))}
       </div>
 

@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { motion } from 'framer-motion';
 import { TrendingUp, TrendingDown, DollarSign, Activity, Percent, Info } from 'lucide-react';
@@ -31,9 +32,9 @@ export const MacroIndicatorsWidget: React.FC<{ persona: string }> = ({ persona }
             <p className="text-[9px] text-slate-500 font-mono tracking-widest uppercase">{premiumLocales.macroIndicators.subtitle}</p>
           </div>
         </div>
-        <button aria-label="Детальніше" className="p-2 hover:bg-white/5 rounded-lg text-slate-500 transition-colors">
+        <Button variant="cyber" aria-label="Детальніше" className="p-2 hover:bg-white/5 rounded-lg text-slate-500 transition-colors">
           <Info size={16} />
-        </button>
+        </Button>
       </div>
 
       <div className="grid grid-cols-2 gap-4">

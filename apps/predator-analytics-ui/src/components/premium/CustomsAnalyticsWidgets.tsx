@@ -12,6 +12,7 @@
  * © 2026 PREDATOR Analytics
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactECharts from '@/components/ECharts';
@@ -77,7 +78,7 @@ export const TopImportersWidget: React.FC<{
 
         <div className="flex gap-1">
           {(['volume', 'value', 'growth'] as const).map(sort => (
-            <button
+            <Button variant="cyber"
               key={sort}
               onClick={() => setSortBy(sort)}
               className={cn(
@@ -88,7 +89,7 @@ export const TopImportersWidget: React.FC<{
               )}
             >
               {sort === 'volume' ? premiumLocales.customsAnalytics.topImporters.volume : sort === 'value' ? premiumLocales.customsAnalytics.topImporters.value : premiumLocales.customsAnalytics.topImporters.growth}
-            </button>
+            </Button>
           ))}
         </div>
       </div>

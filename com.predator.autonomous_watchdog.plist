@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>com.predator.autonomous_watchdog</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/bin/bash</string>
+		<string>-c</string>
+		<string>while true; do /Users/Shared/Predator_60/scripts/predator-watchdog-daemon.sh; sleep 10; done</string>
+	</array>
+	<key>RunAtLoad</key>
+	<true/>
+	<key>KeepAlive</key>
+	<true/>
+	<key>ThrottleInterval</key>
+	<integer>0</integer>
+	<key>StandardOutPath</key>
+	<string>/Users/Shared/Predator_60/logs/watchdog.log</string>
+	<key>StandardErrorPath</key>
+	<string>/Users/Shared/Predator_60/logs/watchdog_error.log</string>
+</dict>
+</plist>

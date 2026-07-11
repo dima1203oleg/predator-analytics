@@ -22,6 +22,7 @@ export interface JobStatusResponse {
     started_at: string | null;
     completed_at: string | null;
     error_summary: string | null;
+    warnings: string[] | null;
 }
 
 export const ingestionApi = {
@@ -34,9 +35,10 @@ export const ingestionApi = {
         if (datasetName) formData.append('dataset_name', datasetName);
         if (description) formData.append('description', description);
 
-        return (await apiClient.post('/ingestion/upload', formData, {
+        const res = await apiClient.post('/ingestion/upload', formData, {
             headers: { 'Content-Type': 'multipart/form-data' }
-        })).data;
+        });
+        return res.data;
     },
 
     /**

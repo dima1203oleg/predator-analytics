@@ -12,6 +12,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -165,7 +166,7 @@ const SOMView: React.FC = () => {
         <div className={cn("flex flex-col", isCompact ? "w-full gap-6" : "col-span-12 xl:col-span-4 gap-10")}>
           <section className={cn("relative flex flex-col items-center justify-center overflow-hidden bg-black/40 border border-white/5 shadow-2xl", isCompact ? "p-5 rounded-[2.5rem] h-[650px]" : "p-10 h-[500px] rounded-[4rem]")}>
             <h2 className={cn("absolute top-10 left-10 font-black text-white uppercase tracking-[0.4em] flex items-center gap-3 italic", isCompact ? "text-[9px]" : "text-[11px]")}>
-              <Shield size={16} className="text-rose-500" /> КІЛЬЦЯ КОНТРОЛЮ
+              <Shield size={16} className="text-cyan-500" /> КІЛЬЦЯ КОНТРОЛЮ
             </h2>
 
             <div className={cn("relative flex items-center justify-center", isCompact ? "w-64 h-64 mt-12 scale-90" : "w-80 h-80 mt-10 scale-110")}>
@@ -187,15 +188,15 @@ const SOMView: React.FC = () => {
 
               {/* Inner Core Eye */}
               <div className="relative z-20 flex flex-col items-center justify-center group cursor-pointer">
-                <div className="absolute inset-0 bg-rose-500/20 blur-2xl rounded-full scale-150 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute inset-0 bg-cyan-500/20 blur-2xl rounded-full scale-150 opacity-0 group-hover:opacity-100 transition-opacity" />
                 <Eye size={36} className={cn("transition-all ", selectedRing === 1 ? "text-rose-400" : "text-slate-600")} />
               </div>
             </div>
 
-            <div className={cn("absolute bottom-10 inset-x-10 bg-black/60 border border-rose-500/10 shadow-xl", isCompact ? "p-6 rounded-[2rem]" : "p-8 rounded-[2.5rem]")}>
+            <div className={cn("absolute bottom-10 inset-x-10 bg-black/60 border border-cyan-500/10 shadow-xl", isCompact ? "p-6 rounded-[2rem]" : "p-8 rounded-[2.5rem]")}>
               <div className={cn("flex items-center mb-3", isCompact ? "flex-col items-start gap-2" : "justify-between")}>
                 <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest italic">ПРОТОКОЛ_АКТИВНОГО_РІВНЯ</span>
-                <span className="text-[9px] font-black text-rose-500 uppercase tracking-widest italic">
+                <span className="text-[9px] font-black text-cyan-500 uppercase tracking-widest italic">
                   {selectedRing === 3 ? 'АБСОЛЮТНИЙ_ОТРИМУВАЧ' : selectedRing === 2 ? 'ЮРИДИЧНА_ВЕРИФІКАЦІЯ' : 'АВТОНОМНИЙ_СКАН'}
                 </span>
               </div>
@@ -207,9 +208,9 @@ const SOMView: React.FC = () => {
             </div>
           </section>
 
-          <section className={cn("relative overflow-hidden bg-rose-950/20 border border-rose-500/20 shadow-2xl group/emerg", isCompact ? "p-6 rounded-[2.5rem]" : "p-10 rounded-[4rem]")}>
+          <section className={cn("relative overflow-hidden bg-rose-950/20 border border-cyan-500/20 shadow-2xl group/emerg", isCompact ? "p-6 rounded-[2.5rem]" : "p-10 rounded-[4rem]")}>
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-2 h-2 bg-rose-500 rounded-full  shadow-[0_0_10px_#f43f5e]" />
+              <div className="w-2 h-2 bg-cyan-500 rounded-full  shadow-[0_0_10px_#f43f5e]" />
               <div>
                 <h2 className="text-xl font-black text-white uppercase italic tracking-tighter">СУВЕРЕННИЙ ЕКСТРЕНИЙ ПРОТОКОЛ</h2>
                 <p className="text-[10px] text-rose-400 font-black uppercase tracking-[0.3em] italic opacity-60">РІШЕННЯ ОСТАННЬОЇ ІНСТАНЦІЇ</p>
@@ -219,14 +220,14 @@ const SOMView: React.FC = () => {
               Активація апаратної ізоляції SOM-модуля. Це призведе до фізичного розірвання зв'язків з усіма зовнішніми системами. Дія незворотна без фізичного втручання.
             </p>
 
-            <button
+            <Button variant="cyber"
               onClick={handleEmergencyProtocol}
               className={cn(
                 "w-full rounded-[2.5rem] font-black uppercase flex items-center justify-center gap-6 transition-all duration-700 shadow-2xl overflow-hidden relative border-4",
                 isCompact ? "py-6 text-[10px] tracking-[0.2em]" : "py-8 text-[12px] tracking-[0.4em]",
                 emergencyMode
                   ? "bg-slate-900 text-slate-600 cursor-not-allowed border-slate-800"
-                  : "bg-rose-600 text-white border-rose-500/30 hover:brightness-110 hover:scale-[1.02]"
+                  : "bg-cyan-600 text-white border-cyan-500/30 hover:brightness-110 hover:scale-[1.02]"
               )}
             >
               {emergencyMode ? (
@@ -239,7 +240,7 @@ const SOMView: React.FC = () => {
                   <Power size={20} className="" /> РОЗІРВАТИ_ЗВ'ЯЗОК_ЯДРА
                 </>
               )}
-            </button>
+            </Button>
           </section>
         </div>
 
@@ -248,25 +249,25 @@ const SOMView: React.FC = () => {
           <HoloContainer className={cn("flex flex-col overflow-hidden bg-black/40 border-white/5 shadow-2xl", isCompact ? "p-5 gap-6 rounded-[2.5rem]" : "p-10 gap-10 rounded-[4rem]")}>
             <div className="flex items-center justify-between">
               <h2 className="text-[11px] font-black text-white uppercase tracking-[0.4em] flex items-center gap-3 italic">
-                <Activity size={18} className="text-rose-500" /> МАТРИЦЯ ЗДОРОВ'Я ОРГАНІЗМУ
+                <Activity size={18} className="text-cyan-500" /> МАТРИЦЯ ЗДОРОВ'Я ОРГАНІЗМУ
               </h2>
-              <div className="flex items-center gap-3 px-4 py-1.5 rounded-full bg-rose-500/5 border border-rose-500/20">
-                <div className="w-2 h-2 bg-rose-500 rounded-full  shadow-[0_0_8px_#f43f5e]" />
-                <span className="text-[9px] font-black text-rose-500 uppercase tracking-widest italic">LIVE_ПОТІК</span>
+              <div className="flex items-center gap-3 px-4 py-1.5 rounded-full bg-cyan-500/5 border border-cyan-500/20">
+                <div className="w-2 h-2 bg-cyan-500 rounded-full  shadow-[0_0_8px_#f43f5e]" />
+                <span className="text-[9px] font-black text-cyan-500 uppercase tracking-widest italic">LIVE_ПОТІК</span>
               </div>
             </div>
 
             <div className={cn("grid", isCompact ? "grid-cols-1 gap-4" : "grid-cols-2 gap-8")}>
-              <div className={cn("bg-black/60 border border-white/5 shadow-inner group hover:border-rose-500/30 transition-all", isCompact ? "p-5 rounded-[2rem]" : "p-8 rounded-[3rem]")}>
+              <div className={cn("bg-black/60 border border-white/5 shadow-inner group hover:border-cyan-500/30 transition-all", isCompact ? "p-5 rounded-[2rem]" : "p-8 rounded-[3rem]")}>
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-[9px] font-black text-rose-400 uppercase tracking-widest italic">ЧИСТОТА_МЕРЕЖІ</span>
                   <span className="text-xs font-black text-rose-300 font-mono italic">94.2%</span>
                 </div>
                 <div className="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden">
-                  <motion.div initial={{ width: 0 }} animate={{ width: '94.2%' }} className="h-full bg-rose-500 " />
+                  <motion.div initial={{ width: 0 }} animate={{ width: '94.2%' }} className="h-full bg-cyan-500 " />
                 </div>
               </div>
-              <div className={cn("bg-black/60 border border-white/5 shadow-inner group hover:border-rose-400/30 transition-all", isCompact ? "p-5 rounded-[2rem]" : "p-8 rounded-[3rem]")}>
+              <div className={cn("bg-black/60 border border-white/5 shadow-inner group hover:border-cyan-400/30 transition-all", isCompact ? "p-5 rounded-[2rem]" : "p-8 rounded-[3rem]")}>
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest italic">СИНХ_СУТНОСТЕЙ</span>
                   <span className="text-xs font-black text-rose-200 font-mono italic">14.2%</span>
@@ -279,7 +280,7 @@ const SOMView: React.FC = () => {
 
             <div className={cn("bg-black/80 border border-white/5 shadow-2xl", isCompact ? "p-6 rounded-[2.5rem]" : "p-10 rounded-[3.5rem]")}>
               <div className="flex items-center gap-4 mb-8">
-                <Layers size={20} className="text-rose-500" />
+                <Layers size={20} className="text-cyan-500" />
                 <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em] italic">СТАН ПРОХОДЖЕННЯ ПАЙПЛАЙНІВ</span>
               </div>
               <div className={cn("flex gap-3 mb-6", isCompact ? "flex-col" : "items-center")}>
@@ -288,7 +289,7 @@ const SOMView: React.FC = () => {
                     <div className={cn(
                       "rounded-full transition-all duration-1000 shadow-lg",
                       isCompact ? "w-3 h-3" : "h-2.5",
-                      i < 3 ? "bg-rose-500 shadow-rose-500/20" : i === 3 ? "bg-amber-500  shadow-amber-500/20" : "bg-slate-800"
+                      i < 3 ? "bg-cyan-500 shadow-cyan-500/20" : i === 3 ? "bg-amber-500  shadow-amber-500/20" : "bg-slate-800"
                     )} />
                     <span className={cn("font-black text-slate-600 uppercase truncate italic tracking-tighter", isCompact ? "text-[10px] text-left" : "text-[8px] text-center")}>{step}</span>
                   </div>
@@ -302,18 +303,18 @@ const SOMView: React.FC = () => {
 
             <div className="space-y-6">
               <h3 className="text-[11px] font-black text-white uppercase tracking-[0.4em] flex items-center gap-3 italic">
-                <Hexagon size={18} className="text-rose-500" /> ПІСОЧНИЦЯ ЦИФРОВОГО ДВІЙНИКА
+                <Hexagon size={18} className="text-cyan-500" /> ПІСОЧНИЦЯ ЦИФРОВОГО ДВІЙНИКА
               </h3>
               <div className={cn("grid", isCompact ? "grid-cols-1 gap-4" : "grid-cols-2 gap-8")}>
-                <div className={cn("bg-black/60 border border-white/5 group/item transition-all hover:border-rose-500/40 shadow-xl", isCompact ? "p-5 rounded-[2.5rem]" : "p-8 rounded-[3.5rem]")}>
+                <div className={cn("bg-black/60 border border-white/5 group/item transition-all hover:border-cyan-500/40 shadow-xl", isCompact ? "p-5 rounded-[2.5rem]" : "p-8 rounded-[3.5rem]")}>
                   <div className="flex items-center gap-3 mb-5">
                     <Database size={18} className="text-slate-500 group-hover/item:text-rose-400" />
                     <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest italic leading-none">ЖУРНАЛ_ІСТИНИ (TRUTH LEDGER)</span>
                   </div>
                   <div className="text-4xl font-black text-white font-mono tracking-tighter italic">42,817</div>
-                  <div className="text-[9px] font-black text-rose-500 uppercase mt-3 font-mono italic">● СИНХ_0MS</div>
+                  <div className="text-[9px] font-black text-cyan-500 uppercase mt-3 font-mono italic">● СИНХ_0MS</div>
                 </div>
-                <div className={cn("bg-black/60 border border-white/5 group/item transition-all hover:border-rose-400/40 shadow-xl", isCompact ? "p-5 rounded-[2.5rem]" : "p-8 rounded-[3.5rem]")}>
+                <div className={cn("bg-black/60 border border-white/5 group/item transition-all hover:border-cyan-400/40 shadow-xl", isCompact ? "p-5 rounded-[2.5rem]" : "p-8 rounded-[3.5rem]")}>
                   <div className="flex items-center gap-3 mb-5">
                     <Cpu size={18} className="text-slate-500 group-hover/item:text-rose-300" />
                     <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest italic leading-none">СТАДІЯ_ДВИГУНА_RCE</span>
@@ -325,10 +326,10 @@ const SOMView: React.FC = () => {
             </div>
           </HoloContainer>
 
-          <section className={cn("relative overflow-hidden bg-rose-950/10 border border-rose-500/20 shadow-2xl", isCompact ? "p-6 rounded-[2.5rem] mt-6" : "p-10 rounded-[4rem] mt-10")}>
+          <section className={cn("relative overflow-hidden bg-rose-950/10 border border-cyan-500/20 shadow-2xl", isCompact ? "p-6 rounded-[2.5rem] mt-6" : "p-10 rounded-[4rem] mt-10")}>
             <div className={cn("flex mb-10", isCompact ? "flex-col gap-4 items-start" : "items-center justify-between")}>
               <div className="flex items-center gap-4">
-                <div className="w-2 h-2 bg-rose-500 rounded-full  shadow-[0_0_10px_#f43f5e]" />
+                <div className="w-2 h-2 bg-cyan-500 rounded-full  shadow-[0_0_10px_#f43f5e]" />
                 <div>
                   <h2 className="text-xl font-black text-white uppercase italic tracking-tighter">САД ГІПОТЕЗ (IDEA GARDEN)</h2>
                   <p className="text-[10px] text-rose-400 font-black uppercase tracking-[0.3em] italic opacity-60">СИТУАТИВНЕ МОДЕЛЮВАННЯ</p>
@@ -346,33 +347,33 @@ const SOMView: React.FC = () => {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.15 }}
-                  className={cn("bg-black/60 border border-white/5 group/h hover:border-rose-500/40 transition-all cursor-pointer relative overflow-hidden shadow-xl", isCompact ? "p-5 rounded-[2rem]" : "p-8 rounded-[3rem]")}
+                  className={cn("bg-black/60 border border-white/5 group/h hover:border-cyan-500/40 transition-all cursor-pointer relative overflow-hidden shadow-xl", isCompact ? "p-5 rounded-[2rem]" : "p-8 rounded-[3rem]")}
                 >
-                  <div className="absolute inset-y-0 left-0 w-1 bg-transparent group-hover/h:bg-rose-500 transition-all" />
+                  <div className="absolute inset-y-0 left-0 w-1 bg-transparent group-hover/h:bg-cyan-500 transition-all" />
                   <div className={cn("flex mb-5", isCompact ? "flex-col gap-3 items-start" : "justify-between items-center")}>
                     <div className="flex items-center gap-4">
                       <span className="text-[9px] font-black bg-black px-3 py-1.5 rounded-xl text-slate-500 border border-white/10 font-mono italic">{h.id}</span>
                       <span className={cn(
                         "text-[9px] font-black px-3 py-1.5 rounded-xl uppercase italic tracking-widest",
-                        h.type === 'ARCH' ? 'text-rose-300 bg-rose-500/10 border border-rose-500/20' : 'text-rose-100 bg-rose-600/10 border border-rose-600/20'
+                        h.type === 'ARCH' ? 'text-rose-300 bg-cyan-500/10 border border-cyan-500/20' : 'text-rose-100 bg-cyan-600/10 border border-cyan-600/20'
                       )}>{h.type}</span>
                     </div>
                     <div className="flex items-center gap-3">
-                      <Sparkles size={14} className="text-rose-500 " />
-                      <span className="text-[10px] font-black text-rose-500 font-mono italic">{(h.confidence * 100).toFixed(0)}% ВПЕВНЕНІСТЬ</span>
+                      <Sparkles size={14} className="text-cyan-500 " />
+                      <span className="text-[10px] font-black text-cyan-500 font-mono italic">{(h.confidence * 100).toFixed(0)}% ВПЕВНЕНІСТЬ</span>
                     </div>
                   </div>
                   <p className="text-[14px] text-slate-300 group-hover/h:text-white transition-colors leading-relaxed mb-8 font-black uppercase italic tracking-tight">
                     {h.desc}
                   </p>
                   <div className={cn("flex gap-4 h-0 overflow-hidden group-hover/h:h-12 transition-all duration-500", isCompact ? "flex-col h-auto group-hover/h:h-auto mt-4" : "")}>
-                    <button className={cn("bg-rose-600 text-white rounded-2xl font-black uppercase hover:brightness-110 transition-all italic shadow-xl", isCompact ? "w-full py-4 text-[9px] tracking-widest" : "flex-1 px-8 text-[10px] tracking-widest")}>ЗАПУСТИТИ_СИМУЛЯЦІЮ</button>
-                    <button
+                    <Button variant="cyber" className={cn("bg-cyan-600 text-white rounded-2xl font-black uppercase hover:brightness-110 transition-all italic shadow-xl", isCompact ? "w-full py-4 text-[9px] tracking-widest" : "flex-1 px-8 text-[10px] tracking-widest")}>ЗАПУСТИТИ_СИМУЛЯЦІЮ</Button>
+                    <Button variant="cyber"
                       onClick={() => setSelectedHypothesisUeid(h.id)}
                       className={cn("bg-white/5 border border-white/10 text-slate-400 rounded-2xl font-black uppercase hover:text-white hover:bg-white/10 transition-all italic", isCompact ? "w-full py-4 text-[9px] tracking-widest" : "px-8 text-[10px] tracking-widest")}
                     >
                       ЗАПИТАТИ_ПОЯСНЕННЯ
-                    </button>
+                    </Button>
                   </div>
                 </motion.div>
               ))}
@@ -387,15 +388,15 @@ const SOMView: React.FC = () => {
                   className="mt-8 border-t border-white/10 pt-8"
                 >
                   <div className="flex justify-between items-center mb-6">
-                    <h4 className="text-[11px] font-black text-rose-500 uppercase tracking-widest flex items-center gap-3 italic">
+                    <h4 className="text-[11px] font-black text-cyan-500 uppercase tracking-widest flex items-center gap-3 italic">
                       <Brain size={16} /> АНАЛІЗ_SOVEREIGN_ADVISOR
                     </h4>
-                    <button
+                    <Button variant="cyber"
                       onClick={() => setSelectedHypothesisUeid(null)}
-                      className="p-2 text-slate-500 hover:text-rose-500 transition-colors"
+                      className="p-2 text-slate-500 hover:text-cyan-500 transition-colors"
                     >
                       <ZapOff size={18} />
-                    </button>
+                    </Button>
                   </div>
                   <SovereignReportWidget ueid={selectedHypothesisUeid} />
                 </motion.div>
@@ -408,7 +409,7 @@ const SOMView: React.FC = () => {
         <div className={cn("flex flex-col", isCompact ? "w-full gap-6" : "col-span-12 xl:col-span-3 gap-10")}>
           <section className={cn("relative flex flex-col h-full overflow-hidden bg-black/40 border border-white/5 shadow-2xl", isCompact ? "p-5 rounded-[2.5rem]" : "p-10 rounded-[4rem]")}>
             <div className="flex items-center gap-4 mb-8">
-              <div className="w-2 h-2 bg-rose-500 rounded-full  shadow-[0_0_10px_#f43f5e]" />
+              <div className="w-2 h-2 bg-cyan-500 rounded-full  shadow-[0_0_10px_#f43f5e]" />
               <div>
                 <h2 className="text-xl font-black text-white uppercase italic tracking-tighter">АКТИВНИЙ РОЙ АГЕНТІВ</h2>
                 <p className="text-[10px] text-rose-400 font-black uppercase tracking-[0.3em] italic opacity-60">СИСТЕМНІ СПОСТЕРІГАЧІ</p>
@@ -422,10 +423,10 @@ const SOMView: React.FC = () => {
                 { name: 'Аудитор', status: 'ВЕРИФІКУЄ', color: 'text-rose-400' },
                 { name: 'Переговорник', status: 'ОЧІКУВАННЯ', color: 'text-slate-600' }
               ].map((agent, i) => (
-                <div key={agent.name} className="flex flex-col gap-4 p-8 bg-black border-2 border-white/5 rounded-[3rem] shadow-inner group hover:border-rose-500/30 transition-all">
+                <div key={agent.name} className="flex flex-col gap-4 p-8 bg-black border-2 border-white/5 rounded-[3rem] shadow-inner group hover:border-cyan-500/30 transition-all">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                      <div className={cn("w-2 h-2 rounded-full shadow-[0_0_8px_currentColor]", agent.status === 'ОЧІКУВАННЯ' ? "bg-slate-800 text-slate-800" : "bg-rose-500 text-rose-500 ")} />
+                      <div className={cn("w-2 h-2 rounded-full shadow-[0_0_8px_currentColor]", agent.status === 'ОЧІКУВАННЯ' ? "bg-slate-800 text-slate-800" : "bg-cyan-500 text-cyan-500 ")} />
                       <span className="text-[11px] font-black text-white uppercase italic tracking-widest">АГЕНТ {agent.name}</span>
                     </div>
                     <Settings size={16} className="text-slate-700 hover:text-white transition-colors cursor-pointer" />
@@ -440,14 +441,14 @@ const SOMView: React.FC = () => {
 
             <div className={cn("bg-black/80 border border-white/5 shadow-2xl relative overflow-hidden", isCompact ? "mt-6 p-6 rounded-[2.5rem]" : "mt-10 p-10 rounded-[3.5rem]")}>
               <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none">
-                 <Terminal size={120} className="text-rose-500" />
+                 <Terminal size={120} className="text-cyan-500" />
               </div>
               <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] mb-8 flex items-center gap-4 italic relative z-10">
-                <Terminal size={16} className="text-rose-500" /> ЛОГИ КОМАНДНОГО НАГЛЯДУ
+                <Terminal size={16} className="text-cyan-500" /> ЛОГИ КОМАНДНОГО НАГЛЯДУ
               </h3>
               <div className="font-mono text-[10px] text-slate-500 space-y-4 h-[250px] overflow-y-auto custom-scrollbar pr-4 italic font-bold relative z-10">
                 <p><span className="text-slate-700 font-black">[11:04:12]</span> <span className="text-rose-400">SOM_ЯДРО:</span> TRUTH LEDGER СИНХРОНІЗОВАНО.</p>
-                <p><span className="text-slate-700 font-black">[11:12:05]</span> <span className="text-rose-500">РЕЗОЛВЕР:</span> ВИРІШЕНО СУТНІСТЬ 'GLOBAL HOLDING LTD' ЧЕРЕЗ SOVEREIGN LINKER (CONF: 0.94).</p>
+                <p><span className="text-slate-700 font-black">[11:12:05]</span> <span className="text-cyan-500">РЕЗОЛВЕР:</span> ВИРІШЕНО СУТНІСТЬ 'GLOBAL HOLDING LTD' ЧЕРЕЗ SOVEREIGN LINKER (CONF: 0.94).</p>
                 <p><span className="text-slate-700 font-black">[11:12:15]</span> <span className="text-amber-500">ГРАФ_МАЙНЕР:</span> ВИЯВЛЕНО НОВИЙ КЛАСТЕР ВПЛИВУ #7 (3 КОМПАНІЇ, 1 UBO).</p>
                 <p><span className="text-slate-700 font-black">[11:12:22]</span> <span className="text-rose-400">АРХІТЕКТОР:</span> ЗГЕНЕРОВАНО ГІПОТЕЗУ H-504 ЧЕРЕЗ RECURSIVE SCAN.</p>
                 <p><span className="text-slate-700 font-black">[11:15:01]</span> <span className="text-rose-300">СИСТЕМА:</span> OSINT ЗАЧИСТКА ЗАВЕРШЕНА. PURITY: 94.2%.</p>
@@ -462,15 +463,15 @@ const SOMView: React.FC = () => {
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
-        className={cn("bg-black/60 border border-rose-500/20 shadow-4xl relative overflow-hidden", isCompact ? "p-6 rounded-[2.5rem]" : "p-12 rounded-[4rem]")}
+        className={cn("bg-black/60 border border-cyan-500/20 shadow-4xl relative overflow-hidden", isCompact ? "p-6 rounded-[2.5rem]" : "p-12 rounded-[4rem]")}
       >
         <div className="absolute inset-0 bg-gradient-to-r from-rose-500/[0.03] via-transparent to-transparent pointer-events-none" />
         <div className={cn("flex relative z-10", isCompact ? "flex-col gap-8" : "flex-row items-center justify-between gap-12")}>
           <div className={cn("flex items-center", isCompact ? "gap-6" : "gap-10")}>
             <div className="relative">
-              <div className="absolute inset-0 bg-rose-500/20 blur-3xl rounded-full scale-125 " />
-              <div className="p-5 bg-black border-2 border-rose-500/30 rounded-full shadow-2xl">
-                <Globe size={42} className="text-rose-500 animate-spin-slow" />
+              <div className="absolute inset-0 bg-cyan-500/20 blur-3xl rounded-full scale-125 " />
+              <div className="p-5 bg-black border-2 border-cyan-500/30 rounded-full shadow-2xl">
+                <Globe size={42} className="text-cyan-500 animate-spin-slow" />
               </div>
             </div>
             <div>
@@ -481,20 +482,20 @@ const SOMView: React.FC = () => {
           <div className={cn("flex", isCompact ? "flex-col gap-6" : "gap-16")}>
             <div className="flex flex-col">
               <span className="text-[9px] font-black text-slate-600 uppercase tracking-[0.4em] mb-2 flex items-center gap-3 italic">
-                <Shield size={12} className="text-rose-500" /> АНКЛАВ_БЕЗПЕКИ
+                <Shield size={12} className="text-cyan-500" /> АНКЛАВ_БЕЗПЕКИ
               </span>
               <span className="text-sm font-black text-rose-400 italic tracking-widest">ТИТАНОВИЙ_ЩИТ_V4</span>
             </div>
             <div className="flex flex-col text-right">
               <span className="text-[9px] font-black text-slate-600 uppercase tracking-[0.4em] mb-2 flex items-center gap-3 justify-end italic">
-                <Radio size={12} className="text-rose-500" /> ТРАНСМІСІЯ
+                <Radio size={12} className="text-cyan-500" /> ТРАНСМІСІЯ
               </span>
               <span className="text-sm font-black text-white uppercase font-mono italic tracking-widest">ШИФРУВАННЯ_AES256</span>
             </div>
           </div>
-          <button className={cn("bg-rose-600 text-white font-black uppercase hover:brightness-110 transition-all shadow-4xl flex items-center gap-5 italic border-4 border-rose-500/20 justify-center", isCompact ? "px-8 py-5 rounded-[2rem] text-[10px] tracking-[0.3em] w-full" : "px-14 py-6 rounded-[2.5rem] text-[11px] tracking-[0.5em]")}>
+          <Button variant="cyber" className={cn("bg-cyan-600 text-white font-black uppercase hover:brightness-110 transition-all shadow-4xl flex items-center gap-5 italic border-4 border-cyan-500/20 justify-center", isCompact ? "px-8 py-5 rounded-[2rem] text-[10px] tracking-[0.3em] w-full" : "px-14 py-6 rounded-[2.5rem] text-[11px] tracking-[0.5em]")}>
             РОЗШИРИТИ_ГОРИЗОНТ_НАГЛЯДУ <ArrowUpRight size={22} />
-          </button>
+          </Button>
         </div>
       </motion.div>
 

@@ -8,6 +8,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -164,7 +165,7 @@ export default function MarketAnalyticsPremium() {
             ]}
           />
           <div className="flex justify-end">
-            <button
+            <Button variant="cyber"
               onClick={() => fetchData()}
               disabled={loading}
               className={cn(
@@ -173,7 +174,7 @@ export default function MarketAnalyticsPremium() {
               )}
             >
               <RefreshCw size={32} className={cn("transition-transform duration-700", !loading && "group-hover/btn:rotate-180")} />
-            </button>
+            </Button>
           </div>
 
           {/* METRICS GRID ELITE */}
@@ -301,9 +302,9 @@ export default function MarketAnalyticsPremium() {
                      </div>
                   </div>
                   
-                  <button className="w-full py-8 bg-[#D4AF37] text-black rounded-[2.5rem] text-[12px] font-black uppercase tracking-[0.5em] italic shadow-4xl hover:bg-yellow-400 hover:scale-[1.02] active:scale-95 transition-all duration-500 relative z-10">
+                  <Button variant="cyber" className="w-full py-8 bg-[#D4AF37] text-black rounded-[2.5rem] text-[12px] font-black uppercase tracking-[0.5em] italic shadow-4xl hover:bg-yellow-400 hover:scale-[1.02] active:scale-95 transition-all duration-500 relative z-10">
                      ПЕРЕГЛЯНУТИ_ПОВНИЙ_AI_ЗВІТ
-                  </button>
+                  </Button>
                </div>
 
                {/* QUICK ACTIONS ELITE */}
@@ -318,7 +319,7 @@ export default function MarketAnalyticsPremium() {
                        { i: Globe, l: 'ГЛОБАЛЬНІ_ПОТОКИ', c: 'text-emerald-500', sub: 'FLOW_SYNC_MASTER' },
                        { i: Fingerprint, l: 'ІНСАЙТИ_КОНКУРЕНТІВ', c: 'text-amber-500', sub: 'SIGNAL_HUNTER' },
                      ].map((a, i) => (
-                       <button key={i} className="w-full flex items-center justify-between p-8 rounded-[3rem] bg-white/[0.01] border-2 border-white/[0.03] hover:bg-white/[0.04] hover:border-yellow-500/20 transition-all duration-500 group/act shadow-xl italic uppercase">
+                       <Button variant="cyber" key={i} className="w-full flex items-center justify-between p-8 rounded-[3rem] bg-white/[0.01] border-2 border-white/[0.03] hover:bg-white/[0.04] hover:border-yellow-500/20 transition-all duration-500 group/act shadow-xl italic uppercase">
                           <div className="flex items-center gap-8">
                              <div className="p-4 rounded-2xl bg-black border-2 border-white/[0.03] group-hover/act:border-yellow-500/30 transition-all">
                                 <a.i size={24} className={a.c} />
@@ -329,7 +330,7 @@ export default function MarketAnalyticsPremium() {
                              </div>
                           </div>
                           <ChevronRight size={20} className="text-slate-900 group-hover/act:text-yellow-500 transition-all group-hover/act:translate-x-2" />
-                       </button>
+                       </Button>
                      ))}
                   </div>
                </div>

@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { api, v45Client } from '../../services/api';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -110,10 +111,10 @@ export const AutonomousLearningStack: React.FC = () => {
                         <Zap className={`w-4 h-4 text-rose-500 ${isThinking ? 'animate-spin' : 'group-hover/btn:scale-125 transition-transform'}`} />
                         <span className="text-[11px] font-black text-rose-500 uppercase tracking-widest">{premiumLocales.evolution.learningStack.startTraining}</span>
                     </motion.button>
-                    <button className="flex items-center justify-center gap-3 p-4 bg-slate-900/60 border border-white/5 rounded-2xl opacity-40 cursor-not-allowed group/btn2">
+                    <Button variant="cyber" className="flex items-center justify-center gap-3 p-4 bg-slate-900/60 border border-white/5 rounded-2xl opacity-40 cursor-not-allowed group/btn2">
                         <Lock className="w-4 h-4 text-slate-500 group-hover/btn2:text-slate-200 transition-colors" />
                         <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest">HYPER_TUNE</span>
-                    </button>
+                    </Button>
                 </div>
 
                 {/* Benchmarks Section */}

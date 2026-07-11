@@ -34,6 +34,7 @@ class ChatRequest(BaseModel):
     message: str
     context: ChatContext | None = None
     context_ueid: str | None = None
+    model: str | None = None
     history: list[dict[str, str]] = Field(default_factory=list)
 
 
@@ -110,7 +111,7 @@ async def copilot_chat(
     messages.extend(payload.history)
     messages.append({"role": "user", "content": payload.message})
 
-    response_text = await AIService.chat_completion(messages)
+    response_text = await AIService.chat_completion(messages, model=payload.model)
 
     # Зберігаємо повідомлення в Redis
     await redis.add_message(session_id, "user", payload.message)
@@ -157,7 +158,7 @@ async def copilot_chat_stream(
         messages = [system_prompt, *payload.history, {"role": "user", "content": payload.message}]
 
         try:
-            response_text = await AIService.chat_completion(messages)
+            response_text = await AIService.chat_completion(messages, model=payload.model)
 
             # Симулюємо streaming по словах
             words = response_text.split()

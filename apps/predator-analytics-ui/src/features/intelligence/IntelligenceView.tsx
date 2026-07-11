@@ -10,6 +10,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import {
     Activity, Brain, Radio, Shield, Sparkles, Zap, Network, Target,
@@ -153,16 +154,16 @@ const IntelligenceView: React.FC = () => {
                         breadcrumbs={['STRATEGY', 'NEXUS', 'RECON_HUB']}
                         actions={
                             <div className="flex gap-4">
-                                <button
+                                <Button variant="cyber"
                                     onClick={triggerCognitiveRefresh}
                                     className="px-10 py-5 bg-[#D4AF37] text-black font-black rounded-2xl text-[11px] uppercase tracking-[0.3em] shadow-xl hover:brightness-110 transition-all flex items-center gap-4 italic group"
                                 >
                                     {isThinking ? <RefreshCw className="animate-spin" size={18} /> : <Sparkles size={18} />}
                                     ОПТИМІЗУВАТИ_ЯДРО
-                                </button>
-                                <button className="p-5 bg-black/60 border border-white/10 rounded-2xl text-slate-500 hover:text-white transition-all">
+                                </Button>
+                                <Button variant="cyber" className="p-5 bg-black/60 border border-white/10 rounded-2xl text-slate-500 hover:text-white transition-all">
                                     <RadioTower size={22} className=" text-[#D4AF37]" />
-                                </button>
+                                </Button>
                             </div>
                         }
                     />
@@ -336,9 +337,9 @@ const IntelligenceView: React.FC = () => {
                                       </div>
                                    ))}
                                 </div>
-                                <button className="w-full py-5 bg-[#D4AF37] text-black rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] hover:brightness-110 transition-all shadow-xl italic mt-6">
+                                <Button variant="cyber" className="w-full py-5 bg-[#D4AF37] text-black rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] hover:brightness-110 transition-all shadow-xl italic mt-6">
                                    ПОВНИЙ СИСТЕМНИЙ АУДИТ
-                                </button>
+                                </Button>
                             </div>
 
                         </div>

@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { render, screen, fireEvent, act, waitFor, within } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import CasesView from '../CasesView';
@@ -54,9 +55,9 @@ vi.mock('@/components/cases/CaseCard', () => {
         CaseCard: React.forwardRef(({ caseItem, onView, onArchive, onEscalate }: any, ref: any) => (
             <div data-testid="case-card" ref={ref}>
                 <h3>{caseItem.title}</h3>
-                <button onClick={() => onView(caseItem.id)}>View</button>
-                <button onClick={() => onArchive(caseItem.id)}>Archive</button>
-                <button onClick={() => onEscalate(caseItem.id)}>Escalate</button>
+                <Button variant="cyber" onClick={() => onView(caseItem.id)}>View</Button>
+                <Button variant="cyber" onClick={() => onArchive(caseItem.id)}>Archive</Button>
+                <Button variant="cyber" onClick={() => onEscalate(caseItem.id)}>Escalate</Button>
             </div>
         )),
     };
@@ -67,7 +68,7 @@ vi.mock('@/components/cases/CaseStats', () => {
     return {
         CaseStats: React.forwardRef(({ cases, activeFilter, onFilterChange }: any, ref: any) => (
             <div data-testid="case-stats" ref={ref}>
-                <button onClick={() => onFilterChange('КРИТИЧНО')}>Filter Critical</button>
+                <Button variant="cyber" onClick={() => onFilterChange('КРИТИЧНО')}>Filter Critical</Button>
                 <span>Active: {activeFilter}</span>
             </div>
         )),
@@ -81,7 +82,7 @@ vi.mock('@/components/cases/CaseDetailModal', () => {
             selectedCase ? (
                 <div data-testid="case-detail-modal" ref={ref}>
                     <h2>{selectedCase.title}</h2>
-                    <button onClick={onClose}>Close</button>
+                    <Button variant="cyber" onClick={onClose}>Close</Button>
                 </div>
             ) : null
         )),

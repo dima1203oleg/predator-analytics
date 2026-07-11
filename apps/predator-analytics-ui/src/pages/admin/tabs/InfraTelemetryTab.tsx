@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState, useEffect } from 'react';
 import { Activity, Cpu, HardDrive, Wifi, Thermometer, Server, Monitor, Layers, Shield, Zap, Globe, Cpu as CpuIcon, Box, Radio, RefreshCw, Zap as ZapIcon } from 'lucide-react';
@@ -59,7 +60,7 @@ const GaugeBar: React.FC<GaugeBarProps> = ({
         <span className="text-white/20">{label}</span>
         <span className={cn(
           "font-black italic ",
-          isDanger ? "text-rose-500" : isWarning ? "text-amber-400" : "text-emerald-500/80"
+          isDanger ? "text-cyan-500" : isWarning ? "text-amber-400" : "text-emerald-500/80"
         )}>{value}{unit}</span>
       </div>
       <div className="h-[4px] bg-white/[0.03] rounded-full overflow-hidden relative border border-white/[0.05] shadow-inner">
@@ -86,7 +87,7 @@ const StatusBadge: React.FC<{ status: NodeMetric['status'] }> = ({ status }) => 
   const map = {
     online:   { label: 'АКТИВНИЙ', cls: 'text-emerald-500 border-emerald-500/20 bg-emerald-500/5' },
     offline:  { label: 'ОФЛАЙН', cls: 'text-white/20 border-white/10 bg-white/5' },
-    degraded: { label: 'КРИТИЧНО', cls: 'text-rose-500 border-rose-500/20 bg-rose-500/5 ' },
+    degraded: { label: 'КРИТИЧНО', cls: 'text-cyan-500 border-cyan-500/20 bg-cyan-500/5 ' },
   };
   const { label, cls } = map[status];
   return (
@@ -117,31 +118,31 @@ const NodeCard: React.FC<{ node: NodeMetric }> = ({ node }) => {
       whileHover={{ y: -8, scale: 1.02 }}
       className={cn(
         'p-8 rounded-[2.5rem] border-2 relative overflow-hidden group transition-all duration-700 glass-wraith  shadow-4xl',
-        node.status === 'online'   ? 'border-white/5 hover:border-rose-500/40' :
-        node.status === 'degraded' ? 'border-rose-500/30 bg-rose-500/5' :
+        node.status === 'online'   ? 'border-white/5 hover:border-cyan-500/40' :
+        node.status === 'degraded' ? 'border-cyan-500/30 bg-cyan-500/5' :
                                      'border-white/5 opacity-40 grayscale bg-black/40',
       )}
     >
       <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
       <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none group-hover:opacity-[0.1] transition-opacity duration-1000">
-        <CpuIcon size={80} className="text-rose-500" />
+        <CpuIcon size={80} className="text-cyan-500" />
       </div>
 
-      <div className="absolute top-0 left-0 w-12 h-12 border-t-2 border-l-2 border-white/5 group-hover:border-rose-500/30 transition-colors rounded-tl-[2.5rem]" />
-      <div className="absolute bottom-0 right-0 w-12 h-12 border-b-2 border-r-2 border-white/5 group-hover:border-rose-500/30 transition-colors rounded-br-[2.5rem]" />
+      <div className="absolute top-0 left-0 w-12 h-12 border-t-2 border-l-2 border-white/5 group-hover:border-cyan-500/30 transition-colors rounded-tl-[2.5rem]" />
+      <div className="absolute bottom-0 right-0 w-12 h-12 border-b-2 border-r-2 border-white/5 group-hover:border-cyan-500/30 transition-colors rounded-br-[2.5rem]" />
 
       <div className="flex items-start justify-between mb-8 relative z-10">
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-4">
-            <div className="p-3 bg-rose-500/10 rounded-2xl group-hover:bg-rose-500/20 transition-all duration-500 border border-rose-500/20">
-              <Server size={20} className="text-rose-500" />
+            <div className="p-3 bg-cyan-500/10 rounded-2xl group-hover:bg-cyan-500/20 transition-all duration-500 border border-cyan-500/20">
+              <Server size={20} className="text-cyan-500" />
             </div>
             <span className="text-2xl font-black tracking-tighter text-white uppercase italic glint-elite">{node.node}</span>
           </div>
           <div className="flex items-center gap-4 pl-1">
             <span className="text-[9px] font-black font-mono text-white/20 uppercase tracking-[0.4em] italic">{localizedRole}</span>
-            <div className="w-1.5 h-1.5 rounded-full bg-rose-500/30 " />
-            <span className="text-[10px] font-black font-mono text-white/40 group-hover:text-rose-500/60 transition-colors uppercase tracking-widest">{node.ip || '192.168.0.x'}</span>
+            <div className="w-1.5 h-1.5 rounded-full bg-cyan-500/30 " />
+            <span className="text-[10px] font-black font-mono text-white/40 group-hover:text-cyan-500/60 transition-colors uppercase tracking-widest">{node.ip || '192.168.0.x'}</span>
           </div>
         </div>
         <StatusBadge status={node.status} />
@@ -165,8 +166,8 @@ const NodeCard: React.FC<{ node: NodeMetric }> = ({ node }) => {
               <div className="flex flex-col gap-1 group/stat-icon">
                 <span className="text-[8px] font-black text-white/20 uppercase tracking-widest italic">ТЕМП.</span>
                 <div className="flex items-center gap-2">
-                   <Thermometer size={14} className="text-rose-500/40 group-hover/stat-icon:text-rose-500 transition-colors" />
-                   <span className={cn("text-[11px] font-black font-mono italic tracking-tighter", (node.temp || 0) > 75 ? "text-rose-500 " : "text-emerald-500/80")}>
+                   <Thermometer size={14} className="text-cyan-500/40 group-hover/stat-icon:text-cyan-500 transition-colors" />
+                   <span className={cn("text-[11px] font-black font-mono italic tracking-tighter", (node.temp || 0) > 75 ? "text-cyan-500 " : "text-emerald-500/80")}>
                      {node.temp}°C
                    </span>
                 </div>
@@ -181,13 +182,13 @@ const NodeCard: React.FC<{ node: NodeMetric }> = ({ node }) => {
             </div>
             <div className="flex flex-col items-end gap-1">
               <span className="text-[8px] font-black font-mono text-white/20 uppercase tracking-[0.3em] italic">UPTIME</span>
-              <span className="text-[10px] font-black font-mono text-rose-500/40 italic uppercase tracking-widest">{node.uptime}</span>
+              <span className="text-[10px] font-black font-mono text-cyan-500/40 italic uppercase tracking-widest">{node.uptime}</span>
             </div>
           </div>
         </div>
       )}
       
-      <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-rose-500/5 blur-[80px] group-hover:bg-rose-500/15 transition-all duration-1000 rounded-full" />
+      <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-cyan-500/5 blur-[80px] group-hover:bg-cyan-500/15 transition-all duration-1000 rounded-full" />
     </motion.div>
   );
 };
@@ -199,7 +200,7 @@ const svcColumns: VirtualColumn<ServiceStatus>[] = [
     key: 'name', label: 'РЕЄСТР_ЦЕНТРАЛЬНИХ_СЕРВІСІВ', width: '250px', mono: true,
     render: (v) => (
       <div className="flex items-center gap-4">
-        <div className="w-2 h-2 rounded-full bg-rose-500 " />
+        <div className="w-2 h-2 rounded-full bg-cyan-500 " />
         <span className="text-white font-black tracking-tight uppercase italic glint-elite">{String(v)}</span>
       </div>
     ),
@@ -207,7 +208,7 @@ const svcColumns: VirtualColumn<ServiceStatus>[] = [
   {
     key: 'status', label: 'СТАН_ЯДРА', width: '140px',
     render: (v) => {
-      const color = v === 'ok' ? 'text-emerald-500' : v === 'warn' ? 'text-amber-500' : 'text-rose-500';
+      const color = v === 'ok' ? 'text-emerald-500' : v === 'warn' ? 'text-amber-500' : 'text-cyan-500';
       const label = v === 'ok' ? 'ОПТИМАЛЬНО' : v === 'warn' ? 'УВАГА' : 'ЗБІЙ';
       return (
         <div className={cn('text-[10px] font-black tracking-[0.3em] flex items-center gap-3 italic uppercase', color)}>
@@ -221,7 +222,7 @@ const svcColumns: VirtualColumn<ServiceStatus>[] = [
     key: 'latencyMs', label: 'ЛАТЕНТНІСТЬ', width: '120px', mono: true, align: 'right',
     render: (v) => {
       const ms = Number(v);
-      const color = ms > 500 ? 'text-rose-500' : ms > 200 ? 'text-amber-500' : 'text-emerald-500/80';
+      const color = ms > 500 ? 'text-cyan-500' : ms > 200 ? 'text-amber-500' : 'text-emerald-500/80';
       return <span className={cn("font-black italic text-[11px]", color)}>{ms}мс</span>;
     },
   },
@@ -248,17 +249,17 @@ const LiveNetworkTopology: React.FC<{ nodes: NodeMetric[] }> = ({ nodes }) => {
       {/* Central Core */}
       <div className="absolute z-20 flex flex-col items-center justify-center">
         <div className="relative flex items-center justify-center">
-          <div className="absolute inset-0 bg-rose-500/30 blur-[60px] rounded-full scale-150 " />
+          <div className="absolute inset-0 bg-cyan-500/30 blur-[60px] rounded-full scale-150 " />
           <motion.div 
             animate={{ rotate: 360 }}
             transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-            className="absolute inset-0 border-2 border-dashed border-rose-500/20 rounded-full scale-150"
+            className="absolute inset-0 border-2 border-dashed border-cyan-500/20 rounded-full scale-150"
           />
           <div className="w-24 h-24 bg-gradient-to-br from-rose-700 via-rose-500 to-rose-800 rounded-full flex items-center justify-center  border-2 border-rose-300/30 relative">
             <Shield size={40} className="text-white " />
           </div>
         </div>
-        <span className="mt-6 text-[12px] font-black text-rose-500 uppercase tracking-[0.5em] italic glint-elite">PREDATOR_CORE_HUB</span>
+        <span className="mt-6 text-[12px] font-black text-cyan-500 uppercase tracking-[0.5em] italic glint-elite">PREDATOR_CORE_HUB</span>
       </div>
 
       {/* Orbiting Nodes */}
@@ -280,7 +281,7 @@ const LiveNetworkTopology: React.FC<{ nodes: NodeMetric[] }> = ({ nodes }) => {
                 transition={{ duration: 1, delay: i * 0.1 }}
                 x1="50%" y1="50%" 
                 x2={`calc(50% + ${x}px)`} y2={`calc(50% + ${y}px)`} 
-                stroke={isOnline ? 'rgba(225,29,72,0.6)' : 'rgba(255,255,255,0.05)'} 
+                stroke={isOnline ? 'rgba(6,182,212,0.6)' : 'rgba(255,255,255,0.05)'} 
                 strokeWidth="2"
                 strokeDasharray={isOnline ? "6 6" : "none"}
                 className={isOnline ? "" : ""}
@@ -300,10 +301,10 @@ const LiveNetworkTopology: React.FC<{ nodes: NodeMetric[] }> = ({ nodes }) => {
             >
               <div className={cn(
                 "w-14 h-14 rounded-2xl flex items-center justify-center border-2 shadow-4xl relative transition-all duration-500 group-hover:scale-125 group-hover:rotate-6",
-                isOnline ? "bg-black/90 border-rose-500/40 shadow-rose-500/20" : "bg-black/40 border-white/5 opacity-40"
+                isOnline ? "bg-black/90 border-cyan-500/40 shadow-cyan-500/20" : "bg-black/40 border-white/5 opacity-40"
               )}>
-                {isOnline && <div className="absolute inset-0 bg-rose-500/20 rounded-2xl blur-xl " />}
-                <Server size={24} className={isOnline ? "text-rose-500" : "text-white/10"} />
+                {isOnline && <div className="absolute inset-0 bg-cyan-500/20 rounded-2xl blur-xl " />}
+                <Server size={24} className={isOnline ? "text-cyan-500" : "text-white/10"} />
               </div>
               <div className="mt-4 absolute top-full flex flex-col items-center opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none w-max bg-black/90 border-2 border-white/5 p-4 rounded-2xl z-30 shadow-4xl transform translate-y-2 group-hover:translate-y-0">
                 <span className="text-[11px] font-black text-white uppercase tracking-[0.2em] italic">{node.node}</span>
@@ -342,11 +343,11 @@ export const InfraTelemetryTab: React.FC = () => {
           <motion.div 
             animate={{ rotate: 360 }}
             transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-            className="w-24 h-24 border-2 border-rose-500/20 rounded-full border-t-rose-500 "
+            className="w-24 h-24 border-2 border-cyan-500/20 rounded-full border-t-rose-500 "
           />
-          <Activity className="absolute inset-0 m-auto w-8 h-8 text-rose-500 " />
+          <Activity className="absolute inset-0 m-auto w-8 h-8 text-cyan-500 " />
         </div>
-        <div className="text-[14px] font-black font-mono uppercase tracking-[0.6em]  italic text-rose-500/60">ЗЧИТУВАННЯ_ТЕЛЕМЕТРІЇ_ЯДРА...</div>
+        <div className="text-[14px] font-black font-mono uppercase tracking-[0.6em]  italic text-cyan-500/60">ЗЧИТУВАННЯ_ТЕЛЕМЕТРІЇ_ЯДРА...</div>
       </div>
     );
   }
@@ -354,10 +355,10 @@ export const InfraTelemetryTab: React.FC = () => {
   if (isError || !data) {
     return (
       <div className="flex flex-col items-center justify-center h-[700px] p-24 text-center m-12 relative overflow-hidden">
-        <div className="absolute inset-0 bg-rose-500/[0.02] blur-[100px] pointer-events-none" />
+        <div className="absolute inset-0 bg-cyan-500/[0.02] blur-[100px] pointer-events-none" />
         <div className="relative z-10 flex flex-col items-center">
-          <div className="w-20 h-20 rounded-2xl bg-rose-500/10 flex items-center justify-center mb-8 border border-rose-500/20 ">
-            <RefreshCw size={32} className="text-rose-500/60 animate-spin-slow" />
+          <div className="w-20 h-20 rounded-2xl bg-cyan-500/10 flex items-center justify-center mb-8 border border-cyan-500/20 ">
+            <RefreshCw size={32} className="text-cyan-500/60 animate-spin-slow" />
           </div>
           <div className="text-2xl font-black uppercase tracking-tighter text-white/80 mb-4 italic">
             ВІДНОВЛЕННЯ_ЗВ'ЯЗКУ_З_ЯДРОМ
@@ -366,13 +367,13 @@ export const InfraTelemetryTab: React.FC = () => {
             Спроба встановити захищене з'єднання з вузлами керування... Перевірте статус сервісів у командному рядку.
           </p>
           <div className="flex gap-4">
-            <button 
+            <Button variant="cyber" 
               onClick={() => window.location.reload()}
               className="px-8 py-3 bg-white/5 border border-white/10 text-white/40 text-[9px] font-black uppercase tracking-[0.3em] rounded-lg hover:bg-white/10 transition-all italic"
             >
               ПЕРЕЗАВАНТАЖИТИ
-            </button>
-            <div className="px-8 py-3 bg-rose-500/10 border border-rose-500/20 text-rose-500/60 text-[9px] font-black uppercase tracking-[0.3em] rounded-lg  italic">
+            </Button>
+            <div className="px-8 py-3 bg-cyan-500/10 border border-cyan-500/20 text-cyan-500/60 text-[9px] font-black uppercase tracking-[0.3em] rounded-lg  italic">
               ОЧІКУВАННЯ_API...
             </div>
           </div>
@@ -387,12 +388,12 @@ export const InfraTelemetryTab: React.FC = () => {
       
       {/* Tri-State Routing Header */}
       <div className="flex flex-col lg:flex-row gap-10 justify-between items-start lg:items-center relative z-10">
-        <div className="flex flex-col gap-3 border-l-4 border-rose-500 pl-10 py-2">
+        <div className="flex flex-col gap-3 border-l-4 border-cyan-500 pl-10 py-2">
           <div className="flex items-center gap-6">
             <h2 className="text-4xl font-black text-white uppercase tracking-tighter italic glint-elite">
-              МОНІТОРИНГ <span className="text-rose-500">ГЛОБАЛЬНОЇ ІНФРАСТРУКТУРИ</span>
+              МОНІТОРИНГ <span className="text-cyan-500">ГЛОБАЛЬНОЇ ІНФРАСТРУКТУРИ</span>
             </h2>
-            <div className="px-4 py-1.5 bg-rose-500/10 border-2 border-rose-500/30 rounded-lg text-[10px] font-black text-rose-500 tracking-[0.3em] uppercase italic shadow-2xl">
+            <div className="px-4 py-1.5 bg-cyan-500/10 border-2 border-cyan-500/30 rounded-lg text-[10px] font-black text-cyan-500 tracking-[0.3em] uppercase italic shadow-2xl">
               INFRA_ELITE_v61.0
             </div>
           </div>
@@ -403,11 +404,11 @@ export const InfraTelemetryTab: React.FC = () => {
             </div>
             <span className="opacity-20">•</span>
             <div className="flex items-center gap-3">
-              <RefreshCw size={14} className="text-rose-500/60 animate-spin-slow" />
+              <RefreshCw size={14} className="text-cyan-500/60 animate-spin-slow" />
               <span>ІНТЕРВАЛ: 3.0с</span>
             </div>
             <span className="opacity-20">•</span>
-            <div className="flex items-center gap-3 text-rose-500/40">
+            <div className="flex items-center gap-3 text-cyan-500/40">
               <Server size={14} />
               <span>МАЙСТЕР_ВУЗОЛ: {nodes.find(n => n.role.includes('Master'))?.node || '0xPRED_MASTER'}</span>
             </div>
@@ -418,16 +419,16 @@ export const InfraTelemetryTab: React.FC = () => {
         <div className="flex items-center gap-6 bg-black/60  p-6 rounded-[2rem] border-2 border-white/5 shadow-4xl group">
            <div className="flex flex-col items-end gap-1">
               <span className="text-[9px] font-black font-mono text-white/20 uppercase tracking-[0.4em] italic">СТРАТЕГІЯ_МАРШРУТИЗАЦІЇ</span>
-              <span className="text-[12px] font-black text-white/60 italic uppercase tracking-tighter group-hover:text-rose-500 transition-colors">{nodeSource}</span>
+              <span className="text-[12px] font-black text-white/60 italic uppercase tracking-tighter group-hover:text-cyan-500 transition-colors">{nodeSource}</span>
            </div>
            <div className="h-12 w-[2px] bg-white/5 mx-2" />
            <div className={cn(
              "px-8 py-4 rounded-[1.5rem] border-2 flex items-center gap-5 transition-all duration-700 shadow-4xl",
-             llmTriStateMode === 'SOVEREIGN' ? "bg-rose-500/10 border-rose-500/40 text-rose-500 shadow-rose-500/10" :
+             llmTriStateMode === 'SOVEREIGN' ? "bg-cyan-500/10 border-cyan-500/40 text-cyan-500 shadow-cyan-500/10" :
              llmTriStateMode === 'HYBRID' ? "bg-emerald-500/10 border-emerald-500/40 text-emerald-500 shadow-emerald-500/10" :
              "bg-sky-500/10 border-sky-500/40 text-sky-500 shadow-sky-500/10"
            )}>
-             <Globe size={20} className={cn("animate-spin-slow", llmTriStateMode === 'SOVEREIGN' ? "text-rose-500" : llmTriStateMode === 'HYBRID' ? "text-emerald-500" : "text-sky-500")} />
+             <Globe size={20} className={cn("animate-spin-slow", llmTriStateMode === 'SOVEREIGN' ? "text-cyan-500" : llmTriStateMode === 'HYBRID' ? "text-emerald-500" : "text-sky-500")} />
              <div className="flex flex-col">
                 <span className="text-xl font-black tracking-widest italic glint-elite leading-none">{llmTriStateMode}</span>
                 <span className="text-[8px] font-black font-mono uppercase tracking-[0.3em] opacity-40 mt-1">
@@ -445,7 +446,7 @@ export const InfraTelemetryTab: React.FC = () => {
       {/* Grid Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
         {[
-          { label: 'АКТИВНІ_ВУЗЛИ', value: `${nodes.filter(n => n.status === 'online').length}/${nodes.length}`, icon: Server, color: 'text-rose-500', sub: 'ВЕРИФІКОВАНІ_АКТИВИ' },
+          { label: 'АКТИВНІ_ВУЗЛИ', value: `${nodes.filter(n => n.status === 'online').length}/${nodes.length}`, icon: Server, color: 'text-cyan-500', sub: 'ВЕРИФІКОВАНІ_АКТИВИ' },
           { label: 'МОДУЛІ_ЯДРА', value: services.length, icon: Box, color: 'text-sky-500', sub: 'МІКРОСЕРВІСНА_ФУНДАЦІЯ' },
           { label: 'ЧАС_UPTIME', value: systemStatus?.uptime || '99.9%', icon: Shield, color: 'text-emerald-500', sub: 'БЕЗПЕРЕВНІСТЬ_СИСТЕМИ' },
           { label: 'ТРАФІК_МЕРЕЖІ', value: `${totalThroughput.toFixed(1)} МБ/с`, icon: ZapIcon, color: 'text-amber-500', sub: 'ПОТОКОВА_ПРОПУСКНА_ЗДАТНІСТЬ' },
@@ -455,26 +456,26 @@ export const InfraTelemetryTab: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1, duration: 0.6 }}
-            className="glass-wraith border-2 border-white/5 p-10 rounded-[2.5rem] flex items-center justify-between group hover:border-rose-500/40 transition-all duration-700 shadow-4xl hover:-translate-y-1 overflow-hidden relative"
+            className="glass-wraith border-2 border-white/5 p-10 rounded-[2.5rem] flex items-center justify-between group hover:border-cyan-500/40 transition-all duration-700 shadow-4xl hover:-translate-y-1 overflow-hidden relative"
           >
             <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
             
             <div className="flex flex-col relative z-10">
-              <span className="text-[10px] font-black font-mono text-white/20 uppercase tracking-[0.4em] mb-4 italic group-hover:text-rose-500/40 transition-colors">{stat.label}</span>
+              <span className="text-[10px] font-black font-mono text-white/20 uppercase tracking-[0.4em] mb-4 italic group-hover:text-cyan-500/40 transition-colors">{stat.label}</span>
               <div className="flex items-baseline gap-4">
                 <span className="text-4xl font-black text-white italic tracking-tighter glint-elite">{stat.value}</span>
                 {stat.color === 'text-emerald-500' && <span className="text-[9px] text-emerald-500 font-black  tracking-widest italic uppercase">SECURE</span>}
               </div>
-              <div className="text-[9px] font-black font-mono text-white/10 mt-6 uppercase tracking-[0.2em] italic group-hover:text-rose-500/60 transition-colors">{stat.sub}</div>
+              <div className="text-[9px] font-black font-mono text-white/10 mt-6 uppercase tracking-[0.2em] italic group-hover:text-cyan-500/60 transition-colors">{stat.sub}</div>
             </div>
             
-            <div className="p-4 bg-white/5 rounded-2xl group-hover:bg-rose-500/10 transition-all duration-700 relative z-10 border border-white/5 group-hover:border-rose-500/20">
+            <div className="p-4 bg-white/5 rounded-2xl group-hover:bg-cyan-500/10 transition-all duration-700 relative z-10 border border-white/5 group-hover:border-cyan-500/20">
                <stat.icon size={32} className={cn("transition-all duration-700 group-hover:scale-125 opacity-40 group-hover:opacity-100", stat.color)} />
             </div>
 
             <div className={cn(
               "absolute bottom-0 left-0 right-0 h-[3px] opacity-0 group-hover:opacity-100 transition-all duration-700",
-              stat.color === 'text-rose-500' ? "bg-rose-500/50 " : 
+              stat.color === 'text-cyan-500' ? "bg-cyan-500/50 " : 
               stat.color === 'text-sky-500' ? "bg-sky-500/50 " : 
               stat.color === 'text-emerald-500' ? "bg-emerald-500/50 " : 
               "bg-amber-500/50 "
@@ -506,8 +507,8 @@ export const InfraTelemetryTab: React.FC = () => {
           <div className="flex flex-col items-center gap-3">
             <span className="text-2xl font-black text-white/50 uppercase tracking-[0.4em] italic glint-elite">ЯДРО_ЕКОСИСТЕМИ & СЕРВІСИ</span>
             <div className="flex items-center gap-4">
-               <div className="w-2.5 h-2.5 rounded-full bg-rose-500  " />
-               <span className="text-[10px] font-black font-mono text-rose-500/60 uppercase tracking-[0.3em] font-black italic">ВЕРИФІКОВАНО_ЦІЛІСНІСТЬ_АРХІТЕКТУРИ_ELITE</span>
+               <div className="w-2.5 h-2.5 rounded-full bg-cyan-500  " />
+               <span className="text-[10px] font-black font-mono text-cyan-500/60 uppercase tracking-[0.3em] font-black italic">ВЕРИФІКОВАНО_ЦІЛІСНІСТЬ_АРХІТЕКТУРИ_ELITE</span>
             </div>
           </div>
           <div className="h-[2px] flex-1 bg-gradient-to-l from-transparent via-white/10 to-transparent" />
@@ -526,7 +527,7 @@ export const InfraTelemetryTab: React.FC = () => {
 
       <style dangerouslySetInnerHTML={{ __html: `
           .shadow-4xl { box-shadow: 0 60px 120px -30px rgba(0,0,0,0.9); }
-          .glint-elite { text-shadow: 0 0 30px rgba(225,29,72,0.4); }
+          .glint-elite { text-shadow: 0 0 30px rgba(6,182,212,0.4); }
           .animate-spin-slow { animation: spin 10s linear infinite; }
           @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
       `}} />

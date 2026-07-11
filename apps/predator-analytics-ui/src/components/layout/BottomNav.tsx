@@ -2,6 +2,7 @@
  * 📱 Bottom Navigation для мобільних пристроїв
  * 5 основних вкладок: Головна, Пошук, OSINT, Алерти, Меню
  */
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Search, ShieldAlert, Megaphone, Menu } from 'lucide-react';
@@ -67,14 +68,14 @@ export const BottomNav: React.FC<BottomNavProps> = ({ onMenuClick }) => {
           );
         })}
 
-        <button
+        <Button variant="cyber"
           type="button"
           onClick={onMenuClick}
           className="flex flex-col items-center justify-center gap-1 min-w-[72px] h-14 rounded-xl text-slate-500 hover:text-slate-300 transition-all"
         >
           <Menu className="h-6 w-6" />
           <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Меню</span>
-        </button>
+        </Button>
       </div>
     </nav>
   );

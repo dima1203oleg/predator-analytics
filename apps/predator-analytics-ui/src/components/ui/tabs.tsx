@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from '@/components/ui/button';
 import * as React from "react";
 import { cn } from "../../utils/cn";
 
@@ -64,7 +65,7 @@ const TabsTrigger = React.forwardRef<
     const isActive = context?.value === value
 
     return (
-        <button
+        <Button variant="cyber"
             ref={ref}
             role="tab"
             aria-selected={!!isActive}

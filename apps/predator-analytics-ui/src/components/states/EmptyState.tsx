@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Inbox, Search, FileX, Database } from 'lucide-react';
@@ -46,12 +47,12 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
       )}
 
       {action && (
-        <button
+        <Button variant="cyber"
           onClick={action.onClick}
           className="px-6 py-2.5 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 hover:border-blue-500/50 rounded-xl text-blue-400 font-semibold text-sm transition-all"
         >
           {action.label}
-        </button>
+        </Button>
       )}
     </motion.div>
   );

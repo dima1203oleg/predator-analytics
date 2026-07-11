@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -113,12 +114,12 @@ users:
                   </p>
                 </div>
               </div>
-              <button 
+              <Button variant="cyber" 
                 onClick={onClose}
                 className="p-2 hover:bg-white/5 rounded-full transition-colors text-slate-400 hover:text-white"
               >
                 <X className="w-6 h-6" />
-              </button>
+              </Button>
             </div>
 
             {/* Scrollable Content */}
@@ -187,18 +188,18 @@ users:
                       </div>
                     </div>
                     <div className="flex flex-col gap-2">
-                      <button 
+                      <Button variant="cyber" 
                         onClick={handleSyncConfig}
                         className="px-4 py-1.5 bg-sky-500/20 text-sky-500 border border-sky-500/30 rounded-lg text-[9px] font-black hover:bg-sky-500 hover:text-white transition-all uppercase tracking-widest"
                       >
                         SYNC_CONFIG
-                      </button>
-                      <button 
+                      </Button>
+                      <Button variant="cyber" 
                         onClick={handleCopyKubeconfig}
                         className="px-4 py-1.5 bg-white/5 text-slate-300 border border-white/10 rounded-lg text-[9px] font-black hover:bg-white/10 transition-all uppercase tracking-widest flex items-center gap-2"
                       >
                         <Copy className="w-3 h-3" /> COPY_CFG
-                      </button>
+                      </Button>
                     </div>
                   </div>
                   <div className="p-3 bg-black/60 rounded-lg font-mono text-[9px] text-sky-300 border border-sky-500/10 group relative cursor-pointer" onClick={handleCopyKubeconfig}>
@@ -225,11 +226,11 @@ users:
                       <div className="flex items-center gap-2">
                         <div className={cn(
                           "w-1.5 h-1.5 rounded-full shadow-[0_0_8px]",
-                          status === 'running' ? "bg-emerald-500 shadow-emerald-500/50" : "bg-rose-600 shadow-rose-600/50"
+                          status === 'running' ? "bg-emerald-500 shadow-emerald-500/50" : "bg-cyan-600 shadow-rose-600/50"
                         )} />
                         <span className={cn(
                           "text-[9px] font-black uppercase tracking-widest",
-                          status === 'running' ? "text-emerald-500/70" : "text-rose-600/70"
+                          status === 'running' ? "text-emerald-500/70" : "text-cyan-600/70"
                         )}>{status === 'running' ? 'ALIVE' : 'OFFLINE'}</span>
                       </div>
                     </div>
@@ -252,23 +253,23 @@ users:
                       <div className="text-[9px] text-slate-500 font-mono mt-1 uppercase">SYNC_TS: {new Date(extended.last_sync || Date.now()).toLocaleString('uk-UA')}</div>
                     </div>
                   </div>
-                  <button 
+                  <Button variant="cyber" 
                     onClick={handleGDriveSync}
                     className="p-3 bg-emerald-500/10 hover:bg-emerald-500 text-emerald-400 hover:text-white rounded-xl transition-all border border-emerald-500/20 active:scale-95 shadow-lg shadow-emerald-500/5"
                   >
                     <RefreshCcw className="w-5 h-5" />
-                  </button>
+                  </Button>
                 </div>
               </section>
 
               {/* Action Buttons */}
               <div className="grid grid-cols-2 gap-4 pt-4">
-                <button 
+                <Button variant="cyber" 
                   onClick={handleSyncCode}
                   className="flex items-center justify-center gap-3 px-5 py-4 bg-white/5 border border-white/10 rounded-2xl text-white text-[11px] font-black uppercase tracking-widest hover:bg-white/10 hover:border-white/20 transition-all group shadow-2xl"
                 >
                   <Github className="w-5 h-5 text-slate-400 group-hover:text-white transition-colors" /> GITHUB_PULL
-                </button>
+                </Button>
                 <a 
                   href={extended.zrok_url}
                   target="_blank"

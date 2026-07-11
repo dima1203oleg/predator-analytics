@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -80,8 +81,8 @@ export const TradeFlowTab: React.FC = () => {
         </div>
 
         <div className="absolute top-8 right-8 z-20 flex flex-col gap-2">
-           <button onClick={() => setZoom(z => Math.min(z + 0.2, 3))} className="p-3 bg-black/80 border border-white/10 rounded-xl text-slate-400 hover:text-[#D4AF37] hover:border-[#D4AF37]/50 transition-all shadow-lg"><ZoomIn size={18} /></button>
-           <button onClick={() => setZoom(z => Math.max(z - 0.2, 0.5))} className="p-3 bg-black/80 border border-white/10 rounded-xl text-slate-400 hover:text-[#D4AF37] hover:border-[#D4AF37]/50 transition-all shadow-lg"><ZoomOut size={18} /></button>
+           <Button variant="cyber" onClick={() => setZoom(z => Math.min(z + 0.2, 3))} className="p-3 bg-black/80 border border-white/10 rounded-xl text-slate-400 hover:text-[#D4AF37] hover:border-[#D4AF37]/50 transition-all shadow-lg"><ZoomIn size={18} /></Button>
+           <Button variant="cyber" onClick={() => setZoom(z => Math.max(z - 0.2, 0.5))} className="p-3 bg-black/80 border border-white/10 rounded-xl text-slate-400 hover:text-[#D4AF37] hover:border-[#D4AF37]/50 transition-all shadow-lg"><ZoomOut size={18} /></Button>
         </div>
 
         {/* SVG MAP SIMULATION */}

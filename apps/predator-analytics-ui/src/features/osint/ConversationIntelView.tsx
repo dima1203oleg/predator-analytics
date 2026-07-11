@@ -8,6 +8,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -149,12 +150,12 @@ export default function ConversationIntelView() {
                      ]}
                      actions={
                        <div className="flex items-center gap-6">
-                          <button onClick={() => refetch()} className="p-6 bg-black border-2 border-white/5 rounded-[2rem] text-slate-500 hover:text-emerald-500 transition-all shadow-4xl group">
+                          <Button variant="cyber" onClick={() => refetch()} className="p-6 bg-black border-2 border-white/5 rounded-[2rem] text-slate-500 hover:text-emerald-500 transition-all shadow-4xl group">
                              <RefreshCcw size={24} className="group-hover:rotate-180 transition-transform duration-1000" />
-                          </button>
-                          <button className="px-14 py-6 bg-emerald-600 text-white rounded-[2rem] text-[12px] font-black uppercase tracking-[0.4em] italic hover:brightness-110 shadow-4xl transition-all flex items-center gap-5 border-4 border-emerald-500/20">
+                          </Button>
+                          <Button variant="cyber" className="px-14 py-6 bg-emerald-600 text-white rounded-[2rem] text-[12px] font-black uppercase tracking-[0.4em] italic hover:brightness-110 shadow-4xl transition-all flex items-center gap-5 border-4 border-emerald-500/20">
                              <Radar size={24} className="animate-spin-slow" /> ЗАПУСТИТИ_ПЕРЕХОПЛЕННЯ
-                          </button>
+                          </Button>
                        </div>
                      }
                    />
@@ -166,7 +167,7 @@ export default function ConversationIntelView() {
                          <div className="flex items-center gap-4 p-3 bg-black border-2 border-white/5 rounded-[2.5rem] w-fit shadow-4xl ">
                              <div className="flex gap-2 bg-black border-2 border-white/5 p-2 rounded-2xl shadow-inner">
                                 {(['feed', 'analytics', 'risk'] as const).map(tab => (
-                                  <button 
+                                  <Button variant="cyber" 
                                     key={tab} 
                                     onClick={() => setActiveTab(tab)} 
                                     className={cn(
@@ -177,7 +178,7 @@ export default function ConversationIntelView() {
                                     )}
                                   >
                                     {tab === 'feed' ? 'LIVE_ПОТІК' : tab === 'analytics' ? 'АНАЛІТИКА' : 'РИЗИК_СИГНАЛИ'}
-                                  </button>
+                                  </Button>
                                 ))}
                              </div>
                          </div>
@@ -256,12 +257,12 @@ export default function ConversationIntelView() {
                                        </span>
                                      ))}
                                      <div className="ml-auto flex gap-3">
-                                        <button className="p-4 rounded-full bg-white/5 border border-white/10 text-slate-600 hover:text-white transition-all">
+                                        <Button variant="cyber" className="p-4 rounded-full bg-white/5 border border-white/10 text-slate-600 hover:text-white transition-all">
                                            <Eye size={18} />
-                                        </button>
-                                        <button className="p-4 rounded-full bg-white/5 border border-white/10 text-slate-600 hover:text-emerald-500 transition-all">
+                                        </Button>
+                                        <Button variant="cyber" className="p-4 rounded-full bg-white/5 border border-white/10 text-slate-600 hover:text-emerald-500 transition-all">
                                            <ArrowUpRight size={18} />
-                                        </button>
+                                        </Button>
                                      </div>
                                   </div>
                                </motion.div>

@@ -44,8 +44,14 @@ def test_user_id():
     """ID тестового користувача."""
     return "b0000000-0000-0000-0000-000000000e2e"
 
-import nest_asyncio
-nest_asyncio.apply()
+import requests
+
+@pytest.fixture(scope="session")
+def api_client():
+    client = requests.Session()
+    # you can set headers or base_url logic here if needed
+    yield client
+    client.close()
 
 os.environ["MINIO_ACCESS_KEY"] = "admin"
 os.environ["MINIO_SECRET_KEY"] = "password"

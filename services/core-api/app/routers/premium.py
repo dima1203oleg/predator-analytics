@@ -108,3 +108,23 @@ async def get_dashboard_recommendations(
         ]
     }
     return recs.get(persona, recs["analyst"])
+
+@router.get("/predictions")
+async def get_predictions(
+    tenant_id: str = Depends(get_tenant_id),
+):
+    """Прогнози ризиків та аномалій."""
+    return [
+        {"id": "pred_1", "type": "risk", "probability": 0.85, "target": "ТОВ «Техно-Трейд»", "impact": "high"},
+        {"id": "pred_2", "type": "anomaly", "probability": 0.65, "target": "Митниця Закарпаття", "impact": "medium"}
+    ]
+
+@router.get("/commodity-forecast")
+async def get_commodity_forecast(
+    tenant_id: str = Depends(get_tenant_id),
+):
+    """Прогноз цін товарів."""
+    return [
+        {"commodity": "Паливо", "current_price": 45.5, "forecast_price": 48.0, "trend": "up"},
+        {"commodity": "Електроніка", "current_price": 1200.0, "forecast_price": 1150.0, "trend": "down"}
+    ]

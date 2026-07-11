@@ -1,4 +1,5 @@
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { 
   Newspaper, RefreshCw, BookOpen, Clock, Bot, Sparkles, 
@@ -117,7 +118,7 @@ export const DailyGazette = ({ onAskAI }: { onAskAI: (query: string) => void }) 
                         </div>
                         
                         <div className="flex flex-col sm:flex-row gap-3 pt-4">
-                            <button 
+                            <Button variant="cyber" 
                                 onClick={() => {
                                     onAskAI(`Проведи детальний аналіз теми: "${selectedArticle.title}" і як це вплине на мій бізнес.`);
                                     setSelectedArticle(null);
@@ -125,10 +126,10 @@ export const DailyGazette = ({ onAskAI }: { onAskAI: (query: string) => void }) 
                                 className="w-full sm:w-auto px-4 py-3 rounded text-xs font-bold flex items-center justify-center gap-2 btn-3d btn-3d-purple transition-all hover:scale-105"
                             >
                                 <Sparkles size={14} /> Запустити Симуляцію Впливу
-                            </button>
-                            <button onClick={() => setSelectedArticle(null)} className="w-full sm:w-auto px-4 py-3 bg-slate-800 rounded text-xs font-bold text-slate-300 hover:bg-slate-700 transition-colors">
+                            </Button>
+                            <Button variant="cyber" onClick={() => setSelectedArticle(null)} className="w-full sm:w-auto px-4 py-3 bg-slate-800 rounded text-xs font-bold text-slate-300 hover:bg-slate-700 transition-colors">
                                 Закрити
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 )}
@@ -171,9 +172,9 @@ export const DailyGazette = ({ onAskAI }: { onAskAI: (query: string) => void }) 
                     <p className="text-xs text-slate-400 leading-relaxed line-clamp-2 mb-4 max-w-[80%]">
                         Наш AI проаналізував останні зміни в реєстрі ЄД . Новий бенефіціар має прямі зв'язки зризиковими контрагентами в офшорних зонах.
                     </p>
-                    <button className="text-xs text-amber-500 font-bold flex items-center gap-1 group/btn bg-amber-900/10 px-3 py-1.5 rounded-lg w-fit border border-amber-500/20 hover:bg-amber-900/30 transition-all">
+                    <Button variant="cyber" className="text-xs text-amber-500 font-bold flex items-center gap-1 group/btn bg-amber-900/10 px-3 py-1.5 rounded-lg w-fit border border-amber-500/20 hover:bg-amber-900/30 transition-all">
                         Дослідити Зв'язки <ArrowUpRight size={12} className="group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform"/>
-                    </button>
+                    </Button>
                 </div>
 
                 {/* Standard Cards */}

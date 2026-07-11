@@ -6,6 +6,7 @@
  * Всі тексти — українською (HR-03/HR-04)
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -308,7 +309,7 @@ export function OsintGraphExplorer() {
                         </div>
                     )}
                     {savedTargets.map(target => (
-                        <button 
+                        <Button variant="cyber" 
                             key={target.id}
                             onClick={() => loadTarget(target.id)}
                             className="w-full text-left p-3 rounded-xl bg-slate-900/40 hover:bg-slate-800 border border-slate-800/60 hover:border-slate-700 transition-all group relative overflow-hidden"
@@ -331,7 +332,7 @@ export function OsintGraphExplorer() {
                                     {target.score}
                                 </div>
                             </div>
-                        </button>
+                        </Button>
                     ))}
                 </div>
                 <div className="p-4 border-t border-slate-800 bg-slate-900/50 space-y-3">
@@ -339,10 +340,10 @@ export function OsintGraphExplorer() {
                         <span className="flex items-center gap-1.5"><Database size={14} /> NEO4J GRAPH DB</span>
                         <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-rose-500 "/> LIVE</span>
                     </div>
-                    <button className="w-full py-2.5 rounded-lg border border-dashed border-slate-700 text-slate-400 text-xs font-bold uppercase tracking-widest hover:text-white hover:border-slate-500 transition-colors flex items-center justify-center gap-2">
+                    <Button variant="cyber" className="w-full py-2.5 rounded-lg border border-dashed border-slate-700 text-slate-400 text-xs font-bold uppercase tracking-widest hover:text-white hover:border-slate-500 transition-colors flex items-center justify-center gap-2">
                         <Bookmark className="w-4 h-4" />
                         Зберегти Поточний Граф
-                    </button>
+                    </Button>
                 </div>
             </div>
 
@@ -385,9 +386,9 @@ export function OsintGraphExplorer() {
                             placeholder={isSearching ? "ВИКОНУЄТЬСЯ ГЛОБАЛЬНИЙ ПОШУК..." : "Введіть ЄДРПОУ, ПІБ, IBAN або адресу..."}
                             className="flex-1 bg-transparent py-4 px-4 text-sm text-white placeholder-slate-500 focus:outline-none disabled:opacity-50"
                         />
-                        <button type="submit" disabled={isSearching} className="p-2 mr-2 bg-rose-600 hover:bg-rose-500 disabled:bg-slate-700 text-white rounded-xl shadow-lg transition-colors flex items-center justify-center">
+                        <Button variant="cyber" type="submit" disabled={isSearching} className="p-2 mr-2 bg-rose-600 hover:bg-rose-500 disabled:bg-slate-700 text-white rounded-xl shadow-lg transition-colors flex items-center justify-center">
                             {isSearching ? <RefreshCw className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
-                        </button>
+                        </Button>
                     </form>
                     
                     {/* Error Toast / Alert (Якщо API впало) */}
@@ -403,9 +404,9 @@ export function OsintGraphExplorer() {
                                     <ServerCrash className="w-4 h-4 text-red-400" />
                                     <b>ЗБІЙ:</b> {error}
                                 </div>
-                                <button onClick={() => setError(null)} className="p-1 hover:bg-red-900/50 rounded-lg transition-colors text-red-400">
+                                <Button variant="cyber" onClick={() => setError(null)} className="p-1 hover:bg-red-900/50 rounded-lg transition-colors text-red-400">
                                     <X className="w-4 h-4" />
-                                </button>
+                                </Button>
                             </motion.div>
                         )}
                     </AnimatePresence>
@@ -413,27 +414,27 @@ export function OsintGraphExplorer() {
 
                 {/* Toolbar */}
                 <div className="absolute top-6 right-6 z-30 flex gap-2">
-                    <button className="p-3 bg-indigo-600/20 hover:bg-indigo-500/30 text-indigo-400 rounded-xl border border-indigo-500/50   transition-colors tooltip group relative">
+                    <Button variant="cyber" className="p-3 bg-indigo-600/20 hover:bg-indigo-500/30 text-indigo-400 rounded-xl border border-indigo-500/50   transition-colors tooltip group relative">
                         <Bot className="h-5 w-5" />
                         <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] uppercase font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">AI Copilot Аналіз</span>
-                    </button>
-                    <button className="p-3 bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 rounded-xl border border-amber-500/50   transition-colors tooltip group relative">
+                    </Button>
+                    <Button variant="cyber" className="p-3 bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 rounded-xl border border-amber-500/50   transition-colors tooltip group relative">
                         <Zap className="h-5 w-5" />
                         <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] uppercase font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Моніторинг Транзакцій</span>
-                    </button>
+                    </Button>
                     <div className="w-px h-8 bg-white/10 mx-1 self-center" />
-                    <button 
+                    <Button variant="cyber" 
                         onClick={resetGraph}
                         disabled={isSearching || isExpanding}
                         className="p-3 bg-slate-900/80 hover:bg-slate-800 disabled:opacity-50 text-slate-300 rounded-xl border border-slate-700 shadow-2xl  transition-colors tooltip group relative"
                     >
                         <RefreshCw className={cn("h-5 w-5", (isExpanding || isSearching) && "animate-spin text-rose-400")} />
                         <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] uppercase font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Скинути Граф</span>
-                    </button>
-                    <button className="p-3 bg-slate-900/80 hover:bg-slate-800 text-slate-300 rounded-xl border border-slate-700 shadow-2xl  transition-colors group relative">
+                    </Button>
+                    <Button variant="cyber" className="p-3 bg-slate-900/80 hover:bg-slate-800 text-slate-300 rounded-xl border border-slate-700 shadow-2xl  transition-colors group relative">
                         <Download className="h-5 w-5" />
                         <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] uppercase font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Експорт PDF</span>
-                    </button>
+                    </Button>
                 </div>
 
                 {/* Graph Area */}
@@ -496,12 +497,12 @@ export function OsintGraphExplorer() {
                                         </h2>
                                     </div>
                                 </div>
-                                <button 
+                                <Button variant="cyber" 
                                     onClick={() => setSelectedNode(null)}
                                     className="p-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-700/50 text-slate-400 rounded-lg transition-colors mt-1"
                                 >
                                     <X className="w-4 h-4" />
-                                </button>
+                                </Button>
                             </div>
 
                             {/* Вкладки %} */}
@@ -511,7 +512,7 @@ export function OsintGraphExplorer() {
                                     { id: 'docs', icon: FileText, label: 'РЕЄСТРИ' },
                                     { id: 'relations', icon: Network, label: "ЗВ'ЯЗКИ" }
                                 ].map(tab => (
-                                    <button
+                                    <Button variant="cyber"
                                         key={tab.id}
                                         onClick={() => setProfileTab(tab.id as any)}
                                         className={cn(
@@ -523,7 +524,7 @@ export function OsintGraphExplorer() {
                                     >
                                         <tab.icon className="w-3.5 h-3.5" />
                                         {tab.label}
-                                    </button>
+                                    </Button>
                                 ))}
                             </div>
                         </div>
@@ -654,7 +655,7 @@ export function OsintGraphExplorer() {
                                                     <div>
                                                         <div className="text-sm font-bold text-white mb-1">Державний Реєстр (ЄДР)</div>
                                                         <div className="text-xs text-slate-400 mb-2">Натисніть для запиту до API Мінюсту</div>
-                                                        <button className="text-[10px] font-bold text-rose-400 uppercase tracking-widest hover:text-rose-300">Оновити Витяг →</button>
+                                                        <Button variant="cyber" className="text-[10px] font-bold text-rose-400 uppercase tracking-widest hover:text-rose-300">Оновити Витяг →</Button>
                                                     </div>
                                                 </div>
                                                 <div className="p-4 bg-slate-900 border border-red-900/50 bg-red-950/20 rounded-xl flex items-start gap-4">
@@ -662,7 +663,7 @@ export function OsintGraphExplorer() {
                                                     <div>
                                                         <div className="text-sm font-bold text-red-200 mb-1">Реєстр Боржників / Суди</div>
                                                         <div className="text-xs text-red-400/80 mb-2">Моніторинг Opendatabot API</div>
-                                                        <button className="text-[10px] font-bold text-red-400 uppercase tracking-widest hover:text-red-300">Перевірити Борги →</button>
+                                                        <Button variant="cyber" className="text-[10px] font-bold text-red-400 uppercase tracking-widest hover:text-red-300">Перевірити Борги →</Button>
                                                     </div>
                                                 </div>
                                             </>

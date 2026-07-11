@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -92,7 +93,7 @@ export const ScenarioSimulationEngine: React.FC = () => {
           </p>
         </div>
         
-        <button
+        <Button variant="cyber"
           onClick={runSimulation}
           disabled={isSimulating}
           className={cn(
@@ -104,7 +105,7 @@ export const ScenarioSimulationEngine: React.FC = () => {
         >
           {isSimulating ? <RefreshCcw className="animate-spin w-5 h-5" /> : <Play className="w-5 h-5 fill-current" />}
           {isSimulating ? 'ЙДЕ МОДЕЛЮВАННЯ...' : 'ЗАПУСТИТИ СИМУЛЯЦІЮ'}
-        </button>
+        </Button>
       </div>
 
       <div className="flex flex-1 overflow-hidden">
@@ -206,7 +207,7 @@ export const ScenarioSimulationEngine: React.FC = () => {
                       className={cn(
                         "p-5 rounded-2xl border transition-all duration-500",
                         node.impact < 0 
-                          ? "bg-rose-500/5 border-rose-500/20 hover:border-rose-500/40" 
+                          ? "bg-cyan-500/5 border-cyan-500/20 hover:border-cyan-500/40" 
                           : "bg-emerald-500/5 border-emerald-500/20 hover:border-emerald-500/40"
                       )}
                     >
@@ -214,7 +215,7 @@ export const ScenarioSimulationEngine: React.FC = () => {
                         <div className="flex items-center gap-3">
                           <div className={cn(
                             "p-2 rounded-lg",
-                            node.impact < 0 ? "bg-rose-500/10 text-rose-400" : "bg-emerald-500/10 text-emerald-400"
+                            node.impact < 0 ? "bg-cyan-500/10 text-rose-400" : "bg-emerald-500/10 text-emerald-400"
                           )}>
                             {node.type === 'entity' && <Network className="w-5 h-5" />}
                             {node.type === 'flow' && <TrendingDown className="w-5 h-5" />}
@@ -227,7 +228,7 @@ export const ScenarioSimulationEngine: React.FC = () => {
                         </div>
                         <div className={cn(
                           "text-xl font-mono font-bold",
-                          node.impact < 0 ? "text-rose-500" : "text-emerald-500"
+                          node.impact < 0 ? "text-cyan-500" : "text-emerald-500"
                         )}>
                           {node.impact > 0 ? '+' : ''}{node.impact}%
                         </div>
@@ -247,12 +248,12 @@ export const ScenarioSimulationEngine: React.FC = () => {
                     Симуляція вказує на високу вразливість вашого імпортного ланцюга. Найбільш критичний удар отримає <span className="text-indigo-400 font-medium">ТОВ "Метал-Трейд"</span>. Рекомендується диверсифікація через регіональний ринок ЄС, де прогнозується зростання на 12%.
                   </p>
                   <div className="mt-4 flex gap-4">
-                    <button className="text-[10px] uppercase tracking-widest font-bold text-indigo-400 flex items-center gap-2 hover:text-indigo-300 transition-colors">
+                    <Button variant="cyber" className="text-[10px] uppercase tracking-widest font-bold text-indigo-400 flex items-center gap-2 hover:text-indigo-300 transition-colors">
                       Завантажити детальний звіт <ArrowRight className="w-3 h-3" />
-                    </button>
-                    <button className="text-[10px] uppercase tracking-widest font-bold text-slate-500 flex items-center gap-2 hover:text-slate-400 transition-colors">
+                    </Button>
+                    <Button variant="cyber" className="text-[10px] uppercase tracking-widest font-bold text-slate-500 flex items-center gap-2 hover:text-slate-400 transition-colors">
                       Експортувати в Кейс-Менеджер <ArrowRight className="w-3 h-3" />
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </motion.div>

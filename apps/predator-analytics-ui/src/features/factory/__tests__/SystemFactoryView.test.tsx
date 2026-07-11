@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
@@ -88,8 +89,8 @@ vi.mock('@/components/TacticalCard', () => ({
 }));
 
 vi.mock('@/components/ui/button', () => ({
-  Button: ({ children, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: string; size?: string }) => (
-    <button {...props}>{children}</button>
+  Button: ({ children, ...props }: any) => (
+    <button data-testid="button" {...props}>{children}</button>
   ),
 }));
 

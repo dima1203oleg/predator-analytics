@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React, { useState, useEffect, useCallback } from 'react';
 import { BrowserRouter } from 'react-router-dom';
@@ -21,23 +22,40 @@ import { ThemeProvider } from './context/ThemeContext';
 import { ToastProvider } from './context/ToastContext';
 
 
-// Components
 import { AppRoutesNew as AppRoutes } from './AppRoutesNew';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { ToasterProvider } from './components/premium/ToasterProvider';
+import { useLocation } from 'react-router-dom';
 import { AdvancedBackground } from './components/AdvancedBackground';
 import NeuralPulse from './components/NeuralPulse';
 import { TechGridBackground } from './components/TechGridBackground';
-import { CommandPalette } from './components/polish/CommandPalette';
 import { ParticleBackground } from './components/ParticleBackground';
+import { Global3DBackground } from './components/cyber/Global3DBackground';
+
+const SpatialEnvironmentWrapper = () => {
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith('/admin');
+  
+  if (isAdminRoute) return null;
+  return (
+    <>
+      <ParticleBackground />
+      <AdvancedBackground />
+      <NeuralPulse />
+      <TechGridBackground />
+      <Global3DBackground />
+    </>
+  );
+};
+
+import { CommandPalette } from './components/polish/CommandPalette';
 import { AIVoiceAssistant } from './components/AIVoiceAssistant';
 import { CustomCursor } from './components/CustomCursor';
 import { ThemeCustomizer } from './components/ThemeCustomizer';
 
 // Lazy-loaded великі компоненти для зменшення initial bundle
 const VideoIntroScreen = React.lazy(() => import('./components/VideoIntroScreen'));
-const LoginScreen = React.lazy(() => import('@/components/LoginScreen'));
-const Predator = React.lazy(() => import('./components/premium/AICopilot').then(m => ({ default: m.Predator })));
+const LoginScreen = React.lazy(() => import('./components/LoginScreen'));
 const OnboardingWizard = React.lazy(() => import('./components/premium/OnboardingWizard'));
 const QuickActionsBar = React.lazy(() => import('./components/premium/QuickActionsBar'));
 const LiveAgentTerminal = React.lazy(() => import('./components/intelligence/LiveAgentTerminal').then(m => ({ default: m.LiveAgentTerminal })));
@@ -158,6 +176,7 @@ function App() {
 
   return (
     <ErrorBoundary>
+      {/* CRT overlay — тільки в debug/legacy режимі, не за замовчуванням */}
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <UserProvider>
@@ -171,10 +190,7 @@ function App() {
                         <GlobalProvider>
                           <ThemeProvider>
                             <SuperIntelligenceProvider>
-                              <ParticleBackground />
-                              <AdvancedBackground />
-                              <NeuralPulse />
-                              <TechGridBackground />
+
                               <AnimatePresence mode="wait">
                                 {appState === 'BOOTING' && (
                                   <motion.div
@@ -216,13 +232,17 @@ function App() {
                                     exit={{ opacity: 0 }}
                                     transition={{ duration: 0.5, ease: 'easeInOut' }}
                                   >
-                                    <AppRoutes />
+                                    <SpatialEnvironmentWrapper />
+                                    
+                                    <div className="relative z-10">
+                                      <AppRoutes />
+                                    </div>
+                                    
                                     {/* Глобальні UI компоненти */}
                                     <React.Suspense fallback={null}>
                                       <QuickActionsBar />
                                       <ToasterProvider />
                                       <OnboardingWizard />
-                                      <Predator />
                                       <LiveAgentTerminal />
                                       <AIVoiceAssistant />
                                       <CustomCursor />
@@ -296,12 +316,12 @@ function App() {
             )}
             
             <div className="flex justify-end pt-4 border-t border-rose-500/20">
-              <button 
+              <Button variant="cyber" 
                 onClick={() => setGlobalError(null)} 
                 className="px-6 py-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/50 font-bold uppercase tracking-widest transition-colors hover:shadow-[0_0_15px_rgba(225,29,72,0.4)]"
               >
                 ПРИМУСОВИЙ ПЕРЕЗАПУСК (IGNORE)
-              </button>
+              </Button>
             </div>
           </div>
         </div>

@@ -5,6 +5,7 @@
  * Тепер включає потужну візуалізацію 250+ реєстрів та 12 OSINT-інструментів.
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -124,7 +125,7 @@ const DatasetStudio: React.FC = () => {
                 {/* ═══ TAB SWITCHER ═══ */}
                 <div className="flex items-center gap-1 p-1.5 bg-slate-950/80 rounded-2xl border border-white/5  w-fit relative z-20">
                     {TABS.map(tab => (
-                        <button
+                        <Button variant="cyber"
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
                             className={cn(
@@ -135,7 +136,7 @@ const DatasetStudio: React.FC = () => {
                             )}
                         >
                             {tab.icon} {tab.label}
-                        </button>
+                        </Button>
                     ))}
                 </div>
 
@@ -241,7 +242,7 @@ const DatasetStudio: React.FC = () => {
                                             </div>
                                             <div className="grid grid-cols-4 gap-2">
                                                 {[1000, 5000, 10000, 50000].map(val => (
-                                                    <button
+                                                    <Button variant="cyber"
                                                         key={val}
                                                         onClick={() => setRowCount(val)}
                                                         className={cn(
@@ -252,12 +253,12 @@ const DatasetStudio: React.FC = () => {
                                                         )}
                                                     >
                                                         {val >= 1000 ? `${val / 1000}k` : val}
-                                                    </button>
+                                                    </Button>
                                                 ))}
                                             </div>
                                         </div>
 
-                                        <button
+                                        <Button variant="cyber"
                                             onClick={handleGenerate}
                                             disabled={!activePrototypeId || isGenerating}
                                             className={cn(
@@ -269,7 +270,7 @@ const DatasetStudio: React.FC = () => {
                                         >
                                             {isGenerating ? <RefreshCw className="animate-spin" size={16} /> : <Zap size={16} />}
                                             СТВО ИТИ (СИНТЕЗ)
-                                        </button>
+                                        </Button>
                                     </div>
                                 </HoloCard>
 
@@ -346,20 +347,20 @@ const DatasetStudio: React.FC = () => {
                                                 </div>
 
                                                 <div className="grid grid-cols-2 gap-2">
-                                                    <button 
+                                                    <Button variant="cyber" 
                                                         onClick={() => mlStudioApi.updateEmbeddingsConfig('nomic-embed-text')}
                                                         className="flex flex-col items-center justify-center p-2 rounded bg-slate-950/40 border border-slate-800/50 hover:border-yellow-500/50 transition-all group"
                                                     >
                                                         <span className="text-[8px] font-black text-slate-500 group-hover:text-yellow-400 mb-1 uppercase tracking-tighter">ПОТУЖНІСТЬ</span>
                                                         <span className="text-[10px] font-bold text-slate-300">Векторний Пошук</span>
-                                                    </button>
-                                                    <button 
+                                                    </Button>
+                                                    <Button variant="cyber" 
                                                         onClick={() => mlStudioApi.updateEmbeddingsConfig('mxbai-embed-large')}
                                                         className="flex flex-col items-center justify-center p-2 rounded bg-slate-950/40 border border-slate-800/50 hover:border-amber-500/50 transition-all group"
                                                     >
                                                         <span className="text-[8px] font-black text-slate-500 group-hover:text-amber-400 mb-1 uppercase tracking-tighter">ТОЧНІСТЬ</span>
                                                         <span className="text-[10px] font-bold text-slate-300">RAG Контекст</span>
-                                                    </button>
+                                                    </Button>
                                                 </div>
                                             </div>
                                         </div>
@@ -430,14 +431,14 @@ const DatasetStudio: React.FC = () => {
                                                     </div>
                                                 </div>
 
-                                                <button
+                                                <Button variant="cyber"
                                                     onClick={handleLoraTrain}
                                                     disabled={isLoraTraining}
                                                     className="w-full py-4 rounded-2xl bg-gradient-to-r from-purple-600 to-yellow-600 text-white font-black text-[10px] tracking-widest uppercase hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-purple-600/20 flex items-center justify-center gap-3"
                                                 >
                                                     {isLoraTraining ? <RefreshCw className="animate-spin" size={14} /> : <Zap size={14} />}
                                                     ЗАПУСТИТИ LoRA АДАПТАЦІЮ
-                                                </button>
+                                                </Button>
                                             </div>
                                         </div>
                                     </HoloCard>

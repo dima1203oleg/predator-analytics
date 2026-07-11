@@ -1,4 +1,5 @@
 
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Binary, Scan, Target, Cpu, Activity, Info, ChevronRight, Zap } from 'lucide-react';
@@ -170,12 +171,12 @@ export const VectorDBView: React.FC<VectorDBViewProps> = ({ vectorData, selected
                                     </div>
                                 </div>
 
-                                <button
+                                <Button variant="cyber"
                                     onClick={() => onSelectVector(null)}
                                     className="mt-8 group/btn w-full py-4 bg-slate-900 border border-white/5 rounded-2xl text-[10px] font-black text-slate-500 hover:text-white hover:border-blue-500/30 transition-all uppercase tracking-[0.3em] flex items-center justify-center gap-2"
                                 >
                                     Reset Selection <ChevronRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
-                                </button>
+                                </Button>
                             </motion.div>
                         ) : (
                             <div className="flex-1 flex flex-col items-center justify-center text-center p-12 mt-10 space-y-8">

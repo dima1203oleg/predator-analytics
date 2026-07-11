@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
@@ -543,7 +544,7 @@ const ReportBuilderPage: React.FC = () => {
                             <div>{backendStatus.statusLabel}</div>
                         </div>
                         <div className="flex rounded-2xl border border-white/10 bg-white/5 p-1">
-                            <button
+                            <Button variant="cyber"
                                 onClick={() => setBatchMode(false)}
                                 className={cn(
                                     'rounded-xl px-6 py-2.5 text-[10px] font-black uppercase tracking-widest transition-all',
@@ -551,8 +552,8 @@ const ReportBuilderPage: React.FC = () => {
                                 )}
                             >
                                 Одиничний
-                            </button>
-                            <button
+                            </Button>
+                            <Button variant="cyber"
                                 onClick={() => setBatchMode(true)}
                                 className={cn(
                                     'rounded-xl px-6 py-2.5 text-[10px] font-black uppercase tracking-widest transition-all',
@@ -560,15 +561,15 @@ const ReportBuilderPage: React.FC = () => {
                                 )}
                             >
                                 Пакетний
-                            </button>
+                            </Button>
                         </div>
-                        <button
+                        <Button variant="cyber"
                             onClick={handleGenerate}
                             disabled={generating || backendStatus.isOffline}
                             className="rounded-2xl bg-amber-300 px-8 py-4 text-[10px] font-black uppercase tracking-[0.25em] text-slate-950 transition-all hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-50"
                         >
                             {generating ? 'Формую...' : batchMode ? 'Запустити пакет' : 'Сформувати звіт'}
-                        </button>
+                        </Button>
                     </div>
                 </div>
 
@@ -581,7 +582,7 @@ const ReportBuilderPage: React.FC = () => {
 
                             <div className="flex flex-col gap-3">
                                 {TEMPLATES.map((template) => (
-                                    <button
+                                    <Button variant="cyber"
                                         key={template.id}
                                         onClick={() => setSelectedTemplate(template.id)}
                                         className={cn(
@@ -616,7 +617,7 @@ const ReportBuilderPage: React.FC = () => {
                                                 className="absolute inset-x-0 bottom-0 h-1 bg-amber-300"
                                             />
                                         )}
-                                    </button>
+                                    </Button>
                                 ))}
                             </div>
                         </div>
@@ -630,13 +631,13 @@ const ReportBuilderPage: React.FC = () => {
                                     </span>
                                 </div>
 
-                                <button
+                                <Button variant="cyber"
                                     onClick={clearAiChat}
                                     className="flex items-center gap-1 rounded-lg border border-amber-500/20 bg-amber-500/10 px-2 py-1 text-[8px] font-black uppercase tracking-wide text-amber-300 transition-all hover:bg-amber-500/20"
                                 >
                                     <Trash2 size={10} />
                                     Очистити
-                                </button>
+                                </Button>
                             </div>
 
                             <div className="mb-4 flex h-[260px] flex-col gap-3 overflow-y-auto rounded-2xl border border-white/5 bg-black/40 p-4 custom-scrollbar">
@@ -688,13 +689,13 @@ const ReportBuilderPage: React.FC = () => {
                                     placeholder="Поставте питання щодо шаблону або звіту"
                                     className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-4 text-[11px] text-white outline-none transition-all placeholder:text-slate-600 focus:border-cyan-400/40"
                                 />
-                                <button
+                                <Button variant="cyber"
                                     onClick={handleAiAsk}
                                     disabled={aiTyping || !aiQuery.trim()}
                                     className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-slate-500 transition-all hover:text-cyan-300 disabled:cursor-not-allowed disabled:opacity-30"
                                 >
                                     <Send size={16} />
-                                </button>
+                                </Button>
                             </div>
                         </HoloCard>
                     </div>
@@ -825,7 +826,7 @@ const ReportBuilderPage: React.FC = () => {
 
                                         <div className="space-y-3">
                                             {batchResults.map((item) => (
-                                                <button
+                                                <Button variant="cyber"
                                                     key={`${item.ueid}-${item.generatedAt}`}
                                                     onClick={() => setPreviewReport(item)}
                                                     className="flex w-full items-center justify-between rounded-2xl border border-white/5 bg-white/[0.03] px-4 py-3 text-left transition-all hover:border-white/10"
@@ -853,7 +854,7 @@ const ReportBuilderPage: React.FC = () => {
                                                               ? 'Частково'
                                                               : 'Помилка'}
                                                     </div>
-                                                </button>
+                                                </Button>
                                             ))}
                                         </div>
                                     </HoloCard>
@@ -997,7 +998,7 @@ const ReportBuilderPage: React.FC = () => {
 
                                 <div className="space-y-3">
                                     {sessionReports.map((report) => (
-                                        <button
+                                        <Button variant="cyber"
                                             key={`${report.ueid}-${report.generatedAt}-${report.templateId}`}
                                             onClick={() => setPreviewReport(report)}
                                             className="w-full rounded-2xl border border-white/5 bg-white/[0.03] p-4 text-left transition-all hover:border-white/10"
@@ -1016,7 +1017,7 @@ const ReportBuilderPage: React.FC = () => {
                                             <div className="text-sm leading-relaxed text-slate-400">
                                                 {report.report ? truncateText(report.report) : report.error || 'Текст не повернувся'}
                                             </div>
-                                        </button>
+                                        </Button>
                                     ))}
                                 </div>
                             </HoloCard>

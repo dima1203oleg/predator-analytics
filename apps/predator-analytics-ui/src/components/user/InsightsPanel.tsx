@@ -1,4 +1,5 @@
 
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts';
 import { Search, AlertOctagon, TrendingUp, Activity, BarChart2, Shield, FileText, Zap, Globe, Siren, Eye } from 'lucide-react';
@@ -74,37 +75,37 @@ export const InsightsPanel: React.FC = () => {
 
             {/* Quick Macros (Actions) - Holographic Grid */}
             <div className="grid grid-cols-2 gap-3">
-                <button className="relative  p-4 bg-slate-900/50 border border-slate-800 hover:border-cyan-500/50 rounded-xl flex flex-col items-center justify-center gap-2 transition-all active:scale-95 touch-manipulation group panel-3d">
+                <Button variant="cyber" className="relative  p-4 bg-slate-900/50 border border-slate-800 hover:border-cyan-500/50 rounded-xl flex flex-col items-center justify-center gap-2 transition-all active:scale-95 touch-manipulation group panel-3d">
                     <div className="absolute inset-0 bg-cyan-500/5 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
                     <div className="p-2 bg-cyan-900/20 rounded-lg text-cyan-400 group-hover:scale-110 transition-transform relative z-10">
                         <FileText size={20} />
                     </div>
                     <span className="text-[10px] font-bold text-slate-300 uppercase tracking-wider relative z-10">Generate Report</span>
-                </button>
+                </Button>
                 
-                <button className="relative  p-4 bg-slate-900/50 border border-slate-800 hover:border-amber-500/50 rounded-xl flex flex-col items-center justify-center gap-2 transition-all active:scale-95 touch-manipulation group panel-3d">
+                <Button variant="cyber" className="relative  p-4 bg-slate-900/50 border border-slate-800 hover:border-amber-500/50 rounded-xl flex flex-col items-center justify-center gap-2 transition-all active:scale-95 touch-manipulation group panel-3d">
                     <div className="absolute inset-0 bg-amber-500/5 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
                     <div className="p-2 bg-amber-900/20 rounded-lg text-amber-400 group-hover:scale-110 transition-transform relative z-10">
                         <Shield size={20} />
                     </div>
                     <span className="text-[10px] font-bold text-slate-300 uppercase tracking-wider relative z-10">Compliance Check</span>
-                </button>
+                </Button>
 
-                <button className="relative  p-4 bg-slate-900/50 border border-slate-800 hover:border-purple-500/50 rounded-xl flex flex-col items-center justify-center gap-2 transition-all active:scale-95 touch-manipulation group panel-3d">
+                <Button variant="cyber" className="relative  p-4 bg-slate-900/50 border border-slate-800 hover:border-purple-500/50 rounded-xl flex flex-col items-center justify-center gap-2 transition-all active:scale-95 touch-manipulation group panel-3d">
                     <div className="absolute inset-0 bg-purple-500/5 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
                     <div className="p-2 bg-purple-900/20 rounded-lg text-purple-400 group-hover:scale-110 transition-transform relative z-10">
                         <Globe size={20} />
                     </div>
                     <span className="text-[10px] font-bold text-slate-300 uppercase tracking-wider relative z-10">Market Scan</span>
-                </button>
+                </Button>
 
-                <button className="relative  p-4 bg-slate-900/50 border border-slate-800 hover:border-red-500/50 rounded-xl flex flex-col items-center justify-center gap-2 transition-all active:scale-95 touch-manipulation group panel-3d">
+                <Button variant="cyber" className="relative  p-4 bg-slate-900/50 border border-slate-800 hover:border-red-500/50 rounded-xl flex flex-col items-center justify-center gap-2 transition-all active:scale-95 touch-manipulation group panel-3d">
                     <div className="absolute inset-0 bg-red-500/5 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
                     <div className="p-2 bg-red-900/20 rounded-lg text-red-400 group-hover:scale-110 transition-transform relative z-10">
                         <Siren size={20} />
                     </div>
                     <span className="text-[10px] font-bold text-slate-300 uppercase tracking-wider relative z-10">Alert Team</span>
-                </button>
+                </Button>
             </div>
         </div>
     );

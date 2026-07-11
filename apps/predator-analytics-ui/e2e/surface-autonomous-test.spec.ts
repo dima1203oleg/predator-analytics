@@ -2,7 +2,15 @@ import { test, expect } from '@playwright/test';
 
 test.describe('🤖 Autonomous Surface Test', () => {
   test('повне тестування поверхні', async ({ page }) => {
-    const results = {
+    const results: {
+      total_clicks: number;
+      successful_clicks: number;
+      failed_clicks: number;
+      form_interactions: number;
+      keyboard_interactions: number;
+      errors: string[];
+      visited_urls: string[];
+    } = {
       total_clicks: 0,
       successful_clicks: 0,
       failed_clicks: 0,
@@ -39,7 +47,7 @@ test.describe('🤖 Autonomous Surface Test', () => {
           
           // Отримуємо тип та інформацію
           const tagName = await el.evaluate(el => el.tagName.toLowerCase());
-          const inputType = tagName === 'input' ? await el.evaluate(el => el.type) : '';
+          const inputType = tagName === 'input' ? await el.evaluate((el: any) => el.type) : '';
           
           if (tagName === 'input' && inputType === 'text') {
             // Заповнюємо текстові поля

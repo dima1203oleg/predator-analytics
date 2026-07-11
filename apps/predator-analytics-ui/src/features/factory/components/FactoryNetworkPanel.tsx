@@ -34,8 +34,8 @@ export const FactoryNetworkPanel: React.FC<FactoryNetworkPanelProps> = ({
       </div>
       
       <section className="relative z-10 p-10 bg-black/60  border-2 border-white/5 rounded-[3rem] shadow-4xl overflow-hidden mt-8 group">
-        <div className="flex items-center gap-6 mb-12 border-l-4 border-rose-600 pl-8">
-          <div className="p-4 bg-rose-600/10 border border-rose-600/20 rounded-2xl text-rose-500 shadow-xl">
+        <div className="flex items-center gap-6 mb-12 border-l-4 border-cyan-600 pl-8">
+          <div className="p-4 bg-cyan-600/10 border border-cyan-600/20 rounded-2xl text-cyan-500 shadow-xl">
             <Network size={28} />
           </div>
           <div>
@@ -54,13 +54,13 @@ export const FactoryNetworkPanel: React.FC<FactoryNetworkPanelProps> = ({
               className="flex flex-col items-center gap-4"
             >
               <div className="relative">
-                <div className="absolute inset-0 bg-rose-500 blur-2xl opacity-20 " />
-                <div className="w-20 h-20 rounded-2xl bg-rose-600/10 border-2 border-rose-500 flex items-center justify-center text-rose-500  transform -rotate-6 group-hover:rotate-0 transition-transform duration-500">
+                <div className="absolute inset-0 bg-cyan-500 blur-2xl opacity-20 " />
+                <div className="w-20 h-20 rounded-2xl bg-cyan-600/10 border-2 border-cyan-500 flex items-center justify-center text-cyan-500  transform -rotate-6 group-hover:rotate-0 transition-transform duration-500">
                   <Globe size={32} />
                 </div>
               </div>
               <div className="text-center">
-                <span className="text-[11px] font-black uppercase text-rose-500 tracking-[0.2em] italic">NGINX / UI</span>
+                <span className="text-[11px] font-black uppercase text-cyan-500 tracking-[0.2em] italic">NGINX / UI</span>
                 <p className="text-[8px] font-mono text-slate-600 uppercase tracking-widest mt-1">PORT: 3030</p>
               </div>
             </motion.div>
@@ -120,7 +120,7 @@ export const FactoryNetworkPanel: React.FC<FactoryNetworkPanelProps> = ({
                 >
                   <div className={cn(
                     "w-14 h-14 rounded-2xl border-2 flex items-center justify-center transition-all duration-500 shadow-xl",
-                    db.color === 'rose' ? "bg-rose-500/10 border-rose-500 text-rose-500" :
+                    db.color === 'rose' ? "bg-cyan-500/10 border-cyan-500 text-cyan-500" :
                     db.color === 'amber' ? "bg-amber-500/10 border-amber-500 text-amber-500" :
                     "bg-emerald-500/10 border-emerald-500 text-emerald-500"
                   )}>
@@ -129,7 +129,7 @@ export const FactoryNetworkPanel: React.FC<FactoryNetworkPanelProps> = ({
                   <div className="flex flex-col">
                     <span className={cn(
                       "text-[10px] font-black uppercase tracking-[0.2em] italic",
-                      db.color === 'rose' ? "text-rose-500" :
+                      db.color === 'rose' ? "text-cyan-500" :
                       db.color === 'amber' ? "text-amber-500" :
                       "text-emerald-500"
                     )}>{db.label}</span>
@@ -150,13 +150,13 @@ export const FactoryNetworkPanel: React.FC<FactoryNetworkPanelProps> = ({
           ].map((stat, idx) => (
             <div key={idx} className={cn(
               "flex flex-col gap-3 p-6 rounded-[1.5rem] border-2 transition-all duration-500",
-              stat.color === 'rose' ? "bg-rose-500/5 border-rose-500/20" :
+              stat.color === 'rose' ? "bg-cyan-500/5 border-cyan-500/20" :
               stat.color === 'emerald' ? "bg-emerald-500/5 border-emerald-500/20" :
               "bg-white/5 border-white/10"
             )}>
               <div className="flex items-center justify-between">
                 <stat.icon size={18} className={cn(
-                  stat.color === 'rose' ? "text-rose-500" :
+                  stat.color === 'rose' ? "text-cyan-500" :
                   stat.color === 'emerald' ? "text-emerald-500" :
                   "text-slate-500"
                 )} />
@@ -169,7 +169,7 @@ export const FactoryNetworkPanel: React.FC<FactoryNetworkPanelProps> = ({
       </section>
 
       <style dangerouslySetInnerHTML={{ __html: `
-        .shadow-4xl { box-shadow: 0 40px 100px -20px rgba(225,29,72,0.3); }
+        .shadow-4xl { box-shadow: 0 40px 100px -20px rgba(6,182,212,0.3); }
       `}} />
     </div>
   );

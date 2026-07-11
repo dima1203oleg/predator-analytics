@@ -1,4 +1,5 @@
 
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useShell, UIShell } from '../context/ShellContext';
@@ -47,7 +48,7 @@ export const ShellSwitcher: React.FC = () => {
         const isActive = currentShell === shell.id;
 
         return (
-          <button
+          <Button variant="cyber"
             key={shell.id}
             onClick={() => setShell(shell.id)}
             className={`
@@ -61,7 +62,7 @@ export const ShellSwitcher: React.FC = () => {
           >
             {shell.icon}
             <span className={isActive ? 'block' : 'hidden'}>{shell.label}</span>
-          </button>
+          </Button>
         );
       })}
     </div>

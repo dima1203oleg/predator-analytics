@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Hammer, Sparkles, Code2, Layout, ArrowUpRight, Zap, RefreshCcw, Box, Diamond } from 'lucide-react';
@@ -122,13 +123,13 @@ const EvolutionForge: React.FC<EvolutionForgeProps> = ({ status }) => {
         </AnimatePresence>
       </div>
 
-      <button className="w-full mt-8 py-5 bg-yellow-500/5 hover:bg-yellow-500/10 rounded-[28px] border border-yellow-500/20 text-[11px] font-black text-yellow-500 uppercase tracking-[0.3em] flex items-center justify-center gap-3 transition-all hover:tracking-[0.4em] relative">
+      <Button variant="cyber" className="w-full mt-8 py-5 bg-yellow-500/5 hover:bg-yellow-500/10 rounded-[28px] border border-yellow-500/20 text-[11px] font-black text-yellow-500 uppercase tracking-[0.3em] flex items-center justify-center gap-3 transition-all hover:tracking-[0.4em] relative">
         <RefreshCcw size={16} /> 
         А ХІВ ЕВОЛЮЦІЇ СИСТЕМИ
         <div className="absolute right-6 opacity-40">
             <Diamond size={12} />
         </div>
-      </button>
+      </Button>
     </div>
   );
 };

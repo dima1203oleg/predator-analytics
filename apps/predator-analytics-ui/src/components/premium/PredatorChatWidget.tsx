@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageSquare, X, Send, Bot, Sparkles, Paperclip, Mic, ChevronDown, Zap, Settings } from 'lucide-react';
@@ -106,17 +107,17 @@ export const PredatorChatWidget: React.FC = () => {
                 </div>
               </div>
               <div className="flex gap-2">
-                 <button aria-label="Налаштування" className="p-1.5 hover:bg-white/10 rounded-lg transition-colors text-slate-400 hover:text-white">
+                 <Button variant="cyber" aria-label="Налаштування" className="p-1.5 hover:bg-white/10 rounded-lg transition-colors text-slate-400 hover:text-white">
                     <Settings size={16} /> {/* Note: Settings need import or replace with other icon. Replaced with imported Sparkles for now if Settings not available, but Settings usually is. Let's use Sparkles for 'Clean' */}
                     <Sparkles size={16} />
-                 </button>
-                 <button
+                 </Button>
+                 <Button variant="cyber"
                    onClick={() => setIsOpen(false)}
                    aria-label="Закрити чат"
                    className="p-1.5 hover:bg-rose-500/20 rounded-lg transition-colors text-slate-400 hover:text-rose-400"
                  >
                     <ChevronDown size={16} />
-                 </button>
+                 </Button>
               </div>
             </div>
 
@@ -174,20 +175,20 @@ export const PredatorChatWidget: React.FC = () => {
                     premiumLocales.predatorChat.hints.createReport,
                     premiumLocales.predatorChat.hints.latestInsights
                   ].map(hint => (
-                    <button
+                    <Button variant="cyber"
                       key={hint}
                       onClick={() => { setInput(hint); handleSend(); }} // Fix: Pass hint directly? No, setInput then handleSend might use old state. Better to allow user to verify.
                       /* actually better to set input or auto send. Let's set input */
                       className="px-3 py-1.5 rounded-full bg-white/5 hover:bg-emerald-500/20 border border-white/5 hover:border-emerald-500/30 text-[10px] text-slate-400 hover:text-emerald-400 whitespace-nowrap transition-all"
                     >
                       {hint}
-                    </button>
+                    </Button>
                   ))}
                </div>
                <div className="relative flex items-end gap-2 bg-slate-900/50 border border-white/10 p-2 rounded-xl focus-within:border-emerald-500/50 transition-colors">
-                   <button aria-label="Прикріпити файл" className="p-2 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-white/5">
+                   <Button variant="cyber" aria-label="Прикріпити файл" className="p-2 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-white/5">
                       <Paperclip size={18} />
-                   </button>
+                   </Button>
                   <textarea
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
@@ -202,17 +203,17 @@ export const PredatorChatWidget: React.FC = () => {
                     rows={1}
                   />
                   <div className="flex flex-col gap-1">
-                     {/* <button className="p-2 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-white/5">
+                     {/* <Button variant="cyber" className="p-2 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-white/5">
                         <Mic size={18} />
-                     </button> */}
-                     <button
+                     </Button> */}
+                     <Button variant="cyber"
                        onClick={handleSend}
                        disabled={!input.trim()}
                        aria-label="Надіслати повідомлення"
                        className="p-2 bg-emerald-500 hover:bg-emerald-400 text-white rounded-lg shadow-lg shadow-emerald-500/20 disabled:opacity-50 disabled:shadow-none transition-all"
                      >
                         <Send size={16} />
-                     </button>
+                     </Button>
                   </div>
                </div>
             </div>

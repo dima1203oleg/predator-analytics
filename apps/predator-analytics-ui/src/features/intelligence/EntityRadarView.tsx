@@ -10,6 +10,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -276,7 +277,7 @@ const EntityRadarView: React.FC = () => {
             ]}
             actions={
               <div className="flex items-center gap-6">
-                <button 
+                <Button variant="cyber" 
                   onClick={handleRefresh} 
                   className={cn(
                     "p-7 bg-black border-2 border-white/[0.04] rounded-[2rem] text-slate-500 hover:text-yellow-500 transition-all shadow-4xl group/btn",
@@ -284,14 +285,14 @@ const EntityRadarView: React.FC = () => {
                   )}
                 >
                   <RefreshCw size={32} className={cn("transition-transform duration-700", refreshing ? "" : "group-hover/btn:rotate-180")} />
-                </button>
-                <button className="relative px-12 py-7 h-fit group/main overflow-hidden rounded-[2.2rem]">
+                </Button>
+                <Button variant="cyber" className="relative px-12 py-7 h-fit group/main overflow-hidden rounded-[2.2rem]">
                   <div className="absolute inset-0 bg-gradient-to-r from-yellow-600 to-yellow-500 transition-transform duration-500 group-hover/main:scale-105" />
                   <div className="relative flex items-center gap-6 text-black font-black uppercase italic tracking-[0.3em] text-[12px]">
                     <Download size={24} /> ЕКСПОРТ_ТОПОЛОГІЇ_РИЗИКУ
                   </div>
                   <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover/main:translate-x-[100%] transition-transform duration-1000" />
-                </button>
+                </Button>
               </div>
             }
           />
@@ -324,9 +325,9 @@ const EntityRadarView: React.FC = () => {
                   <ChevronDown className="absolute right-8 top-1/2 -translate-y-1/2 text-slate-600 pointer-events-none" size={20} />
                 </div>
 
-                <button className="px-10 py-7 bg-white/[0.02] border-2 border-white/[0.05] rounded-[2.2rem] text-slate-400 font-black text-[11px] uppercase tracking-[0.3em] italic hover:bg-white/[0.05] hover:text-white transition-all shadow-xl flex items-center gap-4">
+                <Button variant="cyber" className="px-10 py-7 bg-white/[0.02] border-2 border-white/[0.05] rounded-[2.2rem] text-slate-400 font-black text-[11px] uppercase tracking-[0.3em] italic hover:bg-white/[0.05] hover:text-white transition-all shadow-xl flex items-center gap-4">
                   <Filter size={18} className="text-yellow-500" /> ФІЛЬТРИ
-                </button>
+                </Button>
               </div>
             </div>
           </div>
@@ -519,18 +520,18 @@ const EntityRadarView: React.FC = () => {
                                    </div>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                   <button className="flex flex-col items-center justify-center gap-6 p-8 bg-yellow-500 hover:bg-yellow-400 text-black rounded-[2.5rem] transition-all group/btn shadow-4xl active:scale-95 duration-500">
+                                   <Button variant="cyber" className="flex flex-col items-center justify-center gap-6 p-8 bg-yellow-500 hover:bg-yellow-400 text-black rounded-[2.5rem] transition-all group/btn shadow-4xl active:scale-95 duration-500">
                                       <Download size={24} className="group-hover/btn:translate-y-1 transition-transform" />
                                       <span className="text-[10px] font-black uppercase tracking-[0.2em] italic">ГЕНЕРУВАТИ_ДОСЬЄ</span>
-                                   </button>
-                                   <button className="flex flex-col items-center justify-center gap-6 p-8 bg-white/[0.02] border-2 border-white/10 text-white hover:bg-white/[0.05] rounded-[2.5rem] transition-all group/btn shadow-xl">
+                                   </Button>
+                                   <Button variant="cyber" className="flex flex-col items-center justify-center gap-6 p-8 bg-white/[0.02] border-2 border-white/10 text-white hover:bg-white/[0.05] rounded-[2.5rem] transition-all group/btn shadow-xl">
                                       <Eye size={24} />
                                       <span className="text-[10px] font-black uppercase tracking-[0.2em] italic">ВІЗУАЛІЗУВАТИ_ЗВ'ЯЗКИ</span>
-                                   </button>
-                                   <button className="flex flex-col items-center justify-center gap-6 p-8 bg-amber-600/10 border-2 border-amber-600/20 text-amber-500 hover:bg-amber-600/20 rounded-[2.5rem] transition-all group/btn shadow-2xl">
+                                   </Button>
+                                   <Button variant="cyber" className="flex flex-col items-center justify-center gap-6 p-8 bg-amber-600/10 border-2 border-amber-600/20 text-amber-500 hover:bg-amber-600/20 rounded-[2.5rem] transition-all group/btn shadow-2xl">
                                       <Zap size={24} className="" />
                                       <span className="text-[10px] font-black uppercase tracking-[0.2em] italic">ІЗОЛЮВАТИ_ВУЗОЛ</span>
-                                   </button>
+                                   </Button>
                                 </div>
                              </div>
                           </div>

@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
@@ -250,7 +251,7 @@ export default function OpportunitiesPage() {
             <div className="rounded-[28px] border border-white/[0.08] bg-white/[0.03] p-2">
                 <div className="flex flex-wrap gap-2">
                     {tabs.map((tab) => (
-                        <button
+                        <Button variant="cyber"
                             key={tab.key}
                             onClick={() => setActiveTab(tab.key)}
                             className={cn(
@@ -262,7 +263,7 @@ export default function OpportunitiesPage() {
                         >
                             {tab.icon}
                             {tab.label}
-                        </button>
+                        </Button>
                     ))}
                 </div>
             </div>
@@ -367,13 +368,13 @@ function InsightsTab({
 
                                     <div className="flex flex-wrap gap-2">
                                         {insight.actions?.map((action, actionIndex) => (
-                                            <button
+                                            <Button variant="cyber"
                                                 key={actionIndex}
                                                 className="inline-flex items-center gap-1 rounded-full border border-cyan-400/20 bg-cyan-500/10 px-3 py-1.5 text-xs font-semibold text-cyan-200 transition-all hover:bg-cyan-500/16"
                                             >
                                                 {action.label}
                                                 <ExternalLink size={12} />
-                                            </button>
+                                            </Button>
                                         ))}
                                     </div>
                                 </div>
@@ -435,13 +436,13 @@ function RecommendationsTab({
                     </div>
                     <div className="mt-4 flex flex-wrap gap-2">
                         {(recommendation.actions?.length ? recommendation.actions : [{ label: 'Відкрити картку сигналу' }]).map((action, index) => (
-                            <button
+                            <Button variant="cyber"
                                 key={index}
                                 className="inline-flex items-center gap-1 rounded-full border border-cyan-400/20 bg-cyan-500/10 px-3 py-1.5 text-xs font-semibold text-cyan-200 transition-all hover:bg-cyan-500/16"
                             >
                                 {action.label}
                                 <ExternalLink size={12} />
-                            </button>
+                            </Button>
                         ))}
                     </div>
                 </div>
@@ -669,9 +670,9 @@ function MarketCaptureSimulator({ monetaryImpact }: { monetaryImpact: number }) 
                     </div>
                 </div>
 
-                <button className="w-full py-5 bg-emerald-500 hover:bg-emerald-400 text-black rounded-3xl text-xs font-black uppercase tracking-[0.3em] transition-all shadow-xl shadow-emerald-900/20 active:scale-95">
+                <Button variant="cyber" className="w-full py-5 bg-emerald-500 hover:bg-emerald-400 text-black rounded-3xl text-xs font-black uppercase tracking-[0.3em] transition-all shadow-xl shadow-emerald-900/20 active:scale-95">
                     Сформувати Бізнес-План
-                </button>
+                </Button>
             </div>
         </div>
     );

@@ -58,6 +58,7 @@ class JobStatusResponse(BaseModel):
     started_at: str | None = None
     completed_at: str | None = None
     error_summary: str | None = None
+    warnings: list[str] | None = None
 
 
 # ======================== ЕНДПОЇНТИ ========================
@@ -350,6 +351,7 @@ async def get_job_progress(
         started_at=job.started_at.isoformat() if job.started_at else None,
         completed_at=job.completed_at.isoformat() if job.completed_at else None,
         error_summary=job.error_message,
+        warnings=job.metadata_.get("warnings", []) if job.metadata_ else [],
     )
 
 
@@ -406,6 +408,7 @@ async def stream_job_progress(
                             "records_processed": job.records_processed or 0,
                             "records_errors": job.records_errors or 0,
                             "file_name": job.file_name,
+                            "warnings": job.metadata_.get("warnings", []) if job.metadata_ else [],
                         }
 
                         if job.status == "completed":
@@ -503,8 +506,37 @@ async def list_jobs(
             progress_pct=j.progress or 0,
             created_at=j.created_at.isoformat() if j.created_at else None,
             started_at=j.started_at.isoformat() if j.started_at else None,
-            completed_at=j.completed_at.isoformat() if j.completed_at else None,
             error_summary=j.error_message,
         )
         for j in jobs
     ]
+
+@router.get("/{job_id}/verify")
+async def verify_ingestion_consistency(
+    job_id: str,
+    tenant_id: str = Depends(get_tenant_id),
+    _ = Depends(PermissionChecker([Permission.READ_CORP_DATA])),
+):
+    """
+    Перевірка наявності даних у всіх БД (Data Flow Transparency Layer).
+    """
+    from app.services.data_lineage_service import get_data_lineage_service
+    lineage_svc = get_data_lineage_service()
+    result = await lineage_svc.verify_consistency(tenant_id, job_id)
+    if "error" in result:
+        raise HTTPException(status_code=404, detail=result["error"])
+    return result
+
+@router.get("/{job_id}/lineage")
+async def get_ingestion_lineage(
+    job_id: str,
+    tenant_id: str = Depends(get_tenant_id),
+    _ = Depends(PermissionChecker([Permission.READ_CORP_DATA])),
+):
+    """
+    Отримання повної історії подій по ingestion job (Graph Data).
+    """
+    from app.services.data_lineage_service import get_data_lineage_service
+    lineage_svc = get_data_lineage_service()
+    events = await lineage_svc.get_full_lineage(tenant_id, job_id)
+    return {"ingestion_id": job_id, "events": events}

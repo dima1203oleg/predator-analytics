@@ -1,4 +1,5 @@
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useRef } from 'react';
 import { ViewHeader } from '@/components/ViewHeader';
 import Modal from '@/components/Modal';
@@ -206,9 +207,9 @@ const DatabasesView: React.FC = () => {
                             <span className="text-[10px] font-mono text-slate-300"> ядки: {queryResult?.length || 0}</span>
                             <span className="text-[10px] font-mono text-slate-300">Час виконання: Н/д</span>
                         </div>
-                        <button onClick={handleExecute} disabled={isExecuting} className="px-8 py-3 bg-red-600 hover:bg-red-500 text-white font-black uppercase tracking-widest text-[11px] rounded-xl flex items-center gap-2 shadow-lg shadow-red-600/20 transition-all active:scale-95 disabled:opacity-50 italic">
+                        <Button variant="cyber" onClick={handleExecute} disabled={isExecuting} className="px-8 py-3 bg-red-600 hover:bg-red-500 text-white font-black uppercase tracking-widest text-[11px] rounded-xl flex items-center gap-2 shadow-lg shadow-red-600/20 transition-all active:scale-95 disabled:opacity-50 italic">
                             {isExecuting ? <RefreshCw size={14} className="animate-spin" /> : <Play size={14} />} Виконати запит
-                        </button>
+                        </Button>
                     </div>
                     <div className="flex-1 bg-black/40 border border-white/5 rounded-2xl overflow-auto custom-scrollbar shadow-inner relative">
                         {queryResult ? (
@@ -324,7 +325,7 @@ const DatabasesView: React.FC = () => {
                     ].map(tab => {
                         const isActive = activeTab === tab.id;
                         return (
-                            <button
+                            <Button variant="cyber"
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id as any)}
                                 className={cn(
@@ -347,7 +348,7 @@ const DatabasesView: React.FC = () => {
                                         className={cn("absolute inset-0 border-b-2 bg-gradient-to-t from-white/10 to-transparent shadow-[inset_0_-2px_10px_rgba(0,0,0,0.5)]", tab.color.replace('text', 'border'))}
                                     />
                                 )}
-                            </button>
+                            </Button>
                         );
                     })}
                 </div>

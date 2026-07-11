@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useMemo } from 'react';
 import ReactECharts from '@/components/ECharts';
 import { TrendingUp, Play, RefreshCw, Settings, Zap } from 'lucide-react';
@@ -56,14 +57,14 @@ export const PredictiveModelingWidget: React.FC<{ persona: string }> = ({ person
             <p className="text-[10px] text-slate-500 font-mono uppercase tracking-widest">{premiumLocales.predictiveModeling.subtitle}</p>
           </div>
         </div>
-        <button
+        <Button variant="cyber"
           onClick={() => setIsSimulating(true)}
           className="flex items-center gap-2 px-6 py-3 bg-amber-500 text-black rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-amber-400 transition-all active:scale-95"
           aria-label="Запустити симуляцію"
         >
            {isSimulating ? <RefreshCw className="animate-spin" size={14} /> : <Play size={14} />}
            {premiumLocales.predictiveModeling.runSimulation}
-        </button>
+        </Button>
       </div>
 
       {/* Content */}

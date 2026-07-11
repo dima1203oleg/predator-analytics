@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAtom } from 'jotai';
@@ -451,32 +452,31 @@ export const Sidebar: React.FC = () => {
     <motion.aside
       data-testid="sidebar"
       initial={false}
-      animate={{ width: isOpen ? 296 : 80 }}
-      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-      className="relative sticky top-0 z-50 flex h-screen shrink-0 flex-col overflow-visible glass-obsidian"
+      animate={{ width: isOpen ? 296 : 72 }}
+      transition={{ duration: 0.38, ease: [0.16, 1, 0.3, 1] }}
+      className="relative sticky top-0 z-50 flex h-screen shrink-0 flex-col overflow-visible"
       style={{
-        borderRight: '1px solid rgba(201, 162, 39, 0.12)',
-        boxShadow: '8px 0 40px rgba(0,0,0,0.6), inset 0 0 60px rgba(201,162,39,0.02)',
+        background: 'linear-gradient(180deg, rgba(12,18,32,0.98) 0%, rgba(7,11,20,0.99) 100%)',
+        borderRight: '1px solid rgba(255,255,255,0.07)',
+        boxShadow: '4px 0 32px rgba(0,0,0,0.55), inset -1px 0 0 rgba(255,255,255,0.04)',
       }}
     >
-      {/* Ambient фоновий ефект - більш виражений для візабіліті */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      {/* Ambient background */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
         <div
-          className="absolute top-0 left-0 right-0 h-[60%]"
+          className="absolute top-0 left-0 right-0 h-[50%]"
           style={{
-            background: 'radial-gradient(circle at 0% 0%, rgba(201,162,39,0.12) 0%, transparent 70%)',
+            background: 'radial-gradient(circle at 10% 0%, rgba(225,29,72,0.06) 0%, transparent 60%)',
           }}
         />
         <div
-          className="absolute bottom-0 right-0 w-full h-[50%]"
+          className="absolute bottom-0 left-0 w-full h-[40%]"
           style={{
-            background: 'radial-gradient(circle at 100% 100%, rgba(201,162,39,0.06) 0%, transparent 80%)',
+            background: 'radial-gradient(circle at 0% 100%, rgba(56,189,248,0.04) 0%, transparent 60%)',
           }}
         />
-        <div className="absolute inset-0 cyber-scan-grid opacity-[0.03]" />
-
-        {/* Edge Highlight — aurum gold */}
-        <div className="absolute inset-y-0 right-0 w-[1px] bg-gradient-to-b from-transparent via-[#c9a227]/30 to-transparent" />
+        {/* Right edge accent */}
+        <div className="absolute inset-y-0 right-0 w-px bg-gradient-to-b from-transparent via-white/5 to-transparent" />
       </div>
 
       {/* ── HEADER: Лого + статус ── */}
@@ -503,14 +503,14 @@ export const Sidebar: React.FC = () => {
                 className="min-w-0 flex-1 overflow-hidden"
               >
                 <div
-                  className="text-[13px] font-black uppercase tracking-[0.18em] leading-none"
-                  style={{ color: '#c9a227' }}
+                  className="text-sm font-black uppercase tracking-[0.18em] leading-none"
+                  style={{ color: '#E11D48' }}
                 >
                   PREDATOR
                 </div>
                 <div
-                  className="text-[8px] font-bold uppercase tracking-[0.12em] mt-0.5"
-                  style={{ color: '#64748b' }}
+                  className="text-[10px] font-bold uppercase tracking-[0.12em] mt-0.5"
+                  style={{ color: '#475569' }}
                 >
                   Аналітика · Рішення · Контроль
                 </div>
@@ -519,19 +519,19 @@ export const Sidebar: React.FC = () => {
           </AnimatePresence>
 
           {isOpen && (
-            <div className="flex flex-col items-end gap-1 shrink-0">
-              <div className="flex items-center gap-1.5">
+            <div className="flex flex-col items-end gap-1.5 shrink-0">
+              <div className="flex items-center gap-2">
                 <span
                   className={cn(
-                    'h-1.5 w-1.5 rounded-full',
+                    'h-2 w-2 rounded-full',
                     backendStatus.isOffline ? 'bg-rose-400' : 'bg-emerald-400',
                   )}
-                  style={{}}
+                  style={backendStatus.isOffline ? {} : { boxShadow: '0 0 6px rgba(52,211,153,0.7)' }}
                 />
                 <span
                   className={cn(
-                    'text-[9px] font-black uppercase tracking-[0.14em]',
-                    backendStatus.isOffline ? 'text-rose-600' : 'text-crimson-500',
+                    'text-[10px] font-bold uppercase tracking-[0.12em]',
+                    backendStatus.isOffline ? 'text-rose-500' : 'text-emerald-400',
                   )}
                 >
                   {backendStatus.statusLabel}
@@ -539,10 +539,10 @@ export const Sidebar: React.FC = () => {
               </div>
               <span
                 className={cn(
-                  'rounded-full border px-1.5 py-0.5 text-[7px] font-black uppercase tracking-[0.12em]',
+                  'rounded-full border px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.10em]',
                   backendStatus.isOffline
-                    ? 'border-rose-600/20 bg-rose-600/10 text-rose-500'
-                    : 'border-crimson-500/20 bg-crimson-500/10 text-crimson-500',
+                    ? 'border-rose-600/25 bg-rose-600/10 text-rose-400'
+                    : 'border-emerald-500/20 bg-emerald-500/08 text-emerald-400',
                 )}
               >
                 {backendStatus.isTruthOnly ? 'Правда' : 'Проксі'}
@@ -586,7 +586,7 @@ export const Sidebar: React.FC = () => {
               }
 
               return (
-                <button
+                <Button variant="cyber"
                   key={action.id}
                   type="button"
                   onClick={() => {
@@ -622,7 +622,7 @@ export const Sidebar: React.FC = () => {
                       {visibleRecentIds.length}
                     </span>
                   )}
-                </button>
+                </Button>
               );
             })}
           </div>
@@ -657,13 +657,13 @@ export const Sidebar: React.FC = () => {
               <span>K</span>
             </div>
             {search && (
-              <button
+              <Button variant="cyber"
                 title="Очистити пошук"
                 onClick={() => setSearch('')}
                 className="absolute right-8 top-1/2 -translate-y-1/2 text-slate-500 transition-colors hover:text-white"
               >
                 <X size={10} />
-              </button>
+              </Button>
             )}
           </div>
           <div className="mt-1.5 flex items-center justify-between text-[9px] text-slate-500">
@@ -679,7 +679,7 @@ export const Sidebar: React.FC = () => {
           <div className="mx-2 mt-2 rounded-xl p-3 text-sm" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
             <div className="text-xs font-bold text-white">{getModeLabel(workspaceMode)}</div>
             <p className="mt-1.5 text-[10px] leading-4 text-slate-500">{emptyStateMessage}</p>
-            <button
+            <Button variant="cyber"
               type="button"
               onClick={() => {
                 setWorkspaceMode('all');
@@ -688,7 +688,7 @@ export const Sidebar: React.FC = () => {
               className="mt-2 rounded-full border border-white/[0.08] px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.12em] text-slate-400 transition-colors hover:border-white/[0.12] hover:text-white"
             >
               Показати всю навігацію
-            </button>
+            </Button>
           </div>
         ) : (
           <div className="space-y-1 px-2">
@@ -715,7 +715,7 @@ export const Sidebar: React.FC = () => {
                 >
                   {/* Заголовок секції */}
                   {isOpen ? (
-                    <button
+                    <Button variant="cyber"
                       onClick={() => toggleSection(section.id)}
                       title={`${section.description} — ${section.outcome}`}
                       className="w-full rounded-xl px-2.5 py-2 text-left transition-all duration-200"
@@ -756,7 +756,7 @@ export const Sidebar: React.FC = () => {
                           style={{ color: colors.headerText, opacity: 0.5 }}
                         />
                       </div>
-                    </button>
+                    </Button>
                   ) : (
                     /* Згорнутий вигляд — тільки кольоровий маркер з пульсацією */
                     <div
@@ -971,7 +971,7 @@ export const Sidebar: React.FC = () => {
 
                                     {/* Кнопка Обране */}
                                     {isOpen && (
-                                      <button
+                                      <Button variant="cyber"
                                         type="button"
                                         onClick={(event) => {
                                           event.preventDefault();
@@ -987,7 +987,7 @@ export const Sidebar: React.FC = () => {
                                         )}
                                       >
                                         <Star className={cn('h-3 w-3', isFavorite && 'fill-current')} />
-                                      </button>
+                                      </Button>
                                     )}
                                   </div>
                                 );
@@ -1050,7 +1050,7 @@ export const Sidebar: React.FC = () => {
                 <div className="truncate text-[11px] font-bold text-white">{user?.name || 'Адміністратор'}</div>
                 <div className="truncate text-[9px]" style={{ color: '#475569' }}>{roleLabel}</div>
               </div>
-              <button
+              <Button variant="cyber"
                 onClick={logout}
                 className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg transition-all"
                 style={{ color: '#475569' }}
@@ -1065,14 +1065,14 @@ export const Sidebar: React.FC = () => {
                 title="Вийти з системи"
               >
                 <LogOut size={13} />
-              </button>
+              </Button>
             </>
           )}
         </div>
       </div>
 
       {/* ── КНОПКА РОЗГОРТАННЯ/ЗГО ТАННЯ ── */}
-      <button
+      <Button variant="cyber"
         onClick={() => setIsOpen(!isOpen)}
         aria-label={isOpen ? 'Згорнути навігацію' : 'Розгорнути навігацію'}
         className="absolute -right-3 top-1/2 z-10 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full transition-all duration-300"
@@ -1092,7 +1092,7 @@ export const Sidebar: React.FC = () => {
         title={isOpen ? 'Згорнути навігацію' : 'Розгорнути навігацію'}
       >
         {isOpen ? <ChevronLeft size={12} /> : <ChevronRight size={12} />}
-      </button>
+      </Button>
     </motion.aside>
   );
 };

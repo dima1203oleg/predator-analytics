@@ -1,4 +1,5 @@
 
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { motion } from 'framer-motion';
 import {
@@ -243,27 +244,27 @@ export const CaseCard: React.FC<CaseCardProps> = ({
         </div>
 
         <div className="flex items-center gap-2">
-          <button
+          <Button variant="cyber"
             onClick={(e) => { e.stopPropagation(); onArchive(caseItem.id); }}
             className="p-2 rounded-lg bg-slate-800/50 text-slate-400 hover:text-white hover:bg-slate-800 transition-all"
             title="Архівувати"
           >
             <Archive size={14} />
-          </button>
-          <button
+          </Button>
+          <Button variant="cyber"
             onClick={(e) => { e.stopPropagation(); onEscalate(caseItem.id); }}
             className="p-2 rounded-lg bg-slate-800/50 text-slate-400 hover:text-amber-400 hover:bg-amber-500/10 transition-all"
             title="Ескалювати"
           >
             <Send size={14} />
-          </button>
-          <button
+          </Button>
+          <Button variant="cyber"
             onClick={(e) => { e.stopPropagation(); onView(caseItem.id); }}
             className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 transition-all text-xs font-medium"
           >
             <Eye size={14} />
             Деталі
-          </button>
+          </Button>
         </div>
       </div>
     </HoloCard>

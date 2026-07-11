@@ -4,6 +4,7 @@
  * Sovereign Power Design · Classified · Tier-1
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useCallback } from 'react';
 import { Plus, Save, Eye, Trash2, FileText, BarChart3, PieChart, Table as TableIcon, Layout, FileCode, Cpu, ShieldCheck } from 'lucide-react';
 import { Card } from '@/components/ui/card';
@@ -171,7 +172,7 @@ export const ReportBuilder: React.FC = () => {
           ]}
           actions={
             <div className="flex gap-4">
-              <button
+              <Button variant="cyber"
                 onClick={() => setPreviewMode(!previewMode)}
                 className={cn(
                   "px-8 py-4 rounded-3xl text-[12px] font-black uppercase tracking-widest italic flex items-center gap-3 transition-all shadow-4xl border-2",
@@ -181,13 +182,13 @@ export const ReportBuilder: React.FC = () => {
                 )}
               >
                 <Eye size={20} /> {previewMode ? ' ЕДАГУВАТИ' : 'ПЕ ЕГЛЯД'}
-              </button>
-              <button
+              </Button>
+              <Button variant="cyber"
                 onClick={saveReport}
                 className="px-8 py-4 bg-emerald-600 hover:bg-emerald-500 border-2 border-emerald-400/30 rounded-3xl text-black text-[12px] font-black uppercase tracking-widest italic transition-all shadow-4xl flex items-center gap-3"
               >
                 <Save size={20} /> ЗБЕ ЕГТИ
-              </button>
+              </Button>
             </div>
           }
         />
@@ -241,13 +242,13 @@ export const ReportBuilder: React.FC = () => {
                 { label: 'ЗАВАНТАЖИТИ_EXCEL', format: 'xlsx', color: 'bg-emerald-600', icon: <TableIcon size={24} /> },
                 { label: 'ЗАВАНТАЖИТИ_PPTX', format: 'pptx', color: 'bg-yellow-600', icon: <PieChart size={24} /> },
               ].map((btn) => (
-                <button
+                <Button variant="cyber"
                   key={btn.format}
                   onClick={() => exportReport(btn.format as any)}
                   className={cn("px-12 py-8 rounded-[2.5rem] text-black text-[14px] font-black uppercase tracking-[0.4em] italic transition-all shadow-4xl flex items-center gap-6 hover:brightness-110", btn.color)}
                 >
                   {btn.icon} {btn.label}
-                </button>
+                </Button>
               ))}
             </div>
           </motion.div>
@@ -258,7 +259,7 @@ export const ReportBuilder: React.FC = () => {
                 <h2 className="text-[11px] font-black text-amber-500/60 uppercase tracking-[0.6em] mb-8 italic">🧩 ALPHA_КОМПОНЕНТИ</h2>
                 <div className="space-y-4">
                   {AVAILABLE_SECTIONS.map((section) => (
-                    <button
+                    <Button variant="cyber"
                       key={section.id}
                       onClick={() => addSection(section.id)}
                       className="w-full p-6 bg-white/[0.02] hover:bg-amber-500/10 border-2 border-white/5 hover:border-amber-500/30 rounded-3xl text-left text-white transition-all flex items-center justify-between group"
@@ -270,7 +271,7 @@ export const ReportBuilder: React.FC = () => {
                           <span className="text-[10px] font-black uppercase tracking-widest italic group-hover:translate-x-2 transition-transform">{section.name}</span>
                       </div>
                       <Plus size={18} className="text-slate-800 group-hover:text-amber-500 transition-all transform group-hover:rotate-90" />
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </Card>
@@ -284,12 +285,12 @@ export const ReportBuilder: React.FC = () => {
                     { name: ' ️ ОЦІНКА_РИЗИКІВ', id: 'risk' },
                     { name: '🔍 DUE_DILIGENCE', id: 'dd' }
                   ].map((template) => (
-                    <button
+                    <Button variant="cyber"
                       key={template.id}
                       className="w-full px-6 py-4 bg-amber-950/20 hover:bg-amber-900/40 border-2 border-amber-900/30 rounded-2xl text-left text-amber-500 text-[10px] font-bold uppercase tracking-widest italic transition-all"
                     >
                       {template.name}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </Card>
@@ -383,7 +384,7 @@ export const ReportBuilder: React.FC = () => {
                               )}
                             </div>
                             
-                            <button
+                            <Button variant="cyber"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 removeSection(section.id);
@@ -391,7 +392,7 @@ export const ReportBuilder: React.FC = () => {
                               className="p-5 bg-amber-950/20 hover:bg-amber-600 border-2 border-amber-900/30 hover:border-amber-500 rounded-[2rem] text-amber-600 hover:text-black transition-all group/del shadow-xl"
                             >
                               <Trash2 size={24} className="group-hover/del:scale-125 transition-transform" />
-                            </button>
+                            </Button>
                           </div>
                         </motion.div>
                       ))}

@@ -9,6 +9,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -164,17 +165,17 @@ const RiskPositionCard: React.FC<{
         "border-2 cursor-pointer transition-all relative overflow-hidden group shadow-3xl",
         isCompact ? "p-5 rounded-3xl" : "p-10 rounded-[3.5rem]",
         isSelected
-          ? "bg-rose-600/[0.03] border-rose-500/30 shadow-4xl"
+          ? "bg-cyan-600/[0.03] border-cyan-500/30 shadow-4xl"
           : "bg-black/60 border-white/5 hover:border-white/20"
       )}
     >
       {isSelected && (
-        <div className="absolute left-0 inset-y-0 w-2.5 bg-rose-600 shadow-[0_0_20px_#f43f5e]" />
+        <div className="absolute left-0 inset-y-0 w-2.5 bg-cyan-600 shadow-[0_0_20px_#f43f5e]" />
       )}
 
       <div className={cn("flex items-start", isCompact ? "gap-4 pl-0" : "gap-10 pl-4")}>
         <div className={cn(
-          "shrink-0 rounded-[2rem] bg-black/80 border-2 border-white/5 flex flex-col items-center justify-center shadow-inner group-hover:border-rose-500/30 transition-all",
+          "shrink-0 rounded-[2rem] bg-black/80 border-2 border-white/5 flex flex-col items-center justify-center shadow-inner group-hover:border-cyan-500/30 transition-all",
           isCompact ? "w-16 h-16 rounded-2xl" : "w-24 h-24 rounded-[2rem]"
         )}>
           <span className={cn("font-black font-mono italic tracking-tighter leading-none", isCompact ? "text-xl" : "text-3xl")} style={{ color: RISK_COLOR[pos.riskLevel] }}>
@@ -186,9 +187,9 @@ const RiskPositionCard: React.FC<{
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-4 mb-3">
             <span className="text-[11px] font-black font-mono text-slate-700 uppercase tracking-widest">{pos.id}</span>
-            <span className="text-[10px] font-black text-rose-500/60 uppercase tracking-widest italic">{pos.country}</span>
+            <span className="text-[10px] font-black text-cyan-500/60 uppercase tracking-widest italic">{pos.country}</span>
           </div>
-          <h3 className={cn("font-black text-white group-hover:text-rose-500 transition-colors uppercase italic tracking-tighter leading-none mb-4", isCompact ? "text-xl" : "text-3xl")}>
+          <h3 className={cn("font-black text-white group-hover:text-cyan-500 transition-colors uppercase italic tracking-tighter leading-none mb-4", isCompact ? "text-xl" : "text-3xl")}>
             {pos.counterparty}
           </h3>
           <div className="flex items-center gap-8 mb-6">
@@ -197,7 +198,7 @@ const RiskPositionCard: React.FC<{
                <span className="text-[12px] font-black uppercase italic tracking-tight">{pos.type}</span>
             </div>
             <div className={cn("flex items-center gap-2 px-4 py-1.5 rounded-xl border italic text-[9px] font-black tracking-widest uppercase shadow-inner",
-              pos.riskLevel === 'critical' ? 'border-rose-500/30 text-rose-500 bg-rose-500/5' : 'border-slate-800 text-slate-500 bg-white/5'
+              pos.riskLevel === 'critical' ? 'border-cyan-500/30 text-cyan-500 bg-cyan-500/5' : 'border-slate-800 text-slate-500 bg-white/5'
             )}>
                {RISK_LABEL[pos.riskLevel]}
             </div>
@@ -218,8 +219,8 @@ const RiskPositionCard: React.FC<{
         <div className="shrink-0 pt-6">
           {pos.trend === 'up' ? (
             <div className="relative">
-              <TrendingUp size={32} className="text-rose-500 " />
-              <motion.div animate={{ opacity: [1, 0, 1] }} transition={{ repeat: Infinity }} className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-rose-500 rounded-full" />
+              <TrendingUp size={32} className="text-cyan-500 " />
+              <motion.div animate={{ opacity: [1, 0, 1] }} transition={{ repeat: Infinity }} className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-cyan-500 rounded-full" />
             </div>
           ) : (
             <Activity size={32} className="text-slate-800" />
@@ -270,23 +271,23 @@ const PortfolioRiskView: React.FC = () => {
             title={
               <div className="flex items-center gap-10">
                 <div className="relative group">
-                  <div className="absolute inset-0 bg-rose-500/15 blur-3xl rounded-full scale-150 group-hover:scale-200 transition-transform duration-1000" />
-                  <div className="relative p-7 bg-black border-2 border-rose-500/40 rounded-[3rem] shadow-4xl transform rotate-3 hover:rotate-0 transition-all cursor-crosshair">
-                    <DollarSign size={54} className="text-rose-500 " />
-                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-rose-600 rounded-full border-4 border-black  shadow-[0_0_15px_#f43f5e]" />
+                  <div className="absolute inset-0 bg-cyan-500/15 blur-3xl rounded-full scale-150 group-hover:scale-200 transition-transform duration-1000" />
+                  <div className="relative p-7 bg-black border-2 border-cyan-500/40 rounded-[3rem] shadow-4xl transform rotate-3 hover:rotate-0 transition-all cursor-crosshair">
+                    <DollarSign size={54} className="text-cyan-500 " />
+                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-cyan-600 rounded-full border-4 border-black  shadow-[0_0_15px_#f43f5e]" />
                   </div>
                 </div>
                 <div>
                   <div className="flex items-center gap-4 mb-3">
-                    <span className="w-1.5 h-1.5 bg-rose-600 rounded-full  shadow-[0_0_8px_#f43f5e]" />
-                    <span className="text-[10px] font-black text-rose-500/80 uppercase tracking-[0.6em] italic">
+                    <span className="w-1.5 h-1.5 bg-cyan-600 rounded-full  shadow-[0_0_8px_#f43f5e]" />
+                    <span className="text-[10px] font-black text-cyan-500/80 uppercase tracking-[0.6em] italic">
                       ЦЕНТР ПОРТФЕЛЬНИХ РИЗИКІВ · v63.0-ELITE
                     </span>
                   </div>
                   <h1 className={cn("font-black text-white tracking-tighter uppercase italic skew-x-[-3deg]", isCompact ? "text-4xl" : "text-6xl")}>
-                    P&L <span className={cn("text-rose-600 underline decoration-rose-600/30 underline-offset-[12px] italic uppercase tracking-tighter", isCompact ? "decoration-[8px]" : "decoration-[14px]")}>РИЗИКІВ</span>
+                    P&L <span className={cn("text-cyan-600 underline decoration-rose-600/30 underline-offset-[12px] italic uppercase tracking-tighter", isCompact ? "decoration-[8px]" : "decoration-[14px]")}>РИЗИКІВ</span>
                   </h1>
-                  <p className="text-[12px] text-slate-600 font-black uppercase tracking-[0.5em] mt-6 italic border-l-4 border-rose-500/30 pl-8 opacity-90 max-w-2xl">
+                  <p className="text-[12px] text-slate-600 font-black uppercase tracking-[0.5em] mt-6 italic border-l-4 border-cyan-500/30 pl-8 opacity-90 max-w-2xl">
                     МОНІТОРИНГ ДЕФОЛТНИХ ВЕКТОРІВ · КРИТИЧНА ЕКСПОЗИЦІЯ · СУВЕРЕННИЙ АНАЛІЗ
                   </p>
                 </div>
@@ -315,16 +316,16 @@ const PortfolioRiskView: React.FC = () => {
             ]}
             actions={
               <div className="flex items-center gap-6">
-                <button
+                <Button variant="cyber"
                   onClick={handleRefresh}
-                  className="p-6 rounded-[2rem] bg-black/60 border-2 border-white/5 text-slate-500 hover:text-rose-500 hover:border-rose-500/30 transition-all shadow-4xl group"
+                  className="p-6 rounded-[2rem] bg-black/60 border-2 border-white/5 text-slate-500 hover:text-cyan-500 hover:border-cyan-500/30 transition-all shadow-4xl group"
                 >
-                  <RefreshCw size={24} className={cn(refreshing && 'animate-spin text-rose-500')} />
-                </button>
-                <button className="px-14 py-6 bg-rose-600 text-white text-[12px] font-black uppercase tracking-[0.4em] italic hover:brightness-110 transition-all rounded-[2rem] shadow-4xl flex items-center gap-4 font-bold">
+                  <RefreshCw size={24} className={cn(refreshing && 'animate-spin text-cyan-500')} />
+                </Button>
+                <Button variant="cyber" className="px-14 py-6 bg-cyan-600 text-white text-[12px] font-black uppercase tracking-[0.4em] italic hover:brightness-110 transition-all rounded-[2rem] shadow-4xl flex items-center gap-4 font-bold">
                   <Download size={24} />
                   {!isCompact && "ДОСЬЄ_УПРАВЛІННЯ_ЕЛІТА"}
-                </button>
+                </Button>
               </div>
             }
           />
@@ -340,7 +341,7 @@ const PortfolioRiskView: React.FC = () => {
               <motion.div
                 key={m.l}
                 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
-                className={cn("bg-black/60 border-2 border-white/5 hover:border-rose-500/30 transition-all shadow-2xl group relative overflow-hidden", isCompact ? "p-5 rounded-3xl" : "p-10 rounded-[3.5rem]")}
+                className={cn("bg-black/60 border-2 border-white/5 hover:border-cyan-500/30 transition-all shadow-2xl group relative overflow-hidden", isCompact ? "p-5 rounded-3xl" : "p-10 rounded-[3.5rem]")}
               >
                 <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-rose-500/40 to-transparent opacity-40" />
                 <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.6em] mb-4 italic">{m.l}</p>
@@ -357,18 +358,18 @@ const PortfolioRiskView: React.FC = () => {
               <div className="flex items-center gap-4 p-3 bg-black border-2 border-white/5 rounded-[2.5rem] w-full max-w-full overflow-x-auto no-scrollbar shadow-4xl ">
                 <div className="flex gap-2 bg-black border-2 border-white/5 p-2 rounded-2xl shadow-inner min-w-max">
                   {(['all', 'critical', 'high', 'medium'] as const).map(f => (
-                    <button
+                    <Button variant="cyber"
                       key={f}
                       onClick={() => setFilter(f)}
                       className={cn(
                         "px-8 py-3 text-[10px] font-black uppercase tracking-[0.3em] transition-all rounded-xl italic",
                         filter === f
-                          ? "bg-rose-600 text-white shadow-4xl scale-105 font-bold"
-                          : "text-slate-600 hover:text-slate-300 border-2 border-transparent hover:border-rose-500/10 hover:bg-white/5"
+                          ? "bg-cyan-600 text-white shadow-4xl scale-105 font-bold"
+                          : "text-slate-600 hover:text-slate-300 border-2 border-transparent hover:border-cyan-500/10 hover:bg-white/5"
                       )}
                     >
                       {f === 'all' ? 'УСІ_ПОЗИЦІЇ' : RISK_LABEL[f]}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </div>
@@ -396,24 +397,24 @@ const PortfolioRiskView: React.FC = () => {
                     initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }}
                     className="space-y-8"
                   >
-                    <HoloCard variant="holographic" className={cn("bg-black/80 border-2 border-rose-500/20 shadow-4xl relative overflow-hidden", isCompact ? "p-6 rounded-[2.5rem]" : "p-10 rounded-[4rem]")}>
+                    <HoloCard variant="holographic" className={cn("bg-black/80 border-2 border-cyan-500/20 shadow-4xl relative overflow-hidden", isCompact ? "p-6 rounded-[2.5rem]" : "p-10 rounded-[4rem]")}>
                        <div className="absolute top-0 right-0 p-24 opacity-[0.03] pointer-events-none">
-                          <Target size={260} className="text-rose-500" />
+                          <Target size={260} className="text-cyan-500" />
                        </div>
                        <div className="relative z-10 space-y-10">
                           <div className="flex items-center justify-between">
-                             <div className="px-5 py-2 bg-rose-600/10 border border-rose-600/30 rounded-full">
-                                <span className="text-[10px] font-black text-rose-500 uppercase tracking-widest italic">{selectedPos.id}</span>
+                             <div className="px-5 py-2 bg-cyan-600/10 border border-cyan-600/30 rounded-full">
+                                <span className="text-[10px] font-black text-cyan-500 uppercase tracking-widest italic">{selectedPos.id}</span>
                              </div>
                              <div className="flex gap-2">
-                                <span className="w-2 h-2 bg-rose-600 rounded-full animate-ping" />
+                                <span className="w-2 h-2 bg-cyan-600 rounded-full animate-ping" />
                                 <span className="text-[9px] font-black text-rose-700 uppercase tracking-widest font-mono italic">АКТИВНА_ЗАГРОЗА</span>
                              </div>
                           </div>
 
                           <div>
                              <h2 className={cn("font-black text-white leading-none tracking-tighter italic uppercase mb-4", isCompact ? "text-[28px]" : "text-[42px]")}>{selectedPos.counterparty}</h2>
-                             <p className="text-[12px] text-rose-600 font-black uppercase tracking-[0.5em] italic bg-rose-500/5 px-6 py-2 rounded-full w-fit border border-rose-500/10 max-w-full overflow-hidden text-ellipsis whitespace-nowrap">
+                             <p className="text-[12px] text-cyan-600 font-black uppercase tracking-[0.5em] italic bg-cyan-500/5 px-6 py-2 rounded-full w-fit border border-cyan-500/10 max-w-full overflow-hidden text-ellipsis whitespace-nowrap">
                                {selectedPos.country} · {selectedPos.type}
                              </p>
                           </div>
@@ -425,33 +426,33 @@ const PortfolioRiskView: React.FC = () => {
                               { l: 'ІНДЕКС_X',     v: `${selectedPos.riskPct}%` },
                               { l: 'ЗРІЛІСТЬ',     v: selectedPos.daysToMaturity > 0 ? `${selectedPos.daysToMaturity} ДН` : 'ДЕФОЛТ' },
                             ].map((f, i) => (
-                              <div key={i} className={cn("border-2 border-white/5 bg-black shadow-inner group hover:border-rose-500/20 transition-all", isCompact ? "p-4 rounded-[1.5rem]" : "p-6 rounded-[2.5rem]")}>
-                                <p className="text-[9px] text-slate-800 uppercase font-black tracking-widest mb-3 group-hover:text-rose-500/60 transition-colors italic">{f.l}</p>
+                              <div key={i} className={cn("border-2 border-white/5 bg-black shadow-inner group hover:border-cyan-500/20 transition-all", isCompact ? "p-4 rounded-[1.5rem]" : "p-6 rounded-[2.5rem]")}>
+                                <p className="text-[9px] text-slate-800 uppercase font-black tracking-widest mb-3 group-hover:text-cyan-500/60 transition-colors italic">{f.l}</p>
                                 <p className={cn("font-black text-white font-mono italic tracking-tighter", isCompact ? "text-xl" : "text-2xl")}>{f.v}</p>
                               </div>
                             ))}
                           </div>
 
-                          <div className="p-8 bg-rose-600/5 border-2 border-rose-500/20 rounded-[3rem] relative group/action">
+                          <div className="p-8 bg-cyan-600/5 border-2 border-cyan-500/20 rounded-[3rem] relative group/action">
                              <div className="flex items-center gap-4 mb-4">
-                                <Flame size={20} className="text-rose-500 " />
-                                <h4 className="text-[11px] font-black text-rose-500/60 uppercase tracking-[0.5em] italic">КРИТИЧНИЙ_ТРИГЕР</h4>
+                                <Flame size={20} className="text-cyan-500 " />
+                                <h4 className="text-[11px] font-black text-cyan-500/60 uppercase tracking-[0.5em] italic">КРИТИЧНИЙ_ТРИГЕР</h4>
                              </div>
                              <p className="text-[15px] font-black text-rose-100 italic leading-tight uppercase tracking-tight">
                                {selectedPos.trigger}
                              </p>
                              <div className="absolute top-0 right-0 p-8 opacity-10">
-                                <AlertOctagon size={60} className="text-rose-600" />
+                                <AlertOctagon size={60} className="text-cyan-600" />
                              </div>
                           </div>
 
                           <div className="space-y-4">
-                            <button className="w-full py-8 bg-rose-600 text-white text-[14px] font-black uppercase tracking-[0.6em] italic hover:brightness-110 transition-all shadow-4xl rounded-[2.5rem] flex items-center justify-center gap-6 border-4 border-rose-500/20">
+                            <Button variant="cyber" className="w-full py-8 bg-cyan-600 text-white text-[14px] font-black uppercase tracking-[0.6em] italic hover:brightness-110 transition-all shadow-4xl rounded-[2.5rem] flex items-center justify-center gap-6 border-4 border-cyan-500/20">
                                <Zap size={24} /> ВИКОНАТИ_ПРИМУС
-                            </button>
-                            <button className="w-full py-6 bg-black border-2 border-white/10 text-slate-500 text-[11px] font-black uppercase tracking-[0.4em] italic hover:text-white hover:border-rose-500/30 transition-all rounded-[2.5rem] shadow-2xl">
+                            </Button>
+                            <Button variant="cyber" className="w-full py-6 bg-black border-2 border-white/10 text-slate-500 text-[11px] font-black uppercase tracking-[0.4em] italic hover:text-white hover:border-cyan-500/30 transition-all rounded-[2.5rem] shadow-2xl">
                                ЗАВАНТАЖИТИ_ЮРИДИЧНИЙ_ФАЙЛ
-                            </button>
+                            </Button>
                           </div>
                        </div>
                     </HoloCard>
@@ -459,9 +460,9 @@ const PortfolioRiskView: React.FC = () => {
                     {/* ── ТАЙМЛАЙН ELITE ── */}
                     <HoloCard className={cn("bg-black/60 border-2 border-white/5 shadow-3xl", isCompact ? "p-5 rounded-3xl" : "p-10 rounded-[3.5rem]")}>
                        <h3 className="text-[11px] font-black text-slate-700 uppercase tracking-[0.6em] mb-10 flex items-center gap-4 italic relative">
-                          <Activity size={18} className="text-rose-600 " />
+                          <Activity size={18} className="text-cyan-600 " />
                           ХРОНОЛОГІЯ_ШВИДКОСТІ_РИЗИКУ
-                          <div className="ml-auto w-2 h-2 bg-rose-600 rounded-full shadow-[0_0_10px_#f43f5e]" />
+                          <div className="ml-auto w-2 h-2 bg-cyan-600 rounded-full shadow-[0_0_10px_#f43f5e]" />
                        </h3>
                        <div className="h-[220px]">
                          <ResponsiveContainer width="100%" height="100%">
@@ -488,7 +489,7 @@ const PortfolioRiskView: React.FC = () => {
                     {/* ── СЕКТОРНИЙ РОЗПОДІЛ ELITE ── */}
                     <HoloCard className={cn("bg-black/60 border-2 border-white/5 shadow-3xl overflow-hidden relative", isCompact ? "p-5 rounded-3xl" : "p-10 rounded-[3.5rem]")}>
                        <div className="absolute top-0 right-0 p-8 opacity-5">
-                          <Radar size={100} className="text-rose-500" />
+                          <Radar size={100} className="text-cyan-500" />
                        </div>
                        <h3 className="text-[11px] font-black text-slate-700 uppercase tracking-[0.6em] mb-8 italic leading-none">РАДАР_СЕКТОРНОГО_РИЗИКУ</h3>
                        <div className={cn("flex", isCompact ? "flex-col items-center gap-6" : "items-center gap-10")}>

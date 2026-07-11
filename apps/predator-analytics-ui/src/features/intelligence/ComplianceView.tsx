@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -242,21 +243,21 @@ const TacticalReportsSection = () => (
                         <p className="text-[10px] text-slate-300 font-mono mt-1 mb-3">{report.standard} • {report.date}</p>
 
                         <div className="flex items-center gap-2">
-                           <button className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-yellow-600 rounded-lg text-[10px] font-bold text-slate-300 hover:text-white transition-all uppercase tracking-wider">
+                           <Button variant="cyber" className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-yellow-600 rounded-lg text-[10px] font-bold text-slate-300 hover:text-white transition-all uppercase tracking-wider">
                                 <Download size={12} /> PDF
-                           </button>
-                           <button className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-blue-600 rounded-lg text-[10px] font-bold text-slate-300 hover:text-white transition-all uppercase tracking-wider">
+                           </Button>
+                           <Button variant="cyber" className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-blue-600 rounded-lg text-[10px] font-bold text-slate-300 hover:text-white transition-all uppercase tracking-wider">
                                 <FileCheck size={12} /> XML (регулятор)
-                           </button>
+                           </Button>
                         </div>
                     </div>
                 </div>
             ))}
         </div>
         <div className="mt-6 pt-4 border-t border-white/5 flex justify-end">
-            <button className="text-xs text-yellow-400 hover:text-yellow-300 font-bold uppercase tracking-widest flex items-center gap-2">
+            <Button variant="cyber" className="text-xs text-yellow-400 hover:text-yellow-300 font-bold uppercase tracking-widest flex items-center gap-2">
                 Архів Звітів <Download size={14} />
-            </button>
+            </Button>
         </div>
     </HoloCard>
 );

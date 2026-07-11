@@ -8,6 +8,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -131,12 +132,12 @@ export const RegistriesTab = () => {
                 ]}
                 actions={
                     <div className="flex gap-4">
-                        <button onClick={() => { setSelectedCompany(null); setResults([]); setQuery(''); }} className="p-5 bg-black border border-white/[0.04] rounded-2xl text-slate-400 hover:text-white transition-all shadow-xl">
+                        <Button variant="cyber" onClick={() => { setSelectedCompany(null); setResults([]); setQuery(''); }} className="p-5 bg-black border border-white/[0.04] rounded-2xl text-slate-400 hover:text-white transition-all shadow-xl">
                             <RefreshCcw size={24} />
-                        </button>
-                        <button onClick={handleSearch} className="px-8 py-5 bg-emerald-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-emerald-600 shadow-2xl transition-all flex items-center gap-4">
+                        </Button>
+                        <Button variant="cyber" onClick={handleSearch} className="px-8 py-5 bg-emerald-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-emerald-600 shadow-2xl transition-all flex items-center gap-4">
                             <Radar size={18} /> СКАНУВАТИ_ВЕСЬ_КОНТУ 
-                        </button>
+                        </Button>
                     </div>
                 }
             />
@@ -182,9 +183,9 @@ export const RegistriesTab = () => {
                         </AnimatePresence>
 
                         {!searching && results.length === 0 && (
-                            <button onClick={handleSearch} className="w-full py-8 bg-emerald-700 text-white rounded-3xl text-[12px] font-black uppercase tracking-[0.4em] italic hover:bg-emerald-600 transition-all shadow-3xl flex items-center justify-center gap-6">
+                            <Button variant="cyber" onClick={handleSearch} className="w-full py-8 bg-emerald-700 text-white rounded-3xl text-[12px] font-black uppercase tracking-[0.4em] italic hover:bg-emerald-600 transition-all shadow-3xl flex items-center justify-center gap-6">
                                 <Binary size={28} /> ІНІЦІЮВАТИ_ПОВНИЙ_СКАНУВАЛЬНИЙ_ЦИКЛ
-                            </button>
+                            </Button>
                         )}
 
                         {searching && (
@@ -262,12 +263,12 @@ export const RegistriesTab = () => {
                                 </div>
 
                                 <div className="flex gap-4">
-                                    <button className="flex-1 py-5 bg-white/[0.02] border border-white/[0.04] rounded-2xl text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] italic hover:text-white hover:bg-white/[0.05] transition-all flex items-center justify-center gap-3">
+                                    <Button variant="cyber" className="flex-1 py-5 bg-white/[0.02] border border-white/[0.04] rounded-2xl text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] italic hover:text-white hover:bg-white/[0.05] transition-all flex items-center justify-center gap-3">
                                         <FileText size={16} /> PDF_DOSSIER
-                                    </button>
-                                    <button onClick={() => setSelectedCompany(null)} className="p-5 bg-white/[0.02] border border-white/[0.04] rounded-2xl text-slate-600 hover:text-amber-500 transition-all">
+                                    </Button>
+                                    <Button variant="cyber" onClick={() => setSelectedCompany(null)} className="p-5 bg-white/[0.02] border border-white/[0.04] rounded-2xl text-slate-600 hover:text-amber-500 transition-all">
                                         <RefreshCcw size={20} />
-                                    </button>
+                                    </Button>
                                 </div>
                             </div>
                         </HoloCard>
@@ -317,9 +318,9 @@ export const RegistriesTab = () => {
                                         </div>
                                     ))}
                                 </div>
-                                <button className="w-full py-6 mt-4 bg-amber-700 text-white rounded-[1.5rem] text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-amber-600 shadow-3xl transition-all flex items-center justify-center gap-4">
+                                <Button variant="cyber" className="w-full py-6 mt-4 bg-amber-700 text-white rounded-[1.5rem] text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-amber-600 shadow-3xl transition-all flex items-center justify-center gap-4">
                                     <Zap size={20} /> ЗАПУСТИТИ_ГЛИБИННИЙ_AML_АНАЛІЗ
-                                </button>
+                                </Button>
                             </HoloCard>
                         </div>
 

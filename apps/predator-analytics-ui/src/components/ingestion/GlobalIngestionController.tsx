@@ -16,6 +16,7 @@ import { cn } from "../../utils/cn"
 import { Button } from "../ui/button"
 import { PipelineMonitor } from '../pipeline'
 import { STAGE_LIBRARY } from '../../config/pipelineDefinitions'
+import { DataFlowInspector } from './DataFlowInspector'
 
 export function GlobalIngestionController() {
     const { activeJobs, updateJob, removeJob, isHubOpen, setHubOpen } = useIngestionStore()
@@ -292,12 +293,14 @@ function JobHubItem({ job, onRemove }: { job: IngestionJob; onRemove: () => void
                             <ChevronRight size={10} className="mt-0.5" />
                             <span className="truncate">{job.message}</span>
                         </div>
-                        {!isDone && !isFailed && (
-                            <div className="text-emerald-500/60  overflow-hidden whitespace-nowrap text-[9px]">
-                                {`>> SYSTEM_TRACE_OK >> DATAPACK_OK >> СТАН_НОРМА`}
-                            </div>
-                        )}
                     </div>
+                    
+                    {/* DFTL (Data Flow Transparency Layer) Integration */}
+                    {isDone && (
+                        <div className="mt-4">
+                            <DataFlowInspector jobId={job.id} />
+                        </div>
+                    )}
                 </div>
             </div>
         </motion.div>

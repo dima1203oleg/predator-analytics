@@ -9,6 +9,7 @@
  * © 2026 PREDATOR Analytics
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
@@ -193,7 +194,7 @@ const PlanCard: React.FC<{
       </div>
 
       {/* CTA */}
-      <button
+      <Button variant="cyber"
         onClick={() => onSelect(plan.id)}
         className={cn(
           "w-full py-3.5 rounded-2xl text-sm font-black uppercase tracking-wider transition-all",
@@ -204,7 +205,7 @@ const PlanCard: React.FC<{
       >
         {plan.cta}
         <ArrowRight size={14} className="inline-block ml-2" />
-      </button>
+      </Button>
     </motion.div>
   );
 };
@@ -248,7 +249,7 @@ export const PremiumPricing: React.FC<{
         <span className={cn("text-sm font-bold", !isAnnual ? "text-white" : "text-slate-500")}>
           {premiumLocales.pricing.billing.monthly}
         </span>
-        <button
+        <Button variant="cyber"
           onClick={() => setIsAnnual(!isAnnual)}
           aria-label={isAnnual ? "Switch to monthly billing" : "Switch to annual billing"}
           title={isAnnual ? "Switch to monthly billing" : "Switch to annual billing"}
@@ -261,7 +262,7 @@ export const PremiumPricing: React.FC<{
             "absolute top-1 w-6 h-6 bg-white rounded-full transition-transform shadow-lg",
             isAnnual ? "translate-x-7" : "translate-x-1"
           )} />
-        </button>
+        </Button>
         <span className={cn("text-sm font-bold", isAnnual ? "text-white" : "text-slate-500")}>
           {premiumLocales.pricing.billing.annual}
           <span className="ml-2 px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-[10px] font-black rounded">
@@ -290,13 +291,13 @@ export const PremiumPricing: React.FC<{
 
       {/* Comparison Table Toggle */}
       <div className="text-center">
-        <button
+        <Button variant="cyber"
           onClick={() => setShowComparison(!showComparison)}
           className="inline-flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/10 rounded-xl text-sm font-bold text-slate-300 hover:text-white hover:bg-white/10 transition-all"
         >
           {premiumLocales.pricing.comparison.trigger}
           <ChevronRight size={16} className={cn("transition-transform", showComparison && "rotate-90")} />
-        </button>
+        </Button>
       </div>
 
       {/* Comparison Table */}

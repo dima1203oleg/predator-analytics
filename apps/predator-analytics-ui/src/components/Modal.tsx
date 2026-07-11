@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Shield } from 'lucide-react';
@@ -70,12 +71,12 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, icon, size = 'md'
                                     </div>
                                 </div>
                             </div>
-                            <button 
+                            <Button variant="cyber" 
                                 onClick={onClose} 
                                 className="p-4 bg-white/5 hover:bg-rose-500 hover:text-black rounded-2xl border border-white/5 transition-all duration-300"
                             >
                                 <X size={24} />
-                            </button>
+                            </Button>
                         </div>
 
                         {/* CONTENT */}

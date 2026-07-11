@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Activity, Bell, Layers, Zap } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -44,7 +45,7 @@ export const ProcessRadar = () => {
                 <span className="absolute inset-0 rounded-full bg-emerald-500/10 animate-[ping_3s_linear_infinite]" />
 
                 {/* Main Radar Button */}
-                <button
+                <Button variant="cyber"
                     onClick={() => setHubOpen(!isHubOpen)}
                     onMouseEnter={() => setMinimized(false)}
                     onMouseLeave={() => setMinimized(true)}
@@ -72,7 +73,7 @@ export const ProcessRadar = () => {
 
                     {/* Notification Dot */}
                     <div className="absolute top-3 right-3 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-slate-900 shadow-[0_0_10px_#10b981]" />
-                </button>
+                </Button>
 
                 {/* Quick Info Tooltip / Badge */}
                 <AnimatePresence>

@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { HoloCard } from '@/components/ui/HoloCard';
 import React, { useState, useEffect } from 'react';
 import { Lightbulb, Code, ExternalLink, RefreshCw } from 'lucide-react';
@@ -40,14 +41,14 @@ export const GoogleAdvisoryPanel: React.FC = () => {
             <div className="space-y-4">
                {/* Controls */}
                <div className="flex justify-end">
-                   <button
+                   <Button variant="cyber"
                      onClick={fetchSuggestions}
                      disabled={loading}
                      className="p-1.5 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 transition-colors disabled:opacity-50"
                      title="Оновити поради"
                    >
                        <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-                   </button>
+                   </Button>
                </div>
 
                {/* Content */}
@@ -81,10 +82,10 @@ export const GoogleAdvisoryPanel: React.FC = () => {
                                        )}
 
                                        <div className="mt-3 flex gap-2">
-                                           <button className="text-[10px] px-3 py-1 bg-blue-600/20 hover:bg-blue-600/40 text-blue-300 rounded border border-blue-500/30 transition-colors flex items-center gap-1">
+                                           <Button variant="cyber" className="text-[10px] px-3 py-1 bg-blue-600/20 hover:bg-blue-600/40 text-blue-300 rounded border border-blue-500/30 transition-colors flex items-center gap-1">
                                                <Code className="w-3 h-3" />
                                                Створити пропозицію (CLI)
-                                           </button>
+                                           </Button>
                                        </div>
                                    </div>
                                </div>

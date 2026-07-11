@@ -10,6 +10,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -184,7 +185,7 @@ export default function SupplierDiscoveryPremium() {
             ]}
             actions={
               <div className="flex gap-4">
-                <button 
+                <Button variant="cyber" 
                   onClick={handleRefresh} 
                   className={cn(
                     "p-7 bg-black border-2 border-white/[0.04] rounded-[2rem] text-slate-500 hover:text-yellow-500 transition-all shadow-4xl group/btn",
@@ -192,14 +193,14 @@ export default function SupplierDiscoveryPremium() {
                   )}
                 >
                   <RefreshCw size={32} className={cn("transition-transform duration-700", refreshing ? "" : "group-hover/btn:rotate-180")} />
-                </button>
-                <button className="relative px-12 py-7 h-fit group/main overflow-hidden rounded-[2.2rem]">
+                </Button>
+                <Button variant="cyber" className="relative px-12 py-7 h-fit group/main overflow-hidden rounded-[2.2rem]">
                   <div className="absolute inset-0 bg-gradient-to-r from-yellow-600 to-yellow-500 transition-transform duration-500 group-hover/main:scale-105" />
                   <div className="relative flex items-center gap-6 text-black font-black uppercase italic tracking-[0.3em] text-[12px]">
                     <Sparkles size={24} /> ІНІЦІЮВАТИ_SOURCING
                   </div>
                   <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover/main:translate-x-[100%] transition-transform duration-1000" />
-                </button>
+                </Button>
               </div>
             }
           />
@@ -224,13 +225,13 @@ export default function SupplierDiscoveryPremium() {
                   <div className="space-y-4">
                      <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.4em] italic border-l-4 border-yellow-500/40 pl-6">ФІЛЬТ _ПО_ГЕОГРАФІЇ</p>
                      <div className="grid grid-cols-2 gap-4">
-                        <button onClick={() => setSelectedCountry('all')} className={cn("p-5 rounded-2xl border-2 text-[10px] font-black uppercase tracking-widest italic transition-all", selectedCountry === 'all' ? "bg-yellow-500 border-yellow-400 text-black shadow-lg" : "bg-black border-white/5 text-slate-600 hover:text-white")}>
+                        <Button variant="cyber" onClick={() => setSelectedCountry('all')} className={cn("p-5 rounded-2xl border-2 text-[10px] font-black uppercase tracking-widest italic transition-all", selectedCountry === 'all' ? "bg-yellow-500 border-yellow-400 text-black shadow-lg" : "bg-black border-white/5 text-slate-600 hover:text-white")}>
                            УСІ_КРАЇНИ
-                        </button>
+                        </Button>
                         {countries.slice(0, 5).map(c => (
-                          <button key={c} onClick={() => setSelectedCountry(c)} className={cn("p-5 rounded-2xl border-2 text-[10px] font-black uppercase tracking-widest italic transition-all truncate", selectedCountry === c ? "bg-yellow-500 border-yellow-400 text-black shadow-lg" : "bg-black border-white/5 text-slate-600 hover:text-white")}>
+                          <Button variant="cyber" key={c} onClick={() => setSelectedCountry(c)} className={cn("p-5 rounded-2xl border-2 text-[10px] font-black uppercase tracking-widest italic transition-all truncate", selectedCountry === c ? "bg-yellow-500 border-yellow-400 text-black shadow-lg" : "bg-black border-white/5 text-slate-600 hover:text-white")}>
                              {c}
-                          </button>
+                          </Button>
                         ))}
                      </div>
                   </div>
@@ -292,12 +293,12 @@ export default function SupplierDiscoveryPremium() {
                                  <p className="text-xs font-black text-slate-300 italic uppercase">ОСТАННЯ_ПОСТАВКА: {supplier.lastShipment}</p>
                               </div>
                               <div className="flex items-end justify-end gap-3">
-                                 <button className="p-5 bg-white/5 hover:bg-yellow-500 border border-white/10 hover:border-yellow-400 text-white hover:text-black rounded-3xl transition-all shadow-xl">
+                                 <Button variant="cyber" className="p-5 bg-white/5 hover:bg-yellow-500 border border-white/10 hover:border-yellow-400 text-white hover:text-black rounded-3xl transition-all shadow-xl">
                                     <Mail size={24} />
-                                 </button>
-                                 <button className="flex-1 py-5 bg-yellow-600 hover:bg-yellow-500 text-black rounded-3xl text-[11px] font-black uppercase tracking-widest italic shadow-3xl transition-all">
+                                 </Button>
+                                 <Button variant="cyber" className="flex-1 py-5 bg-yellow-600 hover:bg-yellow-500 text-black rounded-3xl text-[11px] font-black uppercase tracking-widest italic shadow-3xl transition-all">
                                     СТВО ИТИ_ЗАПИТ_RFI
-                                 </button>
+                                 </Button>
                               </div>
                            </motion.div>
                          )}

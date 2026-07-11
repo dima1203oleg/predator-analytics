@@ -5,6 +5,7 @@
  * Без потреби в логіні/паролі
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { cn } from '@/utils/cn';
 import { motion } from 'framer-motion';
@@ -125,7 +126,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
             {/* Time Range Selector */}
             <div className="flex items-center gap-1 bg-black/60 rounded-xl p-1 border border-white/5">
               {['1h', '24h', '7d', '30d'].map((range) => (
-                <button
+                <Button variant="cyber"
                   key={range}
                   onClick={() => setTimeRange(range)}
                   className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${
@@ -135,7 +136,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
                   }`}
                 >
                   {range}
-                </button>
+                </Button>
               ))}
             </div>
 

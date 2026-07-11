@@ -1,179 +1,184 @@
-/* ============================================================================
-   PREDATOR ELITE SPEC v2.0 — DESIGN TOKENS — ЄДИНЕ ДЖЕРЕЛО ІСТИНИ
-   Military Cyberpunk Dark UI | Sovereign Command Center
-   Відповідає §8 PREDATOR_ELITE_SPEC_v56.5.md
-   ============================================================================ */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-:root {
-  /* ── SPACING SCALE ── (8px base) */
-  --space-0: 0;
-  --space-1: 0.25rem;   /*  4px */
-  --space-2: 0.5rem;    /*  8px */
-  --space-3: 0.75rem;   /* 12px */
-  --space-4: 1rem;      /* 16px */
-  --space-5: 1.25rem;   /* 20px */
-  --space-6: 1.5rem;    /* 24px */
-  --space-8: 2rem;      /* 32px */
-  --space-10: 2.5rem;   /* 40px */
-  --space-12: 3rem;     /* 48px */
-  --space-16: 4rem;     /* 64px */
+@layer base {
+  :root {
+    /* ══════════════════════════════════════════════════════
+       OBSIDIAN NEXUS — Design Tokens v2.0
+       Єдина кольорова система для всього проекту
+    ══════════════════════════════════════════════════════ */
 
-  /* ── BORDER RADIUS ── */
-  --radius-sm: 0.375rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
-  --radius-2xl: 1.5rem;
-  --radius-3xl: 2rem;
-  --radius-full: 9999px;
+    /* ── BACKGROUNDS (Elevation System) ── */
+    --bg-base:      #04060E;   /* Абсолютна глибина */
+    --bg-primary:   #070B14;   /* Основний фон (body) */
+    --bg-surface:   #0C1220;   /* Перша поверхня (layout) */
+    --bg-card:      #111827;   /* Карти */
+    --bg-elevated:  #1C2539;   /* Elevated елементи */
+    --bg-overlay:   rgba(7, 11, 20, 0.88);
+    --bg-glass:     rgba(12, 18, 32, 0.72);
+    --bg-glass-md:  rgba(17, 24, 39, 0.85);
 
-  /* ── SEMANTIC BACKGROUNDS — матова безодня */
-  --bg-canvas: #0a0a0a;
-  --bg-surface: #0d0d0d;
-  --bg-elevated: #111111;
-  --bg-overlay: rgba(10, 10, 10, 0.97);
-  --bg-panel: rgba(15, 15, 15, 0.95);
+    /* ── FOREGROUND / TEXT ── */
+    --text-primary:   #F8FAFC;
+    --text-secondary: #CBD5E1;
+    --text-muted:     #94A3B8;
+    --text-dim:       #475569;
+    --text-placeholder: #334155;
 
-  /* ── FOREGROUND ── */
-  --fg-primary: #f8fafc;
-  --fg-secondary: #cbd5e1;
-  --fg-muted: #64748b;
-  --fg-disabled: #334155;
+    /* ── SINGLE ACCENT SYSTEM ── */
+    --accent:          #E11D48;   /* Crimson — єдиний акцент */
+    --accent-hover:    #F43F5E;
+    --accent-muted:    rgba(225, 29, 72, 0.18);
+    --accent-glow:     rgba(225, 29, 72, 0.30);
+    --accent-glow-lg:  rgba(225, 29, 72, 0.15);
+    --accent-border:   rgba(225, 29, 72, 0.35);
 
-  /* ── BORDERS ── */
-  --border-subtle: rgba(255, 255, 255, 0.05);
-  --border-default: rgba(255, 255, 255, 0.10);
-  --border-strong: rgba(255, 255, 255, 0.20);
-  --border-focus: rgba(99, 102, 241, 0.60);
+    /* ── SEMANTIC SIGNALS ── */
+    --signal-success:        #10B981;
+    --signal-success-bg:     rgba(16, 185, 129, 0.10);
+    --signal-success-border: rgba(16, 185, 129, 0.25);
+    --signal-warning:        #F59E0B;
+    --signal-warning-bg:     rgba(245, 158, 11, 0.10);
+    --signal-warning-border: rgba(245, 158, 11, 0.25);
+    --signal-danger:         #EF4444;
+    --signal-danger-bg:      rgba(239, 68, 68, 0.10);
+    --signal-danger-border:  rgba(239, 68, 68, 0.25);
+    --signal-info:           #38BDF8;
+    --signal-info-bg:        rgba(56, 189, 248, 0.10);
+    --signal-info-border:    rgba(56, 189, 248, 0.25);
 
-  /* ── ACCENT PALETTE ── (v64.0-MATTE: стримана небезпека) */
-  --accent-sovereign: #c41230;
-  --accent-sovereign-dim: rgba(196, 18, 48, 0.15);
-  --accent-indigo: #4f52b0;
-  --accent-cyan: #008299;
-  --accent-emerald: #0d7a4a;
-  --accent-amber: #b87a14;
-  --accent-rose: #c41230;
-  --accent-violet: #6d4fb0;
-  --accent-orange: #c44d00;
-  --accent-crimson: #8b1a1a;
-  --accent-blood: #6b0a3a;
+    /* ── BORDERS ── */
+    --border-subtle:  rgba(255, 255, 255, 0.04);
+    --border-default: rgba(255, 255, 255, 0.08);
+    --border-strong:  rgba(255, 255, 255, 0.16);
+    --border-accent:  var(--accent-border);
 
-  /* ── SIGNAL PALETTE ── (v64.0-MATTE: військові сигнали) */
-  --signal-red: #c41230;
-  --signal-red-dim: rgba(196, 18, 48, 0.5);
-  --signal-green: #0d7a4a;
-  --signal-orange: #c44d00;
-  --signal-yellow: #b89b14;
-  --signal-blue: #2d5f8a;
+    /* ── SHADOWS / ELEVATION ── */
+    --shadow-xs:  0 1px 3px rgba(0, 0, 0, 0.5);
+    --shadow-sm:  0 2px 8px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.4);
+    --shadow-md:  0 6px 24px rgba(0, 0, 0, 0.55), 0 2px 8px rgba(0, 0, 0, 0.4);
+    --shadow-lg:  0 12px 40px rgba(0, 0, 0, 0.65), 0 4px 16px rgba(0, 0, 0, 0.5);
+    --shadow-xl:  0 24px 64px rgba(0, 0, 0, 0.75), 0 8px 24px rgba(0, 0, 0, 0.6);
+    --shadow-glow-accent: 0 0 20px var(--accent-glow), 0 0 60px var(--accent-glow-lg);
+    --shadow-glow-info:   0 0 20px rgba(56, 189, 248, 0.20);
+    --shadow-glow-success:0 0 20px rgba(16, 185, 129, 0.20);
 
-  /* ── GRID SYSTEM ── (v64.0-MATTE: червона сітка фону) */
-  --grid-color: rgba(180, 25, 40, 0.12);
-  --grid-color-strong: rgba(180, 25, 40, 0.2);
-  --grid-size: 48px;
-  --grid-dot-size: 1.5px;
+    /* ── INSET HIGHLIGHTS ── */
+    --highlight-top:  inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    --highlight-full: inset 0 1px 0 rgba(255, 255, 255, 0.06), inset 0 -1px 0 rgba(0, 0, 0, 0.4);
 
-  /* ── ELEVATION SHADOWS ── */
-  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.5);
-  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.6);
-  --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.7);
-  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.8);
-  --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.85);
-  --shadow-2xl: 0 30px 80px rgba(0, 0, 0, 0.9);
+    /* ── TYPOGRAPHY SCALE (8-point) ── */
+    --text-2xs: 0.625rem;   /* 10px — absolute minimum */
+    --text-xs:  0.75rem;    /* 12px */
+    --text-sm:  0.875rem;   /* 14px */
+    --text-base:1rem;        /* 16px */
+    --text-lg:  1.125rem;   /* 18px */
+    --text-xl:  1.25rem;    /* 20px */
+    --text-2xl: 1.5rem;     /* 24px */
+    --text-3xl: 1.875rem;   /* 30px */
+    --text-4xl: 2.25rem;    /* 36px */
 
-  /* ── TYPOGRAPHY — інституційний рівень (аналітика світового масштабу) */
-  --font-sans: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
-  --font-mono: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, monospace;
-  --font-display: 'Syne', 'Plus Jakarta Sans', system-ui, sans-serif;
-  --font-metric: 'IBM Plex Mono', 'Barlow Condensed', ui-monospace, sans-serif;
+    /* ── SPACING ── */
+    --radius-sm:   4px;
+    --radius-md:   8px;
+    --radius-lg:   12px;
+    --radius-xl:   16px;
+    --radius-2xl:  24px;
+    --radius-full: 9999px;
+    --radius-card: var(--radius-lg);
+    --radius-button: var(--radius-md);
+    --radius-modal: var(--radius-xl);
 
-  --text-2xs: 0.5rem;     /*  8px */
-  --text-xs: 0.625rem;    /* 10px */
-  --text-sm: 0.75rem;     /* 12px */
-  --text-base: 0.8125rem; /* 13px — density */
-  --text-md: 0.875rem;    /* 14px */
-  --text-lg: 1rem;        /* 16px */
-  --text-xl: 1.25rem;     /* 20px */
-  --text-2xl: 1.5rem;     /* 24px */
-  --text-3xl: 2rem;       /* 32px */
+    /* ── LEGACY COMPAT (щоб не ламати старий код) ── */
+    --bg-overlay:       rgba(7, 11, 20, 0.88);
+    --border-subtle:    rgba(255, 255, 255, 0.04);
+    --border-strong:    rgba(255, 255, 255, 0.16);
+    --text-secondary:   #CBD5E1;
+    --text-muted:       #94A3B8;
+    --accent-info:      #38BDF8;
+    --accent-warning:   #F59E0B;
+    --accent-critical:  #EF4444;
+    --signal-rooted:    #10B981;
+    --signal-target:    #E11D48;
+    --signal-monitoring:#F59E0B;
+    --shadow-dom:       0 4px 16px rgba(0, 0, 0, 0.55);
 
-  /* ── TRANSITIONS ── */
-  --ease-default: cubic-bezier(0.4, 0, 0.2, 1);
-  --ease-spring: cubic-bezier(0.23, 1, 0.32, 1);
-  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
-  --transition-fast: 150ms var(--ease-default);
-  --transition-normal: 300ms var(--ease-default);
-  --transition-slow: 500ms var(--ease-spring);
+    /* ── ANIMATION SPEEDS ── */
+    --dur-fast:    150ms;
+    --dur-normal:  250ms;
+    --dur-slow:    400ms;
+    --ease-spring: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-out:    cubic-bezier(0.0, 0, 0.2, 1);
+    --ease-default:cubic-bezier(0.4, 0, 0.2, 1);
+  }
 
-  /* ── Z-INDEX SCALE ── */
-  --z-base: 0;
-  --z-dropdown: 100;
-  --z-sticky: 200;
-  --z-sidebar: 300;
-  --z-topbar: 400;
-  --z-modal: 500;
-  --z-popover: 600;
-  --z-tooltip: 700;
-  --z-toast: 800;
-  --z-overlay: 900;
-  --z-max: 9999;
+  /* ── THEME: Stealth ── */
+  .theme-stealth {
+    --bg-primary:   #020408;
+    --bg-surface:   #060A10;
+    --bg-card:      #090E18;
+    --bg-elevated:  #0E1520;
+    --text-primary: #8FA0B4;
+    --text-secondary:#5A6A7A;
+    --accent:       #3A4A5A;
+    --accent-glow:  rgba(58, 74, 90, 0.3);
+    --border-subtle:rgba(255, 255, 255, 0.02);
+  }
 
-  /* ── SIDEBAR ── */
-  --sidebar-width-open: 280px;
-  --sidebar-width-closed: 72px;
-  --topbar-height: 56px;
-  --statusbar-height: 24px;
+  /* ── THEME: Briefing (Light) ── */
+  .theme-briefing {
+    --bg-primary:   #F0F4FA;
+    --bg-surface:   #E8EEF6;
+    --bg-card:      #FFFFFF;
+    --bg-elevated:  #F8FAFC;
+    --text-primary: #0F172A;
+    --text-secondary:#334155;
+    --text-muted:   #64748B;
+    --accent:       #2563EB;
+    --accent-glow:  rgba(37, 99, 235, 0.25);
+    --border-subtle:rgba(0, 0, 0, 0.06);
+    --border-default:rgba(0, 0, 0, 0.12);
+    --shadow-sm:    0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-md:    0 6px 24px rgba(0, 0, 0, 0.12);
+  }
 
-  /* ── AMBIENT GLOW BACKGROUNDS ── (Spec v2.0: Sovereign Cyan домінує) */
-  --ambient-sovereign: radial-gradient(circle at 50% 0%, rgba(0, 245, 255, 0.06), transparent 55%);
-  --ambient-emerald: radial-gradient(circle at 20% 80%, rgba(16, 185, 129, 0.10), transparent 50%);
-  --ambient-cyan: radial-gradient(circle at 80% 20%, rgba(0, 245, 255, 0.08), transparent 50%);
-  --ambient-indigo: radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.10), transparent 60%);
-  --ambient-amber: radial-gradient(circle at 10% 30%, rgba(245, 158, 11, 0.10), transparent 50%);
-  --ambient-rose: radial-gradient(circle at 90% 70%, rgba(244, 63, 94, 0.08), transparent 50%);
-  --ambient-violet: radial-gradient(circle at 60% 10%, rgba(139, 92, 246, 0.10), transparent 50%);
-
-  /* ── CARD SURFACE SYSTEM ── */
-  --surface-0: rgba(0, 0, 0, 0.96);
-  --surface-1: rgba(3, 3, 6, 0.92);
-  --surface-2: rgba(6, 6, 12, 0.85);
-  --surface-3: rgba(10, 10, 18, 0.75);
-  --surface-hover: rgba(255, 23, 68, 0.04);
-  --surface-active: rgba(255, 23, 68, 0.08);
-
-  /* ── MATTE SURFACES ── (v64.0: без скляних ефектів) */
-  --matte-bg: rgba(20, 20, 22, 0.95);
-  --matte-bg-elevated: rgba(28, 28, 30, 0.97);
-  --matte-border: 1px solid rgba(255, 255, 255, 0.06);
-  --matte-border-strong: 1px solid rgba(255, 255, 255, 0.1);
-
-  /* ── MATTE GRADIENTS ── (v64.0: стримані переходи) */
-  --matte-gradient-dark: linear-gradient(180deg, rgba(15,15,15,1) 0%, rgba(10,10,10,1) 100%);
-  --matte-gradient-red: linear-gradient(180deg, rgba(25,8,8,1) 0%, rgba(15,10,10,1) 100%);
-  --matte-gradient-warm: linear-gradient(180deg, rgba(25,12,5,1) 0%, rgba(15,10,8,1) 100%);
-
-  /* ── STATUS COLORS ── */
-  --status-ok: #10b981;
-  --status-ok-bg: rgba(16, 185, 129, 0.12);
-  --status-ok-border: rgba(16, 185, 129, 0.25);
-  --status-warn: #fb7185;
-  --status-warn-bg: rgba(251, 113, 133, 0.12);
-  --status-warn-border: rgba(251, 113, 133, 0.25);
-  --status-error: #f43f5e;
-  --status-error-bg: rgba(244, 63, 94, 0.12);
-  --status-error-border: rgba(244, 63, 94, 0.25);
-  --status-info: #3b82f6;
-  --status-info-bg: rgba(59, 130, 246, 0.12);
-  --status-info-border: rgba(59, 130, 246, 0.25);
-  --status-neutral: #64748b;
-  --status-neutral-bg: rgba(100, 116, 139, 0.10);
-  --status-neutral-border: rgba(100, 116, 139, 0.20);
-
-  /* ── ANIMATED SHIMMER ── */
-  --shimmer-gradient: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.06) 50%, transparent 100%);
-  --shimmer-speed: 2s;
-
-  /* ── ASSETS ── */
-  --noise-texture: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  /* ── THEME: NATO-Secure ── */
+  [data-theme='professional-matte'],
+  .theme-nato-secure {
+    --bg-primary:   #07101F;
+    --bg-surface:   #0D192E;
+    --bg-card:      #122038;
+    --bg-elevated:  #1A2D47;
+    --accent:       #3B82F6;
+    --accent-glow:  rgba(59, 130, 246, 0.25);
+    --accent-border:rgba(59, 130, 246, 0.35);
+  }
 }
 
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(225, 29, 72, 0.20);
+  border-radius: 3px;
+  transition: background var(--dur-normal) ease;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(225, 29, 72, 0.45);
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: var(--text-sm);
+  line-height: 1.6;
+}

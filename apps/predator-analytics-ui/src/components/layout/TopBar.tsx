@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Cpu, Database, Menu, Monitor, Search, Shield, ShieldAlert, Smartphone, Tablet, Activity, Zap, Brain, Radio, Building2, ChevronDown, Sparkles, Skull, Fan, Radiation, Crosshair, Dna, Lock } from 'lucide-react';
 import React, { useState, useEffect, useRef } from 'react';
@@ -100,7 +101,7 @@ export const TopBar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
         <div className="flex w-full items-center justify-between relative z-10">
             {/* ЛІВА ЧАСТИНА: LOGO & STATUS */}
             <div className="flex items-center gap-10">
-                <button 
+                <Button variant="cyber" 
                     onClick={() => window.location.href = '/'}
                     className="group relative"
                 >
@@ -109,7 +110,7 @@ export const TopBar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
                        <div className="absolute inset-0 bg-gradient-to-tr from-rose-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                        <Dna size={32} className="text-rose-500 group-hover:scale-110 transition-transform duration-500" />
                     </div>
-                </button>
+                </Button>
                 
                 <div className="hidden xl:flex flex-col">
                     <h1 className="text-2xl font-black text-white italic uppercase tracking-[0.25em] leading-none mb-2 glint-elite chromatic-elite">
@@ -145,7 +146,7 @@ export const TopBar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
                     </div>
                 </div>
 
-                <button 
+                <Button variant="cyber" 
                     onClick={() => setIsAdminOpen(true)}
                     className="flex items-center gap-5 px-8 py-3.5 bg-rose-500/5 hover:bg-rose-500/10 border border-rose-500/20 hover:border-rose-500/40 rounded-[1.5rem] transition-all duration-500 group shadow-2xl"
                 >
@@ -154,7 +155,7 @@ export const TopBar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
                         <div className="text-[8px] font-black text-rose-500/50 uppercase tracking-[0.3em] leading-none mb-1 italic">LEVEL_5_CLEARANCE</div>
                         <div className="text-[11px] text-white font-black leading-none uppercase tracking-widest italic">ADMIN_OVERRIDE</div>
                     </div>
-                </button>
+                </Button>
 
                 <div className="h-12 w-px bg-white/5 mx-2 hidden lg:block" />
                 <OperatorIdentity />

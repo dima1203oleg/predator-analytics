@@ -1,6 +1,7 @@
 /**
  * Компактна бізнес-підказка під верхньою панеллю: зрозуміло для будь-якої галузі та рівня підготовки.
  */
+import { Button } from '@/components/ui/button';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { ChevronsDown, ChevronsUp, PanelRight, Search, Sparkles } from 'lucide-react';
@@ -85,7 +86,7 @@ export const WorkspaceBusinessStrip: React.FC = () => {
         </div>
 
         <div className="flex shrink-0 flex-wrap items-center gap-2 lg:justify-end">
-          <button
+          <Button variant="cyber"
             type="button"
             onClick={() => setPaletteOpen(true)}
             className={cn(
@@ -97,10 +98,10 @@ export const WorkspaceBusinessStrip: React.FC = () => {
             <kbd className="hidden rounded border border-white/15 bg-black/50 px-1 py-0.5 font-mono text-[9px] text-slate-500 sm:inline">
               ⌘K
             </kbd>
-          </button>
+          </Button>
 
           {shellV2 && (
-            <button
+            <Button variant="cyber"
               type="button"
               onClick={() => setContextOpen((v) => !v)}
               title={contextOpen ? 'Сховати контекстну панель' : 'Показати контекстну панель'}
@@ -113,10 +114,10 @@ export const WorkspaceBusinessStrip: React.FC = () => {
             >
               <PanelRight className="h-3.5 w-3.5" aria-hidden />
               Контекст
-            </button>
+            </Button>
           )}
 
-          <button
+          <Button variant="cyber"
             type="button"
             onClick={() => setCollapsed((c) => !c)}
             className="inline-flex items-center gap-1 rounded-lg border border-white/10 px-2 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-500 transition hover:border-white/20 hover:text-slate-300"
@@ -133,7 +134,7 @@ export const WorkspaceBusinessStrip: React.FC = () => {
                 <ChevronsUp className="h-3.5 w-3.5" aria-hidden />
               </>
             )}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

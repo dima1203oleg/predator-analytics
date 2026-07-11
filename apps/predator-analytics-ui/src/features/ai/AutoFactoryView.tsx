@@ -8,6 +8,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { Button } from '@/components/ui/button';
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
@@ -82,24 +83,24 @@ const toneClasses: Record<AutoFactoryTone, { border: string; panel: string; text
     dot: 'bg-emerald-400',
   },
   amber: {
-    border: 'border-rose-500/20',
-    panel: 'bg-rose-500/10',
+    border: 'border-cyan-500/20',
+    panel: 'bg-cyan-500/10',
     text: 'text-rose-400',
-    badge: 'border-rose-500/20 bg-rose-500/10 text-rose-400',
+    badge: 'border-cyan-500/20 bg-cyan-500/10 text-rose-400',
     dot: 'bg-rose-400',
   },
   rose: {
-    border: 'border-rose-500/20',
-    panel: 'bg-rose-500/10',
+    border: 'border-cyan-500/20',
+    panel: 'bg-cyan-500/10',
     text: 'text-rose-400',
-    badge: 'border-rose-500/20 bg-rose-500/10 text-rose-400',
+    badge: 'border-cyan-500/20 bg-cyan-500/10 text-rose-400',
     dot: 'bg-rose-400',
   },
   sky: {
-    border: 'border-rose-500/20',
-    panel: 'bg-rose-500/10',
+    border: 'border-cyan-500/20',
+    panel: 'bg-cyan-500/10',
     text: 'text-rose-400',
-    badge: 'border-rose-500/20 bg-rose-500/10 text-rose-400',
+    badge: 'border-cyan-500/20 bg-cyan-500/10 text-rose-400',
     dot: 'bg-rose-400',
   },
   gold: {
@@ -357,7 +358,7 @@ export default function AutoFactoryView() {
   }, [loadData, snapshot.isRunning]);
 
   const feedbackTone = feedback?.tone === 'amber'
-    ? 'border-rose-500/20 bg-rose-500/10 text-rose-100'
+    ? 'border-cyan-500/20 bg-cyan-500/10 text-rose-100'
     : 'border-emerald-500/20 bg-emerald-500/10 text-emerald-100';
 
   return (
@@ -448,7 +449,7 @@ export default function AutoFactoryView() {
                   { id: 'axioms', label: 'Аксіоми', icon: Shield },
                   { id: 'terminal', label: 'Журнал ядра', icon: Terminal },
                 ].map((item) => (
-                  <button
+                  <Button variant="cyber"
                     key={item.id}
                     type="button"
                     onClick={() => setTab(item.id as typeof tab)}
@@ -461,7 +462,7 @@ export default function AutoFactoryView() {
                   >
                     <item.icon size={14} />
                     {item.label}
-                  </button>
+                  </Button>
                 ))}
               </div>
 
@@ -592,7 +593,7 @@ export default function AutoFactoryView() {
                   </div>
 
                   <div className="grid gap-3 sm:grid-cols-2">
-                    <button
+                    <Button variant="cyber"
                       type="button"
                       onClick={() => {
                         void handleToggleCycle();
@@ -601,16 +602,16 @@ export default function AutoFactoryView() {
                       className={cn(
                         'inline-flex items-center justify-center gap-3 rounded-[24px] px-5 py-4 text-[11px] font-black uppercase tracking-[0.24em] transition',
                         snapshot.isRunning
-                          ? 'border border-rose-500/20 bg-rose-500/10 text-rose-100 hover:bg-rose-500/15'
+                          ? 'border border-cyan-500/20 bg-cyan-500/10 text-rose-100 hover:bg-cyan-500/15'
                           : 'border border-emerald-500/20 bg-emerald-500/10 text-emerald-100 hover:bg-emerald-500/15',
                         busy && 'cursor-not-allowed opacity-60',
                       )}
                     >
                       {busy ? <Loader size={16} className="animate-spin" /> : snapshot.isRunning ? <Pause size={16} /> : <Play size={16} />}
                       {snapshot.isRunning ? 'Зупинити цикл' : 'Запустити цикл'}
-                    </button>
+                    </Button>
 
-                    <button
+                    <Button variant="cyber"
                       type="button"
                       onClick={() => {
                         void loadData(true);
@@ -623,7 +624,7 @@ export default function AutoFactoryView() {
                     >
                       {refreshing ? <Loader size={16} className="animate-spin" /> : <RefreshCw size={16} />}
                       Оновити дані
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </HoloCard>

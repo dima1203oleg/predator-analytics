@@ -9,6 +9,7 @@
  * © 2026 PREDATOR Analytics
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -196,7 +197,7 @@ const AlertItem: React.FC<{
             </div>
 
             <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-              <button
+              <Button variant="cyber"
                 onClick={(e) => { e.stopPropagation(); onPin(alert.id); }}
                 title={alert.isPinned ? 'Відкріпити' : 'Закріпити'}
                 className={cn(
@@ -205,14 +206,14 @@ const AlertItem: React.FC<{
                 )}
               >
                 <Star size={12} />
-              </button>
-              <button
+              </Button>
+              <Button variant="cyber"
                 onClick={(e) => { e.stopPropagation(); onDismiss(alert.id); }}
                 title="Відхилити"
                 className="p-1.5 rounded-lg bg-white/5 text-slate-500 hover:text-rose-400 transition-all"
               >
                 <X size={12} />
-              </button>
+              </Button>
               {alert.actionUrl && (
                 <a
                   href={alert.actionUrl}
@@ -304,19 +305,19 @@ export const LiveIntelligenceAlerts: React.FC<{
             </div>
           </div>
 
-          <button
+          <Button variant="cyber"
             onClick={() => setIsExpanded(!isExpanded)}
             title={isExpanded ? 'Згорнути' : 'розгорнути'}
             className="p-2 rounded-lg bg-white/5 text-slate-400 hover:text-white transition-all"
           >
             <ChevronRight size={16} className={cn("transition-transform", isExpanded && "rotate-90")} />
-          </button>
+          </Button>
         </div>
 
         {/* Filters */}
         <div className="flex gap-2 overflow-x-auto pb-2">
           {['all', 'critical', 'high', 'medium', 'low'].map(sev => (
-            <button
+            <Button variant="cyber"
               key={sev}
               onClick={() => setFilter(sev as any)}
               className={cn(
@@ -334,7 +335,7 @@ export const LiveIntelligenceAlerts: React.FC<{
                   ({alerts.filter(a => a.severity === sev).length})
                 </span>
               )}
-            </button>
+            </Button>
           ))}
         </div>
       </div>

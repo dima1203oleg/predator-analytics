@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { Activity, Server, Database, Globe, RefreshCw, ShieldCheck } from 'lucide-react';
 import { adminService, SystemMetrics, ServiceInternal } from '../../../services/unified/admin.service';
@@ -40,12 +41,12 @@ export const SystemStatus: React.FC = () => {
             <div className="flex items-center gap-4 text-slate-300 text-sm">
                <span className="flex items-center gap-2">
                  Оновлено: {lastUpdated.toLocaleTimeString()}
-                 <button
+                 <Button variant="cyber"
                    onClick={loadData}
                  className={`p-1 hover:bg-slate-800 rounded text-blue-300 transition-colors ${isLoading ? 'animate-spin' : ''}`}
                  >
                     <RefreshCw size={14} />
-                 </button>
+                 </Button>
                </span>
                <span className="w-px h-3 bg-slate-700" />
                <span className="flex items-center gap-1.5 text-blue-300 font-bold uppercase text-[10px] tracking-wider">

@@ -39,10 +39,10 @@ export function ServiceStatusGrid({ data }: ServiceStatusGridProps) {
         const usagePercent = comp.storage_total_gb ? (comp.storage_used_gb / comp.storage_total_gb) * 100 : 0;
         
         return (
-          <div key={key} className="bg-slate-950 border border-white/10 rounded-xl p-4 flex flex-col justify-between hover:bg-rose-500/5 hover:border-rose-500/30 transition-all group shadow-xl">
+          <div key={key} className="bg-slate-950 border border-white/10 rounded-xl p-4 flex flex-col justify-between hover:bg-cyan-500/5 hover:border-cyan-500/30 transition-all group shadow-xl">
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-rose-500/10 rounded-xl text-rose-500 border border-rose-500/20 group-hover:bg-rose-500/20 group-hover:border-rose-500/40 transition-all ">
+                <div className="p-2.5 bg-cyan-500/10 rounded-xl text-cyan-500 border border-cyan-500/20 group-hover:bg-cyan-500/20 group-hover:border-cyan-500/40 transition-all ">
                   {getIcon(key)}
                 </div>
                 <div>
@@ -56,13 +56,13 @@ export function ServiceStatusGrid({ data }: ServiceStatusGridProps) {
                 {comp.status === 'UP' ? (
                   <CheckCircle2 className="w-4 h-4 text-emerald-500 " />
                 ) : comp.status === 'DEGRADED' ? (
-                  <AlertTriangle className="w-4 h-4 text-rose-500  " />
+                  <AlertTriangle className="w-4 h-4 text-cyan-500  " />
                 ) : (
-                  <AlertCircle className="w-4 h-4 text-rose-600 " />
+                  <AlertCircle className="w-4 h-4 text-cyan-600 " />
                 )}
                 <span className={cn(
                     "text-[9px] font-black font-mono px-1.5 py-0.5 rounded bg-black/40 border border-white/5",
-                    comp.latency_ms < 5 ? "text-emerald-500" : "text-rose-500"
+                    comp.latency_ms < 5 ? "text-emerald-500" : "text-cyan-500"
                 )}>{comp.latency_ms || 1}ms</span>
 
               </div>
@@ -86,7 +86,7 @@ export function ServiceStatusGrid({ data }: ServiceStatusGridProps) {
                             animate={{ width: `${usagePercent}%` }}
                             className={cn(
                                 "h-full rounded-full transition-all duration-1000",
-                                usagePercent > 90 ? "bg-rose-600 " : usagePercent > 70 ? "bg-rose-500 " : "bg-emerald-500"
+                                usagePercent > 90 ? "bg-cyan-600 " : usagePercent > 70 ? "bg-cyan-500 " : "bg-emerald-500"
                             )}
                         />
                     </div>
@@ -101,7 +101,7 @@ export function ServiceStatusGrid({ data }: ServiceStatusGridProps) {
 }
 
 const getIconColor = (usage: number) => {
-    if (usage > 90) return "text-rose-600";
-    if (usage > 70) return "text-rose-500";
+    if (usage > 90) return "text-cyan-600";
+    if (usage > 70) return "text-cyan-500";
     return "text-emerald-500";
 };

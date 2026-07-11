@@ -5,6 +5,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useCallback } from 'react';
 import {
     Search, ArrowRight, Skull, Target, Zap,
@@ -206,7 +207,7 @@ export const GlobalSearchTab: React.FC = () => {
 
                         <div className="flex flex-wrap justify-center gap-4">
                             {['ALL', 'COMPANIES', 'DECLARATIONS', 'PERSONS', 'LOCATIONS'].map((f) => (
-                                <button 
+                                <Button variant="cyber" 
                                     key={f}
                                     onClick={() => setActiveFilter(f)}
                                     className={cn(
@@ -220,7 +221,7 @@ export const GlobalSearchTab: React.FC = () => {
                                     {activeFilter === f && (
                                         <motion.div layoutId="search-filter-bg" className="absolute inset-0 bg-red-600/20 -z-10" />
                                     )}
-                                </button>
+                                </Button>
                             ))}
                         </div>
                     </div>
@@ -329,12 +330,12 @@ export const GlobalSearchTab: React.FC = () => {
                         exit={{ opacity: 0, x: 100 }}
                         className="space-y-12"
                     >
-                        <button 
+                        <Button variant="cyber" 
                             onClick={() => setSelectedEntity(null)}
                             className="flex items-center gap-4 text-slate-500 hover:text-red-500 transition-all font-black uppercase text-xs italic tracking-widest p-4 bg-black border border-white/5 rounded-2xl group"
                         >
                             <ArrowLeft size={18} className="group-hover:-translate-x-2 transition-transform" /> ПОВЕ НУТИСЬ ДО ПОШУКУ
-                        </button>
+                        </Button>
 
                         <div className="grid grid-cols-12 gap-10">
                             {/* Entity Header/Quick Info */}
@@ -396,9 +397,9 @@ export const GlobalSearchTab: React.FC = () => {
                                                     <p className="text-sm font-black text-red-100 italic uppercase leading-snug">{s}</p>
                                                 </div>
                                             ))}
-                                            <button className="w-full py-6 mt-4 bg-red-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-red-600 shadow-3xl transition-all flex items-center justify-center gap-4">
+                                            <Button variant="cyber" className="w-full py-6 mt-4 bg-red-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-red-600 shadow-3xl transition-all flex items-center justify-center gap-4">
                                                 <Skull size={20} /> ЗАПУСТИТИ_ГЛИБИННИЙ_СКО ИНГ
-                                            </button>
+                                            </Button>
                                         </div>
                                     ) : (
                                         <div className="flex flex-col items-center justify-center py-10 gap-4 opacity-30 text-center">
@@ -427,12 +428,12 @@ export const GlobalSearchTab: React.FC = () => {
                                             СИСТЕМА ВІДСТЕЖИЛА {selectedEntity.full_details.connections} КОНТАКТІВ З ІНШИМИ СУБ'ЄКТАМИ ТА ДОКУМЕНТАМИ В БАЗІ.
                                         </p>
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                            <button className="p-5 bg-white/5 border border-white/10 rounded-2xl text-[9px] font-black text-slate-400 hover:text-white uppercase transition-all flex flex-col items-center gap-2">
+                                            <Button variant="cyber" className="p-5 bg-white/5 border border-white/10 rounded-2xl text-[9px] font-black text-slate-400 hover:text-white uppercase transition-all flex flex-col items-center gap-2">
                                                 <FileText size={18} /> PDF_REPORT
-                                            </button>
-                                            <button className="p-5 bg-white/5 border border-white/10 rounded-2xl text-[9px] font-black text-slate-400 hover:text-white uppercase transition-all flex flex-col items-center gap-2">
+                                            </Button>
+                                            <Button variant="cyber" className="p-5 bg-white/5 border border-white/10 rounded-2xl text-[9px] font-black text-slate-400 hover:text-white uppercase transition-all flex flex-col items-center gap-2">
                                                 <Activity size={18} /> LIVE_FLOW
-                                            </button>
+                                            </Button>
                                         </div>
                                     </div>
                                 </HoloCard>

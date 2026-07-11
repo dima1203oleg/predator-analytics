@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { useState, useEffect } from 'react';
 import { Mic, Send, Terminal, Cpu, Database, Network } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -135,12 +136,12 @@ export const CentralCommandConsole = ({ onCommand }: CentralCommandConsoleProps)
         <div className="relative flex items-center bg-[#020817]/90 backdrop-blur-xl border border-emerald-500/30 rounded-lg p-1">
           
           {/* Voice Input Button */}
-          <button 
+          <Button variant="cyber" 
             type="button"
             className="p-4 rounded-full bg-white/5 hover:bg-white/10 text-white/50 hover:text-cyan-400 transition-colors"
           >
             <Mic size={24} />
-          </button>
+          </Button>
 
           <input
             type="text"
@@ -150,13 +151,13 @@ export const CentralCommandConsole = ({ onCommand }: CentralCommandConsoleProps)
             className="flex-1 bg-transparent border-none outline-none text-emerald-400 px-2 text-sm font-light placeholder:text-emerald-500/40"
           />
 
-          <button
+          <Button variant="cyber"
             type="submit"
             disabled={!input.trim()}
             className="p-4 rounded-full bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed ml-2"
           >
             <Send size={24} />
-          </button>
+          </Button>
 
         </div>
       </form>

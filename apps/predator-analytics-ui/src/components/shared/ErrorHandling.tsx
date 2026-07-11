@@ -5,6 +5,7 @@
  * Provides user-friendly error messages in Ukrainian with retry capabilities.
  */
 
+import { Button } from '@/components/ui/button';
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { AlertTriangle, RefreshCw, Home, Bug, WifiOff, Server, Database, Shield } from 'lucide-react';
@@ -134,13 +135,13 @@ export const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
         <IconComponent size={18} />
         <span className="text-sm font-medium">{displayTitle}</span>
         {onRetry && (
-          <button
+          <Button variant="cyber"
             onClick={onRetry}
             className="ml-auto flex items-center gap-1.5 px-3 py-1 bg-rose-500/20 rounded-lg text-xs font-bold hover:bg-rose-500/30 transition-colors"
           >
             <RefreshCw size={12} />
             Повторити
-          </button>
+          </Button>
         )}
       </div>
     );
@@ -291,14 +292,14 @@ export const InlineError: React.FC<InlineErrorProps> = ({
     <AlertTriangle size={14} />
     <span>{message}</span>
     {onRetry && (
-      <button
+      <Button variant="cyber"
         onClick={onRetry}
         title="Повторити"
         aria-label="Повторити завантаження"
         className="ml-auto p-1 hover:bg-rose-500/20 rounded transition-colors"
       >
         <RefreshCw size={12} />
-      </button>
+      </Button>
     )}
   </div>
 );
@@ -337,12 +338,12 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
       <p className="text-xs text-slate-500 max-w-xs mb-4">{message}</p>
     )}
     {action && (
-      <button
+      <Button variant="cyber"
         onClick={action.onClick}
         className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-xs font-bold text-slate-400 hover:text-white hover:bg-white/10 transition-all"
       >
         {action.label}
-      </button>
+      </Button>
     )}
   </div>
 );

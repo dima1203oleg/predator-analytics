@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Network, Activity, Cpu, Sparkles, BrainCircuit, ShieldAlert } from 'lucide-react';
@@ -122,9 +123,9 @@ const AZREvolutionTimeline: React.FC<AZREvolutionTimelineProps> = ({ status }) =
       </div>
 
       <div className="mt-10 flex justify-center">
-        <button className="px-6 py-2 rounded-full bg-white/5 border border-white/10 text-[11px] font-bold text-slate-300 hover:bg-white/10 hover:text-white transition-all uppercase tracking-widest">
+        <Button variant="cyber" className="px-6 py-2 rounded-full bg-white/5 border border-white/10 text-[11px] font-bold text-slate-300 hover:bg-white/10 hover:text-white transition-all uppercase tracking-widest">
           Load Historical Cycles
-        </button>
+        </Button>
       </div>
     </div>
   );

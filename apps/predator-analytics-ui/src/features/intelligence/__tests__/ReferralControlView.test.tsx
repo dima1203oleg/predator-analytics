@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import ReferralControlView from '../ReferralControlView';
@@ -44,7 +45,7 @@ vi.mock('@/components/ViewHeader', () => ({
 vi.mock('@/components/TacticalCard', () => ({ TacticalCard: ({ children, className }: any) => <div className={className}>{children}</div> }));
 vi.mock('@/components/layout/PageTransition', () => ({ PageTransition: ({ children }: any) => <>{children}</> }));
 vi.mock('@/components/ui/badge', () => ({ Badge: ({ children, className }: any) => <div className={className}>{children}</div> }));
-vi.mock('@/components/ui/button', () => ({ Button: ({ children, onClick, className }: any) => <button onClick={onClick} className={className}>{children}</button> }));
+vi.mock('@/components/ui/button', () => ({ Button: ({ children, onClick, className }: any) => <Button variant="cyber" onClick={onClick} className={className}>{children}</Button> }));
 vi.mock('@/components/ui/input', () => ({ Input: ({ value, onChange, placeholder, className }: any) => <input value={value} onChange={onChange} placeholder={placeholder} className={className} /> }));
 vi.mock('@/components/ui/card', () => ({ 
     Card: ({ children, className }: any) => <div className={className}>{children}</div>,

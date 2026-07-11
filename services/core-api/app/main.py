@@ -75,6 +75,12 @@ from app.routers import (
     wargaming_router,
     warroom_router,
     websocket_router,
+    ai_router,
+    neural_router,
+    voice_router,
+    voice_ws_router,
+    rag_router,
+    telemetry_router,
 )
 from app.services.factory_repository import FactoryRepository
 from app.services.factory_runtime import (
@@ -114,9 +120,9 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     try:
         security_check = validate_security_on_startup()
         if not security_check["secure"]:
-            logger.error("Critical security issues detected!")
+            logger.error("Виявлено критичні проблеми безпеки!")
     except Exception as e:
-        logger.error(f"Security validation failed: {e}")
+        logger.error(f"Перевірка безпеки не вдалася: {e}")
         if settings.ENV == "production":
             raise
 
@@ -127,7 +133,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         try:
             init_db()
         except Exception as e:
-            logger.warning(f"PostgreSQL connection failed: {e}. Running in degraded mode.")
+            logger.warning(f"Підключення до PostgreSQL не вдалося: {e}. Робота в обмеженому режимі.")
 
         # 2. Init Graph Driver
         try:
@@ -139,7 +145,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         try:
             await init_kafka()
         except Exception as e:
-            logger.warning(f"Kafka connection failed: {e}. Service will be limited.")
+            logger.warning(f"Підключення до Kafka не вдалося: {e}. Сервіс буде обмежено.")
 
         # 4. Init MinIO/S3 (§2.5)
         try:
@@ -175,9 +181,15 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         await orchestrator.start(app)
         logger.info("Antigravity AGI Orchestrator started with Factory Sync")
 
+        # Init Speech Services
+        from app.services.speech import vad_service, stt_service, tts_service
+        await vad_service.initialize()
+        await stt_service.initialize()
+        await tts_service.initialize()
+
         # 8. Start Sovereign Guardian (Auto-Healing)
         app.state.guardian_task = asyncio.create_task(guardian_service.run_loop())
-        logger.info("Sovereign Guardian task started")
+        logger.info("Задачу Sovereign Guardian запущено (авто-відновлення)")
 
         # 9. Start VRAM Watchdog (FR-012)
         app.state.vram_watchdog_task = asyncio.create_task(vram_sentinel.watchdog_loop())
@@ -343,6 +355,11 @@ ROUTERS = [
     ("/api/v1", cloud_assist_router),
     ("/api/v1", osint_vision_router),
     ("/api/v1", websocket_router),
+    ("/api/v1", ai_router),
+    ("/api/v1", neural_router),
+    ("/api/v1", voice_router),
+    ("/api/v1", voice_ws_router),
+    ("/api/v1", rag_router),
     ("/api/v2", admin_v2_router),
 ]
 
@@ -352,6 +369,8 @@ for prefix, router in ROUTERS:
         logger.debug(f"Registered router: {prefix}{router.prefix}")
     else:
         logger.warning(f"Skipped None router at prefix: {prefix}")
+
+app.include_router(telemetry_router, prefix="/api/v1")
 
 @app.get("/api/v1/health", tags=["system"])
 @app.get("/health", tags=["system"])

@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { Users, UserPlus, Shield, MoreHorizontal } from 'lucide-react';
 
@@ -12,9 +13,9 @@ export const UsersRoles: React.FC = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
          <h1 className="text-2xl font-bold text-white">Користувачі та  олі</h1>
-         <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-bold">
+         <Button variant="cyber" className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-bold">
             <UserPlus size={16} /> Додати користувача
-         </button>
+         </Button>
       </div>
 
       <div className="bg-slate-900 border border-slate-700 rounded-xl ">
@@ -45,7 +46,7 @@ export const UsersRoles: React.FC = () => {
                     </td>
                     <td className="p-4 text-slate-300 text-sm">{u.lastLogin}</td>
                     <td className="p-4 text-right">
-                       <button className="p-2 text-slate-300 hover:text-white"><MoreHorizontal size={18} /></button>
+                       <Button variant="cyber" className="p-2 text-slate-300 hover:text-white"><MoreHorizontal size={18} /></Button>
                     </td>
                  </tr>
               ))}

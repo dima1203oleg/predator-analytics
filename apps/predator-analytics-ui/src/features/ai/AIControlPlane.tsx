@@ -7,6 +7,7 @@
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
+import { Button } from '@/components/ui/button';
 import { BrandLoaderFallback } from '@/components/polish/BrandLoader';
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
@@ -54,16 +55,16 @@ const toneClasses: Record<AIControlTone, { border: string; panel: string; text: 
     badge: 'border-emerald-500/20 bg-emerald-500/10 text-emerald-400',
   },
   amber: {
-    border: 'border-rose-500/20',
-    panel: 'bg-rose-500/10',
+    border: 'border-cyan-500/20',
+    panel: 'bg-cyan-500/10',
     text: 'text-rose-400',
-    badge: 'border-rose-500/20 bg-rose-500/10 text-rose-400',
+    badge: 'border-cyan-500/20 bg-cyan-500/10 text-rose-400',
   },
   sky: {
-    border: 'border-rose-500/20', 
-    panel: 'bg-rose-500/10',
-    text: 'text-rose-500',
-    badge: 'border-rose-500/20 bg-rose-500/10 text-rose-500',
+    border: 'border-cyan-500/20', 
+    panel: 'bg-cyan-500/10',
+    text: 'text-cyan-500',
+    badge: 'border-cyan-500/20 bg-cyan-500/10 text-cyan-500',
   },
   gold: {
     border: 'border-[#D4AF37]/20',
@@ -147,7 +148,7 @@ const EngineCard = ({ engine }: { engine: AIControlEngineRecord }) => {
       animate={{ opacity: 1, y: 0 }}
       className={cn('overflow-hidden rounded-[30px] border bg-slate-950/55', tone.border)}
     >
-      <button
+      <Button variant="cyber"
         type="button"
         onClick={() => setExpanded((value) => !value)}
         className="flex w-full items-start gap-4 px-5 py-5 text-left transition hover:bg-white/[0.02]"
@@ -178,7 +179,7 @@ const EngineCard = ({ engine }: { engine: AIControlEngineRecord }) => {
             ))}
           </div>
         </div>
-      </button>
+      </Button>
 
       {expanded && (
         <div className="border-t border-white/5 px-5 py-5">
@@ -312,7 +313,7 @@ export default function AIControlPlane() {
               },
             ]}
             actions={(
-              <button
+              <Button variant="cyber"
                 type="button"
                 onClick={handleRefresh}
                 disabled={isRefreshing}
@@ -323,7 +324,7 @@ export default function AIControlPlane() {
               >
                 {isRefreshing ? <Loader size={15} className="animate-spin" /> : <RefreshCw size={15} />}
                 Оновити дані
-              </button>
+              </Button>
             )}
           />
 
@@ -370,7 +371,7 @@ export default function AIControlPlane() {
               { id: 'governance' as const, label: 'Політики', icon: ShieldAlert },
               { id: 'logs' as const, label: 'Журнал', icon: Terminal },
             ].map((item) => (
-              <button
+              <Button variant="cyber"
                 key={item.id}
                 type="button"
                 onClick={() => setActiveTab(item.id)}
@@ -383,7 +384,7 @@ export default function AIControlPlane() {
               >
                 <item.icon size={14} />
                 {item.label}
-              </button>
+              </Button>
             ))}
           </div>
 

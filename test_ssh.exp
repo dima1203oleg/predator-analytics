@@ -1,0 +1,20 @@
+#!/usr/bin/expect -f
+set timeout 10
+spawn ssh -o StrictHostKeyChecking=no -p 6666 dima@194.177.1.240
+expect {
+    "password:" {
+        send "6666\r"
+        expect "$ "
+        send "ls -la\r"
+        expect "$ "
+        send "exit\r"
+    }
+    timeout {
+        puts "Timeout connecting to SSH"
+        exit 1
+    }
+    eof {
+        puts "Connection failed or EOF"
+        exit 1
+    }
+}

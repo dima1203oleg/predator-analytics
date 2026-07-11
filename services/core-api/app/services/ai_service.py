@@ -50,16 +50,13 @@ class AIService:
         """Прямий виклик локальної моделі Ollama."""
         target_model = model or settings.OLLAMA_MODEL
 
-        # Формуємо промпт
-        prompt = "\\n".join([f"{m['role']}: {m['content']}" for m in messages])
-        
         try:
             async with httpx.AsyncClient() as client:
                 response = await client.post(
-                    f"{settings.OLLAMA_API_URL}/api/generate",
+                    f"{settings.OLLAMA_API_URL}/api/chat",
                     json={
                         "model": target_model,
-                        "prompt": prompt,
+                        "messages": messages,
                         "stream": False,
                         "options": {"temperature": temperature}
                     },
@@ -68,7 +65,7 @@ class AIService:
 
                 if response.status_code == 200:
                     result = response.json()
-                    return result.get("response", "")
+                    return result.get("message", {}).get("content", "")
                 
                 return f"Ollama Error: {response.status_code} - {response.text[:200]}"
         except Exception as e:
@@ -82,15 +79,13 @@ class AIService:
     ) -> AsyncIterator[str]:
         """Streaming відповідь напряму через Ollama."""
         target_model = model or settings.OLLAMA_MODEL
-        prompt = "\\n".join([f"{m['role']}: {m['content']}" for m in messages])
-
         try:
             async with httpx.AsyncClient() as client, client.stream(
                 "POST",
-                f"{settings.OLLAMA_API_URL}/api/generate",
+                f"{settings.OLLAMA_API_URL}/api/chat",
                 json={
                     "model": target_model,
-                    "prompt": prompt,
+                    "messages": messages,
                     "options": {"temperature": temperature},
                 },
                 timeout=120.0,
@@ -105,8 +100,8 @@ class AIService:
                     import json
                     try:
                         chunk = json.loads(line)
-                        if "response" in chunk:
-                            yield chunk["response"]
+                        if "message" in chunk and "content" in chunk["message"]:
+                            yield chunk["message"]["content"]
                     except json.JSONDecodeError:
                         pass
         except Exception as e:
@@ -171,38 +166,22 @@ class AIService:
 
     @staticmethod
     async def get_embeddings(text: str, model: str | None = None) -> list[float]:
-        """Отримання векторних ембедінгів для тексту (пріоритет: Gemini 004)."""
-        fallback_dim = 768
+        """Отримання векторних ембедінгів для тексту через локальний sentence-transformers."""
+        fallback_dim = 384
 
         if not _embedding_breaker.allow_request():
             return [0.0] * fallback_dim
 
-        # 1. Пріоритет — Gemini Enterprise (768-dim)
         try:
-            vector = await gemini_service.embed(text)
-            if any(vector):  # Якщо не нульовий
-                _embedding_breaker.record_success()
-                return vector
-        except Exception as e:
-            logger.warning(f"Gemini embedding failed, falling back to LiteLLM: {e}")
-
-        # 2. Fallback — LiteLLM / Ollama
-        embed_model = model or f"ollama/{settings.OLLAMA_EMBEDDING_MODEL}"
-        try:
-            async with httpx.AsyncClient() as client:
-                response = await client.post(
-                    f"{settings.LITELLM_API_BASE}/embeddings",
-                    json={"model": embed_model, "input": text},
-                    timeout=20.0,
-                )
-                if response.status_code == 200:
-                    result = response.json()
-                    _embedding_breaker.record_success()
-                    return result["data"][0]["embedding"]
-
-                _embedding_breaker.record_failure()
-                return [0.0] * fallback_dim
+            from sentence_transformers import SentenceTransformer
+            
+            # Use the same model as ingestion worker for exact vector match (384-dim)
+            embedder = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2", device="cpu")
+            embedding = embedder.encode(text).tolist()
+            
+            _embedding_breaker.record_success()
+            return embedding
         except Exception as e:
             _embedding_breaker.record_failure()
-            logger.warning(f"Embedding fallback error: {e!s}")
+            logger.warning(f"Local embedding error: {e!s}")
             return [0.0] * fallback_dim

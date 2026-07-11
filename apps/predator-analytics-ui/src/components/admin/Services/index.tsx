@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { Box, Play, Square, RotateCcw } from 'lucide-react';
 
@@ -41,10 +42,10 @@ export const Services: React.FC = () => {
                        </span>
                     </td>
                     <td className="p-4 text-right flex items-center justify-end gap-2">
-                       <button className="p-1.5 bg-slate-800 hover:bg-slate-700 rounded text-slate-300" title="Restart"><RotateCcw size={14} /></button>
+                       <Button variant="cyber" className="p-1.5 bg-slate-800 hover:bg-slate-700 rounded text-slate-300" title="Restart"><RotateCcw size={14} /></Button>
                        {svc.status === 'running'
-                         ? <button className="p-1.5 bg-red-900/20 hover:bg-red-900/40 rounded text-red-400" title="Stop"><Square size={14} /></button>
-                         : <button className="p-1.5 bg-emerald-900/20 hover:bg-emerald-900/40 rounded text-emerald-400" title="Start"><Play size={14} /></button>
+                         ? <Button variant="cyber" className="p-1.5 bg-red-900/20 hover:bg-red-900/40 rounded text-red-400" title="Stop"><Square size={14} /></Button>
+                         : <Button variant="cyber" className="p-1.5 bg-emerald-900/20 hover:bg-emerald-900/40 rounded text-emerald-400" title="Start"><Play size={14} /></Button>
                        }
                     </td>
                  </tr>

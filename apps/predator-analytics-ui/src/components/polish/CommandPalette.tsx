@@ -2,6 +2,7 @@
  * CommandPalette — Spotlight-стиль командний центр
  * v63.0-ELITE · Cmd+K · Sovereign navigation
  */
+import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -135,9 +136,9 @@ export const CommandPalette: React.FC = () => {
               />
               <div className="flex items-center gap-2">
                 <kbd className="px-2 py-1 rounded-lg bg-white/5 border border-white/10 text-[10px] text-slate-500 font-mono">ESC</kbd>
-                <button onClick={() => setOpen(false)} className="p-1 text-slate-600 hover:text-white transition-colors">
+                <Button variant="cyber" onClick={() => setOpen(false)} className="p-1 text-slate-600 hover:text-white transition-colors">
                   <X size={18} />
-                </button>
+                </Button>
               </div>
             </div>
 

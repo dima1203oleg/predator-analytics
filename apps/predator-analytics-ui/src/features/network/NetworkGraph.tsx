@@ -6,6 +6,7 @@
  * ⚠️ MOCK ПОВНІСТЮ ВИДАЛЕНО — усі дані з реального backend.
  */
 
+import { Button } from '@/components/ui/button';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Maximize2, Minimize2, Download, Loader, AlertCircle, RefreshCw } from 'lucide-react';
@@ -213,19 +214,19 @@ export const NetworkGraph: React.FC = () => {
           <p className="text-gray-400">Взаємозв'язки компанії: акціонери, партнери, постачальники, клієнти</p>
         </div>
         <div className="flex items-center gap-2">
-          <button
+          <Button variant="cyber"
             onClick={fetchGraphData}
             className="p-2 bg-emerald-600 hover:bg-emerald-700 rounded-lg text-white"
             title="Оновити дані"
           >
             <RefreshCw size={20} />
-          </button>
-          <button
+          </Button>
+          <Button variant="cyber"
             onClick={() => setIsFullscreen(!isFullscreen)}
             className="p-2 bg-yellow-600 hover:bg-yellow-700 rounded-lg text-white"
           >
             {isFullscreen ? <Minimize2 size={24} /> : <Maximize2 size={24} />}
-          </button>
+          </Button>
         </div>
       </div>
 
