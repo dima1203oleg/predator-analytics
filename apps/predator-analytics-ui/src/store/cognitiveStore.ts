@@ -85,11 +85,11 @@ export const useCognitiveStore = create<CognitiveStore>((set, get) => ({
   insightFlash: 0,
   triggerInsightEvent: () => set((state) => ({ insightFlash: state.insightFlash + 1 })),
   startSimulation: () => {
+    // Підключення до реального бекенду замість симуляції
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1';
+    
+    // Fallback симуляція станів когнітивного ядра
     const interval = setInterval(() => {
-      const t = get().telemetry;
-      const fluctuate = (v: number, max: number, min: number, delta: number) =>
-        Math.max(min, Math.min(max, v + (Math.random() - 0.5) * delta));
-
       const states: CognitiveState[] = [
         'Contemplation', 'Correlation', 'Inference', 'Validation', 
         'Discovery', 'Prediction', 'Optimization', 'Alert', 'Learning'
@@ -99,18 +99,41 @@ export const useCognitiveStore = create<CognitiveStore>((set, get) => ({
          stateIndex = (stateIndex + 1) % states.length;
          get().setState(states[stateIndex]);
       }
+    }, 2000);
 
-      set({
-        telemetry: {
-          computePower: fluctuate(t.computePower, 99, 60, 4),
-          energyMW: parseFloat(fluctuate(t.energyMW, 3.5, 1.2, 0.15).toFixed(2)),
-          parallelProcesses: Math.round(fluctuate(t.parallelProcesses, 2000000, 800000, 50000)),
-          temperature: parseFloat(fluctuate(t.temperature, 78, 32, 2).toFixed(1)),
-          confidence: parseFloat(fluctuate(t.confidence, 99.9, 70, 1.5).toFixed(1)),
-        }
-      });
-    }, 400);
-    return () => clearInterval(interval);
+    // SSE підключення до NVIDIA сервера
+    const eventSource = new EventSource(`${API_BASE_URL}/telemetry/stream`);
+    
+    eventSource.addEventListener('telemetry', (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        
+        // Витягуємо дані з першого доступного GPU (або симульованого Tensor Core з бекенду)
+        const mainGpu = data.gpus && data.gpus.length > 0 ? data.gpus[0] : null;
+        
+        set({
+          telemetry: {
+            computePower: mainGpu ? mainGpu.utilization : data.cpu_percent,
+            energyMW: parseFloat(((mainGpu ? mainGpu.utilization * 1.5 : data.cpu_percent) / 100 * 3.5 + 0.5).toFixed(2)),
+            parallelProcesses: Math.round(data.ram_percent * 10000),
+            temperature: mainGpu ? mainGpu.temperature : 40 + (data.cpu_percent * 0.4),
+            confidence: get().telemetry.confidence, // Залишаємо поточне або логіка
+          }
+        });
+      } catch (e) {
+        console.error('Помилка парсингу телеметрії', e);
+      }
+    });
+
+    eventSource.onerror = (e) => {
+      console.error('SSE connection error in CognitiveStore', e);
+      // Optional: fallback to random simulation on disconnect
+    };
+
+    return () => {
+      clearInterval(interval);
+      eventSource.close();
+    };
   }
 }));
 

@@ -240,6 +240,10 @@ main() {
     create_directories
     set_permissions
     build_image
+    
+    log_info "Downloading voice AI models..."
+    python3 scripts/download_voice_models.py
+    
     run_health_checks
     start_services
     wait_for_services
