@@ -59,11 +59,19 @@ class CircuitBreaker:
                     logger.debug(f"Запобіжник '{self.name}' ВІДКРИТИЙ. Швидка відмова.")
                     raise RuntimeError(f"Сервіс {self.name} тимчасово недоступний (Запобіжник ВІДКРИТИЙ)")
 
+            if self.state == CircuitState.HALF_OPEN:
+                if getattr(self, '_is_probing', False):
+                    logger.debug(f"Запобіжник '{self.name}' ВЖЕ зондується. Швидка відмова.")
+                    raise RuntimeError(f"Сервіс {self.name} тимчасово недоступний (Очікування результату зондування)")
+                self._is_probing = True
+
             try:
                 result = await func(*args, **kwargs)
+                self._is_probing = False
                 self._on_success()
                 return result
             except self.expected_exception as e:
+                self._is_probing = False
                 self._on_failure()
                 raise e
 
