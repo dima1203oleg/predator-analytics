@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React from 'react';
-import { EffectComposer, Bloom, Glitch, Scanline, ChromaticAberration, Noise } from '@react-three/postprocessing';
+import { EffectComposer, Bloom, Glitch, Scanline, ChromaticAberration, Noise, SMAA, Vignette } from '@react-three/postprocessing';
 import { GlitchMode, BlendFunction } from 'postprocessing';
 import { useCyberStore } from '../../store/useCyberStore';
 import * as THREE from 'three';
@@ -11,12 +11,15 @@ export const CyberEffects = () => {
   const isThinking = aiState === 'THINKING';
 
   return (
-    <EffectComposer>
+    <EffectComposer disableNormalPass>
+      <SMAA />
+      
       {/* М'яке кібер-світіння */}
       <Bloom 
+        mipmapBlur
         luminanceThreshold={0.8} 
         luminanceSmoothing={0.1} 
-        intensity={0.8} 
+        intensity={1.2} 
         kernelSize={3}
       />
       
@@ -51,6 +54,8 @@ export const CyberEffects = () => {
         active={isThinking}
         ratio={0.85}
       />
+
+      <Vignette eskil={false} offset={0.1} darkness={1.1} />
     </EffectComposer>
   );
 };

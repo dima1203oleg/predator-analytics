@@ -255,7 +255,8 @@ export const QuantumMindGraph: React.FC = () => {
         <lineBasicMaterial 
           color="#ffffff" 
           transparent 
-          opacity={0.3} 
+          opacity={0.5} 
+          blending={THREE.AdditiveBlending}
           depthWrite={false}
         />
       </lineSegments>
@@ -272,6 +273,7 @@ export const QuantumMindGraph: React.FC = () => {
           fragmentShader={fragmentShader}
           uniforms={uniforms}
           transparent={true}
+          blending={THREE.AdditiveBlending}
           depthWrite={false}
         />
       </instancedMesh>

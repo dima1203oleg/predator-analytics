@@ -2,15 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('🤖 Autonomous Surface Test', () => {
   test('повне тестування поверхні', async ({ page }) => {
-    const results: {
-      total_clicks: number;
-      successful_clicks: number;
-      failed_clicks: number;
-      form_interactions: number;
-      keyboard_interactions: number;
-      errors: string[];
-      visited_urls: string[];
-    } = {
+    const results = {
       total_clicks: 0,
       successful_clicks: 0,
       failed_clicks: 0,
@@ -22,6 +14,15 @@ test.describe('🤖 Autonomous Surface Test', () => {
     
     try {
       await page.goto('http://localhost:3030/', { timeout: 10000 });
+      
+      // Обхід модальних вікон (Onboarding, License)
+      await page.evaluate(() => {
+        localStorage.setItem('predator_onboarding_completed', 'true');
+        localStorage.setItem('admin_license_accepted', 'true');
+        localStorage.setItem('predator_auth_token', 'mock_token');
+      });
+      await page.reload({ timeout: 10000 });
+      
       results.visited_urls.push('http://localhost:3030/');
       
       // Чекаємо завантаження
@@ -47,7 +48,7 @@ test.describe('🤖 Autonomous Surface Test', () => {
           
           // Отримуємо тип та інформацію
           const tagName = await el.evaluate(el => el.tagName.toLowerCase());
-          const inputType = tagName === 'input' ? await el.evaluate((el: any) => el.type) : '';
+          const inputType = tagName === 'input' ? await el.evaluate(el => el.type) : '';
           
           if (tagName === 'input' && inputType === 'text') {
             // Заповнюємо текстові поля

@@ -96,6 +96,15 @@ test.describe('🤖 Autonomous Surface Test', () => {
     
     try {
       await page.goto('http://localhost:3030/', { timeout: 10000 });
+      
+      // Обхід модальних вікон (Onboarding, License)
+      await page.evaluate(() => {
+        localStorage.setItem('predator_onboarding_completed', 'true');
+        localStorage.setItem('admin_license_accepted', 'true');
+        localStorage.setItem('predator_auth_token', 'mock_token');
+      });
+      await page.reload({ timeout: 10000 });
+      
       results.visited_urls.push('http://localhost:3030/');
       
       // Чекаємо завантаження
