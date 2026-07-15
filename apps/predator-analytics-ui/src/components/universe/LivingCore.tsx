@@ -52,7 +52,7 @@ export const LivingCore: React.FC = () => {
       uMousePos: { value: new THREE.Vector3() },
       uAudioLevel: { value: 0 },
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
     []
   );
 

@@ -50,6 +50,8 @@ export function OsintGraphExplorer() {
     // Статуси запитів
     const [isSearching, setIsSearching] = useState(false);
     const [isExpanding, setIsExpanding] = useState(false);
+    const [isCalculatingPath, setIsCalculatingPath] = useState(false);
+    const [pathTargetId, setPathTargetId] = useState('');
     const [error, setError] = useState<string | null>(null);
 
     // Встановлення базового графа при першому завантаженні (з summary API)
@@ -238,6 +240,69 @@ export function OsintGraphExplorer() {
             setEdges([]);
             setSelectedNode(null);
             setError(null);
+        }
+    };
+
+    // РОЗРАХУНОК НАЙКОРОТШОГО ШЛЯХУ (SHORTEST PATH)
+    const calculateShortestPath = async (sourceId: string) => {
+        if (!pathTargetId.trim() || isCalculatingPath) return;
+        setIsCalculatingPath(true);
+        setError(null);
+        
+        try {
+            const res = await apiClient.get('/graph/path', {
+                params: { source: sourceId, target: pathTargetId.trim() }
+            });
+            const data = res.data;
+            
+            if (!data || !data.nodes || data.nodes.length === 0) {
+                setError("Шлях між заданими об'єктами не знайдено.");
+                return;
+            }
+
+            const newNodes: GraphNode[] = [];
+            const newEdges: GraphEdge[] = [];
+            
+            data.nodes.forEach((n: any) => {
+                const nodeUeid = n.ueid || n.id;
+                if (!nodes.some(extNode => extNode.id === nodeUeid)) {
+                    let type: NodeType = 'Organization';
+                    if (n.type === 'Person' || (n.labels && n.labels.includes('Person'))) type = 'Person';
+                    else if (n.type === 'Location' || (n.labels && n.labels.includes('Location'))) type = 'Location';
+                    else if (n.type === 'Asset' || (n.labels && n.labels.includes('Asset'))) type = 'Asset';
+                    
+                    newNodes.push({
+                        id: nodeUeid,
+                        label: n.name || n.title || n.label || nodeUeid,
+                        type: type,
+                        riskLevel: (n.cers || n.riskScore || 0) >= 80 ? 'critical' : (n.cers || n.riskScore || 0) >= 50 ? 'high' : 'medium',
+                        riskScore: parseInt(n.cers || n.riskScore) || 50,
+                        properties: n
+                    });
+                }
+            });
+            
+            data.edges.forEach((e: any) => {
+                const edgeId = `${e.source}-${e.type}-${e.target}`;
+                if (!edges.some(extEdge => extEdge.id === edgeId)) {
+                    newEdges.push({
+                        id: edgeId,
+                        source: e.source,
+                        target: e.target,
+                        type: e.type,
+                        label: (e.type || 'LINKED').replace('_', ' ')
+                    });
+                }
+            });
+            
+            setNodes(prev => [...prev, ...newNodes]);
+            setEdges(prev => [...prev, ...newEdges]);
+            setPathTargetId(''); // Clear target after success
+            
+        } catch(err: any) {
+            setError(`Помилка пошуку шляху: ${err.message}`);
+        } finally {
+            setIsCalculatingPath(false);
         }
     };
 
@@ -607,6 +672,33 @@ export function OsintGraphExplorer() {
                                                     <span className="text-[10px] font-bold uppercase tracking-widest leading-tight mt-1">Знайти UBO</span>
                                                 </motion.button>
                                             )}
+                                        </div>
+
+                                        {/* Трасування зв'язків (Shortest Path) */}
+                                        <div className="bg-slate-900 border border-slate-800 rounded-xl p-3 space-y-3">
+                                            <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                                                <Zap className="w-3.5 h-3.5" /> Трасування зв'язків
+                                            </div>
+                                            <div className="flex flex-col gap-2">
+                                                <input
+                                                    type="text"
+                                                    value={pathTargetId}
+                                                    onChange={(e) => setPathTargetId(e.target.value)}
+                                                    placeholder="ЄДРПОУ / UEID цілі..."
+                                                    className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white placeholder:text-slate-600 outline-none focus:border-rose-500/50 transition-colors"
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === 'Enter') calculateShortestPath(selectedNode.id);
+                                                    }}
+                                                />
+                                                <Button 
+                                                    variant="cyber"
+                                                    disabled={isCalculatingPath || !pathTargetId.trim()}
+                                                    onClick={() => calculateShortestPath(selectedNode.id)}
+                                                    className="w-full py-2 bg-slate-800 hover:bg-slate-700 disabled:bg-slate-900 text-slate-300 disabled:text-slate-600 border border-slate-700/50 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all"
+                                                >
+                                                    {isCalculatingPath ? 'Обчислення...' : 'Знайти шлях'}
+                                                </Button>
+                                            </div>
                                         </div>
 
                                         {/* Properties Дані з API */}

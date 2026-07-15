@@ -15,6 +15,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/utils/cn';
 import { diligenceApi } from '@/features/diligence/api/diligence';
+import { apiClient } from '@/services/api';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
 import { ViewHeader } from '@/components/ViewHeader';
@@ -36,12 +37,13 @@ export const Search: React.FC = () => {
     setResults([]);
 
     try {
-      const response = await diligenceApi.searchCompanies({ query }) as any;
+      const response = await apiClient.get('/osint/search', { params: { q: query } }) as any;
+      const data = response.data;
 
-      if (response && response.results) {
-        setResults(response.results);
-      } else if (Array.isArray(response)) {
-        setResults(response);
+      if (data && data.results) {
+        setResults(data.results);
+      } else if (Array.isArray(data)) {
+        setResults(data);
       }
     } catch (err: any) {
       console.error('Search failed:', err);

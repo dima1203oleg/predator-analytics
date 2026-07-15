@@ -61,7 +61,7 @@ export const AIOracle: React.FC = () => {
     );
 
     return () => timers.forEach(clearTimeout);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, []);
 
   // ─── Відправка повідомлення ────────────────────────────────────────
