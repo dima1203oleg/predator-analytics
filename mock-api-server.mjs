@@ -1937,36 +1937,32 @@ app.post(['/api/v1/ai/query', '/api/v1/nexus/chat'], (req, res) => {
 });
 
 // --- NEW: COPILOT API ---
-app.post('/api/v1/copilot/chat', (req, res) => {
+app.post('/api/v1/copilot/chat', async (req, res) => {
   const { message } = req.body;
-  const qLower = (message || '').toLowerCase();
   
-  const matchingRecords = DB_FACTS.filter(d => {
-    const text = `${d.goods_description} ${d.company_name} ${d.country_origin} ${d.customs_office} ${d.hs_code} ${d.date} ${d.goods_category}`.toLowerCase();
-    return qLower.split(/\s+/).some(word => word.length > 2 && text.includes(word));
-  });
-
-  const sources = matchingRecords.slice(0, 5).map(d => ({
-    id: d.id,
-    type: 'declaration',
-    title: `Декларація ${d.declaration_number}`,
-    snippet: `${d.company_name} — ${d.goods_description} (${d.country_origin})`,
-    relevance: 0.9 + Math.random() * 0.1
-  }));
-
-  let reply = `Вітаю! Я AI Copilot системи Predator. Обробив ваш запит: "${message}".\n\n`;
-  if (matchingRecords.length > 0) {
-    reply += `Аналіз бази виявив **${matchingRecords.length}** відповідних операцій. Найбільша активність спостерігається у компанії **${matchingRecords[0].company_name}**.`;
-  } else {
-    reply += `Я не знайшов специфічних даних для цього запиту в поточній вибірці, але можу допомогти з налаштуванням параметрів звіту.`;
+  try {
+    const ollamaResponse = await fetch('http://194.177.1.240:11434/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'deepseek-r1:latest',
+        messages: [{ role: 'user', content: message }],
+        stream: false
+      })
+    });
+    
+    const data = await ollamaResponse.json();
+    
+    res.json({
+      message_id: `msg-${Date.now()}`,
+      reply: data.message?.content || 'Помилка генерації',
+      sources: [],
+      tokens_used: data.eval_count || 0
+    });
+  } catch (error) {
+    console.error(`[Copilot] ❌ Error: ${error.message}`);
+    res.status(500).json({ error: error.message });
   }
-
-  res.json({
-    message_id: `msg-${Date.now()}`,
-    reply: reply,
-    sources: sources,
-    tokens_used: 124
-  });
 });
 
 app.post('/api/v1/copilot/chat/stream', (req, res) => {
@@ -4441,21 +4437,23 @@ app.post('/api/v1/ai/query', async (req, res) => {
 
 app.post('/api/v1/ai/stt', upload.single('audio'), async (req, res) => {
   try {
-    const audioBytes = fs.readFileSync(req.file.path).toString('base64');
-    const audio = { content: audioBytes };
-    const config = {
-      encoding: 'WEBM_OPUS',
-      sampleRateHertz: 48000,
-      languageCode: 'uk-UA',
-    };
-    const request = { audio: audio, config: config };
-
-    const [response] = await speechClient.recognize(request);
-    const transcription = response.results
-      .map(result => result.alternatives[0].transcript)
-      .join('\n');
-
-    res.json({ text: transcription });
+    const audioPath = req.file.path;
+    console.log(`[STT] Processing audio file: ${audioPath}`);
+    exec(`python3 /Users/Shared/Predator_60/scripts/stt_server.py "${audioPath}"`, (error, stdout, stderr) => {
+      if (fs.existsSync(audioPath)) fs.unlinkSync(audioPath);
+      if (error) {
+        console.error(`[STT] ❌ Error: ${stderr || error.message}`);
+        return res.status(500).json({ error: "STT Engine failed" });
+      }
+      try {
+        const result = JSON.parse(stdout);
+        console.log(`[STT] ✅ Success: "${result.text}"`);
+        res.json(result);
+      } catch (e) {
+        console.error(`[STT] JSON Parse error: ${e.message}`);
+        res.status(500).json({ error: "Invalid STT response" });
+      }
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -4466,65 +4464,17 @@ app.post('/api/v1/ai/tts', async (req, res) => {
     const { text } = req.body;
     if (!text) return res.status(400).json({ error: "Text is required" });
     console.log(`[TTS] 🎙️ Processing request: "${text.substring(0, 50)}..."`);
-
-    try {
-      const request = {
-        input: { text: text },
-        // Using Wavenet-A for superior quality, Female to match 'Lesya'
-        voice: {
-          name: 'uk-UA-Wavenet-A',
-          languageCode: 'uk-UA',
-          ssmlGender: 'FEMALE'
-        },
-        audioConfig: {
-          audioEncoding: 'MP3',
-          speakingRate: 1.0,
-          pitch: 0.0
-        },
-      };
-
-      console.log(`[TTS] 🚀 Attempting Google Cloud Wavenet (uk-UA-Wavenet-A)...`);
-
-      const [response] = await ttsClient.synthesizeSpeech(request);
-      res.set('Content-Type', 'audio/mp3');
-      return res.send(response.audioContent);
-    } catch (googleErr) {
-      console.warn(`[TTS] ⚠️ Google Cloud failed: ${googleErr.message}`);
-      console.log(`[TTS] 🔄 Falling back to MacOS 'say' (System Voice: Lesya)...`);
-
-      // Fallback to MacOS 'say' + 'ffmpeg'
-      const tempId = Date.now();
-      const tempAiff = path.join('uploads', `fallback_${tempId}.aiff`);
-      const tempMp3 = path.join('uploads', `fallback_${tempId}.mp3`);
-
-      // Clean text for shell
-      const safeText = text.replace(/["'`]/g, '');
-
-      const sayCmd = `say -v Lesya "${safeText}" -o ${tempAiff}`;
-      const ffmpegCmd = `ffmpeg -i ${tempAiff} -codec:a libmp3lame -qscale:a 2 ${tempMp3}`;
-
-      exec(`${sayCmd} && ${ffmpegCmd}`, (error) => {
-        if (error) {
-          console.error(`[TTS] ❌ Fallback failed: ${error.message}`);
-          return res.status(500).json({ error: "All TTS engines failed" });
-        }
-
-        try {
-          const audioBuffer = fs.readFileSync(tempMp3);
-          console.log(`[TTS] 🆗 Fallback successful (MacOS Lesya)`);
-          res.set('Content-Type', 'audio/mp3');
-          res.send(audioBuffer);
-
-          // Cleanup
-          setTimeout(() => {
-            if (fs.existsSync(tempAiff)) fs.unlinkSync(tempAiff);
-            if (fs.existsSync(tempMp3)) fs.unlinkSync(tempMp3);
-          }, 5000);
-        } catch (readErr) {
-          res.status(500).json({ error: "Failed to read fallback audio" });
-        }
-      });
-    }
+    
+    // Call python TTS script
+    const safeText = text.replace(/["'`]/g, '');
+    exec(`python3 /Users/Shared/Predator_60/scripts/tts_server.py "${safeText}"`, { encoding: 'buffer', maxBuffer: 1024 * 1024 * 10 }, (error, stdout, stderr) => {
+      if (error) {
+        console.error(`[TTS] ❌ Error: ${stderr || error.message}`);
+        return res.status(500).json({ error: "TTS Engine failed" });
+      }
+      res.set('Content-Type', 'audio/wav');
+      res.send(stdout);
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -6027,46 +5977,33 @@ app.post('/api/pull', (req, res) => {
 });
 
 // AI Chat Simulation
-app.post('/api/v1/ai/chat', (req, res) => {
-  const { messages, model } = req.body;
-  const lastMsg = messages[messages.length - 1].content;
-  const selectedModel = model || 'glm-5.1:elite';
+app.post('/api/v1/ai/chat', async (req, res) => {
+  const { messages, model, stream } = req.body;
+  const selectedModel = model || 'deepseek-r1:latest';
   
   console.log(`[AI] Chat request using model: ${selectedModel}`);
   
-  const thoughts = [
-    { id: 'th-1', stage: 'observation', content: `[GLM-5.1-AGENT] Сприйняття директиви: "${lastMsg}". Поточний стек: OSINT-V3.`, confidence: 0.99, timestamp: new Date().toISOString() },
-    { id: 'th-2', stage: 'analysis', content: 'Активовано SWE-Bench Pro аналізатор. Сканування кодової бази на відповідність суверенним стандартам...', confidence: 0.97, timestamp: new Date().toISOString() },
-    { id: 'th-3', stage: 'action', content: 'Перевірка ZROK тунелю: NVIDIA КЛАСТЕР ➔ ТРАНЗИТ. Стан: СТАБІЛЬНИЙ.', confidence: 0.99, timestamp: new Date().toISOString() },
-    { id: 'th-4', stage: 'decision', content: 'Синтез стратегічної відповіді v56.5. Формування декрету...', confidence: 0.98, timestamp: new Date().toISOString() }
-  ];
-
-  const content = `СУВЕРЕННИЙ ШІ-АГЕНТ GLM-5.1 (v56.5-ELITE): Системи активовані. 
-  
-  Ваш запит: "${lastMsg}" оброблено через агентну матрицю наступного покоління. 
-  
-  [ТЕХНІЧНИЙ_СТАТУС]:
-  - Модель: GLM-5.1:SOVEREIGN
-  - Продуктивність: SWE-Bench Pro (SOTA)
-  - Канал: NVIDIA-A100 через ZROK Tunnel
-  - Стан: Повна автономність активована.
-  
-  Чим я можу допомогти у вашій стратегічній місії?`;
-
-  setTimeout(() => {
-    res.json({
-      choices: [{
-        message: {
-          role: 'assistant',
-          content,
-          thought_process: thoughts
-        }
-      }],
-      usage: { total_tokens: 284 },
-      model: selectedModel,
-      node_source: 'NVIDIA_VIA_ZROK'
+  try {
+    const ollamaResponse = await fetch('http://194.177.1.240:11434/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: selectedModel,
+        messages: messages,
+        stream: false
+      })
     });
-  }, 1200);
+    
+    if (!ollamaResponse.ok) {
+      throw new Error(`Ollama API error: ${ollamaResponse.statusText}`);
+    }
+    
+    const data = await ollamaResponse.json();
+    res.json(data);
+  } catch (error) {
+    console.error(`[AI] ❌ Error: ${error.message}`);
+    res.status(500).json({ error: error.message });
+  }
 });
 
 app.get('/api/v1/ai/thoughts', (req, res) => {
