@@ -75,14 +75,12 @@ export const useVoiceAssistant = () => {
 
   const sendAudioToSTT = async (blob: Blob) => {
     setIsProcessing(true);
-    const formData = new FormData();
-    formData.append('audio', blob, 'recording.webm');
-
     try {
-      const response = await axios.post('/api/v1/ai/stt', formData);
+      const response = await axios.post('/api/v1/ai/stt', blob, {
+        headers: { 'Content-Type': 'audio/webm' }
+      });
       const text = response.data.text;
       console.log('STT Result:', text);
-      // Here we could trigger a command or a chat response
       setIsProcessing(false);
       return text;
     } catch (error) {

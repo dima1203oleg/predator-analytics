@@ -124,31 +124,236 @@ app.get('/api/v1/events/stream', (req, res) => {
 app.get('/api/v1/graph/summary', (req, res) => {
   res.json({
     nodes: [
-      { id: 'TARGET-01', type: 'person', riskScore: 90, label: 'Віктор О.' },
-      { id: 'SHELL-99', type: 'company', riskScore: 85, label: 'Offshore Holdings Ltd' },
-      { id: 'CYPRUS', type: 'country', riskScore: 50, label: 'Кіпр' },
-      { id: 'BANK-01', type: 'company', riskScore: 20, label: 'Global Bank' },
-      { id: 'DOC-123', type: 'document', riskScore: 10, label: 'Транзакція 590M' },
-      { id: 'TRANS-LOG', type: 'company', riskScore: 78, label: 'ТОВ "Транс-Логістик"' },
-      { id: 'PORT-OD', type: 'location', riskScore: 45, label: 'Порт Одеса' },
-      { id: 'CUSTOMS-42', type: 'document', riskScore: 65, label: 'Декларація #42-2024' },
+      { id: 'TARGET-01', type: 'PERSON',      riskScore: 90,  label: 'Віктор О.',               connections: 5 },
+      { id: 'SHELL-99',  type: 'COMPANY',     riskScore: 85,  label: 'Offshore Holdings Ltd',   connections: 8 },
+      { id: 'CYPRUS',    type: 'CLUSTER',     riskScore: 50,  label: 'Кіпр (офшор)',            connections: 6 },
+      { id: 'BANK-01',   type: 'COMPANY',     riskScore: 20,  label: 'Global Bank',              connections: 4 },
+      { id: 'DOC-123',   type: 'DOCUMENT',    riskScore: 60,  label: 'Транзакція 590M UAH',     connections: 2 },
+      { id: 'TRANS-LOG', type: 'COMPANY',     riskScore: 78,  label: 'ТОВ "Транс-Логістик"',   connections: 7 },
+      { id: 'PORT-OD',   type: 'CLUSTER',     riskScore: 45,  label: 'Порт Одеса',              connections: 3 },
+      { id: 'CUSTOMS-42',type: 'DOCUMENT',    riskScore: 65,  label: 'Декларація #42-2024',     connections: 3 },
+      { id: 'RISK-01',   type: 'RISK',        riskScore: 95,  label: 'Схема відмивання',        connections: 4 },
+      { id: 'PERSON-02', type: 'PERSON',      riskScore: 72,  label: 'Андрій К. (директор)',   connections: 3 },
+      { id: 'BVI-01',    type: 'CLUSTER',     riskScore: 88,  label: 'BVI Holdings',            connections: 5 },
+      { id: 'TRANS-02',  type: 'TRANSACTION', riskScore: 70,  label: 'SWIFT $4.2M',             connections: 2 },
     ],
-    edges: [
-      { source: 'TARGET-01', target: 'SHELL-99', weight: 5 },
-      { source: 'SHELL-99', target: 'CYPRUS', weight: 2 },
-      { source: 'SHELL-99', target: 'BANK-01', weight: 8 },
-      { source: 'DOC-123', target: 'TARGET-01', weight: 1 },
-      { source: 'TRANS-LOG', target: 'PORT-OD', weight: 4 },
-      { source: 'TRANS-LOG', target: 'TARGET-01', weight: 6 },
-      { source: 'CUSTOMS-42', target: 'TRANS-LOG', weight: 3 },
-      { source: 'CUSTOMS-42', target: 'PORT-OD', weight: 2 },
+    links: [
+      { id: 'e1', source: 'TARGET-01',  target: 'SHELL-99',   weight: 5, type: 'CONTROLS' },
+      { id: 'e2', source: 'SHELL-99',   target: 'CYPRUS',     weight: 3, type: 'REGISTERED_IN' },
+      { id: 'e3', source: 'SHELL-99',   target: 'BANK-01',    weight: 8, type: 'HAS_ACCOUNT' },
+      { id: 'e4', source: 'DOC-123',    target: 'TARGET-01',  weight: 1, type: 'RELATED_TO' },
+      { id: 'e5', source: 'TRANS-LOG',  target: 'PORT-OD',    weight: 4, type: 'OPERATES_AT' },
+      { id: 'e6', source: 'TRANS-LOG',  target: 'TARGET-01',  weight: 6, type: 'OWNED_BY' },
+      { id: 'e7', source: 'CUSTOMS-42', target: 'TRANS-LOG',  weight: 3, type: 'FILED_BY' },
+      { id: 'e8', source: 'CUSTOMS-42', target: 'PORT-OD',    weight: 2, type: 'CLEARED_AT' },
+      { id: 'e9', source: 'RISK-01',    target: 'TARGET-01',  weight: 9, type: 'IMPLICATES' },
+      { id: 'e10',source: 'PERSON-02',  target: 'TRANS-LOG',  weight: 4, type: 'DIRECTOR_OF' },
+      { id: 'e11',source: 'BVI-01',     target: 'SHELL-99',   weight: 7, type: 'PARENT_OF' },
+      { id: 'e12',source: 'TRANS-02',   target: 'BANK-01',    weight: 5, type: 'PROCESSED_BY' },
+      { id: 'e13',source: 'TARGET-01',  target: 'BVI-01',     weight: 6, type: 'BENEFICIARY' },
     ],
   });
 });
 
 app.get('/api/v1/graph/customs', (req, res) => {
-  res.json({ nodes: [], edges: [], total: 0 });
+  res.json({
+    nodes: [
+      { id: 'C-DECL-001', type: 'DOCUMENT',  label: 'Декларація UA-2024-001', riskScore: 55 },
+      { id: 'C-COMP-001', type: 'COMPANY',   label: 'ТОВ "Імпорт-Трейд"',   riskScore: 70 },
+      { id: 'C-PORT-001', type: 'CLUSTER',   label: 'Порт Іллічівськ',       riskScore: 30 },
+      { id: 'C-GOOD-001', type: 'DOCUMENT',  label: 'Вантаж: Електроніка',   riskScore: 40 },
+    ],
+    edges: [
+      { id: 'ce1', source: 'C-DECL-001', target: 'C-COMP-001', weight: 3 },
+      { id: 'ce2', source: 'C-DECL-001', target: 'C-PORT-001', weight: 2 },
+      { id: 'ce3', source: 'C-DECL-001', target: 'C-GOOD-001', weight: 4 },
+    ],
+    total: 4,
+  });
 });
+
+// ==========================================
+// OSINT ENDPOINTS
+// ==========================================
+
+// Морський OSINT
+app.get('/api/v1/maritime/vessels', (req, res) => {
+  res.json({
+    vessels: [
+      { id: 'v1', name: 'ODESSA STAR', imo: '9876543', flag: 'Panama', risk_score: 88, lat: 46.49, lon: 30.73, status: 'AIS_OFF', last_port: 'Одеса', destination: 'Limassol', cargo_type: 'General' },
+      { id: 'v2', name: 'BLACK SEA TRADER', imo: '1234567', flag: 'Marshall Islands', risk_score: 72, lat: 45.98, lon: 31.10, status: 'UNDERWAY', last_port: 'Маріуполь', destination: 'Стамбул', cargo_type: 'Bulk' },
+      { id: 'v3', name: 'EURO CARGO', imo: '', flag: 'Unknown', risk_score: 95, lat: 46.20, lon: 29.85, status: 'PHANTOM', last_port: 'Невідомо', destination: 'Невідомо', cargo_type: 'Невідомо' },
+      { id: 'v4', name: 'UKRAINE EXPRESS', imo: '7654321', flag: 'Ukraine', risk_score: 15, lat: 46.60, lon: 30.90, status: 'UNDERWAY', last_port: 'Херсон', destination: 'Констанца', cargo_type: 'Container' },
+    ],
+    total: 4,
+    high_risk_count: 2,
+  });
+});
+
+app.get('/api/v1/maritime/ports', (req, res) => {
+  res.json({
+    ports: [
+      { id: 'port-1', name: 'Одеса',       country: 'UA', risk_level: 'medium', throughput_tons: 25000000 },
+      { id: 'port-2', name: 'Іллічівськ',  country: 'UA', risk_level: 'high',   throughput_tons: 18000000 },
+      { id: 'port-3', name: 'Миколаїв',    country: 'UA', risk_level: 'low',    throughput_tons: 12000000 },
+      { id: 'port-4', name: 'Limassol',    country: 'CY', risk_level: 'high',   throughput_tons: 9000000 },
+    ],
+  });
+});
+
+// Реєстри (ОСІНТ)
+app.get('/api/v1/registries/companies', (req, res) => {
+  const q = req.query.q || '';
+  res.json({
+    results: [
+      { edrpou: '12345678', name: 'ТОВ "Транс-Логістик"', status: 'active', director: 'Іванов І.І.', capital: 500000, risk_score: 78, founders: ['Offshore Holdings Ltd'] },
+      { edrpou: '87654321', name: 'ТОВ "Імпорт-Трейд"', status: 'active', director: 'Петренко В.С.', capital: 100000, risk_score: 55, founders: ['Фізична особа'] },
+      { edrpou: '11223344', name: 'ПП "Карго Сервіс"', status: 'liquidating', director: 'Сидоренко А.П.', capital: 50000, risk_score: 82, founders: ['BVI Holdings Ltd'] },
+    ],
+    total: 3,
+    query: q,
+  });
+});
+
+app.get('/api/v1/registries/persons', (req, res) => {
+  res.json({
+    results: [
+      { id: 'p1', full_name: 'Віктор О.',       dob: '1975-03-15', risk_score: 90, sanctions: true,  pep: true,  companies: ['SHELL-99', 'TRANS-LOG'] },
+      { id: 'p2', full_name: 'Андрій К.',        dob: '1981-07-22', risk_score: 72, sanctions: false, pep: false, companies: ['TRANS-LOG'] },
+      { id: 'p3', full_name: 'Олена С.',         dob: '1990-11-08', risk_score: 30, sanctions: false, pep: true,  companies: ['BANK-01'] },
+    ],
+    total: 3,
+  });
+});
+
+// Тендери (Prozorro OSINT)
+app.get('/api/v1/tenders', (req, res) => {
+  res.json({
+    tenders: [
+      { id: 'UA-2024-T001', title: 'Постачання пального для держпідприємств', amount: 15000000, winner: 'ТОВ "Транс-Логістик"', status: 'complete', risk_score: 78, date: '2024-03-15' },
+      { id: 'UA-2024-T002', title: 'Закупівля медичних товарів',              amount: 8500000,  winner: 'ТОВ "Медімпорт"',         status: 'active',   risk_score: 45, date: '2024-04-01' },
+      { id: 'UA-2024-T003', title: 'Будівельні роботи на об\'єкті А',         amount: 32000000, winner: 'ТОВ "Будстрой-2000"',      status: 'complete', risk_score: 65, date: '2024-01-20' },
+    ],
+    total: 3,
+    high_risk_count: 1,
+  });
+});
+
+// Data.gov / Відкриті дані
+app.get('/api/v1/datagov/datasets', (req, res) => {
+  res.json({
+    datasets: [
+      { id: 'ds-1', name: 'Митні декларації 2024 Q1', records: 456789, last_updated: '2024-04-01', status: 'indexed' },
+      { id: 'ds-2', name: 'Реєстр санкцій РНБО',     records: 1823,   last_updated: '2024-04-10', status: 'indexed' },
+      { id: 'ds-3', name: 'ПЕП-реєстр України',       records: 24891,  last_updated: '2024-03-28', status: 'indexed' },
+      { id: 'ds-4', name: 'Дані Prozorro 2024',        records: 891234, last_updated: '2024-04-12', status: 'indexed' },
+    ],
+    total: 4,
+  });
+});
+
+// Пошук по ОСІНТ
+app.get('/api/v1/osint/search', (req, res) => {
+  const q = req.query.q || '';
+  res.json({
+    results: [
+      { id: 'r1', type: 'company', label: 'ТОВ "Транс-Логістик"',  risk_score: 78, source: 'EDR', matched_field: 'name' },
+      { id: 'r2', type: 'person',  label: 'Віктор О. (CEO)',        risk_score: 90, source: 'NACP', matched_field: 'name' },
+      { id: 'r3', type: 'vessel',  label: 'ODESSA STAR',            risk_score: 88, source: 'MarineTraffic', matched_field: 'name' },
+      { id: 'r4', type: 'tender',  label: 'UA-2024-T001 (Пальне)', risk_score: 78, source: 'Prozorro', matched_field: 'winner' },
+    ],
+    total: 4,
+    query: q,
+  });
+});
+
+// Admin OSINT (для OsintCenter)
+app.get('/api/v2/admin/osint/sources', (req, res) => {
+  res.json({
+    sources: [
+      { id: 's1', name: 'Єдиний держреєстр (EDR)',   type: 'white', status: 'active',   last_sync: '2024-04-12T10:00:00Z', records: 2891234 },
+      { id: 's2', name: 'MarineTraffic AIS',          type: 'white', status: 'active',   last_sync: '2024-04-12T11:30:00Z', records: 456789 },
+      { id: 's3', name: 'Prozorro OpenData',          type: 'white', status: 'active',   last_sync: '2024-04-12T09:00:00Z', records: 1234567 },
+      { id: 's4', name: 'NACP (декларації)',          type: 'white', status: 'active',   last_sync: '2024-04-11T22:00:00Z', records: 89012 },
+      { id: 's5', name: 'Офшорні реєстри (Darknet)', type: 'dark',  status: 'warning',  last_sync: '2024-04-10T05:00:00Z', records: 12345 },
+      { id: 's6', name: 'Telegram-канали (OSINT)',    type: 'dark',  status: 'active',   last_sync: '2024-04-12T08:00:00Z', records: 5678 },
+    ],
+  });
+});
+
+app.get('/api/v2/admin/osint/quarantine', (req, res) => {
+  res.json({
+    items: [
+      { id: 'q1', source: 'Darknet Registries', content: 'Shell company data BVI-01', reason: 'Unverified source', created_at: '2024-04-11T14:00:00Z' },
+      { id: 'q2', source: 'Telegram OSINT',     content: 'Vessel location spoofing EURO CARGO', reason: 'Suspicious data pattern', created_at: '2024-04-12T08:00:00Z' },
+    ],
+    total: 2,
+  });
+});
+
+app.get('/api/v2/admin/osint/policies', (req, res) => {
+  res.json({
+    policies: [
+      { id: 'pol-1', domain: 'customs', white_osint: true,  dark_osint: false, description: 'Стандарт митної аналітики' },
+      { id: 'pol-2', domain: 'maritime', white_osint: true, dark_osint: true,  description: 'Морська розвідка (дозволений Dark OSINT)' },
+      { id: 'pol-3', domain: 'finance',  white_osint: true, dark_osint: false,  description: 'Фінансова аналітика' },
+    ],
+  });
+});
+
+// DB Admin endpoints
+app.get('/api/v1/db-admin/health', (req, res) => {
+  res.json({
+    databases: {
+      postgresql: { status: 'healthy', latency_ms: 2,  connections: 12, version: '16.2' },
+      clickhouse:  { status: 'healthy', latency_ms: 5,  connections: 4,  version: '24.1' },
+      opensearch:  { status: 'healthy', latency_ms: 8,  connections: 6,  version: '2.12' },
+      qdrant:      { status: 'healthy', latency_ms: 3,  connections: 2,  version: '1.8.0' },
+      neo4j:       { status: 'healthy', latency_ms: 12, connections: 3,  version: '5.17' },
+      redis:       { status: 'healthy', latency_ms: 1,  connections: 20, version: '7.2' },
+      minio:       { status: 'healthy', latency_ms: 15, connections: 5,  version: 'RELEASE.2024' },
+    },
+    overall_status: 'healthy',
+  });
+});
+
+app.get('/api/v1/db-admin/contract', (req, res) => {
+  res.json({
+    contract: [
+      { db: 'PostgreSQL', role: 'SSOT', description: 'Хранитель Істини — метадані, транзакції, юзери' },
+      { db: 'ClickHouse',  role: 'OLAP', description: 'Аналітичний Мозок — агрегації, 100M+ записів' },
+      { db: 'OpenSearch',  role: 'Search', description: 'Текстова Розвідка — full-text по документах' },
+      { db: 'Qdrant',      role: 'Vector', description: 'AI Пам\'ять — ембедінги для RAG' },
+      { db: 'Neo4j',       role: 'Graph', description: 'Детектор Зв\'язків — схеми власності, фрод' },
+      { db: 'Redis',       role: 'Cache', description: 'Швидка Пам\'ять — сесії, черги' },
+      { db: 'MinIO',       role: 'Storage', description: 'Фізичне Сховище — PDF, скани, файли' },
+    ],
+  });
+});
+
+app.get('/api/v1/db-admin/router/stats', (req, res) => {
+  res.json({
+    routed_queries: { postgresql: 1245, clickhouse: 8923, opensearch: 456, qdrant: 123, neo4j: 234 },
+    cache_hit_rate: 0.82,
+    total_queries_24h: 11981,
+  });
+});
+
+app.post('/api/v1/db-admin/router/classify', (req, res) => {
+  res.json({ query: req.body?.query || '', recommended_db: 'clickhouse', reason: 'Analytical aggregation detected', confidence: 0.94 });
+});
+
+// Stats
+app.get('/api/v1/stats/search', (req, res) => {
+  res.json({
+    total_queries: 15678,
+    daily_queries: [120, 98, 145, 202, 187, 234, 210],
+    top_queries: ['ТОВ Транс', 'Offshore', 'Panama', 'кіпр', 'SWIFT'],
+    avg_response_ms: 145,
+  });
+});
+
+
 
 // ==========================================
 // DEEPSEEK TUNING (MOCK)

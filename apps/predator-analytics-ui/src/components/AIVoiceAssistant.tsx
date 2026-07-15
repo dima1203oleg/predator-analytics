@@ -11,6 +11,8 @@ import { cn } from '@/utils/cn';
 import { useAppStore } from '@/store/useAppStore';
 import { Canvas } from '@react-three/fiber';
 import { HoloFaceModel } from '../features/nexus/components/HoloFaceModel';
+import { useVoiceAssistant } from '@/hooks/useVoiceAssistant';
+import axios from 'axios';
 
 interface AIVoiceAssistantProps {
   className?: string;
@@ -23,75 +25,34 @@ export const AIVoiceAssistant: React.FC<AIVoiceAssistantProps> = ({
   onCommand,
   language = 'uk-UA',
 }) => {
-  const [isListening, setIsListening] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
+  const { setSpeakingState } = useAppStore();
   const [transcript, setTranscript] = useState('');
   const [response, setResponse] = useState('');
-  const [isSpeaking, setIsSpeaking] = useState(false);
   const [volume, setVolume] = useState(1);
+  const [isProcessingChat, setIsProcessingChat] = useState(false);
 
-  const recognitionRef = useRef<any>(null);
-  const synthesisRef = useRef<SpeechSynthesis | null>(null);
+  const {
+    isRecording,
+    isSpeaking,
+    isProcessing,
+    speak,
+    startRecording,
+    stopRecording
+  } = useVoiceAssistant();
 
-  // Feature detection – fallback UI when unavailable
-  const isSpeechSupported =
-    typeof window !== 'undefined' &&
-    ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) &&
-    'speechSynthesis' in window;
-
+  // Sync isSpeaking with global store
   useEffect(() => {
-    if (!isSpeechSupported) return;
-
-    // Initialize Speech Recognition
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (SpeechRecognition) {
-      recognitionRef.current = new SpeechRecognition();
-      recognitionRef.current.continuous = false;
-      recognitionRef.current.interimResults = true;
-      recognitionRef.current.lang = language;
-
-      recognitionRef.current.onresult = (event: any) => {
-        const current = event.resultIndex;
-        const transcript = event.results[current][0].transcript;
-        setTranscript(transcript);
-
-        if (event.results[current].isFinal) {
-          handleCommand(transcript);
-        }
-      };
-
-      recognitionRef.current.onerror = (event: any) => {
-        console.error('Speech recognition error:', event.error);
-        setIsListening(false);
-      };
-
-      recognitionRef.current.onend = () => {
-        setIsListening(false);
-      };
-    }
-
-    // Initialize Speech Synthesis
-    synthesisRef.current = window.speechSynthesis;
-
-    return () => {
-      if (recognitionRef.current) {
-        recognitionRef.current.stop();
-      }
-      if (synthesisRef.current) {
-        synthesisRef.current.cancel();
-      }
-    };
-  }, [language]);
-
-  const { setSpeakingState, speakText } = useAppStore();
+    setSpeakingState(isSpeaking);
+  }, [isSpeaking, setSpeakingState]);
 
   const handleCommand = async (command: string) => {
-    setIsProcessing(true);
+    if (!command) return;
+    setIsProcessingChat(true);
     setTranscript(command);
-
-    // Simulate AI processing
-    setTimeout(() => {
-      const aiResponse = generateResponse(command);
+    
+    try {
+      const res = await axios.post('/api/v1/copilot/chat', { message: command });
+      const aiResponse = res.data.reply || 'Помилка генерації';
       setResponse(aiResponse);
       
       // Оновлюємо глобальний стейт для аватара
@@ -100,87 +61,41 @@ export const AIVoiceAssistant: React.FC<AIVoiceAssistantProps> = ({
       }));
       
       speak(aiResponse);
-      setIsProcessing(false);
-
+      
       if (onCommand) {
         onCommand(command);
       }
-    }, 1000);
+    } catch (error) {
+      console.error('Chat Error:', error);
+      const errRes = 'Помилка з\'єднання з нейронною мережею PREDATOR.';
+      setResponse(errRes);
+      speak(errRes);
+    } finally {
+      setIsProcessingChat(false);
+    }
   };
 
-  const generateResponse = (command: string): string => {
-    const lowerCommand = command.toLowerCase();
-
-    if (lowerCommand.includes('пошук') || lowerCommand.includes('знайди')) {
-      return 'Запускаю пошук по базі даних PREDATOR. Що саме ви шукаєте?';
-    }
-    if (lowerCommand.includes('моніторинг') || lowerCommand.includes('статус')) {
-      return 'Система моніторингу активна. Всі вузли в онлайн режимі. Відображаю тактичну панель.';
-    }
-    if (lowerCommand.includes('допомога') || lowerCommand.includes('help')) {
-      return 'Я PREDATOR AI-асистент. Можу допомогти з пошуком, моніторингом, аналітикою та навігацією. Скажіть "допомога" для списку команд.';
-    }
-    if (lowerCommand.includes('аналітика') || lowerCommand.includes('звіт')) {
-      return 'Генерую аналітичний звіт. Збираю дані з усіх джерел OSINT.';
-    }
-    if (lowerCommand.includes('налаштування') || lowerCommand.includes('settings')) {
-      return 'Відкриваю панель налаштувань. Доступні параметри: тема, мова, сповіщення.';
-    }
-
-    return `Отримав команду: "${command}". Обробляю через нейронну мережу PREDATOR.`;
-  };
-
-  const speak = (text: string) => {
-    if (!synthesisRef.current) return;
-
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = language;
-    utterance.volume = volume;
-    utterance.rate = 0.85; // Slower
-    utterance.pitch = 0.1; // Deep bass
-
-    // Try to select a male voice if available
-    const voices = window.speechSynthesis.getVoices();
-    const ukVoices = voices.filter(v => v.lang.includes('uk'));
-    if (ukVoices.length > 0) {
-      const maleVoice = ukVoices.find(v => v.name.toLowerCase().includes('male'));
-      utterance.voice = maleVoice || ukVoices[0];
-    }
-
-    utterance.onstart = () => {
-      setIsSpeaking(true);
-      setSpeakingState(true);
-    };
-    utterance.onend = () => {
-      setIsSpeaking(false);
-      setSpeakingState(false);
-    };
-    utterance.onerror = () => {
-      setIsSpeaking(false);
-      setSpeakingState(false);
-    };
-
-    synthesisRef.current.speak(utterance);
-  };
-
-  const toggleListening = () => {
-    if (isListening) {
-      recognitionRef.current?.stop();
-      setIsListening(false);
+  const toggleListening = async () => {
+    if (isRecording) {
+      const text = await stopRecording();
+      if (text) {
+        handleCommand(text);
+      }
     } else {
-      recognitionRef.current?.start();
-      setIsListening(true);
       setTranscript('');
       setResponse('');
+      await startRecording();
     }
   };
 
   const toggleSpeaking = () => {
-    if (isSpeaking) {
-      synthesisRef.current?.cancel();
-      setIsSpeaking(false);
-    }
+    // Cannot easily stop TTS via Audio blob once playing, but we can try 
+    // Usually it stops when Audio object is paused, which is handled inside useVoiceAssistant (speak function revokes previous).
+    // Let's leave it as is or add a stopSpeak to the hook later.
   };
+
+  const showOverlay = isRecording || isProcessing || isProcessingChat || isSpeaking;
+  const statusText = isRecording ? 'СЛУХАЮ...' : (isProcessing || isProcessingChat) ? 'ОБРОБЛЯЮ...' : 'ВІДПОВІДАЮ...';
 
   return (
     <div className={cn('fixed bottom-8 right-[120px] z-50', className)}>
@@ -191,7 +106,7 @@ export const AIVoiceAssistant: React.FC<AIVoiceAssistantProps> = ({
       >
         {/* Pulsing effect when listening */}
         <AnimatePresence>
-          {isListening && (
+          {isRecording && (
             <motion.div
               className="absolute inset-0 bg-rose-500 rounded-full blur-xl opacity-50"
               animate={{
@@ -215,11 +130,11 @@ export const AIVoiceAssistant: React.FC<AIVoiceAssistantProps> = ({
             'bg-gradient-to-br from-rose-600 to-rose-800',
             'border-2 border-rose-400/30',
             'shadow-[0_0_30px_rgba(225,29,72,0.5)]',
-            isListening && 'animate-pulse'
+            isRecording && 'animate-pulse'
           )}
           whileHover={{ boxShadow: '0 0 50px rgba(225,29,72,0.7)' }}
         >
-          {isListening ? (
+          {isRecording ? (
             <MicOff className="w-8 h-8 text-white" />
           ) : (
             <Mic className="w-8 h-8 text-white" />
@@ -228,7 +143,7 @@ export const AIVoiceAssistant: React.FC<AIVoiceAssistantProps> = ({
 
         {/* Status indicator */}
         <AnimatePresence>
-          {(isListening || isProcessing || isSpeaking) && (
+          {showOverlay && (
             <motion.div
               initial={{ opacity: 0, y: 20, scale: 0.8 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -237,11 +152,11 @@ export const AIVoiceAssistant: React.FC<AIVoiceAssistantProps> = ({
             >
               {/* Header */}
               <div className="flex items-center gap-2 mb-3">
-                {isListening && <BrainCircuit className="w-5 h-5 text-rose-500 animate-pulse" />}
-                {isProcessing && <Sparkles className="w-5 h-5 text-amber-500 animate-spin" />}
+                {isRecording && <BrainCircuit className="w-5 h-5 text-rose-500 animate-pulse" />}
+                {(isProcessing || isProcessingChat) && <Sparkles className="w-5 h-5 text-amber-500 animate-spin" />}
                 {isSpeaking && <Volume2 className="w-5 h-5 text-emerald-500" />}
                 <span className="text-xs font-bold text-white uppercase tracking-wider">
-                  {isListening ? 'СЛУХАЮ...' : isProcessing ? 'ОБРОБЛЯЮ...' : 'ВІДПОВІДАЮ...'}
+                  {statusText}
                 </span>
               </div>
 
@@ -271,28 +186,13 @@ export const AIVoiceAssistant: React.FC<AIVoiceAssistantProps> = ({
                 </div>
               )}
 
-              {/* Volume control */}
-              <div className="mt-3 flex items-center gap-2">
-                <VolumeX className="w-4 h-4 text-slate-400" />
-                <input
-                  type="range"
-                  min="0"
-                  max="1"
-                  step="0.1"
-                  value={volume}
-                  onChange={(e) => setVolume(parseFloat(e.target.value))}
-                  className="flex-1 h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer"
-                />
-                <Volume2 className="w-4 h-4 text-slate-400" />
-              </div>
-
               {/* Stop speaking button */}
               {isSpeaking && (
                 <Button variant="cyber"
-                  onClick={toggleSpeaking}
+                  onClick={() => window.location.reload()}
                   className="mt-2 w-full py-2 bg-rose-600/20 border border-rose-500/30 rounded-lg text-xs font-bold text-rose-400 hover:bg-rose-600/30 transition-colors"
                 >
-                  ЗУПИНИТИ ВІДТВОРЕННЯ
+                  ПЕРЕЗАВАНТАЖИТИ
                 </Button>
               )}
             </motion.div>

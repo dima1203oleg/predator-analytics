@@ -79,10 +79,10 @@ export const AppRoutesNew = () => {
       <Suspense fallback={<LoadingSkeleton />}>
         <ErrorBoundary>
           <Routes location={location} key={location.pathname}>
-            <Route path="/" element={<Navigate to="/universe" replace />} />
-            <Route path="/command" element={<Navigate to="/universe" replace />} />
-            <Route path="/cyber" element={<Navigate to="/universe" replace />} />
-            <Route path="/dashboard" element={<Navigate to="/universe" replace />} />
+            <Route path="/" element={<Navigate to="/command" replace />} />
+            <Route path="/command" element={<CommandCenter />} />
+            <Route path="/cyber" element={<Navigate to="/command" replace />} />
+            <Route path="/dashboard" element={<Navigate to="/command" replace />} />
             <Route path="/omniscience" element={
               <CyberCommandLayout>
                 <OmniscienceView />
@@ -90,7 +90,7 @@ export const AppRoutesNew = () => {
             } />
             <Route path="/omniscience-v2" element={<OmniscienceV2 />} />
             <Route path="/universe" element={<UniverseView />} />
-            <Route path="/elite-command" element={<Navigate to="/universe" replace />} />
+            <Route path="/elite-command" element={<Navigate to="/command" replace />} />
             <Route path="/predator" element={<CommandCenter />} />
             <Route path="/void-forge" element={<VoidForgeScene />} />
             <Route path="/flow-analytics" element={<FlowAnalytics />} />
