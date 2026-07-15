@@ -5,12 +5,14 @@ export const useVoiceAssistant = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [useNativeSTT, setUseNativeSTT] = useState(false);
+  const [useNativeSTT, setUseNativeSTT] = useState(import.meta.env.VITE_ENABLE_MOCK_API === 'true');
   
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const nativeRecognitionRef = useRef<any>(null);
+  const nativeTranscriptRef = useRef<string>('');
+  const stopPromiseResolveRef = useRef<((value: string | undefined) => void) | null>(null);
 
   const speak = useCallback(async (text: string) => {
     if (!text) return;
@@ -52,14 +54,59 @@ export const useVoiceAssistant = () => {
     setIsSpeaking(false);
   }, []);
 
+  const sendAudioToSTT = async (blob: Blob) => {
+    setIsProcessing(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', blob, 'audio.webm');
+      const response = await axios.post('/api/v1/voice/transcribe', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      const text = response.data.text;
+      console.log('STT Result:', text);
+      setIsProcessing(false);
+      return text;
+    } catch (error) {
+      console.warn('STT Backend Error, falling back to native STT for next time:', error);
+      setUseNativeSTT(true);
+      setIsProcessing(false);
+      return undefined;
+    }
+  };
+
   const startRecording = useCallback(async () => {
+    nativeTranscriptRef.current = '';
+    
     if (useNativeSTT) {
       const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       if (SpeechRecognition) {
         const recognition = new SpeechRecognition();
         recognition.lang = 'uk-UA';
         recognition.interimResults = false;
-        recognition.continuous = false;
+        recognition.continuous = true;
+        
+        recognition.onresult = (event: any) => {
+          const text = event.results[event.results.length - 1][0].transcript;
+          nativeTranscriptRef.current += ' ' + text;
+        };
+        
+        recognition.onend = () => {
+          setIsRecording(false);
+          if (stopPromiseResolveRef.current) {
+            stopPromiseResolveRef.current(nativeTranscriptRef.current.trim() || undefined);
+            stopPromiseResolveRef.current = null;
+          }
+        };
+
+        recognition.onerror = (event: any) => {
+          console.error('Native STT Error:', event.error);
+          setIsRecording(false);
+          if (stopPromiseResolveRef.current) {
+            stopPromiseResolveRef.current(undefined);
+            stopPromiseResolveRef.current = null;
+          }
+        };
+
         nativeRecognitionRef.current = recognition;
         recognition.start();
         setIsRecording(true);
@@ -81,60 +128,35 @@ export const useVoiceAssistant = () => {
       setIsRecording(true);
     } catch (error) {
       console.error('Recording Error:', error);
+      setUseNativeSTT(true);
     }
   }, [useNativeSTT]);
 
-  const sendAudioToSTT = async (blob: Blob) => {
-    setIsProcessing(true);
-    try {
-      const formData = new FormData();
-      formData.append('file', blob, 'audio.webm');
-      const response = await axios.post('/api/v1/voice/transcribe', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
-      const text = response.data.text;
-      console.log('STT Result:', text);
-      setIsProcessing(false);
-      return text;
-    } catch (error) {
-      console.warn('STT Backend Error, falling back to native STT for next time:', error);
-      setUseNativeSTT(true);
-      setIsProcessing(false);
-      return undefined;
-    }
-  };
-
   const stopRecording = useCallback(() => {
     return new Promise<string | undefined>((resolve) => {
-      if (useNativeSTT && nativeRecognitionRef.current && isRecording) {
-        nativeRecognitionRef.current.onresult = (event: any) => {
-          const text = event.results[0][0].transcript;
-          resolve(text);
-        };
-        nativeRecognitionRef.current.onerror = (event: any) => {
-          console.error('Native STT Error:', event.error);
+      if (useNativeSTT && nativeRecognitionRef.current) {
+        stopPromiseResolveRef.current = resolve;
+        try {
+          nativeRecognitionRef.current.stop();
+        } catch (e) {
           resolve(undefined);
-        };
-        nativeRecognitionRef.current.onend = () => {
-          setIsRecording(false);
-        };
-        nativeRecognitionRef.current.stop();
-      } else if (mediaRecorderRef.current && isRecording) {
+        }
+      } else if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
         mediaRecorderRef.current.onstop = async () => {
           const audioBlob = new Blob(chunksRef.current, { type: 'audio/webm' });
           const text = await sendAudioToSTT(audioBlob);
           resolve(text);
           
-          // Stop all audio tracks
           mediaRecorderRef.current?.stream.getTracks().forEach(track => track.stop());
         };
         mediaRecorderRef.current.stop();
         setIsRecording(false);
       } else {
+        setIsRecording(false);
         resolve(undefined);
       }
     });
-  }, [isRecording, useNativeSTT]);
+  }, [useNativeSTT]);
 
   return {
     isRecording,
