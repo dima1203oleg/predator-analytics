@@ -33,6 +33,14 @@ export const useVoiceAssistant = () => {
     }
   }, []);
 
+  const stopSpeak = useCallback(() => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      setIsSpeaking(false);
+    }
+  }, []);
+
   const startRecording = useCallback(async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -96,6 +104,7 @@ export const useVoiceAssistant = () => {
     isSpeaking,
     isProcessing,
     speak,
+    stopSpeak,
     startRecording,
     stopRecording
   };

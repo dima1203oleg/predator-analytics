@@ -36,6 +36,7 @@ export const AIVoiceAssistant: React.FC<AIVoiceAssistantProps> = ({
     isSpeaking,
     isProcessing,
     speak,
+    stopSpeak,
     startRecording,
     stopRecording
   } = useVoiceAssistant();
@@ -89,9 +90,9 @@ export const AIVoiceAssistant: React.FC<AIVoiceAssistantProps> = ({
   };
 
   const toggleSpeaking = () => {
-    // Cannot easily stop TTS via Audio blob once playing, but we can try 
-    // Usually it stops when Audio object is paused, which is handled inside useVoiceAssistant (speak function revokes previous).
-    // Let's leave it as is or add a stopSpeak to the hook later.
+    if (isSpeaking) {
+      stopSpeak();
+    }
   };
 
   const showOverlay = isRecording || isProcessing || isProcessingChat || isSpeaking;
@@ -189,10 +190,11 @@ export const AIVoiceAssistant: React.FC<AIVoiceAssistantProps> = ({
               {/* Stop speaking button */}
               {isSpeaking && (
                 <Button variant="cyber"
-                  onClick={() => window.location.reload()}
-                  className="mt-2 w-full py-2 bg-rose-600/20 border border-rose-500/30 rounded-lg text-xs font-bold text-rose-400 hover:bg-rose-600/30 transition-colors"
+                  onClick={toggleSpeaking}
+                  className="mt-2 w-full py-2 bg-rose-600/20 border border-rose-500/30 rounded-lg text-xs font-bold text-rose-400 hover:bg-rose-600/30 transition-colors flex items-center justify-center gap-2"
                 >
-                  ПЕРЕЗАВАНТАЖИТИ
+                  <VolumeX className="w-4 h-4" />
+                  ЗУПИНИТИ ВІДТВОРЕННЯ
                 </Button>
               )}
             </motion.div>
