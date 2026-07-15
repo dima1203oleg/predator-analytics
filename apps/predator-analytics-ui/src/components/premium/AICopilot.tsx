@@ -322,13 +322,11 @@ export const Predator: React.FC = () => {
         mediaRecorder.onstop = async () => {
           setIsListening(false);
           const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
-          const formData = new FormData();
-          formData.append('audio', audioBlob, 'recording.webm');
-          
           try {
             const response = await fetch(`${API_BASE_URL}/ai/stt`, {
               method: 'POST',
-              body: formData,
+              headers: { 'Content-Type': 'audio/webm' },
+              body: audioBlob,
             });
             if (response.ok) {
               const data = await response.json();
