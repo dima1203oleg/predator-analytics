@@ -13,7 +13,7 @@ export const useVoiceAssistant = () => {
     if (!text) return;
     setIsSpeaking(true);
     try {
-      const response = await axios.post('/voice/tts', { text }, { responseType: 'blob' });
+      const response = await axios.post('/api/v1/ai/tts', { text }, { responseType: 'blob' });
       const audioUrl = URL.createObjectURL(response.data);
 
       if (audioRef.current) {
@@ -76,10 +76,10 @@ export const useVoiceAssistant = () => {
   const sendAudioToSTT = async (blob: Blob) => {
     setIsProcessing(true);
     const formData = new FormData();
-    formData.append('file', blob, 'recording.webm');
+    formData.append('audio', blob, 'recording.webm');
 
     try {
-      const response = await axios.post('/voice/stt', formData);
+      const response = await axios.post('/api/v1/ai/stt', formData);
       const text = response.data.text;
       console.log('STT Result:', text);
       // Here we could trigger a command or a chat response

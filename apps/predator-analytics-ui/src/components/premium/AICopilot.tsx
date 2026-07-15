@@ -253,9 +253,10 @@ export const Predator: React.FC = () => {
         audioRef.current.currentTime = 0;
       }
       const currentSpeakId = ++speakIdRef.current;
-      const response = await fetch(`${API_BASE_URL}/voice/synthesize`, {
+      const response = await fetch(`${API_BASE_URL}/ai/tts`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json', },
         body: JSON.stringify({ text })
       });
       if (!response.ok) throw new Error('TTS Failed');
@@ -322,10 +323,10 @@ export const Predator: React.FC = () => {
           setIsListening(false);
           const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
           const formData = new FormData();
-          formData.append('file', audioBlob, 'recording.webm');
+          formData.append('audio', audioBlob, 'recording.webm');
           
           try {
-            const response = await fetch(`${API_BASE_URL}/voice/transcribe`, {
+            const response = await fetch(`${API_BASE_URL}/ai/stt`, {
               method: 'POST',
               body: formData,
             });
