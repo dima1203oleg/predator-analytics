@@ -46,6 +46,9 @@ export const AIVoiceAssistant: React.FC<AIVoiceAssistantProps> = ({
     setSpeakingState(isSpeaking);
   }, [isSpeaking, setSpeakingState]);
 
+  const wasRecordingRef = useRef(false);
+  const pressStartTime = useRef<number>(0);
+
   const handleCommand = async (command: string) => {
     if (!command) return;
     setIsProcessingChat(true);
@@ -76,16 +79,38 @@ export const AIVoiceAssistant: React.FC<AIVoiceAssistantProps> = ({
     }
   };
 
-  const toggleListening = async () => {
-    if (isRecording) {
-      const text = await stopRecording();
-      if (text) {
-        handleCommand(text);
-      }
-    } else {
+  const handlePointerDown = async (e: React.PointerEvent) => {
+    e.preventDefault();
+    pressStartTime.current = Date.now();
+    wasRecordingRef.current = isRecording;
+
+    if (!isRecording) {
       setTranscript('');
       setResponse('');
       await startRecording();
+    }
+  };
+
+  const handlePointerUp = async (e: React.PointerEvent) => {
+    e.preventDefault();
+    const duration = Date.now() - pressStartTime.current;
+
+    if (wasRecordingRef.current) {
+      const text = await stopRecording();
+      if (text) handleCommand(text);
+    } else {
+      if (duration > 300) {
+        const text = await stopRecording();
+        if (text) handleCommand(text);
+      }
+    }
+  };
+
+  const handlePointerLeave = async (e: React.PointerEvent) => {
+    const duration = Date.now() - pressStartTime.current;
+    if (!wasRecordingRef.current && isRecording && duration > 300) {
+       const text = await stopRecording();
+       if (text) handleCommand(text);
     }
   };
 
@@ -125,7 +150,9 @@ export const AIVoiceAssistant: React.FC<AIVoiceAssistantProps> = ({
 
         {/* Main button */}
         <motion.button
-          onClick={toggleListening}
+          onPointerDown={handlePointerDown}
+          onPointerUp={handlePointerUp}
+          onPointerLeave={handlePointerLeave}
           className={cn(
             'relative w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300',
             'bg-gradient-to-br from-rose-600 to-rose-800',
