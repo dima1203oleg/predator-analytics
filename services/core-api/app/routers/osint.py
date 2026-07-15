@@ -1,6 +1,6 @@
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -60,3 +60,76 @@ async def get_osint_feed(
             "entity_ueid": a.entity_ueid
         })
     return results
+
+
+@router.get("/search", summary="Пошук компаній (OSINT)")
+async def search_companies(
+    q: str,
+    db: Annotated[AsyncSession, Depends(get_db)],
+    tenant_id: Annotated[str, Depends(get_tenant_id)]
+) -> list[dict[str, Any]]:
+    # Search by EDRPOU or Name (case insensitive)
+    query = select(Company, RiskScore).outerjoin(
+        RiskScore, (Company.ueid == RiskScore.entity_ueid) & (RiskScore.tenant_id == tenant_id)
+    ).where(
+        Company.tenant_id == tenant_id,
+        (Company.edrpou.ilike(f"%{q}%")) | (Company.name.ilike(f"%{q}%"))
+    ).limit(20)
+
+    result = await db.execute(query)
+    rows = result.all()
+
+    response = []
+    for company, risk in rows:
+        response.append({
+            "ueid": company.ueid,
+            "edrpou": company.edrpou,
+            "name": company.name,
+            "status": company.status,
+            "industry": company.industry,
+            "risk_score": risk.cers if risk else company.cers_score
+        })
+    return response
+
+@router.get("/company/{ueid}", summary="Досьє компанії")
+async def get_company_dossier(
+    ueid: str,
+    db: Annotated[AsyncSession, Depends(get_db)],
+    tenant_id: Annotated[str, Depends(get_tenant_id)]
+) -> dict[str, Any]:
+    company = await db.scalar(select(Company).where(Company.tenant_id == tenant_id, Company.ueid == ueid))
+    if not company:
+        raise HTTPException(status_code=404, detail="Компанію не знайдено")
+
+    risk = await db.scalar(select(RiskScore).where(RiskScore.tenant_id == tenant_id, RiskScore.entity_ueid == ueid))
+    anomalies_result = await db.execute(select(Anomaly).where(Anomaly.tenant_id == tenant_id, Anomaly.entity_ueid == ueid).order_by(Anomaly.detected_at.desc()))
+    anomalies = anomalies_result.scalars().all()
+
+    return {
+        "company": {
+            "ueid": company.ueid,
+            "edrpou": company.edrpou,
+            "name": company.name,
+            "legal_form": company.legal_form,
+            "status": company.status,
+            "registration_date": company.registration_date.isoformat() if company.registration_date else None,
+            "address": company.address,
+            "industry": company.industry,
+            "sector": company.sector
+        },
+        "risk_profile": {
+            "cers": risk.cers if risk else company.cers_score,
+            "behavioral": risk.behavioral_score if risk else None,
+            "institutional": risk.institutional_score if risk else None,
+            "structural": risk.structural_score if risk else None,
+            "flags": risk.flags if risk else []
+        },
+        "anomalies": [
+            {
+                "type": a.type,
+                "severity": a.severity,
+                "message": a.message,
+                "detected_at": a.detected_at.isoformat() if a.detected_at else None
+            } for a in anomalies
+        ]
+    }

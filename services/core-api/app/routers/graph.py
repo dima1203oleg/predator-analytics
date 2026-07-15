@@ -89,7 +89,7 @@ async def search_graph(
             "nodes": list(nodes_dict.values()),
             "edges": edges
         }
-    except Exception as e:
+    except Exception:
             return {
                 "nodes": [],
                 "edges": []
@@ -156,7 +156,7 @@ async def get_customs_graph(
             "nodes": list(nodes_dict.values()),
             "edges": edges
         }
-    except Exception as e:
+    except Exception:
         return {"nodes": [], "edges": []}
 
 
@@ -451,3 +451,54 @@ async def get_influence_clusters(
         return results
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Cluster detection failed: {e!s}") from e
+
+@router.get("/path", summary="Найкоротший шлях (Shortest Path)")
+async def get_shortest_path(
+    source: str,
+    target: str,
+    max_depth: Annotated[int, Query(ge=1, le=6)] = 6,
+    tenant_id: str = Depends(get_tenant_id),
+    _ = Depends(PermissionChecker([Permission.RUN_GRAPH]))
+):
+    """Пошук найкоротшого шляху між двома сутностями."""
+    query = f"""
+    MATCH p=shortestPath((n {{ueid: $source}})-[*..{max_depth}]-(m {{ueid: $target}}))
+    WHERE n.tenant_id = $tenant_id AND m.tenant_id = $tenant_id
+    RETURN p
+    """
+    try:
+        raw_results = await graph_db.run_query(query, {"source": source, "target": target, "tenant_id": tenant_id})
+
+        nodes_dict = {}
+        edges = []
+
+        if not raw_results:
+            return {"nodes": [], "edges": []}
+
+        for row in raw_results:
+            p = row.get("p")
+            if p:
+                for node in p.nodes:
+                    node_id = node.get("ueid") or str(id(node))
+                    if node_id not in nodes_dict:
+                        nodes_dict[node_id] = {
+                            "id": node_id,
+                            "name": node.get("name") or node.get("ueid") or "Unknown",
+                            "label": next(iter(node.labels)) if hasattr(node, "labels") and node.labels else "ENTITY",
+                            "properties": dict(node)
+                        }
+                for rel in p.relationships:
+                    edges.append({
+                        "id": str(id(rel)),
+                        "source": rel.nodes[0].get("ueid") or str(id(rel.nodes[0])),
+                        "target": rel.nodes[1].get("ueid") or str(id(rel.nodes[1])),
+                        "relation": rel.type,
+                        "weight": 1.0
+                    })
+
+        return {
+            "nodes": list(nodes_dict.values()),
+            "edges": edges
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Path finding failed: {e!s}") from e

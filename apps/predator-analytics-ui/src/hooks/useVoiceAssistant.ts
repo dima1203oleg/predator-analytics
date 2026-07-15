@@ -5,20 +5,26 @@ export const useVoiceAssistant = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [useNativeSTT, setUseNativeSTT] = useState(false);
+  
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
+  const nativeRecognitionRef = useRef<any>(null);
 
   const speak = useCallback(async (text: string) => {
     if (!text) return;
     setIsSpeaking(true);
+    
+    // Stop any native speech
+    window.speechSynthesis.cancel();
+    if (audioRef.current) {
+      audioRef.current.pause();
+    }
+
     try {
       const response = await axios.post('/api/v1/voice/synthesize', { text }, { responseType: 'blob' });
       const audioUrl = URL.createObjectURL(response.data);
-
-      if (audioRef.current) {
-        audioRef.current.pause();
-      }
 
       const audio = new Audio(audioUrl);
       audioRef.current = audio;
@@ -28,8 +34,12 @@ export const useVoiceAssistant = () => {
       };
       await audio.play();
     } catch (error) {
-      console.error('TTS Error:', error);
-      setIsSpeaking(false);
+      console.warn('TTS Backend Error, falling back to native TTS:', error);
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'uk-UA';
+      utterance.onend = () => setIsSpeaking(false);
+      utterance.onerror = () => setIsSpeaking(false);
+      window.speechSynthesis.speak(utterance);
     }
   }, []);
 
@@ -37,11 +47,26 @@ export const useVoiceAssistant = () => {
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
-      setIsSpeaking(false);
     }
+    window.speechSynthesis.cancel();
+    setIsSpeaking(false);
   }, []);
 
   const startRecording = useCallback(async () => {
+    if (useNativeSTT) {
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'uk-UA';
+        recognition.interimResults = false;
+        recognition.continuous = false;
+        nativeRecognitionRef.current = recognition;
+        recognition.start();
+        setIsRecording(true);
+        return;
+      }
+    }
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const mediaRecorder = new MediaRecorder(stream);
@@ -52,34 +77,12 @@ export const useVoiceAssistant = () => {
         if (e.data.size > 0) chunksRef.current.push(e.data);
       };
 
-      mediaRecorder.onstop = async () => {
-        const audioBlob = new Blob(chunksRef.current, { type: 'audio/webm' });
-        await sendAudioToSTT(audioBlob);
-        stream.getTracks().forEach(track => track.stop());
-      };
-
       mediaRecorder.start();
       setIsRecording(true);
     } catch (error) {
       console.error('Recording Error:', error);
     }
-  }, []);
-
-  const stopRecording = useCallback(() => {
-    return new Promise<string | undefined>((resolve) => {
-      if (mediaRecorderRef.current && isRecording) {
-        mediaRecorderRef.current.onstop = async () => {
-          const audioBlob = new Blob(chunksRef.current, { type: 'audio/webm' });
-          const text = await sendAudioToSTT(audioBlob);
-          resolve(text);
-        };
-        mediaRecorderRef.current.stop();
-        setIsRecording(false);
-      } else {
-        resolve(undefined);
-      }
-    });
-  }, [isRecording]);
+  }, [useNativeSTT]);
 
   const sendAudioToSTT = async (blob: Blob) => {
     setIsProcessing(true);
@@ -94,10 +97,44 @@ export const useVoiceAssistant = () => {
       setIsProcessing(false);
       return text;
     } catch (error) {
-      console.error('STT Error:', error);
+      console.warn('STT Backend Error, falling back to native STT for next time:', error);
+      setUseNativeSTT(true);
       setIsProcessing(false);
+      return undefined;
     }
   };
+
+  const stopRecording = useCallback(() => {
+    return new Promise<string | undefined>((resolve) => {
+      if (useNativeSTT && nativeRecognitionRef.current && isRecording) {
+        nativeRecognitionRef.current.onresult = (event: any) => {
+          const text = event.results[0][0].transcript;
+          resolve(text);
+        };
+        nativeRecognitionRef.current.onerror = (event: any) => {
+          console.error('Native STT Error:', event.error);
+          resolve(undefined);
+        };
+        nativeRecognitionRef.current.onend = () => {
+          setIsRecording(false);
+        };
+        nativeRecognitionRef.current.stop();
+      } else if (mediaRecorderRef.current && isRecording) {
+        mediaRecorderRef.current.onstop = async () => {
+          const audioBlob = new Blob(chunksRef.current, { type: 'audio/webm' });
+          const text = await sendAudioToSTT(audioBlob);
+          resolve(text);
+          
+          // Stop all audio tracks
+          mediaRecorderRef.current?.stream.getTracks().forEach(track => track.stop());
+        };
+        mediaRecorderRef.current.stop();
+        setIsRecording(false);
+      } else {
+        resolve(undefined);
+      }
+    });
+  }, [isRecording, useNativeSTT]);
 
   return {
     isRecording,
