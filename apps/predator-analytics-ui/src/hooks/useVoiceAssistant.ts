@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useCallback, useRef, useState } from 'react';
+import { toast } from 'sonner';
 
 export const useVoiceAssistant = () => {
   const [isRecording, setIsRecording] = useState(false);
@@ -82,24 +83,30 @@ export const useVoiceAssistant = () => {
       if (SpeechRecognition) {
         const recognition = new SpeechRecognition();
         recognition.lang = 'uk-UA';
-        recognition.interimResults = false;
+        recognition.interimResults = true;
         recognition.continuous = true;
         
         recognition.onresult = (event: any) => {
-          const text = event.results[event.results.length - 1][0].transcript;
-          nativeTranscriptRef.current += ' ' + text;
+          let currentTranscript = '';
+          for (let i = event.resultIndex; i < event.results.length; ++i) {
+            currentTranscript += event.results[i][0].transcript;
+          }
+          nativeTranscriptRef.current = currentTranscript;
         };
         
         recognition.onend = () => {
           setIsRecording(false);
           if (stopPromiseResolveRef.current) {
-            stopPromiseResolveRef.current(nativeTranscriptRef.current.trim() || undefined);
+            const final = nativeTranscriptRef.current.trim();
+            if (!final) toast.error('Голос не розпізнано. Спробуйте ще раз.');
+            stopPromiseResolveRef.current(final || undefined);
             stopPromiseResolveRef.current = null;
           }
         };
 
         recognition.onerror = (event: any) => {
           console.error('Native STT Error:', event.error);
+          toast.error(`Помилка мікрофону: ${event.error}`);
           setIsRecording(false);
           if (stopPromiseResolveRef.current) {
             stopPromiseResolveRef.current(undefined);
@@ -111,6 +118,9 @@ export const useVoiceAssistant = () => {
         recognition.start();
         setIsRecording(true);
         return;
+      } else {
+        toast.error('Ваш браузер не підтримує Native STT. Перемикаюсь на бекенд.');
+        setUseNativeSTT(false);
       }
     }
 
