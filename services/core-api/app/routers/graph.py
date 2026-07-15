@@ -233,37 +233,58 @@ async def get_graph_summary(
     except Exception:
         pass  # Fallback to PostgreSQL
 
-    # 2. Fallback: PostgreSQL без фільтрації по tenant_id (уникаємо UUID DataError)
+        # 2. Fallback: PostgreSQL без фільтрації по tenant_id (уникаємо UUID DataError)
     try:
         high_risk_query = (
-            select(RiskScore)
+            select(RiskScore, Company)
+            .join(Company, Company.ueid == RiskScore.entity_ueid)
             .order_by(RiskScore.cers.desc())
             .limit(100)
         )
         result = await db.execute(high_risk_query)
-        high_risk = result.scalars().all()
+        high_risk_data = result.all()
 
-        nodes = [
-            {
+        nodes = []
+        edges = []
+        links_list = []
+
+        for i, (rs, company) in enumerate(high_risk_data):
+            nodes.append({
                 "id": rs.entity_ueid,
-                "label": rs.entity_ueid[:20],
+                "label": company.name or rs.entity_ueid[:20],
                 "type": rs.entity_type or "company",
                 "riskScore": int(rs.cers) if rs.cers else 0,
                 "connections": 0,
-                "cluster": i % 5,
-            }
-            for i, rs in enumerate(high_risk)
-        ]
+                "cluster": hash(company.industry or "Unknown") % 10 if company.industry else i % 5,
+                "industry": company.industry,
+                "sector": company.sector
+            })
+
+        # Generate edges between nodes sharing the same industry or sector to provide real semantic connections
+        for i, n1 in enumerate(nodes):
+            for j, n2 in enumerate(nodes):
+                if i < j:
+                    if (n1.get("industry") and n1["industry"] == n2.get("industry")) or (n1.get("sector") and n1["sector"] == n2.get("sector")):
+                        edge = {
+                            "source": n1["id"],
+                            "target": n2["id"],
+                            "type": "SHARED_INDUSTRY" if n1.get("industry") == n2.get("industry") else "SHARED_SECTOR",
+                            "weight": 1.0
+                        }
+                        edges.append(edge)
+                        links_list.append(edge)
+                        n1["connections"] += 1
+                        n2["connections"] += 1
 
         companies_count = await db.scalar(select(func.count()).select_from(Company)) or 0
 
         return {
             "nodes": nodes,
-            "edges": [],
-            "links": [],
+            "edges": edges,
+            "links": links_list,
             "stats": {
                 "total_nodes": companies_count,
-                "high_risk_count": len(high_risk),
+                "high_risk_count": len(high_risk_data),
             },
         }
     except Exception as ex:

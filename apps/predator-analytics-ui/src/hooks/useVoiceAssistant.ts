@@ -13,7 +13,7 @@ export const useVoiceAssistant = () => {
     if (!text) return;
     setIsSpeaking(true);
     try {
-      const response = await axios.post('/api/v1/ai/tts', { text }, { responseType: 'blob' });
+      const response = await axios.post('/api/v1/voice/synthesize', { text }, { responseType: 'blob' });
       const audioUrl = URL.createObjectURL(response.data);
 
       if (audioRef.current) {
@@ -76,8 +76,10 @@ export const useVoiceAssistant = () => {
   const sendAudioToSTT = async (blob: Blob) => {
     setIsProcessing(true);
     try {
-      const response = await axios.post('/api/v1/ai/stt', blob, {
-        headers: { 'Content-Type': 'audio/webm' }
+      const formData = new FormData();
+      formData.append('file', blob, 'audio.webm');
+      const response = await axios.post('/api/v1/voice/transcribe', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
       });
       const text = response.data.text;
       console.log('STT Result:', text);
