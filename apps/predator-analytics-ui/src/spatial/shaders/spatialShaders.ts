@@ -53,35 +53,47 @@ export const nodeFragmentShader = /* glsl */ `
   varying vec2 vUv;
   varying float vFresnel;
 
+  // Simple pseudo-random for matrix effect
+  float random(vec2 st) {
+      return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123);
+  }
+
   void main() {
     // Holographic Hex/Grid Pattern
-    vec2 gridUv = vUv * 10.0;
+    vec2 gridUv = vUv * 12.0;
     vec2 grid = abs(fract(gridUv - 0.5) - 0.5);
     float gridLine = min(grid.x, grid.y);
     float gridMask = smoothstep(0.08, 0.0, gridLine);
 
+    // Matrix Rain Data Stream
+    float col = floor(vUv.x * 20.0);
+    float speed = random(vec2(col, 1.0)) * 2.0 + 0.5;
+    float dropY = fract(vUv.y * 3.0 + uTime * speed);
+    float dropMask = smoothstep(0.8, 1.0, dropY) * (1.0 - smoothstep(0.95, 1.0, dropY));
+
     // Scanlines
-    float scanY = vUv.y + uTime * 0.2;
-    float scan = sin(scanY * 100.0) * 0.5 + 0.5;
-    float scanMask = mix(0.5, 1.0, scan);
+    float scanY = vUv.y + uTime * 0.5;
+    float scan = sin(scanY * 150.0) * 0.5 + 0.5;
+    float scanMask = mix(0.7, 1.0, scan);
 
     // Color logic
     vec3 safeColor = uBaseColor;
-    vec3 riskColor = vec3(1.0, 0.0, 0.3); // Cyber pink/red for risk
+    vec3 riskColor = vec3(1.0, 0.1, 0.2); // Cyber red for risk
     vec3 color = mix(safeColor, riskColor, uRisk);
 
-    // Add Grid glow
-    color += uBaseColor * gridMask * 0.5;
+    // Add Grid glow & Matrix rain
+    color += uBaseColor * gridMask * 0.4;
+    color += mix(uBaseColor, vec3(1.0), 0.5) * dropMask * 1.5;
 
-    // Fresnel rim light (stronger)
-    float rim = vFresnel * (1.5 + uFocused * 3.0);
+    // Fresnel rim light (reacts to camera & energy)
+    float rim = vFresnel * (1.5 + uEnergy + uFocused * 3.0);
     color += color * rim;
 
     // Energy flicker
     float flicker = 1.0 - 0.1 * sin(uTime * 20.0) * sin(uTime * 8.0);
 
     // Transparency
-    float alpha = (0.3 + vFresnel * 0.8 + gridMask * 0.4) * scanMask * flicker;
+    float alpha = (0.3 + vFresnel * 0.8 + gridMask * 0.4 + dropMask * 0.5) * scanMask * flicker;
     alpha = clamp(alpha * (0.8 + uEnergy * 0.6), 0.0, 1.0);
 
     // Focus intensifies
@@ -103,18 +115,27 @@ export const edgeVertexShader = /* glsl */ `
   varying float vProgress;
   varying float vAlpha;
   varying vec3 vColor;
+  varying float vBurst;
 
   void main() {
     vProgress = aProgress;
     vColor = color;
 
-    // Data packet wave moving along edge
-    float wave = sin(aProgress * 20.0 - uTime * 8.0) * 0.5 + 0.5;
-    
-    // Quick burst effect
-    float burst = pow(wave, 5.0);
+    // Comet effect: Data packet traversing the edge
+    float speed = 1.5;
+    float packetPos = fract(uTime * speed);
 
-    vAlpha = 0.2 + burst * uEnergy * 1.5;
+    // Distance from the moving packet — wrap at edges
+    float dist = abs(aProgress - packetPos);
+    dist = min(dist, 1.0 - dist);
+
+    // Comet head glow (no normal displacement — line geometry)
+    float burst = smoothstep(0.12, 0.0, dist);
+    // Comet tail fade
+    float tail = smoothstep(0.35, 0.0, dist - 0.01) * (1.0 - burst) * 0.4;
+
+    vBurst = burst;
+    vAlpha = 0.1 + burst * uEnergy * 1.8 + tail;
 
     gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
   }
@@ -126,10 +147,13 @@ export const edgeFragmentShader = /* glsl */ `
   varying float vProgress;
   varying float vAlpha;
   varying vec3 vColor;
+  varying float vBurst;
 
   void main() {
-    // Add bright core to data packets
-    vec3 finalColor = vColor * (1.0 + vAlpha);
+    // Add bright white core to the comet
+    vec3 coreColor = vec3(1.0);
+    vec3 finalColor = mix(vColor, coreColor, vBurst * 0.8) * (1.0 + vAlpha);
+    
     gl_FragColor = vec4(finalColor, vAlpha);
   }
 `;
@@ -168,12 +192,14 @@ export const atmosphereFragmentShader = /* glsl */ `
     return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
   }
 
+  // Improved FBM for more volumetric look
   float fbm(vec2 p) {
     float v = 0.0;
     float a = 0.5;
-    for (int i = 0; i < 4; i++) {
+    mat2 rot = mat2(cos(0.5), sin(0.5), -sin(0.5), cos(0.5));
+    for (int i = 0; i < 5; i++) {
       v += a * noise(p);
-      p *= 2.0;
+      p = rot * p * 2.0 + vec2(100.0);
       a *= 0.5;
     }
     return v;
@@ -185,35 +211,39 @@ export const atmosphereFragmentShader = /* glsl */ `
     // Базовий фон — темна порожнеча
     vec3 color = vec3(0.01, 0.01, 0.02);
 
-    // Туманність на фоні
-    float nebula = fbm(uv * 3.0 + uTime * 0.02);
+    // Туманність на фоні (вона тепер багатошарова)
+    vec2 q = vec2(fbm(uv + uTime * 0.01), fbm(uv + vec2(1.0)));
+    vec2 r = vec2(fbm(uv + 1.0 * q + vec2(1.7,9.2) + 0.05 * uTime), fbm(uv + 1.0 * q + vec2(8.3,2.8) + 0.05 * uTime));
+    float nebula = fbm(uv * 3.0 + r);
+    
     vec3 nebulaColor = mix(
       vec3(0.0, 0.05, 0.15),     // темно-синій
-      vec3(0.1, 0.0, 0.08),      // темно-пурпурний
+      vec3(0.1, 0.0, 0.12),      // темно-пурпурний (кіберпанк)
       nebula
     );
-    color += nebulaColor * 0.15;
+    color += nebulaColor * 0.25;
 
     // Ефект загрози — червоніє при підвищенні
     float threat = uThreatLevel / 5.0;
-    vec3 threatGlow = vec3(0.4, 0.02, 0.0) * threat * threat;
-    float threatPulse = sin(uTime * 2.0 + uv.y * 5.0) * 0.5 + 0.5;
-    color += threatGlow * (0.5 + threatPulse * 0.5);
+    vec3 threatGlow = vec3(0.5, 0.02, 0.0) * threat * threat;
+    float threatPulse = sin(uTime * 3.0 + uv.y * 5.0) * 0.5 + 0.5;
+    color += threatGlow * (0.6 + threatPulse * 0.4);
 
-    // Сітка (Grid) — тонкі лінії простору
-    float gridSize = 50.0;
-    vec2 grid = abs(fract(uv * gridSize - 0.5) - 0.5);
+    // Сітка (Grid) — тонкі лінії простору з дісторшном
+    float gridSize = 40.0;
+    vec2 gridDistort = uv + r * 0.02;
+    vec2 grid = abs(fract(gridDistort * gridSize - 0.5) - 0.5);
     float gridLine = min(grid.x, grid.y);
-    float gridAlpha = smoothstep(0.02, 0.0, gridLine) * 0.06;
+    float gridAlpha = smoothstep(0.03, 0.0, gridLine) * 0.08;
     vec3 gridColor = mix(vec3(0.0, 0.6, 1.0), vec3(1.0, 0.2, 0.0), threat);
     color += gridColor * gridAlpha;
 
-    // Dark Matter mode — все згасає
+    // Dark Matter mode — все згасає, залишаючи лише тіні
     color *= 1.0 - uDarkMatter * 0.85;
 
-    // Вінь'єтка
-    float vignette = 1.0 - length((uv - 0.5) * 1.4);
-    vignette = smoothstep(0.0, 0.7, vignette);
+    // Кінематографічна вінь'єтка
+    float vignette = 1.0 - length((uv - 0.5) * 1.5);
+    vignette = smoothstep(0.0, 0.8, vignette);
     color *= vignette;
 
     gl_FragColor = vec4(color, 1.0);

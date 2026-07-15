@@ -114,11 +114,13 @@ interface SpatialNodeMeshProps {
 const SpatialNodeMesh = memo(function SpatialNodeMesh({ node, isFocused, onFocus }: SpatialNodeMeshProps) {
   const meshRef = useRef<THREE.Mesh>(null);
   const matRef = useRef<THREE.ShaderMaterial>(null);
+  const targetScale = useRef(1.0);
   const config = NODE_CONFIG[node.type] ?? NODE_CONFIG['COMPANY'];
 
   const handleClick = useCallback((e: ThreeEvent<MouseEvent>) => {
     e.stopPropagation();
     audioFeedback.playSelect();
+    targetScale.current = 2.0; // Click impulse
     onFocus(node.id);
   }, [node.id, onFocus]);
 
@@ -127,7 +129,15 @@ const SpatialNodeMesh = memo(function SpatialNodeMesh({ node, isFocused, onFocus
     if (!isFocused) {
       audioFeedback.playHover(node.type);
     }
+    document.body.style.cursor = 'pointer';
+    targetScale.current = 1.2; // Hover grow
   }, [node.type, isFocused]);
+
+  const handlePointerOut = useCallback((e: ThreeEvent<PointerEvent>) => {
+    e.stopPropagation();
+    document.body.style.cursor = 'auto';
+    targetScale.current = 1.0;
+  }, []);
 
   useFrame((state) => {
     if (!matRef.current) return;
@@ -145,6 +155,17 @@ const SpatialNodeMesh = memo(function SpatialNodeMesh({ node, isFocused, onFocus
       );
       // Легка ротація
       meshRef.current.rotation.y += 0.003 * node.energy;
+
+      // Мікро-анімація масштабу (hover / click)
+      meshRef.current.scale.lerp(
+        new THREE.Vector3(targetScale.current, targetScale.current, targetScale.current),
+        0.2
+      );
+
+      // Загасання імпульсу від кліку
+      if (targetScale.current > 1.2) {
+        targetScale.current -= 0.08;
+      }
     }
   });
 
@@ -163,6 +184,7 @@ const SpatialNodeMesh = memo(function SpatialNodeMesh({ node, isFocused, onFocus
         position={[node.x, node.y, node.z]}
         onClick={handleClick}
         onPointerOver={handlePointerOver}
+        onPointerOut={handlePointerOut}
       >
         {geometry}
         <shaderMaterial

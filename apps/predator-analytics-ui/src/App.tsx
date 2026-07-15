@@ -35,8 +35,11 @@ import { Global3DBackground } from './components/cyber/Global3DBackground';
 const SpatialEnvironmentWrapper = () => {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin');
+  // /universe має власну 3D-сцену (UniverseScene) — вимикаємо Global3DBackground щоб уникнути
+  // конфлікту двох WebGL контекстів (glBlitFramebuffer помилки)
+  const isUniverseRoute = location.pathname === '/universe';
   
-  if (isAdminRoute) return null;
+  if (isAdminRoute || isUniverseRoute) return null;
   return (
     <>
       <ParticleBackground />
@@ -47,6 +50,7 @@ const SpatialEnvironmentWrapper = () => {
     </>
   );
 };
+
 
 import { CommandPalette } from './components/polish/CommandPalette';
 import { AIVoiceAssistant } from './components/AIVoiceAssistant';

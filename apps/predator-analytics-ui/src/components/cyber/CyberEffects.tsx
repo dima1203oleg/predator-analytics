@@ -5,57 +5,73 @@ import { GlitchMode, BlendFunction } from 'postprocessing';
 import { useCyberStore } from '../../store/useCyberStore';
 import * as THREE from 'three';
 
+// ПРИМІТКА: DepthOfField видалено — несумісне з disableNormalPass.
+// Кінематографічний ефект досягається через подвійний Bloom + Vignette.
 export const CyberEffects = () => {
   const { aiState } = useCyberStore();
 
   const isThinking = aiState === 'THINKING';
+  const isHighRisk = aiState === 'ANALYZING';
 
   return (
     <EffectComposer disableNormalPass>
       <SMAA />
-      
-      {/* М'яке кібер-світіння */}
-      <Bloom 
+
+      {/* Широкий Bloom — м'яке неонове сяйво (рівень 1) */}
+      <Bloom
         mipmapBlur
-        luminanceThreshold={0.8} 
-        luminanceSmoothing={0.1} 
-        intensity={1.2} 
-        kernelSize={3}
+        luminanceThreshold={0.45}
+        luminanceSmoothing={0.3}
+        intensity={1.4}
+        kernelSize={4}
       />
-      
-      {/* Легка хроматична аберація для ефекту "камери/голограми" */}
-      <ChromaticAberration 
+
+      {/* Гострий Bloom — яскраві ядра вузлів (рівень 2) */}
+      <Bloom
+        mipmapBlur
+        luminanceThreshold={0.85}
+        luminanceSmoothing={0.05}
+        intensity={2.5}
+        kernelSize={2}
+      />
+
+      {/* Хроматична аберація — реагує на стан ШІ */}
+      <ChromaticAberration
         blendFunction={BlendFunction.NORMAL}
-        offset={new THREE.Vector2(0.002, 0.002)}
+        offset={new THREE.Vector2(
+          isThinking ? 0.005 : 0.002,
+          isThinking ? 0.005 : 0.002
+        )}
         radialModulation={false}
         modulationOffset={0}
       />
-      
-      {/* Scanlines (смуги оновлення як на ЕЛТ-моніторі) */}
-      <Scanline 
-        blendFunction={BlendFunction.OVERLAY} 
-        density={2} 
-        opacity={0.3}
-      />
-      
-      {/* Шум матриці */}
-      <Noise 
-        premultiply 
-        blendFunction={BlendFunction.ADD} 
-        opacity={0.15} 
+
+      {/* Scanlines — рядки оновлення ЕЛТ */}
+      <Scanline
+        blendFunction={BlendFunction.OVERLAY}
+        density={2.2}
+        opacity={isThinking ? 0.45 : 0.18}
       />
 
-      {/* Глітч, коли ШІ "думає" або завантажує дані */}
+      {/* Шум матриці — "живий" фотонний шум */}
+      <Noise
+        premultiply
+        blendFunction={BlendFunction.ADD}
+        opacity={0.08}
+      />
+
+      {/* Глітч — активується при аналізі або підвищеному ризику */}
       <Glitch
-        delay={new THREE.Vector2(0.5, 1.5)} // min/max delay
-        duration={new THREE.Vector2(0.1, 0.3)} // min/max duration
-        strength={new THREE.Vector2(0.1, 0.3)} // min/max strength
-        mode={GlitchMode.SPORADIC} // sporadic or constant
-        active={isThinking}
+        delay={new THREE.Vector2(1.5, 3.5)}
+        duration={new THREE.Vector2(0.08, 0.25)}
+        strength={new THREE.Vector2(0.05, 0.25)}
+        mode={GlitchMode.SPORADIC}
+        active={isThinking || isHighRisk}
         ratio={0.85}
       />
 
-      <Vignette eskil={false} offset={0.1} darkness={1.1} />
+      {/* Кінематографічна віньєтка */}
+      <Vignette eskil={false} offset={0.15} darkness={1.2} />
     </EffectComposer>
   );
 };

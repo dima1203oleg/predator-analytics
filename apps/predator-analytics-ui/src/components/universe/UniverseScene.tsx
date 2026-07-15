@@ -1,70 +1,103 @@
-/**
- * UniverseScene — Головна 3D-сцена живого AI Всесвіту PREDATOR
- * 
- * Об'єднує всі 3D-компоненти:
- * - LivingCore (центральне AI ядро)
- * - DataParticles (живі частинки-сутності)
- * - SynapticLinks (динамічні зв'язки)
- * - CinematicCamera (автономна камера)
- * - Post-processing (Bloom, Vignette)
- * 
- * Оптимізація:
- * - dpr: [1, 2] (адаптивний DPR)
- * - antialias: false (для продуктивності)
- * - frameloop: "always" (постійна анімація)
- */
+// @ts-nocheck
 import React, { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import * as THREE from 'three';
-import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
+import {
+  EffectComposer,
+  Bloom,
+  Vignette,
+  ChromaticAberration,
+  Noise,
+  Scanline,
+  Glitch,
+} from '@react-three/postprocessing';
+import { GlitchMode, BlendFunction } from 'postprocessing';
 import { LivingCore } from './LivingCore';
 import { DataParticles } from './DataParticles';
 import { SynapticLinks } from './SynapticLinks';
 import { CinematicCamera } from './CinematicCamera';
+import { useUniverseStore } from '../../store/useUniverseStore';
 
 /** Навколишнє середовище сцени (освітлення, fog) */
 const SceneEnvironment: React.FC = () => (
   <>
     {/* Мінімальне фонове освітлення */}
     <ambientLight intensity={0.15} color="#2a2a4a" />
-    
+
     {/* Основне направлене світло */}
-    <directionalLight
-      position={[5, 8, 5]}
-      intensity={0.3}
-      color="#4a6fff"
-    />
-    
+    <directionalLight position={[5, 8, 5]} intensity={0.3} color="#4a6fff" />
+
     {/* Акцентне світло знизу (для атмосфери) */}
-    <directionalLight
-      position={[-3, -5, 2]}
-      intensity={0.1}
-      color="#ff3366"
-    />
-    
+    <directionalLight position={[-3, -5, 2]} intensity={0.1} color="#ff3366" />
+
     {/* Далекий fog для глибини */}
     <fog attach="fog" args={['#050510', 25, 60]} />
   </>
 );
 
-/** Пост-ефекти для кінематографічності */
-const PostEffects: React.FC = () => (
-  <EffectComposer>
-    {/* Bloom для свічення ядра та частинок */}
-    <Bloom
-      intensity={0.8}
-      luminanceThreshold={0.2}
-      luminanceSmoothing={0.9}
-      mipmapBlur
-    />
-    {/* Vignette для фокусу на центрі */}
-    <Vignette
-      eskil={false}
-      offset={0.3}
-      darkness={0.7}
-    />
-  </EffectComposer>
-);
+/** Покращені пост-ефекти — кінематографічний стиль */
+const PostEffects: React.FC = () => {
+  const { aiMode } = useUniverseStore();
+  const isActive = aiMode === 'inference' || aiMode === 'discovery';
+
+  return (
+    // disableNormalPass=false (за замовчуванням) — дозволяємо depth buffer для коректного рендерингу
+    <EffectComposer multisampling={4}>
+      {/* Широкий Bloom — неонове сяйво (рівень 1) */}
+      <Bloom
+        mipmapBlur
+        intensity={1.2}
+        luminanceThreshold={0.3}
+        luminanceSmoothing={0.5}
+        kernelSize={4}
+      />
+
+      {/* Гострий Bloom — яскраві ядра (рівень 2) */}
+      <Bloom
+        mipmapBlur
+        intensity={2.8}
+        luminanceThreshold={0.85}
+        luminanceSmoothing={0.05}
+        kernelSize={2}
+      />
+
+      {/* Хроматична аберація */}
+      <ChromaticAberration
+        blendFunction={BlendFunction.NORMAL}
+        offset={new THREE.Vector2(isActive ? 0.004 : 0.0015, isActive ? 0.004 : 0.0015)}
+        radialModulation={false}
+        modulationOffset={0}
+      />
+
+      {/* Scanlines — рядки ЕЛТ */}
+      <Scanline
+        blendFunction={BlendFunction.OVERLAY}
+        density={1.8}
+        opacity={0.12}
+      />
+
+      {/* Шум — живий фотонний фон */}
+      <Noise
+        premultiply
+        blendFunction={BlendFunction.ADD}
+        opacity={0.06}
+      />
+
+      {/* Спорадичний глітч при активних режимах */}
+      <Glitch
+        delay={new THREE.Vector2(2.0, 5.0)}
+        duration={new THREE.Vector2(0.06, 0.2)}
+        strength={new THREE.Vector2(0.02, 0.15)}
+        mode={GlitchMode.SPORADIC}
+        active={isActive}
+        ratio={0.9}
+      />
+
+      {/* Кінематографічна віньєтка */}
+      <Vignette eskil={false} offset={0.2} darkness={1.1} />
+    </EffectComposer>
+  );
+};
 
 export const UniverseScene: React.FC = () => {
   return (

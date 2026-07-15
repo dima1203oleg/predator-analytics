@@ -186,11 +186,12 @@ export const DataParticles: React.FC = () => {
     varying float vImportance;
     varying vec3 vColor;
     varying float vAlpha;
+    varying float vGlow;
 
     vec3 riskColor(float risk) {
-      vec3 safe = vec3(0.1, 0.8, 0.4);
-      vec3 warning = vec3(1.0, 0.8, 0.0);
-      vec3 danger = vec3(1.0, 0.1, 0.2);
+      vec3 safe = vec3(0.0, 0.9, 0.5);       // кіберзелений
+      vec3 warning = vec3(1.0, 0.75, 0.0);    // янтарний
+      vec3 danger = vec3(1.0, 0.08, 0.25);    // кібер-червоний
       float r = risk / 100.0;
       if (r < 0.5) {
         return mix(safe, warning, r * 2.0);
@@ -202,18 +203,21 @@ export const DataParticles: React.FC = () => {
       vec4 instPos = instanceMatrix * vec4(0.0, 0.0, 0.0, 1.0);
       
       float t = uTime * uSpeed + aPhase;
-      float breathe = sin(t * 1.5) * 0.03;
-      float orbit = sin(t * 0.3 + aPhase) * 0.05;
+      
+      // Пульсація — дихання частинки
+      float breathe = sin(t * 1.8) * 0.04;
+      // Орбітальний дрейф
+      float orbit = sin(t * 0.35 + aPhase * 2.1) * 0.06;
       
       vec3 dir = normalize(instPos.xyz);
       vec3 displacement = dir * (breathe + orbit);
       vec3 finalPos = instPos.xyz + displacement;
       
-      float scale = mix(0.15, 0.6, aImportance);
+      float scale = mix(0.12, 0.65, aImportance);
       
-      // Пульсація при високому ризику
+      // Посилена пульсація при критичному ризику
       if (aRisk > 70.0) {
-        scale += sin(t * 4.0) * 0.05;
+        scale += sin(t * 5.0) * 0.07 * ((aRisk - 70.0) / 30.0);
       }
       
       vec4 mvPosition = modelViewMatrix * vec4(finalPos, 1.0);
@@ -221,10 +225,13 @@ export const DataParticles: React.FC = () => {
       
       gl_Position = projectionMatrix * mvPosition;
       
+      // Glow — чим важливіша частинка, тим яскравіша
+      vGlow = aImportance * 0.8 + (aRisk / 100.0) * 0.4;
+      
       vRisk = aRisk;
       vImportance = aImportance;
       vColor = riskColor(aRisk);
-      vAlpha = mix(0.3, 0.9, aImportance);
+      vAlpha = mix(0.25, 1.0, aImportance);
     }
   `;
 
@@ -233,19 +240,25 @@ export const DataParticles: React.FC = () => {
     varying float vImportance;
     varying vec3 vColor;
     varying float vAlpha;
+    varying float vGlow;
 
     void main() {
       // Нормаль для базового шейдингу
       vec3 normal = normalize(cross(dFdx(gl_FragCoord.xyz), dFdy(gl_FragCoord.xyz)));
       
-      // Fresnel glow
-      float fresnel = pow(1.0 - abs(dot(vec3(0.0, 0.0, 1.0), normal)), 2.0);
+      // Fresnel glow — ребро частинки світиться
+      float fresnel = pow(1.0 - abs(dot(vec3(0.0, 0.0, 1.0), normal)), 2.5);
       
-      vec3 finalColor = vColor * (0.5 + fresnel * 0.5);
+      // Базовий колір + ободок
+      vec3 finalColor = vColor * (0.4 + fresnel * 1.2);
       
-      // Яскравіше для критичних ризиків
-      if (vRisk > 85.0) {
-        finalColor *= 1.5;
+      // Додаткове свічення для важливих частинок
+      finalColor += vColor * vGlow * fresnel;
+      
+      // Перевантаження для критичних ризиків — яскраве ядро
+      if (vRisk > 80.0) {
+        finalColor = mix(finalColor, vec3(1.0, 0.2, 0.3), 0.4);
+        finalColor *= 1.8;
       }
       
       gl_FragColor = vec4(finalColor, vAlpha);
