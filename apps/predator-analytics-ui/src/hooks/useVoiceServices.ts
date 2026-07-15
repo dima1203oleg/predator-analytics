@@ -6,7 +6,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000
 export const useVoiceServices = () => {
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [isSynthesizing, setIsSynthesizing] = useState(false);
-  const { token } = useAuthStore();
+
 
   const transcribeAudio = useCallback(
     async (file: File): Promise<string | null> => {
@@ -17,9 +17,6 @@ export const useVoiceServices = () => {
 
         const response = await fetch(`${API_BASE_URL}/voice/transcribe`, {
           method: 'POST',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
           body: formData,
         });
 
@@ -36,7 +33,7 @@ export const useVoiceServices = () => {
         setIsTranscribing(false);
       }
     },
-    [token]
+    []
   );
 
   const synthesizeSpeech = useCallback(
@@ -47,7 +44,6 @@ export const useVoiceServices = () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ text }),
         });
@@ -65,7 +61,7 @@ export const useVoiceServices = () => {
         setIsSynthesizing(false);
       }
     },
-    [token]
+    []
   );
 
   const playSynthesizedSpeech = useCallback(

@@ -17,8 +17,7 @@ export const SpatialMap: React.FC = () => {
             center: [30.5234, 50.4501], // Kyiv
             zoom: 5,
             pitch: 45,
-            bearing: 0,
-            antialias: true
+            bearing: 0
         });
 
         map.current.addControl(new maplibregl.NavigationControl(), 'top-right');

@@ -198,6 +198,41 @@ class RAGService:
     # Retrieval + Generation
     # ------------------------------------------------------------------
 
+    async def retrieve_context(
+        self,
+        question: str,
+        tenant_id: str,
+        top_k: int = 5,
+        score_threshold: float = 0.4,
+    ) -> str:
+        """Отримує контекст для RAG."""
+        try:
+            query_embedding = await AIService.get_embeddings(question)
+            collection_name = f"predator-embeddings-{tenant_id}"
+            search_result = await qdrant_service.search(
+                collection=collection_name,
+                query_vector=query_embedding,
+                tenant_id=tenant_id,
+                limit=top_k,
+                score_threshold=score_threshold,
+            )
+            context_parts = []
+            for i, hit in enumerate(search_result.hits, 1):
+                payload = hit.payload or {}
+                content = payload.get("content", "")
+                if not content:
+                    content_lines = []
+                    for k, v in payload.items():
+                        if k not in ["tenant_id", "job_id", "document_id", "chunk_id"]:
+                            content_lines.append(f"{k}: {v}")
+                    content = "\\n".join(content_lines)
+                doc_id = payload.get("ueid", payload.get("document_id", "unknown"))
+                context_parts.append(f"[Джерело {i}] (ID: {doc_id}):\\n{content}")
+            return "\\n\\n".join(context_parts)
+        except Exception as e:
+            logger.error(f"Error retrieving context: {e}")
+            return ""
+
     async def query(
         self,
         question: str,

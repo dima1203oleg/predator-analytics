@@ -42,7 +42,16 @@ class CustomsPipeline(BasePipeline):
             if processed_companies:
                 await self.sink.upsert_companies(processed_companies)
 
-            logger.info("customs_pipeline.completed", count=len(processed_companies))
+            # 4. Запис самих декларацій
+            valid_declarations = [r for r in rows if r.get("declaration_number") or r.get("customs_value")]
+            if valid_declarations:
+                # Додамо tenant_id до кожної декларації, якщо його немає
+                for d in valid_declarations:
+                    if "_tenant_id" not in d:
+                        d["_tenant_id"] = self.tenant_id
+                await self.sink.insert_declarations(valid_declarations)
+
+            logger.info("customs_pipeline.completed", count=len(processed_companies), decl_count=len(valid_declarations))
 
             return {
                 "status": "success",

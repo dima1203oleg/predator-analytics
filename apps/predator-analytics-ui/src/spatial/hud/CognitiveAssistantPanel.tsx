@@ -159,7 +159,7 @@ export const CognitiveAssistantPanelInner: React.FC = () => {
                                     </p>
 
                                     {/* Кнопки дій */}
-                                    {insight.entityId && (
+                                    {(insight as any).entityId && (
                                         <Button variant="cyber"
                                             className="text-[8px] px-2 py-0.5 rounded transition-colors"
                                             style={{

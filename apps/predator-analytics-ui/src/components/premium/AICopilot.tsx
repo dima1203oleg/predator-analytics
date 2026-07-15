@@ -98,7 +98,8 @@ export const Predator: React.FC = () => {
   const [ramUsage, setRamUsage] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const recognitionRef = useRef<any>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<BlobPart[]>([]);
   const speakIdRef = useRef<number>(0);
 
   const { sendMessage } = useWebSocket('/ws/copilot', {
@@ -252,7 +253,7 @@ export const Predator: React.FC = () => {
         audioRef.current.currentTime = 0;
       }
       const currentSpeakId = ++speakIdRef.current;
-      const response = await fetch(`${API_BASE_URL}/ai/tts`, {
+      const response = await fetch(`${API_BASE_URL}/voice/synthesize`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text })
@@ -277,35 +278,81 @@ export const Predator: React.FC = () => {
     setAiResponse('ІНІЦІАЛІЗАЦІЯ КАНАЛУ GLM-5.1...');
     setHistory(prev => [...prev, { role: 'user', content: query }]);
     
-    sendMessage({
-      type: 'copilot_query',
-      payload: { message: query, history }
-    });
+    if (!backendStatus.isOffline) {
+      sendMessage({
+        type: 'copilot_query',
+        payload: { message: query, history }
+      });
+    } else {
+      console.warn("WS disconnected. Using HTTP fallback.");
+      try {
+        const response = await fetch(`${API_BASE_URL}/copilot/chat`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: query, history })
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setAiResponse(data.response);
+          speak(data.response);
+        } else {
+          setAiResponse("ПОМИЛКА З'ЄДНАННЯ (HTTP FALLBACK)");
+        }
+      } catch (err) {
+        setAiResponse("ВІДСУТНІЙ ЗВ'ЯЗОК З СЕРВЕРОМ");
+      }
+    }
   };
 
-  const handleVoiceToggle = () => {
+  const handleVoiceToggle = async () => {
     if (!isListening) {
-      const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
-      if (SpeechRecognition) {
-        const recognition = new SpeechRecognition();
-        recognitionRef.current = recognition;
-        recognition.lang = 'uk-UA';
-        recognition.continuous = false;
-        recognition.onstart = () => setIsListening(true);
-        recognition.onresult = (event: any) => {
-          const transcript = event.results[event.results.length - 1][0].transcript;
-          if (transcript) {
-             setMessage(transcript);
-             handleSend(transcript);
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const mediaRecorder = new MediaRecorder(stream);
+        mediaRecorderRef.current = mediaRecorder;
+        audioChunksRef.current = [];
+
+        mediaRecorder.ondataavailable = (event) => {
+          if (event.data.size > 0) {
+            audioChunksRef.current.push(event.data);
           }
         };
-        recognition.onerror = () => setIsListening(false);
-        recognition.onend = () => setIsListening(false);
-        recognition.start();
+
+        mediaRecorder.onstop = async () => {
+          setIsListening(false);
+          const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+          const formData = new FormData();
+          formData.append('file', audioBlob, 'recording.webm');
+          
+          try {
+            const response = await fetch(`${API_BASE_URL}/voice/transcribe`, {
+              method: 'POST',
+              body: formData,
+            });
+            if (response.ok) {
+              const data = await response.json();
+              if (data.text) {
+                setMessage(data.text);
+                handleSend(data.text);
+              }
+            }
+          } catch (e) {
+            console.error("STT Error:", e);
+          }
+          stream.getTracks().forEach(track => track.stop());
+        };
+
+        mediaRecorder.start();
+        setIsListening(true);
+      } catch (err) {
+        console.error("Microphone access denied or error:", err);
+        setIsListening(false);
       }
     } else {
+      if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+        mediaRecorderRef.current.stop();
+      }
       setIsListening(false);
-      if (recognitionRef.current) recognitionRef.current.stop();
     }
   };
 

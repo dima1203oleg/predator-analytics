@@ -5,8 +5,7 @@ import { useGraphStore } from '../../core/state/graph.store';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export const DocumentViewer: React.FC = () => {
-  const { rightPanelOpen } = useUiStore();
-  const { currentMode } = useSpatialStore();
+  const { activePanel } = useUiStore();
   const { emitRiskPulse } = useGraphStore();
 
   const [highlights] = useState([
@@ -15,10 +14,10 @@ export const DocumentViewer: React.FC = () => {
 
   const handleHighlightClick = (highlight: any) => {
     // Generate an event to trigger a pulse on the graph
-    emitRiskPulse('node-agro-renta', 'red');
+    emitRiskPulse('node-agro-renta');
   };
 
-  if (!rightPanelOpen || currentMode !== 'graph') return null;
+  if (activePanel !== 'documents') return null;
 
   return (
     <div className="absolute right-0 top-0 bottom-0 w-[450px] bg-black/80 backdrop-blur-md border-l border-white/10 z-40 flex flex-col pointer-events-auto">

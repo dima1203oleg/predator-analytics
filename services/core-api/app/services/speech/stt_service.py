@@ -15,6 +15,7 @@ class STTService:
         self.model_size = os.environ.get("WHISPER_MODEL", "small")
         self.device = "cuda" if os.environ.get("CUDA_VISIBLE_DEVICES") else "cpu"
         self.compute_type = "float16" if self.device == "cuda" else "int8"
+        self._is_ready = False
         
     async def initialize(self):
         """Ініціалізація моделі faster-whisper."""
@@ -29,6 +30,7 @@ class STTService:
                 loop = asyncio.get_event_loop()
                 self.model = await loop.run_in_executor(None, _load_model)
                 logger.info("faster-whisper успішно завантажено.")
+                self._is_ready = True
             except ImportError:
                 logger.warning("faster_whisper not installed! STT will be unavailable.")
                 self.model = "mock"
@@ -36,6 +38,7 @@ class STTService:
         except Exception as e:
             logger.error(f"Помилка ініціалізації faster-whisper: {e}")
             self.model = None
+            self._is_ready = False
 
     async def transcribe(self, audio_bytes: bytes) -> str:
         """Синхронне розпізнавання цілого файлу."""

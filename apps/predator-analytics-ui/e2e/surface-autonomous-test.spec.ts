@@ -8,8 +8,8 @@ test.describe('🤖 Autonomous Surface Test', () => {
       failed_clicks: 0,
       form_interactions: 0,
       keyboard_interactions: 0,
-      errors: [],
-      visited_urls: []
+      errors: [] as string[],
+      visited_urls: [] as string[]
     };
     
     try {
@@ -48,7 +48,7 @@ test.describe('🤖 Autonomous Surface Test', () => {
           
           // Отримуємо тип та інформацію
           const tagName = await el.evaluate(el => el.tagName.toLowerCase());
-          const inputType = tagName === 'input' ? await el.evaluate(el => el.type) : '';
+          const inputType = tagName === 'input' ? await el.evaluate(el => (el as HTMLInputElement).type) : '';
           
           if (tagName === 'input' && inputType === 'text') {
             // Заповнюємо текстові поля

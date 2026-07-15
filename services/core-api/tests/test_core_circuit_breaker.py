@@ -50,7 +50,7 @@ async def test_half_open_state_blocks_parallel_requests(cb: CircuitBreaker) -> N
     assert getattr(cb, "_is_probing", False) is True
     
     # Паралельний запит має отримати швидку відмову (RuntimeError)
-    with pytest.raises(RuntimeError, match="ВЖЕ зондується"):
+    with pytest.raises(RuntimeError, match="Очікування результату зондування"):
         await cb.call(slow_probe)()
         
     # Чекаємо завершення першого (зондуючого) запиту

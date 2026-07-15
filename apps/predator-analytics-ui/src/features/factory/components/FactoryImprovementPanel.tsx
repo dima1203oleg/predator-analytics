@@ -31,6 +31,8 @@ export interface FactoryImprovementPanelProps {
   handleUpdateKnowledgeMap: () => void;
   handleStopInfinite: () => void;
   handleMasterStart: () => void;
+  handleRollback: () => void;
+  handleSecurityScan: () => void;
 }
 
 const techOptions = [
@@ -68,7 +70,9 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
   handleStartImprovement,
   handleUpdateKnowledgeMap,
   handleStopInfinite,
-  handleMasterStart
+  handleMasterStart,
+  handleRollback,
+  handleSecurityScan
 }) => {
   const toggleSelection = (id: string, list: string[], setList: (v: string[]) => void) => {
     if (list.includes(id)) setList(list.filter(x => x !== id));
@@ -207,8 +211,8 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
               <div className="pt-4 border-t border-white/10 flex flex-col gap-3">
                  <Button onClick={handleStartImprovement} variant="neon" className="w-full bg-cyan-600/20 text-rose-400 border-cyan-500/50 font-black uppercase tracking-widest text-[10px] h-12 "><Wrench size={14} className="mr-2"/> Оптимізувати Ядро</Button>
                  <div className="grid grid-cols-2 gap-2">
-                   <Button variant="cyber" className="text-[9px] h-10 border-white/10 text-slate-400 hover:text-white"><HistoryIcon size={12} className="mr-1"/> Відкат (Rollback)</Button>
-                   <Button variant="cyber" className="text-[9px] h-10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/10"><Scan size={12} className="mr-1"/> Сканування Безпеки</Button>
+                   <Button onClick={handleRollback} variant="cyber" className="text-[9px] h-10 border-white/10 text-slate-400 hover:text-white"><HistoryIcon size={12} className="mr-1"/> Відкат (Rollback)</Button>
+                   <Button onClick={handleSecurityScan} variant="cyber" className="text-[9px] h-10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/10"><Scan size={12} className="mr-1"/> Сканування Безпеки</Button>
                  </div>
               </div>
             </div>

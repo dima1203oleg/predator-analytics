@@ -40,6 +40,7 @@ const NAV_CATEGORIES: NavCategory[] = [
     category: 'nav.intelligence_routing',
     items: [
       { path: '/admin/model-lab', label: 'nav.model_lab', Icon: Brain },
+      { path: '/admin/factory', label: 'nav.factory', Icon: Bot },
       { path: '/admin/agent-control', label: 'nav.agent_control', Icon: Bot },
       { path: '/admin/routing-matrix', label: 'nav.routing_matrix', Icon: Network },
       { path: '/admin/domain-knowledge', label: 'nav.domain_knowledge', Icon: Layers },

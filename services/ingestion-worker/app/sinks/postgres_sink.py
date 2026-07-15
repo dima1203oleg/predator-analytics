@@ -16,6 +16,7 @@ from sqlalchemy.orm import sessionmaker
 from app.config import get_settings
 from predator_common.logging import get_logger
 from predator_common.models import Company, Declaration
+
 logger = get_logger("ingestion_worker.postgres")
 settings = get_settings()
 
@@ -108,7 +109,7 @@ class PostgresSink:
             for item in batch:
                 try:
                     from dateutil.parser import parse as parse_date
-                    
+
                     decl_date_raw = item.get("declaration_date")
                     decl_date = None
                     if decl_date_raw:
@@ -116,7 +117,7 @@ class PostgresSink:
                             decl_date = parse_date(str(decl_date_raw)).date()
                         except Exception:
                             decl_date = None
-                            
+
                     # Підготовка даних для сутності Declaration
                     declaration_data = {
                         "tenant_id": item.get("_tenant_id"),
@@ -135,7 +136,7 @@ class PostgresSink:
                         "updated_at": datetime.now(UTC),
                     }
                     declaration_data = {k: v for k, v in declaration_data.items() if v is not None}
-                    
+
                     if not declaration_data.get("declaration_number") or not declaration_data.get("tenant_id"):
                         continue
 
@@ -210,7 +211,7 @@ class PostgresSink:
                     row = res.fetchone()
                     current_metadata = row[0] if row and row[0] else {}
                     current_metadata.update(metadata_updates)
-                    
+
                     query = text(
                         """
                         UPDATE ingestion_jobs
@@ -300,7 +301,6 @@ class PostgresSink:
         self, tenant_id: str, ingestion_id: str, step: str, status: str, records_written: int = 0
     ) -> None:
         """Записує подію Data Lineage Event (DFTL)."""
-        import uuid
         async with self.async_session() as session:
             try:
                 await session.execute(

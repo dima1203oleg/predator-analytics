@@ -7,6 +7,7 @@ import { apiClient } from '../services/api/config';
 export type InterlinkPersona = 'TITAN' | 'INQUISITOR' | 'SOVEREIGN' | 'BUSINESS' | 'GOVERNMENT' | 'INTELLIGENCE' | 'BANKING' | 'MEDIA';
 export type DeviceMode = 'desktop' | 'tablet' | 'mobile';
 export type ApiLanguage = 'ua' | 'en';
+export type ExperienceLevel = 'explorer' | 'professional' | 'expert';
 
 interface AppState {
   // User & Access
@@ -19,6 +20,10 @@ interface AppState {
   language: ApiLanguage;
   isTerminalOpen: boolean;
   highVisibility: boolean;
+  
+  // Universe UI
+  experienceLevel: ExperienceLevel;
+  isUniverseMode: boolean;
   
   // AZR Status
   azrStatus: {
@@ -74,6 +79,8 @@ export const useAppStore = create<AppState>()(
       language: 'ua',
       isTerminalOpen: false,
       highVisibility: true,
+      experienceLevel: 'professional',
+      isUniverseMode: true,
       azrStatus: {
         status: 'stable',
         progress: 100,

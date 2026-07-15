@@ -13,4 +13,5 @@ async def main():
     raw_results = await graph_db.run_query(neo4j_query, {})
     print(f"Graph nodes found: {len(raw_results) if raw_results else 0}")
     
-asyncio.run(main())
+if __name__ == "__main__":
+    asyncio.run(main())

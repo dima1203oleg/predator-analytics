@@ -268,7 +268,7 @@ const NetworkMapPage: React.FC = () => {
                         >
                             2D
                         </Button>
-                        <Button variant={viewMode === '3d' ? 'sovereign' : 'ghost'}
+                        <Button variant={(viewMode as string) === '3d' ? 'sovereign' : 'ghost'}
                             onClick={() => setViewMode('3d')}
                             className="rounded-xl w-16"
                         >

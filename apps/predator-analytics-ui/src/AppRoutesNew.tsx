@@ -15,6 +15,7 @@ import { CyberCommandLayout } from './components/cyber/CyberCommandLayout';
 const CyberDashboard = lazy(() => import('./components/dashboard/CyberDashboard'));
 const OmniscienceView = lazy(() => import('./features/dashboard/OmniscienceView'));
 const DataIngestionTerminal = lazy(() => import('./features/platform/components/DataIngestionTerminal').then(m => ({ default: m.DataIngestionTerminal })));
+const UniverseView = lazy(() => import('./pages/UniverseView'));
 
 // Next-Gen Admin Pages
 import { AdminLayout } from './admin/components/AdminLayout';
@@ -42,6 +43,7 @@ import { DataRoutingMatrix } from './admin/pages/DataRoutingMatrix';
 import { DomainKnowledgeSystem } from './admin/pages/DomainKnowledgeSystem';
 const DigitalTwinView = lazy(() => import('./features/modeling/DigitalTwinView'));
 const FlowAnalytics = lazy(() => import('./pages/FlowAnalytics'));
+const SystemFactoryView = lazy(() => import('./features/factory/SystemFactoryView'));
 
 // Next-Gen Spatial Interface
 import { OmniscienceV2 } from './user/pages/OmniscienceV2';
@@ -55,11 +57,11 @@ export const AppRoutesNew = () => {
   const effectiveRole = resolveUserRole(user?.role);
   const isAdmin = effectiveRole === UserRole.CORE;
 
-  if (!user && !location.pathname.startsWith('/auth') && location.pathname !== '/elite-command' && location.pathname !== '/predator' && location.pathname !== '/void-forge' && location.pathname !== '/ingestion' && location.pathname !== '/') {
+  if (!user && !location.pathname.startsWith('/auth') && location.pathname !== '/elite-command' && location.pathname !== '/predator' && location.pathname !== '/void-forge' && location.pathname !== '/ingestion' && location.pathname !== '/universe' && location.pathname !== '/') {
     return <Navigate to="/auth/login" state={{ from: location }} replace />;
   }
 
-  if ((!user || location.pathname.startsWith('/auth')) && location.pathname !== '/elite-command' && location.pathname !== '/predator' && location.pathname !== '/void-forge' && location.pathname !== '/ingestion' && location.pathname !== '/') {
+  if ((!user || location.pathname.startsWith('/auth')) && location.pathname !== '/elite-command' && location.pathname !== '/predator' && location.pathname !== '/void-forge' && location.pathname !== '/ingestion' && location.pathname !== '/universe' && location.pathname !== '/') {
     return (
       <Suspense fallback={<LoadingSkeleton />}>
         <ErrorBoundary>
@@ -72,22 +74,23 @@ export const AppRoutesNew = () => {
   }
 
   // ─── CYBER & OMNISCIENCE ROUTES (Всі авторизовані + bypass) ──────────────────────
-  if (location.pathname === '/' || location.pathname === '/command' || location.pathname === '/cyber' || location.pathname === '/dashboard' || location.pathname === '/omniscience' || location.pathname === '/omniscience-v2' || location.pathname === '/elite-command' || location.pathname === '/predator' || location.pathname === '/void-forge' || location.pathname === '/ingestion' || location.pathname === '/flow-analytics') {
+  if (location.pathname === '/' || location.pathname === '/command' || location.pathname === '/cyber' || location.pathname === '/dashboard' || location.pathname === '/omniscience' || location.pathname === '/omniscience-v2' || location.pathname === '/universe' || location.pathname === '/elite-command' || location.pathname === '/predator' || location.pathname === '/void-forge' || location.pathname === '/ingestion' || location.pathname === '/flow-analytics') {
     return (
       <Suspense fallback={<LoadingSkeleton />}>
         <ErrorBoundary>
           <Routes location={location} key={location.pathname}>
-            <Route path="/" element={<Navigate to="/omniscience-v2" replace />} />
-            <Route path="/command" element={<Navigate to="/omniscience-v2" replace />} />
-            <Route path="/cyber" element={<Navigate to="/omniscience-v2" replace />} />
-            <Route path="/dashboard" element={<Navigate to="/omniscience-v2" replace />} />
+            <Route path="/" element={<Navigate to="/universe" replace />} />
+            <Route path="/command" element={<Navigate to="/universe" replace />} />
+            <Route path="/cyber" element={<Navigate to="/universe" replace />} />
+            <Route path="/dashboard" element={<Navigate to="/universe" replace />} />
             <Route path="/omniscience" element={
               <CyberCommandLayout>
                 <OmniscienceView />
               </CyberCommandLayout>
             } />
             <Route path="/omniscience-v2" element={<OmniscienceV2 />} />
-            <Route path="/elite-command" element={<Navigate to="/omniscience-v2" replace />} />
+            <Route path="/universe" element={<UniverseView />} />
+            <Route path="/elite-command" element={<Navigate to="/universe" replace />} />
             <Route path="/predator" element={<CommandCenter />} />
             <Route path="/void-forge" element={<VoidForgeScene />} />
             <Route path="/flow-analytics" element={<FlowAnalytics />} />
@@ -134,6 +137,7 @@ export const AppRoutesNew = () => {
               <Route path="/admin/cost-intelligence" element={<CostIntelligenceCenter />} />
               <Route path="/admin/routing-matrix" element={<DataRoutingMatrix />} />
               <Route path="/admin/domain-knowledge" element={<DomainKnowledgeSystem />} />
+              <Route path="/admin/factory" element={<SystemFactoryView />} />
               
               <Route path="*" element={<Navigate to="/admin" replace />} />
             </Routes>

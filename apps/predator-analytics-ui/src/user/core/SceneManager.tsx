@@ -131,9 +131,9 @@ export const SceneManager: React.FC = () => {
                 <Scanline density={1.5} opacity={0.015} blendFunction={BlendFunction.OVERLAY} />
                 <Glitch
                     active={isGlitching}
-                    delay={[0, 0]}
-                    duration={[0.3, 0.5]}
-                    strength={[0.2, 0.4]}
+                    delay={new THREE.Vector2(0, 0)}
+                    duration={new THREE.Vector2(0.3, 0.5)}
+                    strength={new THREE.Vector2(0.2, 0.4)}
                     mode={GlitchMode.SPORADIC}
                     ratio={0.85}
                 />

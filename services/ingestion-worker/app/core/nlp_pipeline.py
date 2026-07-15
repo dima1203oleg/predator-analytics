@@ -11,15 +11,12 @@ PREDATOR Analytics v61.0-ELITE
 
 from __future__ import annotations
 
-import asyncio
-import json
-import logging
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
+import json
+import logging
 from typing import Any
-
-import orjson
 
 from app.config import settings
 
@@ -28,6 +25,7 @@ logger = logging.getLogger("predator.ingestion.nlp")
 
 class EntityType(Enum):
     """Типи сутностей для PREDATOR Analytics."""
+
     COMPANY = "COMPANY"
     PERSON = "PERSON"
     GOVERNMENT = "GOVERNMENT"
@@ -41,13 +39,14 @@ class EntityType(Enum):
 
 class RelationshipType(Enum):
     """Типи зв'язків між сутностями."""
+
     OWNS = "OWNS"
     DIRECTS = "DIRECTS"
     FILED = "FILED"
     PROCESSED = "PROCESSED"
     REGISTERED_AT = "REGISTERED_AT"
     CONTAINS = "CONTAINS"
-    
+
     # Автогенеровані типи (Autonomous Schema Synthesis)
     MUTUAL_BENEFICIARY = "MUTUAL_BENEFICIARY"
     MONEY_LAUNDERING_PATH = "MONEY_LAUNDERING_PATH"
@@ -59,13 +58,14 @@ class RelationshipType(Enum):
 @dataclass
 class Entity:
     """Сутність, виділена з тексту."""
+
     text: str
     entity_type: EntityType
     confidence: float = 0.8
     start_pos: int = 0
     end_pos: int = 0
     metadata: dict[str, Any] = field(default_factory=dict)
-    
+
     def to_dict(self) -> dict[str, Any]:
         return {
             "text": self.text,
@@ -80,12 +80,13 @@ class Entity:
 @dataclass
 class Relationship:
     """Зв'язок між сутностями."""
+
     source: str
     target: str
     relationship_type: RelationshipType
     confidence: float = 0.8
     metadata: dict[str, Any] = field(default_factory=dict)
-    
+
     def to_dict(self) -> dict[str, Any]:
         return {
             "source": self.source,
@@ -99,12 +100,13 @@ class Relationship:
 @dataclass
 class NLPResult:
     """Результат NLP аналізу."""
+
     entities: list[Entity] = field(default_factory=list)
     relationships: list[Relationship] = field(default_factory=list)
     text: str = ""
     processing_time_ms: float = 0.0
     timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
-    
+
     def to_dict(self) -> dict[str, Any]:
         return {
             "entities": [e.to_dict() for e in self.entities],
@@ -121,17 +123,17 @@ class NLPPipeline:
     Використовує spaCy для базового NER та Ollama для LLM-підтвердження
     нових типів сутностей та зв'язків.
     """
-    
+
     def __init__(self):
         self._spacy_model = None
         self._llm_client = None
         self._initialized = False
-        
+
     async def initialize(self):
         """Ініціалізація NLP Pipeline."""
         if self._initialized:
             return
-        
+
         try:
             # Спроба завантажити spaCy модель
             try:
@@ -141,7 +143,7 @@ class NLPPipeline:
             except Exception as e:
                 logger.warning(f"Не вдалося завантажити spaCy модель: {e}")
                 logger.info("Використовуємо fallback без spaCy")
-            
+
             # Ініціалізація LLM клієнта (Ollama)
             try:
                 import httpx
@@ -149,15 +151,15 @@ class NLPPipeline:
                 logger.info("LLM клієнт ініціалізовано (Ollama)")
             except Exception as e:
                 logger.warning(f"Не вдалося ініціалізувати LLM клієнт: {e}")
-            
+
             self._initialized = True
             logger.info("NLP Pipeline ініціалізовано")
-            
+
         except Exception as e:
             logger.exception(f"Помилка ініціалізації NLP Pipeline: {e}")
             # Не падаємо, працюємо в fallback режимі
             self._initialized = True
-    
+
     async def extract_entities(self, text: str) -> list[Entity]:
         """Виділяє сутності з тексту.
         
@@ -166,12 +168,13 @@ class NLPPipeline:
             
         Returns:
             Список виділених сутностей
+
         """
         if not text or not text.strip():
             return []
-        
+
         entities = []
-        
+
         # 1. spaCy NER (якщо доступно)
         if self._spacy_model:
             try:
@@ -188,7 +191,7 @@ class NLPPipeline:
                     ))
             except Exception as e:
                 logger.warning(f"spaCy NER помилка: {e}")
-        
+
         # 2. LLM-підтвердження для невизначених сутностей
         unknown_entities = [e for e in entities if e.entity_type == EntityType.UNKNOWN]
         if unknown_entities and self._llm_client:
@@ -202,16 +205,16 @@ class NLPPipeline:
                         orig.metadata["llm_confirmed"] = True
             except Exception as e:
                 logger.warning(f"LLM підтвердження сутностей не вдалося: {e}")
-        
+
         # 3. Fallback: простий regex для компаній та осіб
         if not entities:
             entities = self._regex_entity_extraction(text)
-        
+
         return entities
-    
+
     async def detect_relationships(
-        self, 
-        entities: list[Entity], 
+        self,
+        entities: list[Entity],
         text: str
     ) -> list[Relationship]:
         """Виявляє зв'язки між сутностями.
@@ -222,12 +225,13 @@ class NLPPipeline:
             
         Returns:
             Список виявлених зв'язків
+
         """
         if not entities or len(entities) < 2:
             return []
-        
+
         relationships = []
-        
+
         # 1. LLM-аналіз контексту для виявлення зв'язків
         if self._llm_client:
             try:
@@ -235,13 +239,13 @@ class NLPPipeline:
                 relationships.extend(llm_relationships)
             except Exception as e:
                 logger.warning(f"LLM виявлення зв'язків не вдалося: {e}")
-        
+
         # 2. Fallback: прості правила на основі ключових слів
         if not relationships:
             relationships = self._rule_based_relationship_detection(entities, text)
-        
+
         return relationships
-    
+
     async def process(self, text: str) -> NLPResult:
         """Повний цикл обробки тексту.
         
@@ -250,31 +254,32 @@ class NLPPipeline:
             
         Returns:
             NLPResult з сутностями та зв'язками
+
         """
         import time
         start_time = time.time()
-        
+
         # Ініціалізація (якщо потрібно)
         if not self._initialized:
             await self.initialize()
-        
+
         # Виділення сутностей
         entities = await self.extract_entities(text)
-        
+
         # Виявлення зв'язків
         relationships = await self.detect_relationships(entities, text)
-        
+
         processing_time = (time.time() - start_time) * 1000
-        
+
         return NLPResult(
             entities=entities,
             relationships=relationships,
             text=text,
             processing_time_ms=processing_time,
         )
-    
+
     # --- Private methods ---
-    
+
     def _map_spacy_label(self, spacy_label: str) -> EntityType:
         """Мапінг spaCy labels на PREDATOR EntityTypes."""
         label_map = {
@@ -285,16 +290,16 @@ class NLPPipeline:
             "PRODUCT": EntityType.PRODUCT,
         }
         return label_map.get(spacy_label, EntityType.UNKNOWN)
-    
+
     async def _llm_confirm_entities(
-        self, 
-        entities: list[Entity], 
+        self,
+        entities: list[Entity],
         text: str
     ) -> list[Entity]:
         """LLM-підтвердження типів сутностей."""
         if not self._llm_client:
             return entities
-        
+
         prompt = f"""Аналізуй наступні сутності з тексту та визнач їх точні типи.
 
 Текст: {text[:2000]}
@@ -323,7 +328,7 @@ class NLPPipeline:
     ]
 }}
 """
-        
+
         try:
             response = await self._llm_client.post(
                 f"{settings.LLM_OLLAMA_BASE_URL}/generate",
@@ -334,11 +339,11 @@ class NLPPipeline:
                     "format": "json"
                 }
             )
-            
+
             if response.status_code == 200:
                 data = response.json()
                 result = json.loads(data.get("response", "{}"))
-                
+
                 confirmed = []
                 for orig, conf in zip(entities, result.get("entities", [])):
                     entity_type = EntityType(conf.get("entity_type", "UNKNOWN"))
@@ -350,25 +355,25 @@ class NLPPipeline:
                         end_pos=orig.end_pos,
                         metadata={"source": "llm_confirmed"}
                     ))
-                
+
                 return confirmed
-                
+
         except Exception as e:
             logger.warning(f"LLM підтвердження сутностей помилка: {e}")
-        
+
         return entities
-    
+
     async def _llm_detect_relationships(
-        self, 
-        entities: list[Entity], 
+        self,
+        entities: list[Entity],
         text: str
     ) -> list[Relationship]:
         """LLM-виявлення зв'язків між сутностями."""
         if not self._llm_client or len(entities) < 2:
             return []
-        
+
         entity_texts = [e.text for e in entities]
-        
+
         prompt = f"""Аналізуй текст та вияв зв'язки між наступними сутностями:
 
 Текст: {text[:2000]}
@@ -400,7 +405,7 @@ class NLPPipeline:
     ]
 }}
 """
-        
+
         try:
             response = await self._llm_client.post(
                 f"{settings.LLM_OLLAMA_BASE_URL}/generate",
@@ -411,11 +416,11 @@ class NLPPipeline:
                     "format": "json"
                 }
             )
-            
+
             if response.status_code == 200:
                 data = response.json()
                 result = json.loads(data.get("response", "{}"))
-                
+
                 relationships = []
                 for rel in result.get("relationships", []):
                     rel_type = RelationshipType(rel.get("relationship_type", "UNKNOWN"))
@@ -426,26 +431,26 @@ class NLPPipeline:
                         confidence=rel.get("confidence", 0.7),
                         metadata={"source": "llm_detected"}
                     ))
-                
+
                 return relationships
-                
+
         except Exception as e:
             logger.warning(f"LLM виявлення зв'язків помилка: {e}")
-        
+
         return []
-    
+
     def _regex_entity_extraction(self, text: str) -> list[Entity]:
         """Fallback: regex-виділення сутностей."""
         import re
-        
+
         entities = []
-        
+
         # Компанії (ТОВ, ПП, ПАТ, тощо)
         company_patterns = [
             r'(?:ТОВ|ПП|ПАТ|ПрАТ|АТ|ДП|КП)\s+["«]?([^"»»]+)["»»]?',
             r'(?:ТОВ|ПП|ПАТ|ПрАТ|АТ|ДП|КП)\s+([А-ЯІЇЄҐ][а-яіїєґ\s]+)',
         ]
-        
+
         for pattern in company_patterns:
             matches = re.finditer(pattern, text, re.IGNORECASE)
             for match in matches:
@@ -456,7 +461,7 @@ class NLPPipeline:
                     confidence=0.6,
                     metadata={"source": "regex"}
                 ))
-        
+
         # Особи (ПІБ)
         person_pattern = r'([А-ЯІЇЄҐ][а-яіїєґ]+\s+[А-ЯІЇЄҐ][а-яіїєґ]+(?:\s+[А-ЯІЇЄҐ][а-яіїєґ]+)?)'
         matches = re.finditer(person_pattern, text)
@@ -468,20 +473,20 @@ class NLPPipeline:
                 confidence=0.6,
                 metadata={"source": "regex"}
             ))
-        
+
         return entities
-    
+
     def _rule_based_relationship_detection(
-        self, 
-        entities: list[Entity], 
+        self,
+        entities: list[Entity],
         text: str
     ) -> list[Relationship]:
         """Fallback: rule-based виявлення зв'язків."""
         relationships = []
-        
+
         # Прості правила на основі ключових слів
         text_lower = text.lower()
-        
+
         for i, e1 in enumerate(entities):
             for e2 in entities[i+1:]:
                 # OWNS: "володіє", "власник"
@@ -494,7 +499,7 @@ class NLPPipeline:
                             confidence=0.5,
                             metadata={"source": "rule_based"}
                         ))
-                
+
                 # DIRECTS: "директор", "керує"
                 if any(word in text_lower for word in ["директор", "керує", "голова"]):
                     if e1.entity_type == EntityType.PERSON and e2.entity_type == EntityType.COMPANY:
@@ -505,7 +510,7 @@ class NLPPipeline:
                             confidence=0.5,
                             metadata={"source": "rule_based"}
                         ))
-        
+
         return relationships
 
 

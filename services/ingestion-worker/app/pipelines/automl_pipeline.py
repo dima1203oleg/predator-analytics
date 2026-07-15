@@ -1,6 +1,5 @@
-import json
 import logging
-from typing import Dict, Any
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -9,28 +8,27 @@ class AutoMLPipeline:
         self.ollama_url = ollama_url
         logger.info("Initialized AutoMLPipeline with Ollama URL: %s", self.ollama_url)
 
-    async def process_dataset(self, file_id: str, data: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Process the uploaded dataset for AutoML and Self-Learning.
+    async def process_dataset(self, file_id: str, data: dict[str, Any]) -> dict[str, Any]:
+        """Process the uploaded dataset for AutoML and Self-Learning.
         1. Clean and deduplicate data.
         2. Feature engineering (via DeepSeek-R1 logic).
         3. Store embeddings in Qdrant.
         4. Recommend ML algorithms.
         """
         logger.info("Starting AutoML dataset processing for %s", file_id)
-        
+
         # 1. Clean and deduplicate (Mock implementation)
         cleaned_data = self._clean_data(data)
-        
+
         # 2. Feature Engineering using DeepSeek-R1 (Mocked interaction)
         features = await self._generate_features(cleaned_data)
-        
+
         # 3. Store embeddings (Mocked Qdrant call)
         await self._store_embeddings(file_id, features)
-        
+
         # 4. Determine AutoML Strategy
         strategy = await self._determine_automl_strategy(file_id)
-        
+
         logger.info("Finished AutoML processing for %s. Strategy: %s", file_id, strategy)
         return {
             "status": "success",
@@ -39,11 +37,11 @@ class AutoMLPipeline:
             "features_generated": len(features)
         }
 
-    def _clean_data(self, data: Dict[str, Any]) -> Dict[str, Any]:
+    def _clean_data(self, data: dict[str, Any]) -> dict[str, Any]:
         # Implementation for deduplication, normalization, etc.
         return data
 
-    async def _generate_features(self, data: Dict[str, Any]) -> list:
+    async def _generate_features(self, data: dict[str, Any]) -> list:
         # In a real scenario, we would call Ollama / DeepSeek-R1
         # to suggest new features based on columns.
         return [{"feature_name": "auto_feat_1", "type": "numeric"}]

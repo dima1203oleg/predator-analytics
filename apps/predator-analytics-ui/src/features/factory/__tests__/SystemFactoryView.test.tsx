@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import React from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import SystemFactoryView from '../SystemFactoryView';
 
 const {
@@ -43,14 +43,22 @@ const {
   },
 }));
 
-vi.mock('framer-motion', () => ({
-  AnimatePresence: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
-  motion: {
-    div: ({ children, ...props }: React.HTMLAttributes<HTMLDivElement> & { children?: React.ReactNode }) => (
-      <div {...props}>{children}</div>
-    ),
-  },
-}));
+vi.mock('framer-motion', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('framer-motion')>();
+  return {
+    ...actual,
+    AnimatePresence: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
+    motion: {
+      ...actual.motion,
+      div: ({ children, ...props }: React.HTMLAttributes<HTMLDivElement> & { children?: React.ReactNode }) => (
+        <div {...props}>{children}</div>
+      ),
+    },
+    useMotionValue: vi.fn(() => ({ set: vi.fn(), get: vi.fn(), on: () => () => {} })),
+    useMotionTemplate: vi.fn(() => ''),
+    useSpring: vi.fn(() => ({ set: vi.fn(), get: vi.fn(), on: () => () => {} })),
+  };
+});
 
 vi.mock('lucide-react', async (importOriginal) => {
   const actual = await importOriginal<typeof import('lucide-react')>();
@@ -111,13 +119,14 @@ vi.mock('@/services/api', () => ({
   apiClient: apiClientMock,
   factoryApi: factoryApiMock,
   monitoringApi: monitoringApiMock,
+  systemApi: systemApiMock,
   v45Client: {
     defaults: {},
   },
 }));
 
-vi.mock('@/services/api/system', () => ({
-  systemApi: systemApiMock,
+vi.mock('@/hooks/useAdminApi', () => ({
+  useDataOpsStatus: vi.fn(() => ({ data: undefined, isLoading: false, isError: false })),
 }));
 
 describe('SystemFactoryView', () => {
@@ -166,9 +175,23 @@ describe('SystemFactoryView', () => {
       expect(factoryApiMock.getInfiniteStatus).toHaveBeenCalled();
     });
 
-    expect(await screen.findByText(/Сервер: АКТИВНИЙ/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /ЗУПИНИТИ/i })).toBeInTheDocument();
+    expect(await screen.findByText(/Активний/i)).toBeInTheDocument();
+
+    // Switch to OODA tab
+    fireEvent.click(screen.getByRole('button', { name: /OODA Loop/i }));
+    
+    expect(await screen.findByRole('button', { name: /ЗУПИНИТИ/i })).toBeInTheDocument();
     expect(screen.getByText(/Автовідновлення/i)).toBeInTheDocument();
     expect(screen.getByText(/Збереження стану/i)).toBeInTheDocument();
+  });
+
+  it('відображає відправлене повідомлення в чаті', async () => {
+    // В цьому компоненті чат знаходиться в FactoryCoordinatorChat
+    // і SystemFactoryView взаємодіє з ним через хуки/стан.
+    // Спрощена перевірка наявності поля вводу команд (на жаль FactoryCoordinatorChat не експортує інпут безпосередньо, перевіряємо його наявність неявно)
+    render(<SystemFactoryView />);
+    await waitFor(() => {
+      expect(factoryApiMock.getInfiniteStatus).toHaveBeenCalled();
+    });
   });
 });

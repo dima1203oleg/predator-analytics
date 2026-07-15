@@ -3,10 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { Terminal, Send, Loader } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { usePredatorStore } from '../../stores/usePredatorStore';
-import { fetchExplanation } from '../../core/apiClient';
+import { fetchExplanation, fetchChatResponse } from '../../core/apiClient';
 
 export const DialoguePanel = () => {
   const [input, setInput] = useState('');
+  const [lastQuery, setLastQuery] = useState('');
   const [aiExplanation, setAiExplanation] = useState<any>(null);
   const [isExplaining, setIsExplaining] = useState(false);
   
@@ -18,6 +19,7 @@ export const DialoguePanel = () => {
     if (selectedNodeId) {
       setIsExplaining(true);
       setAiExplanation(null);
+      setLastQuery(`Аналіз сутності: ${selectedNodeId}`);
       
       const node = nodes.find(n => n.id === selectedNodeId);
       
@@ -28,13 +30,29 @@ export const DialoguePanel = () => {
     } else {
       setAiExplanation(null);
       setIsExplaining(false);
+      setLastQuery('');
     }
   }, [selectedNodeId, nodes]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim()) return;
+    
+    const query = input;
     setInput('');
+    setLastQuery(query);
+    setIsExplaining(true);
+    setAiExplanation(null);
+    
+    // Use real API for chat
+    fetchChatResponse(query).then(res => {
+      setAiExplanation({
+        explanation: res.response || "Аналіз завершено.",
+        confidence: 0.98,
+        chain: res.sources || ["Nemotron MoE", "Neo4j Graph"]
+      });
+      setIsExplaining(false);
+    });
   };
 
   return (
@@ -43,8 +61,8 @@ export const DialoguePanel = () => {
       
       <div className="border border-purple-500/30 bg-purple-900/10 p-3 rounded-sm">
         <div className="text-[10px] text-purple-400/60 uppercase mb-1">{t('hud.your_query')}</div>
-        <div className="text-purple-300">
-          {selectedNodeId ? `Аналіз сутності: ${selectedNodeId}` : "Очікування вибору сутності..."}
+        <div className="text-purple-300 break-words">
+          {lastQuery || "Очікування запиту або вибору сутності..."}
         </div>
       </div>
 

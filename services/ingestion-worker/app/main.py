@@ -17,18 +17,19 @@ from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
 from pydantic import ValidationError
 
 from app.config import get_settings
+from app.core.neo4j_auto_sync import get_neo4j_auto_sync
 from app.core.nlp_pipeline import get_nlp_pipeline
 from app.core.pattern_discovery import get_pattern_discovery_engine
 from app.core.schema_evolution import get_schema_evolution_engine
-from app.core.neo4j_auto_sync import get_neo4j_auto_sync
 from app.fusion_engine import ДвигунЗлиттяДаних
 from app.health import set_health_status, start_health_server, stop_health_server
+from app.pipelines.automl_pipeline import AutoMLPipeline
+from app.pipelines.customs import CustomsPipeline
 from app.pipelines.file_ingestion import FileIngestionPipeline
 from app.pipelines.omniverse_pipeline import OmniversePipeline
 from app.registries.ua_registries import УкраїнськийРеєстр
 from app.services.omniverse_watchdog import OmniverseWatchdog
 from app.sinks.postgres_sink import PostgresSink
-from app.pipelines.automl_pipeline import AutoMLPipeline
 from predator_common.logging import get_logger
 
 logger = get_logger("ingestion_worker")
@@ -92,12 +93,12 @@ async def process_file_upload(
         async def progress_callback(progress: dict[str, Any]) -> None:
             stage = progress.get("stage", "processing")
             status = "processing"
-            
+
             if stage == "indexing":
                 status = "indexing"
             elif stage == "vectorizing":
                 status = "vectorizing"
-            
+
             await postgres_sink.update_job_progress(
                 job_id=job_id,
                 status=status,
@@ -264,6 +265,43 @@ async def process_automl_dataset(
         logger.error("ingestion_worker.automl_error", error=str(e), exc_info=True)
 
 
+async def process_customs_declaration(
+    msg_value: dict[str, Any],
+    producer: AIOKafkaProducer,
+    postgres_sink: PostgresSink,
+) -> None:
+    """Обробка потокових митних декларацій."""
+    tenant_id = msg_value.get("tenant_id", settings.ROOT_TENANT_ID)
+    data = msg_value.get("customs_declaration")
+
+    if not data:
+        logger.warning("ingestion_worker.skip_customs", reason="Відсутні дані customs_declaration")
+        return
+
+    logger.info("ingestion_worker.customs_start", tenant_id=tenant_id)
+    try:
+        pipeline = CustomsPipeline(tenant_id=tenant_id)
+        # Передаємо list, оскільки pipeline очікує список або CSV
+        data_to_process = [data] if isinstance(data, dict) else data
+        result = await pipeline.run(data_to_process)
+
+        logger.info("ingestion_worker.customs_success", processed=result.get("processed_count", 0))
+
+        # Публікуємо подію в TOPIC_ENRICHED
+        event_payload = {
+            "type": "customs_declaration_processed",
+            "tenant_id": tenant_id,
+            "processed_count": result.get("processed_count", 0),
+            "timestamp": int(datetime.now(UTC).timestamp() * 1000)
+        }
+        await producer.send_and_wait(
+            topic=TOPIC_ENRICHED,
+            value=json.dumps(event_payload).encode("utf-8"),
+        )
+    except Exception as e:
+        logger.error("ingestion_worker.customs_error", error=str(e), exc_info=True)
+
+
 async def process_message(
     msg_value: dict[str, Any],
     fusion_engine: ДвигунЗлиттяДаних,
@@ -302,6 +340,9 @@ async def process_message(
         elif "automl_request" in msg_value:
             # Запит на AutoML та створення датасетів
             await process_automl_dataset(msg_value, producer, postgres_sink)
+        elif "customs_declaration" in msg_value:
+            # Інгестія потокових митних декларацій
+            await process_customs_declaration(msg_value, producer, postgres_sink)
         else:
             logger.warning(
                 "ingestion_worker.unknown_message_type",
@@ -428,35 +469,35 @@ async def autonomous_schema_synthesis_loop() -> None:
     та автоматичної еволюції схеми Neo4j.
     """
     logger.info("ASS: Autonomous Schema Synthesis loop запущено")
-    
+
     # Ініціалізація модулів
     nlp_pipeline = await get_nlp_pipeline()
     pattern_engine = await get_pattern_discovery_engine()
     schema_engine = await get_schema_evolution_engine()
     sync = get_neo4j_auto_sync()
-    
+
     while True:
         try:
             logger.info("ASS: Запуск Pattern Discovery")
-            
+
             # Виявлення нових патернів
             patterns = await pattern_engine.discover_new_patterns(
                 sample_size=1000,
                 monte_carlo_iterations=100
             )
-            
+
             if patterns:
                 logger.info(f"ASS: Виявлено {len(patterns)} нових патернів")
-                
+
                 # Еволюція схеми
                 update = await schema_engine.evolve_schema(patterns)
-                
+
                 if update.status.value == "APPROVED":
                     logger.info(f"ASS: Схема оновлена: {update.update_id}")
-                    
+
                     # Синхронізація з Neo4j
                     sync_result = await sync.apply_schema_update(update)
-                    
+
                     if sync_result.status.value == "COMPLETED":
                         logger.info(
                             f"ASS: Синхронізація успішна: "
@@ -466,10 +507,10 @@ async def autonomous_schema_synthesis_loop() -> None:
                         logger.warning(f"ASS: Синхронізація не вдалася: {sync_result.error_message}")
             else:
                 logger.info("ASS: Нових патернів не виявлено")
-            
+
             # Чекаємо 30 хвилин перед наступним запуском
             await asyncio.sleep(1800)
-            
+
         except Exception as e:
             logger.exception(f"ASS: Помилка в циклі Pattern Discovery: {e}")
             # Чекаємо 5 хвилин перед retry
@@ -493,7 +534,7 @@ async def main() -> None:
     # Запускаємо OMNIVERSE Watchdog
     watchdog = OmniverseWatchdog(interval_seconds=300)
     watchdog_task = asyncio.create_task(watchdog.start())
-    
+
     # Запускаємо Autonomous Schema Synthesis loop
     ass_task = asyncio.create_task(autonomous_schema_synthesis_loop())
 

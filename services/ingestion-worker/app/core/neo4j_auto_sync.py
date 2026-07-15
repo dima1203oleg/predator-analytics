@@ -13,10 +13,10 @@ PREDATOR Analytics v61.0-ELITE
 from __future__ import annotations
 
 import asyncio
-import logging
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
+import logging
 from typing import Any
 
 from app.config import settings
@@ -27,6 +27,7 @@ logger = logging.getLogger("predator.ingestion.neo4j_auto_sync")
 
 class SyncStatus(Enum):
     """Статус синхронізації."""
+
     IDLE = "IDLE"
     SYNCING = "SYNCING"
     COMPLETED = "COMPLETED"
@@ -37,6 +38,7 @@ class SyncStatus(Enum):
 @dataclass
 class SyncResult:
     """Результат синхронізації."""
+
     sync_id: str
     status: SyncStatus
     relationships_created: int = 0
@@ -46,7 +48,7 @@ class SyncResult:
     error_message: str | None = None
     duration_ms: float = 0.0
     timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
-    
+
     def to_dict(self) -> dict[str, Any]:
         return {
             "sync_id": self.sync_id,
@@ -64,6 +66,7 @@ class SyncResult:
 @dataclass
 class BackfillResult:
     """Результат backfill операції."""
+
     pattern_id: str
     relationship_type: str
     relationships_backfilled: int = 0
@@ -81,7 +84,7 @@ class Neo4jAutoSync:
     3. Моніторинг стану
     4. Retry логіка
     """
-    
+
     def __init__(self, neo4j_driver=None):
         self.neo4j_driver = neo4j_driver
         if not self.neo4j_driver:
@@ -97,7 +100,7 @@ class Neo4jAutoSync:
         self._current_sync_id: str | None = None
         self._retry_count = 0
         self._max_retries = 3
-        
+
     async def apply_schema_update(self, update: SchemaUpdate) -> SyncResult:
         """Застосовує оновлення схеми до Neo4j.
         
@@ -106,16 +109,17 @@ class Neo4jAutoSync:
             
         Returns:
             SyncResult з деталями синхронізації
+
         """
         import time
         start_time = time.time()
-        
+
         sync_id = self._generate_sync_id()
         self._current_sync_id = sync_id
         self._status = SyncStatus.SYNCING
-        
+
         logger.info(f"Початок синхронізації схеми: {sync_id}")
-        
+
         if not self.neo4j_driver:
             error = "Neo4j драйвер не доступний"
             logger.warning(error)
@@ -126,11 +130,11 @@ class Neo4jAutoSync:
                 error_message=error,
                 duration_ms=(time.time() - start_time) * 1000
             )
-        
+
         try:
             relationships_created = 0
             relationships_failed = 0
-            
+
             async with self.neo4j_driver.session() as session:
                 for command in update.cypher_commands:
                     try:
@@ -141,16 +145,16 @@ class Neo4jAutoSync:
                         relationships_failed += 1
                         logger.warning(f"Помилка виконання команди: {e}")
                         # Продовжуємо з іншими командами
-            
+
             duration = (time.time() - start_time) * 1000
             self._status = SyncStatus.COMPLETED
-            
+
             logger.info(
                 f"Схема успішно синхронізована: {sync_id} "
                 f"(створено: {relationships_created}, помилок: {relationships_failed}, "
                 f"час: {duration:.2f}ms)"
             )
-            
+
             return SyncResult(
                 sync_id=sync_id,
                 status=SyncStatus.COMPLETED,
@@ -158,23 +162,23 @@ class Neo4jAutoSync:
                 relationships_failed=relationships_failed,
                 duration_ms=duration
             )
-            
+
         except Exception as e:
             duration = (time.time() - start_time) * 1000
             self._status = SyncStatus.FAILED
             error_message = str(e)
-            
+
             logger.exception(f"Помилка синхронізації схеми: {sync_id} - {error_message}")
-            
+
             return SyncResult(
                 sync_id=sync_id,
                 status=SyncStatus.FAILED,
                 error_message=error_message,
                 duration_ms=duration
             )
-    
+
     async def backfill_relationships(
-        self, 
+        self,
         relationship_type: str,
         pattern_id: str,
         sample_size: int = 1000
@@ -188,12 +192,13 @@ class Neo4jAutoSync:
             
         Returns:
             BackfillResult з деталями операції
+
         """
         import time
         start_time = time.time()
-        
+
         logger.info(f"Початок backfill для {relationship_type}: {pattern_id}")
-        
+
         if not self.neo4j_driver:
             return BackfillResult(
                 pattern_id=pattern_id,
@@ -201,23 +206,23 @@ class Neo4jAutoSync:
                 status=SyncStatus.FAILED,
                 error_message="Neo4j драйвер не доступний"
             )
-        
+
         try:
             # Генеруємо Cypher для backfill на основі типу зв'язку
             cypher = self._generate_backfill_cypher(relationship_type, sample_size)
-            
+
             async with self.neo4j_driver.session() as session:
                 result = await session.run(cypher)
                 summary = result.summary()
                 count = summary.counters.relationships_created if summary.counters else 0
-            
+
             duration = (time.time() - start_time) * 1000
-            
+
             logger.info(
                 f"Backfill завершено для {relationship_type}: "
                 f"{count} зв'язків створено ({duration:.2f}ms)"
             )
-            
+
             return BackfillResult(
                 pattern_id=pattern_id,
                 relationship_type=relationship_type,
@@ -225,13 +230,13 @@ class Neo4jAutoSync:
                 duration_ms=duration,
                 status=SyncStatus.COMPLETED
             )
-            
+
         except Exception as e:
             duration = (time.time() - start_time) * 1000
             error_message = str(e)
-            
+
             logger.exception(f"Помилка backfill для {relationship_type}: {error_message}")
-            
+
             return BackfillResult(
                 pattern_id=pattern_id,
                 relationship_type=relationship_type,
@@ -239,7 +244,7 @@ class Neo4jAutoSync:
                 error_message=error_message,
                 duration_ms=duration
             )
-    
+
     async def batch_backfill(
         self,
         relationship_types: list[str],
@@ -253,26 +258,27 @@ class Neo4jAutoSync:
             
         Returns:
             Список BackfillResult
+
         """
         results = []
-        
+
         for rel_type, pattern_id in zip(relationship_types, pattern_ids):
             result = await self.backfill_relationships(rel_type, pattern_id)
             results.append(result)
-            
+
             # Невелика затримка між операціями
             await asyncio.sleep(0.1)
-        
+
         return results
-    
+
     def get_status(self) -> SyncStatus:
         """Отримати поточний статус синхронізації."""
         return self._status
-    
+
     def get_current_sync_id(self) -> str | None:
         """Отримати ID поточної синхронізації."""
         return self._current_sync_id
-    
+
     async def retry_sync(self, update: SchemaUpdate) -> SyncResult:
         """Retry синхронізації з обмеженням кількості спроб.
         
@@ -281,6 +287,7 @@ class Neo4jAutoSync:
             
         Returns:
             SyncResult з деталями повторної спроби
+
         """
         if self._retry_count >= self._max_retries:
             logger.error(f"Досягнуто максимум retry спроб: {self._max_retries}")
@@ -289,25 +296,25 @@ class Neo4jAutoSync:
                 status=SyncStatus.FAILED,
                 error_message=f"Максимум retry спроб досягнуто ({self._max_retries})"
             )
-        
+
         self._retry_count += 1
         self._status = SyncStatus.RETRYING
-        
+
         logger.info(f"Retry синхронізації (спроба {self._retry_count}/{self._max_retries})")
-        
+
         # Затримка перед retry (експоненційна)
         delay = min(2 ** self._retry_count, 60)  # Максимум 60 секунд
         await asyncio.sleep(delay)
-        
+
         result = await self.apply_schema_update(update)
-        
+
         if result.status == SyncStatus.COMPLETED:
             self._retry_count = 0  # Скидаємо лічильник при успіху
-        
+
         return result
-    
+
     # --- Private methods ---
-    
+
     def _generate_backfill_cypher(self, relationship_type: str, sample_size: int) -> str:
         """Генерує Cypher для backfill нових зв'язків.
         
@@ -317,7 +324,7 @@ class Neo4jAutoSync:
         - SHELL_COMPANY_CLUSTER: компанії за однією адресою
         """
         rel_type_upper = relationship_type.upper()
-        
+
         if rel_type_upper == "MUTUAL_BENEFICIARY":
             # Знаходимо компанії зі спільними бенефіціарами
             return f"""
@@ -337,7 +344,7 @@ class Neo4jAutoSync:
                 r.mutual_beneficiars = mutual_beneficiars
             RETURN count(r) as created
             """
-        
+
         elif rel_type_upper == "SHELL_COMPANY_CLUSTER":
             # Знаходимо компанії за однією адресою
             return f"""
@@ -360,7 +367,7 @@ class Neo4jAutoSync:
                 r.cluster_address = a.full_address
             RETURN count(r) as created
             """
-        
+
         elif rel_type_upper == "MONEY_LAUNDERING_PATH":
             # Знаходимо підозрілі ланцюжки транзакцій
             return f"""
@@ -381,7 +388,7 @@ class Neo4jAutoSync:
                 r.common_products = common_products
             RETURN count(r) as created
             """
-        
+
         else:
             # Загальний fallback для невідомих типів
             return f"""
@@ -392,7 +399,7 @@ class Neo4jAutoSync:
             // This is a placeholder for future implementation
             RETURN 0 as created
             """
-    
+
     def _generate_sync_id(self) -> str:
         """Генерує унікальний ID для синхронізації."""
         import hashlib

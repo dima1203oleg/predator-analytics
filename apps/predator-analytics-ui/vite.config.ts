@@ -98,27 +98,17 @@ export default defineConfig(({ mode }) => {
           console.log(`[Vite] ✅ Proxy → ${proxyTarget} (режим з бекендом)`);
         }
       },
-      proxy: {
+      proxy: env.VITE_ENABLE_MOCK_API === 'true' ? undefined : {
         '/api': {
-          target: env.VITE_BACKEND_PROXY_TARGET === 'mock' ? 'http://localhost:9999' : proxyTarget,
+          target: proxyTarget,
           changeOrigin: true,
           ws: true,
           secure: false,
           agent: proxyAgent,
           configure: (proxy) => {
             proxy.on('error', (err) => {
-              // Тихо ігноруємо помилки бекенду в автономному режимі
-              if (env.VITE_ENABLE_MOCK_API !== 'true') {
-                console.warn(`[Vite Proxy] Backend (${proxyTarget}) недоступний:`, err.message);
-              }
+              console.warn(`[Vite Proxy] Backend (${proxyTarget}) недоступний:`, err.message);
             });
-          },
-          bypass: (req) => {
-            // В автономному режимі bypass всі API запити
-            if (env.VITE_ENABLE_MOCK_API === 'true' || env.VITE_BACKEND_PROXY_TARGET === 'mock') {
-              return req.url; // Повертаємо URL для обробки локально (Mock API) або null?
-            }
-            return undefined; // undefined означає що proxy має обробити запит
           },
         }
       }

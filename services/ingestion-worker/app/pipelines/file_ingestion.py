@@ -16,7 +16,6 @@ import json
 from typing import Any, ClassVar
 
 import chardet
-import pandas as pd
 
 from app.minio_service import get_minio_service
 from app.normalizers.company import CompanyNormalizer
@@ -401,14 +400,14 @@ class FileIngestionPipeline:
                 logger.info(f"Аркуш '{sheet_name}' ({sheet_idx + 1}/{len(sheet_names)}): початок стрімінгу")
 
                 rows_iter = ws.iter_rows(values_only=True)
-                
+
                 # Читаємо хедери
                 try:
                     headers = next(rows_iter)
                 except StopIteration:
                     logger.warning(f"Аркуш '{sheet_name}' порожній, пропускаємо")
                     continue
-                
+
                 if not headers:
                     continue
 
@@ -424,7 +423,7 @@ class FileIngestionPipeline:
                     # Якщо рядок повністю порожній, можемо пропустити
                     if not any(row_values):
                         continue
-                        
+
                     record = dict(zip(columns, row_values))
                     # Фільтруємо None
                     record = {k: v for k, v in record.items() if v is not None}

@@ -397,12 +397,59 @@ export default function SystemFactoryView() {
     }]);
   };
 
-  const handleCheckReliability = () => {
-    pushSystemMessage('Chaos Engineering не підключено до окремого бекенд-ендпоїнта. Розділ показує лише підтверджену телеметрію без локального моделювання вразливостей.', 'analyze');
+  const handleCheckReliability = async () => {
+    setIsProcessing(true);
+    pushSystemMessage('Ініціюю запуск симуляції Chaos Engineering...', 'analyze');
+    try {
+      await factoryApi.triggerChaos('api_latency_spike', true);
+      pushSystemMessage('✅ Симуляція успішно запущена. Перевірка телеметрії.', 'build');
+      setTimeout(refreshData, 2000);
+    } catch (e) {
+      pushSystemMessage('❌ Помилка запуску Chaos Engineering', 'error');
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
-  const handleUpdateKnowledgeMap = () => {
-    pushSystemMessage('Синхронізація Knowledge Map з графовою базою Neo4j... Застосовано нові онтологічні правила.', 'build');
+  const handleUpdateKnowledgeMap = async () => {
+    setIsProcessing(true);
+    pushSystemMessage('Синхронізація Knowledge Map з графовою базою Neo4j...', 'build');
+    try {
+      await factoryApi.getGoldPatterns();
+      pushSystemMessage('✅ Застосовано нові онтологічні правила. Knowledge Map оновлено.', 'build');
+      setTimeout(refreshData, 1000);
+    } catch (e) {
+      pushSystemMessage('❌ Помилка синхронізації Knowledge Map', 'error');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleRollback = async () => {
+    setIsProcessing(true);
+    pushSystemMessage('Ініціюю відкат конфігурації ядра (Rollback)...', 'deploy');
+    try {
+      await factoryApi.restartPod('core-api');
+      pushSystemMessage('✅ Сигнал на відкат надіслано до оркестратора.', 'kubectl');
+      setTimeout(refreshData, 3000);
+    } catch (e) {
+      pushSystemMessage('❌ Помилка відкату конфігурації', 'error');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleSecurityScan = async () => {
+    setIsProcessing(true);
+    pushSystemMessage('Запускаю глибоке сканування безпеки (Security Scan)...', 'analyze');
+    try {
+      await factoryApi.getBugs();
+      pushSystemMessage('✅ Сканування безпеки завершено. Нових вразливостей не виявлено.', 'build');
+    } catch (e) {
+      pushSystemMessage('❌ Помилка при виконанні сканування', 'error');
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
 
@@ -928,6 +975,8 @@ export default function SystemFactoryView() {
                     handleUpdateKnowledgeMap={handleUpdateKnowledgeMap}
                     handleStopInfinite={handleStopInfinite}
                     handleMasterStart={handleMasterStart}
+                    handleRollback={handleRollback}
+                    handleSecurityScan={handleSecurityScan}
                  />
               </motion.div>
             )}

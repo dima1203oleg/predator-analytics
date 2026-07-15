@@ -253,10 +253,19 @@ async def websocket_copilot(websocket: WebSocket):
                     "timestamp": datetime.now(UTC).isoformat()
                 })
 
+                # Retrieve RAG Context
+                from app.services.rag_service import rag_service
+                tenant_id = "predator-demo-tenant" # Hardcoded or extracted from token
+                rag_context = await rag_service.retrieve_context(message, tenant_id=tenant_id)
+                
+                system_prompt = "You are a Predator Analytics Sovereign Copilot."
+                if rag_context:
+                    system_prompt += f"\\n\\nUse the following knowledge base data to answer:\\n{rag_context}"
+
                 # Стрімінг від AIService
                 full_reply = ""
                 async for chunk in AIService.chat_completion_stream(
-                    messages=[*history, {"role": "user", "content": message}]
+                    messages=[{"role": "system", "content": system_prompt}, *history, {"role": "user", "content": message}]
                 ):
                     full_reply += chunk
                     await websocket.send_json({

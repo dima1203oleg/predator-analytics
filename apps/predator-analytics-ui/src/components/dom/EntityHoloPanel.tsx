@@ -59,7 +59,7 @@ export const EntityHoloPanel: React.FC = () => {
                 <Network className="text-teal-500 mb-2" size={16} />
                 <p className="text-[10px] text-slate-500 font-black tracking-widest uppercase mb-1">Connections</p>
                 <p className="text-lg font-mono font-black text-teal-400">
-                  {selectedNode.degree || Math.floor(Math.random() * 20) + 1}
+                  {(selectedNode as any).degree || Math.floor(Math.random() * 20) + 1}
                 </p>
               </div>
             </div>

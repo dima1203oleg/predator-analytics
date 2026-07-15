@@ -181,7 +181,7 @@ export const QuantumMindGraph: React.FC = () => {
     // Анімація зв'язків
     if (linesRef.current) {
       linesRef.current.rotation.y = time * 0.05;
-      linesRef.current.material.opacity = 0.05 + Math.sin(time * 2.0) * 0.05;
+      (linesRef.current.material as any).opacity = 0.05 + Math.sin(time * 2.0) * 0.05;
     }
 
     // Зміна параметрів в залежності від стану

@@ -40,14 +40,14 @@ class ClickHouseSink:
     async def insert_declarations(self, data: list[dict[str, Any]]):
         if not self.client:
             self.connect()
-            
+
         if not self.client:
             return
 
         try:
             # Мапінг даних до колонок ClickHouse
             from dateutil.parser import parse as parse_date
-            
+
             rows = []
             for item in data:
                 decl_date_raw = item.get("declaration_date")
@@ -57,7 +57,7 @@ class ClickHouseSink:
                         decl_date = parse_date(str(decl_date_raw)).date()
                     except Exception:
                         decl_date = None
-                        
+
                 rows.append([
                     str(item.get('_record_hash'))[:32] if item.get('_record_hash') else "00000000-0000-0000-0000-000000000000", # id
                     str(item.get('declaration_number')) if item.get('declaration_number') is not None else "",

@@ -13,7 +13,7 @@ export const useWebSocketAudio = () => {
   const processorRef = useRef<ScriptProcessorNode | null>(null);
   const sourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
   
-  const { token } = useAuthStore();
+
 
   const disconnect = useCallback(() => {
     if (wsRef.current) {

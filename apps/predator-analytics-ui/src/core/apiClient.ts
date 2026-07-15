@@ -45,3 +45,26 @@ export async function fetchExplanation(entityId: string, contextData: any = {}) 
     return null;
   }
 }
+
+export async function fetchChatResponse(query: string) {
+  try {
+    const response = await fetch(`${API_URL}/copilot/chat`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ query })
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Failed to fetch chat response:", error);
+    return {
+      response: `Помилка з'єднання: не вдалося отримати відповідь на запит "${query}".`,
+      sources: []
+    };
+  }
+}

@@ -2,7 +2,6 @@ import React, { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Stars, Environment, Sky } from '@react-three/drei';
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
-import { PredatorCharacter } from './PredatorCharacter';
 import { ControlRoom } from './ControlRoom';
 import { Spaceships } from './Spaceships';
 import { SynapticMesh } from '../SynapticMesh';
@@ -69,12 +68,6 @@ export function PredatorScene({ onPredatorClick, activeModule }: PredatorScenePr
         <Suspense fallback={null}>
           <ControlRoom />
           <Spaceships />
-          <PredatorCharacter 
-            modelPath="/models/predator.glb" 
-            onClick={onPredatorClick}
-            pathRadius={0.0} 
-            walkSpeed={0.0}
-          />
           {/* The Actual Graph Data Mesh */}
           <group position={[0, 4, -4]} scale={[0.5, 0.5, 0.5]}>
             <SynapticMesh />

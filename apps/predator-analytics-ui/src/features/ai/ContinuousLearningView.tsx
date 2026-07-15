@@ -72,7 +72,7 @@ export default function ContinuousLearningView() {
         if (!silent) setRefreshing(true);
 
         try {
-            const res = await fetch('http://localhost:8000/api/v1/deepseek_tuning/status');
+            const res = await fetch('/api/v1/deepseek_tuning/status');
             if (res.ok) {
                 const data = await res.json();
                 setReport(data);
@@ -106,7 +106,7 @@ export default function ContinuousLearningView() {
         setFeedbackMessage(null);
 
         try {
-            const res = await fetch('http://localhost:8000/api/v1/deepseek_tuning/start_pipeline', { method: 'POST' });
+            const res = await fetch('/api/v1/deepseek_tuning/start_pipeline', { method: 'POST' });
             if (res.ok) {
                 setFeedbackTone('emerald');
                 setFeedbackMessage('Запуск повного циклу Continuous Learning підтверджено.');
