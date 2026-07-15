@@ -1,13 +1,13 @@
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends
+from sqlalchemy import func, select
+from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.database import get_db
 from app.dependencies import get_tenant_id
 from app.services.ukraine_registries import UkraineRegistriesService
-from app.database import get_db
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func
-from predator_common.models import Company, RiskScore, Anomaly
+from predator_common.models import Anomaly, Company, RiskScore
 
 router = APIRouter(prefix="/osint", tags=["OSINT"])
 
@@ -20,7 +20,7 @@ async def get_osint_registries(
     return await service.get_registries_status()
 
 @router.get("/tools", summary="Доступні OSINT інструменти")
-async def get_osint_tools(tenant_id: str = Depends(get_tenant_id)):
+async def get_osint_tools(tenant_id: Annotated[str, Depends(get_tenant_id)]) -> list[dict[str, str]]:
     return [
         {"id": "datagov", "name": "Data.gov.ua", "status": "active", "type": "white"},
         {"id": "prozorro", "name": "Prozorro API", "status": "active", "type": "white"},
@@ -30,7 +30,10 @@ async def get_osint_tools(tenant_id: str = Depends(get_tenant_id)):
     ]
 
 @router.get("/stats", summary="OSINT статистика")
-async def get_osint_stats(db: AsyncSession = Depends(get_db), tenant_id: str = Depends(get_tenant_id)):
+async def get_osint_stats(
+    db: Annotated[AsyncSession, Depends(get_db)],
+    tenant_id: Annotated[str, Depends(get_tenant_id)]
+) -> dict[str, int]:
     total_companies = await db.scalar(select(func.count()).select_from(Company).where(Company.tenant_id == tenant_id)) or 0
     high_risk = await db.scalar(select(func.count()).select_from(RiskScore).where(RiskScore.tenant_id == tenant_id, RiskScore.cers >= 70)) or 0
     return {
@@ -41,7 +44,10 @@ async def get_osint_stats(db: AsyncSession = Depends(get_db), tenant_id: str = D
     }
 
 @router.get("/feed", summary="Живий фід OSINT знахідок")
-async def get_osint_feed(db: AsyncSession = Depends(get_db), tenant_id: str = Depends(get_tenant_id)):
+async def get_osint_feed(
+    db: Annotated[AsyncSession, Depends(get_db)],
+    tenant_id: Annotated[str, Depends(get_tenant_id)]
+) -> list[dict[str, Any]]:
     anomalies = await db.execute(select(Anomaly).where(Anomaly.tenant_id == tenant_id).order_by(Anomaly.detected_at.desc()).limit(15))
     results = []
     for a in anomalies.scalars().all():
