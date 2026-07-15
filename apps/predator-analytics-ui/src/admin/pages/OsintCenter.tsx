@@ -11,7 +11,7 @@ export const OsintCenter: React.FC = () => {
 
   const whiteSources = sourcesData?.white || [];
   const darkSources = sourcesData?.dark || [];
-  const quarantine = quarantineData || [];
+  const quarantine = Array.isArray(quarantineData) ? quarantineData : (quarantineData?.items || []);
   const policies = policiesData || [];
 
   return (
@@ -129,7 +129,9 @@ export const OsintCenter: React.FC = () => {
                     <div style={{ fontWeight: 500, color: 'var(--a-text)' }}>{q.reason}</div>
                     <div style={{ fontSize: '0.8125rem', color: 'var(--a-text-sec)' }}>{q.source} | {q.id}</div>
                   </div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--a-text-muted)' }}>{q.timestamp.split(' ')[1]}</div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--a-text-muted)' }}>
+                    {q.timestamp ? (q.timestamp.includes(' ') ? q.timestamp.split(' ')[1] : q.timestamp) : (q.created_at ? (q.created_at.includes('T') ? q.created_at.split('T')[1].substring(0, 5) : q.created_at) : '')}
+                  </div>
                 </div>
               ))}
             </div>
