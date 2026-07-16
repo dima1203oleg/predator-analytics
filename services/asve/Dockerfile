@@ -17,7 +17,11 @@ RUN pip install --timeout=1000 --retries=10 --no-cache-dir --upgrade pip && \
 COPY services/asve /app/services/asve
 
 # Створення директорії для звітів
-RUN mkdir -p /app/reports
+RUN mkdir -p /app/reports && \
+    groupadd -r predator && useradd -r -g predator predator && \
+    chown -R predator:predator /app
+
+USER predator
 
 # Запуск FastAPI оркестратора
 CMD ["python", "services/asve/main.py"]
