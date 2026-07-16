@@ -460,6 +460,7 @@ export const Sidebar: React.FC = () => {
         borderRight: '1px solid rgba(255,255,255,0.07)',
         boxShadow: '4px 0 32px rgba(0,0,0,0.55), inset -1px 0 0 rgba(255,255,255,0.04)',
       }}
+      aria-label="Бічна панель навігації"
     >
       {/* Ambient background */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
@@ -631,7 +632,7 @@ export const Sidebar: React.FC = () => {
           </div>
 
           {/* Рядок пошуку */}
-          <div className="group relative">
+          <div className="group relative" id="search">
             <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3 w-3 -translate-y-1/2 text-slate-500 transition-colors group-focus-within:text-red-400" aria-hidden="true" />
             <input
               ref={searchInputRef}
@@ -1096,7 +1097,7 @@ export const Sidebar: React.FC = () => {
         }}
         title={isOpen ? 'Згорнути навігацію' : 'Розгорнути навігацію'}
       >
-        {isOpen ? <ChevronLeft size={12} /> : <ChevronRight size={12} />}
+        {isOpen ? <ChevronLeft size={12} aria-hidden="true" /> : <ChevronRight size={12} aria-hidden="true" />}
       </Button>
     </motion.aside>
   );
