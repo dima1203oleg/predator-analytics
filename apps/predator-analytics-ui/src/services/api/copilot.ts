@@ -142,4 +142,55 @@ export const copilotApi = {
     deleteSession: async (sessionId: string): Promise<{ deleted: boolean; session_id: string }> => {
         return (await apiClient.delete(`/copilot/sessions/${sessionId}`)).data;
     },
+
+    /**
+     * Контекстно-збагачений аналіз (slash-команди: /analyze, /risk, /sanctions, /graph)
+     */
+    analyzeStream: async function* (
+        query: string,
+        command: string = 'analyze',
+        sessionId?: string,
+    ): AsyncGenerator<{ type: 'thinking' | 'chunk' | 'sources' | 'complete' | 'error'; data: any }> {
+        const response = await fetch('/api/v1/copilot/analyze', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${sessionStorage.getItem('predator_auth_token') || ''}`,
+            },
+            body: JSON.stringify({ query, command, session_id: sessionId }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`Помилка аналізу: HTTP ${response.status}`);
+        }
+
+        const reader = response.body?.getReader();
+        if (!reader) throw new Error('Потік недоступний');
+
+        const decoder = new TextDecoder();
+        let buffer = '';
+        let currentEvent = 'chunk';
+
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            buffer = lines.pop() || '';
+
+            for (const line of lines) {
+                if (line.startsWith('event: ')) {
+                    currentEvent = line.slice(7).trim();
+                } else if (line.startsWith('data: ')) {
+                    try {
+                        const data = JSON.parse(line.slice(6));
+                        yield { type: currentEvent as any, data };
+                    } catch {
+                        // пропускаємо некоректні чанки
+                    }
+                }
+            }
+        }
+    },
 };

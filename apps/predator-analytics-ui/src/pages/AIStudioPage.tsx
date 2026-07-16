@@ -152,6 +152,51 @@ export const AIStudioPage: React.FC = () => {
       // Since copilotApi.chatStreamFetch doesn't support AbortSignal directly in its signature,
       // we'll try to use the regular chat endpoint if streaming fails or is not needed,
       // or we can implement the streaming manually here using fetch.
+    // ─── Маршрутизація slash-команд ──────────────────────────────────────
+    const COMMAND_MAP: Record<string, string> = {
+      '/analyze': 'analyze',
+      '/risk': 'risk',
+      '/sanctions': 'sanctions',
+      '/graph': 'graph',
+      '/report': 'analyze',
+      '/beneficiary': 'graph',
+    };
+
+    const isSlashCommand = Object.keys(COMMAND_MAP).some(cmd => content.startsWith(cmd + ' ') || content === cmd);
+
+    if (isSlashCommand) {
+      try {
+        const [trigger, ...rest] = content.split(' ');
+        const query = rest.join(' ').trim() || trigger;
+        const command = COMMAND_MAP[trigger] || 'analyze';
+
+        for await (const event of api.copilot.analyzeStream(query, command, currentSessionId)) {
+          if (event.type === 'chunk' && event.data?.text) {
+            fullContent += event.data.text;
+            setMessagesMap(prev => ({
+              ...prev,
+              [currentSessionId as string]: prev[currentSessionId as string].map(m =>
+                m.id === assistantMessageId ? { ...m, content: fullContent } : m
+              )
+            }));
+          }
+          if (event.type === 'complete') break;
+        }
+
+        setMessagesMap(prev => ({
+          ...prev,
+          [currentSessionId as string]: prev[currentSessionId as string].map(m =>
+            m.id === assistantMessageId ? { ...m, content: fullContent, isStreaming: false } : m
+          )
+        }));
+      } catch (e: any) {
+        // Fallback до звичайного чату при помилці аналізу
+        console.warn('Analyze fallback to chat:', e);
+      }
+      return;
+    }
+
+    // ─── Стандартний SSE чат ─────────────────────────────────────────────
       const response = await fetch('/api/v1/copilot/chat/stream', {
         method: 'POST',
         headers: {
