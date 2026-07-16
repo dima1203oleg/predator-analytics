@@ -93,15 +93,28 @@ export const useVoiceAssistant = () => {
 
     try {
       console.log('[STT] Запитуємо доступ до мікрофона...');
+      
+      // РАЗБЛОКУВАННЯ АУДІО ДЛЯ SAFARI/CHROME (щоб дозволити відтворення після довгої генерації)
+      try {
+        const dummyAudio = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA');
+        dummyAudio.volume = 0.01;
+        dummyAudio.play().catch(() => {});
+        const dummyUtterance = new SpeechSynthesisUtterance('');
+        dummyUtterance.volume = 0;
+        window.speechSynthesis.speak(dummyUtterance);
+      } catch (e) {
+        console.warn('[Audio Unlock] не вдалося', e);
+      }
+
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
       console.log('[STT] ✅ Мікрофон отримано');
 
-      const mediaRecorder = new MediaRecorder(stream, {
-        mimeType: MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
-          ? 'audio/webm;codecs=opus'
-          : 'audio/webm',
-      });
+      const options = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+        ? { mimeType: 'audio/webm;codecs=opus' }
+        : undefined;
+
+      const mediaRecorder = new MediaRecorder(stream, options);
       mediaRecorderRef.current = mediaRecorder;
       chunksRef.current = [];
 
@@ -152,8 +165,10 @@ export const useVoiceAssistant = () => {
           return;
         }
 
-        const audioBlob = new Blob(chunksRef.current, { type: 'audio/webm' });
-        console.log('[STT] Розмір аудіо:', audioBlob.size, 'байт');
+        const audioType = (mediaRecorderRef.current?.mimeType) || 'audio/webm';
+        const ext = audioType.includes('mp4') ? 'mp4' : 'webm';
+        const audioBlob = new Blob(chunksRef.current, { type: audioType });
+        console.log('[STT] Розмір аудіо:', audioBlob.size, 'байт', 'Формат:', audioType);
 
         if (audioBlob.size < 100) {
           toast.error('Запис занадто короткий.');
@@ -165,7 +180,7 @@ export const useVoiceAssistant = () => {
         setIsProcessing(true);
         try {
           const formData = new FormData();
-          formData.append('file', audioBlob, 'audio.webm');
+          formData.append('file', audioBlob, `audio.${ext}`);
           const response = await axios.post('/api/v1/voice/transcribe', formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
             timeout: 15000,
