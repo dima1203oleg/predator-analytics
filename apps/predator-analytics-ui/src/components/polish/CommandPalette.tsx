@@ -81,6 +81,12 @@ export const CommandPalette: React.FC = () => {
       if (item) { play(UISoundType.SUCCESS); item.action(); setOpen(false); setQuery(''); }
     } else if (e.key === 'Escape') {
       setOpen(false);
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      setSelectedIndex(0);
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      setSelectedIndex(filtered.length - 1);
     }
   };
 
@@ -108,9 +114,12 @@ export const CommandPalette: React.FC = () => {
           transition={{ duration: 0.15 }}
           className="fixed inset-0 z-[300] flex items-start justify-center pt-[15vh]"
           onClick={() => setOpen(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="command-palette-title"
         >
           {/* Backdrop */}
-          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" aria-hidden="true" />
 
           {/* Modal */}
           <motion.div
@@ -123,9 +132,10 @@ export const CommandPalette: React.FC = () => {
           >
             {/* Search Input */}
             <div className="flex items-center gap-4 px-6 py-5 border-b border-white/5">
-              <Search size={20} className="text-rose-500/60" />
+              <Search size={20} className="text-rose-500/60" aria-hidden="true" />
               <input
                 ref={inputRef}
+                id="command-palette-input"
                 type="text"
                 value={query}
                 onChange={e => setQuery(e.target.value)}
@@ -133,32 +143,37 @@ export const CommandPalette: React.FC = () => {
                 placeholder="Введіть команду або перейдіть до розділу..."
                 className="flex-1 bg-transparent text-white text-[15px] font-medium placeholder:text-slate-700 outline-none"
                 autoComplete="off"
+                aria-label="Пошук команд"
+                aria-controls="command-list"
+                aria-autocomplete="list"
               />
               <div className="flex items-center gap-2">
                 <kbd className="px-2 py-1 rounded-lg bg-white/5 border border-white/10 text-[10px] text-slate-500 font-mono">ESC</kbd>
-                <Button variant="cyber" onClick={() => setOpen(false)} className="p-1 text-slate-600 hover:text-white transition-colors">
-                  <X size={18} />
+                <Button variant="cyber" onClick={() => setOpen(false)} className="p-1 text-slate-600 hover:text-white transition-colors" aria-label="Закрити командний палітр">
+                  <X size={18} aria-hidden="true" />
                 </Button>
               </div>
             </div>
 
             {/* Results */}
-            <div className="max-h-[50vh] overflow-y-auto p-3 space-y-3">
+            <div id="command-list" role="listbox" aria-label="Список команд" className="max-h-[50vh] overflow-y-auto p-3 space-y-3">
               {filtered.length === 0 ? (
-                <div className="py-12 text-center">
-                  <Command size={32} className="mx-auto text-slate-800 mb-3" />
+                <div className="py-12 text-center" role="status" aria-live="polite">
+                  <Command size={32} className="mx-auto text-slate-800 mb-3" aria-hidden="true" />
                   <p className="text-sm text-slate-600">Команду не знайдено</p>
                 </div>
               ) : (
                 Array.from(grouped.entries()).map(([category, items]) => (
                   <div key={category}>
-                    <div className="px-3 py-2 text-[9px] font-black uppercase tracking-[0.3em] text-slate-700">{category}</div>
+                    <div className="px-3 py-2 text-[9px] font-black uppercase tracking-[0.3em] text-slate-700" role="presentation">{category}</div>
                     {items.map((item, idx) => {
                       const globalIdx = filtered.indexOf(item);
                       const isSelected = globalIdx === selectedIndex;
                       return (
                         <motion.button
                           key={item.id}
+                          role="option"
+                          aria-selected={isSelected}
                           onMouseEnter={() => { setSelectedIndex(globalIdx); play(UISoundType.HOVER, 100); }}
                           onClick={() => { play(UISoundType.SUCCESS); item.action(); setOpen(false); setQuery(''); }}
                           className={cn(
@@ -171,7 +186,7 @@ export const CommandPalette: React.FC = () => {
                           <div className={cn(
                             "p-2 rounded-lg transition-colors",
                             isSelected ? "bg-rose-500/20 text-rose-500" : "bg-white/5 text-slate-500 group-hover:text-rose-500/60"
-                          )}>
+                          )} aria-hidden="true">
                             {item.icon}
                           </div>
                           <div className="flex-1 min-w-0">

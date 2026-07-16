@@ -12,6 +12,61 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ═════════════════════════════════════════════════════════════════
+   ACCESSIBILITY IMPROVEMENTS — WCAG 2.1 AA Compliance
+   ═════════════════════════════════════════════════════════════════ */
+
+/* Screen reader only class */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Focus visible improvements */
+*:focus-visible {
+  outline: 2px solid rgba(225, 29, 72, 0.8);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  * {
+    border-color: white !important;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Skip links styling */
+.sr-only:focus:not(.sr-only) {
+  position: absolute;
+  width: auto;
+  height: auto;
+  padding: 0.5rem 1rem;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+  border-width: 1px;
+}
+
 /* ══════════════════════════════════════════════════════════════════
    UNIVERSE DESIGN SYSTEM — Glass + Cinematic + Living AI
    ═════════════════════════════════════════════════════════════════ */

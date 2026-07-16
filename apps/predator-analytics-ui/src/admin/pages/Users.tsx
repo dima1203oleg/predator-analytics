@@ -76,7 +76,7 @@ export const Users: React.FC = () => {
                     <h1 className="admin-page-title">Користувачі та RBAC</h1>
                     <p className="admin-page-desc">Управління доступом до системи PREDATOR</p>
                 </div>
-                <Button variant="cyber" className="admin-btn admin-btn-primary">
+                <Button variant="cyber" className="admin-btn admin-btn-primary" aria-label="Додати нового користувача">
                     + Додати користувача
                 </Button>
             </div>
@@ -88,6 +88,8 @@ export const Users: React.FC = () => {
                     value={filter}
                     onChange={(e) => setFilter(e.target.value)}
                     className="admin-search-input"
+                    aria-label="Пошук користувачів за ім'ям або email"
+                    id="user-search"
                 />
             </div>
 

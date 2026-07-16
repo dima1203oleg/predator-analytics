@@ -56,6 +56,7 @@ import { CommandPalette } from './components/polish/CommandPalette';
 import { AIVoiceAssistant } from './components/AIVoiceAssistant';
 import { CustomCursor } from './components/CustomCursor';
 import { ThemeCustomizer } from './components/ThemeCustomizer';
+import { SkipLinks } from './components/a11y/SkipLinks';
 
 // Lazy-loaded великі компоненти для зменшення initial bundle
 const VideoIntroScreen = React.lazy(() => import('./components/VideoIntroScreen'));
@@ -236,9 +237,10 @@ function App() {
                                     exit={{ opacity: 0 }}
                                     transition={{ duration: 0.5, ease: 'easeInOut' }}
                                   >
+                                    <SkipLinks />
                                     <SpatialEnvironmentWrapper />
-                                    
-                                    <div className="relative z-10">
+
+                                    <div className="relative z-10" id="main-content">
                                       <AppRoutes />
                                     </div>
                                     

@@ -578,8 +578,9 @@ export const Sidebar: React.FC = () => {
                       )
                     }
                     title={action.description}
+                    aria-label={action.label}
                   >
-                    <Icon className="h-3 w-3" />
+                    <Icon className="h-3 w-3" aria-hidden="true" />
                     <span>{action.label}</span>
                   </NavLink>
                 );
@@ -603,6 +604,8 @@ export const Sidebar: React.FC = () => {
                     }
                   }}
                   title={action.description}
+                  aria-label={action.label}
+                  aria-pressed={isActiveMode}
                   className={cn(
                     'inline-flex h-6 items-center gap-1 rounded-full border px-2 text-[9px] font-bold uppercase tracking-[0.1em] transition-all',
                     isActiveMode
@@ -610,15 +613,15 @@ export const Sidebar: React.FC = () => {
                       : 'border-white/[0.07] bg-white/[0.03] text-slate-400 hover:border-white/[0.12] hover:text-white',
                   )}
                 >
-                  <Icon className="h-3 w-3" />
+                  <Icon className="h-3 w-3" aria-hidden="true" />
                   <span>{action.label}</span>
                   {action.id === 'favorites' && visibleFavoriteIds.length > 0 && (
-                    <span className="ml-0.5 rounded-full bg-rose-500/20 px-1 py-0.5 text-[7px] text-rose-300">
+                    <span className="ml-0.5 rounded-full bg-rose-500/20 px-1 py-0.5 text-[7px] text-rose-300" aria-label={`${visibleFavoriteIds.length} обраних елементів`}>
                       {visibleFavoriteIds.length}
                     </span>
                   )}
                   {action.id === 'recent' && visibleRecentIds.length > 0 && (
-                    <span className="ml-0.5 rounded-full bg-white/10 px-1 py-0.5 text-[7px] text-slate-400">
+                    <span className="ml-0.5 rounded-full bg-white/10 px-1 py-0.5 text-[7px] text-slate-400" aria-label={`${visibleRecentIds.length} нещодавніх елементів`}>
                       {visibleRecentIds.length}
                     </span>
                   )}
@@ -629,7 +632,7 @@ export const Sidebar: React.FC = () => {
 
           {/* Рядок пошуку */}
           <div className="group relative">
-            <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3 w-3 -translate-y-1/2 text-slate-500 transition-colors group-focus-within:text-red-400" />
+            <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3 w-3 -translate-y-1/2 text-slate-500 transition-colors group-focus-within:text-red-400" aria-hidden="true" />
             <input
               ref={searchInputRef}
               type="search"
@@ -643,6 +646,8 @@ export const Sidebar: React.FC = () => {
                 paddingLeft: '2rem',
                 paddingRight: '2.5rem',
               }}
+              aria-label="Пошук модулів"
+              aria-describedby="search-hint"
               onFocus={(e) => {
                 e.currentTarget.style.borderColor = 'rgba(225,29,72,0.4)';
                 e.currentTarget.style.background = 'rgba(255,255,255,0.06)';
@@ -652,8 +657,8 @@ export const Sidebar: React.FC = () => {
                 e.currentTarget.style.background = 'rgba(255,255,255,0.04)';
               }}
             />
-            <div className="pointer-events-none absolute right-2.5 top-1/2 flex -translate-y-1/2 items-center gap-0.5 text-[8px] text-slate-600">
-              <Command className="h-2.5 w-2.5" />
+            <div className="pointer-events-none absolute right-2.5 top-1/2 flex -translate-y-1/2 items-center gap-0.5 text-[8px] text-slate-600" id="search-hint">
+              <Command className="h-2.5 w-2.5" aria-hidden="true" />
               <span>K</span>
             </div>
             {search && (

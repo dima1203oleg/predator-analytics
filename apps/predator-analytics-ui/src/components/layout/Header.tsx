@@ -212,11 +212,13 @@ const Header: React.FC = () => {
           <div className={cn("flex items-center shrink-0", isMobileMode ? "justify-between w-full" : "gap-4")}>
             {!isMobileMode && <SystemPulseIndicator />}
             
-            <div className={cn("flex items-center gap-1 rounded-2xl border border-white/5 bg-black/40 p-1.5 shadow-lg", isMobileMode ? "" : "flex")}>
+            <div className={cn("flex items-center gap-1 rounded-2xl border border-white/5 bg-black/40 p-1.5 shadow-lg", isMobileMode ? "" : "flex")} role="group" aria-label="Емулятор пристроїв">
               {deviceModes.map(({ mode, label, icon: Icon }) => (
                 <Button variant="cyber"
                   key={mode}
                   title={`Емулятор: ${label}`}
+                  aria-label={`Перемкнути на ${label}`}
+                  aria-pressed={displayMode === mode}
                   onClick={() => setDisplayMode(mode)}
                   className={cn(
                     "flex items-center justify-center rounded-xl transition-all duration-300",
@@ -226,7 +228,7 @@ const Header: React.FC = () => {
                       : "text-slate-600 hover:bg-white/[0.05] hover:text-white"
                   )}
                 >
-                  <Icon className={cn(isMobileMode ? "h-6 w-6" : "h-4 w-4")} />
+                  <Icon className={cn(isMobileMode ? "h-6 w-6" : "h-4 w-4")} aria-hidden="true" />
                 </Button>
               ))}
             </div>
@@ -236,9 +238,18 @@ const Header: React.FC = () => {
               <div
                 className="relative hidden md:block group cursor-pointer"
                 onClick={() => setIsPaletteOpen(true)}
+                role="button"
+                tabIndex={0}
+                aria-label="Відкрити командний пошук"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setIsPaletteOpen(true);
+                  }
+                }}
               >
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                  <Search className="h-4 w-4 text-slate-600 transition-colors group-hover:text-red-400" />
+                  <Search className="h-4 w-4 text-slate-600 transition-colors group-hover:text-red-400" aria-hidden="true" />
                 </div>
                 <div className="flex h-10 w-56 items-center rounded-xl border border-white/[0.07] bg-black/45 pl-10 pr-12 text-[11px] font-medium tracking-tight text-slate-400 shadow-[inset_0_2px_4px_rgba(0,0,0,0.45)] transition-all group-hover:border-red-500/25 group-hover:bg-red-500/[0.03] lg:w-72">
                   Знайти модуль, звіт або дію…
@@ -270,43 +281,48 @@ const Header: React.FC = () => {
 
               <Button variant="cyber"
                 title="Сповіщення"
+                aria-label="Сповіщення"
                 className={cn(
                   "relative flex items-center justify-center rounded-xl text-slate-600 hover:text-white hover:bg-white/[0.05] transition-all duration-300 group",
                   isMobileMode ? "h-12 w-12" : "h-9 w-9"
                 )}
               >
-                <Bell className={cn(isMobileMode ? "h-6 w-6" : "h-4 w-4")} />
-                <span className={cn("absolute bg-rose-500 rounded-full animate-ping", isMobileMode ? "top-3 right-3 w-2 h-2" : "top-2 right-2 w-1.5 h-1.5")} />
-                <span className={cn("absolute bg-rose-600 rounded-full", isMobileMode ? "top-3 right-3 w-2 h-2" : "top-2 right-2 w-1.5 h-1.5")} />
+                <Bell className={cn(isMobileMode ? "h-6 w-6" : "h-4 w-4")} aria-hidden="true" />
+                <span className={cn("absolute bg-rose-500 rounded-full animate-ping", isMobileMode ? "top-3 right-3 w-2 h-2" : "top-2 right-2 w-1.5 h-1.5")} aria-hidden="true" />
+                <span className={cn("absolute bg-rose-600 rounded-full", isMobileMode ? "top-3 right-3 w-2 h-2" : "top-2 right-2 w-1.5 h-1.5")} aria-hidden="true" />
               </Button>
 
               <Button variant="cyber"
                 title={highVisibility ? 'Режим звичайної видимості' : 'Режим високої видимості (Контраст)'}
+                aria-label={highVisibility ? 'Режим звичайної видимості' : 'Режим високої видимості (Контраст)'}
+                aria-pressed={highVisibility}
                 onClick={() => setHighVisibility(!highVisibility)}
                 className={cn(
                   "flex items-center justify-center rounded-xl transition-all duration-300 relative group",
                   isMobileMode ? "h-12 w-12" : "h-9 w-9",
-                  highVisibility 
-                    ? "bg-amber-500/15 text-amber-400 border border-amber-500/30 shadow-[inset_0_0_12px_rgba(245,158,11,0.2)]" 
+                  highVisibility
+                    ? "bg-amber-500/15 text-amber-400 border border-amber-500/30 shadow-[inset_0_0_12px_rgba(245,158,11,0.2)]"
                     : "text-slate-600 hover:text-white hover:bg-white/[0.05]"
                 )}
               >
-                {highVisibility ? <EyeOff className={cn(isMobileMode ? "h-6 w-6" : "h-4 w-4")} /> : <Eye className={cn(isMobileMode ? "h-6 w-6" : "h-4 w-4")} />}
+                {highVisibility ? <EyeOff className={cn(isMobileMode ? "h-6 w-6" : "h-4 w-4")} aria-hidden="true" /> : <Eye className={cn(isMobileMode ? "h-6 w-6" : "h-4 w-4")} aria-hidden="true" />}
               </Button>
 
               {!isMobileMode && (
                 <Button variant="cyber"
                   id="header-terminal-toggle"
                   title={isTerminalOpen ? 'Закрити термінал' : 'Відкрити термінал'}
+                  aria-label={isTerminalOpen ? 'Закрити термінал' : 'Відкрити термінал'}
+                  aria-pressed={isTerminalOpen}
                   onClick={() => setTerminalOpen(!isTerminalOpen)}
                   className={cn(
                     "flex h-9 w-9 items-center justify-center rounded-xl transition-all duration-300 relative group",
-                    isTerminalOpen 
-                      ? "bg-rose-500/10 text-rose-400 shadow-[inset_0_0_12px_rgba(225,29,72,0.2)]" 
+                    isTerminalOpen
+                      ? "bg-rose-500/10 text-rose-400 shadow-[inset_0_0_12px_rgba(225,29,72,0.2)]"
                       : "text-slate-600 hover:text-white hover:bg-white/[0.05]"
                   )}
                 >
-                  <Terminal className="h-4 w-4" />
+                  <Terminal className="h-4 w-4" aria-hidden="true" />
                 </Button>
               )}
             </div>

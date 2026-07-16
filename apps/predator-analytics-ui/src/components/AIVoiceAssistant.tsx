@@ -75,7 +75,7 @@ export const AIVoiceAssistant: React.FC<AIVoiceAssistantProps> = ({
   };
 
   /** Перемикач запису: Клік 1 = старт, Клік 2 = стоп + обробка */
-  const toggleRecording = async (e: React.MouseEvent) => {
+  const toggleRecording = async (e: React.MouseEvent | React.KeyboardEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
@@ -90,6 +90,13 @@ export const AIVoiceAssistant: React.FC<AIVoiceAssistantProps> = ({
       setTranscript('');
       setResponse('');
       await startRecording();
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      toggleRecording(e);
     }
   };
 
@@ -134,6 +141,7 @@ export const AIVoiceAssistant: React.FC<AIVoiceAssistantProps> = ({
         {/* Головна кнопка мікрофона */}
         <motion.button
           onClick={toggleRecording}
+          onKeyDown={handleKeyDown}
           className={cn(
             'relative w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer select-none',
             'bg-gradient-to-br from-rose-600 to-rose-800',
@@ -144,6 +152,8 @@ export const AIVoiceAssistant: React.FC<AIVoiceAssistantProps> = ({
             isRecording && 'animate-pulse ring-4 ring-rose-500/50'
           )}
           aria-label={isRecording ? 'Зупинити запис' : 'Почати запис голосу'}
+          aria-pressed={isRecording}
+          role="button"
         >
           {isRecording ? (
             <MicOff className="w-8 h-8 text-white" />
