@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "predator.fullname" . }}-analytics-hub-ui
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+    app.kubernetes.io/component: analytics-hub-ui
+spec:
+  replicas: {{ .Values.analyticsHubUi.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "predator.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: analytics-hub-ui
+  template:
+    metadata:
+      labels:
+        {{- include "predator.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: analytics-hub-ui
+    spec:
+      containers:
+        - name: analytics-hub-ui
+          image: "{{ .Values.analyticsHubUi.image.repository }}:{{ .Values.analyticsHubUi.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.analyticsHubUi.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.analyticsHubUi.resources | nindent 12 }}

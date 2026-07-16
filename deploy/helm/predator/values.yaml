@@ -98,11 +98,31 @@ frontend:
     targetCPUUtilizationPercentage: 70
   env:
     VITE_API_URL: "https://api.{{ .Values.global.domain }}:8443/api/v1"
+
     NODE_ENV: "production"
   persistence:
     enabled: false
     size: 1Gi
     storageClass: local-path
+
+# Analytics Hub UI (OODA Radar, Live Analytical Center)
+analyticsHubUi:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: predator/analytics-hub-ui
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 80
+  resources:
+    limits:
+      cpu: 300m
+      memory: 256Mi
+    requests:
+      cpu: 50m
+      memory: 64Mi
 
 # Core API Service
 coreApi:
