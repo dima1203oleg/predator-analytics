@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useCallback, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
-export const useVoiceAssistant = () => {
+export const useVoiceAssistant = (options?: { onResult?: (text: string) => void }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -114,11 +114,14 @@ export const useVoiceAssistant = () => {
         
         recognition.onend = () => {
           setIsRecording(false);
+          const final = nativeTranscriptRef.current.trim();
+          
           if (stopPromiseResolveRef.current) {
-            const final = nativeTranscriptRef.current.trim();
             if (!final) toast.error('Голос не розпізнано. Спробуйте ще раз.');
             stopPromiseResolveRef.current(final || undefined);
             stopPromiseResolveRef.current = null;
+          } else if (final && options?.onResult) {
+            options.onResult(final);
           }
         };
 

@@ -31,6 +31,8 @@ export const AIVoiceAssistant: React.FC<AIVoiceAssistantProps> = ({
   const [volume, setVolume] = useState(1);
   const [isProcessingChat, setIsProcessingChat] = useState(false);
 
+  const onResultRef = useRef<(text: string) => void>();
+  
   const {
     isRecording,
     isSpeaking,
@@ -39,7 +41,11 @@ export const AIVoiceAssistant: React.FC<AIVoiceAssistantProps> = ({
     stopSpeak,
     startRecording,
     stopRecording
-  } = useVoiceAssistant();
+  } = useVoiceAssistant({
+    onResult: (text) => {
+      if (onResultRef.current) onResultRef.current(text);
+    }
+  });
 
   // Sync isSpeaking with global store
   useEffect(() => {
@@ -78,6 +84,10 @@ export const AIVoiceAssistant: React.FC<AIVoiceAssistantProps> = ({
       setIsProcessingChat(false);
     }
   };
+
+  useEffect(() => {
+    onResultRef.current = handleCommand;
+  }, [handleCommand]);
 
   const toggleRecording = async (e?: React.MouseEvent) => {
     if (e) {
