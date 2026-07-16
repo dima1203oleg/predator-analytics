@@ -7,6 +7,8 @@
 @import './styles/admin-classic.css';
 /* Консолідовані візуальні ефекти (замість inline <style>) */
 @import './styles/premium-effects.css';
+/* AI Studio (Veb style) */
+@import './styles/ai-studio.css';
 
 @tailwind base;
 @tailwind components;

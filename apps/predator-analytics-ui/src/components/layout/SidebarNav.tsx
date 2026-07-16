@@ -8,7 +8,8 @@ import {
   Cpu, 
   Settings, 
   ShieldAlert,
-  TerminalSquare
+  TerminalSquare,
+  Sparkles
 } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -20,6 +21,7 @@ const navItems = [
   { id: 'graph', icon: Network, tooltip: "Граф Зв'язків", path: '/predator' },
   { id: 'map', icon: MapIcon, tooltip: 'Геопросторова Аналітика', path: '/admin/routing-matrix' },
   { id: 'docs', icon: FileText, tooltip: 'Документи та Досьє', path: '/admin/datasets' },
+  { id: 'ai-studio', icon: Sparkles, tooltip: 'AI Studio', path: '/admin/ai-studio' },
   { id: 'ai', icon: Cpu, tooltip: 'AI Intelligence', path: '/admin/model-lab' },
   { id: 'monitoring', icon: Activity, tooltip: 'Моніторинг Інфраструктури', path: '/admin/health' },
   { id: 'risks', icon: ShieldAlert, tooltip: 'Управління Ризиками', path: '/admin/security' },

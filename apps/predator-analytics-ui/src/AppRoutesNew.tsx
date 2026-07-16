@@ -44,6 +44,7 @@ import { DomainKnowledgeSystem } from './admin/pages/DomainKnowledgeSystem';
 const DigitalTwinView = lazy(() => import('./features/modeling/DigitalTwinView'));
 const FlowAnalytics = lazy(() => import('./pages/FlowAnalytics'));
 const SystemFactoryView = lazy(() => import('./features/factory/SystemFactoryView'));
+const AIStudioPage = lazy(() => import('./pages/AIStudioPage'));
 
 // Next-Gen Spatial Interface
 import { OmniscienceV2 } from './user/pages/OmniscienceV2';
@@ -138,6 +139,7 @@ export const AppRoutesNew = () => {
               <Route path="/admin/routing-matrix" element={<DataRoutingMatrix />} />
               <Route path="/admin/domain-knowledge" element={<DomainKnowledgeSystem />} />
               <Route path="/admin/factory" element={<SystemFactoryView />} />
+              <Route path="/admin/ai-studio" element={<AIStudioPage />} />
               
               <Route path="*" element={<Navigate to="/admin" replace />} />
             </Routes>
