@@ -12,7 +12,7 @@
 - maritime_aviation.py — AIS/ADS-B моніторинг
 - minio_service.py — MinIO/S3 сервіс
 - neo4j_service.py — Neo4j сервіс
-- redis_service.py — Redis сервіс
+- valkey_service.py — Valkey сервіс
 - risk_service.py — Сервіс ризиків
 - search_service.py — Пошуковий сервіс
 - ukraine_registries.py — Українські реєстри

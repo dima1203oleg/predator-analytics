@@ -12,12 +12,12 @@ import redis.asyncio as redis
 from app.config import get_settings
 from predator_common.logging import get_logger
 
-logger = get_logger("redis_service")
+logger = get_logger("valkey_service")
 settings = get_settings()
 
 
-class RedisService:
-    """Сервіс для роботи з Redis.
+class ValkeyService:
+    """Сервіс для роботи з Valkey.
 
     Використовується для:
     - Кешування API відповідей
@@ -37,28 +37,28 @@ class RedisService:
 
         try:
             self._client = redis.from_url(
-                settings.REDIS_URL,
+                settings.VALKEY_URL,
                 encoding="utf-8",
                 decode_responses=True,
             )
             # Перевірка з'єднання
             await self._client.ping()
             self._connected = True
-            logger.info("Redis підключено", extra={"url": settings.REDIS_URL})
+            logger.info("Valkey підключено", extra={"url": settings.VALKEY_URL})
             return True
 
         except Exception as e:
-            logger.warning(f"Redis недоступний: {e}")
+            logger.warning(f"Valkey недоступний: {e}")
             self._connected = False
             return False
 
     async def disconnect(self):
-        """Відключення від Redis."""
+        """Відключення від Valkey."""
         if self._client:
             await self._client.close()
             self._client = None
             self._connected = False
-            logger.info("Redis відключено")
+            logger.info("Valkey відключено")
 
     async def get(self, key: str) -> str | None:
         """Отримати значення за ключем."""
@@ -67,7 +67,7 @@ class RedisService:
         try:
             return await self._client.get(key)
         except Exception as e:
-            logger.error(f"Redis GET помилка: {e}")
+            logger.error(f"Valkey GET помилка: {e}")
             return None
 
     async def set(
@@ -83,7 +83,7 @@ class RedisService:
             await self._client.set(key, value, ex=expire_seconds)
             return True
         except Exception as e:
-            logger.error(f"Redis SET помилка: {e}")
+            logger.error(f"Valkey SET помилка: {e}")
             return False
 
     async def delete(self, key: str) -> bool:
@@ -94,7 +94,7 @@ class RedisService:
             await self._client.delete(key)
             return True
         except Exception as e:
-            logger.error(f"Redis DELETE помилка: {e}")
+            logger.error(f"Valkey DELETE помилка: {e}")
             return False
 
     async def get_json(self, key: str) -> dict | list | None:
@@ -297,26 +297,26 @@ class RedisService:
 
 # ======================== SINGLETON ========================
 
-_redis_service: RedisService | None = None
+_valkey_service: ValkeyService | None = None
 
 
-def get_redis_service() -> RedisService:
-    """Отримати singleton інстанс Redis сервісу."""
-    global _redis_service
-    if _redis_service is None:
-        _redis_service = RedisService()
-    return _redis_service
+def get_valkey_service() -> ValkeyService:
+    """Отримати singleton інстанс Valkey сервісу."""
+    global _valkey_service
+    if _valkey_service is None:
+        _valkey_service = ValkeyService()
+    return _valkey_service
 
 
-async def init_redis():
-    """Ініціалізація Redis при старті застосунку."""
-    service = get_redis_service()
+async def init_valkey():
+    """Ініціалізація Valkey при старті застосунку."""
+    service = get_valkey_service()
     await service.connect()
 
 
-async def close_redis():
-    """Закриття Redis при зупинці застосунку."""
-    global _redis_service
-    if _redis_service:
-        await _redis_service.disconnect()
-        _redis_service = None
+async def close_valkey():
+    """Закриття Valkey при зупинці застосунку."""
+    global _valkey_service
+    if _valkey_service:
+        await _valkey_service.disconnect()
+        _valkey_service = None

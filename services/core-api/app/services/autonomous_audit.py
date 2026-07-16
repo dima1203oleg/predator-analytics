@@ -20,7 +20,7 @@ from app.config import get_settings
 from app.database import SessionLocal, get_clickhouse_client
 from app.services.audit_service import audit_logger
 from app.services.kafka_service import get_kafka_service
-from app.services.redis_service import get_redis_service
+from app.services.valkey_service import get_valkey_service
 
 logger = logging.getLogger("core_api.autonomous_audit")
 settings = get_settings()
@@ -298,7 +298,7 @@ class AutonomousSovereignAuditEngine:
 
         # 4. Redis (Cache)
         try:
-            redis = get_redis_service()
+            redis = get_valkey_service()
             await redis.get("health_ping")
             statuses["redis"] = {"status": "ok", "role": "Cache / SessionStore (Fast Mem)"}
         except Exception as e:

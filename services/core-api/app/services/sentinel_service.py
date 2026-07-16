@@ -76,8 +76,8 @@ class SentinelService:
         """Перевірка Redis."""
         start = time.monotonic()
         try:
-            from app.services.redis_service import get_redis_service
-            redis = get_redis_service()
+            from app.services.valkey_service import get_valkey_service
+            redis = get_valkey_service()
             if redis._connected and redis._client:
                 await redis._client.ping()
                 return {

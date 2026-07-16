@@ -43,7 +43,7 @@ from app.services.factory_scorer import (
     is_gold_pattern,
     should_create_pattern,
 )
-from app.services.redis_service import get_redis_service
+from app.services.valkey_service import get_valkey_service
 from app.services.vram_watchdog import vram_sentinel
 
 logger = logging.getLogger(__name__)
@@ -60,7 +60,7 @@ async def ingest_pipeline_result(
     request: Request,
     result: PipelineResult,
     repo: FactoryRepository = Depends(get_factory_repo),
-    redis_client=Depends(get_redis_service),
+    redis_client=Depends(get_valkey_service),
 ):
     """Приймає результат CI/CD пайплайну.
 

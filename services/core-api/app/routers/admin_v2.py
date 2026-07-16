@@ -14,7 +14,7 @@ from app.core.permissions import Permission
 from app.dependencies import PermissionChecker
 from app.services.antigravity_orchestrator import orchestrator
 from app.services.kafka_service import get_kafka_service
-from app.services.redis_service import get_redis_service
+from app.services.valkey_service import get_valkey_service
 
 router = APIRouter(prefix="/admin", tags=["Адміністрування (V2)"])
 
@@ -118,11 +118,11 @@ async def get_infra_telemetry(
 
     # Redis
     try:
-        redis_service = get_redis_service()
+        valkey_service = get_valkey_service()
         start = time.time()
-        if not redis_service._connected:
-            await redis_service.connect()
-        await redis_service._client.ping()
+        if not valkey_service._connected:
+            await valkey_service.connect()
+        await valkey_service._client.ping()
         services.append(ServiceStatus(
             name="Redis (Cache)",
             status="ok",

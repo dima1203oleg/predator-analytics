@@ -13,7 +13,7 @@ from pydantic import BaseModel, Field
 
 from app.dependencies import get_current_active_user, get_tenant_id
 from app.services.ai_service import AIService
-from app.services.redis_service import get_redis_service
+from app.services.valkey_service import get_valkey_service
 
 router = APIRouter(prefix="/copilot", tags=["ai"])
 
@@ -70,7 +70,7 @@ async def copilot_chat(
 
     Підтримує як звичайну відповідь, так і SSE streaming.
     """
-    redis = get_redis_service()
+    redis = get_valkey_service()
     user_id = user.get("sub")
 
     # Створюємо або отримуємо сесію
@@ -201,7 +201,7 @@ async def get_session_history(
     limit: int = 50,
 ):
     """Отримання історії сесії чату з Redis."""
-    redis = get_redis_service()
+    redis = get_valkey_service()
     session = await redis.get_session(session_id)
 
     if not session:
@@ -233,7 +233,7 @@ async def create_session(
     session_id = str(uuid.uuid4())
     user_id = user.get("sub")
 
-    redis = get_redis_service()
+    redis = get_valkey_service()
     success = await redis.create_session(
         session_id=session_id,
         user_id=user_id,
@@ -255,7 +255,7 @@ async def delete_session(
     user: dict = Depends(get_current_active_user),
 ):
     """Видалення copilot сесії."""
-    redis = get_redis_service()
+    redis = get_valkey_service()
     success = await redis.delete_session(session_id)
 
     return {"deleted": success, "session_id": session_id}

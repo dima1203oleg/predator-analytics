@@ -251,8 +251,8 @@ async def get_system_status(request: Request) -> dict[str, Any]:
     latency_samples = [service["latency_ms"] for service in services if service["latency_ms"] > 0]
     stats["avg_latency"] = round(sum(latency_samples) / len(latency_samples), 2) if latency_samples else 0
 
-    from app.services.redis_service import get_redis_service
-    redis = get_redis_service()
+    from app.services.valkey_service import get_valkey_service
+    redis = get_valkey_service()
     last_sync = await redis.get("system:last_sync")
 
     return {
@@ -275,9 +275,9 @@ async def get_metrics_history() -> list[dict[str, Any]]:
     """Повертає історію метрик за останні 24 години з Redis."""
     import json
 
-    from app.services.redis_service import get_redis_service
+    from app.services.valkey_service import get_valkey_service
 
-    redis = get_redis_service()
+    redis = get_valkey_service()
     if not redis._connected:
         return []
 
@@ -508,9 +508,9 @@ async def get_nexus_scenarios() -> list[dict[str, Any]]:
     """Повертає активні OSINT-сценарії з Redis."""
     import json
 
-    from app.services.redis_service import get_redis_service
+    from app.services.valkey_service import get_valkey_service
 
-    redis = get_redis_service()
+    redis = get_valkey_service()
     if not redis._connected:
         return []
 

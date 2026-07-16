@@ -1,0 +1,21 @@
+# Web Framework
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+
+# HTTP Client (async)
+httpx==0.27.2
+
+# Retry logic
+tenacity==8.5.0
+
+# Kafka
+aiokafka==0.11.0
+
+# Serialization (HR-17)
+orjson==3.10.7
+
+# Scheduler
+apscheduler==3.10.4
+
+# Config
+pydantic-settings==2.4.0

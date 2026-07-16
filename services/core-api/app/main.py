@@ -93,7 +93,7 @@ from app.services.guardian import guardian_service
 from app.services.kafka_service import close_kafka, init_kafka
 from app.services.minio_service import close_minio, init_minio
 from app.services.oss_automation_scheduler import create_oss_automation_scheduler
-from app.services.redis_service import close_redis, init_redis
+from app.services.valkey_service import close_valkey, init_valkey
 from app.services.vram_watchdog import vram_sentinel
 from predator_common.logging import get_logger
 
@@ -153,11 +153,11 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         except Exception as e:
             logger.warning(f"MinIO connection failed: {e}")
 
-        # 5. Init Redis (§2.6)
+        # 5. Init Valkey (§2.6)
         try:
-            await init_redis()
+            await init_valkey()
         except Exception as e:
-            logger.warning(f"Redis connection failed: {e}")
+            logger.warning(f"Valkey connection failed: {e}")
 
         # 6. Init Factory Repository
         try:
@@ -259,7 +259,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
             oss_sched.shutdown(wait=False)
 
         await cancel_factory_improvement_task(app)
-        await close_redis()
+        await close_valkey()
         await close_kafka()
         await close_minio()
         await close_db()

@@ -4,7 +4,7 @@
 згідно з протоколом TUS, використовуючи Redis для збереження метаданих.
 """
 from typing import Optional
-from app.services.redis_service import get_redis_service
+from app.services.valkey_service import get_valkey_service
 from predator_common.logging import get_logger
 
 logger = get_logger("core_api.tus_service")
@@ -15,7 +15,7 @@ class TusService:
 
     def __init__(self):
         """Ініціалізація сервісу."""
-        self.redis = get_redis_service()
+        self.redis = get_valkey_service()
         self.prefix = "tus:upload:"
         # TTL сесії завантаження (наприклад, 24 години)
         self.ttl = 86400

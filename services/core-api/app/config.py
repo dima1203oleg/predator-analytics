@@ -84,8 +84,8 @@ class Settings(BaseSettings):
             f"@{self.POSTGRES_SERVER}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
         )
 
-    # Redis
-    REDIS_URL: str = "redis://localhost:6379/0"
+    # Valkey (замість Redis)
+    VALKEY_URL: str = "redis://localhost:6379/0"
 
     # Neo4j (Graph)
     NEO4J_URI: str = "bolt://localhost:7687"

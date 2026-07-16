@@ -2,7 +2,7 @@ from typing import Dict, Optional
 from app.models.risk import RiskAssessment
 from app.database import db_session
 from app.models.company import Company
-from app.services.redis_service import redis_client
+from app.services.valkey_service import get_valkey_service
 from sqlalchemy import select
 import json
 

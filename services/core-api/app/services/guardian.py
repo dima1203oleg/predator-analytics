@@ -49,9 +49,9 @@ class SovereignGuardian:
     async def record_metrics(self):
         """Збереження поточних метрик у Redis."""
         from app.routers.system import _collect_system_stats
-        from app.services.redis_service import get_redis_service
+        from app.services.valkey_service import get_valkey_service
 
-        redis = get_redis_service()
+        redis = get_valkey_service()
         if not redis._connected:
             return
 
@@ -97,8 +97,8 @@ class SovereignGuardian:
 
     async def get_predictions(self) -> dict[str, Any]:
         """Прогнозування стану ресурсів."""
-        from app.services.redis_service import get_redis_service
-        redis = get_redis_service()
+        from app.services.valkey_service import get_valkey_service
+        redis = get_valkey_service()
         if not redis._connected: return {}
 
         try:
@@ -114,10 +114,10 @@ class SovereignGuardian:
 
     async def generate_active_scenarios(self):
         """Генерація реальних OSINT-сценаріїв через War-gaming Engine."""
-        from app.services.redis_service import get_redis_service
+        from app.services.valkey_service import get_valkey_service
         from app.services.wargaming_engine import wargaming_engine
 
-        redis = get_redis_service()
+        redis = get_valkey_service()
         if not redis._connected: return
 
         try:

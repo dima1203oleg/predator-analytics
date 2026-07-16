@@ -9,7 +9,7 @@ from typing import ParamSpec, TypeVar
 from fastapi import Request
 from pydantic_core import to_jsonable_python
 
-from app.services.redis_service import get_redis_service
+from app.services.valkey_service import get_valkey_service
 from predator_common.logging import get_logger
 
 logger = get_logger("core.cache")
@@ -52,7 +52,7 @@ def cache_response(ttl: int = 300, key_prefix: str = "api_cache") -> Callable[[C
             # Формуємо унікальний ключ кешу
             cache_key = _generate_cache_key(request, key_prefix, func.__name__)
 
-            redis = get_redis_service()
+            redis = get_valkey_service()
 
             # Спробувати отримати з кешу
             cached_data = await redis.cache_get(cache_key)
