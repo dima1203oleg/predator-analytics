@@ -133,8 +133,14 @@ export const useVoiceAssistant = () => {
         };
 
         nativeRecognitionRef.current = recognition;
-        recognition.start();
-        setIsRecording(true);
+        try {
+          recognition.start();
+          setIsRecording(true);
+        } catch (err: any) {
+          console.error('Native STT Start Error:', err);
+          toast.error(`Не вдалося запустити мікрофон: ${err.message || err}`);
+          setIsRecording(false);
+        }
         return;
       } else {
         toast.error('Ваш браузер не підтримує Native STT. Перемикаюсь на бекенд.');

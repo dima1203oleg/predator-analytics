@@ -79,7 +79,12 @@ export const AIVoiceAssistant: React.FC<AIVoiceAssistantProps> = ({
     }
   };
 
-  const toggleRecording = async () => {
+  const toggleRecording = async (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
     if (isRecording) {
       const text = await stopRecording();
       if (text) handleCommand(text);
@@ -100,7 +105,7 @@ export const AIVoiceAssistant: React.FC<AIVoiceAssistantProps> = ({
   const statusText = isRecording ? 'СЛУХАЮ...' : (isProcessing || isProcessingChat) ? 'ОБРОБЛЯЮ...' : 'ВІДПОВІДАЮ...';
 
   return (
-    <div className={cn('fixed bottom-8 right-[120px] z-50', className)}>
+    <div className={cn('fixed bottom-8 right-[120px] z-[9999] pointer-events-auto', className)}>
       <motion.div
         className="relative"
         whileHover={{ scale: 1.05 }}
