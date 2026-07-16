@@ -25,16 +25,27 @@ dist-ssr/
 *.sln
 *.sw?
 
-# Environment files (NEVER commit real .env)
+# Environment files (NEVER commit real .env — HR-06)
 .env
 .env.local
 .env.production
 .env.nvidia
 .env.ultra-router
+.env.ai-models
+.env.all-api-keys
+.env.god-mode
+.env.server
+.env.telegram
+.env_remote
+.env.shadow_template
 deploy/litellm/.env
 deploy/litellm/.env.*
 deploy/litellm/ssl/
 ua-sources/.env
+
+# SSH/Crypto Keys (NEVER commit — HR-06)
+1204
+1204.pub
 
 # Python
 __pycache__/

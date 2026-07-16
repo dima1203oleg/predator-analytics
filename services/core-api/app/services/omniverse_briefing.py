@@ -61,7 +61,7 @@ class OmniverseBriefing:
         """Генерує зведення останніх подій та інсайтів."""
         try:
             # 1. Отримуємо останні алерти (Watchdog)
-            alerts_query = f"SELECT * FROM omniverse_alerts WHERE tenant_id = '{self.tenant_id}' ORDER BY detected_at DESC LIMIT 5"  # noqa
+            alerts_query = f"SELECT id, severity, message, company, detected_at FROM omniverse_alerts WHERE tenant_id = '{self.tenant_id}' ORDER BY detected_at DESC LIMIT 5"
             alerts_res = self.client.query(alerts_query)
             alerts = [dict(zip(alerts_res.column_names, row)) for row in alerts_res.result_rows]
 
