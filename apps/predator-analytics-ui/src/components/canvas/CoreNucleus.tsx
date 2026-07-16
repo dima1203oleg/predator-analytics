@@ -42,11 +42,12 @@ const FakeGlowMaterial = shaderMaterial(
 
 extend({ FakeGlowMaterial });
 
-// Add to TypeScript namespace
+// Add to JSX types (required for React Three Fiber custom materials)
+// eslint-disable-next-line @typescript-eslint/no-namespace
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      fakeGlowMaterial: any;
+      'fake-glow-material': any;
     }
   }
 }
@@ -89,9 +90,9 @@ export const CoreNucleus: React.FC<CoreNucleusProps> = ({ isVisible, color = '#0
     <mesh ref={meshRef} visible={targetOpacity > 0.01}>
       {/* An Icosahedron gives a crystalline / cyber look */}
       <icosahedronGeometry args={[5, 2]} />
-      <fakeGlowMaterial 
-        ref={materialRef} 
-        transparent 
+      <fake-glow-material
+        ref={materialRef}
+        transparent
         blending={THREE.AdditiveBlending}
         depthWrite={false}
         glowColor={new THREE.Color(color)}

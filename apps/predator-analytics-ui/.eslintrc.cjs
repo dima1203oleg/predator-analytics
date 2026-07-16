@@ -29,6 +29,8 @@ module.exports = {
     '@typescript-eslint/no-empty-object-type': 'off',
     // Дозволяємо require() у .cjs
     '@typescript-eslint/no-require-imports': 'off',
+    // Дозволяємо namespace для JSX типів (React Three Fiber)
+    '@typescript-eslint/no-namespace': 'off',
     // Зменшуємо noise для CI/CD
     'no-console': 'off',
     '@typescript-eslint/ban-ts-comment': 'off',

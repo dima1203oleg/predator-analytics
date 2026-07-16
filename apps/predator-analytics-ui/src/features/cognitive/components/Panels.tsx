@@ -2,6 +2,8 @@ import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import ForceGraph2D from 'react-force-graph-2d';
 import { useDropzone } from 'react-dropzone';
+import { API_BASE_URL } from '../../../services/api/config';
+import { useEventBus } from '../../../store/useEventBus';
 
 // --- ЛІВА ПАНЕЛЬ ---
 export const VerificationPanel = () => {
@@ -10,17 +12,15 @@ export const VerificationPanel = () => {
     setIsUploading(true);
     // Імітація ETL Pipeline
     setTimeout(() => {
-      import('../../../store/useEventBus').then(({ useEventBus }) => {
-        const bus = useEventBus.getState();
-        bus.emit('ETL_PROGRESS', { stage: 'MinIO Upload Complete' });
-        setTimeout(() => bus.emit('ETL_PROGRESS', { stage: 'PostgreSQL Sync' }), 1000);
-        setTimeout(() => bus.emit('ETL_PROGRESS', { stage: 'Neo4j Graph Update' }), 2000);
-        setTimeout(() => bus.emit('ETL_PROGRESS', { stage: 'Qdrant Embeddings' }), 3000);
-        setTimeout(() => {
-          bus.emit('ETL_PROGRESS', { stage: 'OpenSearch Indexed' });
-          setIsUploading(false);
-        }, 4000);
-      });
+      const bus = useEventBus.getState();
+      bus.emit('ETL_PROGRESS', { stage: 'MinIO Upload Complete' });
+      setTimeout(() => bus.emit('ETL_PROGRESS', { stage: 'PostgreSQL Sync' }), 1000);
+      setTimeout(() => bus.emit('ETL_PROGRESS', { stage: 'Neo4j Graph Update' }), 2000);
+      setTimeout(() => bus.emit('ETL_PROGRESS', { stage: 'Qdrant Embeddings' }), 3000);
+      setTimeout(() => {
+        bus.emit('ETL_PROGRESS', { stage: 'OpenSearch Indexed' });
+        setIsUploading(false);
+      }, 4000);
     }, 500);
   }, []);
 
@@ -157,7 +157,6 @@ export const ChatAssistant = () => {
     // Підключення до WebSocket бекенду (динамічний URL на основі API_BASE_URL)
     const wsUrl = (() => {
       try {
-        const { API_BASE_URL } = require('../../../services/api/config');
         const httpUrl = API_BASE_URL.replace('/api/v1', '');
         return httpUrl.replace(/^https?/, 'ws');
       } catch {
