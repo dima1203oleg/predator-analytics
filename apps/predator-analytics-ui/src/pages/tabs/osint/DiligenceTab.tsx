@@ -169,13 +169,14 @@ export const DiligenceTab: React.FC = () => {
                     <form onSubmit={handleSearch} className="flex flex-col gap-3">
                         <div className="relative group w-full">
                             <div className="absolute inset-0 bg-rose-500/5 rounded-xl blur-md opacity-0 group-hover:opacity-100 transition-opacity" />
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-focus-within:text-rose-500 transition-colors z-10" />
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-focus-within:text-rose-500 transition-colors z-10" aria-hidden="true" />
                             <input 
                                 type="text" 
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder="ПОШУК КОМПАНІЇ, ЄДРПОУ АБО UEID..."
                                 className="w-full bg-slate-950/80 border border-white/10 rounded-xl py-3.5 pl-10 pr-4 text-white font-mono text-[11px] tracking-wider focus:outline-none focus:border-rose-500/50 transition-all relative z-10"
+                                aria-label="Пошук компанії, ЄДРПОУ або UEID"
                             />
                         </div>
                         <Button variant="cyber" 
@@ -222,13 +223,14 @@ export const DiligenceTab: React.FC = () => {
                 <form onSubmit={handleSearch} className="flex gap-4">
                     <div className="flex-1 relative group">
                         <div className="absolute inset-0 bg-rose-500/5 rounded-2xl blur-md opacity-0 group-hover:opacity-100 transition-opacity" />
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-rose-500 transition-colors z-10" />
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-rose-500 transition-colors z-10" aria-hidden="true" />
                         <input 
                             type="text" 
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             placeholder="ВВЕДІТЬ НАЗВУ, ЄДРПОУ АБО UEID ДЛЯ ГЛИБОКОГО СКАНУВАННЯ..."
                             className="w-full bg-slate-950/80 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white font-mono text-xs tracking-widest focus:outline-none focus:border-rose-500/50 transition-all relative z-10"
+                            aria-label="Пошук для глибокого сканування"
                         />
                     </div>
                     <Button variant="cyber" 

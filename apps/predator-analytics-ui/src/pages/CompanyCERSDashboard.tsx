@@ -356,8 +356,9 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                 onChange={(e) => setInputValue(e.target.value)}
                                 placeholder="ПОШУК ОБ'ЄКТА РИЗИКУ..."
                                 className="w-full bg-slate-950/80 border border-white/10 text-white rounded-xl py-2 pl-10 pr-4 focus:outline-none focus:border-rose-500/50 transition-all font-mono text-xs tracking-widest relative z-10"
+                                aria-label="Пошук об'єкта ризику"
                             />
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-hover:text-rose-400 transition-colors z-10" />
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-hover:text-rose-400 transition-colors z-10" aria-hidden="true" />
                         </form>
                         
                         <div className="flex items-center gap-2">

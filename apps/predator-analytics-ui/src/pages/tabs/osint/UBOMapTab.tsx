@@ -65,8 +65,9 @@ export const UBOMapTab: React.FC = () => {
                             type="text" 
                             placeholder="ПОШУК ГЕО-ВУЗЛА АБО БЕНЕФІЦІАРА..."
                             className="w-full bg-slate-950/80  border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-xs font-mono tracking-widest text-white focus:outline-none focus:border-rose-500/50 transition-all relative z-10"
+                            aria-label="Пошук гео-вузла або бенефіціара"
                         />
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-hover/search:text-rose-400 transition-colors z-10" />
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-hover/search:text-rose-400 transition-colors z-10" aria-hidden="true" />
                     </div>
                     
                     <div className="flex items-center gap-2 bg-slate-950/60  p-1.5 rounded-2xl border border-white/5">
@@ -88,7 +89,7 @@ export const UBOMapTab: React.FC = () => {
                                 : "bg-rose-500 text-black hover:bg-rose-400 "
                             )}
                         >
-                            <Crosshair size={14} className={cn(isScanning && "animate-spin")} />
+                            <Crosshair size={14} className={cn(isScanning && "animate-spin")} aria-hidden="true" />
                             {isScanning ? 'СКАНУВАННЯ...' : 'ІНІЦІЮВАТИ СКАН'}
                         </Button>
                     </div>
@@ -106,7 +107,7 @@ export const UBOMapTab: React.FC = () => {
                                 { icon: Target, label: 'Ціль' }
                             ].map((Tool, i) => (
                                 <Button variant="cyber" key={i} className="p-3 text-slate-400 hover:bg-rose-500/20 hover:text-rose-400 rounded-xl transition-all group relative">
-                                    <Tool.icon size={20} />
+                                    <Tool.icon size={20} aria-hidden="true" />
                                     <span className="absolute left-16 bg-slate-900 border border-slate-700 text-white text-[9px] uppercase font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
                                         {Tool.label}
                                     </span>
@@ -147,7 +148,7 @@ export const UBOMapTab: React.FC = () => {
                                     "p-6 rounded-full border transition-all duration-1000",
                                     isScanning ? "bg-rose-500/20 border-rose-500 " : "bg-slate-950/60 border-white/10"
                                 )}>
-                                    <MapIcon size={40} className={cn(isScanning ? "text-rose-400" : "text-slate-700")} />
+                                    <MapIcon size={40} className={cn(isScanning ? "text-rose-400" : "text-slate-700")} aria-hidden="true" />
                                 </div>
                                 <div className="text-center">
                                     <h3 className="text-sm font-black text-white uppercase tracking-[0.3em] mb-1 italic">
@@ -174,7 +175,7 @@ export const UBOMapTab: React.FC = () => {
                                 <HoloCard className="bg-slate-950/90  border-white/5 flex flex-col max-h-full">
                                     <div className="flex items-center justify-between mb-4 border-b border-white/5 pb-3">
                                         <div className="flex items-center gap-2">
-                                            <Target size={14} className="text-red-500" />
+                                            <Target size={14} className="text-red-500" aria-hidden="true" />
                                             <h4 className="text-[10px] font-black text-white uppercase tracking-widest">Активні Об'єкти</h4>
                                         </div>
                                         <span className="text-[9px] font-mono text-slate-500">4 ВИЯВЛЕНО</span>
@@ -208,7 +209,7 @@ export const UBOMapTab: React.FC = () => {
                                                 </div>
                                                 <div className="flex items-center justify-between">
                                                     <div className="flex items-center gap-1.5">
-                                                        <MapPin size={10} className="text-slate-500" />
+                                                        <MapPin size={10} className="text-slate-500" aria-hidden="true" />
                                                         <span className="text-[9px] text-slate-500 uppercase font-mono">{node.loc}</span>
                                                     </div>
                                                     <span className="text-[10px] font-mono font-bold text-slate-400">{node.risk}%</span>
@@ -258,10 +259,10 @@ export const UBOMapTab: React.FC = () => {
                     </HoloCard>
                     
                     <Button variant="cyber" className="p-3 bg-slate-900 border border-white/10 rounded-2xl text-slate-400 hover:text-white transition-all shadow-2xl">
-                        <Maximize2 size={18} />
+                        <Maximize2 size={18} aria-hidden="true" />
                     </Button>
                     <Button variant="cyber" className="p-3 bg-slate-900 border border-white/10 rounded-2xl text-slate-400 hover:text-white transition-all shadow-2xl">
-                        <Settings2 size={18} />
+                        <Settings2 size={18} aria-hidden="true" />
                     </Button>
                 </div>
             </div>

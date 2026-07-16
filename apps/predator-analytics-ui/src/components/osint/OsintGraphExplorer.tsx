@@ -402,7 +402,7 @@ export function OsintGraphExplorer() {
                 </div>
                 <div className="p-4 border-t border-slate-800 bg-slate-900/50 space-y-3">
                     <div className="flex items-center justify-between text-[10px] font-black uppercase text-rose-400 bg-rose-500/10 px-3 py-2 border border-rose-500/20 rounded-lg">
-                        <span className="flex items-center gap-1.5"><Database size={14} /> NEO4J GRAPH DB</span>
+                        <span className="flex items-center gap-1.5"><Database size={14} aria-hidden="true" /> NEO4J GRAPH DB</span>
                         <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-rose-500 "/> LIVE</span>
                     </div>
                     <Button variant="cyber" className="w-full py-2.5 rounded-lg border border-dashed border-slate-700 text-slate-400 text-xs font-bold uppercase tracking-widest hover:text-white hover:border-slate-500 transition-colors flex items-center justify-center gap-2">
@@ -450,9 +450,10 @@ export function OsintGraphExplorer() {
                             disabled={isSearching}
                             placeholder={isSearching ? "ВИКОНУЄТЬСЯ ГЛОБАЛЬНИЙ ПОШУК..." : "Введіть ЄДРПОУ, ПІБ, IBAN або адресу..."}
                             className="flex-1 bg-transparent py-4 px-4 text-sm text-white placeholder-slate-500 focus:outline-none disabled:opacity-50"
+                            aria-label="Пошук в графі: ЄДРПОУ, ПІБ, IBAN або адреса"
                         />
                         <Button variant="cyber" type="submit" disabled={isSearching} className="p-2 mr-2 bg-rose-600 hover:bg-rose-500 disabled:bg-slate-700 text-white rounded-xl shadow-lg transition-colors flex items-center justify-center">
-                            {isSearching ? <RefreshCw className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
+                            {isSearching ? <RefreshCw className="w-5 h-5 animate-spin" aria-hidden="true" /> : <Search className="w-5 h-5" aria-hidden="true" />}
                         </Button>
                     </form>
                     
@@ -480,7 +481,7 @@ export function OsintGraphExplorer() {
                 {/* Toolbar */}
                 <div className="absolute top-6 right-6 z-30 flex gap-2">
                     <Button variant="cyber" className="p-3 bg-indigo-600/20 hover:bg-indigo-500/30 text-indigo-400 rounded-xl border border-indigo-500/50   transition-colors tooltip group relative">
-                        <Bot className="h-5 w-5" />
+                        <Bot className="h-5 w-5" aria-hidden="true" />
                         <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] uppercase font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">AI Copilot Аналіз</span>
                     </Button>
                     <Button variant="cyber" className="p-3 bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 rounded-xl border border-amber-500/50   transition-colors tooltip group relative">
@@ -493,11 +494,11 @@ export function OsintGraphExplorer() {
                         disabled={isSearching || isExpanding}
                         className="p-3 bg-slate-900/80 hover:bg-slate-800 disabled:opacity-50 text-slate-300 rounded-xl border border-slate-700 shadow-2xl  transition-colors tooltip group relative"
                     >
-                        <RefreshCw className={cn("h-5 w-5", (isExpanding || isSearching) && "animate-spin text-rose-400")} />
+                        <RefreshCw className={cn("h-5 w-5", (isExpanding || isSearching) && "animate-spin text-rose-400")} aria-hidden="true" />
                         <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] uppercase font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Скинути Граф</span>
                     </Button>
                     <Button variant="cyber" className="p-3 bg-slate-900/80 hover:bg-slate-800 text-slate-300 rounded-xl border border-slate-700 shadow-2xl  transition-colors group relative">
-                        <Download className="h-5 w-5" />
+                        <Download className="h-5 w-5" aria-hidden="true" />
                         <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] uppercase font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Експорт PDF</span>
                     </Button>
                 </div>
@@ -586,8 +587,9 @@ export function OsintGraphExplorer() {
                                                 ? "bg-slate-800 text-white shadow p-0"
                                                 : "text-slate-500 hover:text-slate-300"
                                         )}
+                                        aria-label={tab.label}
                                     >
-                                        <tab.icon className="w-3.5 h-3.5" />
+                                        <tab.icon className="w-3.5 h-3.5" aria-hidden="true" />
                                         {tab.label}
                                     </Button>
                                 ))}
@@ -686,6 +688,7 @@ export function OsintGraphExplorer() {
                                                     onChange={(e) => setPathTargetId(e.target.value)}
                                                     placeholder="ЄДРПОУ / UEID цілі..."
                                                     className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white placeholder:text-slate-600 outline-none focus:border-rose-500/50 transition-colors"
+                                                    aria-label="ЄДРПОУ або UEID цілі для розрахунку шляху"
                                                     onKeyDown={(e) => {
                                                         if (e.key === 'Enter') calculateShortestPath(selectedNode.id);
                                                     }}

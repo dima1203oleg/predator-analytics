@@ -48,11 +48,11 @@ const OSINTHub: React.FC = () => {
   };
 
   const hubTabs = [
-    { id: 'diligence', label: 'Персональне досьє', icon: <Fingerprint size={16} /> },
-    { id: 'graph', label: 'Нейронний граф', icon: <Share2 size={16} /> },
-    { id: 'ubo', label: 'Карта бенефіціарів', icon: <Map size={16} /> },
-    { id: 'cers', label: 'CERS Моніторинг', icon: <Activity size={16} /> },
-    { id: 'sanctions', label: 'Санкції та PEP', icon: <ShieldAlert size={16} /> },
+    { id: 'diligence', label: 'Персональне досьє', icon: <Fingerprint size={16} aria-hidden="true" /> },
+    { id: 'graph', label: 'Нейронний граф', icon: <Share2 size={16} aria-hidden="true" /> },
+    { id: 'ubo', label: 'Карта бенефіціарів', icon: <Map size={16} aria-hidden="true" /> },
+    { id: 'cers', label: 'CERS Моніторинг', icon: <Activity size={16} aria-hidden="true" /> },
+    { id: 'sanctions', label: 'Санкції та PEP', icon: <ShieldAlert size={16} aria-hidden="true" /> },
   ];
 
   if (isCompact && activeTab === 'menu') {
@@ -69,9 +69,10 @@ const OSINTHub: React.FC = () => {
               setActiveTab('menu');
               setSearchParams({});
             }}
+            aria-label="Повернутися до меню"
             className="p-3 rounded-2xl bg-white/5 border border-white/10 text-white"
           >
-            <ArrowLeft size={24} />
+            <ArrowLeft size={24} aria-hidden="true" />
           </Button>
           <h2 className="text-lg font-black text-white italic tracking-widest uppercase">НАЗАД ДО МЕНЮ</h2>
         </div>
@@ -79,7 +80,7 @@ const OSINTHub: React.FC = () => {
       <HubLayout
         title="РОЗВІДКА СУБ'ЄКТІВ"
         subtitle="Глибока OSINT-розвідка суб'єктів та детекція прихованих мережевих зв'язків"
-        icon={<Fingerprint size={24} />}
+        icon={<Fingerprint size={24} aria-hidden="true" />}
         tabs={hubTabs}
         activeTab={activeTab === 'menu' ? 'diligence' : activeTab}
         onTabChange={handleTabChange}

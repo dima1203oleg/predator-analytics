@@ -68,13 +68,14 @@ export const SanctionsTab: React.FC = () => {
         <div className="md:col-span-3 space-y-6">
           <div className="relative group">
             <div className="absolute inset-0 bg-rose-500/5 blur-2xl opacity-0 group-focus-within:opacity-100 transition-opacity" />
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 w-4 h-4 z-10" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 w-4 h-4 z-10" aria-hidden="true" />
             <input 
               type="text" 
               placeholder="Пошук за назвою, ЄДРПОУ або ПІБ..."
               className="w-full bg-slate-900/80 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-rose-500/50 transition-all shadow-2xl  relative z-10"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              aria-label="Пошук за назвою, ЄДРПОУ або ПІБ"
             />
           </div>
 
