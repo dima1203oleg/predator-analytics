@@ -1,0 +1,17 @@
+{{- if .Values.uaRegistryGateway.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "predator.fullname" . }}-ua-registry-gateway
+  labels:
+    app: ua-registry-gateway
+spec:
+  type: {{ .Values.uaRegistryGateway.service.type }}
+  ports:
+    - port: {{ .Values.uaRegistryGateway.service.port }}
+      targetPort: 8002
+      protocol: TCP
+      name: http
+  selector:
+    app: ua-registry-gateway
+{{- end }}

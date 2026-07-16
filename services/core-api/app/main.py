@@ -15,6 +15,7 @@ from app.core.cors import add_cors_middleware
 from app.core.graph import graph_db
 
 # Middlewares
+from app.core.auth_middleware import KeycloakAuthMiddleware
 from app.core.middleware import RequestIDMiddleware, TenantContextMiddleware
 from app.core.middleware_optimization import (
     CompressionMiddleware,
@@ -284,6 +285,7 @@ app.add_middleware(SecurityHeadersMiddleware)
 app.add_middleware(PerformanceMiddleware)
 app.add_middleware(RateLimitMiddleware, rate_limiter_key="api")
 app.add_middleware(RequestIDMiddleware)
+app.add_middleware(KeycloakAuthMiddleware)
 app.add_middleware(TenantContextMiddleware)
 
 # CORS middleware

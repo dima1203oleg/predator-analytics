@@ -23,6 +23,8 @@ class WorkerSettings(BaseSettings):
     KAFKA_TOPIC_INGESTION_RAW: str = "tenant.default.ingestion.raw"
     KAFKA_TOPIC_ENRICHMENT: str = "tenant.default.enrichment.events"
     KAFKA_TOPIC_OMNIVERSE_INGESTION: str = "omniverse-ingestion-triggers"
+    KAFKA_TOPIC_PROZORRO: str = "ua.prozorro.events"
+    KAFKA_TOPIC_EDR: str = "ua.edr.events"
     ROOT_TENANT_ID: str = "global-system"
 
     # ClickHouse Analytics

@@ -27,6 +27,7 @@ from app.pipelines.automl_pipeline import AutoMLPipeline
 from app.pipelines.customs import CustomsPipeline
 from app.pipelines.file_ingestion import FileIngestionPipeline
 from app.pipelines.omniverse_pipeline import OmniversePipeline
+from app.pipelines.ua_registry import UARegistryPipeline
 from app.registries.ua_registries import УкраїнськийРеєстр
 from app.services.omniverse_watchdog import OmniverseWatchdog
 from app.sinks.postgres_sink import PostgresSink
@@ -307,6 +308,7 @@ async def process_message(
     fusion_engine: ДвигунЗлиттяДаних,
     producer: AIOKafkaProducer,
     postgres_sink: PostgresSink,
+    topic: str = "",
 ) -> None:
     """Маршрутизація повідомлень до відповідних обробників з ідемпотентністю."""
     # 1. Генерація або отримання event_id (TZ §5.3)
@@ -343,10 +345,15 @@ async def process_message(
         elif "customs_declaration" in msg_value:
             # Інгестія потокових митних декларацій
             await process_customs_declaration(msg_value, producer, postgres_sink)
+        elif topic in [settings.KAFKA_TOPIC_PROZORRO, settings.KAFKA_TOPIC_EDR]:
+            # UA Registry Gateway OSINT події
+            registry_pipeline = UARegistryPipeline(postgres_sink)
+            await registry_pipeline.process_event(topic, msg_value)
         else:
             logger.warning(
                 "ingestion_worker.unknown_message_type",
                 keys=list(msg_value.keys()),
+                topic=topic,
             )
             return
 
@@ -416,6 +423,8 @@ async def consume() -> None:
         consumer = AIOKafkaConsumer(
             TOPIC_RAW,
             TOPIC_OMNIVERSE,
+            settings.KAFKA_TOPIC_PROZORRO,
+            settings.KAFKA_TOPIC_EDR,
             bootstrap_servers=settings.KAFKA_BOOTSTRAP_SERVERS,
             group_id="predator-ingestion-group",
             auto_offset_reset="earliest",
@@ -447,7 +456,7 @@ async def consume() -> None:
             if msg.value:
                 # Асинхронна обробка події без блокування консьюмера
                 task = asyncio.create_task(
-                    process_message(msg.value, fusion_engine, producer, postgres_sink)
+                    process_message(msg.value, fusion_engine, producer, postgres_sink, msg.topic)
                 )
                 background_tasks.add(task)
                 task.add_done_callback(background_tasks.discard)

@@ -1,0 +1,54 @@
+{{- if .Values.uaRegistryGateway.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "predator.fullname" . }}-ua-registry-gateway
+  labels:
+    app: ua-registry-gateway
+spec:
+  replicas: {{ .Values.uaRegistryGateway.replicaCount }}
+  selector:
+    matchLabels:
+      app: ua-registry-gateway
+  template:
+    metadata:
+      labels:
+        app: ua-registry-gateway
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+      containers:
+        - name: ua-registry-gateway
+          image: "{{ .Values.uaRegistryGateway.image.repository }}:{{ .Values.uaRegistryGateway.image.tag }}"
+          imagePullPolicy: {{ .Values.uaRegistryGateway.image.pullPolicy | default .Values.global.imagePullPolicy }}
+          ports:
+            - containerPort: 8002
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8002
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8002
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            {{- toYaml .Values.uaRegistryGateway.resources | nindent 12 }}
+          env:
+            - name: KAFKA_BROKERS
+              value: "{{ .Release.Name }}-kafka:9092"
+            {{- range $key, $val := .Values.uaRegistryGateway.env }}
+            - name: {{ $key }}
+              value: {{ tpl ($val | toString) $ | quote }}
+            {{- end }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop:
+                - ALL
+{{- end }}

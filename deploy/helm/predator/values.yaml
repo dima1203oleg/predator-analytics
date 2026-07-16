@@ -466,3 +466,25 @@ keycloak:
     user: predator
     database: predator_keycloak
     password: predator_db_secret
+
+# UA Registry Gateway
+uaRegistryGateway:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: predator/ua-registry-gateway
+    tag: v61.0-ELITE
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8002
+  resources:
+    limits:
+      cpu: 300m
+      memory: 256Mi
+    requests:
+      cpu: 50m
+      memory: 64Mi
+  env:
+    ENV: "production"
+    DEBUG: "false"
