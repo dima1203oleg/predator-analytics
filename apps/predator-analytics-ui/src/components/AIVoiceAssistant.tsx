@@ -53,19 +53,19 @@ export const AIVoiceAssistant: React.FC<AIVoiceAssistantProps> = ({
     if (!command) return;
     setIsProcessingChat(true);
     setTranscript(command);
-    
+
     try {
       const res = await axios.post('/api/v1/copilot/chat', { message: command });
       const aiResponse = res.data.reply || 'Помилка генерації';
       setResponse(aiResponse);
-      
+
       // Оновлюємо глобальний стейт для аватара
       useAppStore.setState((state) => ({
         aiState: { ...state.aiState, response: aiResponse }
       }));
-      
+
       speak(aiResponse);
-      
+
       if (onCommand) {
         onCommand(command);
       }
@@ -79,38 +79,14 @@ export const AIVoiceAssistant: React.FC<AIVoiceAssistantProps> = ({
     }
   };
 
-  const handlePointerDown = async (e: React.PointerEvent) => {
-    e.preventDefault();
-    pressStartTime.current = Date.now();
-    wasRecordingRef.current = isRecording;
-
-    if (!isRecording) {
-      setTranscript('');
-      setResponse('');
-      await startRecording();
-    }
-  };
-
-  const handlePointerUp = async (e: React.PointerEvent) => {
-    e.preventDefault();
-    const duration = Date.now() - pressStartTime.current;
-
-    if (wasRecordingRef.current) {
+  const toggleRecording = async () => {
+    if (isRecording) {
       const text = await stopRecording();
       if (text) handleCommand(text);
     } else {
-      if (duration > 300) {
-        const text = await stopRecording();
-        if (text) handleCommand(text);
-      }
-    }
-  };
-
-  const handlePointerLeave = async (e: React.PointerEvent) => {
-    const duration = Date.now() - pressStartTime.current;
-    if (!wasRecordingRef.current && isRecording && duration > 300) {
-       const text = await stopRecording();
-       if (text) handleCommand(text);
+      setTranscript('');
+      setResponse('');
+      await startRecording();
     }
   };
 
@@ -150,9 +126,7 @@ export const AIVoiceAssistant: React.FC<AIVoiceAssistantProps> = ({
 
         {/* Main button */}
         <motion.button
-          onPointerDown={handlePointerDown}
-          onPointerUp={handlePointerUp}
-          onPointerLeave={handlePointerLeave}
+          onClick={toggleRecording}
           className={cn(
             'relative w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300',
             'bg-gradient-to-br from-rose-600 to-rose-800',
