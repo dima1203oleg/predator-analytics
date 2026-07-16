@@ -6,7 +6,7 @@ export const useVoiceAssistant = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [useNativeSTT, setUseNativeSTT] = useState(import.meta.env.VITE_ENABLE_MOCK_API === 'true');
+  const [useNativeSTT, setUseNativeSTT] = useState(true);
   
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -25,24 +25,42 @@ export const useVoiceAssistant = () => {
       audioRef.current.pause();
     }
 
+    // Спочатку завжди пробуємо нативний TTS — він працює без бекенду
+    const speakNative = () => {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'uk-UA';
+      utterance.rate = 1.0;
+      utterance.onend = () => setIsSpeaking(false);
+      utterance.onerror = () => setIsSpeaking(false);
+      window.speechSynthesis.speak(utterance);
+    };
+
     try {
       const response = await axios.post('/api/v1/voice/synthesize', { text }, { responseType: 'blob' });
-      const audioUrl = URL.createObjectURL(response.data);
+      
+      // Якщо бекенд повернув занадто маленький blob (порожній WAV) — використовуємо нативний TTS
+      if (!response.data || response.data.size < 1000) {
+        console.warn('TTS: Бекенд повернув порожній аудіо, використовую нативний TTS');
+        speakNative();
+        return;
+      }
 
+      const audioUrl = URL.createObjectURL(response.data);
       const audio = new Audio(audioUrl);
       audioRef.current = audio;
       audio.onended = () => {
         setIsSpeaking(false);
         URL.revokeObjectURL(audioUrl);
       };
+      audio.onerror = () => {
+        console.warn('TTS: Помилка відтворення аудіо, використовую нативний TTS');
+        URL.revokeObjectURL(audioUrl);
+        speakNative();
+      };
       await audio.play();
     } catch (error) {
       console.warn('TTS Backend Error, falling back to native TTS:', error);
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'uk-UA';
-      utterance.onend = () => setIsSpeaking(false);
-      utterance.onerror = () => setIsSpeaking(false);
-      window.speechSynthesis.speak(utterance);
+      speakNative();
     }
   }, []);
 
