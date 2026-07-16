@@ -19,13 +19,13 @@ import { Terminal } from 'lucide-react';
 type AIHubTab = 'nexus' | 'oracle' | 'hypothesis' | 'agents' | 'insights' | 'knowledge' | 'terminal' | 'menu';
 
 const ALL_TABS = [
-  { id: 'nexus', label: 'Предиктивний Нексус', icon: <BrainCircuit size={16} /> },
-  { id: 'oracle', label: 'Суверенний Оракул', icon: <Sparkles size={16} /> },
-  { id: 'hypothesis', label: 'Генератор Гіпотез', icon: <FlaskConical size={16} />, premium: true },
-  { id: 'agents', label: 'Автономні Агенти', icon: <Users size={16} />, premium: true },
-  { id: 'terminal', label: 'LIVE Термінал', icon: <Terminal size={16} />, premium: true },
-  { id: 'insights', label: 'Центр ШІ-Інсайтів', icon: <Zap size={16} /> },
-  { id: 'knowledge', label: 'Інженерія Знань', icon: <Database size={16} />, premium: true },
+  { id: 'nexus', label: 'Предиктивний Нексус', icon: <BrainCircuit size={16} aria-hidden="true" /> },
+  { id: 'oracle', label: 'Суверенний Оракул', icon: <Sparkles size={16} aria-hidden="true" /> },
+  { id: 'hypothesis', label: 'Генератор Гіпотез', icon: <FlaskConical size={16} aria-hidden="true" />, premium: true },
+  { id: 'agents', label: 'Автономні Агенти', icon: <Users size={16} aria-hidden="true" />, premium: true },
+  { id: 'terminal', label: 'LIVE Термінал', icon: <Terminal size={16} aria-hidden="true" />, premium: true },
+  { id: 'insights', label: 'Центр ШІ-Інсайтів', icon: <Zap size={16} aria-hidden="true" /> },
+  { id: 'knowledge', label: 'Інженерія Знань', icon: <Database size={16} aria-hidden="true" />, premium: true },
 ];
 
 const AIHub: React.FC = () => {
@@ -72,9 +72,10 @@ const AIHub: React.FC = () => {
         <div className="p-4 bg-black border-b border-white/10 flex items-center gap-4">
           <Button variant="cyber"
             onClick={() => { setActiveTab('menu'); setSearchParams({}); }}
+            aria-label="Повернутися до меню"
             className="p-3 rounded-2xl bg-white/5 border border-white/10 text-white"
           >
-            <ArrowLeft size={24} />
+            <ArrowLeft size={24} aria-hidden="true" />
           </Button>
           <h2 className="text-lg font-black text-white italic tracking-widest uppercase">НАЗАД ДО МЕНЮ</h2>
         </div>
@@ -82,7 +83,7 @@ const AIHub: React.FC = () => {
       <HubLayout
         title="AI НЕКСУС"
         subtitle="Автономні агенти, гіпотези та предиктивна аналітика"
-        icon={<BrainCircuit size={24} />}
+        icon={<BrainCircuit size={24} aria-hidden="true" />}
         tabs={hubTabs}
         activeTab={activeTab === 'menu' ? 'nexus' : activeTab}
         onTabChange={handleTabChange}

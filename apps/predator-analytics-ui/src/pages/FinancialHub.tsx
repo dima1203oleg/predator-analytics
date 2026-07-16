@@ -16,10 +16,10 @@ import { MobileFinancialHub } from './MobileFinancialHub';
 type FinancialHubTab = 'swift' | 'offshore' | 'aml' | 'assets' | 'menu';
 
 const ALL_TABS = [
-  { id: 'swift', label: 'Транзакційний монітор', icon: <Activity size={16} /> },
-  { id: 'offshore', label: 'Офшорний детектор', icon: <Globe size={16} />, premium: true },
-  { id: 'aml', label: 'AML радар', icon: <ShieldCheck size={16} />, premium: true },
-  { id: 'assets', label: 'Трекер активів', icon: <Lock size={16} />, premium: true },
+  { id: 'swift', label: 'Транзакційний монітор', icon: <Activity size={16} aria-hidden="true" /> },
+  { id: 'offshore', label: 'Офшорний детектор', icon: <Globe size={16} aria-hidden="true" />, premium: true },
+  { id: 'aml', label: 'AML радар', icon: <ShieldCheck size={16} aria-hidden="true" />, premium: true },
+  { id: 'assets', label: 'Трекер активів', icon: <Lock size={16} aria-hidden="true" />, premium: true },
 ];
 
 const FinancialHub: React.FC = () => {
@@ -67,9 +67,10 @@ const FinancialHub: React.FC = () => {
         <div className="p-4 bg-black border-b border-white/10 flex items-center gap-4">
           <Button variant="cyber"
             onClick={() => { setActiveTab('menu'); setSearchParams({}); }}
+            aria-label="Повернутися до меню"
             className="p-3 rounded-2xl bg-white/5 border border-white/10 text-white"
           >
-            <ArrowLeft size={24} />
+            <ArrowLeft size={24} aria-hidden="true" />
           </Button>
           <h2 className="text-lg font-black text-white italic tracking-widest uppercase">НАЗАД ДО МЕНЮ</h2>
         </div>
@@ -77,7 +78,7 @@ const FinancialHub: React.FC = () => {
       <HubLayout
         title="ФІНАНСОВА РОЗВІДКА"
         subtitle="Фінансова розвідка та моніторинг капіталу"
-        icon={<Landmark size={24} />}
+        icon={<Landmark size={24} aria-hidden="true" />}
         tabs={hubTabs}
         activeTab={activeTab === 'menu' ? 'swift' : activeTab}
         onTabChange={handleTabChange}
@@ -85,11 +86,11 @@ const FinancialHub: React.FC = () => {
         actions={
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[10px] font-bold uppercase tracking-wider">
-              <Zap size={12} />
+              <Zap size={12} aria-hidden="true" />
               {backendStatus.statusLabel}
             </div>
-            <Button variant="cyber" className="p-2 rounded-lg bg-white/5 border border-white/10 text-slate-400 hover:text-white transition-colors">
-              <Settings2 size={18} />
+            <Button variant="cyber" className="p-2 rounded-lg bg-white/5 border border-white/10 text-slate-400 hover:text-white transition-colors" aria-label="Налаштування">
+              <Settings2 size={18} aria-hidden="true" />
             </Button>
           </div>
         }

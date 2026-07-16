@@ -19,12 +19,12 @@ import { MobileCommandHub } from './MobileCommandHub';
 type CommandHubTab = 'board' | 'brief' | 'risk' | 'warroom' | 'observer' | 'simulation' | 'menu';
 
 const ALL_TABS = [
-  { id: 'board', label: 'Панель Управління', icon: <LayoutDashboard size={16} /> },
-  { id: 'brief', label: 'Стратегічний Брифінг', icon: <FileText size={16} /> },
-  { id: 'risk', label: 'Портфельний Ризик', icon: <PieChart size={16} />, premium: true },
-  { id: 'warroom', label: 'Ситуаційна Кімната', icon: <ShieldAlert size={16} />, premium: true },
-  { id: 'observer', label: 'Суверенний Обсерватор', icon: <Eye size={16} />, premium: true },
-  { id: 'simulation', label: 'Симуляція Сценаріїв', icon: <Zap size={16} />, premium: true },
+  { id: 'board', label: 'Панель Управління', icon: <LayoutDashboard size={16} aria-hidden="true" /> },
+  { id: 'brief', label: 'Стратегічний Брифінг', icon: <FileText size={16} aria-hidden="true" /> },
+  { id: 'risk', label: 'Портфельний Ризик', icon: <PieChart size={16} aria-hidden="true" />, premium: true },
+  { id: 'warroom', label: 'Ситуаційна Кімната', icon: <ShieldAlert size={16} aria-hidden="true" />, premium: true },
+  { id: 'observer', label: 'Суверенний Обсерватор', icon: <Eye size={16} aria-hidden="true" />, premium: true },
+  { id: 'simulation', label: 'Симуляція Сценаріїв', icon: <Zap size={16} aria-hidden="true" />, premium: true },
 ];
 
 const CommandHub: React.FC = () => {
@@ -81,9 +81,10 @@ const CommandHub: React.FC = () => {
               setActiveTab('menu');
               setSearchParams({});
             }}
+            aria-label="Повернутися до меню"
             className="p-3 rounded-2xl bg-white/5 border border-white/10 text-white"
           >
-            <ArrowLeft size={24} />
+            <ArrowLeft size={24} aria-hidden="true" />
           </Button>
           <h2 className="text-lg font-black text-white italic tracking-widest uppercase">НАЗАД ДО МЕНЮ</h2>
         </div>
@@ -93,7 +94,7 @@ const CommandHub: React.FC = () => {
         eyebrow="Єдиний екран для керівника · KPI, ризики, сценарії"
         subtitle="Огляд показників, брифінгу та портфельних ризиків"
         businessCaption="Зручно для компаній будь-якого масштабу: від швидкого ранкового огляду до глибокого аналізу перед рішенням. Перемикайте вкладки зверху — логіка однакова для торгівлі, виробництва, логістики та послуг."
-        icon={<LayoutDashboard size={24} />}
+        icon={<LayoutDashboard size={24} aria-hidden="true" />}
         tabs={hubTabs}
         activeTab={activeTab === 'menu' ? 'board' : activeTab}
         onTabChange={handleTabChange}

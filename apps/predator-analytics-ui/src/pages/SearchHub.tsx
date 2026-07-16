@@ -15,10 +15,10 @@ import { MobileSearchHub } from './MobileSearchHub';
 type SearchHubTab = 'global' | 'registries' | 'documents' | 'newspaper' | 'menu';
 
 const ALL_TABS = [
-  { id: 'global', label: 'Пошук Суб\'єктів', icon: <Search size={16} /> },
-  { id: 'registries', label: 'Державні Реєстри', icon: <Database size={16} />, premium: true },
-  { id: 'documents', label: 'Документи', icon: <FileText size={16} /> },
-  { id: 'newspaper', label: 'Стрічка Новин', icon: <Newspaper size={16} />, premium: true },
+  { id: 'global', label: 'Пошук Суб\'єктів', icon: <Search size={16} aria-hidden="true" /> },
+  { id: 'registries', label: 'Державні Реєстри', icon: <Database size={16} aria-hidden="true" />, premium: true },
+  { id: 'documents', label: 'Документи', icon: <FileText size={16} aria-hidden="true" /> },
+  { id: 'newspaper', label: 'Стрічка Новин', icon: <Newspaper size={16} aria-hidden="true" />, premium: true },
 ];
 
 const SearchHub: React.FC = () => {
@@ -70,9 +70,10 @@ const SearchHub: React.FC = () => {
               setActiveTab('menu');
               setSearchParams({});
             }}
+            aria-label="Повернутися до меню"
             className="p-3 rounded-2xl bg-white/5 border border-white/10 text-white"
           >
-            <ArrowLeft size={24} />
+            <ArrowLeft size={24} aria-hidden="true" />
           </Button>
           <h2 className="text-lg font-black text-white italic tracking-widest uppercase">НАЗАД ДО МЕНЮ</h2>
         </div>
@@ -80,7 +81,7 @@ const SearchHub: React.FC = () => {
       <HubLayout
         title="СИНАПТИЧНИЙ ПОШУК"
         subtitle="Синаптичний пошук та робота з реєстрами"
-        icon={<Search size={24} />}
+        icon={<Search size={24} aria-hidden="true" />}
         tabs={hubTabs}
         activeTab={activeTab === 'menu' ? 'global' : activeTab}
         onTabChange={handleTabChange}

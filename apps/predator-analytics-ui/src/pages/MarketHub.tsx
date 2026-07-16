@@ -16,11 +16,11 @@ import { PriceAuditorTab } from './tabs/market/PriceAuditorTab';
 type MarketHubTab = 'overview' | 'customs' | 'flows' | 'suppliers' | 'price';
 
 const ALL_TABS = [
-  { id: 'overview', label: 'Огляд ринку', icon: <BarChart3 size={16} /> },
-  { id: 'customs', label: 'Митний моніторинг', icon: <Globe2 size={16} />, premium: true },
-  { id: 'flows', label: 'Потоки товарів', icon: <Ship size={16} />, premium: true },
-  { id: 'suppliers', label: 'Постачальники', icon: <Truck size={16} />, premium: true },
-  { id: 'price', label: 'Прайс-аудитор', icon: <DollarSign size={16} />, premium: true },
+  { id: 'overview', label: 'Огляд ринку', icon: <BarChart3 size={16} aria-hidden="true" /> },
+  { id: 'customs', label: 'Митний моніторинг', icon: <Globe2 size={16} aria-hidden="true" />, premium: true },
+  { id: 'flows', label: 'Потоки товарів', icon: <Ship size={16} aria-hidden="true" />, premium: true },
+  { id: 'suppliers', label: 'Постачальники', icon: <Truck size={16} aria-hidden="true" />, premium: true },
+  { id: 'price', label: 'Прайс-аудитор', icon: <DollarSign size={16} aria-hidden="true" />, premium: true },
 ];
 
 const MarketHub: React.FC = () => {
@@ -56,7 +56,7 @@ const MarketHub: React.FC = () => {
     <HubLayout
       title="ТОРГОВА РОЗВІДКА"
       subtitle="Торгова розвідка та аналіз товарних ринків"
-      icon={<BarChart3 size={24} />}
+      icon={<BarChart3 size={24} aria-hidden="true" />}
       tabs={hubTabs}
       activeTab={activeTab}
       onTabChange={handleTabChange}
@@ -64,11 +64,11 @@ const MarketHub: React.FC = () => {
       actions={
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-bold uppercase tracking-wider">
-            <Zap size={12} className="" />
+            <Zap size={12} className="" aria-hidden="true" />
             {backendStatus.statusLabel}
           </div>
-          <Button variant="cyber" className="p-2 rounded-lg bg-white/5 border border-white/10 text-slate-400 hover:text-white transition-colors">
-            <Settings2 size={18} />
+          <Button variant="cyber" className="p-2 rounded-lg bg-white/5 border border-white/10 text-slate-400 hover:text-white transition-colors" aria-label="Налаштування">
+            <Settings2 size={18} aria-hidden="true" />
           </Button>
         </div>
       }

@@ -40,13 +40,13 @@ const SystemHub: React.FC = () => {
   };
 
   const hubTabs = [
-    { id: 'monitoring', label: 'Моніторинг', icon: <Activity size={16} /> },
-    { id: 'ingestion', label: 'Кузня Даних', icon: <Upload size={16} /> },
-    { id: 'security', label: 'Безпека', icon: <Lock size={16} /> },
-    { id: 'settings', label: 'Налаштування', icon: <Settings size={16} /> },
-    { id: 'deployment', label: 'Розгортання', icon: <Box size={16} /> },
-    { id: 'governance', label: 'Управління', icon: <Shield size={16} /> },
-    { id: 'factory', label: 'Фабрика Систем', icon: <Factory size={16} /> },
+    { id: 'monitoring', label: 'Моніторинг', icon: <Activity size={16} aria-hidden="true" /> },
+    { id: 'ingestion', label: 'Кузня Даних', icon: <Upload size={16} aria-hidden="true" /> },
+    { id: 'security', label: 'Безпека', icon: <Lock size={16} aria-hidden="true" /> },
+    { id: 'settings', label: 'Налаштування', icon: <Settings size={16} aria-hidden="true" /> },
+    { id: 'deployment', label: 'Розгортання', icon: <Box size={16} aria-hidden="true" /> },
+    { id: 'governance', label: 'Управління', icon: <Shield size={16} aria-hidden="true" /> },
+    { id: 'factory', label: 'Фабрика Систем', icon: <Factory size={16} aria-hidden="true" /> },
   ];
 
   if (isCompact && activeTab === 'menu') {
@@ -62,9 +62,10 @@ const SystemHub: React.FC = () => {
               setActiveTab('menu');
               setSearchParams({});
             }}
+            aria-label="Повернутися до меню"
             className="p-3 rounded-2xl bg-white/5 border border-white/10 text-white"
           >
-            <ArrowLeft size={24} />
+            <ArrowLeft size={24} aria-hidden="true" />
           </Button>
           <h2 className="text-lg font-black text-white italic tracking-widest uppercase">НАЗАД ДО МЕНЮ</h2>
         </div>
@@ -72,7 +73,7 @@ const SystemHub: React.FC = () => {
       <HubLayout
         title="СИСТЕМНЕ ЯДРО"
         subtitle="Безпека, пайплайни даних та моніторинг інфраструктури"
-        icon={<Settings size={24} />}
+        icon={<Settings size={24} aria-hidden="true" />}
         tabs={hubTabs}
         activeTab={activeTab === 'menu' ? 'monitoring' : activeTab}
         onTabChange={handleTabChange}
