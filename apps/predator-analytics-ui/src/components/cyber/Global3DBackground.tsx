@@ -31,3 +31,5 @@ export const Global3DBackground = () => {
     </div>
   );
 };
+
+export default Global3DBackground;

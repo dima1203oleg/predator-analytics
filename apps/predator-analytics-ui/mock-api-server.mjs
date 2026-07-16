@@ -301,6 +301,31 @@ app.get('/api/v2/admin/osint/policies', (req, res) => {
   });
 });
 
+// ==========================================
+// ALERTS & INSIGHTS (для IntelligencePanel)
+// ==========================================
+app.get('/api/v1/alerts', (req, res) => {
+  const severity = req.query.severity || 'all';
+  const limit = parseInt(req.query.limit) || 10;
+  const alerts = [
+    { id: 'R-8492', severity: 'HIGH',     message: 'Аномальний логістичний маршрут через порт Одеса (ТОВ "Транс-Логістик")', company: 'TRANS-LOG', detected_at: new Date().toISOString() },
+    { id: 'R-8491', severity: 'CRITICAL', message: 'Виявлено підозрілу транзакцію на 590M UAH між офшорами', company: 'SHELL-99', detected_at: new Date().toISOString() },
+    { id: 'R-8490', severity: 'HIGH',     message: 'Пов\'язані компанії зареєстровані за однією адресою в Харкові', company: 'UKR-TRADE', detected_at: new Date().toISOString() },
+  ];
+  const filtered = severity === 'all' ? alerts : alerts.filter(a => a.severity.toLowerCase() === severity.toLowerCase());
+  res.json({ alerts: filtered.slice(0, limit), total: filtered.length });
+});
+
+app.get('/api/v1/insights', (req, res) => {
+  const limit = parseInt(req.query.limit) || 5;
+  const insights = [
+    { id: 'I-001', text: 'Прихований зв\'язок між директором "Транс-Логістик" та офшорною компанією на Кіпрі. Ймовірність схеми: 89%.', action: 'graph', confidence: 0.89, created_at: new Date().toISOString() },
+    { id: 'I-002', text: 'Нова реєстрація 3 пов\'язаних компаній протягом 48 годин. Признаки номінальних власників.', action: 'search', confidence: 0.76, created_at: new Date().toISOString() },
+    { id: 'I-003', text: 'Судно ODESSA STAR відвідало незадекларований порт у Криму. Порушення санкцій.', action: 'maritime', confidence: 0.95, created_at: new Date().toISOString() },
+  ];
+  res.json({ insights: insights.slice(0, limit), total: insights.length });
+});
+
 // DB Admin endpoints
 app.get('/api/v1/db-admin/health', (req, res) => {
   res.json({

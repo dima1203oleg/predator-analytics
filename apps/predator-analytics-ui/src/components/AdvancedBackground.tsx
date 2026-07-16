@@ -75,3 +75,4 @@ export const AdvancedBackground: React.FC<AdvancedBackgroundProps> = ({
     );
 };
 
+export default AdvancedBackground;
