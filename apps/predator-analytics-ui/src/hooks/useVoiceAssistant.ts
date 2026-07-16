@@ -1,31 +1,34 @@
+/**
+ * 🎤 useVoiceAssistant Hook | PREDATOR v66.0-ELITE
+ * Голосовий пайплайн: MediaRecorder → Backend STT (Whisper) → TTS
+ * Fallback: Native SpeechRecognition (якщо бекенд недоступний)
+ */
 import axios from 'axios';
 import { useCallback, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
-export const useVoiceAssistant = (options?: { onResult?: (text: string) => void }) => {
+export const useVoiceAssistant = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [useNativeSTT, setUseNativeSTT] = useState(true);
-  
+
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
-  const nativeRecognitionRef = useRef<any>(null);
-  const nativeTranscriptRef = useRef<string>('');
-  const stopPromiseResolveRef = useRef<((value: string | undefined) => void) | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
 
+  // ─── TTS (Text-to-Speech) ───────────────────────────────────────────
   const speak = useCallback(async (text: string) => {
     if (!text) return;
     setIsSpeaking(true);
-    
-    // Stop any native speech
+
+    // Зупиняємо поточне відтворення
     window.speechSynthesis.cancel();
     if (audioRef.current) {
       audioRef.current.pause();
     }
 
-    // Спочатку завжди пробуємо нативний TTS — він працює без бекенду
+    // Нативний TTS як запасний варіант
     const speakNative = () => {
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'uk-UA';
@@ -36,11 +39,14 @@ export const useVoiceAssistant = (options?: { onResult?: (text: string) => void 
     };
 
     try {
-      const response = await axios.post('/api/v1/voice/synthesize', { text }, { responseType: 'blob' });
-      
-      // Якщо бекенд повернув занадто маленький blob (порожній WAV) — використовуємо нативний TTS
+      const response = await axios.post('/api/v1/voice/synthesize', { text }, {
+        responseType: 'blob',
+        timeout: 5000,
+      });
+
+      // Якщо бекенд повернув порожній WAV — нативний TTS
       if (!response.data || response.data.size < 1000) {
-        console.warn('TTS: Бекенд повернув порожній аудіо, використовую нативний TTS');
+        console.warn('[TTS] Бекенд повернув порожній аудіо, нативний TTS');
         speakNative();
         return;
       }
@@ -53,13 +59,13 @@ export const useVoiceAssistant = (options?: { onResult?: (text: string) => void 
         URL.revokeObjectURL(audioUrl);
       };
       audio.onerror = () => {
-        console.warn('TTS: Помилка відтворення аудіо, використовую нативний TTS');
+        console.warn('[TTS] Помилка відтворення, нативний TTS');
         URL.revokeObjectURL(audioUrl);
         speakNative();
       };
       await audio.play();
-    } catch (error) {
-      console.warn('TTS Backend Error, falling back to native TTS:', error);
+    } catch {
+      console.warn('[TTS] Бекенд недоступний, нативний TTS');
       speakNative();
     }
   }, []);
@@ -73,131 +79,117 @@ export const useVoiceAssistant = (options?: { onResult?: (text: string) => void 
     setIsSpeaking(false);
   }, []);
 
-  const sendAudioToSTT = async (blob: Blob) => {
-    setIsProcessing(true);
-    try {
-      const formData = new FormData();
-      formData.append('file', blob, 'audio.webm');
-      const response = await axios.post('/api/v1/voice/transcribe', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
-      const text = response.data.text;
-      console.log('STT Result:', text);
-      setIsProcessing(false);
-      return text;
-    } catch (error) {
-      console.warn('STT Backend Error, falling back to native STT for next time:', error);
-      setUseNativeSTT(true);
-      setIsProcessing(false);
-      return undefined;
-    }
-  };
+  // ─── STT (Speech-to-Text) ──────────────────────────────────────────
 
+  /** Запис через MediaRecorder (основний режим) */
   const startRecording = useCallback(async () => {
-    nativeTranscriptRef.current = '';
-    
-    if (useNativeSTT) {
-      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-      if (SpeechRecognition) {
-        const recognition = new SpeechRecognition();
-        recognition.lang = 'uk-UA';
-        recognition.interimResults = true;
-        recognition.continuous = true;
-        
-        recognition.onresult = (event: any) => {
-          let currentTranscript = '';
-          for (let i = event.resultIndex; i < event.results.length; ++i) {
-            currentTranscript += event.results[i][0].transcript;
-          }
-          nativeTranscriptRef.current = currentTranscript;
-        };
-        
-        recognition.onend = () => {
-          setIsRecording(false);
-          const final = nativeTranscriptRef.current.trim();
-          
-          if (stopPromiseResolveRef.current) {
-            if (!final) toast.error('Голос не розпізнано. Спробуйте ще раз.');
-            stopPromiseResolveRef.current(final || undefined);
-            stopPromiseResolveRef.current = null;
-          } else if (final && options?.onResult) {
-            options.onResult(final);
-          } else if (!final && !stopPromiseResolveRef.current) {
-            // Auto-stopped due to silence or browser error
-            toast.error('Браузер не розпізнав голос. Перемикаємо на серверний Whisper. Спробуйте ще раз.');
-            setUseNativeSTT(false);
-          }
-        };
-
-        recognition.onerror = (event: any) => {
-          console.error('Native STT Error:', event.error);
-          toast.error(`Помилка мікрофону: ${event.error}`);
-          setIsRecording(false);
-          if (stopPromiseResolveRef.current) {
-            stopPromiseResolveRef.current(undefined);
-            stopPromiseResolveRef.current = null;
-          }
-        };
-
-        nativeRecognitionRef.current = recognition;
-        try {
-          recognition.start();
-          setIsRecording(true);
-        } catch (err: any) {
-          console.error('Native STT Start Error:', err);
-          toast.error(`Не вдалося запустити мікрофон: ${err.message || err}`);
-          setIsRecording(false);
-        }
-        return;
-      } else {
-        toast.error('Ваш браузер не підтримує Native STT. Перемикаюсь на бекенд.');
-        setUseNativeSTT(false);
-      }
+    // Зупиняємо попередній запис, якщо він є
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+      mediaRecorderRef.current.stop();
+    }
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(t => t.stop());
     }
 
     try {
+      console.log('[STT] Запитуємо доступ до мікрофона...');
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
+      streamRef.current = stream;
+      console.log('[STT] ✅ Мікрофон отримано');
+
+      const mediaRecorder = new MediaRecorder(stream, {
+        mimeType: MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+          ? 'audio/webm;codecs=opus'
+          : 'audio/webm',
+      });
       mediaRecorderRef.current = mediaRecorder;
       chunksRef.current = [];
 
       mediaRecorder.ondataavailable = (e) => {
-        if (e.data.size > 0) chunksRef.current.push(e.data);
+        if (e.data.size > 0) {
+          chunksRef.current.push(e.data);
+        }
       };
 
-      mediaRecorder.start();
+      // Записуємо дані кожні 250мс для надійності
+      mediaRecorder.start(250);
       setIsRecording(true);
-    } catch (error) {
-      console.error('Recording Error:', error);
-      setUseNativeSTT(true);
-    }
-  }, [useNativeSTT]);
-
-  const stopRecording = useCallback(() => {
-    return new Promise<string | undefined>((resolve) => {
-      if (useNativeSTT && nativeRecognitionRef.current) {
-        stopPromiseResolveRef.current = resolve;
-        try {
-          nativeRecognitionRef.current.stop();
-        } catch (e) {
-          resolve(undefined);
-        }
-      } else if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
-        mediaRecorderRef.current.onstop = async () => {
-          const audioBlob = new Blob(chunksRef.current, { type: 'audio/webm' });
-          const text = await sendAudioToSTT(audioBlob);
-          resolve(text);
-          
-          mediaRecorderRef.current?.stream.getTracks().forEach(track => track.stop());
-        };
-        mediaRecorderRef.current.stop();
-        setIsRecording(false);
+      console.log('[STT] 🎙️ Запис розпочато');
+    } catch (error: any) {
+      console.error('[STT] ❌ Помилка мікрофона:', error);
+      if (error.name === 'NotAllowedError') {
+        toast.error('Доступ до мікрофона заборонено. Дозвольте доступ у налаштуваннях браузера.');
+      } else if (error.name === 'NotFoundError') {
+        toast.error('Мікрофон не знайдено. Підключіть мікрофон і спробуйте знову.');
       } else {
+        toast.error(`Помилка мікрофона: ${error.message || error}`);
+      }
+    }
+  }, []);
+
+  /** Зупинка запису + відправка на бекенд для розпізнавання */
+  const stopRecording = useCallback((): Promise<string | undefined> => {
+    return new Promise((resolve) => {
+      if (!mediaRecorderRef.current || mediaRecorderRef.current.state === 'inactive') {
+        console.warn('[STT] Немає активного запису');
         setIsRecording(false);
         resolve(undefined);
+        return;
       }
+
+      mediaRecorderRef.current.onstop = async () => {
+        console.log('[STT] Запис зупинено, чанків:', chunksRef.current.length);
+
+        // Зупиняємо потік мікрофона
+        if (streamRef.current) {
+          streamRef.current.getTracks().forEach(t => t.stop());
+          streamRef.current = null;
+        }
+
+        if (chunksRef.current.length === 0) {
+          toast.error('Запис порожній. Спробуйте ще раз.');
+          resolve(undefined);
+          return;
+        }
+
+        const audioBlob = new Blob(chunksRef.current, { type: 'audio/webm' });
+        console.log('[STT] Розмір аудіо:', audioBlob.size, 'байт');
+
+        if (audioBlob.size < 100) {
+          toast.error('Запис занадто короткий.');
+          resolve(undefined);
+          return;
+        }
+
+        // Відправляємо на бекенд
+        setIsProcessing(true);
+        try {
+          const formData = new FormData();
+          formData.append('file', audioBlob, 'audio.webm');
+          const response = await axios.post('/api/v1/voice/transcribe', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+            timeout: 15000,
+          });
+          const text = response.data?.text?.trim();
+          console.log('[STT] ✅ Розпізнано:', text);
+          if (!text) {
+            toast.error('Голос не розпізнано. Спробуйте говорити голосніше.');
+          }
+          setIsProcessing(false);
+          resolve(text || undefined);
+        } catch (error) {
+          console.error('[STT] ❌ Помилка транскрибації:', error);
+          toast.error('Помилка розпізнавання голосу. Сервер недоступний.');
+          setIsProcessing(false);
+          resolve(undefined);
+        }
+      };
+
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+      console.log('[STT] ⏹️ Зупиняємо запис...');
     });
-  }, [useNativeSTT]);
+  }, []);
 
   return {
     isRecording,
@@ -206,6 +198,6 @@ export const useVoiceAssistant = (options?: { onResult?: (text: string) => void 
     speak,
     stopSpeak,
     startRecording,
-    stopRecording
+    stopRecording,
   };
 };
