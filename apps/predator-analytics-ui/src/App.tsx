@@ -26,11 +26,12 @@ import { AppRoutesNew as AppRoutes } from './AppRoutesNew';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { ToasterProvider } from './components/premium/ToasterProvider';
 import { useLocation } from 'react-router-dom';
-import { AdvancedBackground } from './components/AdvancedBackground';
-import NeuralPulse from './components/NeuralPulse';
-import { TechGridBackground } from './components/TechGridBackground';
-import { ParticleBackground } from './components/ParticleBackground';
-import { Global3DBackground } from './components/cyber/Global3DBackground';
+// Lazy-loaded важкі 3D компоненти фону для оптимізації bundle size
+const ParticleBackground = React.lazy(() => import('./components/ParticleBackground'));
+const AdvancedBackground = React.lazy(() => import('./components/AdvancedBackground'));
+const NeuralPulse = React.lazy(() => import('./components/NeuralPulse'));
+const TechGridBackground = React.lazy(() => import('./components/TechGridBackground'));
+const Global3DBackground = React.lazy(() => import('./components/cyber/Global3DBackground'));
 
 const SpatialEnvironmentWrapper = () => {
   const location = useLocation();
@@ -41,13 +42,13 @@ const SpatialEnvironmentWrapper = () => {
   
   if (isAdminRoute || isUniverseRoute) return null;
   return (
-    <>
+    <React.Suspense fallback={null}>
       <ParticleBackground />
       <AdvancedBackground />
       <NeuralPulse />
       <TechGridBackground />
       <Global3DBackground />
-    </>
+    </React.Suspense>
   );
 };
 
