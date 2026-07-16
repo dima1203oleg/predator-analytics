@@ -4,8 +4,10 @@ import express from 'express';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
+import multer from 'multer';
 import { exec } from 'child_process';
 const app = express();
+const upload = multer({ dest: os.tmpdir() });
 app.use(express.json());
 app.use('/api/v1/ai/stt', express.raw({ type: ['audio/webm', 'audio/wav', 'audio/ogg', 'application/octet-stream'], limit: '50mb' }));
 
@@ -476,7 +478,7 @@ app.post('/api/v1/copilot/chat', async (req, res) => {
 
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 5000);
+    const timeout = setTimeout(() => controller.abort(), 60000); // Increased timeout to 60s
     
     const ollamaResponse = await fetch('http://194.177.1.240:11434/api/chat', {
       method: 'POST',
@@ -517,10 +519,33 @@ app.post('/api/v1/copilot/chat', async (req, res) => {
 // ==========================================
 // VOICE & AI TTS/STT
 // ==========================================
-app.post('/api/v1/voice/transcribe', (req, res) => {
-  res.json({ text: "Привіт, як я можу допомогти вам з аналітикою?" });
+app.post('/api/v1/voice/transcribe', upload.single('file'), (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "No audio file provided" });
+    }
+    
+    const tempFilePath = req.file.path;
+    console.log(`[STT] Processing transcribe file: ${tempFilePath} (${req.file.size} bytes)`);
+    exec(`python3 /Users/Shared/Predator_60/scripts/stt_server.py "${tempFilePath}"`, (error, stdout, stderr) => {
+      if (fs.existsSync(tempFilePath)) fs.unlinkSync(tempFilePath);
+      if (error) {
+        console.error(`[STT] ❌ Error: ${stderr || error.message}`);
+        return res.status(500).json({ error: "STT Engine failed" });
+      }
+      try {
+        const result = JSON.parse(stdout);
+        console.log(`[STT] ✅ Transcribe Success: "${result.text}"`);
+        res.json(result);
+      } catch (e) {
+        console.error(`[STT] JSON Parse error: ${e.message}`);
+        res.status(500).json({ error: "Invalid STT response" });
+      }
+    });
+  } catch(e) {
+    res.status(500).json({ error: e.message });
+  }
 });
-
 const dummyWav = Buffer.from([
   0x52, 0x49, 0x46, 0x46, 0x24, 0x00, 0x00, 0x00, 0x57, 0x41, 0x56, 0x45, 
   0x66, 0x6d, 0x74, 0x20, 0x10, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 

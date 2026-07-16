@@ -23,9 +23,9 @@ export const OsintCenter: React.FC = () => {
 
       <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', borderBottom: '1px solid var(--a-border)', paddingBottom: '0.5rem' }}>
         {[
-          { id: 'white', label: 'White OSINT (Публічний)' },
-          { id: 'dark', label: 'Risk / Dark OSINT' },
-          { id: 'policy', label: 'Політики (Policy Engine)' },
+          { id: 'white', label: 'Білий OSINT (Публічний)' },
+          { id: 'dark', label: 'Ризик / Тіньовий OSINT' },
+          { id: 'policy', label: 'Політики (Рушій Політик)' },
           { id: 'flow', label: 'Граф Потоку Даних' }
         ].map(tab => (
           <Button variant="cyber"
@@ -91,7 +91,7 @@ export const OsintCenter: React.FC = () => {
               <thead>
                 <tr>
                   <th>Джерело</th>
-                  <th>Risk Score</th>
+                  <th>Оцінка Ризику</th>
                   <th>Статус</th>
                 </tr>
               </thead>
@@ -190,11 +190,11 @@ export const OsintCenter: React.FC = () => {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div style={{ padding: '1rem', border: '1px solid var(--a-border)', borderRadius: '6px', background: 'var(--a-bg)', textAlign: 'center' }}>
                   <Globe size={20} style={{ margin: '0 auto 0.5rem', color: 'var(--a-blue)' }} />
-                  <div>White OSINT</div>
+                  <div>Білий OSINT</div>
                 </div>
                 <div style={{ padding: '1rem', border: '1px solid var(--a-border)', borderRadius: '6px', background: 'var(--a-bg)', textAlign: 'center' }}>
                   <ShieldAlert size={20} style={{ margin: '0 auto 0.5rem', color: 'var(--a-red)' }} />
-                  <div>Dark OSINT</div>
+                  <div>Тіньовий OSINT</div>
                 </div>
               </div>
 
@@ -221,13 +221,13 @@ export const OsintCenter: React.FC = () => {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div style={{ padding: '1rem', border: '1px solid var(--a-green)', borderRadius: '6px', background: 'rgba(34, 197, 94, 0.1)', textAlign: 'center' }}>
                   <FileText size={20} style={{ margin: '0 auto 0.5rem', color: 'var(--a-green)' }} />
-                  <div>ETL Worker</div>
+                  <div>ETL Обробник</div>
                   <div style={{ fontSize: '0.7rem', color: 'var(--a-green)', marginTop: '0.25rem' }}>→ PostgreSQL</div>
                 </div>
                 <div style={{ padding: '1rem', border: '1px solid var(--a-orange)', borderRadius: '6px', background: 'rgba(249, 115, 22, 0.1)', textAlign: 'center' }}>
                   <AlertTriangle size={20} style={{ margin: '0 auto 0.5rem', color: 'var(--a-orange)' }} />
-                  <div>Risk Analyzer</div>
-                  <div style={{ fontSize: '0.7rem', color: 'var(--a-orange)', marginTop: '0.25rem' }}>→ Quarantine</div>
+                  <div>Аналізатор Ризиків</div>
+                  <div style={{ fontSize: '0.7rem', color: 'var(--a-orange)', marginTop: '0.25rem' }}>→ Карантин</div>
                 </div>
               </div>
 

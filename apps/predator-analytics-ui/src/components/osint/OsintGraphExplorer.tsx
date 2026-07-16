@@ -482,7 +482,7 @@ export function OsintGraphExplorer() {
                 <div className="absolute top-6 right-6 z-30 flex gap-2">
                     <Button variant="cyber" className="p-3 bg-indigo-600/20 hover:bg-indigo-500/30 text-indigo-400 rounded-xl border border-indigo-500/50   transition-colors tooltip group relative">
                         <Bot className="h-5 w-5" aria-hidden="true" />
-                        <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] uppercase font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">AI Copilot Аналіз</span>
+                        <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] uppercase font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">AI Помічник</span>
                     </Button>
                     <Button variant="cyber" className="p-3 bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 rounded-xl border border-amber-500/50   transition-colors tooltip group relative">
                         <Zap className="h-5 w-5" />

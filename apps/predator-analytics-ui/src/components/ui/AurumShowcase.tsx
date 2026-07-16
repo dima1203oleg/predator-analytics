@@ -223,11 +223,11 @@ export const AurumShowcase: React.FC = () => {
         <MilitaryLabel variant="primary" size="md">MECHANICAL BUTTONS</MilitaryLabel>
         <GlassPanel variant="default">
           <div className="flex flex-wrap gap-4">
-            <MechanicalButton variant="default">Default</MechanicalButton>
-            <MechanicalButton variant="primary">Primary</MechanicalButton>
-            <MechanicalButton variant="danger">Aurum Gold</MechanicalButton>
-            <MechanicalButton variant="ghost">Ghost</MechanicalButton>
-            <MechanicalButton variant="primary" isLoading>Loading</MechanicalButton>
+            <MechanicalButton variant="default">Стандартна</MechanicalButton>
+            <MechanicalButton variant="primary">Головна</MechanicalButton>
+            <MechanicalButton variant="danger">Критична</MechanicalButton>
+            <MechanicalButton variant="ghost">Прозора</MechanicalButton>
+            <MechanicalButton variant="primary" isLoading>Завантаження</MechanicalButton>
           </div>
         </GlassPanel>
       </section>

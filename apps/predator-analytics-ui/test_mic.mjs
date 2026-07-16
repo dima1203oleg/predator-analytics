@@ -1,7 +1,13 @@
 import { chromium } from '@playwright/test';
 
 (async () => {
-  const browser = await chromium.launch({ headless: true });
+  const browser = await chromium.launch({ 
+    headless: true,
+    args: [
+      '--use-fake-ui-for-media-stream',
+      '--use-fake-device-for-media-stream'
+    ]
+  });
   const context = await browser.newContext({
     permissions: ['microphone'],
   });
@@ -51,23 +57,32 @@ import { chromium } from '@playwright/test';
 
     console.log('3. Click START...');
     await micButton.first().click({ force: true });
-    await page.waitForTimeout(1500);
-
-    // Check state
-    const listeningText = await page.locator('text=СЛУХАЮ').count();
-    console.log(`   СЛУХАЮ visible: ${listeningText > 0 ? '✅ YES' : '❌ NO'}`);
+    
+    // Wait for the UI to actually show listening state
+    try {
+      await page.locator('text=СЛУХАЮ').waitFor({ state: 'visible', timeout: 10000 });
+      console.log('   СЛУХАЮ visible: ✅ YES');
+    } catch (e) {
+      console.log('   СЛУХАЮ visible: ❌ NO');
+    }
 
     console.log('4. Wait 2s (simulating speech)...');
     await page.waitForTimeout(2000);
 
     console.log('5. Click STOP...');
-    await micButton.first().click({ force: true });
+    const stopButton = page.locator('button[aria-label="Зупинити запис"]');
+    await stopButton.first().click({ force: true });
     await page.waitForTimeout(5000);
 
     // Check for processing/response
-    const responseEl = page.locator('.font-medium').first();
-    const responseText = await responseEl.innerText().catch(() => 'none');
-    console.log(`   AI Response: "${responseText}"`);
+    try {
+      const responseEl = page.locator('.font-medium').first();
+      await responseEl.waitFor({ state: 'visible', timeout: 10000 });
+      const responseText = await responseEl.innerText();
+      console.log(`   AI Response: "${responseText}"`);
+    } catch (e) {
+      console.log(`   AI Response: none (timeout or empty recording)`);
+    }
 
     console.log('\n✅ Test complete');
   } catch (err) {

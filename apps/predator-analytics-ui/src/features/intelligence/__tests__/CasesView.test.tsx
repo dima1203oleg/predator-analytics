@@ -55,9 +55,9 @@ vi.mock('@/components/cases/CaseCard', () => {
         CaseCard: React.forwardRef(({ caseItem, onView, onArchive, onEscalate }: any, ref: any) => (
             <div data-testid="case-card" ref={ref}>
                 <h3>{caseItem.title}</h3>
-                <Button variant="cyber" onClick={() => onView(caseItem.id)}>View</Button>
-                <Button variant="cyber" onClick={() => onArchive(caseItem.id)}>Archive</Button>
-                <Button variant="cyber" onClick={() => onEscalate(caseItem.id)}>Escalate</Button>
+                <Button variant="cyber" onClick={() => onView(caseItem.id)}>Перегляд</Button>
+                <Button variant="cyber" onClick={() => onArchive(caseItem.id)}>Архівувати</Button>
+                <Button variant="cyber" onClick={() => onEscalate(caseItem.id)}>Ескалювати</Button>
             </div>
         )),
     };
@@ -68,7 +68,7 @@ vi.mock('@/components/cases/CaseStats', () => {
     return {
         CaseStats: React.forwardRef(({ cases, activeFilter, onFilterChange }: any, ref: any) => (
             <div data-testid="case-stats" ref={ref}>
-                <Button variant="cyber" onClick={() => onFilterChange('КРИТИЧНО')}>Filter Critical</Button>
+                <Button variant="cyber" onClick={() => onFilterChange('КРИТИЧНО')}>Фільтр: Критично</Button>
                 <span>Active: {activeFilter}</span>
             </div>
         )),
@@ -82,7 +82,7 @@ vi.mock('@/components/cases/CaseDetailModal', () => {
             selectedCase ? (
                 <div data-testid="case-detail-modal" ref={ref}>
                     <h2>{selectedCase.title}</h2>
-                    <Button variant="cyber" onClick={onClose}>Close</Button>
+                    <Button variant="cyber" onClick={onClose}>Закрити</Button>
                 </div>
             ) : null
         )),
@@ -135,7 +135,7 @@ describe('CasesView', () => {
             expect(screen.getByText('Критичне відхилення ціни')).toBeInTheDocument();
         });
 
-        const filterBtn = screen.getByText('Filter Critical');
+        const filterBtn = screen.getByText('Фільтр: Критично');
         await act(async () => {
             fireEvent.click(filterBtn);
         });
@@ -167,7 +167,7 @@ describe('CasesView', () => {
             expect(screen.getByText('Критичне відхилення ціни', { selector: 'h3' })).toBeInTheDocument();
         });
 
-        const viewBtn = screen.getAllByText('View')[0];
+        const viewBtn = screen.getAllByText('Перегляд')[0];
         await act(async () => {
             fireEvent.click(viewBtn);
         });
@@ -197,7 +197,7 @@ describe('CasesView', () => {
             expect(screen.getByText('Критичне відхилення ціни')).toBeInTheDocument();
         });
 
-        const archiveBtn = screen.getAllByText('Archive')[0];
+        const archiveBtn = screen.getAllByText('Архівувати')[0];
         await act(async () => {
             fireEvent.click(archiveBtn);
         });

@@ -75,6 +75,7 @@
     "lucide-react": "^0.294.0",
     "maplibre-gl": "^5.24.0",
     "mitt": "^3.0.1",
+    "multer": "^2.2.0",
     "postprocessing": "^6.39.1",
     "r3f-forcegraph": "^1.1.1",
     "react": "^18.2.0",

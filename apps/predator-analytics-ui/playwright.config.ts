@@ -59,6 +59,14 @@ export default defineConfig({
     
     // Ignore HTTPs errors for local testing
     ignoreHTTPSErrors: true,
+
+    // Launch options for testing microphone without NotSupportedError
+    launchOptions: {
+      args: [
+        '--use-fake-ui-for-media-stream',
+        '--use-fake-device-for-media-stream',
+      ],
+    },
   },
 
   // Configure projects for major browsers - only Chromium for speed
