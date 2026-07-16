@@ -122,6 +122,10 @@ export const useVoiceAssistant = (options?: { onResult?: (text: string) => void 
             stopPromiseResolveRef.current = null;
           } else if (final && options?.onResult) {
             options.onResult(final);
+          } else if (!final && !stopPromiseResolveRef.current) {
+            // Auto-stopped due to silence or browser error
+            toast.error('Браузер не розпізнав голос. Перемикаємо на серверний Whisper. Спробуйте ще раз.');
+            setUseNativeSTT(false);
           }
         };
 
