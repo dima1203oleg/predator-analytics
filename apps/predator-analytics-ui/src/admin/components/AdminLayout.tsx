@@ -11,7 +11,7 @@ import {
   ChevronLeft, ChevronRight, Shield, Bell, Settings, LogOut,
   Moon, Sun, Cpu, Brain, LineChart, Search, Database, UploadCloud,
   HardDrive, Box, TestTube, Bot, ShieldAlert, Zap, Dna, UserCircle,
-  Globe, CreditCard, Network, Layers, Languages
+  Globe, CreditCard, Network, Layers, Languages, Sparkles
 } from 'lucide-react';
 import { useUser } from '../../context/UserContext';
 import { useTranslation } from 'react-i18next';

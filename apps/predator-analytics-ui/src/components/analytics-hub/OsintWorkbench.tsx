@@ -14,6 +14,8 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { OSINT_ENTITIES, OsintEntity } from './osintData';
+import { useOsintSearch } from '../../hooks/useOsint';
+import { useDebounce } from 'use-debounce';
 
 interface OsintWorkbenchProps {
   onSelectEntityForInspector: (entity: OsintEntity | null) => void;
@@ -91,6 +93,9 @@ const MAP_LOCATIONS: Record<string, MapLocation> = {
 
 export default function OsintWorkbench({ onSelectEntityForInspector, selectedEntity }: OsintWorkbenchProps) {
   const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearchQuery] = useDebounce(searchQuery, 300);
+  const { data: searchResults, isLoading: isSearchLoading } = useOsintSearch(debouncedSearchQuery);
+
   const [activeFilter, setActiveFilter] = useState<'all' | 'company' | 'person' | 'cryptowallet'>('all');
   const [categoryFilter, setCategoryFilter] = useState<'all' | 'sanctioned' | 'active' | 'high-risk'>('all');
   const [riskLevelFilter, setRiskLevelFilter] = useState<'all' | 'high' | 'medium' | 'low'>('all');
@@ -171,13 +176,32 @@ export default function OsintWorkbench({ onSelectEntityForInspector, selectedEnt
 
   // Memoized filtered entities for the quick-access sidebar list
   const filteredEntities = useMemo(() => {
-    return OSINT_ENTITIES.filter(entity => {
-      // Apply search query if typed
-      if (searchQuery.trim()) {
+    let sourceEntities = OSINT_ENTITIES;
+
+    // Use API search results if available
+    if (searchResults && searchResults.length > 0) {
+      sourceEntities = searchResults.map(r => ({
+        id: r.ueid,
+        name: r.name,
+        code: r.edrpou,
+        type: 'company' as const,
+        riskScore: r.risk_score || 0,
+        status: r.status === 'ACTIVE' ? 'ACTIVE' : 'SUSPICIOUS',
+        description: r.industry || 'Н/Д',
+        address: 'Н/Д',
+        lastActivityDate: new Date().toISOString(),
+        relationships: [],
+        aiRecommendations: 'Потребує додаткового аналізу'
+      }));
+    }
+
+    return sourceEntities.filter(entity => {
+      // Apply local search query if typed and we are not using the API results
+      if (searchQuery.trim() && (!searchResults || searchResults.length === 0)) {
         const query = searchQuery.toLowerCase();
         const matchesSearch = entity.name.toLowerCase().includes(query) || 
                               entity.code.includes(searchQuery) ||
-                              entity.description.toLowerCase().includes(query);
+                              (entity.description && entity.description.toLowerCase().includes(query));
         if (!matchesSearch) return false;
       }
 

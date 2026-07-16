@@ -27,17 +27,7 @@ export const ChatHistory: React.FC<ChatHistoryProps> = ({
   return (
     <>
       <div className={`ai-studio-sidebar ${!isOpen ? 'collapsed' : ''}`}>
-        <div className="ai-sidebar-header">
-          <div className="ai-sidebar-brand">
-            <div className="ai-sidebar-brand-icon">
-              <Sparkles size={16} />
-            </div>
-            <span className="ai-sidebar-brand-text">AI Studio</span>
-          </div>
-          <button className="ai-sidebar-toggle md:hidden" onClick={onToggle}>
-            <ChevronLeft size={16} />
-          </button>
-        </div>
+
 
         <button className="ai-new-chat-btn" onClick={onNewChat}>
           <Plus size={16} />

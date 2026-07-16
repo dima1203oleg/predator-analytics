@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { ChatHistory, ChatSession } from '../components/ai-studio/ChatHistory';
 import { GeminiChat, Message } from '../components/ai-studio/GeminiChat';
@@ -17,6 +17,48 @@ export const AIStudioPage: React.FC = () => {
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const activeMessages = activeSessionId ? (messagesMap[activeSessionId] || []) : [];
+
+  useEffect(() => {
+    const loadSessions = async () => {
+      try {
+        const data = await api.copilot.getSessions();
+        if (data.sessions) {
+          setSessions(data.sessions.map(s => ({
+            id: s.session_id,
+            title: s.title,
+            updatedAt: new Date(s.updated_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          })));
+        }
+      } catch (err) {
+        console.error('Failed to load sessions', err);
+      }
+    };
+    loadSessions();
+  }, []);
+
+  useEffect(() => {
+    const loadSessionMessages = async () => {
+      if (!activeSessionId || messagesMap[activeSessionId]) return;
+      
+      try {
+        const data = await api.copilot.getSession(activeSessionId);
+        if (data.messages) {
+          setMessagesMap(prev => ({
+            ...prev,
+            [activeSessionId]: data.messages.map(m => ({
+              id: m.message_id,
+              role: m.role as 'user' | 'assistant',
+              content: m.content,
+              timestamp: new Date(m.timestamp)
+            }))
+          }));
+        }
+      } catch (err) {
+        console.error('Failed to load session messages', err);
+      }
+    };
+    loadSessionMessages();
+  }, [activeSessionId, messagesMap]);
 
   const handleNewChat = useCallback(() => {
     if (abortControllerRef.current) {
@@ -153,7 +195,8 @@ export const AIStudioPage: React.FC = () => {
               try {
                 const parsed = JSON.parse(dataStr);
                 if (parsed.type === 'chunk') {
-                  fullContent += parsed.content;
+                  const chunkText = parsed.content !== undefined ? parsed.content : (parsed.data?.content || '');
+                  fullContent += chunkText;
                   
                   // Optimistic UI update
                   setMessagesMap(prev => {
@@ -216,20 +259,13 @@ export const AIStudioPage: React.FC = () => {
         onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
       />
       
-      <div className="flex-1 flex flex-col relative min-w-0">
+      <div className="flex-1 flex flex-col relative min-w-0 overflow-hidden">
         <GeminiChat 
           messages={activeMessages}
           onSendMessage={handleSendMessage}
           isTyping={isTyping}
+          onSelectTemplate={activeMessages.length === 0 ? handleTemplateSelect : undefined}
         />
-        
-        {activeMessages.length === 0 && (
-          <div className="absolute top-[60%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-full px-8 flex flex-col items-center pointer-events-none">
-            <div className="pointer-events-auto">
-              <PromptTemplates onSelect={handleTemplateSelect} />
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

@@ -18,6 +18,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { OSINT_ENTITIES, OsintEntity } from './osintData';
 import { SOLUTIONS } from './data';
 import LiveAnalyticalCore from './LiveAnalyticalCore';
+import { useOsintFeed, useOsintStats } from '../../hooks/useOsint';
+import type { OsintFeedItem, OsintStats } from '../../services/api/osint';
 
 interface LiveAnalyticalCenterProps {
   onSelectEntityGlobal: (entity: OsintEntity | null) => void;
@@ -84,6 +86,10 @@ export default function LiveAnalyticalCenter({
   // Mouse looking coordinates for core look reaction
   const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // === Реальні дані з бекенду ===
+  const { data: osintFeed = [], isLoading: isFeedLoading } = useOsintFeed();
+  const { data: osintStats } = useOsintStats();
 
   // Audio commentary system
   const speakVoice = (text: string) => {
@@ -1067,7 +1073,7 @@ export default function LiveAnalyticalCenter({
               </div>
               <div className="flex items-center gap-2 text-slate-300">
                 <Database className="w-3.5 h-3.5 text-indigo-400" />
-                <span>Опрацьовано 12.4 млн записів</span>
+                <span>Опрацьовано {osintStats ? osintStats.total_records.toLocaleString('uk-UA') : '...'} записів</span>
               </div>
               <div className="flex items-center gap-2 text-slate-300">
                 <TrendingUp className="w-3.5 h-3.5 text-indigo-400" />
@@ -1079,7 +1085,11 @@ export default function LiveAnalyticalCenter({
               </div>
               <div className="flex items-center gap-2 text-slate-300">
                 <Eye className="w-3.5 h-3.5 text-indigo-400" />
-                <span>Активні дослідження: 4</span>
+                <span>Активні моніторинги: {osintStats ? osintStats.active_monitors : '...'}</span>
+              </div>
+              <div className="flex items-center gap-2 text-slate-300">
+                <AlertTriangle className="w-3.5 h-3.5 text-rose-400" />
+                <span className="text-rose-400 font-semibold">Висока загроза: {osintStats ? osintStats.high_risk_found : '...'} суб'єктів</span>
               </div>
             </div>
           </div>
@@ -1114,6 +1124,68 @@ export default function LiveAnalyticalCenter({
             <span>Вплив санкцій: <strong className={activeEntity?.status === 'SANCTIONED' ? 'text-red-400 font-bold' : 'text-slate-300 font-bold'}>{activeEntity?.status || 'Н/Д'}</strong></span>
             <span>Клас ризику: <strong className="text-rose-400 font-bold">CLASS A HIGH COMPLIANCE</strong></span>
             <span>Джерело даних: СБУ / ЄДРПОУ / КИЇВ МИТНИЦЯ</span>
+          </div>
+        </div>
+
+        {/* Live OSINT Feed — реальний потік аномалій з бекенду */}
+        <div className="xl:col-span-12 bg-slate-900/30 border border-slate-900 rounded-2xl p-4 space-y-2 shadow-md" id="live-feed-panel">
+          <div className="flex items-center justify-between border-b border-slate-900 pb-2">
+            <div className="flex items-center gap-2">
+              <Activity className="w-4 h-4 text-rose-400 animate-pulse" />
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-200">
+                Живий OSINT Фід
+              </span>
+            </div>
+            <div className="text-[9px] font-mono text-slate-500">
+              {isFeedLoading ? 'Завантаження...' : `${osintFeed.length} подій`}
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-2">
+            {isFeedLoading
+              ? Array.from({ length: 5 }).map((_, i) => (
+                  <div key={i} className="bg-slate-950/50 rounded-xl p-2.5 border border-slate-900 animate-pulse space-y-1.5">
+                    <div className="h-2 bg-slate-800 rounded w-3/4" />
+                    <div className="h-2 bg-slate-800 rounded w-1/2" />
+                  </div>
+                ))
+              : osintFeed.slice(0, 5).map((item) => (
+                  <div
+                    key={item.id}
+                    className={`p-2.5 rounded-xl border bg-slate-950/50 space-y-1 cursor-pointer hover:border-indigo-500/30 transition-colors ${
+                      item.severity === 'critical' || item.severity === 'high'
+                        ? 'border-rose-500/20'
+                        : 'border-slate-900'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-[9px] font-mono font-bold text-indigo-400 truncate max-w-[80px]">
+                        {item.source}
+                      </span>
+                      <span
+                        className={`text-[8px] font-mono px-1 py-0.5 rounded ${
+                          item.severity === 'critical'
+                            ? 'bg-rose-500/15 text-rose-400'
+                            : item.severity === 'high'
+                            ? 'bg-orange-500/15 text-orange-400'
+                            : 'bg-slate-800 text-slate-400'
+                        }`}
+                      >
+                        {item.severity?.toUpperCase()}
+                      </span>
+                    </div>
+                    <p className="text-[9px] text-slate-300 leading-tight font-sans truncate" title={item.title}>
+                      {item.title}
+                    </p>
+                    <p className="text-[8px] text-slate-600 font-mono">
+                      {item.timestamp ? new Date(item.timestamp).toLocaleTimeString('uk-UA') : '—'}
+                    </p>
+                  </div>
+                ))}
+            {!isFeedLoading && osintFeed.length === 0 && (
+              <div className="col-span-5 text-center text-slate-600 font-mono text-[10px] py-4">
+                Фід порожній — аномалій не знайдено
+              </div>
+            )}
           </div>
         </div>
 

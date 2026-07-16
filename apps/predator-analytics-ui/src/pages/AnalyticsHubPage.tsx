@@ -1738,7 +1738,7 @@ export default function App() {
                           >
                             <span>{e.label}</span>
                             <span className="text-[9px] bg-rose-500/10 border border-rose-500/20 px-1.5 py-0.5 rounded text-rose-400 font-mono font-bold">
-                              {e.raw.risk_level === 'CRITICAL' ? '⚠️ КРИТИЧНИЙ' : '🔴 ВИСОКИЙ'}
+                              {e.raw.riskScore >= 80 ? '⚠️ КРИТИЧНИЙ' : '🔴 ВИСОКИЙ'}
                             </span>
                           </button>
                         ))}

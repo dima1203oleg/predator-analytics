@@ -547,13 +547,34 @@ async def main() -> None:
     # Запускаємо Autonomous Schema Synthesis loop
     ass_task = asyncio.create_task(autonomous_schema_synthesis_loop())
 
+    # Запускаємо Autonomous Harvester loop
+    async def autonomous_harvester_loop():
+        from app.core.harvester import Harvester
+        logger.info("Harvester: Autonomous Harvesting loop запущено")
+        producer = AIOKafkaProducer(bootstrap_servers=settings.KAFKA_BOOTSTRAP_SERVERS)
+        await producer.start()
+        try:
+            harvester = Harvester(producer)
+            while True:
+                try:
+                    await harvester.harvest_all()
+                except Exception as e:
+                    logger.error(f"Harvester error: {e}")
+                # Періодичність сканування: кожні 12 годин (умовно 43200 секунд), для тесту - 60 секунд
+                await asyncio.sleep(60)
+        finally:
+            await producer.stop()
+            
+    harvester_task = asyncio.create_task(autonomous_harvester_loop())
+
     await stop_event.wait()
     logger.info("ingestion_worker.stopping")
     consumer_task.cancel()
     watchdog_task.cancel()
     ass_task.cancel()
+    harvester_task.cancel()
     with contextlib.suppress(asyncio.CancelledError):
-        await asyncio.gather(consumer_task, watchdog_task, ass_task)
+        await asyncio.gather(consumer_task, watchdog_task, ass_task, harvester_task)
 
     # Зупиняємо health check сервер
     await stop_health_server(health_runner)

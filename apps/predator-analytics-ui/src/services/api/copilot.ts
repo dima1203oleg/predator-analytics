@@ -130,6 +130,13 @@ export const copilotApi = {
     },
 
     /**
+     * Отримання списку сесій
+     */
+    getSessions: async (): Promise<{ sessions: Array<{ session_id: string; title: string; created_at: string; updated_at: string }> }> => {
+        return (await apiClient.get('/copilot/sessions')).data;
+    },
+
+    /**
      * Видалення сесії
      */
     deleteSession: async (sessionId: string): Promise<{ deleted: boolean; session_id: string }> => {

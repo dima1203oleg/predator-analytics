@@ -53,3 +53,37 @@ class AutoMLPipeline:
     async def _determine_automl_strategy(self, file_id: str) -> str:
         # Ask DeepSeek-R1 for the best model type (e.g., LightGBM vs Neural Net)
         return "LightGBM_Ensemble"
+
+    async def check_data_drift_and_retrain(self, new_records_count: int) -> dict[str, Any]:
+        """Check if enough new data has accumulated to trigger retraining."""
+        logger.info("AutoML: Checking data drift (New records: %d)", new_records_count)
+        
+        # Моковий поріг для перенавчання (в реальності: перевірка PSI або KL Divergence)
+        threshold = 50000
+        if new_records_count > threshold:
+            logger.info("AutoML: Data drift detected / Threshold exceeded. Triggering retraining.")
+            
+            # 1. Train new model (mocked)
+            new_model_version = "v" + str(new_records_count)
+            logger.info("AutoML: Training new model version %s via XGBoost/LightGBM...", new_model_version)
+            
+            # 2. Evaluate in shadow mode
+            evaluation = await self._evaluate_model(new_model_version)
+            
+            if evaluation.get("precision", 0) > 0.90:
+                logger.info("AutoML: New model passed validation (Precision: %f). Deploying...", evaluation.get("precision"))
+                return {"status": "deployed", "version": new_model_version, "metrics": evaluation}
+            else:
+                logger.warning("AutoML: New model failed validation. Rollback to previous version.")
+                return {"status": "rejected", "version": new_model_version, "metrics": evaluation}
+                
+        return {"status": "skipped", "reason": "insufficient_data"}
+
+    async def _evaluate_model(self, version: str) -> dict[str, float]:
+        """Evaluate the newly trained model in shadow mode."""
+        # Мокова оцінка (в реальності: holdout set або cross-validation)
+        return {
+            "precision": 0.92,
+            "recall": 0.88,
+            "f1_score": 0.90
+        }

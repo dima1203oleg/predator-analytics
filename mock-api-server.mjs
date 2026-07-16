@@ -1937,6 +1937,40 @@ app.post(['/api/v1/ai/query', '/api/v1/nexus/chat'], (req, res) => {
 });
 
 // --- NEW: COPILOT API ---
+let copilotSessions = [];
+
+app.post('/api/v1/copilot/sessions', (req, res) => {
+  const newSession = {
+    session_id: `session-${Date.now()}`,
+    created_at: new Date().toISOString(),
+    messages: []
+  };
+  copilotSessions.unshift(newSession);
+  res.json(newSession);
+});
+
+app.get('/api/v1/copilot/sessions', (req, res) => {
+  res.json({
+    sessions: copilotSessions.map(s => ({
+      session_id: s.session_id,
+      title: s.messages[0]?.content.slice(0, 30) || 'Нова розмова',
+      created_at: s.created_at,
+      updated_at: s.updated_at || s.created_at
+    }))
+  });
+});
+
+app.get('/api/v1/copilot/sessions/:sessionId', (req, res) => {
+  const session = copilotSessions.find(s => s.session_id === req.params.sessionId);
+  if (!session) return res.status(404).json({ error: 'Session not found' });
+  res.json(session);
+});
+
+app.delete('/api/v1/copilot/sessions/:sessionId', (req, res) => {
+  copilotSessions = copilotSessions.filter(s => s.session_id !== req.params.sessionId);
+  res.json({ deleted: true, session_id: req.params.sessionId });
+});
+
 app.post('/api/v1/copilot/chat', async (req, res) => {
   const { message } = req.body;
   
@@ -1970,8 +2004,24 @@ app.post('/api/v1/copilot/chat/stream', (req, res) => {
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
 
-  const { message } = req.body;
+  const { message, session_id } = req.body;
+  
+  let session = copilotSessions.find(s => s.session_id === session_id);
+  if (session_id && !session) {
+    session = { session_id, created_at: new Date().toISOString(), messages: [] };
+    copilotSessions.unshift(session);
+  }
+  if (session) {
+    session.messages.push({ message_id: `msg-${Date.now()}`, role: 'user', content: message, timestamp: new Date().toISOString() });
+  }
+
   const responseText = `Аналізую ваш запит щодо "${message}"... Система Predator підключає LLM-агента для обробки OSINT-даних. Знайдено відповідності в реєстрах.`;
+  
+  if (session) {
+    session.messages.push({ message_id: `msg-${Date.now()+1}`, role: 'assistant', content: responseText, timestamp: new Date().toISOString() });
+    session.updated_at = new Date().toISOString();
+  }
+
   const chunks = responseText.split(' ');
   
   let i = 0;

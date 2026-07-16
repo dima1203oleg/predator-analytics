@@ -133,3 +133,43 @@ async def get_company_dossier(
             } for a in anomalies
         ]
     }
+
+@router.get("/analytics/network-density", summary="Щільність зв'язків (Graph Analytics)")
+async def get_network_density(
+    ueid: str,
+    db: Annotated[AsyncSession, Depends(get_db)],
+    tenant_id: Annotated[str, Depends(get_tenant_id)]
+) -> dict[str, Any]:
+    """Аналіз графа зв'язків навколо компанії."""
+    # Симуляція графової аналітики (в реальності тут був би запит до Neo4j)
+    return {
+        "entity_ueid": ueid,
+        "density_score": 85,
+        "nodes_analyzed": 142,
+        "edges_analyzed": 415,
+        "risk_level": "HIGH",
+        "red_flags": [
+            "Виявлено 3 циклічні зв'язки власності",
+            "Спільний директор з 15 іншими компаніями",
+            "Висока концентрація зв'язків першого рівня"
+        ]
+    }
+
+@router.get("/analytics/sanctions-evasion", summary="Аналіз обходу санкцій")
+async def get_sanctions_evasion_risk(
+    ueid: str,
+    db: Annotated[AsyncSession, Depends(get_db)],
+    tenant_id: Annotated[str, Depends(get_tenant_id)]
+) -> dict[str, Any]:
+    """Аналіз патернів обходу санкцій."""
+    # Симуляція аналізу
+    return {
+        "entity_ueid": ueid,
+        "evasion_risk_score": 92,
+        "sanctions_proximity": 2,  # hops
+        "indicators": [
+            "Зміна кінцевого бенефіціара за тиждень до введення санкцій",
+            "Зв'язок 2-го рівня з підсанкційною особою (РНБО)",
+            "Транзакції в юрисдикції високого ризику (Кіпр)"
+        ]
+    }
