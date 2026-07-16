@@ -38,6 +38,7 @@ import { colabPanelOpenAtom, colabNodeDataAtom } from '../../store/atoms';
 import { ColabDetailedPanel } from '@/features/infrastructure/components/ColabDetailedPanel';
 import { useSystemNodes } from '@/hooks/useAdminApi';
 import { DisplayMode, useDisplayMode } from '@/context/DisplayModeContext';
+import { CommandPaletteAI } from '../ai-studio/CommandPaletteAI';
 
 interface DesktopLayoutProps {
   children: React.ReactNode;
@@ -235,10 +236,13 @@ export const DesktopLayout: React.FC<DesktopLayoutProps> = ({ children }) => {
       </div>
 
       {/* BottomNav тепер у AdaptiveNavigation для compact */}
-
       <ChatBot />
       {shellV2Enabled && <ShellCommandPalette />}
       <ConstitutionalShield />
+      <CommandPaletteAI onRunAICommand={(cmd) => {
+        // AI Studio will pick up the command if it's the active route, 
+        // or we could pass it via global state. For now, navigate handles routing.
+      }} />
 
       <ColabDetailedPanel 
         isOpen={isColabOpen} 

@@ -1,0 +1,6 @@
+{
+  "name": "PREDATOR Analytics Hub",
+  "description": "Генеральний план інтеграції (Enterprise Architecture Blueprint) для платформи PREDATOR Analytics",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

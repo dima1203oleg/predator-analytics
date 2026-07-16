@@ -82,6 +82,7 @@ from app.routers import (
     voice_ws_router,
     rag_router,
     telemetry_router,
+    ooda_router,
 )
 from app.services.factory_repository import FactoryRepository
 from app.services.factory_runtime import (
@@ -362,6 +363,7 @@ ROUTERS = [
     ("/api/v1", voice_router),
     ("/api/v1", voice_ws_router),
     ("/api/v1", rag_router),
+    ("/api/v1", ooda_router),
     ("/api/v2", admin_v2_router),
 ]
 

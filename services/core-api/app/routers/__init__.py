@@ -87,6 +87,7 @@ from .voice import router as voice_router
 from .voice_ws import router as voice_ws_router
 from .rag import router as rag_router
 from .telemetry import router as telemetry_router
+from .ooda import router as ooda_router
 
 __all__ = [
     "admin_chaos_router",
@@ -144,4 +145,5 @@ __all__ = [
     "voice_ws_router",
     "rag_router",
     "telemetry_router",
+    "ooda_router",
 ]
