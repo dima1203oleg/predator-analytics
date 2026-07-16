@@ -1,0 +1,22 @@
+{
+  "id": "mc-006ff5be",
+  "name": "hybrid-model-5a20bd",
+  "task_type": "classification",
+  "created_at": "2026-06-14T14:40:16.747175+00:00",
+  "training_details": {
+    "training_data_card": "/Users/Shared/Predator_60/services/synthetic_data_engine/app/data/data-cards/dc-a87d5506.json",
+    "data_type": "synthetic_or_hybrid",
+    "hyperparameters": {
+      "model_class": "XGBClassifier"
+    }
+  },
+  "performance_metrics": {
+    "accuracy": 0.6,
+    "f1": 0.6470588235294118,
+    "roc_auc": 0.6555023923444976
+  },
+  "ethical_considerations": {
+    "privacy": "Trained on synthetic data, no real PII exposure",
+    "bias": "Inherits biases from original seed data (if any)"
+  }
+}

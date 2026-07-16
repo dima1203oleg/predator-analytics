@@ -1,0 +1,58 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "predator.events.ModelPerformanceDegraded.v1",
+    "type": "object",
+    "required": [
+        "event_id",
+        "event_type",
+        "correlation_id",
+        "timestamp",
+        "source",
+        "version",
+        "context",
+        "idempotency_key"
+    ],
+    "properties": {
+        "event_type": {
+            "const": "ModelPerformanceDegraded"
+        },
+        "version": {
+            "enum": [
+                "1.0",
+                "1.1"
+            ]
+        },
+        "context": {
+            "type": "object",
+            "required": [
+                "model_id",
+                "metric",
+                "current",
+                "baseline",
+                "drop"
+            ],
+            "properties": {
+                "model_id": {
+                    "type": "string"
+                },
+                "metric": {
+                    "type": "string"
+                },
+                "current": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "baseline": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "drop": {
+                    "type": "number",
+                    "minimum": 0
+                }
+            }
+        }
+    }
+}

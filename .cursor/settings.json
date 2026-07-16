@@ -1,0 +1,10 @@
+{
+  "plugins": {
+    "figma": {
+      "enabled": true
+    },
+    "slack": {
+      "enabled": true
+    }
+  }
+}

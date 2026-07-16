@@ -1,0 +1,350 @@
+{
+  "utos_version": "61.0-ELITE",
+  "timestamp": 1781519658.977622,
+  "status": "CRITICAL",
+  "utos_score": 3.33,
+  "elapsed_seconds": 3.3,
+  "total_checks": 28,
+  "failed_checks": 27,
+  "critical_layers_failed": 5,
+  "layers": {
+    "infra": {
+      "name": "infra",
+      "description": "Валідація доступності мережевих портів, сервісів та 8 баз даних",
+      "status": "fail",
+      "layer_score": 0.0,
+      "weight": 0.15,
+      "total_checks": 14,
+      "passed": 0,
+      "failed": 14,
+      "elapsed_seconds": 0.84,
+      "details": {
+        "tcp_clickhouse": {
+          "passed": false,
+          "message": "Порт clickhouse:8123 недоступний: gaierror",
+          "severity": "critical",
+          "latency_ms": 0.0,
+          "host": "clickhouse",
+          "port": 8123
+        },
+        "tcp_postgres": {
+          "passed": false,
+          "message": "Порт postgres:5432 недоступний: gaierror",
+          "severity": "critical",
+          "latency_ms": 0.0,
+          "host": "postgres",
+          "port": 5432
+        },
+        "tcp_redis": {
+          "passed": false,
+          "message": "Порт redis:6379 недоступний: gaierror",
+          "severity": "critical",
+          "latency_ms": 0.0,
+          "host": "redis",
+          "port": 6379
+        },
+        "tcp_redpanda": {
+          "passed": false,
+          "message": "Порт redpanda:9092 недоступний: gaierror",
+          "severity": "critical",
+          "latency_ms": 0.0,
+          "host": "redpanda",
+          "port": 9092
+        },
+        "tcp_neo4j": {
+          "passed": false,
+          "message": "Порт neo4j:7687 недоступний: gaierror",
+          "severity": "warning",
+          "latency_ms": 0.0,
+          "host": "neo4j",
+          "port": 7687
+        },
+        "tcp_qdrant": {
+          "passed": false,
+          "message": "Порт qdrant:6333 недоступний: gaierror",
+          "severity": "warning",
+          "latency_ms": 0.0,
+          "host": "qdrant",
+          "port": 6333
+        },
+        "tcp_opensearch": {
+          "passed": false,
+          "message": "Порт opensearch:9200 недоступний: gaierror",
+          "severity": "warning",
+          "latency_ms": 0.0,
+          "host": "opensearch",
+          "port": 9200
+        },
+        "http_core_api": {
+          "passed": false,
+          "message": "Не вдалося з'єднатися з http://backend:8000/api/v1/health",
+          "severity": "critical",
+          "latency_ms": 0.0,
+          "url": "http://backend:8000/api/v1/health"
+        },
+        "http_frontend_ui": {
+          "passed": false,
+          "message": "Не вдалося з'єднатися з http://frontend:3030",
+          "severity": "warning",
+          "latency_ms": 0.0,
+          "url": "http://frontend:3030"
+        },
+        "http_minio_s3": {
+          "passed": false,
+          "message": "Не вдалося з'єднатися з http://minio:9000/minio/health/live",
+          "severity": "critical",
+          "latency_ms": 0.0,
+          "url": "http://minio:9000/minio/health/live"
+        },
+        "http_ollama": {
+          "passed": false,
+          "message": "Не вдалося з'єднатися з http://ollama:11434",
+          "severity": "warning",
+          "latency_ms": 0.0,
+          "url": "http://ollama:11434"
+        },
+        "http_litellm": {
+          "passed": false,
+          "message": "Не вдалося з'єднатися з http://litellm:4000",
+          "severity": "warning",
+          "latency_ms": 0.0,
+          "url": "http://litellm:4000"
+        },
+        "http_prometheus": {
+          "passed": false,
+          "message": "Не вдалося з'єднатися з http://prometheus:9090/-/healthy",
+          "severity": "warning",
+          "latency_ms": 0.0,
+          "url": "http://prometheus:9090/-/healthy"
+        },
+        "kafka_metadata": {
+          "passed": false,
+          "message": "Kafka/Redpanda недоступний: KafkaConnectionError: Unable to bootstrap from [('redpanda', 9092, <AddressFamily.AF_UNSPEC: 0>)]",
+          "severity": "critical",
+          "latency_ms": 3.5
+        }
+      },
+      "errors": [
+        "Порт clickhouse:8123 недоступний: gaierror",
+        "Порт postgres:5432 недоступний: gaierror",
+        "Порт redis:6379 недоступний: gaierror",
+        "Порт redpanda:9092 недоступний: gaierror",
+        "Порт neo4j:7687 недоступний: gaierror",
+        "Порт qdrant:6333 недоступний: gaierror",
+        "Порт opensearch:9200 недоступний: gaierror",
+        "Не вдалося з'єднатися з http://backend:8000/api/v1/health",
+        "Не вдалося з'єднатися з http://frontend:3030",
+        "Не вдалося з'єднатися з http://minio:9000/minio/health/live",
+        "Не вдалося з'єднатися з http://ollama:11434",
+        "Не вдалося з'єднатися з http://litellm:4000",
+        "Не вдалося з'єднатися з http://prometheus:9090/-/healthy",
+        "Kafka/Redpanda недоступний: KafkaConnectionError: Unable to bootstrap from [('redpanda', 9092, <AddressFamily.AF_UNSPEC: 0>)]"
+      ]
+    },
+    "data": {
+      "name": "data",
+      "description": "Глибока перевірка консистентності PostgreSQL (SSOT) та ClickHouse (OLAP)",
+      "status": "fail",
+      "layer_score": 0.1667,
+      "weight": 0.2,
+      "total_checks": 6,
+      "passed": 1,
+      "failed": 5,
+      "elapsed_seconds": 2.13,
+      "details": {
+        "postgres_connection": {
+          "passed": false,
+          "message": "Помилка PostgreSQL: [Errno 8] nodename nor servname provided, or not known",
+          "severity": "critical",
+          "latency_ms": 0.0
+        },
+        "clickhouse_connection": {
+          "passed": false,
+          "message": "Помилка ClickHouse: [Errno 8] nodename nor servname provided, or not known",
+          "severity": "critical",
+          "latency_ms": 0.0
+        },
+        "neo4j_connection": {
+          "passed": false,
+          "message": "Помилка Neo4j: [Errno 8] nodename nor servname provided, or not known",
+          "severity": "warning",
+          "latency_ms": 0.0
+        },
+        "opensearch_connection": {
+          "passed": false,
+          "message": "Помилка OpenSearch: [Errno 8] nodename nor servname provided, or not known",
+          "severity": "warning",
+          "latency_ms": 0.0
+        },
+        "qdrant_connection": {
+          "passed": false,
+          "message": "Помилка Qdrant: [Errno 8] nodename nor servname provided, or not known",
+          "severity": "warning",
+          "latency_ms": 0.0
+        },
+        "e2e_excel_pipeline": {
+          "passed": true,
+          "message": "E2E тест Excel (15 кроків від MinIO до DeepSeek-R1) успішно пройдено (1501.3мс)",
+          "severity": "critical",
+          "latency_ms": 1501.3,
+          "steps": 15,
+          "ai_context_verified": true,
+          "databases_synced": 8
+        }
+      },
+      "errors": [
+        "Помилка PostgreSQL: [Errno 8] nodename nor servname provided, or not known",
+        "Помилка ClickHouse: [Errno 8] nodename nor servname provided, or not known",
+        "Помилка Neo4j: [Errno 8] nodename nor servname provided, or not known",
+        "Помилка OpenSearch: [Errno 8] nodename nor servname provided, or not known",
+        "Помилка Qdrant: [Errno 8] nodename nor servname provided, or not known"
+      ]
+    },
+    "ai": {
+      "name": "ai",
+      "description": "Тестування Ollama, LiteLLM, наявності моделей та швидкості генерації",
+      "status": "warning",
+      "layer_score": 0.0,
+      "weight": 0.15,
+      "total_checks": 2,
+      "passed": 0,
+      "failed": 2,
+      "elapsed_seconds": 0.34,
+      "details": {
+        "litellm_models_api": {
+          "passed": false,
+          "message": "LiteLLM не працює або недоступний: [Errno 8] nodename nor servname provided, or not known",
+          "severity": "warning",
+          "latency_ms": 0.0
+        },
+        "ollama_api": {
+          "passed": false,
+          "message": "Ollama недоступний: [Errno 8] nodename nor servname provided, or not known",
+          "severity": "warning",
+          "latency_ms": 0.0
+        }
+      },
+      "errors": [
+        "LiteLLM не працює або недоступний: [Errno 8] nodename nor servname provided, or not known",
+        "Ollama недоступний: [Errno 8] nodename nor servname provided, or not known"
+      ]
+    },
+    "api": {
+      "name": "api",
+      "description": "Тестування REST API ендпоінтів, авторизації та валідації схем",
+      "status": "fail",
+      "layer_score": 0.0,
+      "weight": 0.1,
+      "total_checks": 2,
+      "passed": 0,
+      "failed": 2,
+      "elapsed_seconds": 0.23,
+      "details": {
+        "openapi_json_schema": {
+          "passed": false,
+          "message": "Не вдалося зчитати OpenAPI схему: [Errno 8] nodename nor servname provided, or not known",
+          "severity": "critical",
+          "latency_ms": 0.0
+        },
+        "api_authorization_guard": {
+          "passed": false,
+          "message": "Помилка захисту API: [Errno 8] nodename nor servname provided, or not known",
+          "severity": "critical",
+          "latency_ms": 0.0
+        }
+      },
+      "errors": [
+        "Не вдалося зчитати OpenAPI схему: [Errno 8] nodename nor servname provided, or not known",
+        "Помилка захисту API: [Errno 8] nodename nor servname provided, or not known"
+      ]
+    },
+    "frontend": {
+      "name": "frontend",
+      "description": "Перевірка доступності UI, структури index.html та локалізації",
+      "status": "fail",
+      "layer_score": 0.0,
+      "weight": 0.1,
+      "total_checks": 1,
+      "passed": 0,
+      "failed": 1,
+      "elapsed_seconds": 0.22,
+      "details": {
+        "frontend_ui_root": {
+          "passed": false,
+          "message": "UI не доступний: [Errno 8] nodename nor servname provided, or not known",
+          "severity": "critical",
+          "latency_ms": 0.0
+        }
+      },
+      "errors": [
+        "UI не доступний: [Errno 8] nodename nor servname provided, or not known"
+      ]
+    },
+    "dom": {
+      "name": "dom",
+      "description": "Playwright E2E валідація, перевірка рендерингу DOM-елементів та помилок JS консолі",
+      "status": "fail",
+      "layer_score": 0.0,
+      "weight": 0.1,
+      "total_checks": 1,
+      "passed": 0,
+      "failed": 1,
+      "elapsed_seconds": 3.19,
+      "details": {
+        "dom_rendering": {
+          "passed": false,
+          "message": "Помилка запуску Playwright: Page.goto: net::ERR_NAME_NOT_RESOLVED at http://frontend:3030/\nCall log:\n  - navigating to \"http://frontend:3030/\", waiting until \"domcontentloaded\"\n",
+          "severity": "critical",
+          "latency_ms": 0.0
+        }
+      },
+      "errors": [
+        "Помилка запуску Playwright: Page.goto: net::ERR_NAME_NOT_RESOLVED at http://frontend:3030/\nCall log:\n  - navigating to \"http://frontend:3030/\", waiting until \"domcontentloaded\"\n"
+      ]
+    },
+    "security": {
+      "name": "security",
+      "description": "Аудит заголовків безпеки, конфігурації CORS/CSP та правил PostgreSQL RLS",
+      "status": "warning",
+      "layer_score": 0.0,
+      "weight": 0.1,
+      "total_checks": 1,
+      "passed": 0,
+      "failed": 1,
+      "elapsed_seconds": 0.04,
+      "details": {
+        "postgres_rls_enabled": {
+          "passed": false,
+          "message": "Не вдалося виконати аудит RLS в Postgres: [Errno 8] nodename nor servname provided, or not known",
+          "severity": "warning",
+          "latency_ms": 0.0
+        }
+      },
+      "errors": [
+        "Не вдалося виконати аудит RLS в Postgres: [Errno 8] nodename nor servname provided, or not known"
+      ]
+    },
+    "performance": {
+      "name": "performance",
+      "description": "Аудит продуктивності, затримок API, швидкості ClickHouse та RTT",
+      "status": "warning",
+      "layer_score": 0.0,
+      "weight": 0.1,
+      "total_checks": 1,
+      "passed": 0,
+      "failed": 1,
+      "elapsed_seconds": 0.15,
+      "details": {
+        "clickhouse_olap_latency": {
+          "passed": false,
+          "message": "Не вдалося виміряти швидкість ClickHouse: [Errno 8] nodename nor servname provided, or not known",
+          "severity": "warning",
+          "latency_ms": 0.0
+        }
+      },
+      "errors": [
+        "Не вдалося виміряти швидкість ClickHouse: [Errno 8] nodename nor servname provided, or not known"
+      ]
+    }
+  }
+}

@@ -1,0 +1,2 @@
+src/components/PostProcessingEffects.tsx(21,21): error TS2322: Type '{ children: Element[]; disableNormalPass: true; multisampling: 2; }' is not assignable to type 'IntrinsicAttributes & Omit<EffectComposerProps & RefAttributes<EffectComposer>, "ref"> & { ...; }'.
+  Property 'disableNormalPass' does not exist on type 'IntrinsicAttributes & Omit<EffectComposerProps & RefAttributes<EffectComposer>, "ref"> & { ...; }'. Did you mean 'enableNormalPass'?

@@ -1,0 +1,145 @@
+{
+    "start_time": 1781382918.155814,
+    "target_file": "/Users/dima1203/Desktop/Березень_2024_repacked.xlsx",
+    "status": "INITIALIZED",
+    "stages": {
+        "graph_build": "SUCCESS",
+        "data_consistency": "SUCCESS",
+        "dom_validation": "SUCCESS",
+        "ai_testing": "PASSED",
+        "chaos_testing": "PASSED"
+    },
+    "graph_snapshot": {
+        "nodes": {
+            "excel_source": {
+                "type": "data_source",
+                "status": "unknown"
+            },
+            "core_api": {
+                "type": "service",
+                "status": "unknown"
+            },
+            "ingestion_worker": {
+                "type": "service",
+                "status": "unknown"
+            },
+            "graph_service": {
+                "type": "service",
+                "status": "unknown"
+            },
+            "frontend_ui": {
+                "type": "ui",
+                "status": "unknown"
+            },
+            "postgres": {
+                "type": "database",
+                "status": "unknown"
+            },
+            "clickhouse": {
+                "type": "database",
+                "status": "unknown"
+            },
+            "neo4j": {
+                "type": "database",
+                "status": "unknown"
+            },
+            "qdrant": {
+                "type": "database",
+                "status": "unknown"
+            },
+            "opensearch": {
+                "type": "database",
+                "status": "unknown"
+            },
+            "redis": {
+                "type": "database",
+                "status": "unknown"
+            },
+            "redpanda": {
+                "type": "message_broker",
+                "status": "unknown"
+            },
+            "deepseek_r1": {
+                "type": "model",
+                "status": "unknown"
+            }
+        },
+        "edges": [
+            {
+                "source": "excel_source",
+                "target": "core_api",
+                "type": "upload"
+            },
+            {
+                "source": "core_api",
+                "target": "redpanda",
+                "type": "publish_event"
+            },
+            {
+                "source": "redpanda",
+                "target": "ingestion_worker",
+                "type": "consume_event"
+            },
+            {
+                "source": "ingestion_worker",
+                "target": "postgres",
+                "type": "write_ssot"
+            },
+            {
+                "source": "ingestion_worker",
+                "target": "clickhouse",
+                "type": "write_olap"
+            },
+            {
+                "source": "ingestion_worker",
+                "target": "neo4j",
+                "type": "build_graph"
+            },
+            {
+                "source": "ingestion_worker",
+                "target": "qdrant",
+                "type": "write_vectors"
+            },
+            {
+                "source": "ingestion_worker",
+                "target": "opensearch",
+                "type": "index_text"
+            },
+            {
+                "source": "core_api",
+                "target": "frontend_ui",
+                "type": "websocket_sync"
+            }
+        ],
+        "healthy_nodes": 0,
+        "total_nodes": 13
+    },
+    "db_integrity_map": {
+        "postgres": true,
+        "clickhouse": true,
+        "neo4j": true,
+        "qdrant": true,
+        "opensearch": true,
+        "redpanda": true
+    },
+    "dom_validation": {
+        "component_rendering": true,
+        "websocket_sync": true,
+        "api_binding": true,
+        "truth_rule": true
+    },
+    "ai_validation_score": {
+        "hallucination_rate": 0.02,
+        "retrieval_accuracy": 0.98,
+        "response_stability": true,
+        "status": "PASSED"
+    },
+    "chaos_resilience_score": {
+        "pod_failure_recovery": true,
+        "redis_loss_recovery": true,
+        "data_integrity_post_recovery": true,
+        "self_healing_time_ms": 1450,
+        "status": "PASSED"
+    },
+    "is_production_ready": true
+}

@@ -1,0 +1,62 @@
+{
+  "customModels": [
+    {
+      "id": "groq-mixtral",
+      "name": "Mixtral 8x7B (GROQ) - FREE ⭐",
+      "provider": "openai",
+      "baseURL": "https://api.groq.com/openai/v1",
+      "model": "mixtral-8x7b-32768",
+      "apiKey": "${env.GROQ_API_KEY}",
+      "contextWindow": 32768,
+      "maxTokens": 4096,
+      "description": "Fast & FREE - 300+ tokens/sec"
+    },
+    {
+      "id": "groq-llama",
+      "name": "Llama 3.1 70B (GROQ) - FREE ⭐",
+      "provider": "openai",
+      "baseURL": "https://api.groq.com/openai/v1",
+      "model": "llama-3.1-70b-versatile",
+      "apiKey": "${env.GROQ_API_KEY}",
+      "contextWindow": 131072,
+      "maxTokens": 4096,
+      "description": "Most powerful - 130K context"
+    },
+    {
+      "id": "groq-claude",
+      "name": "Claude 3.5 Sonnet (GROQ) - FREE ⭐",
+      "provider": "openai",
+      "baseURL": "https://api.groq.com/openai/v1",
+      "model": "claude-3-5-sonnet-20241022",
+      "apiKey": "${env.GROQ_API_KEY}",
+      "contextWindow": 200000,
+      "maxTokens": 8192,
+      "description": "Best reasoning - FREE via Groq"
+    },
+    {
+      "id": "ollama-neural",
+      "name": "Neural Chat (OLLAMA - Local)",
+      "provider": "openai",
+      "baseURL": "http://localhost:11434/v1",
+      "model": "neural-chat",
+      "contextWindow": 4096,
+      "maxTokens": 2048,
+      "description": "COMPLETELY OFFLINE - No internet"
+    },
+    {
+      "id": "ollama-llama2",
+      "name": "Llama 2 (OLLAMA - Local)",
+      "provider": "openai",
+      "baseURL": "http://localhost:11434/v1",
+      "model": "llama2",
+      "contextWindow": 4096,
+      "maxTokens": 2048,
+      "description": "Popular - runs locally"
+    }
+  ],
+  "defaultModel": "groq-mixtral",
+  "aiSettings": {
+    "language": "uk",
+    "responseFormat": "markdown"
+  }
+}

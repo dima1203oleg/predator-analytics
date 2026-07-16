@@ -121,17 +121,21 @@ opensearch:
   replicas: 1
   persistence:
     enabled: true
-    size: 10Gi
+    size: 5Gi
   resources:
     limits:
-      cpu: "2"
-      memory: "4Gi"
-    requests:
       cpu: "1"
       memory: "2Gi"
+    requests:
+      cpu: "0.5"
+      memory: "1Gi"
   service:
     type: ClusterIP
     port: 9200
+  # Оптимізація для low-memory
+  extraEnvVars:
+    - name: OPENSEARCH_JAVA_OPTS
+      value: "-Xms1g -Xmx1g"
 # ============ MLOps Pipeline ============
 mlOps:
   enabled: true
@@ -169,19 +173,17 @@ ollama:
     tag: "latest"
   resources:
     limits:
-      cpu: "4"
-      memory: "16Gi"
-      nvidia.com/gpu: 1
-    requests:
       cpu: "2"
       memory: "8Gi"
+      nvidia.com/gpu: 1
+    requests:
+      cpu: "1"
+      memory: "4Gi"
   persistence:
     enabled: true
-    size: 50Gi
+    size: 20Gi
   models:
-    - "llama3.2"
-    - "qwen2.5"
-    - "qwen3"
+    - "qwen2.5:4b"
     - "nomic-embed-text"
   service:
     type: ClusterIP

@@ -1,0 +1,49 @@
+{
+  "customModels": [
+    {
+      "id": "claude-3.5-sonnet",
+      "name": "Claude 3.5 Sonnet (GROQ) - FREE ⭐",
+      "provider": "openai",
+      "baseURL": "https://api.groq.com/openai/v1",
+      "model": "claude-3-5-sonnet-20241022",
+      "apiKey": "${env.GROQ_API_KEY}",
+      "contextWindow": 200000,
+      "maxTokens": 8192,
+      "description": "🎉 COMPLETELY FREE - No limits"
+    },
+    {
+      "id": "gemini-2-flash",
+      "name": "Gemini 2.0 Flash - FREE ⭐",
+      "provider": "openai",
+      "baseURL": "https://generativelanguage.googleapis.com/v1beta/openai/",
+      "model": "gemini-2.0-flash",
+      "apiKey": "${env.GOOGLE_API_KEY}",
+      "contextWindow": 1000000,
+      "maxTokens": 8192,
+      "description": "🎉 COMPLETELY FREE - 1M context!"
+    },
+    {
+      "id": "mixtral-8x7b",
+      "name": "Mixtral 8x7B (GROQ) - FREE ⭐",
+      "provider": "openai",
+      "baseURL": "https://api.groq.com/openai/v1",
+      "model": "mixtral-8x7b-32768",
+      "apiKey": "${env.GROQ_API_KEY}",
+      "contextWindow": 32768,
+      "maxTokens": 4096,
+      "description": "🎉 COMPLETELY FREE - Fastest"
+    },
+    {
+      "id": "llama-3.1-70b",
+      "name": "Llama 3.1 70B (GROQ) - FREE ⭐",
+      "provider": "openai",
+      "baseURL": "https://api.groq.com/openai/v1",
+      "model": "llama-3.1-70b-versatile",
+      "apiKey": "${env.GROQ_API_KEY}",
+      "contextWindow": 131072,
+      "maxTokens": 4096,
+      "description": "🎉 COMPLETELY FREE - Most powerful"
+    }
+  ],
+  "defaultModel": "claude-3.5-sonnet"
+}

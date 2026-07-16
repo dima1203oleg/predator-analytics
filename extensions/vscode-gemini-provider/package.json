@@ -1,0 +1,111 @@
+{
+  "name": "vscode-gemini-provider",
+  "displayName": "Gemini Provider via OpenRouter for VS Code",
+  "version": "1.1.0",
+  "publisher": "predator-analytics",
+  "description": "Gemini models via OpenRouter API integrated into VS Code Chat",
+  "engines": {
+    "vscode": "^1.125.0"
+  },
+  "categories": [
+    "AI"
+  ],
+  "activationEvents": [
+    "onLanguage:typescript",
+    "onLanguage:python",
+    "onLanguage:javascript",
+    "onLanguage:typescriptreact",
+    "onLanguage:javascriptreact"
+  ],
+  "contributes": {
+    "chat.contributions": [
+      {
+        "id": "gemini-chat",
+        "type": "languageModelChat",
+        "displayName": "Gemini (OpenRouter)",
+        "provider": "gemini",
+        "defaultModel": "gemini-2.5-flash"
+      }
+    ],
+    "languageModelChatProviders": [
+      {
+        "id": "gemini",
+        "displayName": "Gemini (OpenRouter)",
+        "supportsModelSelection": true,
+        "description": "Gemini models via OpenRouter API",
+        "vendor": "openrouter"
+      }
+    ],
+    "languageModelChatModels": [
+      {
+        "id": "gemini-2.5-flash",
+        "providerId": "gemini",
+        "displayName": "Gemini 2.5 Flash",
+        "description": "Fast, general purpose model with multimodal capabilities via OpenRouter",
+        "features": {
+          "code": true,
+          "reasoning": true,
+          "vision": true
+        }
+      },
+      {
+        "id": "gemini-flash-latest",
+        "providerId": "gemini",
+        "displayName": "Gemini Flash Latest",
+        "description": "Latest Flash model with multimodal capabilities via OpenRouter",
+        "features": {
+          "code": true,
+          "reasoning": true,
+          "vision": true
+        }
+      },
+      {
+        "id": "gemini-3.5-flash",
+        "providerId": "gemini",
+        "displayName": "Gemini 3.5 Flash",
+        "description": "Next generation Flash model with multimodal capabilities via OpenRouter",
+        "features": {
+          "code": true,
+          "reasoning": true,
+          "vision": true
+        }
+      },
+      {
+        "id": "gemini-2.5-flash-lite",
+        "providerId": "gemini",
+        "displayName": "Gemini 2.5 Flash Lite",
+        "description": "Lightweight Flash model for fast responses via OpenRouter",
+        "features": {
+          "code": true,
+          "reasoning": true,
+          "vision": true
+        }
+      }
+    ]
+  },
+  "main": "./dist/extension.js",
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^20.0.0",
+    "@types/sinon": "^20.0.0",
+    "@types/vscode": "^1.125.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@vscode/test-electron": "^2.3.0",
+    "eslint": "^8.50.0",
+    "mocha": "^10.2.0",
+    "sinon": "^15.2.0",
+    "typescript": "^5.3.0"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  }
+}

@@ -1,0 +1,18 @@
+# Тестові залежності для PREDATOR Analytics v3.0
+# Python 3.14+
+
+# Бази даних та клієнти
+redis>=5.0.0
+qdrant-client>=1.17.0
+opensearch-py>=2.4.0
+neo4j>=5.17.0
+minio>=7.2.0
+aiokafka>=0.10.0
+sqlalchemy>=2.0.27
+asyncpg>=0.29.0
+
+# HTTP клієнт
+httpx>=0.26.0
+
+# Інші залежності
+orjson>=3.9.10

@@ -1,0 +1,7 @@
+python-dotenv==1.0.0
+kafka-python==2.0.2
+neo4j==5.17.0
+qdrant-client==1.8.0
+sentence-transformers==2.2.2
+minio==7.1.15
+pyTelegramBotAPI==4.14.0

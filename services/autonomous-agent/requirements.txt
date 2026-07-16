@@ -1,0 +1,10 @@
+aiogram>=3.4.1
+langgraph>=0.0.30
+langchain-core>=0.1.30
+litellm>=1.31.0
+pydantic>=2.6.4
+python-dotenv>=1.0.1
+loguru>=0.7.2
+asyncio>=3.4.3
+aiohttp>=3.9.3
+gitpython>=3.1.42

@@ -1,0 +1,435 @@
+{
+  "deployment_id": "deployment-20260610-213434",
+  "timestamp": "2026-06-10T21:34:34.922881",
+  "readiness_index": 13.499999999999998,
+  "overall_status": "failed",
+  "results": [
+    {
+      "level": "INFRASTRUCTURE",
+      "name": "Docker Validation",
+      "status": "failed",
+      "duration": 0.310604,
+      "details": {},
+      "errors": [
+        "docker ps failed",
+        "docker stats failed"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:34:35.412561"
+    },
+    {
+      "level": "INFRASTRUCTURE",
+      "name": "Kubernetes Validation",
+      "status": "failed",
+      "duration": 0.214911,
+      "details": {},
+      "errors": [
+        "kubectl get pods failed",
+        "kubectl get nodes failed"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:34:35.627500"
+    },
+    {
+      "level": "INFRASTRUCTURE",
+      "name": "ArgoCD Validation",
+      "status": "failed",
+      "duration": 0.463095,
+      "details": {},
+      "errors": [
+        "argocd app list failed"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:34:36.090610"
+    },
+    {
+      "level": "INFRASTRUCTURE",
+      "name": "Helm Validation",
+      "status": "failed",
+      "duration": 0.130649,
+      "details": {},
+      "errors": [
+        "helm list failed"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:34:36.221270"
+    },
+    {
+      "level": "CONTAINER",
+      "name": "Container Validation",
+      "status": "failed",
+      "duration": 0.126095,
+      "details": {},
+      "errors": [
+        "Failed to get container list"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:34:36.347409"
+    },
+    {
+      "level": "DATABASE",
+      "name": "PostgreSQL Validation",
+      "status": "failed",
+      "duration": 0.115775,
+      "details": {},
+      "errors": [
+        "PostgreSQL connection failed"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:34:36.463084"
+    },
+    {
+      "level": "DATABASE",
+      "name": "Neo4j Validation",
+      "status": "failed",
+      "duration": 0.119497,
+      "details": {},
+      "errors": [
+        "Neo4j connection failed"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:34:36.582724"
+    },
+    {
+      "level": "DATABASE",
+      "name": "ClickHouse Validation",
+      "status": "failed",
+      "duration": 0.115606,
+      "details": {},
+      "errors": [
+        "ClickHouse connection failed"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:34:36.698337"
+    },
+    {
+      "level": "DATABASE",
+      "name": "Redis Validation",
+      "status": "failed",
+      "duration": 0.119052,
+      "details": {},
+      "errors": [
+        "Redis connection failed"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:34:36.817408"
+    },
+    {
+      "level": "DOM",
+      "name": "DOM Validation",
+      "status": "passed",
+      "duration": 14.737387,
+      "details": {
+        "page_results": {
+          "/login": {
+            "status": "OK",
+            "content_length": 658536,
+            "js_errors": 0,
+            "react_errors": 0
+          },
+          "/dashboard": {
+            "status": "OK",
+            "content_length": 658307,
+            "js_errors": 0,
+            "react_errors": 0
+          },
+          "/search": {
+            "status": "OK",
+            "content_length": 658304,
+            "js_errors": 0,
+            "react_errors": 0
+          },
+          "/market": {
+            "status": "OK",
+            "content_length": 658069,
+            "js_errors": 0,
+            "react_errors": 0
+          },
+          "/osint": {
+            "status": "OK",
+            "content_length": 658300,
+            "js_errors": 0,
+            "react_errors": 0
+          },
+          "/nexus": {
+            "status": "OK",
+            "content_length": 658071,
+            "js_errors": 0,
+            "react_errors": 0
+          },
+          "/financial": {
+            "status": "OK",
+            "content_length": 658305,
+            "js_errors": 0,
+            "react_errors": 0
+          },
+          "/modeling": {
+            "status": "OK",
+            "content_length": 658306,
+            "js_errors": 0,
+            "react_errors": 0
+          },
+          "/admin": {
+            "status": "OK",
+            "content_length": 658305,
+            "js_errors": 0,
+            "react_errors": 0
+          }
+        }
+      },
+      "errors": [],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:34:51.554836"
+    },
+    {
+      "level": "USER_JOURNEY",
+      "name": "User Journey Scenario 1",
+      "status": "failed",
+      "duration": 4.70223,
+      "details": {
+        "scenario_1": {
+          "status": "COMPLETED",
+          "steps_completed": 7
+        }
+      },
+      "errors": [
+        "Login form not found",
+        "Search input not found"
+      ],
+      "warnings": [
+        "Company card not found, skipping",
+        "Risk section not found",
+        "Graph button not found",
+        "PDF button not found",
+        "Download button not found"
+      ],
+      "timestamp": "2026-06-10T21:34:56.257284"
+    },
+    {
+      "level": "USER_JOURNEY",
+      "name": "User Journey Scenario 2",
+      "status": "passed",
+      "duration": 2.473954,
+      "details": {
+        "scenario_2": {
+          "status": "COMPLETED",
+          "steps_completed": 4
+        }
+      },
+      "errors": [],
+      "warnings": [
+        "Create scenario button not found",
+        "Monte-Carlo button not found",
+        "Result section not found"
+      ],
+      "timestamp": "2026-06-10T21:34:58.731226"
+    },
+    {
+      "level": "USER_JOURNEY",
+      "name": "User Journey Scenario 3",
+      "status": "failed",
+      "duration": 2.614583,
+      "details": {
+        "scenario_3": {
+          "status": "COMPLETED",
+          "steps_completed": 4
+        }
+      },
+      "errors": [
+        "Chat input not found",
+        "AI response not found"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:35:01.345837"
+    },
+    {
+      "level": "API",
+      "name": "API Validation",
+      "status": "failed",
+      "duration": 0.016234,
+      "details": {
+        "endpoint_results": {
+          "/api/v1/health": {
+            "status": "ERROR",
+            "error": "Cannot connect to host localhost:8000 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('::1', 8000, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 8000)]"
+          },
+          "/api/v1/companies": {
+            "status": "ERROR",
+            "error": "Cannot connect to host localhost:8000 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('127.0.0.1', 8000), [Errno 61] Connect call failed ('::1', 8000, 0, 0)]"
+          },
+          "/api/v1/search": {
+            "status": "ERROR",
+            "error": "Cannot connect to host localhost:8000 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('::1', 8000, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 8000)]"
+          },
+          "/api/v1/risks": {
+            "status": "ERROR",
+            "error": "Cannot connect to host localhost:8000 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('127.0.0.1', 8000), [Errno 61] Connect call failed ('::1', 8000, 0, 0)]"
+          },
+          "/api/v1/graph": {
+            "status": "ERROR",
+            "error": "Cannot connect to host localhost:8000 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('::1', 8000, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 8000)]"
+          },
+          "/api/v1/etl": {
+            "status": "ERROR",
+            "error": "Cannot connect to host localhost:8000 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('127.0.0.1', 8000), [Errno 61] Connect call failed ('::1', 8000, 0, 0)]"
+          }
+        }
+      },
+      "errors": [
+        "Endpoint /api/v1/health error: Cannot connect to host localhost:8000 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('::1', 8000, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 8000)]",
+        "Endpoint /api/v1/companies error: Cannot connect to host localhost:8000 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('127.0.0.1', 8000), [Errno 61] Connect call failed ('::1', 8000, 0, 0)]",
+        "Endpoint /api/v1/search error: Cannot connect to host localhost:8000 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('::1', 8000, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 8000)]",
+        "Endpoint /api/v1/risks error: Cannot connect to host localhost:8000 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('127.0.0.1', 8000), [Errno 61] Connect call failed ('::1', 8000, 0, 0)]",
+        "Endpoint /api/v1/graph error: Cannot connect to host localhost:8000 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('::1', 8000, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 8000)]",
+        "Endpoint /api/v1/etl error: Cannot connect to host localhost:8000 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('127.0.0.1', 8000), [Errno 61] Connect call failed ('::1', 8000, 0, 0)]"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:35:01.362115"
+    },
+    {
+      "level": "ETL",
+      "name": "ETL Validation",
+      "status": "failed",
+      "duration": 0.00146,
+      "details": {},
+      "errors": [
+        "ETL validation error: Cannot connect to host localhost:8000 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('::1', 8000, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 8000)]"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:35:01.363582"
+    },
+    {
+      "level": "TELEGRAM",
+      "name": "Telegram Validation",
+      "status": "failed",
+      "duration": 1.1e-05,
+      "details": {},
+      "errors": [
+        "TELEGRAM_BOT_TOKEN not set"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:35:01.363599"
+    },
+    {
+      "level": "AI",
+      "name": "AI Validation",
+      "status": "warning",
+      "duration": 120.299352,
+      "details": {
+        "ollama_status": "OK",
+        "available_models": []
+      },
+      "errors": [],
+      "warnings": [
+        "Missing models: qwen, gemma, phi, nemotron",
+        "Test query error: Command '['ollama', 'run', 'qwen', '\u041d\u0430\u043f\u0438\u0448\u0438 \u0441\u043b\u043e\u0432\u043e \u0422\u0415\u0421\u0422']' timed out after 60 seconds",
+        "Analytical query error: Command '['ollama', 'run', 'qwen', '\u0417\u043d\u0430\u0439\u0434\u0438 \u0440\u0438\u0437\u0438\u043a\u0438 \u043a\u043e\u043c\u043f\u0430\u043d\u0456\u0457 TestCompany']' timed out after 60 seconds"
+      ],
+      "timestamp": "2026-06-10T21:37:01.658210"
+    },
+    {
+      "level": "OBSERVABILITY",
+      "name": "Observability Validation",
+      "status": "warning",
+      "duration": 0.074764,
+      "details": {},
+      "errors": [],
+      "warnings": [
+        "Prometheus validation error: Cannot connect to host localhost:9090 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('::1', 9090, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 9090)]",
+        "Grafana validation error: Cannot connect to host localhost:3000 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('::1', 3000, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 3000)]",
+        "Loki validation error: Cannot connect to host localhost:3100 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('::1', 3100, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 3100)]"
+      ],
+      "timestamp": "2026-06-10T21:37:01.750004"
+    },
+    {
+      "level": "SECURITY",
+      "name": "Vault Validation",
+      "status": "failed",
+      "duration": 0.000211,
+      "details": {},
+      "errors": [
+        "VAULT_TOKEN not set"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:37:01.750261"
+    },
+    {
+      "level": "SECURITY",
+      "name": "Keycloak Validation",
+      "status": "failed",
+      "duration": 0.00165,
+      "details": {},
+      "errors": [
+        "Keycloak validation error: Cannot connect to host localhost:8080 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('::1', 8080, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 8080)]"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:37:01.751913"
+    },
+    {
+      "level": "SECURITY",
+      "name": "JWT Validation",
+      "status": "failed",
+      "duration": 0.001256,
+      "details": {},
+      "errors": [
+        "JWT validation error: Cannot connect to host localhost:8000 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('::1', 8000, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 8000)]"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:37:01.753171"
+    },
+    {
+      "level": "SECURITY",
+      "name": "RLS Validation",
+      "status": "failed",
+      "duration": 0.000748,
+      "details": {},
+      "errors": [
+        "RLS validation error: Cannot connect to host localhost:8000 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('::1', 8000, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 8000)]"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:37:01.753922"
+    },
+    {
+      "level": "CHAOS",
+      "name": "Chaos PostgreSQL Validation",
+      "status": "failed",
+      "duration": 30.609631,
+      "details": {
+        "postgresql_stopped": true
+      },
+      "errors": [
+        "PostgreSQL did not recover"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:37:32.363511"
+    },
+    {
+      "level": "CHAOS",
+      "name": "Chaos Neo4j Validation",
+      "status": "failed",
+      "duration": 30.456558,
+      "details": {
+        "neo4j_stopped": true
+      },
+      "errors": [
+        "Neo4j did not recover"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:38:02.820076"
+    },
+    {
+      "level": "CHAOS",
+      "name": "Chaos Backend Validation",
+      "status": "failed",
+      "duration": 30.625071,
+      "details": {
+        "backend_stopped": true
+      },
+      "errors": [
+        "Backend did not recover"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:38:33.445217"
+    }
+  ]
+}

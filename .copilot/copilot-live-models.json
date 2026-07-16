@@ -1,0 +1,53 @@
+{
+  "customModels": [
+    {
+      "id": "mistral-large",
+      "name": "🟣 Mistral Large (LIVE) — Best Quality",
+      "provider": "openai",
+      "baseURL": "https://api.mistral.ai/v1",
+      "model": "mistral-large-latest",
+      "apiKey": "${env.MISTRAL_API_KEY}",
+      "contextWindow": 32768,
+      "maxTokens": 4096,
+      "description": "Best reasoning & coding • 32K context • Ultra-reliable"
+    },
+    {
+      "id": "cohere-command-r",
+      "name": "🟢 Cohere Command R (LIVE) — Max Context ⭐",
+      "provider": "openai",
+      "baseURL": "https://api.cohere.ai/v1",
+      "model": "command-r",
+      "apiKey": "${env.COHERE_API_KEY}",
+      "contextWindow": 128000,
+      "maxTokens": 4096,
+      "description": "128K context (4x bigger!) • Perfect for long docs"
+    },
+    {
+      "id": "openrouter-models",
+      "name": "🟠 OpenRouter (LIVE) — 100+ Models",
+      "provider": "openai",
+      "baseURL": "https://openrouter.ai/api/v1",
+      "model": "meta-llama/llama-2-70b-chat",
+      "apiKey": "${env.OPENROUTER_API_KEY}",
+      "contextWindow": 4096,
+      "maxTokens": 2048,
+      "description": "Access to Llama, Mistral, Claude, GPT-4 & more"
+    },
+    {
+      "id": "together-llama",
+      "name": "🟡 Together.ai (LIVE) — Fastest ⚡",
+      "provider": "openai",
+      "baseURL": "https://api.together.xyz/v1",
+      "model": "meta-llama/Llama-2-70b-chat-hf",
+      "apiKey": "${env.TOGETHER_API_KEY}",
+      "contextWindow": 4096,
+      "maxTokens": 2048,
+      "description": "Ultra-fast inference • Real-time responses"
+    }
+  ],
+  "defaultModel": "mistral-large",
+  "ai": {
+    "timeout": 30000,
+    "maxRetries": 2
+  }
+}

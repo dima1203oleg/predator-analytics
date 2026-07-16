@@ -1,0 +1,174 @@
+{
+  "version": "2.0",
+  "description": "Autonomous Agent Configuration for PREDATOR Analytics v61.0-ELITE",
+  
+  "nvidia_server": {
+    "alias": "predator-server",
+    "host": "194.177.1.200",
+    "user": "predator",
+    "identity_file": "~/.ssh/id_rsa"
+  },
+  
+  "ui": {
+    "url": "http://localhost:3030",
+    "timeout": 30000
+  },
+  
+  "backend": {
+    "url": "http://localhost:8000",
+    "mode": "auto",
+    "container": "predator_backend"
+  },
+  
+  "test_file": {
+    "path": "/Users/dima1203/Desktop/Березень_2024_repacked.xlsx",
+    "required": false
+  },
+  
+  "limits": {
+    "max_iterations": 10,
+    "max_healing_time": 1800,
+    "etl_timeout": 1800,
+    "ai_response_timeout": 120,
+    "test_timeout": 600
+  },
+  
+  "features": {
+    "enable_llm_diagnostics": true,
+    "enable_self_healing": true,
+    "enable_continuous_improvement": true,
+    "enable_regression_tests": true
+  },
+  
+  "rbac": {
+    "test_levels": ["admin", "commander", "strateg", "operations"],
+    "test_users": {
+      "admin": {
+        "email": "admin@predator.dev",
+        "password": "admin123",
+        "role": "admin"
+      },
+      "commander": {
+        "email": "commander@predator.dev",
+        "password": "test123",
+        "role": "commander"
+      },
+      "strateg": {
+        "email": "strateg@predator.dev",
+        "password": "test123",
+        "role": "strateg"
+      },
+      "operations": {
+        "email": "operations@predator.dev",
+        "password": "test123",
+        "role": "operations"
+      }
+    }
+  },
+  
+  "databases": {
+    "postgres": {
+      "host": "localhost",
+      "port": 5432,
+      "database": "predator",
+      "enabled": true
+    },
+    "clickhouse": {
+      "host": "localhost",
+      "port": 8123,
+      "database": "predator",
+      "enabled": true
+    },
+    "neo4j": {
+      "host": "localhost",
+      "port": 7687,
+      "enabled": true
+    },
+    "qdrant": {
+      "host": "localhost",
+      "port": 6333,
+      "enabled": true
+    },
+    "opensearch": {
+      "host": "localhost",
+      "port": 9200,
+      "enabled": false
+    },
+    "redis": {
+      "host": "localhost",
+      "port": 6379,
+      "enabled": true
+    },
+    "minio": {
+      "host": "localhost",
+      "port": 9000,
+      "enabled": false
+    },
+    "redpanda": {
+      "host": "localhost",
+      "port": 9092,
+      "enabled": false
+    }
+  },
+  
+  "ai_workflow": {
+    "test_queries": [
+      {
+        "query": "Покажи декларації за березень 2024 року",
+        "type": "declaration_search"
+      },
+      {
+        "query": "Які компанії імпортували найбільше товарів?",
+        "type": "company_analysis"
+      },
+      {
+        "query": "Побудуй граф зв'язків контрагентів",
+        "type": "graph_analysis"
+      },
+      {
+        "query": "Знайди потенційні аномалії в імпорті",
+        "type": "anomaly_detection"
+      },
+      {
+        "query": "Покажи семантично схожі декларації",
+        "type": "semantic_search"
+      },
+      {
+        "query": "Побудуй короткий аналітичний звіт",
+        "type": "report_generation"
+      }
+    ],
+    "expected_sources": {
+      "declaration_search": ["PostgreSQL", "ClickHouse"],
+      "company_analysis": ["PostgreSQL", "ClickHouse"],
+      "graph_analysis": ["Neo4j"],
+      "anomaly_detection": ["PostgreSQL", "ClickHouse", "Qdrant"],
+      "semantic_search": ["Qdrant"],
+      "report_generation": ["PostgreSQL", "ClickHouse", "OpenSearch"]
+    }
+  },
+  
+  "performance": {
+    "thresholds": {
+      "cpu_usage": 80,
+      "memory_usage": 85,
+      "disk_usage": 90,
+      "api_response_time": 1000,
+      "network_latency": 200
+    }
+  },
+  
+  "reporting": {
+    "output_dir": "reports",
+    "formats": ["json", "markdown", "html"],
+    "include_screenshots": true,
+    "include_trace": true,
+    "include_video": false
+  },
+  
+  "logging": {
+    "level": "INFO",
+    "file": "logs/orchestrator.log",
+    "format": "%(asctime)s [%(levelname)s] %(message)s"
+  }
+}

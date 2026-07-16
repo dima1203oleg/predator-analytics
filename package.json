@@ -1,0 +1,39 @@
+{
+  "name": "predator-21",
+  "private": true,
+  "packageManager": "pnpm@9.0.0",
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "lint:ox": "oxlint --config oxlint.json apps/predator-analytics-ui/src/",
+    "lint:ox:fix": "oxlint --config oxlint.json --fix apps/predator-analytics-ui/src/",
+    "lint:knip": "knip",
+    "lint:knip:fix": "knip --fix",
+    "lint:all": "pnpm lint:ox && pnpm lint:knip",
+    "test": "turbo test",
+    "clean": "turbo clean",
+    "py:lint": "ruff check --config ruff.toml .",
+    "py:lint:fix": "ruff check --config ruff.toml --fix .",
+    "py:format": "ruff format --config ruff.toml .",
+    "py:type": "pyrefly check",
+    "py:all": "pnpm py:lint:fix && pnpm py:format && pnpm py:type"
+  },
+  "devDependencies": {
+    "@types/ajv": "^0.0.5",
+    "knip": "^5.82.1",
+    "oxlint": "^0.15.15",
+    "playwright": "^1.60.0",
+    "turbo": "latest"
+  },
+  "dependencies": {
+    "@google-cloud/speech": "^7.2.1",
+    "@google-cloud/text-to-speech": "^6.4.0",
+    "ajv": "^8.20.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "multer": "^2.0.2",
+    "ws": "^8.19.0"
+  }
+}

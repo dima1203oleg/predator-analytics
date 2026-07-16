@@ -1,0 +1,48 @@
+{
+  "id": "dc-971cb98e",
+  "name": "refbased-job-d81affce",
+  "domain": "custom",
+  "version": "1.0.0",
+  "created_at": "2026-06-14T14:36:19.382867+00:00",
+  "author": "PREDATOR Synthetic Engine",
+  "methodology": {
+    "generator": "CTGAN",
+    "is_synthetic": true
+  },
+  "dataset_statistics": {
+    "num_rows": 50,
+    "num_columns": 5,
+    "columns": [
+      "id",
+      "date",
+      "company",
+      "amount",
+      "risk_score"
+    ],
+    "memory_usage_mb": 0.01
+  },
+  "quality_assessment": {
+    "statistical_similarity": 90.5,
+    "correlation_similarity": 98.44,
+    "overall_score": 93.67,
+    "details": {
+      "ks_risk_score": {
+        "similarity": 0.98,
+        "p_value": 1.0
+      },
+      "ks_amount": {
+        "similarity": 0.83,
+        "p_value": 0.2810652113316832
+      }
+    }
+  },
+  "intended_use": [
+    "Model training and fine-tuning",
+    "System testing without privacy risks",
+    "Anomaly detection baseline generation"
+  ],
+  "limitations": [
+    "Synthetic data may not capture all real-world edge cases",
+    "Not suitable for direct financial reporting"
+  ]
+}

@@ -133,10 +133,14 @@ htmlcov/
 *.venv*
 .predator_dev
 
-*.json
-!renovate.json
-*.txt
+# Scratch / temp directories
 scratch/
+
+# Exclude large JSON data files, but keep config files
+*.jsonl
+sample_data/*.json
+working_api_keys.json
+test_api_keys.py
 
 
 # Playwright generated artifacts

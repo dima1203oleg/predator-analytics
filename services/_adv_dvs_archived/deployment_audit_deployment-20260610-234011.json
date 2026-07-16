@@ -1,0 +1,482 @@
+{
+  "deployment_id": "deployment-20260610-234011",
+  "timestamp": "2026-06-10T23:40:11.419139",
+  "readiness_index": 19.166666666666668,
+  "overall_status": "failed",
+  "results": [
+    {
+      "level": "INFRASTRUCTURE",
+      "name": "Docker Validation",
+      "status": "passed",
+      "duration": 0.300837,
+      "details": {
+        "docker_ps": "OK",
+        "running_containers": 1,
+        "docker_stats": "OK"
+      },
+      "errors": [],
+      "warnings": [],
+      "timestamp": "2026-06-10T23:40:12.285565"
+    },
+    {
+      "level": "INFRASTRUCTURE",
+      "name": "Kubernetes Validation",
+      "status": "failed",
+      "duration": 0.43896,
+      "details": {},
+      "errors": [
+        "kubectl get pods failed",
+        "kubectl get nodes failed"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T23:40:12.724542"
+    },
+    {
+      "level": "INFRASTRUCTURE",
+      "name": "ArgoCD Validation",
+      "status": "failed",
+      "duration": 0.618002,
+      "details": {},
+      "errors": [
+        "argocd app list failed"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T23:40:13.342515"
+    },
+    {
+      "level": "INFRASTRUCTURE",
+      "name": "Helm Validation",
+      "status": "failed",
+      "duration": 0.267466,
+      "details": {},
+      "errors": [
+        "helm list failed"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T23:40:13.610036"
+    },
+    {
+      "level": "CONTAINER",
+      "name": "Container Validation",
+      "status": "warning",
+      "duration": 0.157912,
+      "details": {
+        "running_containers": [
+          ""
+        ],
+        "running_count": 1,
+        "missing_containers": [
+          "predator_backend",
+          "predator_frontend",
+          "predator_postgres",
+          "predator_clickhouse",
+          "predator_neo4j",
+          "predator_qdrant",
+          "predator_opensearch",
+          "predator_minio",
+          "predator_redpanda",
+          "predator_redis",
+          "predator_ollama",
+          "predator_graph_service",
+          "predator_osint_service",
+          "predator_mcp_router",
+          "predator_orchestrator",
+          "predator_telegram_bot"
+        ],
+        "container_details": {}
+      },
+      "errors": [],
+      "warnings": [
+        "Missing containers: predator_backend, predator_frontend, predator_postgres, predator_clickhouse, predator_neo4j, predator_qdrant, predator_opensearch, predator_minio, predator_redpanda, predator_redis, predator_ollama, predator_graph_service, predator_osint_service, predator_mcp_router, predator_orchestrator, predator_telegram_bot"
+      ],
+      "timestamp": "2026-06-10T23:40:13.768016"
+    },
+    {
+      "level": "DATABASE",
+      "name": "PostgreSQL Validation",
+      "status": "failed",
+      "duration": 0.036906,
+      "details": {},
+      "errors": [
+        "PostgreSQL connection failed"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T23:40:13.804938"
+    },
+    {
+      "level": "DATABASE",
+      "name": "Neo4j Validation",
+      "status": "failed",
+      "duration": 0.039009,
+      "details": {},
+      "errors": [
+        "Neo4j connection failed"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T23:40:13.843950"
+    },
+    {
+      "level": "DATABASE",
+      "name": "ClickHouse Validation",
+      "status": "failed",
+      "duration": 0.030646,
+      "details": {},
+      "errors": [
+        "ClickHouse connection failed"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T23:40:13.874621"
+    },
+    {
+      "level": "DATABASE",
+      "name": "Redis Validation",
+      "status": "failed",
+      "duration": 0.023891,
+      "details": {},
+      "errors": [
+        "Redis connection failed"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T23:40:13.898519"
+    },
+    {
+      "level": "DOM",
+      "name": "DOM Validation",
+      "status": "passed",
+      "duration": 11.055751,
+      "details": {
+        "page_results": {
+          "/login": {
+            "status": "OK",
+            "content_length": 4716,
+            "js_errors": 0,
+            "react_errors": 0
+          },
+          "/dashboard": {
+            "status": "OK",
+            "content_length": 4716,
+            "js_errors": 0,
+            "react_errors": 0
+          },
+          "/search": {
+            "status": "OK",
+            "content_length": 4716,
+            "js_errors": 0,
+            "react_errors": 0
+          },
+          "/market": {
+            "status": "OK",
+            "content_length": 4716,
+            "js_errors": 0,
+            "react_errors": 0
+          },
+          "/osint": {
+            "status": "OK",
+            "content_length": 4716,
+            "js_errors": 0,
+            "react_errors": 0
+          },
+          "/nexus": {
+            "status": "OK",
+            "content_length": 4716,
+            "js_errors": 0,
+            "react_errors": 0
+          },
+          "/financial": {
+            "status": "OK",
+            "content_length": 4716,
+            "js_errors": 0,
+            "react_errors": 0
+          },
+          "/modeling": {
+            "status": "OK",
+            "content_length": 4716,
+            "js_errors": 0,
+            "react_errors": 0
+          },
+          "/admin": {
+            "status": "OK",
+            "content_length": 4716,
+            "js_errors": 0,
+            "react_errors": 0
+          }
+        }
+      },
+      "errors": [],
+      "warnings": [],
+      "timestamp": "2026-06-10T23:40:24.954306"
+    },
+    {
+      "level": "USER_JOURNEY",
+      "name": "User Journey Scenario 1",
+      "status": "failed",
+      "duration": 3.958919,
+      "details": {
+        "scenario_1": {
+          "status": "COMPLETED",
+          "steps_completed": 7
+        }
+      },
+      "errors": [
+        "Login form not found",
+        "Search input not found"
+      ],
+      "warnings": [
+        "Company card not found, skipping",
+        "Risk section not found",
+        "Graph button not found",
+        "PDF button not found",
+        "Download button not found"
+      ],
+      "timestamp": "2026-06-10T23:40:28.913468"
+    },
+    {
+      "level": "USER_JOURNEY",
+      "name": "User Journey Scenario 2",
+      "status": "passed",
+      "duration": 1.738895,
+      "details": {
+        "scenario_2": {
+          "status": "COMPLETED",
+          "steps_completed": 4
+        }
+      },
+      "errors": [],
+      "warnings": [
+        "Create scenario button not found",
+        "Monte-Carlo button not found",
+        "Result section not found"
+      ],
+      "timestamp": "2026-06-10T23:40:30.652365"
+    },
+    {
+      "level": "USER_JOURNEY",
+      "name": "User Journey Scenario 3",
+      "status": "failed",
+      "duration": 1.956895,
+      "details": {
+        "scenario_3": {
+          "status": "COMPLETED",
+          "steps_completed": 4
+        }
+      },
+      "errors": [
+        "Chat input not found",
+        "AI response not found"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T23:40:32.609273"
+    },
+    {
+      "level": "API",
+      "name": "API Validation",
+      "status": "failed",
+      "duration": 0.066658,
+      "details": {
+        "endpoint_results": {
+          "/api/v1/health": {
+            "status_code": 400,
+            "status": "ERROR",
+            "json_valid": false
+          },
+          "/api/v1/companies": {
+            "status_code": 400,
+            "status": "ERROR",
+            "json_valid": false
+          },
+          "/api/v1/search": {
+            "status_code": 400,
+            "status": "ERROR",
+            "json_valid": false
+          },
+          "/api/v1/risks": {
+            "status_code": 400,
+            "status": "ERROR",
+            "json_valid": false
+          },
+          "/api/v1/graph": {
+            "status_code": 400,
+            "status": "ERROR",
+            "json_valid": false
+          },
+          "/api/v1/etl": {
+            "status_code": 400,
+            "status": "ERROR",
+            "json_valid": false
+          }
+        }
+      },
+      "errors": [
+        "Endpoint /api/v1/health returned 400",
+        "Endpoint /api/v1/companies returned 400",
+        "Endpoint /api/v1/search returned 400",
+        "Endpoint /api/v1/risks returned 400",
+        "Endpoint /api/v1/graph returned 400",
+        "Endpoint /api/v1/etl returned 400"
+      ],
+      "warnings": [
+        "Endpoint /api/v1/health did not return valid JSON",
+        "Endpoint /api/v1/companies did not return valid JSON",
+        "Endpoint /api/v1/search did not return valid JSON",
+        "Endpoint /api/v1/risks did not return valid JSON",
+        "Endpoint /api/v1/graph did not return valid JSON",
+        "Endpoint /api/v1/etl did not return valid JSON"
+      ],
+      "timestamp": "2026-06-10T23:40:32.675973"
+    },
+    {
+      "level": "ETL",
+      "name": "ETL Validation",
+      "status": "failed",
+      "duration": 0.018655,
+      "details": {
+        "postgresql_check": "SKIPPED",
+        "neo4j_check": "SKIPPED",
+        "opensearch_check": "SKIPPED",
+        "qdrant_check": "SKIPPED"
+      },
+      "errors": [
+        "ETL upload failed with status 400"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T23:40:32.694612"
+    },
+    {
+      "level": "TELEGRAM",
+      "name": "Telegram Validation",
+      "status": "failed",
+      "duration": 1.4e-05,
+      "details": {},
+      "errors": [
+        "TELEGRAM_BOT_TOKEN not set"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T23:40:32.694693"
+    },
+    {
+      "level": "AI",
+      "name": "AI Validation",
+      "status": "warning",
+      "duration": 65.020792,
+      "details": {
+        "ollama_status": "OK",
+        "available_models": [
+          "qwen:latest"
+        ],
+        "test_query": "OK",
+        "analytical_query": "OK",
+        "response_length": 895
+      },
+      "errors": [],
+      "warnings": [
+        "Missing models: gemma, phi, nemotron",
+        "Test query response unexpected"
+      ],
+      "timestamp": "2026-06-10T23:41:37.707977"
+    },
+    {
+      "level": "OBSERVABILITY",
+      "name": "Observability Validation",
+      "status": "warning",
+      "duration": 32.872827,
+      "details": {},
+      "errors": [],
+      "warnings": [
+        "Prometheus validation error: ",
+        "Grafana validation error: ",
+        "Loki validation error: "
+      ],
+      "timestamp": "2026-06-10T23:42:10.590479"
+    },
+    {
+      "level": "SECURITY",
+      "name": "Vault Validation",
+      "status": "failed",
+      "duration": 0.002333,
+      "details": {},
+      "errors": [
+        "VAULT_TOKEN not set"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T23:42:10.599511"
+    },
+    {
+      "level": "SECURITY",
+      "name": "Keycloak Validation",
+      "status": "failed",
+      "duration": 31.217196,
+      "details": {},
+      "errors": [
+        "Keycloak validation error: "
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T23:42:41.807668"
+    },
+    {
+      "level": "SECURITY",
+      "name": "JWT Validation",
+      "status": "failed",
+      "duration": 0.420425,
+      "details": {},
+      "errors": [
+        "JWT login failed"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T23:42:42.237456"
+    },
+    {
+      "level": "SECURITY",
+      "name": "RLS Validation",
+      "status": "failed",
+      "duration": 0.059367,
+      "details": {},
+      "errors": [
+        "RLS not working correctly"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T23:42:42.296909"
+    },
+    {
+      "level": "CHAOS",
+      "name": "Chaos PostgreSQL Validation",
+      "status": "failed",
+      "duration": 101.95889,
+      "details": {
+        "postgresql_stopped": true
+      },
+      "errors": [
+        "Chaos PostgreSQL error: Command '['docker', 'ps', '--filter', 'name=predator_postgres', '--format', '{{.Status}}']' timed out after 30 seconds"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T23:44:24.251420"
+    },
+    {
+      "level": "CHAOS",
+      "name": "Chaos Neo4j Validation",
+      "status": "failed",
+      "duration": 30.708072,
+      "details": {
+        "neo4j_stopped": true
+      },
+      "errors": [
+        "Neo4j did not recover"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T23:44:54.966154"
+    },
+    {
+      "level": "CHAOS",
+      "name": "Chaos Backend Validation",
+      "status": "failed",
+      "duration": 30.467249,
+      "details": {
+        "backend_stopped": true
+      },
+      "errors": [
+        "Backend did not recover"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T23:45:25.433620"
+    }
+  ]
+}

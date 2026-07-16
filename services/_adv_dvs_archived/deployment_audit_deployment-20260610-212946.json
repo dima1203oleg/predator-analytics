@@ -1,0 +1,308 @@
+{
+  "deployment_id": "deployment-20260610-212946",
+  "timestamp": "2026-06-10T21:29:46.900705",
+  "readiness_index": 0.0,
+  "overall_status": "failed",
+  "results": [
+    {
+      "level": "INFRASTRUCTURE",
+      "name": "validate_docker",
+      "status": "failed",
+      "duration": 0,
+      "details": {},
+      "errors": [
+        "ValidationResult.__init__() missing 1 required positional argument: 'duration'"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:29:47.354813"
+    },
+    {
+      "level": "INFRASTRUCTURE",
+      "name": "validate_kubernetes",
+      "status": "failed",
+      "duration": 0,
+      "details": {},
+      "errors": [
+        "ValidationResult.__init__() missing 1 required positional argument: 'duration'"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:29:47.442058"
+    },
+    {
+      "level": "INFRASTRUCTURE",
+      "name": "validate_argocd",
+      "status": "failed",
+      "duration": 0,
+      "details": {},
+      "errors": [
+        "ValidationResult.__init__() missing 1 required positional argument: 'duration'"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:29:47.909528"
+    },
+    {
+      "level": "INFRASTRUCTURE",
+      "name": "validate_helm",
+      "status": "failed",
+      "duration": 0,
+      "details": {},
+      "errors": [
+        "ValidationResult.__init__() missing 1 required positional argument: 'duration'"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:29:48.039188"
+    },
+    {
+      "level": "CONTAINER",
+      "name": "validate_containers",
+      "status": "failed",
+      "duration": 0,
+      "details": {},
+      "errors": [
+        "ValidationResult.__init__() missing 1 required positional argument: 'duration'"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:29:48.152970"
+    },
+    {
+      "level": "DATABASE",
+      "name": "validate_postgresql",
+      "status": "failed",
+      "duration": 0,
+      "details": {},
+      "errors": [
+        "ValidationResult.__init__() missing 1 required positional argument: 'duration'"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:29:48.269611"
+    },
+    {
+      "level": "DATABASE",
+      "name": "validate_neo4j",
+      "status": "failed",
+      "duration": 0,
+      "details": {},
+      "errors": [
+        "ValidationResult.__init__() missing 1 required positional argument: 'duration'"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:29:48.387713"
+    },
+    {
+      "level": "DATABASE",
+      "name": "validate_clickhouse",
+      "status": "failed",
+      "duration": 0,
+      "details": {},
+      "errors": [
+        "ValidationResult.__init__() missing 1 required positional argument: 'duration'"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:29:48.504253"
+    },
+    {
+      "level": "DATABASE",
+      "name": "validate_redis",
+      "status": "failed",
+      "duration": 0,
+      "details": {},
+      "errors": [
+        "ValidationResult.__init__() missing 1 required positional argument: 'duration'"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:29:48.620023"
+    },
+    {
+      "level": "DOM",
+      "name": "validate_dom_pages",
+      "status": "failed",
+      "duration": 0,
+      "details": {},
+      "errors": [
+        "ValidationResult.__init__() missing 1 required positional argument: 'duration'"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:30:02.380285"
+    },
+    {
+      "level": "USER_JOURNEY",
+      "name": "validate_user_journey_scenario_1",
+      "status": "failed",
+      "duration": 0,
+      "details": {},
+      "errors": [
+        "ValidationResult.__init__() missing 1 required positional argument: 'duration'"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:30:06.814694"
+    },
+    {
+      "level": "USER_JOURNEY",
+      "name": "validate_user_journey_scenario_2",
+      "status": "failed",
+      "duration": 0,
+      "details": {},
+      "errors": [
+        "ValidationResult.__init__() missing 1 required positional argument: 'duration'"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:30:09.650388"
+    },
+    {
+      "level": "USER_JOURNEY",
+      "name": "validate_user_journey_scenario_3",
+      "status": "failed",
+      "duration": 0,
+      "details": {},
+      "errors": [
+        "ValidationResult.__init__() missing 1 required positional argument: 'duration'"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:30:12.394861"
+    },
+    {
+      "level": "API",
+      "name": "validate_api_endpoints",
+      "status": "failed",
+      "duration": 0,
+      "details": {},
+      "errors": [
+        "ValidationResult.__init__() missing 1 required positional argument: 'duration'"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:30:12.411158"
+    },
+    {
+      "level": "ETL",
+      "name": "validate_etl",
+      "status": "failed",
+      "duration": 0,
+      "details": {},
+      "errors": [
+        "ValidationResult.__init__() missing 1 required positional argument: 'duration'"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:30:12.412687"
+    },
+    {
+      "level": "TELEGRAM",
+      "name": "validate_telegram",
+      "status": "failed",
+      "duration": 0,
+      "details": {},
+      "errors": [
+        "ValidationResult.__init__() missing 1 required positional argument: 'duration'"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:30:12.412704"
+    },
+    {
+      "level": "AI",
+      "name": "validate_ollama",
+      "status": "failed",
+      "duration": 0,
+      "details": {},
+      "errors": [
+        "ValidationResult.__init__() missing 1 required positional argument: 'duration'"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:32:12.618217"
+    },
+    {
+      "level": "OBSERVABILITY",
+      "name": "validate_observability",
+      "status": "failed",
+      "duration": 0,
+      "details": {},
+      "errors": [
+        "ValidationResult.__init__() missing 1 required positional argument: 'duration'"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:32:12.631966"
+    },
+    {
+      "level": "SECURITY",
+      "name": "validate_vault",
+      "status": "failed",
+      "duration": 0,
+      "details": {},
+      "errors": [
+        "ValidationResult.__init__() missing 1 required positional argument: 'duration'"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:32:12.632038"
+    },
+    {
+      "level": "SECURITY",
+      "name": "validate_keycloak",
+      "status": "failed",
+      "duration": 0,
+      "details": {},
+      "errors": [
+        "ValidationResult.__init__() missing 1 required positional argument: 'duration'"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:32:12.632938"
+    },
+    {
+      "level": "SECURITY",
+      "name": "validate_jwt",
+      "status": "failed",
+      "duration": 0,
+      "details": {},
+      "errors": [
+        "ValidationResult.__init__() missing 1 required positional argument: 'duration'"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:32:12.634991"
+    },
+    {
+      "level": "SECURITY",
+      "name": "validate_rls",
+      "status": "failed",
+      "duration": 0,
+      "details": {},
+      "errors": [
+        "ValidationResult.__init__() missing 1 required positional argument: 'duration'"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:32:12.635863"
+    },
+    {
+      "level": "CHAOS",
+      "name": "validate_chaos_postgresql",
+      "status": "failed",
+      "duration": 0,
+      "details": {},
+      "errors": [
+        "ValidationResult.__init__() missing 1 required positional argument: 'duration'"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:32:43.146635"
+    },
+    {
+      "level": "CHAOS",
+      "name": "validate_chaos_neo4j",
+      "status": "failed",
+      "duration": 0,
+      "details": {},
+      "errors": [
+        "ValidationResult.__init__() missing 1 required positional argument: 'duration'"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:33:13.578266"
+    },
+    {
+      "level": "CHAOS",
+      "name": "validate_chaos_backend",
+      "status": "failed",
+      "duration": 0,
+      "details": {},
+      "errors": [
+        "ValidationResult.__init__() missing 1 required positional argument: 'duration'"
+      ],
+      "warnings": [],
+      "timestamp": "2026-06-10T21:33:44.067570"
+    }
+  ]
+}

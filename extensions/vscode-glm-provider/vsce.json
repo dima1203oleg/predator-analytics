@@ -1,0 +1,106 @@
+{
+  "version": "1.0.0",
+  "publisher": "predator-analytics",
+  "name": "vscode-glm-provider",
+  "displayName": "Z.ai GLM Provider for VS Code",
+  "description": "GLM models from Z.ai integrated into VS Code Chat",
+  "icon": "icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/predator-analytics/vscode-glm-provider"
+  },
+  "engines": {
+    "vscode": "^1.100.0"
+  },
+  "categories": [
+    "AI"
+  ],
+  "activationEvents": [
+    "onLanguage:typescript",
+    "onLanguage:python",
+    "onLanguage:javascript",
+    "onLanguage:typescriptreact",
+    "onLanguage:javascriptreact"
+  ],
+  "contributes": {
+    "chat.contributions": [
+      {
+        "id": "zai-glm-chat",
+        "type": "languageModelChat",
+        "displayName": "Z.ai GLM",
+        "provider": "zai-glm",
+        "defaultModel": "glm-5.1"
+      }
+    ],
+    "languageModelChatProviders": [
+      {
+        "id": "zai-glm",
+        "displayName": "Z.ai GLM",
+        "supportsModelSelection": true,
+        "description": "GLM models from Z.ai (https://z.ai/)"
+      }
+    ],
+    "languageModelChatModels": [
+      {
+        "id": "glm-5.1",
+        "providerId": "zai-glm",
+        "displayName": "GLM-5.1 (Coding Plan)",
+        "description": "GLM-5.1 for coding tasks with strong reasoning capabilities",
+        "features": {
+          "code": true,
+          "reasoning": true,
+          "reflection": true
+        }
+      },
+      {
+        "id": "glm-5",
+        "providerId": "zai-glm",
+        "displayName": "GLM-5",
+        "description": "GLM-5 for general coding and reasoning tasks",
+        "features": {
+          "code": true,
+          "reasoning": true
+        }
+      },
+      {
+        "id": "glm-4.7",
+        "providerId": "zai-glm",
+        "displayName": "GLM-4.7",
+        "description": "GLM-4.7 for general coding assistance",
+        "features": {
+          "code": true,
+          "reasoning": false
+        }
+      }
+    ]
+  },
+  "main": "./dist/extension.js",
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.100.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.50.0",
+    "typescript": "^5.3.0",
+    "@types/vscode-webview": "^1.0.2",
+    "@types/mocha": "^10.0.1",
+    "@types/sinon": "^10.2.0",
+    "@types/sinonjs/callstats": "^0.0.1",
+    "mocha": "^10.2.0",
+    "sinon": "^15.2.0",
+    "@vscode/test-electron": "^2.3.0"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/predator-analytics/vscode-glm-provider/issues"
+  },
+  "homepage": "https://github.com/predator-analytics/vscode-glm-provider#readme"
+}

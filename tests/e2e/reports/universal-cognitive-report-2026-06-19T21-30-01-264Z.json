@@ -1,0 +1,51 @@
+{
+  "timestamp": "2026-06-19T21:20:17.871Z",
+  "test_file": "Березень_2024_repacked.xlsx",
+  "file_format": "XLSX",
+  "business_context": "Я продаю взуття оптом, мене цікавить конкуренція та ціни",
+  "iteration": 10,
+  "etl_success": false,
+  "validation_results": {},
+  "ai_queries": [],
+  "dom_audit": {
+    "console_errors": [],
+    "network_errors": [],
+    "websocket_connected": false,
+    "progress_bar_visible": false,
+    "table_updates": 0,
+    "modal_windows": 0
+  },
+  "consistency_check": {
+    "source_rows": 0,
+    "postgres_rows": 0,
+    "clickhouse_aggregates": 0,
+    "neo4j_nodes": 0,
+    "qdrant_vectors": 0,
+    "opensearch_docs": 0,
+    "differences": {
+      "postgres_vs_source": 0,
+      "qdrant_vs_postgres": 0
+    }
+  },
+  "performance_metrics": {
+    "upload_time": 0,
+    "etl_time": 0,
+    "validation_time": 0,
+    "total_time": 583159
+  },
+  "errors": [
+    "Ітерація 10: page.waitForSelector: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[type=\"file\"]')\u001b[22m\n"
+  ],
+  "fixes_applied": [
+    "Перезапуск сервісів (Backend/Celery)",
+    "Перезапуск сервісів (Backend/Celery)",
+    "Перезапуск сервісів (Backend/Celery)",
+    "Перезапуск сервісів (Backend/Celery)",
+    "Перезапуск сервісів (Backend/Celery)",
+    "Перезапуск сервісів (Backend/Celery)",
+    "Перезапуск сервісів (Backend/Celery)",
+    "Перезапуск сервісів (Backend/Celery)",
+    "Перезапуск сервісів (Backend/Celery)"
+  ],
+  "final_status": "FAIL"
+}

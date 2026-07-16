@@ -1,0 +1,142 @@
+{
+  "name": "vscode-multi-llm-provider",
+  "displayName": "Multi-LLM Provider for VS Code (GLM + Gemini)",
+  "version": "2.0.0",
+  "publisher": "predator-analytics",
+  "description": "GLM models from Z.ai and Gemini models from Google AI Studio integrated into VS Code Chat",
+  "engines": {
+    "vscode": "^1.125.0"
+  },
+  "categories": [
+    "AI"
+  ],
+  "activationEvents": [
+    "onLanguage:typescript",
+    "onLanguage:python",
+    "onLanguage:javascript",
+    "onLanguage:typescriptreact",
+    "onLanguage:javascriptreact"
+  ],
+  "contributes": {
+    "chat.contributions": [
+      {
+        "id": "multi-llm-chat",
+        "type": "languageModelChat",
+        "displayName": "Multi-LLM (GLM + Gemini)",
+        "provider": "multi-llm",
+        "defaultModel": "gemini-2.5-flash"
+      }
+    ],
+    "languageModelChatProviders": [
+      {
+        "id": "multi-llm",
+        "displayName": "Multi-LLM (GLM + Gemini)",
+        "supportsModelSelection": true,
+        "description": "GLM models from Z.ai and Gemini models from Google AI Studio",
+        "vendor": "predator-analytics"
+      }
+    ],
+    "languageModelChatModels": [
+      {
+        "id": "glm-5.1",
+        "providerId": "multi-llm",
+        "displayName": "GLM-5.1 (Coding Plan)",
+        "description": "GLM-5.1 for coding tasks with strong reasoning capabilities",
+        "features": {
+          "code": true,
+          "reasoning": true,
+          "reflection": true
+        }
+      },
+      {
+        "id": "glm-5",
+        "providerId": "multi-llm",
+        "displayName": "GLM-5",
+        "description": "GLM-5 for general coding and reasoning tasks",
+        "features": {
+          "code": true,
+          "reasoning": true
+        }
+      },
+      {
+        "id": "glm-4.7",
+        "providerId": "multi-llm",
+        "displayName": "GLM-4.7",
+        "description": "GLM-4.7 for general coding assistance",
+        "features": {
+          "code": true,
+          "reasoning": false
+        }
+      },
+      {
+        "id": "gemini-2.5-flash",
+        "providerId": "multi-llm",
+        "displayName": "Gemini 2.5 Flash",
+        "description": "Fast, general purpose model with multimodal capabilities",
+        "features": {
+          "code": true,
+          "reasoning": true,
+          "vision": true
+        }
+      },
+      {
+        "id": "gemini-flash-latest",
+        "providerId": "multi-llm",
+        "displayName": "Gemini Flash Latest",
+        "description": "Latest Flash model with multimodal capabilities",
+        "features": {
+          "code": true,
+          "reasoning": true,
+          "vision": true
+        }
+      },
+      {
+        "id": "gemini-3.5-flash",
+        "providerId": "multi-llm",
+        "displayName": "Gemini 3.5 Flash",
+        "description": "Next generation Flash model with multimodal capabilities",
+        "features": {
+          "code": true,
+          "reasoning": true,
+          "vision": true
+        }
+      },
+      {
+        "id": "gemini-2.5-flash-lite",
+        "providerId": "multi-llm",
+        "displayName": "Gemini 2.5 Flash Lite",
+        "description": "Lightweight Flash model for fast responses",
+        "features": {
+          "code": true,
+          "reasoning": true,
+          "vision": true
+        }
+      }
+    ]
+  },
+  "main": "./dist/extension.js",
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^20.0.0",
+    "@types/sinon": "^20.0.0",
+    "@types/vscode": "^1.125.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@vscode/test-electron": "^2.3.0",
+    "eslint": "^8.50.0",
+    "mocha": "^10.2.0",
+    "sinon": "^15.2.0",
+    "typescript": "^5.3.0"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  }
+}

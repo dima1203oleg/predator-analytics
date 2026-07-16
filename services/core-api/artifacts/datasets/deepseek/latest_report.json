@@ -1,0 +1,17 @@
+{
+  "cycle": 1,
+  "max_cycles": 5,
+  "status": "COMPLETED",
+  "job": {
+    "run_id": "test1"
+  },
+  "dataset_metrics": {
+    "count": 1
+  },
+  "eval_metrics": {
+    "f1_score": 0.9
+  },
+  "decision": {
+    "decision": "deploy"
+  }
+}

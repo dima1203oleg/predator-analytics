@@ -1,0 +1,91 @@
+{
+  "$schema": "https://unpkg.com/knip@latest/schema.json",
+  "workspaces": {
+    ".": {
+      "entry": [
+        "scripts/**/*.{ts,js,mjs}"
+      ],
+      "project": [
+        "scripts/**/*.{ts,js,mjs}"
+      ],
+      "ignore": [
+        "node_modules/**",
+        "dist/**",
+        "build/**",
+        ".git/**"
+      ]
+    },
+    "apps/predator-analytics-ui": {
+      "entry": [
+        "src/main.tsx",
+        "src/App.tsx",
+        "vite.config.ts",
+        "tailwind.config.js",
+        "postcss.config.js"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx,js,jsx}",
+        "*.config.{ts,js,mjs}"
+      ],
+      "ignore": [
+        "node_modules/**",
+        "dist/**",
+        "*.d.ts"
+      ],
+      "ignoreDependencies": [
+        "@vitejs/plugin-react",
+        "autoprefixer",
+        "postcss",
+        "tailwindcss",
+        "vite-plugin-pwa"
+      ],
+      "ignoreBinaries": [
+        "vite",
+        "tsc"
+      ]
+    }
+  },
+  "rules": {
+    "files": "error",
+    "dependencies": "error",
+    "devDependencies": "error",
+    "optionalPeerDependencies": "warn",
+    "unlisted": "warn",
+    "binaries": "warn",
+    "unresolved": "error",
+    "exports": "warn",
+    "types": "warn",
+    "nsExports": "warn",
+    "nsTypes": "warn",
+    "duplicates": "warn",
+    "enumMembers": "warn",
+    "classMembers": "warn"
+  },
+  "ignore": [
+    "**/*.d.ts",
+    "**/*.test.{ts,tsx,js,jsx}",
+    "**/*.spec.{ts,tsx,js,jsx}",
+    "**/test/**",
+    "**/tests/**",
+    "**/__tests__/**",
+    "**/__mocks__/**",
+    "**/coverage/**",
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/.git/**"
+  ],
+  "ignoreDependencies": [
+    "@types/*",
+    "turbo"
+  ],
+  "ignoreExportsUsedInFile": true,
+  "includeEntryExports": true,
+  "compilers": {
+    "tsx": {
+      "include": [
+        "**/src/**/*.tsx"
+      ]
+    }
+  }
+}

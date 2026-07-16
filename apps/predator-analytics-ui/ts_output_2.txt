@@ -1,0 +1,8 @@
+src/components/dashboard/HolographicAvatar.tsx(11,23): error TS2322: Type '{ mode: string; emotion: "idle"; }' is not assignable to type 'IntrinsicAttributes & AvatarShellProps'.
+  Property 'mode' does not exist on type 'IntrinsicAttributes & AvatarShellProps'.
+src/components/PostProcessingEffects.tsx(39,7): error TS2322: Type 'false | Element' is not assignable to type 'Element'.
+  Type 'boolean' is not assignable to type 'ReactElement<any, any>'.
+src/components/PostProcessingEffects.tsx(52,7): error TS2322: Type 'undefined' is not assignable to type 'Element'.
+src/components/PostProcessingEffects.tsx(53,7): error TS2322: Type 'undefined' is not assignable to type 'Element'.
+src/components/PostProcessingEffects.tsx(59,7): error TS2322: Type 'false | Element' is not assignable to type 'Element'.
+  Type 'boolean' is not assignable to type 'ReactElement<any, any>'.

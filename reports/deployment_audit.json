@@ -1,0 +1,1392 @@
+{
+    "timestamp": "2026-06-12T04:58:00.643519+00:00",
+    "deployment_readiness_index": 38.24,
+    "is_ready": false,
+    "critical_levels_ok": false,
+    "overall_status": "PREDATOR Analytics НЕ готова до експлуатації (DRI: 38.2%)",
+    "levels": {
+        "1": {
+            "name": "level1_infra",
+            "description": "Інфраструктура: Docker, контейнери, мережі, volumes, health checks",
+            "status": "fail",
+            "total_checks": 10,
+            "passed": 4,
+            "failed": 6,
+            "elapsed_seconds": 10.72,
+            "details": {
+                "docker_engine": {
+                    "passed": false,
+                    "message": "Таймаут перевірки Docker",
+                    "severity": "critical",
+                    "latency_ms": 0.0
+                },
+                "docker_compose": {
+                    "passed": true,
+                    "message": "Docker Compose v5.1.0",
+                    "severity": "info",
+                    "latency_ms": 0.0,
+                    "version": "5.1.0"
+                },
+                "containers_local": {
+                    "passed": false,
+                    "message": "Неможливо перевірити контейнери: EOF\n",
+                    "severity": "warning",
+                    "latency_ms": 0.0
+                },
+                "nvidia_server_ssh": {
+                    "passed": true,
+                    "message": "NVIDIA Server (194.177.1.240) доступний через SSH",
+                    "severity": "warning",
+                    "latency_ms": 0.0
+                },
+                "docker_networks": {
+                    "passed": false,
+                    "message": "Неможливо перевірити мережі Docker",
+                    "severity": "warning",
+                    "latency_ms": 0.0
+                },
+                "docker_volumes": {
+                    "passed": false,
+                    "message": "Неможливо перевірити volumes",
+                    "severity": "warning",
+                    "latency_ms": 0.0
+                },
+                "frontend_3030": {
+                    "passed": true,
+                    "message": "Порт 3030 доступний (6мс)",
+                    "severity": "critical",
+                    "latency_ms": 6.3,
+                    "host": "localhost",
+                    "port": 3030
+                },
+                "ollama_11434": {
+                    "passed": true,
+                    "message": "Порт 11434 доступний (1мс)",
+                    "severity": "critical",
+                    "latency_ms": 1.0,
+                    "host": "localhost",
+                    "port": 11434
+                },
+                "core_api_8000": {
+                    "passed": false,
+                    "message": "Порт localhost:8000 недоступний: OSError",
+                    "severity": "warning",
+                    "latency_ms": 0.0,
+                    "host": "localhost",
+                    "port": 8000
+                },
+                "mock_api_9080": {
+                    "passed": false,
+                    "message": "Порт localhost:9080 недоступний: OSError",
+                    "severity": "warning",
+                    "latency_ms": 0.0,
+                    "host": "localhost",
+                    "port": 9080
+                }
+            },
+            "errors": [
+                "Таймаут перевірки Docker",
+                "Неможливо перевірити контейнери: EOF\n",
+                "Неможливо перевірити мережі Docker",
+                "Неможливо перевірити volumes",
+                "Порт localhost:8000 недоступний: OSError",
+                "Порт localhost:9080 недоступний: OSError"
+            ]
+        },
+        "2": {
+            "name": "level2_backend",
+            "description": "Backend: FastAPI, REST API, JWT, WebSocket, маршрути",
+            "status": "fail",
+            "total_checks": 8,
+            "passed": 0,
+            "failed": 8,
+            "elapsed_seconds": 0.1,
+            "details": {
+                "api_health": {
+                    "passed": false,
+                    "message": "Не вдалося з'єднатися з http://localhost:8000/api/v1/health",
+                    "severity": "critical",
+                    "latency_ms": 0.0,
+                    "url": "http://localhost:8000/api/v1/health"
+                },
+                "openapi_schema": {
+                    "passed": false,
+                    "message": "Помилка: All connection attempts failed",
+                    "severity": "warning",
+                    "latency_ms": 0.0,
+                    "url": "http://localhost:8000/openapi.json",
+                    "error": "All connection attempts failed"
+                },
+                "route_health": {
+                    "passed": false,
+                    "message": "Не вдалося з'єднатися з http://localhost:8000/api/v1/health",
+                    "severity": "warning",
+                    "latency_ms": 0.0,
+                    "url": "http://localhost:8000/api/v1/health"
+                },
+                "route_swagger_docs": {
+                    "passed": false,
+                    "message": "Не вдалося з'єднатися з http://localhost:8000/docs",
+                    "severity": "warning",
+                    "latency_ms": 0.0,
+                    "url": "http://localhost:8000/docs"
+                },
+                "route_redoc": {
+                    "passed": false,
+                    "message": "Не вдалося з'єднатися з http://localhost:8000/redoc",
+                    "severity": "warning",
+                    "latency_ms": 0.0,
+                    "url": "http://localhost:8000/redoc"
+                },
+                "mock_api_health": {
+                    "passed": false,
+                    "message": "Не вдалося з'єднатися з http://localhost:9080/api/v1/health",
+                    "severity": "warning",
+                    "latency_ms": 0.0,
+                    "url": "http://localhost:9080/api/v1/health"
+                },
+                "adv_dvs_health": {
+                    "passed": false,
+                    "message": "Не вдалося з'єднатися з http://localhost:8003/health",
+                    "severity": "warning",
+                    "latency_ms": 0.0,
+                    "url": "http://localhost:8003/health"
+                },
+                "cors_headers": {
+                    "passed": false,
+                    "message": "Неможливо перевірити CORS: All connection attempts failed",
+                    "severity": "warning",
+                    "latency_ms": 0.0
+                }
+            },
+            "errors": [
+                "Не вдалося з'єднатися з http://localhost:8000/api/v1/health",
+                "Помилка: All connection attempts failed",
+                "Не вдалося з'єднатися з http://localhost:8000/api/v1/health",
+                "Не вдалося з'єднатися з http://localhost:8000/docs",
+                "Не вдалося з'єднатися з http://localhost:8000/redoc",
+                "Не вдалося з'єднатися з http://localhost:9080/api/v1/health",
+                "Не вдалося з'єднатися з http://localhost:8003/health",
+                "Неможливо перевірити CORS: All connection attempts failed"
+            ]
+        },
+        "3": {
+            "name": "level3_frontend",
+            "description": "Frontend: DOM-аудит, маршрути, HTML, компоненти, WebGL",
+            "status": "warning",
+            "total_checks": 23,
+            "passed": 22,
+            "failed": 1,
+            "elapsed_seconds": 0.49,
+            "details": {
+                "frontend_root": {
+                    "passed": true,
+                    "message": "HTTP 200 (250мс)",
+                    "severity": "critical",
+                    "latency_ms": 250.4,
+                    "url": "http://localhost:3030",
+                    "status_code": 200
+                },
+                "html_doctype": {
+                    "passed": true,
+                    "message": "HTML doctype: знайдено",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                },
+                "html_html_lang_uk": {
+                    "passed": true,
+                    "message": "HTML html_lang_uk: знайдено",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                },
+                "html_head_tag": {
+                    "passed": true,
+                    "message": "HTML head_tag: знайдено",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                },
+                "html_body_tag": {
+                    "passed": true,
+                    "message": "HTML body_tag: знайдено",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                },
+                "html_root_div": {
+                    "passed": true,
+                    "message": "HTML root_div: знайдено",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                },
+                "html_charset_utf8": {
+                    "passed": true,
+                    "message": "HTML charset_utf8: знайдено",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                },
+                "html_viewport_meta": {
+                    "passed": true,
+                    "message": "HTML viewport_meta: знайдено",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                },
+                "html_title_tag": {
+                    "passed": true,
+                    "message": "HTML title_tag: знайдено",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                },
+                "html_title_predator": {
+                    "passed": true,
+                    "message": "Title: 'PREDATOR v66.0-ELITE | Суверенна Аналітична Платформа'",
+                    "severity": "warning",
+                    "latency_ms": 0.0,
+                    "title": "PREDATOR v66.0-ELITE | Суверенна Аналітична Платформа"
+                },
+                "route_admin_command": {
+                    "passed": true,
+                    "message": "HTTP 200 (31мс)",
+                    "severity": "warning",
+                    "latency_ms": 31.2,
+                    "url": "http://localhost:3030/admin/command",
+                    "status_code": 200
+                },
+                "route_admin_database-command-center": {
+                    "passed": true,
+                    "message": "HTTP 200 (14мс)",
+                    "severity": "warning",
+                    "latency_ms": 13.6,
+                    "url": "http://localhost:3030/admin/database-command-center",
+                    "status_code": 200
+                },
+                "route_admin_adv-dvs": {
+                    "passed": true,
+                    "message": "HTTP 200 (3мс)",
+                    "severity": "warning",
+                    "latency_ms": 3.1,
+                    "url": "http://localhost:3030/admin/adv-dvs",
+                    "status_code": 200
+                },
+                "route_command": {
+                    "passed": true,
+                    "message": "HTTP 200 (4мс)",
+                    "severity": "warning",
+                    "latency_ms": 4.0,
+                    "url": "http://localhost:3030/command",
+                    "status_code": 200
+                },
+                "route_search": {
+                    "passed": true,
+                    "message": "HTTP 200 (16мс)",
+                    "severity": "warning",
+                    "latency_ms": 16.1,
+                    "url": "http://localhost:3030/search",
+                    "status_code": 200
+                },
+                "route_market": {
+                    "passed": true,
+                    "message": "HTTP 200 (10мс)",
+                    "severity": "warning",
+                    "latency_ms": 10.2,
+                    "url": "http://localhost:3030/market",
+                    "status_code": 200
+                },
+                "route_api-docs": {
+                    "passed": false,
+                    "message": "Очікувався 200, отримано 400",
+                    "severity": "warning",
+                    "latency_ms": 97.2,
+                    "url": "http://localhost:3030/api-docs",
+                    "status_code": 400
+                },
+                "asset_vite.svg": {
+                    "passed": true,
+                    "message": "HTTP 200 (8мс)",
+                    "severity": "warning",
+                    "latency_ms": 7.9,
+                    "url": "http://localhost:3030/vite.svg",
+                    "status_code": 200
+                },
+                "asset_at_vite_client": {
+                    "passed": true,
+                    "message": "HTTP 200 (37мс)",
+                    "severity": "warning",
+                    "latency_ms": 37.5,
+                    "url": "http://localhost:3030/@vite/client",
+                    "status_code": 200
+                },
+                "meta_description": {
+                    "passed": true,
+                    "message": "Meta description: ✓",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                },
+                "meta_theme_color": {
+                    "passed": true,
+                    "message": "Meta theme_color: ✓",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                },
+                "meta_apple_mobile": {
+                    "passed": true,
+                    "message": "Meta apple_mobile: ✓",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                },
+                "localization_uk": {
+                    "passed": true,
+                    "message": "Інтерфейс українізовано",
+                    "severity": "warning",
+                    "latency_ms": 0.0
+                }
+            },
+            "errors": [
+                "Очікувався 200, отримано 400"
+            ]
+        },
+        "4": {
+            "name": "level4_sync",
+            "description": "Синхронізація Frontend ↔ Backend: WebSocket, дані, кеш",
+            "status": "warning",
+            "total_checks": 4,
+            "passed": 0,
+            "failed": 4,
+            "elapsed_seconds": 0.01,
+            "details": {
+                "websocket_endpoint": {
+                    "passed": false,
+                    "message": "WebSocket недоступний: All connection attempts failed",
+                    "severity": "warning",
+                    "latency_ms": 0.0
+                },
+                "frontend_backend_both_up": {
+                    "passed": false,
+                    "message": "Frontend: ✓, Backend: ✗",
+                    "severity": "warning",
+                    "latency_ms": 0.0,
+                    "frontend": true,
+                    "backend": false
+                },
+                "sync_degraded": {
+                    "passed": false,
+                    "message": "Frontend працює, але Backend недоступний — UI працює з mock даними",
+                    "severity": "warning",
+                    "latency_ms": 0.0
+                },
+                "mock_api_fallback": {
+                    "passed": false,
+                    "message": "Mock API (порт 9080) не запущений",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                }
+            },
+            "errors": [
+                "WebSocket недоступний: All connection attempts failed",
+                "Frontend: ✓, Backend: ✗",
+                "Frontend працює, але Backend недоступний — UI працює з mock даними",
+                "Mock API (порт 9080) не запущений"
+            ]
+        },
+        "5": {
+            "name": "level5_databases",
+            "description": "Бази даних: PostgreSQL, ClickHouse, Neo4j, Qdrant, OpenSearch, Redis, MinIO, Redpanda",
+            "status": "fail",
+            "total_checks": 14,
+            "passed": 0,
+            "failed": 14,
+            "elapsed_seconds": 0.01,
+            "details": {
+                "postgres_tcp": {
+                    "passed": false,
+                    "message": "Порт localhost:5432 недоступний: OSError",
+                    "severity": "critical",
+                    "latency_ms": 0.0,
+                    "host": "localhost",
+                    "port": 5432
+                },
+                "clickhouse_ping": {
+                    "passed": false,
+                    "message": "Не вдалося з'єднатися з http://localhost:8123/ping",
+                    "severity": "critical",
+                    "latency_ms": 0.0,
+                    "url": "http://localhost:8123/ping"
+                },
+                "clickhouse_query": {
+                    "passed": false,
+                    "message": "Помилка: All connection attempts failed",
+                    "severity": "warning",
+                    "latency_ms": 0.0,
+                    "url": "http://localhost:8123/?query=SELECT+1+FORMAT+JSON",
+                    "error": "All connection attempts failed"
+                },
+                "neo4j_bolt": {
+                    "passed": false,
+                    "message": "Порт localhost:7687 недоступний: OSError",
+                    "severity": "critical",
+                    "latency_ms": 0.0,
+                    "host": "localhost",
+                    "port": 7687
+                },
+                "neo4j_browser": {
+                    "passed": false,
+                    "message": "Не вдалося з'єднатися з http://localhost:7474",
+                    "severity": "warning",
+                    "latency_ms": 0.0,
+                    "url": "http://localhost:7474"
+                },
+                "qdrant_healthz": {
+                    "passed": false,
+                    "message": "Не вдалося з'єднатися з http://localhost:6333/healthz",
+                    "severity": "critical",
+                    "latency_ms": 0.0,
+                    "url": "http://localhost:6333/healthz"
+                },
+                "qdrant_collections": {
+                    "passed": false,
+                    "message": "Помилка: All connection attempts failed",
+                    "severity": "warning",
+                    "latency_ms": 0.0,
+                    "url": "http://localhost:6333/collections",
+                    "error": "All connection attempts failed"
+                },
+                "opensearch_cluster": {
+                    "passed": false,
+                    "message": "Помилка: All connection attempts failed",
+                    "severity": "critical",
+                    "latency_ms": 0.0,
+                    "url": "http://localhost:9200/_cluster/health",
+                    "error": "All connection attempts failed"
+                },
+                "opensearch_indices": {
+                    "passed": false,
+                    "message": "Помилка: All connection attempts failed",
+                    "severity": "warning",
+                    "latency_ms": 0.0,
+                    "url": "http://localhost:9200/_cat/indices?format=json",
+                    "error": "All connection attempts failed"
+                },
+                "redis_tcp": {
+                    "passed": false,
+                    "message": "Порт localhost:6379 недоступний: OSError",
+                    "severity": "critical",
+                    "latency_ms": 0.0,
+                    "host": "localhost",
+                    "port": 6379
+                },
+                "minio_health": {
+                    "passed": false,
+                    "message": "Не вдалося з'єднатися з http://localhost:9000/minio/health/live",
+                    "severity": "critical",
+                    "latency_ms": 0.0,
+                    "url": "http://localhost:9000/minio/health/live"
+                },
+                "minio_console": {
+                    "passed": false,
+                    "message": "Не вдалося з'єднатися з http://localhost:9001",
+                    "severity": "warning",
+                    "latency_ms": 0.0,
+                    "url": "http://localhost:9001"
+                },
+                "kafka_tcp_9092": {
+                    "passed": false,
+                    "message": "Порт localhost:9092 недоступний: OSError",
+                    "severity": "warning",
+                    "latency_ms": 0.0,
+                    "host": "localhost",
+                    "port": 9092
+                },
+                "kafka_tcp_19092": {
+                    "passed": false,
+                    "message": "Порт localhost:19092 недоступний: OSError",
+                    "severity": "warning",
+                    "latency_ms": 0.0,
+                    "host": "localhost",
+                    "port": 19092
+                }
+            },
+            "errors": [
+                "Порт localhost:5432 недоступний: OSError",
+                "Не вдалося з'єднатися з http://localhost:8123/ping",
+                "Помилка: All connection attempts failed",
+                "Порт localhost:7687 недоступний: OSError",
+                "Не вдалося з'єднатися з http://localhost:7474",
+                "Не вдалося з'єднатися з http://localhost:6333/healthz",
+                "Помилка: All connection attempts failed",
+                "Помилка: All connection attempts failed",
+                "Помилка: All connection attempts failed",
+                "Порт localhost:6379 недоступний: OSError",
+                "Не вдалося з'єднатися з http://localhost:9000/minio/health/live",
+                "Не вдалося з'єднатися з http://localhost:9001",
+                "Порт localhost:9092 недоступний: OSError",
+                "Порт localhost:19092 недоступний: OSError"
+            ]
+        },
+        "6": {
+            "name": "level6_etl",
+            "description": "ETL/CDC: імпорт файлів, трансформації, синхронізація сховищ",
+            "status": "warning",
+            "total_checks": 6,
+            "passed": 4,
+            "failed": 2,
+            "elapsed_seconds": 0.0,
+            "details": {
+                "etl_module_ingestion_worker": {
+                    "passed": true,
+                    "message": "Знайдено: ingestion-worker",
+                    "severity": "info",
+                    "latency_ms": 0.0,
+                    "path": "/Users/Shared/Predator_60/services/ingestion-worker"
+                },
+                "etl_module_ingestion_init": {
+                    "passed": false,
+                    "message": "Відсутній: __init__.py",
+                    "severity": "warning",
+                    "latency_ms": 0.0,
+                    "path": "/Users/Shared/Predator_60/services/ingestion-worker/__init__.py"
+                },
+                "etl_module_ingestion_dockerfile": {
+                    "passed": true,
+                    "message": "Знайдено: Dockerfile",
+                    "severity": "info",
+                    "latency_ms": 0.0,
+                    "path": "/Users/Shared/Predator_60/services/ingestion-worker/Dockerfile"
+                },
+                "ingestion_worker_files": {
+                    "passed": false,
+                    "message": "Знайдено 2/5 ключових файлів worker",
+                    "severity": "warning",
+                    "latency_ms": 0.0,
+                    "found": [
+                        "Dockerfile",
+                        "requirements.txt"
+                    ],
+                    "missing": [
+                        "main.py",
+                        "consumer.py",
+                        "parsers"
+                    ]
+                },
+                "kafka_topic_scripts": {
+                    "passed": true,
+                    "message": "Знайдено 4 скриптів Kafka topics",
+                    "severity": "info",
+                    "latency_ms": 0.0,
+                    "scripts": [
+                        "init-kafka-topics.sh",
+                        "create-kafka-topics.sh",
+                        "init-kafka-topics.sh",
+                        "create-kafka-topics.sh"
+                    ]
+                },
+                "test_data_e2e": {
+                    "passed": true,
+                    "message": "Директорія e2e: 29 файлів",
+                    "severity": "info",
+                    "latency_ms": 0.0,
+                    "path": "/Users/Shared/Predator_60/tests/e2e",
+                    "file_count": 29
+                }
+            },
+            "errors": [
+                "Відсутній: __init__.py",
+                "Знайдено 2/5 ключових файлів worker"
+            ]
+        },
+        "7": {
+            "name": "level7_parsers",
+            "description": "Парсери: Telethon, Scrapy, BS4, PyMuPDF, OCR, файлові парсери",
+            "status": "warning",
+            "total_checks": 15,
+            "passed": 7,
+            "failed": 8,
+            "elapsed_seconds": 0.47,
+            "details": {
+                "lib_beautifulsoup4": {
+                    "passed": false,
+                    "message": "beautifulsoup4 не встановлений",
+                    "severity": "warning",
+                    "latency_ms": 0.0
+                },
+                "lib_lxml": {
+                    "passed": false,
+                    "message": "lxml не встановлений",
+                    "severity": "warning",
+                    "latency_ms": 0.0
+                },
+                "lib_openpyxl": {
+                    "passed": true,
+                    "message": "openpyxl v3.1.5 доступний",
+                    "severity": "info",
+                    "latency_ms": 0.0,
+                    "version": "3.1.5"
+                },
+                "lib_pandas": {
+                    "passed": true,
+                    "message": "pandas v3.0.3 доступний",
+                    "severity": "info",
+                    "latency_ms": 0.0,
+                    "version": "3.0.3"
+                },
+                "lib_httpx": {
+                    "passed": true,
+                    "message": "httpx v0.28.1 доступний",
+                    "severity": "info",
+                    "latency_ms": 0.0,
+                    "version": "0.28.1"
+                },
+                "lib_telethon": {
+                    "passed": true,
+                    "message": "telethon v1.43.2 доступний",
+                    "severity": "info",
+                    "latency_ms": 0.0,
+                    "version": "1.43.2"
+                },
+                "lib_scrapy": {
+                    "passed": false,
+                    "message": "scrapy не встановлений (потрібен у Docker-контейнері)",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                },
+                "lib_pymupdf": {
+                    "passed": false,
+                    "message": "pymupdf не встановлений (потрібен у Docker-контейнері)",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                },
+                "lib_pytesseract": {
+                    "passed": false,
+                    "message": "pytesseract не встановлений (потрібен у Docker-контейнері)",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                },
+                "lib_playwright": {
+                    "passed": false,
+                    "message": "playwright не встановлений (потрібен у Docker-контейнері)",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                },
+                "lib_python-docx": {
+                    "passed": false,
+                    "message": "python-docx не встановлений (потрібен у Docker-контейнері)",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                },
+                "parser_module_parsers": {
+                    "passed": false,
+                    "message": "Модуль parsers не знайдено",
+                    "severity": "warning",
+                    "latency_ms": 0.0,
+                    "path": "/Users/Shared/Predator_60/services/ingestion-worker/parsers"
+                },
+                "parser_module_osint-service": {
+                    "passed": true,
+                    "message": "Модуль osint-service: 107 Python файлів",
+                    "severity": "info",
+                    "latency_ms": 0.0,
+                    "path": "/Users/Shared/Predator_60/services/osint-service",
+                    "files": [
+                        "config.py",
+                        "__init__.py",
+                        "main.py",
+                        "geolocation.py",
+                        "ukraine_registries.py",
+                        "osint_2_0.py",
+                        "person.py",
+                        "social.py",
+                        "company.py",
+                        "domain.py"
+                    ]
+                },
+                "parser_module_predator-common": {
+                    "passed": true,
+                    "message": "Модуль predator-common: 20 Python файлів",
+                    "severity": "info",
+                    "latency_ms": 0.0,
+                    "path": "/Users/Shared/Predator_60/libs/predator-common",
+                    "files": [
+                        "sub_interpreters.py",
+                        "auth.py",
+                        "logging.py",
+                        "db.py",
+                        "models.py",
+                        "entity_resolution.py",
+                        "ueid.py",
+                        "__init__.py",
+                        "retry.py",
+                        "event_schemas.py"
+                    ]
+                },
+                "tesseract_ocr": {
+                    "passed": true,
+                    "message": "Tesseract: tesseract 5.5.2",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                }
+            },
+            "errors": [
+                "beautifulsoup4 не встановлений",
+                "lxml не встановлений",
+                "scrapy не встановлений (потрібен у Docker-контейнері)",
+                "pymupdf не встановлений (потрібен у Docker-контейнері)",
+                "pytesseract не встановлений (потрібен у Docker-контейнері)",
+                "playwright не встановлений (потрібен у Docker-контейнері)",
+                "python-docx не встановлений (потрібен у Docker-контейнері)",
+                "Модуль parsers не знайдено"
+            ]
+        },
+        "8": {
+            "name": "level8_integrations",
+            "description": "Інтеграції: Telegram, реєстри, зовнішні/внутрішні API",
+            "status": "warning",
+            "total_checks": 8,
+            "passed": 3,
+            "failed": 5,
+            "elapsed_seconds": 0.01,
+            "details": {
+                "telegram_bot_code": {
+                    "passed": true,
+                    "message": "Telegram Bot: Dockerfile знайдено",
+                    "severity": "warning",
+                    "latency_ms": 0.0,
+                    "path": "/Users/Shared/Predator_60/services/telegram-bot"
+                },
+                "osint_service": {
+                    "passed": false,
+                    "message": "Не вдалося з'єднатися з http://localhost:9201/health",
+                    "severity": "warning",
+                    "latency_ms": 0.0,
+                    "url": "http://localhost:9201/health"
+                },
+                "osint_service_code": {
+                    "passed": true,
+                    "message": "OSINT Service: 107 Python файлів",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                },
+                "graph_service": {
+                    "passed": false,
+                    "message": "Не вдалося з'єднатися з http://localhost:8001/health",
+                    "severity": "warning",
+                    "latency_ms": 0.0,
+                    "url": "http://localhost:8001/health"
+                },
+                "litellm_proxy": {
+                    "passed": false,
+                    "message": "Не вдалося з'єднатися з http://localhost:4000/health",
+                    "severity": "warning",
+                    "latency_ms": 0.0,
+                    "url": "http://localhost:4000/health"
+                },
+                "internal_core_api": {
+                    "passed": false,
+                    "message": "Не вдалося з'єднатися з http://localhost:8000/api/v1/health",
+                    "severity": "warning",
+                    "latency_ms": 0.0,
+                    "url": "http://localhost:8000/api/v1/health"
+                },
+                "internal_adv_dvs": {
+                    "passed": false,
+                    "message": "Не вдалося з'єднатися з http://localhost:8003/health",
+                    "severity": "warning",
+                    "latency_ms": 0.0,
+                    "url": "http://localhost:8003/health"
+                },
+                "env_config": {
+                    "passed": true,
+                    "message": ".env: знайдено 4 конфігурацій інтеграцій",
+                    "severity": "info",
+                    "latency_ms": 0.0,
+                    "found_prefixes": [
+                        "TELEGRAM",
+                        "NEO4J",
+                        "POSTGRES",
+                        "REDIS"
+                    ]
+                }
+            },
+            "errors": [
+                "Не вдалося з'єднатися з http://localhost:9201/health",
+                "Не вдалося з'єднатися з http://localhost:8001/health",
+                "Не вдалося з'єднатися з http://localhost:4000/health",
+                "Не вдалося з'єднатися з http://localhost:8000/api/v1/health",
+                "Не вдалося з'єднатися з http://localhost:8003/health"
+            ]
+        },
+        "9": {
+            "name": "level9_datasets",
+            "description": "Генерація датасетів: очищення, features, версіонування, Parquet",
+            "status": "warning",
+            "total_checks": 4,
+            "passed": 1,
+            "failed": 3,
+            "elapsed_seconds": 0.0,
+            "details": {
+                "dataset_module": {
+                    "passed": false,
+                    "message": "Модуль генерації датасетів не знайдено (буде створено при розгортанні)",
+                    "severity": "warning",
+                    "latency_ms": 0.0
+                },
+                "minio_for_datasets": {
+                    "passed": false,
+                    "message": "Не вдалося з'єднатися з http://localhost:9000/minio/health/live",
+                    "severity": "warning",
+                    "latency_ms": 0.0,
+                    "url": "http://localhost:9000/minio/health/live"
+                },
+                "pandas_available": {
+                    "passed": true,
+                    "message": "Pandas v3.0.3 (Parquet підтримка)",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                },
+                "pyarrow_available": {
+                    "passed": false,
+                    "message": "PyArrow не встановлений (потрібен у Docker)",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                }
+            },
+            "errors": [
+                "Модуль генерації датасетів не знайдено (буде створено при розгортанні)",
+                "Не вдалося з'єднатися з http://localhost:9000/minio/health/live",
+                "PyArrow не встановлений (потрібен у Docker)"
+            ]
+        },
+        "10": {
+            "name": "level10_automl",
+            "description": "AutoML: підбір моделей, гіперпараметри, метрики, експерименти",
+            "status": "warning",
+            "total_checks": 8,
+            "passed": 2,
+            "failed": 6,
+            "elapsed_seconds": 0.0,
+            "details": {
+                "ml_modules": {
+                    "passed": false,
+                    "message": "ML/AutoML модулі не знайдено в проекті",
+                    "severity": "warning",
+                    "latency_ms": 0.0
+                },
+                "ml_lib_scikit-learn": {
+                    "passed": false,
+                    "message": "scikit-learn не встановлений",
+                    "severity": "warning",
+                    "latency_ms": 0.0
+                },
+                "ml_lib_numpy": {
+                    "passed": true,
+                    "message": "numpy v2.4.6",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                },
+                "ml_lib_pandas": {
+                    "passed": true,
+                    "message": "pandas v3.0.3",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                },
+                "ml_lib_xgboost": {
+                    "passed": false,
+                    "message": "xgboost не встановлений (потрібен у Docker)",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                },
+                "ml_lib_lightgbm": {
+                    "passed": false,
+                    "message": "lightgbm не встановлений (потрібен у Docker)",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                },
+                "ml_lib_optuna": {
+                    "passed": false,
+                    "message": "optuna не встановлений (потрібен у Docker)",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                },
+                "ml_lib_mlflow": {
+                    "passed": false,
+                    "message": "mlflow не встановлений (потрібен у Docker)",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                }
+            },
+            "errors": [
+                "ML/AutoML модулі не знайдено в проекті",
+                "scikit-learn не встановлений",
+                "xgboost не встановлений (потрібен у Docker)",
+                "lightgbm не встановлений (потрібен у Docker)",
+                "optuna не встановлений (потрібен у Docker)",
+                "mlflow не встановлений (потрібен у Docker)"
+            ]
+        },
+        "11": {
+            "name": "level11_llm",
+            "description": "LLM: Ollama, deepseek-r1:latest, генерація, embeddings",
+            "status": "fail",
+            "total_checks": 6,
+            "passed": 4,
+            "failed": 2,
+            "elapsed_seconds": 30.9,
+            "details": {
+                "ollama_health": {
+                    "passed": true,
+                    "message": "HTTP 200 (168мс)",
+                    "severity": "critical",
+                    "latency_ms": 168.0,
+                    "url": "http://localhost:11434",
+                    "status_code": 200
+                },
+                "ollama_models_list": {
+                    "passed": true,
+                    "message": "OK (578мс)",
+                    "severity": "critical",
+                    "latency_ms": 578.3,
+                    "url": "http://localhost:11434/api/tags"
+                },
+                "ollama_models_count": {
+                    "passed": true,
+                    "message": "Ollama: 1 моделей встановлено",
+                    "severity": "info",
+                    "latency_ms": 0.0,
+                    "models": [
+                        "qwen:latest"
+                    ]
+                },
+                "ollama_required_model": {
+                    "passed": false,
+                    "message": "Модель deepseek-r1:latest: ВІДСУТНЯ",
+                    "severity": "critical",
+                    "latency_ms": 0.0,
+                    "required": "deepseek-r1:latest",
+                    "available": [
+                        "qwen:latest"
+                    ]
+                },
+                "ollama_alternative_models": {
+                    "passed": true,
+                    "message": "Доступні альтернативні моделі: qwen:latest",
+                    "severity": "warning",
+                    "latency_ms": 0.0
+                },
+                "ollama_inference": {
+                    "passed": false,
+                    "message": "Інференс таймаут/помилка: ",
+                    "severity": "warning",
+                    "latency_ms": 0.0
+                }
+            },
+            "errors": [
+                "Модель deepseek-r1:latest: ВІДСУТНЯ",
+                "Інференс таймаут/помилка: "
+            ]
+        },
+        "12": {
+            "name": "level12_ai_pipelines",
+            "description": "AI пайплайни: embeddings, RAG, векторний пошук, Risk Engine",
+            "status": "warning",
+            "total_checks": 4,
+            "passed": 2,
+            "failed": 2,
+            "elapsed_seconds": 0.22,
+            "details": {
+                "qdrant_for_ai": {
+                    "passed": false,
+                    "message": "Не вдалося з'єднатися з http://localhost:6333/healthz",
+                    "severity": "warning",
+                    "latency_ms": 0.0,
+                    "url": "http://localhost:6333/healthz"
+                },
+                "ollama_for_embeddings": {
+                    "passed": true,
+                    "message": "HTTP 200 (97мс)",
+                    "severity": "warning",
+                    "latency_ms": 97.4,
+                    "url": "http://localhost:11434",
+                    "status_code": 200
+                },
+                "ai_related_files": {
+                    "passed": true,
+                    "message": "Знайдено 50 AI-пов'язаних файлів у core-api",
+                    "severity": "info",
+                    "latency_ms": 0.0,
+                    "files": [
+                        "main.py",
+                        "test_risk.py",
+                        "test_main.py",
+                        "__main__.py",
+                        "main.py",
+                        "__main__.py",
+                        "__main__.py",
+                        "__main__.py",
+                        "__main__.py",
+                        "containers.py"
+                    ]
+                },
+                "litellm_for_ai": {
+                    "passed": false,
+                    "message": "Не вдалося з'єднатися з http://localhost:4000/health",
+                    "severity": "warning",
+                    "latency_ms": 0.0,
+                    "url": "http://localhost:4000/health"
+                }
+            },
+            "errors": [
+                "Не вдалося з'єднатися з http://localhost:6333/healthz",
+                "Не вдалося з'єднатися з http://localhost:4000/health"
+            ]
+        },
+        "13": {
+            "name": "level13_data_flow",
+            "description": "Повний потік даних: Джерело → ... → Frontend → DOM",
+            "status": "fail",
+            "total_checks": 10,
+            "passed": 1,
+            "failed": 9,
+            "elapsed_seconds": 0.08,
+            "details": {
+                "flow_1_source_parser": {
+                    "passed": false,
+                    "message": "Порт localhost:8000 недоступний: OSError",
+                    "severity": "warning",
+                    "latency_ms": 0.0,
+                    "host": "localhost",
+                    "port": 8000
+                },
+                "flow_2_etl_postgres": {
+                    "passed": false,
+                    "message": "Порт localhost:5432 недоступний: OSError",
+                    "severity": "warning",
+                    "latency_ms": 0.0,
+                    "host": "localhost",
+                    "port": 5432
+                },
+                "flow_3_kafka_redpanda": {
+                    "passed": false,
+                    "message": "Порт localhost:19092 недоступний: OSError",
+                    "severity": "warning",
+                    "latency_ms": 0.0,
+                    "host": "localhost",
+                    "port": 19092
+                },
+                "flow_4_clickhouse": {
+                    "passed": false,
+                    "message": "Не вдалося з'єднатися з http://localhost:8123",
+                    "severity": "warning",
+                    "latency_ms": 0.0,
+                    "url": "http://localhost:8123"
+                },
+                "flow_5_neo4j": {
+                    "passed": false,
+                    "message": "Порт localhost:7687 недоступний: OSError",
+                    "severity": "warning",
+                    "latency_ms": 0.0,
+                    "host": "localhost",
+                    "port": 7687
+                },
+                "flow_6_qdrant": {
+                    "passed": false,
+                    "message": "Не вдалося з'єднатися з http://localhost:6333/healthz",
+                    "severity": "warning",
+                    "latency_ms": 0.0,
+                    "url": "http://localhost:6333/healthz"
+                },
+                "flow_7_opensearch": {
+                    "passed": false,
+                    "message": "Не вдалося з'єднатися з http://localhost:9200/_cluster/health",
+                    "severity": "warning",
+                    "latency_ms": 0.0,
+                    "url": "http://localhost:9200/_cluster/health"
+                },
+                "flow_8_backend_api": {
+                    "passed": false,
+                    "message": "Не вдалося з'єднатися з http://localhost:8000/api/v1/health",
+                    "severity": "warning",
+                    "latency_ms": 0.0,
+                    "url": "http://localhost:8000/api/v1/health"
+                },
+                "flow_9_frontend": {
+                    "passed": true,
+                    "message": "HTTP 200 (66мс)",
+                    "severity": "warning",
+                    "latency_ms": 66.2,
+                    "url": "http://localhost:3030",
+                    "status_code": 200
+                },
+                "data_flow_completeness": {
+                    "passed": false,
+                    "message": "Потік даних: 1/9 ланок доступні",
+                    "severity": "critical",
+                    "latency_ms": 0.0,
+                    "available": 1,
+                    "total": 9
+                }
+            },
+            "errors": [
+                "Порт localhost:8000 недоступний: OSError",
+                "Порт localhost:5432 недоступний: OSError",
+                "Порт localhost:19092 недоступний: OSError",
+                "Не вдалося з'єднатися з http://localhost:8123",
+                "Порт localhost:7687 недоступний: OSError",
+                "Не вдалося з'єднатися з http://localhost:6333/healthz",
+                "Не вдалося з'єднатися з http://localhost:9200/_cluster/health",
+                "Не вдалося з'єднатися з http://localhost:8000/api/v1/health",
+                "Потік даних: 1/9 ланок доступні"
+            ]
+        },
+        "14": {
+            "name": "level14_performance",
+            "description": "Продуктивність: stress/load тести, затримки API, ресурси",
+            "status": "warning",
+            "total_checks": 4,
+            "passed": 3,
+            "failed": 1,
+            "elapsed_seconds": 0.22,
+            "details": {
+                "system_resources": {
+                    "passed": true,
+                    "message": "RAM: 8 ГБ, CPU: 8 ядер",
+                    "severity": "info",
+                    "latency_ms": 0.0,
+                    "ram_gb": 8.0,
+                    "cpus": 8
+                },
+                "load_frontend": {
+                    "passed": true,
+                    "message": "Frontend: 10/10 OK, avg 5мс, total 0.1с",
+                    "severity": "info",
+                    "latency_ms": 5.3,
+                    "success": 10,
+                    "total": 10,
+                    "elapsed_s": 0.05
+                },
+                "load_api": {
+                    "passed": false,
+                    "message": "API не доступний для load тесту",
+                    "severity": "warning",
+                    "latency_ms": 0.0,
+                    "success": 0,
+                    "total": 10
+                },
+                "ollama_latency": {
+                    "passed": true,
+                    "message": "Ollama затримка: 5мс",
+                    "severity": "info",
+                    "latency_ms": 5.4
+                }
+            },
+            "errors": [
+                "API не доступний для load тесту"
+            ]
+        },
+        "15": {
+            "name": "level15_security",
+            "description": "Безпека: JWT, RBAC, Vault, WORM, секрети, аудит",
+            "status": "warning",
+            "total_checks": 6,
+            "passed": 5,
+            "failed": 1,
+            "elapsed_seconds": 1.3,
+            "details": {
+                "env_not_in_git": {
+                    "passed": true,
+                    "message": ".env в .gitignore",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                },
+                "gitignore_completeness": {
+                    "passed": true,
+                    "message": ".gitignore: 5/5 правил",
+                    "severity": "info",
+                    "latency_ms": 0.0,
+                    "found": [
+                        "node_modules",
+                        ".env",
+                        "__pycache__",
+                        ".venv",
+                        "dist"
+                    ],
+                    "missing": []
+                },
+                "no_hardcoded_secrets": {
+                    "passed": true,
+                    "message": "Секрети в коді не знайдено (базова перевірка)",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                },
+                "dockerfile_security": {
+                    "passed": false,
+                    "message": "Проблеми: services/utos/Dockerfile: відсутній USER (запуск від root)",
+                    "severity": "warning",
+                    "latency_ms": 0.0,
+                    "total_dockerfiles": 28,
+                    "issues": [
+                        "services/utos/Dockerfile: відсутній USER (запуск від root)"
+                    ]
+                },
+                "jwt_implementation": {
+                    "passed": true,
+                    "message": "JWT: 9 файлів з JWT логікою",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                },
+                "worm_tables": {
+                    "passed": true,
+                    "message": "WORM/audit таблиці знайдені в init.sql",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                }
+            },
+            "errors": [
+                "Проблеми: services/utos/Dockerfile: відсутній USER (запуск від root)"
+            ]
+        },
+        "16": {
+            "name": "level16_backup",
+            "description": "Резервне копіювання: бекапи БД, конфігурації, відновлення",
+            "status": "pass",
+            "total_checks": 5,
+            "passed": 5,
+            "failed": 0,
+            "elapsed_seconds": 0.01,
+            "details": {
+                "backup_scripts": {
+                    "passed": true,
+                    "message": "Знайдено 6 скриптів бекапу",
+                    "severity": "info",
+                    "latency_ms": 0.0,
+                    "files": [
+                        "restore_zrok_tunnel.sh",
+                        "k8s_cluster_dump.sh",
+                        "restore.sh",
+                        "backup.sh",
+                        "nuclear_restore.sh",
+                        "wait_and_restore.sh"
+                    ]
+                },
+                "docker_volumes_defined": {
+                    "passed": true,
+                    "message": "Docker volumes визначені у docker-compose.yml",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                },
+                "config_docker_compose_yml": {
+                    "passed": true,
+                    "message": "Конфігурація docker-compose.yml: ✓",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                },
+                "config_init_sql": {
+                    "passed": true,
+                    "message": "Конфігурація init.sql: ✓",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                },
+                "config__env_example": {
+                    "passed": true,
+                    "message": "Конфігурація .env.example: ✓",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                }
+            },
+            "errors": []
+        },
+        "17": {
+            "name": "level17_e2e",
+            "description": "E2E: повний ланцюг від завантаження до відображення",
+            "status": "warning",
+            "total_checks": 14,
+            "passed": 13,
+            "failed": 1,
+            "elapsed_seconds": 25.45,
+            "details": {
+                "e2e_frontend_render": {
+                    "passed": true,
+                    "message": "Frontend рендерить: root=✓, scripts=✓, title=✓, vite=✓",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                },
+                "e2e_spa_route_admin_command": {
+                    "passed": true,
+                    "message": "SPA маршрут /admin/command: HTTP 200",
+                    "severity": "warning",
+                    "latency_ms": 0.0
+                },
+                "e2e_spa_route_command": {
+                    "passed": true,
+                    "message": "SPA маршрут /command: HTTP 200",
+                    "severity": "warning",
+                    "latency_ms": 0.0
+                },
+                "e2e_spa_route_search": {
+                    "passed": true,
+                    "message": "SPA маршрут /search: HTTP 200",
+                    "severity": "warning",
+                    "latency_ms": 0.0
+                },
+                "e2e_spa_route_market": {
+                    "passed": true,
+                    "message": "SPA маршрут /market: HTTP 200",
+                    "severity": "warning",
+                    "latency_ms": 0.0
+                },
+                "e2e_api_health": {
+                    "passed": false,
+                    "message": "API недоступний (Backend не запущений): ConnectError",
+                    "severity": "warning",
+                    "latency_ms": 0.0
+                },
+                "e2e_ollama_generate": {
+                    "passed": true,
+                    "message": "Ollama (qwen:latest): 'ОК.'",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                },
+                "e2e_dir_apps_predator_analytics_ui": {
+                    "passed": true,
+                    "message": "Директорія apps/predator-analytics-ui: ✓",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                },
+                "e2e_dir_services_core_api": {
+                    "passed": true,
+                    "message": "Директорія services/core-api: ✓",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                },
+                "e2e_dir_services_ingestion_worker": {
+                    "passed": true,
+                    "message": "Директорія services/ingestion-worker: ✓",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                },
+                "e2e_dir_services_adv_dvs": {
+                    "passed": true,
+                    "message": "Директорія services/adv_dvs: ✓",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                },
+                "e2e_dir_deploy": {
+                    "passed": true,
+                    "message": "Директорія deploy: ✓",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                },
+                "e2e_dir_db_postgres": {
+                    "passed": true,
+                    "message": "Директорія db/postgres: ✓",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                },
+                "e2e_codebase_complete": {
+                    "passed": true,
+                    "message": "Кодова база цілісна",
+                    "severity": "info",
+                    "latency_ms": 0.0
+                }
+            },
+            "errors": [
+                "API недоступний (Backend не запущений): ConnectError"
+            ]
+        }
+    }
+}

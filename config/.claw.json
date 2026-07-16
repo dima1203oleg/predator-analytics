@@ -1,0 +1,33 @@
+{
+  "aliases": {
+    "stable": "openai/deepseek-r1",
+    "quick": "local/google/gemma-4-31b-it:free",
+    "reasoner": "local/nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+    "mega": "local/meta-llama/llama-3.3-70b-instruct:free",
+    "gpt": "local/openai/gpt-oss-120b:free",
+    "mistral": "mistral/codestral-latest",
+    "codestral": "mistral/codestral-latest"
+  },
+  "providerFallbacks": {
+    "primary": "codestral",
+    "fallbacks": [
+      "stable"
+    ]
+  },
+  "injectedTools": [
+    "bash",
+    "read_file",
+    "write_file",
+    "edit_file",
+    "glob_search",
+    "grep_search",
+    "TodoWrite",
+    "Skill",
+    "retrieve_context",
+    "ingest_context",
+    "ToolSearch"
+  ],
+  "allowedTools": [
+    "*"
+  ]
+}

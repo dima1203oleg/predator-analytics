@@ -83,27 +83,27 @@ qdrant:
   replicaCount: 1
   persistence:
     enabled: true
-    size: 20Gi
+    size: 10Gi
   resources:
     requests:
-      memory: "2Gi"
-      cpu: "500m"
+      memory: "1Gi"
+      cpu: "250m"
     limits:
-      memory: "4Gi"
-      cpu: "2"
+      memory: "2Gi"
+      cpu: "1"
 
 opensearch:
   enabled: true
-  singleNode: false
-  replicas: 2
+  singleNode: true
+  replicas: 1
   resources:
     requests:
-      memory: "2Gi"
-      cpu: "500m"
+      memory: "1Gi"
+      cpu: "250m"
     limits:
-      memory: "4Gi"
-      cpu: "2"
-  javaOpts: "-Xms2g -Xmx2g"
+      memory: "2Gi"
+      cpu: "1"
+  javaOpts: "-Xms1g -Xmx1g"
 
 opensearch-dashboards:
   enabled: true
@@ -180,11 +180,14 @@ minio:
   enabled: true
   persistence:
     enabled: true
-    size: 100Gi
+    size: 20Gi
   resources:
     requests:
+      memory: "256Mi"
+      cpu: "100m"
+    limits:
       memory: "512Mi"
-      cpu: "200m"
+      cpu: "250m"
 
 # Ingress with TLS
 ingress:
