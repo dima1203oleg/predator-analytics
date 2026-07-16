@@ -2669,6 +2669,22 @@ tbody tr:hover {
   40% { clip-path: inset(40% 0 50% 0); }
   60% { clip-path: inset(80% 0 5% 0); }
   80% { clip-path: inset(10% 0 70% 0); }
-  100% { clip-path: inset(30% 0 40% 0); }
 }
+
+/* Custom smooth scrolling marquee animation for the Tactical Ticker */
+@keyframes marquee {
+  0% { transform: translateX(50%); }
+  100% { transform: translateX(-100%); }
+}
+
+.animate-marquee {
+  display: inline-flex;
+  animation: marquee 35s linear infinite;
+  will-change: transform;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
 
