@@ -91,3 +91,84 @@ async def shortest_path(source_id: str, target_id: str):
     """Знайти найкоротший шлях (OSINT зв'язок) між двома суб'єктами (з кешуванням)."""
     return await fetch_shortest_path(source_id, target_id)
 
+
+@app.get("/api/v1/graph/fraud_rings")
+async def get_fraud_rings(limit: int = 10):
+    """Виявити циклічні зв'язки власності (підозрілі на фрод/відмивання)."""
+    if not driver:
+        raise HTTPException(status_code=503, detail="Neo4j Service Unavailable")
+        
+    query = """
+    MATCH p=(c1:Company)-[*2..5]->(c1)
+    WITH p, length(p) as path_length
+    WHERE path_length > 1
+    RETURN [node in nodes(p) | node.id] AS cycle, path_length
+    LIMIT $limit
+    """
+    try:
+        async with driver.session() as session:
+            result = await session.run(query, limit=limit)
+            cycles = [record.data() for record in await result.fetch(limit)]
+            return {"fraud_rings": cycles}
+    except Exception as e:
+        logger.error(f"Fraud Ring Detection Error: {e}")
+        raise HTTPException(status_code=500, detail="Помилка виявлення фрод-кілець")
+
+
+@app.get("/api/v1/graph/sanctions_exposure")
+async def get_sanctions_exposure(ueid: str, max_depth: int = 3):
+    """Знайти зв'язки компанії з підсанкційними особами або юрисдикціями."""
+    if not driver:
+        raise HTTPException(status_code=503, detail="Neo4j Service Unavailable")
+        
+    query = """
+    MATCH p=(c:Company {ueid: $ueid})-[*1..4]-(s)
+    WHERE (s:Person AND s.is_sanctioned = true) OR (s:Country AND s.is_sanctioned = true)
+    RETURN [node in nodes(p) | {id: node.id, labels: labels(node)}] AS path, length(p) as degrees_of_separation
+    ORDER BY degrees_of_separation ASC
+    LIMIT 20
+    """
+    try:
+        async with driver.session() as session:
+            result = await session.run(query, ueid=ueid)
+            # Fetch up to 20 paths
+            paths = [record.data() for record in await result.fetch(20)]
+            return {"sanctions_exposure": paths}
+    except Exception as e:
+        logger.error(f"Sanctions Exposure Error: {e}")
+        raise HTTPException(status_code=500, detail="Помилка перевірки санкцій")
+
+
+@app.get("/api/v1/graph/influence_score")
+async def get_influence_score(ueid: str):
+    """Обчислити рівень впливу компанії на основі зв'язків 1-го, 2-го та 3-го рівня."""
+    if not driver:
+        raise HTTPException(status_code=503, detail="Neo4j Service Unavailable")
+        
+    query = """
+    MATCH (c:Company {ueid: $ueid})
+    OPTIONAL MATCH (c)-[*1..1]-(deg1)
+    WITH c, count(DISTINCT deg1) as degree_1
+    OPTIONAL MATCH (c)-[*2..2]-(deg2)
+    WITH c, degree_1, count(DISTINCT deg2) as degree_2
+    OPTIONAL MATCH (c)-[*3..3]-(deg3)
+    RETURN 
+        c.ueid AS ueid,
+        degree_1,
+        degree_2,
+        count(DISTINCT deg3) as degree_3,
+        (degree_1 * 1.0 + degree_2 * 0.5 + count(DISTINCT deg3) * 0.1) AS total_influence_score
+    """
+    try:
+        async with driver.session() as session:
+            result = await session.run(query, ueid=ueid)
+            record = await result.single()
+            if not record:
+                raise HTTPException(status_code=404, detail="Компанію не знайдено")
+            return record.data()
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Influence Score Error: {e}")
+        raise HTTPException(status_code=500, detail="Помилка обчислення впливу")
+

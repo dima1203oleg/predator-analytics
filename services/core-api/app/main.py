@@ -80,6 +80,7 @@ from app.routers import (
     synthetic_data_router,
     system_router,
     telemetry_router,
+    tenders_router,
     voice_router,
     voice_ws_router,
     wargaming_router,
@@ -368,6 +369,7 @@ ROUTERS = [
     ("/api/v1", ooda_router),
     ("/api/v1", open_data_router),
     ("/api/v1", ownership_graph_router),
+    ("/api/v1", tenders_router),
     ("/api/v2", admin_v2_router),
 ]
 

@@ -8,11 +8,12 @@ from jwt import PyJWKClient
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse
 
-from app.config import settings
+from app.config import get_settings
 
 logger = logging.getLogger("core-api.auth")
 
 # Кешування ключів (JWKS) з Keycloak
+settings = get_settings()
 jwks_url = f"{settings.KEYCLOAK_URL.rstrip('/')}/realms/{settings.KEYCLOAK_REALM}/protocol/openid-connect/certs"
 try:
     jwks_client = PyJWKClient(jwks_url, cache_keys=True)

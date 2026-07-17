@@ -85,6 +85,7 @@ from .rag import router as rag_router
 from .system import router as system_router
 from .system import stats_router
 from .telemetry import router as telemetry_router
+from .tenders import router as tenders_router
 from .voice import router as voice_router
 from .voice_ws import router as voice_ws_router
 from .wargaming import router as wargaming_router
@@ -150,4 +151,5 @@ __all__ = [
     "ooda_router",
     "open_data_router",
     "ownership_graph_router",
+    "tenders_router",
 ]
