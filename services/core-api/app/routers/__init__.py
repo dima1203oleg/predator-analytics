@@ -34,6 +34,7 @@ from .alerts import router as alerts_router
 from .analytics import router as analytics_router
 from .antigravity import router as antigravity_router
 from .auth import router as auth_router
+from .auto_optimizer import router as auto_optimizer_router
 from .cases import router as cases_router
 from .cloud_assist import router as cloud_assist_router
 from .companies import router as companies_router
@@ -56,7 +57,6 @@ from .ml_studio import router as ml_studio_router
 from .newspaper import router as newspaper_router
 from .omniverse import router as omniverse_router
 from .optimizer import router as optimizer_router
-from .auto_optimizer import router as auto_optimizer_router
 from .orchestrator import router as orchestrator_router
 from .osint import router as osint_router
 from .osint_ua import router as osint_ua_router
@@ -75,19 +75,21 @@ try:
     from .synthetic_data import router as synthetic_data_router
 except ImportError:
     synthetic_data_router = None
+from .ai import router as ai_router
+from .deepseek_tuning import router as deepseek_tuning_router
+from .neural import router as neural_router
+from .ooda import router as ooda_router
+from .open_data import router as open_data_router
+from .ownership_graph import router as ownership_graph_router
+from .rag import router as rag_router
 from .system import router as system_router
 from .system import stats_router
+from .telemetry import router as telemetry_router
+from .voice import router as voice_router
+from .voice_ws import router as voice_ws_router
 from .wargaming import router as wargaming_router
 from .warroom import router as warroom_router
 from .websocket import router as websocket_router
-from .deepseek_tuning import router as deepseek_tuning_router
-from .ai import router as ai_router
-from .neural import router as neural_router
-from .voice import router as voice_router
-from .voice_ws import router as voice_ws_router
-from .rag import router as rag_router
-from .telemetry import router as telemetry_router
-from .ooda import router as ooda_router
 
 __all__ = [
     "admin_chaos_router",
@@ -146,4 +148,6 @@ __all__ = [
     "rag_router",
     "telemetry_router",
     "ooda_router",
+    "open_data_router",
+    "ownership_graph_router",
 ]

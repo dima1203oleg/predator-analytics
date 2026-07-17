@@ -10,12 +10,12 @@ from starlette.responses import Response
 
 from app.config import get_settings
 
+# Middlewares
+from app.core.auth_middleware import KeycloakAuthMiddleware
+
 # Services
 from app.core.cors import add_cors_middleware
 from app.core.graph import graph_db
-
-# Middlewares
-from app.core.auth_middleware import KeycloakAuthMiddleware
 from app.core.middleware import RequestIDMiddleware, TenantContextMiddleware
 from app.core.middleware_optimization import (
     CompressionMiddleware,
@@ -30,10 +30,12 @@ from app.routers import (
     admin_chaos_router,
     admin_v2_router,
     agents_router,
+    ai_router,
     alerts_router,
     analytics_router,
     antigravity_router,
     auth_router,
+    auto_optimizer_router,
     cases_router,
     cloud_assist_router,
     companies_router,
@@ -43,6 +45,7 @@ from app.routers import (
     db_admin_router,
     # decisions_router,
     declarations_router,
+    deepseek_tuning_router,
     factory_router,
     forecast_router,
     graph_intelligence_router,
@@ -52,18 +55,21 @@ from app.routers import (
     maritime_router,
     market_router,
     ml_studio_router,
+    neural_router,
     newspaper_router,
-    optimizer_router,
-    auto_optimizer_router,
-    orchestrator_router,
     omniverse_router,
-    deepseek_tuning_router,
+    ooda_router,
+    open_data_router,
+    optimizer_router,
+    orchestrator_router,
     osint_router,
     osint_ua_router,
     osint_vision_router,
+    ownership_graph_router,
     persons_router,
     premium_router,
     public_api_router,
+    rag_router,
     registries_router,
     registries_ui_router,
     risk_router,
@@ -73,16 +79,12 @@ from app.routers import (
     stats_router,
     synthetic_data_router,
     system_router,
+    telemetry_router,
+    voice_router,
+    voice_ws_router,
     wargaming_router,
     warroom_router,
     websocket_router,
-    ai_router,
-    neural_router,
-    voice_router,
-    voice_ws_router,
-    rag_router,
-    telemetry_router,
-    ooda_router,
 )
 from app.services.factory_repository import FactoryRepository
 from app.services.factory_runtime import (
@@ -184,7 +186,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         logger.info("Antigravity AGI Orchestrator started with Factory Sync")
 
         # Init Speech Services
-        from app.services.speech import vad_service, stt_service, tts_service
+        from app.services.speech import stt_service, tts_service, vad_service
         await vad_service.initialize()
         await stt_service.initialize()
         await tts_service.initialize()
@@ -364,6 +366,8 @@ ROUTERS = [
     ("/api/v1", voice_ws_router),
     ("/api/v1", rag_router),
     ("/api/v1", ooda_router),
+    ("/api/v1", open_data_router),
+    ("/api/v1", ownership_graph_router),
     ("/api/v2", admin_v2_router),
 ]
 

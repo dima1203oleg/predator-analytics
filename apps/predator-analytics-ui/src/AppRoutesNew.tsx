@@ -46,6 +46,7 @@ const FlowAnalytics = lazy(() => import('./pages/FlowAnalytics'));
 const SystemFactoryView = lazy(() => import('./features/factory/SystemFactoryView'));
 const AIStudioPage = lazy(() => import('./pages/AIStudioPage'));
 const AnalyticsHubPage = lazy(() => import('./pages/AnalyticsHubPage'));
+const OpenDataHubPage = lazy(() => import('./pages/OpenDataHubPage'));
 
 // Next-Gen Spatial Interface
 import { OmniscienceV2 } from './user/pages/OmniscienceV2';
@@ -142,6 +143,7 @@ export const AppRoutesNew = () => {
               <Route path="/admin/factory" element={<SystemFactoryView />} />
               <Route path="/admin/ai-studio" element={<AIStudioPage />} />
               <Route path="/admin/analytics-hub" element={<AnalyticsHubPage />} />
+              <Route path="/admin/open-data" element={<OpenDataHubPage />} />
               
               <Route path="*" element={<Navigate to="/admin" replace />} />
             </Routes>
