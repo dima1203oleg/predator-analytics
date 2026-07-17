@@ -47,7 +47,7 @@ jobs:
         with:
           node-version: "20"
           cache: "npm"
-          cache-dependency-path: "apps/predator-analytics-ui/package-lock.json"
+          cache-dependency-path: "apps/analytics-hub-ui/package-lock.json"
 
       - name: Install Python dependencies
         run: |
@@ -60,19 +60,19 @@ jobs:
         run: mypy services/ libs/ --ignore-missing-imports --no-strict-optional
 
       - name: Frontend Install
-        working-directory: ./apps/predator-analytics-ui
+        working-directory: ./apps/analytics-hub-ui
         run: npm ci
 
       - name: Frontend Lint
-        working-directory: ./apps/predator-analytics-ui
+        working-directory: ./apps/analytics-hub-ui
         run: npm run lint --if-present
 
       - name: Frontend TypeScript Check
-        working-directory: ./apps/predator-analytics-ui
+        working-directory: ./apps/analytics-hub-ui
         run: npx tsc --noEmit --skipLibCheck
 
       - name: Frontend Vitest Tests
-        working-directory: ./apps/predator-analytics-ui
+        working-directory: ./apps/analytics-hub-ui
         run: npx vitest run --reporter=verbose
 
   # ── 2. Helm Lint ───────────────────────────────────────────
@@ -123,8 +123,8 @@ jobs:
             dockerfile: services/ingestion-worker/Dockerfile
             image: predator-ingestion-worker
           - service: frontend
-            context: ./apps/predator-analytics-ui
-            dockerfile: apps/predator-analytics-ui/Dockerfile
+            context: ./apps/analytics-hub-ui
+            dockerfile: apps/analytics-hub-ui/Dockerfile
             image: predator-frontend
 
     steps:
