@@ -153,7 +153,7 @@ HR-23  TUNNELS: Тільки zrok (zrok.io). Використання Cloudflare
 
 ```
 Predator_21/
-├── apps/predator-analytics-ui/    ← ЄДИНИЙ frontend (порт 3030)
+├── apps/analytics-hub-ui/    ← ЄДИНИЙ frontend (порт 3030)
 ├── services/
 │   ├── core-api/                  ← FastAPI сервіс (порт 8000)
 │   ├── ingestion-worker/          ← Kafka consumer
@@ -176,7 +176,7 @@ Predator_21/
 
 **⚠️ УВАГА:** Не використовувати старі директорії:
 - ❌ `public_ui`, `v30_ui_new`, `v30_ui`
-- ✅ ТІЛЬКИ `apps/predator-analytics-ui`
+- ✅ ТІЛЬКИ `apps/analytics-hub-ui`
 
 ---
 
@@ -198,7 +198,7 @@ Predator_21/
 
 4. **Порт UI**: завжди **3030** (`http://194.177.1.240:3030` — посилання на NVIDIA)
 
-5. **Директорія UI**: `/Users/dima-mac/Documents/Predator_21/apps/predator-analytics-ui`
+5. **Директорія UI**: `/Users/dima-mac/Documents/Predator_21/apps/analytics-hub-ui`
 
 6. **Mock API**: `mock-api-server.mjs` на порту **9080** (коли backend недоступний)
 

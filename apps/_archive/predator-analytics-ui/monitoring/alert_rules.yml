@@ -1,0 +1,239 @@
+# 🚨 PREDATOR Analytics UI - Alert Rules
+# Version: v55.1.0
+# Purpose: Alerting rules for frontend service monitoring
+
+groups:
+  - name: predator_frontend_alerts
+    rules:
+      # Service Health Alerts
+      - alert: FrontendServiceDown
+        expr: up{job="predator-frontend"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: predator-frontend
+        annotations:
+          summary: "PREDATOR Frontend service is down"
+          description: "Frontend service has been down for more than 1 minute."
+          runbook_url: "https://docs.predator-analytics.ua/runbooks/frontend-down"
+
+      - alert: FrontendHealthCheckFailed
+        expr: probe_success{job="blackbox-http",instance="http://predator-frontend:3030/health"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          service: predator-frontend
+        annotations:
+          summary: "Frontend health check failed"
+          description: "Health check endpoint /health has been failing for more than 2 minutes."
+          runbook_url: "https://docs.predator-analytics.ua/runbooks/health-check-failed"
+
+      # Performance Alerts
+      - alert: HighErrorRate
+        expr: predator_frontend:error_rate:5m > 0.05
+        for: 5m
+        labels:
+          severity: warning
+          service: predator-frontend
+        annotations:
+          summary: "High error rate detected"
+          description: "Error rate is {{ $value | humanizePercentage }} for the last 5 minutes."
+          runbook_url: "https://docs.predator-analytics.ua/runbooks/high-error-rate"
+
+      - alert: HighResponseTime
+        expr: predator_frontend:response_time:5m > 2
+        for: 5m
+        labels:
+          severity: warning
+          service: predator-frontend
+        annotations:
+          summary: "High response time detected"
+          description: "95th percentile response time is {{ $value }}s for the last 5 minutes."
+          runbook_url: "https://docs.predator-analytics.ua/runbooks/high-response-time"
+
+      - alert: VeryHighResponseTime
+        expr: predator_frontend:response_time:5m > 5
+        for: 2m
+        labels:
+          severity: critical
+          service: predator-frontend
+        annotations:
+          summary: "Very high response time detected"
+          description: "95th percentile response time is {{ $value }}s for the last 2 minutes."
+          runbook_url: "https://docs.predator-analytics.ua/runbooks/very-high-response-time"
+
+      # Resource Usage Alerts
+      - alert: HighCPUUsage
+        expr: predator_frontend:container_cpu_usage:5m > 0.8
+        for: 10m
+        labels:
+          severity: warning
+          service: predator-frontend
+        annotations:
+          summary: "High CPU usage detected"
+          description: "CPU usage is {{ $value | humanizePercentage }} for the last 10 minutes."
+          runbook_url: "https://docs.predator-analytics.ua/runbooks/high-cpu-usage"
+
+      - alert: VeryHighCPUUsage
+        expr: predator_frontend:container_cpu_usage:5m > 0.95
+        for: 5m
+        labels:
+          severity: critical
+          service: predator-frontend
+        annotations:
+          summary: "Very high CPU usage detected"
+          description: "CPU usage is {{ $value | humanizePercentage }} for the last 5 minutes."
+          runbook_url: "https://docs.predator-analytics.ua/runbooks/very-high-cpu-usage"
+
+      - alert: HighMemoryUsage
+        expr: predator_frontend:container_memory_usage / (1024*1024*1024) > 0.8
+        for: 10m
+        labels:
+          severity: warning
+          service: predator-frontend
+        annotations:
+          summary: "High memory usage detected"
+          description: "Memory usage is {{ $value | humanizePercentage }} for the last 10 minutes."
+          runbook_url: "https://docs.predator-analytics.ua/runbooks/high-memory-usage"
+
+      - alert: VeryHighMemoryUsage
+        expr: predator_frontend:container_memory_usage / (1024*1024*1024) > 0.95
+        for: 5m
+        labels:
+          severity: critical
+          service: predator-frontend
+        annotations:
+          summary: "Very high memory usage detected"
+          description: "Memory usage is {{ $value | humanizePercentage }} for the last 5 minutes."
+          runbook_url: "https://docs.predator-analytics.ua/runbooks/very-high-memory-usage"
+
+      # Nginx Alerts
+      - alert: NginxHighErrorRate
+        expr: predator_frontend:nginx_error_rate:5m > 0.05
+        for: 5m
+        labels:
+          severity: warning
+          service: nginx
+        annotations:
+          summary: "Nginx high error rate"
+          description: "Nginx error rate is {{ $value | humanizePercentage }} for the last 5 minutes."
+          runbook_url: "https://docs.predator-analytics.ua/runbooks/nginx-high-error-rate"
+
+      - alert: NginxHighResponseTime
+        expr: predator_frontend:nginx_response_time:5m > 2
+        for: 5m
+        labels:
+          severity: warning
+          service: nginx
+        annotations:
+          summary: "Nginx high response time"
+          description: "Nginx 95th percentile response time is {{ $value }}s for the last 5 minutes."
+          runbook_url: "https://docs.predator-analytics.ua/runbooks/nginx-high-response-time"
+
+      # SSL Certificate Alerts
+      - alert: SSLCertificateExpiringSoon
+        expr: probe_ssl_earliest_cert_expiry{job="blackbox-http"} - time() < 86400 * 30
+        for: 1h
+        labels:
+          severity: warning
+          service: ssl
+        annotations:
+          summary: "SSL certificate expiring soon"
+          description: "SSL certificate for {{ $labels.instance }} expires in {{ $value | humanizeDuration }}."
+          runbook_url: "https://docs.predator-analytics.ua/runbooks/ssl-expiring"
+
+      - alert: SSLCertificateExpired
+        expr: probe_ssl_earliest_cert_expiry{job="blackbox-http"} - time() < 0
+        for: 1m
+        labels:
+          severity: critical
+          service: ssl
+        annotations:
+          summary: "SSL certificate expired"
+          description: "SSL certificate for {{ $labels.instance }} has expired."
+          runbook_url: "https://docs.predator-analytics.ua/runbooks/ssl-expired"
+
+  - name: predator_infrastructure_alerts
+    rules:
+      # Docker Container Alerts
+      - alert: DockerContainerRestarting
+        expr: increase(container_start_time_seconds{name="predator-frontend"}[1h]) > 3
+        for: 0m
+        labels:
+          severity: warning
+          service: docker
+        annotations:
+          summary: "Docker container restarting frequently"
+          description: "Container predator-frontend has restarted {{ $value }} times in the last hour."
+          runbook_url: "https://docs.predator-analytics.ua/runbooks/container-restarting"
+
+      - alert: DockerContainerNotRunning
+        expr: container_state_running{name="predator-frontend"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          service: docker
+        annotations:
+          summary: "Docker container not running"
+          description: "Container predator-frontend is not running."
+          runbook_url: "https://docs.predator-analytics.ua/runbooks/container-not-running"
+
+      # Disk Space Alerts
+      - alert: DiskSpaceLow
+        expr: (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) < 0.1
+        for: 5m
+        labels:
+          severity: warning
+          service: system
+        annotations:
+          summary: "Low disk space"
+          description: "Disk space is {{ $value | humanizePercentage }} full."
+          runbook_url: "https://docs.predator-analytics.ua/runbooks/low-disk-space"
+
+      - alert: DiskSpaceCritical
+        expr: (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) < 0.05
+        for: 2m
+        labels:
+          severity: critical
+          service: system
+        annotations:
+          summary: "Critical disk space"
+          description: "Disk space is {{ $value | humanizePercentage }} full."
+          runbook_url: "https://docs.predator-analytics.ua/runbooks/critical-disk-space"
+
+  - name: predator_business_alerts
+    rules:
+      # Business Metrics Alerts
+      - alert: LowRequestRate
+        expr: predator_frontend:request_rate:5m < 0.1
+        for: 10m
+        labels:
+          severity: warning
+          service: business
+        annotations:
+          summary: "Low request rate"
+          description: "Request rate is {{ $value }} requests/second for the last 10 minutes."
+          runbook_url: "https://docs.predator-analytics.ua/runbooks/low-request-rate"
+
+      - alert: ZeroRequestRate
+        expr: predator_frontend:request_rate:5m == 0
+        for: 5m
+        labels:
+          severity: critical
+          service: business
+        annotations:
+          summary: "Zero request rate"
+          description: "No requests received in the last 5 minutes."
+          runbook_url: "https://docs.predator-analytics.ua/runbooks/zero-request-rate"
+
+# Silence Rules (for maintenance windows)
+silences:
+  - matchers:
+      - name: alertname
+        value: FrontendServiceDown
+      - name: service
+        value: predator-frontend
+    startsAt: "2024-01-01T00:00:00Z"
+    endsAt: "2024-01-01T01:00:00Z"
+    createdBy: "automation@predator-analytics.ua"
+    comment: "Scheduled maintenance window"

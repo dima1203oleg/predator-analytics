@@ -1,0 +1,37 @@
+# 🦅 PREDATOR Analytics UI - Helm Chart
+# Version: v61.0-ELITE
+
+apiVersion: v2
+name: predator-frontend
+description: PREDATOR Analytics Frontend - OSINT платформа для митної аналітики України
+type: application
+version: 61.0.0
+appVersion: "61.0-ELITE"
+
+home: https://github.com/dima1203oleg/predator-analytics
+sources:
+  - https://github.com/dima1203oleg/predator-analytics
+  - https://docs.predator-analytics.ua
+
+maintainers:
+  - name: PREDATOR Analytics Team
+    email: support@predator-analytics.ua
+    url: https://predator-analytics.ua
+
+keywords:
+  - osint
+  - analytics
+  - ukraine
+  - customs
+  - security
+  - frontend
+  - react
+  - typescript
+
+annotations:
+  category: Analytics
+  licenses: MIT
+  predatorengine: "v61.0-ELITE"
+  compliance: "AGENTS.md v61.0-ELITE"
+
+# Note: External dependencies (nginx, prometheus) managed separately

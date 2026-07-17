@@ -1,0 +1,65 @@
+
+    PREDATOR ELITEКластер_Абсолютного_Інтелекту // v60.0ДОСТУП: ВЕХОВНИЙ_СУВЕРЕННЕЙРОННИЙ_ЩИТ_АКТИВНИЙ // 2048-Q ШифруванняПРОПУСТИТИ ЗАСТАВКУЖурнал_Ініціалізації_Системи:> BOOT: ЗАВАНТАЖЕННЯ_ЕЛІТНИХ_СИСТЕМНИХ_ВИКЛИКІВ[ACK]> CORE: ПРИЄДНАННЯ_НЕЙ ОННИХ_СИНАПСІВ_v60[ACK]> SIGINT: СКАНУВАННЯ_ГЛОБАЛЬНИХ_ ЕЗЕ ВІВ [КИЇВ_СИНХ О][ACK]ВЛАСНИЙ_ПРОТОКОЛ_60.0рівень_Суверенної_АвторизаціїПравовий СуверенітетДОСТУП ДО PREDATOR ELITE ОБМЕЖЕНИЙ. ВИ ПОГОДЖУЄТЕСЬ НА ПОВНУ ПРОЗОРІСТЬ ВАШИХ ДІЙ ПЕРЕД АВТОНОМНИМ ЯДРОМ.Всі операції логуються в незмінному реєстрі WORM.АНАЛІЗ БІОМЕТРИЧНОГО ВІДБИТКУ...ЦЕНТРАЛЬНЕ_ЯДРО_КИЇВКИЇВ_ВУЗОЛ_H100: СИНХ ОНІЗОВАНОGEO_SIGINT: ОДЕСЬКА_ОБЛАСТЬ_АНАЛІЗ...НЕЙ ОННЕ_НАВАНТАЖЕННЯ: 3.48%ВИЯВЛЕНО_МАНІПУЛЯЦІЮ_ ИНКОМЗАТрИМКА: 0.000042msКИЇВ_ВУЗОЛ_H100: СИНХ ОНІЗОВАНОGEO_SIGINT: ОДЕСЬКА_ОБЛАСТЬ_АНАЛІЗ...НЕЙ ОННЕ_НАВАНТАЖЕННЯ: 3.48%ВИЯВЛЕНО_МАНІПУЛЯЦІЮ_ ИНКОМЗАТрИМКА: 0.000042msКИЇВ_ВУЗОЛ_H100: СИНХ ОНІЗОВАНОGEO_SIGINT: ОДЕСЬКА_ОБЛАСТЬ_АНАЛІЗ...НЕЙ ОННЕ_НАВАНТАЖЕННЯ: 3.48%ВИЯВЛЕНО_МАНІПУЛЯЦІЮ_ ИНКОМЗАТрИМКА: 0.000042msКИЇВ_ВУЗОЛ_H100: СИНХ ОНІЗОВАНОGEO_SIGINT: ОДЕСЬКА_ОБЛАСТЬ_АНАЛІЗ...НЕЙ ОННЕ_НАВАНТАЖЕННЯ: 3.48%ВИЯВЛЕНО_МАНІПУЛЯЦІЮ_ ИНКОМЗАТрИМКА: 0.000042msКИЇВ_ВУЗОЛ_H100: СИНХ ОНІЗОВАНОGEO_SIGINT: ОДЕСЬКА_ОБЛАСТЬ_АНАЛІЗ...НЕЙ ОННЕ_НАВАНТАЖЕННЯ: 3.48%ВИЯВЛЕНО_МАНІПУЛЯЦІЮ_ ИНКОМЗАТрИМКА: 0.000042ms
+        @keyframes ticker {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .animate-ticker {
+          animation: ticker 40s linear infinite;
+        }
+        @keyframes spin-slow {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        @keyframes spin-reverse {
+          from { transform: rotate(360deg); }
+          to { transform: rotate(-360deg); }
+        }
+        .animate-spin-slow {
+          animation: spin-slow 40s linear infinite;
+        }
+        .animate-spin-reverse {
+          animation: spin-reverse 25s linear infinite;
+        }
+        .scanline {
+          width: 100%;
+          height: 4px;
+          background: rgba(212, 175, 55, 0.05);
+          position: absolute;
+          top: 0;
+          z-index: 100;
+          animation: scanline 8s linear infinite;
+          pointer-events: none;
+        }
+        @keyframes scanline {
+          0% { top: -100%; }
+          100% { top: 100%; }
+        }
+        .crt-overlay {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.01), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.01));
+          background-size: 100% 4px, 4px 100%;
+          z-index: 95;
+          pointer-events: none;
+          opacity: 0.3;
+        }
+        @keyframes subtle-shake {
+          0% { transform: translate(0, 0); }
+          25% { transform: translate(-3px, 3px); }
+          50% { transform: translate(3px, -3px); }
+          75% { transform: translate(-3px, -3px); }
+          100% { transform: translate(0, 0); }
+        }
+        .animate-subtle-shake {
+          animation: subtle-shake 0.15s infinite;
+        }
+      
+                @keyframes toastIn {
+                    from { opacity: 0; transform: translateX(40px) scale(0.95); }
+                    to   { opacity: 1; transform: translateX(0) scale(1); }
+                }
+            
+    
+  
+

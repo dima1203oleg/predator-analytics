@@ -1,0 +1,435 @@
+
+ RUN  v1.6.1 /Users/Shared/Predator_60/apps/predator-analytics-ui
+
+stderr | src/features/intelligence/__tests__/IntelligenceView.test.tsx > IntelligenceView > повинен відмальовувати основний заголовок та структуру
+Error: Uncaught [Error: [vitest] No "Activity" export is defined on the "lucide-react" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+]
+    at reportException (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:26599:12) Error: [vitest] No "Activity" export is defined on the "lucide-react" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+    at VitestMocker.createError (file:///Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/vitest/dist/vendor/execute.fL3szUAI.js:79:19)
+    at Object.get (file:///Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/vitest/dist/vendor/execute.fL3szUAI.js:153:22)
+    at IntelligenceView (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/features/intelligence/IntelligenceView.tsx:90:95)
+    at renderWithHooks (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3) {
+  codeFrame: 'vi.mock("lucide-react", async (importOriginal) => {\n' +
+    '  const actual = await importOriginal()\n' +
+    '  return {\n' +
+    '    ...actual,\n' +
+    '    // your mocked methods\n' +
+    '  }\n' +
+    '})'
+}
+Error: Uncaught [Error: [vitest] No "Activity" export is defined on the "lucide-react" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+]
+    at reportException (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:26599:12) Error: [vitest] No "Activity" export is defined on the "lucide-react" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+    at VitestMocker.createError (file:///Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/vitest/dist/vendor/execute.fL3szUAI.js:79:19)
+    at Object.get (file:///Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/vitest/dist/vendor/execute.fL3szUAI.js:153:22)
+    at IntelligenceView (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/features/intelligence/IntelligenceView.tsx:90:95)
+    at renderWithHooks (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3) {
+  codeFrame: 'vi.mock("lucide-react", async (importOriginal) => {\n' +
+    '  const actual = await importOriginal()\n' +
+    '  return {\n' +
+    '    ...actual,\n' +
+    '    // your mocked methods\n' +
+    '  }\n' +
+    '})'
+}
+The above error occurred in the <IntelligenceView> component:
+
+    at IntelligenceView (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/features/intelligence/IntelligenceView.tsx:34:65)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/features/intelligence/__tests__/IntelligenceView.test.tsx > IntelligenceView > повинен активувати режим "мислення" при натисканні на кнопку оптимізації
+Error: Uncaught [Error: [vitest] No "Activity" export is defined on the "lucide-react" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+]
+    at reportException (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:26599:12) Error: [vitest] No "Activity" export is defined on the "lucide-react" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+    at VitestMocker.createError (file:///Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/vitest/dist/vendor/execute.fL3szUAI.js:79:19)
+    at Object.get (file:///Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/vitest/dist/vendor/execute.fL3szUAI.js:153:22)
+    at IntelligenceView (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/features/intelligence/IntelligenceView.tsx:90:95)
+    at renderWithHooks (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3) {
+  codeFrame: 'vi.mock("lucide-react", async (importOriginal) => {\n' +
+    '  const actual = await importOriginal()\n' +
+    '  return {\n' +
+    '    ...actual,\n' +
+    '    // your mocked methods\n' +
+    '  }\n' +
+    '})'
+}
+Error: Uncaught [Error: [vitest] No "Activity" export is defined on the "lucide-react" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+]
+    at reportException (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:26599:12) Error: [vitest] No "Activity" export is defined on the "lucide-react" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+    at VitestMocker.createError (file:///Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/vitest/dist/vendor/execute.fL3szUAI.js:79:19)
+    at Object.get (file:///Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/vitest/dist/vendor/execute.fL3szUAI.js:153:22)
+    at IntelligenceView (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/features/intelligence/IntelligenceView.tsx:90:95)
+    at renderWithHooks (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3) {
+  codeFrame: 'vi.mock("lucide-react", async (importOriginal) => {\n' +
+    '  const actual = await importOriginal()\n' +
+    '  return {\n' +
+    '    ...actual,\n' +
+    '    // your mocked methods\n' +
+    '  }\n' +
+    '})'
+}
+The above error occurred in the <IntelligenceView> component:
+
+    at IntelligenceView (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/features/intelligence/IntelligenceView.tsx:34:65)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/features/intelligence/__tests__/IntelligenceView.test.tsx > IntelligenceView > повинен перемикати шари (Graph vs Radar)
+Error: Uncaught [Error: [vitest] No "Activity" export is defined on the "lucide-react" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+]
+    at reportException (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:26599:12) Error: [vitest] No "Activity" export is defined on the "lucide-react" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+    at VitestMocker.createError (file:///Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/vitest/dist/vendor/execute.fL3szUAI.js:79:19)
+    at Object.get (file:///Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/vitest/dist/vendor/execute.fL3szUAI.js:153:22)
+    at IntelligenceView (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/features/intelligence/IntelligenceView.tsx:90:95)
+    at renderWithHooks (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3) {
+  codeFrame: 'vi.mock("lucide-react", async (importOriginal) => {\n' +
+    '  const actual = await importOriginal()\n' +
+    '  return {\n' +
+    '    ...actual,\n' +
+    '    // your mocked methods\n' +
+    '  }\n' +
+    '})'
+}
+Error: Uncaught [Error: [vitest] No "Activity" export is defined on the "lucide-react" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+]
+    at reportException (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:26599:12) Error: [vitest] No "Activity" export is defined on the "lucide-react" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+    at VitestMocker.createError (file:///Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/vitest/dist/vendor/execute.fL3szUAI.js:79:19)
+    at Object.get (file:///Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/vitest/dist/vendor/execute.fL3szUAI.js:153:22)
+    at IntelligenceView (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/features/intelligence/IntelligenceView.tsx:90:95)
+    at renderWithHooks (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3) {
+  codeFrame: 'vi.mock("lucide-react", async (importOriginal) => {\n' +
+    '  const actual = await importOriginal()\n' +
+    '  return {\n' +
+    '    ...actual,\n' +
+    '    // your mocked methods\n' +
+    '  }\n' +
+    '})'
+}
+The above error occurred in the <IntelligenceView> component:
+
+    at IntelligenceView (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/features/intelligence/IntelligenceView.tsx:34:65)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/features/intelligence/__tests__/IntelligenceView.test.tsx > IntelligenceView > повинен відображати віджет звітів для вибраного об'єкта
+Error: Uncaught [Error: [vitest] No "Activity" export is defined on the "lucide-react" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+]
+    at reportException (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:26599:12) Error: [vitest] No "Activity" export is defined on the "lucide-react" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+    at VitestMocker.createError (file:///Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/vitest/dist/vendor/execute.fL3szUAI.js:79:19)
+    at Object.get (file:///Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/vitest/dist/vendor/execute.fL3szUAI.js:153:22)
+    at IntelligenceView (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/features/intelligence/IntelligenceView.tsx:90:95)
+    at renderWithHooks (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3) {
+  codeFrame: 'vi.mock("lucide-react", async (importOriginal) => {\n' +
+    '  const actual = await importOriginal()\n' +
+    '  return {\n' +
+    '    ...actual,\n' +
+    '    // your mocked methods\n' +
+    '  }\n' +
+    '})'
+}
+Error: Uncaught [Error: [vitest] No "Activity" export is defined on the "lucide-react" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+]
+    at reportException (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:26599:12) Error: [vitest] No "Activity" export is defined on the "lucide-react" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+    at VitestMocker.createError (file:///Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/vitest/dist/vendor/execute.fL3szUAI.js:79:19)
+    at Object.get (file:///Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/vitest/dist/vendor/execute.fL3szUAI.js:153:22)
+    at IntelligenceView (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/features/intelligence/IntelligenceView.tsx:90:95)
+    at renderWithHooks (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3) {
+  codeFrame: 'vi.mock("lucide-react", async (importOriginal) => {\n' +
+    '  const actual = await importOriginal()\n' +
+    '  return {\n' +
+    '    ...actual,\n' +
+    '    // your mocked methods\n' +
+    '  }\n' +
+    '})'
+}
+The above error occurred in the <IntelligenceView> component:
+
+    at IntelligenceView (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/features/intelligence/IntelligenceView.tsx:34:65)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/features/intelligence/__tests__/IntelligenceView.test.tsx > IntelligenceView > повинен відображати діагностичні панелі та їх стани
+Error: Uncaught [Error: [vitest] No "Activity" export is defined on the "lucide-react" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+]
+    at reportException (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:26599:12) Error: [vitest] No "Activity" export is defined on the "lucide-react" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+    at VitestMocker.createError (file:///Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/vitest/dist/vendor/execute.fL3szUAI.js:79:19)
+    at Object.get (file:///Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/vitest/dist/vendor/execute.fL3szUAI.js:153:22)
+    at IntelligenceView (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/features/intelligence/IntelligenceView.tsx:90:95)
+    at renderWithHooks (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3) {
+  codeFrame: 'vi.mock("lucide-react", async (importOriginal) => {\n' +
+    '  const actual = await importOriginal()\n' +
+    '  return {\n' +
+    '    ...actual,\n' +
+    '    // your mocked methods\n' +
+    '  }\n' +
+    '})'
+}
+Error: Uncaught [Error: [vitest] No "Activity" export is defined on the "lucide-react" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+]
+    at reportException (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:26599:12) Error: [vitest] No "Activity" export is defined on the "lucide-react" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+    at VitestMocker.createError (file:///Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/vitest/dist/vendor/execute.fL3szUAI.js:79:19)
+    at Object.get (file:///Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/vitest/dist/vendor/execute.fL3szUAI.js:153:22)
+    at IntelligenceView (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/features/intelligence/IntelligenceView.tsx:90:95)
+    at renderWithHooks (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3) {
+  codeFrame: 'vi.mock("lucide-react", async (importOriginal) => {\n' +
+    '  const actual = await importOriginal()\n' +
+    '  return {\n' +
+    '    ...actual,\n' +
+    '    // your mocked methods\n' +
+    '  }\n' +
+    '})'
+}
+The above error occurred in the <IntelligenceView> component:
+
+    at IntelligenceView (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/features/intelligence/IntelligenceView.tsx:34:65)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+ ❯ src/features/intelligence/__tests__/IntelligenceView.test.tsx  (5 tests | 5 failed) 111ms
+   ❯ src/features/intelligence/__tests__/IntelligenceView.test.tsx > IntelligenceView > повинен відмальовувати основний заголовок та структуру
+     → [vitest] No "Activity" export is defined on the "lucide-react" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+   ❯ src/features/intelligence/__tests__/IntelligenceView.test.tsx > IntelligenceView > повинен активувати режим "мислення" при натисканні на кнопку оптимізації
+     → [vitest] No "Activity" export is defined on the "lucide-react" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+   ❯ src/features/intelligence/__tests__/IntelligenceView.test.tsx > IntelligenceView > повинен перемикати шари (Graph vs Radar)
+     → [vitest] No "Activity" export is defined on the "lucide-react" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+   ❯ src/features/intelligence/__tests__/IntelligenceView.test.tsx > IntelligenceView > повинен відображати віджет звітів для вибраного об'єкта
+     → [vitest] No "Activity" export is defined on the "lucide-react" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+   ❯ src/features/intelligence/__tests__/IntelligenceView.test.tsx > IntelligenceView > повинен відображати діагностичні панелі та їх стани
+     → [vitest] No "Activity" export is defined on the "lucide-react" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/intelligence/__tests__/IntelligenceView.test.tsx > IntelligenceView > повинен відмальовувати основний заголовок та структуру
+ FAIL  src/features/intelligence/__tests__/IntelligenceView.test.tsx > IntelligenceView > повинен активувати режим "мислення" при натисканні на кнопку оптимізації
+ FAIL  src/features/intelligence/__tests__/IntelligenceView.test.tsx > IntelligenceView > повинен перемикати шари (Graph vs Radar)
+ FAIL  src/features/intelligence/__tests__/IntelligenceView.test.tsx > IntelligenceView > повинен відображати віджет звітів для вибраного об'єкта
+ FAIL  src/features/intelligence/__tests__/IntelligenceView.test.tsx > IntelligenceView > повинен відображати діагностичні панелі та їх стани
+Error: [vitest] No "Activity" export is defined on the "lucide-react" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+vi.mock("lucide-react", async (importOriginal) => {
+  const actual = await importOriginal()
+  return {
+    ...actual,
+    // your mocked methods
+  }
+})
+
+ ❯ IntelligenceView src/features/intelligence/IntelligenceView.tsx:90:95
+     88|                         }
+     89|                         stats={[
+     90|                             { label: 'COGNITIVE_LOAD', value: '72%', c…
+       |                                                                                               ^
+     91|                             { label: 'NODE_SOURCE', value: isOffline ?…
+     92|                             { label: 'FAILOVER', value: activeFailover…
+ ❯ renderWithHooks node_modules/react-dom/cjs/react-dom.development.js:15486:18
+ ❯ mountIndeterminateComponent node_modules/react-dom/cjs/react-dom.development.js:20103:13
+ ❯ beginWork node_modules/react-dom/cjs/react-dom.development.js:21626:16
+ ❯ beginWork$1 node_modules/react-dom/cjs/react-dom.development.js:27465:14
+ ❯ performUnitOfWork node_modules/react-dom/cjs/react-dom.development.js:26599:12
+ ❯ workLoopSync node_modules/react-dom/cjs/react-dom.development.js:26505:5
+ ❯ renderRootSync node_modules/react-dom/cjs/react-dom.development.js:26473:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ Test Files  1 failed (1)
+      Tests  5 failed (5)
+   Start at  20:06:49
+   Duration  14.77s (transform 2.45s, setup 6.34s, collect 2.44s, tests 111ms, environment 3.26s, prepare 966ms)
+

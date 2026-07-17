@@ -1,0 +1,69 @@
+/**
+ * 🦅 PREDATOR Analytics v63.0-ELITE — Dashboard Hooks
+ * TanStack Query хуки для головного командного дашборду.
+ */
+
+import { useQuery } from '@tanstack/react-query';
+import { dashboardApi, type DashboardOverview, type DashboardAlert } from '../services/api/dashboard';
+import { intelligenceApi } from '../services/api/intelligence';
+
+const DASHBOARD_KEYS = {
+  overview: ['dashboard', 'overview'] as const,
+  alerts:   ['dashboard', 'alerts'] as const,
+  sentinel: ['system', 'sentinel'] as const,
+  morningBrief: ['intelligence', 'morningBrief'] as const,
+};
+
+/**
+ * Хук для отримання глобальної статистики дашборду.
+ * Оновлюється кожні 30 секунд.
+ */
+export function useDashboardOverview() {
+  return useQuery<DashboardOverview>({
+    queryKey: DASHBOARD_KEYS.overview,
+    queryFn: () => dashboardApi.getOverview(),
+    refetchInterval: 30000,
+    staleTime: 15000,
+  });
+}
+
+/**
+ * Хук для отримання активних алертів.
+ * Оновлюється кожні 10 секунд (критично для моніторингу).
+ */
+export function useDashboardAlerts(limit: number = 10) {
+  return useQuery<{ items: DashboardAlert[] }>({
+    queryKey: [...DASHBOARD_KEYS.alerts, limit],
+    queryFn: () => dashboardApi.getAlerts(limit),
+    refetchInterval: 10000,
+    staleTime: 5000,
+  });
+}
+
+/**
+ * Хук для отримання ранкового звіту (Morning Brief).
+ */
+export function useMorningBrief() {
+  return useQuery({
+    queryKey: DASHBOARD_KEYS.morningBrief,
+    queryFn: () => intelligenceApi.getMorningNewspaper(),
+    refetchInterval: 60000 * 5, // Every 5 mins
+    staleTime: 60000,
+  });
+}
+
+/**
+ * Хук для моніторингу Sentinel (глобальний статус системи).
+ */
+export function useSystemSentinel() {
+  return useQuery({
+    queryKey: DASHBOARD_KEYS.sentinel,
+    queryFn: async () => {
+      const response = await fetch('/api/v1/health/ready');
+      if (!response.ok) throw new Error('Sentinel node connection failure');
+      return response.json();
+    },
+    refetchInterval: 15000,
+    staleTime: 10000,
+  });
+}

@@ -1,9 +1,0 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@layer base {
-  body {
-    @apply m-0 overflow-hidden bg-obsidian text-cyan-tactical font-sans;
-  }
-}

@@ -1,0 +1,223 @@
+
+/* ============================================================================
+   PRODUCTION-READY UTILITIES - Заміна динамічних Tailwind класів
+   ============================================================================ */
+
+/* Color Variants - для заміни bg-${color}-500 */
+/* Color Variants - для заміни bg-${color}-500 */
+.bg-cyan { background-color: rgb(225 29 72 / 0.1); } /* Ремап на rose */
+.bg-blue { background-color: rgb(59 130 246 / 0.1); }
+.bg-purple { background-color: rgb(168 85 247 / 0.1); }
+.bg-green { background-color: rgb(225 29 72 / 0.1); } /* Ремап на rose */
+.bg-amber { background-color: rgb(244 63 94 / 0.1); } /* Ремап на rose-light */
+.bg-red { background-color: rgb(239 68 68 / 0.1); }
+.bg-orange { background-color: rgb(249 115 22 / 0.1); }
+.bg-rose { background-color: rgb(225 29 72 / 0.1); }
+
+/* Border Variants */
+.border-cyan { border-color: rgb(225 29 72 / 0.2); }
+.border-blue { border-color: rgb(59 130 246 / 0.2); }
+.border-purple { border-color: rgb(168 85 247 / 0.2); }
+.border-green { border-color: rgb(225 29 72 / 0.2); }
+.border-amber { border-color: rgb(244 63 94 / 0.2); }
+.border-red { border-color: rgb(239 68 68 / 0.2); }
+.border-orange { border-color: rgb(249 115 22 / 0.2); }
+.border-rose { border-color: rgb(225 29 72 / 0.2); }
+
+/* Text Variants */
+.text-cyan { color: rgb(244 63 94); }
+.text-blue { color: rgb(96 165 250); }
+.text-purple { color: rgb(192 132 252); }
+.text-green { color: rgb(244 63 94); }
+.text-amber { color: rgb(251 113 133); }
+.text-red { color: rgb(248 113 113); }
+.text-orange { color: rgb(251 146 60); }
+.text-rose { color: rgb(225 29 72); }
+
+/* Hover Variants */
+.hover-border-cyan:hover { border-color: rgb(225 29 72 / 0.4); }
+.hover-border-blue:hover { border-color: rgb(59 130 246 / 0.4); }
+.hover-border-purple:hover { border-color: rgb(168 85 247 / 0.4); }
+.hover-border-green:hover { border-color: rgb(225 29 72 / 0.4); }
+.hover-border-amber:hover { border-color: rgb(244 63 94 / 0.4); }
+.hover-border-red:hover { border-color: rgb(239 68 68 / 0.4); }
+.hover-border-rose:hover { border-color: rgb(225 29 72 / 0.4); }
+
+/* Progress Bar Variants */
+.progress-cyan { background-color: rgb(225 29 72); }
+.progress-blue { background-color: rgb(59 130 246); }
+.progress-purple { background-color: rgb(168 85 247); }
+.progress-green { background-color: rgb(225 29 72); }
+.progress-amber { background-color: rgb(244 63 94); }
+.progress-red { background-color: rgb(239 68 68); }
+.progress-rose { background-color: rgb(225 29 72); }
+
+/* ============================================================================
+   RESPONSIVE UTILITIES - Production Ready
+   ============================================================================ */
+
+/* Responsive Grid System */
+.grid-responsive {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.grid-responsive-sm {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+/* Responsive Padding */
+.responsive-padding {
+  padding: 1rem;
+}
+
+@media (min-width: 768px) {
+  .responsive-padding {
+    padding: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsive-padding {
+    padding: 2rem;
+  }
+}
+
+/* Touch Targets (мінімум 44x44px для accessibility) */
+.touch-target {
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ============================================================================
+   LAYOUT UTILITIES - Flexbox & Grid Helpers
+   ============================================================================ */
+
+/* Flex Utilities */
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.flex-start {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+/* Grid Auto-Fit */
+.grid-auto-fit {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: 1.5rem;
+}
+
+/* ============================================================================
+   SCROLL ENHANCEMENTS
+   ============================================================================ */
+
+/* Custom Scrollbar для різних кольорових тем */
+.scrollbar-rose::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgb(225 29 72), rgb(190 18 60));
+}
+
+.scrollbar-cyan::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgb(225 29 72), rgb(190 18 60));
+}
+
+.scrollbar-purple::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgb(168 85 247), rgb(147 51 234));
+}
+
+.scrollbar-green::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgb(225 29 72), rgb(190 18 60));
+}
+
+/* ============================================================================
+   RESPONSIVE BREAKPOINTS - Mobile First
+   ============================================================================ */
+
+/* ── RESPONSIVE BREAKPOINTS v2.0 (useViewport система) ── */
+/* compact < 640px | medium 640-1024px | expanded > 1024px | wide > 1440px */
+
+/* Приховати на compact (телефони) */
+@media (max-width: 639px) {
+  .hide-compact { display: none !important; }
+}
+
+/* Приховати на medium (планшети) */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .hide-medium { display: none !important; }
+}
+
+/* Приховати на expanded (ноутбуки/десктоп) */
+@media (min-width: 1024px) {
+  .hide-expanded { display: none !important; }
+}
+
+/* Показати тільки на compact */
+@media (min-width: 640px) {
+  .show-compact-only { display: none !important; }
+}
+
+/* Показати тільки на medium */
+@media (max-width: 639px), (min-width: 1024px) {
+  .show-medium-only { display: none !important; }
+}
+
+/* Показати тільки на expanded */
+@media (max-width: 1023px) {
+  .show-expanded-only { display: none !important; }
+}
+
+/* Touch targets для всіх breakpoints */
+.touch-min {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+@media (max-width: 639px) {
+  .touch-min {
+    min-width: 48px;
+    min-height: 48px;
+  }
+}
+
+/* Responsive Text Sizes */
+.text-responsive {
+  font-size: clamp(0.75rem, 2vw, 1rem);
+}
+
+.text-responsive-lg {
+  font-size: clamp(1rem, 3vw, 1.5rem);
+}
+
+.text-responsive-xl {
+  font-size: clamp(1.25rem, 4vw, 2.25rem);
+}
+
+/* Responsive padding */
+@media (max-width: 639px) {
+  .responsive-padding { padding: 0.75rem; }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .responsive-padding { padding: 1.25rem; }
+}
+
+@media (min-width: 1024px) {
+  .responsive-padding { padding: 2rem; }
+}

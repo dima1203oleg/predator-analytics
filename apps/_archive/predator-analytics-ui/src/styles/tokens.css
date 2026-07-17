@@ -1,0 +1,184 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* ══════════════════════════════════════════════════════
+       OBSIDIAN NEXUS — Design Tokens v2.0
+       Єдина кольорова система для всього проекту
+    ══════════════════════════════════════════════════════ */
+
+    /* ── BACKGROUNDS (Elevation System) ── */
+    --bg-base:      #04060E;   /* Абсолютна глибина */
+    --bg-primary:   #070B14;   /* Основний фон (body) */
+    --bg-surface:   #0C1220;   /* Перша поверхня (layout) */
+    --bg-card:      #111827;   /* Карти */
+    --bg-elevated:  #1C2539;   /* Elevated елементи */
+    --bg-overlay:   rgba(7, 11, 20, 0.88);
+    --bg-glass:     rgba(12, 18, 32, 0.72);
+    --bg-glass-md:  rgba(17, 24, 39, 0.85);
+
+    /* ── FOREGROUND / TEXT ── */
+    --text-primary:   #F8FAFC;
+    --text-secondary: #CBD5E1;
+    --text-muted:     #94A3B8;
+    --text-dim:       #475569;
+    --text-placeholder: #334155;
+
+    /* ── SINGLE ACCENT SYSTEM ── */
+    --accent:          #E11D48;   /* Crimson — єдиний акцент */
+    --accent-hover:    #F43F5E;
+    --accent-muted:    rgba(225, 29, 72, 0.18);
+    --accent-glow:     rgba(225, 29, 72, 0.30);
+    --accent-glow-lg:  rgba(225, 29, 72, 0.15);
+    --accent-border:   rgba(225, 29, 72, 0.35);
+
+    /* ── SEMANTIC SIGNALS ── */
+    --signal-success:        #10B981;
+    --signal-success-bg:     rgba(16, 185, 129, 0.10);
+    --signal-success-border: rgba(16, 185, 129, 0.25);
+    --signal-warning:        #F59E0B;
+    --signal-warning-bg:     rgba(245, 158, 11, 0.10);
+    --signal-warning-border: rgba(245, 158, 11, 0.25);
+    --signal-danger:         #EF4444;
+    --signal-danger-bg:      rgba(239, 68, 68, 0.10);
+    --signal-danger-border:  rgba(239, 68, 68, 0.25);
+    --signal-info:           #38BDF8;
+    --signal-info-bg:        rgba(56, 189, 248, 0.10);
+    --signal-info-border:    rgba(56, 189, 248, 0.25);
+
+    /* ── BORDERS ── */
+    --border-subtle:  rgba(255, 255, 255, 0.04);
+    --border-default: rgba(255, 255, 255, 0.08);
+    --border-strong:  rgba(255, 255, 255, 0.16);
+    --border-accent:  var(--accent-border);
+
+    /* ── SHADOWS / ELEVATION ── */
+    --shadow-xs:  0 1px 3px rgba(0, 0, 0, 0.5);
+    --shadow-sm:  0 2px 8px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.4);
+    --shadow-md:  0 6px 24px rgba(0, 0, 0, 0.55), 0 2px 8px rgba(0, 0, 0, 0.4);
+    --shadow-lg:  0 12px 40px rgba(0, 0, 0, 0.65), 0 4px 16px rgba(0, 0, 0, 0.5);
+    --shadow-xl:  0 24px 64px rgba(0, 0, 0, 0.75), 0 8px 24px rgba(0, 0, 0, 0.6);
+    --shadow-glow-accent: 0 0 20px var(--accent-glow), 0 0 60px var(--accent-glow-lg);
+    --shadow-glow-info:   0 0 20px rgba(56, 189, 248, 0.20);
+    --shadow-glow-success:0 0 20px rgba(16, 185, 129, 0.20);
+
+    /* ── INSET HIGHLIGHTS ── */
+    --highlight-top:  inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    --highlight-full: inset 0 1px 0 rgba(255, 255, 255, 0.06), inset 0 -1px 0 rgba(0, 0, 0, 0.4);
+
+    /* ── TYPOGRAPHY SCALE (8-point) ── */
+    --text-2xs: 0.625rem;   /* 10px — absolute minimum */
+    --text-xs:  0.75rem;    /* 12px */
+    --text-sm:  0.875rem;   /* 14px */
+    --text-base:1rem;        /* 16px */
+    --text-lg:  1.125rem;   /* 18px */
+    --text-xl:  1.25rem;    /* 20px */
+    --text-2xl: 1.5rem;     /* 24px */
+    --text-3xl: 1.875rem;   /* 30px */
+    --text-4xl: 2.25rem;    /* 36px */
+
+    /* ── SPACING ── */
+    --radius-sm:   4px;
+    --radius-md:   8px;
+    --radius-lg:   12px;
+    --radius-xl:   16px;
+    --radius-2xl:  24px;
+    --radius-full: 9999px;
+    --radius-card: var(--radius-lg);
+    --radius-button: var(--radius-md);
+    --radius-modal: var(--radius-xl);
+
+    /* ── LEGACY COMPAT (щоб не ламати старий код) ── */
+    --bg-overlay:       rgba(7, 11, 20, 0.88);
+    --border-subtle:    rgba(255, 255, 255, 0.04);
+    --border-strong:    rgba(255, 255, 255, 0.16);
+    --text-secondary:   #CBD5E1;
+    --text-muted:       #94A3B8;
+    --accent-info:      #38BDF8;
+    --accent-warning:   #F59E0B;
+    --accent-critical:  #EF4444;
+    --signal-rooted:    #10B981;
+    --signal-target:    #E11D48;
+    --signal-monitoring:#F59E0B;
+    --shadow-dom:       0 4px 16px rgba(0, 0, 0, 0.55);
+
+    /* ── ANIMATION SPEEDS ── */
+    --dur-fast:    150ms;
+    --dur-normal:  250ms;
+    --dur-slow:    400ms;
+    --ease-spring: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-out:    cubic-bezier(0.0, 0, 0.2, 1);
+    --ease-default:cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* ── THEME: Stealth ── */
+  .theme-stealth {
+    --bg-primary:   #020408;
+    --bg-surface:   #060A10;
+    --bg-card:      #090E18;
+    --bg-elevated:  #0E1520;
+    --text-primary: #8FA0B4;
+    --text-secondary:#5A6A7A;
+    --accent:       #3A4A5A;
+    --accent-glow:  rgba(58, 74, 90, 0.3);
+    --border-subtle:rgba(255, 255, 255, 0.02);
+  }
+
+  /* ── THEME: Briefing (Light) ── */
+  .theme-briefing {
+    --bg-primary:   #F0F4FA;
+    --bg-surface:   #E8EEF6;
+    --bg-card:      #FFFFFF;
+    --bg-elevated:  #F8FAFC;
+    --text-primary: #0F172A;
+    --text-secondary:#334155;
+    --text-muted:   #64748B;
+    --accent:       #2563EB;
+    --accent-glow:  rgba(37, 99, 235, 0.25);
+    --border-subtle:rgba(0, 0, 0, 0.06);
+    --border-default:rgba(0, 0, 0, 0.12);
+    --shadow-sm:    0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-md:    0 6px 24px rgba(0, 0, 0, 0.12);
+  }
+
+  /* ── THEME: NATO-Secure ── */
+  [data-theme='professional-matte'],
+  .theme-nato-secure {
+    --bg-primary:   #07101F;
+    --bg-surface:   #0D192E;
+    --bg-card:      #122038;
+    --bg-elevated:  #1A2D47;
+    --accent:       #3B82F6;
+    --accent-glow:  rgba(59, 130, 246, 0.25);
+    --accent-border:rgba(59, 130, 246, 0.35);
+  }
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(225, 29, 72, 0.20);
+  border-radius: 3px;
+  transition: background var(--dur-normal) ease;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(225, 29, 72, 0.45);
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: var(--text-sm);
+  line-height: 1.6;
+}

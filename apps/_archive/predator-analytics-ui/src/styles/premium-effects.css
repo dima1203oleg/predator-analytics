@@ -1,0 +1,1609 @@
+/* ============================================================================
+   PREDATOR v63.0-ELITE — PREMIUM VISUAL EFFECTS
+   Консолідація всіх inline <style> блоків з 21+ компонентів.
+   Імпортується один раз у index.css.
+   ============================================================================ */
+
+/* ── PANEL 3D ── */
+.panel-3d {
+  transform: perspective(1000px) rotateX(0deg);
+  transition: all 0.5s var(--ease-spring, cubic-bezier(0.23, 1, 0.32, 1));
+}
+
+.panel-3d:hover {
+  transform: perspective(1000px) rotateX(1deg) translateY(-4px);
+  box-shadow:
+    0 24px 64px -12px rgba(0, 0, 0, 0.7),
+    0 0 30px rgba(99, 102, 241, 0.1);
+}
+
+/* ── SCROLLBAR — Єдина версія для всього проекту ── */
+.scrollbar-predator::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.scrollbar-predator::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-predator::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.2);
+  border-radius: 9999px;
+}
+
+.scrollbar-predator::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.4);
+}
+
+/* ── SCROLLBAR DARK — Blood Red Elite ── */
+.scrollbar-dark::-webkit-scrollbar {
+  width: 4px;
+}
+
+.scrollbar-dark::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-dark::-webkit-scrollbar-thumb {
+  background: rgba(225, 29, 72, 0.3);
+  border-radius: 10px;
+}
+
+.scrollbar-dark::-webkit-scrollbar-thumb:hover {
+  background: rgba(225, 29, 72, 0.6);
+}
+
+/* Варіанти кольору скролбару */
+.scrollbar-cyan::-webkit-scrollbar-thumb {
+  background: rgba(6, 182, 212, 0.2);
+}
+.scrollbar-cyan::-webkit-scrollbar-thumb:hover {
+  background: rgba(6, 182, 212, 0.4);
+}
+
+.scrollbar-emerald::-webkit-scrollbar-thumb {
+  background: rgba(16, 185, 129, 0.2);
+}
+.scrollbar-emerald::-webkit-scrollbar-thumb:hover {
+  background: rgba(16, 185, 129, 0.4);
+}
+
+/* ── SKEW TEXT ── */
+.skew-text {
+  transform: skewX(-4deg);
+}
+
+/* ── TACTICAL GLOW UTILITIES ── */
+.tactical-glow-indigo  { box-shadow: var(--glow-indigo); }
+.tactical-glow-cyan    { box-shadow: var(--glow-cyan); }
+.tactical-glow-rose    { box-shadow: var(--glow-rose); }
+.tactical-glow-emerald { box-shadow: var(--glow-emerald); }
+.tactical-glow-amber   { box-shadow: var(--glow-amber); }
+.tactical-glow-violet  { box-shadow: var(--glow-violet); }
+
+/* ── CARD HOVER LIFT ── */
+.card-hover-lift {
+  transition: all 0.3s var(--ease-default, cubic-bezier(0.4, 0, 0.2, 1));
+}
+
+.card-hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* ── SIDEBAR ACTIVE ITEM ── */
+.sidebar-nav-active {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(6, 182, 212, 0.06) 100%);
+  border: 1px solid rgba(99, 102, 241, 0.20);
+  box-shadow:
+    0 0 20px rgba(99, 102, 241, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+/* ── GRADIENT HEADINGS ── */
+.gradient-text-indigo {
+  background: linear-gradient(135deg, #ffffff 0%, #c7d2fe 50%, #818cf8 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-text-cyan {
+  background: linear-gradient(135deg, #ffffff 0%, #a5f3fc 50%, #06b6d4 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-text-orange {
+  background: linear-gradient(135deg, #ffffff 0%, #fed7aa 50%, #fb923c 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-text-rose {
+  background: linear-gradient(135deg, #ffffff 0%, #fecdd3 50%, #f43f5e 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ── NEON BORDERS ── */
+.neon-border-indigo {
+  border-color: rgba(99, 102, 241, 0.5);
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.15), inset 0 0 15px rgba(99, 102, 241, 0.04);
+}
+
+.neon-border-cyan {
+  border-color: rgba(6, 182, 212, 0.5);
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.15), inset 0 0 15px rgba(6, 182, 212, 0.04);
+}
+
+.neon-border-orange {
+  border-color: rgba(249, 115, 22, 0.5);
+  box-shadow: 0 0 15px rgba(249, 115, 22, 0.15), inset 0 0 15px rgba(249, 115, 22, 0.04);
+}
+
+.neon-border-rose {
+  border-color: rgba(244, 63, 94, 0.5);
+  box-shadow: 0 0 15px rgba(244, 63, 94, 0.15), inset 0 0 15px rgba(244, 63, 94, 0.04);
+}
+
+.neon-border-violet {
+  border-color: rgba(139, 92, 246, 0.5);
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.15), inset 0 0 15px rgba(139, 92, 246, 0.04);
+}
+
+/* ── FACTORY ANIMATIONS ── */
+@keyframes factory-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(249, 115, 22, 0.2), 0 0 60px rgba(249, 115, 22, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(249, 115, 22, 0.4), 0 0 80px rgba(249, 115, 22, 0.15);
+  }
+}
+
+.factory-pulse {
+  animation: factory-glow 3s ease-in-out infinite;
+}
+
+@keyframes pipeline-flow {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.pipeline-flow {
+  background: linear-gradient(90deg, #f97316, #f59e0b, #06b6d4, #f97316);
+  background-size: 300% 300%;
+  animation: pipeline-flow 3s ease infinite;
+}
+
+/* ── AZR PULSE ── */
+@keyframes azr-pulse {
+  0%, 100% {
+    opacity: 1;
+    filter: drop-shadow(0 0 4px rgba(249, 115, 22, 0.6));
+  }
+  50% {
+    opacity: 0.7;
+    filter: drop-shadow(0 0 12px rgba(249, 115, 22, 0.9));
+  }
+}
+
+.azr-active {
+  animation: azr-pulse 2s ease-in-out infinite;
+}
+
+/* ── STATUS DOT ── */
+.status-dot {
+  position: relative;
+}
+
+.status-dot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  opacity: 0.5;
+  filter: blur(4px);
+  animation: pulse 2s ease-in-out infinite;
+  background: inherit;
+}
+
+/* ── DATA CAPSULE ── */
+.data-capsule-enhanced {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(2, 6, 23, 0.9) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.5),
+    inset 0 1px 1px rgba(255, 255, 255, 0.05);
+  transition: all 0.3s var(--ease-default, cubic-bezier(0.4, 0, 0.2, 1));
+}
+
+.data-capsule-enhanced:hover {
+  border-color: rgba(6, 182, 212, 0.3);
+  box-shadow:
+    0 8px 32px rgba(6, 182, 212, 0.1),
+    inset 0 1px 1px rgba(255, 255, 255, 0.1);
+}
+
+/* ============================================================================
+   PREDATOR v57 NEXUS — NEW CORE EFFECTS
+   ============================================================================ */
+
+/* ── NEXUS HUD CORNERS ── */
+.hud-corner-nexus {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  pointer-events: none;
+  z-index: 30;
+  transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+  opacity: 0.6;
+}
+
+.group:hover .hud-corner-nexus {
+  opacity: 1;
+  width: 16px;
+  height: 16px;
+}
+
+.hud-corner-tl { top: -1px; left: -1px; border-top: 2px solid var(--hud-accent, var(--neon-cyan)); border-left: 2px solid var(--hud-accent, var(--neon-cyan)); }
+.hud-corner-tr { top: -1px; right: -1px; border-top: 2px solid var(--hud-accent, var(--neon-cyan)); border-right: 2px solid var(--hud-accent, var(--neon-cyan)); }
+.hud-corner-bl { bottom: -1px; left: -1px; border-bottom: 2px solid var(--hud-accent, var(--neon-cyan)); border-left: 2px solid var(--hud-accent, var(--neon-cyan)); }
+.hud-corner-br { bottom: -1px; right: -1px; border-bottom: 2px solid var(--hud-accent, var(--neon-cyan)); border-right: 2px solid var(--hud-accent, var(--neon-cyan)); }
+
+.hud-corner-rose { --hud-accent: #f43f5e; }
+.hud-corner-emerald { --hud-accent: #10b981; }
+.hud-corner-cyan { --hud-accent: #06b6d4; }
+.hud-corner-amber { --hud-accent: #f59e0b; }
+
+/* ── SCANLINE v57 ── */
+@keyframes nexus-scan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(200%); }
+}
+
+.scanline-nexus {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 243, 255, 0.03) 50%,
+    rgba(0, 243, 255, 0.08) 50.5%,
+    rgba(0, 243, 255, 0.03) 51%,
+    transparent 100%
+  );
+  height: 200%;
+  width: 100%;
+  z-index: 10;
+  pointer-events: none;
+  animation: nexus-scan 8s linear infinite;
+  opacity: 0.4;
+}
+
+/* ── SIDEBAR SCAN SLIDE ── */
+@keyframes scan-slide {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── SIDEBAR KINETIC HOVER ── */
+.sidebar-kinetic-item {
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.sidebar-kinetic-item:hover {
+  transform: translateX(2px);
+}
+
+/* ── GLOW NEON INTENSE ── */
+.glow-nexus-cyan {
+  box-shadow: 0 0 30px rgba(0, 243, 255, 0.1), inset 0 0 20px rgba(0, 243, 255, 0.05);
+}
+
+.glow-nexus-cyan:hover {
+  box-shadow: 0 0 50px rgba(0, 243, 255, 0.2), inset 0 0 30px rgba(0, 243, 255, 0.1);
+}
+
+/* ── GLASS HUD BASE ── */
+.glass-hud {
+  background: rgba(1, 4, 9, 0.75);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(0, 243, 255, 0.15);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
+.glass-hud:hover {
+  border-color: rgba(0, 243, 255, 0.3);
+}
+
+/* ============================================================================
+   PREDATOR v57 — ADVANCED PREMIUM UTILITIES
+   ============================================================================ */
+
+/* ── SHIMMER LOADING SKELETON ── */
+@keyframes shimmer-sweep {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.skeleton-shimmer {
+  position: relative;
+  overflow: hidden;
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: var(--radius-lg);
+}
+
+.skeleton-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.04) 40%, rgba(255, 255, 255, 0.08) 50%, rgba(255, 255, 255, 0.04) 60%, transparent 100%);
+  animation: shimmer-sweep 2s ease-in-out infinite;
+}
+
+/* ── STAT CARD V2 — з динамічним glow ── */
+.stat-card-v2 {
+  position: relative;
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-2xl);
+  padding: 1.25rem;
+  overflow: hidden;
+  transition: all 0.4s var(--ease-spring, cubic-bezier(0.23, 1, 0.32, 1));
+}
+
+.stat-card-v2::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--stat-accent, var(--accent-indigo));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.stat-card-v2:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+  transform: translateY(-2px);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+.stat-card-v2:hover::before {
+  opacity: 1;
+}
+
+/* Тонові варіанти stat-card */
+.stat-card-v2.tone-emerald { --stat-accent: var(--accent-emerald); }
+.stat-card-v2.tone-cyan    { --stat-accent: var(--accent-cyan); }
+.stat-card-v2.tone-amber   { --stat-accent: var(--accent-amber); }
+.stat-card-v2.tone-rose    { --stat-accent: var(--accent-rose); }
+.stat-card-v2.tone-indigo  { --stat-accent: var(--accent-indigo); }
+.stat-card-v2.tone-violet  { --stat-accent: var(--accent-violet); }
+
+/* ── AMBIENT MESH SECTION ── */
+.ambient-section {
+  position: relative;
+  overflow: hidden;
+}
+
+.ambient-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.6;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ambient-section:hover::before {
+  opacity: 1;
+}
+
+.ambient-section.mesh-primary::before   { background: var(--mesh-primary); }
+.ambient-section.mesh-warm::before      { background: var(--mesh-warm); }
+.ambient-section.mesh-cool::before      { background: var(--mesh-cool); }
+.ambient-section.mesh-threat::before    { background: var(--mesh-threat); }
+
+/* ── PREMIUM CARD DEPTH ── */
+.card-depth {
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-md);
+  transition: all 0.35s var(--ease-spring, cubic-bezier(0.23, 1, 0.32, 1));
+  position: relative;
+  overflow: hidden;
+}
+
+.card-depth::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+}
+
+.card-depth:hover {
+  border-color: var(--border-default);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-3px);
+}
+
+/* ── INTERACTIVE ICON BUTTON ── */
+.icon-btn-glow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-2);
+  transition: all 0.25s ease;
+  cursor: pointer;
+  color: var(--fg-muted);
+}
+
+.icon-btn-glow:hover {
+  border-color: var(--border-default);
+  background: var(--surface-3);
+  color: var(--fg-primary);
+  box-shadow: 0 0 16px rgba(99, 102, 241, 0.12);
+}
+
+/* ── LIVE DOT INDICATOR ── */
+@keyframes live-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.8); }
+}
+
+.live-dot {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: var(--accent-emerald);
+}
+
+.live-dot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: inherit;
+  animation: live-pulse 2s ease-in-out infinite;
+}
+
+/* ── GRADIENT LINE DIVIDER ── */
+.divider-gradient {
+  height: 1px;
+  border: none;
+  background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.25), rgba(6, 182, 212, 0.15), transparent);
+}
+
+/* ── BADGE v2 ── */
+.badge-v2 {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.badge-v2.badge-emerald {
+  background: var(--status-ok-bg);
+  border-color: var(--status-ok-border);
+  color: #6ee7b7;
+}
+.badge-v2.badge-amber {
+  background: var(--status-warn-bg);
+  border-color: var(--status-warn-border);
+  color: #fcd34d;
+}
+.badge-v2.badge-rose {
+  background: var(--status-error-bg);
+  border-color: var(--status-error-border);
+  color: #fda4af;
+}
+.badge-v2.badge-cyan {
+  background: var(--status-info-bg);
+  border-color: var(--status-info-border);
+  color: #67e8f9;
+}
+.badge-v2.badge-indigo, .badge-v2-indigo {
+  background: rgba(99, 102, 241, 0.12);
+  border-color: rgba(99, 102, 241, 0.25);
+  color: #a5b4fc;
+}
+
+/* v11.5 Badge Color Variations — Sovereign Apex Hub */
+.badge-v2-emerald { background: var(--status-ok-bg); border-color: var(--status-ok-border); color: #6ee7b7; }
+.badge-v2-rose { background: var(--status-error-bg); border-color: var(--status-error-border); color: #fda4af; }
+.badge-v2-cyan { background: var(--status-info-bg); border-color: var(--status-info-border); color: #67e8f9; }
+.badge-v2-amber { background: var(--status-warn-bg); border-color: var(--status-warn-border); color: #fcd34d; }
+.badge-v2-indigo { background: rgba(99, 102, 241, 0.12); border-color: rgba(99, 102, 241, 0.25); color: #a5b4fc; }
+
+/* Glimmer effect for v11.5 Sovereign badges */
+.badge-v2-glimmer {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.15),
+    transparent
+  );
+  transform: skewX(-25deg);
+  animation: badge-glimmer-sweep 4s infinite;
+  pointer-events: none;
+}
+
+@keyframes badge-glimmer-sweep {
+  0% { left: -100%; }
+  25% { left: 200%; }
+  100% { left: 200%; }
+}
+
+/* ── CONTENT SECTION HEADER ── */
+.section-header-v2 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: 1.5rem;
+}
+
+/* ── FLOATING ACTION RING ── */
+@keyframes ring-orbit {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.orbit-ring {
+  position: absolute;
+  inset: -4px;
+  border-radius: var(--radius-full);
+  border: 1px dashed rgba(99, 102, 241, 0.15);
+  animation: ring-orbit 20s linear infinite;
+  pointer-events: none;
+}
+
+/* ============================================================================
+   PREDATOR v63.0-ELITE — SOVEREIGN POWER DESIGN SYSTEM
+   Потужні ефекти для основного інтерфейсу
+   ============================================================================ */
+
+/* ── COMMAND TERMINAL CARD — Стиль командного терміналу ── */
+.terminal-card {
+  position: relative;
+  background: linear-gradient(180deg, rgba(1, 4, 9, 0.9) 0%, rgba(5, 10, 20, 0.85) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow:
+    0 4px 32px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.terminal-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--op-accent, rgba(99, 102, 241, 0.6)), transparent);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.terminal-card:hover::before {
+  opacity: 1;
+}
+
+.terminal-card:hover {
+  border-color: var(--op-accent-border, rgba(255, 255, 255, 0.1));
+  box-shadow:
+    0 8px 48px rgba(0, 0, 0, 0.7),
+    0 0 30px var(--op-accent-bg, rgba(99, 102, 241, 0.06)),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transform: translateY(-2px);
+}
+
+/* ── TACTICAL HEADER BAR — Верхня полоса з операційним акцентом ── */
+.tactical-header {
+  position: relative;
+  background: linear-gradient(180deg, rgba(1, 4, 9, 0.95) 0%, rgba(2, 6, 15, 0.9) 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(24px);
+}
+
+.tactical-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--op-header-glow, linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.15), transparent));
+}
+
+/* ── POWER METRIC — Великий статистичний блок ── */
+.power-metric {
+  position: relative;
+  padding: 1.25rem;
+  background: linear-gradient(135deg, rgba(1, 4, 9, 0.8) 0%, rgba(8, 15, 30, 0.7) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.power-metric::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 30% 0%, var(--op-accent-bg, rgba(99, 102, 241, 0.05)) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.power-metric::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: var(--op-accent, rgba(99, 102, 241, 0.6));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.power-metric:hover {
+  border-color: var(--op-accent-border, rgba(255, 255, 255, 0.08));
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 20px var(--op-accent-bg, rgba(99, 102, 241, 0.04));
+}
+
+.power-metric:hover::after {
+  opacity: 1;
+}
+
+/* ── SOVEREIGN GRID — Сітка з ефектом глибини ── */
+.sovereign-grid {
+  position: relative;
+}
+
+.sovereign-grid::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.015;
+  background-image:
+    linear-gradient(var(--op-accent, rgba(99,102,241,0.3)) 1px, transparent 1px),
+    linear-gradient(90deg, var(--op-accent, rgba(99,102,241,0.3)) 1px, transparent 1px);
+  background-size: 60px 60px;
+  z-index: 0;
+}
+
+/* ── DANGER STRIPE — Тривожна смуга для критичних секцій ── */
+.danger-stripe {
+  position: relative;
+  overflow: hidden;
+}
+
+.danger-stripe::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(239, 68, 68, 0.6) 0px,
+    rgba(239, 68, 68, 0.6) 12px,
+    transparent 12px,
+    transparent 20px
+  );
+  animation: danger-march 1s linear infinite;
+}
+
+@keyframes danger-march {
+  0% { background-position: 0 0; }
+  100% { background-position: 20px 0; }
+}
+
+/* ── RADAR SWEEP — Радарний ефект для активних секцій ── */
+@keyframes radar-sweep-bg {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.radar-sweep {
+  position: relative;
+  overflow: hidden;
+}
+
+.radar-sweep::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200%;
+  height: 200%;
+  transform-origin: center;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 340deg,
+    var(--op-accent-bg, rgba(99, 102, 241, 0.06)) 350deg,
+    transparent 360deg
+  );
+  animation: radar-sweep-bg 8s linear infinite;
+  pointer-events: none;
+  opacity: 0.4;
+}
+
+/* ── INTEL TICKER — Рядок оперативної інформації ── */
+@keyframes intel-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.intel-ticker {
+  overflow: hidden;
+  white-space: nowrap;
+  background: rgba(1, 4, 9, 0.9);
+  border-top: 1px solid rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.intel-ticker-content {
+  display: inline-block;
+  animation: intel-scroll 60s linear infinite;
+}
+
+/* ── HOLOGRAPHIC SHIMMER — Голографічний відблиск для преміальних карток ── */
+@keyframes holo-shine {
+  0% { left: -120%; }
+  30% { left: 120%; }
+  100% { left: 120%; }
+}
+
+.holo-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.holo-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.02) 40%,
+    rgba(255, 255, 255, 0.06) 50%,
+    rgba(255, 255, 255, 0.02) 60%,
+    transparent 100%
+  );
+  transform: skewX(-15deg);
+  animation: holo-shine 6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* ── NEXUS PULSE — Пульсуючий ефект для активних елементів ── */
+@keyframes nexus-breathe {
+  0%, 100% {
+    box-shadow: 0 0 10px var(--op-accent-bg, rgba(99, 102, 241, 0.05));
+  }
+  50% {
+    box-shadow:
+      0 0 20px var(--op-accent-bg, rgba(99, 102, 241, 0.1)),
+      0 0 40px var(--op-accent-bg, rgba(99, 102, 241, 0.03));
+  }
+}
+
+.nexus-pulse {
+  animation: nexus-breathe 4s ease-in-out infinite;
+}
+
+/* ── DEPTH SHADOW LAYERS — Глибокі тіні для преміального відчуття ── */
+.depth-shadow-1 {
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.3),
+    0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.depth-shadow-2 {
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.4),
+    0 12px 48px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.03);
+}
+
+.depth-shadow-3 {
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.5),
+    0 24px 80px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+
+/* ── SCANLINE FAST — Швидкий скануючий ефект для CyberGrid ── */
+@keyframes scanline-fast {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(500%); }
+}
+
+.animate-scanline-fast {
+  animation: scanline-fast 4s linear infinite;
+}
+
+/* ── ELITE HEADING ── */
+.elite-heading {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #f8fafc;
+  text-transform: uppercase;
+}
+
+/* ── CYBER SCAN GRID ── */
+.cyber-scan-grid {
+  background-image: 
+    linear-gradient(rgba(244, 63, 94, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(244, 63, 94, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+  position: relative;
+}
+
+.cyber-scan-grid::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--wraith-accent), transparent);
+  animation: scan-line-move var(--scan-speed) linear infinite;
+  opacity: 0.5;
+  box-shadow: 0 0 15px var(--wraith-accent);
+}
+
+@keyframes scan-line-move {
+  0% { top: 0%; opacity: 0; }
+  5% { opacity: 0.5; }
+  95% { opacity: 0.5; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* ── TACTICAL FOCUS DOTS ── */
+.focus-dot {
+  width: 4px;
+  height: 4px;
+  background: var(--wraith-accent);
+  border-radius: 50%;
+  position: absolute;
+  box-shadow: 0 0 8px var(--wraith-accent);
+}
+
+/* ═══════════════════════════════════════════════════
+   THERMAL HOVER — елемент "нагрівається" при hover
+   ═══════════════════════════════════════════════════ */
+.thermal-hover {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.thermal-hover::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(244, 63, 94, 0.15) 0%,
+    transparent 60%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.thermal-hover:hover {
+  border-color: rgba(244, 63, 94, 0.4) !important;
+  box-shadow:
+    0 0 20px rgba(244, 63, 94, 0.1),
+    0 0 40px rgba(244, 63, 94, 0.05);
+  transform: translateY(-2px);
+}
+
+.thermal-hover:hover::before {
+  opacity: 1;
+}
+
+/* ═══════════════════════════════════════════════════
+   SLIDE-TO-EXECUTE — свайп для підтвердження дії
+   ═══════════════════════════════════════════════════ */
+@keyframes slide-shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.slide-to-execute {
+  position: relative;
+  overflow: hidden;
+  cursor: grab;
+  user-select: none;
+  touch-action: pan-x;
+}
+
+.slide-to-execute::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(244, 63, 94, 0.15) 30%,
+    rgba(244, 63, 94, 0.25) 50%,
+    rgba(244, 63, 94, 0.15) 70%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: slide-shimmer 3s linear infinite;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.slide-to-execute:hover::after {
+  opacity: 1;
+}
+
+.slide-to-execute:active {
+  cursor: grabbing;
+}
+
+.slide-thumb {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  bottom: 4px;
+  width: 48px;
+  background: linear-gradient(135deg, #e11d48, #f43f5e);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 12px rgba(225, 29, 72, 0.4);
+  transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+}
+
+.slide-thumb.unlocked {
+  left: calc(100% - 52px);
+  background: linear-gradient(135deg, #10b981, #34d399);
+  box-shadow: 0 2px 12px rgba(16, 185, 129, 0.4);
+}
+
+/* ═══════════════════════════════════════════════════
+   KINETIC PARALLAX DEPTH — шари з різною швидкістю
+   ═══════════════════════════════════════════════════ */
+.parallax-layer {
+  will-change: transform;
+  transition: transform 0.1s linear;
+}
+
+.parallax-deep { --parallax-depth: 0.2; }
+.parallax-mid  { --parallax-depth: 0.5; }
+.parallax-shallow { --parallax-depth: 0.8; }
+
+/* ═══════════════════════════════════════════════════
+   DECRYPTION LOADER — замість звичайного spinner
+   ═══════════════════════════════════════════════════ */
+@keyframes decrypt-scramble {
+  0%, 100% { content: '█'; }
+  10% { content: '▓'; }
+  20% { content: '▒'; }
+  30% { content: '░'; }
+  40% { content: '◆'; }
+  50% { content: '◇'; }
+  60% { content: '●'; }
+  70% { content: '○'; }
+  80% { content: '◐'; }
+  90% { content: '◑'; }
+}
+
+.decrypt-loader {
+  font-family: 'IBM Plex Mono', monospace;
+  color: #e11d48;
+  font-size: 14px;
+  letter-spacing: 0.15em;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.decrypt-loader::after {
+  content: '█';
+  animation: decrypt-scramble 0.8s steps(10) infinite;
+}
+
+/* ═══════════════════════════════════════════════════
+   BLOOD PULSE — пульсуючий елемент (критичний статус)
+   ═══════════════════════════════════════════════════ */
+@keyframes blood-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(225, 29, 72, 0); }
+}
+
+.blood-pulse {
+  animation: blood-pulse 2s ease-in-out infinite;
+}
+
+/* ═══════════════════════════════════════════════════
+   DATA STREAM — анімований текстовий потік
+   ═══════════════════════════════════════════════════ */
+@keyframes data-stream {
+  0% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-20px); opacity: 0; }
+}
+
+.data-stream-char {
+  display: inline-block;
+  animation: data-stream 0.6s ease-out forwards;
+}
+
+/* ============================================================================
+   OBSIDIAN NEXUS v2.0 — НОВИЙ ПРЕМІАЛЬНИЙ ДИЗАЙН-СИСТЕМА
+   Реалістичні картки, ambient glow, глибина та ієрархія
+   ============================================================================ */
+
+/* ── OBSIDIAN CARD — Основна картка з глибиною ── */
+.obsidian-card {
+  position: relative;
+  background: linear-gradient(
+    145deg,
+    rgba(17, 24, 39, 0.95) 0%,
+    rgba(12, 18, 32, 0.90) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.065);
+  border-radius: var(--radius-lg, 12px);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.5),
+    0 8px 24px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(12px);
+  transition: all 300ms var(--ease-spring, cubic-bezier(0.23, 1, 0.32, 1));
+  overflow: hidden;
+}
+
+.obsidian-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.10),
+    transparent
+  );
+  pointer-events: none;
+}
+
+.obsidian-card:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.6),
+    0 16px 48px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transform: translateY(-2px);
+}
+
+/* ── OBSIDIAN CARD — Accent variant ── */
+.obsidian-card-accent {
+  position: relative;
+  background: linear-gradient(
+    145deg,
+    rgba(17, 24, 39, 0.95) 0%,
+    rgba(12, 18, 32, 0.90) 100%
+  );
+  border: 1px solid var(--accent-border, rgba(225, 29, 72, 0.25));
+  border-radius: var(--radius-lg, 12px);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.5),
+    0 0 30px var(--accent-glow-lg, rgba(225, 29, 72, 0.08)),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(12px);
+  transition: all 300ms var(--ease-spring, cubic-bezier(0.23, 1, 0.32, 1));
+  overflow: hidden;
+}
+
+.obsidian-card-accent::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--accent, #E11D48),
+    transparent
+  );
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.obsidian-card-accent:hover {
+  border-color: rgba(225, 29, 72, 0.45);
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.6),
+    0 0 50px var(--accent-glow, rgba(225, 29, 72, 0.15)),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transform: translateY(-3px);
+}
+
+/* ── NEXUS STAT CARD — KPI з ambient glow ── */
+.nexus-stat-card {
+  position: relative;
+  background: var(--bg-card, #111827);
+  border: 1px solid var(--border-subtle, rgba(255,255,255,0.06));
+  border-radius: var(--radius-lg, 12px);
+  padding: 1.5rem;
+  overflow: hidden;
+  transition: all 350ms var(--ease-spring, cubic-bezier(0.23, 1, 0.32, 1));
+}
+
+.nexus-stat-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--card-accent-gradient, linear-gradient(90deg, var(--accent, #E11D48), transparent));
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+
+.nexus-stat-card:hover {
+  border-color: var(--border-default, rgba(255, 255, 255, 0.10));
+  background: var(--bg-elevated, #1C2539);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.5),
+    0 0 40px var(--card-glow-color, rgba(225, 29, 72, 0.06));
+  transform: translateY(-3px);
+}
+
+.nexus-stat-card:hover::after {
+  opacity: 1;
+}
+
+/* Tone variants */
+.nexus-stat-card.tone-crimson  { --card-accent-gradient: linear-gradient(90deg, #E11D48, transparent); --card-glow-color: rgba(225,29,72,0.10); }
+.nexus-stat-card.tone-sky      { --card-accent-gradient: linear-gradient(90deg, #38BDF8, transparent); --card-glow-color: rgba(56,189,248,0.10); }
+.nexus-stat-card.tone-emerald  { --card-accent-gradient: linear-gradient(90deg, #10B981, transparent); --card-glow-color: rgba(16,185,129,0.10); }
+.nexus-stat-card.tone-amber    { --card-accent-gradient: linear-gradient(90deg, #F59E0B, transparent); --card-glow-color: rgba(245,158,11,0.10); }
+.nexus-stat-card.tone-violet   { --card-accent-gradient: linear-gradient(90deg, #8B5CF6, transparent); --card-glow-color: rgba(139,92,246,0.10); }
+
+/* ── AMBIENT GLOW SPOT — Нерівний ambient light ── */
+.ambient-glow-spot {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(60px);
+  opacity: 0.35;
+}
+
+.ambient-glow-spot.glow-crimson { background: radial-gradient(circle, rgba(225,29,72,0.5), transparent); }
+.ambient-glow-spot.glow-sky     { background: radial-gradient(circle, rgba(56,189,248,0.4), transparent); }
+.ambient-glow-spot.glow-emerald { background: radial-gradient(circle, rgba(16,185,129,0.4), transparent); }
+.ambient-glow-spot.glow-amber   { background: radial-gradient(circle, rgba(245,158,11,0.4), transparent); }
+
+/* ── NEXUS GLASS — Глибокий скляний ефект ── */
+.nexus-glass {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(255, 255, 255, 0.01) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* ── READABLE LABELS — Мінімум 12px, чіткість ── */
+.label-tactical {
+  font-size: 0.6875rem;   /* 11px */
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted, #94A3B8);
+}
+
+.label-section {
+  font-size: 0.75rem;     /* 12px */
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--text-secondary, #CBD5E1);
+}
+
+.label-data {
+  font-size: 0.6875rem;   /* 11px min for data */
+  font-weight: 600;
+  color: var(--text-muted, #94A3B8);
+  letter-spacing: 0.05em;
+}
+
+.text-readable {
+  font-size: 0.875rem;  /* 14px */
+  line-height: 1.6;
+  color: var(--text-primary, #F8FAFC);
+}
+
+/* ── NEXUS BUTTON — Покращені кнопки ── */
+.btn-nexus-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  background: var(--accent, #E11D48);
+  color: #ffffff;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: var(--radius-button, 8px);
+  box-shadow:
+    0 4px 16px var(--accent-glow, rgba(225, 29, 72, 0.30)),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  transition: all 200ms ease;
+  cursor: pointer;
+}
+
+.btn-nexus-primary:hover {
+  background: var(--accent-hover, #F43F5E);
+  box-shadow:
+    0 6px 24px var(--accent-glow, rgba(225, 29, 72, 0.45)),
+    inset 0 1px 0 rgba(255, 255, 255, 0.20);
+  transform: translateY(-1px);
+}
+
+.btn-nexus-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px var(--accent-glow, rgba(225, 29, 72, 0.30));
+}
+
+.btn-nexus-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  background: transparent;
+  color: var(--text-primary, #F8FAFC);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  border: 1px solid var(--border-default, rgba(255, 255, 255, 0.10));
+  border-radius: var(--radius-button, 8px);
+  transition: all 200ms ease;
+  cursor: pointer;
+}
+
+.btn-nexus-ghost:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--border-strong, rgba(255, 255, 255, 0.20));
+  transform: translateY(-1px);
+}
+
+/* ── NEXUS INPUT — Покращені поля вводу ── */
+.input-nexus {
+  width: 100%;
+  background: rgba(7, 11, 20, 0.6);
+  border: 1px solid var(--border-default, rgba(255, 255, 255, 0.10));
+  border-radius: var(--radius-md, 8px);
+  padding: 0.75rem 1rem;
+  color: var(--text-primary, #F8FAFC);
+  font-size: 0.875rem;
+  font-family: inherit;
+  transition: all 200ms ease;
+  outline: none;
+}
+
+.input-nexus::placeholder {
+  color: var(--text-placeholder, #334155);
+}
+
+.input-nexus:focus {
+  border-color: var(--accent, #E11D48);
+  background: rgba(12, 18, 32, 0.8);
+  box-shadow:
+    0 0 0 3px var(--accent-muted, rgba(225, 29, 72, 0.12)),
+    0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* ── SIDEBAR NEXUS ACTIVE — Чіткий active state ── */
+.sidebar-nexus-active {
+  position: relative;
+  background: linear-gradient(
+    135deg,
+    rgba(225, 29, 72, 0.14) 0%,
+    rgba(225, 29, 72, 0.06) 100%
+  );
+  border: 1px solid rgba(225, 29, 72, 0.28);
+  box-shadow:
+    0 0 24px rgba(225, 29, 72, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.sidebar-nexus-active::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 20%; bottom: 20%;
+  width: 3px;
+  background: linear-gradient(180deg, var(--accent, #E11D48), var(--accent-hover, #F43F5E));
+  border-radius: 0 2px 2px 0;
+  box-shadow: 0 0 8px var(--accent-glow, rgba(225, 29, 72, 0.6));
+}
+
+/* ── STATUS BADGE NEXUS ── */
+.badge-nexus {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.2rem 0.65rem;
+  border-radius: var(--radius-full, 9999px);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  border: 1px solid;
+}
+
+.badge-nexus-ok      { background: rgba(16,185,129,0.12); border-color: rgba(16,185,129,0.30); color: #6EE7B7; }
+.badge-nexus-warn    { background: rgba(245,158,11,0.12); border-color: rgba(245,158,11,0.30); color: #FCD34D; }
+.badge-nexus-danger  { background: rgba(239,68,68,0.12);  border-color: rgba(239,68,68,0.30);  color: #FCA5A5; }
+.badge-nexus-info    { background: rgba(56,189,248,0.12); border-color: rgba(56,189,248,0.30); color: #7DD3FC; }
+.badge-nexus-accent  { background: rgba(225,29,72,0.12);  border-color: rgba(225,29,72,0.30);  color: #FDA4AF; }
+
+/* ── NEON SEPARATOR LINE ── */
+.divider-nexus {
+  height: 1px;
+  border: none;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(225, 29, 72, 0.20),
+    rgba(56, 189, 248, 0.10),
+    transparent
+  );
+  margin: 1rem 0;
+}
+
+/* ── LIVE INDICATOR (pulsing dot) ── */
+.live-indicator {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--signal-success, #10B981);
+}
+
+.live-indicator::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 1px solid var(--signal-success, #10B981);
+  opacity: 0;
+  animation: live-ping 2s ease-in-out infinite;
+}
+
+@keyframes live-ping {
+  0%   { transform: scale(0.8); opacity: 0.8; }
+  70%  { transform: scale(1.8); opacity: 0; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+
+/* Danger variant */
+.live-indicator.danger {
+  background: var(--signal-danger, #EF4444);
+}
+.live-indicator.danger::after {
+  border-color: var(--signal-danger, #EF4444);
+}
+
+/* Warning variant */
+.live-indicator.warning {
+  background: var(--signal-warning, #F59E0B);
+}
+.live-indicator.warning::after {
+  border-color: var(--signal-warning, #F59E0B);
+}
+
+/* ── KINETIC HOVER ROW — Hover highlight для таблиць/списків ── */
+.kinetic-row {
+  transition: background 200ms ease, border-color 200ms ease;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md, 8px);
+  cursor: pointer;
+}
+
+.kinetic-row:hover {
+  background: rgba(255, 255, 255, 0.035);
+  border-color: rgba(255, 255, 255, 0.07);
+}
+
+.kinetic-row:active {
+  background: rgba(225, 29, 72, 0.06);
+  border-color: rgba(225, 29, 72, 0.15);
+}
+
+/* ── FOCUS GLOW — Доступність ── */
+.focus-nexus:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--bg-primary, #070B14),
+    0 0 0 4px var(--accent, #E11D48);
+}
+
+/* ── METRIC VALUE — Великі числа на дашборді ── */
+.metric-value {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--text-primary, #F8FAFC);
+  font-variant-numeric: tabular-nums;
+}
+
+.metric-value.metric-lg {
+  font-size: 2.5rem;
+}
+
+.metric-label {
+  font-size: 0.6875rem;   /* 11px */
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted, #94A3B8);
+  margin-top: 0.25rem;
+}
+
+.metric-delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+}
+
+.metric-delta.up   { color: #6EE7B7; background: rgba(16,185,129,0.12); }
+.metric-delta.down { color: #FCA5A5; background: rgba(239,68,68,0.12); }
+
+/* ── PREMIUM SECTION HEADER ── */
+.section-nexus-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding-bottom: 0.875rem;
+  border-bottom: 1px solid var(--border-subtle, rgba(255,255,255,0.05));
+  margin-bottom: 1.25rem;
+}
+
+.section-nexus-header-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  background: var(--accent-muted, rgba(225,29,72,0.12));
+  border: 1px solid var(--accent-border, rgba(225,29,72,0.25));
+  border-radius: var(--radius-md, 8px);
+  color: var(--accent, #E11D48);
+  flex-shrink: 0;
+}
+
+.section-nexus-title {
+  font-size: 0.9375rem;   /* 15px */
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--text-primary, #F8FAFC);
+}
+
+.section-nexus-subtitle {
+  font-size: 0.75rem;
+  color: var(--text-muted, #94A3B8);
+  margin-top: 0.125rem;
+}
+
+/* ── PAGE TRANSITION WRAPPER ── */
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.99);
+    filter: blur(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+.page-enter {
+  animation: page-enter 350ms var(--ease-spring, cubic-bezier(0.23, 1, 0.32, 1)) forwards;
+}
+
+/* ── LOADING SHIMMER — Покращений ── */
+@keyframes nexus-shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.nexus-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--bg-card, #111827) 0%,
+    var(--bg-elevated, #1C2539) 40%,
+    var(--bg-card, #111827) 80%
+  );
+  background-size: 800px 100%;
+  animation: nexus-shimmer 1.8s ease-in-out infinite;
+  border-radius: var(--radius-md, 8px);
+}
+
+/* ── TACTICAL TOOLTIP ── */
+.tooltip-nexus {
+  position: absolute;
+  z-index: 1000;
+  pointer-events: none;
+  background: var(--bg-elevated, #1C2539);
+  border: 1px solid var(--border-default, rgba(255,255,255,0.10));
+  border-radius: var(--radius-md, 8px);
+  padding: 0.5rem 0.875rem;
+  font-size: 0.75rem;
+  color: var(--text-primary, #F8FAFC);
+  box-shadow: var(--shadow-lg);
+  white-space: nowrap;
+}
+

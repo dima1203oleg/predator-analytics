@@ -1,0 +1,456 @@
+[
+  {
+    "name": "Wraith Nexus (Root)",
+    "path": "/",
+    "status": "WARNINGS",
+    "errors": [],
+    "warnings": [
+      "Не знайдено очікуваний текст: \"Запит до Когнітивного Ядра\""
+    ],
+    "apiCalls": [
+      {
+        "url": "/src/services/api/system.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/monitoring.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/ml.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/intelligence.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/config.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/features/market/api/market.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/features/forecast/api/forecast.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/features/diligence/api/diligence.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/features/competitors/api/competitors.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/ingestion.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/factory.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/infra.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/copilot.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/dashboard.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/config.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/system.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/monitoring.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/ml.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/intelligence.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/ingestion.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/features/market/api/market.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/features/competitors/api/competitors.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/dashboard.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/infra.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/factory.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/features/forecast/api/forecast.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/features/diligence/api/diligence.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/copilot.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/config.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/monitoring.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/system.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/ml.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/intelligence.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/ingestion.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/features/market/api/market.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/features/forecast/api/forecast.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/features/diligence/api/diligence.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/features/competitors/api/competitors.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/dashboard.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/factory.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/infra.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/copilot.ts",
+        "status": 200,
+        "hasData": true
+      }
+    ],
+    "contentFound": [
+      "WebGL Canvas (3D Nexus)"
+    ],
+    "stubsFound": [],
+    "loadTime": 2554,
+    "consoleErrors": []
+  },
+  {
+    "name": "Wraith Nexus (Command)",
+    "path": "/command",
+    "status": "WARNINGS",
+    "errors": [],
+    "warnings": [
+      "Не знайдено очікуваний текст: \"Запит до Когнітивного Ядра\""
+    ],
+    "apiCalls": [
+      {
+        "url": "/src/services/api/config.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/system.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/monitoring.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/ml.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/intelligence.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/ingestion.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/features/market/api/market.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/features/forecast/api/forecast.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/features/diligence/api/diligence.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/features/competitors/api/competitors.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/dashboard.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/factory.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/infra.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/copilot.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/config.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/intelligence.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/system.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/monitoring.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/ml.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/features/forecast/api/forecast.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/ingestion.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/features/market/api/market.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/features/diligence/api/diligence.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/features/competitors/api/competitors.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/dashboard.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/factory.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/infra.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/copilot.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/config.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/system.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/monitoring.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/ml.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/intelligence.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/ingestion.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/features/competitors/api/competitors.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/dashboard.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/features/market/api/market.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/features/forecast/api/forecast.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/features/diligence/api/diligence.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/infra.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/copilot.ts",
+        "status": 200,
+        "hasData": true
+      },
+      {
+        "url": "/src/services/api/factory.ts",
+        "status": 200,
+        "hasData": true
+      }
+    ],
+    "contentFound": [
+      "WebGL Canvas (3D Nexus)"
+    ],
+    "stubsFound": [],
+    "loadTime": 238,
+    "consoleErrors": []
+  }
+]
