@@ -16,6 +16,7 @@ import DashboardView from './components/DashboardView';
 import InspectorPanel from './components/InspectorPanel';
 import LiveAnalyticalCenter from './components/LiveAnalyticalCenter';
 import { OodaRadar } from './components/OodaRadar';
+import { SovereignDashboard } from './components/SovereignDashboard';
 import AdminBackOffice from './components/AdminBackOffice';
 import MapsTab from './components/MapsTab';
 import { OSINT_ENTITIES, OsintEntity } from './osintData';
@@ -30,7 +31,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
-type TabId = 'live-analytical-center' | 'admin-back-office' | 'dashboard' | 'osint' | 'maps' | 'catalog' | 'license' | 'architecture' | 'gap' | 'roadmap' | 'volumes' | 'advisor';
+type TabId = 'live-analytical-center' | 'sovereign-dashboard' | 'admin-back-office' | 'dashboard' | 'osint' | 'maps' | 'catalog' | 'license' | 'architecture' | 'gap' | 'roadmap' | 'volumes' | 'advisor';
 
 export default function App() {
   const [ecosystem, setEcosystem] = useState<'user' | 'admin'>('user');
@@ -731,6 +732,9 @@ export default function App() {
               )}
               {activeTab === 'admin-back-office' && (
                 <AdminBackOffice />
+              )}
+              {activeTab === 'sovereign-dashboard' && (
+                <SovereignDashboard />
               )}
               {activeTab === 'dashboard' && (
                 <DashboardView 
@@ -1615,6 +1619,19 @@ export default function App() {
                         <div className="flex items-center justify-between flex-1">
                           <span>Живе ШІ-Ядро</span>
                           <span className="text-[8px] bg-indigo-500/15 text-indigo-400 border border-indigo-500/30 px-1.5 py-0.5 rounded font-mono font-bold tracking-widest">CORE</span>
+                        </div>
+                      )}
+                    </button>
+
+                    <button 
+                      onClick={() => setActiveTab('sovereign-dashboard')}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer ${activeTab === 'sovereign-dashboard' ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20 shadow-sm' : 'text-slate-400 border border-transparent hover:text-slate-200 hover:bg-slate-900/30'}`}
+                    >
+                      <ShieldAlert className={`w-4 h-4 ${activeTab === 'sovereign-dashboard' ? 'text-indigo-400' : 'text-slate-500'}`} />
+                      {!sidebarCollapsed && (
+                        <div className="flex items-center justify-between flex-1">
+                          <span>Командний Центр</span>
+                          <span className="text-[8px] bg-red-500/15 text-red-400 border border-red-500/30 px-1.5 py-0.5 rounded font-mono font-bold tracking-widest">CMD</span>
                         </div>
                       )}
                     </button>

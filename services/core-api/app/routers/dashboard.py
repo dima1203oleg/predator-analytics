@@ -127,5 +127,10 @@ async def get_dashboard_overview(
             "UA100000": {"count": 45000, "value": 450000000, "highRisk": 12},
             "UA500000": {"count": 22000, "value": 220000000, "highRisk": 8}
         },
+        "investigations": [
+            {"id": "INV-001", "target": "ТОВ 'Газ-Трейд'", "status": "active", "progress": 85, "type": "osint_deep_dive"},
+            {"id": "INV-002", "target": "ПП 'Медуза'", "status": "queued", "progress": 0, "type": "graph_analysis"},
+            {"id": "INV-003", "target": "Метал-Інвест Холдинг", "status": "completed", "progress": 100, "type": "financial_audit"}
+        ],
         "generated_at": datetime.now(UTC).isoformat()
     }
