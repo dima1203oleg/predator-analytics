@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Search, ShieldAlert, Network, Map, Globe, Briefcase, User, 
   DollarSign, FileText, Compass, Server, CheckCircle, HelpCircle, 
@@ -110,6 +110,71 @@ export default function OsintWorkbench({ onSelectEntityForInspector, selectedEnt
   const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
 
+  // API States
+  const [apiStats, setApiStats] = useState<any>(null);
+  const [apiTools, setApiTools] = useState<any[]>([]);
+  const [apiRegistries, setApiRegistries] = useState<any>(null);
+  const [apiFeed, setApiFeed] = useState<any[]>([]);
+  const [apiSearchResults, setApiSearchResults] = useState<OsintEntity[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+
+  // Fetch static OSINT data on mount
+  useEffect(() => {
+    const fetchOsintData = async () => {
+      try {
+        const [statsRes, toolsRes, registriesRes, feedRes] = await Promise.all([
+          fetch('/api/v1/osint/stats').catch(() => null),
+          fetch('/api/v1/osint/tools').catch(() => null),
+          fetch('/api/v1/osint/registries').catch(() => null),
+          fetch('/api/v1/osint/feed').catch(() => null)
+        ]);
+        
+        if (statsRes?.ok) setApiStats(await statsRes.json());
+        if (toolsRes?.ok) setApiTools(await toolsRes.json());
+        if (registriesRes?.ok) setApiRegistries(await registriesRes.json());
+        if (feedRes?.ok) setApiFeed(await feedRes.json());
+      } catch (err) {
+        console.error('OSINT API fetch error:', err);
+      }
+    };
+    fetchOsintData();
+  }, []);
+
+  // Search API effect (debounced)
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setApiSearchResults([]);
+      return;
+    }
+    const timer = setTimeout(async () => {
+      setIsSearching(true);
+      try {
+        const res = await fetch(`/api/v1/osint/search?q=${encodeURIComponent(searchQuery)}`);
+        if (res.ok) {
+          const data = await res.json();
+          const mapped: OsintEntity[] = data.map((d: any) => ({
+            id: d.ueid || `api-${d.edrpou}`,
+            type: 'company',
+            name: d.name,
+            code: d.edrpou,
+            status: d.status === 'registered' ? 'ACTIVE' : d.status === 'bankrupt' ? 'LIQUIDATED' : 'ACTIVE',
+            riskScore: d.risk_score || 0,
+            address: 'Дані з API',
+            description: `Галузь: ${d.industry || 'Не вказано'}`,
+            relationships: [],
+            aiRecommendations: 'Знайдено через API'
+          }));
+          setApiSearchResults(mapped);
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
   // Checklist Multi-Selection and Simulation States
   const [selectedEntityIds, setSelectedEntityIds] = useState<string[]>(OSINT_ENTITIES.map(e => e.id));
   const [simulateLargeDataset, setSimulateLargeDataset] = useState(false);
@@ -118,7 +183,8 @@ export default function OsintWorkbench({ onSelectEntityForInspector, selectedEnt
 
   // Memoized filtered entities for the quick-access sidebar list
   const filteredEntities = useMemo(() => {
-    return OSINT_ENTITIES.filter(entity => {
+    // 1. Filter local mock entities
+    const localFiltered = OSINT_ENTITIES.filter(entity => {
       // Apply search query if typed
       if (searchQuery.trim()) {
         const query = searchQuery.toLowerCase();
@@ -165,7 +231,25 @@ export default function OsintWorkbench({ onSelectEntityForInspector, selectedEnt
       
       return true;
     });
-  }, [searchQuery, activeFilter, categoryFilter, riskLevelFilter, startDate, endDate]);
+
+    // 2. Add API Search results (deduplicating by code)
+    const apiFiltered = apiSearchResults.filter(apiItem => !localFiltered.some(local => local.code === apiItem.code));
+    
+    // Apply the same filters to API results
+    const finalApi = apiFiltered.filter(entity => {
+      const matchesType = activeFilter === 'all' || entity.type === activeFilter;
+      if (!matchesType) return false;
+      if (categoryFilter === 'sanctioned' && entity.status !== 'SANCTIONED') return false;
+      if (categoryFilter === 'active' && entity.status !== 'ACTIVE') return false;
+      if (categoryFilter === 'high-risk' && entity.riskScore < 75) return false;
+      if (riskLevelFilter === 'high' && entity.riskScore < 80) return false;
+      if (riskLevelFilter === 'medium' && (entity.riskScore < 50 || entity.riskScore >= 80)) return false;
+      if (riskLevelFilter === 'low' && entity.riskScore >= 50) return false;
+      return true;
+    });
+
+    return [...localFiltered, ...finalApi];
+  }, [searchQuery, activeFilter, categoryFilter, riskLevelFilter, startDate, endDate, apiSearchResults]);
 
   const toggleEntitySelection = (id: string) => {
     setSelectedEntityIds(prev => 
@@ -496,6 +580,28 @@ export default function OsintWorkbench({ onSelectEntityForInspector, selectedEnt
           />
         )}
       </AnimatePresence>
+      
+      {/* API Stats Banner */}
+      {apiStats && (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4" id="api-stats-banner">
+          <div className="bg-slate-900/60 p-3 rounded-xl border border-slate-800">
+            <span className="text-[10px] text-slate-500 font-mono uppercase">Компаній в базі</span>
+            <div className="text-xl font-bold text-slate-200">{apiStats.total_records?.toLocaleString()}</div>
+          </div>
+          <div className="bg-slate-900/60 p-3 rounded-xl border border-rose-900/40">
+            <span className="text-[10px] text-rose-500/70 font-mono uppercase">Високий ризик</span>
+            <div className="text-xl font-bold text-rose-400">{apiStats.high_risk_found?.toLocaleString()}</div>
+          </div>
+          <div className="bg-slate-900/60 p-3 rounded-xl border border-indigo-900/40">
+            <span className="text-[10px] text-indigo-400/70 font-mono uppercase">Джерел сканування</span>
+            <div className="text-xl font-bold text-indigo-400">{apiStats.sources_scanned}</div>
+          </div>
+          <div className="bg-slate-900/60 p-3 rounded-xl border border-emerald-900/40">
+            <span className="text-[10px] text-emerald-400/70 font-mono uppercase">Активні монітори</span>
+            <div className="text-xl font-bold text-emerald-400">{apiStats.active_monitors}</div>
+          </div>
+        </div>
+      )}
       
       {/* Workspace Header with Export Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-slate-900/60" id="osint-workspace-header">
@@ -999,6 +1105,37 @@ export default function OsintWorkbench({ onSelectEntityForInspector, selectedEnt
         
         {/* Left Column: List of filtered entities with categories */}
         <div className="xl:col-span-3 space-y-6" id="osint-list-panel">
+          
+          {/* API Sources Block */}
+          {apiRegistries && apiRegistries.length > 0 && (
+            <div className="bg-slate-900/40 border border-slate-900 rounded-2xl p-4 shadow-xl">
+              <h3 className="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-wider mb-2">Підключені Реєстри</h3>
+              <div className="flex flex-wrap gap-1.5">
+                {apiRegistries.map(reg => (
+                  <span key={reg.id} className="text-[9px] bg-slate-950/50 border border-slate-800 text-slate-300 px-2 py-1 rounded" title={reg.description}>
+                    {reg.name}
+                    <span className={`ml-1.5 w-1.5 h-1.5 inline-block rounded-full ${reg.status === 'active' ? 'bg-emerald-500' : 'bg-rose-500'}`} />
+                  </span>
+                ))}
+              </div>
+              
+              {apiTools && apiTools.length > 0 && (
+                <>
+                  <h3 className="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-wider mt-4 mb-2">OSINT Інструменти</h3>
+                  <div className="flex flex-wrap gap-1.5">
+                    {apiTools.map(tool => (
+                      <span key={tool.id} className="text-[9px] bg-slate-950/50 border border-slate-800 text-slate-300 px-2 py-1 rounded" title={tool.description}>
+                        {tool.name}
+                        <span className={`ml-1.5 w-1.5 h-1.5 inline-block rounded-full ${tool.status === 'online' ? 'bg-indigo-500' : 'bg-rose-500'}`} />
+                      </span>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+            </div>
+          )}
+
           <div className="bg-slate-900/40 border border-slate-900 rounded-2xl p-4.5 shadow-xl flex flex-col h-[650px]" id="osint-list-card">
             <div className="flex items-center justify-between border-b border-slate-900 pb-3 mb-3">
               <div className="flex items-center gap-2">
@@ -2305,6 +2442,38 @@ export default function OsintWorkbench({ onSelectEntityForInspector, selectedEnt
               </div>
             </div>
           </div>
+
+          {/* Live API Feed Panel */}
+          {apiFeed && apiFeed.length > 0 && (
+            <div className="bg-slate-900/40 border border-slate-900 rounded-2xl p-4.5 shadow-xl flex flex-col mt-6">
+              <h3 className="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-wider mb-4 flex items-center gap-2">
+                <Zap className="w-3.5 h-3.5 text-amber-400" />
+                Стрічка Подій (Live)
+              </h3>
+              <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                {apiFeed.map((item, idx) => (
+                  <div key={idx} className="flex gap-3 items-start border-b border-slate-800/50 pb-3 last:border-0 last:pb-0">
+                    <div className="mt-1 flex-shrink-0">
+                      {item.severity === 'high' ? (
+                        <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse shadow-[0_0_8px_rgba(244,63,94,0.6)]" />
+                      ) : item.severity === 'medium' ? (
+                        <div className="w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.6)]" />
+                      ) : (
+                        <div className="w-2 h-2 rounded-full bg-slate-500" />
+                      )}
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <span className="text-[9px] text-slate-400 font-mono">{new Date(item.timestamp).toLocaleString('uk-UA')}</span>
+                        <span className="text-[8px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded uppercase tracking-wider">{item.source}</span>
+                      </div>
+                      <p className="text-xs text-slate-200">{item.message}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
         </div>
 
