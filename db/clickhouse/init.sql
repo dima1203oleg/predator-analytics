@@ -46,3 +46,21 @@ CREATE TABLE IF NOT EXISTS predator_analytics.system_events (
 ) ENGINE = MergeTree()
 PARTITION BY toDate(event_time)
 ORDER BY (event_time, event_type);
+
+-- Таблиця для Prozorro тендерів
+CREATE TABLE IF NOT EXISTS predator_analytics.prozorro_tenders (
+    tender_id String,
+    date_modified DateTime,
+    procuring_entity_edrpou String,
+    procuring_entity_name String,
+    status String,
+    procurement_method LowCardinality(String),
+    value_amount Float64,
+    value_currency LowCardinality(String),
+    title String,
+    description String,
+    ingested_at DateTime DEFAULT now()
+) ENGINE = MergeTree()
+PARTITION BY toYYYYMM(date_modified)
+ORDER BY (date_modified, tender_id)
+SETTINGS index_granularity = 8192;

@@ -5,7 +5,7 @@ import pytest
 
 from app.harvesters.ckan_harvester import CKANHarvester
 from app.harvesters.edr_aggregator import EDRAggregator
-from app.harvesters.prozorro_sync import ProzorroSync
+from app.harvesters.prozorro_sync import ProzorroSynchronizer
 
 
 @pytest.fixture
@@ -14,7 +14,7 @@ def ckan_harvester():
 
 @pytest.fixture
 def prozorro_sync():
-    return ProzorroSync()
+    return ProzorroSynchronizer()
 
 @pytest.fixture
 def edr_aggregator():

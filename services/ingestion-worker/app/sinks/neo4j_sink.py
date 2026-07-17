@@ -113,6 +113,58 @@ class Neo4jSink:
         """Створення або оновлення вузла компанії (legacy)."""
         await self.upsert_company(data)
 
+    async def merge_ownership_graph(self, graph_data: dict[str, Any]) -> None:
+        """Зберегти граф власності.
+        
+        graph_data очікується у форматі OwnershipGraph.model_dump()
+        """
+        if not self._connected or not self.driver:
+            return
+
+        nodes = graph_data.get("nodes", [])
+        edges = graph_data.get("edges", [])
+
+        if not nodes:
+            return
+
+        try:
+            async with self.driver.session() as session:
+                # Створюємо вершини
+                for node in nodes:
+                    node_type = node.get("node_type", "company").capitalize()
+                    node_id = node.get("node_id")
+                    label = node.get("label", "")
+                    props = node.get("properties", {})
+                    
+                    # Додаємо node_id та label в props для зручності
+                    props["id"] = node_id
+                    props["name"] = label
+
+                    query = f"""
+                    MERGE (n:{node_type} {{id: $node_id}})
+                    SET n += $props
+                    """
+                    await session.run(query, {"node_id": node_id, "props": props})
+
+                # Створюємо зв'язки
+                for edge in edges:
+                    source_id = edge.get("source_id")
+                    target_id = edge.get("target_id")
+                    rel_type = edge.get("relationship", "RELATED_TO").upper()
+                    props = edge.get("properties", {})
+
+                    query = f"""
+                    MATCH (source {{id: $source_id}})
+                    MATCH (target {{id: $target_id}})
+                    MERGE (source)-[r:{rel_type}]->(target)
+                    SET r += $props
+                    """
+                    await session.run(query, {"source_id": source_id, "target_id": target_id, "props": props})
+                    
+            logger.info(f"Збережено {len(nodes)} вузлів та {len(edges)} зв'язків у Neo4j")
+        except Exception as e:
+            logger.error(f"Failed to merge ownership graph: {e}")
+
     async def run_query(self, query: str, params: dict[str, Any] | None = None) -> Any:
         """Виконує довільний Cypher запит."""
         if not self._connected or not self.driver:

@@ -37,6 +37,79 @@ class ClickHouseSink:
             logger.warning("ClickHouse недоступний", error=str(e))
             self.client = None
 
+    def init_schema(self) -> None:
+        """Ініціалізація DDL для таблиць."""
+        if not self.client:
+            self.connect()
+        if not self.client:
+            return
+            
+        self.client.command("CREATE DATABASE IF NOT EXISTS predator_analytics")
+        
+        self.client.command("""
+        CREATE TABLE IF NOT EXISTS predator_analytics.prozorro_tenders (
+            tender_id String,
+            date_modified DateTime,
+            procuring_entity_edrpou String,
+            procuring_entity_name String,
+            status String,
+            procurement_method String,
+            value_amount Float64,
+            value_currency String,
+            title String,
+            description String,
+            ingested_at DateTime DEFAULT now()
+        ) ENGINE = MergeTree()
+        ORDER BY (date_modified, tender_id)
+        """)
+        logger.info("ClickHouse schema initialized for prozorro_tenders")
+
+    async def insert_prozorro_tenders(self, tenders_data: list[dict[str, Any]]) -> None:
+        """Вставка тендерів батчем."""
+        if not self.client:
+            self.connect()
+        if not self.client or not tenders_data:
+            return
+
+        column_names = [
+            "tender_id", "date_modified", "procuring_entity_edrpou", "procuring_entity_name",
+            "status", "procurement_method", "value_amount", "value_currency",
+            "title", "description"
+        ]
+        
+        rows = []
+        for item in tenders_data:
+            date_modified = item.get("date_modified", "")
+            if date_modified and "T" in date_modified:
+                date_modified = date_modified.split(".")[0][:19].replace("T", " ")
+            else:
+                date_modified = "1970-01-01 00:00:00"
+
+            rows.append([
+                item.get("tender_id", ""),
+                date_modified,
+                item.get("procuring_entity_edrpou", ""),
+                item.get("procuring_entity_name", ""),
+                item.get("status", ""),
+                item.get("procurement_method", ""),
+                float(item.get("value_amount", 0.0)) if item.get("value_amount") is not None else 0.0,
+                item.get("value_currency", "UAH"),
+                item.get("title", ""),
+                item.get("description", ""),
+            ])
+
+        try:
+            import asyncio
+            await asyncio.to_thread(
+                self.client.insert,
+                "prozorro_tenders",
+                rows,
+                column_names=column_names
+            )
+            logger.info("Inserted batch of tenders into ClickHouse", count=len(rows))
+        except Exception as e:
+            logger.error("ClickHouse insertion error for prozorro_tenders", error=str(e))
+
     async def insert_declarations(self, data: list[dict[str, Any]]):
         if not self.client:
             self.connect()

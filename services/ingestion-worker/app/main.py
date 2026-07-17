@@ -31,6 +31,8 @@ from app.pipelines.ua_registry import UARegistryPipeline
 from app.registries.ua_registries import УкраїнськийРеєстр
 from app.services.omniverse_watchdog import OmniverseWatchdog
 from app.sinks.postgres_sink import PostgresSink
+from app.sinks.clickhouse_sink import ClickHouseSink
+from app.sinks.neo4j_sink import Neo4jSink
 from predator_common.logging import get_logger
 
 logger = get_logger("ingestion_worker")
@@ -308,7 +310,9 @@ async def process_message(
     fusion_engine: ДвигунЗлиттяДаних,
     producer: AIOKafkaProducer,
     postgres_sink: PostgresSink,
-    topic: str = "",
+    clickhouse_sink: ClickHouseSink,
+    neo4j_sink: Neo4jSink,
+    topic: str,
 ) -> None:
     """Маршрутизація повідомлень до відповідних обробників з ідемпотентністю."""
     # 1. Генерація або отримання event_id (TZ §5.3)
@@ -347,7 +351,7 @@ async def process_message(
             await process_customs_declaration(msg_value, producer, postgres_sink)
         elif topic in [settings.KAFKA_TOPIC_PROZORRO, settings.KAFKA_TOPIC_EDR]:
             # UA Registry Gateway OSINT події
-            registry_pipeline = UARegistryPipeline(postgres_sink)
+            registry_pipeline = UARegistryPipeline(postgres_sink, clickhouse_sink, neo4j_sink)
             await registry_pipeline.process_event(topic, msg_value)
         else:
             logger.warning(
@@ -406,6 +410,8 @@ async def consume() -> None:
     ua_registry = УкраїнськийРеєстр()
     fusion_engine = ДвигунЗлиттяДаних(ua_registry)
     postgres_sink = PostgresSink()
+    clickhouse_sink = ClickHouseSink()
+    neo4j_sink = Neo4jSink()
 
     # Перевірка підключення до PostgreSQL
     try:
@@ -456,7 +462,7 @@ async def consume() -> None:
             if msg.value:
                 # Асинхронна обробка події без блокування консьюмера
                 task = asyncio.create_task(
-                    process_message(msg.value, fusion_engine, producer, postgres_sink, msg.topic)
+                    process_message(msg.value, fusion_engine, producer, postgres_sink, clickhouse_sink, neo4j_sink, msg.topic)
                 )
                 background_tasks.add(task)
                 task.add_done_callback(background_tasks.discard)
@@ -469,6 +475,8 @@ async def consume() -> None:
         await producer.stop()
         await ua_registry.закрити()
         await postgres_sink.close()
+        clickhouse_sink.close()
+        await neo4j_sink.close()
 
 
 async def autonomous_schema_synthesis_loop() -> None:

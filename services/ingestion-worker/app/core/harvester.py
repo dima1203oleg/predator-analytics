@@ -12,6 +12,8 @@ from typing import Any
 from aiokafka import AIOKafkaProducer
 
 from app.config import get_settings
+from app.harvesters.prozorro_sync import ProzorroSynchronizer
+from app.harvesters.edr_aggregator import EDRAggregator
 
 logger = logging.getLogger(__name__)
 
@@ -24,76 +26,68 @@ class Harvester:
         self.tenant_id = self.settings.ROOT_TENANT_ID
 
     async def _harvest_datagov(self) -> None:
-        """Сканує data.gov.ua (умовно) на наявність нових даних."""
-        logger.info("Harvester: Сканування Data.gov.ua розпочато...")
-        await asyncio.sleep(2)  # Імітація запиту до CKAN API
-
-        # Імітація знайденого нового датасету (наприклад, "Реєстр платників ПДВ")
-        fake_dataset_event = {
-            "event_id": str(uuid.uuid4()),
-            "tenant_id": self.tenant_id,
-            "event_type": "datagov_dataset_updated",
-            "source": "data.gov.ua",
-            "timestamp": datetime.datetime.now(datetime.UTC).isoformat(),
-            "payload": [
-                {
-                    "edrpou": "12345678",
-                    "name": "ТОВ 'АГРО-ІНВЕСТ'",
-                    "tax_debt": 0.0,
-                    "status": "активний"
-                },
-                {
-                    "edrpou": "87654321",
-                    "name": "ПРАТ 'ТЕХНОБУД'",
-                    "tax_debt": 55000.0,
-                    "status": "припинено"
-                }
-            ]
-        }
+        """Сканує data.gov.ua та ЄДР (використовуючи EDRAggregator)."""
+        logger.info("Harvester: Сканування ЄДР розпочато...")
         
-        topic = getattr(self.settings, 'KAFKA_TOPIC_EDR', "registry.edr.events")
+        # Використовуємо реальний агрегатор
+        aggregator = EDRAggregator()
+        # Для прикладу беремо ключову компанію
+        edrpou_to_scan = "04362489"
         
         try:
+            graph = await aggregator.build_ownership_graph(edrpou_to_scan)
+            
+            event = {
+                "event_id": str(uuid.uuid4()),
+                "tenant_id": self.tenant_id,
+                "event_type": "edr_ownership_graph_updated",
+                "source": "edr_aggregator",
+                "timestamp": datetime.datetime.now(datetime.UTC).isoformat(),
+                "payload": graph.model_dump()
+            }
+            
+            topic = getattr(self.settings, 'KAFKA_TOPIC_EDR', "registry.edr.events")
             await self.producer.send_and_wait(
                 topic=topic,
-                value=json.dumps(fake_dataset_event).encode("utf-8"),
-                key=fake_dataset_event["event_id"].encode("utf-8")
+                value=json.dumps(event).encode("utf-8"),
+                key=event["event_id"].encode("utf-8")
             )
-            logger.info("Harvester: Знайдено 1 новий датасет. Відправлено в Kafka для інгестії.")
+            logger.info("Harvester: Граф власності отримано та відправлено в Kafka.")
         except Exception as e:
-            logger.error(f"Harvester: Помилка відправки в Kafka: {e}")
+            logger.error(f"Harvester: Помилка сканування ЄДР: {e}")
+        finally:
+            await aggregator.close()
 
     async def _harvest_prozorro(self) -> None:
-        """Сканує тендери Prozorro (умовно)."""
+        """Сканує тендери Prozorro через ProzorroSynchronizer."""
         logger.info("Harvester: Сканування Prozorro розпочато...")
-        await asyncio.sleep(1)
-
-        fake_tender_event = {
-            "event_id": str(uuid.uuid4()),
-            "tenant_id": self.tenant_id,
-            "event_type": "prozorro_tender_created",
-            "timestamp": datetime.datetime.now(datetime.UTC).isoformat(),
-            "payload": [
-                {
-                    "tender_id": "UA-2026-07-16-000001-a",
-                    "edrpou_supplier": "12345678",
-                    "amount": 1500000.0,
-                    "status": "active"
-                }
-            ]
-        }
-
-        topic = getattr(self.settings, 'KAFKA_TOPIC_PROZORRO', "registry.prozorro.events")
         
+        sync = ProzorroSynchronizer(max_pages_per_run=1)  # 1 сторінка для демо
         try:
-            await self.producer.send_and_wait(
-                topic=topic,
-                value=json.dumps(fake_tender_event).encode("utf-8"),
-                key=fake_tender_event["event_id"].encode("utf-8")
-            )
-            logger.info("Harvester: Знайдено новий тендер Prozorro. Відправлено в Kafka.")
+            tenders = await sync.sync_tenders()
+            
+            if tenders:
+                payload = [t.model_dump() for t in tenders]
+                event = {
+                    "event_id": str(uuid.uuid4()),
+                    "tenant_id": self.tenant_id,
+                    "event_type": "prozorro_tenders_batch",
+                    "timestamp": datetime.datetime.now(datetime.UTC).isoformat(),
+                    "payload": payload
+                }
+
+                topic = getattr(self.settings, 'KAFKA_TOPIC_PROZORRO', "registry.prozorro.events")
+                
+                await self.producer.send_and_wait(
+                    topic=topic,
+                    value=json.dumps(event).encode("utf-8"),
+                    key=event["event_id"].encode("utf-8")
+                )
+                logger.info(f"Harvester: Знайдено {len(tenders)} тендерів Prozorro. Відправлено в Kafka.")
         except Exception as e:
-            logger.error(f"Harvester: Помилка відправки в Kafka: {e}")
+            logger.error(f"Harvester: Помилка сканування Prozorro: {e}")
+        finally:
+            await sync.close()
 
     async def harvest_all(self) -> None:
         """Запускає всі модулі збору."""

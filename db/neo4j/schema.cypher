@@ -15,12 +15,18 @@ CREATE CONSTRAINT company_edrpou IF NOT EXISTS
 CREATE CONSTRAINT company_ueid IF NOT EXISTS
     FOR (c:Company) REQUIRE c.ueid IS UNIQUE;
 
+CREATE CONSTRAINT company_id IF NOT EXISTS
+    FOR (c:Company) REQUIRE c.id IS UNIQUE;
+
 // Особи
 CREATE CONSTRAINT person_inn IF NOT EXISTS
     FOR (p:Person) REQUIRE p.inn IS UNIQUE;
 
 CREATE CONSTRAINT person_ueid IF NOT EXISTS
     FOR (p:Person) REQUIRE p.ueid IS UNIQUE;
+
+CREATE CONSTRAINT person_id IF NOT EXISTS
+    FOR (p:Person) REQUIRE p.id IS UNIQUE;
 
 // Митні декларації
 CREATE CONSTRAINT decl_id IF NOT EXISTS
