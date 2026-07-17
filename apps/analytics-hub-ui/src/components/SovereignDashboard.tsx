@@ -34,30 +34,22 @@ const itemVariants = {
 export function SovereignDashboard() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setError(null);
         const res = await fetch('/api/v1/dashboard/overview');
-        if (!res.ok) throw new Error('API Error');
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(`API Error ${res.status}: ${text}`);
+        }
         const json = await res.json();
         setData(json);
-      } catch (err) {
+      } catch (err: any) {
         console.error('Failed to fetch dashboard data', err);
-        // Fallback mock data if backend is offline
-        setData({
-          summary: { total_declarations: 2450000, high_risk_count: 1420, graph_nodes: 1245000, vectors: 4500000 },
-          infrastructure: {},
-          engines: {
-            aml_core: { name: "AML Core", status: "optimal", load: 45, latency: 12 },
-            osint_engine: { name: "OSINT Engine", status: "warning", load: 82, latency: 45 }
-          },
-          alerts: [],
-          investigations: [
-            { id: "INV-2026-001", target: "ТОВ 'Газ-Трейд'", status: "active", progress: 65 },
-            { id: "INV-2026-002", target: "ПП 'Медуза'", status: "completed", progress: 100 }
-          ]
-        });
+        setError(err.message || 'Unknown error');
       } finally {
         setLoading(false);
       }
@@ -68,7 +60,7 @@ export function SovereignDashboard() {
     return () => clearInterval(interval);
   }, []);
 
-  if (loading || !data) {
+  if (loading && !data && !error) {
     return (
       <div className="flex items-center justify-center h-full w-full bg-[#0a0a0a]">
         <div className="text-emerald-500 flex flex-col items-center">
@@ -78,6 +70,26 @@ export function SovereignDashboard() {
       </div>
     );
   }
+
+  if (error && !data) {
+    return (
+      <div className="flex items-center justify-center h-full w-full bg-[#0a0a0a]">
+        <div className="text-rose-500 flex flex-col items-center max-w-lg text-center p-6 bg-rose-950/20 border border-rose-900/50 rounded-lg">
+          <AlertTriangle className="w-12 h-12 mb-4 animate-pulse" />
+          <span className="text-lg font-bold tracking-widest uppercase mb-2">System Offline</span>
+          <span className="text-sm font-mono text-rose-400">Failed to connect to backend API: {error}</span>
+          <button 
+            onClick={() => window.location.reload()}
+            className="mt-6 px-6 py-2 bg-rose-900/30 hover:bg-rose-900/50 border border-rose-700/50 rounded text-rose-300 font-mono text-sm transition-colors"
+          >
+            REBOOT SYSTEM
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!data) return null;
 
   return (
     <div className="h-full w-full bg-[#0a0a0a] text-slate-300 p-6 overflow-y-auto">
