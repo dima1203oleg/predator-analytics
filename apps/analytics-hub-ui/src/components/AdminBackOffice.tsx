@@ -95,28 +95,58 @@ interface LogMessage {
 export default function AdminBackOffice() {
   const [activeSection, setActiveSection] = useState<AdminSection>('dashboard');
 
-  // Interactive state lists
-  const [users, setUsers] = useState<UserRecord[]>([
+  // Фаллбек-дані (поки API не відповів, UI не буде порожнім)
+  const MOCK_USERS: UserRecord[] = [
     { id: 'u1', email: 'admin.predator@sbu.gov.ua', role: 'Super Admin', org: 'Держмитслужба', status: 'ACTIVE', mfa: true, quota: 'Необмежено', activity: 'Створив користувача analyst.petrenko' },
     { id: 'u2', email: 'officer.shevchenko@sbu.gov.ua', role: 'Operator', org: 'Нацбанк', status: 'ACTIVE', mfa: true, quota: '500 запитів/день', activity: 'Перегляд кейсу №1920' },
     { id: 'u3', email: 'analyst.petrenko@sbu.gov.ua', role: 'Analyst', org: 'ПриватБанк', status: 'ACTIVE', mfa: false, quota: '1000 запитів/день', activity: 'Експорт PDF-звіту' },
     { id: 'u4', email: 'auditor.kravchuk@nbu.gov.ua', role: 'Auditor', org: 'Sense', status: 'ACTIVE', mfa: true, quota: '250 запитів/день', activity: 'Аудит логів безпеки' },
     { id: 'u5', email: 'guest.test@gmail.com', role: 'Guest', org: 'Elite Business Broker', status: 'BLOCKED', mfa: false, quota: '10 запитів/день', activity: 'Невдала спроба входу' }
-  ]);
-
-  const [orgs, setOrgs] = useState<OrganizationRecord[]>([
+  ];
+  const MOCK_ORGS: OrganizationRecord[] = [
     { id: 'org1', name: 'Нацбанк', license: 'Government', users: 18, tariff: '$24,500/міс', endDate: '2027-12-31', apiUsage: '45,290 / 100k', aiUsage: '1.2M tokens', storageUsage: '45.2 GB' },
     { id: 'org2', name: 'Держмитслужба', license: 'Government', users: 45, tariff: '$35,000/міс', endDate: '2028-06-30', apiUsage: '128,490 / Unlimited', aiUsage: '5.6M tokens', storageUsage: '280.4 GB' },
     { id: 'org3', name: 'ПриватБанк', license: 'Enterprise', users: 12, tariff: '$18,900/міс', endDate: '2026-11-15', apiUsage: '38,910 / 50k', aiUsage: '890k tokens', storageUsage: '12.8 GB' },
     { id: 'org4', name: 'Sense Bank', license: 'Enterprise', users: 6, tariff: '$12,400/міс', endDate: '2026-09-01', apiUsage: '15,200 / 30k', aiUsage: '410k tokens', storageUsage: '8.4 GB' },
     { id: 'org5', name: 'Юридична компанія "Право-Захист"', license: 'Professional', users: 3, tariff: '$4,200/міс', endDate: '2026-08-12', apiUsage: '8,400 / 15k', aiUsage: '120k tokens', storageUsage: '2.1 GB' },
     { id: 'org6', name: 'Elite Business Broker', license: 'Community', users: 1, tariff: '$0/міс', endDate: '2026-07-31', apiUsage: '940 / 1k', aiUsage: '5k tokens', storageUsage: '120 MB' }
-  ]);
+  ];
 
-  // Form for creating users
+  const [users, setUsers] = useState<UserRecord[]>(MOCK_USERS);
+  const [orgs, setOrgs] = useState<OrganizationRecord[]>(MOCK_ORGS);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Форма для створення користувачів
   const [newUserEmail, setNewUserEmail] = useState('');
   const [newUserRole, setNewUserRole] = useState('Analyst');
   const [newUserOrg, setNewUserOrg] = useState('Нацбанк');
+
+  // Завантажуємо реальні дані з backend — при помилці fallback залишається
+  const fetchAdminData = async () => {
+    setLoading(true);
+    try {
+      const [usersRes, orgsRes] = await Promise.all([
+        apiFetch('/api/v1/admin/users'),
+        apiFetch('/api/v1/admin/organizations')
+      ]);
+      if (!usersRes.ok || !orgsRes.ok) throw new Error(`Бекенд недоступний (${usersRes.status})`);
+      const usersData = await usersRes.json();
+      const orgsData = await orgsRes.json();
+      if (usersData?.length) setUsers(usersData);
+      if (orgsData?.length) setOrgs(orgsData);
+      setError(null);
+    } catch (e: any) {
+      console.warn('Адмін API:', e.message, '— використовуємось фаллбек-дані');
+      // Не ставимо помилку — користувач бачить mock-дані навіть при відключеному API
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAdminData();
+  }, []);
 
   // RBAC Permission Matrix state
   // Roles: Super Admin, Admin, Auditor, Operator, Analyst, Guest

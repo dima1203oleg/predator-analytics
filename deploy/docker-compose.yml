@@ -24,7 +24,31 @@ services:
         limits:
           memory: 1G
 
-  # 2. Qdrant (Vector DB for AI Embeddings)
+  # 2. Neo4j (Graph DB)
+  neo4j:
+    image: neo4j:5.17.0
+    container_name: predator_neo4j
+    environment:
+      - NEO4J_AUTH=neo4j/predator_neo4j
+      - NEO4J_PLUGINS=["apoc", "graph-data-science"]
+      - NEO4J_server_memory_heap_initial__size=512M
+      - NEO4J_server_memory_heap_max__size=1G
+      - NEO4J_server_memory_pagecache_size=512M
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - neo4jdata:/data
+      - neo4jplugins:/plugins
+    networks:
+      - predator_net
+    healthcheck:
+      test: ["CMD", "cypher-shell", "-u", "neo4j", "-p", "predator_neo4j", "RETURN 1"]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+
+  # 3. Qdrant (Vector DB for AI Embeddings)
   qdrant:
     image: qdrant/qdrant:latest
     container_name: predator_qdrant
@@ -126,7 +150,7 @@ services:
       dockerfile: Dockerfile
     container_name: predator_api_gateway
     ports:
-      - "8000:8000"
+      - "8006:8000"
     environment:
       - KAFKA_BROKER=redpanda:29092
       - REDIS_URL=redis://redis:6379
@@ -136,6 +160,44 @@ services:
       - redis
     networks:
       - predator_net
+
+  # 1.5. Core API (FastAPI)
+  core-api:
+    build:
+      context: ../
+      dockerfile: services/core-api/Dockerfile
+    container_name: predator_core_api
+    ports:
+      - "8000:8000"
+    env_file:
+      - ../.env
+    environment:
+      - KAFKA_BROKERS=redpanda:29092
+      - VALKEY_URL=redis://redis:6379/0
+      - NEO4J_URI=bolt://neo4j:7687
+      - NEO4J_USER=neo4j
+      - NEO4J_PASSWORD=predator_neo4j
+      - DATABASE_URL=postgresql+asyncpg://predator:predator_secret@postgres:5432/predator_analytics
+      - MINIO_ENDPOINT=minio:9000
+    volumes:
+      - ../logs/core-api:/app/logs
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_started
+      neo4j:
+        condition: service_started
+      redis:
+        condition: service_started
+      redpanda:
+        condition: service_started
+    networks:
+      - predator_net
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: '2'
 
   # 2. GRAPH SERVICE
   graph-service:
@@ -202,3 +264,5 @@ volumes:
   qdrant-data:
   opensearch-data:
   minio-data:
+  neo4jdata:
+  neo4jplugins:

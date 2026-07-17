@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { apiFetch } from '../api';
 
 interface OodaPhase {
   latency_ms: number;
@@ -19,7 +20,7 @@ export function OodaRadar() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('/api/v1/ooda/status');
+        const response = await apiFetch('/api/v1/ooda/status');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }

@@ -53,11 +53,12 @@ class KeycloakAuthMiddleware(BaseHTTPMiddleware):
             
         token = auth_header.split(" ")[1]
         
+        # Fallback for local development / testing
+        if settings.ENV in ["development", "testing"] and token == "test-token":
+            request.state.user = {"sub": "test-user", "roles": ["admin", "analyst"]}
+            return await call_next(request)
+            
         if not jwks_client:
-            # Fallback for local development / testing without Keycloak
-            if settings.ENV in ["development", "testing"] and token == "test-token":
-                request.state.user = {"sub": "test-user", "roles": ["admin", "analyst"]}
-                return await call_next(request)
             return JSONResponse(status_code=503, content={"detail": "Auth provider unavailable"})
 
         try:

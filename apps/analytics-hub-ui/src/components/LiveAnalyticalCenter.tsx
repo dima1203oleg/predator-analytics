@@ -18,6 +18,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { OSINT_ENTITIES, OsintEntity } from '../osintData';
 import { SOLUTIONS } from '../data';
 import LiveAnalyticalCore from './LiveAnalyticalCore';
+import { apiFetch } from '../api';
 
 interface LiveAnalyticalCenterProps {
   onSelectEntityGlobal: (entity: OsintEntity | null) => void;
@@ -237,7 +238,7 @@ export default function LiveAnalyticalCenter({
       speakVoice('Активовано автономний режим командного центру. Переходжу на автопілот.');
       
       try {
-        const res = await fetch('/api/v1/osint/search?q=ТОВ');
+        const res = await apiFetch('/api/v1/osint/search?q=ТОВ');
         if (!res.ok) throw new Error('Failed to fetch');
         const data = await res.json();
         
@@ -248,7 +249,7 @@ export default function LiveAnalyticalCenter({
             idx++;
             
             try {
-              const dossierRes = await fetch(`/api/v1/osint/company/${match.ueid}`);
+              const dossierRes = await apiFetch(`/api/v1/osint/company/${match.ueid}`);
               if (dossierRes.ok) {
                 const dossierData = await dossierRes.json();
                 const nextEntity: OsintEntity = {
@@ -320,7 +321,7 @@ export default function LiveAnalyticalCenter({
     const timeoutId = setTimeout(async () => {
       try {
         setIsLoadingSearch(true);
-        const res = await fetch(`/api/v1/osint/search?q=${encodeURIComponent(searchQuery)}`);
+        const res = await apiFetch(`/api/v1/osint/search?q=${encodeURIComponent(searchQuery)}`);
         if (!res.ok) throw new Error('Search failed');
         const data = await res.json();
         const matched = data.map((d: any) => ({
@@ -482,14 +483,14 @@ export default function LiveAnalyticalCenter({
     setIsGalaxySwirling(true);
 
     try {
-      const searchRes = await fetch(`/api/v1/osint/search?q=${encodeURIComponent(queryText)}`);
+      const searchRes = await apiFetch(`/api/v1/osint/search?q=${encodeURIComponent(queryText)}`);
       if (!searchRes.ok) throw new Error('Search failed');
       const searchData = await searchRes.json();
       
       if (searchData.length > 0) {
         const topMatch = searchData[0];
         
-        const dossierRes = await fetch(`/api/v1/osint/company/${topMatch.ueid}`);
+        const dossierRes = await apiFetch(`/api/v1/osint/company/${topMatch.ueid}`);
         if (!dossierRes.ok) throw new Error('Dossier failed');
         const dossierData = await dossierRes.json();
         

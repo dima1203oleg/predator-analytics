@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { OSINT_ENTITIES } from '../osintData';
+import { apiFetch } from '../api';
 
 interface DashboardViewProps {
   onSelectTab: (tabId: string) => void;
@@ -28,6 +29,29 @@ export default function DashboardView({ onSelectTab, onSelectEntity }: Dashboard
   const [heatmapFilter, setHeatmapFilter] = React.useState<'all' | 'company' | 'person' | 'cryptowallet'>('all');
   const [showGlow, setShowGlow] = React.useState(true);
   const [activeHoverId, setActiveHoverId] = React.useState<string | null>(null);
+
+  const [dashboardData, setDashboardData] = React.useState<any>(null);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    const fetchDashboard = async () => {
+      try {
+        // apiFetch повертає Response — потрібен .json()
+        const res = await apiFetch('/api/v1/dashboard/overview');
+        if (!res.ok) throw new Error(`API ${res.status}`);
+        const data = await res.json();
+        setDashboardData(data);
+        setError(null);
+      } catch (err: any) {
+        // Не блокуємо UI — показуємо помилку як banner
+        setError(err.message || 'Не вдалося завантажити дані дашборду');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDashboard();
+  }, []);
 
   // Trigger simulated radar sweep
   const triggerRadarScan = () => {
@@ -59,11 +83,12 @@ export default function DashboardView({ onSelectTab, onSelectEntity }: Dashboard
     setScreeningResult("ШІ: Виявлено 4 транскордонні підозрілі транзакції на суму $120,000 через Беліз. Об'єкт ТОВ 'СпецТехПостач' помічено як КРИТИЧНИЙ РИЗИК.");
   };
 
+  const summary = dashboardData?.summary || {};
   const stats = [
-    { label: "Під санкціями РНБО", value: "4,192", change: "+14 сьогодні", icon: ShieldAlert, color: "text-rose-500 bg-rose-500/10 border-rose-500/20" },
-    { label: "Моніторинг юросіб", value: "148,029", change: "60 FPS індекс", icon: Briefcase, color: "text-indigo-400 bg-indigo-500/10 border-indigo-500/20" },
-    { label: "Судові ухвали (оброблено)", value: "1.2M", change: "99.9% точність OCR", icon: FileText, color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20" },
-    { label: "Крипто-адреси в базі", value: "12,401", change: "+89 за годину", icon: TrendingUp, color: "text-amber-400 bg-amber-500/10 border-amber-500/20" }
+    { label: "Під санкціями РНБО", value: summary.high_risk_count ?? "4,192", change: "Високий ризик", icon: ShieldAlert, color: "text-rose-500 bg-rose-500/10 border-rose-500/20" },
+    { label: "Моніторинг юросіб", value: summary.total_declarations ?? "148,029", change: "Активні", icon: Briefcase, color: "text-indigo-400 bg-indigo-500/10 border-indigo-500/20" },
+    { label: "Документів (Search)", value: summary.search_documents ? (summary.search_documents / 1000000).toFixed(1) + 'M' : "1.2M", change: "99.9% точність OCR", icon: FileText, color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20" },
+    { label: "Граф (Вузли)", value: summary.graph_nodes ?? "12,401", change: "Neo4j Active", icon: TrendingUp, color: "text-amber-400 bg-amber-500/10 border-amber-500/20" }
   ];
 
   const recentSearches = [
@@ -72,7 +97,13 @@ export default function DashboardView({ onSelectTab, onSelectEntity }: Dashboard
     { text: "BTC Wallet (0x38ac...d831)", type: "Wallet", risk: 89, code: "bc1qxy2kg..." }
   ];
 
-  const criticalRisks = [
+  const apiAlerts = dashboardData?.alerts || [];
+  const criticalRisks = apiAlerts.length > 0 ? apiAlerts.map((a: any) => ({
+    title: a.message || a.type,
+    level: a.severity === 'critical' ? 'КРИТИЧНО' : 'ВИСОКИЙ',
+    date: new Date(a.timestamp).toLocaleString('uk-UA'),
+    source: "Система Алертів"
+  })) : [
     { title: "Транзит коштів через офшори Belize у ТОВ 'СпецТехПостач'", level: "КРИТИЧНО", date: "Сьогодні, 02:40", source: "AML Моніторинг" },
     { title: "Зміна засновника у підсанкційному Львівському оборонному постачальнику", level: "ВИСОКИЙ", date: "Вчора, 18:15", source: "ЄДР моніторинг" },
     { title: "Збіг санкційного списку ЄС щодо директора ТОВ 'Харків-Логістик'", level: "ВИСОКИЙ", date: "15 липня, 11:30", source: "OpenSanctions" }
@@ -112,8 +143,16 @@ export default function DashboardView({ onSelectTab, onSelectEntity }: Dashboard
   
   const criticalCount = filteredEntities.filter(ent => ent.riskScore >= 75).length;
 
+  // Не блокуємо UI — дашборд рендериться з fallback-даними одразу
+
   return (
     <div className="space-y-6" id="dashboard-view-root">
+      {error && (
+        <div className="bg-rose-500/10 border border-rose-500/20 text-rose-400 p-4 rounded-xl flex items-center gap-3">
+          <AlertTriangle className="w-5 h-5" />
+          <span>{error}</span>
+        </div>
+      )}
       
       {/* Dynamic HUD Quick stats row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="hud-stats-grid">

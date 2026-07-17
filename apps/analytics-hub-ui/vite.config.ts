@@ -14,9 +14,12 @@ export default defineConfig(() => {
     server: {
       proxy: {
         '/api': {
-          target: 'https://194.177.1.240:8000',
+          // HR-22: Основний Compute Node — NVIDIA (194.177.1.200)
+          target: 'http://194.177.1.200:8000',
           changeOrigin: true,
           secure: false,
+          // Kaggle/zrok fallback — замінити вручну при активному тунелі:
+          // target: 'https://l7rb3vt15xjq.share.zrok.io',
         }
       },
       // HMR is disabled in AI Studio via DISABLE_HMR env var.

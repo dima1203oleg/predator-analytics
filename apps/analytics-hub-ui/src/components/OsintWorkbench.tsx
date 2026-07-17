@@ -16,6 +16,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { OSINT_ENTITIES, OsintEntity } from '../osintData';
+import { apiFetch } from '../api';
 
 interface OsintWorkbenchProps {
   onSelectEntityForInspector: (entity: OsintEntity | null) => void;
@@ -123,10 +124,10 @@ export default function OsintWorkbench({ onSelectEntityForInspector, selectedEnt
     const fetchOsintData = async () => {
       try {
         const [statsRes, toolsRes, registriesRes, feedRes] = await Promise.all([
-          fetch('/api/v1/osint/stats').catch(() => null),
-          fetch('/api/v1/osint/tools').catch(() => null),
-          fetch('/api/v1/osint/registries').catch(() => null),
-          fetch('/api/v1/osint/feed').catch(() => null)
+          apiFetch('/api/v1/osint/stats').catch(() => null),
+          apiFetch('/api/v1/osint/tools').catch(() => null),
+          apiFetch('/api/v1/osint/registries').catch(() => null),
+          apiFetch('/api/v1/osint/feed').catch(() => null)
         ]);
         
         if (statsRes?.ok) setApiStats(await statsRes.json());
@@ -149,7 +150,7 @@ export default function OsintWorkbench({ onSelectEntityForInspector, selectedEnt
     const timer = setTimeout(async () => {
       setIsSearching(true);
       try {
-        const res = await fetch(`/api/v1/osint/search?q=${encodeURIComponent(searchQuery)}`);
+        const res = await apiFetch(`/api/v1/osint/search?q=${encodeURIComponent(searchQuery)}`);
         if (res.ok) {
           const data = await res.json();
           const mapped: OsintEntity[] = data.map((d: any) => ({

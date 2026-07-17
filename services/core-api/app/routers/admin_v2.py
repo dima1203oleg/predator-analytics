@@ -15,6 +15,11 @@ from app.dependencies import PermissionChecker
 from app.services.antigravity_orchestrator import orchestrator
 from app.services.kafka_service import get_kafka_service
 from app.services.valkey_service import get_valkey_service
+from sqlalchemy.future import select
+from sqlalchemy.orm import selectinload
+from app.database import get_db
+from sqlalchemy.ext.asyncio import AsyncSession
+from predator_common.models import User, Tenant
 
 router = APIRouter(prefix="/admin", tags=["Адміністрування (V2)"])
 
@@ -345,3 +350,50 @@ async def get_osint_quarantine():
 @router.get("/osint/policies")
 async def get_osint_policies():
     return []
+
+# ─── RBAC & Users ──────────────────────────────────────────────────────────────
+
+@router.get("/users")
+async def get_admin_users(
+    db: AsyncSession = Depends(get_db),
+    _ = Depends(PermissionChecker([Permission.MANAGE_USERS]))
+):
+    query = select(User).options(selectinload(User.tenant))
+    result = await db.execute(query)
+    users = result.scalars().all()
+    
+    return [
+        {
+            "id": str(u.id),
+            "email": u.email,
+            "role": u.role.capitalize(),
+            "org": u.tenant.name if hasattr(u, "tenant") and u.tenant else "N/A",
+            "status": "ACTIVE" if u.is_active else "BLOCKED",
+            "mfa": u.mfa_enabled,
+            "quota": "Standard",
+            "activity": "Останній вхід: " + (u.last_login_at.strftime("%Y-%m-%d %H:%M") if u.last_login_at else "Ніколи")
+        } for u in users
+    ]
+
+@router.get("/organizations")
+async def get_admin_organizations(
+    db: AsyncSession = Depends(get_db),
+    _ = Depends(PermissionChecker([Permission.MANAGE_USERS]))
+):
+    query = select(Tenant)
+    result = await db.execute(query)
+    tenants = result.scalars().all()
+    
+    return [
+        {
+            "id": str(t.id),
+            "name": t.name,
+            "license": t.plan.capitalize(),
+            "users": t.max_users,
+            "tariff": "Custom",
+            "endDate": "2028-12-31",
+            "apiUsage": "Unknown",
+            "aiUsage": "Unknown",
+            "storageUsage": f"{t.max_storage_gb} GB"
+        } for t in tenants
+    ]

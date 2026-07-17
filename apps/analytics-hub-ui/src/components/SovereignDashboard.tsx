@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 import { 
-  Activity, ShieldAlert, Cpu, Database, 
-  Search, Eye, Network, AlertTriangle
+  ShieldAlert, Server, Activity, Users, 
+  Database, Network, Zap, Globe, Cpu, Search, Eye, AlertTriangle
 } from 'lucide-react';
+import { apiFetch } from '../api';
 import { OodaRadar } from './OodaRadar';
 import { IntelligenceFeed } from './IntelligenceFeed';
 
@@ -40,7 +41,7 @@ export function SovereignDashboard() {
     const fetchData = async () => {
       try {
         setError(null);
-        const res = await fetch('/api/v1/dashboard/overview');
+        const res = await apiFetch('/api/v1/dashboard/overview');
         if (!res.ok) {
           const text = await res.text();
           throw new Error(`API Error ${res.status}: ${text}`);
