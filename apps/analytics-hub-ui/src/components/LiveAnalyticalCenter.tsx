@@ -63,6 +63,7 @@ export default function LiveAnalyticalCenter({
   const [activeEntity, setActiveEntity] = useState<OsintEntity | null>(selectedEntity || OSINT_ENTITIES[0]);
   const [graphNodes, setGraphNodes] = useState<GraphNode[]>([]);
   const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
+  const [isLoadingSearch, setIsLoadingSearch] = useState(false);
 
   // Core bootup & Jarvis state
   const [bootProgress, setBootProgress] = useState(0);
@@ -228,55 +229,122 @@ export default function LiveAnalyticalCenter({
     }
   }, [selectedEntity]);
 
+  // Autonomous walkthrough cycle for Command Center (Point 9)
+  useEffect(() => {
+    let isActive = true;
+    
+    const runAutopilot = async () => {
+      speakVoice('Активовано автономний режим командного центру. Переходжу на автопілот.');
+      
+      try {
+        const res = await fetch('/api/v1/osint/search?q=ТОВ');
+        if (!res.ok) throw new Error('Failed to fetch');
+        const data = await res.json();
+        
+        if (data && data.length > 0) {
+          let idx = 0;
+          while (isActive) {
+            const match = data[idx % data.length];
+            idx++;
+            
+            try {
+              const dossierRes = await fetch(`/api/v1/osint/company/${match.ueid}`);
+              if (dossierRes.ok) {
+                const dossierData = await dossierRes.json();
+                const nextEntity: OsintEntity = {
+                  id: dossierData.company.ueid,
+                  type: 'company',
+                  name: dossierData.company.name,
+                  code: dossierData.company.edrpou,
+                  status: dossierData.company.status,
+                  riskScore: dossierData.risk_profile?.cers || 50,
+                  address: dossierData.company.address || '',
+                  description: dossierData.company.industry || '',
+                  founders: [],
+                  taxes: {
+                    year: "2025",
+                    paid: "Дані уточнюються",
+                    debt: "Дані уточнюються",
+                    status: dossierData.company.status
+                  },
+                  relationships: []
+                };
+                
+                setActiveEntity(nextEntity);
+                buildGraphForEntity(nextEntity);
+                onSelectEntityGlobal(nextEntity);
+
+                const modes: Array<'learning' | 'optimization' | 'inference' | 'validation'> = ['learning', 'optimization', 'inference', 'validation'];
+                const randomMode = modes[Math.floor(Math.random() * modes.length)];
+                setCoreState(randomMode);
+
+                const voicePhrases = [
+                  `Аналізую суб'єкт ${nextEntity.name}. Рівень загрози: ${nextEntity.riskScore} відсотків.`,
+                  `Проводжу семантичний аналіз зв'язків для об'єкта ${nextEntity.code}.`,
+                  `Співвідношу компанію з базою Qdrant. Запускаю моделювання ризиків.`,
+                  `ШІ-перевірка завершена. Оновлено статус здоров'я системи.`
+                ];
+                speakVoice(voicePhrases[Math.floor(Math.random() * voicePhrases.length)]);
+
+                setTimeout(() => {
+                  if (isActive) setCoreState('idle');
+                }, 3000);
+              }
+            } catch(e) {}
+            
+            await new Promise(resolve => setTimeout(resolve, 7000));
+          }
+        }
+      } catch (err) {
+        console.error("Autopilot error", err);
+      }
+    };
+
+    if (workMode === 'command-center') {
+      runAutopilot();
+    } else {
+      setCoreState('idle');
+    }
+    
+    return () => {
+      isActive = false;
+    };
+  }, [workMode]);
+
   // Handle auto-complete recommendations
   useEffect(() => {
     if (!searchQuery.trim()) {
       setSearchSuggestions([]);
       return;
     }
-    const matched = OSINT_ENTITIES.filter(e => 
-      e.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      e.code.includes(searchQuery)
-    );
-    setSearchSuggestions(matched);
+    const timeoutId = setTimeout(async () => {
+      try {
+        setIsLoadingSearch(true);
+        const res = await fetch(`/api/v1/osint/search?q=${encodeURIComponent(searchQuery)}`);
+        if (!res.ok) throw new Error('Search failed');
+        const data = await res.json();
+        const matched = data.map((d: any) => ({
+          id: d.ueid,
+          type: 'company',
+          name: d.name,
+          code: d.edrpou,
+          status: d.status,
+          riskScore: d.risk_score || 0,
+          address: d.address || '',
+          description: d.industry || '',
+          relationships: []
+        }));
+        setSearchSuggestions(matched);
+      } catch (err) {
+        console.error(err);
+        setSearchSuggestions([]);
+      } finally {
+        setIsLoadingSearch(false);
+      }
+    }, 400);
+    return () => clearTimeout(timeoutId);
   }, [searchQuery]);
 
-  // Autonomous walkthrough cycle for Command Center (Point 9)
-  useEffect(() => {
-    if (workMode === 'command-center') {
-      speakVoice('Активовано автономний режим командного центру. Переходжу на автопілот.');
-      let idx = 0;
-      autopilotIntervalRef.current = setInterval(() => {
-        const nextEntity = OSINT_ENTITIES[idx % OSINT_ENTITIES.length];
-        idx++;
-        setActiveEntity(nextEntity);
-        buildGraphForEntity(nextEntity);
-        onSelectEntityGlobal(nextEntity);
-
-        // Cycle core modes randomly
-        const modes: Array<'learning' | 'optimization' | 'inference' | 'validation'> = ['learning', 'optimization', 'inference', 'validation'];
-        const randomMode = modes[Math.floor(Math.random() * modes.length)];
-        setCoreState(randomMode);
-
-        const voicePhrases = [
-          `Аналізую суб'єкт ${nextEntity.name}. Рівень загрози: ${nextEntity.riskScore} відсотків.`,
-          `Проводжу семантичний аналіз зв'язків. Виявлено ${nextEntity.relationships.length} залежностей.`,
-          `Співвідношу компанію з базою Qdrant. Запускаю моделювання ризиків.`,
-          `ШІ-перевірка завершена. Оновлено статус здоров'я системи.`
-        ];
-        speakVoice(voicePhrases[Math.floor(Math.random() * voicePhrases.length)]);
-
-        setTimeout(() => setCoreState('idle'), 3000);
-      }, 7000);
-    } else {
-      if (autopilotIntervalRef.current) {
-        clearInterval(autopilotIntervalRef.current);
-      }
-    }
-    return () => {
-      if (autopilotIntervalRef.current) clearInterval(autopilotIntervalRef.current);
-    };
-  }, [workMode]);
 
   // Coordinates mouse-tracking logic for emotional core (Point 10)
   const handleMouseMove = (e: React.MouseEvent) => {
@@ -403,7 +471,7 @@ export default function LiveAnalyticalCenter({
     setSelectedNode(targetNode);
   };
 
-  const handleSearchTrigger = (queryText: string) => {
+  const handleSearchTrigger = async (queryText: string) => {
     if (!queryText.trim()) return;
 
     setIsThinking(true);
@@ -413,21 +481,50 @@ export default function LiveAnalyticalCenter({
     // Swirl background particles beautifully (Point 6)
     setIsGalaxySwirling(true);
 
-    setTimeout(() => {
-      setIsThinking(false);
-      setIsGalaxySwirling(false);
-      setCoreState('inference');
+    try {
+      const searchRes = await fetch(`/api/v1/osint/search?q=${encodeURIComponent(queryText)}`);
+      if (!searchRes.ok) throw new Error('Search failed');
+      const searchData = await searchRes.json();
+      
+      if (searchData.length > 0) {
+        const topMatch = searchData[0];
+        
+        const dossierRes = await fetch(`/api/v1/osint/company/${topMatch.ueid}`);
+        if (!dossierRes.ok) throw new Error('Dossier failed');
+        const dossierData = await dossierRes.json();
+        
+        const mappedEntity: OsintEntity = {
+          id: dossierData.company.ueid,
+          type: 'company',
+          name: dossierData.company.name,
+          code: dossierData.company.edrpou,
+          status: dossierData.company.status,
+          riskScore: dossierData.risk_profile?.cers || 0,
+          address: dossierData.company.address || '',
+          description: dossierData.company.industry || '',
+          founders: [],
+          taxes: {
+            year: "2025",
+            paid: "Дані уточнюються",
+            debt: "Дані уточнюються",
+            status: dossierData.company.status
+          },
+          sanctions: dossierData.risk_profile?.flags?.includes("SANCTIONED") 
+            ? { listName: "Автоматизований аналіз", dateAdded: "", reason: "Виявлено санкційний ризик", authority: "System" }
+            : undefined,
+          relationships: dossierData.anomalies ? dossierData.anomalies.map((a: any, i: number) => ({
+            targetId: `anomaly-${i}`,
+            targetName: a.type || 'Аномалія',
+            type: 'ANOMALY',
+            risk: a.severity === 'high' ? 'HIGH' : 'MEDIUM'
+          })) : [],
+          aiRecommendations: "Проведено автоматизований аналіз. Див. графічне представлення."
+        };
 
-      const matched = OSINT_ENTITIES.find(e => 
-        e.name.toLowerCase().includes(queryText.toLowerCase()) ||
-        e.code.includes(queryText)
-      );
-
-      if (matched) {
-        setActiveEntity(matched);
-        buildGraphForEntity(matched);
-        onSelectEntityGlobal(matched);
-        speakVoice(`Знайдено компанію ${matched.name}. Сформовано граф зв'язків.`);
+        setActiveEntity(mappedEntity);
+        buildGraphForEntity(mappedEntity);
+        onSelectEntityGlobal(mappedEntity);
+        speakVoice(`Знайдено компанію ${mappedEntity.name}. Сформовано граф зв'язків.`);
       } else {
         const dummy: OsintEntity = {
           id: 'custom-found',
@@ -465,9 +562,14 @@ export default function LiveAnalyticalCenter({
         onSelectEntityGlobal(dummy);
         speakVoice(`Знайдено новий об'єкт ${dummy.name}. Виявлено прихований зв'язок з імпортом.`);
       }
-
+    } catch (err) {
+      console.error(err);
+      speakVoice("Помилка зв'язку з центральним сервером.");
+    } finally {
+      setIsThinking(false);
+      setIsGalaxySwirling(false);
       setTimeout(() => setCoreState('idle'), 3000);
-    }, 2000);
+    }
   };
 
   const selectSuggestion = (entity: OsintEntity) => {
@@ -974,6 +1076,7 @@ export default function LiveAnalyticalCenter({
                   CLEAR
                 </button>
               )}
+              {isLoadingSearch && <div className="px-2 text-indigo-400"><RefreshCw className="w-4 h-4 animate-spin" /></div>}
               <button
                 onClick={() => handleSearchTrigger(searchQuery)}
                 className="bg-indigo-600 hover:bg-indigo-500 text-white font-mono font-bold text-[10px] uppercase px-4 py-2 rounded-xl transition-all flex items-center gap-1"

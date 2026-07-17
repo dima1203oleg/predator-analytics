@@ -1133,7 +1133,6 @@ export default function OsintWorkbench({ onSelectEntityForInspector, selectedEnt
                 </>
               )}
             </div>
-            </div>
           )}
 
           <div className="bg-slate-900/40 border border-slate-900 rounded-2xl p-4.5 shadow-xl flex flex-col h-[650px]" id="osint-list-card">
