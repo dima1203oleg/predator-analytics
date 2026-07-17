@@ -30,8 +30,10 @@ import {
   Briefcase, Truck, Globe, TrendingUp, Users, Map, Mic
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { LiveChatBot } from './components/LiveChatBot';
+import { MediaForensicsTab } from './components/MediaForensicsTab';
 
-type TabId = 'live-analytical-center' | 'sovereign-dashboard' | 'admin-back-office' | 'dashboard' | 'osint' | 'maps' | 'catalog' | 'license' | 'architecture' | 'gap' | 'roadmap' | 'volumes' | 'advisor';
+type TabId = 'live-analytical-center' | 'sovereign-dashboard' | 'admin-back-office' | 'dashboard' | 'osint' | 'maps' | 'catalog' | 'license' | 'architecture' | 'gap' | 'roadmap' | 'volumes' | 'advisor' | 'media-forensics';
 
 export default function App() {
   const [ecosystem, setEcosystem] = useState<'user' | 'admin'>('user');
@@ -532,6 +534,7 @@ export default function App() {
       const allNavs = [
         { id: 'live-analytical-center', label: '🛰️ Живе ШІ-Ядро (Спецпроект PREDATOR)', type: 'nav' },
         { id: 'dashboard', label: '📊 Інтерактивний Дашборд', type: 'nav' },
+        { id: 'media-forensics', label: '🎥 Media Forensics', type: 'nav' },
         { id: 'osint', label: '🔍 Робочий стіл OSINT пошуку', type: 'nav' },
         { id: 'architecture', label: '🕸️ Граф архітектури та залежностей', type: 'nav' },
         { id: 'gap', label: '🛡️ Аналіз прогалин та ризиків', type: 'nav' },
@@ -738,18 +741,12 @@ export default function App() {
               )}
               {activeTab === 'dashboard' && (
                 <DashboardView 
-                  onSelectTab={(tabId) => {
-                    if (tabId === 'osint') {
-                      setActiveTab('live-analytical-center');
-                    } else {
-                      setActiveTab(tabId as TabId);
-                    }
-                  }}
-                  onSelectEntity={(entId) => {
-                    selectEntityById(entId);
-                    setActiveTab('live-analytical-center');
-                  }}
+                  onSelectTab={setActiveTab}
+                  onSelectEntity={handleEntitySelect}
                 />
+              )}
+              {activeTab === 'media-forensics' && (
+                <MediaForensicsTab />
               )}
               {activeTab === 'osint' && (
                 <OsintWorkbench 
@@ -2308,6 +2305,7 @@ export default function App() {
           </motion.div>
         )}
       </AnimatePresence>
+      <LiveChatBot />
     </>
   );
 }
