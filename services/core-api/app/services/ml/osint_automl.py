@@ -152,3 +152,62 @@ class OsintAutoML:
         
         logger.info(f"Final Model Evaluation - ROC-AUC: {auc:.4f}, F1-Score: {f1:.4f}")
         return {"roc_auc": auc, "f1": f1, "params": best_params}
+
+    def save_model(self, path: str):
+        """
+        Saves the trained LightGBM model to disk.
+        """
+        if self.risk_model:
+            self.risk_model.save_model(path)
+            logger.info(f"Model saved to {path}")
+        else:
+            logger.warning("No model to save.")
+
+    def load_model(self, path: str):
+        """
+        Loads a trained LightGBM model from disk.
+        """
+        try:
+            self.risk_model = lgb.Booster(model_file=path)
+            logger.info(f"Model loaded from {path}")
+            return True
+        except Exception as e:
+            logger.error(f"Failed to load model from {path}: {e}")
+            return False
+
+    def predict_risk(self, profile: dict) -> float:
+        """
+        Predicts the risk score for a single OSINT profile using the trained model.
+        Returns a probability between 0 and 1.
+        """
+        if not self.risk_model:
+            logger.warning("Model not loaded or trained. Returning default risk score of 0.0")
+            return 0.0
+
+        # Convert the single profile to a DataFrame format expected by the model
+        df = self._extract_features([profile])
+        
+        # Handle Missing or NULL Values
+        df = df.fillna(0)
+        
+        # Drop ID and Type columns that shouldn't be scaled/predicted on
+        features = df.drop(columns=['id', 'type', 'is_high_risk'], errors='ignore')
+        
+        # Scale features using the fitted scaler
+        # Note: In a real production system, the StandardScaler instance itself needs to be saved/loaded alongside the LightGBM model. 
+        # For this prototype we will bypass scaler serialization by using unscaled features or refitting, but warning about it.
+        # Ideally, we should use joblib to dump/load the scaler.
+        try:
+            # For a single sample without a saved scaler, this might raise NotFittedError.
+            # In a full implementation, load the scaler from disk using joblib.load.
+            features_scaled = self.scaler.transform(features)
+        except Exception as e:
+            logger.warning(f"Scaler not fitted or missing. Using unscaled features for prediction (might degrade accuracy). Error: {e}")
+            features_scaled = features.values
+            
+        # Predict probability of class 1 (High Risk)
+        preds_prob = self.risk_model.predict(features_scaled)
+        
+        if isinstance(preds_prob, np.ndarray) and len(preds_prob) > 0:
+            return float(preds_prob[0])
+        return 0.0

@@ -13,7 +13,10 @@ from typing import Any
 
 from predator_common.logging import get_logger
 import httpx
+import os
 import json
+
+from ..ml.osint_automl import OsintAutoML
 
 from .collectors.base import (
     BaseCollector,
@@ -34,6 +37,10 @@ class DossierAggregator:
     def __init__(self) -> None:
         self._collectors: list[BaseCollector] = []
         self._register_collectors()
+        
+        self.automl = OsintAutoML()
+        model_path = os.path.join(os.path.dirname(__file__), '..', '..', 'models', 'risk_model.txt')
+        self.automl.load_model(model_path)
 
     def _register_collectors(self) -> None:
         """Реєстрація всіх доступних збирачів."""
@@ -127,6 +134,31 @@ class DossierAggregator:
         sections = self._aggregate_sections(results)
         graph = self._build_graph(query, results)
         risk_assessment = self._assess_risk(results)
+        
+        # AutoML Scoring
+        profile_for_ml = {
+            "id": dossier_id,
+            "type": query.entity_type.value,
+            "taxes": {"debt": str(sections.get("tax_debt", {}).get("data", {}).get("total_debts", 0)) + " UAH"},
+            "courts": {
+                "totalCases": sections.get("court_cases", {}).get("data", {}).get("total_cases", 0), 
+                "criminalCases": sections.get("court_cases", {}).get("data", {}).get("criminal_cases", 0)
+            },
+            "cyber": {
+                "openPorts": sections.get("cyber", {}).get("data", {}).get("open_ports", []),
+                "vulnerabilities": sections.get("cyber", {}).get("data", {}).get("vulnerabilities", []),
+                "darknetMentions": len(sections.get("darknet", {}).get("data", {}).get("dark_web_mentions", [])),
+                "hasOnionLinks": bool(sections.get("darknet", {}).get("data", {}).get("dark_web_mentions", []))
+            },
+            "leaks": {
+                "totalBreaches": sections.get("data_breaches", {}).get("data", {}).get("total_breaches", 0),
+                "compromisedPasswords": bool(sections.get("data_breaches", {}).get("data", {}).get("compromised_passwords", []))
+            },
+            "interpol": {"isWanted": sections.get("interpol", {}).get("data", {}).get("total_matches", 0) > 0}
+        }
+        
+        ml_risk_score = self.automl.predict_risk(profile_for_ml)
+        risk_assessment['ml_risk_score'] = ml_risk_score
 
         elapsed_ms = int((time.monotonic() - start_ts) * 1000)
         completed_at = datetime.now(UTC)

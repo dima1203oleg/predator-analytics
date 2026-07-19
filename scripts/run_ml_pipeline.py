@@ -65,6 +65,10 @@ def main():
     logger.info("--- Phase 2: Risk Scoring (Supervised + Optuna) ---")
     metrics = automl.train_risk_model(mock_data, n_trials=20)
     
+    # Save the trained model
+    model_path = os.path.join(os.path.dirname(__file__), '..', 'services', 'core-api', 'app', 'models', 'risk_model.txt')
+    automl.save_model(model_path)
+    
     if metrics:
         logger.info("--- Final Pipeline Metrics ---")
         logger.info(json.dumps(metrics, indent=2))
