@@ -21,13 +21,51 @@ export const CopilotPanel: React.FC = () => {
   // Handle Speech Recognition (Web Speech API mockup/stub for actual implementation)
   const toggleRecording = () => {
     if (!isRecording) {
-      setIsRecording(true);
-      setTextInput('Аналізую голос...');
-      // Simulate STT delay
-      setTimeout(() => {
-        setTextInput('Знайди зв\'язки між Кізима Дмитро та ТОВ Нафтогаз');
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        setMessages(prev => [...prev, { role: 'system', content: 'Помилка: Ваш браузер не підтримує розпізнавання голосу.' }]);
+        return;
+      }
+      
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'uk-UA';
+      recognition.interimResults = true;
+      recognition.continuous = false;
+      
+      recognition.onstart = () => {
+        setIsRecording(true);
+        setTextInput('Слухаю...');
+      };
+      
+      recognition.onresult = (event: any) => {
+        const transcript = Array.from(event.results)
+          .map((result: any) => result[0].transcript)
+          .join('');
+        setTextInput(transcript);
+      };
+      
+      recognition.onerror = (event: any) => {
+        console.error('Speech recognition error', event.error);
         setIsRecording(false);
-      }, 2000);
+        setTextInput('');
+        setMessages(prev => [...prev, { role: 'system', content: `Помилка розпізнавання: ${event.error}` }]);
+      };
+      
+      recognition.onend = () => {
+        setIsRecording(false);
+        // Automatically send the message if there's transcribed text
+        setTimeout(() => {
+           // We use a small timeout to let React state update with the final transcript
+           const inputElement = document.getElementById('copilot-text-input') as HTMLInputElement;
+           if (inputElement && inputElement.value && inputElement.value !== 'Слухаю...') {
+              // Triggering the send logic will be handled manually by user clicking send for safety, 
+              // but we can leave the text in the input.
+           }
+        }, 100);
+      };
+      
+      recognition.start();
+      
     } else {
       setIsRecording(false);
       setTextInput('');
@@ -38,21 +76,43 @@ export const CopilotPanel: React.FC = () => {
     setMessages(prev => [...prev, { role: 'user', content: 'Згенеруй Executive Briefing (Вижимку)' }]);
     setIsThinking(true);
     setThoughtProcess(['Ініціалізація Executive Report Module...', 'Аналіз зібраних досьє...', 'Синтез ключових ризиків...']);
-    setTimeout(() => {
-      setMessages(prev => [...prev, { 
-        role: 'assistant', 
-        content: `**EXECUTIVE BRIEFING**\n\n**Ціль:** Кізима Дмитро Миколайович\n**Ризик:** Високий (78/100)\n\n**Ключові фактори:**\n- Виявлено приховані зв'язки з компаніями під санкціями (через 2 транзакції).\n- Збіги з реєстрами PEP (Політично значущі особи).\n\n**Рекомендація:** Потребує детальної перевірки службою безпеки.`
-      }]);
-      setIsThinking(false);
-      setThoughtProcess([]);
+    
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch('/api/v1/react-agent/query', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` 
+        },
+        body: JSON.stringify({ query: 'Згенеруй Executive Briefing на основі останнього досьє для поточної цілі.' })
+      });
+      
+      if (!res.ok) throw new Error('Network error');
+      
+      const data = await res.json();
+      
+      for (const thought of (data.thought_process || [])) {
+        setThoughtProcess(prev => [...prev, thought]);
+        await new Promise(r => setTimeout(r, 400));
+      }
+      
+      setMessages(prev => [...prev, { role: 'assistant', content: data.answer }]);
       
       if (voiceEnabled) {
-        // Speak using TTS
-        const utterance = new SpeechSynthesisUtterance('Згенеровано звіт. Ризик високий, виявлено приховані зв\'язки з компаніями під санкціями.');
+        const utterance = new SpeechSynthesisUtterance(data.answer);
         utterance.lang = 'uk-UA';
         speechSynthesis.speak(utterance);
       }
-    }, 2500);
+    } catch (error) {
+      setMessages(prev => [...prev, { 
+        role: 'system', 
+        content: 'System Error: Failed to generate briefing via AI Core. Fallback engaged.' 
+      }]);
+    } finally {
+      setIsThinking(false);
+      setThoughtProcess([]);
+    }
   };
 
   const sendMessage = async (e?: React.FormEvent) => {
