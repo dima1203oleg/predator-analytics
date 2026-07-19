@@ -11,16 +11,28 @@ export const apiFetch = async (endpoint: string, options: RequestInit = {}) => {
   
   const headers = new Headers(options.headers);
   
-  // Тимчасовий обхід авторизації для розробки (test-token).
-  // TODO: Замінити на реальний токен після створення екрану логіну.
-  const token = localStorage.getItem('predator_token') || 'test-token';
+  // Remove fallback to test-token. Only use real token from storage.
+  const token = localStorage.getItem('predator_token');
   
   if (token && !headers.has('Authorization')) {
     headers.set('Authorization', `Bearer ${token}`);
   }
   
-  return fetch(url, {
-    ...options,
-    headers
-  });
+  try {
+    const response = await fetch(url, {
+      ...options,
+      headers
+    });
+
+    if (response.status === 401) {
+      // If unauthorized, clear token and emit event for UI to react
+      localStorage.removeItem('predator_token');
+      window.dispatchEvent(new Event('predator:logout'));
+      throw new Error('Сесія закінчилась (401). Будь ласка, увійдіть знову.');
+    }
+
+    return response;
+  } catch (error) {
+    throw error;
+  }
 };

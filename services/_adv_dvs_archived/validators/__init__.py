@@ -5,6 +5,7 @@ from .level2_backend import BackendValidator
 from .level3_frontend import FrontendValidator
 from .level4_sync import SyncValidator
 from .level5_databases import DatabasesValidator
+from .level5_osint import OsintValidator
 from .level6_etl import EtlValidator
 from .level7_parsers import ParsersValidator
 from .level8_integrations import IntegrationsValidator
@@ -20,7 +21,7 @@ from .level17_e2e import E2eValidator
 
 VALIDATORS = [
     InfraValidator, BackendValidator, FrontendValidator, SyncValidator,
-    DatabasesValidator, EtlValidator, ParsersValidator, IntegrationsValidator,
+    DatabasesValidator, OsintValidator, EtlValidator, ParsersValidator, IntegrationsValidator,
     DatasetsValidator, AutoMLValidator, LlmValidator, AiPipelinesValidator,
     DataFlowValidator, PerformanceValidator, SecurityValidator, BackupValidator,
     E2eValidator

@@ -91,7 +91,7 @@ export default function DashboardView({ onSelectTab, onSelectEntity }: Dashboard
     { label: "Граф (Вузли)", value: summary.graph_nodes ?? "12,401", change: "Neo4j Active", icon: TrendingUp, color: "text-amber-400 bg-amber-500/10 border-amber-500/20" }
   ];
 
-  const recentSearches = [
+  const recentSearches = dashboardData?.recent_searches || [
     { text: "ТОВ 'СпецТехПостач'", type: "Company", risk: 94, code: "38294012" },
     { text: "Коваленко Ігор Вікторович", type: "Person", risk: 82, code: "2938401923" },
     { text: "BTC Wallet (0x38ac...d831)", type: "Wallet", risk: 89, code: "bc1qxy2kg..." }

@@ -21,24 +21,34 @@ import AdminBackOffice from './components/AdminBackOffice';
 import MapsTab from './components/MapsTab';
 import { OSINT_ENTITIES, OsintEntity } from './osintData';
 import { SOLUTIONS } from './data';
+import { apiFetch } from './api';
 import { 
   Layers, ShieldCheck, Network, Wrench, Calendar, Bot, 
   FileText, CheckCircle, AlertTriangle, Info, BookOpen,
   Menu, X, Search, Bell, User, Terminal, Cpu, Database, 
   Activity, Landmark, MessageSquare, Sparkles, Send, HelpCircle,
   Maximize2, Minimize2, Settings, ShieldAlert, Compass,
-  Briefcase, Truck, Globe, TrendingUp, Users, Map, Mic, Zap
+  Briefcase, Truck, Globe, TrendingUp, Users, Map, Mic, Zap, LogOut
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { LiveChatBot } from './components/LiveChatBot';
+import { CopilotPanel } from './components/CopilotPanel';
 import { MediaForensicsTab } from './components/MediaForensicsTab';
 import { RestrictedFeatureOverlay } from './components/RestrictedFeatureOverlay';
+import { LoginScreen } from './components/LoginScreen';
 
 type TabId = 'live-analytical-center' | 'sovereign-dashboard' | 'admin-back-office' | 'dashboard' | 'osint' | 'maps' | 'catalog' | 'license' | 'architecture' | 'gap' | 'roadmap' | 'volumes' | 'advisor' | 'media-forensics';
 
 export default function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(!!localStorage.getItem('predator_token'));
   const [userRole, setUserRole] = useState<'admin' | 'predator' | 'predator-pro'>('predator-pro');
   const [ecosystem, setEcosystem] = useState<'user' | 'admin'>('user');
+
+  useEffect(() => {
+    const handleLogoutEvent = () => setIsAuthenticated(false);
+    window.addEventListener('predator:logout', handleLogoutEvent);
+    return () => window.removeEventListener('predator:logout', handleLogoutEvent);
+  }, []);
 
   useEffect(() => {
     if (userRole === 'admin') {
@@ -64,7 +74,7 @@ export default function App() {
   const [isIphoneMuted, setIsIphoneMuted] = useState(false);
   const [iphoneVolume, setIphoneVolume] = useState(65);
   const [showVolumeHUD, setShowVolumeHUD] = useState(false);
-  const [dynamicIslandState, setDynamicIslandState] = useState<'normal' | 'expanded' | 'mute-alert' | 'unmute-alert'>('normal');
+  const [dynamicIslandState, setDynamicIslandState] = useState<'normal' | 'expanded' | 'mute-alert' | 'unmute-alert' | 'voice-listening'>('normal');
   const [volumeTimer, setVolumeTimer] = useState<any>(null);
   const [lockscreenDate, setLockscreenDate] = useState('Четвер, 16 липня');
 
@@ -167,36 +177,14 @@ export default function App() {
   const [voiceFeedback, setVoiceFeedback] = useState<string | null>(null);
   const [voiceError, setVoiceError] = useState<string | null>(null);
 
-  const recognitionRef = React.useRef<any>(null);
+  const mediaRecorderRef = React.useRef<MediaRecorder | null>(null);
+  const audioChunksRef = React.useRef<Blob[]>([]);
 
-  // Microsoft TTS Engine state (Web Speech Synthesis Integration)
+  // Backend TTS Engine (Piper via FastAPI)
   const [isTtsEnabled, setIsTtsEnabled] = useState(true);
-  const [selectedTtsVoice, setSelectedTtsVoice] = useState('Microsoft Irina (UA)');
-  const [availableVoices, setAvailableVoices] = useState<any[]>([]);
 
-  // Initialize and load Speech Synthesis voices natively supporting Microsoft cloud-inspired voices
-  useEffect(() => {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      const loadVoices = () => {
-        const voices = window.speechSynthesis.getVoices();
-        setAvailableVoices(voices);
-      };
-      loadVoices();
-      if (window.speechSynthesis.onvoiceschanged !== undefined) {
-        window.speechSynthesis.onvoiceschanged = loadVoices;
-      }
-    }
-  }, []);
-
-  const speakText = (text: string) => {
+  const speakText = async (text: string) => {
     if (!isTtsEnabled) return;
-    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
-
-    try {
-      window.speechSynthesis.cancel();
-    } catch (e) {
-      console.warn("SpeechSynthesis cancel notice:", e);
-    }
 
     // Clean text: remove code blocks, formatting, long logs
     let cleanText = text
@@ -209,45 +197,32 @@ export default function App() {
 
     if (!cleanText) return;
 
-    // Split into readable sentences to avoid browser length bottlenecks
-    const sentences = cleanText.match(/[^.!?]+[.!?]*/g) || [cleanText];
-    
-    sentences.forEach((sentence) => {
-      const sTrimmed = sentence.trim();
-      if (!sTrimmed) return;
+    try {
+      const response = await apiFetch('/api/v1/voice/synthesize', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ text: cleanText })
+      });
 
-      const utterance = new SpeechSynthesisUtterance(sTrimmed);
-      utterance.lang = 'uk-UA';
-      utterance.rate = 1.05; // natural swift pace
-      utterance.pitch = 1.0;
-
-      // Match selected voice or any Ukrainian Microsoft cloud voice
-      const voices = window.speechSynthesis.getVoices();
-      let matchedVoice = null;
-
-      if (selectedTtsVoice.includes('Irina')) {
-        matchedVoice = voices.find(v => v.lang.startsWith('uk') && v.name.includes('Irina')) ||
-                       voices.find(v => v.lang.startsWith('uk') && v.name.includes('Microsoft'));
-      } else if (selectedTtsVoice.includes('Pavel')) {
-        matchedVoice = voices.find(v => v.lang.startsWith('uk') && v.name.includes('Pavel')) ||
-                       voices.find(v => v.lang.startsWith('uk') && v.name.includes('Microsoft'));
-      } else {
-        matchedVoice = voices.find(v => v.lang.startsWith('uk') && v.name.includes('Microsoft'));
+      if (!response.ok) {
+        throw new Error(`TTS API Error: ${response.status}`);
       }
 
-      if (!matchedVoice) {
-        // Fallback to general Ukrainian engines (Microsoft, Google, iOS native)
-        matchedVoice = voices.find(v => v.lang.startsWith('uk')) ||
-                       voices.find(v => v.lang.startsWith('uk-UA')) ||
-                       voices.find(v => v.name.toLowerCase().includes('ukrainian'));
-      }
-
-      if (matchedVoice) {
-        utterance.voice = matchedVoice;
-      }
-
-      window.speechSynthesis.speak(utterance);
-    });
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      
+      // Auto-cleanup URL object after playing
+      audio.onended = () => {
+        URL.revokeObjectURL(url);
+      };
+      
+      audio.play();
+    } catch (e) {
+      console.warn("Failed to synthesize speech via backend:", e);
+    }
   };
 
   const handleVoiceCommand = (transcript: string) => {
@@ -427,70 +402,81 @@ export default function App() {
     }, 800);
   };
 
-  const startVoiceControl = () => {
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      setVoiceError("Web Speech API не підтримується у цьому браузері. Будь ласка, використовуйте Google Chrome.");
-      setTimeout(() => setVoiceError(null), 5000);
-      return;
-    }
-
+  const startVoiceControl = async () => {
     if (isVoiceListening) {
-      try {
-        recognitionRef.current?.stop();
-      } catch (e) {}
-      setIsVoiceListening(false);
-      setDynamicIslandState('normal');
+      if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+        mediaRecorderRef.current.stop();
+      }
       return;
     }
 
-    setIsVoiceListening(true);
-    setVoiceError(null);
-    setVoiceFeedback("Активація мікрофона...");
-    setDynamicIslandState('voice-listening');
-
-    const rec = new SpeechRecognition();
-    rec.continuous = false;
-    rec.interimResults = false;
-    rec.lang = 'uk-UA';
-
-    rec.onstart = () => {
-      setVoiceFeedback("Слухаю... Назвіть команду");
-    };
-
-    rec.onerror = (event: any) => {
-      console.warn("Speech recognition notice (non-fatal):", event);
-      if (event.error === 'no-speech') {
-        setVoiceError("Голос не виявлено. Спробуйте ще раз або виберіть симуляцію нижче:");
-      } else if (event.error === 'not-allowed') {
-        setVoiceError("Доступ заблоковано (запуск у пісочниці/фреймі). Виберіть симуляцію:");
-      } else {
-        setVoiceError(`Помилка розпізнавання: ${event.error}. Виберіть симуляцію:`);
-      }
-      setIsVoiceListening(false);
-      setDynamicIslandState('normal');
-      setTimeout(() => setVoiceError(null), 15000);
-    };
-
-    rec.onend = () => {
-      setIsVoiceListening(false);
-      setTimeout(() => {
-        setDynamicIslandState(prev => prev === 'voice-listening' ? 'normal' : prev);
-      }, 3000);
-    };
-
-    rec.onresult = (event: any) => {
-      const resultIndex = event.resultIndex;
-      const transcript = event.results[resultIndex][0].transcript;
-      setVoiceTranscript(transcript);
-      handleVoiceCommand(transcript);
-    };
-
-    recognitionRef.current = rec;
     try {
-      rec.start();
-    } catch (err) {
-      console.warn("Could not start speech recognition directly (non-fatal):", err);
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      audioChunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
+      };
+
+      mediaRecorder.onstart = () => {
+        setIsVoiceListening(true);
+        setVoiceError(null);
+        setVoiceFeedback("Слухаю... Назвіть команду");
+        setDynamicIslandState('voice-listening');
+      };
+
+      mediaRecorder.onstop = async () => {
+        setIsVoiceListening(false);
+        setVoiceFeedback("Аналіз аудіо...");
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        audioChunksRef.current = [];
+        
+        // Зупинка всіх треків мікрофона
+        stream.getTracks().forEach(track => track.stop());
+
+        try {
+          const formData = new FormData();
+          formData.append('file', audioBlob, 'voice.webm');
+          
+          const response = await apiFetch('/api/v1/voice/transcribe', {
+            method: 'POST',
+            body: formData,
+          });
+          
+          if (!response.ok) {
+            throw new Error(`STT API Error: ${response.status}`);
+          }
+          
+          const data = await response.json();
+          const transcript = data.text;
+          
+          if (transcript) {
+            setVoiceTranscript(transcript);
+            handleVoiceCommand(transcript);
+          } else {
+            setVoiceError("Голос не виявлено.");
+            setTimeout(() => setVoiceError(null), 5000);
+          }
+          
+          setTimeout(() => {
+            setDynamicIslandState(prev => prev === 'voice-listening' ? 'normal' : prev);
+          }, 3000);
+        } catch (err: any) {
+          setVoiceError(`Помилка розпізнавання: ${err.message}`);
+          setDynamicIslandState('normal');
+          setTimeout(() => setVoiceError(null), 15000);
+        }
+      };
+
+      mediaRecorder.start();
+    } catch (err: any) {
+      console.error("Microphone access denied or error:", err);
+      setVoiceError("Доступ до мікрофона заблоковано або не підтримується.");
+      setTimeout(() => setVoiceError(null), 15000);
       setIsVoiceListening(false);
       setDynamicIslandState('normal');
     }
@@ -753,11 +739,14 @@ export default function App() {
               )}
               {activeTab === 'dashboard' && (
                 <DashboardView 
-                  onSelectTab={setActiveTab}
-                  onSelectEntity={(ent) => {
-                    setSelectedEntity(ent);
-                    setSelectedTool(null);
-                    setSelectedNode(null);
+                  onSelectTab={(tabId) => setActiveTab(tabId as TabId)}
+                  onSelectEntity={(entId) => {
+                    const found = OSINT_ENTITIES.find(e => e.id === entId);
+                    if (found) {
+                      setSelectedEntity(found);
+                      setSelectedTool(null);
+                      setSelectedNode(null);
+                    }
                   }}
                 />
               )}
@@ -1615,6 +1604,17 @@ export default function App() {
                 <p className="font-bold text-slate-200">Черговий : АН</p>
                 <p className="text-slate-500 font-mono">ID: 02894-A</p>
               </div>
+              
+              <button 
+                onClick={() => {
+                  localStorage.removeItem('predator_token');
+                  setIsAuthenticated(false);
+                }}
+                className="ml-2 p-1.5 hover:bg-rose-500/10 rounded-lg text-slate-500 hover:text-rose-400 transition-colors cursor-pointer border border-transparent hover:border-rose-500/30"
+                title="Завершити сесію"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
             </div>
 
           </div>
@@ -2272,7 +2272,7 @@ export default function App() {
                           >
                             <span>{e.label}</span>
                             <span className="text-[9px] bg-rose-500/10 border border-rose-500/20 px-1.5 py-0.5 rounded text-rose-400 font-mono font-bold">
-                              {e.raw.risk_level === 'CRITICAL' ? '⚠️ КРИТИЧНИЙ' : '🔴 ВИСОКИЙ'}
+                              {e.raw.riskScore >= 75 ? '⚠️ КРИТИЧНИЙ' : '🔴 ВИСОКИЙ'}
                             </span>
                           </button>
                         ))}
@@ -2313,6 +2313,10 @@ export default function App() {
       </div>
     );
   };
+
+  if (!isAuthenticated) {
+    return <LoginScreen onLoginSuccess={(token) => setIsAuthenticated(true)} />;
+  }
 
   return (
     <>
@@ -2416,6 +2420,7 @@ export default function App() {
         )}
       </AnimatePresence>
       <LiveChatBot />
+      <CopilotPanel />
     </>
   );
 }

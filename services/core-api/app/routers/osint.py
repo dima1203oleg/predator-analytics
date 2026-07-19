@@ -1,15 +1,118 @@
-from typing import Annotated, Any
+import csv
+import io
+import os
+from datetime import datetime
+from typing import Annotated, Any, List
 
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import StreamingResponse
+from pydantic import BaseModel
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from fpdf import FPDF
 
 from app.database import get_db
 from app.dependencies import get_tenant_id
 from app.services.ukraine_registries import UkraineRegistriesService
 from predator_common.models import Anomaly, Company, RiskScore
 
+class ExportEntity(BaseModel):
+    id: str
+    name: str
+    code: str
+    type: str
+    riskLevel: str
+    status: str
+    source: str
+    matchScore: int
+    description: str
+
 router = APIRouter(prefix="/osint", tags=["OSINT"])
+
+@router.post("/export/csv", summary="Експорт OSINT даних у CSV")
+async def export_osint_csv(
+    entities: List[ExportEntity],
+    tenant_id: Annotated[str, Depends(get_tenant_id)]
+):
+    output = io.StringIO()
+    writer = csv.writer(output)
+    
+    writer.writerow(["ID", "Name", "Code", "Type", "Risk Level", "Status", "Source", "Match Score", "Description"])
+    
+    for entity in entities:
+        writer.writerow([
+            entity.id,
+            entity.name,
+            entity.code,
+            entity.type,
+            entity.riskLevel,
+            entity.status,
+            entity.source,
+            entity.matchScore,
+            entity.description
+        ])
+    
+    output.seek(0)
+    
+    return StreamingResponse(
+        iter([output.getvalue()]),
+        media_type="text/csv",
+        headers={"Content-Disposition": f"attachment; filename=OSINT_Report_{datetime.now().strftime('%Y-%m-%d')}.csv"}
+    )
+
+@router.post("/export/pdf", summary="Експорт OSINT даних у PDF")
+async def export_osint_pdf(
+    entities: List[ExportEntity],
+    tenant_id: Annotated[str, Depends(get_tenant_id)]
+):
+    pdf = FPDF()
+    pdf.add_page()
+    
+    # Try to load DejaVuSans for Cyrillic support
+    font_path = os.path.join(os.path.dirname(__file__), "..", "assets", "fonts", "DejaVuSans.ttf")
+    if os.path.exists(font_path):
+        pdf.add_font("DejaVu", "", font_path, uni=True)
+        pdf.set_font("DejaVu", "", 16)
+        has_font = True
+    else:
+        pdf.set_font("helvetica", "B", 16)
+        has_font = False
+
+    pdf.cell(0, 10, "OSINT Analytics Report", new_x="LMARGIN", new_y="NEXT", align="C")
+    
+    if has_font:
+        pdf.set_font("DejaVu", "", 10)
+    else:
+        pdf.set_font("helvetica", "", 10)
+        
+    pdf.cell(0, 10, f"Date: {datetime.now().strftime('%Y-%m-%d %H:%M')}", new_x="LMARGIN", new_y="NEXT", align="R")
+    pdf.ln(5)
+    
+    for idx, entity in enumerate(entities, 1):
+        if has_font:
+            pdf.set_font("DejaVu", "", 12)
+        else:
+            pdf.set_font("helvetica", "B", 12)
+            
+        pdf.cell(0, 8, f"{idx}. {entity.name} (Code: {entity.code})", new_x="LMARGIN", new_y="NEXT")
+        
+        if has_font:
+            pdf.set_font("DejaVu", "", 10)
+        else:
+            pdf.set_font("helvetica", "", 10)
+        
+        pdf.cell(0, 6, f"Type: {entity.type} | Risk: {entity.riskLevel} | Status: {entity.status}", new_x="LMARGIN", new_y="NEXT")
+        pdf.cell(0, 6, f"Source: {entity.source} | Match Score: {entity.matchScore}%", new_x="LMARGIN", new_y="NEXT")
+        pdf.multi_cell(0, 6, f"Description: {entity.description}")
+        pdf.ln(4)
+        
+    pdf_content = pdf.output()
+    
+    return StreamingResponse(
+        io.BytesIO(pdf_content),
+        media_type="application/pdf",
+        headers={"Content-Disposition": f"attachment; filename=OSINT_Report_{datetime.now().strftime('%Y-%m-%d')}.pdf"}
+    )
 
 @router.get("/registries", summary="Статус підключення до реєстрів (для UI)")
 async def get_osint_registries(

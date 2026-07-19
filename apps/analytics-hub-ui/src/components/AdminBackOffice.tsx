@@ -128,8 +128,8 @@ export default function AdminBackOffice() {
     setLoading(true);
     try {
       const [usersRes, orgsRes] = await Promise.all([
-        apiFetch('/api/v1/admin/users'),
-        apiFetch('/api/v1/admin/organizations')
+        apiFetch('/api/v2/admin/users'),
+        apiFetch('/api/v2/admin/organizations')
       ]);
       if (!usersRes.ok || !orgsRes.ok) throw new Error(`Бекенд недоступний (${usersRes.status})`);
       const usersData = await usersRes.json();

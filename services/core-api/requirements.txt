@@ -43,3 +43,4 @@ faster-whisper>=1.0.0
 silero-vad>=0.1.0
 soundfile>=0.12.1
 onnxruntime>=1.17.0
+fpdf2>=2.7.0

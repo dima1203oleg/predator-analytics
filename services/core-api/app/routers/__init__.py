@@ -45,6 +45,7 @@ from .db_admin import router as db_admin_router
 
 # from .decisions import router as decisions_router
 from .declarations import router as declarations_router
+from .dossier import router as dossier_router
 from .factory import router as factory_router
 from .forecast import router as forecast_router
 from .graph import router as graph_router
@@ -111,6 +112,7 @@ __all__ = [
     "neural_router",
     # "decisions_router",
     "declarations_router",
+    "dossier_router",
     "factory_router",
     "forecast_router",
     "graph_intelligence_router",

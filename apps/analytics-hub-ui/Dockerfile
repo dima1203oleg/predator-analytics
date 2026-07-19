@@ -23,11 +23,12 @@ FROM nginx:alpine
 # Copy built assets to Nginx html directory
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# Add custom Nginx configuration if necessary
-# COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Add custom Nginx configuration template
+COPY nginx.conf.template /etc/nginx/templates/default.conf.template
 
-# Expose port
-EXPOSE 80
+# Cloud Run sets the PORT env var
+ENV PORT=8080
+EXPOSE 8080
 
 # Start Nginx
 CMD ["nginx", "-g", "daemon off;"]

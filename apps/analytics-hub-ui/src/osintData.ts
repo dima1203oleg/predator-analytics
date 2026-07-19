@@ -22,6 +22,12 @@ export interface OsintEntity {
   relationships: { targetId: string; targetName: string; type: string; risk: 'HIGH' | 'MEDIUM' | 'LOW' }[];
   aiRecommendations: string;
   lastActivityDate?: string; // YYYY-MM-DD
+  // Розширений профіль фізичної особи (Person)
+  familyTies?: { name: string; relation: string; status: string; risk: 'HIGH' | 'MEDIUM' | 'LOW' }[];
+  assets?: { type: string; description: string; estimatedValue: string; ownership: string }[];
+  psychologicalPortrait?: { characteristics: string[]; vulnerabilities: string[]; summary: string };
+  compromat?: { summary: string; details: string; mediaUrl?: string; source: string; severity: 'CRITICAL' | 'HIGH' | 'MEDIUM' }[];
+  medicalProfile?: { coprogram: string; wormEggsCount: number; lastCheckup: string; summary: string };
 }
 
 export const OSINT_ENTITIES: OsintEntity[] = [

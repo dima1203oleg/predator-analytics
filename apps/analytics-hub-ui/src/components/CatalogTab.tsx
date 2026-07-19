@@ -313,7 +313,7 @@ export default function CatalogTab() {
                           <h3 className="text-base font-bold text-slate-100 group-hover:text-white mt-1.5 flex items-center gap-1.5">
                             {sol.name}
                             {sol.productionReady.startsWith('Tak') && (
-                              <CheckCircle2 className="w-4 h-4 text-emerald-500" title="Production Ready" />
+                              <span title="Production Ready"><CheckCircle2 className="w-4 h-4 text-emerald-500" /></span>
                             )}
                           </h3>
                         </div>

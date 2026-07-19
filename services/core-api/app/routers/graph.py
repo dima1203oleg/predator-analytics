@@ -502,3 +502,65 @@ async def get_shortest_path(
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Path finding failed: {e!s}") from e
+
+@router.get("/expand/{ueid}", summary="Розгортання вузла (Expand Node)")
+async def expand_node(
+    ueid: str,
+    relation: str = "ALL",
+    tenant_id: str = Depends(get_tenant_id),
+    _ = Depends(PermissionChecker([Permission.RUN_GRAPH]))
+):
+    """Отримання сусідніх вузлів для розгортання графа в UI."""
+    rel_filter = ""
+    if relation != "ALL":
+        rel_filter = f":{relation}"
+        
+    query = f"""
+    MATCH (n {{ueid: $ueid}})-[r{rel_filter}]-(m)
+    WHERE n.tenant_id = $tenant_id AND (m.tenant_id = $tenant_id OR m.tenant_id IS NULL)
+    RETURN n, r, m
+    LIMIT 100
+    """
+    try:
+        raw_results = await graph_db.run_query(query, {"ueid": ueid, "tenant_id": tenant_id})
+        
+        nodes_dict = {}
+        edges = []
+
+        if not raw_results:
+            return {"nodes": [], "edges": []}
+
+        for row in raw_results:
+            n = row.get("n")
+            m = row.get("m")
+            r = row.get("r")
+            
+            for node in [n, m]:
+                if node:
+                    node_id = node.get("ueid") or str(id(node))
+                    if node_id not in nodes_dict:
+                        nodes_dict[node_id] = {
+                            "data": {
+                                "id": node_id,
+                                "label": node.get("name") or node.get("ueid") or "Unknown",
+                                "type": next(iter(node.labels)).lower() if hasattr(node, "labels") and node.labels else "entity",
+                                "properties": dict(node)
+                            }
+                        }
+            if r:
+                edges.append({
+                    "data": {
+                        "id": str(id(r)),
+                        "source": r.nodes[0].get("ueid") or str(id(r.nodes[0])),
+                        "target": r.nodes[1].get("ueid") or str(id(r.nodes[1])),
+                        "label": r.type,
+                        "risk": "MEDIUM" # Mock risk for now
+                    }
+                })
+
+        return {
+            "nodes": list(nodes_dict.values()),
+            "edges": edges
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Node expansion failed: {e!s}") from e

@@ -5809,6 +5809,38 @@ app.get('/api/v1/osint/stats', (req, res) => {
     });
 });
 
+app.get('/api/v1/osint/search', (req, res) => {
+  const { q } = req.query;
+  if (!q) {
+    return res.json([]);
+  }
+  const query = String(q).toLowerCase();
+  
+  // Real mock OSINT data coming from API
+  const apiResults = [
+    {
+      ueid: "api-comp-" + Math.floor(Math.random() * 1000),
+      edrpou: "4019" + Math.floor(Math.random() * 10000),
+      name: `ТОВ "АгроІмпорт ${query}"`,
+      status: "registered",
+      risk_score: 88,
+      industry: "Агропромисловість"
+    },
+    {
+      ueid: "api-comp-" + Math.floor(Math.random() * 1000),
+      edrpou: "3920" + Math.floor(Math.random() * 10000),
+      name: `ТОВ "Логістик-${query}"`,
+      status: "bankrupt",
+      risk_score: 95,
+      industry: "Транспорт та логістика"
+    }
+  ];
+  
+  setTimeout(() => {
+    res.json(apiResults);
+  }, 300);
+});
+
 app.post('/api/v1/osint/scan/start', (req, res) => {
     res.json({ jobId: 'job-osint-' + Math.floor(Math.random() * 1000) });
 });

@@ -256,7 +256,7 @@ ZROK (на базі OpenZiti) створює зашифрований peer-to-pe
 | Призначення | Технологія | Версія |
 |---|---|---|
 | API Framework | FastAPI | 0.110+ |
-| ORM | SQLAlchemy 2.0 async + asyncpg | 2.0.27+ |
+| ORM | SQLAlchemy 2.0 async + asyncpg | 2.0.29+ |
 | Міграції | Alembic | 1.13+ |
 | Auth | PyJWT + bcrypt + passlib | — |
 | Neo4j | neo4j-python-driver | 5.17+ |
@@ -264,6 +264,7 @@ ZROK (на базі OpenZiti) створює зашифрований peer-to-pe
 | Серіалізація | orjson | 3.9+ |
 | Лінтер | Ruff | latest |
 | Тести | Pytest + pytest-asyncio + pytest-cov | 8.0+ |
+| ML Framework | PyTorch, TensorFlow | 2.3+, 2.16+ |
 
 ### 10.2. Frontend
 

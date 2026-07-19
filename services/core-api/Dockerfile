@@ -63,15 +63,12 @@ ENV PYTHONPATH="/app:/libs/predator-common" \
     PYTHONUNBUFFERED=1 \
     APP_VERSION="61.0-ELITE"
 
+# Cloud Run sets the PORT environment variable
+ENV PORT=8000
+EXPOSE ${PORT}
+
 # Kubernetes probes
 HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
-    CMD curl -f http://localhost:8000/api/v1/health/live || exit 1
+    CMD curl -f http://localhost:${PORT}/api/v1/health/live || exit 1
 
-EXPOSE 8000
-
-CMD ["python", "-m", "uvicorn", "app.main:app", \
-     "--host", "0.0.0.0", "--port", "8000", \
-     "--workers", "1", \
-     "--timeout-keep-alive", "65", \
-     "--access-log", \
-     "--log-level", "info"]
+CMD ["sh", "-c", "python -m uvicorn app.main:app --host 0.0.0.0 --port ${PORT} --workers 1 --timeout-keep-alive 65 --access-log --log-level info"]

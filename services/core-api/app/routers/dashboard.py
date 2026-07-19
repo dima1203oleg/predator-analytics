@@ -132,5 +132,10 @@ async def get_dashboard_overview(
             {"id": "INV-002", "target": "ПП 'Медуза'", "status": "queued", "progress": 0, "type": "graph_analysis"},
             {"id": "INV-003", "target": "Метал-Інвест Холдинг", "status": "completed", "progress": 100, "type": "financial_audit"}
         ],
+        "recent_searches": [
+            {"text": "ТОВ 'Газ-Трейд'", "type": "Company", "risk": 92.5, "code": "12345678"},
+            {"text": "ПП 'Медуза'", "type": "Company", "risk": 85.1, "code": "87654321"},
+            {"text": "Коваленко Ігор Вікторович", "type": "Person", "risk": 82, "code": "2938401923"}
+        ],
         "generated_at": datetime.now(UTC).isoformat()
     }

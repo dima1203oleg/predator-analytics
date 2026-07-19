@@ -423,3 +423,31 @@ async def list_sessions(
     user_id = user.get("sub")
     sessions = await redis.list_sessions(user_id) if hasattr(redis, "list_sessions") else []
     return {"sessions": sessions or []}
+
+class AgentQueryRequest(BaseModel):
+    query: str
+
+@router.post("/react-agent/query", summary="ReAct Agent Query (Chain of Thought)")
+async def react_agent_query(
+    payload: AgentQueryRequest,
+    user: dict = Depends(get_current_active_user),
+    tenant_id: str = Depends(get_tenant_id)
+):
+    """
+    Mock endpoint for Sovereign Command Center.
+    Returns thought process and answer.
+    """
+    import asyncio
+    # Simulate processing delay
+    await asyncio.sleep(1)
+    
+    # In a real scenario, this would use LangChain or native LLM ReAct loop.
+    return {
+        "thought_process": [
+            "Агент аналізує запит...",
+            f"Викликано інструмент: search_graph_anomaly(pattern='{payload.query}')",
+            "Отримано результати. Виявлено підозрілі зв'язки.",
+            "Формування фінального звіту..."
+        ],
+        "answer": "За результатами аналізу виявлено потенційні ризики. Компанія має ознаки фіктивності та приховані зв'язки з офшорними юрисдикціями. Рекомендується провести додаткову перевірку бенефіціарів."
+    }

@@ -25,6 +25,9 @@ export function OodaRadar() {
           throw new Error('Network response was not ok');
         }
         const data = await response.json();
+        if (!data || !data.phases) {
+          throw new Error('Invalid response format');
+        }
         setStatus(data);
         setError(null);
       } catch (err) {

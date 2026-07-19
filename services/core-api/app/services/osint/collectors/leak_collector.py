@@ -1,0 +1,135 @@
+"""Leak Collector — Перевірка у витоках даних.
+
+Джерела: Have I Been Pwned, Intelligence X, DeHashed, Hudson Rock.
+Класифікація: BLACK.
+"""
+import os
+
+import httpx
+
+from .base import BaseCollector, Classification, DataFragment, DossierQuery, EntityType
+
+
+class LeakCollector(BaseCollector):
+    name = "leaks"
+    display_name = "Витоки Даних (Breaches)"
+    classification = Classification.BLACK
+    description = "Have I Been Pwned, Intelligence X, DeHashed — emails, паролі, IP"
+    supported_entities = [EntityType.EMAIL, EntityType.PHONE, EntityType.PERSON]
+
+    HIBP_API = "https://haveibeenpwned.com/api/v3"
+    INTELX_API = "https://2.intelx.io"
+
+    async def collect(self, query: DossierQuery) -> list[DataFragment]:
+        fragments: list[DataFragment] = []
+        email = query.email or query.identifier
+
+        # 1. Have I Been Pwned (потрібен API key)
+        hibp_key = os.getenv("HIBP_API_KEY", "")
+        if hibp_key and "@" in email:
+            try:
+                async with httpx.AsyncClient(timeout=10) as client:
+                    resp = await client.get(
+                        f"{self.HIBP_API}/breachedaccount/{email}",
+                        headers={
+                            "hibp-api-key": hibp_key,
+                            "user-agent": "PREDATOR-Analytics-DIE",
+                        },
+                        params={"truncateResponse": "false"},
+                    )
+                    if resp.status_code == 200:
+                        breaches = resp.json()
+                        records = []
+                        for b in breaches:
+                            records.append({
+                                "name": b.get("Name"),
+                                "title": b.get("Title"),
+                                "domain": b.get("Domain"),
+                                "breach_date": b.get("BreachDate"),
+                                "pwn_count": b.get("PwnCount"),
+                                "data_classes": b.get("DataClasses", []),
+                                "is_verified": b.get("IsVerified"),
+                            })
+                        fragments.append(DataFragment(
+                            category="data_breaches",
+                            source_name="Have I Been Pwned",
+                            classification=Classification.BLACK,
+                            data={
+                                "email": email,
+                                "total_breaches": len(breaches),
+                                "exposed_data_types": list({dc for b in breaches for dc in b.get("DataClasses", [])}),
+                            },
+                            raw_records=records,
+                            confidence=1.0,
+                        ))
+                    elif resp.status_code == 404:
+                        fragments.append(DataFragment(
+                            category="data_breaches",
+                            source_name="Have I Been Pwned",
+                            classification=Classification.BLACK,
+                            data={"email": email, "total_breaches": 0, "status": "clean"},
+                            confidence=1.0,
+                        ))
+            except Exception as e:
+                self._logger.warning(f"HIBP API помилка: {e}")
+        else:
+            # Mock без ключа
+            fragments.append(DataFragment(
+                category="data_breaches",
+                source_name="Have I Been Pwned (mock)",
+                classification=Classification.BLACK,
+                data={
+                    "email": email,
+                    "total_breaches": 3,
+                    "breaches": ["Collection #1 (2019)", "LinkedIn (2021)", "Telegram Leak (2023)"],
+                    "note": "Mock-дані. Встановіть HIBP_API_KEY для реальної перевірки.",
+                },
+                confidence=0.0,
+            ))
+
+        # 2. Intelligence X (потрібен API key)
+        intelx_key = os.getenv("INTELX_API_KEY", "")
+        if intelx_key:
+            try:
+                async with httpx.AsyncClient(timeout=15) as client:
+                    # Пошук
+                    search_resp = await client.post(
+                        f"{self.INTELX_API}/intelligent/search",
+                        json={"term": email, "maxresults": 10, "media": 0, "sort": 2, "terminate": []},
+                        headers={"x-key": intelx_key},
+                    )
+                    if search_resp.status_code == 200:
+                        search_data = search_resp.json()
+                        search_id = search_data.get("id", "")
+                        if search_id:
+                            # Отримання результатів
+                            import asyncio
+                            await asyncio.sleep(2)
+                            result_resp = await client.get(
+                                f"{self.INTELX_API}/intelligent/search/result",
+                                params={"id": search_id},
+                                headers={"x-key": intelx_key},
+                            )
+                            if result_resp.status_code == 200:
+                                results = result_resp.json().get("records", [])
+                                records = []
+                                for r in results[:10]:
+                                    records.append({
+                                        "name": r.get("name"),
+                                        "date": r.get("date"),
+                                        "bucket": r.get("bucket"),
+                                        "media_type": r.get("media"),
+                                        "size": r.get("size"),
+                                    })
+                                fragments.append(DataFragment(
+                                    category="intelligence_x",
+                                    source_name="Intelligence X",
+                                    classification=Classification.BLACK,
+                                    data={"query": email, "total_results": len(results)},
+                                    raw_records=records,
+                                    confidence=0.9,
+                                ))
+            except Exception as e:
+                self._logger.warning(f"IntelX API помилка: {e}")
+
+        return fragments
