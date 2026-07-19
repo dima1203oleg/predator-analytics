@@ -2,6 +2,38 @@ import React, { useState } from 'react';
 import { Shield, Search, Server, AlertTriangle, CheckCircle, Database, Globe, Network, Activity, ChevronRight, XCircle, FileText, Download, Send } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
+const RiskGauge = ({ score }: { score: number }) => {
+  const percentage = score * 100;
+  let color = "text-emerald-500";
+  let label = "НИЗЬКИЙ";
+  if (percentage > 40) { color = "text-yellow-500"; label = "СЕРЕДНІЙ"; }
+  if (percentage > 70) { color = "text-rose-500"; label = "КРИТИЧНИЙ"; }
+  
+  return (
+    <div className="flex flex-col items-center justify-center p-2">
+      <div className="relative w-24 h-24">
+        <svg className="w-full h-full" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="8" className="text-slate-800" />
+          <circle 
+            cx="50" cy="50" r="45" 
+            fill="none" 
+            stroke="currentColor" 
+            strokeWidth="8" 
+            strokeDasharray="283" 
+            strokeDashoffset={283 - (283 * percentage) / 100}
+            className={`transition-all duration-1000 ease-out ${color} drop-shadow-[0_0_8px_currentColor]`}
+            transform="rotate(-90 50 50)"
+          />
+        </svg>
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
+          <span className="text-xl font-bold text-white">{Math.round(percentage)}</span>
+        </div>
+      </div>
+      <div className={`mt-2 text-xs font-bold tracking-wider ${color}`}>{label}</div>
+    </div>
+  );
+};
+
 interface DossierCompilerProps {
   onDossierComplete?: (dossierData: any) => void;
 }
@@ -84,7 +116,7 @@ export const DossierCompiler: React.FC<DossierCompilerProps> = ({ onDossierCompl
   };
 
   return (
-    <div className="glass-panel rounded-2xl p-6 shadow-2xl text-white">
+    <div className="bg-slate-900/50 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] text-white">
       <div className="flex items-center gap-3 mb-6 border-b border-slate-800 pb-4">
         <div className="bg-red-500/20 p-2 rounded-lg">
           <Shield className="text-red-500 w-6 h-6" />
@@ -98,7 +130,7 @@ export const DossierCompiler: React.FC<DossierCompilerProps> = ({ onDossierCompl
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Панель керування */}
         <div className="lg:col-span-1 space-y-6">
-          <div className="glass-card p-5 rounded-xl space-y-4">
+          <div className="bg-white/5 backdrop-blur-md border border-white/10 p-5 rounded-xl space-y-4 shadow-lg">
             <div>
               <label className="block text-sm text-slate-400 mb-2">Тип цілі</label>
               <select 
@@ -238,6 +270,9 @@ export const DossierCompiler: React.FC<DossierCompilerProps> = ({ onDossierCompl
                       <div><strong>Записів знайдено:</strong> {result.total_records_found}</div>
                       <div><strong>Вузлів у графі:</strong> {result.graph?.total_nodes || 0}</div>
                     </div>
+                  </div>
+                  <div className="flex-shrink-0 border-l border-emerald-900/50 pl-4 ml-2">
+                    <RiskGauge score={result.risk_assessment?.ml_risk_score || 0} />
                   </div>
                 </div>
                 

@@ -23,6 +23,10 @@ class Settings(BaseSettings):
     DATAGOV_BASE_URL: str = "https://data.gov.ua/api/3/action"
     DATAGOV_SCHEDULE_MINUTES: int = 360
 
+    # API Keys for External Registries
+    YOUCONTROL_API_KEY: str = ""
+    OPENDATABOT_API_KEY: str = ""
+
     # MinIO/S3 (для резервного збереження сирих JSON)
     MINIO_ENDPOINT: str = "localhost:9000"
     MINIO_ACCESS_KEY: str = ""
