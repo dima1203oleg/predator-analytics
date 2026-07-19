@@ -72,20 +72,53 @@ class LeakCollector(BaseCollector):
                         ))
             except Exception as e:
                 self._logger.warning(f"HIBP API помилка: {e}")
-        else:
-            # Mock без ключа
-            fragments.append(DataFragment(
-                category="data_breaches",
-                source_name="Have I Been Pwned (mock)",
-                classification=Classification.BLACK,
-                data={
-                    "email": email,
-                    "total_breaches": 3,
-                    "breaches": ["Collection #1 (2019)", "LinkedIn (2021)", "Telegram Leak (2023)"],
-                    "note": "Mock-дані. Встановіть HIBP_API_KEY для реальної перевірки.",
-                },
-                confidence=0.0,
-            ))
+        elif "@" in email:
+            # Proxynova COMB (безкоштовний відкритий API для перевірки email)
+            try:
+                async with httpx.AsyncClient(timeout=15) as client:
+                    resp = await client.get(f"https://api.proxynova.com/comb?query={email}")
+                    if resp.status_code == 200:
+                        data = resp.json()
+                        count = data.get("count", 0)
+                        lines = data.get("lines", [])
+                        if count > 0:
+                            records = [{"email": email, "breach_excerpt": line[:50] + "..."} for line in lines[:10]]
+                            fragments.append(DataFragment(
+                                category="data_breaches",
+                                source_name="Proxynova COMB",
+                                classification=Classification.BLACK,
+                                data={
+                                    "email": email,
+                                    "total_breaches": count,
+                                    "breaches": ["COMB (Compilation of Many Breaches)"],
+                                },
+                                raw_records=records,
+                                confidence=0.8,
+                            ))
+                        else:
+                            fragments.append(DataFragment(
+                                category="data_breaches",
+                                source_name="Proxynova COMB",
+                                classification=Classification.BLACK,
+                                data={"email": email, "total_breaches": 0, "status": "clean"},
+                                confidence=0.8,
+                            ))
+            except Exception as e:
+                self._logger.warning(f"Proxynova API помилка: {e}")
+                
+                # Mock fallback
+                fragments.append(DataFragment(
+                    category="data_breaches",
+                    source_name="Data Leaks (mock)",
+                    classification=Classification.BLACK,
+                    data={
+                        "email": email,
+                        "total_breaches": 2,
+                        "breaches": ["VK Leak (2020)", "Telegram Leak (2023)"],
+                        "note": "Mock-дані",
+                    },
+                    confidence=0.0,
+                ))
 
         # 2. Intelligence X (потрібен API key)
         intelx_key = os.getenv("INTELX_API_KEY", "")

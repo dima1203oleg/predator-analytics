@@ -171,7 +171,7 @@ class E2eValidator(BaseValidator):
         root = Path(os.getenv("PREDATOR_ROOT", Path(__file__).resolve().parent.parent.parent.parent))
 
         critical_dirs = {
-            "apps/predator-analytics-ui": root / "apps" / "predator-analytics-ui",
+            "apps/analytics-hub-ui": root / "apps" / "analytics-hub-ui",
             "services/core-api": root / "services" / "core-api",
             "services/ingestion-worker": root / "services" / "ingestion-worker",
             "services/adv_dvs": root / "services" / "adv_dvs",

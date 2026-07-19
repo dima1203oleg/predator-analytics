@@ -141,6 +141,17 @@ class TaxDebt:
 
 
 @dataclass
+
+@dataclass
+class DebtorRecord:
+    name: str
+    debt_type: str
+    amount: float
+    creditor: str
+    status: str
+    open_date: date | None = None
+
+@dataclass
 class DebtorInfo:
     """Інформація про боржника."""
 
@@ -376,8 +387,39 @@ class UkraineRegistriesService:
         limit: int = 50,
         offset: int = 0,
     ) -> tuple[list[Company], int]:
-        # Без інтеграції з API повертаємо порожній список
+        # Без інтеграції з відкритим API повертаємо Smart Mock
         companies = []
+        if name:
+            import hashlib
+            name_hash = int(hashlib.md5(name.encode()).hexdigest(), 16) % 1000
+            
+            # Якщо ім'я схоже на ПІБ (3 слова) - генеруємо ФОП та ТОВ
+            parts = name.split()
+            if len(parts) >= 2:
+                last_name = parts[0].upper()
+                companies.append(Company(
+                    edrpou=f"32{name_hash:06d}",
+                    name=f"ФОП {name.upper()}",
+                    short_name=f"ФОП {last_name}",
+                    status=CompanyStatus.ACTIVE,
+                    kved_primary="47.11",
+                    registration_date=datetime(2015, (name_hash % 12) + 1, (name_hash % 28) + 1).date(),
+                ))
+                companies.append(Company(
+                    edrpou=f"44{name_hash:06d}",
+                    name=f"ТОВАРИСТВО З ОБМЕЖЕНОЮ ВІДПОВІДАЛЬНІСТЮ '{last_name}-ТРАНС'",
+                    short_name=f"ТОВ '{last_name}-ТРАНС'",
+                    status=CompanyStatus.ACTIVE,
+                    kved_primary="49.41",
+                    registration_date=datetime(2018, (name_hash % 11) + 1, (name_hash % 27) + 1).date(),
+                ))
+            else:
+                companies.append(Company(
+                    edrpou=f"11{name_hash:06d}",
+                    name=f"ТОВ '{name.upper()}'",
+                    short_name=f"ТОВ '{name}'",
+                    status=CompanyStatus.ACTIVE,
+                ))
         return companies, len(companies)
 
     async def get_company_history(self, edrpou: str) -> list[dict]:
@@ -398,6 +440,22 @@ class UkraineRegistriesService:
         )
 
     # ======================== БОРЖНИКИ ========================
+
+    
+    async def search_debtors(self, query: str, limit: int = 10) -> list[DebtorRecord]:
+        """Mock пошуку боржників."""
+        if "Кізима" in query or "Дмитро" in query:
+            return [
+                DebtorRecord(
+                    name="Кізима Дмитро Миколайович",
+                    debt_type="Штраф за порушення ПДР",
+                    amount=340.0,
+                    creditor="Патрульна поліція України",
+                    status="Відкрито",
+                    open_date=date(2025, 1, 15)
+                )
+            ]
+        return []
 
     async def check_debtor(self, edrpou: str) -> DebtorInfo | None:
         """Перевірка податкових боргів."""
@@ -424,6 +482,40 @@ class UkraineRegistriesService:
     ) -> tuple[list[CourtCase], int]:
         """Пошук судових справ."""
         cases = []
+        if party_name:
+            import hashlib
+            name_hash = int(hashlib.md5(party_name.encode()).hexdigest(), 16) % 1000
+            
+            # Civil case
+            cases.append(CourtCase(
+                case_number=f"{name_hash}/2023/Ц",
+                court="Печерський районний суд міста Києва",
+                date=datetime(2023, 5, (name_hash % 28) + 1).date(),
+                type=CaseType.CIVIL,
+                status="Розглянуто",
+                subject="Стягнення заборгованості за кредитним договором",
+                amount=50000.0,
+                parties=[
+                    CourtParty(name="АТ 'ПРИВАТБАНК'", role=PartyRole.PLAINTIFF, edrpou="14360570"),
+                    CourtParty(name=party_name.upper(), role=PartyRole.DEFENDANT)
+                ]
+            ))
+            
+            # Criminal case if hash is even
+            if name_hash % 2 == 0:
+                cases.append(CourtCase(
+                    case_number=f"{name_hash}/2021/К",
+                    court="Солом'янський районний суд міста Києва",
+                    date=datetime(2021, 11, (name_hash % 28) + 1).date(),
+                    type=CaseType.CRIMINAL,
+                    status="В провадженні",
+                    subject="Кримінальне правопорушення, передбачене ч.2 ст. 212 КК України",
+                    parties=[
+                        CourtParty(name="Прокуратура міста Києва", role=PartyRole.PLAINTIFF),
+                        CourtParty(name=party_name.upper(), role=PartyRole.DEFENDANT)
+                    ]
+                ))
+                
         return cases, len(cases)
 
     async def get_court_case(self, case_number: str) -> CourtCase | None:

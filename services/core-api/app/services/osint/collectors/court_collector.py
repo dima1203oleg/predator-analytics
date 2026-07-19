@@ -34,19 +34,18 @@ class CourtCollector(BaseCollector):
                 records = []
                 criminal_count = 0
                 for case in cases:
+                    category_str = case.type.value if hasattr(case.type, "value") else str(case.type)
                     case_data = {
                         "case_number": case.case_number,
-                        "court": case.court_name,
-                        "category": case.category,
+                        "court": getattr(case, "court", ""),
+                        "category": category_str,
                         "status": case.status,
                         "date": case.date.isoformat() if case.date else None,
-                        "plaintiff": case.plaintiff,
-                        "defendant": case.defendant,
-                        "judge": case.judge,
-                        "result": case.result,
+                        "parties": [{"name": p.name, "role": p.role, "type": getattr(p, "party_type", "")} for p in getattr(case, "parties", [])],
+                        "subject": getattr(case, "subject", ""),
                     }
                     records.append(case_data)
-                    if case.category and "кримінал" in case.category.lower():
+                    if "кримінал" in category_str.lower():
                         criminal_count += 1
 
                 fragments.append(DataFragment(
