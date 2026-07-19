@@ -112,7 +112,7 @@ export default function CatalogTab() {
         {/* Left Side Filters & Dynamic Compatibility Weighting Simulator */}
         <div className="lg:col-span-1 space-y-6">
           {/* Filtering Card */}
-          <div className="bg-slate-900/50 border border-slate-800/80 rounded-xl p-5 space-y-4" id="filters-container">
+          <div className="glass-panel/80 rounded-xl p-5 space-y-4" id="filters-container">
             <h3 className="text-sm font-semibold text-slate-200 uppercase tracking-wider">Пошук та Фільтри</h3>
             
             {/* Search Query */}
@@ -162,7 +162,7 @@ export default function CatalogTab() {
           </div>
 
           {/* Dynamic Weight Simulator Card */}
-          <div className="bg-slate-900/50 border border-slate-800/80 rounded-xl p-5 space-y-4" id="weight-simulator-card">
+          <div className="glass-panel/80 rounded-xl p-5 space-y-4" id="weight-simulator-card">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-semibold text-slate-200 flex items-center gap-1.5 uppercase tracking-wider">
                 <Sliders className="w-4 h-4 text-emerald-400" />
@@ -301,7 +301,7 @@ export default function CatalogTab() {
                     key={sol.id}
                     layoutId={`sol-card-${sol.id}`}
                     onClick={() => setSelectedSolution(sol)}
-                    className="group bg-slate-900/40 hover:bg-slate-900/80 border border-slate-800/80 hover:border-slate-700/80 rounded-xl p-5 transition-all cursor-pointer flex flex-col justify-between space-y-4"
+                    className="group bg-slate-900/40 hover:glass-panel/80 hover:border-slate-700/80 rounded-xl p-5 transition-all cursor-pointer flex flex-col justify-between space-y-4"
                     whileHover={{ y: -2 }}
                   >
                     <div className="space-y-2">

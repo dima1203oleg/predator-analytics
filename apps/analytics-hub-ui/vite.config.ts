@@ -15,8 +15,7 @@ export default defineConfig(() => {
       proxy: {
         '/api': {
           // HR-22: Основний Compute Node — NVIDIA (194.177.1.200)
-          // target: 'http://194.177.1.200:8000',
-          target: 'http://localhost:9080',
+          target: 'http://194.177.1.200:8000',
           changeOrigin: true,
           secure: false,
           // Kaggle/zrok fallback — замінити вручну при активному тунелі:

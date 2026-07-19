@@ -10,6 +10,8 @@ from pydantic import BaseModel, Field
 from app.core.permissions import Permission
 from app.dependencies import PermissionChecker, get_tenant_id
 from predator_common.logging import get_logger
+from app.services.ml.dataset_orchestrator import dataset_orchestrator
+from app.services.ml.automl_pipeline import automl_pipeline
 
 logger = get_logger("core_api.ml_studio")
 
@@ -144,3 +146,37 @@ async def get_model_registry(
             "framework": "H2O.ai"
         }
     ]
+
+# ======================== DATASETS & AUTOML ========================
+
+@router.post("/datasets/sync", summary="Синхронізація датасетів")
+async def sync_datasets(
+    tenant_id: str = Depends(get_tenant_id),
+    _ = Depends(PermissionChecker([Permission.RUN_ANALYTICS])),
+):
+    """Синхронізувати датасети з Kaggle та OpenDataBot."""
+    return await dataset_orchestrator.sync_datasets()
+
+@router.get("/datasets/status", summary="Статус датасетів")
+async def get_datasets_status(
+    tenant_id: str = Depends(get_tenant_id),
+):
+    """Перевірити статус завантажених датасетів."""
+    return await dataset_orchestrator.get_dataset_status()
+
+@router.post("/automl/train", summary="Запустити AutoML тренування")
+async def start_automl_training(
+    dataset_name: str = Query(..., description="Назва датасету для тренування"),
+    model_type: str = Query(default="xgboost", description="Тип моделі (xgboost, lightgbm)"),
+    tenant_id: str = Depends(get_tenant_id),
+    _ = Depends(PermissionChecker([Permission.RUN_ANALYTICS])),
+):
+    """Ініціювати автоматичне тренування на основі датасету."""
+    return await automl_pipeline.train_model(dataset_name, model_type)
+
+@router.get("/automl/status", summary="Статус AutoML")
+async def get_automl_status(
+    tenant_id: str = Depends(get_tenant_id),
+):
+    """Отримати статус активних тренувань AutoML."""
+    return await automl_pipeline.get_models_status()

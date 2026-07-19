@@ -470,7 +470,7 @@ export default function AdminBackOffice() {
             </div>
 
             {/* Comprehensive status panel for 15 system technologies */}
-            <div className="bg-[#0b1329]/40 border border-slate-850 rounded-2xl p-5 shadow-xl space-y-4">
+            <div className="glass-panel rounded-2xl p-5 shadow-xl space-y-4">
               <div className="flex items-center justify-between border-b border-slate-900 pb-3">
                 <div className="flex items-center gap-2">
                   <Database className="w-4.5 h-4.5 text-indigo-400" />

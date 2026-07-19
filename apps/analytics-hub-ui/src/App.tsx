@@ -13,6 +13,7 @@ import VolumesTab from './components/VolumesTab';
 import AdvisorTab from './components/AdvisorTab';
 import OsintWorkbench from './components/OsintWorkbench';
 import DashboardView from './components/DashboardView';
+import { AuthStatus } from './components/AuthStatus';
 import InspectorPanel from './components/InspectorPanel';
 import LiveAnalyticalCenter from './components/LiveAnalyticalCenter';
 import { OodaRadar } from './components/OodaRadar';
@@ -36,8 +37,12 @@ import { CopilotPanel } from './components/CopilotPanel';
 import { MediaForensicsTab } from './components/MediaForensicsTab';
 import { RestrictedFeatureOverlay } from './components/RestrictedFeatureOverlay';
 import { LoginScreen } from './components/LoginScreen';
+import { usePAEStream } from './hooks/usePAEStream';
+import './styles/cyber-theme.css';
+import { GenesisCanvas } from './components/canvas/GenesisCanvas';
+import { CommandPalette } from './components/CommandPalette';
 
-type TabId = 'live-analytical-center' | 'sovereign-dashboard' | 'admin-back-office' | 'dashboard' | 'osint' | 'maps' | 'catalog' | 'license' | 'architecture' | 'gap' | 'roadmap' | 'volumes' | 'advisor' | 'media-forensics';
+type TabId = 'genesis-workspace' | 'live-analytical-center' | 'sovereign-dashboard' | 'admin-back-office' | 'dashboard' | 'osint' | 'maps' | 'catalog' | 'license' | 'architecture' | 'gap' | 'roadmap' | 'volumes' | 'advisor' | 'media-forensics';
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(!!localStorage.getItem('predator_token'));
@@ -58,10 +63,50 @@ export default function App() {
     }
   }, [userRole]);
 
-  const [activeTab, setActiveTab] = useState<TabId>('live-analytical-center');
+  const [activeTab, setActiveTab] = useState<TabId>('genesis-workspace');
   const [selectedScenario, setSelectedScenario] = useState<string>('business');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isInspectorOpen, setIsInspectorOpen] = useState(true);
+  
+  // Genesis Canvas States
+  const [intentActive, setIntentActive] = useState(false);
+  const [genesisQuery, setGenesisQuery] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+  const { data: paeData, sendIntent } = usePAEStream();
+  
+  // Genesis Canvas Global Input Listener
+  useEffect(() => {
+    if (activeTab !== 'genesis-workspace') return;
+    
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ignore if typing in an existing input/textarea
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      
+      // If alphanumeric, start typing
+      if (e.key.length === 1 && /[a-zA-Z0-9А-Яа-яЄєІіЇїҐґ ]/.test(e.key)) {
+        if (!isTyping) {
+          setIsTyping(true);
+          setIntentActive(true);
+        }
+      }
+      
+      if (e.key === 'Escape') {
+        setIsTyping(false);
+        setIntentActive(false);
+        setGenesisQuery('');
+      }
+      
+      if (e.key === 'Enter' && isTyping && genesisQuery.trim().length > 0) {
+        console.log("Submitting Intent to PAE:", genesisQuery);
+        sendIntent(genesisQuery);
+        setIntentActive(false);
+        setTimeout(() => setIntentActive(true), 200);
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activeTab, isTyping, genesisQuery, sendIntent]);
   
   // Interactive rendering and mobile adaptive states
   const [deviceMode, setDeviceMode] = useState<'desktop' | 'iphone'>('desktop');
@@ -1449,10 +1494,10 @@ export default function App() {
 
   const renderDesktopLayout = () => {
     return (
-      <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-indigo-500/30 selection:text-indigo-200" id="predator-hub-app">
+      <div className="min-h-screen bg-transparent text-slate-100 flex flex-col font-sans selection:bg-indigo-500/30 selection:text-indigo-200" id="predator-hub-app">
         
         {/* 1. STICKY HEADER (Section 6) */}
-        <header className="border-b border-slate-900 bg-slate-950/80 backdrop-blur-md sticky top-0 z-40 px-5 py-3.5 flex items-center justify-between gap-4">
+        <header className="glass-nav sticky top-0 z-40 px-5 py-3.5 flex items-center justify-between gap-4">
           
           {/* Left: Brand logo & name */}
           <div className="flex items-center gap-3">
@@ -1661,7 +1706,7 @@ export default function App() {
           
           {/* LEFT SIDEBAR (Section 7) */}
           <aside 
-            className={`shrink-0 bg-slate-950 border-r border-slate-900 flex flex-col justify-between transition-all duration-300 ${sidebarCollapsed ? 'w-[72px]' : 'w-[280px]'}`}
+            className={`shrink-0 glass-nav flex flex-col justify-between transition-all duration-300 ${sidebarCollapsed ? 'w-[72px]' : 'w-[280px]'}`}
             id="tactical-sidebar"
           >
             
@@ -1677,6 +1722,19 @@ export default function App() {
                         🛰️ АНАЛІТИЧНИЙ ПРОСТІР
                       </span>
                     )}
+                    
+                    <button 
+                      onClick={() => setActiveTab('genesis-workspace')}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer ${activeTab === 'genesis-workspace' ? 'bg-cyan-600/10 text-cyan-400 border border-cyan-500/20 shadow-sm' : 'text-slate-400 border border-transparent hover:text-slate-200 hover:bg-slate-900/30'}`}
+                    >
+                      <Map className={`w-4 h-4 ${activeTab === 'genesis-workspace' ? 'text-cyan-400' : 'text-slate-500'}`} />
+                      {!sidebarCollapsed && (
+                        <div className="flex items-center justify-between flex-1">
+                          <span>Genesis Canvas</span>
+                          <span className="text-[8px] bg-cyan-500/15 text-cyan-400 border border-cyan-500/30 px-1.5 py-0.5 rounded font-mono font-bold tracking-widest">PAE</span>
+                        </div>
+                      )}
+                    </button>
                     
                     <button 
                       onClick={() => setActiveTab('live-analytical-center')}
@@ -1913,6 +1971,38 @@ export default function App() {
                 transition={{ duration: 0.15 }}
               >
                 {/* Dynamic routing */}
+                {activeTab === 'genesis-workspace' && (
+                  <div className="absolute inset-0 overflow-hidden">
+                    <GenesisCanvas intentActive={intentActive} data={paeData} />
+                    <div className="ui-overlay pointer-events-none flex flex-col items-center justify-center">
+                      <AnimatePresence>
+                        {isTyping && (
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.9 }}
+                            className="cyber-panel p-6 rounded-2xl w-[600px] pointer-events-auto shadow-2xl shadow-cyan-500/20"
+                          >
+                            <h3 className="hud-element text-sm mb-4 tracking-[0.2em] uppercase text-cyan-400">
+                              [PAE] Введіть намір або об'єкт...
+                            </h3>
+                            <input
+                              type="text"
+                              value={genesisQuery}
+                              onChange={(e) => setGenesisQuery(e.target.value)}
+                              placeholder="Type to command..."
+                              className="cyber-type-input"
+                              autoFocus
+                            />
+                            <p className="text-[10px] text-cyan-500/50 mt-4 text-center font-mono">
+                              Press ENTER to Synthesize • ESC to abort
+                            </p>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  </div>
+                )}
                 {activeTab === 'live-analytical-center' && (
                   <div className="flex flex-col gap-6">
                     <OodaRadar />
@@ -2421,6 +2511,7 @@ export default function App() {
       </AnimatePresence>
       <LiveChatBot />
       <CopilotPanel />
+      <CommandPalette onNavigate={setActiveTab} />
     </>
   );
 }

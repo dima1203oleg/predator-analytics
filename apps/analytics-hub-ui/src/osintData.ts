@@ -22,22 +22,7 @@ export interface OsintEntity {
   relationships: { targetId: string; targetName: string; type: string; risk: 'HIGH' | 'MEDIUM' | 'LOW' }[];
   aiRecommendations: string;
   lastActivityDate?: string; // YYYY-MM-DD
-  // Розширений профіль фізичної особи (Person)
-  familyTies?: { name: string; relation: string; status: string; risk: 'HIGH' | 'MEDIUM' | 'LOW' }[];
-  assets?: { type: string; description: string; estimatedValue: string; ownership: string }[];
-  psychologicalPortrait?: { characteristics: string[]; vulnerabilities: string[]; summary: string };
-  medicalProfile?: { coprogram: string; wormEggsCount: number; lastCheckup: string; summary: string };
-  // Deep OSINT fields
-  cyber?: { ip: string; openPorts: number[]; vulnerabilities: string[]; darknetMentions: number; hasOnionLinks: boolean };
-  interpol?: { isWanted: boolean; noticeType?: 'RED' | 'YELLOW'; charge?: string; country?: string };
-  leaks?: { totalBreaches: number; exposedData: string[]; sources: string[]; compromisedPasswords: boolean };
-  compromat?: Array<{
-    date: string;
-    source: string;
-    summary: string;
-    severity: 'CRITICAL' | 'HIGH' | 'MEDIUM';
-    details: string;
-  }>;
+  rawContext?: any;
 }
 
 export const OSINT_ENTITIES: OsintEntity[] = [
@@ -110,22 +95,6 @@ export const OSINT_ENTITIES: OsintEntity[] = [
       criminalCases: 2,
       lastCaseTitle: "Підозра у державній зраді та сприянні діяльності терористичної організації",
       lastCaseDate: "2026-05-15"
-    },
-    cyber: {
-      ip: "194.177.1.55",
-      openPorts: [22, 80, 443, 3389],
-      vulnerabilities: ["CVE-2021-34527", "CVE-2023-23397"],
-      darknetMentions: 12,
-      hasOnionLinks: true
-    },
-    interpol: {
-      isWanted: false
-    },
-    leaks: {
-      totalBreaches: 4,
-      exposedData: ["Email", "Password", "IP Address", "Phone"],
-      sources: ["LinkedIn (2012)", "Canva (2019)", "BreachCompilation"],
-      compromisedPasswords: true
     },
     description: "Громадянин України, бізнесмен, бенефіціарний власник компаній у сфері торгівлі та логістики. Фігурує у розслідуваннях щодо фінансування сепаратизму та обходу міжнародних санкцій через офшорні юрисдикції.",
     relationships: [

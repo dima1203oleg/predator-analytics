@@ -83,7 +83,7 @@ export default function InspectorPanel({ selectedEntity, selectedTool, selectedN
                 {/* Metadata Grid (Section 9) */}
                 <div className="space-y-1.5">
                   <span className="text-[9px] text-slate-500 font-mono font-bold uppercase tracking-widest block">Метадані об'єкта</span>
-                  <div className="bg-slate-900/40 border border-slate-900 rounded-xl p-3 space-y-1.5 font-mono text-[10px] text-slate-300">
+                  <div className="glass-card rounded-xl p-3 space-y-1.5 font-mono text-[10px] text-slate-300">
                     <div className="flex justify-between">
                       <span className="text-slate-500">Адреса:</span>
                       <span className="text-slate-200 text-right max-w-[160px] truncate" title={selectedEntity.address}>{selectedEntity.address}</span>
@@ -145,7 +145,7 @@ export default function InspectorPanel({ selectedEntity, selectedTool, selectedN
                 </div>
 
                 {/* Compatibility Rating */}
-                <div className="bg-slate-900/40 border border-slate-900 p-3 rounded-xl space-y-2">
+                <div className="glass-card p-3 rounded-xl space-y-2">
                   <span className="text-[9px] text-slate-500 font-mono font-bold uppercase tracking-widest block">Сумісність з ТЗ</span>
                   <div className="flex items-center gap-3">
                     <span className="text-2xl font-bold font-mono text-indigo-400">{selectedTool.compatibilityScore}%</span>
@@ -199,7 +199,7 @@ export default function InspectorPanel({ selectedEntity, selectedTool, selectedN
                 </div>
 
                 {/* Status metrics */}
-                <div className="bg-slate-900/40 border border-slate-900 p-3 rounded-xl space-y-2 font-mono text-[10px]">
+                <div className="glass-card p-3 rounded-xl space-y-2 font-mono text-[10px]">
                   <span className="text-[9px] text-slate-500 font-bold uppercase tracking-widest block">Метрики контейнера</span>
                   <div className="space-y-1 text-slate-300">
                     <div className="flex justify-between">

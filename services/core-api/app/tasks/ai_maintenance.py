@@ -39,10 +39,26 @@ async def run_drift_detection_async():
 
 async def run_retraining_async():
     """Адаптивне оновлення параметрів моделей."""
-    # Логіка: аналіз помилок моделей та авто-коригування порогів
+    from app.services.ml.dataset_orchestrator import dataset_orchestrator
+    from app.services.ml.automl_pipeline import automl_pipeline
+    
     logger.info("Запуск адаптивного перенавчання (AutoML Retrain)...")
-    await asyncio.sleep(1) # Симуляція важких обчислень
-    logger.info("Параметри Z-SCORE та IQR оптимізовані для поточного розподілу даних.")
+    
+    # 1. Синхронізація наборів даних
+    logger.info("Викачування нових наборів даних...")
+    sync_result = await dataset_orchestrator.sync_datasets()
+    
+    if sync_result.get("status") == "success":
+        logger.info(f"Синхронізовано {len(sync_result.get('downloaded', []))} датасетів.")
+        
+        # 2. Тренування моделі
+        logger.info("Запуск тренування моделей...")
+        for dataset in sync_result.get("downloaded", []):
+            await automl_pipeline.train_model(dataset["name"], "xgboost")
+            
+        logger.info("Автоматичне тренування (AutoML) завершено успішно.")
+    else:
+        logger.warning("Помилка під час синхронізації датасетів.")
 
 @shared_task(name="app.tasks.ai_maintenance.daily_graph_snapshot")
 def daily_graph_snapshot():

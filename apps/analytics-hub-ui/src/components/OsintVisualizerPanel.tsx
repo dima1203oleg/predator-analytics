@@ -206,7 +206,7 @@ export const OsintVisualizerPanel: React.FC<{
           </span>
         </div>
 
-        <div className="relative w-full h-[360px] bg-slate-900/40 border border-slate-900 rounded-xl overflow-hidden flex items-center justify-center">
+        <div className="relative w-full h-[360px] glass-card rounded-xl overflow-hidden flex items-center justify-center">
           <div className="absolute inset-0 border border-dashed border-slate-800/10 rounded-full scale-[2.0] animate-spin pointer-events-none" style={{ animationDuration: '120s' }}></div>
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-950 pointer-events-none z-10"></div>
           

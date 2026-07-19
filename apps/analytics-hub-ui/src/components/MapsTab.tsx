@@ -167,7 +167,7 @@ export default function MapsTab({ onSelectEntityGlobal }: MapsTabProps) {
       
       {/* Upper HUD with visual map statistics */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4" id="maps-hud-stats">
-        <div className="bg-[#0b1329]/60 border border-slate-850 rounded-2xl p-4 flex items-center justify-between shadow-lg">
+        <div className="glass-card rounded-2xl p-4 flex items-center justify-between shadow-lg">
           <div>
             <span className="text-[8px] text-slate-400 font-mono font-bold uppercase tracking-widest block">АКТИВНІ ГЕО-ВУЗЛИ</span>
             <span className="text-xl font-black text-white tracking-tight mt-1 block">4 Точки інтересу</span>
@@ -178,7 +178,7 @@ export default function MapsTab({ onSelectEntityGlobal }: MapsTabProps) {
           </div>
         </div>
 
-        <div className="bg-[#0b1329]/60 border border-slate-850 rounded-2xl p-4 flex items-center justify-between shadow-lg">
+        <div className="glass-card rounded-2xl p-4 flex items-center justify-between shadow-lg">
           <div>
             <span className="text-[8px] text-slate-400 font-mono font-bold uppercase tracking-widest block">АКТИВНІСТЬ ТРАНЗАКЦІЙ</span>
             <span className="text-xl font-black text-amber-400 tracking-tight mt-1 block">2 Потоки коштів</span>
@@ -189,7 +189,7 @@ export default function MapsTab({ onSelectEntityGlobal }: MapsTabProps) {
           </div>
         </div>
 
-        <div className="bg-[#0b1329]/60 border border-slate-850 rounded-2xl p-4 flex items-center justify-between shadow-lg">
+        <div className="glass-card rounded-2xl p-4 flex items-center justify-between shadow-lg">
           <div>
             <span className="text-[8px] text-slate-400 font-mono font-bold uppercase tracking-widest block">РІВЕНЬ ЗАГРОЗИ СЕКТОРУ</span>
             <span className="text-xl font-black text-rose-500 tracking-tight mt-1 block">94% Критичний</span>
@@ -200,7 +200,7 @@ export default function MapsTab({ onSelectEntityGlobal }: MapsTabProps) {
           </div>
         </div>
 
-        <div className="bg-[#0b1329]/60 border border-slate-850 rounded-2xl p-4 flex items-center justify-between shadow-lg">
+        <div className="glass-card rounded-2xl p-4 flex items-center justify-between shadow-lg">
           <div>
             <span className="text-[8px] text-slate-400 font-mono font-bold uppercase tracking-widest block">АКТИВНІ ШАРИ ДАНИХ</span>
             <span className="text-xl font-black text-indigo-400 tracking-tight mt-1 block">{activeLayersCount} / 4 шарів</span>
@@ -216,7 +216,7 @@ export default function MapsTab({ onSelectEntityGlobal }: MapsTabProps) {
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
         
         {/* Left Column: Interactive Map Canvas (Span 8) */}
-        <div className="xl:col-span-8 bg-slate-900/40 border border-slate-900 rounded-2xl p-5 shadow-2xl relative overflow-hidden backdrop-blur-sm">
+        <div className="xl:col-span-8 glass-card rounded-2xl p-5 shadow-2xl relative overflow-hidden backdrop-blur-sm">
           
           {/* Header controls of the Map */}
           <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-slate-900 pb-4 gap-3 z-10 relative">
@@ -727,7 +727,7 @@ export default function MapsTab({ onSelectEntityGlobal }: MapsTabProps) {
         <div className="xl:col-span-4 space-y-6">
           
           {/* Node Selector & Filter Box */}
-          <div className="bg-slate-900/40 border border-slate-900 rounded-2xl p-5 shadow-lg space-y-4">
+          <div className="glass-card rounded-2xl p-5 shadow-lg space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-[10px] text-slate-400 font-mono font-bold uppercase tracking-widest block">
                 ФІЛЬТРАЦІЯ ГЕО-ВУЗЛІВ
@@ -820,7 +820,7 @@ export default function MapsTab({ onSelectEntityGlobal }: MapsTabProps) {
           </div>
 
           {/* Selected Node Detailed OSINT Dossier Card */}
-          <div className="bg-slate-900/40 border border-slate-900 rounded-2xl p-5 shadow-lg space-y-4 relative overflow-hidden">
+          <div className="glass-card rounded-2xl p-5 shadow-lg space-y-4 relative overflow-hidden">
             <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none select-none">
               <Sparkles className="w-16 h-16" />
             </div>
@@ -917,7 +917,7 @@ export default function MapsTab({ onSelectEntityGlobal }: MapsTabProps) {
           </div>
 
           {/* Tactical controls (Radar, Scanning) */}
-          <div className="bg-slate-900/40 border border-slate-900 rounded-2xl p-5 shadow-lg space-y-4">
+          <div className="glass-card rounded-2xl p-5 shadow-lg space-y-4">
             <span className="text-[10px] text-slate-500 font-mono font-bold uppercase tracking-widest block">
               АКТИВНІ СУПУТНИКОВІ СКРИПТИ
             </span>

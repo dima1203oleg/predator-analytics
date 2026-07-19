@@ -4,8 +4,9 @@
  */
 
 import React, { useState } from 'react';
-import { HelpCircle, Terminal, FileText, Send, Sparkles, MessageSquare, Bot, AlertTriangle, ShieldCheck, Database, Zap } from 'lucide-react';
+import { HelpCircle, Terminal, FileText, Send, Sparkles, MessageSquare, Bot, AlertTriangle, ShieldCheck, Database, Zap, BookOpen } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import SkeManifesto from './SkeManifesto';
 
 interface PredefinedQA {
   question: string;
@@ -97,7 +98,7 @@ services:
     category: "Штучний інтелект",
     answer: "Для розгортання PREDATOR в ізольованому військовому чи державному контурі (Air-gapped mode, Phase 5) без доступу до Інтернету:\n1. Локальні ваги моделей: Моделі (Llama 3, Mistral) повинні бути завантажені заздалегідь у форматі ваг HuggingFace (safetensors) та збережені у локальному реєстрі MinIO S3.\n2. Локальний сервер vLLM: vLLM розгортається на локальних серверах з GPU (напр., RTX A6000 або A100) та забезпечує OpenAI-сумісний API всередині Kubernetes кластера.\n3. Офлайн Ембедінги: Модель генерації векторів (наприклад, text-embedding-ada-002 еквіваленти на кшталт BGE-M3) повинна виконуватися на локальному воркері, а вектори зберігатися в локальний Qdrant.",
     codeSnippet: `# Запуск локального vLLM контейнера в закритому контурі
-# vLLM підвантажує ваги з локального змонтованого диска
+# vLLM підвантажує ваги з локального змонтонаного диска
 docker run --gpus all \\
   -v /mnt/local_storage/llama3-weights:/models \\
   -p 8000:8000 \\
@@ -110,6 +111,7 @@ docker run --gpus all \\
 ];
 
 export default function AdvisorTab() {
+  const [activeTab, setActiveTab] = useState<'ske' | 'architecture'>('ske');
   const [selectedQA, setSelectedQA] = useState<PredefinedQA | null>(FAQ_ITEMS[0]);
   const [chatInput, setChatInput] = useState('');
   
@@ -121,7 +123,7 @@ export default function AdvisorTab() {
     }
   ]);
 
-  const handleSendMessage = (e: React.FormEvent) => {
+  const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!chatInput.trim()) return;
 
@@ -129,34 +131,23 @@ export default function AdvisorTab() {
     setChatHistory(prev => [...prev, { sender: 'user', text: userText }]);
     setChatInput('');
 
-    // Semantic matching simulation based on keywords
-    setTimeout(() => {
-      const lower = userText.toLowerCase();
-      let reply = "Я отримав ваше запитання щодо архітектури PREDATOR. ";
-      let code: string | undefined;
-
-      if (lower.includes('gpl') || lower.includes('license') || lower.includes('ліцензі')) {
-        reply += "Щодо ліцензування: головний ризик — ліцензії GPL-3.0 (Neo4j, BBOT) та AGPL-3.0. При створенні комерційного SaaS ви ЗОБОВ’ЯЗАНІ виносити GPL-компоненти в ізольовані мікросервіси та взаємодіяти з ними виключно через мережеві API (HTTP/gRPC/Bolt). Це захистить ваше ядро від інфікування ліцензією.";
-        code = FAQ_ITEMS[0].codeSnippet;
-      } else if (lower.includes('neo4j') || lower.includes('граф')) {
-        reply += "Neo4j — найкраща графова база для Link Analysis (аналізу зв’язків). Пам’ятайте, що безкоштовна версія Neo4j Community має обмеження: підтримує лише 1 CPU та не підтримує кластеризацію. Альтернативою з ліберальнішою ліцензією є Memgraph, або доведеться будувати кастомний рівень шардування.";
-      } else if (lower.includes('qdrant') || lower.includes('вектор')) {
-        reply += "Qdrant — це надшвидка база векторного пошуку, написана на Rust. Вона ідеально підходить для RAG (Retrieval-Augmented Generation) та семантичного пошуку по документах. Інтегруйте її за допомогою офіційного клієнта gRPC для досягнення мінімальної затримки (latency).";
-      } else if (lower.includes('reestr') || lower.includes('реєстр') || lower.includes('дія') || lower.includes('єдр')) {
-        reply += "Для роботи з державними реєстрами України (ЄДР, Prozorro, Opendatabot) не існує готових K8s воркерів. Цю частину доведеться розробляти з нуля (In-house) за допомогою асинхронних Python-адаптерів з використанням черги Kafka та обов’язковим ротаційним пулом житлових проксі-серверів для обходу блокувань Cloudflare.";
-        code = FAQ_ITEMS[2].codeSnippet;
-      } else if (lower.includes('ai') || lower.includes('модел') || lower.includes('vllm') || lower.includes('gpu')) {
-        reply += "ШІ підсистема PREDATOR використовує сервіси vLLM для LLM, faster-whisper для STT та docTR для OCR. vLLM забезпечує унікальну оптимізацію PagedAttention, що дозволяє суттєво економити VRAM відеокарт. Мінімальні вимоги для Beta етапу - 1x GPU NVIDIA A6000 або RTX 4090.";
-        code = FAQ_ITEMS[4].codeSnippet;
-      } else if (lower.includes('elasticsearch') || lower.includes('opensearch')) {
-        reply += "Elasticsearch більше не використовує вільну ліцензію Apache 2.0 (перейшов на SSPL/Elastic License). Це забороняє використовувати його для побудови комерційних SaaS без купівлі ліцензії. OpenSearch є повністю вільним форком від AWS під Apache 2.0, тому він обраний основним текстовим індексом PREDATOR.";
-        code = FAQ_ITEMS[3].codeSnippet;
-      } else {
-        reply += "Для побудови гнучкої та надійної системи PREDATOR Analytics рекомендується дотримуватися чотирьох фаз: розгортання MVP (FastAPI + Postgres + OpenSearch), підключення графів та реєстрів (Kafka + Neo4j), інтеграція локального ШІ (vLLM + Qdrant + docTR) та повна фіналізація безпеки (Keycloak + Istio + Vault).";
-      }
-
-      setChatHistory(prev => [...prev, { sender: 'bot', text: reply, code }]);
-    }, 800);
+    try {
+      const response = await fetch("/api/chatbot", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          prompt: userText, 
+          history: chatHistory.map(h => ({ role: h.sender === "user" ? "user" : "model", text: h.text })),
+          fast: true
+        })
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error);
+      
+      setChatHistory(prev => [...prev, { sender: "bot", text: data.text }]);
+    } catch (error: any) {
+      setChatHistory(prev => [...prev, { sender: "bot", text: "Помилка зв'язку з ШІ: " + error.message }]);
+    }
   };
 
   const handleSelectPredefined = (item: PredefinedQA) => {
@@ -170,142 +161,112 @@ export default function AdvisorTab() {
 
   return (
     <div className="space-y-6" id="advisor-tab-root">
-      {/* Intro Header */}
-      <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-6 backdrop-blur-md">
-        <h2 className="text-xl font-semibold text-slate-100 flex items-center gap-2 mb-2">
-          <Bot className="w-5 h-5 text-indigo-400" id="advisor-title-icon" />
-          Інтерактивний ШІ-Архітектор PREDATOR
-        </h2>
-        <p className="text-slate-400 text-sm leading-relaxed">
-          Отримайте детальні технічні відповіді на найскладніші виклики архітектури та інтеграції open-source систем від нашого вбудованого експертного консультанта. Оберіть питання зі списку або задайте власне у чаті.
-        </p>
+      
+      {/* Sub navigation buttons */}
+      <div className="flex border-b border-indigo-500/10 pb-1 gap-1" id="advisor-subnav">
+        <button
+          type="button"
+          onClick={() => setActiveTab('ske')}
+          className={`px-4 py-2 text-xs font-mono font-black uppercase tracking-widest border-b-2 transition-all ${
+            activeTab === 'ske' 
+              ? 'border-cyan-400 text-cyan-400 bg-cyan-500/5' 
+              : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-900/40'
+          } rounded-t-xl`}
+        >
+          ✦ THE GENESIS CANVAS (SKE PHILOSOPHY)
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab('architecture')}
+          className={`px-4 py-2 text-xs font-mono font-black uppercase tracking-widest border-b-2 transition-all ${
+            activeTab === 'architecture' 
+              ? 'border-indigo-400 text-indigo-400 bg-indigo-500/5' 
+              : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-900/40'
+          } rounded-t-xl`}
+        >
+          ⚙️ ТЕХНІЧНИЙ ШІ-АРХІТЕКТОР (FAQ)
+        </button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        {/* Left Column: Common Dilemmas / FAQ selection */}
-        <div className="lg:col-span-1 space-y-4" id="faq-dilemmas-list">
-          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest pl-1">
-            Ключові архітектурні дилеми
-          </h3>
+      <AnimatePresence mode="wait">
+        {activeTab === 'ske' ? (
+          <motion.div
+            key="ske-tab"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
+          >
+            <SkeManifesto />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="architecture-tab"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
+            className="space-y-6"
+          >
+            {/* Intro Header */}
+            <div className="bg-slate-900/60 border border-indigo-500/10 rounded-xl p-6 backdrop-blur-md">
+              <h2 className="text-xl font-semibold text-slate-100 flex items-center gap-2 mb-2">
+                <Bot className="w-5 h-5 text-indigo-400" id="advisor-title-icon" />
+                Інтерактивний ШІ-Архітектор PREDATOR
+              </h2>
+              <p className="text-slate-300 text-sm leading-relaxed">
+                Отримайте детальні технічні відповіді на найскладніші виклики архітектури та інтеграції open-source систем від нашого вбудованого експертного консультанта. Оберіть питання зі списку або задайте власне у чаті.
+              </p>
+            </div>
 
-          <div className="space-y-2.5">
-            {FAQ_ITEMS.map((item, idx) => {
-              const isSelected = selectedQA?.question === item.question;
-              return (
-                <button
-                  key={idx}
-                  id={`faq-item-btn-${idx}`}
-                  type="button"
-                  onClick={() => handleSelectPredefined(item)}
-                  className={`w-full text-left p-4 rounded-xl border transition-all text-xs flex flex-col justify-between space-y-3 ${isSelected ? 'bg-indigo-500/10 border-indigo-500/40 shadow-[0_0_15px_rgba(99,102,241,0.04)] text-white' : 'bg-slate-900/40 border-slate-850 hover:border-slate-800 text-slate-300'}`}
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider font-mono bg-indigo-500/10 px-2 py-0.5 rounded">
-                      {item.category}
-                    </span>
-                    <HelpCircle className="w-4 h-4 text-slate-500" />
-                  </div>
-                  
-                  <span className="font-semibold leading-normal">
-                    {item.question}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              
+              {/* Left Column: Common Dilemmas / FAQ selection */}
+              <div className="lg:col-span-1 space-y-4" id="faq-dilemmas-list">
+                <h3 className="text-xs font-bold text-slate-300 uppercase tracking-widest pl-1">
+                  Ключові архітектурні дилеми
+                </h3>
 
-        {/* Right Column: Conversational Advisor Console */}
-        <div className="lg:col-span-2 flex flex-col justify-between bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden h-[620px]" id="advisor-console">
-          
-          {/* Header */}
-          <div className="px-5 py-3.5 bg-slate-900/60 border-b border-slate-850 flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <Bot className="w-5 h-5 text-indigo-400" />
-              <div>
-                <h4 className="text-xs font-bold text-white uppercase tracking-wider">PREDATOR Architecture Advisor</h4>
-                <span className="text-[9px] text-emerald-400 font-mono flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> ONLINE / EXPERT MODE
-                </span>
+                <div className="space-y-2.5">
+                  {FAQ_ITEMS.map((item, idx) => {
+                    const isSelected = selectedQA?.question === item.question;
+                    return (
+                      <button
+                        key={idx}
+                        id={`faq-item-btn-${idx}`}
+                        type="button"
+                        onClick={() => handleSelectPredefined(item)}
+                        className={`w-full text-left p-4 rounded-xl border transition-all text-xs flex flex-col justify-between space-y-3 ${isSelected ? 'bg-indigo-500/10 border-indigo-500/40 shadow-[0_0_15px_rgba(99,102,241,0.04)] text-white' : 'bg-slate-900/40 border-slate-850 hover:border-indigo-500/10 text-slate-300'}`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider font-mono bg-indigo-500/10 px-2 py-0.5 rounded">
+                            {item.category}
+                          </span>
+                          <HelpCircle className="w-4 h-4 text-slate-500" />
+                        </div>
+                        
+                        <span className="font-semibold leading-normal">
+                          {item.question}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Right Column: Conversational Advisor Console */}
+              <div className="lg:col-span-2 flex flex-col justify-center items-center bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] border border-indigo-500/10 rounded-2xl p-10 text-center h-[620px]">
+                <Bot className="w-16 h-16 text-indigo-400/50 mb-4" />
+                <h3 className="text-lg font-bold text-slate-200 mb-2">Глобальний ШІ-Асистент MARIARTI</h3>
+                <p className="text-sm text-slate-300 max-w-md">
+                  Чат-бот архітектора інтегровано в єдиний глобальний комунікаційний модуль PREDATOR (внизу праворуч). 
+                  Використовуйте плаваючий віджет для текстового та голосового спілкування з MARIARTI з будь-какого екрану.
+                </p>
               </div>
             </div>
-            
-            <span className="text-[10px] bg-slate-950 border border-slate-800 text-slate-400 font-mono px-2 py-0.5 rounded">
-              v1.2.0
-            </span>
-          </div>
-
-          {/* Chat Messages Log */}
-          <div className="p-5 overflow-y-auto space-y-4 flex-1 text-xs text-slate-300 bg-slate-950/40" id="chat-messages-log">
-            {chatHistory.map((msg, idx) => {
-              const isBot = msg.sender === 'bot';
-              return (
-                <div
-                  key={idx}
-                  className={`flex ${isBot ? 'justify-start' : 'justify-end'}`}
-                >
-                  <div className={`max-w-[85%] rounded-2xl p-4 space-y-3 ${isBot ? 'bg-slate-900/60 border border-slate-850 text-slate-300' : 'bg-indigo-600 text-white shadow-lg'}`}>
-                    <div className="flex items-center gap-1.5 border-b border-slate-800/40 pb-1.5">
-                      {isBot ? (
-                        <>
-                          <Bot className="w-4 h-4 text-indigo-400" />
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">ШІ Архітектор</span>
-                        </>
-                      ) : (
-                        <>
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-200">Ви (Аналітик)</span>
-                        </>
-                      )}
-                    </div>
-
-                    <p className="whitespace-pre-line leading-relaxed text-[11px]">
-                      {msg.text}
-                    </p>
-
-                    {/* Optional code snippets render */}
-                    {msg.code && (
-                      <div className="space-y-1">
-                        <span className="text-[9px] text-slate-500 font-mono uppercase tracking-widest block">Запропоноване рішення:</span>
-                        <div className="bg-slate-950 rounded-lg p-3 border border-slate-900 overflow-x-auto">
-                          <pre className="text-[10px] font-mono text-emerald-400 leading-normal">
-                            <code>{msg.code}</code>
-                          </pre>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Form Chat Input */}
-          <form
-            id="advisor-chat-form"
-            onSubmit={handleSendMessage}
-            className="p-4 bg-slate-900/60 border-t border-slate-850 flex items-center gap-2"
-          >
-            <input
-              id="advisor-chat-input"
-              type="text"
-              placeholder="Запитайте про реєстри, ліцензії, vLLM, Neo4j, Qdrant, масштабування..."
-              value={chatInput}
-              onChange={(e) => setChatInput(e.target.value)}
-              className="flex-1 bg-slate-950 border border-slate-850 rounded-xl px-4 py-3 text-xs text-slate-300 focus:outline-none focus:ring-1 focus:ring-indigo-500 placeholder:text-slate-500"
-            />
-            <button
-              id="send-chat-message-button"
-              type="submit"
-              className="bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white p-3 rounded-xl transition-all cursor-pointer flex items-center justify-center shadow-lg"
-              title="Надіслати запит"
-            >
-              <Send className="w-4 h-4" />
-            </button>
-          </form>
-
-        </div>
-      </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

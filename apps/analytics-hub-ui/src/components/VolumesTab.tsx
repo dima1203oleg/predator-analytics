@@ -765,7 +765,7 @@ export default function VolumesTab() {
                                 {ch.requirements.map((req, rIdx) => (
                                   <div 
                                     key={rIdx}
-                                    className="bg-slate-950/40 border border-slate-900 rounded-lg p-2.5 flex items-start gap-2 text-[10px] text-slate-400"
+                                    className="glass-panel rounded-lg p-2.5 flex items-start gap-2 text-[10px] text-slate-400"
                                   >
                                     <CheckCircle className="w-3.5 h-3.5 text-indigo-500 shrink-0 mt-0.5" />
                                     <span className="leading-tight">{req}</span>

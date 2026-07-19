@@ -190,7 +190,7 @@ export default function OsintFiltersPanel({
         </div>
 
         {showHeatmap && (
-          <div className="flex items-center gap-3 bg-slate-950/40 border border-slate-900/60 rounded-xl px-4 py-2 flex-1 sm:flex-initial sm:min-w-[280px]">
+          <div className="flex items-center gap-3 glass-panel/60 rounded-xl px-4 py-2 flex-1 sm:flex-initial sm:min-w-[280px]">
             <span className="text-[10px] text-slate-400 font-mono font-bold uppercase tracking-wider flex items-center gap-1 shrink-0">
               <Sliders className="w-3 h-3 text-rose-400" />
               <span>Чутливість:</span>
@@ -227,7 +227,7 @@ export default function OsintFiltersPanel({
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {/* High Risk Category */}
-          <div className="bg-slate-950/40 border border-slate-900/60 p-3 rounded-xl flex flex-col justify-between hover:border-rose-500/30 hover:bg-rose-500/5 transition-all duration-300 group">
+          <div className="glass-panel/60 p-3 rounded-xl flex flex-col justify-between hover:border-rose-500/30 hover:bg-rose-500/5 transition-all duration-300 group">
             <div className="flex items-center justify-between text-[10px] font-mono mb-2">
               <span className="flex items-center gap-1.5 font-bold text-rose-400">
                 <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
@@ -248,7 +248,7 @@ export default function OsintFiltersPanel({
           </div>
 
           {/* Medium Risk Category */}
-          <div className="bg-slate-950/40 border border-slate-900/60 p-3 rounded-xl flex flex-col justify-between hover:border-amber-500/30 hover:bg-amber-500/5 transition-all duration-300 group">
+          <div className="glass-panel/60 p-3 rounded-xl flex flex-col justify-between hover:border-amber-500/30 hover:bg-amber-500/5 transition-all duration-300 group">
             <div className="flex items-center justify-between text-[10px] font-mono mb-2">
               <span className="flex items-center gap-1.5 font-bold text-amber-400">
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
@@ -269,7 +269,7 @@ export default function OsintFiltersPanel({
           </div>
 
           {/* Low Risk Category */}
-          <div className="bg-slate-950/40 border border-slate-900/60 p-3 rounded-xl flex flex-col justify-between hover:border-emerald-500/30 hover:bg-emerald-500/5 transition-all duration-300 group">
+          <div className="glass-panel/60 p-3 rounded-xl flex flex-col justify-between hover:border-emerald-500/30 hover:bg-emerald-500/5 transition-all duration-300 group">
             <div className="flex items-center justify-between text-[10px] font-mono mb-2">
               <span className="flex items-center gap-1.5 font-bold text-emerald-400">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />

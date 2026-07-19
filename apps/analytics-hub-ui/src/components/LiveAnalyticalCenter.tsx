@@ -1160,7 +1160,7 @@ export default function LiveAnalyticalCenter({
           </div>
 
           {/* AI Health Dashboard Widget (Point 8) */}
-          <div className="bg-slate-900/40 border border-slate-900 p-4 rounded-2xl space-y-3 shadow-md text-left">
+          <div className="glass-card p-4 rounded-2xl space-y-3 shadow-md text-left">
             <span className="text-[8px] font-mono font-bold uppercase tracking-widest text-slate-500 block">ЗДОРОВ'Я ШІ (AI HEALTH)</span>
             
             <div className="space-y-2 text-[11px] font-medium font-sans">
@@ -1225,7 +1225,7 @@ export default function LiveAnalyticalCenter({
         </div>
 
         {/* Right half: Detailed interactive actions card */}
-        <div className="xl:col-span-4 bg-slate-900/40 border border-slate-900 rounded-2xl p-4 space-y-4 shadow-lg">
+        <div className="xl:col-span-4 glass-card rounded-2xl p-4 space-y-4 shadow-lg">
           <div className="flex justify-between items-start">
             <div>
               <span className="text-[8px] text-indigo-400 font-mono font-bold uppercase tracking-widest block">АКТИВНИЙ ОБ'ЄКТ</span>
@@ -1480,7 +1480,7 @@ export default function LiveAnalyticalCenter({
 
               <div className="space-y-4 text-xs text-slate-300">
                 <h4 className="text-[10px] font-mono font-black text-indigo-400 uppercase tracking-wider">ГЕОГРАФІЧНІ КООРДИНАТИ ТРАНЗИТУ</h4>
-                <div className="bg-slate-900/40 border border-slate-900 rounded-xl p-3.5 space-y-2 font-mono text-[10px]">
+                <div className="glass-card rounded-xl p-3.5 space-y-2 font-mono text-[10px]">
                   <div className="flex justify-between border-b border-slate-900/60 pb-1.5">
                     <span className="text-slate-500">Пункт вильоту / Порт:</span>
                     <strong className="text-slate-200">Гонконг Термінал 4</strong>

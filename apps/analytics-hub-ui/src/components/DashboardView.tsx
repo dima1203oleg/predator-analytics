@@ -161,7 +161,7 @@ export default function DashboardView({ onSelectTab, onSelectEntity }: Dashboard
             key={i} 
             whileHover={{ y: -4, scale: 1.02 }}
             transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-            className="bg-[#0b1329]/60 border border-slate-850 hover:border-indigo-500/30 rounded-2xl p-4.5 flex items-center justify-between shadow-xl backdrop-blur-sm relative overflow-hidden group cursor-pointer"
+            className="glass-card hover:border-indigo-500/30 rounded-2xl p-4.5 flex items-center justify-between shadow-xl backdrop-blur-sm relative overflow-hidden group cursor-pointer"
           >
             {/* Ambient hover glow spot */}
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
@@ -191,7 +191,7 @@ export default function DashboardView({ onSelectTab, onSelectEntity }: Dashboard
         <div className="xl:col-span-8 space-y-6">
           
           {/* Map & Link-Graph Widget combination */}
-          <div className="bg-slate-900/40 border border-slate-900 rounded-2xl p-5 shadow-lg space-y-4">
+          <div className="glass-panel rounded-2xl p-5 shadow-lg space-y-4">
             <div className="flex items-center justify-between border-b border-slate-900 pb-3">
               <div className="flex items-center gap-2">
                 <Globe className="w-4.5 h-4.5 text-teal-400" />
@@ -245,7 +245,7 @@ export default function DashboardView({ onSelectTab, onSelectEntity }: Dashboard
               </div>
 
               {/* Sidebar metric inside the Situational map block */}
-              <div className="md:col-span-4 bg-slate-950/40 border border-slate-900 rounded-xl p-3.5 flex flex-col justify-between">
+              <div className="md:col-span-4 glass-panel rounded-xl p-3.5 flex flex-col justify-between">
                 <span className="text-[9px] text-slate-500 font-mono font-bold uppercase tracking-widest block">АКТИВНІ КАНАЛИ</span>
                 
                 <div className="space-y-2 mt-2">
@@ -282,7 +282,7 @@ export default function DashboardView({ onSelectTab, onSelectEntity }: Dashboard
           </div>
 
           {/* 2D Risk-Distribution Heatmap Widget */}
-          <div className="bg-[#0b1329]/60 border border-slate-850 rounded-2xl p-5 shadow-xl space-y-4 relative overflow-hidden backdrop-blur-sm" id="risk-distribution-heatmap-widget">
+          <div className="glass-card rounded-2xl p-5 shadow-xl space-y-4 relative overflow-hidden backdrop-blur-sm" id="risk-distribution-heatmap-widget">
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-transparent to-transparent pointer-events-none" />
             
             <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-900 pb-3 gap-3 relative z-10">
@@ -338,7 +338,7 @@ export default function DashboardView({ onSelectTab, onSelectEntity }: Dashboard
             {/* Grid for heatmap container */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 relative z-10">
               {/* Heatmap main canvas */}
-              <div className="lg:col-span-8 relative h-[300px] bg-slate-950/80 border border-slate-900/80 rounded-xl overflow-hidden p-4 flex flex-col justify-between">
+              <div className="lg:col-span-8 relative h-[300px] glass-panel rounded-xl overflow-hidden p-4 flex flex-col justify-between">
                 
                 {/* 2D Plane Grid Background */}
                 <div className="absolute inset-0 pointer-events-none">
@@ -483,7 +483,7 @@ export default function DashboardView({ onSelectTab, onSelectEntity }: Dashboard
               </div>
 
               {/* Right panel: Heatmap key stats / legend */}
-              <div className="lg:col-span-4 bg-slate-950/40 border border-slate-900 rounded-xl p-4 flex flex-col justify-between space-y-4">
+              <div className="lg:col-span-4 glass-panel rounded-xl p-4 flex flex-col justify-between space-y-4">
                 <div className="space-y-3.5">
                   <span className="text-[9px] text-slate-500 font-mono font-bold uppercase tracking-widest block border-b border-slate-900 pb-1.5">
                     Показники ризик-матриці
@@ -491,18 +491,18 @@ export default function DashboardView({ onSelectTab, onSelectEntity }: Dashboard
                   
                   {/* Analytics metrics */}
                   <div className="grid grid-cols-2 gap-2">
-                    <div className="bg-slate-950/80 p-2.5 rounded-lg border border-slate-900 text-center">
+                    <div className="glass-panel p-2.5 rounded-lg text-center">
                       <span className="text-[8px] text-slate-500 font-mono block">СЕРЕДНІЙ РИЗИК</span>
                       <span className="text-lg font-black text-indigo-400 font-mono">{avgRiskScore}%</span>
                     </div>
-                    <div className="bg-slate-950/80 p-2.5 rounded-lg border border-slate-900 text-center">
+                    <div className="glass-panel p-2.5 rounded-lg text-center">
                       <span className="text-[8px] text-slate-500 font-mono block">КРИТИЧНІ ОБ'ЄКТИ</span>
                       <span className="text-lg font-black text-rose-500 font-mono">{criticalCount}</span>
                     </div>
                   </div>
 
                   {/* Settings toggle */}
-                  <div className="bg-slate-950/80 rounded-lg border border-slate-900 p-3 space-y-2">
+                  <div className="glass-panel rounded-lg p-3 space-y-2">
                     <span className="text-[8px] text-slate-400 font-mono font-bold block uppercase tracking-wider">Візуальні параметри</span>
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] text-slate-400">Градієнтні теплові ареоли</span>
@@ -556,7 +556,7 @@ export default function DashboardView({ onSelectTab, onSelectEntity }: Dashboard
           </div>
 
           {/* TACTICAL INTERACTIVE CONTROL PANEL */}
-          <div className="bg-[#0b1329]/40 border border-slate-850 rounded-2xl p-5 shadow-xl space-y-4 relative overflow-hidden backdrop-blur-sm" id="tactical-interactive-panel">
+          <div className="glass-panel rounded-2xl p-5 shadow-xl space-y-4 relative overflow-hidden backdrop-blur-sm" id="tactical-interactive-panel">
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-transparent to-transparent pointer-events-none" />
             
             <div className="flex items-center justify-between border-b border-slate-900 pb-3 relative z-10">
@@ -571,7 +571,7 @@ export default function DashboardView({ onSelectTab, onSelectEntity }: Dashboard
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 relative z-10">
               {/* Operation 1: Radar scan */}
-              <div className="bg-slate-950/70 border border-slate-900 rounded-xl p-3.5 flex flex-col justify-between space-y-4 hover:border-indigo-500/20 transition-all group">
+              <div className="glass-panel rounded-xl p-3.5 flex flex-col justify-between space-y-4 hover:border-indigo-500/20 transition-all group">
                 <div>
                   <h4 className="text-xs font-bold text-slate-200 group-hover:text-indigo-400 transition-colors">📡 ГЛОБАЛЬНИЙ РАДАР</h4>
                   <p className="text-[10px] text-slate-500 font-mono mt-1 leading-relaxed">Сканування гео-каналів та обходу митниць у реальному часі.</p>
@@ -603,7 +603,7 @@ export default function DashboardView({ onSelectTab, onSelectEntity }: Dashboard
               </div>
 
               {/* Operation 2: Sync DB */}
-              <div className="bg-slate-950/70 border border-slate-900 rounded-xl p-3.5 flex flex-col justify-between space-y-4 hover:border-indigo-500/20 transition-all group">
+              <div className="glass-panel rounded-xl p-3.5 flex flex-col justify-between space-y-4 hover:border-indigo-500/20 transition-all group">
                 <div>
                   <h4 className="text-xs font-bold text-slate-200 group-hover:text-indigo-400 transition-colors">🔄 СИНХРОНІЗАЦІЯ БАЗИ</h4>
                   <p className="text-[10px] text-slate-500 font-mono mt-1 leading-relaxed">Звірка реєстру РНБО з міжнародними санкційними списками.</p>
@@ -640,7 +640,7 @@ export default function DashboardView({ onSelectTab, onSelectEntity }: Dashboard
               </div>
 
               {/* Operation 3: AI Screening */}
-              <div className="bg-slate-950/70 border border-slate-900 rounded-xl p-3.5 flex flex-col justify-between space-y-4 hover:border-indigo-500/20 transition-all group">
+              <div className="glass-panel rounded-xl p-3.5 flex flex-col justify-between space-y-4 hover:border-indigo-500/20 transition-all group">
                 <div>
                   <h4 className="text-xs font-bold text-slate-200 group-hover:text-indigo-400 transition-colors">🧪 ШІ AML СКРИНІНГ</h4>
                   <p className="text-[10px] text-slate-500 font-mono mt-1 leading-relaxed">Глибока перевірка транскордонних переказів через Gemini 3.5.</p>
@@ -686,7 +686,7 @@ export default function DashboardView({ onSelectTab, onSelectEntity }: Dashboard
         <div className="xl:col-span-4 space-y-6">
           
           {/* Last Searches / Autocomplete AI reference (Section 11 & 12) */}
-          <div className="bg-slate-900/40 border border-slate-900 rounded-2xl p-5 shadow-lg space-y-3.5">
+          <div className="glass-panel rounded-2xl p-5 shadow-lg space-y-3.5">
             <span className="text-[10px] text-slate-500 font-mono font-bold uppercase tracking-widest block flex items-center justify-between">
               <span>ОСТАННІ АНАЛІЗОВАНИЙ ОБ'ЄКТИ</span>
               <Activity className="w-3.5 h-3.5 text-indigo-400" />
@@ -703,7 +703,7 @@ export default function DashboardView({ onSelectTab, onSelectEntity }: Dashboard
                       onSelectTab('volumes'); // Navigate to workbench
                     }
                   }}
-                  className="bg-slate-950/70 border border-slate-900 hover:border-slate-800 rounded-xl p-3 flex items-center justify-between transition-colors cursor-pointer group"
+                  className="glass-panel hover:border-slate-800 rounded-xl p-3 flex items-center justify-between transition-colors cursor-pointer group"
                 >
                   <div className="flex items-center gap-2.5">
                     <div className="p-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 group-hover:text-indigo-400 transition-colors">
@@ -723,7 +723,7 @@ export default function DashboardView({ onSelectTab, onSelectEntity }: Dashboard
           </div>
 
           {/* Risks list widget (Section 11) */}
-          <div className="bg-slate-900/40 border border-slate-900 rounded-2xl p-5 shadow-lg space-y-3.5">
+          <div className="glass-panel rounded-2xl p-5 shadow-lg space-y-3.5">
             <span className="text-[10px] text-slate-500 font-mono font-bold uppercase tracking-widest block flex items-center gap-2">
               <AlertTriangle className="w-4 h-4 text-amber-500" />
               <span>ДЖЕРЕЛО РИЗИКІВ (РЕАЛЬНИЙ ЧАС)</span>
@@ -731,7 +731,7 @@ export default function DashboardView({ onSelectTab, onSelectEntity }: Dashboard
 
             <div className="space-y-3">
               {criticalRisks.map((risk, idx) => (
-                <div key={idx} className="bg-slate-950 p-3 rounded-xl border border-slate-900 space-y-1.5">
+                <div key={idx} className="glass-panel p-3 rounded-xl space-y-1.5">
                   <div className="flex justify-between items-center text-[9px] font-mono">
                     <span className="text-slate-500">{risk.source}</span>
                     <span className={`font-bold px-1.5 py-0.5 rounded ${risk.level === 'КРИТИЧНО' ? 'bg-red-500/10 text-red-400' : 'bg-amber-500/10 text-amber-400'}`}>

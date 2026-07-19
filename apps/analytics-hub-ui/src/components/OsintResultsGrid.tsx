@@ -141,7 +141,7 @@ export default function OsintResultsGrid({
   });
 
   return (
-    <div className="bg-slate-900/40 border border-slate-900 rounded-2xl p-4.5 shadow-xl flex flex-col h-[650px]" id="osint-list-card">
+    <div className="glass-card rounded-2xl p-4.5 shadow-xl flex flex-col h-[650px]" id="osint-list-card">
       <div className="flex items-center justify-between border-b border-slate-900 pb-3 mb-3">
         <div className="flex items-center gap-2">
           <Filter className="w-4 h-4 text-indigo-400" />
@@ -160,7 +160,7 @@ export default function OsintResultsGrid({
       </div>
 
       {/* Selection control bar */}
-      <div className="flex items-center justify-between bg-slate-950/40 border border-slate-900/60 rounded-xl px-2.5 py-1.5 mb-3 text-[10px] font-mono text-slate-400">
+      <div className="flex items-center justify-between glass-panel/60 rounded-xl px-2.5 py-1.5 mb-3 text-[10px] font-mono text-slate-400">
         <div className="flex items-center gap-1.5">
           <span>Обрано: <strong className="text-indigo-400 font-bold">{selectedEntitiesCount}</strong></span>
         </div>

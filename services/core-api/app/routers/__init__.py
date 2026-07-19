@@ -62,6 +62,7 @@ from .orchestrator import router as orchestrator_router
 from .osint import router as osint_router
 from .osint_ua import router as osint_ua_router
 from .osint_vision import router as osint_vision_router
+from .pae_stream import router as pae_stream_router
 from .persons import router as persons_router
 from .premium import router as premium_router
 from .public_api import router as public_api_router
@@ -129,6 +130,8 @@ __all__ = [
     "osint_router",
     "omniverse_router",
     "osint_ua_router",
+    "osint_vision_router",
+    "pae_stream_router",
     "persons_router",
     "premium_router",
     "public_api_router",

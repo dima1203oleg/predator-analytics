@@ -128,6 +128,33 @@ export function LiveChatBot() {
 
         const sourceNode = outputAudioCtx.createBufferSource();
         sourceNode.buffer = audioBuffer;
+        
+        // Deepen and mask the voice by lowering playback rate
+        sourceNode.playbackRate.value = 0.82; // Lower pitch slightly for depth
+
+        // Anonymous/Masked voice effect: Bandpass filter
+        const bandpass = outputAudioCtx.createBiquadFilter();
+        bandpass.type = 'bandpass';
+        bandpass.frequency.value = 1000;
+        bandpass.Q.value = 0.8;
+
+        // Add a bit of distortion
+        const distortion = outputAudioCtx.createWaveShaper();
+        function makeDistortionCurve(amount) {
+          const k = typeof amount === 'number' ? amount : 50,
+            n_samples = 44100,
+            curve = new Float32Array(n_samples),
+            deg = Math.PI / 180;
+          for (let i = 0; i < n_samples; ++i) {
+            const x = (i * 2) / n_samples - 1;
+            curve[i] = ((3 + k) * x * 20 * deg) / (Math.PI + k * Math.abs(x));
+          }
+          return curve;
+        }
+        distortion.curve = makeDistortionCurve(10);
+        distortion.oversample = '4x';
+
+
         if (!analyserRef.current) {
           analyserRef.current = outputAudioCtx.createAnalyser();
           analyserRef.current.fftSize = 64;
@@ -163,7 +190,9 @@ export function LiveChatBot() {
             gainNodeRef.current.gain.value = isTTSMutedRef.current ? 0 : 1;
         }
         
-        sourceNode.connect(analyserRef.current);
+        sourceNode.connect(distortion);
+          distortion.connect(bandpass);
+          bandpass.connect(analyserRef.current);
         
         if (nextStartTimeRef.current < outputAudioCtx.currentTime) {
           nextStartTimeRef.current = outputAudioCtx.currentTime;
@@ -272,7 +301,7 @@ export function LiveChatBot() {
             className="absolute bottom-20 right-0 w-[380px] h-[550px] bg-slate-950/95 border border-indigo-500/30 rounded-2xl shadow-[0_15px_40px_rgba(0,0,0,0.5)] backdrop-blur-md flex flex-col overflow-hidden"
           >
             {/* Header */}
-            <div className="px-4 py-3 bg-slate-900/60 border-b border-slate-800 flex items-center justify-between">
+            <div className="px-4 py-3 bg-slate-900/60 border-b border-indigo-500/10 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Bot className="w-5 h-5 text-indigo-400" />
                 <div>
@@ -282,7 +311,7 @@ export function LiveChatBot() {
                   </span>
                 </div>
               </div>
-              <button onClick={() => setIsOpen(false)} className="text-slate-400 hover:text-white transition-colors">
+              <button onClick={() => setIsOpen(false)} className="text-slate-300 hover:text-white transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -297,7 +326,7 @@ export function LiveChatBot() {
               )}
               {messages.map((msg) => (
                 <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-[85%] rounded-2xl p-3 text-xs leading-relaxed ${msg.sender === 'user' ? 'bg-indigo-600 text-white' : 'bg-slate-900/80 border border-slate-800 text-slate-300'}`}>
+                  <div className={`max-w-[85%] rounded-2xl p-3 text-xs leading-relaxed ${msg.sender === 'user' ? 'bg-indigo-600 text-white' : 'bg-slate-900/80 border border-indigo-500/10 text-slate-300'}`}>
                     <p className="whitespace-pre-line">{msg.text}</p>
                   </div>
                 </div>
@@ -314,15 +343,15 @@ export function LiveChatBot() {
             )}
 
             {/* Input Area */}
-            <div className="p-2 bg-slate-900/60 border-t border-slate-800">
-              <form onSubmit={handleSendText} className="flex items-center gap-1.5 bg-slate-950 p-1.5 rounded-2xl border border-slate-800/80">
+            <div className="p-2 bg-slate-900/60 border-t border-indigo-500/10">
+              <form onSubmit={handleSendText} className="flex items-center gap-1.5 bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] p-1.5 rounded-2xl border border-indigo-500/10/80">
                 <button
                   type="button"
                   onClick={isActive ? stopMic : startMic}
                   className={`p-2 rounded-xl transition-all ${
                     isActive 
                       ? 'bg-red-500/20 text-red-400 shadow-[0_0_10px_rgba(239,68,68,0.15)]' 
-                      : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+                      : 'text-slate-300 hover:bg-slate-800 hover:text-slate-200'
                   }`}
                   title={isActive ? "Вимкнути мікрофон" : "Увімкнути мікрофон"}
                 >
@@ -333,7 +362,7 @@ export function LiveChatBot() {
                   onClick={() => setIsTTSMuted(!isTTSMuted)}
                   className={`p-2 rounded-xl transition-all ${
                     isTTSMuted 
-                      ? 'text-slate-500 hover:bg-slate-800 hover:text-slate-400' 
+                      ? 'text-slate-500 hover:bg-slate-800 hover:text-slate-300' 
                       : 'text-emerald-400 hover:bg-slate-800 bg-emerald-500/10'
                   }`}
                   title={isTTSMuted ? "Увімкнути звук" : "Вимкнути звук"}
@@ -364,7 +393,7 @@ export function LiveChatBot() {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="h-14 w-14 rounded-full flex items-center justify-center shadow-2xl transition-all border bg-slate-900 hover:bg-slate-800 text-slate-300 border-slate-700 relative"
+        className="h-14 w-14 rounded-full flex items-center justify-center shadow-2xl transition-all border bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] hover:bg-slate-800 text-slate-300 border-slate-700 relative"
       >
         <MessageSquare className="w-6 h-6" />
         {isActive && (

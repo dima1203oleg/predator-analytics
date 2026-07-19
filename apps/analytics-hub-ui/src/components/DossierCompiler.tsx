@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Shield, Search, Server, AlertTriangle, CheckCircle, Database, Globe, Network, Activity, ChevronRight, XCircle } from 'lucide-react';
+import { Shield, Search, Server, AlertTriangle, CheckCircle, Database, Globe, Network, Activity, ChevronRight, XCircle, FileText, Download, Send } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 
 interface DossierCompilerProps {
   onDossierComplete?: (dossierData: any) => void;
@@ -49,13 +50,12 @@ export const DossierCompiler: React.FC<DossierCompilerProps> = ({ onDossierCompl
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          // Додаємо токен якщо є автентифікація
           'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
         },
         body: JSON.stringify({
           entity_type: entityType,
           identifier: identifier,
-          name: identifier, // Для спрощення передаємо як ім'я
+          name: identifier,
           classification_levels: activeLevels
         })
       });
@@ -84,27 +84,27 @@ export const DossierCompiler: React.FC<DossierCompilerProps> = ({ onDossierCompl
   };
 
   return (
-    <div className="bg-[#111111] border border-gray-800 rounded-lg p-6 shadow-2xl text-white">
-      <div className="flex items-center gap-3 mb-6 border-b border-gray-800 pb-4">
+    <div className="glass-panel rounded-2xl p-6 shadow-2xl text-white">
+      <div className="flex items-center gap-3 mb-6 border-b border-slate-800 pb-4">
         <div className="bg-red-500/20 p-2 rounded-lg">
           <Shield className="text-red-500 w-6 h-6" />
         </div>
         <div>
           <h2 className="text-xl font-bold tracking-wider">DEEP INTELLIGENCE ENGINE</h2>
-          <p className="text-gray-400 text-sm">Мультивекторна компіляція досьє</p>
+          <p className="text-slate-400 text-sm">Мультивекторна компіляція досьє</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Панель керування */}
         <div className="lg:col-span-1 space-y-6">
-          <div className="space-y-4">
+          <div className="glass-card p-5 rounded-xl space-y-4">
             <div>
-              <label className="block text-sm text-gray-400 mb-2">Тип цілі</label>
+              <label className="block text-sm text-slate-400 mb-2">Тип цілі</label>
               <select 
                 value={entityType}
                 onChange={(e) => setEntityType(e.target.value)}
-                className="w-full bg-[#1A1A1A] border border-gray-700 rounded p-2 text-white focus:border-red-500 focus:outline-none transition-colors"
+                className="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white focus:border-red-500 focus:outline-none transition-colors"
                 disabled={status === 'compiling'}
               >
                 <option value="person">Фізична особа</option>
@@ -116,31 +116,31 @@ export const DossierCompiler: React.FC<DossierCompilerProps> = ({ onDossierCompl
             </div>
 
             <div>
-              <label className="block text-sm text-gray-400 mb-2">Ідентифікатор (ПІБ, ЄДРПОУ, ІПН...)</label>
+              <label className="block text-sm text-slate-400 mb-2">Ідентифікатор (ПІБ, ЄДРПОУ, ІПН...)</label>
               <input
                 type="text"
                 value={identifier}
                 onChange={(e) => setIdentifier(e.target.value)}
                 placeholder="Введіть дані для пошуку..."
-                className="w-full bg-[#1A1A1A] border border-gray-700 rounded p-2 text-white focus:border-red-500 focus:outline-none transition-colors"
+                className="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white focus:border-red-500 focus:outline-none transition-colors"
                 disabled={status === 'compiling'}
               />
             </div>
 
             <div>
-              <label className="block text-sm text-gray-400 mb-2">Рівні сканування</label>
+              <label className="block text-sm text-slate-400 mb-2">Рівні сканування</label>
               <div className="space-y-2">
-                <label className="flex items-center gap-3 p-2 bg-[#1A1A1A] border border-gray-800 rounded cursor-pointer hover:border-gray-600 transition-colors">
+                <label className="flex items-center gap-3 p-2 bg-slate-900 border border-slate-800 rounded cursor-pointer hover:border-slate-600 transition-colors">
                   <input type="checkbox" checked={levels.WHITE} onChange={(e) => setLevels({...levels, WHITE: e.target.checked})} disabled={status === 'compiling'} className="accent-blue-500" />
                   <Database className="w-4 h-4 text-blue-400" />
                   <span>WHITE (Публічні реєстри)</span>
                 </label>
-                <label className="flex items-center gap-3 p-2 bg-[#1A1A1A] border border-gray-800 rounded cursor-pointer hover:border-gray-600 transition-colors">
+                <label className="flex items-center gap-3 p-2 bg-slate-900 border border-slate-800 rounded cursor-pointer hover:border-slate-600 transition-colors">
                   <input type="checkbox" checked={levels.GREY} onChange={(e) => setLevels({...levels, GREY: e.target.checked})} disabled={status === 'compiling'} className="accent-yellow-500" />
                   <Globe className="w-4 h-4 text-yellow-400" />
                   <span>GREY (OSINT / ЗМІ / Соцмережі)</span>
                 </label>
-                <label className="flex items-center gap-3 p-2 bg-[#1A1A1A] border border-gray-800 rounded cursor-pointer hover:border-gray-600 transition-colors">
+                <label className="flex items-center gap-3 p-2 bg-slate-900 border border-slate-800 rounded cursor-pointer hover:border-slate-600 transition-colors">
                   <input type="checkbox" checked={levels.BLACK} onChange={(e) => setLevels({...levels, BLACK: e.target.checked})} disabled={status === 'compiling'} className="accent-red-500" />
                   <Network className="w-4 h-4 text-red-400" />
                   <span>BLACK (Даркнет / Витоки / Інтерпол)</span>
@@ -153,7 +153,7 @@ export const DossierCompiler: React.FC<DossierCompilerProps> = ({ onDossierCompl
               disabled={!identifier || status === 'compiling'}
               className={`w-full py-3 rounded font-medium flex items-center justify-center gap-2 transition-all ${
                 status === 'compiling' 
-                  ? 'bg-gray-800 text-gray-500 cursor-not-allowed'
+                  ? 'bg-slate-800 text-slate-500 cursor-not-allowed'
                   : 'bg-red-600 hover:bg-red-500 text-white shadow-[0_0_15px_rgba(220,38,38,0.3)] hover:shadow-[0_0_25px_rgba(220,38,38,0.5)]'
               }`}
             >
@@ -168,8 +168,8 @@ export const DossierCompiler: React.FC<DossierCompilerProps> = ({ onDossierCompl
 
         {/* Консоль / Результати */}
         <div className="lg:col-span-2 flex flex-col h-full min-h-[400px]">
-          <div className="bg-black border border-gray-800 rounded-t p-2 flex items-center justify-between">
-            <span className="text-xs text-gray-500 font-mono flex items-center gap-2">
+          <div className="bg-slate-950 border border-slate-800 rounded-t-xl p-3 flex items-center justify-between">
+            <span className="text-xs text-slate-500 font-mono flex items-center gap-2">
               <Server className="w-3 h-3" /> ORCHESTRATOR TERMINAL
             </span>
             {status === 'compiling' && (
@@ -178,25 +178,25 @@ export const DossierCompiler: React.FC<DossierCompilerProps> = ({ onDossierCompl
               </span>
             )}
           </div>
-          <div className="bg-[#0A0A0A] border-x border-b border-gray-800 rounded-b p-4 font-mono text-sm flex-1 overflow-y-auto max-h-[500px]">
+          <div className="bg-slate-900 border-x border-b border-slate-800 rounded-b-xl p-4 font-mono text-sm flex-1 overflow-y-auto max-h-[500px] shadow-inner custom-scrollbar">
             {logs.length === 0 ? (
-              <div className="text-gray-600 h-full flex items-center justify-center italic">
+              <div className="text-slate-600 h-full flex items-center justify-center italic">
                 Очікування параметрів запуску...
               </div>
             ) : (
               <div className="space-y-1">
                 {logs.map((log, i) => (
                   <div key={i} className={`
-                    ${log.includes('✅') ? 'text-green-400' : ''}
-                    ${log.includes('❌') ? 'text-red-500' : ''}
-                    ${log.includes('Рівень ризику: CRITICAL') ? 'text-red-500 font-bold bg-red-950/50 p-1' : ''}
-                    ${!log.includes('✅') && !log.includes('❌') && !log.includes('CRITICAL') ? 'text-gray-300' : ''}
+                    ${log.includes('✅') ? 'text-emerald-400' : ''}
+                    ${log.includes('❌') ? 'text-rose-500' : ''}
+                    ${log.includes('Рівень ризику: CRITICAL') ? 'text-rose-500 font-bold bg-rose-950/50 p-1' : ''}
+                    ${!log.includes('✅') && !log.includes('❌') && !log.includes('CRITICAL') ? 'text-slate-300' : ''}
                   `}>
                     {log}
                   </div>
                 ))}
                 {status === 'compiling' && (
-                  <div className="text-gray-500 animate-pulse mt-2 flex items-center gap-2">
+                  <div className="text-slate-500 animate-pulse mt-2 flex items-center gap-2">
                     <ChevronRight className="w-4 h-4" /> Обробка потоків даних...
                   </div>
                 )}
@@ -207,42 +207,63 @@ export const DossierCompiler: React.FC<DossierCompilerProps> = ({ onDossierCompl
           {/* Прогрес бар */}
           {(status === 'compiling' || status === 'success') && (
             <div className="mt-4">
-              <div className="flex justify-between text-xs text-gray-400 mb-1">
+              <div className="flex justify-between text-xs text-slate-400 mb-1">
                 <span>Прогрес виконання</span>
                 <span>{progress}%</span>
               </div>
-              <div className="w-full bg-gray-800 rounded-full h-1.5 overflow-hidden">
+              <div className="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
                 <div 
-                  className={`h-full transition-all duration-300 ${status === 'success' ? 'bg-green-500' : 'bg-red-500 shadow-[0_0_10px_rgba(220,38,38,0.8)]'}`}
+                  className={`h-full transition-all duration-300 ${status === 'success' ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.8)]' : 'bg-red-500 shadow-[0_0_10px_rgba(220,38,38,0.8)]'}`}
                   style={{ width: `${progress}%` }}
                 ></div>
               </div>
             </div>
           )}
 
-          {/* Короткий підсумок якщо успіх */}
-          {status === 'success' && result && (
-            <div className="mt-4 p-4 border border-green-900/50 bg-green-950/20 rounded-lg flex items-start gap-4">
-              <CheckCircle className="w-6 h-6 text-green-500 mt-1 flex-shrink-0" />
-              <div>
-                <h4 className="text-green-400 font-bold mb-1">Досьє успішно скомпільовано</h4>
-                <div className="text-sm text-gray-300 grid grid-cols-2 gap-x-4 gap-y-2 mt-2">
-                  <div><strong>ID:</strong> <span className="font-mono text-xs">{result.dossier_id}</span></div>
-                  <div><strong>Збирачів:</strong> {result.collectors_succeeded} / {result.collectors_used}</div>
-                  <div><strong>Записів знайдено:</strong> {result.total_records_found}</div>
-                  <div><strong>Вузлів у графі:</strong> {result.graph?.total_nodes || 0}</div>
+          {/* Короткий підсумок та Дії (Експорт) якщо успіх */}
+          <AnimatePresence>
+            {status === 'success' && result && (
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-4 p-4 border border-emerald-900/50 bg-emerald-950/20 rounded-xl flex flex-col gap-4"
+              >
+                <div className="flex items-start gap-4">
+                  <CheckCircle className="w-6 h-6 text-emerald-500 mt-1 flex-shrink-0" />
+                  <div className="flex-1">
+                    <h4 className="text-emerald-400 font-bold mb-1">Досьє успішно скомпільовано</h4>
+                    <div className="text-sm text-slate-300 grid grid-cols-2 gap-x-4 gap-y-2 mt-2">
+                      <div><strong>ID:</strong> <span className="font-mono text-xs">{result.dossier_id}</span></div>
+                      <div><strong>Збирачів:</strong> {result.collectors_succeeded} / {result.collectors_used}</div>
+                      <div><strong>Записів знайдено:</strong> {result.total_records_found}</div>
+                      <div><strong>Вузлів у графі:</strong> {result.graph?.total_nodes || 0}</div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          )}
+                
+                {/* Export / Actions Panel */}
+                <div className="pt-3 border-t border-emerald-900/30 flex gap-3">
+                  <button className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white py-2 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors">
+                    <FileText className="w-4 h-4" /> Відкрити Звіт
+                  </button>
+                  <button className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 py-2 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors">
+                    <Download className="w-4 h-4" /> PDF Експорт
+                  </button>
+                  <button className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-2 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors">
+                    <Send className="w-4 h-4" /> Command Center
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
           
           {/* Помилка */}
           {status === 'error' && (
-            <div className="mt-4 p-4 border border-red-900/50 bg-red-950/20 rounded-lg flex items-start gap-4">
-              <XCircle className="w-6 h-6 text-red-500 mt-1 flex-shrink-0" />
+            <div className="mt-4 p-4 border border-rose-900/50 bg-rose-950/20 rounded-xl flex items-start gap-4">
+              <XCircle className="w-6 h-6 text-rose-500 mt-1 flex-shrink-0" />
               <div>
-                <h4 className="text-red-400 font-bold mb-1">Помилка компіляції</h4>
-                <p className="text-sm text-gray-300">Перевірте з'єднання з сервером або параметри запиту.</p>
+                <h4 className="text-rose-400 font-bold mb-1">Помилка компіляції</h4>
+                <p className="text-sm text-slate-300">Перевірте з'єднання з сервером або параметри запиту.</p>
               </div>
             </div>
           )}

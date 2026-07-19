@@ -31,7 +31,7 @@ export const OsintDossierPanel: React.FC<{
 
   return (
         <div className="xl:col-span-4 space-y-6" id="osint-dossier-panel">
-          <div className="bg-slate-900/40 border border-slate-900 rounded-2xl overflow-hidden shadow-xl">
+          <div className="glass-card rounded-2xl overflow-hidden shadow-xl">
             
             {/* Dossier Header */}
             <div className="p-5 border-b border-slate-900 bg-slate-950/60 relative">
@@ -183,7 +183,7 @@ export const OsintDossierPanel: React.FC<{
                   {/* Taxes and Customs Data (Section 13) */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {activeEntity.taxes && (
-                      <div className="bg-slate-950/40 border border-slate-900 rounded-xl p-3.5 space-y-2">
+                      <div className="glass-panel rounded-xl p-3.5 space-y-2">
                         <span className="text-[9px] text-slate-500 font-mono font-bold uppercase tracking-widest block flex items-center gap-1">
                           <DollarSign className="w-3.5 h-3.5 text-slate-500" /> Фінансовий стан
                         </span>
@@ -208,7 +208,7 @@ export const OsintDossierPanel: React.FC<{
                     )}
 
                     {activeEntity.customs && (
-                      <div className="bg-slate-950/40 border border-slate-900 rounded-xl p-3.5 space-y-2">
+                      <div className="glass-panel rounded-xl p-3.5 space-y-2">
                         <span className="text-[9px] text-slate-500 font-mono font-bold uppercase tracking-widest block flex items-center gap-1">
                           <Truck className="w-3.5 h-3.5 text-slate-500" /> Митна діяльність
                         </span>
@@ -235,7 +235,7 @@ export const OsintDossierPanel: React.FC<{
 
               {/* Courts / Litigation history (Section 13) */}
               {activeEntity.courts && (
-                <div className="bg-slate-950/40 border border-slate-900 rounded-xl p-3.5 space-y-2">
+                <div className="glass-panel rounded-xl p-3.5 space-y-2">
                   <span className="text-[9px] text-slate-500 font-mono font-bold uppercase tracking-widest block flex items-center justify-between">
                     <span>СУДОВИЙ РЕЄСТР</span>
                     <span className="text-red-400 font-bold font-mono text-[10px]">{activeEntity.courts.criminalCases} КРИМІНАЛ / {activeEntity.courts.totalCases} ВСЬОГО</span>
@@ -309,7 +309,7 @@ export const OsintDossierPanel: React.FC<{
                       <span className="text-[9px] text-slate-500 font-mono font-bold uppercase tracking-widest block">Близьке оточення / Родина</span>
                       <div className="grid gap-2">
                         {activeEntity.familyTies.map((member, idx) => (
-                          <div key={idx} className="bg-slate-950/40 border border-slate-900 rounded-xl p-3 flex flex-col gap-1">
+                          <div key={idx} className="glass-panel rounded-xl p-3 flex flex-col gap-1">
                             <div className="flex justify-between items-center">
                               <span className="text-slate-200 font-bold text-[11px]">{member.name}</span>
                               <span className={`px-1.5 py-0.5 rounded text-[8px] font-bold uppercase ${member.risk === 'HIGH' ? 'bg-rose-500/20 text-rose-400' : member.risk === 'MEDIUM' ? 'bg-amber-500/20 text-amber-400' : 'bg-slate-800 text-slate-400'}`}>{member.risk} Risk</span>
@@ -329,7 +329,7 @@ export const OsintDossierPanel: React.FC<{
                       <span className="text-[9px] text-slate-500 font-mono font-bold uppercase tracking-widest block">Капітал та Власність</span>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                         {activeEntity.assets.map((asset, idx) => (
-                          <div key={idx} className="bg-slate-950/40 border border-slate-900 rounded-xl p-3 flex flex-col justify-between">
+                          <div key={idx} className="glass-panel rounded-xl p-3 flex flex-col justify-between">
                             <div>
                               <div className="flex justify-between">
                                 <span className="text-indigo-400 font-bold text-[10px] uppercase font-mono">{asset.type}</span>

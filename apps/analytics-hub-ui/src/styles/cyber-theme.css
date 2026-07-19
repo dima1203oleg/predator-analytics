@@ -1,0 +1,88 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* PREDATOR Cyber Theme Tokens */
+  --cyber-bg: #030712;
+  --cyber-bg-alpha: rgba(3, 7, 18, 0.8);
+  
+  --cyber-primary: #38bdf8; /* Cyan */
+  --cyber-primary-glow: rgba(56, 189, 248, 0.5);
+  
+  --cyber-accent: #f43f5e; /* Red / Target */
+  --cyber-accent-glow: rgba(244, 63, 94, 0.5);
+  
+  --cyber-success: #10b981;
+  --cyber-warning: #f59e0b;
+  
+  --cyber-surface: rgba(15, 23, 42, 0.6);
+  --cyber-border: rgba(51, 65, 85, 0.5);
+  
+  --font-cyber: 'Rajdhani', sans-serif;
+  --font-display: 'Orbitron', sans-serif;
+}
+
+body {
+  background-color: var(--cyber-bg);
+  color: #e2e8f0;
+  font-family: var(--font-cyber);
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* Hide scrollbars for Infinite Canvas */
+  -webkit-font-smoothing: antialiased;
+}
+
+.genesis-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1; /* Backend rendering layer */
+}
+
+.ui-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 10;
+  pointer-events: none; /* Let clicks pass through to 3D canvas by default */
+}
+
+/* Glassmorphism Panels */
+.cyber-panel {
+  background: var(--cyber-surface);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--cyber-border);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  pointer-events: auto; /* Enable interactions on UI elements */
+}
+
+.cyber-type-input {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid var(--cyber-primary);
+  color: var(--cyber-primary);
+  font-family: var(--font-display);
+  font-size: 2rem;
+  padding: 10px;
+  outline: none;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-shadow: 0 0 10px var(--cyber-primary-glow);
+  width: 100%;
+}
+
+.cyber-type-input::placeholder {
+  color: rgba(56, 189, 248, 0.3);
+}
+
+.hud-element {
+  font-family: var(--font-display);
+  color: var(--cyber-primary);
+  text-shadow: 0 0 5px var(--cyber-primary-glow);
+  letter-spacing: 2px;
+}
