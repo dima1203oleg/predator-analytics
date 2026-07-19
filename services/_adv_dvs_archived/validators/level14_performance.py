@@ -8,6 +8,7 @@ import time
 import httpx
 from .base import BaseValidator, CheckResult
 from .. import config
+TARGET_HOST = os.getenv("TARGET_HOST", "localhost")
 
 
 class PerformanceValidator(BaseValidator):

@@ -5,6 +5,7 @@ import os
 """
 from pathlib import Path
 from .base import BaseValidator, CheckResult
+TARGET_HOST = os.getenv("TARGET_HOST", "localhost")
 
 
 class AutoMLValidator(BaseValidator):

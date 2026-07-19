@@ -7,6 +7,7 @@ import httpx
 import time
 from .base import BaseValidator, CheckResult
 from .. import config
+TARGET_HOST = os.getenv("TARGET_HOST", "localhost")
 
 
 class LlmValidator(BaseValidator):

@@ -8,6 +8,7 @@ from typing import Dict, Any
 
 from .base import BaseValidator, CheckResult
 from .. import config
+TARGET_HOST = os.getenv("TARGET_HOST", "localhost")
 
 
 class BackendValidator(BaseValidator):
@@ -50,11 +51,11 @@ class BackendValidator(BaseValidator):
             )
 
         # 4. Mock API перевірка (як альтернатива при відсутності core-api)
-        mock_base = "http://localhost:9080"
+        mock_base = f"http://{TARGET_HOST}:9080"
         await self.http_check("mock_api_health", f"{mock_base}/api/v1/health", severity="warning")
 
         # 5. ADV-DVS API
-        await self.http_check("adv_dvs_health", "http://localhost:8003/health", severity="warning")
+        await self.http_check("adv_dvs_health", f"http://{TARGET_HOST}:8003/health", severity="warning")
 
         # 6. Перевірка CORS та заголовків
         await self._check_cors(base)
@@ -66,7 +67,7 @@ class BackendValidator(BaseValidator):
             async with httpx.AsyncClient(verify=False, timeout=5) as client:
                 resp = await client.options(
                     f"{base_url}/api/v1/health",
-                    headers={"Origin": "http://localhost:3030", "Access-Control-Request-Method": "GET"},
+                    headers={"Origin": f"http://{TARGET_HOST}:3030", "Access-Control-Request-Method": "GET"},
                 )
                 has_cors = "access-control-allow-origin" in resp.headers
                 self.add_check(CheckResult(

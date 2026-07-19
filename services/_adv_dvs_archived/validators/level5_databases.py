@@ -8,6 +8,7 @@ from typing import Dict, Any
 
 from .base import BaseValidator, CheckResult
 from .. import config
+TARGET_HOST = os.getenv("TARGET_HOST", "localhost")
 
 
 class DatabasesValidator(BaseValidator):
@@ -38,7 +39,7 @@ class DatabasesValidator(BaseValidator):
     async def _check_postgres(self):
         """PostgreSQL через TCP порт."""
         # DSN: postgresql+asyncpg://predator:predator@localhost:5432/predator
-        host = "localhost"
+        host = TARGET_HOST
         port = 5432
         await self.tcp_check("postgres_tcp", host, port, severity="critical")
 
@@ -63,8 +64,8 @@ class DatabasesValidator(BaseValidator):
 
     async def _check_neo4j(self):
         """Neo4j через TCP bolt порт та HTTP browser."""
-        await self.tcp_check("neo4j_bolt", "localhost", 7687, severity="critical")
-        await self.http_check("neo4j_browser", "http://localhost:7474", severity="warning")
+        await self.tcp_check("neo4j_bolt", TARGET_HOST, 7687, severity="critical")
+        await self.http_check("neo4j_browser", f"http://{TARGET_HOST}:7474", severity="warning")
 
     async def _check_qdrant(self):
         """Qdrant через REST API."""
@@ -120,7 +121,7 @@ class DatabasesValidator(BaseValidator):
 
     async def _check_redis(self):
         """Redis через TCP порт."""
-        await self.tcp_check("redis_tcp", "localhost", 6379, severity="critical")
+        await self.tcp_check("redis_tcp", TARGET_HOST, 6379, severity="critical")
 
     async def _check_minio(self):
         """MinIO через health endpoint."""
@@ -129,10 +130,10 @@ class DatabasesValidator(BaseValidator):
         await self.http_check("minio_health", f"{url}{health}", severity="critical")
 
         # Console
-        await self.http_check("minio_console", "http://localhost:9001", severity="warning")
+        await self.http_check("minio_console", f"http://{TARGET_HOST}:9001", severity="warning")
 
     async def _check_kafka(self):
         """Redpanda/Kafka через TCP порт."""
         # Локальний порт Redpanda
-        await self.tcp_check("kafka_tcp_9092", "localhost", 9092, severity="warning")
-        await self.tcp_check("kafka_tcp_19092", "localhost", 19092, severity="warning")
+        await self.tcp_check("kafka_tcp_9092", TARGET_HOST, 9092, severity="warning")
+        await self.tcp_check("kafka_tcp_19092", TARGET_HOST, 19092, severity="warning")

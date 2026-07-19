@@ -6,6 +6,7 @@ Qdrant → OpenSearch → Backend → API → WebSocket → Frontend → DOM.
 """
 from .base import BaseValidator, CheckResult
 from .. import config
+TARGET_HOST = os.getenv("TARGET_HOST", "localhost")
 
 
 class DataFlowValidator(BaseValidator):
@@ -20,11 +21,11 @@ class DataFlowValidator(BaseValidator):
 
         # Ланцюг потоку даних
         flow_chain = [
-            ("1_source_parser", "Парсер (ingestion-worker)", None, "tcp", "localhost", 8000),
-            ("2_etl_postgres", "PostgreSQL (SSOT)", None, "tcp", "localhost", 5432),
-            ("3_kafka_redpanda", "Redpanda/Kafka (Stream)", None, "tcp", "localhost", 19092),
+            ("1_source_parser", "Парсер (ingestion-worker)", None, "tcp", TARGET_HOST, 8000),
+            ("2_etl_postgres", "PostgreSQL (SSOT)", None, "tcp", TARGET_HOST, 5432),
+            ("3_kafka_redpanda", "Redpanda/Kafka (Stream)", None, "tcp", TARGET_HOST, 19092),
             ("4_clickhouse", "ClickHouse (OLAP)", config.CLICKHOUSE_URL, "http", None, None),
-            ("5_neo4j", "Neo4j (Graph)", None, "tcp", "localhost", 7687),
+            ("5_neo4j", "Neo4j (Graph)", None, "tcp", TARGET_HOST, 7687),
             ("6_qdrant", "Qdrant (Vector)", f"{config.QDRANT_URL}/healthz", "http", None, None),
             ("7_opensearch", "OpenSearch (Search)", f"{config.OPENSEARCH_URL}/_cluster/health", "http", None, None),
             ("8_backend_api", "Backend API", f"{config.CORE_API_URL}/api/v1/health", "http", None, None),

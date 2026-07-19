@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 from .base import BaseValidator, CheckResult
 from .. import config
+TARGET_HOST = os.getenv("TARGET_HOST", "localhost")
 
 
 class DatasetsValidator(BaseValidator):

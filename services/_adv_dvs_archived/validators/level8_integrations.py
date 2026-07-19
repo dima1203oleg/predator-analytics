@@ -8,6 +8,7 @@ from typing import Dict, Any
 
 from .base import BaseValidator, CheckResult
 from .. import config
+TARGET_HOST = os.getenv("TARGET_HOST", "localhost")
 
 
 class IntegrationsValidator(BaseValidator):
@@ -56,7 +57,7 @@ class IntegrationsValidator(BaseValidator):
         """OSINT Service."""
         await self.http_check(
             "osint_service",
-            "http://localhost:9201/health",
+            f"http://{TARGET_HOST}:9201/health",
             severity="warning",
         )
         # Перевірка коду
@@ -75,7 +76,7 @@ class IntegrationsValidator(BaseValidator):
         """Graph Service (Neo4j алгоритми)."""
         await self.http_check(
             "graph_service",
-            "http://localhost:8001/health",
+            f"http://{TARGET_HOST}:8001/health",
             severity="warning",
         )
 
@@ -91,7 +92,7 @@ class IntegrationsValidator(BaseValidator):
         """Внутрішні API-сервіси."""
         services = {
             "core_api": (config.CORE_API_URL, "/api/v1/health"),
-            "adv_dvs": ("http://localhost:8003", "/health"),
+            "adv_dvs": (f"http://{TARGET_HOST}:8003", "/health"),
         }
         for name, (base, path) in services.items():
             await self.http_check(f"internal_{name}", f"{base}{path}", severity="warning")

@@ -1,9 +1,11 @@
+import os
 import sys
 import asyncio
 from services.adv_dvs.models import CheckResult, CheckStatus
 
 sys.path.append("/Users/Shared/Predator_60/libs/predator-common")
 from predator_common.ai.deepseek_core import DeepSeekCore
+TARGET_HOST = os.getenv("TARGET_HOST", "localhost")
 
 async def run_check(context: dict) -> CheckResult:
     """

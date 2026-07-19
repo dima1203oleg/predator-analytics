@@ -9,6 +9,7 @@ from typing import Dict, Any
 
 from .base import BaseValidator, CheckResult
 from .. import config
+TARGET_HOST = os.getenv("TARGET_HOST", "localhost")
 
 
 class FrontendValidator(BaseValidator):

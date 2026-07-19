@@ -1,8 +1,10 @@
+import os
 import httpx
 from typing import List, Dict, Any
 
 from .base import BaseValidator, CheckResult
 from .. import config
+TARGET_HOST = os.getenv("TARGET_HOST", "localhost")
 
 # Загальний пошуковий термін, який має повернути результати, якщо БД наповнена.
 TEST_SEARCH_QUERY = "ТОВАРИСТВО З ОБМЕЖЕНОЮ ВІДПОВІДАЛЬНІСТЮ"

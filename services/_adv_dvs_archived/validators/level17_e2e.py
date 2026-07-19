@@ -7,6 +7,7 @@ import httpx
 from pathlib import Path
 from .base import BaseValidator, CheckResult
 from .. import config
+TARGET_HOST = os.getenv("TARGET_HOST", "localhost")
 
 
 class E2eValidator(BaseValidator):

@@ -10,6 +10,7 @@ from typing import Dict, Any, List, Optional, Tuple
 from dataclasses import dataclass, field
 
 import httpx
+TARGET_HOST = os.getenv("TARGET_HOST", "localhost")
 
 logger = logging.getLogger(__name__)
 

@@ -8,6 +8,7 @@ from typing import Dict, Any
 
 from .base import BaseValidator, CheckResult
 from .. import config
+TARGET_HOST = os.getenv("TARGET_HOST", "localhost")
 
 
 class SyncValidator(BaseValidator):
@@ -106,7 +107,7 @@ class SyncValidator(BaseValidator):
 
     async def _check_mock_api_sync(self):
         """Перевірка Mock API як fallback для frontend."""
-        mock_base = "http://localhost:9080"
+        mock_base = f"http://{TARGET_HOST}:9080"
         try:
             async with httpx.AsyncClient(verify=False, timeout=3) as client:
                 r = await client.get(f"{mock_base}/api/v1/health")

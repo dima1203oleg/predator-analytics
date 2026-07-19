@@ -10,6 +10,7 @@ import subprocess
 from typing import Dict, Any
 
 from .base import BaseValidator, CheckResult
+TARGET_HOST = os.getenv("TARGET_HOST", "localhost")
 
 
 class InfraValidator(BaseValidator):
@@ -267,13 +268,13 @@ class InfraValidator(BaseValidator):
         """Перевірка ключових портів платформи."""
         # Перевірка базових портів
         ports_to_check = {
-            "postgres_5432": ("localhost", 5432),
-            "redis_6379": ("localhost", 6379),
-            "neo4j_7687": ("localhost", 7687),
-            "frontend_3030": ("localhost", 3030),
-            "ollama_11434": ("localhost", 11434),
-            "core_api_8000": ("localhost", 8090),  # Host maps to 8090
-            "mock_api_9080": ("localhost", 9080),
+            "postgres_5432": (TARGET_HOST, 5432),
+            "redis_6379": (TARGET_HOST, 6379),
+            "neo4j_7687": (TARGET_HOST, 7687),
+            "frontend_3030": (TARGET_HOST, 3030),
+            "ollama_11434": (TARGET_HOST, 11434),
+            "core_api_8000": (TARGET_HOST, 8090),  # Host maps to 8090
+            "mock_api_9080": (TARGET_HOST, 9080),
         }
         for name, (host, port) in ports_to_check.items():
             severity = "warning" if name in ("core_api_8000", "mock_api_9080") else "critical"

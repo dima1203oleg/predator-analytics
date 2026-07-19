@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Dict, Any
 
 from .base import BaseValidator, CheckResult
+TARGET_HOST = os.getenv("TARGET_HOST", "localhost")
 
 
 class EtlValidator(BaseValidator):

@@ -18,6 +18,7 @@ from .level14_performance import PerformanceValidator
 from .level15_security import SecurityValidator
 from .level16_backup import BackupValidator
 from .level17_e2e import E2eValidator
+TARGET_HOST = os.getenv("TARGET_HOST", "localhost")
 
 VALIDATORS = [
     InfraValidator, BackendValidator, FrontendValidator, SyncValidator,
