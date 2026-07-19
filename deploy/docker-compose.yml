@@ -254,6 +254,19 @@ services:
     networks:
       - predator_net
 
+  # 6. Tor Proxy (For OSINT / Darknet Collectors)
+  tor-proxy:
+    image: dperson/torproxy
+    container_name: predator_tor_proxy
+    ports:
+      - "9050:9050"
+      - "8118:8118"
+    networks:
+      - predator_net
+    deploy:
+      resources:
+        limits:
+          memory: 256M
 networks:
   predator_net:
     driver: bridge
