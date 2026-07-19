@@ -31,6 +31,13 @@ export interface OsintEntity {
   cyber?: { ip: string; openPorts: number[]; vulnerabilities: string[]; darknetMentions: number; hasOnionLinks: boolean };
   interpol?: { isWanted: boolean; noticeType?: 'RED' | 'YELLOW'; charge?: string; country?: string };
   leaks?: { totalBreaches: number; exposedData: string[]; sources: string[]; compromisedPasswords: boolean };
+  compromat?: Array<{
+    date: string;
+    source: string;
+    summary: string;
+    severity: 'CRITICAL' | 'HIGH' | 'MEDIUM';
+    details: string;
+  }>;
 }
 
 export const OSINT_ENTITIES: OsintEntity[] = [

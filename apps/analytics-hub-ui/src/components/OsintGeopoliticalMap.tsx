@@ -20,52 +20,29 @@ export interface MapLocation {
   status: 'ACTIVE' | 'LIQUIDATED' | 'SANCTIONED' | 'SUSPICIOUS';
 }
 
-export const REAL_MAP_LOCATIONS: Record<string, MapLocation> = {
-  'comp-1': {
-    id: 'comp-1',
-    name: "ТОВ 'СпецТехПостач'",
-    city: 'Київ',
-    sector: 'Центральний сектор',
-    lat: 50.4501,
-    lng: 30.5234,
-    address: "вул. Михайла Грушевського, 15",
-    riskScore: 94,
-    status: 'SANCTIONED'
-  },
-  'person-1': {
-    id: 'person-1',
-    name: 'Коваленко Ігор Вікторович',
-    city: 'Козин',
-    sector: 'Київська область',
-    lat: 50.2199,
-    lng: 30.6698,
-    address: 'смт Козин, вул. Старокиївська, 72',
-    riskScore: 82,
-    status: 'SUSPICIOUS'
-  },
-  'comp-2': {
-    id: 'comp-2',
-    name: "ТОВ 'Арсенал Сек'юріті'",
-    city: 'Львів',
-    sector: 'Західний сектор',
-    lat: 49.8397,
-    lng: 24.0297,
-    address: 'вул. Героїв УПА, 73',
-    riskScore: 45,
-    status: 'ACTIVE'
-  },
-  'wallet-1': {
-    id: 'wallet-1',
-    name: 'BTC Wallet (0x38ac...d831)',
-    city: 'Blockchain Network',
-    sector: 'Децентралізована мережа',
-    lat: 48.8566,
-    lng: 2.3522,
-    address: 'Ledger Node #48231',
-    riskScore: 89,
-    status: 'SUSPICIOUS'
-  }
+const CITY_COORDS: Record<string, [number, number]> = {
+  'київ': [30.5234, 50.4501],
+  'козин': [30.6698, 50.2199],
+  'львів': [24.0297, 49.8397],
+  'одеса': [30.7326, 46.4825],
+  'харків': [36.2304, 50.0057],
+  'дніпро': [35.0462, 48.4647],
+  'запоріжжя': [35.1396, 47.8388],
+  'london': [-0.1278, 51.5074],
+  'cyprus': [33.4299, 35.1264],
+  'кіпр': [33.4299, 35.1264],
+  'panama': [-79.5199, 8.9824],
+  'панама': [-79.5199, 8.9824]
 };
+
+function geocodeAddress(address?: string): [number, number] {
+  if (!address) return [31.0 + Math.random() * 2, 49.0 + Math.random() * 2]; // random in UA
+  const lower = address.toLowerCase();
+  for (const [city, coords] of Object.entries(CITY_COORDS)) {
+    if (lower.includes(city)) return coords;
+  }
+  return [31.0 + Math.random() * 2, 49.0 + Math.random() * 2];
+}
 
 interface OsintGeopoliticalMapProps {
   activeEntity: OsintEntity;
@@ -109,7 +86,68 @@ export const OsintGeopoliticalMap: React.FC<OsintGeopoliticalMapProps> = ({
     }
   }, [mapZoom]);
 
-  const mapData = Object.values(REAL_MAP_LOCATIONS);
+  const { mapData, arcsData } = useMemo(() => {
+    const locations: MapLocation[] = [];
+    const arcs: any[] = [];
+    
+    // Add active entity
+    const activeCoords = geocodeAddress(activeEntity.address || activeEntity.name);
+    const activeLoc: MapLocation = {
+      id: activeEntity.id,
+      name: activeEntity.name,
+      city: activeEntity.address || 'Невідомо',
+      sector: activeEntity.type === 'person' ? 'Фізична особа' : 'Юридична особа',
+      lng: activeCoords[0],
+      lat: activeCoords[1],
+      address: activeEntity.address || '',
+      riskScore: activeEntity.riskScore || 50,
+      status: activeEntity.status === 'ACTIVE' ? 'ACTIVE' : (activeEntity.riskScore || 0) > 80 ? 'SANCTIONED' : 'SUSPICIOUS'
+    };
+    locations.push(activeLoc);
+
+    // Add related entities
+    if (activeEntity.relationships) {
+      activeEntity.relationships.forEach(rel => {
+        const target = OSINT_ENTITIES.find(e => e.id === rel.targetId);
+        if (target) {
+          const coords = geocodeAddress(target.address || target.name);
+          const targetLoc: MapLocation = {
+            id: target.id,
+            name: target.name,
+            city: target.address || 'Невідомо',
+            sector: rel.type,
+            lng: coords[0],
+            lat: coords[1],
+            address: target.address || '',
+            riskScore: target.riskScore || 50,
+            status: target.status === 'ACTIVE' ? 'ACTIVE' : (target.riskScore || 0) > 80 ? 'SANCTIONED' : 'SUSPICIOUS'
+          };
+          // Avoid duplicates
+          if (!locations.find(l => l.id === targetLoc.id)) {
+            locations.push(targetLoc);
+          }
+          arcs.push({ source: activeLoc, target: targetLoc });
+        } else if (rel.targetId.includes('wallet') || rel.targetName.includes('Wallet')) {
+          // Special case for crypto wallets
+          const targetLoc: MapLocation = {
+            id: rel.targetId,
+            name: rel.targetName,
+            city: 'Blockchain Network',
+            sector: 'Крипто-актив',
+            lng: 2.3522 + (Math.random() - 0.5)*10, // random global
+            lat: 48.8566 + (Math.random() - 0.5)*10,
+            address: 'Децентралізована мережа',
+            riskScore: rel.risk === 'HIGH' ? 90 : 50,
+            status: 'SUSPICIOUS'
+          };
+          locations.push(targetLoc);
+          arcs.push({ source: activeLoc, target: targetLoc });
+        }
+      });
+    }
+    
+    return { mapData: locations, arcsData: arcs };
+  }, [activeEntity]);
 
   // Generate synthetic data for heatmap/hexagons around known points
   const syntheticData = useMemo(() => {
@@ -126,7 +164,7 @@ export const OsintGeopoliticalMap: React.FC<OsintGeopoliticalMapProps> = ({
       }
     });
     return points;
-  }, []);
+  }, [mapData]);
 
   const layers = [
     activeLayer === 'heatmap' && new HeatmapLayer({
@@ -182,11 +220,7 @@ export const OsintGeopoliticalMap: React.FC<OsintGeopoliticalMapProps> = ({
     // Draw arcs from Suspicious/Sanctioned to Active representing hidden ties
     new ArcLayer({
       id: 'arcs-layer',
-      data: [
-        { source: REAL_MAP_LOCATIONS['comp-1'], target: REAL_MAP_LOCATIONS['comp-2'] },
-        { source: REAL_MAP_LOCATIONS['person-1'], target: REAL_MAP_LOCATIONS['comp-1'] },
-        { source: REAL_MAP_LOCATIONS['wallet-1'], target: REAL_MAP_LOCATIONS['person-1'] }
-      ],
+      data: arcsData,
       getSourcePosition: d => [d.source.lng, d.source.lat],
       getTargetPosition: d => [d.target.lng, d.target.lat],
       getSourceColor: [244, 63, 94, 200], // Red
@@ -248,8 +282,7 @@ export const OsintGeopoliticalMap: React.FC<OsintGeopoliticalMapProps> = ({
         >
           <Map
             mapStyle="https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
-            width="100%"
-            height="100%"
+            style={{width: '100%', height: '100%'}}
           />
           <div className="absolute top-4 right-4 z-10 bg-black/50 p-2 rounded">
             <NavigationControl showCompass={true} showZoom={true} />
