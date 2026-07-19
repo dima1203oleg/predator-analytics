@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { 
   User, Users, Wallet, Brain, Stethoscope, AlertCircle, 
   AlertTriangle, ShieldAlert, DollarSign, Truck, 
-  Briefcase, Landmark, Hash, Globe 
+  Briefcase, Landmark, Hash, Globe, Server, Shield
 } from 'lucide-react';
 import { OSINT_ENTITIES, OsintEntity } from '../osintData';
 
@@ -11,7 +11,7 @@ export const OsintDossierPanel: React.FC<{
   userRole: string;
   onSelectEntityForInspector: (entity: OsintEntity) => void;
 }> = ({ activeEntity, userRole, onSelectEntityForInspector }) => {
-  const [activePersonTab, setActivePersonTab] = useState<'general' | 'family' | 'assets' | 'psychology' | 'medical' | 'compromat'>('general');
+  const [activePersonTab, setActivePersonTab] = useState<'general' | 'family' | 'assets' | 'psychology' | 'medical' | 'compromat' | 'cyber' | 'interpol' | 'leaks'>('general');
 
   const getStatusBadge = (status: string) => {
     switch(status) {
@@ -110,6 +110,24 @@ export const OsintDossierPanel: React.FC<{
                       className={`px-3 py-1.5 rounded-md text-[10px] font-bold font-mono transition-colors flex items-center gap-1.5 ${activePersonTab === 'compromat' ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30' : 'bg-slate-900 text-slate-400 border border-transparent hover:bg-slate-800'}`}
                     >
                       <AlertCircle className="w-3.5 h-3.5" /> КОМПРОМАТ
+                    </button>
+                    <button 
+                      onClick={() => setActivePersonTab('cyber')}
+                      className={`px-3 py-1.5 rounded-md text-[10px] font-bold font-mono transition-colors flex items-center gap-1.5 ${activePersonTab === 'cyber' ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30' : 'bg-slate-900 text-slate-400 border border-transparent hover:bg-slate-800'}`}
+                    >
+                      <Server className="w-3.5 h-3.5" /> КІБЕР
+                    </button>
+                    <button 
+                      onClick={() => setActivePersonTab('leaks')}
+                      className={`px-3 py-1.5 rounded-md text-[10px] font-bold font-mono transition-colors flex items-center gap-1.5 ${activePersonTab === 'leaks' ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30' : 'bg-slate-900 text-slate-400 border border-transparent hover:bg-slate-800'}`}
+                    >
+                      <Hash className="w-3.5 h-3.5" /> ВИТОКИ
+                    </button>
+                    <button 
+                      onClick={() => setActivePersonTab('interpol')}
+                      className={`px-3 py-1.5 rounded-md text-[10px] font-bold font-mono transition-colors flex items-center gap-1.5 ${activePersonTab === 'interpol' ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'bg-slate-900 text-slate-400 border border-transparent hover:bg-slate-800'}`}
+                    >
+                      <ShieldAlert className="w-3.5 h-3.5" /> ІНТЕРПОЛ
                     </button>
                   </div>
               )}
