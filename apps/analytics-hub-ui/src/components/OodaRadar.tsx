@@ -92,7 +92,7 @@ export function OodaRadar() {
       )}
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mt-4">
-        {Object.entries(status.phases).map(([phase, data]) => {
+        {(Object.entries(status.phases) as [string, OodaPhase][]).map(([phase, data]) => {
           const colorClass = phaseColors[phase.toLowerCase()] || 'bg-slate-800 text-slate-300 border-slate-700';
           
           return (

@@ -21,6 +21,7 @@ import { apiFetch } from '../api';
 interface OsintWorkbenchProps {
   onSelectEntityForInspector: (entity: OsintEntity | null) => void;
   selectedEntity: OsintEntity | null;
+  userRole?: 'admin' | 'predator' | 'predator-pro';
 }
 
 interface MapLocation {
@@ -92,7 +93,11 @@ const MAP_LOCATIONS: Record<string, MapLocation> = {
   }
 };
 
-export default function OsintWorkbench({ onSelectEntityForInspector, selectedEntity }: OsintWorkbenchProps) {
+export default function OsintWorkbench({ 
+  onSelectEntityForInspector, 
+  selectedEntity,
+  userRole = 'predator-pro'
+}: OsintWorkbenchProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<'all' | 'company' | 'person' | 'cryptowallet'>('all');
   const [categoryFilter, setCategoryFilter] = useState<'all' | 'sanctioned' | 'active' | 'high-risk'>('all');
@@ -1691,13 +1696,17 @@ export default function OsintWorkbench({ onSelectEntityForInspector, selectedEnt
                   {activeEntity.phone && (
                     <p className="flex justify-between">
                       <span className="text-slate-500">Телефон:</span>
-                      <span className="text-slate-200">{activeEntity.phone}</span>
+                      <span className="text-slate-200">
+                        {userRole === 'predator' ? "🔒 +380 (XX) XXX-XX-XX" : activeEntity.phone}
+                      </span>
                     </p>
                   )}
                   {activeEntity.email && (
                     <p className="flex justify-between">
                       <span className="text-slate-500">Email:</span>
-                      <span className="text-slate-200 hover:text-indigo-400 cursor-pointer">{activeEntity.email}</span>
+                      <span className="text-slate-200 hover:text-indigo-400 cursor-pointer">
+                        {userRole === 'predator' ? "🔒 xxxxxxx@xxxx.gov.ua" : activeEntity.email}
+                      </span>
                     </p>
                   )}
                 </div>

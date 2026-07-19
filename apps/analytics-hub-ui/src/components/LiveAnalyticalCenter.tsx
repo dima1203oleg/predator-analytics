@@ -25,6 +25,7 @@ interface LiveAnalyticalCenterProps {
   selectedEntity: OsintEntity | null;
   selectedScenario?: string;
   onSelectScenario?: (scen: string) => void;
+  userRole?: 'admin' | 'predator' | 'predator-pro';
 }
 
 interface GraphNode {
@@ -55,7 +56,8 @@ export default function LiveAnalyticalCenter({
   onSelectEntityGlobal, 
   selectedEntity,
   selectedScenario = 'business',
-  onSelectScenario
+  onSelectScenario,
+  userRole = 'predator-pro'
 }: LiveAnalyticalCenterProps) {
   
   // Interactive core parameters
@@ -268,7 +270,8 @@ export default function LiveAnalyticalCenter({
                     debt: "Дані уточнюються",
                     status: dossierData.company.status
                   },
-                  relationships: []
+                  relationships: [],
+                  aiRecommendations: dossierData.risk_profile?.recommendation || 'Аналіз виконується автоматично системою PREDATOR AI.'
                 };
                 
                 setActiveEntity(nextEntity);
@@ -1238,6 +1241,15 @@ export default function LiveAnalyticalCenter({
             </div>
           </div>
 
+          {userRole === 'predator' && (
+            <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-2.5 flex items-start gap-2 text-[9px] text-amber-400 leading-normal">
+              <ShieldAlert className="w-3.5 h-3.5 shrink-0 mt-0.5 text-amber-500" />
+              <span>
+                <strong>Обмежений доступ (Level 1):</strong> Скринінг чутливих зв'язків та бенефіціарів заблоковано. Увімкніть <strong>PREDATOR PRO</strong>.
+              </span>
+            </div>
+          )}
+
           <div className="space-y-2 border-y border-slate-900 py-3 text-xs font-sans">
             <div className="flex justify-between">
               <span className="text-slate-500">Адреса:</span>
@@ -1251,7 +1263,9 @@ export default function LiveAnalyticalCenter({
             </div>
             <div className="flex justify-between">
               <span className="text-slate-500">Бенефіціар:</span>
-              <span className="text-slate-300 font-medium">{activeEntity?.founders?.[0]?.name || "Невідомо"}</span>
+              <span className="text-slate-300 font-medium">
+                {userRole === 'predator' ? "🔒 [ДОСТУП ОБМЕЖЕНО]" : (activeEntity?.founders?.[0]?.name || "Невідомо")}
+              </span>
             </div>
           </div>
 

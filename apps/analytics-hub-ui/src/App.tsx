@@ -27,16 +27,27 @@ import {
   Menu, X, Search, Bell, User, Terminal, Cpu, Database, 
   Activity, Landmark, MessageSquare, Sparkles, Send, HelpCircle,
   Maximize2, Minimize2, Settings, ShieldAlert, Compass,
-  Briefcase, Truck, Globe, TrendingUp, Users, Map, Mic
+  Briefcase, Truck, Globe, TrendingUp, Users, Map, Mic, Zap
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { LiveChatBot } from './components/LiveChatBot';
 import { MediaForensicsTab } from './components/MediaForensicsTab';
+import { RestrictedFeatureOverlay } from './components/RestrictedFeatureOverlay';
 
 type TabId = 'live-analytical-center' | 'sovereign-dashboard' | 'admin-back-office' | 'dashboard' | 'osint' | 'maps' | 'catalog' | 'license' | 'architecture' | 'gap' | 'roadmap' | 'volumes' | 'advisor' | 'media-forensics';
 
 export default function App() {
+  const [userRole, setUserRole] = useState<'admin' | 'predator' | 'predator-pro'>('predator-pro');
   const [ecosystem, setEcosystem] = useState<'user' | 'admin'>('user');
+
+  useEffect(() => {
+    if (userRole === 'admin') {
+      setEcosystem('admin');
+    } else {
+      setEcosystem('user');
+    }
+  }, [userRole]);
+
   const [activeTab, setActiveTab] = useState<TabId>('live-analytical-center');
   const [selectedScenario, setSelectedScenario] = useState<string>('business');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -731,6 +742,7 @@ export default function App() {
                   }}
                   selectedScenario={selectedScenario}
                   onSelectScenario={setSelectedScenario}
+                  userRole={userRole}
                 />
               )}
               {activeTab === 'admin-back-office' && (
@@ -742,11 +754,19 @@ export default function App() {
               {activeTab === 'dashboard' && (
                 <DashboardView 
                   onSelectTab={setActiveTab}
-                  onSelectEntity={handleEntitySelect}
+                  onSelectEntity={(ent) => {
+                    setSelectedEntity(ent);
+                    setSelectedTool(null);
+                    setSelectedNode(null);
+                  }}
                 />
               )}
               {activeTab === 'media-forensics' && (
-                <MediaForensicsTab />
+                userRole === 'predator' ? (
+                  <RestrictedFeatureOverlay onUpgrade={() => setUserRole('predator-pro')} tabName="Media Forensics" />
+                ) : (
+                  <MediaForensicsTab />
+                )
               )}
               {activeTab === 'osint' && (
                 <OsintWorkbench 
@@ -757,15 +777,46 @@ export default function App() {
                     setSelectedNode(null);
                     setIsInspectorOpen(true);
                   }}
+                  userRole={userRole}
                 />
               )}
               {activeTab === 'catalog' && <CatalogTab />}
               {activeTab === 'license' && <LicenseTab />}
-              {activeTab === 'architecture' && <ArchitectureTab />}
-              {activeTab === 'gap' && <GapAnalysisTab />}
-              {activeTab === 'roadmap' && <RoadmapTab />}
-              {activeTab === 'volumes' && <VolumesTab />}
-              {activeTab === 'advisor' && <AdvisorTab />}
+              {activeTab === 'architecture' && (
+                userRole === 'predator' ? (
+                  <RestrictedFeatureOverlay onUpgrade={() => setUserRole('predator-pro')} tabName="Граф архітектури" />
+                ) : (
+                  <ArchitectureTab />
+                )
+              )}
+              {activeTab === 'gap' && (
+                userRole === 'predator' ? (
+                  <RestrictedFeatureOverlay onUpgrade={() => setUserRole('predator-pro')} tabName="Аналіз прогалин" />
+                ) : (
+                  <GapAnalysisTab />
+                )
+              )}
+              {activeTab === 'roadmap' && (
+                userRole === 'predator' ? (
+                  <RestrictedFeatureOverlay onUpgrade={() => setUserRole('predator-pro')} tabName="Дорожня карта" />
+                ) : (
+                  <RoadmapTab />
+                )
+              )}
+              {activeTab === 'volumes' && (
+                userRole === 'predator' ? (
+                  <RestrictedFeatureOverlay onUpgrade={() => setUserRole('predator-pro')} tabName="Томи ТЗ" />
+                ) : (
+                  <VolumesTab />
+                )
+              )}
+              {activeTab === 'advisor' && (
+                userRole === 'predator' ? (
+                  <RestrictedFeatureOverlay onUpgrade={() => setUserRole('predator-pro')} tabName="ШІ-Архітектор" />
+                ) : (
+                  <AdvisorTab />
+                )
+              )}
             </motion.div>
           </AnimatePresence>
         </main>
@@ -813,28 +864,38 @@ export default function App() {
                   {/* Ecosystem Selector */}
                   <div className="space-y-1.5">
                     <span className="text-[8px] text-slate-500 font-mono font-bold uppercase tracking-widest block px-1">
-                      ПРОСТІР УПРАВЛІННЯ
+                      РОЛЬ ТА РІВЕНЬ ДОСТУПУ
                     </span>
-                    <div className="grid grid-cols-2 bg-slate-900/60 p-1 rounded-xl border border-slate-850 gap-1">
+                    <div className="grid grid-cols-3 bg-slate-900/60 p-0.5 rounded-xl border border-slate-850 gap-0.5">
                       <button
                         onClick={() => {
-                          setEcosystem('user');
+                          setUserRole('predator');
                           setActiveTab('live-analytical-center');
                           setMobileMenuOpen(false);
                         }}
-                        className={`py-2 rounded-lg text-[8px] font-black font-mono uppercase tracking-wider transition-all text-center ${ecosystem === 'user' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400'}`}
+                        className={`py-2 rounded-lg text-[7px] font-black font-mono uppercase tracking-tight transition-all text-center ${userRole === 'predator' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400'}`}
                       >
-                        🛰️ USER SPACE
+                        🦅 PREDATOR
                       </button>
                       <button
                         onClick={() => {
-                          setEcosystem('admin');
+                          setUserRole('predator-pro');
+                          setActiveTab('live-analytical-center');
+                          setMobileMenuOpen(false);
+                        }}
+                        className={`py-2 rounded-lg text-[7px] font-black font-mono uppercase tracking-tight transition-all text-center ${userRole === 'predator-pro' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400'}`}
+                      >
+                        ⚡ PRO
+                      </button>
+                      <button
+                        onClick={() => {
+                          setUserRole('admin');
                           setActiveTab('admin-back-office');
                           setMobileMenuOpen(false);
                         }}
-                        className={`py-2 rounded-lg text-[8px] font-black font-mono uppercase tracking-wider transition-all text-center ${ecosystem === 'admin' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400'}`}
+                        className={`py-2 rounded-lg text-[7px] font-black font-mono uppercase tracking-tight transition-all text-center ${userRole === 'admin' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400'}`}
                       >
-                        ⚙️ ADMIN SPACE
+                        ⚙️ ADMIN
                       </button>
                     </div>
                   </div>
@@ -1458,28 +1519,38 @@ export default function App() {
             </button>
           </div>
 
-          {/* Center: Dual Ecosystem Switch Toggle & Device Rendering Switch */}
-          <div className="flex bg-slate-900/60 border border-slate-850 p-1 rounded-xl max-w-lg gap-3 items-center" id="ecosystem-toggle">
+          {/* Center: Triple Role Switch Toggle & Device Rendering Switch */}
+          <div className="flex bg-slate-900/60 border border-slate-850 p-1 rounded-xl max-w-2xl gap-3 items-center" id="ecosystem-toggle">
             <div className="flex gap-1">
               <button
                 onClick={() => {
-                  setEcosystem('user');
+                  setUserRole('predator');
                   setActiveTab('live-analytical-center');
                 }}
-                className={`px-4 py-2 rounded-lg text-[10px] font-black font-mono tracking-wider uppercase transition-all flex items-center gap-2 cursor-pointer ${ecosystem === 'user' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/30'}`}
+                className={`px-3 py-1.5 rounded-lg text-[9px] font-black font-mono tracking-wider uppercase transition-all flex items-center gap-1.5 cursor-pointer ${userRole === 'predator' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/30'}`}
               >
-                <Compass className="w-3.5 h-3.5" />
-                <span>🛰️ ЖИВИЙ ЦЕНТР</span>
+                <Compass className="w-3.5 h-3.5 text-indigo-400" />
+                <span>🦅 PREDATOR</span>
               </button>
               <button
                 onClick={() => {
-                  setEcosystem('admin');
+                  setUserRole('predator-pro');
+                  setActiveTab('live-analytical-center');
+                }}
+                className={`px-3 py-1.5 rounded-lg text-[9px] font-black font-mono tracking-wider uppercase transition-all flex items-center gap-1.5 cursor-pointer ${userRole === 'predator-pro' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/30'}`}
+              >
+                <Zap className="w-3.5 h-3.5 text-amber-400" />
+                <span>⚡ PREDATOR PRO</span>
+              </button>
+              <button
+                onClick={() => {
+                  setUserRole('admin');
                   setActiveTab('admin-back-office');
                 }}
-                className={`px-4 py-2 rounded-lg text-[10px] font-black font-mono tracking-wider uppercase transition-all flex items-center gap-2 cursor-pointer ${ecosystem === 'admin' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/30'}`}
+                className={`px-3 py-1.5 rounded-lg text-[9px] font-black font-mono tracking-wider uppercase transition-all flex items-center gap-1.5 cursor-pointer ${userRole === 'admin' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/30'}`}
               >
-                <Settings className="w-3.5 h-3.5" />
-                <span>⚙️ BACK OFFICE</span>
+                <Settings className="w-3.5 h-3.5 text-indigo-400" />
+                <span>⚙️ ADMIN</span>
               </button>
             </div>
 
@@ -1847,14 +1918,15 @@ export default function App() {
                     <OodaRadar />
                     <LiveAnalyticalCenter 
                       selectedEntity={selectedEntity}
-                    onSelectEntityGlobal={(ent) => {
-                      setSelectedEntity(ent);
-                      setSelectedTool(null);
-                      setSelectedNode(null);
-                    }}
-                    selectedScenario={selectedScenario}
-                    onSelectScenario={setSelectedScenario}
-                  />
+                      onSelectEntityGlobal={(ent) => {
+                        setSelectedEntity(ent);
+                        setSelectedTool(null);
+                        setSelectedNode(null);
+                      }}
+                      selectedScenario={selectedScenario}
+                      onSelectScenario={setSelectedScenario}
+                      userRole={userRole}
+                    />
                   </div>
                 )}
                 {activeTab === 'admin-back-office' && (
@@ -1875,6 +1947,13 @@ export default function App() {
                     }}
                   />
                 )}
+                {activeTab === 'media-forensics' && (
+                  userRole === 'predator' ? (
+                    <RestrictedFeatureOverlay onUpgrade={() => setUserRole('predator-pro')} tabName="Media Forensics" />
+                  ) : (
+                    <MediaForensicsTab />
+                  )
+                )}
                 {activeTab === 'osint' && (
                   <OsintWorkbench 
                     selectedEntity={selectedEntity}
@@ -1884,6 +1963,7 @@ export default function App() {
                       setSelectedNode(null);
                       setIsInspectorOpen(true);
                     }}
+                    userRole={userRole}
                   />
                 )}
                 {activeTab === 'maps' && (
@@ -1898,11 +1978,41 @@ export default function App() {
                 )}
                 {activeTab === 'catalog' && <CatalogTab />}
                 {activeTab === 'license' && <LicenseTab />}
-                {activeTab === 'architecture' && <ArchitectureTab />}
-                {activeTab === 'gap' && <GapAnalysisTab />}
-                {activeTab === 'roadmap' && <RoadmapTab />}
-                {activeTab === 'volumes' && <VolumesTab />}
-                {activeTab === 'advisor' && <AdvisorTab />}
+                {activeTab === 'architecture' && (
+                  userRole === 'predator' ? (
+                    <RestrictedFeatureOverlay onUpgrade={() => setUserRole('predator-pro')} tabName="Граф архітектури" />
+                  ) : (
+                    <ArchitectureTab />
+                  )
+                )}
+                {activeTab === 'gap' && (
+                  userRole === 'predator' ? (
+                    <RestrictedFeatureOverlay onUpgrade={() => setUserRole('predator-pro')} tabName="Аналіз прогалин" />
+                  ) : (
+                    <GapAnalysisTab />
+                  )
+                )}
+                {activeTab === 'roadmap' && (
+                  userRole === 'predator' ? (
+                    <RestrictedFeatureOverlay onUpgrade={() => setUserRole('predator-pro')} tabName="Дорожня карта" />
+                  ) : (
+                    <RoadmapTab />
+                  )
+                )}
+                {activeTab === 'volumes' && (
+                  userRole === 'predator' ? (
+                    <RestrictedFeatureOverlay onUpgrade={() => setUserRole('predator-pro')} tabName="Томи ТЗ" />
+                  ) : (
+                    <VolumesTab />
+                  )
+                )}
+                {activeTab === 'advisor' && (
+                  userRole === 'predator' ? (
+                    <RestrictedFeatureOverlay onUpgrade={() => setUserRole('predator-pro')} tabName="ШІ-Архітектор" />
+                  ) : (
+                    <AdvisorTab />
+                  )
+                )}
               </motion.div>
             </AnimatePresence>
 

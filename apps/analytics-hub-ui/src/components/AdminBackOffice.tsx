@@ -12,6 +12,7 @@ import {
   Plus, Trash2, Lock, Unlock, Eye, Sliders, Filter, FileText, CheckSquare, Square, ToggleLeft, ToggleRight
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { apiFetch } from '../api';
 
 // Sub-tabs for Back Office according to Enterprise Spec
 type AdminSection = 
