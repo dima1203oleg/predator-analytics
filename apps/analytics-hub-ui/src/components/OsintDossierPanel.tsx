@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { 
   User, Users, Wallet, Brain, Stethoscope, AlertCircle, 
   AlertTriangle, ShieldAlert, DollarSign, Truck, 
-  Briefcase, Landmark, Hash, Globe, Server, Shield, MessageSquare, Bitcoin, FileWarning
+  Briefcase, Landmark, Hash, Globe, Server, Shield, MessageSquare, Bitcoin, FileWarning, Download
 } from 'lucide-react';
 import { OSINT_ENTITIES, OsintEntity } from '../osintData';
 
@@ -29,6 +29,14 @@ export const OsintDossierPanel: React.FC<{
     return "text-emerald-500 border-emerald-500 bg-emerald-500/10";
   };
 
+  const exportDossierToJson = () => {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(activeEntity, null, 2));
+    const a = document.createElement('a');
+    a.href = dataStr;
+    a.download = `dossier_${activeEntity.code}_${activeEntity.id}.json`;
+    a.click();
+  };
+
   return (
         <div className="xl:col-span-4 space-y-6" id="osint-dossier-panel">
           <div className="glass-card rounded-2xl overflow-hidden shadow-xl">
@@ -36,6 +44,14 @@ export const OsintDossierPanel: React.FC<{
             {/* Dossier Header */}
             <div className="p-5 border-b border-slate-900 bg-slate-950/60 relative">
               <div className="absolute right-4 top-4 flex items-center gap-2">
+                <button
+                  onClick={exportDossierToJson}
+                  title="Експорт досьє у JSON"
+                  className="p-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-md transition-colors text-slate-400 hover:text-indigo-400 flex items-center gap-2"
+                >
+                  <Download className="w-4 h-4" />
+                  <span className="text-[10px] font-mono uppercase font-bold hidden sm:inline">JSON</span>
+                </button>
                 {getStatusBadge(activeEntity.status)}
                 <div className={`text-xs font-bold font-mono px-2.5 py-1 rounded-lg border ${getRiskColor(activeEntity.riskScore)}`}>
                   RISK Score: {activeEntity.riskScore}

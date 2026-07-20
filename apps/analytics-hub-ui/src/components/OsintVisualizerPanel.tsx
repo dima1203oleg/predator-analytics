@@ -1,5 +1,5 @@
 import React, { useMemo, useEffect, useRef, useState } from 'react';
-import { Network, Maximize2, Loader2 } from 'lucide-react';
+import { Network, Maximize2, Loader2, Camera } from 'lucide-react';
 import CytoscapeComponent from 'react-cytoscapejs';
 import cytoscape from 'cytoscape';
 import { OsintEntity, OSINT_ENTITIES } from '../osintData';
@@ -269,6 +269,16 @@ export const OsintVisualizerPanel: React.FC<{
     }
   };
 
+  const exportGraphToPng = () => {
+    if (cyRef.current) {
+      const pngData = cyRef.current.png({ bg: '#020617', full: true, scale: 2 });
+      const a = document.createElement('a');
+      a.href = pngData;
+      a.download = `graph_export_${activeEntity.id}.png`;
+      a.click();
+    }
+  };
+
   return (
     <>
       <div className="bg-slate-950 border border-slate-900 rounded-2xl p-5 shadow-xl space-y-4 relative">
@@ -280,9 +290,19 @@ export const OsintVisualizerPanel: React.FC<{
               {isLoading && <Loader2 className="w-3 h-3 text-indigo-500 animate-spin" />}
             </h4>
           </div>
-          <span className="text-[9px] text-slate-500 font-mono">
-            Правий клік (або довгий тап) для розгортання
-          </span>
+          <div className="flex items-center gap-4">
+            <span className="text-[9px] text-slate-500 font-mono">
+              Правий клік (або довгий тап) для розгортання
+            </span>
+            <button
+              onClick={exportGraphToPng}
+              title="Експорт графа у PNG"
+              className="p-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-md transition-colors text-slate-400 hover:text-indigo-400 flex items-center gap-2"
+            >
+              <Camera className="w-4 h-4" />
+              <span className="text-[10px] font-mono uppercase font-bold hidden sm:inline">Зберегти PNG</span>
+            </button>
+          </div>
         </div>
 
         <div className="relative w-full h-[360px] glass-card rounded-xl overflow-hidden flex items-center justify-center">
