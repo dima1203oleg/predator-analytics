@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Shield, Search, Server, AlertTriangle, CheckCircle, Database, Globe, Network, Activity, ChevronRight, XCircle, FileText, Download, Send } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { Shield, Activity, Search, Database, Globe, Network, Server, ChevronRight, CheckCircle, XCircle, FileText, Download, Send } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { exportDossierToPDF } from '../lib/pdfExport';
 
 const RiskGauge = ({ score }: { score: number }) => {
   const percentage = score * 100;
@@ -322,7 +323,10 @@ export const DossierCompiler: React.FC<DossierCompilerProps> = ({ onDossierCompl
                   <button className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white py-2 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors">
                     <FileText className="w-4 h-4" /> Відкрити Звіт
                   </button>
-                  <button className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 py-2 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors">
+                  <button 
+                    onClick={() => exportDossierToPDF(result)}
+                    className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 py-2 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors"
+                  >
                     <Download className="w-4 h-4" /> PDF Експорт
                   </button>
                   <button className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-2 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors">
