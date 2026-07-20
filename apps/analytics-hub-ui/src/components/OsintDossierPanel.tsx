@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { 
   User, Users, Wallet, Brain, Stethoscope, AlertCircle, 
   AlertTriangle, ShieldAlert, DollarSign, Truck, 
-  Briefcase, Landmark, Hash, Globe, Server, Shield, MessageSquare, Bitcoin, FileWarning, Download, Clock, Cpu, Database, Loader2
+  Briefcase, Landmark, Hash, Globe, Server, Shield, MessageSquare, Bitcoin, FileWarning, Download, Clock, Cpu, Database, Loader2, Mail
 } from 'lucide-react';
 import { OSINT_ENTITIES, OsintEntity } from '../osintData';
 import { useQuery } from '@tanstack/react-query';
@@ -543,6 +543,90 @@ export const OsintDossierPanel: React.FC<{
                           </div>
                         ))}
                       </div>
+                    </div>
+              )}
+              
+              {activeEntity.type === 'person' && activePersonTab === 'interpol' && (
+                    <div className="space-y-3 animate-fade-in">
+                      <span className="text-[9px] text-red-500/70 font-mono font-bold uppercase tracking-widest flex items-center gap-2">
+                        <AlertTriangle className="w-3.5 h-3.5"/> БАЗА ДАНИХ ІНТЕРПОЛУ
+                      </span>
+                      {activeEntity.interpol ? (
+                        <div className="bg-red-950/20 border border-red-900/30 rounded-xl p-3">
+                          <div className="flex justify-between items-center mb-2">
+                            <span className="text-[11px] font-bold text-slate-200">Статус: <span className="text-red-400">{activeEntity.interpol.status}</span></span>
+                            <span className="px-1.5 py-0.5 rounded text-[8px] font-bold font-mono bg-red-500/20 text-red-400">РІВЕНЬ: {activeEntity.interpol.riskLevel}</span>
+                          </div>
+                          <p className="text-[10px] text-slate-300 mb-2">{activeEntity.interpol.details}</p>
+                          <div className="flex gap-2 mb-2">
+                            {activeEntity.interpol.notices.map((notice: string, i: number) => (
+                              <span key={i} className="px-2 py-0.5 bg-red-600/30 text-red-300 border border-red-500/50 rounded-sm text-[9px] font-bold">{notice} NOTICE</span>
+                            ))}
+                          </div>
+                          <div className="text-[9px] text-slate-500 mt-2 font-mono">Остання фіксація: {activeEntity.interpol.lastSpotted}</div>
+                        </div>
+                      ) : (
+                        <p className="text-[10px] text-slate-500 italic">Даних у базах Інтерполу не знайдено.</p>
+                      )}
+                    </div>
+              )}
+
+              {activeEntity.type === 'person' && activePersonTab === 'cyber' && (
+                    <div className="space-y-3 animate-fade-in">
+                      <span className="text-[9px] text-indigo-400/70 font-mono font-bold uppercase tracking-widest flex items-center gap-2">
+                        <Cpu className="w-3.5 h-3.5"/> КІБЕРПРОФІЛЬ ТА ДАРКНЕТ
+                      </span>
+                      {activeEntity.cyber ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          <div className="bg-slate-950/50 border border-slate-800 rounded-xl p-3">
+                            <h4 className="text-[10px] text-slate-400 font-bold mb-2">Зв'язані Email / Акаунти</h4>
+                            <ul className="space-y-1">
+                              {activeEntity.cyber.knownEmails?.map((email: string, i: number) => (
+                                <li key={i} className="text-[10px] text-indigo-300 font-mono flex items-center gap-1.5"><Mail className="w-3 h-3"/> {email}</li>
+                              ))}
+                            </ul>
+                          </div>
+                          <div className="bg-slate-950/50 border border-slate-800 rounded-xl p-3">
+                            <h4 className="text-[10px] text-slate-400 font-bold mb-2">Активність у Даркнеті</h4>
+                            <div className="text-[20px] font-bold text-rose-400 font-mono">{activeEntity.cyber.darkwebMentions} <span className="text-[10px] text-slate-500 uppercase">згадок</span></div>
+                            <div className="text-[9px] text-slate-500 mt-2">Остання активність: {activeEntity.cyber.lastActive}</div>
+                          </div>
+                          <div className="col-span-1 md:col-span-2 bg-slate-950/50 border border-slate-800 rounded-xl p-3">
+                            <h4 className="text-[10px] text-slate-400 font-bold mb-2">Участь у витоках даних (Breaches)</h4>
+                            <div className="flex flex-wrap gap-1.5">
+                              {activeEntity.cyber.breaches?.map((breach: string, i: number) => (
+                                <span key={i} className="px-1.5 py-0.5 bg-slate-800 text-slate-300 rounded text-[9px] font-mono border border-slate-700">{breach}</span>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <p className="text-[10px] text-slate-500 italic">Кібер-активності не виявлено.</p>
+                      )}
+                    </div>
+              )}
+
+              {activeEntity.type === 'person' && activePersonTab === 'leaks' && (
+                    <div className="space-y-3 animate-fade-in">
+                      <span className="text-[9px] text-orange-400/70 font-mono font-bold uppercase tracking-widest flex items-center gap-2">
+                        <Database className="w-3.5 h-3.5"/> ВИТОКИ ДАНИХ (LEAKS)
+                      </span>
+                      {activeEntity.leaks && activeEntity.leaks.length > 0 ? (
+                        <div className="space-y-2">
+                          {activeEntity.leaks.map((leak: any, idx: number) => (
+                            <div key={idx} className="bg-slate-950/50 border border-orange-900/30 rounded-xl p-3 hover:bg-slate-900/50 transition-colors">
+                              <div className="flex justify-between items-start mb-1.5">
+                                <h4 className="text-[11px] font-bold text-orange-300">{leak.title}</h4>
+                                <span className={`px-1.5 py-0.5 rounded text-[8px] font-bold font-mono ${leak.severity === 'CRITICAL' ? 'bg-rose-500/20 text-rose-400' : leak.severity === 'HIGH' ? 'bg-orange-500/20 text-orange-400' : 'bg-yellow-500/20 text-yellow-400'}`}>{leak.severity}</span>
+                              </div>
+                              <p className="text-[10px] text-slate-400 mb-2">{leak.description}</p>
+                              <div className="text-[9px] text-slate-500 font-mono">Дата: {leak.date}</div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-[10px] text-slate-500 italic">Відсутня інформація у відомих витоках даних.</p>
+                      )}
                     </div>
               )}
 

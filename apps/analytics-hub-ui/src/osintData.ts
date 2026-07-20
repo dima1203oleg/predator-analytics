@@ -32,6 +32,9 @@ export interface OsintEntity {
   cryptoData?: { address: string; balance_btc?: number; total_received_btc?: number; n_tx?: number };
   leakData?: { email: string; total_breaches: number; exposed_data_types?: string[], records?: any[] };
   timeline?: { date: string; event: string; source: string; severity: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW' | 'INFO' }[];
+  cyber?: { breaches: string[]; darkwebMentions: number; knownEmails: string[]; lastActive: string; riskLevel: 'HIGH' | 'MEDIUM' | 'LOW' | 'CRITICAL' };
+  interpol?: { status: string; notices: string[]; details: string; lastSpotted: string; riskLevel: string };
+  leaks?: { title: string; description: string; severity: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW'; date: string }[];
 }
 
 export const OSINT_ENTITIES: OsintEntity[] = [
@@ -163,6 +166,7 @@ export const OSINT_ENTITIES: OsintEntity[] = [
     timeline: [
       { date: '2012-05-01', event: 'Email kovalenko.i@spectech.ua знайдено у витоку LinkedIn Data Breach', source: 'LeakCollector', severity: 'MEDIUM' },
       { date: '2019-01-15', event: 'Email знайдено у витоку Collection #1 (хеш паролю)', source: 'LeakCollector', severity: 'HIGH' },
+      { date: '2025-08-01T09:15:00Z', event: 'Реєстрація нової офшорної компанії', source: 'Corporate Registry', severity: 'HIGH' },
       { date: '2021-03-10', event: 'Реєстрація ТОВ "СпецТехПостач" (ЄДРПОУ 38294012)', source: 'EdrCollector', severity: 'INFO' },
       { date: '2024-07-20', event: 'Спільний відпочинок з підсанкційними особами зафіксовано OSINT-моніторингом', source: 'MediaCollector', severity: 'MEDIUM' },
       { date: '2025-02-14', event: 'Перша підозріла BTC-транзакція на суму 12.5 BTC через міксер', source: 'BlockchainCollector', severity: 'HIGH' },
@@ -171,6 +175,24 @@ export const OSINT_ENTITIES: OsintEntity[] = [
       { date: '2026-04-12', event: 'Кримінальне провадження №4202400000000123 — ст. 110-2 ККУ', source: 'CourtCollector', severity: 'CRITICAL' },
       { date: '2026-05-10', event: 'Внесення до санкційного списку РНБО (Указ №214/2026)', source: 'SanctionsCollector', severity: 'CRITICAL' },
       { date: '2026-05-15', event: 'Підозра у державній зраді та сприянні тероризму', source: 'CourtCollector', severity: 'CRITICAL' },
+    ],
+    interpol: {
+      status: 'WANTED',
+      notices: ['RED'],
+      details: 'Ордер на арешт видано Інтерполом. Звинувачення у фінансових махінаціях та відмиванні коштів.',
+      lastSpotted: '2025-10-12T08:00:00Z (Кіпр)',
+      riskLevel: 'CRITICAL'
+    },
+    cyber: {
+      breaches: ['Collection #1', 'LinkedIn 2012', 'Cit0day'],
+      darkwebMentions: 142,
+      knownEmails: ['igor.k@sunrise.cy', 'igor_k2000@protonmail.com'],
+      lastActive: '2025-10-15T22:11:00Z',
+      riskLevel: 'HIGH'
+    },
+    leaks: [
+      { title: 'Cyprus Papers', description: 'Згаданий як бенефіціар 4 офшорних компаній.', severity: 'HIGH', date: '2020-08-25' },
+      { title: 'Panama Papers', description: 'Зафіксований зв\'язок з Mossack Fonseca.', severity: 'MEDIUM', date: '2016-04-03' }
     ],
     aiRecommendations: "Провести повний фінансовий моніторинг рахунків дружини (Петренко О. С.) на предмет легалізації активів, отриманих злочинним шляхом. Встановити прикордонний моніторинг пересування особи.",
     lastActivityDate: "2026-05-15"
