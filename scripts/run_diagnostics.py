@@ -15,8 +15,8 @@ PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, PROJECT_ROOT)
 sys.path.insert(0, os.path.join(PROJECT_ROOT, "services", "_adv_dvs_archived"))
 
-# Встановлюємо NVIDIA сервер як ціль для валідаторів
-os.environ["TARGET_HOST"] = "194.177.1.240"
+# Встановлюємо локальний хост для тестування (Mock Server)
+os.environ["TARGET_HOST"] = "127.0.0.1"
 
 # Налаштування логування
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')

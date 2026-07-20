@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { 
   User, Users, Wallet, Brain, Stethoscope, AlertCircle, 
   AlertTriangle, ShieldAlert, DollarSign, Truck, 
-  Briefcase, Landmark, Hash, Globe, Server, Shield, MessageSquare, Bitcoin, FileWarning, Download, Clock, Cpu, Database
+  Briefcase, Landmark, Hash, Globe, Server, Shield, MessageSquare, Bitcoin, FileWarning, Download, Clock, Cpu, Database, Loader2
 } from 'lucide-react';
 import { OSINT_ENTITIES, OsintEntity } from '../osintData';
+import { useQuery } from '@tanstack/react-query';
+import { fetchEntityTimeline } from '../api';
 
 export const OsintDossierPanel: React.FC<{
   activeEntity: OsintEntity;
@@ -12,6 +14,13 @@ export const OsintDossierPanel: React.FC<{
   onSelectEntityForInspector: (entity: OsintEntity) => void;
 }> = ({ activeEntity, userRole, onSelectEntityForInspector }) => {
   const [activePersonTab, setActivePersonTab] = useState<'general' | 'family' | 'assets' | 'psychology' | 'medical' | 'compromat' | 'cyber' | 'interpol' | 'leaks' | 'timeline'>('general');
+
+  const { data: timelineData, isLoading: isTimelineLoading } = useQuery({
+    queryKey: ['entityTimeline', activeEntity.id],
+    queryFn: () => fetchEntityTimeline(activeEntity.id),
+    refetchInterval: 10000,
+    enabled: activePersonTab === 'timeline'
+  });
 
   const getStatusBadge = (status: string) => {
     switch(status) {
@@ -539,12 +548,15 @@ export const OsintDossierPanel: React.FC<{
 
               {activeEntity.type === 'person' && activePersonTab === 'timeline' && (
                     <div className="space-y-3 animate-fade-in">
-                      <span className="text-[9px] text-cyan-400/70 font-mono font-bold uppercase tracking-widest block flex items-center gap-1">
+                      <span className="text-[9px] text-cyan-400/70 font-mono font-bold uppercase tracking-widest flex items-center gap-2">
                         <Clock className="w-3.5 h-3.5"/> ХРОНОЛОГІЧНА ШКАЛА ПОДІЙ
+                        {isTimelineLoading && <Loader2 className="w-3 h-3 text-cyan-500 animate-spin" />}
+                        {!isTimelineLoading && timelineData && <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span></span>}
                       </span>
                       
                       {(() => {
-                        const events = (activeEntity.timeline || []).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+                        const sourceEvents = timelineData?.timeline || activeEntity.timeline || [];
+                        const events = [...sourceEvents].sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime());
                         if (events.length === 0) return <p className="text-[10px] text-slate-500 italic">Немає хронологічних даних для цього об'єкта.</p>;
                         
                         const getSeverityStyle = (s: string) => {

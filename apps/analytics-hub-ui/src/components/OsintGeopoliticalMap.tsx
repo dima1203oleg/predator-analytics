@@ -5,9 +5,10 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { DeckGL } from '@deck.gl/react';
 import { ScatterplotLayer, ArcLayer } from '@deck.gl/layers';
 import { HexagonLayer, HeatmapLayer } from '@deck.gl/aggregation-layers';
-import { Globe, Crosshair, Map as MapIcon, Layers } from 'lucide-react';
+import { Globe, Crosshair, Map as MapIcon, Layers, Loader2 } from 'lucide-react';
 import { OsintEntity, OSINT_ENTITIES } from '../osintData';
-
+import { useQuery } from '@tanstack/react-query';
+import { fetchGeoEntities } from '../api';
 export interface MapLocation {
   id: string;
   name: string;
@@ -20,29 +21,6 @@ export interface MapLocation {
   status: 'ACTIVE' | 'LIQUIDATED' | 'SANCTIONED' | 'SUSPICIOUS';
 }
 
-const CITY_COORDS: Record<string, [number, number]> = {
-  'київ': [30.5234, 50.4501],
-  'козин': [30.6698, 50.2199],
-  'львів': [24.0297, 49.8397],
-  'одеса': [30.7326, 46.4825],
-  'харків': [36.2304, 50.0057],
-  'дніпро': [35.0462, 48.4647],
-  'запоріжжя': [35.1396, 47.8388],
-  'london': [-0.1278, 51.5074],
-  'cyprus': [33.4299, 35.1264],
-  'кіпр': [33.4299, 35.1264],
-  'panama': [-79.5199, 8.9824],
-  'панама': [-79.5199, 8.9824]
-};
-
-function geocodeAddress(address?: string): [number, number] {
-  if (!address) return [31.0 + Math.random() * 2, 49.0 + Math.random() * 2]; // random in UA
-  const lower = address.toLowerCase();
-  for (const [city, coords] of Object.entries(CITY_COORDS)) {
-    if (lower.includes(city)) return coords;
-  }
-  return [31.0 + Math.random() * 2, 49.0 + Math.random() * 2];
-}
 
 interface OsintGeopoliticalMapProps {
   activeEntity: OsintEntity;
@@ -86,69 +64,61 @@ export const OsintGeopoliticalMap: React.FC<OsintGeopoliticalMapProps> = ({
     }
   }, [mapZoom]);
 
+  const { data: geoData, isLoading } = useQuery({
+    queryKey: ['geoEntities'],
+    queryFn: fetchGeoEntities,
+    refetchInterval: 30000
+  });
+
   const { mapData, arcsData } = useMemo(() => {
     const locations: MapLocation[] = [];
     const arcs: any[] = [];
     
-    // Add active entity
-    const activeCoords = geocodeAddress(activeEntity.address || activeEntity.name);
-    const activeLoc: MapLocation = {
-      id: activeEntity.id,
-      name: activeEntity.name,
-      city: activeEntity.address || 'Невідомо',
-      sector: activeEntity.type === 'person' ? 'Фізична особа' : 'Юридична особа',
-      lng: activeCoords[0],
-      lat: activeCoords[1],
-      address: activeEntity.address || '',
-      riskScore: activeEntity.riskScore || 50,
-      status: activeEntity.status === 'ACTIVE' ? 'ACTIVE' : (activeEntity.riskScore || 0) > 80 ? 'SANCTIONED' : 'SUSPICIOUS'
-    };
-    locations.push(activeLoc);
-
-    // Add related entities
-    if (activeEntity.relationships) {
-      activeEntity.relationships.forEach(rel => {
-        const target = OSINT_ENTITIES.find(e => e.id === rel.targetId);
-        if (target) {
-          const coords = geocodeAddress(target.address || target.name);
-          const targetLoc: MapLocation = {
-            id: target.id,
-            name: target.name,
-            city: target.address || 'Невідомо',
-            sector: rel.type,
-            lng: coords[0],
-            lat: coords[1],
-            address: target.address || '',
-            riskScore: target.riskScore || 50,
-            status: target.status === 'ACTIVE' ? 'ACTIVE' : (target.riskScore || 0) > 80 ? 'SANCTIONED' : 'SUSPICIOUS'
-          };
-          // Avoid duplicates
-          if (!locations.find(l => l.id === targetLoc.id)) {
-            locations.push(targetLoc);
-          }
-          arcs.push({ source: activeLoc, target: targetLoc });
-        } else if (rel.targetId.includes('wallet') || rel.targetName.includes('Wallet')) {
-          // Special case for crypto wallets
-          const targetLoc: MapLocation = {
-            id: rel.targetId,
-            name: rel.targetName,
-            city: 'Blockchain Network',
-            sector: 'Крипто-актив',
-            lng: 2.3522 + (Math.random() - 0.5)*10, // random global
-            lat: 48.8566 + (Math.random() - 0.5)*10,
-            address: 'Децентралізована мережа',
-            riskScore: rel.risk === 'HIGH' ? 90 : 50,
-            status: 'SUSPICIOUS'
-          };
-          locations.push(targetLoc);
-          arcs.push({ source: activeLoc, target: targetLoc });
-        }
+    if (geoData?.entities) {
+      geoData.entities.forEach((entity: any) => {
+        locations.push({
+          id: entity.id,
+          name: entity.name,
+          city: entity.address,
+          sector: entity.type,
+          lng: entity.lng,
+          lat: entity.lat,
+          address: entity.address,
+          riskScore: entity.riskScore,
+          status: entity.status
+        });
       });
+
+      // Find the active entity in fetched data (if it exists)
+      const activeLoc = locations.find(l => l.name === activeEntity.name);
+      
+      if (activeLoc && activeEntity.relationships) {
+        activeEntity.relationships.forEach(rel => {
+          const targetLoc = locations.find(l => l.name === rel.targetName || l.id === rel.targetId);
+          if (targetLoc) {
+            arcs.push({ source: activeLoc, target: targetLoc });
+          } else if (rel.targetId.includes('wallet') || rel.targetName.includes('Wallet')) {
+            // Special case for crypto wallets
+            const walletLoc: MapLocation = {
+              id: rel.targetId,
+              name: rel.targetName,
+              city: 'Blockchain Network',
+              sector: 'Крипто-актив',
+              lng: 2.3522 + (Math.random() - 0.5)*10,
+              lat: 48.8566 + (Math.random() - 0.5)*10,
+              address: 'Децентралізована мережа',
+              riskScore: rel.risk === 'HIGH' ? 90 : 50,
+              status: 'SUSPICIOUS'
+            };
+            locations.push(walletLoc);
+            arcs.push({ source: activeLoc, target: walletLoc });
+          }
+        });
+      }
     }
     
     return { mapData: locations, arcsData: arcs };
-  }, [activeEntity]);
-
+  }, [activeEntity, geoData]);
   // Generate synthetic data for heatmap/hexagons around known points
   const syntheticData = useMemo(() => {
     const points: any[] = [];
@@ -237,8 +207,9 @@ export const OsintGeopoliticalMap: React.FC<OsintGeopoliticalMapProps> = ({
         <div className="flex items-center gap-2">
           <Globe className="w-5 h-5 text-red-500" />
           <div>
-            <h4 className="text-sm font-bold text-white uppercase tracking-widest">
+            <h4 className="text-sm font-bold text-white uppercase tracking-widest flex items-center gap-2">
               Аналітика Гео-Даних (deck.gl)
+              {isLoading && <Loader2 className="w-3 h-3 text-red-500 animate-spin" />}
             </h4>
             <p className="text-xs text-gray-400 font-mono">
               Візуалізація транзакцій, активів та пересувань у 3D просторі

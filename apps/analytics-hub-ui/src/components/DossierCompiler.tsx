@@ -72,9 +72,10 @@ export const DossierCompiler: React.FC<DossierCompilerProps> = ({ onDossierCompl
       
     addLog(`Рівні доступу: ${activeLevels.join(', ')}`);
 
+    let progressInterval: any;
     try {
       // Симуляція прогресу поки йде запит
-      const progressInterval = setInterval(() => {
+      progressInterval = setInterval(() => {
         setProgress(p => (p < 90 ? p + 5 : p));
       }, 500);
 

@@ -1793,6 +1793,22 @@ app.get('/api/v1/geo/risk-events', (req, res) => {
   });
 });
 
+app.get('/api/v1/geo/entities', (req, res) => {
+  res.json({
+    entities: [
+      { id: 'geo-1', name: 'ТОВ "АГРО-ЛІДЕР ГРУП"', address: 'Київ, Печерський район', type: 'company', lat: 50.4501, lng: 30.5234, riskScore: 87, status: 'SUSPICIOUS' },
+      { id: 'geo-2', name: 'OCEAN TITAN', address: 'Чорне море (Маршрут)', type: 'vessel', lat: 46.48, lng: 30.72, riskScore: 12, status: 'ACTIVE' },
+      { id: 'geo-3', name: 'CRIMEA EXPRESS', address: 'Чорне море (Маршрут)', type: 'vessel', lat: 44.61, lng: 33.52, riskScore: 88, status: 'SANCTIONED' },
+      { id: 'geo-4', name: 'Одеський морський порт', address: 'Одеса, Україна', type: 'port', lat: 46.49, lng: 30.74, riskScore: 40, status: 'ACTIVE' },
+      { id: 'geo-5', name: 'Kyoto Holdings Ltd', address: 'Віргінські Острови', type: 'offshore', lat: 18.4207, lng: -64.6399, riskScore: 94, status: 'SUSPICIOUS' },
+      { id: 'geo-6', name: 'Кіпрський траст "Alfa Trust"', address: 'Нікосія, Кіпр', type: 'offshore', lat: 35.1264, lng: 33.4299, riskScore: 78, status: 'SUSPICIOUS' },
+      { id: 'geo-7', name: 'Газпромбанк (швейцарська філія)', address: 'Цюрих, Швейцарія', type: 'bank', lat: 47.3769, lng: 8.5417, riskScore: 95, status: 'SANCTIONED' },
+      { id: 'geo-8', name: 'Panama Papers Entity', address: 'Панама-Сіті', type: 'offshore', lat: 8.9824, lng: -79.5199, riskScore: 85, status: 'SUSPICIOUS' },
+      { id: 'geo-9', name: 'ФОП Коваленко О.І.', address: 'Львів, Україна', type: 'person', lat: 49.8397, lng: 24.0297, riskScore: 25, status: 'ACTIVE' }
+    ]
+  });
+});
+
 // 🎯 M&A TARGET SCANNER
 app.get('/api/v1/ma/targets', (req, res) => {
   const { status, min_score, sector } = req.query;
@@ -6839,6 +6855,36 @@ avatarWss.on('connection', (ws) => {
   });
 
   ws.on('close', () => console.log('[WSS] Avatar WebSocket disconnected'));
+});
+
+// 🕒 TIMELINE ENDPOINT (DYNAMIC)
+const timelineCache = {};
+
+app.get('/api/v1/osint/entity/:id/timeline', (req, res) => {
+  const entityId = req.params.id;
+  
+  if (!timelineCache[entityId]) {
+    // Initial static events
+    timelineCache[entityId] = [
+      { date: '2023-01-15', event: 'Реєстрація компанії або суб\'єкта в юрисдикції.', source: 'Державний реєстр', severity: 'LOW' },
+      { date: '2023-06-22', event: 'Зміна бенефіціарного власника.', source: 'YouControl', severity: 'MEDIUM' },
+      { date: '2024-02-10', event: 'Транзакція на суму $2.4M через офшорну зону.', source: 'Держфінмоніторинг', severity: 'HIGH' }
+    ];
+  }
+
+  // Simulate new live events
+  if (Math.random() > 0.6) {
+    const severities = ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'];
+    const newEvent = {
+      date: new Date().toISOString().split('T')[0],
+      event: `Нова активність: Виявлено транзакцію або зв'язок (ID: ${Math.floor(Math.random()*10000)})`,
+      source: 'OSINT Monitor',
+      severity: severities[Math.floor(Math.random() * severities.length)]
+    };
+    timelineCache[entityId].push(newEvent);
+  }
+
+  res.json({ timeline: timelineCache[entityId] });
 });
 
 server.listen(PORT, '127.0.0.1', () => {

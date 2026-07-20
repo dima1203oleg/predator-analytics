@@ -36,3 +36,19 @@ export const apiFetch = async (endpoint: string, options: RequestInit = {}) => {
     throw error;
   }
 };
+
+export const fetchGeoEntities = async () => {
+  const response = await apiFetch('/api/v1/geo/entities');
+  if (!response.ok) {
+    throw new Error('Failed to fetch geo entities');
+  }
+  return response.json();
+};
+
+export const fetchEntityTimeline = async (entityId: string) => {
+  const response = await apiFetch(`/api/v1/osint/entity/${entityId}/timeline`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch entity timeline');
+  }
+  return response.json();
+};
