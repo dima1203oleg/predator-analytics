@@ -31,6 +31,7 @@ export interface OsintEntity {
   socialMediaProfiles?: { platform: string; url: string; profileName: string; note: string }[];
   cryptoData?: { address: string; balance_btc?: number; total_received_btc?: number; n_tx?: number };
   leakData?: { email: string; total_breaches: number; exposed_data_types?: string[], records?: any[] };
+  timeline?: { date: string; event: string; source: string; severity: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW' | 'INFO' }[];
 }
 
 export const OSINT_ENTITIES: OsintEntity[] = [
@@ -159,6 +160,18 @@ export const OSINT_ENTITIES: OsintEntity[] = [
       total_received_btc: 102.3,
       n_tx: 45
     },
+    timeline: [
+      { date: '2012-05-01', event: 'Email kovalenko.i@spectech.ua знайдено у витоку LinkedIn Data Breach', source: 'LeakCollector', severity: 'MEDIUM' },
+      { date: '2019-01-15', event: 'Email знайдено у витоку Collection #1 (хеш паролю)', source: 'LeakCollector', severity: 'HIGH' },
+      { date: '2021-03-10', event: 'Реєстрація ТОВ "СпецТехПостач" (ЄДРПОУ 38294012)', source: 'EdrCollector', severity: 'INFO' },
+      { date: '2024-07-20', event: 'Спільний відпочинок з підсанкційними особами зафіксовано OSINT-моніторингом', source: 'MediaCollector', severity: 'MEDIUM' },
+      { date: '2025-02-14', event: 'Перша підозріла BTC-транзакція на суму 12.5 BTC через міксер', source: 'BlockchainCollector', severity: 'HIGH' },
+      { date: '2025-08-01', event: 'Згадка у Telegram-каналі @DarkMarket_UA у контексті продажу даних', source: 'TelegramCollector', severity: 'HIGH' },
+      { date: '2025-11-04', event: 'Господарський спір ТОВ "Арсенал Сек\'юріті" щодо орендної плати', source: 'CourtCollector', severity: 'LOW' },
+      { date: '2026-04-12', event: 'Кримінальне провадження №4202400000000123 — ст. 110-2 ККУ', source: 'CourtCollector', severity: 'CRITICAL' },
+      { date: '2026-05-10', event: 'Внесення до санкційного списку РНБО (Указ №214/2026)', source: 'SanctionsCollector', severity: 'CRITICAL' },
+      { date: '2026-05-15', event: 'Підозра у державній зраді та сприянні тероризму', source: 'CourtCollector', severity: 'CRITICAL' },
+    ],
     aiRecommendations: "Провести повний фінансовий моніторинг рахунків дружини (Петренко О. С.) на предмет легалізації активів, отриманих злочинним шляхом. Встановити прикордонний моніторинг пересування особи.",
     lastActivityDate: "2026-05-15"
   },

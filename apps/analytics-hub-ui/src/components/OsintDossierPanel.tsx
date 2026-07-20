@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { 
   User, Users, Wallet, Brain, Stethoscope, AlertCircle, 
   AlertTriangle, ShieldAlert, DollarSign, Truck, 
-  Briefcase, Landmark, Hash, Globe, Server, Shield, MessageSquare, Bitcoin, FileWarning, Download
+  Briefcase, Landmark, Hash, Globe, Server, Shield, MessageSquare, Bitcoin, FileWarning, Download, Clock, Cpu, Database
 } from 'lucide-react';
 import { OSINT_ENTITIES, OsintEntity } from '../osintData';
 
@@ -11,7 +11,7 @@ export const OsintDossierPanel: React.FC<{
   userRole: string;
   onSelectEntityForInspector: (entity: OsintEntity) => void;
 }> = ({ activeEntity, userRole, onSelectEntityForInspector }) => {
-  const [activePersonTab, setActivePersonTab] = useState<'general' | 'family' | 'assets' | 'psychology' | 'medical' | 'compromat' | 'cyber' | 'interpol' | 'leaks'>('general');
+  const [activePersonTab, setActivePersonTab] = useState<'general' | 'family' | 'assets' | 'psychology' | 'medical' | 'compromat' | 'cyber' | 'interpol' | 'leaks' | 'timeline'>('general');
 
   const getStatusBadge = (status: string) => {
     switch(status) {
@@ -144,6 +144,12 @@ export const OsintDossierPanel: React.FC<{
                       className={`px-3 py-1.5 rounded-md text-[10px] font-bold font-mono transition-colors flex items-center gap-1.5 ${activePersonTab === 'interpol' ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'bg-slate-900 text-slate-400 border border-transparent hover:bg-slate-800'}`}
                     >
                       <ShieldAlert className="w-3.5 h-3.5" /> ІНТЕРПОЛ
+                    </button>
+                    <button 
+                      onClick={() => setActivePersonTab('timeline')}
+                      className={`px-3 py-1.5 rounded-md text-[10px] font-bold font-mono transition-colors flex items-center gap-1.5 ${activePersonTab === 'timeline' ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30' : 'bg-slate-900 text-slate-400 border border-transparent hover:bg-slate-800'}`}
+                    >
+                      <Clock className="w-3.5 h-3.5" /> ХРОНОЛОГІЯ
                     </button>
                   </div>
               )}
@@ -527,6 +533,73 @@ export const OsintDossierPanel: React.FC<{
                             </div>
                           </div>
                         ))}
+                      </div>
+                    </div>
+              )}
+
+              {activeEntity.type === 'person' && activePersonTab === 'timeline' && (
+                    <div className="space-y-3 animate-fade-in">
+                      <span className="text-[9px] text-cyan-400/70 font-mono font-bold uppercase tracking-widest block flex items-center gap-1">
+                        <Clock className="w-3.5 h-3.5"/> ХРОНОЛОГІЧНА ШКАЛА ПОДІЙ
+                      </span>
+                      
+                      {(() => {
+                        const events = (activeEntity.timeline || []).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+                        if (events.length === 0) return <p className="text-[10px] text-slate-500 italic">Немає хронологічних даних для цього об'єкта.</p>;
+                        
+                        const getSeverityStyle = (s: string) => {
+                          switch(s) {
+                            case 'CRITICAL': return { dot: 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.6)]', line: 'border-rose-500/40', text: 'text-rose-400', badge: 'bg-rose-500/20 text-rose-400 border-rose-500/30' };
+                            case 'HIGH': return { dot: 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]', line: 'border-amber-500/40', text: 'text-amber-400', badge: 'bg-amber-500/20 text-amber-400 border-amber-500/30' };
+                            case 'MEDIUM': return { dot: 'bg-yellow-500', line: 'border-yellow-500/30', text: 'text-yellow-400', badge: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' };
+                            case 'LOW': return { dot: 'bg-slate-500', line: 'border-slate-600', text: 'text-slate-400', badge: 'bg-slate-800 text-slate-400 border-slate-700' };
+                            default: return { dot: 'bg-cyan-500', line: 'border-cyan-500/30', text: 'text-cyan-400', badge: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30' };
+                          }
+                        };
+
+                        return (
+                          <div className="relative pl-6">
+                            <div className="absolute left-[9px] top-2 bottom-2 w-[2px] bg-gradient-to-b from-cyan-500/40 via-slate-700/30 to-rose-500/40"></div>
+                            
+                            {events.map((evt, idx) => {
+                              const style = getSeverityStyle(evt.severity);
+                              return (
+                                <div key={idx} className="relative mb-4 last:mb-0 group">
+                                  <div className={`absolute -left-6 top-1 w-[20px] h-[20px] rounded-full border-2 border-slate-950 ${style.dot} z-10 flex items-center justify-center transition-transform group-hover:scale-125`}>
+                                    <div className="w-1.5 h-1.5 bg-white/70 rounded-full"></div>
+                                  </div>
+                                  <div className={`bg-slate-950/70 border ${style.line} rounded-xl p-3 hover:bg-slate-900/50 transition-colors`}>
+                                    <div className="flex items-center justify-between mb-1.5">
+                                      <span className={`text-[10px] font-bold font-mono ${style.text}`}>
+                                        {new Date(evt.date).toLocaleDateString('uk-UA', { year: 'numeric', month: 'long', day: 'numeric' })}
+                                      </span>
+                                      <span className={`text-[8px] font-bold font-mono px-1.5 py-0.5 rounded border ${style.badge}`}>
+                                        {evt.severity}
+                                      </span>
+                                    </div>
+                                    <p className="text-[11px] text-slate-200 leading-relaxed">{evt.event}</p>
+                                    <div className="mt-1.5 text-[9px] text-slate-500 font-mono flex items-center gap-1">
+                                      <Database className="w-2.5 h-2.5"/> Джерело: {evt.source}
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        );
+                      })()}
+
+                      {/* AI Профілювання */}
+                      <div className="mt-6 bg-gradient-to-br from-indigo-950/40 to-slate-950 border border-indigo-500/20 rounded-xl p-4 space-y-2">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Cpu className="w-4 h-4 text-indigo-400"/>
+                          <span className="text-[10px] text-indigo-400 font-mono font-bold uppercase tracking-widest">AI Профілювання (Аналітичний висновок)</span>
+                        </div>
+                        <p className="text-[11px] text-slate-300 leading-relaxed whitespace-pre-line">{activeEntity.aiRecommendations}</p>
+                        <div className="flex gap-2 mt-3 pt-2 border-t border-indigo-900/30">
+                          <span className="text-[8px] bg-indigo-500/10 text-indigo-400 px-2 py-0.5 rounded border border-indigo-500/20 font-mono">AutoML Risk: {activeEntity.riskScore}</span>
+                          <span className="text-[8px] bg-slate-900 text-slate-400 px-2 py-0.5 rounded border border-slate-800 font-mono">Модель: Predator DIE v57.0</span>
+                        </div>
                       </div>
                     </div>
               )}
