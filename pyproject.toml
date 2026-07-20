@@ -44,6 +44,10 @@ dependencies = [
     "python-jose[cryptography]>=3.3.0",
     "passlib[bcrypt]>=1.7.4",
     "httpx>=0.27.0",
+    # Парсери (OSINT/Scraping)
+    "beautifulsoup4>=4.12.0",
+    "lxml>=5.1.0",
+    "scrapy>=2.11.0",
     # Утиліти
     "structlog>=24.2.0",
     "rich>=13.7.1",
