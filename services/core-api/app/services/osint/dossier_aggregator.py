@@ -6,18 +6,17 @@
 from __future__ import annotations
 
 import asyncio
-import time
-import uuid
 from datetime import UTC, datetime
+import os
+import time
 from typing import Any
+import uuid
+
+import httpx
 
 from predator_common.logging import get_logger
-import httpx
-import os
-import json
 
 from ..ml.osint_automl import OsintAutoML
-
 from .collectors.base import (
     BaseCollector,
     Classification,
@@ -25,7 +24,6 @@ from .collectors.base import (
     CollectorStatus,
     CompleteDossier,
     DossierQuery,
-    EntityType,
 )
 
 logger = get_logger("die.aggregator")
@@ -37,7 +35,7 @@ class DossierAggregator:
     def __init__(self) -> None:
         self._collectors: list[BaseCollector] = []
         self._register_collectors()
-        
+
         self.automl = OsintAutoML()
         model_path = os.path.join(os.path.dirname(__file__), '..', '..', 'models', 'risk_model.txt')
         self.automl.load_model(model_path)
@@ -45,28 +43,28 @@ class DossierAggregator:
     def _register_collectors(self) -> None:
         """Реєстрація всіх доступних збирачів."""
         # WHITE — Публічні реєстри
-        from .collectors.edr_collector import EdrCollector
-        from .collectors.court_collector import CourtCollector
-        from .collectors.property_collector import PropertyCollector
-        from .collectors.vehicle_collector import VehicleCollector
-        from .collectors.tax_collector import TaxCollector
-        from .collectors.sanctions_collector import SanctionsCollector
-        from .collectors.pep_collector import PepCollector
-
-        # GREY — OSINT
-        from .collectors.social_media_collector import SocialMediaCollector
-        from .collectors.telegram_collector import TelegramCollector
         from .collectors.blockchain_collector import BlockchainCollector
-        from .collectors.media_collector import MediaCollector
         from .collectors.corporate_web_collector import CorporateWebCollector
+        from .collectors.court_collector import CourtCollector
         from .collectors.cyber_collector import CyberCollector
-        from .collectors.metadata_collector import MetadataCollector
+        from .collectors.darknet_collector import DarknetCollector
+        from .collectors.document_collector import DocumentCollector
+        from .collectors.edr_collector import EdrCollector
+        from .collectors.interpol_collector import InterpolCollector
 
         # BLACK — Deep OSINT
         from .collectors.leak_collector import LeakCollector
-        from .collectors.darknet_collector import DarknetCollector
-        from .collectors.interpol_collector import InterpolCollector
-        from .collectors.document_collector import DocumentCollector
+        from .collectors.media_collector import MediaCollector
+        from .collectors.metadata_collector import MetadataCollector
+        from .collectors.pep_collector import PepCollector
+        from .collectors.property_collector import PropertyCollector
+        from .collectors.sanctions_collector import SanctionsCollector
+
+        # GREY — OSINT
+        from .collectors.social_media_collector import SocialMediaCollector
+        from .collectors.tax_collector import TaxCollector
+        from .collectors.telegram_collector import TelegramCollector
+        from .collectors.vehicle_collector import VehicleCollector
 
         self._collectors = [
             # WHITE
@@ -134,14 +132,14 @@ class DossierAggregator:
         sections = self._aggregate_sections(results)
         graph = self._build_graph(query, results)
         risk_assessment = self._assess_risk(results)
-        
+
         # AutoML Scoring
         profile_for_ml = {
             "id": dossier_id,
             "type": query.entity_type.value,
             "taxes": {"debt": str(sections.get("tax_debt", {}).get("data", {}).get("total_debts", 0)) + " UAH"},
             "courts": {
-                "totalCases": sections.get("court_cases", {}).get("data", {}).get("total_cases", 0), 
+                "totalCases": sections.get("court_cases", {}).get("data", {}).get("total_cases", 0),
                 "criminalCases": sections.get("court_cases", {}).get("data", {}).get("criminal_cases", 0)
             },
             "cyber": {
@@ -156,7 +154,7 @@ class DossierAggregator:
             },
             "interpol": {"isWanted": sections.get("interpol", {}).get("data", {}).get("total_matches", 0) > 0}
         }
-        
+
         ml_risk_score = self.automl.predict_risk(profile_for_ml)
         risk_assessment['ml_risk_score'] = ml_risk_score
 
@@ -366,18 +364,16 @@ class DossierAggregator:
                 category = fragment.category
 
                 # Санкції — найвищий ризик
-                if category.startswith("sanctions"):
-                    if fragment.data.get("is_sanctioned"):
-                        risk_score += 40
-                        risk_factors.append("🔴 Знайдено у санкційних списках")
-                        risk_breakdown["sanctions"] = 40
+                if category.startswith("sanctions") and fragment.data.get("is_sanctioned"):
+                    risk_score += 40
+                    risk_factors.append("🔴 Знайдено у санкційних списках")
+                    risk_breakdown["sanctions"] = 40
 
                 # Інтерпол
-                if category.startswith("interpol"):
-                    if fragment.data.get("total_matches", 0) > 0:
-                        risk_score += 35
-                        risk_factors.append("🔴 Знайдено у базі Інтерполу")
-                        risk_breakdown["interpol"] = 35
+                if category.startswith("interpol") and fragment.data.get("total_matches", 0) > 0:
+                    risk_score += 35
+                    risk_factors.append("🔴 Знайдено у базі Інтерполу")
+                    risk_breakdown["interpol"] = 35
 
                 # Витоки даних
                 if category == "data_breaches":
@@ -415,11 +411,10 @@ class DossierAggregator:
                         risk_breakdown["debt"] = 5
 
                 # PEP статус
-                if category == "pep":
-                    if fragment.data.get("is_pep"):
-                        risk_score += 10
-                        risk_factors.append("🟡 Публічно значуща особа (PEP)")
-                        risk_breakdown["pep"] = 10
+                if category == "pep" and fragment.data.get("is_pep"):
+                    risk_score += 10
+                    risk_factors.append("🟡 Публічно значуща особа (PEP)")
+                    risk_breakdown["pep"] = 10
 
                 # Медіа (негатив)
                 if category == "media":
@@ -429,16 +424,68 @@ class DossierAggregator:
                         risk_factors.append(f"🟡 {neg} негативних згадок у ЗМІ")
                         risk_breakdown["media"] = 5
 
-                # Офшори
+                # Офшори (OpenCorporates)
                 if category == "international_companies":
                     offshore_links = [
-                        l for l in fragment.discovered_links
-                        if l.get("relation_type") == "OFFSHORE_LINK"
+                        link for link in fragment.discovered_links
+                        if link.get("relation_type") == "OFFSHORE_LINK"
                     ]
                     if offshore_links:
                         risk_score += 15
                         risk_factors.append(f"🟠 {len(offshore_links)} офшорних зв'язків")
                         risk_breakdown["offshore"] = 15
+
+                # ICIJ Offshore Leaks
+                if category == "offshore_leaks":
+                    panama = fragment.data.get("panama_papers", [])
+                    pandora = fragment.data.get("pandora_papers", [])
+                    paradise = fragment.data.get("paradise_papers", [])
+                    total_leaks = len(panama) + len(pandora) + len(paradise)
+                    if total_leaks > 0:
+                        risk_score += 30
+                        risk_factors.append(f"🔴 Знайдено {total_leaks} записів у ICIJ (Panama/Pandora Papers)")
+                        risk_breakdown["icij_leaks"] = 30
+
+                # Крипто-активи
+                if category == "blockchain_btc":
+                    balance = fragment.data.get("balance_btc", 0)
+                    if balance > 1.0:
+                        risk_score += 25
+                        risk_factors.append(f"🟠 Великий баланс BTC: {balance:.2f} BTC")
+                        risk_breakdown["crypto_btc"] = 25
+                    elif balance > 0:
+                        risk_score += 5
+                        risk_breakdown["crypto_btc"] = 5
+
+                if category == "blockchain_eth":
+                    balance = fragment.data.get("balance_eth", 0)
+                    if balance > 10.0:
+                        risk_score += 25
+                        risk_factors.append(f"🟠 Великий баланс ETH: {balance:.2f} ETH")
+                        risk_breakdown["crypto_eth"] = 25
+                    elif balance > 0:
+                        risk_score += 5
+                        risk_breakdown["crypto_eth"] = 5
+
+                # Telegram
+                if category == "telegram_mentions":
+                    suspicious_channels = [
+                        c for c in fragment.data.get("channels", [])
+                        if c.get("sentiment") == "NEGATIVE"
+                    ]
+                    if suspicious_channels:
+                        risk_score += 15
+                        risk_factors.append(f"🔴 Згадки у {len(suspicious_channels)} підозрілих Telegram-каналах")
+                        risk_breakdown["telegram"] = 15
+
+                # Соціальні мережі
+                if category == "social_profiles":
+                    profiles = fragment.data.get("profiles", [])
+                    if profiles:
+                        # Social profiles themselves aren't high risk, but good to note
+                        risk_score += 5
+                        risk_factors.append(f"⚪ Знайдено {len(profiles)} соціальних профілів")
+                        risk_breakdown["social_media"] = 5
 
         # Нормалізація 0-100
         risk_score = min(risk_score, 100)

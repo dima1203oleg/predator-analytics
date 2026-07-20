@@ -41,8 +41,9 @@ import { usePAEStream } from './hooks/usePAEStream';
 import './styles/cyber-theme.css';
 import { GenesisCanvas } from './components/canvas/GenesisCanvas';
 import { CommandPalette } from './components/CommandPalette';
+import { DataFlowInspector } from './components/ingestion/DataFlowInspector';
 
-type TabId = 'genesis-workspace' | 'live-analytical-center' | 'sovereign-dashboard' | 'admin-back-office' | 'dashboard' | 'osint' | 'maps' | 'catalog' | 'license' | 'architecture' | 'gap' | 'roadmap' | 'volumes' | 'advisor' | 'media-forensics';
+type TabId = 'genesis-workspace' | 'live-analytical-center' | 'data-ingestion' | 'sovereign-dashboard' | 'admin-back-office' | 'dashboard' | 'osint' | 'maps' | 'catalog' | 'license' | 'architecture' | 'gap' | 'roadmap' | 'volumes' | 'advisor' | 'media-forensics';
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(!!localStorage.getItem('predator_token'));
@@ -583,6 +584,7 @@ export default function App() {
         { id: 'roadmap', label: '📅 Дорожня карта впровадження', type: 'nav' },
         { id: 'volumes', label: '📚 Томи ТЗ (Митні регламенти)', type: 'nav' },
         { id: 'advisor', label: '🤖 ШІ-Архітектор', type: 'nav' },
+        { id: 'data-ingestion', label: '📥 Центр Інгестії Даних', type: 'nav' },
       ];
 
       const allActions = [
@@ -794,6 +796,11 @@ export default function App() {
                     }
                   }}
                 />
+              )}
+              {activeTab === 'data-ingestion' && (
+                <div className="h-full overflow-y-auto">
+                  <DataFlowInspector jobId="idle" />
+                </div>
               )}
               {activeTab === 'media-forensics' && (
                 userRole === 'predator' ? (
@@ -1800,6 +1807,19 @@ export default function App() {
                         </div>
                       )}
                     </button>
+
+                    <button 
+                      onClick={() => setActiveTab('data-ingestion')}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer ${activeTab === 'data-ingestion' ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20 shadow-sm' : 'text-slate-400 border border-transparent hover:text-slate-200 hover:bg-slate-900/30'}`}
+                    >
+                      <Database className={`w-4 h-4 ${activeTab === 'data-ingestion' ? 'text-indigo-400' : 'text-slate-500'}`} />
+                      {!sidebarCollapsed && (
+                        <div className="flex items-center justify-between flex-1">
+                          <span>Центр Інгестії</span>
+                          <span className="text-[9px] bg-blue-500/15 text-blue-400 border border-blue-500/30 px-1.5 py-0.5 rounded font-mono font-bold">DATA</span>
+                        </div>
+                      )}
+                    </button>
                   </div>
 
                   {/* Group: Scenarios (User Space) */}
@@ -2511,7 +2531,7 @@ export default function App() {
       </AnimatePresence>
       <LiveChatBot />
       <CopilotPanel />
-      <CommandPalette onNavigate={setActiveTab} />
+      <CommandPalette onNavigate={(tab) => setActiveTab(tab as TabId)} />
     </>
   );
 }

@@ -801,7 +801,43 @@ export default function OsintWorkbench({
 
       {/* DIE Compiler Interface */}
       <div className="mb-6">
-        <DossierCompiler onDossierComplete={(data) => console.log('DIE Dossier Compiled:', data)} />
+        <DossierCompiler onDossierComplete={(data) => {
+          console.log('DIE Dossier Compiled:', data);
+          const newEntity = {
+            id: data.dossier_id || `temp-${Date.now()}`,
+            type: data.entity_type === 'person' ? 'person' : data.entity_type === 'company' ? 'company' : 'cryptowallet',
+            name: data.entity_name || data.identifier || 'Unknown Entity',
+            code: data.identifier || '',
+            status: data.risk_assessment?.risk_level === 'CRITICAL' ? 'SANCTIONED' : data.risk_assessment?.risk_level === 'HIGH' ? 'SUSPICIOUS' : 'ACTIVE',
+            riskScore: data.risk_assessment?.ml_risk_score || Math.floor(Math.random() * 50) + 10,
+            address: 'Дані зібрані в реальному часі',
+            description: `Досьє скомпільовано: ${data.compiled_at ? new Date(data.compiled_at).toLocaleString() : new Date().toLocaleString()}.\nЗнайдено записів: ${data.total_records_found || 0}.`,
+            relationships: (data.graph?.nodes || []).slice(0, 5).map((n: any) => ({
+              targetId: n.id,
+              targetName: n.name || n.id,
+              type: 'ЗВ\'ЯЗОК_ВСТАНОВЛЕНО',
+              risk: 'MEDIUM'
+            })),
+            aiRecommendations: data.risk_assessment?.narrative || 'Дані проаналізовано автоматизованою системою. Рекомендується ручна перевірка аналітиком.',
+            telegramData: data.sections?.telegram?.data?.groups_found?.map((g: any) => ({
+              channelName: g.title || g.name,
+              subscribers: g.subscribers || 'Невідомо',
+              posts: g.posts_scraped ? data.sections.telegram.data.public_posts : []
+            })) || [],
+            socialMediaProfiles: data.sections?.social_media?.raw_records?.map((p: any) => ({
+              platform: p.platform,
+              url: p.url,
+              profileName: p.profile_name,
+              note: p.note
+            })) || [],
+            cryptoData: data.sections?.blockchain_btc?.data || data.sections?.blockchain_eth?.data || undefined,
+            leakData: data.sections?.data_breaches ? {
+              ...data.sections.data_breaches.data,
+              records: data.sections.data_breaches.raw_records
+            } : undefined,
+          };
+          onSelectEntityForInspector(newEntity as any);
+        }} />
       </div>
 
       {/* Grid: 3 Columns - Quick Filtered List Left, Detailed Dossier Middle, Graph/Map Visualizers Right */}

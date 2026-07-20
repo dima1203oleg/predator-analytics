@@ -274,6 +274,7 @@ class Vehicle:
     owner_edrpou: str | None = None
     owner_rnokpp: str | None = None
     registration_date: date | None = None
+    is_stolen: bool = False
 
 
 class UkraineRegistriesService:
@@ -392,7 +393,7 @@ class UkraineRegistriesService:
         if name:
             import hashlib
             name_hash = int(hashlib.md5(name.encode()).hexdigest(), 16) % 1000
-            
+
             # Якщо ім'я схоже на ПІБ (3 слова) - генеруємо ФОП та ТОВ
             parts = name.split()
             if len(parts) >= 2:
@@ -441,7 +442,7 @@ class UkraineRegistriesService:
 
     # ======================== БОРЖНИКИ ========================
 
-    
+
     async def search_debtors(self, query: str, limit: int = 10) -> list[DebtorRecord]:
         """Mock пошуку боржників."""
         if "Кізима" in query or "Дмитро" in query:
@@ -485,7 +486,7 @@ class UkraineRegistriesService:
         if party_name:
             import hashlib
             name_hash = int(hashlib.md5(party_name.encode()).hexdigest(), 16) % 1000
-            
+
             # Civil case
             cases.append(CourtCase(
                 case_number=f"{name_hash}/2023/Ц",
@@ -500,7 +501,7 @@ class UkraineRegistriesService:
                     CourtParty(name=party_name.upper(), role=PartyRole.DEFENDANT)
                 ]
             ))
-            
+
             # Criminal case if hash is even
             if name_hash % 2 == 0:
                 cases.append(CourtCase(
@@ -515,7 +516,7 @@ class UkraineRegistriesService:
                         CourtParty(name=party_name.upper(), role=PartyRole.DEFENDANT)
                     ]
                 ))
-                
+
         return cases, len(cases)
 
     async def get_court_case(self, case_number: str) -> CourtCase | None:

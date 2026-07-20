@@ -16,8 +16,37 @@ class DocumentCollector(BaseCollector):
     async def collect(self, query: DossierQuery) -> list[DataFragment]:
         fragments: list[DataFragment] = []
         search_name = query.name or query.identifier
+        
+        # Спроба отримати реальні дані з публічного API (наприклад, Opendatabot)
+        import os
+        import httpx
+        
+        api_key = os.getenv("OPENDATABOT_API_KEY", "")
+        if api_key:
+            try:
+                async with httpx.AsyncClient(timeout=15) as client:
+                    resp = await client.get(
+                        "https://opendatabot.com/api/v3/registry/notary",
+                        params={"q": search_name},
+                        headers={"Authorization": f"Bearer {api_key}"}
+                    )
+                    if resp.status_code == 200:
+                        data = resp.json()
+                        records = data.get("records", [])
+                        if records:
+                            fragments.append(DataFragment(
+                                category="notary_actions",
+                                source_name="Opendatabot (Реєстр нотаріальних дій)",
+                                classification=Classification.BLACK,
+                                data={"total_actions": len(records), "query": search_name},
+                                raw_records=records,
+                                confidence=0.9,
+                            ))
+                            return fragments
+            except Exception as e:
+                self._logger.warning(f"Opendatabot API помилка: {e}")
 
-        # Mock: реєстр обтяжень рухомого майна
+        # Fallback до Mock-даних
         mock_encumbrances = [
             {
                 "type": "Іпотека",
@@ -37,7 +66,6 @@ class DocumentCollector(BaseCollector):
             },
         ]
 
-        # Mock: нотаріальні дії
         mock_notary = [
             {
                 "type": "Довіреність",
@@ -93,6 +121,7 @@ class DocumentCollector(BaseCollector):
             data={"total_actions": len(mock_notary)},
             raw_records=mock_notary,
             confidence=0.5,
+            metadata={"note": "Mock-дані."},
         ))
 
         return fragments

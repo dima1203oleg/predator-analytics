@@ -42,10 +42,42 @@ const graphStylesheet: any[] = [
     }
   },
   {
-    selector: 'node[type = "cryptowallet"]',
+    selector: 'node[type = "crypto_wallet"]',
     style: {
       'border-color': '#eab308',
       'shape': 'diamond',
+      'border-width': 3
+    }
+  },
+  {
+    selector: 'node[type = "darknet"]',
+    style: {
+      'border-color': '#71717a',
+      'shape': 'pentagon',
+      'border-width': 3
+    }
+  },
+  {
+    selector: 'node[type = "group"]',
+    style: {
+      'border-color': '#3b82f6',
+      'shape': 'star',
+      'border-width': 3
+    }
+  },
+  {
+    selector: 'node[type = "interpol"]',
+    style: {
+      'border-color': '#dc2626',
+      'shape': 'vee',
+      'border-width': 3
+    }
+  },
+  {
+    selector: 'node[type = "social"]',
+    style: {
+      'border-color': '#ec4899',
+      'shape': 'round-rectangle',
       'border-width': 3
     }
   },

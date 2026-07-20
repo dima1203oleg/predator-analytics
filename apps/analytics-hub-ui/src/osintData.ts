@@ -23,6 +23,14 @@ export interface OsintEntity {
   aiRecommendations: string;
   lastActivityDate?: string; // YYYY-MM-DD
   rawContext?: any;
+  familyTies?: { name: string; relation: string; status: string; risk: 'HIGH' | 'MEDIUM' | 'LOW' }[];
+  assets?: { type: string; estimatedValue: string; description: string; ownership: string }[];
+  psychologicalPortrait?: { summary: string; characteristics: string[]; vulnerabilities: string[] };
+  compromat?: { summary: string; details: string; severity: 'CRITICAL' | 'WARNING'; source: string }[];
+  telegramData?: { channelName: string; subscribers: string; posts: string[] }[];
+  socialMediaProfiles?: { platform: string; url: string; profileName: string; note: string }[];
+  cryptoData?: { address: string; balance_btc?: number; total_received_btc?: number; n_tx?: number };
+  leakData?: { email: string; total_breaches: number; exposed_data_types?: string[], records?: any[] };
 }
 
 export const OSINT_ENTITIES: OsintEntity[] = [
@@ -102,6 +110,55 @@ export const OSINT_ENTITIES: OsintEntity[] = [
       { targetId: 'person-2', targetName: 'Петренко Ольга Сергіївна (Дружина)', type: 'FAMILY_RELATION', risk: 'LOW' },
       { targetId: 'wallet-1', targetName: 'BTC Wallet (0x38ac...d831)', type: 'OWNER_OF', risk: 'HIGH' }
     ],
+    familyTies: [
+      { name: 'Петренко Ольга Сергіївна', relation: 'Дружина', status: 'Громадянка України', risk: 'LOW' }
+    ],
+    assets: [
+      { type: 'Нерухомість', estimatedValue: '$1.2M', description: 'Будинок в смт Козин (450 кв.м)', ownership: 'Особиста власність' },
+      { type: 'Автопарк', estimatedValue: '$150K', description: 'Range Rover (AA1111AA)', ownership: 'Оформлено на дружину' }
+    ],
+    psychologicalPortrait: {
+      summary: 'Схильний до ризику, амбітний, має широкі зв\'язки у владних колах. Може використовувати методи соціальної інженерії.',
+      characteristics: ['Авторитарний стиль управління', 'Схильність до створення складних схем', 'Широкі міжнародні зв\'язки'],
+      vulnerabilities: ['Залежність від публічного іміджу', 'Активи родини як важіль впливу']
+    },
+    compromat: [
+      { summary: 'Зв\'язки з підсанкційними особами', details: 'Спільний відпочинок з особами зі санкційного списку РНБО у 2024 році.', severity: 'WARNING', source: 'Медіа-моніторинг / OSINT' },
+      { summary: 'Підозра у виведенні коштів', details: 'У 2025 році зафіксовано транзакції на криптогаманці, що співпадають за часом з отриманням державних підрядів.', severity: 'CRITICAL', source: 'Аналіз Blockchain / Держфінмоніторинг' }
+    ],
+    telegramData: [
+      {
+        channelName: "DarkMarket_UA",
+        subscribers: "15.2K",
+        posts: [
+          "Користувач Kovalenko_Igor згадується у контексті продажу даних.",
+          "Шукаю контакти Ігоря Коваленка з приводу офшорних схем."
+        ]
+      }
+    ],
+    socialMediaProfiles: [
+      {
+        platform: "LinkedIn",
+        url: "https://linkedin.com/in/igor-kovalenko-ua",
+        profileName: "Igor Kovalenko",
+        note: "CEO at SpecTech. У списку контактів є підсанкційні особи."
+      }
+    ],
+    leakData: {
+      email: "kovalenko.i@spectech.ua",
+      total_breaches: 4,
+      exposed_data_types: ["Email addresses", "Passwords", "IP addresses", "Phone numbers"],
+      records: [
+        { title: "Collection #1", breach_date: "2019-01", password_hash: "8743b52063cd84097a65d1633f5c74f5" },
+        { title: "LinkedIn Data Breach", breach_date: "2012-05", ip_address: "194.21.11.2" }
+      ]
+    },
+    cryptoData: {
+      address: "bc1qxy2kg3ut7wvufgz7h0df30097h42831d831",
+      balance_btc: 14.5,
+      total_received_btc: 102.3,
+      n_tx: 45
+    },
     aiRecommendations: "Провести повний фінансовий моніторинг рахунків дружини (Петренко О. С.) на предмет легалізації активів, отриманих злочинним шляхом. Встановити прикордонний моніторинг пересування особи.",
     lastActivityDate: "2026-05-15"
   },

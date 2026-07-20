@@ -146,9 +146,9 @@ export default function DashboardView({ onSelectTab, onSelectEntity }: Dashboard
   // Не блокуємо UI — дашборд рендериться з fallback-даними одразу
 
   return (
-    <div className="space-y-6" id="dashboard-view-root">
+    <div className="space-y-6 animate-fade-in" id="dashboard-view-root">
       {error && (
-        <div className="bg-rose-500/10 border border-rose-500/20 text-rose-400 p-4 rounded-xl flex items-center gap-3">
+        <div className="glass-panel border-rose-500/40 text-rose-400 p-4 rounded-xl flex items-center gap-3">
           <AlertTriangle className="w-5 h-5" />
           <span>{error}</span>
         </div>
@@ -159,12 +159,10 @@ export default function DashboardView({ onSelectTab, onSelectEntity }: Dashboard
         {stats.map((stat, i) => (
           <motion.div 
             key={i} 
-            whileHover={{ y: -4, scale: 1.02 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-            className="glass-card hover:border-indigo-500/30 rounded-2xl p-4.5 flex items-center justify-between shadow-xl backdrop-blur-sm relative overflow-hidden group cursor-pointer"
+            className="glass-panel rounded-2xl p-4.5 flex items-center justify-between shadow-xl backdrop-blur-sm relative overflow-hidden group cursor-pointer"
           >
             {/* Ambient hover glow spot */}
-            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
             
             <div className="relative z-10">
               <span className="text-[9px] text-slate-400 font-mono font-bold uppercase tracking-widest block">
@@ -195,7 +193,7 @@ export default function DashboardView({ onSelectTab, onSelectEntity }: Dashboard
             <div className="flex items-center justify-between border-b border-slate-900 pb-3">
               <div className="flex items-center gap-2">
                 <Globe className="w-4.5 h-4.5 text-teal-400" />
-                <span className="text-xs font-bold uppercase text-slate-100 tracking-widest">
+                <span className="text-xs font-bold uppercase gradient-text tracking-widest">
                   Глобальна Ситуаційна Карта Загроз
                 </span>
               </div>

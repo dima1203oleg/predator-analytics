@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { 
   User, Users, Wallet, Brain, Stethoscope, AlertCircle, 
   AlertTriangle, ShieldAlert, DollarSign, Truck, 
-  Briefcase, Landmark, Hash, Globe, Server, Shield
+  Briefcase, Landmark, Hash, Globe, Server, Shield, MessageSquare, Bitcoin, FileWarning
 } from 'lucide-react';
 import { OSINT_ENTITIES, OsintEntity } from '../osintData';
 
@@ -300,6 +300,130 @@ export const OsintDossierPanel: React.FC<{
                   )}
                 </div>
               </div>
+
+              {/* Social Media & Telegram Data */}
+              {activeEntity.socialMediaProfiles && activeEntity.socialMediaProfiles.length > 0 && (
+                <div className="space-y-1">
+                  <span className="text-[9px] text-indigo-400/80 font-mono font-bold uppercase tracking-widest block flex items-center gap-1">
+                    <Globe className="w-3.5 h-3.5"/> Соціальні мережі
+                  </span>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    {activeEntity.socialMediaProfiles.map((sm, idx) => (
+                      <div key={idx} className="bg-slate-950/60 p-2.5 rounded-lg border border-indigo-900/30 text-[11px] font-mono space-y-1 hover:border-indigo-500/50 transition-colors">
+                        <div className="flex justify-between items-center text-slate-300 font-bold">
+                          <span>{sm.platform}</span>
+                          <span className="text-[9px] text-slate-500">{sm.profileName}</span>
+                        </div>
+                        <p className="text-[10px] text-slate-400 mt-1 line-clamp-2">{sm.note}</p>
+                        <a href={sm.url} target="_blank" rel="noreferrer" className="text-[9px] text-indigo-400 hover:underline block pt-1 border-t border-slate-900 mt-1.5 truncate">
+                          Відкрити: {sm.url}
+                        </a>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {activeEntity.telegramData && activeEntity.telegramData.length > 0 && (
+                <div className="space-y-1">
+                  <span className="text-[9px] text-sky-400/80 font-mono font-bold uppercase tracking-widest block flex items-center gap-1">
+                    <MessageSquare className="w-3.5 h-3.5"/> Telegram моніторинг
+                  </span>
+                  <div className="grid gap-2">
+                    {activeEntity.telegramData.map((tg, idx) => (
+                      <div key={idx} className="bg-slate-950/60 p-3 rounded-lg border border-sky-900/30 text-[11px] font-mono hover:border-sky-500/50 transition-colors">
+                        <div className="flex justify-between items-center mb-2 pb-2 border-b border-slate-900">
+                          <span className="font-bold text-sky-300">@{tg.channelName}</span>
+                          <span className="text-[9px] text-slate-500 bg-slate-900 px-1.5 py-0.5 rounded">
+                            {tg.subscribers}
+                          </span>
+                        </div>
+                        {tg.posts && tg.posts.length > 0 ? (
+                          <ul className="space-y-2 mt-2">
+                            {tg.posts.map((post, pIdx) => (
+                              <li key={pIdx} className="text-[10px] text-slate-300 line-clamp-3 leading-relaxed border-l-2 border-sky-500/30 pl-2">
+                                {post}
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <span className="text-[10px] text-slate-500">Немає доступних повідомлень (можливо приватна група)</span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {activeEntity.cryptoData && (
+                <div className="space-y-1">
+                  <span className="text-[9px] text-amber-400/80 font-mono font-bold uppercase tracking-widest block flex items-center gap-1">
+                    <Bitcoin className="w-3.5 h-3.5"/> Крипто-активи
+                  </span>
+                  <div className="bg-slate-950/60 p-3 rounded-lg border border-amber-900/30 font-mono hover:border-amber-500/50 transition-colors">
+                    <div className="flex justify-between items-center mb-2 pb-2 border-b border-slate-900">
+                      <span className="text-[10px] text-slate-400 break-all">{activeEntity.cryptoData.address}</span>
+                      <span className="text-[11px] font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded">
+                        {activeEntity.cryptoData.balance_btc !== undefined ? `${activeEntity.cryptoData.balance_btc.toFixed(4)} BTC` : 'N/A'}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 text-[10px] text-slate-300">
+                      <div>
+                        <span className="text-slate-500 block mb-0.5">Отримано всього:</span>
+                        <span className="font-bold">{activeEntity.cryptoData.total_received_btc !== undefined ? `${activeEntity.cryptoData.total_received_btc.toFixed(4)} BTC` : 'N/A'}</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-500 block mb-0.5">Транзакцій:</span>
+                        <span className="font-bold">{activeEntity.cryptoData.n_tx !== undefined ? activeEntity.cryptoData.n_tx : 'N/A'}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeEntity.leakData && (
+                <div className="space-y-1">
+                  <span className="text-[9px] text-rose-500/80 font-mono font-bold uppercase tracking-widest block flex items-center gap-1">
+                    <FileWarning className="w-3.5 h-3.5"/> Реєстр витоків
+                  </span>
+                  <div className="bg-slate-950/60 p-3 rounded-lg border border-rose-900/30 hover:border-rose-500/50 transition-colors">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-[11px] font-bold text-slate-200">Email: {activeEntity.leakData.email}</span>
+                      <span className="text-[10px] font-bold text-rose-400 bg-rose-500/20 px-2 py-0.5 rounded flex items-center gap-1">
+                        <AlertTriangle className="w-3 h-3"/> Знайдено у {activeEntity.leakData.total_breaches} базах
+                      </span>
+                    </div>
+                    {activeEntity.leakData.exposed_data_types && activeEntity.leakData.exposed_data_types.length > 0 && (
+                      <div className="mt-2">
+                        <span className="text-[9px] text-slate-500 font-mono block mb-1">Скомпрометовані дані:</span>
+                        <div className="flex flex-wrap gap-1">
+                          {activeEntity.leakData.exposed_data_types.map((dt, idx) => (
+                            <span key={idx} className="text-[9px] bg-slate-900 text-rose-300/80 px-1.5 py-0.5 rounded border border-rose-900/50">
+                              {dt}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {activeEntity.leakData.records && activeEntity.leakData.records.length > 0 && (
+                      <ul className="mt-3 space-y-2 border-t border-slate-900 pt-2">
+                        {activeEntity.leakData.records.slice(0, 5).map((rec, idx) => (
+                          <li key={idx} className="text-[10px] text-slate-400 font-mono">
+                            <div className="truncate"><span className="text-rose-500/70 mr-1">•</span> {rec.title || rec.name || rec.breach_excerpt || "Невідоме джерело"}</div>
+                            {(rec.password_hash || rec.ip_address) && (
+                              <div className="flex flex-col gap-0.5 mt-1 ml-3 p-1.5 bg-slate-950/50 rounded border border-rose-900/20">
+                                {rec.password_hash && <div className="text-rose-400/80 truncate font-bold text-[9px]">Hash: {rec.password_hash}</div>}
+                                {rec.ip_address && <div className="text-blue-400/80 flex items-center gap-1 font-bold text-[9px]"><Server className="w-2.5 h-2.5"/> IP: {rec.ip_address}</div>}
+                                {rec.breach_date && <div className="text-slate-500 text-[9px]">Date: {rec.breach_date}</div>}
+                              </div>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                </div>
+              )}
 
                 </div>
               )}

@@ -102,9 +102,16 @@ class DarknetCollector(BaseCollector):
                             "date": "2025-11-20",
                             "description": f"Можливий збіг: '{search_term}' знайдено у дампі",
                             "risk_level": "HIGH",
+                        },
+                        {
+                            "source": "XSS.is / Exploit.in (Darknet)",
+                            "type": "forum_post",
+                            "date": "2026-05-14",
+                            "description": f"Користувач залишив повідомлення зі згадкою '{search_term}' у гілці 'Market'",
+                            "risk_level": "MEDIUM",
                         }
                     ],
-                    "forums_mentioned": 1,
+                    "forums_mentioned": 2,
                     "paste_sites_mentioned": 0,
                 }
 

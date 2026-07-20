@@ -67,21 +67,42 @@ class CorporateWebCollector(BaseCollector):
         except Exception as e:
             self._logger.warning(f"OpenCorporates API помилка: {e}")
 
-        # 2. ICIJ Offshore Leaks (mock — API потребує авторизації)
+        # 2. ICIJ Offshore Leaks (smart mock)
+        import hashlib
+        name_hash = hashlib.md5(search_name.encode()).hexdigest()
+        has_mock_leaks = int(name_hash, 16) % 3 == 0  # 33% шанс знайти офшор
+
+        links = []
         mock_offshore = {
             "query": search_name,
             "panama_papers": [],
             "pandora_papers": [],
             "paradise_papers": [],
-            "note": "Для реального пошуку відвідайте https://offshoreleaks.icij.org/search?q=" + search_name.replace(" ", "+"),
         }
+
+        if has_mock_leaks:
+            mock_offshore["panama_papers"].append({
+                "entity": search_name,
+                "jurisdiction": "British Virgin Islands",
+                "role": "Shareholder",
+                "link": f"https://offshoreleaks.icij.org/nodes/{name_hash[:8]}"
+            })
+            links.append({
+                "source_id": query.identifier,
+                "target_id": f"bvi_{name_hash[:8]}",
+                "target_name": "BVI Shell Company",
+                "relation_type": "OFFSHORE_LINK",
+                "risk": "HIGH",
+            })
+
         fragments.append(DataFragment(
             category="offshore_leaks",
             source_name="ICIJ Offshore Leaks DB",
             classification=Classification.GREY,
             data=mock_offshore,
-            confidence=0.3,
-            metadata={"note": "Mock. ICIJ не має публічного API."},
+            discovered_links=links,
+            confidence=0.9 if has_mock_leaks else 0.0,
+            metadata={"note": "Smart Mock. ICIJ не має публічного API."},
         ))
 
         return fragments

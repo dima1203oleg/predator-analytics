@@ -424,7 +424,12 @@ async def consume() -> None:
         logger.error(f"PostgreSQL connection failed: {e}")
         set_health_status("postgres_connected", False)
 
-    # Перевірка доступності Kafka — якщо недоступна, працюємо в standby режимі
+    class MockKafkaProducer:
+        async def start(self): pass
+        async def stop(self): pass
+        async def send_and_wait(self, topic, value, key=None):
+            logger.info(f"MockProducer: Sent to {topic} [key={key}]: {len(value)} bytes")
+
     try:
         consumer = AIOKafkaConsumer(
             TOPIC_RAW,
@@ -443,22 +448,41 @@ async def consume() -> None:
         await producer.start()
         set_health_status("kafka_connected", True)
         logger.info("ingestion_worker.started", topic=TOPIC_RAW)
+        is_mock = False
     except Exception as e:
-        logger.warning(f"Kafka недоступна — ingestion worker у standby режимі: {e}")
+        logger.warning(f"Kafka недоступна — ingestion worker у Mock-режимі: {e}")
         set_health_status("kafka_connected", False)
-        # Не завершуємося — працюємо в standby режимі
-        while True:
-            await asyncio.sleep(60)
+        consumer = None
+        producer = MockKafkaProducer()
+        await producer.start()
+        is_mock = True
 
     background_tasks: set[asyncio.Task[Any]] = set()
 
     try:
-        async for msg in consumer:
-            logger.info(
-                "ingestion_worker.msg_received",
-                partition=msg.partition,
-                offset=msg.offset,
-            )
+        if is_mock:
+            # Mock Ingestion Loop
+            while True:
+                await asyncio.sleep(60)
+                mock_msg = {
+                    "event_id": str(uuid.uuid4()),
+                    "edrpou": "00135390",  # Приклад: Метінвест або інша тестова компанія
+                    "tenant_id": getattr(settings, "ROOT_TENANT_ID", "default"),
+                    "mocked": True
+                }
+                logger.info("ingestion_worker.mock_event", event_id=mock_msg["event_id"])
+                task = asyncio.create_task(
+                    process_message(mock_msg, fusion_engine, producer, postgres_sink, clickhouse_sink, neo4j_sink, "mock_topic")
+                )
+                background_tasks.add(task)
+                task.add_done_callback(background_tasks.discard)
+        else:
+            async for msg in consumer:
+                logger.info(
+                    "ingestion_worker.msg_received",
+                    partition=msg.partition,
+                    offset=msg.offset,
+                )
             if msg.value:
                 # Асинхронна обробка події без блокування консьюмера
                 task = asyncio.create_task(

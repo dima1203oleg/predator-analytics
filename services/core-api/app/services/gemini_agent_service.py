@@ -252,8 +252,8 @@ class GeminiAgentService:
 
         Повертає структурований JSON з risk_level, confidence, factors.
         """
-        system_prompt = """Ти — експерт з митної аналітики та фінансової розвідки.
-Аналізуй надані дані компанії та визнач рівень ризику.
+        system_prompt = """Ти — експерт з митної аналітики, фінансової розвідки та кібербезпеки (OSINT).
+Аналізуй надані дані контрагента (включно зі зв'язками з офшорами, даркнетом, санкціями та криптовалютою) і визнач загальний рівень ризику.
 ЗАВЖДИ відповідай ТІЛЬКИ валідним JSON (без markdown):
 {
   "risk_level": "LOW|MEDIUM|HIGH|CRITICAL",
@@ -261,7 +261,9 @@ class GeminiAgentService:
   "factors": ["список_факторів_ризику"],
   "recommendation_ua": "рекомендація українською",
   "sanctions_check": true/false,
-  "ubo_anomaly": true/false
+  "ubo_anomaly": true/false,
+  "darknet_exposure": true/false,
+  "offshore_links": true/false
 }"""
 
         import json
