@@ -178,6 +178,53 @@ export const OsintVisualizerPanel: React.FC<{
       });
     });
 
+    // Додаємо віртуальні вузли для цифрових активів
+    if (activeEntity.cryptoData) {
+      const cId = `crypto-${activeEntity.cryptoData.address}`;
+      initialNodes.push({
+        data: { id: cId, label: `BTC: ${activeEntity.cryptoData.address.substring(0,8)}...`, type: 'crypto_wallet' }
+      });
+      initialEdges.push({
+        data: { id: `e-${activeEntity.id}-${cId}`, source: activeEntity.id, target: cId, label: 'OWNS WALLET', risk: 'HIGH' }
+      });
+    }
+
+    if (activeEntity.telegramData) {
+      activeEntity.telegramData.forEach((td, i) => {
+        const tId = `tg-${i}`;
+        initialNodes.push({
+          data: { id: tId, label: `TG: ${td.channelName}`, type: 'darknet' }
+        });
+        initialEdges.push({
+          data: { id: `e-${activeEntity.id}-${tId}`, source: activeEntity.id, target: tId, label: 'MENTIONED IN', risk: 'HIGH' }
+        });
+      });
+    }
+
+    if (activeEntity.socialMediaProfiles) {
+      activeEntity.socialMediaProfiles.forEach((sm, i) => {
+        const sId = `social-${i}`;
+        initialNodes.push({
+          data: { id: sId, label: sm.platform, type: 'social' }
+        });
+        initialEdges.push({
+          data: { id: `e-${activeEntity.id}-${sId}`, source: activeEntity.id, target: sId, label: 'HAS PROFILE', risk: 'LOW' }
+        });
+      });
+    }
+
+    if (activeEntity.leakData && activeEntity.leakData.records) {
+      activeEntity.leakData.records.forEach((leak, i) => {
+        const lId = `leak-${i}`;
+        initialNodes.push({
+          data: { id: lId, label: leak.title || 'Data Breach', type: 'darknet' }
+        });
+        initialEdges.push({
+          data: { id: `e-${activeEntity.id}-${lId}`, source: activeEntity.id, target: lId, label: 'DATA LEAK', risk: 'HIGH' }
+        });
+      });
+    }
+
     setElements([...initialNodes, ...initialEdges]);
   }, [activeEntity]);
 
