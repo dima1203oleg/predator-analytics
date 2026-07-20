@@ -39,6 +39,7 @@ from .cases import router as cases_router
 from .cloud_assist import router as cloud_assist_router
 from .companies import router as companies_router
 from .competitors import router as competitors_router
+from .compliance import router as compliance_router
 from .copilot import router as copilot_router
 from .dashboard import router as dashboard_router
 from .db_admin import router as db_admin_router
@@ -56,6 +57,7 @@ from .maritime import router as maritime_router
 from .market import router as market_router
 from .ml_studio import router as ml_studio_router
 from .newspaper import router as newspaper_router
+from .nli import router as nli_router
 from .omniverse import router as omniverse_router
 from .optimizer import router as optimizer_router
 from .orchestrator import router as orchestrator_router
@@ -64,6 +66,7 @@ from .osint_ua import router as osint_ua_router
 from .osint_vision import router as osint_vision_router
 from .pae_stream import router as pae_stream_router
 from .persons import router as persons_router
+from .person_dossier import router as person_dossier_router
 from .premium import router as premium_router
 from .public_api import router as public_api_router
 from .registries import router as registries_router
@@ -105,6 +108,7 @@ __all__ = [
     "cases_router",
     "companies_router",
     "competitors_router",
+    "compliance_router",
     "copilot_router",
     "dashboard_router",
     "db_admin_router",
@@ -124,6 +128,7 @@ __all__ = [
     "market_router",
     "ml_studio_router",
     "newspaper_router",
+    "nli_router",
     "optimizer_router",
     "auto_optimizer_router",
     "orchestrator_router",
@@ -133,6 +138,7 @@ __all__ = [
     "osint_vision_router",
     "pae_stream_router",
     "persons_router",
+    "person_dossier_router",
     "premium_router",
     "public_api_router",
     "registries_router",

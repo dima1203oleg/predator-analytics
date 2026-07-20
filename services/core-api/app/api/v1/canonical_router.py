@@ -63,3 +63,11 @@ router.include_router(
     prefix="/v1/osint",
     tags=["osint"]
 )
+
+# Підключення Watchlist Router (Безперервний моніторинг)
+from app.routers.watchlist import router as watchlist_router
+router.include_router(
+    watchlist_router,
+    prefix="/v1",
+    tags=["watchlist"]
+)

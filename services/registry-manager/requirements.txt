@@ -1,0 +1,11 @@
+fastapi>=0.110.0
+uvicorn[standard]
+pydantic>=2.0
+pydantic-settings
+requests
+httpx
+alembic
+sqlalchemy[asyncio]
+asyncpg
+celery
+redis

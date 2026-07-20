@@ -18,6 +18,7 @@ import InspectorPanel from './components/InspectorPanel';
 import LiveAnalyticalCenter from './components/LiveAnalyticalCenter';
 import { OodaRadar } from './components/OodaRadar';
 import { SovereignDashboard } from './components/SovereignDashboard';
+import { WarRoom } from './components/WarRoom';
 import AdminBackOffice from './components/AdminBackOffice';
 import MapsTab from './components/MapsTab';
 import { OSINT_ENTITIES, OsintEntity } from './osintData';
@@ -29,7 +30,7 @@ import {
   Menu, X, Search, Bell, User, Terminal, Cpu, Database, 
   Activity, Landmark, MessageSquare, Sparkles, Send, HelpCircle,
   Maximize2, Minimize2, Settings, ShieldAlert, Compass,
-  Briefcase, Truck, Globe, TrendingUp, Users, Map, Mic, Zap, LogOut
+  Briefcase, Truck, Globe, TrendingUp, Users, Map, Mic, Zap, LogOut, Shield, BrainCircuit
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { LiveChatBot } from './components/LiveChatBot';
@@ -42,8 +43,12 @@ import './styles/cyber-theme.css';
 import { GenesisCanvas } from './components/canvas/GenesisCanvas';
 import { CommandPalette } from './components/CommandPalette';
 import { DataFlowInspector } from './components/ingestion/DataFlowInspector';
+import { AlertCenter } from './components/AlertCenter';
+import { WatchlistPanel } from './components/WatchlistPanel';
+import { OracleWorkspace } from './components/OracleWorkspace';
+import { ShieldCompliance } from './components/ShieldCompliance';
 
-type TabId = 'genesis-workspace' | 'live-analytical-center' | 'data-ingestion' | 'sovereign-dashboard' | 'admin-back-office' | 'dashboard' | 'osint' | 'maps' | 'catalog' | 'license' | 'architecture' | 'gap' | 'roadmap' | 'volumes' | 'advisor' | 'media-forensics';
+type TabId = 'genesis-workspace' | 'live-analytical-center' | 'data-ingestion' | 'sovereign-dashboard' | 'admin-back-office' | 'dashboard' | 'osint' | 'maps' | 'warroom' | 'oracle' | 'shield' | 'catalog' | 'license' | 'architecture' | 'gap' | 'roadmap' | 'volumes' | 'advisor' | 'media-forensics';
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(!!localStorage.getItem('predator_token'));
@@ -74,6 +79,9 @@ export default function App() {
   const [genesisQuery, setGenesisQuery] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const { data: paeData, sendIntent } = usePAEStream();
+  
+  // Watchlist State
+  const [isWatchlistOpen, setIsWatchlistOpen] = useState(false);
   
   // Genesis Canvas Global Input Listener
   useEffect(() => {
@@ -204,6 +212,17 @@ export default function App() {
     group: 'Core',
     details: 'Основний бекенд-сервіс на базі FastAPI. Забезпечує оркестрацію черг, інтеграцію ШІ-моделей vLLM та інтерфейс до баз даних Qdrant та Neo4j.'
   });
+
+  const handleSelectEntityFromWatchlist = (entityId: string) => {
+    // В реальній програмі тут буде запит на бекенд для отримання повних даних про сутність,
+    // але для демо використовуємо заглушку або шукаємо в локальних даних
+    const entity = OSINT_ENTITIES.find(e => e.id === entityId) || null;
+    if (entity) {
+      setSelectedEntity(entity);
+      setActiveTab('live-analytical-center');
+      setIsWatchlistOpen(false);
+    }
+  };
 
 
   // Floating AI Assistant state
@@ -576,6 +595,9 @@ export default function App() {
     } else {
       const allNavs = [
         { id: 'live-analytical-center', label: '🛰️ Живе ШІ-Ядро (Спецпроект PREDATOR)', type: 'nav' },
+        { id: 'warroom', label: '🛡️ Воєнна Кімната (War Room)', type: 'nav' },
+        { id: 'oracle', label: '🧠 PREDATOR ORACLE (AI NLI)', type: 'nav' },
+        { id: 'shield', label: '🛡️ PREDATOR SHIELD', type: 'nav' },
         { id: 'dashboard', label: '📊 Інтерактивний Дашборд', type: 'nav' },
         { id: 'media-forensics', label: '🎥 Media Forensics', type: 'nav' },
         { id: 'osint', label: '🔍 Робочий стіл OSINT пошуку', type: 'nav' },
@@ -777,6 +799,15 @@ export default function App() {
                   onSelectScenario={setSelectedScenario}
                   userRole={userRole}
                 />
+              )}
+              {activeTab === 'warroom' && (
+                <WarRoom />
+              )}
+              {activeTab === 'oracle' && (
+                <OracleWorkspace />
+              )}
+              {activeTab === 'shield' && (
+                <ShieldCompliance />
               )}
               {activeTab === 'admin-back-office' && (
                 <AdminBackOffice />
@@ -1501,6 +1532,7 @@ export default function App() {
 
   const renderDesktopLayout = () => {
     return (
+      <>
       <div className="min-h-screen bg-transparent text-slate-100 flex flex-col font-sans selection:bg-indigo-500/30 selection:text-indigo-200" id="predator-hub-app">
         
         {/* 1. STICKY HEADER (Section 6) */}
@@ -1641,11 +1673,10 @@ export default function App() {
             </div>
 
             {/* Alerts Bell notification */}
-            <button className="p-1.5 hover:bg-slate-900 rounded-lg text-slate-400 hover:text-slate-200 relative cursor-pointer" title="Сповіщення">
-              <span className="absolute top-1 right-1 w-2 h-2 bg-rose-500 rounded-full animate-ping"></span>
-              <span className="absolute top-1 right-1 w-2 h-2 bg-rose-500 rounded-full"></span>
-              <Bell className="w-4 h-4" />
-            </button>
+            <AlertCenter 
+              onOpenWatchlist={() => setIsWatchlistOpen(true)}
+              onSelectEntity={handleSelectEntityFromWatchlist}
+            />
 
             {/* Profile Avatars */}
             <div className="flex items-center gap-2.5 pl-2 border-l border-slate-900">
@@ -1778,6 +1809,45 @@ export default function App() {
                         <div className="flex items-center justify-between flex-1">
                           <span>Інтерактивна Карта</span>
                           <span className="text-[9px] bg-indigo-500/15 text-indigo-400 border border-indigo-500/30 px-1.5 py-0.5 rounded font-mono font-bold">MAP</span>
+                        </div>
+                      )}
+                    </button>
+
+                    <button 
+                      onClick={() => setActiveTab('warroom')}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer ${activeTab === 'warroom' ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20 shadow-sm' : 'text-slate-400 border border-transparent hover:text-slate-200 hover:bg-slate-900/30'}`}
+                    >
+                      <Shield className={`w-4 h-4 ${activeTab === 'warroom' ? 'text-indigo-400' : 'text-slate-500'}`} />
+                      {!sidebarCollapsed && (
+                        <div className="flex items-center justify-between flex-1">
+                          <span>Воєнна Кімната</span>
+                          <span className="text-[9px] bg-indigo-500/15 text-indigo-400 border border-indigo-500/30 px-1.5 py-0.5 rounded font-mono font-bold">WAR</span>
+                        </div>
+                      )}
+                    </button>
+
+                    <button 
+                      onClick={() => setActiveTab('oracle')}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer ${activeTab === 'oracle' ? 'bg-cyan-600/10 text-cyan-400 border border-cyan-500/20 shadow-sm' : 'text-slate-400 border border-transparent hover:text-slate-200 hover:bg-slate-900/30'}`}
+                    >
+                      <BrainCircuit className={`w-4 h-4 ${activeTab === 'oracle' ? 'text-cyan-400' : 'text-slate-500'}`} />
+                      {!sidebarCollapsed && (
+                        <div className="flex items-center justify-between flex-1">
+                          <span>PREDATOR ORACLE</span>
+                          <span className="text-[9px] bg-cyan-500/15 text-cyan-400 border border-cyan-500/30 px-1.5 py-0.5 rounded font-mono font-bold">NLI</span>
+                        </div>
+                      )}
+                    </button>
+
+                    <button 
+                      onClick={() => setActiveTab('shield')}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer ${activeTab === 'shield' ? 'bg-emerald-600/10 text-emerald-400 border border-emerald-500/20 shadow-sm' : 'text-slate-400 border border-transparent hover:text-slate-200 hover:bg-slate-900/30'}`}
+                    >
+                      <ShieldCheck className={`w-4 h-4 ${activeTab === 'shield' ? 'text-emerald-400' : 'text-slate-500'}`} />
+                      {!sidebarCollapsed && (
+                        <div className="flex items-center justify-between flex-1">
+                          <span>PREDATOR SHIELD</span>
+                          <span className="text-[9px] bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 px-1.5 py-0.5 rounded font-mono font-bold">WORM</span>
                         </div>
                       )}
                     </button>
@@ -1972,6 +2042,9 @@ export default function App() {
                 {activeTab === 'dashboard' && 'Старий Дашборд'}
                 {activeTab === 'osint' && 'Старий Пошук OSINT'}
                 {activeTab === 'maps' && 'Інтерактивна Карта PREDATOR'}
+                {activeTab === 'warroom' && 'PREDATOR WAR ROOM'}
+                {activeTab === 'oracle' && 'PREDATOR ORACLE (AI NLI)'}
+                {activeTab === 'shield' && 'PREDATOR SHIELD (Compliance)'}
                 {activeTab === 'catalog' && 'Каталог рішень'}
                 {activeTab === 'license' && 'Сумісність ліцензій'}
                 {activeTab === 'architecture' && 'Граф залежностей'}
@@ -2421,6 +2494,31 @@ export default function App() {
         </AnimatePresence>
 
       </div>
+
+      {/* Floating Watchlist Panel */}
+      <AnimatePresence>
+        {isWatchlistOpen && (
+          <motion.div
+            initial={{ opacity: 0, x: 400 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 400 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            className="fixed top-[60px] right-0 bottom-0 w-[420px] max-w-[100vw] z-[60] shadow-2xl border-l border-slate-800"
+            style={{ background: 'rgba(10,12,20,0.98)' }}
+          >
+            <div className="absolute top-4 right-4 z-10">
+              <button 
+                onClick={() => setIsWatchlistOpen(false)}
+                className="p-1.5 bg-slate-900/50 hover:bg-slate-800 text-slate-400 hover:text-white rounded-lg transition-colors cursor-pointer border border-slate-700/50"
+              >
+                <X size={16} />
+              </button>
+            </div>
+            <WatchlistPanel onSelectEntity={handleSelectEntityFromWatchlist} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+      </>
     );
   };
 

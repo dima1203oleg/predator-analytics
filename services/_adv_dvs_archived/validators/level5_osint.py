@@ -26,9 +26,8 @@ class OsintValidator(BaseValidator):
 
         try:
             async with httpx.AsyncClient(verify=False, timeout=15) as client:
-                response = await client.post(
-                    osint_search_url,
-                    json={"query": TEST_SEARCH_QUERY, "limit": 1},
+                response = await client.get(
+                    f"{osint_search_url}?q={TEST_SEARCH_QUERY}",
                     headers={"Content-Type": "application/json"}
                 )
 
@@ -65,15 +64,15 @@ class OsintValidator(BaseValidator):
                 severity="critical",
             ))
 
-    async def _validate_osint_response(self, data: Dict[str, Any]):
+    async def _validate_osint_response(self, data: Any):
         """Валідація структури відповіді від OSINT API."""
-        results = data.get("data", {}).get("results", [])
+        results = data
 
         if not isinstance(results, list):
             self.add_check(CheckResult(
                 name="osint_response_format",
                 passed=False,
-                message="Відповідь API має невірний формат: 'results' не є списком.",
+                message="Відповідь API має невірний формат: очікується список.",
                 severity="critical",
             ))
             return

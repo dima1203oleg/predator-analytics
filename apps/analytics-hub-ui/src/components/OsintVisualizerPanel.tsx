@@ -223,6 +223,45 @@ export const OsintVisualizerPanel: React.FC<{
     }
   };
 
+  const findCartels = async () => {
+    setIsLoading(true);
+    try {
+      const response = await apiFetch(`/api/v1/graph/clusters/cartels`);
+      const data = await response.json();
+      if (data.nodes) setElements([...data.nodes, ...(data.edges || [])]);
+    } catch (err) {
+      console.error("Error finding cartels:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const getShadowMap = async () => {
+    setIsLoading(true);
+    try {
+      const response = await apiFetch(`/api/v1/graph/shadow/${activeEntity.id}`);
+      const data = await response.json();
+      if (data.nodes) setElements([...data.nodes, ...(data.edges || [])]);
+    } catch (err) {
+      console.error("Error getting shadow map:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const getInfluence = async () => {
+    setIsLoading(true);
+    try {
+      const response = await apiFetch(`/api/v1/graph/influence/${activeEntity.id}`);
+      const data = await response.json();
+      if (data.nodes) setElements([...data.nodes, ...(data.edges || [])]);
+    } catch (err) {
+      console.error("Error getting influence metrics:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const exportGraphToPng = () => {
     if (cyRef.current) {
       const pngData = cyRef.current.png({ bg: '#020617', full: true, scale: 2 });
@@ -244,17 +283,38 @@ export const OsintVisualizerPanel: React.FC<{
               {isLoading && <Loader2 className="w-3 h-3 text-indigo-500 animate-spin" />}
             </h4>
           </div>
-          <div className="flex items-center gap-4">
-            <span className="text-[9px] text-slate-500 font-mono">
-              Правий клік (або довгий тап) для розгортання
+          <div className="flex items-center gap-2">
+            <button
+              onClick={getShadowMap}
+              title="Тіньова карта (Shadow Map)"
+              className="px-2 py-1 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded transition-colors text-slate-300 text-[10px] font-mono font-bold"
+            >
+              Тіньова Карта
+            </button>
+            <button
+              onClick={findCartels}
+              title="Виявити картелі (Спільноти)"
+              className="px-2 py-1 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded transition-colors text-slate-300 text-[10px] font-mono font-bold"
+            >
+              Картелі
+            </button>
+            <button
+              onClick={getInfluence}
+              title="Рейтинг впливу (PageRank)"
+              className="px-2 py-1 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded transition-colors text-slate-300 text-[10px] font-mono font-bold"
+            >
+              Впливовість
+            </button>
+            
+            <span className="text-[9px] text-slate-500 font-mono hidden md:inline ml-2 border-l border-slate-800 pl-2">
+              Правий клік для вузлів
             </span>
             <button
               onClick={exportGraphToPng}
               title="Експорт графа у PNG"
-              className="p-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-md transition-colors text-slate-400 hover:text-indigo-400 flex items-center gap-2"
+              className="p-1.5 ml-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-md transition-colors text-slate-400 hover:text-indigo-400 flex items-center gap-2"
             >
               <Camera className="w-4 h-4" />
-              <span className="text-[10px] font-mono uppercase font-bold hidden sm:inline">Зберегти PNG</span>
             </button>
           </div>
         </div>

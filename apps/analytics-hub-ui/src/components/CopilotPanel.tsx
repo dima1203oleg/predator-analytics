@@ -18,6 +18,40 @@ export const CopilotPanel: React.FC = () => {
     }
   }, [messages, thoughtProcess]);
 
+  useEffect(() => {
+    const handleCustomBriefing = (e: any) => {
+      setIsOpen(true);
+      const dossier = e.detail;
+      
+      const query = `Аналіз досьє: ${dossier.metadata?.identifier || 'Особа'}`;
+      setMessages(prev => [...prev, { role: 'user', content: query }]);
+      setIsThinking(true);
+      setThoughtProcess(['Отримання даних досьє...', 'Синтез психологічного портрету...', 'Підготовка Executive Briefing...']);
+      
+      setTimeout(() => {
+        let answer = "Аналіз завершено. ";
+        if (dossier.ai_analytics) {
+          answer += `${dossier.ai_analytics.psychological_portrait} Окрім цього, ${dossier.ai_analytics.hidden_wealth_estimate}. Загальний ризик: ${dossier.ai_analytics.risk_assessment?.aml_risk || 'Невідомо'}.`;
+        } else {
+          answer += "Прямих AI-оцінок не знайдено, але досьє містить зібрані сирі дані з реєстрів.";
+        }
+        
+        setMessages(prev => [...prev, { role: 'assistant', content: answer }]);
+        setIsThinking(false);
+        setThoughtProcess([]);
+        
+        if (voiceEnabled) {
+          const utterance = new SpeechSynthesisUtterance(answer);
+          utterance.lang = 'uk-UA';
+          speechSynthesis.speak(utterance);
+        }
+      }, 2500);
+    };
+
+    document.addEventListener('copilot-execute-briefing', handleCustomBriefing);
+    return () => document.removeEventListener('copilot-execute-briefing', handleCustomBriefing);
+  }, [voiceEnabled]);
+
   // Handle Speech Recognition (Web Speech API mockup/stub for actual implementation)
   const toggleRecording = () => {
     if (!isRecording) {

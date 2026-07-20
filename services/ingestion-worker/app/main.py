@@ -343,6 +343,11 @@ async def process_message(
         elif "edrpou" in msg_value:
             # Це запит на OSINT збагачення
             await process_osint_enrichment(msg_value, fusion_engine, producer)
+        elif msg_value.get("action") == "watchlist_rescan":
+            # Watchlist автоматичне перескановування
+            from app.pipelines.watchlist_pipeline import WatchlistPipeline
+            pipeline = WatchlistPipeline(neo4j_sink, postgres_sink, clickhouse_sink)
+            await pipeline.process(msg_value)
         elif msg_value.get("action") == "run_osint_scan":
             # OSINT scan orchestration
             from app.pipelines.osint_pipeline import OSINTPipeline

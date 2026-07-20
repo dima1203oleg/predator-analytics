@@ -81,18 +81,29 @@ export const DossierCompiler: React.FC<DossierCompilerProps> = ({ onDossierCompl
 
       let data;
       try {
-        const response = await fetch('/api/v1/dossier/compile', {
-          method: 'POST',
+        let apiUrl = '/api/v1/dossier/compile';
+        let method = 'POST';
+        let body: any = JSON.stringify({
+          entity_type: entityType,
+          identifier: identifier,
+          name: identifier,
+          classification_levels: activeLevels
+        });
+
+        // Use new specialized endpoint for Person Deep Intel
+        if (entityType === 'person') {
+          apiUrl = `/api/v1/dossier/person/${encodeURIComponent(identifier)}`;
+          method = 'GET';
+          body = undefined;
+        }
+
+        const response = await fetch(apiUrl, {
+          method: method,
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
           },
-          body: JSON.stringify({
-            entity_type: entityType,
-            identifier: identifier,
-            name: identifier,
-            classification_levels: activeLevels
-          })
+          ...(body ? { body } : {})
         });
 
         if (!response.ok) {
@@ -103,15 +114,10 @@ export const DossierCompiler: React.FC<DossierCompilerProps> = ({ onDossierCompl
         // Fallback to local mock server if main API fails (Dev Mode / Zero-Local-Deployment)
         addLog(`⚠️ Головний API недоступний (${apiErr.message}). Спроба використати Mock Server (порт 9080)...`);
         try {
-          const mockResponse = await fetch('http://localhost:9080/api/v1/dossier/compile', {
-            method: 'POST',
+          const mockResponse = await fetch(`http://localhost:9080${apiUrl}`, {
+            method: method,
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              entity_type: entityType,
-              identifier: identifier,
-              name: identifier,
-              classification_levels: activeLevels
-            })
+            ...(body ? { body } : {})
           });
           if (!mockResponse.ok) throw new Error(`Mock API Error: ${mockResponse.status}`);
           data = await mockResponse.json();
@@ -308,16 +314,39 @@ export const DossierCompiler: React.FC<DossierCompilerProps> = ({ onDossierCompl
                   <div className="flex-1">
                     <h4 className="text-emerald-400 font-bold mb-1">Досьє успішно скомпільовано</h4>
                     <div className="text-sm text-slate-300 grid grid-cols-2 gap-x-4 gap-y-2 mt-2">
-                      <div><strong>ID:</strong> <span className="font-mono text-xs">{result.dossier_id}</span></div>
-                      <div><strong>Збирачів:</strong> {result.collectors_succeeded} / {result.collectors_used}</div>
-                      <div><strong>Записів знайдено:</strong> {result.total_records_found}</div>
-                      <div><strong>Вузлів у графі:</strong> {result.graph?.total_nodes || 0}</div>
+                      <div><strong>ID:</strong> <span className="font-mono text-xs">{result.dossier_id || result.metadata?.identifier}</span></div>
+                      <div><strong>Збирачів:</strong> {result.collectors_succeeded || 'AI'} / {result.collectors_used || 'AI'}</div>
+                      <div><strong>Записів знайдено:</strong> {result.total_records_found || Object.keys(result.graph_data || {}).length}</div>
+                      <div><strong>Вузлів у графі:</strong> {result.graph?.total_nodes || 'N/A'}</div>
                     </div>
                   </div>
                   <div className="flex-shrink-0 border-l border-emerald-900/50 pl-4 ml-2">
-                    <RiskGauge score={result.risk_assessment?.ml_risk_score || 0} />
+                    <RiskGauge score={result.risk_assessment?.ml_risk_score || (result.ai_analytics?.risk_assessment?.aml_risk === 'High' ? 95 : 50)} />
                   </div>
                 </div>
+
+                {/* AI Analytics Block */}
+                {result.ai_analytics && (
+                  <div className="mt-4 pt-4 border-t border-emerald-900/30 grid gap-4">
+                    <div className="bg-slate-900/50 p-3 rounded-lg border border-indigo-500/30 shadow-[0_0_15px_rgba(99,102,241,0.1)]">
+                      <div className="flex items-center gap-2 mb-2 text-indigo-400 font-bold text-sm tracking-wider">
+                        <Brain className="w-4 h-4" /> Психологічний Портрет (AI)
+                      </div>
+                      <p className="text-sm text-slate-300 leading-relaxed italic">
+                        "{result.ai_analytics.psychological_portrait}"
+                      </p>
+                    </div>
+
+                    <div className="bg-slate-900/50 p-3 rounded-lg border border-yellow-500/30 shadow-[0_0_15px_rgba(234,179,8,0.1)]">
+                      <div className="flex items-center gap-2 mb-2 text-yellow-400 font-bold text-sm tracking-wider">
+                        <Database className="w-4 h-4" /> Оцінка прихованих статків
+                      </div>
+                      <p className="text-sm text-slate-300 leading-relaxed font-medium">
+                        {result.ai_analytics.hidden_wealth_estimate}
+                      </p>
+                    </div>
+                  </div>
+                )}
                 
                 {/* Export / Actions Panel */}
                 <div className="pt-3 border-t border-emerald-900/30 flex gap-3">
@@ -330,8 +359,11 @@ export const DossierCompiler: React.FC<DossierCompilerProps> = ({ onDossierCompl
                   >
                     <Download className="w-4 h-4" /> PDF Експорт
                   </button>
-                  <button className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-2 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors">
-                    <Send className="w-4 h-4" /> Command Center
+                  <button 
+                    onClick={() => document.dispatchEvent(new CustomEvent('copilot-execute-briefing', { detail: result }))}
+                    className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-2 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors"
+                  >
+                    <Send className="w-4 h-4" /> AI Briefing
                   </button>
                 </div>
               </motion.div>

@@ -36,8 +36,27 @@ export function SovereignDashboard() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [liveAlerts, setLiveAlerts] = useState<any[]>([]);
 
   useEffect(() => {
+    // 1. WebSocket Connection for Intelligence Feed
+    const wsUrl = `ws://${window.location.hostname}:8000/api/v1/ws/alerts`;
+    const ws = new WebSocket(wsUrl);
+
+    ws.onmessage = (event) => {
+      try {
+        const newAlert = JSON.parse(event.data);
+        setLiveAlerts(prev => [newAlert, ...prev].slice(0, 50));
+      } catch (err) {
+        console.error("Failed to parse websocket message", err);
+      }
+    };
+
+    ws.onerror = (err) => {
+      console.error("WebSocket error on alerts:", err);
+    };
+
+    // 2. Fetch Initial Dashboard Data
     const fetchData = async () => {
       try {
         setError(null);
@@ -57,8 +76,12 @@ export function SovereignDashboard() {
     };
 
     fetchData();
-    const interval = setInterval(fetchData, 5000);
-    return () => clearInterval(interval);
+    const interval = setInterval(fetchData, 10000); // Polling reduced to 10s since we have WS
+
+    return () => {
+      clearInterval(interval);
+      ws.close();
+    };
   }, []);
 
   if (loading && !data && !error) {
@@ -224,7 +247,7 @@ export function SovereignDashboard() {
 
           {/* Right Column: Intelligence Feed */}
           <motion.div variants={itemVariants} className="xl:col-span-1">
-            <IntelligenceFeed alerts={data.alerts || []} />
+            <IntelligenceFeed alerts={liveAlerts.length > 0 ? liveAlerts : (data.alerts || [])} />
           </motion.div>
 
         </div>
