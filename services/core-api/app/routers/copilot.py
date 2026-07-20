@@ -434,20 +434,42 @@ async def react_agent_query(
     tenant_id: str = Depends(get_tenant_id)
 ):
     """
-    Mock endpoint for Sovereign Command Center.
-    Returns thought process and answer.
+    Real endpoint for Sovereign Command Center.
+    Returns thought process and answer using AIService.
     """
-    import asyncio
-    # Simulate processing delay
-    await asyncio.sleep(1)
+    messages = [
+        {
+            "role": "system", 
+            "content": "Ти — PREDATOR AI Copilot. Дай професійну відповідь на запит. Згенеруй також 'thought_process' (3-4 кроки аналізу). Поверни відповідь СУВОРО у форматі JSON: {\"thought_process\": [\"крок 1\", \"крок 2\"], \"answer\": \"твоя детальна відповідь\"} без жодних блоків коду та маркдауну, просто валідний JSON."
+        },
+        {"role": "user", "content": payload.query}
+    ]
     
-    # In a real scenario, this would use LangChain or native LLM ReAct loop.
-    return {
-        "thought_process": [
-            "Агент аналізує запит...",
-            f"Викликано інструмент: search_graph_anomaly(pattern='{payload.query}')",
-            "Отримано результати. Виявлено підозрілі зв'язки.",
-            "Формування фінального звіту..."
-        ],
-        "answer": "За результатами аналізу виявлено потенційні ризики. Компанія має ознаки фіктивності та приховані зв'язки з офшорними юрисдикціями. Рекомендується провести додаткову перевірку бенефіціарів."
-    }
+    try:
+        # Requesting completion from AI Service
+        response_text = await AIService.chat_completion(messages, model="gemini-1.5-flash") # або інша модель
+        
+        # Clean up possible markdown wrappers
+        import re
+        clean_json = re.sub(r'```json\s*', '', response_text)
+        clean_json = re.sub(r'```\s*', '', clean_json).strip()
+        
+        try:
+            import json
+            data = json.loads(clean_json)
+            return {
+                "thought_process": data.get("thought_process", ["Аналіз запиту...", "Генерація відповіді..."]),
+                "answer": data.get("answer", clean_json)
+            }
+        except json.JSONDecodeError:
+            return {
+                "thought_process": ["Пряма генерація відповіді..."],
+                "answer": response_text
+            }
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return {
+            "thought_process": ["Помилка доступу до ядра ШІ. Перехід у fallback-режим."],
+            "answer": "Вибачте, виникла помилка при зверненні до мовної моделі. Деталі: " + str(e)
+        }
