@@ -62,7 +62,20 @@ class ClickHouseSink:
         ) ENGINE = MergeTree()
         ORDER BY (date_modified, tender_id)
         """)
-        logger.info("ClickHouse schema initialized for prozorro_tenders")
+        
+        self.client.command("""
+        CREATE TABLE IF NOT EXISTS predator_analytics.osint_dossiers (
+            job_id String,
+            entity_id String,
+            entity_type String,
+            name String,
+            risk_score Float64,
+            dossier_json String,
+            created_at DateTime DEFAULT now()
+        ) ENGINE = MergeTree()
+        ORDER BY (created_at, entity_id)
+        """)
+        logger.info("ClickHouse schema initialized for prozorro_tenders and osint_dossiers")
 
     async def insert_prozorro_tenders(self, tenders_data: list[dict[str, Any]]) -> None:
         """Вставка тендерів батчем."""
@@ -205,3 +218,32 @@ class ClickHouseSink:
         except Exception as e:
             logger.error("ClickHouse dynamic insertion error", table=table_name, error=str(e))
             raise
+
+    async def insert_osint_dossier(self, dossier_data: dict[str, Any]) -> None:
+        """Збереження повного OSINT досьє."""
+        if not self.client:
+            self.connect()
+        if not self.client:
+            return
+
+        import json
+        import asyncio
+        try:
+            row = [
+                str(dossier_data.get("job_id", "")),
+                str(dossier_data.get("entity_id", "")),
+                str(dossier_data.get("entity_type", "")),
+                str(dossier_data.get("name", "")),
+                float(dossier_data.get("risk_score", 0.0)),
+                json.dumps(dossier_data.get("dossier", {}), ensure_ascii=False)
+            ]
+            
+            await asyncio.to_thread(
+                self.client.insert,
+                "osint_dossiers",
+                [row],
+                column_names=["job_id", "entity_id", "entity_type", "name", "risk_score", "dossier_json"]
+            )
+            logger.info("Inserted OSINT dossier into ClickHouse", entity_id=dossier_data.get("entity_id"))
+        except Exception as e:
+            logger.error("ClickHouse insertion error for osint_dossiers", error=str(e))

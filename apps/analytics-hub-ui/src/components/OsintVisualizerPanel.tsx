@@ -140,92 +140,46 @@ export const OsintVisualizerPanel: React.FC<{
   const [contextMenu, setContextMenu] = useState<{ x: number, y: number, nodeId: string } | null>(null);
 
   // Initialize elements based on activeEntity
+  // Fetch elements from backend Neo4j graph API
   useEffect(() => {
-    const initialNodes: cytoscape.ElementDefinition[] = [];
-    const initialEdges: cytoscape.ElementDefinition[] = [];
-
-    initialNodes.push({
-      data: {
-        id: activeEntity.id,
-        label: activeEntity.name,
-        type: activeEntity.type,
-      },
-      classes: 'center'
-    });
-
-    activeEntity.relationships.forEach(rel => {
-      const targetEntity = OSINT_ENTITIES.find(e => e.id === rel.targetId);
-      const targetType = targetEntity?.type || 'company';
-
-      if (!initialNodes.find(n => n.data.id === rel.targetId)) {
-        initialNodes.push({
-          data: {
-            id: rel.targetId,
-            label: rel.targetName,
-            type: targetType,
+    let isMounted = true;
+    
+    const fetchGraph = async () => {
+      setIsLoading(true);
+      try {
+        const response = await apiFetch(`/api/v1/osint/entity/${activeEntity.id}/graph`);
+        if (response.ok) {
+          const data = await response.json();
+          if (isMounted) {
+            if (data.nodes && data.nodes.length > 0) {
+              setElements([...data.nodes, ...(data.edges || [])]);
+            } else {
+              // Fallback to minimal graph if Neo4j is empty or not synced yet
+              setElements([
+                {
+                  data: {
+                    id: activeEntity.id,
+                    label: activeEntity.name,
+                    type: activeEntity.type,
+                  },
+                  classes: 'center'
+                }
+              ]);
+            }
           }
-        });
-      }
-
-      initialEdges.push({
-        data: {
-          id: `${activeEntity.id}-${rel.targetId}`,
-          source: activeEntity.id,
-          target: rel.targetId,
-          label: rel.type.replace(/_/g, ' '),
-          risk: rel.risk
         }
-      });
-    });
+      } catch (err) {
+        console.error("Failed to fetch OSINT graph from API:", err);
+      } finally {
+        if (isMounted) setIsLoading(false);
+      }
+    };
 
-    // Додаємо віртуальні вузли для цифрових активів
-    if (activeEntity.cryptoData) {
-      const cId = `crypto-${activeEntity.cryptoData.address}`;
-      initialNodes.push({
-        data: { id: cId, label: `BTC: ${activeEntity.cryptoData.address.substring(0,8)}...`, type: 'crypto_wallet' }
-      });
-      initialEdges.push({
-        data: { id: `e-${activeEntity.id}-${cId}`, source: activeEntity.id, target: cId, label: 'OWNS WALLET', risk: 'HIGH' }
-      });
-    }
+    fetchGraph();
 
-    if (activeEntity.telegramData) {
-      activeEntity.telegramData.forEach((td, i) => {
-        const tId = `tg-${i}`;
-        initialNodes.push({
-          data: { id: tId, label: `TG: ${td.channelName}`, type: 'darknet' }
-        });
-        initialEdges.push({
-          data: { id: `e-${activeEntity.id}-${tId}`, source: activeEntity.id, target: tId, label: 'MENTIONED IN', risk: 'HIGH' }
-        });
-      });
-    }
-
-    if (activeEntity.socialMediaProfiles) {
-      activeEntity.socialMediaProfiles.forEach((sm, i) => {
-        const sId = `social-${i}`;
-        initialNodes.push({
-          data: { id: sId, label: sm.platform, type: 'social' }
-        });
-        initialEdges.push({
-          data: { id: `e-${activeEntity.id}-${sId}`, source: activeEntity.id, target: sId, label: 'HAS PROFILE', risk: 'LOW' }
-        });
-      });
-    }
-
-    if (activeEntity.leakData && activeEntity.leakData.records) {
-      activeEntity.leakData.records.forEach((leak, i) => {
-        const lId = `leak-${i}`;
-        initialNodes.push({
-          data: { id: lId, label: leak.title || 'Data Breach', type: 'darknet' }
-        });
-        initialEdges.push({
-          data: { id: `e-${activeEntity.id}-${lId}`, source: activeEntity.id, target: lId, label: 'DATA LEAK', risk: 'HIGH' }
-        });
-      });
-    }
-
-    setElements([...initialNodes, ...initialEdges]);
+    return () => {
+      isMounted = false;
+    };
   }, [activeEntity]);
 
   useEffect(() => {

@@ -346,7 +346,7 @@ async def process_message(
         elif msg_value.get("action") == "run_osint_scan":
             # OSINT scan orchestration
             from app.pipelines.osint_pipeline import OSINTPipeline
-            pipeline = OSINTPipeline(neo4j_sink, postgres_sink)
+            pipeline = OSINTPipeline(neo4j_sink, postgres_sink, clickhouse_sink)
             await pipeline.process(msg_value)
         elif "automl_request" in msg_value:
             # Запит на AutoML та створення датасетів

@@ -9,9 +9,10 @@ from app.pipelines.base import BasePipeline
 class OSINTPipeline(BasePipeline):
     """Пайплайн для обробки запитів на OSINT-сканування."""
     
-    def __init__(self, neo4j_sink, postgres_sink):
+    def __init__(self, neo4j_sink, postgres_sink, clickhouse_sink):
         self.neo4j_sink = neo4j_sink
         self.postgres_sink = postgres_sink
+        self.clickhouse_sink = clickhouse_sink
         self.logger = logging.getLogger("ingestion_worker.osint_pipeline")
 
     async def process(self, msg_value: Dict[str, Any]) -> None:
@@ -93,6 +94,19 @@ class OSINTPipeline(BasePipeline):
                         nodes_count=len(graph_data["nodes"]),
                         edges_count=len(graph_data["edges"])
                     )
+
+            # 5. Save Complete Dossier to ClickHouse for analytics history
+            if self.clickhouse_sink:
+                dossier_data = {
+                    "job_id": job_id,
+                    "entity_id": entity_id,
+                    "entity_type": entity_type,
+                    "name": name,
+                    "risk_score": risk_score,
+                    "dossier": dossier.model_dump(mode="json")
+                }
+                await self.clickhouse_sink.insert_osint_dossier(dossier_data)
+                self.logger.info("osint_pipeline.clickhouse_saved", job_id=job_id)
             
         except Exception as e:
             self.logger.error(
