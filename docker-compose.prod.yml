@@ -396,6 +396,52 @@ services:
       predator-network:
         ipv4_address: 172.20.0.20
 
+  # ClickHouse Database - ADIP Update
+  clickhouse:
+    image: clickhouse/clickhouse-server:24.3-alpine
+    container_name: predator-clickhouse
+    restart: unless-stopped
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    networks:
+      predator-network:
+        ipv4_address: 172.20.0.22
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8123/ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Hashicorp Vault (Credential Manager) - ADIP Update
+  vault:
+    image: hashicorp/vault:1.15
+    container_name: predator-vault
+    restart: unless-stopped
+    environment:
+      - VAULT_DEV_ROOT_TOKEN_ID=${VAULT_TOKEN}
+      - VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200
+    ports:
+      - "8200:8200"
+    volumes:
+      - vault_data:/vault/file
+    cap_add:
+      - IPC_LOCK
+    networks:
+      predator-network:
+        ipv4_address: 172.20.0.23
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8200/v1/sys/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   # Ingestion Worker - v61.0-ELITE
   ingestion-worker:
     build:
@@ -450,3 +496,5 @@ volumes:
   redpanda_data:
   neo4j_data:
   neo4j_logs:
+  clickhouse_data:
+  vault_data:
