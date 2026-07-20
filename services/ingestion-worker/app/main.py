@@ -343,6 +343,11 @@ async def process_message(
         elif "edrpou" in msg_value:
             # Це запит на OSINT збагачення
             await process_osint_enrichment(msg_value, fusion_engine, producer)
+        elif msg_value.get("action") == "run_osint_scan":
+            # OSINT scan orchestration
+            from app.pipelines.osint_pipeline import OSINTPipeline
+            pipeline = OSINTPipeline(neo4j_sink, postgres_sink)
+            await pipeline.process(msg_value)
         elif "automl_request" in msg_value:
             # Запит на AutoML та створення датасетів
             await process_automl_dataset(msg_value, producer, postgres_sink)

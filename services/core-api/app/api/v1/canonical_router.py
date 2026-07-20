@@ -15,7 +15,7 @@ from app.routers import (
     persons_router as users_router,
 )
 from app.api.v1.adv_dvs import router as adv_dvs_router
-from app.api.v1.endpoints import agents_control, llm, claw_code, avatar_stream
+from app.api.v1.endpoints import agents_control, llm, claw_code, avatar_stream, osint
 
 router = APIRouter()
 
@@ -55,4 +55,11 @@ router.include_router(
 router.include_router(
     forecast_router,
     prefix="/v1", # it already has /forecast in its prefix
+)
+
+# Підключення OSINT Router
+router.include_router(
+    osint.router,
+    prefix="/v1/osint",
+    tags=["osint"]
 )
