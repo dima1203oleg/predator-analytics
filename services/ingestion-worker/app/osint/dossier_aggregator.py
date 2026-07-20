@@ -128,6 +128,24 @@ class DossierAggregator:
         tasks = [collector.execute(query) for collector in active_collectors]
         results: list[CollectorResult] = await asyncio.gather(*tasks)
 
+        # LLM AI Extraction for unstructured BLACK fragments
+        for result in results:
+            if result.status == CollectorStatus.SUCCESS:
+                for fragment in result.fragments:
+                    if fragment.classification == Classification.BLACK:
+                        # Extract unstructured text for LLM
+                        text_to_analyze = ""
+                        if fragment.category == "darknet":
+                            text_to_analyze = str(fragment.raw_records)[:2000] # Limit size
+                        elif fragment.category == "data_breaches":
+                            excerpts = [str(r.get("breach_excerpt", r.get("title", ""))) for r in fragment.raw_records]
+                            text_to_analyze = " ".join(excerpts)[:2000]
+                        
+                        if text_to_analyze and len(text_to_analyze) > 20:
+                            llm_links = await self._extract_relations_via_llm(text_to_analyze)
+                            if llm_links:
+                                fragment.discovered_links.extend(llm_links)
+
         # Агрегація результатів
         sections = self._aggregate_sections(results)
         graph = self._build_graph(query, results)
@@ -204,19 +222,34 @@ class DossierAggregator:
         """Використовує локальну LLM для витягування зв'язків з неструктурованого тексту.
         (Наприклад, з повідомлень у Darknet форумах).
         """
+        import json
+        
+        system_prompt = \"\"\"You are an OSINT extraction tool. 
+Analyze the following text and extract ANY mentioned relationships between entities (people, companies, domains, emails, etc.).
+Return ONLY a valid JSON array of objects with the following schema:
+[{"target_id": "identifier", "target_name": "Name", "relation_type": "KNOWS|OWNS|MENTIONED_WITH", "risk": "LOW|MEDIUM|HIGH"}]
+Do not include markdown blocks, just the JSON array.\"\"\"
+
         try:
-            async with httpx.AsyncClient(timeout=5) as client:
+            async with httpx.AsyncClient(timeout=10) as client:
                 resp = await client.post(
                     "http://localhost:11434/api/generate",
                     json={
-                        "model": "qwen:latest",  # Fallback model since deepseek might be missing
-                        "prompt": f"Extract OSINT relationships from this text as JSON array: {text}",
-                        "stream": False
+                        "model": "qwen:latest",  # Local Ollama model
+                        "prompt": f"{system_prompt}\\n\\nText:\\n{text}",
+                        "stream": False,
+                        "format": "json" # Forces Ollama to return JSON
                     }
                 )
                 if resp.status_code == 200:
-                    # Parse JSON from LLM output (mocked for safety if LLM returns bad format)
-                    pass
+                    data = resp.json()
+                    response_text = data.get("response", "[]").strip()
+                    try:
+                        extracted = json.loads(response_text)
+                        if isinstance(extracted, list):
+                            return extracted
+                    except json.JSONDecodeError:
+                        logger.warning(f"Failed to decode LLM JSON: {response_text}")
         except Exception as e:
             logger.error(f"LLM extraction failed: {e}")
         return []
@@ -287,12 +320,6 @@ class DossierAggregator:
             if result.status != CollectorStatus.SUCCESS:
                 continue
             for fragment in result.fragments:
-                # LLM AI Extraction for BLACK / unstructured fragments
-                if fragment.classification == Classification.BLACK and hasattr(self, '_extract_relations_via_llm'):
-                    # To avoid blocking, in real scenario we would enqueue this.
-                    # For demonstration, we simulate the LLM call or do a quick async call.
-                    pass
-
                 for link in fragment.discovered_links:
                     target_id = str(link.get("target_id", ""))
                     target_name = link.get("target_name", target_id)
