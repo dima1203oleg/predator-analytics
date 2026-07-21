@@ -170,6 +170,13 @@ export const OsintVisualizerPanel: React.FC<{
         }
       } catch (err) {
         console.error("Failed to fetch OSINT graph from API:", err);
+        if (isMounted) {
+          // Keep a minimal representation if API totally fails
+          setElements([{
+            data: { id: activeEntity.id, label: activeEntity.name, type: activeEntity.type },
+            classes: 'center'
+          }]);
+        }
       } finally {
         if (isMounted) setIsLoading(false);
       }
@@ -194,30 +201,44 @@ export const OsintVisualizerPanel: React.FC<{
     setIsLoading(true);
     try {
       const response = await apiFetch(`/api/v1/graph/expand/${nodeId}?relation=${relationType}`);
+      if (!response.ok) throw new Error('Expand API failed');
       
       const data = await response.json();
       
       setElements(prev => {
-        const newElements = [...prev];
+        // Use a Map for O(1) lookups during merge
+        const elementMap = new Map<string, cytoscape.ElementDefinition>(
+          prev.map(e => [e.data.id!, e])
+        );
         
-        data.nodes.forEach((n: any) => {
-          if (!newElements.find(e => e.data.id === n.data.id)) {
-            newElements.push(n);
-          }
-        });
+        if (data.nodes) {
+          data.nodes.forEach((n: any) => {
+            if (!elementMap.has(n.data.id)) {
+              elementMap.set(n.data.id, n);
+            } else {
+              // Merge data
+              elementMap.set(n.data.id, {
+                ...elementMap.get(n.data.id)!,
+                data: { ...elementMap.get(n.data.id)!.data, ...n.data }
+              });
+            }
+          });
+        }
         
-        data.edges.forEach((e: any) => {
-          if (!newElements.find(el => el.data.id === e.data.id)) {
-            newElements.push(e);
-          }
-        });
+        if (data.edges) {
+          data.edges.forEach((e: any) => {
+            const edgeId = e.data.id || `${e.data.source}-${e.data.target}-${e.data.label}`;
+            e.data.id = edgeId;
+            if (!elementMap.has(edgeId)) {
+              elementMap.set(edgeId, e);
+            }
+          });
+        }
         
-        return newElements;
+        return Array.from(elementMap.values());
       });
     } catch (err) {
       console.error("Error expanding node:", err);
-      // Fallback or mock data for expand if backend is unavailable? 
-      // User requested API integration, so we show an error if it fails
     } finally {
       setIsLoading(false);
     }
@@ -227,8 +248,10 @@ export const OsintVisualizerPanel: React.FC<{
     setIsLoading(true);
     try {
       const response = await apiFetch(`/api/v1/graph/clusters/cartels`);
-      const data = await response.json();
-      if (data.nodes) setElements([...data.nodes, ...(data.edges || [])]);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.nodes) setElements([...data.nodes, ...(data.edges || [])]);
+      }
     } catch (err) {
       console.error("Error finding cartels:", err);
     } finally {
@@ -240,8 +263,10 @@ export const OsintVisualizerPanel: React.FC<{
     setIsLoading(true);
     try {
       const response = await apiFetch(`/api/v1/graph/shadow/${activeEntity.id}`);
-      const data = await response.json();
-      if (data.nodes) setElements([...data.nodes, ...(data.edges || [])]);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.nodes) setElements([...data.nodes, ...(data.edges || [])]);
+      }
     } catch (err) {
       console.error("Error getting shadow map:", err);
     } finally {
@@ -253,8 +278,10 @@ export const OsintVisualizerPanel: React.FC<{
     setIsLoading(true);
     try {
       const response = await apiFetch(`/api/v1/graph/influence/${activeEntity.id}`);
-      const data = await response.json();
-      if (data.nodes) setElements([...data.nodes, ...(data.edges || [])]);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.nodes) setElements([...data.nodes, ...(data.edges || [])]);
+      }
     } catch (err) {
       console.error("Error getting influence metrics:", err);
     } finally {
@@ -334,31 +361,75 @@ export const OsintVisualizerPanel: React.FC<{
             cy={(cy) => {
               cyRef.current = cy;
               
-              cy.on('tap', 'node', (evt) => {
-                const node = evt.target;
-                const targetId = node.id();
+              // Only attach listeners once to avoid duplication if re-rendered
+              if (!cy.scratch('_listenersAttached')) {
+                cy.scratch('_listenersAttached', true);
                 
-                const entityToNavigate = OSINT_ENTITIES.find(e => e.id === targetId);
-                if (entityToNavigate) {
-                  onSelectEntityForInspector(entityToNavigate);
-                }
-              });
-
-              cy.on('cxttap', 'node', (evt) => {
-                const node = evt.target;
-                const position = evt.renderedPosition;
-                setContextMenu({
-                  x: position.x,
-                  y: position.y,
-                  nodeId: node.id()
+                cy.on('tap', 'node', async (evt) => {
+                  const node = evt.target;
+                  const targetId = node.id();
+                  
+                  // Try to find in local mock first
+                  const localEntity = OSINT_ENTITIES.find(e => e.id === targetId);
+                  if (localEntity) {
+                    onSelectEntityForInspector(localEntity);
+                    return;
+                  }
+                  
+                  // If not found in mock, fetch from API or construct from node data
+                  try {
+                    const response = await apiFetch(`/api/v1/osint/company/${targetId}`);
+                    if (response.ok) {
+                      const data = await response.json();
+                      const typeStr = node.data('type') === 'person' ? 'person' : node.data('type') === 'crypto_wallet' ? 'cryptowallet' : 'company';
+                      onSelectEntityForInspector({
+                        id: data.ueid || targetId,
+                        name: data.name || node.data('label'),
+                        type: typeStr as any,
+                        code: data.edrpou || node.data('code') || '',
+                        status: data.status || 'ACTIVE',
+                        riskScore: data.cers_score || data.risk_score || 50,
+                        description: data.industry || 'Завантажено з бази даних',
+                        relationships: [],
+                        aiRecommendations: ''
+                      });
+                      return;
+                    }
+                  } catch (e) {
+                    // Ignore and fallback
+                  }
+                  
+                  // Fallback to minimal data constructed from node
+                  const fallbackType = node.data('type') === 'person' ? 'person' : node.data('type') === 'crypto_wallet' ? 'cryptowallet' : 'company';
+                  onSelectEntityForInspector({
+                    id: targetId,
+                    name: node.data('label') || targetId,
+                    type: fallbackType as any,
+                    code: node.data('code') || '',
+                    status: node.data('status') || 'ACTIVE',
+                    riskScore: node.data('riskScore') || 50,
+                    description: 'Вузол з графа Neo4j',
+                    relationships: [],
+                    aiRecommendations: ''
+                  });
                 });
-              });
 
-              cy.on('tap', (evt) => {
-                if (evt.target === cy) {
-                  setContextMenu(null);
-                }
-              });
+                cy.on('cxttap', 'node', (evt) => {
+                  const node = evt.target;
+                  const position = evt.renderedPosition;
+                  setContextMenu({
+                    x: position.x,
+                    y: position.y,
+                    nodeId: node.id()
+                  });
+                });
+
+                cy.on('tap', (evt) => {
+                  if (evt.target === cy) {
+                    setContextMenu(null);
+                  }
+                });
+              }
             }}
           />
 
@@ -368,8 +439,8 @@ export const OsintVisualizerPanel: React.FC<{
               className="absolute z-50 bg-slate-900 border border-slate-700 rounded-lg shadow-2xl overflow-hidden w-48 text-xs font-mono"
               style={{ left: contextMenu.x, top: contextMenu.y }}
             >
-              <div className="px-3 py-2 bg-slate-800/50 text-slate-400 font-bold border-b border-slate-700">
-                Вузол: {contextMenu.nodeId.substring(0,8)}...
+              <div className="px-3 py-2 bg-slate-800/50 text-slate-400 font-bold border-b border-slate-700 truncate">
+                Вузол: {contextMenu.nodeId}
               </div>
               <button 
                 onClick={() => expandNode(contextMenu.nodeId, 'ALL')}
@@ -396,3 +467,4 @@ export const OsintVisualizerPanel: React.FC<{
     </>
   );
 };
+

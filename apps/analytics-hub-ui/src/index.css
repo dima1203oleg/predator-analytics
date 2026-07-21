@@ -1,76 +1,52 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 @import "tailwindcss";
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-heading: "Outfit", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
 body {
-  background-color: #020617; /* Very dark slate, almost black */
-  color: #f8fafc;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  background-color: #030712;
+  color: #f3f4f6;
   font-family: var(--font-sans);
-  background-image: 
-    radial-gradient(circle at 15% 50%, rgba(14, 165, 233, 0.08), transparent 25%),
-    radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.08), transparent 25%);
+  background-image: radial-gradient(circle at 50% 0%, #1e1b4b 0%, transparent 70%);
   background-attachment: fixed;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-heading);
+::selection {
+  background: rgba(217, 70, 239, 0.3);
+  color: #fdf4ff;
 }
 
-/* Scrollbar styling */
+/* Subtle glow for fuchsia elements */
+.glow-fuchsia {
+  box-shadow: 0 0 15px rgba(217, 70, 239, 0.15);
+}
+
+/* Custom scrollbar to keep it clean and tech-y */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(3, 7, 18, 0.5);
+  background: #030712;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(51, 65, 85, 0.8);
-  border-radius: 4px;
+  background: #1e293b;
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(71, 85, 105, 1);
+  background: #334155;
 }
 
-/* Premium Glassmorphism Utilities */
-.glass-panel {
-  background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-}
-
-.glass-nav {
-  background: rgba(3, 7, 18, 0.8);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-right: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.glass-card {
-  background: linear-gradient(145deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.9) 100%);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.glass-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
-  border-color: rgba(56, 189, 248, 0.2);
-}
-
-/* Animations */
+/* Custom smooth scrolling marquee animation for the Tactical Ticker */
 @keyframes marquee {
   0% { transform: translateX(50%); }
   100% { transform: translateX(-100%); }
@@ -86,11 +62,34 @@ h1, h2, h3, h4, h5, h6 {
   animation-play-state: paused;
 }
 
-@keyframes pulse-glow {
-  0%, 100% { opacity: 1; transform: scale(1); filter: brightness(1); }
-  50% { opacity: 0.8; transform: scale(1.05); filter: brightness(1.2); }
+
+@keyframes data-pulse {
+  0% { opacity: 1; filter: blur(0px); transform: scale(1); }
+  50% { opacity: 0.5; filter: blur(3px); transform: scale(0.98); }
+  100% { opacity: 1; filter: blur(0px); transform: scale(1); }
 }
 
-.animate-pulse-glow {
-  animation: pulse-glow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+.animate-data-pulse {
+  animation: data-pulse 0.8s ease-in-out;
+}
+
+/* Global scrollbar improvements */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.5); 
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(71, 85, 105, 0.5); 
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.6); 
+}
+
+@keyframes waveform {
+  0%, 100% { transform: scaleY(0.5); opacity: 0.5; }
+  50% { transform: scaleY(1.5); opacity: 1; }
 }

@@ -533,7 +533,7 @@ export default function VolumesTab() {
   return (
     <div className="space-y-6" id="volumes-tab-root">
       {/* Intro Header banner */}
-      <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-6 backdrop-blur-md relative overflow-hidden">
+      <div className="bg-slate-900/60 border border-indigo-500/10 rounded-xl p-6 backdrop-blur-md relative overflow-hidden">
         <div className="absolute right-0 top-0 w-80 h-80 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none"></div>
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
@@ -541,13 +541,13 @@ export default function VolumesTab() {
               <BookOpen className="w-5 h-5 text-indigo-400" />
               Комплект документації PREDATOR Analytics Enterprise
             </h2>
-            <p className="text-slate-400 text-xs leading-relaxed max-w-3xl">
+            <p className="text-slate-300 text-xs leading-relaxed max-w-3xl">
               Повний еталонний пакет системної архітектури, розроблений для масштабування OSINT платформи. 
               Містить 16 взаємопов'язаних томів, детальні діаграми, схеми даних, інфраструктурний код та понад 450+ функціональних вимог для реалізації.
             </p>
           </div>
           
-          <div className="flex items-center gap-4 text-xs font-mono bg-slate-950 border border-slate-850 px-4 py-3 rounded-xl shrink-0">
+          <div className="flex items-center gap-4 text-xs font-mono bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] border border-slate-850 px-4 py-3 rounded-xl shrink-0">
             <div>
               <span className="text-slate-500 block">ТОМИ ТЗ</span>
               <span className="text-indigo-400 font-bold text-base">16</span>
@@ -567,7 +567,7 @@ export default function VolumesTab() {
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="bg-slate-900/30 border border-slate-900 rounded-xl p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div className="bg-slate-900/30 border border-indigo-500/5 rounded-xl p-4 flex flex-col md:flex-row items-center justify-between gap-4">
         {/* Category Pill Filters */}
         <div className="flex flex-wrap gap-1.5 items-center w-full md:w-auto" id="volume-category-filters">
           <Filter className="w-4 h-4 text-slate-500 mr-1 shrink-0" />
@@ -575,7 +575,7 @@ export default function VolumesTab() {
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer ${selectedCategory === cat ? 'bg-indigo-600 text-white' : 'bg-slate-900/60 text-slate-400 hover:text-slate-200 hover:bg-slate-850'}`}
+              className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer ${selectedCategory === cat ? 'bg-indigo-600 text-white' : 'bg-slate-900/60 text-slate-300 hover:text-slate-200 hover:bg-slate-850'}`}
             >
               {cat === 'All' ? 'Всі Категорії' : cat}
             </button>
@@ -589,7 +589,7 @@ export default function VolumesTab() {
             placeholder="Шукати у 16 томах..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-slate-950 border border-slate-850 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-300 focus:outline-none focus:ring-1 focus:ring-indigo-500 placeholder:text-slate-500"
+            className="w-full bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] border border-slate-850 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-300 focus:outline-none focus:ring-1 focus:ring-indigo-500 placeholder:text-slate-500"
           />
           <Search className="w-4 h-4 text-slate-500 absolute left-3 top-2.5" />
         </div>
@@ -610,9 +610,9 @@ export default function VolumesTab() {
                   setActiveVolume(vol.id);
                   setExpandedChapter(null);
                 }}
-                className={`w-full text-left p-3.5 rounded-xl border transition-all text-xs flex items-start gap-3.5 relative cursor-pointer ${isActive ? 'bg-indigo-500/10 border-indigo-500/40 text-white shadow-lg shadow-indigo-500/5' : 'bg-slate-900/40 border-slate-900/80 text-slate-400 hover:text-slate-200 hover:border-slate-800'}`}
+                className={`w-full text-left p-3.5 rounded-xl border transition-all text-xs flex items-start gap-3.5 relative cursor-pointer ${isActive ? 'bg-indigo-500/10 border-indigo-500/40 text-white shadow-lg shadow-indigo-500/5' : 'bg-slate-900/40 border-indigo-500/5/80 text-slate-300 hover:text-slate-200 hover:border-indigo-500/10'}`}
               >
-                <div className={`p-2 rounded-lg shrink-0 ${isActive ? 'bg-indigo-500/20 text-indigo-400' : 'bg-slate-950 text-slate-500'}`}>
+                <div className={`p-2 rounded-lg shrink-0 ${isActive ? 'bg-indigo-500/20 text-indigo-400' : 'bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] text-slate-500'}`}>
                   <Icon className="w-4 h-4" />
                 </div>
                 
@@ -645,26 +645,26 @@ export default function VolumesTab() {
         </div>
 
         {/* Right Column: Detailed Chapter Browser */}
-        <div className="lg:col-span-8 space-y-5 bg-slate-950 border border-slate-900 rounded-2xl p-6" id="volume-details-workspace">
+        <div className="lg:col-span-8 space-y-5 bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] border border-indigo-500/5 rounded-2xl p-6" id="volume-details-workspace">
           
           {/* Active Volume Header */}
-          <div className="border-b border-slate-900 pb-5">
+          <div className="border-b border-indigo-500/5 pb-5">
             <div className="flex items-center gap-2 mb-2">
               <span className="text-[10px] bg-indigo-500/10 text-indigo-400 font-mono font-bold uppercase tracking-widest px-2.5 py-0.5 rounded">
                 {currentVolumeObj.category} специфікація
               </span>
-              <span className="text-[10px] bg-slate-900 text-slate-400 font-mono px-2 py-0.5 rounded">
+              <span className="text-[10px] bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] text-slate-300 font-mono px-2 py-0.5 rounded">
                 Verified
               </span>
             </div>
             
             <h3 className="text-lg font-bold text-white mb-1.5">{currentVolumeObj.title}</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">{currentVolumeObj.subtitle}</p>
+            <p className="text-xs text-slate-300 leading-relaxed">{currentVolumeObj.subtitle}</p>
           </div>
 
           {/* Chapters loop */}
           <div className="space-y-4" id="chapters-accordion-group">
-            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest pl-1 mb-2">
+            <h4 className="text-xs font-bold text-slate-300 uppercase tracking-widest pl-1 mb-2">
               Структура та зміст тому
             </h4>
 
@@ -673,7 +673,7 @@ export default function VolumesTab() {
               return (
                 <div 
                   key={idx}
-                  className={`border rounded-xl transition-all ${isOpen ? 'bg-slate-900/40 border-slate-800' : 'bg-slate-900/10 border-slate-900 hover:border-slate-850'}`}
+                  className={`border rounded-xl transition-all ${isOpen ? 'bg-slate-900/40 border-indigo-500/10' : 'bg-slate-900/10 border-indigo-500/5 hover:border-slate-850'}`}
                 >
                   {/* Title Toggle bar */}
                   <button
@@ -703,7 +703,7 @@ export default function VolumesTab() {
                         transition={{ duration: 0.15 }}
                         className="overflow-hidden"
                       >
-                        <div className="px-5 pb-5 pt-1 border-t border-slate-900 space-y-4 text-xs">
+                        <div className="px-5 pb-5 pt-1 border-t border-indigo-500/5 space-y-4 text-xs">
                           
                           {/* Core Description */}
                           <div className="space-y-1">
@@ -717,7 +717,7 @@ export default function VolumesTab() {
                           {ch.technicalDetails && (
                             <div className="bg-slate-950/60 border border-slate-850/40 rounded-lg p-3 space-y-1">
                               <span className="text-[9px] text-amber-400 font-mono uppercase tracking-widest block font-bold">Архітектурні особливості:</span>
-                              <p className="text-slate-400 text-[10px] leading-relaxed">
+                              <p className="text-slate-300 text-[10px] leading-relaxed">
                                 {ch.technicalDetails}
                               </p>
                             </div>
@@ -732,7 +732,7 @@ export default function VolumesTab() {
                                 </span>
                                 <button
                                   onClick={() => handleCopyCode(ch.codeSnippet!.code)}
-                                  className="text-[10px] text-indigo-400 hover:text-indigo-300 flex items-center gap-1 cursor-pointer font-mono bg-slate-950 px-2 py-0.5 rounded border border-slate-850"
+                                  className="text-[10px] text-indigo-400 hover:text-indigo-300 flex items-center gap-1 cursor-pointer font-mono bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] px-2 py-0.5 rounded border border-slate-850"
                                 >
                                   {copiedText === ch.codeSnippet.code ? (
                                     <>
@@ -747,7 +747,7 @@ export default function VolumesTab() {
                                   )}
                                 </button>
                               </div>
-                              <div className="bg-slate-950 rounded-lg p-3.5 border border-slate-900 overflow-x-auto">
+                              <div className="bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] rounded-lg p-3.5 border border-indigo-500/5 overflow-x-auto">
                                 <pre className="text-[10px] font-mono text-indigo-300 leading-relaxed">
                                   <code>{ch.codeSnippet.code}</code>
                                 </pre>
@@ -765,7 +765,7 @@ export default function VolumesTab() {
                                 {ch.requirements.map((req, rIdx) => (
                                   <div 
                                     key={rIdx}
-                                    className="glass-panel rounded-lg p-2.5 flex items-start gap-2 text-[10px] text-slate-400"
+                                    className="bg-slate-950/40 border border-indigo-500/5 rounded-lg p-2.5 flex items-start gap-2 text-[10px] text-slate-300"
                                   >
                                     <CheckCircle className="w-3.5 h-3.5 text-indigo-500 shrink-0 mt-0.5" />
                                     <span className="leading-tight">{req}</span>
@@ -785,11 +785,11 @@ export default function VolumesTab() {
           </div>
 
           {/* Quick Informational Box */}
-          <div className="bg-slate-900/20 border border-slate-900 rounded-xl p-4 flex items-start gap-3 text-xs">
+          <div className="bg-slate-900/20 border border-indigo-500/5 rounded-xl p-4 flex items-start gap-3 text-xs">
             <Info className="w-4.5 h-4.5 text-indigo-400 shrink-0 mt-0.5" />
             <div className="space-y-1">
               <span className="font-bold text-slate-200">Довідка розробника:</span>
-              <p className="text-slate-400 leading-normal">
+              <p className="text-slate-300 leading-normal">
                 Кожен том містить точні, затверджені в ТЗ специфікації, які є обов'язковими для дотримання при побудові PREDATOR OSINT. Натисніть на розділи вище для детального ознайомлення, копіювання коду та перевірки системних вимог (REQ).
               </p>
             </div>

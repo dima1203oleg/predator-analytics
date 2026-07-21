@@ -129,25 +129,34 @@ export const DossierCompiler: React.FC<DossierCompilerProps> = ({ onDossierCompl
             
             if (statusData.status === 'success') {
               jobCompleted = true;
-              data = {
-                dossier_id: jobId,
-                entity_type: entityType,
-                identifier: identifier,
-                name: identifier,
-                total_records_found: 100 + Math.floor(Math.random() * 50),
-                collectors_used: 18,
-                collectors_succeeded: 18,
-                risk_assessment: {
-                  risk_level: statusData.risk_score > 70 ? "HIGH" : (statusData.risk_score > 40 ? "MEDIUM" : "LOW"),
-                  composite_score: statusData.risk_score || 0,
-                  ml_risk_score: statusData.risk_score || 0,
-                  risk_factors: ["Знайдено через Kafka Worker"],
-                  risk_breakdown: { sanctions: 0, crypto_btc: 0, telegram: 0 }
-                },
-                graph: { total_nodes: 0, total_edges: 0, nodes: [], edges: [] },
-                timeline: []
-              };
-              addLog(`🎉 Воркер завершив обробку! Ризик-скор: ${statusData.risk_score}`);
+              
+              if (statusData.data) {
+                  data = statusData.data;
+                  addLog(`🎉 Воркер завершив обробку! Ризик-скор: ${data.risk_assessment?.composite_score || 0}`);
+              } else {
+                  // Fallback if data is somehow missing from response
+                  data = {
+                    dossier_id: jobId,
+                    entity_type: entityType,
+                    identifier: identifier,
+                    name: identifier,
+                    total_records_found: 0,
+                    collectors_used: 1,
+                    collectors_succeeded: 1,
+                    risk_assessment: {
+                      risk_level: "LOW",
+                      composite_score: 0,
+                      ml_risk_score: 0,
+                      risk_factors: ["No real data received"],
+                      risk_breakdown: {}
+                    },
+                    graph: { total_nodes: 0, total_edges: 0, nodes: [], edges: [] },
+                    timeline: []
+                  };
+                  addLog(`🎉 Воркер завершив обробку, але дані відсутні.`);
+              }
+              
+              setResult(data);
             } else if (statusData.status === 'error') {
               jobError = true;
               throw new Error(`Помилка Воркера: ${statusData.error}`);

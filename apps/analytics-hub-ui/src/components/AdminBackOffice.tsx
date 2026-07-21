@@ -12,7 +12,6 @@ import {
   Plus, Trash2, Lock, Unlock, Eye, Sliders, Filter, FileText, CheckSquare, Square, ToggleLeft, ToggleRight
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { apiFetch } from '../api';
 
 // Sub-tabs for Back Office according to Enterprise Spec
 type AdminSection = 
@@ -96,58 +95,28 @@ interface LogMessage {
 export default function AdminBackOffice() {
   const [activeSection, setActiveSection] = useState<AdminSection>('dashboard');
 
-  // Фаллбек-дані (поки API не відповів, UI не буде порожнім)
-  const MOCK_USERS: UserRecord[] = [
+  // Interactive state lists
+  const [users, setUsers] = useState<UserRecord[]>([
     { id: 'u1', email: 'admin.predator@sbu.gov.ua', role: 'Super Admin', org: 'Держмитслужба', status: 'ACTIVE', mfa: true, quota: 'Необмежено', activity: 'Створив користувача analyst.petrenko' },
     { id: 'u2', email: 'officer.shevchenko@sbu.gov.ua', role: 'Operator', org: 'Нацбанк', status: 'ACTIVE', mfa: true, quota: '500 запитів/день', activity: 'Перегляд кейсу №1920' },
     { id: 'u3', email: 'analyst.petrenko@sbu.gov.ua', role: 'Analyst', org: 'ПриватБанк', status: 'ACTIVE', mfa: false, quota: '1000 запитів/день', activity: 'Експорт PDF-звіту' },
     { id: 'u4', email: 'auditor.kravchuk@nbu.gov.ua', role: 'Auditor', org: 'Sense', status: 'ACTIVE', mfa: true, quota: '250 запитів/день', activity: 'Аудит логів безпеки' },
     { id: 'u5', email: 'guest.test@gmail.com', role: 'Guest', org: 'Elite Business Broker', status: 'BLOCKED', mfa: false, quota: '10 запитів/день', activity: 'Невдала спроба входу' }
-  ];
-  const MOCK_ORGS: OrganizationRecord[] = [
+  ]);
+
+  const [orgs, setOrgs] = useState<OrganizationRecord[]>([
     { id: 'org1', name: 'Нацбанк', license: 'Government', users: 18, tariff: '$24,500/міс', endDate: '2027-12-31', apiUsage: '45,290 / 100k', aiUsage: '1.2M tokens', storageUsage: '45.2 GB' },
     { id: 'org2', name: 'Держмитслужба', license: 'Government', users: 45, tariff: '$35,000/міс', endDate: '2028-06-30', apiUsage: '128,490 / Unlimited', aiUsage: '5.6M tokens', storageUsage: '280.4 GB' },
     { id: 'org3', name: 'ПриватБанк', license: 'Enterprise', users: 12, tariff: '$18,900/міс', endDate: '2026-11-15', apiUsage: '38,910 / 50k', aiUsage: '890k tokens', storageUsage: '12.8 GB' },
     { id: 'org4', name: 'Sense Bank', license: 'Enterprise', users: 6, tariff: '$12,400/міс', endDate: '2026-09-01', apiUsage: '15,200 / 30k', aiUsage: '410k tokens', storageUsage: '8.4 GB' },
     { id: 'org5', name: 'Юридична компанія "Право-Захист"', license: 'Professional', users: 3, tariff: '$4,200/міс', endDate: '2026-08-12', apiUsage: '8,400 / 15k', aiUsage: '120k tokens', storageUsage: '2.1 GB' },
     { id: 'org6', name: 'Elite Business Broker', license: 'Community', users: 1, tariff: '$0/міс', endDate: '2026-07-31', apiUsage: '940 / 1k', aiUsage: '5k tokens', storageUsage: '120 MB' }
-  ];
+  ]);
 
-  const [users, setUsers] = useState<UserRecord[]>(MOCK_USERS);
-  const [orgs, setOrgs] = useState<OrganizationRecord[]>(MOCK_ORGS);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  // Форма для створення користувачів
+  // Form for creating users
   const [newUserEmail, setNewUserEmail] = useState('');
   const [newUserRole, setNewUserRole] = useState('Analyst');
   const [newUserOrg, setNewUserOrg] = useState('Нацбанк');
-
-  // Завантажуємо реальні дані з backend — при помилці fallback залишається
-  const fetchAdminData = async () => {
-    setLoading(true);
-    try {
-      const [usersRes, orgsRes] = await Promise.all([
-        apiFetch('/api/v2/admin/users'),
-        apiFetch('/api/v2/admin/organizations')
-      ]);
-      if (!usersRes.ok || !orgsRes.ok) throw new Error(`Бекенд недоступний (${usersRes.status})`);
-      const usersData = await usersRes.json();
-      const orgsData = await orgsRes.json();
-      if (usersData?.length) setUsers(usersData);
-      if (orgsData?.length) setOrgs(orgsData);
-      setError(null);
-    } catch (e: any) {
-      console.warn('Адмін API:', e.message, '— використовуємось фаллбек-дані');
-      // Не ставимо помилку — користувач бачить mock-дані навіть при відключеному API
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchAdminData();
-  }, []);
 
   // RBAC Permission Matrix state
   // Roles: Super Admin, Admin, Auditor, Operator, Analyst, Guest
@@ -377,9 +346,9 @@ export default function AdminBackOffice() {
     <div className="space-y-6" id="admin-back-office-root">
       
       {/* HEADER SECTION: Professional, Enterprise Console theme */}
-      <div className="bg-[#0b1329]/80 border border-slate-800/80 rounded-2xl p-5 flex flex-col xl:flex-row xl:items-center justify-between gap-4 shadow-xl backdrop-blur-sm">
+      <div className="bg-[#0b1329]/80 border border-indigo-500/10/80 rounded-2xl p-5 flex flex-col xl:flex-row xl:items-center justify-between gap-4 shadow-xl backdrop-blur-sm">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl bg-indigo-600/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+          <div className="w-12 h-12 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
             <Settings className="w-6 h-6 animate-spin" style={{ animationDuration: '8s' }} />
           </div>
           <div>
@@ -389,12 +358,12 @@ export default function AdminBackOffice() {
                 ENTERPRISE SYSTEM ADMIN
               </span>
             </h1>
-            <p className="text-[10px] text-slate-400 font-semibold font-mono mt-0.5">Класичний Enterprise-моніторинг. Конфігурація кластерів, ліцензій, RBAC, API шлюзів, бекапів та DevOps.</p>
+            <p className="text-[10px] text-slate-300 font-semibold font-mono mt-0.5">Класичний Enterprise-моніторинг. Конфігурація кластерів, ліцензій, RBAC, API шлюзів, бекапів та DevOps.</p>
           </div>
         </div>
 
         {/* TOP LEVEL NAVIGATION BUTTONS - Enterprise Style */}
-        <div className="flex flex-wrap gap-1.5 border-t xl:border-t-0 pt-3 xl:pt-0 border-slate-900">
+        <div className="flex flex-wrap gap-1.5 border-t xl:border-t-0 pt-3 xl:pt-0 border-indigo-500/5">
           {[
             { id: 'dashboard', label: '📊 Здоров\'я & Дашборд', icon: Activity },
             { id: 'users-orgs', label: '👥 Користувачі & Клієнти', icon: Users },
@@ -410,7 +379,7 @@ export default function AdminBackOffice() {
               <button
                 key={sec.id}
                 onClick={() => setActiveSection(sec.id as AdminSection)}
-                className={`px-3 py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider font-mono border transition-all cursor-pointer flex items-center gap-2 ${isActive ? 'bg-indigo-600 text-white border-indigo-500 shadow-md' : 'bg-slate-950/40 text-slate-400 border-slate-900 hover:border-slate-800'}`}
+                className={`px-3 py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider font-mono border transition-all cursor-pointer flex items-center gap-2 ${isActive ? 'bg-indigo-600 text-white border-indigo-500 shadow-md' : 'bg-slate-950/40 text-slate-300 border-indigo-500/5 hover:border-indigo-500/10'}`}
               >
                 <Icon className="w-3.5 h-3.5" />
                 {sec.label}
@@ -430,14 +399,14 @@ export default function AdminBackOffice() {
             {/* Server load and general metrics */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {[
-                { label: "Кількість користувачів", value: "89 всього", desc: "14 активних сесій", icon: Users, color: "text-indigo-400 bg-indigo-500/10 border-indigo-500/20" },
+                { label: "Кількість користувачів", value: "89 всього", desc: "14 активних сесій", icon: Users, color: "text-indigo-400 bg-indigo-500/10 border-indigo-500/30" },
                 { label: "AI Запитів за добу", value: "148,029", desc: "Швидкість: 42 токена/сек", icon: Zap, color: "text-amber-400 bg-amber-500/10 border-amber-500/20" },
                 { label: "Кластер Kubernetes", value: "14 / 14 Pods OK", desc: "0 перезапусків за 7д", icon: Server, color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20" },
                 { label: "Використання GPU", value: "82.4%", desc: "Пам'ять: 42 GB / 48 GB", icon: Cpu, color: "text-rose-400 bg-rose-500/10 border-rose-500/20" }
               ].map((stat, idx) => (
                 <div key={idx} className="bg-[#0b1329]/50 border border-slate-850 rounded-2xl p-4.5 flex items-center justify-between shadow-lg">
                   <div>
-                    <span className="text-[9px] text-slate-400 font-mono font-bold uppercase tracking-wider block">{stat.label}</span>
+                    <span className="text-[9px] text-slate-300 font-mono font-bold uppercase tracking-wider block">{stat.label}</span>
                     <span className="text-xl font-black text-white font-mono mt-1.5 block">{stat.value}</span>
                     <span className="text-[10px] text-slate-500 font-semibold block mt-0.5">{stat.desc}</span>
                   </div>
@@ -456,12 +425,12 @@ export default function AdminBackOffice() {
                 { label: "Дисковий простір (MinIO)", val: "4.2 TB / 10 TB", progress: 42, text: "NVMe SSD RAID-10" },
                 { label: "Транскордонний трафік", val: "142 GB / 500 GB", progress: 28, text: "Санкційні шлюзи СБУ" }
               ].map((bar, idx) => (
-                <div key={idx} className="bg-slate-950 border border-slate-900 rounded-2xl p-4 space-y-2.5 text-left">
+                <div key={idx} className="bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] border border-indigo-500/5 rounded-2xl p-4 space-y-2.5 text-left">
                   <div className="flex justify-between items-center text-[10px] font-mono">
-                    <span className="text-slate-400 font-bold uppercase">{bar.label}</span>
+                    <span className="text-slate-300 font-bold uppercase">{bar.label}</span>
                     <span className="text-indigo-400 font-black">{bar.val}</span>
                   </div>
-                  <div className="w-full bg-slate-900 h-2 rounded-full overflow-hidden">
+                  <div className="w-full bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] h-2 rounded-full overflow-hidden">
                     <div className="bg-indigo-500 h-2 rounded-full" style={{ width: `${bar.progress}%` }}></div>
                   </div>
                   <span className="text-[9px] text-slate-500 font-mono block">{bar.text}</span>
@@ -470,13 +439,13 @@ export default function AdminBackOffice() {
             </div>
 
             {/* Comprehensive status panel for 15 system technologies */}
-            <div className="glass-panel rounded-2xl p-5 shadow-xl space-y-4">
-              <div className="flex items-center justify-between border-b border-slate-900 pb-3">
+            <div className="bg-[#0b1329]/40 border border-slate-850 rounded-2xl p-5 shadow-xl space-y-4">
+              <div className="flex items-center justify-between border-b border-indigo-500/5 pb-3">
                 <div className="flex items-center gap-2">
                   <Database className="w-4.5 h-4.5 text-indigo-400" />
                   <span className="text-xs font-black font-mono uppercase text-slate-100 tracking-wider">Статус компонентів та технологічного стеку ядра</span>
                 </div>
-                <span className="text-[9px] text-slate-400 font-mono font-bold">Оновлено 1 сек тому</span>
+                <span className="text-[9px] text-slate-300 font-mono font-bold">Оновлено 1 сек тому</span>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
@@ -495,13 +464,13 @@ export default function AdminBackOffice() {
                   { name: "Opendatabot Sync API", status: "ONLINE", lag: "Connected", color: "text-emerald-400 border-emerald-500/10 bg-emerald-500/5" },
                   { name: "Митні API Gateway", status: "ONLINE", lag: "Connected", color: "text-emerald-400 border-emerald-500/10 bg-emerald-500/5" },
                   { name: "Прозорро API Sink", status: "ONLINE", lag: "Connected", color: "text-emerald-400 border-emerald-500/10 bg-emerald-500/5" },
-                  { name: "Telegram Scraper Bot", status: "OFFLINE", lag: "Disabled by Admin", color: "text-slate-500 border-slate-900 bg-slate-950/40" }
+                  { name: "Telegram Scraper Bot", status: "OFFLINE", lag: "Disabled by Admin", color: "text-slate-500 border-indigo-500/5 bg-slate-950/40" }
                 ].map((comp, idx) => (
                   <div key={idx} className={`p-3.5 rounded-xl border text-left ${comp.color}`}>
                     <strong className="text-[10px] font-mono block text-white truncate">{comp.name}</strong>
                     <div className="flex items-center justify-between mt-1 text-[9px] font-mono">
                       <span>{comp.status}</span>
-                      <span className="text-slate-400">{comp.lag}</span>
+                      <span className="text-slate-300">{comp.lag}</span>
                     </div>
                   </div>
                 ))}
@@ -513,7 +482,7 @@ export default function AdminBackOffice() {
               <AlertTriangle className="w-5 h-5 text-rose-500 shrink-0 mt-0.5 animate-bounce" />
               <div>
                 <h4 className="text-xs font-black font-mono text-rose-400 uppercase tracking-wider">КРИТИЧНІ СПОВІЩЕННЯ ОПЕРАЦІЙНОГО ЦЕНТРУ</h4>
-                <p className="text-[10px] text-slate-400 font-mono leading-relaxed mt-1">
+                <p className="text-[10px] text-slate-300 font-mono leading-relaxed mt-1">
                   1. <strong className="text-white">Dead Letter Queue (Kafka)</strong> містить 1 нерозпізнану транзакцію від YouControl. Потрібен ручний розбір.<br />
                   2. Користувач <strong className="text-white">guest.test@gmail.com</strong> заблокований автоматично через спробу брутфорсу паролю.
                 </p>
@@ -531,19 +500,19 @@ export default function AdminBackOffice() {
             <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
               
               {/* Users list and controls */}
-              <div className="xl:col-span-7 bg-slate-900/30 border border-slate-900 rounded-2xl p-5 space-y-4">
-                <div className="flex items-center justify-between border-b border-slate-900 pb-3">
+              <div className="xl:col-span-7 bg-slate-900/30 border border-indigo-500/5 rounded-2xl p-5 space-y-4">
+                <div className="flex items-center justify-between border-b border-indigo-500/5 pb-3">
                   <div className="flex items-center gap-2">
                     <Users className="w-4.5 h-4.5 text-indigo-400" />
                     <span className="text-xs font-black font-mono uppercase text-slate-100 tracking-wider">Реєстр користувачів платформи</span>
                   </div>
-                  <span className="text-[9px] text-indigo-400 font-mono font-bold bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20">
+                  <span className="text-[9px] text-indigo-400 font-mono font-bold bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/30">
                     Усього: {users.length} осіб
                   </span>
                 </div>
 
                 {/* Create User Form */}
-                <form onSubmit={handleCreateUser} className="bg-slate-950 border border-slate-900 p-4 rounded-xl space-y-3 text-left">
+                <form onSubmit={handleCreateUser} className="bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] border border-indigo-500/5 p-4 rounded-xl space-y-3 text-left">
                   <h4 className="text-[10px] font-mono font-bold text-indigo-400 uppercase tracking-widest">➕ Створити нового користувача</h4>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
@@ -554,7 +523,7 @@ export default function AdminBackOffice() {
                         placeholder="analyst@sbu.gov.ua"
                         value={newUserEmail}
                         onChange={(e) => setNewUserEmail(e.target.value)}
-                        className="w-full bg-slate-900 text-white placeholder-slate-600 text-xs px-3 py-2 rounded-lg border border-slate-800 focus:outline-none focus:border-indigo-500"
+                        className="w-full bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] text-white placeholder-slate-600 text-xs px-3 py-2 rounded-lg border border-indigo-500/10 focus:outline-none focus:border-indigo-500"
                       />
                     </div>
                     <div>
@@ -562,7 +531,7 @@ export default function AdminBackOffice() {
                       <select 
                         value={newUserRole}
                         onChange={(e) => setNewUserRole(e.target.value)}
-                        className="w-full bg-slate-900 text-white text-xs px-3 py-2 rounded-lg border border-slate-800 focus:outline-none focus:border-indigo-500"
+                        className="w-full bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] text-white text-xs px-3 py-2 rounded-lg border border-indigo-500/10 focus:outline-none focus:border-indigo-500"
                       >
                         <option value="Super Admin">Super Admin</option>
                         <option value="Admin">Admin</option>
@@ -577,7 +546,7 @@ export default function AdminBackOffice() {
                       <select 
                         value={newUserOrg}
                         onChange={(e) => setNewUserOrg(e.target.value)}
-                        className="w-full bg-slate-900 text-white text-xs px-3 py-2 rounded-lg border border-slate-800 focus:outline-none focus:border-indigo-500"
+                        className="w-full bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] text-white text-xs px-3 py-2 rounded-lg border border-indigo-500/10 focus:outline-none focus:border-indigo-500"
                       >
                         {orgs.map(o => (
                           <option key={o.id} value={o.name}>{o.name}</option>
@@ -596,9 +565,9 @@ export default function AdminBackOffice() {
                 </form>
 
                 {/* Users Table */}
-                <div className="border border-slate-900 rounded-xl overflow-hidden divide-y divide-slate-900 bg-slate-950/40">
+                <div className="border border-indigo-500/5 rounded-xl overflow-hidden divide-y divide-slate-900 bg-slate-950/40">
                   {users.map(usr => (
-                    <div key={usr.id} className="p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-left">
+                    <div key={usr.id} className="p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-left transition-all duration-300 hover:bg-slate-900/60 hover:border-indigo-400/20 group cursor-pointer border border-transparent">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-lg bg-indigo-950 border border-indigo-900/60 flex items-center justify-center font-bold text-xs text-indigo-400 font-mono shrink-0">
                           {usr.email.slice(0, 2).toUpperCase()}
@@ -606,7 +575,7 @@ export default function AdminBackOffice() {
                         <div>
                           <div className="flex items-center gap-2">
                             <span className="text-xs font-bold text-slate-200">{usr.email}</span>
-                            <span className="text-[8px] bg-slate-900 text-slate-400 border border-slate-800 px-1.5 py-0.5 rounded font-mono font-bold uppercase">{usr.org}</span>
+                            <span className="text-[8px] bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] text-slate-300 border border-indigo-500/10 px-1.5 py-0.5 rounded font-mono font-bold uppercase">{usr.org}</span>
                           </div>
                           <p className="text-[9px] text-slate-500 font-mono mt-1">Остання активність: {usr.activity}</p>
                         </div>
@@ -619,7 +588,7 @@ export default function AdminBackOffice() {
                         </span>
                         
                         {/* Role tag */}
-                        <span className="text-[9px] bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2 py-0.5 rounded font-mono font-bold">
+                        <span className="text-[9px] bg-indigo-500/10 text-indigo-400 border border-indigo-500/30 px-2 py-0.5 rounded font-mono font-bold">
                           {usr.role}
                         </span>
 
@@ -634,7 +603,7 @@ export default function AdminBackOffice() {
                         {/* Reset password button */}
                         <button
                           onClick={() => alert(`Запит на скидання паролю для ${usr.email} надіслано в Keycloak!`)}
-                          className="px-2 py-1 bg-slate-900 hover:bg-slate-850 text-slate-400 hover:text-slate-200 border border-slate-800 rounded text-[8px] font-mono font-bold uppercase transition-all cursor-pointer"
+                          className="px-2 py-1 bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] hover:bg-slate-850 text-slate-300 hover:text-slate-200 border border-indigo-500/10 rounded text-[8px] font-mono font-bold uppercase transition-all cursor-pointer"
                         >
                           Скинути PW
                         </button>
@@ -654,8 +623,8 @@ export default function AdminBackOffice() {
 
               {/* Clients Organizations details */}
               <div className="xl:col-span-5 space-y-4">
-                <div className="bg-slate-900/30 border border-slate-900 rounded-2xl p-5 space-y-4">
-                  <div className="flex items-center justify-between border-b border-slate-900 pb-3">
+                <div className="bg-slate-900/30 border border-indigo-500/5 rounded-2xl p-5 space-y-4">
+                  <div className="flex items-center justify-between border-b border-indigo-500/5 pb-3">
                     <div className="flex items-center gap-2">
                       <Landmark className="w-4.5 h-4.5 text-indigo-400" />
                       <span className="text-xs font-black font-mono uppercase text-slate-100 tracking-wider">Клієнтські Організації (Tenant Profiles)</span>
@@ -664,7 +633,7 @@ export default function AdminBackOffice() {
 
                   <div className="space-y-3">
                     {orgs.map(org => (
-                      <div key={org.id} className="bg-slate-950 border border-slate-900 p-3.5 rounded-xl text-left space-y-2">
+                      <div key={org.id} className="bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] border border-indigo-500/5 p-3.5 rounded-xl text-left space-y-2">
                         <div className="flex justify-between items-center">
                           <strong className="text-xs text-white font-bold">{org.name}</strong>
                           <span className="text-[9px] bg-indigo-500/15 text-indigo-400 border border-indigo-500/30 px-2 py-0.5 rounded font-mono font-bold">
@@ -672,7 +641,7 @@ export default function AdminBackOffice() {
                           </span>
                         </div>
                         
-                        <div className="grid grid-cols-3 gap-2 text-[9px] font-mono text-slate-400 border-t border-slate-900/50 pt-2">
+                        <div className="grid grid-cols-3 gap-2 text-[9px] font-mono text-slate-300 border-t border-indigo-500/5/50 pt-2">
                           <div>
                             <span className="text-slate-500 block">Аналітики</span>
                             <strong className="text-slate-200">{org.users} осіб</strong>
@@ -687,7 +656,7 @@ export default function AdminBackOffice() {
                           </div>
                         </div>
 
-                        <div className="grid grid-cols-3 gap-2 text-[9px] font-mono text-slate-400">
+                        <div className="grid grid-cols-3 gap-2 text-[9px] font-mono text-slate-300">
                           <div>
                             <span className="text-slate-500 block">Використання API</span>
                             <strong className="text-slate-200">{org.apiUsage}</strong>
@@ -719,8 +688,8 @@ export default function AdminBackOffice() {
             <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
               
               {/* Matrix of RBAC Permissions */}
-              <div className="xl:col-span-8 bg-slate-900/30 border border-slate-900 rounded-2xl p-5 space-y-4">
-                <div className="flex items-center justify-between border-b border-slate-900 pb-3">
+              <div className="xl:col-span-8 bg-slate-900/30 border border-indigo-500/5 rounded-2xl p-5 space-y-4">
+                <div className="flex items-center justify-between border-b border-indigo-500/5 pb-3">
                   <div className="flex items-center gap-2">
                     <Shield className="w-4.5 h-4.5 text-indigo-400" />
                     <span className="text-xs font-black font-mono uppercase text-slate-100 tracking-wider">Матриця дозволів безпеки (RBAC Access Matrix)</span>
@@ -738,10 +707,10 @@ export default function AdminBackOffice() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-left font-mono text-[10px] border-collapse">
                     <thead>
-                      <tr className="border-b border-slate-900 bg-slate-950/60">
-                        <th className="p-3 text-slate-400 uppercase font-black">Роль доступу</th>
+                      <tr className="border-b border-indigo-500/5 bg-slate-950/60">
+                        <th className="p-3 text-slate-300 uppercase font-black">Роль доступу</th>
                         {permissionsList.map(p => (
-                          <th key={p.key} className="p-3 text-slate-400 uppercase font-black text-center max-w-[120px] leading-tight" title={p.label}>
+                          <th key={p.key} className="p-3 text-slate-300 uppercase font-black text-center max-w-[120px] leading-tight" title={p.label}>
                             {p.key.replace('_', ' ')}
                           </th>
                         ))}
@@ -780,15 +749,15 @@ export default function AdminBackOffice() {
               </div>
 
               {/* License Tiers Management */}
-              <div className="xl:col-span-4 bg-slate-900/30 border border-slate-900 rounded-2xl p-5 space-y-4 text-left">
-                <div className="flex items-center gap-2 border-b border-slate-900 pb-3">
+              <div className="xl:col-span-4 bg-slate-900/30 border border-indigo-500/5 rounded-2xl p-5 space-y-4 text-left">
+                <div className="flex items-center gap-2 border-b border-indigo-500/5 pb-3">
                   <Landmark className="w-4.5 h-4.5 text-indigo-400" />
                   <span className="text-xs font-black font-mono uppercase text-slate-100 tracking-wider">Активація модулів за ліцензіями</span>
                 </div>
 
                 <div className="space-y-4">
                   {licenses.map(lic => (
-                    <div key={lic.id} className="bg-slate-950 border border-slate-900 p-3.5 rounded-xl space-y-2">
+                    <div key={lic.id} className="bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] border border-indigo-500/5 p-3.5 rounded-xl space-y-2">
                       <div className="flex justify-between items-center">
                         <strong className="text-xs text-white font-bold font-mono">{lic.name} Tier</strong>
                         <button
@@ -796,7 +765,7 @@ export default function AdminBackOffice() {
                             setLicenses(prev => prev.map(l => l.id === lic.id ? { ...l, active: !l.active } : l));
                             alert(`Статус ліцензії ${lic.name} змінено!`);
                           }}
-                          className={`text-[8px] font-mono font-bold px-2 py-0.5 rounded border transition-all cursor-pointer ${lic.active ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-slate-900 text-slate-500 border-slate-800'}`}
+                          className={`text-[8px] font-mono font-bold px-2 py-0.5 rounded border transition-all cursor-pointer ${lic.active ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] text-slate-500 border-indigo-500/10'}`}
                         >
                           {lic.active ? 'ACTIVE' : 'INACTIVE'}
                         </button>
@@ -806,7 +775,7 @@ export default function AdminBackOffice() {
                         <span className="text-[8px] text-slate-500 font-mono block">ДОЗВОЛЕНІ МОДУЛІ:</span>
                         <div className="flex flex-wrap gap-1">
                           {lic.modules.map((m, i) => (
-                            <span key={i} className="text-[8px] bg-slate-900 text-slate-300 border border-slate-800 px-1.5 py-0.5 rounded font-mono">
+                            <span key={i} className="text-[8px] bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] text-slate-300 border border-indigo-500/10 px-1.5 py-0.5 rounded font-mono">
                               {m}
                             </span>
                           ))}
@@ -837,26 +806,26 @@ export default function AdminBackOffice() {
                 <Sliders className="w-4.5 h-4.5 text-indigo-400 animate-pulse" />
                 <span className="text-xs font-black font-mono uppercase text-slate-100 tracking-wider">Розумний Роутер ШІ "Arbiter Engine" v1.2</span>
               </div>
-              <p className="text-[10px] text-slate-400 font-mono leading-relaxed">
+              <p className="text-[10px] text-slate-300 font-mono leading-relaxed">
                 ШІ-Арбітр автоматично перенаправляє аналітичні запити на ту модель, яка найкраще підходить для розв'язання конкретної задачі. Якщо користувач задає загальне питання — запит йде на легку локальну <strong className="text-white">Gemma 2B</strong>. Якщо потрібен глибокий аналіз компанії з пошуком зв'язків — запит йде на <strong className="text-indigo-400">Gemini 3.5 Flash</strong> чи локальний <strong className="text-indigo-400">DeepSeek R1</strong>.
               </p>
             </div>
 
             {/* Models Table with routing controls */}
-            <div className="bg-slate-900/30 border border-slate-900 rounded-2xl p-5 space-y-4 text-left">
-              <div className="flex items-center justify-between border-b border-slate-900 pb-3">
+            <div className="bg-slate-900/30 border border-indigo-500/5 rounded-2xl p-5 space-y-4 text-left">
+              <div className="flex items-center justify-between border-b border-indigo-500/5 pb-3">
                 <span className="text-xs font-black font-mono uppercase text-slate-100 tracking-wider">ШІ-моделі у семантичному пулі</span>
-                <span className="text-[9px] text-slate-400 font-mono font-bold">Активно моделей: {aiModels.filter(m => m.status === 'ONLINE').length} / {aiModels.length}</span>
+                <span className="text-[9px] text-slate-300 font-mono font-bold">Активно моделей: {aiModels.filter(m => m.status === 'ONLINE').length} / {aiModels.length}</span>
               </div>
 
-              <div className="border border-slate-900 rounded-xl overflow-hidden divide-y divide-slate-900 bg-slate-950/40">
+              <div className="border border-indigo-500/5 rounded-xl overflow-hidden divide-y divide-slate-900 bg-slate-950/40">
                 {aiModels.map(model => (
                   <div key={model.id} className="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <strong className="text-xs text-white font-mono">{model.name}</strong>
-                        <span className="text-[8px] bg-slate-900 text-slate-500 border border-slate-800 px-1.5 py-0.5 rounded font-mono uppercase">{model.provider}</span>
-                        <span className={`text-[8px] font-mono font-bold px-1.5 py-0.5 rounded ${model.status === 'ONLINE' ? 'text-emerald-400 bg-emerald-500/10 border border-emerald-500/20' : model.status === 'STANDBY' ? 'text-amber-400 bg-amber-500/10 border border-amber-500/20' : 'text-slate-500 border-slate-800 bg-slate-950/40'}`}>
+                        <span className="text-[8px] bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] text-slate-500 border border-indigo-500/10 px-1.5 py-0.5 rounded font-mono uppercase">{model.provider}</span>
+                        <span className={`text-[8px] font-mono font-bold px-1.5 py-0.5 rounded ${model.status === 'ONLINE' ? 'text-emerald-400 bg-emerald-500/10 border border-emerald-500/20' : model.status === 'STANDBY' ? 'text-amber-400 bg-amber-500/10 border border-amber-500/20' : 'text-slate-500 border-indigo-500/10 bg-slate-950/40'}`}>
                           {model.status}
                         </span>
                       </div>
@@ -914,15 +883,15 @@ export default function AdminBackOffice() {
             <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 text-left">
               
               {/* Integrations on/off switches */}
-              <div className="xl:col-span-6 bg-slate-900/30 border border-slate-900 rounded-2xl p-5 space-y-4">
-                <div className="flex items-center gap-2 border-b border-slate-900 pb-3">
+              <div className="xl:col-span-6 bg-slate-900/30 border border-indigo-500/5 rounded-2xl p-5 space-y-4">
+                <div className="flex items-center gap-2 border-b border-indigo-500/5 pb-3">
                   <Landmark className="w-4.5 h-4.5 text-indigo-400" />
                   <span className="text-xs font-black font-mono uppercase text-slate-100 tracking-wider">Підключені зовнішні API джерела</span>
                 </div>
 
                 <div className="space-y-3">
                   {dataSources.map(ds => (
-                    <div key={ds.id} className="bg-slate-950 border border-slate-900 p-3.5 rounded-xl flex items-center justify-between">
+                    <div key={ds.id} className="bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] border border-indigo-500/5 p-3.5 rounded-xl flex items-center justify-between">
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
                           <strong className="text-xs text-white">{ds.name}</strong>
@@ -952,25 +921,25 @@ export default function AdminBackOffice() {
               <div className="xl:col-span-6 space-y-6">
                 
                 {/* Pipelines List */}
-                <div className="bg-slate-900/30 border border-slate-900 rounded-2xl p-5 space-y-4">
-                  <div className="flex items-center gap-2 border-b border-slate-900 pb-3">
+                <div className="bg-slate-900/30 border border-indigo-500/5 rounded-2xl p-5 space-y-4">
+                  <div className="flex items-center gap-2 border-b border-indigo-500/5 pb-3">
                     <Layers className="w-4.5 h-4.5 text-indigo-400 animate-pulse" />
                     <span className="text-xs font-black font-mono uppercase text-slate-100 tracking-wider">Аналітичні ETL-пайплайни</span>
                   </div>
 
                   <div className="space-y-3">
                     {etlPipelines.map(pipe => (
-                      <div key={pipe.id} className="bg-slate-950 border border-slate-900 p-3 rounded-xl space-y-2">
+                      <div key={pipe.id} className="bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] border border-indigo-500/5 p-3 rounded-xl space-y-2">
                         <div className="flex justify-between items-center text-[10px] font-mono">
                           <strong className="text-slate-200">{pipe.name}</strong>
-                          <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded border ${pipe.status === 'Running' ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' : pipe.status === 'Paused' ? 'text-amber-400 bg-amber-500/10 border-amber-500/20' : pipe.status === 'Completed' ? 'text-indigo-400 bg-indigo-500/10 border-indigo-500/20' : 'text-rose-400 bg-rose-500/10 border-rose-500/20'}`}>
+                          <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded border ${pipe.status === 'Running' ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' : pipe.status === 'Paused' ? 'text-amber-400 bg-amber-500/10 border-amber-500/20' : pipe.status === 'Completed' ? 'text-indigo-400 bg-indigo-500/10 border-indigo-500/30' : 'text-rose-400 bg-rose-500/10 border-rose-500/20'}`}>
                             {pipe.status}
                           </span>
                         </div>
 
                         {pipe.status === 'Running' && (
                           <div className="space-y-1">
-                            <div className="w-full bg-slate-900 h-1 rounded-full overflow-hidden">
+                            <div className="w-full bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] h-1 rounded-full overflow-hidden">
                               <div className="bg-indigo-500 h-1 rounded-full animate-pulse" style={{ width: `${pipe.progress}%` }}></div>
                             </div>
                             <div className="flex justify-between text-[8px] text-slate-500 font-mono">
@@ -988,19 +957,19 @@ export default function AdminBackOffice() {
                 </div>
 
                 {/* Scheduler Cron Tasks */}
-                <div className="bg-slate-900/30 border border-slate-900 rounded-2xl p-5 space-y-4">
-                  <div className="flex items-center gap-2 border-b border-slate-900 pb-3">
+                <div className="bg-slate-900/30 border border-indigo-500/5 rounded-2xl p-5 space-y-4">
+                  <div className="flex items-center gap-2 border-b border-indigo-500/5 pb-3">
                     <Clock className="w-4.5 h-4.5 text-indigo-400" />
                     <span className="text-xs font-black font-mono uppercase text-slate-100 tracking-wider">Планувальник Cron-задач</span>
                   </div>
 
-                  <div className="border border-slate-900 rounded-xl overflow-hidden divide-y divide-slate-900 bg-slate-950/40">
+                  <div className="border border-indigo-500/5 rounded-xl overflow-hidden divide-y divide-slate-900 bg-slate-950/40">
                     {cronTasks.map(cron => (
                       <div key={cron.id} className="p-3 flex items-center justify-between text-[10px] font-mono">
                         <div>
                           <strong className="text-slate-200">{cron.name}</strong>
                           <div className="flex gap-2 text-[8px] text-slate-500 mt-0.5">
-                            <span>Cron: <strong className="text-slate-400">{cron.schedule}</strong></span>
+                            <span>Cron: <strong className="text-slate-300">{cron.schedule}</strong></span>
                             <span>Останній запуск: {cron.lastRun}</span>
                           </div>
                         </div>
@@ -1010,7 +979,7 @@ export default function AdminBackOffice() {
                             setCronTasks(prev => prev.map(c => c.id === cron.id ? { ...c, status: c.status === 'ACTIVE' ? 'PAUSED' : 'ACTIVE' } : c));
                             alert(`Статус Cron-задачі ${cron.name} змінено!`);
                           }}
-                          className={`text-[8px] font-mono font-bold px-2 py-0.5 rounded border transition-all cursor-pointer ${cron.status === 'ACTIVE' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-slate-900 text-slate-500 border-slate-800'}`}
+                          className={`text-[8px] font-mono font-bold px-2 py-0.5 rounded border transition-all cursor-pointer ${cron.status === 'ACTIVE' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] text-slate-500 border-indigo-500/10'}`}
                         >
                           {cron.status}
                         </button>
@@ -1038,13 +1007,13 @@ export default function AdminBackOffice() {
                 { label: "Redis Queue size", value: "28 entries", text: "Transient memory broker pipeline", icon: Database, color: "text-indigo-400" },
                 { label: "Dead Letter Queue", value: "1 msg", text: "Failed messages to analyze", icon: AlertTriangle, color: "text-amber-500 animate-pulse" }
               ].map((m, idx) => (
-                <div key={idx} className="bg-slate-950 border border-slate-900 rounded-2xl p-4.5 flex items-center justify-between text-left">
+                <div key={idx} className="bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] border border-indigo-500/5 rounded-2xl p-4.5 flex items-center justify-between text-left">
                   <div>
                     <span className="text-[8px] text-slate-500 font-mono font-black uppercase tracking-wider block">{m.label}</span>
                     <strong className="text-base text-white font-mono mt-1.5 block">{m.value}</strong>
-                    <span className="text-[9px] text-slate-400 font-mono block mt-0.5">{m.text}</span>
+                    <span className="text-[9px] text-slate-300 font-mono block mt-0.5">{m.text}</span>
                   </div>
-                  <div className={`p-2.5 rounded-lg bg-slate-900 border border-slate-800 ${m.color}`}>
+                  <div className={`p-2.5 rounded-lg bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] border border-indigo-500/10 ${m.color}`}>
                     <m.icon className="w-4 h-4" />
                   </div>
                 </div>
@@ -1052,8 +1021,8 @@ export default function AdminBackOffice() {
             </div>
 
             {/* Live systems log console with filters */}
-            <div className="bg-slate-950 border border-slate-900 rounded-2xl p-5 space-y-4 text-left">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-900 pb-3">
+            <div className="bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] border border-indigo-500/5 rounded-2xl p-5 space-y-4 text-left">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-indigo-500/5 pb-3">
                 <div className="flex items-center gap-2">
                   <Terminal className="w-4.5 h-4.5 text-indigo-400" />
                   <span className="text-xs font-black font-mono uppercase text-slate-200">Живий перегляд логів платформи PREDATOR</span>
@@ -1066,7 +1035,7 @@ export default function AdminBackOffice() {
                     <button
                       key={f}
                       onClick={() => setLogFilter(f)}
-                      className={`px-2 py-1 rounded text-[8px] font-mono font-black uppercase border transition-all cursor-pointer ${logFilter === f ? 'bg-indigo-600 text-white border-indigo-500 shadow' : 'bg-slate-900 text-slate-500 border-slate-800 hover:text-slate-300'}`}
+                      className={`px-2 py-1 rounded text-[8px] font-mono font-black uppercase border transition-all cursor-pointer ${logFilter === f ? 'bg-indigo-600 text-white border-indigo-500 shadow' : 'bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] text-slate-500 border-indigo-500/10 hover:text-slate-300'}`}
                     >
                       {f}
                     </button>
@@ -1075,15 +1044,15 @@ export default function AdminBackOffice() {
               </div>
 
               {/* Scrolling Log rows */}
-              <div className="h-96 overflow-y-auto font-mono text-[10px] space-y-1.5 scrollbar-thin p-1 bg-slate-950">
+              <div className="h-96 overflow-y-auto font-mono text-[10px] space-y-1.5 scrollbar-thin p-1 bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)]">
                 <AnimatePresence initial={false}>
                   {filteredLogs.map((log, i) => {
                     const badgeColors = {
                       'ERROR': 'text-rose-400 bg-rose-500/10 border-rose-500/20',
                       'WARNING': 'text-amber-400 bg-amber-500/10 border-amber-500/20',
-                      'INFO': 'text-slate-400 bg-slate-900 border-slate-800',
+                      'INFO': 'text-slate-300 bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] border-indigo-500/10',
                       'SECURITY': 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
-                      'AUDIT': 'text-indigo-400 bg-indigo-500/10 border-indigo-500/20',
+                      'AUDIT': 'text-indigo-400 bg-indigo-500/10 border-indigo-500/30',
                       'AI': 'text-teal-400 bg-teal-500/10 border-teal-500/20'
                     };
                     return (
@@ -1091,7 +1060,7 @@ export default function AdminBackOffice() {
                         key={i} 
                         initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
-                        className="flex items-start gap-3 p-1.5 hover:bg-slate-900/60 rounded border border-transparent hover:border-slate-900 transition-all text-left"
+                        className="flex items-start gap-3 p-1.5 hover:bg-slate-900/60 rounded border border-transparent hover:border-indigo-500/5 transition-all text-left"
                       >
                         <span className="text-slate-500 font-bold shrink-0">{log.timestamp}</span>
                         <span className={`text-[8px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded border shrink-0 ${badgeColors[log.level]}`}>
@@ -1109,7 +1078,7 @@ export default function AdminBackOffice() {
                 </AnimatePresence>
               </div>
 
-              <div className="flex items-center justify-between text-[9px] text-slate-500 font-mono pt-2 border-t border-slate-900">
+              <div className="flex items-center justify-between text-[9px] text-slate-500 font-mono pt-2 border-t border-indigo-500/5">
                 <span>Показано {filteredLogs.length} подій за фільтром</span>
                 <span className="text-emerald-400 font-black animate-pulse flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping"></span>
@@ -1128,8 +1097,8 @@ export default function AdminBackOffice() {
             <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 text-left">
               
               {/* Kubernetes Pods & Deployments */}
-              <div className="xl:col-span-7 bg-slate-900/30 border border-slate-900 rounded-2xl p-5 space-y-4">
-                <div className="flex items-center justify-between border-b border-slate-900 pb-3">
+              <div className="xl:col-span-7 bg-slate-900/30 border border-indigo-500/5 rounded-2xl p-5 space-y-4">
+                <div className="flex items-center justify-between border-b border-indigo-500/5 pb-3">
                   <div className="flex items-center gap-2">
                     <Layers className="w-4.5 h-4.5 text-indigo-400" />
                     <span className="text-xs font-black font-mono uppercase text-slate-100 tracking-wider">Дерево Pods кластеру Kubernetes (Microservices)</span>
@@ -1141,7 +1110,7 @@ export default function AdminBackOffice() {
 
                 <div className="space-y-3">
                   {k8sPods.map(pod => (
-                    <div key={pod.name} className="bg-slate-950 border border-slate-900 p-3.5 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div key={pod.name} className="bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] border border-indigo-500/5 p-3.5 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                       <div>
                         <div className="flex items-center gap-2">
                           <strong className="text-xs text-white font-mono">{pod.name}</strong>
@@ -1171,8 +1140,8 @@ export default function AdminBackOffice() {
               <div className="xl:col-span-5 space-y-6">
                 
                 {/* Vault & Keycloak */}
-                <div className="bg-slate-900/30 border border-slate-900 rounded-2xl p-5 space-y-4">
-                  <div className="flex items-center justify-between border-b border-slate-900 pb-3">
+                <div className="bg-slate-900/30 border border-indigo-500/5 rounded-2xl p-5 space-y-4">
+                  <div className="flex items-center justify-between border-b border-indigo-500/5 pb-3">
                     <div className="flex items-center gap-2">
                       <Shield className="w-4.5 h-4.5 text-indigo-400" />
                       <span className="text-xs font-black font-mono uppercase text-slate-100 tracking-wider">Безпека: HashiCorp Vault</span>
@@ -1188,12 +1157,12 @@ export default function AdminBackOffice() {
                     </button>
                   </div>
 
-                  <div className="space-y-3 font-sans text-xs text-slate-400">
+                  <div className="space-y-3 font-sans text-xs text-slate-300">
                     <p className="leading-relaxed text-[10px] font-mono">
                       Ключ шифрування Gemini API та токени YouControl надійно запечатані у Vault сейфі за допомогою алгоритму розподілу секретів Шаміра (3 з 5 шардів активовані).
                     </p>
 
-                    <div className="bg-slate-950 border border-slate-900 p-3 rounded-xl font-mono text-[9px] text-slate-400 space-y-1">
+                    <div className="bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] border border-indigo-500/5 p-3 rounded-xl font-mono text-[9px] text-slate-300 space-y-1">
                       <div className="flex justify-between">
                         <span>OIDC Provider (Keycloak):</span>
                         <strong className="text-emerald-400">CONNECTING SECURE</strong>
@@ -1211,8 +1180,8 @@ export default function AdminBackOffice() {
                 </div>
 
                 {/* Databases Snapshot backups */}
-                <div className="bg-slate-900/30 border border-slate-900 rounded-2xl p-5 space-y-4">
-                  <div className="flex items-center justify-between border-b border-slate-900 pb-3">
+                <div className="bg-slate-900/30 border border-indigo-500/5 rounded-2xl p-5 space-y-4">
+                  <div className="flex items-center justify-between border-b border-indigo-500/5 pb-3">
                     <div className="flex items-center gap-2">
                       <Database className="w-4.5 h-4.5 text-indigo-400" />
                       <span className="text-xs font-black font-mono uppercase text-slate-100 tracking-wider">Резервні копії & Snapshots</span>
@@ -1227,7 +1196,7 @@ export default function AdminBackOffice() {
 
                   <div className="space-y-2">
                     {backups.map((bak, i) => (
-                      <div key={i} className="bg-slate-950 border border-slate-900 p-2.5 rounded-xl flex justify-between items-center text-[9px] font-mono">
+                      <div key={i} className="bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] border border-indigo-500/5 p-2.5 rounded-xl flex justify-between items-center text-[9px] font-mono">
                         <div>
                           <strong className="text-slate-300 block truncate max-w-[200px]" title={bak.filename}>{bak.filename}</strong>
                           <span className="text-slate-500 block text-[8px] mt-0.5">{bak.type} • Обсяг: {bak.size}</span>
@@ -1235,7 +1204,7 @@ export default function AdminBackOffice() {
                         <div className="flex gap-1.5 shrink-0">
                           <button
                             onClick={() => alert(`Запущено відновлення бази з файлу ${bak.filename}... Будь ласка, зачекайте 2 хв.`)}
-                            className="px-2 py-1 bg-slate-900 hover:bg-slate-850 text-indigo-400 hover:text-indigo-300 rounded border border-slate-800 transition-colors cursor-pointer font-black text-[8px]"
+                            className="px-2 py-1 bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] hover:bg-slate-850 text-indigo-400 hover:text-indigo-300 rounded border border-indigo-500/10 transition-colors cursor-pointer font-black text-[8px]"
                           >
                             RESTORE
                           </button>

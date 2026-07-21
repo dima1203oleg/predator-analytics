@@ -334,6 +334,36 @@ CERS Risk Score: {risk.cers if risk else company.cers_score}/100
 ========================
 """
 
+            # --- NEO4J GRAPH INTEGRATION FOR AI AGENT ---
+            from app.core.graph import graph_db
+            try:
+                neo4j_query = """
+                MATCH (n)-[r]-(m)
+                WHERE (n.ueid = $ueid OR n.id = $ueid) 
+                RETURN n, type(r) as rel_type, m 
+                LIMIT 50
+                """
+                graph_results = await graph_db.run_query(neo4j_query, {"ueid": company.ueid})
+                
+                graph_context = "\n=== ЗВ'ЯЗКИ З NEO4J (ГРАФ) ===\n"
+                if graph_results:
+                    for record in graph_results:
+                        n_node = record.get("n") or {}
+                        m_node = record.get("m") or {}
+                        rel_type = record.get("rel_type") or "RELATED_TO"
+                        
+                        start_name = n_node.get("name") or n_node.get("id") or n_node.get("ueid") or "Unknown"
+                        end_name = m_node.get("name") or m_node.get("id") or m_node.get("ueid") or "Unknown"
+                        
+                        graph_context += f"- {start_name} --[{rel_type}]--> {end_name}\n"
+                else:
+                    graph_context += "Прямі зв'язки в графі відсутні.\n"
+                    
+                company_context += graph_context
+            except Exception as e:
+                company_context += f"\n[Neo4j Graph Exception: {str(e)}]\n"
+
+
     # ─── Вибір системного промпту за командою ─────────────────────────────
     command_prompts: dict[str, str] = {
         "analyze": f"""Ти — PREDATOR Copilot, елітний аналітик митної розвідки України.

@@ -165,6 +165,48 @@ class Neo4jSink:
         except Exception as e:
             logger.error(f"Failed to merge ownership graph: {e}")
 
+    async def merge_bulk_nodes(self, label: str, nodes: list[dict[str, Any]]) -> None:
+        """Масове збереження вузлів одного типу через UNWIND.
+        
+        Очікується list of dict: [{"id": "...", "props": {...}}, ...]
+        """
+        if not self._connected or not self.driver or not nodes:
+            return
+
+        query = f"""
+        UNWIND $nodes AS node
+        MERGE (n:{label} {{id: node.id}})
+        SET n += node.props
+        """
+        try:
+            async with self.driver.session() as session:
+                await session.run(query, {"nodes": nodes})
+            logger.info(f"neo4j.bulk_nodes_saved", extra={"label": label, "count": len(nodes)})
+        except Exception as e:
+            logger.error(f"Failed to merge bulk nodes {label}: {e}")
+
+    async def merge_bulk_edges(self, rel_type: str, edges: list[dict[str, Any]]) -> None:
+        """Масове збереження зв'язків одного типу через UNWIND.
+        
+        Очікується list of dict: [{"source_id": "...", "target_id": "...", "props": {...}}, ...]
+        """
+        if not self._connected or not self.driver or not edges:
+            return
+
+        query = f"""
+        UNWIND $edges AS edge
+        MATCH (source {{id: edge.source_id}})
+        MATCH (target {{id: edge.target_id}})
+        MERGE (source)-[r:{rel_type}]->(target)
+        SET r += edge.props
+        """
+        try:
+            async with self.driver.session() as session:
+                await session.run(query, {"edges": edges})
+            logger.info(f"neo4j.bulk_edges_saved", extra={"rel_type": rel_type, "count": len(edges)})
+        except Exception as e:
+            logger.error(f"Failed to merge bulk edges {rel_type}: {e}")
+
     async def run_query(self, query: str, params: dict[str, Any] | None = None) -> Any:
         """Виконує довільний Cypher запит."""
         if not self._connected or not self.driver:

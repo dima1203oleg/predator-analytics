@@ -94,12 +94,12 @@ export default function GapAnalysisTab() {
   return (
     <div className="space-y-6" id="gap-analysis-tab-root">
       {/* Intro section */}
-      <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-6 backdrop-blur-md">
+      <div className="bg-slate-900/60 border border-indigo-500/10 rounded-xl p-6 backdrop-blur-md">
         <h2 className="text-xl font-semibold text-slate-100 flex items-center gap-2 mb-2">
           <Wrench className="w-5 h-5 text-amber-400" id="gap-title-icon" />
           Gap Analysis (Аналіз прогалин та кастомна розробка)
         </h2>
-        <p className="text-slate-400 text-sm leading-relaxed">
+        <p className="text-slate-300 text-sm leading-relaxed">
           Аналіз відповідності вимогам open-source продуктів та розрахунок ресурсів на створення внутрішньої унікальної інтелектуальної власності PREDATOR Analytics. Визначте, які компоненти вимагають адаптації, заміни чи розробки з нуля.
         </p>
       </div>
@@ -109,41 +109,41 @@ export default function GapAnalysisTab() {
         {/* Left column: Categories & Dynamic Cost Estimator */}
         <div className="lg:col-span-1 space-y-6">
           {/* Action Category Filters */}
-          <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-5 space-y-3" id="gap-filters">
+          <div className="bg-slate-900/40 border border-indigo-500/10 rounded-xl p-5 space-y-3" id="gap-filters">
             <h3 className="text-sm font-semibold text-slate-200 uppercase tracking-wider">Категорії інтеграції</h3>
             <div className="space-y-1.5 text-xs">
               <button
                 id="gap-all-filter"
                 onClick={() => setSelectedCategory('all')}
-                className={`w-full text-left px-3 py-2.5 rounded-lg border transition-all flex items-center justify-between ${selectedCategory === 'all' ? 'bg-indigo-500/10 border-indigo-500/30 text-indigo-300 font-semibold' : 'bg-slate-950 border-slate-850 text-slate-400 hover:text-slate-200'}`}
+                className={`w-full text-left px-3 py-2.5 rounded-lg border transition-all flex items-center justify-between ${selectedCategory === 'all' ? 'bg-indigo-500/10 border-indigo-500/30 text-indigo-300 font-semibold' : 'bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] border-slate-850 text-slate-300 hover:text-slate-200'}`}
               >
                 <span>Усі категорії ({GAP_ITEMS.length})</span>
-                <span className="text-[10px] bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800">Все</span>
+                <span className="text-[10px] bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] px-1.5 py-0.5 rounded border border-indigo-500/10">Все</span>
               </button>
               {GAP_ITEMS.map(item => (
                 <button
                   key={item.id}
                   id={`gap-filter-${item.id}`}
                   onClick={() => setSelectedCategory(item.category)}
-                  className={`w-full text-left px-3 py-2.5 rounded-lg border transition-all flex items-center justify-between ${selectedCategory === item.category ? 'bg-indigo-500/10 border-indigo-500/30 text-indigo-300 font-semibold' : 'bg-slate-950 border-slate-850 text-slate-400 hover:text-slate-200'}`}
+                  className={`w-full text-left px-3 py-2.5 rounded-lg border transition-all flex items-center justify-between ${selectedCategory === item.category ? 'bg-indigo-500/10 border-indigo-500/30 text-indigo-300 font-semibold' : 'bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] border-slate-850 text-slate-300 hover:text-slate-200'}`}
                 >
                   <span className="truncate">{item.categoryLabel}</span>
-                  <span className="text-[10px] bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800 uppercase font-mono">{item.difficulty}</span>
+                  <span className="text-[10px] bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] px-1.5 py-0.5 rounded border border-indigo-500/10 uppercase font-mono">{item.difficulty}</span>
                 </button>
               ))}
             </div>
           </div>
 
           {/* Dynamic Estimator Card */}
-          <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-5 space-y-5" id="dynamic-estimator">
-            <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
+          <div className="bg-slate-900/40 border border-indigo-500/10 rounded-xl p-5 space-y-5" id="dynamic-estimator">
+            <div className="flex items-center gap-2 border-b border-indigo-500/10 pb-3">
               <Calculator className="w-4 h-4 text-emerald-400" />
               <h3 className="text-sm font-semibold text-slate-200 uppercase tracking-wider">
                 Калькулятор власної розробки
               </h3>
             </div>
             
-            <p className="text-[11px] text-slate-400 leading-normal">
+            <p className="text-[11px] text-slate-300 leading-normal">
               Оцінка ресурсів для створення <strong>Власної експертизи (з нуля)</strong>: Конекторів до реєстрів України, Entity Resolution Engine та онтології даних.
             </p>
 
@@ -152,7 +152,7 @@ export default function GapAnalysisTab() {
               {/* Connectors Complexity */}
               <div className="space-y-1">
                 <div className="flex justify-between text-[11px]">
-                  <span className="text-slate-400">Конектори до реєстрів</span>
+                  <span className="text-slate-300">Конектори до реєстрів</span>
                   <span className={`px-1.5 py-0.5 rounded font-medium text-[9px] border ${getComplexityColor(complexity.connectors)}`}>
                     {getComplexityLabel(complexity.connectors)}
                   </span>
@@ -171,7 +171,7 @@ export default function GapAnalysisTab() {
               {/* Entity Resolution Engine */}
               <div className="space-y-1">
                 <div className="flex justify-between text-[11px]">
-                  <span className="text-slate-400">Entity Resolution (ШІ-злиття)</span>
+                  <span className="text-slate-300">Entity Resolution (ШІ-злиття)</span>
                   <span className={`px-1.5 py-0.5 rounded font-medium text-[9px] border ${getComplexityColor(complexity.entityResolution)}`}>
                     {getComplexityLabel(complexity.entityResolution)}
                   </span>
@@ -190,7 +190,7 @@ export default function GapAnalysisTab() {
               {/* Data Ontology mapping */}
               <div className="space-y-1">
                 <div className="flex justify-between text-[11px]">
-                  <span className="text-slate-400">Єдина онтологія даних</span>
+                  <span className="text-slate-300">Єдина онтологія даних</span>
                   <span className={`px-1.5 py-0.5 rounded font-medium text-[9px] border ${getComplexityColor(complexity.ontology)}`}>
                     {getComplexityLabel(complexity.ontology)}
                   </span>
@@ -207,9 +207,9 @@ export default function GapAnalysisTab() {
               </div>
 
               {/* Team Size */}
-              <div className="space-y-1 pt-2 border-t border-slate-800/60">
+              <div className="space-y-1 pt-2 border-t border-indigo-500/10/60">
                 <div className="flex justify-between text-[11px]">
-                  <span className="text-slate-400">Кількість розробників</span>
+                  <span className="text-slate-300">Кількість розробників</span>
                   <span className="text-indigo-400 font-bold font-mono">{teamSize} чол.</span>
                 </div>
                 <input
@@ -226,7 +226,7 @@ export default function GapAnalysisTab() {
               {/* Hourly Rate */}
               <div className="space-y-1">
                 <div className="flex justify-between text-[11px]">
-                  <span className="text-slate-400">Погодинна ставка розробника</span>
+                  <span className="text-slate-300">Погодинна ставка розробника</span>
                   <span className="text-emerald-400 font-bold font-mono">${developerRate}/год</span>
                 </div>
                 <input
@@ -243,7 +243,7 @@ export default function GapAnalysisTab() {
             </div>
 
             {/* DYNAMIC CALCULATIONS RESULT PANEL */}
-            <div className="bg-slate-950 rounded-xl p-4 border border-slate-800 space-y-3" id="estimator-results">
+            <div className="bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] rounded-xl p-4 border border-indigo-500/10 space-y-3" id="estimator-results">
               <h4 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest text-center">Результати моделювання</h4>
               
               <div className="grid grid-cols-2 gap-3 text-center">
@@ -285,12 +285,12 @@ export default function GapAnalysisTab() {
             {filteredGapItems.map(item => (
               <div
                 key={item.id}
-                className="bg-slate-900/30 border border-slate-800/80 rounded-xl p-5 space-y-4 hover:border-slate-700/60 transition-colors"
+                className="bg-slate-900/30 border border-indigo-500/10/80 rounded-xl p-5 space-y-4 hover:border-slate-700/60 transition-colors"
               >
                 {/* Card Title Header */}
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 bg-slate-950 rounded-lg border border-slate-850">
+                    <div className="p-2 bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] rounded-lg border border-slate-850">
                       {getCategoryIcon(item.category)}
                     </div>
                     <div>
@@ -308,7 +308,7 @@ export default function GapAnalysisTab() {
                 </div>
 
                 {/* Card Description */}
-                <p className="text-xs text-slate-400 leading-relaxed bg-slate-950/40 p-3 rounded-lg border border-slate-900/60">
+                <p className="text-xs text-slate-300 leading-relaxed bg-slate-950/40 p-3 rounded-lg border border-indigo-500/5/60">
                   {item.description}
                 </p>
 
@@ -319,7 +319,7 @@ export default function GapAnalysisTab() {
                     {item.actionItems.map((action, idx) => (
                       <div
                         key={idx}
-                        className="bg-slate-950/80 border border-slate-900 p-2.5 rounded-lg flex items-start gap-2.5"
+                        className="bg-slate-950/80 border border-indigo-500/5 p-2.5 rounded-lg flex items-start gap-2.5"
                       >
                         <span className="text-indigo-500 font-bold text-xs mt-0.5">[{idx + 1}]</span>
                         <p className="text-xs text-slate-300 leading-normal">{action}</p>

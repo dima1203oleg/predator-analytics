@@ -13,111 +13,33 @@ import VolumesTab from './components/VolumesTab';
 import AdvisorTab from './components/AdvisorTab';
 import OsintWorkbench from './components/OsintWorkbench';
 import DashboardView from './components/DashboardView';
-import { AuthStatus } from './components/AuthStatus';
 import InspectorPanel from './components/InspectorPanel';
 import LiveAnalyticalCenter from './components/LiveAnalyticalCenter';
-import { OodaRadar } from './components/OodaRadar';
-import { SovereignDashboard } from './components/SovereignDashboard';
-import { WarRoom } from './components/WarRoom';
 import AdminBackOffice from './components/AdminBackOffice';
 import MapsTab from './components/MapsTab';
+import { MediaForensicsTab } from './components/MediaForensicsTab';
 import { OSINT_ENTITIES, OsintEntity } from './osintData';
 import { SOLUTIONS } from './data';
-import { apiFetch } from './api';
 import { 
   Layers, ShieldCheck, Network, Wrench, Calendar, Bot, 
   FileText, CheckCircle, AlertTriangle, Info, BookOpen,
   Menu, X, Search, Bell, User, Terminal, Cpu, Database, 
-  Activity, Landmark, MessageSquare, Sparkles, Send, HelpCircle,
+  Activity, Camera, Landmark, MessageSquare, Sparkles, Send, HelpCircle,
   Maximize2, Minimize2, Settings, ShieldAlert, Compass,
-  Briefcase, Truck, Globe, TrendingUp, Users, Map, Mic, Zap, LogOut, Shield, BrainCircuit
+  Briefcase, Truck, Globe, TrendingUp, Users, Map, Mic
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { LiveChatBot } from './components/LiveChatBot';
-import { CopilotPanel } from './components/CopilotPanel';
-import { MediaForensicsTab } from './components/MediaForensicsTab';
-import { RestrictedFeatureOverlay } from './components/RestrictedFeatureOverlay';
-import { LoginScreen } from './components/LoginScreen';
-import { usePAEStream } from './hooks/usePAEStream';
-import './styles/cyber-theme.css';
-import { GenesisCanvas } from './components/canvas/GenesisCanvas';
-import { CommandPalette } from './components/CommandPalette';
-import { DataFlowInspector } from './components/ingestion/DataFlowInspector';
-import { AlertCenter } from './components/AlertCenter';
-import { WatchlistPanel } from './components/WatchlistPanel';
-import { OracleWorkspace } from './components/OracleWorkspace';
-import { ShieldCompliance } from './components/ShieldCompliance';
-import ACPFactoryPage from './pages/ACPFactoryPage';
-import ResearchEnginePage from './pages/ResearchEnginePage';
+import { AuthStatus } from './components/AuthStatus';
 
-type TabId = 'genesis-workspace' | 'live-analytical-center' | 'data-ingestion' | 'sovereign-dashboard' | 'admin-back-office' | 'dashboard' | 'osint' | 'maps' | 'warroom' | 'oracle' | 'shield' | 'catalog' | 'license' | 'architecture' | 'gap' | 'roadmap' | 'volumes' | 'advisor' | 'media-forensics' | 'acp-factory' | 'research-engine';
+type TabId = 'live-analytical-center' | 'admin-back-office' | 'dashboard' | 'osint' | 'maps' | 'catalog' | 'license' | 'architecture' | 'gap' | 'roadmap' | 'volumes' | 'advisor';
 
 export default function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(!!localStorage.getItem('predator_token'));
-  const [userRole, setUserRole] = useState<'admin' | 'predator' | 'predator-pro'>('predator-pro');
   const [ecosystem, setEcosystem] = useState<'user' | 'admin'>('user');
-
-  useEffect(() => {
-    const handleLogoutEvent = () => setIsAuthenticated(false);
-    window.addEventListener('predator:logout', handleLogoutEvent);
-    return () => window.removeEventListener('predator:logout', handleLogoutEvent);
-  }, []);
-
-  useEffect(() => {
-    if (userRole === 'admin') {
-      setEcosystem('admin');
-    } else {
-      setEcosystem('user');
-    }
-  }, [userRole]);
-
-  const [activeTab, setActiveTab] = useState<TabId>('genesis-workspace');
+  const [activeTab, setActiveTab] = useState<TabId>('live-analytical-center');
   const [selectedScenario, setSelectedScenario] = useState<string>('business');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isInspectorOpen, setIsInspectorOpen] = useState(true);
-  
-  // Genesis Canvas States
-  const [intentActive, setIntentActive] = useState(false);
-  const [genesisQuery, setGenesisQuery] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
-  const { data: paeData, sendIntent } = usePAEStream();
-  
-  // Watchlist State
-  const [isWatchlistOpen, setIsWatchlistOpen] = useState(false);
-  
-  // Genesis Canvas Global Input Listener
-  useEffect(() => {
-    if (activeTab !== 'genesis-workspace') return;
-    
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Ignore if typing in an existing input/textarea
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
-      
-      // If alphanumeric, start typing
-      if (e.key.length === 1 && /[a-zA-Z0-9А-Яа-яЄєІіЇїҐґ ]/.test(e.key)) {
-        if (!isTyping) {
-          setIsTyping(true);
-          setIntentActive(true);
-        }
-      }
-      
-      if (e.key === 'Escape') {
-        setIsTyping(false);
-        setIntentActive(false);
-        setGenesisQuery('');
-      }
-      
-      if (e.key === 'Enter' && isTyping && genesisQuery.trim().length > 0) {
-        console.log("Submitting Intent to PAE:", genesisQuery);
-        sendIntent(genesisQuery);
-        setIntentActive(false);
-        setTimeout(() => setIntentActive(true), 200);
-      }
-    };
-    
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activeTab, isTyping, genesisQuery, sendIntent]);
   
   // Interactive rendering and mobile adaptive states
   const [deviceMode, setDeviceMode] = useState<'desktop' | 'iphone'>('desktop');
@@ -130,7 +52,7 @@ export default function App() {
   const [isIphoneMuted, setIsIphoneMuted] = useState(false);
   const [iphoneVolume, setIphoneVolume] = useState(65);
   const [showVolumeHUD, setShowVolumeHUD] = useState(false);
-  const [dynamicIslandState, setDynamicIslandState] = useState<'normal' | 'expanded' | 'mute-alert' | 'unmute-alert' | 'voice-listening'>('normal');
+  const [dynamicIslandState, setDynamicIslandState] = useState<'normal' | 'expanded' | 'mute-alert' | 'unmute-alert'>('normal');
   const [volumeTimer, setVolumeTimer] = useState<any>(null);
   const [lockscreenDate, setLockscreenDate] = useState('Четвер, 16 липня');
 
@@ -215,17 +137,6 @@ export default function App() {
     details: 'Основний бекенд-сервіс на базі FastAPI. Забезпечує оркестрацію черг, інтеграцію ШІ-моделей vLLM та інтерфейс до баз даних Qdrant та Neo4j.'
   });
 
-  const handleSelectEntityFromWatchlist = (entityId: string) => {
-    // В реальній програмі тут буде запит на бекенд для отримання повних даних про сутність,
-    // але для демо використовуємо заглушку або шукаємо в локальних даних
-    const entity = OSINT_ENTITIES.find(e => e.id === entityId) || null;
-    if (entity) {
-      setSelectedEntity(entity);
-      setActiveTab('live-analytical-center');
-      setIsWatchlistOpen(false);
-    }
-  };
-
 
   // Floating AI Assistant state
   const [isAiChatOpen, setIsAiChatOpen] = useState(false);
@@ -244,14 +155,36 @@ export default function App() {
   const [voiceFeedback, setVoiceFeedback] = useState<string | null>(null);
   const [voiceError, setVoiceError] = useState<string | null>(null);
 
-  const mediaRecorderRef = React.useRef<MediaRecorder | null>(null);
-  const audioChunksRef = React.useRef<Blob[]>([]);
+  const recognitionRef = React.useRef<any>(null);
 
-  // Backend TTS Engine (Piper via FastAPI)
+  // Microsoft TTS Engine state (Web Speech Synthesis Integration)
   const [isTtsEnabled, setIsTtsEnabled] = useState(true);
+  const [selectedTtsVoice, setSelectedTtsVoice] = useState('Microsoft Pavel (UA)');
+  const [availableVoices, setAvailableVoices] = useState<any[]>([]);
 
-  const speakText = async (text: string) => {
+  // Initialize and load Speech Synthesis voices natively supporting Microsoft cloud-inspired voices
+  useEffect(() => {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      const loadVoices = () => {
+        const voices = window.speechSynthesis.getVoices();
+        setAvailableVoices(voices);
+      };
+      loadVoices();
+      if (window.speechSynthesis.onvoiceschanged !== undefined) {
+        window.speechSynthesis.onvoiceschanged = loadVoices;
+      }
+    }
+  }, []);
+
+  const speakText = (text: string) => {
     if (!isTtsEnabled) return;
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+
+    try {
+      window.speechSynthesis.cancel();
+    } catch (e) {
+      console.warn("SpeechSynthesis cancel notice:", e);
+    }
 
     // Clean text: remove code blocks, formatting, long logs
     let cleanText = text
@@ -264,32 +197,45 @@ export default function App() {
 
     if (!cleanText) return;
 
-    try {
-      const response = await apiFetch('/api/v1/voice/synthesize', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ text: cleanText })
-      });
+    // Split into readable sentences to avoid browser length bottlenecks
+    const sentences = cleanText.match(/[^.!?]+[.!?]*/g) || [cleanText];
+    
+    sentences.forEach((sentence) => {
+      const sTrimmed = sentence.trim();
+      if (!sTrimmed) return;
 
-      if (!response.ok) {
-        throw new Error(`TTS API Error: ${response.status}`);
+      const utterance = new SpeechSynthesisUtterance(sTrimmed);
+      utterance.lang = 'uk-UA';
+      utterance.rate = 0.8; // slower, masked pace
+      utterance.pitch = 0.1; // deeply lowered pitch for masked voice effect
+
+      // Match selected voice or any Ukrainian Microsoft cloud voice
+      const voices = window.speechSynthesis.getVoices();
+      let matchedVoice = null;
+
+      if (selectedTtsVoice.includes('Irina')) {
+        matchedVoice = voices.find(v => v.lang.startsWith('uk') && v.name.includes('Irina')) ||
+                       voices.find(v => v.lang.startsWith('uk') && v.name.includes('Microsoft'));
+      } else if (selectedTtsVoice.includes('Pavel')) {
+        matchedVoice = voices.find(v => v.lang.startsWith('uk') && v.name.includes('Pavel')) ||
+                       voices.find(v => v.lang.startsWith('uk') && v.name.includes('Microsoft'));
+      } else {
+        matchedVoice = voices.find(v => v.lang.startsWith('uk') && v.name.includes('Microsoft'));
       }
 
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-      const audio = new Audio(url);
-      
-      // Auto-cleanup URL object after playing
-      audio.onended = () => {
-        URL.revokeObjectURL(url);
-      };
-      
-      audio.play();
-    } catch (e) {
-      console.warn("Failed to synthesize speech via backend:", e);
-    }
+      if (!matchedVoice) {
+        // Fallback to general Ukrainian engines (Microsoft, Google, iOS native)
+        matchedVoice = voices.find(v => v.lang.startsWith('uk')) ||
+                       voices.find(v => v.lang.startsWith('uk-UA')) ||
+                       voices.find(v => v.name.toLowerCase().includes('ukrainian'));
+      }
+
+      if (matchedVoice) {
+        utterance.voice = matchedVoice;
+      }
+
+      window.speechSynthesis.speak(utterance);
+    });
   };
 
   const handleVoiceCommand = (transcript: string) => {
@@ -469,81 +415,70 @@ export default function App() {
     }, 800);
   };
 
-  const startVoiceControl = async () => {
-    if (isVoiceListening) {
-      if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
-        mediaRecorderRef.current.stop();
-      }
+  const startVoiceControl = () => {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      setVoiceError("Web Speech API не підтримується у цьому браузері. Будь ласка, використовуйте Google Chrome.");
+      setTimeout(() => setVoiceError(null), 5000);
       return;
     }
 
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
-      mediaRecorderRef.current = mediaRecorder;
-      audioChunksRef.current = [];
+    if (isVoiceListening) {
+      try {
+        recognitionRef.current?.stop();
+      } catch (e) {}
+      setIsVoiceListening(false);
+      setDynamicIslandState('normal');
+      return;
+    }
 
-      mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          audioChunksRef.current.push(event.data);
-        }
-      };
+    setIsVoiceListening(true);
+    setVoiceError(null);
+    setVoiceFeedback("Активація мікрофона...");
+    setDynamicIslandState('voice-listening');
 
-      mediaRecorder.onstart = () => {
-        setIsVoiceListening(true);
-        setVoiceError(null);
-        setVoiceFeedback("Слухаю... Назвіть команду");
-        setDynamicIslandState('voice-listening');
-      };
+    const rec = new SpeechRecognition();
+    rec.continuous = false;
+    rec.interimResults = false;
+    rec.lang = 'uk-UA';
 
-      mediaRecorder.onstop = async () => {
-        setIsVoiceListening(false);
-        setVoiceFeedback("Аналіз аудіо...");
-        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
-        audioChunksRef.current = [];
-        
-        // Зупинка всіх треків мікрофона
-        stream.getTracks().forEach(track => track.stop());
+    rec.onstart = () => {
+      setVoiceFeedback("Слухаю... Назвіть команду");
+    };
 
-        try {
-          const formData = new FormData();
-          formData.append('file', audioBlob, 'voice.webm');
-          
-          const response = await apiFetch('/api/v1/voice/transcribe', {
-            method: 'POST',
-            body: formData,
-          });
-          
-          if (!response.ok) {
-            throw new Error(`STT API Error: ${response.status}`);
-          }
-          
-          const data = await response.json();
-          const transcript = data.text;
-          
-          if (transcript) {
-            setVoiceTranscript(transcript);
-            handleVoiceCommand(transcript);
-          } else {
-            setVoiceError("Голос не виявлено.");
-            setTimeout(() => setVoiceError(null), 5000);
-          }
-          
-          setTimeout(() => {
-            setDynamicIslandState(prev => prev === 'voice-listening' ? 'normal' : prev);
-          }, 3000);
-        } catch (err: any) {
-          setVoiceError(`Помилка розпізнавання: ${err.message}`);
-          setDynamicIslandState('normal');
-          setTimeout(() => setVoiceError(null), 15000);
-        }
-      };
-
-      mediaRecorder.start();
-    } catch (err: any) {
-      console.error("Microphone access denied or error:", err);
-      setVoiceError("Доступ до мікрофона заблоковано або не підтримується.");
+    rec.onerror = (event: any) => {
+      console.warn("Speech recognition notice (non-fatal):", event);
+      if (event.error === 'no-speech') {
+        setVoiceError("Голос не виявлено. Спробуйте ще раз або виберіть симуляцію нижче:");
+      } else if (event.error === 'not-allowed') {
+        setVoiceError("Доступ заблоковано (запуск у пісочниці/фреймі). Виберіть симуляцію:");
+      } else {
+        setVoiceError(`Помилка розпізнавання: ${event.error}. Виберіть симуляцію:`);
+      }
+      setIsVoiceListening(false);
+      setDynamicIslandState('normal');
       setTimeout(() => setVoiceError(null), 15000);
+    };
+
+    rec.onend = () => {
+      setIsVoiceListening(false);
+      setTimeout(() => {
+        setDynamicIslandState(prev => prev === 'voice-listening' ? 'normal' : prev);
+      }, 3000);
+    };
+
+    rec.onresult = (event: any) => {
+      const resultIndex = event.resultIndex;
+      const transcript = event.results[resultIndex][0].transcript;
+      setVoiceTranscript(transcript);
+      handleVoiceCommand(transcript);
+    };
+
+    recognitionRef.current = rec;
+    try {
+      rec.start();
+    } catch (err) {
+      console.warn("Could not start speech recognition directly (non-fatal):", err);
       setIsVoiceListening(false);
       setDynamicIslandState('normal');
     }
@@ -597,20 +532,13 @@ export default function App() {
     } else {
       const allNavs = [
         { id: 'live-analytical-center', label: '🛰️ Живе ШІ-Ядро (Спецпроект PREDATOR)', type: 'nav' },
-        { id: 'warroom', label: '🛡️ Воєнна Кімната (War Room)', type: 'nav' },
-        { id: 'oracle', label: '🧠 PREDATOR ORACLE (AI NLI)', type: 'nav' },
-        { id: 'shield', label: '🛡️ PREDATOR SHIELD', type: 'nav' },
         { id: 'dashboard', label: '📊 Інтерактивний Дашборд', type: 'nav' },
-        { id: 'media-forensics', label: '🎥 Media Forensics', type: 'nav' },
         { id: 'osint', label: '🔍 Робочий стіл OSINT пошуку', type: 'nav' },
         { id: 'architecture', label: '🕸️ Граф архітектури та залежностей', type: 'nav' },
         { id: 'gap', label: '🛡️ Аналіз прогалин та ризиків', type: 'nav' },
         { id: 'roadmap', label: '📅 Дорожня карта впровадження', type: 'nav' },
         { id: 'volumes', label: '📚 Томи ТЗ (Митні регламенти)', type: 'nav' },
         { id: 'advisor', label: '🤖 ШІ-Архітектор', type: 'nav' },
-        { id: 'data-ingestion', label: '📥 Центр Інгестії Даних', type: 'nav' },
-        { id: 'acp-factory', label: '⚡ ACP Factory', type: 'nav' },
-        { id: 'research-engine', label: '🧠 AI Research Engine', type: 'nav' },
       ];
 
       const allActions = [
@@ -730,14 +658,14 @@ export default function App() {
 
   const renderMobileMainContent = () => {
     return (
-      <div className="h-full flex flex-col relative bg-[#020611] text-slate-100 font-sans" id="mobile-viewport-root">
+      <div className="h-full flex flex-col relative bg-[#020611] text-slate-100 font-sans bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]" style={{ backgroundBlendMode: 'color-dodge' }} id="mobile-viewport-root">
         
         {/* Compact iOS / Mobile App Header */}
-        <header className="border-b border-slate-900 bg-[#050c18]/90 backdrop-blur-md px-4 py-3 flex items-center justify-between gap-2 sticky top-0 z-40">
+        <header className="border-b border-indigo-500/5 bg-[#050c18]/90 backdrop-blur-md px-4 py-3 flex items-center justify-between gap-2 sticky top-0 z-40">
           <div className="flex items-center gap-2.5">
             <button 
               onClick={() => setMobileMenuOpen(true)}
-              className="p-1.5 hover:bg-slate-900/60 rounded-lg text-slate-400 hover:text-slate-200 transition-colors"
+              className="p-1.5 hover:bg-slate-900/60 rounded-lg text-slate-300 hover:text-slate-200 transition-colors"
             >
               <Menu className="w-5 h-5" />
             </button>
@@ -760,7 +688,7 @@ export default function App() {
             {!isRealMobile && (
               <button
                 onClick={() => setDeviceMode('desktop')}
-                className="px-2 py-1 bg-slate-900 border border-slate-800 rounded-lg text-[8px] font-bold font-mono text-indigo-400 hover:bg-slate-850 transition-all"
+                className="px-2 py-1 bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] border border-indigo-500/10 rounded-lg text-[8px] font-bold font-mono text-indigo-400 hover:bg-slate-850 transition-all"
                 title="Режим Десктоп"
               >
                 ДЕСКТОП 💻
@@ -801,48 +729,25 @@ export default function App() {
                   }}
                   selectedScenario={selectedScenario}
                   onSelectScenario={setSelectedScenario}
-                  userRole={userRole}
                 />
-              )}
-              {activeTab === 'warroom' && (
-                <WarRoom />
-              )}
-              {activeTab === 'oracle' && (
-                <OracleWorkspace />
-              )}
-              {activeTab === 'shield' && (
-                <ShieldCompliance />
               )}
               {activeTab === 'admin-back-office' && (
                 <AdminBackOffice />
               )}
-              {activeTab === 'sovereign-dashboard' && (
-                <SovereignDashboard />
-              )}
               {activeTab === 'dashboard' && (
                 <DashboardView 
-                  onSelectTab={(tabId) => setActiveTab(tabId as TabId)}
-                  onSelectEntity={(entId) => {
-                    const found = OSINT_ENTITIES.find(e => e.id === entId);
-                    if (found) {
-                      setSelectedEntity(found);
-                      setSelectedTool(null);
-                      setSelectedNode(null);
+                  onSelectTab={(tabId) => {
+                    if (tabId === 'osint') {
+                      setActiveTab('live-analytical-center');
+                    } else {
+                      setActiveTab(tabId as TabId);
                     }
                   }}
+                  onSelectEntity={(entId) => {
+                    selectEntityById(entId);
+                    setActiveTab('live-analytical-center');
+                  }}
                 />
-              )}
-              {activeTab === 'data-ingestion' && (
-                <div className="h-full overflow-y-auto">
-                  <DataFlowInspector jobId="idle" />
-                </div>
-              )}
-              {activeTab === 'media-forensics' && (
-                userRole === 'predator' ? (
-                  <RestrictedFeatureOverlay onUpgrade={() => setUserRole('predator-pro')} tabName="Media Forensics" />
-                ) : (
-                  <MediaForensicsTab />
-                )
               )}
               {activeTab === 'osint' && (
                 <OsintWorkbench 
@@ -853,46 +758,16 @@ export default function App() {
                     setSelectedNode(null);
                     setIsInspectorOpen(true);
                   }}
-                  userRole={userRole}
                 />
               )}
               {activeTab === 'catalog' && <CatalogTab />}
               {activeTab === 'license' && <LicenseTab />}
-              {activeTab === 'architecture' && (
-                userRole === 'predator' ? (
-                  <RestrictedFeatureOverlay onUpgrade={() => setUserRole('predator-pro')} tabName="Граф архітектури" />
-                ) : (
-                  <ArchitectureTab />
-                )
-              )}
-              {activeTab === 'gap' && (
-                userRole === 'predator' ? (
-                  <RestrictedFeatureOverlay onUpgrade={() => setUserRole('predator-pro')} tabName="Аналіз прогалин" />
-                ) : (
-                  <GapAnalysisTab />
-                )
-              )}
-              {activeTab === 'roadmap' && (
-                userRole === 'predator' ? (
-                  <RestrictedFeatureOverlay onUpgrade={() => setUserRole('predator-pro')} tabName="Дорожня карта" />
-                ) : (
-                  <RoadmapTab />
-                )
-              )}
-              {activeTab === 'volumes' && (
-                userRole === 'predator' ? (
-                  <RestrictedFeatureOverlay onUpgrade={() => setUserRole('predator-pro')} tabName="Томи ТЗ" />
-                ) : (
-                  <VolumesTab />
-                )
-              )}
-              {activeTab === 'advisor' && (
-                userRole === 'predator' ? (
-                  <RestrictedFeatureOverlay onUpgrade={() => setUserRole('predator-pro')} tabName="ШІ-Архітектор" />
-                ) : (
-                  <AdvisorTab />
-                )
-              )}
+              {activeTab === 'architecture' && <ArchitectureTab />}
+              {activeTab === 'gap' && <GapAnalysisTab />}
+              {activeTab === 'roadmap' && <RoadmapTab />}
+              {activeTab === 'volumes' && <VolumesTab />}
+              {activeTab === 'advisor' && <AdvisorTab />}
+                {activeTab === 'media-forensics' && <MediaForensicsTab />}
             </motion.div>
           </AnimatePresence>
         </main>
@@ -916,12 +791,12 @@ export default function App() {
                 animate={{ x: 0 }}
                 exit={{ x: '-100%' }}
                 transition={{ type: 'spring', damping: 26, stiffness: 220 }}
-                className="absolute left-0 top-0 bottom-0 w-[280px] bg-[#050b14] border-r border-slate-900 z-50 flex flex-col justify-between shadow-2xl"
+                className="absolute left-0 top-0 bottom-0 w-[280px] bg-[#050b14] border-r border-indigo-500/5 z-50 flex flex-col justify-between shadow-2xl"
               >
                 <div className="p-4 space-y-5 overflow-y-auto flex-1">
                   
                   {/* Header */}
-                  <div className="flex items-center justify-between border-b border-slate-900 pb-3.5">
+                  <div className="flex items-center justify-between border-b border-indigo-500/5 pb-3.5">
                     <div className="flex items-center gap-2.5">
                       <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center font-mono font-black text-white shadow">P</div>
                       <div>
@@ -931,7 +806,7 @@ export default function App() {
                     </div>
                     <button
                       onClick={() => setMobileMenuOpen(false)}
-                      className="p-1.5 hover:bg-slate-900 rounded-lg text-slate-400 hover:text-slate-200 transition-colors"
+                      className="p-1.5 hover:bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] rounded-lg text-slate-300 hover:text-slate-200 transition-colors"
                     >
                       <X className="w-4 h-4" />
                     </button>
@@ -940,38 +815,28 @@ export default function App() {
                   {/* Ecosystem Selector */}
                   <div className="space-y-1.5">
                     <span className="text-[8px] text-slate-500 font-mono font-bold uppercase tracking-widest block px-1">
-                      РОЛЬ ТА РІВЕНЬ ДОСТУПУ
+                      ПРОСТІР УПРАВЛІННЯ
                     </span>
-                    <div className="grid grid-cols-3 bg-slate-900/60 p-0.5 rounded-xl border border-slate-850 gap-0.5">
+                    <div className="grid grid-cols-2 bg-slate-900/60 p-1 rounded-xl border border-slate-850 gap-1">
                       <button
                         onClick={() => {
-                          setUserRole('predator');
+                          setEcosystem('user');
                           setActiveTab('live-analytical-center');
                           setMobileMenuOpen(false);
                         }}
-                        className={`py-2 rounded-lg text-[7px] font-black font-mono uppercase tracking-tight transition-all text-center ${userRole === 'predator' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400'}`}
+                        className={`py-2 rounded-lg text-[8px] font-black font-mono uppercase tracking-wider transition-all text-center ${ecosystem === 'user' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-300'}`}
                       >
-                        🦅 PREDATOR
+                        🛰️ USER SPACE
                       </button>
                       <button
                         onClick={() => {
-                          setUserRole('predator-pro');
-                          setActiveTab('live-analytical-center');
-                          setMobileMenuOpen(false);
-                        }}
-                        className={`py-2 rounded-lg text-[7px] font-black font-mono uppercase tracking-tight transition-all text-center ${userRole === 'predator-pro' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400'}`}
-                      >
-                        ⚡ PRO
-                      </button>
-                      <button
-                        onClick={() => {
-                          setUserRole('admin');
+                          setEcosystem('admin');
                           setActiveTab('admin-back-office');
                           setMobileMenuOpen(false);
                         }}
-                        className={`py-2 rounded-lg text-[7px] font-black font-mono uppercase tracking-tight transition-all text-center ${userRole === 'admin' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400'}`}
+                        className={`py-2 rounded-lg text-[8px] font-black font-mono uppercase tracking-wider transition-all text-center ${ecosystem === 'admin' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-300'}`}
                       >
-                        ⚙️ ADMIN
+                        ⚙️ ADMIN SPACE
                       </button>
                     </div>
                   </div>
@@ -1005,7 +870,7 @@ export default function App() {
                                 setSelectedScenario(scen.id);
                                 setMobileMenuOpen(false);
                               }}
-                              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[10px] font-semibold transition-all text-left border ${isActive ? 'bg-indigo-600/10 text-indigo-400 border-indigo-500/20 shadow-sm' : 'text-slate-400 border-transparent hover:bg-slate-900/30'}`}
+                              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[10px] font-semibold transition-all text-left border ${isActive ? 'bg-indigo-600/20 text-indigo-400 border-indigo-500/30 shadow-sm' : 'text-slate-300 border-transparent hover:bg-slate-900/30'}`}
                             >
                               <Icon className="w-3.5 h-3.5" />
                               <span>{scen.label}</span>
@@ -1030,7 +895,7 @@ export default function App() {
                                 setActiveTab(tab.id as TabId);
                                 setMobileMenuOpen(false);
                               }}
-                              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[10px] font-semibold transition-all text-left border ${isActive ? 'bg-indigo-600/10 text-indigo-400 border-indigo-500/20 shadow-sm' : 'text-slate-400 border-transparent hover:bg-slate-900/30'}`}
+                              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[10px] font-semibold transition-all text-left border ${isActive ? 'bg-indigo-600/20 text-indigo-400 border-indigo-500/30 shadow-sm' : 'text-slate-300 border-transparent hover:bg-slate-900/30'}`}
                             >
                               <Icon className="w-3.5 h-3.5" />
                               <span>{tab.label}</span>
@@ -1042,21 +907,21 @@ export default function App() {
                   </div>
 
                   {/* Mobile Stats alert */}
-                  <div className="bg-[#020612] border border-slate-900 p-3 rounded-xl space-y-1.5 text-[9px] font-mono">
+                  <div className="bg-[#020612] border border-indigo-500/5 p-3 rounded-xl space-y-1.5 text-[9px] font-mono">
                     <span className="text-[7px] text-slate-500 font-bold uppercase tracking-wider block">СТАТУС З'ЄДНАННЯ</span>
                     <div className="flex justify-between">
-                      <span className="text-slate-400">Пінґ Сервера:</span>
+                      <span className="text-slate-300">Пінґ Сервера:</span>
                       <span className="text-emerald-400 font-bold">14ms</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-400">Канали зв'язку:</span>
+                      <span className="text-slate-300">Канали зв'язку:</span>
                       <span className="text-indigo-400 font-bold">Зашифровано</span>
                     </div>
                   </div>
 
                 </div>
 
-                <div className="p-3.5 border-t border-slate-900 text-center text-[8px] text-slate-600 font-mono tracking-widest uppercase">
+                <div className="p-3.5 border-t border-indigo-500/5 text-center text-[8px] text-slate-600 font-mono tracking-widest uppercase">
                   Military Crypto v3.5
                 </div>
               </motion.aside>
@@ -1083,11 +948,11 @@ export default function App() {
                 animate={{ y: 0 }}
                 exit={{ y: '100%' }}
                 transition={{ type: 'spring', damping: 25, stiffness: 220 }}
-                className="absolute left-0 right-0 bottom-0 h-[72%] bg-[#050b14] border-t border-slate-800 rounded-t-[32px] z-50 flex flex-col shadow-2xl overflow-hidden select-text"
+                className="absolute left-0 right-0 bottom-0 h-[72%] bg-[#050b14] border-t border-indigo-500/10 rounded-t-[32px] z-50 flex flex-col shadow-2xl overflow-hidden select-text"
               >
                 {/* Horizontal Drag handle indicator bar */}
                 <div 
-                  className="py-3 flex justify-center items-center cursor-pointer border-b border-slate-900/60 shrink-0 bg-[#050b14]"
+                  className="py-3 flex justify-center items-center cursor-pointer border-b border-indigo-500/5/60 shrink-0 bg-[#050b14]"
                   onClick={() => setIsInspectorOpen(false)}
                 >
                   <div className="w-12 h-1 bg-slate-700 hover:bg-slate-500 rounded-full transition-colors" />
@@ -1125,10 +990,10 @@ export default function App() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 30 }}
-              className="absolute bottom-18 right-4 left-4 h-[300px] bg-[#050c18] border border-slate-900 rounded-2xl overflow-hidden shadow-2xl flex flex-col z-40 select-text"
+              className="absolute bottom-18 right-4 left-4 h-[300px] bg-[#050c18] border border-indigo-500/5 rounded-2xl overflow-hidden shadow-2xl flex flex-col z-40 select-text"
             >
               {/* Header */}
-              <div className="p-2.5 bg-indigo-950/20 border-b border-slate-900 flex items-center justify-between">
+              <div className="p-2.5 bg-indigo-950/20 border-b border-indigo-500/5 flex items-center justify-between">
                 <div className="flex items-center gap-1.5">
                   <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
                   <span className="text-[9px] font-mono font-bold text-white uppercase tracking-wider">JARVIS ШІ</span>
@@ -1143,7 +1008,7 @@ export default function App() {
                 {chatHistory.map((msg, i) => (
                   <div 
                     key={i} 
-                    className={`p-2 rounded-xl leading-relaxed max-w-[90%] ${msg.sender === 'user' ? 'bg-indigo-600 text-white ml-auto' : 'bg-slate-900 border border-slate-850 text-slate-300'}`}
+                    className={`p-2 rounded-xl leading-relaxed max-w-[90%] ${msg.sender === 'user' ? 'bg-indigo-600 text-white ml-auto' : 'bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] border border-slate-850 text-slate-300'}`}
                   >
                     {msg.text}
                   </div>
@@ -1151,7 +1016,7 @@ export default function App() {
               </div>
 
               {/* Chat inputs */}
-              <div className="p-1.5 border-t border-slate-900 bg-slate-950 flex items-center gap-1">
+              <div className="p-1.5 border-t border-indigo-500/5 bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] flex items-center gap-1">
                 <input
                   type="text"
                   placeholder="Запитайте ШІ про санкції..."
@@ -1160,11 +1025,11 @@ export default function App() {
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') handleSendMessage();
                   }}
-                  className="flex-1 bg-slate-900 border border-slate-850 rounded-md px-2 py-1.5 text-[11px] focus:outline-none focus:border-indigo-500/40"
+                  className="flex-1 bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] border border-slate-850 rounded-md px-2 py-1.5 text-[11px] focus:outline-none focus:border-indigo-500/40"
                 />
                 <button
                   onClick={startVoiceControl}
-                  className={`p-1.5 rounded-md transition-colors flex items-center justify-center ${isVoiceListening ? 'bg-red-500/20 text-red-400 border border-red-500/20 animate-pulse' : 'bg-slate-900 border border-slate-850 text-slate-400 hover:text-indigo-400'}`}
+                  className={`p-1.5 rounded-md transition-colors flex items-center justify-center ${isVoiceListening ? 'bg-red-500/20 text-red-400 border border-red-500/20 animate-pulse' : 'bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] border border-slate-850 text-slate-300 hover:text-indigo-400'}`}
                   title="Голосовий ввід"
                 >
                   <Mic className="w-3.5 h-3.5" />
@@ -1178,7 +1043,7 @@ export default function App() {
         </AnimatePresence>
 
         {/* Bottom iOS Navigation / Tab Bar */}
-        <nav className="border-t border-slate-900 bg-slate-950/95 backdrop-blur-md px-2 py-1.5 flex items-center justify-around shrink-0 relative z-30 pb-5">
+        <nav className="border-t border-indigo-500/5 bg-slate-950/95 backdrop-blur-md px-2 py-1.5 flex items-center justify-around shrink-0 relative z-30 pb-5">
           {[
             { id: 'live-analytical-center', label: 'ШІ-Ядро', icon: Compass },
             { id: 'dashboard', label: 'Дашборд', icon: Layers },
@@ -1238,7 +1103,7 @@ export default function App() {
           </p>
           <button
             onClick={() => setDeviceMode('desktop')}
-            className="mt-2 px-3.5 py-1.5 bg-slate-900 border border-slate-800 hover:bg-slate-850 text-indigo-400 text-[10px] font-bold font-mono tracking-wider rounded-xl transition-all cursor-pointer shadow flex items-center gap-1.5"
+            className="mt-2 px-3.5 py-1.5 bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] border border-indigo-500/10 hover:bg-slate-850 text-indigo-400 text-[10px] font-bold font-mono tracking-wider rounded-xl transition-all cursor-pointer shadow flex items-center gap-1.5"
           >
             💻 ПОВЕРНУТИСЬ НА ДЕСКТОП
           </button>
@@ -1279,14 +1144,14 @@ export default function App() {
                 transition={{ type: 'spring', stiffness: 300, damping: 25 }}
                 className="absolute left-4 top-[220px] w-6 h-32 bg-black/95 rounded-xl z-50 border border-slate-850/80 p-1 flex flex-col items-center justify-end overflow-hidden shadow-2xl"
               >
-                <div className="flex-1 w-full bg-slate-900 rounded-lg overflow-hidden flex flex-col justify-end relative">
+                <div className="flex-1 w-full bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] rounded-lg overflow-hidden flex flex-col justify-end relative">
                   <motion.div 
                     className="w-full bg-indigo-500"
                     animate={{ height: `${iphoneVolume}%` }}
                     transition={{ duration: 0.1 }}
                   />
                 </div>
-                <span className="text-[8px] text-slate-400 font-mono mt-1 font-bold">
+                <span className="text-[8px] text-slate-300 font-mono mt-1 font-bold">
                   {iphoneVolume}%
                 </span>
               </motion.div>
@@ -1300,7 +1165,7 @@ export default function App() {
             <motion.div 
               layout
               onClick={handleDynamicIslandClick}
-              className="absolute top-3 left-1/2 -translate-x-1/2 bg-black rounded-[20px] z-50 flex items-center justify-between pointer-events-auto border border-slate-900/80 shadow-2xl cursor-pointer select-none overflow-hidden"
+              className="absolute top-3 left-1/2 -translate-x-1/2 bg-black rounded-[20px] z-50 flex items-center justify-between pointer-events-auto border border-indigo-500/5/80 shadow-2xl cursor-pointer select-none overflow-hidden"
               animate={{
                 width: dynamicIslandState === 'expanded' ? 320 : dynamicIslandState === 'voice-listening' ? 240 : dynamicIslandState === 'mute-alert' || dynamicIslandState === 'unmute-alert' ? 150 : 112,
                 height: dynamicIslandState === 'expanded' ? 120 : dynamicIslandState === 'voice-listening' ? 36 : 26,
@@ -1316,7 +1181,7 @@ export default function App() {
                     <div className="w-1 h-1 bg-indigo-400 rounded-full animate-ping"></div>
                   </div>
                   <span className="text-[7px] text-indigo-400 font-mono font-black tracking-widest uppercase animate-pulse shrink-0">PREDATOR</span>
-                  <div className="w-2 h-2 bg-slate-900 rounded-full flex items-center justify-center shrink-0">
+                  <div className="w-2 h-2 bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] rounded-full flex items-center justify-center shrink-0">
                     <div className="w-1 h-1 bg-[#020617] rounded-full"></div>
                   </div>
                 </>
@@ -1338,7 +1203,7 @@ export default function App() {
                     <span className="w-0.5 h-3 bg-indigo-400 animate-pulse rounded delay-200"></span>
                     <span className="w-0.5 h-1 bg-indigo-400 animate-pulse rounded delay-300"></span>
                   </div>
-                  <span className="text-[7px] text-slate-400 truncate max-w-[110px] shrink-0 font-sans italic">
+                  <span className="text-[7px] text-slate-300 truncate max-w-[110px] shrink-0 font-sans italic">
                     {voiceFeedback ? voiceFeedback.replace('Почуто: ', '').replace('Об\'єкт: ', '') : "Слухаю..."}
                   </span>
                 </div>
@@ -1372,7 +1237,7 @@ export default function App() {
                       <div className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
                       <span className="text-[9px] font-mono font-black uppercase text-indigo-400 tracking-wider">PREDATOR INTEL ENGINE</span>
                     </div>
-                    <span className="text-[8px] bg-indigo-500/10 border border-indigo-500/20 px-1.5 py-0.5 rounded text-white font-mono">
+                    <span className="text-[8px] bg-indigo-500/10 border border-indigo-500/30 px-1.5 py-0.5 rounded text-white font-mono">
                       v2.5
                     </span>
                   </div>
@@ -1393,7 +1258,7 @@ export default function App() {
                   </div>
 
                   <div className="flex items-center justify-between pt-1">
-                    <span className="text-[8px] text-slate-400 font-mono flex items-center gap-1">
+                    <span className="text-[8px] text-slate-300 font-mono flex items-center gap-1">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                       Зв'язок захищено (СБУ-VIP)
                     </span>
@@ -1419,7 +1284,7 @@ export default function App() {
                   initial={{ top: -10, scale: 0.8, opacity: 0 }}
                   animate={{ top: 12, scale: 1, opacity: 1 }}
                   exit={{ top: -10, scale: 0.8, opacity: 0 }}
-                  className="absolute left-1/2 -translate-x-1/2 w-72 bg-black/95 text-white py-2 px-3.5 rounded-full z-50 border border-indigo-500/20 flex items-center justify-between text-[8px] font-mono shadow-2xl pointer-events-auto"
+                  className="absolute left-1/2 -translate-x-1/2 w-72 bg-black/95 text-white py-2 px-3.5 rounded-full z-50 border border-indigo-500/30 flex items-center justify-between text-[8px] font-mono shadow-2xl pointer-events-auto"
                 >
                   <div className="flex items-center gap-1.5">
                     <Sparkles className="w-3 h-3 text-indigo-400 animate-spin" />
@@ -1437,7 +1302,7 @@ export default function App() {
               
               {/* Icons */}
               <div className="flex items-center gap-1.5 text-[9px]">
-                <span className="text-[8px] font-bold text-slate-400">5G</span>
+                <span className="text-[8px] font-bold text-slate-300">5G</span>
                 {/* Strength bars */}
                 <div className="flex gap-[1px] items-end h-2">
                   <div className="w-[1px] h-[3px] bg-slate-400 rounded-full" />
@@ -1448,7 +1313,7 @@ export default function App() {
                 <span>📶</span>
                 {/* Battery */}
                 <div className="flex items-center gap-0.5 border border-slate-500 rounded px-[1.5px] py-[0.5px]">
-                  <span className="text-[7px] scale-[0.8] leading-none text-slate-400 font-medium">98%</span>
+                  <span className="text-[7px] scale-[0.8] leading-none text-slate-300 font-medium">98%</span>
                   <div className="w-2.5 h-1 bg-emerald-500 rounded-sm" />
                 </div>
               </div>
@@ -1471,7 +1336,7 @@ export default function App() {
                     <span className="text-[10px] text-indigo-400 font-mono font-bold tracking-[0.25em] uppercase">
                       🔒 PREDATOR TACTICAL OS
                     </span>
-                    <h3 className="text-[11px] text-slate-400 font-medium font-sans">
+                    <h3 className="text-[11px] text-slate-300 font-medium font-sans">
                       {lockscreenDate}
                     </h3>
                     <h1 className="text-6xl font-light tracking-tighter text-white font-sans mt-2">
@@ -1536,17 +1401,16 @@ export default function App() {
 
   const renderDesktopLayout = () => {
     return (
-      <>
       <div className="min-h-screen bg-transparent text-slate-100 flex flex-col font-sans selection:bg-indigo-500/30 selection:text-indigo-200" id="predator-hub-app">
         
         {/* 1. STICKY HEADER (Section 6) */}
-        <header className="glass-nav sticky top-0 z-40 px-5 py-3.5 flex items-center justify-between gap-4">
+        <header className="border-b border-indigo-500/5 bg-slate-950/80 backdrop-blur-md sticky top-0 z-40 px-5 py-3.5 flex items-center justify-between gap-4">
           
           {/* Left: Brand logo & name */}
           <div className="flex items-center gap-3">
             <button 
               onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              className="p-1.5 hover:bg-slate-900 rounded-lg text-slate-400 hover:text-slate-200 transition-colors cursor-pointer"
+              className="p-1.5 hover:bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] rounded-lg text-slate-300 hover:text-slate-200 transition-colors cursor-pointer"
               title={sidebarCollapsed ? "Розгорнути меню" : "Згорнути меню"}
             >
               <Menu className="w-5 h-5" />
@@ -1556,7 +1420,7 @@ export default function App() {
               onClick={() => setActiveTab('dashboard')} 
               className="flex items-center gap-2.5 cursor-pointer"
             >
-              <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center font-mono font-black text-lg tracking-wider text-white shadow-lg shadow-indigo-500/10 border border-indigo-500/20" id="header-logo">
+              <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center font-mono font-black text-lg tracking-wider text-white shadow-lg shadow-indigo-500/10 border border-indigo-500/30" id="header-logo">
                 P
               </div>
               <div>
@@ -1581,14 +1445,14 @@ export default function App() {
               id="spotlight-header-trigger"
             >
               <Search className="w-4 h-4 text-slate-500 group-hover:text-indigo-400 transition-colors" />
-              <span className="text-slate-400 text-xs flex-1 text-left">Шукати фірму, особу чи гаманець...</span>
-              <span className="text-[9px] bg-slate-950 border border-slate-800 text-slate-400 px-1.5 py-0.5 rounded font-mono font-bold tracking-wider">
+              <span className="text-slate-300 text-xs flex-1 text-left">Шукати фірму, особу чи гаманець...</span>
+              <span className="text-[9px] bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] border border-indigo-500/10 text-slate-300 px-1.5 py-0.5 rounded font-mono font-bold tracking-wider">
                 Ctrl+K
               </span>
             </div>
             <button
               onClick={startVoiceControl}
-              className={`p-2 rounded-xl border transition-all cursor-pointer flex items-center justify-center ${isVoiceListening ? 'bg-red-500/20 text-red-400 border-red-500/40 animate-pulse' : 'bg-slate-900/50 text-slate-400 border-slate-850 hover:border-indigo-500/30 hover:text-indigo-400'}`}
+              className={`p-2 rounded-xl border transition-all cursor-pointer flex items-center justify-center ${isVoiceListening ? 'bg-red-500/20 text-red-400 border-red-500/40 animate-pulse' : 'bg-slate-900/50 text-slate-300 border-slate-850 hover:border-indigo-500/30 hover:text-indigo-400'}`}
               title="Голосовий пошук та команди (Web Speech API)"
               id="voice-header-trigger"
             >
@@ -1596,38 +1460,28 @@ export default function App() {
             </button>
           </div>
 
-          {/* Center: Triple Role Switch Toggle & Device Rendering Switch */}
-          <div className="flex bg-slate-900/60 border border-slate-850 p-1 rounded-xl max-w-2xl gap-3 items-center" id="ecosystem-toggle">
+          {/* Center: Dual Ecosystem Switch Toggle & Device Rendering Switch */}
+          <div className="flex bg-slate-900/60 border border-slate-850 p-1 rounded-xl max-w-lg gap-3 items-center" id="ecosystem-toggle">
             <div className="flex gap-1">
               <button
                 onClick={() => {
-                  setUserRole('predator');
+                  setEcosystem('user');
                   setActiveTab('live-analytical-center');
                 }}
-                className={`px-3 py-1.5 rounded-lg text-[9px] font-black font-mono tracking-wider uppercase transition-all flex items-center gap-1.5 cursor-pointer ${userRole === 'predator' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/30'}`}
+                className={`px-4 py-2 rounded-lg text-[10px] font-black font-mono tracking-wider uppercase transition-all flex items-center gap-2 cursor-pointer ${ecosystem === 'user' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-300 hover:text-slate-200 hover:bg-slate-900/30'}`}
               >
-                <Compass className="w-3.5 h-3.5 text-indigo-400" />
-                <span>🦅 PREDATOR</span>
+                <Compass className="w-3.5 h-3.5" />
+                <span>🛰️ ЖИВИЙ ЦЕНТР</span>
               </button>
               <button
                 onClick={() => {
-                  setUserRole('predator-pro');
-                  setActiveTab('live-analytical-center');
-                }}
-                className={`px-3 py-1.5 rounded-lg text-[9px] font-black font-mono tracking-wider uppercase transition-all flex items-center gap-1.5 cursor-pointer ${userRole === 'predator-pro' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/30'}`}
-              >
-                <Zap className="w-3.5 h-3.5 text-amber-400" />
-                <span>⚡ PREDATOR PRO</span>
-              </button>
-              <button
-                onClick={() => {
-                  setUserRole('admin');
+                  setEcosystem('admin');
                   setActiveTab('admin-back-office');
                 }}
-                className={`px-3 py-1.5 rounded-lg text-[9px] font-black font-mono tracking-wider uppercase transition-all flex items-center gap-1.5 cursor-pointer ${userRole === 'admin' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/30'}`}
+                className={`px-4 py-2 rounded-lg text-[10px] font-black font-mono tracking-wider uppercase transition-all flex items-center gap-2 cursor-pointer ${ecosystem === 'admin' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-300 hover:text-slate-200 hover:bg-slate-900/30'}`}
               >
-                <Settings className="w-3.5 h-3.5 text-indigo-400" />
-                <span>⚙️ ADMIN</span>
+                <Settings className="w-3.5 h-3.5" />
+                <span>⚙️ BACK OFFICE</span>
               </button>
             </div>
 
@@ -1636,10 +1490,10 @@ export default function App() {
             )}
 
             {!isRealMobile && (
-              <div className="flex bg-slate-950/60 p-0.5 rounded-lg border border-slate-900 gap-1">
+              <div className="flex bg-slate-950/60 p-0.5 rounded-lg border border-indigo-500/5 gap-1">
                 <button
                   onClick={() => setDeviceMode('desktop')}
-                  className={`px-2.5 py-1.5 rounded text-[9px] font-black font-mono tracking-wider transition-all flex items-center gap-1 cursor-pointer ${deviceMode === 'desktop' ? 'bg-slate-900 text-indigo-400 border border-indigo-500/10' : 'text-slate-500 hover:text-slate-300'}`}
+                  className={`px-2.5 py-1.5 rounded text-[9px] font-black font-mono tracking-wider transition-all flex items-center gap-1 cursor-pointer ${deviceMode === 'desktop' ? 'bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] text-indigo-400 border border-indigo-500/10' : 'text-slate-500 hover:text-slate-300'}`}
                   title="Режим Десктоп"
                 >
                   💻 ДЕСКТОП
@@ -1665,7 +1519,7 @@ export default function App() {
             </div>
 
             {/* Quick Status indicators (Section 6) */}
-            <div className="hidden sm:flex items-center gap-4 text-slate-400 text-[10px]">
+            <div className="hidden sm:flex items-center gap-4 text-slate-300 text-[10px]">
               <span className="flex items-center gap-1">
                 <Activity className="w-3.5 h-3.5 text-indigo-400" />
                 API: <strong className="text-slate-200">14ms</strong>
@@ -1677,31 +1531,15 @@ export default function App() {
             </div>
 
             {/* Alerts Bell notification */}
-            <AlertCenter 
-              onOpenWatchlist={() => setIsWatchlistOpen(true)}
-              onSelectEntity={handleSelectEntityFromWatchlist}
-            />
+            <button className="p-1.5 hover:bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] rounded-lg text-slate-300 hover:text-slate-200 relative cursor-pointer" title="Сповіщення">
+              <span className="absolute top-1 right-1 w-2 h-2 bg-rose-500 rounded-full animate-ping"></span>
+              <span className="absolute top-1 right-1 w-2 h-2 bg-rose-500 rounded-full"></span>
+              <Bell className="w-4 h-4" />
+            </button>
 
-            {/* Profile Avatars */}
-            <div className="flex items-center gap-2.5 pl-2 border-l border-slate-900">
-              <div className="w-8 h-8 rounded-lg bg-indigo-950 border border-indigo-900 flex items-center justify-center font-bold text-indigo-400 font-mono">
-                UA
-              </div>
-              <div className="hidden xl:block text-left text-[10px] leading-tight">
-                <p className="font-bold text-slate-200">Черговий : АН</p>
-                <p className="text-slate-500 font-mono">ID: 02894-A</p>
-              </div>
-              
-              <button 
-                onClick={() => {
-                  localStorage.removeItem('predator_token');
-                  setIsAuthenticated(false);
-                }}
-                className="ml-2 p-1.5 hover:bg-rose-500/10 rounded-lg text-slate-500 hover:text-rose-400 transition-colors cursor-pointer border border-transparent hover:border-rose-500/30"
-                title="Завершити сесію"
-              >
-                <LogOut className="w-4 h-4" />
-              </button>
+            {/* Profile Avatars / Auth Status */}
+            <div className="flex items-center gap-2.5 pl-2 border-l border-indigo-500/5">
+              <AuthStatus />
             </div>
 
           </div>
@@ -1710,14 +1548,14 @@ export default function App() {
 
         {/* MILITARY BROADCAST SECURITY NEWS TICKER */}
         {ecosystem === 'user' && (
-          <div className="bg-slate-950/90 border-b border-slate-900/60 h-8 flex items-center overflow-hidden relative select-none z-30 shrink-0">
+          <div className="bg-slate-950/90 border-b border-indigo-500/5/60 h-8 flex items-center overflow-hidden relative select-none z-30 shrink-0">
             <div className="absolute left-0 top-0 bottom-0 px-3 bg-indigo-950/80 border-r border-indigo-900/40 text-indigo-400 font-mono text-[9px] font-extrabold uppercase tracking-widest flex items-center gap-1.5 z-10 shrink-0">
               <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
               <span>ШІ-СЕНСОР</span>
             </div>
 
             <div className="flex-1 overflow-hidden pl-24">
-              <div className="animate-marquee whitespace-nowrap flex gap-12 text-[10px] text-slate-400 font-mono font-medium py-1">
+              <div className="animate-marquee whitespace-nowrap flex gap-12 text-[10px] text-slate-300 font-mono font-medium py-1">
                 <span className="flex items-center gap-1.5 shrink-0">
                   <span className="text-rose-500 font-bold">🚨 КРИТИЧНО:</span>
                   <span>Виявлено обхід санкцій через Туреччину у ТОВ "СпецТехПостач" (Код: 38294012).</span>
@@ -1736,7 +1574,7 @@ export default function App() {
                 </span>
                 <span className="flex items-center gap-1.5 shrink-0">
                   <span className="text-indigo-400 font-bold">💡 ПІДКАЗКА:</span>
-                  <span>Натисніть <strong className="text-white bg-slate-900 border border-slate-800 px-1 rounded">Ctrl+K</strong> або клікніть "Швидкий пошук" для миттєвих команд.</span>
+                  <span>Натисніть <strong className="text-white bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] border border-indigo-500/10 px-1 rounded">Ctrl+K</strong> або клікніть "Швидкий пошук" для миттєвих команд.</span>
                 </span>
               </div>
             </div>
@@ -1748,7 +1586,7 @@ export default function App() {
           
           {/* LEFT SIDEBAR (Section 7) */}
           <aside 
-            className={`shrink-0 glass-nav flex flex-col justify-between transition-all duration-300 ${sidebarCollapsed ? 'w-[72px]' : 'w-[280px]'}`}
+            className={`shrink-0 bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] border-r border-indigo-500/5 flex flex-col justify-between transition-all duration-300 ${sidebarCollapsed ? 'w-[72px]' : 'w-[280px]'}`}
             id="tactical-sidebar"
           >
             
@@ -1766,21 +1604,8 @@ export default function App() {
                     )}
                     
                     <button 
-                      onClick={() => setActiveTab('genesis-workspace')}
-                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer ${activeTab === 'genesis-workspace' ? 'bg-cyan-600/10 text-cyan-400 border border-cyan-500/20 shadow-sm' : 'text-slate-400 border border-transparent hover:text-slate-200 hover:bg-slate-900/30'}`}
-                    >
-                      <Map className={`w-4 h-4 ${activeTab === 'genesis-workspace' ? 'text-cyan-400' : 'text-slate-500'}`} />
-                      {!sidebarCollapsed && (
-                        <div className="flex items-center justify-between flex-1">
-                          <span>Genesis Canvas</span>
-                          <span className="text-[8px] bg-cyan-500/15 text-cyan-400 border border-cyan-500/30 px-1.5 py-0.5 rounded font-mono font-bold tracking-widest">PAE</span>
-                        </div>
-                      )}
-                    </button>
-                    
-                    <button 
                       onClick={() => setActiveTab('live-analytical-center')}
-                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer ${activeTab === 'live-analytical-center' ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20 shadow-sm' : 'text-slate-400 border border-transparent hover:text-slate-200 hover:bg-slate-900/30'}`}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer ${activeTab === 'live-analytical-center' ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 shadow-sm' : 'text-slate-300 border border-transparent hover:text-slate-200 hover:bg-slate-900/30'}`}
                     >
                       <Compass className={`w-4 h-4 ${activeTab === 'live-analytical-center' ? 'text-indigo-400' : 'text-slate-500'}`} />
                       {!sidebarCollapsed && (
@@ -1792,21 +1617,8 @@ export default function App() {
                     </button>
 
                     <button 
-                      onClick={() => setActiveTab('sovereign-dashboard')}
-                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer ${activeTab === 'sovereign-dashboard' ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20 shadow-sm' : 'text-slate-400 border border-transparent hover:text-slate-200 hover:bg-slate-900/30'}`}
-                    >
-                      <ShieldAlert className={`w-4 h-4 ${activeTab === 'sovereign-dashboard' ? 'text-indigo-400' : 'text-slate-500'}`} />
-                      {!sidebarCollapsed && (
-                        <div className="flex items-center justify-between flex-1">
-                          <span>Командний Центр</span>
-                          <span className="text-[8px] bg-red-500/15 text-red-400 border border-red-500/30 px-1.5 py-0.5 rounded font-mono font-bold tracking-widest">CMD</span>
-                        </div>
-                      )}
-                    </button>
-
-                    <button 
                       onClick={() => setActiveTab('maps')}
-                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer ${activeTab === 'maps' ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20 shadow-sm' : 'text-slate-400 border border-transparent hover:text-slate-200 hover:bg-slate-900/30'}`}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer ${activeTab === 'maps' ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 shadow-sm' : 'text-slate-300 border border-transparent hover:text-slate-200 hover:bg-slate-900/30'}`}
                     >
                       <Map className={`w-4 h-4 ${activeTab === 'maps' ? 'text-indigo-400' : 'text-slate-500'}`} />
                       {!sidebarCollapsed && (
@@ -1816,49 +1628,32 @@ export default function App() {
                         </div>
                       )}
                     </button>
-
-                    <button 
-                      onClick={() => setActiveTab('warroom')}
-                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer ${activeTab === 'warroom' ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20 shadow-sm' : 'text-slate-400 border border-transparent hover:text-slate-200 hover:bg-slate-900/30'}`}
+          <button 
+                      onClick={() => setActiveTab('media-forensics')}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer ${activeTab === 'media-forensics' ? 'bg-fuchsia-600/10 text-fuchsia-400 border border-fuchsia-500/20 shadow-[inset_0_0_15px_rgba(217,70,239,0.1)]' : 'text-slate-300 border border-transparent hover:text-slate-200 hover:bg-slate-900/30'}`}
+                      title="Triggers high-load forensic deep-analysis"
                     >
-                      <Shield className={`w-4 h-4 ${activeTab === 'warroom' ? 'text-indigo-400' : 'text-slate-500'}`} />
+                      <Camera className={`w-4 h-4 ${activeTab === 'media-forensics' ? 'text-fuchsia-400' : 'text-slate-500'}`} />
                       {!sidebarCollapsed && (
                         <div className="flex items-center justify-between flex-1">
-                          <span>Воєнна Кімната</span>
-                          <span className="text-[9px] bg-indigo-500/15 text-indigo-400 border border-indigo-500/30 px-1.5 py-0.5 rounded font-mono font-bold">WAR</span>
+                          <span>Media Forensics</span>
+                          <div className="flex items-center gap-1.5 opacity-80">
+                            {/* Animated CSS Waveform */}
+                            <div className="flex items-center gap-[2px] h-3">
+                              <div className="w-[2px] bg-fuchsia-500 rounded-full animate-[waveform_1.2s_ease-in-out_infinite_0.1s] h-1.5" />
+                              <div className="w-[2px] bg-fuchsia-400 rounded-full animate-[waveform_1.2s_ease-in-out_infinite_0.3s] h-3" />
+                              <div className="w-[2px] bg-fuchsia-500 rounded-full animate-[waveform_1.2s_ease-in-out_infinite_0.5s] h-1" />
+                              <div className="w-[2px] bg-fuchsia-400 rounded-full animate-[waveform_1.2s_ease-in-out_infinite_0.2s] h-2" />
+                            </div>
+                          </div>
                         </div>
                       )}
                     </button>
 
-                    <button 
-                      onClick={() => setActiveTab('oracle')}
-                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer ${activeTab === 'oracle' ? 'bg-cyan-600/10 text-cyan-400 border border-cyan-500/20 shadow-sm' : 'text-slate-400 border border-transparent hover:text-slate-200 hover:bg-slate-900/30'}`}
-                    >
-                      <BrainCircuit className={`w-4 h-4 ${activeTab === 'oracle' ? 'text-cyan-400' : 'text-slate-500'}`} />
-                      {!sidebarCollapsed && (
-                        <div className="flex items-center justify-between flex-1">
-                          <span>PREDATOR ORACLE</span>
-                          <span className="text-[9px] bg-cyan-500/15 text-cyan-400 border border-cyan-500/30 px-1.5 py-0.5 rounded font-mono font-bold">NLI</span>
-                        </div>
-                      )}
-                    </button>
-
-                    <button 
-                      onClick={() => setActiveTab('shield')}
-                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer ${activeTab === 'shield' ? 'bg-emerald-600/10 text-emerald-400 border border-emerald-500/20 shadow-sm' : 'text-slate-400 border border-transparent hover:text-slate-200 hover:bg-slate-900/30'}`}
-                    >
-                      <ShieldCheck className={`w-4 h-4 ${activeTab === 'shield' ? 'text-emerald-400' : 'text-slate-500'}`} />
-                      {!sidebarCollapsed && (
-                        <div className="flex items-center justify-between flex-1">
-                          <span>PREDATOR SHIELD</span>
-                          <span className="text-[9px] bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 px-1.5 py-0.5 rounded font-mono font-bold">WORM</span>
-                        </div>
-                      )}
-                    </button>
 
                     <button 
                       onClick={() => setActiveTab('dashboard')}
-                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer ${activeTab === 'dashboard' ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20' : 'text-slate-400 border border-transparent hover:text-slate-200 hover:bg-slate-900/30'}`}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer ${activeTab === 'dashboard' ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-500/30' : 'text-slate-300 border border-transparent hover:text-slate-200 hover:bg-slate-900/30'}`}
                     >
                       <Layers className={`w-4 h-4 ${activeTab === 'dashboard' ? 'text-indigo-400' : 'text-slate-500'}`} />
                       {!sidebarCollapsed && (
@@ -1871,52 +1666,13 @@ export default function App() {
 
                     <button 
                       onClick={() => setActiveTab('osint')}
-                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer ${activeTab === 'osint' ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20' : 'text-slate-400 border border-transparent hover:text-slate-200 hover:bg-slate-900/30'}`}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer ${activeTab === 'osint' ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-500/30' : 'text-slate-300 border border-transparent hover:text-slate-200 hover:bg-slate-900/30'}`}
                     >
                       <Search className={`w-4 h-4 ${activeTab === 'osint' ? 'text-indigo-400' : 'text-slate-500'}`} />
                       {!sidebarCollapsed && (
                         <div className="flex items-center justify-between flex-1">
                           <span>Старий Пошук</span>
                           <span className="text-[9px] bg-rose-500/10 text-rose-400 border border-rose-500/20 px-1.5 py-0.5 rounded font-mono">RISK</span>
-                        </div>
-                      )}
-                    </button>
-
-                    <button 
-                      onClick={() => setActiveTab('data-ingestion')}
-                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer ${activeTab === 'data-ingestion' ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20 shadow-sm' : 'text-slate-400 border border-transparent hover:text-slate-200 hover:bg-slate-900/30'}`}
-                    >
-                      <Database className={`w-4 h-4 ${activeTab === 'data-ingestion' ? 'text-indigo-400' : 'text-slate-500'}`} />
-                      {!sidebarCollapsed && (
-                        <div className="flex items-center justify-between flex-1">
-                          <span>Центр Інгестії</span>
-                          <span className="text-[9px] bg-blue-500/15 text-blue-400 border border-blue-500/30 px-1.5 py-0.5 rounded font-mono font-bold">DATA</span>
-                        </div>
-                      )}
-                    </button>
-
-                    <button 
-                      onClick={() => setActiveTab('acp-factory')}
-                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer ${activeTab === 'acp-factory' ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20 shadow-sm' : 'text-slate-400 border border-transparent hover:text-slate-200 hover:bg-slate-900/30'}`}
-                    >
-                      <Zap className={`w-4 h-4 ${activeTab === 'acp-factory' ? 'text-indigo-400' : 'text-slate-500'}`} />
-                      {!sidebarCollapsed && (
-                        <div className="flex items-center justify-between flex-1">
-                          <span>ACP Factory</span>
-                          <span className="text-[9px] bg-yellow-500/15 text-yellow-400 border border-yellow-500/30 px-1.5 py-0.5 rounded font-mono font-bold">ACP</span>
-                        </div>
-                      )}
-                    </button>
-
-                    <button 
-                      onClick={() => setActiveTab('research-engine')}
-                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer ${activeTab === 'research-engine' ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20 shadow-sm' : 'text-slate-400 border border-transparent hover:text-slate-200 hover:bg-slate-900/30'}`}
-                    >
-                      <BrainCircuit className={`w-4 h-4 ${activeTab === 'research-engine' ? 'text-indigo-400' : 'text-slate-500'}`} />
-                      {!sidebarCollapsed && (
-                        <div className="flex items-center justify-between flex-1">
-                          <span>Research Engine</span>
-                          <span className="text-[9px] bg-fuchsia-500/15 text-fuchsia-400 border border-fuchsia-500/30 px-1.5 py-0.5 rounded font-mono font-bold">AI</span>
                         </div>
                       )}
                     </button>
@@ -1950,7 +1706,7 @@ export default function App() {
                             setActiveTab('live-analytical-center');
                             setSelectedScenario(scen.id);
                           }}
-                          className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer ${isActive ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20' : 'text-slate-400 border border-transparent hover:text-slate-200 hover:bg-slate-900/30'}`}
+                          className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer ${isActive ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-500/30' : 'text-slate-300 border border-transparent hover:text-slate-200 hover:bg-slate-900/30'}`}
                         >
                           <Icon className={`w-4 h-4 ${isActive ? 'text-indigo-400' : 'text-slate-500'}`} />
                           {!sidebarCollapsed && <span>{scen.label}</span>}
@@ -1971,7 +1727,7 @@ export default function App() {
                     
                     <button 
                       onClick={() => setActiveTab('admin-back-office')}
-                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer ${activeTab === 'admin-back-office' ? 'bg-indigo-600/10 text-indigo-400 border border-indigo-500/20 shadow-sm' : 'text-slate-400 border border-transparent hover:text-slate-200 hover:bg-slate-900/30'}`}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer ${activeTab === 'admin-back-office' ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 shadow-sm' : 'text-slate-300 border border-transparent hover:text-slate-200 hover:bg-slate-900/30'}`}
                     >
                       <Settings className={`w-4 h-4 ${activeTab === 'admin-back-office' ? 'text-indigo-400' : 'text-slate-500'}`} />
                       {!sidebarCollapsed && (
@@ -2013,7 +1769,7 @@ export default function App() {
                               setSelectedTool(null);
                             }
                           }}
-                          className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer ${isActive ? 'bg-slate-900 text-indigo-400 border border-slate-800' : 'text-slate-400 border border-transparent hover:text-slate-200 hover:bg-slate-900/30'}`}
+                          className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold tracking-wide transition-all cursor-pointer ${isActive ? 'bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] text-indigo-400 border border-indigo-500/10' : 'text-slate-300 border border-transparent hover:text-slate-200 hover:bg-slate-900/30'}`}
                         >
                           <Icon className={`w-4 h-4 ${isActive ? 'text-indigo-400' : 'text-slate-500'}`} />
                           {!sidebarCollapsed && <span>{tab.label}</span>}
@@ -2026,9 +1782,9 @@ export default function App() {
 
               {/* Quick status alerts inside sidebar */}
               {!sidebarCollapsed && (
-                <div className="bg-slate-950 border border-slate-900 p-3.5 rounded-xl space-y-2 mt-4">
+                <div className="bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] border border-indigo-500/5 p-3.5 rounded-xl space-y-2 mt-4">
                   <span className="text-[8px] text-slate-500 font-mono font-bold uppercase tracking-wider block">СТАН СИСТЕМИ PREDATOR</span>
-                  <div className="space-y-1 text-[10px] text-slate-400 font-mono">
+                  <div className="space-y-1 text-[10px] text-slate-300 font-mono">
                     <div className="flex justify-between">
                       <span>Kafka Queue:</span>
                       <span className="text-emerald-400 font-bold">0 lag</span>
@@ -2044,10 +1800,10 @@ export default function App() {
             </div>
 
             {/* Collapsed control */}
-            <div className="p-3 border-t border-slate-900 text-center">
+            <div className="p-3 border-t border-indigo-500/5 text-center">
               <button 
                 onClick={() => setIsInspectorOpen(!isInspectorOpen)}
-                className="w-full bg-slate-900 hover:bg-slate-850 text-slate-400 hover:text-slate-200 py-2 rounded-lg text-[10px] font-mono font-bold uppercase tracking-wider transition-colors cursor-pointer"
+                className="w-full bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] hover:bg-slate-850 text-slate-300 hover:text-slate-200 py-2 rounded-lg text-[10px] font-mono font-bold uppercase tracking-wider transition-colors cursor-pointer"
               >
                 {sidebarCollapsed ? 'INSP' : isInspectorOpen ? 'Сховати Інспектор' : 'Показати Інспектор'}
               </button>
@@ -2056,7 +1812,7 @@ export default function App() {
           </aside>
 
           {/* MAIN WORKSPACE (Section 8) */}
-          <main className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-950 relative" id="workspace-main">
+          <main className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] relative" id="workspace-main">
             
             {/* Active Navigation Breadcrumbs */}
             <div className="flex items-center gap-2 text-[10px] text-slate-500 font-mono uppercase tracking-wider mb-2">
@@ -2072,9 +1828,6 @@ export default function App() {
                 {activeTab === 'dashboard' && 'Старий Дашборд'}
                 {activeTab === 'osint' && 'Старий Пошук OSINT'}
                 {activeTab === 'maps' && 'Інтерактивна Карта PREDATOR'}
-                {activeTab === 'warroom' && 'PREDATOR WAR ROOM'}
-                {activeTab === 'oracle' && 'PREDATOR ORACLE (AI NLI)'}
-                {activeTab === 'shield' && 'PREDATOR SHIELD (Compliance)'}
                 {activeTab === 'catalog' && 'Каталог рішень'}
                 {activeTab === 'license' && 'Сумісність ліцензій'}
                 {activeTab === 'architecture' && 'Граф залежностей'}
@@ -2082,6 +1835,7 @@ export default function App() {
                 {activeTab === 'roadmap' && 'Дорожня карта'}
                 {activeTab === 'volumes' && 'Томи ТЗ'}
                 {activeTab === 'advisor' && 'ШІ-Архітектор'}
+                {activeTab === 'media-forensics' && 'Аналіз Медіа (Forensics)'}
               </span>
             </div>
 
@@ -2094,53 +1848,17 @@ export default function App() {
                 transition={{ duration: 0.15 }}
               >
                 {/* Dynamic routing */}
-                {activeTab === 'genesis-workspace' && (
-                  <div className="absolute inset-0 overflow-hidden">
-                    <GenesisCanvas intentActive={intentActive} data={paeData} />
-                    <div className="ui-overlay pointer-events-none flex flex-col items-center justify-center">
-                      <AnimatePresence>
-                        {isTyping && (
-                          <motion.div
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.9 }}
-                            className="cyber-panel p-6 rounded-2xl w-[600px] pointer-events-auto shadow-2xl shadow-cyan-500/20"
-                          >
-                            <h3 className="hud-element text-sm mb-4 tracking-[0.2em] uppercase text-cyan-400">
-                              [PAE] Введіть намір або об'єкт...
-                            </h3>
-                            <input
-                              type="text"
-                              value={genesisQuery}
-                              onChange={(e) => setGenesisQuery(e.target.value)}
-                              placeholder="Type to command..."
-                              className="cyber-type-input"
-                              autoFocus
-                            />
-                            <p className="text-[10px] text-cyan-500/50 mt-4 text-center font-mono">
-                              Press ENTER to Synthesize • ESC to abort
-                            </p>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  </div>
-                )}
                 {activeTab === 'live-analytical-center' && (
-                  <div className="flex flex-col gap-6">
-                    <OodaRadar />
-                    <LiveAnalyticalCenter 
-                      selectedEntity={selectedEntity}
-                      onSelectEntityGlobal={(ent) => {
-                        setSelectedEntity(ent);
-                        setSelectedTool(null);
-                        setSelectedNode(null);
-                      }}
-                      selectedScenario={selectedScenario}
-                      onSelectScenario={setSelectedScenario}
-                      userRole={userRole}
-                    />
-                  </div>
+                  <LiveAnalyticalCenter 
+                    selectedEntity={selectedEntity}
+                    onSelectEntityGlobal={(ent) => {
+                      setSelectedEntity(ent);
+                      setSelectedTool(null);
+                      setSelectedNode(null);
+                    }}
+                    selectedScenario={selectedScenario}
+                    onSelectScenario={setSelectedScenario}
+                  />
                 )}
                 {activeTab === 'admin-back-office' && (
                   <AdminBackOffice />
@@ -2160,13 +1878,6 @@ export default function App() {
                     }}
                   />
                 )}
-                {activeTab === 'media-forensics' && (
-                  userRole === 'predator' ? (
-                    <RestrictedFeatureOverlay onUpgrade={() => setUserRole('predator-pro')} tabName="Media Forensics" />
-                  ) : (
-                    <MediaForensicsTab />
-                  )
-                )}
                 {activeTab === 'osint' && (
                   <OsintWorkbench 
                     selectedEntity={selectedEntity}
@@ -2176,7 +1887,6 @@ export default function App() {
                       setSelectedNode(null);
                       setIsInspectorOpen(true);
                     }}
-                    userRole={userRole}
                   />
                 )}
                 {activeTab === 'maps' && (
@@ -2191,47 +1901,11 @@ export default function App() {
                 )}
                 {activeTab === 'catalog' && <CatalogTab />}
                 {activeTab === 'license' && <LicenseTab />}
-                {activeTab === 'architecture' && (
-                  userRole === 'predator' ? (
-                    <RestrictedFeatureOverlay onUpgrade={() => setUserRole('predator-pro')} tabName="Граф архітектури" />
-                  ) : (
-                    <ArchitectureTab />
-                  )
-                )}
-                {activeTab === 'gap' && (
-                  userRole === 'predator' ? (
-                    <RestrictedFeatureOverlay onUpgrade={() => setUserRole('predator-pro')} tabName="Аналіз прогалин" />
-                  ) : (
-                    <GapAnalysisTab />
-                  )
-                )}
-                {activeTab === 'roadmap' && (
-                  userRole === 'predator' ? (
-                    <RestrictedFeatureOverlay onUpgrade={() => setUserRole('predator-pro')} tabName="Дорожня карта" />
-                  ) : (
-                    <RoadmapTab />
-                  )
-                )}
-                {activeTab === 'volumes' && (
-                  userRole === 'predator' ? (
-                    <RestrictedFeatureOverlay onUpgrade={() => setUserRole('predator-pro')} tabName="Томи ТЗ" />
-                  ) : (
-                    <VolumesTab />
-                  )
-                )}
-                {activeTab === 'advisor' && (
-                  userRole === 'predator' ? (
-                    <RestrictedFeatureOverlay onUpgrade={() => setUserRole('predator-pro')} tabName="ШІ-Архітектор" />
-                  ) : (
-                    <AdvisorTab />
-                  )
-                )}
-                {activeTab === 'acp-factory' && (
-                  <ACPFactoryPage />
-                )}
-                {activeTab === 'research-engine' && (
-                  <ResearchEnginePage />
-                )}
+                {activeTab === 'architecture' && <ArchitectureTab />}
+                {activeTab === 'gap' && <GapAnalysisTab />}
+                {activeTab === 'roadmap' && <RoadmapTab />}
+                {activeTab === 'volumes' && <VolumesTab />}
+                {activeTab === 'advisor' && <AdvisorTab />}
               </motion.div>
             </AnimatePresence>
 
@@ -2280,10 +1954,10 @@ export default function App() {
                   initial={{ opacity: 0, y: 50, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 50, scale: 0.95 }}
-                  className="absolute bottom-14 right-0 w-80 bg-slate-950 border border-slate-900 rounded-2xl overflow-hidden shadow-2xl flex flex-col h-[380px]"
+                  className="absolute bottom-14 right-0 w-80 bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] border border-indigo-500/5 rounded-2xl overflow-hidden shadow-2xl flex flex-col h-[380px]"
                 >
                   {/* Header */}
-                  <div className="p-3 bg-indigo-950/20 border-b border-slate-900 flex items-center justify-between">
+                  <div className="p-3 bg-indigo-950/20 border-b border-indigo-500/5 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Sparkles className="w-4 h-4 text-indigo-400" />
                       <span className="text-[10px] font-mono font-bold text-white uppercase tracking-wider">
@@ -2303,7 +1977,7 @@ export default function App() {
                     {chatHistory.map((msg, i) => (
                       <div 
                         key={i} 
-                        className={`p-2.5 rounded-xl leading-relaxed max-w-[85%] ${msg.sender === 'user' ? 'bg-indigo-600 text-white ml-auto' : 'bg-slate-900 border border-slate-850 text-slate-300'}`}
+                        className={`p-2.5 rounded-xl leading-relaxed max-w-[85%] ${msg.sender === 'user' ? 'bg-indigo-600 text-white ml-auto' : 'bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] border border-slate-850 text-slate-300'}`}
                       >
                         {msg.text}
                       </div>
@@ -2311,7 +1985,7 @@ export default function App() {
                   </div>
 
                   {/* Input */}
-                  <div className="p-2 border-t border-slate-900 bg-slate-950/80 flex items-center gap-1.5">
+                  <div className="p-2 border-t border-indigo-500/5 bg-slate-950/80 flex items-center gap-1.5">
                     <input
                       type="text"
                       placeholder="Запитайте ШІ про санкції чи SQL..."
@@ -2320,11 +1994,11 @@ export default function App() {
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') handleSendMessage();
                       }}
-                      className="flex-1 bg-slate-900 border border-slate-850 rounded-lg px-2.5 py-2 text-xs focus:outline-none focus:border-indigo-500/40"
+                      className="flex-1 bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] border border-slate-850 rounded-lg px-2.5 py-2 text-xs focus:outline-none focus:border-indigo-500/40"
                     />
                     <button
                       onClick={startVoiceControl}
-                      className={`p-2 rounded-lg transition-colors cursor-pointer flex items-center justify-center ${isVoiceListening ? 'bg-red-500/20 text-red-400 border border-red-500/20 animate-pulse' : 'bg-slate-900 border border-slate-850 text-slate-400 hover:text-indigo-400'}`}
+                      className={`p-2 rounded-lg transition-colors cursor-pointer flex items-center justify-center ${isVoiceListening ? 'bg-red-500/20 text-red-400 border border-red-500/20 animate-pulse' : 'bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] border border-slate-850 text-slate-300 hover:text-indigo-400'}`}
                       title="Голосовий ввід"
                     >
                       <Mic className="w-3.5 h-3.5" />
@@ -2346,11 +2020,11 @@ export default function App() {
 
         {/* 4. BOTTOM STATUS BAR (Section 10) */}
         {ecosystem === 'admin' ? (
-          <footer className="border-t border-slate-900 bg-slate-950 px-5 py-2 flex flex-col sm:flex-row items-center justify-between gap-4 text-[9px] text-slate-500 font-mono uppercase tracking-wider z-40 sticky bottom-0">
+          <footer className="border-t border-indigo-500/5 bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] px-5 py-2 flex flex-col sm:flex-row items-center justify-between gap-4 text-[9px] text-slate-500 font-mono uppercase tracking-wider z-40 sticky bottom-0">
             
             {/* Left indicators */}
             <div className="flex flex-wrap items-center gap-4">
-              <span className="flex items-center gap-1.5 text-slate-400 font-bold">
+              <span className="flex items-center gap-1.5 text-slate-300 font-bold">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                 PREDATOR ENG: ONLINE
               </span>
@@ -2371,7 +2045,7 @@ export default function App() {
 
           </footer>
         ) : (
-          <footer className="border-t border-slate-900 bg-slate-950 px-5 py-2 flex flex-col sm:flex-row items-center justify-between gap-4 text-[9px] text-slate-500 font-mono uppercase tracking-wider z-40 sticky bottom-0">
+          <footer className="border-t border-indigo-500/5 bg-slate-950/40 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.5)] px-5 py-2 flex flex-col sm:flex-row items-center justify-between gap-4 text-[9px] text-slate-500 font-mono uppercase tracking-wider z-40 sticky bottom-0">
             
             {/* Left analytical indicators */}
             <div className="flex flex-wrap items-center gap-4">
@@ -2379,15 +2053,15 @@ export default function App() {
                 <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></span>
                 СЕКТОР: АНАЛІТИКА ТА РОЗСЛІДУВАННЯ (СБУ-VIP)
               </span>
-              <span className="text-slate-400">РЕЄСТРИ: <strong className="text-slate-200">СИНХРОНІЗОВАНО</strong></span>
+              <span className="text-slate-300">РЕЄСТРИ: <strong className="text-slate-200">СИНХРОНІЗОВАНО</strong></span>
               <span className="text-emerald-400 font-bold">КЛАС КАНАЛУ: НАДІЙНИЙ (AES-GCM)</span>
-              <span className="text-slate-400">КАБІНЕТ: <strong className="text-slate-200">ОФІЦЕР-АНАЛІТИК</strong></span>
+              <span className="text-slate-300">КАБІНЕТ: <strong className="text-slate-200">ОФІЦЕР-АНАЛІТИК</strong></span>
             </div>
 
             {/* Right analytical indicators */}
             <div className="flex flex-wrap items-center gap-4">
               <span className="text-indigo-400 font-bold">ПРОТОКОЛ: RSA-4096 (СБУ-VIP)</span>
-              <span className="text-slate-400">ІНТЕГРАЦІЯ: YOUCONTROL, OPENDATABOT, МИТНИЦЯ, РНБО</span>
+              <span className="text-slate-300">ІНТЕГРАЦІЯ: YOUCONTROL, OPENDATABOT, МИТНИЦЯ, РНБО</span>
               <span className="text-indigo-400 font-bold">ШІ-ЯДРО: PREDATOR INTEL v3.5</span>
             </div>
 
@@ -2413,10 +2087,10 @@ export default function App() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.96, y: -10 }}
                 transition={{ duration: 0.15 }}
-                className="relative w-full max-w-2xl bg-[#0a0f1d] border border-slate-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[500px] z-50"
+                className="relative w-full max-w-2xl bg-[#0a0f1d] border border-indigo-500/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[500px] z-50"
               >
                 {/* Search input header */}
-                <div className="flex items-center gap-3 px-4 py-3.5 border-b border-slate-900 bg-slate-950/50">
+                <div className="flex items-center gap-3 px-4 py-3.5 border-b border-indigo-500/5 bg-slate-950/50">
                   <Search className="w-5 h-5 text-indigo-400 shrink-0" />
                   <input
                     type="text"
@@ -2426,7 +2100,7 @@ export default function App() {
                     onChange={(e) => setSpotlightQuery(e.target.value)}
                     className="w-full bg-transparent text-white placeholder-slate-500 text-sm focus:outline-none"
                   />
-                  <span className="text-[10px] bg-slate-900 border border-slate-800 text-slate-400 px-2 py-0.5 rounded font-mono shrink-0">
+                  <span className="text-[10px] bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] border border-indigo-500/10 text-slate-300 px-2 py-0.5 rounded font-mono shrink-0">
                     ESC
                   </span>
                 </div>
@@ -2445,7 +2119,7 @@ export default function App() {
                           <button
                             key={n.id}
                             onClick={() => handleSpotlightSelect(n)}
-                            className="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-indigo-600/20 hover:border-indigo-500/20 border border-transparent transition-all flex items-center justify-between cursor-pointer"
+                            className="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-indigo-600/20 hover:border-indigo-500/40 border border-transparent transition-all duration-300 hover:-translate-y-[1px] hover:shadow-[0_2px_10px_rgba(99,102,241,0.15)] flex items-center justify-between cursor-pointer"
                           >
                             <span>{n.label}</span>
                             <span className="text-[9px] text-indigo-500 font-mono">Перейти →</span>
@@ -2487,11 +2161,11 @@ export default function App() {
                           <button
                             key={e.id}
                             onClick={() => handleSpotlightSelect(e)}
-                            className="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-rose-600/20 hover:border-rose-500/20 border border-transparent transition-all flex items-center justify-between cursor-pointer"
+                            className="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-rose-600/20 hover:border-rose-500/40 border border-transparent transition-all duration-300 hover:-translate-y-[1px] hover:shadow-[0_2px_10px_rgba(244,63,94,0.15)] flex items-center justify-between cursor-pointer"
                           >
                             <span>{e.label}</span>
                             <span className="text-[9px] bg-rose-500/10 border border-rose-500/20 px-1.5 py-0.5 rounded text-rose-400 font-mono font-bold">
-                              {e.raw.riskScore >= 75 ? '⚠️ КРИТИЧНИЙ' : '🔴 ВИСОКИЙ'}
+                              {e.raw.risk_level === 'CRITICAL' ? '⚠️ КРИТИЧНИЙ' : '🔴 ВИСОКИЙ'}
                             </span>
                           </button>
                         ))}
@@ -2503,7 +2177,7 @@ export default function App() {
                   {spotlightResults.navigation.length === 0 && spotlightResults.actions.length === 0 && spotlightResults.entities.length === 0 && (
                     <div className="text-center py-8">
                       <AlertTriangle className="w-8 h-8 text-slate-500 mx-auto mb-2 animate-bounce" />
-                      <p className="text-xs text-slate-400 font-semibold">Жодного збігу не знайдено для "{spotlightQuery}"</p>
+                      <p className="text-xs text-slate-300 font-semibold">Жодного збігу не знайдено для "{spotlightQuery}"</p>
                       <p className="text-[10px] text-slate-600 mt-1 font-mono">Спробуйте ввести інший пошуковий термін</p>
                     </div>
                   )}
@@ -2511,12 +2185,12 @@ export default function App() {
                 </div>
 
                 {/* Spotlight footer */}
-                <div className="px-4 py-2.5 bg-slate-950/80 border-t border-slate-900 flex items-center justify-between text-[10px] text-slate-500 font-mono">
+                <div className="px-4 py-2.5 bg-slate-950/80 border-t border-indigo-500/5 flex items-center justify-between text-[10px] text-slate-500 font-mono">
                   <span className="flex items-center gap-1">
                     <span>Швидкі дії:</span>
-                    <strong className="text-slate-400 font-bold bg-slate-900 border border-slate-800 px-1.5 py-0.5 rounded">↑↓</strong>
+                    <strong className="text-slate-300 font-bold bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] border border-indigo-500/10 px-1.5 py-0.5 rounded">↑↓</strong>
                     <span>для вибору,</span>
-                    <strong className="text-slate-400 font-bold bg-slate-900 border border-slate-800 px-1.5 py-0.5 rounded">Enter</strong>
+                    <strong className="text-slate-300 font-bold bg-slate-900/50 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)] border border-indigo-500/10 px-1.5 py-0.5 rounded">Enter</strong>
                     <span>для запуску</span>
                   </span>
                   <span className="text-indigo-400 font-bold uppercase tracking-wider">
@@ -2530,37 +2204,8 @@ export default function App() {
         </AnimatePresence>
 
       </div>
-
-      {/* Floating Watchlist Panel */}
-      <AnimatePresence>
-        {isWatchlistOpen && (
-          <motion.div
-            initial={{ opacity: 0, x: 400 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 400 }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed top-[60px] right-0 bottom-0 w-[420px] max-w-[100vw] z-[60] shadow-2xl border-l border-slate-800"
-            style={{ background: 'rgba(10,12,20,0.98)' }}
-          >
-            <div className="absolute top-4 right-4 z-10">
-              <button 
-                onClick={() => setIsWatchlistOpen(false)}
-                className="p-1.5 bg-slate-900/50 hover:bg-slate-800 text-slate-400 hover:text-white rounded-lg transition-colors cursor-pointer border border-slate-700/50"
-              >
-                <X size={16} />
-              </button>
-            </div>
-            <WatchlistPanel onSelectEntity={handleSelectEntityFromWatchlist} />
-          </motion.div>
-        )}
-      </AnimatePresence>
-      </>
     );
   };
-
-  if (!isAuthenticated) {
-    return <LoginScreen onLoginSuccess={(token) => setIsAuthenticated(true)} />;
-  }
 
   return (
     <>
@@ -2612,7 +2257,7 @@ export default function App() {
             <div className="flex items-start gap-2.5">
               <span className="text-sm shrink-0 mt-0.5">{voiceError ? '⚠️' : '🎙️'}</span>
               <div className="flex-1 min-w-0">
-                <p className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400">
+                <p className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-300">
                   {voiceError ? 'Помилка голосового аналізатора' : 'Аналітичний голос PREDATOR'}
                 </p>
                 <p className="text-xs font-semibold tracking-wide leading-relaxed mt-0.5">
@@ -2664,8 +2309,6 @@ export default function App() {
         )}
       </AnimatePresence>
       <LiveChatBot />
-      <CopilotPanel />
-      <CommandPalette onNavigate={(tab) => setActiveTab(tab as TabId)} />
     </>
   );
 }

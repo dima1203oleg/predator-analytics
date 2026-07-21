@@ -1,19 +1,6 @@
 import React from 'react';
+import { useAuth } from '../lib/AuthContext';
 import { User, LogIn, LogOut } from 'lucide-react';
-
-// Mock authentication for the requested target persona
-function useAuth() {
-  return {
-    user: {
-      email: 'dima.k@predator.analytics',
-      photoURL: '',
-      displayName: 'Кізима Дмитро Миколайович'
-    },
-    loading: false,
-    signInWithGoogle: () => {},
-    logout: () => {}
-  };
-}
 
 export function AuthStatus() {
   const { user, loading, signInWithGoogle, logout } = useAuth();

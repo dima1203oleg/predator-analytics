@@ -15,6 +15,40 @@ from app.database import get_db
 from app.dependencies import get_tenant_id
 from app.services.ukraine_registries import UkraineRegistriesService
 from predator_common.models import Anomaly, Company, RiskScore
+from enum import Enum
+import uuid
+import json
+from app.services.kafka_service import get_kafka_service
+from app.services.valkey_service import get_valkey_service
+
+class EntityType(str, Enum):
+    PERSON = "person"
+    COMPANY = "company"
+    DOMAIN = "domain"
+    EMAIL = "email"
+    PHONE = "phone"
+    VEHICLE = "vehicle"
+    ADDRESS = "address"
+    CRYPTO_WALLET = "crypto_wallet"
+    IP = "ip"
+
+class Classification(str, Enum):
+    WHITE = "WHITE"
+    GREY = "GREY"
+    BLACK = "BLACK"
+
+class ScanStartRequest(BaseModel):
+    entity_type: EntityType
+    identifier: str
+    name: str | None = None
+    email: str | None = None
+    phone: str | None = None
+    edrpou: str | None = None
+    rnokpp: str | None = None
+    address: str | None = None
+    classification_levels: list[Classification] = [Classification.WHITE, Classification.GREY]
+    collectors_override: list[str] | None = None
+
 
 class ExportEntity(BaseModel):
     id: str
@@ -28,6 +62,57 @@ class ExportEntity(BaseModel):
     description: str
 
 router = APIRouter(prefix="/osint", tags=["OSINT"])
+
+@router.post("/scan/start", summary="Start OSINT Scan (Event-Driven)")
+async def start_osint_scan(
+    request: ScanStartRequest,
+    tenant_id: Annotated[str, Depends(get_tenant_id)]
+) -> dict[str, Any]:
+    job_id = str(uuid.uuid4())
+    
+    redis = get_valkey_service()
+    if redis._connected:
+        status_data = {
+            "status": "pending",
+            "job_id": job_id,
+            "created_at": datetime.now().isoformat()
+        }
+        # Redis uses await redis._client.setex(key, ttl, value)
+        if hasattr(redis._client, "setex"):
+            await redis._client.setex(f"osint_scan:{job_id}", 3600, json.dumps(status_data))
+        else:
+            await redis._client.set(f"osint_scan:{job_id}", json.dumps(status_data), ex=3600)
+            
+    kafka = get_kafka_service()
+    payload = request.model_dump()
+    payload["job_id"] = job_id
+    payload["tenant_id"] = tenant_id
+    
+    await kafka.publish_event(
+        topic="osint.scan.requested",
+        key=job_id,
+        event_type="OSINT_SCAN_REQUESTED",
+        payload=payload
+    )
+    
+    return {"status": "ok", "job_id": job_id, "message": "Scan started"}
+    
+@router.get("/scan/status/{job_id}", summary="Check OSINT Scan Status")
+async def get_osint_scan_status(
+    job_id: str,
+    tenant_id: Annotated[str, Depends(get_tenant_id)]
+) -> dict[str, Any]:
+    redis = get_valkey_service()
+    if not redis._connected:
+        return {"status": "processing", "job_id": job_id}
+        
+    data_str = await redis._client.get(f"osint_scan:{job_id}")
+    if not data_str:
+        return {"status": "processing", "job_id": job_id}
+        
+    data = json.loads(data_str)
+    return data
+
 
 @router.post("/export/csv", summary="Експорт OSINT даних у CSV")
 async def export_osint_csv(
