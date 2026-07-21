@@ -1,10 +1,11 @@
-from typing import Dict, Any, List
-from app.services.osint.collectors.base import BaseOsintCollector
 import asyncio
+from typing import Any
+
+from app.services.osint.collectors.base import BaseOsintCollector
+
 
 class BlockchainCollector(BaseOsintCollector):
-    """
-    Колектор блокчейн-даних.
+    """Колектор блокчейн-даних.
     Шукає прив'язані криптогаманці до особи (через витоки або вказані адреси).
     Аналізує транзакції на підозрілу активність (міксери, даркнет-маркети).
     Симулює Chainalysis / TRM Labs API.
@@ -13,10 +14,10 @@ class BlockchainCollector(BaseOsintCollector):
     def __init__(self):
         super().__init__(source_name="Blockchain_Analytics")
 
-    async def collect(self, query: str, **kwargs) -> Dict[str, Any]:
+    async def collect(self, query: str, **kwargs) -> dict[str, Any]:
         """Симуляція запиту до блокчейн-аналітики"""
         await asyncio.sleep(0.8)
-        
+
         # Симулюємо знахідку гаманця для певних ключових слів
         if "crypto" in query.lower() or "іванов" in query.lower() or "dark" in query.lower():
             return {
@@ -40,27 +41,27 @@ class BlockchainCollector(BaseOsintCollector):
                     }
                 ]
             }
-            
+
         return {"search_query": query, "wallets": []}
 
-    def normalize(self, raw_data: Dict[str, Any]) -> Dict[str, Any]:
+    def normalize(self, raw_data: dict[str, Any]) -> dict[str, Any]:
         nodes = []
         edges = []
         dossier_updates = {"digital_footprint": {"crypto_wallets": []}}
-        
+
         wallets = raw_data.get("wallets", [])
-        
+
         for wallet in wallets:
             address = wallet.get("address")
             currency = wallet.get("currency")
             risk = wallet.get("risk_score")
-            
+
             node_id = f"wallet_{address[:8]}"
-            
+
             labels = ["CryptoWallet"]
             if risk > 70:
                 labels.append("HighRisk")
-                
+
             nodes.append({
                 "node_id": node_id,
                 "labels": labels,
@@ -72,7 +73,7 @@ class BlockchainCollector(BaseOsintCollector):
                     "clusters": wallet.get("clusters", [])
                 }
             })
-            
+
             edges.append({
                 "target": node_id,
                 "type": "OWNS_WALLET",
@@ -81,14 +82,14 @@ class BlockchainCollector(BaseOsintCollector):
                     "verified": False
                 }
             })
-            
+
             dossier_updates["digital_footprint"]["crypto_wallets"].append({
                 "address": address,
                 "currency": currency,
                 "risk_score": risk,
                 "clusters": wallet.get("clusters")
             })
-            
+
         return {
             "nodes": nodes,
             "edges": edges,
